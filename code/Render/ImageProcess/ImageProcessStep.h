@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_ImageProcessStep_H
 #define traktor_render_ImageProcessStep_H
 
+#include "Core/Ref.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Serialization/ISerializable.h"

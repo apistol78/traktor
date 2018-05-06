@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_animation_ClothEntityData_H
 
 #include <vector>
+#include "Core/Ref.h"
 #include "Resource/Id.h"
 #include "World/EntityData.h"
 

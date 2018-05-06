@@ -7,8 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_spray_Effect_H
 #define traktor_spray_Effect_H
 
-#include "Core/RefArray.h"
 #include "Core/Object.h"
+#include "Core/Ref.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

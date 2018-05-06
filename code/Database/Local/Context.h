@@ -7,8 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_db_Context_H
 #define traktor_db_Context_H
 
-#include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Object.h"
+#include "Core/Ref.h"
 
 namespace traktor
 {

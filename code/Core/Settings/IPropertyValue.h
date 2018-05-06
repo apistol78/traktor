@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_IPropertyValue_H
 #define traktor_IPropertyValue_H
 
+#include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

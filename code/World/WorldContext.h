@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_world_WorldContext_H
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 

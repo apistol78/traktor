@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_animation_RagDollPoseController_H
 #define traktor_animation_RagDollPoseController_H
 
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Animation/IPoseController.h"
 

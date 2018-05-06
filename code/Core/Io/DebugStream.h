@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_DebugStream_H
 #define traktor_DebugStream_H
 
+#include "Core/Ref.h"
 #include "Core/Io/IStream.h"
 #include "Core/Timer/Timer.h"
 

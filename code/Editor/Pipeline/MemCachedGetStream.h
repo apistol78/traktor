@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_editor_MemCachedGetStream_H
 #define traktor_editor_MemCachedGetStream_H
 
+#include "Core/Ref.h"
 #include "Core/Io/IStream.h"
 
 namespace traktor

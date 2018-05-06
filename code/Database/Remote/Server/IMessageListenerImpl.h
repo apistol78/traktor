@@ -8,8 +8,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_db_MessageListener_H
 
 #include <map>
-#include "Database/Remote/Server/IMessageListener.h"
+#include "Core/Ref.h"
 #include "Database/Remote/IMessage.h"
+#include "Database/Remote/Server/IMessageListener.h"
 
 namespace traktor
 {

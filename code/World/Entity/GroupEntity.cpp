@@ -87,7 +87,7 @@ int GroupEntity::getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& e
 	return int(entities.size());
 }
 
-Ref< Entity > GroupEntity::getFirstEntityOf(const TypeInfo& entityType) const
+Entity* GroupEntity::getFirstEntityOf(const TypeInfo& entityType) const
 {
 	for (RefArray< Entity >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{

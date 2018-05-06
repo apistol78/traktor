@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_world_VolumeComponent_H
 #define traktor_world_VolumeComponent_H
 
+#include "Core/Ref.h"
 #include "World/IEntityComponent.h"
 
 // import/export mechanism.

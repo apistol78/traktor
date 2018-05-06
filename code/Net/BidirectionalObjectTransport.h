@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include <vector>
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Misc/AutoPtr.h"

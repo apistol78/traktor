@@ -271,7 +271,7 @@ void AsConfiguration::setRumbleEnable(bool rumbleEnable)
 
 Ref< AsSoundDriver > AsConfiguration::getSoundDriver() const
 {
-	return new AsSoundDriver(TypeInfo::find(m_soundDriver));
+	return new AsSoundDriver(TypeInfo::find(m_soundDriver.c_str()));
 }
 
 void AsConfiguration::setSoundDriver(const AsSoundDriver* soundDriver)

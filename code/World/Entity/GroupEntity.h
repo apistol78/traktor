@@ -47,7 +47,7 @@ public:
 	
 	int getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& outEntities) const;
 	
-	Ref< Entity > getFirstEntityOf(const TypeInfo& entityType) const;
+	Entity* getFirstEntityOf(const TypeInfo& entityType) const;
 	
 	virtual void update(const UpdateParams& update) T_OVERRIDE;
 
@@ -64,10 +64,10 @@ public:
 	}
 
 	template < typename EntityType >
-	Ref< EntityType > getFirstEntityOf() const
+	EntityType* getFirstEntityOf() const
 	{
-		Ref< Entity > entity = getFirstEntityOf(type_of< EntityType >());
-		return reinterpret_cast< Ref< EntityType >& >(entity);
+		Entity* entity = getFirstEntityOf(type_of< EntityType >());
+		return reinterpret_cast< EntityType* >(entity);
 	}
 	
 private:

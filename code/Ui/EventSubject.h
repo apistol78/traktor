@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <map>
 #include <vector>
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Ui/Enums.h"
 

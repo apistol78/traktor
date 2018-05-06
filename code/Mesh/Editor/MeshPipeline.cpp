@@ -735,7 +735,7 @@ render::IProgramCompiler* MeshPipeline::getProgramCompiler() const
 	if (m_programCompiler)
 		return m_programCompiler;
 
-	const TypeInfo* programCompilerType = TypeInfo::find(m_programCompilerTypeName);
+	const TypeInfo* programCompilerType = TypeInfo::find(m_programCompilerTypeName.c_str());
 	if (!programCompilerType)
 	{
 		log::error << L"Mesh pipeline; unable to find program compiler type \"" << m_programCompilerTypeName << L"\"" << Endl;

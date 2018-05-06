@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <set>
 #include <vector>
 #include "Core/Config.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Rtti/ITypedObject.h"
 #include "Net/Url.h"

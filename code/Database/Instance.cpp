@@ -114,7 +114,7 @@ std::wstring Instance::getPrimaryTypeName() const
 
 const TypeInfo* Instance::getPrimaryType() const
 {
-	return TypeInfo::find(getPrimaryTypeName());
+	return TypeInfo::find(getPrimaryTypeName().c_str());
 }
 
 Ref< ISerializable > Instance::getObject() const

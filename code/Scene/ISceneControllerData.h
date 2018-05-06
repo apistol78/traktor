@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_scene_ISceneControllerData_H
 
 #include <map>
+#include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

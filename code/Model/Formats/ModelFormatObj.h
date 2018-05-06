@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_model_ModelFormatObj_H
 #define traktor_model_ModelFormatObj_H
 
+#include "Core/Ref.h"
 #include "Model/ModelFormat.h"
 
 // import/export mechanism.

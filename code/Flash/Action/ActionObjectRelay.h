@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_flash_ActionObjectRelay_H
 #define traktor_flash_ActionObjectRelay_H
 
+#include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Flash/Collectable.h"
 

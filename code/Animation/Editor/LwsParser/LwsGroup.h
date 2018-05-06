@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_animation_LwsGroup_H
 
 #include "Animation/Editor/LwsParser/LwsNode.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 
 namespace traktor

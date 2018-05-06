@@ -120,7 +120,7 @@ Ref< IStream > RemoteInstance::readObject(const TypeInfo*& outSerializerType) co
 	if (!result)
 		return 0;
 
-	outSerializerType = TypeInfo::find(result->getSerializerTypeName());
+	outSerializerType = TypeInfo::find(result->getSerializerTypeName().c_str());
 	if (!outSerializerType)
 		return 0;
 
@@ -133,7 +133,7 @@ Ref< IStream > RemoteInstance::writeObject(const std::wstring& primaryTypeName, 
 	if (!result)
 		return 0;
 
-	outSerializerType = TypeInfo::find(result->getSerializerTypeName());
+	outSerializerType = TypeInfo::find(result->getSerializerTypeName().c_str());
 	if (!outSerializerType)
 		return 0;
 

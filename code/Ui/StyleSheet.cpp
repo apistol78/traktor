@@ -96,7 +96,7 @@ Color4ub StyleSheet::getColor(const Object* widget, const wchar_t* const element
 		if (i->element != element)
 			continue;
 
-		const TypeInfo* type = TypeInfo::find(i->type);
+		const TypeInfo* type = TypeInfo::find(i->type.c_str());
 		if (!type)
 			continue;
 

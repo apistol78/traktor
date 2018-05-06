@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_physics_ArticulatedEntityData_H
 
 #include <vector>
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "World/EntityData.h"
 

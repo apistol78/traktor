@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_amalgam_OnlineServer_H
 
 #include "Amalgam/Game/IOnlineServer.h"
+#include "Core/Ref.h"
 
 namespace traktor
 {

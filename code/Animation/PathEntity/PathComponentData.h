@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_animation_PathComponentData_H
 
 #include "Animation/PathEntity/PathComponent.h"
+#include "Core/Ref.h"
 #include "World/IEntityComponentData.h"
 
 #undef T_DLLCLASS

@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_ai_NavMesh_H
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
 

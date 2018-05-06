@@ -43,7 +43,7 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	m_audioType = settings->getProperty< std::wstring >(L"Audio.Type");
 
 	// Create sound driver.
-	Ref< sound::ISoundDriver > soundDriver = dynamic_type_cast< sound::ISoundDriver* >(TypeInfo::createInstance(m_audioType));
+	Ref< sound::ISoundDriver > soundDriver = dynamic_type_cast< sound::ISoundDriver* >(TypeInfo::createInstance(m_audioType.c_str()));
 	if (!soundDriver)
 		return false;
 
@@ -219,7 +219,7 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 	std::wstring audioType = settings->getProperty< std::wstring >(L"Audio.Type");
 	if (audioType != m_audioType)
 	{
-		Ref< sound::ISoundDriver > soundDriver = dynamic_type_cast< sound::ISoundDriver* >(TypeInfo::createInstance(audioType));
+		Ref< sound::ISoundDriver > soundDriver = dynamic_type_cast< sound::ISoundDriver* >(TypeInfo::createInstance(audioType.c_str()));
 		if (soundDriver && m_soundSystem->reset(soundDriver))
 			m_audioType = audioType;
 		else

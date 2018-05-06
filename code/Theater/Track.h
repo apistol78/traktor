@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_theater_Track_H
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/Math/TransformPath.h"
 
 // import/export mechanism.
@@ -51,11 +52,11 @@ public:
 
 	void setEntity(world::Entity* entity);
 
-	Ref< world::Entity > getEntity() const;
+	world::Entity* getEntity() const;
 
 	void setLookAtEntity(world::Entity* entity);
 
-	Ref< world::Entity > getLookAtEntity() const;
+	 world::Entity* getLookAtEntity() const;
 
 	const TransformPath& getPath() const;
 

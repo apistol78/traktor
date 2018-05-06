@@ -141,7 +141,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	// Get physics manager type.
 	std::wstring physicsManagerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"SceneEditor.PhysicsManager");
-	const TypeInfo* physicsManagerType = TypeInfo::find(physicsManagerTypeName);
+	const TypeInfo* physicsManagerType = TypeInfo::find(physicsManagerTypeName.c_str());
 	if (!physicsManagerType)
 	{
 		log::error << L"Unable to create scene editor; no such physics manager type \"" << physicsManagerTypeName << L"\"." << Endl;

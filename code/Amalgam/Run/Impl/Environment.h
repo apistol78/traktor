@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_amalgam_Environment_H
 
 #include "Amalgam/Run/IEnvironment.h"
+#include "Core/Ref.h"
 
 namespace traktor
 {

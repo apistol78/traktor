@@ -8,8 +8,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_db_IProviderInstance_H
 
 #include <vector>
-#include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/Date/DateTime.h"
 
 // import/export mechanism.

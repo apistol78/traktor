@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_weather_WeatherRenderer_H
 #define traktor_weather_WeatherRenderer_H
 
+#include "Core/Ref.h"
 #include "World/IEntityRenderer.h"
 
 // import/export mechanism.

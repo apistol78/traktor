@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include <map>
 #include <vector>
+#include "Core/Ref.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Resource/ProgramResource.h"
 

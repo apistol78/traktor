@@ -64,7 +64,7 @@ bool LocalDatabase::open(const ConnectionString& connectionString)
 	{
 		std::wstring fileStoreTypeName = connectionString.get(L"fileStore");
 
-		const TypeInfo* fileStoreType = TypeInfo::find(fileStoreTypeName);
+		const TypeInfo* fileStoreType = TypeInfo::find(fileStoreTypeName.c_str());
 		if (fileStoreType)
 			fileStore = checked_type_cast< IFileStore* >(fileStoreType->createInstance());
 

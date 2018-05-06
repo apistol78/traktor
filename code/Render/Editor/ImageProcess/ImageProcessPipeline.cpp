@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/RefArray.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Database/Instance.h"
@@ -40,7 +41,9 @@ void gatherSources(const RefArray< ImageProcessStep >& steps, std::vector< std::
 
 Ref< IImageProcessStepFacade > createFacade(const ImageProcessStep* step)
 {
-	const TypeInfo* facadeType = TypeInfo::find(std::wstring(type_name(step)) + L"Facade");
+	StringOutputStream ss;
+	ss << type_name(step) << L"Facade";
+	const TypeInfo* facadeType = TypeInfo::find(ss.str().c_str());
 	if (facadeType)
 		return checked_type_cast< IImageProcessStepFacade* >(facadeType->createInstance());
 	else

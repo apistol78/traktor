@@ -11,13 +11,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <string>
 #include "Core/Guid.h"
 #include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor

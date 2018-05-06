@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_mesh_MeshComponent_H
 #define traktor_mesh_MeshComponent_H
 
+#include "Core/Ref.h"
 #include "Core/Math/IntervalTransform.h"
 #include "World/IEntityComponent.h"
 

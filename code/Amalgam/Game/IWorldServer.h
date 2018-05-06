@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_amalgam_IWorldServer_H
 
 #include "Amalgam/Game/IServer.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

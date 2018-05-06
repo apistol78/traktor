@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_TimeQueryOpenGL_H
 #define traktor_render_TimeQueryOpenGL_H
 
+#include "Core/Ref.h"
 #include "Render/ITimeQuery.h"
 #include "Render/OpenGL/Platform.h"
 

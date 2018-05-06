@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <utility>
+#include "Core/Ref.h"
 #include "Core/Io/IStream.h"
 #include "Model/Formats/LwChunk.h"
 #include "Model/Formats/LwClip.h"

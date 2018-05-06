@@ -959,7 +959,7 @@ void threadProcessAgentClient(
 
 		log::info << L"Received build item " << agentBuild->getOutputGuid().format() << Endl;
 
-		const TypeInfo* pipelineType = TypeInfo::find(agentBuild->getPipelineTypeName());
+		const TypeInfo* pipelineType = TypeInfo::find(agentBuild->getPipelineTypeName().c_str());
 		if (!pipelineType)
 		{
 			log::error << L"Agent build error; no such pipeline \"" << agentBuild->getPipelineTypeName() << L"\"" << Endl;

@@ -11,6 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <string>
 #include <vector>
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 
 // import/export mechanism.

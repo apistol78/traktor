@@ -56,7 +56,7 @@ void SoundEditorPlugin::handleWorkspaceOpened()
 		return;
 
 	std::wstring soundDriverTypeName = settings->getProperty< std::wstring >(L"Editor.SoundDriver");
-	const TypeInfo* soundDriverType = TypeInfo::find(soundDriverTypeName);
+	const TypeInfo* soundDriverType = TypeInfo::find(soundDriverTypeName.c_str());
 	if (!soundDriverType)
 		return;
 

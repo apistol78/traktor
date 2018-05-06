@@ -145,12 +145,14 @@ TypeInfo::TypeInfo(
 ,	m_factory(factory)
 ,	m_tag(0)
 {
+	T_SAFE_ADDREF(m_factory);
 	__registerTypeInfo(this);
 }
 
 TypeInfo::~TypeInfo()
 {
 	__unregisterTypeInfo(this);
+	T_SAFE_RELEASE(m_factory);
 }
 
 ITypedObject* TypeInfo::createInstance(void* memory) const
@@ -161,7 +163,7 @@ ITypedObject* TypeInfo::createInstance(void* memory) const
 		return 0;
 }
 
-const TypeInfo* TypeInfo::find(const std::wstring& name)
+const TypeInfo* TypeInfo::find(const wchar_t* name)
 {
 	uint32_t first = 0;
 	uint32_t last = s_typeInfoCount;
@@ -172,7 +174,7 @@ const TypeInfo* TypeInfo::find(const std::wstring& name)
 		T_ASSERT (index >= first && index < last);
 
 		const wchar_t* typeName = s_typeInfoRegistry[index]->getName();
-		int32_t res = safeStringCompare(typeName, name.c_str());
+		int32_t res = safeStringCompare(typeName, name);
 		if (res == 0)
 			return s_typeInfoRegistry[index];
 		else if (res > 0)
@@ -196,7 +198,7 @@ void TypeInfo::findAllOf(std::set< const TypeInfo* >& outTypes, bool inclusive) 
 	}
 }
 
-ITypedObject* TypeInfo::createInstance(const std::wstring& name, void* memory)
+ITypedObject* TypeInfo::createInstance(const wchar_t* name, void* memory)
 {
 	const TypeInfo* type = TypeInfo::find(name);
 	return type ? type->createInstance(memory) : 0;

@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_ShaderGraphEvaluator_H
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Render/Editor/Shader/Constant.h"
 
 // import/export mechanism.

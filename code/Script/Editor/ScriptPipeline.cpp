@@ -146,7 +146,7 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 		return true;
 
 	// Create script manager instance.
-	const TypeInfo* scriptManagerType = TypeInfo::find(scriptManagerTypeName);
+	const TypeInfo* scriptManagerType = TypeInfo::find(scriptManagerTypeName.c_str());
 	if (!scriptManagerType)
 	{
 		log::error << L"Script pipeline failed; no such type \"" << scriptManagerTypeName << L"\"" << Endl;

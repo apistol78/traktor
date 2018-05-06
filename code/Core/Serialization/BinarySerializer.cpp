@@ -685,7 +685,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 						return;
 					}
 
-					type = TypeInfo::find(typeName);
+					type = TypeInfo::find(typeName.c_str());
 					if (!ensure(type != 0))
 					{
 						log::error << L"Unable to serialize \"" << m.getName() << L"\"; no such type \"" << typeName << L"\"" << Endl;
@@ -742,7 +742,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 							return;
 						}
 
-						baseType = TypeInfo::find(typeName);
+						baseType = TypeInfo::find(typeName.c_str());
 						if (!ensure(baseType != 0))
 						{
 							log::error << L"Unable to serialize \"" << m.getName() << L"\"; no such base type \"" << typeName << L"\"." << Endl;

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_animation_PathEntity_H
 #define traktor_animation_PathEntity_H
 
+#include "Core/Ref.h"
 #include "Core/Math/TransformPath.h"
 #include "World/Entity.h"
 

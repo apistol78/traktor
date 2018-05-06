@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_online_LocalAchievements_H
 #define traktor_online_LocalAchievements_H
 
+#include "Core/Ref.h"
 #include "Online/Provider/IAchievementsProvider.h"
 
 namespace traktor

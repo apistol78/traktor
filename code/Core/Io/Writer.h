@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_Writer_H
 
 #include <string>
+#include "Core/Ref.h"
 #include "Core/Io/IStream.h"
 
 // import/export mechanism.

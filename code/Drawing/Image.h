@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_drawing_Image_H
 #define traktor_drawing_Image_H
 
+#include "Core/Ref.h"
 #include "Core/Io/Path.h"
 #include "Core/Math/Color4f.h"
 #include "Drawing/ImageInfo.h"

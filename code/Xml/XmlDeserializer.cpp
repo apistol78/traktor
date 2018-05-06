@@ -295,7 +295,7 @@ void XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 	{
 		std::wstring typeName = a->second;
 
-		const TypeInfo* type = TypeInfo::find(typeName);
+		const TypeInfo* type = TypeInfo::find(typeName.c_str());
 		if (!ensure(type != 0))
 			return;
 
@@ -317,7 +317,7 @@ void XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 					std::wstring dataTypeName = s.substr(0, p);
 					int32_t dataTypeVersion = parseString< int32_t >(s.substr(p + 1));
 
-					const TypeInfo* dataType = TypeInfo::find(dataTypeName);
+					const TypeInfo* dataType = TypeInfo::find(dataTypeName.c_str());
 					if (!ensure(dataType != 0))
 						return;
 

@@ -7,8 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_db_IProviderGroup_H
 #define traktor_db_IProviderGroup_H
 
-#include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 
 // import/export mechanism.

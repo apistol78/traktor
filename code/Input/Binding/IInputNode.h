@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_input_IInputNode_H
 #define traktor_input_IInputNode_H
 
+#include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

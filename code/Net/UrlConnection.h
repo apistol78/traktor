@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_net_UrlConnection_H
 #define traktor_net_UrlConnection_H
 
+#include "Core/Ref.h"
 #include "Core/Object.h"
 #include "Net/Url.h"
 

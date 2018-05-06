@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_sound_IFilter_H
 #define traktor_sound_IFilter_H
 
+#include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Sound/Types.h"
 

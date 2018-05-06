@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_animation_BoidsEntityData_H
 #define traktor_animation_BoidsEntityData_H
 
+#include "Core/Ref.h"
 #include "World/EntityData.h"
 
 // import/export mechanism.

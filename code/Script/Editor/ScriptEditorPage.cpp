@@ -242,7 +242,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	// Create language specific implementations.
 	{
 		std::wstring syntaxLanguageTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.SyntaxLanguageType");
-		const TypeInfo* syntaxLanguageType = TypeInfo::find(syntaxLanguageTypeName);
+		const TypeInfo* syntaxLanguageType = TypeInfo::find(syntaxLanguageTypeName.c_str());
 		if (syntaxLanguageType)
 		{
 			Ref< ui::custom::SyntaxLanguage > syntaxLanguage = dynamic_type_cast< ui::custom::SyntaxLanguage* >(syntaxLanguageType->createInstance());
@@ -251,7 +251,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		}
 
 		std::wstring scriptManagerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.ScriptManagerType");
-		const TypeInfo* scriptManagerType = TypeInfo::find(scriptManagerTypeName);
+		const TypeInfo* scriptManagerType = TypeInfo::find(scriptManagerTypeName.c_str());
 		if (scriptManagerType)
 		{
 			m_scriptManager = dynamic_type_cast< IScriptManager* >(scriptManagerType->createInstance());
@@ -259,7 +259,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		}
 
 		std::wstring scriptOutlineTypeName = L"traktor.script.ScriptOutlineLua";
-		const TypeInfo* scriptOutlineType = TypeInfo::find(scriptOutlineTypeName);
+		const TypeInfo* scriptOutlineType = TypeInfo::find(scriptOutlineTypeName.c_str());
 		if (scriptOutlineType)
 		{
 			m_scriptOutline = dynamic_type_cast< IScriptOutline* >(scriptOutlineType->createInstance());
