@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_RfpMemberName_H
 #define traktor_RfpMemberName_H
 
+#include <string>
 #include "Core/Reflection/ReflectionMemberPredicate.h"
 
 // import/export mechanism.

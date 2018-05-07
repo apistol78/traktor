@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_RfmEnum_H
 #define traktor_RfmEnum_H
 
+#include <string>
 #include "Core/Reflection/ReflectionMember.h"
 
 // import/export mechanism.

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_Any_H
 #define traktor_Any_H
 
+#include <string>
 #include "Core/Config.h"
 #include "Core/Ref.h"
 #include "Core/Rtti/ITypedObject.h"

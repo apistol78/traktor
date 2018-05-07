@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_Environment_H
 
 #include <map>
+#include <string>
 #include "Core/Object.h"
 
 // import/export mechanism.
