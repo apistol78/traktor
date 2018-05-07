@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_online_LobbyFilter_H
 #define traktor_online_LobbyFilter_H
 
+#include <string>
 #include <vector>
 #include "Core/Object.h"
 

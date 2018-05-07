@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_sound_StaticSoundResource_H
 #define traktor_sound_StaticSoundResource_H
 
+#include <string>
 #include "Sound/ISoundResource.h"
 
 // import/export mechanism.

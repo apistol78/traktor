@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_world_IEntityEventManager_H
 #define traktor_world_IEntityEventManager_H
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/Math/Transform.h"
 #include "World/WorldTypes.h"

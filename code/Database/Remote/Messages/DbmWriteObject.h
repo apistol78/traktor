@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_db_DbmWriteObject_H
 #define traktor_db_DbmWriteObject_H
 
+#include <string>
 #include "Database/Remote/IMessage.h"
 
 // import/export mechanism.

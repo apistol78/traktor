@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_amalgam_LayerData_H
 #define traktor_amalgam_LayerData_H
 
+#include <string>
 #include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
 

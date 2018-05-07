@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_flash_AbcFile_H
 #define traktor_flash_AbcFile_H
 
+#include <string>
 #include "Core/Containers/AlignedVector.h"
 
 namespace traktor

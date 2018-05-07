@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_online_LocalGameConfiguration_H
 
 #include <list>
+#include <string>
 #include "Online/IGameConfiguration.h"
 
 namespace traktor

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_ui_StyleBitmap_H
 #define traktor_ui_StyleBitmap_H
 
+#include <string>
 #include "Ui/IBitmap.h"
 
 // import/export mechanism.
@@ -30,11 +31,11 @@ class T_DLLCLASS StyleBitmap : public IBitmap
 	T_RTTI_CLASS;
 
 public:
-	StyleBitmap(const wchar_t* const name);
+	explicit StyleBitmap(const wchar_t* const name);
 
-	StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap);
+	explicit StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap);
 
-	StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize);
+	explicit StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

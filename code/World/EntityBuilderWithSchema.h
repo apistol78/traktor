@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <list>
 #include <map>
 #include <stack>
+#include <string>
 #include "World/IEntityBuilder.h"
 
 // import/export mechanism.
