@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_amalgam_CommandEvent_H
 #define traktor_amalgam_CommandEvent_H
 
+#include <string>
 #include "Amalgam/IRemoteEvent.h"
 
 // import/export mechanism.

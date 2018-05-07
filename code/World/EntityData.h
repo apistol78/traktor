@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_world_EntityData_H
 #define traktor_world_EntityData_H
 
+#include <string>
 #include "Core/Math/Transform.h"
 #include "Core/Serialization/ISerializable.h"
 

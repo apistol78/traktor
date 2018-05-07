@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_ui_custom_SyntaxTypes_H
 #define traktor_ui_custom_SyntaxTypes_H
 
+#include <string>
 #include "Core/Config.h"
 
 namespace traktor

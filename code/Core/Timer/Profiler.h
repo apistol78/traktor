@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_Profiler_H
 #define traktor_Profiler_H
 
+#include <string>
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Singleton/ISingleton.h"

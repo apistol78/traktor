@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_amalgam_AudioServer_H
 #define traktor_amalgam_AudioServer_H
 
+#include <string>
 #include "Amalgam/Game/IAudioServer.h"
 #include "Core/Platform.h"
 #include "Core/Ref.h"

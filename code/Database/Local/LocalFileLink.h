@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_db_LocalFileLink_H
 #define traktor_db_LocalFileLink_H
 
+#include <string>
 #include "Core/Serialization/ISerializable.h"
 
 namespace traktor

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_ui_custom_SearchEvent_H
 #define traktor_ui_custom_SearchEvent_H
 
+#include <string>
 #include "Ui/Event.h"
 
 // import/export mechanism.
