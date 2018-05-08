@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_run_IInput_H
 #define traktor_run_IInput_H
 
+#include <string>
 #include "Core/Object.h"
 
 namespace traktor

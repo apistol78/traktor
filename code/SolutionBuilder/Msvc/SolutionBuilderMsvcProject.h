@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef SolutionBuilderMsvcProject_H
 #define SolutionBuilderMsvcProject_H
 
+#include <string>
 #include "Core/Serialization/ISerializable.h"
 
 namespace traktor

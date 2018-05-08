@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_sound_Types_H
 
 #include <cmath>
+#include <string>
 #include "Core/Config.h"
 #include "Core/Platform.h"
 

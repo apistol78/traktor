@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_net_INetworkTopology_H
 #define traktor_net_INetworkTopology_H
 
+#include <string>
 #include "Core/Object.h"
 #include "Net/Replication/NetworkTypes.h"
 

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_db_MsgStringArrayResult_H
 #define traktor_db_MsgStringArrayResult_H
 
+#include <string>
 #include <vector>
 #include "Database/Remote/IMessage.h"
 
@@ -33,7 +34,7 @@ class T_DLLCLASS MsgStringArrayResult : public IMessage
 public:
 	MsgStringArrayResult();
 
-	MsgStringArrayResult(const std::vector< std::wstring >& values);
+	explicit MsgStringArrayResult(const std::vector< std::wstring >& values);
 
 	void add(const std::wstring& value);
 
