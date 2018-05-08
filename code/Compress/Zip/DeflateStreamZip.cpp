@@ -8,11 +8,26 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <zlib.h>
 #include "Compress/Zip/DeflateStreamZip.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Memory/Alloc.h"
 
 namespace traktor
 {
 	namespace compress
 	{
+		namespace
+		{
+		
+voidpf deflateZAlloc(voidpf opaque, uInt items, uInt size)
+{
+	return Alloc::acquire(items * size, "zlib");
+}
+
+void deflateZFree(voidpf opaque, voidpf address)
+{
+	Alloc::free(address);
+}
+		
+		}
 
 class DeflateZipImpl : public RefCountImpl< IRefCount >
 {
@@ -23,7 +38,12 @@ public:
 	,	m_position(stream->tell())
 	{
 		std::memset(&m_zstream, 0, sizeof(m_zstream));
-		deflateInit(&m_zstream, Z_DEFAULT_COMPRESSION);
+
+		m_zstream.zalloc = &deflateZAlloc;
+		m_zstream.zfree = &deflateZFree;
+
+		int rc = deflateInit(&m_zstream, Z_DEFAULT_COMPRESSION);
+		T_FATAL_ASSERT (rc == Z_OK);
 
 		m_zstream.next_out = (Bytef*)&m_buf[0];
 		m_zstream.avail_out = (uInt)m_buf.size();

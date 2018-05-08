@@ -8,11 +8,26 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <zlib.h>
 #include "Compress/Zip/InflateStreamZip.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Memory/Alloc.h"
 
 namespace traktor
 {
 	namespace compress
 	{
+		namespace
+		{
+		
+voidpf inflateZAlloc(voidpf opaque, uInt items, uInt size)
+{
+	return Alloc::acquire(items * size, "zlib");
+}
+
+void inflateZFree(voidpf opaque, voidpf address)
+{
+	Alloc::free(address);
+}
+		
+		}
 
 class InflateZipImpl : public RefCountImpl< IRefCount >
 {
@@ -24,7 +39,12 @@ public:
 	,	m_position(m_startPosition)
 	{
 		std::memset(&m_zstream, 0, sizeof(m_zstream));
-		inflateInit(&m_zstream);
+		
+		m_zstream.zalloc = &inflateZAlloc;
+		m_zstream.zfree = &inflateZFree;
+
+		int rc = inflateInit(&m_zstream);
+		T_FATAL_ASSERT (rc == Z_OK);
 	}
 
 	void close()
