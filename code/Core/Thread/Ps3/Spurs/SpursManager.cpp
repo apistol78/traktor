@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <spu_printf.h>
+#include <string.h>
 #include <sys/spu_initialize.h>
 #include "Core/Memory/Alloc.h"
 #include "Core/Singleton/SingletonManager.h"
