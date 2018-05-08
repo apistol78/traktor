@@ -15642,6 +15642,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Engine</name>
+								<items>
+									<item type="File">
+										<fileName>Engine/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">
