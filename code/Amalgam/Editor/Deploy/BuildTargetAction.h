@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_amalgam_BuildTargetAction_H
 #define traktor_amalgam_BuildTargetAction_H
 
+#include <string>
 #include "Amalgam/Editor/Deploy/ITargetAction.h"
 #include "Core/Ref.h"
 

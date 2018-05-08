@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_amalgam_TargetCommandEvent_H
 #define traktor_amalgam_TargetCommandEvent_H
 
+#include <string>
 #include "Ui/Event.h"
 
 namespace traktor

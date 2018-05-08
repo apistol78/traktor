@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include <map>
 #include <steam/steam_api.h>
+#include "Core/Ref.h"
 #include "Core/Thread/Semaphore.h"
 #include "Online/Provider/ISessionManagerProvider.h"
 #include "Online/Steam/SteamTypes.h"

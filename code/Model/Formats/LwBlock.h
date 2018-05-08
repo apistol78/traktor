@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_model_LwBlock_H
 #define traktor_model_LwBlock_H
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/Math/Vector4.h"
 

@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_amalgam_DeployTool_H
 
 #include <map>
+#include <string>
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

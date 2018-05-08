@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_model_Material_H
 #define traktor_model_Material_H
 
+#include <string>
 #include "Core/Config.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Math/Color4ub.h"
