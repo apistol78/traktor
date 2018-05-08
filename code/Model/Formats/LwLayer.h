@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_model_LwLayer_H
 #define traktor_model_LwLayer_H
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"

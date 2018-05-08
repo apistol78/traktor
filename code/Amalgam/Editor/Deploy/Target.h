@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_amalgam_Target_H
 #define traktor_amalgam_Target_H
 
+#include <string>
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 

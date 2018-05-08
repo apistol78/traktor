@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_script_IScriptOutline_H
 #define traktor_script_IScriptOutline_H
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
