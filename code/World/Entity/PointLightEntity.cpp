@@ -32,7 +32,9 @@ PointLightEntity::PointLightEntity(
 ,	m_randomFlickerFilter(randomFlickerFilter)
 ,	m_randomFlickerValue(0.0f)
 ,	m_randomFlicker(1.0f)
+#if !defined(__PS3__)
 ,	m_random(uint32_t(clock()))
+#endif
 {
 }
 
