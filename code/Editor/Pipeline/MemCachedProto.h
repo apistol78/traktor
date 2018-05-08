@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_editor_MemCachedProto_H
 #define traktor_editor_MemCachedProto_H
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Thread/Semaphore.h"
@@ -28,7 +29,7 @@ class MemCachedProto : public Object
 	T_RTTI_CLASS;
 
 public:
-	MemCachedProto(net::Socket* socket);
+	explicit MemCachedProto(net::Socket* socket);
 
 	Semaphore& getLock();
 

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_online_ISessionManagerProvider_H
 #define traktor_online_ISessionManagerProvider_H
 
+#include <string>
 #include <vector>
 #include "Core/Object.h"
 

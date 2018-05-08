@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_graphics_ISurface_H
 #define traktor_graphics_ISurface_H
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/Math/Color4ub.h"
 #include "Graphics/PixelFormat.h"

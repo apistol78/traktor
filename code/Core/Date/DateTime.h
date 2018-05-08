@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_DateTime_H
 #define traktor_DateTime_H
 
+#include <string>
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

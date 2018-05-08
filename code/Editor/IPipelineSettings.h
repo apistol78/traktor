@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_editor_IPipelineSettings_H
 #define traktor_editor_IPipelineSettings_H
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/Settings/IPropertyValue.h"
 

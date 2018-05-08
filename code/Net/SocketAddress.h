@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_net_SocketAddress_H
 #define traktor_net_SocketAddress_H
 
+#include <string>
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -34,7 +35,7 @@ public:
 
 	virtual std::wstring getHostName() const = 0;
 };
-	
+
 	}
 }
 
