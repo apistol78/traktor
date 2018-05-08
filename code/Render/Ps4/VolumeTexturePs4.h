@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_VolumeTexturePs4_H
 #define traktor_render_VolumeTexturePs4_H
 
+#include "Core/Ref.h"
 #include "Render/IVolumeTexture.h"
 
 namespace traktor

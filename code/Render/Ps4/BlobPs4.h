@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_BlobPs4_H
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/Misc/AutoPtr.h"
 
 namespace traktor

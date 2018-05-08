@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include <gnmx.h>
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Semaphore.h"
 
