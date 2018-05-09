@@ -67,6 +67,28 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>AVFoundation.framework</item>
+								<item>AdSupport.framework</item>
+								<item>AssetsLibrary.framework</item>
+								<item>AudioToolbox.framework</item>
+								<item>CoreGraphics.framework</item>
+								<item>CoreImage.framework</item>
+								<item>CoreMedia.framework</item>
+								<item>CoreVideo.framework</item>
+								<item>Everyplay.bundle</item>
+								<item>Everyplay.framework</item>
+								<item>Foundation.framework</item>
+								<item>GameKit.framework</item>
+								<item>MessageUI.framework</item>
+								<item>MobileCoreServices.framework</item>
+								<item>OpenGLES.framework</item>
+								<item>QuartzCore.framework</item>
+								<item>Security.framework</item>
+								<item>Social.framework</item>
+								<item>StoreKit.framework</item>
+								<item>SystemConfiguration.framework</item>
+								<item>Twitter.framework</item>
+								<item>UIKit.framework</item>
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Online.Gc.a</item>
 								<item>libTraktor.Online.a</item>

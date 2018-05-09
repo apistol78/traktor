@@ -95,7 +95,7 @@ function createXCAssets()
 	s:printLn("  \"images\" : [")
 
 	for i, id in ipairs(iconDefinitions) do
-		local image = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/" .. id.image)
+		local image = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/" .. id.image)
 		if image == nil then
 			return false
 		end
@@ -132,7 +132,7 @@ function createXCAssets()
 	s:printLn("  \"images\" : [")
 
 	for i, id in ipairs(imageDefinitions) do
-		local image = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/" .. id.image)
+		local image = Image.loadFromFile("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/" .. id.image)
 		if image == nil then
 			return false
 		end
@@ -193,13 +193,13 @@ function deploy(args)
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
 	stdout:printLn("Generating Info.plist...")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Info.plist.template", "Info.plist") ~= 0 then
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/Info.plist.template", "Info.plist") ~= 0 then
 		stderr:printLn("Failed to generate Info.plist")
 		return 1
 	end
 
 	stdout:printLn("Generating Main.mm...")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Main.mm.template", "Main.mm") ~= 0 then
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/Main.mm.template", "Main.mm") ~= 0 then
 		stderr:printLn("Failed to generate Main.mm")
 		return 1
 	end
@@ -212,14 +212,14 @@ function deploy(args)
 
 	stdout:printLn("Generating Xcode project...")
 	run:mkdir("$(DEPLOY_PROJECT_NAME).xcodeproj")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/project.pbxproj.template", "$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj") ~= 0 then
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/project.pbxproj.template", "$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj") ~= 0 then
 		stderr:printLn("Failed to generate Xcode project")
 		return 1
 	end
 
 	stdout:printLn("Generating Xcode scheme...")
 	run:mkdir("$(DEPLOY_PROJECT_NAME).xcodeproj/xcshareddata/xcschemes")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/scheme.xcscheme.template", "$(DEPLOY_PROJECT_NAME).xcodeproj/xcshareddata/xcschemes/$(DEPLOY_PROJECT_NAME).xcscheme") ~= 0 then
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/scheme.xcscheme.template", "$(DEPLOY_PROJECT_NAME).xcodeproj/xcshareddata/xcschemes/$(DEPLOY_PROJECT_NAME).xcscheme") ~= 0 then
 		stderr:printLn("Failed to generate Xcode scheme")
 		return 1
 	end
@@ -232,42 +232,40 @@ function deploy(args)
 
 	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
 		stdout:printLn("Deploying resources to target host...")
+
 		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh *.plist *.mm *.png Application.config", "(null)")
 		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" -recursive Images.xcassets/*.*", "(null)")
 		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
 
-		if not debug then
-			stdout:printLn("Deploying binaries to target host...")
-			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/ios/releasestatic")
-		else
-			stdout:printLn("Deploying *DEBUG* binaries to target host...")
-			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/ios/debugstatic")
-		end
+		-- Get shared paths.
+		local paths = nil
+		if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
 
-		local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
-		
-		local deployFiles = ""
-		local deployBundles = {}
-
-		for _, f in ipairs(files) do
-			if string.endswith(f, ".a") then
-				deployFiles = deployFiles .. " " .. f
-			elseif string.endswith(f, ".plist") then
-				deployFiles = deployFiles .. " " .. f
-			elseif string.endswith(f, ".framework") or string.endswith(f, ".bundle") then
-				table.insert(deployBundles, f)
+		-- Find files to deploy; qualitfy through paths.
+		local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
+		for _, p in ipairs(paths) do
+			local deployFiles = ""
+			local deployBundles = {}
+			for _, f in ipairs(files) do
+				local qf = Path(p):concat(Path(f))
+				if FileSystem.getInstance():exist(qf) then
+					if string.endswith(f, ".a") or string.endswith(f, ".plist") then
+						deployFiles = deployFiles .. " " .. f
+					elseif string.endswith(f, ".framework") or string.endswith(f, ".bundle") then
+						table.insert(deployBundles, f)
+					end
+				end
 			end
+			run:pushd(p)
+			if deployFiles ~= "" then
+				run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles) -- , nil)
+				if run:exitCode() ~= 0 then return run:exitCode() end
+			end
+			for _, bundle in ipairs(deployBundles) do
+				run:execute(tools.remote .. " deploy -recursive $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. bundle .. "/*.*") -- nil)
+			end
+			run:popd()
 		end
-
-		if #deployFiles > 0 then
-			run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, "(null)")
-		end
-
-		for _, bundle in ipairs(deployBundles) do
-			run:execute(tools.remote .. " deploy -recursive $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. bundle .. "/*.*", "(null)")
-		end
-
-		run:popd()
 	end
 
 	stdout:printLn("Deploy finished")
@@ -298,13 +296,13 @@ function migrate(args)
 	end
 
 	stdout:printLn("Generating Info.plist...")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Info.plist.template", "Info.plist") ~= 0 then
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/Info.plist.template", "Info.plist") ~= 0 then
 		stderr:printLn("Failed to generate Info.plist")
 		return 1
 	end
 
 	stdout:printLn("Generating Main.mm...")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/Main.mm.template", "Main.mm") ~= 0 then
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/Main.mm.template", "Main.mm") ~= 0 then
 		stderr:printLn("Failed to generate Main.mm")
 		return 1
 	end
@@ -317,14 +315,14 @@ function migrate(args)
 
 	stdout:printLn("Generating Xcode project...")
 	run:mkdir("$(DEPLOY_PROJECT_NAME).xcodeproj")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/project.pbxproj.template Content.compact", "$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj") ~= 0 then
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/project.pbxproj.template Content.compact", "$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj") ~= 0 then
 		stderr:printLn("Failed to generate Xcode project")
 		return 1
 	end
 
 	stdout:printLn("Generating Xcode scheme...")
 	run:mkdir("$(DEPLOY_PROJECT_NAME).xcodeproj/xcshareddata/xcschemes")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/ios/scheme.xcscheme.template", "$(DEPLOY_PROJECT_NAME).xcodeproj/xcshareddata/xcschemes/$(DEPLOY_PROJECT_NAME).xcscheme") ~= 0 then
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/ios/scheme.xcscheme.template", "$(DEPLOY_PROJECT_NAME).xcodeproj/xcshareddata/xcschemes/$(DEPLOY_PROJECT_NAME).xcscheme") ~= 0 then
 		stderr:printLn("Failed to generate Xcode scheme")
 		return 1
 	end

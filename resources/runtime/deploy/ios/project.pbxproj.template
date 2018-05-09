@@ -36,8 +36,7 @@ local productName = environment:get("DEPLOY_EXECUTABLE"):gsub("[.,;:-]", "_")
 
 
 -- Determine all libraries, frameworks and bundles which must be linked.
-local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
-local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
 
 local modules = {}
 local frameworks = {}
@@ -46,9 +45,6 @@ local additional = {}
 
 for _, f in ipairs(files) do
 	if string.endswith(f, ".a") then
-		if debug then
-			f = f:sub(1, string.len(f) - 2) .. "_d.a"
-		end
 		table.insert(modules, f)
 	elseif string.endswith(f, ".framework") then
 		local fw = {}
