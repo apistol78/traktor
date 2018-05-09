@@ -42,7 +42,10 @@
 					<item>
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
-							<value/>
+							<value>
+								<item>AudioToolbox.framework</item>
+								<item>Foundation.framework</item>
+							</value>
 						</second>
 					</item>
 					<item>
