@@ -2,6 +2,8 @@
 
 # Toolchain and SDK configuration.
 TOOLCHAIN_BIN=$(ANDROID_NDK_ROOT)/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin
+NDK_SYSROOT=$(ANDROID_NDK_ROOT)/platforms/android-19/arch-arm
+NDK_CXX_PATH=$(ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a
 NDK_INCLUDES=\
 	-I$(ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/include\
 	-I$(ANDROID_NDK_ROOT)/sources/android/support/include\
@@ -82,7 +84,9 @@ AR_FLAGS_RELEASE_STATIC=$(AR_FLAGS_COMMON)
 AR_FLAG_OUTPUT=
 
 LINK=$(TOOLCHAIN_BIN)/arm-linux-androideabi-g++
-LINK_LIBS=
+LINK_LIBS=-lc++ -llog -lc -lm -landroid -lgcc -shared
+LINK_FLAGS_DEBUG_EXECUTABLE=$(LINK_LIBS) --sysroot=$(NDK_SYSROOT) -L$(NDK_CXX_PATH)
+LINK_FLAGS_RELEASE_EXECUTABLE=$(LINK_LIBS) --sysroot=$(NDK_SYSROOT) -L$(NDK_CXX_PATH)
 LINK_FLAG_OUTPUT=-o
 
 ADDITIONAL_INCLUDE_PATHS=
