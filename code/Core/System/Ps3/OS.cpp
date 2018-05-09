@@ -102,6 +102,11 @@ bool OS::exploreFile(const std::wstring& file) const
 	return false;
 }
 
+bool OS::setEnvironment(const std::wstring& name, const std::wstring& value) const
+{
+	return false;
+}
+
 Ref< Environment > OS::getEnvironment() const
 {
 	OSData* data = static_cast< OSData* >(m_handle);

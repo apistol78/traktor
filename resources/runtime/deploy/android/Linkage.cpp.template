@@ -20,11 +20,9 @@ end
 
 local linkerIncludes = {}
 
-local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+local files = os:getEnvironment("DEPLOY_MODULES"):split("\n")
 for _, f in ipairs(files) do
-	if f:endswith(".a") and not f:startswith("libExtern") then
-		table.insert(linkerIncludes, "__module__" .. f:sub(4, #f - 2):gsub("%.", "_"))
-	end
+	table.insert(linkerIncludes, "__module__" .. f:gsub("%.", "_"))
 end
 
 for _, m in ipairs(linkerIncludes) do

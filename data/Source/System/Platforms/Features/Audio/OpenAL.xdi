@@ -47,6 +47,7 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
+								<item>AVFoundation.framework</item>
 								<item>AudioToolbox.framework</item>
 								<item>OpenAL.framework</item>
 								<item>libTraktor.Core.a</item>

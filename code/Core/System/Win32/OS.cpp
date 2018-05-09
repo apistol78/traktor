@@ -198,6 +198,11 @@ bool OS::exploreFile(const std::wstring& file) const
 	return int(hInstance) > 32;
 }
 
+bool OS::setEnvironment(const std::wstring& name, const std::wstring& value) const
+{
+	return SetEnvironmentVariable(wstots(name).c_str(), wstots(value).c_str()) != FALSE;
+}
+
 Ref< Environment > OS::getEnvironment() const
 {
 	Ref< Environment > env = new Environment();
@@ -229,11 +234,13 @@ Ref< Environment > OS::getEnvironment() const
 
 bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 {
-	const char* env = getenv(wstombs(name).c_str());
-	if (!env)
-		return false;
-
-	outValue = mbstows(env);
+	TCHAR buf[32767] = { 0 };
+	if (GetEnvironmentVariable(wstots(name).c_str(), buf, sizeof_array(buf)) == 0)
+	{
+		if (GetLastError() == ERROR_ENVVAR_NOT_FOUND)
+			return false;
+	}
+	outValue = tstows(buf);
 	return true;
 }
 

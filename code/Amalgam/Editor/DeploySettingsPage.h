@@ -50,6 +50,7 @@ private:
 	Ref< ui::Edit > m_editAndroidAntHome;
 	Ref< ui::Edit > m_editAndroidToolchain;
 	Ref< ui::Edit > m_editAndroidApiLevel;
+	Ref< ui::Edit > m_editEmscripten;
 };
 
 	}
