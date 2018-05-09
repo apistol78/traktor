@@ -498,6 +498,7 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classOS->addMethod("getWritableFolderPath", &OS::getWritableFolderPath);
 	classOS->addMethod("openFile", &OS::openFile);
 	classOS->addMethod("editFile", &OS::editFile);
+	classOS->addMethod("setEnvironment", &OS::setEnvironment);
 	classOS->addMethod("getEnvironment", &OS_getEnvironment_0);
 	classOS->addMethod("getEnvironment", &OS_getEnvironment_1);
 	classOS->addMethod("execute", &OS_execute);

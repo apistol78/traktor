@@ -108,6 +108,14 @@ public:
 	 */
 	bool exploreFile(const std::wstring& file) const;
 
+	/*! \brief Set environment variable.
+	 *
+	 * \param name Name of variable.
+	 * \param value New value of variable.
+	 * \return True if variable set succeeded.
+	 */
+	bool setEnvironment(const std::wstring& name, const std::wstring& value) const;
+
 	/*! \brief Get process's environment variables.
 	 *
 	 * \return Environment variables.

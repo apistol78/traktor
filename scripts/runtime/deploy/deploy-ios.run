@@ -27,6 +27,7 @@ local iconDefinitions =
 	{ image = "Icon.png", idiom = "ipad",   width = 40, height = 40, scale = 2 },
 	{ image = "Icon.png", idiom = "ipad",   width = 76, height = 76, scale = 1 },
 	{ image = "Icon.png", idiom = "ipad",   width = 76, height = 76, scale = 2 },
+	{ image = "Icon.png", idiom = "ipad",   width = 83.5, height = 83.5, scale = 2 },
 }
 
 
@@ -335,39 +336,39 @@ function migrate(args)
 
 	if environment:get("DEPLOY_TARGET_HOST") ~= "localhost" then
 		stdout:printLn("Deploying resources to target host...")
+
 		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh *.plist *.mm *.png Content.compact Application.config", "(null)")
 		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" -recursive Images.xcassets/*.*", "(null)")
 		run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" \"$(DEPLOY_PROJECT_NAME).xcodeproj/project.pbxproj\"", "(null)")
 
-		if not debug then
-			stdout:printLn("Deploying binaries to target host...")
-			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/ios/releasestatic")
-		else
-			stdout:printLn("Deploying *DEBUG* binaries to target host...")
-			run:pushd("$(DEPLOY_SYSTEM_ROOT)/bin/latest/ios/debugstatic")
-		end
+		-- Get shared paths.
+		local paths = nil
+		if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
 
-		local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
-		
-		local deployFiles = ""
-		local deployBundles = {}
-
-		for _, f in ipairs(files) do
-			if string.endswith(f, ".a") then
-				deployFiles = deployFiles .. " " .. f
-			elseif string.endswith(f, ".plist") then
-				deployFiles = deployFiles .. " " .. f
-			elseif string.endswith(f, ".framework") or string.endswith(f, ".bundle") then
-				table.insert(deployBundles, f)
+		-- Find files to deploy; qualitfy through paths.
+		local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
+		for _, p in ipairs(paths) do
+			local deployFiles = ""
+			local deployBundles = {}
+			for _, f in ipairs(files) do
+				local qf = Path(p):concat(Path(f))
+				if FileSystem.getInstance():exist(qf) then
+					if string.endswith(f, ".a") or string.endswith(f, ".plist") then
+						deployFiles = deployFiles .. " " .. f
+					elseif string.endswith(f, ".framework") or string.endswith(f, ".bundle") then
+						table.insert(deployBundles, f)
+					end
+				end
 			end
-		end
-
-		if #deployFiles > 0 then
-			run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, "(null)")
-		end
-
-		for _, bundle in ipairs(deployBundles) do
-			run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" -recursive " .. bundle .. "/*.*", "(null)")
+			run:pushd(p)
+			if deployFiles ~= "" then
+				run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles) -- , nil)
+				if run:exitCode() ~= 0 then return run:exitCode() end
+			end
+			for _, bundle in ipairs(deployBundles) do
+				run:execute(tools.remote .. " deploy -recursive $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. bundle .. "/*.*") -- nil)
+			end
+			run:popd()
 		end
 
 		stdout:printLn("Launching Xcode on target host...")

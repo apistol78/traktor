@@ -42,6 +42,42 @@ function string:endswith(send)
 end
 
 
+-- Setup environment for emscripten; we need to ensure we're using emscripten specified in our configuration.
+local function setupEmscriptenEnvironment()
+	local emsdk = os:getEnvironment("DEPLOY_EMSCRIPTEN")
+	if #emsdk <= 0 then
+		stderr:printLn("DEPLOY_EMSCRIPTEN not set; ensure Emscripten SDK is properly installed and try again.")
+		return nil
+	end
+
+	local emscripten = emsdk .. "/emscripten/1.37.36"
+	local clang = emsdk .. "/clang/e1.37.36_64bit"
+	local binaryen = emsdk .. "/clang/e1.37.36_64bit/binaryen"
+	local java = emsdk .. "/java/8.152_64bit"
+	local python = emsdk .. "/python/2.7.13.1_64bit"
+	local node = emsdk .. "/node/8.9.1_64bit"
+
+	os:setEnvironment("EMSCRIPTEN", emscripten)
+	os:setEnvironment("BINARYEN_ROOT", binaryen)
+	os:setEnvironment("BINARYEN", binaryen)
+	os:setEnvironment("JAVA_HOME", java)
+
+	local p = os:getEnvironment("PATH")
+	os:setEnvironment(
+		"PATH",
+		clang .. ";" ..
+		node .. "/bin;" ..
+		python .. "/python-2.7.13.amd64;" ..
+		java .. "/bin;" ..
+		emsdk .. ";" ..
+		emscripten .. ";" ..
+		p
+	)
+
+	return emscripten
+end
+
+
 function build(args)
 	stdout:printLn("Building asset(s)...")
 	local cmdline = tools.pipeline .. " -p -s=Pipeline"
@@ -58,11 +94,8 @@ function deploy(args)
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
-	local emscripten = os:getEnvironment("EMSCRIPTEN")
-	if #emscripten <= 0 then
-		stderr:printLn("EMSCRIPTEN not set; ensure Emscripten SDK is properly installed and try again.")
-		return 1
-	end
+	local emscripten = setupEmscriptenEnvironment()
+	if emscripten == nil then return 1 end
 
 	-- Get toolchain binaries.
 	local emcc = emscripten .. "/emcc" 
@@ -76,34 +109,24 @@ function deploy(args)
 		emcc = emcc .. ".bat"
 	end
 
-	-- Ensure debug symbols are kept when linking.
-	if debug then
-		emcc = emcc .. " -g"
-	end
-
-	-- Determine path to module libraries.
-	local prepend
-	if not debug then
-	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/emscripten/releasestatic/"
-	else
-		stdout:printLn("Using *DEBUG* binaries")
-	 	prepend = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/emscripten/debugstatic/"
+	-- Get library paths.
+	local libraryPaths = ""
+	local paths = ""
+	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
+	 for _, p in pairs(paths) do
+		libraryPaths = libraryPaths .. " -L " .. Path(p):getPathName() .. ""
 	end
 
 	-- Collect libraries to link.
-	local linkerLibraries = {}
-	local linkerExternLibraries = {}
-
-	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
+	local libraries = ""
+	local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
 	for _, f in ipairs(files) do
-		if f:endswith(".bc") then
-			if not f:startswith("libExtern") then
-				table.insert(linkerLibraries, f)
-			else
-				table.insert(linkerExternLibraries, f)
-			end
-		elseif f:endswith(".a") or f:endswith(".o") then
-			table.insert(linkerLibraries, f)
+		if f:endswith(".a") then
+			f = f:sub(4)
+			f = f:sub(1, #f - 2)
+			libraries = libraries .. " -l" .. f		
+		elseif f:endswith(".bc") or f:endswith(".o") then
+			libraries = libraries .. " " .. f
 		else
 			stderr:printLn("Unknown deploy file \"" .. f .. "\"")
 		end
@@ -111,7 +134,7 @@ function deploy(args)
 
 	-- Create the module initialization file.
 	stdout:printLn("Generating Linkage.cpp...")
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/emscripten/Linkage.cpp.template", "Linkage.cpp") ~= 0 then
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Linkage.cpp.template", "Linkage.cpp") ~= 0 then
 		stderr:printLn("Failed to generate Linkage.cpp")
 		return 1
 	end	
@@ -128,36 +151,35 @@ function deploy(args)
 	-- Build linker command line.
 	local cmd = "\"" .. emcc .. "\" "
 	cmd = cmd .. " -s WASM=1"
-	cmd = cmd .. " -s ERROR_ON_UNDEFINED_SYMBOLS=0"
+	cmd = cmd .. " -s BINARYEN_TRAP_MODE='clamp'"
+	-- cmd = cmd .. " -s ERROR_ON_UNDEFINED_SYMBOLS=0"
 	cmd = cmd .. " -s USE_PTHREADS=0"
 	cmd = cmd .. " -s TOTAL_MEMORY=" .. totalMemory
-	cmd = cmd .. " -Wl,-s,ERROR_ON_UNDEFINED_SYMBOLS=0"
+	-- cmd = cmd .. " -Wl,-s,ERROR_ON_UNDEFINED_SYMBOLS=0"
+	-- cmd = cmd .. " -g"
 	cmd = cmd .. " -O2"
 	cmd = cmd .. " Linkage.o"
-	for _, m in ipairs(linkerLibraries) do
-		cmd = cmd .. " " .. prepend .. m
-	end
-	for _, m in ipairs(linkerLibraries) do
-		cmd = cmd .. " " .. prepend .. m
-	end
-	for _, m in ipairs(linkerExternLibraries) do
-		cmd = cmd .. " " .. prepend .. m
-	end
-	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).js --preload-file Application.config"
+	cmd = cmd .. libraryPaths
+	cmd = cmd .. libraries
+	cmd = cmd .. libraries
+	cmd = cmd .. " -o $(DEPLOY_EXECUTABLE).html --preload-file Application.config"
 
 	-- Link files into an executable product.
-	local result = run:execute(cmd) --, nil)
+	local result = run:execute(cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
 		stderr:printLn(cmd)
 		return 1
 	end
 
+	-- Remove intermediate files.
+	run:rm("Linkage.*")
+
 	-- Create html loader.
-	if run:run("$(DEPLOY_SYSTEM_ROOT)/res/deploy/emscripten/Index.html.template", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
-		stderr:printLn("Failed to generate html loader.")
+	if run:run("$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/emscripten/Index.html.template", os:getEnvironment("DEPLOY_EXECUTABLE") .. ".html") ~= 0 then
+		stderr:printLn("Failed to generate HTML loader.")
 		return 1
-	end	
+	end
 
 	return 0
 end
@@ -170,7 +192,7 @@ end
 
 function migrate(args)
 	stdout:printLn("Migrating Emscripten...")
-	
+
 	local result = run:execute(tools.migrate .. " -p -s=Migrate")
 	if result ~= 0 then
 		stderr:printLn("Unable to migrate content.")
@@ -182,12 +204,8 @@ function migrate(args)
 	local host = os:getEnvironment("DEPLOY_HOST_OS")
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
-	local emscripten = os:getEnvironment("EMSCRIPTEN")
-	if #emscripten <= 0 then
-		stderr:printLn("EMSCRIPTEN not set; ensure Emscripten SDK is properly installed and try again.")
-		return 1
-	end
-	stdout:printLn("Using Emscripten SDK at \"" .. emscripten .. "\"")
+	local emscripten = setupEmscriptenEnvironment()
+	if emscripten == nil then return 1 end
 
 	-- Get toolchain binaries.
 	local emcc = emscripten .. "/emcc" 

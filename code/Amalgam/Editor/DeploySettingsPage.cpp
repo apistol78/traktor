@@ -102,6 +102,12 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_editAndroidApiLevel = new ui::Edit();
 	m_editAndroidApiLevel->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidApiLevel", L"android-19"));
 
+	Ref< ui::Static > staticEmscripten = new ui::Static();
+	staticEmscripten->create(containerAndroid, L"Emscripten SDK");
+
+	m_editEmscripten = new ui::Edit();
+	m_editEmscripten->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.Emscripten", L"$(EMSCRIPTEN)"));
+
 	Ref< ui::Container > containerEnvironment = new ui::Container();
 	containerEnvironment->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 4));
 
@@ -172,6 +178,9 @@ bool DeploySettingsPage::apply(PropertyGroup* settings)
 
 	std::wstring androidApiLevel = m_editAndroidApiLevel->getText();
 	settings->setProperty< PropertyString >(L"Amalgam.AndroidApiLevel", androidApiLevel);
+
+	std::wstring emscripten = m_editEmscripten->getText();
+	settings->setProperty< PropertyString >(L"Amalgam.Emscripten", emscripten);
 
 	return true;
 }
