@@ -47,13 +47,13 @@ ITask::TaskResult SetValueTask::execute()
 	);
 	if (!response)
 	{
-		log::error << L"Unable to set value; no response from server." << Endl;
+		T_DEBUG(L"Unable to add value; no response from server.");
 		return TrRetryAgainLater;
 	}
 
 	if (response->getStatusCode() != 200)
 	{
-		log::error << L"Unable to set value; error response from server \"" << response->getStatusMessage() << L"\" (" << response->getStatusCode() << L")." << Endl;
+		T_DEBUG(L"Unable to add value; error response from server \"" << response->getStatusMessage() << L"\" (" << response->getStatusCode() << L").");
 		return TrFailure;
 	}
 
