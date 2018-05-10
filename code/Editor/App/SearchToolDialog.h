@@ -46,6 +46,8 @@ public:
 
 	bool create(ui::Widget* parent);
 
+	virtual void show() T_OVERRIDE T_FINAL;
+
 private:
 	IEditor* m_editor;
 	Ref< ui::Edit > m_editSearch;
@@ -56,6 +58,10 @@ private:
 	Ref< ui::custom::ProgressBar > m_progressBar;
 	Ref< ui::custom::GridView > m_gridResults;
 	Ref< Job > m_jobSearch;
+
+	void search(const std::wstring& needle);
+
+	void eventSearchKey(ui::KeyDownEvent* event);
 
 	void eventButtonSearchClick(ui::ButtonClickEvent* event);
 

@@ -271,6 +271,8 @@ void SearchToolDialog::destroy()
 
 bool SearchToolDialog::create(ui::Widget* parent)
 {
+	const int32_t f = ui::dpi96(4);
+
 	if (!ui::Dialog::create(parent, i18n::Text(L"EDITOR_SEARCH_TOOL_TITLE"), ui::dpi96(1100), ui::dpi96(600), ui::Dialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
 
@@ -280,10 +282,11 @@ bool SearchToolDialog::create(ui::Widget* parent)
 	splitterV->create(this, true, ui::dpi96(220), false);
 
 	Ref< ui::Container > containerSearch = new ui::Container();
-	containerSearch->create(splitterV, ui::WsNone, new ui::TableLayout(L"100%", L"*", 4, 4));
+	containerSearch->create(splitterV, ui::WsNone, new ui::TableLayout(L"100%", L"*", f, f));
 
 	m_editSearch = new ui::Edit();
-	m_editSearch->create(containerSearch);
+	m_editSearch->create(containerSearch, L"", ui::WsClientBorder | ui::WsWantAllInput);
+	m_editSearch->addEventHandler< ui::KeyDownEvent >(this, &SearchToolDialog::eventSearchKey);
 
 	m_checkRegExp = new ui::CheckBox();
 	m_checkRegExp->create(containerSearch, i18n::Text(L"EDITOR_SEARCH_TOOL_REGEXP"));
@@ -320,12 +323,14 @@ bool SearchToolDialog::create(ui::Widget* parent)
 	return true;
 }
 
-void SearchToolDialog::eventButtonSearchClick(ui::ButtonClickEvent* event)
+void SearchToolDialog::show()
 {
-	std::wstring needle = m_editSearch->getText();
-	if (needle.empty())
-		return;
+	ui::Dialog::show();
+	m_editSearch->setFocus();
+}
 
+void SearchToolDialog::search(const std::wstring& needle)
+{
 	bool regExp = m_checkRegExp->isChecked();
 	bool caseSensitive = m_checkCaseSensitive->isChecked();
 
@@ -340,6 +345,23 @@ void SearchToolDialog::eventButtonSearchClick(ui::ButtonClickEvent* event)
 	m_progressBar->setVisible(true);
 
 	startTimer(100);
+}
+
+void SearchToolDialog::eventSearchKey(ui::KeyDownEvent* event)
+{
+	if (m_editSearch->isEnable() && event->getVirtualKey() == ui::VkReturn)
+	{
+		std::wstring needle = m_editSearch->getText();
+		if (!needle.empty())
+			search(needle);
+	}
+}
+
+void SearchToolDialog::eventButtonSearchClick(ui::ButtonClickEvent* event)
+{
+	std::wstring needle = m_editSearch->getText();
+	if (!needle.empty())
+		search(needle);
 }
 
 void SearchToolDialog::eventButtonSaveAsClick(ui::ButtonClickEvent* event)
