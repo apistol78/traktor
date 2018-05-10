@@ -156,7 +156,7 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)
 	{
-		log::error << L"Unable to create " << productType.getName() << L" resource; no such instance." << Endl;
+		log::error << L"Unable to create " << productType.getName() << L" resource; no such instance (" << guid.format() << L")." << Endl;
 		return 0;
 	}
 
@@ -164,7 +164,7 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 	const TypeInfo* resourceType = instance->getPrimaryType();
 	if (!resourceType)
 	{
-		log::error << L"Unable to create " << productType.getName() << L" resource; unable to read resource type." << Endl;
+		log::error << L"Unable to create " << productType.getName() << L" resource; unable to read resource type (" << guid.format() << L")." << Endl;
 		return 0;
 	}
 
@@ -172,7 +172,7 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 	const IResourceFactory* factory = findFactory(*resourceType);
 	if (!factory)
 	{
-		log::error << L"Unable to create " << productType.getName() << L" resource; no factory for specified resource type \"" << resourceType->getName() << L"\"." << Endl;
+		log::error << L"Unable to create " << productType.getName() << L" resource; no factory for specified resource type \"" << resourceType->getName() << L"\" (" << guid.format() << L")." << Endl;
 		return 0;
 	}
 
