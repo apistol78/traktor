@@ -5,7 +5,7 @@ if "%CONFIG%" == "" ( set CONFIG=all )
 
 :: Setup our build environment.
 call "%~dp0..\config.bat"
-call "%~dp0..\emscripten-env.bat"
+call "%~dp0..\config-emscripten.bat"
 
 :: Rebuild entire solution.
 pushd "%TRAKTOR_HOME%\build\emscripten"
