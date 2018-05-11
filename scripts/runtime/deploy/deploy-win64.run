@@ -74,7 +74,7 @@ end
 
 local function linkStaticProduct()
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
-	local preamble = "\"$(TRAKTOR_HOME)/scripts/vsenv-x64.bat\" && "
+	local preamble = "\"$(TRAKTOR_HOME)/scripts/config-vs-x64.bat\" && "
 
 	-- Get library paths.
 	local libraryPaths = ""
