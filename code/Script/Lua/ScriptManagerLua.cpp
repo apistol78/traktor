@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Save.h"
 #include "Core/Misc/Split.h"
