@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.input.InputMappingAsset" version="1">
+	<inputNodes>
+		<item type="traktor.input.InReadValue">
+			<valueId>ID_KEY_BACK</valueId>
+		</item>
+		<item type="traktor.input.InCombine" version="1">
+			<entries>
+				<item>
+					<source type="traktor.input.InReadValue">
+						<valueId>ID_MOUSE_LBUTTON</valueId>
+					</source>
+					<mul>1</mul>
+					<add>0</add>
+				</item>
+				<item>
+					<source type="traktor.input.InReadValue">
+						<valueId>ID_MOUSE_X</valueId>
+					</source>
+					<mul>1</mul>
+					<add>0</add>
+				</item>
+			</entries>
+			<operator>CoMul</operator>
+		</item>
+		<item type="traktor.input.InReadValue">
+			<valueId>ID_KEY_RIGHT</valueId>
+		</item>
+		<item type="traktor.input.InCombine" version="1">
+			<entries>
+				<item>
+					<source ref="/object/inputNodes/item[1]/entries/item/source"/>
+					<mul>1</mul>
+					<add>0</add>
+				</item>
+				<item>
+					<source type="traktor.input.InReadValue">
+						<valueId>ID_MOUSE_Y</valueId>
+					</source>
+					<mul>1</mul>
+					<add>0</add>
+				</item>
+			</entries>
+			<operator>CoMul</operator>
+		</item>
+		<item type="traktor.input.InCombine" version="1">
+			<entries>
+				<item>
+					<source type="traktor.input.InReadValue">
+						<valueId>ID_KEY_FORWARD</valueId>
+					</source>
+					<mul>1</mul>
+					<add>0</add>
+				</item>
+				<item>
+					<source ref="/object/inputNodes/item"/>
+					<mul>-1</mul>
+					<add>0</add>
+				</item>
+			</entries>
+			<operator>CoAdd</operator>
+		</item>
+		<item ref="/object/inputNodes/item[1]/entries/item[1]/source"/>
+		<item type="traktor.input.InReadValue">
+			<valueId>ID_KEY_LEFT</valueId>
+		</item>
+		<item type="traktor.input.InCombine" version="1">
+			<entries>
+				<item>
+					<source ref="/object/inputNodes/item[6]"/>
+					<mul>-1</mul>
+					<add>0</add>
+				</item>
+				<item>
+					<source ref="/object/inputNodes/item[2]"/>
+					<mul>1</mul>
+					<add>0</add>
+				</item>
+			</entries>
+			<operator>CoAdd</operator>
+		</item>
+		<item ref="/object/inputNodes/item[4]/entries/item/source"/>
+		<item ref="/object/inputNodes/item[3]/entries/item[1]/source"/>
+		<item ref="/object/inputNodes/item[1]/entries/item/source"/>
+	</inputNodes>
+	<positions>
+		<item>
+			<first ref="/object/inputNodes/item"/>
+			<second>
+				<x>434</x>
+				<y>248</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[1]"/>
+			<second>
+				<x>738</x>
+				<y>417</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[2]"/>
+			<second>
+				<x>420</x>
+				<y>118</y>
+			</second>
+		</item>
+		<item>
+			<first type="traktor.input.InputStateData">
+				<source ref="/object/inputNodes/item[7]"/>
+			</first>
+			<second>
+				<x>963</x>
+				<y>78</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[3]"/>
+			<second>
+				<x>744</x>
+				<y>594</y>
+			</second>
+		</item>
+		<item>
+			<first type="traktor.input.InputStateData">
+				<source ref="/object/inputNodes/item[3]"/>
+			</first>
+			<second>
+				<x>996</x>
+				<y>665</y>
+			</second>
+		</item>
+		<item>
+			<first type="traktor.input.InputStateData">
+				<source ref="/object/inputNodes/item[4]"/>
+			</first>
+			<second>
+				<x>980</x>
+				<y>205</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[4]"/>
+			<second>
+				<x>705</x>
+				<y>161</y>
+			</second>
+		</item>
+		<item>
+			<first type="traktor.input.InputStateData">
+				<source ref="/object/inputNodes/item[1]"/>
+			</first>
+			<second>
+				<x>964</x>
+				<y>469</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[1]/entries/item[1]/source"/>
+			<second>
+				<x>413</x>
+				<y>510</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[6]"/>
+			<second>
+				<x>422</x>
+				<y>56</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[7]"/>
+			<second>
+				<x>703</x>
+				<y>22</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[4]/entries/item/source"/>
+			<second>
+				<x>406</x>
+				<y>173</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[3]/entries/item[1]/source"/>
+			<second>
+				<x>322</x>
+				<y>624</y>
+			</second>
+		</item>
+		<item>
+			<first ref="/object/inputNodes/item[1]/entries/item/source"/>
+			<second>
+				<x>365</x>
+				<y>419</y>
+			</second>
+		</item>
+	</positions>
+	<sourceData type="traktor.input.InputMappingSourceData">
+		<sourceData>
+			<item>
+				<first>ID_KEY_BACK</first>
+				<second type="traktor.input.KeyboardInputSourceData">
+					<controlTypes>
+						<item>DtKeyS</item>
+					</controlTypes>
+				</second>
+			</item>
+			<item>
+				<first>ID_KEY_FORWARD</first>
+				<second type="traktor.input.KeyboardInputSourceData">
+					<controlTypes>
+						<item>DtKeyW</item>
+					</controlTypes>
+				</second>
+			</item>
+			<item>
+				<first>ID_KEY_LEFT</first>
+				<second type="traktor.input.KeyboardInputSourceData">
+					<controlTypes>
+						<item>DtKeyA</item>
+					</controlTypes>
+				</second>
+			</item>
+			<item>
+				<first>ID_KEY_RIGHT</first>
+				<second type="traktor.input.KeyboardInputSourceData">
+					<controlTypes>
+						<item>DtKeyD</item>
+					</controlTypes>
+				</second>
+			</item>
+			<item>
+				<first>ID_MOUSE_LBUTTON</first>
+				<second type="traktor.input.GenericInputSourceData" version="3">
+					<category>CtMouse</category>
+					<controlType>DtButton1</controlType>
+					<analogue>false</analogue>
+					<normalize>false</normalize>
+					<index>-1</index>
+				</second>
+			</item>
+			<item>
+				<first>ID_MOUSE_X</first>
+				<second type="traktor.input.GenericInputSourceData" version="3">
+					<category>CtMouse</category>
+					<controlType>DtAxisX</controlType>
+					<analogue>true</analogue>
+					<normalize>false</normalize>
+					<index>-1</index>
+				</second>
+			</item>
+			<item>
+				<first>ID_MOUSE_Y</first>
+				<second type="traktor.input.GenericInputSourceData" version="3">
+					<category>CtMouse</category>
+					<controlType>DtAxisY</controlType>
+					<analogue>true</analogue>
+					<normalize>false</normalize>
+					<index>-1</index>
+				</second>
+			</item>
+		</sourceData>
+	</sourceData>
+	<stateData type="traktor.input.InputMappingStateData">
+		<stateData>
+			<item>
+				<first>STATE_MOVE_X</first>
+				<second ref="/object/positions/item[3]/first"/>
+			</item>
+			<item>
+				<first>STATE_MOVE_Z</first>
+				<second ref="/object/positions/item[6]/first"/>
+			</item>
+			<item>
+				<first>STATE_ROTATE_HEAD</first>
+				<second ref="/object/positions/item[8]/first"/>
+			</item>
+			<item>
+				<first>STATE_ROTATE_PITCH</first>
+				<second ref="/object/positions/item[5]/first"/>
+			</item>
+		</stateData>
+	</stateData>
+	<dependencies/>
+</object>
