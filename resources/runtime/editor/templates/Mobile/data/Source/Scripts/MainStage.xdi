@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{FC4400A2-BDB6-BA45-9A22-12B9676E71FA}
+
+-- MainStage
+
+MainStage = MainStage or class("MainStage", traktor.amalgam.Stage)
+
+function MainStage:new(params, environment)
+
+	-- Save input mapping in member for quick access.
+	self.inputMapping = environment.input.inputMapping
+
+	-- Access entities and save inital transform of camera.
+	local cubeEntity = self.world:getEntity("Cube")
+	local cameraEntity = self.world:getEntity("Camera")
+	local cameraTransform = cameraEntity:getTransform()
+
+	-- Initialize UiKit.
+	Widget.initialize(
+		environment,
+		{ "\{5ABEAE05-EB26-934F-932F-7F3C7C582383}" }
+	)
+
+	-- Create UI frame with virtual size of 1280x720.
+	local root = self.ui.root
+	self._frame = Frame(
+		root,
+		160, 480,
+		TableLayout.new({ 0 }, { 0 }, 4, 4, 4, 4)
+	)
+
+	-- Create static label.
+	self._lbl = Static(self._frame, "Time: 0")
+
+	-- Create reset button.
+	self._btn = PushButton(self._frame, "Reset")
+	self._btn:setOnClick(function()
+		cubeEntity:reset()
+		cameraEntity:setTransform(cameraTransform)
+	end)
+
+	-- Ensure layout is updated.
+	self._frame:update()
+end
+
+function MainStage:finalize()
+	self._frame:remove()
+	self._frame = nil
+end
+
+function MainStage:update(info)
+	local dT = info.simulationDeltaTime
+
+	-- Update input.
+	local moveX = self.inputMapping:getStateValue("STATE_MOVE_X")
+	local moveZ = self.inputMapping:getStateValue("STATE_MOVE_Z")
+
+	local cameraEntity = self.world:getEntity("Camera")
+	local cameraTransform = cameraEntity:getTransform()
+	cameraTransform = cameraTransform * Transform(Vector4(moveX * 2 * dT, 0, moveZ * 2 * dT), Quaternion.identity)
+	cameraEntity:setTransform(cameraTransform)
+
+	-- Update UI.
+	self._lbl:setText("Time: " .. info.simulationTime)
+end
+
+	]]>
+	</text>
+</object>
