@@ -7,9 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_IRuntimeClass_H
 #define traktor_IRuntimeClass_H
 
-#include <map>
 #include "Core/Object.h"
 #include "Core/Class/Any.h"
+#include "Core/Containers/SmallMap.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,7 +31,7 @@ class T_DLLCLASS IRuntimeClass : public Object
 
 public:
 	enum { MaxSignatures = 16 };
-	typedef std::map< std::string, Any > prototype_t;
+	typedef SmallMap< std::string, Any > prototype_t;
 
 	/*! \brief Get exported native type. */
 	virtual const TypeInfo& getExportType() const = 0;
@@ -43,7 +43,7 @@ public:
 	virtual bool haveUnknown() const = 0;
 
 	/*! \brief Construct new object. */
-	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t& proto = prototype_t()) const = 0;
+	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t* proto = 0) const = 0;
 
 	/*! \brief Get number of constants. */
 	virtual uint32_t getConstantCount() const = 0;

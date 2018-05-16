@@ -8,7 +8,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_IRuntimeDelegate_H
 
 #include "Core/Object.h"
-#include "Core/Class/Any.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,6 +19,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+
+class Any;
 
 /*! \brief
  * \ingroup Core

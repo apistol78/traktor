@@ -35,7 +35,7 @@ public:
 
 	virtual bool haveUnknown() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t& proto) const T_OVERRIDE T_FINAL;
+	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t* proto) const T_OVERRIDE T_FINAL;
 
 	virtual uint32_t getConstantCount() const T_OVERRIDE T_FINAL;
 

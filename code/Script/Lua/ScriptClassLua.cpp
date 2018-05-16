@@ -75,7 +75,7 @@ bool ScriptClassLua::haveUnknown() const
 	return false;
 }
 
-Ref< ITypedObject > ScriptClassLua::construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t& proto) const
+Ref< ITypedObject > ScriptClassLua::construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t* proto) const
 {
 	m_scriptManager->lock(m_scriptContext);
 
@@ -96,12 +96,15 @@ Ref< ITypedObject > ScriptClassLua::construct(ITypedObject* self, uint32_t argc,
 	Ref< ScriptObjectLua > scriptSelf = new ScriptObjectLua(m_scriptManager, m_scriptContext, m_luaState, tableRef);
 
 	// Initialize prototype members before calling constructor.
-	for (prototype_t::const_iterator i = proto.begin(); i != proto.end(); ++i)
+	if (proto)
 	{
-		T_ANONYMOUS_VAR(UnwindStack)(m_luaState);
-		scriptSelf->push();
-		m_scriptManager->pushAny(i->second);
-		lua_setfield(m_luaState, -2, i->first.c_str());
+		for (prototype_t::const_iterator i = proto->begin(); i != proto->end(); ++i)
+		{
+			T_ANONYMOUS_VAR(UnwindStack)(m_luaState);
+			scriptSelf->push();
+			m_scriptManager->pushAny(i->second);
+			lua_setfield(m_luaState, -2, i->first.c_str());
+		}
 	}
 
 	m_scriptManager->unlock();

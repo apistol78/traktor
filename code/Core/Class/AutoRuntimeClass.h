@@ -3220,7 +3220,7 @@ public:
 		return m_unknown != 0;
 	}
 
-	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t& proto) const T_OVERRIDE T_FINAL
+	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t* proto) const T_OVERRIDE T_FINAL
 	{
 		if (argc < m_constructors.size() && m_constructors[argc] != 0)
 			return m_constructors[argc]->construct(argc, argv);
