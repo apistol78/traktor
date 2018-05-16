@@ -9,8 +9,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Class/CastAny.h"
 #include "Core/Class/IRuntimeClass.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/StringOutputStream.h"
-#include "Core/Meta/TypeList.h"
+#include "Core/Meta/MethodSignature.h"
+#include "Core/Misc/TString.h"
 
 namespace traktor
 {
@@ -320,282 +322,6 @@ struct FnConstructor_4 : public IConstructor
 
 /*! \} */
 
-/*! \name Method signatures */
-/*! \{ */
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	bool Const
->
-struct MethodSignature_0
-{
-	T_NO_COPY_CLASS(MethodSignature_0);
-	typedef ReturnType (ClassType::*method_t)();
-	typedef ReturnType (*static_method_t)();
-};
-
-template <
-	typename ClassType,
-	typename ReturnType
->
-struct MethodSignature_0 < ClassType, ReturnType, true >
-{
-	T_NO_COPY_CLASS(MethodSignature_0);
-	typedef ReturnType (ClassType::*method_t)() const;
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	bool Const
->
-struct MethodSignature_1
-{
-	T_NO_COPY_CLASS(MethodSignature_1);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type);
-	typedef ReturnType (*static_method_t)(Argument1Type);
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type
->
-struct MethodSignature_1 < ClassType, ReturnType, Argument1Type, true >
-{
-	T_NO_COPY_CLASS(MethodSignature_1);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type) const;
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	typename Argument2Type,
-	bool Const
->
-struct MethodSignature_2
-{
-	T_NO_COPY_CLASS(MethodSignature_2);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type);
-	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type);
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	typename Argument2Type
->
-struct MethodSignature_2 < ClassType, ReturnType, Argument1Type, Argument2Type, true >
-{
-	T_NO_COPY_CLASS(MethodSignature_2);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type) const;
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	typename Argument2Type,
-	typename Argument3Type,
-	bool Const
->
-struct MethodSignature_3
-{
-	T_NO_COPY_CLASS(MethodSignature_3);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type);
-	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type);
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	typename Argument2Type,
-	typename Argument3Type
->
-struct MethodSignature_3 < ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, true >
-{
-	T_NO_COPY_CLASS(MethodSignature_3);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type) const;
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	typename Argument2Type,
-	typename Argument3Type,
-	typename Argument4Type,
-	bool Const
->
-struct MethodSignature_4
-{
-	T_NO_COPY_CLASS(MethodSignature_4);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type);
-	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type);
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	typename Argument2Type,
-	typename Argument3Type,
-	typename Argument4Type
->
-struct MethodSignature_4 < ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, true >
-{
-	T_NO_COPY_CLASS(MethodSignature_4);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type) const;
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	typename Argument2Type,
-	typename Argument3Type,
-	typename Argument4Type,
-	typename Argument5Type,
-	bool Const
->
-struct MethodSignature_5
-{
-	T_NO_COPY_CLASS(MethodSignature_5);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type);
-	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type);
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	typename Argument2Type,
-	typename Argument3Type,
-	typename Argument4Type,
-	typename Argument5Type
->
-struct MethodSignature_5 < ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, true >
-{
-	T_NO_COPY_CLASS(MethodSignature_5);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type) const;
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	typename Argument2Type,
-	typename Argument3Type,
-	typename Argument4Type,
-	typename Argument5Type,
-	typename Argument6Type,
-	bool Const
->
-struct MethodSignature_6
-{
-	T_NO_COPY_CLASS(MethodSignature_6);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type);
-	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type);
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	typename Argument2Type,
-	typename Argument3Type,
-	typename Argument4Type,
-	typename Argument5Type,
-	typename Argument6Type
->
-struct MethodSignature_6 < ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, true >
-{
-	T_NO_COPY_CLASS(MethodSignature_6);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type) const;
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	typename Argument2Type,
-	typename Argument3Type,
-	typename Argument4Type,
-	typename Argument5Type,
-	typename Argument6Type,
-	typename Argument7Type,
-	bool Const
->
-struct MethodSignature_7
-{
-	T_NO_COPY_CLASS(MethodSignature_7);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type);
-	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type);
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	typename Argument2Type,
-	typename Argument3Type,
-	typename Argument4Type,
-	typename Argument5Type,
-	typename Argument6Type,
-	typename Argument7Type
->
-struct MethodSignature_7 < ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, true >
-{
-	T_NO_COPY_CLASS(MethodSignature_7);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type) const;
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	typename Argument2Type,
-	typename Argument3Type,
-	typename Argument4Type,
-	typename Argument5Type,
-	typename Argument6Type,
-	typename Argument7Type,
-	typename Argument8Type,
-	bool Const
->
-struct MethodSignature_8
-{
-	T_NO_COPY_CLASS(MethodSignature_8);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type);
-	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type);
-};
-
-template <
-	typename ClassType,
-	typename ReturnType,
-	typename Argument1Type,
-	typename Argument2Type,
-	typename Argument3Type,
-	typename Argument4Type,
-	typename Argument5Type,
-	typename Argument6Type,
-	typename Argument7Type,
-	typename Argument8Type
->
-struct MethodSignature_8 < ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, true >
-{
-	T_NO_COPY_CLASS(MethodSignature_8);
-	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type) const;
-};
-
-
-/*! \} */
-
 /*! \name Method invocations */
 /*! \{ */
 
@@ -608,7 +334,7 @@ struct Method_0 : public IMethod
 {
 	T_NO_COPY_CLASS(Method_0);
 
-	typedef typename MethodSignature_0< ClassType, ReturnType, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, ReturnType >::method_t method_t;
 
 	method_t m_method;
 
@@ -637,7 +363,7 @@ struct Method_0 < ClassType, void, Const > : public IMethod
 {
 	T_NO_COPY_CLASS(Method_0);
 
-	typedef typename MethodSignature_0< ClassType, void, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, void >::method_t method_t;
 
 	method_t m_method;
 
@@ -668,7 +394,7 @@ struct Method_1 : public IMethod
 {
 	T_NO_COPY_CLASS(Method_1);
 
-	typedef typename MethodSignature_1< ClassType, ReturnType, Argument1Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, ReturnType, Argument1Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -701,7 +427,7 @@ struct Method_1 < ClassType, void, Argument1Type, Const > : public IMethod
 {
 	T_NO_COPY_CLASS(Method_1);
 
-	typedef typename MethodSignature_1< ClassType, void, Argument1Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, void, Argument1Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -736,7 +462,7 @@ struct Method_2 : public IMethod
 {
 	T_NO_COPY_CLASS(Method_2);
 
-	typedef typename MethodSignature_2< ClassType, ReturnType, Argument1Type, Argument2Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, ReturnType, Argument1Type, Argument2Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -771,7 +497,7 @@ struct Method_2 < ClassType, void, Argument1Type, Argument2Type, Const > : publi
 {
 	T_NO_COPY_CLASS(Method_2);
 
-	typedef typename MethodSignature_2< ClassType, void, Argument1Type, Argument2Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, void, Argument1Type, Argument2Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -808,7 +534,7 @@ struct Method_3 : public IMethod
 {
 	T_NO_COPY_CLASS(Method_3);
 
-	typedef typename MethodSignature_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -845,7 +571,7 @@ struct Method_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 {
 	T_NO_COPY_CLASS(Method_3);
 
-	typedef typename MethodSignature_3< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, void, Argument1Type, Argument2Type, Argument3Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -884,7 +610,7 @@ struct Method_4 : public IMethod
 {
 	T_NO_COPY_CLASS(Method_4);
 
-	typedef typename MethodSignature_4< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -923,7 +649,7 @@ struct Method_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 {
 	T_NO_COPY_CLASS(Method_4);
 
-	typedef typename MethodSignature_4< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -964,7 +690,7 @@ struct Method_5 : public IMethod
 {
 	T_NO_COPY_CLASS(Method_5);
 
-	typedef typename MethodSignature_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -1005,7 +731,7 @@ struct Method_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 {
 	T_NO_COPY_CLASS(Method_5);
 
-	typedef typename MethodSignature_5< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -1048,7 +774,7 @@ struct Method_6 : public IMethod
 {
 	T_NO_COPY_CLASS(Method_6);
 
-	typedef typename MethodSignature_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -1091,7 +817,7 @@ struct Method_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 {
 	T_NO_COPY_CLASS(Method_6);
 
-	typedef typename MethodSignature_6< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -1136,7 +862,7 @@ struct Method_7 : public IMethod
 {
 	T_NO_COPY_CLASS(Method_7);
 
-	typedef typename MethodSignature_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -1181,7 +907,7 @@ struct Method_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 {
 	T_NO_COPY_CLASS(Method_7);
 
-	typedef typename MethodSignature_7< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -1228,7 +954,7 @@ struct Method_8 : public IMethod
 {
 	T_NO_COPY_CLASS(Method_8);
 
-	typedef typename MethodSignature_8< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -1275,7 +1001,7 @@ struct Method_8 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 {
 	T_NO_COPY_CLASS(Method_8);
 
-	typedef typename MethodSignature_8< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -2030,7 +1756,7 @@ struct StaticMethod_0 : public IStaticMethod
 {
 	T_NO_COPY_CLASS(StaticMethod_0);
 
-	typedef typename MethodSignature_0< ClassType, ReturnType, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, ReturnType >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2058,7 +1784,7 @@ struct StaticMethod_0 < ClassType, void > : public IStaticMethod
 {
 	T_NO_COPY_CLASS(StaticMethod_0);
 
-	typedef typename MethodSignature_0< ClassType, void, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, void >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2088,7 +1814,7 @@ struct StaticMethod_1 : public IStaticMethod
 {
 	T_NO_COPY_CLASS(StaticMethod_1);
 
-	typedef typename MethodSignature_1< ClassType, ReturnType, Argument1Type, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, ReturnType, Argument1Type >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2120,7 +1846,7 @@ struct StaticMethod_1 < ClassType, void, Argument1Type > : public IStaticMethod
 {
 	T_NO_COPY_CLASS(StaticMethod_1);
 
-	typedef typename MethodSignature_1< ClassType, void, Argument1Type, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, void, Argument1Type >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2154,7 +1880,7 @@ struct StaticMethod_2 : public IStaticMethod
 {
 	T_NO_COPY_CLASS(StaticMethod_2);
 
-	typedef typename MethodSignature_2< ClassType, ReturnType, Argument1Type, Argument2Type, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, ReturnType, Argument1Type, Argument2Type >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2188,7 +1914,7 @@ struct StaticMethod_2 < ClassType, void, Argument1Type, Argument2Type > : public
 {
 	T_NO_COPY_CLASS(StaticMethod_2);
 
-	typedef typename MethodSignature_2< ClassType, void, Argument1Type, Argument2Type, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, void, Argument1Type, Argument2Type >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2224,7 +1950,7 @@ struct StaticMethod_3 : public IStaticMethod
 {
 	T_NO_COPY_CLASS(StaticMethod_3);
 
-	typedef typename MethodSignature_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2260,7 +1986,7 @@ struct StaticMethod_3 < ClassType, void, Argument1Type, Argument2Type, Argument3
 {
 	T_NO_COPY_CLASS(StaticMethod_3);
 
-	typedef typename MethodSignature_3< ClassType, void, Argument1Type, Argument2Type, Argument3Type, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, void, Argument1Type, Argument2Type, Argument3Type >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2298,7 +2024,7 @@ struct StaticMethod_4 : public IStaticMethod
 {
 	T_NO_COPY_CLASS(StaticMethod_4);
 
-	typedef typename MethodSignature_4< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2336,7 +2062,7 @@ struct StaticMethod_4 < ClassType, void, Argument1Type, Argument2Type, Argument3
 {
 	T_NO_COPY_CLASS(StaticMethod_4);
 
-	typedef typename MethodSignature_4< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2376,7 +2102,7 @@ struct StaticMethod_5 : public IStaticMethod
 {
 	T_NO_COPY_CLASS(StaticMethod_5);
 
-	typedef typename MethodSignature_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2416,7 +2142,7 @@ struct StaticMethod_5 < ClassType, void, Argument1Type, Argument2Type, Argument3
 {
 	T_NO_COPY_CLASS(StaticMethod_5);
 
-	typedef typename MethodSignature_5< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2458,7 +2184,7 @@ struct StaticMethod_6 : public IStaticMethod
 {
 	T_NO_COPY_CLASS(StaticMethod_6);
 
-	typedef typename MethodSignature_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2500,7 +2226,7 @@ struct StaticMethod_6 < ClassType, void, Argument1Type, Argument2Type, Argument3
 {
 	T_NO_COPY_CLASS(StaticMethod_6);
 
-	typedef typename MethodSignature_6< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2544,7 +2270,7 @@ struct StaticMethod_7 : public IStaticMethod
 {
 	T_NO_COPY_CLASS(StaticMethod_7);
 
-	typedef typename MethodSignature_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2588,7 +2314,7 @@ struct StaticMethod_7 < ClassType, void, Argument1Type, Argument2Type, Argument3
 {
 	T_NO_COPY_CLASS(StaticMethod_7);
 
-	typedef typename MethodSignature_7< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, false >::static_method_t static_method_t;
+	typedef typename MethodSignature< false, ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type >::static_method_t static_method_t;
 
 	static_method_t m_method;
 
@@ -2631,7 +2357,7 @@ struct PropertySet : public IPropertySet
 {
 	T_NO_COPY_CLASS(PropertySet);
 
-	typedef typename MethodSignature_1< ClassType, void, ValueType, false >::method_t method_t;
+	typedef typename MethodSignature< false, ClassType, void, ValueType >::method_t method_t;
 
 	method_t m_method;
 
@@ -2657,7 +2383,7 @@ struct PropertyGet : public IPropertyGet
 {
 	T_NO_COPY_CLASS(PropertyGet);
 
-	typedef typename MethodSignature_0< ClassType, ValueType, Const >::method_t method_t;
+	typedef typename MethodSignature< Const, ClassType, ValueType >::method_t method_t;
 
 	method_t m_method;
 
@@ -2737,7 +2463,7 @@ struct Operator : public IOperator
 {
 	T_NO_COPY_CLASS(Operator);
 
-	typedef typename MethodSignature_1< ClassType, ReturnType, Argument1Type, true >::method_t method_t;
+	typedef typename MethodSignature< true, ClassType, ReturnType, Argument1Type >::method_t method_t;
 
 	method_t m_method;
 
@@ -2789,24 +2515,24 @@ public:
 	{
 		T_EXCEPTION_GUARD_BEGIN
 		
-		for (std::vector< IConstructor* >::iterator i = m_constructors.begin(); i != m_constructors.end(); ++i)
+		for (AlignedVector< IConstructor* >::iterator i = m_constructors.begin(); i != m_constructors.end(); ++i)
 			delete *i;
 		
-		for (typename std::vector< MethodInfo >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
+		for (typename AlignedVector< MethodInfo >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
 		{
-			for (std::vector< IMethod* >::iterator j = i->methods.begin(); j != i->methods.end(); ++j)
+			for (AlignedVector< IMethod* >::iterator j = i->methods.begin(); j != i->methods.end(); ++j)
 				delete *j;
 		}
 
-		for (typename std::vector< StaticMethodInfo >::iterator i = m_staticMethods.begin(); i != m_staticMethods.end(); ++i)
+		for (typename AlignedVector< StaticMethodInfo >::iterator i = m_staticMethods.begin(); i != m_staticMethods.end(); ++i)
 		{
-			for (std::vector< IStaticMethod* >::iterator j = i->methods.begin(); j != i->methods.end(); ++j)
+			for (AlignedVector< IStaticMethod* >::iterator j = i->methods.begin(); j != i->methods.end(); ++j)
 				delete *j;
 		}
 
 		for (int i = 0; i < sizeof_array(m_operators); ++i)
 		{
-			for (std::vector< IOperator* >::iterator j = m_operators[i].begin(); j != m_operators[i].end(); ++j)
+			for (AlignedVector< IOperator* >::iterator j = m_operators[i].begin(); j != m_operators[i].end(); ++j)
 				delete *j;
 		}
 
@@ -3530,7 +3256,7 @@ public:
 	virtual std::wstring getMethodSignature(uint32_t methodId) const T_OVERRIDE T_FINAL
 	{
 		const MethodInfo& info = m_methods[methodId];
-		for (std::vector< IMethod* >::const_iterator i = info.methods.begin(); i != info.methods.end(); ++i)
+		for (AlignedVector< IMethod* >::const_iterator i = info.methods.begin(); i != info.methods.end(); ++i)
 		{
 			if (*i)
 			{
@@ -3545,7 +3271,7 @@ public:
 	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
 	{
 		const MethodInfo& info = m_methods[methodId];
-		const std::vector< IMethod* >& methods = info.methods;
+		const AlignedVector< IMethod* >& methods = info.methods;
 		if (argc < methods.size() && methods[argc] != 0)
 			return methods[argc]->invoke(object, argc, argv);
 		else
@@ -3570,7 +3296,7 @@ public:
 	virtual std::wstring getStaticMethodSignature(uint32_t methodId) const T_OVERRIDE T_FINAL
 	{
 		const StaticMethodInfo& info = m_staticMethods[methodId];
-		for (std::vector< IStaticMethod* >::const_iterator i = info.methods.begin(); i != info.methods.end(); ++i)
+		for (AlignedVector< IStaticMethod* >::const_iterator i = info.methods.begin(); i != info.methods.end(); ++i)
 		{
 			if (*i)
 			{
@@ -3585,7 +3311,7 @@ public:
 	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
 	{
 		const StaticMethodInfo& info = m_staticMethods[methodId];
-		const std::vector< IStaticMethod* >& methods = info.methods;
+		const AlignedVector< IStaticMethod* >& methods = info.methods;
 		if (argc < methods.size() && methods[argc] != 0)
 			return methods[argc]->invoke(argc, argv);
 		else
@@ -3645,8 +3371,8 @@ public:
 
 		// Try evaluate operation through handlers; first handler which return true
 		// indicating successful evaluation aborts loop.
-		const std::vector< IOperator* >& handlers = m_operators[operation];
-		for (std::vector< IOperator* >::const_iterator i = handlers.begin(); i != handlers.end(); ++i)
+		const AlignedVector< IOperator* >& handlers = m_operators[operation];
+		for (AlignedVector< IOperator* >::const_iterator i = handlers.begin(); i != handlers.end(); ++i)
 		{
 			if ((*i)->tryPerform(object, arg, result))
 				break;
@@ -3665,13 +3391,13 @@ private:
 	struct MethodInfo
 	{
 		std::string name;
-		std::vector< IMethod* > methods;
+		AlignedVector< IMethod* > methods;
 	};
 
 	struct StaticMethodInfo
 	{
 		std::string name;
-		std::vector< IStaticMethod* > methods;
+		AlignedVector< IStaticMethod* > methods;
 	};
 
 	struct PropertyInfo
@@ -3682,12 +3408,12 @@ private:
 		IPropertyGet* getter;
 	};
 
-	std::vector< IConstructor* > m_constructors;
-	std::vector< ConstInfo > m_consts;
-	std::vector< MethodInfo > m_methods;
-	std::vector< StaticMethodInfo > m_staticMethods;
-	std::vector< PropertyInfo > m_properties;
-	std::vector< IOperator* > m_operators[4];
+	AlignedVector< IConstructor* > m_constructors;
+	AlignedVector< ConstInfo > m_consts;
+	AlignedVector< MethodInfo > m_methods;
+	AlignedVector< StaticMethodInfo > m_staticMethods;
+	AlignedVector< PropertyInfo > m_properties;
+	AlignedVector< IOperator* > m_operators[4];
 	unknown_fn_t m_unknown;
 
 	void addConstructor(size_t argc, IConstructor* constructor)
@@ -3699,11 +3425,11 @@ private:
 
 	void addMethod(const std::string& methodName, size_t argc, IMethod* method)
 	{
-		for (typename std::vector< MethodInfo >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
+		for (typename AlignedVector< MethodInfo >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
 		{
 			if (i->name == methodName)
 			{
-				std::vector< IMethod* >& methods = i->methods;
+				AlignedVector< IMethod* >& methods = i->methods;
 				if (methods.size() < argc + 1)
 					methods.resize(argc + 1, 0);
 				methods[argc] = method;
@@ -3711,20 +3437,19 @@ private:
 			}
 		}
 
-		MethodInfo m;
+		MethodInfo& m = m_methods.push_back();
 		m.name = methodName;
 		m.methods.resize(argc + 1, 0);
 		m.methods[argc] = method;
-		m_methods.push_back(m);
 	}
 
 	void addStaticMethod(const std::string& methodName, size_t argc, IStaticMethod* method)
 	{
-		for (typename std::vector< StaticMethodInfo >::iterator i = m_staticMethods.begin(); i != m_staticMethods.end(); ++i)
+		for (typename AlignedVector< StaticMethodInfo >::iterator i = m_staticMethods.begin(); i != m_staticMethods.end(); ++i)
 		{
 			if (i->name == methodName)
 			{
-				std::vector< IStaticMethod* >& methods = i->methods;
+				AlignedVector< IStaticMethod* >& methods = i->methods;
 				if (methods.size() < argc + 1)
 					methods.resize(argc + 1, 0);
 				methods[argc] = method;
@@ -3732,16 +3457,15 @@ private:
 			}
 		}
 
-		StaticMethodInfo m;
+		StaticMethodInfo& m = m_staticMethods.push_back();
 		m.name = methodName;
 		m.methods.resize(argc + 1, 0);
 		m.methods[argc] = method;
-		m_staticMethods.push_back(m);
 	}
 
 	void addProperty(const std::string& propertyName, const std::wstring& signature, IPropertySet* setter, IPropertyGet* getter)
 	{
-		for (typename std::vector< PropertyInfo >::iterator i = m_properties.begin(); i != m_properties.end(); ++i)
+		for (typename AlignedVector< PropertyInfo >::iterator i = m_properties.begin(); i != m_properties.end(); ++i)
 		{
 			if (i->name == propertyName)
 			{
@@ -3751,12 +3475,11 @@ private:
 			}
 		}
 
-		PropertyInfo p;
+		PropertyInfo& p = m_properties.push_back();
 		p.name = propertyName;
 		p.signature = signature;
 		p.setter = setter;
 		p.getter = getter;
-		m_properties.push_back(p);
 	}
 };
 

@@ -1181,6 +1181,44 @@ struct CastAny < const Guid&, false >
 };
 
 template < >
+struct CastAny < Scalar, false >
+{
+	T_NO_COPY_CLASS(CastAny);
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"Scalar";
+	}
+	static bool accept(const Any& value) {
+		return value.isNumeric();
+	}
+	static Any set(const Scalar& value) {
+		return Any::fromFloat(float(value));
+	}
+	static Scalar get(const Any& value) {
+		T_CAST_EXCEPTION(value.isNumeric(), "Cannot cast to Scalar; value not numeric");
+		return Scalar(value.getFloat());
+	}
+};
+
+template < >
+struct CastAny < const Scalar&, false >
+{
+	T_NO_COPY_CLASS(CastAny);
+	static OutputStream& typeName(OutputStream& ss) {
+		return ss << L"const Scalar&";
+	}
+	static bool accept(const Any& value) {
+		return value.isNumeric();
+	}
+	static Any set(const Scalar& value) {
+		return Any::fromFloat(float(value));
+	}
+	static Scalar get(const Any& value) {
+		T_CAST_EXCEPTION(value.isNumeric(), "Cannot cast to Scalar; value not numeric");
+		return Scalar(value.getFloat());
+	}
+};
+
+template < >
 struct CastAny < Vector2, false >
 {
 	static OutputStream& typeName(OutputStream& ss) {

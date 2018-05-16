@@ -116,6 +116,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	bool vertexColor
 ) const
 {
+	// Read material template shader.
 	Guid templateGuid = materialTemplate;
 	if (templateGuid.isNull() || !templateGuid.isValid())
 		templateGuid = c_materialShader;
@@ -124,6 +125,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	if (!materialShaderGraph)
 		return 0;
 
+	// Patch material template shader with concrete implementations of value fetching fragments.
 	Guid diffuseTexture = lookupTexture(textures, material.getDiffuseMap().name);
 	Guid specularTexture = lookupTexture(textures, material.getSpecularMap().name);
 	Guid transparencyTexture = lookupTexture(textures, material.getTransparencyMap().name);
@@ -224,11 +226,13 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			(*i)->setFragmentGuid(c_implVertex);
 	}
 
+	// Resolve material shader; load all patched fragments and merge into a complete shader.
 	FragmentReaderAdapter fragmentReader(database);
 	materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, false);
 	if (!materialShaderGraph)
 		return 0;
 
+	// Patch constant values, such as colors, from materials into shader.
 	const RefArray< render::Node >& nodes = materialShaderGraph->getNodes();
 	for (RefArray< render::Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
@@ -343,6 +347,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 		}
 	}
 
+	// Validate integrity and then return complete mesh material shader.
 	render::ShaderGraphValidator(materialShaderGraph).validateIntegrity();
 	return materialShaderGraph;
 }

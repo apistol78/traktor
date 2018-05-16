@@ -11,6 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"

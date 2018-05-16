@@ -11,6 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/StringReader.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Script/IScriptContext.h"
 #include "Script/Lua/ScriptManagerLua.h"
