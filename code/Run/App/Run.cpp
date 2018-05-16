@@ -10,17 +10,37 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyFloat.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
 #include "Core/System/PipeReader.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Run/App/Run.h"
+#include "Xml/XmlDeserializer.h"
+#include "Xml/XmlSerializer.h"
 
 namespace traktor
 {
 	namespace run
 	{
+		namespace
+		{
+
+Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
+{
+	Ref< IStream > file = FileSystem::getInstance().open(settingsFile, File::FmRead);
+	if (file)
+		return xml::XmlDeserializer(file).readObject< PropertyGroup >();
+	else
+		return 0;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.run.Run", Run, Object)
 
@@ -206,6 +226,66 @@ bool Run::rmdir(const std::wstring& path)
 void Run::sleep(int32_t ms)
 {
 	ThreadManager::getInstance().getCurrentThread()->sleep(ms);
+}
+
+Any Run::getProperty(const std::wstring& fileName1, const std::wstring& fileName2, const std::wstring& propertyName, const Any& defaultValue) const
+{
+	Ref< PropertyGroup > p = loadSettings(fileName1);
+	if (!p)
+		return Any();
+
+	if (!fileName2.empty())
+	{
+		Ref< PropertyGroup > pr = loadSettings(fileName2);
+		if (!pr)
+			return Any();
+
+		if ((p = p->mergeReplace(pr)) == 0)
+			return Any();
+	}
+
+	Ref< IPropertyValue > property = p->getProperty(propertyName);
+	if (!property)
+		return Any();
+
+	if (const PropertyBoolean* propertyBoolean = dynamic_type_cast< const PropertyBoolean* >(property))
+		return Any::fromBoolean(*propertyBoolean);
+	else if (const PropertyInteger* propertyInteger = dynamic_type_cast< const PropertyInteger* >(property))
+		return Any::fromInt32(*propertyInteger);
+	else if (const PropertyFloat* propertyFloat = dynamic_type_cast< const PropertyFloat* >(property))
+		return Any::fromFloat(*propertyFloat);
+	else if (const PropertyString* propertyString = dynamic_type_cast< const PropertyString* >(property))
+		return Any::fromString(*propertyString);
+	else
+		return Any::fromObject(property);
+}
+
+bool Run::setProperty(const std::wstring& fileName, const std::wstring& propertyName, const Any& value) const
+{
+	Ref< PropertyGroup > p = loadSettings(fileName);
+	if (!p)
+		p = new PropertyGroup();
+
+	if (value.isBoolean())
+		p->setProperty< PropertyBoolean >(propertyName, value.getBoolean());
+	else if (value.isInt32())
+		p->setProperty< PropertyInteger >(propertyName, value.getInt32());
+	else if (value.isInt64())
+		p->setProperty< PropertyInteger >(propertyName, (int32_t)value.getInt64());
+	else if (value.isFloat())
+		p->setProperty< PropertyFloat >(propertyName, value.getFloat());
+	else if (value.isString())
+		p->setProperty< PropertyString >(propertyName, value.getWideString());
+	else if (is_a< IPropertyValue >(value.getObject()))
+		p->setProperty(propertyName, static_cast< IPropertyValue* >(value.getObjectUnsafe()));
+	else
+		return false;
+
+	Ref< IStream > f = FileSystem::getInstance().open(fileName, File::FmWrite);
+	if (f)
+		return xml::XmlSerializer(f).writeObject(p);
+	else
+		return false;
 }
 
 	}
