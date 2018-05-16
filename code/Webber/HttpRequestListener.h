@@ -2,6 +2,7 @@
 #define traktor_wbr_HttpRequestListener_H
 
 #include <functional>
+#include <map>
 #include "Net/Http/HttpServer.h"
 
 // import/export mechanism.

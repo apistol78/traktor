@@ -447,7 +447,7 @@ bool Stage::validateScriptContext()
 				Any::fromObject(const_cast< Object* >(m_params.c_ptr())),
 				Any::fromObject(m_environment)
 			};
-			m_object = m_class->construct(this, sizeof_array(argv), argv, proto);
+			m_object = m_class->construct(this, sizeof_array(argv), argv, &proto);
 		}
 
 		if (m_scriptContext)
