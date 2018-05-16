@@ -205,9 +205,9 @@ void PropertyGroup_setProperty(PropertyGroup* self, const std::wstring& property
 	if (value.isBoolean())
 		self->setProperty< PropertyBoolean >(propertyName, value.getBoolean());
 	else if (value.isInt32())
-		self->setProperty< PropertyInteger >(propertyName, value.isInt32());
+		self->setProperty< PropertyInteger >(propertyName, value.getInt32());
 	else if (value.isInt64())
-		self->setProperty< PropertyInteger >(propertyName, value.isInt64());
+		self->setProperty< PropertyInteger >(propertyName, (int32_t)value.getInt64());
 	else if (value.isFloat())
 		self->setProperty< PropertyFloat >(propertyName, value.getFloat());
 	else if (value.isString())

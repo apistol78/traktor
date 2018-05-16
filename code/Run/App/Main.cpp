@@ -75,6 +75,16 @@ int32_t Run_execute_3(Run* self, const std::wstring& command, const Any& saveOut
 	return self->execute(command, saveOutputAs.isString() ? saveOutputAs.getWideString() : L"(null)", env);
 }
 
+Any Run_getProperty_1(Run* self, const std::wstring& fileName, const std::wstring& propertyName, const Any& defaultValue)
+{
+	return self->getProperty(fileName, std::wstring(), propertyName, defaultValue);
+}
+
+Any Run_getProperty_2(Run* self, const std::wstring& fileName1, const std::wstring& fileName2, const std::wstring& propertyName, const Any& defaultValue)
+{
+	return self->getProperty(fileName1, fileName2, propertyName, defaultValue);
+}
+
 bool Run_loadModule(Run* self, const std::wstring& moduleName)
 {
 	Library library;
@@ -169,6 +179,9 @@ void registerRuntimeClasses()
 	classRun->addMethod("mkdir", &Run::mkdir);
 	classRun->addMethod("rmdir", &Run::rmdir);
 	classRun->addMethod("sleep", &Run::sleep);
+	classRun->addMethod("getProperty", &Run_getProperty_1);
+	classRun->addMethod("getProperty", &Run_getProperty_2);
+	classRun->addMethod("setProperty", &Run::setProperty);
 	classRun->addMethod("loadModule", &Run_loadModule);
 	registrar.registerClass(classRun);
 

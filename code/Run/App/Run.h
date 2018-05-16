@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include <list>
 #include "Core/Object.h"
+#include "Core/Class/Any.h"
 
 namespace traktor
 {
@@ -59,6 +60,10 @@ public:
 	bool rmdir(const std::wstring& path);
 
 	void sleep(int32_t ms);
+
+	Any getProperty(const std::wstring& fileName1, const std::wstring& fileName2, const std::wstring& propertyName, const Any& defaultValue) const;
+
+	bool setProperty(const std::wstring& fileName, const std::wstring& propertyName, const Any& value) const;
 
 private:
 	std::list< std::wstring > m_cwd;
