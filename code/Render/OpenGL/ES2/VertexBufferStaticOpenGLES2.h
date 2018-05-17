@@ -28,7 +28,7 @@ class VertexBufferStaticOpenGLES2 : public VertexBufferOpenGLES2
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferStaticOpenGLES2(ContextOpenGLES2* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize);
+	VertexBufferStaticOpenGLES2(ContextOpenGLES2* context, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize);
 
 	virtual ~VertexBufferStaticOpenGLES2();
 

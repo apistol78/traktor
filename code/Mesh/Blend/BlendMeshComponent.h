@@ -7,7 +7,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_mesh_BlendMeshComponent_H
 #define traktor_mesh_BlendMeshComponent_H
 
-#include <vector>
 #include "Mesh/MeshComponent.h"
 #include "Mesh/Blend/BlendMesh.h"
 #include "Resource/Proxy.h"
@@ -41,14 +40,14 @@ public:
 
 	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) T_OVERRIDE T_FINAL;
 
-	void setBlendWeights(const std::vector< float >& blendWeights);
+	void setBlendWeights(const AlignedVector< float >& blendWeights);
 
-	const std::vector< float >& getBlendWeights() const;
+	const AlignedVector< float >& getBlendWeights() const;
 
 private:
 	resource::Proxy< BlendMesh > m_mesh;
 	Ref< BlendMesh::Instance > m_instance;
-	std::vector< float > m_blendWeights;
+	AlignedVector< float > m_blendWeights;
 };
 
 	}

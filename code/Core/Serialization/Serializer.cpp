@@ -14,7 +14,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Serializer", Serializer, ISerializer);
 
 Serializer::Serializer()
-:	m_failure(false)
+:	m_versionPointer(0)
+,	m_failure(false)
 {
 }
 
@@ -40,14 +41,14 @@ bool Serializer::writeObject(const ISerializable* o)
 
 int32_t Serializer::getVersion() const
 {
-	T_ASSERT (!m_versions.empty());
-	return m_versions.back().v;
+	T_ASSERT (m_versionPointer > 0);
+	return m_versions[m_versionPointer - 1].v;
 }
 
 int32_t Serializer::getVersion(const TypeInfo& typeInfo) const
 {
-	T_ASSERT (!m_versions.empty());
-	const dataVersionMap_t& dv = m_versions.back().dvm;
+	T_ASSERT (m_versionPointer > 0);
+	const dataVersionMap_t& dv = m_versions[m_versionPointer - 1].dvm;
 	dataVersionMap_t::const_iterator it = dv.find(&typeInfo);
 	return it != dv.end() ? it->second : 0;
 }
@@ -79,13 +80,23 @@ void Serializer::serialize(ISerializable* inner, const dataVersionMap_t& dataVer
 
 	dataVersionMap_t::const_iterator it = dataVersions.find(&type_of(inner));
 
-	Version& v = m_versions.push_back();
-	v.dvm = dataVersions;
-	v.v = (it != dataVersions.end()) ? it->second : 0;
+	if (m_versionPointer >= m_versions.size())
+		m_versions.resize(m_versionPointer + 16);
+
+	// Push version scope.
+	{
+		Version& v = m_versions[m_versionPointer++];
+		v.dvm = dataVersions;
+		v.v = (it != dataVersions.end()) ? it->second : 0;
+	}
 
 	inner->serialize(*this);
 
-	m_versions.pop_back();
+	// Pop version scope.
+	{
+		Version& v = m_versions[--m_versionPointer];
+		v.dvm.clear();
+	}
 }
 
 }

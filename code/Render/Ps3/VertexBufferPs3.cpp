@@ -21,7 +21,7 @@ VertexBufferPs3* VertexBufferPs3::ms_activeVertexBuffer = 0;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferPs3", VertexBufferPs3, VertexBuffer)
 
-VertexBufferPs3::VertexBufferPs3(const std::vector< VertexElement >& vertexElements, MemoryHeapObject* vbo, int bufferSize, int32_t& counter)
+VertexBufferPs3::VertexBufferPs3(const AlignedVector< VertexElement >& vertexElements, MemoryHeapObject* vbo, int bufferSize, int32_t& counter)
 :	VertexBuffer(bufferSize)
 ,	m_vbo(vbo)
 ,	m_counter(counter)
@@ -30,7 +30,7 @@ VertexBufferPs3::VertexBufferPs3(const std::vector< VertexElement >& vertexEleme
 
 	std::memset(m_attributeDesc, 0, sizeof(m_attributeDesc));
 
-	for (std::vector< VertexElement >::const_iterator i = vertexElements.begin(); i != vertexElements.end(); ++i)
+	for (AlignedVector< VertexElement >::const_iterator i = vertexElements.begin(); i != vertexElements.end(); ++i)
 	{
 		int32_t attr = cg_attr_index(i->getDataUsage(), i->getIndex());
 		switch (i->getDataType())

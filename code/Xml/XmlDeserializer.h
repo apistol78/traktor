@@ -103,6 +103,7 @@ private:
 	};
 
 	AlignedVector< Entry > m_stack;
+	uint32_t m_stackPointer;
 	SmallMap< std::wstring, Ref< ISerializable > > m_refs;
 	std::wstring m_value;
 	AlignedVector< float > m_values;

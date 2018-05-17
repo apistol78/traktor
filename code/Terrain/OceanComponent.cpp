@@ -95,7 +95,7 @@ OceanComponent::~OceanComponent()
 
 bool OceanComponent::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanComponentData& data)
 {
-	std::vector< render::VertexElement > vertexElements;
+	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(OceanVertex, pos)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat1, offsetof(OceanVertex, edge)));
 

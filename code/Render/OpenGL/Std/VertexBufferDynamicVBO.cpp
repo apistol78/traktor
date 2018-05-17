@@ -82,7 +82,7 @@ void copyBuffer(uint8_t* dst, const uint8_t* src, uint32_t size)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferDynamicVBO", VertexBufferDynamicVBO, VertexBufferOpenGL)
 
-VertexBufferDynamicVBO::VertexBufferDynamicVBO(ContextOpenGL* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize)
+VertexBufferDynamicVBO::VertexBufferDynamicVBO(ContextOpenGL* resourceContext, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize)
 :	VertexBufferOpenGL(bufferSize)
 ,	m_resourceContext(resourceContext)
 ,	m_array(0)

@@ -24,14 +24,14 @@ BlendMeshEntity::BlendMeshEntity(const Transform& transform, bool screenSpaceCul
 	m_blendWeights.resize(blendTargetCount, 0.0f);
 }
 
-void BlendMeshEntity::setBlendWeights(const std::vector< float >& blendWeights)
+void BlendMeshEntity::setBlendWeights(const AlignedVector< float >& blendWeights)
 {
 	size_t copy = std::min(m_blendWeights.size(), blendWeights.size());
 	for (size_t i = 0; i < copy; ++i)
 		m_blendWeights[i] = blendWeights[i];
 }
 
-const std::vector< float >& BlendMeshEntity::getBlendWeights() const
+const AlignedVector< float >& BlendMeshEntity::getBlendWeights() const
 {
 	return m_blendWeights;
 }

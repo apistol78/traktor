@@ -31,7 +31,7 @@ public:
 	virtual void unlock() { }
 
 private:
-	std::vector< uint8_t > m_data;
+	AlignedVector< uint8_t > m_data;
 };
 
 class InternalIndexBuffer : public IndexBuffer
@@ -48,7 +48,7 @@ public:
 	virtual void unlock() { }
 
 private:
-	std::vector< uint8_t > m_data;
+	AlignedVector< uint8_t > m_data;
 };
 
 		}
@@ -56,10 +56,10 @@ private:
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SystemMeshFactory", SystemMeshFactory, MeshFactory)
 
 Ref< Mesh > SystemMeshFactory::createMesh(
-	const std::vector< VertexElement >& vertexElements,
-	unsigned int vertexBufferSize,
+	const AlignedVector< VertexElement >& vertexElements,
+	uint32_t vertexBufferSize,
 	IndexType indexType,
-	unsigned int indexBufferSize
+	uint32_t indexBufferSize
 )
 {
 	Ref< VertexBuffer > vertexBuffer;

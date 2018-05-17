@@ -121,6 +121,10 @@ void TrackAllocator::free(void* ptr)
 		Block toBeFreed = i->second; (void)toBeFreed;
 		m_aliveBlocks.erase(i);
 	}
+	else
+	{
+		T_FATAL_ASSERT_M(ptr == 0, L"Invalid free, pointer does not reference allocated memory!");
+	}
 
 	m_systemAllocator->free(ptr);
 }

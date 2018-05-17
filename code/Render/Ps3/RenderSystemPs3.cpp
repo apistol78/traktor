@@ -261,7 +261,7 @@ Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewEmbeddedDes
 	return 0;
 }
 
-Ref< VertexBuffer > RenderSystemPs3::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+Ref< VertexBuffer > RenderSystemPs3::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 	MemoryHeapObject* vbo = (dynamic ? m_memoryHeapMain : m_memoryHeapLocal)->alloc(bufferSize, 16, false);
 	if (vbo)

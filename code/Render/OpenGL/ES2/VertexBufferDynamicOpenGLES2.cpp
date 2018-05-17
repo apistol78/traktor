@@ -54,7 +54,7 @@ struct DeleteBufferCallback : public ContextOpenGLES2::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferDynamicOpenGLES2", VertexBufferDynamicOpenGLES2, VertexBufferOpenGLES2)
 
-VertexBufferDynamicOpenGLES2::VertexBufferDynamicOpenGLES2(ContextOpenGLES2* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize)
+VertexBufferDynamicOpenGLES2::VertexBufferDynamicOpenGLES2(ContextOpenGLES2* context, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize)
 :	VertexBufferOpenGLES2(bufferSize)
 ,	m_context(context)
 ,	m_arrayObject(0)

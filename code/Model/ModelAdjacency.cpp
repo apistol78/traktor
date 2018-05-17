@@ -64,7 +64,7 @@ void ModelAdjacency::add(uint32_t polygon)
 
 void ModelAdjacency::remove(uint32_t polygon)
 {
-	for (uint32_t i = 0; i < m_edges.size(); )
+	for (size_t i = 0; i < m_edges.size(); )
 	{
 		if (m_edges[i].polygon != polygon)
 		{
@@ -72,10 +72,10 @@ void ModelAdjacency::remove(uint32_t polygon)
 			continue;
 		}
 
-		for (uint32_t j = 0; j < m_edges.size(); ++j)
+		for (size_t j = 0; j < m_edges.size(); ++j)
 		{
 			share_vector_t& edgeShare = m_edges[j].share;
-			for (uint32_t k = 0; k < edgeShare.size(); )
+			for (size_t k = 0; k < edgeShare.size(); )
 			{
 				if (edgeShare[k] == i)
 					edgeShare.erase(edgeShare.begin() + k);

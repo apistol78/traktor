@@ -55,7 +55,7 @@ void SkinnedMesh::render(
 
 	const Aabb3& boundingBox = getBoundingBox();
 
-	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
+	const AlignedVector< render::Mesh::Part >& meshParts = m_mesh->getParts();
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
 		m_shader->setTechnique(i->shaderTechnique);

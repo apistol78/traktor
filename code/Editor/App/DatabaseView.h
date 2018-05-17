@@ -12,6 +12,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+
+class PropertyGroup;
+
 	namespace ui
 	{
 
@@ -101,6 +104,7 @@ private:
 	Ref< ui::PopupMenu > m_menuGroup[2];
 	Ref< ui::PopupMenu > m_menuInstance;
 	Ref< ui::PopupMenu > m_menuInstanceAsset;
+	Ref< PropertyGroup > m_iconsGroup;
 	Ref< db::Database > m_db;
 	Ref< Filter > m_filter;
 	RefArray< IWizardTool > m_wizardTools;

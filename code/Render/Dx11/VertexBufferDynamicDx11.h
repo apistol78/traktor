@@ -30,7 +30,7 @@ public:
 	static Ref< VertexBufferDynamicDx11 > create(
 		ContextDx11* context,
 		uint32_t bufferSize,
-		const std::vector< VertexElement >& vertexElements
+		const AlignedVector< VertexElement >& vertexElements
 	);
 
 	virtual ~VertexBufferDynamicDx11();

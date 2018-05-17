@@ -8,17 +8,17 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_Mesh_H
 
 #include <string>
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb3.h"
 #include "Render/VertexElement.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -43,31 +43,31 @@ public:
 		Primitives primitives;
 	};
 
-	void setVertexElements(const std::vector< VertexElement >& vertexDeclaration);
+	void setVertexElements(const AlignedVector< VertexElement >& vertexDeclaration);
 
 	void setVertexBuffer(VertexBuffer* vertexBuffer);
 
 	void setIndexBuffer(IndexBuffer* indexBuffer);
 
-	void setParts(const std::vector< Part >& parts);
+	void setParts(const AlignedVector< Part >& parts);
 
 	void setBoundingBox(const Aabb3& boundingBox);
 
-	const std::vector< VertexElement >& getVertexElements() const { return m_vertexElements; }
+	const AlignedVector< VertexElement >& getVertexElements() const { return m_vertexElements; }
 
 	VertexBuffer* getVertexBuffer() const { return m_vertexBuffer; }
 
 	IndexBuffer* getIndexBuffer() const { return m_indexBuffer; }
 
-	const std::vector< Part >& getParts() const { return m_parts; }
+	const AlignedVector< Part >& getParts() const { return m_parts; }
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
 private:
-	std::vector< VertexElement > m_vertexElements;
+	AlignedVector< VertexElement > m_vertexElements;
 	Ref< VertexBuffer > m_vertexBuffer;
 	Ref< IndexBuffer > m_indexBuffer;
-	std::vector< Part > m_parts;
+	AlignedVector< Part > m_parts;
 	Aabb3 m_boundingBox;
 };
 

@@ -38,7 +38,7 @@ bool BlendMeshConverter::convert(
 	const RefArray< model::Model >& models,
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
-	const std::vector< render::VertexElement >& vertexElements,
+	const AlignedVector< render::VertexElement >& vertexElements,
 	int32_t maxInstanceCount,
 	IMeshResource* meshResource,
 	IStream* meshResourceStream
@@ -114,7 +114,7 @@ bool BlendMeshConverter::convert(
 	baseMesh->getVertexBuffer()->unlock();
 
 	// Create index buffer and build parts.
-	std::vector< render::Mesh::Part > meshParts;
+	AlignedVector< render::Mesh::Part > meshParts;
 	std::map< std::wstring, BlendMeshResource::parts_t > parts;
 
 	uint16_t* index = static_cast< uint16_t* >(baseMesh->getIndexBuffer()->lock());

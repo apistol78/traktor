@@ -108,7 +108,7 @@ void InstanceMesh::render(
 		)));
 	}
 
-	const std::vector< render::Mesh::Part >& meshParts = m_renderMesh->getParts();
+	const AlignedVector< render::Mesh::Part >& meshParts = m_renderMesh->getParts();
 
 	// Render opaque parts front-to-back.
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)

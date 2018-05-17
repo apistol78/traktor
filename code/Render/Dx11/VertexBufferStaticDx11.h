@@ -33,7 +33,7 @@ public:
 		ContextDx11* context,
 		IBufferHeapDx11* bufferHeap,
 		uint32_t bufferSize,
-		const std::vector< VertexElement >& vertexElements
+		const AlignedVector< VertexElement >& vertexElements
 	);
 
 	virtual ~VertexBufferStaticDx11();

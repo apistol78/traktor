@@ -63,7 +63,17 @@ public:
 			return const_iterator(m_ptr + offset);
 		}
 
+		const_iterator operator + (size_t offset) const
+		{
+			return const_iterator(m_ptr + offset);
+		}
+
 		const_iterator operator - (int offset) const
+		{
+			return const_iterator(m_ptr - offset);
+		}
+
+		const_iterator operator - (size_t offset) const
 		{
 			return const_iterator(m_ptr - offset);
 		}
@@ -174,7 +184,17 @@ public:
 			return iterator(_O::m_ptr + offset);
 		}
 
+		iterator operator + (size_t offset) const
+		{
+			return iterator(_O::m_ptr + offset);
+		}
+
 		iterator operator - (int offset) const
+		{
+			return iterator(_O::m_ptr - offset);
+		}
+
+		iterator operator - (size_t offset) const
 		{
 			return iterator(_O::m_ptr - offset);
 		}
@@ -413,6 +433,28 @@ public:
 		return const_iterator(&m_items[m_size]);
 	}
 
+	/*! \brief Insert element into vector.
+	 *
+	 * \param where Iterator at element.
+	 * \param item Item value.
+	 * \return Iterator at new element.
+	 */
+	iterator insert(const iterator& where, const ItemType& item)
+	{
+		size_t size = m_size;
+		size_t offset = size_t(where.m_ptr - &m_items[0]);
+
+		m_size++;
+
+		// Move items to make room for item to be inserted.
+		for (size_t i = size; i > offset; --i)
+			m_items[i] = m_items[i - 1];
+
+		m_items[offset] = item;
+
+		return iterator(&m_items[offset]);
+	}
+
 	/*! \brief Erase element.
 	 *
 	 * \param where Iterator at element.
@@ -437,6 +479,14 @@ public:
 	operator const ItemType* () const
 	{
 		return m_items;
+	}
+
+	StaticVector& operator = (const StaticVector& src)
+	{
+		for (size_t i = 0; i < src.m_size; ++i)
+			m_items[i] = src.m_items[i];
+		m_size = src.m_size;
+		return *this;
 	}
 
 private:

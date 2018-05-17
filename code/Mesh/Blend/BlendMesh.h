@@ -8,7 +8,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_mesh_BlendMesh_H
 
 #include <map>
-#include <vector>
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
@@ -68,7 +67,7 @@ public:
 	{
 		Ref< render::VertexBuffer > vertexBuffers[VertexBufferCount];
 		Ref< render::Mesh > mesh;
-		std::vector< float > weights;
+		AlignedVector< float > weights;
 		uint32_t count;
 
 		Instance()
@@ -93,7 +92,7 @@ public:
 		const Transform& lastWorldTransform,
 		const Transform& worldTransform,
 		Instance* instance,
-		const std::vector< float >& blendWeights,
+		const AlignedVector< float >& blendWeights,
 		float distance,
 		const IMeshParameterCallback* parameterCallback
 	);
@@ -112,8 +111,8 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< render::Shader > m_shader;
 	RefArray< render::Mesh > m_meshes;
-	std::vector< const uint8_t* > m_vertices;
-	SmallMap< render::handle_t, std::vector< Part > > m_parts;
+	AlignedVector< const uint8_t* > m_vertices;
+	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
 	std::map< std::wstring, int > m_targetMap;
 };
 

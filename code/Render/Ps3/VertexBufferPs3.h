@@ -7,7 +7,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_VertexBufferPs3_H
 #define traktor_render_VertexBufferPs3_H
 
-#include <vector>
 #include "Core/Containers/AlignedVector.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
@@ -33,7 +32,7 @@ class T_DLLCLASS VertexBufferPs3 : public VertexBuffer
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferPs3(const std::vector< VertexElement >& vertexElements, MemoryHeapObject* vbo, int bufferSize, int32_t& counter);
+	VertexBufferPs3(const AlignedVector< VertexElement >& vertexElements, MemoryHeapObject* vbo, int bufferSize, int32_t& counter);
 
 	virtual ~VertexBufferPs3();
 

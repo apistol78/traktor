@@ -127,7 +127,7 @@ bool LightRendererDeferred::create(
 	if (!resourceManager->bind(c_fogShader, m_fogShader))
 		return false;
 
-	std::vector< render::VertexElement > vertexElements;
+	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(LightVertex, pos)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(LightVertex, texCoord)));
 

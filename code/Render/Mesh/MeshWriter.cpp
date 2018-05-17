@@ -24,10 +24,10 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 
 	writer << uint32_t(3);
 
-	const std::vector< VertexElement >& vertexElements = mesh->getVertexElements();
+	const AlignedVector< VertexElement >& vertexElements = mesh->getVertexElements();
 	writer << uint32_t(vertexElements.size());
 
-	for (std::vector< VertexElement >::const_iterator i = vertexElements.begin(); i != vertexElements.end(); ++i)
+	for (AlignedVector< VertexElement >::const_iterator i = vertexElements.begin(); i != vertexElements.end(); ++i)
 	{
 		writer << uint32_t(i->getDataUsage());
 		writer << uint32_t(i->getDataType());
@@ -55,9 +55,9 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 	if (vertexBufferSize > 0)
 	{
 		uint8_t* vertex = static_cast< uint8_t* >(mesh->getVertexBuffer()->lock());
-		for (unsigned int i = 0; i < vertexBufferSize; )
+		for (uint32_t i = 0; i < vertexBufferSize; )
 		{
-			for (std::vector< VertexElement >::const_iterator j = vertexElements.begin(); j != vertexElements.end(); ++j)
+			for (AlignedVector< VertexElement >::const_iterator j = vertexElements.begin(); j != vertexElements.end(); ++j)
 			{
 				switch (j->getDataType())
 				{
@@ -124,7 +124,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 		mesh->getIndexBuffer()->unlock();
 	}
 
-	const std::vector< Mesh::Part >& parts = mesh->getParts();
+	const AlignedVector< Mesh::Part >& parts = mesh->getParts();
 
 	uint32_t partCount = uint32_t(parts.size());
 	writer << partCount;

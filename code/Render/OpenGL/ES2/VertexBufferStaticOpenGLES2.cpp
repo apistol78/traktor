@@ -76,7 +76,7 @@ struct DeleteVertexArrayCallback : public ContextOpenGLES2::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferStaticOpenGLES2", VertexBufferStaticOpenGLES2, VertexBufferOpenGLES2)
 
-VertexBufferStaticOpenGLES2::VertexBufferStaticOpenGLES2(ContextOpenGLES2* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize)
+VertexBufferStaticOpenGLES2::VertexBufferStaticOpenGLES2(ContextOpenGLES2* context, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize)
 :	VertexBufferOpenGLES2(bufferSize)
 ,	m_context(context)
 ,	m_arrayObject(0)

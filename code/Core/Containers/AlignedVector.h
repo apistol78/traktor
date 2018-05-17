@@ -14,6 +14,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/Align.h"
 
+#if defined(T_CXX11)
+#	include <utility>
+#endif
+
 namespace traktor
 {
 
@@ -521,6 +525,18 @@ public:
 		insert(begin(), src.begin(), src.end());
 	}
 
+#if defined(T_CXX11)
+	AlignedVector(AlignedVector< ItemType >&& src)
+	:	m_data(src.m_data)
+	,	m_size(src.m_size)
+	,	m_capacity(src.m_capacity)
+	{
+		src.m_data = 0;
+		src.m_size = 0;
+		src.m_capacity = 0;
+	}
+#endif
+
 	virtual ~AlignedVector()
 	{
 		clear();
@@ -818,7 +834,7 @@ public:
 		size_t offset = size_t(where.m_ptr - m_data);
 
 		for (size_t i = offset; i < m_size - 1; ++i)
-			m_data[i] = m_data[i + 1];
+			move(i, i + 1);
 
 		Constructor::destroy(m_data[m_size - 1]);
 		shrink(1);
@@ -842,7 +858,7 @@ public:
 		if (count > 0)
 		{
 			for (size_t i = offset; i < m_size - count; ++i)
-				m_data[i] = m_data[i + count];
+				move(i, i + count);
 
 			for (size_t i = m_size - count; i < m_size; ++i)
 				Constructor::destroy(m_data[i]);
@@ -871,7 +887,7 @@ public:
 
 		// Move items to make room for item to be inserted.
 		for (size_t i = size; i > offset; --i)
-			m_data[i] = m_data[i - 1];
+			move(i, i - 1);
 
 		// Copy insert item into location.
 		Constructor::destroy(m_data[offset]);
@@ -900,12 +916,12 @@ public:
 			Constructor::construct(m_data[i + size]);
 
 		// Move items to make room for items to be inserted.
-		int32_t move = int32_t(size - offset);
-		for (int32_t i = move - 1; i >= 0; --i)
+		int32_t mv = int32_t(size - offset);
+		for (int32_t i = mv - 1; i >= 0; --i)
 		{
 			T_ASSERT (i + offset < size);
 			T_ASSERT (i + offset + count < m_size);
-			m_data[i + offset + count] = m_data[i + offset];
+			move(i + offset + count, i + offset);
 		}
 
 		// Copy insert items into location.
@@ -938,9 +954,13 @@ public:
 			Constructor::construct(m_data[i + size]);
 
 		// Move items to make room for items to be inserted.
-		size_t move = std::min< size_t >(size, count);
-		for (size_t i = offset; i < offset + move; ++i)
-			m_data[i + count] = m_data[i];
+		int32_t mv = int32_t(size - offset);
+		for (int32_t i = mv - 1; i >= 0; --i)
+		{
+			T_ASSERT (i + offset < size);
+			T_ASSERT (i + offset + count < m_size);
+			move(i + offset + count, i + offset);
+		}
 
 		// Copy insert items into location.
 		for (size_t i = 0; i < count; ++i)
@@ -971,10 +991,39 @@ public:
 		return *this;
 	}
 
+#if defined(T_CXX11)
+	AlignedVector< ItemType >& operator = (AlignedVector< ItemType >&& src)
+	{
+		clear();
+		
+		m_data = src.m_data;
+		m_size = src.m_size;
+		m_capacity = src.m_capacity;
+
+		src.m_data = 0;
+		src.m_size = 0;
+		src.m_capacity = 0;
+
+		return *this;
+	}
+#endif
+
 private:
 	ItemType* m_data;
 	size_t m_size;
 	size_t m_capacity;
+
+#if defined(T_CXX11)
+	void move(size_t target, size_t source)
+	{
+		m_data[target] = std::move(m_data[source]);
+	}
+#else
+	void move(size_t target, size_t source)
+	{
+		m_data[target] = m_data[source];
+	}
+#endif
 
 	void grow(size_t count)
 	{

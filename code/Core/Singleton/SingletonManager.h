@@ -7,8 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_SingletonManager_H
 #define traktor_SingletonManager_H
 
-#include <vector>
-#include "Core/Config.h"
+#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -48,7 +47,7 @@ public:
 	void destroy();
 
 private:
-	std::vector< ISingleton* > m_singletons;
+	AlignedVector< ISingleton* > m_singletons;
 
 	virtual ~SingletonManager();
 };

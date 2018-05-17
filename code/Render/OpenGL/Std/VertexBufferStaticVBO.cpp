@@ -37,7 +37,7 @@ struct DeleteBufferCallback : public ContextOpenGL::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferStaticVBO", VertexBufferStaticVBO, VertexBufferOpenGL)
 
-VertexBufferStaticVBO::VertexBufferStaticVBO(ContextOpenGL* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize)
+VertexBufferStaticVBO::VertexBufferStaticVBO(ContextOpenGL* resourceContext, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize)
 :	VertexBufferOpenGL(bufferSize)
 ,	m_resourceContext(resourceContext)
 ,	m_array(0)

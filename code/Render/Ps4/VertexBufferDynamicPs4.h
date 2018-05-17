@@ -28,7 +28,7 @@ public:
 	static Ref< VertexBufferDynamicPs4 > create(
 		ContextPs4* context,
 		uint32_t bufferSize,
-		const std::vector< VertexElement >& vertexElements
+		const AlignedVector< VertexElement >& vertexElements
 	);
 
 	virtual ~VertexBufferDynamicPs4();

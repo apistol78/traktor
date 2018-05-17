@@ -12,9 +12,9 @@ namespace traktor
 	namespace mesh
 	{
 
-uint32_t writeVertexData(const std::vector< render::VertexElement >& vertexElements, uint8_t* vertex, render::DataUsage usage, uint32_t index, const float* data)
+uint32_t writeVertexData(const AlignedVector< render::VertexElement >& vertexElements, uint8_t* vertex, render::DataUsage usage, uint32_t index, const float* data)
 {
-	std::vector< render::VertexElement >::const_iterator i = render::findVertexElement(vertexElements, usage, index);
+	AlignedVector< render::VertexElement >::const_iterator i = render::findVertexElement(vertexElements, usage, index);
 	if (i == vertexElements.end())
 		return 0;
 
@@ -60,13 +60,13 @@ uint32_t writeVertexData(const std::vector< render::VertexElement >& vertexEleme
 	return i->getSize();
 }
 
-uint32_t writeVertexData(const std::vector< render::VertexElement >& vertexElements, uint8_t* vertex, render::DataUsage usage, uint32_t index, const Vector2& data)
+uint32_t writeVertexData(const AlignedVector< render::VertexElement >& vertexElements, uint8_t* vertex, render::DataUsage usage, uint32_t index, const Vector2& data)
 {
 	float d[] = { data.x, data.y, 0.0f, 0.0f };
 	return writeVertexData(vertexElements, vertex, usage, index, d);
 }
 
-uint32_t writeVertexData(const std::vector< render::VertexElement >& vertexElements, uint8_t* vertex, render::DataUsage usage, uint32_t index, const Vector4& data)
+uint32_t writeVertexData(const AlignedVector< render::VertexElement >& vertexElements, uint8_t* vertex, render::DataUsage usage, uint32_t index, const Vector4& data)
 {
 	float d[] = { data.x(), data.y(), data.z(), data.w() };
 	return writeVertexData(vertexElements, vertex, usage, index, d);

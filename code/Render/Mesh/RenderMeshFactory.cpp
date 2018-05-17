@@ -21,10 +21,10 @@ RenderMeshFactory::RenderMeshFactory(IRenderSystem* renderSystem)
 }
 
 Ref< Mesh > RenderMeshFactory::createMesh(
-	const std::vector< VertexElement >& vertexElements,
-	unsigned int vertexBufferSize,
+	const AlignedVector< VertexElement >& vertexElements,
+	uint32_t vertexBufferSize,
 	IndexType indexType,
-	unsigned int indexBufferSize
+	uint32_t indexBufferSize
 )
 {
 	Ref< VertexBuffer > vertexBuffer;

@@ -1020,7 +1020,7 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 		if (m_freeVertexBuffers.empty())
 		{
 			// No free buffers; need to allocate a new buffer.
-			std::vector< VertexElement > vertexElements;
+			AlignedVector< VertexElement > vertexElements;
 			vertexElements.push_back(VertexElement(DuPosition, DtFloat4, offsetof(Vertex, pos), 0));
 			vertexElements.push_back(VertexElement(DuCustom, DtHalf2, offsetof(Vertex, texCoord), 0));
 			vertexElements.push_back(VertexElement(DuColor, DtByte4N, offsetof(Vertex, rgb), 0));

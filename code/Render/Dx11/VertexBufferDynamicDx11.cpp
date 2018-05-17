@@ -65,7 +65,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferDynamicDx11", VertexBufferDy
 Ref< VertexBufferDynamicDx11 > VertexBufferDynamicDx11::create(
 	ContextDx11* context,
 	uint32_t bufferSize,
-	const std::vector< VertexElement >& vertexElements
+	const AlignedVector< VertexElement >& vertexElements
 )
 {
 	ComRef< ID3D11Buffer > d3dBuffer;

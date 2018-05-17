@@ -16,7 +16,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferStaticPs4", VertexBufferStat
 Ref< VertexBufferStaticPs4 > VertexBufferStaticPs4::create(
 	ContextPs4* context,
 	uint32_t bufferSize,
-	const std::vector< VertexElement >& vertexElements
+	const AlignedVector< VertexElement >& vertexElements
 )
 {
 	Ref< VertexBufferStaticPs4 > vb = new VertexBufferStaticPs4(bufferSize);

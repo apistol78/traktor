@@ -165,7 +165,7 @@ Ref< IRenderView > RenderSystemPs4::createRenderView(const RenderViewEmbeddedDes
 	return 0;
 }
 
-Ref< VertexBuffer > RenderSystemPs4::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+Ref< VertexBuffer > RenderSystemPs4::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 	if (!dynamic)
 		return VertexBufferStaticPs4::create(m_context, bufferSize, vertexElements);

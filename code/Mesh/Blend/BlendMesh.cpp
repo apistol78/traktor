@@ -35,17 +35,17 @@ const uint32_t c_vertexCountFork = 1000;	//< Fork blend update on multiple threa
 
 struct BlendMeshTask
 {
-	const std::vector< render::VertexElement >& m_vertexElements;
-	const std::vector< float >& m_blendWeights;
-	const std::vector< const uint8_t* >& m_sourceVertexPtrs;
+	const AlignedVector< render::VertexElement >& m_vertexElements;
+	const AlignedVector< float >& m_blendWeights;
+	const AlignedVector< const uint8_t* >& m_sourceVertexPtrs;
 	uint8_t* m_destinationVertexPtr;
 	uint32_t m_start;
 	uint32_t m_end;
 
 	BlendMeshTask(
-		const std::vector< render::VertexElement >& vertexElements,
-		const std::vector< float >& blendWeights,
-		const std::vector< const uint8_t* >& sourceVertexPtrs,
+		const AlignedVector< render::VertexElement >& vertexElements,
+		const AlignedVector< float >& blendWeights,
+		const AlignedVector< const uint8_t* >& sourceVertexPtrs,
 		uint8_t* destinationVertexPtr,
 		uint32_t start,
 		uint32_t end
@@ -81,7 +81,7 @@ struct BlendMeshTask
 
 			for (uint32_t j = m_start; j < m_end; ++j)
 			{
-				for (std::vector< render::VertexElement >::const_iterator k = m_vertexElements.begin(); k != m_vertexElements.end(); ++k)
+				for (AlignedVector< render::VertexElement >::const_iterator k = m_vertexElements.begin(); k != m_vertexElements.end(); ++k)
 				{
 					uint8_t* destVertexElement = destVertices + k->getOffset();
 					const uint8_t* targetVertexElement = targetVertices + k->getOffset();
@@ -196,7 +196,7 @@ void BlendMesh::render(
 	const Transform& lastWorldTransform,
 	const Transform& worldTransform,
 	Instance* instance,
-	const std::vector< float >& blendWeights,
+	const AlignedVector< float >& blendWeights,
 	float distance,
 	const IMeshParameterCallback* parameterCallback
 )
@@ -228,7 +228,7 @@ void BlendMesh::render(
 		{
 			render::VertexBuffer* vertexBuffer = instance->vertexBuffers[instance->count % VertexBufferCount];
 
-			const std::vector< render::VertexElement >& vertexElements = instance->mesh->getVertexElements();
+			const AlignedVector< render::VertexElement >& vertexElements = instance->mesh->getVertexElements();
 			uint32_t vertexSize = render::getVertexSize(vertexElements);
 			uint32_t vertexCount = vertexBuffer->getBufferSize() / vertexSize;
 
@@ -283,11 +283,11 @@ void BlendMesh::render(
 		return;
 
 	// Render mesh.
-	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
+	SmallMap< render::handle_t, AlignedVector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT (it != m_parts.end());
 
-	const std::vector< render::Mesh::Part >& meshParts = instance->mesh->getParts();
-	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+	const AlignedVector< render::Mesh::Part >& meshParts = instance->mesh->getParts();
+	for (AlignedVector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
 		m_shader->setTechnique(i->shaderTechnique);
 

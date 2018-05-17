@@ -96,7 +96,7 @@ bool UndergrowthLayer::create(
 	if (!resourceManager->bind(m_layerData.m_shader, m_shader))
 		return false;
 
-	std::vector< render::VertexElement > vertexElements;
+	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, position)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtHalf2, offsetof(Vertex, texCoord)));
 	T_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));

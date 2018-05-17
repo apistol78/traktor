@@ -331,7 +331,7 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Build materials.
-	std::vector< render::VertexElement > vertexElements;
+	AlignedVector< render::VertexElement > vertexElements;
 	uint32_t vertexElementOffset = 0;
 
 	std::map< uint32_t, Ref< render::ShaderGraph > > materialTechniqueShaderGraphs;		//< Collection of all material technique fragments; later merged into single shader.
@@ -528,7 +528,7 @@ bool MeshPipeline::buildOutput(
 			}
 
 			// Is it already added to vertex declaration?
-			for (std::vector< render::VertexElement >::iterator k = vertexElements.begin(); k != vertexElements.end(); ++k)
+			for (AlignedVector< render::VertexElement >::iterator k = vertexElements.begin(); k != vertexElements.end(); ++k)
 			{
 				if (
 					(*j)->getDataUsage() == k->getDataUsage() &&

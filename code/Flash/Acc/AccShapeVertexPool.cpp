@@ -18,7 +18,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AccShapeVertexPool", AccShapeVertexPool, Object)
 
-AccShapeVertexPool::AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frameCount, const std::vector< render::VertexElement >& vertexElements)
+AccShapeVertexPool::AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frameCount, const AlignedVector< render::VertexElement >& vertexElements)
 :	m_renderSystem(renderSystem)
 ,	m_vertexElements(vertexElements)
 ,	m_frame(0)

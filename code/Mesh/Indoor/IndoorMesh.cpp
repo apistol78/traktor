@@ -87,7 +87,7 @@ void IndoorMesh::render(
 	// Render sectors, should probably sort all visible parts by their shader as
 	// it will otherwise be a lot of state changes.
 
-	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
+	const AlignedVector< render::Mesh::Part >& meshParts = m_mesh->getParts();
 
 	for (std::set< int >::iterator i = activeSectors.begin(); i != activeSectors.end(); ++i)
 	{
@@ -179,7 +179,7 @@ void IndoorMesh::findVisibleSectors(
 				outVisibleSectors.insert(nextSector);
 
 				AlignedVector< Plane > nextFrustum(clipped.size());
-				for (size_t j = 0, k = clipped.size() - 1; j < clipped.size(); k = j++)
+				for (uint32_t j = 0, k = clipped.size() - 1; j < clipped.size(); k = j++)
 				{
 					nextFrustum[j] = Plane(
 						Vector4(0.0f, 0.0f, 0.0f, 1.0f),

@@ -41,7 +41,7 @@ TrailRenderer::TrailRenderer(render::IRenderSystem* renderSystem)
 {
 	s_handleTimeAndAge = render::getParameterHandle(L"TimeAndAge");
 
-	std::vector< render::VertexElement > vertexElements;
+	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, offsetof(TrailVertex, position), 0));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(TrailVertex, direction), 0));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(TrailVertex, uv), 1));
