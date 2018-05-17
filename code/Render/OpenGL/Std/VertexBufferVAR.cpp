@@ -16,7 +16,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferVAR", VertexBufferVAR, VertexBufferOpenGL)
 
-VertexBufferVAR::VertexBufferVAR(ContextOpenGL* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+VertexBufferVAR::VertexBufferVAR(ContextOpenGL* resourceContext, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 :	VertexBufferOpenGL(bufferSize)
 ,	m_resourceContext(resourceContext)
 ,	m_dynamic(dynamic)

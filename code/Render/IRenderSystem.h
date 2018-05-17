@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_IRenderSystem_H
 #define traktor_render_IRenderSystem_H
 
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Render/ITexture.h"
 #include "Render/Types.h"
 
@@ -118,7 +118,7 @@ public:
 	 * \param bufferSize Size of vertex buffer in bytes.
 	 * \param dynamic If vertex buffer is frequently updated.
 	 */
-	virtual Ref< VertexBuffer > createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic) = 0;
+	virtual Ref< VertexBuffer > createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic) = 0;
 
 	/*! \brief Create index buffer.
 	 *

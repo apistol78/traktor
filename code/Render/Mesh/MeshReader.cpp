@@ -38,7 +38,7 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 	uint32_t vertexElementCount;
 	reader >> vertexElementCount;
 
-	std::vector< VertexElement > vertexElements;
+	AlignedVector< VertexElement > vertexElements;
 	vertexElements.reserve(vertexElementCount);
 
 	for (uint32_t i = 0; i < vertexElementCount; ++i)
@@ -88,7 +88,7 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 		uint32_t vertexSize = getVertexSize(vertexElements);
 		for (uint32_t i = 0; i < vertexBufferSize; i += vertexSize)
 		{
-			for (std::vector< VertexElement >::iterator j = vertexElements.begin(); j != vertexElements.end(); ++j)
+			for (AlignedVector< VertexElement >::iterator j = vertexElements.begin(); j != vertexElements.end(); ++j)
 			{
 				uint8_t* vertexElm = &vertex[i + j->getOffset()];
 				switch (j->getDataType())
@@ -177,7 +177,7 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 	uint32_t partCount;
 	reader >> partCount;
 
-	std::vector< Mesh::Part > parts;
+	AlignedVector< Mesh::Part > parts;
 	parts.resize(partCount);
 
 	for (uint32_t i = 0; i < partCount; ++i)

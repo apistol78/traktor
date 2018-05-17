@@ -41,7 +41,7 @@ public:
 		}
 	};
 
-	AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frames, const std::vector< render::VertexElement >& vertexElements);
+	AccShapeVertexPool(render::IRenderSystem* renderSystem, uint32_t frames, const AlignedVector< render::VertexElement >& vertexElements);
 
 	bool create();
 
@@ -63,7 +63,7 @@ private:
 	typedef std::list< VertexRange > vr_list_t;
 
 	Ref< render::IRenderSystem > m_renderSystem;
-	std::vector< render::VertexElement > m_vertexElements;
+	AlignedVector< render::VertexElement > m_vertexElements;
 	vr_list_t m_usedRanges;
 	vr_list_t m_freeRanges;
 	AlignedVector< vr_list_t > m_garbageRanges;

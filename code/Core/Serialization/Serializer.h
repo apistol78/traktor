@@ -8,7 +8,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_Serializer_H
 
 #include "Core/Ref.h"
-#include "Core/Containers/SmallMap.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/StaticMap.h"
 #include "Core/Serialization/ISerializer.h"
 
 // import/export mechanism.
@@ -30,7 +31,7 @@ class T_DLLCLASS Serializer : public ISerializer
 	T_RTTI_CLASS;
 
 public:
-	typedef SmallMap< const TypeInfo*, int32_t > dataVersionMap_t;
+	typedef StaticMap< const TypeInfo*, int32_t, 16 > dataVersionMap_t;
 
 	Serializer();
 
@@ -66,6 +67,7 @@ private:
 	};
 
 	AlignedVector< Version > m_versions;
+	uint32_t m_versionPointer;
 	bool m_failure;
 };
 

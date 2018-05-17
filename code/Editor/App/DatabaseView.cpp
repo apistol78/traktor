@@ -511,6 +511,10 @@ bool DatabaseView::create(ui::Widget* parent)
 		m_menuInstanceAsset->add(menuInstanceWizards);
 	}
 
+	m_iconsGroup = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Icons");
+	if (!m_iconsGroup)
+		return false;
+
 	addEventHandler< ui::TimerEvent >(this, &DatabaseView::eventTimer);
 	startTimer(100);
 
@@ -1125,12 +1129,9 @@ void DatabaseView::setEnable(bool enable)
 
 int32_t DatabaseView::getIconIndex(const TypeInfo* instanceType) const
 {
-	Ref< PropertyGroup > iconsGroup = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Icons");
-	T_ASSERT (iconsGroup);
+	int32_t iconIndex = 2;
 
-	const std::map< std::wstring, Ref< IPropertyValue > >& icons = iconsGroup->getValues();
-
-	int iconIndex = 2;
+	const std::map< std::wstring, Ref< IPropertyValue > >& icons = m_iconsGroup->getValues();
 	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = icons.begin(); i != icons.end(); ++i)
 	{
 		const TypeInfo* iconType = TypeInfo::find(i->first.c_str());

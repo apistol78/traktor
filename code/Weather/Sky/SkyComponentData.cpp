@@ -46,7 +46,7 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 	if (!resourceManager->bind(m_shader, shader))
 		return 0;
 
-	std::vector< render::VertexElement > vertexElements;
+	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, 0));
 
 	Ref< render::VertexBuffer > vertexBuffer = renderSystem->createVertexBuffer(

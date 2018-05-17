@@ -25,7 +25,7 @@ class VertexBufferVAR : public VertexBufferOpenGL
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferVAR(ContextOpenGL* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
+	VertexBufferVAR(ContextOpenGL* resourceContext, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
 
 	virtual ~VertexBufferVAR();
 

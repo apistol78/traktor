@@ -7,7 +7,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_mesh_StaticMesh_H
 #define traktor_mesh_StaticMesh_H
 
-#include <vector>
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Transform.h"
@@ -81,7 +80,7 @@ private:
 
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_renderMesh;
-	SmallMap< render::handle_t, std::vector< Part > > m_parts;
+	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
 #if defined(_DEBUG)
 	std::string m_name;
 #endif

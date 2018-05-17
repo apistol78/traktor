@@ -86,7 +86,7 @@ Ref< IRenderView > RenderSystemCapture::createRenderView(const RenderViewEmbedde
 	return new RenderViewCapture(m_renderSystem, renderView);
 }
 
-Ref< VertexBuffer > RenderSystemCapture::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+Ref< VertexBuffer > RenderSystemCapture::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 	T_CAPTURE_ASSERT (bufferSize > 0, L"Invalid vertex buffer size.");
 

@@ -4,19 +4,15 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_SmallMap_H
-#define traktor_SmallMap_H
+#ifndef traktor_StaticMap_H
+#define traktor_StaticMap_H
 
-#include "Core/Containers/AlignedVector.h"
-
-#if defined(T_CXX11)
-#	include <utility>
-#endif
+#include "Core/Containers/StaticVector.h"
 
 namespace traktor
 {
 
-/*! \brief Small directional map
+/*! \brief Small, static, directional map
  * \ingroup Core
  *
  * This container is optimized for fast lookup
@@ -24,31 +20,22 @@ namespace traktor
  * Lookup is performed in a sorted, linear
  * array of pairs using simple binary search.
  */
-template < typename Key, typename Item >
-class SmallMap
+template < typename Key, typename Item, size_t Capacity >
+class StaticMap
 {
 public:
 	typedef std::pair< Key, Item > pair_t;
-	typedef typename AlignedVector< pair_t >::iterator iterator;
-	typedef typename AlignedVector< pair_t >::const_iterator const_iterator;
-	typedef typename AlignedVector< pair_t >::reverse_iterator reverse_iterator;
-	typedef typename AlignedVector< pair_t >::const_reverse_iterator const_reverse_iterator;
+	typedef typename StaticVector< pair_t, Capacity >::iterator iterator;
+	typedef typename StaticVector< pair_t, Capacity >::const_iterator const_iterator;
 
-	SmallMap()
+	StaticMap()
 	{
 	}
 
-	SmallMap(const SmallMap& src)
+	StaticMap(const StaticMap& src)
 	:	m_data(src.m_data)
 	{
 	}
-
-#if defined(T_CXX11)
-	SmallMap(SmallMap&& src)
-	{
-		m_data = std::move(src.m_data);
-	}
-#endif
 
 	void reserve(size_t capacity)
 	{
@@ -64,16 +51,6 @@ public:
 	{
 		return m_data.begin();
 	}
-	
-	reverse_iterator rbegin()
-	{
-		return m_data.rbegin();
-	}
-
-	const_reverse_iterator rbegin() const
-	{
-		return m_data.rbegin();
-	}
 
 	iterator end()
 	{
@@ -83,16 +60,6 @@ public:
 	const_iterator end() const
 	{
 		return m_data.end();
-	}
-	
-	reverse_iterator rend()
-	{
-		return m_data.rend();
-	}
-	
-	const_reverse_iterator rend() const
-	{
-		return m_data.rend();
 	}
 
 	iterator find(const Key& key)
@@ -181,17 +148,6 @@ public:
 			erase(it);
 	}
 
-	/*! \brief Reset content but keep memory allocated.
-	 * This method reset the map's content but keeps memory
-	 * allocated for it's internal vector to quickly be
-	 * able to rebuild map without reallocating memory.
-	 */
-	void reset()
-	{
-		m_data.resize(0);
-	}
-
-	/*! \brief Clear content and release allocated memory. */
 	void clear()
 	{
 		m_data.clear();
@@ -246,24 +202,16 @@ public:
 		return Item();
 	}
 
-	SmallMap& operator = (const SmallMap& src)
+	StaticMap& operator = (const StaticMap& src)
 	{
 		m_data = src.m_data;
 		return *this;
 	}
-	
-#if defined(T_CXX11)
-	SmallMap& operator = (SmallMap&& src)
-	{
-		m_data = std::move(src.m_data);
-		return *this;
-	}
-#endif
 
 private:
-	AlignedVector< pair_t > m_data;
+	StaticVector< pair_t, Capacity > m_data;
 };
 
 }
 
-#endif	// traktor_SmallMap_H
+#endif	// traktor_StaticMap_H

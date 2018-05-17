@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_VertexBufferSw_H
 #define traktor_render_VertexBufferSw_H
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Render/VertexBuffer.h"
@@ -29,7 +29,7 @@ class VertexBufferSw : public VertexBuffer
 public:
 	typedef float vertex_tuple_t [4];
 
-	VertexBufferSw(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize);
+	VertexBufferSw(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize);
 
 	virtual void destroy();
 
@@ -39,14 +39,14 @@ public:
 	
 	virtual void unlock();
 
-	const std::vector< VertexElement >& getVertexElements() const { return m_vertexElements; }
+	const AlignedVector< VertexElement >& getVertexElements() const { return m_vertexElements; }
 
 	const uint32_t getVertexCount() const { return m_vertexCount; }
 
 	const vertex_tuple_t* getData() { return m_data.ptr(); }
 
 private:
-	std::vector< VertexElement > m_vertexElements;
+	AlignedVector< VertexElement > m_vertexElements;
 	uint32_t m_vertexStride;
 	uint32_t m_vertexCount;
 	AutoArrayPtr< vertex_tuple_t > m_data;

@@ -38,14 +38,16 @@ public:
 private:
 	struct Block
 	{
-		void* top;
+		uint8_t* top;
 		size_t size;
+		void* at[8];
 	};
 
 	mutable CriticalSection m_lock;
 	Ref< IAllocator > m_systemAllocator;
 	std::list< Block > m_aliveBlocks;
 	std::list< Block > m_freedBlocks;
+	int32_t m_untilCheck;
 
 	void checkBlocks();
 };

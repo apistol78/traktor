@@ -91,7 +91,7 @@ bool AccGlyph::create(
 	if (!resourceManager->bind(c_idShaderGlyphMask, m_shaderGlyph))
 		return false;
 
-	std::vector< render::VertexElement > vertexElements;
+	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, texOffsetAndScale), 1));

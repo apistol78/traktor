@@ -52,7 +52,7 @@ Ref< IMesh > BlendMeshResource::createMesh(
 
 	render::SystemMeshFactory systemMeshFactory;
 	RefArray< render::Mesh > meshes(meshCount);
-	std::vector< const uint8_t* > meshVertices(meshCount);
+	AlignedVector< const uint8_t* > meshVertices(meshCount);
 
 	for (uint32_t i = 0; i < meshCount; ++i)
 	{

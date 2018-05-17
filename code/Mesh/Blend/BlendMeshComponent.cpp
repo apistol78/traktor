@@ -78,14 +78,14 @@ void BlendMeshComponent::render(world::WorldContext& worldContext, world::WorldR
 	);
 }
 
-void BlendMeshComponent::setBlendWeights(const std::vector< float >& blendWeights)
+void BlendMeshComponent::setBlendWeights(const AlignedVector< float >& blendWeights)
 {
 	size_t copy = std::min(m_blendWeights.size(), blendWeights.size());
 	for (size_t i = 0; i < copy; ++i)
 		m_blendWeights[i] = blendWeights[i];
 }
 
-const std::vector< float >& BlendMeshComponent::getBlendWeights() const
+const AlignedVector< float >& BlendMeshComponent::getBlendWeights() const
 {
 	return m_blendWeights;
 }

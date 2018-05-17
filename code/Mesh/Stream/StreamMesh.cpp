@@ -90,7 +90,7 @@ void StreamMesh::render(
 	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT (it != m_parts.end());
 
-	const std::vector< render::Mesh::Part >& meshParts = instance->mesh[0]->getParts();
+	const AlignedVector< render::Mesh::Part >& meshParts = instance->mesh[0]->getParts();
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
 		m_shader->setTechnique(i->shaderTechnique);
@@ -106,7 +106,7 @@ void StreamMesh::render(
 			continue;
 
 		// \fixme Linear search by string
-		std::vector< render::Mesh::Part >::const_iterator j = std::find_if(meshParts.begin(), meshParts.end(), NamedMeshPart(i->meshPart));
+		AlignedVector< render::Mesh::Part >::const_iterator j = std::find_if(meshParts.begin(), meshParts.end(), NamedMeshPart(i->meshPart));
 		if (j == meshParts.end())
 			continue;
 

@@ -54,7 +54,7 @@ void PartitionMesh::render(
 	if (m_partIndices.empty())
 		return;
 
-	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
+	const AlignedVector< render::Mesh::Part >& meshParts = m_mesh->getParts();
 	for (std::vector< uint32_t >::const_iterator i = m_partIndices.begin(); i != m_partIndices.end(); ++i)
 	{
 		const Part& part = m_parts[*i];

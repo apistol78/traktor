@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Memory/Alloc.h"
+#include "Core/Memory/DebugAllocator.h"
 #include "Core/Memory/FastAllocator.h"
 #include "Core/Memory/StdAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
@@ -47,6 +48,7 @@ IAllocator* getAllocator()
 		s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
 #else
 		s_allocator = allocConstruct< TrackAllocator >(s_stdAllocator);
+		//s_allocator = allocConstruct< DebugAllocator >(s_stdAllocator);
 #endif
 
 		s_allocator->addRef(0);

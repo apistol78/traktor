@@ -37,7 +37,7 @@ ScreenRenderer::ScreenRenderer()
 
 bool ScreenRenderer::create(IRenderSystem* renderSystem)
 {
-	std::vector< VertexElement > vertexElements;
+	AlignedVector< VertexElement > vertexElements;
 	vertexElements.push_back(VertexElement(DuPosition, DtFloat2, offsetof(ScreenVertex, pos)));
 	vertexElements.push_back(VertexElement(DuCustom, DtFloat2, offsetof(ScreenVertex, texCoord)));
 

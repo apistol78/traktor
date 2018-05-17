@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Core/Debug/CallStack.h"
 #include "Core/Memory/DebugAllocator.h"
 #include "Core/Thread/Acquire.h"
 
@@ -12,13 +13,18 @@ namespace traktor
 	namespace
 	{
 
+const uint32_t c_wallHead = 0xaaaaaaaa;
+const uint32_t c_wallTail = 0x55555555;
+const uint32_t c_wallDead = 0xdddddddd;
 const size_t c_wallSize = 16;
-const size_t c_maxFreedBlocks = 1000;
+const size_t c_maxFreedBlocks = 32;
+const int32_t c_eventsUntilCheck = 128;
 
 	}
 
 DebugAllocator::DebugAllocator(IAllocator* systemAllocator)
 :	m_systemAllocator(systemAllocator)
+,	m_untilCheck(c_eventsUntilCheck)
 {
 }
 
@@ -40,15 +46,25 @@ void* DebugAllocator::alloc(size_t size, size_t align, const char* const tag)
 	if (!ptr)
 		return 0;
 
-	for (size_t i = 0; i < c_wallSize; ++i)
+	uint32_t* whp = reinterpret_cast< uint32_t* >(ptr);
+	uint32_t* wtp = reinterpret_cast< uint32_t* >(ptr + c_wallSize + size);
+	for (size_t i = 0; i < c_wallSize / sizeof(uint32_t); ++i)
 	{
-		ptr[i] = 0xaa;
-		ptr[i + c_wallSize + size] = 0x55;
+		*whp++ = c_wallHead;
+		*wtp++ = c_wallTail;
 	}
 
 	m_aliveBlocks.push_front(Block());
-	m_aliveBlocks.front().top = ptr;
-	m_aliveBlocks.front().size = size + c_wallSize * 2;
+
+	Block& block = m_aliveBlocks.front();
+
+	block.top = ptr;
+	block.size = size + c_wallSize * 2;
+
+	for (int i = 0; i < sizeof_array(block.at); ++i)
+		block.at[i] = 0;
+
+	getCallStack(sizeof_array(block.at), block.at, 1);
 
 	return ptr + c_wallSize;	
 }
@@ -66,9 +82,13 @@ void DebugAllocator::free(void* ptr)
 	{
 		if (static_cast< uint8_t* >(i->top) + c_wallSize == ptr)
 		{
-			uint8_t* bptr = static_cast< uint8_t* >(i->top);
-			for (size_t j = 0; j < i->size; ++j)
-				bptr[j] = 0xdd;
+			uint32_t* whp = reinterpret_cast< uint32_t* >(i->top);
+			uint32_t* wtp = reinterpret_cast< uint32_t* >(i->top + i->size - c_wallSize);
+			for (size_t i = 0; i < c_wallSize / sizeof(uint32_t); ++i)
+			{
+				*whp++ = c_wallDead;
+				*wtp++ = c_wallDead;
+			}
 
 			m_freedBlocks.push_back(*i);
 			m_aliveBlocks.erase(i);
@@ -81,22 +101,34 @@ void DebugAllocator::free(void* ptr)
 
 void DebugAllocator::checkBlocks()
 {
+	// Skip checks; else application will be too slow.
+	if (--m_untilCheck > 0)
+		return;
+
+	m_untilCheck = c_eventsUntilCheck;
+
 	// Check walls on alive blocks.
 	for (std::list< Block >::iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
 	{
-		uint8_t* ptr = static_cast< uint8_t* >(i->top);
-		for (size_t j = 0; j < c_wallSize; ++j)
-			T_FATAL_ASSERT (ptr[j] == 0xaa);
-		for (size_t j = i->size - c_wallSize; j < i->size; ++j)
-			T_FATAL_ASSERT (ptr[j] == 0x55);
+		uint32_t* whp = reinterpret_cast< uint32_t* >(i->top);
+		uint32_t* wtp = reinterpret_cast< uint32_t* >(i->top + i->size - c_wallSize);
+		for (size_t j = 0; j < c_wallSize / sizeof(uint32_t); ++j)
+		{
+			T_FATAL_ASSERT (whp[j] == c_wallHead);
+			T_FATAL_ASSERT (wtp[j] == c_wallTail);
+		}
 	}
 
 	// Ensure freed blocks aren't modified after they have been released.
 	for (std::list< Block >::iterator i = m_freedBlocks.begin(); i != m_freedBlocks.end(); ++i)
 	{
-		uint8_t* ptr = static_cast< uint8_t* >(i->top);
-		for (size_t j = 0; j < i->size; ++j)
-			T_FATAL_ASSERT (ptr[j] == 0xdd);
+		uint32_t* whp = reinterpret_cast< uint32_t* >(i->top);
+		uint32_t* wtp = reinterpret_cast< uint32_t* >(i->top + i->size - c_wallSize);
+		for (size_t j = 0; j < c_wallSize / sizeof(uint32_t); ++j)
+		{
+			T_FATAL_ASSERT (whp[j] == c_wallDead);
+			T_FATAL_ASSERT (wtp[j] == c_wallDead);
+		}
 	}
 
 	// Reduce load; we cannot keep every released block forever.

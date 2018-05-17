@@ -61,7 +61,7 @@ VertexDeclCache::VertexDeclCache(IDirect3DDevice9* d3dDevice)
 {
 }
 
-bool VertexDeclCache::createDeclaration(const std::vector< VertexElement >& vertexElements, ComRef< IDirect3DVertexDeclaration9 >& outVertexDeclaration, DWORD& outVertexStride)
+bool VertexDeclCache::createDeclaration(const AlignedVector< VertexElement >& vertexElements, ComRef< IDirect3DVertexDeclaration9 >& outVertexDeclaration, DWORD& outVertexStride)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	D3DVERTEXELEMENT9 d3dDeclaration[32];
@@ -69,7 +69,7 @@ bool VertexDeclCache::createDeclaration(const std::vector< VertexElement >& vert
 	HRESULT hr;
 
 	// Check cache if declaration is already created.
-	for (std::vector< Declaration >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
+	for (AlignedVector< Declaration >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
 	{
 		if (i->vertexElements.size() != vertexElements.size())
 			continue;
@@ -83,7 +83,7 @@ bool VertexDeclCache::createDeclaration(const std::vector< VertexElement >& vert
 	}
 
 	// Create new declaration.
-	for (std::vector< VertexElement >::const_iterator i = vertexElements.begin(); i != vertexElements.end(); ++i)
+	for (AlignedVector< VertexElement >::const_iterator i = vertexElements.begin(); i != vertexElements.end(); ++i)
 	{
 		const VertexElement& vertexElement = *i;
 		std::memset(d3dDeclarationLast, 0, sizeof(D3DVERTEXELEMENT9));

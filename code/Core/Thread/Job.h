@@ -32,7 +32,7 @@ class T_DLLCLASS Job
 ,	public IWaitable
 {
 public:
-	virtual bool wait(int32_t timeout = -1);
+	virtual bool wait(int32_t timeout = -1) T_OVERRIDE T_FINAL;
 
 	bool stopped() const;
 

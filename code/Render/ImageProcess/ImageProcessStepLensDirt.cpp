@@ -60,7 +60,7 @@ Ref< ImageProcessStep::Instance > ImageProcessStepLensDirt::create(
 		instance->m_sources[i].index = m_sources[i].index;
 	}
 
-	std::vector< VertexElement > vertexElements;
+	AlignedVector< VertexElement > vertexElements;
 	vertexElements.push_back(VertexElement(DuPosition, DtFloat2, offsetof(Vertex, position), 0));
 	T_ASSERT_M (getVertexSize(vertexElements) == sizeof(Vertex), L"Incorrect size of vertex");
 

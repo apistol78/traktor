@@ -235,7 +235,7 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewEmbeddedDesc
 	return new RenderViewSw(this, graphicsSystem, m_processor);
 }
 
-Ref< VertexBuffer > RenderSystemSw::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+Ref< VertexBuffer > RenderSystemSw::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 	return new VertexBufferSw(vertexElements, bufferSize);
 }

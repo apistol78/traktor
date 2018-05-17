@@ -7,7 +7,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_VertexDeclCache_H
 #define traktor_render_VertexDeclCache_H
 
-#include <vector>
 #include "Core/Object.h"
 #include "Core/Misc/ComRef.h"
 #include "Core/Thread/Semaphore.h"
@@ -24,7 +23,7 @@ class VertexDeclCache : public Object
 public:
 	VertexDeclCache(IDirect3DDevice9* d3dDevice);
 
-	bool createDeclaration(const std::vector< VertexElement >& vertexElements, ComRef< IDirect3DVertexDeclaration9 >& outVertexDeclaration, DWORD& outVertexStride);
+	bool createDeclaration(const AlignedVector< VertexElement >& vertexElements, ComRef< IDirect3DVertexDeclaration9 >& outVertexDeclaration, DWORD& outVertexStride);
 
 	void setDeclaration(IDirect3DVertexDeclaration9* d3dVertexDeclaration);
 
@@ -35,14 +34,14 @@ public:
 private:
 	struct Declaration
 	{
-		std::vector< VertexElement > vertexElements;
+		AlignedVector< VertexElement > vertexElements;
 		ComRef< IDirect3DVertexDeclaration9 > d3dVertexDeclaration;
 		DWORD d3dVertexStride;
 	};
 
 	Semaphore m_lock;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
-	std::vector< Declaration > m_cache;
+	AlignedVector< Declaration > m_cache;
 	IDirect3DVertexDeclaration9* m_currentVertexDeclaration;
 };
 

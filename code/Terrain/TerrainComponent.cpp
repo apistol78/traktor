@@ -687,7 +687,7 @@ bool TerrainComponent::createPatches()
 	m_patchCount = heightfieldSize / (patchDim * detailSkip);
 
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-	std::vector< render::VertexElement > vertexElements;
+	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, 0));
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
 
@@ -713,7 +713,7 @@ bool TerrainComponent::createPatches()
 
 	m_vertexBuffer->unlock();
 #else
-	std::vector< render::VertexElement > vertexElements;
+	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, 0));
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
 #endif
@@ -743,7 +743,7 @@ bool TerrainComponent::createPatches()
 
 	updatePatches();
 
-	std::vector< uint32_t > indices;
+	AlignedVector< uint32_t > indices;
 	for (uint32_t lod = 0; lod < LodCount; ++lod)
 	{
 		uint32_t indexOffset = uint32_t(indices.size());
@@ -963,8 +963,8 @@ bool TerrainComponent::createPatches()
 
 		uint32_t indexEndOffset = uint32_t(indices.size());
 
-		uint32_t minIndex = *std::min_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
-		uint32_t maxIndex = *std::max_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
+		uint32_t minIndex = *std::min_element(indices.c_ptr() + indexOffset, indices.c_ptr() + indexEndOffset);
+		uint32_t maxIndex = *std::max_element(indices.c_ptr() + indexOffset, indices.c_ptr() + indexEndOffset);
 
 		T_FATAL_ASSERT (minIndex < patchVertexCount);
 		T_FATAL_ASSERT (maxIndex < patchVertexCount);

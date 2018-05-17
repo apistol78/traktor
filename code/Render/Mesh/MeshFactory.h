@@ -7,16 +7,16 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_MeshFactory_H
 #define traktor_render_MeshFactory_H
 
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Render/VertexElement.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -35,10 +35,10 @@ class T_DLLCLASS MeshFactory : public Object
 
 public:
 	virtual Ref< Mesh > createMesh(
-		const std::vector< VertexElement >& vertexElements,
-		unsigned int vertexBufferSize,
+		const AlignedVector< VertexElement >& vertexElements,
+		uint32_t vertexBufferSize,
 		IndexType indexType,
-		unsigned int indexBufferSize
+		uint32_t indexBufferSize
 	) = 0;
 };
 

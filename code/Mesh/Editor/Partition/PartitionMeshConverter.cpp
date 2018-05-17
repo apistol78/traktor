@@ -255,7 +255,7 @@ Ref< OctreeNodeData > createOctreeParts(
 	bool useLargeIndices,
 	const uint8_t* indexFirst,
 	uint8_t*& index,
-	std::vector< render::Mesh::Part >& renderParts,
+	AlignedVector< render::Mesh::Part >& renderParts,
 	AlignedVector< PartitionMeshResource::Part >& partitionParts,
 	std::vector< std::wstring >& worldTechniques
 )
@@ -394,7 +394,7 @@ bool PartitionMeshConverter::convert(
 	const RefArray< model::Model >& models,
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
-	const std::vector< render::VertexElement >& vertexElements,
+	const AlignedVector< render::VertexElement >& vertexElements,
 	int32_t maxInstanceCount,
 	IMeshResource* meshResource,
 	IStream* meshResourceStream
@@ -478,7 +478,7 @@ bool PartitionMeshConverter::convert(
 	uint8_t* index = static_cast< uint8_t* >(mesh->getIndexBuffer()->lock());
 	uint8_t* indexFirst = index;
 
-	std::vector< render::Mesh::Part > renderParts;
+	AlignedVector< render::Mesh::Part > renderParts;
 	AlignedVector< PartitionMeshResource::Part > partitionParts;
 
 	Ref< OctreePartitionData > partitionData = new OctreePartitionData();

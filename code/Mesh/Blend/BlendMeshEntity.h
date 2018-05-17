@@ -34,9 +34,9 @@ class T_DLLCLASS BlendMeshEntity : public MeshEntity
 public:
 	BlendMeshEntity(const Transform& transform, bool screenSpaceCulling, const resource::Proxy< BlendMesh >& mesh);
 
-	void setBlendWeights(const std::vector< float >& blendWeights);
+	void setBlendWeights(const AlignedVector< float >& blendWeights);
 
-	const std::vector< float >& getBlendWeights() const;
+	const AlignedVector< float >& getBlendWeights() const;
 
 	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
 
@@ -52,7 +52,7 @@ public:
 private:
 	resource::Proxy< BlendMesh > m_mesh;
 	Ref< BlendMesh::Instance > m_instance;
-	std::vector< float > m_blendWeights;
+	AlignedVector< float > m_blendWeights;
 };
 
 	}

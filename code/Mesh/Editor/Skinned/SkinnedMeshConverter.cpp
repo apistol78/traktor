@@ -54,7 +54,7 @@ bool SkinnedMeshConverter::convert(
 	const RefArray< model::Model >& models,
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
-	const std::vector< render::VertexElement >& vertexElements,
+	const AlignedVector< render::VertexElement >& vertexElements,
 	int32_t maxInstanceCount,
 	IMeshResource* meshResource,
 	IStream* meshResourceStream
@@ -211,7 +211,7 @@ bool SkinnedMeshConverter::convert(
 	mesh->getIndexBuffer()->unlock();
 
 	// Build parts.
-	std::vector< render::Mesh::Part > meshParts;
+	AlignedVector< render::Mesh::Part > meshParts;
 	std::map< std::wstring, SkinnedMeshResource::parts_t > parts;
 
 	for (std::map< std::wstring, std::vector< IndexRange > >::const_iterator i = techniqueRanges.begin(); i != techniqueRanges.end(); ++i)

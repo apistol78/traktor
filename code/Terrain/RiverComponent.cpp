@@ -94,7 +94,7 @@ bool RiverComponent::create(resource::IResourceManager* resourceManager, render:
 		T += dT * pn.tension;
 	}
 
-	std::vector< render::VertexElement > vertexElements;
+	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, 0));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, 4 * sizeof(float)));
 

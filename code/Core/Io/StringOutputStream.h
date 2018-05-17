@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_StringOutputStream_H
 #define traktor_StringOutputStream_H
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/OutputStream.h"
 #include "Core/Io/OutputStreamBuffer.h"
 
@@ -41,7 +41,7 @@ public:
 private:
 	friend class StringOutputStream;
 
-	std::vector< wchar_t > m_internal;
+	AlignedVector< wchar_t > m_internal;
 };
 
 /*! \brief Formatting string stream.

@@ -36,13 +36,13 @@ void StaticMesh::render(
 	const IMeshParameterCallback* parameterCallback
 )
 {
-	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
+	SmallMap< render::handle_t, AlignedVector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT (it != m_parts.end());
 
 	Aabb3 boundingBox = m_renderMesh->getBoundingBox();
 
-	const std::vector< render::Mesh::Part >& meshParts = m_renderMesh->getParts();
-	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+	const AlignedVector< render::Mesh::Part >& meshParts = m_renderMesh->getParts();
+	for (AlignedVector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
 		m_shader->setTechnique(i->shaderTechnique);
 

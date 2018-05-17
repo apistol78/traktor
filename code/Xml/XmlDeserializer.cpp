@@ -45,8 +45,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.XmlDeserializer", XmlDeserializer, Serializ
 
 XmlDeserializer::XmlDeserializer(IStream* stream)
 :	m_xpp(stream)
+,	m_stackPointer(0)
 {
 	T_ASSERT_M (stream->canRead(), L"Incorrect direction on input stream");
+	m_stack.reserve(32);
 	m_values.reserve(16);
 }
 
@@ -415,7 +417,7 @@ void XmlDeserializer::operator >> (const MemberArray& m)
 		m.read(*this);
 	}
 
-	m_stack.pop_back();
+	m_stack[--m_stackPointer].dups.reset();
 }
 
 void XmlDeserializer::operator >> (const MemberComplex& m)
@@ -446,23 +448,26 @@ void XmlDeserializer::operator >> (const MemberEnumBase& m)
 std::wstring XmlDeserializer::stackPath()
 {
 	StringOutputStream ss;
-	for (AlignedVector< Entry >::const_iterator i = m_stack.begin(); i != m_stack.end(); ++i)
+	for (uint32_t i = 0; i < m_stackPointer; ++i)
 	{
-		ss << L'/' << i->name;
-		if (i->index > 0)
-			ss << L'[' << i->index << L']';
+		const Entry& e = m_stack[i];
+		ss << L'/' << e.name;
+		if (e.index > 0)
+			ss << L'[' << e.index << L']';
 	}
 	return ss.str();
 }
 
 bool XmlDeserializer::enterElement(const std::wstring& name)
 {
-	Entry e =
-	{
-		name,
-		m_stack.empty() ? 0 : m_stack.back().dups[name]++
-	};
-	m_stack.push_back(e);
+	int32_t index = (m_stackPointer > 0) ? m_stack[m_stackPointer - 1].dups[name]++ : 0;
+
+	if (m_stackPointer >= m_stack.size())
+		m_stack.resize(m_stackPointer + 16);
+
+	Entry& e = m_stack[m_stackPointer++];
+	e.name = name;
+	e.index = index;
 
 	XmlPullParser::EventType eventType;
 	while ((eventType = m_xpp.next()) != XmlPullParser::EtEndDocument)
@@ -485,8 +490,9 @@ bool XmlDeserializer::enterElement(const std::wstring& name)
 
 bool XmlDeserializer::leaveElement(const std::wstring& name)
 {
-	T_ASSERT (m_stack.back().name == name);
-	m_stack.pop_back();
+	T_ASSERT (m_stackPointer > 0);
+	T_ASSERT (m_stack[m_stackPointer - 1].name == name);
+	m_stack[--m_stackPointer].dups.reset();
 
 	while (m_xpp.next() != XmlPullParser::EtEndDocument)
 	{

@@ -31,7 +31,7 @@ public:
 
 	virtual ~VertexBufferStaticDx9();
 
-	bool create(IDirect3DDevice9* d3dDevice, const std::vector< VertexElement >& vertexElements);
+	bool create(IDirect3DDevice9* d3dDevice, const AlignedVector< VertexElement >& vertexElements);
 
 	bool activate(IDirect3DDevice9* d3dDevice);
 

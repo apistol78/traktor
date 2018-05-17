@@ -35,7 +35,7 @@ VertexBufferDynamicDx9::~VertexBufferDynamicDx9()
 	destroy();
 }
 
-bool VertexBufferDynamicDx9::create(IDirect3DDevice9* d3dDevice, const std::vector< VertexElement >& vertexElements)
+bool VertexBufferDynamicDx9::create(IDirect3DDevice9* d3dDevice, const AlignedVector< VertexElement >& vertexElements)
 {
 	HRESULT hr;
 	DWORD usage;

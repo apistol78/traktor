@@ -452,7 +452,7 @@ bool RenderViewSw::getBackBufferContent(void* buffer) const
 
 void RenderViewSw::fetchVertex(uint32_t index, varying_data_t& outVertexVarying) const
 {
-	const std::vector< VertexElement >& vertexElements = m_currentVertexBuffer->getVertexElements();
+	const AlignedVector< VertexElement >& vertexElements = m_currentVertexBuffer->getVertexElements();
 	const VertexBufferSw::vertex_tuple_t* vertices = m_currentVertexBuffer->getData();
 
 	uint32_t vertexElementCount = uint32_t(vertexElements.size());

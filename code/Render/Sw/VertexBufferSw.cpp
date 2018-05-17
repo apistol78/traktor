@@ -31,7 +31,7 @@ float safeHalfToFloat(half_t half)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferSw", VertexBufferSw, VertexBuffer)
 
-VertexBufferSw::VertexBufferSw(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize)
+VertexBufferSw::VertexBufferSw(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize)
 :	VertexBuffer(bufferSize)
 ,	m_vertexElements(vertexElements)
 ,	m_vertexStride(getVertexSize(vertexElements))
@@ -83,7 +83,7 @@ void VertexBufferSw::unlock()
 
 	for (uint32_t i = 0; i < m_lockCount; ++i)
 	{
-		for (std::vector< VertexElement >::const_iterator j = m_vertexElements.begin(); j != m_vertexElements.end(); ++j)
+		for (AlignedVector< VertexElement >::const_iterator j = m_vertexElements.begin(); j != m_vertexElements.end(); ++j)
 		{
 			uint8_t* source = lockIter + j->getOffset();
 

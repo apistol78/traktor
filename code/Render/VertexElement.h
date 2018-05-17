@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_VertexElement_H
 #define traktor_render_VertexElement_H
 
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -41,13 +41,13 @@ public:
 
 	uint32_t getSize() const;
 
-	inline DataUsage getDataUsage() const { return m_usage; }
+	DataUsage getDataUsage() const { return m_usage; }
 	
-	inline DataType getDataType() const { return m_type; }
+	DataType getDataType() const { return m_type; }
 	
-	inline uint32_t getOffset() const { return m_offset; }
+	uint32_t getOffset() const { return m_offset; }
 	
-	inline uint32_t getIndex() const { return m_index; }
+	uint32_t getIndex() const { return m_index; }
 	
 private:
 	DataUsage m_usage;
@@ -56,12 +56,12 @@ private:
 	unsigned int m_index;
 };
 
-uint32_t T_DLLCLASS getVertexSize(const std::vector< VertexElement >& vertexElements);
+uint32_t T_DLLCLASS getVertexSize(const AlignedVector< VertexElement >& vertexElements);
 
 uint32_t T_DLLCLASS getVertexSize(const VertexElement* vertexElements, uint32_t count);
 
-std::vector< VertexElement >::const_iterator T_DLLCLASS findVertexElement(
-	const std::vector< VertexElement >& vertexElements,
+AlignedVector< VertexElement >::const_iterator T_DLLCLASS findVertexElement(
+	const AlignedVector< VertexElement >& vertexElements,
 	DataUsage usage,
 	uint32_t index
 );

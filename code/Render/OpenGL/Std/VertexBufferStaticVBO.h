@@ -25,7 +25,7 @@ class VertexBufferStaticVBO : public VertexBufferOpenGL
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferStaticVBO(ContextOpenGL* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize);
+	VertexBufferStaticVBO(ContextOpenGL* resourceContext, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize);
 
 	virtual ~VertexBufferStaticVBO();
 

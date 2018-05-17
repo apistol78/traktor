@@ -127,7 +127,7 @@ bool AccDisplayRenderer::create(
 		return false;
 	}
 
-	std::vector< render::VertexElement > fillVertexElements(5);
+	AlignedVector< render::VertexElement > fillVertexElements(5);
 	fillVertexElements[0] = render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(AccShape::FillVertex, pos));
 	fillVertexElements[1] = render::VertexElement(render::DuCustom, render::DtByte4N, offsetof(AccShape::FillVertex, curvature), 0);
 	fillVertexElements[2] = render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(AccShape::FillVertex, texCoord), 1);
@@ -142,7 +142,7 @@ bool AccDisplayRenderer::create(
 		return false;
 	}
 
-	std::vector< render::VertexElement > lineVertexElements(2);
+	AlignedVector< render::VertexElement > lineVertexElements(2);
 	lineVertexElements[0] = render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(AccShape::LineVertex, pos));
 	lineVertexElements[1] = render::VertexElement(render::DuCustom, render::DtFloat1, offsetof(AccShape::LineVertex, lineOffset), 0);
 	T_FATAL_ASSERT (render::getVertexSize(lineVertexElements) == sizeof(AccShape::LineVertex));

@@ -69,7 +69,7 @@ Ref< ImageProcessStepBokeh::Instance > ImageProcessStepBokeh::create(
 	}
 
 	// Create dense grid of screen "point quads".
-	std::vector< VertexElement > vertexElements;
+	AlignedVector< VertexElement > vertexElements;
 	vertexElements.push_back(VertexElement(DuPosition, DtFloat2, offsetof(Vertex, x)));
 	vertexElements.push_back(VertexElement(DuCustom, DtFloat2, offsetof(Vertex, dx)));
 

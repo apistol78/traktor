@@ -59,7 +59,7 @@ public:
 
 	bool finished() const;
 
-	virtual bool wait(int32_t timeout = -1);
+	virtual bool wait(int32_t timeout = -1) T_OVERRIDE T_FINAL;
 
 	uint32_t id() const { return m_id; }
 

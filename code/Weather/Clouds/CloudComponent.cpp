@@ -210,7 +210,7 @@ bool CloudComponent::create(
 	const CloudParticleData& particleData
 )
 {
-	std::vector< render::VertexElement > vertexElements;
+	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat1, offsetof(Vertex, index)));
 

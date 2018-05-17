@@ -26,7 +26,7 @@ void SingletonManager::addBefore(ISingleton* singleton, ISingleton* dependency)
 {
 	T_ASSERT (dependency);
 
-	std::vector< ISingleton* >::iterator i = std::find(m_singletons.begin(), m_singletons.end(), dependency);
+	AlignedVector< ISingleton* >::iterator i = std::find(m_singletons.begin(), m_singletons.end(), dependency);
 	T_ASSERT (i != m_singletons.end());
 
 	m_singletons.insert(i, singleton);
@@ -36,7 +36,7 @@ void SingletonManager::addAfter(ISingleton* singleton, ISingleton* dependency)
 {
 	T_ASSERT (dependency);
 
-	std::vector< ISingleton* >::iterator i = std::find(m_singletons.begin(), m_singletons.end(), dependency);
+	AlignedVector< ISingleton* >::iterator i = std::find(m_singletons.begin(), m_singletons.end(), dependency);
 	T_ASSERT (i != m_singletons.end());
 
 	m_singletons.insert(++i, singleton);
@@ -44,7 +44,7 @@ void SingletonManager::addAfter(ISingleton* singleton, ISingleton* dependency)
 
 void SingletonManager::destroy()
 {
-	for (std::vector< ISingleton* >::iterator i = m_singletons.begin(); i != m_singletons.end(); ++i)
+	for (AlignedVector< ISingleton* >::iterator i = m_singletons.begin(); i != m_singletons.end(); ++i)
 		(*i)->destroy();
 
 	m_singletons.resize(0);

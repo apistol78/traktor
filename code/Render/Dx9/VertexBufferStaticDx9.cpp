@@ -29,7 +29,7 @@ VertexBufferStaticDx9::~VertexBufferStaticDx9()
 	destroy();
 }
 
-bool VertexBufferStaticDx9::create(IDirect3DDevice9* d3dDevice, const std::vector< VertexElement >& vertexElements)
+bool VertexBufferStaticDx9::create(IDirect3DDevice9* d3dDevice, const AlignedVector< VertexElement >& vertexElements)
 {
 	HRESULT hr;
 

@@ -26,7 +26,7 @@ class VertexBufferDynamicVBO : public VertexBufferOpenGL
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferDynamicVBO(ContextOpenGL* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize);
+	VertexBufferDynamicVBO(ContextOpenGL* resourceContext, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize);
 
 	virtual ~VertexBufferDynamicVBO();
 
