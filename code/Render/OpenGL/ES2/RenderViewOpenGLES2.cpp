@@ -6,7 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
+#include "Render/OpenGL/ES2/ExtensionsGLES2.h"
 #include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
 #include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
@@ -14,6 +14,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderViewOpenGLES2.h"
 #include "Render/OpenGL/ES2/StateCache.h"
+#include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
 #if defined(__ANDROID__)
 #	include "Render/OpenGL/ES2/Android/ContextOpenGLES2.h"
 #elif defined(__IOS__)
@@ -552,7 +553,7 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 		T_ASSERT (0);
 	}
 
-#if !defined(_WIN32) && GL_EXT_draw_instanced
+#if !defined(_WIN32) && !defined(__ANDROID__) && GL_EXT_draw_instanced
 
 	if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull, 0))
 		return;
@@ -601,6 +602,60 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 	}
 
 #else
+#	if defined(__ANDROID__)
+
+	if (s_glDrawElementsInstancedEXT != 0 && s_glDrawArraysInstancedEXT != 0)
+	{
+		if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull, 0))
+			return;
+
+		if (primitives.indexed)
+		{
+			T_ASSERT_M (indexBufferGL, L"No index buffer");
+
+			GLenum indexType = 0;
+			GLint offsetMultiplier = 0;
+
+			switch (indexBufferGL->getIndexType())
+			{
+			case ItUInt16:
+				indexType = GL_UNSIGNED_SHORT;
+				offsetMultiplier = 2;
+				break;
+
+			case ItUInt32:
+				indexType = GL_UNSIGNED_INT;
+				offsetMultiplier = 4;
+				break;
+
+			default:
+				return;
+			}
+
+			indexBufferGL->activate(m_stateCache);
+
+			T_OGL_SAFE(s_glDrawElementsInstancedEXT(
+				primitiveType,
+				vertexCount,
+				indexType,
+				(const GLubyte*)(primitives.offset * offsetMultiplier),
+				instanceCount
+			));
+		}
+		else
+		{
+			T_OGL_SAFE(s_glDrawArraysInstancedEXT(
+				primitiveType,
+				primitives.offset,
+				vertexCount,
+				instanceCount
+			));
+		}
+	}
+	else
+	{
+
+#	endif
 
 	for (uint32_t i = 0; i < instanceCount; ++i)
 	{
@@ -649,6 +704,9 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 		}
 	}
 
+#	if defined(__ANDROID__)
+	}
+#	endif
 #endif
 
 	m_drawCalls++;

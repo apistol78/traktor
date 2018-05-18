@@ -30,7 +30,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.DeploySettingsPage", 0, DeployS
 bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,*,*,*,100%", 0, 4)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,*,*,100%", 0, 4)))
 		return false;
 
 	m_checkInheritCache = new ui::CheckBox();
@@ -57,12 +57,6 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	bool staticallyLinked = settings->getProperty< bool >(L"Amalgam.StaticallyLinked", false);
 	m_checkStaticallyLinked->setChecked(staticallyLinked);
 
-	m_checkUseVS = new ui::CheckBox();
-	m_checkUseVS->create(container, L"Build Android using MS Visual Studio");
-
-	bool useVS = settings->getProperty< bool >(L"Amalgam.AndroidUseVS", false);
-	m_checkUseVS->setChecked(useVS);
-
 	Ref< ui::Container > containerAndroid = new ui::Container();
 	containerAndroid->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4));
 
@@ -72,35 +66,23 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_editAndroidHome = new ui::Edit();
 	m_editAndroidHome->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidHome", L"$(ANDROID_HOME)"));
 
-	Ref< ui::Static > staticAndroidJavaHome = new ui::Static();
-	staticAndroidJavaHome->create(containerAndroid, L"Android Java home");
-
-	m_editAndroidJavaHome = new ui::Edit();
-	m_editAndroidJavaHome->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidJavaHome", L"$(JAVA_HOME)"));
-
 	Ref< ui::Static > staticAndroidNdkRoot = new ui::Static();
 	staticAndroidNdkRoot->create(containerAndroid, L"Android NDK root");
 
 	m_editAndroidNdkRoot = new ui::Edit();
 	m_editAndroidNdkRoot->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidNdkRoot", L"$(ANDROID_NDK_ROOT)"));
 
-	Ref< ui::Static > staticAndroidAntHome = new ui::Static();
-	staticAndroidAntHome->create(containerAndroid, L"Android ANT home");
-
-	m_editAndroidAntHome = new ui::Edit();
-	m_editAndroidAntHome->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidAntHome", L"$(ANT_HOME)"));
-
 	Ref< ui::Static > staticAndroidToolchain = new ui::Static();
 	staticAndroidToolchain->create(containerAndroid, L"Android Toolchain");
 
 	m_editAndroidToolchain = new ui::Edit();
-	m_editAndroidToolchain->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidToolchain", L"4.9"));
+	m_editAndroidToolchain->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidToolchain", L""));
 
 	Ref< ui::Static > staticAndroidApiLevel = new ui::Static();
 	staticAndroidApiLevel->create(containerAndroid, L"Android API level");
 
 	m_editAndroidApiLevel = new ui::Edit();
-	m_editAndroidApiLevel->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidApiLevel", L"android-19"));
+	m_editAndroidApiLevel->create(containerAndroid, settings->getProperty< std::wstring >(L"Amalgam.AndroidApiLevel", L""));
 
 	Ref< ui::Static > staticEmscripten = new ui::Static();
 	staticEmscripten->create(containerAndroid, L"Emscripten SDK");
@@ -158,20 +140,11 @@ bool DeploySettingsPage::apply(PropertyGroup* settings)
 	bool staticallyLinked = m_checkStaticallyLinked->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Amalgam.StaticallyLinked", staticallyLinked);
 
-	bool useNsight = m_checkUseVS->isChecked();
-	settings->setProperty< PropertyBoolean >(L"Amalgam.AndroidUseVS", useNsight);
-
 	std::wstring androidHome = m_editAndroidHome->getText();
 	settings->setProperty< PropertyString >(L"Amalgam.AndroidHome", androidHome);
 
-	std::wstring androidJavaHome = m_editAndroidJavaHome->getText();
-	settings->setProperty< PropertyString >(L"Amalgam.AndroidJavaHome", androidJavaHome);
-
 	std::wstring androidNdkRoot = m_editAndroidNdkRoot->getText();
 	settings->setProperty< PropertyString >(L"Amalgam.AndroidNdkRoot", androidNdkRoot);
-
-	std::wstring androidAntHome = m_editAndroidAntHome->getText();
-	settings->setProperty< PropertyString >(L"Amalgam.AndroidAntHome", androidAntHome);
 
 	std::wstring androidToolchain = m_editAndroidToolchain->getText();
 	settings->setProperty< PropertyString >(L"Amalgam.AndroidToolchain", androidToolchain);

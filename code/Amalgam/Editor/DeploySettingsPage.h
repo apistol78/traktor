@@ -43,11 +43,8 @@ private:
 	Ref< ui::CheckBox > m_checkHidePipeline;
 	Ref< ui::CheckBox > m_checkUseDebugBinaries;
 	Ref< ui::CheckBox > m_checkStaticallyLinked;
-	Ref< ui::CheckBox > m_checkUseVS;
 	Ref< ui::Edit > m_editAndroidHome;
-	Ref< ui::Edit > m_editAndroidJavaHome;
 	Ref< ui::Edit > m_editAndroidNdkRoot;
-	Ref< ui::Edit > m_editAndroidAntHome;
 	Ref< ui::Edit > m_editAndroidToolchain;
 	Ref< ui::Edit > m_editAndroidApiLevel;
 	Ref< ui::Edit > m_editEmscripten;

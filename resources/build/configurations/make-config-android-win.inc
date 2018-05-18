@@ -2,6 +2,8 @@
 
 # Toolchain and SDK configuration.
 TOOLCHAIN_BIN=$(ANDROID_NDK_ROOT)/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/bin
+NDK_SYSROOT=$(ANDROID_NDK_ROOT)/platforms/android-27/arch-arm
+NDK_CXX_PATH=$(ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a
 NDK_INCLUDES=\
 	-I$(ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/include\
 	-I$(ANDROID_NDK_ROOT)/sources/android/support/include\
@@ -10,15 +12,15 @@ NDK_INCLUDES=\
 	-I$(ANDROID_NDK_ROOT)/sysroot/usr/include
 
 # Build tools.
-C="$(TOOLCHAIN_BIN)/arm-linux-androideabi-g++"
+C="$(TOOLCHAIN_BIN)/arm-linux-androideabi-gcc"
 
 C_FLAGS_COMMON=\
+	-static-libstdc++\
 	-pthread\
 	-MMD\
 	-marm\
 	-march=armv7-a\
 	-mtune=xscale\
-	-fpermissive\
 	-fno-common\
 	-fno-strict-aliasing\
 	-funswitch-loops\
@@ -26,10 +28,8 @@ C_FLAGS_COMMON=\
 	-fomit-frame-pointer\
 	-fno-exceptions\
 	-fstack-protector\
-	-fno-rtti\
 	-fno-short-enums\
 	-fPIC\
-	-x c++\
 	-Wno-psabi\
 	-Wno-attributes\
 	-D __ANDROID__\
@@ -41,12 +41,13 @@ C_FLAGS_DEBUG_STATIC=$(C_FLAGS_COMMON) -g -D _UNICODE -D UNICODE
 C_FLAGS_RELEASE_STATIC=$(C_FLAGS_COMMON) -O2 -D _UNICODE -D UNICODE -D NDEBUG
 C_FLAGS_DEBUG_EXECUTABLE=$(C_FLAGS_COMMON) -g -D _UNICODE -D UNICODE
 C_FLAGS_RELEASE_EXECUTABLE=$(C_FLAGS_COMMON) -O2 -D _UNICODE -D UNICODE -D NDEBUG
-C_FLAG_OUTPUT=-o^ # 
+C_FLAG_OUTPUT=-o 
 
 
-CC="$(TOOLCHAIN_BIN)/arm-linux-androideabi-g++"
+CC="$(TOOLCHAIN_BIN)/arm-linux-androideabi-gcc"
 
 CC_FLAGS_COMMON=\
+	-static-libstdc++\
 	-std=c++11\
 	-pthread\
 	-MMD\
@@ -76,7 +77,7 @@ CC_FLAGS_DEBUG_STATIC=$(CC_FLAGS_COMMON) -g -D _UNICODE -D UNICODE
 CC_FLAGS_RELEASE_STATIC=$(CC_FLAGS_COMMON) -O2 -D _UNICODE -D UNICODE -D NDEBUG
 CC_FLAGS_DEBUG_EXECUTABLE=$(CC_FLAGS_COMMON) -g -D _UNICODE -D UNICODE
 CC_FLAGS_RELEASE_EXECUTABLE=$(CC_FLAGS_COMMON) -O2 -D _UNICODE -D UNICODE -D NDEBUG
-CC_FLAG_OUTPUT=-o^ # 
+CC_FLAG_OUTPUT=-o
 
 AR="$(TOOLCHAIN_BIN)/arm-linux-androideabi-ar"
 AR_FLAGS_COMMON=-r -s
@@ -84,9 +85,11 @@ AR_FLAGS_DEBUG_STATIC=$(AR_FLAGS_COMMON)
 AR_FLAGS_RELEASE_STATIC=$(AR_FLAGS_COMMON)
 AR_FLAG_OUTPUT=
 
-LINK="$(TOOLCHAIN_BIN)/arm-linux-androideabi-g++"
-LINK_LIBS=
-LINK_FLAG_OUTPUT=-o^ # 
+LINK="$(TOOLCHAIN_BIN)/arm-linux-androideabi-gcc"
+LINK_LIBS=-lc++ -llog -lc -lm -landroid -lgcc -shared
+LINK_FLAGS_DEBUG_EXECUTABLE=$(LINK_LIBS) --sysroot=$(NDK_SYSROOT) -L$(NDK_CXX_PATH)
+LINK_FLAGS_RELEASE_EXECUTABLE=$(LINK_LIBS) --sysroot=$(NDK_SYSROOT) -L$(NDK_CXX_PATH)
+LINK_FLAG_OUTPUT=-o
 
 ADDITIONAL_INCLUDE_PATHS=
 ADDITIONAL_LIBRARY_PATHS=

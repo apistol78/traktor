@@ -158,13 +158,10 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 	env->set(L"DEPLOY_DEBUG", m_globalSettings->getProperty< bool >(L"Amalgam.UseDebugBinaries", false) ? L"YES" : L"");
 	env->set(L"DEPLOY_STATIC_LINK", m_globalSettings->getProperty< bool >(L"Amalgam.StaticallyLinked", false) ? L"YES" : L"");
 
-	env->set(L"DEPLOY_ANDROID_USE_VS", m_globalSettings->getProperty< bool >(L"Amalgam.AndroidUseVS", false) ? L"YES" : L"");
 	env->set(L"DEPLOY_ANDROID_HOME", resolveEnv(m_globalSettings->getProperty< std::wstring >(L"Amalgam.AndroidHome", L"$(ANDROID_HOME)"), 0));
-	env->set(L"DEPLOY_ANDROID_JAVA_HOME", resolveEnv(m_globalSettings->getProperty< std::wstring >(L"Amalgam.AndroidJavaHome", L"$(JAVA_HOME)"), 0));
 	env->set(L"DEPLOY_ANDROID_NDK_ROOT", resolveEnv(m_globalSettings->getProperty< std::wstring >(L"Amalgam.AndroidNdkRoot", L"$(ANDROID_NDK_ROOT)"), 0));
-	env->set(L"DEPLOY_ANDROID_ANT_HOME", resolveEnv(m_globalSettings->getProperty< std::wstring >(L"Amalgam.AndroidAntHome", L"$(ANT_HOME)"), 0));
-	env->set(L"DEPLOY_ANDROID_TOOLCHAIN", m_globalSettings->getProperty< std::wstring >(L"Amalgam.AndroidToolchain", L"4.9"));
-	env->set(L"DEPLOY_ANDROID_APILEVEL", m_globalSettings->getProperty< std::wstring >(L"Amalgam.AndroidApiLevel", L"android-19"));
+	env->set(L"DEPLOY_ANDROID_TOOLCHAIN", m_globalSettings->getProperty< std::wstring >(L"Amalgam.AndroidToolchain", L""));
+	env->set(L"DEPLOY_ANDROID_APILEVEL", m_globalSettings->getProperty< std::wstring >(L"Amalgam.AndroidApiLevel", L""));
 
 	env->set(L"DEPLOY_EMSCRIPTEN", resolveEnv(m_globalSettings->getProperty< std::wstring >(L"Amalgam.Emscripten", L"$(EMSCRIPTEN)"), 0));
 
