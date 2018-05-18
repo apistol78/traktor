@@ -28,6 +28,8 @@ extern PFNGLGENVERTEXARRAYSOESPROC g_glGenVertexArraysOES;
 
 #if defined(__ANDROID__)
 extern PFNGLDISCARDFRAMEBUFFEREXTPROC s_glDiscardFramebufferEXT;
+extern PFNGLDRAWELEMENTSINSTANCEDEXTPROC s_glDrawElementsInstancedEXT;
+extern PFNGLDRAWARRAYSINSTANCEDEXTPROC s_glDrawArraysInstancedEXT;
 #endif
 
 void initializeExtensions();

@@ -24,6 +24,8 @@ PFNGLGENVERTEXARRAYSOESPROC g_glGenVertexArraysOES = 0;
 
 #if defined(__ANDROID__)
 PFNGLDISCARDFRAMEBUFFEREXTPROC s_glDiscardFramebufferEXT = 0;
+PFNGLDRAWELEMENTSINSTANCEDEXTPROC s_glDrawElementsInstancedEXT = 0;
+PFNGLDRAWARRAYSINSTANCEDEXTPROC s_glDrawArraysInstancedEXT = 0;
 #endif
 
 void initializeExtensions()
@@ -89,6 +91,18 @@ void initializeExtensions()
 			log::info << L"glDiscardFramebufferEXT found!" << Endl;
 		else
 			log::info << L"glDiscardFramebufferEXT NOT found!" << Endl;
+
+		s_glDrawElementsInstancedEXT = (PFNGLDRAWELEMENTSINSTANCEDEXTPROC)dlsym(RTLD_DEFAULT, "glDrawElementsInstancedEXT");
+		if (s_glDrawElementsInstancedEXT)
+			log::info << L"glDrawElementsInstancedEXT found!" << Endl;
+		else
+			log::info << L"glDrawElementsInstancedEXT NOT found!" << Endl;
+
+		s_glDrawArraysInstancedEXT = (PFNGLDRAWARRAYSINSTANCEDEXTPROC)dlsym(RTLD_DEFAULT, "glDrawArraysInstancedEXT");
+		if (s_glDrawArraysInstancedEXT)
+			log::info << L"glDrawArraysInstancedEXT found!" << Endl;
+		else
+			log::info << L"glDrawArraysInstancedEXT NOT found!" << Endl;
 	}
 #endif
 }

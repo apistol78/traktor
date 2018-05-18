@@ -2380,6 +2380,7 @@
 					<definitions>
 						<item>_DEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>LUA_USE_LONGJMP</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -2409,6 +2410,7 @@
 					<definitions>
 						<item>NDEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
+						<item>LUA_USE_LONGJMP</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
