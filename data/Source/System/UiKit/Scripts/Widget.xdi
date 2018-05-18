@@ -241,7 +241,6 @@ function Widget:place(x, y, width, height)
 	end
 	self._placement.x = ax
 	self._placement.width = aw
-	self._mc:setX(ax)
 
 	local ay, ah
 	if self._valign == Widget.ALIGN_TOP then
@@ -259,7 +258,11 @@ function Widget:place(x, y, width, height)
 	end
 	self._placement.y = ay
 	self._placement.height = ah
-	self._mc:setY(ay)
+
+	if self._mc ~= nil then
+		self._mc:setX(ax)
+		self._mc:setY(ay)
+	end
 end
 
 function Widget:globalToLocal(pt)
@@ -310,8 +313,10 @@ end
 
 function Widget:_initialize(parent, mc)
 	self._parent = parent
-	self._mc = mc
-	self._mc:setPlaying(false, true)
+	if mc ~= nil then
+		self._mc = mc
+		self._mc:setPlaying(false, true)
+	end
 	self._enable = true
 	self._visible = true
 	self._placement = { x = 0, y = 0, width = 0, height = 0 }
