@@ -5768,6 +5768,11 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[36]"/>
 				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[7]"/>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">

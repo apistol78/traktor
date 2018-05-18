@@ -10,6 +10,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Timer/Timer.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/UdpSocket.h"
 #include "Net/Discovery/DiscoveryManager.h"
@@ -51,7 +53,20 @@ bool LanUser::getName(uint64_t userHandle, std::wstring& outName)
 
 Ref< drawing::Image > LanUser::getImage(uint64_t userHandle) const
 {
-	return 0;
+	static Ref< drawing::Image > s_image;
+	if (!s_image)
+	{
+		s_image = new drawing::Image(drawing::PixelFormat::getA8B8G8R8(), 64, 64);
+		for (int32_t y = 0; y < 64; ++y)
+		{
+			for (int32_t x = 0; x < 64; ++x)
+			{
+				bool t = (((x / 16) & 1) ^ ((y / 16) & 1)) != 0;
+				s_image->setPixelUnsafe(x, y, t ? Color4f(0.0f, 0.0f, 1.0f, 1.0) : Color4f(0.0f, 1.0f, 0.0f, 1.0f));
+			}
+		}
+	}
+	return s_image;
 }
 
 bool LanUser::isFriend(uint64_t userHandle)
