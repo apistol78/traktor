@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
+
+import(traktor)
+
+-- Null
+
+Null = Null or class("Null", Widget)
+
+function Null:new(parent, width, height)
+	local mc = nil -- Widget._createResource(parent, "MC_Static")
+	self:_initialize(parent, mc, width, height)
+end
+
+function Null:getPreferredSize()
+	return self._preferredSize
+end
+
+-- Private
+
+function Null:_initialize(parent, mc, width, height)
+	Widget._initialize(self, parent, mc)
+	self._preferredSize = { width = width, height = height }
+end
+
+
+	]]>
+	</text>
+</object>
