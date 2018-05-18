@@ -143,7 +143,7 @@ function Static:_onMouseLeave(event)
 end
 
 function Static:_onMouseRelease(event)
-	if self._clickFn ~= nil then self._clickFn() end
+	if self._clickFn ~= nil then self._clickFn(self) end
 	return true
 end
 

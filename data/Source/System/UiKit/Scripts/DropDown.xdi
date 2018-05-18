@@ -194,7 +194,7 @@ function DropDown:_onListClick(index)
 	if self._selected ~= index then
 		self:select(index)
 		if self._clickFn ~= nil then
-			self._clickFn()
+			self._clickFn(self)
 		end
 	end
 	self:_removeList()

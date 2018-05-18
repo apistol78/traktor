@@ -145,7 +145,7 @@ function Button:_onMouseRelease(event)
 	end
 	self:releaseExclusive()
 	if event.inside then
-		if self._clickFn ~= nil then self._clickFn() end
+		if self._clickFn ~= nil then self._clickFn(self) end
 		self._isPressed = false
 	end
 	return true

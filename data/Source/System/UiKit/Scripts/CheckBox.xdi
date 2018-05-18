@@ -74,7 +74,7 @@ end
 function CheckBox:_onMouseRelease(event)
 	if event.inside then
 		if self._clickFn ~= nil then
-			self._clickFn()
+			self._clickFn(self)
 		end
 	end
 	return true
