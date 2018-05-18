@@ -142,7 +142,7 @@ end
 
 function Image:_onMouseRelease(event)
 	if event.inside then
-		if self._clickFn ~= nil then self._clickFn() end
+		if self._clickFn ~= nil then self._clickFn(self) end
 	end
 	self:releaseExclusive()
 	return true

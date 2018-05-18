@@ -116,7 +116,7 @@ end
 function PushButton:_onMouseRelease(event)
 	self._background_mc:gotoAndStop("up")
 	if event.inside and self._clickFn ~= nil then
-		self._clickFn()
+		self._clickFn(self)
 	end
 	return true
 end
