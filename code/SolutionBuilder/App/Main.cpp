@@ -19,6 +19,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "SolutionBuilder/CBlocks/SolutionBuilderCBlocks.h"
 #include "SolutionBuilder/Dependencies/SolutionBuilderDependencies.h"
 #include "SolutionBuilder/Eclipse/SolutionBuilderEclipse.h"
+#include "SolutionBuilder/FBuild/SolutionBuilderFBuild.h"
 #include "SolutionBuilder/GraphViz/SolutionBuilderGraphViz.h"
 #include "SolutionBuilder/Make/SolutionBuilderMake.h"
 #include "SolutionBuilder/Make/SolutionBuilderMake2.h"
@@ -74,6 +75,8 @@ int main(int argc, const char** argv)
 			builder = new SolutionBuilderCBlocks();
 		else if (ide == L"eclipse")
 			builder = new SolutionBuilderEclipse();
+		else if (ide == L"fbuild")
+			builder = new SolutionBuilderFBuild();
 		else if (ide == L"graphviz")
 			builder = new SolutionBuilderGraphViz();
 		else if (ide == L"make")

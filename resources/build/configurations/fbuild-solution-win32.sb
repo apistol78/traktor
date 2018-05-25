@@ -1,0 +1,65 @@
+// ** DO NOT EDIT **
+
+#include "../../resources/build/configurations/fbuild-config-win32.bff"
+
+<?--
+
+local cnames = {}
+
+-- Include projects and collect unique configuration names.
+local projects = solution:getProjects()
+for i = 0, projects:size() - 1 do
+	local project = projects:get(i)
+	if project:getEnable() then
+--?>#include "<?-- output:print(project:getName() .. "/fbuild.bff" ) --?>"
+<?--
+		local configurations = project:getConfigurations()
+		for j = 0, configurations:size() - 1 do
+			local configuration = configurations:get(j)
+			cnames[configuration:getName()] = true
+		end
+	end
+end
+
+-- Configuration targets.
+for cname, _ in pairs(cnames) do
+--?>
+//-----------------------------------------------------------------------------
+// <?-- output:print(cname) --?>
+
+Alias('<?-- output:print(cname) --?>')
+{
+	.Targets =
+	{
+<?--
+
+	local projects = solution:getProjects()
+	for i = 0, projects:size() - 1 do
+		local project = projects:get(i)
+		if project:getEnable() and project:getConfiguration(cname) ~= nil then
+			output:printLn("\t\t'" .. project:getName() .. "/" .. cname .. "',")
+		end
+	end
+
+--?>
+	}
+}
+
+<?--
+end
+--?>
+
+//-----------------------------------------------------------------------------
+// all
+
+Alias('all')
+{
+	.Targets =
+	{
+<?--
+	for cname, _ in pairs(cnames) do
+		output:printLn("\t\t'" .. cname .. "',")
+	end
+--?>
+	}
+}

@@ -51,6 +51,17 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 
 					(*j)->setAggregationItems(items);
 				}
+
+				if ((*j)->getTargetFormat() == Configuration::TfStaticLibrary)
+				{
+					if (!(
+						compareIgnoreCase< std::wstring >((*j)->getName(), L"DebugStatic") == 0 ||
+						compareIgnoreCase< std::wstring >((*j)->getName(), L"ReleaseStatic") == 0
+					))
+					{
+						(*j)->setConsumerLibraryPath(L"");
+					}
+				}
 			}
 			else
 			{
@@ -67,6 +78,8 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 						a->setTargetPath(toLower((*j)->getName()));
 						(*j)->addAggregationItem(a);
 					}
+					else
+						(*j)->setConsumerLibraryPath(L"");
 					break;
 				case Configuration::TfSharedLibrary:
 					{
