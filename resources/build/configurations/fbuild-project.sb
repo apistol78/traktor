@@ -279,7 +279,9 @@ collectFiles(
 --?>// ** DO NOT EDIT **
 #once
 
-#include "../../../resources/build/configurations/fbuild-config-win32.bff"
+<?--
+local inc = fileSystem:getAbsolutePath(Path(OS.getInstance():getEnvironment("FBUILD_INCLUDE")))
+--?>#include "<?-- output:print(inc:getPathName()) --?>"
 <?--
 
 -- Include build scripts for local dependencies.
