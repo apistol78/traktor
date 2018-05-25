@@ -1,7 +1,5 @@
 // ** DO NOT EDIT **
 
-#include "../../resources/build/configurations/fbuild-config-win32.bff"
-
 <?--
 
 local cnames = {}

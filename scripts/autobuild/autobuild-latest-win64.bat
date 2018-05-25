@@ -7,8 +7,11 @@ if "%CONFIG%" == "" ( set CONFIG=all )
 call "%~dp0..\config.bat"
 call "%~dp0..\config-vs-x64.bat"
 
+:: FBuild executable.
+set FBUILD=%TRAKTOR_HOME%\3rdp\FASTBuild-Windows-x64-v0.95\FBuild.exe
+
 :: Rebuild entire solution.
 pushd "%TRAKTOR_HOME%\build\win64"
-msbuild "Extern Win64.sln" /nologo /maxcpucount /p:BuildInParallel=true /p:Configuration=%CONFIG% /p:Platform="x64"
-msbuild "Traktor Win64.sln" /nologo /maxcpucount /p:BuildInParallel=true /p:Configuration=%CONFIG% /p:Platform="x64"
+%FBUILD% -config "Extern Win64.bff" -noprogress -summary -cache %CONFIG%
+%FBUILD% -config "Traktor Win64.bff" -noprogress -summary -cache %CONFIG%
 popd
