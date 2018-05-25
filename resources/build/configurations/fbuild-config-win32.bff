@@ -11,7 +11,7 @@
 
 .CC_FLAGS = '/nologo /c /EHsc /FS /D "WIN32" /D "_WINDOWS" /D "UNICODE" /D "_UNICODE" /D "_MBCS"'
 .CC_FLAGS_DEBUG = '/D "_DEBUG" /MP /W3 /WX- /Zc:wchar_t /Zc:inline /Zc:forScope /Z7 /GS /Gm /Gd /fp:precise /Od /MDd'
-.CC_FLAGS_RELEASE = '/D "NDEBUG" /MP /W3 /WX- /Zc:wchar_t /Zc:inline /Zc:forScope /Z7 /GS- /Gm- /GR- /Gd /fp:fast /Ox /Ob2 /Oy /Oi /Ot /MD'
+.CC_FLAGS_RELEASE = '/D "NDEBUG" /MP /W3 /WX- /Zc:wchar_t /Zc:inline /Zc:forScope /GS- /Gm- /GR- /Gd /fp:fast /Ox /Ob2 /Oy /Oi /Ot /MD'
 
 .CC_FLAGS_DEBUG_STATIC = '$CC_FLAGS$ $CC_FLAGS_DEBUG$'
 .CC_FLAGS_DEBUG_SHARED = '$CC_FLAGS$ $CC_FLAGS_DEBUG$ /D "_USRDLL" /D "_WINDLL"'
