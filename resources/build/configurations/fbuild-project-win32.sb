@@ -24,6 +24,24 @@ local function insertLast(t, iv)
 end
 
 
+local function collectLocalBuildDependencies(project, configuration, outBuildDependencies)
+	local dependencies = project:getDependencies()
+	for i = 0, dependencies:size() - 1 do
+		local dep = dependencies:get(i)
+		if isa(dep, ProjectDependency) then
+			local localProject = dep:getProject()
+			local localConfig = localProject:getConfiguration(configuration:getName())
+			if localProject:getEnable() and localConfig ~= nil then
+				outBuildDependencies[localProject:getName()] = localProject
+				if localConfig:getTargetFormat() == "StaticLibrary" then
+					collectLocalBuildDependencies(localProject, localConfig, outBuildDependencies)
+				end
+			end
+		end
+	end
+end
+
+
 local function collectDependencies(
 	solution,
 	project,
@@ -119,25 +137,12 @@ local function collectDependencies(
 
 					local consumerAbsPath = fileSystem:getAbsolutePath(aggregateOutputPath:concat(consumerLibraryPath))
 					insertLast(outLibraryPaths, consumerAbsPath:getPathName())
-
-					-- local consumerRelPath = fileSystem:getRelativePath(
-					-- 	aggregateOutputPath:concat(consumerLibraryPath),
-					-- 	projectPath
-					-- )
-
-					-- if consumerRelPath ~= nil then
-					-- 	insertLast(outLibraryPaths, consumerRelPath:getPathName())
-					-- end
 				else
-					-- local externalRelPath = fileSystem:getRelativePath(
-					-- 	Path(externalSolution:getRootPath() .. "/" .. configuration:getName()),
-					-- 	projectPath
-					-- )
-					local externalRelPath = fileSystem:getAbsolutePath(
+					local externalAbsPath = fileSystem:getAbsolutePath(
 						Path(externalSolution:getRootPath() .. "/" .. configuration:getName())
 					)
-					if externalRelPath ~= nil then
-						insertLast(outLibraryPaths, externalRelPath:getPathName())
+					if externalAbsPath ~= nil then
+						insertLast(outLibraryPaths, externalAbsPath:getPathName())
 					end
 				end
 
@@ -202,11 +207,15 @@ local includePaths = {}
 local libraries = {}
 local externalLibraries = {}
 local libraryPaths = {}
+local buildDependencies = {}
+
 for i = 0, configurations:size() - 1 do
+	
 	includePaths[i] = {}
 	libraries[i] = {}
 	externalLibraries[i] = {}
 	libraryPaths[i] = {}
+
 	collectDependencies(
 		solution,
 		project,
@@ -215,6 +224,14 @@ for i = 0, configurations:size() - 1 do
 		libraries[i],
 		externalLibraries[i],
 		libraryPaths[i]
+	)
+
+	buildDependencies[i] = {}
+
+	collectLocalBuildDependencies(
+		project,
+		configurations:get(i),
+		buildDependencies[i]
 	)
 end
 
@@ -456,18 +473,9 @@ DLL('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/
 			end
 		end
 
-		local dependencies = project:getDependencies()
-		for i = 0, dependencies:size() - 1 do
-			local dep = dependencies:get(i)
-			if isa(dep, ProjectDependency) then
-				local localSolution = solution
-				local localProject = dep:getProject()
-				local localConfig = localProject:getConfiguration(configuration:getName())
-				if localProject:getEnable() then
---?>		'<?-- output:print(localProject:getName() .. "/" .. configuration:getName() .. "/Product") --?>',
+		for _, dependentProject in pairs(buildDependencies[i]) do
+--?>		'<?-- output:print(dependentProject:getName() .. "/" .. configuration:getName() .. "/Product") --?>',
 <?--
-				end
-			end
 		end
 --?>	}
 <?--
@@ -483,18 +491,10 @@ DLL('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/
 --?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Resource/" .. fileRel:getPathNameNoExtension()) --?>',
 <?--
 		end
-		for i = 0, dependencies:size() - 1 do
-			local dep = dependencies:get(i)
-			if isa(dep, ProjectDependency) then
-				local localSolution = solution
-				local localProject = dep:getProject()
-				local localConfig = localProject:getConfiguration(configuration:getName())
-				if localProject:getEnable() then
---?>		'<?-- output:print(localProject:getName() .. "/" .. configuration:getName()) --?>',
+		for _, dependentProject in pairs(buildDependencies[i]) do
+--?>		'<?-- output:print(dependentProject:getName() .. "/" .. configuration:getName()) --?>',
 <?--
-				end
-			end
-		end		
+		end
 --?>	}
 }
 <?--
@@ -578,19 +578,9 @@ Executable('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 <?--
 			end
 		end
-
-		local dependencies = project:getDependencies()
-		for i = 0, dependencies:size() - 1 do
-			local dep = dependencies:get(i)
-			if isa(dep, ProjectDependency) then
-				local localSolution = solution
-				local localProject = dep:getProject()
-				local localConfig = localProject:getConfiguration(configuration:getName())
-				if localProject:getEnable() then
---?>		'<?-- output:print(localProject:getName() .. "/" .. configuration:getName() .. "/Product") --?>',
+		for _, dependentProject in pairs(buildDependencies[i]) do
+--?>		'<?-- output:print(dependentProject:getName() .. "/" .. configuration:getName() .. "/Product") --?>',
 <?--
-				end
-			end
 		end
 --?>	}
 <?--
@@ -606,18 +596,11 @@ Executable('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 --?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Resource/" .. fileRel:getPathNameNoExtension()) --?>',
 <?--
 		end
-		for i = 0, dependencies:size() - 1 do
-			local dep = dependencies:get(i)
-			if isa(dep, ProjectDependency) then
-				local localSolution = solution
-				local localProject = dep:getProject()
-				local localConfig = localProject:getConfiguration(configuration:getName())
-				if localProject:getEnable() then
---?>		'<?-- output:print(localProject:getName() .. "/" .. configuration:getName()) --?>',
+		for _, dependentProject in pairs(buildDependencies[i]) do
+--?>		'<?-- output:print(dependentProject:getName() .. "/" .. configuration:getName()) --?>',
 <?--
-				end
-			end
-		end		
+		end
+
 --?>	}
 }
 <?--
