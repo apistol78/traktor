@@ -32,7 +32,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -57,7 +57,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -181,7 +181,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -204,7 +204,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -415,7 +415,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -438,7 +438,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -550,7 +550,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -578,7 +578,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -696,7 +696,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -722,7 +722,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -1782,7 +1782,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -1806,7 +1806,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -1902,7 +1902,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -1926,7 +1926,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2030,7 +2030,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -2058,7 +2058,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2249,7 +2249,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -2273,7 +2273,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2393,7 +2393,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -2421,7 +2421,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2627,7 +2627,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -2652,7 +2652,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2757,7 +2757,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -2784,7 +2784,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -2913,7 +2913,7 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems/>
-								<consumerLibraryPath>debugshared</consumerLibraryPath>
+								<consumerLibraryPath/>
 							</item>
 							<item type="Configuration" version="5">
 								<name>ReleaseShared</name>
@@ -2940,7 +2940,7 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems/>
-								<consumerLibraryPath>releaseshared</consumerLibraryPath>
+								<consumerLibraryPath/>
 							</item>
 							<item type="Configuration" version="5">
 								<name>DebugStatic</name>
@@ -3376,7 +3376,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -3401,7 +3401,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -3503,7 +3503,7 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems/>
-								<consumerLibraryPath>debugshared</consumerLibraryPath>
+								<consumerLibraryPath/>
 							</item>
 							<item type="Configuration" version="5">
 								<name>ReleaseShared</name>
@@ -3527,7 +3527,7 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems/>
-								<consumerLibraryPath>releaseshared</consumerLibraryPath>
+								<consumerLibraryPath/>
 							</item>
 						</configurations>
 						<items>
@@ -3571,7 +3571,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -3594,7 +3594,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -3748,7 +3748,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -3772,7 +3772,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -3811,7 +3811,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -3836,7 +3836,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -3946,7 +3946,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -3973,7 +3973,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -4296,7 +4296,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -4319,7 +4319,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -4426,7 +4426,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -4449,7 +4449,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -4543,7 +4543,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -4567,7 +4567,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -4671,7 +4671,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -4695,7 +4695,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -4792,7 +4792,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -4813,7 +4813,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -4906,7 +4906,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -4933,7 +4933,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+					<consumerLibraryPath/>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>

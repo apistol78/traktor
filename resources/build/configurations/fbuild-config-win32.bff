@@ -1,0 +1,78 @@
+#once
+
+#import VCToolsInstallDir
+#import WindowsSdkVerBinPath
+#import TRAKTOR_HOME
+
+//-----------------------------------------------------------------------------
+// Toolchain
+
+.CC = '$VCToolsInstallDir$\bin\Hostx86\x86\cl.exe'
+
+.CC_FLAGS = '/nologo /c /EHsc /FS /D "WIN32" /D "_WINDOWS" /D "UNICODE" /D "_UNICODE" /D "_MBCS"'
+.CC_FLAGS_DEBUG = '/D "_DEBUG" /MP /W3 /WX- /Zc:wchar_t /Zc:inline /Zc:forScope /Z7 /GS /Gm /Gd /fp:precise /Od /MDd'
+.CC_FLAGS_RELEASE = '/D "NDEBUG" /MP /W3 /WX- /Zc:wchar_t /Zc:inline /Zc:forScope /Z7 /GS- /Gm- /GR- /Gd /fp:fast /Ox /Ob2 /Oy /Oi /Ot /MD'
+
+.CC_FLAGS_DEBUG_STATIC = '$CC_FLAGS$ $CC_FLAGS_DEBUG$'
+.CC_FLAGS_DEBUG_SHARED = '$CC_FLAGS$ $CC_FLAGS_DEBUG$ /D "_USRDLL" /D "_WINDLL"'
+.CC_FLAGS_DEBUG_EXECUTABLE = '$CC_FLAGS$ $CC_FLAGS_DEBUG$'
+.CC_FLAGS_DEBUG_EXECUTABLE_CONSOLE = '$CC_FLAGS$ $CC_FLAGS_DEBUG$ /D "_CONSOLE"'
+
+.CC_FLAGS_RELEASE_STATIC = '$CC_FLAGS$ $CC_FLAGS_RELEASE$'
+.CC_FLAGS_RELEASE_SHARED = '$CC_FLAGS$ $CC_FLAGS_RELEASE$ /D "_USRDLL" /D "_WINDLL"'
+.CC_FLAGS_RELEASE_EXECUTABLE = '$CC_FLAGS$ $CC_FLAGS_RELEASE$'
+.CC_FLAGS_RELEASE_EXECUTABLE_CONSOLE = '$CC_FLAGS$ $CC_FLAGS_RELEASE$ /D "_CONSOLE"'
+
+
+.RC = '$WindowsSdkVerBinPath$\x86\rc.exe'
+
+.RC_FLAGS = '/nologo'
+
+.RC_FLAGS_DEBUG_STATIC = '$RC_FLAGS$'
+.RC_FLAGS_DEBUG_SHARED = '$RC_FLAGS$'
+.RC_FLAGS_DEBUG_EXECUTABLE = '$RC_FLAGS$'
+.RC_FLAGS_DEBUG_EXECUTABLE_CONSOLE = '$RC_FLAGS$'
+
+.RC_FLAGS_RELEASE_STATIC = '$RC_FLAGS$'
+.RC_FLAGS_RELEASE_SHARED = '$RC_FLAGS$'
+.RC_FLAGS_RELEASE_EXECUTABLE = '$RC_FLAGS$'
+.RC_FLAGS_RELEASE_EXECUTABLE_CONSOLE = '$RC_FLAGS$'
+
+
+.LIB = '$VCToolsInstallDir$\bin\Hostx86\x86\lib.exe'
+
+.LIB_FLAGS_DEBUG_STATIC = '/MACHINE:X86 /NOLOGO'
+.LIB_FLAGS_RELEASE_STATIC = '/MACHINE:X86 /NOLOGO'
+
+
+.LINK = '$VCToolsInstallDir$\bin\Hostx86\x86\link.exe'
+
+.LINK_SYSTEM_LIBS = 'winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib'
+
+.LINK_FLAGS_DEBUG_SHARED = '/NOLOGO /DEBUG /DLL /MACHINE:X86 /SUBSYSTEM:WINDOWS /SAFESEH /INCREMENTAL $LINK_SYSTEM_LIBS$'
+.LINK_FLAGS_DEBUG_EXECUTABLE = '/NOLOGO /DEBUG /MACHINE:X86 /SUBSYSTEM:WINDOWS /SAFESEH /INCREMENTAL $LINK_SYSTEM_LIBS$'
+.LINK_FLAGS_DEBUG_EXECUTABLE_CONSOLE = '/NOLOGO /DEBUG /MACHINE:X86 /SUBSYSTEM:CONSOLE /SAFESEH /INCREMENTAL $LINK_SYSTEM_LIBS$'
+
+.LINK_FLAGS_RELEASE_SHARED = '/NOLOGO /DLL /MACHINE:X86 /SUBSYSTEM:WINDOWS /SAFESEH /INCREMENTAL:NO $LINK_SYSTEM_LIBS$'
+.LINK_FLAGS_RELEASE_EXECUTABLE = '/NOLOGO /MACHINE:X86 /SUBSYSTEM:WINDOWS /SAFESEH /INCREMENTAL:NO $LINK_SYSTEM_LIBS$'
+.LINK_FLAGS_RELEASE_EXECUTABLE_CONSOLE = '/NOLOGO /MACHINE:X86 /SUBSYSTEM:CONSOLE /SAFESEH /INCREMENTAL:NO $LINK_SYSTEM_LIBS$'
+
+
+.RUN = '$TRAKTOR_HOME$\bin\win64\releasestatic\Traktor.Run.App'
+.BINARY_INCLUDE = '$TRAKTOR_HOME$\scripts\binaryinclude\BinaryInclude.run'
+
+
+Compiler( 'ResourceCompiler' )
+{
+	.Executable = '$RC$'
+	.CompilerFamily = 'custom'
+}
+
+
+//-----------------------------------------------------------------------------
+// Settings
+
+Settings
+{
+	.CachePath = '$TRAKTOR_HOME$\build\.fbuild-cache'
+}
