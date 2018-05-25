@@ -429,6 +429,8 @@ ObjectList('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 <?--
 	end
 
+	local manifest = OS.getInstance():getEnvironment("FBUILD_MANIFEST")
+
 	local lo = ""
 	if format ~= "StaticLibrary" then
 		--lo = lo .. " /LIBPATH:\"../" .. configuration:getName() .. "\""
@@ -447,12 +449,16 @@ ObjectList('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 	end
 
 	if format == "SharedLibrary" then
+		local outputPath = Path(solution:getRootPath()):concat(Path(configuration:getName() .. "/" .. project:getName() .. ".dll"))
+		outputPath = fileSystem:getAbsolutePath(outputPath)
 --?>
 // Build product
 DLL('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Product") --?>')
 {
 	.Linker = '$LINK$'
 	.LinkerOptions = '$LINK_FLAGS_<?-- output:print(flags) --?>$<?-- output:print(lo) --?> /OUT:"%2" "%1"'
+	.LinkerStampExe = '$MT$'
+	.LinkerStampExeArgs = '-manifest "<?-- output:print(manifest) --?>" -outputresource:<?-- output:print(outputPath:getPathName()) --?>;2'
 	.Libraries =
 	{
 <?--
@@ -480,10 +486,7 @@ DLL('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/
 <?--
 		end
 --?>	}
-<?--
-		local outputPath = Path(solution:getRootPath()):concat(Path(configuration:getName() .. "/" .. project:getName() .. ".dll"))
-		outputPath = fileSystem:getAbsolutePath(outputPath)
---?>	.LinkerOutput = '<?-- output:print(outputPath:getPathName()) --?>'
+	.LinkerOutput = '<?-- output:print(outputPath:getPathName()) --?>'
 	.PreBuildDependencies =
 	{
 <?--
@@ -553,12 +556,16 @@ Library('<?-- output:print(project:getName() .. "/" .. configuration:getName() .
 }
 <?--
 	elseif format == "Executable" or format == "ExecutableConsole" then
+		local outputPath = Path(solution:getRootPath()):concat(Path(configuration:getName() .. "/" .. project:getName() .. ".exe"))
+		outputPath = fileSystem:getAbsolutePath(outputPath)
 --?>
 // Build product
 Executable('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Product") --?>')
 {
 	.Linker = '$LINK$'
 	.LinkerOptions = '$LINK_FLAGS_<?-- output:print(flags) --?>$<?-- output:print(lo) --?> /OUT:"%2" "%1"'
+	.LinkerStampExe = '$MT$'
+	.LinkerStampExeArgs = '-manifest "<?-- output:print(manifest) --?>" -outputresource:<?-- output:print(outputPath:getPathName()) --?>;1'
 	.Libraries =
 	{
 <?--
@@ -585,10 +592,7 @@ Executable('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 <?--
 		end
 --?>	}
-<?--
-		local outputPath = Path(solution:getRootPath()):concat(Path(configuration:getName() .. "/" .. project:getName() .. ".exe"))
-		outputPath = fileSystem:getAbsolutePath(outputPath)
---?>	.LinkerOutput = '<?-- output:print(outputPath:getPathName()) --?>'
+	.LinkerOutput = '<?-- output:print(outputPath:getPathName()) --?>'
 	.PreBuildDependencies =
 	{
 <?--

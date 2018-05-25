@@ -58,6 +58,9 @@
 .LINK_FLAGS_RELEASE_EXECUTABLE_CONSOLE = '/NOLOGO /MACHINE:X86 /SUBSYSTEM:CONSOLE /SAFESEH /INCREMENTAL:NO $LINK_SYSTEM_LIBS$'
 
 
+.MT = '$WindowsSdkVerBinPath$\x86\mt.exe'
+
+
 .RUN = '$TRAKTOR_HOME$\bin\win64\releasestatic\Traktor.Run.App'
 .BINARY_INCLUDE = '$TRAKTOR_HOME$\scripts\binaryinclude\BinaryInclude.run'
 
