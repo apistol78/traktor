@@ -1,6 +1,11 @@
 @echo off
 set VSWHERE="%~dp0..\3rdp\Visual Studio\vswhere"
 
+:: Check if already setup.
+if "%HAVE_CONFIG_VS%" == "x86" (
+	goto eof
+)
+
 :: Non-legacy 2017+ environment script.
 for /f "usebackq delims=" %%i in (`%VSWHERE% -prerelease -latest -property installationPath`) do (
 	if exist "%%i\Common7\Tools\vsdevcmd.bat" (
@@ -36,3 +41,4 @@ echo No Visual Studio found.
 exit /b 1
 
 :eof
+set HAVE_CONFIG_VS=x86
