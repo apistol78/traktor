@@ -1013,7 +1013,7 @@ private:
 	size_t m_size;
 	size_t m_capacity;
 
-#if defined(T_CXX11)
+#if defined(T_CXX11) && !defined(__PS3__)
 	void move(size_t target, size_t source)
 	{
 		m_data[target] = std::move(m_data[source]);

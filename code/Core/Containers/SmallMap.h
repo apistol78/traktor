@@ -43,7 +43,7 @@ public:
 	{
 	}
 
-#if defined(T_CXX11)
+#if defined(T_CXX11) && !defined(__PS3__)
 	SmallMap(SmallMap&& src)
 	{
 		m_data = std::move(src.m_data);
@@ -252,7 +252,7 @@ public:
 		return *this;
 	}
 	
-#if defined(T_CXX11)
+#if defined(T_CXX11) && !defined(__PS3__)
 	SmallMap& operator = (SmallMap&& src)
 	{
 		m_data = std::move(src.m_data);

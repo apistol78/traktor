@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_RenderSystemPs3_H
 #define traktor_render_RenderSystemPs3_H
 
+#include <vector>
 #include "Core/Thread/Semaphore.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Ps3/TileArea.h"

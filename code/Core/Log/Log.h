@@ -69,7 +69,7 @@ extern T_DLLCLASS LogStream debug;
 #	define T_TRACE_WIDEN__(x) T_TRACE_WIDEN2__(x)
 #	define T_TRACE(x) { T_DEBUG(T_TRACE_WIDEN__(x)); (x); }
 #else
-#	define T_DEBUG(x) false
+#	define T_DEBUG(x)
 #	define T_TRACE(x) (x);
 #endif
 

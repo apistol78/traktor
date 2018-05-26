@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_SystemCallback_H
 #define traktor_SystemCallback_H
 
+#include <vector>
 #include "Core/Singleton/ISingleton.h"
 
 // import/export mechanism.
