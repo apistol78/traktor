@@ -38,49 +38,34 @@ function deploy(args)
 	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
-	-- Collect libraries to link.
-	local linkerLibraries = {}
-	local linkerIncludes = {}
-
-	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
-	for _, f in ipairs(files) do
-		if f:endswith(".lib") then
-			if string.sub(f, 1, 6) ~= "Extern" then
-				table.insert(linkerLibraries, f)
-				table.insert(linkerIncludes, "__module__" .. f:sub(1, string.len(f) - 4):gsub("%.", "_"))
-			else
-				table.insert(linkerLibraries, f)
-			end
-		elseif f:endswith(".a") or f:endswith(".o") then
-			table.insert(linkerLibraries, f)
-		else
-			stderr:printLn("Unknown deploy file \"" .. f .. "\"")
-		end
+	-- Get library paths.
+	local libraryPaths = ""
+	local paths = ""
+	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
+	for _, p in pairs(paths) do
+		libraryPaths = libraryPaths .. " --library-path=" .. Path(p):getPathName() .. "/ppu"
+		libraryPaths = libraryPaths .. " --library-path=" .. Path(p):getPathName() .. "/spu"
 	end
 
-	-- Determine path to module libraries.
-	local libraryPathPPU
-	local libraryPathSPU
-	if not debug then
-	 	libraryPathPPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/ppu/releasestatic"
-	 	libraryPathSPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/spu/releasestatic"
-	else
-		stdout:printLn("Using *DEBUG* binaries")
-	 	libraryPathPPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/ppu/debugstatic"
-	 	libraryPathSPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/spu/releasestatic"	-- Using release SPU binaries until link issues fixed.
-	end	
+	-- Collect libraries to link.
+	local libraries = {}
+	local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
+	for _, f in ipairs(files) do
+		table.insert(libraries, f)
+	end
 
 	-- Create a linker "keep" symbol file.
 	local f = fileSystem:open(Path("keep.sym"), 2)
 	local s = StreamOutput(f, Utf8Encoding(), "unix")
-	for _, sym in ipairs(linkerIncludes) do
-		s:printLn(sym)
-	end	
+	local modules = os:getEnvironment("DEPLOY_MODULES"):split("\n")
+	for _, m in ipairs(modules) do
+		s:printLn("__module__" .. m:gsub("%.", "_"))
+	end
 	f:close()
 	
 	-- Build link command line.
-	local ld = "$(SCE_PS3_ROOT)/host-win32/sn/bin/ps3ppuld --library-path=" .. libraryPathPPU .. " --library-path=" .. libraryPathSPU
-	for _, m in ipairs(linkerLibraries) do
+	local ld = "$(SCE_PS3_ROOT)/host-win32/sn/bin/ps3ppuld " .. libraryPaths
+	for _, m in ipairs(libraries) do
 		ld = ld .. " " .. m
 	end
 	ld = ld .. " --keep=keep.sym"
@@ -102,7 +87,8 @@ function deploy(args)
 		return 1
 	end
 
-	stdout:printLn("PS3 deployed successfully.")
+	run:rm(executable .. ".elf")
+	run:rm("keep.sym")
 	return 0
 end
 
@@ -111,7 +97,7 @@ function launch(args)
 	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
 
 	stdout:printLn("Launching PS3...")
-	local result = run:execute("\"$(SN_PS3_PATH)/bin/ps3run.exe\" -k -r2 -f . " .. executable .. ".self", "(null)")
+	local result = run:execute("\"$(SN_PS3_PATH)/bin/ps3run.exe\" -k -r2 -f . " .. executable .. ".self") --, "(null)")
 	if result ~= 0 then
 		stderr:printLn("Failed to launch PS3 executable (" .. result .. ").")
 		return 1
@@ -130,49 +116,34 @@ function migrate(args)
 	local executable = os:getEnvironment("DEPLOY_EXECUTABLE")
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 
-	-- Collect libraries to link.
-	local linkerLibraries = {}
-	local linkerIncludes = {}
-
-	local files = os:getEnvironment("DEPLOY_FILES"):split(" ")
-	for _, f in ipairs(files) do
-		if f:endswith(".lib") then
-			if string.sub(f, 1, 6) ~= "Extern" then
-				table.insert(linkerLibraries, f)
-				table.insert(linkerIncludes, "__module__" .. f:sub(1, string.len(f) - 4):gsub("%.", "_"))
-			else
-				table.insert(linkerLibraries, f)
-			end
-		elseif f:endswith(".a") or f:endswith(".o") then
-			table.insert(linkerLibraries, f)
-		else
-			stderr:printLn("Unknown deploy file \"" .. f .. "\"")
-		end
+	-- Get library paths.
+	local libraryPaths = ""
+	local paths = ""
+	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
+	for _, p in pairs(paths) do
+		libraryPaths = libraryPaths .. " --library-path=" .. Path(p):getPathName() .. "/ppu"
+		libraryPaths = libraryPaths .. " --library-path=" .. Path(p):getPathName() .. "/spu"
 	end
 
-	-- Determine path to module libraries.
-	local libraryPathPPU
-	local libraryPathSPU
-	if not debug then
-	 	libraryPathPPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/ppu/releasestatic"
-	 	libraryPathSPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/spu/releasestatic"
-	else
-		stdout:printLn("Using *DEBUG* binaries")
-	 	libraryPathPPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/ppu/debugstatic"
-	 	libraryPathSPU = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/ps3/spu/releasestatic"	-- Using release SPU binaries until link issues fixed.
-	end	
+	-- Collect libraries to link.
+	local libraries = {}
+	local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
+	for _, f in ipairs(files) do
+		table.insert(libraries, f)
+	end
 
 	-- Create a linker "keep" symbol file.
 	local f = fileSystem:open(Path("keep.sym"), 2)
 	local s = StreamOutput(f, Utf8Encoding(), "unix")
-	for _, sym in ipairs(linkerIncludes) do
-		s:printLn(sym)
-	end	
+	local modules = os:getEnvironment("DEPLOY_MODULES"):split("\n")
+	for _, m in ipairs(modules) do
+		s:printLn("__module__" .. m:gsub("%.", "_"))
+	end
 	f:close()
-
+	
 	-- Build link command line.
-	local ld = "$(SCE_PS3_ROOT)/host-win32/sn/bin/ps3ppuld --library-path=" .. libraryPathPPU .. " --library-path=" .. libraryPathSPU
-	for _, m in ipairs(linkerLibraries) do
+	local ld = "$(SCE_PS3_ROOT)/host-win32/sn/bin/ps3ppuld " .. libraryPaths
+	for _, m in ipairs(libraries) do
 		ld = ld .. " " .. m
 	end
 	ld = ld .. " --keep=keep.sym"
@@ -194,6 +165,8 @@ function migrate(args)
 		return 1
 	end
 
+	run:rm(executable .. ".elf")
+	run:rm("keep.sym")
 	return 0
 end
 

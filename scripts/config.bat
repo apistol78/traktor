@@ -20,6 +20,9 @@ set TOBII_SDK=%TRAKTOR_HOME%\3rdp\tobii-sdk-1.7.480
 set OPENVR_SDK=%TRAKTOR_HOME%\3rdp\openvr-master-20160822
 set EXPAT_SDK=%TRAKTOR_HOME%\3rdp\libexpat-R_2_2_5\expat
 set ZLIB_SDK=%TRAKTOR_HOME%\3rdp\zlib-1.2.11
+set SCE_PS3_ROOT=%TRAKTOR_HOME%\3rdp\ps3\usr\local\cell
+set SN_COMMON_PATH=%TRAKTOR_HOME%\3rdp\ps3\SN Systems\Common
+set SN_PS3_PATH=%TRAKTOR_HOME%\3rdp\ps3\SN Systems\Ps3
 
 :: Export name of solution builder binary.
 set SOLUTIONBUILDER=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.SolutionBuilder.App
