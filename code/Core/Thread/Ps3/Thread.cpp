@@ -115,7 +115,7 @@ bool Thread::start(Priority priority)
 	return true;
 }
 
-bool Thread::wait(int timeout)
+bool Thread::wait(int32_t timeout)
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 	T_ASSERT (in);
@@ -156,7 +156,7 @@ bool Thread::wait(int timeout)
 	return bool(rc == CELL_OK);
 }
 
-bool Thread::stop(int timeout)
+bool Thread::stop(int32_t timeout)
 {
 	m_stopped = true;
 	return wait(timeout);
@@ -174,7 +174,13 @@ bool Thread::resume()
 	return false;
 }
 
-void Thread::sleep(int duration)
+bool Thread::resume(Priority priority)
+{
+	T_ASSERT (0);
+	return false;
+}
+
+void Thread::sleep(int32_t duration)
 {
 	sys_timer_usleep(usecond_t(duration) * 1000);
 }

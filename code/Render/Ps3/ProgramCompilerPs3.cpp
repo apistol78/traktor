@@ -32,8 +32,8 @@ bool collectScalarParameters(
 	const ShaderGraph* shaderGraph,
 	CGCbin* shaderBin,
 	bool isFragmentProfile,
-	std::vector< ProgramScalar >& outScalars,
-	std::map< std::wstring, ScalarParameter >& outScalarParameterMap,
+	AlignedVector< ProgramScalar >& outScalars,
+	SmallMap< std::wstring, ScalarParameter >& outScalarParameterMap,
 	uint32_t& outOffset
 )
 {
@@ -163,7 +163,7 @@ bool collectScalarParameters(
 
 			if (scalarUsed)
 			{
-				std::map< std::wstring, ScalarParameter >::iterator j = outScalarParameterMap.find(parameterName);
+				SmallMap< std::wstring, ScalarParameter >::iterator j = outScalarParameterMap.find(parameterName);
 				if (j != outScalarParameterMap.end())
 				{
 					scalar.offset = j->second.offset;
@@ -186,8 +186,8 @@ bool collectScalarParameters(
 
 bool collectSamplerParameters(
 	const std::map< std::wstring, int32_t >& samplerTextures,
-	std::vector< ProgramSampler >& outSamplers,
-	std::map< std::wstring, uint32_t >& outTextureParameterMap,
+	AlignedVector< ProgramSampler >& outSamplers,
+	SmallMap< std::wstring, uint32_t >& outTextureParameterMap,
 	uint32_t& outOffset
 )
 {
@@ -197,7 +197,7 @@ bool collectSamplerParameters(
 		sampler.stage = i->second;
 		sampler.texture = outOffset;
 
-		std::map< std::wstring, uint32_t >::const_iterator j = outTextureParameterMap.find(i->first);
+		SmallMap< std::wstring, uint32_t >::const_iterator j = outTextureParameterMap.find(i->first);
 		if (j != outTextureParameterMap.end())
 			sampler.texture = j->second;
 		else
@@ -209,7 +209,7 @@ bool collectSamplerParameters(
 	return true;
 }
 
-bool collectInputSignature(const ShaderGraph* shaderGraph, std::vector< uint8_t >& outSignature)
+bool collectInputSignature(const ShaderGraph* shaderGraph, AlignedVector< uint8_t >& outSignature)
 {
 	RefArray< VertexInput > vertexInputNodes;
 	shaderGraph->findNodesOf< VertexInput >(vertexInputNodes);
