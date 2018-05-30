@@ -1,0 +1,92 @@
+# Configuration file
+
+#c:\private\traktor\3rdp\ps3\usr\local\cell\host-win32\spu\bin\spu-lv2-gcc.exe 
+#spu-lv2-gcc.exe
+# -o ReleaseStatic\\Math\Frustum.obj
+# -c -iquote. -fpch-deps -MD -MV
+# -Ic:/BuildAgent/work/9bccaeaa5ade4c8/traktor/code
+# -I.
+# -I$(SCE_PS3_ROOT)\target\spu\include
+# -I$(SCE_PS3_ROOT)\target\common\include
+# -I$(SCE_PS3_ROOT)\host-win32\spu\lib\gcc\spu-lv2\4.1.1\include
+# -DT_STATIC -DNDEBUG -D_PS3 -DSN_TARGET_PS3_SPU -DSPU -D__CELLOS_LV2__ -DUNICODE -D_UNICODE -D__PS3__ -D__GCC__ -DSPU
+# -Wall -O0 -fno-exceptions -fno-rtti C:\BuildAgent\work\9bccaeaa5ade4c8\traktor\code\Core\Math\Frustum.cpp
+
+# C
+
+C="$(SCE_PS3_ROOT)\host-win32\spu\bin\spu-lv2-gcc.exe"
+
+C_SYSTEM_DEFINES=-D_PS3 -DSN_TARGET_PS3_SPU -DSPU -D__CELLOS_LV2__ -DUNICODE -D_UNICODE -D__PS3__ -D__GCC__ -DSPU
+C_SYSTEM_INCLUDES=-I$(SCE_PS3_ROOT)\target\spu\include -I$(SCE_PS3_ROOT)\target\common\include -I$(SCE_PS3_ROOT)\host-win32\spu\lib\gcc\spu-lv2\4.1.1\include
+
+C_FLAGS=$(C_SYSTEM_DEFINES) $(C_SYSTEM_INCLUDES) -c -iquote. -fpch-deps -MD -MV -fno-exceptions -fno-rtti -fpic
+C_FLAGS_DEBUG=-O0
+C_FLAGS_RELEASE=-O3
+
+C_FLAGS_DEBUG_STATIC=$(C_FLAGS) $(C_FLAGS_DEBUG)
+C_FLAGS_DEBUG_SHARED=$(C_FLAGS) $(C_FLAGS_DEBUG)
+C_FLAGS_DEBUG_EXECUTABLE=$(C_FLAGS) $(C_FLAGS_DEBUG)
+C_FLAGS_DEBUG_EXECUTABLE_CONSOLE=$(C_FLAGS) $(C_FLAGS_DEBUG)
+
+C_FLAGS_RELEASE_STATIC=$(C_FLAGS) $(C_FLAGS_RELEASE)
+C_FLAGS_RELEASE_SHARED=$(C_FLAGS) $(C_FLAGS_RELEASE)
+C_FLAGS_RELEASE_EXECUTABLE=$(C_FLAGS) $(C_FLAGS_RELEASE)
+C_FLAGS_RELEASE_EXECUTABLE_CONSOLE=$(C_FLAGS) $(C_FLAGS_RELEASE)
+
+C_FLAG_OUTPUT=-o
+
+
+# C++
+
+CC="$(SCE_PS3_ROOT)\host-win32\spu\bin\spu-lv2-gcc.exe"
+
+CC_SYSTEM_DEFINES=-D_PS3 -DSN_TARGET_PS3_SPU -DSPU -D__CELLOS_LV2__ -DUNICODE -D_UNICODE -D__PS3__ -D__GCC__ -DSPU
+CC_SYSTEM_INCLUDES=-I$(SCE_PS3_ROOT)\target\spu\include -I$(SCE_PS3_ROOT)\target\common\include -I$(SCE_PS3_ROOT)\host-win32\spu\lib\gcc\spu-lv2\4.1.1\include
+
+CC_FLAGS=$(CC_SYSTEM_DEFINES) $(CC_SYSTEM_INCLUDES) -c -iquote. -fpch-deps -MD -MV -fno-exceptions -fno-rtti -fpic
+CC_FLAGS_DEBUG=-O0 
+CC_FLAGS_RELEASE=-O3 
+
+CC_FLAGS_DEBUG_STATIC=$(CC_FLAGS) $(CC_FLAGS_DEBUG)
+CC_FLAGS_DEBUG_SHARED=$(CC_FLAGS) $(CC_FLAGS_DEBUG)
+CC_FLAGS_DEBUG_EXECUTABLE=$(CC_FLAGS) $(CC_FLAGS_DEBUG)
+CC_FLAGS_DEBUG_EXECUTABLE_CONSOLE=$(CC_FLAGS) $(CC_FLAGS_DEBUG)
+
+CC_FLAGS_RELEASE_STATIC=$(CC_FLAGS) $(CC_FLAGS_RELEASE)
+CC_FLAGS_RELEASE_SHARED=$(CC_FLAGS) $(CC_FLAGS_RELEASE)
+CC_FLAGS_RELEASE_EXECUTABLE=$(CC_FLAGS) $(CC_FLAGS_RELEASE)
+CC_FLAGS_RELEASE_EXECUTABLE_CONSOLE=$(CC_FLAGS) $(CC_FLAGS_RELEASE)
+
+CC_FLAG_OUTPUT=-o
+
+
+# Librarian
+AR="$(SCE_PS3_ROOT)\host-win32\spu\bin\spu-lv2-ar.exe"
+
+AR_FLAGS_COMMON=-r
+AR_FLAGS_DEBUG_STATIC=$(AR_FLAGS_COMMON)
+AR_FLAGS_RELEASE_STATIC=$(AR_FLAGS_COMMON)
+
+AR_FLAG_OUTPUT=
+
+
+# Linker
+#LINK="$(SCE_PS3_ROOT)\host-win32\spu\bin\spu-lv2-ld.exe"
+LINK="$(SCE_PS3_ROOT)\host-win32\spu\bin\spu-lv2-gcc.exe"
+
+LINK_SYSTEM_LIBS=-L$(SCE_PS3_ROOT)\target\spu\lib\pic
+
+LINK_FLAGS_DEBUG_SHARED=$(LINK_SYSTEM_LIBS)
+LINK_FLAGS_DEBUG_EXECUTABLE=$(LINK_SYSTEM_LIBS)
+LINK_FLAGS_DEBUG_EXECUTABLE_CONSOLE=$(LINK_SYSTEM_LIBS)
+
+LINK_FLAGS_RELEASE_SHARED=$(LINK_SYSTEM_LIBS)
+LINK_FLAGS_RELEASE_EXECUTABLE=$(LINK_SYSTEM_LIBS)
+LINK_FLAGS_RELEASE_EXECUTABLE_CONSOLE=$(LINK_SYSTEM_LIBS)
+
+LINK_FLAG_OUTPUT=-o 
+
+
+# Misc
+BINARY_INCLUDE=$(TRAKTOR_HOME)\bin\win64\releasestatic\Traktor.Run.App $(TRAKTOR_HOME)\scripts\binaryinclude\BinaryInclude.run
+SPU_ELF_TO_PPU=$(SCE_PS3_ROOT)\host-win32\bin\spu_elf-to-ppu_obj.exe

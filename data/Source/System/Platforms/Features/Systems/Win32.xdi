@@ -40,31 +40,31 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>msvcrt.lib</item>
-								<item>winmm.lib</item>
-								<item>iphlpapi.lib</item>
-								<item>ws2_32.lib</item>
-								<item>kernel32.lib</item>
-								<item>user32.lib</item>
-								<item>gdi32.lib</item>
-								<item>winspool.lib</item>
-								<item>comdlg32.lib</item>
 								<item>advapi32.lib</item>
-								<item>shell32.lib</item>
-								<item>ole32.lib</item>
-								<item>oleaut32.lib</item>
-								<item>uuid.lib</item>
+								<item>comctl32.lib</item>
+								<item>comdlg32.lib</item>
+								<item>d2d1.lib</item>
+								<item>d3d11.lib</item>
+								<item>dinput8.lib</item>
+								<item>dwrite.lib</item>
+								<item>dxgi.lib</item>
+								<item>dxguid.lib</item>
+								<item>gdi32.lib</item>
+								<item>gdiplus.lib</item>
+								<item>iphlpapi.lib</item>
+								<item>kernel32.lib</item>
+								<item>msimg32.lib</item>
+								<item>msvcrt.lib</item>
 								<item>odbc32.lib</item>
 								<item>odbccp32.lib</item>
-								<item>comctl32.lib</item>
-								<item>d2d1.lib</item>
-								<item>dwrite.lib</item>
-								<item>gdiplus.lib</item>
-								<item>msimg32.lib</item>
-								<item>d3d11.lib</item>
-								<item>dxgi.lib</item>
-								<item>dinput8.lib</item>
-								<item>dxguid.lib</item>
+								<item>ole32.lib</item>
+								<item>oleaut32.lib</item>
+								<item>shell32.lib</item>
+								<item>user32.lib</item>
+								<item>uuid.lib</item>
+								<item>winmm.lib</item>
+								<item>winspool.lib</item>
+								<item>ws2_32.lib</item>
 								<item>xinput.lib</item>
 							</value>
 						</second>

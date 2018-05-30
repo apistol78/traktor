@@ -9,8 +9,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Ps3/MemoryHeapObject.h"
 #include "Render/Ps3/StateCachePs3.h"
 
-extern "C" unsigned long _binary_ClearFp_vpo_start;
-extern "C" unsigned long _binary_ClearFp_fpo_start;
+// Resources
+#include "Resources/ClearVertex.h"
+#include "Resources/ClearFragment.h"
 
 namespace traktor
 {
@@ -62,8 +63,8 @@ bool ClearFpPs3::create(MemoryHeap* memoryHeap)
 	ptr[4] = -1.0f; ptr[5] =  1.0f;
 	ptr[6] =  1.0f; ptr[7] =  1.0f;
 
-	m_clearVertexProgram = (CGprogram)(void*)&_binary_ClearFp_vpo_start;
-	m_clearFragmentProgram = (CGprogram)(void*)&_binary_ClearFp_fpo_start;
+	m_clearVertexProgram = (CGprogram)(void*)&c_ResourceClearVertex;
+	m_clearFragmentProgram = (CGprogram)(void*)&c_ResourceClearFragment;
 
 	cellGcmCgInitProgram(m_clearVertexProgram);
 	cellGcmCgInitProgram(m_clearFragmentProgram);

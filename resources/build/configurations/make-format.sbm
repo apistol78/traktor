@@ -90,14 +90,21 @@ function CC(solution, project, configuration, architecture, filePath, outputPath
 		ao = "_" .. architecture
 	end
 
+	local adco = configuration:getAdditionalCompilerOptions()
+	if adco ~= "" then
+		adco = " " .. adco .. " "
+	else
+		adco = " "
+	end
+
 	if format == "StaticLibrary" then
-		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	elseif format == "SharedLibrary" then
-		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	elseif format == "Executable" then
-		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	elseif format == "ExecutableConsole" then
-		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. " $(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	end
 end
 
@@ -172,6 +179,11 @@ function LINK(solution, project, configuration, architecture, sourcePath, source
 	local ao = ""
 	if architecture ~= nil then
 		ao = "_" .. architecture
+	end
+
+	local adlo = configuration:getAdditionalLinkerOptions()
+	if adlo ~= "" then
+		lo = lo .. " " .. adlo
 	end
 
 	if format == "StaticLibrary" then

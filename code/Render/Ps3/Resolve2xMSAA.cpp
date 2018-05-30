@@ -11,10 +11,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Ps3/Resolve2xMSAA.h"
 #include "Render/Ps3/StateCachePs3.h"
 
-#define USE_DEBUG_DRAW 0
+// Resources
+#include "Resources/Resolve.h"
+#include "Resources/Resolve2xAccuview.h"
 
-extern "C" unsigned long _binary_Resolve_vpo_start;
-extern "C" unsigned long _binary_Resolve2xAccuview_fpo_start;
+#define USE_DEBUG_DRAW 0
 
 namespace traktor
 {
@@ -75,8 +76,8 @@ bool Resolve2xMSAA::create(MemoryHeap* memoryHeap)
 			return false;
 	}
 
-	m_vertexProgram = (CGprogram)(void*)&_binary_Resolve_vpo_start;
-	m_fragmentProgram = (CGprogram)(void*)&_binary_Resolve2xAccuview_fpo_start;
+	m_vertexProgram = (CGprogram)(void*)&c_ResourceResolve;
+	m_fragmentProgram = (CGprogram)(void*)&c_ResourceResolve2xAccuview;
 
 	cellGcmCgInitProgram(m_vertexProgram);
 	cellGcmCgInitProgram(m_fragmentProgram);

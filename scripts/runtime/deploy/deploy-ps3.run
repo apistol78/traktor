@@ -43,8 +43,7 @@ function deploy(args)
 	local paths = ""
 	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
 	for _, p in pairs(paths) do
-		libraryPaths = libraryPaths .. " --library-path=" .. Path(p):getPathName() .. "/ppu"
-		libraryPaths = libraryPaths .. " --library-path=" .. Path(p):getPathName() .. "/spu"
+		libraryPaths = libraryPaths .. " --library-path=" .. Path(p):getPathName()
 	end
 
 	-- Collect libraries to link.

@@ -242,7 +242,8 @@
 						<first>DEPLOY_SHARED_PATH_DEBUG</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>$(TRAKTOR_HOME)/bin/latest/ps3/debugshared</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps3/ppu/debugshared</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps3/spu/debugshared</item>
 							</value>
 						</second>
 					</item>
@@ -250,7 +251,8 @@
 						<first>DEPLOY_SHARED_PATH_RELEASE</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>$(TRAKTOR_HOME)/bin/latest/ps3/releaseshared</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps3/ppu/releaseshared</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps3/spu/releaseshared</item>
 							</value>
 						</second>
 					</item>
@@ -271,7 +273,8 @@
 						<first>DEPLOY_STATIC_PATH_DEBUG</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>$(TRAKTOR_HOME)/bin/latest/ps3/debugstatic</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps3/ppu/debugstatic</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps3/spu/debugstatic</item>
 							</value>
 						</second>
 					</item>
@@ -279,7 +282,8 @@
 						<first>DEPLOY_STATIC_PATH_RELEASE</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>$(TRAKTOR_HOME)/bin/latest/ps3/releasestatic</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps3/ppu/releasestatic</item>
+								<item>$(TRAKTOR_HOME)/bin/latest/ps3/spu/releasestatic</item>
 							</value>
 						</second>
 					</item>
