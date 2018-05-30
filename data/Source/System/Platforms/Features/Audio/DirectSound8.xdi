@@ -48,11 +48,11 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>dxguid.lib</item>
-								<item>dsound.lib</item>
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Sound.Ds8.lib</item>
 								<item>Traktor.Sound.lib</item>
+								<item>dsound.lib</item>
+								<item>dxguid.lib</item>
 							</value>
 						</second>
 					</item>
@@ -122,11 +122,11 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>dxguid.lib</item>
-								<item>dsound.lib</item>
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Sound.Ds8.lib</item>
 								<item>Traktor.Sound.lib</item>
+								<item>dsound.lib</item>
+								<item>dxguid.lib</item>
 							</value>
 						</second>
 					</item>

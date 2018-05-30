@@ -22,8 +22,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -53,8 +53,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -101,7 +101,7 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>$(SCE_PS3_ROOT)/target/spu/lib/libm.a</item>
+									<item>m</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -132,7 +132,7 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>$(SCE_PS3_ROOT)/target/spu/lib/libm.a</item>
+									<item>m</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -325,8 +325,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -356,12 +356,12 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
-					<additionalLinkerOptions>-mspurs-job-initialize -fpic</additionalLinkerOptions>
+					<additionalLinkerOptions>-Wl,-q -fpic -mspurs-job-initialize</additionalLinkerOptions>
 					<debugExecutable/>
 					<debugArguments/>
 					<debugEnvironment/>
@@ -408,8 +408,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -440,8 +440,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -492,8 +492,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -524,8 +524,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -576,8 +576,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -608,8 +608,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -660,8 +660,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -692,8 +692,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -744,8 +744,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -776,8 +776,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -828,8 +828,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -860,8 +860,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -912,8 +912,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -944,8 +944,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -997,8 +997,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-g -Wall -fno-exceptions -fno-rtti -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>
@@ -1029,8 +1029,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
-						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+						<item>spurs</item>
+						<item>spurs_jq</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions>-Wall -fno-exceptions -fno-rtti -O3 -ffast-math -ffunction-sections -fdata-sections -fstack-check -mspurs-job-initialize</additionalCompilerOptions>

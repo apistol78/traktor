@@ -318,7 +318,7 @@ collectFiles(
 		local ext = file:getExtension()
 		if ext == "c" or ext == "cc" or ext == "cpp" or ext == "m" or ext == "mm" or ext == "rc" then
 			table.insert(sourceFiles, file)
-		elseif ext == "xdi" or ext == "image" or ext == "png" or ext == "lua" or ext == "js" or ext == "css" then
+		elseif ext == "xdi" or ext == "image" or ext == "png" or ext == "lua" or ext == "js" or ext == "css" or ext == "cgv" or ext == "cgf" then
 			table.insert(resourceFiles, file)
 		elseif ext == "def" then
 			definitionFile = file
@@ -631,8 +631,27 @@ for i = 0, configurations:size() - 1 do
 		local f1 = fileSystem:getRelativePath(file, projectPath)
 		assert (f1 ~= nil)
 
-		output:printLn(configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h : \\")
-		output:printLn("\t" .. f1:getPathName())
+		local inputFileNoExt = f1:getPathNameNoExtension()
+		local inputFile = f1:getPathName()
+		local outputFileNoExt = configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension()
+		local outputFileH = outputFileNoExt .. ".h"
+
+		output:printLn(outputFileH .. " : \\")
+		output:printLn("\t" .. inputFile)
+
+		-- \hack Compile PS3/CG embedded shaders.
+		local ext = f1:getExtension()
+		if ext == "cgv" then
+			local intermediateFile = configuration:getName() .. "/" .. file:getFileNameNoExtension() .. ".vpo"
+			printWithColor(35, "Compiling vertex shader " .. file:getFileNameNoExtension() .. "...")
+			output:printLn("\t@$(CGC) -profile sce_vp_rsx -o \"" .. intermediateFile .. "\" \"" .. inputFile .. "\"")
+			inputFile = intermediateFile
+		elseif ext == "cgf" then
+			local intermediateFile = configuration:getName() .. "/" .. file:getFileNameNoExtension() .. ".fpo"
+			printWithColor(35, "Compiling fragment shader " .. file:getFileNameNoExtension() .. "...")
+			output:printLn("\t@$(CGC) -profile sce_fp_rsx -o \"" .. intermediateFile .. "\" \"" .. inputFile .. "\"")
+			inputFile = intermediateFile
+		end
 
 		printWithColor(35, "Converting " .. file:getFileName() .. "...")
 		if dialect == "nmake" then
@@ -645,12 +664,7 @@ for i = 0, configurations:size() - 1 do
 			end
 		end
 
-		if dialect == "nmake" then
-			output:printLn("\t@$(BINARY_INCLUDE) $** $@ c_Resource" .. file:getFileNameNoExtension())
-		elseif dialect == "make" then
-			output:printLn("\t@$(BINARY_INCLUDE) $^ $@ c_Resource" .. file:getFileNameNoExtension())
-		end
-
+		output:printLn("\t@$(BINARY_INCLUDE) " .. inputFile .. " $@ c_Resource" .. file:getFileNameNoExtension())
 		output:printLn("")
 	end
 end
