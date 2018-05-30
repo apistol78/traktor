@@ -23,7 +23,7 @@ namespace traktor
 		{
 
 const uint32_t c_version = 3;
-const uint32_t c_flushAfterChanges = 10;	//!< Flush pipeline after N changes.
+const uint32_t c_flushAfterChanges = 100;	//!< Flush pipeline after N changes.
 
 class MemberPipelineDependencyHash : public MemberComplex
 {
