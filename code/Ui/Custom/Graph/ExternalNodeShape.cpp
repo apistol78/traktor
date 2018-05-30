@@ -277,7 +277,7 @@ void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size&
 				extent
 			),
 			name,
-			AnRight,
+			AnLeft,
 			AnCenter
 		);
 	}
