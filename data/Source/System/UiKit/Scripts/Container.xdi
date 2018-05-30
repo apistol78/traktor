@@ -15,12 +15,8 @@ end
 
 function Container:getPreferredSize()
 	if self._layout ~= nil then
---		if self:isVisible(false) then
-			local w, h = self._layout:estimate(self)
-			return { width = w, height = h }
---		else
---			return { width = 0, height = 0 }
---		end
+		local w, h = self._layout:estimate(self)
+		return { width = w, height = h }
 	else
 		local w, h = 0, 0
 		for _, child in ipairs(self._children) do
@@ -34,26 +30,24 @@ end
 
 function Container:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
---	if self:isVisible(false) and self._layout ~= nil then
-	if self._layout ~= nil then
+	if self:isVisible(false) and self._layout ~= nil then
 		local p = self:getPlacement()
 		self._layout:update(self, p.width, p.height)
 	end
 end
 
 function Container:layout()
---	if self:isVisible(false) and self._layout ~= nil then
-	if self._layout ~= nil then
+	if self:isVisible(false) and self._layout ~= nil then
 		local p = self:getPlacement()
 		self._layout:update(self, p.width, p.height)
 	end
 end
 
---function Container:setVisible(visible)
---	Widget.setVisible(self, visible)
---	self:layout()
---	return self
---end
+function Container:setVisible(visible)
+	Widget.setVisible(self, visible)
+	self:layout()
+	return self
+end
 
 -- Private
 
