@@ -1,0 +1,204 @@
+
+function OBJNAME(filePath)
+	local objectFile = OS.getInstance():getEnvironment("MAKE_OBJECT_FILE")
+	return string.format(objectFile, filePath:getPathNameNoExtension())
+end
+
+function PRODUCTNAME(solution, project, configuration)
+	local format = configuration:getTargetFormat()
+
+	local productName
+	if format == "StaticLibrary" then
+		local staticLibraryFile = OS.getInstance():getEnvironment("MAKE_STATIC_LIBRARY_FILE")
+		productName = string.format(staticLibraryFile, project:getName())
+	elseif format == "SharedLibrary" then
+		local sharedLibraryFile = OS.getInstance():getEnvironment("MAKE_SHARED_LIBRARY_FILE")
+		productName = string.format(sharedLibraryFile, project:getName())
+	elseif format == "Executable" then
+		local executableFile = OS.getInstance():getEnvironment("MAKE_EXECUTABLE_FILE")
+		productName = string.format(executableFile, project:getName())
+	elseif format == "ExecutableConsole" then
+		local executableFile = OS.getInstance():getEnvironment("MAKE_EXECUTABLE_FILE")
+		productName = string.format(executableFile, project:getName())
+	end	
+	assert(productName ~= nil)
+
+	return productName
+end
+
+function DEFINE(solution, project, configuration, definition, output)
+	local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
+
+	if toolchain == "vc" then
+		output:print("/D" .. definition .. " ")
+	elseif toolchain == "gcc" or toolchain == "clang" then
+		output:print("-D" .. definition .. " ")
+	end
+end
+
+function INCLUDE(solution, project, configuration, includePaths, libraryPaths, output)
+	local os = OS.getInstance():getEnvironment("MAKE_OS")
+	local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
+
+	if toolchain == "vc" then
+		output:print("/I " .. configuration:getName())
+	elseif toolchain == "gcc" or toolchain == "clang" then
+		output:print("-I" .. configuration:getName())
+	end
+
+	for _, includePath in ipairs(includePaths) do
+		if toolchain == "vc" then
+			output:print(" /I " .. includePath)
+		elseif toolchain == "gcc" or toolchain == "clang" then
+			if includePath:sub(1, 1) ~= "`" then
+				output:print(" -I" .. includePath)
+			else
+				output:print(" " .. includePath)
+			end
+		end
+	end
+
+	if os == "osx" then
+		for _, libraryPath in ipairs(libraryPaths) do
+			if toolchain == "gcc" or toolchain == "clang" then
+				output:print(" -F" .. libraryPath)
+			end
+		end
+	end	
+end
+
+function CC(solution, project, configuration, architecture, filePath, outputPath, output)
+	local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
+	local profile = configuration:getTargetProfile()
+	local format = configuration:getTargetFormat()
+
+	local cc = "CC"
+	local ext = filePath:getExtension()
+	if ext == "c" then
+		cc = "C"
+	elseif ext == "m" or ext == "mm" then
+		cc = "MM"
+	end
+
+	local ws = ""
+	if toolchain == "gcc" or toolchain == "clang" then
+		ws = " "
+	end
+
+	local ao = ""
+	if architecture ~= nil then
+		ao = "_" .. architecture
+	end
+
+	local adco = configuration:getAdditionalCompilerOptions()
+	if adco ~= "" then
+		adco = " " .. adco .. " "
+	else
+		adco = " "
+	end
+
+	if format == "StaticLibrary" then
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+	elseif format == "SharedLibrary" then
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+	elseif format == "Executable" then
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+	elseif format == "ExecutableConsole" then
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+	end
+end
+
+function LINK(solution, project, configuration, architecture, sourcePath, sourceFiles, libraryPaths, libraries, externalLibraries, definitionFile, output)
+	local os = OS.getInstance():getEnvironment("MAKE_OS")
+	local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
+	local profile = configuration:getTargetProfile()
+	local format = configuration:getTargetFormat()
+
+	local productName
+	if format == "StaticLibrary" then
+		local staticLibraryFile = OS.getInstance():getEnvironment("MAKE_STATIC_LIBRARY_FILE")
+		productName = string.format(staticLibraryFile, project:getName())
+	elseif format == "SharedLibrary" then
+		local sharedLibraryFile = OS.getInstance():getEnvironment("MAKE_SHARED_LIBRARY_FILE")
+		productName = string.format(sharedLibraryFile, project:getName())
+	elseif format == "Executable" then
+		local executableFile = OS.getInstance():getEnvironment("MAKE_EXECUTABLE_FILE")
+		productName = string.format(executableFile, project:getName())
+	elseif format == "ExecutableConsole" then
+		local executableFile = OS.getInstance():getEnvironment("MAKE_EXECUTABLE_FILE")
+		productName = string.format(executableFile, project:getName())
+	end	
+	assert(productName ~= nil)
+
+	local ws = ""
+	if toolchain == "gcc" or toolchain == "clang" then
+		ws = " "
+	end
+
+	local lo = ""
+	if format ~= "StaticLibrary" then
+		if toolchain == "vc" then
+			lo = lo .. " /LIBPATH:../" .. configuration:getName()
+		elseif toolchain == "gcc" then
+			lo = lo .. " -L../" .. configuration:getName()
+			lo = lo .. " -Wl,-rpath-link=../" .. configuration:getName()
+		elseif toolchain == "clang" then
+			lo = lo .. " -L../" .. configuration:getName()
+		end		
+		for _, libraryPath in ipairs(libraryPaths) do
+			if toolchain == "vc" then
+				lo = lo .. " /LIBPATH:" .. libraryPath
+			elseif toolchain == "gcc" or toolchain == "clang" then
+				lo = lo .. " -L" .. libraryPath
+			end
+		end
+		for _, library in ipairs(libraries) do
+			if toolchain == "vc" then
+				lo = lo .. " " .. library
+			elseif toolchain == "gcc" or toolchain == "clang" then
+				lo = lo .. " -l" .. library
+			end
+		end
+		for _, externalLibrary in ipairs(externalLibraries) do
+			if toolchain == "vc" then
+				lo = lo .. " " .. externalLibrary
+			elseif toolchain == "gcc" or toolchain == "clang" then
+				if string.find(externalLibrary, ".framework") == nil then
+					if externalLibrary:sub(1, 1) ~= "`" then
+						lo = lo .. " -l" .. externalLibrary
+					else
+						lo = lo .. " " .. externalLibrary
+					end
+				else
+					lo = lo .. " -framework " .. externalLibrary:sub(1, #externalLibrary - 10)
+				end
+			end
+		end
+	end
+
+	local ao = ""
+	if architecture ~= nil then
+		ao = "_" .. architecture
+	end
+
+	local adlo = configuration:getAdditionalLinkerOptions()
+	if adlo ~= "" then
+		lo = lo .. " " .. adlo
+	end
+
+	if format == "StaticLibrary" then
+		output:printLn("\t$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS)")
+	elseif format == "SharedLibrary" then
+		if os ~= "osx" then
+			output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS) " .. lo)
+		else
+			output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) -dynamiclib -install_name @executable_path/" .. productName .. " $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS) " .. lo)
+		end
+	elseif format == "Executable" then
+		output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS)" .. lo)
+		output:printLn("\t$(SPU_ELF_TO_PPU) ../" .. configuration:getName() .. ao .. "/" .. productName .. " ../" .. configuration:getName() .. ao .. "/" .. project:getName() .. ".ppu.o")
+	elseif format == "ExecutableConsole" then
+		output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS)" .. lo)
+		output:printLn("\t$(SPU_ELF_TO_PPU) ../" .. configuration:getName() .. ao .. "/" .. productName .. " ../" .. configuration:getName() .. ao .. "/" .. project:getName() .. ".ppu.o")
+	end	
+end
