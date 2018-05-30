@@ -21,7 +21,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Sound/SoundChannel.h"
 #include "Sound/SoundMixer.h"
 #include "Sound/SoundSystem.h"
-#if defined(_WIN64)
+#if defined(T_SOUND_USE_AVX_MIXER)
 #	include "Sound/Avx/SoundMixerAvx.h"
 #endif
 
@@ -81,7 +81,7 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	// a default mixer.
 	if (!m_mixer)
 	{
-#if defined(_WIN64)
+#if defined(T_SOUND_USE_AVX_MIXER)
 		if (SoundMixerAvx::supported())
 			m_mixer = new SoundMixerAvx();
 #endif
