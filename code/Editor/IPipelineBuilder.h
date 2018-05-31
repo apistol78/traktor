@@ -57,7 +57,7 @@ public:
 			int32_t index,
 			int32_t count,
 			const PipelineDependency* dependency
-		) const = 0;
+		) = 0;
 
 		virtual void endBuild(
 			int32_t core,
@@ -65,7 +65,7 @@ public:
 			int32_t count,
 			const PipelineDependency* dependency,
 			BuildResult result
-		) const = 0;
+		) = 0;
 	};
 
 	virtual bool build(const IPipelineDependencySet* dependencySet, bool rebuild) = 0;
