@@ -244,7 +244,7 @@ struct StatusListener : public editor::IPipelineBuilder::IListener
 		int32_t index,
 		int32_t count,
 		const editor::PipelineDependency* dependency
-	) const T_OVERRIDE T_FINAL
+	) T_OVERRIDE T_FINAL
 	{
 		log::info << L":" << index << L":" << count << Endl;
 	}
@@ -255,7 +255,7 @@ struct StatusListener : public editor::IPipelineBuilder::IListener
 		int32_t count,
 		const editor::PipelineDependency* dependency,
 		editor::IPipelineBuilder::BuildResult result
-	) const T_OVERRIDE T_FINAL
+	) T_OVERRIDE T_FINAL
 	{
 	}
 };

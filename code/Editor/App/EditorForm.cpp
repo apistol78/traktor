@@ -177,48 +177,6 @@ private:
 	Ref< ILogTarget > m_target2;
 };
 
-struct StatusListener : public IPipelineBuilder::IListener
-{
-	Ref< ui::Form > m_form;
-	Ref< BuildView > m_buildView;
-	Ref< ui::custom::ProgressBar > m_buildProgress;
-
-	StatusListener(
-		ui::Form* form,
-		BuildView* buildView,
-		ui::custom::ProgressBar* buildProgress
-	)
-	:	m_form(form)
-	,	m_buildView(buildView)
-	,	m_buildProgress(buildProgress)
-	{
-	}
-
-	virtual void beginBuild(
-		int32_t core,
-		int32_t index,
-		int32_t count,
-		const PipelineDependency* dependency
-	) const T_OVERRIDE T_FINAL
-	{
-		m_form->showProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count, 100);
-		m_buildView->beginBuild(core, dependency->outputPath);
-		m_buildProgress->setProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count);
-	}
-
-	virtual void endBuild(
-		int32_t core,
-		int32_t index,
-		int32_t count,
-		const PipelineDependency* dependency,
-		IPipelineBuilder::BuildResult result
-	) const T_OVERRIDE T_FINAL
-	{
-		m_form->hideProgress();
-		m_buildView->endBuild(core, result);
-	}
-};
-
 class OpenWorkspaceStatus : public RefCountImpl< ui::custom::BackgroundWorkerDialog::IWorkerStatus >
 {
 public:
@@ -236,6 +194,27 @@ public:
 
 private:
 	int32_t& m_step;
+};
+
+class BuildStatus : public RefCountImpl< ui::custom::BackgroundWorkerDialog::IWorkerStatus >
+{
+public:
+	BuildStatus(int32_t& step, std::wstring& message)
+	:	m_step(step)
+	,	m_message(message)
+	{
+	}
+
+	virtual bool read(int32_t& outStep, std::wstring& outStatus) T_OVERRIDE T_FINAL
+	{
+		outStep = m_step;
+		outStatus = m_message;
+		return true;
+	}
+
+private:
+	int32_t& m_step;
+	std::wstring& m_message;
 };
 
 struct EditorToolPredicate
@@ -438,6 +417,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.EditorForm", EditorForm, ui::Form)
 EditorForm::EditorForm()
 :	m_threadAssetMonitor(0)
 ,	m_threadBuild(0)
+,	m_buildStep(0)
 {
 }
 
@@ -1865,7 +1845,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	m_buildView->beginBuild();
 
 	// Build output.
-	StatusListener listener(this, m_buildView, m_buildProgress);
 	Ref< IPipelineBuilder > pipelineBuilder;
 
 	if (
@@ -1879,7 +1858,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 			pipelineCache,
 			m_pipelineDb,
 			&instanceCache,
-			&listener,
+			this,
 			m_mergedSettings->getProperty< bool >(L"Pipeline.BuildThreads", true)
 		);
 	else
@@ -1887,7 +1866,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 			m_agentsManager,
 			&pipelineFactory,
 			m_pipelineDb,
-			&listener
+			this
 		);
 
 	if (rebuild)
@@ -1942,7 +1921,7 @@ void EditorForm::buildWaitUntilFinished()
 		// Show a dialog if processing seems to take more than N second(s).
 		ui::custom::BackgroundWorkerDialog dialog;
 		dialog.create(this, i18n::Text(L"EDITOR_WAIT_BUILDING_TITLE"), i18n::Text(L"EDITOR_WAIT_BUILDING_MESSAGE"), false);
-		dialog.execute(m_threadBuild, 0);
+		dialog.execute(m_threadBuild, new BuildStatus(m_buildStep, m_buildStepMessage));
 		dialog.destroy();
 
 		// As build thread is no longer in use we can safely release it's resources.
@@ -2051,6 +2030,21 @@ Object* EditorForm::getStoreObject(const std::wstring& name) const
 {
 	std::map< std::wstring, Ref< Object > >::const_iterator i = m_objectStore.find(name);
 	return i != m_objectStore.end() ? i->second : 0;
+}
+
+void EditorForm::beginBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency)
+{
+	showProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count, 100);
+	m_buildView->beginBuild(core, dependency->outputPath);
+	m_buildProgress->setProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count);
+	m_buildStep = (index * 1000) / count;
+	m_buildStepMessage = dependency->outputPath;
+}
+
+void EditorForm::endBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency, IPipelineBuilder::BuildResult result)
+{
+	hideProgress();
+	m_buildView->endBuild(core, result);
 }
 
 void EditorForm::updateMRU()

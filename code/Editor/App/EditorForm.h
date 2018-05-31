@@ -13,6 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Library/Library.h"
 #include "Core/Thread/Semaphore.h"
 #include "Editor/IEditor.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Ui/Command.h"
 #include "Ui/Form.h"
 
@@ -88,6 +89,7 @@ class PropertiesView;
 class EditorForm
 :	public ui::Form
 ,	public IEditor
+,	public IPipelineBuilder::IListener
 {
 	T_RTTI_CLASS;
 
@@ -165,6 +167,15 @@ public:
 
 	//@}
 
+	/*! \name IPipelineBuilder::IListener implementation */
+	//@{
+
+	virtual void beginBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency) T_OVERRIDE T_FINAL;
+
+	virtual void endBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency, IPipelineBuilder::BuildResult result) T_OVERRIDE T_FINAL;
+
+	//@}
+
 private:
 	friend class EditorPageSite;
 	friend class EditorPluginSite;
@@ -217,6 +228,8 @@ private:
 	Ref< PropertyGroup > m_globalSettings;		//!< Traktor.Editor.config + Traktor.Editor.<platform>.config + Traktor.Editor.<user>.config
 	Ref< PropertyGroup > m_workspaceSettings;	//!< <Application>.workspace
 	Ref< PropertyGroup > m_mergedSettings;		//!< Traktor.Editor.config + Traktor.Editor.<platform>.config + Traktor.Editor.<user>.config + <Application>.workspace
+	int32_t m_buildStep;
+	std::wstring m_buildStepMessage;
 
 	bool createWorkspace();
 
