@@ -208,7 +208,7 @@ public:
 	virtual bool read(int32_t& outStep, std::wstring& outStatus) T_OVERRIDE T_FINAL
 	{
 		outStep = m_step;
-		outStatus = m_message;
+		outStatus = !m_message.empty() ? m_message : L"...";
 		return true;
 	}
 

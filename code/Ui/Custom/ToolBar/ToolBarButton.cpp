@@ -153,7 +153,8 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBi
 
 bool ToolBarButton::mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent)
 {
-	m_state |= BstHover;
+	if (isEnable())
+		m_state |= BstHover;
 	return true;
 }
 
