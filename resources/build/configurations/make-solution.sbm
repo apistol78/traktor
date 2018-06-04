@@ -101,7 +101,7 @@ for i = 0, projects:size() - 1 do
 			if dialect == "nmake" then
 				output:printLn("\tpushd " .. project:getName() .. " & $(MAKE) /J 8 " .. configuration:getName() .. " & popd")
 			elseif dialect == "make" then
-				output:printLn("\t$(MAKE) -j 8 --debug=b -C " .. project:getName() .. " " .. configuration:getName())
+				output:printLn("\t$(MAKE) -j 8 -C " .. project:getName() .. " " .. configuration:getName())
 			end
 			output:printLn("")
 		end
