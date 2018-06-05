@@ -137,6 +137,9 @@ PipelineBuilder::PipelineBuilder(
 ,	m_succeeded(0)
 ,	m_succeededBuilt(0)
 ,	m_failed(0)
+,	m_cacheHit(0)
+,	m_cacheMiss(0)
+,	m_cacheVoid(0)
 {
 }
 
@@ -275,6 +278,9 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 	m_succeeded = dependencyCount - m_progressEnd;
 	m_succeededBuilt = 0;
 	m_failed = 0;
+	m_cacheHit = 0;
+	m_cacheMiss = 0;
+	m_cacheVoid = 0;
 
 	int32_t cpuCores = OS::getInstance().getCPUCoreCount();
 	if (
@@ -324,11 +330,15 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 
 	T_DEBUG(L"Pipeline build; total " << int32_t(timer.getElapsedTime() * 1000) << L" ms");
 
+	// Log cache performance.
+	if (m_cache)
+		log::info << L"Pipeline cache; " << m_cacheHit << L" hit(s), " << m_cacheMiss << L" miss(es), " << m_cacheVoid << L" void(s)." << Endl;
+
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
-		log::info << L"Build finished; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed" << Endl;
+		log::info << L"Build finished; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed." << Endl;
 	else
-		log::info << L"Build finished; aborted" << Endl;
+		log::info << L"Build finished; aborted." << Endl;
 
 	return m_failed == 0;
 }
@@ -600,11 +610,17 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	{
 		if (getInstancesFromCache(dependency->outputGuid, currentDependencyHash))
 		{
-			log::info << L"Cached instance(s) used" << Endl;
+			log::info << L"Cached output used of \"" << dependency->outputPath << L"\"." << Endl;
 			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
+			Atomic::increment(m_cacheHit);
+			Atomic::increment(m_succeededBuilt);
 			return BrSucceeded;
 		}
+		else
+			Atomic::increment(m_cacheMiss);
 	}
+	else if (m_cache)
+		Atomic::increment(m_cacheVoid);
 
 	// Build output instances; keep an array of written instances as we
 	// need them to update the cache.
@@ -779,9 +795,9 @@ void PipelineBuilder::buildThread(
 
 		BuildResult result = performBuild(dependencySet, workDependency, workBuildParams, m_reasons[workDependencyIndex]);
 		if (result == BrSucceeded || result == BrSucceededWithWarnings)
-			++m_succeeded;
+			Atomic::increment(m_succeeded);
 		else
-			++m_failed;
+			Atomic::increment(m_failed);
 
 		if (m_listener)
 			m_listener->endBuild(
