@@ -121,6 +121,9 @@ private:
 	int32_t m_succeeded;
 	int32_t m_succeededBuilt;
 	int32_t m_failed;
+	int32_t m_cacheHit;
+	int32_t m_cacheMiss;
+	int32_t m_cacheVoid;
 
 	/*! \brief Perform build. */
 	BuildResult performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason);
