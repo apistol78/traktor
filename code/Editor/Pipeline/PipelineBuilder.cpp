@@ -648,6 +648,13 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 
 	if (result)
 	{
+		if (m_cache && !buildParams)
+			putInstancesInCache(
+				dependency->outputGuid,
+				currentDependencyHash,
+				builtInstances
+			);
+
 		if (!builtInstances.empty())
 		{
 			log::info << L"Instance(s) built:" << Endl;
@@ -655,13 +662,6 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 
 			for (RefArray< db::Instance >::const_iterator j = builtInstances.begin(); j != builtInstances.end(); ++j)
 				log::info << L"\"" << (*j)->getPath() << L"\" " << (*j)->getGuid().format() << Endl;
-
-			if (m_cache && !buildParams)
-				putInstancesInCache(
-					dependency->outputGuid,
-					currentDependencyHash,
-					builtInstances
-				);
 
 			log::info << DecreaseIndent;
 		}

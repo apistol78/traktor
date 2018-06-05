@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
 #include "Editor/Pipeline/FilePipelinePutStream.h"
 
 namespace traktor
@@ -27,10 +28,11 @@ void FilePipelinePutStream::close()
 		m_file->close();
 		m_file = 0;
 		
-		FileSystem::getInstance().move(
+		if (!FileSystem::getInstance().move(
 			m_path,
 			m_path + L"~"
-		);
+		))
+			log::error << L"File pipeline cache failed; unable to commit cache entry " << m_path << L"." << Endl;
 	}
 }
 
