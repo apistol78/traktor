@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Log/Log.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
@@ -67,7 +68,10 @@ Ref< IStream > FilePipelineCache::put(const Guid& guid, const PipelineDependency
 	
 	Ref< IStream > fileStream = FileSystem::getInstance().open(ss.str() + L"~", File::FmWrite);
 	if (!fileStream)
+	{
+		log::error << L"File pipeline cache failed; unable to create cache entry " << ss.str() << L"." << Endl;
 		return 0;
+	}
 
 	return new FilePipelinePutStream(
 		new BufferedStream(fileStream),
