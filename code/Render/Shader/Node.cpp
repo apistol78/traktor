@@ -91,6 +91,8 @@ void Node::serialize(ISerializer& s)
 {
 	if (s.getVersion< Node >() >= 1)
 		s >> Member< Guid >(L"id", m_id);
+	else if (s.getDirection() == ISerializer::SdRead)
+		m_id = Guid();
 
 	s >> Member< std::wstring >(L"comment", m_comment, AttributeMultiLine());
 	s >> MemberStlPair< int, int >(L"position", m_position);
