@@ -84,13 +84,15 @@ void calculateLinearSpline(Point s1, Point d1, std::vector< Point >& outSpline)
 		}
 	}
 
+	const int32_t c_six = dpi96(6);
+
 	outSpline.resize(6);
-	outSpline[0] = Point(s1.x + 6, s1.y);
+	outSpline[0] = Point(s1.x + c_six, s1.y);
 	outSpline[1] = s;
 	outSpline[2] = m1;
 	outSpline[3] = m2;
 	outSpline[4] = d;
-	outSpline[5] = Point(d1.x - 6, d1.y);
+	outSpline[5] = Point(d1.x - c_six, d1.y);
 }
 
 void calculateSmoothSpline(Point s1, Point d1, std::vector< Point >& outSpline)
@@ -174,6 +176,8 @@ bool Edge::hit(const PaintSettings* paintSettings, const Point& p) const
 	else
 		calculateLinearSpline(m_source->getPosition(), m_destination->getPosition(), m_spline);
 
+	const float c_hitWidth = float(dpi96(4));
+
 	for (int i = 1; i < int(m_spline.size() - 2); ++i)
 	{
 		const Point& s = m_spline[i];
@@ -187,7 +191,7 @@ bool Edge::hit(const PaintSettings* paintSettings, const Point& p) const
 		Vector2 R = Vector2(float(s.x), float(s.y)) - P;
 
 		float D = traktor::abs(dot(V, R) / V.length());
-		if (D > 4.0f)
+		if (D > c_hitWidth)
 			continue;
 
 		Vector2 Pr = P + V * D;
