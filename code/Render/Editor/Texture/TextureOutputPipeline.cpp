@@ -627,6 +627,8 @@ bool TextureOutputPipeline::buildOutput(
 			}
 
 			// Create task for each mip level.
+			if (mipCount > 0)
+				log::info << L"Generating " << mipCount << L" mip(s)..." << Endl;
 			for (int32_t i = 0; i < mipCount; ++i)
 			{
 				if (ThreadManager::getInstance().getCurrentThread()->stopped())
@@ -634,8 +636,6 @@ bool TextureOutputPipeline::buildOutput(
 
 				int32_t mipWidth = std::max(width >> i, 1);
 				int32_t mipHeight = std::max(height >> i, 1);
-
-				log::info << L"Generating mip " << i << L" (" << mipWidth << L"*" << mipHeight << L")..." << Endl;
 
 				if (mipWidth != image->getWidth() || mipHeight != image->getHeight() || isNormalMap || mipFilters)
 				{

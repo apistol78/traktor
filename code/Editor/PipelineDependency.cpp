@@ -4,7 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Core/Log/Log.h"
+#include "Core/Io/OutputStream.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
@@ -32,41 +32,41 @@ PipelineDependency::PipelineDependency()
 {
 }
 
-void PipelineDependency::dump() const
+void PipelineDependency::dump(OutputStream& os) const
 {
 	uint32_t i = 0;
 
-	log::info << L"pipelineType: " << (pipelineType ? pipelineType->getName() : L"(null)") << Endl;
-	log::info << L"sourceInstanceGuid: " << sourceInstanceGuid.format() << Endl;
-	log::info << L"sourceAsset: " << type_name(sourceAsset) << Endl;
+	os << L"pipelineType: " << (pipelineType ? pipelineType->getName() : L"(null)") << Endl;
+	os << L"sourceInstanceGuid: " << sourceInstanceGuid.format() << Endl;
+	os << L"sourceAsset: " << type_name(sourceAsset) << Endl;
 
 	for (external_files_t::const_iterator it = files.begin(); it != files.end(); ++it, ++i)
 	{
-		log::info << L"files[" << i << L"]" << Endl;
-		log::info << L"\t.filePath: " << it->filePath.getPathName() << Endl;
-		log::info << L"\t.lastWriteTime: " << it->lastWriteTime.getSecondsSinceEpoch() << Endl;
+		os << L"files[" << i << L"]" << Endl;
+		os << L"\t.filePath: " << it->filePath.getPathName() << Endl;
+		os << L"\t.lastWriteTime: " << it->lastWriteTime.getSecondsSinceEpoch() << Endl;
 	}
 
-	log::info << L"outputPath: " << outputPath << Endl;
-	log::info << L"outputGuid: " << outputGuid.format() << Endl;
-	log::info << L"pipelineHash: " << pipelineHash << Endl;
-	log::info << L"sourceAssetHash: " << sourceAssetHash << Endl;
-	log::info << L"sourceDataHash: " << sourceDataHash << Endl;
-	log::info << L"filesHash: " << filesHash << Endl;
+	os << L"outputPath: " << outputPath << Endl;
+	os << L"outputGuid: " << outputGuid.format() << Endl;
+	os << L"pipelineHash: " << pipelineHash << Endl;
+	os << L"sourceAssetHash: " << sourceAssetHash << Endl;
+	os << L"sourceDataHash: " << sourceDataHash << Endl;
+	os << L"filesHash: " << filesHash << Endl;
 
-	log::info << L"flags:";
+	os << L"flags:";
 	if (flags & PdfBuild)
-		log::info << L" PdfBuild";
+		os << L" PdfBuild";
 	if (flags & PdfUse)
-		log::info << L" PdfUse";
+		os << L" PdfUse";
 	if (flags & PdfResource)
-		log::info << L" PdfResource";
+		os << L" PdfResource";
 	if (flags & PdfFailed)
-		log::info << L" PdfFailed";
-	log::info << Endl;
+		os << L" PdfFailed";
+	os << Endl;
 
 	for (i = 0; i < uint32_t(children.size()); ++i)
-		log::info << L"children[" << i << L"] = " << children[i] << Endl;
+		os << L"children[" << i << L"] = " << children[i] << Endl;
 }
 
 void PipelineDependency::serialize(ISerializer& s)

@@ -44,7 +44,6 @@ public:
 	PipelineDependsParallel(
 		PipelineFactory* pipelineFactory,
 		db::Database* sourceDatabase,
-		db::Database* outputDatabase,
 		IPipelineDependencySet* dependencySet,
 		IPipelineDb* pipelineDb,
 		IPipelineInstanceCache* instanceCache
@@ -86,8 +85,6 @@ public:
 
 	virtual Ref< db::Database > getSourceDatabase() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< db::Database > getOutputDatabase() const T_OVERRIDE T_FINAL;
-
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) T_OVERRIDE T_FINAL;
 
 	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName) T_OVERRIDE T_FINAL;
@@ -100,7 +97,6 @@ private:
 	Ref< JobQueue > m_jobQueue;
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
-	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineDependencySet > m_dependencySet;
 	Ref< IPipelineDb > m_pipelineDb;
 	Ref< IPipelineInstanceCache > m_instanceCache;

@@ -37,6 +37,7 @@ struct InGestureSwipeInstance : public RefCountImpl< IInputNode::Instance >
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InGestureSwipe", 0, InGestureSwipe, IInputNode)
 
 InGestureSwipe::InGestureSwipe()
+:	m_direction(SdUp)
 {
 }
 

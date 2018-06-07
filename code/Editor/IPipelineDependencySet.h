@@ -20,6 +20,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+
+class OutputStream;
+
 	namespace editor
 	{
 
@@ -45,7 +48,7 @@ public:
 
 	virtual uint32_t size() const = 0;
 
-	virtual void dump() = 0;
+	virtual void dump(OutputStream& os) const = 0;
 };
 
 	}

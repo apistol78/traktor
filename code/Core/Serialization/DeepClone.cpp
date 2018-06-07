@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Io/MemoryStream.h"
 
 namespace traktor
 {
@@ -26,9 +27,9 @@ DeepClone::DeepClone(const ISerializable* source)
 	BinarySerializer(&stream).writeObject(source);
 }
 
-Ref< ISerializable > DeepClone::create()
+Ref< ISerializable > DeepClone::create() const
 {
-	DynamicMemoryStream stream(m_copy, true, false, T_FILE_LINE);
+	MemoryStream stream(m_copy.c_ptr(), m_copy.size());
 	return BinarySerializer(&stream).readObject();
 }
 

@@ -161,11 +161,13 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 	_controlfp_s(&dummy,_RC_NEAR, _MCW_RC);
 #endif
 
-	log::info << L"Analyzing build conditions..." << Endl;
+	uint32_t dependencyCount = dependencySet->size();
+	uint32_t modifiedCount = 0;
+
+	if (!rebuild)
+		log::info << L"Analyzing conditions of " << dependencyCount << L" build item(s)..." << Endl;
 
 	// Determine build reasons.
-	uint32_t dependencyCount = dependencySet->size();
-	
 	m_reasons.resize(dependencyCount, 0);
 	for (uint32_t i = 0; i < dependencyCount; ++i)
 	{
@@ -200,6 +202,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed." << Endl;
 #endif
 				m_reasons[i] |= PbrSourceModified;
+				++modifiedCount;
 			}
 			else if (
 				previousDependencyHash.pipelineHash != pipelineHash ||
@@ -215,15 +218,20 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 				log::info << L"Source asset hash "; FormatHex(log::info, sourceAssetHash, 8); log::info << L" ("; FormatHex(log::info, previousDependencyHash.sourceAssetHash, 8); log::info << L")" << Endl;
 				log::info << L"Source data hash "; FormatHex(log::info, sourceDataHash, 8); log::info << L" ("; FormatHex(log::info, previousDependencyHash.sourceDataHash, 8); log::info << L")" << Endl;
 				log::info << L"File(s) hash "; FormatHex(log::info, filesHash, 8); log::info << L" ("; FormatHex(log::info, previousDependencyHash.filesHash, 8); log::info << L")" << Endl;
+				log::info << L"---" << Endl;
+				dependency->dump(log::info);
 				log::info << DecreaseIndent;
 #endif
-
 				m_reasons[i] |= PbrSourceModified;
+				++modifiedCount;
 			}
 		}
 		else
 			m_reasons[i] |= PbrForced;
 	}
+
+	if (!rebuild)
+		log::info << modifiedCount << L" modified instance(s)." << Endl;
 
 	for (uint32_t i = 0; i < dependencyCount; ++i)
 	{
@@ -473,16 +481,6 @@ Ref< ISerializable > PipelineBuilder::getBuildProduct(const ISerializable* sourc
 	return 0;
 }
 
-Ref< db::Database > PipelineBuilder::getSourceDatabase() const
-{
-	return m_sourceDatabase;
-}
-
-Ref< db::Database > PipelineBuilder::getOutputDatabase() const
-{
-	return m_outputDatabase;
-}
-
 Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_createOutputLock);
@@ -531,6 +529,16 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 	}
 }
 
+Ref< db::Database > PipelineBuilder::getOutputDatabase() const
+{
+	return m_outputDatabase;
+}
+
+Ref< db::Database > PipelineBuilder::getSourceDatabase() const
+{
+	return m_sourceDatabase;
+}
+
 Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instanceGuid)
 {
 	if (instanceGuid.isNotNull())
@@ -560,8 +568,6 @@ Ref< IStream > PipelineBuilder::openTemporaryFile(const std::wstring& fileName)
 
 IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason)
 {
-	PipelineDependencyHash currentDependencyHash;
-
 	// Ensure FP is in known state.
 #if defined(_WIN32) && !defined(_WIN64)
 	uint32_t dummy;
@@ -573,25 +579,16 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	if (!dependency->pipelineType)
 		return BrFailed;
 
-	uint32_t pipelineHash = 0;
-	uint32_t sourceAssetHash = 0;
-	uint32_t sourceDataHash = 0;
-	uint32_t filesHash = 0;
-
+	// Calculate recursive hash entry.
+	PipelineDependencyHash currentDependencyHash;
 	calculateGlobalHash(
 		dependencySet,
 		dependency,
-		pipelineHash,
-		sourceAssetHash,
-		sourceDataHash,
-		filesHash
+		currentDependencyHash.pipelineHash,
+		currentDependencyHash.sourceAssetHash,
+		currentDependencyHash.sourceDataHash,
+		currentDependencyHash.filesHash
 	);
-
-	// Create hash entry.
-	currentDependencyHash.pipelineHash = pipelineHash;
-	currentDependencyHash.sourceAssetHash = sourceAssetHash;
-	currentDependencyHash.sourceDataHash = sourceDataHash;
-	currentDependencyHash.filesHash = filesHash;
 
 	// Skip no-build asset; just update hash.
 	if ((dependency->flags & PdfBuild) == 0)

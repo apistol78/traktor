@@ -59,11 +59,11 @@ public:
 
 	virtual Ref< ISerializable > getBuildProduct(const ISerializable* sourceAsset) T_OVERRIDE T_FINAL;
 
-	virtual Ref< db::Database > getSourceDatabase() const T_OVERRIDE T_FINAL;
+	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) T_OVERRIDE T_FINAL;
 
 	virtual Ref< db::Database > getOutputDatabase() const T_OVERRIDE T_FINAL;
 
-	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) T_OVERRIDE T_FINAL;
+	virtual Ref< db::Database > getSourceDatabase() const T_OVERRIDE T_FINAL;
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) T_OVERRIDE T_FINAL;
 

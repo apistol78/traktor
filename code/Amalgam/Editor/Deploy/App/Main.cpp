@@ -71,6 +71,8 @@ int main(int argc, const char** argv)
 		log::info << L"    -debug                    Use debug binaries in deploy or migrate actions." << Endl;
 		log::info << L"    -static-link              Statically link product in deploy or migrate actions." << Endl;
 		log::info << L"    -file-cache               Specify pipeline file cache directory, cache disabled if none specified." << Endl;
+		log::info << L"    -sequential-depends       Disable multithreaded pipeline dependency scanner." << Endl;
+		log::info << L"    -sequential-build         Disable multithreaded pipeline build." << Endl;
 		return 1;
 	}
 
@@ -113,6 +115,11 @@ int main(int argc, const char** argv)
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", true);
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", true);
 	}
+
+	if (cmdLine.hasOption(L"sequential-depends"))
+		settings->setProperty< PropertyBoolean >(L"Pipeline.DependsThreads", false);
+	if (cmdLine.hasOption(L"sequential-build"))
+		settings->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", false);
 
 	db::ConnectionString sourceDatabaseCS = settings->getProperty< std::wstring >(L"Editor.SourceDatabase");
 	sourceDatabaseCS.set(L"fileStore", L"");

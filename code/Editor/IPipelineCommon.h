@@ -46,8 +46,6 @@ class T_DLLCLASS IPipelineCommon : public Object
 public:
 	virtual Ref< db::Database > getSourceDatabase() const = 0;
 
-	virtual Ref< db::Database > getOutputDatabase() const = 0;
-
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
 
 	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName) = 0;

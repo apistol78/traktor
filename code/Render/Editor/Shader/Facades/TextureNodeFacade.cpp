@@ -133,7 +133,12 @@ void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::custom::Node* e
 			if (thumbnailGenerator)
 			{
 				bool visibleAlpha = (textureAsset->m_output.m_hasAlpha == true && textureAsset->m_output.m_ignoreAlpha == false);
-				Ref< drawing::Image > thumbnail = thumbnailGenerator->get(fileName, 64, 64, visibleAlpha ? editor::IThumbnailGenerator::AmWithAlpha : editor::IThumbnailGenerator::AmNoAlpha);
+				Ref< drawing::Image > thumbnail = thumbnailGenerator->get(
+					fileName,
+					ui::dpi96(64),
+					ui::dpi96(64),
+					visibleAlpha ? editor::IThumbnailGenerator::AmWithAlpha : editor::IThumbnailGenerator::AmNoAlpha
+				);
 				if (thumbnail)
 				{
 					Ref< ui::Bitmap > nodeImage = new ui::Bitmap();

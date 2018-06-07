@@ -57,12 +57,16 @@ void BitmapImage::serialize(ISerializer& s)
 		m_image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), m_width, m_height);
 #endif
 
+	void* bits = 0;
+	uint32_t size = 0;
+
 	if (m_image)
 	{
-		void* bits = m_image->getData();
-		uint32_t size = m_width * m_height * 4;
-		s >> Member< void* >(L"bits", bits, size);
+		bits = m_image->getData();
+		size = m_width * m_height * 4;
 	}
+
+	s >> Member< void* >(L"bits", bits, size);
 }
 
 	}

@@ -77,6 +77,8 @@ public:
 	virtual Ref< ISerializable > getBuildProduct(const ISerializable* sourceAsset) = 0;
 
 	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) = 0;
+
+	virtual Ref< db::Database > getOutputDatabase() const = 0;
 };
 
 	}

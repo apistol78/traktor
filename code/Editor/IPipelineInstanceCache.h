@@ -27,7 +27,7 @@ class IPipelineInstanceCache : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< ISerializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
+	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
 
 	virtual void flush(const Guid& instanceGuid) = 0;
 };

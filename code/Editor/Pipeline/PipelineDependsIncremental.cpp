@@ -34,7 +34,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsIncremental", PipelineDep
 PipelineDependsIncremental::PipelineDependsIncremental(
 	PipelineFactory* pipelineFactory,
 	db::Database* sourceDatabase,
-	db::Database* outputDatabase,
 	IPipelineDependencySet* dependencySet,
 	IPipelineDb* pipelineDb,
 	IPipelineInstanceCache* instanceCache,
@@ -42,7 +41,6 @@ PipelineDependsIncremental::PipelineDependsIncremental(
 )
 :	m_pipelineFactory(pipelineFactory)
 ,	m_sourceDatabase(sourceDatabase)
-,	m_outputDatabase(outputDatabase)
 ,	m_dependencySet(dependencySet)
 ,	m_pipelineDb(pipelineDb)
 ,	m_instanceCache(instanceCache)
@@ -134,7 +132,7 @@ void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance
 	}
 
 	// Checkout source asset instance.
-	Ref< ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetInstance->getGuid());
+	Ref< const ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetInstance->getGuid());
 	if (!sourceAsset)
 	{
 		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to checkout instance" << Endl;
@@ -185,7 +183,7 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 	}
 
 	// Checkout source asset instance.
-	Ref< ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetGuid);
+	Ref< const ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetGuid);
 	if (!sourceAsset)
 	{
 		if (m_currentDependency)
@@ -266,11 +264,6 @@ bool PipelineDependsIncremental::waitUntilFinished()
 Ref< db::Database > PipelineDependsIncremental::getSourceDatabase() const
 {
 	return m_sourceDatabase;
-}
-
-Ref< db::Database > PipelineDependsIncremental::getOutputDatabase() const
-{
-	return m_outputDatabase;
 }
 
 Ref< const ISerializable > PipelineDependsIncremental::getObjectReadOnly(const Guid& instanceGuid)
