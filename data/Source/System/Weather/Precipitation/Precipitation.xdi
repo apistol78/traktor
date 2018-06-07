@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.mesh.MeshAsset" version="12">
-	<fileName>d:/private/traktor/data/Assets/System/Weather/Precipitation.lwo</fileName>
+	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Weather/Precipitation.lwo</fileName>
 	<meshType>MtStatic</meshType>
 	<materialTemplates/>
 	<materialShaders>
