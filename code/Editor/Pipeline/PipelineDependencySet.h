@@ -37,7 +37,7 @@ public:
 
 	virtual uint32_t size() const T_OVERRIDE T_FINAL;
 
-	virtual void dump() T_OVERRIDE T_FINAL;
+	virtual void dump(OutputStream& os) const T_OVERRIDE T_FINAL;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 

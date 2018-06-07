@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
+#include "Core/Io/BufferedStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
@@ -163,7 +163,8 @@ void PipelineDbFlat::endTransaction()
 		Ref< IStream > f = FileSystem::getInstance().open(m_file, File::FmWrite);
 		if (f)
 		{
-			BinarySerializer s(f);
+			BufferedStream bs(f);
+			BinarySerializer s(&bs);
 
 			uint32_t version = c_version;
 			s >> Member< uint32_t >(L"version", version);
@@ -190,7 +191,7 @@ void PipelineDbFlat::endTransaction()
 				>
 			>(L"files", m_files);
 
-			f->close();
+			bs.close();
 			f = 0;
 
 			m_changes = 0;
@@ -211,11 +212,9 @@ void PipelineDbFlat::setDependency(const Guid& guid, const PipelineDependencyHas
 bool PipelineDbFlat::getDependency(const Guid& guid, PipelineDependencyHash& outHash) const
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
-
 	std::map< Guid, PipelineDependencyHash >::const_iterator it = m_dependencies.find(guid);
 	if (it == m_dependencies.end())
 		return false;
-
 	outHash = it->second;
 	return true;
 }

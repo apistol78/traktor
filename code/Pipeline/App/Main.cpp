@@ -208,6 +208,38 @@ private:
 	Ref< ILogTarget > m_target2;
 };
 
+class LogPrependThreadId : public ILogTarget
+{
+public:
+	LogPrependThreadId(ILogTarget* target)
+	:	m_target(target)
+	{
+	}
+
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
+	{
+		StringOutputStream ss;
+		
+		if (threadId < 10)
+			ss << L"[    " << threadId << L"] ";
+		else if (threadId < 100)
+			ss << L"[   " << threadId << L"] ";
+		else if (threadId < 1000)
+			ss << L"[  " << threadId << L"] ";
+		else if (threadId < 10000)
+			ss << L"[ " << threadId << L"] ";
+		else
+			ss << L"[" << threadId << L"] ";
+
+		ss << str;
+
+		m_target->log(threadId, level, ss.str());
+	}
+
+private:
+	Ref< ILogTarget > m_target;
+};
+
 class LogRedirect : public ILogTarget
 {
 public:
@@ -350,6 +382,8 @@ ConnectionAndCache openDatabase(const PropertyGroup* settings, const std::wstrin
 	std::map< std::wstring, ConnectionAndCache >::iterator i = g_databaseConnections.find(connectionString);
 	if (i != g_databaseConnections.end())
 		return i->second;
+
+	log::info << L"Opening database \"" << connectionString << L"\"..." << Endl;
 
 	Ref< db::Database > database = new db::Database();
 	if (!database->open(connectionString))
@@ -521,7 +555,6 @@ bool perform(const PipelineParameters* params)
 		pipelineDepends = new editor::PipelineDependsParallel(
 			&pipelineFactory,
 			sourceDatabaseAndCache.database,
-			outputDatabaseAndCache.database,
 			&pipelineDependencySet,
 			pipelineDb,
 			sourceDatabaseAndCache.cache
@@ -532,7 +565,6 @@ bool perform(const PipelineParameters* params)
 		pipelineDepends = new editor::PipelineDependsIncremental(
 			&pipelineFactory,
 			sourceDatabaseAndCache.database,
-			outputDatabaseAndCache.database,
 			&pipelineDependencySet,
 			pipelineDb,
 			sourceDatabaseAndCache.cache
@@ -697,9 +729,9 @@ int slave(const CommandLine& cmdLine)
 		Ref< ILogTarget > warningTarget = traktor::log::warning.getGlobalTarget();
 		Ref< ILogTarget > errorTarget   = traktor::log::error.  getGlobalTarget();
 
-		traktor::log::info   .setGlobalTarget(new LogRedirect(infoTarget,    transport));
-		traktor::log::warning.setGlobalTarget(new LogRedirect(warningTarget, transport));
-		traktor::log::error  .setGlobalTarget(new LogRedirect(errorTarget,   transport));
+		traktor::log::info   .setGlobalTarget(new LogPrependThreadId(new LogRedirect(infoTarget,    transport)));
+		traktor::log::warning.setGlobalTarget(new LogPrependThreadId(new LogRedirect(warningTarget, transport)));
+		traktor::log::error  .setGlobalTarget(new LogPrependThreadId(new LogRedirect(errorTarget,   transport)));
 
 		Ref< PipelineParameters > params;
 		transport->recv< PipelineParameters >(1000, params);

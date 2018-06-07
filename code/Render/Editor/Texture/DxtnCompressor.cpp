@@ -148,15 +148,14 @@ bool DxtnCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 	RefArray< Job > jobs;
 
 	int32_t mipCount = int32_t(mipImages.size());
+	log::info << L"DXTn compressing " << mipCount << L" mip(s)..." << Endl;
+
 	for (int32_t i = 0; i < mipCount; ++i)
 	{
 		int32_t height = mipImages[i]->getHeight();
-
 		int32_t split = height / 32;
 		if (split < 1)
 			split = 1;
-
-		log::info << L"Executing mip compression " << i << L" in " << split << L" task(s)..." << Endl;
 
 		for (int32_t j = 0; j < split; ++j)
 		{
@@ -175,8 +174,6 @@ bool DxtnCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 		}
 	}
 
-	log::info << L"Collecting task(s)..." << Endl;
-
 	for (size_t i = 0; i < jobs.size(); ++i)
 	{
 		jobs[i]->wait();
@@ -188,7 +185,6 @@ bool DxtnCompressor::compress(Writer& writer, const RefArray< drawing::Image >& 
 		tasks[i] = 0;
 	}
 
-	log::info << L"All task(s) collected" << Endl;
 	return true;
 }
 

@@ -379,8 +379,8 @@ void InputMappingEditor::updateGraphView()
 	m_graph->removeAllNodes();
 
 	// Add all input nodes first.
-	const RefSet< IInputNode >& inputNodes = m_mappingAsset->getInputNodes();
-	for (RefSet< IInputNode >::const_iterator i = inputNodes.begin(); i != inputNodes.end(); ++i)
+	const RefArray< IInputNode >& inputNodes = m_mappingAsset->getInputNodes();
+	for (RefArray< IInputNode >::const_iterator i = inputNodes.begin(); i != inputNodes.end(); ++i)
 		createInputNodes(m_mappingAsset, m_graph, m_traits, *i, 0);
 
 	// Add all output states.

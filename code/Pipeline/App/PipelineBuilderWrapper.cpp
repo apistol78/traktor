@@ -164,16 +164,6 @@ Ref< ISerializable > PipelineBuilderWrapper::getBuildProduct(const ISerializable
 	return 0;
 }
 
-Ref< db::Database > PipelineBuilderWrapper::getSourceDatabase() const
-{
-	return m_sourceDatabase;
-}
-
-Ref< db::Database > PipelineBuilderWrapper::getOutputDatabase() const
-{
-	return m_outputDatabase;
-}
-
 Ref< db::Instance > PipelineBuilderWrapper::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_createOutputLock);
@@ -212,6 +202,16 @@ Ref< db::Instance > PipelineBuilderWrapper::createOutputInstance(const std::wstr
 		return instance;
 	else
 		return 0;
+}
+
+Ref< db::Database > PipelineBuilderWrapper::getOutputDatabase() const
+{
+	return m_outputDatabase;
+}
+
+Ref< db::Database > PipelineBuilderWrapper::getSourceDatabase() const
+{
+	return m_sourceDatabase;
 }
 
 Ref< const ISerializable > PipelineBuilderWrapper::getObjectReadOnly(const Guid& instanceGuid)

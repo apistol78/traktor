@@ -51,14 +51,14 @@ uint32_t PipelineDependencySet::size() const
 	return m_dependencies.size();
 }
 
-void PipelineDependencySet::dump()
+void PipelineDependencySet::dump(OutputStream& os) const
 {
 	for (uint32_t i = 0; i < uint32_t(m_dependencies.size()); ++i)
 	{
-		log::info << L"dependency[" << i << L"]:" << Endl;
-		log::info << IncreaseIndent;
-		m_dependencies[i]->dump();
-		log::info << DecreaseIndent;
+		os << L"dependency[" << i << L"]:" << Endl;
+		os << IncreaseIndent;
+		m_dependencies[i]->dump(os);
+		os << DecreaseIndent;
 	}
 }
 

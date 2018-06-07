@@ -230,7 +230,7 @@ Ref< ISerializable > PipelineBuilderDistributed::getBuildProduct(const ISerializ
 	return 0;
 }
 
-Ref< db::Database > PipelineBuilderDistributed::getSourceDatabase() const
+Ref< db::Instance > PipelineBuilderDistributed::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
 {
 	T_FATAL_ERROR;
 	return 0;
@@ -242,7 +242,7 @@ Ref< db::Database > PipelineBuilderDistributed::getOutputDatabase() const
 	return 0;
 }
 
-Ref< db::Instance > PipelineBuilderDistributed::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
+Ref< db::Database > PipelineBuilderDistributed::getSourceDatabase() const
 {
 	T_FATAL_ERROR;
 	return 0;

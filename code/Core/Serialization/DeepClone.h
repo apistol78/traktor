@@ -38,11 +38,11 @@ public:
 	DeepClone(const ISerializable* source);
 
 	/*! \brief Create new instance of source object. */
-	Ref< ISerializable > create();
+	Ref< ISerializable > create() const;
 
 	/*! \brief Create new instance of source object. */
 	template < typename T >
-	Ref< T > create()
+	Ref< T > create() const
 	{
 		return dynamic_type_cast< T* >(create());
 	}

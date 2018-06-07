@@ -13,6 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/String.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/Pipeline/PipelineInstanceCache.h"
@@ -32,17 +33,18 @@ PipelineInstanceCache::PipelineInstanceCache(db::Database* database, const std::
 	FileSystem::getInstance().makeAllDirectories(m_cacheDirectory);
 }
 
-Ref< ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& instanceGuid)
+Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& instanceGuid)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	DateTime lastModifyDate;
 
 	// First check if this object has already been read during this build.
-	std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
+	std::map< Guid, CacheEntry >::iterator i = m_readCache.find(instanceGuid);
 	if (i != m_readCache.end())
 	{
-		T_FATAL_ASSERT (i->second);
-		return i->second;
+		T_FATAL_ASSERT (i->second.object);
+		T_ASSERT (DeepHash(i->second.object).get() == i->second.hash);
+		return i->second.object;
 	}
 
 	// Get instance from database.
@@ -67,16 +69,21 @@ Ref< ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& instan
 	if (stream)
 	{
 		uint64_t cachedLastModifyDate = 0;
+		uint32_t cachedHash = 0;
 
 		BufferedStream bufferedStream(stream);
+
 		Reader(&bufferedStream) >> cachedLastModifyDate;
+		Reader(&bufferedStream) >> cachedHash;
 
 		if (cachedLastModifyDate == lastModifyDate)
 		{
 			Ref< ISerializable > object = BinarySerializer(&bufferedStream).readObject();
 			if (object)
 			{
-				m_readCache[instanceGuid] = object;
+				T_ASSERT (DeepHash(object).get() == cachedHash);
+				m_readCache[instanceGuid].object = object;
+				m_readCache[instanceGuid].hash = cachedHash;
 				return object;
 			}
 		}
@@ -93,7 +100,10 @@ Ref< ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& instan
 		return 0;
 	}
 
-	m_readCache[instanceGuid] = object;
+	uint32_t hash = DeepHash(object).get();
+
+	m_readCache[instanceGuid].object = object;
+	m_readCache[instanceGuid].hash = hash;
 
 	stream = FileSystem::getInstance().open(cachedPathName, File::FmWrite);
 	if (stream)
@@ -101,6 +111,8 @@ Ref< ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& instan
 		BufferedStream bufferedStream(stream);
 
 		Writer(&bufferedStream) << uint64_t(lastModifyDate);
+		Writer(&bufferedStream) << hash;
+
 		BinarySerializer(&bufferedStream).writeObject(object);
 
 		bufferedStream.close();
@@ -113,7 +125,7 @@ Ref< ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& instan
 void PipelineInstanceCache::flush(const Guid& instanceGuid)
 {
 	// Remove from in-memory map.
-	std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
+	std::map< Guid, CacheEntry >::iterator i = m_readCache.find(instanceGuid);
 	if (i != m_readCache.end())
 		m_readCache.erase(i);
 

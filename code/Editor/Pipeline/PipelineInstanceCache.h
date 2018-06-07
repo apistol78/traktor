@@ -41,15 +41,21 @@ class T_DLLCLASS PipelineInstanceCache : public IPipelineInstanceCache
 public:
 	PipelineInstanceCache(db::Database* database, const std::wstring& cacheDirectory);
 
-	virtual Ref< ISerializable > getObjectReadOnly(const Guid& instanceGuid) T_OVERRIDE T_FINAL;
+	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) T_OVERRIDE T_FINAL;
 
 	virtual void flush(const Guid& instanceGuid) T_OVERRIDE T_FINAL;
 
 private:
+	struct CacheEntry
+	{
+		Ref< const ISerializable > object;
+		uint32_t hash;
+	};
+
 	Semaphore m_lock;
 	Ref< db::Database > m_database;
 	std::wstring m_cacheDirectory;
-	std::map< Guid, Ref< ISerializable > > m_readCache;
+	std::map< Guid, CacheEntry > m_readCache;
 };
 
 	}

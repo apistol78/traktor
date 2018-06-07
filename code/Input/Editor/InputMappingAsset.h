@@ -8,9 +8,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_input_InputMappingAsset_H
 
 #include <list>
-#include <map>
 #include "Core/Guid.h"
-#include "Core/RefSet.h"
+#include "Core/Ref.h"
+#include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -48,7 +49,7 @@ public:
 
 	void removeInputNode(IInputNode* inputNode);
 
-	const RefSet< IInputNode >& getInputNodes() const;
+	const RefArray< IInputNode >& getInputNodes() const;
 
 	void setPosition(const Object* object, const Position& position);
 
@@ -71,8 +72,20 @@ public:
 	const std::list< Guid >& getDependencies() const { return m_dependencies; }
 
 private:
-	RefSet< IInputNode > m_inputNodes;
-	std::map< Ref< const Object >, Position > m_positions;
+	struct ObjectPosition
+	{
+		Ref< const Object > object;
+		Position position;
+
+		ObjectPosition();
+
+		ObjectPosition(const Object* object, const Position& position);
+
+		void serialize(ISerializer& s);
+	};
+
+	RefArray< IInputNode > m_inputNodes;
+	AlignedVector< ObjectPosition > m_positions;
 	Ref< InputMappingSourceData > m_sourceData;
 	Ref< InputMappingStateData > m_stateData;
 	std::list< Guid > m_dependencies;

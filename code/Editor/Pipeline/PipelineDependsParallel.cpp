@@ -61,14 +61,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsParallel", PipelineDepend
 PipelineDependsParallel::PipelineDependsParallel(
 	PipelineFactory* pipelineFactory,
 	db::Database* sourceDatabase,
-	db::Database* outputDatabase,
 	IPipelineDependencySet* dependencySet,
 	IPipelineDb* pipelineDb,
 	IPipelineInstanceCache* instanceCache
 )
 :	m_pipelineFactory(pipelineFactory)
 ,	m_sourceDatabase(sourceDatabase)
-,	m_outputDatabase(outputDatabase)
 ,	m_dependencySet(dependencySet)
 ,	m_pipelineDb(pipelineDb)
 ,	m_instanceCache(instanceCache)
@@ -209,11 +207,6 @@ bool PipelineDependsParallel::waitUntilFinished()
 Ref< db::Database > PipelineDependsParallel::getSourceDatabase() const
 {
 	return m_sourceDatabase;
-}
-
-Ref< db::Database > PipelineDependsParallel::getOutputDatabase() const
-{
-	return m_outputDatabase;
 }
 
 Ref< const ISerializable > PipelineDependsParallel::getObjectReadOnly(const Guid& instanceGuid)
@@ -483,7 +476,7 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 		return;
 
 	// Read source asset instance.
-	Ref< ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetInstance->getGuid());
+	Ref< const ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetInstance->getGuid());
 	if (!sourceAsset)
 	{
 		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to read instance object" << Endl;
@@ -521,7 +514,7 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 	}
 
 	// Checkout source asset instance.
-	Ref< ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetGuid);
+	Ref< const ISerializable > sourceAsset = m_instanceCache->getObjectReadOnly(sourceAssetGuid);
 	if (!sourceAsset)
 	{
 		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to checkout instance" << Endl;

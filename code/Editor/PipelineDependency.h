@@ -28,6 +28,7 @@ namespace traktor
 {
 
 class ISerializable;
+class OutputStream;
 
 	namespace editor
 	{
@@ -70,7 +71,7 @@ public:
 
 	PipelineDependency();
 
-	void dump() const;
+	void dump(OutputStream& os) const;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 };

@@ -1721,7 +1721,6 @@ void EditorForm::buildDependent(const RefArray< db::Instance >& modifiedInstance
 		PipelineDependsIncremental pipelineDepends(
 			&pipelineFactory,
 			m_sourceDatabase,
-			m_outputDatabase,
 			&dependencySet,
 			m_pipelineDb,
 			&pipelineInstanceCache
@@ -1803,7 +1802,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		pipelineDepends = new PipelineDependsParallel(
 			&pipelineFactory,
 			m_sourceDatabase,
-			m_outputDatabase,
 			&dependencySet,
 			m_pipelineDb,
 			&instanceCache
@@ -1814,7 +1812,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		pipelineDepends = new PipelineDependsIncremental(
 			&pipelineFactory,
 			m_sourceDatabase,
-			m_outputDatabase,
 			&dependencySet,
 			m_pipelineDb,
 			&instanceCache
@@ -2009,7 +2006,6 @@ Ref< IPipelineDependencySet > EditorForm::buildAssetDependencies(const ISerializ
 	PipelineDependsIncremental pipelineDepends(
 		&pipelineFactory,
 		m_sourceDatabase,
-		m_outputDatabase,
 		dependencySet,
 		m_pipelineDb,
 		&instanceCache,
