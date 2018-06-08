@@ -81,8 +81,8 @@ uint32_t ToolBar::addImage(IBitmap* image, uint32_t imageCount)
 	else
 	{
 		m_imageEnabled = image;
-		m_imageWidth = std::max< uint32_t >(m_imageWidth, m_imageEnabled->getSize().cx / imageCount);
-		m_imageHeight = std::max< uint32_t >(m_imageHeight, m_imageEnabled->getSize().cy);
+		m_imageWidth = m_imageEnabled->getSize().cx / imageCount;
+		m_imageHeight = m_imageEnabled->getSize().cy;
 	}
 
 	uint32_t imageBase = m_imageCount;

@@ -208,38 +208,6 @@ private:
 	Ref< ILogTarget > m_target2;
 };
 
-class LogPrependThreadId : public ILogTarget
-{
-public:
-	LogPrependThreadId(ILogTarget* target)
-	:	m_target(target)
-	{
-	}
-
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
-	{
-		StringOutputStream ss;
-		
-		if (threadId < 10)
-			ss << L"[    " << threadId << L"] ";
-		else if (threadId < 100)
-			ss << L"[   " << threadId << L"] ";
-		else if (threadId < 1000)
-			ss << L"[  " << threadId << L"] ";
-		else if (threadId < 10000)
-			ss << L"[ " << threadId << L"] ";
-		else
-			ss << L"[" << threadId << L"] ";
-
-		ss << str;
-
-		m_target->log(threadId, level, ss.str());
-	}
-
-private:
-	Ref< ILogTarget > m_target;
-};
-
 class LogRedirect : public ILogTarget
 {
 public:
@@ -729,9 +697,9 @@ int slave(const CommandLine& cmdLine)
 		Ref< ILogTarget > warningTarget = traktor::log::warning.getGlobalTarget();
 		Ref< ILogTarget > errorTarget   = traktor::log::error.  getGlobalTarget();
 
-		traktor::log::info   .setGlobalTarget(new LogPrependThreadId(new LogRedirect(infoTarget,    transport)));
-		traktor::log::warning.setGlobalTarget(new LogPrependThreadId(new LogRedirect(warningTarget, transport)));
-		traktor::log::error  .setGlobalTarget(new LogPrependThreadId(new LogRedirect(errorTarget,   transport)));
+		traktor::log::info   .setGlobalTarget(new LogRedirect(infoTarget,    transport));
+		traktor::log::warning.setGlobalTarget(new LogRedirect(warningTarget, transport));
+		traktor::log::error  .setGlobalTarget(new LogRedirect(errorTarget,   transport));
 
 		Ref< PipelineParameters > params;
 		transport->recv< PipelineParameters >(1000, params);
@@ -859,16 +827,16 @@ int master(const CommandLine& cmdLine)
 			{
 			default:
 			case 0:
-				traktor::log::info << slaveLog->getText() << Endl;
+				traktor::log::info.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText());
 				break;
 			case 1:
-				traktor::log::warning << slaveLog->getText() << Endl;
+				traktor::log::warning.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText());
 				break;
 			case 2:
-				traktor::log::error << slaveLog->getText() << Endl;
+				traktor::log::error.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText());
 				break;
 			case 3:
-				traktor::log::debug << slaveLog->getText() << Endl;
+				traktor::log::debug.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText());
 				break;
 			}
 		}
