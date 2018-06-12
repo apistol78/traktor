@@ -13,6 +13,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/Writer.h"
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
+#include "Core/Log/LogRedirectTarget.h"
+#include "Core/Log/LogStreamTarget.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/String.h"
@@ -170,43 +172,6 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 }
 
 #endif
-
-class LogStreamTarget : public ILogTarget
-{
-public:
-	LogStreamTarget(OutputStream* stream)
-	:	m_stream(stream)
-	{
-	}
-
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
-	{
-		(*m_stream) << str << Endl;
-	}
-
-private:
-	Ref< OutputStream > m_stream;
-};
-
-class LogDualTarget : public ILogTarget
-{
-public:
-	LogDualTarget(ILogTarget* target1, ILogTarget* target2)
-	:	m_target1(target1)
-	,	m_target2(target2)
-	{
-	}
-
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
-	{
-		m_target1->log(threadId, level, str);
-		m_target2->log(threadId, level, str);
-	}
-
-private:
-	Ref< ILogTarget > m_target1;
-	Ref< ILogTarget > m_target2;
-};
 
 class LogRedirect : public ILogTarget
 {
@@ -742,9 +707,9 @@ int master(const CommandLine& cmdLine)
 			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
 			Ref< LogStreamTarget > logStreamTarget = new LogStreamTarget(logStream);
 
-			traktor::log::info   .setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::info   .getGlobalTarget()));
-			traktor::log::warning.setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
-			traktor::log::error  .setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
+			traktor::log::info   .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::info   .getGlobalTarget()));
+			traktor::log::warning.setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
+			traktor::log::error  .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
 
 			traktor::log::info << L"Log file \"Application.log\" created" << Endl;
 		}
@@ -881,9 +846,9 @@ int standalone(const CommandLine& cmdLine)
 			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
 			Ref< LogStreamTarget > logStreamTarget = new LogStreamTarget(logStream);
 
-			traktor::log::info   .setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::info   .getGlobalTarget()));
-			traktor::log::warning.setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
-			traktor::log::error  .setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
+			traktor::log::info   .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::info   .getGlobalTarget()));
+			traktor::log::warning.setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
+			traktor::log::error  .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
 
 			traktor::log::info << L"Log file \"Application.log\" created" << Endl;
 		}

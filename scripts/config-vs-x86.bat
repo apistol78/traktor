@@ -33,6 +33,7 @@ goto eof
 if "%VSDEVCMD_LEGACY%" == "" ( goto no_vs2015 )
 
 call "%VSDEVCMD_LEGACY%"
+set PATH=%PATH%;"%WindowsSdkDir%bin\%WindowsSDKVersion%x86"
 goto eof
 
 :no_vs2015

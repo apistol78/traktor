@@ -2,6 +2,9 @@
 import(traktor)
 
 
+local toolchain = OS.getInstance():getEnvironment("FBUILD_TOOLCHAIN") or "vc"
+
+
 local function split(s, delimiter)
     local result = {}
     for match in (s .. delimiter):gmatch("(.-)" .. delimiter) do
@@ -320,9 +323,16 @@ for i = 0, configurations:size() - 1 do
 	local resourceIncludePath = fileSystem:getAbsolutePath(projectPath:concat(Path(configuration:getName())))
 
 	local compileOptions = ""
-	compileOptions = compileOptions .. "/I " .. resourceIncludePath:getPathName()
-	for _, includePath in ipairs(includePaths[i]) do
-		compileOptions = compileOptions .. " /I \"" .. includePath .. "\""
+	if toolchain == "gcc" or toolchain == "clang" then
+		compileOptions = compileOptions .. "-I " .. resourceIncludePath:getPathName()
+		for _, includePath in ipairs(includePaths[i]) do
+			compileOptions = compileOptions .. " -I \"" .. includePath .. "\""
+		end
+	else
+		compileOptions = compileOptions .. "/I " .. resourceIncludePath:getPathName()
+		for _, includePath in ipairs(includePaths[i]) do
+			compileOptions = compileOptions .. " /I \"" .. includePath .. "\""
+		end
 	end
 
 	local definitions = configuration:getDefinitions()
@@ -330,7 +340,11 @@ for i = 0, configurations:size() - 1 do
 		local definition = definitions:get(j)
 		local def0 = string.sub(definition, 1, 1)
 		if not (def0 == "'" or def0 == "`") then
-			compileOptions = compileOptions .. " /D" .. definition
+			if toolchain == "gcc" or toolchain == "clang" then
+				compileOptions = compileOptions .. " -D " .. definition
+			else
+				compileOptions = compileOptions .. " /D" .. definition
+			end
 --		else
 --			output:print(definition)
 		end
@@ -374,7 +388,17 @@ ObjectList('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 		end
 --?>{
 	.Compiler = '$CC$'
+<?--
+		if toolchain == "gcc" or toolchain == "clang" then
+--?>
+	.CompilerOptions = '$CC_FLAGS_<?-- output:print(flags) --?>$ <?-- output:print(compileOptions) --?> "%1" -o "%2"'
+<?--
+		else
+--?>
 	.CompilerOptions = '$CC_FLAGS_<?-- output:print(flags) --?>$ <?-- output:print(compileOptions) --?> "%1" /Fo"%2"'
+<?--
+		end
+--?>	
 	.CompilerInputFiles =
 	{
 <?--
@@ -509,7 +533,17 @@ DLL('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/
 Library('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Product") --?>')
 {
 	.Librarian = '$LIB$'
+<?--
+if toolchain == "gcc" or toolchain == "clang" then
+--?>
+	.LibrarianOptions = '$LIB_FLAGS_<?-- output:print(flags) --?>$ "%2" %1'
+<?--
+else
+--?>
 	.LibrarianOptions = '$LIB_FLAGS_<?-- output:print(flags) --?>$ /OUT:"%2" %1'
+<?--
+end
+--?>
 	.LibrarianAdditionalInputs =
 	{
 <?--

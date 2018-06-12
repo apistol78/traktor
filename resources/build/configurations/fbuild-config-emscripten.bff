@@ -1,0 +1,40 @@
+#import EMSCRIPTEN
+#import PYTHON
+#import TRAKTOR_HOME
+
+.C = '$EMSCRIPTEN$\emcc.bat'
+.C_FLAGS_COMMON = '-c -s WASM=1 -D __EMSCRIPTEN__ -Wno-warn-absolute-paths'
+.C_FLAGS_DEBUG_STATIC = '$C_FLAGS_COMMON$ -g -D _UNICODE -D UNICODE'
+.C_FLAGS_RELEASE_STATIC = '$C_FLAGS_COMMON$ -O2 -D _UNICODE -D UNICODE -D NDEBUG'
+
+.CC = '$EMSCRIPTEN$\emcc.bat'
+.CC_FLAGS_COMMON = '-c -s WASM=1 -D __EMSCRIPTEN__ -std=c++11 -Wno-warn-absolute-paths'
+.CC_FLAGS_DEBUG_STATIC = '$CC_FLAGS_COMMON$ -g -D _UNICODE -D UNICODE'
+.CC_FLAGS_RELEASE_STATIC = '$CC_FLAGS_COMMON$ -O2 -D _UNICODE -D UNICODE -D NDEBUG'
+
+// .LIB = '$EMSCRIPTEN$\emar.bat'
+.LIB = '$PYTHON$\python-2.7.13.amd64\python.exe "$EMSCRIPTEN$\emar"'
+.LIB_FLAGS_COMMON = 'rs'
+.LIB_FLAGS_DEBUG_STATIC = '$LIB_FLAGS_COMMON$'
+.LIB_FLAGS_RELEASE_STATIC = '$LIB_FLAGS_COMMON$'
+
+.LINK = '$EMSCRIPTEN$\emcc.bat'
+.LINK_FLAGS_COMMON = '-s WASM=1'
+.LINK_FLAGS_DEBUG_STATIC = '$LINK_FLAGS_COMMON$'
+.LINK_FLAGS_RELEASE_STATIC = '$LINK_FLAGS_COMMON$ -O2'
+.LINK_FLAGS_DEBUG_EXECUTABLE = '$LINK_FLAGS_COMMON$'
+.LINK_FLAGS_RELEASE_EXECUTABLE = '$LINK_FLAGS_COMMON$ -O2'
+
+.RUN = '$TRAKTOR_HOME$\bin\win64\releasestatic\Traktor.Run.App'
+.BINARY_INCLUDE = '$TRAKTOR_HOME$\scripts\binaryinclude\BinaryInclude.run'
+
+Compiler( 'EmscriptenCompiler' )
+{
+	.Executable = '$CC$'
+	.CompilerFamily = 'clang'
+}
+
+Settings
+{
+	.CachePath = '$TRAKTOR_HOME$\build\.fbuild-cache-emscripten'
+}

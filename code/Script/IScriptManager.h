@@ -41,8 +41,10 @@ class IErrorCallback
 public:
 	virtual ~IErrorCallback() {}
 
+	/*! \brief Syntax error callback. */
 	virtual void syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message) = 0;
 
+	/*! \brief Other error callback. */
 	virtual void otherError(const std::wstring& message) = 0;
 };
 

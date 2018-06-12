@@ -34,8 +34,12 @@ for i = 0, projects:size() - 1 do
 end
 
 -- Create "all" target.
-output:printLn(".PHONY: all")
-output:print("all :")
+if dialect == "nmake" then
+	output:print("all : .phony")
+else
+	output:printLn(".PHONY: all")
+	output:print("all :")
+end
 local projects = solution:getProjects()
 for i = 0, projects:size() - 1 do
 	local project = projects:get(i)
@@ -55,8 +59,12 @@ output:printLn("")
 
 -- Create target for each configuration.
 for c, _ in pairs(availConfigurations) do
-	output:printLn(".PHONY: " .. c)
-	output:print(c .. " :")
+	if dialect == "nmake" then
+		output:print(c .. " : .phony")
+	else
+		output:printLn(".PHONY: " .. c)
+		output:print(c .. " :")
+	end
 	local projects = solution:getProjects()
 	for i = 0, projects:size() - 1 do
 		local project = projects:get(i)
@@ -84,8 +92,14 @@ for i = 0, projects:size() - 1 do
 			local configuration = configurations:get(j)
 			local productName = PRODUCTNAME(solution, project, configuration)
 
-			output:printLn(".PHONY: " .. configuration:getName() .. "/" .. productName)
-			output:print(configuration:getName() .. "/" .. productName .. " :")
+			if dialect == "nmake" then
+				output:printLn(configuration:getName() .. "/" .. productName .. " : \\")
+				output:print("\t.phony")
+			else
+				output:printLn(".PHONY: " .. configuration:getName() .. "/" .. productName)
+				output:print(configuration:getName() .. "/" .. productName .. " :")
+			end
+
 			local dependencies = project:getDependencies()
 			for k = 0, dependencies:size() - 1 do
 				local dependency = dependencies:get(k)
@@ -99,17 +113,21 @@ for i = 0, projects:size() - 1 do
 			end
 			output:printLn("")
 			if dialect == "nmake" then
-				output:printLn("\tpushd " .. project:getName() .. " & $(MAKE) /J 8 " .. configuration:getName() .. " & popd")
+				output:printLn("\tpushd " .. project:getName() .. " & $(MAKE) " .. configuration:getName() .. " & popd")
 			elseif dialect == "make" then
-				output:printLn("\t$(MAKE) -j 8 -C " .. project:getName() .. " " .. configuration:getName())
+				output:printLn("\t$(MAKE) -C " .. project:getName() .. " " .. configuration:getName())
 			end
 			output:printLn("")
 		end
 	end
 end
 
-output:printLn(".PHONY: clean")
-output:printLn("clean :")
+if dialect == "nmake" then
+	output:printLn("clean : .phony")
+else
+	output:printLn(".PHONY: clean")
+	output:printLn("clean :")
+end
 local projects = solution:getProjects()
 for i = 0, projects:size() - 1 do
 	local project = projects:get(i)
@@ -123,8 +141,12 @@ for i = 0, projects:size() - 1 do
 end
 output:printLn("")
 
-output:printLn(".PHONY: install")
-output:printLn("install :")
+if dialect == "nmake" then
+	output:printLn("install : .phony")
+else
+	output:printLn(".PHONY: install")
+	output:printLn("install :")
+end
 local projects = solution:getProjects()
 for i = 0, projects:size() - 1 do
 	local project = projects:get(i)
@@ -135,6 +157,11 @@ for i = 0, projects:size() - 1 do
 			output:printLn("\t$(MAKE) -C " .. project:getName() .. " install")
 		end
 	end
+end
+
+if dialect == "nmake" then
+	output:printLn("")
+	output:printLn(".phony:")
 end
 
 --?>

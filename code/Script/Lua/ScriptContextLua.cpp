@@ -292,6 +292,15 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 	return returnValue;
 }
 
+ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, bool strict)
+:	m_scriptManager(scriptManager)
+,	m_luaState(luaState)
+,	m_environmentRef(environmentRef)
+,	m_strict(strict)
+,	m_lastSelf(0)
+{
+}
+
 Any ScriptContextLua::executeDelegate(ScriptDelegateLua* delegate, uint32_t argc, const Any* argv)
 {
 	T_PROFILER_SCOPE(L"Script executeDelegate");
@@ -411,15 +420,6 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 	}
 	m_scriptManager->unlock();
 	return returnValue;
-}
-
-ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, bool strict)
-:	m_scriptManager(scriptManager)
-,	m_luaState(luaState)
-,	m_environmentRef(environmentRef)
-,	m_strict(strict)
-,	m_lastSelf(0)
-{
 }
 
 int32_t ScriptContextLua::runtimeError(lua_State* luaState)
