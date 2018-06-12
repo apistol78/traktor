@@ -9,6 +9,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Ref.h"
 
+#if defined(T_CXX11)
+#	include <functional>
+#endif
+
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
@@ -36,6 +40,38 @@ public:
 
 	virtual void operator () () = 0;
 };
+
+#if defined(T_CXX11)
+
+/*! \brief C++11 lambda functor.
+ * \ingroup Core
+ */
+class LambdaFunctor : public Functor
+{
+public:
+	LambdaFunctor(const std::function< void() >& fn)
+	:	m_fn(fn)
+	{
+	}
+
+	virtual void operator () () T_OVERRIDE T_FINAL
+	{
+		m_fn();
+	}
+
+private:
+	std::function< void() > m_fn;
+};
+
+/*! \brief Create functor object.
+ * \ingroup Core
+ */
+inline Ref< LambdaFunctor > makeFunctor(const std::function< void() >& fn)
+{
+	return new LambdaFunctor(fn);
+}
+
+#endif	// T_CXX11
 
 /*! \brief Class method functor.
  * \ingroup Core

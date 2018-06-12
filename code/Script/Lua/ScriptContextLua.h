@@ -16,7 +16,6 @@ namespace traktor
 	namespace script
 	{
 
-class IScriptClass;
 class ScriptDelegateLua;
 class ScriptManagerLua;
 class ScriptObjectLua;
@@ -45,12 +44,10 @@ public:
 
 	virtual Any executeFunction(const std::string& functionName, uint32_t argc, const Any* argv) T_OVERRIDE T_FINAL;
 
-	Any executeDelegate(ScriptDelegateLua* delegate, uint32_t argc, const Any* argv);
-
-	Any executeMethod(ScriptObjectLua* self, int32_t methodRef, uint32_t argc, const Any* argv);
-
 private:
+	friend class ScriptClassLua;
 	friend class ScriptDebuggerLua;
+	friend class ScriptDelegateLua;
 	friend class ScriptManagerLua;
 	friend class ScriptProfilerLua;
 
@@ -62,6 +59,10 @@ private:
 	std::set< std::string > m_globals;
 
 	ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, bool strict);
+
+	Any executeDelegate(ScriptDelegateLua* delegate, uint32_t argc, const Any* argv);
+
+	Any executeMethod(ScriptObjectLua* self, int32_t methodRef, uint32_t argc, const Any* argv);
 
 	static int32_t runtimeError(lua_State* luaState);
 

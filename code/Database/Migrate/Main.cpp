@@ -12,6 +12,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
+#include "Core/Log/LogRedirectTarget.h"
+#include "Core/Log/LogStreamTarget.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
@@ -29,44 +31,12 @@ using namespace traktor;
 namespace
 {
 
-class LogStreamTarget : public ILogTarget
-{
-public:
-	LogStreamTarget(OutputStream* stream)
-	:	m_stream(stream)
-	{
-	}
-
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
-	{
-		(*m_stream) << str << Endl;
-	}
-
-private:
-	Ref< OutputStream > m_stream;
-};
-
-class LogDualTarget : public ILogTarget
-{
-public:
-	LogDualTarget(ILogTarget* target1, ILogTarget* target2)
-	:	m_target1(target1)
-	,	m_target2(target2)
-	{
-	}
-
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
-	{
-		m_target1->log(threadId, level, str);
-		m_target2->log(threadId, level, str);
-	}
-
-private:
-	Ref< ILogTarget > m_target1;
-	Ref< ILogTarget > m_target2;
-};
-
-int32_t recursiveCountGroups(db::Group* group)
+/*! \brief Count number of groups in database.
+ *
+ * \param group Current group
+ * \reurn Number of groups including current group.
+ */
+int32_t countGroups(db::Group* group)
 {
 	RefArray< db::Group > childGroups;
 	group->getChildGroups(childGroups);
@@ -75,139 +45,36 @@ int32_t recursiveCountGroups(db::Group* group)
 	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 	{
 		T_ASSERT (*i);
-		localCount += recursiveCountGroups(*i);
+		localCount += countGroups(*i);
 	}
 
 	return localCount;
 }
 
-void jobConvertInstance(Ref< db::Instance > sourceInstance, Ref< db::Group > targetGroup)
+/*! \brief Migrate instance from source into target group.
+ *
+ * \param sourceInstance Source instance to migrate.
+ * \param targetGroup Migrate into target group.
+ */
+bool migrateInstance(Ref< db::Instance > sourceInstance, Ref< db::Group > targetGroup)
 {
+	static Semaphore s_lock;
+
 	Ref< ISerializable > sourceObject = sourceInstance->getObject();
 	if (!sourceObject)
 	{
 		traktor::log::error << L"Failed, unable to get source object" << Endl;
-		return;
+		return false;
 	}
 
 	Guid sourceGuid = sourceInstance->getGuid();
-	Ref< db::Instance > targetInstance = targetGroup->createInstance(sourceInstance->getName(), db::CifReplaceExisting, &sourceGuid);
-	if (!targetInstance)
-	{
-		traktor::log::error << L"Failed, unable to create target instance" << Endl;
-		return;
-	}
-
-	targetInstance->setObject(sourceObject);
 
 	std::vector< std::wstring > dataNames;
 	sourceInstance->getDataNames(dataNames);
 
-	for (std::vector< std::wstring >::iterator j = dataNames.begin(); j != dataNames.end(); ++j)
 	{
-		Ref< IStream > sourceStream = sourceInstance->readData(*j);
-		if (!sourceStream)
-		{
-			traktor::log::error << L"Failed, unable to open source stream" << Endl;
-			return;
-		}
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
 
-		Ref< IStream > targetStream = targetInstance->writeData(*j);
-		if (!targetStream)
-		{
-			traktor::log::error << L"Failed, unable to open target stream" << Endl;
-			return;
-		}
-
-		if (!StreamCopy(targetStream, sourceStream).execute())
-		{
-			traktor::log::error << L"Failed, unable to copy data" << Endl;
-			return;
-		}
-
-		targetStream->close();
-		sourceStream->close();
-	}
-
-	if (!targetInstance->commit())
-	{
-		traktor::log::error << L"Failed, unable to commit target instance" << Endl;
-		return;
-	}
-}
-
-bool recursiveCreateConvertJobs(db::Group* targetGroup, db::Group* sourceGroup, RefArray< Job >& outJobs)
-{
-	RefArray< db::Instance > childInstances;
-	sourceGroup->getChildInstances(childInstances);
-
-	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
-	{
-		Ref< db::Instance > sourceInstance = *i;
-		T_ASSERT (sourceInstance);
-
-		Ref< Job > job = JobManager::getInstance().add(makeStaticFunctor< Ref< db::Instance >, Ref< db::Group > >(
-			&jobConvertInstance,
-			sourceInstance,
-			targetGroup
-		));
-
-		if (job)
-			outJobs.push_back(job);
-	}
-
-	RefArray< db::Group > childGroups;
-	sourceGroup->getChildGroups(childGroups);
-
-	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
-	{
-		Ref< db::Group > sourceChildGroup = *i;
-		T_ASSERT (sourceChildGroup);
-
-		Ref< db::Group > targetChildGroup = targetGroup->getGroup(sourceChildGroup->getName());
-		if (!targetChildGroup)
-		{
-			targetChildGroup = targetGroup->createGroup(sourceChildGroup->getName());
-			if (!targetChildGroup)
-			{
-				traktor::log::error << L"Failed, unable to create target group" << Endl;
-				return false;
-			}
-		}
-
-		if (!recursiveCreateConvertJobs(targetChildGroup, sourceChildGroup, outJobs))
-			return false;
-	}
-
-	return true;
-}
-
-/*
-bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, int32_t& groupIndex, int32_t groupCount)
-{
-	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
-	traktor::log::info << IncreaseIndent;
-
-	log::info << L":" << groupIndex << L":" << groupCount << Endl;
-
-	RefArray< db::Instance > childInstances;
-	sourceGroup->getChildInstances(childInstances);
-
-	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
-	{
-		Ref< db::Instance > sourceInstance = *i;
-		T_ASSERT (sourceInstance);
-
-		traktor::log::info << L"Converting \"" << sourceInstance->getName() << L"\"..." << Endl;
-
-		Ref< ISerializable > sourceObject = sourceInstance->getObject();
-		if (!sourceObject)
-		{
-			traktor::log::error << L"Failed, unable to get source object" << Endl;
-			return false;
-		}
-
-		Guid sourceGuid = sourceInstance->getGuid();
 		Ref< db::Instance > targetInstance = targetGroup->createInstance(sourceInstance->getName(), db::CifReplaceExisting, &sourceGuid);
 		if (!targetInstance)
 		{
@@ -217,13 +84,8 @@ bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, i
 
 		targetInstance->setObject(sourceObject);
 
-		std::vector< std::wstring > dataNames;
-		sourceInstance->getDataNames(dataNames);
-
 		for (std::vector< std::wstring >::iterator j = dataNames.begin(); j != dataNames.end(); ++j)
 		{
-			log::info << L"\t\"" << *j << L"\"..." << Endl;
-
 			Ref< IStream > sourceStream = sourceInstance->readData(*j);
 			if (!sourceStream)
 			{
@@ -255,6 +117,36 @@ bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, i
 		}
 	}
 
+	return true;
+}
+
+/* \brief Migrate instances sequentially.
+ *
+ * \param targetGroup Target group
+ * \param sourceGroup Source group
+ * \param groupIndex Index of current group.
+ * \param groupCount Number of groups to migrate.
+ * \return True if successful. 
+ */
+bool migrateGroup(db::Group* targetGroup, db::Group* sourceGroup, int32_t& groupIndex, int32_t groupCount)
+{
+	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
+	traktor::log::info << IncreaseIndent;
+
+	log::info << L":" << groupIndex << L":" << groupCount << Endl;
+
+	RefArray< db::Instance > childInstances;
+	sourceGroup->getChildInstances(childInstances);
+
+	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	{
+		Ref< db::Instance > sourceInstance = *i;
+		T_ASSERT (sourceInstance);
+
+		if (!migrateInstance(sourceInstance, targetGroup))
+			return false;
+	}
+
 	++groupIndex;
 
 	RefArray< db::Group > childGroups;
@@ -265,26 +157,76 @@ bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, i
 		Ref< db::Group > sourceChildGroup = *i;
 		T_ASSERT (sourceChildGroup);
 
-		traktor::log::info << L"Creating group \"" << sourceChildGroup->getName() << L"\"..." << Endl;
+		Ref< db::Group > targetChildGroup = targetGroup->getGroup(sourceChildGroup->getName());
+		if (!targetChildGroup)
+		{
+			targetChildGroup = targetGroup->createGroup(sourceChildGroup->getName());
+			if (!targetChildGroup)
+				return false;
+		}
+
+		if (!migrateGroup(targetChildGroup, sourceChildGroup, groupIndex, groupCount))
+			return false;
+	}
+
+	return true;
+}
+
+/*! \brief Create instance migration jobs.
+ *
+ * \param targetGroup Target group
+ * \param sourceGroup Source group
+ * \param outJobs Output array of all jobs created.
+ * \return True if successful.
+ */
+bool createMigrationJobs(db::Group* targetGroup, db::Group* sourceGroup, RefArray< Job >& outJobs)
+{
+	RefArray< db::Instance > childInstances;
+	sourceGroup->getChildInstances(childInstances);
+
+	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	{
+		Ref< db::Instance > sourceInstance = *i;
+		T_ASSERT (sourceInstance);
+
+		Ref< Job > job = JobManager::getInstance().add(makeFunctor(
+			[=] () {
+				migrateInstance(sourceInstance, targetGroup); 
+			}
+		));
+
+		if (job)
+			outJobs.push_back(job);
+	}
+
+	RefArray< db::Group > childGroups;
+	sourceGroup->getChildGroups(childGroups);
+
+	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
+	{
+		Ref< db::Group > sourceChildGroup = *i;
+		T_ASSERT (sourceChildGroup);
 
 		Ref< db::Group > targetChildGroup = targetGroup->getGroup(sourceChildGroup->getName());
 		if (!targetChildGroup)
 		{
 			targetChildGroup = targetGroup->createGroup(sourceChildGroup->getName());
 			if (!targetChildGroup)
-			{
-				traktor::log::error << L"Failed, unable to create target group" << Endl;
 				return false;
-			}
 		}
 
-		if (!recursiveConvertInstances(targetChildGroup, sourceChildGroup, groupIndex, groupCount))
+		if (!createMigrationJobs(targetChildGroup, sourceChildGroup, outJobs))
 			return false;
 	}
 
 	return true;
 }
-*/
+
+/*! \brief Load settings.
+ *
+ * \param settingsFile File path to settings.
+ * \return Settings group.
+ */
 Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 {
 	Ref< PropertyGroup > settings;
@@ -335,12 +277,14 @@ int main(int argc, const char** argv)
 		traktor::log::info << L"       Traktor.Database.Migrate.App -s|-settings=[settings]" << Endl;
 		traktor::log::info << L"       -s|-settings    Settings (default \"Traktor.Editor\")" << Endl;
 		traktor::log::info << L"       -l|-log=logfile Save log file" << Endl;
+		traktor::log::info << L"       -sequential     Migrate sequentially" << Endl;
 		return 0;
 	}
 
 	std::wstring sourceCs;
 	std::wstring destinationCs;
 
+	// Save log file.
 	if (cmdLine.hasOption('l', L"log"))
 	{
 		std::wstring logPath = cmdLine.getOption('l', L"log").getString();
@@ -349,9 +293,9 @@ int main(int argc, const char** argv)
 			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
 			Ref< LogStreamTarget > logStreamTarget = new LogStreamTarget(logStream);
 
-			traktor::log::info   .setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::info   .getGlobalTarget()));
-			traktor::log::warning.setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
-			traktor::log::error  .setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
+			traktor::log::info   .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::info   .getGlobalTarget()));
+			traktor::log::warning.setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
+			traktor::log::error  .setGlobalTarget(new LogRedirectTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
 
 			traktor::log::info << L"Log file \"" << logPath << L"\" created" << Endl;
 		}
@@ -359,6 +303,7 @@ int main(int argc, const char** argv)
 			traktor::log::error << L"Unable to create log file; logging only to std pipes" << Endl;
 	}
 
+	// Either read configuration from settings file or from command line.
 	if (cmdLine.hasOption('s', L"settings"))
 	{
 		std::wstring settingsFile = cmdLine.getOption('s', L"settings").getString();
@@ -405,6 +350,8 @@ int main(int argc, const char** argv)
 		destinationCs = cmdLine.getString(1);
 	}
 
+	// Open databases.
+	traktor::log::info << L"Opening source database \"" << sourceCs << L"\"..." << Endl;	
 	Ref< db::Database > sourceDb = new db::Database();
 	if (!sourceDb->open(sourceCs))
 	{
@@ -412,6 +359,7 @@ int main(int argc, const char** argv)
 		return 3;
 	}
 
+	traktor::log::info << L"Opening destination database \"" << destinationCs << L"\"..." << Endl;	
 	Ref< db::Database > destinationDb = new db::Database();
 	if (!destinationDb->create(destinationCs))
 	{
@@ -419,38 +367,50 @@ int main(int argc, const char** argv)
 		return 4;
 	}
 
-	traktor::log::info << L"Migration begin" << Endl;
-
+	// Begin migration of instances.
 	Ref< db::Group > sourceGroup = sourceDb->getRootGroup();
 	Ref< db::Group > targetGroup = destinationDb->getRootGroup();
 	if (sourceGroup && targetGroup)
 	{
-/*
-		// Count number of groups; quicker than number of instances but
-		// should be sufficient for progress information.
-		int32_t groupIndex = 0;
-		int32_t groupCount = recursiveCountGroups(sourceGroup);
-
-		if (!recursiveConvertInstances(targetGroup, sourceGroup, groupIndex, groupCount))
-			return 5;
-*/
-		RefArray< Job > jobs;
-		recursiveCreateConvertJobs(targetGroup, sourceGroup, jobs);
-
-		int32_t njobs = int32_t(jobs.size());
-		while (!jobs.empty())
+		if (!cmdLine.hasOption(L"sequential"))
 		{
-			log::info << L":" << (njobs - int32_t(jobs.size())) << L":" << njobs << Endl;
-			jobs.back()->wait();
-			jobs.pop_back();
+			traktor::log::info << L"Migration begin, creating jobs..." << Endl;
+
+			RefArray< Job > jobs;
+			if (!createMigrationJobs(targetGroup, sourceGroup, jobs))
+				return 5;
+
+			int32_t njobs = int32_t(jobs.size());
+			traktor::log::info << L"Waiting for " << njobs << L" job(s) to complete..." << Endl;
+			while (!jobs.empty())
+			{
+				log::info << L":" << (njobs - int32_t(jobs.size())) << L":" << njobs << Endl;
+				jobs.back()->wait();
+				jobs.pop_back();
+			}
+		}
+		else
+		{
+			traktor::log::info << L"Migration begin, counting groups..." << Endl;
+
+			// Count number of groups; quicker than number of instances but
+			// should be sufficient for progress information.
+			int32_t groupIndex = 0;
+			int32_t groupCount = countGroups(sourceGroup);
+
+			traktor::log::info << L"Migrating " << groupCount << L" group(s)..." << Endl;
+			if (!migrateGroup(targetGroup, sourceGroup, groupIndex, groupCount))
+				return 5;
 		}
 	}
 
 	traktor::log::info << L"Migration complete" << Endl;
 
+	// Close database connections.
 	destinationDb->close();
 	sourceDb->close();
 
+	// Close log file if being recorded.
 	if (logFile)
 	{
 		traktor::log::info.setBuffer(0);

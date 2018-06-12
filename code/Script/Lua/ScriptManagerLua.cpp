@@ -200,7 +200,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	else
 		lua_pushnil(m_luaState);
 	lua_call(m_luaState, 2, 1);
-	T_FATAL_ASSERT (lua_istable(m_luaState, - 1));
+	T_FATAL_ASSERT (lua_istable(m_luaState, -1));
 
 	// Attach C++ runtime class to script table.
 	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
@@ -355,11 +355,12 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 
 #endif
 
-	// Add entries to lookup table; flatten with all specialized types in order
-	// to reduce lookups required when resolving script class.
+	// Store index of registered script class in C++ rtti type; used
+	// to accelerate lookup of C++ class when constructing new instance from script.
+	// Need to propagate index into derived types as well in order to
+	// be able to skip traversing class hierarchy while constructing.
 	TypeInfoSet derivedTypes;
 	exportType.findAllOf(derivedTypes);
-
 	for (TypeInfoSet::iterator i = derivedTypes.begin(); i != derivedTypes.end(); ++i)
 	{
 		if ((*i)->getTag() != 0)
