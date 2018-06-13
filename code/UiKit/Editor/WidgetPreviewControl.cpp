@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -24,12 +26,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.uikit.WidgetPreviewControl", WidgetPreviewControl, ui::Widget)
 
-WidgetPreviewControl::WidgetPreviewControl(editor::IEditor* editor)
+WidgetPreviewControl::WidgetPreviewControl(editor::IEditor* editor, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 :	m_editor(editor)
+,	m_resourceManager(resourceManager)
+,	m_renderSystem(renderSystem)
 {
 }
 
-bool WidgetPreviewControl::create(ui::Widget* parent, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+bool WidgetPreviewControl::create(ui::Widget* parent)
 {
 	if (!ui::Widget::create(parent, ui::WsNone))
 		return false;
@@ -52,15 +56,15 @@ bool WidgetPreviewControl::create(ui::Widget* parent, resource::IResourceManager
 	desc.waitVBlanks = 0;
 	desc.syswin = getIWidget()->getSystemWindow();
 
-	m_renderView = renderSystem->createRenderView(desc);
+	m_renderView = m_renderSystem->createRenderView(desc);
 	if (!m_renderView)
 		return false;
 
 	// Create flash display renderer.
 	m_displayRenderer = new flash::AccDisplayRenderer();
 	m_displayRenderer->create(
-		resourceManager,
-		renderSystem,
+		m_resourceManager,
+		m_renderSystem,
 		1,
 		4 * 1024 * 1024,
 		true,
@@ -110,6 +114,7 @@ void WidgetPreviewControl::setScaffoldingClass(const IRuntimeClass* scaffoldingC
 
 	Any argv[] =
 	{
+		Any::fromObject(m_resourceManager),
 		Any::fromObject(root)
 	};
 

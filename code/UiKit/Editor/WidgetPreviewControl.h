@@ -55,9 +55,9 @@ class WidgetPreviewControl : public ui::Widget
 	T_RTTI_CLASS;
 
 public:
-	WidgetPreviewControl(editor::IEditor* editor);
+	WidgetPreviewControl(editor::IEditor* editor, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
-	bool create(ui::Widget* parent, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	bool create(ui::Widget* parent);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
@@ -65,7 +65,9 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< db::Database > m_database;
+	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< render::IRenderSystem > m_renderSystem;
+	//Ref< db::Database > m_database;
 	Ref< render::IRenderView > m_renderView;
 	Ref< flash::AccDisplayRenderer > m_displayRenderer;
 	Ref< flash::MoviePlayer > m_moviePlayer;

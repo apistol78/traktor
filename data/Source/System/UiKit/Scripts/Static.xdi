@@ -17,7 +17,7 @@ end
 
 function Static:getPreferredSize(hint)
 	local text = self._text_tb:getText()
-	if hint ~= nil then
+	if hint ~= nil and self._text_tb:getMultiLine() then
 		self._text_tb:setTextBounds(Aabb2(
 			Vector2(0, 0),
 			Vector2(hint.width * 20, hint.height * 20)

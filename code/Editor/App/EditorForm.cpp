@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
+#include "Core/Log/LogRedirectTarget.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/EnterLeave.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -155,26 +156,6 @@ private:
 	};
 
 	std::list< Log > m_logs;
-};
-
-class LogDualTarget : public ILogTarget
-{
-public:
-	LogDualTarget(ILogTarget* target1, ILogTarget* target2)
-	:	m_target1(target1)
-	,	m_target2(target2)
-	{
-	}
-
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
-	{
-		m_target1->log(threadId, level, str);
-		m_target2->log(threadId, level, str);
-	}
-
-private:
-	Ref< ILogTarget > m_target1;
-	Ref< ILogTarget > m_target2;
 };
 
 class OpenWorkspaceStatus : public RefCountImpl< ui::custom::BackgroundWorkerDialog::IWorkerStatus >
@@ -423,14 +404,18 @@ EditorForm::EditorForm()
 
 bool EditorForm::create(const CommandLine& cmdLine)
 {
+	Ref< ILogTarget > defaultInfoLog = log::info.getGlobalTarget();
+	Ref< ILogTarget > defaultWarningLog = log::info.getGlobalTarget();
+	Ref< ILogTarget > defaultErrorLog = log::info.getGlobalTarget();
+
 	// Record logging occuring before log view has been propertly initialized.
 	Ref< LogRecordTarget > infoLog = new LogRecordTarget();
 	Ref< LogRecordTarget > warningLog = new LogRecordTarget();
 	Ref< LogRecordTarget > errorLog = new LogRecordTarget();
 	
-	log::info.setGlobalTarget(infoLog);
-	log::warning.setGlobalTarget(warningLog);
-	log::error.setGlobalTarget(errorLog);
+	log::info.setGlobalTarget(new LogRedirectTarget(defaultInfoLog, infoLog));
+	log::warning.setGlobalTarget(new LogRedirectTarget(defaultWarningLog, warningLog));
+	log::error.setGlobalTarget(new LogRedirectTarget(defaultErrorLog, errorLog));
 
 	// Default configuration file.
 	m_settingsPath = Path(L"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config");
@@ -637,9 +622,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	warningLog->replay(m_logView->getLogTarget());
 	errorLog->replay(m_logView->getLogTarget());
 
-	log::info.setGlobalTarget(new LogDualTarget(log::info.getGlobalTarget(), m_logView->getLogTarget()));
-	log::warning.setGlobalTarget(new LogDualTarget(log::warning.getGlobalTarget(), m_logView->getLogTarget()));
-	log::error.setGlobalTarget(new LogDualTarget(log::error.getGlobalTarget(), m_logView->getLogTarget()));
+	log::info.setGlobalTarget(new LogRedirectTarget(defaultInfoLog, m_logView->getLogTarget()));
+	log::warning.setGlobalTarget(new LogRedirectTarget(defaultWarningLog, m_logView->getLogTarget()));
+	log::error.setGlobalTarget(new LogRedirectTarget(defaultErrorLog, m_logView->getLogTarget()));
 
 	Ref< ui::TabPage > tabPageBuild = new ui::TabPage();
 	tabPageBuild->create(m_tabOutput, i18n::Text(L"TITLE_BUILD"), new ui::FloodLayout());
