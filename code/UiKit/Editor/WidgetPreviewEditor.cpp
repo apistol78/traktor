@@ -1,9 +1,15 @@
+#pragma optimize( "", off )
+
 #include "Core/Class/IRuntimeClass.h"
+#include "Core/Class/IRuntimeClassFactory.h"
+#include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Editor/IEditor.h"
+#include "Flash/MovieResourceFactory.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
+#include "Script/IScriptContext.h"
 #include "Script/ScriptFactory.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Ui/Application.h"
@@ -25,11 +31,25 @@ WidgetPreviewEditor::WidgetPreviewEditor(editor::IEditor* editor)
 
 bool WidgetPreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
 {
-	// Create LUA script manager and context.
-	Ref< script::IScriptManager > scriptManager = new script::ScriptManagerLua();
+	// Create LUA script manager.
+	m_scriptManager = new script::ScriptManagerLua();
 
-	Ref< script::IScriptContext > scriptContext = scriptManager->createContext(true);
-	if (!scriptContext)
+	// Register all runtime classes, first collect all classes
+	// and then register them in class dependency order.
+	OrderedClassRegistrar registrar;
+	std::set< const TypeInfo* > runtimeClassFactoryTypes;
+	type_of< IRuntimeClassFactory >().findAllOf(runtimeClassFactoryTypes, false);
+	for (std::set< const TypeInfo* >::const_iterator i = runtimeClassFactoryTypes.begin(); i != runtimeClassFactoryTypes.end(); ++i)
+	{
+		Ref< IRuntimeClassFactory > runtimeClassFactory = dynamic_type_cast< IRuntimeClassFactory* >((*i)->createInstance());
+		if (runtimeClassFactory)
+			runtimeClassFactory->createClasses(&registrar);
+	}
+	registrar.registerClassesInOrder(m_scriptManager);
+
+	// Create script context.
+	m_scriptContext = m_scriptManager->createContext(false);
+	if (!m_scriptContext)
 		return false;
 
 	// Create resource manager.
@@ -43,11 +63,12 @@ bool WidgetPreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 
 	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager(database, true);
 	resourceManager->addFactory(new render::ShaderFactory(renderSystem));
-	resourceManager->addFactory(new script::ScriptFactory(scriptManager, scriptContext));
+	resourceManager->addFactory(new script::ScriptFactory(m_scriptManager, m_scriptContext));
+	resourceManager->addFactory(new flash::MovieResourceFactory());
 
 	// Create preview control.
-	m_previewControl = new WidgetPreviewControl(m_editor);
-	if (!m_previewControl->create(parent, resourceManager, renderSystem))
+	m_previewControl = new WidgetPreviewControl(m_editor, resourceManager, renderSystem);
+	if (!m_previewControl->create(parent))
 		return false;
 
 	// Bind widget scaffolding.
@@ -63,6 +84,8 @@ bool WidgetPreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 void WidgetPreviewEditor::destroy()
 {
 	safeDestroy(m_previewControl);
+	safeDestroy(m_scriptContext);
+	safeDestroy(m_scriptManager);
 }
 
 void WidgetPreviewEditor::apply()

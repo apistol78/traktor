@@ -159,6 +159,15 @@ void ScriptManagerLua::destroy()
 
 	T_ANONYMOUS_VAR(Ref< ScriptManagerLua >)(this);
 
+	// Discard all tags from C++ rtti types.
+	for (AlignedVector< RegisteredClass >::iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
+	{
+		TypeInfoSet derivedTypes;
+		i->runtimeClass->getExportType().findAllOf(derivedTypes);
+		for (TypeInfoSet::iterator j = derivedTypes.begin(); j != derivedTypes.end(); ++j)
+			(*j)->setTag(0);
+	}
+
 	m_debugger = 0;
 	m_profiler = 0;
 

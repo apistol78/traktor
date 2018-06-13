@@ -22,15 +22,15 @@ Widget.ALIGN_RIGHT = "R"
 Widget.ALIGN_TOP = "T"
 Widget.ALIGN_BOTTOM = "B"
 
-function Widget.initialize(env, resourceKits)
-	Widget._env = env
+function Widget.initialize(resourceManager, resourceKits)
+	Widget._resourceManager = resourceManager
 	Widget._resourceKits = {}
 	Widget._modal = {}
 	Widget._exclusive = {}
 	Widget._focus = nil
 	Widget._eventMaskDirty = false
 	for _, rkid in ipairs(resourceKits) do
-		local rk = env.resource.resourceManager:bind(traktor.flash.Movie, rkid)
+		local rk = resourceManager:bind(traktor.flash.Movie, rkid)
 		if rk == nil then return false end
 		table.insert(Widget._resourceKits, rk)
 	end
@@ -489,6 +489,7 @@ function Widget._createResource(parent, resource)
 end
 
 function Widget:_playSound(soundId)
+#if 0
 	local resourceManager = Widget._env.resource.resourceManager
 	assert (resourceManager ~= nil)
 
@@ -499,10 +500,11 @@ function Widget:_playSound(soundId)
 		soundId = Guid(soundId)
 	end
 
-	local sound = resourceManager:bind(traktor.sound.Sound, soundId)
+	local sound = self._resourceManager:bind(traktor.sound.Sound, soundId)
 	if sound == nil or sound:get() == nil then return end
 
 	soundPlayer:play(sound:get(), 0)
+#endif
 end
 
 	]]>

@@ -13,6 +13,14 @@ class IEditor;
 
 	}
 
+	namespace script
+	{
+	
+class IScriptContext;
+class IScriptManager;
+
+	}
+
 	namespace uikit
 	{
 
@@ -39,6 +47,8 @@ public:
 
 private:
 	editor::IEditor* m_editor;
+	Ref< script::IScriptManager > m_scriptManager;
+	Ref< script::IScriptContext > m_scriptContext;
 	Ref< WidgetPreviewControl > m_previewControl;
 };
 
