@@ -16,10 +16,25 @@ function Frame:new(root_mc, vwidth, vheight, layout)
 end
 
 function Frame:remove()
+	local cx = self._mc:getContext()
+
 	self._mc:setMember("onEnterFrame", nil)
 	self._mc:setMember("onMouseDown", nil)
 	self._mc:setMember("onMouseUp", nil)
 	self._mc:setMember("onMouseMove", nil)
+
+	if self._mouseListener ~= nil then
+		local mouse = cx:getGlobal():getMember("Mouse")
+		mouse:removeListener(self._mouseListener)
+		self._mouseListener = nil
+	end
+
+	if self._stageListener ~= nil then
+		local stage = cx:getGlobal():getMember("Stage")
+		stage:removeListener(self._stageListener)
+		self._stageListener = nil
+	end
+
 	Widget.remove(self)
 end
 
@@ -54,9 +69,9 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	-- Disable stage scale and position, register listener of changes in stage size.
 	local cx = mc:getContext()
 	local stage = cx:getGlobal():getMember("Stage")
-	local listener = cx:createObject()
-	listener:setMember("onResize", function() self:update() end)
-	stage:addListener(listener)
+	self._stageListener = cx:createObject()
+	self._stageListener:setMember("onResize", function() self:update() end)
+	stage:addListener(self._stageListener)
 	stage:setProperty("scaleMode", "noScale")
 	stage:setProperty("align", "TL")
 
@@ -70,9 +85,9 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	self._mc:setMember("onMouseMove", function() self:_eventMouseMove() end)
 
 	local mouse = cx:getGlobal():getMember("Mouse")
-	local listener = cx:createObject()
-	listener:setMember("onMouseWheel", function(delta) self:_eventMouseWheel(delta) end)
-	mouse:addListener(listener)
+	self._mouseListener = cx:createObject()
+	self._mouseListener:setMember("onMouseWheel", function(delta) self:_eventMouseWheel(delta) end)
+	mouse:addListener(self._mouseListener)
 
 #if defined(_DEBUG)
 	self._mc_debug = Widget._createResource(self, "MC_DebugMarker")

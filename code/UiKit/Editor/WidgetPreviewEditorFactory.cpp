@@ -16,6 +16,7 @@ const TypeInfoSet WidgetPreviewEditorFactory::getEditableTypes() const
 
 bool WidgetPreviewEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
+	outDependencies.insert(Guid(L"{14D6A2DB-796D-E54D-9D70-73DE4AE7C4E8}"));	// System/Flash/Shaders/FlashShaderAssets
 	return true;
 }
 

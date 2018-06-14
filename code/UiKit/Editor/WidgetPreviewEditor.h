@@ -13,6 +13,13 @@ class IEditor;
 
 	}
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace script
 	{
 	
@@ -49,6 +56,7 @@ private:
 	editor::IEditor* m_editor;
 	Ref< script::IScriptManager > m_scriptManager;
 	Ref< script::IScriptContext > m_scriptContext;
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< WidgetPreviewControl > m_previewControl;
 };
 

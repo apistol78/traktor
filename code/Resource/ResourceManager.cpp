@@ -244,6 +244,14 @@ void ResourceManager::reload(const Guid& guid, bool flushedOnly)
 	if (!factory)
 		return;
 
+	std::map< Guid, Ref< ResidentResourceHandle > >::iterator i1 = m_residentHandles.find(guid);
+	if (i1 != m_residentHandles.end())
+	{
+		const TypeInfo& productType = i1->second->getProductType();
+		if (!flushedOnly || i1->second->get() == 0)
+			load(instance, factory, productType, i1->second);
+	}
+
 	std::map< Guid, RefArray< ExclusiveResourceHandle > >::iterator i0 = m_exclusiveHandles.find(guid);
 	if (i0 != m_exclusiveHandles.end())
 	{
@@ -254,16 +262,6 @@ void ResourceManager::reload(const Guid& guid, bool flushedOnly)
 			if (!flushedOnly || (*i)->get() == 0)
 				load(instance, factory, productType, *i);
 		}
-		return;
-	}
-
-	std::map< Guid, Ref< ResidentResourceHandle > >::iterator i1 = m_residentHandles.find(guid);
-	if (i1 != m_residentHandles.end())
-	{
-		const TypeInfo& productType = i1->second->getProductType();
-		if (!flushedOnly || i1->second->get() == 0)
-			load(instance, factory, productType, i1->second);
-		return;
 	}
 }
 

@@ -45,7 +45,6 @@ bool DefaultPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-
 	Ref< Reflection > reflection = Reflection::create(sourceAsset);
 	if (!reflection)
 		return false;

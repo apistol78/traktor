@@ -28,8 +28,8 @@ class IEditor;
 	{
 
 class AccDisplayRenderer;
+class Movie;
 class MoviePlayer;
-
 	}
 
 	namespace render
@@ -50,6 +50,8 @@ class IResourceManager;
 	namespace uikit
 	{
 
+class WidgetScaffolding;
+
 class WidgetPreviewControl : public ui::Widget
 {
 	T_RTTI_CLASS;
@@ -61,27 +63,41 @@ public:
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	void setScaffoldingClass(const IRuntimeClass* scaffoldingClass);
+	void setScaffolding(const WidgetScaffolding* scaffolding);
 
 private:
 	editor::IEditor* m_editor;
+	Ref< const WidgetScaffolding > m_scaffolding;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	//Ref< db::Database > m_database;
 	Ref< render::IRenderView > m_renderView;
 	Ref< flash::AccDisplayRenderer > m_displayRenderer;
 	Ref< flash::MoviePlayer > m_moviePlayer;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
+	Ref< flash::Movie > m_movie;
+	resource::Proxy< IRuntimeClass > m_scaffoldingClass;
+	Ref< ITypedObject > m_scaffoldingObject;
 	Timer m_timer;
-
-	Ref< const IRuntimeClass > m_scaffoldingClass;
-	Ref< ITypedObject > m_scaffolding;
 
 	void eventSize(ui::SizeEvent* event);
 
 	void eventPaint(ui::PaintEvent* event);
 
 	void eventIdle(ui::IdleEvent* event);
+
+	void eventKey(ui::KeyEvent* event);
+
+	void eventKeyDown(ui::KeyDownEvent* event);
+
+	void eventKeyUp(ui::KeyUpEvent* event);
+
+	void eventButtonDown(ui::MouseButtonDownEvent* event);
+
+	void eventButtonUp(ui::MouseButtonUpEvent* event);
+
+	void eventMouseMove(ui::MouseMoveEvent* event);
+
+	void eventMouseWheel(ui::MouseWheelEvent* event);
 };
 
 	}
