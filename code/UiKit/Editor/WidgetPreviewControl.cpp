@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -12,17 +10,59 @@
 #include "Flash/Sprite.h"
 #include "Flash/SpriteInstance.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
+#include "Flash/Action/Common/Classes/AsKey.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/Itf/IWidget.h"
 #include "UiKit/Editor/WidgetPreviewControl.h"
+#include "UiKit/Editor/WidgetScaffolding.h"
 
 namespace traktor
 {
 	namespace uikit
 	{
+		namespace
+		{
+
+const struct
+{
+	ui::VirtualKey vk;
+	int32_t ak;
+}
+c_askeys[] =
+{
+	{ ui::VkBackSpace, flash::AsKey::AkBackspace },
+	{ ui::VkControl, flash::AsKey::AkControl },
+	{ ui::VkDelete, flash::AsKey::AkDeleteKey },
+	{ ui::VkDown, flash::AsKey::AkDown },
+	{ ui::VkEnd, flash::AsKey::AkEnd },
+	{ ui::VkReturn, flash::AsKey::AkEnter },
+	{ ui::VkEscape, flash::AsKey::AkEscape },
+	{ ui::VkHome, flash::AsKey::AkHome },
+	{ ui::VkInsert, flash::AsKey::AkInsert },
+	{ ui::VkLeft, flash::AsKey::AkLeft },
+	{ ui::VkPageDown, flash::AsKey::AkPgDn },
+	{ ui::VkPageUp, flash::AsKey::AkPgUp },
+	{ ui::VkRight, flash::AsKey::AkRight },
+	{ ui::VkShift, flash::AsKey::AkShift },
+	{ ui::VkSpace, flash::AsKey::AkSpace },
+	{ ui::VkTab, flash::AsKey::AkTab },
+	{ ui::VkUp, flash::AsKey::AkUp }
+};
+
+int32_t translateVirtualKey(ui::VirtualKey vk)
+{
+	for (int i = 0; i < sizeof_array(c_askeys); ++i)
+	{
+		if (vk == c_askeys[i].vk)
+			return c_askeys[i].ak;
+	}
+	return 0;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.uikit.WidgetPreviewControl", WidgetPreviewControl, ui::Widget)
 
@@ -43,7 +83,7 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 	Ref< flash::Frame > frame = new flash::Frame();
 	frame->changeBackgroundColor(Color4f(0.2f, 0.2f, 0.2f, 1.0f));
 	movieClip->addFrame(frame);
-	Ref< flash::Movie > movie = new flash::Movie(
+	m_movie = new flash::Movie(
 		Aabb2(Vector2(0.0f, 0.0f), Vector2(1280.0f * 20.0f, 720.0f * 20.0f)),
 		movieClip
 	);
@@ -84,7 +124,7 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 		0,
 		0
 	);
-	if (!m_moviePlayer->create(movie, width, height))
+	if (!m_moviePlayer->create(m_movie, width, height))
 		return false;
 
 	while (!m_moviePlayer->progressFrame(1.0f / 60.0f));
@@ -92,6 +132,13 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 	// Add widget event handler.
 	addEventHandler< ui::SizeEvent >(this, &WidgetPreviewControl::eventSize);
 	addEventHandler< ui::PaintEvent >(this, &WidgetPreviewControl::eventPaint);
+	addEventHandler< ui::KeyEvent >(this, &WidgetPreviewControl::eventKey);
+	addEventHandler< ui::KeyDownEvent >(this, &WidgetPreviewControl::eventKeyDown);
+	addEventHandler< ui::KeyUpEvent >(this, &WidgetPreviewControl::eventKeyUp);
+	addEventHandler< ui::MouseButtonDownEvent >(this, &WidgetPreviewControl::eventButtonDown);
+	addEventHandler< ui::MouseButtonUpEvent >(this, &WidgetPreviewControl::eventButtonUp);
+	addEventHandler< ui::MouseMoveEvent >(this, &WidgetPreviewControl::eventMouseMove);
+	addEventHandler< ui::MouseWheelEvent >(this, &WidgetPreviewControl::eventMouseWheel);
 
 	// Register our idle event handler.
 	m_idleEventHandler = ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &WidgetPreviewControl::eventIdle);
@@ -108,18 +155,13 @@ void WidgetPreviewControl::destroy()
 	ui::Widget::destroy();
 }
 
-void WidgetPreviewControl::setScaffoldingClass(const IRuntimeClass* scaffoldingClass)
+void WidgetPreviewControl::setScaffolding(const WidgetScaffolding* scaffolding)
 {
-	Ref< flash::SpriteInstance > root = m_moviePlayer->getMovieInstance();
-
-	Any argv[] =
-	{
-		Any::fromObject(m_resourceManager),
-		Any::fromObject(root)
-	};
-
-	m_scaffoldingClass = scaffoldingClass;
-	m_scaffolding = m_scaffoldingClass->construct(0, sizeof_array(argv), argv);
+	m_scaffoldingObject = 0;
+	if ((m_scaffolding = scaffolding) != 0)
+		m_resourceManager->bind(m_scaffolding->getScaffoldingClass(), m_scaffoldingClass);
+	else
+		m_scaffoldingClass.clear();
 }
 
 void WidgetPreviewControl::eventSize(ui::SizeEvent* event)
@@ -138,6 +180,34 @@ void WidgetPreviewControl::eventSize(ui::SizeEvent* event)
 
 void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 {
+	// Initialize scaffolding.
+	if (m_scaffoldingClass.changed())
+	{
+		// Create scaffolding object.
+		if (m_scaffoldingClass)
+		{
+			// Remove previous scaffolding.
+			if (m_scaffoldingObject)
+			{
+				uint32_t methodId = findRuntimeClassMethodId(m_scaffoldingClass, "remove");
+				if (methodId != ~0U)
+					m_scaffoldingClass->invoke(m_scaffoldingObject, methodId, 0, 0);
+			}
+
+			// Construct new scaffolding.
+			Any argv[] =
+			{
+				Any::fromObject(m_resourceManager),
+				Any::fromObject(m_moviePlayer->getMovieInstance())
+			};
+			m_scaffoldingObject = m_scaffoldingClass->construct(0, sizeof_array(argv), argv);
+		}
+		else
+			m_scaffoldingObject = 0;
+
+		m_scaffoldingClass.consume();
+	}
+
 	if (!m_renderView || !m_moviePlayer)
 		return;
 
@@ -178,6 +248,71 @@ void WidgetPreviewControl::eventIdle(ui::IdleEvent* event)
 			update();
 
 		event->requestMore();
+	}
+}
+
+void WidgetPreviewControl::eventKey(ui::KeyEvent* event)
+{
+	if (event->getCharacter() != '\r' && m_moviePlayer)
+		m_moviePlayer->postKey(event->getCharacter());
+}
+
+void WidgetPreviewControl::eventKeyDown(ui::KeyDownEvent* event)
+{
+	if (m_moviePlayer)
+	{
+		int32_t ak = translateVirtualKey(event->getVirtualKey());
+		if (ak > 0)
+			m_moviePlayer->postKeyDown(ak);
+	}
+}
+
+void WidgetPreviewControl::eventKeyUp(ui::KeyUpEvent* event)
+{
+	if (m_moviePlayer)
+	{
+		int32_t ak = translateVirtualKey(event->getVirtualKey());
+		if (ak > 0)
+			m_moviePlayer->postKeyUp(ak);
+	}
+}
+
+void WidgetPreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)
+{
+	if (m_moviePlayer)
+	{
+		ui::Point mousePosition = event->getPosition();
+		m_moviePlayer->postMouseDown(mousePosition.x, mousePosition.y, event->getButton());
+	}
+	setCapture();
+	setFocus();
+}
+
+void WidgetPreviewControl::eventButtonUp(ui::MouseButtonUpEvent* event)
+{
+	if (m_moviePlayer)
+	{
+		ui::Point mousePosition = event->getPosition();
+		m_moviePlayer->postMouseUp(mousePosition.x, mousePosition.y, event->getButton());
+	}
+	releaseCapture();
+}
+
+void WidgetPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
+{
+	if (m_moviePlayer)
+	{
+		ui::Point mousePosition = event->getPosition();
+		m_moviePlayer->postMouseMove(mousePosition.x, mousePosition.y, event->getButton());
+	}
+}
+
+void WidgetPreviewControl::eventMouseWheel(ui::MouseWheelEvent* event)
+{
+	if (m_moviePlayer)
+	{
+		ui::Point mousePosition = event->getPosition();
+		m_moviePlayer->postMouseWheel(mousePosition.x, mousePosition.y, event->getRotation());
 	}
 }
 

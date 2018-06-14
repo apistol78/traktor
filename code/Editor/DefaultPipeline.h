@@ -52,8 +52,8 @@ public:
 
 	virtual bool buildOutput(
 		IPipelineBuilder* pipelineBuilder,
-		const editor::IPipelineDependencySet* dependencySet,
-		const editor::PipelineDependency* dependency,
+		const IPipelineDependencySet* dependencySet,
+		const PipelineDependency* dependency,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
 		uint32_t sourceAssetHash,

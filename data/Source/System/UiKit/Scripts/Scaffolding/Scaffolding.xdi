@@ -17,6 +17,7 @@ function Scaffolding:new(resourceManager, root)
 		TableLayout.new({ 0 }, { 0 }, 4, 4, 4, 4)
 	)
 	self:setup(self._frame)
+	self._frame:layout()
 end
 
 function Scaffolding:getResourceKits()
@@ -26,6 +27,12 @@ end
 function Scaffolding:setup(frame)
 end
 
+function Scaffolding:remove()
+	if self._frame ~= nil then
+		self._frame:remove()
+		self._frame = nil
+	end
+end
 
 	]]>
 	</text>
