@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Ref.h"
 
-#if defined(T_CXX11)
+#if defined(T_CXX11) && !defined(__PS3__)
 #	include <functional>
 #endif
 
@@ -41,7 +41,7 @@ public:
 	virtual void operator () () = 0;
 };
 
-#if defined(T_CXX11)
+#if defined(T_CXX11) && !defined(__PS3__)
 
 /*! \brief C++11 lambda functor.
  * \ingroup Core
