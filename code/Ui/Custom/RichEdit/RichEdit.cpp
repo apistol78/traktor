@@ -1315,7 +1315,6 @@ void RichEdit::eventDoubleClick(MouseDoubleClickEvent* event)
 	{
 		if ((m_selectionStart = offset) > 0)
 		{
-			m_selectionStart--;
 			while (m_selectionStart > 0)
 			{
 				if (isWordSeparator(m_text[m_selectionStart - 1].ch))
@@ -1331,6 +1330,10 @@ void RichEdit::eventDoubleClick(MouseDoubleClickEvent* event)
 				break;
 		}
 		m_caret = m_selectionStop;
+
+		std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator i = m_specialCharacters.find(m_text[m_caret].ch);
+		if (i != m_specialCharacters.end())
+			i->second->mouseDoubleClick(event);
 
 		CaretEvent caretEvent(this);
 		raiseEvent(&caretEvent);

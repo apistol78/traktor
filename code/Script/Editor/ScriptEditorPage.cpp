@@ -67,11 +67,13 @@ namespace traktor
 		
 struct DependencyCharacter : public RefCountImpl< ui::custom::RichEdit::ISpecialCharacter >
 {
+	editor::IEditor* editor;
 	Guid id;
 	std::wstring path;
 
-	DependencyCharacter(const Guid& id_, const std::wstring& path_)
-	:	id(id_)
+	DependencyCharacter(editor::IEditor* editor_, const Guid& id_, const std::wstring& path_)
+	:	editor(editor_)
+	,	id(id_)
 	,	path(path_)
 	{
 	}
@@ -95,6 +97,13 @@ struct DependencyCharacter : public RefCountImpl< ui::custom::RichEdit::ISpecial
 
 	virtual void mouseButtonUp(ui::MouseButtonUpEvent* event) const T_OVERRIDE T_FINAL
 	{
+	}
+
+	virtual void mouseDoubleClick(ui::MouseDoubleClickEvent* event) const T_OVERRIDE T_FINAL
+	{
+		Ref< db::Instance > instance = editor->getSourceDatabase()->getInstance(id);
+		if (instance)
+			editor->openEditor(instance);
 	}
 };
 		
@@ -192,7 +201,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 			const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
 			if (instance)
 			{
-				wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(g, instance->getPath()));
+				wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(m_editor, g, instance->getPath()));
 				return std::wstring(1, ch);
 			}
 			else
@@ -322,7 +331,7 @@ bool ScriptEditorPage::dropInstance(db::Instance* instance, const ui::Point& pos
 	if (dropOffset < 0)
 		return false;
 
-	wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(instance->getGuid(), instance->getPath()));
+	wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(m_editor, instance->getGuid(), instance->getPath()));
 
 	m_edit->placeCaret(dropOffset);
 	m_edit->insert(std::wstring(1, ch));
@@ -343,7 +352,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 				const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
 				if (instance)
 				{
-					wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(g, instance->getPath()));
+					wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(m_editor, g, instance->getPath()));
 					return std::wstring(1, ch);
 				}
 				else
@@ -364,7 +373,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 				const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
 				if (instance)
 				{
-					wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(g, instance->getPath()));
+					wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(m_editor, g, instance->getPath()));
 					return std::wstring(1, ch);
 				}
 				else
@@ -659,7 +668,7 @@ void ScriptEditorPage::eventScriptButtonUp(ui::MouseButtonUpEvent* event)
 
 				offset = m_edit->getLineOffset(line);
 
-				wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(instance->getGuid(), instance->getPath()));
+				wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(m_editor, instance->getGuid(), instance->getPath()));
 				m_edit->placeCaret(offset);
 				m_edit->insert(L"#using " + std::wstring(1, ch) + L"\n");
 			}

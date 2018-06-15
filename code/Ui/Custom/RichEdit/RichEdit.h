@@ -50,6 +50,8 @@ public:
 		virtual void mouseButtonDown(MouseButtonDownEvent* event) const = 0;
 
 		virtual void mouseButtonUp(MouseButtonUpEvent* event) const = 0;
+
+		virtual void mouseDoubleClick(MouseDoubleClickEvent* event) const = 0;
 	};
 
 	RichEdit();
