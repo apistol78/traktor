@@ -23,7 +23,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetManager", TargetManager, Object)
 
-TargetManager::TargetManager(editor::IEditor* editor, TargetScriptDebuggerSessions* targetDebuggerSessions)
+TargetManager::TargetManager(editor::IEditor *editor, script::IScriptDebuggerSessions *targetDebuggerSessions)
 :	m_editor(editor)
 ,	m_targetDebuggerSessions(targetDebuggerSessions)
 ,	m_port(0)

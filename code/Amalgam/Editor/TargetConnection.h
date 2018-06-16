@@ -24,11 +24,17 @@ class BidirectionalObjectTransport;
 
 	}
 
+	namespace script
+	{
+
+class IScriptDebuggerSessions;
+
+	}
+
 	namespace amalgam
 	{
 
 class TargetScriptDebugger;
-class TargetScriptDebuggerSessions;
 class TargetScriptProfiler;
 
 /*! \brief
@@ -48,7 +54,7 @@ public:
 		const std::wstring& name,
 		net::BidirectionalObjectTransport* transport,
 		ILogTarget* targetLog,
-		TargetScriptDebuggerSessions* targetDebuggerSessions
+		script::IScriptDebuggerSessions* targetDebuggerSessions
 	);
 
 	virtual ~TargetConnection();
@@ -71,7 +77,7 @@ private:
 	std::wstring m_name;
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	Ref< ILogTarget > m_targetLog;
-	Ref< TargetScriptDebuggerSessions > m_targetDebuggerSessions;
+	Ref<script::IScriptDebuggerSessions> m_targetDebuggerSessions;
 	Ref< TargetScriptDebugger > m_targetDebugger;
 	Ref< TargetScriptProfiler > m_targetProfiler;
 	TargetPerformance m_performance;

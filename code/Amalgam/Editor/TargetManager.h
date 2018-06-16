@@ -19,11 +19,17 @@ class IEditor;
 
 	}
 
+	namespace script
+	{
+
+class IScriptDebuggerSessions;
+
+	}
+
 	namespace amalgam
 	{
 
 class TargetInstance;
-class TargetScriptDebuggerSessions;
 
 /*! \brief
  * \ingroup Amalgam
@@ -33,7 +39,7 @@ class TargetManager : public Object
 	T_RTTI_CLASS;
 
 public:
-	TargetManager(editor::IEditor* editor, TargetScriptDebuggerSessions* targetDebuggerSessions);
+	TargetManager(editor::IEditor *editor, script::IScriptDebuggerSessions *targetDebuggerSessions);
 
 	bool create();
 
@@ -51,7 +57,7 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< TargetScriptDebuggerSessions > m_targetDebuggerSessions;
+	Ref< script::IScriptDebuggerSessions > m_targetDebuggerSessions;
 	Ref< net::TcpSocket > m_listenSocket;
 	RefArray< TargetInstance > m_instances;
 	uint16_t m_port;

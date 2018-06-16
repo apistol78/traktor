@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_script_ScriptEditorPlugin_H
 #define traktor_script_ScriptEditorPlugin_H
 
+#include "Core/Ref.h"
 #include "Editor/IEditorPlugin.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
 
@@ -22,6 +23,9 @@ class IEditor;
 	namespace script
 	{
 	
+class IScriptManager;
+class ScriptDebuggerSessions;
+
 /*! \brief Editor scripting plugin.
  * \ingroup Script
  */
@@ -61,6 +65,8 @@ public:
 
 private:
 	editor::IEditor* m_editor;
+	Ref< script::IScriptManager > m_scriptManager;
+	Ref< script::ScriptDebuggerSessions > m_debuggerSessions;
 };
 	
 	}

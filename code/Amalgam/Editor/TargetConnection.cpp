@@ -9,11 +9,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Amalgam/TargetProfilerEvents.h"
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/TargetScriptDebugger.h"
-#include "Amalgam/Editor/TargetScriptDebuggerSessions.h"
 #include "Amalgam/Editor/TargetScriptProfiler.h"
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Net/BidirectionalObjectTransport.h"
+#include "Script/Editor/IScriptDebuggerSessions.h"
 
 namespace traktor
 {
@@ -22,8 +22,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetConnection", TargetConnection, Object)
 
-TargetConnection::TargetConnection(const std::wstring& name, net::BidirectionalObjectTransport* transport, ILogTarget* targetLog, TargetScriptDebuggerSessions* targetDebuggerSessions)
-:	m_name(name)
+TargetConnection::TargetConnection(const std::wstring &name, net::BidirectionalObjectTransport *transport, ILogTarget *targetLog, script::IScriptDebuggerSessions *targetDebuggerSessions)
+    :	m_name(name)
 ,	m_transport(transport)
 ,	m_targetLog(targetLog)
 ,	m_targetDebuggerSessions(targetDebuggerSessions)

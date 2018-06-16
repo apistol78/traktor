@@ -4,19 +4,19 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Amalgam/Editor/TargetScriptDebugger.h"
-#include "Amalgam/Editor/TargetScriptDebuggerSessions.h"
-#include "Amalgam/Editor/TargetScriptProfiler.h"
 #include "Core/Guid.h"
+#include "Script/IScriptDebugger.h"
+#include "Script/IScriptProfiler.h"
+#include "Script/Editor/ScriptDebuggerSessions.h"
 
 namespace traktor
 {
-	namespace amalgam
+	namespace script
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetScriptDebuggerSessions", TargetScriptDebuggerSessions, script::IScriptDebuggerSessions)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerSessions", ScriptDebuggerSessions, IScriptDebuggerSessions)
 
-void TargetScriptDebuggerSessions::beginSession(TargetScriptDebugger* scriptDebugger, TargetScriptProfiler* scriptProfiler)
+void ScriptDebuggerSessions::beginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
 {
 	Session session;
 	session.debugger = scriptDebugger;
@@ -36,7 +36,7 @@ void TargetScriptDebuggerSessions::beginSession(TargetScriptDebugger* scriptDebu
 		(*i)->notifyBeginSession(scriptDebugger, scriptProfiler);
 }
 
-void TargetScriptDebuggerSessions::endSession(TargetScriptDebugger* scriptDebugger, TargetScriptProfiler* scriptProfiler)
+void ScriptDebuggerSessions::endSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
 {
 	for (std::list< IListener* >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
 		(*i)->notifyEndSession(scriptDebugger, scriptProfiler);
@@ -60,7 +60,7 @@ void TargetScriptDebuggerSessions::endSession(TargetScriptDebugger* scriptDebugg
 	}
 }
 
-bool TargetScriptDebuggerSessions::setBreakpoint(const Guid& scriptId, int32_t lineNumber)
+bool ScriptDebuggerSessions::setBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
 	m_breakpoints[lineNumber].insert(scriptId);
 
@@ -73,7 +73,7 @@ bool TargetScriptDebuggerSessions::setBreakpoint(const Guid& scriptId, int32_t l
 	return true;
 }
 
-bool TargetScriptDebuggerSessions::removeBreakpoint(const Guid& scriptId, int32_t lineNumber)
+bool ScriptDebuggerSessions::removeBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
 	m_breakpoints[lineNumber].erase(scriptId);
 
@@ -86,7 +86,7 @@ bool TargetScriptDebuggerSessions::removeBreakpoint(const Guid& scriptId, int32_
 	return true;
 }
 
-bool TargetScriptDebuggerSessions::removeAllBreakpoints(const Guid& scriptId)
+bool ScriptDebuggerSessions::removeAllBreakpoints(const Guid& scriptId)
 {
 	for (std::map< int32_t, std::set< Guid > >::iterator i = m_breakpoints.begin(); i != m_breakpoints.end(); ++i)
 	{
@@ -107,7 +107,7 @@ bool TargetScriptDebuggerSessions::removeAllBreakpoints(const Guid& scriptId)
 	return true;
 }
 
-bool TargetScriptDebuggerSessions::haveBreakpoint(const Guid& scriptId, int32_t lineNumber) const
+bool ScriptDebuggerSessions::haveBreakpoint(const Guid& scriptId, int32_t lineNumber) const
 {
 	std::map< int32_t, std::set< Guid > >::const_iterator i = m_breakpoints.find(lineNumber);
 	if (i != m_breakpoints.end())
@@ -116,7 +116,7 @@ bool TargetScriptDebuggerSessions::haveBreakpoint(const Guid& scriptId, int32_t 
 		return false;
 }
 
-void TargetScriptDebuggerSessions::addListener(IListener* listener)
+void ScriptDebuggerSessions::addListener(IListener* listener)
 {
 	T_ASSERT (listener);
 	
@@ -132,7 +132,7 @@ void TargetScriptDebuggerSessions::addListener(IListener* listener)
 	m_listeners.push_back(listener);
 }
 
-void TargetScriptDebuggerSessions::removeListener(IListener* listener)
+void ScriptDebuggerSessions::removeListener(IListener* listener)
 {
 	T_ASSERT (listener);
 	for (std::list< Session >::iterator i = m_sessions.begin(); i != m_sessions.end(); ++i)
