@@ -12,7 +12,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/TargetInstance.h"
 #include "Amalgam/Editor/TargetManager.h"
-#include "Amalgam/Editor/TargetScriptDebuggerSessions.h"
 #include "Amalgam/Editor/Deploy/BuildTargetAction.h"
 #include "Amalgam/Editor/Deploy/DeployTargetAction.h"
 #include "Amalgam/Editor/Deploy/LaunchTargetAction.h"
@@ -56,6 +55,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/Discovery/DiscoveryManager.h"
+#include "Script/Editor/ScriptDebuggerSessions.h"
 #include "Ui/Application.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Clipboard.h"
@@ -147,8 +147,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_hostEnumerator = new HostEnumerator(m_editor->getSettings(), m_discoveryManager);
 
 	// Create target script debugger dispatcher.
-	m_targetDebuggerSessions = new TargetScriptDebuggerSessions();
-	m_editor->setStoreObject(L"ScriptDebuggerSessions", m_targetDebuggerSessions);
+	m_targetDebuggerSessions = m_editor->getStoreObject< script::IScriptDebuggerSessions >(L"ScriptDebuggerSessions");
 
 	// Create panel.
 	Ref< ui::Container > container = new ui::Container();
@@ -235,8 +234,6 @@ void EditorPlugin::destroy()
 
 	safeDestroy(m_targetManager);
 
-	if (m_editor)
-		m_editor->setStoreObject(L"ScriptDebuggerSessions", 0);
 	m_targetDebuggerSessions = 0;
 
 	m_targetInstances.clear();

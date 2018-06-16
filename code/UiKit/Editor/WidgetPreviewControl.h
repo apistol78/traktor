@@ -9,6 +9,7 @@ namespace traktor
 {
 
 class IRuntimeClass;
+class Job;
 
 	namespace db
 	{
@@ -77,6 +78,7 @@ private:
 	Ref< flash::Movie > m_movie;
 	resource::Proxy< IRuntimeClass > m_scaffoldingClass;
 	Ref< ITypedObject > m_scaffoldingObject;
+	Ref< Job > m_job;
 	Timer m_timer;
 
 	void eventSize(ui::SizeEvent* event);

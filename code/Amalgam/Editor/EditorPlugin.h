@@ -31,6 +31,13 @@ class DiscoveryManager;
 
 	}
 
+	namespace script
+	{
+
+class IScriptDebuggerSessions;
+
+	}
+
 	namespace ui
 	{
 
@@ -62,7 +69,6 @@ class TargetInstance;
 class TargetManager;
 class TargetPlayEvent;
 class TargetStopEvent;
-class TargetScriptDebuggerSessions;
 
 /*! \brief Amalgam editor plugin.
  * \ingroup Amalgam
@@ -123,7 +129,7 @@ private:
 
 	// \name Tool
 	// \{
-	Ref< TargetScriptDebuggerSessions > m_targetDebuggerSessions;
+	Ref< script::IScriptDebuggerSessions > m_targetDebuggerSessions;
 	std::vector< EditTarget > m_targets;
 	RefArray< TargetInstance > m_targetInstances;
 	// \}

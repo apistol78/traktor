@@ -28,7 +28,7 @@ class Guid;
 class IScriptDebugger;
 class IScriptProfiler;
 
-/*! \brief
+/*! \brief Debugger sessions interface.
  * \ingroup Script
  */
 class T_DLLCLASS IScriptDebuggerSessions : public Object
@@ -47,16 +47,61 @@ public:
 		virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
 	};
 
+	/*! \brief Begin new debugging session.
+	 *
+	 * \param scriptDebugger Script debugger.
+	 * \param scriptProfiler Script profiler.
+	 */
+	virtual void beginSession(script::IScriptDebugger* scriptDebugger, script::IScriptProfiler* scriptProfiler) = 0;
+
+	/*! \brief End debugging session.
+	 *
+	 * \param scriptDebugger Script debugger.
+	 * \param scriptProfiler Script profiler.
+	 */
+	virtual void endSession(script::IScriptDebugger* scriptDebugger, script::IScriptProfiler* scriptProfiler) = 0;
+
+	/*! \brief Activate new breakpoint.
+	 *
+	 * \param scriptId Script identifier.
+	 * \param lineNumber Line within script to associate with breakpoint.
+	 * \return True if breakpoint was set.
+	 */
 	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
 
+	/*! \brief Remove breakpoint.
+	 *
+	 * \param scriptId Script identifier.
+	 * \param lineNumber Line within script to associate with breakpoint.
+	 * \return True if breakpoint was removed.
+	 */
 	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
 
+	/*! \brief Remove all breakpoints from script.
+	 *
+	 * \param scriptId Script identifier.
+	 * \return True if all breakpoints was removed.
+	 */
 	virtual bool removeAllBreakpoints(const Guid& scriptId) = 0;
 
+	/*! \brief Check if breakpoint is set.
+	 *
+	 * \param scriptId Script identifier.
+	 * \param lineNumber Line within script to check for breakpoint.
+	 * \return True if breakpoint is set.
+	 */
 	virtual bool haveBreakpoint(const Guid& scriptId, int32_t lineNumber) const = 0;
 
+	/*! \brief Add session listener.
+	 *
+	 * \param listener Listener implementation.
+	 */
 	virtual void addListener(IListener* listener) = 0;
 
+	/*! \brief Remove session listener.
+	 *
+	 * \param listener Listener to remove.
+	 */
 	virtual void removeListener(IListener* listener) = 0;
 };
 

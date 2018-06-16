@@ -4,33 +4,38 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_amalgam_TargetScriptDebuggerSessions_H
-#define traktor_amalgam_TargetScriptDebuggerSessions_H
+#ifndef traktor_script_ScriptDebuggerSessions_H
+#define traktor_script_ScriptDebuggerSessions_H
 
 #include <list>
 #include <map>
-#include "Core/RefArray.h"
+#include "Core/Ref.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SCRIPT_EDITOR_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor
 {
-	namespace amalgam
+	namespace script
 	{
 
-class TargetScriptDebugger;
-class TargetScriptProfiler;
-
 /*! \brief
- * \ingroup Amalgam
+ * \ingroup script
  */
-class TargetScriptDebuggerSessions : public script::IScriptDebuggerSessions
+class T_DLLCLASS ScriptDebuggerSessions : public IScriptDebuggerSessions
 {
 	T_RTTI_CLASS;
 
 public:
-	void beginSession(TargetScriptDebugger* scriptDebugger, TargetScriptProfiler* scriptProfiler);
+	virtual void beginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) T_OVERRIDE T_FINAL;
 
-	void endSession(TargetScriptDebugger* scriptDebugger, TargetScriptProfiler* scriptProfiler);
+	virtual void endSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) T_OVERRIDE T_FINAL;
 
 	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
 
@@ -47,8 +52,8 @@ public:
 private:
 	struct Session
 	{
-		Ref< TargetScriptDebugger > debugger;
-		Ref< TargetScriptProfiler > profiler;
+		Ref< IScriptDebugger > debugger;
+		Ref< IScriptProfiler > profiler;
 	};
 	std::list< Session > m_sessions;
 	std::map< int32_t, std::set< Guid > > m_breakpoints;
@@ -59,4 +64,4 @@ private:
 }
 
 
-#endif	// traktor_amalgam_TargetScriptDebuggerSessions_H
+#endif	// traktor_script_ScriptDebuggerSessions_H
