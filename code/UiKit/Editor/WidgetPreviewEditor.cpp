@@ -4,6 +4,7 @@
 #include "Flash/MovieResourceFactory.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/ShaderFactory.h"
+#include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Script/IScriptContext.h"
 #include "Script/IScriptManager.h"
@@ -13,6 +14,7 @@
 #include "UiKit/Editor/WidgetPreviewControl.h"
 #include "UiKit/Editor/WidgetPreviewEditor.h"
 #include "UiKit/Editor/WidgetScaffolding.h"
+#include "Video/VideoFactory.h"
 
 namespace traktor
 {
@@ -51,8 +53,10 @@ bool WidgetPreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 	// Create resource manager.
 	m_resourceManager = new resource::ResourceManager(database, false);
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
+	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
 	m_resourceManager->addFactory(new script::ScriptFactory(scriptManager, m_scriptContext));
 	m_resourceManager->addFactory(new flash::MovieResourceFactory());
+	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
 
 	// Create preview control.
 	m_previewControl = new WidgetPreviewControl(m_editor, m_resourceManager, renderSystem);
