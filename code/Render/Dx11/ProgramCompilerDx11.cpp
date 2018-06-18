@@ -518,7 +518,8 @@ bool ProgramCompilerDx11::generate(
 	const PropertyGroup* settings,
 	int32_t optimize,
 	std::wstring& outVertexShader,
-	std::wstring& outPixelShader
+	std::wstring& outPixelShader,
+	std::wstring& outComputeShader
 ) const
 {
 	HlslProgram hlslProgram;
@@ -527,6 +528,7 @@ bool ProgramCompilerDx11::generate(
 
 	outVertexShader = hlslProgram.getVertexShader();
 	outPixelShader = hlslProgram.getPixelShader();
+	outComputeShader = hlslProgram.getComputeShader();
 	return true;
 }
 

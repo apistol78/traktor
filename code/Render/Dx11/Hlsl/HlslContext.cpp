@@ -35,6 +35,7 @@ HlslContext::HlslContext(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
 ,	m_vertexShader(HlslShader::StVertex)
 ,	m_pixelShader(HlslShader::StPixel)
+,	m_computeShader(HlslShader::StCompute)
 ,	m_currentShader(0)
 ,	m_stencilReference(0)
 {
@@ -204,6 +205,11 @@ void HlslContext::enterPixel()
 	m_currentShader = &m_pixelShader;
 }
 
+void HlslContext::enterCompute()
+{
+	m_currentShader = &m_computeShader;
+}
+
 bool HlslContext::inVertex() const
 {
 	return bool(m_currentShader == &m_vertexShader);
@@ -212,6 +218,11 @@ bool HlslContext::inVertex() const
 bool HlslContext::inPixel() const
 {
 	return bool(m_currentShader == &m_pixelShader);
+}
+
+bool HlslContext::inCompute() const
+{
+	return bool(m_currentShader == &m_computeShader);
 }
 
 bool HlslContext::allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset)
@@ -248,6 +259,11 @@ HlslShader& HlslContext::getVertexShader()
 HlslShader& HlslContext::getPixelShader()
 {
 	return m_pixelShader;
+}
+
+HlslShader& HlslContext::getComputeShader()
+{
+	return m_computeShader;
 }
 
 HlslShader& HlslContext::getShader()

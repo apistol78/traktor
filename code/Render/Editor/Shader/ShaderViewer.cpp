@@ -135,6 +135,10 @@ bool ShaderViewer::create(ui::Widget* parent)
 	tabPagePixel->create(tab, i18n::Text(L"SHADERGRAPH_VIEWER_PIXEL"), new ui::FloodLayout());
 	tab->addPage(tabPagePixel);
 
+	Ref< ui::TabPage > tabPageCompute = new ui::TabPage();
+	tabPageCompute->create(tab, i18n::Text(L"SHADERGRAPH_VIEWER_COMPUTE"), new ui::FloodLayout());
+	tab->addPage(tabPageCompute);
+
 	tab->setActivePage(tabPageVertex);
 
 	// Create read-only syntax rich editors.
@@ -146,10 +150,15 @@ bool ShaderViewer::create(ui::Widget* parent)
 	m_shaderEditPixel->create(tabPagePixel, L"", ui::WsDoubleBuffer);
 	m_shaderEditPixel->setLanguage(new ui::custom::SyntaxLanguageHlsl());
 
+	m_shaderEditCompute = new ui::custom::SyntaxRichEdit();
+	m_shaderEditCompute->create(tabPageCompute, L"", ui::WsDoubleBuffer);
+	m_shaderEditCompute->setLanguage(new ui::custom::SyntaxLanguageHlsl());
+
 	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
 	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
 	m_shaderEditVertex->setFont(ui::Font(font, fontSize));
 	m_shaderEditPixel->setFont(ui::Font(font, fontSize));
+	m_shaderEditCompute->setFont(ui::Font(font, fontSize));
 
 	addEventHandler< ui::TimerEvent >(this, &ShaderViewer::eventTimer);
 	startTimer(200);
@@ -226,9 +235,11 @@ void ShaderViewer::updateShaders()
 
 	int32_t vertexOffset = m_shaderEditVertex->getScrollLine();
 	int32_t pixelOffset = m_shaderEditPixel->getScrollLine();
+	int32_t computeOffset = m_shaderEditCompute->getScrollLine();
 
 	m_shaderEditVertex->setText(L"");
 	m_shaderEditPixel->setText(L"");
+	m_shaderEditCompute->setText(L"");
 
 	// Find matching shader combination.
 	std::wstring techniqueName = m_dropTechniques->getSelectedItem();
@@ -241,6 +252,7 @@ void ShaderViewer::updateShaders()
 			{
 				m_shaderEditVertex->setText(j->vertexShader);
 				m_shaderEditPixel->setText(j->pixelShader);
+				m_shaderEditCompute->setText(j->computeShader);
 				break;
 			}
 		}
@@ -248,9 +260,11 @@ void ShaderViewer::updateShaders()
 
 	m_shaderEditVertex->scrollToLine(vertexOffset);
 	m_shaderEditPixel->scrollToLine(pixelOffset);
+	m_shaderEditCompute->scrollToLine(computeOffset);
 
 	m_shaderEditVertex->update();
 	m_shaderEditPixel->update();
+	m_shaderEditCompute->update();
 }
 
 void ShaderViewer::eventCompilerChange(ui::SelectionChangeEvent* event)
@@ -420,11 +434,12 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 				}
 
 				// Finally ready to compile program graph.
-				std::wstring vertexShader, pixelShader;
-				if (compiler->generate(programGraph, m_editor->getSettings(), 0, vertexShader, pixelShader))
+				std::wstring vertexShader, pixelShader, computeShader;
+				if (compiler->generate(programGraph, m_editor->getSettings(), 0, vertexShader, pixelShader, computeShader))
 				{
 					ci.vertexShader = vertexShader;
 					ci.pixelShader = pixelShader;
+					ci.computeShader = computeShader;
 				}
 			}
 		}

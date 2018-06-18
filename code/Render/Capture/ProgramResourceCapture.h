@@ -35,6 +35,7 @@ private:
 	RefArray< IndexedUniform > m_indexedUniforms;
 	std::wstring m_vertexShader;
 	std::wstring m_pixelShader;
+	std::wstring m_computeShader;
 };
 	
 	}

@@ -46,7 +46,7 @@ Ref< ProgramResource > ProgramCompilerCapture::compile(
 	shaderGraph->findNodesOf< IndexedUniform >(resourceCapture->m_indexedUniforms);
 
 	// Keep copy of readable shader in capture.
-	m_compiler->generate(shaderGraph, settings, optimize, resourceCapture->m_vertexShader, resourceCapture->m_pixelShader);
+	m_compiler->generate(shaderGraph, settings, optimize, resourceCapture->m_vertexShader, resourceCapture->m_pixelShader, resourceCapture->m_computeShader);
 
 	return resourceCapture;
 }
@@ -56,10 +56,11 @@ bool ProgramCompilerCapture::generate(
 	const PropertyGroup* settings,
 	int32_t optimize,
 	std::wstring& outVertexShader,
-	std::wstring& outPixelShader
+	std::wstring& outPixelShader,
+	std::wstring& outComputeShader
 ) const
 {
-	return m_compiler->generate(shaderGraph, settings, optimize, outVertexShader, outPixelShader);
+	return m_compiler->generate(shaderGraph, settings, optimize, outVertexShader, outPixelShader, outComputeShader);
 }
 
 	}

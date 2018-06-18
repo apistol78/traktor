@@ -10,7 +10,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/IRenderSystem.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Render/Resource/ProgramResource.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/ShaderResource.h"
@@ -101,18 +100,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 			if (!j->program)
 				continue;
 
-			Ref< ProgramResource > programResource;
-			if (ShaderGraph* programShaderGraph = dynamic_type_cast< ShaderGraph* >(j->program))
-			{
-				Ref< IProgramCompiler > programCompiler = m_renderSystem->createProgramCompiler();
-				if (!programCompiler)
-					return 0;
-
-				programResource = programCompiler->compile(programShaderGraph, 0, 4, false, 0);
-			}
-			else
-				programResource = checked_type_cast< ProgramResource* >(j->program);
-
+			Ref< ProgramResource > programResource = checked_type_cast< ProgramResource* >(j->program);
 			if (!programResource)
 				return 0;
 
@@ -131,9 +119,9 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 
 			// Set uniform default values.
 			for (AlignedVector< ShaderResource::InitializeUniformScalar >::const_iterator k = j->initializeUniformScalar.begin(); k != j->initializeUniformScalar.end(); ++k)
-				combination.program->setFloatParameter(k->name, k->value);
+				combination.program->setFloatParameter(getParameterHandle(k->name), k->value);
 			for (AlignedVector< ShaderResource::InitializeUniformVector >::const_iterator k = j->initializeUniformVector.begin(); k != j->initializeUniformVector.end(); ++k)
-				combination.program->setVectorParameter(k->name, k->value);
+				combination.program->setVectorParameter(getParameterHandle(k->name), k->value);
 
 			technique.combinations.push_back(combination);
 		}

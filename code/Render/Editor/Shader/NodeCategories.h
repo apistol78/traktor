@@ -33,6 +33,7 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< Clamp >(), L"SHADERGRAPH_CONDITIONAL", L"Clamp values within range" },
 	{ type_of< Color >(), L"SHADERGRAPH_VALUE", L"Color constant" },
 	{ type_of< Comment >(), L"SHADERGRAPH_MISCELLANEOUS", L"Comment" },
+	{ type_of< ComputeOutput >(), L"SHADERGRAPH_VALUE", L"Output from compute shader" },
 	{ type_of< Conditional >(), L"SHADERGRAPH_CONDITIONAL", L"Evaluate different branches based on condition" },
 	{ type_of< Connected >(), L"SHADERGRAPH_CONDITIONAL", L"Check if input is connected" },
 	{ type_of< Cos >(), L"SHADERGRAPH_TRIGONOMETRY", L"Cosine" },

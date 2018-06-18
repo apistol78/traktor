@@ -395,6 +395,35 @@ Comment::Comment()
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ComputeOutput", 0, ComputeOutput, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_ComputeOutput_i[] = { { L"Input", true }, { 0 } };
+const ImmutableNode::OutputPinDesc c_ComputeOutput_o[] = { { 0 } };
+
+ComputeOutput::ComputeOutput()
+:	ImmutableNode(c_ComputeOutput_i, c_ComputeOutput_o)
+,	m_technique(L"Default")
+{
+}
+
+void ComputeOutput::setTechnique(const std::wstring& technique)
+{
+	m_technique = technique;
+}
+
+const std::wstring& ComputeOutput::getTechnique() const
+{
+	return m_technique;
+}
+
+void ComputeOutput::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"technique", m_technique);
+}
+
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Conditional", 1, Conditional, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Conditional_i[] = { { L"Input", false }, { L"Reference", false }, { L"CaseTrue", false }, { L"CaseFalse", false }, { 0 } };

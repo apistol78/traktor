@@ -89,6 +89,7 @@ public:
 	 * \param optimize Optimization level (0-4; 0 = No optimization; 4 = Maximum optimization).
 	 * \param outVertexShader Output render specific shader.
 	 * \param outPixelShader Output render specific shader.
+	 * \param outComputeShader Output compute specific shader.
 	 * \return True if shader was successfully generated.
 	 */
 	virtual bool generate(
@@ -96,7 +97,8 @@ public:
 		const PropertyGroup* settings,
 		int32_t optimize,
 		std::wstring& outVertexShader,
-		std::wstring& outPixelShader
+		std::wstring& outPixelShader,
+		std::wstring& outComputeShader
 	) const = 0;
 };
 
