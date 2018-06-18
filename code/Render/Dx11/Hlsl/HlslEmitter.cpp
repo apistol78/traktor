@@ -99,6 +99,17 @@ bool emitColor(HlslContext& cx, Color* node)
 	return true;
 }
 
+bool emitComputeOutput(HlslContext& cx, ComputeOutput* node)
+{
+	cx.enterCompute();
+
+	HlslVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+
+	return true;
+}
+
 bool emitConditional(HlslContext& cx, Conditional* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -2316,6 +2327,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< ArcusTan >()] = new EmitterCast< ArcusTan >(emitArcusTan);
 	m_emitters[&type_of< Clamp >()] = new EmitterCast< Clamp >(emitClamp);
 	m_emitters[&type_of< Color >()] = new EmitterCast< Color >(emitColor);
+	m_emitters[&type_of< ComputeOutput >()] = new EmitterCast< ComputeOutput >(emitComputeOutput);
 	m_emitters[&type_of< Conditional >()] = new EmitterCast< Conditional >(emitConditional);
 	m_emitters[&type_of< Cos >()] = new EmitterCast< Cos >(emitCos);
 	m_emitters[&type_of< Cross >()] = new EmitterCast< Cross >(emitCross);

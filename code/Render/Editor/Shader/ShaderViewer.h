@@ -63,6 +63,7 @@ private:
 		uint32_t value;
 		std::wstring vertexShader;
 		std::wstring pixelShader;
+		std::wstring computeShader;
 	};
 
 	struct TechniqueInfo
@@ -78,6 +79,7 @@ private:
 	RefArray< ui::CheckBox > m_checkCombinations;
 	Ref< ui::custom::SyntaxRichEdit > m_shaderEditVertex;
 	Ref< ui::custom::SyntaxRichEdit > m_shaderEditPixel;
+	Ref< ui::custom::SyntaxRichEdit > m_shaderEditCompute;
 	Ref< ShaderGraph > m_pendingShaderGraph;
 	Ref< ShaderGraph > m_lastShaderGraph;
 	Ref< Job > m_reflectJob;

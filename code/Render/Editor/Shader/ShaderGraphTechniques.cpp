@@ -60,6 +60,8 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 		}
 		else if (PixelOutput* pixelOutput = dynamic_type_cast< PixelOutput* >(*i))
 			names.insert(pixelOutput->getTechnique());
+		else if (ComputeOutput* computeOutput = dynamic_type_cast< ComputeOutput* >(*i))
+			names.insert(computeOutput->getTechnique());
 	}
 
 	// Generate each technique.
@@ -84,6 +86,11 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 			{
 				if (pixelOutput->getTechnique() == *i)
 					roots.push_back(pixelOutput);
+			}
+			else if (ComputeOutput* computeOutput = dynamic_type_cast< ComputeOutput* >(*j))
+			{
+				if (computeOutput->getTechnique() == *i)
+					roots.push_back(computeOutput);
 			}
 			else
 			{

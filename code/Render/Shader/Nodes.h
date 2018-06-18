@@ -147,6 +147,24 @@ public:
 	Comment();
 };
 
+/*! \brief Compute output node. */
+class T_DLLCLASS ComputeOutput : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	ComputeOutput();
+
+	void setTechnique(const std::wstring& technique);
+
+	const std::wstring& getTechnique() const;
+
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+
+private:
+	std::wstring m_technique;	
+};
+
 /*! \brief Conditional selection. */
 class T_DLLCLASS Conditional : public ImmutableNode
 {

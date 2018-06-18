@@ -18,6 +18,7 @@ void ProgramResourceCapture::serialize(ISerializer& s)
 	s >> MemberRefArray< IndexedUniform >(L"indexedUniforms", m_indexedUniforms);
 	s >> Member< std::wstring >(L"vertexShader", m_vertexShader);
 	s >> Member< std::wstring >(L"pixelShader", m_pixelShader);
+	s >> Member< std::wstring >(L"computeShader", m_computeShader);
 }
 
 	}

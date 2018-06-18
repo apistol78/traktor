@@ -51,15 +51,21 @@ public:
 
 	void enterPixel();
 
+	void enterCompute();
+
 	bool inVertex() const;
 
 	bool inPixel() const;
+
+	bool inCompute() const;
 
 	bool allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset);
 
 	HlslShader& getVertexShader();
 
 	HlslShader& getPixelShader();
+
+	HlslShader& getComputeShader();
 
 	HlslShader& getShader();
 
@@ -99,6 +105,7 @@ private:
 	Ref< const ShaderGraph > m_shaderGraph;
 	HlslShader m_vertexShader;
 	HlslShader m_pixelShader;
+	HlslShader m_computeShader;
 	HlslShader* m_currentShader;
 	HlslEmitter m_emitter;
 	std::vector< uint8_t > m_interpolatorMap;

@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Matrix44.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"

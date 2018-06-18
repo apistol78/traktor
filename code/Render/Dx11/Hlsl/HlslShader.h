@@ -33,7 +33,8 @@ public:
 	enum ShaderType
 	{
 		StVertex,
-		StPixel
+		StPixel,
+		StCompute
 	};
 
 	enum BlockType

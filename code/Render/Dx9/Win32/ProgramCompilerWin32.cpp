@@ -374,7 +374,8 @@ bool ProgramCompilerWin32::generate(
 	const PropertyGroup* settings,
 	int32_t optimize,
 	std::wstring& outVertexShader,
-	std::wstring& outPixelShader
+	std::wstring& outPixelShader,
+	std::wstring& outComputeShader
 ) const
 {
 	HlslProgram hlslProgram;

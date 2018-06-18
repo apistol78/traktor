@@ -28,6 +28,7 @@ public:
 	HlslProgram(
 		const std::wstring& vertexShader,
 		const std::wstring& pixelShader,
+		const std::wstring& computeShader,
 		const D3D11_RASTERIZER_DESC& d3dRasterizerDesc,
 		const D3D11_DEPTH_STENCIL_DESC& d3dDepthStencilDesc,
 		const D3D11_BLEND_DESC& d3dBlendDesc,
@@ -39,6 +40,8 @@ public:
 	const std::wstring& getVertexShader() const;
 
 	const std::wstring& getPixelShader() const;
+
+	const std::wstring& getComputeShader() const;
 
 	const D3D11_RASTERIZER_DESC& getD3DRasterizerDesc() const;
 
@@ -55,6 +58,7 @@ public:
 private:
 	std::wstring m_vertexShader;
 	std::wstring m_pixelShader;
+	std::wstring m_computeShader;
 	D3D11_RASTERIZER_DESC m_d3dRasterizerDesc;
 	D3D11_DEPTH_STENCIL_DESC m_d3dDepthStencilDesc;
 	D3D11_BLEND_DESC m_d3dBlendDesc;

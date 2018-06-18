@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Math/Float.h"
+#include "Core/Math/Matrix44.h"
 #include "Core/Memory/Alloc.h"
 #include "Render/VertexElement.h"
 #include "Render/Sw/CubeTextureSw.h"

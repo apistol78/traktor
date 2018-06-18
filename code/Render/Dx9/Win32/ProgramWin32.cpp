@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Log/Log.h"
+#include "Core/Math/Matrix44.h"
 #include "Core/Misc/TString.h"
 #include "Render/Dx9/Platform.h"
 #include "Render/Dx9/CubeTextureDx9.h"

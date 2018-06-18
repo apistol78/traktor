@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_SequenceTexture_H
 #define traktor_render_SequenceTexture_H
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Timer/Timer.h"
 #include "Render/ITexture.h"
 #include "Resource/Proxy.h"
@@ -24,7 +24,10 @@ namespace traktor
 {
 	namespace render
 	{
-	
+
+/*! \brief Sequence, flipbook, texture.
+ * \ingroup Render
+ */
 class T_DLLCLASS SequenceTexture : public ITexture
 {
 	T_RTTI_CLASS;
@@ -39,7 +42,7 @@ private:
 
 	Timer m_time;
 	float m_rate;
-	std::vector< resource::Proxy< ITexture > > m_textures;
+	AlignedVector< resource::Proxy< ITexture > > m_textures;
 };
 	
 	}
