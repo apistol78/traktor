@@ -146,9 +146,6 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_discoveryManager = m_editor->getStoreObject< net::DiscoveryManager >(L"DiscoveryManager");
 	m_hostEnumerator = new HostEnumerator(m_editor->getSettings(), m_discoveryManager);
 
-	// Create target script debugger dispatcher.
-	m_targetDebuggerSessions = m_editor->getStoreObject< script::IScriptDebuggerSessions >(L"ScriptDebuggerSessions");
-
 	// Create panel.
 	Ref< ui::Container > container = new ui::Container();
 	container->create(m_parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
@@ -233,8 +230,6 @@ void EditorPlugin::destroy()
 	m_discoveryManager = 0;
 
 	safeDestroy(m_targetManager);
-
-	m_targetDebuggerSessions = 0;
 
 	m_targetInstances.clear();
 	m_targets.clear();
@@ -330,7 +325,7 @@ void EditorPlugin::handleWorkspaceOpened()
 	updateTargetLists();
 
 	// Create target manager.
-	m_targetManager = new TargetManager(m_editor, m_targetDebuggerSessions);
+	m_targetManager = new TargetManager(m_editor);
 	if (!m_targetManager->create())
 	{
 		log::error << L"Unable to create target manager; target manager disabled" << Endl;

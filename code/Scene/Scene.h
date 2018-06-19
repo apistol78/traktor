@@ -72,7 +72,9 @@ public:
 
 	void destroy();
 
-	void update(const world::UpdateParams& update, bool updateController, bool updateEntity);
+	void updateController(const world::UpdateParams& update);
+	
+	void updateEntity(const world::UpdateParams& update);
 
 	world::IEntitySchema* getEntitySchema() const;
 

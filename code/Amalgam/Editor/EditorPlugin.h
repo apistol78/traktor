@@ -31,13 +31,6 @@ class DiscoveryManager;
 
 	}
 
-	namespace script
-	{
-
-class IScriptDebuggerSessions;
-
-	}
-
 	namespace ui
 	{
 
@@ -129,7 +122,6 @@ private:
 
 	// \name Tool
 	// \{
-	Ref< script::IScriptDebuggerSessions > m_targetDebuggerSessions;
 	std::vector< EditTarget > m_targets;
 	RefArray< TargetInstance > m_targetInstances;
 	// \}

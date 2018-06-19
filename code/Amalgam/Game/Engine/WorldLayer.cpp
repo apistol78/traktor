@@ -267,7 +267,7 @@ void WorldLayer::update(const UpdateInfo& info)
 		up.deltaTime = info.getSimulationDeltaTime();
 		up.alternateTime = m_alternateTime;
 
-		m_scene->update(up, true, false);
+		m_scene->updateController(up);
 	}
 
 	{

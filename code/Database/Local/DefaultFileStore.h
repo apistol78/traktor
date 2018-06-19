@@ -30,6 +30,8 @@ class T_DLLCLASS DefaultFileStore : public IFileStore
 	T_RTTI_CLASS;
 
 public:
+	DefaultFileStore();
+
 	virtual bool create(const ConnectionString& connectionString) T_OVERRIDE T_FINAL;
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
@@ -47,6 +49,9 @@ public:
 	virtual bool rollback(const Path& filePath) T_OVERRIDE T_FINAL;
 
 	virtual bool clean(const Path& filePath) T_OVERRIDE T_FINAL;
+
+private:
+	bool m_editReadOnly;
 };
 
 	}

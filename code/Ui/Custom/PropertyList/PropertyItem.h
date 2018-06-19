@@ -49,6 +49,10 @@ public:
 
 	const std::wstring& getText() const;
 
+	void setVisible(bool visible);
+
+	bool isVisible() const;
+
 	void expand();
 
 	void collapse();
@@ -116,6 +120,7 @@ protected:
 private:
 	PropertyList* m_propertyList;
 	std::wstring m_text;
+	bool m_visible;
 	bool m_expanded;
 	bool m_selected;
 	PropertyItem* m_parent;

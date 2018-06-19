@@ -14,6 +14,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/AttributeHex.h"
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributePoint.h"
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeReadOnly.h"
 #include "Core/Serialization/AttributeType.h"
@@ -99,11 +100,17 @@ Serializer::Direction InspectReflector::getDirection() const
 
 void InspectReflector::operator >> (const Member< bool >& m)
 {
-	addPropertyItem(new CheckPropertyItem(stylizeMemberName(m.getName()), m));
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	addPropertyItem(
+		new CheckPropertyItem(stylizeMemberName(m.getName()), m),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< int8_t >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+
 	float min = std::numeric_limits< int8_t >::min();
 	float max = std::numeric_limits< int8_t >::max();
 
@@ -114,19 +121,24 @@ void InspectReflector::operator >> (const Member< int8_t >& m)
 		max = range->getMax();
 	}
 
-	addPropertyItem(new NumericPropertyItem(
-		stylizeMemberName(m.getName()),
-		m,
-		min,
-		max,
-		false,
-		false,
-		false
-	));
+	addPropertyItem(
+		new NumericPropertyItem(
+			stylizeMemberName(m.getName()),
+			m,
+			min,
+			max,
+			false,
+			false,
+			false
+		),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< uint8_t >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+
 	float min = std::numeric_limits< uint8_t >::min();
 	float max = std::numeric_limits< uint8_t >::max();
 
@@ -139,19 +151,24 @@ void InspectReflector::operator >> (const Member< uint8_t >& m)
 
 	const AttributeHex* hex = findAttribute< AttributeHex >(m);
 
-	addPropertyItem(new NumericPropertyItem(
-		stylizeMemberName(m.getName()),
-		m,
-		min,
-		max,
-		false,
-		hex != 0,
-		false
-	));
+	addPropertyItem(
+		new NumericPropertyItem(
+			stylizeMemberName(m.getName()),
+			m,
+			min,
+			max,
+			false,
+			hex != 0,
+			false
+		),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< int16_t >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+
 	float min = std::numeric_limits< int16_t >::min();
 	float max = std::numeric_limits< int16_t >::max();
 
@@ -162,19 +179,24 @@ void InspectReflector::operator >> (const Member< int16_t >& m)
 		max = range->getMax();
 	}
 
-	addPropertyItem(new NumericPropertyItem(
-		stylizeMemberName(m.getName()),
-		m,
-		min,
-		max,
-		false,
-		false,
-		false
-	));
+	addPropertyItem(
+		new NumericPropertyItem(
+			stylizeMemberName(m.getName()),
+			m,
+			min,
+			max,
+			false,
+			false,
+			false
+		),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< uint16_t >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+
 	float min = std::numeric_limits< uint16_t >::min();
 	float max = std::numeric_limits< uint16_t >::max();
 
@@ -187,19 +209,24 @@ void InspectReflector::operator >> (const Member< uint16_t >& m)
 
 	const AttributeHex* hex = findAttribute< AttributeHex >(m);
 
-	addPropertyItem(new NumericPropertyItem(
-		stylizeMemberName(m.getName()),
-		m,
-		min,
-		max,
-		false,
-		hex != 0,
-		false
-	));
+	addPropertyItem(
+		new NumericPropertyItem(
+			stylizeMemberName(m.getName()),
+			m,
+			min,
+			max,
+			false,
+			hex != 0,
+			false
+		),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< int32_t >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+
 	float min = std::numeric_limits< int32_t >::min();
 	float max = std::numeric_limits< int32_t >::max();
 
@@ -210,19 +237,24 @@ void InspectReflector::operator >> (const Member< int32_t >& m)
 		max = range->getMax();
 	}
 
-	addPropertyItem(new NumericPropertyItem(
-		stylizeMemberName(m.getName()),
-		m,
-		min,
-		max,
-		false,
-		false,
-		false
-	));
+	addPropertyItem(
+		new NumericPropertyItem(
+			stylizeMemberName(m.getName()),
+			m,
+			min,
+			max,
+			false,
+			false,
+			false
+		),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< uint32_t >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+
 	double min = std::numeric_limits< uint32_t >::min();
 	double max = std::numeric_limits< uint32_t >::max();
 
@@ -235,19 +267,24 @@ void InspectReflector::operator >> (const Member< uint32_t >& m)
 
 	const AttributeHex* hex = findAttribute< AttributeHex >(m);
 
-	addPropertyItem(new NumericPropertyItem(
-		stylizeMemberName(m.getName()),
-		m,
-		min,
-		max,
-		false,
-		hex != 0,
-		false
-	));
+	addPropertyItem(
+		new NumericPropertyItem(
+			stylizeMemberName(m.getName()),
+			m,
+			min,
+			max,
+			false,
+			hex != 0,
+			false
+		),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< int64_t >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+
 	double min = std::numeric_limits< int64_t >::min();
 	double max = std::numeric_limits< int64_t >::max();
 
@@ -258,19 +295,24 @@ void InspectReflector::operator >> (const Member< int64_t >& m)
 		max = range->getMax();
 	}
 
-	addPropertyItem(new NumericPropertyItem(
-		stylizeMemberName(m.getName()),
-		(double)m,
-		min,
-		max,
-		false,
-		false,
-		false
-	));
+	addPropertyItem(
+		new NumericPropertyItem(
+			stylizeMemberName(m.getName()),
+			(double)m,
+			min,
+			max,
+			false,
+			false,
+			false
+		),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< uint64_t >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+
 	double min = std::numeric_limits< uint64_t >::min();
 	double max = std::numeric_limits< uint64_t >::max();
 
@@ -283,19 +325,24 @@ void InspectReflector::operator >> (const Member< uint64_t >& m)
 
 	const AttributeHex* hex = findAttribute< AttributeHex >(m);
 
-	addPropertyItem(new NumericPropertyItem(
-		stylizeMemberName(m.getName()),
-		(double)m,
-		min,
-		max,
-		false,
-		hex != 0,
-		false
-	));
+	addPropertyItem(
+		new NumericPropertyItem(
+			stylizeMemberName(m.getName()),
+			(double)m,
+			min,
+			max,
+			false,
+			hex != 0,
+			false
+		),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< float >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+
 	float min = -std::numeric_limits< float >::max();
 	float max = std::numeric_limits< float >::max();
 
@@ -306,19 +353,24 @@ void InspectReflector::operator >> (const Member< float >& m)
 		max = range->getMax();
 	}
 
-	addPropertyItem(new NumericPropertyItem(
-		stylizeMemberName(m.getName()),
-		m,
-		min,
-		max,
-		true,
-		false,
-		bool(findAttribute< AttributeDecibel >(m) != 0)
-	));
+	addPropertyItem(
+		new NumericPropertyItem(
+			stylizeMemberName(m.getName()),
+			m,
+			min,
+			max,
+			true,
+			false,
+			bool(findAttribute< AttributeDecibel >(m) != 0)
+		),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< double >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+
 	double min = -std::numeric_limits< double >::max();
 	double max = std::numeric_limits< double >::max();
 
@@ -329,65 +381,94 @@ void InspectReflector::operator >> (const Member< double >& m)
 		max = range->getMax();
 	}
 
-	addPropertyItem(new NumericPropertyItem(
-		stylizeMemberName(m.getName()),
-		m,
-		min,
-		max,
-		true,
-		false,
-		bool(findAttribute< AttributeDecibel >(m) != 0)
-	));
+	addPropertyItem(
+		new NumericPropertyItem(
+			stylizeMemberName(m.getName()),
+			m,
+			min,
+			max,
+			true,
+			false,
+			bool(findAttribute< AttributeDecibel >(m) != 0)
+		),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< std::string >& m)
 {
-	addPropertyItem(new TextPropertyItem(stylizeMemberName(m.getName()), mbstows(m), false));
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	addPropertyItem(
+		new TextPropertyItem(stylizeMemberName(m.getName()), mbstows(m), false),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< std::wstring >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
 	const AttributeMultiLine* multiLine = findAttribute< AttributeMultiLine >(m);
-	addPropertyItem(new TextPropertyItem(
-		stylizeMemberName(m.getName()),
-		m,
-		multiLine != 0
-	));
+	addPropertyItem(
+		new TextPropertyItem(
+			stylizeMemberName(m.getName()),
+			m,
+			multiLine != 0
+		),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< Guid >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
 	const AttributeType* memberType = findAttribute< AttributeType >(m);
-	addPropertyItem(new BrowsePropertyItem(stylizeMemberName(
-		m.getName()),
-		memberType ? &(memberType->getMemberType()) : 0,
-		m
-	));
+	addPropertyItem(
+		new BrowsePropertyItem(stylizeMemberName(
+			m.getName()),
+			memberType ? &(memberType->getMemberType()) : 0,
+			m
+		),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< Path >& m)
 {
-	addPropertyItem(new FilePropertyItem(stylizeMemberName(m.getName()), *m));
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	addPropertyItem(
+		new FilePropertyItem(stylizeMemberName(m.getName()), *m),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< Color4ub >& m)
 {
-	addPropertyItem(new ColorPropertyItem(stylizeMemberName(m.getName()), m));
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	addPropertyItem(
+		new ColorPropertyItem(stylizeMemberName(m.getName()), m),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< Color4f >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
 	Color4ub value(
 		uint8_t(m->getRed() * 255),
 		uint8_t(m->getGreen() * 255),
 		uint8_t(m->getBlue() * 255),
 		uint8_t(m->getAlpha() * 255)
 	);
-	addPropertyItem(new ColorPropertyItem(stylizeMemberName(m.getName()), value));
+	addPropertyItem(
+		new ColorPropertyItem(stylizeMemberName(m.getName()), value),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< Scalar >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+
 	float min = std::numeric_limits< float >::min();
 	float max = std::numeric_limits< float >::max();
 
@@ -399,30 +480,42 @@ void InspectReflector::operator >> (const Member< Scalar >& m)
 	}
 
 	Scalar& v = m;
-	addPropertyItem(new NumericPropertyItem(
-		stylizeMemberName(m.getName()),
-		float(v),
-		min,
-		max,
-		true,
-		false,
-		bool(findAttribute< AttributeDecibel >(m) != 0)
-	));
+	addPropertyItem(
+		new NumericPropertyItem(
+			stylizeMemberName(m.getName()),
+			float(v),
+			min,
+			max,
+			true,
+			false,
+			bool(findAttribute< AttributeDecibel >(m) != 0)
+		),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< Vector2 >& m)
 {
-	VectorPropertyItem::vector_t value = { m->x, m->y };
-	addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 2));
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const VectorPropertyItem::vector_t value = { m->x, m->y };
+	addPropertyItem(
+		new VectorPropertyItem(stylizeMemberName(m.getName()), value, 2),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< Vector4 >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+
 	const AttributeDirection* direction = findAttribute< AttributeDirection >(m);
 	if (direction)
 	{
 		VectorPropertyItem::vector_t value = { m->x(), m->y(), m->z(), 0.0f };
-		addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 3));
+		addPropertyItem(
+			new VectorPropertyItem(stylizeMemberName(m.getName()), value, 3),
+			memberPrivate
+		);
 		return;
 	}
 
@@ -430,19 +523,28 @@ void InspectReflector::operator >> (const Member< Vector4 >& m)
 	if (point)
 	{
 		VectorPropertyItem::vector_t value = { m->x(), m->y(), m->z(), 1.0f };
-		addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 3));
+		addPropertyItem(
+			new VectorPropertyItem(stylizeMemberName(m.getName()), value, 3),
+			memberPrivate
+		);
 		return;
 	}
 
 	const AttributeAngles* angles = findAttribute< AttributeAngles >(m);
 	if (angles)
 	{
-		addPropertyItem(new AnglesPropertyItem(stylizeMemberName(m.getName()), *m));
+		addPropertyItem(
+			new AnglesPropertyItem(stylizeMemberName(m.getName()), *m),
+			memberPrivate
+		);
 		return;
 	}
 
 	VectorPropertyItem::vector_t value = { m->x(), m->y(), m->z(), m->w() };
-	addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 4));
+	addPropertyItem(
+		new VectorPropertyItem(stylizeMemberName(m.getName()), value, 4),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< Matrix33 >& m)
@@ -450,7 +552,7 @@ void InspectReflector::operator >> (const Member< Matrix33 >& m)
 	Ref< PropertyItem > propertyItem = new PropertyItem(
 		stylizeMemberName(m.getName())
 	);
-	addPropertyItem(propertyItem);
+	addPropertyItem(propertyItem, false);
 
 	VectorPropertyItem::vector_t row1 = { m->e[0][0], m->e[0][1], m->e[0][2] };
 	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[0]", row1, 3));
@@ -467,7 +569,7 @@ void InspectReflector::operator >> (const Member< Matrix44 >& m)
 	Ref< PropertyItem > propertyItem = new PropertyItem(
 		stylizeMemberName(m.getName())
 	);
-	addPropertyItem(propertyItem);
+	addPropertyItem(propertyItem, false);
 
 	VectorPropertyItem::vector_t row1 = { m->get(0, 0), m->get(0, 1), m->get(0, 2), m->get(0, 3) };
 	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[0]", row1, 4));
@@ -484,11 +586,16 @@ void InspectReflector::operator >> (const Member< Matrix44 >& m)
 
 void InspectReflector::operator >> (const Member< Quaternion >& m)
 {
-	addPropertyItem(new AnglesPropertyItem(stylizeMemberName(m.getName()), m->toEulerAngles()));
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	addPropertyItem(
+		new AnglesPropertyItem(stylizeMemberName(m.getName()), m->toEulerAngles()),
+		memberPrivate
+	);
 }
 
 void InspectReflector::operator >> (const Member< ISerializable* >& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
 	const AttributeType* memberType = findAttribute< AttributeType >(m);
 
 	Ref< ISerializable > object = *m;
@@ -498,7 +605,7 @@ void InspectReflector::operator >> (const Member< ISerializable* >& m)
 		memberType ? &(memberType->getMemberType()) : 0,
 		object
 	);
-	addPropertyItem(propertyItem);
+	addPropertyItem(propertyItem, memberPrivate);
 
 	if (object)
 	{
@@ -514,6 +621,7 @@ void InspectReflector::operator >> (const Member< void* >& m)
 
 void InspectReflector::operator >> (const MemberArray& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
 	const AttributeType* memberType = findAttribute< AttributeType >(m);
 	const AttributeReadOnly* memberReadOnly = findAttribute< AttributeReadOnly >(m);
 
@@ -522,7 +630,7 @@ void InspectReflector::operator >> (const MemberArray& m)
 		memberType ? &(memberType->getMemberType()) : 0,
 		memberReadOnly ? true : false
 	);
-	addPropertyItem(propertyItem);
+	addPropertyItem(propertyItem, memberPrivate);
 	
 	m_propertyItemStack.push_back(propertyItem);
 	for (size_t i = 0; i < m.size(); ++i)
@@ -532,10 +640,12 @@ void InspectReflector::operator >> (const MemberArray& m)
 
 void InspectReflector::operator >> (const MemberComplex& m)
 {
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+
 	if (m.getCompound())
 	{
 		Ref< PropertyItem > propertyItem = new PropertyItem(stylizeMemberName(m.getName()));
-		addPropertyItem(propertyItem);
+		addPropertyItem(propertyItem, memberPrivate);
 		m_propertyItemStack.push_back(propertyItem);
 	}
 
@@ -548,18 +658,31 @@ void InspectReflector::operator >> (const MemberComplex& m)
 void InspectReflector::operator >> (const MemberEnumBase& m)
 {
 	Ref< ListPropertyItem > propertyItem = new ListPropertyItem(stylizeMemberName(m.getName()));
-	addPropertyItem(propertyItem);
+	addPropertyItem(propertyItem, false);
 
 	for (const MemberEnumBase::Key* key = m.keys(); key && key->id; ++key)
 	{
-		int i = propertyItem->add(key->id);
+		int32_t i = propertyItem->add(key->id);
 		if (m.get() == key->id)
 			propertyItem->select(i);
 	}
 }
 
-void InspectReflector::addPropertyItem(PropertyItem* propertyItem)
+void InspectReflector::addPropertyItem(PropertyItem* propertyItem, bool propertyPrivate)
 {
+	// Check if child of a private property; privacy is propagated to children.
+	if (!propertyPrivate)
+	{
+		for (RefArray< PropertyItem >::const_iterator i = m_propertyItemStack.begin(); i != m_propertyItemStack.end(); ++i)
+		{
+			if (!(*i)->isVisible())
+				propertyPrivate = true;
+		}
+	}
+	if (propertyPrivate)
+		propertyItem->setVisible(false);
+
+	// Add property item to parent or as root.
 	if (m_propertyItemStack.empty())
 		m_propertyList->addPropertyItem(propertyItem);
 	else

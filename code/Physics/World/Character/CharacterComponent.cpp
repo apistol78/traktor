@@ -33,6 +33,7 @@ CharacterComponent::CharacterComponent(
 ,	m_traceIgnore(traceIgnore)
 ,	m_headAngle(0.0f)
 ,	m_velocity(Vector4::zero())
+,	m_grounded(false)
 {
 }
 
@@ -74,25 +75,37 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	Vector4 position = m_body->getTransform().translation();
 	QueryResult result;
 
+	// Integrate velocity.
+	m_velocity += Vector4(0.0f, -9.2f, 0.0f) * Scalar(dT);
+
 	// Step up.
 	const Vector4 stepUpDir(0.0f, 1.0f, 0.0f);
-	const float stepUpDownLength = m_data->getStepHeight();
+	
+	float stepUpLength = m_data->getStepHeight();
+	if (movement.y() > 0.0f)
+		stepUpLength += movement.y();
 
 	if (m_physicsManager->querySweep(
 		m_body,
 		rotation,
 		position,
 		stepUpDir,
-		stepUpDownLength,
+		stepUpLength,
 		physics::QueryFilter(m_traceInclude, m_traceIgnore),
 		result
 	))
-		position = position + stepUpDir * Scalar(stepUpDownLength * result.fraction);
+	{
+		position = position + stepUpDir * Scalar(stepUpLength * result.fraction);
+		
+		// Head hit; cancel out up motion.
+		m_velocity *= Vector4(1.0f, 0.0f, 1.0f, 0.0f);
+	}
 	else
-		position = position + stepUpDir * Scalar(stepUpDownLength);
+		position = position + stepUpDir * Scalar(stepUpLength);
 
 	// Step forward.
-	Scalar totalMovementLength = movement.normalize();
+	Vector4 movementXZ = movement * Vector4(1.0f, 0.0f, 1.0f);
+	Scalar totalMovementLength = movementXZ.normalize();
 	if (totalMovementLength > FUZZY_EPSILON)
 	{
 		Scalar movementLength = totalMovementLength;
@@ -102,7 +115,7 @@ void CharacterComponent::update(const world::UpdateParams& update)
 				m_body,
 				rotation,
 				position,
-				movement,
+				movementXZ,
 				movementLength,
 				physics::QueryFilter(m_traceInclude, m_traceIgnore),
 				result
@@ -118,36 +131,51 @@ void CharacterComponent::update(const world::UpdateParams& update)
 				position = position + movement * move;
 				
 				// Adjust movement vector.
-				Scalar k = dot3(-movement, result.normal);
-				movement += result.normal * k;
-				if (movement.normalize() <= FUZZY_EPSILON)
+				Scalar k = dot3(-movementXZ, result.normal);
+				movementXZ += result.normal * k;
+				movementXZ *= Vector4(1.0f, 0.0f, 1.0f);
+				if (movementXZ.normalize() <= FUZZY_EPSILON)
 					break;
 
 				movementLength -= move;
 			}
 			else
 			{
-				position = position + movement * movementLength;
+				position = position + movementXZ * movementLength;
 				movementLength = Scalar(0.0f);
 			}
 		}
 	}
 
-	// Step down.
+	// Step down, step further down to simulate falling.
 	const Vector4 stepDownDir(0.0f, -1.0f, 0.0f);
+
+	float stepDownLength = m_data->getStepHeight();
+	if (movement.y() < 0.0f)
+		stepDownLength += -movement.y();
 
 	if (m_physicsManager->querySweep(
 		m_body,
 		rotation,
 		position,
 		stepDownDir,
-		stepUpDownLength,
+		stepDownLength,
 		physics::QueryFilter(m_traceInclude, m_traceIgnore),
 		result
 	))
-		position = position + stepDownDir * Scalar(stepUpDownLength * result.fraction);
+	{
+		position = position + stepDownDir * Scalar(stepDownLength * result.fraction);
+
+		// Foot hit; cancel out up motion.
+		m_velocity *= Vector4(1.0f, 0.0f, 1.0f, 0.0f);
+
+		m_grounded = true;
+	}
 	else
-		position = position + stepDownDir * Scalar(stepUpDownLength + dT);
+	{
+		position = position + stepDownDir * Scalar(stepDownLength);
+		m_grounded = false;
+	}
 
 	m_body->setTransform(Transform(
 		position,
@@ -179,6 +207,11 @@ void CharacterComponent::setVelocity(const Vector4& velocity)
 const Vector4& CharacterComponent::getVelocity() const
 {
 	return m_velocity;
+}
+
+bool CharacterComponent::isGrounded() const
+{
+	return m_grounded;
 }
 
 	}

@@ -228,6 +228,12 @@ public:
 	{
 	}
 
+	MemberStlPair(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	:	MemberComplex(name, true, attributes)
+	,	m_ref(ref)
+	{
+	}
+
 	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
 	{
 		s >> FirstMember(L"first", m_ref.first);

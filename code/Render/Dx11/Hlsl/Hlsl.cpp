@@ -31,10 +31,10 @@ bool Hlsl::generate(
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
 	shaderGraph->findNodesOf< ComputeOutput >(computeOutputs);
 
-	if (
-		(computeOutputs.empty() && (vertexOutputs.size() != 1 || pixelOutputs.size() != 1)) ||
-		computeOutputs.size() != 1
-	)
+	if (!(
+		(vertexOutputs.size() == 1 && pixelOutputs.size() == 1) ||
+		computeOutputs.size() == 1
+	))
 	{
 		log::error << L"Unable to generate HLSL shader; incorrect number of outputs (VS " << vertexOutputs.size() << L", PS " << pixelOutputs.size() << L", CS " << computeOutputs.size() << L")." << Endl;
 		return false;

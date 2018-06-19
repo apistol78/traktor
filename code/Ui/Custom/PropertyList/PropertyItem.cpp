@@ -39,6 +39,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.PropertyItem", PropertyItem, Object)
 PropertyItem::PropertyItem(const std::wstring& text)
 :	m_propertyList(0)
 ,	m_text(text)
+,	m_visible(true)
 ,	m_expanded(false)
 ,	m_selected(false)
 ,	m_parent(0)
@@ -57,6 +58,16 @@ void PropertyItem::setText(const std::wstring& text)
 const std::wstring& PropertyItem::getText() const
 {
 	return m_text;
+}
+
+void PropertyItem::setVisible(bool visible)
+{
+	m_visible = visible;
+}
+
+bool PropertyItem::isVisible() const
+{
+	return m_visible;
 }
 
 void PropertyItem::expand()

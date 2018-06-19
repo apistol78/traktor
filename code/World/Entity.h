@@ -33,8 +33,6 @@ class T_DLLCLASS Entity : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual ~Entity();
-
 	/*! \brief Destroy entity resources.
 	 *
 	 * Called automatically from Entity destructor

@@ -60,12 +60,15 @@ void Scene::destroy()
 	m_imageProcessParams.clear();
 }
 
-void Scene::update(const world::UpdateParams& update, bool updateController, bool updateEntity)
+void Scene::updateController(const world::UpdateParams& update)
 {
-	if (m_controller && updateController)
+	if (m_controller)
 		m_controller->update(this, update.totalTime, update.deltaTime);
+}
 
-	if (m_rootEntity && updateEntity)
+void Scene::updateEntity(const world::UpdateParams& update)
+{
+	if (m_rootEntity)
 		m_rootEntity->update(update);
 }
 

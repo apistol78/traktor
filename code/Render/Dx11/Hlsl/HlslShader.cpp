@@ -297,8 +297,7 @@ std::wstring HlslShader::getGeneratedShader()
 		ss << L"}" << Endl;
 		ss << Endl;
 	}
-
-	if (m_shaderType == StPixel)
+	else if (m_shaderType == StPixel)
 	{
 		ss << L"void main(";
 		
@@ -320,6 +319,19 @@ std::wstring HlslShader::getGeneratedShader()
 		ss << IncreaseIndent;
 
 		ss << L"o = (OutputData)0;" << Endl;
+
+		ss << getOutputStream(BtBody).str();
+
+		ss << DecreaseIndent;
+		ss << L"}" << Endl;
+		ss << Endl;
+	}
+	else if (m_shaderType == StCompute)
+	{
+		ss << L"[numthreads(1, 1, 1)]" << Endl;
+		ss << L"void main(uint3 dispatchThreadID : SV_DispatchThreadID)" << Endl;
+		ss << L"{" << Endl;
+		ss << IncreaseIndent;
 
 		ss << getOutputStream(BtBody).str();
 

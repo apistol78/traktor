@@ -39,7 +39,7 @@ class TargetManager : public Object
 	T_RTTI_CLASS;
 
 public:
-	TargetManager(editor::IEditor *editor, script::IScriptDebuggerSessions *targetDebuggerSessions);
+	TargetManager(editor::IEditor *editor);
 
 	bool create();
 
@@ -57,7 +57,6 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< script::IScriptDebuggerSessions > m_targetDebuggerSessions;
 	Ref< net::TcpSocket > m_listenSocket;
 	RefArray< TargetInstance > m_instances;
 	uint16_t m_port;

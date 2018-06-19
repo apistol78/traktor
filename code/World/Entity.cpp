@@ -13,10 +13,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.Entity", Entity, Object)
 
-Entity::~Entity()
-{
-}
-
 void Entity::destroy()
 {
 	// Nothing to destroy.
