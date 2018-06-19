@@ -51,7 +51,8 @@ public:
 		GfDefault = 0,
 		GfDescendants = 1,
 		GfSelectedOnly = 2,
-		GfExpandedOnly = 4
+		GfExpandedOnly = 4,
+		GfVisibleOnly = 8
 	};
 
 	struct IPropertyGuidResolver

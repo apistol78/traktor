@@ -15,6 +15,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketSet.h"
+#include "Script/Editor/IScriptDebuggerSessions.h"
 
 namespace traktor
 {
@@ -23,9 +24,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetManager", TargetManager, Object)
 
-TargetManager::TargetManager(editor::IEditor *editor, script::IScriptDebuggerSessions *targetDebuggerSessions)
+TargetManager::TargetManager(editor::IEditor *editor)
 :	m_editor(editor)
-,	m_targetDebuggerSessions(targetDebuggerSessions)
 ,	m_port(0)
 {
 }
@@ -63,7 +63,6 @@ void TargetManager::destroy()
 		m_listenSocket = 0;
 	}
 
-	m_targetDebuggerSessions = 0;
 	m_editor = 0;
 }
 
@@ -159,7 +158,8 @@ bool TargetManager::update()
 					Ref< ILogTarget > targetLog = m_editor->createLogTarget(logName);
 
 					// Create connection object and add to instance.
-					instance->addConnection(new TargetConnection(targetId->getName(), transport, targetLog, m_targetDebuggerSessions));
+					Ref< script::IScriptDebuggerSessions > debuggerSessions = m_editor->getStoreObject< script::IScriptDebuggerSessions >(L"ScriptDebuggerSessions");
+					instance->addConnection(new TargetConnection(targetId->getName(), transport, targetLog, debuggerSessions));
 					needUpdate |= true;
 					log::info << L"New target connection accepted; ID " << targetId->getId().format() << Endl;
 				}

@@ -23,7 +23,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetConnection", TargetConnection, Object)
 
 TargetConnection::TargetConnection(const std::wstring &name, net::BidirectionalObjectTransport *transport, ILogTarget *targetLog, script::IScriptDebuggerSessions *targetDebuggerSessions)
-    :	m_name(name)
+:	m_name(name)
 ,	m_transport(transport)
 ,	m_targetLog(targetLog)
 ,	m_targetDebuggerSessions(targetDebuggerSessions)

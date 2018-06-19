@@ -103,7 +103,7 @@ private:
 	Ref< AutoPropertyList > m_propertyList;
 	RefArray< PropertyItem > m_propertyItemStack;
 
-	void addPropertyItem(PropertyItem* propertyItem);
+	void addPropertyItem(PropertyItem* propertyItem, bool propertyPrivate);
 };
 		
 		}

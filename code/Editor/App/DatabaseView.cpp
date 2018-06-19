@@ -144,6 +144,32 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.TextFilter", TextFilter, DatabaseView::Filter)
 
+class GuidFilter : public DatabaseView::Filter
+{
+	T_RTTI_CLASS;
+
+public:
+	GuidFilter(const Guid& filter)
+	:	m_filter(filter)
+	{
+	}
+
+	virtual bool acceptInstance(const db::Instance* instance) const T_OVERRIDE T_FINAL
+	{
+		return m_filter == instance->getGuid();
+	}
+
+	virtual bool acceptEmptyGroups() const T_OVERRIDE T_FINAL
+	{
+		return false;
+	}
+
+private:
+	Guid m_filter;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.GuidFilter", GuidFilter, DatabaseView::Filter)
+
 class TypeSetFilter : public DatabaseView::Filter
 {
 	T_RTTI_CLASS;
@@ -1519,7 +1545,13 @@ void DatabaseView::eventTimer(ui::TimerEvent* event)
 	if (--m_filterCountDown == 0)
 	{
 		if (!m_filterText.empty())
-			m_filter = new TextFilter(m_filterText);
+		{
+			Guid filterGuid(m_filterText);
+			if (filterGuid.isValid() && filterGuid.isNotNull())
+				m_filter = new GuidFilter(filterGuid);
+			else
+				m_filter = new TextFilter(m_filterText);
+		}
 		else
 			m_filter = new DefaultFilter();
 

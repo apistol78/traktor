@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Io/FileSystem.h"
+#include "Database/ConnectionString.h"
 #include "Database/Local/DefaultFileStore.h"
 
 namespace traktor
@@ -14,8 +15,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.DefaultFileStore", DefaultFileStore, IFileStore)
 
+DefaultFileStore::DefaultFileStore()
+:	m_editReadOnly(false)
+{
+}
+
 bool DefaultFileStore::create(const ConnectionString& connectionString)
 {
+	m_editReadOnly = connectionString.get(L"readOnly") == L"edit";
 	return true;
 }
 
@@ -77,8 +84,17 @@ bool DefaultFileStore::edit(const Path& filePath)
 
 	if (file->isReadOnly())
 	{
-		// Read-only file; not allowed to edit those.
-		return false;
+		if (m_editReadOnly)
+		{
+			// Read-only file; try remove flag and open for edit.
+			if (!FileSystem::getInstance().modify(filePath, file->getFlags() & ~File::FfReadOnly))
+				return false;
+		}
+		else
+		{
+			// Read-only file; not allowed to edit those.
+			return false;
+		}
 	}
 
 	Path filePathAlt = filePath.getPathName() + L"~";

@@ -66,6 +66,8 @@ public:
 
 	const Vector4& getVelocity() const;
 
+	bool isGrounded() const;
+
 private:
 	world::Entity* m_owner;
 	Ref< PhysicsManager > m_physicsManager;
@@ -75,6 +77,7 @@ private:
 	uint32_t m_traceIgnore;
 	float m_headAngle;
 	Vector4 m_velocity;
+	bool m_grounded;
 };
 
 	}

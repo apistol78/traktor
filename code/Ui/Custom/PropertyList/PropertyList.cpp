@@ -201,12 +201,21 @@ int PropertyList::getPropertyItems(RefArray< PropertyItem >& propertyItems, int 
 		{
 			PropertyItem* item = *r.first++;
 
+			bool shouldAdd = true;
+
 			if (flags & GfSelectedOnly)
 			{
-				if (item->isSelected())
-					propertyItems.push_back(item);
+				if (!item->isSelected())
+					shouldAdd = false;
 			}
-			else
+
+			if (flags & GfVisibleOnly)
+			{
+				if (!item->isVisible())
+					shouldAdd = false;
+			}
+
+			if (shouldAdd)
 				propertyItems.push_back(item);
 
 			if (flags & GfDescendants)
@@ -252,7 +261,7 @@ Ref< PropertyItem > PropertyList::getPropertyItemFromPosition(const Point& posit
 	int32_t scrollBarOffset = m_scrollBar->getPosition() * dpi96(c_propertyItemHeight);
 
 	RefArray< PropertyItem > propertyItems;
-	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
+	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly | GfVisibleOnly);
 
 	int32_t y = position.y;
 	if (m_columnHeader)
@@ -346,7 +355,7 @@ void PropertyList::updateScrollBar()
 	Rect rc = getInnerRect();
 
 	RefArray< PropertyItem > propertyItems;
-	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
+	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly | GfVisibleOnly);
 
 	int32_t height = rc.getHeight();
 	if (m_columnHeader)
@@ -372,7 +381,7 @@ void PropertyList::placeItems()
 	int32_t top = m_columnHeader ? dpi96(c_columnsHeight) : 0;
 
 	RefArray< PropertyItem > propertyItems;
-	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
+	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly | GfVisibleOnly);
 
 	std::vector< WidgetRect > childRects;
 
@@ -427,7 +436,7 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 		}
 
 		RefArray< PropertyItem > propertyItems;
-		getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
+		getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly | GfVisibleOnly);
 
 		int32_t id = (y + scrollBarOffset) / dpi96(c_propertyItemHeight);
 		for (RefArray< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
@@ -620,7 +629,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 
 	// Get visible items.
 	RefArray< PropertyItem > propertyItems;
-	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
+	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly | GfVisibleOnly);
 
 	// Draw property items.
 	Rect rcItem(

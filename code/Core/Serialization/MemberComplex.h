@@ -7,7 +7,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_MemberComplex_H
 #define traktor_MemberComplex_H
 
-#include <string>
 #include "Core/Config.h"
 
 // import/export mechanism.
@@ -21,6 +20,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 namespace traktor
 {
 
+class Attribute;
 class ISerializer;
 
 /*! \brief Complex member base.
@@ -31,17 +31,36 @@ class T_DLLCLASS MemberComplex
 public:
 	MemberComplex(const wchar_t* const name, bool compound);
 
+	MemberComplex(const wchar_t* const name, bool compound, const Attribute& attributes);
+
 	virtual ~MemberComplex();
 
-	const wchar_t* const getName() const;
+	/*! \brief Get member name.
+	 *
+	 * \return Member name.
+	 */
+	const wchar_t* const getName() const { return m_name; }
 	
-	bool getCompound() const;
+	/*! \brief Get member attributes.
+	 *
+	 * Get member attributes if applicable.
+	 *
+	 * \return Member attributes.
+	 */
+	const Attribute* getAttributes() const { return m_attributes; }
+
+	/*! \brief Check if member is compound. 
+	 *
+	 * \return True if member is compound.
+	 */
+	bool getCompound() const { return m_compound; }
 
 	virtual void serialize(ISerializer& s) const = 0;
 	
 private:
 	const wchar_t* const m_name;
 	bool m_compound;
+	const Attribute* m_attributes;
 };
 	
 }
