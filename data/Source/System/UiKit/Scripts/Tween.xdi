@@ -34,14 +34,14 @@ function Tween.update(dT)
 		local k = t._time / t._duration
 		local value = t._startValue * (1 - k) + t._endValue * k
 		if t._fn ~= nil then
-			t._fn(value)
+			t._fn(value, false)
 		end
 		t._time = t._time + dT
 		if t._time <= t._duration then
 			i = i + 1
 		else
 			if t._fn ~= nil then
-				t._fn(t._endValue)
+				t._fn(t._endValue, true)
 			end
 			Tween._instances[i] = Tween._instances[n]
 			Tween._instances[n] = nil
