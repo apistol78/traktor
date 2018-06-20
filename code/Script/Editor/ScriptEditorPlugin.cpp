@@ -79,18 +79,7 @@ void ScriptEditorPlugin::handleWorkspaceOpened()
 {
 	IScriptDebuggerSessions* scriptDebuggerSessions = m_editor->getStoreObject< IScriptDebuggerSessions >(L"ScriptDebuggerSessions");
 	if (scriptDebuggerSessions)
-	{
-		// Add, always running, editor session.
-		if (m_scriptManager)
-		{
-			Ref< IScriptDebugger > debugger = m_scriptManager->createDebugger();
-			if (debugger)
-				scriptDebuggerSessions->beginSession(debugger, 0);
-		}
-
-		// Register ourself after beginning editor session as we don't want "auto open" yet.
 		scriptDebuggerSessions->addListener(this);
-	}
 }
 
 void ScriptEditorPlugin::handleWorkspaceClosed()
