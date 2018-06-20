@@ -213,6 +213,13 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	if (m_renderView->begin(render::EtCyclop))
 	{
+		if (m_scaffoldingObject)
+		{
+			uint32_t methodId = findRuntimeClassMethodId(m_scaffoldingClass, "update");
+			if (methodId != ~0U)
+				m_scaffoldingClass->invoke(m_scaffoldingObject, methodId, 0, 0);
+		}
+
 		// Build render context.
 		m_displayRenderer->build(uint32_t(0));
 		m_moviePlayer->renderFrame();
