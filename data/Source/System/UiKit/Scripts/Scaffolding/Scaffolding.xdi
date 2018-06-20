@@ -11,12 +11,21 @@ function Scaffolding:new(resourceManager, root)
 		resourceManager,
 		self:getResourceKits()
 	)
+
+	-- Create test frame.
 	self._frame = Frame(
 		root,
-		1280/4, 720/4,
-		TableLayout.new({ 0 }, { 0 }, 4, 4, 4, 4)
+		1280, 720,
+		FloodLayout(16, 16)
 	)
+
+	-- Setup "widget under test".
 	self:setup(self._frame)
+
+	-- Ensure frame is properly layed out.
+	self._frame:update()
+	self._frame:layout()
+	self._frame:update()
 	self._frame:layout()
 end
 
@@ -25,6 +34,11 @@ function Scaffolding:getResourceKits()
 end
 
 function Scaffolding:setup(frame)
+end
+
+function Scaffolding:update()
+	Tween.update(1 / 60)
+	Interval.update(1 / 60)
 end
 
 function Scaffolding:remove()
