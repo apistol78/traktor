@@ -7,11 +7,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_script_ScriptUtilitiesLua_H
 #define traktor_script_ScriptUtilitiesLua_H
 
-//#if defined(_DEBUG)
+#if defined(_DEBUG)
 #	define T_SCRIPT_LUA_FORCE_STACK_CHECK 1
-//#else
-//#	define T_SCRIPT_LUA_FORCE_STACK_CHECK 0
-//#endif
+#else
+#	define T_SCRIPT_LUA_FORCE_STACK_CHECK 0
+#endif
 
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
@@ -24,6 +24,7 @@ extern "C"
 #include "lua.h"
 #include "lualib.h"
 #include "lauxlib.h"
+#include "lstate.h"
 }
 
 namespace traktor

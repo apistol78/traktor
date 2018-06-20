@@ -81,8 +81,6 @@ private:
 		int32_t classTableRef;
 	};
 
-	static ScriptManagerLua* ms_instance;
-
 	lua_State* m_luaState;
 	void* m_defaultAllocFn;
 	void* m_defaultAllocOpaque;

@@ -70,8 +70,6 @@ ITypedObject* toTypedObject(lua_State* luaState, int32_t index)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptManagerLua, IScriptManager)
 
-ScriptManagerLua* ScriptManagerLua::ms_instance = 0;
-
 ScriptManagerLua::ScriptManagerLua()
 :	m_luaState(0)
 ,	m_defaultAllocFn(0)
@@ -83,8 +81,6 @@ ScriptManagerLua::ScriptManagerLua()
 ,	m_totalMemoryUse(0)
 ,	m_lastMemoryUse(0)
 {
-	ms_instance = this;
-
 #if defined(T_USE_ALLOCATOR)
 	m_luaState = lua_newstate(&luaAlloc, this);
 #else
@@ -149,7 +145,6 @@ ScriptManagerLua::ScriptManagerLua()
 ScriptManagerLua::~ScriptManagerLua()
 {
 	T_FATAL_ASSERT_M(!m_luaState, L"Must call destroy");
-	ms_instance = 0;
 }
 
 void ScriptManagerLua::destroy()
@@ -1349,19 +1344,18 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 
 int ScriptManagerLua::luaAllocatedMemory(lua_State* luaState)
 {
-	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (manager);
-
+	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(G(luaState)->ud);
 	lua_pushinteger(luaState, lua_Integer(manager->m_totalMemoryUse));
 	return 1;
 }
 
 void ScriptManagerLua::hookCallback(lua_State* luaState, lua_Debug* ar)
 {
-	if (ms_instance->m_debugger)
-		ms_instance->m_debugger->hookCallback(luaState, ar);
-	if (ms_instance->m_profiler)
-		ms_instance->m_profiler->hookCallback(luaState, ar);
+	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(G(luaState)->ud);
+	if (manager->m_debugger)
+		manager->m_debugger->hookCallback(luaState, ar);
+	if (manager->m_profiler)
+		manager->m_profiler->hookCallback(luaState, ar);
 }
 
 int ScriptManagerLua::luaPanic(lua_State* luaState)

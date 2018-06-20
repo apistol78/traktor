@@ -1,10 +1,7 @@
 #include "Core/Class/IRuntimeClass.h"
-#include "Core/Functor/Functor.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
-#include "Core/Thread/Job.h"
-#include "Core/Thread/JobManager.h"
 #include "Editor/IEditor.h"
 #include "Flash/DefaultCharacterFactory.h"
 #include "Flash/Frame.h"
@@ -183,46 +180,9 @@ void WidgetPreviewControl::eventSize(ui::SizeEvent* event)
 
 void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 {
-	if (!m_job)
+	// Initialize scaffolding.
+	if (m_scaffoldingClass.changed())
 	{
-		if (!m_scaffoldingObject || m_scaffoldingClass.changed())
-		{
-			if (!m_scaffoldingClass)
-				return;
-
-			m_job = JobManager::getInstance().add(makeFunctor(
-				[&] ()
-				{
-					T_ASSERT (m_scaffoldingClass);
-
-					if (m_scaffoldingObject)
-					{
-						uint32_t methodId = findRuntimeClassMethodId(m_scaffoldingClass, "remove");
-						if (methodId != ~0U)
-							m_scaffoldingClass->invoke(m_scaffoldingObject, methodId, 0, 0);
-					}
-
-					Any argv[] =
-					{
-						Any::fromObject(m_resourceManager),
-						Any::fromObject(m_moviePlayer->getMovieInstance())
-					};
-					m_scaffoldingObject = m_scaffoldingClass->construct(0, sizeof_array(argv), argv);
-				}
-			));
-		}
-	}
-	
-	if (m_job)
-	{
-		if (!m_job->wait(0))
-			return;
-
-		m_scaffoldingClass.consume();
-		m_job = 0;
-	}
-
-/*
 		// Create scaffolding object.
 		if (m_scaffoldingClass)
 		{
@@ -247,7 +207,6 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 
 		m_scaffoldingClass.consume();
 	}
-*/
 
 	if (!m_renderView || !m_moviePlayer)
 		return;
@@ -278,7 +237,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 
 void WidgetPreviewControl::eventIdle(ui::IdleEvent* event)
 {
-	if (!m_moviePlayer || m_job)
+	if (!m_moviePlayer)
 		return;
 
 	if (isVisible(true))
