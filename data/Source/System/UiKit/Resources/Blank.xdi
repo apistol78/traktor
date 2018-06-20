@@ -3,5 +3,5 @@
 	<stageWidth>1280</stageWidth>
 	<stageHeight>720</stageHeight>
 	<frameRate>60</frameRate>
-	<backgroundColor>192, 145, 254, 255</backgroundColor>
+	<backgroundColor>0, 0, 0, 255</backgroundColor>
 </object>

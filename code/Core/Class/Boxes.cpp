@@ -1750,6 +1750,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedColor4f->addMethod("setGreen", &BoxedColor4f::setGreen);
 	classBoxedColor4f->addMethod("setBlue", &BoxedColor4f::setBlue);
 	classBoxedColor4f->addMethod("setAlpha", &BoxedColor4f::setAlpha);
+	classBoxedColor4f->addStaticMethod("lerp", &BoxedColor4f::lerp);
 	registrar->registerClass(classBoxedColor4f);
 
 	Ref< AutoRuntimeClass< BoxedColor4ub > > classBoxedColor4ub = new AutoRuntimeClass< BoxedColor4ub >();
