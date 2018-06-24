@@ -38,22 +38,22 @@ end
 
 function Edit:setTextSize(size)
 	local tf = self._text_tb:getTextFormat()
-	tf:setSize(size * 20)
+	tf.size = size * 20
 	self._text_tb:setTextFormat(tf)
 	self._preferredSize.height = size + self._textSizeMargin
 	return self
 end
 
 function Edit:setColor(color)
-	self._background_mc:setColorTransform(ColorTransform(
+	self._background_mc.colorTransform = ColorTransform(
 		color,
 		Color4f(0, 0, 0, 0)
-	))
+	)
 	return self
 end
 
 function Edit:setTextColor(color)
-	self._text_tb:setTextColor(color)
+	self._text_tb.textColor = color
 	return self
 end
 
@@ -79,15 +79,15 @@ end
 function Edit:setFocus()
 	Widget.setFocus(self)
 
-	local cx = self._mc:getContext()
-	local selection = cx:getGlobal():getMember("Selection")
+	local cx = self._mc.context
+	local selection = cx.global:getMember("Selection")
 	selection:setFocus(self._text_tb)
 end
 
 function Edit:killFocus()
 	if Widget.killFocus(self) then
-		local cx = self._mc:getContext()
-		local selection = cx:getGlobal():getMember("Selection")
+		local cx = self._mc.context
+		local selection = cx.global:getMember("Selection")
 		selection:setFocus(nil)
 	end
 end
@@ -96,11 +96,11 @@ function Edit:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
 
 	local p = self:getPlacement()
-	local mx = self._text_tb:getX()
-	self._text_tb:setWidth(p.width - mx * 2)
+	local mx = self._text_tb.X
+	self._text_tb.width = p.width - mx * 2
 
-	self._background_mc:setWidth(p.width)
-	self._background_mc:setHeight(p.height)
+	self._background_mc.width = p.width
+	self._background_mc.height = p.height
 end
 
 -- private
@@ -116,11 +116,11 @@ function Edit:_initialize(parent, mc, text, hint, validator)
 
 	self._preferredSize =
 	{
-		width = mc:getWidth(),
-		height = mc:getHeight()
+		width = mc.width,
+		height = mc.height
 	}
 
-	local th = self._text_tb:getTextFormat():getSize() / 20
+	local th = self._text_tb:getTextFormat().size / 20
 	self._textSizeMargin = self._preferredSize.height - th
 
 	self._hint = hint
@@ -148,8 +148,8 @@ function Edit:_onSetFocus()
 	end
 
 	-- Register global key up/down events.
-	local cx = self._mc:getContext()
-	local key = cx:getGlobal():getMember("Key")
+	local cx = self._mc.context
+	local key = cx.global:getMember("Key")
 
 	self._keyListener = cx:createObject()
 	self._keyListener:setMember("onKeyDown", function() self:_onKeyDown() end)
@@ -168,15 +168,15 @@ function Edit:_onKillFocus()
 		self._editedFn(self)
 	end
 
-	if self._hint ~= "" and self._text_tb:getText() == "" then
+	if self._hint ~= "" and self._text_tb.text == "" then
 		self._text_tb:parseText(self._hint)
 		self._hintActive = true
 	end
 
 	-- Remove global key up/down events.
 	if self._keyListener ~= nil then
-		local cx = self._mc:getContext()
-		local key = cx:getGlobal():getMember("Key")
+		local cx = self._mc.context
+		local key = cx.global:getMember("Key")
 		key:removeListener(self._keyListener)
 		self._keyListener = nil
 	end
@@ -188,7 +188,7 @@ end
 
 function Edit:_onChanged()
 	if self._validator ~= nil then
-		local text = self._text_tb:getText()
+		local text = self._text_tb.text
 		if self._validator:check(text) then
 			self._text0 = text
 		else
@@ -201,8 +201,8 @@ function Edit:_onChanged()
 end
 
 function Edit:_onKeyDown()
-	local cx = self._mc:getContext()
-	local key = cx:getGlobal():getMember("Key")
+	local cx = self._mc.context
+	local key = cx.global:getMember("Key")
 	local code = key:getCode()
 	if code == key:getMember("ENTER") or code == 220 then
 		self._enterPressed = true
@@ -213,8 +213,8 @@ function Edit:_onKeyUp()
 	if self._enterPressed then
 		self._enterPressed = false
 
-		local cx = self._mc:getContext()
-		local key = cx:getGlobal():getMember("Key")
+		local cx = self._mc.context
+		local key = cx.global:getMember("Key")
 		local code = key:getCode()
 		if code == key:getMember("ENTER") or code == 220 then
 			if self._enterFn ~= nil then

@@ -31,12 +31,12 @@ function Image:place(x, y, width, height)
 
 	local p = self:getPlacement()
 	if self._mode == Image.MODE_STRETCH then
-		self._image_mc:setWidth(p.width)
-		self._image_mc:setHeight(p.height)
+		self._image_mc.width = p.width
+		self._image_mc.height = p.height
 
 	elseif self._mode == Image.MODE_CLIP then
-		self._clipper_mc:setWidth(p.width)
-		self._clipper_mc:setHeight(p.height)
+		self._clipper_mc.width = p.width
+		self._clipper_mc.height = p.height
 	end
 end
 
@@ -74,18 +74,18 @@ function Image:setImage(image, mode)
 	end
 
 	-- Keep original size as preferred size.
-	self._preferredSize.width = self._image_mc:getWidth()
-	self._preferredSize.height = self._image_mc:getHeight()
+	self._preferredSize.width = self._image_mc.width
+	self._preferredSize.height = self._image_mc.height
 
 	-- Ensure scale is 
-	self._image_mc:setScale(Vector2(self._hscale * 100, self._vscale * 100))
+	self._image_mc.scale = Vector2(self._hscale * 100, self._vscale * 100)
 
 	-- Create clipper.
 	if mode == Image.MODE_CLIP then
 		self._clipper_mc = Widget._createResource(self, "MC_Clipper")
-		self._clipper_mc:setWidth(self._preferredSize.width)
-		self._clipper_mc:setHeight(self._preferredSize.height)
-		self._image_mc:setMask(self._clipper_mc)
+		self._clipper_mc.width = self._preferredSize.width
+		self._clipper_mc.height = self._preferredSize.height
+		self._image_mc.mask = self._clipper_mc
 	end
 
 	self._mode = mode
@@ -93,9 +93,9 @@ end
 
 function Image:setBlend(mode)
 	if mode == Image.BLEND_ALPHA then
-		self._image_mc:setBlendMode(traktor.flash.CharacterInstance.SbmDefault)
+		self._image_mc.blendMode = traktor.flash.CharacterInstance.SbmDefault
 	elseif mode == Image.BLEND_ADD then
-		self._image_mc:setBlendMode(traktor.flash.CharacterInstance.SbmAdd)
+		self._image_mc.blendMode = traktor.flash.CharacterInstance.SbmAdd
 	end
 	return self
 end
@@ -104,7 +104,7 @@ function Image:setScale(hscale, vscale)
 	self._hscale = hscale
 	self._vscale = hscale
 	if self._image_mc ~= nil then
-		self._image_mc:setScale(Vector2(hscale * 100, vscale * 100))
+		self._image_mc.scale = Vector2(hscale * 100, vscale * 100)
 	end
 	return self
 end

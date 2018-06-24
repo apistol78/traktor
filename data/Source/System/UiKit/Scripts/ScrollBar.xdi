@@ -33,26 +33,26 @@ function ScrollBar:place(x, y, width, height)
 
 	local p = self:getPlacement()
 	if self._orientation == ScrollBar.HORIZONTAL then
-		self._background_mc:setWidth(p.width)
+		self._background_mc.width = p.width
 	elseif self._orientation == ScrollBar.VERTICAL then
-		self._background_mc:setHeight(p.height)
+		self._background_mc.height = p.height
 	end
 	self:_updateKnobSize()
 end
 
 function ScrollBar:setColor(color)
-	self._background_mc:setColorTransform(ColorTransform(
+	self._background_mc.colorTransform = ColorTransform(
 		color,
 		Color4f(0, 0, 0, 0)
-	))
+	)
 	return self
 end
 
 function ScrollBar:setKnobColor(color)
-	self._knob_mc:setColorTransform(ColorTransform(
+	self._knob_mc.colorTransform = ColorTransform(
 		color,
 		Color4f(0, 0, 0, 0)
-	))
+	)
 	return self
 end
 
@@ -65,29 +65,29 @@ end
 
 function ScrollBar:setPosition(position)
 	if self._orientation == ScrollBar.HORIZONTAL then
-		local bw = self._background_mc:getWidth() - self._knobMargin * 2
-		local kw = self._knob_mc:getWidth()
+		local bw = self._background_mc.width - self._knobMargin * 2
+		local kw = self._knob_mc.width
 		local f = position / self._range
-		self._knob_mc:setX((bw - kw) * f + self._knobMargin)
+		self._knob_mc.X = (bw - kw) * f + self._knobMargin
 	elseif self._orientation == ScrollBar.VERTICAL then
-		local bh = self._background_mc:getHeight() - self._knobMargin * 2
-		local kh = self._knob_mc:getHeight()
+		local bh = self._background_mc.height - self._knobMargin * 2
+		local kh = self._knob_mc.height
 		local f = position / self._range
-		self._knob_mc:setY((bh - kh) * f + self._knobMargin)
+		self._knob_mc.Y = (bh - kh) * f + self._knobMargin
 	end
 	return self
 end
 
 function ScrollBar:getPosition()
 	if self._orientation == ScrollBar.HORIZONTAL then
-		local bw = self._background_mc:getWidth() - self._knobMargin * 2
-		local kw = self._knob_mc:getWidth()
-		local kx = self._knob_mc:getX() - self._knobMargin
+		local bw = self._background_mc.width - self._knobMargin * 2
+		local kw = self._knob_mc.width
+		local kx = self._knob_mc.X - self._knobMargin
 		return self._range * kx / (bw - kw)
 	elseif self._orientation == ScrollBar.VERTICAL then
-		local bh = self._background_mc:getHeight() - self._knobMargin * 2
-		local kh = self._knob_mc:getHeight()
-		local ky = self._knob_mc:getY() - self._knobMargin
+		local bh = self._background_mc.height - self._knobMargin * 2
+		local kh = self._knob_mc.height
+		local ky = self._knob_mc.Y - self._knobMargin
 		return self._range * ky / (bh - kh)
 	end
 	return 0
@@ -102,13 +102,13 @@ end
 
 function ScrollBar:_updateKnobSize()
 	if self._orientation == ScrollBar.HORIZONTAL then
-		local bw = self._background_mc:getWidth() - self._knobMargin * 2
+		local bw = self._background_mc.width - self._knobMargin * 2
 		local w = (self._size / self._range) * bw
-		self._knob_mc:setWidth(w)
+		self._knob_mc.width = w
 	elseif self._orientation == ScrollBar.VERTICAL then
-		local bh = self._background_mc:getHeight() - self._knobMargin * 2
+		local bh = self._background_mc.height - self._knobMargin * 2
 		local h = (self._size / self._range) * bh
-		self._knob_mc:setHeight(h)
+		self._knob_mc.height = h
 	end
 end
 
@@ -117,8 +117,8 @@ function ScrollBar:_initialize(parent, mc, orientation)
 
 	self._preferredSize =
 	{
-		width = mc:getWidth(),
-		height = mc:getHeight()
+		width = mc.width,
+		height = mc.height
 	}
 
 	self._background_mc = mc:getMember("background_mc")
@@ -127,9 +127,9 @@ function ScrollBar:_initialize(parent, mc, orientation)
 	self._orientation = orientation
 
 	if self._orientation == ScrollBar.HORIZONTAL then
-		self._knobMargin = self._knob_mc:getX()
+		self._knobMargin = self._knob_mc.X
 	elseif self._orientation == ScrollBar.VERTICAL then
-		self._knobMargin = self._knob_mc:getY()
+		self._knobMargin = self._knob_mc.Y
 	end
 
 	self:addEventListener(MousePressEvent, self, self._onMousePress)
@@ -141,11 +141,11 @@ end
 
 function ScrollBar:_onMousePress(event)
 	if self._orientation == ScrollBar.HORIZONTAL then
-		self._trackOffset = self._mc:getMouseX() - self._knob_mc:getX()
-		self._track = (self._trackOffset >= 0 and self._trackOffset < self._knob_mc:getWidth())
+		self._trackOffset = self._mc.mouseX - self._knob_mc.X
+		self._track = (self._trackOffset >= 0 and self._trackOffset < self._knob_mc.width)
 	elseif self._orientation == ScrollBar.VERTICAL then
-		self._trackOffset = self._mc:getMouseY() - self._knob_mc:getY()
-		self._track = (self._trackOffset >= 0 and self._trackOffset < self._knob_mc:getHeight())
+		self._trackOffset = self._mc.mouseY - self._knob_mc.Y
+		self._track = (self._trackOffset >= 0 and self._trackOffset < self._knob_mc.height)
 	end
 	return true
 end
@@ -159,36 +159,36 @@ function ScrollBar:_onMouseMove(event)
 	if not self._track then return false end
 
 	if self._orientation == ScrollBar.HORIZONTAL then
-		local x = self._mc:getMouseX() - self._trackOffset - self._knobMargin
+		local x = self._mc.mouseX - self._trackOffset - self._knobMargin
 
 		-- Clamp range.
-		local bw = self._background_mc:getWidth() - self._knobMargin * 2
-		local mx = bw - self._knob_mc:getWidth()
+		local bw = self._background_mc.width - self._knobMargin * 2
+		local mx = bw - self._knob_mc.width
 		if x < 0 then
 			x = 0
 		elseif x > mx then
 			x = mx
 		end
 
-		self._knob_mc:setX(x + self._knobMargin)
+		self._knob_mc.X = x + self._knobMargin
 
 		if self._scrollFn ~= nil then
 			self._scrollFn()
 		end
 
 	elseif self._orientation == ScrollBar.VERTICAL then
-		local y = self._mc:getMouseY() - self._trackOffset - self._knobMargin
+		local y = self._mc.mouseY - self._trackOffset - self._knobMargin
 
 		-- Clamp range.
-		local bh = self._background_mc:getHeight() - self._knobMargin * 2
-		local my = bh - self._knob_mc:getHeight()
+		local bh = self._background_mc.height - self._knobMargin * 2
+		local my = bh - self._knob_mc.height
 		if y < 0 then
 			y = 0
 		elseif y > my then
 			y = my
 		end
 
-		self._knob_mc:setY(y + self._knobMargin)
+		self._knob_mc.Y = y + self._knobMargin
 
 		if self._scrollFn ~= nil then
 			self._scrollFn()
