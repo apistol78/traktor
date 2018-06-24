@@ -19,7 +19,7 @@ function Border:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
 
 	local p = self:getPlacement()
-	self._mc:setSize(Vector2(p.width, p.height))
+	self._mc.size = Vector2(p.width, p.height)
 end
 
 -- Private
@@ -27,8 +27,8 @@ end
 function Border:_initialize(parent, mc)
 	self._preferredSize =
 	{
-		width = mc:getWidth(),
-		height = mc:getHeight()
+		width = mc.width,
+		height = mc.height
 	}
 	Widget._initialize(self, parent, mc)
 end

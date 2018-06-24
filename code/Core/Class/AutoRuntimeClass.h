@@ -3340,16 +3340,29 @@ public:
 	
 	virtual Any invokePropertyGet(ITypedObject* self, uint32_t propertyId) const T_OVERRIDE T_FINAL
 	{
-		if (m_properties[propertyId].getter)
-			return m_properties[propertyId].getter->invoke(self);
+		const PropertyInfo& info = m_properties[propertyId];
+		if (info.getter)
+			return info.getter->invoke(self);
 		else
+		{
+			StringOutputStream ss;
+			ss << L"No getter available of property \"" << mbstows(info.name) << L"\".";
+			T_FATAL_ASSERT_M(false, ss.str().c_str());
 			return Any();
+		}
 	}
 
 	virtual void invokePropertySet(ITypedObject* self, uint32_t propertyId, const Any& value) const T_OVERRIDE T_FINAL
 	{
-		if (m_properties[propertyId].setter)
-			m_properties[propertyId].setter->invoke(self, value);
+		const PropertyInfo& info = m_properties[propertyId];
+		if (info.setter)
+			info.setter->invoke(self, value);
+		else
+		{
+			StringOutputStream ss;
+			ss << L"No setter available of property \"" << mbstows(info.name) << L"\".";
+			T_FATAL_ASSERT_M(false, ss.str().c_str());
+		}
 	}
 
 	virtual Any invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL

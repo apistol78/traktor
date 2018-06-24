@@ -117,7 +117,7 @@ end
 
 function Widget:setVisible(visible)
 	if visible ~= self._visible then
-		self._mc:setVisible(visible)
+		self._mc.visible = visible
 		self._visible = visible
 	end
 	return self
@@ -260,8 +260,8 @@ function Widget:place(x, y, width, height)
 	self._placement.height = ah
 
 	if self._mc ~= nil then
-		self._mc:setX(ax)
-		self._mc:setY(ay)
+		self._mc.X = ax
+		self._mc.Y = ay
 	end
 end
 
@@ -292,7 +292,7 @@ function Widget:hitTest(position)
 end
 
 function Widget:getMousePosition()
-	return { x = self._mc:getMouseX(), y = self._mc:getMouseY() }
+	return { x = self._mc.mouseX, y = self._mc.mouseY }
 end
 
 function Widget:addEventListener(eventType, target, fn)
@@ -467,7 +467,7 @@ function Widget._createEmptyResource(parent)
 	local into_mc = parent:_getInnerClip()
 	assert (into_mc ~= nil)
 
-	local depth = into_mc:getNextHighestDepth()
+	local depth = into_mc.displayList.nextHighestDepth
 	local mc = into_mc:createEmptyMovieClip("", depth)
 	assert (mc ~= nil)
 
@@ -478,7 +478,7 @@ function Widget._createResource(parent, resource)
 	local into_mc = parent:_getInnerClip()
 	assert (into_mc ~= nil)
 
-	local depth = into_mc:getNextHighestDepth()
+	local depth = into_mc.displayList.nextHighestDepth
 	local mc = nil
 	for _, rk in ipairs(Widget._resourceKits) do
 		mc = rk:get():createExternalSpriteInstance(into_mc, resource, depth)

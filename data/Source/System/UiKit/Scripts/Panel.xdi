@@ -19,15 +19,15 @@ function Panel:place(x, y, width, height)
 	Container.place(self, x, y, width, height)
 
 	local p = self:getPlacement()
-	self._background_mc:setWidth(p.width)
-	self._background_mc:setHeight(p.height)
+	self._background_mc.width = p.width
+	self._background_mc.height = p.height
 end
 
 function Panel:setColor(color)
-	self._background_mc:setColorTransform(ColorTransform(
+	self._background_mc.colorTransform = ColorTransform(
 		color,
 		Color4f(0, 0, 0, 0)
-	))
+	)
 	return self
 end
 

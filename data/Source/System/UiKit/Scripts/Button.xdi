@@ -38,7 +38,7 @@ function Button:_initialize(parent, mc, imageUp, imageDown, imageHover)
 	Widget._initialize(self, parent, mc)
 
 	if isa(imageUp, traktor.drawing.Image) then
-		local bm = self._mc:getContext():createBitmap(imageUp)
+		local bm = self._mc.context:createBitmap(imageUp)
 		if bm == nil then return false end
 		self._imageUp_mc = Widget._createEmptyResource(self)
 		self._imageUp_mc:attachBitmap(bm, 0)
@@ -59,7 +59,7 @@ function Button:_initialize(parent, mc, imageUp, imageDown, imageHover)
 
 	if imageDown ~= nil then
 		if isa(imageDown, traktor.drawing.Image) then
-			local bm = self._mc:getContext():createBitmap(imageDown)
+			local bm = self._mc.context:createBitmap(imageDown)
 			if bm == nil then return false end
 			self._imageDown_mc = Widget._createEmptyResource(self)
 			self._imageDown_mc:attachBitmap(bm, 0)
@@ -83,7 +83,7 @@ function Button:_initialize(parent, mc, imageUp, imageDown, imageHover)
 
 	if imageHover ~= nil then
 		if isa(imageHover, traktor.drawing.Image) then
-			local bm = self._mc:getContext():createBitmap(imageHover)
+			local bm = self._mc.context:createBitmap(imageHover)
 			if bm == nil then return false end
 			self._imageHover_mc = Widget._createEmptyResource(self)
 			self._imageHover_mc:attachBitmap(bm, 0)
@@ -107,8 +107,8 @@ function Button:_initialize(parent, mc, imageUp, imageDown, imageHover)
 
 	self._preferredSize =
 	{
-		width = mc:getWidth(),
-		height = mc:getHeight()
+		width = mc.width,
+		height = mc.height
 	}
 	self._clickFn = nil
 
@@ -117,31 +117,31 @@ function Button:_initialize(parent, mc, imageUp, imageDown, imageHover)
 	self:addEventListener(MouseEnterEvent, self, self._onMouseEnter)
 	self:addEventListener(MouseLeaveEvent, self, self._onMouseLeave)
 
-	self._imageDown_mc:setVisible(false)
-	self._imageHover_mc:setVisible(false)
-	self._imageUp_mc:setVisible(true)
+	self._imageDown_mc.visible = false
+	self._imageHover_mc.visible = false
+	self._imageUp_mc.visible = true
 
 	self._isPressed = false
 	self._isRolledOver = false	
 end
 
 function Button:_onMousePress(event)
-	self._imageUp_mc:setVisible(false)
-	self._imageHover_mc:setVisible(false)
-	self._imageDown_mc:setVisible(true)
+	self._imageDown_mc.visible = false
+	self._imageHover_mc.visible = false
+	self._imageUp_mc.visible = true
 	self._isPressed = true
 	self:setExclusive()
 	return true
 end
 
 function Button:_onMouseRelease(event)
-	self._imageDown_mc:setVisible(false)
+	self._imageDown_mc.visible = false
 	if not self._isRolledOver then
-		self._imageHover_mc:setVisible(false)
-		self._imageUp_mc:setVisible(true)
+		self._imageHover_mc.visible(false)
+		self._imageUp_mc.visible = true
 	else
-		self._imageUp_mc:setVisible(false)
-		self._imageHover_mc:setVisible(true)
+		self._imageUp_mc.visible = false
+		self._imageHover_mc.visible = true
 	end
 	self:releaseExclusive()
 	if event.inside then
@@ -153,22 +153,22 @@ end
 
 function Button:_onMouseEnter(event)
 	if not self._isPressed then
-		self._imageUp_mc:setVisible(false)
-		self._imageDown_mc:setVisible(false)
-		self._imageHover_mc:setVisible(true)
+		self._imageUp_mc.visible = false
+		self._imageDown_mc.visible = false
+		self._imageHover_mc.visible = true
 	end
 	self._isRolledOver = true
 	return true
 end
 
 function Button:_onMouseLeave()
-	self._imageHover_mc:setVisible(false)
+	self._imageHover_mc.visible = false
 	if not self._isPressed then
-		self._imageDown_mc:setVisible(false)
-		self._imageUp_mc:setVisible(true)
+		self._imageDown_mc.visible = false
+		self._imageUp_mc.visible = true
 	else
-		self._imageUp_mc:setVisible(false)
-		self._imageDown_mc:setVisible(true)
+		self._imageUp_mc.visible = false
+		self._imageDown_mc.visible = true
 	end
 	self._isRolledOver = false
 	return true

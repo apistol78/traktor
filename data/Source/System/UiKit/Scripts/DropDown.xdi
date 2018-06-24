@@ -67,10 +67,10 @@ function DropDown:getSelectedItem()
 end
 
 function DropDown:setColor(color)
-	self._background_mc:setColorTransform(ColorTransform(
+	self._background_mc.colorTransform = ColorTransform(
 		color,
 		Color4f(0, 0, 0, 0)
-	))
+	)
 	return self
 end
 
@@ -80,11 +80,11 @@ function DropDown:setListColor(color)
 end
 
 function DropDown:setTextColor(textColor)
-	self._caption_tb:setTextColor(textColor)
-	self._arrow_mc:setColorTransform(ColorTransform(
+	self._caption_tb.textColor = textColor
+	self._arrow_mc.colorTransform = ColorTransform(
 		textColor,
 		Color4f(0, 0, 0, 0)
-	))
+	)
 	return self
 end
 
@@ -113,11 +113,11 @@ function DropDown:_initialize(parent, mc, items)
 	self._caption_tb = mc:getMember("caption_tb")
 	self._caption_tb:parseText("")
 
-	self._margin = self._caption_tb:getX()
+	self._margin = self._caption_tb.X
 	self._preferredSize =
 	{
-		width = mc:getWidth(),
-		height = mc:getHeight()
+		width = mc.width,
+		height = mc.height
 	}
 
 	if items ~= nil then

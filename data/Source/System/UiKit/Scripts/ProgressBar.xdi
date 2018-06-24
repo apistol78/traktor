@@ -23,36 +23,36 @@ function ProgressBar:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
 
 	local p = self:getPlacement()
-	self._back_mc:setWidth(p.width)
-	self._back_mc:setHeight(p.height)
-	self._front_mc:setWidth(p.width)
-	self._front_mc:setHeight(p.height)
+	self._back_mc.width = p.width
+	self._back_mc.height = p.height
+	self._front_mc.width = p.width
+	self._front_mc.height = p.height
 
 	self:setValue(self._value)
 end
 
 function ProgressBar:setBackColor(color)
-	self._back_mc:setColorTransform(ColorTransform(
+	self._back_mc.colorTransform = ColorTransform(
 		color,
 		Color4f(0, 0, 0, 0)
-	))
+	)
 	return self
 end
 
 function ProgressBar:setFrontColor(color)
-	self._front_mc:setColorTransform(ColorTransform(
+	self._front_mc.colorTransform = ColorTransform(
 		color,
 		Color4f(0, 0, 0, 0)
-	))
+	)
 	return self
 end
 
 function ProgressBar:setValue(value)
 	self._value = math.max(math.min(value, 1), 0)
-	local w = self._back_mc:getWidth()
-	self._mask_mc:setWidth(w * value)
+	local w = self._back_mc.width
+	self._mask_mc.width = w * value
 	if self._reverse then
-		self._mask_mc:setX(w * (1 - value))
+		self._mask_mc.X = w * (1 - value)
 	end
 	return self
 end
@@ -68,8 +68,8 @@ function ProgressBar:_initialize(parent, mc, reverse)
 
 	self._preferredSize =
 	{
-		width = mc:getWidth(),
-		height = mc:getHeight()
+		width = mc.width,
+		height = mc.height
 	}
 
 	self._back_mc = mc:getMember("back_mc")

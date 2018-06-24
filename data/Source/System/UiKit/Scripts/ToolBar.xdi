@@ -27,8 +27,8 @@ function ToolBar:place(x, y, width, height)
 		ch = math.max(ch, ps.height)
 	end
 
-	self._background_mc:setWidth(p.width)
-	self._background_mc:setHeight(ch)
+	self._background_mc.width = p.width
+	self._background_mc.height = ch
 
 	local mx = (p.width - cw) / (cc + 1)
 	local cx = mx

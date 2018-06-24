@@ -32,31 +32,36 @@ function Tab:place(x, y, width, height)
 
 	local tx = 0
 	for _, tab_mc in ipairs(self._tab_mc) do
-		tab_mc:setPosition(Vector2(tx, 0))
-		tx = tx + tab_mc:getWidth() + 8
+		tab_mc.position = Vector2(tx, 0)
+		tx = tx + tab_mc.width + 8
 	end
 
-	self._separatorTop_mc:setPosition(Vector2(0, self._tabHeight))
-	self._separatorTop_mc:setSize(Vector2(p.width, self._separatorHeight))
+	self._separatorTop_mc.position = Vector2(0, self._tabHeight)
+	self._separatorTop_mc.size = Vector2(p.width, self._separatorHeight)
 
-	self._separatorBottom_mc:setPosition(Vector2(0, p.height - self._separatorHeight))
-	self._separatorBottom_mc:setSize(Vector2(p.width, self._separatorHeight))
+	self._separatorBottom_mc.position = Vector2(0, p.height - self._separatorHeight)
+	self._separatorBottom_mc.size = Vector2(p.width, self._separatorHeight)
 
 	for _, child in ipairs(self._children) do
-		child:place(0, self._tabHeight + self._separatorHeight, p.width, p.height - self._tabHeight - self._separatorHeight * 2)
+		child:place(
+			0,
+			self._tabHeight + self._separatorHeight,
+			p.width,
+			p.height - self._tabHeight - self._separatorHeight * 2
+		)
 	end
 end
 
 function Tab:setColor(color)
 	self._color = color
-	self._separatorTop_mc:setColorTransform(ColorTransform(
+	self._separatorTop_mc.colorTransform = ColorTransform(
 		color,
 		Color4f(0, 0, 0, 0)
-	))
-	self._separatorBottom_mc:setColorTransform(ColorTransform(
+	)
+	self._separatorBottom_mc.colorTransform = ColorTransform(
 		color,
 		Color4f(0, 0, 0, 0)
-	))
+	)
 	return self
 end
 
@@ -73,7 +78,7 @@ function Tab:_initialize(parent, mc, inner_mc)
 	self._inner_mc = inner_mc
 	self._separatorTop_mc = Widget._createResource(self, "MC_TabSeparator")
 	self._separatorBottom_mc = Widget._createResource(self, "MC_TabSeparator")
-	self._separatorHeight = self._separatorTop_mc:getHeight()
+	self._separatorHeight = self._separatorTop_mc.height
 	self._tab_mc = {}
 	self._tabHeight = 0
 	self._active = 1
@@ -94,14 +99,14 @@ function Tab:_addChild(child)
 	end)
 
 	if self._color ~= nil then
-		tab_mc:getMember("background_mc"):setColorTransform(ColorTransform(
+		tab_mc:getMember("background_mc").colorTransform = ColorTransform(
 			self._color,
 			Color4f(0, 0, 0, 0)
-		))
+		)
 	end
 
 	local caption_tb = tab_mc:getMember("caption_tb")
-	caption_tb:setRenderClipMask(false)
+	caption_tb.renderClipMask = false
 #if defined(_DEBUG)
 	caption_tb:setMember("__renderWireOutline", true)
 #endif
@@ -112,21 +117,21 @@ function Tab:_addChild(child)
 
 		caption_tb:parseText(caption)
 
-		local mx = caption_tb:getX()
-		local sz = caption_tb:getTextSize()
+		local mx = caption_tb.X
+		local sz = caption_tb.textSize
 
-		background_mc:setWidth(sz.x + mx * 2)
-		caption_tb:setTextBounds(Aabb2(
+		background_mc.width = sz.x + mx * 2
+		caption_tb.textBounds = Aabb2(
 			Vector2(mx, 0),
 			Vector2(sz.x * 20, sz.y * 20)
-		))
+		)
 
 		return childSelf
 	end
 
 	table.insert(self._tab_mc, tab_mc)
 
-	self._tabHeight = math.max(self._tabHeight, tab_mc:getHeight())
+	self._tabHeight = math.max(self._tabHeight, tab_mc.height)
 	self:_updateState()
 end
 

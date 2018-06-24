@@ -39,10 +39,10 @@ function ScrollContainer:place(x, y, width, height)
 	end
 
 	if self._scrollSize.width > 0 then
-		self._mask_mc:setWidth(self._scrollSize.width)
+		self._mask_mc.width = self._scrollSize.width
 	end
 	if self._scrollSize.height > 0 then
-		self._mask_mc:setHeight(self._scrollSize.height)
+		self._mask_mc.height = self._scrollSize.height
 	end
 
 	if self._layout ~= nil then
@@ -51,8 +51,8 @@ function ScrollContainer:place(x, y, width, height)
 	end
 
 	self:_clampScrollOffsets()
-	self._inner_mc:setX(-self._scroll.x)
-	self._inner_mc:setY(-self._scroll.y)
+	self._inner_mc.X = -self._scroll.x
+	self._inner_mc.Y = -self._scroll.y
 
 	if self._scrollBarHorizontal ~= nil then
 		local range = self._innerSize.width - self._scrollSize.width
@@ -81,8 +81,8 @@ function ScrollContainer:setOffset(x, y)
 	self._scroll.x = x
 	self._scroll.y = y
 	self:_clampScrollOffsets()
-	self._inner_mc:setX(-self._scroll.x)
-	self._inner_mc:setY(-self._scroll.y)
+	self._inner_mc.X = -self._scroll.x
+	self._inner_mc.Y = -self._scroll.y
 	return self
 end
 
@@ -120,8 +120,8 @@ end
 function ScrollContainer:resetScroll()
 	self._scroll.y = 0
 	self._scroll.x = 0
-	self._inner_mc:setX(-self._scroll.x)
-	self._inner_mc:setY(-self._scroll.y)
+	self._inner_mc.X = -self._scroll.x
+	self._inner_mc.Y = -self._scroll.y
 	if self._scrollBarHorizontal ~= nil then
 		self._scrollBarHorizontal:setPosition(0)	
 	end
@@ -238,8 +238,8 @@ end
 
 function ScrollContainer:_onMouseDown(event)
 	if self:isVisible() then
-		local x = self._mc:getMouseX()
-		local y = self._mc:getMouseY()
+		local x = self._mc.mouseX
+		local y = self._mc.mouseY
 		if x >= 0 and y >= 0 and x < self._scrollSize.width and y < self._scrollSize.height then
 			if self:setExclusive() then
 				self._scrollFrom =
@@ -273,8 +273,8 @@ function ScrollContainer:_onMouseMove(event)
 
 	local time = self._timer:getElapsedTime()
 
-	local dx = self._mc:getMouseX() - self._scrollFrom.mouseX
-	local dy = self._mc:getMouseY() - self._scrollFrom.mouseY
+	local dx = self._mc.mouseX - self._scrollFrom.mouseX
+	local dy = self._mc.mouseY - self._scrollFrom.mouseY
 
 	self._scroll.x = self._scrollFrom.scrollX - dx
 	self._scroll.y = self._scrollFrom.scrollY - dy
@@ -310,8 +310,8 @@ function ScrollContainer:_onFrame(event)
 		self._scroll.y = self._scroll.y - self._motion.y * 1/60
 		self:_clampScrollOffsets()
 
-		self._inner_mc:setX(-self._scroll.x)
-		self._inner_mc:setY(-self._scroll.y)
+		self._inner_mc.X = -self._scroll.x
+		self._inner_mc.Y = -self._scroll.y
 
 		self._motion.x = self._motion.x * self._motion.k
 		self._motion.y = self._motion.y * self._motion.k

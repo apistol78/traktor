@@ -16,7 +16,7 @@ function Frame:new(root_mc, vwidth, vheight, layout)
 end
 
 function Frame:remove()
-	local cx = self._mc:getContext()
+	local cx = self._mc.context
 
 	self._mc:setMember("onEnterFrame", nil)
 	self._mc:setMember("onMouseDown", nil)
@@ -24,13 +24,13 @@ function Frame:remove()
 	self._mc:setMember("onMouseMove", nil)
 
 	if self._mouseListener ~= nil then
-		local mouse = cx:getGlobal():getMember("Mouse")
+		local mouse = cx.global:getMember("Mouse")
 		mouse:removeListener(self._mouseListener)
 		self._mouseListener = nil
 	end
 
 	if self._stageListener ~= nil then
-		local stage = cx:getGlobal():getMember("Stage")
+		local stage = cx.global:getMember("Stage")
 		stage:removeListener(self._stageListener)
 		self._stageListener = nil
 	end
@@ -43,8 +43,8 @@ function Frame:getPreferredSize()
 end
 
 function Frame:update()
-	local cx = self._mc:getContext()
-	local stage = cx:getGlobal():getMember("Stage")
+	local cx = self._mc.context
+	local stage = cx.global:getMember("Stage")
 
 	local width = stage:getProperty("width")
 	local height = stage:getProperty("height")
@@ -55,8 +55,8 @@ function Frame:update()
 	local yscale = height / self._vheight
 	local scale = math.min(xscale, yscale)
 
-	self._mc:setXScale(scale * 100)
-	self._mc:setYScale(scale * 100)
+	self._mc.xScale = scale * 100
+	self._mc.yScale = scale * 100
 
 	self:place(0, 0, width / scale, height / scale)
 end
@@ -67,8 +67,8 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	Container._initialize(self, nil, mc, layout)
 
 	-- Disable stage scale and position, register listener of changes in stage size.
-	local cx = mc:getContext()
-	local stage = cx:getGlobal():getMember("Stage")
+	local cx = mc.context
+	local stage = cx.global:getMember("Stage")
 	self._stageListener = cx:createObject()
 	self._stageListener:setMember("onResize", function() self:update() end)
 	stage:addListener(self._stageListener)
@@ -84,7 +84,7 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	self._mc:setMember("onMouseUp", function() self:_eventMouseUp() end)
 	self._mc:setMember("onMouseMove", function() self:_eventMouseMove() end)
 
-	local mouse = cx:getGlobal():getMember("Mouse")
+	local mouse = cx.global:getMember("Mouse")
 	self._mouseListener = cx:createObject()
 	self._mouseListener:setMember("onMouseWheel", function(delta) self:_eventMouseWheel(delta) end)
 	mouse:addListener(self._mouseListener)
@@ -112,7 +112,7 @@ end
 function Frame:_eventMouseMove()
 	local pt = self:getMousePosition()
 #if defined(_DEBUG)
-	self._mc_debug:setPosition(Vector2(pt.x, pt.y))
+	self._mc_debug.position = Vector2(pt.x, pt.y)
 	self._tb_position:parseText(pt.x .. ";" .. pt.y)
 #endif
 	self:_dispatchEvent(MouseMoveEvent(pt.x, pt.y))

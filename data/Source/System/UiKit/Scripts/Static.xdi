@@ -16,14 +16,14 @@ function Static:new(parent, text, clip)
 end
 
 function Static:getPreferredSize(hint)
-	local text = self._text_tb:getText()
-	if hint ~= nil and self._text_tb:getMultiLine() then
-		self._text_tb:setTextBounds(Aabb2(
+	local text = self._text_tb.text
+	if hint ~= nil and self._text_tb.multiLine then
+		self._text_tb.textBounds = Aabb2(
 			Vector2(0, 0),
 			Vector2(hint.width * 20, hint.height * 20)
-		))
-		self:setText(text)
-		local sz = self._text_tb:getTextSize()
+		)
+		self.text = text
+		local sz = self._text_tb.textSize
 		return { width = sz.x, height = sz.y }
 	else
 		local sz = self._text_tb:measureText(text)
@@ -36,13 +36,13 @@ function Static:place(x, y, width, height)
 
 	-- Use placement to set text bound.
 	local p = self:getPlacement()
-	self._text_tb:setTextBounds(Aabb2(
+	self._text_tb.textBounds = Aabb2(
 		Vector2(0, 0),
 		Vector2(p.width * 20, p.height * 20)
-	))
+	)
 
 	-- Reset text to ensure it's properly fitted to given text bound.
-	local text = self._text_tb:getText()
+	local text = self._text_tb.text
 	self:setText(text)
 end
 
@@ -58,13 +58,13 @@ end
 
 function Static:setTextSize(size)
 	local tf = self._text_tb:getTextFormat()
-	tf:setSize(size * 20)
+	tf.size = size * 20
 	self._text_tb:setTextFormat(tf)
 	return self
 end
 
 function Static:setTextColor(color)
-	self._text_tb:setTextColor(color)
+	self._text_tb.textColor = color
 	self._textColor = color
 	return self
 end
@@ -76,31 +76,31 @@ end
 
 function Static:setDropShadowColor(color)
 	if color:getAlpha() > 0.01 then
-		self._text_tb:setFilter(1)
-		self._text_tb:setFilterColor(color)
+		self._text_tb.filter = 1
+		self._text_tb.filterColor = color
 	else
-		self._text_tb:setFilter(0)
+		self._text_tb.filter = 0
 	end
 	return self
 end
 
 function Static:setMultiLine(multiLine)
-	self._text_tb:setMultiLine(multiLine)
+	self._text_tb.multiLine = multiLine
 	return self
 end
 
 function Static:setWordWrap(wordWrap)
-	self._text_tb:setWordWrap(wordWrap)
+	self._text_tb.wordWrap = wordWrap
 	return self
 end
 
 function Static:setScroll(scroll)
-	self._text_tb:setScroll(scroll)
+	self._text_tb.scroll = scroll
 	return self
 end
 
 function Static:getMaxScroll()
-	return self._text_tb:getMaxScroll()
+	return self._text_tb.maxScroll
 end
 
 function Static:setOnClick(fn)
@@ -114,9 +114,9 @@ function Static:_initialize(parent, mc, text, clip)
 	Widget._initialize(self, parent, mc)
 
 	self._text_tb = mc:getMember("text_tb")
-	self._text_tb:setTransform(Matrix33.identity)
-	self._text_tb:setRenderClipMask(clip or false)
-	self._textColor = self._text_tb:getTextColor()
+	self._text_tb.transform = Matrix33.identity
+	self._text_tb.renderClipMask = clip or false
+	self._textColor = self._text_tb.textColor
 	self._textHoverColor = nil
 
 	self:setText(text or "")
@@ -132,13 +132,13 @@ end
 
 function Static:_onMouseEnter(event)
 	if self._textHoverColor ~= nil then
-		self._text_tb:setTextColor(self._textHoverColor)
+		self._text_tb.textColor = self._textHoverColor
 	end
 end
 
 function Static:_onMouseLeave(event)
 	if self._textHoverColor ~= nil then
-		self._text_tb:setTextColor(self._textColor)
+		self._text_tb.textColor = self._textColor
 	end
 end
 
