@@ -83,6 +83,8 @@ private:
 	Ref< IBitmap > m_imageState;
 	Ref< IBitmap > m_image;
 	int32_t m_imageCount;
+	Font m_font;
+	Font m_fontBold;
 	Ref< Edit > m_itemEditor;
 	Ref< TreeViewItem > m_editItem;
 	bool m_autoEdit;

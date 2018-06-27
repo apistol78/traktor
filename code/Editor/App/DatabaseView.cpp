@@ -467,6 +467,8 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
 	m_menuInstance->add(new ui::MenuItem(L"-"));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.ListInstanceDependents"), i18n::Text(L"DATABASE_LIST_DEPENDENTS")));
+	m_menuInstance->add(new ui::MenuItem(L"-"));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.ToggleRoot"), i18n::Text(L"DATABASE_TOGGLE_AS_ROOT")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.ToggleFavorite"), i18n::Text(L"DATABASE_TOGGLE_AS_FAVORITE")));
 	m_menuInstance->add(new ui::MenuItem(L"-"));
@@ -490,6 +492,8 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
+	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.ListInstanceDependents"), i18n::Text(L"DATABASE_LIST_DEPENDENTS")));
 	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.ToggleRoot"), i18n::Text(L"DATABASE_TOGGLE_AS_ROOT")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.ToggleFavorite"), i18n::Text(L"DATABASE_TOGGLE_AS_FAVORITE")));
@@ -914,6 +918,10 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		else if (command == L"Editor.Database.FilterInstanceDepends")	// Filter on dependencies
 		{
 			filterDependencies(instance);
+		}
+		else if (command == L"Editor.Database.ListInstanceDependents")
+		{
+			listInstanceDependents(instance);
 		}
 		else if (command == L"Editor.Database.ToggleRoot")	// Toggle root flag.
 		{
@@ -1469,6 +1477,43 @@ void DatabaseView::filterDependencies(db::Instance* instance)
 	m_toolFilterAssets->setToggled(false);
 
 	updateView();
+}
+
+void DatabaseView::listInstanceDependents(db::Instance* instance)
+{
+	if (!instance)
+		return;
+
+	Guid findInstanceGuid = instance->getGuid();
+
+	for (const auto& rootGuid : m_rootInstances)
+	{
+		Ref< db::Instance > rootInstance = m_db->getInstance(rootGuid);
+		if (!rootInstance)
+			continue;
+
+		Ref< IPipelineDependencySet > dependencySet = m_editor->buildAssetDependencies(rootInstance->getObject(), ~0U);
+		if (!dependencySet)
+			continue;
+
+		for (uint32_t j = 0; j < dependencySet->size(); ++j)
+		{
+			const PipelineDependency* dependency = dependencySet->get(j);
+			T_ASSERT (dependency != nullptr);
+
+			if (dependency->sourceInstanceGuid == findInstanceGuid)
+			{
+				for (uint32_t k = 0; k < dependencySet->size(); ++k)
+				{
+					const PipelineDependency* parentDependency = dependencySet->get(k);
+					T_ASSERT (parentDependency != nullptr);
+
+					if (parentDependency->children.find(j) != parentDependency->children.end())
+						log::info << parentDependency->sourceInstanceGuid.format() << Endl;
+				}
+			}
+		}
+	}
 }
 
 void DatabaseView::eventToolSelectionClicked(ui::custom::ToolBarButtonClickEvent* event)

@@ -128,6 +128,8 @@ private:
 
 	void filterDependencies(db::Instance* instance);
 
+	void listInstanceDependents(db::Instance* instance);
+
 	void eventToolSelectionClicked(ui::custom::ToolBarButtonClickEvent* event);
 
 	void eventFilterKey(ui::KeyUpEvent* event);
