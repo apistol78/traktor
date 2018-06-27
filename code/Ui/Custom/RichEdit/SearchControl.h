@@ -29,6 +29,7 @@ class Edit;
 
 class ToolBar;
 class ToolBarButton;
+class ToolBarButtonClickEvent;
 
 class T_DLLCLASS SearchControl : public ui::Container
 {
@@ -38,6 +39,14 @@ public:
 	SearchControl();
 
 	bool create(ui::Widget* parent);
+
+	std::wstring getNeedle() const;
+
+	bool caseSensitive() const;
+
+	bool wholeWord() const;
+
+	bool wildcard() const;
 
 	void setAnyMatchingHint(bool hint);
 
@@ -57,6 +66,10 @@ private:
 	void eventEditSearchKeyDown(ui::KeyDownEvent* event);
 
 	void eventEditChange(ui::ContentChangeEvent* event);
+
+	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
+
+	void eventContentChange(ui::ContentChangeEvent* event);
 };
 
 		}

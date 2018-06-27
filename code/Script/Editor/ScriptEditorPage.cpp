@@ -343,7 +343,11 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.Undo")
 	{
-		if (m_script && m_document->undo())
+		Ref< const PropertyInteger > meta;
+		if (
+			m_script &&
+			m_document->undo(new PropertyInteger(m_edit->getCaretOffset()), meta)
+		)
 		{
 			m_script = m_document->getObject< Script >(0);
 
@@ -358,13 +362,18 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 				else
 					return L"\"\"";
 			}));
+			m_edit->placeCaret(*meta);
 
 			updateBreakpoints();
 		}
 	}
 	else if (command == L"Editor.Redo")
 	{
-		if (m_script && m_document->redo())
+		Ref< const PropertyInteger > meta;
+		if (
+			m_script &&
+			m_document->redo(meta)
+		)
 		{
 			m_script = m_document->getObject< Script >(0);
 
@@ -379,6 +388,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 				else
 					return L"\"\"";
 			}));
+			m_edit->placeCaret(*meta);
 
 			updateBreakpoints();
 		}
@@ -621,7 +631,7 @@ void ScriptEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 	// Update script with text.
 	m_script->setTextDirect(text);
 
-	m_compileCountDown = 10;
+	m_compileCountDown = 3;
 	m_compileStatus->setText(i18n::Text(L"SCRIPT_EDITOR_STATUS_READY"));
 	m_compileStatus->setAlert(false);
 
@@ -687,7 +697,7 @@ void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 		// This is triggered by script change; push for undo here
 		// as we don't want to keep pushing for all input.
 		if (m_document)
-			m_document->push();
+			m_document->push(new PropertyInteger(m_edit->getCaretOffset()));
 
 		if (m_scriptManager)
 		{

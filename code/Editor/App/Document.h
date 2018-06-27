@@ -40,11 +40,11 @@ public:
 
 	virtual void setModified() T_OVERRIDE T_FINAL;
 
-	virtual void push() T_OVERRIDE T_FINAL;
+	virtual void push(const ISerializable* meta) T_OVERRIDE T_FINAL;
 
-	virtual bool undo() T_OVERRIDE T_FINAL;
+	virtual bool undo(const ISerializable* redoMeta, Ref< const ISerializable >* outMeta) T_OVERRIDE T_FINAL;
 
-	virtual bool redo() T_OVERRIDE T_FINAL;
+	virtual bool redo(Ref< const ISerializable >* outMeta) T_OVERRIDE T_FINAL;
 
 	bool save();
 
@@ -59,6 +59,7 @@ private:
 	{
 		RefArray< ISerializable > objects;
 		std::vector< uint32_t > objectHashes;
+		Ref< const ISerializable > meta;
 	};
 
 	RefArray< db::Instance > m_instances;

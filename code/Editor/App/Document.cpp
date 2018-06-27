@@ -77,7 +77,7 @@ void Document::setModified()
 	m_modified = true;
 }
 
-void Document::push()
+void Document::push(const ISerializable* meta)
 {
 	if (!m_undoHistory.empty())
 	{
@@ -100,6 +100,7 @@ void Document::push()
 
 	state.objects.resize(m_objects.size());
 	state.objectHashes.resize(m_objectHashes.size());
+	state.meta = meta;
 
 	for (uint32_t i = 0; i < m_objects.size(); ++i)
 	{
@@ -111,7 +112,7 @@ void Document::push()
 	m_redoHistory.clear();
 }
 
-bool Document::undo()
+bool Document::undo(const ISerializable* redoMeta, Ref< const ISerializable >* outMeta)
 {
 	if (m_undoHistory.empty())
 		return false;
@@ -120,6 +121,7 @@ bool Document::undo()
 
 	redoState.objects.resize(m_objects.size());
 	redoState.objectHashes.resize(m_objectHashes.size());
+	redoState.meta = redoMeta;
 
 	for (uint32_t i = 0; i < m_objects.size(); ++i)
 	{
@@ -133,12 +135,15 @@ bool Document::undo()
 	for (uint32_t i = 0; i < undoState.objects.size(); ++i)
 		m_objects[i] = undoState.objects[i];
 	
+	if (outMeta)
+		*outMeta = undoState.meta;
+
 	m_undoHistory.pop_back();
 
 	return true;
 }
 
-bool Document::redo()
+bool Document::redo(Ref< const ISerializable >* outMeta)
 {
 	if (m_redoHistory.empty())
 		return false;
@@ -146,6 +151,9 @@ bool Document::redo()
 	HistoryState& redoState = m_redoHistory.back();
 	for (uint32_t i = 0; i < redoState.objects.size(); ++i)
 		m_objects[i] = redoState.objects[i];
+
+	if (outMeta)
+		*outMeta = redoState.meta;
 
 	m_redoHistory.pop_back();
 

@@ -246,6 +246,12 @@ private:
 		}
 	};
 
+	struct FindResult
+	{
+		int32_t line;
+		int32_t offset;
+	};
+
 	Ref< ScrollBar > m_scrollBarV;
 	Ref< ScrollBar > m_scrollBarH;
 	Ref< SearchControl > m_searchControl;
@@ -282,6 +288,12 @@ private:
 	void scrollToCaret();
 
 	void santiyCheck();
+
+	void updateFindPreview() const;
+
+	bool findFirstLine(int32_t currentLine, const std::wstring& needle, bool caseSensitive, bool wholeWord, bool wildcard, FindResult& outResult) const;
+
+	bool findNextLine(int32_t currentLine, const std::wstring& needle, bool caseSensitive, bool wholeWord, bool wildcard, FindResult& outResult) const;
 
 	void eventKeyDown(KeyDownEvent* event);
 
