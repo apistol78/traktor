@@ -624,7 +624,27 @@ bool RichEdit::find()
 
 bool RichEdit::findNext()
 {
-	return false;
+	FindResult result;
+
+	std::wstring needle = m_searchControl->getNeedle();
+	bool caseSensitive = m_searchControl->caseSensitive();
+	bool wholeWord = m_searchControl->wholeWord();
+	bool wildcard = m_searchControl->wildcard();
+
+	m_searchControl->setAnyMatchingHint(false);
+
+	int32_t caretLine = getLineFromOffset(getCaretOffset());
+	if (!findNextLine(caretLine, needle, caseSensitive, wholeWord, wildcard, result))
+		return false;
+
+	showLine(result.line);
+	placeCaret(getLineOffset(result.line) + result.offset);
+	for (int32_t i = 0; i < getLineCount(); ++i)
+		setBackgroundAttribute(i, (i == result.line) ? m_foundLineAttribute : 0xffff);
+	setFocus();
+
+	m_searchControl->setAnyMatchingHint(true);
+	return true;
 }
 
 bool RichEdit::replace()
@@ -955,41 +975,140 @@ void RichEdit::santiyCheck()
 	T_FATAL_ASSERT (last == m_text.size());
 }
 
+void RichEdit::updateFindPreview() const
+{
+	FindResult result;
+
+	std::wstring needle = m_searchControl->getNeedle();
+	bool caseSensitive = m_searchControl->caseSensitive();
+	bool wholeWord = m_searchControl->wholeWord();
+	bool wildcard = m_searchControl->wildcard();
+
+	m_searchControl->setAnyMatchingHint(
+		findFirstLine(0, needle, caseSensitive, wholeWord, wildcard, result)
+	);
+}
+
+bool RichEdit::findFirstLine(int32_t currentLine, const std::wstring& needle, bool caseSensitive, bool wholeWord, bool wildcard, FindResult& outResult) const
+{
+	std::wstring ndl = caseSensitive ? needle : toLower(needle);
+	int32_t line = currentLine;
+
+	while (line < getLineCount())
+	{
+		std::wstring text = caseSensitive ? getLine(line) : toLower(getLine(line));
+		size_t p = text.find(needle);
+		if (p != text.npos)
+		{
+			outResult.line = line;
+			outResult.offset = (int32_t)p;
+			return true;
+		}
+		++line;
+	}
+
+	if (line >= getLineCount())
+	{
+		line = 0;
+		while (line < currentLine)
+		{
+			std::wstring text = caseSensitive ? getLine(line) : toLower(getLine(line));
+			size_t p = text.find(needle);
+			if (p != text.npos)
+			{
+				outResult.line = line;
+				outResult.offset = (int32_t)p;
+				return true;
+			}
+			++line;
+		}
+	}
+
+	return false;
+}
+
+bool RichEdit::findNextLine(int32_t currentLine, const std::wstring& needle, bool caseSensitive, bool wholeWord, bool wildcard, FindResult& outResult) const
+{
+	return findFirstLine(
+		(currentLine + 1) % getLineCount(),
+		needle,
+		caseSensitive,
+		wholeWord,
+		wildcard,
+		outResult
+	);
+}
+
 void RichEdit::eventKeyDown(KeyDownEvent* event)
 {
 	int32_t caret = m_caret;
 	bool caretMovement = false;
+	bool manualScrolled = false;
 
 	switch (event->getVirtualKey())
 	{
+	case VkEscape:
+		m_searchControl->hide();
+		break;
+
 	case VkUp:
-		// Move caret up.
-		for (uint32_t i = 1; i < m_lines.size(); ++i)
+		if ((event->getKeyState() & KsControl) == 0)
 		{
-			if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
+			// Move caret up.
+			for (uint32_t i = 1; i < m_lines.size(); ++i)
 			{
-				int32_t offset = m_caret - m_lines[i].start;
-				offset = std::min(offset, m_lines[i - 1].stop - m_lines[i - 1].start);
-				m_caret = m_lines[i - 1].start + offset;
-				break;
+				if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
+				{
+					int32_t offset = m_caret - m_lines[i].start;
+					offset = std::min(offset, m_lines[i - 1].stop - m_lines[i - 1].start);
+					m_caret = m_lines[i - 1].start + offset;
+					break;
+				}
+			}
+			caretMovement = true;
+		}
+		else
+		{
+			// Scroll up.
+			if (m_scrollBarV->isVisible(false))
+			{
+				int32_t position = m_scrollBarV->getPosition();
+				m_scrollBarV->setPosition(position - 1);
+				m_scrollBarV->update();
+				update();
+				manualScrolled = true;
 			}
 		}
-		caretMovement = true;
 		break;
 
 	case VkDown:
-		// Move caret down.
-		for (uint32_t i = 0; i < m_lines.size() - 1; ++i)
+		if ((event->getKeyState() & KsControl) == 0)
 		{
-			if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
+			// Move caret down.
+			for (uint32_t i = 0; i < m_lines.size() - 1; ++i)
 			{
-				int32_t offset = m_caret - m_lines[i].start;
-				offset = std::min(offset, m_lines[i + 1].stop - m_lines[i + 1].start);
-				m_caret = m_lines[i + 1].start + offset;
-				break;
+				if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
+				{
+					int32_t offset = m_caret - m_lines[i].start;
+					offset = std::min(offset, m_lines[i + 1].stop - m_lines[i + 1].start);
+					m_caret = m_lines[i + 1].start + offset;
+					break;
+				}
+			}
+			caretMovement = true;
+		}
+		else
+		{
+			// Scroll down.
+			if (m_scrollBarV->isVisible(false))
+			{
+				int32_t position = m_scrollBarV->getPosition();
+				m_scrollBarV->setPosition(position + 1);
+				m_scrollBarV->update();
+				update();
+				manualScrolled = true;
 			}
 		}
-		caretMovement = true;
 		break;
 
 	case VkLeft:
@@ -1185,7 +1304,10 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 	}
 
 	updateScrollBars();
-	scrollToCaret();
+	
+	if (!manualScrolled)
+		scrollToCaret();
+
 	update();
 	santiyCheck();
 }
@@ -1545,61 +1667,27 @@ void RichEdit::eventScroll(ScrollEvent* event)
 
 void RichEdit::eventSearch(SearchEvent* event)
 {
-	if (!event->isPreview())
+	if (!event->preview())
 	{
+		FindResult result;
+
+		std::wstring needle = m_searchControl->getNeedle();
+		bool caseSensitive = m_searchControl->caseSensitive();
+		bool wholeWord = m_searchControl->wholeWord();
+		bool wildcard = m_searchControl->wildcard();
+
 		int32_t caretLine = getLineFromOffset(getCaretOffset());
-		int32_t line = caretLine;
-
-		while (line < getLineCount())
+		if (findFirstLine(caretLine, needle, caseSensitive, wholeWord, wildcard, result))
 		{
-			std::wstring text = getLine(line);
-			size_t p = text.find(event->getSearch());
-			if (p != text.npos)
-			{
-				showLine(line);
-				placeCaret(getLineOffset(line) + int32_t(p));
-				for (int32_t i = 0; i < getLineCount(); ++i)
-					setBackgroundAttribute(i, (i == line) ? m_foundLineAttribute : 0xffff);
-				break;
-			}
-			++line;
-		}
-
-		if (line >= getLineCount())
-		{
-			line = 0;
-			while (line < caretLine)
-			{
-				std::wstring text = getLine(line);
-				size_t p = text.find(event->getSearch());
-				if (p != text.npos)
-				{
-					showLine(line);
-					placeCaret(getLineOffset(line) + int32_t(p));
-					for (int32_t i = 0; i < getLineCount(); ++i)
-						setBackgroundAttribute(i, (i == line) ? m_foundLineAttribute : 0xffff);
-					break;
-				}
-				++line;
-			}
+			showLine(result.line);
+			placeCaret(getLineOffset(result.line) + result.offset);
+			for (int32_t i = 0; i < getLineCount(); ++i)
+				setBackgroundAttribute(i, (i == result.line) ? m_foundLineAttribute : 0xffff);
+			setFocus();
 		}
 	}
 	else
-	{
-		// See if any match exist in document, update search control hints.
-		bool found = false;
-		for (int32_t line = 0; line < getLineCount(); ++line)
-		{
-			std::wstring text = getLine(line);
-			size_t p = text.find(event->getSearch());
-			if (p != text.npos)
-			{
-				found = true;
-				break;
-			}
-		}
-		m_searchControl->setAnyMatchingHint(found);
-	}
+		updateFindPreview();
 }
 
 		}

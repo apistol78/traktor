@@ -15,6 +15,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Custom/RichEdit/SearchEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor
 {
@@ -44,6 +45,7 @@ bool SearchControl::create(ui::Widget* parent)
 	m_toolBarMode->addImage(new ui::StyleBitmap(L"UI.SearchCaseSensitive"), 1);
 	m_toolBarMode->addImage(new ui::StyleBitmap(L"UI.SearchWholeWord"), 1);
 	m_toolBarMode->addImage(new ui::StyleBitmap(L"UI.SearchWildCard"), 1);
+	m_toolBarMode->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SearchControl::eventToolClick);
 	
 	m_toolCaseSensitive = new ui::custom::ToolBarButton(L"Toggle case sensitive search", 0, ui::Command(L"Script.Editor.ToggleCaseSensitive"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolBarMode->addItem(m_toolCaseSensitive);
@@ -54,7 +56,29 @@ bool SearchControl::create(ui::Widget* parent)
 	m_toolWildCard = new ui::custom::ToolBarButton(L"Toggle wild-card search", 2, ui::Command(L"Script.Editor.ToggleWildCard"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolBarMode->addItem(m_toolWildCard);
 
+	parent->addEventHandler< ui::ContentChangeEvent >(this, &SearchControl::eventContentChange);
+
 	return true;
+}
+
+std::wstring SearchControl::getNeedle() const
+{
+	return m_editSearch->getText();
+}
+
+bool SearchControl::caseSensitive() const
+{
+	return m_toolCaseSensitive->isToggled();
+}
+
+bool SearchControl::wholeWord() const
+{
+	return m_toolWholeWord->isToggled();
+}
+
+bool SearchControl::wildcard() const
+{
+	return m_toolWildCard->isToggled();
 }
 
 void SearchControl::setAnyMatchingHint(bool hint)
@@ -72,6 +96,13 @@ void SearchControl::show()
 {
 	//if (!isVisible(false))
 	//	m_editSearch->setText(m_editor->getSettings()->getProperty< std::wstring >(L"Editor.LastSearch", L""));
+
+	setAnyMatchingHint(true);
+	if (!m_editSearch->getText().empty())
+	{
+		SearchEvent searchEvent(this, true);
+		raiseEvent(&searchEvent);
+	}
 
 	ui::Container::show();
 }
@@ -98,14 +129,7 @@ void SearchControl::eventEditSearchKeyDown(ui::KeyDownEvent* event)
 			//m_editor->checkoutGlobalSettings()->setProperty< PropertyString >(L"Editor.LastSearch", m_editSearch->getText());
 			//m_editor->commitGlobalSettings();
 
-			SearchEvent searchEvent(
-				this,
-				m_editSearch->getText(),
-				m_toolCaseSensitive->isToggled(),
-				m_toolWholeWord->isToggled(),
-				m_toolWildCard->isToggled(),
-				false
-			);
+			SearchEvent searchEvent(this, false);
 			raiseEvent(&searchEvent);
 		}
 	}
@@ -116,14 +140,30 @@ void SearchControl::eventEditChange(ui::ContentChangeEvent* event)
 	setAnyMatchingHint(true);
 	if (!m_editSearch->getText().empty())
 	{
-		SearchEvent searchEvent(
-			this,
-			m_editSearch->getText(),
-			m_toolCaseSensitive->isToggled(),
-			m_toolWholeWord->isToggled(),
-			m_toolWildCard->isToggled(),
-			true
-		);
+		SearchEvent searchEvent(this, true);
+		raiseEvent(&searchEvent);
+	}
+}
+
+void SearchControl::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
+{
+	setAnyMatchingHint(true);
+	if (!m_editSearch->getText().empty())
+	{
+		SearchEvent searchEvent(this, true);
+		raiseEvent(&searchEvent);
+	}
+}
+
+void SearchControl::eventContentChange(ui::ContentChangeEvent* event)
+{
+	if (!isVisible(false))
+		return;
+
+	setAnyMatchingHint(true);
+	if (!m_editSearch->getText().empty())
+	{
+		SearchEvent searchEvent(this, true);
 		raiseEvent(&searchEvent);
 	}
 }

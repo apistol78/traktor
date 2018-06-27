@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_editor_IDocument_H
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -109,20 +110,25 @@ public:
 	/*! \brief Push current state of document.
 	 *
 	 * Push document state onto undo stack.
+	 *
+	 * \param meta Optional meta object associated with this push.
 	 */
-	virtual void push() = 0;
+	virtual void push(const ISerializable* meta) = 0;
 
 	/*! \brief Undo state of document.
 	 *
+	 * \param redoMeta Meta object in case this undo will get redo;ed.
+	 * \param outMeta Meta object associated with pushed state.
 	 * \return True if state recovered.
 	 */
-	virtual bool undo() = 0;
+	virtual bool undo(const ISerializable* redoMeta, Ref< const ISerializable >* outMeta) = 0;
 
 	/*! \brief Redo state of document.
 	 *
+	 * \param outMeta Meta object associated with pushed state.
 	 * \return True if state recovered.
 	 */
-	virtual bool redo() = 0;
+	virtual bool redo(Ref< const ISerializable >* outMeta) = 0;
 
 	/*! \brief Get editing object.
 	 *
@@ -134,6 +140,64 @@ public:
 	T* getObject(uint32_t index) const
 	{
 		return dynamic_type_cast< T* >(getObject(index));
+	}
+
+	/*! \brief Push current state of document.
+	 *
+	 * Push document state onto undo stack.
+	 */
+	void push()
+	{
+		push(nullptr);
+	}
+
+	/*! \brief Undo state of document.
+	 *
+	 * \return True if state recovered.
+	 */
+	bool undo()
+	{
+		return undo(nullptr, nullptr);
+	}
+
+	/*! \brief Undo state of document.
+	 *
+	 * \param redoMeta Meta object in case this undo will get redo;ed.
+	 * \param outMeta Meta object associated with pushed state.
+	 * \return True if state recovered.
+	 */
+	template < typename T >
+	bool undo(const T* redoMeta, Ref< const T >& outMeta)
+	{
+		Ref< const ISerializable > undoMeta;
+		if (!undo(redoMeta, &undoMeta))
+			return false;
+		outMeta = dynamic_type_cast< const T* >(undoMeta);
+		return true;
+	}
+
+	/*! \brief Redo state of document.
+	 *
+	 * \return True if state recovered.
+	 */
+	bool redo()
+	{
+		return redo(nullptr);
+	}
+
+	/*! \brief Redo state of document.
+	 *
+	 * \param outMeta Meta object associated with pushed state.
+	 * \return True if state recovered.
+	 */
+	template < typename T >
+	bool redo(Ref< const T >& outMeta)
+	{
+		Ref< const ISerializable > redoMeta;
+		if (!redo(&redoMeta))
+			return false;
+		outMeta = dynamic_type_cast< const T* >(redoMeta);
+		return true;
 	}
 };
 
