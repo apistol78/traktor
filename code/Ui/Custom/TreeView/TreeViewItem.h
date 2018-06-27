@@ -132,6 +132,7 @@ private:
 	std::wstring m_text;
 	Color4ub m_outlineColor;
 	AlignedVector< Image > m_images;
+	bool m_bold;
 	bool m_expanded;
 	bool m_enabled;
 	bool m_selected;

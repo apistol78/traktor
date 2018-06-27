@@ -542,6 +542,10 @@
       <second>Type</second>
     </item>
     <item>
+      <first>DATABASE_LIST_DEPENDENTS</first>
+      <second>List dependents...</second>
+    </item>
+    <item>
       <first>DATABASE_LOADING_MESSAGE</first>
       <second>Loading database...</second>
     </item>

@@ -50,6 +50,11 @@ bool TreeView::create(Widget* parent, int32_t style)
 
 	m_imageState = new ui::StyleBitmap(L"UI.Tree", c_ResourceTree, sizeof(c_ResourceTree));
 
+	m_font = getFont();
+
+	m_fontBold = m_font;
+	m_fontBold.setBold(true);
+
 	addEventHandler< ScrollEvent >(this, &TreeView::eventScroll);
 	addEventHandler< KeyDownEvent >(this, &TreeView::eventKeyDown);
 	return true;
