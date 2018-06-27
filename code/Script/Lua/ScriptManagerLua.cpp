@@ -1060,8 +1060,20 @@ int ScriptManagerLua::classSetProperty(lua_State* luaState)
 		return 0;
 	}
 
-	Any value = manager->toAny(2);
-	runtimeClass->invokePropertySet(object, propertyId, value);
+#if defined(T_HAVE_CAST_EXCEPTIONS)
+	try
+#endif
+	{
+		Any value = manager->toAny(2);
+		runtimeClass->invokePropertySet(object, propertyId, value);
+	}
+#if defined(T_HAVE_CAST_EXCEPTIONS)
+	catch(const CastException& x)
+	{
+		log::error << L"Unhandled CastException occurred when setting property \"" << mbstows(runtimeClass->getPropertyName(propertyId)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		manager->breakDebugger(luaState);
+	}
+#endif
 
 	return 0;
 }
