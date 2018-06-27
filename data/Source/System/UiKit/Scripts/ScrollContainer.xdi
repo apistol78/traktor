@@ -280,8 +280,8 @@ function ScrollContainer:_onMouseMove(event)
 	self._scroll.y = self._scrollFrom.scrollY - dy
 	self:_clampScrollOffsets()
 
-	self._inner_mc:setX(-self._scroll.x)
-	self._inner_mc:setY(-self._scroll.y)
+	self._inner_mc.X = -self._scroll.x
+	self._inner_mc.Y = -self._scroll.y
 
 	if time > self._scrollFrom.time then
 		local dt = time - self._scrollFrom.time
