@@ -4,8 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_world_WorldRenderSettings_H
-#define traktor_world_WorldRenderSettings_H
+#pragma once
 
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Color4ub.h"
@@ -77,7 +76,6 @@ public:
 	float viewNearZ;
 	float viewFarZ;
 	bool linearLighting;
-	bool occlusionCulling;
 	bool depthPass;
 	ShadowSettings shadowSettings[QuLast];
 	bool fog;
@@ -96,5 +94,3 @@ public:
 
 	}
 }
-
-#endif	// traktor_world_WorldRenderSettings_H
