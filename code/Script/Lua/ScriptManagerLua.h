@@ -68,7 +68,7 @@ public:
 
 	virtual void getStatistics(ScriptStatistics& outStatistics) const T_OVERRIDE T_FINAL;
 
-private:
+//private:
 	friend class ScriptClassLua;
 	friend class ScriptContextLua;
 	friend class ScriptDebuggerLua;

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+--
+-- Expose layers as members for quick and easy access.
+--
+
+Stage = Stage or class("Stage", traktor.amalgam.Stage)
+
+function Stage:new(params, environment)
+	local layers = self:getLayers()
+	for i = 0, layers:size() - 1 do
+		local layer = layers:get(i)
+		if layer.name ~= "" then
+			assert (self[layer.name] == nil)
+			self[layer.name] = layer
+		end
+	end
+end
+
+
+	]]>
+	</text>
+</object>

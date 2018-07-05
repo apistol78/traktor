@@ -10,7 +10,7 @@
 Frame = Frame or class("Frame", Container)
 
 function Frame:new(root_mc, vwidth, vheight, layout)
-	local depth = root_mc:getNextHighestDepth()
+	local depth = root_mc.displayList.nextHighestDepth
 	local mc = root_mc:createEmptyMovieClip("mc", depth)
 	self:_initialize(mc, vwidth, vheight, layout)
 end

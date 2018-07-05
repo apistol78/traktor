@@ -1,4 +1,5 @@
 #include "Core/Class/IRuntimeClass.h"
+#include "Core/Class/IRuntimeDispatch.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -189,9 +190,9 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 			// Remove previous scaffolding.
 			if (m_scaffoldingObject)
 			{
-				uint32_t methodId = findRuntimeClassMethodId(m_scaffoldingClass, "remove");
-				if (methodId != ~0U)
-					m_scaffoldingClass->invoke(m_scaffoldingObject, methodId, 0, 0);
+				const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "remove");
+				if (method != 0)
+					method->invoke(m_scaffoldingObject, 0, 0);
 			}
 
 			// Construct new scaffolding.
@@ -200,7 +201,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 				Any::fromObject(m_resourceManager),
 				Any::fromObject(m_moviePlayer->getMovieInstance())
 			};
-			m_scaffoldingObject = m_scaffoldingClass->construct(0, sizeof_array(argv), argv);
+			m_scaffoldingObject = createRuntimeClassInstance(m_scaffoldingClass, 0, sizeof_array(argv), argv);
 		}
 		else
 			m_scaffoldingObject = 0;
@@ -215,9 +216,9 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 	{
 		if (m_scaffoldingObject)
 		{
-			uint32_t methodId = findRuntimeClassMethodId(m_scaffoldingClass, "update");
-			if (methodId != ~0U)
-				m_scaffoldingClass->invoke(m_scaffoldingObject, methodId, 0, 0);
+			const IRuntimeDispatch* method = findRuntimeClassMethod(m_scaffoldingClass, "update");
+			if (method != 0)
+				method->invoke(m_scaffoldingObject, 0, 0);
 		}
 
 		// Build render context.

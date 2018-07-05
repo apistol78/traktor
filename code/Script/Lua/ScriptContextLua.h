@@ -44,7 +44,7 @@ public:
 
 	virtual Any executeFunction(const std::string& functionName, uint32_t argc, const Any* argv) T_OVERRIDE T_FINAL;
 
-private:
+//private:
 	friend class ScriptClassLua;
 	friend class ScriptDebuggerLua;
 	friend class ScriptDelegateLua;

@@ -5,8 +5,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <cstring>
+#include "Core/Class/AutoVerify.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClass.h"
+#include "Core/Class/IRuntimeDispatch.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
@@ -221,17 +223,22 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	lua_setfield(m_luaState, -2, "__gc");
 
 	// Create "new" callback to be able to instantiate C++ object when creating from script side.
-	lua_pushlightuserdata(m_luaState, (void*)this);
-	lua_pushinteger(m_luaState, classRegistryIndex);
-	lua_pushcclosure(m_luaState, classNew, 2);
-	lua_setfield(m_luaState, -2, "new");
+	if (runtimeClass->getConstructorDispatch())
+	{
+		lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getConstructorDispatch());
+		lua_pushlightuserdata(m_luaState, (void*)this);
+		lua_pushinteger(m_luaState, classRegistryIndex);
+		lua_pushcclosure(m_luaState, classNew, 3);
+		lua_setfield(m_luaState, -2, "new");
+	}
 
 	// Create "__unknown" callback if class handle unknown calls.
-	if (runtimeClass->haveUnknown())
+	if (runtimeClass->getUnknownDispatch())
 	{
+		lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getUnknownDispatch());
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
-		lua_pushcclosure(m_luaState, classCallUnknownMethod, 2);
+		lua_pushcclosure(m_luaState, classCallUnknownMethod, 3);
 		lua_setfield(m_luaState, -2, "__unknown");
 	}
 
@@ -240,7 +247,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	for (uint32_t i = 0; i < staticMethodCount; ++i)
 	{
 		std::string methodName = runtimeClass->getStaticMethodName(i);
-		lua_pushinteger(m_luaState, i);
+		lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getStaticMethodDispatch(i));
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 		lua_pushcclosure(m_luaState, classCallStaticMethod, 3);
@@ -252,7 +259,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	for (uint32_t i = 0; i < methodCount; ++i)
 	{
 		std::string methodName = runtimeClass->getMethodName(i);
-		lua_pushinteger(m_luaState, i);
+		lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getMethodDispatch(i));
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 		lua_pushcclosure(m_luaState, classCallMethod, 3);
@@ -269,7 +276,8 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 		lua_getfield(m_luaState, -1, "__setters");
 		T_FATAL_ASSERT (lua_istable(m_luaState, - 1));
 
-		lua_pushinteger(m_luaState, i);
+		//lua_pushinteger(m_luaState, i);
+		lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getPropertySetDispatch(i));
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 		lua_pushcclosure(m_luaState, classSetProperty, 3);
@@ -281,7 +289,8 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 		lua_getfield(m_luaState, -1, "__getters");
 		T_FATAL_ASSERT (lua_istable(m_luaState, - 1));
 		
-		lua_pushinteger(m_luaState, i);
+		//lua_pushinteger(m_luaState, i);
+		lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getPropertyGetDispatch(i));
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 		lua_pushcclosure(m_luaState, classGetProperty, 3);
@@ -297,25 +306,53 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	lua_pushcclosure(m_luaState, classEqual, 2);
 	lua_setfield(m_luaState, -2, "__eq");
 
-	lua_pushlightuserdata(m_luaState, (void*)this);
-	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
-	lua_pushcclosure(m_luaState, classAdd, 2);
-	lua_setfield(m_luaState, -2, "__add");
+	{
+		const IRuntimeDispatch* addDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::OptAdd);
+		if (addDispatch)
+		{
+			lua_pushlightuserdata(m_luaState, (void*)this);
+			lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
+			lua_pushlightuserdata(m_luaState, (void*)addDispatch);
+			lua_pushcclosure(m_luaState, classAdd, 3);
+			lua_setfield(m_luaState, -2, "__add");
+		}
+	}
 
-	lua_pushlightuserdata(m_luaState, (void*)this);
-	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
-	lua_pushcclosure(m_luaState, classSubtract, 2);
-	lua_setfield(m_luaState, -2, "__sub");
+	{
+		const IRuntimeDispatch* subDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::OptSubtract);
+		if (subDispatch)
+		{
+			lua_pushlightuserdata(m_luaState, (void*)this);
+			lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
+			lua_pushlightuserdata(m_luaState, (void*)subDispatch);
+			lua_pushcclosure(m_luaState, classSubtract, 3);
+			lua_setfield(m_luaState, -2, "__sub");
+		}
+	}
 
-	lua_pushlightuserdata(m_luaState, (void*)this);
-	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
-	lua_pushcclosure(m_luaState, classMultiply, 2);
-	lua_setfield(m_luaState, -2, "__mul");
+	{
+		const IRuntimeDispatch* mulDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::OptMultiply);
+		if (mulDispatch)
+		{
+			lua_pushlightuserdata(m_luaState, (void*)this);
+			lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
+			lua_pushlightuserdata(m_luaState, (void*)mulDispatch);
+			lua_pushcclosure(m_luaState, classMultiply, 3);
+			lua_setfield(m_luaState, -2, "__mul");
+		}
+	}
 
-	lua_pushlightuserdata(m_luaState, (void*)this);
-	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
-	lua_pushcclosure(m_luaState, classDivide, 2);
-	lua_setfield(m_luaState, -2, "__div");
+	{
+		const IRuntimeDispatch* divDispatch = runtimeClass->getOperatorDispatch(IRuntimeClass::OptDivide);
+		if (divDispatch)
+		{
+			lua_pushlightuserdata(m_luaState, (void*)this);
+			lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
+			lua_pushlightuserdata(m_luaState, (void*)divDispatch);
+			lua_pushcclosure(m_luaState, classDivide, 3);
+			lua_setfield(m_luaState, -2, "__div");
+		}
+	}
 
 	rc.classTableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 
@@ -871,11 +908,14 @@ int ScriptManagerLua::classGc(lua_State* luaState)
 
 int ScriptManagerLua::classNew(lua_State* luaState)
 {
-	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (manager);
 
-	int32_t classId = (int32_t)lua_tointeger(luaState, lua_upvalueindex(2));
+	int32_t classId = (int32_t)lua_tointeger(luaState, lua_upvalueindex(3));
 	const RegisteredClass& rc =	manager->m_classRegistry[classId];
+
+	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 
@@ -885,11 +925,11 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 	// Discard all arguments, only instance table in stack.
 	lua_settop(luaState, 1);
 
-#if defined(T_HAVE_CAST_EXCEPTIONS)
+#if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
-		Ref< ITypedObject > object = rc.runtimeClass->construct(0, top - 1, argv);
+		Ref< ITypedObject > object = runtimeDispatch->invoke(0, top - 1, argv).getObject();
 		if (!object)
 			return 0;
 		
@@ -909,10 +949,10 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 		lua_remove(luaState, -2);
 		return 0;
 	}
-#if defined(T_HAVE_CAST_EXCEPTIONS)
-	catch(const CastException& x)
+#if T_VERIFY_USING_EXCEPTIONS
+	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled CastException occurred when calling constructor, class " << rc.runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when calling constructor, class " << rc.runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -922,11 +962,14 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 
 int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 {
-	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (manager);
 
-	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
 	T_ASSERT (runtimeClass);
+
+	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 2)
@@ -942,21 +985,23 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 		return 0;
 	}
 
+	// Convert arguments; first argument should always be method name.
 	Any argv[8];
-	manager->toAny(3, top - 2, argv);
+	argv[0] = Any::fromString(methodName);
+	manager->toAny(3, top - 2, &argv[1]);
 
-#if defined(T_HAVE_CAST_EXCEPTIONS)
+#if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
-		Any returnValue = runtimeClass->invokeUnknown(object, methodName, top - 2, argv);
+		Any returnValue = runtimeDispatch->invoke(object, top - 1, argv);
 		manager->pushAny(returnValue);
 		return 1;
 	}
-#if defined(T_HAVE_CAST_EXCEPTIONS)
-	catch(const CastException& x)
+#if T_VERIFY_USING_EXCEPTIONS
+	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled CastException occurred when calling unknown method \"" << mbstows(methodName) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when calling unknown method \"" << mbstows(methodName) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -969,10 +1014,8 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (manager);
 
-	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-	T_ASSERT (runtimeClass);
-
-	int32_t methodId = (int32_t)lua_tonumber(luaState, lua_upvalueindex(1));
+	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -981,25 +1024,27 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object)
 	{
-		log::error << L"Unable to call method \"" << mbstows(runtimeClass->getMethodName(methodId)) << L"\"; null object" << Endl;
+		const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+		log::error << L"Unable to call method \"" <<mbstows(findRuntimeClassMethodName(runtimeClass, runtimeDispatch)) << L"\"; null object" << Endl;
 		return 0;
 	}
 
 	Any argv[10];
 	manager->toAny(2, top - 1, argv);
 
-#if defined(T_HAVE_CAST_EXCEPTIONS)
+#if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
-		Any returnValue = runtimeClass->invoke(object, methodId, top - 1, argv);
+		Any returnValue = runtimeDispatch->invoke(object, top - 1, argv);
 		manager->pushAny(returnValue);
 		return 1;
 	}
-#if defined(T_HAVE_CAST_EXCEPTIONS)
-	catch(const CastException& x)
+#if T_VERIFY_USING_EXCEPTIONS
+	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled CastException occurred when calling method \"" << mbstows(runtimeClass->getMethodName(methodId)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+		log::error << L"Unhandled RuntimeException occurred when calling method \"" << mbstows(findRuntimeClassMethodName(runtimeClass, runtimeDispatch)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -1012,10 +1057,8 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (manager);
 
-	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-	T_ASSERT (runtimeClass);
-
-	int32_t methodId = (int32_t)lua_tonumber(luaState, lua_upvalueindex(1));
+	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 0)
@@ -1024,18 +1067,19 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 	Any argv[10];
 	manager->toAny(1, top, argv);
 
-#if defined(T_HAVE_CAST_EXCEPTIONS)
+#if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
-		Any returnValue = runtimeClass->invokeStatic(methodId, top, argv);
+		Any returnValue = runtimeDispatch->invoke(0, top, argv);
 		manager->pushAny(returnValue);
 		return 1;
 	}
-#if defined(T_HAVE_CAST_EXCEPTIONS)
-	catch(const CastException& x)
+#if T_VERIFY_USING_EXCEPTIONS
+	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled CastException occurred when calling static method \"" << mbstows(runtimeClass->getStaticMethodName(methodId)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+		log::error << L"Unhandled RuntimeException occurred when calling static method \"" << mbstows(findRuntimeClassMethodName(runtimeClass, runtimeDispatch)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -1048,29 +1092,29 @@ int ScriptManagerLua::classSetProperty(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (manager);
 
-	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-	T_ASSERT (runtimeClass);
-
-	int32_t propertyId = (int32_t)lua_tonumber(luaState, lua_upvalueindex(1));
+	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (runtimeDispatch);
 
 	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object)
 	{
-		log::error << L"Unable to set property \"" << mbstows(runtimeClass->getPropertyName(propertyId)) << L"\"; null object" << Endl;
+		const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+		log::error << L"Unable to set property \"" << mbstows(findRuntimeClassPropertyName(runtimeClass, runtimeDispatch)) << L"\"; null object" << Endl;
 		return 0;
 	}
 
-#if defined(T_HAVE_CAST_EXCEPTIONS)
+#if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
 		Any value = manager->toAny(2);
-		runtimeClass->invokePropertySet(object, propertyId, value);
+		runtimeDispatch->invoke(object, 1, &value);
 	}
-#if defined(T_HAVE_CAST_EXCEPTIONS)
-	catch(const CastException& x)
+#if T_VERIFY_USING_EXCEPTIONS
+	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled CastException occurred when setting property \"" << mbstows(runtimeClass->getPropertyName(propertyId)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+		log::error << L"Unhandled RuntimeException occurred when setting property \"" << mbstows(findRuntimeClassPropertyName(runtimeClass, runtimeDispatch)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -1083,19 +1127,18 @@ int ScriptManagerLua::classGetProperty(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (manager);
 
-	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-	T_ASSERT (runtimeClass);
-
-	int32_t propertyId = (int32_t)lua_tonumber(luaState, lua_upvalueindex(1));
+	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (runtimeDispatch);
 
 	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object)
 	{
-		log::error << L"Unable to get property \"" << mbstows(runtimeClass->getPropertyName(propertyId)) << L"\"; null object" << Endl;
+		const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+		log::error << L"Unable to get property \"" << mbstows(findRuntimeClassPropertyName(runtimeClass, runtimeDispatch)) << L"\"; null object" << Endl;
 		return 0;
 	}
 
-	Any value = runtimeClass->invokePropertyGet(object, propertyId);
+	Any value = runtimeDispatch->invoke(object, 0, 0);
 	manager->pushAny(value);
 
 	return 1;
@@ -1123,8 +1166,11 @@ int ScriptManagerLua::classAdd(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT (manager);
 
-	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (runtimeClass);
+
+	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+	T_ASSERT (runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -1150,18 +1196,18 @@ int ScriptManagerLua::classAdd(lua_State* luaState)
 		return 0;
 	}
 
-#if defined(T_HAVE_CAST_EXCEPTIONS)
+#if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
-		Any returnValue = runtimeClass->invokeOperator(object, 0, arg);
+		Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
 		manager->pushAny(returnValue);
 		return 1;
 	}
-#if defined(T_HAVE_CAST_EXCEPTIONS)
-	catch(const CastException& x)
+#if T_VERIFY_USING_EXCEPTIONS
+	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled CastException occurred when calling add operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when calling add operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -1174,8 +1220,11 @@ int ScriptManagerLua::classSubtract(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT (manager);
 
-	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (runtimeClass);
+
+	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+	T_ASSERT (runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -1190,18 +1239,18 @@ int ScriptManagerLua::classSubtract(lua_State* luaState)
 
 	Any arg = manager->toAny(2);
 
-#if defined(T_HAVE_CAST_EXCEPTIONS)
+#if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
-		Any returnValue = runtimeClass->invokeOperator(object, 1, arg);
+		Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
 		manager->pushAny(returnValue);
 		return 1;
 	}
-#if defined(T_HAVE_CAST_EXCEPTIONS)
-	catch(const CastException& x)
+#if T_VERIFY_USING_EXCEPTIONS
+	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled CastException occurred when calling subtract operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when calling subtract operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -1214,8 +1263,11 @@ int ScriptManagerLua::classMultiply(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT (manager);
 
-	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (runtimeClass);
+
+	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+	T_ASSERT (runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -1241,18 +1293,18 @@ int ScriptManagerLua::classMultiply(lua_State* luaState)
 		return 0;
 	}
 
-#if defined(T_HAVE_CAST_EXCEPTIONS)
+#if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
-		Any returnValue = runtimeClass->invokeOperator(object, 2, arg);
+		Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
 		manager->pushAny(returnValue);
 		return 1;
 	}
-#if defined(T_HAVE_CAST_EXCEPTIONS)
-	catch(const CastException& x)
+#if T_VERIFY_USING_EXCEPTIONS
+	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled CastException occurred when calling multiply operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when calling multiply operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -1265,8 +1317,11 @@ int ScriptManagerLua::classDivide(lua_State* luaState)
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT (manager);
 
-	const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (runtimeClass);
+
+	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+	T_ASSERT (runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -1281,18 +1336,18 @@ int ScriptManagerLua::classDivide(lua_State* luaState)
 
 	Any arg = manager->toAny(2);
 
-#if defined(T_HAVE_CAST_EXCEPTIONS)
+#if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
-		Any returnValue = runtimeClass->invokeOperator(object, 3, arg);
+		Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
 		manager->pushAny(returnValue);
 		return 1;
 	}
-#if defined(T_HAVE_CAST_EXCEPTIONS)
-	catch(const CastException& x)
+#if T_VERIFY_USING_EXCEPTIONS
+	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled CastException occurred when calling divide operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when calling divide operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif

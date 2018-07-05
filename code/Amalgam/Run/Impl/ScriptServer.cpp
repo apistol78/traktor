@@ -16,6 +16,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Class/CastAny.h"
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeClassFactory.h"
+#include "Core/Class/IRuntimeDispatch.h"
 #include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -200,13 +201,13 @@ script::IScriptManager* ScriptServer::getScriptManager()
 
 void ScriptServer::threadExecution(resource::Proxy< IRuntimeClass > scriptClass)
 {
-	Ref< ITypedObject > scriptObject = scriptClass->construct(0, 0, 0);
+	Ref< ITypedObject > scriptObject = createRuntimeClassInstance(scriptClass, 0, 0, 0);
 	if (!scriptObject)
 		return;
 
-	uint32_t runMethodId = findRuntimeClassMethodId(scriptClass, "run");
-	if (runMethodId != ~0U)
-		scriptClass->invoke(scriptObject, runMethodId, 0, 0);
+	const IRuntimeDispatch* runMethod = findRuntimeClassMethod(scriptClass, "run");
+	if (runMethod != 0)
+		runMethod->invoke(scriptObject, 0, 0);
 }
 
 void ScriptServer::threadDebugger()

@@ -4,17 +4,17 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Core/Class/CastException.h"
+#include "Core/Class/RuntimeException.h"
 
 namespace traktor
 {
 
-CastException::CastException(const char* what_)
+RuntimeException::RuntimeException(const char* what_)
 :	m_what(what_)
 {
 }
 
-const char* CastException::what() const throw()
+const char* RuntimeException::what() const throw()
 {
 	return m_what;
 }

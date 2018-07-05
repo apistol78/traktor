@@ -4,29 +4,14 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_CastAny_H
-#define traktor_CastAny_H
+#pragma once
 
 #include "Core/Class/Any.h"
-#include "Core/Class/CastException.h"
 #include "Core/Io/OutputStream.h"
 #include "Core/Meta/Traits.h"
 
 namespace traktor
 {
-
-#if !defined(__ANDROID__) && !defined(__PS3__) && !defined(__PS4__)
-#	define T_CAST_EXCEPTION(condition, message) \
-	if (!(condition)) { \
-		throw CastException((message)); \
-	}
-#	define T_HAVE_CAST_EXCEPTIONS
-#endif
-
-#if !defined(T_CAST_EXCEPTION)
-#	define T_CAST_EXCEPTION(condition, message)
-#	undef T_HAVE_CAST_EXCEPTIONS
-#endif
 
 /*! \name Any cast templates */
 /*! \ingroup Core */
@@ -106,7 +91,6 @@ struct CastAny < int8_t, false >
 		return Any::fromInt32(value);
 	}
 	static int8_t get(const Any& value) {
-		T_CAST_EXCEPTION(value.isNumeric(), "Cannot cast to int8_t; value not numeric");
 		return value.getInt32();
 	}
 };
@@ -125,7 +109,6 @@ struct CastAny < uint8_t, false >
 		return Any::fromInt32(uint8_t(value));
 	}
 	static uint8_t get(const Any& value) {
-		T_CAST_EXCEPTION(value.isNumeric(), "Cannot cast to uint8_t; value not numeric");
 		return (uint8_t)value.getInt32();
 	}
 };
@@ -144,7 +127,6 @@ struct CastAny < int16_t, false >
 		return Any::fromInt32(value);
 	}
 	static int16_t get(const Any& value) {
-		T_CAST_EXCEPTION(value.isNumeric(), "Cannot cast to int16_t; value not numeric");
 		return value.getInt32();
 	}
 };
@@ -163,7 +145,6 @@ struct CastAny < uint16_t, false >
 		return Any::fromInt32(uint16_t(value));
 	}
 	static uint16_t get(const Any& value) {
-		T_CAST_EXCEPTION(value.isNumeric(), "Cannot cast to uint16_t; value not numeric");
 		return (uint16_t)value.getInt32();
 	}
 };
@@ -182,7 +163,6 @@ struct CastAny < int32_t, false >
 		return Any::fromInt32(value);
 	}
 	static int32_t get(const Any& value) {
-		T_CAST_EXCEPTION(value.isNumeric(), "Cannot cast to int32_t; value not numeric");
 		return value.getInt32();
 	}
 };
@@ -201,7 +181,6 @@ struct CastAny < uint32_t, false >
 		return Any::fromInt32(int32_t(value));
 	}
 	static uint32_t get(const Any& value) {
-		T_CAST_EXCEPTION(value.isNumeric(), "Cannot cast to uint32_t; value not numeric");
 		return (uint32_t)value.getInt32();
 	}
 };
@@ -220,7 +199,6 @@ struct CastAny < int64_t, false >
 		return Any::fromInt64(value);
 	}
 	static int64_t get(const Any& value) {
-		T_CAST_EXCEPTION(value.isNumeric(), "Cannot cast to int64_t; value not numeric");
 		return value.getInt64();
 	}
 };
@@ -239,7 +217,6 @@ struct CastAny < uint64_t, false >
 		return Any::fromInt64(int64_t(value));
 	}
 	static uint64_t get(const Any& value) {
-		T_CAST_EXCEPTION(value.isNumeric(), "Cannot cast to uint64_t; value not numeric");
 		return (uint64_t)value.getInt64();
 	}
 };
@@ -258,7 +235,6 @@ struct CastAny < float, false >
 		return Any::fromFloat(value);
 	}
 	static float get(const Any& value) {
-		T_CAST_EXCEPTION(value.isNumeric(), "Cannot cast to float; value not numeric");
 		return value.getFloat();
 	}
 };
@@ -277,7 +253,6 @@ struct CastAny < double, false >
 		return Any::fromFloat(float(value));
 	}
 	static double get(const Any& value) {
-		T_CAST_EXCEPTION(value.isNumeric(), "Cannot cast to double; value not numeric");
 		return double(value.getFloat());
 	}
 };
@@ -290,13 +265,12 @@ struct CastAny < std::string, false >
 		return ss << L"std::string";
 	}
 	static bool accept(const Any& value) {
-		return value.isString();
+		return value.isString() || value.isNumeric();
 	}
 	static Any set(const std::string& value) {
 		return Any::fromString(value);
 	}
 	static std::string get(const Any& value) {
-		T_CAST_EXCEPTION(value.isString() || value.isNumeric(), "Cannot cast to std::string; value not string nor numeric");
 		return value.getString();
 	}
 };
@@ -309,13 +283,12 @@ struct CastAny < const std::string&, false >
 		return ss << L"const std::string&";
 	}
 	static bool accept(const Any& value) {
-		return value.isString();
+		return value.isString() || value.isNumeric();
 	}
 	static Any set(const std::string& value) {
 		return Any::fromString(value);
 	}
 	static std::string get(const Any& value) {
-		T_CAST_EXCEPTION(value.isString() || value.isNumeric(), "Cannot cast to std::string; value not string nor numeric");
 		return value.getString();
 	}
 };
@@ -328,13 +301,12 @@ struct CastAny < const char, true >
 		return ss << L"const char";
 	}
 	static bool accept(const Any& value) {
-		return value.isString();
+		return value.isString() || value.isNumeric();
 	}
 	static Any set(const char* value) {
 		return Any::fromString(value);
 	}
 	static const char* get(const Any& value) {
-		T_CAST_EXCEPTION(value.isString() || value.isNumeric(), "Cannot cast to c-string; value not string nor numeric");
 		return value.getString().c_str();
 	}
 };
@@ -347,13 +319,12 @@ struct CastAny < std::wstring, false >
 		return ss << L"std::wstring";
 	}
 	static bool accept(const Any& value) {
-		return value.isString();
+		return value.isString() || value.isNumeric();
 	}
 	static Any set(const std::wstring& value) {
 		return Any::fromString(value);
 	}
 	static std::wstring get(const Any& value) {
-		T_CAST_EXCEPTION(value.isString() || value.isNumeric(), "Cannot cast to std::wstring; value not string nor numeric");
 		return value.getWideString();
 	}
 };
@@ -366,13 +337,12 @@ struct CastAny < const std::wstring&, false >
 		return ss << L"const std::wstring&";
 	}
 	static bool accept(const Any& value) {
-		return value.isString();
+		return value.isString() || value.isNumeric();
 	}
 	static Any set(const std::wstring& value) {
 		return Any::fromString(value);
 	}
 	static std::wstring get(const Any& value) {
-		T_CAST_EXCEPTION(value.isString() || value.isNumeric(), "Cannot cast to std::wstring; value not string nor numeric");
 		return value.getWideString();
 	}
 };
@@ -385,13 +355,12 @@ struct CastAny < const wchar_t, true >
 		return ss << L"const wchar_t";
 	}
 	static bool accept(const Any& value) {
-		return value.isString();
+		return value.isString() || value.isNumeric();
 	}
 	static Any set(const wchar_t* value) {
 		return Any::fromString(value);
 	}
 	static const wchar_t* get(const Any& value) {
-		T_CAST_EXCEPTION(value.isString() || value.isNumeric(), "Cannot cast to c-wstring; value not string nor numeric");
 		return value.getWideString().c_str();
 	}
 };
@@ -404,24 +373,16 @@ struct CastAny < Ref< Type >, false >
 		return ss << L"Ref< " << type_name< Type >() << L">";
 	}
 	static bool accept(const Any& value) {
-		return value.isObject() && is_a< Type >(value.getObjectUnsafe());
+		return value.isVoid() || (value.isObject() && is_a< Type >(value.getObjectUnsafe()));
 	}
 	static Any set(const Ref< Type >& value) {
 		return Any::fromObject(const_cast< typename IsConst< Type >::type_t* >(value.ptr()));
 	}
 	static Ref< Type > get(const Any& value) {
-		if (value.isVoid())
+		if (!value.isVoid())
+			return static_cast< Type* >(value.getObjectUnsafe());
+		else
 			return 0;
-
-		T_CAST_EXCEPTION(value.isObject(), "Cannot cast to object; value not an object");
-		
-		ITypedObject* ptr = value.getObjectUnsafe();
-		if (!ptr)
-			return 0;
-
-		T_CAST_EXCEPTION(is_a< Type >(ptr), "Cannot cast to object; value is not of correct type");
-
-		return static_cast< Type* >(ptr);
 	}
 };
 
@@ -433,24 +394,16 @@ struct CastAny < const Ref< Type >&, false >
 		return ss << L"const Ref< " << type_name< Type >() << L" >&";
 	}
 	static bool accept(const Any& value) {
-		return value.isObject() && is_a< Type >(value.getObjectUnsafe());
+		return value.isVoid() || (value.isObject() && is_a< Type >(value.getObjectUnsafe()));
 	}
 	static Any set(const Ref< Type >& value) {
 		return Any::fromObject(const_cast< typename IsConst< Type >::type_t* >(value.ptr()));
 	}
 	static Ref< Type > get(const Any& value) {
-		if (value.isVoid())
+		if (!value.isVoid())
+			return static_cast< Type* >(value.getObjectUnsafe());
+		else
 			return 0;
-
-		T_CAST_EXCEPTION(value.isObject(), "Cannot cast to object; value not an object");
-
-		ITypedObject* ptr = value.getObjectUnsafe();
-		if (!ptr)
-			return 0;
-
-		T_CAST_EXCEPTION(is_a< Type >(ptr), "Cannot cast to object; value is not of correct type");
-
-		return static_cast< Type* >(ptr);
 	}
 };
 
@@ -471,15 +424,7 @@ struct CastAny < Type, false >
 		return Any::fromObject(new type_t(value));
 	}
 	static Type get(const Any& value) {
-		T_CAST_EXCEPTION(!value.isVoid(), "Cannot cast to object; value is void");
-		T_CAST_EXCEPTION(value.isObject(), "Cannot cast to object; value not an object");
-
-		ITypedObject* ptr = value.getObjectUnsafe();
-
-		T_CAST_EXCEPTION(ptr, "Cannot cast to object; value is null");
-		T_CAST_EXCEPTION(is_a< type_t* >(ptr), "Cannot cast to object; value is not of correct type");
-
-		return Type(*static_cast< type_t* >(ptr));
+		return Type(*static_cast< type_t* >(value.getObjectUnsafe()));
 	}
 };
 
@@ -494,29 +439,19 @@ struct CastAny < Type, true >
 		return ss << type_name< Type >();
 	}
 	static bool accept(const Any& value) {
-		return value.isObject() && is_a< Type >(value.getObjectUnsafe());
+		return value.isVoid() || (value.isObject() && is_a< Type >(value.getObjectUnsafe()));
 	}
 	static Any set(Type value) {
 		return Any::fromObject((ITypedObject*)(value));
 	}
 	static Type get(const Any& value) {
-		if (value.isVoid())
+		if (!value.isVoid())
+			return static_cast< Type >(value.getObjectUnsafe());
+		else
 			return 0;
-
-		T_CAST_EXCEPTION(value.isObject(), "Cannot cast to object; value not an object");
-
-		ITypedObject* ptr = value.getObjectUnsafe();
-		if (!ptr)
-			return 0;
-
-		T_CAST_EXCEPTION(is_a< Type >(ptr), "Cannot cast to object; value is not of correct type");
-
-		return static_cast< Type >(ptr);
 	}
 };
 
 /*! \} */
 
 }
-
-#endif	// traktor_CastAny_H
