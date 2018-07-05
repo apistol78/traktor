@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include <cstring>
 #include "Core/Class/Any.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
@@ -332,5 +333,46 @@ Any& Any::operator = (Any&& src)
 	return *this;
 }
 #endif
+
+std::wstring Any::format() const
+{
+	StringOutputStream ss;
+
+	ss << L"[";
+
+	switch (m_type)
+	{
+	case AtBoolean:
+		ss << L"bool";
+		break;
+	case AtInt32:
+		ss << L"int32";
+		break;
+	case AtInt64:
+		ss << L"int64";
+		break;
+	case AtFloat:
+		ss << L"float";
+		break;
+	case AtString:
+		ss << L"string";
+		break;
+	default:
+		ss << L"void";
+		break;
+	}
+
+	if (!isVoid())
+	{
+		ss << L";";
+		if (!isObject())
+			ss << getWideString();
+		else
+			ss << type_name(getObjectUnsafe());
+	}
+
+	ss << L"]";
+	return ss.str();
+}
 
 }

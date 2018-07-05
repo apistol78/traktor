@@ -6,7 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #pragma once
 
-#include <exception>
+#include <string>
 #include "Core/Config.h"
 
 // import/export mechanism.
@@ -23,15 +23,15 @@ namespace traktor
 /*! \brief
  * \ingroup Core
  */
-class T_DLLCLASS RuntimeException : public std::exception
+class T_DLLCLASS RuntimeException
 {
 public:
-	RuntimeException(const char* what_);
+	RuntimeException(const std::wstring& what_);
 
-	virtual const char* what() const throw();
+	virtual const std::wstring& what() const throw();
 
 private:
-	const char* m_what;
+	std::wstring m_what;
 };
 
 }
