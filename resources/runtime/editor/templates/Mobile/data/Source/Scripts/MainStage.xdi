@@ -2,13 +2,15 @@
 <object type="traktor.script.Script" version="2">
 	<text>
 	<![CDATA[
+#using \{720C0A68-B608-2F40-8EBA-F7E42EB27F61}
 #using \{FC4400A2-BDB6-BA45-9A22-12B9676E71FA}
 
 -- MainStage
 
-MainStage = MainStage or class("MainStage", traktor.amalgam.Stage)
+MainStage = MainStage or class("MainStage", Stage)
 
 function MainStage:new(params, environment)
+	Stage.new(self, params, environment)
 
 	-- Save input mapping in member for quick access.
 	self.inputMapping = environment.input.inputMapping
@@ -20,7 +22,7 @@ function MainStage:new(params, environment)
 
 	-- Initialize UiKit.
 	Widget.initialize(
-		environment,
+		environment.resource.resourceManager,
 		{ "\{5ABEAE05-EB26-934F-932F-7F3C7C582383}" }
 	)
 
@@ -29,7 +31,7 @@ function MainStage:new(params, environment)
 	self._frame = Frame(
 		root,
 		160, 480,
-		TableLayout.new({ 0 }, { 0 }, 4, 4, 4, 4)
+		TableLayout({ 0 }, { 0 }, 4, 4, 4, 4)
 	)
 
 	-- Create static label.
