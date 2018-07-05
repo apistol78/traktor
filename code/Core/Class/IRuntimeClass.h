@@ -9,7 +9,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Object.h"
 #include "Core/Class/Any.h"
-#include "Core/Containers/SmallMap.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,6 +21,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 namespace traktor
 {
 
+class IRuntimeDispatch;
+
 /*! \brief Runtime class definition.
  * \ingroup Core
  */
@@ -30,20 +31,21 @@ class T_DLLCLASS IRuntimeClass : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum { MaxSignatures = 16 };
-	typedef SmallMap< std::string, Any > prototype_t;
+	/*! \brief Operator types. */
+	enum OperatorType
+	{
+		OptAdd = 0,
+		OptSubtract = 1,
+		OptMultiply = 2,
+		OptDivide = 3,
+		OptCount = 4
+	};
 
 	/*! \brief Get exported native type. */
 	virtual const TypeInfo& getExportType() const = 0;
 
-	/*! \brief Have constructor. */
-	virtual bool haveConstructor() const = 0;
-
-	/*! \brief Have unknown method. */
-	virtual bool haveUnknown() const = 0;
-
-	/*! \brief Construct new object. */
-	virtual Ref< ITypedObject > construct(ITypedObject* self, uint32_t argc, const Any* argv, const prototype_t* proto = 0) const = 0;
+	/*! \brief Get constructor dispatch. */
+	virtual const IRuntimeDispatch* getConstructorDispatch() const = 0;
 
 	/*! \brief Get number of constants. */
 	virtual uint32_t getConstantCount() const = 0;
@@ -60,23 +62,17 @@ public:
 	/*! \brief Get name of exported method. */
 	virtual std::string getMethodName(uint32_t methodId) const = 0;
 
-	/*! \brief Get signature of exported method. */
-	virtual std::wstring getMethodSignature(uint32_t methodId) const = 0;
+	/*! \brief Get dispatcher of exported method. */
+	virtual const IRuntimeDispatch* getMethodDispatch(uint32_t methodId) const = 0;
 
-	/*! \brief Invoke exported method. */
-	virtual Any invoke(ITypedObject* object, uint32_t methodId, uint32_t argc, const Any* argv) const = 0;
-
-	/*! \brief Get exported method count. */
+	/*! \brief Get exported static method count. */
 	virtual uint32_t getStaticMethodCount() const = 0;
 
-	/*! \brief Get name of exported method. */
+	/*! \brief Get name of exported static method. */
 	virtual std::string getStaticMethodName(uint32_t methodId) const = 0;
 
-	/*! \brief Get signature of exported method. */
-	virtual std::wstring getStaticMethodSignature(uint32_t methodId) const = 0;
-
-	/*! \brief Invoke exported static method. */
-	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const = 0;
+	/*! \brief Get dispatcher of exported static method. */
+	virtual const IRuntimeDispatch* getStaticMethodDispatch(uint32_t methodId) const = 0;
 
 	/*! \brief Get exported properties count. */
 	virtual uint32_t getPropertiesCount() const = 0;
@@ -84,26 +80,38 @@ public:
 	/*! \brief Get name of exported property. */
 	virtual std::string getPropertyName(uint32_t propertyId) const = 0;
 
-	/*! \brief Get signature of exported property. */
-	virtual std::wstring getPropertySignature(uint32_t propertyId) const = 0;
+	/*! \brief Get "get" dispatcher of exported property. */
+	virtual const IRuntimeDispatch* getPropertyGetDispatch(uint32_t propertyId) const = 0;
 
-	/*! \brief Invoke property get. */
-	virtual Any invokePropertyGet(ITypedObject* self, uint32_t propertyId) const = 0;
+	/*! \brief Get "set" dispatcher of exported property. */
+	virtual const IRuntimeDispatch* getPropertySetDispatch(uint32_t propertyId) const = 0;
 
-	/*! \brief Invoke property set. */
-	virtual void invokePropertySet(ITypedObject* self, uint32_t propertyId, const Any& value) const = 0;
+	/*! \brief Get math operator. */
+	virtual const IRuntimeDispatch* getOperatorDispatch(OperatorType op) const = 0;
 
 	/*! \brief Invoke unknown method. */
-	virtual Any invokeUnknown(ITypedObject* object, const std::string& methodName, uint32_t argc, const Any* argv) const = 0;
-
-	/*! \brief Invoke math operator. */
-	virtual Any invokeOperator(ITypedObject* object, uint8_t operation, const Any& arg) const = 0;
+	virtual const IRuntimeDispatch* getUnknownDispatch() const = 0;
 };
 
 /*! \brief
  * \ingroup Core
  */
-uint32_t T_DLLCLASS findRuntimeClassMethodId(const IRuntimeClass* runtimeClass, const std::string& methodName);
+Ref< ITypedObject > T_DLLCLASS createRuntimeClassInstance(const IRuntimeClass* runtimeClass, ITypedObject* self, uint32_t argc, const Any* argv);
+
+/*! \brief
+ * \ingroup Core
+ */
+const IRuntimeDispatch T_DLLCLASS * findRuntimeClassMethod(const IRuntimeClass* runtimeClass, const std::string& methodName);
+
+/*! \brief
+ * \ingroup Core
+ */
+std::string T_DLLCLASS findRuntimeClassMethodName(const IRuntimeClass* runtimeClass, const IRuntimeDispatch* methodDispatch);
+
+/*! \brief
+ * \ingroup Core
+ */
+std::string T_DLLCLASS findRuntimeClassPropertyName(const IRuntimeClass* runtimeClass, const IRuntimeDispatch* propertyDispatch);
 
 }
 

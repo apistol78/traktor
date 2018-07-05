@@ -4,11 +4,10 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_CastException_H
-#define traktor_CastException_H
+#pragma once
 
-#include <exception>
-#include "Core/Config.h"
+#include "Core/RefArray.h"
+#include "Core/Class/IRuntimeDispatch.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,20 +20,24 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 namespace traktor
 {
 
-/*! \brief
+/*! \brief Operator dispatch
  * \ingroup Core
+ *
+ * Handle multiple dispatches for same operator.
  */
-class T_DLLCLASS CastException : public std::exception
+class T_DLLCLASS OperatorDispatch : public IRuntimeDispatch
 {
-public:
-	CastException(const char* what_);
+	T_RTTI_CLASS;
 
-	virtual const char* what() const throw();
+public:
+	void add(const IRuntimeDispatch* dispatch);
+
+	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL;
+
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL;
 
 private:
-	const char* m_what;
+	RefArray< const IRuntimeDispatch > m_dispatches;
 };
 
 }
-
-#endif	// traktor_CastException_H

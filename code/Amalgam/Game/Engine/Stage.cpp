@@ -13,6 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Amalgam/Game/Engine/StageLoader.h"
 #include "Amalgam/Game/Engine/StageState.h"
 #include "Core/Class/IRuntimeClass.h"
+#include "Core/Class/IRuntimeDispatch.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -70,14 +71,14 @@ void Stage::destroy()
 
 	if (m_object)
 	{
-		uint32_t methodIdFinalize = findRuntimeClassMethodId(m_class, "finalize");
-		if (m_initialized && methodIdFinalize != ~0U)
+		const IRuntimeDispatch* methodFinalize = findRuntimeClassMethod(m_class, "finalize");
+		if (m_initialized && methodFinalize != 0)
 		{
 			Any argv[] =
 			{
 				Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
 			};
-			m_class->invoke(m_object, methodIdFinalize, sizeof_array(argv), argv);
+			methodFinalize->invoke(m_object, sizeof_array(argv), argv);
 		}
 		m_object = 0;
 		m_class.clear();
@@ -161,9 +162,9 @@ Any Stage::invokeScript(const std::string& fn, uint32_t argc, const Any* argv)
 
 	if (m_object)
 	{
-		uint32_t methodId = findRuntimeClassMethodId(m_class, fn);
-		if (methodId != ~0U)
-			return m_class->invoke(m_object, methodId, argc, argv);
+		const IRuntimeDispatch* method = findRuntimeClassMethod(m_class, fn);
+		if (method != 0)
+			return method->invoke(m_object, sizeof_array(argv), argv);
 	}
 	
 	if (m_scriptContext)
@@ -242,10 +243,10 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 
 			if (m_object)
 			{
-				uint32_t methodIdUpdate = findRuntimeClassMethodId(m_class, "update");
-				if (methodIdUpdate != ~0U)
+				const IRuntimeDispatch* methodUpdate = findRuntimeClassMethod(m_class, "update");
+				if (methodUpdate != 0)
 				{
-					T_MEASURE_STATEMENT(m_class->invoke(m_object, methodIdUpdate, sizeof_array(argv), argv), 1.0 / 60.0);
+					T_MEASURE_STATEMENT(methodUpdate->invoke(m_object, sizeof_array(argv), argv), 1.0 / 60.0);
 				}
 			}
 
@@ -271,10 +272,10 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 
 			if (m_object)
 			{
-				uint32_t methodIdPostUpdate = findRuntimeClassMethodId(m_class, "postUpdate");
-				if (methodIdPostUpdate != ~0U)
+				const IRuntimeDispatch* methodPostUpdate = findRuntimeClassMethod(m_class, "postUpdate");
+				if (methodPostUpdate != 0)
 				{
-					T_MEASURE_STATEMENT(m_class->invoke(m_object, methodIdPostUpdate, sizeof_array(argv), argv), 1.0 / 60.0);
+					T_MEASURE_STATEMENT(methodPostUpdate->invoke(m_object, sizeof_array(argv), argv), 1.0 / 60.0);
 				}
 			}
 
@@ -371,9 +372,9 @@ void Stage::postReconfigured()
 
 	if (m_object && m_initialized)
 	{
-		uint32_t methodIdReconfigured = findRuntimeClassMethodId(m_class, "reconfigured");
-		if (methodIdReconfigured != ~0U)
-			m_class->invoke(m_object, methodIdReconfigured, 0, 0);
+		const IRuntimeDispatch* methodReconfigured = findRuntimeClassMethod(m_class, "reconfigured");
+		if (methodReconfigured != 0)
+			methodReconfigured->invoke(m_object, 0, 0);
 	}
 
 	if (m_scriptContext && m_initialized)
@@ -387,9 +388,9 @@ void Stage::suspend()
 {
 	if (m_object && m_initialized)
 	{
-		uint32_t methodIdSuspend = findRuntimeClassMethodId(m_class, "suspend");
-		if (methodIdSuspend != ~0U)
-			m_class->invoke(m_object, methodIdSuspend, 0, 0);
+		const IRuntimeDispatch* methodSuspend = findRuntimeClassMethod(m_class, "suspend");
+		if (methodSuspend != 0)
+			methodSuspend->invoke(m_object, 0, 0);
 	}
 
 	if (m_scriptContext && m_initialized)
@@ -409,9 +410,9 @@ void Stage::resume()
 
 	if (m_object && m_initialized)
 	{
-		uint32_t methodIdResume = findRuntimeClassMethodId(m_class, "resume");
-		if (methodIdResume != ~0U)
-			m_class->invoke(m_object, methodIdResume, 0, 0);
+		const IRuntimeDispatch* methodResume = findRuntimeClassMethod(m_class, "resume");
+		if (methodResume != 0)
+			methodResume->invoke(m_object, 0, 0);
 	}
 
 	if (m_scriptContext && m_initialized)
@@ -434,12 +435,12 @@ bool Stage::validateScriptContext()
 		if (m_class)
 		{
 			// Define members, do this as a prototype as we possibly want to access those in the constructor.
-			IRuntimeClass::prototype_t proto;
-			for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			{
-				if (!(*i)->getName().empty())
-					proto[wstombs((*i)->getName())] = Any::fromObject(*i);
-			}
+			//IRuntimeClass::prototype_t proto;
+			//for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+			//{
+			//	if (!(*i)->getName().empty())
+			//		proto[wstombs((*i)->getName())] = Any::fromObject(*i);
+			//}
 
 			// Call script constructor.
 			Any argv[] =
@@ -447,7 +448,8 @@ bool Stage::validateScriptContext()
 				Any::fromObject(const_cast< Object* >(m_params.c_ptr())),
 				Any::fromObject(m_environment)
 			};
-			m_object = m_class->construct(this, sizeof_array(argv), argv, &proto);
+			//m_object = m_class->construct(this, sizeof_array(argv), argv, &proto);
+			m_object = createRuntimeClassInstance(m_class, this, sizeof_array(argv), argv);
 		}
 
 		if (m_scriptContext)

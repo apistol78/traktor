@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Class/IRuntimeClass.h"
+#include "Core/Class/IRuntimeDispatch.h"
 #include "World/Entity.h"
 #include "World/Entity/ScriptComponent.h"
 
@@ -18,7 +19,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ScriptComponent", ScriptComponent, IEntit
 ScriptComponent::ScriptComponent(const resource::Proxy< IRuntimeClass >& clazz)
 :	m_owner(0)
 ,	m_class(clazz)
-,	m_methodUpdate(~0U)
 {
 }
 
@@ -27,15 +27,15 @@ void ScriptComponent::destroy()
 	m_owner = 0;
 	m_class.clear();
 	m_object = 0;
-	m_methodUpdate = ~0U;
+	m_methodUpdate = 0;
 }
 
 void ScriptComponent::setOwner(Entity* owner)
 {
 	T_ASSERT (m_owner == 0);
 	m_owner = owner;
-	m_object = m_class->construct(m_owner, 0, 0);
-	m_methodUpdate = findRuntimeClassMethodId(m_class, "update");
+	m_object = createRuntimeClassInstance(m_class, m_owner, 0, 0);
+	m_methodUpdate = findRuntimeClassMethod(m_class, "update");
 	m_class.consume();
 }
 
@@ -55,20 +55,20 @@ void ScriptComponent::update(const UpdateParams& update)
 	// Check if class has changed, hot-reload new class.
 	if (m_class.changed())
 	{
-		m_object = m_class->construct(m_owner, 0, 0);
-		m_methodUpdate = findRuntimeClassMethodId(m_class, "update");
+		m_object = createRuntimeClassInstance(m_class, m_owner, 0, 0);
+		m_methodUpdate = findRuntimeClassMethod(m_class, "update");
 		m_class.consume();
 	}
 
 	// Invoke update method if available.
-	if (m_class && m_object && m_methodUpdate != ~0U)
+	if (m_class && m_object && m_methodUpdate != 0)
 	{
 		Any argv[] =
 		{
 			Any::fromFloat(update.totalTime),
 			Any::fromFloat(update.deltaTime)
 		};
-		m_class->invoke(m_object, m_methodUpdate, sizeof_array(argv), argv);
+		m_methodUpdate->invoke(m_object, sizeof_array(argv), argv);
 	}
 }
 

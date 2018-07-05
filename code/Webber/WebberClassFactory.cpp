@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Class/IRuntimeDelegate.h"
+#include "Core/Class/IRuntimeDispatch.h"
 #include "Core/Class/IRuntimeObject.h"
 #include "Core/Io/IStream.h"
 #include "Html/Element.h"
@@ -37,8 +38,6 @@ class Application : public IApplication
 public:
 	Application(IRuntimeObject* app)
 	:	m_app(app)
-	,	m_methodIdGetRootWidget(~0U)
-	,	m_methodIdResolve(~0U)
 	{
 	}
 
@@ -47,8 +46,8 @@ public:
 		if (!(m_appClass = m_app->getRuntimeClass()))
 			return false;
 
-		m_methodIdGetRootWidget = findRuntimeClassMethodId(m_appClass, "getRootWidget");
-		m_methodIdResolve = findRuntimeClassMethodId(m_appClass, "resolve");
+		m_methodGetRootWidget = findRuntimeClassMethod(m_appClass, "getRootWidget");
+		m_methodResolve = findRuntimeClassMethod(m_appClass, "resolve");
 
 		return true;
 	}
@@ -60,17 +59,17 @@ public:
 
 	virtual Widget* getRootWidget() const T_OVERRIDE T_FINAL
 	{
-		if (!m_appClass || m_methodIdGetRootWidget == ~0U)
+		if (!m_appClass || m_methodGetRootWidget == 0)
 			return 0;
 
 		return CastAny< Widget* >::get(
-			m_appClass->invoke(m_app, m_methodIdGetRootWidget, 0, 0)
+			m_methodGetRootWidget->invoke(m_app, 0, 0)
 		);
 	}
 
 	virtual Ref< IStream > resolve(const std::wstring& uri) const T_OVERRIDE T_FINAL
 	{
-		if (!m_appClass || m_methodIdResolve == ~0U)
+		if (!m_appClass || m_methodResolve == 0)
 			return 0;
 
 		Any argv[] =
@@ -79,15 +78,15 @@ public:
 		};
 
 		return CastAny< IStream* >::get(
-			m_appClass->invoke(m_app, m_methodIdResolve, sizeof_array(argv), argv)
+			m_methodResolve->invoke(m_app, sizeof_array(argv), argv)
 		);
 	}
 
 private:
 	Ref< IRuntimeObject > m_app;
 	Ref< const IRuntimeClass > m_appClass;
-	uint32_t m_methodIdGetRootWidget;
-	uint32_t m_methodIdResolve;
+	Ref< const IRuntimeDispatch > m_methodGetRootWidget;
+	Ref< const IRuntimeDispatch > m_methodResolve;
 };
 
 Event* Button_get_clicked(Button* self)

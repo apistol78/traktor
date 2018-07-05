@@ -22,6 +22,7 @@ namespace traktor
 {
 
 class IRuntimeClass;
+class IRuntimeDispatch;
 
 	namespace world
 	{
@@ -52,7 +53,7 @@ private:
 	Entity* m_owner;
 	resource::Proxy< IRuntimeClass > m_class;
 	Ref< ITypedObject > m_object;
-	uint32_t m_methodUpdate;
+	Ref< const IRuntimeDispatch > m_methodUpdate;
 };
 
 	}

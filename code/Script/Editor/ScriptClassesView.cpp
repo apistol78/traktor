@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Class/IRuntimeClassFactory.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
+#include "Core/Class/IRuntimeDispatch.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/Split.h"
@@ -63,8 +64,8 @@ public:
 			0
 		);
 
-		if (runtimeClass->haveConstructor())
-			m_treeClasses->createItem(classItem, L"(ctor)", 0);
+		//if (runtimeClass->haveConstructor())
+		//	m_treeClasses->createItem(classItem, L"(ctor)", 0);
 
 		for (uint32_t i = 0; i < runtimeClass->getConstantCount(); ++i)
 		{
@@ -75,10 +76,14 @@ public:
 
 		for (uint32_t i = 0; i < runtimeClass->getPropertiesCount(); ++i)
 		{
-			std::wstring signature = runtimeClass->getPropertySignature(i);
+			ss.reset();
+			if (runtimeClass->getPropertyGetDispatch(i))
+				runtimeClass->getPropertyGetDispatch(i)->signature(ss);
+			else if (runtimeClass->getPropertySetDispatch(i))
+				runtimeClass->getPropertySetDispatch(i)->signature(ss);
 
 			std::vector< std::wstring > s;
-			Split< std::wstring >::any(signature, L",", s, true);
+			Split< std::wstring >::any(ss.str(), L",", s, true);
 			T_FATAL_ASSERT(s.size() >= 1);
 
 			ss.reset();
@@ -89,10 +94,11 @@ public:
 
 		for (uint32_t i = 0; i < runtimeClass->getMethodCount(); ++i)
 		{
-			std::wstring signature = runtimeClass->getMethodSignature(i);
+			ss.reset();
+			runtimeClass->getMethodDispatch(i)->signature(ss);
 
 			std::vector< std::wstring > s;
-			Split< std::wstring >::any(signature, L",", s, true);
+			Split< std::wstring >::any(ss.str(), L",", s, true);
 			T_FATAL_ASSERT (s.size() >= 1);
 
 			ss.reset();
@@ -106,10 +112,11 @@ public:
 
 		for (uint32_t i = 0; i < runtimeClass->getStaticMethodCount(); ++i)
 		{
-			std::wstring signature = runtimeClass->getStaticMethodSignature(i);
+			ss.reset();
+			runtimeClass->getStaticMethodDispatch(i)->signature(ss);
 
 			std::vector< std::wstring > s;
-			Split< std::wstring >::any(signature, L",", s, true);
+			Split< std::wstring >::any(ss.str(), L",", s, true);
 			T_FATAL_ASSERT (s.size() >= 1);
 
 			ss.reset();
