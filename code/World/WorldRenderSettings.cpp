@@ -50,13 +50,12 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 24, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 25, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
 ,	viewFarZ(100.0f)
 ,	linearLighting(true)
-,	occlusionCulling(false)
 ,	depthPass(true)
 ,	fog(false)
 ,	fogDistanceY(0.0f)
@@ -77,12 +76,20 @@ void WorldRenderSettings::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 23)
 	{
-		s >> Member< bool >(L"occlusionCulling", occlusionCulling);
+		if (s.getVersion() < 25)
+		{
+			bool dummy = false;
+			s >> Member< bool >(L"occlusionCulling", dummy);
+		}
 		s >> Member< bool >(L"depthPass", depthPass);
 	}
 	else
 	{
-		s >> Member< bool >(L"occlusionCullingEnabled", occlusionCulling);
+		if (s.getVersion() < 25)
+		{
+			bool dummy = false;
+			s >> Member< bool >(L"occlusionCulling", dummy);
+		}
 		s >> Member< bool >(L"depthPassEnabled", depthPass);
 	}
 
