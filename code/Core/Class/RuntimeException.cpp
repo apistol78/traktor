@@ -9,12 +9,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 namespace traktor
 {
 
-RuntimeException::RuntimeException(const char* what_)
+RuntimeException::RuntimeException(const std::wstring& what_)
 :	m_what(what_)
 {
 }
 
-const char* RuntimeException::what() const throw()
+const std::wstring& RuntimeException::what() const throw()
 {
 	return m_what;
 }

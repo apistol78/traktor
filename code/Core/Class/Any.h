@@ -135,6 +135,8 @@ public:
 	Any& operator = (Any&& src);
 #endif
 
+	std::wstring format() const;
+
 private:
 	union AnyData
 	{

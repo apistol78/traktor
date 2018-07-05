@@ -952,7 +952,7 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 #if T_VERIFY_USING_EXCEPTIONS
 	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled RuntimeException occurred when calling constructor, class " << rc.runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when calling constructor, class " << rc.runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -1001,7 +1001,7 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 #if T_VERIFY_USING_EXCEPTIONS
 	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled RuntimeException occurred when calling unknown method \"" << mbstows(methodName) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when calling unknown method \"" << mbstows(methodName) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -1044,7 +1044,7 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	catch(const RuntimeException& x)
 	{
 		const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-		log::error << L"Unhandled RuntimeException occurred when calling method \"" << mbstows(findRuntimeClassMethodName(runtimeClass, runtimeDispatch)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when calling method \"" << mbstows(findRuntimeClassMethodName(runtimeClass, runtimeDispatch)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -1079,7 +1079,7 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 	catch(const RuntimeException& x)
 	{
 		const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-		log::error << L"Unhandled RuntimeException occurred when calling static method \"" << mbstows(findRuntimeClassMethodName(runtimeClass, runtimeDispatch)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when calling static method \"" << mbstows(findRuntimeClassMethodName(runtimeClass, runtimeDispatch)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -1114,7 +1114,7 @@ int ScriptManagerLua::classSetProperty(lua_State* luaState)
 	catch(const RuntimeException& x)
 	{
 		const IRuntimeClass* runtimeClass = reinterpret_cast< IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-		log::error << L"Unhandled RuntimeException occurred when setting property \"" << mbstows(findRuntimeClassPropertyName(runtimeClass, runtimeDispatch)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when setting property \"" << mbstows(findRuntimeClassPropertyName(runtimeClass, runtimeDispatch)) << L"\", class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -1207,7 +1207,7 @@ int ScriptManagerLua::classAdd(lua_State* luaState)
 #if T_VERIFY_USING_EXCEPTIONS
 	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled RuntimeException occurred when calling add operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when calling add operator, class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -1250,7 +1250,7 @@ int ScriptManagerLua::classSubtract(lua_State* luaState)
 #if T_VERIFY_USING_EXCEPTIONS
 	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled RuntimeException occurred when calling subtract operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when calling subtract operator, class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -1304,7 +1304,7 @@ int ScriptManagerLua::classMultiply(lua_State* luaState)
 #if T_VERIFY_USING_EXCEPTIONS
 	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled RuntimeException occurred when calling multiply operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when calling multiply operator, class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
@@ -1347,7 +1347,7 @@ int ScriptManagerLua::classDivide(lua_State* luaState)
 #if T_VERIFY_USING_EXCEPTIONS
 	catch(const RuntimeException& x)
 	{
-		log::error << L"Unhandled RuntimeException occurred when calling divide operator, class " << runtimeClass->getExportType().getName() << L"; \"" << mbstows(x.what()) << L"\"." << Endl;
+		log::error << L"Unhandled RuntimeException occurred when calling divide operator, class " << runtimeClass->getExportType().getName() << L"; \"" << x.what() << L"\"." << Endl;
 		manager->breakDebugger(luaState);
 	}
 #endif
