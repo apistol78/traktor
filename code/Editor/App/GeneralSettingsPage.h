@@ -48,6 +48,7 @@ private:
 	Ref< ui::CheckBox > m_checkBuildWhenAssetModified;
 	Ref< ui::CheckBox > m_checkBuildAfterBrowseInstance;
 	Ref< ui::CheckBox > m_checkPropertyHelpVisible;
+	Ref< ui::CheckBox > m_checkShowNewLogTargets;
 };
 
 	}
