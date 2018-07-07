@@ -80,6 +80,9 @@ bool executeRequest(const wchar_t* const method, const net::Url& url, const IHtt
 	if (!outResponse->parse(outStream))
 		return false;
 
+	// Reset offset in stream to origin.
+	outStream->seek(IStream::SeekSet, 0);
+
 	// Create chunked-transfer stream if such encoding is required.
 	if (outResponse->get(L"Transfer-Encoding") == L"chunked")
 		outStream = new HttpChunkStream(outStream);
