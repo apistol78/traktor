@@ -137,6 +137,7 @@ bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet)
 bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	RenderTargetSetCapture* rtsc = mandatory_non_null_type_cast< RenderTargetSetCapture* >(renderTargetSet);
+	T_CAPTURE_ASSERT (rtsc->haveColorTexture(renderTarget), L"No such render target.");
 
 	if (!m_renderView->begin(rtsc->getRenderTargetSet(), renderTarget))
 		return false;
