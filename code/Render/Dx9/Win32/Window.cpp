@@ -104,7 +104,19 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 		windowHeight = (windowHeight - realClientHeight) + height;
 		SetWindowPos(m_hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOMOVE | SWP_NOZORDER);
 	}
-	
+
+	// Ensure window is shown when starting from editor.
+    HWND hCurWnd = GetForegroundWindow();
+    DWORD dwMyID = GetCurrentThreadId();
+    DWORD dwCurID = GetWindowThreadProcessId(hCurWnd, NULL);
+    AttachThreadInput(dwCurID, dwMyID, TRUE);
+    SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+    SetWindowPos(m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+    SetForegroundWindow(m_hWnd);
+    AttachThreadInput(dwCurID, dwMyID, FALSE);
+    SetFocus(m_hWnd);
+    SetActiveWindow(m_hWnd);
+
 	m_fullScreen = false;
 }
 
