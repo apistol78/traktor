@@ -182,13 +182,14 @@ bool WorldRendererForward::create(
 
 		// Create shadow map target.
 		render::RenderTargetSetCreateDesc rtscd;
-		rtscd.count = 1;
+		rtscd.count = 0;
 		rtscd.width =
 		rtscd.height = resolution;
 		rtscd.multiSample = 0;
 		rtscd.createDepthStencil = true;
+		rtscd.usingDepthStencilAsTexture = true;
 		rtscd.usingPrimaryDepthStencil = false;
-		rtscd.targets[0].format = render::TfR16F;
+		rtscd.ignoreStencil = true;
 		rtscd.preferTiled = true;
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(rtscd);
 
@@ -673,10 +674,9 @@ void WorldRendererForward::render(int frame, render::EyeType eye)
 				shadowProgramParams.endParameters(m_globalContext);
 
 				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
-				if (m_renderView->begin(m_shadowTargetSet, 0))
+				if (m_renderView->begin(m_shadowTargetSet))
 				{
-					const Color4f maskClear(1.0f, 1.0f, 1.0f, 1.0f);
-					m_renderView->clear(render::CfColor | render::CfDepth, &maskClear, 1.0f, 0);
+					m_renderView->clear(render::CfDepth, 0, 1.0f, 0);
 					f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RpOpaque, &shadowProgramParams);
 					m_renderView->end();
 				}

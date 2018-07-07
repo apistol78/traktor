@@ -46,6 +46,10 @@ public:
 
 	RenderTargetSet* getRenderTargetSet() const { return m_renderTargetSet; }
 
+	bool haveColorTexture(int index) const;
+
+	bool haveDepthTexture() const;
+
 private:
 	Ref< RenderTargetSet > m_renderTargetSet;
 	mutable Ref< SimpleTextureCapture > m_colorTextures[4];

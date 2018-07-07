@@ -123,5 +123,17 @@ bool RenderTargetSetCapture::read(int index, void* buffer) const
 	return m_renderTargetSet ? m_renderTargetSet->read(index, buffer) : false;
 }
 
+bool RenderTargetSetCapture::haveColorTexture(int index) const
+{
+	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+	return m_renderTargetSet ? m_renderTargetSet->getColorTexture(index) != 0 : false;	
+}
+
+bool RenderTargetSetCapture::haveDepthTexture() const
+{
+	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+	return m_renderTargetSet ? m_renderTargetSet->getDepthTexture() != 0 : false;
+}
+
 	}
 }
