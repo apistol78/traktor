@@ -961,7 +961,12 @@ Ref< ILogTarget > EditorForm::createLogTarget(const std::wstring& title)
 
 		Ref< ui::TabPage > activePage = m_tabOutput->getActivePage();
 		m_tabOutput->addPage(tabPageLog);
-		m_tabOutput->setActivePage(activePage);
+
+		if (m_globalSettings->getProperty< bool >(L"Editor.ShowNewLogTargets"))
+			m_tabOutput->setActivePage(tabPageLog);
+		else
+			m_tabOutput->setActivePage(activePage);
+
 		m_tabOutput->update();
 
 		m_logTargets[title] = logView->getLogTarget();

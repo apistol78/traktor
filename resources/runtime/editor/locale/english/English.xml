@@ -986,6 +986,10 @@
       <second>Help section visible in property view</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_SHOW_NEW_LOG_TARGETS</first>
+      <second>Show new log targets automatically</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_REMOVE_MODULE</first>
       <second>Remove module</second>
     </item>

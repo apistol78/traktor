@@ -121,6 +121,10 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	m_checkPropertyHelpVisible->create(container, i18n::Text(L"EDITOR_SETTINGS_PROPERTY_HELP_VISIBLE"));
 	m_checkPropertyHelpVisible->setChecked(settings->getProperty< bool >(L"Editor.PropertyHelpVisible"));
 
+	m_checkShowNewLogTargets = new ui::CheckBox();
+	m_checkShowNewLogTargets->create(container, i18n::Text(L"EDITOR_SETTINGS_SHOW_NEW_LOG_TARGETS"));
+	m_checkShowNewLogTargets->setChecked(settings->getProperty< bool >(L"Editor.ShowNewLogTargets"));
+
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_GENERAL"));
 	return true;
 }
@@ -141,6 +145,7 @@ bool GeneralSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified", m_checkBuildWhenAssetModified->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildAfterBrowseInstance", m_checkBuildAfterBrowseInstance->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.PropertyHelpVisible", m_checkPropertyHelpVisible->isChecked());
+	settings->setProperty< PropertyBoolean >(L"Editor.ShowNewLogTargets", m_checkShowNewLogTargets->isChecked());
 	return true;
 }
 
