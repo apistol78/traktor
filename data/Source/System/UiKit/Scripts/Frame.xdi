@@ -9,6 +9,10 @@
 
 Frame = Frame or class("Frame", Container)
 
+#if defined(_DEBUG)
+Frame.ShowDebugCursor = false
+#endif
+
 function Frame:new(root_mc, vwidth, vheight, layout)
 	local depth = root_mc.displayList.nextHighestDepth
 	local mc = root_mc:createEmptyMovieClip("mc", depth)
@@ -90,8 +94,10 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	mouse:addListener(self._mouseListener)
 
 #if defined(_DEBUG)
-	self._mc_debug = Widget._createResource(self, "MC_DebugMarker")
-	self._tb_position = self._mc_debug:getMember("tb_position")
+	if Frame.ShowDebugCursor then
+		self._mc_debug = Widget._createResource(self, "MC_DebugMarker")
+		self._tb_position = self._mc_debug:getMember("tb_position")
+	end
 #endif
 end
 
@@ -112,8 +118,10 @@ end
 function Frame:_eventMouseMove()
 	local pt = self:getMousePosition()
 #if defined(_DEBUG)
-	self._mc_debug.position = Vector2(pt.x, pt.y)
-	self._tb_position:parseText(pt.x .. ";" .. pt.y)
+	if Frame.ShowDebugCursor then
+		self._mc_debug.position = Vector2(pt.x, pt.y)
+		self._tb_position:parseText(pt.x .. ";" .. pt.y)
+	end
 #endif
 	self:_dispatchEvent(MouseMoveEvent(pt.x, pt.y))
 end
