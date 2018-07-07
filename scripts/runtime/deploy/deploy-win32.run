@@ -241,7 +241,7 @@ local function deployShared(args)
 		end
 		if deployFiles ~= "" then
 			run:pushd(p)
-			run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles) -- , nil)
+			run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, nil)
 			run:popd()
 			if run:exitCode() ~= 0 then return run:exitCode() end
 		end
