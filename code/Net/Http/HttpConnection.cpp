@@ -13,6 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	include "Net/SocketAddressIPv4.h"
 #endif
 #include "Net/SocketStream.h"
+#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/StreamStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/FileOutputStream.h"
@@ -58,19 +59,28 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 		resource += L"#" + ref;
 
 	// Create request header.
-	StringOutputStream ss;
-	ss << L"GET " << resource << L" HTTP/1.1\r\n";
-	ss << L"Host: " << url.getHost() << L"\r\n";
-	ss << L"User-Agent: traktor/1.0\r\n";
-	ss << L"Accept: */*\r\n";
-	ss << L"X-Requested-With: XMLHttpRequest\r\n";
-	ss << L"\r\n\r\n";
+	AlignedVector< uint8_t > header;
+	DynamicMemoryStream dms(header, false, true);
+	FileOutputStream fos(&dms, new Utf8Encoding());
+	fos << L"GET " << resource << L" HTTP/1.1\r\n";
+	if (url.getPort() == 80)
+		fos << L"Host: " << url.getHost() << L"\r\n";
+	else
+		fos << L"Host: " << url.getHost() << L":" << url.getPort() << L"\r\n";
+	fos << L"Connection: keep-alive\r\n";
+	fos << L"Cache-Control: max-age=0\r\n";
+	fos << L"User-Agent: traktor/1.0\r\n";
+	fos << L"Accept: */*\r\n";
+	fos << L"\r\n";
 
 	Ref< IStream > stream = new SocketStream(m_socket);
 
-	// Send request, UTF-8 encoded.
-	FileOutputStream fos(stream, new Utf8Encoding());
-	fos << ss.str();
+	// Send request header.
+	if (stream->write(header.c_ptr(), header.size()) != header.size())
+	{
+		log::error << L"Unable to send HTTP request header." << Endl;
+		return ErFailed;
+	}
 
 	// Accept and parse response from server.
 	HttpResponse response;
