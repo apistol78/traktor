@@ -64,6 +64,7 @@ public:
 private:
 	MenuBarWin32* m_menuBar;
 	ComRef< ITaskbarList3 > m_taskBarList;
+	HWND m_hWndLastFocus;
 
 	LRESULT eventInitMenuPopup(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 
@@ -72,6 +73,8 @@ private:
 	LRESULT eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 
 	LRESULT eventDestroy(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
+
+	LRESULT eventActivate(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 
 	LRESULT eventTaskBarButtonCreated(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 };

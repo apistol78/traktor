@@ -613,6 +613,7 @@ void DockPane::eventFocus(FocusEvent* event)
 		if (m_owner)
 			m_owner->update();
 	}
+	event->consume();
 }
 
 	}
