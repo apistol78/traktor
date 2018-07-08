@@ -18,6 +18,7 @@ namespace traktor
 FormWin32::FormWin32(EventSubject* owner)
 :	WidgetWin32Impl< IForm >(owner)
 ,	m_menuBar(0)
+,	m_hWndLastFocus(NULL)
 {
 }
 
@@ -58,30 +59,12 @@ bool FormWin32::create(IWidget* parent, const std::wstring& text, int width, int
 	if (!WidgetWin32Impl::create(style))
 		return false;
 
-	m_hWnd.registerMessageHandler(
-		WM_INITMENUPOPUP,
-		new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventInitMenuPopup)
-	);
-
-	m_hWnd.registerMessageHandler(
-		WM_MENUCOMMAND,
-		new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventMenuCommand)
-	);
-
-	m_hWnd.registerMessageHandler(
-		WM_CLOSE,
-		new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventClose)
-	);
-
-	m_hWnd.registerMessageHandler(
-		WM_DESTROY,
-		new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventDestroy)
-	);
-
-	m_hWnd.registerMessageHandler(
-		L"TaskbarButtonCreated",
-		new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventTaskBarButtonCreated)
-	);
+	m_hWnd.registerMessageHandler(WM_INITMENUPOPUP, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventInitMenuPopup));
+	m_hWnd.registerMessageHandler(WM_MENUCOMMAND, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventMenuCommand));
+	m_hWnd.registerMessageHandler(WM_CLOSE, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventClose));
+	m_hWnd.registerMessageHandler(WM_DESTROY, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventDestroy));
+	m_hWnd.registerMessageHandler(WM_ACTIVATE, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventActivate));
+	m_hWnd.registerMessageHandler(L"TaskbarButtonCreated", new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventTaskBarButtonCreated));
 
 	m_ownCursor = true;
 	return true;
@@ -196,6 +179,21 @@ LRESULT FormWin32::eventDestroy(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 {
 	PostQuitMessage(0);
 	return TRUE;
+}
+
+LRESULT FormWin32::eventActivate(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
+{
+	if (LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE)
+	{
+		if (m_hWndLastFocus)
+			SetFocus(m_hWndLastFocus);
+	}
+	else if (LOWORD(wParam) == WA_INACTIVE)
+	{
+		m_hWndLastFocus = GetFocus();
+	}
+	pass = false;
+	return 0;
 }
 
 LRESULT FormWin32::eventTaskBarButtonCreated(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)

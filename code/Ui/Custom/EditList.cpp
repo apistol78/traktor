@@ -129,8 +129,8 @@ void EditList::eventEditFocus(FocusEvent* event)
 		}
 
 		m_editId = -1;
+		event->consume();
 	}
-	event->consume();
 #endif
 }
 

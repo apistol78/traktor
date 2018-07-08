@@ -253,6 +253,8 @@ void TreeView::eventEditFocus(FocusEvent* event)
 
 		if (!changeEvent.consumed())
 			m_editItem->setText(originalText);
+
+		event->consume();
 	}
 }
 
