@@ -64,8 +64,34 @@ public:
 			0
 		);
 
-		//if (runtimeClass->haveConstructor())
-		//	m_treeClasses->createItem(classItem, L"(ctor)", 0);
+		if (runtimeClass->getConstructorDispatch())
+		{
+			ss.reset();
+			runtimeClass->getConstructorDispatch()->signature(ss);
+
+			std::vector< std::wstring > polys;
+			Split< std::wstring >::any(ss.str(), L";", polys, true);
+
+			for (const auto& poly : polys)
+			{
+				std::vector< std::wstring > args;
+				Split< std::wstring >::any(poly, L",", args, true);
+
+				ss.reset();
+				ss << L"(";
+
+				for (size_t i = 0; i < args.size(); ++i)
+				{
+					if (i > 0)
+						ss << L", ";
+					ss << args[i];
+				}
+
+				ss << L")";
+
+				m_treeClasses->createItem(classItem, ss.str(), 0);
+			}
+		}
 
 		for (uint32_t i = 0; i < runtimeClass->getConstantCount(); ++i)
 		{
