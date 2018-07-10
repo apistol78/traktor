@@ -60,19 +60,20 @@ void XmlClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	Ref< AutoRuntimeClass< xml::Attribute > > classAttribute = new AutoRuntimeClass< xml::Attribute >();
 	classAttribute->addConstructor< const std::wstring&, const std::wstring& >();
-	classAttribute->addMethod("getName", &xml::Attribute::getName);
-	classAttribute->addMethod("setName", &xml::Attribute::setName);
-	classAttribute->addMethod("getValue", &xml::Attribute::getValue);
-	classAttribute->addMethod("setValue", &xml::Attribute::setValue);
-	classAttribute->addMethod("getPrevious", &xml::Attribute::getPrevious);
-	classAttribute->addMethod("getNext", &xml::Attribute::getNext);
+	classAttribute->addProperty("name", &xml::Attribute::setName, &xml::Attribute::getName);
+	classAttribute->addProperty("value", &xml::Attribute::setValue, &xml::Attribute::getValue);
+	classAttribute->addProperty("previous", &xml::Attribute::getPrevious);
+	classAttribute->addProperty("next", &xml::Attribute::getNext);
 	registrar->registerClass(classAttribute);
 
 	Ref< AutoRuntimeClass< xml::Node > > classNode = new AutoRuntimeClass< xml::Node >();
-	classNode->addMethod("getName", &xml::Node::getName);
-	classNode->addMethod("setName", &xml::Node::setName);
-	classNode->addMethod("getValue", &xml::Node::getValue);
-	classNode->addMethod("setValue", &xml::Node::setValue);
+	classNode->addProperty("name", &xml::Node::setName, &xml::Node::getName);
+	classNode->addProperty("value", &xml::Node::setValue, &xml::Node::getValue);
+	classNode->addProperty("parent", &xml::Node::getParent);
+	classNode->addProperty("previousSibling", &xml::Node::getPreviousSibling);
+	classNode->addProperty("nextSibling", &xml::Node::getNextSibling);
+	classNode->addProperty("firstChild", &xml::Node::getFirstChild);
+	classNode->addProperty("lastChild", &xml::Node::getLastChild);
 	classNode->addMethod("write", &xml_Node_write);
 	classNode->addMethod("unlink", &xml::Node::unlink);
 	classNode->addMethod("addChild", &xml::Node::addChild);
@@ -80,30 +81,23 @@ void XmlClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classNode->addMethod("removeAllChildren", &xml::Node::removeAllChildren);
 	classNode->addMethod("insertBefore", &xml::Node::insertBefore);
 	classNode->addMethod("insertAfter", &xml::Node::insertAfter);
-	classNode->addMethod("getParent", &xml::Node::getParent);
-	classNode->addMethod("getPreviousSibling", &xml::Node::getPreviousSibling);
-	classNode->addMethod("getNextSibling", &xml::Node::getNextSibling);
-	classNode->addMethod("getFirstChild", &xml::Node::getFirstChild);
-	classNode->addMethod("getLastChild", &xml::Node::getLastChild);
 	registrar->registerClass(classNode);
 
 	Ref< AutoRuntimeClass< xml::Text > > classText = new AutoRuntimeClass< xml::Text >();
 	classText->addConstructor< const std::wstring& >();
-	classText->addMethod("getValue", &xml::Text::getValue);
-	classText->addMethod("setValue", &xml::Text::setValue);
 	classText->addMethod("clone", &xml::Text::clone);
 	registrar->registerClass(classText);
 
 	Ref< AutoRuntimeClass< xml::Element > > classElement = new AutoRuntimeClass< xml::Element >();
 	classElement->addConstructor< const std::wstring& >();
+	classElement->addProperty("firstAttribute", &xml::Element::getFirstAttribute);
+	classElement->addProperty("lastAttribute", &xml::Element::getLastAttribute);
 	classElement->addMethod("get", &xml_Element_get);
 	classElement->addMethod("getSingle", &xml::Element::getSingle);
 	classElement->addMethod("getPath", &xml::Element::getPath);
 	classElement->addMethod("match", &xml::Element::match);
 	classElement->addMethod("hasAttribute", &xml::Element::hasAttribute);
 	classElement->addMethod("setAttribute", &xml::Element::setAttribute);
-	classElement->addMethod("getFirstAttribute", &xml::Element::getFirstAttribute);
-	classElement->addMethod("getLastAttribute", &xml::Element::getLastAttribute);
 	classElement->addMethod("getAttribute", &xml_Element_getAttribute_1);
 	classElement->addMethod("getAttribute", &xml_Element_getAttribute_2);
 	classElement->addMethod("getChildElementByName", &xml::Element::getChildElementByName);
@@ -112,6 +106,7 @@ void XmlClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< xml::Document > > classDocument = new AutoRuntimeClass< xml::Document >();
 	classDocument->addConstructor();
+	classDocument->addProperty("documentElement", &xml::Document::setDocumentElement, &xml::Document::getDocumentElement);
 	classDocument->addMethod("loadFromFile", &xml::Document::loadFromFile);
 	classDocument->addMethod("loadFromStream", &xml::Document::loadFromStream);
 	classDocument->addMethod("loadFromText", &xml::Document::loadFromText);
@@ -119,8 +114,6 @@ void XmlClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classDocument->addMethod("saveIntoStream", &xml::Document::saveIntoStream);
 	classDocument->addMethod("get", &xml_Document_get);
 	classDocument->addMethod("getSingle", &xml::Document::getSingle);
-	classDocument->addMethod("setDocumentElement", &xml::Document::setDocumentElement);
-	classDocument->addMethod("getDocumentElement", &xml::Document::getDocumentElement);
 	classDocument->addMethod("clone", &xml::Document::clone);
 	registrar->registerClass(classDocument);
 }
