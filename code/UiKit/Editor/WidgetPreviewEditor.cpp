@@ -54,7 +54,7 @@ bool WidgetPreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 	m_resourceManager = new resource::ResourceManager(database, false);
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
-	m_resourceManager->addFactory(new script::ScriptFactory(scriptManager, m_scriptContext));
+	m_resourceManager->addFactory(new script::ScriptFactory(m_scriptContext));
 	m_resourceManager->addFactory(new flash::MovieResourceFactory());
 	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
 

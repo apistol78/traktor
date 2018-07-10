@@ -156,7 +156,7 @@ void ScriptServer::destroy()
 void ScriptServer::createResourceFactories(IEnvironment* environment)
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	resourceManager->addFactory(new script::ScriptFactory(m_scriptManager, m_scriptContext));
+	resourceManager->addFactory(new script::ScriptFactory(m_scriptContext));
 
 	// Expose environment as a global in shared script environment.
 	m_scriptContext->setGlobal("environment", Any::fromObject(environment));

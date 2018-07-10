@@ -51,8 +51,6 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 		// Replace script.
 		if (stageDataOut->getClass().isNull())
 			stageDataOut->setClass(downStageDataFlatten->getClass());
-		if (stageDataOut->getScript().isNull())
-			stageDataOut->setScript(downStageDataFlatten->getScript());
 
 		// Replace shader fade.
 		if (stageDataOut->getShaderFade().isNull())
@@ -105,7 +103,6 @@ bool StagePipeline::buildDependencies(
 
 	pipelineDepends->addDependency(stageData->m_inherit, editor::PdfUse);
 	pipelineDepends->addDependency(stageData->m_class, editor::PdfBuild);
-	pipelineDepends->addDependency(stageData->m_script, editor::PdfBuild);
 	pipelineDepends->addDependency(stageData->m_shaderFade, editor::PdfBuild | editor::PdfResource);
 
 	for (std::map< std::wstring, Guid >::const_iterator i = stageData->m_transitions.begin(); i != stageData->m_transitions.end(); ++i)
