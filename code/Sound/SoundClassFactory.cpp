@@ -59,12 +59,12 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	Ref< AutoRuntimeClass< Sound > > classSound = new AutoRuntimeClass< Sound >();
 	classSound->addConstructor< ISoundBuffer*, handle_t, float, float, float, float >();
-	classSound->addMethod("getBuffer", &Sound::getBuffer);
-	classSound->addMethod("getCategory", &Sound::getCategory);
-	classSound->addMethod("getGain", &Sound::getGain);
-	classSound->addMethod("getPresence", &Sound::getPresence);
-	classSound->addMethod("getPresenceRate", &Sound::getPresenceRate);
-	classSound->addMethod("getRange", &Sound::getRange);
+	classSound->addProperty("buffer", &Sound::getBuffer);
+	classSound->addProperty("category", &Sound::getCategory);
+	classSound->addProperty("gain", &Sound::getGain);
+	classSound->addProperty("presence", &Sound::getPresence);
+	classSound->addProperty("presenceRate", &Sound::getPresenceRate);
+	classSound->addProperty("range", &Sound::getRange);
 	registrar->registerClass(classSound);
 
 	Ref< AutoRuntimeClass< SoundSystem > > classSoundSystem = new AutoRuntimeClass< SoundSystem >();
@@ -72,9 +72,9 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classSoundSystem);
 
 	Ref< AutoRuntimeClass< SoundChannel > > classSoundChannel = new AutoRuntimeClass< SoundChannel >();
-	classSoundChannel->addMethod("setVolume", &SoundChannel::setVolume);
+	classSoundChannel->addProperty("volume", &SoundChannel::setVolume, &SoundChannel::getVolume);
+	classSoundChannel->addProperty("playing", &SoundChannel::isPlaying);
 	classSoundChannel->addMethod("setFilter", &SoundChannel::setFilter);
-	classSoundChannel->addMethod("isPlaying", &SoundChannel::isPlaying);
 	classSoundChannel->addMethod("stop", &SoundChannel::stop);
 	registrar->registerClass(classSoundChannel);
 
@@ -91,15 +91,11 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIFilter);
 
 	Ref< AutoRuntimeClass< SurroundEnvironment > > classSurroundEnvironment = new AutoRuntimeClass< SurroundEnvironment >();
-	classSurroundEnvironment->addMethod("setMaxDistance", &SurroundEnvironment::setMaxDistance);
-	classSurroundEnvironment->addMethod("getMaxDistance", &SurroundEnvironment::getMaxDistance);
-	classSurroundEnvironment->addMethod("setInnerRadius", &SurroundEnvironment::setInnerRadius);
-	classSurroundEnvironment->addMethod("getInnerRadius", &SurroundEnvironment::getInnerRadius);
-	classSurroundEnvironment->addMethod("setFullSurround", &SurroundEnvironment::setFullSurround);
-	classSurroundEnvironment->addMethod("getFullSurround", &SurroundEnvironment::getFullSurround);
-	classSurroundEnvironment->addMethod("setListenerTransform", &SurroundEnvironment::setListenerTransform);
-	classSurroundEnvironment->addMethod("getListenerTransform", &SurroundEnvironment::getListenerTransform);
-	classSurroundEnvironment->addMethod("getListenerTransformInv", &SurroundEnvironment::getListenerTransformInv);
+	classSurroundEnvironment->addProperty("maxDistance", &SurroundEnvironment::setMaxDistance, &SurroundEnvironment::getMaxDistance);
+	classSurroundEnvironment->addProperty("innerRadius", &SurroundEnvironment::setInnerRadius, &SurroundEnvironment::getInnerRadius);
+	classSurroundEnvironment->addProperty("fullSurround", &SurroundEnvironment::setFullSurround, &SurroundEnvironment::getFullSurround);
+	classSurroundEnvironment->addProperty("listenerTransform", &SurroundEnvironment::setListenerTransform, &SurroundEnvironment::getListenerTransform);
+	classSurroundEnvironment->addProperty("listenerTransformInv", &SurroundEnvironment::getListenerTransformInv);
 	registrar->registerClass(classSurroundEnvironment);
 
 	Ref< AutoRuntimeClass< CombFilter > > classCombFilter = new AutoRuntimeClass< CombFilter >();
@@ -132,8 +128,7 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< LowPassFilter > > classLowPassFilter = new AutoRuntimeClass< LowPassFilter >();
 	classLowPassFilter->addConstructor();
 	classLowPassFilter->addConstructor< float >();
-	classLowPassFilter->addMethod("setCutOff", &LowPassFilter::setCutOff);
-	classLowPassFilter->addMethod("getCutOff", &LowPassFilter::getCutOff);
+	classLowPassFilter->addProperty("cutOff", &LowPassFilter::setCutOff, &LowPassFilter::getCutOff);
 	registrar->registerClass(classLowPassFilter);
 
 	Ref< AutoRuntimeClass< NormalizationFilter > > classNormalizationFilter = new AutoRuntimeClass< NormalizationFilter >();
@@ -141,9 +136,9 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classNormalizationFilter->addConstructor< float >();
 	classNormalizationFilter->addConstructor< float, float >();
 	classNormalizationFilter->addConstructor< float, float, float >();
-	classNormalizationFilter->addMethod("getTargetEnergy", &NormalizationFilter::getTargetEnergy);
-	classNormalizationFilter->addMethod("getEnergyThreshold", &NormalizationFilter::getEnergyThreshold);
-	classNormalizationFilter->addMethod("getAttackRate", &NormalizationFilter::getAttackRate);
+	classNormalizationFilter->addProperty("targetEnergy", &NormalizationFilter::getTargetEnergy);
+	classNormalizationFilter->addProperty("energyThreshold", &NormalizationFilter::getEnergyThreshold);
+	classNormalizationFilter->addProperty("attackRate", &NormalizationFilter::getAttackRate);
 	registrar->registerClass(classNormalizationFilter);
 
 	Ref< AutoRuntimeClass< RingModulationFilter > > classRingModulationFilter = new AutoRuntimeClass< RingModulationFilter >();
@@ -169,10 +164,9 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classISoundHandle);
 
 	Ref< AutoRuntimeClass< ISoundPlayer > > classISoundPlayer = new AutoRuntimeClass< ISoundPlayer >();
+	classISoundPlayer->addProperty("listenerTransform", &ISoundPlayer::setListenerTransform, &ISoundPlayer::getListenerTransform);
 	classISoundPlayer->addMethod("play", &ISoundPlayer::play);
 	classISoundPlayer->addMethod("play3d", &ISoundPlayer::play3d);
-	classISoundPlayer->addMethod("setListenerTransform", &ISoundPlayer::setListenerTransform);
-	classISoundPlayer->addMethod("getListenerTransform", &ISoundPlayer::getListenerTransform);
 	registrar->registerClass(classISoundPlayer);
 
 	Ref< AutoRuntimeClass< BankBuffer > > classBankBuffer = new AutoRuntimeClass< BankBuffer >();
