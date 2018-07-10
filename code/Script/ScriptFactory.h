@@ -23,7 +23,6 @@ namespace traktor
 	{
 
 class IScriptContext;
-class IScriptManager;
 
 /*! \brief Script class factory.
  * \ingroup Script
@@ -33,7 +32,7 @@ class T_DLLCLASS ScriptFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	ScriptFactory(IScriptManager* scriptManager, IScriptContext* scriptContext);
+	ScriptFactory(IScriptContext* scriptContext);
 
 	virtual const TypeInfoSet getResourceTypes() const T_OVERRIDE T_FINAL;
 
@@ -44,7 +43,6 @@ public:
 	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const T_OVERRIDE T_FINAL;
 
 private:
-	Ref< IScriptManager > m_scriptManager;
 	Ref< IScriptContext > m_scriptContext;
 };
 

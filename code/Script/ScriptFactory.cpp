@@ -11,7 +11,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Database/Instance.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptContext.h"
-#include "Script/IScriptManager.h"
 #include "Script/ScriptChunk.h"
 #include "Script/ScriptFactory.h"
 #include "Script/ScriptResource.h"
@@ -23,9 +22,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptFactory", ScriptFactory, resource::IResourceFactory)
 
-ScriptFactory::ScriptFactory(IScriptManager* scriptManager, IScriptContext* scriptContext)
-:	m_scriptManager(scriptManager)
-,	m_scriptContext(scriptContext)
+ScriptFactory::ScriptFactory(IScriptContext* scriptContext)
+:	m_scriptContext(scriptContext)
 {
 }
 
@@ -36,7 +34,7 @@ const TypeInfoSet ScriptFactory::getResourceTypes() const
 
 const TypeInfoSet ScriptFactory::getProductTypes(const TypeInfo& resourceType) const
 {
-	return makeTypeInfoSet< IRuntimeClass, ScriptChunk, IScriptContext >();
+	return makeTypeInfoSet< IRuntimeClass, ScriptChunk >();
 }
 
 bool ScriptFactory::isCacheable(const TypeInfo& productType) const
@@ -44,8 +42,6 @@ bool ScriptFactory::isCacheable(const TypeInfo& productType) const
 	if (is_type_a< IRuntimeClass >(productType))
 		return false;
 	else if (is_type_a< ScriptChunk >(productType))
-		return true;
-	else if (is_type_a< IScriptContext >(productType))
 		return true;
 	else
 		return false;
@@ -92,48 +88,6 @@ Ref< Object > ScriptFactory::create(resource::IResourceManager* resourceManager,
 		}
 
 		return new Object();
-	}
-	else if (is_type_a< IScriptContext >(productType))
-	{
-		Ref< ScriptResource > scriptResource = instance->getObject< ScriptResource >();
-		if (!scriptResource)
-		{
-			log::error << L"Unable to create script context; no such instance" << Endl;
-			return 0;
-		}
-
-		Ref< IScriptContext > scriptContext = m_scriptManager->createContext(true);
-		if (!scriptContext)
-		{
-			log::error << L"Unable to create script context; create context failed" << Endl;
-			return 0;
-		}
-
-		// Load all dependencies first.
-		const std::vector< Guid >& dependencies = scriptResource->getDependencies();
-		for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-		{
-			Ref< ScriptResource > dependentScriptResource = database->getObjectReadOnly< ScriptResource >(*i);
-			if (!dependentScriptResource)
-			{
-				log::error << L"Unable to create script context; failed to load dependent script" << Endl;
-				return 0;
-			}
-			if (!scriptContext->load(dependentScriptResource->getBlob()))
-			{
-				log::error << L"Unable to create script context; load dependent resource failed" << Endl;
-				return 0;
-			}
-		}
-
-		// Load this resource's blob last.
-		if (!scriptContext->load(scriptResource->getBlob()))
-		{
-			log::error << L"Unable to create script context; load resource failed" << Endl;
-			return 0;
-		}
-
-		return scriptContext;
 	}
 	else
 		return 0;

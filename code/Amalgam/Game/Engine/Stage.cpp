@@ -22,7 +22,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
-#include "Script/IScriptContext.h"
 
 //#define T_ENABLE_MEASURE
 #include "Core/Timer/Measure.h"
@@ -38,7 +37,6 @@ Stage::Stage(
 	const std::wstring& name,
 	IEnvironment* environment,
 	const resource::Proxy< IRuntimeClass >& clazz,
-	const resource::Proxy< script::IScriptContext >& scriptContext,
 	const resource::Proxy< render::Shader >& shaderFade,
 	float fadeRate,
 	const std::map< std::wstring, Guid >& transitions,
@@ -47,7 +45,6 @@ Stage::Stage(
 :	m_name(name)
 ,	m_environment(environment)
 ,	m_class(clazz)
-,	m_scriptContext(scriptContext)
 ,	m_shaderFade(shaderFade)
 ,	m_fadeRate(fadeRate)
 ,	m_transitions(transitions)
@@ -82,31 +79,6 @@ void Stage::destroy()
 		}
 		m_object = 0;
 		m_class.clear();
-	}
-
-	if (m_scriptContext)
-	{
-		if (m_initialized && m_scriptContext->haveFunction("finalize"))
-		{
-			// Call script fini.
-			Any argv[] =
-			{
-				Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
-			};
-			m_scriptContext->executeFunction("finalize", sizeof_array(argv), argv);
-		}
-
-		m_scriptContext->setGlobal("stage", Any());
-		m_scriptContext->setGlobal("environment", Any());
-
-		for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		{
-			if (!(*i)->getName().empty())
-				m_scriptContext->setGlobal(wstombs((*i)->getName()), Any());
-		}
-
-		m_scriptContext->destroy();
-		m_scriptContext.clear();
 	}
 
 	safeDestroy(m_screenRenderer);
@@ -166,12 +138,6 @@ Any Stage::invokeScript(const std::string& fn, uint32_t argc, const Any* argv)
 		if (method != 0)
 			return method->invoke(m_object, sizeof_array(argv), argv);
 	}
-	
-	if (m_scriptContext)
-	{
-		if (m_scriptContext->haveFunction(fn))
-			return m_scriptContext->executeFunction(fn, argc, argv);
-	}
 
 	log::error << L"No such script function \"" << mbstows(fn) << L"\"" << Endl;
 	return Any();
@@ -223,10 +189,6 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 
 	if (!m_pendingStage)
 	{
-		// Set ourself as a global in shared script context.
-		if (m_environment->getScript())
-			m_environment->getScript()->getScriptContext()->setGlobal("stage", Any::fromObject(this));
-
 		// Prepare all layers.
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 			T_MEASURE_STATEMENT_M((*i)->prepare(info), 1.0 / 60.0, type_name(*i));
@@ -235,24 +197,18 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 		if (validateScriptContext())
 		{
 			T_PROFILER_SCOPE(L"Script update");
-
-			Any argv[] =
-			{
-				Any::fromObject(const_cast< UpdateInfo* >(&info))
-			};
-
 			if (m_object)
 			{
+				Any argv[] =
+				{
+					Any::fromObject(const_cast< UpdateInfo* >(&info))
+				};
+
 				const IRuntimeDispatch* methodUpdate = findRuntimeClassMethod(m_class, "update");
 				if (methodUpdate != 0)
 				{
 					T_MEASURE_STATEMENT(methodUpdate->invoke(m_object, sizeof_array(argv), argv), 1.0 / 60.0);
 				}
-			}
-
-			if (m_scriptContext)
-			{
-				T_MEASURE_STATEMENT(m_scriptContext->executeFunction("update", sizeof_array(argv), argv), 1.0 / 60.0);
 			}
 		}
 
@@ -264,30 +220,20 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 		if (validateScriptContext())
 		{
 			T_PROFILER_SCOPE(L"Script post update");
-
-			Any argv[] =
-			{
-				Any::fromObject(const_cast< UpdateInfo* >(&info))
-			};
-
 			if (m_object)
 			{
+				Any argv[] =
+				{
+					Any::fromObject(const_cast< UpdateInfo* >(&info))
+				};
+
 				const IRuntimeDispatch* methodPostUpdate = findRuntimeClassMethod(m_class, "postUpdate");
 				if (methodPostUpdate != 0)
 				{
 					T_MEASURE_STATEMENT(methodPostUpdate->invoke(m_object, sizeof_array(argv), argv), 1.0 / 60.0);
 				}
 			}
-
-			if (m_scriptContext)
-			{
-				T_MEASURE_STATEMENT(m_scriptContext->executeFunction("postUpdate", sizeof_array(argv), argv), 1.0 / 60.0);
-			}
 		}
-
-		// Remove ourself as a global in shared script context.
-		if (m_environment->getScript())
-			m_environment->getScript()->getScriptContext()->setGlobal("stage", Any());
 
 		m_fade = max(0.0f, m_fade - info.getSimulationDeltaTime() * m_fadeRate);
 	}
@@ -376,12 +322,6 @@ void Stage::postReconfigured()
 		if (methodReconfigured != 0)
 			methodReconfigured->invoke(m_object, 0, 0);
 	}
-
-	if (m_scriptContext && m_initialized)
-	{
-		if (m_scriptContext->haveFunction("reconfigured"))
-			m_scriptContext->executeFunction("reconfigured");
-	}
 }
 
 void Stage::suspend()
@@ -391,12 +331,6 @@ void Stage::suspend()
 		const IRuntimeDispatch* methodSuspend = findRuntimeClassMethod(m_class, "suspend");
 		if (methodSuspend != 0)
 			methodSuspend->invoke(m_object, 0, 0);
-	}
-
-	if (m_scriptContext && m_initialized)
-	{
-		if (m_scriptContext->haveFunction("suspend"))
-			m_scriptContext->executeFunction("suspend");
 	}
 
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
@@ -414,17 +348,11 @@ void Stage::resume()
 		if (methodResume != 0)
 			methodResume->invoke(m_object, 0, 0);
 	}
-
-	if (m_scriptContext && m_initialized)
-	{
-		if (m_scriptContext->haveFunction("resume"))
-			m_scriptContext->executeFunction("resume");
-	}
 }
 
 bool Stage::validateScriptContext()
 {
-	if (!m_class && !m_scriptContext)
+	if (!m_class)
 		return false;
 
 	T_PROFILER_SCOPE(L"Script validate");
@@ -434,47 +362,14 @@ bool Stage::validateScriptContext()
 	{
 		if (m_class)
 		{
-			// Define members, do this as a prototype as we possibly want to access those in the constructor.
-			//IRuntimeClass::prototype_t proto;
-			//for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			//{
-			//	if (!(*i)->getName().empty())
-			//		proto[wstombs((*i)->getName())] = Any::fromObject(*i);
-			//}
-
 			// Call script constructor.
 			Any argv[] =
 			{
 				Any::fromObject(const_cast< Object* >(m_params.c_ptr())),
 				Any::fromObject(m_environment)
 			};
-			//m_object = m_class->construct(this, sizeof_array(argv), argv, &proto);
 			m_object = createRuntimeClassInstance(m_class, this, sizeof_array(argv), argv);
 		}
-
-		if (m_scriptContext)
-		{
-			// Expose commonly used globals.
-			m_scriptContext->setGlobal("stage", Any::fromObject(this));
-			m_scriptContext->setGlobal("environment", Any::fromObject(m_environment));
-
-			for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			{
-				if (!(*i)->getName().empty())
-					m_scriptContext->setGlobal(wstombs((*i)->getName()), Any::fromObject(*i));
-			}
-
-			// Call script init; do this everytime we re-validate script.
-			if (m_scriptContext->haveFunction("initialize"))
-			{
-				Any argv[] =
-				{
-					Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
-				};
-				m_scriptContext->executeFunction("initialize", sizeof_array(argv), argv);
-			}
-		}
-
 		m_initialized = true;
 	}
 

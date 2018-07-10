@@ -35,13 +35,6 @@ class Shader;
 
 	}
 
-	namespace script
-	{
-
-class IScriptContext;
-
-	}
-
 	namespace amalgam
 	{
 
@@ -68,7 +61,6 @@ public:
 		const std::wstring& name,
 		IEnvironment* environment,
 		const resource::Proxy< IRuntimeClass >& clazz,
-		const resource::Proxy< script::IScriptContext >& scriptContext,
 		const resource::Proxy< render::Shader >& shaderFade,
 		float fadeRate,
 		const std::map< std::wstring, Guid >& transitions,
@@ -181,7 +173,6 @@ private:
 	Ref< IEnvironment > m_environment;
 	resource::Proxy< IRuntimeClass > m_class;
 	Ref< ITypedObject > m_object;
-	resource::Proxy< script::IScriptContext > m_scriptContext;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_shaderFade;
 	float m_fadeRate;
