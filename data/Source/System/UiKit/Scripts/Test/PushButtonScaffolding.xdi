@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{218D113A-66DC-9049-8424-701FF60F2BC4}
+#using \{708A40FD-8C5F-8C4E-9E8D-3754F349FA6E}
+#using \{7947759C-88DB-794E-8D09-7F30A40B6669}
+#using \{BA802A78-F9E0-7843-B731-198BEB633236}
+#using \{A1037592-62F9-6048-B54A-AADFD485DC18}
+
+PushButtonScaffolding = PushButtonScaffolding or class("PushButtonScaffolding", Scaffolding)
+
+function PushButtonScaffolding:setup(frame)
+	local ct = Container(frame, TableLayout({0}, {0}, 4,4,4,4))
+	PushButton(ct, "A"):setMinimumWidth(0)
+	PushButton(ct, "B"):setMinimumWidth(0)
+	PushButton(ct, "C"):setMinimumWidth(0)
+	PushButton(ct, "D"):setMinimumWidth(0)
+
+end
+
+	]]>
+	</text>
+</object>

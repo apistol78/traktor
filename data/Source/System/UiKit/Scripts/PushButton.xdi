@@ -55,6 +55,10 @@ end
 
 function PushButton:setMinimumWidth(minimumWidth)
 	self._minimumWidth = minimumWidth
+
+	local sz = self._caption_tb.textSize
+	self._preferredSize.width = math.max(sz.x + self._margin * 2, self._minimumWidth)
+
 	return self
 end
 
