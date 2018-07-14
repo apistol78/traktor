@@ -14,8 +14,10 @@ end
 
 -- Import scope into global namespace.
 function import(scope)
-	for n,v in pairs(scope) do
-		_G[n] = v
+	if scope ~= nil and type(scope) == "table" then
+		for n,v in pairs(scope) do
+			_G[n] = v
+		end
 	end
 end
 
