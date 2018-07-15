@@ -137,7 +137,7 @@ end
 function Button:_onMouseRelease(event)
 	self._imageDown_mc.visible = false
 	if not self._isRolledOver then
-		self._imageHover_mc.visible(false)
+		self._imageHover_mc.visible = false
 		self._imageUp_mc.visible = true
 	else
 		self._imageUp_mc.visible = false
