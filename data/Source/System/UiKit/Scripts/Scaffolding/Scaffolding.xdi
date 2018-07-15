@@ -6,7 +6,11 @@
 
 Scaffolding = Scaffolding or class("Scaffolding")
 
-function Scaffolding:new(resourceManager, root)
+function Scaffolding:new(database, resourceManager, root)
+	self._database = database
+	self._resourceManager = resourceManager
+
+	-- Initialize UiKit.
 	Widget.initialize(
 		resourceManager,
 		self:getResourceKits()
