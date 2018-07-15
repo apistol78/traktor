@@ -3,6 +3,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Database/Database.h"
 #include "Editor/IEditor.h"
 #include "Flash/DefaultCharacterFactory.h"
 #include "Flash/Frame.h"
@@ -198,6 +199,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 			// Construct new scaffolding.
 			Any argv[] =
 			{
+				Any::fromObject(m_editor->getSourceDatabase()),
 				Any::fromObject(m_resourceManager),
 				Any::fromObject(m_moviePlayer->getMovieInstance())
 			};
