@@ -111,6 +111,7 @@ void TreeView::removeItem(TreeViewItem* item)
 void TreeView::removeAllItems()
 {
 	m_roots.resize(0);
+	requestUpdate();
 }
 
 uint32_t TreeView::getItems(RefArray< TreeViewItem >& outItems, uint32_t flags) const
