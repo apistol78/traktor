@@ -23,7 +23,7 @@ function Edit:remove()
 end
 
 function Edit:setMode(mode)
-	self._text_tb:setPassword((mode & Edit.MODE_PASSWORD) ~= 0)
+	self._text_tb.password = ((mode & Edit.MODE_PASSWORD) ~= 0)
 	return self
 end
 
@@ -33,7 +33,7 @@ function Edit:setText(text)
 end
 
 function Edit:getText()
-	return self._text_tb:getText()
+	return self._text_tb.text
 end
 
 function Edit:setTextSize(size)
