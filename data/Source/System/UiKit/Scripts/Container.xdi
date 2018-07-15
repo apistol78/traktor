@@ -14,9 +14,15 @@ function Container:new(parent, layout)
 end
 
 function Container:getPreferredSize()
+	if self._cachedEstimate ~= nil then
+		return self._cachedEstimate
+	end
+
 	if self._layout ~= nil then
 		local w, h = self._layout:estimate(self)
-		return { width = w, height = h }
+		local e = { width = w, height = h }
+		self._cachedEstimate = e
+		return e
 	else
 		local w, h = 0, 0
 		for _, child in ipairs(self._children) do
@@ -24,12 +30,21 @@ function Container:getPreferredSize()
 			w = math.max(w, ps.width)
 			h = math.max(h, ps.height)
 		end
-		return { width = w, height = h }
+		local e = { width = w, height = h }
+		self._cachedEstimate = e
+		return e
 	end
 end
 
 function Container:place(x, y, width, height)
+	local last = self:getPlacement()
+
 	Widget.place(self, x, y, width, height)
+
+	if last.width ~= width or last.height ~= height then
+		self._cachedEstimate = nil
+	end
+
 	if self:isVisible(false) and self._layout ~= nil then
 		local p = self:getPlacement()
 		self._layout:update(self, p.width, p.height)
@@ -54,8 +69,18 @@ end
 function Container:_initialize(parent, mc, layout)
 	Widget._initialize(self, parent, mc)
 	self._layout = layout
+	self._cachedEstimate = nil
 end
 
+function Container:_addChild(child)
+	Widget._addChild(self, child)
+	self._cachedEstimate = nil
+end
+
+function Container:_removeChild(child)
+	Widget._removeChild(self, child)
+	self._cachedEstimate = nil
+end
 	]]>
 	</text>
 </object>
