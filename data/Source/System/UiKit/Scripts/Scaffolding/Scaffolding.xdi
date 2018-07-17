@@ -22,14 +22,12 @@ function Scaffolding:new(database, resourceManager, root)
 		1280, 720,
 		FloodLayout(16, 16)
 	)
+	self._frame:update()
 
 	-- Setup "widget under test".
 	self:setup(self._frame)
 
 	-- Ensure frame is properly layed out.
-	self._frame:update()
-	self._frame:layout()
-	self._frame:update()
 	self._frame:layout()
 end
 

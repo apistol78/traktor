@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+-- ResizeEvent
+
+ResizeEvent = ResizeEvent or class("ResizeEvent")
+
+ResizeEvent.mask = 0x00000400
+
+	]]>
+	</text>
+</object>
