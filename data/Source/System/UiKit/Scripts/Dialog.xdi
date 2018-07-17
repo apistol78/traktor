@@ -9,20 +9,53 @@
 Dialog = Dialog or class("Dialog", Container)
 
 function Dialog:new(parent, layout)
-	local mc = Widget._createResource(parent, "MC_Dialog")
+	local mc = Widget._createResource(parent, "MC_Dialog", true)
 	self:_initialize(parent, mc, layout)
 end
 
-function Dialog:getPreferredSize()
-	return self._preferredSize
+function Dialog:place(x, y, width, height)
+	Container.place(self, x, y, width, height)
+
+	local p = self:getPlacement()
+	self._background_mc.width = p.width
+	self._background_mc.height = p.height
+	self._border_mc.width = p.width
+	self._border_mc.height = p.height
+
+	local p = self:getAncestor():getPlacement()
+	local tl = self:globalToLocal({ x = 0, y = 0 })
+
+	self._shadow_mc.X = tl.x
+	self._shadow_mc.Y = tl.y
+	self._shadow_mc.width = p.width
+	self._shadow_mc.height = p.height
 end
 
-function Dialog:place(x, y, width, height)
-	self._background_mc.width = width
-	self._background_mc.height = height / 2
-	self._preferredSize.width = width
-	self._preferredSize.height = height / 2
-	Container.place(self, x, y, width, height / 2)
+function Dialog:setColor(color)
+	self._background_mc.colorTransform = ColorTransform(
+		color,
+		Color4f(0, 0, 0, 0)
+	)
+	return self
+end
+
+function Dialog:setBorderColor(color)
+	self._border_mc.colorTransform = ColorTransform(
+		color,
+		Color4f(0, 0, 0, 0)
+	)
+	return self
+end
+
+function Dialog:show()
+	self:_updatePlacement()
+	self:setVisible(true)
+	self:setModal()
+end
+
+function Dialog:hide()
+	self:setVisible(false)
+	self:releaseModal()
 end
 
 -- Private
@@ -30,15 +63,28 @@ end
 function Dialog:_initialize(parent, mc, layout)
 	Container._initialize(self, parent, mc, layout)
 
+	self._shadow_mc = mc:getMember("shadow_mc")
 	self._background_mc = mc:getMember("background_mc")
-	self._preferredSize =
-	{
-		width = mc.width,
-		height = mc.height
-	}
+	self._border_mc = mc:getMember("border_mc")
+	self._inner_mc = mc:getMember("innerContainer_mc")
 
-	local inner_mc = mc:getMember("innerContainer_mc")
-	self._getInnerClip = function() return inner_mc end
+	self.__layout = ILayout.FLOAT
+
+	self:addEventListener(ResizeEvent, self, function()
+		self:_updatePlacement()
+	end)
+
+	self:setVisible(false)
+end
+
+function Dialog:_updatePlacement()
+	local ps = self:getPreferredSize()
+	local p = self:getAncestor():getPlacement()
+	self:place((p.width - ps.width) / 2, (p.height - ps.height) / 2, ps.width, ps.height)
+end
+
+function Dialog:_getInnerClip()
+	return self._inner_mc
 end
 
 	]]>

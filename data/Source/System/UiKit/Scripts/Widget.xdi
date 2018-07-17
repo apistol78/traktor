@@ -463,22 +463,28 @@ function Widget:_getInnerClip()
 	return self._mc
 end
 
-function Widget._createEmptyResource(parent)
+function Widget._determineDepth(mc, topMost)
+	local range = { 0, 9999 }
+	if topMost then range = { 10000, 19999 } end
+	return mc.displayList:getNextHighestDepthInRange(range[1], range[2])
+end
+
+function Widget._createEmptyResource(parent, topMost)
 	local into_mc = parent:_getInnerClip()
 	assert (into_mc ~= nil)
 
-	local depth = into_mc.displayList.nextHighestDepth
+	local depth = Widget._determineDepth(into_mc, topMost or false)
 	local mc = into_mc:createEmptyMovieClip("", depth)
 	assert (mc ~= nil)
 
 	return mc
 end
 
-function Widget._createResource(parent, resource)
+function Widget._createResource(parent, resource, topMost)
 	local into_mc = parent:_getInnerClip()
 	assert (into_mc ~= nil)
 
-	local depth = into_mc.displayList.nextHighestDepth
+	local depth = Widget._determineDepth(into_mc, topMost or false)
 	local mc = nil
 	for _, rk in ipairs(Widget._resourceKits) do
 		mc = rk:get():createExternalSpriteInstance(into_mc, resource, depth)
