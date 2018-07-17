@@ -4,6 +4,7 @@
 	<![CDATA[
 #using \{7947759C-88DB-794E-8D09-7F30A40B6669}
 #using \{26FCC8EA-F349-5545-93B5-6ABDAE065E6F}
+#using \{65079C2E-2443-F248-BCF1-F48F8A2EE1F5}
 
 -- Frame
 
@@ -74,7 +75,7 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	local cx = mc.context
 	local stage = cx.global:getMember("Stage")
 	self._stageListener = cx:createObject()
-	self._stageListener:setMember("onResize", function() self:update() end)
+	self._stageListener:setMember("onResize", function() self:_eventStageResize() end)
 	stage:addListener(self._stageListener)
 	stage:setProperty("scaleMode", "noScale")
 	stage:setProperty("align", "TL")
@@ -99,6 +100,11 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 		self._tb_position = self._mc_debug:getMember("tb_position")
 	end
 #endif
+end
+
+function Frame:_eventStageResize()
+	self:update()
+	self:_dispatchEvent(ResizeEvent())
 end
 
 function Frame:_eventEnterFrame()
