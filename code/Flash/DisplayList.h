@@ -119,6 +119,14 @@ public:
 	 */
 	int32_t getNextHighestDepth() const;
 
+	/*! \brief Get next highest depth in given range which is free.
+	 *
+	 * \param minDepth Minimum depth.
+	 * \param maxDepth Maximum depth.
+	 * \return Next highest depth.
+	 */
+	int32_t getNextHighestDepthInRange(int32_t minDepth, int32_t maxDepth) const;
+
 	/*! \brief Swap character instances at two depths.
 	 *
 	 * \param depth1 First depth.

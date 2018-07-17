@@ -298,6 +298,17 @@ int32_t DisplayList::getNextHighestDepth() const
 	return depth;
 }
 
+int32_t DisplayList::getNextHighestDepthInRange(int32_t minDepth, int32_t maxDepth) const
+{
+	int32_t depth = minDepth;
+	for (layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+	{
+		if (i->first + 1 <= maxDepth)
+			depth = max(depth, i->first + 1);
+	}
+	return depth;
+}
+
 void DisplayList::swap(int32_t depth1, int32_t depth2)
 {
 	layer_map_t::iterator it1 = m_layers.find(depth1);

@@ -579,6 +579,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classDisplayList->addMethod("showObject", &DisplayList::showObject);
 	classDisplayList->addMethod("removeObject", &DisplayList_removeObject);
 	classDisplayList->addMethod("getObjectDepth", &DisplayList::getObjectDepth);
+	classDisplayList->addMethod("getNextHighestDepthInRange", &DisplayList::getNextHighestDepthInRange);
 	classDisplayList->addMethod("swap", &DisplayList::swap);
 	registrar->registerClass(classDisplayList);
 
