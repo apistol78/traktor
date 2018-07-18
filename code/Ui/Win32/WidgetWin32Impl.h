@@ -740,9 +740,8 @@ protected:
 		FocusEvent focusEvent(m_owner, bool(message == WM_SETFOCUS));
 		m_owner->raiseEvent(&focusEvent);
 
-		if (!focusEvent.consumed())
-			outPass = true;
-		return 0;
+		outPass = true;
+		return TRUE;
 	}
 
 	LRESULT eventPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
