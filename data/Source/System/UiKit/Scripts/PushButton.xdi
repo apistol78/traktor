@@ -31,10 +31,16 @@ function PushButton:place(x, y, width, height)
 end
 
 function PushButton:setColor(color)
+	self._defaultColor = color
 	self._background_mc.colorTransform = ColorTransform(
-		color,
+		self._defaultColor,
 		Color4f(0, 0, 0, 0)
 	)
+	return self
+end
+
+function PushButton:setHoverColor(color)
+	self._hoverColor = color
 	return self
 end
 
@@ -98,11 +104,19 @@ function PushButton:_initialize(parent, mc, caption)
 		width = mc.width,
 		height = mc.height
 	}
-
+	self._defaultColor = Color4f(0.8, 0.8, 0.8, 1)
+	self._hoverColor = Color4f(1, 1, 1, 1)
 	self._clickFn = nil
+
+	self._background_mc.colorTransform = ColorTransform(
+		self._defaultColor,
+		Color4f(0, 0, 0, 0)
+	)
 
 	self:addEventListener(MousePressEvent, self, self._onMousePress)
 	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
+	self:addEventListener(MouseEnterEvent, self, self._onMouseEnter)
+	self:addEventListener(MouseLeaveEvent, self, self._onMouseLeave)
 
 	self:setCaption(caption)
 
@@ -122,6 +136,22 @@ function PushButton:_onMouseRelease(event)
 	if event.inside and self._clickFn ~= nil then
 		self._clickFn(self)
 	end
+	return true
+end
+
+function PushButton:_onMouseEnter(event)
+	self._background_mc.colorTransform = ColorTransform(
+		self._hoverColor,
+		Color4f(0, 0, 0, 0)
+	)
+	return true
+end
+
+function PushButton:_onMouseLeave(event)
+	self._background_mc.colorTransform = ColorTransform(
+		self._defaultColor,
+		Color4f(0, 0, 0, 0)
+	)
 	return true
 end
 
