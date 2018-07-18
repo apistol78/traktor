@@ -997,7 +997,7 @@ bool RichEdit::findFirstLine(int32_t currentLine, const std::wstring& needle, bo
 	while (line < getLineCount())
 	{
 		std::wstring text = caseSensitive ? getLine(line) : toLower(getLine(line));
-		size_t p = text.find(needle);
+		size_t p = text.find(ndl);
 		if (p != text.npos)
 		{
 			outResult.line = line;
@@ -1013,7 +1013,7 @@ bool RichEdit::findFirstLine(int32_t currentLine, const std::wstring& needle, bo
 		while (line < currentLine)
 		{
 			std::wstring text = caseSensitive ? getLine(line) : toLower(getLine(line));
-			size_t p = text.find(needle);
+			size_t p = text.find(ndl);
 			if (p != text.npos)
 			{
 				outResult.line = line;
