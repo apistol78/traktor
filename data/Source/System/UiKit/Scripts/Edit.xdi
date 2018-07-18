@@ -28,7 +28,13 @@ function Edit:setMode(mode)
 end
 
 function Edit:setText(text)
-	self._text_tb:parseText(text)
+	if text ~= nil then
+		self._text_tb:parseText(text)
+	elseif self._hint ~= nil then
+		self._text_tb:parseText(self._hint)
+	else
+		self._text_tb:parseText("")
+	end
 	return self
 end
 
