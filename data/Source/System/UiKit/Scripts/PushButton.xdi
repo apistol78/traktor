@@ -75,9 +75,9 @@ end
 function PushButton:setEnable(enable)
 	Widget.setEnable(self, enable)
 	if enable then
-		self._mc:setProperty("_alpha", 100)
+		self._mc.alpha = 1
 	else
-		self._mc:setProperty("_alpha", 50)
+		self._mc.alpha = 0.5
 	end
 	return self
 end

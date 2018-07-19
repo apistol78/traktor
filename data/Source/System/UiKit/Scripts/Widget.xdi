@@ -205,7 +205,7 @@ function Widget:setVerticalAlign(valign)
 end
 
 function Widget:setAlpha(alpha)
-	self._mc:setProperty("_alpha", 100 * alpha)
+	self._mc.alpha = alpha
 	return self
 end
 

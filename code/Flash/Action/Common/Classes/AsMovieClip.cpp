@@ -735,15 +735,12 @@ void AsMovieClip::MovieClip_unloadMovie(SpriteInstance* self) const
 
 float AsMovieClip::MovieClip_get_alpha(const SpriteInstance* self) const
 {
-	const ColorTransform& colorTransform = self->getColorTransform();
-	return colorTransform.mul.getAlpha() * 100.0f;
+	return self->getAlpha() * 100.0f;
 }
 
 void AsMovieClip::MovieClip_set_alpha(SpriteInstance* self, float alpha) const
 {
-	ColorTransform colorTransform = self->getColorTransform();
-	colorTransform.mul.setAlpha(Scalar(alpha / 100.0f));
-	self->setColorTransform(colorTransform);
+	self->setAlpha(alpha / 100.0f);
 }
 
 void AsMovieClip::MovieClip_get_blendMode(const SpriteInstance* self) const
