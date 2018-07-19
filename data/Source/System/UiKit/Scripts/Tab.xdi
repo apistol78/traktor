@@ -144,11 +144,11 @@ function Tab:_updateState()
 
 		if i == self._active then
 			background_mc:gotoAndStop("active")
-			caption_tb:setProperty("_alpha", 100)
+			caption_tb.alpha = 1
 			children[i]:setVisible(true)
 		else
 			background_mc:gotoAndStop("other")
-			caption_tb:setProperty("_alpha", 50)
+			caption_tb.alpha = 0.5
 			children[i]:setVisible(false)
 		end
 

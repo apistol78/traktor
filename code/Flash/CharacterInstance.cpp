@@ -134,6 +134,16 @@ ColorTransform CharacterInstance::getFullColorTransform() const
 		return m_cxform;
 }
 
+void CharacterInstance::setAlpha(float alpha)
+{
+	m_cxform.mul.setAlpha(Scalar(alpha));
+}
+
+float CharacterInstance::getAlpha() const
+{
+	return m_cxform.mul.getAlpha();
+}
+
 void CharacterInstance::setTransform(const Matrix33& transform)
 {
 	m_transform = transform;

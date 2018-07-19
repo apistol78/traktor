@@ -545,6 +545,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCharacterInstance->addProperty("name", &CharacterInstance::setName, &CharacterInstance::getName);
 	classCharacterInstance->addProperty("target", &CharacterInstance::getTarget);
 	classCharacterInstance->addProperty("colorTransform", &CharacterInstance::setColorTransform, &CharacterInstance::getColorTransform);
+	classCharacterInstance->addProperty("alpha", &CharacterInstance::setAlpha, &CharacterInstance::getAlpha);
 	classCharacterInstance->addProperty("transform", &CharacterInstance::setTransform, &CharacterInstance::getTransform);
 	classCharacterInstance->addProperty("fullTransform", &CharacterInstance::getFullTransform);
 	classCharacterInstance->addProperty("filter", &CharacterInstance::setFilter, &CharacterInstance::getFilter);

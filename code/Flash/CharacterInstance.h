@@ -136,6 +136,14 @@ public:
 	 */
 	ColorTransform getFullColorTransform() const;
 
+	/*! \brief Set alpha value in color transform.
+	 */
+	void setAlpha(float alpha);
+
+	/*! \brief Get alpha value from color transform.
+	 */
+	float getAlpha() const;
+
 	/*! \brief Set coordinate transformation.
 	 *
 	 * \param transform Transformation matrix.
