@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_resource_ResourceCast_H
 
 #include "Core/Class/Any.h"
+#include "Resource/Proxy.h"
 #include "Resource/ResourceHandle.h"
 
 namespace traktor
