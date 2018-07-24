@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_drone_DroneSettings_H
 #define traktor_drone_DroneSettings_H
 
-#include <Core/Serialization/ISerializable.h>
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -25,7 +25,7 @@ public:
 
 	const RefArray< DroneTool >& getTools() const;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
 	RefArray< DroneTool > m_tools;

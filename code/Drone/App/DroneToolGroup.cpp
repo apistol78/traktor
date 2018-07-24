@@ -4,12 +4,11 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include <Core/Serialization/ISerializer.h>
-#include <Core/Serialization/Member.h>
-#include <Core/Serialization/MemberRefArray.h>
-#include <Ui/MenuItem.h>
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Drone/App/DroneToolGroup.h"
-#include "Drone/App/Process.h"
+#include "Ui/MenuItem.h"
 
 namespace traktor
 {

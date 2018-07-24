@@ -4,10 +4,10 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include <Ui/MenuItem.h>
-#include <Ui/MessageBox.h>
-#include <Core/Io/StringOutputStream.h>
+#include "Core/Io/StringOutputStream.h"
 #include "Drone/App/DroneToolTimer.h"
+#include "Ui/MenuItem.h"
+#include "Ui/MessageBox.h"
 
 namespace traktor
 {

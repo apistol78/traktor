@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_drone_DroneTool_H
 #define traktor_drone_DroneTool_H
 
-#include <Core/RefArray.h>
-#include <Core/Serialization/ISerializable.h>
+#include "Core/RefArray.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {

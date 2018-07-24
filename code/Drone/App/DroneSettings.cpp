@@ -4,8 +4,8 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include <Core/Serialization/ISerializer.h>
-#include <Core/Serialization/MemberRefArray.h>
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Drone/App/DroneSettings.h"
 #include "Drone/App/DroneTool.h"
 
