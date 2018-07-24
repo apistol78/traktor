@@ -19,11 +19,11 @@ class DroneToolSeparator : public DroneTool
 	T_RTTI_CLASS
 
 public:
-	virtual void getMenuItems(RefArray< ui::MenuItem >& outItems);
+	virtual void getMenuItems(RefArray< ui::MenuItem >& outItems) T_OVERRIDE T_FINAL;
 
-	virtual bool execute(ui::Widget* parent, ui::MenuItem* menuItem);
+	virtual bool execute(ui::Widget* parent, ui::MenuItem* menuItem) T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 };
 
 	}
