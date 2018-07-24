@@ -5,9 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Animation/Skeleton.h"
-#include "Animation/Editor/SkeletonFormatBvh.h"
-#include "Animation/Editor/SkeletonFormatFbx.h"
-#include "Animation/Editor/SkeletonFormatLws.h"
+#include "Animation/Editor/SkeletonFormat.h"
 #include "Animation/Editor/SkeletonWizardTool.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -51,21 +49,6 @@ bool SkeletonWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db:
 	}
 	fileDialog.destroy();
 
-	Ref< ISkeletonFormat > format;
-
-	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"bvh") == 0)
-		format = new SkeletonFormatBvh();
-	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"fbx") == 0)
-		format = new SkeletonFormatFbx();
-	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"lws") == 0)
-		format = new SkeletonFormatLws();
-
-	if (!format)
-	{
-		log::error << L"Unable to import skeleton; unsupported format" << Endl;
-		return false;
-	}
-
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!file)
 	{
@@ -73,8 +56,9 @@ bool SkeletonWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db:
 		return false;
 	}
 
-	Ref< Skeleton > skeleton = format->import(
+	Ref< Skeleton > skeleton = SkeletonFormat::readAny(
 		file,
+		fileName.getExtension(),
 		Vector4::zero(),
 		1.0f,
 		0.1f,

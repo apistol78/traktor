@@ -104,9 +104,9 @@ void createBones(
 }
 */
 		}
-/*
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SkeletonFormatCollada", SkeletonFormatCollada, ISkeletonFormat)
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SkeletonFormatCollada", 0, SkeletonFormatCollada, SkeletonFormat)
+/*
 Ref< Skeleton > SkeletonFormatCollada::create(const BvhDocument* document) const
 {
 	Ref< Skeleton > skeleton = new Skeleton();
@@ -119,7 +119,19 @@ Ref< Skeleton > SkeletonFormatCollada::create(const BvhDocument* document) const
 	return skeleton;
 }
 */
-Ref< Skeleton > SkeletonFormatCollada::import(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const
+
+void SkeletonFormatCollada::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
+{
+	outDescription = L"Collada";
+	outExtensions.push_back(L"xml");
+}
+
+bool SkeletonFormatCollada::supportFormat(const std::wstring& extension) const
+{
+	return compareIgnoreCase< std::wstring >(extension, L"xml") == 0;
+}
+
+Ref< Skeleton > SkeletonFormatCollada::read(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const
 {
 /*
 	Ref< BvhDocument > document = BvhDocument::parse(stream);

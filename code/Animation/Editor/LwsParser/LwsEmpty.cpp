@@ -4,14 +4,19 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Animation/Editor/ISkeletonFormat.h"
+#include "Animation/Editor/LwsParser/LwsEmpty.h"
 
 namespace traktor
 {
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ISkeletonFormat", ISkeletonFormat, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.LwsEmpty", LwsEmpty, LwsNode)
+
+LwsEmpty::LwsEmpty()
+:	LwsNode(L"")
+{
+}
 
 	}
 }

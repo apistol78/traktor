@@ -12,7 +12,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.LwsValue", LwsValue, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.LwsValue", LwsValue, LwsNode)
 
 LwsValue::LwsValue(const std::vector< std::wstring >& pieces)
 :	LwsNode(pieces[0])

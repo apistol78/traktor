@@ -6,9 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Animation/Skeleton.h"
 #include "Animation/Editor/SkeletonAsset.h"
-#include "Animation/Editor/SkeletonFormatBvh.h"
-#include "Animation/Editor/SkeletonFormatFbx.h"
-#include "Animation/Editor/SkeletonFormatLws.h"
+#include "Animation/Editor/SkeletonFormat.h"
 #include "Animation/Editor/SkeletonPipeline.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -70,20 +68,6 @@ bool SkeletonPipeline::buildOutput(
 ) const
 {
 	Ref< const SkeletonAsset > skeletonAsset = checked_type_cast< const SkeletonAsset* >(sourceAsset);
-	Ref< ISkeletonFormat > format;
-
-	if (compareIgnoreCase< std::wstring >(skeletonAsset->getFileName().getExtension(), L"bvh") == 0)
-		format = new SkeletonFormatBvh();
-	else if (compareIgnoreCase< std::wstring >(skeletonAsset->getFileName().getExtension(), L"fbx") == 0)
-		format = new SkeletonFormatFbx();
-	else if (compareIgnoreCase< std::wstring >(skeletonAsset->getFileName().getExtension(), L"lws") == 0)
-		format = new SkeletonFormatLws();
-
-	if (!format)
-	{
-		log::error << L"Unable to build skeleton; unsupported format" << Endl;
-		return false;
-	}
 
 	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), skeletonAsset->getFileName().getOriginal());
 	if (!file)
@@ -92,8 +76,9 @@ bool SkeletonPipeline::buildOutput(
 		return false;
 	}
 
-	Ref< Skeleton > skeleton = format->import(
+	Ref< Skeleton > skeleton = SkeletonFormat::readAny(
 		file,
+		skeletonAsset->getFileName().getExtension(),
 		skeletonAsset->getOffset(),
 		skeletonAsset->getScale(),
 		skeletonAsset->getRadius(),

@@ -4,10 +4,9 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_animation_SkeletonFormatLws_H
-#define traktor_animation_SkeletonFormatLws_H
+#pragma once
 
-#include "Animation/Editor/ISkeletonFormat.h"
+#include "Animation/Editor/SkeletonFormat.h"
 
 namespace traktor
 {
@@ -19,17 +18,20 @@ class LwsDocument;
 /*! \brief
  * \ingroup Animation
  */
-class SkeletonFormatLws : public ISkeletonFormat
+class SkeletonFormatLws : public SkeletonFormat
 {
 	T_RTTI_CLASS;
 
 public:
 	Ref< Skeleton > create(LwsDocument* document) const;
 
-	virtual Ref< Skeleton > import(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const T_OVERRIDE T_FINAL;
+	virtual void getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const T_OVERRIDE T_FINAL;
+
+	virtual bool supportFormat(const std::wstring& extension) const T_OVERRIDE T_FINAL;
+
+	virtual Ref< Skeleton > read(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const T_OVERRIDE T_FINAL;
 };
 
 	}
 }
 
-#endif	// traktor_animation_SkeletonFormatLws_H

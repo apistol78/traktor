@@ -8,12 +8,17 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
+#include "Animation/Editor/SkeletonAsset.h"
 #include "Animation/Editor/SkeletonEditorPage.h"
+#include "Animation/Editor/SkeletonFormat.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Vector2.h"
+#include "Core/Misc/String.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
@@ -79,8 +84,31 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	if (!renderSystem)
 		return false;
 
-	m_skeleton = m_document->getObject< Skeleton >(0);
-	if (!m_skeleton)
+	auto doc = m_document->getObject(0);
+	if (is_a< SkeletonAsset >(doc))
+	{
+		m_skeletonAsset = static_cast< SkeletonAsset* >(doc);
+
+		// Get full path to skeleton asset.
+		auto assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+		auto filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + Path(m_skeletonAsset->getFileName()));
+
+		// Parse skeleton.
+		m_skeleton = SkeletonFormat::readAny(
+			filePath,
+			m_skeletonAsset->getOffset(),
+			m_skeletonAsset->getScale(),
+			m_skeletonAsset->getRadius(),
+			m_skeletonAsset->getInvertX(),
+			m_skeletonAsset->getInvertZ()
+		);
+	}
+	else if (is_a< Skeleton >(doc))
+	{
+		m_skeletonAsset = nullptr;
+		m_skeleton = static_cast< Skeleton* >(doc);
+	}
+	else
 		return false;
 
 	m_renderWidget = new ui::Widget();
@@ -106,7 +134,9 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	m_treeSkeleton->addImage(new ui::StyleBitmap(L"Animation.Bones"), 2);
 	m_treeSkeleton->addEventHandler< ui::MouseButtonDownEvent >(this, &SkeletonEditorPage::eventTreeButtonDown);
 	m_treeSkeleton->addEventHandler< ui::SelectionChangeEvent >(this, &SkeletonEditorPage::eventTreeSelect);
-	m_treeSkeleton->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &SkeletonEditorPage::eventTreeEdited);
+
+	if (!m_skeletonAsset)
+		m_treeSkeleton->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &SkeletonEditorPage::eventTreeEdited);
 
 	m_site->createAdditionalPanel(m_skeletonPanel, ui::dpi96(250), false);
 
@@ -132,7 +162,10 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem, 1))
 		return false;
 
-	m_site->setPropertyObject(m_skeleton);
+	if (m_skeletonAsset)
+		m_site->setPropertyObject(m_skeletonAsset);
+	else
+		m_site->setPropertyObject(m_skeleton);
 
 	Aabb3 boundingBox = calculateBoundingBox(m_skeleton);
 
@@ -210,6 +243,9 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Delete")
 	{
+		if (m_skeletonAsset)
+			return false;
+
 		RefArray< ui::custom::TreeViewItem > selectedItems;
 		if (m_treeSkeleton->getItems(selectedItems, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) == 0)
 			return false;
@@ -239,6 +275,9 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Skeleton.Editor.AddJoint")
 	{
+		if (m_skeletonAsset)
+			return false;
+
 		RefArray< ui::custom::TreeViewItem > selectedItems;
 		if (m_treeSkeleton->getItems(selectedItems, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) != 1)
 			return false;
@@ -339,7 +378,7 @@ void SkeletonEditorPage::eventMouseMove(ui::MouseMoveEvent* event)
 
 	if ((event->getKeyState() & ui::KsControl) == 0)
 	{
-		if (m_selectedJoint >= 0)
+		if (!m_skeletonAsset && m_selectedJoint >= 0)
 		{
 			Joint* joint = m_skeleton->getJoint(m_selectedJoint);
 			T_ASSERT (joint);
@@ -542,6 +581,8 @@ void SkeletonEditorPage::eventTreeSelect(ui::SelectionChangeEvent* event)
 
 	if (joint)
 		m_site->setPropertyObject(joint);
+	else if (m_skeletonAsset)
+		m_site->setPropertyObject(m_skeletonAsset);
 	else
 		m_site->setPropertyObject(m_skeleton);
 
@@ -550,6 +591,7 @@ void SkeletonEditorPage::eventTreeSelect(ui::SelectionChangeEvent* event)
 
 void SkeletonEditorPage::eventTreeEdited(ui::custom::TreeViewContentChangeEvent* event)
 {
+	T_ASSERT (!m_skeletonAsset);
 	ui::custom::TreeViewItem* selectedItem = event->getItem();
 	Joint* joint = selectedItem->getData< Joint >(L"JOINT");
 	if (joint)
