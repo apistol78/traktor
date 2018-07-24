@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Animation/Skeleton.h"
+#include "Animation/Editor/SkeletonAsset.h"
 #include "Animation/Editor/SkeletonEditorPage.h"
 #include "Animation/Editor/SkeletonEditorPageFactory.h"
 #include "Ui/Command.h"
@@ -20,6 +21,7 @@ const TypeInfoSet SkeletonEditorPageFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Skeleton >());
+	typeSet.insert(&type_of< SkeletonAsset >());
 	return typeSet;
 }
 

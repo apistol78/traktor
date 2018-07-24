@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Animation/Editor/BvhParser/BvhDocument.h"
 #include "Animation/Editor/BvhParser/BvhJoint.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -56,7 +57,7 @@ void createJoints(
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SkeletonFormatBvh", SkeletonFormatBvh, ISkeletonFormat)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SkeletonFormatBvh", 0, SkeletonFormatBvh, SkeletonFormat)
 
 Ref< Skeleton > SkeletonFormatBvh::create(const BvhDocument* document, const Vector4& offset, float radius) const
 {
@@ -71,7 +72,18 @@ Ref< Skeleton > SkeletonFormatBvh::create(const BvhDocument* document, const Vec
 	return skeleton;
 }
 
-Ref< Skeleton > SkeletonFormatBvh::import(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const
+void SkeletonFormatBvh::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
+{
+	outDescription = L"BVH";
+	outExtensions.push_back(L"bvh");
+}
+
+bool SkeletonFormatBvh::supportFormat(const std::wstring& extension) const
+{
+	return compareIgnoreCase< std::wstring >(extension, L"bvh") == 0;
+}
+
+Ref< Skeleton > SkeletonFormatBvh::read(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const
 {
 	Vector4 jointModifier(
 		invertX ? -1.0f : 1.0f, 

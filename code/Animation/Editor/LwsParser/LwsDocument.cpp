@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Animation/Editor/LwsParser/LwsDocument.h"
+#include "Animation/Editor/LwsParser/LwsEmpty.h"
 #include "Animation/Editor/LwsParser/LwsGroup.h"
 #include "Animation/Editor/LwsParser/LwsValue.h"
 #include "Core/RefArray.h"
@@ -36,7 +37,11 @@ Ref< LwsDocument > LwsDocument::parse(IStream* stream)
 	while (reader.readLine(line) >= 0)
 	{
 		if (line.empty())
+		{
+			if (!groupStack.empty())
+				groupStack.back()->add(new LwsEmpty());
 			continue;
+		}
 
 		std::vector< std::wstring > pieces;
 		Split< std::wstring >::any(line, L" \t", pieces);

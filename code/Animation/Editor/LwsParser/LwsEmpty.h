@@ -4,35 +4,28 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_animation_ISkeletonFormat_H
-#define traktor_animation_ISkeletonFormat_H
+#ifndef traktor_animation_LwsEmpty_H
+#define traktor_animation_LwsEmpty_H
 
-#include "Core/Object.h"
-#include "Core/Ref.h"
+#include "Animation/Editor/LwsParser/LwsNode.h"
 
 namespace traktor
 {
-
-class IStream;
-class Vector4;
-
 	namespace animation
 	{
-
-class Skeleton;
 
 /*! \brief
  * \ingroup Animation
  */
-class ISkeletonFormat : public Object
+class LwsEmpty : public LwsNode
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< Skeleton > import(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const = 0;
+	LwsEmpty();
 };
 
 	}
 }
 
-#endif	// traktor_animation_ISkeletonFormat_H
+#endif	// traktor_animation_LwsEmpty_H

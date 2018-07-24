@@ -75,6 +75,7 @@ class PrimitiveRenderer;
 	{
 
 class Skeleton;
+class SkeletonAsset;
 
 /*! \brief
  * \ingroup Animation
@@ -100,6 +101,7 @@ private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
+	Ref< SkeletonAsset > m_skeletonAsset;
 	Ref< Skeleton > m_skeleton;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< ui::PopupMenu > m_boneMenu;

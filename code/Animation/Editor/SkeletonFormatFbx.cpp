@@ -13,6 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Log/Log.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 
@@ -199,9 +200,20 @@ void createJoints(
 
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SkeletonFormatFbx", SkeletonFormatFbx, ISkeletonFormat)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SkeletonFormatFbx", 0, SkeletonFormatFbx, SkeletonFormat)
 
-Ref< Skeleton > SkeletonFormatFbx::import(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const
+void SkeletonFormatFbx::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
+{
+	outDescription = L"FBX";
+	outExtensions.push_back(L"fbx");
+}
+
+bool SkeletonFormatFbx::supportFormat(const std::wstring& extension) const
+{
+	return compareIgnoreCase< std::wstring >(extension, L"fbx") == 0;
+}
+
+Ref< Skeleton > SkeletonFormatFbx::read(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_fbxLock);
 
