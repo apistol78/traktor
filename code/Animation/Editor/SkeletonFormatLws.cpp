@@ -77,7 +77,7 @@ Ref< Skeleton > SkeletonFormatLws::create(LwsDocument* document) const
 				{
 					const LwsGroup* env = dynamic_type_cast< const LwsGroup* >(rootGroup->get(i + 1));
 					if (!env)
-						return false;
+						return 0;
 
 					const LwsValue* key = dynamic_type_cast< const LwsValue* >(env->find(L"Key"));
 					if (key)

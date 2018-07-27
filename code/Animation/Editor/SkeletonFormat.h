@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #pragma once
 
+#include <string>
 #include <vector>
 #include "Core/Object.h"
 #include "Core/Ref.h"
