@@ -22,7 +22,7 @@ function Static:getPreferredSize(hint)
 			Vector2(0, 0),
 			Vector2(hint.width * 20, hint.height * 20)
 		)
-		self.text = text
+		self:setText(text)
 		local sz = self._text_tb.textSize
 		return { width = sz.x, height = sz.y }
 	else
@@ -35,10 +35,9 @@ function Static:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
 
 	-- Use placement to set text bound.
-	local p = self:getPlacement()
 	self._text_tb.textBounds = Aabb2(
 		Vector2(0, 0),
-		Vector2(p.width * 20, p.height * 20)
+		Vector2(width * 20, height * 20)
 	)
 
 	-- Reset text to ensure it's properly fitted to given text bound.
