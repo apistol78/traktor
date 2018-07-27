@@ -12,7 +12,7 @@ PushButtonScaffolding = PushButtonScaffolding or class("PushButtonScaffolding", 
 
 function PushButtonScaffolding:setup(frame)
 	local ct = Container(frame, TableLayout({0}, {0}, 4,4,4,4))
-	PushButton(ct, "A"):setMinimumWidth(0)
+	PushButton(ct, "A", PushButton.Toggle):setMinimumWidth(0)
 	PushButton(ct, "B"):setMinimumWidth(0)
 	PushButton(ct, "C"):setMinimumWidth(0)
 	PushButton(ct, "D"):setMinimumWidth(0)
