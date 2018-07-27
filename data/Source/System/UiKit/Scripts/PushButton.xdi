@@ -10,9 +10,12 @@ import(traktor.flash)
 
 PushButton = PushButton or class("PushButton", Widget)
 
-function PushButton:new(parent, caption)
+PushButton.Default = 0
+PushButton.Toggle = 1
+
+function PushButton:new(parent, caption, mode)
 	local mc = Widget._createResource(parent, "MC_PushButton")
-	self:_initialize(parent, mc, caption)
+	self:_initialize(parent, mc, caption, mode or PushButton.Default)
 end
 
 function PushButton:getPreferredSize()
@@ -87,9 +90,23 @@ function PushButton:setOnClick(fn)
 	return self
 end
 
+function PushButton:setToggled(toggled)
+	self._toggled = toggled
+	if self._toggled then
+		self._background_mc:gotoAndStop("down")
+	else
+		self._background_mc:gotoAndStop("up")
+	end
+	return self
+end
+
+function PushButton:isToggled()
+	return self._toggled
+end
+
 -- Private
 
-function PushButton:_initialize(parent, mc, caption)
+function PushButton:_initialize(parent, mc, caption, mode)
 	Widget._initialize(self, parent, mc)
 
 	self._background_mc = mc:getMember("background_mc")
@@ -107,6 +124,10 @@ function PushButton:_initialize(parent, mc, caption)
 	self._defaultColor = Color4f(0.8, 0.8, 0.8, 1)
 	self._hoverColor = Color4f(1, 1, 1, 1)
 	self._clickFn = nil
+	self._mode = mode
+	self._toggled = false
+	self._inside = false
+	self._pressed = false
 
 	self._background_mc.colorTransform = ColorTransform(
 		self._defaultColor,
@@ -126,32 +147,61 @@ function PushButton:_initialize(parent, mc, caption)
 #endif
 end
 
+function PushButton:_updateColor()
+	if self._inside and not self._pressed then
+		self._background_mc.colorTransform = ColorTransform(
+			self._hoverColor,
+			Color4f(0, 0, 0, 0)
+		)
+	else
+		self._background_mc.colorTransform = ColorTransform(
+			self._defaultColor,
+			Color4f(0, 0, 0, 0)
+		)
+	end
+end
+
 function PushButton:_onMousePress(event)
 	self._background_mc:gotoAndStop("down")
+	self._pressed = true
+	self:_updateColor()
 	return true
 end
 
 function PushButton:_onMouseRelease(event)
-	self._background_mc:gotoAndStop("up")
-	if event.inside and self._clickFn ~= nil then
+	self._pressed = false
+
+	local toggle = (self._mode & PushButton.Toggle) ~= 0
+	if toggle then
+		if self._inside then
+			self._toggled = not self._toggled
+		end
+		if self._toggled then
+			self._background_mc:gotoAndStop("down")
+		else
+			self._background_mc:gotoAndStop("up")
+		end
+	else
+		self._background_mc:gotoAndStop("up")
+	end
+
+	if self._inside and self._clickFn ~= nil then
 		self._clickFn(self)
 	end
+
+	self:_updateColor()
 	return true
 end
 
 function PushButton:_onMouseEnter(event)
-	self._background_mc.colorTransform = ColorTransform(
-		self._hoverColor,
-		Color4f(0, 0, 0, 0)
-	)
+	self._inside = true
+	self:_updateColor()
 	return true
 end
 
 function PushButton:_onMouseLeave(event)
-	self._background_mc.colorTransform = ColorTransform(
-		self._defaultColor,
-		Color4f(0, 0, 0, 0)
-	)
+	self._inside = false
+	self:_updateColor()
 	return true
 end
 
