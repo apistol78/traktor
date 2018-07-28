@@ -323,15 +323,22 @@ local function migrateShared(args)
 
 	-- Find files to deploy; qualitfy through paths.
 	local files = os:getEnvironment("DEPLOY_SHARED"):split("\n")
-	for _, p in ipairs(paths) do
-		for _, f in ipairs(files) do
+	for _, f in ipairs(files) do
+		local found = false
+		for _, p in ipairs(paths) do
 			local qf = Path(p):concat(Path(f))
 			if FileSystem.getInstance():exist(qf) then
-				if not run:replace(qf:getPathName(), "bin64/" .. f) then
-					stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder")
+				if run:replace(qf:getPathName(), "bin64/" .. f) then
+					found = true
+				else
+					stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder; file copy failed.")
 					return 1
 				end
 			end
+		end
+		if not found then
+			stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder; no such file found.")
+			return 1
 		end
 	end
 
