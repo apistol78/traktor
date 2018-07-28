@@ -14,17 +14,13 @@ function Interval:new(duration, callFn)
 
 	self._duration = duration
 	self._callFn = callFn
+	self._cancelled = false
 
 	table.insert(Interval._instances, self)
 end
 
 function Interval:cancel()
-	for i, t in ipairs(Interval._instances) do
-		if t == self then
-			table.remove(Interval._instances, i)
-			break
-		end
-	end
+	self._cancelled = true
 end
 
 function Interval.update(dT)
@@ -37,7 +33,7 @@ function Interval.update(dT)
 		local t = Interval._instances[i]
 		assert (t._callFn ~= nil)
 		t._duration = t._duration - dT
-		if t._duration <= 0 then
+		if t._duration <= 0 and not t._cancelled then
 			t._callFn()
 			t._callFn = nil
 		end
@@ -49,7 +45,7 @@ function Interval.update(dT)
 	local i = 1
 	while i <= n do
 		local t = Interval._instances[i]
-		if t._duration <= 0 then
+		if t._duration <= 0 or t._cancelled then
 			Interval._instances[i] = Interval._instances[n]
 			Interval._instances[n] = nil
 			n = n - 1
