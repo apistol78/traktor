@@ -86,24 +86,20 @@ bool translateComparison(const std::wstring& comparison, LobbyFilter::Comparison
 	return false;
 }
 
-bool LobbyFilter_addStringComparison(LobbyFilter* self, const std::wstring& key, const std::wstring& value, const std::wstring& comparison)
+bool LobbyFilter_addComparison(LobbyFilter* self, const std::wstring& key, const Any& value, int32_t comparison)
 {
-	LobbyFilter::ComparisonType ct;
-	if (!translateComparison(comparison, ct))
+	if (value.isInt32())
+	{
+		self->addComparison(key, value.getInt32Unsafe(), (LobbyFilter::ComparisonType)comparison);
+		return true;
+	}
+	else if (value.isString())
+	{
+		self->addComparison(key, value.getWideString(), (LobbyFilter::ComparisonType)comparison);
+		return true;
+	}
+	else
 		return false;
-
-	self->addComparison(key, value, ct);
-	return true;
-}
-
-bool LobbyFilter_addNumberComparison(LobbyFilter* self, const std::wstring& key, int32_t value, const std::wstring& comparison)
-{
-	LobbyFilter::ComparisonType ct;
-	if (!translateComparison(comparison, ct))
-		return false;
-
-	self->addComparison(key, value, ct);
-	return true;
 }
 
 bool LobbyFilter_setDistance(LobbyFilter* self, const std::wstring& distance)
@@ -328,9 +324,14 @@ void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classUserArrayResult);
 
 	Ref< AutoRuntimeClass< LobbyFilter > > classLobbyFilter = new AutoRuntimeClass< LobbyFilter >();
+	classLobbyFilter->addConstant("CtEqual", Any::fromInt32(LobbyFilter::CtEqual));
+	classLobbyFilter->addConstant("CtNotEqual", Any::fromInt32(LobbyFilter::CtNotEqual));
+	classLobbyFilter->addConstant("CtLess", Any::fromInt32(LobbyFilter::CtLess));
+	classLobbyFilter->addConstant("CtLessEqual", Any::fromInt32(LobbyFilter::CtLessEqual));
+	classLobbyFilter->addConstant("CtGreater", Any::fromInt32(LobbyFilter::CtGreater));
+	classLobbyFilter->addConstant("CtGreaterEqual", Any::fromInt32(LobbyFilter::CtGreaterEqual));
 	classLobbyFilter->addConstructor();
-	classLobbyFilter->addMethod("addStringComparison", &LobbyFilter_addStringComparison);
-	classLobbyFilter->addMethod("addNumberComparison", &LobbyFilter_addNumberComparison);
+	classLobbyFilter->addMethod("addComparison", &LobbyFilter_addComparison);
 	classLobbyFilter->addMethod("setDistance", &LobbyFilter_setDistance);
 	classLobbyFilter->addMethod("setSlots", &LobbyFilter::setSlots);
 	classLobbyFilter->addMethod("setCount", &LobbyFilter::setCount);

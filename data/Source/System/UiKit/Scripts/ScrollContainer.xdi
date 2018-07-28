@@ -30,7 +30,7 @@ function ScrollContainer:place(x, y, width, height)
 	self._scrollSize.height = p.height
 
 	if self._scrollBarHorizontal ~= nil then
-		local ps = self._scrollBarhorizontal:getPreferredSize()
+		local ps = self._scrollBarHorizontal:getPreferredSize()
 		self._scrollSize.height = self._scrollSize.height - ps.height
 	end
 	if self._scrollBarVertical ~= nil then
@@ -290,6 +290,15 @@ function ScrollContainer:_onMouseMove(event)
 		self._motion.k = 0.95
 	end
 
+	if self._scrollBarHorizontal ~= nil then
+		local v = self:getOffset()
+		self._scrollBarHorizontal:setPosition(v.x)
+	end
+	if self._scrollBarVertical ~= nil then
+		local v = self:getOffset()
+		self._scrollBarVertical:setPosition(v.y)
+	end
+
 	if self._scrollFn ~= nil then
 		self._scrollFn()
 	end
@@ -316,9 +325,19 @@ function ScrollContainer:_onFrame(event)
 		self._motion.x = self._motion.x * self._motion.k
 		self._motion.y = self._motion.y * self._motion.k
 
+		if self._scrollBarHorizontal ~= nil then
+			local v = self:getOffset()
+			self._scrollBarHorizontal:setPosition(v.x)
+		end
+		if self._scrollBarVertical ~= nil then
+			local v = self:getOffset()
+			self._scrollBarVertical:setPosition(v.y)
+		end
+
 		if self._scrollFn ~= nil then
 			self._scrollFn()
 		end
+
 		return true
 	end
 	return false

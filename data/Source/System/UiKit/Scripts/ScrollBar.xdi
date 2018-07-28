@@ -57,8 +57,8 @@ function ScrollBar:setKnobColor(color)
 end
 
 function ScrollBar:setRange(range, size)
-	self._range = range
-	self._size = size
+	self._range = math.max(range, 1)
+	self._size = math.max(size, 1)
 	self:_updateKnobSize()
 	return self
 end
