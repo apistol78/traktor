@@ -61,6 +61,8 @@ public:
 
 	virtual bool buyDLC(const std::wstring& id) const = 0;
 
+	virtual void overrideDLC(const std::wstring& id, bool set, bool enable) = 0;
+
 	virtual bool navigateUrl(const net::Url& url) const = 0;
 
 	virtual bool getFriends(RefArray< IUser >& outFriends, bool onlineOnly) const = 0;
