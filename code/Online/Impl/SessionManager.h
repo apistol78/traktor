@@ -67,6 +67,8 @@ public:
 
 	virtual bool buyDLC(const std::wstring& id) const T_OVERRIDE T_FINAL;
 
+	virtual void overrideDLC(const std::wstring& id, bool set, bool enable) T_OVERRIDE T_FINAL;
+
 	virtual bool navigateUrl(const net::Url& url) const T_OVERRIDE T_FINAL;
 
 	virtual bool getFriends(RefArray< IUser >& outFriends, bool onlineOnly) const T_OVERRIDE T_FINAL;
@@ -110,6 +112,7 @@ private:
 	Ref< TaskUpdateSessionManager > m_updateTask;
 	std::wstring m_overrideLanguageCode;
 	bool m_downloadableContent;
+	std::map< std::wstring, bool > m_overrideDLC;
 	bool m_connected;
 };
 

@@ -431,6 +431,7 @@ void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classISessionManager->addMethod("update", &ISessionManager::update);
 	classISessionManager->addMethod("haveDLC", &ISessionManager::haveDLC);
 	classISessionManager->addMethod("buyDLC", &ISessionManager::buyDLC);
+	classISessionManager->addMethod("overrideDLC", &ISessionManager::overrideDLC);
 	classISessionManager->addMethod("navigateUrl", &ISessionManager_navigateUrl);
 	classISessionManager->addMethod("getFriends", &ISessionManager_getFriends);
 	classISessionManager->addMethod("findFriend", &ISessionManager_findFriend);

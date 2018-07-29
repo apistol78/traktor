@@ -212,18 +212,30 @@ bool SessionManager::requireUserAttention() const
 
 bool SessionManager::haveDLC(const std::wstring& id) const
 {
-	if (m_downloadableContent)
-		return m_provider ? m_provider->haveDLC(id) : false;
-	else
+	if (!m_downloadableContent)
 		return false;
+
+	std::map< std::wstring, bool >::const_iterator i = m_overrideDLC.find(id);
+	if (i != m_overrideDLC.end())
+		return i->second;
+
+	return m_provider ? m_provider->haveDLC(id) : false;
 }
 
 bool SessionManager::buyDLC(const std::wstring& id) const
 {
-	if (m_downloadableContent)
-		return m_provider ? m_provider->buyDLC(id) : false;
-	else
+	if (!m_downloadableContent)
 		return false;
+
+	return m_provider ? m_provider->buyDLC(id) : false;
+}
+
+void SessionManager::overrideDLC(const std::wstring& id, bool set, bool enable)
+{
+	if (set)
+		m_overrideDLC[id] = enable;
+	else
+		m_overrideDLC.erase(id);
 }
 
 bool SessionManager::navigateUrl(const net::Url& url) const
