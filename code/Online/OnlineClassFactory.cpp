@@ -167,6 +167,16 @@ RefArray< IUser > ILobby_getParticipants(ILobby* self)
 	return users;
 }
 
+void ILobby_setOwner(ILobby* self, const IUser* user)
+{
+	self->setOwner(user);
+}
+
+const IUser* ILobby_getOwner(ILobby* self)
+{
+	return self->getOwner();
+}
+
 Ref< LobbyResult > IMatchMaking_createLobby(IMatchMaking* self, uint32_t maxUsers, const std::wstring& access)
 {
 	LobbyAccess la;
@@ -280,47 +290,48 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.online.OnlineClassFactory", 0, OnlineCl
 void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	Ref< AutoRuntimeClass< Result > > classResult = new AutoRuntimeClass< Result >();
+	classResult->addProperty("ready", &Result::ready);
+	classResult->addProperty("succeeded", &Result::succeeded);
 	classResult->addMethod("succeed", &Result::succeed);
 	classResult->addMethod("fail", &Result::fail);
-	classResult->addMethod("ready", &Result::ready);
-	classResult->addMethod("succeeded", &Result::succeeded);
 	classResult->addMethod("defer", &Result_defer);
+	classResult->addMethod("wait", &Result::succeeded);	// Mapping wait to succeeded, will block until result is available.
 	registrar->registerClass(classResult);
 
 	Ref< AutoRuntimeClass< AttachmentResult > > classAttachmentResult = new AutoRuntimeClass< AttachmentResult >();
+	classAttachmentResult->addProperty("attachment", &AttachmentResult::get);
 	classAttachmentResult->addMethod("succeed", &AttachmentResult::succeed);
-	classAttachmentResult->addMethod("get", &AttachmentResult::get);
 	registrar->registerClass(classAttachmentResult);
 
 	Ref< AutoRuntimeClass< LobbyResult > > classLobbyResult = new AutoRuntimeClass< LobbyResult >();
+	classLobbyResult->addProperty("lobby", &LobbyResult::get);
 	classLobbyResult->addMethod("succeed", &LobbyResult::succeed);
-	classLobbyResult->addMethod("get", &LobbyResult::get);
 	registrar->registerClass(classLobbyResult);
 
 	Ref< AutoRuntimeClass< LobbyArrayResult > > classLobbyArrayResult = new AutoRuntimeClass< LobbyArrayResult >();
+	classLobbyArrayResult->addProperty("lobbies", &LobbyArrayResult::get);
 	classLobbyArrayResult->addMethod("succeed", &LobbyArrayResult::succeed);
-	classLobbyArrayResult->addMethod("get", &LobbyArrayResult::get);
 	registrar->registerClass(classLobbyArrayResult);
 
 	Ref< AutoRuntimeClass< PartyResult > > classPartyResult = new AutoRuntimeClass< PartyResult >();
+	classPartyResult->addProperty("party", &PartyResult::get);
 	classPartyResult->addMethod("succeed", &PartyResult::succeed);
-	classPartyResult->addMethod("get", &PartyResult::get);
 	registrar->registerClass(classPartyResult);
 
 	Ref< AutoRuntimeClass< Score > > classScore = new AutoRuntimeClass< Score >();
-	classScore->addMethod("getUser", &Score::getUser);
-	classScore->addMethod("getScore", &Score::getScore);
-	classScore->addMethod("getRank", &Score::getRank);
+	classScore->addProperty("user", &Score::getUser);
+	classScore->addProperty("score", &Score::getScore);
+	classScore->addProperty("rank", &Score::getRank);
 	registrar->registerClass(classScore);
 
 	Ref< AutoRuntimeClass< ScoreArrayResult > > classScoreArrayResult = new AutoRuntimeClass< ScoreArrayResult >();
 	classScoreArrayResult->addMethod("succeed", &ScoreArrayResult::succeed);
-	classScoreArrayResult->addMethod("get", &ScoreArrayResult::get);
+	classScoreArrayResult->addProperty("scores", &ScoreArrayResult::get);
 	registrar->registerClass(classScoreArrayResult);
 
 	Ref< AutoRuntimeClass< UserArrayResult > > classUserArrayResult = new AutoRuntimeClass< UserArrayResult >();
 	classUserArrayResult->addMethod("succeed", &UserArrayResult::succeed);
-	classUserArrayResult->addMethod("get", &UserArrayResult::get);
+	classUserArrayResult->addProperty("users", &UserArrayResult::get);
 	registrar->registerClass(classUserArrayResult);
 
 	Ref< AutoRuntimeClass< LobbyFilter > > classLobbyFilter = new AutoRuntimeClass< LobbyFilter >();
@@ -338,14 +349,14 @@ void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classLobbyFilter);
 
 	Ref< AutoRuntimeClass< IAchievements > > classIAchievements = new AutoRuntimeClass< IAchievements >();
-	classIAchievements->addMethod("ready", &IAchievements::ready);
+	classIAchievements->addProperty("ready", &IAchievements::ready);
 	classIAchievements->addMethod("enumerate", &IAchievements_enumerate);
 	classIAchievements->addMethod("have", &IAchievements::have);
 	classIAchievements->addMethod("set", &IAchievements::set);
 	registrar->registerClass(classIAchievements);
 
 	Ref< AutoRuntimeClass< ILeaderboards > > classILeaderboards = new AutoRuntimeClass< ILeaderboards >();
-	classILeaderboards->addMethod("ready", &ILeaderboards::ready);
+	classILeaderboards->addProperty("ready", &ILeaderboards::ready);
 	classILeaderboards->addMethod("enumerate", &ILeaderboards_enumerate);
 	classILeaderboards->addMethod("create", &ILeaderboards::create);
 	classILeaderboards->addMethod("getRank", &ILeaderboards_getRank);
@@ -357,23 +368,22 @@ void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classILeaderboards);
 
 	Ref< AutoRuntimeClass< ILobby > > classILobby = new AutoRuntimeClass< ILobby >();
+	classILobby->addProperty("participants", &ILobby_getParticipants);
+	classILobby->addProperty("participantCount", &ILobby::getParticipantCount);
+	classILobby->addProperty("maxParticipantCount", &ILobby::getMaxParticipantCount);
+	classILobby->addProperty("friendsCount", &ILobby::getFriendsCount);
+	classILobby->addProperty("owner", &ILobby_setOwner, &ILobby_getOwner);
 	classILobby->addMethod("setMetaValue", &ILobby::setMetaValue);
 	classILobby->addMethod("getMetaValue", &ILobby_getMetaValue);
 	classILobby->addMethod("setParticipantMetaValue", &ILobby::setParticipantMetaValue);
 	classILobby->addMethod("getParticipantMetaValue", &ILobby_getParticipantMetaValue);
 	classILobby->addMethod("join", &ILobby::join);
 	classILobby->addMethod("leave", &ILobby::leave);
-	classILobby->addMethod("getParticipants", &ILobby_getParticipants);
-	classILobby->addMethod("getParticipantCount", &ILobby::getParticipantCount);
-	classILobby->addMethod("getMaxParticipantCount", &ILobby::getMaxParticipantCount);
-	classILobby->addMethod("getFriendsCount", &ILobby::getFriendsCount);
 	classILobby->addMethod("invite", &ILobby::invite);
-	classILobby->addMethod("setOwner", &ILobby::setOwner);
-	classILobby->addMethod("getOwner", &ILobby::getOwner);
 	registrar->registerClass(classILobby);
 
 	Ref< AutoRuntimeClass< IMatchMaking > > classIMatchMaking = new AutoRuntimeClass< IMatchMaking >();
-	classIMatchMaking->addMethod("ready", &IMatchMaking::ready);
+	classIMatchMaking->addProperty("ready", &IMatchMaking::ready);
 	classIMatchMaking->addMethod("findMatchingLobbies", &IMatchMaking::findMatchingLobbies);
 	classIMatchMaking->addMethod("createLobby", &IMatchMaking_createLobby);
 	classIMatchMaking->addMethod("acceptLobby", &IMatchMaking::acceptLobby);
@@ -382,18 +392,18 @@ void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIMatchMaking);
 
 	Ref< AutoRuntimeClass< IParty > > classIParty = new AutoRuntimeClass< IParty >();
+	classIParty->addProperty("participants", &IParty_getParticipants);
+	classIParty->addProperty("participantCount", &IParty::getParticipantCount);
 	classIParty->addMethod("setMetaValue", &IParty::setMetaValue);
 	classIParty->addMethod("getMetaValue", &IParty_getMetaValue);
 	classIParty->addMethod("setParticipantMetaValue", &IParty::setParticipantMetaValue);
 	classIParty->addMethod("getParticipantMetaValue", &IParty_getParticipantMetaValue);
 	classIParty->addMethod("leave", &IParty::leave);
-	classIParty->addMethod("getParticipants", &IParty_getParticipants);
-	classIParty->addMethod("getParticipantCount", &IParty::getParticipantCount);
 	classIParty->addMethod("invite", &IParty::invite);
 	registrar->registerClass(classIParty);
 
 	Ref< AutoRuntimeClass< ISaveData > > classISaveData = new AutoRuntimeClass< ISaveData >();
-	classISaveData->addMethod("ready", &ISaveData::ready);
+	classISaveData->addProperty("ready", &ISaveData::ready);
 	classISaveData->addMethod("enumerate", &ISaveData_enumerate);
 	classISaveData->addMethod("get", &ISaveData::get);
 	classISaveData->addMethod("getNow", &ISaveData::getNow);
@@ -403,30 +413,31 @@ void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classISaveData);
 
 	Ref< AutoRuntimeClass< ISessionManager > > classISessionManager = new AutoRuntimeClass< ISessionManager >();
+	classISessionManager->addProperty("languageCode", &ISessionManager::getLanguageCode);
+	classISessionManager->addProperty("connected", &ISessionManager::isConnected);
+	classISessionManager->addProperty("haveP2PData", &ISessionManager::haveP2PData);
+	classISessionManager->addProperty("requireFullScreen", &ISessionManager::requireFullScreen);
+	classISessionManager->addProperty("requireUserAttention", &ISessionManager::requireUserAttention);
+	classISessionManager->addProperty("currentGameCount", &ISessionManager::getCurrentGameCount);
+	classISessionManager->addProperty("achievements", &ISessionManager::getAchievements);
+	classISessionManager->addProperty("leaderboards", &ISessionManager::getLeaderboards);
+	classISessionManager->addProperty("matchMaking", &ISessionManager::getMatchMaking);
+	classISessionManager->addProperty("saveData", &ISessionManager::getSaveData);
+	classISessionManager->addProperty("statistics", &ISessionManager::getStatistics);
+	classISessionManager->addProperty("user", &ISessionManager::getUser);
+	classISessionManager->addProperty("videoSharing", &ISessionManager::getVideoSharing);
+	classISessionManager->addProperty("voiceChat", &ISessionManager::getVoiceChat);
 	classISessionManager->addMethod("destroy", &ISessionManager::destroy);
 	classISessionManager->addMethod("update", &ISessionManager::update);
-	classISessionManager->addMethod("getLanguageCode", &ISessionManager::getLanguageCode);
-	classISessionManager->addMethod("isConnected", &ISessionManager::isConnected);
-	classISessionManager->addMethod("requireUserAttention", &ISessionManager::requireUserAttention);
 	classISessionManager->addMethod("haveDLC", &ISessionManager::haveDLC);
 	classISessionManager->addMethod("buyDLC", &ISessionManager::buyDLC);
 	classISessionManager->addMethod("navigateUrl", &ISessionManager_navigateUrl);
 	classISessionManager->addMethod("getFriends", &ISessionManager_getFriends);
 	classISessionManager->addMethod("findFriend", &ISessionManager_findFriend);
-	classISessionManager->addMethod("haveP2PData", &ISessionManager::haveP2PData);
-	classISessionManager->addMethod("getCurrentGameCount", &ISessionManager::getCurrentGameCount);
-	classISessionManager->addMethod("getAchievements", &ISessionManager::getAchievements);
-	classISessionManager->addMethod("getLeaderboards", &ISessionManager::getLeaderboards);
-	classISessionManager->addMethod("getMatchMaking", &ISessionManager::getMatchMaking);
-	classISessionManager->addMethod("getSaveData", &ISessionManager::getSaveData);
-	classISessionManager->addMethod("getStatistics", &ISessionManager::getStatistics);
-	classISessionManager->addMethod("getUser", &ISessionManager::getUser);
-	classISessionManager->addMethod("getVideoSharing", &ISessionManager::getVideoSharing);
-	classISessionManager->addMethod("getVoiceChat", &ISessionManager::getVoiceChat);
 	registrar->registerClass(classISessionManager);
 
 	Ref< AutoRuntimeClass< IStatistics > > classIStatistics = new AutoRuntimeClass< IStatistics >();
-	classIStatistics->addMethod("ready", &IStatistics::ready);
+	classIStatistics->addProperty("ready", &IStatistics::ready);
 	classIStatistics->addMethod("enumerate", &IStatistics_enumerate);
 	classIStatistics->addMethod("get", &IStatistics_get);
 	classIStatistics->addMethod("set", &IStatistics::set);
@@ -434,24 +445,24 @@ void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIStatistics);
 
 	Ref< AutoRuntimeClass< IUser > > classIUser = new AutoRuntimeClass< IUser >();
-	classIUser->addMethod("getName", &IUser_getName);
-	classIUser->addMethod("getImage", &IUser::getImage);
-	classIUser->addMethod("getGlobalId", &IUser::getGlobalId);
-	classIUser->addMethod("isFriend", &IUser::isFriend);
+	classIUser->addProperty("name", &IUser_getName);
+	classIUser->addProperty("image", &IUser::getImage);
+	classIUser->addProperty("globalId", &IUser::getGlobalId);
+	classIUser->addProperty("friend", &IUser::isFriend);
+	classIUser->addProperty("p2pAllowed", &IUser::isP2PAllowed);
+	classIUser->addProperty("p2pRelayed", &IUser::isP2PRelayed);
 	classIUser->addMethod("isMemberOfGroup", &IUser::isMemberOfGroup);
 	classIUser->addMethod("joinGroup", &IUser::joinGroup);
 	classIUser->addMethod("invite", &IUser::invite);
 	classIUser->addMethod("setPresenceValue", &IUser::setPresenceValue);
 	classIUser->addMethod("getPresenceValue", &IUser_getPresenceValue);
 	classIUser->addMethod("setP2PEnable", &IUser::setP2PEnable);
-	classIUser->addMethod("isP2PAllowed", &IUser::isP2PAllowed);
-	classIUser->addMethod("isP2PRelayed", &IUser::isP2PRelayed);
 	registrar->registerClass(classIUser);
 
 	Ref< AutoRuntimeClass< IVideoSharing > > classIVideoSharing = new AutoRuntimeClass< IVideoSharing >();
+	classIVideoSharing->addProperty("capturing", &IVideoSharing::isCapturing);
 	classIVideoSharing->addMethod("beginCapture", &IVideoSharing::beginCapture);
 	classIVideoSharing->addMethod("endCapture", &IVideoSharing::endCapture);
-	classIVideoSharing->addMethod("isCapturing", &IVideoSharing::isCapturing);
 	classIVideoSharing->addMethod("showShareUI", &IVideoSharing::showShareUI);
 	registrar->registerClass(classIVideoSharing);
 
