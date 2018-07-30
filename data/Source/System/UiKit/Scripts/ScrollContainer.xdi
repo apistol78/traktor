@@ -248,7 +248,7 @@ function ScrollContainer:_onMouseDown(event)
 					mouseY = y,
 					scrollX = self._scroll.x,
 					scrollY = self._scroll.y,
-					time = self._timer:getElapsedTime()
+					time = self._timer.elapsedTime
 				}
 			end
 			return true
@@ -271,7 +271,7 @@ function ScrollContainer:_onMouseMove(event)
 		return false
 	end
 
-	local time = self._timer:getElapsedTime()
+	local time = self._timer.elapsedTime
 
 	local dx = self._mc.mouseX - self._scrollFrom.mouseX
 	local dy = self._mc.mouseY - self._scrollFrom.mouseY

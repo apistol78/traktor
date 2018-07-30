@@ -57,11 +57,11 @@ void CoreClassFactory2::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	Ref< AutoRuntimeClass< Timer > > classTimer = new AutoRuntimeClass< Timer >();
 	classTimer->addConstructor();
+	classTimer->addProperty("elapsedTime", &Timer::getElapsedTime);
+	classTimer->addProperty("deltaTime", &Timer::getDeltaTime);
 	classTimer->addMethod("start", &Timer::start);
 	classTimer->addMethod("pause", &Timer::pause);
 	classTimer->addMethod("stop", &Timer::stop);
-	classTimer->addMethod("getElapsedTime", &Timer::getElapsedTime);
-	classTimer->addMethod("getDeltaTime", &Timer::getDeltaTime);
 	registrar->registerClass(classTimer);
 
 	Ref< AutoRuntimeClass< IHash > > classIHash = new AutoRuntimeClass< IHash >();

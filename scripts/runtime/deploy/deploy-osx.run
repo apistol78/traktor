@@ -52,7 +52,7 @@ function deploy(args)
 		for _, f in ipairs(files) do
 			local qf = Path(p):concat(Path(f))
 			if FileSystem.getInstance():exist(qf) then
-				run:replace(qf:getPathName(), bundle .. "/Contents/MacOS/" .. f)
+				run:replace(qf.pathName, bundle .. "/Contents/MacOS/" .. f)
 			end
 		end
 	end
@@ -114,7 +114,7 @@ function migrate(args)
 		for _, f in ipairs(files) do
 			local qf = Path(p):concat(Path(f))
 			if FileSystem.getInstance():exist(qf) then
-				if not run:replace(qf:getPathName(), bundle .. "/Contents/MacOS/" .. f) then
+				if not run:replace(qf.pathName, bundle .. "/Contents/MacOS/" .. f) then
 					stderr:printLn("Unable to copy file \"" .. f .. "\" to bundle")
 					return 1
 				end

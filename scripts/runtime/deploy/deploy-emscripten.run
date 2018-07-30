@@ -114,7 +114,7 @@ function deploy(args)
 	local paths = ""
 	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
 	 for _, p in pairs(paths) do
-		libraryPaths = libraryPaths .. " -L " .. Path(p):getPathName() .. ""
+		libraryPaths = libraryPaths .. " -L " .. Path(p).pathName .. ""
 	end
 
 	-- Collect libraries to link.
@@ -224,7 +224,7 @@ function migrate(args)
 	local paths = ""
 	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
 	 for _, p in pairs(paths) do
-		libraryPaths = libraryPaths .. " -L " .. Path(p):getPathName() .. ""
+		libraryPaths = libraryPaths .. " -L " .. Path(p).pathName .. ""
 	end
 
 	-- Collect libraries to link.

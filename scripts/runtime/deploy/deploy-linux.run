@@ -105,7 +105,7 @@ function migrate(args)
 		for _, f in ipairs(files) do
 			local qf = Path(p):concat(Path(f))
 			if FileSystem.getInstance():exist(qf) then
-				if not run:replace(qf:getPathName(), "bin/" .. f) then
+				if not run:replace(qf.pathName, "bin/" .. f) then
 					stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder")
 					return 1
 				end

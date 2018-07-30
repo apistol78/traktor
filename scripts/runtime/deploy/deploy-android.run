@@ -125,7 +125,7 @@ local function generateBinary()
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
 	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
 	 for _, p in pairs(paths) do
-		libraryPaths = libraryPaths .. "-L " .. Path(p):getPathName() .. " "
+		libraryPaths = libraryPaths .. "-L " .. Path(p).pathName .. " "
 	end
 
 	-- Collect libraries to link.
@@ -248,7 +248,7 @@ function deploy(args)
 	end
 
 	local iconPath = Path("$(DEPLOY_SYSTEM_ROOT)"):concat(Path(iconFile))
-	local iconImage = Image.loadFromFile(iconPath:getPathName())
+	local iconImage = Image.loadFromFile(iconPath.pathName)
 	if iconImage ~= nil then
 		generateImage("res/drawable/splash_image.png", iconImage, 512, 512)
 		generateImage("res/drawable-hdpi/ic_launcher.png", iconImage, 72, 72)
@@ -256,7 +256,7 @@ function deploy(args)
 		generateImage("res/drawable-mdpi/ic_launcher.png", iconImage, 48, 48)
 		generateImage("res/drawable-xhdpi/ic_launcher.png", iconImage, 96, 96)
 	else
-		stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconPath:getPathName() .. "\".")
+		stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconPath.pathName .. "\".")
 		return 1
 	end
 
@@ -360,7 +360,7 @@ function migrate(args)
 	end
 
 	local iconPath = Path("$(DEPLOY_SYSTEM_ROOT)"):concat(Path(iconFile))
-	local iconImage = Image.loadFromFile(iconPath:getPathName())
+	local iconImage = Image.loadFromFile(iconPath.pathName)
 	if iconImage ~= nil then
 		generateImage("res/drawable/splash_image.png", iconImage, 512, 512)
 		generateImage("res/drawable-hdpi/ic_launcher.png", iconImage, 72, 72)
@@ -368,7 +368,7 @@ function migrate(args)
 		generateImage("res/drawable-mdpi/ic_launcher.png", iconImage, 48, 48)
 		generateImage("res/drawable-xhdpi/ic_launcher.png", iconImage, 96, 96)
 	else
-		stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconPath:getPathName() .. "\".")
+		stderr:printLn("Failed to generate Android icon images; unable to read source image \"" .. iconPath.pathName .. "\".")
 		return 1
 	end
 

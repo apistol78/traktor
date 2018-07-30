@@ -44,7 +44,7 @@ local function createIcon()
 		iconFile = "$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/DefaultIcon.png"
 	end
 
-	iconFile = Path(projectRoot):concat(Path(iconFile)):getPathName()
+	iconFile = Path(projectRoot):concat(Path(iconFile)).pathName
 
 	local iconImage = Image.loadFromFile(iconFile)
 	if iconImage == nil then 
@@ -64,7 +64,7 @@ local function generateResponseFile(files)
 	local s = StreamOutput(f, Utf8Encoding())
 	local fna = files:split(" ")
 	for _, fn in ipairs(fna) do
-		s:printLn(Path(fn):getPathName())
+		s:printLn(Path(fn).pathName)
 	end
 
 	f:close()
@@ -81,7 +81,7 @@ local function linkStaticProduct()
 	local paths = ""
 	if not debug then paths = os:getEnvironment("DEPLOY_STATIC_PATH_RELEASE"):split("\n") else paths = os:getEnvironment("DEPLOY_STATIC_PATH_DEBUG"):split("\n") end
 	for _, p in pairs(paths) do
-		libraryPaths = libraryPaths .. "/LIBPATH:\"" .. Path(p):getPathName() .. "\" "
+		libraryPaths = libraryPaths .. "/LIBPATH:\"" .. Path(p).pathName .. "\" "
 	end
 
 	-- Get files to link or copy.
@@ -296,7 +296,7 @@ local function migrateStatic(args)
 			if f ~= "" and not f:endswith(".lib") then
 				local qf = Path(p):concat(Path(f))
 				if FileSystem.getInstance():exist(qf) then
-					run:replace(qf:getPathName(), "bin64/" .. f)
+					run:replace(qf.pathName, "bin64/" .. f)
 				end
 			end
 		end
@@ -328,7 +328,7 @@ local function migrateShared(args)
 		for _, p in ipairs(paths) do
 			local qf = Path(p):concat(Path(f))
 			if FileSystem.getInstance():exist(qf) then
-				if run:replace(qf:getPathName(), "bin64/" .. f) then
+				if run:replace(qf.pathName, "bin64/" .. f) then
 					found = true
 				else
 					stderr:printLn("Unable to copy file \"" .. f .. "\" to binary folder; file copy failed.")
