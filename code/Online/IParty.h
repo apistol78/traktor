@@ -7,8 +7,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_online_IParty_H
 #define traktor_online_IParty_H
 
+#include <string>
+#include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
-#include "Online/Result.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,6 +22,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+
+class Result;
+
 	namespace online
 	{
 

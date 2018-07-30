@@ -30,30 +30,30 @@ EventTask::EventTask(const std::wstring& serverHost, const std::wstring& client,
 
 ITask::TaskResult EventTask::execute()
 {
-	StringOutputStream ss;
-	ss << L"<?xml version=\"1.0\"?>";
-	ss << L"<event>";
-	ss <<	L"<client>" << m_client << L"</client>";
-	ss <<	L"<symbol>" << m_symbol << L"</symbol>";
-	ss <<	L"<timeStamp>" << m_timeStamp << L"</timeStamp>";
-	ss << L"</event>";
+	//StringOutputStream ss;
+	//ss << L"<?xml version=\"1.0\"?>";
+	//ss << L"<event>";
+	//ss <<	L"<client>" << m_client << L"</client>";
+	//ss <<	L"<symbol>" << m_symbol << L"</symbol>";
+	//ss <<	L"<timeStamp>" << m_timeStamp << L"</timeStamp>";
+	//ss << L"</event>";
 
-	net::HttpClient client;
-	Ref< net::HttpResponse > response = client.put(
-		net::Url(L"http://" + m_serverHost + L"/Api/Event.php"),
-		net::HttpRequestContent(ss.str())
-	);
-	if (!response)
-	{
-		T_DEBUG(L"Unable to add value; no response from server.");
-		return TrRetryAgainLater;
-	}
+	//net::HttpClient client;
+	//Ref< net::HttpResponse > response = client.put(
+	//	net::Url(L"http://" + m_serverHost + L"/Api/Event.php"),
+	//	net::HttpRequestContent(ss.str())
+	//);
+	//if (!response)
+	//{
+	//	T_DEBUG(L"Unable to add value; no response from server.");
+	//	return TrRetryAgainLater;
+	//}
 
-	if (response->getStatusCode() != 200)
-	{
-		T_DEBUG(L"Unable to add value; error response from server \"" << response->getStatusMessage() << L"\" (" << response->getStatusCode() << L").");
-		return TrFailure;
-	}
+	//if (response->getStatusCode() != 200)
+	//{
+	//	T_DEBUG(L"Unable to add value; error response from server \"" << response->getStatusMessage() << L"\" (" << response->getStatusCode() << L").");
+	//	return TrFailure;
+	//}
 
 	return TrSuccess;
 }

@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_online_LobbyArrayResult_H
 
 #include "Core/RefArray.h"
-#include "Online/Result.h"
+#include "Core/Thread/Result.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

@@ -4,14 +4,13 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_online_LobbyResult_H
-#define traktor_online_LobbyResult_H
+#pragma once
 
 #include "Core/Thread/Result.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_ONLINE_EXPORT)
+#if defined(T_NET_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -19,25 +18,36 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
-	namespace online
+
+class IStream;
+class Job;
+
+	namespace net
 	{
 
-class ILobby;
+class HttpResponse;
 
-class T_DLLCLASS LobbyResult : public Result
+/*! \brief
+ * \ingroup Net
+ */
+class T_DLLCLASS HttpClientResult : public Result
 {
 	T_RTTI_CLASS;
 
 public:
-	void succeed(ILobby* lobby);
+	void succeed(const HttpResponse* response, IStream* stream);
 
-	ILobby* get() const;
+	const HttpResponse* getResponse();
+
+	IStream* getStream();
 
 private:
-	Ref< ILobby > m_lobby;
+	friend class HttpClient;
+
+	Ref< Job > m_job;
+	Ref< const HttpResponse > m_response;
+	Ref< IStream > m_stream;
 };
 
 	}
 }
-
-#endif	// traktor_online_LobbyResult_H

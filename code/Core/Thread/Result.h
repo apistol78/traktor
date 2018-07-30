@@ -4,15 +4,14 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_online_Result_H
-#define traktor_online_Result_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_ONLINE_EXPORT)
+#if defined(T_CORE_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -20,8 +19,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
-	namespace online
-	{
 
 /*! \brief Deferred result.
  *
@@ -34,20 +31,18 @@ namespace traktor
  * it's designed to either to used
  * with a callback, polled or blocked.
  *
- * Ref< online::AttachmentResult > result = m_sessionManager->getSaveData()->get(L"MySaveGame");
+ * Ref< Result > result = lengthyOperation();
  *
  * // Either defer result as a callback.
- * result->defer(this, &GameState::deferredLoadFinished, ...);
+ * result->defer(this, &MyClass::deferredResultFinished, ...);
  *
  * // Or poll until result is ready.
  * if (result->ready())
  * {
- *   if (result->succeeded())
- *     saveGame = result->get< MySaveGame >();
  * }
  *
  * // Or block.
- * saveGame = result->get< MySaveGame >();
+ * saveGame = result->get< MyData >();
  *
  */
 class T_DLLCLASS Result : public Object
@@ -117,7 +112,4 @@ private:
 	void deferred();
 };
 
-	}
 }
-
-#endif	// traktor_online_Result_H

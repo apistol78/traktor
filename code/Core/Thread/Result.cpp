@@ -5,20 +5,18 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Thread/Event.h"
-#include "Online/Result.h"
+#include "Core/Thread/Result.h"
 
 namespace traktor
 {
-	namespace online
+	namespace
 	{
-		namespace
-		{
 
 Event s_eventStatus;
 
-		}
+	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.online.Result", Result, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Result", Result, Object)
 
 Result::Result()
 :	m_ready(false)
@@ -80,5 +78,4 @@ void Result::deferred()
 	}
 }
 
-	}
 }

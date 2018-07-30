@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/Result.h"
 #include "Online/Impl/Statistics.h"
 #include "Online/Impl/TaskQueue.h"
 #include "Online/Impl/Tasks/TaskEnumStatistics.h"

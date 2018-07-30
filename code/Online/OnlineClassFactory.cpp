@@ -7,7 +7,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
-#include "Core/Class/IRuntimeDelegate.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Drawing/Image.h"
@@ -27,6 +26,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Online/LobbyFilter.h"
 #include "Online/OnlinePeer2PeerProvider.h"
 #include "Online/Score.h"
+#include "Online/ScoreArrayResult.h"
 #include "Sound/Player/ISoundPlayer.h"
 
 namespace traktor
@@ -35,32 +35,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-class ResultDeferred : public Result::IDeferred
-{
-public:
-	ResultDeferred(IRuntimeDelegate* delegate)
-	:	m_delegate(delegate)
-	{
-	}
-
-	virtual void dispatch(const Result& result) const
-	{
-		const Any argv[] =
-		{
-			Any::fromObject(const_cast< Result* >(&result))
-		};
-		m_delegate->call(sizeof_array(argv), argv);
-	}
-
-private:
-	Ref< IRuntimeDelegate > m_delegate;
-};
-
-void Result_defer(Result* self, IRuntimeDelegate* delegate)
-{
-	self->defer(new ResultDeferred(delegate));
-}
 
 bool translateComparison(const std::wstring& comparison, LobbyFilter::ComparisonType& outComparison)
 {
@@ -289,15 +263,6 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.online.OnlineClassFactory", 0, OnlineCl
 
 void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< Result > > classResult = new AutoRuntimeClass< Result >();
-	classResult->addProperty("ready", &Result::ready);
-	classResult->addProperty("succeeded", &Result::succeeded);
-	classResult->addMethod("succeed", &Result::succeed);
-	classResult->addMethod("fail", &Result::fail);
-	classResult->addMethod("defer", &Result_defer);
-	classResult->addMethod("wait", &Result::succeeded);	// Mapping wait to succeeded, will block until result is available.
-	registrar->registerClass(classResult);
-
 	Ref< AutoRuntimeClass< AttachmentResult > > classAttachmentResult = new AutoRuntimeClass< AttachmentResult >();
 	classAttachmentResult->addProperty("attachment", &AttachmentResult::get);
 	classAttachmentResult->addMethod("succeed", &AttachmentResult::succeed);

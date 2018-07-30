@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style
+		parent="@android:style/Theme.NoTitleBar.Fullscreen"
+		name="splash_theme"
+	>
+		<item name="android:windowBackground">@drawable/splash_drawable</item>
+	</style>
+</resources>
