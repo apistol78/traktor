@@ -4,16 +4,19 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Core/Functor/Functor.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/StreamStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Misc/String.h"
+#include "Core/Thread/JobManager.h"
 #include "Net/SocketAddressIPv6.h"
 #include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
 #include "Net/Url.h"
 #include "Net/Http/HttpClient.h"
+#include "Net/Http/HttpClientResult.h"
 #include "Net/Http/HttpChunkStream.h"
 #include "Net/Http/HttpResponse.h"
 #include "Net/Http/IHttpRequestContent.h"
@@ -25,20 +28,20 @@ namespace traktor
 		namespace
 		{
 
-bool executeRequest(const wchar_t* const method, const net::Url& url, const IHttpRequestContent* content, Ref< HttpResponse >& outResponse, Ref< IStream >& outStream)
+void executeRequestJob(std::wstring method, net::Url url, Ref< const IHttpRequestContent > content, Ref< HttpClientResult > result)
 {
 	if (url.getProtocol() != L"http")
-		return false;
+		return;
 	
 	// Lookup host address.
 	SocketAddressIPv6 addr(url.getHost(), url.getPort());
 	if (!addr.valid())
-		return false;
+		return;
 	
 	// Create and connect socket to host.
 	Ref< TcpSocket > socket = new TcpSocket();
 	if (!socket->connect(addr))
-		return false;
+		return;
 
 	// Build GET string.
 	std::wstring resource = url.getPath();
@@ -69,93 +72,70 @@ bool executeRequest(const wchar_t* const method, const net::Url& url, const IHtt
 	else
 		ss << L"\r\n";
 
-	outStream = new SocketStream(socket);
+	Ref< IStream > stream = new SocketStream(socket);
 
 	// Send request, UTF-8 encoded.
-	FileOutputStream fos(outStream, new Utf8Encoding());
+	FileOutputStream fos(stream, new Utf8Encoding());
 	fos << ss.str();
 
 	// Accept and parse response from server.
-	outResponse = new HttpResponse();
-	if (!outResponse->parse(outStream))
-		return false;
+	Ref< HttpResponse > response = new HttpResponse();
+	if (!response->parse(stream))
+		return;
 
 	// Reset offset in stream to origin.
-	outStream->seek(IStream::SeekSet, 0);
+	stream->seek(IStream::SeekSet, 0);
 
 	// Create chunked-transfer stream if such encoding is required.
-	if (outResponse->get(L"Transfer-Encoding") == L"chunked")
-		outStream = new HttpChunkStream(outStream);
+	if (response->get(L"Transfer-Encoding") == L"chunked")
+		stream = new HttpChunkStream(stream);
 
 	// If response contains content length field we can cap stream.
-	int contentLength = parseString< int >(outResponse->get(L"Content-Length"));
+	int contentLength = parseString< int >(response->get(L"Content-Length"));
 	if (contentLength > 0)
-		outStream = new StreamStream(outStream, contentLength);
+		stream = new StreamStream(stream, contentLength);
 
-	return true;
+	result->succeed(response, stream);
 }
 
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.HttpClient", HttpClient, Object)
 
-Ref< HttpResponse > HttpClient::get(const net::Url& url)
+Ref< HttpClientResult > HttpClient::get(const net::Url& url, const IHttpRequestContent* content)
 {
-	Ref< HttpResponse > response;
-	if (executeRequest(L"GET", url, 0, response, m_stream))
-		return response;
+	Ref< HttpClientResult > result = new HttpClientResult();
+	result->m_job = JobManager::getInstance().add(makeStaticFunctor< std::wstring, net::Url, Ref< const IHttpRequestContent >, Ref< HttpClientResult > >(
+		&executeRequestJob, L"GET", url, content, result)
+	);
+	if (result->m_job)
+		return result;
 	else
 		return 0;
 }
 
-Ref< HttpResponse > HttpClient::get(const net::Url& url, const IHttpRequestContent& content)
+Ref< HttpClientResult > HttpClient::put(const net::Url& url, const IHttpRequestContent* content)
 {
-	Ref< HttpResponse > response;
-	if (executeRequest(L"GET", url, &content, response, m_stream))
-		return response;
+	Ref< HttpClientResult > result = new HttpClientResult();
+	result->m_job = JobManager::getInstance().add(makeStaticFunctor< std::wstring, net::Url, Ref< const IHttpRequestContent >, Ref< HttpClientResult > >(
+		&executeRequestJob, L"PUT", url, content, result)
+	);
+	if (result->m_job)
+		return result;
 	else
 		return 0;
 }
 
-Ref< HttpResponse > HttpClient::put(const net::Url& url)
+Ref< HttpClientResult > HttpClient::post(const net::Url& url, const IHttpRequestContent* content)
 {
-	Ref< HttpResponse > response;
-	if (executeRequest(L"PUT", url, 0, response, m_stream))
-		return response;
+	Ref< HttpClientResult > result = new HttpClientResult();
+	result->m_job = JobManager::getInstance().add(makeStaticFunctor< std::wstring, net::Url, Ref< const IHttpRequestContent >, Ref< HttpClientResult > >(
+		&executeRequestJob, L"POST", url, content, result)
+	);
+	if (result->m_job)
+		return result;
 	else
 		return 0;
-}
-
-Ref< HttpResponse > HttpClient::put(const net::Url& url, const IHttpRequestContent& content)
-{
-	Ref< HttpResponse > response;
-	if (executeRequest(L"PUT", url, &content, response, m_stream))
-		return response;
-	else
-		return 0;
-}
-
-Ref< HttpResponse > HttpClient::post(const net::Url& url)
-{
-	Ref< HttpResponse > response;
-	if (executeRequest(L"POST", url, 0, response, m_stream))
-		return response;
-	else
-		return 0;
-}
-
-Ref< HttpResponse > HttpClient::post(const net::Url& url, const IHttpRequestContent& content)
-{
-	Ref< HttpResponse > response;
-	if (executeRequest(L"POST", url, &content, response, m_stream))
-		return response;
-	else
-		return 0;
-}
-
-Ref< IStream > HttpClient::getStream()
-{
-	return m_stream;
 }
 
 	}

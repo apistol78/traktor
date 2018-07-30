@@ -12,11 +12,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+
+class Result;
+
 	namespace online
 	{
 
 class IStatisticsProvider;
-class Result;
 
 class TaskStatistics : public ITask
 {

@@ -31,31 +31,31 @@ SetValueTask::SetValueTask(const std::wstring& serverHost, const std::wstring& c
 
 ITask::TaskResult SetValueTask::execute()
 {
-	StringOutputStream ss;
-	ss << L"<?xml version=\"1.0\"?>";
-	ss << L"<setvalue>";
-	ss <<	L"<client>" << m_client << L"</client>";
-	ss <<	L"<symbol>" << m_symbol << L"</symbol>";
-	ss <<	L"<value>" << m_value << L"</value>";
-	ss <<	L"<timeStamp>" << m_timeStamp << L"</timeStamp>";
-	ss << L"</setvalue>";
+	//StringOutputStream ss;
+	//ss << L"<?xml version=\"1.0\"?>";
+	//ss << L"<setvalue>";
+	//ss <<	L"<client>" << m_client << L"</client>";
+	//ss <<	L"<symbol>" << m_symbol << L"</symbol>";
+	//ss <<	L"<value>" << m_value << L"</value>";
+	//ss <<	L"<timeStamp>" << m_timeStamp << L"</timeStamp>";
+	//ss << L"</setvalue>";
 
-	net::HttpClient client;
-	Ref< net::HttpResponse > response = client.put(
-		net::Url(L"http://" + m_serverHost + L"/Api/Set.php"),
-		net::HttpRequestContent(ss.str())
-	);
-	if (!response)
-	{
-		T_DEBUG(L"Unable to add value; no response from server.");
-		return TrRetryAgainLater;
-	}
+	//net::HttpClient client;
+	//Ref< net::HttpResponse > response = client.put(
+	//	net::Url(L"http://" + m_serverHost + L"/Api/Set.php"),
+	//	net::HttpRequestContent(ss.str())
+	//);
+	//if (!response)
+	//{
+	//	T_DEBUG(L"Unable to add value; no response from server.");
+	//	return TrRetryAgainLater;
+	//}
 
-	if (response->getStatusCode() != 200)
-	{
-		T_DEBUG(L"Unable to add value; error response from server \"" << response->getStatusMessage() << L"\" (" << response->getStatusCode() << L").");
-		return TrFailure;
-	}
+	//if (response->getStatusCode() != 200)
+	//{
+	//	T_DEBUG(L"Unable to add value; error response from server \"" << response->getStatusMessage() << L"\" (" << response->getStatusCode() << L").");
+	//	return TrFailure;
+	//}
 
 	return TrSuccess;
 }

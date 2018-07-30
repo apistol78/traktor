@@ -20,6 +20,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Net/UdpSocket.h"
 #include "Net/UrlConnection.h"
 #include "Net/Http/HttpClient.h"
+#include "Net/Http/HttpClientResult.h"
 #include "Net/Http/HttpResponse.h"
 #include "Net/Http/HttpRequest.h"
 #include "Net/Http/HttpRequestContent.h"
@@ -43,32 +44,32 @@ namespace traktor
 		namespace
 		{
 
-Ref< HttpResponse > net_HttpClient_get_2(HttpClient* self, const Url& url)
+Ref< HttpClientResult > net_HttpClient_get_2(HttpClient* self, const Url& url)
 {
 	return self->get(url);
 }
 
-Ref< HttpResponse > net_HttpClient_get_3(HttpClient* self, const Url& url, const IHttpRequestContent& content)
+Ref< HttpClientResult > net_HttpClient_get_3(HttpClient* self, const Url& url, const IHttpRequestContent* content)
 {
 	return self->get(url, content);
 }
 
-Ref< HttpResponse > net_HttpClient_put_2(HttpClient* self, const Url& url)
+Ref< HttpClientResult > net_HttpClient_put_2(HttpClient* self, const Url& url)
 {
 	return self->put(url);
 }
 
-Ref< HttpResponse > net_HttpClient_put_3(HttpClient* self, const Url& url, const IHttpRequestContent& content)
+Ref< HttpClientResult > net_HttpClient_put_3(HttpClient* self, const Url& url, const IHttpRequestContent* content)
 {
 	return self->put(url, content);
 }
 
-Ref< HttpResponse > net_HttpClient_post_2(HttpClient* self, const Url& url)
+Ref< HttpClientResult > net_HttpClient_post_2(HttpClient* self, const Url& url)
 {
 	return self->post(url);
 }
 
-Ref< HttpResponse > net_HttpClient_post_3(HttpClient* self, const Url& url, const IHttpRequestContent& content)
+Ref< HttpClientResult > net_HttpClient_post_3(HttpClient* self, const Url& url, const IHttpRequestContent* content)
 {
 	return self->post(url, content);
 }
@@ -300,14 +301,14 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< TcpSocket > > classTcpSocket = new AutoRuntimeClass< TcpSocket >();
 	classTcpSocket->addConstructor();
+	classTcpSocket->addProperty("localAddress", &TcpSocket::getLocalAddress);
+	classTcpSocket->addProperty("remoteAddress", &TcpSocket::getRemoteAddress);
 	//classTcpSocket->addMethod("bind", &TcpSocket::bind);
 	//classTcpSocket->addMethod("bind", &TcpSocket::bind);
 	//classTcpSocket->addMethod("connect", &TcpSocket::connect);
 	//classTcpSocket->addMethod("connect", &TcpSocket::connect);
 	classTcpSocket->addMethod("listen", &TcpSocket::listen);
 	classTcpSocket->addMethod("accept", &TcpSocket::accept);
-	classTcpSocket->addMethod("getLocalAddress", &TcpSocket::getLocalAddress);
-	classTcpSocket->addMethod("getRemoteAddress", &TcpSocket::getRemoteAddress);
 	classTcpSocket->addMethod("setNoDelay", &TcpSocket::setNoDelay);
 	registrar->registerClass(classTcpSocket);
 
@@ -346,18 +347,18 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< Url > > classUrl = new AutoRuntimeClass< Url >();
 	classUrl->addConstructor();
 	classUrl->addConstructor< const std::wstring& >();
+	classUrl->addProperty("valid", &Url::valid);
+	classUrl->addProperty("defaultPort", &Url::getDefaultPort);
+	classUrl->addProperty("file", &Url::getFile);
+	classUrl->addProperty("host", &Url::getHost);
+	classUrl->addProperty("path", &Url::getPath);
+	classUrl->addProperty("port", &Url::getPort);
+	classUrl->addProperty("protocol", &Url::getProtocol);
+	classUrl->addProperty("query", &Url::getQuery);
+	classUrl->addProperty("ref", &Url::getRef);
+	classUrl->addProperty("userInfo", &Url::getUserInfo);
+	classUrl->addProperty("string", &Url::getString);
 	classUrl->addMethod("set", &Url::set);
-	classUrl->addMethod("valid", &Url::valid);
-	classUrl->addMethod("getDefaultPort", &Url::getDefaultPort);
-	classUrl->addMethod("getFile", &Url::getFile);
-	classUrl->addMethod("getHost", &Url::getHost);
-	classUrl->addMethod("getPath", &Url::getPath);
-	classUrl->addMethod("getPort", &Url::getPort);
-	classUrl->addMethod("getProtocol", &Url::getProtocol);
-	classUrl->addMethod("getQuery", &Url::getQuery);
-	classUrl->addMethod("getRef", &Url::getRef);
-	classUrl->addMethod("getUserInfo", &Url::getUserInfo);
-	classUrl->addMethod("getString", &Url::getString);
 	//classUrl->addStaticMethod("encode", &Url::encode);
 	//classUrl->addStaticMethod("encode", &Url::encode);
 	//classUrl->addStaticMethod("decode", &Url::decode);
@@ -365,12 +366,12 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	Ref< AutoRuntimeClass< UrlConnection > > classUrlConnection = new AutoRuntimeClass< UrlConnection >();
 	classUrlConnection->addStaticMethod("open", &UrlConnection::open);
-	classUrlConnection->addMethod("getUrl", &UrlConnection::getUrl);
-	classUrlConnection->addMethod("getStream", &UrlConnection::getStream);
+	classUrlConnection->addProperty("url", &UrlConnection::getUrl);
+	classUrlConnection->addProperty("stream", &UrlConnection::getStream);
 	registrar->registerClass(classUrlConnection);
 
 	Ref< AutoRuntimeClass< IHttpRequestContent > > classIHttpRequestContent = new AutoRuntimeClass< IHttpRequestContent >();
-	classIHttpRequestContent->addMethod("getUrlEncodedContent", &IHttpRequestContent::getUrlEncodedContent);
+	classIHttpRequestContent->addProperty("urlEncodedContent", &IHttpRequestContent::getUrlEncodedContent);
 	registrar->registerClass(classIHttpRequestContent);
 
 	Ref< AutoRuntimeClass< HttpRequestContent > > classHttpRequestContent = new AutoRuntimeClass< HttpRequestContent >();
@@ -391,21 +392,25 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classHttpClient->addMethod("put", &net_HttpClient_put_3);
 	classHttpClient->addMethod("post", &net_HttpClient_post_2);
 	classHttpClient->addMethod("post", &net_HttpClient_post_3);
-	classHttpClient->addMethod("getStream", &HttpClient::getStream);
 	registrar->registerClass(classHttpClient);
+
+	Ref< AutoRuntimeClass< HttpClientResult > > classHttpClientResult = new AutoRuntimeClass< HttpClientResult >();
+	classHttpClientResult->addProperty("response", &HttpClientResult::getResponse);
+	classHttpClientResult->addProperty("stream", &HttpClientResult::getStream);
+	registrar->registerClass(classHttpClientResult);
 
 	Ref< AutoRuntimeClass< HttpResponse > > classHttpResponse = new AutoRuntimeClass< HttpResponse >();
 	classHttpResponse->addConstructor();
+	classHttpResponse->addProperty("statusCode", &HttpResponse::getStatusCode);
+	classHttpResponse->addProperty("statusMessage", &HttpResponse::getStatusMessage);
 	classHttpResponse->addMethod("parse", &HttpResponse::parse);
-	classHttpResponse->addMethod("getStatusCode", &HttpResponse::getStatusCode);
-	classHttpResponse->addMethod("getStatusMessage", &HttpResponse::getStatusMessage);
 	classHttpResponse->addMethod("set", &HttpResponse::set);
 	classHttpResponse->addMethod("get", &HttpResponse::get);
 	registrar->registerClass(classHttpResponse);
 
 	Ref< AutoRuntimeClass< HttpRequest > > classHttpRequest = new AutoRuntimeClass< HttpRequest >();
-	classHttpRequest->addMethod("getMethod", &net_HttpRequest_getMethod);
-	classHttpRequest->addMethod("getResource", &HttpRequest::getResource);
+	classHttpRequest->addProperty("method", &net_HttpRequest_getMethod);
+	classHttpRequest->addProperty("resource", &HttpRequest::getResource);
 	classHttpRequest->addMethod("hasValue", &HttpRequest::hasValue);
 	classHttpRequest->addMethod("setValue", &HttpRequest::setValue);
 	classHttpRequest->addMethod("getValue", &HttpRequest::getValue);

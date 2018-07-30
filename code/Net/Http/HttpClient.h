@@ -19,13 +19,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
-
-class IStream;
-
 	namespace net
 	{
 
-class HttpResponse;
+class HttpClientResult;
 class IHttpRequestContent;
 class Url;
 
@@ -37,23 +34,11 @@ class T_DLLCLASS HttpClient : public Object
 	T_RTTI_CLASS;
 
 public:
-	Ref< HttpResponse > get(const net::Url& url);
+	Ref< HttpClientResult > get(const net::Url& url, const IHttpRequestContent* content = 0);
 
-	Ref< HttpResponse > get(const net::Url& url, const IHttpRequestContent& content);
+	Ref< HttpClientResult > put(const net::Url& url, const IHttpRequestContent* content = 0);
 
-	Ref< HttpResponse > put(const net::Url& url);
-
-	Ref< HttpResponse > put(const net::Url& url, const IHttpRequestContent& content);
-
-	Ref< HttpResponse > post(const net::Url& url);
-
-	Ref< HttpResponse > post(const net::Url& url, const IHttpRequestContent& content);
-
-	Ref< IStream > getStream();
-
-private:
-	Ref< IStream > m_stream;
-
+	Ref< HttpClientResult > post(const net::Url& url, const IHttpRequestContent* content = 0);
 };
 
 	}

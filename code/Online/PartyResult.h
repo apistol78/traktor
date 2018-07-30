@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_online_PartyResult_H
 #define traktor_online_PartyResult_H
 
-#include "Online/Result.h"
+#include "Core/Thread/Result.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

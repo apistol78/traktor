@@ -7,8 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_online_ILeaderboards_H
 #define traktor_online_ILeaderboards_H
 
-#include "Online/Result.h"
-#include "Online/ScoreArrayResult.h"
+#include <string>
+#include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,8 +21,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+
+class Result;
+
 	namespace online
 	{
+
+class ScoreArrayResult;
 
 class T_DLLCLASS ILeaderboards : public Object
 {
