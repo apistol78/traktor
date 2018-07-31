@@ -303,24 +303,23 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classQueryFilter);
 
 	Ref< AutoRuntimeClass< QueryResultWrapper > > classQueryResult = new AutoRuntimeClass< QueryResultWrapper >();
-	classQueryResult->addMethod("body", &QueryResultWrapper::body);
-	classQueryResult->addMethod("position", &QueryResultWrapper::position);
-	classQueryResult->addMethod("normal", &QueryResultWrapper::normal);
-	classQueryResult->addMethod("distance", &QueryResultWrapper::distance);
-	classQueryResult->addMethod("fraction", &QueryResultWrapper::fraction);
-	classQueryResult->addMethod("material", &QueryResultWrapper::material);
+	classQueryResult->addProperty("body", &QueryResultWrapper::body);
+	classQueryResult->addProperty("position", &QueryResultWrapper::position);
+	classQueryResult->addProperty("normal", &QueryResultWrapper::normal);
+	classQueryResult->addProperty("distance", &QueryResultWrapper::distance);
+	classQueryResult->addProperty("fraction", &QueryResultWrapper::fraction);
+	classQueryResult->addProperty("material", &QueryResultWrapper::material);
 	registrar->registerClass(classQueryResult);
 
 	Ref< AutoRuntimeClass< BodyStateWrapper > > classBodyState = new AutoRuntimeClass< BodyStateWrapper >();
 	registrar->registerClass(classBodyState);
 
 	Ref< AutoRuntimeClass< PhysicsManager > > classPhysicsManager = new AutoRuntimeClass< PhysicsManager >();
+	classPhysicsManager->addProperty("gravity", &PhysicsManager::setGravity, &PhysicsManager::getGravity);
+	classPhysicsManager->addProperty("bodies", &PhysicsManager::getBodies);
 	classPhysicsManager->addMethod("addCollisionListener", &PhysicsManager::addCollisionListener);
 	classPhysicsManager->addMethod("removeCollisionListener", &PhysicsManager::removeCollisionListener);
-	classPhysicsManager->addMethod("setGravity", &PhysicsManager::setGravity);
-	classPhysicsManager->addMethod("getGravity", &PhysicsManager::getGravity);
 	classPhysicsManager->addMethod("update", &PhysicsManager::update);
-	classPhysicsManager->addMethod("getBodies", &PhysicsManager::getBodies);
 	classPhysicsManager->addMethod("queryPoint", &PhysicsManager_queryPoint);
 	classPhysicsManager->addMethod("queryRay", &PhysicsManager_queryRay);
 	classPhysicsManager->addMethod("queryShadowRay", &PhysicsManager_queryShadowRay);
@@ -330,15 +329,15 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classPhysicsManager);
 
 	Ref< AutoRuntimeClass< Body > > classBody = new AutoRuntimeClass< Body >();
-	classBody->addMethod("setTransform", &Body::setTransform);
-	classBody->addMethod("getTransform", &Body::getTransform);
-	classBody->addMethod("getCenterTransform", &Body::getCenterTransform);
-	classBody->addMethod("isStatic", &Body::isStatic);
-	classBody->addMethod("isKinematic", &Body::isKinematic);
-	classBody->addMethod("setActive", &Body::setActive);
-	classBody->addMethod("isActive", &Body::isActive);
-	classBody->addMethod("setEnable", &Body::setEnable);
-	classBody->addMethod("isEnable", &Body::isEnable);
+	classBody->addProperty("transform", &Body::setTransform, &Body::getTransform);
+	classBody->addProperty("centerTransform", &Body::getCenterTransform);
+	classBody->addProperty("static", &Body::isStatic);
+	classBody->addProperty("kinematic", &Body::isKinematic);
+	classBody->addProperty("active", &Body::setActive, &Body::isActive);
+	classBody->addProperty("enable", &Body::setEnable, &Body::isEnable);
+	classBody->addProperty("linearVelocity", &Body::setLinearVelocity, &Body::getLinearVelocity);
+	classBody->addProperty("angularVelocity", &Body::setAngularVelocity, &Body::getAngularVelocity);
+	classBody->addProperty("userObject", &Body::setUserObject, &Body::getUserObject);
 	classBody->addMethod("reset", &Body::reset);
 	classBody->addMethod("setMass", &Body::setMass);
 	classBody->addMethod("getInverseMass", &Body::getInverseMass);
@@ -347,28 +346,21 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBody->addMethod("addLinearImpulse", &Body::addLinearImpulse);
 	classBody->addMethod("addAngularImpulse", &Body::addAngularImpulse);
 	classBody->addMethod("addImpulse", &Body::addImpulse);
-	classBody->addMethod("setLinearVelocity", &Body::setLinearVelocity);
-	classBody->addMethod("getLinearVelocity", &Body::getLinearVelocity);
-	classBody->addMethod("setAngularVelocity", &Body::setAngularVelocity);
-	classBody->addMethod("getAngularVelocity", &Body::getAngularVelocity);
 	classBody->addMethod("getVelocityAt", &Body::getVelocityAt);
 	classBody->addMethod("setState", &Body_setState);
 	classBody->addMethod("getState", &Body_getState);
 	classBody->addMethod("addCollisionListener", &Body::addCollisionListener);
 	classBody->addMethod("removeCollisionListener", &Body::removeCollisionListener);
 	classBody->addMethod("removeAllCollisionListeners", &Body::removeAllCollisionListeners);
-	classBody->addMethod("setUserObject", &Body::setUserObject);
-	classBody->addMethod("getUserObject", &Body::getUserObject);
 	registrar->registerClass(classBody);
 
 	Ref< AutoRuntimeClass< Joint > > classJoint = new AutoRuntimeClass< Joint >();
-	classJoint->addMethod("getBody1", &Joint::getBody1);
-	classJoint->addMethod("getBody2", &Joint::getBody2);
+	classJoint->addProperty("body1", &Joint::getBody1);
+	classJoint->addProperty("body2", &Joint::getBody2);
 	registrar->registerClass(classJoint);
 
 	Ref< AutoRuntimeClass< BallJoint > > classBallJoint = new AutoRuntimeClass< BallJoint >();
-	classBallJoint->addMethod("setAnchor", &BallJoint::setAnchor);
-	classBallJoint->addMethod("getAnchor", &BallJoint::getAnchor);
+	classBallJoint->addProperty("anchor", &BallJoint::setAnchor, &BallJoint::getAnchor);
 	registrar->registerClass(classBallJoint);
 
 	Ref< AutoRuntimeClass< ConeTwistJoint > > classConeTwistJoint = new AutoRuntimeClass< ConeTwistJoint >();
@@ -382,20 +374,20 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classHinge2Joint);
 
 	Ref< AutoRuntimeClass< HingeJoint > > classHingeJoint = new AutoRuntimeClass< HingeJoint >();
-	classHingeJoint->addMethod("getAnchor", &HingeJoint::getAnchor);
-	classHingeJoint->addMethod("getAxis", &HingeJoint::getAxis);
-	classHingeJoint->addMethod("getAngle", &HingeJoint::getAngle);
-	classHingeJoint->addMethod("getAngleVelocity", &HingeJoint::getAngleVelocity);
+	classHingeJoint->addProperty("anchor", &HingeJoint::getAnchor);
+	classHingeJoint->addProperty("axis", &HingeJoint::getAxis);
+	classHingeJoint->addProperty("angle", &HingeJoint::getAngle);
+	classHingeJoint->addProperty("angleVelocity", &HingeJoint::getAngleVelocity);
 	registrar->registerClass(classHingeJoint);
 
 	Ref< AutoRuntimeClass< ArticulatedEntity > > classArticulatedEntity = new AutoRuntimeClass< ArticulatedEntity >();
-	classArticulatedEntity->addMethod("getEntities", &ArticulatedEntity::getEntities);
-	classArticulatedEntity->addMethod("getJoints", &ArticulatedEntity::getJoints);
+	classArticulatedEntity->addProperty("entities", &ArticulatedEntity::getEntities);
+	classArticulatedEntity->addProperty("joints", &ArticulatedEntity::getJoints);
 	registrar->registerClass(classArticulatedEntity);
 
 	Ref< AutoRuntimeClass< RigidEntity > > classRigidEntity = new AutoRuntimeClass< RigidEntity >();
-	classRigidEntity->addMethod("getBody", &RigidEntity::getBody);
-	classRigidEntity->addMethod("getEntity", &RigidEntity::getEntity);
+	classRigidEntity->addProperty("body", &RigidEntity::getBody);
+	classRigidEntity->addProperty("entity", &RigidEntity::getEntity);
 	registrar->registerClass(classRigidEntity);
 
 	Ref< AutoRuntimeClass< CharacterComponent > > classCharacterComponent = new AutoRuntimeClass< CharacterComponent >();
@@ -405,12 +397,12 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classCharacterComponent);
 
 	Ref< AutoRuntimeClass< VehicleComponent > > classVehicleComponent = new AutoRuntimeClass< VehicleComponent >();
-	classVehicleComponent->addMethod("setSteerAngle", &VehicleComponent::setSteerAngle);
-	classVehicleComponent->addMethod("setEngineThrottle", &VehicleComponent::setEngineThrottle);
+	classVehicleComponent->addProperty("steerAngle", &VehicleComponent::setSteerAngle, &VehicleComponent::getSteerAngle);
+	classVehicleComponent->addProperty("engineThrottle", &VehicleComponent::setEngineThrottle, &VehicleComponent::getEngineThrottle);
 	registrar->registerClass(classVehicleComponent);
 
 	Ref< AutoRuntimeClass< CollisionContactWrapper > > classCollisionContact = new AutoRuntimeClass< CollisionContactWrapper >();
-	classCollisionContact->addMethod("length", &CollisionContactWrapper::length);
+	classCollisionContact->addProperty("length", &CollisionContactWrapper::length);
 	classCollisionContact->addMethod("position", &CollisionContactWrapper::position);
 	classCollisionContact->addMethod("normal", &CollisionContactWrapper::normal);
 	classCollisionContact->addMethod("depth", &CollisionContactWrapper::depth);

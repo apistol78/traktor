@@ -80,6 +80,11 @@ Ref< Entity > IEntityBuilder_create(IEntityBuilder* this_, const EntityData* ent
 	return this_->create(entityData);
 }
 
+void Entity_setTransform(Entity* this_, const Transform& transform)
+{
+	this_->setTransform(transform);
+}
+
 Transform Entity_getTransform(Entity* this_)
 {
 	Transform transform;
@@ -87,44 +92,24 @@ Transform Entity_getTransform(Entity* this_)
 	return transform;
 }
 
-void CameraComponentData_setCameraType(CameraComponentData* this_, const std::wstring& type)
+void CameraComponentData_setCameraType(CameraComponentData* this_, int32_t type)
 {
-	if (compareIgnoreCase< std::wstring >(type, L"orthographic") == 0)
-		this_->setCameraType(CtOrthographic);
-	else if (compareIgnoreCase< std::wstring >(type, L"perspective") == 0)
-		this_->setCameraType(CtPerspective);
+	this_->setCameraType((CameraType)type);
 }
 
-std::wstring CameraComponentData_getCameraType(CameraComponentData* this_)
+int32_t CameraComponentData_getCameraType(CameraComponentData* this_)
 {
-	switch (this_->getCameraType())
-	{
-	case CtOrthographic:
-		return L"orthographic";
-	case CtPerspective:
-		return L"perspective";
-	}
-	return L"";
+	return (int32_t)this_->getCameraType();
 }
 
-void CameraComponent_setCameraType(CameraComponent* this_, const std::wstring& type)
+void CameraComponent_setCameraType(CameraComponent* this_, int32_t type)
 {
-	if (compareIgnoreCase< std::wstring >(type, L"orthographic") == 0)
-		this_->setCameraType(CtOrthographic);
-	else if (compareIgnoreCase< std::wstring >(type, L"perspective") == 0)
-		this_->setCameraType(CtPerspective);
+	this_->setCameraType((CameraType)type);
 }
 
-std::wstring CameraComponent_getCameraType(CameraComponent* this_)
+int32_t CameraComponent_getCameraType(CameraComponent* this_)
 {
-	switch (this_->getCameraType())
-	{
-	case CtOrthographic:
-		return L"orthographic";
-	case CtPerspective:
-		return L"perspective";
-	}
-	return L"";
+	return (int32_t)this_->getCameraType();
 }
 
 RefArray< Entity > GroupEntity_getEntitiesOf(GroupEntity* this_, const TypeInfo& entityType)
@@ -218,18 +203,15 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIEntityRenderer);
 
 	Ref< AutoRuntimeClass< EntityData > > classEntityData = new AutoRuntimeClass< EntityData >();
-	classEntityData->addMethod("setName", &EntityData::setName);
-	classEntityData->addMethod("getName", &EntityData::getName);
-	classEntityData->addMethod("setTransform", &EntityData::setTransform);
-	classEntityData->addMethod("getTransform", &EntityData::getTransform);
+	classEntityData->addProperty("name", &EntityData::setName, &EntityData::getName);
+	classEntityData->addProperty("transform", &EntityData::setTransform, &EntityData::getTransform);
 	registrar->registerClass(classEntityData);
 
 	Ref< AutoRuntimeClass< Entity > > classEntity = new AutoRuntimeClass< Entity >();
+	classEntity->addProperty("transform", &Entity_setTransform, &Entity_getTransform);
+	classEntity->addProperty("boundingBox", &Entity::getBoundingBox);
+	classEntity->addProperty("worldBoundingBox", &Entity::getWorldBoundingBox);
 	classEntity->addMethod("destroy", &Entity::destroy);
-	classEntity->addMethod("setTransform", &Entity::setTransform);
-	classEntity->addMethod("getTransform", &Entity_getTransform);
-	classEntity->addMethod("getBoundingBox", &Entity::getBoundingBox);
-	classEntity->addMethod("getWorldBoundingBox", &Entity::getWorldBoundingBox);
 	classEntity->addMethod("update", &Entity_update);
 	registrar->registerClass(classEntity);
 
@@ -244,92 +226,68 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classGroupEntity);
 
 	Ref< AutoRuntimeClass< PointLightEntity > > classPointLightEntity = new AutoRuntimeClass< PointLightEntity >();
-	classPointLightEntity->addMethod("getSunColor", &PointLightEntity::getSunColor);
-	classPointLightEntity->addMethod("getBaseColor", &PointLightEntity::getBaseColor);
-	classPointLightEntity->addMethod("getShadowColor", &PointLightEntity::getShadowColor);
-	classPointLightEntity->addMethod("getRange", &PointLightEntity::getRange);
-	classPointLightEntity->addMethod("getRandomFlicker", &PointLightEntity::getRandomFlicker);
+	classPointLightEntity->addProperty("sunColor", &PointLightEntity::getSunColor);
+	classPointLightEntity->addProperty("baseColor", &PointLightEntity::getBaseColor);
+	classPointLightEntity->addProperty("shadowColor", &PointLightEntity::getShadowColor);
+	classPointLightEntity->addProperty("range", &PointLightEntity::getRange);
+	classPointLightEntity->addProperty("randomFlicker", &PointLightEntity::getRandomFlicker);
 	registrar->registerClass(classPointLightEntity);
 
 	Ref< AutoRuntimeClass< DirectionalLightEntity > > classDirectionalLightEntity = new AutoRuntimeClass< DirectionalLightEntity >();
 	//classDirectionalLightEntity->addConstructor< const Transform&, const Vector4&, const Vector4&, const Vector4&, bool >();
-	classDirectionalLightEntity->addMethod("setSunColor", &DirectionalLightEntity::setSunColor);
-	classDirectionalLightEntity->addMethod("getSunColor", &DirectionalLightEntity::getSunColor);
-	classDirectionalLightEntity->addMethod("setBaseColor", &DirectionalLightEntity::setBaseColor);
-	classDirectionalLightEntity->addMethod("getBaseColor", &DirectionalLightEntity::getBaseColor);
-	classDirectionalLightEntity->addMethod("setShadowColor", &DirectionalLightEntity::setShadowColor);
-	classDirectionalLightEntity->addMethod("getShadowColor", &DirectionalLightEntity::getShadowColor);
-	classDirectionalLightEntity->addMethod("setCastShadow", &DirectionalLightEntity::setCastShadow);
-	classDirectionalLightEntity->addMethod("getCastShadow", &DirectionalLightEntity::getCastShadow);
+	classDirectionalLightEntity->addProperty("sunColor", &DirectionalLightEntity::setSunColor, &DirectionalLightEntity::getSunColor);
+	classDirectionalLightEntity->addProperty("baseColor", &DirectionalLightEntity::setBaseColor, &DirectionalLightEntity::getBaseColor);
+	classDirectionalLightEntity->addProperty("shadowColor", &DirectionalLightEntity::setShadowColor, &DirectionalLightEntity::getShadowColor);
+	classDirectionalLightEntity->addProperty("castShadow", &DirectionalLightEntity::setCastShadow, &DirectionalLightEntity::getCastShadow);
 	registrar->registerClass(classDirectionalLightEntity);
 
 	Ref< AutoRuntimeClass< IEntityComponentData > > classIEntityComponentData = new AutoRuntimeClass< IEntityComponentData >();
 	registrar->registerClass(classIEntityComponentData);
 
 	Ref< AutoRuntimeClass< IEntityComponent > > classIEntityComponent = new AutoRuntimeClass< IEntityComponent >();
+	classIEntityComponent->addProperty("boundingBox", &IEntityComponent::getBoundingBox);
 	classIEntityComponent->addMethod("setTransform", &IEntityComponent::setTransform);
-	classIEntityComponent->addMethod("getBoundingBox", &IEntityComponent::getBoundingBox);
 	registrar->registerClass(classIEntityComponent);
 
 	Ref< AutoRuntimeClass< CameraComponentData > > classCameraComponentData = new AutoRuntimeClass< CameraComponentData >();
+	classCameraComponentData->addConstant("CtOrthographic", Any::fromInt32(CtOrthographic));
+	classCameraComponentData->addConstant("CtPerspective", Any::fromInt32(CtPerspective));
 	classCameraComponentData->addConstructor();
-	classCameraComponentData->addMethod("setCameraType", &CameraComponentData_setCameraType);
-	classCameraComponentData->addMethod("getCameraType", &CameraComponentData_getCameraType);
-	classCameraComponentData->addMethod("setFieldOfView", &CameraComponentData::setFieldOfView);
-	classCameraComponentData->addMethod("getFieldOfView", &CameraComponentData::getFieldOfView);
-	classCameraComponentData->addMethod("setWidth", &CameraComponentData::setWidth);
-	classCameraComponentData->addMethod("getWidth", &CameraComponentData::getWidth);
-	classCameraComponentData->addMethod("setHeight", &CameraComponentData::setHeight);
-	classCameraComponentData->addMethod("getHeight", &CameraComponentData::getHeight);
+	classCameraComponentData->addProperty("cameraType", &CameraComponentData_setCameraType, &CameraComponentData_getCameraType);
+	classCameraComponentData->addProperty("fieldOfView", &CameraComponentData::setFieldOfView, &CameraComponentData::getFieldOfView);
+	classCameraComponentData->addProperty("width", &CameraComponentData::setWidth, &CameraComponentData::getWidth);
+	classCameraComponentData->addProperty("height", &CameraComponentData::setHeight, &CameraComponentData::getHeight);
 	registrar->registerClass(classCameraComponentData);
 
 	Ref< AutoRuntimeClass< CameraComponent > > classCameraComponent = new AutoRuntimeClass< CameraComponent >();
-	classCameraComponent->addMethod("setCameraType", &CameraComponent_setCameraType);
-	classCameraComponent->addMethod("getCameraType", &CameraComponent_getCameraType);
-	classCameraComponent->addMethod("setFieldOfView", &CameraComponent::setFieldOfView);
-	classCameraComponent->addMethod("getFieldOfView", &CameraComponent::getFieldOfView);
-	classCameraComponent->addMethod("setWidth", &CameraComponent::setWidth);
-	classCameraComponent->addMethod("getWidth", &CameraComponent::getWidth);
-	classCameraComponent->addMethod("setHeight", &CameraComponent::setHeight);
-	classCameraComponent->addMethod("getHeight", &CameraComponent::getHeight);
+	classCameraComponent->addConstant("CtOrthographic", Any::fromInt32(CtOrthographic));
+	classCameraComponent->addConstant("CtPerspective", Any::fromInt32(CtPerspective));
+	classCameraComponent->addProperty("cameraType", &CameraComponent_setCameraType, &CameraComponent_getCameraType);
+	classCameraComponent->addProperty("fieldOfView", &CameraComponent::setFieldOfView, &CameraComponent::getFieldOfView);
+	classCameraComponent->addProperty("width", &CameraComponent::setWidth, &CameraComponent::getWidth);
+	classCameraComponent->addProperty("height", &CameraComponent::setHeight, &CameraComponent::getHeight);
 	registrar->registerClass(classCameraComponent);
 
 	Ref< AutoRuntimeClass< LightComponentData > > classLightComponentData = new AutoRuntimeClass< LightComponentData >();
-	classLightComponentData->addMethod("setSunColor", &LightComponentData::setSunColor);
-	classLightComponentData->addMethod("getSunColor", &LightComponentData::getSunColor);
-	classLightComponentData->addMethod("setBaseColor", &LightComponentData::setBaseColor);
-	classLightComponentData->addMethod("getBaseColor", &LightComponentData::getBaseColor);
-	classLightComponentData->addMethod("setShadowColor", &LightComponentData::setShadowColor);
-	classLightComponentData->addMethod("getShadowColor", &LightComponentData::getShadowColor);
-	classLightComponentData->addMethod("setCastShadow", &LightComponentData::setCastShadow);
-	classLightComponentData->addMethod("getCastShadow", &LightComponentData::getCastShadow);
-	classLightComponentData->addMethod("setRange", &LightComponentData::setRange);
-	classLightComponentData->addMethod("getRange", &LightComponentData::getRange);
-	classLightComponentData->addMethod("setRadius", &LightComponentData::setRadius);
-	classLightComponentData->addMethod("getRadius", &LightComponentData::getRadius);
-	classLightComponentData->addMethod("setFlickerAmount", &LightComponentData::setFlickerAmount);
-	classLightComponentData->addMethod("getFlickerAmount", &LightComponentData::getFlickerAmount);
-	classLightComponentData->addMethod("setFlickerFilter", &LightComponentData::setFlickerFilter);
-	classLightComponentData->addMethod("getFlickerFilter", &LightComponentData::getFlickerFilter);
+	classLightComponentData->addProperty("sunColor", &LightComponentData::setSunColor, &LightComponentData::getSunColor);
+	classLightComponentData->addProperty("baseColor", &LightComponentData::setBaseColor, &LightComponentData::getBaseColor);
+	classLightComponentData->addProperty("shadowColor", &LightComponentData::setShadowColor, &LightComponentData::getShadowColor);
+	classLightComponentData->addProperty("castShadow", &LightComponentData::setCastShadow, &LightComponentData::getCastShadow);
+	classLightComponentData->addProperty("range", &LightComponentData::setRange, &LightComponentData::getRange);
+	classLightComponentData->addProperty("radius", &LightComponentData::setRadius, &LightComponentData::getRadius);
+	classLightComponentData->addProperty("flickerAmount", &LightComponentData::setFlickerAmount, &LightComponentData::getFlickerAmount);
+	classLightComponentData->addProperty("flickerFilter", &LightComponentData::setFlickerFilter, &LightComponentData::getFlickerFilter);
 	registrar->registerClass(classLightComponentData);
 
 	Ref< AutoRuntimeClass< LightComponent > > classLightComponent = new AutoRuntimeClass< LightComponent >();
-	classLightComponent->addMethod("setSunColor", &LightComponent::setSunColor);
-	classLightComponent->addMethod("getSunColor", &LightComponent::getSunColor);
-	classLightComponent->addMethod("setBaseColor", &LightComponent::setBaseColor);
-	classLightComponent->addMethod("getBaseColor", &LightComponent::getBaseColor);
-	classLightComponent->addMethod("setShadowColor", &LightComponent::setShadowColor);
-	classLightComponent->addMethod("getShadowColor", &LightComponent::getShadowColor);
-	classLightComponent->addMethod("setCastShadow", &LightComponent::setCastShadow);
-	classLightComponent->addMethod("getCastShadow", &LightComponent::getCastShadow);
-	classLightComponent->addMethod("setRange", &LightComponent::setRange);
-	classLightComponent->addMethod("getRange", &LightComponent::getRange);
-	classLightComponent->addMethod("setRadius", &LightComponent::setRadius);
-	classLightComponent->addMethod("getRadius", &LightComponent::getRadius);
-	classLightComponent->addMethod("setFlickerAmount", &LightComponent::setFlickerAmount);
-	classLightComponent->addMethod("getFlickerAmount", &LightComponent::getFlickerAmount);
-	classLightComponent->addMethod("setFlickerFilter", &LightComponent::setFlickerFilter);
-	classLightComponent->addMethod("getFlickerFilter", &LightComponent::getFlickerFilter);
+	classLightComponent->addProperty("sunColor", &LightComponent::setSunColor, &LightComponent::getSunColor);
+	classLightComponent->addProperty("baseColor", &LightComponent::setBaseColor, &LightComponent::getBaseColor);
+	classLightComponent->addProperty("shadowColor", &LightComponent::setShadowColor, &LightComponent::getShadowColor);
+	classLightComponent->addProperty("castShadow", &LightComponent::setCastShadow, &LightComponent::getCastShadow);
+	classLightComponent->addProperty("range", &LightComponent::setRange, &LightComponent::getRange);
+	classLightComponent->addProperty("radius", &LightComponent::setRadius, &LightComponent::getRadius);
+	classLightComponent->addProperty("flickerAmount", &LightComponent::setFlickerAmount, &LightComponent::getFlickerAmount);
+	classLightComponent->addProperty("flickerFilter", &LightComponent::setFlickerFilter, &LightComponent::getFlickerFilter);
 	registrar->registerClass(classLightComponent);
 
 	Ref< AutoRuntimeClass< ScriptComponentData > > classScriptComponentData = new AutoRuntimeClass< ScriptComponentData >();
