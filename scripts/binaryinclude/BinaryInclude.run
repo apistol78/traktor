@@ -23,15 +23,15 @@ function main(args)
 	-- Check if we need to build; do not touch output unneccessarily.
 	local fileInputFile = fs:get(inputFile)
 	if fileInputFile == nil then
-		stderr:printLn("Unable to convert file \"" .. inputFile:getPathName() .. "\"; no such file.")
+		stderr:printLn("Unable to convert file \"" .. inputFile.pathName .. "\"; no such file.")
 		return 1
 	end
 
 	local fileOutputFile = fs:get(outputFile)
 	if fileOutputFile ~= nil then
-		local filw = fileInputFile:getLastWriteTime()
-		local folw = fileOutputFile:getLastAccessTime()
-		if filw:getSecondsSinceEpoch() <= folw:getSecondsSinceEpoch() then
+		local filw = fileInputFile.lastWriteTime
+		local folw = fileOutputFile.lastAccessTime
+		if filw.secondsSinceEpoch <= folw.secondsSinceEpoch then
 			stdout:printLn("File up-to-date; skipped.")
 			return 0
 		end
@@ -42,18 +42,18 @@ function main(args)
 	fs:remove(outputFile)
 
 	-- Ensure all output directories exist.
-	fs:makeAllDirectories(Path(outputFile:getPathOnly()))
+	fs:makeAllDirectories(Path(outputFile.pathOnly))
 
 	-- Get streams to input and output files.
 	local fileInput = fs:open(inputFile, File.FmRead)
 	if fileInput == nil then
-		stderr:printLn("Unable to convert file \"" .. inputFile:getPathName() .. "\"; failed to open for read.")
+		stderr:printLn("Unable to convert file \"" .. inputFile.pathName .. "\"; failed to open for read.")
 		return 1
 	end
 
 	local fileOutput = fs:open(outputFile, File.FmWrite)
 	if fileOutput == nil then
-		stderr:printLn("Unable to convert file \"" .. inputFile:getPathName() .. "\"; failed to create file for writing.")
+		stderr:printLn("Unable to convert file \"" .. inputFile.pathName .. "\"; failed to create file for writing.")
 		return 1
 	end
 

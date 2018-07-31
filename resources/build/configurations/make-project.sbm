@@ -61,7 +61,7 @@ local function collectDependencies(
 	-- Add include paths.
 	local includePaths = configuration:getIncludePaths()
 	for i = 0, includePaths:size() - 1 do
-		local ip = Path(includePaths:get(i)):getPathName()
+		local ip = Path(includePaths:get(i)).pathName
 		if ip ~= "" then
 			insertLast(outIncludePaths, ip)
 		end
@@ -82,9 +82,9 @@ local function collectDependencies(
 		)
 		local lp = ""
 		if libraryRelPath ~= nil then
-			lp = libraryRelPath:getPathName()
+			lp = libraryRelPath.pathName
 		else
-			lp = Path(libraryPaths:get(i)):getPathName()
+			lp = Path(libraryPaths:get(i)).pathName
 		end
 		if lp ~= "" then
 			insertLast(outLibraryPaths, lp)
@@ -120,7 +120,7 @@ local function collectDependencies(
 					-- Only add include paths when dealing with shared library dependencies.
 					local includePaths = localConfig:getIncludePaths()
 					for j = 0, includePaths:size() - 1 do
-						local ip = Path(includePaths:get(j)):getPathName()
+						local ip = Path(includePaths:get(j)).pathName
 						if ip ~= "" then
 							insertLast(outIncludePaths, ip)
 						end
@@ -145,7 +145,7 @@ local function collectDependencies(
 					)
 
 					if consumerRelPath ~= nil then
-						insertLast(outLibraryPaths, consumerRelPath:getPathName())
+						insertLast(outLibraryPaths, consumerRelPath.pathName)
 					end
 				else
 					local externalRelPath = fileSystem:getRelativePath(
@@ -153,7 +153,7 @@ local function collectDependencies(
 						projectPath
 					)
 					if externalRelPath ~= nil then
-						insertLast(outLibraryPaths, externalRelPath:getPathName())
+						insertLast(outLibraryPaths, externalRelPath.pathName)
 					end
 				end
 
@@ -176,7 +176,7 @@ local function collectDependencies(
 					-- Only add include paths when dealing with shared library dependencies.
 					local includePaths = externalConfig:getIncludePaths()
 					for j = 0, includePaths:size() - 1 do
-						local ip = Path(includePaths:get(j)):getPathName()
+						local ip = Path(includePaths:get(j)).pathName
 						if ip ~= "" then
 							insertLast(outIncludePaths, ip)
 						end
@@ -199,7 +199,7 @@ local function collectFiles(project, projectOrFilter, pred)
 			for i = 0, files:size() - 1 do
 				local file = files:get(i)
 				if os ~= "windows" then
-					file = Path(files:get(i):getPathNameNoVolume())
+					file = Path(files:get(i).pathNameNoVolume)
 				end
 				pred(file)
 			end
@@ -215,7 +215,7 @@ end
 
 local function scanHeaderDependencies(cache, includePaths, file)
 	-- Check if already cached.
-	local fpn = file:getPathName()
+	local fpn = file.pathName
 	if cache[fpn] ~= nil then return cache[fpn]	end
 
 	local c = {}
@@ -237,8 +237,8 @@ local function scanHeaderDependencies(cache, includePaths, file)
 			for _, ip in ipairs(includePaths) do
 				local ipp = Path(ip .. "/" .. p):normalized()
 				if fileSystem:exist(ipp) then
-					if c.dependencies[ipp:getPathName()] ~= true then
-						c.dependencies[ipp:getPathName()] = true
+					if c.dependencies[ipp.pathName] ~= true then
+						c.dependencies[ipp.pathName] = true
 
 						local rc = scanHeaderDependencies(cache, includePaths, ipp)
 						mergeTable(c.dependencies, rc.dependencies)
@@ -249,10 +249,10 @@ local function scanHeaderDependencies(cache, includePaths, file)
 				end
 			end
 			if not found then
-				local ipp = Path(file:getPathOnly() .. "/" .. p):normalized()
+				local ipp = Path(file.pathOnly .. "/" .. p):normalized()
 				if fileSystem:exist(ipp) then
-					if c.dependencies[ipp:getPathName()] ~= true then
-						c.dependencies[ipp:getPathName()] = true
+					if c.dependencies[ipp.pathName] ~= true then
+						c.dependencies[ipp.pathName] = true
 
 						local rc = scanHeaderDependencies(cache, includePaths, ipp)
 						mergeTable(c.dependencies, rc.dependencies)
@@ -315,7 +315,7 @@ collectFiles(
 	project,
 	project,
 	function(file)
-		local ext = file:getExtension()
+		local ext = file.extension
 		if ext == "c" or ext == "cc" or ext == "cpp" or ext == "m" or ext == "mm" or ext == "rc" then
 			table.insert(sourceFiles, file)
 		elseif ext == "xdi" or ext == "image" or ext == "png" or ext == "lua" or ext == "js" or ext == "css" or ext == "cgv" or ext == "cgf" then
@@ -421,11 +421,11 @@ for i = 0, configurations:size() - 1 do
 		local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
 
 		if os == "windows" then
-			output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
+			output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
 		elseif os == "osx" or os == "linux" then
-			printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume())
-			output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
-			output:printLn("\t@-cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath:getPathNameNoVolume() .. "/\"")
+			printWithColor(35, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
+			output:printLn("\t@mkdir -p \"" .. targetPath.pathNameNoVolume .. "/\"")
+			output:printLn("\t@-cp -Rf " .. sourceFile.pathNameNoVolume .. " \"" .. targetPath.pathNameNoVolume .. "/\"")
 		end
 	end
 end
@@ -488,11 +488,11 @@ if #architectures > 0 then
 			local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
 
 			if os == "windows" then
-				output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
+				output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
 			elseif os == "osx" or os == "linux" then
-				printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume())
-				output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
-				output:printLn("\t@-cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath:getPathNameNoVolume() .. "/\"")
+				printWithColor(35, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
+				output:printLn("\t@mkdir -p \"" .. targetPath.pathNameNoVolume .. "/\"")
+				output:printLn("\t@-cp -Rf " .. sourceFile.pathNameNoVolume .. " \"" .. targetPath.pathNameNoVolume .. "/\"")
 			end
 		end
 
@@ -608,11 +608,11 @@ else -- No architectures
 			local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
 
 			if os == "windows" then
-				output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile:getPathName() .. "\" \"" .. targetPath:getPathName() .. "\\\"")
+				output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
 			elseif os == "osx" or os == "linux" then
-				printWithColor(35, "Copy " .. sourceFile:getPathNameNoVolume() .. " to " .. targetPath:getPathNameNoVolume())
-				output:printLn("\t@mkdir -p \"" .. targetPath:getPathNameNoVolume() .. "/\"")
-				output:printLn("\t@-cp -Rf " .. sourceFile:getPathNameNoVolume() .. " \"" .. targetPath:getPathNameNoVolume() .. "/\"")
+				printWithColor(35, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
+				output:printLn("\t@mkdir -p \"" .. targetPath.pathNameNoVolume .. "/\"")
+				output:printLn("\t@-cp -Rf " .. sourceFile.pathNameNoVolume .. " \"" .. targetPath.pathNameNoVolume .. "/\"")
 			end
 		end
 
@@ -631,29 +631,29 @@ for i = 0, configurations:size() - 1 do
 		local f1 = fileSystem:getRelativePath(file, projectPath)
 		assert (f1 ~= nil)
 
-		local inputFileNoExt = f1:getPathNameNoExtension()
-		local inputFile = f1:getPathName()
-		local outputFileNoExt = configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension()
+		local inputFileNoExt = f1.pathNameNoExtension
+		local inputFile = f1.pathName
+		local outputFileNoExt = configuration:getName() .. "/Resources/" .. file.fileNameNoExtension
 		local outputFileH = outputFileNoExt .. ".h"
 
 		output:printLn(outputFileH .. " : \\")
 		output:printLn("\t" .. inputFile)
 
 		-- \hack Compile PS3/CG embedded shaders.
-		local ext = f1:getExtension()
+		local ext = f1.extension
 		if ext == "cgv" then
-			local intermediateFile = configuration:getName() .. "/" .. file:getFileNameNoExtension() .. ".vpo"
-			printWithColor(35, "Compiling vertex shader " .. file:getFileNameNoExtension() .. "...")
+			local intermediateFile = configuration:getName() .. "/" .. file.fileNameNoExtension .. ".vpo"
+			printWithColor(35, "Compiling vertex shader " .. file.fileNameNoExtension .. "...")
 			output:printLn("\t@$(CGC) -profile sce_vp_rsx -o \"" .. intermediateFile .. "\" \"" .. inputFile .. "\"")
 			inputFile = intermediateFile
 		elseif ext == "cgf" then
-			local intermediateFile = configuration:getName() .. "/" .. file:getFileNameNoExtension() .. ".fpo"
-			printWithColor(35, "Compiling fragment shader " .. file:getFileNameNoExtension() .. "...")
+			local intermediateFile = configuration:getName() .. "/" .. file.fileNameNoExtension .. ".fpo"
+			printWithColor(35, "Compiling fragment shader " .. file.fileNameNoExtension .. "...")
 			output:printLn("\t@$(CGC) -profile sce_fp_rsx -o \"" .. intermediateFile .. "\" \"" .. inputFile .. "\"")
 			inputFile = intermediateFile
 		end
 
-		printWithColor(35, "Converting " .. file:getFileName() .. "...")
+		printWithColor(35, "Converting " .. file.fileName .. "...")
 		if dialect == "nmake" then
 			output:printLn("\t-@mkdir \"$(@D)\" 1>nul 2>&1")
 		elseif dialect == "make" then
@@ -664,7 +664,7 @@ for i = 0, configurations:size() - 1 do
 			end
 		end
 
-		output:printLn("\t@$(BINARY_INCLUDE) " .. inputFile .. " $@ c_Resource" .. file:getFileNameNoExtension())
+		output:printLn("\t@$(BINARY_INCLUDE) " .. inputFile .. " $@ c_Resource" .. file.fileNameNoExtension)
 		output:printLn("")
 	end
 end
@@ -687,24 +687,24 @@ for i = 0, configurations:size() - 1 do
 			for _, a in ipairs(architectures) do
 
 				output:printLn(configuration:getName() .. "_" .. a .. "/" .. OBJNAME(f) .. " : \\")
-				output:print("\t" .. f1:getPathName())
+				output:print("\t" .. f1.pathName)
 				for dep, _ in pairs(c.dependencies) do
 					local f2 = fileSystem:getRelativePath(Path(dep), projectPath)
 					assert (f2 ~= nil)
 					output:printLn(" \\")
-					output:print("\t" .. f2:getPathName())
+					output:print("\t" .. f2.pathName)
 				end
 
 				-- Add resource builds as dependency to all targets to ensure
 				-- resources are built first and always.
 				for _, file in ipairs(resourceFiles) do
 					output:printLn(" \\")
-					output:print("\t" .. configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h")
+					output:print("\t" .. configuration:getName() .. "/Resources/" .. file.fileNameNoExtension .. ".h")
 				end		
 
 				output:printLn("")
 
-				printWithColor(35, "Compiling " .. f:getFileName() .. " (" .. a .. ")...")
+				printWithColor(35, "Compiling " .. f.fileName .. " (" .. a .. ")...")
 
 				if dialect == "nmake" then
 					output:printLn("\t-@mkdir \"$(@D)\" 1>nul 2>&1")
@@ -730,24 +730,24 @@ for i = 0, configurations:size() - 1 do
 			end
 		else
 			output:printLn(configuration:getName() .. "/" .. OBJNAME(f) .. " : \\")
-			output:print("\t" .. f1:getPathName())
+			output:print("\t" .. f1.pathName)
 			for dep, _ in pairs(c.dependencies) do
 				local f2 = fileSystem:getRelativePath(Path(dep), projectPath)
 				assert (f2 ~= nil)
 				output:printLn(" \\")
-				output:print("\t" .. f2:getPathName())
+				output:print("\t" .. f2.pathName)
 			end
 
 			-- Add resource builds as dependency to all targets to ensure
 			-- resources are built first and always.
 			for _, file in ipairs(resourceFiles) do
 				output:printLn(" \\")
-				output:print("\t" .. configuration:getName() .. "/Resources/" .. file:getFileNameNoExtension() .. ".h")
+				output:print("\t" .. configuration:getName() .. "/Resources/" .. file.fileNameNoExtension .. ".h")
 			end		
 
 			output:printLn("")
 
-			printWithColor(35, "Compiling " .. f:getFileName() .. "...")
+			printWithColor(35, "Compiling " .. f.fileName .. "...")
 
 			if dialect == "nmake" then
 				output:printLn("\t-@mkdir \"$(@D)\" 1>nul 2>&1")

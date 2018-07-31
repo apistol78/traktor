@@ -1,7 +1,7 @@
 
 function OBJNAME(filePath)
 	local objectFile = OS.getInstance():getEnvironment("MAKE_OBJECT_FILE")
-	return string.format(objectFile, filePath:getPathNameNoExtension())
+	return string.format(objectFile, filePath.pathNameNoExtension)
 end
 
 function PRODUCTNAME(solution, project, configuration)
@@ -73,7 +73,7 @@ function CC(solution, project, configuration, architecture, filePath, outputPath
 	local format = configuration:getTargetFormat()
 
 	local cc = "CC"
-	local ext = filePath:getExtension()
+	local ext = filePath.extension
 	if ext == "c" then
 		cc = "C"
 	elseif ext == "m" or ext == "mm" then
@@ -98,13 +98,13 @@ function CC(solution, project, configuration, architecture, filePath, outputPath
 	end
 
 	if format == "StaticLibrary" then
-		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath.pathName .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	elseif format == "SharedLibrary" then
-		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath.pathName .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	elseif format == "Executable" then
-		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath.pathName .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	elseif format == "ExecutableConsole" then
-		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath:getPathName() .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath.pathName .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	end
 end
 

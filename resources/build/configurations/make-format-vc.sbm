@@ -1,9 +1,9 @@
 
 function OBJNAME(filePath)
-	if filePath:getExtension() ~= "rc" then
-		return filePath:getPathNameNoExtension() .. ".obj"
+	if filePath.extension ~= "rc" then
+		return filePath.pathNameNoExtension .. ".obj"
 	else
-		return filePath:getPathNameNoExtension() .. ".res"
+		return filePath.pathNameNoExtension .. ".res"
 	end
 end
 
@@ -40,14 +40,14 @@ function CC(solution, project, configuration, architecture, filePath, outputPath
 	local profile = configuration:getTargetProfile()
 	local format = configuration:getTargetFormat()
 
-	if filePath:getExtension() ~= "rc" then
+	if filePath.extension ~= "rc" then
 		if format == "StaticLibrary" then
 			output:printLn(
 				"\tcl " ..
 				"$(CC_FLAGS_" .. profile:upper() .. "_STATIC) " ..
 				"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
 				"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
-				filePath:getPathName() .. " " ..
+				filePath.pathName .. " " ..
 				"/Fo" .. outputPath
 			)
 		elseif format == "SharedLibrary" then
@@ -56,7 +56,7 @@ function CC(solution, project, configuration, architecture, filePath, outputPath
 				"$(CC_FLAGS_" .. profile:upper() .. "_SHARED) " ..
 				"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
 				"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
-				filePath:getPathName() .. " " ..
+				filePath.pathName .. " " ..
 				"/Fo" .. outputPath
 			)
 		elseif format == "Executable" then
@@ -65,7 +65,7 @@ function CC(solution, project, configuration, architecture, filePath, outputPath
 				"$(CC_FLAGS_" .. profile:upper() .. "_EXECUTABLE) " ..
 				"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
 				"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
-				filePath:getPathName() .. " " ..
+				filePath.pathName .. " " ..
 				"/Fo" .. outputPath
 			)
 		elseif format == "ExecutableConsole" then
@@ -74,7 +74,7 @@ function CC(solution, project, configuration, architecture, filePath, outputPath
 				"$(CC_FLAGS_" .. profile:upper() .. "_EXECUTABLE_CONSOLE) " ..
 				"$(" .. configuration:getName():upper() .. "_INCLUDE) " ..
 				"$(" .. configuration:getName():upper() .. "_DEFINES) " ..
-				filePath:getPathName() .. " " ..
+				filePath.pathName .. " " ..
 				"/Fo" .. outputPath
 			)
 		end
@@ -84,28 +84,28 @@ function CC(solution, project, configuration, architecture, filePath, outputPath
 				"\trc " ..
 				"$(RC_FLAGS_" .. profile:upper() .. "_STATIC) " ..
 				"/fo\"" .. outputPath .. "\" " ..
-				filePath:getPathName()
+				filePath.pathName
 			)
 		elseif format == "SharedLibrary" then
 			output:printLn(
 				"\trc " ..
 				"$(RC_FLAGS_" .. profile:upper() .. "_SHARED) " ..
 				"/fo\"" .. outputPath .. "\" " ..
-				filePath:getPathName()
+				filePath.pathName
 			)
 		elseif format == "Executable" then
 			output:printLn(
 				"\trc " ..
 				"$(RC_FLAGS_" .. profile:upper() .. "_EXECUTABLE) " ..
 				"/fo\"" .. outputPath .. "\" " ..
-				filePath:getPathName()
+				filePath.pathName
 			)
 		elseif format == "ExecutableConsole" then
 			output:printLn(
 				"\trc " ..
 				"$(RC_FLAGS_" .. profile:upper() .. "_EXECUTABLE_CONSOLE) " ..
 				"/fo\"" .. outputPath .. "\" " ..
-				filePath:getPathName()
+				filePath.pathName
 			)
 		end		
 	end
@@ -138,7 +138,7 @@ function LINK(solution, project, configuration, architecture, sourcePath, source
 				lo = lo .. " " .. externalLibrary
 			end
 			if definitionFile ~= nil then
-				lo = lo .. " /DEF:\"" .. definitionFile:getPathName() .. "\""
+				lo = lo .. " /DEF:\"" .. definitionFile.pathName .. "\""
 			end
 		end
 
