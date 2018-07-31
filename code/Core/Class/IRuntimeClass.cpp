@@ -59,7 +59,7 @@ std::string findRuntimeClassPropertyName(const IRuntimeClass* runtimeClass, cons
 	for (uint32_t i = 0; i < propertyCount; ++i)
 	{
 		if (runtimeClass->getPropertyGetDispatch(i) == propertyDispatch || runtimeClass->getPropertySetDispatch(i) == propertyDispatch)
-			return runtimeClass->getStaticMethodName(i);
+			return runtimeClass->getPropertyName(i);
 	}
 	return "";
 }

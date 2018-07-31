@@ -20,7 +20,7 @@ function Application:resolve(uri)
 	local dbi = self._db:getInstanceByGuid(Guid("\{0B15CA62-4FF8-C04F-B093-BB0AC7804C86}"))
 	if dbi == nil then return nil end
 
-	local fb = dbi:getObject()
+	local fb = dbi.object
 	assert (fb ~= nil)
 
 	local id = fb:lookup(uri)

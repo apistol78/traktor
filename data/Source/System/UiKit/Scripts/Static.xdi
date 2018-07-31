@@ -82,7 +82,7 @@ function Static:setTextHoverColor(color)
 end
 
 function Static:setDropShadowColor(color)
-	if color:getAlpha() > 0.01 then
+	if color.alpha > 0.01 then
 		self._text_tb.filter = 1
 		self._text_tb.filterColor = color
 	else

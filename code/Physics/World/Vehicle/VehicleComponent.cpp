@@ -104,9 +104,19 @@ void VehicleComponent::setSteerAngle(float steerAngle)
 	m_steerAngleTarget = steerAngle;
 }
 
+float VehicleComponent::getSteerAngle() const
+{
+	return m_steerAngleTarget;
+}
+
 void VehicleComponent::setEngineThrottle(float engineThrottle)
 {
 	m_engineThrottle = engineThrottle;
+}
+
+float VehicleComponent::getEngineThrottle() const
+{
+	return m_engineThrottle;
 }
 
 void VehicleComponent::updateSteering(float dT)

@@ -57,7 +57,11 @@ public:
 
 	void setSteerAngle(float steerAngle);
 
+	float getSteerAngle() const;
+
 	void setEngineThrottle(float engineThrottle);
+
+	float getEngineThrottle() const;
 
 	const RefArray< Wheel >& getWheels() const { return m_wheels; }
 
