@@ -136,6 +136,7 @@ ColorTransform CharacterInstance::getFullColorTransform() const
 
 void CharacterInstance::setAlpha(float alpha)
 {
+	clearCacheObject();
 	m_cxform.mul.setAlpha(Scalar(alpha));
 }
 
