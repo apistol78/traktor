@@ -189,7 +189,7 @@ int main(int argc, const char** argv)
 		}
 
 		if (userSettings)
-			settings = settings->mergeReplace(userSettings);
+			settings = settings->merge(userSettings, PropertyGroup::MmReplace);
 	}
 
 	if (!settings)
