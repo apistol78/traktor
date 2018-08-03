@@ -23,7 +23,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageProcessStepGodRay", 0, ImageProcessStepGodRay, ImageProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageProcessStepGodRay", 1, ImageProcessStepGodRay, ImageProcessStep)
 
 ImageProcessStepGodRay::ImageProcessStepGodRay()
 :	m_lightDistance(100.0f)
@@ -46,7 +46,6 @@ Ref< ImageProcessStep::Instance > ImageProcessStepGodRay::create(
 	{
 		sources[i].param = getParameterHandle(m_sources[i].param);
 		sources[i].source = getParameterHandle(m_sources[i].source);
-		sources[i].index = m_sources[i].index;
 	}
 
 	return new InstanceGodRay(this, shader, sources);
@@ -60,7 +59,6 @@ void ImageProcessStepGodRay::serialize(ISerializer& s)
 }
 
 ImageProcessStepGodRay::Source::Source()
-:	index(0)
 {
 }
 
@@ -68,7 +66,13 @@ void ImageProcessStepGodRay::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"param", param);
 	s >> Member< std::wstring >(L"source", source);
-	s >> Member< uint32_t >(L"index", index);
+
+	if (s.getVersion() < 1)
+	{
+		uint32_t index = 0;
+		s >> Member< uint32_t >(L"index", index);
+		T_FATAL_ASSERT_M (index == 0, L"Index must be zero, update binding");
+	}
 }
 
 // Instance
@@ -119,9 +123,9 @@ void ImageProcessStepGodRay::InstanceGodRay::render(
 
 	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{
-		RenderTargetSet* source = imageProcess->getTarget(i->source);
+		ISimpleTexture* source = imageProcess->getTarget(i->source);
 		if (source)
-			m_shader->setTextureParameter(i->param, source->getColorTexture(i->index));
+			m_shader->setTextureParameter(i->param, source);
 	}
 
 	screenRenderer->draw(renderView, m_shader);

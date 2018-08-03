@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
@@ -109,12 +110,12 @@ const IPropertyValue* PropertyGroup::getProperty(const std::wstring& propertyNam
 	}
 }
 
-Ref< PropertyGroup > PropertyGroup::mergeJoin(const PropertyGroup* rightGroup) const
+Ref< PropertyGroup > PropertyGroup::merge(const PropertyGroup* rightGroup, MergeMode mode) const
 {
 	const std::map< std::wstring, Ref< IPropertyValue > >& leftValues = getValues();
 	const std::map< std::wstring, Ref< IPropertyValue > >& rightValues = rightGroup->getValues();
 
-	Ref< PropertyGroup > joinedGroup = new PropertyGroup();
+	Ref< PropertyGroup > mergedGroup = new PropertyGroup();
 
 	// Insert values from left group.
 	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = leftValues.begin(); i != leftValues.end(); ++i)
@@ -122,46 +123,78 @@ Ref< PropertyGroup > PropertyGroup::mergeJoin(const PropertyGroup* rightGroup) c
 		if (!i->second || rightValues.find(i->first) != rightValues.end())
 			continue;
 
-		joinedGroup->setProperty(i->first, i->second->clone());
+		mergedGroup->setProperty(i->first, i->second->clone());
 	}
 
 	// Insert values from right group.
 	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = rightValues.begin(); i != rightValues.end(); ++i)
 	{
 		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = leftValues.find(i->first);
-		if (it != leftValues.end() && it->second)
-			joinedGroup->setProperty(i->first, it->second->join(i->second));
+		if (mode == MmJoin && it != leftValues.end() && it->second)
+			mergedGroup->setProperty(i->first, it->second->join(i->second));
 		else if (i->second)
-			joinedGroup->setProperty(i->first, i->second->clone());
+			mergedGroup->setProperty(i->first, i->second->clone());
 	}
 
-	return joinedGroup;
+	return mergedGroup;
 }
 
-Ref< PropertyGroup > PropertyGroup::mergeReplace(const PropertyGroup* rightGroup) const
+Ref< PropertyGroup > PropertyGroup::difference(const PropertyGroup* rightGroup) const
 {
 	const std::map< std::wstring, Ref< IPropertyValue > >& leftValues = getValues();
 	const std::map< std::wstring, Ref< IPropertyValue > >& rightValues = rightGroup->getValues();
 
-	Ref< PropertyGroup > joinedGroup = new PropertyGroup();
+	Ref< PropertyGroup > diffGroup = new PropertyGroup();
 
-	// Insert values from left group.
-	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = leftValues.begin(); i != leftValues.end(); ++i)
+	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator il = leftValues.begin(); il != leftValues.end(); ++il)
 	{
-		if (!i->second || rightValues.find(i->first) != rightValues.end())
+		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator ir = rightValues.find(il->first);
+		if (ir != rightValues.end())
+		{
+			// Ensure both left and right values aren't nil.
+			if (il->second && ir->second)
+			{
+				if (&type_of(il->second) == &type_of(ir->second))
+				{
+					if (is_a< PropertyGroup >(il->second))
+					{
+						Ref< PropertyGroup > d = static_cast< const PropertyGroup* >(il->second.c_ptr())->difference(static_cast< const PropertyGroup* >(ir->second.c_ptr()));
+						if (d && !d->getValues().empty())
+							diffGroup->setProperty(il->first, d);
+					}
+					else
+					{
+						// Types match and are not groups, check if value match and if not then keep right value.
+						if (DeepHash(il->second) != DeepHash(ir->second))
+							diffGroup->setProperty(il->first, ir->second->clone());
+					}
+				}
+				else
+				{
+					// Types mismatch, keep right value.
+					diffGroup->setProperty(il->first, ir->second->clone());
+				}
+			}
+			else if (ir->second)
+			{
+				// Left value are nil, keep right value.
+				diffGroup->setProperty(il->first, ir->second->clone());
+			}
+		}
+	}
+
+	// Add all right values which isn't present in left group.
+	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator ir = rightValues.begin(); ir != rightValues.end(); ++ir)
+	{
+		if (!ir->second)
 			continue;
 
-		joinedGroup->setProperty(i->first, i->second->clone());
+		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator il = leftValues.find(ir->first);
+		if (il == leftValues.end())
+			diffGroup->setProperty(ir->first, ir->second->clone());
 	}
 
-	// Insert values from right group.
-	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = rightValues.begin(); i != rightValues.end(); ++i)
-	{
-		if (i->second)
-			joinedGroup->setProperty(i->first, i->second->clone());
-	}
-
-	return joinedGroup;
+	return diffGroup;
 }
 
 void PropertyGroup::serialize(ISerializer& s)
@@ -181,7 +214,7 @@ void PropertyGroup::serialize(ISerializer& s)
 Ref< IPropertyValue > PropertyGroup::join(const IPropertyValue* right) const
 {
 	if (const PropertyGroup* rightGroup = dynamic_type_cast< const PropertyGroup* >(right))
-		return mergeJoin(rightGroup);
+		return merge(rightGroup, MmJoin);
 	else
 		return right->clone();
 }

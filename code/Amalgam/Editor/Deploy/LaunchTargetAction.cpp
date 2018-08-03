@@ -127,7 +127,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 		if (fp)
 		{
 			if (fp->deploy)
-				deploy = deploy->mergeJoin(fp->deploy);
+				deploy = deploy->merge(fp->deploy, PropertyGroup::MmJoin);
 			if (!fp->executableFile.empty())
 				executableFile = fp->executableFile;
 		}

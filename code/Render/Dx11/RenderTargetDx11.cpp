@@ -159,7 +159,6 @@ bool RenderTargetDx11::create(const RenderTargetSetCreateDesc& setDesc, const Re
 	m_width = setDesc.width;
 	m_height = setDesc.height;
 	m_generateMips = setDesc.generateMips;
-
 	return true;
 }
 

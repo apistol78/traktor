@@ -83,7 +83,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 	// Merge user settings with default settings in order to get new properties in case application has been updated.
 	Ref< const PropertyGroup > mergedSettings = defaultSettings;
 	if (settings)
-		mergedSettings = defaultSettings->mergeJoin(settings);
+		mergedSettings = defaultSettings->merge(settings, PropertyGroup::MmJoin);
 
 	// Instanciate input drivers.
 	std::set< std::wstring > driverTypes = mergedSettings->getProperty< std::set< std::wstring > >(L"Input.DriverTypes");

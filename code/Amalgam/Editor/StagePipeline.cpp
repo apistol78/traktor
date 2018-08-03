@@ -70,7 +70,7 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 
 		if (stageDataOut->getProperties() && downStageData->getProperties())
 		{
-			Ref< const PropertyGroup > mergedProperties = downStageData->getProperties()->mergeReplace(stageDataOut->getProperties());
+			Ref< const PropertyGroup > mergedProperties = downStageData->getProperties()->merge(stageDataOut->getProperties(), PropertyGroup::MmReplace);
 			stageDataOut->setProperties(mergedProperties);
 		}
 		else if (downStageData->getProperties())

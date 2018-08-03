@@ -29,6 +29,12 @@ class T_DLLCLASS PropertyGroup : public IPropertyValue
 	T_RTTI_CLASS;
 
 public:
+	enum MergeMode
+	{
+		MmReplace,
+		MmJoin
+	};
+
 	typedef Ref< PropertyGroup > value_type_t;
 
 	PropertyGroup();
@@ -72,9 +78,9 @@ public:
 		return PropertyTrait< ValueType >::property_type_t::get(value);
 	}
 
-	Ref< PropertyGroup > mergeJoin(const PropertyGroup* rightGroup) const;
+	Ref< PropertyGroup > merge(const PropertyGroup* rightGroup, MergeMode mode) const;
 
-	Ref< PropertyGroup > mergeReplace(const PropertyGroup* rightGroup) const;
+	Ref< PropertyGroup > difference(const PropertyGroup* rightGroup) const;
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 

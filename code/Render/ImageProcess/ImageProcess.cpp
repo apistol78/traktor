@@ -27,6 +27,7 @@ namespace traktor
 handle_t s_handleOutput;
 handle_t s_handleInputColor;
 handle_t s_handleInputDepth;
+handle_t s_handleInputNormal;
 handle_t s_handleInputVelocity;
 handle_t s_handleInputShadowMask;
 
@@ -41,6 +42,7 @@ ImageProcess::ImageProcess()
 	s_handleOutput = getParameterHandle(L"Output");
 	s_handleInputColor = getParameterHandle(L"InputColor");
 	s_handleInputDepth = getParameterHandle(L"InputDepth");
+	s_handleInputNormal = getParameterHandle(L"InputNormal");
 	s_handleInputVelocity = getParameterHandle(L"InputVelocity");
 	s_handleInputShadowMask = getParameterHandle(L"InputShadowMask");
 }
@@ -108,26 +110,35 @@ void ImageProcess::destroy()
 
 bool ImageProcess::render(
 	IRenderView* renderView,
-	RenderTargetSet* colorBuffer,
-	RenderTargetSet* depthBuffer,
-	RenderTargetSet* velocityBuffer,
-	RenderTargetSet* shadowMask,
+	ISimpleTexture* colorBuffer,
+	ISimpleTexture* depthBuffer,
+	ISimpleTexture* normalBuffer,
+	ISimpleTexture* velocityBuffer,
+	ISimpleTexture* shadowMask,
 	const ImageProcessStep::Instance::RenderParams& params
 )
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	m_targets[s_handleInputColor].rts = colorBuffer;
+	m_targets[s_handleInputColor].rt = colorBuffer;
 	m_targets[s_handleInputColor].persistent = true;
+	m_targets[s_handleInputColor].implicit = true;
 
-	m_targets[s_handleInputDepth].rts = depthBuffer;
+	m_targets[s_handleInputDepth].rt = depthBuffer;
 	m_targets[s_handleInputDepth].persistent = true;
+	m_targets[s_handleInputDepth].implicit = true;
 
-	m_targets[s_handleInputVelocity].rts = velocityBuffer;
+	m_targets[s_handleInputNormal].rt = normalBuffer;
+	m_targets[s_handleInputNormal].persistent = true;
+	m_targets[s_handleInputNormal].implicit = true;
+
+	m_targets[s_handleInputVelocity].rt = velocityBuffer;
 	m_targets[s_handleInputVelocity].persistent = true;
+	m_targets[s_handleInputVelocity].implicit = true;
 
-	m_targets[s_handleInputShadowMask].rts = shadowMask;
+	m_targets[s_handleInputShadowMask].rt = shadowMask;
 	m_targets[s_handleInputShadowMask].persistent = true;
+	m_targets[s_handleInputShadowMask].implicit = true;
 
 	m_currentTarget = 0;
 
@@ -184,13 +195,16 @@ void ImageProcess::defineTarget(const std::wstring& name, handle_t id, const Ren
 {
 	T_ASSERT_M(id != s_handleInputColor, L"Cannot define source color buffer");
 	T_ASSERT_M(id != s_handleInputDepth, L"Cannot define source depth buffer");
+	T_ASSERT_M(id != s_handleInputNormal, L"Cannot define source normal buffer");
 	T_ASSERT_M(id != s_handleInputVelocity, L"Cannot define source velocity buffer");
 	T_ASSERT_M(id != s_handleInputShadowMask, L"Cannot define source shadow mask");
+	T_ASSERT_M(rtscd.count == 1, L"rtscd.count must be 1");
 
 	Target& t = m_targets[id];
 	t.name = name;
 	t.rtscd = rtscd;
 	t.rts = 0;
+	t.rt = 0;
 	t.shouldClear = persistent || m_allTargetsPersistent;
 	t.persistent = persistent || m_allTargetsPersistent;
 	clearColor.storeUnaligned(t.clearColor);
@@ -200,6 +214,7 @@ void ImageProcess::setTarget(IRenderView* renderView, handle_t id)
 {
 	T_ASSERT_M(id != s_handleInputColor, L"Cannot bind source color buffer as output");
 	T_ASSERT_M(id != s_handleInputDepth, L"Cannot bind source depth buffer as output");
+	T_ASSERT_M(id != s_handleInputNormal, L"Cannot define source normal buffer");
 	T_ASSERT_M(id != s_handleInputVelocity, L"Cannot bind source velocity buffer as output");
 	T_ASSERT_M(id != s_handleInputShadowMask, L"Cannot bind source shadow mask as output");
 
@@ -214,6 +229,9 @@ void ImageProcess::setTarget(IRenderView* renderView, handle_t id)
 		{
 			t.rts = m_targetPool->acquireTarget(t.rtscd);
 			T_ASSERT (t.rts);
+
+			t.rt = t.rts->getColorTexture(0);
+			T_ASSERT (t.rt);
 		}
 
 		m_currentTarget = t.rts;
@@ -225,17 +243,42 @@ void ImageProcess::setTarget(IRenderView* renderView, handle_t id)
 		m_currentTarget = 0;
 }
 
-RenderTargetSet* ImageProcess::getTarget(handle_t id)
+ISimpleTexture* ImageProcess::getTarget(handle_t id)
 {
 	Target& t = m_targets[id];
 
-	if (t.rts == 0)
+	if (t.rt == 0)
 	{
+		if (t.implicit)
+		{
+			log::error << L"Image process using unprovided implicit target ";
+			if (id == s_handleOutput)
+				log::error << L"\"Output\"" << Endl;
+			else if(id == s_handleInputColor)
+				log::error << L"\"InputColor\"" << Endl;
+			else if(id == s_handleInputDepth)
+				log::error << L"\"InputDepth\"" << Endl;
+			else if(id == s_handleInputNormal)
+				log::error << L"\"InputDepth\"" << Endl;
+			else if(id == s_handleInputVelocity)
+				log::error << L"\"InputVelocity\"" << Endl;
+			else if(id == s_handleInputShadowMask)
+				log::error << L"\"InputShadowMask\"" << Endl;
+			else
+				log::error << L"unknown" << Endl;
+			return 0;
+		}
+
+		T_ASSERT (t.rts == 0);
+
 		t.rts = m_targetPool->acquireTarget(t.rtscd);
 		T_ASSERT (t.rts);
+
+		t.rt = t.rts->getColorTexture(0);
+		T_ASSERT (t.rt);
 	}
 
-	return t.rts;
+	return t.rt;
 }
 
 void ImageProcess::swapTargets(handle_t id0, handle_t id1)
@@ -253,6 +296,7 @@ void ImageProcess::discardTarget(handle_t id)
 			target.rts
 		);
 		target.rts = 0;
+		target.rt = 0;
 	}
 }
 
@@ -301,8 +345,8 @@ void ImageProcess::getDebugTargets(std::vector< DebugTarget >& outTargets) const
 {
 	for (SmallMap< handle_t, Target >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
 	{
-		if (i->second.rts && !i->second.name.empty())
-			outTargets.push_back(DebugTarget(i->second.name, DtvDefault, i->second.rts->getColorTexture(0)));
+		if (i->second.rt && !i->second.name.empty())
+			outTargets.push_back(DebugTarget(i->second.name, DtvDefault, i->second.rt));
 	}
 }
 

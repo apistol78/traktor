@@ -100,7 +100,7 @@ int main(int argc, const char** argv)
 	}
 
 	if (workspace)
-		settings = settings->mergeReplace(workspace);
+		settings = settings->merge(workspace, PropertyGroup::MmReplace);
 
 	if (cmdLine.hasOption(L"debug"))
 		settings->setProperty< PropertyBoolean >(L"Amalgam.UseDebugBinaries", true);

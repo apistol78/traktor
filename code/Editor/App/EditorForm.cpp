@@ -245,7 +245,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
         {
             if (outOriginalSettings)
             {
-                outOriginalSettings = outOriginalSettings->mergeReplace(systemSettings);
+                outOriginalSettings = outOriginalSettings->merge(systemSettings, PropertyGroup::MmReplace);
                 T_ASSERT (outOriginalSettings);
             }
             else
@@ -282,7 +282,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 				return false;
 			}
 
-			*outSettings = (*outSettings)->mergeReplace(userSettings);
+			*outSettings = (*outSettings)->merge(userSettings, PropertyGroup::MmReplace);
 			T_ASSERT (*outSettings);  
 		}
 	}
@@ -455,23 +455,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	ui::Application::getInstance()->setStyleSheet(styleSheet);
 
 	// Load dependent modules.
-#if !defined(T_STATIC)
-	std::set< std::wstring > modulePaths = m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.ModulePaths");
-	std::set< std::wstring > modules = m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
-
-	std::vector< Path > modulePathsFlatten(modulePaths.begin(), modulePaths.end());
-	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
-	{
-		Ref< Library > library = new Library();
-		if (library->open(*i, modulePathsFlatten, true))
-		{
-			log::info << L"Module \"" << *i << L"\" loaded successfully" << Endl;
-			library->detach();
-		}
-		else
-			log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
-	}
-#endif
+	loadModules();
 
 	// Load dictionaries.
 	loadLanguageDictionary();
@@ -890,24 +874,9 @@ void EditorForm::destroy()
 	Form::destroy();
 }
 
-Ref< const PropertyGroup > EditorForm::getOriginalSettings() const
-{
-	return m_originalSettings;
-}
-
 Ref< const PropertyGroup > EditorForm::getSettings() const
 {
 	return m_mergedSettings;
-}
-
-Ref< const PropertyGroup > EditorForm::getGlobalSettings() const
-{
-	return m_globalSettings;
-}
-
-Ref< const PropertyGroup > EditorForm::getWorkspaceSettings() const
-{
-	return m_workspaceSettings;
 }
 
 Ref< PropertyGroup > EditorForm::checkoutGlobalSettings()
@@ -918,7 +887,7 @@ Ref< PropertyGroup > EditorForm::checkoutGlobalSettings()
 void EditorForm::commitGlobalSettings()
 {
 	if (m_workspaceSettings)
-		m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
+		m_mergedSettings = m_globalSettings->merge(m_workspaceSettings, PropertyGroup::MmJoin);
 	else
 		m_mergedSettings = m_globalSettings;
 }
@@ -936,7 +905,7 @@ void EditorForm::commitWorkspaceSettings()
 {
 	if (m_workspaceSettings)
 	{
-		m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
+		m_mergedSettings = m_globalSettings->merge(m_workspaceSettings, PropertyGroup::MmJoin);
 		saveGlobalSettings(m_workspacePath, m_workspaceSettings);
 	}
 	else
@@ -1483,6 +1452,9 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	}
 
 	m_workspacePath = workspacePath;
+
+	// Reload modules, more modules might be added in workspace.
+	loadModules();
 
 	// Update UI views.
 	updateTitle();
@@ -2346,6 +2318,27 @@ void EditorForm::activateNextEditor()
 	}
 }
 
+void EditorForm::loadModules()
+{
+#if !defined(T_STATIC)
+	std::set< std::wstring > modulePaths = m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.ModulePaths");
+	std::set< std::wstring > modules = m_mergedSettings->getProperty< std::set< std::wstring > >(L"Editor.Modules");
+
+	std::vector< Path > modulePathsFlatten(modulePaths.begin(), modulePaths.end());
+	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
+	{
+		Ref< Library > library = new Library();
+		if (library->open(*i, modulePathsFlatten, true))
+		{
+			log::info << L"Module \"" << *i << L"\" loaded successfully" << Endl;
+			library->detach();
+		}
+		else
+			log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
+	}
+#endif
+}
+
 void EditorForm::loadLanguageDictionary()
 {
 	std::wstring dictionaryFile = m_mergedSettings->getProperty< std::wstring >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/resources/runtime/editor/locale/english/English.xml");
@@ -2507,7 +2500,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 					// Create merged settings.
 					if (m_workspaceSettings)
 					{
-						m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
+						m_mergedSettings = m_globalSettings->merge(m_workspaceSettings, PropertyGroup::MmJoin);
 						T_ASSERT (m_mergedSettings);
 					}
 					else
@@ -2536,7 +2529,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 				// Create merged settings.
 				if (m_workspaceSettings)
 				{
-					m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
+					m_mergedSettings = m_globalSettings->merge(m_workspaceSettings, PropertyGroup::MmJoin);
 					T_ASSERT (m_mergedSettings);
 				}
 				else
@@ -2552,7 +2545,8 @@ bool EditorForm::handleCommand(const ui::Command& command)
 
 				// Save modified settings; do this here as well as at termination
 				// as we want to make sure changes doesn't get lost in case of a crash.
-				if (saveUserSettings(m_settingsPath, m_globalSettings))
+				Ref< const PropertyGroup > userSettings = m_originalSettings->difference(m_globalSettings);
+				if (saveUserSettings(m_settingsPath, userSettings))
 				{
 					updateShortcutTable();
 					for (int i = 0; i < m_tab->getPageCount(); ++i)
@@ -2862,8 +2856,10 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 	m_globalSettings->setProperty< PropertyInteger >(L"Editor.LastDesktopWidth", desktopSize.cx);
 	m_globalSettings->setProperty< PropertyInteger >(L"Editor.LastDesktopHeight", desktopSize.cy);
 
-	// Save settings and pipeline hash.
-	saveUserSettings(m_settingsPath, m_globalSettings);
+	// Save settings; generate a diff patch to simplify adding new properties to original settings.
+	Ref< const PropertyGroup > userSettings = m_originalSettings->difference(m_globalSettings);
+	saveUserSettings(m_settingsPath, userSettings);
+
 	ui::Application::getInstance()->exit(0);
 }
 
@@ -3057,7 +3053,7 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 	FileSystem::getInstance().setCurrentVolumeAndDirectory(workspacePath.getPathOnly());
 
 	// Create merged settings.
-	m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
+	m_mergedSettings = m_globalSettings->merge(m_workspaceSettings, PropertyGroup::MmJoin);
 	T_ASSERT (m_mergedSettings);
 
 	progress = 200;

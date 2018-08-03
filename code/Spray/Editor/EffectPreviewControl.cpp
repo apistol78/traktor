@@ -654,7 +654,8 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		params.deltaTime = deltaTime;
 		m_postProcess->render(
 			m_renderView,
-			m_postTargetSet,
+			m_postTargetSet->getColorTexture(0),
+			0,
 			0,
 			0,
 			0,

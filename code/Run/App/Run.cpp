@@ -240,7 +240,7 @@ Any Run::getProperty(const std::wstring& fileName1, const std::wstring& fileName
 		if (!pr)
 			return Any();
 
-		if ((p = p->mergeReplace(pr)) == 0)
+		if ((p = p->merge(pr, PropertyGroup::MmReplace)) == 0)
 			return Any();
 	}
 

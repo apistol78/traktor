@@ -41,7 +41,6 @@ public:
 	{
 		std::wstring param;		/*!< Shader parameter name. */
 		std::wstring source;	/*!< Render target set source. */
-		uint32_t index;			/*!< Render target index. */
 
 		Source();
 
@@ -57,7 +56,6 @@ public:
 		{
 			handle_t param;
 			handle_t source;
-			uint32_t index;
 		};
 
 		InstanceLensDirt(const ImageProcessStepLensDirt* step);

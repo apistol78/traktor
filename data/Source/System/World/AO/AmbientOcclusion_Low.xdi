@@ -67,23 +67,20 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>SsaoFlip</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSsao" version="1">
+		<item type="traktor.render.ImageProcessStepSsao" version="2">
 			<shader>{868B48AA-AC86-F64F-9934-671F2BE9DD80}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>InputColor</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Normal</param>
-					<source>InputDepth</source>
-					<index>1</index>
+					<source>InputNormal</source>
 				</item>
 			</sources>
 		</item>
@@ -109,18 +106,16 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>SsaoBlur1</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{FECC6D88-5127-0247-B896-A6EDC6FE87A9}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>SsaoFlop</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>2, 0, 0, 0</direction>
@@ -130,18 +125,16 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>SsaoBlur2</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{FECC6D88-5127-0247-B896-A6EDC6FE87A9}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>SsaoBlur1</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>0, 2, 0, 0</direction>
@@ -151,13 +144,12 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Output</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{01AAA8D7-E528-A44D-AF01-78CD5B18F178}</shader>
 			<sources>
 				<item>
 					<param>AO</param>
 					<source>SsaoBlur2</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>

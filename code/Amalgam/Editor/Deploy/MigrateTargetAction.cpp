@@ -145,7 +145,7 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 		if (!migrateProperties)
 			continue;
 
-		migrateConfiguration = migrateConfiguration->mergeJoin(migrateProperties);
+		migrateConfiguration = migrateConfiguration->merge(migrateProperties, PropertyGroup::MmJoin);
 	}
 
 	migrateConfiguration->setProperty< PropertyString >(L"Migrate.SourceDatabase", sourceDatabaseCs.format());
@@ -162,13 +162,13 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 
 		Ref< const PropertyGroup > runtimeProperties = feature->getRuntimeProperties();
 		if (runtimeProperties)
-			applicationConfiguration = applicationConfiguration->mergeJoin(runtimeProperties);
+			applicationConfiguration = applicationConfiguration->merge(runtimeProperties, PropertyGroup::MmJoin);
 
 		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
 		if (fp)
 		{
 			if (fp->deploy)
-				deploy = deploy->mergeJoin(fp->deploy);
+				deploy = deploy->merge(fp->deploy, PropertyGroup::MmJoin);
 			if (!fp->executableFile.empty())
 				executableFile = fp->executableFile;
 		}

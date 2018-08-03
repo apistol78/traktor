@@ -43,7 +43,7 @@ const int32_t c_density = 5;
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageProcessStepBokeh", 1, ImageProcessStepBokeh, ImageProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageProcessStepBokeh", 2, ImageProcessStepBokeh, ImageProcessStep)
 
 ImageProcessStepBokeh::ImageProcessStepBokeh()
 {
@@ -65,7 +65,6 @@ Ref< ImageProcessStepBokeh::Instance > ImageProcessStepBokeh::create(
 	{
 		sources[i].param = getParameterHandle(m_sources[i].param);
 		sources[i].source = getParameterHandle(m_sources[i].source);
-		sources[i].index = m_sources[i].index;
 	}
 
 	// Create dense grid of screen "point quads".
@@ -152,7 +151,6 @@ void ImageProcessStepBokeh::serialize(ISerializer& s)
 }
 
 ImageProcessStepBokeh::Source::Source()
-:	index(0)
 {
 }
 
@@ -160,7 +158,13 @@ void ImageProcessStepBokeh::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"param", param);
 	s >> Member< std::wstring >(L"source", source);
-	s >> Member< uint32_t >(L"index", index);
+
+	if (s.getVersion() < 2)
+	{
+		uint32_t index = 0;
+		s >> Member< uint32_t >(L"index", index);
+		T_FATAL_ASSERT_M (index == 0, L"Index must be zero, update binding");
+	}
 }
 
 // Instance
@@ -203,9 +207,9 @@ void ImageProcessStepBokeh::InstanceBokeh::render(
 
 	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{
-		RenderTargetSet* source = imageProcess->getTarget(i->source);
+		ISimpleTexture* source = imageProcess->getTarget(i->source);
 		if (source)
-			m_shader->setTextureParameter(i->param, source->getColorTexture(i->index));
+			m_shader->setTextureParameter(i->param, source);
 	}
 
 	m_shader->draw(
