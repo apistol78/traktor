@@ -34,7 +34,7 @@ struct Vertex
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageProcessStepLensDirt", 0, ImageProcessStepLensDirt, ImageProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageProcessStepLensDirt", 1, ImageProcessStepLensDirt, ImageProcessStep)
 
 ImageProcessStepLensDirt::ImageProcessStepLensDirt()
 {
@@ -57,7 +57,6 @@ Ref< ImageProcessStep::Instance > ImageProcessStepLensDirt::create(
 	{
 		instance->m_sources[i].param = getParameterHandle(m_sources[i].param);
 		instance->m_sources[i].source = getParameterHandle(m_sources[i].source);
-		instance->m_sources[i].index = m_sources[i].index;
 	}
 
 	AlignedVector< VertexElement > vertexElements;
@@ -103,7 +102,6 @@ void ImageProcessStepLensDirt::serialize(ISerializer& s)
 }
 
 ImageProcessStepLensDirt::Source::Source()
-:	index(0)
 {
 }
 
@@ -111,7 +109,13 @@ void ImageProcessStepLensDirt::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"param", param);
 	s >> Member< std::wstring >(L"source", source);
-	s >> Member< uint32_t >(L"index", index);
+
+	if (s.getVersion() < 1)
+	{
+		uint32_t index = 0;
+		s >> Member< uint32_t >(L"index", index);
+		T_FATAL_ASSERT_M (index == 0, L"Index must be zero, update binding");
+	}
 }
 
 // Instance
@@ -140,9 +144,9 @@ void ImageProcessStepLensDirt::InstanceLensDirt::render(
 
 	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{
-		RenderTargetSet* source = imageProcess->getTarget(i->source);
+		ISimpleTexture* source = imageProcess->getTarget(i->source);
 		if (source)
-			m_shader->setTextureParameter(i->param, source->getColorTexture(i->index));
+			m_shader->setTextureParameter(i->param, source);
 	}
 
 	m_shader->draw(

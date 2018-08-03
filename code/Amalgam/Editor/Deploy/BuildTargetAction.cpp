@@ -135,7 +135,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 		if (fp)
 		{
 			if (fp->deploy)
-				deploy = deploy->mergeJoin(fp->deploy);
+				deploy = deploy->merge(fp->deploy, PropertyGroup::MmJoin);
 		}
 		else
 			log::warning << L"Feature \"" << feature->getDescription() << L"\" doesn't support selected platform." << Endl;
@@ -144,7 +144,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 		if (!pipelineProperties)
 			continue;
 
-		pipelineConfiguration = pipelineConfiguration->mergeJoin(pipelineProperties);
+		pipelineConfiguration = pipelineConfiguration->merge(pipelineProperties, PropertyGroup::MmJoin);
 	}
 
 	// Merge pipeline cache configuration from global configuration.

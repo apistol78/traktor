@@ -92,7 +92,7 @@ void ImageProcessStepLuminance::InstanceLuminance::render(
 	const RenderParams& params
 )
 {
-	RenderTargetSet* source = imageProcess->getTarget(m_source);
+	ISimpleTexture* source = imageProcess->getTarget(m_source);
 	if (!source)
 		return;
 
@@ -105,7 +105,7 @@ void ImageProcessStepLuminance::InstanceLuminance::render(
 		0.5f / source->getHeight()
 	);
 
-	m_shader->setTextureParameter(L"SourceTexture", source->getColorTexture(0));
+	m_shader->setTextureParameter(L"SourceTexture", source);
 	m_shader->setVectorArrayParameter(L"SampleOffsets", m_sampleOffsets, sizeof_array(m_sampleOffsets));
 	m_shader->setVectorParameter(L"SampleOffsetScale", sampleOffsetScale);
 

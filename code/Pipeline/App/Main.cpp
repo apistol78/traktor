@@ -276,7 +276,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 
 	// Merge in system configuration.
 	if (globalSettings && systemSettings)
-		settings = globalSettings->mergeReplace(systemSettings);
+		settings = globalSettings->merge(systemSettings, PropertyGroup::MmReplace);
 	else
 		settings = globalSettings;
 

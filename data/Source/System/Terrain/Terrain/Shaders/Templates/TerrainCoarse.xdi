@@ -497,7 +497,7 @@ Disabled emissive for now as it doesn't work on OpenGL
 				</item>
 				<item>
 					<first>SpecularTerm</first>
-					<second>1</second>
+					<second>0</second>
 				</item>
 				<item>
 					<first>State</first>

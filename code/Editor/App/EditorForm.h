@@ -103,13 +103,7 @@ public:
 	/*! \name IEditor implementation */
 	//@{
 
-	virtual Ref< const PropertyGroup > getOriginalSettings() const T_OVERRIDE T_FINAL;
-
 	virtual Ref< const PropertyGroup > getSettings() const T_OVERRIDE T_FINAL;
-
-	virtual Ref< const PropertyGroup > getGlobalSettings() const T_OVERRIDE T_FINAL;
-
-	virtual Ref< const PropertyGroup > getWorkspaceSettings() const T_OVERRIDE T_FINAL;
 
 	virtual Ref< PropertyGroup > checkoutGlobalSettings() T_OVERRIDE T_FINAL;
 
@@ -280,6 +274,8 @@ private:
 	void activatePreviousEditor();
 
 	void activateNextEditor();
+
+	void loadModules();
 
 	void loadLanguageDictionary();
 

@@ -142,13 +142,13 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 
 		Ref< const PropertyGroup > runtimeProperties = feature->getRuntimeProperties();
 		if (runtimeProperties)
-			applicationConfiguration = applicationConfiguration->mergeJoin(runtimeProperties);
+			applicationConfiguration = applicationConfiguration->merge(runtimeProperties, PropertyGroup::MmJoin);
 
 		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
 		if (fp)
 		{
 			if (fp->deploy)
-				deploy = deploy->mergeJoin(fp->deploy);
+				deploy = deploy->merge(fp->deploy, PropertyGroup::MmJoin);
 			if (!fp->executableFile.empty())
 				executableFile = fp->executableFile;
 		}
@@ -180,7 +180,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 
 	// Append tweaks.
 	if (m_tweakSettings)
-		applicationConfiguration = applicationConfiguration->mergeJoin(m_tweakSettings);
+		applicationConfiguration = applicationConfiguration->merge(m_tweakSettings, PropertyGroup::MmJoin);
 
 	// Write generated application configuration in output directory.
 	Ref< IStream > file = FileSystem::getInstance().open(

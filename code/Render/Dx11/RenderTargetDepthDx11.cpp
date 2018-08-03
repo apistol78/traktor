@@ -130,6 +130,8 @@ bool RenderTargetDepthDx11::create(const RenderTargetSetCreateDesc& setDesc)
 		}
 	}
 
+	m_width = setDesc.width;
+	m_height = setDesc.height;
 	return true;
 }
 

@@ -309,6 +309,9 @@ bool WorldRendererDeferred::create(
 				m_shadowsQuality = QuDisabled;
 			}
 
+			// Use "shadow map is a depth texture" combination.
+			m_shadowMaskProject->setCombination(render::getParameterHandle(L"World_ShadowMapDepthTexture"), true);
+
 			if (shadowMaskFilter)
 			{
 				// Create filtered shadow mask target.
@@ -918,7 +921,8 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 				m_motionBlurPrimeImageProcess->render(
 					m_renderView,
 					0,	// color
-					m_gbufferTargetSet,	// depth
+					m_gbufferTargetSet->getColorTexture(0),	// depth
+					0,	// normal
 					0,	// velocity
 					0,	// shadow mask
 					params
@@ -994,10 +998,11 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 
 						m_shadowMaskProject->render(
 							m_renderView,
-							m_shadowTargetSet,
-							m_gbufferTargetSet,
-							0,
-							0,
+							m_shadowTargetSet->getDepthTexture(),	// color
+							m_gbufferTargetSet->getColorTexture(0),	// depth
+							m_gbufferTargetSet->getColorTexture(1),	// normal
+							0,	// velocity
+							0,	// shadow mask
 							params
 						);
 
@@ -1025,10 +1030,11 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 
 					m_shadowMaskFilter->render(
 						m_renderView,
-						m_shadowMaskProjectTargetSet,
-						m_gbufferTargetSet,
-						0,
-						0,
+						m_shadowMaskProjectTargetSet->getColorTexture(0),	// color
+						m_gbufferTargetSet->getColorTexture(0),	// depth
+						m_gbufferTargetSet->getColorTexture(1),	// normal
+						0,	// velocity
+						0,	// shadow mask
 						params
 					);
 					m_renderView->end();
@@ -1116,10 +1122,11 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (0)");
 			m_colorTargetCopy->render(
 				m_renderView,
-				m_visualTargetSet,
-				0,
-				0,
-				0,
+				m_visualTargetSet->getColorTexture(0),	// color
+				0,	// depth
+				0,	// normal
+				0,	// velocity
+				0,	// shadow mask
 				params
 			);
 			T_RENDER_POP_MARKER(m_renderView);
@@ -1209,10 +1216,11 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 
 		m_colorTargetCopy->render(
 			m_renderView,
-			m_visualTargetSet,
-			0,
-			0,
-			0,
+			m_visualTargetSet->getColorTexture(0),	// color
+			0,	// depth
+			0,	// normal
+			0,	// velocity
+			0,	// shadow
 			params
 		);
 
@@ -1237,10 +1245,11 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 
 			m_ambientOcclusion->render(
 				m_renderView,
-				m_shadowTargetSet,
-				m_gbufferTargetSet,
-				0,
-				0,
+				m_visualTargetSet->getColorTexture(0),	// color
+				m_gbufferTargetSet->getColorTexture(0),	// depth
+				m_gbufferTargetSet->getColorTexture(1),	// normal
+				0,	// velocity
+				0,	// shadow mask
 				params
 			);
 
@@ -1279,10 +1288,11 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 
 		m_colorTargetCopy->render(
 			m_renderView,
-			m_visualTargetSet,
-			0,
-			0,
-			0,
+			m_visualTargetSet->getColorTexture(0),	// color
+			0,	// depth
+			0,	// normal
+			0,	// velocity
+			0,	// shadow mask
 			params
 		);
 
@@ -1336,10 +1346,11 @@ void WorldRendererDeferred::endRender(int frame, render::EyeType eye, float delt
 
 		processes[i]->render(
 			m_renderView,
-			sourceTargetSet,
-			m_gbufferTargetSet,
-			m_velocityTargetSet,
-			m_shadowTargetSet,
+			sourceTargetSet->getColorTexture(0),		// color
+			m_gbufferTargetSet->getColorTexture(0),		// depth
+			m_gbufferTargetSet->getColorTexture(1),		// normal
+			m_velocityTargetSet ? m_velocityTargetSet->getColorTexture(0) : 0,	// velocity
+			0,		// shadow mask
 			params
 		);
 

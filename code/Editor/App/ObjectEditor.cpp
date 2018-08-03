@@ -20,24 +20,9 @@ ObjectEditor::ObjectEditor(IEditor* editor, ui::Dialog* parent)
 {
 }
 
-Ref< const PropertyGroup > ObjectEditor::getOriginalSettings() const
-{
-	return m_editor->getOriginalSettings();
-}
-
 Ref< const PropertyGroup > ObjectEditor::getSettings() const
 {
 	return m_editor->getSettings();
-}
-
-Ref< const PropertyGroup > ObjectEditor::getGlobalSettings() const
-{
-	return m_editor->getGlobalSettings();
-}
-
-Ref< const PropertyGroup > ObjectEditor::getWorkspaceSettings() const
-{
-	return m_editor->getWorkspaceSettings();
 }
 
 Ref< PropertyGroup > ObjectEditor::checkoutGlobalSettings()

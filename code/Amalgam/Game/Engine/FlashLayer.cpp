@@ -532,7 +532,8 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 			render::ImageProcessStep::Instance::RenderParams params;
 			m_imageProcess->render(
 				renderView,
-				m_imageTargetSet,
+				m_imageTargetSet->getColorTexture(0),
+				0,
 				0,
 				0,
 				0,

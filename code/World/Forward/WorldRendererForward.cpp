@@ -219,6 +219,9 @@ bool WorldRendererForward::create(
 			m_shadowsQuality = QuDisabled;
 		}
 
+		// Use "shadow map is a depth texture" combination.
+		m_shadowMaskProject->setCombination(render::getParameterHandle(L"World_ShadowMapDepthTexture"), true);
+
 		if (shadowMaskFilter)
 		{
 			// Create filtered shadow mask target.
@@ -708,10 +711,11 @@ void WorldRendererForward::render(int frame, render::EyeType eye)
 
 					m_shadowMaskProject->render(
 						m_renderView,
-						m_shadowTargetSet,
-						m_depthTargetSet,
-						0,
-						0,
+						m_shadowTargetSet->getDepthTexture(),	// color
+						m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0,	// depth
+						0,	// normal
+						0,	// velocity
+						0,	// shadow mask
 						params
 					);
 
@@ -735,10 +739,11 @@ void WorldRendererForward::render(int frame, render::EyeType eye)
 
 					m_shadowMaskFilter->render(
 						m_renderView,
-						m_shadowMaskProjectTargetSet,
-						m_depthTargetSet,
-						0,
-						0,
+						m_shadowMaskProjectTargetSet->getColorTexture(0),	// color
+						m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0,	// depth
+						0,	// normal
+						0,	// velocity
+						0,	// shadow mask
 						params
 					);
 					m_renderView->end();
@@ -805,10 +810,11 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 	
 			m_visualImageProcess->render(
 				m_renderView,
-				sourceTargetSet,
-				m_depthTargetSet,
-				0,
-				m_shadowTargetSet,
+				sourceTargetSet->getColorTexture(0),	// color
+				m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0,	// depth
+				0,	// normal
+				0,	// velocity
+				m_shadowTargetSet ? m_shadowTargetSet->getColorTexture(0) : 0,	// shadow mask
 				params
 			);
 	
@@ -831,10 +837,11 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 	
 			m_gammaCorrectionImageProcess->render(
 				m_renderView,
-				sourceTargetSet,
-				m_depthTargetSet,
-				0,
-				m_shadowTargetSet,
+				sourceTargetSet->getColorTexture(0),	// color
+				m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0,	// depth
+				0,	// normal
+				0,	// velocity
+				m_shadowTargetSet ? m_shadowTargetSet->getColorTexture(0) : 0,	// shadow mask
 				params
 			);
 	
@@ -854,10 +861,11 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 	
 			m_antiAlias->render(
 				m_renderView,
-				sourceTargetSet,
-				m_depthTargetSet,
-				0,
-				m_shadowTargetSet,
+				sourceTargetSet->getColorTexture(0),	// color
+				m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0,	// depth
+				0,	// normal
+				0,	// velocity
+				m_shadowTargetSet ? m_shadowTargetSet->getColorTexture(0) : 0,	// shadow mask
 				params
 			);
 	

@@ -123,9 +123,9 @@ void ImageProcessStepTemporal::InstanceTemporal::render(
 
 	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{
-		RenderTargetSet* source = imageProcess->getTarget(i->source);
+		ISimpleTexture* source = imageProcess->getTarget(i->source);
 		if (source)
-			m_shader->setTextureParameter(i->param, source->getColorTexture(i->index));
+			m_shader->setTextureParameter(i->param, source);
 	}
 
 	screenRenderer->draw(renderView, m_shader);

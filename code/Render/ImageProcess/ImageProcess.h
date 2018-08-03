@@ -44,6 +44,7 @@ class ImageProcessSettings;
 class ImageProcessTargetPool;
 class IRenderSystem;
 class IRenderView;
+class ISimpleTexture;
 class ITexture;
 class Shader;
 class RenderTargetSet;
@@ -56,6 +57,8 @@ class ScreenRenderer;
  * "Output" - Frame buffer, write only.
  * "InputColor" - Source color buffer, read only.
  * "InputDepth" - Source depth buffer, read only.
+ * "InputNormal" - Source normal buffer, read only.
+ * "InputVelocity" - Source velocity buffer, read only.
  * "InputShadowMask" - Source shadow mask, read only.
  */
 class T_DLLCLASS ImageProcess : public Object
@@ -79,10 +82,11 @@ public:
 
 	bool render(
 		IRenderView* renderView,
-		RenderTargetSet* colorBuffer,
-		RenderTargetSet* depthBuffer,
-		RenderTargetSet* velocityBuffer,
-		RenderTargetSet* shadowMask,
+		ISimpleTexture* colorBuffer,
+		ISimpleTexture* depthBuffer,
+		ISimpleTexture* normalBuffer,
+		ISimpleTexture* velocityBuffer,
+		ISimpleTexture* shadowMask,
 		const ImageProcessStep::Instance::RenderParams& params
 	);
 
@@ -90,7 +94,7 @@ public:
 
 	void setTarget(IRenderView* renderView, handle_t id);
 
-	RenderTargetSet* getTarget(handle_t id);
+	ISimpleTexture* getTarget(handle_t id);
 
 	void swapTargets(handle_t id0, handle_t id1);
 
@@ -116,13 +120,16 @@ private:
 		std::wstring name;
 		RenderTargetSetCreateDesc rtscd;
 		Ref< RenderTargetSet > rts;
+		Ref< ISimpleTexture > rt;
 		float clearColor[4];
 		bool shouldClear;
 		bool persistent;
+		bool implicit;
 
 		Target()
 		:	shouldClear(false)
 		,	persistent(false)
+		,	implicit(false)
 		{
 			clearColor[0] =
 			clearColor[1] =

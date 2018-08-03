@@ -570,7 +570,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 			}
 
 			if (userSettings)
-				settings = settings->mergeReplace(userSettings);
+				settings = settings->merge(userSettings, PropertyGroup::MmReplace);
 		}
 
 		if (!settings)
