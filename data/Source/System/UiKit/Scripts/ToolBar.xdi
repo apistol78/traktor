@@ -8,8 +8,10 @@
 
 ToolBar = ToolBar or class("ToolBar", Container)
 
+ToolBar:setStyle("resource", "MC_ToolBar")
+
 function ToolBar:new(parent)
-	local mc = Widget._createResource(parent, "MC_ToolBar")
+	local mc = Widget._createResource(parent, self:getStyle().resource)
 	self:_initialize(parent, mc)
 end
 

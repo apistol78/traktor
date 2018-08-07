@@ -10,8 +10,12 @@ import(traktor.flash)
 
 Slider = Slider or class("Slider", Widget)
 
+Slider:setStyle("resource", "MC_Slider")
+Slider:setStyle("background", Color4f(0.4, 0.4, 0.4, 1.0))
+Slider:setStyle("knob", Color4f(0.8, 0.8, 0.8, 1.0))
+
 function Slider:new(parent)
-	local mc = Widget._createResource(parent, "MC_Slider")
+	local mc = Widget._createResource(parent, self:getStyle().resource)
 	self:_initialize(parent, mc)
 end
 
@@ -50,13 +54,13 @@ end
 function Slider:setPosition(position)
 	local w = self._background_mc.width - self._knob_mc.width
 	local f = (position - self._range.min) / (self._range.max - self._range.min)
-	self._knob_mc.X = w * f
+	self:_moveKnob(w * f)
 	return self
 end
 
 function Slider:getPosition()
 	local w = self._background_mc.width - self._knob_mc.width
-	local x = self._knob_mc.X
+	local x = self._knobX
 	return self._range.min + (self._range.max - self._range.min) * x / w
 end
 
@@ -78,12 +82,37 @@ function Slider:_initialize(parent, mc)
 
 	self._background_mc = mc:getMember("background_mc")
 	self._knob_mc = mc:getMember("knob_mc")
+	self._knobX = self._knob_mc.X
+
+	self:_loadStyle()
 
 	self:addEventListener(MousePressEvent, self, self._onMousePress)
 	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
 	self:addEventListener(MouseMoveEvent, self, self._onMouseMove)
 
 	self:setRange(0, 100)
+end
+
+function Slider:_loadStyle()
+	local style = self:getStyle()
+	self:setColor(style.background)
+	self:setKnobColor(style.knob)
+end
+
+function Slider:_moveKnob(x)
+	local current = self._knob_mc.X
+	if x ~= current then
+		local d = math.abs(x - current) / (self:getPlacement().width * 2)
+		if self._knobTween == nil then
+			self._knobTween = Tween(current, x, d, function(v, last)
+				self._knob_mc.X = v
+				if last then self._knobTween = nil end
+			end)
+		else
+			self._knobTween:continueTo(x, d)
+		end
+	end
+	self._knobX = x
 end
 
 function Slider:_onMousePress(event)
@@ -110,7 +139,7 @@ function Slider:_onMouseMove(event)
 		x = mx
 	end
 
-	self._knob_mc.X = X
+	self:_moveKnob(x)
 
 	if self._scrollFn ~= nil then
 		self._scrollFn()

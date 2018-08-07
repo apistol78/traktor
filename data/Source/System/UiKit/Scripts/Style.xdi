@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+-- Style
+
+Style = Style or class("Style")
+
+function Style:new()
+	self._values = {}
+end
+
+function Style:insert(otherStyle, override)
+	for k, v in pairs(otherStyle._values) do
+		if self._values[k] == nil or override then
+			self._values[k] = v
+		end
+	end
+end
+
+function Style:__index(key)
+	local vi = rawget(self, key)
+	if vi ~= nil then return vi end
+
+	local vm = rawget(Style, key)
+	if vm ~= nil then return vm end
+
+	local vs = rawget(self, "_values")
+	assert(vs ~= nil)
+
+	return rawget(vs, key)
+end
+
+function Style:__newindex(key, value)
+	if key ~= "_values" then
+		local vs = rawget(self, "_values")
+		assert(vs ~= nil)
+		rawset(vs, key, value)
+	else
+		rawset(self, key, value)
+	end
+end
+
+
+	]]>
+	</text>
+</object>

@@ -4,14 +4,19 @@
 	<![CDATA[
 #using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
 
+import(traktor)
 import(traktor.flash)
 
 -- ProgressBar
 
 ProgressBar = ProgressBar or class("ProgressBar", Widget)
 
+ProgressBar:setStyle("resource", "MC_ProgressBar")
+ProgressBar:setStyle("background", Color4f(0.0, 0.0, 0.0, 1.0))
+ProgressBar:setStyle("foreground", Color4f(1.0, 1.0, 1.0, 1.0))
+
 function ProgressBar:new(parent, reverse, skin)
-	local mc = Widget._createResource(parent, skin or "MC_ProgressBar")
+	local mc = Widget._createResource(parent, skin or self:getStyle().resource)
 	self:_initialize(parent, mc, reverse)
 end
 
@@ -81,7 +86,14 @@ function ProgressBar:_initialize(parent, mc, reverse)
 	self._back_mc:setMember("__renderWireOutline", true)
 #endif
 
-	self:setValue(0.5)
+	self:_loadStyle()
+	self:setValue(0)
+end
+
+function ProgressBar:_loadStyle()
+	local style = self:getStyle()
+	self:setBackColor(style.background)
+	self:setFrontColor(style.foreground)
 end
 
 	]]>

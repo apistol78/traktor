@@ -10,8 +10,14 @@ import(traktor)
 
 Static = Static or class("Static", Widget)
 
+Static:setStyle("resource", "MC_Static")
+Static:setStyle("text", Color4f(0.0, 0.0, 0.0, 1.0))
+Static:setStyle("textHover", nil)
+Static:setStyle("textDropShadow", nil)
+Static:setStyle("textSize", 17)
+
 function Static:new(parent, text, clip)
-	local mc = Widget._createResource(parent, "MC_Static")
+	local mc = Widget._createResource(parent, self:getStyle().resource)
 	self:_initialize(parent, mc, text, clip)
 end
 
@@ -82,7 +88,7 @@ function Static:setTextHoverColor(color)
 end
 
 function Static:setDropShadowColor(color)
-	if color.alpha > 0.01 then
+	if color ~= nil then
 		self._text_tb.filter = 1
 		self._text_tb.filterColor = color
 	else
@@ -127,6 +133,8 @@ function Static:_initialize(parent, mc, text, clip)
 	self._textHoverColor = nil
 	self._html = false
 
+	self:_loadStyle()
+
 	self:setText(text or "")
 
 	self:addEventListener(MouseEnterEvent, self, self._onMouseEnter)
@@ -136,6 +144,14 @@ function Static:_initialize(parent, mc, text, clip)
 #if defined(_DEBUG)
 	self._text_tb:setMember("__renderWireOutline", true)
 #endif
+end
+
+function Static:_loadStyle()
+	local style = self:getStyle()
+	self:setTextColor(style.text)
+	self:setTextHoverColor(style.textHover)
+	self:setDropShadowColor(style.textDropShadow)
+	self:setTextSize(style.textSize)
 end
 
 function Static:_onMouseEnter(event)

@@ -10,8 +10,11 @@ import(traktor.flash)
 
 CheckBox = CheckBox or class("CheckBox", Widget)
 
+CheckBox:setStyle("resource", "MC_CheckBox")
+CheckBox:setStyle("background", Color4f(0.8, 0.8, 0.8, 1.0))
+
 function CheckBox:new(parent)
-	local mc = Widget._createResource(parent, "MC_CheckBox")
+	local mc = Widget._createResource(parent, self:getStyle().resource)
 	self:_initialize(parent, mc)
 end
 
@@ -62,8 +65,15 @@ function CheckBox:_initialize(parent, mc, caption)
 	self._checked = false
 	self._clickFn = nil
 
+	self:_loadStyle()
+
 	self:addEventListener(MousePressEvent, self, self._onMousePress)
 	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
+end
+
+function CheckBox:_loadStyle()
+	local style = self:getStyle()
+	self:setColor(style.background)
 end
 
 function CheckBox:_onMousePress(event)

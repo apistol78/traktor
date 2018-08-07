@@ -17,6 +17,14 @@ function Tween:new(startValue, endValue, duration, fn)
 	table.insert(Tween._instances, self)
 end
 
+function Tween:continueTo(endValue, duration)
+	local k = self._time / self._duration
+	self._startValue = self._startValue * (1 - k) + self._endValue * k
+	self._endValue = endValue
+	self._duration = duration
+	self._time = 0
+end
+
 function Tween:stop()
 	for i, t in ipairs(Tween._instances) do
 		if t == self then

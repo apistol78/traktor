@@ -11,9 +11,13 @@
 
 ListBox = ListBox or class("ListBox", Widget)
 
-function ListBox:new(parent)
+ListBox:setStyle("background", Color4f(0.8, 0.8, 0.8, 1.0))
+ListBox:setStyle("text", Color4f(0.0, 0.0, 0.0, 1.0))
+ListBox:setStyle("textHover", Color4f(1.0, 1.0, 1.0, 1.0))
+
+function ListBox:new(parent, skin)
 	local mc = Widget._createEmptyResource(parent)
-	self:_initialize(parent, mc)
+	self:_initialize(parent, mc, skin)
 end
 
 function ListBox:getPreferredSize()
@@ -47,7 +51,6 @@ end
 
 function ListBox:setColor(color)
 	self._panel:setColor(color)
-	self._listContainer:getScrollBar(ScrollContainer.VERTICAL):setColor(color)
 	return self
 end
 
@@ -64,7 +67,7 @@ end
 function ListBox:setTextHoverColor(textHoverColor)
 	local children = self._listContainer:getChildren()
 	for _, child in ipairs(children) do
-		children:setTextColor(textHoverColor)
+		children:setTextHoverColor(textHoverColor)
 	end
 	self._textHoverColor = textHoverColor
 	return self
@@ -77,15 +80,23 @@ end
 
 -- private
 
-function ListBox:_initialize(parent, mc)
+function ListBox:_initialize(parent, mc, skin)
 	Widget._initialize(self, parent, mc)
 
-	self._textColor = Color4f(0, 0, 0, 1)
-	self._textHoverColor = Color4f(1, 1, 1, 1)
 	self._index = 0
 
-	self._panel = Panel(self, FloodLayout())
+	self._panel = Panel(self, FloodLayout(), skin)
 	self._listContainer = ScrollContainer(self._panel, TableLayout({ 100 }, { 0 }, 4, 4, 0, 0), ScrollContainer.VERTICAL | ScrollContainer.SCROLLBARS)
+	self._listContainer:getScrollBar(ScrollContainer.VERTICAL):setColor(Color4f(0.0, 0.0, 0.0, 0.2))
+
+	self:_loadStyle()
+end
+
+function ListBox:_loadStyle()
+	local style = self:getStyle()
+	self:setColor(style.background)
+	self:setTextColor(style.text)
+	self:setTextHoverColor(style.textHover)
 end
 
 	]]>

@@ -6,8 +6,11 @@
 
 Border = Border or class("Border", Widget)
 
+Border:setStyle("resource", "MC_Border")
+Border:setStyle("background", Color4f(0.8, 0.8, 0.8, 1.0))
+
 function Border:new(parent)
-	local mc = Widget._createResource(parent, "MC_Border")
+	local mc = Widget._createResource(parent, self:getStyle().resource)
 	self:_initialize(parent, mc)
 end
 
@@ -22,16 +25,30 @@ function Border:place(x, y, width, height)
 	self._mc.size = Vector2(p.width, p.height)
 end
 
+function Border:setColor(color)
+	self._mc.colorTransform = ColorTransform(color, Color4f(0, 0, 0, 0))
+	return self
+end
+
 -- Private
 
 function Border:_initialize(parent, mc)
+	Widget._initialize(self, parent, mc)
+
 	self._preferredSize =
 	{
 		width = mc.width,
 		height = mc.height
 	}
-	Widget._initialize(self, parent, mc)
+
+	self:_loadStyle()
 end
+
+function Border:_loadStyle()
+	local style = self:getStyle()
+	self:setColor(style.background)
+end
+
 
 	]]>
 	</text>

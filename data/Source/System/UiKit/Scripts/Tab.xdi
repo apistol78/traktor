@@ -10,6 +10,8 @@ import(traktor)
 
 Tab = Tab or class("Tab", Widget)
 
+Tab:setStyle("background", Color4f(0.6, 0.6, 0.6, 1.0))
+
 function Tab:new(parent)
 	local mc = Widget._createEmptyResource(parent)
 	self:_initialize(parent, mc, mc)
@@ -82,6 +84,13 @@ function Tab:_initialize(parent, mc, inner_mc)
 	self._tab_mc = {}
 	self._tabHeight = 0
 	self._active = 1
+
+	self:_loadStyle()
+end
+
+function Tab:_loadStyle()
+	local style = self:getStyle()
+	self:setColor(style.background)
 end
 
 function Tab:_addChild(child)

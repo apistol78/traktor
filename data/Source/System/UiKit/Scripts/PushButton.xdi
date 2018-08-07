@@ -13,8 +13,15 @@ PushButton = PushButton or class("PushButton", Widget)
 PushButton.Default = 0
 PushButton.Toggle = 1
 
+PushButton:setStyle("resource", "MC_PushButton")
+PushButton:setStyle("background", Color4f(0.8, 0.8, 0.8, 1.0))
+PushButton:setStyle("backgroundDown", Color4f(0.4, 0.4, 0.4, 1.0))
+PushButton:setStyle("backgroundHover", Color4f(1.0, 1.0, 1.0, 1.0))
+PushButton:setStyle("text", Color4f(0.0, 0.0, 0.0, 1.0))
+PushButton:setStyle("textSize", 17)
+
 function PushButton:new(parent, caption, mode)
-	local mc = Widget._createResource(parent, "MC_PushButton")
+	local mc = Widget._createResource(parent, self:getStyle().resource)
 	self:_initialize(parent, mc, caption, mode or PushButton.Default)
 end
 
@@ -27,6 +34,7 @@ function PushButton:place(x, y, width, height)
 
 	local p = self:getPlacement()
 	self._background_mc.width = p.width
+	self._background_mc.height = p.height
 
 	local sz = self._caption_tb.textSize
 	local m = p.width - sz.x
@@ -35,15 +43,32 @@ end
 
 function PushButton:setColor(color)
 	self._defaultColor = color
-	self._background_mc.colorTransform = ColorTransform(
-		self._defaultColor,
-		Color4f(0, 0, 0, 0)
-	)
+	self:_updateState()
+	return self
+end
+
+function PushButton:setDownColor(color)
+	self._downColor = color
+	self:_updateState()
 	return self
 end
 
 function PushButton:setHoverColor(color)
 	self._hoverColor = color
+	self:_updateState()
+	return self
+end
+
+function PushButton:setTextColor(color)
+	self._caption_tb.textColor = color
+	return self
+end
+
+function PushButton:setTextSize(size)
+	local tf = self._caption_tb:getTextFormat()
+	tf.size = size * 20
+	self._caption_tb:setTextFormat(tf)
+	self._preferredSize.height = size + self._textSizeMargin
 	return self
 end
 
@@ -77,11 +102,7 @@ end
 
 function PushButton:setEnable(enable)
 	Widget.setEnable(self, enable)
-	if enable then
-		self._mc.alpha = 1
-	else
-		self._mc.alpha = 0.5
-	end
+	self:_updateState()
 	return self
 end
 
@@ -92,11 +113,7 @@ end
 
 function PushButton:setToggled(toggled)
 	self._toggled = toggled
-	if self._toggled then
-		self._background_mc:gotoAndStop("down")
-	else
-		self._background_mc:gotoAndStop("up")
-	end
+	self:_updateState()
 	return self
 end
 
@@ -116,23 +133,21 @@ function PushButton:_initialize(parent, mc, caption, mode)
 	self._originalBounds = self._caption_tb.textBounds
 	self._margin = self._caption_tb.X
 	self._minimumWidth = mc.width
+	self._textSizeMargin = mc.height - self._caption_tb:getTextFormat().size / 20
 	self._preferredSize =
 	{
 		width = mc.width,
 		height = mc.height
 	}
-	self._defaultColor = Color4f(0.8, 0.8, 0.8, 1)
-	self._hoverColor = Color4f(1, 1, 1, 1)
+
 	self._clickFn = nil
 	self._mode = mode
 	self._toggled = false
 	self._inside = false
 	self._pressed = false
 
-	self._background_mc.colorTransform = ColorTransform(
-		self._defaultColor,
-		Color4f(0, 0, 0, 0)
-	)
+	self:_loadStyle()
+	self:_updateState()
 
 	self:addEventListener(MousePressEvent, self, self._onMousePress)
 	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
@@ -147,24 +162,47 @@ function PushButton:_initialize(parent, mc, caption, mode)
 #endif
 end
 
-function PushButton:_updateColor()
-	if self._inside and not self._pressed then
-		self._background_mc.colorTransform = ColorTransform(
-			self._hoverColor,
-			Color4f(0, 0, 0, 0)
-		)
+function PushButton:_loadStyle()
+	local style = self:getStyle()
+	self:setColor(style.background)
+	self:setDownColor(style.backgroundDown)
+	self:setHoverColor(style.backgroundHover)
+	self:setTextColor(style.text)
+	self:setTextSize(style.textSize)
+end
+
+function PushButton:_updateState()
+	local cb = Color4f(0, 0, 0, 0)
+
+	local down = self._toggled or (self._pressed and self._inside)
+	local up = not down and not self._inside
+	local hover = not down and self._inside
+
+	if down then
+		self._background_mc:gotoAndStop("down")
+		self._background_mc.colorTransform = ColorTransform(self._downColor, cb)
+	end
+
+	if up then
+		self._background_mc:gotoAndStop("up")
+		self._background_mc.colorTransform = ColorTransform(self._defaultColor, cb)
+	end
+
+	if hover then
+		self._background_mc:gotoAndStop("hover")
+		self._background_mc.colorTransform = ColorTransform(self._hoverColor, cb)
+	end
+
+	if self:isEnabled() then
+		self._mc.alpha = 1
 	else
-		self._background_mc.colorTransform = ColorTransform(
-			self._defaultColor,
-			Color4f(0, 0, 0, 0)
-		)
+		self._mc.alpha = 0.5
 	end
 end
 
 function PushButton:_onMousePress(event)
-	self._background_mc:gotoAndStop("down")
 	self._pressed = true
-	self:_updateColor()
+	self:_updateState()
 	return true
 end
 
@@ -176,32 +214,25 @@ function PushButton:_onMouseRelease(event)
 		if self._inside then
 			self._toggled = not self._toggled
 		end
-		if self._toggled then
-			self._background_mc:gotoAndStop("down")
-		else
-			self._background_mc:gotoAndStop("up")
-		end
-	else
-		self._background_mc:gotoAndStop("up")
 	end
+
+	self:_updateState()
 
 	if self._inside and self._clickFn ~= nil then
 		self._clickFn(self)
 	end
-
-	self:_updateColor()
 	return true
 end
 
 function PushButton:_onMouseEnter(event)
 	self._inside = true
-	self:_updateColor()
+	self:_updateState()
 	return true
 end
 
 function PushButton:_onMouseLeave(event)
 	self._inside = false
-	self:_updateColor()
+	self:_updateState()
 	return true
 end
 
