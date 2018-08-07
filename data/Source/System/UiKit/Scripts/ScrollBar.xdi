@@ -13,12 +13,17 @@ ScrollBar = ScrollBar or class("ScrollBar", Widget)
 ScrollBar.HORIZONTAL = 0
 ScrollBar.VERTICAL = 1
 
+ScrollBar:setStyle("resourceHorizontal", "MC_ScrollBar_Horizontal")
+ScrollBar:setStyle("resourceVertical", "MC_ScrollBar_Vertical")
+ScrollBar:setStyle("background", Color4f(0.6, 0.6, 0.6, 1.0))
+ScrollBar:setStyle("knob", Color4f(1.0, 1.0, 1.0, 1.0))
+
 function ScrollBar:new(parent, orientation)
 	local mc
 	if orientation == ScrollBar.HORIZONTAL then
-		mc = Widget._createResource(parent, "MC_ScrollBar_Horizontal")
+		mc = Widget._createResource(parent, self:getStyle().resourceHorizontal)
 	elseif orientation == ScrollBar.VERTICAL then
-		mc = Widget._createResource(parent, "MC_ScrollBar_Vertical")
+		mc = Widget._createResource(parent, self:getStyle().resourceVertical)
 	end
 	assert (mc ~= nil)
 	self:_initialize(parent, mc, orientation)
@@ -132,11 +137,19 @@ function ScrollBar:_initialize(parent, mc, orientation)
 		self._knobMargin = self._knob_mc.Y
 	end
 
+	self:_loadStyle()
+
 	self:addEventListener(MousePressEvent, self, self._onMousePress)
 	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
 	self:addEventListener(MouseMoveEvent, self, self._onMouseMove)
 
 	self:setRange(100, 20)
+end
+
+function ScrollBar:_loadStyle()
+	local style = self:getStyle()
+	self:setColor(style.background)
+	self:setKnobColor(style.knob)
 end
 
 function ScrollBar:_onMousePress(event)

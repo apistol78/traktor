@@ -11,6 +11,7 @@
 #using \{FE6D486C-DD87-B842-B350-6270791D3E64}
 #using \{816FB49B-11B4-7A40-8F72-5F76DC858D5F}
 #using \{E571F548-103B-DB47-BD21-0E6D3662681C}
+#using \{69E4AD87-C702-DA45-9AB7-22048C1A954F}
 
 -- Widget
 
@@ -136,6 +137,41 @@ function Widget:isVisible(recursive)
 		if not self._visible then return false end
 	end
 	return true
+end
+
+function Widget:setStyle(style, optionalValue)
+	if isa(style, Style) then
+		assert(optionalValue == nil)
+		self._style = style
+	elseif type(style) == "string" then
+		if self._style == nil then self._style = Style() end
+		self._style[style] = optionalValue
+	end
+	if isinstance(self) then
+		self:_loadStyle(self:getStyle())
+	end
+	return self
+end
+
+function Widget:getStyle()
+	local outputStyle = Style()
+
+	-- First add instance defined styles.
+	if self._style ~= nil then
+		outputStyle:insert(self._style, false)
+	end
+
+	-- Then add class styles, traverse class chain to add base styles.
+	local cls = getmetatable(self)
+	while cls ~= nil do
+		local style = cls._style
+		if style ~= nil then
+			outputStyle:insert(style, false)
+		end
+		cls = superof(cls)
+	end
+
+	return outputStyle
 end
 
 function Widget:setEnable(enable)
@@ -455,6 +491,10 @@ function Widget:_dispatchEvent(event)
 
 	-- Call listener attached to this widget for specific event.
 	return self:_notifyEventListeners(event)
+end
+
+function Widget:_loadStyle()
+	assert(isinstance(self))
 end
 
 -- Retrieve "inner" movie clip; into which child resources are created.

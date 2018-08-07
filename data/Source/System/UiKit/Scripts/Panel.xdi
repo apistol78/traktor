@@ -10,8 +10,11 @@ import(traktor.flash)
 
 Panel = Panel or class("Panel", Container)
 
-function Panel:new(parent, layout)
-	local mc = Widget._createResource(parent, "MC_Panel")
+Panel:setStyle("resource", "MC_Panel")
+Panel:setStyle("background", Color4f(0.6, 0.6, 0.6, 1.0))
+
+function Panel:new(parent, layout, skin)
+	local mc = Widget._createResource(parent, skin or self:getStyle().resource)
 	self:_initialize(parent, mc, layout)
 end
 
@@ -38,6 +41,13 @@ function Panel:_initialize(parent, mc, layout)
 
 	self._background_mc = mc:getMember("background_mc")
 	self._inner_mc = mc:getMember("innerContainer_mc")
+
+	self:_loadStyle()
+end
+
+function Panel:_loadStyle()
+	local style = self:getStyle()
+	self:setColor(style.background)
 end
 
 function Panel:_getInnerClip()

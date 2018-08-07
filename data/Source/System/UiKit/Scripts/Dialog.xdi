@@ -8,8 +8,12 @@
 
 Dialog = Dialog or class("Dialog", Container)
 
+Dialog:setStyle("resource", "MC_Dialog")
+Dialog:setStyle("background", Color4f(0.6, 0.6, 0.6, 1.0))
+Dialog:setStyle("border", Color4f(1.0, 1.0, 1.0, 1.0))
+
 function Dialog:new(parent, layout)
-	local mc = Widget._createResource(parent, "MC_Dialog", true)
+	local mc = Widget._createResource(parent, self:getStyle().resource, true)
 	self:_initialize(parent, mc, layout)
 end
 
@@ -70,6 +74,8 @@ function Dialog:_initialize(parent, mc, layout)
 
 	self.__layout = ILayout.FLOAT
 
+	self:_loadStyle()
+
 	self:addEventListener(ResizeEvent, self, function()
 		self:_updatePlacement()
 	end)
@@ -81,6 +87,12 @@ function Dialog:_updatePlacement()
 	local ps = self:getPreferredSize()
 	local p = self:getAncestor():getPlacement()
 	self:place((p.width - ps.width) / 2, (p.height - ps.height) / 2, ps.width, ps.height)
+end
+
+function Dialog:_loadStyle()
+	local style = self:getStyle()
+	self:setColor(style.background)
+	self:setBorderColor(style.border)
 end
 
 function Dialog:_getInnerClip()

@@ -9,8 +9,16 @@
 
 DropDown = DropDown or class("DropDown", Widget)
 
+DropDown:setStyle("resource", "MC_DropDown")
+DropDown:setStyle("resourceListBox", "MC_DropDownListBox")
+DropDown:setStyle("background", Color4f(0.8, 0.8, 0.8, 1.0))
+DropDown:setStyle("list", Color4f(0.8, 0.8, 0.8, 1.0))
+DropDown:setStyle("text", Color4f(0.0, 0.0, 0.0, 1.0))
+DropDown:setStyle("textList", Color4f(0.0, 0.0, 0.0, 1.0))
+DropDown:setStyle("textListHover", Color4f(1.0, 1.0, 1.0, 1.0))
+
 function DropDown:new(parent, items)
-	local mc = Widget._createResource(parent, "MC_DropDown")
+	local mc = Widget._createResource(parent, self:getStyle().resource)
 	self:_initialize(parent, mc, items)
 end
 
@@ -103,6 +111,24 @@ function DropDown:setOnClick(clickFn)
 	return self
 end
 
+function DropDown:setOnCancel(cancelFn)
+	self._cancelFn = cancelFn
+	return self
+end
+
+function DropDown:place(x, y, width, height)
+	Widget.place(self, x, y, width, height)
+
+	local p = self:getPlacement()
+	self._background_mc.width = p.width
+	self._background_mc.height = p.height
+
+	self._arrow_mc.X = p.width - self._arrow_mc.width - self._arrowOffset
+
+	local mx = self._caption_tb.X
+	self._caption_tb.width = p.width - mx * 2
+end
+
 -- private
 
 function DropDown:_initialize(parent, mc, items)
@@ -114,6 +140,7 @@ function DropDown:_initialize(parent, mc, items)
 	self._caption_tb:parseText("")
 
 	self._margin = self._caption_tb.X
+	self._arrowOffset = self._background_mc.width - self._arrow_mc.X
 	self._preferredSize =
 	{
 		width = mc.width,
@@ -127,7 +154,18 @@ function DropDown:_initialize(parent, mc, items)
 	end
 	self._selected = 0
 
+	self:_loadStyle()
+
 	self:addEventListener(MousePressEvent, self, self._onMousePress)
+end
+
+function DropDown:_loadStyle()
+	local style = self:getStyle()
+	self:setColor(style.background)
+	self:setListColor(style.list)
+	self:setTextColor(style.text)
+	self:setListTextColor(style.textList)
+	self:setListTextHoverColor(style.textListHover)
 end
 
 function DropDown:_removeList()
@@ -157,7 +195,7 @@ function DropDown:_onMousePress()
 
 	local ancestor = self:getAncestor()
 
-	self._list = ListBox(ancestor)
+	self._list = ListBox(ancestor, self:getStyle().resourceListBox)
 	self._list.__layout = ILayout.FLOAT
 
 	if self._color ~= nil then self._list:setColor(self._color) end
@@ -205,6 +243,9 @@ function DropDown:_onListMouseDown(event)
 	local mp = self._list:getMousePosition()
 	if self._list:hitTest(mp) == nil then
 		self:_removeList()
+		if self._cancelFn ~= nil then
+			self._cancelFn(self)
+		end
 	end
 	return true
 end

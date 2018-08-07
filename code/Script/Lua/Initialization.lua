@@ -6,10 +6,36 @@
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
+-- Return true if table is a class.
+function isclass(t)
+	local tp = rawget(t, "__type")
+	if tp ~= nil then
+		return tp == "class"
+	else
+		return false
+	end
+end
+
+-- Return true if table is an instance.
+function isinstance(t)
+	local tp = rawget(t, "__type")
+	if tp ~= nil then
+		return tp == "instance"
+	else
+		return false
+	end
+end
+
 -- Get name of instance, read "__name" member if available.
-local function nameof(v)
+function nameof(v)
 	if v == nil then return "<nil>" end
 	return rawget(v, "__name") or "<unnamed>"
+end
+
+-- Get super class of class.
+function superof(c)
+	if c == nil then return nil end
+	return rawget(c, "__super")
 end
 
 -- Import scope into global namespace.
@@ -26,12 +52,9 @@ function class(name, super)
 	local cl = {}
 	cl = {}
 
---	print("** class, name = \"" .. name .. "\", super = \"" .. nameof(super) .. "\" **")
-
 	-- Flatten inheritance; copy tables.
 	if super ~= nil then
 		for k, v in pairs(super) do
---			print("** " .. name .. "[" .. k .. "] = " .. tostring(v) .. " " .. type(v))
 			if type(v) == "table" then
 				local c = {}
 				for kk, vv in pairs(v) do c[kk] = vv end
@@ -47,20 +70,19 @@ function class(name, super)
 
 	-- Ensure these are written after "flatten".
 	cl.__name = "[" .. name .. "]"
+	cl.__type = "class"
 	cl.__super = super
 
 	setmetatable(cl, {
 		__call = function(cl, ...)
---			print("** " .. name .. ".__call **")
-		
 			-- Allocate object.
 			local o
 			local alloc = rawget(cl, "__alloc")
 			if alloc ~= nil then o = alloc(...) else o = {} end
---			assert (o ~= nil)
 
 			-- Setup object.
 			o.__name = "[" .. name .. " instance]"
+			o.__type = "instance"
 			setmetatable(o, cl)
 
 			-- Invoke constructor.
@@ -72,13 +94,10 @@ function class(name, super)
 	})
 
 	cl.__index = function(instance, member)
---		print("** " .. name .. ".__index, instance = \"" .. nameof(instance) .. "\", member = \"" .. member .. "\" **")
-
 		local m = rawget(cl, member)
 		if m ~= nil then return m end
 
 		local getters = rawget(cl, "__getters")
---		assert (getters ~= nil)
 
 		local gpfn = rawget(getters, member)
 		if gpfn ~= nil then return gpfn(instance) end
@@ -90,8 +109,6 @@ function class(name, super)
 	end
 
 	cl.__newindex = function(instance, member, value)
---	 	print("** " .. name .. ".__newindex, instance = \"" .. nameof(instance) .. "\", member = \"" .. member .. "\", value = \"" .. value .. "\" **")
-
 	 	local setters = rawget(cl, "__setters")
 	 	assert (setters ~= nil)
 
@@ -109,7 +126,7 @@ function isa(obj, cl)
 	local obj_cl = getmetatable(obj)
 	while obj_cl ~= nil do
 		if cl == obj_cl then return true end
-		obj_cl = obj_cl.__super
+		obj_cl = rawget(obj_cl, "__super")
 	end
 	return false
 end

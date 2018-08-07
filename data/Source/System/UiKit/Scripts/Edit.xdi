@@ -10,8 +10,13 @@ Edit = Edit or class("Edit", Widget)
 Edit.MODE_DEFAULT = 0
 Edit.MODE_PASSWORD = 1
 
+Edit:setStyle("resource", "MC_Edit")
+Edit:setStyle("background", Color4f(1.0, 1.0, 1.0, 1.0))
+Edit:setStyle("text", Color4f(0.0, 0.0, 0.0, 1.0))
+Edit:setStyle("textSize", 10)
+
 function Edit:new(parent, text, hint, validator)
-	local mc = Widget._createResource(parent, "MC_Edit")
+	local mc = Widget._createResource(parent, self:getStyle().resource)
 	self:_initialize(parent, mc, text, hint, validator)
 end
 
@@ -144,6 +149,15 @@ function Edit:_initialize(parent, mc, text, hint, validator)
 		self._text_tb:parseText(hint)
 		self._hintActive = true
 	end
+
+	self:_loadStyle()
+end
+
+function Edit:_loadStyle()
+	local style = self:getStyle()
+	self:setColor(style.background)
+	self:setTextColor(style.text)
+	self:setTextSize(style.textSize)
 end
 
 function Edit:_onSetFocus()
