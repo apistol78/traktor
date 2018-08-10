@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include <string>
 #include "Core/Math/Random.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Drawing/Image.h"
