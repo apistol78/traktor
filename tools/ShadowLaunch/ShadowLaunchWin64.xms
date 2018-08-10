@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="Solution" version="2">
+<object type="Solution" version="4">
 	<name>ShadowLaunch Win64</name>
 	<rootPath>$(TRAKTOR_HOME)/tools/ShadowLaunch/build/win64</rootPath>
-	<definitions/>
+	<aggregateOutputPath/>
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>ShadowLaunch</name>
 			<sourcePath>$(TRAKTOR_HOME)/tools/ShadowLaunch/code/App</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/Detours-master/include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 					<debugExecutable/>
@@ -29,20 +28,20 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/Detours-master/include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 					<debugExecutable/>
@@ -50,6 +49,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -65,20 +65,24 @@
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Extern.detours</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/Detours-master/src</sourcePath>
+						<sourcePath>$(DETOURS_SDK)/src</sourcePath>
 						<configurations>
-							<item type="Configuration" version="3">
+							<item type="Configuration" version="5">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
-								<includePaths/>
+								<includePaths>
+									<item>$(DETOURS_SDK)/src</item>
+								</includePaths>
 								<definitions>
 									<item>DETOURS_X64</item>
 									<item>DETOURS_64BIT</item>
+									<item>DETOURS_VERSION=0x4c0c1</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 								<debugExecutable/>
@@ -86,19 +90,24 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems/>
+								<consumerLibraryPath/>
 							</item>
-							<item type="Configuration" version="3">
+							<item type="Configuration" version="5">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
-								<includePaths/>
+								<includePaths>
+									<item>$(DETOURS_SDK)/src</item>
+								</includePaths>
 								<definitions>
 									<item>DETOURS_X64</item>
 									<item>DETOURS_64BIT</item>
+									<item>DETOURS_VERSION=0x4c0c1</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 								<debugExecutable/>
@@ -106,11 +115,12 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems/>
+								<consumerLibraryPath/>
 							</item>
 						</configurations>
 						<items>
 							<item type="File">
-								<fileName>Makefile</fileName>
+								<fileName>*.h</fileName>
 								<items/>
 							</item>
 							<item type="File">
@@ -122,15 +132,27 @@
 								<items/>
 							</item>
 							<item type="File">
-								<fileName>detours.h</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>detver.h</fileName>
-								<items/>
-							</item>
-							<item type="File">
 								<fileName>disasm.cpp</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>disolarm.cpp</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>disolarm64.cpp</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>disolia64.cpp</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>disolx64.cpp</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>disolx86.cpp</fileName>
 								<items/>
 							</item>
 							<item type="File">
@@ -148,7 +170,7 @@
 				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
 					<projectName>Traktor.Core</projectName>
 				</item>
 			</dependencies>
@@ -159,19 +181,18 @@
 			<name>ShadowLaunchHook</name>
 			<sourcePath>$(TRAKTOR_HOME)/tools/ShadowLaunch/code/Hook</sourcePath>
 			<configurations>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/Detours-master/include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 					<debugExecutable/>
@@ -179,20 +200,20 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
+					<consumerLibraryPath/>
 				</item>
-				<item type="Configuration" version="3">
+				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/Detours-master/include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 					<debugExecutable/>
@@ -200,6 +221,7 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems/>
+					<consumerLibraryPath/>
 				</item>
 			</configurations>
 			<items>
@@ -217,7 +239,7 @@
 				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin64.xms</solutionFileName>
+					<solutionFileName>$(TRAKTOR_HOME)/resources/build/TraktorWin64.xms</solutionFileName>
 					<projectName>Traktor.Core</projectName>
 				</item>
 			</dependencies>

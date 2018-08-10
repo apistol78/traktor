@@ -26,10 +26,39 @@ struct ShadowPayload
 #pragma pack()
 
 static ShadowPayload* g_shadowPayload = 0;
+static wchar_t g_shadowDllName[MAX_PATH] = { 0 };
+
 static HMODULE (WINAPI *s_LoadLibraryA)(LPCSTR lpLibFileName) = LoadLibraryA;
+
 static HMODULE (WINAPI *s_LoadLibraryW)(LPCWSTR lpLibFileName) = LoadLibraryW;
 
-static BOOL CALLBACK ListFileCallback(PVOID pContext, PCHAR pszOrigFile, PCHAR pszFile, PCHAR *ppszOutFile)
+static BOOL (WINAPI *s_CreateProcessA)(
+	LPCSTR lpApplicationName,
+    LPSTR lpCommandLine,
+    LPSECURITY_ATTRIBUTES lpProcessAttributes,
+    LPSECURITY_ATTRIBUTES lpThreadAttributes,
+    BOOL bInheritHandles,
+    DWORD dwCreationFlags,
+    LPVOID lpEnvironment,
+    LPCSTR lpCurrentDirectory,
+    LPSTARTUPINFOA lpStartupInfo,
+    LPPROCESS_INFORMATION lpProcessInformation
+) = CreateProcessA;
+
+static BOOL (WINAPI *s_CreateProcessW)(
+    LPCWSTR lpApplicationName,
+    LPWSTR lpCommandLine,
+    LPSECURITY_ATTRIBUTES lpProcessAttributes,
+    LPSECURITY_ATTRIBUTES lpThreadAttributes,
+    BOOL bInheritHandles,
+    DWORD dwCreationFlags,
+    LPVOID lpEnvironment,
+    LPCWSTR lpCurrentDirectory,
+    LPSTARTUPINFOW lpStartupInfo,
+    LPPROCESS_INFORMATION lpProcessInformation
+) = CreateProcessW;
+
+static BOOL CALLBACK ListFileCallback(PVOID pContext, LPCSTR pszOrigFile, LPCSTR pszFile, LPCSTR *ppszOutFile)
 {  
 	std::set< std::wstring >& dlls = *(std::set< std::wstring >*)pContext;
 	dlls.insert(mbstows(pszFile));
@@ -79,7 +108,14 @@ bool shadowCopy(const Path& sourceFile)
 
 	// Scan all import DLLs from binary.
 	std::set< std::wstring > dlls;
-	DetourBinaryEditImports(pBinary, &dlls, NULL, ListFileCallback, NULL, NULL);
+	DetourBinaryEditImports(
+		pBinary,
+		&dlls,
+		NULL,
+		ListFileCallback,
+		NULL,
+		NULL
+	);
 
 	// Append our payload to binary.
 	ShadowPayload pl = { 0 };
@@ -152,6 +188,112 @@ HMODULE WINAPI HookLoadLibraryW(LPCWSTR lpLibFileName)
 	return (*s_LoadLibraryW)(lpLibFileName);
 }
 
+BOOL WINAPI HookCreateProcessA(
+	LPCSTR lpApplicationName,
+    LPSTR lpCommandLine,
+    LPSECURITY_ATTRIBUTES lpProcessAttributes,
+    LPSECURITY_ATTRIBUTES lpThreadAttributes,
+    BOOL bInheritHandles,
+    DWORD dwCreationFlags,
+    LPVOID lpEnvironment,
+    LPCSTR lpCurrentDirectory,
+    LPSTARTUPINFOA lpStartupInfo,
+    LPPROCESS_INFORMATION lpProcessInformation
+)
+{
+	return (*s_CreateProcessA)(
+		lpApplicationName,
+		lpCommandLine,
+		lpProcessAttributes,
+		lpThreadAttributes,
+		bInheritHandles,
+		dwCreationFlags,
+		lpEnvironment,
+		lpCurrentDirectory,
+		lpStartupInfo,
+		lpProcessInformation
+	);
+}
+
+BOOL WINAPI HookCreateProcessW(
+    LPCWSTR lpApplicationName,
+    LPWSTR lpCommandLine,
+    LPSECURITY_ATTRIBUTES lpProcessAttributes,
+    LPSECURITY_ATTRIBUTES lpThreadAttributes,
+    BOOL bInheritHandles,
+    DWORD dwCreationFlags,
+    LPVOID lpEnvironment,
+    LPCWSTR lpCurrentDirectory,
+    LPSTARTUPINFOW lpStartupInfo,
+    LPPROCESS_INFORMATION lpProcessInformation
+)
+{
+	if (!lpCommandLine)
+		return FALSE;
+
+	std::wstring commandLine = lpCommandLine;
+	if (commandLine.empty())
+		return FALSE;
+
+	Path executable;
+	if (commandLine[0] == L'\"')
+	{
+		size_t p = commandLine.find(L'\"', 1);
+		if (p == commandLine.npos)
+			return FALSE;
+
+		executable = commandLine.substr(1, p - 1);
+		commandLine = commandLine.substr(p + 1);
+	}
+	else
+	{
+		size_t p = commandLine.find(L' ');
+		if (p == commandLine.npos)
+			return FALSE;
+
+		executable = commandLine.substr(0, p);
+		commandLine = commandLine.substr(p + 1);		
+	}
+
+	if (toLower(executable.getExtension()) != L"exe")
+		executable = executable.getPathName() + L".exe";
+
+	Path shadowFile = Path(g_shadowPayload->sandboxPath) + Path(executable.getFileName());
+	if (!FileSystem::getInstance().exist(shadowFile))
+	{
+		Path sourceFile = Path(g_shadowPayload->sourcePath) + Path(executable.getFileName());
+		if (FileSystem::getInstance().exist(sourceFile))
+		{
+			// File exist is source, need to create sandboxed copy.
+			if (!shadowCopy(sourceFile))
+				return FALSE;
+
+			commandLine = L"\"" + shadowFile.getPathName() + L"\" " + commandLine;
+		}
+		else
+			// No source file exist, use original command line.
+			commandLine = lpCommandLine;
+	}
+	else
+		// File already exist in sandbox.
+		commandLine = L"\"" + shadowFile.getPathName() + L"\" " + commandLine;
+
+	return DetourCreateProcessWithDllW(
+		lpApplicationName,
+		(LPWSTR)commandLine.c_str(),
+		lpProcessAttributes,
+		lpThreadAttributes,
+		bInheritHandles,
+		dwCreationFlags,
+		lpEnvironment,
+		lpCurrentDirectory,
+		lpStartupInfo,
+		lpProcessInformation,
+		wstombs(g_shadowDllName).c_str(),
+		s_CreateProcessW
+	);
+}
+
 __declspec(dllexport)
 INT APIENTRY DllMain(HMODULE hDLL, DWORD Reason, LPVOID Reserved)
 {
@@ -164,11 +306,15 @@ INT APIENTRY DllMain(HMODULE hDLL, DWORD Reason, LPVOID Reserved)
 			if (!g_shadowPayload)
 				return FALSE;
 
+			GetModuleFileName(hDLL, g_shadowDllName, sizeof(g_shadowDllName));
+
 			DisableThreadLibraryCalls(hDLL);
 			DetourTransactionBegin();
 			DetourUpdateThread(GetCurrentThread());
 			DetourAttach(&(PVOID&)s_LoadLibraryA, HookLoadLibraryA);
 			DetourAttach(&(PVOID&)s_LoadLibraryW, HookLoadLibraryW);
+			DetourAttach(&(PVOID&)s_CreateProcessA, HookCreateProcessA);
+			DetourAttach(&(PVOID&)s_CreateProcessW, HookCreateProcessW);
 			DetourTransactionCommit();
 		}
 		break;

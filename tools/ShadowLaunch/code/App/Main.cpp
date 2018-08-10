@@ -25,7 +25,7 @@ struct ShadowPayload
 };
 #pragma pack()
 
-static BOOL CALLBACK ListFileCallback(PVOID pContext, PCHAR pszOrigFile, PCHAR pszFile, PCHAR *ppszOutFile)
+static BOOL CALLBACK ListFileCallback(PVOID pContext, LPCSTR pszOrigFile, LPCSTR pszFile, LPCSTR *ppszOutFile)
 {  
 	std::set< std::wstring >& dlls = *(std::set< std::wstring >*)pContext;
 	dlls.insert(mbstows(pszFile));
@@ -121,7 +121,7 @@ int main(int argc, const char** argv)
 
 	if (!shadowCopy(shadowPath, executableFile))
 	{
-		log::error << L"Unable to sandbox file \"" << executableFile.getPathName() << "\"." << Endl;
+		log::error << L"Unable to sandbox file \"" << executableFile.getPathName() << L"\"." << Endl;
 		return 1;
 	}
 
