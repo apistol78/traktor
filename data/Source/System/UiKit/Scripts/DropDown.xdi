@@ -123,7 +123,7 @@ function DropDown:place(x, y, width, height)
 	self._background_mc.width = p.width
 	self._background_mc.height = p.height
 
-	self._arrow_mc.X = p.width - self._arrow_mc.width - self._arrowOffset
+	self._arrow_mc.X = p.width - self._arrowOffset
 
 	local mx = self._caption_tb.X
 	self._caption_tb.width = p.width - mx * 2
