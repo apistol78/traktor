@@ -102,6 +102,14 @@ end
 
 function PushButton:setEnable(enable)
 	Widget.setEnable(self, enable)
+
+	-- As disabled widgets doesn't receive events we force button back to default
+	-- state even if mouse cursor is inside and pressing.
+	if not enable then
+		self._pressed = false
+		self._inside = false
+	end
+
 	self:_updateState()
 	return self
 end
