@@ -14,6 +14,7 @@ ListBox = ListBox or class("ListBox", Widget)
 ListBox:setStyle("background", Color4f(0.8, 0.8, 0.8, 1.0))
 ListBox:setStyle("text", Color4f(0.0, 0.0, 0.0, 1.0))
 ListBox:setStyle("textHover", Color4f(1.0, 1.0, 1.0, 1.0))
+ListBox:setStyle("textSize", 17)
 
 function ListBox:new(parent, skin)
 	local mc = Widget._createEmptyResource(parent)
@@ -35,6 +36,7 @@ function ListBox:add(item)
 	local s = Static(self._listContainer, item)
 	s:setTextColor(self._textColor)
 	s:setTextHoverColor(self._textHoverColor)
+	s:setTextSize(self._textSize)
 
 	self._index = self._index + 1
 	local index = self._index
@@ -73,6 +75,15 @@ function ListBox:setTextHoverColor(textHoverColor)
 	return self
 end
 
+function ListBox:setTextSize(size)
+	local children = self._listContainer:getChildren()
+	for _, child in ipairs(children) do
+		children:setTextSize(size)
+	end
+	self._textSize = size
+	return self
+end
+
 function ListBox:setOnClick(clickFn)
 	self._clickFn = clickFn
 	return self
@@ -97,6 +108,7 @@ function ListBox:_loadStyle()
 	self:setColor(style.background)
 	self:setTextColor(style.text)
 	self:setTextHoverColor(style.textHover)
+	self:setTextSize(style.textSize)
 end
 
 	]]>

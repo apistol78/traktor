@@ -14,8 +14,10 @@ DropDown:setStyle("resourceListBox", "MC_DropDownListBox")
 DropDown:setStyle("background", Color4f(0.8, 0.8, 0.8, 1.0))
 DropDown:setStyle("list", Color4f(0.8, 0.8, 0.8, 1.0))
 DropDown:setStyle("text", Color4f(0.0, 0.0, 0.0, 1.0))
+DropDown:setStyle("textSize", 17)
 DropDown:setStyle("textList", Color4f(0.0, 0.0, 0.0, 1.0))
 DropDown:setStyle("textListHover", Color4f(1.0, 1.0, 1.0, 1.0))
+DropDown:setStyle("textListSize", 17)
 
 function DropDown:new(parent, items)
 	local mc = Widget._createResource(parent, self:getStyle().resource)
@@ -96,6 +98,14 @@ function DropDown:setTextColor(textColor)
 	return self
 end
 
+function DropDown:setTextSize(size)
+	local tf = self._caption_tb:getTextFormat()
+	tf.size = size * 20
+	self._caption_tb:setTextFormat(tf)
+	self._preferredSize.height = size + self._textSizeMargin
+	return self
+end
+
 function DropDown:setListTextColor(textColor)
 	self._textColor = textColor
 	return self
@@ -103,6 +113,11 @@ end
 
 function DropDown:setListTextHoverColor(textHoverColor)
 	self._textHoverColor = textHoverColor
+	return self
+end
+
+function DropDown:setListTextSize(size)
+	self._textSize = size
 	return self
 end
 
@@ -124,6 +139,7 @@ function DropDown:place(x, y, width, height)
 	self._background_mc.height = p.height
 
 	self._arrow_mc.X = p.width - self._arrowOffset
+	self._arrow_mc.Y = (p.height - self._arrow_mc.height) / 2
 
 	local mx = self._caption_tb.X
 	self._caption_tb.width = p.width - mx * 2
@@ -140,6 +156,7 @@ function DropDown:_initialize(parent, mc, items)
 	self._caption_tb:parseText("")
 
 	self._margin = self._caption_tb.X
+	self._textSizeMargin = mc.height - self._caption_tb:getTextFormat().size / 20
 	self._arrowOffset = self._background_mc.width - self._arrow_mc.X
 	self._preferredSize =
 	{
@@ -164,8 +181,10 @@ function DropDown:_loadStyle()
 	self:setColor(style.background)
 	self:setListColor(style.list)
 	self:setTextColor(style.text)
+	self:setTextSize(style.textSize)
 	self:setListTextColor(style.textList)
 	self:setListTextHoverColor(style.textListHover)
+	self:setListTextSize(style.textListSize)
 end
 
 function DropDown:_removeList()
@@ -201,6 +220,7 @@ function DropDown:_onMousePress()
 	if self._color ~= nil then self._list:setColor(self._color) end
 	if self._textColor ~= nil then self._list:setTextColor(self._textColor) end
 	if self._textHoverColor ~= nil then self._list:setTextHoverColor(self._textHoverColor) end
+	if self._textSize ~= nil then self._list:setTextSize(self._textSize) end
 
 	for _, item in ipairs(self._items) do
 		self._list:add(self:_getTextOfItem(item))
@@ -208,7 +228,7 @@ function DropDown:_onMousePress()
 
 	local p = self:getPlacement()
 	local ps = self._list:getPreferredSize()
-	local itemHeight = 21
+	local itemHeight = self._textSize + 5
 
 	-- Transform local coordinate into ancestor frame as
 	-- list box is temporarily added as child to ancestor in
