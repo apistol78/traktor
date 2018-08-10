@@ -352,7 +352,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	if (!FileSystem::getInstance().makeAllDirectories(g_scratchPath))
 	{
 		log::error << L"Unable to create scratch directory \"" << g_scratchPath << L"\"." << Endl;
-		return 1;
+		return 2;
 	}
 
 #if defined(_WIN32)
@@ -379,13 +379,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	if (!serverSocket->bind(net::SocketAddressIPv4(c_listenPort)))
 	{
 		log::error << L"Unable to bind server socket to port " << c_listenPort << Endl;
-		return 1;
+		return 3;
 	}
 
 	if (!serverSocket->listen())
 	{
 		log::error << L"Unable to listen on server socket" << Endl;
-		return 2;
+		return 4;
 	}
 
 	// Create http server.
@@ -427,7 +427,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	if (!discoveryManager->create(net::MdPublishServices))
 	{
 		log::error << L"Unable to create discovery manager" << Endl;
-		return 4;
+		return 5;
 	}
 
 	log::info << L"Waiting for client(s)..." << Endl;
@@ -443,7 +443,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		if (!net::SocketAddressIPv4::getBestInterface(itf))
 		{
 			log::error << L"Unable to get interfaces" << Endl;
-			return 4;
+			return 6;
 		}
 
 		if (itf.addr->getHostName() != hostName)
