@@ -6081,6 +6081,170 @@
 			<dependencies/>
 		</item>
 		<item ref="/object/projects/item[21]/dependencies/item/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.detours</name>
+			<sourcePath>$(DETOURS_SDK)/src</sourcePath>
+			<configurations>
+				<item type="Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(DETOURS_SDK)/src</item>
+					</includePaths>
+					<definitions>
+						<item>DETOURS_X64</item>
+						<item>DETOURS_64BIT</item>
+						<item>DETOURS_VERSION=0x4c0c1</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.detours.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(DETOURS_SDK)/src</item>
+					</includePaths>
+					<definitions>
+						<item>DETOURS_X64</item>
+						<item>DETOURS_64BIT</item>
+						<item>DETOURS_VERSION=0x4c0c1</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.detours.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(DETOURS_SDK)/src</item>
+					</includePaths>
+					<definitions>
+						<item>DETOURS_X64</item>
+						<item>DETOURS_64BIT</item>
+						<item>DETOURS_VERSION=0x4c0c1</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(DETOURS_SDK)/src</item>
+					</includePaths>
+					<definitions>
+						<item>DETOURS_X64</item>
+						<item>DETOURS_64BIT</item>
+						<item>DETOURS_VERSION=0x4c0c1</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>creatwth.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>detours.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>disasm.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>disolarm.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>disolarm64.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>disolia64.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>disolx64.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>disolx86.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>image.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>modules.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
 	</projects>
 	<aggregations/>
 </object>
