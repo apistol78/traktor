@@ -4,11 +4,9 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_render_ProbeTextureAsset_H
-#define traktor_render_ProbeTextureAsset_H
+#pragma once
 
-#include "Editor/Asset.h"
-#include "Render/Editor/Texture/TextureOutput.h"
+#include "Editor/IObjectEditorFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,23 +21,19 @@ namespace traktor
 	namespace render
 	{
 
-class T_DLLCLASS ProbeTextureAsset : public editor::Asset
+class T_DLLCLASS ProbeTextureAssetEditorFactory : public editor::IObjectEditorFactory
 {
 	T_RTTI_CLASS;
 
 public:
-	ProbeTextureAsset();
+	virtual const TypeInfoSet getEditableTypes() const T_OVERRIDE T_FINAL;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual bool needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const T_OVERRIDE T_FINAL;
 
-private:
-	friend class ProbeTexturePipeline;
-	friend class ProbeTextureAssetEditor;
+	virtual Ref< editor::IObjectEditor > createObjectEditor(editor::IEditor* editor) const T_OVERRIDE T_FINAL;
 
-	float m_filterAngle;
+	virtual void getCommands(std::list< ui::Command >& outCommands) const T_OVERRIDE T_FINAL;
 };
 
 	}
 }
-
-#endif	// traktor_render_ProbeTextureAsset_H
