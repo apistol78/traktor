@@ -41,6 +41,11 @@ class T_DLLCLASS RichEdit : public Widget
 	T_RTTI_CLASS;
 
 public:
+	enum
+	{
+		WsNoClipboard = WsUser
+	};
+
 	struct ISpecialCharacter : public IRefCount
 	{
 		virtual int32_t measureWidth(const RichEdit* richEdit) const = 0;
@@ -163,6 +168,9 @@ public:
 	/*! \brief Copy selected text into clipboard. */
 	bool copy();
 
+	/*! \brief Cut selected text into clipboard. */
+	bool cut();
+
 	/*! \brief Paste text from clipboard at caret position. */
 	bool paste();
 
@@ -264,6 +272,7 @@ private:
 	std::vector< Line > m_lines;
 	std::vector< Character > m_text;
 	std::map< wchar_t, Ref< const ISpecialCharacter > > m_specialCharacters;
+	bool m_clipboard;
 	int32_t m_caret;
 	bool m_caretBlink;
 	int32_t m_selectionStart;

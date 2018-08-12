@@ -40,6 +40,8 @@ public:
 
 	bool create(ui::Widget* parent);
 
+	void setNeedle(const std::wstring& needle);
+
 	std::wstring getNeedle() const;
 
 	bool caseSensitive() const;
