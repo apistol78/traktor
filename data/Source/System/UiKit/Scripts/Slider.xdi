@@ -142,7 +142,7 @@ function Slider:_onMouseMove(event)
 	self:_moveKnob(x)
 
 	if self._scrollFn ~= nil then
-		self._scrollFn()
+		self._scrollFn(self, self:getPosition())
 	end
 
 	return true

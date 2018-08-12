@@ -18,10 +18,16 @@ DropDown:setStyle("textSize", 17)
 DropDown:setStyle("textList", Color4f(0.0, 0.0, 0.0, 1.0))
 DropDown:setStyle("textListHover", Color4f(1.0, 1.0, 1.0, 1.0))
 DropDown:setStyle("textListSize", 17)
+DropDown:setStyle("fadeDuration", 0.1)
 
 function DropDown:new(parent, items)
 	local mc = Widget._createResource(parent, self:getStyle().resource)
 	self:_initialize(parent, mc, items)
+end
+
+function DropDown:remove()
+	self:_removeList()
+	Widget.remove(self)
 end
 
 function DropDown:getPreferredSize()
@@ -188,6 +194,10 @@ function DropDown:_loadStyle()
 end
 
 function DropDown:_removeList()
+	if self._tween ~= nil then
+		self._tween:stop()
+		self._tween = nil
+	end
 	if self._list ~= nil then
 		self._list:remove()
 		self._list = nil
@@ -245,6 +255,17 @@ function DropDown:_onMousePress()
 	self._list:setOnClick(function(index) self:_onListClick(index) end)
 	self._list:addEventListener(MouseDownEvent, self, self._onListMouseDown)
 	self._list:setModal()
+
+	-- Fade in list.
+	local duration = self:getStyle().fadeDuration
+	if duration > 0 then
+		self._tween = Tween(
+			0,
+			1,
+			duration,
+			function(v, e) self._list:setAlpha(v) end
+		)
+	end
 	return true
 end
 

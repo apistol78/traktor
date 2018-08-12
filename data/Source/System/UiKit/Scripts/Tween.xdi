@@ -15,6 +15,7 @@ function Tween:new(startValue, endValue, duration, fn)
 	self._time = 0
 	self._fn = fn
 	table.insert(Tween._instances, self)
+	self._fn(startValue, false)
 end
 
 function Tween:continueTo(endValue, duration)
