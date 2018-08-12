@@ -61,6 +61,11 @@ bool SearchControl::create(ui::Widget* parent)
 	return true;
 }
 
+void SearchControl::setNeedle(const std::wstring& needle)
+{
+	m_editSearch->setText(needle);
+}
+
 std::wstring SearchControl::getNeedle() const
 {
 	return m_editSearch->getText();

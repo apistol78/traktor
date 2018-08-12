@@ -53,6 +53,7 @@ RichEdit::RichEdit()
 :	m_imageWidth(0)
 ,	m_imageHeight(0)
 ,	m_imageCount(0)
+,	m_clipboard(true)
 ,	m_caret(0)
 ,	m_caretBlink(true)
 ,	m_selectionStart(-1)
@@ -69,6 +70,8 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 {
 	if (!Widget::create(parent, style | WsWantAllInput | WsDoubleBuffer | WsAccelerated))
 		return false;
+
+	m_clipboard = bool((style & WsNoClipboard) == 0);
 
 	addEventHandler< KeyDownEvent >(this, &RichEdit::eventKeyDown);
 	addEventHandler< KeyEvent >(this, &RichEdit::eventKey);
@@ -600,6 +603,15 @@ bool RichEdit::copy()
 	return clipboard->setText(selectedText);
 }
 
+bool RichEdit::cut()
+{
+	if (!copy())
+		return false;
+
+	deleteCharacters();
+	return true;
+}
+
 bool RichEdit::paste()
 {
 	Clipboard* clipboard = Application::getInstance()->getClipboard();
@@ -617,6 +629,16 @@ bool RichEdit::paste()
 
 bool RichEdit::find()
 {
+	// Initialize needle with selection; only if selection is single line.
+	int32_t startLine = getLineFromOffset(getSelectionStartOffset());
+	int32_t stopLine = getLineFromOffset(getSelectionStopOffset());
+	if (startLine == stopLine)
+	{
+		std::wstring needle = getSelectedText();
+		m_searchControl->setNeedle(needle);
+	}
+
+	// Show and focus search control.
 	m_searchControl->show();
 	m_searchControl->setFocus();
 	return true;
@@ -1316,15 +1338,12 @@ void RichEdit::eventKey(KeyEvent* event)
 {
 	wchar_t ch = event->getCharacter();
 
-	if (ch == 3)
+	if (ch == 3 && m_clipboard)
 		copy();
-	else if (ch == 22)
+	else if (ch == 22 && m_clipboard)
 		paste();
-	else if (ch == 24)
-	{
-		copy();
-		deleteCharacters();
-	}
+	else if (ch == 24 && m_clipboard)
+		cut();
 	else if (ch != 8)
 		insertCharacter(ch, true);
 

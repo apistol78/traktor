@@ -190,7 +190,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	}
 
 	m_edit = new ui::custom::SyntaxRichEdit();
-	if (!m_edit->create(containerEdit, L"", ui::WsDoubleBuffer))
+	if (!m_edit->create(containerEdit, L"", ui::WsDoubleBuffer | ui::custom::SyntaxRichEdit::WsNoClipboard))
 		return false;
 	m_edit->addImage(new ui::StyleBitmap(L"Script.Breakpoint"), 1);
 
@@ -341,7 +341,13 @@ bool ScriptEditorPage::dropInstance(db::Instance* instance, const ui::Point& pos
 
 bool ScriptEditorPage::handleCommand(const ui::Command& command)
 {
-	if (command == L"Editor.Undo")
+	if (command == L"Editor.Copy")
+		m_edit->copy();
+	else if (command == L"Editor.Cut")
+		m_edit->cut();
+	else if (command == L"Editor.Paste")
+		m_edit->paste();
+	else if (command == L"Editor.Undo")
 	{
 		Ref< const PropertyInteger > meta;
 		if (
