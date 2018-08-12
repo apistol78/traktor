@@ -110,6 +110,13 @@ function Image:setScale(hscale, vscale)
 end
 
 function Image:setOnClick(fn)
+	if self._clickFn == nil and fn ~= nil then
+		self:addEventListener(MousePressEvent, self, self._onMousePress)
+		self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
+	elseif self._clickFn ~= nil and fn == nil then
+		self:removeEventListener(MousePressEvent, self, self._onMousePress)
+		self:removeEventListener(MouseReleaseEvent, self, self._onMouseRelease)
+	end
 	self._clickFn = fn
 	return self
 end
@@ -130,9 +137,6 @@ function Image:_initialize(parent, mc, image, mode)
 	if image ~= nil then
 		self:setImage(image, mode)
 	end
-
-	self:addEventListener(MousePressEvent, self, self._onMousePress)
-	self:addEventListener(MouseReleaseEvent, self, self._onMouseRelease)
 end
 
 function Image:_onMousePress(event)
