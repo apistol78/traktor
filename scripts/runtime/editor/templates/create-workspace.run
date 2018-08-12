@@ -7,14 +7,14 @@ import(traktor)
 -- WIZARD_TEMPLATE_FILE	Template file
 
 local function traverse(base, path, outputPath, rules)
-	local fa = FileSystem.getInstance():find(path:getPathName() .. "/*.*")
+	local fa = FileSystem.getInstance():find(path.pathName .. "/*.*")
 	for i = 0, fa:size() - 1 do
 		local f = fa:get(i)
-		local p = f:getPath()
-		local fn = p:getFileName()
-		local pn = p:getPathName()
+		local p = f.path
+		local fn = p.fileName
+		local pn = p.pathName
 
-		if f:isDirectory() then
+		if f.directory then
 			if fn ~= "." and fn ~= ".." then
 				if not traverse(base, p, outputPath, rules) then
 					return false
@@ -26,15 +26,15 @@ local function traverse(base, path, outputPath, rules)
 			if pr ~= nil then
 				local applyRule = nil
 				for _, rule in ipairs(rules) do
-					if string.match(pr:getPathName(), rule.pattern) ~= nil then
+					if string.match(pr.pathName, rule.pattern) ~= nil then
 						if applyRule == nil or rule.transform then
 							applyRule = rule
 						end
 					end
 				end
 				if applyRule ~= nil then
-					local source = pa:getPathName()
-					local target = outputPath:concat(pr):getPathName()
+					local source = pa.pathName
+					local target = outputPath:concat(pr).pathName
 
 					-- Replace special tokens in target name with values from environment.
 					target = string.gsub(target, "!%-%-(.*)%-%-!", function (a)
@@ -42,30 +42,28 @@ local function traverse(base, path, outputPath, rules)
 					end)
 
 					-- Ensure full output path exists.
-					if not run:mkdir(Path(target):getPathOnly()) then
-						stderr:printLn("Unable to make output path \"" .. Path(target):getPathOnly() .. "\"")
-						return 1
+					if not run:mkdir(Path(target).pathOnly) then
+						stderr:printLn("Unable to make output path \"" .. Path(target).pathOnly .. "\".")
+						return false
 					end
 
 					-- Transform or copy source into target.
 					if applyRule.transform then
-						stdout:printLn("Transforming file \"" .. source .. "\" into \"" .. target .. "\"...")
 						if run:run("-as-template \"" .. source .. "\"", target) ~= 0 then
-							stderr:printLn("Unable to transform source file")
-							return 1
+							stderr:printLn("Unable to transform source file \"" .. source .. "\".")
+							return false
 						end
 					else
-						stdout:printLn("Copying file \"" .. source .. "\" into \"" .. target .. "\"...")
 						if not run:copy(source, target) then
-							stderr:printLn("Unable to copy source file")
-							return 1
+							stderr:printLn("Unable to copy source file \"" .. source .. "\".")
+							return false
 						end
 					end
 				end
 			else
 				stderr:printLn("No relative path found")
-				stderr:printLn("Base: \"" .. base:getPathName() .. "\"")
-				stderr:printLn("File: \"" .. pa:getPathName() .. "\"")
+				stderr:printLn("Base: \"" .. base.pathName .. "\"")
+				stderr:printLn("File: \"" .. pa.pathName .. "\"")
 				return false
 			end	
 		end
@@ -93,17 +91,21 @@ function main(args)
 		assert (xrule ~= nil)
 
 		local rule = {}
-		rule.pattern = xrule:getChildElementByName("pattern"):getValue()
-		rule.transform = (xrule:getChildElementByName("transform"):getValue() == "true")
+		rule.pattern = xrule:getChildElementByName("pattern").value
+		rule.transform = (xrule:getChildElementByName("transform").value == "true")
 		table.insert(rules, rule)
 	end
 
 	-- Recursively copy or transform template into target.
-	local path = Path(doc:getSingle("/template/path"):getValue())
-	traverse(
+	local path = Path(doc:getSingle("/template/path").value)
+	if not traverse(
 		FileSystem.getInstance():getAbsolutePath(path),
 		path,
 		Path(WIZARD_OUTPUT_PATH),
 		rules
-	)
+	) then
+		return 1
+	end
+
+	return 0
 end

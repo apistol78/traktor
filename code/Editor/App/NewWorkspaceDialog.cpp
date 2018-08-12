@@ -6,9 +6,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Log/Log.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/System/Environment.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
+#include "Core/System/PipeReader.h"
 #include "Drawing/Image.h"
 #include "Editor/App/NewWorkspaceDialog.h"
 #include "I18N/Text.h"
@@ -151,13 +153,33 @@ void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 #endif
 				file->getPath().getPathOnly(),
 				env,
-				false,
+				true,
 				true,
 				false
 			);
 			if (process)
 			{
-				process->wait();
+				PipeReader stdOutReader(
+					process->getPipeStream(IProcess::SpStdOut)
+				);
+				PipeReader stdErrReader(
+					process->getPipeStream(IProcess::SpStdErr)
+				);
+
+				std::wstring str;
+				for (;;)
+				{
+					PipeReader::Result result1 = stdOutReader.readLine(str, 10);
+					if (result1 == PipeReader::RtOk)
+						log::info << str << Endl;
+
+					PipeReader::Result result2 = stdErrReader.readLine(str, 10);
+					if (result2 == PipeReader::RtOk)
+						log::error << str << Endl;
+
+					if (result1 == PipeReader::RtEnd && result2 == PipeReader::RtEnd)
+						break;
+				}
 
 				if (process->exitCode() == 0)
 					m_workspacePath = outputPath + L"/" + name + L".workspace";
