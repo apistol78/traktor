@@ -35,6 +35,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Script/Editor/ScriptEditorPage.h"
 #include "Ui/Application.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/MenuItem.h"
@@ -342,11 +343,61 @@ bool ScriptEditorPage::dropInstance(db::Instance* instance, const ui::Point& pos
 bool ScriptEditorPage::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.Copy")
-		m_edit->copy();
+	{
+		ui::Clipboard* clipboard = ui::Application::getInstance()->getClipboard();
+		if (!clipboard)
+			return false;
+
+		std::wstring selectedText = m_edit->getSelectedText(
+			[&] (wchar_t ch) -> std::wstring {
+				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
+			},
+			[&] (const ui::custom::RichEdit::ISpecialCharacter* sc) -> std::wstring {
+				const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
+				return L"\\" + dc->id.format();
+			}
+		);
+		clipboard->setText(selectedText);
+	}
 	else if (command == L"Editor.Cut")
-		m_edit->cut();
+	{
+		ui::Clipboard* clipboard = ui::Application::getInstance()->getClipboard();
+		if (!clipboard)
+			return false;
+
+		std::wstring selectedText = m_edit->getSelectedText(
+			[&] (wchar_t ch) -> std::wstring {
+				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
+			},
+			[&] (const ui::custom::RichEdit::ISpecialCharacter* sc) -> std::wstring {
+				const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
+				return L"\\" + dc->id.format();
+			}
+		);
+		clipboard->setText(selectedText);
+
+		m_edit->deleteSelection();
+	}
 	else if (command == L"Editor.Paste")
-		m_edit->paste();
+	{
+		ui::Clipboard* clipboard = ui::Application::getInstance()->getClipboard();
+		if (!clipboard)
+			return false;
+
+		m_edit->deleteSelection();
+
+		Script pasteScript(clipboard->getText());
+		m_edit->insert(pasteScript.escape([&] (const Guid& g) -> std::wstring {
+			const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
+			if (instance)
+			{
+				wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(m_editor, g, instance->getPath()));
+				return std::wstring(1, ch);
+			}
+			else
+				return L"\"\"";
+		}));	
+	}
 	else if (command == L"Editor.Undo")
 	{
 		Ref< const PropertyInteger > meta;

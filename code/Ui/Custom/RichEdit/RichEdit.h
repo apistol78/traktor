@@ -105,6 +105,9 @@ public:
 	/*! \brief Clear attributes, images or content of text. */
 	void clear(bool attributes, bool images, bool content);
 
+	/*! \brief Delete selected text. */
+	void deleteSelection();
+
 	/*! \brief Insert text at caret's current position. */
 	void insert(const std::wstring& text);
 
@@ -149,6 +152,9 @@ public:
 
 	/*! \brief Get selected text. */
 	std::wstring getSelectedText() const;
+
+	/*! \brief Get selected text. */
+	std::wstring getSelectedText(std::function< std::wstring (wchar_t) > cfn, std::function< std::wstring (const ISpecialCharacter*) > scfn) const;
 
 	/*! \brief Scroll text view to a certain line. */
 	bool scrollToLine(int32_t line);

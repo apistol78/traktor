@@ -369,6 +369,21 @@ void RichEdit::clear(bool attributes, bool images, bool content)
 	santiyCheck();
 }
 
+void RichEdit::deleteSelection()
+{
+	if (m_selectionStart >= 0)
+		deleteCharacters();
+
+	m_selectionStart =
+	m_selectionStop = -1;
+
+	updateCharacterWidths();
+	updateScrollBars();
+	update();
+
+	santiyCheck();
+}
+
 void RichEdit::insert(const std::wstring& text)
 {
 	if (text.empty())
@@ -535,9 +550,29 @@ std::wstring RichEdit::getSelectedText() const
 		return L"";
 
 	std::vector< wchar_t > text;
+	text.reserve(m_selectionStop - m_selectionStart + 1);
+
 	for (int32_t i = m_selectionStart; i < m_selectionStop; ++i)
 		text.push_back(m_text[i].ch);
+
 	return std::wstring(text.begin(), text.end());
+}
+
+std::wstring RichEdit::getSelectedText(std::function< std::wstring (wchar_t) > cfn, std::function< std::wstring (const ISpecialCharacter*) > scfn) const
+{
+	if (m_selectionStart < 0 || m_text.empty())
+		return L"";
+
+	StringOutputStream ss;
+	for (int32_t i = m_selectionStart; i < m_selectionStop; ++i)
+	{
+		std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator j = m_specialCharacters.find(m_text[i].ch);
+		if (j == m_specialCharacters.end())
+			ss << cfn(m_text[i].ch);
+		else
+			ss << scfn(j->second);
+	}
+	return ss.str();
 }
 
 bool RichEdit::scrollToLine(int32_t line)
