@@ -7,8 +7,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Windows.h>
 #include <detours.h>
 #include "Core/Guid.h"
+#include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/Path.h"
+#include "Core/Io/StringReader.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/System/OS.h"
@@ -108,12 +112,44 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	CommandLine cmdLine(file, mbstows(szCmdLine));
 	if (cmdLine.getCount() < 1)
 	{
+		log::info << L"Traktor.ShadowLaunch.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+		log::info << Endl;
 		log::info << L"Usable: Traktor.ShadowLaunch.App [executable] (command line)" << Endl;
 		return 1;
 	}
 
 	Path executableFile = cmdLine.getString(0);
 	std::wstring sandbox = Guid::create().format();
+
+	// Find old sandbox matching same command line.
+	RefArray< File > sandboxes;
+	FileSystem::getInstance().find(OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Sandbox/*.*", sandboxes);
+	for (RefArray< File >::const_iterator i = sandboxes.begin(); i != sandboxes.end(); ++i)
+	{
+		const Path& p = (*i)->getPath();
+		if (p.getFileName() == L"." || p.getFileName() == L"..")
+			continue;
+
+		Ref< traktor::IStream > f = FileSystem::getInstance().open(p + L".commandLine", File::FmRead);
+		if (!f)
+			continue;
+
+		std::wstring commandLine;
+		if (StringReader(f, &Utf8Encoding()).readLine(commandLine) <= 0)
+			continue;
+
+		f->close();
+		f = nullptr;
+
+		if (commandLine == mbstows(szCmdLine))
+		{
+			if (FileSystem::getInstance().remove(p + L".commandLine"))
+			{
+				sandbox = p.getFileName();
+				break;
+			}
+		}
+	}
 
 	Path shadowPath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Sandbox/" + sandbox;
 	Path shadowFile = shadowPath + executableFile.getFileName();
@@ -180,7 +216,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
 		FileSystem::getInstance().remove((*i)->getPath());
 
-	FileSystem::getInstance().removeDirectory(shadowPath);
+	// Save command line in sandbox so it can be reused.
+	Ref< traktor::IStream > f = FileSystem::getInstance().open(shadowPath + L".commandLine", File::FmWrite);
+	if (f)
+	{
+		FileOutputStream(f, &Utf8Encoding()) << mbstows(szCmdLine) << Endl;
+		f->close();
+	}
 
 	// Return using same exit code as child process.
 	DWORD code = 0;
