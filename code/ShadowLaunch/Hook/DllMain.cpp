@@ -330,19 +330,6 @@ INT APIENTRY DllMain(HMODULE hDLL, DWORD Reason, LPVOID Reserved)
 			DetourAttach(&(PVOID&)s_CreateProcessA, HookCreateProcessA);
 			DetourAttach(&(PVOID&)s_CreateProcessW, HookCreateProcessW);
 			DetourTransactionCommit();
-
-			// Create a lock file in shadow path to indicate this sandbox is in use.
-			FileSystem::getInstance().open(Path(g_shadowPayload->sandboxPath) + L".lock", File::FmWrite);
-		}
-		break;
-
-	case DLL_PROCESS_DETACH:
-		{
-			if (g_shadowPayload)
-			{
-				// Delete lock file to indicate sandbox is no longer in use.
-				FileSystem::getInstance().remove(Path(g_shadowPayload->sandboxPath) + L".lock");
-			}
 		}
 		break;
 	}
