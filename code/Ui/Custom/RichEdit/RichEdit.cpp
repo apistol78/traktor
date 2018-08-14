@@ -653,10 +653,12 @@ bool RichEdit::paste()
 	if (!clipboard)
 		return false;
 
-	if (m_selectionStart >= 0)
-		deleteCharacters();
+	if (!hasFocus())
+		return false;
 
 	std::wstring pasteText = clipboard->getText();
+	if (m_selectionStart >= 0)
+		deleteCharacters();
 	insert(pasteText);
 
 	return true;

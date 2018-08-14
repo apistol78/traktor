@@ -348,6 +348,9 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 		if (!clipboard)
 			return false;
 
+		if (!m_edit->hasFocus())
+			return false;
+
 		std::wstring selectedText = m_edit->getSelectedText(
 			[&] (wchar_t ch) -> std::wstring {
 				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
@@ -363,6 +366,9 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 	{
 		ui::Clipboard* clipboard = ui::Application::getInstance()->getClipboard();
 		if (!clipboard)
+			return false;
+
+		if (!m_edit->hasFocus())
 			return false;
 
 		std::wstring selectedText = m_edit->getSelectedText(
@@ -382,6 +388,9 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 	{
 		ui::Clipboard* clipboard = ui::Application::getInstance()->getClipboard();
 		if (!clipboard)
+			return false;
+
+		if (!m_edit->hasFocus())
 			return false;
 
 		m_edit->deleteSelection();
