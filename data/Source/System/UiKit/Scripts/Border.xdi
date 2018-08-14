@@ -26,7 +26,7 @@ function Border:place(x, y, width, height)
 end
 
 function Border:setColor(color)
-	self._mc.colorTransform = ColorTransform(color, Color4f(0, 0, 0, 0))
+	self._mc.colorTransform = traktor.flash.ColorTransform(color, traktor.Color4f(0, 0, 0, 0))
 	return self
 end
 
@@ -48,7 +48,6 @@ function Border:_loadStyle()
 	local style = self:getStyle()
 	self:setColor(style.background)
 end
-
 
 	]]>
 	</text>

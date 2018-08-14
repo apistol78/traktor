@@ -11,12 +11,12 @@ DropDown = DropDown or class("DropDown", Widget)
 
 DropDown:setStyle("resource", "MC_DropDown")
 DropDown:setStyle("resourceListBox", "MC_DropDownListBox")
-DropDown:setStyle("background", Color4f(0.8, 0.8, 0.8, 1.0))
-DropDown:setStyle("list", Color4f(0.8, 0.8, 0.8, 1.0))
-DropDown:setStyle("text", Color4f(0.0, 0.0, 0.0, 1.0))
+DropDown:setStyle("background", traktor.Color4f(0.8, 0.8, 0.8, 1.0))
+DropDown:setStyle("list", traktor.Color4f(0.8, 0.8, 0.8, 1.0))
+DropDown:setStyle("text", traktor.Color4f(0.0, 0.0, 0.0, 1.0))
 DropDown:setStyle("textSize", 17)
-DropDown:setStyle("textList", Color4f(0.0, 0.0, 0.0, 1.0))
-DropDown:setStyle("textListHover", Color4f(1.0, 1.0, 1.0, 1.0))
+DropDown:setStyle("textList", traktor.Color4f(0.0, 0.0, 0.0, 1.0))
+DropDown:setStyle("textListHover", traktor.Color4f(1.0, 1.0, 1.0, 1.0))
 DropDown:setStyle("textListSize", 17)
 DropDown:setStyle("fadeDuration", 0.1)
 
@@ -83,9 +83,9 @@ function DropDown:getSelectedItem()
 end
 
 function DropDown:setColor(color)
-	self._background_mc.colorTransform = ColorTransform(
+	self._background_mc.colorTransform = traktor.flash.ColorTransform(
 		color,
-		Color4f(0, 0, 0, 0)
+		traktor.Color4f(0, 0, 0, 0)
 	)
 	return self
 end
@@ -97,9 +97,9 @@ end
 
 function DropDown:setTextColor(textColor)
 	self._caption_tb.textColor = textColor
-	self._arrow_mc.colorTransform = ColorTransform(
+	self._arrow_mc.colorTransform = traktor.flash.ColorTransform(
 		textColor,
-		Color4f(0, 0, 0, 0)
+		traktor.Color4f(0, 0, 0, 0)
 	)
 	return self
 end

@@ -2,8 +2,9 @@
 <object type="traktor.script.Script" version="2">
 	<text>
 	<![CDATA[
+#using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
+
 -- Edit
-import(traktor.input)
 
 Edit = Edit or class("Edit", Widget)
 
@@ -56,9 +57,9 @@ function Edit:setTextSize(size)
 end
 
 function Edit:setColor(color)
-	self._background_mc.colorTransform = ColorTransform(
+	self._background_mc.colorTransform = traktor.flash.ColorTransform(
 		color,
-		Color4f(0, 0, 0, 0)
+		traktor.Color4f(0, 0, 0, 0)
 	)
 	return self
 end
@@ -179,7 +180,7 @@ function Edit:_onSetFocus()
 	self._enterPressed = false
 
 #if defined(ANDROID)
-	KeyboardDeviceAndroid.showSoftKeyboard()
+	traktor.input.KeyboardDeviceAndroid.showSoftKeyboard()
 #endif
 end
 
@@ -202,7 +203,7 @@ function Edit:_onKillFocus()
 	end
 
 #if defined(ANDROID)
-	KeyboardDeviceAndroid.hideSoftKeyboard()
+	traktor.input.KeyboardDeviceAndroid.hideSoftKeyboard()
 #endif
 end
 

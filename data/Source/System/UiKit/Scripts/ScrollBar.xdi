@@ -4,8 +4,6 @@
 	<![CDATA[
 #using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
 
-import(traktor.flash)
-
 -- ScrollBar
 
 ScrollBar = ScrollBar or class("ScrollBar", Widget)
@@ -15,8 +13,8 @@ ScrollBar.VERTICAL = 1
 
 ScrollBar:setStyle("resourceHorizontal", "MC_ScrollBar_Horizontal")
 ScrollBar:setStyle("resourceVertical", "MC_ScrollBar_Vertical")
-ScrollBar:setStyle("background", Color4f(0.6, 0.6, 0.6, 1.0))
-ScrollBar:setStyle("knob", Color4f(1.0, 1.0, 1.0, 1.0))
+ScrollBar:setStyle("background", traktor.Color4f(0.6, 0.6, 0.6, 1.0))
+ScrollBar:setStyle("knob", traktor.Color4f(1.0, 1.0, 1.0, 1.0))
 
 function ScrollBar:new(parent, orientation)
 	local mc
@@ -46,17 +44,17 @@ function ScrollBar:place(x, y, width, height)
 end
 
 function ScrollBar:setColor(color)
-	self._background_mc.colorTransform = ColorTransform(
+	self._background_mc.colorTransform = traktor.flash.ColorTransform(
 		color,
-		Color4f(0, 0, 0, 0)
+		traktor.Color4f(0, 0, 0, 0)
 	)
 	return self
 end
 
 function ScrollBar:setKnobColor(color)
-	self._knob_mc.colorTransform = ColorTransform(
+	self._knob_mc.colorTransform = traktor.flash.ColorTransform(
 		color,
-		Color4f(0, 0, 0, 0)
+		traktor.Color4f(0, 0, 0, 0)
 	)
 	return self
 end

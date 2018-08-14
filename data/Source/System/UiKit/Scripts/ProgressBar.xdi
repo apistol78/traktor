@@ -4,16 +4,13 @@
 	<![CDATA[
 #using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
 
-import(traktor)
-import(traktor.flash)
-
 -- ProgressBar
 
 ProgressBar = ProgressBar or class("ProgressBar", Widget)
 
 ProgressBar:setStyle("resource", "MC_ProgressBar")
-ProgressBar:setStyle("background", Color4f(0.0, 0.0, 0.0, 1.0))
-ProgressBar:setStyle("foreground", Color4f(1.0, 1.0, 1.0, 1.0))
+ProgressBar:setStyle("background", traktor.Color4f(0.0, 0.0, 0.0, 1.0))
+ProgressBar:setStyle("foreground", traktor.Color4f(1.0, 1.0, 1.0, 1.0))
 
 function ProgressBar:new(parent, reverse, skin)
 	local mc = Widget._createResource(parent, skin or self:getStyle().resource)
@@ -37,17 +34,17 @@ function ProgressBar:place(x, y, width, height)
 end
 
 function ProgressBar:setBackColor(color)
-	self._back_mc.colorTransform = ColorTransform(
+	self._back_mc.colorTransform = traktor.flash.ColorTransform(
 		color,
-		Color4f(0, 0, 0, 0)
+		traktor.Color4f(0, 0, 0, 0)
 	)
 	return self
 end
 
 function ProgressBar:setFrontColor(color)
-	self._front_mc.colorTransform = ColorTransform(
+	self._front_mc.colorTransform = traktor.flash.ColorTransform(
 		color,
-		Color4f(0, 0, 0, 0)
+		traktor.Color4f(0, 0, 0, 0)
 	)
 	return self
 end
