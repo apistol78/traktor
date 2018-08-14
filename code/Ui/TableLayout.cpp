@@ -150,6 +150,10 @@ TableLayout::TableLayout(const std::wstring& cdef, const std::wstring& rdef, int
 
 bool TableLayout::fit(Widget* widget, const Size& bounds, Size& result)
 {
+	Rect inner = widget->getInnerRect();
+	
+	result = Size(0, 0);
+
 	std::vector< Widget* > children;
 	for (Widget* child = widget->getFirstChild(); child != 0; child = child->getNextSibling())
 	{
@@ -166,8 +170,34 @@ bool TableLayout::fit(Widget* widget, const Size& bounds, Size& result)
 	std::vector< int > h;
 	calculate(bounds, m_cdef, m_rdef, children, w, h);
 
-	result.cx = std::accumulate(w.begin(), w.end(), m_margin.cx * 2 + m_pad.cx * (nc - 1));
-	result.cy = std::accumulate(h.begin(), h.end(), m_margin.cy * 2 + m_pad.cy * (nr - 1));
+	Point tl = inner.getTopLeft() + m_margin;
+	for (int32_t i = 0; i < int32_t(children.size()); ++i)
+	{
+		int32_t c = i % std::max(nc, 1);
+		int32_t r = i / std::max(nc, 1);
+		
+		Size pf = children[i]->getPreferedSize();
+		Size sz(
+			std::min< int32_t >(w[c], pf.cx),
+			std::min< int32_t >(h[r], pf.cy)
+		);
+
+		result.cx = std::max< int32_t >(result.cx, tl.x + sz.cx);
+		result.cy = std::max< int32_t >(result.cy, tl.y + sz.cy);
+
+		if (c < nc - 1)
+		{
+			tl.x += w[c] + m_pad.cx;
+		}
+		else
+		{
+			tl.x = inner.left + m_margin.cx;
+			tl.y += h[r] + m_pad.cy;
+		}
+	}
+
+	result.cx += m_margin.cx;
+	result.cy += m_margin.cy;
 	return true;
 }
 

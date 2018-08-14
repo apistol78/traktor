@@ -36,32 +36,88 @@ class T_DLLCLASS InputDialog : public ConfigDialog
 	T_RTTI_CLASS;
 
 public:
+	class IValueEnumerator : public IRefCount
+	{
+	public:
+		virtual bool getValue(size_t index, std::wstring& outKey, std::wstring& outValue) const = 0;
+	};
+
+	class StringArrayEnumerator : public RefCountImpl< IValueEnumerator >
+	{
+	public:
+		StringArrayEnumerator(const wchar_t** values)
+		:	m_values(values)
+		{
+		}
+
+		virtual bool getValue(size_t index, std::wstring& outKey, std::wstring& outValue) const T_OVERRIDE
+		{
+			if (m_values[index])
+			{
+				outKey = m_values[index];
+				outValue = m_values[index];
+				return true;
+			}
+			else
+				return false;
+		}
+
+	private:
+		const wchar_t** m_values;
+	};
+
+	class KeyValueArrayEnumerator : public RefCountImpl< IValueEnumerator >
+	{
+	public:
+		KeyValueArrayEnumerator(const wchar_t** values)
+		:	m_values(values)
+		{
+		}
+
+		virtual bool getValue(size_t index, std::wstring& outKey, std::wstring& outValue) const T_OVERRIDE
+		{
+			if (m_values[index * 2])
+			{
+				outKey = m_values[index * 2];
+				outValue = m_values[index * 2 + 1];
+				return true;
+			}
+			else
+				return false;
+		}
+
+	private:
+		const wchar_t** m_values;
+	};
+
 	struct Field
 	{
 		std::wstring title;
 		std::wstring value;
-		Ref< EditValidator > validator;
-		const wchar_t** values;
+		Ref< const EditValidator > validator;
+		Ref< const IValueEnumerator > valueEnumerator;
 		bool browseFile;
+		int32_t selectedIndex;
 
 		Field()
-		:	values(0)
-		,	browseFile(false)
+		:	browseFile(false)
+		,	selectedIndex(-1)
 		{
 		}
 
 		Field(
 			const std::wstring& title_,
 			const std::wstring& value_ = L"",
-			EditValidator* validator_ = 0,
-			const wchar_t** values_ = 0,
+			const EditValidator* validator_ = 0,
+			const IValueEnumerator* valueEnumerator_ = 0,
 			bool browseFile_ = false
 		)
 		:	title(title_)
 		,	value(value_)
 		,	validator(validator_)
-		,	values(values_)
+		,	valueEnumerator(valueEnumerator_)
 		,	browseFile(browseFile_)
+		,	selectedIndex(-1)
 		{
 		}
 	};

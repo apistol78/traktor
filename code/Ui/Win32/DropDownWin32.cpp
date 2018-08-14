@@ -103,11 +103,21 @@ Size DropDownWin32::getPreferedSize() const
 		(24 * dpi) / 96
 	);
 
-	int32_t c = count();
-	for (int32_t i = 0; i < c; ++i)
+	HDC hDC = GetWindowDC(m_hWnd);
+	if (hDC != NULL)
 	{
-		std::wstring s = get(i);
-		sz.cx = std::max< int32_t >(getTextExtent(s).cx + (32 * dpi) / 96, sz.cx);
+		int32_t c = count();
+		for (int32_t i = 0; i < c; ++i)
+		{
+			std::wstring s = get(i);
+			if (!s.empty())
+			{
+				SIZE size = { 0 };
+				GetTextExtentPoint32(hDC, wstots(s).c_str(), int(s.length()), &size);
+				sz.cx = std::max< int32_t >(size.cx + (32 * dpi) / 96, sz.cx);
+			}
+		}
+		ReleaseDC(m_hWnd, hDC);
 	}
 
 	return sz;
