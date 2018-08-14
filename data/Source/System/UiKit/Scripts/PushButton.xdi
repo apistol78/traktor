@@ -4,8 +4,6 @@
 	<![CDATA[
 #using \{40191BBE-DDD0-0E47-92A9-66AF2CEC0F6F}
 
-import(traktor.flash)
-
 -- PushButton
 
 PushButton = PushButton or class("PushButton", Widget)
@@ -14,10 +12,10 @@ PushButton.Default = 0
 PushButton.Toggle = 1
 
 PushButton:setStyle("resource", "MC_PushButton")
-PushButton:setStyle("background", Color4f(0.8, 0.8, 0.8, 1.0))
-PushButton:setStyle("backgroundDown", Color4f(0.4, 0.4, 0.4, 1.0))
-PushButton:setStyle("backgroundHover", Color4f(1.0, 1.0, 1.0, 1.0))
-PushButton:setStyle("text", Color4f(0.0, 0.0, 0.0, 1.0))
+PushButton:setStyle("background", traktor.Color4f(0.8, 0.8, 0.8, 1.0))
+PushButton:setStyle("backgroundDown", traktor.Color4f(0.4, 0.4, 0.4, 1.0))
+PushButton:setStyle("backgroundHover", traktor.Color4f(1.0, 1.0, 1.0, 1.0))
+PushButton:setStyle("text", traktor.Color4f(0.0, 0.0, 0.0, 1.0))
 PushButton:setStyle("textSize", 17)
 
 function PushButton:new(parent, caption, mode)
@@ -180,7 +178,7 @@ function PushButton:_loadStyle()
 end
 
 function PushButton:_updateState()
-	local cb = Color4f(0, 0, 0, 0)
+	local cb = traktor.Color4f(0, 0, 0, 0)
 
 	local down = self._toggled or (self._pressed and self._inside)
 	local up = not down and not self._inside
@@ -188,17 +186,17 @@ function PushButton:_updateState()
 
 	if down then
 		self._background_mc:gotoAndStop("down")
-		self._background_mc.colorTransform = ColorTransform(self._downColor, cb)
+		self._background_mc.colorTransform = traktor.flash.ColorTransform(self._downColor, cb)
 	end
 
 	if up then
 		self._background_mc:gotoAndStop("up")
-		self._background_mc.colorTransform = ColorTransform(self._defaultColor, cb)
+		self._background_mc.colorTransform = traktor.flash.ColorTransform(self._defaultColor, cb)
 	end
 
 	if hover then
 		self._background_mc:gotoAndStop("hover")
-		self._background_mc.colorTransform = ColorTransform(self._hoverColor, cb)
+		self._background_mc.colorTransform = traktor.flash.ColorTransform(self._hoverColor, cb)
 	end
 
 	if self:isEnabled() then
