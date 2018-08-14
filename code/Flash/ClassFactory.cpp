@@ -18,6 +18,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Character.h"
 #include "Flash/ClassFactory.h"
 #include "Flash/Dictionary.h"
+#include "Flash/Edit.h"
 #include "Flash/EditInstance.h"
 #include "Flash/Font.h"
 #include "Flash/Frame.h"
@@ -190,6 +191,15 @@ void ColorTransform_setAdd(ColorTransform* self, const Color4f& add)
 const Color4f& ColorTransform_getAdd(ColorTransform* self)
 {
 	return self->add;
+}
+
+Any Font_getBounds(Font* self, uint16_t index)
+{
+	const Aabb2* bounds = self->getBounds(index);
+	if (bounds)
+		return CastAny< Aabb2 >::set(*bounds);
+	else
+		return Any();
 }
 
 Any Dictionary_getExportId(Dictionary* self, const std::string& exportName)
@@ -509,6 +519,20 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBitmapTexture->addProperty("texture", &BitmapTexture::getTexture);
 	registrar->registerClass(classBitmapTexture);
 
+	Ref< AutoRuntimeClass< Font > > classFont = new AutoRuntimeClass< Font >();
+	classFont->addProperty("fontName", &Font::getFontName);
+	classFont->addProperty("italic", &Font::isItalic);
+	classFont->addProperty("bold", &Font::isBold);
+	classFont->addProperty("ascent", &Font::getAscent);
+	classFont->addProperty("descent", &Font::getDescent);
+	classFont->addProperty("leading", &Font::getLeading);
+	classFont->addProperty("maxDimension", &Font::getMaxDimension);
+	classFont->addMethod("getAdvance", &Font::getAdvance);
+	classFont->addMethod("getBounds", &Font_getBounds);
+	classFont->addMethod("lookupKerning", &Font::lookupKerning);
+	classFont->addMethod("lookupIndex", &Font::lookupIndex);
+	registrar->registerClass(classFont);
+
 	Ref< AutoRuntimeClass< Dictionary > > classDictionary = new AutoRuntimeClass< Dictionary >();
 	classDictionary->addMethod("addFont", &Dictionary::addFont);
 	classDictionary->addMethod("addBitmap", &Dictionary::addBitmap);
@@ -521,6 +545,10 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classDictionary->addMethod("getExportId", &Dictionary_getExportId);
 	classDictionary->addMethod("getExportName", &Dictionary_getExportName);
 	registrar->registerClass(classDictionary);
+
+	Ref< AutoRuntimeClass< Character > > classCharacter = new AutoRuntimeClass< Character >();
+	classCharacter->addProperty("id", &Character::getId);
+	registrar->registerClass(classCharacter);
 
 	Ref< AutoRuntimeClass< CharacterInstance > > classCharacterInstance = new AutoRuntimeClass< CharacterInstance >();
 	classCharacterInstance->addConstant("SbmDefault", Any::fromInt32(SbmDefault));
@@ -636,7 +664,26 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classTextFormat->addProperty("size", &TextFormat::setSize, &TextFormat::getSize);
 	registrar->registerClass(classTextFormat);
 
+	Ref< AutoRuntimeClass< Edit > > classEdit = new AutoRuntimeClass< Edit >();
+	classEdit->addProperty("fontId", &Edit::getFontId);
+	classEdit->addProperty("fontHeight", &Edit::getFontHeight);
+	classEdit->addProperty("textBounds", &Edit::getTextBounds);
+	classEdit->addProperty("textColor", &Edit::getTextColor);
+	classEdit->addProperty("maxLength", &Edit::getMaxLength);
+	classEdit->addProperty("initialText", &Edit::setInitialText, &Edit::getInitialText);
+	classEdit->addProperty("leftMargin", &Edit::getLeftMargin);
+	classEdit->addProperty("rightMargin", &Edit::getRightMargin);
+	classEdit->addProperty("indent", &Edit::getIndent);
+	classEdit->addProperty("leading", &Edit::getLeading);
+	classEdit->addProperty("readOnly", &Edit::readOnly);
+	classEdit->addProperty("wordWrap", &Edit::wordWrap);
+	classEdit->addProperty("multiLine", &Edit::multiLine);
+	classEdit->addProperty("password", &Edit::password);
+	classEdit->addProperty("renderHtml", &Edit::renderHtml);
+	registrar->registerClass(classEdit);
+
 	Ref< AutoRuntimeClass< EditInstance > > classEditInstance = new AutoRuntimeClass< EditInstance >();
+	classEditInstance->addProperty("edit", &EditInstance::getEdit);
 	classEditInstance->addProperty("textBounds", &EditInstance::setTextBounds, &EditInstance::getTextBounds);
 	classEditInstance->addProperty("textColor", &EditInstance::setTextColor, &EditInstance::getTextColor);
 	classEditInstance->addProperty("letterSpacing", &EditInstance::setLetterSpacing, &EditInstance::getLetterSpacing);
