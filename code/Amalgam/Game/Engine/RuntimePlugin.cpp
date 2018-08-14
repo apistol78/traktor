@@ -23,21 +23,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.RuntimePlugin", 0, RuntimePlugin, IRuntimePlugin)
 
-bool RuntimePlugin::getDependencies(TypeInfoSet& outDependencies) const
-{
-	return true;
-}
-
-bool RuntimePlugin::startup(IEnvironment* environment)
-{
-	return true;
-}
-
-bool RuntimePlugin::shutdown(IEnvironment* environment)
-{
-	return true;
-}
-
 Ref< IState > RuntimePlugin::createInitialState(IEnvironment* environment) const
 {
 	Guid startupGuid(environment->getSettings()->getProperty< std::wstring >(L"Amalgam.Startup"));

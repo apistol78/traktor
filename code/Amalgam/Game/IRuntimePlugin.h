@@ -34,12 +34,6 @@ class T_DLLCLASS IRuntimePlugin : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual bool getDependencies(TypeInfoSet& outDependencies) const = 0;
-
-	virtual bool startup(IEnvironment* environment) = 0;
-
-	virtual bool shutdown(IEnvironment* environment) = 0;
-
 	virtual Ref< IState > createInitialState(IEnvironment* environment) const = 0;
 };
 
