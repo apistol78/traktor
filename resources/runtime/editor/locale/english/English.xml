@@ -2510,6 +2510,10 @@
       <second>Top</second>
     </item>
     <item>
+    	<first>SCRIPT_CLASS_NO_CLASS</first>
+    	<second>[No class]</second>
+    </item>
+    <item>
       <first>SCRIPT_CLASS_WIZARDTOOL_CLASS_NAME</first>
       <second>Class name</second>
     </item>

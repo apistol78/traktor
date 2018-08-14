@@ -18,7 +18,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Edit", Edit, Widget)
 
-bool Edit::create(Widget* parent, const std::wstring& text, int style, EditValidator* validator)
+bool Edit::create(Widget* parent, const std::wstring& text, int style, const EditValidator* validator)
 {
 	if (!parent)
 		return false;
@@ -49,7 +49,7 @@ bool Edit::create(Widget* parent, const std::wstring& text, int style, EditValid
 	return Widget::create(parent);
 }
 
-bool Edit::setValidator(EditValidator* validator)
+bool Edit::setValidator(const EditValidator* validator)
 {
 	if (validator)
 	{
@@ -60,7 +60,7 @@ bool Edit::setValidator(EditValidator* validator)
 	return true;
 }
 
-Ref< EditValidator > Edit::getValidator() const
+const EditValidator* Edit::getValidator() const
 {
 	return m_validator;
 }

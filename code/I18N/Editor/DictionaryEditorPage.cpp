@@ -276,14 +276,14 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 			ui::custom::InputDialog::Field(
 				Text(L"DICTIONARY_EDITOR_FROM_LANGUAGE"),
 				L"",
-				0,
-				c_languages
+				nullptr,
+				new ui::custom::InputDialog::KeyValueArrayEnumerator(c_languages)
 			),
 			ui::custom::InputDialog::Field(
 				Text(L"DICTIONARY_EDITOR_TO_LANGUAGE"),
 				L"",
-				0,
-				c_languages
+				nullptr,
+				new ui::custom::InputDialog::KeyValueArrayEnumerator(c_languages)
 			)
 		};
 

@@ -34,14 +34,14 @@ bool InputDialog::create(
 	uint32_t outFieldsCount
 )
 {
-	if (!ConfigDialog::create(parent, title, dpi96(300), dpi96(180), ConfigDialog::WsDefaultFixed, new TableLayout(L"100%", L"*,*", 4, 4)))
+	if (!ConfigDialog::create(parent, title, dpi96(1280), dpi96(720), ConfigDialog::WsDefaultFixed, new TableLayout(L"100%", L"*,*", 4, 4)))
 		return false;
 
 	Ref< Static > labelMessage = new Static();
 	labelMessage->create(this, message);
 
 	Ref< Container > container = new Container();
-	container->create(this, WsNone, new TableLayout(L"*,100%", L"*", 0, 4));
+	container->create(this, WsNone, new TableLayout(L"*,*", L"*", 0, 4));
 
 	m_outFields = outFields;
 	for (uint32_t i = 0; i < outFieldsCount; ++i)
@@ -49,7 +49,7 @@ bool InputDialog::create(
 		Ref< Static > labelEdit = new Static();
 		labelEdit->create(container, m_outFields[i].title);
 
-		if (!m_outFields[i].values)
+		if (!m_outFields[i].valueEnumerator)
 		{
 			if (!m_outFields[i].browseFile)
 			{
@@ -74,11 +74,11 @@ bool InputDialog::create(
 		{
 			Ref< DropDown > dropDown = new DropDown();
 			dropDown->create(container, m_outFields[i].value, WsClientBorder | WsTabStop);
-			for (const wchar_t** it = m_outFields[i].values; *it; it += 2)
-			{
-				T_ASSERT (*it);
-				dropDown->add(*it);
-			}
+
+			std::wstring key, value;
+			for (size_t index = 0; m_outFields[i].valueEnumerator->getValue(index, key, value); ++index)
+				dropDown->add(key);
+
 			dropDown->select(0);
 			m_editFields.push_back(dropDown);
 		}
@@ -107,24 +107,22 @@ int InputDialog::showModal()
 		for (uint32_t i = 0; i < uint32_t(m_editFields.size()); ++i)
 		{
 			Ref< Edit > editField = dynamic_type_cast< Edit* >(m_editFields[i]);
-			if (edit)
+			if (editField)
 				m_outFields[i].value = editField->getText();
 
 			Ref< DropDown > dropDown = dynamic_type_cast< DropDown* >(m_editFields[i]);
 			if (dropDown)
 			{
-				int32_t index = dropDown->getSelected();
-				if (index >= 0)
+				m_outFields[i].selectedIndex = dropDown->getSelected();
+				if (m_outFields[i].selectedIndex >= 0)
 				{
-					for (const wchar_t** it = m_outFields[i].values; *it; it += 2)
-					{
-						T_ASSERT (*it);
-						if (index-- <= 0)
-						{
-							m_outFields[i].value = *(it + 1);
-							break;
-						}
-					}
+					std::wstring key, value;
+					if (m_outFields[i].valueEnumerator->getValue(
+						(size_t)m_outFields[i].selectedIndex,
+						key,
+						value
+					))
+						m_outFields[i].value = value;
 				}
 			}
 		}
