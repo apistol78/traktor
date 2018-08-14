@@ -57,7 +57,6 @@ class ScriptServer;
 class WorldServer;
 
 class Environment;
-class IRuntimePlugin;
 class IState;
 class StateManager;
 class TargetManagerConnection;
@@ -106,7 +105,6 @@ private:
 	Ref< WorldServer > m_worldServer;
 	Ref< Environment > m_environment;
 	Ref< StateManager > m_stateManager;
-	RefArray< IRuntimePlugin > m_plugins;
 	Semaphore m_lockUpdate;
 #if !defined(__EMSCRIPTEN__)
 	Thread* m_threadDatabase;

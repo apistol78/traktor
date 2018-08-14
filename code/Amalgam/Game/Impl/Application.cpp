@@ -300,72 +300,6 @@ bool Application::create(
 	if (m_onlineServer && m_audioServer)
 		m_onlineServer->setupVoice(m_audioServer);
 
-	// Create plugins.
-	T_DEBUG(L"Creating plugins...");
-
-	TypeInfoSet pluginTypes;
-	type_of< IRuntimePlugin >().findAllOf(pluginTypes, false);
-
-	for (TypeInfoSet::const_iterator i = pluginTypes.begin(); i != pluginTypes.end(); ++i)
-	{
-		T_ASSERT (*i);
-
-		Ref< IRuntimePlugin > plugin = dynamic_type_cast< IRuntimePlugin* >((*i)->createInstance());
-		if (!plugin)
-		{
-			log::error << L"Application failed; unable to instantiate plugin \"" << (*i)->getName() << L"\"" << Endl;
-			return false;
-		}
-
-		m_plugins.push_back(plugin);
-	}
-
-	for (uint32_t i = 0; i < m_plugins.size(); )
-	{
-		TypeInfoSet dependencies;
-		m_plugins[i]->getDependencies(dependencies);
-
-		bool satisfied = true;
-
-		for (TypeInfoSet::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
-		{
-			satisfied = false;
-			for (uint32_t k = 0; k < i; ++k)
-			{
-				if (*j == &type_of(m_plugins[k]))
-				{
-					satisfied = true;
-					break;
-				}
-			}
-			if (!satisfied)
-				break;
-		}
-
-		if (!satisfied)
-		{
-			if (i < m_plugins.size() - 1)
-			{
-				m_plugins.push_back(m_plugins[i]);
-				m_plugins.erase(m_plugins.begin() + i);
-			}
-			else
-			{
-				log::error << L"Application failed; unable to resolve plugin \"" << type_name(m_plugins[i]) << L"\" dependencies" << Endl;
-				return false;
-			}
-		}
-		else
-		{
-			if (!m_plugins[i]->startup(m_environment))
-			{
-				log::error << L"Application failed; unable to start plugin \"" << type_name(m_plugins[i]) << L"\"" << Endl;
-				return false;
-			}
-			++i;
-		}
-	}
-
 #if !defined(__EMSCRIPTEN__)
 
 	// Database monitoring thread.
@@ -382,12 +316,18 @@ bool Application::create(
 	// Initial, startup, state.
 	T_DEBUG(L"Creating initial state...");
 
+	TypeInfoSet pluginTypes;
+	type_of< IRuntimePlugin >().findAllOf(pluginTypes, false);
+
 	Ref< IState > state;
-	for (RefArray< IRuntimePlugin >::const_iterator i = m_plugins.begin(); i != m_plugins.end(); ++i)
+	for (TypeInfoSet::const_iterator i = pluginTypes.begin(); i != pluginTypes.end(); ++i)
 	{
-		state = (*i)->createInitialState(m_environment);
-		if (state)
-			break;
+		Ref< IRuntimePlugin > plugin = dynamic_type_cast< IRuntimePlugin* >((*i)->createInstance());
+		if (plugin)
+		{
+			if ((state = plugin->createInitialState(m_environment)) != 0)
+				break;
+		}
 	}
 	if (!state)
 	{
@@ -432,11 +372,6 @@ bool Application::create(
 void Application::destroy()
 {
 	Profiler::getInstance().setListener(0);
-
-	for (RefArray< IRuntimePlugin >::iterator i = m_plugins.begin(); i != m_plugins.end(); ++i)
-		(*i)->shutdown(m_environment);
-
-	m_plugins.resize(0);
 
 #if !defined(__EMSCRIPTEN__)
 
