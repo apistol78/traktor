@@ -232,21 +232,24 @@ bool EditInstance::parseHtml(const std::wstring& html)
 
 Vector2 EditInstance::measureText(const std::wstring& text) const
 {
+	return measureText(text, std::numeric_limits< float >::max());
+}
+
+Vector2 EditInstance::measureText(const std::wstring& text, float width) const
+{
 	const Dictionary* dictionary = getDictionary();
 	T_ASSERT (dictionary);
 
 	const Font* font = dictionary->getFont(m_edit->getFontId());
 	T_ASSERT (font);
 
-	const float mxf = std::numeric_limits< float >::max();
-
 	TextLayout layout;
 	layout.begin();
-	layout.setBounds(Aabb2(Vector2(0.0f, 0.0f), Vector2(mxf, mxf)));
+	layout.setBounds(Aabb2(Vector2(0.0f, 0.0f), Vector2(width, std::numeric_limits< float >::max())));
 	layout.setLeading(m_edit->getLeading());
 	layout.setLetterSpacing(m_password ? 6 : m_letterSpacing);
 	layout.setFontHeight(m_fontHeight);
-	layout.setWordWrap(false);
+	layout.setWordWrap(m_wordWrap);
 	layout.setAlignment(m_align);
 	layout.setAttribute(font, m_textColor);
 	layout.insertText(text);
