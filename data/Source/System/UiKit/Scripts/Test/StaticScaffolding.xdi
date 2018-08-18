@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+#using \{218D113A-66DC-9049-8424-701FF60F2BC4}
+#using \{FC4400A2-BDB6-BA45-9A22-12B9676E71FA}
+
+local ipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+
+StaticScaffolding = StaticScaffolding or class("StaticScaffolding", Scaffolding)
+
+function StaticScaffolding:setup(frame)
+	local ct = Panel(frame, TableLayout({100,0}, {100}, 4, 4, 4, 16))
+
+	Static(ct, ipsum)
+		:setTextColor(Color4f(1, 1, 1, 1))
+		:setTextSize(40)
+		:setMultiLine(true)
+		:setWordWrap(true)
+
+	PushButton(ct, "Test")
+end
+
+	]]>
+	</text>
+</object>

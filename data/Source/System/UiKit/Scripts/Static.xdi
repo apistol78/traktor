@@ -22,31 +22,23 @@ function Static:new(parent, text, clip)
 end
 
 function Static:getPreferredSize(hint)
-	if hint ~= nil and self._text_tb.multiLine then
-		self._text_tb.textBounds = Aabb2(
-			Vector2(0, 0),
-			Vector2(hint.width * 20, hint.height * 20)
-		)
-		if not self._html then
-			self:setText(self._text_tb.text)
-		else
-			self:setHtml(self._text_tb.htmlText)
-		end
-		local sz = self._text_tb.textSize
-		return { width = sz.x, height = sz.y }
+	local sz = 0
+	if hint ~= nil then
+		sz = self._text_tb:measureText(self._text_tb.text, hint.width * 20)
 	else
-		local sz = self._text_tb:measureText(self._text_tb.text)
-		return { width = sz.x, height = sz.y }
+		sz = self._text_tb:measureText(self._text_tb.text)
 	end
+	return { width = sz.x, height = sz.y }
 end
 
 function Static:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
 
-	-- Use placement to set text bound.
+	-- Calculate explicit text bounds given width.
+	local sz = self._text_tb:measureText(self._text_tb.text, width * 20)
 	self._text_tb.textBounds = Aabb2(
 		Vector2(0, 0),
-		Vector2(width * 20, height * 20)
+		Vector2(sz.x * 20, sz.y * 20)
 	)
 
 	-- Reset text to ensure it's properly fitted to given text bound.
