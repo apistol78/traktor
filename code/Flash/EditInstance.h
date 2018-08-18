@@ -49,6 +49,9 @@ public:
 	/*! \brief Measure text (without replacing) using edit field's format. */
 	Vector2 measureText(const std::wstring& text) const;
 
+	/*! \brief Measure text (without replacing) using edit field's format. */
+	Vector2 measureText(const std::wstring& text, float width) const;
+
 	/*! \brief Set text bounds. */
 	void setTextBounds(const Aabb2& textBounds);
 

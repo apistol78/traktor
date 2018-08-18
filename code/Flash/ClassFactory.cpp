@@ -280,6 +280,16 @@ DisplayList* SpriteInstance_getDisplayList(SpriteInstance* self)
 	return &self->getDisplayList();
 }
 
+Vector2 EditInstance_measureText_1(EditInstance* self, const std::wstring& text)
+{
+	return self->measureText(text);
+}
+
+Vector2 EditInstance_measureText_2(EditInstance* self, const std::wstring& text, float width)
+{
+	return self->measureText(text, width);
+}
+
 void EditInstance_setTextFormat_1(EditInstance* self, const TextFormat* textFormat)
 {
 	self->setTextFormat(textFormat);
@@ -711,7 +721,8 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEditInstance->addProperty("textHeight", &EditInstance::getTextHeight);
 	classEditInstance->addMethod("parseText", &EditInstance::parseText);
 	classEditInstance->addMethod("parseHtml", &EditInstance::parseHtml);
-	classEditInstance->addMethod("measureText", &EditInstance::measureText);
+	classEditInstance->addMethod("measureText", &EditInstance_measureText_1);
+	classEditInstance->addMethod("measureText", &EditInstance_measureText_2);
 	classEditInstance->addMethod("setTextFormat", &EditInstance_setTextFormat_1);
 	classEditInstance->addMethod("getTextFormat", &EditInstance_getTextFormat_0);
 	classEditInstance->addMethod("setTextFormat", &EditInstance_setTextFormat_3);
