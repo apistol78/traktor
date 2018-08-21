@@ -28,8 +28,8 @@ class Bitmap;
 class Canvas;
 class Character;
 class EditInstance;
+class ISoundRenderer;
 class ShapeInstance;
-class SoundPlayer;
 class Sprite;
 
 /*! \brief Flash sprite instance.
@@ -68,7 +68,7 @@ public:
 	void updateDisplayList();
 
 	/*! \brief Update display list, sounds and begin event dispatching. */
-	void updateDisplayListAndSounds(SoundPlayer* soundPlayer);
+	void updateDisplayListAndSounds(ISoundRenderer* soundRenderer);
 
 	DisplayList& getDisplayList() { return m_displayList; }
 

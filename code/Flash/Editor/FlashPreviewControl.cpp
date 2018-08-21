@@ -17,6 +17,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Movie.h"
 #include "Flash/MovieLoader.h"
 #include "Flash/MoviePlayer.h"
+#include "Flash/MovieRenderer.h"
 #include "Flash/Frame.h"
 #include "Flash/Sprite.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
@@ -136,6 +137,9 @@ bool FlashPreviewControl::create(
 		false,
 		0.0f
 	);
+
+	m_movieRenderer = new MovieRenderer(m_displayRenderer, nullptr);
+
 #else
 	graphics::CreateDesc desc;
 	desc.syswin = getIWidget()->getSystemWindow();
@@ -189,15 +193,12 @@ void FlashPreviewControl::destroy()
 
 #if T_USE_ACCELERATED_RENDERER
 	safeDestroy(m_displayRenderer);
-
-	if (m_renderView)
-	{
-		m_renderView->close();
-		m_renderView = 0;
-	}
+	safeClose(m_renderView);
 #else
 	safeDestroy(m_graphicsSystem);
 #endif
+
+	m_movieRenderer = 0;
 
 	Widget::destroy();
 }
@@ -212,13 +213,11 @@ void FlashPreviewControl::setMovie(Movie* movie)
 	ui::Size sz = getInnerRect().getSize();
 
 	m_moviePlayer = new MoviePlayer(
-		m_displayRenderer,
-		m_soundRenderer,
 		new flash::DefaultCharacterFactory(),
 		new flash::MovieLoader(),
-		0
+		nullptr
 	);
-	m_moviePlayer->create(movie, sz.cx, sz.cy);
+	m_moviePlayer->create(movie, sz.cx, sz.cy, nullptr);
 
 	m_playing = true;
 }
@@ -321,7 +320,7 @@ void FlashPreviewControl::eventPaint(ui::PaintEvent* event)
 		if (m_movie)
 		{
 			m_displayRenderer->build(uint32_t(0));
-			m_moviePlayer->renderFrame();
+			m_moviePlayer->render(m_movieRenderer);
 		}
 
 		// Flush render context.
@@ -381,7 +380,7 @@ void FlashPreviewControl::eventIdle(ui::IdleEvent* event)
 
 		if (m_playing)
 		{
-			if (m_moviePlayer->progressFrame(deltaTime))
+			if (m_moviePlayer->progress(deltaTime, m_soundRenderer))
 			{
 				std::string command, args;
 				while (m_moviePlayer->getFsCommand(command, args))

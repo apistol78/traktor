@@ -173,7 +173,6 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(createTweakMenuItem(L"Profile Rendering", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Disable All DLC", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Disable Adaptive Updates", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Render Flash Debug Wires", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Launch With 1/4 Window", false));
 	m_toolBar->addItem(m_toolTweaks);
 
@@ -738,8 +737,6 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 		if (m_toolTweaks->get(10)->isChecked())
 			tweakSettings->setProperty< PropertyInteger >(L"Amalgam.MaxSimulationUpdates", 1);
 		if (m_toolTweaks->get(11)->isChecked())
-			tweakSettings->setProperty< PropertyBoolean >(L"Amalgam.FlashDebugWires", true);
-		if (m_toolTweaks->get(12)->isChecked())
 			tweakSettings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/DefaultDenominator", 4);
 
 		int32_t language = m_toolLanguage->getSelected();

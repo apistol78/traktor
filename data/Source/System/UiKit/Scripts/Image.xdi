@@ -124,7 +124,7 @@ end
 -- Private
 
 function Image:_initialize(parent, mc, image, mode)
-#if defined(_DEBUG)
+#if defined(_EDITOR)
 	mc:setMember("__renderWireOutline", true)
 #endif
 

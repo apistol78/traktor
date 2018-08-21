@@ -12,14 +12,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Timer/Profiler.h"
 #include "Core/Timer/Timer.h"
 #include "Flash/Dictionary.h"
+#include "Flash/GC.h"
+//#include "Flash/IDisplayRenderer.h"
+#include "Flash/ISoundRenderer.h"
 #include "Flash/MoviePlayer.h"
 #include "Flash/MovieRenderer.h"
 #include "Flash/Movie.h"
-#include "Flash/SoundPlayer.h"
 #include "Flash/Sprite.h"
 #include "Flash/SpriteInstance.h"
-#include "Flash/GC.h"
-#include "Flash/IDisplayRenderer.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunctionNative.h"
@@ -44,18 +44,13 @@ const int32_t c_framesBetweenCollections = 100;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.MoviePlayer", MoviePlayer, Object)
 
 MoviePlayer::MoviePlayer(
-	IDisplayRenderer* displayRenderer,
-	ISoundRenderer* soundRenderer,
 	const ICharacterFactory* characterFactory,
 	const IMovieLoader* movieLoader,
 	const MovieDebugger* movieDebugger
 )
-:	m_displayRenderer(displayRenderer)
-,	m_soundRenderer(soundRenderer)
-,	m_characterFactory(characterFactory)
+:	m_characterFactory(characterFactory)
 ,	m_movieLoader(movieLoader)
 ,	m_movieDebugger(movieDebugger)
-,	m_movieRenderer(new MovieRenderer(displayRenderer))
 ,	m_intervalNextId(1)
 ,	m_timeCurrent(0.0f)
 ,	m_timeNext(0.0f)
@@ -63,8 +58,6 @@ MoviePlayer::MoviePlayer(
 ,	m_gcEnable(true)
 ,	m_framesUntilCollection(c_framesBetweenCollections)
 {
-	if (soundRenderer)
-		m_soundPlayer = new SoundPlayer(soundRenderer);
 }
 
 MoviePlayer::~MoviePlayer()
@@ -76,7 +69,7 @@ MoviePlayer::~MoviePlayer()
 	T_EXCEPTION_GUARD_END
 }
 
-bool MoviePlayer::create(Movie* movie, int32_t width, int32_t height)
+bool MoviePlayer::create(Movie* movie, int32_t width, int32_t height, ISoundRenderer* soundRenderer)
 {
 	ActionValue memberValue;
 
@@ -92,7 +85,7 @@ bool MoviePlayer::create(Movie* movie, int32_t width, int32_t height)
 	setGlobal("clearInterval", ActionValue(createNativeFunction(context, this, &MoviePlayer::Global_clearInterval)));
 
 	// Create sound prototype.
-	setGlobal("Sound", ActionValue(new AsSound(context, m_soundPlayer)));
+	setGlobal("Sound", ActionValue(new AsSound(context, soundRenderer)));
 
 	// Get references to key and mouse singletons.
 	if (global->getMemberByQName("Key", memberValue))
@@ -127,10 +120,6 @@ void MoviePlayer::destroy()
 		safeDestroy(m_movieInstance);
 	}
 
-	m_displayRenderer = 0;
-	m_soundRenderer = 0;
-	m_movieRenderer = 0;
-	m_soundPlayer = 0;
 	m_actionVM = 0;
 	m_externalInterface = 0;
 	m_stage =  0;
@@ -186,9 +175,10 @@ uint32_t MoviePlayer::getFrameCount() const
 	return m_movie->getMovieClip()->getFrameCount();
 }
 
-void MoviePlayer::renderFrame()
+void MoviePlayer::render(MovieRenderer* movieRenderer) const
 {
-	m_movieRenderer->renderFrame(
+	T_PROFILER_SCOPE(L"MoviePlayer render");
+	movieRenderer->render(
 		m_movieInstance,
 		m_movie->getFrameBounds(),
 		m_stage->getFrameTransform(),
@@ -197,9 +187,9 @@ void MoviePlayer::renderFrame()
 	);
 }
 
-void MoviePlayer::executeFrame()
+void MoviePlayer::execute(ISoundRenderer* soundRenderer)
 {
-	T_PROFILER_SCOPE(L"MoviePlayer executeFrame");
+	T_PROFILER_SCOPE(L"MoviePlayer execute");
 
 	ActionContext* context = m_movieInstance->getContext();
 	T_ASSERT (context);
@@ -229,8 +219,8 @@ void MoviePlayer::executeFrame()
 	// the play head and other aspects of the movie.
 	{
 		T_PROFILER_SCOPE(L"MoviePlayer updateDisplayList");
-		if (m_soundPlayer)
-			m_movieInstance->updateDisplayListAndSounds(m_soundPlayer);
+		if (soundRenderer)
+			m_movieInstance->updateDisplayListAndSounds(soundRenderer);
 		else
 			m_movieInstance->updateDisplayList();
 	}
@@ -358,14 +348,14 @@ void MoviePlayer::executeFrame()
 		);
 }
 
-bool MoviePlayer::progressFrame(float deltaTime)
+bool MoviePlayer::progress(float deltaTime, ISoundRenderer* soundRenderer)
 {
 	bool executed = false;
 	if (m_timeNext >= m_timeNextFrame)
 	{
 		m_timeCurrent = m_timeNext;
 		m_timeNextFrame += 1.0f / m_movie->getMovieClip()->getFrameRate();
-		executeFrame();
+		execute(soundRenderer);
 		executed = true;
 	}
 	m_timeNext += deltaTime;

@@ -27,10 +27,10 @@ namespace traktor
 class ColorTransform;
 class IDisplayRenderer;
 class Dictionary;
+class DirtyRegionTracker;
 class Sprite;
 class SpriteInstance;
 class CharacterInstance;
-class Frame;
 
 /*! \brief Flash movie renderer.
  * \ingroup Flash
@@ -40,9 +40,9 @@ class T_DLLCLASS MovieRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
-	MovieRenderer(IDisplayRenderer* displayRenderer);
+	MovieRenderer(IDisplayRenderer* displayRenderer, DirtyRegionTracker* dirtyRegionTracker);
 
-	void renderFrame(
+	void render(
 		SpriteInstance* movieInstance,
 		const Aabb2& frameBounds,
 		const Vector4& frameTransform,
@@ -51,19 +51,8 @@ public:
 	);
 
 private:
-	struct State : public RefCountImpl< IRefCount >
-	{
-		Aabb2 bounds;
-		bool visible;
-
-		State();
-
-		virtual ~State();
-	};
-
 	Ref< IDisplayRenderer > m_displayRenderer;
-	bool m_wantDirtyRegion;
-	static bool ms_forceRedraw;
+	Ref< DirtyRegionTracker > m_dirtyRegionTracker;
 
 	void renderSprite(
 		SpriteInstance* spriteInstance,
@@ -99,13 +88,6 @@ private:
 		const ColorTransform& cxTransform,
 		bool renderAsMask,
 		uint8_t blendMode
-	);
-
-	void calculateDirtyRegion(
-		CharacterInstance* characterInstance,
-		const Matrix33& transform,
-		bool visible,
-		Aabb2& outDirtyRegion
 	);
 };
 

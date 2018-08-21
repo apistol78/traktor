@@ -116,7 +116,7 @@ function Tab:_addChild(child)
 
 	local caption_tb = tab_mc:getMember("caption_tb")
 	caption_tb.renderClipMask = false
-#if defined(_DEBUG)
+#if defined(_EDITOR)
 	caption_tb:setMember("__renderWireOutline", true)
 #endif
 

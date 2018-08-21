@@ -24,13 +24,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Font.h"
 #include "Flash/Movie.h"
 #include "Flash/MovieLoader.h"
+#include "Flash/MovieRenderer.h"
 #include "Flash/MoviePlayer.h"
 #include "Flash/SpriteInstance.h"
 #include "Flash/ISoundRenderer.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
 #include "Flash/Action/Common/Classes/AsKey.h"
 #include "Flash/Debug/MovieDebugger.h"
-#include "Flash/Debug/WireDisplayRenderer.h"
 #include "Flash/Sound/SoundRenderer.h"
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
@@ -180,8 +180,7 @@ void FlashLayer::destroy()
 	m_imageProcessSettings.clear();
 
 	safeDestroy(m_moviePlayer);
-	//safeDestroy(m_displayRendererWire);
-	safeDestroy(m_displayRendererAcc);
+	safeDestroy(m_displayRenderer);
 	safeDestroy(m_soundRenderer);
 	safeDestroy(m_imageTargetSet);
 	safeDestroy(m_imageProcess);
@@ -221,16 +220,14 @@ void FlashLayer::transition(Layer* fromLayer)
 	}
 
 	// Keep display and sound renderer.
-	m_displayRendererAcc = fromFlashLayer->m_displayRendererAcc;
-	m_displayRendererWire = fromFlashLayer->m_displayRendererWire;
+	m_displayRenderer = fromFlashLayer->m_displayRenderer;
 	m_soundRenderer = fromFlashLayer->m_soundRenderer;
-	fromFlashLayer->m_displayRendererAcc = 0;
-	fromFlashLayer->m_displayRendererWire = 0;
+	fromFlashLayer->m_displayRenderer = 0;
 	fromFlashLayer->m_soundRenderer = 0;
 
 	// Ensure display renderer's caches are fresh.
-	if (m_displayRendererAcc && shouldFlush)
-		m_displayRendererAcc->flushCaches();
+	if (m_displayRenderer && shouldFlush)
+		m_displayRenderer->flushCaches();
 }
 
 void FlashLayer::prepare(const UpdateInfo& info)
@@ -470,7 +467,7 @@ void FlashLayer::update(const UpdateInfo& info)
 	}
 
 	// Update movie player.
-	m_moviePlayer->progressFrame(info.getSimulationDeltaTime());
+	m_moviePlayer->progress(info.getSimulationDeltaTime(), m_soundRenderer);
 
 	// Dispatch "fscommand"s to script.
 	while (m_moviePlayer->getFsCommand(command, args))
@@ -486,24 +483,17 @@ void FlashLayer::update(const UpdateInfo& info)
 void FlashLayer::build(const UpdateInfo& info, uint32_t frame)
 {
 	T_PROFILER_SCOPE(L"FlashLayer build");
-	if (!m_displayRendererAcc || !m_moviePlayer || !m_visible)
+	if (!m_displayRenderer || !m_movieRenderer || !m_moviePlayer || !m_visible)
 		return;
 
-	m_displayRendererAcc->build(frame);
-
-	if (m_displayRendererWire)
-		m_displayRendererWire->begin(frame);
-
-	m_moviePlayer->renderFrame();
-
-	if (m_displayRendererWire)
-		m_displayRendererWire->end(frame);
+	m_displayRenderer->build(frame);
+	m_moviePlayer->render(m_movieRenderer);
 }
 
 void FlashLayer::render(render::EyeType eye, uint32_t frame)
 {
 	T_PROFILER_SCOPE(L"FlashLayer render");
-	if (!m_displayRendererAcc || !m_visible)
+	if (!m_displayRenderer || !m_visible)
 		return;
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
@@ -516,16 +506,13 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 			const static Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
 
-			m_displayRendererAcc->render(
+			m_displayRenderer->render(
 				renderView,
 				frame,
 				eye,
 				m_offset,
 				m_scale
 			);
-
-			if (m_displayRendererWire)
-				m_displayRendererWire->render(renderView, frame);
 
 			renderView->end();
 
@@ -543,23 +530,20 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 	}
 	else
 	{
-		m_displayRendererAcc->render(
+		m_displayRenderer->render(
 			renderView,
 			frame,
 			eye,
 			m_offset,
 			m_scale
 		);
-
-		if (m_displayRendererWire)
-			m_displayRendererWire->render(renderView, frame);
 	}
 }
 
 void FlashLayer::flush()
 {
-	if (m_displayRendererAcc)
-		m_displayRendererAcc->flush();
+	if (m_displayRenderer)
+		m_displayRenderer->flush();
 }
 
 void FlashLayer::preReconfigured()
@@ -680,7 +664,7 @@ std::wstring FlashLayer::getPrintableString(const std::wstring& text, const std:
 void FlashLayer::createMoviePlayer()
 {
 	// Create accelerated Flash renderer.
-	if (!m_displayRendererAcc)
+	if (!m_displayRenderer)
 	{
 		Ref< flash::AccDisplayRenderer > displayRenderer = new flash::AccDisplayRenderer();
 		if (!displayRenderer->create(
@@ -698,27 +682,8 @@ void FlashLayer::createMoviePlayer()
 			return;
 		}
 		
-		m_displayRendererAcc = displayRenderer;
-	}
-
-	// Create debug Flash renderer.
-	if (!m_displayRendererWire)
-	{
-		if (m_environment->getSettings()->getProperty< bool >(L"Amalgam.FlashDebugWires", false))
-		{
-			Ref< flash::WireDisplayRenderer > displayRenderer = new flash::WireDisplayRenderer(m_displayRendererAcc);
-			if (!displayRenderer->create(
-				m_environment->getResource()->getResourceManager(),
-				m_environment->getRender()->getRenderSystem(),
-				m_environment->getRender()->getThreadFrameQueueCount()
-			))
-			{
-				log::error << L"Unable to create wire renderer." << Endl;
-				return;
-			}
-		
-			m_displayRendererWire = displayRenderer;
-		}
+		m_displayRenderer = displayRenderer;
+		m_movieRenderer = new flash::MovieRenderer(m_displayRenderer, 0);
 	}
 
 	// Create sound Flash renderer.
@@ -750,10 +715,6 @@ void FlashLayer::createMoviePlayer()
 
 		width = int32_t(width * aspectRatio / viewRatio);
 
-		flash::IDisplayRenderer* displayRenderer = m_displayRendererAcc;
-		if (m_displayRendererWire)
-			displayRenderer = m_displayRendererWire;
-
 		// Connect to remote debugger.
 		Ref< flash::MovieDebugger > movieDebugger;
 		Ref< net::TcpSocket > remoteDebuggerSocket = new net::TcpSocket();
@@ -764,13 +725,11 @@ void FlashLayer::createMoviePlayer()
 			);
 
 		Ref< flash::MoviePlayer > moviePlayer = new flash::MoviePlayer(
-			displayRenderer,
-			m_soundRenderer,
 			new flash::DefaultCharacterFactory(),
 			new CustomMovieLoader(m_externalMovies),
 			movieDebugger
 		);
-		if (!moviePlayer->create(m_movie, width, height))
+		if (!moviePlayer->create(m_movie, width, height, m_soundRenderer))
 		{
 			log::error << L"Unable to create movie player" << Endl;
 			return;
@@ -779,8 +738,8 @@ void FlashLayer::createMoviePlayer()
 		// Set ourself as external call hook.
 		moviePlayer->setExternalCall(this);
 
-		// Execute first frame.
-		while (!moviePlayer->progressFrame(1.0f / 60.0f));
+		// Execute first frame, do not provide sound renderer so we don't trigger alot of sounds initially.
+		while (!moviePlayer->progress(1.0f / 60.0f, 0));
 
 		// All success, replace instances.
 		m_moviePlayer = moviePlayer;

@@ -34,13 +34,11 @@ class AsStage;
 class As_flash_external_ExternalInterface;
 class IActionVM;
 class ICharacterFactory;
-class IDisplayRenderer;
 class IMovieLoader;
 class ISoundRenderer;
 class Movie;
 class MovieDebugger;
 class MovieRenderer;
-class SoundPlayer;
 class SpriteInstance;
 
 struct CallArgs;
@@ -58,8 +56,6 @@ class T_DLLCLASS MoviePlayer : public Object
 
 public:
 	MoviePlayer(
-		IDisplayRenderer* displayRenderer,
-		ISoundRenderer* soundRenderer,
 		const ICharacterFactory* characterFactory,
 		const IMovieLoader* movieLoader,
 		const MovieDebugger* movieDebugger
@@ -72,9 +68,10 @@ public:
 	 * \param movie Root movie.
 	 * \param width Output render width (in pixels).
 	 * \param height Output render height (in pixels).
+	 * \param soundRenderer Optional implementation of sound renderer provided to AS Sound.
 	 * \return True if created successfully.
 	 */
-	bool create(Movie* movie, int32_t width, int32_t height);
+	bool create(Movie* movie, int32_t width, int32_t height, ISoundRenderer* soundRenderer);
 
 	/*! \brief Destroy resources used by movie player. */
 	void destroy();
@@ -111,18 +108,18 @@ public:
 	 */
 	uint32_t getFrameCount() const;
 
-	/*! \brief Render frame using associated display renderer. */
-	void renderFrame();
+	/*! \brief Render frame. */
+	void render(MovieRenderer* movieRenderer) const;
 
 	/*! \brief Execute events in current frame. */
-	void executeFrame();
+	void execute(ISoundRenderer* soundRenderer);
 
 	/*! \brief Progress until next frame.
 	 *
 	 * \param deltaTime Time in seconds to progress movie.
 	 * \return True if new frame.
 	 */
-	bool progressFrame(float deltaTime);
+	bool progress(float deltaTime, ISoundRenderer* soundRenderer);
 
 	/*! \brief Post key event.
 	 *
@@ -263,13 +260,9 @@ private:
 		Ref< ActionFunction > function;
 	};
 
-	Ref< IDisplayRenderer > m_displayRenderer;
-	Ref< ISoundRenderer > m_soundRenderer;
 	Ref< const ICharacterFactory > m_characterFactory;
 	Ref< const IMovieLoader > m_movieLoader;
 	Ref< const MovieDebugger > m_movieDebugger;
-	Ref< MovieRenderer > m_movieRenderer;
-	Ref< SoundPlayer > m_soundPlayer;
 	Ref< IActionVM > m_actionVM;
 	Ref< AsKey > m_key;
 	Ref< AsMouse > m_mouse;
