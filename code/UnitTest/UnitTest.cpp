@@ -29,6 +29,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "UnitTest/CaseXmlPullParser.h"
 #include "UnitTest/CaseXmlDocument.h"
 #include "UnitTest/CaseZip.h"
+#include "UnitTest/CaseRef.h"
 #include "UnitTest/CaseRenderSw.h"
 #include "UnitTest/CaseSound.h"
 #include "UnitTest/CaseStreamCopy.h"
@@ -47,8 +48,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case atomic" << Endl;
 	//traktor::CaseAtomic().execute(context);
 
-	log::info << L"Case clone" << Endl;
-	traktor::CaseClone().execute(context);
+	//log::info << L"Case clone" << Endl;
+	//traktor::CaseClone().execute(context);
 
 	//log::info << L"Case cycle debugger" << Endl;
 	//traktor::CaseCycleDebugger().execute(context);
@@ -118,6 +119,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//log::info << L"Case semaphore" << Endl;
 	//traktor::CaseSemaphore().execute(context);
+
+	log::info << L"Case ref" << Endl;
+	traktor::CaseRef().execute(context);
 
 	log::info << L"Finished" << Endl;
 	log::info << IncreaseIndent;
