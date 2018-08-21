@@ -76,7 +76,7 @@ void BitmapData::applyFilter(const BitmapData* sourceBitmapData, const Rectangle
 void BitmapData::draw(SpriteInstance* source)
 {
 	SwDisplayRenderer displayRenderer(m_image, false);
-	MovieRenderer movieRenderer(&displayRenderer);
+	MovieRenderer movieRenderer(&displayRenderer, 0);
 
 	Aabb2 frameBounds = source->getLocalBounds();
 	Vector4 frameTransform(0.0f, 0.0f, 1.0f, 1.0f);
@@ -84,7 +84,7 @@ void BitmapData::draw(SpriteInstance* source)
 	float viewWidth = m_image->getWidth();
 	float viewHeight = m_image->getHeight();
 
-	movieRenderer.renderFrame(
+	movieRenderer.render(
 		source,
 		frameBounds,
 		frameTransform,

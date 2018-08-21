@@ -162,7 +162,7 @@ function PushButton:_initialize(parent, mc, caption, mode)
 
 	self:setCaption(caption)
 
-#if defined(_DEBUG)
+#if defined(_EDITOR)
 	self._background_mc:setMember("__renderWireOutline", true)
 	self._caption_tb:setMember("__renderWireOutline", true)
 #endif

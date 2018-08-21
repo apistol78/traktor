@@ -47,7 +47,7 @@ class T_DLLCLASS WireDisplayRenderer : public IDisplayRenderer
 	T_RTTI_CLASS;
 
 public:
-	WireDisplayRenderer(IDisplayRenderer* displayRenderer);
+	WireDisplayRenderer();
 
 	bool create(
 		resource::IResourceManager* resourceManager,
@@ -109,13 +109,9 @@ public:
 	virtual void end() T_OVERRIDE T_FINAL;
 
 private:
-	Ref< IDisplayRenderer > m_displayRenderer;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
-
 	Aabb2 m_frameBounds;
 	Vector4 m_frameTransform;
-	//int32_t m_wireEnableCount;
-
 	std::stack< bool > m_wireEnable;
 };
 

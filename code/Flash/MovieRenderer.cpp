@@ -12,6 +12,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Dictionary.h"
 #include "Flash/Button.h"
 #include "Flash/ButtonInstance.h"
+#include "Flash/DirtyRegionTracker.h"
 #include "Flash/Edit.h"
 #include "Flash/EditInstance.h"
 #include "Flash/Font.h"
@@ -42,15 +43,13 @@ Timer s_timer;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.MovieRenderer", MovieRenderer, Object)
 
-bool MovieRenderer::ms_forceRedraw = false;
-
-MovieRenderer::MovieRenderer(IDisplayRenderer* displayRenderer)
+MovieRenderer::MovieRenderer(IDisplayRenderer* displayRenderer, DirtyRegionTracker* dirtyRegionTracker)
 :	m_displayRenderer(displayRenderer)
-,	m_wantDirtyRegion(displayRenderer->wantDirtyRegion())
+,	m_dirtyRegionTracker(dirtyRegionTracker)
 {
 }
 
-void MovieRenderer::renderFrame(
+void MovieRenderer::render(
 	SpriteInstance* movieInstance,
 	const Aabb2& frameBounds,
 	const Vector4& frameTransform,
@@ -60,18 +59,9 @@ void MovieRenderer::renderFrame(
 {
 	const Color4f& backgroundColor = movieInstance->getDisplayList().getBackgroundColor();
 
-	Aabb2 dirtyRegion;
-	if (m_wantDirtyRegion && !ms_forceRedraw)
-	{
-		calculateDirtyRegion(
-			movieInstance,
-			Matrix33::identity(),
-			true,
-			dirtyRegion
-		);
-	}
-	else
-		dirtyRegion = frameBounds;
+	Aabb2 dirtyRegion = frameBounds;
+	if (m_dirtyRegionTracker)
+		m_dirtyRegionTracker->update(movieInstance, dirtyRegion);
 
 	m_displayRenderer->begin(
 		*movieInstance->getDictionary(),
@@ -91,7 +81,6 @@ void MovieRenderer::renderFrame(
 	);
 
 	m_displayRenderer->end();
-	ms_forceRedraw = false;
 }
 
 void MovieRenderer::renderSprite(
@@ -779,80 +768,6 @@ void MovieRenderer::renderCharacter(
 
 		return;
 	}
-}
-
-void MovieRenderer::calculateDirtyRegion(CharacterInstance* characterInstance, const Matrix33& transform, bool visible, Aabb2& outDirtyRegion)
-{
-	ActionContext* context = characterInstance->getContext();
-	T_ASSERT (context);
-
-	bool instanceVisible = characterInstance->isVisible() && visible;
-	if (&type_of(characterInstance) == &type_of< SpriteInstance >())
-	{
-		SpriteInstance* spriteInstance = static_cast< SpriteInstance* >(characterInstance);
-
-		const Matrix33 T = transform * spriteInstance->getTransform();
-		const DisplayList& displayList = spriteInstance->getDisplayList();
-		const DisplayList::layer_map_t& layers = displayList.getLayers();
-
-		for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-		{
-			const DisplayList::Layer& layer = i->second;
-			if (layer.instance)
-				calculateDirtyRegion(
-					layer.instance,
-					T,
-					instanceVisible,
-					outDirtyRegion
-				);
-		}
-	}
-	else if (characterInstance == context->getFocus())
-	{
-		Aabb2 bounds = transform * characterInstance->getBounds();
-		outDirtyRegion.contain(bounds);
-	}
-	else
-	{
-		State* s = static_cast< State* >(characterInstance->getCacheObject());
-		if (!s)
-		{
-			s = new State();
-			characterInstance->setCacheObject(s);
-		}
-
-		// Compare state and add to dirty region if mismatch.
-		Aabb2 bounds = transform * characterInstance->getBounds();
-		if (s->visible != instanceVisible)
-		{
-			if (s->visible)
-			{
-				outDirtyRegion.contain(s->bounds);
-				s->visible = false;
-			}
-			else
-			{
-				outDirtyRegion.contain(bounds);
-				s->visible = true;
-			}
-		}
-		else if (instanceVisible && s->bounds != bounds)
-		{
-			outDirtyRegion.contain(s->bounds);
-			outDirtyRegion.contain(bounds);
-			s->bounds = bounds;
-		}
-	}
-}
-
-MovieRenderer::State::State()
-:	visible(false)
-{
-}
-
-MovieRenderer::State::~State()
-{
-	ms_forceRedraw |= true; //visible;
 }
 
 	}

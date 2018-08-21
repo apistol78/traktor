@@ -30,6 +30,9 @@ class IEditor;
 class AccDisplayRenderer;
 class Movie;
 class MoviePlayer;
+class MovieRenderer;
+class WireDisplayRenderer;
+
 	}
 
 	namespace render
@@ -72,6 +75,9 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;
 	Ref< flash::AccDisplayRenderer > m_displayRenderer;
+	Ref< flash::WireDisplayRenderer > m_displayRendererWire;
+	Ref< flash::MovieRenderer > m_movieRenderer;
+	Ref< flash::MovieRenderer > m_movieRendererWire;
 	Ref< flash::MoviePlayer > m_moviePlayer;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	Ref< flash::Movie > m_movie;

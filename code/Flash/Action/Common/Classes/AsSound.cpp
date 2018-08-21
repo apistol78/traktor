@@ -6,7 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Log/Log.h"
 #include "Flash/Dictionary.h"
-#include "Flash/SoundPlayer.h"
+#include "Flash/ISoundRenderer.h"
 #include "Flash/SpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
@@ -50,9 +50,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.SoundRelay", SoundRelay, ActionObjectRela
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSound", AsSound, ActionClass)
 
-AsSound::AsSound(ActionContext* context, SoundPlayer* soundPlayer)
+AsSound::AsSound(ActionContext* context, ISoundRenderer* soundRenderer)
 :	ActionClass(context, "Sound")
-,	m_soundPlayer(soundPlayer)
+,	m_soundRenderer(soundRenderer)
 {
 	Ref< ActionObject > prototype = new ActionObject(context);
 
@@ -188,7 +188,8 @@ void AsSound::Sound_start(ActionObject* self) const
 	if (!fsr)
 		return;
 
-	m_soundPlayer->play(fsr->getSound());
+	if (m_soundRenderer)
+		m_soundRenderer->play(fsr->getSound());
 }
 
 void AsSound::Sound_stop(ActionObject* self) const

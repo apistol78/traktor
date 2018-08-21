@@ -42,8 +42,7 @@ Vector4 transformIntoView(const Aabb2& frameBounds, const Vector4& frameTransfor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.WireDisplayRenderer", WireDisplayRenderer, IDisplayRenderer)
 
-WireDisplayRenderer::WireDisplayRenderer(IDisplayRenderer* displayRenderer)
-:	m_displayRenderer(displayRenderer)
+WireDisplayRenderer::WireDisplayRenderer()
 {
 }
 
@@ -54,7 +53,11 @@ bool WireDisplayRenderer::create(
 )
 {
 	m_primitiveRenderer = new render::PrimitiveRenderer();
-	m_primitiveRenderer->create(resourceManager, renderSystem, frameCount);
+	if (!m_primitiveRenderer->create(resourceManager, renderSystem, frameCount))
+	{
+		safeDestroy(m_primitiveRenderer);
+		return false;
+	}
 	return true;
 }
 
@@ -79,7 +82,7 @@ void WireDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame
 
 bool WireDisplayRenderer::wantDirtyRegion() const
 {
-	return m_displayRenderer->wantDirtyRegion();
+	return false;
 }
 
 void WireDisplayRenderer::begin(
@@ -92,8 +95,6 @@ void WireDisplayRenderer::begin(
 	const Aabb2& dirtyRegion
 )
 {
-	m_displayRenderer->begin(dictionary, backgroundColor, frameBounds, frameTransform, viewWidth, viewHeight, dirtyRegion);
-
 	m_frameBounds = frameBounds;
 	m_frameTransform = frameTransform;
 
@@ -102,8 +103,6 @@ void WireDisplayRenderer::begin(
 
 void WireDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix33& transform)
 {
-	m_displayRenderer->beginSprite(sprite, transform);
-
 	bool parentWireEnable = m_wireEnable.top();
 
 	ActionValue wireOutline;	
@@ -157,14 +156,11 @@ void WireDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix
 
 void WireDisplayRenderer::endSprite(const SpriteInstance& sprite, const Matrix33& transform)
 {
-	m_displayRenderer->endSprite(sprite, transform);
 	m_wireEnable.pop();
 }
 
 void WireDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& transform)
 {
-	m_displayRenderer->beginEdit(edit, transform);
-
 	bool parentWireEnable = m_wireEnable.top();
 
 	ActionValue wireOutline;	
@@ -252,24 +248,19 @@ void WireDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& tr
 
 void WireDisplayRenderer::endEdit(const EditInstance& edit, const Matrix33& transform)
 {
-	m_displayRenderer->endEdit(edit, transform);
 	m_wireEnable.pop();
 }
 
 void WireDisplayRenderer::beginMask(bool increment)
 {
-	m_displayRenderer->beginMask(increment);
 }
 
 void WireDisplayRenderer::endMask()
 {
-	m_displayRenderer->endMask();
 }
 
 void WireDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33& transform, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode)
 {
-	m_displayRenderer->renderShape(dictionary, transform, shape, cxform, blendMode);
-
 	if (m_wireEnable.top())
 	{
 		const Aabb2& bounds = shape.getShapeBounds();
@@ -297,7 +288,6 @@ void WireDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix
 
 void WireDisplayRenderer::renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const MorphShape& shape, const ColorTransform& cxform)
 {
-	m_displayRenderer->renderMorphShape(dictionary, transform, shape, cxform);
 }
 
 void WireDisplayRenderer::renderGlyph(
@@ -313,22 +303,18 @@ void WireDisplayRenderer::renderGlyph(
 	const Color4f& filterColor
 )
 {
-	m_displayRenderer->renderGlyph(dictionary, transform, font, glyph, fontHeight, character, color, cxform, filter, filterColor);
 }
 
 void WireDisplayRenderer::renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform)
 {
-	m_displayRenderer->renderQuad(transform, bounds, cxform);
 }
 
 void WireDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& canvas, const ColorTransform& cxform, uint8_t blendMode)
 {
-	m_displayRenderer->renderCanvas(transform, canvas, cxform, blendMode);
 }
 
 void WireDisplayRenderer::end()
 {
-	m_displayRenderer->end();
 }
 
 	}

@@ -13,11 +13,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Dictionary.h"
 #include "Flash/Edit.h"
 #include "Flash/EditInstance.h"
+#include "Flash/ISoundRenderer.h"
 #include "Flash/Frame.h"
 #include "Flash/Shape.h"
 #include "Flash/ShapeInstance.h"
 #include "Flash/Sound.h"
-#include "Flash/SoundPlayer.h"
 #include "Flash/Sprite.h"
 #include "Flash/SpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
@@ -182,7 +182,7 @@ void SpriteInstance::updateDisplayList()
 	preDispatchEvents();
 }
 
-void SpriteInstance::updateDisplayListAndSounds(SoundPlayer* soundPlayer)
+void SpriteInstance::updateDisplayListAndSounds(ISoundRenderer* soundRenderer)
 {
 	// Update sprite instance's display list.
 	if (m_currentFrame < m_lastUpdateFrame)
@@ -220,7 +220,7 @@ void SpriteInstance::updateDisplayListAndSounds(SoundPlayer* soundPlayer)
 			{
 				const Sound* sound = getDictionary()->getSound(*i);
 				if (sound)
-					soundPlayer->play(sound);
+					soundRenderer->play(sound);
 			}
 		}
 	}
@@ -228,7 +228,7 @@ void SpriteInstance::updateDisplayListAndSounds(SoundPlayer* soundPlayer)
 
 	m_displayList.forEachVisibleObjectDirect([&] (CharacterInstance* instance) {
 		if (&type_of(instance) == &type_of< SpriteInstance >())
-			static_cast< SpriteInstance* >(instance)->updateDisplayListAndSounds(soundPlayer);
+			static_cast< SpriteInstance* >(instance)->updateDisplayListAndSounds(soundRenderer);
 	});
 
 	preDispatchEvents();

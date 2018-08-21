@@ -14,6 +14,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Database/Database.h"
@@ -158,6 +159,9 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 
 	// Create preprocessor.
 	m_preprocessor = new Preprocessor();
+
+	if (settings->getProperty< bool >(L"Pipeline.TargetEditor", false))
+		m_preprocessor->setDefinition(L"_EDITOR");
 	
 	std::set< std::wstring > definitions = settings->getProperty< std::set< std::wstring > >(L"ScriptPipeline.PreprocessorDefinitions");
 	for (std::set< std::wstring >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)

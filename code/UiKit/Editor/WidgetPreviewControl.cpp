@@ -9,10 +9,12 @@
 #include "Flash/Frame.h"
 #include "Flash/Movie.h"
 #include "Flash/MoviePlayer.h"
+#include "Flash/MovieRenderer.h"
 #include "Flash/Sprite.h"
 #include "Flash/SpriteInstance.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
 #include "Flash/Action/Common/Classes/AsKey.h"
+#include "Flash/Debug/WireDisplayRenderer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Resource/ResourceManager.h"
@@ -104,7 +106,7 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 
 	// Create flash display renderer.
 	m_displayRenderer = new flash::AccDisplayRenderer();
-	m_displayRenderer->create(
+	if (!m_displayRenderer->create(
 		m_resourceManager,
 		m_renderSystem,
 		1,
@@ -113,23 +115,37 @@ bool WidgetPreviewControl::create(ui::Widget* parent)
 		false,
 		false,
 		0.0f
-	);
+	))
+		return false;
+
+	m_displayRendererWire = new flash::WireDisplayRenderer();
+	if (!m_displayRendererWire->create(
+		m_resourceManager,
+		m_renderSystem,
+		1
+	))
+	{
+		log::error << L"Unable to create wire renderer." << Endl;
+		return false;
+	}
+
+	// Create separate movie renderer for each display renderer.
+	m_movieRenderer = new flash::MovieRenderer(m_displayRenderer, nullptr);
+	m_movieRendererWire = new flash::MovieRenderer(m_displayRendererWire, nullptr);
 
 	// Create flash movie player.
 	int32_t width = m_renderView->getWidth();
 	int32_t height = m_renderView->getHeight();
 
 	m_moviePlayer = new flash::MoviePlayer(
-		m_displayRenderer,
-		0,
 		new flash::DefaultCharacterFactory(),
-		0,
-		0
+		nullptr,
+		nullptr
 	);
-	if (!m_moviePlayer->create(m_movie, width, height))
+	if (!m_moviePlayer->create(m_movie, width, height, nullptr))
 		return false;
 
-	while (!m_moviePlayer->progressFrame(1.0f / 60.0f));
+	while (!m_moviePlayer->progress(1.0f / 60.0f, nullptr));
 
 	// Add widget event handler.
 	addEventHandler< ui::SizeEvent >(this, &WidgetPreviewControl::eventSize);
@@ -225,7 +241,12 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 
 		// Build render context.
 		m_displayRenderer->build(uint32_t(0));
-		m_moviePlayer->renderFrame();
+		m_displayRendererWire->begin(uint32_t(0));
+
+		m_moviePlayer->render(m_movieRenderer);
+		m_moviePlayer->render(m_movieRendererWire);
+
+		m_displayRendererWire->end(uint32_t(0));
 
 		// Flush render context.
 		const Color4f clearColor(0.8f, 0.8f, 0.8f, 0.0);
@@ -237,6 +258,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 		);
 
 		m_displayRenderer->render(m_renderView, 0, render::EtCyclop, Vector2(0.0f, 0.0f), 1.0f);
+		m_displayRendererWire->render(m_renderView, uint32_t(0));
 
 		m_renderView->end();
 		m_renderView->present();
@@ -254,7 +276,7 @@ void WidgetPreviewControl::eventIdle(ui::IdleEvent* event)
 	{
 		float deltaTime = float(m_timer.getDeltaTime());
 
-		if (m_moviePlayer->progressFrame(deltaTime))
+		if (m_moviePlayer->progress(deltaTime, nullptr))
 			update();
 
 		event->requestMore();

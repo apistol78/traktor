@@ -80,6 +80,7 @@ class IGraphicsSystem;
 class AccDisplayRenderer;
 class Movie;
 class MoviePlayer;
+class MovieRenderer;
 class SoundRenderer;
 class SwDisplayRenderer;
 
@@ -130,6 +131,7 @@ private:
 	Ref< SwDisplayRenderer > m_displayRenderer;
 #endif
 	Ref< SoundRenderer > m_soundRenderer;
+	Ref< MovieRenderer > m_movieRenderer;
 	Ref< MoviePlayer > m_moviePlayer;
 	Ref< Movie > m_movie;
 	Timer m_timer;

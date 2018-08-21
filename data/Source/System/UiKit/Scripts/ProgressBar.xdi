@@ -79,7 +79,7 @@ function ProgressBar:_initialize(parent, mc, reverse)
 	self._mask_mc = mc:getMember("mask_mc")
 	self._reverse = reverse or false
 
-#if defined(_DEBUG)
+#if defined(_EDITOR)
 	self._back_mc:setMember("__renderWireOutline", true)
 #endif
 
