@@ -6,8 +6,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include <algorithm>
 #include "Core/Object.h"
-//#include "Core/Heap/Ref.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
+#include "UnitTest/CaseRef.h"
 
 namespace traktor
 {
@@ -20,15 +21,23 @@ class C : public Object {};
 
 struct DummyPred { bool operator () (A* a) const { return false; } };
 
-void referenceTest()
+#pragma optimize( "", off )
+
+void CaseRef::run()
 {
+
 	RefArray< A > ra;
-//	Ref< A > a;
-//	A* a;
-	
-//	*ra.begin() = a;
-	
-	std::remove_if(ra.begin(), ra.end(), DummyPred());
+	for (int i = 0; i < 10; ++i)
+		ra.push_back(new A());
+	CASE_ASSERT_EQUAL(ra.size(), 10);
+
+#if defined(T_CXX11)
+	int c = 0;
+	for (auto r : ra)
+		++c;
+	CASE_ASSERT_EQUAL(c, 10);
+#endif
+
 }
 
 //// OK
