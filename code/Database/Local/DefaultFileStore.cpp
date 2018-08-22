@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Io/FileSystem.h"
 #include "Database/ConnectionString.h"
+#include "Database/Types.h"
 #include "Database/Local/DefaultFileStore.h"
 
 namespace traktor
@@ -30,18 +31,16 @@ void DefaultFileStore::destroy()
 {
 }
 
-bool DefaultFileStore::locked(const Path& filePath)
+uint32_t DefaultFileStore::flags(const Path& filePath)
 {
+	uint32_t flags = IfNormal;
 	Ref< File > file = FileSystem::getInstance().get(filePath);
 	if (file)
-		return file->isReadOnly();
-	else
-		return false;
-}
-
-bool DefaultFileStore::pending(const Path& filePath)
-{
-	return false;
+	{
+		if (file->isReadOnly())
+			flags |= IfReadOnly;
+	}
+	return flags;
 }
 
 bool DefaultFileStore::add(const Path& filePath)

@@ -33,21 +33,21 @@ class T_DLLCLASS PerforceFileStore : public IFileStore
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const ConnectionString& connectionString);
+	virtual bool create(const ConnectionString& connectionString) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual bool pending(const Path& filePath);
+	virtual uint32_t flags(const Path& filePath) T_OVERRIDE T_FINAL;
 
-	virtual bool add(const Path& filePath);
+	virtual bool add(const Path& filePath) T_OVERRIDE T_FINAL;
 
-	virtual bool remove(const Path& filePath);
+	virtual bool remove(const Path& filePath) T_OVERRIDE T_FINAL;
 
-	virtual bool edit(const Path& filePath);
+	virtual bool edit(const Path& filePath) T_OVERRIDE T_FINAL;
 
-	virtual bool rollback(const Path& filePath);
+	virtual bool rollback(const Path& filePath) T_OVERRIDE T_FINAL;
 
-	virtual bool clean(const Path& filePath);
+	virtual bool clean(const Path& filePath) T_OVERRIDE T_FINAL;
 
 private:
 	Ref< PerforceClient > m_p4client;

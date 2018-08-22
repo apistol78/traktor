@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Io/FileSystem.h"
+#include "Database/Types.h"
 #include "Database/Local/NoFileStore.h"
 
 namespace traktor
@@ -23,14 +24,9 @@ void NoFileStore::destroy()
 {
 }
 
-bool NoFileStore::locked(const Path& filePath)
+uint32_t NoFileStore::flags(const Path& filePath)
 {
-	return false;
-}
-
-bool NoFileStore::pending(const Path& filePath)
-{
-	return false;
+	return IfNormal;
 }
 
 bool NoFileStore::add(const Path& filePath)

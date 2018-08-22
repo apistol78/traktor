@@ -37,9 +37,7 @@ public:
 
 	virtual void destroy() = 0;
 
-	virtual bool locked(const Path& filePath) = 0;
-
-	virtual bool pending(const Path& filePath) = 0;
+	virtual uint32_t flags(const Path& filePath) = 0;
 
 	virtual bool add(const Path& filePath) = 0;
 

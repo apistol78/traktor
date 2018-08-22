@@ -16038,7 +16038,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Database.Local.P4</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Database/Local/Perforce</sourcePath>
 			<configurations>
@@ -16062,6 +16062,7 @@
 						<item>librpc.lib</item>
 						<item>libsupp.lib</item>
 						<item>ws2_32.lib</item>
+						<item>libp4sslstub.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -16102,6 +16103,7 @@
 						<item>librpc.lib</item>
 						<item>libsupp.lib</item>
 						<item>ws2_32.lib</item>
+						<item>libp4sslstub.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -16142,6 +16144,7 @@
 						<item>librpc.lib</item>
 						<item>libsupp.lib</item>
 						<item>ws2_32.lib</item>
+						<item>libp4sslstub.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -16178,6 +16181,7 @@
 						<item>librpc.lib</item>
 						<item>libsupp.lib</item>
 						<item>ws2_32.lib</item>
+						<item>libp4sslstub.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
