@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/String.h"
 #include "Core/System/OS.h"
 #include "Database/ConnectionString.h"
+#include "Database/Types.h"
 #include "Database/Local/Perforce/PerforceChangeList.h"
 #include "Database/Local/Perforce/PerforceClient.h"
 #include "Database/Local/Perforce/PerforceFileStore.h"
@@ -49,11 +50,11 @@ bool PerforceFileStore::create(const ConnectionString& connectionString)
 	RefArray< PerforceChangeList > changeLists;
 	if (m_p4client->getChangeLists(changeLists))
 	{
-		for (RefArray< PerforceChangeList >::iterator i = changeLists.begin(); i != changeLists.end(); ++i)
+		for (auto changeList : changeLists)
 		{
-			if (compareIgnoreCase< std::wstring >((*i)->getDescription(), changeListDescription) == 0)
+			if (compareIgnoreCase< std::wstring >(changeList->getDescription(), changeListDescription) == 0)
 			{
-				m_p4changeList = *i;
+				m_p4changeList = changeList;
 				break;
 			}
 		}
@@ -75,11 +76,18 @@ void PerforceFileStore::destroy()
 	m_p4client = 0;
 }
 
-bool PerforceFileStore::pending(const Path& filePath)
+uint32_t PerforceFileStore::flags(const Path& filePath)
 {
+	uint32_t flags = IfNormal;
+
 	PerforceAction action;
 	m_p4client->isOpened(filePath.getPathName(), action);
-	return action != AtNotOpened;
+	if (action == AtNotOpened)
+		flags |= IfReadOnly;
+	else
+		flags |= IfModified;
+
+	return flags;
 }
 
 bool PerforceFileStore::add(const Path& filePath)

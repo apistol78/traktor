@@ -46,7 +46,7 @@ public:
 #if defined(_DEBUG)
 	virtual void OutputStat(StrDict* varList)
 	{
-		for (int i = 0; ; ++i)
+		for (int32_t i = 0; ; ++i)
 		{
 			StrRef var, val;
 			if (!varList->GetVar(i, var, val))
@@ -145,7 +145,7 @@ public:
 	{
 		ClientUserAdapter::OutputStat(varList);
 
-		for (int i = 0; ; ++i)
+		for (int32_t i = 0; ; ++i)
 		{
 			char buf[256];
 
@@ -340,7 +340,7 @@ bool PerforceClient::getChangeLists(RefArray< PerforceChangeList >& outChangeLis
 			return false;
 	}
 
-	for (RefArray< PerforceChangeList >::iterator i = outChangeLists.begin(); i != outChangeLists.end(); ++i)
+	for (auto changeList : outChangeLists)
 	{
 		RefArray< PerforceChangeListFile > changeListFiles;
 
@@ -348,7 +348,7 @@ bool PerforceClient::getChangeLists(RefArray< PerforceChangeList >& outChangeLis
 			ChangeListDepotFilesAdapter depotFilesAdapter(m_lastError, changeListFiles);
 
 			char change[256];
-			sprintf_s(change, "%d", (*i)->getChange());
+			sprintf_s(change, "%d", changeList->getChange());
 
 			char* const argv[] = { "-s", change };
 
@@ -359,7 +359,7 @@ bool PerforceClient::getChangeLists(RefArray< PerforceChangeList >& outChangeLis
 				return false;
 		}
 
-		for (RefArray< PerforceChangeListFile >::iterator j = changeListFiles.begin(); j != changeListFiles.end(); ++j)
+		for (auto changeListFile : changeListFiles)
 		{
 			std::wstring localPath;
 
@@ -367,7 +367,7 @@ bool PerforceClient::getChangeLists(RefArray< PerforceChangeList >& outChangeLis
 				DepotToWorkspaceFileAdapter changeListFileAdapter(m_lastError, localPath);
 
 				char depotFile[256];
-				strcpy_s(depotFile, wstombs((*j)->getDepotPath()).c_str());
+				strcpy_s(depotFile, wstombs(changeListFile->getDepotPath()).c_str());
 
 				char* const argv[] = { depotFile };
 				m_p4client->SetArgv(sizeof_array(argv), argv);
@@ -377,10 +377,10 @@ bool PerforceClient::getChangeLists(RefArray< PerforceChangeList >& outChangeLis
 					return false;
 			}
 
-			(*j)->setLocalPath(localPath);
+			changeListFile->setLocalPath(localPath);
 		}
 
-		(*i)->setFiles(changeListFiles);
+		changeList->setFiles(changeListFiles);
 	}
 
 	return true;
@@ -602,7 +602,7 @@ bool PerforceClient::establishConnection()
 		Ref< xml::Document > doc = new xml::Document();
 		if (doc->loadFromFile(applicationSettingsPath))
 		{
-			Ref< xml::Element > lastConnection = doc->getSingle(L"/PropertyList/PropertyList[@varName=Connection]/String[@varName=LastConnection]");
+			Ref< xml::Element > lastConnection = doc->getSingle(L"/PropertyList/PropertyList[@varName=Connection]/StringList[@varName=OpenWorkspaces]/String[0]");
 			if (lastConnection)
 			{
 				std::wstring v = lastConnection->getValue();
