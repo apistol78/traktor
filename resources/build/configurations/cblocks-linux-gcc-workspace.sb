@@ -2,7 +2,7 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="<?-- output:print(solution:getName()) --?>"><?--
 
-		sorted = {}
+		local sorted = {}
 
 		-- Collect enabled projects.
 		local projects = solution:getProjects()

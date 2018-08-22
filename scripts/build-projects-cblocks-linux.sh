@@ -4,7 +4,7 @@
 . "`dirname \"$BASH_SOURCE\"`/config.sh"
 
 # Ensure correct path and build solution files.
-$TRAKTOR_HOME/bin/linux/SolutionBuilder \
+$SOLUTIONBUILDER \
 	-f=cblocks \
 	-w=$TRAKTOR_HOME/resources/build/configurations/cblocks-linux-gcc-workspace.sb \
 	-p=$TRAKTOR_HOME/resources/build/configurations/cblocks-linux-gcc-project.sb \

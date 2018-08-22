@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_sound_IGrainFacade_H
 #define traktor_sound_IGrainFacade_H
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 
