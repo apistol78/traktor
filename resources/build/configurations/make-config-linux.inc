@@ -37,4 +37,4 @@ LINK_FLAGS_RELEASE_EXECUTABLE=$(LINK_FLAGS_COMMON)
 LINK_FLAG_OUTPUT=-o 
 LINK_LIBS=
 
-BINARY_INCLUDE=$(TRAKTOR_HOME)/bin/linux/BinaryInclude
+BINARY_INCLUDE=$(TRAKTOR_HOME)/bin/linux/releasestatic/Traktor.Run.App $(TRAKTOR_HOME)/scripts/binaryinclude/BinaryInclude.run

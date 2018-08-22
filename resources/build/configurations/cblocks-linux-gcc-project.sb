@@ -91,7 +91,7 @@
 
 							local rel = fileSystem:getRelativePath(Path(ip), projectPath)
 							if rel ~= nil then
-								ip = rel:getPathName()
+								ip = rel.pathName
 							end
 
 --?>
@@ -110,7 +110,7 @@
 --?>
 				<Linker><?--
 
-function insertLibrary(outLibraries, library)
+local function insertLibrary(outLibraries, library)
 	for i, v in ipairs(outLibraries) do
 		if v == library then
 			table.remove(outLibraries, i)
@@ -120,7 +120,7 @@ function insertLibrary(outLibraries, library)
 	table.insert(outLibraries, library)
 end
 
-function collectLinkProducts(solution, project, configuration, outLibraries, outLibrariesExternal, outLibraryPaths)
+local function collectLinkProducts(solution, project, configuration, outLibraries, outLibrariesExternal, outLibraryPaths)
 
 	local libraries = configuration:getLibraries()
 	for i = 0, libraries:size() - 1 do
@@ -133,7 +133,7 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 			Path(libraryPaths:get(i)),
 			projectPath
 		)
-		insertLibrary(outLibraryPaths, libraryRelPath:getPathName())
+		insertLibrary(outLibraryPaths, libraryRelPath.pathName)
 	end
 
 	local dependencies = project:getDependencies()
@@ -170,7 +170,7 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 					projectPath
 				)
 
-				insertLibrary(outLibraryPaths, externalRelPath:getPathName())
+				insertLibrary(outLibraryPaths, externalRelPath.pathName)
 				insertLibrary(outLibraries, externalProject:getName())
 
 				collectLinkProducts(
@@ -242,7 +242,7 @@ end
 --?>
 		</Build><?--
 
-		function addPreBuildItems(project, item)
+		local function addPreBuildItems(project, item)
 			if isa(item, Filter) then
 				local childItems = item:getItems()
 				for i = 0, childItems:size() - 1 do
@@ -252,44 +252,43 @@ end
 				local files = item:getSystemFiles(project:getSourcePath())
 				for i = 0, files:size() - 1 do
 
-					local filePath = Path(files:get(i):getPathNameNoVolume()) -- fileSystem:getAbsolutePath(files:get(i))
+					local filePath = Path(files:get(i).pathNameNoVolume) -- fileSystem:getAbsolutePath(files:get(i))
 
-					local ext = filePath:getExtension()
+					local ext = filePath.extension
 					if ext == "png" or ext == "image" or ext == "xdi" then
 
 						local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
 						if filePathRel ~= nil then
 --?>
-			<Add before="BinaryInclude <?-- output:print(filePathRel:getPathName() .. " ./Resources/" .. filePathRel:getFileNameNoExtension() .. ".h c_Resource" .. filePathRel:getFileNameNoExtension()) --?>" /><?--
+			<Add before="BinaryInclude <?-- output:print(filePathRel.pathName .. " ./Resources/" .. filePathRel:getFileNameNoExtension() .. ".h c_Resource" .. filePathRel:getFileNameNoExtension()) --?>" /><?--
 						else
-							print("Unable to determine relative path; " .. filePath:getPathName() .. " vs " .. projectPath:getPathName())
+							print("Unable to determine relative path; " .. filePath.pathName .. " vs " .. projectPath.pathName)
 						end
 					end
 				end
 			end
 		end
 
-		function addItem(project, item)
-			if isa(item, Filter) then
+		local function addItem(project, item)
+			if item.__name == "[Filter]" then
 				local childItems = item:getItems()
 				for i = 0, childItems:size() - 1 do
 					addItem(project, childItems:get(i))
 				end
-			elseif isa(item, File) then
+			elseif item.__name == "[File]" then
 				local files = item:getSystemFiles(project:getSourcePath())
 				for i = 0, files:size() - 1 do
+					local filePath = Path(files:get(i).pathNameNoVolume) -- fileSystem:getAbsolutePath(files:get(i))
 
-					local filePath = Path(files:get(i):getPathNameNoVolume()) -- fileSystem:getAbsolutePath(files:get(i))
-
-					local ext = filePath:getExtension()
+					local ext = filePath.extension
 					if ext == "c" or ext == "cc" or ext == "cpp" or ext == "h" or ext == "hh" or ext == "hpp" or ext == "inl" or ext == "o" then
 
 						local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
 						if filePathRel ~= nil then
 --?>
-		<Unit filename="<?-- output:print(filePathRel:getPathName()) --?>" /><?--
+		<Unit filename="<?-- output:print(filePathRel.pathName) --?>" /><?--
 						else
-							print("Unable to determine relative path; " .. filePath:getPathName() .. " vs " .. projectPath:getPathName())
+							print("Unable to determine relative path; " .. filePath.pathName .. " vs " .. projectPath.pathName)
 						end
 					end
 				end

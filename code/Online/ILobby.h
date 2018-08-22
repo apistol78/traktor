@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_online_ILobby_H
 #define traktor_online_ILobby_H
 
+#include <string>
 #include "Online/UserArrayResult.h"
 
 // import/export mechanism.

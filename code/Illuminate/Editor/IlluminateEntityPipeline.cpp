@@ -235,14 +235,14 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				if (!file)
 				{
 					log::error << L"IlluminateEntityPipeline failed; unable to open source image \"" << probeAsset->getFileName().getOriginal() << L"\"" << Endl;
-					return false;
+					return 0;
 				}
 
 				Ref< drawing::Image > image = drawing::Image::load(file, probeAsset->getFileName().getExtension());
 				if (!image)
 				{
 					log::error << L"IlluminateEntityPipeline failed; unable to load source image \"" << probeAsset->getFileName().getOriginal() << L"\"" << Endl;
-					return false;
+					return 0;
 				}
 
 				file->close();
