@@ -15,15 +15,21 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ToolBarButtonClickEvent", ToolBarButtonClickEvent, ButtonClickEvent)
 
-ToolBarButtonClickEvent::ToolBarButtonClickEvent(EventSubject* sender, ToolBarItem* item, const Command& command)
+ToolBarButtonClickEvent::ToolBarButtonClickEvent(EventSubject* sender, ToolBarItem* item, const Command& command, MenuItem* menuItem)
 :	ButtonClickEvent(sender, command)
 ,	m_item(item)
+,	m_menuItem(menuItem)
 {
 }
 
 ToolBarItem* ToolBarButtonClickEvent::getItem() const
 {
 	return m_item;
+}
+
+MenuItem* ToolBarButtonClickEvent::getMenuItem() const
+{
+	return m_menuItem;
 }
 
 		}

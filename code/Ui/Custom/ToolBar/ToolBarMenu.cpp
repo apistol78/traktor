@@ -126,7 +126,7 @@ void ToolBarMenu::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent)
 			Ref< MenuItem > item = m_menu->show(toolBar, m_menuPosition);
 			if (item)
 			{
-				ToolBarButtonClickEvent clickEvent(toolBar, this, item->getCommand());
+				ToolBarButtonClickEvent clickEvent(toolBar, this, item->getCommand(), item);
 				toolBar->raiseEvent(&clickEvent);
 			}
 

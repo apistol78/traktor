@@ -21,6 +21,9 @@ namespace traktor
 {
 	namespace ui
 	{
+
+class MenuItem;
+
 		namespace custom
 		{
 
@@ -34,12 +37,15 @@ class T_DLLCLASS ToolBarButtonClickEvent : public ButtonClickEvent
 	T_RTTI_CLASS;
 
 public:
-	ToolBarButtonClickEvent(EventSubject* sender, ToolBarItem* item, const Command& command);
+	ToolBarButtonClickEvent(EventSubject* sender, ToolBarItem* item, const Command& command, MenuItem* menuItem = 0);
 
 	ToolBarItem* getItem() const;
 
+	MenuItem* getMenuItem() const;
+
 private:
 	Ref< ToolBarItem > m_item;
+	Ref< MenuItem > m_menuItem;
 };
 
 		}
