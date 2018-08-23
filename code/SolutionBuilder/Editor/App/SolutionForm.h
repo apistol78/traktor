@@ -14,6 +14,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Ui/MenuBar.h>
 #include <Ui/MenuItem.h>
 #include <Ui/PopupMenu.h>
+#include <Ui/Custom/ToolBar/ToolBar.h>
+#include <Ui/Custom/ToolBar/ToolBarButtonClickEvent.h>
 #include <Ui/Custom/TreeView/TreeView.h>
 #include <Ui/Custom/TreeView/TreeViewContentChangeEvent.h>
 #include <Ui/Custom/TreeView/TreeViewEditEvent.h>
@@ -51,7 +53,7 @@ public:
 
 private:
 	Ref< ui::ShortcutTable > m_shortcutTable;
-	Ref< ui::MenuBar > m_menuBar;
+	Ref< ui::custom::ToolBar > m_menuBar;
 	Ref< ui::MenuItem > m_menuItemMRU;
 	Ref< ui::custom::TreeView > m_treeSolution;
 	Ref< ui::PopupMenu > m_menuSolution;
@@ -111,7 +113,7 @@ private:
 
 	void eventShortcut(ui::ShortcutEvent*);
 
-	void eventMenuClick(ui::MenuClickEvent*);
+	void eventMenuClick(ui::custom::ToolBarButtonClickEvent*);
 
 	void eventTreeButtonDown(ui::MouseButtonDownEvent*);
 

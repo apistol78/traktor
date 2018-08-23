@@ -17,7 +17,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Ui/FileDialog.h>
 #include <Ui/StyleBitmap.h>
 #include <Ui/StyleSheet.h>
+#include <Ui/TableLayout.h>
 #include <Ui/Custom/Splitter.h>
+#include <Ui/Custom/ToolBar/ToolBarMenu.h>
 #include <Xml/XmlSerializer.h>
 #include <Xml/XmlDeserializer.h>
 #include "SolutionBuilder/Version.h"
@@ -97,7 +99,7 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 		ui::dpi96(1000),
 		ui::dpi96(800),
 		ui::Form::WsDefault,
-		new ui::FloodLayout()
+		new ui::TableLayout(L"100%", L"*,100%", 0, 0)
 	))
 		return false;
 
@@ -115,13 +117,13 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_shortcutTable->addCommand(ui::KsCommand, ui::VkX, ui::Command(L"File.Exit"));
 	m_shortcutTable->addEventHandler< ui::ShortcutEvent >(this, &SolutionForm::eventShortcut);
 
-	m_menuBar = new ui::MenuBar();
+	m_menuBar = new ui::custom::ToolBar();
 	m_menuBar->create(this);
-	m_menuBar->addEventHandler< ui::MenuClickEvent >(this, &SolutionForm::eventMenuClick);
+	m_menuBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SolutionForm::eventMenuClick);
 
 	m_menuItemMRU = new ui::MenuItem(L"Recent");
 
-	Ref< ui::MenuItem > menuFile = new ui::MenuItem(L"File");
+	Ref< ui::custom::ToolBarMenu > menuFile = new ui::custom::ToolBarMenu(L"File", L"");
 	menuFile->add(new ui::MenuItem(ui::Command(L"File.New"), L"New"));
 	menuFile->add(new ui::MenuItem(ui::Command(L"File.Open"), L"Open..."));
 	menuFile->add(new ui::MenuItem(ui::Command(L"File.Save"), L"Save"));
@@ -129,16 +131,16 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	menuFile->add(m_menuItemMRU);
 	menuFile->add(new ui::MenuItem(L"-"));
 	menuFile->add(new ui::MenuItem(ui::Command(L"File.Exit"), L"Exit"));
-	m_menuBar->add(menuFile);
+	m_menuBar->addItem(menuFile);
 
-	Ref< ui::MenuItem > menuTools = new ui::MenuItem(L"Tools");
+	Ref< ui::custom::ToolBarMenu > menuTools = new ui::custom::ToolBarMenu(L"Tools", L"");
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.AddAggregates"), L"Add aggregates..."));
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.AddMultipleConfigurations"), L"Add multiple configurations..."));
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.EditConfigurations"), L"Edit configurations..."));
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ImportProject"), L"Import project..."));
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ImportMsvcProject"), L"Import MSVC project..."));
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ExtractSolution"), L"Extract project(s) into external solution..."));
-	m_menuBar->add(menuTools);
+	m_menuBar->addItem(menuTools);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	splitter->create(this, true, ui::dpi96(300));
@@ -610,7 +612,7 @@ void SolutionForm::eventShortcut(ui::ShortcutEvent* event)
 		commandExit();
 }
 
-void SolutionForm::eventMenuClick(ui::MenuClickEvent* event)
+void SolutionForm::eventMenuClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	if (command == L"File.New")
@@ -623,7 +625,7 @@ void SolutionForm::eventMenuClick(ui::MenuClickEvent* event)
 		commandSave(true);
 	else if (command == L"File.MRU")
 	{
-		Ref< Path > path = event->getItem()->getData< Path >(L"PATH");
+		Ref< Path > path = event->getMenuItem()->getData< Path >(L"PATH");
 		T_ASSERT (path);
 
 		Ref< IStream > file = FileSystem::getInstance().open(*path, traktor::File::FmRead);
