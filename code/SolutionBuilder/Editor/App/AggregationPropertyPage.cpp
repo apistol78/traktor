@@ -8,10 +8,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Ui/TableLayout.h>
 #include <Ui/Static.h>
 #include <Ui/Button.h>
-#include <Ui/ListViewItem.h>
 #include <Ui/FileDialog.h>
 #include <Ui/MessageBox.h>
 #include <Ui/Custom/InputDialog.h>
+#include <Ui/Custom/GridView/GridColumn.h>
+#include <Ui/Custom/GridView/GridItem.h>
+#include <Ui/Custom/GridView/GridRow.h>
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Aggregation.h"
 #include "SolutionBuilder/Project.h"
@@ -69,12 +71,12 @@ bool AggregationPropertyPage::create(ui::Widget* parent)
 	Ref< ui::Static > staticDependencies = new ui::Static();
 	staticDependencies->create(container, L"Dependencies");
 
-	m_listDependencies = new ui::ListView();
-	m_listDependencies->create(container, ui::WsClientBorder | ui::ListView::WsReport);
-	m_listDependencies->addColumn(L"Dependency", ui::dpi96(130));
-	m_listDependencies->addColumn(L"Location", ui::dpi96(270));
-	m_listDependencies->addColumn(L"Link", ui::dpi96(50));
-	m_listDependencies->addEventHandler< ui::MouseDoubleClickEvent >(this, &AggregationPropertyPage::eventDependencyDoubleClick);
+	m_gridDependencies = new ui::custom::GridView();
+	m_gridDependencies->create(container, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
+	m_gridDependencies->addColumn(new ui::custom::GridColumn(L"Dependency", ui::dpi96(130)));
+	m_gridDependencies->addColumn(new ui::custom::GridColumn(L"Location", ui::dpi96(270)));
+	m_gridDependencies->addColumn(new ui::custom::GridColumn(L"Link", ui::dpi96(50)));
+	m_gridDependencies->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &AggregationPropertyPage::eventDependencyDoubleClick);
 
 	Ref< ui::Static > staticAvailable = new ui::Static();
 	staticAvailable->create(container, L"Available");
@@ -113,42 +115,40 @@ void AggregationPropertyPage::set(Solution* solution, Aggregation* aggregation)
 void AggregationPropertyPage::updateDependencyList()
 {
 	RefArray< Dependency > dependencies = m_aggregation->getDependencies();
-	Ref< ui::ListViewItems > dependencyItems = new ui::ListViewItems();
-
 	const wchar_t* c_link[] = { L"No", L"Yes", L"Force" };
 
 	// Sort all dependencies.
 	dependencies.sort(DependencyPredicate());
 
+	m_gridDependencies->removeAllRows();
+
 	// Add all local dependencies first.
-	for (RefArray< Dependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	for (auto dependency : dependencies)
 	{
-		if (is_a< ExternalDependency >(*i))
+		if (is_a< ExternalDependency >(dependency))
 			continue;
 
-		Ref< ui::ListViewItem > dependencyItem = new ui::ListViewItem();
-		dependencyItem->setText(0, (*i)->getName());
-		dependencyItem->setText(1, (*i)->getLocation());
-		dependencyItem->setText(2, c_link[(*i)->getLink()]);
-		dependencyItem->setData(L"DEPENDENCY", *i);
-		dependencyItems->add(dependencyItem);
+		Ref< ui::custom::GridRow > dependencyItem = new ui::custom::GridRow();
+		dependencyItem->add(new ui::custom::GridItem(dependency->getName()));
+		dependencyItem->add(new ui::custom::GridItem(dependency->getLocation()));
+		dependencyItem->add(new ui::custom::GridItem(c_link[dependency->getLink()]));
+		dependencyItem->setData(L"DEPENDENCY", dependency);
+		m_gridDependencies->addRow(dependencyItem);
 	}
 
 	// Add external dependencies last.
-	for (RefArray< Dependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	for (auto dependency : dependencies)
 	{
-		if (is_a< ProjectDependency >(*i))
+		if (is_a< ProjectDependency >(dependency))
 			continue;
 
-		Ref< ui::ListViewItem > dependencyItem = new ui::ListViewItem();
-		dependencyItem->setText(0, (*i)->getName());
-		dependencyItem->setText(1, (*i)->getLocation());
-		dependencyItem->setText(2, c_link[(*i)->getLink()]);
-		dependencyItem->setData(L"DEPENDENCY", *i);
-		dependencyItems->add(dependencyItem);
+		Ref< ui::custom::GridRow > dependencyItem = new ui::custom::GridRow();
+		dependencyItem->add(new ui::custom::GridItem(dependency->getName()));
+		dependencyItem->add(new ui::custom::GridItem(dependency->getLocation()));
+		dependencyItem->add(new ui::custom::GridItem(c_link[dependency->getLink()]));
+		dependencyItem->setData(L"DEPENDENCY", dependency);
+		m_gridDependencies->addRow(dependencyItem);
 	}
-
-	m_listDependencies->setItems(dependencyItems);
 
 	// Get available projects, remove all local projects which are already in dependency list.
 	RefArray< Project > projects = m_solution->getProjects();
@@ -174,21 +174,14 @@ void AggregationPropertyPage::eventEnableClick(ui::ButtonClickEvent* event)
 	m_aggregation->setEnable(m_checkEnable->isChecked());
 }
 
-void AggregationPropertyPage::eventDependencyDoubleClick(ui::MouseDoubleClickEvent* event)
+void AggregationPropertyPage::eventDependencyDoubleClick(ui::custom::GridRowDoubleClickEvent* event)
 {
-	ui::Point mousePosition = event->getPosition();
-
-	Ref< ui::ListViewItem > selectedItem = m_listDependencies->getSelectedItem();
-	if (!selectedItem)
-		return;
-
-	Ref< Dependency > dependency = selectedItem->getData< Dependency >(L"DEPENDENCY");
+	Ref< Dependency > dependency = event->getRow()->getData< Dependency >(L"DEPENDENCY");
 	if (!dependency)
 		return;
 
 	// Check if user double clicked on "link" column.
-	int32_t left = m_listDependencies->getColumnWidth(0) + m_listDependencies->getColumnWidth(1);
-	if (mousePosition.x < left)
+	if (event->getColumnIndex() != 2)
 	{
 		Ref< ExternalDependency > selectedDependency = dynamic_type_cast< ExternalDependency* >(dependency);
 		if (!selectedDependency)
@@ -244,20 +237,22 @@ void AggregationPropertyPage::eventClickAdd(ui::ButtonClickEvent* event)
 
 void AggregationPropertyPage::eventClickRemove(ui::ButtonClickEvent* event)
 {
-	Ref< ui::ListViewItem > selectedItem = m_listDependencies->getSelectedItem();
-	if (!selectedItem)
-		return;
+	RefArray< ui::custom::GridRow > selectedRows;
+	m_gridDependencies->getRows(selectedRows, ui::custom::GridView::GfSelectedOnly);
 
-	Ref< Dependency > selectedDependency = selectedItem->getData< Dependency >(L"DEPENDENCY");
-	T_ASSERT (selectedDependency);
+	for (auto selectedRow : selectedRows)
+	{
+		Ref< Dependency > selectedDependency = selectedRow->getData< Dependency >(L"DEPENDENCY");
+		T_ASSERT (selectedDependency);
 
-	RefArray< Dependency > dependencies = m_aggregation->getDependencies();
-	RefArray< Dependency >::iterator i = std::find(dependencies.begin(), dependencies.end(), selectedDependency);
-	T_ASSERT (i != dependencies.end());
+		RefArray< Dependency > dependencies = m_aggregation->getDependencies();
+		RefArray< Dependency >::iterator i = std::find(dependencies.begin(), dependencies.end(), selectedDependency);
+		T_ASSERT (i != dependencies.end());
 
-	dependencies.erase(i);
-	m_aggregation->setDependencies(dependencies);
-	
+		dependencies.erase(i);
+		m_aggregation->setDependencies(dependencies);
+	}
+
 	updateDependencyList();
 }
 
