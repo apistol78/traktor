@@ -14,9 +14,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #elif defined(__APPLE__)
 #	include <Ui/Cocoa/EventLoopCocoa.h>
 #	include <Ui/Cocoa/WidgetFactoryCocoa.h>
-#else
-#	include <Ui/Wx/EventLoopWx.h>
-#	include <Ui/Wx/WidgetFactoryWx.h>
+#elif defined(__LINUX__)
+#	include <Ui/Gtk/EventLoopGtk.h>
+#	include <Ui/Gtk/WidgetFactoryGtk.h>
 #endif
 #include <Core/Config.h>
 #include "SolutionForm.h"
@@ -53,10 +53,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		new ui::WidgetFactoryCocoa(),
 		0
 	);
-#else
+#elif defined(__LINUX__)
 	ui::Application::getInstance()->initialize(
-		new ui::EventLoopWx(),
-		new ui::WidgetFactoryWx(),
+		new ui::EventLoopGtk(),
+		new ui::WidgetFactoryGtk(),
 		0
 	);
 #endif

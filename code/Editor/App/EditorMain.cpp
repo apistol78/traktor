@@ -30,11 +30,11 @@ typedef traktor::ui::WidgetFactoryWin32 WidgetFactoryImpl;
 #	include <Ui/Cocoa/WidgetFactoryCocoa.h>
 typedef traktor::ui::EventLoopCocoa EventLoopImpl;
 typedef traktor::ui::WidgetFactoryCocoa WidgetFactoryImpl;
-#else
-#	include <Ui/Wx/EventLoopWx.h>
-#	include <Ui/Wx/WidgetFactoryWx.h>
-typedef traktor::ui::EventLoopWx EventLoopImpl;
-typedef traktor::ui::WidgetFactoryWx WidgetFactoryImpl;
+#elif defined(__LINUX__)
+#	include <Ui/Gtk/EventLoopGtk.h>
+#	include <Ui/Gtk/WidgetFactoryGtk.h>
+typedef traktor::ui::EventLoopGtk EventLoopImpl;
+typedef traktor::ui::WidgetFactoryGtk WidgetFactoryImpl;
 #endif
 
 #if defined(__LINUX__)
