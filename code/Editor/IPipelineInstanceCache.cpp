@@ -13,5 +13,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktort.editor.IPipelineInstanceCache", IPipelineInstanceCache, Object)
 
+IPipelineInstanceCache::~IPipelineInstanceCache()
+{
+}
+
 	}
 }

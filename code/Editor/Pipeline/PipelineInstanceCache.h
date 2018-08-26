@@ -41,6 +41,8 @@ class T_DLLCLASS PipelineInstanceCache : public IPipelineInstanceCache
 public:
 	PipelineInstanceCache(db::Database* database, const std::wstring& cacheDirectory);
 
+	virtual ~PipelineInstanceCache();
+
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) T_OVERRIDE T_FINAL;
 
 	virtual void flush(const Guid& instanceGuid) T_OVERRIDE T_FINAL;
