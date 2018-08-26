@@ -33,6 +33,10 @@ PipelineInstanceCache::PipelineInstanceCache(db::Database* database, const std::
 	FileSystem::getInstance().makeAllDirectories(m_cacheDirectory);
 }
 
+PipelineInstanceCache::~PipelineInstanceCache()
+{
+}
+
 Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& instanceGuid)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);

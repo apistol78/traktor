@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <cstring>
+#include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Drawing/Image.h"
