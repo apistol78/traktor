@@ -461,7 +461,7 @@ restart_iteration:
 							if (outputPinType != foldOutputPinType)
 							{
 								// Need to add a swizzle node in order to expand into expected type.
-								T_ASSERT (foldOutputPinType < outputPinType);
+								T_FATAL_ASSERT (foldOutputPinType < outputPinType);
 
 								if (foldOutputPinType == PntScalar1)
 								{
