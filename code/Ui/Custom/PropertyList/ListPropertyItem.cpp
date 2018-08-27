@@ -7,10 +7,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/ListBox.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/ToolForm.h"
 #include "Ui/Custom/MiniButton.h"
+#include "Ui/Custom/ListBox/ListBox.h"
 #include "Ui/Custom/PropertyList/ListPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
 

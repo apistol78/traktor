@@ -24,6 +24,14 @@ public:
 
 private:
 	GtkWidget* m_menu;
+	Point m_at;
+	MenuItem* m_selected;
+
+	static void menuPosition(GtkMenu* menu, gint* x, gint* y, gint* pushIn, gpointer userData);
+
+	static void signal_cancel(GtkMenuShell* menu, gpointer userData);
+
+	static void signal_activate(GtkMenuItem* item, gpointer userData);
 };
 
 	}

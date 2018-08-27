@@ -23,7 +23,7 @@ public:
 	virtual void setText(const std::wstring& text) T_OVERRIDE T_FINAL;
 
 private:
-	void on_button_clicked();
+	static void signal_button_clicked(GtkButton* button, gpointer data);
 };
 
 	}

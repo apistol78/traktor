@@ -39,7 +39,7 @@ void CanvasGtk::setFont(const Font& font)
 		CAIRO_FONT_SLANT_NORMAL,
 		/*font.isBold() ? CAIRO_FONT_WEIGHT_BOLD : */CAIRO_FONT_WEIGHT_NORMAL
 	);
-	cairo_set_font_size(m_cr, /*font.getSize()*/14);
+	cairo_set_font_size(m_cr, /*font.getSize()*/14 * 2);
 }
 
 void CanvasGtk::setLineStyle(LineStyle lineStyle)
@@ -54,12 +54,14 @@ void CanvasGtk::setPenThickness(int thickness)
 
 void CanvasGtk::setClipRect(const Rect& rc)
 {
-	log::info << L"CanvasGtk::setClipRect NI" << Endl;
+	cairo_save(m_cr);
+	cairo_rectangle(m_cr, rc.left, rc.top, rc.getWidth(), rc.getHeight());
+	cairo_clip(m_cr);
 }
 
 void CanvasGtk::resetClipRect()
 {
-	log::info << L"CanvasGtk::resetClipRect NI" << Endl;
+	cairo_restore(m_cr);
 }
 
 void CanvasGtk::drawPixel(int x, int y, const Color4ub& c)
@@ -174,7 +176,7 @@ void CanvasGtk::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& s
 	if (cs == nullptr)
 		return;
 
-	cairo_set_source_surface(m_cr, cs, srcAt.x, srcAt.y);
+	cairo_set_source_surface(m_cr, cs, dstAt.x - srcAt.x, dstAt.y - srcAt.y);
 	cairo_rectangle(m_cr, dstAt.x, dstAt.y, size.cx, size.cy);
 	cairo_fill(m_cr);
 }
@@ -188,25 +190,30 @@ void CanvasGtk::drawBitmap(const Point& dstAt, const Size& dstSize, const Point&
 	if (cs == nullptr)
 		return;
 
-	cairo_set_source_surface(m_cr, cs, srcAt.x, srcAt.y);
+	cairo_scale(m_cr, float(srcSize.cx) / dstSize.cx, float(srcSize.cy) / dstSize.cy);
+	cairo_set_source_surface(m_cr, cs, dstAt.x - srcAt.x, dstAt.y - srcAt.y);
 	cairo_rectangle(m_cr, dstAt.x, dstAt.y, dstSize.cx, dstSize.cy);
 	cairo_fill(m_cr);
 }
 
 void CanvasGtk::drawText(const Point& at, const std::wstring& text)
 {
-	cairo_text_extents_t x;
+	cairo_font_extents_t x;
 	cairo_set_source_rgba(m_cr, m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
-	cairo_text_extents(m_cr, wstombs(text).c_str(), &x);
+	cairo_font_extents(m_cr, &x);
 	cairo_move_to(m_cr, at.x, at.y + x.height);
 	cairo_show_text(m_cr, wstombs(text).c_str());
 }
 
 void CanvasGtk::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
 {
-	cairo_text_extents_t x;
+	cairo_font_extents_t fx;
+	cairo_text_extents_t tx;
+
 	cairo_set_source_rgba(m_cr, m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
-	cairo_text_extents(m_cr, wstombs(text).c_str(), &x);
+	
+	cairo_font_extents(m_cr, &fx);
+	cairo_text_extents(m_cr, wstombs(text).c_str(), &tx);
 
 	Point pt = rc.getTopLeft();
 	switch (halign)
@@ -214,10 +221,10 @@ void CanvasGtk::drawText(const Rect& rc, const std::wstring& text, Align halign,
 	case AnLeft:
 		break;
 	case AnCenter:
-		pt.x = rc.left + (rc.getWidth() - x.width) / 2;
+		pt.x = rc.left + (rc.getWidth() - tx.width) / 2;
 		break;
 	case AnRight:
-		pt.x = rc.right - x.width;
+		pt.x = rc.right - tx.width;
 		break;
 	}
 	switch (valign)
@@ -225,22 +232,24 @@ void CanvasGtk::drawText(const Rect& rc, const std::wstring& text, Align halign,
 	case AnTop:
 		break;
 	case AnCenter:
-		pt.y = rc.top + (rc.getHeight() - x.height) / 2;
+		pt.y = rc.top + (rc.getHeight() - fx.height) / 2;
 		break;
 	case AnBottom:
-		pt.y = rc.bottom - x.height;
+		pt.y = rc.bottom - fx.height;
 		break;
 	}
 
-	cairo_move_to(m_cr, pt.x, pt.y + x.height);
+	cairo_move_to(m_cr, pt.x, pt.y + fx.height);
 	cairo_show_text(m_cr, wstombs(text).c_str());
 }
 
 Size CanvasGtk::getTextExtent(const std::wstring& text) const
 {
-	cairo_text_extents_t x;
-	cairo_text_extents(m_cr, wstombs(text).c_str(), &x);
-	return Size(x.width, x.height);
+	cairo_font_extents_t fx;
+	cairo_text_extents_t tx;
+	cairo_font_extents(m_cr, &fx);
+	cairo_text_extents(m_cr, wstombs(text).c_str(), &tx);
+	return Size(tx.width, fx.height);
 }
 
 void* CanvasGtk::getSystemHandle()

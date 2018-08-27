@@ -2,6 +2,7 @@
 #define traktor_ui_WidgetGtkImpl_H
 
 #include <cassert>
+#include <vector>
 #include <gtk/gtk.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
@@ -26,16 +27,23 @@ public:
 	:	m_owner(owner)
 	,	m_parent(nullptr)
 	,	m_visible(true)
+	,	m_capture(false)
 	{
 	}
 
 	virtual ~WidgetGtkImpl()
 	{
 		T_FATAL_ASSERT(m_warp.widget == nullptr);
+		T_FATAL_ASSERT(m_timers.empty());
 	}
 
 	virtual void destroy()
 	{
+		// Remove all timers.
+		for (auto timer : m_timers)
+			g_source_destroy(timer.source);
+		m_timers.clear();
+
 		// Remove myself from parent.
 		if (m_parent != nullptr)
 		{
@@ -57,7 +65,22 @@ public:
 
 	virtual void setParent(IWidget* parent)
 	{
-		//m_api.container->reparent(*pi->container);
+		// Remove myself from old parent.
+		if (m_parent != nullptr)
+		{
+			Warp* parentWarp = static_cast< Warp* >(m_parent->getInternalHandle());
+			if (m_warp.widget != nullptr)
+				gtk_container_remove(GTK_CONTAINER(parentWarp->widget), m_warp.widget);
+			m_parent = nullptr;
+		}
+
+		// Add myself to new parent.
+		if ((m_parent = parent) != nullptr)
+		{
+			Warp* parentWarp = static_cast< Warp* >(m_parent->getInternalHandle());
+			if (m_warp.widget != nullptr)
+				gtk_container_add(GTK_CONTAINER(parentWarp->widget), m_warp.widget);
+		}
 	}
 
 	virtual void setText(const std::wstring& text)
@@ -124,14 +147,6 @@ public:
 			return false;
 	}
 
-	virtual bool containFocus() const
-	{
-		if (m_warp.widget != nullptr)
-			return gtk_widget_is_focus(m_warp.widget);
-		else
-			return false;
-	}
-
 	virtual void setFocus()
 	{
 		if (m_warp.widget != nullptr)
@@ -140,25 +155,42 @@ public:
 
 	virtual bool hasCapture() const
 	{
-		return false;
+		return m_capture;
 	}
 
 	virtual void setCapture()
 	{
-		gtk_grab_add(m_warp.widget);
+		if (!m_capture)
+		{
+			gtk_grab_add(m_warp.widget);
+			m_capture = true;
+		}
 	}
 
 	virtual void releaseCapture()
 	{
-		gtk_grab_remove(m_warp.widget);
+		if (m_capture)
+		{
+			gtk_grab_remove(m_warp.widget);
+			m_capture = false;
+		}
 	}
 
 	virtual void startTimer(int interval, int id)
 	{
+		Timer t;
+		t.id = id;
+		t.source = g_timeout_source_new(interval);
+		g_source_set_callback(t.source, function_timeout, this, nullptr);
+		g_source_set_name(t.source, "Traktor Timer");
+		g_source_attach(t.source, nullptr);
+		m_timers.push_back(t);
 	}
 
 	virtual void stopTimer(int id)
 	{
+		//g_source_remove(m_timers[id]);
+		//m_timers.erase(id);
 	}
 
 	virtual void setOutline(const Point* p, int np)
@@ -209,25 +241,22 @@ public:
 	{
 		int ew = 0, eh = 0;
 
-		/*
-		PangoFontDescription* fd = pango_font_description_new();
-		pango_font_description_set_family(fd, "Sans");
-		pango_font_description_set_style(fd, PANGO_STYLE_NORMAL);
-		pango_font_description_set_variant(fd, PANGO_VARIANT_NORMAL);
-		pango_font_description_set_weight(fd, PANGO_WEIGHT_NORMAL);
-		pango_font_description_set_stretch(fd, PANGO_STRETCH_NORMAL);
-		pango_font_description_set_size(fd, 12 * PANGO_SCALE);
+		GtkStyleContext* cx = gtk_widget_get_style_context(m_warp.widget);
+		if (cx == nullptr)
+			return Size(0, 0);
 
-		PangoContext* cx = gtk_widget_get_pango_context(m_widget);
+		const PangoFontDescription* fd = gtk_style_context_get_font(cx, GTK_STATE_FLAG_NORMAL);
+		if (fd == nullptr)
+			return Size(0, 0);
 
-		PangoLayout* ly = pango_layout_new(cx);
+		PangoContext* pcx = gtk_widget_get_pango_context(m_warp.widget);
+		PangoLayout* ly = pango_layout_new(pcx);
 		pango_layout_set_text(ly, wstombs(text).c_str(), -1);
 		pango_layout_set_font_description(ly, fd);
-		*/
-
-		PangoLayout* ly = gtk_widget_create_pango_layout(m_warp.widget, wstombs(text).c_str());
+		//PangoLayout* ly = gtk_widget_create_pango_layout(m_warp.widget, wstombs(text).c_str());
 		pango_layout_get_pixel_size(ly, &ew, &eh);
 		g_object_unref(ly);
+
 		return Size(ew, eh);
 	}
 
@@ -237,7 +266,21 @@ public:
 
 	virtual Font getFont() const
 	{
-		return Font();
+		GtkStyleContext* cx = gtk_widget_get_style_context(m_warp.widget);
+		if (cx == nullptr)
+			return Font();
+
+		const PangoFontDescription* fd = gtk_style_context_get_font(cx, GTK_STATE_FLAG_NORMAL);
+		if (fd == nullptr)
+			return Font();
+
+		return Font(
+			mbstows(pango_font_description_get_family(fd)),
+			pango_font_description_get_size(fd) / PANGO_SCALE,
+			false,
+			false,
+			false
+		);
 	}
 
 	virtual void setCursor(Cursor cursor)
@@ -296,8 +339,11 @@ public:
 
 	virtual void update(const Rect* rc, bool immediate)
 	{
-//		if (m_warp.widget != nullptr)
-//			gtk_widget_queue_draw(m_warp.widget);
+		if (m_warp.widget != nullptr)
+		{
+			T_FATAL_ASSERT(GTK_IS_WIDGET(m_warp.widget));
+			gtk_widget_queue_draw(m_warp.widget);
+		}
 	}
 
 	virtual void* getInternalHandle()
@@ -323,12 +369,20 @@ public:
 	}
 
 protected:
+	struct Timer
+	{
+		int32_t id;
+		GSource* source;
+	};
+
 	EventSubject* m_owner;
 	IWidget* m_parent;
 	Warp m_warp;
 	Rect m_rect;
 	bool m_visible;
+	bool m_capture;
 	std::wstring m_text;
+	std::vector< Timer > m_timers;
 
 	bool create(IWidget* parent)
 	{
@@ -357,6 +411,17 @@ protected:
 
 		m_parent = parent;
 		return true;
+	}
+
+	static gboolean function_timeout(gpointer data)
+	{
+		WidgetGtkImpl* self = static_cast< WidgetGtkImpl* >(data);
+		T_FATAL_ASSERT(self != nullptr);
+
+		TimerEvent timerEvent(self->m_owner, 0);
+		self->m_owner->raiseEvent(&timerEvent);
+
+		return G_SOURCE_CONTINUE;
 	}
 
 	static void signal_size_allocate(GtkWidget* widget, GdkRectangle* allocation, gpointer data)
@@ -400,8 +465,6 @@ protected:
 
 		PaintEvent paintEvent(self->m_owner, canvas, rc);
 		self->m_owner->raiseEvent(&paintEvent);
-		//if (paintEvent.consumed())
-		//	return TRUE;
 
 		return FALSE;
 	}
@@ -444,14 +507,30 @@ protected:
 		else if (event->button == 3)
 			button = MbtRight;
 
-		MouseButtonDownEvent mouseDownEvent(
-			self->m_owner,
-			button,
-			Point(int32_t(event->x), int32_t(event->y))
-		);
-		self->m_owner->raiseEvent(&mouseDownEvent);
-		if (mouseDownEvent.consumed())
-			return TRUE;
+		if (event->type == GDK_BUTTON_PRESS)
+		{
+			MouseButtonDownEvent mouseDownEvent(
+				self->m_owner,
+				button,
+				Point(int32_t(event->x), int32_t(event->y))
+			);
+			self->m_owner->raiseEvent(&mouseDownEvent);
+			if (mouseDownEvent.consumed())
+				return TRUE;
+		}
+		else if (event->type == GDK_2BUTTON_PRESS)
+		{
+			MouseDoubleClickEvent mouseDoubleClickEvent(
+				self->m_owner,
+				button,
+				Point(int32_t(event->x), int32_t(event->y))
+			);
+			self->m_owner->raiseEvent(&mouseDoubleClickEvent);
+			if (mouseDoubleClickEvent.consumed())
+				return TRUE;
+		}
+
+		self->setFocus();
 
 		return FALSE;
 	}

@@ -16,6 +16,8 @@ public:
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style);
 
+	virtual void destroy() T_OVERRIDE T_FINAL;
+
 	virtual void setIcon(ISystemBitmap* icon);
 
 	virtual int showModal();
@@ -24,8 +26,14 @@ public:
 
 	virtual void setMinSize(const Size& minSize);
 
+	virtual void setVisible(bool visible) T_OVERRIDE T_FINAL;
+
 private:
-	//void on_remove(Gtk::Widget* widget);
+	GtkWidget* m_window;
+	int32_t m_result;
+	bool m_modal;
+
+	static gboolean signal_remove(GtkWidget* widget, GdkEvent* event, gpointer data);
 };
 
 	}

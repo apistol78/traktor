@@ -1,12 +1,15 @@
 #include "Ui/Gtk/BitmapGtk.h"
 #include "Ui/Gtk/ButtonGtk.h"
 #include "Ui/Gtk/ContainerGtk.h"
+#include "Ui/Gtk/ClipboardGtk.h"
 #include "Ui/Gtk/DialogGtk.h"
 #include "Ui/Gtk/DropDownGtk.h"
 #include "Ui/Gtk/EditGtk.h"
+#include "Ui/Gtk/FileDialogGtk.h"
 #include "Ui/Gtk/FormGtk.h"
 #include "Ui/Gtk/MenuBarGtk.h"
 #include "Ui/Gtk/PopupMenuGtk.h"
+#include "Ui/Gtk/SliderGtk.h"
 #include "Ui/Gtk/ToolFormGtk.h"
 #include "Ui/Gtk/UserWidgetGtk.h"
 #include "Ui/Gtk/WidgetFactoryGtk.h"
@@ -53,7 +56,7 @@ IEdit* WidgetFactoryGtk::createEdit(EventSubject* owner)
 
 IFileDialog* WidgetFactoryGtk::createFileDialog(EventSubject* owner)
 {
-	return 0;
+	return new FileDialogGtk(owner);
 }
 
 IForm* WidgetFactoryGtk::createForm(EventSubject* owner)
@@ -118,7 +121,7 @@ IScrollBar* WidgetFactoryGtk::createScrollBar(EventSubject* owner)
 
 ISlider* WidgetFactoryGtk::createSlider(EventSubject* owner)
 {
-	return 0;
+	return new SliderGtk(owner);
 }
 
 IStatic* WidgetFactoryGtk::createStatic(EventSubject* owner)
@@ -158,12 +161,12 @@ ISystemBitmap* WidgetFactoryGtk::createBitmap()
 
 IClipboard* WidgetFactoryGtk::createClipboard()
 {
-	return 0;
+	return new ClipboardGtk();
 }
 
 int32_t WidgetFactoryGtk::getSystemDPI() const
 {
-	return 2*96;
+	return 96;
 }
 
 bool WidgetFactoryGtk::getSystemColor(SystemColor systemColor, Color4ub& outColor)

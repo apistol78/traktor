@@ -324,6 +324,7 @@ void ScriptEditorPage::destroy()
 
 	safeDestroy(m_containerExplorer);
 	safeDestroy(m_scriptManager);
+	safeDestroy(m_editMenu);
 }
 
 bool ScriptEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

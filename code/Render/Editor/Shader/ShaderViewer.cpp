@@ -303,7 +303,8 @@ void ShaderViewer::eventTimer(ui::TimerEvent* event)
 	else if (m_pendingShaderGraph)
 	{
 		Ref< const IProgramCompiler > compiler = m_dropCompiler->getSelectedData< IProgramCompiler >();
-		T_ASSERT (compiler);
+		if (!compiler)
+			return;
 
 		m_reflectJob = JobManager::getInstance().add(makeFunctor(this, &ShaderViewer::jobReflect, m_pendingShaderGraph, compiler));
 

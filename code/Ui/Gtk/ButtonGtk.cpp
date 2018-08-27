@@ -19,6 +19,8 @@ bool ButtonGtk::create(IWidget* parent, const std::wstring& text, int style)
 	m_warp.widget = gtk_button_new_with_label(wstombs(text).c_str());
 	gtk_container_add(GTK_CONTAINER(p->widget), m_warp.widget);
 
+	g_signal_connect(m_warp.widget, "clicked", G_CALLBACK(ButtonGtk::signal_button_clicked), this);
+
 	m_text = text;
 
 	return WidgetGtkImpl< IButton >::create(parent);
@@ -39,10 +41,13 @@ void ButtonGtk::setText(const std::wstring& text)
 	WidgetGtkImpl< IButton >::setText(text);
 }
 
-void ButtonGtk::on_button_clicked()
+void ButtonGtk::signal_button_clicked(GtkButton* button, gpointer data)
 {
-	ButtonClickEvent clickEvent(m_owner);
-	m_owner->raiseEvent(&clickEvent);
+	ButtonGtk* self = static_cast< ButtonGtk* >(data);
+	T_FATAL_ASSERT(self != nullptr);
+
+	ButtonClickEvent clickEvent(self->m_owner);
+	self->m_owner->raiseEvent(&clickEvent);
 }
 
 	}
