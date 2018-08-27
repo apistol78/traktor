@@ -25,10 +25,11 @@ namespace traktor
 
 class Button;
 class Edit;
-class ListBox;
 
 		namespace custom
 		{
+
+class ListBox;
 
 /*! \brief Combo box control.
  * \ingroup UIC

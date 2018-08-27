@@ -4,11 +4,11 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Ui/Custom/ComboBox.h"
 #include "Ui/Button.h"
 #include "Ui/Edit.h"
-#include "Ui/ListBox.h"
 #include "Ui/Command.h"
+#include "Ui/Custom/ComboBox.h"
+#include "Ui/Custom/ListBox/ListBox.h"
 
 namespace traktor
 {
@@ -32,10 +32,8 @@ bool ComboBox::create(Widget* parent, const std::wstring& text, int style)
 
 	m_listBox = new ListBox();
 	m_listBox->create(this);
-	//m_listBox->setVisible(false);
 
 	addEventHandler< SizeEvent >(this, &ComboBox::eventSize);
-
 	return true;
 }
 
