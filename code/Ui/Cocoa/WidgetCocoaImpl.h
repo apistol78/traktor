@@ -157,11 +157,6 @@ public:
 		return false;
 	}
 
-	virtual bool containFocus() const T_OVERRIDE
-	{
-		return hasFocus();
-	}
-
 	virtual void setFocus() T_OVERRIDE
 	{
 		NSWindow* window = [getControl() window];

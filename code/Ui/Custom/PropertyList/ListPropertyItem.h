@@ -24,11 +24,11 @@ namespace traktor
 	{
 
 class ToolForm;
-class ListBox;
 
 		namespace custom
 		{
 
+class ListBox;
 class MiniButton;
 
 /*! \brief List property item.

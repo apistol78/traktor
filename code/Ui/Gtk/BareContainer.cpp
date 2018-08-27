@@ -49,6 +49,7 @@ static void t_bare_container_class_init(BareContainerClass* klass)
 static void t_bare_container_init(BareContainer* self)
 {
 	gtk_widget_set_has_window(GTK_WIDGET(self), TRUE);
+	gtk_widget_set_can_focus (GTK_WIDGET(self), TRUE);
 
 	BareContainerPrivate* pr = T_BARE_CONTAINER_PRIVATE(self);
 	pr->window = nullptr;

@@ -65,17 +65,21 @@ void BitmapGtk::copySubImage(drawing::Image* image, const Rect& srcRect, const P
 	bool haveAlpha = image->getPixelFormat().getAlphaBits() > 0;
 
 	Ref< drawing::Image > sourceImage = image->clone();
-	sourceImage->convert(drawing::PixelFormat::getA8B8G8R8());
+	sourceImage->convert(drawing::PixelFormat::getA8R8G8B8());
+
+	cairo_surface_flush(m_surface);
 
 	const uint32_t* sourceBits = (const uint32_t*)(sourceImage->getData());
-	uint32_t* destinationBits = (uint32_t*)cairo_image_surface_get_data(m_surface);
+	uint8_t* destinationBits = (uint8_t*)cairo_image_surface_get_data(m_surface);
+	uint32_t destinationPitch = cairo_image_surface_get_stride(m_surface);
 	uint32_t sourceWidth = sourceImage->getWidth();
 
 	for (int y = rc.top; y < rc.bottom; ++y)
 	{
 		for (int x = rc.left; x < rc.right; ++x)
 		{
-			uint32_t dstOffset = destPos.x + (x - rc.left) + (size.cy - (destPos.y + (y - rc.top)) - 1) * size.cx;
+			uint32_t dstOffset = (destPos.x + (x - rc.left)) * 4 + (destPos.y + (y - rc.top)) * destinationPitch;
+			uint32_t* dstBits = (uint32_t*)&destinationBits[dstOffset];
 			uint32_t c = sourceBits[x + y * sourceWidth];
 
 			if (!haveAlpha)
@@ -90,9 +94,11 @@ void BitmapGtk::copySubImage(drawing::Image* image, const Rect& srcRect, const P
 			pg = (pg * pa) >> 8;
 			pb = (pb * pa) >> 8;
 
-			destinationBits[dstOffset] = c;
+			*dstBits = c;
 		}
 	}
+
+	cairo_surface_mark_dirty(m_surface);
 }
 
 Ref< drawing::Image > BitmapGtk::getImage() const
@@ -100,18 +106,21 @@ Ref< drawing::Image > BitmapGtk::getImage() const
 	Size size = getSize();
 
 	Ref< drawing::Image > image = new drawing::Image(
-		drawing::PixelFormat::getR8G8B8A8(),
+		drawing::PixelFormat::getA8R8G8B8(),
 		size.cx,
 		size.cy
 	);
 
-	const uint32_t* sourceBits = reinterpret_cast< const uint32_t* >(cairo_image_surface_get_data(m_surface));
+	cairo_surface_flush(m_surface);
+
+	const uint8_t* sourceBits = reinterpret_cast< const uint8_t* >(cairo_image_surface_get_data(m_surface));
+	uint32_t sourcePitch = cairo_image_surface_get_stride(m_surface);
 	uint32_t* destinationBits = static_cast< uint32_t* >(image->getData());
 
 	for (int y = 0; y < size.cy; ++y)
 	{
-		const uint32_t* sp = &sourceBits[(size.cy - y - 1) * size.cx];
-		uint32_t* dp = &destinationBits[y * size.cx];
+		const uint32_t* sp = (const uint32_t*)&sourceBits[y * sourcePitch];
+		uint32_t* dp = (uint32_t*)&destinationBits[y * size.cx];
 		for (int x = 0; x < size.cx; ++x)
 			*dp++ = *sp++;
 	}
@@ -129,9 +138,9 @@ Size BitmapGtk::getSize() const
 void BitmapGtk::setPixel(uint32_t x, uint32_t y, const Color4ub& color)
 {
 	cairo_surface_flush(m_surface);
-	uint32_t* bits = reinterpret_cast< uint32_t* >(cairo_image_surface_get_data(m_surface));
-	uint32_t pitch = cairo_image_surface_get_stride(m_surface) / 4;
-	bits[x + y * pitch] = color.getRGBA();
+	uint8_t* bits = reinterpret_cast< uint8_t* >(cairo_image_surface_get_data(m_surface));
+	uint32_t pitch = cairo_image_surface_get_stride(m_surface);
+	*(uint32_t*)&bits[x + y * pitch] = color.getRGBA();
 	cairo_surface_mark_dirty(m_surface);
 }
 

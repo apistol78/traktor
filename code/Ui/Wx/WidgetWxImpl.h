@@ -185,16 +185,6 @@ public:
 		return bool(wxWindow::FindFocus() == m_window);
 	}
 
-	virtual bool containFocus() const
-	{
-		for (wxWindow* window = m_window; window; window = window->GetParent())
-		{
-			if (wxWindow::FindFocus() == window)
-				return true;
-		}
-		return false;
-	}
-
 	virtual void setFocus()
 	{
 		m_window->SetFocus();

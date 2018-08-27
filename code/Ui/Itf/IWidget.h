@@ -60,8 +60,6 @@ public:
 
 	virtual bool hasFocus() const = 0;
 
-	virtual bool containFocus() const = 0;
-
 	virtual void setFocus() = 0;
 
 	virtual bool hasCapture() const = 0;

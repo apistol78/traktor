@@ -283,7 +283,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 			}
 
 			*outSettings = (*outSettings)->merge(userSettings, PropertyGroup::MmReplace);
-			T_ASSERT (*outSettings);  
+			T_FATAL_ASSERT (*outSettings);  
 		}
 	}
 
@@ -1447,6 +1447,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 
 	if (!m_sourceDatabase || !m_outputDatabase)
 	{
+		log::error << L"No databases opened; failed to open workspace." << Endl;
 		closeWorkspace();
 		return false;
 	}
@@ -1510,6 +1511,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	saveRecent(OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Traktor.Editor.mru", m_mru);
 	updateMRU();
 
+	log::info << L"Workspace opened successfully." << Endl;
 	return true;
 }
 
@@ -3044,8 +3046,14 @@ void EditorForm::threadAssetMonitor()
 
 void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progress)
 {
-	if (!loadSettings(workspacePath, m_workspaceSettings, 0))
+	Ref< PropertyGroup > workspaceSettings;
+
+	if (!loadSettings(workspacePath, workspaceSettings, 0))
+	{
+		log::error << L"Failed to load workspace; load failed." << Endl;
 		return;
+	}
+	T_FATAL_ASSERT (workspaceSettings != nullptr)
 
 	progress = 100;
 
@@ -3053,30 +3061,35 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 	FileSystem::getInstance().setCurrentVolumeAndDirectory(workspacePath.getPathOnly());
 
 	// Create merged settings.
-	m_mergedSettings = m_globalSettings->merge(m_workspaceSettings, PropertyGroup::MmJoin);
-	T_ASSERT (m_mergedSettings);
+	Ref< PropertyGroup > mergedSettings = m_globalSettings->merge(workspaceSettings, PropertyGroup::MmJoin);
+	T_FATAL_ASSERT (mergedSettings != nullptr);
 
 	progress = 200;
 
 	// Open databases.
-	std::wstring sourceDatabase = m_mergedSettings->getProperty< std::wstring >(L"Editor.SourceDatabase");
-	std::wstring outputDatabase = m_mergedSettings->getProperty< std::wstring >(L"Editor.OutputDatabase");
-
-	m_sourceDatabase = openDatabase(sourceDatabase, false);
-	if (!m_sourceDatabase)
+	std::wstring sourceDatabaseCs = mergedSettings->getProperty< std::wstring >(L"Editor.SourceDatabase");
+	Ref< db::Database > sourceDatabase = openDatabase(sourceDatabaseCs, false);
+	if (!sourceDatabase)
 	{
-		log::error << L"Unable to open source database \"" << sourceDatabase << L"\"" << Endl;
+		log::error << L"Unable to open source database \"" << sourceDatabaseCs << L"\"" << Endl;
 		return;
 	}
 
 	progress = 600;
 
-	m_outputDatabase = openDatabase(outputDatabase, true);
-	if (!m_outputDatabase)
+	std::wstring outputDatabaseCs = mergedSettings->getProperty< std::wstring >(L"Editor.OutputDatabase");
+	Ref< db::Database > outputDatabase = openDatabase(outputDatabaseCs, true);
+	if (!outputDatabase)
 	{
-		log::error << L"Unable to open output database \"" << outputDatabase << L"\"" << Endl;
+		log::error << L"Unable to open output database \"" << outputDatabaseCs << L"\"" << Endl;
 		return;
 	}
+
+	// Successfully opened workspace.
+	m_workspaceSettings = workspaceSettings;
+	m_mergedSettings = mergedSettings;
+	m_sourceDatabase = sourceDatabase;
+	m_outputDatabase = outputDatabase;
 
 	progress = 1000;
 }
