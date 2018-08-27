@@ -60,6 +60,7 @@ void ShaderGraph::addEdge(Edge* edge)
 	
 	m_edges.push_back(edge);
 
+	T_ASSERT (m_inputPinEdge[edge->getDestination()] == 0);
 	m_inputPinEdge[edge->getDestination()] = edge;
 
 	RefSet< Edge >*& set = m_outputPinEdges[edge->getSource()];

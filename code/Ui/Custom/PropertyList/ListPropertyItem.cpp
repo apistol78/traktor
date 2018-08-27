@@ -108,12 +108,12 @@ void ListPropertyItem::createInPlaceControls(Widget* parent)
 
 	T_ASSERT (!m_listForm);
 	m_listForm = new ToolForm();
-	m_listForm->create(parent, L"List", 0, 0, WsNone, new ui::FloodLayout());
+	m_listForm->create(parent, L"", 0, 0, WsNone, new ui::FloodLayout());
 	m_listForm->setVisible(false);
 
 	T_ASSERT (!m_listBox);
 	m_listBox = new ListBox();
-	m_listBox->create(m_listForm);
+	m_listBox->create(m_listForm, ListBox::WsSingle);
 	m_listBox->addEventHandler< SelectionChangeEvent >(this, &ListPropertyItem::eventSelect);
 	m_listBox->addEventHandler< FocusEvent >(this, &ListPropertyItem::eventFocus);
 
