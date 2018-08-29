@@ -35,11 +35,11 @@ void CanvasGtk::setFont(const Font& font)
 {
 	cairo_select_font_face(
 		m_cr,
-		"Sans", //wstombs(font.getFace()).c_str(),
+		wstombs(font.getFace()).c_str(),
 		CAIRO_FONT_SLANT_NORMAL,
-		/*font.isBold() ? CAIRO_FONT_WEIGHT_BOLD : */CAIRO_FONT_WEIGHT_NORMAL
+		font.isBold() ? CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL
 	);
-	cairo_set_font_size(m_cr, /*font.getSize()*/14 * 2);
+	cairo_set_font_size(m_cr, font.getSize());
 }
 
 void CanvasGtk::setLineStyle(LineStyle lineStyle)

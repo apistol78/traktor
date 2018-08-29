@@ -239,25 +239,7 @@ public:
 
 	virtual Size getTextExtent(const std::wstring& text) const
 	{
-		int ew = 0, eh = 0;
-
-		GtkStyleContext* cx = gtk_widget_get_style_context(m_warp.widget);
-		if (cx == nullptr)
-			return Size(0, 0);
-
-		const PangoFontDescription* fd = gtk_style_context_get_font(cx, GTK_STATE_FLAG_NORMAL);
-		if (fd == nullptr)
-			return Size(0, 0);
-
-		PangoContext* pcx = gtk_widget_get_pango_context(m_warp.widget);
-		PangoLayout* ly = pango_layout_new(pcx);
-		pango_layout_set_text(ly, wstombs(text).c_str(), -1);
-		pango_layout_set_font_description(ly, fd);
-		//PangoLayout* ly = gtk_widget_create_pango_layout(m_warp.widget, wstombs(text).c_str());
-		pango_layout_get_pixel_size(ly, &ew, &eh);
-		g_object_unref(ly);
-
-		return Size(ew, eh);
+		return Size(0, 0);
 	}
 
 	virtual void setFont(const Font& font)
@@ -266,21 +248,7 @@ public:
 
 	virtual Font getFont() const
 	{
-		GtkStyleContext* cx = gtk_widget_get_style_context(m_warp.widget);
-		if (cx == nullptr)
-			return Font();
-
-		const PangoFontDescription* fd = gtk_style_context_get_font(cx, GTK_STATE_FLAG_NORMAL);
-		if (fd == nullptr)
-			return Font();
-
-		return Font(
-			mbstows(pango_font_description_get_family(fd)),
-			pango_font_description_get_size(fd) / PANGO_SCALE,
-			false,
-			false,
-			false
-		);
+		return Font();
 	}
 
 	virtual void setCursor(Cursor cursor)
@@ -399,7 +367,6 @@ protected:
 		);
 
 		g_signal_connect(m_warp.widget, "size-allocate", G_CALLBACK(WidgetGtkImpl::signal_size_allocate), this);
-		g_signal_connect(m_warp.widget, "draw", G_CALLBACK(WidgetGtkImpl::signal_draw), this);
 		g_signal_connect(m_warp.widget, "motion-notify-event", G_CALLBACK(WidgetGtkImpl::signal_motion_notify), this);
 		g_signal_connect(m_warp.widget, "button-press-event", G_CALLBACK(WidgetGtkImpl::signal_button_press), this);
 		g_signal_connect(m_warp.widget, "button-release-event", G_CALLBACK(WidgetGtkImpl::signal_button_release), this);
@@ -451,22 +418,6 @@ protected:
 
 		SizeEvent sizeEvent(self->m_owner, self->m_rect.getSize());
 		self->m_owner->raiseEvent(&sizeEvent);
-	}
-
-	static gboolean signal_draw(GtkWidget* widget, cairo_t* cr, gpointer data)
-	{
-		WidgetGtkImpl* self = static_cast< WidgetGtkImpl* >(data);
-		T_FATAL_ASSERT(self != nullptr);
-
-		Rect rc = self->getInnerRect();
-
-		CanvasGtk canvasGtk(cr);
-		Canvas canvas(&canvasGtk);
-
-		PaintEvent paintEvent(self->m_owner, canvas, rc);
-		self->m_owner->raiseEvent(&paintEvent);
-
-		return FALSE;
 	}
 
 	static gboolean signal_motion_notify(GtkWidget* widget, GdkEventMotion* event, gpointer data)
