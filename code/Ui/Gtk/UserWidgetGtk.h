@@ -16,8 +16,17 @@ public:
 
 	virtual bool create(IWidget* parent, int style);
 
+	virtual Size getTextExtent(const std::wstring& text) const T_OVERRIDE T_FINAL;
+
+	virtual void setFont(const Font& font) T_OVERRIDE T_FINAL;
+
+	virtual Font getFont() const T_OVERRIDE T_FINAL;
+
 private:
 	BareContainer* m_parent;
+	Font m_font;
+
+	static gboolean signal_draw(GtkWidget* widget, cairo_t* cr, gpointer data);
 };
 
 	}
