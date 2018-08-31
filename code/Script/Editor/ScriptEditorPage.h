@@ -39,7 +39,7 @@ class IEditorPageSite;
 	{
 
 class IBitmap;
-class PopupMenu;
+class Menu;
 class Tab;
 
 		namespace custom
@@ -107,7 +107,7 @@ private:
 	Ref< ui::custom::GridView > m_outlineGrid;
 	Ref< ScriptClassesView > m_classesView;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
-	Ref< ui::PopupMenu > m_editMenu;
+	Ref< ui::Menu > m_editMenu;
 	Ref< ui::custom::StatusBar > m_compileStatus;
 	int32_t m_compileCountDown;
 	int32_t m_debugLineAttribute;

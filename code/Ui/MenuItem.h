@@ -12,6 +12,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/RefArray.h"
 #include "Ui/Associative.h"
 #include "Ui/Command.h"
+#include "Ui/Size.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,6 +28,12 @@ namespace traktor
 	{
 
 class Bitmap;
+class Canvas;
+class MouseButtonDownEvent;
+class MouseButtonUpEvent;
+class MouseMoveEvent;
+class Rect;
+class Widget;
 
 /*! \brief Menu item.
  * \ingroup UI
@@ -84,6 +91,18 @@ public:
 
 	Ref< MenuItem > get(int index);
 
+	virtual Size getSize(const Widget* shell) const;
+
+	virtual void paint(const Widget* shell, Canvas& canvas, const Rect& rc) const;
+
+	virtual bool mouseEnter(Widget* shell, MouseMoveEvent* mouseEvent);
+
+	virtual void mouseLeave(Widget* shell, MouseMoveEvent* mouseEvent);
+
+	virtual void buttonDown(Widget* shell, MouseButtonDownEvent* mouseEvent);
+
+	virtual void buttonUp(Widget* shell, MouseButtonUpEvent* mouseEvent);
+
 private:
 	Command m_command;
 	std::wstring m_text;
@@ -91,6 +110,7 @@ private:
 	Ref< Bitmap > m_image;
 	bool m_enable;
 	bool m_checked;
+	bool m_hover;
 	RefArray< MenuItem > m_items;
 };
 

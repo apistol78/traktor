@@ -13,9 +13,12 @@ namespace traktor
 {
 	namespace ui
 	{
+		namespace custom
+		{
 
 class RichEdit;
 
+		}
 	}
 
 	namespace editor
@@ -31,7 +34,7 @@ public:
 	virtual std::wstring getText() const T_OVERRIDE T_FINAL;
 
 private:
-	Ref< ui::RichEdit > m_edit;
+	Ref< ui::custom::RichEdit > m_edit;
 };
 
 	}

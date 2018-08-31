@@ -33,7 +33,7 @@ class IEditorPageSite;
 	{
 
 class MouseButtonDownEvent;
-class PopupMenu;
+class Menu;
 class SelectionChangeEvent;
 
 		namespace custom
@@ -85,7 +85,7 @@ private:
 	Ref< ui::custom::ToolBar > m_toolBarGraph;
 	Ref< ui::custom::EditList > m_listValueSources;
 	Ref< ui::custom::GraphControl > m_graph;
-	Ref< ui::PopupMenu > m_menuPopup;
+	Ref< ui::Menu > m_menuPopup;
 
 	void updateGraphView();
 

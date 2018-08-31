@@ -14,10 +14,15 @@ namespace traktor
 	namespace ui
 	{
 
-class DropDown;
 class CheckBox;
 class Edit;
 
+		namespace custom
+		{
+		
+class DropDown;
+
+		}
 	}
 
 	namespace editor
@@ -39,8 +44,8 @@ public:
 
 private:
 	Ref< ui::Edit > m_editDictionary;
-	Ref< ui::DropDown > m_dropStyleSheet;
-	Ref< ui::DropDown > m_dropFonts;
+	Ref< ui::custom::DropDown > m_dropStyleSheet;
+	Ref< ui::custom::DropDown > m_dropFonts;
 	Ref< ui::Edit > m_editFontSize;
 	Ref< ui::CheckBox > m_checkAutoOpen;
 	Ref< ui::CheckBox > m_checkAutoSave;

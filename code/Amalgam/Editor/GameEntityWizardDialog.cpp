@@ -26,12 +26,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Script/Editor/Script.h"
 #include "Ui/Application.h"
 #include "Ui/CheckBox.h"
-#include "Ui/DropDown.h"
 #include "Ui/Edit.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/DropDown.h"
 #include "Ui/Custom/MiniButton.h"
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/GroupEntityData.h"
@@ -109,7 +109,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	Ref< ui::Static > staticPhysicsType = new ui::Static();
 	staticPhysicsType->create(containerPhysics, i18n::Text(L"GAMEENTITY_WIZARD_PHYSICS_TYPE"));
 
-	m_dropPhysicsType = new ui::DropDown();
+	m_dropPhysicsType = new ui::custom::DropDown();
 	m_dropPhysicsType->create(containerPhysics);
 	m_dropPhysicsType->add(i18n::Text(L"GAMEENTITY_WIZARD_PHYSICS_STATIC"));
 	m_dropPhysicsType->add(i18n::Text(L"GAMEENTITY_WIZARD_PHYSICS_KINEMATIC"));

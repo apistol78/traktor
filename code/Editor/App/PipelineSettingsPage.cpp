@@ -62,7 +62,7 @@ bool PipelineSettingsPage::create(ui::Container* parent, const PropertyGroup* or
 	m_editMemCachedHost->setEnable(memCachedEnable);
 
 	m_editMemCachedPort = new ui::Edit();
-	m_editMemCachedPort->create(container, toString(settings->getProperty< int32_t >(L"Pipeline.MemCached.Port")), ui::WsClientBorder, new ui::NumericEditValidator(false, 0, 65535));
+	m_editMemCachedPort->create(container, toString(settings->getProperty< int32_t >(L"Pipeline.MemCached.Port")), ui::WsNone, new ui::NumericEditValidator(false, 0, 65535));
 	m_editMemCachedPort->setEnable(memCachedEnable);
 
 	m_checkMemCachedRead = new ui::CheckBox();
@@ -84,7 +84,7 @@ bool PipelineSettingsPage::create(ui::Container* parent, const PropertyGroup* or
 	m_checkUseFileCache->addEventHandler< ui::ButtonClickEvent >(this, &PipelineSettingsPage::eventUseCacheClick);
 
 	m_editFileCachePath = new ui::Edit();
-	m_editFileCachePath->create(container, toString(settings->getProperty< std::wstring >(L"Pipeline.FileCache.Path")), ui::WsClientBorder);
+	m_editFileCachePath->create(container, toString(settings->getProperty< std::wstring >(L"Pipeline.FileCache.Path")), ui::WsNone);
 	m_editFileCachePath->setEnable(fileCacheEnable);
 
 	m_checkFileCacheRead = new ui::CheckBox();

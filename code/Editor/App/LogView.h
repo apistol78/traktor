@@ -18,7 +18,7 @@ class ILogTarget;
 	namespace ui
 	{
 
-class PopupMenu;
+class Menu;
 
 		namespace custom
 		{
@@ -57,7 +57,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleError;
 	Ref< ui::custom::ToolBar > m_toolFilter;
 	Ref< ui::custom::LogList > m_log;
-	Ref< ui::PopupMenu > m_popup;
+	Ref< ui::Menu > m_popup;
 	Ref< ILogTarget > m_logTarget;
 
 	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);

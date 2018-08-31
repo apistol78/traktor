@@ -205,7 +205,7 @@ void Widget::setFont(const Font& font)
 	m_widget->setFont(font);
 }
 
-Font Widget::getFont()
+Font Widget::getFont() const
 {
 	T_ASSERT (m_widget);
 	return m_widget->getFont();

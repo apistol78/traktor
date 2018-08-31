@@ -42,10 +42,10 @@ class Instance;
 	namespace ui
 	{
 
-class Widget;
+class Menu;
 class TreeView;
 class TreeViewItem;
-class PopupMenu;
+class Widget;
 
 		namespace custom
 		{
@@ -114,7 +114,7 @@ private:
 	Ref< ui::custom::ToolBar > m_toolBarPlay;
 	Ref< ui::Container > m_sequencerPanel;
 	Ref< ui::custom::SequencerControl > m_sequencer;
-	Ref< ui::PopupMenu > m_menuPopup;
+	Ref< ui::Menu > m_menuPopup;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< resource::ResourceManager > m_resourceManager;
 	Color4ub m_colorClear;

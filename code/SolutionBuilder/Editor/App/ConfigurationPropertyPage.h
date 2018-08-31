@@ -8,8 +8,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define ConfigurationPropertyPage_H
 
 #include <Ui/Container.h>
-#include <Ui/DropDown.h>
 #include <Ui/Edit.h>
+#include <Ui/Custom/DropDown.h>
 #include <Ui/Custom/EditList.h>
 #include <Ui/Custom/EditListEditEvent.h>
 
@@ -31,13 +31,13 @@ public:
 
 private:
 	Ref< Configuration > m_configuration;
-	Ref< ui::DropDown > m_dropType;
-	Ref< ui::DropDown > m_dropProfile;
+	Ref< ui::custom::DropDown > m_dropType;
+	Ref< ui::custom::DropDown > m_dropProfile;
 	Ref< ui::custom::EditList > m_listIncludePaths;
 	Ref< ui::custom::EditList > m_listDefinitions;
 	Ref< ui::custom::EditList > m_listLibraryPaths;
 	Ref< ui::custom::EditList > m_listLibraries;
-	Ref< ui::DropDown > m_dropWarningLevel;
+	Ref< ui::custom::DropDown > m_dropWarningLevel;
 	Ref< ui::Edit > m_editAdditionalCompilerOptions;
 	Ref< ui::Edit > m_editAdditionalLinkerOptions;
 	Ref< ui::Edit > m_editDebugExecutable;

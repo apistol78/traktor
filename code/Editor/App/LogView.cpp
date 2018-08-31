@@ -12,7 +12,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Editor/App/LogView.h"
 #include "I18N/Text.h"
 #include "Ui/StyleBitmap.h"
-#include "Ui/PopupMenu.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
@@ -96,8 +96,7 @@ bool LogView::create(ui::Widget* parent)
 	m_log->create(this, ui::WsNone, this);
 	m_log->addEventHandler< ui::MouseButtonDownEvent >(this, &LogView::eventButtonDown);
 
-	m_popup = new ui::PopupMenu();
-	m_popup->create();
+	m_popup = new ui::Menu();
 	m_popup->add(new ui::MenuItem(ui::Command(L"Editor.Log.Copy"), i18n::Text(L"LOG_COPY")));
 	m_popup->add(new ui::MenuItem(ui::Command(L"Editor.Log.CopyFiltered"), i18n::Text(L"LOG_COPY_FILTERED")));
 	m_popup->add(new ui::MenuItem(L"-"));
@@ -109,7 +108,6 @@ bool LogView::create(ui::Widget* parent)
 
 void LogView::destroy()
 {
-	safeDestroy(m_popup);
 	ui::Container::destroy();
 }
 

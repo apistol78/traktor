@@ -27,12 +27,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/TableLayout.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
-#include "Ui/DropDown.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Edit.h"
 #include "Ui/FileDialog.h"
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
+#include "Ui/Custom/DropDown.h"
 #include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/GridView/GridColumn.h"
@@ -134,7 +134,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!staticMeshType->create(containerFile, i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE")))
 		return false;
 
-	m_dropMeshType = new ui::DropDown();
+	m_dropMeshType = new ui::custom::DropDown();
 	if (!m_dropMeshType->create(containerFile))
 		return false;
 

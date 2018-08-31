@@ -100,7 +100,7 @@ public:
 
 	virtual void setFont(const Font& font);
 	
-	virtual Font getFont();
+	virtual Font getFont() const;
 	
 	virtual void setCursor(Cursor cursor);
 	

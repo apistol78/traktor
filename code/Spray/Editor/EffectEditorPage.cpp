@@ -43,7 +43,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
-#include "Ui/PopupMenu.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
@@ -201,8 +201,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 	m_site->createAdditionalPanel(m_sequencer, ui::dpi96(140), true);
 
-	m_popupMenu = new ui::PopupMenu();
-	m_popupMenu->create();
+	m_popupMenu = new ui::Menu();
 	m_popupMenu->add(new ui::MenuItem(ui::Command(L"Effect.Editor.ReplaceEmitterSource"), i18n::Text(L"EFFECT_EDITOR_REPLACE_EMITTER_SOURCE")));
 
 	m_site->setPropertyObject(m_effectData);
@@ -229,7 +228,6 @@ void EffectEditorPage::destroy()
 	m_site->destroyAdditionalPanel(m_sequencer);
 
 	// Destroy widgets.
-	safeDestroy(m_popupMenu);
 	safeDestroy(m_sequencer);
 	safeDestroy(m_previewControl);
 	safeDestroy(m_resourceManager);

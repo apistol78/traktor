@@ -46,8 +46,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
-#include "Ui/PopupMenu.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
@@ -222,16 +222,14 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 	m_entityPanel->setText(i18n::Text(L"SCENE_EDITOR_ENTITIES"));
 
-	m_entityMenu = new ui::PopupMenu();
-	m_entityMenu->create();
+	m_entityMenu = new ui::Menu();
 	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
 	m_entityMenu->add(new ui::MenuItem(L"-"));
 	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
 	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddGroupEntity"), i18n::Text(L"SCENE_EDITOR_ADD_GROUP_ENTITY")));
 	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 
-	m_entityMenuExternal = new ui::PopupMenu();
-	m_entityMenuExternal->create();
+	m_entityMenuExternal = new ui::Menu();
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
 	m_entityMenuExternal->add(new ui::MenuItem(L"-"));
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
@@ -357,8 +355,6 @@ void SceneEditorPage::destroy()
 	safeDestroy(m_editControl);
 	safeDestroy(m_entityPanel);
 	safeDestroy(m_tabMisc);
-	safeDestroy(m_entityMenu);
-	safeDestroy(m_entityMenuExternal);
 	safeDestroy(m_controllerPanel);
 	safeDestroy(m_entityToolBar);
 	safeDestroy(m_instanceGrid);

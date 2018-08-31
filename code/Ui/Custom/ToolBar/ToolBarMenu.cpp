@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
-#include "Ui/PopupMenu.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
@@ -117,28 +117,23 @@ void ToolBarMenu::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent)
 
 	if (!m_menu)
 	{
-		m_menu = new PopupMenu();
-		if (m_menu->create())
-		{
-			for (size_t i = 0; i < m_items.size(); ++i)
-				m_menu->add(m_items[i]);
-		
-			Ref< MenuItem > item = m_menu->show(toolBar, m_menuPosition);
-			if (item)
-			{
-				ToolBarButtonClickEvent clickEvent(toolBar, this, item->getCommand(), item);
-				toolBar->raiseEvent(&clickEvent);
-			}
+		m_menu = new Menu();
 
-			safeDestroy(m_menu);
-			toolBar->update();
+		for (size_t i = 0; i < m_items.size(); ++i)
+			m_menu->add(m_items[i]);
+		
+		Ref< MenuItem > item = m_menu->show(toolBar, m_menuPosition);
+		if (item)
+		{
+			ToolBarButtonClickEvent clickEvent(toolBar, this, item->getCommand(), item);
+			toolBar->raiseEvent(&clickEvent);
 		}
-		else
-			m_menu = 0;
+
+		toolBar->update();
 	}
 	else
 	{
-		safeDestroy(m_menu);
+		m_menu = nullptr;
 	}
 }
 

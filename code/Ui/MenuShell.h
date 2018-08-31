@@ -4,10 +4,9 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_ui_ToolForm_H
-#define traktor_ui_ToolForm_H
+#pragma once
 
-#include "Ui/Container.h"
+#include "Ui/Widget.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,39 +20,40 @@ namespace traktor
 {
 	namespace ui
 	{
+	
+class MenuItem;
 
-/*! \brief Tool form.
+/*! \brief Menu shell
  * \ingroup UI
  */
-class T_DLLCLASS ToolForm : public Container
+class T_DLLCLASS MenuShell : public Widget
 {
 	T_RTTI_CLASS;
 
 public:
-	enum StyleFlags
-	{
-		WsDefault = WsResizable | WsSystemBox | WsCloseBox | WsCaption
-	};
+	bool create(Widget* parent);
 
-	ToolForm();
+	void add(MenuItem* item);
 
-	bool create(Widget* parent, const std::wstring& text, int width, int height, int style = WsDefault, Layout* layout = 0);
+	MenuItem* getItem(const Point& at) const;
 
-	void center();
+	virtual Size getMinimumSize() const T_OVERRIDE T_FINAL;
 
-	virtual int showModal();
-
-	virtual void endModal(int result);
-
-	bool isModal() const;
-
-	virtual bool acceptLayout() const T_OVERRIDE;
+	virtual Size getPreferedSize() const T_OVERRIDE T_FINAL;
 
 private:
-	bool m_modal;
+	RefArray< MenuItem > m_items;
+	Ref< MenuItem > m_trackItem;
+
+	void eventMouseMove(MouseMoveEvent* event);
+
+	void eventButtonDown(MouseButtonDownEvent* event);
+
+	void eventButtonUp(MouseButtonUpEvent* event);
+
+	void eventPaint(PaintEvent* e);
 };
 
 	}
 }
 
-#endif	// traktor_ui_ToolForm_H

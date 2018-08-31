@@ -25,11 +25,11 @@ class IEditor;
 	{
 
 class CheckBox;
-class DropDown;
 
 		namespace custom
 		{
 
+class DropDown;
 class SyntaxRichEdit;
 
 		}
@@ -73,8 +73,8 @@ private:
 	};
 
 	editor::IEditor* m_editor;
-	Ref< ui::DropDown > m_dropCompiler;
-	Ref< ui::DropDown > m_dropTechniques;
+	Ref< ui::custom::DropDown > m_dropCompiler;
+	Ref< ui::custom::DropDown > m_dropTechniques;
 	Ref< ui::Container > m_containerCombinations;
 	RefArray< ui::CheckBox > m_checkCombinations;
 	Ref< ui::custom::SyntaxRichEdit > m_shaderEditVertex;

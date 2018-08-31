@@ -11,12 +11,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "I18N/Text.h"
 #include "Sound/ISoundDriver.h"
 #include "Sound/Editor/SoundSettingsPage.h"
-#include "Ui/DropDown.h"
 #include "Ui/Container.h"
 #include "Ui/Edit.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/DropDown.h"
 
 namespace traktor
 {
@@ -34,20 +34,20 @@ bool SoundSettingsPage::create(ui::Container* parent, const PropertyGroup* origi
 	Ref< ui::Static > staticSounder = new ui::Static();
 	staticSounder->create(container, i18n::Text(L"EDITOR_SETTINGS_SOUND_DRIVER_TYPE"));
 
-	m_dropSoundDriver = new ui::DropDown();
-	m_dropSoundDriver->create(container, L"");
+	m_dropSoundDriver = new ui::custom::DropDown();
+	m_dropSoundDriver->create(container);
 
 	Ref< ui::Static > staticVirtualChannels = new ui::Static();
 	staticVirtualChannels->create(container, i18n::Text(L"EDITOR_SETTINGS_SOUND_VIRTUAL_CHANNELS"));
 
 	m_editVirtualChannels = new ui::Edit();
-	m_editVirtualChannels->create(container, L"", ui::WsClientBorder, new ui::NumericEditValidator(false, 1, 256));
+	m_editVirtualChannels->create(container, L"", ui::WsNone, new ui::NumericEditValidator(false, 1, 256));
 
 	Ref< ui::Static > staticSampleRate = new ui::Static();
 	staticSampleRate->create(container, i18n::Text(L"EDITOR_SETTINGS_SOUND_SAMPLE_RATE"));
 
-	m_dropSampleRate = new ui::DropDown();
-	m_dropSampleRate->create(container, L"");
+	m_dropSampleRate = new ui::custom::DropDown();
+	m_dropSampleRate->create(container);
 	m_dropSampleRate->add(L"11025");
 	m_dropSampleRate->add(L"22050");
 	m_dropSampleRate->add(L"44100");
@@ -56,16 +56,16 @@ bool SoundSettingsPage::create(ui::Container* parent, const PropertyGroup* origi
 	Ref< ui::Static > staticBitsPerSample = new ui::Static();
 	staticBitsPerSample->create(container, i18n::Text(L"EDITOR_SETTINGS_SOUND_BITS_PER_SAMPLE"));
 
-	m_dropBitsPerSample = new ui::DropDown();
-	m_dropBitsPerSample->create(container, L"");
+	m_dropBitsPerSample = new ui::custom::DropDown();
+	m_dropBitsPerSample->create(container);
 	m_dropBitsPerSample->add(L"8");
 	m_dropBitsPerSample->add(L"16");
 
 	Ref< ui::Static > staticHwChannels = new ui::Static();
 	staticHwChannels->create(container, i18n::Text(L"EDITOR_SETTINGS_SOUND_HW_CHANNELS"));
 
-	m_dropHwChannels = new ui::DropDown();
-	m_dropHwChannels->create(container, L"");
+	m_dropHwChannels = new ui::custom::DropDown();
+	m_dropHwChannels->create(container);
 	m_dropHwChannels->add(L"1");
 	m_dropHwChannels->add(L"2");
 	m_dropHwChannels->add(L"2.1");
@@ -79,13 +79,13 @@ bool SoundSettingsPage::create(ui::Container* parent, const PropertyGroup* origi
 	staticFrameSamples->create(container, i18n::Text(L"EDITOR_SETTINGS_SOUND_FRAME_SAMPLES"));
 
 	m_editFrameSamples = new ui::Edit();
-	m_editFrameSamples->create(container, L"", ui::WsClientBorder, new ui::NumericEditValidator(false, 16, 4096));
+	m_editFrameSamples->create(container, L"", ui::WsNone, new ui::NumericEditValidator(false, 16, 4096));
 
 	Ref< ui::Static > staticMixerFrames = new ui::Static();
 	staticMixerFrames->create(container, i18n::Text(L"EDITOR_SETTINGS_SOUND_MIXER_FRAMES"));
 
 	m_editMixerFrames = new ui::Edit();
-	m_editMixerFrames->create(container, L"", ui::WsClientBorder, new ui::NumericEditValidator(false, 1, 16));
+	m_editMixerFrames->create(container, L"", ui::WsNone, new ui::NumericEditValidator(false, 1, 16));
 
 	std::wstring soundDriverType = settings->getProperty< std::wstring >(L"Editor.SoundDriver");
 

@@ -37,7 +37,7 @@ class IEditorPageSite;
 class Container;
 class Font;
 class IBitmap;
-class PopupMenu;
+class Menu;
 class Tab;
 
 		namespace custom
@@ -104,8 +104,8 @@ private:
 	Ref< ui::Tab > m_tabMisc;
 	Ref< EntityDependencyInvestigator > m_entityDependencyPanel;
 	Ref< ui::custom::GridView > m_gridGuides;
-	Ref< ui::PopupMenu > m_entityMenu;
-	Ref< ui::PopupMenu > m_entityMenuExternal;
+	Ref< ui::Menu > m_entityMenu;
+	Ref< ui::Menu > m_entityMenuExternal;
 	Ref< ui::Container > m_controllerPanel;
 	Ref< ui::custom::ToolBar > m_entityToolBar;
 	Ref< ui::custom::ToolBarButton > m_buttonFilterEntity;

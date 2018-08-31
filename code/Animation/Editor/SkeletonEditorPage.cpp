@@ -14,6 +14,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/FileSystem.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Vector2.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -35,7 +36,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Container.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/PopupMenu.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/Custom/TreeView/TreeView.h"
@@ -119,8 +120,7 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &SkeletonEditorPage::eventSize);
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &SkeletonEditorPage::eventPaint);
 
-	m_boneMenu = new ui::PopupMenu();
-	m_boneMenu->create();
+	m_boneMenu = new ui::Menu();
 	m_boneMenu->add(new ui::MenuItem(ui::Command(L"Skeleton.Editor.AddBone"), i18n::Text(L"SKELETON_EDITOR_ADD_BONE")));
 	m_boneMenu->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SKELETON_EDITOR_DELETE_BONE")));
 
@@ -191,11 +191,9 @@ void SkeletonEditorPage::destroy()
 {
 	m_site->destroyAdditionalPanel(m_skeletonPanel);
 	
-	m_renderView->close();
-
-	m_boneMenu->destroy();
-	m_skeletonPanel->destroy();
-	m_renderWidget->destroy();
+	safeClose(m_renderView);
+	safeDestroy(m_skeletonPanel);
+	safeDestroy(m_renderWidget);
 }
 
 bool SkeletonEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

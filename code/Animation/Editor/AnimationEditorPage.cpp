@@ -16,6 +16,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Vector2.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Settings/PropertyColor.h"
@@ -37,7 +38,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
-#include "Ui/PopupMenu.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
 #include "Ui/StyleBitmap.h"
@@ -236,8 +237,7 @@ bool AnimationEditorPage::create(ui::Container* parent)
 	m_site->createAdditionalPanel(m_sequencerPanel, ui::dpi96(160), true);
 
 	// Build popup menu.
-	m_menuPopup = new ui::PopupMenu();
-	m_menuPopup->create();
+	m_menuPopup = new ui::Menu();
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Animation.Editor.Create"), i18n::Text(L"ANIMATION_EDITOR_CREATE")));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"ANIMATION_EDITOR_DELETE")));
 
@@ -303,8 +303,7 @@ void AnimationEditorPage::destroy()
 	}
 
 	// Destroy widgets.
-	m_menuPopup->destroy();
-	m_sequencerPanel->destroy();
+	safeDestroy(m_sequencerPanel);
 }
 
 bool AnimationEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

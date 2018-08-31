@@ -27,12 +27,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Shader/ShaderGraph.h"
 #include "Ui/Application.h"
 #include "Ui/CheckBox.h"
-#include "Ui/DropDown.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Static.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/DropDown.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageHlsl.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
 
@@ -92,14 +92,14 @@ bool ShaderViewer::create(ui::Widget* parent)
 	Ref< ui::Static > staticCompiler = new ui::Static();
 	staticCompiler->create(containerDrops, i18n::Text(L"SHADERGRAPH_VIEWER_COMPILER"));
 
-	m_dropCompiler = new ui::DropDown();
+	m_dropCompiler = new ui::custom::DropDown();
 	m_dropCompiler->create(containerDrops);
 	m_dropCompiler->addEventHandler< ui::SelectionChangeEvent >(this, &ShaderViewer::eventCompilerChange);
 
 	Ref< ui::Static > staticTechnique = new ui::Static();
 	staticTechnique->create(containerDrops, i18n::Text(L"SHADERGRAPH_VIEWER_TECHNIQUE"));
 
-	m_dropTechniques = new ui::DropDown();
+	m_dropTechniques = new ui::custom::DropDown();
 	m_dropTechniques->create(containerDrops);
 	m_dropTechniques->addEventHandler< ui::SelectionChangeEvent >(this, &ShaderViewer::eventTechniqueChange);
 

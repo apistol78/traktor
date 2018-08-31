@@ -38,8 +38,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
-#include "Ui/PopupMenu.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Tab.h"
@@ -241,8 +241,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
 	m_debugLineAttribute = m_edit->addBackgroundAttribute(ss->getColor(this, L"background-debug-line"));
 
-	m_editMenu = new ui::PopupMenu();
-	m_editMenu->create();
+	m_editMenu = new ui::Menu();
 	m_editMenu->add(new ui::MenuItem(ui::Command(L"Script.Editor.AddUsingStatement"), i18n::Text(L"SCRIPT_EDITOR_ADD_USING")));
 
 	m_compileStatus = new ui::custom::StatusBar();
@@ -324,7 +323,6 @@ void ScriptEditorPage::destroy()
 
 	safeDestroy(m_containerExplorer);
 	safeDestroy(m_scriptManager);
-	safeDestroy(m_editMenu);
 }
 
 bool ScriptEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

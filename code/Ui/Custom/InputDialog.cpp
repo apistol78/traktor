@@ -5,10 +5,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Ui/Application.h"
-#include "Ui/DropDown.h"
 #include "Ui/Edit.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/DropDown.h"
 #include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/MiniButton.h"
 
@@ -73,7 +73,7 @@ bool InputDialog::create(
 		else
 		{
 			Ref< DropDown > dropDown = new DropDown();
-			dropDown->create(container, m_outFields[i].value, WsClientBorder | WsTabStop);
+			dropDown->create(container, WsClientBorder | WsTabStop);
 
 			std::wstring key, value;
 			for (size_t index = 0; m_outFields[i].valueEnumerator->getValue(index, key, value); ++index)

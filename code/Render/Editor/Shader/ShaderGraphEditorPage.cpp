@@ -53,9 +53,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
-#include "Ui/PopupMenu.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
@@ -187,8 +187,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_editorGraph->setPaintSettings(paintSettings);
 
 	// Build popup menu.
-	m_menuPopup = new ui::PopupMenu();
-	m_menuPopup->create();
+	m_menuPopup = new ui::Menu();
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"SHADERGRAPH_CREATE_NODE"));
 	
 	std::map< std::wstring, Ref< ui::MenuItem > > categories;
@@ -272,7 +271,6 @@ void ShaderGraphEditorPage::destroy()
 	safeDestroy(m_editorGraph);
 	safeDestroy(m_shaderViewer);
 	safeDestroy(m_dependencyPane);
-	safeDestroy(m_menuPopup);
 	safeDestroy(m_menuQuick);
 }
 

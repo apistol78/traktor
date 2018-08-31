@@ -23,7 +23,7 @@ class IEditor;
 	{
 
 class Command;
-class PopupMenu;
+class Menu;
 
 		namespace custom
 		{
@@ -65,7 +65,7 @@ private:
 	Ref< ui::custom::ToolBar > m_debuggerTools;
 	Ref< ui::custom::GridView > m_callStackGrid;
 	Ref< ui::custom::GridView > m_localsGrid;
-	Ref< ui::PopupMenu > m_localsPopup;
+	Ref< ui::Menu > m_localsPopup;
 	RefArray< StackFrame > m_stackFrames;
 	int32_t m_activeFrame;
 

@@ -8,7 +8,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Form.h"
-#include "Ui/MenuBar.h"
 #include "Ui/Itf/IForm.h"
 
 namespace traktor

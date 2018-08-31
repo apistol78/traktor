@@ -23,9 +23,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
-#include "Ui/PopupMenu.h"
-#include "Ui/StyleBitmap.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/AspectLayout.h"
 #include "Ui/Custom/Splitter.h"
@@ -91,8 +91,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_editorGraph->addEventHandler< ui::custom::EdgeDisconnectEvent >(this, &StateGraphEditorPage::eventEdgeDisconnect);
 
 	// Build popup menu.
-	m_menuPopup = new ui::PopupMenu();
-	m_menuPopup->create();
+	m_menuPopup = new ui::Menu();
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.Create"), i18n::Text(L"STATEGRAPH_CREATE_STATE")));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"STATEGRAPH_DELETE_STATE")));
 	m_menuPopup->add(new ui::MenuItem(L"-"));
@@ -138,7 +137,6 @@ void StateGraphEditorPage::destroy()
 	m_site->destroyAdditionalPanel(m_containerPreview);
 	safeDestroy(m_containerPreview);
 	safeDestroy(m_editorGraph);
-	safeDestroy(m_menuPopup);
 }
 
 bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

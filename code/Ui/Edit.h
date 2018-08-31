@@ -37,7 +37,9 @@ public:
 		WsReadOnly = WsUser
 	};
 
-	bool create(Widget* parent, const std::wstring& text = L"", int style = WsClientBorder, const EditValidator* validator = 0);
+	Edit();
+
+	bool create(Widget* parent, const std::wstring& text = L"", int style = WsNone, const EditValidator* validator = 0);
 	
 	bool setValidator(const EditValidator* validator);
 
@@ -49,10 +51,23 @@ public:
 
 	void setBorderColor(const Color4ub& borderColor);
 
+	virtual Size getPreferedSize() const T_OVERRIDE;
+
 private:
 	Ref< const EditValidator > m_validator;
+	int32_t m_selectionStart;
+	int32_t m_selectionEnd;
+	int32_t m_caret;
+	bool m_caretBlink;
+	bool m_readOnly;
+
+	void eventKeyDown(KeyDownEvent* event);
 
 	void eventKey(KeyEvent* event);
+
+	void eventPaint(PaintEvent* event);
+
+	void eventTimer(TimerEvent* event);
 };
 
 	}

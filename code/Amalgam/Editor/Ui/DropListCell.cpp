@@ -10,8 +10,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/Command.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
-#include "Ui/PopupMenu.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 
 namespace traktor
@@ -29,27 +29,23 @@ DropListCell::DropListCell(HostEnumerator* hostEnumerator, TargetInstance* insta
 
 void DropListCell::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& position)
 {
-	ui::PopupMenu menu;
-	if (menu.create())
+	ui::Menu menu;
+
+	std::wstring platformName = m_instance->getPlatformName();
+
+	int32_t count = m_hostEnumerator->count();
+	for (int32_t i = 0; i < count; ++i)
 	{
-		std::wstring platformName = m_instance->getPlatformName();
-
-		int32_t count = m_hostEnumerator->count();
-		for (int32_t i = 0; i < count; ++i)
+		if (m_hostEnumerator->supportPlatform(i, platformName))
 		{
-			if (m_hostEnumerator->supportPlatform(i, platformName))
-			{
-				const std::wstring& description = m_hostEnumerator->getDescription(i);
-				menu.add(new ui::MenuItem(ui::Command(i), description));
-			}
+			const std::wstring& description = m_hostEnumerator->getDescription(i);
+			menu.add(new ui::MenuItem(ui::Command(i), description));
 		}
-
-		Ref< ui::MenuItem > selectedItem = menu.show(getWidget< ui::custom::AutoWidget >(), m_menuPosition);
-		if (selectedItem)
-			m_instance->setDeployHostId(selectedItem->getCommand().getId());
-
-		menu.destroy();
 	}
+
+	Ref< ui::MenuItem > selectedItem = menu.show(getWidget< ui::custom::AutoWidget >(), m_menuPosition);
+	if (selectedItem)
+		m_instance->setDeployHostId(selectedItem->getCommand().getId());
 }
 
 void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)

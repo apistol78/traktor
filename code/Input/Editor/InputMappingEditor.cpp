@@ -51,8 +51,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Input/Editor/InThresholdTraits.h"
 #include "Input/Editor/InTriggerTraits.h"
 #include "Ui/Container.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
-#include "Ui/PopupMenu.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/EditList.h"
@@ -257,8 +257,7 @@ bool InputMappingEditor::create(ui::Container* parent)
 	}
 
 	// Build popup menu.
-	m_menuPopup = new ui::PopupMenu();
-	m_menuPopup->create();
+	m_menuPopup = new ui::Menu();
 
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"INPUT_EDITOR_CREATE_NODE"));
 
@@ -285,7 +284,6 @@ bool InputMappingEditor::create(ui::Container* parent)
 
 void InputMappingEditor::destroy()
 {
-	safeDestroy(m_menuPopup);
 }
 
 bool InputMappingEditor::dropInstance(db::Instance* instance, const ui::Point& position)

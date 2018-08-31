@@ -15,8 +15,6 @@ namespace traktor
 	namespace ui
 	{
 
-class MenuBarWin32;
-
 /*! \brief
  * \ingroup UIW32
  */
@@ -45,30 +43,9 @@ public:
 
 	virtual void showProgress(int32_t current, int32_t total) T_OVERRIDE T_FINAL;
 
-	/*! \brief Bar registration.
-	 *
-	 * As some widgets need to be notified about
-	 * parent form's size we need to register those widgets
-	 * explicitly.
-	 * The form also needs to know about these widgets
-	 * in order to calculate it's inner size.
-	 */
-	//@{
-
-	void registerMenuBar(MenuBarWin32* menuBar);
-
-	void unregisterMenuBar(MenuBarWin32* menuBar);
-
-	//@}
-
 private:
-	MenuBarWin32* m_menuBar;
 	ComRef< ITaskbarList3 > m_taskBarList;
 	HWND m_hWndLastFocus;
-
-	LRESULT eventInitMenuPopup(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
-
-	LRESULT eventMenuCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 
 	LRESULT eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 

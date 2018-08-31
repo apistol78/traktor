@@ -7,9 +7,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <sstream>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/MemoryStream.h>
+#include <Core/Log/Log.h>
+#include <Core/Misc/SafeDestroy.h>
 #include <Core/Serialization/DeepHash.h>
 #include <Core/Serialization/DeepClone.h>
-#include <Core/Log/Log.h>
 #include <Drawing/Formats/ImageFormatBmp.h>
 #include <Ui/Application.h>
 #include <Ui/MessageBox.h>
@@ -165,44 +166,37 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_treeSolution->addEventHandler< ui::SelectionChangeEvent >(this, &SolutionForm::eventTreeSelect);
 	m_treeSolution->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &SolutionForm::eventTreeChange);
 
-	m_menuSolution = new ui::PopupMenu();
-	m_menuSolution->create();
+	m_menuSolution = new ui::Menu();
 	m_menuSolution->add(new ui::MenuItem(ui::Command(L"Solution.AddProject"), L"Add New Project"));
 	m_menuSolution->add(new ui::MenuItem(ui::Command(L"Solution.AddAggregation"), L"Add New Aggregation"));
 
-	m_menuProject = new ui::PopupMenu();
-	m_menuProject->create();
+	m_menuProject = new ui::Menu();
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddConfiguration"), L"Add New Configuration"));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddFilter"), L"Add New Filter"));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddFile"), L"Add New File"));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddExistingFiles"), L"Add Existing File(s)..."));
 	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.Remove"), L"Remove"));
 
-	m_menuAggregation = new ui::PopupMenu();
-	m_menuAggregation->create();
+	m_menuAggregation = new ui::Menu();
 	m_menuAggregation->add(new ui::MenuItem(ui::Command(L"Aggregation.AddFile"), L"Add New File"));
 	m_menuAggregation->add(new ui::MenuItem(ui::Command(L"Aggregation.AddExistingFiles"), L"Add Existing File(s)..."));
 	m_menuAggregation->add(new ui::MenuItem(ui::Command(L"Aggregation.Remove"), L"Remove"));
 
-	m_menuConfiguration = new ui::PopupMenu();
-	m_menuConfiguration->create();
+	m_menuConfiguration = new ui::Menu();
 	m_menuConfiguration->add(new ui::MenuItem(ui::Command(L"Configuration.AddAggregation"), L"Add New Aggregation"));
 	m_menuConfiguration->add(new ui::MenuItem(ui::Command(L"Configuration.Remove"), L"Remove"));
 
-	m_menuFilter = new ui::PopupMenu();
-	m_menuFilter->create();
+	m_menuFilter = new ui::Menu();
 	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.AddFilter"), L"Add New Filter"));
 	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.AddFile"), L"Add New File"));
 	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.AddExistingFiles"), L"Add Existing File(s)..."));
 	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.Remove"), L"Remove"));
 
-	m_menuFile = new ui::PopupMenu();
-	m_menuFile->create();
+	m_menuFile = new ui::Menu();
 	m_menuFile->add(new ui::MenuItem(ui::Command(L"File.Flatten"), L"Flatten Wild-card..."));
 	m_menuFile->add(new ui::MenuItem(ui::Command(L"File.Remove"), L"Remove"));
 
-	m_menuAggregationItem = new ui::PopupMenu();
-	m_menuAggregationItem->create();
+	m_menuAggregationItem = new ui::Menu();
 	m_menuAggregationItem->add(new ui::MenuItem(ui::Command(L"AggregationItem.Remove"), L"Remove"));
 
 	Ref< ui::Container > pageContainer = new ui::Container();
@@ -259,15 +253,7 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 
 void SolutionForm::destroy()
 {
-	m_menuAggregationItem->destroy();
-	m_menuFile->destroy();
-	m_menuFilter->destroy();
-	m_menuConfiguration->destroy();
-	m_menuAggregation->destroy();
-	m_menuProject->destroy();
-	m_menuSolution->destroy();
-	m_menuBar->destroy();
-
+	safeDestroy(m_menuBar);
 	ui::Form::destroy();
 }
 
