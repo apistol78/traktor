@@ -304,7 +304,6 @@ void UiClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWidget->addMethod("destroy", &Widget::destroy);
 	classWidget->addMethod("setText", &Widget::setText);
 	classWidget->addMethod("getText", &Widget::getText);
-	classWidget->addMethod("setToolTipText", &Widget::setToolTipText);
 	classWidget->addMethod("setForeground", &Widget::setForeground);
 	classWidget->addMethod("isForeground", &Widget::isForeground);
 	classWidget->addMethod("setVisible", &Widget::setVisible);

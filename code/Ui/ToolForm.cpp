@@ -17,7 +17,6 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolForm", ToolForm, Container)
 
 ToolForm::ToolForm()
-:	m_modal(false)
 {
 }
 
@@ -46,31 +45,6 @@ bool ToolForm::create(Widget* parent, const std::wstring& text, int width, int h
 void ToolForm::center()
 {
 	static_cast< IToolForm* >(m_widget)->center();
-}
-
-int ToolForm::showModal()
-{
-	T_ASSERT (m_widget);
-
-	m_modal = true;
-
-	update();
-	return static_cast< IToolForm* >(m_widget)->showModal();
-}
-
-void ToolForm::endModal(int result)
-{
-	T_ASSERT (m_widget);
-	T_ASSERT (m_modal);
-
-	static_cast< IToolForm* >(m_widget)->endModal(result);
-
-	m_modal = false;
-}
-
-bool ToolForm::isModal() const
-{
-	return m_modal;
 }
 
 bool ToolForm::acceptLayout() const

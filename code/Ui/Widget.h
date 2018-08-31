@@ -67,8 +67,6 @@ public:
 	virtual void setText(const std::wstring& text);
 	
 	virtual std::wstring getText() const;
-	
-	virtual void setToolTipText(const std::wstring& text);
 
 	virtual void setForeground();
 

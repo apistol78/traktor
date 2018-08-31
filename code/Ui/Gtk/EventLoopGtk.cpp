@@ -6,6 +6,8 @@ namespace traktor
 	{
 
 EventLoopGtk::EventLoopGtk()
+:	m_terminated(false)
+,	m_exitCode(0)
 {
 	gtk_init(0, nullptr);
 }
@@ -16,23 +18,29 @@ EventLoopGtk::~EventLoopGtk()
 
 bool EventLoopGtk::process(EventSubject* owner)
 {
-	return false;
+	if (m_terminated)
+		return false;
+
+	gtk_main_iteration_do(FALSE);
+	return true;
 }
 
 int32_t EventLoopGtk::execute(EventSubject* owner)
 {
 	gtk_main();
-	return 0;
+	return m_exitCode;
 }
 
 void EventLoopGtk::exit(int32_t exitCode)
 {
+	m_exitCode = exitCode;
+	m_terminated = true;
 	gtk_main_quit();
 }
 
 int32_t EventLoopGtk::getExitCode() const
 {
-	return 0;
+	return m_exitCode;
 }
 
 int32_t EventLoopGtk::getAsyncKeyState() const
@@ -47,7 +55,16 @@ bool EventLoopGtk::isKeyDown(VirtualKey vk) const
 
 Size EventLoopGtk::getDesktopSize() const
 {
-	return Size(0, 0);
+	GdkDisplay* display = gdk_display_get_default();
+	T_FATAL_ASSERT(display != nullptr);
+
+	GdkMonitor* monitor = gdk_display_get_primary_monitor(display);
+	T_FATAL_ASSERT(monitor != nullptr);
+
+	GdkRectangle wa;
+	gdk_monitor_get_workarea(monitor, &wa);
+	
+	return Size(wa.width, wa.height);
 }
 
 	}

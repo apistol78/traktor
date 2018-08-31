@@ -17,7 +17,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <string>
 #include <vector>
 #include "Core/Config.h"
-#if defined(__ANDROID__)
+#if defined(__ANDROID__) || defined(__LINUX__)
 #	include "Core/Io/Utf8Encoding.h"
 #endif
 
@@ -67,7 +67,7 @@ std::string T_DLLCLASS wstombs(const IEncoding& encoding, const std::wstring& s)
 inline
 std::wstring mbstows(const std::string& mbs)
 {
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__LINUX__)
 	if (!mbs.empty())
 	{
 		wchar_t* buf = (wchar_t*)alloca((mbs.length() + 1) * sizeof(wchar_t));
@@ -86,7 +86,7 @@ std::wstring mbstows(const std::string& mbs)
 inline
 std::string wstombs(const std::wstring& ws)
 {
-#if !defined(__ANDROID__)
+#if !defined(__ANDROID__) && !defined(__LINUX__)
 	if (!ws.empty())
 	{
 		char* buf = (char*)alloca((ws.length() + 1) * sizeof(char));

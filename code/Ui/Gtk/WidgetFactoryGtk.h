@@ -19,69 +19,35 @@ namespace traktor
 class T_DLLCLASS WidgetFactoryGtk : public IWidgetFactory
 {
 public:
-	virtual IButton* createButton(EventSubject* owner);
+	virtual IContainer* createContainer(EventSubject* owner) T_OVERRIDE T_FINAL;
 
-	virtual ICheckBox* createCheckBox(EventSubject* owner);
+	virtual IDialog* createDialog(EventSubject* owner) T_OVERRIDE T_FINAL;
 
-	virtual IComboBox* createComboBox(EventSubject* owner);
+	virtual IFileDialog* createFileDialog(EventSubject* owner) T_OVERRIDE T_FINAL;
 
-	virtual IContainer* createContainer(EventSubject* owner);
+	virtual IForm* createForm(EventSubject* owner) T_OVERRIDE T_FINAL;
 
-	virtual IDialog* createDialog(EventSubject* owner);
+	virtual IMessageBox* createMessageBox(EventSubject* owner) T_OVERRIDE T_FINAL;
 
-	virtual IDropDown* createDropDown(EventSubject* owner);
+	virtual INotificationIcon* createNotificationIcon(EventSubject* owner) T_OVERRIDE T_FINAL;
 
-	virtual IEdit* createEdit(EventSubject* owner);
+	virtual IPathDialog* createPathDialog(EventSubject* owner) T_OVERRIDE T_FINAL;
 
-	virtual IFileDialog* createFileDialog(EventSubject* owner);
+	virtual IToolForm* createToolForm(EventSubject* owner) T_OVERRIDE T_FINAL;
 
-	virtual IForm* createForm(EventSubject* owner);
+	virtual IUserWidget* createUserWidget(EventSubject* owner) T_OVERRIDE T_FINAL;
 
-	virtual IListBox* createListBox(EventSubject* owner);
+	virtual IWebBrowser* createWebBrowser(EventSubject* owner) T_OVERRIDE T_FINAL;
 
-	virtual IListView* createListView(EventSubject* owner);
+	virtual ISystemBitmap* createBitmap() T_OVERRIDE T_FINAL;
 
-	virtual IMenuBar* createMenuBar(EventSubject* owner);
+	virtual IClipboard* createClipboard() T_OVERRIDE T_FINAL;
 
-	virtual IMessageBox* createMessageBox(EventSubject* owner);
+	virtual int32_t getSystemDPI() const T_OVERRIDE T_FINAL;
 
-	virtual INotificationIcon* createNotificationIcon(EventSubject* owner);
+	virtual bool getSystemColor(SystemColor systemColor, Color4ub& outColor) T_OVERRIDE T_FINAL;
 
-	virtual IPanel* createPanel(EventSubject* owner);
-
-	virtual IPathDialog* createPathDialog(EventSubject* owner);
-
-	virtual IPopupMenu* createPopupMenu(EventSubject* owner);
-
-	virtual IRadioButton* createRadioButton(EventSubject* owner);
-
-	virtual IRichEdit* createRichEdit(EventSubject* owner);
-
-	virtual IScrollBar* createScrollBar(EventSubject* owner);
-
-	virtual ISlider* createSlider(EventSubject* owner);
-
-	virtual IStatic* createStatic(EventSubject* owner);
-
-	virtual IToolForm* createToolForm(EventSubject* owner);
-
-	virtual ITreeView* createTreeView(EventSubject* owner);
-
-	virtual IUserWidget* createUserWidget(EventSubject* owner);
-
-	virtual IWebBrowser* createWebBrowser(EventSubject* owner);
-
-	virtual INative* createNative(EventSubject* owner);
-
-	virtual ISystemBitmap* createBitmap();
-
-	virtual IClipboard* createClipboard();
-
-	virtual int32_t getSystemDPI() const;
-
-	virtual bool getSystemColor(SystemColor systemColor, Color4ub& outColor);
-
-	virtual void getSystemFonts(std::list< std::wstring >& outFonts);
+	virtual void getSystemFonts(std::list< std::wstring >& outFonts) T_OVERRIDE T_FINAL;
 };
 
 	}

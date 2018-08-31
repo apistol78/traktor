@@ -105,10 +105,6 @@ std::wstring DialogCocoa::getText() const
 	return fromNSString([m_window title]);
 }
 
-void DialogCocoa::setToolTipText(const std::wstring& text)
-{
-}
-
 void DialogCocoa::setForeground()
 {
 }
