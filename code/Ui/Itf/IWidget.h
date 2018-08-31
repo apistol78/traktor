@@ -42,8 +42,6 @@ public:
 
 	virtual std::wstring getText() const = 0;
 
-	virtual void setToolTipText(const std::wstring& text) = 0;
-
 	virtual void setForeground() = 0;
 
 	virtual bool isForeground() const = 0;

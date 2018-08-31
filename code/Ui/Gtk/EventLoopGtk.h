@@ -44,6 +44,10 @@ public:
 	virtual bool isKeyDown(VirtualKey vk) const;
 
 	virtual Size getDesktopSize() const;
+
+private:
+	bool m_terminated;
+	int32_t m_exitCode;
 };
 
 	}

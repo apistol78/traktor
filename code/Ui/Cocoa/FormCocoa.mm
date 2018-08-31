@@ -110,10 +110,6 @@ std::wstring FormCocoa::getText() const
 	return fromNSString([m_window title]);
 }
 
-void FormCocoa::setToolTipText(const std::wstring& text)
-{
-}
-
 void FormCocoa::setForeground()
 {
 }

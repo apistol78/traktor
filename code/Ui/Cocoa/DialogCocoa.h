@@ -49,8 +49,6 @@ public:
 
 	virtual std::wstring getText() const T_OVERRIDE;
 
-	virtual void setToolTipText(const std::wstring& text) T_OVERRIDE;
-
 	virtual void setForeground() T_OVERRIDE;
 
 	virtual bool isForeground() const T_OVERRIDE;

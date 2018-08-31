@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 /*
 ================================================================================================
 CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
@@ -35,15 +33,15 @@ MenuItem* Menu::show(Widget* parent, const Point& at)
 	Ref< MenuItem > selectedItem;
 
 	if (!parent)
-		return 0;
+		return nullptr;
 
 	Ref< ToolForm > form = new ToolForm();
 	if (!form->create(parent, L"", 0, 0, WsNone, new FloodLayout()))
-		return 0;
+		return nullptr;
 
 	Ref< MenuShell > shell = new MenuShell();
 	if (!shell->create(form))
-		return 0;
+		return nullptr;
 
 	shell->addEventHandler< MenuClickEvent >([&](MenuClickEvent* e) {
 		selectedItem = e->getItem();
@@ -63,13 +61,14 @@ MenuItem* Menu::show(Widget* parent, const Point& at)
 	));
 
 	form->show();
-	//shell->setCapture();
 	
 	// Process events until menu item has been selected.
 	while (!selectedItem)
-		Application::getInstance()->process();
+	{
+		if (!Application::getInstance()->process())
+			return nullptr;
+	}
 
-	//shell->releaseCapture();
 	form->destroy();
 
 	return selectedItem;

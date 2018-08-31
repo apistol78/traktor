@@ -16,9 +16,13 @@ public:
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style);
 
-	virtual void center();
+	virtual void destroy() T_OVERRIDE T_FINAL;
+
+	virtual void center() T_OVERRIDE T_FINAL;
 
 	virtual void setVisible(bool visible) T_OVERRIDE T_FINAL;
+
+	virtual void setRect(const Rect& rect) T_OVERRIDE T_FINAL;
 
 private:
 	GtkWidget* m_window;	

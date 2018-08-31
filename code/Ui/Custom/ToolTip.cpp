@@ -84,7 +84,7 @@ void ToolTip::eventTimer(TimerEvent* event)
 			inside = true;
 	}
 
-	inside &= parent->hitTest(parent->clientToScreen(mousePosition));
+	inside &= parent->getRect().inside(mousePosition);
 
 	if (inside && !isVisible(true))
 	{

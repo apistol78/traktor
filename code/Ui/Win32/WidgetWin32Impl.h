@@ -82,10 +82,6 @@ public:
 		return tstows(buffer.ptr());
 	}
 
-	virtual void setToolTipText(const std::wstring& text)
-	{
-	}
-
 	virtual void setForeground()
 	{
 		SetForegroundWindow(m_hWnd);

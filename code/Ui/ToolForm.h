@@ -41,16 +41,7 @@ public:
 
 	void center();
 
-	virtual int showModal();
-
-	virtual void endModal(int result);
-
-	bool isModal() const;
-
 	virtual bool acceptLayout() const T_OVERRIDE;
-
-private:
-	bool m_modal;
 };
 
 	}

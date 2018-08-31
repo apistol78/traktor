@@ -90,12 +90,6 @@ std::wstring Widget::getText() const
 	return m_widget->getText();
 }
 
-void Widget::setToolTipText(const std::wstring& text)
-{
-	T_ASSERT (m_widget);
-	return m_widget->setToolTipText(text);
-}
-
 void Widget::setForeground()
 {
 	T_ASSERT (m_widget);

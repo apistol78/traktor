@@ -97,10 +97,6 @@ public:
 	{
 	}
 
-	virtual void setToolTipText(const std::wstring& text)
-	{
-	}
-
 	virtual void setForeground()
 	{
 	}
@@ -216,9 +212,6 @@ public:
 				);
 			}
 		}
-		else
-			log::info << L"Unable to setRect; no parent" << Endl;
-
 		m_rect = rect;
 	}
 
@@ -239,39 +232,54 @@ public:
 
 	virtual Size getTextExtent(const std::wstring& text) const
 	{
+		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::getTextExtent NOT IMPLEMENTED" << Endl;
 		return Size(0, 0);
 	}
 
 	virtual void setFont(const Font& font)
 	{
+		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::setFont NOT IMPLEMENTED" << Endl;
 	}
 
 	virtual Font getFont() const
 	{
+		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::getFont NOT IMPLEMENTED" << Endl;
 		return Font();
 	}
 
 	virtual void setCursor(Cursor cursor)
 	{
+		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::setCursor NOT IMPLEMENTED" << Endl;
 	}
 
 	virtual Point getMousePosition(bool relative) const
 	{
+		if (relative)
+		{
+			gint x, y;
+			gtk_widget_get_pointer(m_warp.widget, &x, &y);
+			return Point(x, y);
+		}
+
+		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::getMousePosition(false) NOT IMPLEMENTED" << Endl;
 		return Point(0, 0);
 	}
 
 	virtual Point screenToClient(const Point& pt) const
 	{
+		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::screenToClient NOT IMPLEMENTED" << Endl;
 		return Point(0, 0);
 	}
 
 	virtual Point clientToScreen(const Point& pt) const
 	{
+		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::clientToScreen NOT IMPLEMENTED" << Endl;
 		return Point(0, 0);
 	}
 
 	virtual bool hitTest(const Point& pt) const
 	{
+		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::hitTest NOT IMPLEMENTED" << Endl;
 		return false;
 	}
 

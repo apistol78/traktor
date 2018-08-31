@@ -102,10 +102,6 @@ public:
 		return fromNSString([m_control stringValue]);
 	}
 
-	virtual void setToolTipText(const std::wstring& text) T_OVERRIDE
-	{
-	}
-
 	virtual void setForeground() T_OVERRIDE
 	{
 	}
