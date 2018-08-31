@@ -32,7 +32,7 @@ class IDocument;
 	namespace ui
 	{
 
-class PopupMenu;
+class Menu;
 
 		namespace custom
 		{
@@ -97,7 +97,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleGroundClip;
 	Ref< EffectPreviewControl > m_previewControl;
 	Ref< ui::custom::SequencerControl > m_sequencer;
-	Ref< ui::PopupMenu > m_popupMenu;
+	Ref< ui::Menu > m_popupMenu;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< sound::SoundSystem > m_soundSystem;
 	bool m_velocityVisible;

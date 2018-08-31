@@ -45,7 +45,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Sound/Editor/Resound/TriggerGrainFacade.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
-#include "Ui/PopupMenu.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
@@ -170,8 +170,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_containerGrainView = new ui::custom::Panel();
 	m_containerGrainView->create(splitterRightH, L"View", new ui::TableLayout(L"100%", L"100%", 0, 0));
 
-	m_menuGrains = new ui::PopupMenu();
-	m_menuGrains->create();
+	m_menuGrains = new ui::Menu();
 	m_menuGrains->add(new ui::MenuItem(ui::Command(L"Bank.AddGrain"), L"Add grain..."));
 	m_menuGrains->add(new ui::MenuItem(ui::Command(L"Bank.RemoveGrain"), L"Remove grain..."));
 
@@ -218,7 +217,6 @@ void BankAssetEditor::destroy()
 		m_resourceManager = 0;
 
 	m_soundSystem = 0;
-	safeDestroy(m_menuGrains);
 }
 
 void BankAssetEditor::apply()

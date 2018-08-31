@@ -26,13 +26,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Bitmap.h"
 #include "Ui/Button.h"
 #include "Ui/Container.h"
-#include "Ui/DropDown.h"
 #include "Ui/Edit.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FlowLayout.h"
 #include "Ui/Image.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/DropDown.h"
 #include "Ui/Custom/EditList.h"
 #include "Ui/Custom/EditListEditEvent.h"
 #include "Ui/Custom/InputDialog.h"
@@ -104,7 +104,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	Ref< ui::Static > staticPlatform = new ui::Static();
 	staticPlatform->create(containerLeft, L"Platform");
 
-	m_dropDownPlatform = new ui::DropDown();
+	m_dropDownPlatform = new ui::custom::DropDown();
 	m_dropDownPlatform->create(containerLeft);
 	m_dropDownPlatform->addEventHandler< ui::SelectionChangeEvent >(this, &TargetEditor::eventDropDownPlatformSelect);
 

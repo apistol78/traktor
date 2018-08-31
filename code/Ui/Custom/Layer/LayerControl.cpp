@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <algorithm>
 #include <stack>
 #include "Drawing/Image.h"
-#include "Ui/ScrollBar.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/Custom/ScrollBar.h"
 #include "Ui/Custom/Layer/LayerContentChangeEvent.h"
 #include "Ui/Custom/Layer/LayerControl.h"
 #include "Ui/Custom/Layer/LayerItem.h"

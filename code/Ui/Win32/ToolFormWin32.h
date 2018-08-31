@@ -27,12 +27,21 @@ public:
 
 	virtual void center();
 
+	virtual int showModal();
+
+	virtual void endModal(int result);
+
 private:
+	bool m_modal;
+	int32_t m_result;
+
 	LRESULT eventNcButtonDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 
 	LRESULT eventNcButtonUp(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 
 	LRESULT eventNcMouseMove(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
+
+	LRESULT eventEndModal(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
 };
 
 	}

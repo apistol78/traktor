@@ -34,13 +34,13 @@ class IEditor;
 
 class Bitmap;
 class Container;
-class DropDown;
 class Edit;
 class Image;
 
 		namespace custom
 		{
 
+class DropDown;
 class EditList;
 class EditListEditEvent;
 class ListBox;
@@ -97,7 +97,7 @@ private:
 	Ref< ui::Container > m_containerOuter;
 	Ref< ui::custom::EditList > m_listBoxTargetConfigurations;
 	Ref< ui::Image > m_imageIcon;
-	Ref< ui::DropDown > m_dropDownPlatform;
+	Ref< ui::custom::DropDown > m_dropDownPlatform;
 	Ref< ui::custom::MiniButton > m_buttonBuildRootInstance;
 	Ref< ui::custom::MiniButton > m_buttonStartupInstance;
 	Ref< ui::custom::MiniButton > m_buttonDefaultInputInstance;

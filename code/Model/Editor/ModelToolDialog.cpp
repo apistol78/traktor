@@ -37,8 +37,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Resource/IResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/FileDialog.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
-#include "Ui/PopupMenu.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/GridView/GridColumn.h"
@@ -155,8 +155,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Blend Operator", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Double Sided", ui::dpi96(100)));
 
-	m_modelRootPopup = new ui::PopupMenu();
-	m_modelRootPopup->create();
+	m_modelRootPopup = new ui::Menu();
 
 	Ref< ui::MenuItem > modelRootPopupAdd = new ui::MenuItem(L"Add Operation...");
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CalculateTangents"), L"Calculate Tangents"));
@@ -183,8 +182,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.SaveAs"), L"Save As..."));
 	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Remove"), L"Remove"));
 
-	m_modelChildPopup = new ui::PopupMenu();
-	m_modelChildPopup->create();
+	m_modelChildPopup = new ui::Menu();
 
 	Ref< ui::MenuItem > modelChildPopupPerform = new ui::MenuItem(L"Perform Operation...");
 	modelChildPopupPerform->add(new ui::MenuItem(ui::Command(L"ModelTool.BakeOcclusion"), L"Bake Occlusion..."));

@@ -22,9 +22,14 @@ namespace traktor
 	namespace ui
 	{
 
-class DropDown;
 class Edit;
 
+		namespace custom
+		{
+
+class DropDown;
+
+		}
 	}
 
 	namespace sound
@@ -45,11 +50,11 @@ public:
 	virtual bool apply(PropertyGroup* settings) T_OVERRIDE T_FINAL;
 
 private:
-	Ref< ui::DropDown > m_dropSoundDriver;
+	Ref< ui::custom::DropDown > m_dropSoundDriver;
 	Ref< ui::Edit > m_editVirtualChannels;
-	Ref< ui::DropDown > m_dropSampleRate;
-	Ref< ui::DropDown > m_dropBitsPerSample;
-	Ref< ui::DropDown > m_dropHwChannels;
+	Ref< ui::custom::DropDown > m_dropSampleRate;
+	Ref< ui::custom::DropDown > m_dropBitsPerSample;
+	Ref< ui::custom::DropDown > m_dropHwChannels;
 	Ref< ui::Edit > m_editFrameSamples;
 	Ref< ui::Edit > m_editMixerFrames;
 };

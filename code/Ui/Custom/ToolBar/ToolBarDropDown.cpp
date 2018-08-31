@@ -6,8 +6,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
-#include "Ui/PopupMenu.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
@@ -161,22 +161,17 @@ void ToolBarDropDown::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEv
 	if (m_items.empty())
 		return;
 
-	PopupMenu menu;
-	if (menu.create())
-	{
-		for (uint32_t i = 0; i < uint32_t(m_items.size()); ++i)
-			menu.add(new MenuItem(Command(i), m_items[i]));
+	Menu menu;
+	for (uint32_t i = 0; i < uint32_t(m_items.size()); ++i)
+		menu.add(new MenuItem(Command(i), m_items[i]));
 		
-		Ref< MenuItem > selectedItem = menu.show(toolBar, m_menuPosition);
-		if (selectedItem)
-		{
-			m_selected = selectedItem->getCommand().getId();
+	Ref< MenuItem > selectedItem = menu.show(toolBar, m_menuPosition);
+	if (selectedItem)
+	{
+		m_selected = selectedItem->getCommand().getId();
 
-			ToolBarButtonClickEvent clickEvent(toolBar, this, m_command);
-			toolBar->raiseEvent(&clickEvent);
-		}
-
-		menu.destroy();
+		ToolBarButtonClickEvent clickEvent(toolBar, this, m_command);
+		toolBar->raiseEvent(&clickEvent);
 	}
 }
 

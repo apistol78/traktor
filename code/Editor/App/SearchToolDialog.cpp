@@ -32,8 +32,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Edit.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
-#include "Ui/PopupMenu.h"
 #include "Ui/TableLayout.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/Custom/ProgressBar.h"
@@ -417,8 +417,7 @@ void SearchToolDialog::eventGridResultButtonUp(ui::MouseButtonUpEvent* event)
 		Ref< db::Instance > instance = row->getData< db::Instance >(L"INSTANCE");
 		T_ASSERT (instance);
 
-		Ref< ui::PopupMenu > popupMenu = new ui::PopupMenu();
-		popupMenu->create();
+		Ref< ui::Menu > popupMenu = new ui::Menu();
 		popupMenu->add(new ui::MenuItem(ui::Command(L"SearchTool.OpenInstance"), i18n::Text(L"EDITOR_SEARCH_TOOL_OPEN_INSTANCE")));
 		popupMenu->add(new ui::MenuItem(ui::Command(L"SearchTool.HighlightInstance"), i18n::Text(L"EDITOR_SEARCH_TOOL_HIGHLIGHT_INSTANCE")));
 		

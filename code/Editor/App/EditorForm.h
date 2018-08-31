@@ -37,7 +37,7 @@ class StreamServer;
 class ShortcutTable;
 class Dock;
 class DockPane;
-class PopupMenu;
+class Menu;
 class MenuItem;
 class Tab;
 
@@ -199,7 +199,7 @@ private:
 	Ref< ui::custom::StatusBar > m_statusBar;
 	Ref< ui::custom::ProgressBar > m_buildProgress;
 	Ref< ui::Tab > m_tab;
-	Ref< ui::PopupMenu > m_menuTab;
+	Ref< ui::Menu > m_menuTab;
 	Ref< ui::custom::ToolBarMenu > m_menuTools;
 	Ref< DatabaseView > m_dataBaseView;
 	Ref< PropertiesView > m_propertiesView;

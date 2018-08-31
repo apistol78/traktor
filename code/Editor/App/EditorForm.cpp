@@ -93,7 +93,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/ShortcutTable.h"
 #include "Ui/Dock.h"
 #include "Ui/DockPane.h"
-#include "Ui/PopupMenu.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
@@ -632,9 +632,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	paneCenter->dock(m_tab, false);
 
 	// Create tab pop up.
-	m_menuTab = new ui::PopupMenu();
-	if (!m_menuTab->create())
-		return false;
+	m_menuTab = new ui::Menu();
 	m_menuTab->add(new ui::MenuItem(ui::Command(L"Editor.CloseEditor"), i18n::Text(L"CLOSE")));
 	m_menuTab->add(new ui::MenuItem(ui::Command(L"Editor.CloseAllOtherEditors"), i18n::Text(L"CLOSE_ALL_BUT_THIS")));
 	m_menuTab->add(new ui::MenuItem(ui::Command(L"Editor.FindInDatabase"), i18n::Text(L"FIND_IN_DATABASE")));
@@ -865,7 +863,6 @@ void EditorForm::destroy()
 	safeDestroy(m_shortcutTable);
 
 	// Destroy widgets.
-	safeDestroy(m_menuTab);
 	safeDestroy(m_dock);
 	safeDestroy(m_statusBar);
 	safeDestroy(m_toolBar);

@@ -64,7 +64,7 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	Ref< ui::Static > staticType = new ui::Static();
 	staticType->create(tabPageBuild, L"Type");
 
-	m_dropType = new ui::DropDown();
+	m_dropType = new ui::custom::DropDown();
 	m_dropType->create(tabPageBuild);
 	m_dropType->add(L"Static library");
 	m_dropType->add(L"Shared library");
@@ -75,7 +75,7 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	Ref< ui::Static > staticProfile = new ui::Static();
 	staticProfile->create(tabPageBuild, L"Profile");
 
-	m_dropProfile = new ui::DropDown();
+	m_dropProfile = new ui::custom::DropDown();
 	m_dropProfile->create(tabPageBuild);
 	m_dropProfile->add(L"Debug");
 	m_dropProfile->add(L"Release");
@@ -113,7 +113,7 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	Ref< ui::Static > staticWarningLevel = new ui::Static();
 	staticWarningLevel->create(tabPageBuild, L"Warning level");
 
-	m_dropWarningLevel = new ui::DropDown();
+	m_dropWarningLevel = new ui::custom::DropDown();
 	m_dropWarningLevel->create(tabPageBuild);
 	m_dropWarningLevel->add(L"No warnings");
 	m_dropWarningLevel->add(L"Critical warnings only");

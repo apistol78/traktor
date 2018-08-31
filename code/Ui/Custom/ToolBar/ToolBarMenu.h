@@ -25,8 +25,8 @@ namespace traktor
 	namespace ui
 	{
 
+class Menu;
 class MenuItem;
-class PopupMenu;
 
 		namespace custom
 		{
@@ -73,7 +73,7 @@ private:
 	RefArray< MenuItem > m_items;
 	bool m_hover;
 	Point m_menuPosition;
-	Ref< PopupMenu > m_menu;
+	Ref< Menu > m_menu;
 };
 
 		}

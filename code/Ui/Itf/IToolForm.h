@@ -23,6 +23,10 @@ public:
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) = 0;
 
 	virtual void center() = 0;
+
+	virtual int showModal() = 0;
+
+	virtual void endModal(int result) = 0;
 };
 
 	}

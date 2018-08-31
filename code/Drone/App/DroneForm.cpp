@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Misc/CommandLine.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Log/Log.h"
 #include "Drone/App/DroneForm.h"
 #include "Drone/App/DroneSettings.h"
@@ -16,7 +17,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Command.h"
-#include "Ui/PopupMenu.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
 #include "Xml/XmlDeserializer.h"
@@ -79,8 +80,7 @@ bool DroneForm::create(const CommandLine& cmdLine)
 		return false;
 	}
 
-	m_menuTools = new ui::PopupMenu();
-	m_menuTools->create();
+	m_menuTools = new ui::Menu();
 
 	const RefArray< DroneTool >& tools = m_settings->getTools();
 	for (RefArray< DroneTool >::const_iterator i = tools.begin(); i != tools.end(); ++i)
@@ -106,8 +106,7 @@ bool DroneForm::create(const CommandLine& cmdLine)
 
 void DroneForm::destroy()
 {
-	m_menuTools->destroy();
-	m_notificationIcon->destroy();
+	safeDestroy(m_notificationIcon);
 	ui::Form::destroy();
 }
 

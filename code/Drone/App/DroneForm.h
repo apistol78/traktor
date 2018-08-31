@@ -17,7 +17,7 @@ class CommandLine;
 	namespace ui
 	{
 
-class PopupMenu;
+class Menu;
 class NotificationIcon;
 
 	}
@@ -37,7 +37,7 @@ public:
 	void destroy();
 
 private:
-	Ref< ui::PopupMenu > m_menuTools;
+	Ref< ui::Menu > m_menuTools;
 	Ref< ui::NotificationIcon > m_notificationIcon;
 	Ref< DroneSettings > m_settings;
 	bool m_toolExecuting;

@@ -13,12 +13,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/IProgramCompiler.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Editor/RenderSettingsPage.h"
-#include "Ui/DropDown.h"
 #include "Ui/Container.h"
 #include "Ui/Edit.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/DropDown.h"
 
 namespace traktor
 {
@@ -36,32 +36,32 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	Ref< ui::Static > staticRenderer = new ui::Static();
 	staticRenderer->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_TYPE"));
 
-	m_dropRenderSystem = new ui::DropDown();
-	m_dropRenderSystem->create(container, L"");
+	m_dropRenderSystem = new ui::custom::DropDown();
+	m_dropRenderSystem->create(container);
 	
 	Ref< ui::Static > staticCompiler = new ui::Static();
 	staticCompiler->create(container, i18n::Text(L"EDITOR_SETTINGS_COMPILER_TYPE"));
 	
-	m_dropCompiler = new ui::DropDown();
-	m_dropCompiler->create(container, L"");
+	m_dropCompiler = new ui::custom::DropDown();
+	m_dropCompiler->create(container);
 
 	Ref< ui::Static > staticMipBias = new ui::Static();
 	staticMipBias->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_MIPBIAS"));
 
 	m_editMipBias = new ui::Edit();
-	m_editMipBias->create(container, L"", ui::WsClientBorder, new ui::NumericEditValidator(true, -100.0f, 100.0f));
+	m_editMipBias->create(container, L"", ui::WsNone, new ui::NumericEditValidator(true, -100.0f, 100.0f));
 
 	Ref< ui::Static > staticMaxAnisotropy = new ui::Static();
 	staticMaxAnisotropy->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_MAX_ANISOTROPY"));
 
 	m_editMaxAnisotropy = new ui::Edit();
-	m_editMaxAnisotropy->create(container, L"", ui::WsClientBorder, new ui::NumericEditValidator(false, 0, 16));
+	m_editMaxAnisotropy->create(container, L"", ui::WsNone, new ui::NumericEditValidator(false, 0, 16));
 
 	Ref< ui::Static > staticMultiSample = new ui::Static();
 	staticMultiSample->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_MULTISAMPLE"));
 
 	m_editMultiSample = new ui::Edit();
-	m_editMultiSample->create(container, L"", ui::WsClientBorder, new ui::NumericEditValidator(false, 0, 8));
+	m_editMultiSample->create(container, L"", ui::WsNone, new ui::NumericEditValidator(false, 0, 8));
 
 	std::wstring renderSystemType = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
 

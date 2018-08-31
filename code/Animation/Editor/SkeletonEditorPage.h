@@ -41,9 +41,9 @@ class Instance;
 	namespace ui
 	{
 
-class Widget;
 class Container;
-class PopupMenu;
+class Menu;
+class Widget;
 
 		namespace custom
 		{
@@ -104,7 +104,7 @@ private:
 	Ref< SkeletonAsset > m_skeletonAsset;
 	Ref< Skeleton > m_skeleton;
 	Ref< ui::Widget > m_renderWidget;
-	Ref< ui::PopupMenu > m_boneMenu;
+	Ref< ui::Menu > m_boneMenu;
 	Ref< ui::Container > m_skeletonPanel;
 	Ref< ui::custom::TreeView > m_treeSkeleton;
 	Ref< render::IRenderView > m_renderView;

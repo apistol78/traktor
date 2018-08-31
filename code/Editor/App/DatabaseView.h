@@ -20,7 +20,7 @@ class PropertyGroup;
 
 class Edit;
 class HierarchicalState;
-class PopupMenu;
+class Menu;
 
 		namespace custom
 		{
@@ -101,9 +101,9 @@ private:
 	Ref< ui::custom::TreeView > m_treeDatabase;
 	Ref< ui::custom::GridView > m_gridInstances;
 	Ref< ui::HierarchicalState > m_treeState;
-	Ref< ui::PopupMenu > m_menuGroup[2];
-	Ref< ui::PopupMenu > m_menuInstance;
-	Ref< ui::PopupMenu > m_menuInstanceAsset;
+	Ref< ui::Menu > m_menuGroup[2];
+	Ref< ui::Menu > m_menuInstance;
+	Ref< ui::Menu > m_menuInstanceAsset;
 	Ref< PropertyGroup > m_iconsGroup;
 	Ref< db::Database > m_db;
 	Ref< Filter > m_filter;

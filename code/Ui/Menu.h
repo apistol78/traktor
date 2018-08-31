@@ -1,0 +1,60 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
+#ifndef traktor_ui_Menu_H
+#define traktor_ui_Menu_H
+
+#include "Core/Object.h"
+#include "Core/RefArray.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_UI_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace ui
+	{
+
+class MenuItem;
+class Point;
+class Widget;
+
+/*! \brief Menu
+ * \ingroup UI
+ */
+class T_DLLCLASS Menu : public Object
+{
+	T_RTTI_CLASS;
+	
+public:
+	void add(MenuItem* item);
+
+	const RefArray< MenuItem >& getItems() const;
+
+	/*! \brief Show menu.
+	 *
+	 * This method will not return until an menu item
+	 * has been selected.
+	 *
+	 * \param parent Parent widget.
+	 * \param at Position of menu top-left corner, in parent coordinate space.
+	 * \return Selected menu item, null if menu was cancelled.
+	 */
+	MenuItem* show(Widget* parent, const Point& at);
+
+private:
+	RefArray< MenuItem > m_items;
+};
+
+	}
+}
+
+#endif	// traktor_ui_Menu_H

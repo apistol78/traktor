@@ -36,10 +36,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
 #include "Ui/NotificationIcon.h"
-#include "Ui/PopupMenu.h"
 #include "Ui/Events/AllEvents.h"
 #if defined(_WIN32)
 #	include "Ui/Win32/EventLoopWin32.h"
@@ -96,12 +96,12 @@ std::map< std::wstring, uint32_t > g_fileHashes;
 
 #if defined(_WIN32)
 Mutex g_globalMutex(Guid(L"{DDB3D52F-8893-4f83-9FCD-D8A73211CC96}"));
-Ref< ui::PopupMenu > g_popupMenu;
+Ref< ui::Menu > g_popupMenu;
 Ref< ui::NotificationIcon > g_notificationIcon;
 
 void eventNotificationButtonDown(ui::MouseButtonDownEvent* event)
 {
-	Ref< ui::MenuItem > item = g_popupMenu->show(event->getPosition());
+	Ref< ui::MenuItem > item = g_popupMenu->show(nullptr, event->getPosition());
 	if (!item)
 		return;
 
@@ -356,8 +356,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	}
 
 #if defined(_WIN32)
-	g_popupMenu = new ui::PopupMenu();
-	g_popupMenu->create();
+	g_popupMenu = new ui::Menu();
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.CopyScratch"), L"Copy Scratch Path"));
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.CleanScratch"), L"Clean Scratch"));
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.BrowseScratch"), L"Browse Scratch..."));
@@ -494,7 +493,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 #if defined(_WIN32)
 	safeDestroy(g_notificationIcon);
-	safeDestroy(g_popupMenu);
 #endif
 
 	net::Network::finalize();

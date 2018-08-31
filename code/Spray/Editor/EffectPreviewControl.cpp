@@ -55,7 +55,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Spray/Sources/SphereSourceData.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Application.h"
-#include "Ui/PopupMenu.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "World/WorldRenderView.h"
 #include "World/Forward/WorldRenderPassForward.h"

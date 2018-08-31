@@ -32,7 +32,6 @@ class IEditor;
 
 class Container;
 class CheckBox;
-class DropDown;
 class Edit;
 class Slider;
 class Static;
@@ -40,6 +39,7 @@ class Static;
 		namespace custom
 		{
 
+class DropDown;
 class GridView;
 class ToolBarButtonClickEvent;
 
@@ -84,7 +84,7 @@ private:
 	Ref< model::Model > m_model;
 	Ref< ui::Edit > m_editFileName;
 	Ref< ui::Container > m_containerMaterials;
-	Ref< ui::DropDown > m_dropMeshType;
+	Ref< ui::custom::DropDown > m_dropMeshType;
 	Ref< ui::CheckBox > m_checkBakeOcclusion;
 	Ref< ui::CheckBox > m_checkCullDistantFaces;
 	Ref< ui::Static > m_staticLodSteps;

@@ -24,12 +24,12 @@ namespace traktor
 	{
 
 class IBitmap;
-class ScrollBar;
 
 		namespace custom
 		{
 
 class LayerItem;
+class ScrollBar;
 
 /*! \brief Layer control.
  * \ingroup UIC

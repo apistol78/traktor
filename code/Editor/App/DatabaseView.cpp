@@ -39,9 +39,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Clipboard.h"
 #include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
-#include "Ui/PopupMenu.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/HierarchicalState.h"
@@ -429,10 +429,9 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_gridInstances->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &DatabaseView::eventInstanceGridActivate);
 	m_gridInstances->setVisible(false);
 
-	m_menuGroup[0] = new ui::PopupMenu();
-	m_menuGroup[1] = new ui::PopupMenu();
-	if (!m_menuGroup[0]->create() || !m_menuGroup[1]->create())
-		return false;
+	m_menuGroup[0] = new ui::Menu();
+	m_menuGroup[1] = new ui::Menu();
+
 	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewInstance"), i18n::Text(L"DATABASE_NEW_INSTANCE")));
 	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewGroup"), i18n::Text(L"DATABASE_NEW_GROUP")));
 	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
@@ -451,9 +450,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuGroup[1]->add(new ui::MenuItem(L"-"));
 	m_menuGroup[1]->add(new ui::MenuItem(ui::Command(L"Editor.Paste"), i18n::Text(L"DATABASE_PASTE")));
 
-	m_menuInstance = new ui::PopupMenu();
-	if (!m_menuInstance->create())
-		return false;
+	m_menuInstance = new ui::Menu();
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.ReplaceInstance"), i18n::Text(L"DATABASE_REPLACE_INSTANCE")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
@@ -475,9 +472,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
 
-	m_menuInstanceAsset = new ui::PopupMenu();
-	if (!m_menuInstanceAsset->create())
-		return false;
+	m_menuInstanceAsset = new ui::Menu();
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Edit"), i18n::Text(L"DATABASE_EDIT")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Explore"), i18n::Text(L"DATABASE_EXPLORE")));
 	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
@@ -554,10 +549,6 @@ bool DatabaseView::create(ui::Widget* parent)
 
 void DatabaseView::destroy()
 {
-	safeDestroy(m_menuGroup[1]);
-	safeDestroy(m_menuGroup[0]);
-	safeDestroy(m_menuInstance);
-	safeDestroy(m_menuInstanceAsset);
 	ui::Container::destroy();
 }
 
@@ -1654,7 +1645,7 @@ void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 
 	if (group && instance)
 	{
-		Ref< ui::PopupMenu > menuInstance;
+		Ref< ui::Menu > menuInstance;
 
 		if (is_type_of< Asset >(*instance->getPrimaryType()))
 			menuInstance = m_menuInstanceAsset;

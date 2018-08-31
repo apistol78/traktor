@@ -33,7 +33,7 @@ class IResourceManager;
 
 class Command;
 class Container;
-class PopupMenu;
+class Menu;
 class Slider;
 
 		namespace custom
@@ -93,7 +93,7 @@ private:
 	Ref< ui::custom::Panel > m_containerGrainProperties;
 	Ref< GrainProperties > m_grainProperties;
 	Ref< ui::custom::Panel > m_containerGrainView;
-	Ref< ui::PopupMenu > m_menuGrains;
+	Ref< ui::Menu > m_menuGrains;
 	std::map< const TypeInfo*, Ref< IGrainFacade > > m_grainFacades;
 	Ref< ui::Widget > m_currentGrainView;
 	Ref< resource::IResourceManager > m_resourceManager;

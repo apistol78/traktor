@@ -10,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Ui/Container.h>
 #include <Ui/CheckBox.h>
 #include <Ui/Edit.h>
-#include <Ui/DropDown.h>
+#include <Ui/Custom/DropDown.h>
 #include <Ui/Custom/GridView/GridRowDoubleClickEvent.h>
 #include <Ui/Custom/GridView/GridView.h>
 
@@ -36,7 +36,7 @@ private:
 	Ref< Aggregation > m_aggregation;
 	Ref< ui::CheckBox > m_checkEnable;
 	Ref< ui::custom::GridView > m_gridDependencies;
-	Ref< ui::DropDown > m_dropAvailable;
+	Ref< ui::custom::DropDown > m_dropAvailable;
 
 	void updateDependencyList();
 

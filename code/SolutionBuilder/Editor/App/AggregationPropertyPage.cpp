@@ -84,7 +84,7 @@ bool AggregationPropertyPage::create(ui::Widget* parent)
 	Ref< ui::Container > containerAvailable = new ui::Container();
 	containerAvailable->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0, f));
 
-	m_dropAvailable = new ui::DropDown();
+	m_dropAvailable = new ui::custom::DropDown();
 	m_dropAvailable->create(containerAvailable);
 
 	Ref< ui::Button > buttonAdd = new ui::Button();

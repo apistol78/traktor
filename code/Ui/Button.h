@@ -36,11 +36,26 @@ public:
 		WsToggle = (WsUser << 1)
 	};
 
+	Button();
+
 	bool create(Widget* parent, const std::wstring& text, int style = WsNone);
 
 	void setState(bool state);
 
 	bool getState() const;
+
+	virtual Size getPreferedSize() const T_OVERRIDE;
+
+	virtual Size getMaximumSize() const T_OVERRIDE;
+
+private:
+	bool m_pushed;
+
+	void eventButtonDown(MouseButtonDownEvent* event);
+
+	void eventButtonUp(MouseButtonUpEvent* event);
+
+	void eventPaint(PaintEvent* event);
 };
 
 	}

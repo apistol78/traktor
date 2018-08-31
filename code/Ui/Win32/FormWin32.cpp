@@ -8,7 +8,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Events/CloseEvent.h"
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/FormWin32.h"
-#include "Ui/Win32/MenuBarWin32.h"
 
 namespace traktor
 {
@@ -17,7 +16,6 @@ namespace traktor
 
 FormWin32::FormWin32(EventSubject* owner)
 :	WidgetWin32Impl< IForm >(owner)
-,	m_menuBar(0)
 ,	m_hWndLastFocus(NULL)
 {
 }
@@ -59,8 +57,6 @@ bool FormWin32::create(IWidget* parent, const std::wstring& text, int width, int
 	if (!WidgetWin32Impl::create(style))
 		return false;
 
-	m_hWnd.registerMessageHandler(WM_INITMENUPOPUP, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventInitMenuPopup));
-	m_hWnd.registerMessageHandler(WM_MENUCOMMAND, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventMenuCommand));
 	m_hWnd.registerMessageHandler(WM_CLOSE, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventClose));
 	m_hWnd.registerMessageHandler(WM_DESTROY, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventDestroy));
 	m_hWnd.registerMessageHandler(WM_ACTIVATE, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventActivate));
@@ -124,45 +120,6 @@ void FormWin32::showProgress(int32_t current, int32_t total)
 	m_taskBarList->SetProgressValue(m_hWnd, current, total);
 }
 
-void FormWin32::registerMenuBar(MenuBarWin32* menuBar)
-{
-	T_ASSERT_M (!m_menuBar, L"Only a single menubar is allowed");
-	m_menuBar = menuBar;
-}
-
-void FormWin32::unregisterMenuBar(MenuBarWin32* menuBar)
-{
-	T_ASSERT_M (m_menuBar == menuBar, L"Unregistered menubar");
-	m_menuBar = 0;
-}
-
-LRESULT FormWin32::eventInitMenuPopup(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
-{
-	LRESULT result;
-
-	if (m_menuBar)
-	{
-		result = m_menuBar->eventInitMenuPopup(hWnd, message, wParam, lParam, pass);
-		if (!pass)
-			return result;
-	}
-
-	return 0;
-}
-
-LRESULT FormWin32::eventMenuCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
-{
-	LRESULT result;
-
-	if (m_menuBar)
-	{
-		result = m_menuBar->eventMenuCommand(hWnd, message, wParam, lParam, pass);
-		if (!pass)
-			return result;
-	}
-
-	return 0;
-}
 
 LRESULT FormWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
 {

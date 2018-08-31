@@ -11,9 +11,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Core/Io/Path.h>
 #include <Ui/Form.h>
 #include <Ui/ShortcutTable.h>
-#include <Ui/MenuBar.h>
+#include <Ui/Menu.h>
 #include <Ui/MenuItem.h>
-#include <Ui/PopupMenu.h>
 #include <Ui/Custom/ToolBar/ToolBar.h>
 #include <Ui/Custom/ToolBar/ToolBarButtonClickEvent.h>
 #include <Ui/Custom/TreeView/TreeView.h>
@@ -56,13 +55,13 @@ private:
 	Ref< ui::custom::ToolBar > m_menuBar;
 	Ref< ui::MenuItem > m_menuItemMRU;
 	Ref< ui::custom::TreeView > m_treeSolution;
-	Ref< ui::PopupMenu > m_menuSolution;
-	Ref< ui::PopupMenu > m_menuProject;
-	Ref< ui::PopupMenu > m_menuAggregation;
-	Ref< ui::PopupMenu > m_menuConfiguration;
-	Ref< ui::PopupMenu > m_menuFilter;
-	Ref< ui::PopupMenu > m_menuFile;
-	Ref< ui::PopupMenu > m_menuAggregationItem;
+	Ref< ui::Menu > m_menuSolution;
+	Ref< ui::Menu > m_menuProject;
+	Ref< ui::Menu > m_menuAggregation;
+	Ref< ui::Menu > m_menuConfiguration;
+	Ref< ui::Menu > m_menuFilter;
+	Ref< ui::Menu > m_menuFile;
+	Ref< ui::Menu > m_menuAggregationItem;
 	Ref< AggregationPropertyPage > m_pageAggregation;
 	Ref< AggregationItemPropertyPage > m_pageAggregationItem;
 	Ref< ConfigurationPropertyPage > m_pageConfiguration;

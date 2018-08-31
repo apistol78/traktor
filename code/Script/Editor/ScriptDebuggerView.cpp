@@ -22,8 +22,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
-#include "Ui/PopupMenu.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/Splitter.h"
@@ -105,8 +105,7 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 	m_localsGrid->addEventHandler< ui::custom::GridRowStateChangeEvent >(this, &ScriptDebuggerView::eventLocalsGridStateChange);
 	m_localsGrid->addEventHandler< ui::MouseButtonDownEvent >(this, &ScriptDebuggerView::eventLocalsGridButtonDown);
 
-	m_localsPopup = new ui::PopupMenu();
-	m_localsPopup->create();
+	m_localsPopup = new ui::Menu();
 	m_localsPopup->add(new ui::MenuItem(ui::Command(L"Script.Editor.CopyLocalValue"), i18n::Text(L"SCRIPT_EDITOR_DEBUG_COPY_LOCAL_VALUE")));
 
 	m_scriptDebugger->addListener(this);
@@ -120,7 +119,6 @@ void ScriptDebuggerView::destroy()
 		m_scriptDebugger->removeListener(this);
 		m_scriptDebugger = 0;
 	}
-	safeDestroy(m_localsPopup);
 	ui::Container::destroy();
 }
 

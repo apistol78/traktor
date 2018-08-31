@@ -35,8 +35,8 @@ class IEditorPageSite;
 	{
 
 class Container;
+class Menu;
 class Point;
-class PopupMenu;
 
 		namespace custom
 		{
@@ -96,7 +96,7 @@ private:
 	Ref< ui::custom::GraphControl > m_editorGraph;
 	Ref< ShaderDependencyPane > m_dependencyPane;
 	Ref< ShaderViewer > m_shaderViewer;
-	Ref< ui::PopupMenu > m_menuPopup;
+	Ref< ui::Menu > m_menuPopup;
 	Ref< QuickMenuTool > m_menuQuick;
 	std::map< const TypeInfo*, Ref< INodeFacade > > m_nodeFacades;
 	bool m_lastValidationResult;
