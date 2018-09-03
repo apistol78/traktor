@@ -48,6 +48,11 @@ void Canvas::setFont(const Font& font)
 	m_canvas->setFont(font);
 }
 
+FontMetric Canvas::getFontMetric() const
+{
+	return FontMetric(m_canvas->getFontMetric());
+}
+
 void Canvas::setLineStyle(LineStyle lineStyle)
 {
 	m_canvas->setLineStyle(lineStyle);
@@ -182,12 +187,45 @@ void Canvas::drawText(const Point& at, const std::wstring& text)
 
 void Canvas::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
 {
-	m_canvas->drawText(rc, text, halign, valign);
-}
+	FontMetric fm = getFontMetric();
+	Size ex = fm.getExtent(text);
+	Point at = rc.getTopLeft();
 
-Size Canvas::getTextExtent(const std::wstring& text) const
-{
-	return m_canvas->getTextExtent(text);
+	switch (halign)
+	{
+	case AnLeft:
+		break;
+
+	case AnCenter:
+		at.x = at.x + (rc.getWidth() - ex.cx) / 2;
+		break;
+
+	case AnRight:
+		at.x = at.x + rc.getWidth() - ex.cx;
+		break;
+
+	default:
+		break;
+	}
+
+	switch (valign)
+	{
+	case AnTop:
+		break;
+
+	case AnCenter:
+		at.y = at.y + (rc.getHeight() - ex.cy) / 2;
+		break;
+
+	case AnBottom:
+		at.y = at.y + rc.getHeight() - ex.cy;
+		break;
+
+	default:
+		break;
+	}
+
+	m_canvas->drawText(at, text);
 }
 
 	}

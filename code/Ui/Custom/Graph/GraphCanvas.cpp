@@ -144,7 +144,7 @@ void GraphCanvas::drawText(const Rect& rc, const std::wstring& text, Align halig
 
 Size GraphCanvas::getTextExtent(const std::wstring& text) const
 {
-	return m_canvas->getTextExtent(text) / m_scale;
+	return m_canvas->getFontMetric().getExtent(text) / m_scale;
 }
 
 		}

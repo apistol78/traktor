@@ -30,7 +30,7 @@ bool GradientStatic::create(Widget* parent, const std::wstring& text, int style)
 
 Size GradientStatic::getPreferedSize() const
 {
-	return getTextExtent(getText());
+	return getFontMetric().getExtent(getText());
 }
 
 void GradientStatic::eventPaint(PaintEvent* event)

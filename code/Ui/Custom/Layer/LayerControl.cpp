@@ -196,7 +196,7 @@ void LayerControl::paintItem(Canvas& canvas, Rect& rcItem, LayerItem* item, int 
 		canvas.drawLine(x, rcItem.top + rcItem.getHeight() / 2, x + 8, rcItem.top + rcItem.getHeight() / 2);
 	}
 
-	Size ext = canvas.getTextExtent(item->getText());
+	Size ext = canvas.getFontMetric().getExtent(item->getText());
 
 	canvas.setForeground(Color4ub(0, 0, 0));
 	canvas.drawText(

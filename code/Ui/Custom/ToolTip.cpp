@@ -52,7 +52,7 @@ void ToolTip::show(const Point& at, const std::wstring& text)
 
 	setText(text);
 
-	Size extent = getTextExtent(text);
+	Size extent = getFontMetric().getExtent(text);
 	extent.cx += ui::dpi96(c_margin) * 2;
 	extent.cy += ui::dpi96(c_margin) * 2;
 

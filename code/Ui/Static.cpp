@@ -28,7 +28,7 @@ bool Static::create(Widget* parent, const std::wstring& text)
 
 Size Static::getPreferedSize() const
 {
-	return getTextExtent(getText());
+	return getFontMetric().getExtent(getText());
 }
 
 Size Static::getMaximumSize() const

@@ -760,7 +760,7 @@ void RichEdit::updateScrollBars()
 
 void RichEdit::updateCharacterWidths()
 {
-	Size szw = getTextExtent(L" ");
+	Size szw = getFontMetric().getExtent(L" ");
 	if (szw.cx <= 0)
 		szw.cx = 1;
 
@@ -778,7 +778,7 @@ void RichEdit::updateCharacterWidths()
 					std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator k = m_specialCharacters.find(c.ch);
 					if (k == m_specialCharacters.end())
 					{
-						Size sz = getTextExtent(std::wstring(1, c.ch));
+						Size sz = getFontMetric().getExtent(std::wstring(1, c.ch));
 						c.width = sz.cx;
 					}
 					else
@@ -1555,7 +1555,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 	uint32_t pageLines = (innerRc.getHeight() + lineHeight - 1) / lineHeight;
 
 	// Calculate margin width from highest visible line number.
-	m_lineMargin = dpi96(c_iconSize) + canvas.getTextExtent(toString(lineOffset + pageLines)).cx + dpi96(2);
+	m_lineMargin = dpi96(c_iconSize) + canvas.getFontMetric().getExtent(toString(lineOffset + pageLines)).cx + dpi96(2);
 	m_lineOffsetH = m_scrollBarH->isVisible(false) ? m_scrollBarH->getPosition() * c_scrollHSteps : 0;
 
 	// Background

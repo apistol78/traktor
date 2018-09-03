@@ -77,7 +77,7 @@ Size ToolBarDropMenu::getSize(const ToolBar* toolBar, int imageWidth, int imageH
 		return Size(m_width, imageHeight + dpi96(4));
 	else
 	{
-		Size sz = toolBar->getTextExtent(m_text);
+		Size sz = toolBar->getFontMetric().getExtent(m_text);
 		return Size(sz.cx + dpi96(32), imageHeight + dpi96(4));
 	}
 }

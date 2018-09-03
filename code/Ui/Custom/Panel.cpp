@@ -38,7 +38,7 @@ void Panel::destroy()
 
 Size Panel::getMinimumSize() const
 {
-	Size titleSize = getTextExtent(getText());
+	Size titleSize = getFontMetric().getExtent(getText());
 	Size sz = Container::getMinimumSize();
 	sz.cx += 2;
 	sz.cy += 1 + titleSize.cy;
@@ -47,7 +47,7 @@ Size Panel::getMinimumSize() const
 
 Size Panel::getPreferedSize() const
 {
-	Size titleSize = getTextExtent(getText());
+	Size titleSize = getFontMetric().getExtent(getText());
 	Size sz = Container::getPreferedSize();
 	sz.cx += 2;
 	sz.cy += 3 + titleSize.cy;
@@ -56,7 +56,7 @@ Size Panel::getPreferedSize() const
 
 Rect Panel::getInnerRect() const
 {
-	Size titleSize = getTextExtent(getText());
+	Size titleSize = getFontMetric().getExtent(getText());
 	Rect rc = Container::getInnerRect();
 	rc.left += 1;
 	rc.top += titleSize.cy + 3;
@@ -75,7 +75,7 @@ void Panel::eventPaint(PaintEvent* event)
 	bool focus = containFocus();
 
 	std::wstring text = getText();
-	Size extent = canvas.getTextExtent(text);
+	Size extent = canvas.getFontMetric().getExtent(text);
 
 	Rect rcTitle(rcInner.left, rcInner.top, rcInner.right, rcInner.top + extent.cy + 4);
 

@@ -317,7 +317,6 @@ void UiClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWidget->addMethod("getRect", &Widget::getRect);
 	classWidget->addMethod("getInnerRect", &Widget::getInnerRect);
 	classWidget->addMethod("getNormalRect", &Widget::getNormalRect);
-	classWidget->addMethod("getTextExtent", &Widget::getTextExtent);
 	//classWidget->addMethod("setFont", &Widget::setFont);
 	//classWidget->addMethod("getFont", &Widget::getFont);
 	//classWidget->addMethod("setCursor", &Widget::setCursor);

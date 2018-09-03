@@ -11,6 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/CanvasGdiWin32.h"
+#include "Ui/Win32/Window.h"
 
 namespace traktor
 {
@@ -203,7 +204,21 @@ void CanvasGdiWin32::endPaint(Window& hWnd)
 #endif
 }
 
-Size CanvasGdiWin32::getTextExtent(Window& hWnd, const std::wstring& text) const
+void CanvasGdiWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, int32_t& outDescent) const
+{
+}
+
+int32_t CanvasGdiWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) const
+{
+	return 0;
+}
+
+int32_t CanvasGdiWin32::getLineSpacing(Window& hWnd) const
+{
+	return 0;
+}
+
+Size CanvasGdiWin32::getExtent(Window& hWnd, const std::wstring& text) const
 {
 	SIZE size = { 0, 0 };
 	HDC hDC = GetDC(hWnd);
@@ -211,6 +226,27 @@ Size CanvasGdiWin32::getTextExtent(Window& hWnd, const std::wstring& text) const
 	GetTextExtentPoint32(hDC, wstots(text).c_str(), int(text.length()), &size);
 	SelectObject(hDC, hOldFont);
 	ReleaseDC(hWnd, hDC);
+	return Size(size.cx, size.cy);
+}
+
+void CanvasGdiWin32::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
+{
+}
+
+int32_t CanvasGdiWin32::getAdvance(wchar_t ch, wchar_t next) const
+{
+	return 0;
+}
+
+int32_t CanvasGdiWin32::getLineSpacing() const
+{
+	return 0;
+}
+
+Size CanvasGdiWin32::getExtent(const std::wstring& text) const
+{
+	SIZE size;
+	GetTextExtentPoint32(m_hDC, wstots(text).c_str(), int(text.length()), &size);
 	return Size(size.cx, size.cy);
 }
 
@@ -241,6 +277,11 @@ void CanvasGdiWin32::setFont(const Font& font)
 		m_font = font;
 		updateFont();
 	}
+}
+
+const IFontMetric* CanvasGdiWin32::getFontMetric() const
+{
+	return this;
 }
 
 void CanvasGdiWin32::setLineStyle(LineStyle lineStyle)
@@ -551,52 +592,6 @@ void CanvasGdiWin32::drawText(const Point& at, const std::wstring& text)
 
 	SetBkMode(m_hDC, TRANSPARENT);
 	DrawText(m_hDC, wstots(text).c_str(), int(text.length()), &wrc, format);
-}
-
-void CanvasGdiWin32::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
-{
-	RECT wrc = { rc.left, rc.top, rc.right, rc.bottom };
-	UINT format = DT_SINGLELINE;
-	
-	switch (halign)
-	{
-	case AnLeft:
-		format |= DT_LEFT;
-		break;
-
-	case AnCenter:
-		format |= DT_CENTER;
-		break;
-
-	case AnRight:
-		format |= DT_RIGHT;
-		break;
-	}
-
-	switch (valign)
-	{
-	case AnTop:
-		format |= DT_TOP;
-		break;
-
-	case AnCenter:
-		format |= DT_VCENTER;
-		break;
-
-	case AnBottom:
-		format |= DT_BOTTOM;
-		break;
-	}
-
-	SetBkMode(m_hDC, TRANSPARENT);
-	DrawText(m_hDC, wstots(text).c_str(), int(text.length()), &wrc, format);
-}
-
-Size CanvasGdiWin32::getTextExtent(const std::wstring& text) const
-{
-	SIZE size;
-	GetTextExtentPoint32(m_hDC, wstots(text).c_str(), int(text.length()), &size);
-	return Size(size.cx, size.cy);
 }
 
 void* CanvasGdiWin32::getSystemHandle()

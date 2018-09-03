@@ -169,7 +169,7 @@ Size InOutNodeShape::calculateSize(const Node* node) const
 	if (!node->getInfo().empty())
 	{
 		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFont());
-		int32_t extent = m_graphControl->getTextExtent(node->getInfo()).cx;
+		int32_t extent = m_graphControl->getFontMetric().getExtent(node->getInfo()).cx;
 		width += std::max(extent, ui::dpi96(c_minExtent));
 	}
 

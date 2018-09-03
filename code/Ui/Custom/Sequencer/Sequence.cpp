@@ -227,7 +227,7 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 
 	// Draw sequence text.
 	canvas.setForeground(Color4ub(0, 0, 0));
-	Size ext = canvas.getTextExtent(getName());
+	Size ext = canvas.getFontMetric().getExtent(getName());
 	canvas.drawText(
 		Point(
 			rc.left + 32 + getDepth() * 16,

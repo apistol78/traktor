@@ -163,7 +163,7 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 
 	// Draw sequence group text.
 	canvas.setForeground(Color4ub(0, 0, 0));
-	Size ext = canvas.getTextExtent(getName());
+	Size ext = canvas.getFontMetric().getExtent(getName());
 	canvas.drawText(
 		Point(
 			textLeft,

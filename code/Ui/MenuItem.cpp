@@ -178,9 +178,9 @@ Ref< MenuItem > MenuItem::get(int index)
 
 Size MenuItem::getSize(const Widget* shell) const
 {
-	int32_t cw = shell->getTextExtent(m_text).cx;
+	int32_t cw = shell->getFontMetric().getExtent(m_text).cx;
 	int32_t ch = shell->getFont().getPixelSize();
-	return Size(cw + dpi96(c_itemMarginX), ch + dpi96(c_itemMarginY) * 2);
+	return Size(cw + dpi96(c_itemMarginX) * 2, ch + dpi96(c_itemMarginY) * 2);
 }
 
 void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc) const
@@ -188,7 +188,7 @@ void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc) const
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	const Size sz = getSize(shell);
 
-	Rect rcLabel = rc.inflate(-dpi96(c_itemMarginX), -dpi96(c_itemMarginY));
+	Rect rcLabel = rc.inflate(-dpi96(c_itemMarginX), 0);
 
 	canvas.setBackground(ss->getColor(this, m_hover ? L"background-color-hover" : L"background-color"));
 	canvas.fillRect(rc);

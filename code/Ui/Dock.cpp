@@ -58,7 +58,6 @@ bool Dock::create(Widget* parent)
 		Point(xy[0], xy[1]),
 		Point(xy[1], xy[1])
 	};
-	m_hint->setOutline(p, sizeof(p) / sizeof(Point));
 
 	m_hintLeft = new ui::Image();
 	m_hintLeft->create(m_hint, Bitmap::load(c_ResourceDockLeft, sizeof(c_ResourceDockLeft), L"png"), false);

@@ -179,13 +179,13 @@ Size OutputNodeShape::calculateSize(const Node* node) const
 	if (!node->getTitle().empty())
 	{
 		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFontBold());
-		width += m_graphControl->getTextExtent(node->getTitle()).cx;
+		width += m_graphControl->getFontMetric().getExtent(node->getTitle()).cx;
 	}
 
 	if (!node->getInfo().empty())
 	{
 		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFont());
-		width += ui::dpi96(c_textPad) + m_graphControl->getTextExtent(node->getInfo()).cx;
+		width += ui::dpi96(c_textPad) + m_graphControl->getFontMetric().getExtent(node->getInfo()).cx;
 	}
 
 	width = alignUp(width, ui::dpi96(c_textWidthAlign)) + ui::dpi96(c_marginWidth) * 2 + ui::dpi96(c_textMargin) * 2;

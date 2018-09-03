@@ -163,8 +163,8 @@ void EnvelopeControl::eventPaint(PaintEvent* event)
 	mnv << m_minValue;
 	mxv << m_maxValue;
 
-	Size mne = canvas.getTextExtent(mnv.str());
-	Size mxe = canvas.getTextExtent(mxv.str());
+	Size mne = canvas.getFontMetric().getExtent(mnv.str());
+	Size mxe = canvas.getFontMetric().getExtent(mxv.str());
 
 	int32_t x = std::max< int32_t >(mne.cx, mxe.cx);
 	int32_t y = std::max< int32_t >(mne.cy, mxe.cy);

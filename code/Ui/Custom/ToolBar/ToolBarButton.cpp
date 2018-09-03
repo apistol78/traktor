@@ -94,7 +94,7 @@ Size ToolBarButton::getSize(const ToolBar* toolBar, int imageWidth, int imageHei
 	}
 	if (m_style & BsText)
 	{
-		Size textExtent = toolBar->getTextExtent(m_text);
+		Size textExtent = toolBar->getFontMetric().getExtent(m_text);
 		width += textExtent.cx;
 		height = max(textExtent.cy + dpi96(8), height);
 	}
@@ -141,7 +141,7 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBi
 	}
 	if (m_style & BsText)
 	{
-		Size textExtent = toolBar->getTextExtent(m_text);
+		Size textExtent = toolBar->getFontMetric().getExtent(m_text);
 		int centerOffsetY = (size.cy - textExtent.cy) / 2;
 		canvas.setForeground(ss->getColor(toolBar, L"color"));
 		canvas.drawText(

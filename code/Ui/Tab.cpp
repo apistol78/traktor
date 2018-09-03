@@ -466,7 +466,7 @@ void Tab::eventPaint(PaintEvent* event)
 			const TabPage* page = i->page;
 			const std::wstring text = page->getText();
 
-			Size sizText = canvas.getTextExtent(text);
+			Size sizText = canvas.getFontMetric().getExtent(text);
 
 			int32_t tabWidthNoMargin = sizText.cx;
 			if (m_closeButton)

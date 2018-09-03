@@ -81,7 +81,7 @@ struct DependencyCharacter : public RefCountImpl< ui::custom::RichEdit::ISpecial
 
 	virtual int32_t measureWidth(const ui::custom::RichEdit* richEdit) const T_OVERRIDE T_FINAL
 	{
-		return richEdit->getTextExtent(path).cx;
+		return richEdit->getFontMetric().getExtent(path).cx;
 	}
 
 	virtual void draw(ui::Canvas& canvas, const ui::Rect& rc) const T_OVERRIDE T_FINAL

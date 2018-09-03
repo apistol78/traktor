@@ -8,21 +8,24 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_ui_CanvasWin32_H
 
 #include "Ui/Itf/ICanvas.h"
-#include "Ui/Win32/Window.h"
+#include "Ui/Itf/IFontMetric.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
+class Window;
+
 /*! \brief
  * \ingroup UIW32
  */
-class CanvasWin32 : public ICanvas
+class CanvasWin32
+:	public ICanvas
+,	public IFontMetric
 {
 public:
 	/*!
-	 * \param hWnd Target window.
 	 * \param doubleBuffer Double buffered draw.
 	 * \param hDC If non null, use context for drawing.
 	 */
@@ -30,7 +33,13 @@ public:
 
 	virtual void endPaint(Window& hWnd) = 0;
 
-	virtual Size getTextExtent(Window& hWnd, const std::wstring& text) const = 0;
+	virtual void getAscentAndDescent(Window& hWnd, int32_t& outAscent, int32_t& outDescent) const = 0;
+
+	virtual int32_t getAdvance(Window& hWnd, wchar_t ch, wchar_t next) const = 0;
+
+	virtual int32_t getLineSpacing(Window& hWnd) const = 0;
+
+	virtual Size getExtent(Window& hWnd, const std::wstring& text) const = 0;
 };
 	
 	}

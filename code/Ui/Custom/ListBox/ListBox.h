@@ -41,7 +41,7 @@ public:
 		WsMultiple = WsUser,
 		WsExtended = (WsUser << 1),
 		WsSort = (WsUser << 2),
-		WsDefault = WsClientBorder | WsSingle
+		WsDefault = WsSingle
 	};
 
 	ListBox();

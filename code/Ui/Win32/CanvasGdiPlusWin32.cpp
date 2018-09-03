@@ -11,6 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/CanvasGdiPlusWin32.h"
+#include "Ui/Win32/Window.h"
 
 using namespace Gdiplus;
 
@@ -140,31 +141,170 @@ void CanvasGdiPlusWin32::endPaint(Window& hWnd)
 	m_hDC = NULL;
 }
 
-Size CanvasGdiPlusWin32::getTextExtent(Window& hWnd, const std::wstring& text) const
+void CanvasGdiPlusWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, int32_t& outDescent) const
+{
+	HDC hDC = GetDC(hWnd);
+
+	Gdiplus::Font font(hDC, hWnd.getFont());
+	Gdiplus::FontFamily fontFamily;
+	font.GetFamily(&fontFamily);
+
+	UINT16 emHeight = fontFamily.GetEmHeight(FontStyleRegular);
+	UINT16 ascent = fontFamily.GetCellAscent(FontStyleRegular);
+	UINT16 descent = fontFamily.GetCellDescent(FontStyleRegular);
+
+	outAscent = font.GetSize() * ascent / emHeight;
+	outDescent = font.GetSize() * descent / emHeight;
+
+	ReleaseDC(hWnd, hDC);
+}
+
+int32_t CanvasGdiPlusWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) const
+{
+	HDC hDC = GetDC(hWnd);
+
+	Gdiplus::Font font(hDC, hWnd.getFont());
+	Gdiplus::RectF layoutRect(0.0f, 0.0f, std::numeric_limits< float >::max(), std::numeric_limits< float >::max());
+
+	wchar_t chs[3] = { ch, next, 0 };
+
+	Gdiplus::CharacterRange range(0, 1);
+	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic()->Clone());
+	stringFormat.SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces | StringFormatFlagsNoFitBlackBox);
+	stringFormat.SetTrimming(StringTrimmingNone);
+	stringFormat.SetMeasurableCharacterRanges(1, &range);
+
+	Gdiplus::Region region;
+	m_graphics->MeasureCharacterRanges(
+		chs,
+		-1,
+		&font,
+		layoutRect,
+		&stringFormat,
+		1,
+		&region
+	);
+
+	Gdiplus::RectF rc;
+	region.GetBounds(&rc, m_graphics.ptr());
+
+	ReleaseDC(hWnd, hDC);
+
+	return rc.Width;
+}
+
+int32_t CanvasGdiPlusWin32::getLineSpacing(Window& hWnd) const
+{
+	HDC hDC = GetDC(hWnd);
+
+	Gdiplus::Font font(hDC, hWnd.getFont());
+	Gdiplus::FontFamily fontFamily;
+	font.GetFamily(&fontFamily);
+
+	int32_t lineSpacing = font.GetSize() * fontFamily.GetLineSpacing(FontStyleRegular) / fontFamily.GetEmHeight(FontStyleRegular);
+
+	ReleaseDC(hWnd, hDC);
+	return lineSpacing;
+}
+
+Size CanvasGdiPlusWin32::getExtent(Window& hWnd, const std::wstring& text) const
 {
 	Gdiplus::RectF boundingBox;
 
 	HDC hDC = GetDC(hWnd);
 
-	AutoPtr< Gdiplus::Graphics > graphics(new Gdiplus::Graphics(hDC));
-	AutoPtr< Gdiplus::Font > font(new Gdiplus::Font(hDC, hWnd.getFont()));
+	Gdiplus::Graphics graphics(hDC);
+	Gdiplus::Font font(hDC, hWnd.getFont());
 
-	AutoPtr< Gdiplus::StringFormat > stringFormat(StringFormat::GenericTypographic()->Clone());
-	stringFormat->SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces);
-	stringFormat->SetTrimming(StringTrimmingNone);
+	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic()->Clone());
+	stringFormat.SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces);
+	stringFormat.SetTrimming(StringTrimmingNone);
 
-	graphics->MeasureString(
+	graphics.MeasureString(
 		text.c_str(),
 		(INT)text.length(),
-		font.ptr(),
+		&font,
 		Gdiplus::RectF(0, 0, 0, 0),
-		stringFormat.ptr(),
+		&stringFormat,
 		&boundingBox
 	);
 
 	ReleaseDC(hWnd, hDC);
-
 	return Size(int(boundingBox.Width + 1), int(boundingBox.Height + 4));
+}
+
+void CanvasGdiPlusWin32::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
+{
+	Gdiplus::Font font(m_hDC, m_hFont);
+	Gdiplus::FontFamily fontFamily;
+	font.GetFamily(&fontFamily);
+
+	UINT16 emHeight = fontFamily.GetEmHeight(FontStyleRegular);
+	UINT16 ascent = fontFamily.GetCellAscent(FontStyleRegular);
+	UINT16 descent = fontFamily.GetCellDescent(FontStyleRegular);
+
+	outAscent = font.GetSize() * ascent / emHeight;
+	outDescent = font.GetSize() * descent / emHeight;
+}
+
+int32_t CanvasGdiPlusWin32::getAdvance(wchar_t ch, wchar_t next) const
+{
+	Gdiplus::RectF layoutRect(0.0f, 0.0f, std::numeric_limits< float >::max(), std::numeric_limits< float >::max());
+
+	wchar_t chs[3] = { ch, next, 0 };
+
+	Gdiplus::CharacterRange range(0, 1);
+	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic()->Clone());
+	stringFormat.SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces | StringFormatFlagsNoFitBlackBox);
+	stringFormat.SetTrimming(StringTrimmingNone);
+	stringFormat.SetMeasurableCharacterRanges(1, &range);
+
+	Gdiplus::Region region;
+	m_graphics->MeasureCharacterRanges(
+		chs,
+		-1,
+		m_font.ptr(),
+		layoutRect,
+		&stringFormat,
+		1,
+		&region
+	);
+
+	Gdiplus::RectF rc;
+	region.GetBounds(&rc, m_graphics.ptr());
+
+	return rc.Width;
+}
+
+int32_t CanvasGdiPlusWin32::getLineSpacing() const
+{
+	Gdiplus::FontFamily fontFamily;
+	m_font->GetFamily(&fontFamily);
+
+	return m_font->GetSize() * fontFamily.GetLineSpacing(FontStyleRegular) / fontFamily.GetEmHeight(FontStyleRegular);
+}
+
+Size CanvasGdiPlusWin32::getExtent(const std::wstring& text) const
+{
+	Gdiplus::RectF boundingBox;
+
+	if (!m_font.ptr())
+		m_font.reset(new Gdiplus::Font(m_hDC, m_hFont));
+
+	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic()->Clone());
+	stringFormat.SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces | StringFormatFlagsNoFitBlackBox);
+	stringFormat.SetTrimming(StringTrimmingNone);
+
+	m_graphics->MeasureString(
+		text.c_str(),
+		(INT)text.length(),
+		m_font.ptr(),
+		Gdiplus::RectF(0, 0, 0, 0),
+		&stringFormat,
+		&boundingBox
+	);
+
+	return Size(int(boundingBox.Width + 1), int(boundingBox.Height + 1));
 }
 
 void CanvasGdiPlusWin32::setForeground(const Color4ub& color)
@@ -190,6 +330,11 @@ void CanvasGdiPlusWin32::setFont(const Font& font)
 		UnitPixel,
 		NULL
 	));
+}
+
+const IFontMetric* CanvasGdiPlusWin32::getFontMetric() const
+{
+	return this;
 }
 
 void CanvasGdiPlusWin32::setLineStyle(LineStyle lineStyle)
@@ -394,105 +539,18 @@ void CanvasGdiPlusWin32::drawText(const Point& at, const std::wstring& text)
 	if (!m_font.ptr())
 		m_font.reset(new Gdiplus::Font(m_hDC, m_hFont));
 
-	if (!m_stringFormat.ptr())
-	{
-		m_stringFormat.reset(StringFormat::GenericTypographic()->Clone());
-		m_stringFormat->SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces);
-		m_stringFormat->SetTrimming(StringTrimmingNone);
-	}
-
-	m_stringFormat->SetAlignment(StringAlignmentNear);
-	m_stringFormat->SetLineAlignment(StringAlignmentNear);
+	Gdiplus::StringFormat stringFormat(StringFormat::GenericTypographic()->Clone());
+	stringFormat.SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces | StringFormatFlagsNoFitBlackBox);
+	stringFormat.SetTrimming(StringTrimmingNone);
 
 	m_graphics->DrawString(
 		text.c_str(),
 		(INT)text.length(),
 		m_font.ptr(),
 		Gdiplus::PointF((Gdiplus::REAL)at.x, (Gdiplus::REAL)at.y),
-		m_stringFormat.ptr(),
+		&stringFormat,
 		&SolidBrush(m_foreGround)
 	);
-}
-
-void CanvasGdiPlusWin32::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
-{
-	if (!m_font.ptr())
-		m_font.reset(new Gdiplus::Font(m_hDC, m_hFont));
-
-	if (!m_stringFormat.ptr())
-	{
-		m_stringFormat.reset(StringFormat::GenericTypographic()->Clone());
-		m_stringFormat->SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces);
-		m_stringFormat->SetTrimming(StringTrimmingNone);
-	}
-
-	switch (halign)
-	{
-	case AnLeft:
-		m_stringFormat->SetAlignment(StringAlignmentNear);
-		break;
-
-	case AnCenter:
-		m_stringFormat->SetAlignment(StringAlignmentCenter);
-		break;
-
-	case AnRight:
-		m_stringFormat->SetAlignment(StringAlignmentFar);
-		break;
-	}
-
-	switch (valign)
-	{
-	case AnTop:
-		m_stringFormat->SetLineAlignment(StringAlignmentNear);
-		break;
-
-	case AnCenter:
-		m_stringFormat->SetLineAlignment(StringAlignmentCenter);
-		break;
-
-	case AnBottom:
-		m_stringFormat->SetLineAlignment(StringAlignmentFar);
-		break;
-	}
-
-	m_graphics->DrawString(
-		text.c_str(),
-		(INT)text.length(),
-		m_font.ptr(),
-		Gdiplus::RectF((Gdiplus::REAL)rc.left, (Gdiplus::REAL)rc.top, (Gdiplus::REAL)rc.getWidth(), (Gdiplus::REAL)rc.getHeight()),
-		m_stringFormat.ptr(),
-		&SolidBrush(m_foreGround)
-	);
-}
-
-Size CanvasGdiPlusWin32::getTextExtent(const std::wstring& text) const
-{
-	Gdiplus::RectF boundingBox;
-
-	if (!m_font.ptr())
-		m_font.reset(new Gdiplus::Font(m_hDC, m_hFont));
-
-	if (!m_stringFormat.ptr())
-	{
-		m_stringFormat.reset(StringFormat::GenericTypographic()->Clone());
-		m_stringFormat->SetFormatFlags(StringFormatFlagsNoWrap | StringFormatFlagsMeasureTrailingSpaces);
-		m_stringFormat->SetTrimming(StringTrimmingNone);
-	}
-
-	m_stringFormat->SetAlignment(StringAlignmentNear);
-	m_stringFormat->SetLineAlignment(StringAlignmentNear);
-
-	m_graphics->MeasureString(
-		text.c_str(),
-		(INT)text.length(),
-		m_font.ptr(),
-		Gdiplus::RectF(0, 0, 0, 0),
-		m_stringFormat.ptr(),
-		&boundingBox
-	);
-
-	return Size(int(boundingBox.Width + 1), int(boundingBox.Height + 1));
 }
 
 void* CanvasGdiPlusWin32::getSystemHandle()

@@ -30,61 +30,77 @@ public:
 
 	virtual ~CanvasDirect2DWin32();
 
-	virtual bool beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC);
+	virtual bool beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC) T_OVERRIDE T_FINAL;
 
-	virtual void endPaint(Window& hWnd);
+	virtual void endPaint(Window& hWnd) T_OVERRIDE T_FINAL;
 
-	virtual Size getTextExtent(Window& hWnd, const std::wstring& text) const;
+	virtual void getAscentAndDescent(Window& hWnd, int32_t& outAscent, int32_t& outDescent) const T_OVERRIDE T_FINAL;
+
+	virtual int32_t getAdvance(Window& hWnd, wchar_t ch, wchar_t next) const T_OVERRIDE T_FINAL;
+
+	virtual int32_t getLineSpacing(Window& hWnd) const T_OVERRIDE T_FINAL;
+
+	virtual Size getExtent(Window& hWnd, const std::wstring& text) const T_OVERRIDE T_FINAL;
+
+	// IFontMetric
+
+	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const T_OVERRIDE T_FINAL;
+
+	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const T_OVERRIDE T_FINAL;
+
+	virtual int32_t getLineSpacing() const T_OVERRIDE T_FINAL;
+
+	virtual Size getExtent(const std::wstring& text) const T_OVERRIDE T_FINAL;
+
+	// ICanvas
 	
-	virtual void setForeground(const Color4ub& foreground);
+	virtual void setForeground(const Color4ub& foreground) T_OVERRIDE T_FINAL;
 
-	virtual void setBackground(const Color4ub& background);
+	virtual void setBackground(const Color4ub& background) T_OVERRIDE T_FINAL;
 
-	virtual void setFont(const Font& font);
+	virtual void setFont(const Font& font) T_OVERRIDE T_FINAL;
 
-	virtual void setLineStyle(LineStyle lineStyle);
+	virtual const IFontMetric* getFontMetric() const T_OVERRIDE T_FINAL;
 
-	virtual void setPenThickness(int thickness);
+	virtual void setLineStyle(LineStyle lineStyle) T_OVERRIDE T_FINAL;
 
-	virtual void setClipRect(const Rect& rc);
+	virtual void setPenThickness(int thickness) T_OVERRIDE T_FINAL;
 
-	virtual void resetClipRect();
+	virtual void setClipRect(const Rect& rc) T_OVERRIDE T_FINAL;
+
+	virtual void resetClipRect() T_OVERRIDE T_FINAL;
 	
-	virtual void drawPixel(int x, int y, const Color4ub& c);
+	virtual void drawPixel(int x, int y, const Color4ub& c) T_OVERRIDE T_FINAL;
 
-	virtual void drawLine(int x1, int y1, int x2, int y2);
+	virtual void drawLine(int x1, int y1, int x2, int y2) T_OVERRIDE T_FINAL;
 
-	virtual void drawLines(const Point* pnts, int npnts);
+	virtual void drawLines(const Point* pnts, int npnts) T_OVERRIDE T_FINAL;
 
-	virtual void fillCircle(int x, int y, float radius);
+	virtual void fillCircle(int x, int y, float radius) T_OVERRIDE T_FINAL;
 
-	virtual void drawCircle(int x, int y, float radius);
+	virtual void drawCircle(int x, int y, float radius) T_OVERRIDE T_FINAL;
 
-	virtual void drawEllipticArc(int x, int y, int w, int h, float start, float end);
+	virtual void drawEllipticArc(int x, int y, int w, int h, float start, float end) T_OVERRIDE T_FINAL;
 
-	virtual void drawSpline(const Point* pnts, int npnts);
+	virtual void drawSpline(const Point* pnts, int npnts) T_OVERRIDE T_FINAL;
 
-	virtual void fillRect(const Rect& rc);
+	virtual void fillRect(const Rect& rc) T_OVERRIDE T_FINAL;
 
-	virtual void fillGradientRect(const Rect& rc, bool vertical = true);
+	virtual void fillGradientRect(const Rect& rc, bool vertical = true) T_OVERRIDE T_FINAL;
 
-	virtual void drawRect(const Rect& rc);
+	virtual void drawRect(const Rect& rc) T_OVERRIDE T_FINAL;
 
-	virtual void drawRoundRect(const Rect& rc, int radius);
+	virtual void drawRoundRect(const Rect& rc, int radius) T_OVERRIDE T_FINAL;
 
-	virtual void drawPolygon(const Point* pnts, int count);
+	virtual void drawPolygon(const Point* pnts, int count) T_OVERRIDE T_FINAL;
 
-	virtual void fillPolygon(const Point* pnts, int count);
+	virtual void fillPolygon(const Point* pnts, int count) T_OVERRIDE T_FINAL;
 	
-	virtual void drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode);
+	virtual void drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode) T_OVERRIDE T_FINAL;
 
-	virtual void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode);
+	virtual void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode) T_OVERRIDE T_FINAL;
 
-	virtual void drawText(const Point& at, const std::wstring& text);
-
-	virtual void drawText(const Rect& rc, const std::wstring& text, Align halign = AnLeft, Align valign = AnTop);
-	
-	virtual Size getTextExtent(const std::wstring& text) const;
+	virtual void drawText(const Point& at, const std::wstring& text) T_OVERRIDE T_FINAL;
 
 	virtual void* getSystemHandle();
 
@@ -102,6 +118,8 @@ private:
 	D2D1_GRADIENT_STOP m_gradientStops[2];
 	ComRef< ID2D1GradientStopCollection > m_d2dGradientStops;
 	ComRef< IDWriteTextFormat > m_dwTextFormat;
+	ComRef< IDWriteFont > m_dwFont;
+	DWRITE_FONT_METRICS m_fontMetrics;
 	std::map< int32_t, ComRef< ID2D1Bitmap > > m_d2dBitmaps;
 	float m_strokeWidth;
 	bool m_underline;

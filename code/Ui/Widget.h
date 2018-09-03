@@ -13,6 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Enums.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Font.h"
+#include "Ui/FontMetric.h"
 #include "Ui/Rect.h"
 #include "Ui/Events/AllEvents.h"
 
@@ -94,11 +95,11 @@ public:
 
 	virtual Rect getNormalRect() const;
 
-	virtual Size getTextExtent(const std::wstring& text) const;
-
 	virtual void setFont(const Font& font);
 	
 	virtual Font getFont() const;
+
+	virtual FontMetric getFontMetric() const;
 	
 	virtual void setCursor(Cursor cursor);
 	
@@ -123,8 +124,6 @@ public:
 	void startTimer(int interval, int id = -1);
 
 	void stopTimer(int id = -1);
-
-	void setOutline(const Point* p, int np);
 
 	Point getMousePosition(bool relative = true) const;
 

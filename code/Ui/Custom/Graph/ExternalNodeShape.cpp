@@ -304,22 +304,22 @@ Size ExternalNodeShape::calculateSize(const Node* node) const
 
 	int maxWidthPins[2] = { 0, 0 };
 	for (RefArray< Pin >::const_iterator i = node->getInputPins().begin(); i != node->getInputPins().end(); ++i)
-		maxWidthPins[0] = std::max< int32_t >(maxWidthPins[0], m_graphControl->getTextExtent((*i)->getName()).cx);
+		maxWidthPins[0] = std::max< int32_t >(maxWidthPins[0], m_graphControl->getFontMetric().getExtent((*i)->getName()).cx);
 	for (RefArray< Pin >::const_iterator i = node->getOutputPins().begin(); i != node->getOutputPins().end(); ++i)
-		maxWidthPins[1] = std::max< int32_t >(maxWidthPins[1], m_graphControl->getTextExtent((*i)->getName()).cx);
+		maxWidthPins[1] = std::max< int32_t >(maxWidthPins[1], m_graphControl->getFontMetric().getExtent((*i)->getName()).cx);
 
 	int32_t width = maxWidthPins[0] + maxWidthPins[1];
 
 	if (!node->getTitle().empty())
 	{
 		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFontBold());
-		int32_t titleExtent = m_graphControl->getTextExtent(node->getTitle()).cx;
+		int32_t titleExtent = m_graphControl->getFontMetric().getExtent(node->getTitle()).cx;
 		width = std::max(width, titleExtent);
 		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFont());
 	}
 	if (!node->getInfo().empty())
 	{
-		int32_t infoExtent = m_graphControl->getTextExtent(node->getInfo()).cx;
+		int32_t infoExtent = m_graphControl->getFontMetric().getExtent(node->getInfo()).cx;
 		width = std::max(width, infoExtent);
 	}
 	if (node->getImage())

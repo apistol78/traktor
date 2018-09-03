@@ -20,6 +20,11 @@ namespace traktor
 	namespace ui
 	{
 
+class IFontMetric;
+
+/*! \brief
+ * \ingroup UI
+ */
 struct IWidgetRect
 {
 	class IWidget* widget;
@@ -70,8 +75,6 @@ public:
 
 	virtual void stopTimer(int id) = 0;
 
-	virtual void setOutline(const Point* p, int np) = 0;
-
 	virtual void setRect(const Rect& rect) = 0;
 
 	virtual Rect getRect() const = 0;
@@ -80,11 +83,11 @@ public:
 
 	virtual Rect getNormalRect() const = 0;
 
-	virtual Size getTextExtent(const std::wstring& text) const = 0;
-
 	virtual void setFont(const Font& font) = 0;
 
 	virtual Font getFont() const = 0;
+
+	virtual const IFontMetric* getFontMetric() const = 0;
 
 	virtual void setCursor(Cursor cursor) = 0;
 	
