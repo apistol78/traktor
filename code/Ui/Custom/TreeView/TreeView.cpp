@@ -201,7 +201,7 @@ void TreeView::applyState(const HierarchicalState* state)
 
 void TreeView::layoutCells(const Rect& rc)
 {
-	int32_t height = getFont().getPixelSize() + dpi96(6);
+	int32_t height = getFontMetric().getHeight() + dpi96(4);
 
 	RefArray< TreeViewItem > items;
 	getItems(items, GfDescendants | GfExpandedOnly);
