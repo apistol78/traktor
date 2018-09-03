@@ -42,7 +42,31 @@ bool UserWidgetGtk::create(IWidget* parent, int style)
 	return true;
 }
 
-Size UserWidgetGtk::getTextExtent(const std::wstring& text) const
+void UserWidgetGtk::setFont(const Font& font)
+{
+	m_font = font;
+}
+
+Font UserWidgetGtk::getFont() const
+{
+	return m_font;
+}
+
+void UserWidgetGtk::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
+{
+}
+
+int32_t UserWidgetGtk::getAdvance(wchar_t ch, wchar_t next) const
+{
+	return 0;
+}
+
+int32_t UserWidgetGtk::getLineSpacing() const
+{
+	return 0;
+}
+
+Size UserWidgetGtk::getExtent(const std::wstring& text) const
 {
 	int ew = 0, eh = 0;
 
@@ -62,16 +86,6 @@ Size UserWidgetGtk::getTextExtent(const std::wstring& text) const
 	g_object_unref(ly);
 
 	return Size(ew, eh);
-}
-
-void UserWidgetGtk::setFont(const Font& font)
-{
-	m_font = font;
-}
-
-Font UserWidgetGtk::getFont() const
-{
-	return m_font;
 }
 
 gboolean UserWidgetGtk::signal_draw(GtkWidget* widget, cairo_t* cr, gpointer data)
