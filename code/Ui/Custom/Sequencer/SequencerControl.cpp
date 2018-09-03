@@ -588,7 +588,7 @@ void SequencerControl::eventPaint(PaintEvent* event)
 
 	std::wstringstream ss;
 	ss << m_cursor << L" ms";
-	Size ext = canvas.getTextExtent(ss.str());
+	Size ext = canvas.getFontMetric().getExtent(ss.str());
 
 	canvas.setForeground(Color4ub(0, 0, 0));
 	canvas.drawText(

@@ -205,7 +205,7 @@ void Tab::eventPaint(PaintEvent* event)
 			Ref< TabPage >& page = i->page;
 
 			std::wstring text = page->getText();
-			Size extent = canvas.getTextExtent(text);
+			Size extent = canvas.getFontMetric().getExtent(text);
 
 			int headerWidth = extent.cx + c_tabHeaderMargin * 2;
 

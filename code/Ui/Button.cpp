@@ -48,7 +48,12 @@ Size Button::getPreferedSize() const
 {
 	const int32_t marginX = dpi96(16);
 	const int32_t marginY = dpi96(4);
-	return getTextExtent(getText()) + Size(marginX * 2, marginY * 2);
+
+	FontMetric fm = getFontMetric();
+	int32_t w = fm.getExtent(getText()).cx;
+	int32_t h = fm.getHeight();
+
+	return Size(w + marginX * 2, h + marginY * 2);
 }
 
 Size Button::getMaximumSize() const

@@ -64,7 +64,7 @@ bool CheckBox::isChecked() const
 
 Size CheckBox::getPreferedSize() const
 {
-	Size sz = getTextExtent(getText());
+	Size sz = getFontMetric().getExtent(getText());
 	sz.cx += s_imageUnchecked->getSize().cx + dpi96(4);
 	sz.cy = std::max(sz.cy, s_imageUnchecked->getSize().cy);
 	return sz;

@@ -389,6 +389,8 @@ void DockPane::draw(Canvas& canvas)
 
 	if (m_widget && m_detachable)
 	{
+		FontMetric fm = m_widget->getFontMetric();
+
 		Rect captionRect = m_rect;
 		captionRect.bottom = captionRect.top + dpi96(c_gripperDim);
 
@@ -408,13 +410,13 @@ void DockPane::draw(Canvas& canvas)
 
 		std::wstring title = m_widget->getText();
 
-		Size titleExtent = canvas.getTextExtent(title);
+		Size titleExtent = fm.getExtent(title);
 		if (titleExtent.cx > titleRect.getWidth())
 		{
 			while (title.length() > 0 && titleExtent.cx > titleRect.getWidth())
 			{
 				title = title.substr(0, title.length() - 1);
-				titleExtent = canvas.getTextExtent(title + L"...");
+				titleExtent = fm.getExtent(title + L"...");
 			}
 			title += L"...";
 		}

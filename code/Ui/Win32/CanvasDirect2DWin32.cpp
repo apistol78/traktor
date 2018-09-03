@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/CanvasDirect2DWin32.h"
+#include "Ui/Win32/Window.h"
 
 #undef max
 
@@ -161,7 +162,21 @@ void CanvasDirect2DWin32::endPaint(Window& hWnd)
 	m_hDC = NULL;
 }
 
-Size CanvasDirect2DWin32::getTextExtent(Window& hWnd, const std::wstring& text) const
+void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, int32_t& outDescent) const
+{
+}
+
+int32_t CanvasDirect2DWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) const
+{
+	return getExtent(hWnd, std::wstring(1, ch)).cx;
+}
+
+int32_t CanvasDirect2DWin32::getLineSpacing(Window& hWnd) const
+{
+	return 0;
+}
+
+Size CanvasDirect2DWin32::getExtent(Window& hWnd, const std::wstring& text) const
 {
 	LOGFONT lf;
 	if (!GetObject(hWnd.getFont(), sizeof(lf), &lf))
@@ -219,6 +234,45 @@ Size CanvasDirect2DWin32::getTextExtent(Window& hWnd, const std::wstring& text) 
 	);
 }
 
+void CanvasDirect2DWin32::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
+{
+	outAscent = m_dwTextFormat->GetFontSize() * m_fontMetrics.ascent / m_fontMetrics.designUnitsPerEm;
+	outDescent = m_dwTextFormat->GetFontSize() * m_fontMetrics.descent / m_fontMetrics.designUnitsPerEm;
+}
+
+int32_t CanvasDirect2DWin32::getAdvance(wchar_t ch, wchar_t next) const
+{
+	return getExtent(std::wstring(1, ch)).cx;
+}
+
+int32_t CanvasDirect2DWin32::getLineSpacing() const
+{
+	return 0;
+}
+
+Size CanvasDirect2DWin32::getExtent(const std::wstring& text) const
+{
+	ComRef< IDWriteTextLayout > dwLayout;
+	s_dwFactory->CreateTextLayout(
+		text.c_str(),
+		text.length(),
+		m_dwTextFormat,
+		std::numeric_limits< FLOAT >::max(),
+		std::numeric_limits< FLOAT >::max(),
+		&dwLayout.getAssign()
+	);
+	if (!dwLayout)
+		return Size(0, 0);
+
+	DWRITE_TEXT_METRICS dwtm;
+	dwLayout->GetMetrics(&dwtm);
+
+	return Size(
+		dwtm.widthIncludingTrailingWhitespace,
+		dwtm.height
+	);
+}
+
 void CanvasDirect2DWin32::setForeground(const Color4ub& foreground)
 {
 	m_d2dRenderTarget->CreateSolidColorBrush(
@@ -243,7 +297,7 @@ void CanvasDirect2DWin32::setBackground(const Color4ub& background)
 
 void CanvasDirect2DWin32::setFont(const Font& font)
 {
-	int32_t dip = font.getSize();
+	m_dwFont.release();
 
 	s_dwFactory->CreateTextFormat(
 		font.getFace().c_str(),
@@ -251,15 +305,48 @@ void CanvasDirect2DWin32::setFont(const Font& font)
 		font.isBold() ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
 		font.isItalic() ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		dip * getSystemDPI() / 96.0f,
+		font.getSize() * getSystemDPI() / 96.0f,
 		L"",
 		&m_dwTextFormat.getAssign()
 	);
 
 	if (m_dwTextFormat)
+	{
+		m_dwTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+		m_dwTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		m_dwTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 
+		ComRef< IDWriteFontCollection > collection;
+		m_dwTextFormat->GetFontCollection(&collection.getAssign());
+
+		UINT32 findex;
+		BOOL exists;
+		collection->FindFamilyName(font.getFace().c_str(), &findex, &exists); 
+
+		if (exists)
+		{
+			ComRef< IDWriteFontFamily > ffamily;
+			collection->GetFontFamily(findex, &ffamily.getAssign());
+			T_FATAL_ASSERT(ffamily != nullptr);
+
+			ffamily->GetFirstMatchingFont(
+				m_dwTextFormat->GetFontWeight(),
+				m_dwTextFormat->GetFontStretch(),
+				m_dwTextFormat->GetFontStyle(),
+				&m_dwFont.getAssign()
+			);
+
+			if (m_dwFont != nullptr)
+				m_dwFont->GetMetrics(&m_fontMetrics);
+		}
+	}
+
 	m_underline = font.isUnderline();
+}
+
+const IFontMetric* CanvasDirect2DWin32::getFontMetric() const
+{
+	return this;
 }
 
 void CanvasDirect2DWin32::setLineStyle(LineStyle lineStyle)
@@ -573,9 +660,6 @@ void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 	if (!m_dwTextFormat)
 		return;
 
-	m_dwTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-	m_dwTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-
 	ComRef< IDWriteTextLayout > dwLayout;
 	s_dwFactory->CreateTextLayout(
 		text.c_str(),
@@ -596,99 +680,13 @@ void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 		dwLayout->SetUnderline(TRUE, range);
 	}
 
-	m_d2dRenderTarget->DrawTextLayout(
-		D2D1::Point2F(at.x, at.y),
-		dwLayout,
-		m_d2dForegroundBrush
-	);
-}
-
-void CanvasDirect2DWin32::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
-{
-	Rect rc2 = rc.getUnified();
-	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
-		return;
-
-	if (!m_dwTextFormat)
-		return;
-
-	switch (halign)
-	{
-	case AnLeft:
-		m_dwTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-		break;
-
-	case AnCenter:
-		m_dwTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-		break;
-
-	case AnRight:
-		m_dwTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
-		break;
-	}
-
-	switch (valign)
-	{
-	case AnTop:
-		m_dwTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-		break;
-
-	case AnCenter:
-		m_dwTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-		break;
-
-	case AnBottom:
-		m_dwTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_FAR);
-		break;
-	}
-
-	ComRef< IDWriteTextLayout > dwLayout;
-	s_dwFactory->CreateTextLayout(
-		text.c_str(),
-		text.length(),
-		m_dwTextFormat,
-		rc2.getWidth(),
-		rc2.getHeight(),
-		&dwLayout.getAssign()
-	);
-	if (!dwLayout)
-		return;
-
-	if (m_underline)
-	{
-		DWRITE_TEXT_RANGE range;
-		range.startPosition = 0;
-		range.length = text.length();
-		dwLayout->SetUnderline(TRUE, range);
-	}
+	// Remove line gap; it's being added on top of ascent.
+	int32_t lineGap = m_dwTextFormat->GetFontSize() * m_fontMetrics.lineGap / m_fontMetrics.designUnitsPerEm;
 
 	m_d2dRenderTarget->DrawTextLayout(
-		D2D1::Point2F(rc2.left, rc2.top),
+		D2D1::Point2F(at.x, at.y - lineGap),
 		dwLayout,
 		m_d2dForegroundBrush
-	);
-}
-
-Size CanvasDirect2DWin32::getTextExtent(const std::wstring& text) const
-{
-	ComRef< IDWriteTextLayout > dwLayout;
-	s_dwFactory->CreateTextLayout(
-		text.c_str(),
-		text.length(),
-		m_dwTextFormat,
-		std::numeric_limits< FLOAT >::max(),
-		std::numeric_limits< FLOAT >::max(),
-		&dwLayout.getAssign()
-	);
-	if (!dwLayout)
-		return Size(0, 0);
-
-	DWRITE_TEXT_METRICS dwtm;
-	dwLayout->GetMetrics(&dwtm);
-
-	return Size(
-		dwtm.widthIncludingTrailingWhitespace,
-		dwtm.height
 	);
 }
 

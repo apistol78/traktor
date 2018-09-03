@@ -135,24 +135,11 @@ bool Widget::hasFocus() const
 bool Widget::containFocus() const
 {
 	T_ASSERT (m_widget);
-
-	/*
-	if (m_widget->hasFocus())
-		return true;
-
-	for (Widget* child = getFirstChild(); child != 0; child = child->getNextSibling())
-	{
-		if (child->containFocus())
-			return true;
-	}
-	*/
-
 	for (const Widget* w = this; w != 0; w = w->getParent())
 	{
 		if (w->hasFocus())
 			return true;
 	}	
-
 	return false;
 }
 
@@ -187,12 +174,6 @@ Rect Widget::getNormalRect() const
 	return m_widget->getNormalRect();
 }
 
-Size Widget::getTextExtent(const std::wstring& text) const
-{
-	T_ASSERT (m_widget);
-	return m_widget->getTextExtent(text);
-}
-
 void Widget::setFont(const Font& font)
 {
 	T_ASSERT (m_widget);
@@ -203,6 +184,12 @@ Font Widget::getFont() const
 {
 	T_ASSERT (m_widget);
 	return m_widget->getFont();
+}
+
+FontMetric Widget::getFontMetric() const
+{
+	T_ASSERT (m_widget);
+	return FontMetric(m_widget->getFontMetric());
 }
 
 void Widget::setCursor(Cursor cursor)
@@ -276,12 +263,6 @@ void Widget::stopTimer(int id)
 {
 	T_ASSERT (m_widget);
 	m_widget->stopTimer(id);
-}
-
-void Widget::setOutline(const Point* p, int np)
-{
-	T_ASSERT (m_widget);
-	m_widget->setOutline(p, np);
 }
 
 Point Widget::getMousePosition(bool relative) const

@@ -275,7 +275,7 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 			ox *= 2.0f / m_renderScale;
 			oy *= 2.0f / m_renderScale;
 
-			ui::Size ext = canvas.getTextExtent(debugTargets[i].name);
+			ui::Size ext = canvas.getFontMetric().getExtent(debugTargets[i].name);
 
 			int32_t x = innerSize.cx * (ox * 0.5f + 0.5f);
 			int32_t y = innerSize.cy * (0.5f - oy * 0.5f) - ext.cy;

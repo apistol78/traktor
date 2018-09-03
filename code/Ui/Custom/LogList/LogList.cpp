@@ -272,7 +272,7 @@ void LogList::eventPaint(PaintEvent* event)
 			std::wstring text = i->logText.substr(e1, e2 - e1);
 			canvas.drawText(textRect, text, AnLeft, AnCenter);
 
-			Size extent = canvas.getTextExtent(text);
+			Size extent = canvas.getFontMetric().getExtent(text);
 			textRect.left += extent.cx;
 
 			s = e2;

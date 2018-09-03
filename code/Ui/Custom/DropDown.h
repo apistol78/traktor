@@ -25,6 +25,7 @@ namespace traktor
 
 class Button;
 class Edit;
+class ToolForm;
 
 		namespace custom
 		{
@@ -79,10 +80,17 @@ public:
 		return dynamic_type_cast< T* >(getSelectedData());
 	}
 
+	virtual Size getPreferedSize() const T_OVERRIDE;
+
 private:
 	Ref< Button > m_buttonArrow;
 	Ref< Edit > m_edit;
+	Ref< ToolForm > m_listForm;
 	Ref< ListBox > m_listBox;
+
+	void eventArrowClick(ButtonClickEvent* event);
+
+	void eventListButtonDown(MouseButtonDownEvent* event);
 
 	void eventSize(SizeEvent* event);
 };

@@ -59,7 +59,7 @@ Size MiniButton::getPreferedSize() const
 	if (m_image)
 		return m_image->getSize() + Size(ui::dpi96(6), ui::dpi96(6));
 	else
-		return Size(getTextExtent(getText()).cx + ui::dpi96(10), ui::dpi96(16));
+		return Size(getFontMetric().getExtent(getText()).cx + ui::dpi96(10), ui::dpi96(16));
 }
 
 void MiniButton::eventButtonDown(MouseButtonDownEvent* event)

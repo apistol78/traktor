@@ -92,7 +92,7 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 	Rect textRect = rect;
 	textRect.top += frameSize.cy;
 
-	Size textExtent = canvas.getTextExtent(text);
+	Size textExtent = canvas.getFontMetric().getExtent(text);
 	if (textExtent.cx > textRect.getWidth())
 	{
 		if (!isSelected())
@@ -101,7 +101,7 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 			while (!text.empty())
 			{
 				text = text.substr(0, text.length() - 1);
-				textExtent = canvas.getTextExtent(text + L"...");
+				textExtent = canvas.getFontMetric().getExtent(text + L"...");
 				if (textExtent.cx <= rect.getWidth())
 					break;
 			}

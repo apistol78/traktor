@@ -369,7 +369,7 @@ Rect TreeViewItem::calculateLabelRect() const
 	const int32_t depth = calculateDepth();
 	const int32_t imageCount = getImageCount();
 
-	Size extent = m_view->getTextExtent(m_text);
+	Size extent = m_view->getFontMetric().getExtent(m_text);
 
 	Rect rcItem = m_view->getCellClientRect(this);
 	rcItem.left += dpi96(4 + depth * 20 + 28) + imageCount * d;
@@ -380,7 +380,7 @@ Rect TreeViewItem::calculateLabelRect() const
 
 int32_t TreeViewItem::calculateWidth() const
 {
-	Size extent = m_view->getTextExtent(m_text);
+	Size extent = m_view->getFontMetric().getExtent(m_text);
 	int32_t d = m_view->m_imageState->getSize().cy;
 	return dpi96(4 + calculateDepth() * 20 + 28) + extent.cx + d;
 }

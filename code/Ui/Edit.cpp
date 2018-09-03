@@ -46,6 +46,8 @@ bool Edit::create(Widget* parent, const std::wstring& text, int style, const Edi
 	addEventHandler< TimerEvent >(this, &Edit::eventTimer);
 
 	startTimer(500);
+	setText(text);
+
 	return true;
 }
 
@@ -102,7 +104,7 @@ void Edit::setBorderColor(const Color4ub& borderColor)
 
 Size Edit::getPreferedSize() const
 {
-	const int32_t height = getFont().getPixelSize() + dpi96(4) * 2;
+	const int32_t height = getFontMetric().getHeight() + dpi96(4) * 2;
 	return Size(dpi96(200), height);
 }
 
@@ -166,7 +168,7 @@ void Edit::eventPaint(PaintEvent* event)
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
-	
+	FontMetric fm = getFontMetric();
 	Rect rcInner = getInnerRect();
 	
 	canvas.setBackground(ss->getColor(this, L"background-color"));
@@ -179,9 +181,9 @@ void Edit::eventPaint(PaintEvent* event)
 
 	canvas.setForeground(ss->getColor(this, L"color"));
 
-	int32_t h = getFont().getPixelSize();
-	int32_t x = 0;
-	int32_t y = (rcInner.getHeight() - h) / 2;
+	int32_t h = fm.getHeight();
+	int32_t x = dpi96(4);
+	int32_t y = dpi96(4);
 	int32_t caretX = 0;
 
 	for (int32_t i = 0; i < text.length(); ++i)
@@ -192,7 +194,7 @@ void Edit::eventPaint(PaintEvent* event)
 		if (i == m_caret)
 			caretX = x;
 
-		x += canvas.getTextExtent(chs).cx;
+		x += fm.getAdvance(text[i], 0);
 	}
 
 	if (m_caret >= text.length())

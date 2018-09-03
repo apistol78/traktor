@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_ui_Canvas_H
 
 #include "Core/Object.h"
+#include "Ui/FontMetric.h"
 #include "Ui/Itf/ICanvas.h"
 
 // import/export mechanism.
@@ -44,6 +45,8 @@ public:
 	const Color4ub& getBackground() const;
 
 	void setFont(const Font& font);
+
+	FontMetric getFontMetric() const;
 
 	void setLineStyle(LineStyle lineStyle);
 
@@ -99,8 +102,6 @@ public:
 
 	void drawText(const Rect& rc, const std::wstring& text, Align halign = AnLeft, Align valign = AnTop);
 	
-	Size getTextExtent(const std::wstring& text) const;
-
 	ICanvas* getICanvas() const { return m_canvas; }
 
 private:

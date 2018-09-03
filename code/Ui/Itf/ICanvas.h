@@ -21,6 +21,7 @@ namespace traktor
 	namespace ui
 	{
 
+class IFontMetric;
 class ISystemBitmap;
 
 /*! \brief Canvas interface.
@@ -34,6 +35,8 @@ public:
 	virtual void setBackground(const Color4ub& background) = 0;
 
 	virtual void setFont(const Font& font) = 0;
+
+	virtual const IFontMetric* getFontMetric() const = 0;
 
 	virtual void setLineStyle(LineStyle lineStyle) = 0;
 
@@ -74,10 +77,6 @@ public:
 	virtual void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode) = 0;
 
 	virtual void drawText(const Point& at, const std::wstring& text) = 0;
-
-	virtual void drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign) = 0;
-	
-	virtual Size getTextExtent(const std::wstring& text) const = 0;
 
 	virtual void* getSystemHandle() = 0;
 };

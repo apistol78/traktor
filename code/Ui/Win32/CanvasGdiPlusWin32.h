@@ -39,13 +39,33 @@ public:
 
 	virtual void endPaint(Window& hWnd) T_OVERRIDE T_FINAL;
 
-	virtual Size getTextExtent(Window& hWnd, const std::wstring& text) const T_OVERRIDE T_FINAL;
-	
+	virtual void getAscentAndDescent(Window& hWnd, int32_t& outAscent, int32_t& outDescent) const T_OVERRIDE T_FINAL;
+
+	virtual int32_t getAdvance(Window& hWnd, wchar_t ch, wchar_t next) const T_OVERRIDE T_FINAL;
+
+	virtual int32_t getLineSpacing(Window& hWnd) const T_OVERRIDE T_FINAL;
+
+	virtual Size getExtent(Window& hWnd, const std::wstring& text) const T_OVERRIDE T_FINAL;
+
+	// IFontMetric
+
+	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const T_OVERRIDE T_FINAL;
+
+	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const T_OVERRIDE T_FINAL;
+
+	virtual int32_t getLineSpacing() const T_OVERRIDE T_FINAL;
+
+	virtual Size getExtent(const std::wstring& text) const T_OVERRIDE T_FINAL;
+
+	// ICanvas
+
 	virtual void setForeground(const Color4ub& foreground) T_OVERRIDE T_FINAL;
 
 	virtual void setBackground(const Color4ub& background) T_OVERRIDE T_FINAL;
 
 	virtual void setFont(const Font& font) T_OVERRIDE T_FINAL;
+
+	virtual const IFontMetric* getFontMetric() const T_OVERRIDE T_FINAL;
 
 	virtual void setLineStyle(LineStyle lineStyle) T_OVERRIDE T_FINAL;
 
@@ -87,10 +107,6 @@ public:
 
 	virtual void drawText(const Point& at, const std::wstring& text) T_OVERRIDE T_FINAL;
 
-	virtual void drawText(const Rect& rc, const std::wstring& text, Align halign = AnLeft, Align valign = AnTop) T_OVERRIDE T_FINAL;
-	
-	virtual Size getTextExtent(const std::wstring& text) const T_OVERRIDE T_FINAL;
-
 	virtual void* getSystemHandle() T_OVERRIDE T_FINAL;
 
 	static bool startup();
@@ -107,7 +123,6 @@ private:
 	uint32_t m_offScreenBitmapHeight;
 	AutoPtr< Gdiplus::Bitmap > m_offScreenBitmap;
 	mutable AutoPtr< Gdiplus::Graphics > m_graphics;
-	mutable AutoPtr< Gdiplus::StringFormat > m_stringFormat;
 	mutable AutoPtr< Gdiplus::Font > m_font;
 	Gdiplus::Color m_foreGround;
 	Gdiplus::Color m_backGround;
