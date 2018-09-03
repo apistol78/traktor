@@ -179,7 +179,7 @@ Ref< MenuItem > MenuItem::get(int index)
 Size MenuItem::getSize(const Widget* shell) const
 {
 	int32_t cw = shell->getFontMetric().getExtent(m_text).cx;
-	int32_t ch = shell->getFont().getPixelSize();
+	int32_t ch = shell->getFontMetric().getHeight();
 	return Size(cw + dpi96(c_itemMarginX) * 2, ch + dpi96(c_itemMarginY) * 2);
 }
 
