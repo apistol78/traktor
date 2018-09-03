@@ -16,11 +16,19 @@ public:
 
 	virtual bool create(IWidget* parent, int style);
 
-	virtual Size getTextExtent(const std::wstring& text) const T_OVERRIDE T_FINAL;
-
 	virtual void setFont(const Font& font) T_OVERRIDE T_FINAL;
 
 	virtual Font getFont() const T_OVERRIDE T_FINAL;
+
+	// IFontMetric
+
+	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const T_OVERRIDE T_FINAL;
+
+	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const T_OVERRIDE T_FINAL;
+
+	virtual int32_t getLineSpacing() const T_OVERRIDE T_FINAL;
+
+	virtual Size getExtent(const std::wstring& text) const T_OVERRIDE T_FINAL;
 
 private:
 	BareContainer* m_parent;

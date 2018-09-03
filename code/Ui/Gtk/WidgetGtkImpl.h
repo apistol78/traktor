@@ -7,6 +7,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Ui/Canvas.h"
+#include "Ui/Itf/IFontMetric.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/AllEvents.h"
@@ -20,7 +21,9 @@ namespace traktor
 	{
 
 template < typename ControlType >
-class WidgetGtkImpl : public ControlType
+class WidgetGtkImpl
+:	public ControlType
+,	public IFontMetric
 {
 public:
 	WidgetGtkImpl(EventSubject* owner)
@@ -37,11 +40,14 @@ public:
 		T_FATAL_ASSERT(m_timers.empty());
 	}
 
-	virtual void destroy()
+	virtual void destroy() T_OVERRIDE
 	{
 		// Remove all timers.
 		for (auto timer : m_timers)
+		{
 			g_source_destroy(timer.source);
+			g_source_unref(timer.source);
+		}
 		m_timers.clear();
 
 		// Remove myself from parent.
@@ -63,7 +69,7 @@ public:
 		delete this;
 	}
 
-	virtual void setParent(IWidget* parent)
+	virtual void setParent(IWidget* parent) T_OVERRIDE
 	{
 		// Remove myself from old parent.
 		if (m_parent != nullptr)
@@ -83,51 +89,47 @@ public:
 		}
 	}
 
-	virtual void setText(const std::wstring& text)
+	virtual void setText(const std::wstring& text) T_OVERRIDE
 	{
 		m_text = text;
 	}
 
-	virtual std::wstring getText() const
+	virtual std::wstring getText() const T_OVERRIDE
 	{
 		return m_text;
 	}
 
-	virtual void setStyle(int style)
+	virtual void setForeground() T_OVERRIDE
 	{
 	}
 
-	virtual void setForeground()
+	virtual bool isForeground() const T_OVERRIDE
 	{
 	}
 
-	virtual bool isForeground() const
-	{
-	}
-
-	virtual void setVisible(bool visible)
+	virtual void setVisible(bool visible) T_OVERRIDE
 	{
 		if (m_warp.widget != nullptr)
 			gtk_widget_set_visible(m_warp.widget, visible);
 		m_visible = visible;
 	}
 
-	virtual bool isVisible(bool includingParents) const
+	virtual bool isVisible(bool includingParents) const T_OVERRIDE
 	{
 		return m_visible;
 	}
 
-	virtual void setActive()
+	virtual void setActive() T_OVERRIDE
 	{
 	}
 
-	virtual void setEnable(bool enable)
+	virtual void setEnable(bool enable) T_OVERRIDE
 	{
 		if (m_warp.widget != nullptr)
 			gtk_widget_set_sensitive(m_warp.widget, enable);
 	}
 
-	virtual bool isEnable() const
+	virtual bool isEnable() const T_OVERRIDE
 	{
 		if (m_warp.widget != nullptr)
 			return gtk_widget_get_sensitive(m_warp.widget);
@@ -135,7 +137,7 @@ public:
 			return false;
 	}
 
-	virtual bool hasFocus() const
+	virtual bool hasFocus() const T_OVERRIDE
 	{
 		if (m_warp.widget != nullptr)
 			return gtk_widget_is_focus(m_warp.widget);
@@ -143,18 +145,18 @@ public:
 			return false;
 	}
 
-	virtual void setFocus()
+	virtual void setFocus() T_OVERRIDE
 	{
 		if (m_warp.widget != nullptr)
 			gtk_widget_grab_focus(m_warp.widget);
 	}
 
-	virtual bool hasCapture() const
+	virtual bool hasCapture() const T_OVERRIDE
 	{
 		return m_capture;
 	}
 
-	virtual void setCapture()
+	virtual void setCapture() T_OVERRIDE
 	{
 		if (!m_capture)
 		{
@@ -163,7 +165,7 @@ public:
 		}
 	}
 
-	virtual void releaseCapture()
+	virtual void releaseCapture() T_OVERRIDE
 	{
 		if (m_capture)
 		{
@@ -172,7 +174,7 @@ public:
 		}
 	}
 
-	virtual void startTimer(int interval, int id)
+	virtual void startTimer(int interval, int id) T_OVERRIDE
 	{
 		Timer t;
 		t.id = id;
@@ -183,17 +185,13 @@ public:
 		m_timers.push_back(t);
 	}
 
-	virtual void stopTimer(int id)
+	virtual void stopTimer(int id) T_OVERRIDE
 	{
 		//g_source_remove(m_timers[id]);
 		//m_timers.erase(id);
 	}
 
-	virtual void setOutline(const Point* p, int np)
-	{
-	}
-
-	virtual void setRect(const Rect& rect)
+	virtual void setRect(const Rect& rect) T_OVERRIDE
 	{
 		if (m_parent != nullptr)
 		{
@@ -215,44 +213,43 @@ public:
 		m_rect = rect;
 	}
 
-	virtual Rect getRect() const
+	virtual Rect getRect() const T_OVERRIDE
 	{
 		return m_rect;
 	}
 
-	virtual Rect getInnerRect() const
+	virtual Rect getInnerRect() const T_OVERRIDE
 	{
 		return Rect(0, 0, m_rect.getWidth(), m_rect.getHeight());
 	}
 
-	virtual Rect getNormalRect() const
+	virtual Rect getNormalRect() const T_OVERRIDE
 	{
 		return m_rect;
 	}
 
-	virtual Size getTextExtent(const std::wstring& text) const
-	{
-		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::getTextExtent NOT IMPLEMENTED" << Endl;
-		return Size(0, 0);
-	}
-
-	virtual void setFont(const Font& font)
+	virtual void setFont(const Font& font) T_OVERRIDE
 	{
 		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::setFont NOT IMPLEMENTED" << Endl;
 	}
 
-	virtual Font getFont() const
+	virtual Font getFont() const T_OVERRIDE
 	{
 		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::getFont NOT IMPLEMENTED" << Endl;
 		return Font();
 	}
 
-	virtual void setCursor(Cursor cursor)
+	virtual const IFontMetric* getFontMetric() const T_OVERRIDE
+	{
+		return this;
+	}
+
+	virtual void setCursor(Cursor cursor) T_OVERRIDE
 	{
 		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::setCursor NOT IMPLEMENTED" << Endl;
 	}
 
-	virtual Point getMousePosition(bool relative) const
+	virtual Point getMousePosition(bool relative) const T_OVERRIDE
 	{
 		if (relative)
 		{
@@ -265,25 +262,25 @@ public:
 		return Point(0, 0);
 	}
 
-	virtual Point screenToClient(const Point& pt) const
+	virtual Point screenToClient(const Point& pt) const T_OVERRIDE
 	{
 		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::screenToClient NOT IMPLEMENTED" << Endl;
 		return Point(0, 0);
 	}
 
-	virtual Point clientToScreen(const Point& pt) const
+	virtual Point clientToScreen(const Point& pt) const T_OVERRIDE
 	{
 		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::clientToScreen NOT IMPLEMENTED" << Endl;
 		return Point(0, 0);
 	}
 
-	virtual bool hitTest(const Point& pt) const
+	virtual bool hitTest(const Point& pt) const T_OVERRIDE
 	{
 		log::info << L"WidgetGtkImpl< " << type_name(m_owner) << L" >::hitTest NOT IMPLEMENTED" << Endl;
 		return false;
 	}
 
-	virtual void setChildRects(const std::vector< IWidgetRect >& childRects)
+	virtual void setChildRects(const std::vector< IWidgetRect >& childRects) T_OVERRIDE
 	{
 		for (std::vector< IWidgetRect >::const_iterator i = childRects.begin(); i != childRects.end(); ++i)
 		{
@@ -292,7 +289,7 @@ public:
 		}
 	}
 
-	virtual Size getMinimumSize() const
+	virtual Size getMinimumSize() const T_OVERRIDE
 	{
 		GtkRequisition mn = { 0 };
 		if (m_warp.widget != nullptr)
@@ -300,7 +297,7 @@ public:
 		return Size(mn.width, mn.height);
 	}
 
-	virtual Size getPreferedSize() const
+	virtual Size getPreferedSize() const T_OVERRIDE
 	{
 		GtkRequisition nt = { 0 };
 		if (m_warp.widget != nullptr)
@@ -308,12 +305,12 @@ public:
 		return Size(nt.width, nt.height);
 	}
 
-	virtual Size getMaximumSize() const
+	virtual Size getMaximumSize() const T_OVERRIDE
 	{
 		return Size(65535, 65535);
 	}
 
-	virtual void update(const Rect* rc, bool immediate)
+	virtual void update(const Rect* rc, bool immediate) T_OVERRIDE
 	{
 		if (m_warp.widget != nullptr)
 		{
@@ -322,12 +319,12 @@ public:
 		}
 	}
 
-	virtual void* getInternalHandle()
+	virtual void* getInternalHandle() T_OVERRIDE
 	{
 		return &m_warp;
 	}
 
-	virtual SystemWindow getSystemWindow()
+	virtual SystemWindow getSystemWindow() T_OVERRIDE
 	{
 /*		
 		// Get internal GTK widget from wxGTK.
@@ -342,6 +339,27 @@ public:
 			gtk_widget_realize(internalWidget);
 */
 		return SystemWindow(0, 0); //GDK_WINDOW_XWINDOW(m_api.widget->window));		
+	}
+
+	// IFontMetric
+
+	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const T_OVERRIDE
+	{
+	}
+
+	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const T_OVERRIDE
+	{
+		return 0;
+	}
+
+	virtual int32_t getLineSpacing() const T_OVERRIDE
+	{
+		return 0;
+	}
+
+	virtual Size getExtent(const std::wstring& text) const T_OVERRIDE
+	{
+		return Size(0, 0);
 	}
 
 protected:

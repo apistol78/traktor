@@ -3,13 +3,16 @@
 
 #include <gtk/gtk.h>
 #include "Ui/Itf/ICanvas.h"
+#include "Ui/Itf/IFontMetric.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
-class CanvasGtk : public ICanvas
+class CanvasGtk
+:	public ICanvas
+,	public IFontMetric
 {
 public:
 	CanvasGtk(cairo_t* cr);
@@ -21,6 +24,8 @@ public:
 	virtual void setBackground(const Color4ub& background) T_OVERRIDE T_FINAL;
 
 	virtual void setFont(const Font& font) T_OVERRIDE T_FINAL;
+
+	virtual const IFontMetric* getFontMetric() const T_OVERRIDE T_FINAL;
 
 	virtual void setLineStyle(LineStyle lineStyle) T_OVERRIDE T_FINAL;
 
@@ -62,11 +67,17 @@ public:
 
 	virtual void drawText(const Point& at, const std::wstring& text) T_OVERRIDE T_FINAL;
 
-	virtual void drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign) T_OVERRIDE T_FINAL;
-
-	virtual Size getTextExtent(const std::wstring& text) const T_OVERRIDE T_FINAL;
-
 	virtual void* getSystemHandle() T_OVERRIDE T_FINAL;
+
+	// IFontMetric
+
+	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const T_OVERRIDE T_FINAL;
+
+	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const T_OVERRIDE T_FINAL;
+
+	virtual int32_t getLineSpacing() const T_OVERRIDE T_FINAL;
+
+	virtual Size getExtent(const std::wstring& text) const T_OVERRIDE T_FINAL;
 
 private:
 	cairo_t* m_cr;
