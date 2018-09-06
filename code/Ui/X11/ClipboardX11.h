@@ -4,10 +4,9 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_ui_ClipboardGtk_H
-#define traktor_ui_ClipboardGtk_H
+#ifndef traktor_ui_ClipboardX11_H
+#define traktor_ui_ClipboardX11_H
 
-#include <string>
 #include "Ui/Itf/IClipboard.h"
 
 namespace traktor
@@ -18,7 +17,7 @@ namespace traktor
 /*! \brief
  * \ingroup UI
  */
-class ClipboardGtk : public IClipboard
+class ClipboardX11 : public IClipboard
 {
 public:
 	virtual void destroy() T_OVERRIDE T_FINAL;
@@ -41,4 +40,4 @@ public:
 	}
 }
 
-#endif	// traktor_ui_ClipboardGtk_H
+#endif	// traktor_ui_ClipboardX11_H

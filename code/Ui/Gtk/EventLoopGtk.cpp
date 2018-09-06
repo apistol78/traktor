@@ -1,3 +1,5 @@
+#include <gdk/gdk.h>
+#include <gtk/gtk.h>
 #include "Ui/Gtk/EventLoopGtk.h"
 
 namespace traktor

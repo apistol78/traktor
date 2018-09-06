@@ -54,6 +54,8 @@ Font UserWidgetGtk::getFont() const
 
 void UserWidgetGtk::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
 {
+	outAscent = 0;
+	outDescent = 0;
 }
 
 int32_t UserWidgetGtk::getAdvance(wchar_t ch, wchar_t next) const

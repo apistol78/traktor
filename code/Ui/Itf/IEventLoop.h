@@ -26,6 +26,8 @@ class IEventLoop
 public:
 	virtual ~IEventLoop() {}
 
+	virtual void destroy() = 0;
+
 	virtual bool process(EventSubject* owner) = 0;
 
 	virtual int32_t execute(EventSubject* owner) = 0;

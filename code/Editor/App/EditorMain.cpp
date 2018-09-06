@@ -21,20 +21,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 
 #if defined(_WIN32)
-#	include <Ui/Win32/EventLoopWin32.h>
 #	include <Ui/Win32/WidgetFactoryWin32.h>
-typedef traktor::ui::EventLoopWin32 EventLoopImpl;
 typedef traktor::ui::WidgetFactoryWin32 WidgetFactoryImpl;
 #elif defined(__APPLE__)
-#	include <Ui/Cocoa/EventLoopCocoa.h>
 #	include <Ui/Cocoa/WidgetFactoryCocoa.h>
-typedef traktor::ui::EventLoopCocoa EventLoopImpl;
 typedef traktor::ui::WidgetFactoryCocoa WidgetFactoryImpl;
 #elif defined(__LINUX__)
-#	include <Ui/Gtk/EventLoopGtk.h>
-#	include <Ui/Gtk/WidgetFactoryGtk.h>
-typedef traktor::ui::EventLoopGtk EventLoopImpl;
-typedef traktor::ui::WidgetFactoryGtk WidgetFactoryImpl;
+#	include <Ui/X11/WidgetFactoryX11.h>
+typedef traktor::ui::WidgetFactoryX11 WidgetFactoryImpl;
 #endif
 
 #if defined(__LINUX__)
@@ -89,7 +83,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #endif
 
 	ui::Application::getInstance()->initialize(
-		new EventLoopImpl(),
 		new WidgetFactoryImpl(),
 		0
 	);

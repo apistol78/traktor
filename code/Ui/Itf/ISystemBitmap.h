@@ -9,13 +9,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Config.h"
 #include "Core/Ref.h"
+#include "Core/Math/Color4ub.h"
 #include "Ui/Rect.h"
 
 namespace traktor
 {
-
-class Color4ub;
-
 	namespace drawing
 	{
 

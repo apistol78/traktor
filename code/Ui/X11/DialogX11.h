@@ -1,7 +1,7 @@
-#ifndef traktor_ui_DialogGtk_H
-#define traktor_ui_DialogGtk_H
+#ifndef traktor_ui_DialogX11_H
+#define traktor_ui_DialogX11_H
 
-#include "Ui/Gtk/WidgetGtkImpl.h"
+#include "Ui/X11/WidgetX11Impl.h"
 #include "Ui/Itf/IDialog.h"
 
 namespace traktor
@@ -9,10 +9,10 @@ namespace traktor
 	namespace ui
 	{
 
-class DialogGtk : public WidgetGtkImpl< IDialog >
+class DialogX11 : public WidgetX11Impl< IDialog >
 {
 public:
-	DialogGtk(EventSubject* owner);
+	DialogX11(EventSubject* owner, Display* display, int32_t screen);
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) T_OVERRIDE T_FINAL;
 
@@ -26,17 +26,12 @@ public:
 
 	virtual void setMinSize(const Size& minSize) T_OVERRIDE T_FINAL;
 
-	virtual void setVisible(bool visible) T_OVERRIDE T_FINAL;
-
 private:
-	GtkWidget* m_window;
 	int32_t m_result;
 	bool m_modal;
-
-	static gboolean signal_remove(GtkWidget* widget, GdkEvent* event, gpointer data);
 };
 
 	}
 }
 
-#endif	// traktor_ui_DialogGtk_H
+#endif	// traktor_ui_DialogX11_H
