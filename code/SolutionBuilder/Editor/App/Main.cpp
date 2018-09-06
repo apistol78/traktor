@@ -9,14 +9,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #endif
 #include <Ui/Application.h>
 #if defined(_WIN32)
-#	include <Ui/Win32/EventLoopWin32.h>
 #	include <Ui/Win32/WidgetFactoryWin32.h>
 #elif defined(__APPLE__)
-#	include <Ui/Cocoa/EventLoopCocoa.h>
 #	include <Ui/Cocoa/WidgetFactoryCocoa.h>
 #elif defined(__LINUX__)
-#	include <Ui/Gtk/EventLoopGtk.h>
-#	include <Ui/Gtk/WidgetFactoryGtk.h>
+#	include <Ui/X11/WidgetFactoryX11.h>
 #endif
 #include <Core/Config.h>
 #include "SolutionForm.h"
@@ -43,20 +40,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 #if defined(_WIN32)
 	ui::Application::getInstance()->initialize(
-		new ui::EventLoopWin32(),
 		new ui::WidgetFactoryWin32(),
 		0
 	);
 #elif defined(__APPLE__)
 	ui::Application::getInstance()->initialize(
-		new ui::EventLoopCocoa(),
 		new ui::WidgetFactoryCocoa(),
 		0
 	);
 #elif defined(__LINUX__)
 	ui::Application::getInstance()->initialize(
-		new ui::EventLoopGtk(),
-		new ui::WidgetFactoryGtk(),
+		new ui::WidgetFactoryX11(),
 		0
 	);
 #endif

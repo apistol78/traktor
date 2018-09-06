@@ -14,7 +14,7 @@ class ContainerGtk : public WidgetGtkImpl< IContainer >
 public:
 	ContainerGtk(EventSubject* owner);
 
-	virtual bool create(IWidget* parent, int style);
+	virtual bool create(IWidget* parent, int style) T_OVERRIDE T_FINAL;
 };
 
 	}

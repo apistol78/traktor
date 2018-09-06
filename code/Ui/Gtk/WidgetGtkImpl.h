@@ -345,6 +345,8 @@ public:
 
 	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const T_OVERRIDE
 	{
+		outAscent = 0;
+		outDescent = 0;
 	}
 
 	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const T_OVERRIDE

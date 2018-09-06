@@ -41,6 +41,8 @@ class IWidgetFactory
 public:
 	virtual ~IWidgetFactory() {}
 
+	virtual IEventLoop* createEventLoop(EventSubject* owner) = 0;
+
 	virtual IContainer* createContainer(EventSubject* owner) = 0;
 
 	virtual IDialog* createDialog(EventSubject* owner) = 0;

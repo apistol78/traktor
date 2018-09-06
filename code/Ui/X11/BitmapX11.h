@@ -1,7 +1,7 @@
-#ifndef traktor_ui_BitmapGtk_H
-#define traktor_ui_BitmapGtk_H
+#ifndef traktor_ui_BitmapX11_H
+#define traktor_ui_BitmapX11_H
 
-#include <gtk/gtk.h>
+#include <cairo.h>
 #include "Ui/Itf/ISystemBitmap.h"
 
 namespace traktor
@@ -9,10 +9,10 @@ namespace traktor
 	namespace ui
 	{
 
-class BitmapGtk : public ISystemBitmap
+class BitmapX11 : public ISystemBitmap
 {
 public:
-	BitmapGtk();
+	BitmapX11();
 
 	virtual bool create(uint32_t width, uint32_t height) T_OVERRIDE T_FINAL;
 
@@ -37,4 +37,4 @@ private:
 	}
 }
 
-#endif  // traktor_ui_BitmapGtk_H
+#endif  // traktor_ui_BitmapX11_H

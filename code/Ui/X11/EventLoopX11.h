@@ -1,17 +1,18 @@
-#ifndef traktor_ui_EventLoopGtk_H
-#define traktor_ui_EventLoopGtk_H
+#ifndef traktor_ui_EventLoopX11_H
+#define traktor_ui_EventLoopX11_H
 
+#include <X11/Xlib.h>
 #include "Ui/Itf/IEventLoop.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_UI_WIN32_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#if defined(T_UI_X11_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace Gtk
+namespace X11
 {
 
 	class Main;
@@ -23,12 +24,14 @@ namespace traktor
 	namespace ui
 	{
 
-class T_DLLCLASS EventLoopGtk : public IEventLoop
+class T_DLLCLASS EventLoopX11 : public IEventLoop
 {
 public:
-	EventLoopGtk();
+	EventLoopX11(Display* display, int32_t screen);
 
-	virtual ~EventLoopGtk();
+	virtual ~EventLoopX11();
+
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	virtual bool process(EventSubject* owner) T_OVERRIDE T_FINAL;
 
@@ -45,6 +48,8 @@ public:
 	virtual Size getDesktopSize() const T_OVERRIDE T_FINAL;
 
 private:
+	Display* m_display;
+	int32_t m_screen;
 	bool m_terminated;
 	int32_t m_exitCode;
 };
@@ -52,5 +57,5 @@ private:
 	}
 }
 
-#endif	// traktor_ui_EventLoopGtk_H
+#endif	// traktor_ui_EventLoopX11_H
 

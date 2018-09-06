@@ -58,10 +58,10 @@ Application* Application::getInstance()
 	return s_instance;
 }
 
-bool Application::initialize(IEventLoop* eventLoop, IWidgetFactory* widgetFactory, const StyleSheet* styleSheet)
+bool Application::initialize(IWidgetFactory* widgetFactory, const StyleSheet* styleSheet)
 {
-	m_eventLoop = eventLoop;
 	m_widgetFactory = widgetFactory;
+	m_eventLoop = widgetFactory->createEventLoop(this);
 	m_clipboard = new Clipboard(widgetFactory->createClipboard());
 	setStyleSheet(styleSheet);
 	return true;
@@ -72,11 +72,17 @@ void Application::finalize()
 	if (m_clipboard)
 	{
 		m_clipboard->destroy();
-		m_clipboard = 0;
+		m_clipboard = nullptr;
 	}
 
-	m_widgetFactory = 0;
-	m_eventLoop = 0;
+	if (m_eventLoop)
+	{
+		m_eventLoop->destroy();
+		m_eventLoop = nullptr;
+	}
+
+	m_widgetFactory = nullptr;
+	m_eventLoop = nullptr;
 }
 
 bool Application::process()

@@ -14,7 +14,7 @@ class ToolFormGtk : public WidgetGtkImpl< IToolForm >
 public:
 	ToolFormGtk(EventSubject* owner);
 
-	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style);
+	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) T_OVERRIDE T_FINAL;
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

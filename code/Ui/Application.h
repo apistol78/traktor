@@ -53,11 +53,10 @@ public:
 	 * This must be called prior to any UI related
 	 * calls are being made.
 	 *
-	 * \param eventLoop System event loop instance.
 	 * \param widgetFactory System widget factory instance.
 	 * \return True if application initialization succeeded.
 	 */
-	bool initialize(IEventLoop* eventLoop, IWidgetFactory* widgetFactory, const StyleSheet* styleSheet);
+	bool initialize(IWidgetFactory* widgetFactory, const StyleSheet* styleSheet);
 	
 	/*! \brief Cleanup UI application. */
 	void finalize();

@@ -14,7 +14,7 @@ class UserWidgetGtk : public WidgetGtkImpl< IUserWidget >
 public:
 	UserWidgetGtk(EventSubject* owner);
 
-	virtual bool create(IWidget* parent, int style);
+	virtual bool create(IWidget* parent, int style) T_OVERRIDE T_FINAL;
 
 	virtual void setFont(const Font& font) T_OVERRIDE T_FINAL;
 

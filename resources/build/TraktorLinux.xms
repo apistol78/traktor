@@ -7380,8 +7380,8 @@
 					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
-						<name>Traktor.Ui.Gtk</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Ui/Gtk</sourcePath>
+						<name>Traktor.Ui.X11</name>
+						<sourcePath>$(TRAKTOR_HOME)/code/Ui/X11</sourcePath>
 						<configurations>
 							<item type="Configuration" version="5">
 								<name>DebugShared</name>
@@ -7390,15 +7390,15 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>`pkg-config gtk+-3.0 --cflags`</item>
+									<item>`pkg-config --cflags cairo x11`</item>
 								</includePaths>
 								<definitions>
-									<item>T_UI_GTK_EXPORT</item>
+									<item>T_UI_X11_EXPORT</item>
 									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>`pkg-config gtk+-3.0 --libs`</item>
+									<item>`pkg-config --libs cairo x11`</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -7409,7 +7409,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Ui.Gtk.so</sourceFile>
+										<sourceFile>libTraktor.Ui.X11.so</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
 								</aggregationItems>
@@ -7422,15 +7422,15 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>`pkg-config gtk+-3.0 --cflags`</item>
+									<item>`pkg-config --cflags cairo x11`</item>
 								</includePaths>
 								<definitions>
-									<item>T_UI_GTK_EXPORT</item>
+									<item>T_UI_X11_EXPORT</item>
 									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>`pkg-config gtk+-3.0 --libs`</item>
+									<item>`pkg-config --libs cairo x11`</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -7441,7 +7441,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Ui.Gtk.so</sourceFile>
+										<sourceFile>libTraktor.Ui.X11.so</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
 								</aggregationItems>
@@ -7454,7 +7454,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>`pkg-config gtk+-3.0 --cflags`</item>
+									<item>`pkg-config --cflags cairo x11`</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -7462,7 +7462,7 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>`pkg-config gtk+-3.0 --libs`</item>
+									<item>`pkg-config --libs cairo x11`</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -7473,7 +7473,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Ui.Gtk.a</sourceFile>
+										<sourceFile>libTraktor.Ui.X11.a</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -7486,7 +7486,7 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>`pkg-config gtk+-3.0 --cflags`</item>
+									<item>`pkg-config --cflags cairo x11`</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -7494,7 +7494,7 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>`pkg-config gtk+-3.0 --libs`</item>
+									<item>`pkg-config --libs cairo x11`</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -7505,7 +7505,7 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>libTraktor.Ui.Gtk.a</sourceFile>
+										<sourceFile>libTraktor.Ui.X11.a</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -16969,6 +16969,164 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[15]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>false</enable>
+			<name>Traktor.Ui.Gtk</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Gtk</sourcePath>
+			<configurations>
+				<item type="Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>`pkg-config gtk+-3.0 --cflags`</item>
+					</includePaths>
+					<definitions>
+						<item>T_UI_GTK_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>`pkg-config gtk+-3.0 --libs`</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Ui.Gtk.so</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>`pkg-config gtk+-3.0 --cflags`</item>
+					</includePaths>
+					<definitions>
+						<item>T_UI_GTK_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>`pkg-config gtk+-3.0 --libs`</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Ui.Gtk.so</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>`pkg-config gtk+-3.0 --cflags`</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>`pkg-config gtk+-3.0 --libs`</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Ui.Gtk.a</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>`pkg-config gtk+-3.0 --cflags`</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>`pkg-config gtk+-3.0 --libs`</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Ui.Gtk.a</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
