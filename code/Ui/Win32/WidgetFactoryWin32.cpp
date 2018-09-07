@@ -9,7 +9,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Win32/DialogWin32.h"
 #include "Ui/Win32/FileDialogWin32.h"
 #include "Ui/Win32/FormWin32.h"
-#include "Ui/Win32/MessageBoxWin32.h"
 #include "Ui/Win32/NotificationIconWin32.h"
 #include "Ui/Win32/PathDialogWin32.h"
 #include "Ui/Win32/ToolFormWin32.h"
@@ -63,11 +62,6 @@ IFileDialog* WidgetFactoryWin32::createFileDialog(EventSubject* owner)
 IForm* WidgetFactoryWin32::createForm(EventSubject* owner)
 {
 	return new FormWin32(owner);
-}
-
-IMessageBox* WidgetFactoryWin32::createMessageBox(EventSubject* owner)
-{
-	return new MessageBoxWin32(owner);
 }
 
 INotificationIcon* WidgetFactoryWin32::createNotificationIcon(EventSubject* owner)

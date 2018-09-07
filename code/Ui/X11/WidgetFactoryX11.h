@@ -34,8 +34,6 @@ public:
 
 	virtual IForm* createForm(EventSubject* owner) T_OVERRIDE T_FINAL;
 
-	virtual IMessageBox* createMessageBox(EventSubject* owner) T_OVERRIDE T_FINAL;
-
 	virtual INotificationIcon* createNotificationIcon(EventSubject* owner) T_OVERRIDE T_FINAL;
 
 	virtual IPathDialog* createPathDialog(EventSubject* owner) T_OVERRIDE T_FINAL;

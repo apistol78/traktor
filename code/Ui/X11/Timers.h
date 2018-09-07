@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <map>
+#include <vector>
 
 namespace traktor
 {
@@ -17,12 +18,16 @@ public:
 
     void unbind(int32_t id);
 
+    void queue(const std::function< void() >& fn);
+
+    void dequeue();
+
     void update();
 
 private:
     std::map< int32_t, std::function< void(int32_t) > > m_timers;
+    std::vector< std::function< void() > > m_events;
     int32_t m_nid;
-    bool m_inupdate;
 
     Timers();
 };

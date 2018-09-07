@@ -1,3 +1,4 @@
+#include <X11/Xutil.h>
 #include "Ui/X11/Assoc.h"
 #include "Ui/X11/DialogX11.h"
 #include "Ui/X11/Timers.h"
@@ -34,6 +35,14 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 		0
 	);
 	
+	std::string cs = wstombs(text);
+	const char* csp = cs.c_str();
+
+	XTextProperty tp;
+	XStringListToTextProperty((char**)&csp, 1, &tp);
+
+	XSetWMName(m_display, window, &tp);
+
 	return WidgetX11Impl< IDialog >::create(parent, window, width, height, false);
 }
 

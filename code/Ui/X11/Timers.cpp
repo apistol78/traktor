@@ -1,4 +1,5 @@
 #include "Core/Assert.h"
+#include "Core/Log/Log.h"
 #include "Ui/X11/Timers.h"
 
 namespace traktor
@@ -14,27 +15,54 @@ Timers& Timers::getInstance()
 
 int32_t Timers::bind(int32_t interval, const std::function< void(int32_t) >& fn)
 {
-    T_FATAL_ASSERT(!m_inupdate);
-    m_timers[m_nid++] = fn;
+    int32_t id = m_nid++;
+    T_FATAL_ASSERT(m_timers.find(id) == m_timers.end());
+    m_timers[id] = fn;
+    return id;
 }
 
 void Timers::unbind(int32_t id)
 {
-    T_FATAL_ASSERT(!m_inupdate);
-    m_timers.erase(id);
+    size_t nr = m_timers.erase(id);
+    T_FATAL_ASSERT(nr > 0);
+    m_nid++;
+}
+
+void Timers::queue(const std::function< void() >& fn)
+{
+    m_events.push_back(fn);
+}
+
+void Timers::dequeue()
+{
+    m_events.clear();
 }
 
 void Timers::update()
 {
-    m_inupdate = true;
+    std::vector< std::function< void(int32_t) > > fns;
     for (auto it : m_timers)
-        it.second(it.first);
-    m_inupdate = false;
+        fns.push_back(it.second);
+
+    int32_t nid = m_nid;
+    for (auto fn : fns)
+    {
+        fn(0);
+        if (nid != m_nid)
+        {
+            log::info << L"Timers modified in update; skipped timers." << Endl;
+            break;
+        }
+    }
+
+    for (auto it : m_events)
+        it();
+
+    m_events.resize(0);
 }
 
 Timers::Timers()
 :   m_nid(1)
-,   m_inupdate(false)
 {
 }
 

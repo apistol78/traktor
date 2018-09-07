@@ -1,4 +1,6 @@
 #include "Core/Log/Log.h"
+#include "Ui/EventSubject.h"
+#include "Ui/Events/IdleEvent.h"
 #include "Ui/X11/Assoc.h"
 #include "Ui/X11/EventLoopX11.h"
 #include "Ui/X11/Timers.h"
@@ -53,7 +55,7 @@ int32_t EventLoopX11::execute(EventSubject* owner)
         FD_SET(fd, &fds);
 
         struct timeval tv;
-        tv.tv_usec = 100 * 1000;
+        tv.tv_usec = 20 * 1000;
         tv.tv_sec = 0;
 
         int nr = select(fd + 1, &fds, NULL, NULL, &tv);
@@ -69,6 +71,9 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 		{
 			Timers::getInstance().update();
 		}
+
+		IdleEvent idleEvent(owner);
+		owner->raiseEvent(&idleEvent);
 	}
 
 	return m_exitCode;

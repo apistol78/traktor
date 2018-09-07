@@ -201,19 +201,23 @@ void ScrollBar::eventPaint(PaintEvent* event)
 	{
 		if (m_range > 0)
 		{
-			int32_t sliderRange = rcInner.getHeight() - dpi96(16) * 2;
-			int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
-			int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
+			int32_t dh = m_range - (m_page - 1);
+			if (dh > 0)
+			{
+				int32_t sliderRange = rcInner.getHeight() - dpi96(16) * 2;
+				int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
+				int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
 
-			Rect rcSlider(
-				rcInner.left + dpi96(4),
-				rcInner.top + dpi96(16) + sliderTop,
-				rcInner.right - dpi96(4),
-				rcInner.top + dpi96(16) + sliderTop + sliderHeight
-			);
+				Rect rcSlider(
+					rcInner.left + dpi96(4),
+					rcInner.top + dpi96(16) + sliderTop,
+					rcInner.right - dpi96(4),
+					rcInner.top + dpi96(16) + sliderTop + sliderHeight
+				);
 
-			canvas.setBackground(ss->getColor(this, L"color-slider"));
-			canvas.fillRect(rcSlider);
+				canvas.setBackground(ss->getColor(this, L"color-slider"));
+				canvas.fillRect(rcSlider);
+			}
 		}
 
 		Rect rcButtonUp(
@@ -228,7 +232,7 @@ void ScrollBar::eventPaint(PaintEvent* event)
 		{
 			ui::Point(centerUp.x - dpi96(4), centerUp.y + dpi96(2)),
 			ui::Point(centerUp.x + dpi96(4), centerUp.y + dpi96(2)),
-			ui::Point(centerUp.x                      , centerUp.y - dpi96(2))
+			ui::Point(centerUp.x, centerUp.y - dpi96(2))
 		};
 
 		canvas.setBackground(ss->getColor(this, L"color-arrow"));
@@ -246,7 +250,7 @@ void ScrollBar::eventPaint(PaintEvent* event)
 		{
 			ui::Point(centerDown.x - dpi96(4), centerDown.y - dpi96(2)),
 			ui::Point(centerDown.x + dpi96(4), centerDown.y - dpi96(2)),
-			ui::Point(centerDown.x                      , centerDown.y + dpi96(2))
+			ui::Point(centerDown.x, centerDown.y + dpi96(2))
 		};
 
 		canvas.setBackground(ss->getColor(this, L"color-arrow"));
@@ -256,19 +260,23 @@ void ScrollBar::eventPaint(PaintEvent* event)
 	{
 		if (m_range > 0)
 		{
-			int32_t sliderRange = rcInner.getWidth() - dpi96(16) * 2;
-			int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
-			int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
+			int32_t dh = m_range - (m_page - 1);
+			if (dh > 0)
+			{
+				int32_t sliderRange = rcInner.getWidth() - dpi96(16) * 2;
+				int32_t sliderHeight = max(m_page * sliderRange / m_range, dpi96(60));
+				int32_t sliderTop = m_position * (sliderRange - sliderHeight) / dh;
 
-			Rect rcSlider(
-				rcInner.left + dpi96(16) + sliderTop,
-				rcInner.top + dpi96(4),
-				rcInner.left + dpi96(16) + sliderTop + sliderHeight,
-				rcInner.bottom - dpi96(4)
-			);
+				Rect rcSlider(
+					rcInner.left + dpi96(16) + sliderTop,
+					rcInner.top + dpi96(4),
+					rcInner.left + dpi96(16) + sliderTop + sliderHeight,
+					rcInner.bottom - dpi96(4)
+				);
 
-			canvas.setBackground(ss->getColor(this, L"color-slider"));
-			canvas.fillRect(rcSlider);
+				canvas.setBackground(ss->getColor(this, L"color-slider"));
+				canvas.fillRect(rcSlider);
+			}
 		}
 
 		Rect rcButtonUp(

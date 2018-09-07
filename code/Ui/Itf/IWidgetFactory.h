@@ -24,7 +24,6 @@ class IContainer;
 class IDialog;
 class IFileDialog;
 class IForm;
-class IMessageBox;
 class INotificationIcon;
 class IPathDialog;
 class IToolForm;
@@ -50,8 +49,6 @@ public:
 	virtual IFileDialog* createFileDialog(EventSubject* owner) = 0;
 
 	virtual IForm* createForm(EventSubject* owner) = 0;
-
-	virtual IMessageBox* createMessageBox(EventSubject* owner) = 0;
 
 	virtual INotificationIcon* createNotificationIcon(EventSubject* owner) = 0;
 

@@ -181,7 +181,6 @@ void ListPropertyItem::eventDropClick(ButtonClickEvent* event)
 
 		m_listForm->setRect(listRect);
 		m_listForm->setVisible(true);
-		m_listForm->raise();
 		m_listBox->setFocus();
 	}
 	else

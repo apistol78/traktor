@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_ui_MessageBox_H
 #define traktor_ui_MessageBox_H
 
-#include "Ui/EventSubject.h"
+#include "Ui/ConfigDialog.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,33 +27,19 @@ namespace traktor
 #	undef MessageBox
 #endif
 
-class Widget;
-class IMessageBox;
-
 /*! \brief Message box.
  * \ingroup UI
  */
-class T_DLLCLASS MessageBox : public EventSubject
+class T_DLLCLASS MessageBox : public ConfigDialog
 {
 	T_RTTI_CLASS;
 
 public:
-	MessageBox();
-
-	virtual ~MessageBox();
-
 	bool create(Widget* parent, const std::wstring& message, const std::wstring& caption, int style);
-
-	void destroy();
-
-	int showModal();
 
 	static int show(Widget* parent, const std::wstring& message, const std::wstring& caption, int style);
 
 	static int show(const std::wstring& message, const std::wstring& caption, int style);
-
-private:
-	IMessageBox* m_messageBox;
 };
 
 	}
