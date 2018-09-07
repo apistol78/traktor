@@ -71,11 +71,6 @@ IForm* WidgetFactoryX11::createForm(EventSubject* owner)
 	return new FormX11(owner, m_display, m_screen);
 }
 
-IMessageBox* WidgetFactoryX11::createMessageBox(EventSubject* owner)
-{
-	return 0;
-}
-
 INotificationIcon* WidgetFactoryX11::createNotificationIcon(EventSubject* owner)
 {
 	return 0;

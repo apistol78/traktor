@@ -272,11 +272,7 @@ void Dock::eventFormMove(MoveEvent* event)
 	{
 		// Is hint form already visible for this pane?
 		if (pane == m_hintDockPane && m_hint->isVisible(false))
-		{
-			// Bring hint form to foreground.
-			m_hint->raise();
 			return;
-		}
 		else
 			m_hint->hide();
 
@@ -290,7 +286,6 @@ void Dock::eventFormMove(MoveEvent* event)
 		));
 
 		m_hint->show();
-		m_hint->raise();
 
 		m_hintDockPane = pane;
 		m_hintDockForm = checked_type_cast< ToolForm* >(event->getSender());

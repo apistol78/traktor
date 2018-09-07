@@ -14,19 +14,16 @@ Assoc& Assoc::getInstance()
 
 void Assoc::bind(Drawable window, int32_t eventType, const std::function< void(XEvent& xe) >& fn)
 {
-    T_FATAL_ASSERT(!m_indispatch);
     m_bindings[window][eventType] = fn;
 }
 
 void Assoc::unbind(Drawable window, int32_t eventType)
 {
-    T_FATAL_ASSERT(!m_indispatch);
     m_bindings[window].erase(eventType);
 }
 
 void Assoc::unbind(Drawable window)
 {
-    T_FATAL_ASSERT(!m_indispatch);
     m_bindings[window].clear();
 }
 
@@ -63,11 +60,6 @@ void Assoc::dispatch(XEvent& xe)
     }
 }
 
-Assoc::Assoc()
-:   m_indispatch(false)
-{
-}
-
 void Assoc::dispatch(Drawable window, int32_t eventType, XEvent& xe)
 {
     auto bsi = m_bindings.find(window);
@@ -78,9 +70,8 @@ void Assoc::dispatch(Drawable window, int32_t eventType, XEvent& xe)
     if (bi == bsi->second.end())
         return;
 
-    m_indispatch = true;
-    bi->second(xe);
-    m_indispatch = false;
+    std::function< void(XEvent& xe) > fn = bi->second;
+    fn(xe);
 }
 
     }

@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/TString.h"
+#include "Ui/Application.h"
 #include "Ui/X11/BitmapX11.h"
 #include "Ui/X11/CanvasX11.h"
 
@@ -41,7 +42,7 @@ void CanvasX11::setFont(const Font& font)
 	);
 	cairo_set_font_size(
 		m_cr,
-		font.getSize()
+		dpi96(font.getSize())
 	);
 }
 
@@ -170,7 +171,7 @@ void CanvasX11::fillPolygon(const Point* pnts, int count)
 	cairo_move_to(m_cr, pnts[0].x, pnts[0].y);
 	for (int i = 1; i < count; ++i)
 		cairo_line_to(m_cr, pnts[i].x, pnts[1].y);
-	cairo_line_to(m_cr, pnts[0].x, pnts[0].y);
+	//cairo_line_to(m_cr, pnts[0].x, pnts[0].y);
 	cairo_fill(m_cr);
 }
 

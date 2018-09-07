@@ -326,8 +326,6 @@ void UiClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	//classWidget->addMethod("update", &Widget_update_2);
 	classWidget->addMethod("show", &Widget::show);
 	classWidget->addMethod("hide", &Widget::hide);
-	classWidget->addMethod("raise", &Widget::raise);
-	classWidget->addMethod("lower", &Widget::lower);
 	classWidget->addMethod("hasCapture", &Widget::hasCapture);
 	classWidget->addMethod("setCapture", &Widget::setCapture);
 	classWidget->addMethod("releaseCapture", &Widget::releaseCapture);

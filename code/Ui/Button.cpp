@@ -75,14 +75,16 @@ void Button::eventButtonUp(MouseButtonUpEvent* event)
 	if (!m_pushed || !isEnable())
 		return;
 
-	if (m_pushed)
+	bool pushed = m_pushed;
+
+	m_pushed = false;
+	update();
+
+	if (pushed)
 	{
 		ButtonClickEvent clickEvent(this);
 		raiseEvent(&clickEvent);
 	}
-
-	m_pushed = false;
-	update();
 }
 
 void Button::eventPaint(PaintEvent* event)

@@ -27,9 +27,6 @@ private:
     typedef std::map< Drawable, binding_t > bindings_t;
 
     bindings_t m_bindings;
-    bool m_indispatch;
-
-    Assoc();
 
     void dispatch(Drawable window, int32_t eventType, XEvent& xe);
 };

@@ -1,4 +1,3 @@
-// #include <X11/Xatom.h>
 #include <X11/Xutil.h>
 #include "Ui/X11/FormX11.h"
 

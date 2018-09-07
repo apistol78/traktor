@@ -111,10 +111,6 @@ public:
 
 	virtual void hide();
 
-	void raise();
-
-	void lower();
-
 	bool hasCapture() const;
 
 	void setCapture();

@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Widget.h"
 #include "Ui/Itf/IUserWidget.h"
@@ -71,11 +72,7 @@ void Widget::destroy()
 
 	unlink();
 
-	if (m_widget)
-	{
-		m_widget->destroy();
-		m_widget = 0;
-	}
+	safeDestroy(m_widget);
 }
 
 void Widget::setText(const std::wstring& text)
@@ -221,18 +218,6 @@ void Widget::hide()
 {
 	T_ASSERT (m_widget);
 	m_widget->setVisible(false);
-}
-
-void Widget::raise()
-{
-	//T_ASSERT (m_widget);
-	//m_window->Raise();
-}
-
-void Widget::lower()
-{
-	//T_ASSERT (m_widget);
-	//m_window->Lower();
 }
 
 bool Widget::hasCapture() const

@@ -7,6 +7,7 @@
 #include <cairo-xlib.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/AllEvents.h"
@@ -37,18 +38,30 @@ public:
 	,	m_surface(nullptr)
 	,	m_visible(false)
 	,	m_enable(true)
+	,	m_lastMousePress(0)
+	,	m_lastMouseButton(0)
+	,	m_grabbed(false)
+	,	m_drawPending(false)
 	{
 	}
 
 	virtual ~WidgetX11Impl()
 	{
+		T_FATAL_ASSERT(m_timers.empty());
+		T_FATAL_ASSERT(m_surface == nullptr);
+		T_FATAL_ASSERT(m_display == nullptr);
+		T_FATAL_ASSERT(m_grabbed == false);
 	}
 
 	virtual void destroy() T_OVERRIDE
 	{
+		releaseCapture();
+
 		for (auto it : m_timers)
 			Timers::getInstance().unbind(it.second);
 		m_timers.clear();
+
+		Timers::getInstance().dequeue();
 
 		if (m_surface != nullptr)
 		{
@@ -153,15 +166,36 @@ public:
 
 	virtual bool hasCapture() const T_OVERRIDE
 	{
-		return false;
+		return m_grabbed;
 	}
 
 	virtual void setCapture() T_OVERRIDE
 	{
+		if (m_grabbed)
+			return;
+		
+		// m_grabbed = bool(XGrabPointer(
+		// 	m_display,
+		// 	m_window,
+		// 	True,
+		// 	0,
+		// 	GrabModeAsync,
+		// 	GrabModeAsync,
+		// 	m_window,
+		// 	None,
+		// 	CurrentTime
+		// ) == GrabSuccess);
+
+		m_grabbed = true;
 	}
 
 	virtual void releaseCapture() T_OVERRIDE
 	{
+		if (!m_grabbed)
+			return;
+
+		//XUngrabPointer(m_display, CurrentTime);
+		m_grabbed = false;
 	}
 
 	virtual void startTimer(int interval, int id) T_OVERRIDE
@@ -283,20 +317,19 @@ public:
 
 	virtual void update(const Rect* rc, bool immediate) T_OVERRIDE
 	{
-		cairo_t* ctx = cairo_create(m_surface);
-
-		CanvasX11 canvasImpl(ctx);
-		canvasImpl.setFont(m_font);
-
-		Canvas canvas(&canvasImpl);
-		PaintEvent paintEvent(
-			m_owner,
-			canvas,
-			m_rect
-		);
-		m_owner->raiseEvent(&paintEvent);
-
-		cairo_destroy(ctx);
+		if (!immediate)
+		{
+			if (!m_drawPending)
+			{
+				Timers::getInstance().queue([&](){
+					m_drawPending = false;
+					draw();
+				});
+				m_drawPending = true;
+			}
+		}
+		else
+			draw();
 	}
 
 	virtual void* getInternalHandle() T_OVERRIDE
@@ -307,7 +340,7 @@ public:
 
 	virtual SystemWindow getSystemWindow() T_OVERRIDE
 	{
-		return SystemWindow(0, 0); //GDK_WINDOW_XWINDOW(m_api.widget->window));		
+		return SystemWindow(m_display, m_window);
 	}
 
 	// IFontMetric
@@ -328,7 +361,7 @@ public:
 		);
 		cairo_set_font_size(
 			ctx,
-			m_font.getSize()
+			dpi96(m_font.getSize())
 		);
 
 		cairo_font_extents(ctx, &x);
@@ -365,7 +398,7 @@ public:
 		);
 		cairo_set_font_size(
 			ctx,
-			m_font.getSize()
+			dpi96(m_font.getSize())
 		);
 
 		cairo_font_extents(ctx, &fx);
@@ -387,6 +420,10 @@ protected:
 	bool m_visible;
 	bool m_enable;
 	std::map< int32_t, int32_t > m_timers;
+	int32_t m_lastMousePress;
+	int32_t m_lastMouseButton;
+	bool m_grabbed;
+	bool m_drawPending;
 
 	bool create(IWidget* parent, Drawable window, int32_t width, int32_t height, bool visible)
 	{
@@ -426,7 +463,7 @@ protected:
 		cairo_xlib_surface_set_size(m_surface, width, height);
 
 		m_rect = Rect(0, 0, width, height);
-		m_font = Font(L"Ubuntu Regular", 24);
+		m_font = Font(L"Ubuntu Regular", 11);
 
 		auto& a = Assoc::getInstance();
 
@@ -449,12 +486,25 @@ protected:
 
 		a.bind(m_window, ButtonPress, [&](XEvent& xe){
 			int32_t button = 0;
-			if ((xe.xbutton.state & Button1Mask) != 0)
+			switch (xe.xbutton.button)
+			{
+			case Button1:
 				button = MbtLeft;
-			if ((xe.xbutton.state & Button2Mask) != 0)
+				break;
+
+			case Button2:
 				button = MbtRight;
-			if ((xe.xbutton.state & Button3Mask) != 0)
+				break;
+
+			case Button3:
 				button = MbtMiddle;
+				break;
+
+			default:
+				return;
+			}
+
+			setFocus();
 
 			MouseButtonDownEvent mouseButtonDownEvent(
 				m_owner,
@@ -462,16 +512,41 @@ protected:
 				Point(xe.xbutton.x, xe.xbutton.y)
 			);
 			m_owner->raiseEvent(&mouseButtonDownEvent);
+
+			int32_t dbt = xe.xbutton.time - m_lastMousePress;
+			if (dbt <= 150 && m_lastMouseButton == button)
+			{
+				MouseDoubleClickEvent mouseDoubleClickEvent(
+					m_owner,
+					button,
+					Point(xe.xbutton.x, xe.xbutton.y)
+				);
+				m_owner->raiseEvent(&mouseDoubleClickEvent);
+			}
+
+			m_lastMousePress = xe.xbutton.time;
+			m_lastMouseButton = button;
 		});
 
 		a.bind(m_window, ButtonRelease, [&](XEvent& xe){
 			int32_t button = 0;
-			if ((xe.xbutton.state & Button1Mask) != 0)
+			switch (xe.xbutton.button)
+			{
+			case Button1:
 				button = MbtLeft;
-			if ((xe.xbutton.state & Button2Mask) != 0)
+				break;
+
+			case Button2:
 				button = MbtRight;
-			if ((xe.xbutton.state & Button3Mask) != 0)
+				break;
+
+			case Button3:
 				button = MbtMiddle;
+				break;
+
+			default:
+				return;
+			}
 
 			MouseButtonUpEvent mouseButtonUpEvent(
 				m_owner,
@@ -486,30 +561,48 @@ protected:
 			m_rect.setWidth(xe.xconfigure.width);
 			m_rect.setHeight(xe.xconfigure.height);
 
-			SizeEvent sizeEvent(m_owner, Size(xe.xconfigure.width, xe.xconfigure.height));
+			cairo_xlib_surface_set_size(
+				m_surface,
+				m_rect.getWidth(),
+				m_rect.getHeight()
+			);
+
+			SizeEvent sizeEvent(m_owner, m_rect.getSize());
 			m_owner->raiseEvent(&sizeEvent);
 		});
 
 		a.bind(m_window, Expose, [&](XEvent& xe){
-			T_FATAL_ASSERT(m_surface != nullptr);
-			cairo_t* ctx = cairo_create(m_surface);
-
-			CanvasX11 canvasImpl(ctx);
-			canvasImpl.setFont(m_font);
-
-			Canvas canvas(&canvasImpl);
-			PaintEvent paintEvent(
-				m_owner,
-				canvas,
-				m_rect
-			);
-			m_owner->raiseEvent(&paintEvent);
-
-			cairo_destroy(ctx);
+			draw();
 		});
 
 		return true;
 	}
+
+	void draw()
+	{
+		T_FATAL_ASSERT(m_surface != nullptr);
+
+		if (!m_visible)
+			return;
+
+		cairo_t* ctx = cairo_create(m_surface);
+		cairo_push_group(ctx);
+
+		CanvasX11 canvasImpl(ctx);
+		canvasImpl.setFont(m_font);
+
+		Canvas canvas(&canvasImpl);
+		PaintEvent paintEvent(
+			m_owner,
+			canvas,
+			m_rect
+		);
+		m_owner->raiseEvent(&paintEvent);
+
+		cairo_pop_group_to_source(ctx);
+		cairo_paint(ctx);
+		cairo_destroy(ctx);
+	}	
 };
 
 	}

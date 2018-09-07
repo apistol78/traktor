@@ -34,9 +34,7 @@ bool Splash::create()
 	center();
 	show();
 
-	raise();
 	update(0, true);
-
 	return true;
 }
 
