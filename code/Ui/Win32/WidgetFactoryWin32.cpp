@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Win32/WidgetFactoryWin32.h"
 #include "Ui/Win32/ContainerWin32.h"
 #include "Ui/Win32/DialogWin32.h"
+#include "Ui/Win32/EventLoopWin32.h"
 #include "Ui/Win32/FileDialogWin32.h"
 #include "Ui/Win32/FormWin32.h"
 #include "Ui/Win32/NotificationIconWin32.h"
@@ -42,6 +43,11 @@ WidgetFactoryWin32::WidgetFactoryWin32()
 		m_systemDPI = GetDeviceCaps(hDC, LOGPIXELSX);
 		ReleaseDC(NULL, hDC);
 	}
+}
+
+IEventLoop* WidgetFactoryWin32::createEventLoop(EventSubject* owner)
+{
+	return new EventLoopWin32();
 }
 
 IContainer* WidgetFactoryWin32::createContainer(EventSubject* owner)

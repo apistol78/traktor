@@ -22,6 +22,7 @@ class EventSubject;
 
 class IContainer;
 class IDialog;
+class IEventLoop;
 class IFileDialog;
 class IForm;
 class INotificationIcon;
