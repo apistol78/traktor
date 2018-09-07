@@ -4,6 +4,9 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#if defined(_WIN32)
+#	include <Windows.h>
+#endif
 #if defined(_DEBUG)
 #	include "Core/CycleRefDebugger.h"
 #endif

@@ -71,6 +71,11 @@ EventLoopWin32::~EventLoopWin32()
 #endif
 }
 
+void EventLoopWin32::destroy()
+{
+	delete this;
+}
+
 bool EventLoopWin32::process(EventSubject* owner)
 {
 	if (m_terminate)

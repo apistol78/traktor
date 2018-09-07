@@ -333,7 +333,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 #if defined(_WIN32)
 	ui::Application::getInstance()->initialize(
-		new ui::EventLoopWin32(),
 		new ui::WidgetFactoryWin32(),
 		0
 	);
