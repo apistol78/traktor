@@ -31,6 +31,14 @@ void Assoc::dispatch(XEvent& xe)
 {
     switch (xe.type)
     {
+    case KeyPress:
+        dispatch(xe.xkey.window, KeyPress, xe);
+        break;
+
+    case KeyRelease:
+        dispatch(xe.xkey.window, KeyRelease, xe);
+        break;
+
     case MotionNotify:
         dispatch(xe.xmotion.window, MotionNotify, xe);
         break;
@@ -53,6 +61,10 @@ void Assoc::dispatch(XEvent& xe)
         
     case Expose:
         dispatch(xe.xexpose.window, Expose, xe);
+        break;
+
+    case ClientMessage:
+        dispatch(xe.xclient.window, ClientMessage, xe);
         break;
 
     default:

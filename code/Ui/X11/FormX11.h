@@ -31,6 +31,9 @@ public:
 	virtual void hideProgress() T_OVERRIDE T_FINAL;
 
 	virtual void showProgress(int32_t current, int32_t total) T_OVERRIDE T_FINAL;
+
+private:
+	Atom m_atomWmDeleteWindow;
 };
 
 	}

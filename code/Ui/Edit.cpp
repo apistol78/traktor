@@ -159,7 +159,12 @@ void Edit::eventKey(KeyEvent* event)
 	m_caret = std::max< int32_t >(m_caret, 0);
 
 	if (m_validator == nullptr || m_validator->validate(text) != EditValidator::VrInvalid)
+	{
 		setText(text);
+
+		ContentChangeEvent contentChangeEvent(this);
+		raiseEvent(&contentChangeEvent);
+	}
 
 	update();
 }

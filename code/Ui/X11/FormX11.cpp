@@ -1,4 +1,5 @@
 #include <X11/Xutil.h>
+#include "Ui/Events/CloseEvent.h"
 #include "Ui/X11/FormX11.h"
 
 namespace traktor
@@ -21,18 +22,22 @@ bool FormX11::create(IWidget* parent, const std::wstring& text, int width, int h
 	width = std::max< int32_t >(width, c_minWidth);
 	height = std::max< int32_t >(height, c_minHeight);
 
-	Drawable window = XCreateSimpleWindow(
+	Window window = XCreateWindow(
 		m_display,
 		DefaultRootWindow(m_display),
-        0,
+		0,
 		0,
 		width,
 		height,
-		1,
-		WhitePixel(m_display, m_screen),
-		WhitePixel(m_display, m_screen)
+		0,
+		0,
+		InputOutput,
+		CopyFromParent,
+		0,
+		nullptr
 	);
 
+	// Notify WM about form title.
 	std::string cs = wstombs(text);
 	const char* csp = cs.c_str();
 
@@ -41,7 +46,22 @@ bool FormX11::create(IWidget* parent, const std::wstring& text, int width, int h
 
 	XSetWMName(m_display, window, &tp);
 
-	return WidgetX11Impl< IForm >::create(parent, window, width, height, false);
+	// Register "delete window" window manager message.
+	m_atomWmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
+
+	Assoc::getInstance().bind(window, ClientMessage, [&](XEvent& xe){
+		if ((Atom)xe.xclient.data.l[0] == m_atomWmDeleteWindow)
+		{
+			CloseEvent closeEvent(m_owner);
+			m_owner->raiseEvent(&closeEvent);
+			if (!(closeEvent.consumed() && closeEvent.cancelled()))
+				destroy();
+		}		
+	});
+
+	XSetWMProtocols(m_display, window, &m_atomWmDeleteWindow, 1);
+
+	return WidgetX11Impl< IForm >::create(nullptr, window, Rect(0, 0, width, height), false);
 }
 
 void FormX11::setIcon(ISystemBitmap* icon)

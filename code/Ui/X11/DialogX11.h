@@ -1,8 +1,8 @@
 #ifndef traktor_ui_DialogX11_H
 #define traktor_ui_DialogX11_H
 
-#include "Ui/X11/WidgetX11Impl.h"
 #include "Ui/Itf/IDialog.h"
+#include "Ui/X11/WidgetX11Impl.h"
 
 namespace traktor
 {
@@ -27,6 +27,7 @@ public:
 	virtual void setMinSize(const Size& minSize) T_OVERRIDE T_FINAL;
 
 private:
+	Atom m_atomWmDeleteWindow;
 	int32_t m_result;
 	bool m_modal;
 };

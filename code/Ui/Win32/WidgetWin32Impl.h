@@ -106,12 +106,9 @@ public:
 		}
 	}
 
-	virtual bool isVisible(bool includingParents) const T_OVERRIDE
+	virtual bool isVisible() const T_OVERRIDE
 	{
-		if (includingParents)
-			return bool(IsWindowVisible(m_hWnd) != FALSE);
-		else
-			return bool((GetWindowLong(m_hWnd, GWL_STYLE) & WS_VISIBLE) == WS_VISIBLE);
+		return bool((GetWindowLong(m_hWnd, GWL_STYLE) & WS_VISIBLE) == WS_VISIBLE);
 	}
 
 	virtual void setActive() T_OVERRIDE

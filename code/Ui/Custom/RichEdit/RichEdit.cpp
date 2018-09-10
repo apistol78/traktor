@@ -756,9 +756,9 @@ void RichEdit::updateScrollBars()
 
 void RichEdit::updateCharacterWidths()
 {
-	Size szw = getFontMetric().getExtent(L" ");
-	if (szw.cx <= 0)
-		szw.cx = 1;
+	int32_t blw = getFontMetric().getAdvance(L' ', 0);
+	if (blw <= 0)
+		blw = 1;
 
 	m_widestLineWidth = 0;
 	for (std::vector< Line >::const_iterator i = m_lines.begin(); i != m_lines.end(); ++i)
@@ -774,8 +774,8 @@ void RichEdit::updateCharacterWidths()
 					std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator k = m_specialCharacters.find(c.ch);
 					if (k == m_specialCharacters.end())
 					{
-						Size sz = getFontMetric().getExtent(std::wstring(1, c.ch));
-						c.width = sz.cx;
+						int32_t chw = getFontMetric().getAdvance(c.ch, 0);
+						c.width = chw;
 					}
 					else
 					{
@@ -784,7 +784,7 @@ void RichEdit::updateCharacterWidths()
 				}
 				else
 				{
-					int32_t nx = alignUp(x + 4 * szw.cx, 4 * szw.cx);
+					int32_t nx = alignUp(x + 4 * blw, 4 * blw);
 					c.width = nx - x;
 				}
 			}

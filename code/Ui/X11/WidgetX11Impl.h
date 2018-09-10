@@ -3,6 +3,7 @@
 
 #include <map>
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include <cairo.h>
 #include <cairo-xlib.h>
 #include "Core/Log/Log.h"
@@ -16,6 +17,7 @@
 #include "Ui/X11/Assoc.h"
 #include "Ui/X11/CanvasX11.h"
 #include "Ui/X11/Timers.h"
+#include "Ui/X11/UtilitiesX11.h"
 
 namespace traktor
 {
@@ -36,12 +38,13 @@ public:
 	,	m_screen(screen)
 	,	m_window(0)
 	,	m_surface(nullptr)
+	,	m_context(nullptr)
 	,	m_visible(false)
 	,	m_enable(true)
+	,	m_grabbed(false)
 	,	m_lastMousePress(0)
 	,	m_lastMouseButton(0)
-	,	m_grabbed(false)
-	,	m_drawPending(false)
+	,	m_pendingDraw(false)
 	{
 	}
 
@@ -62,6 +65,12 @@ public:
 		m_timers.clear();
 
 		Timers::getInstance().dequeue();
+
+		if (m_context != nullptr)
+		{
+			cairo_destroy(m_context);
+			m_context = nullptr;
+		}
 
 		if (m_surface != nullptr)
 		{
@@ -102,6 +111,7 @@ public:
 
 	virtual bool isForeground() const T_OVERRIDE
 	{
+		return false;
 	}
 
 	virtual void setVisible(bool visible) T_OVERRIDE
@@ -111,16 +121,13 @@ public:
 			m_visible = visible;
 			if (visible)
 			{
-				XMapWindow(m_display, m_window);
-				XFlush(m_display);
-
 				int32_t width = std::max< int32_t >(m_rect.getWidth(), 1);
 				int32_t height = std::max< int32_t >(m_rect.getHeight(), 1);
 
 				// Resize window.
-				XMoveWindow(m_display, m_window, m_rect.left, m_rect.top);
-				XResizeWindow(m_display, m_window, width, height);
-				XFlush(m_display);
+				XMapWindow(m_display, m_window);
+				XMoveResizeWindow(m_display, m_window, m_rect.left, m_rect.top, width, height);
+				//XFlush(m_display);
 
 				// Resize surface.
 				cairo_xlib_surface_set_size(m_surface, width, height);
@@ -128,12 +135,12 @@ public:
 			else
 			{
 				XUnmapWindow(m_display, m_window);
-				XFlush(m_display);
+				//XFlush(m_display);
 			}
 		}
 	}
 
-	virtual bool isVisible(bool includingParents) const T_OVERRIDE
+	virtual bool isVisible() const T_OVERRIDE
 	{
 		return m_visible;
 	}
@@ -174,17 +181,17 @@ public:
 		if (m_grabbed)
 			return;
 		
-		// m_grabbed = bool(XGrabPointer(
-		// 	m_display,
-		// 	m_window,
-		// 	True,
-		// 	0,
-		// 	GrabModeAsync,
-		// 	GrabModeAsync,
-		// 	m_window,
-		// 	None,
-		// 	CurrentTime
-		// ) == GrabSuccess);
+		m_grabbed = bool(XGrabPointer(
+			m_display,
+			m_window,
+			True,
+			0,
+			GrabModeAsync,
+			GrabModeAsync,
+			None, //m_window,
+			None,
+			CurrentTime
+		) == GrabSuccess);
 
 		m_grabbed = true;
 	}
@@ -194,7 +201,7 @@ public:
 		if (!m_grabbed)
 			return;
 
-		//XUngrabPointer(m_display, CurrentTime);
+		XUngrabPointer(m_display, CurrentTime);
 		m_grabbed = false;
 	}
 
@@ -218,19 +225,32 @@ public:
 
 	virtual void setRect(const Rect& rect) T_OVERRIDE
 	{
+		int32_t oldWidth = std::max< int32_t >(m_rect.getWidth(), 1);
+		int32_t oldHeight = std::max< int32_t >(m_rect.getHeight(), 1);
+
+		int32_t newWidth = std::max< int32_t >(rect.getWidth(), 1);
+		int32_t newHeight = std::max< int32_t >(rect.getHeight(), 1);
+
 		m_rect = rect;
 
-		int32_t width = std::max< int32_t >(rect.getWidth(), 1);
-		int32_t height = std::max< int32_t >(rect.getHeight(), 1);
+		if (m_visible)
+		{
+			if (newWidth != oldWidth || newHeight != oldHeight)
+			{
+				XMoveResizeWindow(m_display, m_window, rect.left, rect.top, newWidth, newHeight);
+			 	cairo_xlib_surface_set_size(m_surface, newWidth, newHeight);
+			}
+			else
+				XMoveWindow(m_display, m_window, rect.left, rect.top);
 
-		// Resize window.
-		XMoveWindow(m_display, m_window, rect.left, rect.top);
-		XResizeWindow(m_display, m_window, width, height);
+			//XFlush(m_display);
+		}
 
-		// Resize surface.
-		cairo_xlib_surface_set_size(m_surface, width, height);
-
-		XFlush(m_display);
+		if (newWidth != oldWidth || newHeight != oldHeight)
+		{
+			SizeEvent sizeEvent(m_owner, m_rect.getSize());
+			m_owner->raiseEvent(&sizeEvent);
+		}
 	}
 
 	virtual Rect getRect() const T_OVERRIDE
@@ -251,6 +271,18 @@ public:
 	virtual void setFont(const Font& font) T_OVERRIDE
 	{
 		m_font = font;
+
+		cairo_select_font_face(
+			m_context,
+			wstombs(m_font.getFace()).c_str(),
+			CAIRO_FONT_SLANT_NORMAL,
+			m_font.isBold() ? CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL
+		);
+
+		cairo_set_font_size(
+			m_context,
+			dpi96(m_font.getSize())
+		);		
 	}
 
 	virtual Font getFont() const T_OVERRIDE
@@ -269,7 +301,22 @@ public:
 
 	virtual Point getMousePosition(bool relative) const T_OVERRIDE
 	{
-		return Point(0, 0);
+		Window root, child;
+		int rootX, rootY;
+		int winX, winY;
+		unsigned int mask;
+
+		XQueryPointer(
+			m_display,
+			relative ? m_window : DefaultRootWindow(m_display),
+			&root,
+			&child,
+			&rootX, &rootY,
+			&winX, &winY,
+			&mask
+		);
+
+		return Point(winX, winY);
 	}
 
 	virtual Point screenToClient(const Point& pt) const T_OVERRIDE
@@ -317,19 +364,20 @@ public:
 
 	virtual void update(const Rect* rc, bool immediate) T_OVERRIDE
 	{
-		if (!immediate)
+		if (!m_pendingDraw)
 		{
-			if (!m_drawPending)
-			{
-				Timers::getInstance().queue([&](){
-					m_drawPending = false;
+			m_pendingDraw = true;
+			Timers::getInstance().queue([&]() {
+				if (m_pendingDraw)
 					draw();
-				});
-				m_drawPending = true;
-			}
+				m_pendingDraw = false;
+			});
 		}
 		else
+		{
 			draw();
+			m_pendingDraw = false;
+		}
 	}
 
 	virtual void* getInternalHandle() T_OVERRIDE
@@ -350,35 +398,31 @@ public:
 		T_FATAL_ASSERT(m_surface != nullptr);
 		
 		cairo_font_extents_t x;
+		cairo_font_extents(m_context, &x);
 
-		cairo_t* ctx = cairo_create(m_surface);
-
-		cairo_select_font_face(
-			ctx,
-			wstombs(m_font.getFace()).c_str(),
-			CAIRO_FONT_SLANT_NORMAL,
-			m_font.isBold() ? CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL
-		);
-		cairo_set_font_size(
-			ctx,
-			dpi96(m_font.getSize())
-		);
-
-		cairo_font_extents(ctx, &x);
-		cairo_destroy(ctx);
-
-		outAscent = x.ascent;
-		outDescent = x.descent;
+		outAscent = (int32_t)x.ascent;
+		outDescent = (int32_t)x.descent;
 	}
 
 	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const T_OVERRIDE
 	{
-		return 0;
+		T_FATAL_ASSERT(m_surface != nullptr);
+		
+		cairo_text_extents_t tx;
+		const char cs[] = { (char)ch, 0 };
+		cairo_text_extents(m_context, cs, &tx);
+
+		return (int32_t)tx.x_advance;
 	}
 
 	virtual int32_t getLineSpacing() const T_OVERRIDE
 	{
-		return 0;
+		T_FATAL_ASSERT(m_surface != nullptr);
+		
+		cairo_font_extents_t x;
+		cairo_font_extents(m_context, &x);
+
+		return (int32_t)x.height;
 	}
 
 	virtual Size getExtent(const std::wstring& text) const T_OVERRIDE
@@ -387,23 +431,8 @@ public:
 
 		cairo_font_extents_t fx;
 		cairo_text_extents_t tx;
-
-		cairo_t* ctx = cairo_create(m_surface);
-
-		cairo_select_font_face(
-			ctx,
-			wstombs(m_font.getFace()).c_str(),
-			CAIRO_FONT_SLANT_NORMAL,
-			m_font.isBold() ? CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL
-		);
-		cairo_set_font_size(
-			ctx,
-			dpi96(m_font.getSize())
-		);
-
-		cairo_font_extents(ctx, &fx);
-		cairo_text_extents(ctx, wstombs(text).c_str(), &tx);
-		cairo_destroy(ctx);
+		cairo_font_extents(m_context, &fx);
+		cairo_text_extents(m_context, wstombs(text).c_str(), &tx);
 
 		return Size(tx.width, fx.height);
 	}
@@ -415,31 +444,37 @@ protected:
 	Drawable m_window;
 	Rect m_rect;
 	Font m_font;
+
 	cairo_surface_t* m_surface;
+	cairo_t* m_context;
+
 	std::wstring m_text;
 	bool m_visible;
 	bool m_enable;
+	bool m_grabbed;
+
 	std::map< int32_t, int32_t > m_timers;
+
 	int32_t m_lastMousePress;
 	int32_t m_lastMouseButton;
-	bool m_grabbed;
-	bool m_drawPending;
+	bool m_pendingDraw;
 
-	bool create(IWidget* parent, Drawable window, int32_t width, int32_t height, bool visible)
+
+	bool create(IWidget* parent, Drawable window, const Rect& rect, bool visible)
 	{
 		if (window == 0)
 			return false;
 
 		m_window = window;
+		m_rect = rect;
+		m_visible = visible;
 
     	XSelectInput(
 			m_display,
 			window, 
 			ButtonPressMask |
 			ButtonReleaseMask |
-			SubstructureNotifyMask |
 			StructureNotifyMask |
-			SubstructureRedirectMask |
 			KeyPressMask |
 			ExposureMask |
 			FocusChangeMask |
@@ -449,23 +484,51 @@ protected:
 		if (visible)
 	    	XMapWindow(m_display, window);
 
-		m_visible = visible;
-
 		XFlush(m_display);
 
 		m_surface = cairo_xlib_surface_create(
 			m_display,
 			window,
 			DefaultVisual(m_display, m_screen),
-			width,
-			height
+			m_rect.getWidth(),
+			m_rect.getHeight()
 		);
-		cairo_xlib_surface_set_size(m_surface, width, height);
+		//cairo_xlib_surface_set_size(m_surface, width, height);
 
-		m_rect = Rect(0, 0, width, height);
-		m_font = Font(L"Ubuntu Regular", 11);
+		m_context = cairo_create(m_surface);
+		setFont(Font(L"Ubuntu Regular", 11));
 
 		auto& a = Assoc::getInstance();
+
+		a.bind(m_window, KeyPress, [&](XEvent& xe) {
+			KeySym ks = XKeycodeToKeysym(m_display, xe.xkey.keycode, 0);
+
+			VirtualKey vk = translateToVirtualKey(ks);
+			if (vk != VkNull)
+			{
+				KeyDownEvent keyDownEvent(m_owner, vk, xe.xkey.keycode, 0);
+				m_owner->raiseEvent(&keyDownEvent);
+			}
+
+			char keybuf[8];
+			int nk = XLookupString(&xe.xkey, keybuf, sizeof(keybuf), nullptr, nullptr);
+			if (nk > 0)
+			{
+				KeyEvent keyEvent(m_owner, vk, xe.xkey.keycode, wchar_t(keybuf[0]));
+				m_owner->raiseEvent(&keyEvent);
+			}
+		});
+
+		a.bind(m_window, KeyRelease, [&](XEvent& xe) {
+			KeySym ks = XKeycodeToKeysym(m_display, xe.xkey.keycode, 0);
+
+			VirtualKey vk = translateToVirtualKey(ks);
+			if (vk != VkNull)
+			{
+				KeyUpEvent keyUpEvent(m_owner, vk, xe.xkey.keycode, 0);
+				m_owner->raiseEvent(&keyUpEvent);
+			}
+		});
 
 		a.bind(m_window, MotionNotify, [&](XEvent& xe){
 			int32_t button = 0;
@@ -557,22 +620,27 @@ protected:
 
 		});
 
-		a.bind(m_window, ConfigureNotify, [&](XEvent& xe){
-			m_rect.setWidth(xe.xconfigure.width);
-			m_rect.setHeight(xe.xconfigure.height);
+		if (parent == nullptr)
+		{
+			a.bind(m_window, ConfigureNotify, [&](XEvent& xe){
+				m_rect = Rect(
+					Point(xe.xconfigure.x, xe.xconfigure.y),
+					Size(xe.xconfigure.width, xe.xconfigure.height)
+				);
 
-			cairo_xlib_surface_set_size(
-				m_surface,
-				m_rect.getWidth(),
-				m_rect.getHeight()
-			);
+				int32_t newWidth = std::max< int32_t >(m_rect.getWidth(), 1);
+				int32_t newHeight = std::max< int32_t >(m_rect.getHeight(), 1);
 
-			SizeEvent sizeEvent(m_owner, m_rect.getSize());
-			m_owner->raiseEvent(&sizeEvent);
-		});
+				if (m_visible)
+					cairo_xlib_surface_set_size(m_surface, newWidth, newHeight);
+
+				SizeEvent sizeEvent(m_owner, m_rect.getSize());
+				m_owner->raiseEvent(&sizeEvent);
+			});
+		}
 
 		a.bind(m_window, Expose, [&](XEvent& xe){
-			draw();
+			update(nullptr, true);
 		});
 
 		return true;
@@ -582,26 +650,21 @@ protected:
 	{
 		T_FATAL_ASSERT(m_surface != nullptr);
 
-		if (!m_visible)
-			return;
+		cairo_push_group(m_context);
 
-		cairo_t* ctx = cairo_create(m_surface);
-		cairo_push_group(ctx);
-
-		CanvasX11 canvasImpl(ctx);
-		canvasImpl.setFont(m_font);
-
+		CanvasX11 canvasImpl(m_context);
 		Canvas canvas(&canvasImpl);
 		PaintEvent paintEvent(
 			m_owner,
 			canvas,
-			m_rect
+			Rect(Point(0, 0), m_rect.getSize())
 		);
 		m_owner->raiseEvent(&paintEvent);
 
-		cairo_pop_group_to_source(ctx);
-		cairo_paint(ctx);
-		cairo_destroy(ctx);
+		cairo_pop_group_to_source(m_context);
+		cairo_paint(m_context);
+
+		cairo_surface_flush(m_surface);
 	}	
 };
 
@@ -609,4 +672,3 @@ protected:
 }
 
 #endif	// traktor_ui_WidgetX11Impl_H
-
