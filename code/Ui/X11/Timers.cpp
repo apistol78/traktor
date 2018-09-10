@@ -17,7 +17,12 @@ int32_t Timers::bind(int32_t interval, const std::function< void(int32_t) >& fn)
 {
     int32_t id = m_nid++;
     T_FATAL_ASSERT(m_timers.find(id) == m_timers.end());
-    m_timers[id] = fn;
+    
+    Timer& t = m_timers[id];
+    t.interval = interval;
+    t.until = interval;
+    t.fn = fn;
+
     return id;
 }
 
@@ -38,21 +43,25 @@ void Timers::dequeue()
     m_events.clear();
 }
 
-void Timers::update()
+void Timers::update(int32_t ms)
 {
     std::vector< std::function< void(int32_t) > > fns;
-    for (auto it : m_timers)
-        fns.push_back(it.second);
+    for (auto& it : m_timers)
+    {
+        Timer& t = it.second;
+        if ((t.until -= ms) <= 0)
+        {
+            t.until = t.interval;
+            fns.push_back(t.fn);
+        }
+    }
 
     int32_t nid = m_nid;
     for (auto fn : fns)
     {
         fn(0);
         if (nid != m_nid)
-        {
-            log::info << L"Timers modified in update; skipped timers." << Endl;
             break;
-        }
     }
 
     for (auto it : m_events)

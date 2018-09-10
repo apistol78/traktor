@@ -47,6 +47,7 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 	XEvent e;
 
 	int fd = ConnectionNumber(m_display);
+	bool idle = true;
 
 	while (!m_terminated)
 	{
@@ -55,7 +56,7 @@ int32_t EventLoopX11::execute(EventSubject* owner)
         FD_SET(fd, &fds);
 
         struct timeval tv;
-        tv.tv_usec = 20 * 1000;
+        tv.tv_usec = 10 * 1000;
         tv.tv_sec = 0;
 
         int nr = select(fd + 1, &fds, NULL, NULL, &tv);
@@ -66,14 +67,18 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 				XNextEvent(m_display, &e);
 				Assoc::getInstance().dispatch(e);
 			}
-		}
-		else
-		{
-			Timers::getInstance().update();
+			idle = true;
+			continue;
 		}
 
-		IdleEvent idleEvent(owner);
-		owner->raiseEvent(&idleEvent);
+		if (idle)
+		{
+			IdleEvent idleEvent(owner);
+			owner->raiseEvent(&idleEvent);
+			idle = false;
+		}
+
+		Timers::getInstance().update(10);
 	}
 
 	return m_exitCode;

@@ -22,10 +22,17 @@ public:
 
     void dequeue();
 
-    void update();
+    void update(int32_t ms);
 
 private:
-    std::map< int32_t, std::function< void(int32_t) > > m_timers;
+    struct Timer
+    {
+        int32_t interval;
+        int32_t until;
+        std::function< void(int32_t) > fn;
+    };
+
+    std::map< int32_t, Timer > m_timers;
     std::vector< std::function< void() > > m_events;
     int32_t m_nid;
 

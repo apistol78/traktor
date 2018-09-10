@@ -108,7 +108,18 @@ void Widget::setVisible(bool visible)
 bool Widget::isVisible(bool includingParents) const
 {
 	T_ASSERT (m_widget);
-	return m_widget->isVisible(includingParents);
+	
+	if (!m_widget->isVisible())
+		return false;
+
+	if (includingParents)
+	{
+		for (Widget* parent = m_parent; parent != nullptr; parent = parent->getParent())
+			if (!parent->isVisible(true))
+				return false;
+	}
+
+	return true;
 }
 
 void Widget::setEnable(bool enable)

@@ -68,14 +68,18 @@ uint32_t ToolBar::addImage(IBitmap* image, uint32_t imageCount)
 	T_ASSERT (image);
 	T_ASSERT (imageCount > 0);
 
+	Size imageSize = image->getSize();
+	if (imageSize.cx <= 0 || imageSize.cy <= 0)
+		return 0;
+
 	if (m_imageEnabled)
 	{
-		uint32_t width = m_imageEnabled->getSize().cx + image->getSize().cx;
-		uint32_t height = std::max(m_imageEnabled->getSize().cy, image->getSize().cy);
+		uint32_t width = m_imageEnabled->getSize().cx + imageSize.cx;
+		uint32_t height = std::max(m_imageEnabled->getSize().cy, imageSize.cy);
 
 		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
 		newImage->copyImage(m_imageEnabled->getImage());
-		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), image->getSize()), Point(m_imageEnabled->getSize().cx, 0));
+		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), imageSize), Point(m_imageEnabled->getSize().cx, 0));
 		m_imageEnabled = newImage;
 	}
 	else
@@ -90,7 +94,10 @@ uint32_t ToolBar::addImage(IBitmap* image, uint32_t imageCount)
 
 	// Create disabled image
 	{
-		Ref< drawing::Image > image = m_imageEnabled->getImage()->clone();
+		Ref< drawing::Image > image = m_imageEnabled->getImage();
+		T_FATAL_ASSERT(image != nullptr);
+
+		image = image->clone();
 
 		drawing::GrayscaleFilter grayscaleFilter;
 		image->apply(&grayscaleFilter);

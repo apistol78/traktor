@@ -19,23 +19,26 @@ bool ToolFormX11::create(IWidget* parent, const std::wstring& text, int width, i
 	width = std::max< int32_t >(width, c_minWidth);
 	height = std::max< int32_t >(height, c_minHeight);
 
-	Drawable window = XCreateSimpleWindow(
+	Window window = XCreateWindow(
 		m_display,
 		DefaultRootWindow(m_display),
-        0,
+		0,
 		0,
 		width,
 		height,
 		0,
-		WhitePixel(m_display, m_screen),
-		WhitePixel(m_display, m_screen)
+		0,
+		InputOutput,
+		CopyFromParent,
+		0,
+		nullptr
 	);
 
     Atom type = XInternAtom(m_display,"_NET_WM_WINDOW_TYPE", False);
     Atom value = XInternAtom(m_display,"_NET_WM_WINDOW_TYPE_SPLASH", False);
     XChangeProperty(m_display, window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
 
-	return WidgetX11Impl< IToolForm >::create(parent, window, width, height, false);
+	return WidgetX11Impl< IToolForm >::create(nullptr, window, Rect(0, 0, width, height), false);
 }
 
 void ToolFormX11::destroy()

@@ -53,7 +53,7 @@ public:
 
 	virtual void setVisible(bool visible) = 0;
 
-	virtual bool isVisible(bool includingParents) const = 0;
+	virtual bool isVisible() const = 0;
 
 	virtual void setActive() = 0;
 

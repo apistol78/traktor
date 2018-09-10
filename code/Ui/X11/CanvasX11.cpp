@@ -12,10 +12,12 @@ namespace traktor
 
 CanvasX11::CanvasX11(cairo_t* cr)
 :	m_cr(cr)
-,	m_foreground(0, 0, 0, 255)
-,	m_background(255, 0, 0, 255)
+,	m_foreground(255, 255, 255, 255)
+,	m_background(255, 255, 255, 255)
 {
+	cairo_reset_clip(m_cr);
 	cairo_set_line_width(m_cr, 1);
+	cairo_set_source_rgba(m_cr, 1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 CanvasX11::~CanvasX11()
@@ -62,14 +64,13 @@ void CanvasX11::setPenThickness(int thickness)
 
 void CanvasX11::setClipRect(const Rect& rc)
 {
-	cairo_save(m_cr);
 	cairo_rectangle(m_cr, rc.left, rc.top, rc.getWidth(), rc.getHeight());
 	cairo_clip(m_cr);
 }
 
 void CanvasX11::resetClipRect()
 {
-	cairo_restore(m_cr);
+	cairo_reset_clip(m_cr);
 }
 
 void CanvasX11::drawPixel(int x, int y, const Color4ub& c)
@@ -90,28 +91,24 @@ void CanvasX11::drawLines(const Point* pnts, int npnts)
 	cairo_set_source_rgba(m_cr, m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
 	cairo_move_to(m_cr, pnts[0].x, pnts[0].y);
 	for (int i = 1; i < npnts; ++i)
-		cairo_line_to(m_cr, pnts[i].x, pnts[1].y);
+		cairo_line_to(m_cr, pnts[i].x, pnts[i].y);
 	cairo_stroke(m_cr);
 }
 
 void CanvasX11::fillCircle(int x, int y, float radius)
 {
-	log::info << L"CanvasX11::fillCircle NI" << Endl;
-	/*
-	m_context->set_source_rgba(m_background.e[0] / 255.0, m_background.e[1] / 255.0, m_background.e[2] / 255.0, m_background.e[3] / 255.0);
-	m_context->arc(x, y, radius, 0.0, TWO_PI);
-	m_context->fill();
-	*/
+	cairo_set_source_rgba(m_cr, m_background.e[0] / 255.0, m_background.e[1] / 255.0, m_background.e[2] / 255.0, m_background.e[3] / 255.0);
+	cairo_move_to(m_cr, x, y);
+	cairo_arc(m_cr, x, y, radius, 0.0, TWO_PI);
+	cairo_fill(m_cr);
 }
 
 void CanvasX11::drawCircle(int x, int y, float radius)
 {
-	log::info << L"CanvasX11::drawCircle NI" << Endl;
-	/*
-	m_context->set_source_rgba(m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
-	m_context->arc(x, y, radius, 0.0, TWO_PI);
-	m_context->stroke();
-	*/
+	cairo_set_source_rgba(m_cr, m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
+	cairo_move_to(m_cr, x, y);
+	cairo_arc(m_cr, x, y, radius, 0.0, TWO_PI);
+	cairo_stroke(m_cr);
 }
 
 void CanvasX11::drawEllipticArc(int x, int y, int w, int h, float start, float end)
@@ -147,12 +144,9 @@ void CanvasX11::drawRect(const Rect& rc)
 
 void CanvasX11::drawRoundRect(const Rect& rc, int radius)
 {
-	log::info << L"CanvasX11::drawRoundRect NI" << Endl;
-	/*
-	m_context->set_source_rgba(m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
-	m_context->rectangle(rc.left, rc.top, rc.getWidth(), rc.getHeight());
-	m_context->stroke();
-	*/
+	cairo_set_source_rgba(m_cr, m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
+	cairo_rectangle(m_cr, rc.left, rc.top, rc.getWidth(), rc.getHeight());
+	cairo_stroke(m_cr);
 }
 
 void CanvasX11::drawPolygon(const Point* pnts, int count)
@@ -160,7 +154,7 @@ void CanvasX11::drawPolygon(const Point* pnts, int count)
 	cairo_set_source_rgba(m_cr, m_foreground.e[0] / 255.0, m_foreground.e[1] / 255.0, m_foreground.e[2] / 255.0, m_foreground.e[3] / 255.0);
 	cairo_move_to(m_cr, pnts[0].x, pnts[0].y);
 	for (int i = 1; i < count; ++i)
-		cairo_line_to(m_cr, pnts[i].x, pnts[1].y);
+		cairo_line_to(m_cr, pnts[i].x, pnts[i].y);
 	cairo_line_to(m_cr, pnts[0].x, pnts[0].y);
 	cairo_stroke(m_cr);
 }
@@ -170,8 +164,8 @@ void CanvasX11::fillPolygon(const Point* pnts, int count)
 	cairo_set_source_rgba(m_cr, m_background.e[0] / 255.0, m_background.e[1] / 255.0, m_background.e[2] / 255.0, m_background.e[3] / 255.0);
 	cairo_move_to(m_cr, pnts[0].x, pnts[0].y);
 	for (int i = 1; i < count; ++i)
-		cairo_line_to(m_cr, pnts[i].x, pnts[1].y);
-	//cairo_line_to(m_cr, pnts[0].x, pnts[0].y);
+		cairo_line_to(m_cr, pnts[i].x, pnts[i].y);
+	cairo_line_to(m_cr, pnts[0].x, pnts[0].y);
 	cairo_fill(m_cr);
 }
 
@@ -198,10 +192,14 @@ void CanvasX11::drawBitmap(const Point& dstAt, const Size& dstSize, const Point&
 	if (cs == nullptr)
 		return;
 
-	cairo_scale(m_cr, float(srcSize.cx) / dstSize.cx, float(srcSize.cy) / dstSize.cy);
-	cairo_set_source_surface(m_cr, cs, dstAt.x - srcAt.x, dstAt.y - srcAt.y);
-	cairo_rectangle(m_cr, dstAt.x, dstAt.y, dstSize.cx, dstSize.cy);
+	float sx = float(dstSize.cx) / srcSize.cx;
+	float sy = float(dstSize.cy) / srcSize.cy;
+
+	cairo_scale(m_cr, sx, sy);
+	cairo_set_source_surface(m_cr, cs, dstAt.x / sx - srcAt.x, dstAt.y / sy - srcAt.y);
+	cairo_rectangle(m_cr, dstAt.x / sx, dstAt.y / sy, dstSize.cx / sx, dstSize.cy / sy);
 	cairo_fill(m_cr);
+	cairo_identity_matrix(m_cr);
 }
 
 void CanvasX11::drawText(const Point& at, const std::wstring& text)
@@ -225,18 +223,23 @@ void CanvasX11::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) con
 {
 	cairo_font_extents_t x;
 	cairo_font_extents(m_cr, &x);
-	outAscent = x.ascent;
-	outDescent = x.descent;
+	outAscent = (int32_t)x.ascent;
+	outDescent = (int32_t)x.descent;
 }
 
 int32_t CanvasX11::getAdvance(wchar_t ch, wchar_t next) const
 {
-	return 0;
+	cairo_text_extents_t tx;
+	const char cs[] = { (char)ch, 0 };
+	cairo_text_extents(m_cr, cs, &tx);
+	return (int32_t)tx.x_advance;
 }
 
 int32_t CanvasX11::getLineSpacing() const
 {
-	return 0;
+	cairo_font_extents_t x;
+	cairo_font_extents(m_cr, &x);
+	return (int32_t)x.height;
 }
 
 Size CanvasX11::getExtent(const std::wstring& text) const
