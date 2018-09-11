@@ -10,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "I18N/Text.h"
 #include "I18N/Editor/IDictionaryFormat.h"
 #include "I18N/Editor/ImportDictionaryWizardTool.h"
-#include "Ui/FileDialog.h"
+#include "Ui/Custom/FileDialog.h"
 
 namespace traktor
 {
@@ -33,7 +33,7 @@ bool ImportDictionaryWizardTool::launch(ui::Widget* parent, editor::IEditor* edi
 {
 	std::wstring line;
 
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	if (!fileDialog.create(parent, Text(L"IMPORT_DICTIONARY_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
 		return false;
 

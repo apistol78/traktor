@@ -12,10 +12,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureBatchDialog.h"
 #include "Ui/Application.h"
-#include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/ListBox/ListBox.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
@@ -95,7 +95,7 @@ bool TextureBatchDialog::showModal(RefArray< TextureAsset >& outAssets)
 
 void TextureBatchDialog::addTexture()
 {
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	if (!fileDialog.create(this, i18n::Text(L"TEXTURE_BATCH_FILE_TITLE"), L"All files;*.*"))
 		return;
 

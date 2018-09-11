@@ -35,7 +35,7 @@ bool ToolFormX11::create(IWidget* parent, const std::wstring& text, int width, i
 	);
 
     Atom type = XInternAtom(m_display,"_NET_WM_WINDOW_TYPE", False);
-    Atom value = XInternAtom(m_display,"_NET_WM_WINDOW_TYPE_SPLASH", False);
+    Atom value = XInternAtom(m_display,"_NET_WM_WINDOW_TYPE_DOCK", False);
     XChangeProperty(m_display, window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
 
 	return WidgetX11Impl< IToolForm >::create(nullptr, window, Rect(0, 0, width, height), false);

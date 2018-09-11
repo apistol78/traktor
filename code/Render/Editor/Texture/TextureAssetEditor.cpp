@@ -20,10 +20,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
-#include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Image.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
 #include "Ui/Custom/PropertyList/FilePropertyItem.h"
@@ -234,7 +234,7 @@ void TextureAssetEditor::eventPropertyCommand(ui::custom::PropertyCommandEvent* 
 		ui::custom::FilePropertyItem* fileItem = dynamic_type_cast< ui::custom::FilePropertyItem* >(event->getItem());
 		if (fileItem)
 		{
-			ui::FileDialog fileDialog;
+			ui::custom::FileDialog fileDialog;
 			if (!fileDialog.create(m_propertyList, i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
 				return;
 

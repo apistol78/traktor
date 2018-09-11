@@ -13,7 +13,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureBatchDialog.h"
 #include "Render/Editor/Texture/TextureBatchWizardTool.h"
-#include "Ui/FileDialog.h"
 
 namespace traktor
 {

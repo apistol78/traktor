@@ -23,7 +23,6 @@ class EventSubject;
 class IContainer;
 class IDialog;
 class IEventLoop;
-class IFileDialog;
 class IForm;
 class INotificationIcon;
 class IPathDialog;
@@ -46,8 +45,6 @@ public:
 	virtual IContainer* createContainer(EventSubject* owner) = 0;
 
 	virtual IDialog* createDialog(EventSubject* owner) = 0;
-
-	virtual IFileDialog* createFileDialog(EventSubject* owner) = 0;
 
 	virtual IForm* createForm(EventSubject* owner) = 0;
 

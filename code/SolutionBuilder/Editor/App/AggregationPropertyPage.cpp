@@ -8,8 +8,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Ui/TableLayout.h>
 #include <Ui/Static.h>
 #include <Ui/Button.h>
-#include <Ui/FileDialog.h>
 #include <Ui/MessageBox.h>
+#include <Ui/Custom/FileDialog.h>
 #include <Ui/Custom/InputDialog.h>
 #include <Ui/Custom/GridView/GridColumn.h>
 #include <Ui/Custom/GridView/GridItem.h>
@@ -258,7 +258,7 @@ void AggregationPropertyPage::eventClickRemove(ui::ButtonClickEvent* event)
 
 void AggregationPropertyPage::eventClickAddExternal(ui::ButtonClickEvent* event)
 {
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	fileDialog.create(this, L"Select solution", L"SolutionBuilder solutions;*.xms");
 
 	Path filePath;

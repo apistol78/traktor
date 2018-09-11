@@ -8,7 +8,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Win32/ContainerWin32.h"
 #include "Ui/Win32/DialogWin32.h"
 #include "Ui/Win32/EventLoopWin32.h"
-#include "Ui/Win32/FileDialogWin32.h"
 #include "Ui/Win32/FormWin32.h"
 #include "Ui/Win32/NotificationIconWin32.h"
 #include "Ui/Win32/PathDialogWin32.h"
@@ -58,11 +57,6 @@ IContainer* WidgetFactoryWin32::createContainer(EventSubject* owner)
 IDialog* WidgetFactoryWin32::createDialog(EventSubject* owner)
 {
 	return new DialogWin32(owner);
-}
-
-IFileDialog* WidgetFactoryWin32::createFileDialog(EventSubject* owner)
-{
-	return new FileDialogWin32(owner);
 }
 
 IForm* WidgetFactoryWin32::createForm(EventSubject* owner)

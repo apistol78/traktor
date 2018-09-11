@@ -30,12 +30,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Button.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Edit.h"
-#include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/ProgressBar.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/GridView/GridColumn.h"
@@ -366,7 +366,7 @@ void SearchToolDialog::eventButtonSearchClick(ui::ButtonClickEvent* event)
 
 void SearchToolDialog::eventButtonSaveAsClick(ui::ButtonClickEvent* event)
 {
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	if (!fileDialog.create(this, i18n::Text(L"EDITOR_SEARCH_TOOL_SAVE_AS_TITLE"), L"All files;*.*", true))
 		return;
 

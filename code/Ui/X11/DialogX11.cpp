@@ -76,9 +76,14 @@ void DialogX11::setIcon(ISystemBitmap* icon)
 
 int DialogX11::showModal()
 {
+	setWmProperty("_NET_WM_STATE_MODAL", _NET_WM_STATE_ADD);
 	setVisible(true);
 
+	XFlush(m_display);
+
 	int fd = ConnectionNumber(m_display);
+	XEvent e;
+
 	for (m_modal = true; m_modal; )
 	{
 		fd_set fds;
@@ -89,23 +94,23 @@ int DialogX11::showModal()
 		tv.tv_usec = 10 * 1000;
 		tv.tv_sec = 0;
 
-		int nr = select(fd + 1, &fds, NULL, NULL, &tv);
-		if (nr > 0)
+        int nr = select(fd + 1, &fds, NULL, NULL, &tv);
+        if (nr > 0)
 		{
 			while (XPending(m_display))
 			{
-				XEvent e;
 				XNextEvent(m_display, &e);
 				Assoc::getInstance().dispatch(e);
 			}
+			continue;
 		}
-		else
-		{
-			Timers::getInstance().update(10);
-		}
+
+		Timers::getInstance().update(10);
 	}
 
 	setVisible(false);
+	setWmProperty("_NET_WM_STATE_MODAL", _NET_WM_STATE_REMOVE);
+
 	return m_result;
 }
 

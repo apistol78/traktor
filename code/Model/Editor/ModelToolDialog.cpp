@@ -36,10 +36,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/PrimitiveRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "Ui/Application.h"
-#include "Ui/FileDialog.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
@@ -246,7 +246,7 @@ void ModelToolDialog::destroy()
 
 bool ModelToolDialog::loadModel()
 {
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	if (!fileDialog.create(this, L"Load model(s)...", L"All files;*.*"))
 		return false;
 
@@ -277,7 +277,7 @@ bool ModelToolDialog::loadModel()
 
 bool ModelToolDialog::saveModel(Model* model)
 {
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	if (!fileDialog.create(this, L"Save model as...", L"All files;*.*", true))
 		return false;
 
@@ -294,7 +294,7 @@ bool ModelToolDialog::saveModel(Model* model)
 
 void ModelToolDialog::bakeOcclusion(Model* model)
 {
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	if (!fileDialog.create(this, L"Save occlusion image as...", L"All files;*.*", true))
 		return;
 
