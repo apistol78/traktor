@@ -23,8 +23,6 @@ public:
 
 	virtual IDialog* createDialog(EventSubject* owner) T_OVERRIDE T_FINAL;
 
-	virtual IFileDialog* createFileDialog(EventSubject* owner) T_OVERRIDE T_FINAL;
-
 	virtual IForm* createForm(EventSubject* owner) T_OVERRIDE T_FINAL;
 
 	virtual IMessageBox* createMessageBox(EventSubject* owner) T_OVERRIDE T_FINAL;

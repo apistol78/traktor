@@ -25,10 +25,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Editor/Debug/DebugView.h"
 #include "Ui/Application.h"
 #include "Ui/Edit.h"
-#include "Ui/FileDialog.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
@@ -388,7 +388,7 @@ void ClientPage::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 {
 	if (event->getCommand() == L"Traktor.Flash.Load")
 	{
-		ui::FileDialog fileDialog;
+		ui::custom::FileDialog fileDialog;
 		fileDialog.create(this, L"Load capture...", L"All files;*.*", false);
 
 		Path fileName;
@@ -424,7 +424,7 @@ void ClientPage::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 	{
 		//if (m_debugInfo)
 		//{
-		//	ui::FileDialog fileDialog;
+		//	ui::custom::FileDialog fileDialog;
 		//	fileDialog.create(this, L"Save capture as...", L"All files;*.*", true);
 
 		//	Path fileName;

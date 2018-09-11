@@ -11,7 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "I18N/Text.h"
 #include "Net/Url.h"
 #include "Net/UrlConnection.h"
-#include "Ui/FileDialog.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/InputDialog.h"
 
 namespace traktor
@@ -65,7 +65,7 @@ bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring
 
 	Path fileName = url.getFile();
 
-	ui::FileDialog saveAsDialog;
+	ui::custom::FileDialog saveAsDialog;
 	saveAsDialog.create(
 		parent,
 		i18n::Text(L"EDITOR_HTTP_GET_SAVE_AS"),

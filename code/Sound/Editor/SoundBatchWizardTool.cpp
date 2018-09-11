@@ -13,7 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundBatchDialog.h"
 #include "Sound/Editor/SoundBatchWizardTool.h"
-#include "Ui/FileDialog.h"
+#include "Ui/Custom/FileDialog.h"
 
 namespace traktor
 {

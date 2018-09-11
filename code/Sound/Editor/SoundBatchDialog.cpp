@@ -12,10 +12,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundBatchDialog.h"
 #include "Ui/Application.h"
-#include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ListBox/ListBox.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
@@ -95,7 +95,7 @@ bool SoundBatchDialog::showModal(RefArray< SoundAsset >& outAssets)
 
 void SoundBatchDialog::addSound()
 {
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	if (!fileDialog.create(this, i18n::Text(L"SOUND_BATCH_FILE_TITLE"), L"All files;*.*"))
 		return;
 

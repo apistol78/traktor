@@ -29,10 +29,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Container.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Edit.h"
-#include "Ui/FileDialog.h"
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
 #include "Ui/Custom/DropDown.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/GridView/GridColumn.h"
@@ -617,7 +617,7 @@ void MeshAssetEditor::eventLodStepsChange(ui::ContentChangeEvent* event)
 
 void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)
 {
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	if (!fileDialog.create(m_editFileName, i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
 		return;
 

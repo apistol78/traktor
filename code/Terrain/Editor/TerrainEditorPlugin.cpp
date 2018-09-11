@@ -25,12 +25,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Terrain/Editor/TerrainEditModifier.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
-#include "Ui/FileDialog.h"
 #include "Ui/MenuItem.h"
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/ColorPicker/ColorControl.h"
 #include "Ui/Custom/ColorPicker/ColorDialog.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
@@ -224,7 +224,7 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 			toolSelected = m_toolToggleFallOffSharp;
 		else if (command == L"Terrain.Editor.ImageFallOff")
 		{
-			ui::FileDialog fileDialog;
+			ui::custom::FileDialog fileDialog;
 
 			if (!fileDialog.create(m_parent, i18n::Text(L"TERRAIN_EDITOR_BROWSE_IMAGE"), L"All files (*.*);*.*"))
 				return false;

@@ -15,10 +15,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Ui/Application.h>
 #include <Ui/MessageBox.h>
 #include <Ui/FloodLayout.h>
-#include <Ui/FileDialog.h>
 #include <Ui/StyleBitmap.h>
 #include <Ui/StyleSheet.h>
 #include <Ui/TableLayout.h>
+#include <Ui/Custom/FileDialog.h>
 #include <Ui/Custom/Splitter.h>
 #include <Ui/Custom/ToolBar/ToolBarMenu.h>
 #include <Xml/XmlSerializer.h>
@@ -493,7 +493,7 @@ void SolutionForm::commandOpen()
 			return;
 	}
 
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	fileDialog.create(this, L"Open solution", L"SolutionBuilder solutions;*.xms;All files;*.*");
 	
 	Path filePath;
@@ -516,7 +516,7 @@ void SolutionForm::commandSave(bool saveAs)
 
 	if (saveAs || m_solutionFileName.empty())
 	{
-		ui::FileDialog fileDialog;
+		ui::custom::FileDialog fileDialog;
 		fileDialog.create(this, L"Save solution as", L"SolutionBuilder solutions;*.xms", true);
 		cancelled = !(fileDialog.showModal(filePath) == ui::DrOk);
 		fileDialog.destroy();
@@ -756,7 +756,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			}
 			else if (command == L"Project.AddExistingFiles")
 			{
-				ui::FileDialog fileDialog;
+				ui::custom::FileDialog fileDialog;
 				if (fileDialog.create(this, L"Select file(s)...", L"All files;*.*"))
 				{
 					std::vector< Path > paths;
@@ -811,7 +811,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			}
 			else if (command == L"Aggregation.AddExistingFiles")
 			{
-				ui::FileDialog fileDialog;
+				ui::custom::FileDialog fileDialog;
 				if (fileDialog.create(this, L"Select file(s)...", L"All files;*.*"))
 				{
 					std::vector< Path > paths;
@@ -908,7 +908,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			}
 			else if (command == L"Filter.AddExistingFiles")
 			{
-				ui::FileDialog fileDialog;
+				ui::custom::FileDialog fileDialog;
 				if (fileDialog.create(this, L"Select file(s)...", L"All files;*.*"))
 				{
 					std::vector< Path > paths;

@@ -26,8 +26,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Sound/Editor/SoundAssetEditor.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
-#include "Ui/FileDialog.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
 #include "Ui/Custom/PropertyList/FilePropertyItem.h"
@@ -245,7 +245,7 @@ void SoundAssetEditor::eventPropertyCommand(ui::custom::PropertyCommandEvent* ev
 		ui::custom::FilePropertyItem* fileItem = dynamic_type_cast< ui::custom::FilePropertyItem* >(event->getItem());
 		if (fileItem)
 		{
-			ui::FileDialog fileDialog;
+			ui::custom::FileDialog fileDialog;
 			if (!fileDialog.create(m_propertyList, i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
 				return;
 

@@ -4,7 +4,6 @@
 #include "Ui/X11/ClipboardX11.h"
 #include "Ui/X11/DialogX11.h"
 #include "Ui/X11/EventLoopX11.h"
-#include "Ui/X11/FileDialogX11.h"
 #include "Ui/X11/FormX11.h"
 #include "Ui/X11/ToolFormX11.h"
 #include "Ui/X11/UserWidgetX11.h"
@@ -59,11 +58,6 @@ IContainer* WidgetFactoryX11::createContainer(EventSubject* owner)
 IDialog* WidgetFactoryX11::createDialog(EventSubject* owner)
 {
 	return new DialogX11(owner, m_display, m_screen);
-}
-
-IFileDialog* WidgetFactoryX11::createFileDialog(EventSubject* owner)
-{
-	return new FileDialogX11(owner);
 }
 
 IForm* WidgetFactoryX11::createForm(EventSubject* owner)

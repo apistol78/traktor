@@ -14,7 +14,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/ExportHeightfieldWizardTool.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
-#include "Ui/FileDialog.h"
+#include "Ui/Custom/FileDialog.h"
 
 namespace traktor
 {
@@ -90,7 +90,7 @@ bool ExportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 
 	Path fileName;
 
-	ui::FileDialog saveAsDialog;
+	ui::custom::FileDialog saveAsDialog;
 	saveAsDialog.create(parent, i18n::Text(L"EXPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE"), L"All files;*.*", true);
 	if (saveAsDialog.showModal(fileName) != ui::DrOk)
 		return false;

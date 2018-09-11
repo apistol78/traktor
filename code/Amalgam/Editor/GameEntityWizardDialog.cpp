@@ -27,11 +27,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Edit.h"
-#include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/DropDown.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/MiniButton.h"
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/GroupEntityData.h"
@@ -158,7 +158,7 @@ void GameEntityWizardDialog::eventNameChange(ui::ContentChangeEvent* event)
 
 void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* event)
 {
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	if (!fileDialog.create(this, i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*"))
 		return;
 
@@ -186,7 +186,7 @@ void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* ev
 
 void GameEntityWizardDialog::eventBrowseCollisionMeshClick(ui::ButtonClickEvent* event)
 {
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	if (!fileDialog.create(this, i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*"))
 		return;
 

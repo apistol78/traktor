@@ -14,8 +14,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshAssetWizardTool.h"
-#include "Ui/FileDialog.h"
 #include "Ui/MessageBox.h"
+#include "Ui/Custom/FileDialog.h"
 
 namespace traktor
 {
@@ -37,7 +37,7 @@ uint32_t MeshAssetWizardTool::getFlags() const
 bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
 	// Select source model.
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	if (!fileDialog.create(parent, i18n::Text(L"MESHASSET_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
 		return 0;
 

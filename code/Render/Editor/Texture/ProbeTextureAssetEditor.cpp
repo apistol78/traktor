@@ -4,8 +4,6 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#pragma optimize( "", off )
-
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -23,9 +21,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Editor/Texture/ProbeTexturePreviewControl.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
-#include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
 #include "Ui/Custom/PropertyList/FilePropertyItem.h"
@@ -190,7 +188,7 @@ void ProbeTextureAssetEditor::eventPropertyCommand(ui::custom::PropertyCommandEv
 		ui::custom::FilePropertyItem* fileItem = dynamic_type_cast< ui::custom::FilePropertyItem* >(event->getItem());
 		if (fileItem)
 		{
-			ui::FileDialog fileDialog;
+			ui::custom::FileDialog fileDialog;
 			if (!fileDialog.create(m_propertyList, i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
 				return;
 

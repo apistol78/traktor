@@ -4,16 +4,15 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_ui_FileDialog_H
-#define traktor_ui_FileDialog_H
+#pragma once
 
 #include <vector>
 #include "Core/Io/Path.h"
-#include "Ui/EventSubject.h"
+#include "Ui/ConfigDialog.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_UI_EXPORT)
+#if defined(T_UI_CUSTOM_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -24,21 +23,21 @@ namespace traktor
 	namespace ui
 	{
 
-class Widget;
-class IFileDialog;
+class Container;
+
+		namespace custom
+		{
+
+class GridView;
 
 /*! \brief File dialog.
- * \ingroup UI
+ * \ingroup UIC
  */
-class T_DLLCLASS FileDialog : public EventSubject
+class T_DLLCLASS FileDialog : public ConfigDialog
 {
 	T_RTTI_CLASS;
 
 public:
-	FileDialog();
-
-	virtual ~FileDialog();
-
 	bool create(Widget* parent, const std::wstring& title, const std::wstring& filters, bool save = false);
 
 	void destroy();
@@ -48,10 +47,15 @@ public:
 	int showModal(std::vector< Path >& outPaths);
 
 private:
-	IFileDialog* m_fileDialog;
+	Ref< Container > m_containerPath;
+	Ref< custom::GridView > m_gridFiles;
+	Path m_currentPath;
+
+	void updatePath();
+
+	void updateFiles();	
 };
 
+		}
 	}
 }
-
-#endif	// traktor_ui_FileDialog_H

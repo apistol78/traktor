@@ -175,7 +175,7 @@ void GrainProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* eve
 		ui::custom::FilePropertyItem* fileItem = dynamic_type_cast< ui::custom::FilePropertyItem* >(event->getItem());
 		if (fileItem)
 		{
-			ui::FileDialog fileDialog;
+			ui::custom::FileDialog fileDialog;
 			if (!fileDialog.create(m_propertyList, i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
 				return;
 

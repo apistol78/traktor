@@ -97,7 +97,31 @@ int32_t EventLoopX11::getExitCode() const
 
 int32_t EventLoopX11::getAsyncKeyState() const
 {
-	return 0;
+	Window root, child;
+	int rootX, rootY;
+	int winX, winY;
+	unsigned int mask;
+
+	XQueryPointer(
+		m_display,
+		DefaultRootWindow(m_display),
+		&root,
+		&child,
+		&rootX, &rootY,
+		&winX, &winY,
+		&mask
+	);
+
+	int32_t keyState = KsNone;
+
+	if (mask & ShiftMask)
+		keyState |= KsShift;
+	if (mask & ControlMask)
+		keyState |= KsControl | KsCommand;
+	if (mask & (Mod1Mask | Mod5Mask))
+		keyState |= KsMenu;
+
+	return keyState;
 }
 
 bool EventLoopX11::isKeyDown(VirtualKey vk) const

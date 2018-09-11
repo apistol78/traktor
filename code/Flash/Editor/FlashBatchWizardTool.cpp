@@ -13,7 +13,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Flash/Editor/FlashMovieAsset.h"
 #include "Flash/Editor/FlashBatchDialog.h"
 #include "Flash/Editor/FlashBatchWizardTool.h"
-#include "Ui/FileDialog.h"
 
 namespace traktor
 {

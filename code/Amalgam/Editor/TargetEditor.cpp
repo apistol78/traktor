@@ -27,7 +27,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Button.h"
 #include "Ui/Container.h"
 #include "Ui/Edit.h"
-#include "Ui/FileDialog.h"
 #include "Ui/FlowLayout.h"
 #include "Ui/Image.h"
 #include "Ui/Static.h"
@@ -35,6 +34,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Custom/DropDown.h"
 #include "Ui/Custom/EditList.h"
 #include "Ui/Custom/EditListEditEvent.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/Panel.h"
@@ -636,7 +636,7 @@ void TargetEditor::eventBrowseIconClick(ui::MouseButtonDownEvent* event)
 	if (!targetConfiguration)
 		return;
 
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	if (fileDialog.create(m_containerOuter, L"Select icon image", L"All files;*.*"))
 	{
 		Path fileName;

@@ -2,7 +2,6 @@
 #include "Ui/Gtk/ContainerGtk.h"
 #include "Ui/Gtk/ClipboardGtk.h"
 #include "Ui/Gtk/DialogGtk.h"
-#include "Ui/Gtk/FileDialogGtk.h"
 #include "Ui/Gtk/FormGtk.h"
 #include "Ui/Gtk/ToolFormGtk.h"
 #include "Ui/Gtk/UserWidgetGtk.h"
@@ -21,11 +20,6 @@ IContainer* WidgetFactoryGtk::createContainer(EventSubject* owner)
 IDialog* WidgetFactoryGtk::createDialog(EventSubject* owner)
 {
 	return new DialogGtk(owner);
-}
-
-IFileDialog* WidgetFactoryGtk::createFileDialog(EventSubject* owner)
-{
-	return new FileDialogGtk(owner);
 }
 
 IForm* WidgetFactoryGtk::createForm(EventSubject* owner)

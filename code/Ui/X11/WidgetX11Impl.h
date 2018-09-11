@@ -127,7 +127,6 @@ public:
 				// Resize window.
 				XMapWindow(m_display, m_window);
 				XMoveResizeWindow(m_display, m_window, m_rect.left, m_rect.top, width, height);
-				//XFlush(m_display);
 
 				// Resize surface.
 				cairo_xlib_surface_set_size(m_surface, width, height);
@@ -135,7 +134,6 @@ public:
 			else
 			{
 				XUnmapWindow(m_display, m_window);
-				//XFlush(m_display);
 			}
 		}
 	}
@@ -184,11 +182,11 @@ public:
 		m_grabbed = bool(XGrabPointer(
 			m_display,
 			m_window,
-			True,
-			0,
+			False,
+			ButtonPressMask | ButtonReleaseMask | PointerMotionMask,
 			GrabModeAsync,
 			GrabModeAsync,
-			None, //m_window,
+			None,
 			None,
 			CurrentTime
 		) == GrabSuccess);
@@ -242,8 +240,6 @@ public:
 			}
 			else
 				XMoveWindow(m_display, m_window, rect.left, rect.top);
-
-			//XFlush(m_display);
 		}
 
 		if (newWidth != oldWidth || newHeight != oldHeight)
@@ -438,6 +434,13 @@ public:
 	}
 
 protected:
+	enum
+	{
+		_NET_WM_STATE_REMOVE = 0,
+		_NET_WM_STATE_ADD = 1,
+		_NET_WM_STATE_TOGGLE = 2
+	};
+
 	EventSubject* m_owner;
 	Display* m_display;
 	int32_t m_screen;
@@ -459,7 +462,6 @@ protected:
 	int32_t m_lastMouseButton;
 	bool m_pendingDraw;
 
-
 	bool create(IWidget* parent, Drawable window, const Rect& rect, bool visible)
 	{
 		if (window == 0)
@@ -469,7 +471,7 @@ protected:
 		m_rect = rect;
 		m_visible = visible;
 
-    	XSelectInput(
+		XSelectInput(
 			m_display,
 			window, 
 			ButtonPressMask |
@@ -479,7 +481,7 @@ protected:
 			ExposureMask |
 			FocusChangeMask |
 			PointerMotionMask
-		);
+		);			
 
 		if (visible)
 	    	XMapWindow(m_display, window);
@@ -493,7 +495,6 @@ protected:
 			m_rect.getWidth(),
 			m_rect.getHeight()
 		);
-		//cairo_xlib_surface_set_size(m_surface, width, height);
 
 		m_context = cairo_create(m_surface);
 		setFont(Font(L"Ubuntu Regular", 11));
@@ -501,32 +502,42 @@ protected:
 		auto& a = Assoc::getInstance();
 
 		a.bind(m_window, KeyPress, [&](XEvent& xe) {
-			KeySym ks = XKeycodeToKeysym(m_display, xe.xkey.keycode, 0);
-
-			VirtualKey vk = translateToVirtualKey(ks);
-			if (vk != VkNull)
+			int nkeysyms;
+			KeySym* ks = XGetKeyboardMapping(m_display, xe.xkey.keycode, 1, &nkeysyms);
+			if (ks != nullptr)
 			{
-				KeyDownEvent keyDownEvent(m_owner, vk, xe.xkey.keycode, 0);
-				m_owner->raiseEvent(&keyDownEvent);
-			}
+				VirtualKey vk = translateToVirtualKey(*ks);
+				if (vk != VkNull)
+				{
+					KeyDownEvent keyDownEvent(m_owner, vk, xe.xkey.keycode, 0);
+					m_owner->raiseEvent(&keyDownEvent);
+				}
 
-			char keybuf[8];
-			int nk = XLookupString(&xe.xkey, keybuf, sizeof(keybuf), nullptr, nullptr);
-			if (nk > 0)
-			{
-				KeyEvent keyEvent(m_owner, vk, xe.xkey.keycode, wchar_t(keybuf[0]));
-				m_owner->raiseEvent(&keyEvent);
+				char keybuf[8];
+				int nk = XLookupString(&xe.xkey, keybuf, sizeof(keybuf), nullptr, nullptr);
+				if (nk > 0)
+				{
+					KeyEvent keyEvent(m_owner, vk, xe.xkey.keycode, wchar_t(keybuf[0]));
+					m_owner->raiseEvent(&keyEvent);
+				}
+
+				XFree(ks);
 			}
 		});
 
 		a.bind(m_window, KeyRelease, [&](XEvent& xe) {
-			KeySym ks = XKeycodeToKeysym(m_display, xe.xkey.keycode, 0);
-
-			VirtualKey vk = translateToVirtualKey(ks);
-			if (vk != VkNull)
+			int nkeysyms;
+			KeySym* ks = XGetKeyboardMapping(m_display, xe.xkey.keycode, 1, &nkeysyms);
+			if (ks != nullptr)
 			{
-				KeyUpEvent keyUpEvent(m_owner, vk, xe.xkey.keycode, 0);
-				m_owner->raiseEvent(&keyUpEvent);
+				VirtualKey vk = translateToVirtualKey(*ks);
+				if (vk != VkNull)
+				{
+					KeyUpEvent keyUpEvent(m_owner, vk, xe.xkey.keycode, 0);
+					m_owner->raiseEvent(&keyUpEvent);
+				}
+
+				XFree(ks);
 			}
 		});
 
@@ -617,7 +628,6 @@ protected:
 				Point(xe.xbutton.x, xe.xbutton.y)
 			);
 			m_owner->raiseEvent(&mouseButtonUpEvent);
-
 		});
 
 		if (parent == nullptr)
@@ -640,7 +650,7 @@ protected:
 		}
 
 		a.bind(m_window, Expose, [&](XEvent& xe){
-			update(nullptr, true);
+			update(nullptr, false);
 		});
 
 		return true;
@@ -665,7 +675,60 @@ protected:
 		cairo_paint(m_context);
 
 		cairo_surface_flush(m_surface);
-	}	
+	}
+
+	void setWmProperty(const char* const property, int32_t value)
+	{
+		XEvent evt = { 0 };
+
+		Atom atomWmState = XInternAtom(m_display, "_NET_WM_STATE", False);
+		Atom atomWmProperty = XInternAtom(m_display, property, False);
+
+		evt.type = ClientMessage;
+		evt.xclient.window = m_window;
+		evt.xclient.message_type = atomWmState;
+		evt.xclient.format = 32;
+		evt.xclient.data.l[0] = value;
+		evt.xclient.data.l[1] = atomWmProperty;
+		evt.xclient.data.l[2] = 0;
+		evt.xclient.data.l[3] = 0;
+		evt.xclient.data.l[4] = 0;
+
+		XSendEvent(
+			m_display,
+			RootWindow(m_display, m_screen),
+			False,
+			SubstructureRedirectMask | SubstructureNotifyMask,
+			&evt
+		);
+	}
+
+	void setWmProperty(const char* const property1, const char* const property2, int32_t value)
+	{
+		XEvent evt = { 0 };
+
+		Atom atomWmState = XInternAtom(m_display, "_NET_WM_STATE", False);
+		Atom atomWmProperty1 = XInternAtom(m_display, property1, False);
+		Atom atomWmProperty2 = XInternAtom(m_display, property2, False);
+
+		evt.type = ClientMessage;
+		evt.xclient.window = m_window;
+		evt.xclient.message_type = atomWmState;
+		evt.xclient.format = 32;
+		evt.xclient.data.l[0] = value;
+		evt.xclient.data.l[1] = atomWmProperty1;
+		evt.xclient.data.l[2] = atomWmProperty2;
+		evt.xclient.data.l[3] = 0;
+		evt.xclient.data.l[4] = 0;
+
+		XSendEvent(
+			m_display,
+			RootWindow(m_display, m_screen),
+			False,
+			SubstructureRedirectMask | SubstructureNotifyMask,
+			&evt
+		);
+	}
 };
 
 	}

@@ -87,7 +87,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/MessageBox.h"
-#include "Ui/FileDialog.h"
 #include "Ui/TableLayout.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/ShortcutTable.h"
@@ -100,6 +99,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 #include "Ui/Custom/BackgroundWorkerDialog.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/StatusBar/StatusBar.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
@@ -1397,7 +1397,7 @@ bool EditorForm::createWorkspace()
 
 bool EditorForm::openWorkspace()
 {
-	ui::FileDialog fileDialog;
+	ui::custom::FileDialog fileDialog;
 	if (!fileDialog.create(this, i18n::Text(L"EDITOR_BROWSE_WORKSPACE"), L"Workspace files (*.workspace);*.workspace;All files (*.*);*.*"))
 		return false;
 
@@ -1989,7 +1989,7 @@ void EditorForm::beginBuild(int32_t core, int32_t index, int32_t count, const Pi
 {
 	showProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count, 100);
 	m_buildView->beginBuild(core, dependency->outputPath);
-	m_buildProgress->setProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count);
+	//m_buildProgress->setProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count);
 	m_buildStep = (index * 1000) / count;
 	m_buildStepMessage = dependency->outputPath;
 }

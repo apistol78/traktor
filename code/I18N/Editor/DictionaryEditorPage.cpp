@@ -17,8 +17,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
-#include "Ui/FileDialog.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
@@ -231,7 +231,7 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 	{
 		std::wstring line;
 
-		ui::FileDialog fileDialog;
+		ui::custom::FileDialog fileDialog;
 		if (!fileDialog.create(m_gridDictionary, Text(L"DICTIONARY_EDITOR_IMPORT_DICTIONARY_DIALOG"), L"All files;*.*"))
 			return;
 
@@ -255,7 +255,7 @@ void DictionaryEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* e
 	}
 	else if (cmd == L"I18N.Editor.Export")
 	{
-		ui::FileDialog fileDialog;
+		ui::custom::FileDialog fileDialog;
 		if (!fileDialog.create(m_gridDictionary, Text(L"DICTIONARY_EDITOR_EXPORT_DICTIONARY_DIALOG"), L"All files;*.*", true))
 			return;
 
