@@ -5,8 +5,8 @@
 			<id>{3D2016CE-BC47-CE4E-B291-5EBD0806981F}</id>
 			<comment/>
 			<position>
-				<first>1190</first>
-				<second>-2634</second>
+				<first>1209</first>
+				<second>-2685</second>
 			</position>
 			<parameterName>Flash_Color</parameterName>
 			<type>PtVector</type>
