@@ -53,7 +53,6 @@ VertexBufferStaticVBO::VertexBufferStaticVBO(ContextOpenGL* resourceContext, con
 	T_OGL_SAFE(glBufferStorage(GL_ARRAY_BUFFER, bufferSize, 0, GL_MAP_WRITE_BIT));
 
 	std::memset(m_attributeDesc, 0, sizeof(m_attributeDesc));
-
 	for (size_t i = 0; i < vertexElements.size(); ++i)
 	{
 		if (vertexElements[i].getIndex() >= 4)
@@ -166,7 +165,7 @@ void* VertexBufferStaticVBO::lock()
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	
 	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
-	m_lock = static_cast< uint8_t* >(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+	m_lock = static_cast< uint8_t* >(glMapBufferRange(GL_ARRAY_BUFFER, 0, getBufferSize(), GL_MAP_WRITE_BIT));
 	
 	return m_lock;
 }
@@ -177,9 +176,9 @@ void* VertexBufferStaticVBO::lock(uint32_t vertexOffset, uint32_t vertexCount)
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	
 	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
-	m_lock = static_cast< uint8_t* >(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+	m_lock = static_cast< uint8_t* >(glMapBufferRange(GL_ARRAY_BUFFER, vertexOffset * m_vertexStride, vertexCount * m_vertexStride, GL_MAP_WRITE_BIT));
 	
-	return m_lock ? (m_lock + vertexOffset * m_vertexStride) : 0;
+	return m_lock;
 }
 
 void VertexBufferStaticVBO::unlock()
