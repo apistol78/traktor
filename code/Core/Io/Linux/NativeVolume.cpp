@@ -50,6 +50,9 @@ Ref< File > NativeVolume::get(const Path& path)
 	if ((st.st_mode & S_IWUSR) == 0)
 		flags |= File::FfReadOnly;
 
+	if (path.getFileName().front() == L'.')
+		flags |= File::FfHidden;
+
 	return new File(
 		path,
 		st.st_size,
@@ -92,7 +95,7 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 				out.push_back(new File(
 					maskPath + mbstows(dp->d_name),
 					0,
-					File::FfDirectory
+					File::FfDirectory | (dp->d_name[0] == '.' ? File::FfHidden : 0)
 				));
 			}
 			else	// Assumes it's a normal file.
