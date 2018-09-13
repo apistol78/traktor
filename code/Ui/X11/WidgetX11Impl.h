@@ -6,6 +6,7 @@
 #include <X11/Xutil.h>
 #include <cairo.h>
 #include <cairo-xlib.h>
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Ui/Application.h"
@@ -18,6 +19,9 @@
 #include "Ui/X11/CanvasX11.h"
 #include "Ui/X11/Timers.h"
 #include "Ui/X11/UtilitiesX11.h"
+
+#define T_LIMIT_SCOPE_ENABLE
+#include "Core/Timer/LimitScope.h"
 
 namespace traktor
 {
@@ -37,6 +41,8 @@ public:
 	,	m_display(display)
 	,	m_screen(screen)
 	,	m_window(0)
+	,	m_xim(0)
+	,	m_xic(0)
 	,	m_surface(nullptr)
 	,	m_context(nullptr)
 	,	m_visible(false)
@@ -44,7 +50,7 @@ public:
 	,	m_grabbed(false)
 	,	m_lastMousePress(0)
 	,	m_lastMouseButton(0)
-	,	m_pendingDraw(false)
+	,	m_pendingExposure(false)
 	{
 	}
 
@@ -63,8 +69,6 @@ public:
 		for (auto it : m_timers)
 			Timers::getInstance().unbind(it.second);
 		m_timers.clear();
-
-		Timers::getInstance().dequeue();
 
 		if (m_context != nullptr)
 		{
@@ -360,19 +364,25 @@ public:
 
 	virtual void update(const Rect* rc, bool immediate) T_OVERRIDE
 	{
-		if (!m_pendingDraw)
+		if (!m_visible)
+			return;
+
+		if (!immediate)
 		{
-			m_pendingDraw = true;
-			Timers::getInstance().queue([&]() {
-				if (m_pendingDraw)
-					draw();
-				m_pendingDraw = false;
-			});
+			if (m_pendingExposure)
+				return;
+
+			m_pendingExposure = true;
+
+			XEvent xe = { 0 };
+        	xe.type = Expose;
+        	xe.xexpose.window = m_window;
+        	XSendEvent(m_display, m_window, False, ExposureMask, &xe);
+			XFlush(m_display);
 		}
 		else
 		{
 			draw();
-			m_pendingDraw = false;
 		}
 	}
 
@@ -404,9 +414,13 @@ public:
 	{
 		T_FATAL_ASSERT(m_surface != nullptr);
 		
+		uint8_t uc[IEncoding::MaxEncodingSize + 1] = { 0 };
+		int32_t nuc = Utf8Encoding().translate(&ch, 1, uc);
+		if (nuc <= 0)
+			return 0;
+
 		cairo_text_extents_t tx;
-		const char cs[] = { (char)ch, 0 };
-		cairo_text_extents(m_context, cs, &tx);
+		cairo_text_extents(m_context, (const char*)uc, &tx);
 
 		return (int32_t)tx.x_advance;
 	}
@@ -445,6 +459,9 @@ protected:
 	Display* m_display;
 	int32_t m_screen;
 	Drawable m_window;
+	XIM m_xim;
+	XIC m_xic;
+
 	Rect m_rect;
 	Font m_font;
 
@@ -460,9 +477,9 @@ protected:
 
 	int32_t m_lastMousePress;
 	int32_t m_lastMouseButton;
-	bool m_pendingDraw;
+	bool m_pendingExposure;
 
-	bool create(IWidget* parent, Drawable window, const Rect& rect, bool visible)
+	bool create(IWidget* parent, int32_t style, Drawable window, const Rect& rect, bool visible)
 	{
 		if (window == 0)
 			return false;
@@ -488,6 +505,29 @@ protected:
 
 		XFlush(m_display);
 
+		// Open input method.
+		XSetLocaleModifiers("");
+		if ((m_xim = XOpenIM(m_display, nullptr, nullptr, nullptr)) == 0)
+		{
+			XSetLocaleModifiers("@im=");
+			if ((m_xim = XOpenIM(m_display, nullptr, nullptr, nullptr)) == 0)
+			{
+				return false;
+			}
+		}
+
+		// Create input context.
+		if ((m_xic = XCreateIC(
+			m_xim,
+			XNInputStyle,   XIMPreeditNothing | XIMStatusNothing,
+			XNClientWindow, m_window,
+			XNFocusWindow,  m_window,
+			nullptr
+		)) == 0)
+		{
+			return false;
+		}	
+
 		m_surface = cairo_xlib_surface_create(
 			m_display,
 			window,
@@ -501,6 +541,21 @@ protected:
 
 		auto& a = Assoc::getInstance();
 
+		// Focus in.
+		a.bind(m_window, FocusIn, [&](XEvent& xe) {
+			XSetICFocus(m_xic);
+			FocusEvent focusEvent(m_owner, true);
+			m_owner->raiseEvent(&focusEvent);
+		});
+
+		// Focus out.
+		a.bind(m_window, FocusOut, [&](XEvent& xe) {
+			XUnsetICFocus(m_xic);
+			FocusEvent focusEvent(m_owner, false);
+			m_owner->raiseEvent(&focusEvent);
+		});
+
+		// Key press.
 		a.bind(m_window, KeyPress, [&](XEvent& xe) {
 			int nkeysyms;
 			KeySym* ks = XGetKeyboardMapping(m_display, xe.xkey.keycode, 1, &nkeysyms);
@@ -513,18 +568,25 @@ protected:
 					m_owner->raiseEvent(&keyDownEvent);
 				}
 
-				char keybuf[8];
-				int nk = XLookupString(&xe.xkey, keybuf, sizeof(keybuf), nullptr, nullptr);
-				if (nk > 0)
+				uint8_t str[8] = { 0 };
+
+				Status status = 0;
+				const int n = Xutf8LookupString(m_xic, &xe.xkey, (char*)str, 8, ks, &status);
+				if (n > 0)
 				{
-					KeyEvent keyEvent(m_owner, vk, xe.xkey.keycode, wchar_t(keybuf[0]));
-					m_owner->raiseEvent(&keyEvent);
+					wchar_t wch = 0;
+					if (Utf8Encoding().translate(str, n, wch) > 0)
+					{
+						KeyEvent keyEvent(m_owner, vk, xe.xkey.keycode, wch);
+						m_owner->raiseEvent(&keyEvent);
+					}
 				}
 
 				XFree(ks);
 			}
 		});
 
+		// Key release.
 		a.bind(m_window, KeyRelease, [&](XEvent& xe) {
 			int nkeysyms;
 			KeySym* ks = XGetKeyboardMapping(m_display, xe.xkey.keycode, 1, &nkeysyms);
@@ -541,14 +603,15 @@ protected:
 			}
 		});
 
+		// Motion
 		a.bind(m_window, MotionNotify, [&](XEvent& xe){
 			int32_t button = 0;
 			if ((xe.xmotion.state & Button1Mask) != 0)
 				button = MbtLeft;
 			if ((xe.xmotion.state & Button2Mask) != 0)
-				button = MbtRight;
-			if ((xe.xmotion.state & Button3Mask) != 0)
 				button = MbtMiddle;
+			if ((xe.xmotion.state & Button3Mask) != 0)
+				button = MbtRight;
 
 			MouseMoveEvent mouseMoveEvent(
 				m_owner,
@@ -558,50 +621,64 @@ protected:
 			m_owner->raiseEvent(&mouseMoveEvent);
 		});
 
+		// Button press.
 		a.bind(m_window, ButtonPress, [&](XEvent& xe){
-			int32_t button = 0;
-			switch (xe.xbutton.button)
+			if (xe.xbutton.button == 4 || xe.xbutton.button == 5)
 			{
-			case Button1:
-				button = MbtLeft;
-				break;
-
-			case Button2:
-				button = MbtRight;
-				break;
-
-			case Button3:
-				button = MbtMiddle;
-				break;
-
-			default:
-				return;
+				MouseWheelEvent mouseWheelEvent(
+					m_owner,
+					xe.xbutton.button == 4 ? 1 : -1,
+					Point(xe.xbutton.x, xe.xbutton.y)
+				);
+				m_owner->raiseEvent(&mouseWheelEvent);
 			}
-
-			setFocus();
-
-			MouseButtonDownEvent mouseButtonDownEvent(
-				m_owner,
-				button,
-				Point(xe.xbutton.x, xe.xbutton.y)
-			);
-			m_owner->raiseEvent(&mouseButtonDownEvent);
-
-			int32_t dbt = xe.xbutton.time - m_lastMousePress;
-			if (dbt <= 150 && m_lastMouseButton == button)
+			else
 			{
-				MouseDoubleClickEvent mouseDoubleClickEvent(
+				int32_t button = 0;
+				switch (xe.xbutton.button)
+				{
+				case Button1:
+					button = MbtLeft;
+					break;
+
+				case Button2:
+					button = MbtMiddle;
+					break;
+
+				case Button3:
+					button = MbtRight;
+					break;
+
+				default:
+					return;
+				}
+
+				setFocus();
+
+				MouseButtonDownEvent mouseButtonDownEvent(
 					m_owner,
 					button,
 					Point(xe.xbutton.x, xe.xbutton.y)
 				);
-				m_owner->raiseEvent(&mouseDoubleClickEvent);
-			}
+				m_owner->raiseEvent(&mouseButtonDownEvent);
 
-			m_lastMousePress = xe.xbutton.time;
-			m_lastMouseButton = button;
+				int32_t dbt = xe.xbutton.time - m_lastMousePress;
+				if (dbt <= 200 && m_lastMouseButton == button)
+				{
+					MouseDoubleClickEvent mouseDoubleClickEvent(
+						m_owner,
+						button,
+						Point(xe.xbutton.x, xe.xbutton.y)
+					);
+					m_owner->raiseEvent(&mouseDoubleClickEvent);
+				}
+
+				m_lastMousePress = xe.xbutton.time;
+				m_lastMouseButton = button;
+			}
 		});
 
+		// Button release.
 		a.bind(m_window, ButtonRelease, [&](XEvent& xe){
 			int32_t button = 0;
 			switch (xe.xbutton.button)
@@ -611,11 +688,11 @@ protected:
 				break;
 
 			case Button2:
-				button = MbtRight;
+				button = MbtMiddle;
 				break;
 
 			case Button3:
-				button = MbtMiddle;
+				button = MbtRight;
 				break;
 
 			default:
@@ -630,6 +707,7 @@ protected:
 			m_owner->raiseEvent(&mouseButtonUpEvent);
 		});
 
+		// Configure, only top windows.
 		if (parent == nullptr)
 		{
 			a.bind(m_window, ConfigureNotify, [&](XEvent& xe){
@@ -649,8 +727,11 @@ protected:
 			});
 		}
 
+		// Expose
 		a.bind(m_window, Expose, [&](XEvent& xe){
-			update(nullptr, false);
+			draw();
+			if (xe.xexpose.send_event != 0)
+				m_pendingExposure = false;
 		});
 
 		return true;
@@ -659,6 +740,12 @@ protected:
 	void draw()
 	{
 		T_FATAL_ASSERT(m_surface != nullptr);
+		T_LIMIT_SCOPE(100);
+
+		XWindowAttributes xa;
+		XGetWindowAttributes(m_display, m_window, &xa);
+		if (xa.map_state != IsViewable)
+			return;
 
 		cairo_push_group(m_context);
 

@@ -22,6 +22,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.DropDown", DropDown, Widget)
 
+DropDown::DropDown()
+:	m_selected(-1)
+{
+}
+
 bool DropDown::create(Widget* parent, int style)
 {
 	if (!Widget::create(parent, style))
@@ -68,44 +73,70 @@ int32_t DropDown::count() const
 
 void DropDown::setItem(int32_t index, const std::wstring& item)
 {
+	m_listBox->setItem(index, item);
 }
 
 void DropDown::setData(int32_t index, Object* data)
 {
+	m_listBox->setData(index, data);
 }
 
 std::wstring DropDown::getItem(int32_t index) const
 {
-	return L"";
+	return m_listBox->getItem(index);
 }
 
 Ref< Object > DropDown::getData(int32_t index) const
 {
-	return nullptr;
+	return m_listBox->getData(index);
 }
 
 void DropDown::select(int32_t index)
 {
+	if (index >= 0)
+	{
+		std::wstring item = m_listBox->getItem(index);
+		m_edit->setText(item);
+	}
+	else
+		m_edit->setText(L"");
+
+	m_selected = index;
 }
 
 bool DropDown::select(const std::wstring& item)
 {
+	for (int32_t i = 0; i < m_listBox->count(); ++i)
+	{
+		if (m_listBox->getItem(i) == item)
+		{
+			select(i);
+			return true;
+		}
+	}
+	select(-1);
 	return false;
 }
 
 int32_t DropDown::getSelected() const
 {
-	return -1;
+	return m_selected;
 }
 
 std::wstring DropDown::getSelectedItem() const
 {
-	return std::wstring();
+	if (m_selected >= 0)
+		return getItem(m_selected);
+	else
+		return std::wstring();
 }
 
 Ref< Object > DropDown::getSelectedData() const
 {
-	return nullptr;
+	if (m_selected >= 0)
+		return getData(m_selected);
+	else
+		return nullptr;
 }
 
 Size DropDown::getPreferedSize() const

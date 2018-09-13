@@ -1,5 +1,4 @@
 #include "Core/Assert.h"
-#include "Core/Log/Log.h"
 #include "Ui/X11/Timers.h"
 
 namespace traktor
@@ -20,7 +19,7 @@ int32_t Timers::bind(int32_t interval, const std::function< void(int32_t) >& fn)
     
     Timer& t = m_timers[id];
     t.interval = interval;
-    t.until = interval;
+    t.until = interval / 1000.0;
     t.fn = fn;
 
     return id;
@@ -33,41 +32,21 @@ void Timers::unbind(int32_t id)
     m_nid++;
 }
 
-void Timers::queue(const std::function< void() >& fn)
-{
-    m_events.push_back(fn);
-}
-
-void Timers::dequeue()
-{
-    m_events.clear();
-}
-
-void Timers::update(int32_t ms)
+void Timers::update(double s)
 {
     std::vector< std::function< void(int32_t) > > fns;
     for (auto& it : m_timers)
     {
         Timer& t = it.second;
-        if ((t.until -= ms) <= 0)
+        if ((t.until -= s) <= 0.0)
         {
-            t.until = t.interval;
+            t.until = t.interval / 1000.0;
             fns.push_back(t.fn);
         }
     }
 
-    int32_t nid = m_nid;
     for (auto fn : fns)
-    {
         fn(0);
-        if (nid != m_nid)
-            break;
-    }
-
-    for (auto it : m_events)
-        it();
-
-    m_events.resize(0);
 }
 
 Timers::Timers()

@@ -61,7 +61,7 @@ bool FormX11::create(IWidget* parent, const std::wstring& text, int width, int h
 
 	XSetWMProtocols(m_display, window, &m_atomWmDeleteWindow, 1);
 
-	return WidgetX11Impl< IForm >::create(nullptr, window, Rect(0, 0, width, height), false);
+	return WidgetX11Impl< IForm >::create(nullptr, style, window, Rect(0, 0, width, height), false);
 }
 
 void FormX11::setIcon(ISystemBitmap* icon)

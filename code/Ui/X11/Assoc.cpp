@@ -31,6 +31,14 @@ void Assoc::dispatch(XEvent& xe)
 {
     switch (xe.type)
     {
+    case FocusIn:
+        dispatch(xe.xfocus.window, FocusIn, xe);
+        break;
+
+    case FocusOut:
+        dispatch(xe.xfocus.window, FocusOut, xe);
+        break;
+
     case KeyPress:
         dispatch(xe.xkey.window, KeyPress, xe);
         break;

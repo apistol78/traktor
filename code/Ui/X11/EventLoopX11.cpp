@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Timer/Timer.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/IdleEvent.h"
 #include "Ui/X11/Assoc.h"
@@ -49,36 +50,49 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 	int fd = ConnectionNumber(m_display);
 	bool idle = true;
 
+	Timer timer;
+	timer.start();
+
 	while (!m_terminated)
 	{
-        fd_set fds;
-        FD_ZERO(&fds);
-        FD_SET(fd, &fds);
+        int nr = 0;
+		if (!XPending(m_display))
+		{
+			fd_set fds;
+			FD_ZERO(&fds);
+			FD_SET(fd, &fds);
 
-        struct timeval tv;
-        tv.tv_usec = 10 * 1000;
-        tv.tv_sec = 0;
+			struct timeval tv;
+			tv.tv_usec = idle ? 10 : 1 * 1000;
+			tv.tv_sec = 0;
 
-        int nr = select(fd + 1, &fds, NULL, NULL, &tv);
+			nr = select(fd + 1, &fds, nullptr, nullptr, &tv);
+		}
+		else
+			nr = 1;
+
         if (nr > 0)
 		{
 			while (XPending(m_display))
 			{
 				XNextEvent(m_display, &e);
 				Assoc::getInstance().dispatch(e);
+				idle = true;
 			}
-			idle = true;
-			continue;
 		}
-
-		if (idle)
+		else
 		{
-			IdleEvent idleEvent(owner);
-			owner->raiseEvent(&idleEvent);
-			idle = false;
+			if (idle)
+			{
+				IdleEvent idleEvent(owner);
+				owner->raiseEvent(&idleEvent);
+				if (!idleEvent.requestedMore())
+					idle = false;
+			}
 		}
 
-		Timers::getInstance().update(10);
+		double dt = timer.getDeltaTime();
+		Timers::getInstance().update(dt);
 	}
 
 	return m_exitCode;

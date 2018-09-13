@@ -1,4 +1,6 @@
 #include <X11/Xutil.h>
+#include "Core/Timer/Timer.h"
+#include "Ui/Dialog.h"
 #include "Ui/X11/Assoc.h"
 #include "Ui/X11/DialogX11.h"
 #include "Ui/X11/Timers.h"
@@ -47,6 +49,13 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 
 	XSetWMName(m_display, window, &tp);
 
+	// Make dialog on top of parent.
+	if (parent != nullptr)
+	{
+		Window parentWindow = (Window)parent->getInternalHandle();
+		XSetTransientForHint(m_display, window, parentWindow);
+	}
+
 	// Register "delete window" window manager message.
 	m_atomWmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
 
@@ -62,7 +71,30 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 
 	XSetWMProtocols(m_display, window, &m_atomWmDeleteWindow, 1);
 
-	return WidgetX11Impl< IDialog >::create(nullptr, window, Rect(0, 0, width, height), false);
+	// Center dialog on parent or desktop.
+	Window parentWindow = DefaultRootWindow(m_display);
+	Window root;
+	int px, py;
+	unsigned int pwidth, pheight;
+	unsigned int pborder, pdepth;
+
+	if (parent != nullptr && style & Dialog::WsCenterDesktop == 0)
+		parentWindow = (Window)parent->getInternalHandle();
+
+	XGetGeometry(
+		m_display,
+		parentWindow,
+		&root,
+		&px, &py,
+		&pwidth, 
+		&pheight,
+		&pborder,
+		&pdepth
+	);
+
+	Rect rc(Point(px + (pwidth - width) / 2, py + (pheight - height) / 2), Size(width, height));
+
+	return WidgetX11Impl< IDialog >::create(nullptr, style, window, rc, false);
 }
 
 void DialogX11::destroy()
@@ -84,17 +116,27 @@ int DialogX11::showModal()
 	int fd = ConnectionNumber(m_display);
 	XEvent e;
 
+	Timer timer;
+	timer.start();
+
 	for (m_modal = true; m_modal; )
 	{
-		fd_set fds;
-		FD_ZERO(&fds);
-		FD_SET(fd, &fds);
+        int nr = 0;
+		if (!XPending(m_display))
+		{
+			fd_set fds;
+			FD_ZERO(&fds);
+			FD_SET(fd, &fds);
 
-		struct timeval tv;
-		tv.tv_usec = 10 * 1000;
-		tv.tv_sec = 0;
+			struct timeval tv;
+			tv.tv_usec = 1 * 1000;
+			tv.tv_sec = 0;
 
-        int nr = select(fd + 1, &fds, NULL, NULL, &tv);
+			nr = select(fd + 1, &fds, nullptr, nullptr, &tv);
+		}
+		else
+			nr = 1;
+
         if (nr > 0)
 		{
 			while (XPending(m_display))
@@ -102,10 +144,10 @@ int DialogX11::showModal()
 				XNextEvent(m_display, &e);
 				Assoc::getInstance().dispatch(e);
 			}
-			continue;
 		}
 
-		Timers::getInstance().update(10);
+		double dt = timer.getDeltaTime();
+		Timers::getInstance().update(dt);
 	}
 
 	setVisible(false);
@@ -122,6 +164,11 @@ void DialogX11::endModal(int result)
 
 void DialogX11::setMinSize(const Size& minSize)
 {
+	XSizeHints sh;
+	sh.flags = PMinSize;
+	sh.min_width = minSize.cx;
+	sh.min_height = minSize.cy;
+	XSetWMNormalHints(m_display, m_window, &sh);
 }
 
 	}
