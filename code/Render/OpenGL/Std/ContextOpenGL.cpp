@@ -27,8 +27,8 @@ namespace traktor
 
 typedef RefArray< ContextOpenGL > context_stack_t;
 
-#if !defined(__LINUX__) && !defined(__APPLE__)
-void APIENTRY debugCallbackARB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, GLvoid *userParam)
+#if !defined(__APPLE__)
+void debugCallbackARB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, GLvoid *userParam)
 {
 #	if !defined(_DEBUG)
 	if (severity != GL_DEBUG_SEVERITY_MEDIUM_ARB && severity != GL_DEBUG_SEVERITY_HIGH_ARB)
@@ -50,7 +50,7 @@ void APIENTRY debugCallbackARB(GLenum source, GLenum type, GLuint id, GLenum sev
 		log::info << L"OpenGL (" << s << L"): <empty>" << Endl;
 }
 
-void APIENTRY debugCallbackAMD(GLuint id, GLenum category, GLenum severity, GLsizei length, const GLchar *message, GLvoid *userParam)
+void debugCallbackAMD(GLuint id, GLenum category, GLenum severity, GLsizei length, const GLchar *message, GLvoid *userParam)
 {
 	if (message)
 		log::info << L"OpenGL: " << mbstows(message) << Endl;
@@ -153,6 +153,7 @@ void ContextOpenGL::swapBuffers(int32_t waitVBlanks)
 		glXSwapIntervalEXT(m_display, m_window, waitVBlanks);
 	glXSwapBuffers(m_display, m_window);
 #endif
+	m_stateCache.reset();
 }
 
 void ContextOpenGL::destroy()
@@ -224,12 +225,11 @@ bool ContextOpenGL::enter()
 		ms_contextStack.set(stack);
 	}
 
-	/*
-#if !defined(__LINUX__) && !defined(__APPLE__)
+#if !defined(__APPLE__)
 	if (glDebugMessageCallbackARB)
 	{
 		glDebugMessageControlARB(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, 0, GL_TRUE);
-		glDebugMessageCallbackARB(&debugCallbackARB, 0);
+		glDebugMessageCallbackARB((GLDEBUGPROCARB)&debugCallbackARB, 0);
 #	if defined(_WIN32)
 #		if defined(_DEBUG)
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -244,7 +244,6 @@ bool ContextOpenGL::enter()
 		glDebugMessageCallbackAMD(&debugCallbackAMD, 0);
 	}
 #endif
-	*/
 
 	// Flush GL error stack.
 	while (glGetError() != GL_NO_ERROR)
@@ -323,7 +322,7 @@ GLuint ContextOpenGL::createShaderObject(const char* shader, GLenum shaderType)
 
 	uint32_t hash = adler.get();
 
-	std::map< uint32_t, GLuint >::const_iterator i = m_shaderObjects.find(hash);
+	SmallMap< uint32_t, GLuint >::const_iterator i = m_shaderObjects.find(hash);
 	if (i != m_shaderObjects.end())
 		return i->second;
 
@@ -375,7 +374,7 @@ uint32_t ContextOpenGL::createRenderStateObject(const RenderStateOpenGL& renderS
 	adler.feed(renderState.stencilOpZFail);
 	adler.feed(renderState.stencilOpZPass);
 
-	std::map< uint32_t, uint32_t >::iterator i = m_renderStateListCache.find(adler.get());
+	SmallMap< uint32_t, uint32_t >::iterator i = m_renderStateListCache.find(adler.get());
 	if (i != m_renderStateListCache.end())
 		return i->second;
 
@@ -415,36 +414,23 @@ uint32_t ContextOpenGL::createSamplerStateObject(const SamplerStateOpenGL& sampl
 	adler.feed(samplerState.wrapR);
 	adler.feed(samplerState.compare);
 
-	/*
-	std::map< uint32_t, uint32_t >::iterator i = m_samplerStateListCache.find(adler.get());
-	if (i != m_samplerStateListCache.end())
-		return i->second;
-	*/
-
-	std::map< uint32_t, SamplerStateObject >::iterator i = m_samplerStateObjects.find(adler.get());
+	SmallMap< uint32_t, SamplerStateObject >::iterator i = m_samplerStateObjects.find(adler.get());
 	if (i != m_samplerStateObjects.end())
 		return i->first;
-
-	/*
-	uint32_t list = m_samplerStateList.size() + 1;
-	m_samplerStateList.push_back(samplerState);
-	m_samplerStateListCache.insert(std::make_pair(adler.get(), list));
-	*/
 
 	SamplerStateObject& sso = m_samplerStateObjects[adler.get()];
 	glGenSamplers(2, sso.samplers);
 
 	for (uint32_t i = 0; i < sizeof_array(sso.samplers); ++i)
 	{
-		bool haveMips = bool(i == 0);
-
 		T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_WRAP_S, samplerState.wrapS));
 		T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_WRAP_T, samplerState.wrapT));
 		T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_WRAP_R, samplerState.wrapR));
 
 		T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
 
-		if (haveMips)
+		bool withMips = bool(i == 0);
+		if (withMips)
 		{
 			T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_MIN_FILTER, samplerState.minFilter));
 			if (m_maxAnisotropy > 0.0f)
@@ -475,12 +461,15 @@ void ContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 	if (renderStateObject == m_currentRenderStateList)
 		return;
 
-	const std::vector< RenderStateOpenGL >& renderStateList = m_resourceContext->m_renderStateList;
+	const AlignedVector< RenderStateOpenGL >& renderStateList = m_resourceContext->m_renderStateList;
 
 	T_ASSERT (renderStateObject > 0);
 	T_ASSERT (renderStateObject <= renderStateList.size());
 	const RenderStateOpenGL& rs = renderStateList[renderStateObject - 1];
 
+	m_stateCache.setRenderState(rs);
+
+	/*
 	if (rs.cullFaceEnable)
 		{ T_OGL_SAFE(glEnable(GL_CULL_FACE)); }
 	else
@@ -518,20 +507,21 @@ void ContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 
 	T_OGL_SAFE(glStencilMask(~0U));
 	T_OGL_SAFE(glStencilOp(rs.stencilOpFail, rs.stencilOpZFail, rs.stencilOpZPass));
+	*/
 
 	m_currentRenderStateList = renderStateObject;
 }
 
 void ContextOpenGL::bindSamplerStateObject(GLenum textureTarget, uint32_t samplerStateObject, uint32_t stage, bool haveMips)
 {
-	std::map< uint32_t, SamplerStateObject >::iterator i = m_resourceContext->m_samplerStateObjects.find(samplerStateObject);
+	SmallMap< uint32_t, SamplerStateObject >::iterator i = m_resourceContext->m_samplerStateObjects.find(samplerStateObject);
 	if (haveMips)
 	{
-		T_OGL_SAFE(glBindSampler(stage, i->second.withMips));
+		T_OGL_SAFE(glBindSampler(stage, i->second.samplers[0]));
 	}
 	else
 	{
-		T_OGL_SAFE(glBindSampler(stage, i->second.noMips));
+		T_OGL_SAFE(glBindSampler(stage, i->second.samplers[1]));
 	}
 }
 
@@ -556,7 +546,7 @@ void ContextOpenGL::deleteResources()
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	if (!m_deleteResources.empty())
 	{
-		for (std::vector< IDeleteCallback* >::iterator i = m_deleteResources.begin(); i != m_deleteResources.end(); ++i)
+		for (AlignedVector< IDeleteCallback* >::iterator i = m_deleteResources.begin(); i != m_deleteResources.end(); ++i)
 			(*i)->deleteResource();
 		m_deleteResources.resize(0);
 	}

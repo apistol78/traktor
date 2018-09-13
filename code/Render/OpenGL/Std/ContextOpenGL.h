@@ -7,16 +7,16 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_ContextOpenGL_H
 #define traktor_render_ContextOpenGL_H
 
-#include <map>
 #if defined(__LINUX__)
 #	include <X11/Xlib.h>
 #endif
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/TypesOpenGL.h"
+#include "Render/OpenGL/Std/StateCache.h"
 
 namespace traktor
 {
@@ -133,31 +133,22 @@ private:
 
 	struct SamplerStateObject
 	{
-		union
-		{
-			struct
-			{
-				GLuint withMips;
-				GLuint noMips;
-			};
-			GLuint samplers[2];
-		};
+		GLuint samplers[2];	// 0 = with mips, 1 = no mips
 	};
 
 	static ThreadLocal ms_contextStack;
 	Semaphore m_lock;
-	std::map< uint32_t, GLuint > m_shaderObjects;
-	std::map< uint32_t, uint32_t > m_renderStateListCache;
-	//std::map< uint32_t, uint32_t > m_samplerStateListCache;
-	std::map< uint32_t, SamplerStateObject > m_samplerStateObjects;
-	std::vector< RenderStateOpenGL > m_renderStateList;
-	//std::vector< SamplerStateOpenGL > m_samplerStateList;
-	std::vector< IDeleteCallback* > m_deleteResources;
+	SmallMap< uint32_t, GLuint > m_shaderObjects;
+	SmallMap< uint32_t, uint32_t > m_renderStateListCache;
+	SmallMap< uint32_t, SamplerStateObject > m_samplerStateObjects;
+	AlignedVector< RenderStateOpenGL > m_renderStateList;
+	AlignedVector< IDeleteCallback* > m_deleteResources;
 	int32_t m_width;
 	int32_t m_height;
 	GLfloat m_maxAnisotropy;
 	bool m_permitDepth;
 	uint32_t m_currentRenderStateList;
+	StateCache m_stateCache;
 };
 
 	}
