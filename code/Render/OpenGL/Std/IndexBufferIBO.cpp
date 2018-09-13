@@ -41,7 +41,14 @@ IndexBufferIBO::IndexBufferIBO(ContextOpenGL* resourceContext, IndexType indexTy
 {
 	T_OGL_SAFE(glGenBuffers(1, &m_name));
 	T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_name));
-	T_OGL_SAFE(glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferSize, 0, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
+	if (!dynamic)
+	{
+		T_OGL_SAFE(glBufferStorage(GL_ELEMENT_ARRAY_BUFFER, bufferSize, 0,  GL_MAP_WRITE_BIT));
+	}
+	else
+	{
+		T_OGL_SAFE(glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferSize, 0, GL_DYNAMIC_DRAW));
+	}
 }
 
 IndexBufferIBO::~IndexBufferIBO()

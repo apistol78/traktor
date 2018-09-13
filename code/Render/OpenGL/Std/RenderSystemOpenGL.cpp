@@ -391,7 +391,30 @@ DisplayMode RenderSystemOpenGL::getCurrentDisplayMode() const
 
 #elif defined(__LINUX__)
 
-	int screen = DefaultScreen(m_display);
+	int screen = 0; // DefaultScreen(m_display);
+	::Window root = RootWindow(m_display, screen);
+
+	XRRScreenResources* resources = XRRGetScreenResources(m_display, root);
+
+	XRRScreenConfiguration* xrrc = XRRGetScreenInfo(m_display, root);
+	if (xrrc)
+	{
+		Rotation rotation;
+		SizeID sizeId = XRRConfigCurrentConfiguration(xrrc, &rotation);
+
+		int sizes;
+		XRRScreenSize* xrrss = XRRConfigSizes(xrrc, &sizes);
+
+		if (sizeId < sizes)
+		{
+			DisplayMode dm;
+			dm.width = xrrss[sizeId].width;
+			dm.height = xrrss[sizeId].height;
+			dm.refreshRate = 60;
+			dm.colorBits = 32;
+			return dm;			
+		}
+	}
 
 	DisplayMode dm;
 	dm.width = DisplayWidth(m_display, screen);

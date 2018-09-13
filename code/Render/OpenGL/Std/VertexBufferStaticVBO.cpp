@@ -50,7 +50,7 @@ VertexBufferStaticVBO::VertexBufferStaticVBO(ContextOpenGL* resourceContext, con
 
 	T_OGL_SAFE(glGenBuffers(1, &m_buffer));
 	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
-	T_OGL_SAFE(glBufferData(GL_ARRAY_BUFFER, bufferSize, 0, GL_STATIC_DRAW));
+	T_OGL_SAFE(glBufferStorage(GL_ARRAY_BUFFER, bufferSize, 0, GL_MAP_WRITE_BIT));
 
 	std::memset(m_attributeDesc, 0, sizeof(m_attributeDesc));
 
