@@ -30,7 +30,7 @@ LimitScope::~LimitScope()
 	{
 		m_context.m_peek = std::max(m_context.m_peek, elapsed);
 		m_context.m_count++;
-		T_DEBUG(L"Time limit \"" << mbstows(m_name) << L"\" exceeded by " << result << L" ms (limit " << m_threshold << L" ms, current " << elapsed << L" ms, peek " << m_context.m_peek << L" ms) " << m_context.m_count << L" time(s)");
+		log::warning << L"Time limit \"" << mbstows(m_name) << L"\" exceeded by " << result << L" ms (limit " << m_threshold << L" ms, current " << elapsed << L" ms, peek " << m_context.m_peek << L" ms) " << m_context.m_count << L" time(s)" << Endl;
 	}
 }
 
