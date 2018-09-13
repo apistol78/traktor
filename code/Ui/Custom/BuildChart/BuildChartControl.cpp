@@ -263,7 +263,8 @@ void BuildChartControl::eventTimer(TimerEvent* event)
 		}
 	}
 
-	update();
+	if (m_running)
+		update();
 }
 
 void BuildChartControl::eventButtonDown(MouseButtonDownEvent* event)

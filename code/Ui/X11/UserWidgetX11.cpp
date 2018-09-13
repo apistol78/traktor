@@ -32,7 +32,7 @@ bool UserWidgetX11::create(IWidget* parent, int style)
 		nullptr
 	);
 
-	return WidgetX11Impl< IUserWidget >::create(parent, window, Rect(0, 0, c_defaultWidth, c_defaultHeight), true);
+	return WidgetX11Impl< IUserWidget >::create(parent, style, window, Rect(0, 0, c_defaultWidth, c_defaultHeight), true);
 }
 
 	}

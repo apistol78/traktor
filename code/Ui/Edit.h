@@ -51,6 +51,8 @@ public:
 
 	void setBorderColor(const Color4ub& borderColor);
 
+	virtual void setText(const std::wstring& text) T_OVERRIDE;
+
 	virtual Size getPreferedSize() const T_OVERRIDE;
 
 private:
@@ -60,6 +62,8 @@ private:
 	int32_t m_caret;
 	bool m_caretBlink;
 	bool m_readOnly;
+
+	void eventButtonDown(MouseButtonDownEvent* event);
 
 	void eventKeyDown(KeyDownEvent* event);
 

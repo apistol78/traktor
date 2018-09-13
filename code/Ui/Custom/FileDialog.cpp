@@ -117,7 +117,7 @@ void FileDialog::updatePath()
 	while (m_containerPath->getFirstChild() != nullptr)
 		m_containerPath->getFirstChild()->destroy();
 
-	auto pn = m_currentPath.getPathOnlyNoVolume();
+	auto pn = m_currentPath.getPathNameNoVolume();
 
 	Path p;
 
@@ -147,7 +147,7 @@ void FileDialog::updateFiles()
 	for (auto file : files)
 	{
 		auto fn = file->getPath().getFileName();
-		if (fn == L"." || fn == L"..")
+		if (fn == L"." || fn == L".." || file->isHidden())
 			continue;
 
 		Ref< GridRow > row = new GridRow();

@@ -1373,7 +1373,7 @@ void RichEdit::eventKey(KeyEvent* event)
 		paste();
 	else if (ch == 24 && m_clipboard)
 		cut();
-	else if (ch != 8)
+	else if (ch != 8 && ch != 127)
 		insertCharacter(ch, true);
 
 	updateScrollBars();
@@ -1649,7 +1649,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 				std::map< wchar_t, Ref< const ISpecialCharacter > >::const_iterator k = m_specialCharacters.find(m_text[j].ch);
 				if (k == m_specialCharacters.end())
 				{
-					if (std::iswgraph(m_text[j].ch))
+					if (m_text[j].ch != L'\t' && m_text[j].ch != L' ')
 						canvas.drawText(textRc, std::wstring(1, m_text[j].ch), AnLeft, AnCenter);
 				}
 				else

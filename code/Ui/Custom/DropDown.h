@@ -40,6 +40,8 @@ class T_DLLCLASS DropDown : public Widget
 	T_RTTI_CLASS;
 
 public:
+	DropDown();
+
 	bool create(Widget* parent, int style = WsNone);
 
 	int32_t add(const std::wstring& item, Object* data = 0);
@@ -87,6 +89,7 @@ private:
 	Ref< Edit > m_edit;
 	Ref< ToolForm > m_listForm;
 	Ref< ListBox > m_listBox;
+	int32_t m_selected;
 
 	void eventArrowClick(ButtonClickEvent* event);
 

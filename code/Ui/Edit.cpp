@@ -40,6 +40,7 @@ bool Edit::create(Widget* parent, const std::wstring& text, int style, const Edi
 
 	m_readOnly = bool((style & WsReadOnly) != 0);
 
+	addEventHandler< MouseButtonDownEvent >(this, &Edit::eventButtonDown);
 	addEventHandler< KeyDownEvent >(this, &Edit::eventKeyDown);
 	addEventHandler< KeyEvent >(this, &Edit::eventKey);
 	addEventHandler< PaintEvent >(this, &Edit::eventPaint);
@@ -102,10 +103,47 @@ void Edit::setBorderColor(const Color4ub& borderColor)
 {
 }
 
+void Edit::setText(const std::wstring& text)
+{
+	Widget::setText(text);
+	update();
+}
+
 Size Edit::getPreferedSize() const
 {
 	const int32_t height = getFontMetric().getHeight() + dpi96(4) * 2;
 	return Size(dpi96(200), height);
+}
+
+void Edit::eventButtonDown(MouseButtonDownEvent* event)
+{
+	int32_t mx = event->getPosition().x;
+	int32_t x = dpi96(4);
+	if (mx >= x)
+	{
+		m_caret = -1;
+
+		std::wstring text = getText();
+		FontMetric fm = getFontMetric();
+
+		for (int32_t i = 0; i < text.length(); ++i)
+		{
+			int32_t a = fm.getAdvance(text[i], 0);
+			if (mx >= x && mx <= x + a)
+			{
+				if (mx <= x + a / 2)
+					m_caret = i;
+				else
+					m_caret = i + 1;
+				break;
+			}
+			x += a;
+		}
+		if (m_caret < 0)
+			m_caret = int32_t(text.length());
+	}
+	else
+		m_caret = 0;
 }
 
 void Edit::eventKeyDown(KeyDownEvent* event)
@@ -137,7 +175,7 @@ void Edit::eventKey(KeyEvent* event)
 	wchar_t ch = event->getCharacter();
 	std::wstring text = getText();
 
-	if (ch != 8)
+	if (ch != 8 && ch != 127)
 	{
 		if (m_caret >= text.length())
 			text += ch;
@@ -145,7 +183,7 @@ void Edit::eventKey(KeyEvent* event)
 			text = text.substr(0, m_caret) + ch + text.substr(m_caret);
 		++m_caret;
 	}
-	else
+	else if (ch == 8)
 	{
 		if (m_caret > 0)
 		{
@@ -218,6 +256,9 @@ void Edit::eventPaint(PaintEvent* event)
 
 void Edit::eventTimer(TimerEvent* event)
 {
+	if (!hasFocus())
+		return;
+
 	m_caretBlink = !m_caretBlink;
 	update();
 }

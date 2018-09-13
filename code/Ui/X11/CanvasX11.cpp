@@ -229,9 +229,14 @@ void CanvasX11::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) con
 
 int32_t CanvasX11::getAdvance(wchar_t ch, wchar_t next) const
 {
+	uint8_t uc[IEncoding::MaxEncodingSize + 1] = { 0 };
+	int32_t nuc = Utf8Encoding().translate(&ch, 1, uc);
+	if (nuc <= 0)
+		return 0;
+
 	cairo_text_extents_t tx;
-	const char cs[] = { (char)ch, 0 };
-	cairo_text_extents(m_cr, cs, &tx);
+	cairo_text_extents(m_cr, (const char*)uc, &tx);
+
 	return (int32_t)tx.x_advance;
 }
 
