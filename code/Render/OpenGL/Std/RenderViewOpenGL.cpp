@@ -624,7 +624,7 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 		if (!programGL->activate(m_renderContext, targetSize))
 			return;
 
-		const GLubyte* indices = static_cast< const GLubyte* >(indexBufferGL->getIndexData()) + primitives.offset * offsetMultiplier;
+		const GLubyte* indices = reinterpret_cast< const GLubyte* >(primitives.offset * offsetMultiplier);
 		T_OGL_SAFE(glDrawRangeElements(
 			primitiveType,
 			primitives.minIndex,
@@ -727,7 +727,7 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 		if (!programGL->activate(m_renderContext, targetSize))
 			return;
 
-		const GLubyte* indices = static_cast< const GLubyte* >(indexBufferGL->getIndexData()) + primitives.offset * offsetMultiplier;
+		const GLubyte* indices = reinterpret_cast< const GLubyte* >(primitives.offset * offsetMultiplier);
 		T_OGL_SAFE(glDrawElementsInstanced(
 			primitiveType,
 			vertexCount,
