@@ -178,9 +178,14 @@ Ref< MenuItem > MenuItem::get(int index)
 
 Size MenuItem::getSize(const Widget* shell) const
 {
-	int32_t cw = shell->getFontMetric().getExtent(m_text).cx;
-	int32_t ch = shell->getFontMetric().getHeight();
-	return Size(cw + dpi96(c_itemMarginX) * 2, ch + dpi96(c_itemMarginY) * 2);
+	if (m_text != L"-")
+	{
+		int32_t cw = shell->getFontMetric().getExtent(m_text).cx;
+		int32_t ch = shell->getFontMetric().getHeight();
+		return Size(cw + dpi96(c_itemMarginX) * 2, ch + dpi96(c_itemMarginY) * 2);
+	}
+	else
+		return Size(0, 1 + dpi96(c_itemMarginY) * 2);
 }
 
 void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc) const
@@ -194,12 +199,20 @@ void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc) const
 	canvas.fillRect(rc);
 
 	canvas.setForeground(ss->getColor(this, L"color"));
-	canvas.drawText(rcLabel, m_text, AnLeft, AnCenter);
+
+	if (m_text != L"-")
+		canvas.drawText(rcLabel, m_text, AnLeft, AnCenter);
+	else
+		canvas.drawLine(
+			Point(rcLabel.left, rcLabel.getCenter().y),
+			Point(rcLabel.right, rcLabel.getCenter().y)
+		);
 }
 
 bool MenuItem::mouseEnter(Widget* shell, MouseMoveEvent* mouseEvent)
 {
-	m_hover = true;
+	if (m_text != L"-")
+		m_hover = true;
 	return true;
 }
 

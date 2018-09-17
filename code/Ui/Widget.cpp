@@ -222,7 +222,6 @@ void Widget::show()
 {
 	T_ASSERT (m_widget);
 	m_widget->setVisible(true);
-	m_widget->setActive();
 }
 
 void Widget::hide()
