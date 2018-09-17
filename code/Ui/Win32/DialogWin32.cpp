@@ -139,16 +139,14 @@ int DialogWin32::showModal()
 
 	while (m_modal)
 	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		if (!GetMessage(&msg, NULL, 0, 0))
+			break;
+
+		if (!IsDialogMessage(m_hWnd, &msg))
 		{
-			if (!IsDialogMessage(m_hWnd, &msg))
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
-		else
-			Sleep(100);
 	}
 
 	if (hParentWnd)
@@ -175,7 +173,7 @@ void DialogWin32::setMinSize(const Size& minSize)
 
 void DialogWin32::setVisible(bool visible)
 {
-	if (visible == isVisible(false))
+	if (visible == isVisible())
 		return;
 
 	if (visible)

@@ -97,7 +97,7 @@ public:
 
 	virtual void setVisible(bool visible) T_OVERRIDE
 	{
-		if (visible ^ isVisible(false))
+		if (visible ^ isVisible())
 		{
 			ShowWindow(m_hWnd, visible ? SW_SHOWNA : SW_HIDE);
 

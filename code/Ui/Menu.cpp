@@ -36,7 +36,7 @@ MenuItem* Menu::show(Widget* parent, const Point& at)
 		return nullptr;
 
 	Ref< ToolForm > form = new ToolForm();
-	if (!form->create(parent, L"", 0, 0, WsNone, new FloodLayout()))
+	if (!form->create(parent, L"", 0, 0, WsTop, new FloodLayout()))
 		return nullptr;
 
 	Ref< MenuShell > shell = new MenuShell();

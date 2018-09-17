@@ -285,7 +285,7 @@ bool SearchToolDialog::create(ui::Widget* parent)
 	containerSearch->create(splitterV, ui::WsNone, new ui::TableLayout(L"100%", L"*", f, f));
 
 	m_editSearch = new ui::Edit();
-	m_editSearch->create(containerSearch, L"", ui::WsClientBorder | ui::WsWantAllInput);
+	m_editSearch->create(containerSearch, L"", ui::WsWantAllInput);
 	m_editSearch->addEventHandler< ui::KeyDownEvent >(this, &SearchToolDialog::eventSearchKey);
 
 	m_checkRegExp = new ui::CheckBox();
