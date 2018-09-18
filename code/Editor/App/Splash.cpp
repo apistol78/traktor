@@ -31,7 +31,7 @@ bool Splash::create()
 	image->create(this, splash, false);
 
 	fit();
-	center();
+	//center();
 	show();
 
 	update(0, true);

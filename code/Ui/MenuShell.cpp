@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/MenuItem.h"
@@ -65,6 +66,8 @@ void MenuShell::eventMouseMove(MouseMoveEvent* event)
 	if (!isEnable())
 		return;
 
+		log::info << event->getPosition().x << L", " << event->getPosition().y << Endl;
+
 	MenuItem* item = getItem(event->getPosition());
 	if (item != m_trackItem)
 	{
@@ -78,13 +81,13 @@ void MenuShell::eventMouseMove(MouseMoveEvent* event)
 
 		if (item && item->mouseEnter(this, event))
 		{
-			setCapture();
+			//setCapture();
 			m_trackItem = item;
 		}
-		else
-		{
-			releaseCapture();
-		}
+		// else
+		// {
+		// 	releaseCapture();
+		// }
 
 		update();
 	}
@@ -100,6 +103,11 @@ void MenuShell::eventButtonDown(MouseButtonDownEvent* event)
 	{
 		item->buttonDown(this, event);
 		update();
+	}
+	else
+	{
+		MenuClickEvent clickEvent(this, nullptr, Command());
+		raiseEvent(&clickEvent);
 	}
 }
 

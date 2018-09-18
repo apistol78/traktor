@@ -89,7 +89,6 @@ private:
 	Ref< Edit > m_edit;
 	Ref< ToolForm > m_listForm;
 	Ref< ListBox > m_listBox;
-	int32_t m_selected;
 
 	void eventArrowClick(ButtonClickEvent* event);
 
