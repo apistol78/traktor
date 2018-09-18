@@ -194,8 +194,6 @@ public:
 			None,
 			CurrentTime
 		) == GrabSuccess);
-
-		m_grabbed = true;
 	}
 
 	virtual void releaseCapture() T_OVERRIDE

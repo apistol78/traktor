@@ -23,7 +23,6 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.DropDown", DropDown, Widget)
 
 DropDown::DropDown()
-:	m_selected(-1)
 {
 }
 
@@ -93,15 +92,8 @@ Ref< Object > DropDown::getData(int32_t index) const
 
 void DropDown::select(int32_t index)
 {
-	if (index >= 0)
-	{
-		std::wstring item = m_listBox->getItem(index);
-		m_edit->setText(item);
-	}
-	else
-		m_edit->setText(L"");
-
-	m_selected = index;
+	m_listBox->select(index);
+	m_edit->setText(m_listBox->getSelectedItem());
 }
 
 bool DropDown::select(const std::wstring& item)
@@ -120,23 +112,17 @@ bool DropDown::select(const std::wstring& item)
 
 int32_t DropDown::getSelected() const
 {
-	return m_selected;
+	return m_listBox->getSelected();
 }
 
 std::wstring DropDown::getSelectedItem() const
 {
-	if (m_selected >= 0)
-		return getItem(m_selected);
-	else
-		return std::wstring();
+	return m_listBox->getSelectedItem();
 }
 
 Ref< Object > DropDown::getSelectedData() const
 {
-	if (m_selected >= 0)
-		return getData(m_selected);
-	else
-		return nullptr;
+	return m_listBox->getSelectedData();
 }
 
 Size DropDown::getPreferedSize() const
@@ -148,7 +134,13 @@ Size DropDown::getPreferedSize() const
 
 void DropDown::eventArrowClick(ButtonClickEvent* event)
 {
+	const Size sz = getRect().getSize();
+	const int32_t h = sz.cy;
+	const int32_t lh = m_listBox->getItemHeight() * 8;
+
+	m_listForm->setRect(Rect(clientToScreen(Point(0, h)), Size(sz.cx, lh)));
 	m_listForm->show();
+
 	m_listBox->setCapture();
 }
 
@@ -156,17 +148,16 @@ void DropDown::eventListButtonDown(MouseButtonDownEvent* event)
 {
 	m_listBox->releaseCapture();
 	m_listForm->hide();
+	m_edit->setText(m_listBox->getSelectedItem());
 }
 
 void DropDown::eventSize(SizeEvent* event)
 {
 	const Size sz = event->getSize();
 	const int32_t h = sz.cy;
-	const int32_t lh = m_listBox->getItemHeight() * 8;
 
 	m_edit->setRect(Rect(Point(0, 0), Size(sz.cx - h, h)));
 	m_buttonArrow->setRect(Rect(Point(sz.cx - h, 0), Size(h, h)));
-	m_listForm->setRect(Rect(Point(0, h), Size(sz.cx, lh)));
 }
 
 		}

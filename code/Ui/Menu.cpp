@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Core/Log/Log.h"
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Menu.h"
@@ -45,6 +46,10 @@ MenuItem* Menu::show(Widget* parent, const Point& at)
 
 	shell->addEventHandler< MenuClickEvent >([&](MenuClickEvent* e) {
 		selectedItem = e->getItem();
+		if (selectedItem != nullptr)
+			form->endModal(DrOk);
+		else
+			form->endModal(DrCancel);
 	});
 
 	for (auto item : m_items)
@@ -60,16 +65,16 @@ MenuItem* Menu::show(Widget* parent, const Point& at)
 		rc.getSize()
 	));
 
-	form->show();
-	
-	// Process events until menu item has been selected.
-	while (!selectedItem)
-	{
-		if (!Application::getInstance()->process())
-			return nullptr;
-	}
+	// Show form before showModal because we need to explicit set capture on shell.
+	form->setVisible(true);
+	shell->setCapture();
 
-	form->destroy();
+	log::info << shell->hasCapture() << Endl;
+
+	if (form->showModal() != DrOk)
+		selectedItem = nullptr;
+
+	shell->releaseCapture();
 
 	return selectedItem;
 }

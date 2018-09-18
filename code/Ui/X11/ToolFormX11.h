@@ -18,7 +18,13 @@ public:
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void center() T_OVERRIDE T_FINAL;
+	virtual int showModal() T_OVERRIDE T_FINAL;
+
+	virtual void endModal(int result) T_OVERRIDE T_FINAL;
+
+private:
+	int32_t m_result;
+	bool m_modal;
 };
 
 	}

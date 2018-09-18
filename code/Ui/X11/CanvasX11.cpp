@@ -197,6 +197,21 @@ void CanvasX11::drawBitmap(const Point& dstAt, const Size& dstSize, const Point&
 
 	cairo_scale(m_cr, sx, sy);
 	cairo_set_source_surface(m_cr, cs, dstAt.x / sx - srcAt.x, dstAt.y / sy - srcAt.y);
+
+	switch (blendMode)
+	{
+	case BmNone:
+		cairo_set_operator(m_cr, CAIRO_OPERATOR_SOURCE);
+		break;
+		
+	case BmAlpha:
+	case BmModulate:
+		break;
+
+	default:
+		return;
+	}
+
 	cairo_rectangle(m_cr, dstAt.x / sx, dstAt.y / sy, dstSize.cx / sx, dstSize.cy / sy);
 	cairo_fill(m_cr);
 	cairo_identity_matrix(m_cr);
