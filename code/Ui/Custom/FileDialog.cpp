@@ -56,7 +56,7 @@ bool FileDialog::create(Widget* parent, const std::wstring& title, const std::ws
 	ct->create(splitter, WsNone, new TableLayout(L"100%", L"*,100%", 0, 0));
 
 	m_containerPath = new Container();
-	m_containerPath->create(ct, WsNone, new TableLayout(L"*,*,*,*,*,*,*,*,*", L"100%", 0, 0));
+	m_containerPath->create(ct, WsNone, new TableLayout(L"*,*,*,*,*,*,*,*,*", L"100%", 0, dpi96(4)));
 
 	m_gridFiles = new GridView();
 	m_gridFiles->create(ct, GridView::WsColumnHeader);

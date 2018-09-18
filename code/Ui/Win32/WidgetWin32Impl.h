@@ -111,11 +111,6 @@ public:
 		return bool((GetWindowLong(m_hWnd, GWL_STYLE) & WS_VISIBLE) == WS_VISIBLE);
 	}
 
-	virtual void setActive() T_OVERRIDE
-	{
-		SetActiveWindow(m_hWnd);
-	}
-
 	virtual void setEnable(bool enable) T_OVERRIDE
 	{
 		EnableWindow(m_hWnd, enable);

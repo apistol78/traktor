@@ -55,8 +55,6 @@ public:
 
 	virtual bool isVisible() const = 0;
 
-	virtual void setActive() = 0;
-
 	virtual void setEnable(bool enable) = 0;
 
 	virtual bool isEnable() const = 0;
