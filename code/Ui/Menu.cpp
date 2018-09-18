@@ -4,7 +4,6 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Core/Log/Log.h"
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Menu.h"
@@ -68,8 +67,6 @@ MenuItem* Menu::show(Widget* parent, const Point& at)
 	// Show form before showModal because we need to explicit set capture on shell.
 	form->setVisible(true);
 	shell->setCapture();
-
-	log::info << shell->hasCapture() << Endl;
 
 	if (form->showModal() != DrOk)
 		selectedItem = nullptr;
