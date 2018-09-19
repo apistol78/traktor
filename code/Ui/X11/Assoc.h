@@ -14,21 +14,35 @@ class Assoc
 public:
     static Assoc& getInstance();
 
-    void bind(Drawable window, int32_t eventType, const std::function< void(XEvent& xe) >& fn);
+    void bind(Window window, int32_t eventType, const std::function< void(XEvent& xe) >& fn);
 
-    void unbind(Drawable window, int32_t eventType);
+    void unbind(Window window, int32_t eventType);
 
-    void unbind(Drawable window);
+    void unbind(Window window);
 
-    void dispatch(XEvent& xe);
+    void dispatch(Display* display, XEvent& xe);
+
+	void setEnable(Window window, bool enable);
 
 private:
-    typedef std::map< int32_t, std::function< void(XEvent& xe) > > binding_t;
-    typedef std::map< Drawable, binding_t > bindings_t;
+	struct Binding
+	{
+		bool enable;
+		std::map< int32_t, std::function< void(XEvent& xe) > > dispatch;
+
+		Binding()
+		:	enable(true)
+		{
+		}
+	};
+
+    typedef std::map< Window, Binding > bindings_t;
 
     bindings_t m_bindings;
 
-    void dispatch(Drawable window, int32_t eventType, XEvent& xe);
+    void dispatch(Display* display, Window window, int32_t eventType, bool always, XEvent& xe);
+
+	bool allowed(Display* display, Window window);
 };
 
     }

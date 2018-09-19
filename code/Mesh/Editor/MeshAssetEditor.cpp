@@ -24,17 +24,17 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/ITexture.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Ui/Application.h"
-#include "Ui/TableLayout.h"
+#include "Ui/Button.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Container.h"
-#include "Ui/NumericEditValidator.h"
 #include "Ui/Edit.h"
+#include "Ui/NumericEditValidator.h"
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
+#include "Ui/TableLayout.h"
 #include "Ui/Custom/DropDown.h"
 #include "Ui/Custom/FileDialog.h"
 #include "Ui/Custom/InputDialog.h"
-#include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/GridView/GridRow.h"
@@ -115,17 +115,17 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_editFileName->create(containerFileName, L""))
 		return false;
 
-	Ref< ui::custom::MiniButton > browseButton = new ui::custom::MiniButton();
+	Ref< ui::Button > browseButton = new ui::Button();
 	if (!browseButton->create(containerFileName, L"..."))
 		return false;
 	browseButton->addEventHandler< ui::ButtonClickEvent >(this, &MeshAssetEditor::eventBrowseClick);
 
-	Ref< ui::custom::MiniButton > previewModelButton = new ui::custom::MiniButton();
+	Ref< ui::Button > previewModelButton = new ui::Button();
 	if (!previewModelButton->create(containerFileName, i18n::Text(L"MESHASSET_EDITOR_PREVIEW_MESH")))
 		return false;
 	previewModelButton->addEventHandler< ui::ButtonClickEvent >(this, &MeshAssetEditor::eventPreviewModelClick);
 
-	Ref< ui::custom::MiniButton > editModelButton = new ui::custom::MiniButton();
+	Ref< ui::Button > editModelButton = new ui::Button();
 	if (!editModelButton->create(containerFileName, i18n::Text(L"MESHASSET_EDITOR_EDIT_MESH")))
 		return false;
 	editModelButton->addEventHandler< ui::ButtonClickEvent >(this, &MeshAssetEditor::eventEditModelClick);
