@@ -38,7 +38,7 @@ bool EventLoopX11::process(EventSubject* owner)
 
 	XEvent e;
 	XNextEvent(m_display, &e);
-	Assoc::getInstance().dispatch(e);
+	Assoc::getInstance().dispatch(m_display, e);
 
 	return !m_terminated;
 }
@@ -76,7 +76,7 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 			while (XPending(m_display))
 			{
 				XNextEvent(m_display, &e);
-				Assoc::getInstance().dispatch(e);
+				Assoc::getInstance().dispatch(m_display, e);
 				idle = true;
 			}
 		}

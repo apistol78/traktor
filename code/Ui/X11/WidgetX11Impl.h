@@ -95,7 +95,7 @@ public:
 
 	virtual void setParent(IWidget* parent) T_OVERRIDE
 	{
-		Drawable parentWindow = (Drawable)parent->getInternalHandle();
+		Window parentWindow = (Window)parent->getInternalHandle();
 		XReparentWindow(m_display, m_window, parentWindow, 0, 0);
 	}
 
@@ -147,13 +147,10 @@ public:
 		return m_visible;
 	}
 
-	virtual void setActive() T_OVERRIDE
-	{
-	}
-
 	virtual void setEnable(bool enable) T_OVERRIDE
 	{
 		m_enable = enable;
+		Assoc::getInstance().setEnable(m_window, m_enable);
 	}
 
 	virtual bool isEnable() const T_OVERRIDE
@@ -456,7 +453,7 @@ protected:
 	EventSubject* m_owner;
 	Display* m_display;
 	int32_t m_screen;
-	Drawable m_window;
+	Window m_window;
 	XIM m_xim;
 	XIC m_xic;
 
@@ -477,7 +474,7 @@ protected:
 	int32_t m_lastMouseButton;
 	bool m_pendingExposure;
 
-	bool create(IWidget* parent, int32_t style, Drawable window, const Rect& rect, bool visible)
+	bool create(IWidget* parent, int32_t style, Window window, const Rect& rect, bool visible)
 	{
 		if (window == 0)
 			return false;
@@ -555,6 +552,8 @@ protected:
 
 		// Key press.
 		a.bind(m_window, KeyPress, [&](XEvent& xe) {
+			T_FATAL_ASSERT (m_enable);
+
 			int nkeysyms;
 			KeySym* ks = XGetKeyboardMapping(m_display, xe.xkey.keycode, 1, &nkeysyms);
 			if (ks != nullptr)
@@ -586,6 +585,8 @@ protected:
 
 		// Key release.
 		a.bind(m_window, KeyRelease, [&](XEvent& xe) {
+			T_FATAL_ASSERT (m_enable);
+
 			int nkeysyms;
 			KeySym* ks = XGetKeyboardMapping(m_display, xe.xkey.keycode, 1, &nkeysyms);
 			if (ks != nullptr)
@@ -603,6 +604,8 @@ protected:
 
 		// Motion
 		a.bind(m_window, MotionNotify, [&](XEvent& xe){
+			T_FATAL_ASSERT (m_enable);
+
 			int32_t button = 0;
 			if ((xe.xmotion.state & Button1Mask) != 0)
 				button = MbtLeft;
@@ -621,6 +624,8 @@ protected:
 
 		// Button press.
 		a.bind(m_window, ButtonPress, [&](XEvent& xe){
+			T_FATAL_ASSERT (m_enable);
+
 			if (xe.xbutton.button == 4 || xe.xbutton.button == 5)
 			{
 				MouseWheelEvent mouseWheelEvent(
@@ -678,6 +683,8 @@ protected:
 
 		// Button release.
 		a.bind(m_window, ButtonRelease, [&](XEvent& xe){
+			T_FATAL_ASSERT (m_enable);
+
 			int32_t button = 0;
 			switch (xe.xbutton.button)
 			{

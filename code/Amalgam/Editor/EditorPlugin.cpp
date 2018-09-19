@@ -154,6 +154,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	// Create toolbar; add all targets as drop down items.
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
+	m_toolBar->setEnable(false);
 	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EditorPlugin::eventToolBarClick);
 
 	m_toolTargets = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Targets"), ui::dpi96(120), i18n::Text(L"AMALGAM_TARGETS"));
@@ -361,6 +362,9 @@ void EditorPlugin::handleWorkspaceOpened()
 		false
 	);
 #endif
+
+	// Enable widgets.
+	m_toolBar->setEnable(true);
 
 	updateTargetManagers();
 }

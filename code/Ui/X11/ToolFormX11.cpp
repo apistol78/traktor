@@ -92,7 +92,7 @@ int ToolFormX11::showModal()
 			while (XPending(m_display))
 			{
 				XNextEvent(m_display, &e);
-				Assoc::getInstance().dispatch(e);
+				Assoc::getInstance().dispatch(m_display, e);
 			}
 		}
 
