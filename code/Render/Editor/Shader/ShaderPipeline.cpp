@@ -262,6 +262,7 @@ struct BuildCombinationTask : public Object
 		Ref< ProgramResource > programResource = programCompiler->compile(
 			programGraph,
 			compilerSettings,
+			path,
 			optimize,
 			validate,
 			&stats

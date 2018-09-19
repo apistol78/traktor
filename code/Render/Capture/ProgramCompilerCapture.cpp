@@ -29,12 +29,13 @@ const wchar_t* ProgramCompilerCapture::getPlatformSignature() const
 Ref< ProgramResource > ProgramCompilerCapture::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
+	const std::wstring& name,
 	int32_t optimize,
 	bool validate,
 	Stats* outStats
 ) const
 {
-	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, settings, optimize, validate, outStats);
+	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, settings, name, optimize, validate, outStats);
 	if (!resource)
 		return 0;
 
@@ -46,7 +47,15 @@ Ref< ProgramResource > ProgramCompilerCapture::compile(
 	shaderGraph->findNodesOf< IndexedUniform >(resourceCapture->m_indexedUniforms);
 
 	// Keep copy of readable shader in capture.
-	m_compiler->generate(shaderGraph, settings, optimize, resourceCapture->m_vertexShader, resourceCapture->m_pixelShader, resourceCapture->m_computeShader);
+	m_compiler->generate(
+		shaderGraph,
+		settings,
+		name,
+		optimize,
+		resourceCapture->m_vertexShader,
+		resourceCapture->m_pixelShader,
+		resourceCapture->m_computeShader
+	);
 
 	return resourceCapture;
 }
@@ -54,13 +63,14 @@ Ref< ProgramResource > ProgramCompilerCapture::compile(
 bool ProgramCompilerCapture::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
+	const std::wstring& name,
 	int32_t optimize,
 	std::wstring& outVertexShader,
 	std::wstring& outPixelShader,
 	std::wstring& outComputeShader
 ) const
 {
-	return m_compiler->generate(shaderGraph, settings, optimize, outVertexShader, outPixelShader, outComputeShader);
+	return m_compiler->generate(shaderGraph, settings, name, optimize, outVertexShader, outPixelShader, outComputeShader);
 }
 
 	}

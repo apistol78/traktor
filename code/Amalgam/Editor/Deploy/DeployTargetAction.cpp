@@ -178,6 +178,10 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	// Append application title.
 	applicationConfiguration->setProperty< PropertyString >(L"Render.Title", m_targetName);
 
+	// Append verbose resource manager.
+	if (m_globalSettings->getProperty< bool >(L"Amalgam.VerboseResourceManager", false))
+		applicationConfiguration->setProperty< PropertyBoolean >(L"Resource.Verbose", true);
+
 	// Append tweaks.
 	if (m_tweakSettings)
 		applicationConfiguration = applicationConfiguration->merge(m_tweakSettings, PropertyGroup::MmJoin);

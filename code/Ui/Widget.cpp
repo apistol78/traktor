@@ -143,11 +143,16 @@ bool Widget::hasFocus() const
 bool Widget::containFocus() const
 {
 	T_ASSERT (m_widget);
-	for (const Widget* w = this; w != 0; w = w->getParent())
+
+	if (m_widget->hasFocus())
+		return true;
+
+	for (const Widget* child = m_firstChild; child != nullptr; child = child->getNextSibling())
 	{
-		if (w->hasFocus())
+		if (child->containFocus())
 			return true;
-	}	
+	}
+
 	return false;
 }
 

@@ -20,6 +20,8 @@ namespace traktor
 class ClipboardX11 : public IClipboard
 {
 public:
+	ClipboardX11();
+
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	virtual bool setObject(ISerializable* object) T_OVERRIDE T_FINAL;
@@ -35,6 +37,12 @@ public:
 	virtual std::wstring getText() const T_OVERRIDE T_FINAL;
 
 	virtual Ref< const drawing::Image > getImage() const T_OVERRIDE T_FINAL;
+
+private:
+	ClipboardContentType m_type;
+	Ref< ISerializable > m_object;
+	std::wstring m_text;
+	Ref< const drawing::Image > m_image;
 };
 
 	}

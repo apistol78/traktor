@@ -66,6 +66,7 @@ public:
 	 *
 	 * \param shaderGraph Program shader graph.
 	 * \param settings Compiler settings.
+	 * \param name Program name, useful for debugging.
 	 * \param optimize Optimization level (0-4; 0 = No optimization; 4 = Maximum optimization).
 	 * \param validate Validate compiled program.
 	 * \param outStats Optional stats.
@@ -74,6 +75,7 @@ public:
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
+		const std::wstring& name,
 		int32_t optimize,
 		bool validate,
 		Stats* outStats
@@ -86,6 +88,7 @@ public:
 	 *
 	 * \param shaderGraph Program shader graph.
 	 * \param settings Compiler settings.
+	 * \param name Program name, useful for debugging.
 	 * \param optimize Optimization level (0-4; 0 = No optimization; 4 = Maximum optimization).
 	 * \param outVertexShader Output render specific shader.
 	 * \param outPixelShader Output render specific shader.
@@ -95,6 +98,7 @@ public:
 	virtual bool generate(
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
+		const std::wstring& name,
 		int32_t optimize,
 		std::wstring& outVertexShader,
 		std::wstring& outPixelShader,

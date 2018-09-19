@@ -63,31 +63,14 @@ Size MenuShell::getPreferedSize() const
 
 void MenuShell::eventMouseMove(MouseMoveEvent* event)
 {
-	if (!isEnable())
-		return;
-
-		log::info << event->getPosition().x << L", " << event->getPosition().y << Endl;
-
 	MenuItem* item = getItem(event->getPosition());
 	if (item != m_trackItem)
 	{
-		if (m_trackItem)
-		{
-			m_trackItem->mouseLeave(this, event);
-			m_trackItem = 0;
-		}
+		if (hasCapture())
+			releaseCapture();
 
-		m_trackItem = item;
-
-		if (item && item->mouseEnter(this, event))
-		{
-			//setCapture();
-			m_trackItem = item;
-		}
-		// else
-		// {
-		// 	releaseCapture();
-		// }
+		if ((m_trackItem = item) != nullptr)
+			setCapture();
 
 		update();
 	}
@@ -95,16 +78,8 @@ void MenuShell::eventMouseMove(MouseMoveEvent* event)
 
 void MenuShell::eventButtonDown(MouseButtonDownEvent* event)
 {
-	if (!isEnable())
-		return;
-
 	MenuItem* item = getItem(event->getPosition());
-	if (item && item->isEnable())
-	{
-		item->buttonDown(this, event);
-		update();
-	}
-	else
+	if (item == nullptr)
 	{
 		MenuClickEvent clickEvent(this, nullptr, Command());
 		raiseEvent(&clickEvent);
@@ -113,14 +88,11 @@ void MenuShell::eventButtonDown(MouseButtonDownEvent* event)
 
 void MenuShell::eventButtonUp(MouseButtonUpEvent* event)
 {
-	if (!isEnable())
-		return;
-
 	MenuItem* item = getItem(event->getPosition());
 	if (item && item->isEnable())
 	{
-		item->buttonUp(this, event);
-		update();
+		MenuClickEvent clickEvent(this, item, item->getCommand());
+		raiseEvent(&clickEvent);
 	}
 }
 
@@ -137,7 +109,7 @@ void MenuShell::eventPaint(PaintEvent* e)
 	for (auto item : m_items)
 	{
 		Size itemSize(rcInner.getWidth() - 2, item->getSize(this).cy);
-		item->paint(this, canvas, Rect(itemTopLeft, itemSize));
+		item->paint(this, canvas, Rect(itemTopLeft, itemSize), bool(item == m_trackItem));
 		itemTopLeft.y += itemSize.cy;
 	}
 

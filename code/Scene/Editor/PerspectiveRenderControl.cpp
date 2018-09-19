@@ -107,7 +107,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	m_fieldOfView = settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView);
+	m_fieldOfView = std::max< float >(settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView), c_minFieldOfView);
 	m_mouseWheelRate = settings->getProperty< float >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
 	m_multiSample = settings->getProperty< int32_t >(L"Editor.MultiSample", c_defaultMultiSample);
 
@@ -390,7 +390,7 @@ void PerspectiveRenderControl::updateSettings()
 	m_colorGrid = settings->getProperty< Color4ub >(L"Editor.Colors/Grid");
 	m_colorRef = settings->getProperty< Color4ub >(L"Editor.Colors/ReferenceEdge");
 	m_invertPanY = settings->getProperty< bool >(L"SceneEditor.InvertPanY");
-	m_fieldOfView = settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView);
+	m_fieldOfView = std::max< float >(settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView), c_minFieldOfView);
 	m_mouseWheelRate = settings->getProperty< float >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
 
 	updateWorldRenderer();

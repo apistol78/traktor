@@ -80,7 +80,8 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 	const std::vector< std::pair< const TypeInfo*, Guid > >& resources = bundle->get();
 	for (std::vector< std::pair< const TypeInfo*, Guid > >::const_iterator i = resources.begin(); i != resources.end(); ++i)
 	{
-		T_DEBUG(L"Preloading " << int32_t(1 + std::distance(resources.begin(), i)) << L" / " << int32_t(resources.size()) << L" " << i->first->getName());
+		if (m_verbose)
+			log::info << L"Preloading " << int32_t(1 + std::distance(resources.begin(), i)) << L" / " << int32_t(resources.size()) << L" " << i->first->getName() << (bundle->persistent() ? L" <persistent> " : L"") << L"..." << Endl;
 
 		// Get resource instance from database.
 		Ref< db::Instance > instance = m_database->getInstance(i->second);
@@ -365,7 +366,7 @@ void ResourceManager::unloadUnusedResident()
 		)
 		{
 			if (m_verbose)
-				log::info << L"Unload resource \"" << i->first.format() << L"\" (" << type_name(i->second->get()) << L")." << Endl;
+				log::info << L"Unloading resource \"" << i->first.format() << L"\" (" << type_name(i->second->get()) << L")." << Endl;
 			i->second->replace(0);
 		}
 	}
@@ -428,9 +429,8 @@ void ResourceManager::load(const db::Instance* instance, const IResourceFactory*
 		handle->replace(object);
 
 		// Yield current thread; we want other threads to get some periodic CPU time to
-		// render loading screens etc. Use sleep as we want lower priority threads also
-		// to be able to run.
-		currentThread->sleep(0);
+		// render loading screens etc.
+		currentThread->yield();
 	}
 	else
 		log::error << L"Unable to create resource \"" << instance->getGuid().format() << L"\" (" << productType.getName() << L") using factory \"" << type_name(factory) << L"\"." << Endl;

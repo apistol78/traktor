@@ -24,13 +24,14 @@ const wchar_t* ProgramCompilerOpenGLES2::getPlatformSignature() const
 Ref< ProgramResource > ProgramCompilerOpenGLES2::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
+	const std::wstring& name,
 	int32_t optimize,
 	bool validate,
 	Stats* outStats
 ) const
 {
 	GlslProgram glslProgram;
-	if (!Glsl().generate(shaderGraph, settings, glslProgram))
+	if (!Glsl().generate(shaderGraph, settings, name, glslProgram))
 		return 0;
 
 	return ProgramOpenGLES2::compile(glslProgram, optimize, validate);
@@ -39,6 +40,7 @@ Ref< ProgramResource > ProgramCompilerOpenGLES2::compile(
 bool ProgramCompilerOpenGLES2::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
+	const std::wstring& name,
 	int32_t optimize,
 	std::wstring& outVertexShader,
 	std::wstring& outPixelShader,
@@ -46,7 +48,7 @@ bool ProgramCompilerOpenGLES2::generate(
 ) const
 {
 	GlslProgram glslProgram;
-	if (!Glsl().generate(shaderGraph, settings, glslProgram))
+	if (!Glsl().generate(shaderGraph, settings, name, glslProgram))
 		return false;
 
 	outVertexShader = glslProgram.getVertexShader();

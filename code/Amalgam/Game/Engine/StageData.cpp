@@ -64,10 +64,18 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 			{
 				Ref< const resource::ResourceBundle > resourceBundle = environment->getDatabase()->getObjectReadOnly< resource::ResourceBundle >(m_resourceBundle);
 				if (resourceBundle)
+				{
+					log::info << L"Preloading bundle \"" << m_resourceBundle.format() << L"\"..." << Endl;
 					resourceManager->load(resourceBundle);
+				}
 			}
 			else
-				log::warning << L"Pre-loading of resources skipped due to limited graphics adapter." << Endl;
+			{
+				if (rsi.dedicatedMemoryTotal < preloadLimit)
+					log::warning << L"Pre-loading of resources skipped due to limited graphics adapter (" << (rsi.dedicatedMemoryTotal / 1024) << L" < " << (preloadLimit / 1024) << L" KiB)." << Endl;
+				else
+					log::warning << L"Pre-loading of resources skipped due to unknown graphics adapter, only permitted for NVidia or AMD adapters." << Endl;
+			}
 		}
 		else
 			log::warning << L"Pre-loading of resources ignored" << Endl;

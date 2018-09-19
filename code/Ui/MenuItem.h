@@ -93,15 +93,7 @@ public:
 
 	virtual Size getSize(const Widget* shell) const;
 
-	virtual void paint(const Widget* shell, Canvas& canvas, const Rect& rc) const;
-
-	virtual bool mouseEnter(Widget* shell, MouseMoveEvent* mouseEvent);
-
-	virtual void mouseLeave(Widget* shell, MouseMoveEvent* mouseEvent);
-
-	virtual void buttonDown(Widget* shell, MouseButtonDownEvent* mouseEvent);
-
-	virtual void buttonUp(Widget* shell, MouseButtonUpEvent* mouseEvent);
+	virtual void paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool tracking) const;
 
 private:
 	Command m_command;
@@ -110,7 +102,6 @@ private:
 	Ref< Bitmap > m_image;
 	bool m_enable;
 	bool m_checked;
-	bool m_hover;
 	RefArray< MenuItem > m_items;
 };
 
