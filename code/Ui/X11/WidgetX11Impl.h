@@ -82,6 +82,18 @@ public:
 			m_surface = nullptr;
 		}
 
+		if (m_xic != 0)
+		{
+			XDestroyIC(m_xic);
+			m_xic = 0;
+		}
+
+		if (m_xim != 0)
+		{
+			XCloseIM(m_xim);
+			m_xim = 0;
+		}
+
 		if (m_display != nullptr)
 		{
 			Assoc::getInstance().unbind(m_window);
@@ -521,7 +533,7 @@ protected:
 		)) == 0)
 		{
 			return false;
-		}	
+		}
 
 		m_surface = cairo_xlib_surface_create(
 			m_display,
@@ -558,7 +570,7 @@ protected:
 			KeySym* ks = XGetKeyboardMapping(m_display, xe.xkey.keycode, 1, &nkeysyms);
 			if (ks != nullptr)
 			{
-				VirtualKey vk = translateToVirtualKey(*ks);
+				VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
 				if (vk != VkNull)
 				{
 					KeyDownEvent keyDownEvent(m_owner, vk, xe.xkey.keycode, 0);
@@ -591,7 +603,7 @@ protected:
 			KeySym* ks = XGetKeyboardMapping(m_display, xe.xkey.keycode, 1, &nkeysyms);
 			if (ks != nullptr)
 			{
-				VirtualKey vk = translateToVirtualKey(*ks);
+				VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
 				if (vk != VkNull)
 				{
 					KeyUpEvent keyUpEvent(m_owner, vk, xe.xkey.keycode, 0);

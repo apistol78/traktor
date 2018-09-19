@@ -436,7 +436,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 
 				// Finally ready to compile program graph.
 				std::wstring vertexShader, pixelShader, computeShader;
-				if (compiler->generate(programGraph, m_editor->getSettings(), 0, vertexShader, pixelShader, computeShader))
+				if (compiler->generate(programGraph, m_editor->getSettings(), L"", 0, vertexShader, pixelShader, computeShader))
 				{
 					ci.vertexShader = vertexShader;
 					ci.pixelShader = pixelShader;

@@ -70,17 +70,56 @@ const struct { uint32_t keySym; VirtualKey vkey; } c_translateTable[] =
 	{ XK_F11, VkF11 },
 	{ XK_F12, VkF12 },
 	//{ VK_NUMLOCK, VkNumLock },
-	//{ VK_SCROLL, VkScroll }
+	//{ VK_SCROLL, VkScroll },
+	{ XK_Q, VkQ },
+	{ XK_W, VkW },
+	{ XK_E, VkE },
+	{ XK_R, VkR },
+	{ XK_T, VkT },
+	{ XK_Y, VkY },
+	{ XK_U, VkU },
+	{ XK_I, VkI },
+	{ XK_O, VkO },
+	{ XK_P, VkP },
+	{ XK_A, VkA },
+	{ XK_S, VkS },
+	{ XK_D, VkD },
+	{ XK_F, VkF },
+	{ XK_G, VkG },
+	{ XK_H, VkH },
+	{ XK_J, VkJ },
+	{ XK_K, VkK },
+	{ XK_L, VkL },
+	{ XK_Z, VkZ },
+	{ XK_X, VkX },
+	{ XK_C, VkC },
+	{ XK_V, VkV },
+	{ XK_B, VkB },
+	{ XK_N, VkN },
+	{ XK_M, VkM },
+	{ XK_1, Vk1 },
+	{ XK_2, Vk2 },
+	{ XK_3, Vk3 },
+	{ XK_4, Vk4 },
+	{ XK_5, Vk5 },
+	{ XK_6, Vk6 },
+	{ XK_7, Vk7 },
+	{ XK_8, Vk8 },
+	{ XK_9, Vk9 },
+	{ XK_0, Vk0 },
 };
 
 		}
 
-VirtualKey translateToVirtualKey(KeySym keySym)
+VirtualKey translateToVirtualKey(const KeySym* keySym, int nkeySyms)
 {
 	for (int32_t i = 0; i < sizeof_array(c_translateTable); ++i)
 	{
-		if (c_translateTable[i].keySym == keySym)
-			return c_translateTable[i].vkey;
+		for (int32_t j = 0; j < nkeySyms; ++j)
+		{
+			if (c_translateTable[i].keySym == keySym[j])
+				return c_translateTable[i].vkey;
+		}
 	}
 	return VkNull;
 }

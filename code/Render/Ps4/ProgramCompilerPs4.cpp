@@ -29,6 +29,7 @@ const wchar_t* ProgramCompilerPs4::getPlatformSignature() const
 Ref< ProgramResource > ProgramCompilerPs4::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
+	const std::wstring& name,
 	int32_t optimize,
 	bool validate,
 	Stats* outStats
@@ -44,6 +45,7 @@ Ref< ProgramResource > ProgramCompilerPs4::compile(
 bool ProgramCompilerPs4::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
+	const std::wstring& name,
 	int32_t optimize,
 	std::wstring& outVertexShader,
 	std::wstring& outPixelShader,

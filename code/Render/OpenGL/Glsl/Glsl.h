@@ -29,6 +29,7 @@ public:
 	bool generate(
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
+		const std::wstring& name,
 		GlslProgram& outProgram
 	);
 };

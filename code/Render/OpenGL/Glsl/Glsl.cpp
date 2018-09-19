@@ -20,6 +20,7 @@ namespace traktor
 bool Glsl::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
+	const std::wstring& name,
 	GlslProgram& outProgram
 )
 {
@@ -49,14 +50,15 @@ bool Glsl::generate(
 		return false;
 	}
 
-	bool requireDerivatives = cx.getRequireDerivatives();
-	bool requireTranspose = cx.getRequireTranspose();
-	bool requireTexture3D = cx.getRequireTexture3D();
-	bool requireShadowSamplers = cx.getRequireShadowSamplers();
+	GlslRequirements vertexRequirements = cx.requirements();
+	vertexRequirements.derivatives = false;
+	vertexRequirements.precisionHint = PhHigh;
+
+	GlslRequirements fragmentRequirements = cx.requirements();
 
 	outProgram = GlslProgram(
-		cx.getVertexShader().getGeneratedShader(settings, false, requireTranspose, requireTexture3D, requireShadowSamplers, PhHigh),
-		cx.getFragmentShader().getGeneratedShader(settings, requireDerivatives, requireTranspose, requireTexture3D, requireShadowSamplers, cx.getPrecisionHint()),
+		cx.getVertexShader().getGeneratedShader(settings, name, vertexRequirements),
+		cx.getFragmentShader().getGeneratedShader(settings, name, fragmentRequirements),
 		cx.getTextures(),
 		cx.getUniforms(),
 		cx.getSamplers(),

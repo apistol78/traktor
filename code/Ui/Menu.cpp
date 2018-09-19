@@ -64,14 +64,8 @@ MenuItem* Menu::show(Widget* parent, const Point& at)
 		rc.getSize()
 	));
 
-	// Show form before showModal because we need to explicit set capture on shell.
-	form->setVisible(true);
-	shell->setCapture();
-
 	if (form->showModal() != DrOk)
 		selectedItem = nullptr;
-
-	shell->releaseCapture();
 
 	return selectedItem;
 }

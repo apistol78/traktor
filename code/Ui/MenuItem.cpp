@@ -33,7 +33,6 @@ MenuItem::MenuItem(const Command& command, const std::wstring& text, bool checkB
 ,	m_image(image)
 ,	m_enable(true)
 ,	m_checked(false)
-,	m_hover(false)
 {
 }
 
@@ -43,7 +42,6 @@ MenuItem::MenuItem(const std::wstring& text, bool checkBox, Bitmap* image)
 ,	m_image(image)
 ,	m_enable(true)
 ,	m_checked(false)
-,	m_hover(false)
 {
 }
 
@@ -54,7 +52,6 @@ MenuItem::MenuItem(const Command& command, const std::wstring& text, Bitmap* ima
 ,	m_image(image)
 ,	m_enable(true)
 ,	m_checked(false)
-,	m_hover(false)
 {
 }
 
@@ -64,7 +61,6 @@ MenuItem::MenuItem(const std::wstring& text, Bitmap* image)
 ,	m_image(image)
 ,	m_enable(true)
 ,	m_checked(false)
-,	m_hover(false)
 {
 }
 
@@ -74,7 +70,6 @@ MenuItem::MenuItem(const Command& command, const std::wstring& text)
 ,	m_checkBox(false)
 ,	m_enable(true)
 ,	m_checked(false)
-,	m_hover(false)
 {
 }
 
@@ -83,7 +78,6 @@ MenuItem::MenuItem(const std::wstring& text)
 ,	m_checkBox(false)
 ,	m_enable(true)
 ,	m_checked(false)
-,	m_hover(false)
 {
 }
 
@@ -188,14 +182,14 @@ Size MenuItem::getSize(const Widget* shell) const
 		return Size(0, 1 + dpi96(c_itemMarginY) * 2);
 }
 
-void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc) const
+void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool tracking) const
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	const Size sz = getSize(shell);
 
 	Rect rcLabel = rc.inflate(-dpi96(c_itemMarginX), 0);
 
-	canvas.setBackground(ss->getColor(this, m_hover ? L"background-color-hover" : L"background-color"));
+	canvas.setBackground(ss->getColor(this, tracking ? L"background-color-hover" : L"background-color"));
 	canvas.fillRect(rc);
 
 	canvas.setForeground(ss->getColor(this, L"color"));
@@ -207,28 +201,6 @@ void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc) const
 			Point(rcLabel.left, rcLabel.getCenter().y),
 			Point(rcLabel.right, rcLabel.getCenter().y)
 		);
-}
-
-bool MenuItem::mouseEnter(Widget* shell, MouseMoveEvent* mouseEvent)
-{
-	if (m_text != L"-")
-		m_hover = true;
-	return true;
-}
-
-void MenuItem::mouseLeave(Widget* shell, MouseMoveEvent* mouseEvent)
-{
-	m_hover = false;
-}
-
-void MenuItem::buttonDown(Widget* shell, MouseButtonDownEvent* mouseEvent)
-{
-}
-
-void MenuItem::buttonUp(Widget* shell, MouseButtonUpEvent* mouseEvent)
-{
-	MenuClickEvent clickEvent(shell, this, m_command);
-	shell->raiseEvent(&clickEvent);
 }
 
 	}

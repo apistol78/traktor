@@ -62,25 +62,9 @@ public:
 	
 	bool allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset);
 
-	void setRequireDerivatives();
-	
-	bool getRequireDerivatives() const;
+	GlslRequirements& requirements();
 
-	void setRequireTranspose();
-
-	bool getRequireTranspose() const;
-
-	void setRequireTexture3D();
-
-	bool getRequireTexture3D() const;
-
-	void setRequireShadowSamplers();
-
-	bool getRequireShadowSamplers() const;
-
-	void setPrecisionHint(PrecisionHint precisionHint);
-
-	PrecisionHint getPrecisionHint() const;
+	const GlslRequirements& requirements() const;
 
 	const PropertyGroup* getSettings() const;
 
@@ -135,11 +119,7 @@ private:
 	GlslEmitter m_emitter;
 	RenderStateOpenGL m_renderState;
 	int32_t m_nextStage;
-	bool m_requireDerivatives;
-	bool m_requireTranspose;
-	bool m_requireTexture3D;
-	bool m_requireShadowSamplers;
-	PrecisionHint m_precisionHint;
+	GlslRequirements m_requirements;
 	std::vector< uint8_t > m_interpolatorMap;
 	std::vector< std::wstring > m_textures;
 	std::vector< NamedUniformType > m_uniforms;

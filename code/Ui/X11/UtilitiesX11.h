@@ -19,10 +19,11 @@ namespace traktor
 /*! \brief Translate X11 virtual key to our virtual key.
  * \ingroup UIW32
  *
- * \param keyCode X11 virtual key.
+ * \param keySym X11 virtual key symbols.
+ * \param nkeySyms Number of key symbols
  * \return Virtual key.
  */
-VirtualKey translateToVirtualKey(KeySym keySym);
+VirtualKey translateToVirtualKey(const KeySym* keySym, int nkeySyms);
 
 	}
 }

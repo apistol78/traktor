@@ -37,6 +37,7 @@ public:
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
+		const std::wstring& name,
 		int32_t optimize,
 		bool validate,
 		Stats* outStats
@@ -45,6 +46,7 @@ public:
 	virtual bool generate(
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
+		const std::wstring& name,
 		int32_t optimize,
 		std::wstring& outVertexShader,
 		std::wstring& outPixelShader,

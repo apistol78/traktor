@@ -139,18 +139,24 @@ StringOutputStream& GlslShader::getOutputStream(BlockType blockType)
 	return *(m_outputStreams[int(blockType)].back());
 }
 
-std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool requireDerivatives, bool requireTranspose, bool requireTexture3D, bool requireShadowSamplers, PrecisionHint precisionHint)
+const StringOutputStream& GlslShader::getOutputStream(BlockType blockType) const
+{
+	T_ASSERT (!m_outputStreams[int(blockType)].empty());
+	return *(m_outputStreams[int(blockType)].back());
+}
+
+std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const std::wstring& name, const GlslRequirements& requirements) const
 {
 	StringOutputStream ss;
 
 #if defined(T_OPENGL_ES2)
-	if (m_shaderType == StFragment && requireDerivatives)
+	if (m_shaderType == StFragment && requirements.derivatives)
 		ss << L"#extension GL_OES_standard_derivatives : enable" << Endl;
 
-	if (m_shaderType == StFragment && requireTexture3D)
+	if (m_shaderType == StFragment && requirements.texture3D)
 		ss << L"#extension GL_OES_texture_3D : enable" << Endl;
 
-	if (m_shaderType == StFragment && requireShadowSamplers)
+	if (m_shaderType == StFragment && requirements.shadowSamplers)
 		ss << L"#extension GL_EXT_shadow_samplers : require" << Endl;
 
 	if (settings && settings->getProperty< bool >(L"Glsl.ES2.SupportHwInstancing", false))
@@ -163,6 +169,8 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool 
 #endif
 
 	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
+	if (!name.empty())
+		ss << L"// " << name << Endl;
 	ss << Endl;
 
 	ss << L"precision highp float;" << Endl;
@@ -178,7 +186,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool 
 	ss << Endl;
 
 #if defined(T_OPENGL_ES2)
-	switch (precisionHint)
+	switch (requirements.precisionHint)
 	{
 	case PhLow:
 		ss << L"precision lowp float;" << Endl;
@@ -200,7 +208,6 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool 
 	if (m_shaderType == StVertex)
 	{
 		// Add post-orientation transform function.
-		
 		ss << L"uniform vec4 _gl_postTransform;" << Endl;
 		ss << Endl;
 		
@@ -217,7 +224,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool 
 	}
 
 	// Add transpose function; not implemented by default in GLSL 1.0
-	if (requireTranspose)
+	if (requirements.transpose)
 	{
 		ss << L"mat4 transpose(in mat4 m)" << Endl;
 		ss << L"{" << Endl;
@@ -242,20 +249,23 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool 
 		ss << Endl;
 
 		// Add bilinear texture fetch.
-		ss << L"vec4 texture2DBilinear(sampler2D sampler, vec2 uv)" << Endl;
-		ss << L"{" << Endl;
-		ss << L"\tvec2 textureSize = vec2(textureSize(sampler, 0));" << Endl;
-		ss << L"\tvec2 texelSize = 1.0 / textureSize;" << Endl;
-		ss << L"\tvec4 tl = texture(sampler, uv);" << Endl;
-		ss << L"\tvec4 tr = texture(sampler, uv + vec2(texelSize.x, 0.0));" << Endl;
-		ss << L"\tvec4 bl = texture(sampler, uv + vec2(0.0, texelSize.y));" << Endl;
-		ss << L"\tvec4 br = texture(sampler, uv + texelSize);" << Endl;
-		ss << L"\tvec2 f = fract(uv * textureSize);" << Endl;
-		ss << L"\tvec4 a = mix(tl, tr, f.x);" << Endl;
-		ss << L"\tvec4 b = mix(bl, br, f.x);" << Endl;
-		ss << L"\treturn mix(a, b, f.y);" << Endl;
-		ss << L"}" << Endl;
-		ss << Endl;
+		if (requirements.vertexBilinearSampler)
+		{
+			ss << L"vec4 texture2DBilinear(sampler2D sampler, vec2 uv)" << Endl;
+			ss << L"{" << Endl;
+			ss << L"\tvec2 textureSize = vec2(textureSize(sampler, 0));" << Endl;
+			ss << L"\tvec2 texelSize = 1.0 / textureSize;" << Endl;
+			ss << L"\tvec4 tl = texture(sampler, uv);" << Endl;
+			ss << L"\tvec4 tr = texture(sampler, uv + vec2(texelSize.x, 0.0));" << Endl;
+			ss << L"\tvec4 bl = texture(sampler, uv + vec2(0.0, texelSize.y));" << Endl;
+			ss << L"\tvec4 br = texture(sampler, uv + texelSize);" << Endl;
+			ss << L"\tvec2 f = fract(uv * textureSize);" << Endl;
+			ss << L"\tvec4 a = mix(tl, tr, f.x);" << Endl;
+			ss << L"\tvec4 b = mix(bl, br, f.x);" << Endl;
+			ss << L"\treturn mix(a, b, f.y);" << Endl;
+			ss << L"}" << Endl;
+			ss << Endl;
+		}
 	}
 	else
 	{
@@ -270,7 +280,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, bool 
 
 	ss << getOutputStream(BtUniform).str();
 	ss << Endl;
-	ss <<getOutputStream(BtInput).str();
+	ss << getOutputStream(BtInput).str();
 	ss << Endl;
 	ss << getOutputStream(BtOutput).str();
 	ss << Endl;

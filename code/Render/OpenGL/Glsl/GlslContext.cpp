@@ -36,11 +36,6 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 ,	m_fragmentShader(GlslShader::StFragment)
 ,	m_currentShader(0)
 ,	m_nextStage(0)
-,	m_requireDerivatives(false)
-,	m_requireTranspose(false)
-,	m_requireTexture3D(false)
-,	m_requireShadowSamplers(false)
-,	m_precisionHint(PhUndefined)
 {
 }
 
@@ -215,54 +210,14 @@ bool GlslContext::allocateInterpolator(int32_t width, int32_t& outId, int32_t& o
 	return true;
 }
 
-void GlslContext::setRequireDerivatives()
+GlslRequirements& GlslContext::requirements()
 {
-	m_requireDerivatives = true;
+	return m_requirements;
 }
 
-bool GlslContext::getRequireDerivatives() const
+const GlslRequirements& GlslContext::requirements() const
 {
-	return m_requireDerivatives;
-}
-
-void GlslContext::setRequireTranspose()
-{
-	m_requireTranspose = true;
-}
-
-bool GlslContext::getRequireTranspose() const
-{
-	return m_requireTranspose;
-}
-
-void GlslContext::setRequireTexture3D()
-{
-	m_requireTexture3D = true;
-}
-
-bool GlslContext::getRequireTexture3D() const
-{
-	return m_requireTexture3D;
-}
-
-void GlslContext::setRequireShadowSamplers()
-{
-	m_requireShadowSamplers = true;
-}
-
-bool GlslContext::getRequireShadowSamplers() const
-{
-	return m_requireShadowSamplers;
-}
-
-void GlslContext::setPrecisionHint(PrecisionHint precisionHint)
-{
-	m_precisionHint = precisionHint;
-}
-
-PrecisionHint GlslContext::getPrecisionHint() const
-{
-	return m_precisionHint;
+	return m_requirements;
 }
 
 const PropertyGroup* GlslContext::getSettings() const

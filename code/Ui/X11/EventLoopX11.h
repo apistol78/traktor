@@ -2,6 +2,7 @@
 #define traktor_ui_EventLoopX11_H
 
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include "Ui/Itf/IEventLoop.h"
 
 // import/export mechanism.
@@ -50,6 +51,8 @@ public:
 private:
 	Display* m_display;
 	int32_t m_screen;
+	XIM m_xim;
+	XIC m_xic;
 	bool m_terminated;
 	int32_t m_exitCode;
 };

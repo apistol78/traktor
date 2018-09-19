@@ -46,9 +46,10 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
             errors += mbstows(dlerror()) + L"\n";
  	}
 
-	// Try working directory second.
+	// Try loading from specified search paths.
+	for (std::vector< Path >::const_iterator i = searchPaths.begin(); i != searchPaths.end(); ++i)
 	{
-		std::wstring library = L"./" + resolved;
+		std::wstring library = i->getPathNameNoVolume() + L"/" + resolved;
 		m_handle = dlopen(wstombs(library).c_str(), RTLD_LAZY | RTLD_GLOBAL);
 		if (m_handle)
 		{

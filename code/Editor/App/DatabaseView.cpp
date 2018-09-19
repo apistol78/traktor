@@ -1445,7 +1445,7 @@ void DatabaseView::filterDependencies(db::Instance* instance)
 	if (!instance)
 		return;
 
-	Ref< IPipelineDependencySet > dependencySet = m_editor->buildAssetDependencies(instance->getObject(), ~0UL);
+	Ref< IPipelineDependencySet > dependencySet = m_editor->buildAssetDependencies(instance->getObject(), ~0U);
 	if (!dependencySet)
 		return;
 
@@ -1545,7 +1545,7 @@ void DatabaseView::eventToolSelectionClicked(ui::custom::ToolBarButtonClickEvent
 			{
 				guidSet.insert((*i)->getGuid());
 
-				Ref< IPipelineDependencySet > dependencySet = m_editor->buildAssetDependencies((*i)->getObject(), ~0UL);
+				Ref< IPipelineDependencySet > dependencySet = m_editor->buildAssetDependencies((*i)->getObject(), ~0U);
 				if (!dependencySet)
 					continue;
 

@@ -7,12 +7,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <algorithm>
 #include <locale>
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
-// #include "Render/OpenGL/Std/IndexBufferIAR.h"
 #include "Render/OpenGL/Std/IndexBufferIBO.h"
 #include "Render/OpenGL/Std/ProgramCompilerOpenGL.h"
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
@@ -21,7 +21,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/OpenGL/Std/RenderViewOpenGL.h"
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
 #include "Render/OpenGL/Std/TimeQueryOpenGL.h"
-// #include "Render/OpenGL/Std/VertexBufferVAR.h"
 #include "Render/OpenGL/Std/VertexBufferDynamicVBO.h"
 #include "Render/OpenGL/Std/VertexBufferStaticVBO.h"
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
@@ -214,22 +213,40 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 
 	log::info << L"OpenGL " << mbstows((const char *)glGetString(GL_VERSION)) << L" renderer created." << Endl;
 
+	// Determine hardware vendor.
+	std::wstring vendor = mbstows((const char*)glGetString(GL_VENDOR));
+	log::info << L"GL_VENDOR = \"" << vendor << L"\"" << Endl;
+
+	if (toLower(vendor).find(L"nvidia") != vendor.npos)
+		m_info.vendor = AvtNVidia;
+	else if (toLower(vendor).find(L"ati") != vendor.npos || toLower(vendor).find(L"amd") != vendor.npos)
+		m_info.vendor = AvtAMD;
+	else if (toLower(vendor).find(L"intel") != vendor.npos)
+		m_info.vendor = AvtIntel;
+
 	// Get GPU memory information; used to determine if or not to preload resources during startup.
-	// \fixme Currently only NV HW on Windows is supported.
-#if defined(_WIN32)
-	GLint param = 0;
+	// \fixme Currently only NV HW on Windows and Linux is supported.
+#if defined(_WIN32) || defined(__LINUX__)
+	if (m_info.vendor == AvtNVidia)
+	{
+		GLint param = 0;
 
-	glGetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX, &param);
-	m_info.dedicatedMemoryTotal = param * 1024;
+		glGetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX, &param);
+		m_info.dedicatedMemoryTotal = param * 1024;
 
-	glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &param);
-	m_info.sharedMemoryTotal = param * 1024;
-	m_info.sharedMemoryAvailable = param * 1024;
+		glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, &param);
+		m_info.dedicatedMemoryAvailable = param * 1024;
 
-	glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, &param);
-	m_info.dedicatedMemoryAvailable = param * 1024;
+		glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &param);
+		m_info.sharedMemoryTotal = param * 1024;
+		m_info.sharedMemoryAvailable = param * 1024;
 
-	glGetError();
+		log::info << L"GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX = " << m_info.dedicatedMemoryTotal << Endl;
+		log::info << L"GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX = " << m_info.dedicatedMemoryAvailable << Endl;
+		log::info << L"GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX = " << m_info.sharedMemoryTotal << Endl;
+
+		glGetError();
+	}
 #endif
 
 	m_resourceContext->leave();
@@ -865,7 +882,7 @@ Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTar
 Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
-	return ProgramOpenGL::create(m_resourceContext, programResource);
+	return ProgramOpenGL::create(m_resourceContext, programResource, true);
 }
 
 Ref< IProgramCompiler > RenderSystemOpenGL::createProgramCompiler() const

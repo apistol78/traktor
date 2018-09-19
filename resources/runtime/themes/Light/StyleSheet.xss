@@ -57,6 +57,18 @@
 			<color>30, 30, 30, 255</color>
 		</item>
 
+		<!-- Slider -->
+		<item>
+			<type>traktor.ui.Slider</type>
+			<element>color</element>
+			<color>160, 160, 160, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.Slider</type>
+			<element>knob-color</element>
+			<color>160, 160, 160, 255</color>
+		</item>	
+
 		<!-- ListBox -->
 		<item>
 			<type>traktor.ui.ListBox</type>

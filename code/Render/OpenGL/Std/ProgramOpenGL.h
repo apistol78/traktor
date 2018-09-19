@@ -33,7 +33,7 @@ public:
 
 	static Ref< ProgramResource > compile(const GlslProgram& glslProgram, int optimize, bool validate);
 
-	static Ref< ProgramOpenGL > create(ContextOpenGL* resourceContext, const ProgramResource* resource);
+	static Ref< ProgramOpenGL > create(ContextOpenGL* resourceContext, const ProgramResource* resource, bool cacheEnable);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_ui_Slider_H
 #define traktor_ui_Slider_H
 
+#include "Core/Math/Range.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -30,13 +31,30 @@ class T_DLLCLASS Slider : public Widget
 	T_RTTI_CLASS;
 
 public:
-	bool create(Widget* parent, int style = WsNone);
+	Slider();
 
-	void setRange(int minValue, int maxValue);
+	bool create(Widget* parent, int32_t style = WsNone);
 
-	void setValue(int value);
+	void setRange(int32_t minValue, int32_t maxValue);
 
-	int getValue() const;
+	void setValue(int32_t value);
+
+	int32_t getValue() const;
+
+	virtual Size getPreferedSize() const T_OVERRIDE;
+
+private:
+	Range< int32_t > m_range;
+	int32_t m_value;
+	bool m_drag;
+
+	void eventButtonDown(MouseButtonDownEvent* event);
+
+	void eventButtonUp(MouseButtonUpEvent* event);
+
+	void eventMouseMove(MouseMoveEvent* event);
+
+	void eventPaint(PaintEvent* event);
 };
 
 	}

@@ -274,7 +274,7 @@ bool emitDerivative(GlslContext& cx, Derivative* node)
 		assign(f, out) << L"dFdy(" << input->getName() << L");" << Endl;
 		break;
 	}
-	cx.setRequireDerivatives();
+	cx.requirements().derivatives = true;
 	return true;
 }
 
@@ -1123,7 +1123,7 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 	rsogl.stencilOpZPass = c_oglStencilOperation[rs.stencilPass];
 
 #if defined(T_OPENGL_ES2)
-	cx.setPrecisionHint(node->getPrecisionHint());
+	cx.requirements().precisionHint = node->getPrecisionHint();
 #endif
 	return true;
 }
@@ -1359,7 +1359,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 
 	// ES 2.0 require extension for sampling 3D textures.
 	if (texture->getType() == GtTexture3D)
-		cx.setRequireTexture3D();
+		cx.requirements().texture3D = true;
 
 	// Calculate sampler hash.
 	Adler32 samplerHash;
@@ -1439,7 +1439,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 			if (!cx.inFragment())
 				return false;
 
-			cx.setRequireShadowSamplers();
+			cx.requirements().shadowSamplers = true;
 
 			switch (texture->getType())
 			{
@@ -1595,6 +1595,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		{
 		case GtTexture2D:
 			assign(f, out) << L"texture2DBilinear(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+			cx.requirements().vertexBilinearSampler = true;
 			break;
 
 		case GtTexture3D:
@@ -2223,7 +2224,7 @@ bool emitTranspose(GlslContext& cx, Transpose* node)
 		return false;
 	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"transpose(" << in->getName() << L");" << Endl;
-	cx.setRequireTranspose();
+	cx.requirements().transpose = true;
 	return true;
 }
 

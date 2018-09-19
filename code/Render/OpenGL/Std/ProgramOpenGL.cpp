@@ -132,7 +132,7 @@ Ref< ProgramResource > ProgramOpenGL::compile(const GlslProgram& glslProgram, in
 	return resource;
 }
 
-Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const ProgramResource* resource)
+Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const ProgramResource* resource, bool cacheEnable)
 {
 	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
 	char errorBuf[32000];
@@ -148,29 +148,32 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 	T_ASSERT (programObject != 0);
 
 #if defined(GL_ARB_get_program_binary)
-	T_OGL_SAFE(glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats));
-	if (formats > 0)
+	if (cacheEnable)
 	{
-		binaryFormats.reset(new GLint[formats]);
-		T_OGL_SAFE(glGetIntegerv(GL_PROGRAM_BINARY_FORMATS, binaryFormats.ptr()));
-
-		StringOutputStream ss;
-		ss << OS::getInstance().getWritableFolderPath() << L"/Doctor Entertainment AB/ProgramCache/Program_" << resourceOpenGL->getHash() << L".cache";
-
-		// Read and upload cached program if available.
-		Ref< IStream > file = FileSystem::getInstance().open(ss.str(), File::FmRead);
-		if (file)
+		T_OGL_SAFE(glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &formats));
+		if (formats > 0)
 		{
-			binaryLength = file->available();
-			binary.reset(new uint8_t [binaryLength]);
-			file->read(binary.ptr(), binaryLength);
-			file->close();
+			binaryFormats.reset(new GLint[formats]);
+			T_OGL_SAFE(glGetIntegerv(GL_PROGRAM_BINARY_FORMATS, binaryFormats.ptr()));
 
-			T_OGL_SAFE(glProgramBinary(programObject, binaryFormats[0], binary.c_ptr(), binaryLength));
-			T_OGL_SAFE(glGetProgramiv(programObject, GL_LINK_STATUS, &status));
+			StringOutputStream ss;
+			ss << OS::getInstance().getWritableFolderPath() << L"/Doctor Entertainment AB/ProgramCache/Program_" << resourceOpenGL->getHash() << L".cache";
 
-			if (status == GL_TRUE)
-				needToCompile = false;
+			// Read and upload cached program if available.
+			Ref< IStream > file = FileSystem::getInstance().open(ss.str(), File::FmRead);
+			if (file)
+			{
+				binaryLength = file->available();
+				binary.reset(new uint8_t [binaryLength]);
+				file->read(binary.ptr(), binaryLength);
+				file->close();
+
+				T_OGL_SAFE(glProgramBinary(programObject, binaryFormats[0], binary.c_ptr(), binaryLength));
+				T_OGL_SAFE(glGetProgramiv(programObject, GL_LINK_STATUS, &status));
+
+				if (status == GL_TRUE)
+					needToCompile = false;
+			}
 		}
 	}
 #endif
@@ -204,7 +207,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 		T_OGL_SAFE(glBindFragDataLocation(programObject, 3, "_gl_FragData_3"));
 
 #if defined(GL_ARB_get_program_binary)
-		if (formats > 0)
+		if (cacheEnable && formats > 0)
 			T_OGL_SAFE(glProgramParameteri(programObject, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE));
 #endif
 
@@ -224,7 +227,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 	}
 
 #if defined(GL_ARB_get_program_binary)
-	if (needToCompile && formats > 0)
+	if (cacheEnable && needToCompile && formats > 0)
 	{
 		StringOutputStream ss;
 		ss << OS::getInstance().getWritableFolderPath() << L"/Doctor Entertainment AB/ProgramCache/Program_" << resourceOpenGL->getHash() << L".cache";

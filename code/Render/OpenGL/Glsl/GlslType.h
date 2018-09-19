@@ -31,6 +31,26 @@ enum GlslType
 	GtTextureCube
 };
 
+struct GlslRequirements
+{
+	bool derivatives;
+	bool transpose;
+	bool texture3D;
+	bool shadowSamplers;
+	bool vertexBilinearSampler;
+	PrecisionHint precisionHint;
+
+	GlslRequirements()
+	:	derivatives(false)
+	,	transpose(false)
+	,	texture3D(false)
+	,	shadowSamplers(false)
+	,	vertexBilinearSampler(false)
+	,	precisionHint(PhUndefined)
+	{
+	}
+};
+
 std::wstring glsl_vertex_attr_name(DataUsage usage, int index);
 
 int32_t glsl_vertex_attr_location(DataUsage usage, int index);

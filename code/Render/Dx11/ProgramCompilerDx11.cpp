@@ -102,6 +102,7 @@ const wchar_t* ProgramCompilerDx11::getPlatformSignature() const
 Ref< ProgramResource > ProgramCompilerDx11::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
+	const std::wstring& name,
 	int32_t optimize,
 	bool validate,
 	Stats* outStats
@@ -516,6 +517,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 bool ProgramCompilerDx11::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
+	const std::wstring& name,
 	int32_t optimize,
 	std::wstring& outVertexShader,
 	std::wstring& outPixelShader,

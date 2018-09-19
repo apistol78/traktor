@@ -73,7 +73,6 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc)
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
-	T_OGL_SAFE(glTexStorage2D(GL_TEXTURE_2D, desc.mipCount, m_components, m_width, m_height));
 
 	m_dataSize = getTextureMipPitch(desc.format, desc.width, desc.height);
 
@@ -90,27 +89,26 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc)
 			{
 				uint32_t mipPitch = getTextureMipPitch(desc.format, width, height);
 
-				T_OGL_SAFE(glCompressedTexSubImage2D(
+				T_OGL_SAFE(glCompressedTexImage2D(
 					GL_TEXTURE_2D,
 					i,
-					0,
-					0,
+					m_components,
 					width,
 					height,
-					m_format,
+					0,
 					mipPitch,
 					desc.initialData[i].data
 				));
 			}
 			else
 			{
-				T_OGL_SAFE(glTexSubImage2D(
+				T_OGL_SAFE(glTexImage2D(
 					GL_TEXTURE_2D,
 					i,
-					0,
-					0,
+					m_components,
 					width,
 					height,
+					0,
 					m_format,
 					m_type,
 					desc.initialData[i].data
