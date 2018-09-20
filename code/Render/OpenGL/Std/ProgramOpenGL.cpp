@@ -402,6 +402,19 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 	{
 		T_ASSERT (m_samplers.size() <= 16);
 
+		// First unbind previously bound textures.
+		if (ms_activeProgram != this && ms_activeProgram != nullptr)
+		{
+			uint32_t nsamplers = ms_activeProgram->m_samplers.size();
+			for (uint32_t i = 0; i < nsamplers; ++i)
+			{
+				const Sampler& sampler = ms_activeProgram->m_samplers[i];
+				T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + sampler.stage));
+				T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, 0));
+				T_OGL_SAFE(glBindSampler(sampler.stage, 0));
+			}
+		}
+
 		uint32_t nsamplers = m_samplers.size();
 		for (uint32_t i = 0; i < nsamplers; ++i)
 		{

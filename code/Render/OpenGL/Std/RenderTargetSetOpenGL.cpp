@@ -102,10 +102,13 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 			if (!m_desc.ignoreStencil)
 				return false;
 
-			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
-
 			T_OGL_SAFE(glGenTextures(1, &m_depthBufferOrTexture));
 			T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_depthBufferOrTexture));
+
+			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 
 			T_OGL_SAFE(glTexImage2D(
 				GL_TEXTURE_2D,
@@ -141,8 +144,12 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 		if (!convertTargetFormat(desc.targets[i].format, internalFormat, format, type))
 			return false;
 
-		T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
 		T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_targetTextures[i]));
+
+		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 
 		T_OGL_SAFE(glTexImage2D(
 			GL_TEXTURE_2D,
