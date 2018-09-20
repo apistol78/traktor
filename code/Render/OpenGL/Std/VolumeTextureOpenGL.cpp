@@ -78,6 +78,9 @@ bool VolumeTextureOpenGL::create(const VolumeTextureCreateDesc& desc)
 		T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 		T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D, m_textureName));
 
+		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+
 		if (desc.format >= TfDXT1 && desc.format <= TfDXT5)
 		{
 			uint32_t mipPitch = getTextureMipPitch(desc.format, m_width, m_height);

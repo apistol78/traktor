@@ -177,22 +177,27 @@ bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, 
 	switch (targetFormat)
 	{
 	case TfR8:
+		outInternalFormat = GL_R8;
+		outFormat = GL_RGBA;
+		outType = GL_UNSIGNED_BYTE;
+		return true;
+
 	case TfR8G8B8A8:
-		outInternalFormat = GL_RGBA;
+		outInternalFormat = GL_RGBA8;
 		outFormat = GL_RGBA;
 		outType = GL_UNSIGNED_BYTE;
 		return true;
 
 	case TfR10G10B10A2:
-		outInternalFormat = GL_RGBA;
+		outInternalFormat = GL_RGB10_A2;
 		outFormat = GL_RGBA;
-		outType = GL_UNSIGNED_INT_2_10_10_10_REV;
+		outType = GL_UNSIGNED_BYTE;
 		return true;
 
 	case TfR16G16B16A16F:
 		outInternalFormat = GL_RGBA16F;
 		outFormat = GL_RGBA;
-		outType = GL_HALF_FLOAT;
+		outType = GL_FLOAT;
 		return true;
 
 	case TfR32G32B32A32F:
@@ -202,33 +207,33 @@ bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, 
 		return true;
 
 	case TfR16F:
-		outInternalFormat = GL_RGBA16F;
-		outFormat = GL_RED;
-		outType = GL_HALF_FLOAT;
+		outInternalFormat = GL_R16F;
+		outFormat = GL_RGBA;
+		outType = GL_FLOAT;
 		return true;
 
 	case TfR16G16F:
-		outInternalFormat = GL_RGBA16F;
+		outInternalFormat = GL_RG16F;
 		outFormat = GL_RGBA;
-		outType = GL_HALF_FLOAT;
+		outType = GL_FLOAT;
 		return true;
 
 	case TfR32F:
-		outInternalFormat = GL_RGBA32F;
-		outFormat = GL_RED;
+		outInternalFormat = GL_R32F;
+		outFormat = GL_RGBA;
 		outType = GL_FLOAT;
 		return true;
 
 	case TfR32G32F:
-		outInternalFormat = GL_RGBA32F;
+		outInternalFormat = GL_RG32F;
 		outFormat = GL_RGBA;
 		outType = GL_FLOAT;
 		return true;
 
 	case TfR11G11B10F:
-		outInternalFormat = GL_RGBA16F;
+		outInternalFormat = GL_R11F_G11F_B10F;
 		outFormat = GL_RGBA;
-		outType = GL_HALF_FLOAT;
+		outType = GL_FLOAT;
 		return true;
 
 	default:

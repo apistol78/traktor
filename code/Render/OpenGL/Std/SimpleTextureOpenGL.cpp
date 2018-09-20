@@ -72,14 +72,16 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc)
 	}
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
+	T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
+
+	T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+	T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 
 	m_dataSize = getTextureMipPitch(desc.format, desc.width, desc.height);
 
 	if (desc.immutable)
 	{
-		T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-
 		for (int i = 0; i < desc.mipCount; ++i)
 		{
 			uint32_t width = getTextureMipSize(m_width, i);

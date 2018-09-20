@@ -100,6 +100,9 @@ bool CubeTextureOpenGL::create(const CubeTextureCreateDesc& desc)
 		T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 		T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
 
+		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+
 		for (int face = 0; face < 6; ++face)
 		{
 			for (int i = 0; i < desc.mipCount; ++i)
