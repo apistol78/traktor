@@ -40,15 +40,14 @@ bool Edit::create(Widget* parent, const std::wstring& text, int style, const Edi
 
 	m_readOnly = bool((style & WsReadOnly) != 0);
 
+	addEventHandler< FocusEvent >(this, &Edit::eventFocus);
 	addEventHandler< MouseButtonDownEvent >(this, &Edit::eventButtonDown);
 	addEventHandler< KeyDownEvent >(this, &Edit::eventKeyDown);
 	addEventHandler< KeyEvent >(this, &Edit::eventKey);
 	addEventHandler< PaintEvent >(this, &Edit::eventPaint);
 	addEventHandler< TimerEvent >(this, &Edit::eventTimer);
 
-	startTimer(500);
 	setText(text);
-
 	return true;
 }
 
@@ -115,6 +114,21 @@ Size Edit::getPreferedSize() const
 	return Size(dpi96(200), height);
 }
 
+void Edit::eventFocus(FocusEvent* event)
+{
+	if (event->gotFocus())
+	{
+		m_caretBlink = true;
+		startTimer(500);
+	}
+	else
+	{
+		m_caretBlink = true;
+		stopTimer();
+	}
+	update();
+}
+
 void Edit::eventButtonDown(MouseButtonDownEvent* event)
 {
 	int32_t mx = event->getPosition().x;
@@ -161,6 +175,21 @@ void Edit::eventKeyDown(KeyDownEvent* event)
 		{
 			std::wstring text = getText();
 			m_caret = std::min< int32_t >(m_caret + 1, text.length());
+			update();
+		}
+		break;
+
+	case VkHome:
+		{
+			m_caret = 0;
+			update();
+		}
+		break;
+		
+	case VkEnd:
+		{
+			std::wstring text = getText();
+			m_caret = text.length();
 			update();
 		}
 		break;
@@ -256,7 +285,7 @@ void Edit::eventPaint(PaintEvent* event)
 
 void Edit::eventTimer(TimerEvent* event)
 {
-	if (!hasFocus())
+	if (!hasFocus() && !m_caretBlink)
 		return;
 
 	m_caretBlink = !m_caretBlink;

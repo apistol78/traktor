@@ -163,6 +163,7 @@ int32_t CanvasGdiPlusWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) c
 {
 	HDC hDC = GetDC(hWnd);
 
+	Gdiplus::Graphics graphics(hDC);
 	Gdiplus::Font font(hDC, hWnd.getFont());
 	Gdiplus::RectF layoutRect(0.0f, 0.0f, std::numeric_limits< float >::max(), std::numeric_limits< float >::max());
 
@@ -175,7 +176,7 @@ int32_t CanvasGdiPlusWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) c
 	stringFormat.SetMeasurableCharacterRanges(1, &range);
 
 	Gdiplus::Region region;
-	m_graphics->MeasureCharacterRanges(
+	graphics.MeasureCharacterRanges(
 		chs,
 		-1,
 		&font,
@@ -186,7 +187,7 @@ int32_t CanvasGdiPlusWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) c
 	);
 
 	Gdiplus::RectF rc;
-	region.GetBounds(&rc, m_graphics.ptr());
+	region.GetBounds(&rc, &graphics);
 
 	ReleaseDC(hWnd, hDC);
 

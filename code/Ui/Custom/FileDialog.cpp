@@ -59,7 +59,7 @@ bool FileDialog::create(Widget* parent, const std::wstring& title, const std::ws
 	m_containerPath->create(ct, WsNone, new TableLayout(L"*,*,*,*,*,*,*,*,*", L"100%", 0, dpi96(4)));
 
 	m_gridFiles = new GridView();
-	m_gridFiles->create(ct, GridView::WsColumnHeader);
+	m_gridFiles->create(ct, GridView::WsColumnHeader | WsDoubleBuffer);
 	m_gridFiles->addColumn(new GridColumn(L"Filename", dpi96(300)));
 	m_gridFiles->addColumn(new GridColumn(L"Size", dpi96(100)));
 	m_gridFiles->addColumn(new GridColumn(L"Modified", dpi96(100)));
