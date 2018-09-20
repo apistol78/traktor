@@ -16,6 +16,8 @@ public:
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) T_OVERRIDE T_FINAL;
 
+	virtual void setText(const std::wstring& text) T_OVERRIDE T_FINAL;
+
 	virtual void setIcon(ISystemBitmap* icon) T_OVERRIDE T_FINAL;
 
 	virtual void maximize() T_OVERRIDE T_FINAL;

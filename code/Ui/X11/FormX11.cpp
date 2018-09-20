@@ -37,15 +37,6 @@ bool FormX11::create(IWidget* parent, const std::wstring& text, int width, int h
 		nullptr
 	);
 
-	// Notify WM about form title.
-	std::string cs = wstombs(text);
-	const char* csp = cs.c_str();
-
-	XTextProperty tp;
-	XStringListToTextProperty((char**)&csp, 1, &tp);
-
-	XSetWMName(m_display, window, &tp);
-
 	// Register "delete window" window manager message.
 	m_atomWmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
 
@@ -61,7 +52,24 @@ bool FormX11::create(IWidget* parent, const std::wstring& text, int width, int h
 
 	XSetWMProtocols(m_display, window, &m_atomWmDeleteWindow, 1);
 
-	return WidgetX11Impl< IForm >::create(nullptr, style, window, Rect(0, 0, width, height), false);
+	if (!WidgetX11Impl< IForm >::create(nullptr, style, window, Rect(0, 0, width, height), false))
+		return false;
+
+	setText(text);
+	return true;
+}
+
+void FormX11::setText(const std::wstring& text)
+{
+	WidgetX11Impl< IForm >::setText(text);
+
+	std::string cs = wstombs(text);
+	const char* csp = cs.c_str();
+
+	XTextProperty tp;
+	XStringListToTextProperty((char**)&csp, 1, &tp);
+
+	XSetWMName(m_display, m_window, &tp);
 }
 
 void FormX11::setIcon(ISystemBitmap* icon)

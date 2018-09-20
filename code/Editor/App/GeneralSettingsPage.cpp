@@ -88,6 +88,11 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 
 	std::list< std::wstring > fonts;
 	ui::Application::getInstance()->getWidgetFactory()->getSystemFonts(fonts);
+
+	fonts.sort([](const std::wstring& lh, const std::wstring& rh) {
+		return compareIgnoreCase< std::wstring >(lh, rh) < 0;
+	});
+
 	for (std::list< std::wstring >::const_iterator i = fonts.begin(); i != fonts.end(); ++i)
 		m_dropFonts->add(*i);
 
