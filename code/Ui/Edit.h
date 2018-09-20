@@ -63,6 +63,8 @@ private:
 	bool m_caretBlink;
 	bool m_readOnly;
 
+	void eventFocus(FocusEvent* event);
+
 	void eventButtonDown(MouseButtonDownEvent* event);
 
 	void eventKeyDown(KeyDownEvent* event);

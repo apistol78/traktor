@@ -64,6 +64,10 @@ MenuItem* Menu::show(Widget* parent, const Point& at)
 		rc.getSize()
 	));
 
+	// Show form.
+	form->show();
+
+	// Modal until item selected.
 	if (form->showModal() != DrOk)
 		selectedItem = nullptr;
 
