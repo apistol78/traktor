@@ -7399,6 +7399,7 @@
 								<libraryPaths/>
 								<libraries>
 									<item>`pkg-config --libs cairo x11`</item>
+									<item>fontconfig</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -7431,6 +7432,7 @@
 								<libraryPaths/>
 								<libraries>
 									<item>`pkg-config --libs cairo x11`</item>
+									<item>fontconfig</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -7463,6 +7465,7 @@
 								<libraryPaths/>
 								<libraries>
 									<item>`pkg-config --libs cairo x11`</item>
+									<item>fontconfig</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -7495,6 +7498,7 @@
 								<libraryPaths/>
 								<libraries>
 									<item>`pkg-config --libs cairo x11`</item>
+									<item>fontconfig</item>
 								</libraries>
 								<warningLevel>WlCompilerDefault</warningLevel>
 								<additionalCompilerOptions/>
@@ -11107,175 +11111,6 @@
 		</item>
 		<item ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[8]/project"/>
-		<item type="Project" version="1">
-			<enable>false</enable>
-			<name>Traktor.Ui.Wx</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Wx</sourcePath>
-			<configurations>
-				<item type="Configuration" version="5">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`wx-config --cxxflags`</item>
-						<item>`pkg-config gtk+-2.0 --cflags`</item>
-					</includePaths>
-					<definitions>
-						<item>T_UI_WX_EXPORT</item>
-						<item>_DEBUG</item>
-						<item>__LINUX__</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries>
-						<item>`wx-config --libs`</item>
-						<item>`pkg-config gtk+-2.0 --libs`</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Ui.Wx.so</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`wx-config --cxxflags`</item>
-						<item>`pkg-config gtk+-2.0 --cflags`</item>
-					</includePaths>
-					<definitions>
-						<item>T_UI_WX_EXPORT</item>
-						<item>NDEBUG</item>
-						<item>__LINUX__</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries>
-						<item>`wx-config --libs`</item>
-						<item>`pkg-config gtk+-2.0 --libs`</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Ui.Wx.so</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`wx-config --cxxflags`</item>
-						<item>`pkg-config gtk+-2.0 --cflags`</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-						<item>__LINUX__</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries>
-						<item>`wx-config --libs`</item>
-						<item>`pkg-config gtk+-2.0 --libs`</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Ui.Wx.a</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugstatic</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`wx-config --cxxflags`</item>
-						<item>`pkg-config gtk+-2.0 --cflags`</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries>
-						<item>`wx-config --libs`</item>
-						<item>`pkg-config gtk+-2.0 --libs`</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Ui.Wx.a</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releasestatic</consumerLibraryPath>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project"/>
-				</item>
-			</dependencies>
-		</item>
 		<item ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[7]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
@@ -12728,7 +12563,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[59]/dependencies/item[14]/project/dependencies/item[24]/project"/>
+								<project ref="/object/projects/item[58]/dependencies/item[14]/project/dependencies/item[24]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -12751,7 +12586,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[59]/dependencies/item[14]/project/dependencies/item[24]/project"/>
+					<project ref="/object/projects/item[58]/dependencies/item[14]/project/dependencies/item[24]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -12790,7 +12625,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[59]/dependencies/item[14]/project"/>
+		<item ref="/object/projects/item[58]/dependencies/item[14]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Amalgam.Game.App</name>
@@ -12952,7 +12787,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[59]/dependencies/item[14]/project"/>
+					<project ref="/object/projects/item[58]/dependencies/item[14]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -12962,11 +12797,11 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[59]/dependencies/item[14]/project/dependencies/item[21]/project"/>
+					<project ref="/object/projects/item[58]/dependencies/item[14]/project/dependencies/item[21]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[59]/dependencies/item[14]/project/dependencies/item[21]/project"/>
+		<item ref="/object/projects/item[58]/dependencies/item[14]/project/dependencies/item[21]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Online.Local</name>
@@ -13104,7 +12939,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[59]/dependencies/item[14]/project/dependencies/item[21]/project"/>
+					<project ref="/object/projects/item[58]/dependencies/item[14]/project/dependencies/item[21]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -14109,7 +13944,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[59]/dependencies/item[14]/project/dependencies/item[21]/project"/>
+					<project ref="/object/projects/item[58]/dependencies/item[14]/project/dependencies/item[21]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -14276,7 +14111,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[59]/dependencies/item[14]/project/dependencies/item[23]/project"/>
+		<item ref="/object/projects/item[58]/dependencies/item[14]/project/dependencies/item[23]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Ai.Editor</name>
@@ -14464,7 +14299,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[59]/dependencies/item[14]/project/dependencies/item[23]/project"/>
+					<project ref="/object/projects/item[58]/dependencies/item[14]/project/dependencies/item[23]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -14830,7 +14665,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[59]/dependencies/item[14]/project/dependencies/item[21]/project"/>
+					<project ref="/object/projects/item[58]/dependencies/item[14]/project/dependencies/item[21]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -15122,7 +14957,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[59]/dependencies/item[14]/project/dependencies/item[21]/project"/>
+					<project ref="/object/projects/item[58]/dependencies/item[14]/project/dependencies/item[21]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -15131,7 +14966,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[59]/dependencies/item[14]/project/dependencies/item[24]/project"/>
+		<item ref="/object/projects/item[58]/dependencies/item[14]/project/dependencies/item[24]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Telemetry</name>
@@ -15479,7 +15314,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[59]/dependencies/item[15]/project"/>
+		<item ref="/object/projects/item[58]/dependencies/item[15]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Amalgam.Deploy.App</name>
@@ -15610,12 +15445,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[59]/dependencies/item[14]/project/dependencies/item[24]/project"/>
+					<project ref="/object/projects/item[58]/dependencies/item[14]/project/dependencies/item[24]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[59]/dependencies/item[15]/project"/>
+					<project ref="/object/projects/item[58]/dependencies/item[15]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16611,7 +16446,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[88]"/>
+					<project ref="/object/projects/item[87]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16757,7 +16592,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[88]"/>
+					<project ref="/object/projects/item[87]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16969,164 +16804,6 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[15]/project"/>
-				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>false</enable>
-			<name>Traktor.Ui.Gtk</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Gtk</sourcePath>
-			<configurations>
-				<item type="Configuration" version="5">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`pkg-config gtk+-3.0 --cflags`</item>
-					</includePaths>
-					<definitions>
-						<item>T_UI_GTK_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries>
-						<item>`pkg-config gtk+-3.0 --libs`</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Ui.Gtk.so</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath/>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`pkg-config gtk+-3.0 --cflags`</item>
-					</includePaths>
-					<definitions>
-						<item>T_UI_GTK_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries>
-						<item>`pkg-config gtk+-3.0 --libs`</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Ui.Gtk.so</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath/>
-				</item>
-				<item type="Configuration" version="5">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`pkg-config gtk+-3.0 --cflags`</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries>
-						<item>`pkg-config gtk+-3.0 --libs`</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Ui.Gtk.a</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath/>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`pkg-config gtk+-3.0 --cflags`</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries>
-						<item>`pkg-config gtk+-3.0 --libs`</item>
-					</libraries>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Ui.Gtk.a</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
