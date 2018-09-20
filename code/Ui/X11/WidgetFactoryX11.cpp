@@ -1,4 +1,6 @@
+#include <fontconfig/fontconfig.h>
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Ui/X11/BitmapX11.h"
 #include "Ui/X11/ContainerX11.h"
 #include "Ui/X11/ClipboardX11.h"
@@ -112,6 +114,36 @@ bool WidgetFactoryX11::getSystemColor(SystemColor systemColor, Color4ub& outColo
 
 void WidgetFactoryX11::getSystemFonts(std::list< std::wstring >& outFonts)
 {
+	FcConfig* config = FcInitLoadConfigAndFonts();
+	if (config == nullptr)
+		return;
+
+	FcPattern* pat = FcPatternCreate();
+	if (pat == nullptr)
+		return;
+
+	FcObjectSet* os = FcObjectSetBuild(FC_FAMILY, FC_STYLE, (char*)nullptr);
+	if (os == nullptr)
+		return;
+
+	FcFontSet* fs = FcFontList(config, pat, os);
+	if (fs == nullptr)
+		return;
+
+	for (int i = 0; fs && i < fs->nfont; ++i)
+	{
+		FcPattern* font = fs->fonts[i];
+		if (font == nullptr)
+			continue;
+
+		FcChar8 *family;
+		if (FcPatternGetString(font, FC_FAMILY, 0, &family) == FcResultMatch)
+		{
+			outFonts.push_back(mbstows((const char*)family));
+		}
+	}
+
+	FcFontSetDestroy(fs);
 }
 
 	}
