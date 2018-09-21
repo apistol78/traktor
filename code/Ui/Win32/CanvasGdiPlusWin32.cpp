@@ -106,7 +106,7 @@ bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	m_graphics->SetSmoothingMode(SmoothingModeHighSpeed);
 
 	setForeground(Color4ub(255, 255, 255, 255));
-	setBackground(getSystemColor(ScButtonFace));
+	setBackground(Color4ub(220, 220, 220, 255));
 
 	return true;
 }
