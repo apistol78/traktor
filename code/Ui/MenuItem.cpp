@@ -8,9 +8,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/MenuItem.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Widget.h"
 #include "Ui/Events/MenuClickEvent.h"
+
+// Resources
+#include "Resources/Unchecked.h"
+#include "Resources/Checked.h"
 
 namespace traktor
 {
@@ -18,6 +23,9 @@ namespace traktor
 	{
 		namespace
 		{
+
+Ref< IBitmap > s_imageUnchecked;
+Ref< IBitmap > s_imageChecked;
 
 const int32_t c_itemMarginX = 12;
 const int32_t c_itemMarginY = 8;
@@ -34,6 +42,10 @@ MenuItem::MenuItem(const Command& command, const std::wstring& text, bool checkB
 ,	m_enable(true)
 ,	m_checked(false)
 {
+	if (!s_imageUnchecked)
+		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
+	if (!s_imageChecked)
+		s_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
 }
 
 MenuItem::MenuItem(const std::wstring& text, bool checkBox, Bitmap* image)
@@ -43,6 +55,10 @@ MenuItem::MenuItem(const std::wstring& text, bool checkBox, Bitmap* image)
 ,	m_enable(true)
 ,	m_checked(false)
 {
+	if (!s_imageUnchecked)
+		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
+	if (!s_imageChecked)
+		s_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
 }
 
 MenuItem::MenuItem(const Command& command, const std::wstring& text, Bitmap* image)
@@ -53,6 +69,10 @@ MenuItem::MenuItem(const Command& command, const std::wstring& text, Bitmap* ima
 ,	m_enable(true)
 ,	m_checked(false)
 {
+	if (!s_imageUnchecked)
+		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
+	if (!s_imageChecked)
+		s_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
 }
 
 MenuItem::MenuItem(const std::wstring& text, Bitmap* image)
@@ -62,6 +82,10 @@ MenuItem::MenuItem(const std::wstring& text, Bitmap* image)
 ,	m_enable(true)
 ,	m_checked(false)
 {
+	if (!s_imageUnchecked)
+		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
+	if (!s_imageChecked)
+		s_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
 }
 
 MenuItem::MenuItem(const Command& command, const std::wstring& text)
@@ -71,6 +95,10 @@ MenuItem::MenuItem(const Command& command, const std::wstring& text)
 ,	m_enable(true)
 ,	m_checked(false)
 {
+	if (!s_imageUnchecked)
+		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
+	if (!s_imageChecked)
+		s_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
 }
 
 MenuItem::MenuItem(const std::wstring& text)
@@ -79,6 +107,10 @@ MenuItem::MenuItem(const std::wstring& text)
 ,	m_enable(true)
 ,	m_checked(false)
 {
+	if (!s_imageUnchecked)
+		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
+	if (!s_imageChecked)
+		s_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
 }
 
 void MenuItem::setCommand(const Command& command)
@@ -176,6 +208,14 @@ Size MenuItem::getSize(const Widget* shell) const
 	{
 		int32_t cw = shell->getFontMetric().getExtent(m_text).cx;
 		int32_t ch = shell->getFontMetric().getHeight();
+
+		if (m_checkBox)
+		{
+			Size sz = s_imageUnchecked->getSize();
+			cw += dpi96(c_itemMarginX) + sz.cx;
+			ch = std::max< int32_t >(ch, sz.cy);
+		}
+
 		return Size(cw + dpi96(c_itemMarginX) * 2, ch + dpi96(c_itemMarginY) * 2);
 	}
 	else
@@ -185,7 +225,6 @@ Size MenuItem::getSize(const Widget* shell) const
 void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool tracking) const
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
-	const Size sz = getSize(shell);
 
 	Rect rcLabel = rc.inflate(-dpi96(c_itemMarginX), 0);
 
@@ -201,6 +240,20 @@ void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool t
 			Point(rcLabel.left, rcLabel.getCenter().y),
 			Point(rcLabel.right, rcLabel.getCenter().y)
 		);
+
+	if (m_checkBox)
+	{
+		IBitmap* image = m_checked ? s_imageChecked : s_imageUnchecked;
+		Size sz = image->getSize();
+
+		canvas.drawBitmap(
+			Point(rcLabel.right - sz.cx, rcLabel.top + (rcLabel.getHeight() - sz.cy) / 2),
+			Point(0, 0),
+			sz,
+			image,
+			BmAlpha
+		);
+	}
 }
 
 	}

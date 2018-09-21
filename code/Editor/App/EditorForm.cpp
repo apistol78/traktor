@@ -2729,7 +2729,7 @@ void EditorForm::eventTabButtonDown(ui::MouseButtonDownEvent* event)
 	{
 		if (m_tab->getPageAt(event->getPosition()) != 0)
 		{
-			Ref< ui::MenuItem > selectedItem = m_menuTab->show(m_tab, event->getPosition());
+			const ui::MenuItem* selectedItem = m_menuTab->showModal(m_tab, event->getPosition());
 			if (selectedItem)
 				handleCommand(selectedItem->getCommand());
 		}

@@ -170,8 +170,8 @@ void ToolBarDropMenu::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEv
 	for (size_t i = 0; i < m_items.size(); ++i)
 		menu.add(m_items[i]);
 		
-	Ref< MenuItem > item = menu.show(toolBar, m_menuPosition);
-	if (item)
+	const MenuItem* item = menu.showModal(toolBar, m_menuPosition);
+	if (item != nullptr)
 	{
 		ToolBarButtonClickEvent clickEvent(toolBar, this, item->getCommand());
 		toolBar->raiseEvent(&clickEvent);

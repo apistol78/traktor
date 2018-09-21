@@ -433,7 +433,7 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	Ref< ui::MenuItem > selected = m_menuPopup->show(m_graph, event->getPosition());
+	const ui::MenuItem* selected = m_menuPopup->showModal(m_graph, event->getPosition());
 	if (!selected)
 		return;
 

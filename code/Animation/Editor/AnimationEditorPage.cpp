@@ -1016,7 +1016,7 @@ void AnimationEditorPage::eventSequencerButtonDown(ui::MouseButtonDownEvent* eve
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	Ref< ui::MenuItem > selectedItem = m_menuPopup->show(m_sequencer, event->getPosition());
+	const ui::MenuItem* selectedItem = m_menuPopup->showModal(m_sequencer, event->getPosition());
 	if (selectedItem)
 		handleCommand(selectedItem->getCommand());
 

@@ -1104,11 +1104,11 @@ void SceneEditorPage::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 		RefArray< EntityAdapter > selectedEntities;
 		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 
-		Ref< ui::MenuItem > selectedItem;
+		const ui::MenuItem* selectedItem;
 		if (selectedEntities.size() == 1 && selectedEntities[0]->isExternal())
-			selectedItem = m_entityMenuExternal->show(m_instanceGrid, event->getPosition());
+			selectedItem = m_entityMenuExternal->showModal(m_instanceGrid, event->getPosition());
 		else
-			selectedItem = m_entityMenu->show(m_instanceGrid, event->getPosition());
+			selectedItem = m_entityMenu->showModal(m_instanceGrid, event->getPosition());
 
 		if (selectedItem)
 		{

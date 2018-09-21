@@ -560,7 +560,7 @@ void SkeletonEditorPage::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	Ref< ui::MenuItem > menuItem = m_boneMenu->show(m_treeSkeleton, event->getPosition());
+	const ui::MenuItem* menuItem = m_boneMenu->showModal(m_treeSkeleton, event->getPosition());
 	if (menuItem)
 	{
 		if (handleCommand(menuItem->getCommand()))

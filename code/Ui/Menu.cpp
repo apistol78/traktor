@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Menu.h"
@@ -28,9 +29,45 @@ const RefArray< MenuItem >& Menu::getItems() const
 	return m_items;
 }
 
-MenuItem* Menu::show(Widget* parent, const Point& at)
+Ref< Widget > Menu::show(Widget* parent, const Point& at) const
 {
-	Ref< MenuItem > selectedItem;
+	if (!parent)
+		return nullptr;
+
+	Ref< ToolForm > form = new ToolForm();
+	if (!form->create(parent, L"", 0, 0, WsTop, new FloodLayout()))
+		return nullptr;
+
+	Ref< MenuShell > shell = new MenuShell();
+	if (!shell->create(form))
+		return nullptr;
+
+	shell->addEventHandler< MenuClickEvent >([=](MenuClickEvent* e) {
+		MenuClickEvent clickEvent(form, e->getItem(), e->getCommand());
+		form->raiseEvent(&clickEvent);
+	});
+
+	for (auto item : m_items)
+		shell->add(item);
+
+	// Resize form to shell size.
+	form->fit();
+
+	// Place form at given position.
+	auto rc = form->getRect();
+	form->setRect(Rect(
+		parent->clientToScreen(at),
+		rc.getSize()
+	));
+
+	// Show form.
+	form->show();
+	return form;
+}
+
+const MenuItem* Menu::showModal(Widget* parent, const Point& at) const
+{
+	const MenuItem* selectedItem = nullptr;
 
 	if (!parent)
 		return nullptr;
@@ -71,6 +108,7 @@ MenuItem* Menu::show(Widget* parent, const Point& at)
 	if (form->showModal() != DrOk)
 		selectedItem = nullptr;
 
+	safeDestroy(form);
 	return selectedItem;
 }
 

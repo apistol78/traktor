@@ -1,6 +1,8 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
+#include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MenuShell.h"
 #include "Ui/StyleSheet.h"
@@ -44,6 +46,23 @@ MenuItem* MenuShell::getItem(const Point& at) const
 	return 0;
 }
 
+bool MenuShell::getItemRect(const MenuItem* item, Rect& outItemRect) const
+{
+	Rect rcInner = getInnerRect();
+	Point itemTopLeft(1, 1);
+	for (auto it : m_items)
+	{
+		Size itemSize(rcInner.getWidth() - 2, item->getSize(this).cy);
+		if (it == item)
+		{
+			outItemRect = Rect(itemTopLeft, itemSize);
+			return true;
+		}
+		itemTopLeft.y += itemSize.cy;
+	}
+	return false;
+}
+
 Size MenuShell::getMinimumSize() const
 {
 	Size minimumSize(0, 0);
@@ -66,11 +85,38 @@ void MenuShell::eventMouseMove(MouseMoveEvent* event)
 	MenuItem* item = getItem(event->getPosition());
 	if (item != m_trackItem)
 	{
-		if (hasCapture())
-			releaseCapture();
+		//if (hasCapture())
+		//	releaseCapture();
+
+		safeDestroy(m_trackSubMenu);
 
 		if ((m_trackItem = item) != nullptr)
-			setCapture();
+		{
+			if (item->count() > 0)
+			{
+				Menu sm;
+
+				// Build sub menu.
+				for (int32_t i = 0; i < item->count(); ++i)
+					sm.add(item->get(i));
+
+				// Get position of clicked item.
+				Rect rc;
+				getItemRect(item, rc);
+
+				// Show sub menu.
+				m_trackSubMenu = sm.show(this, Point(rc.right, rc.top));
+				T_FATAL_ASSERT (m_trackSubMenu != nullptr);
+
+				m_trackSubMenu->addEventHandler< MenuClickEvent >([&](MenuClickEvent* e) {
+					// Sub item selected, re-issue event in this shell.
+					MenuClickEvent clickEvent(this, e->getItem(), e->getCommand());
+					raiseEvent(&clickEvent);
+				});
+			}
+
+			//setCapture();
+		}
 
 		update();
 	}

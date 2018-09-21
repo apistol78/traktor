@@ -499,7 +499,7 @@ void BankAssetEditor::eventGrainButtonUp(ui::MouseButtonUpEvent* event)
 {
 	if (event->getButton() == ui::MbtRight)
 	{
-		Ref< ui::MenuItem > selectedItem = m_menuGrains->show(m_bankControl, event->getPosition());
+		const ui::MenuItem* selectedItem = m_menuGrains->showModal(m_bankControl, event->getPosition());
 		if (selectedItem)
 			handleCommand(selectedItem->getCommand());
 		event->consume();

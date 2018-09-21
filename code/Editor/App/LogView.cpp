@@ -131,7 +131,7 @@ void LogView::eventButtonDown(ui::MouseButtonDownEvent* event)
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	Ref< ui::MenuItem > selected = m_popup->show(m_log, event->getPosition());
+	const ui::MenuItem* selected = m_popup->showModal(m_log, event->getPosition());
 	if (!selected)
 		return;
 

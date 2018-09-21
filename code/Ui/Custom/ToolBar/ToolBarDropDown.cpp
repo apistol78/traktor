@@ -165,8 +165,8 @@ void ToolBarDropDown::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEv
 	for (uint32_t i = 0; i < uint32_t(m_items.size()); ++i)
 		menu.add(new MenuItem(Command(i), m_items[i]));
 		
-	Ref< MenuItem > selectedItem = menu.show(toolBar, m_menuPosition);
-	if (selectedItem)
+	const MenuItem* selectedItem = menu.showModal(toolBar, m_menuPosition);
+	if (selectedItem != nullptr)
 	{
 		m_selected = selectedItem->getCommand().getId();
 

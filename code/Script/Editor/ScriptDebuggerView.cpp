@@ -310,7 +310,7 @@ void ScriptDebuggerView::eventLocalsGridButtonDown(ui::MouseButtonDownEvent* eve
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	Ref< ui::MenuItem > selected = m_localsPopup->show(m_localsGrid, event->getPosition());
+	const ui::MenuItem* selected = m_localsPopup->showModal(m_localsGrid, event->getPosition());
 	if (!selected)
 		return;
 
