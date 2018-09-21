@@ -19,6 +19,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+	namespace drawing
+	{
+
+class Image;
+
+	}
+
 	namespace ui
 	{
 
@@ -46,6 +53,7 @@ public:
 private:
 	float m_hue;
 	Point m_cursor;
+	Ref< drawing::Image > m_gradientImage;
 	Ref< Bitmap > m_gradientBitmap;
 
 	void updateGradientImage();

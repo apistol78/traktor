@@ -24,10 +24,6 @@ public:
 
 	virtual Size getSize() const T_OVERRIDE T_FINAL;
 
-	virtual void setPixel(uint32_t x, uint32_t y, const Color4ub& color) T_OVERRIDE T_FINAL;
-
-	virtual Color4ub getPixel(uint32_t x, uint32_t y) const T_OVERRIDE T_FINAL;
-
 	cairo_surface_t* getSurface() const { return m_surface; }
 
 private:

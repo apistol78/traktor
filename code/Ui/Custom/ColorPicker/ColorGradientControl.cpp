@@ -4,6 +4,8 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Custom/ColorPicker/ColorEvent.h"
@@ -29,6 +31,7 @@ bool ColorGradientControl::create(Widget* parent, int style, const Color4ub& col
 	addEventHandler< MouseMoveEvent >(this, &ColorGradientControl::eventMouseMove);
 	addEventHandler< PaintEvent >(this, &ColorGradientControl::eventPaint);
 
+	m_gradientImage = new drawing::Image(drawing::PixelFormat::getR8G8B8(), 256, 256);
 	m_gradientBitmap = new Bitmap(256, 256);
 
 	setColor(color, true);
@@ -45,8 +48,11 @@ Size ColorGradientControl::getPreferedSize() const
 
 void ColorGradientControl::setColor(const Color4ub& color, bool updateCursor)
 {
+	float rgba[4];
+	color.getRGBA32F(rgba);
+
 	float hsv[3];
-	RGBtoHSV(color, hsv);
+	RGBtoHSV(Color4f(rgba), hsv);
 
 	m_hue = hsv[0];
 
@@ -61,12 +67,14 @@ void ColorGradientControl::setColor(const Color4ub& color, bool updateCursor)
 
 Color4ub ColorGradientControl::getColor() const
 {
-	return m_gradientBitmap->getPixel(m_cursor.x, m_cursor.y);
+	Color4f clr;
+	m_gradientImage->getPixelUnsafe(m_cursor.x, m_cursor.y, clr);
+	return clr.toColor4ub();
 }
 
 void ColorGradientControl::updateGradientImage()
 {
-	Color4ub color;
+	Color4f color;
 	float hsv[3];
 
 	for (int y = 0; y < 256; ++y)
@@ -79,9 +87,11 @@ void ColorGradientControl::updateGradientImage()
 
 			HSVtoRGB(hsv, color);
 
-			m_gradientBitmap->setPixel(x, y, color);
+			m_gradientImage->setPixelUnsafe(x, y, color);
 		}
 	}
+
+	m_gradientBitmap->copyImage(m_gradientImage);
 }
 
 void ColorGradientControl::eventButtonDown(MouseButtonDownEvent* event)
@@ -140,7 +150,7 @@ void ColorGradientControl::eventPaint(PaintEvent* event)
 		m_gradientBitmap
 	);
 
-	Color4ub color = m_gradientBitmap->getPixel(m_cursor.x, m_cursor.y);
+	Color4ub color = getColor();
 
 	int average = (color.r + color.g + color.b) / 3;
 	if (average < 128)

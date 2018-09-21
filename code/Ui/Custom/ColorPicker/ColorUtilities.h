@@ -10,16 +10,16 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 namespace traktor
 {
 
-class Color4ub;
+class Color4f;
 
 	namespace ui
 	{
 		namespace custom
 		{
 
-void RGBtoHSV(const Color4ub& rgb, float outHsv[3]);
+void RGBtoHSV(const Color4f& rgb, float outHsv[3]);
 
-void HSVtoRGB(float hsv[3], Color4ub& outRgb);
+void HSVtoRGB(float hsv[3], Color4f& outRgb);
 
 		}
 	}

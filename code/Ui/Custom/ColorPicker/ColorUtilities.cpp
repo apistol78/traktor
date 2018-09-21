@@ -5,8 +5,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <cmath>
+#include "Core/Math/Color4f.h"
 #include "Ui/Custom/ColorPicker/ColorUtilities.h"
-#include "Core/Math/Color4ub.h"
 
 namespace traktor
 {
@@ -15,14 +15,10 @@ namespace traktor
 		namespace custom
 		{
 
-void RGBtoHSV(const Color4ub& rgb, float outHsv[3])
+void RGBtoHSV(const Color4f& rgb, float outHsv[3])
 {
-	float c[] =
-	{
-		rgb.r / 255.0f,
-		rgb.g / 255.0f,
-		rgb.b / 255.0f
-	};
+	float c[4] = { 0.0f };
+	rgb.storeUnaligned(c);
 
 	int mn = 0;
 	if (c[0] < c[1])
@@ -78,7 +74,7 @@ void RGBtoHSV(const Color4ub& rgb, float outHsv[3])
 		outHsv[1] = 1.0f - c[mn] / c[mx];
 }
 
-void HSVtoRGB(float hsv[3], Color4ub& outRgb)
+void HSVtoRGB(float hsv[3], Color4f& outRgb)
 {
 	int hi = int(hsv[0] / 60.0f) % 6;
 	float f = hsv[0] / 60.0f - int(hsv[0] / 60.0f);
@@ -121,9 +117,7 @@ void HSVtoRGB(float hsv[3], Color4ub& outRgb)
 		break;
 	}
 
-	outRgb.r = uint8_t(r * 255.0f);
-	outRgb.g = uint8_t(g * 255.0f);
-	outRgb.b = uint8_t(b * 255.0f);
+	outRgb = Color4f(r, g, b, 1.0f);
 }
 
 		}
