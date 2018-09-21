@@ -9,7 +9,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Config.h"
 #include "Core/Ref.h"
-#include "Core/Math/Color4ub.h"
 #include "Ui/Rect.h"
 
 namespace traktor
@@ -39,10 +38,6 @@ public:
 	virtual Ref< drawing::Image > getImage() const = 0;
 
 	virtual Size getSize() const = 0;
-
-	virtual void setPixel(uint32_t x, uint32_t y, const Color4ub& color) = 0;
-
-	virtual Color4ub getPixel(uint32_t x, uint32_t y) const = 0;
 };
 
 	}

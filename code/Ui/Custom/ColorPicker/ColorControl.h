@@ -19,6 +19,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+	namespace drawing
+	{
+
+class Image;
+
+	}
+
 	namespace ui
 	{
 
@@ -45,7 +52,8 @@ public:
 
 private:
 	Color4ub m_color;
-	Ref< Bitmap > m_preview;
+	Ref< drawing::Image > m_previewImage;
+	Ref< Bitmap > m_previewBitmap;
 
 	void eventPaint(PaintEvent* event);
 };

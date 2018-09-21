@@ -176,45 +176,6 @@ Size BitmapWin32::getSize() const
 	return Size(int(m_width), int(m_height));
 }
 
-void BitmapWin32::setPixel(uint32_t x, uint32_t y, const Color4ub& color)
-{
-	uint32_t rgba = (color.a << 24) | (color.r << 16) | (color.g << 8) | color.b;
-
-	uint32_t* dstColor = reinterpret_cast< uint32_t* >(m_pBits);
-	uint32_t* dstAlpha = reinterpret_cast< uint32_t* >(m_pBitsPreMulAlpha);
-	uint32_t offset = x + (m_height - y - 1) * m_width;
-
-	dstColor[offset] = rgba & 0x00ffffff;
-
-	uint8_t* h = reinterpret_cast< uint8_t* >(&rgba);
-	h[0] = (h[0] * h[3]) >> 8;
-	h[1] = (h[1] * h[3]) >> 8;
-	h[2] = (h[2] * h[3]) >> 8;
-
-	dstAlpha[offset] = rgba;
-
-#if defined(T_USE_GDI_PLUS)
-	m_gpBitmap.release();
-#endif
-}
-
-Color4ub BitmapWin32::getPixel(uint32_t x, uint32_t y) const
-{
-	uint32_t* dstColor = reinterpret_cast< uint32_t* >(m_pBits);
-	uint32_t* dstAlpha = reinterpret_cast< uint32_t* >(m_pBitsPreMulAlpha);
-	uint32_t offset = x + (m_height - y - 1) * m_width;
-
-	uint32_t rgb = dstColor[offset];
-	uint32_t alpha = dstAlpha[offset];
-
-	int r = (rgb & 0x00ff0000) >> 16;
-	int g = (rgb & 0x0000ff00) >> 8;
-	int b = (rgb & 0x000000ff);
-	int a = (alpha & 0xff000000) >> 24;
-
-	return Color4ub(r, g, b, a);
-}
-
 HICON BitmapWin32::createIcon() const
 {
 	HDC hScreenDC = GetDC(NULL);

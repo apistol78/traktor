@@ -97,12 +97,6 @@ public:
 	/*! \brief Get size of bitmap in pixels. */
 	virtual Size getSize() const T_OVERRIDE T_FINAL;
 
-	/*! \brief Get pixel. */
-	Color4ub getPixel(uint32_t x, uint32_t y) const;
-
-	/*! \brief Set pixel. */
-	void setPixel(uint32_t x, uint32_t y, const Color4ub& color);
-
 	/*! \brief Get system bitmap. */
 	virtual ISystemBitmap* getSystemBitmap() const T_OVERRIDE T_FINAL;
 

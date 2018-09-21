@@ -4,6 +4,8 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Custom/ColorPicker/ColorControl.h"
@@ -34,9 +36,10 @@ bool ColorControl::create(Widget* parent, int style)
 	const int32_t width = dpi96(c_width);
 	const int32_t height = dpi96(c_height);
 
-	m_preview = new ui::Bitmap(width, height);
-	setColor(Color4ub(0, 0, 0));
+	m_previewImage = new drawing::Image(drawing::PixelFormat::getR8G8B8(), width, height);
+	m_previewBitmap = new ui::Bitmap(width, height);
 
+	setColor(Color4ub(0, 0, 0));
 	return true;
 }
 
@@ -52,10 +55,15 @@ void ColorControl::setColor(const Color4ub& color)
 		{
 			Color4ub checkerColor = (((x >> 2) & 1) ^ ((y >> 2) & 1)) ? Color4ub(180, 180, 180) : Color4ub(80, 80, 80);
 			Color4ub previewColor = lerp(checkerColor, color, color.a / 255.0f);
-			m_preview->setPixel(x, y, previewColor);
+
+			float rgba[4];
+			previewColor.getRGBA32F(rgba);
+
+			m_previewImage->setPixel(x, y, Color4f(rgba));
 		}
 	}
 
+	m_previewBitmap->copyImage(m_previewImage);
 	update();
 }
 
@@ -78,8 +86,8 @@ void ColorControl::eventPaint(PaintEvent* event)
 	canvas.drawBitmap(
 		Point(0, 0),
 		Point(0, 0),
-		m_preview->getSize(),
-		m_preview
+		m_previewBitmap->getSize(),
+		m_previewBitmap
 	);
 
 	event->consume();

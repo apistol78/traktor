@@ -19,6 +19,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+	namespace drawing
+	{
+
+class Image;
+
+	}
+
 	namespace ui
 	{
 
@@ -50,6 +57,7 @@ public:
 
 private:
 	Ref< IGradient > m_gradient;
+	Ref< drawing::Image > m_gradientImage;
 	Ref< Bitmap > m_gradientBitmap;
 	int32_t m_marker;
 

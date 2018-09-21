@@ -135,23 +135,5 @@ Size BitmapX11::getSize() const
 	return Size(w, h);
 }
 
-void BitmapX11::setPixel(uint32_t x, uint32_t y, const Color4ub& color)
-{
-	cairo_surface_flush(m_surface);
-	uint8_t* bits = reinterpret_cast< uint8_t* >(cairo_image_surface_get_data(m_surface));
-	uint32_t pitch = cairo_image_surface_get_stride(m_surface);
-	*(uint32_t*)&bits[x + y * pitch] = color.getRGBA();
-	cairo_surface_mark_dirty(m_surface);
-}
-
-Color4ub BitmapX11::getPixel(uint32_t x, uint32_t y) const
-{
-	cairo_surface_flush(m_surface);
-	const uint8_t* bits = reinterpret_cast< const uint8_t* >(cairo_image_surface_get_data(m_surface));
-	uint32_t pitch = cairo_image_surface_get_stride(m_surface);
-	const uint8_t* px = &bits[x + y * pitch];
-	return Color4ub(px[0], px[1], px[2], px[3]);
-}
-
 	}
 }

@@ -5,6 +5,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Math/MathUtils.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Custom/ColorPicker/ColorEvent.h"
@@ -33,6 +35,7 @@ bool ColorSliderControl::create(Widget* parent, int style, IGradient* gradient)
 	const int32_t sliderHeight = dpi96(256);
 
 	m_gradient = gradient;
+	m_gradientImage = new drawing::Image(drawing::PixelFormat::getR8G8B8(), sliderWidth, sliderHeight);
 	m_gradientBitmap = new Bitmap(sliderWidth, sliderHeight);
 	m_marker = 0;
 
@@ -59,6 +62,7 @@ void ColorSliderControl::updateGradient()
 {
 	const int32_t sliderWidth = dpi96(24);
 	const int32_t sliderHeight = dpi96(256);
+	
 	for (int y = 0; y < sliderHeight; ++y)
 	{
 		Color4ub color = m_gradient->get((y * 256) / sliderHeight);
@@ -66,9 +70,15 @@ void ColorSliderControl::updateGradient()
 		{
 			Color4ub checkerColor = (((x >> 2) & 1) ^ ((y >> 2) & 1)) ? Color4ub(180, 180, 180) : Color4ub(80, 80, 80);
 			Color4ub gradientColor = lerp(checkerColor, color, color.a / 255.0f);
-			m_gradientBitmap->setPixel(x, y, gradientColor);
+
+			float rgba[4];
+			gradientColor.getRGBA32F(rgba);
+
+			m_gradientImage->setPixelUnsafe(x, y, Color4f(rgba));
 		}
 	}
+
+	m_gradientBitmap->copyImage(m_gradientImage);
 }
 
 void ColorSliderControl::eventButtonDown(MouseButtonDownEvent* event)
