@@ -47,8 +47,6 @@ public:
 
 	virtual int32_t getSystemDPI() const T_OVERRIDE T_FINAL;
 
-	virtual bool getSystemColor(SystemColor systemColor, Color4ub& outColor) T_OVERRIDE T_FINAL;
-
 	virtual void getSystemFonts(std::list< std::wstring >& outFonts) T_OVERRIDE T_FINAL;
 };
 

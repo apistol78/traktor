@@ -10,7 +10,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <list>
 #include <string>
 #include "Core/Config.h"
-#include "Core/Math/Color4ub.h"
 #include "Ui/Enums.h"
 
 namespace traktor
@@ -63,8 +62,6 @@ public:
 	virtual IClipboard* createClipboard() = 0;
 
 	virtual int32_t getSystemDPI() const = 0;
-
-	virtual bool getSystemColor(SystemColor systemColor, Color4ub& outColor) = 0;
 
 	virtual void getSystemFonts(std::list< std::wstring >& outFonts) = 0;
 };

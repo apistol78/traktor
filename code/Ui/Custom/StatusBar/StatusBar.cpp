@@ -4,10 +4,10 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Ui/Custom/StatusBar/StatusBar.h"
 #include "Ui/Application.h"
-#include "Ui/StyleSheet.h"
 #include "Ui/Form.h"
+#include "Ui/StyleSheet.h"
+#include "Ui/Custom/StatusBar/StatusBar.h"
 
 namespace traktor
 {
@@ -85,10 +85,9 @@ void StatusBar::eventSize(SizeEvent* event)
 
 void StatusBar::eventPaint(PaintEvent* event)
 {
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 	Rect rc = getInnerRect();
-
-	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 
 	canvas.setBackground(ss->getColor(this, m_alert ? L"background-color-alert" : L"background-color"));
 	canvas.fillRect(rc);
@@ -104,7 +103,7 @@ void StatusBar::eventPaint(PaintEvent* event)
 		rc = rc.inflate(-dpi96(2), -dpi96(2));
 		for (int i = 0; i <= 2; ++i)
 		{
-			canvas.setForeground(getSystemColor(ScButtonShadow));
+			canvas.setForeground(Color4ub(180, 180, 180));
 			canvas.drawLine(rc.right, rc.bottom - dpi96(i * 4 - 1), rc.right - dpi96(i * 4 - 1), rc.bottom);
 			canvas.drawLine(rc.right, rc.bottom - dpi96(i * 4 - 2), rc.right - dpi96(i * 4 - 2), rc.bottom);
 

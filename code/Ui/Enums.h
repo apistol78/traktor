@@ -99,25 +99,6 @@ enum LineStyle
 	LsDotDash
 };
 
-enum SystemColor
-{
-	ScDesktopBackground,
-	ScActiveCaption,
-	ScInactiveCaption,
-	ScMenuBackground,
-	ScWindowBackground,
-	ScWindowFrame,
-	ScMenuText,
-	ScWindowText,
-	ScActiveCaptionText,
-	ScInactiveCaptionText,
-	ScActiveBorder,
-	ScInactiveBorder,
-	ScButtonFace,
-	ScButtonShadow,
-	ScDisabledText
-};
-
 enum BlendMode
 {
 	BmNone		= 0,

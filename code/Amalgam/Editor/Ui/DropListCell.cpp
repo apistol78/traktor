@@ -12,6 +12,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Command.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 
 namespace traktor
@@ -50,6 +51,7 @@ void DropListCell::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& p
 
 void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
+	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
 	ui::Size size = rect.getSize();
 
 	int32_t sep = ui::dpi96(14);
@@ -67,10 +69,10 @@ void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		rect.bottom
 	);
 
-	canvas.setBackground(ui::getSystemColor(ui::ScWindowBackground));
+	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rect);
 
-	canvas.setBackground(ui::getSystemColor(ui::ScMenuBackground));
+	canvas.setBackground(ss->getColor(this, L"background-color-button"));;
 	canvas.fillRect(rcButton);
 
 	canvas.setForeground(Color4ub(128, 128, 140));
@@ -85,14 +87,14 @@ void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		ui::Point(center.x - ui::dpi96(1), center.y + ui::dpi96(2))
 	};
 
-	canvas.setBackground(ui::getSystemColor(ui::ScWindowText));
+	canvas.setBackground(ss->getColor(this, L"color"));
 	canvas.fillPolygon(pnts, 3);
 
 	int32_t id = m_instance->getDeployHostId();
 	if (id >= 0)
 	{
 		const std::wstring& description = m_hostEnumerator->getDescription(id);
-		canvas.setForeground(ui::getSystemColor(ui::ScWindowText));
+		canvas.setForeground(ss->getColor(this, L"color"));
 		canvas.drawText(rcText, description, ui::AnLeft, ui::AnCenter);
 	}
 
