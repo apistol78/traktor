@@ -107,11 +107,6 @@ int32_t WidgetFactoryX11::getSystemDPI() const
 	return 96 * 2;
 }
 
-bool WidgetFactoryX11::getSystemColor(SystemColor systemColor, Color4ub& outColor)
-{
-	return false;
-}
-
 void WidgetFactoryX11::getSystemFonts(std::list< std::wstring >& outFonts)
 {
 	FcConfig* config = FcInitLoadConfigAndFonts();

@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Ui/Application.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/Panel.h"
 
 namespace traktor
@@ -67,6 +68,7 @@ Rect Panel::getInnerRect() const
 
 void Panel::eventPaint(PaintEvent* event)
 {
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 
 	Rect rcInner = Widget::getInnerRect();
@@ -79,10 +81,10 @@ void Panel::eventPaint(PaintEvent* event)
 
 	Rect rcTitle(rcInner.left, rcInner.top, rcInner.right, rcInner.top + extent.cy + 4);
 
-	canvas.setBackground(getSystemColor(focus ? ScActiveCaption : ScInactiveCaption));
+	canvas.setBackground(ss->getColor(this, focus ? L"caption-background-color-focus" : L"caption-background-color-no-focus"));
 	canvas.fillRect(rcTitle);
 
-	canvas.setForeground(getSystemColor(focus ? ScActiveCaptionText : ScInactiveCaptionText));
+	canvas.setForeground(ss->getColor(this, focus ? L"caption-color-focus" : L"caption-color-no-focus"));
 	canvas.drawText(
 		rcTitle.inflate(-4, 0),
 		text,

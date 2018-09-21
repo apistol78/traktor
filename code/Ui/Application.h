@@ -141,13 +141,6 @@ inline int32_t invdpi96(int32_t measure)
 	return (measure * 96) / getSystemDPI();
 }
 
-inline Color4ub getSystemColor(SystemColor systemColor)
-{
-	Color4ub color;
-	Application::getInstance()->getWidgetFactory()->getSystemColor(systemColor, color);
-	return color;
-}
-
 //@}
 
 	}

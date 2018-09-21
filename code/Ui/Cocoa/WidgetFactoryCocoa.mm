@@ -64,97 +64,9 @@ IClipboard* WidgetFactoryCocoa::createClipboard()
 	return new ClipboardCocoa();
 }
 
- int32_t WidgetFactoryCocoa::getSystemDPI() const
- {
- 	return 96;
- }
-
-bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color4ub& outColor)
+int32_t WidgetFactoryCocoa::getSystemDPI() const
 {
-	NSColor* color;
-	switch (systemColor)
-	{
-	case ScDesktopBackground:
-		color = [NSColor windowBackgroundColor];
-		break;
-	case ScActiveCaption:
-		{
-			outColor = Color4ub(153, 180, 209);
-			return true;
-		}
-		break;
-	case ScInactiveCaption:
-		{
-			outColor = Color4ub(163, 190, 219);
-			return true;
-		}
-		break;
-	case ScMenuBackground:
-		color = [NSColor textBackgroundColor];
-		break;
-	case ScWindowBackground:
-		{
-			outColor = Color4ub(241, 241, 241);
-			return true;
-		}
-		break;
-	case ScWindowFrame:
-		color = [NSColor windowFrameColor];		
-		break;
-	case ScMenuText:
-		color = [NSColor textColor];
-		break;
-	case ScWindowText:
-		color = [NSColor textColor];
-		break;
-	case ScActiveCaptionText:
-		{
-			outColor = Color4ub(255, 255, 255);
-			return true;
-		}
-		break;
-	case ScInactiveCaptionText:
-		{
-			outColor = Color4ub(0, 0, 0);
-			return true;
-		}
-		break;
-	case ScActiveBorder:
-		color = [NSColor windowFrameColor];
-		break;
-	case ScInactiveBorder:
-		color = [NSColor windowFrameColor];
-		break;
-	case ScButtonFace:
-		{
-			outColor = Color4ub(200, 200, 200);
-			return true;
-		}
-		break;
-	case ScButtonShadow:
-		color = [NSColor controlShadowColor];
-		break;
-	case ScDisabledText:
-		color = [NSColor disabledControlTextColor];
-		break;
-	default:
-		return false;
-	}
-	
-	// Ensure color is in RGB color space.
-	color = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-	
-	// Extract color components.
-	float r = [color redComponent];
-	float g = [color greenComponent];
-	float b = [color blueComponent];
-	
-	outColor = Color4ub(
-		uint8_t(r * 255),
-		uint8_t(g * 255),
-		uint8_t(b * 255)
-	);
-	return true;
+	return 96;
 }
 
 void WidgetFactoryCocoa::getSystemFonts(std::list< std::wstring >& outFonts)

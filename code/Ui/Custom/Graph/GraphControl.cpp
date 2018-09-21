@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/GraphCanvas.h"
 #include "Ui/Custom/Graph/PaintSettings.h"
@@ -892,6 +893,7 @@ void GraphControl::eventMouseWheel(MouseWheelEvent* event)
 
 void GraphControl::eventPaint(PaintEvent* event)
 {
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 	Rect rc = getInnerRect();
 
@@ -923,7 +925,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 	}
 	else
 	{
-		canvas.setBackground(getSystemColor(ScButtonFace));
+		canvas.setBackground(ss->getColor(this, L"background-color"));
 		canvas.fillRect(rc);
 	}
 

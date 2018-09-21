@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Ui/Application.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/ScrollBar.h"
 #include "Ui/Custom/Sequencer/CursorMoveEvent.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
@@ -497,6 +498,7 @@ void SequencerControl::eventMouseWheel(MouseWheelEvent* event)
 
 void SequencerControl::eventPaint(PaintEvent* event)
 {
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 
 	// Get all items, including descendants.
@@ -513,13 +515,13 @@ void SequencerControl::eventPaint(PaintEvent* event)
 	int scrollOffsetY = m_scrollBarV->getPosition();
 
 	// Clear background.
-	canvas.setBackground(getSystemColor(ScButtonFace));
+	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(Rect(rc.left, rc.top, rc.left + m_separator, rc.bottom));
 	
 	canvas.setBackground(Color4ub(138, 137, 140));
 	canvas.fillRect(Rect(rc.left + m_separator, rc.top, rc.right, rc.bottom));
 
-	canvas.setBackground(getSystemColor(ScButtonFace));
+	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(Rect(rc.right - scrollWidth, rc.bottom - scrollHeight, rc.right, rc.bottom));
 
 	// Right sequence edge.
@@ -586,9 +588,9 @@ void SequencerControl::eventPaint(PaintEvent* event)
 	canvas.setBackground(Color4ub(255, 255, 255));
 	canvas.fillRect(rcTime);
 
-	std::wstringstream ss;
-	ss << m_cursor << L" ms";
-	Size ext = canvas.getFontMetric().getExtent(ss.str());
+	std::wstringstream wss;
+	wss << m_cursor << L" ms";
+	Size ext = canvas.getFontMetric().getExtent(wss.str());
 
 	canvas.setForeground(Color4ub(0, 0, 0));
 	canvas.drawText(
@@ -596,7 +598,7 @@ void SequencerControl::eventPaint(PaintEvent* event)
 			rcTime.left + 4,
 			rcTime.top + (rcTime.getHeight() - ext.cy) / 2
 		),
-		ss.str()
+		wss.str()
 	);
 
 	event->consume();

@@ -104,37 +104,6 @@ int32_t WidgetFactoryWin32::getSystemDPI() const
 	return m_systemDPI;
 }
 
-bool WidgetFactoryWin32::getSystemColor(SystemColor systemColor, Color4ub& outColor)
-{
-	const int c_systemColors[] =
-	{
-		COLOR_BACKGROUND,
-		COLOR_ACTIVECAPTION,
-		COLOR_INACTIVECAPTION,
-		COLOR_MENU,
-		COLOR_WINDOW,
-		COLOR_WINDOWFRAME,
-		COLOR_MENUTEXT,
-		COLOR_WINDOWTEXT,
-		COLOR_CAPTIONTEXT,
-		COLOR_INACTIVECAPTIONTEXT,
-		COLOR_ACTIVEBORDER,
-		COLOR_INACTIVEBORDER,
-		COLOR_BTNFACE,
-		COLOR_BTNSHADOW,
-		COLOR_GRAYTEXT
-	};
-
-	DWORD c = GetSysColor(c_systemColors[systemColor]);
-	outColor = Color4ub(
-		GetRValue(c),
-		GetGValue(c),
-		GetBValue(c)
-	);
-
-	return true;
-}
-
 void WidgetFactoryWin32::getSystemFonts(std::list< std::wstring >& outFonts)
 {
 	HDC hDC = GetDC(NULL);
