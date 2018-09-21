@@ -690,7 +690,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 	Ref< Solution > solution = selectedItem->getData< Solution >(L"PRIMARY");
 	if (solution)
 	{
-		Ref< ui::MenuItem > menuItem = m_menuSolution->show(m_treeSolution, event->getPosition());
+		const ui::MenuItem* menuItem = m_menuSolution->showModal(m_treeSolution, event->getPosition());
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
@@ -720,7 +720,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 	Ref< Project > project = selectedItem->getData< Project >(L"PRIMARY");
 	if (project)
 	{
-		Ref< ui::MenuItem > menuItem = m_menuProject->show(m_treeSolution, event->getPosition());
+		const ui::MenuItem* menuItem = m_menuProject->showModal(m_treeSolution, event->getPosition());
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
@@ -795,7 +795,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 	Ref< Aggregation > aggregation = selectedItem->getData< Aggregation >(L"PRIMARY");
 	if (aggregation)
 	{
-		Ref< ui::MenuItem > menuItem = m_menuAggregation->show(m_treeSolution, event->getPosition());
+		const ui::MenuItem* menuItem = m_menuAggregation->showModal(m_treeSolution, event->getPosition());
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
@@ -850,7 +850,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 	Ref< Configuration > configuration = selectedItem->getData< Configuration >(L"PRIMARY");
 	if (configuration)
 	{
-		Ref< ui::MenuItem > menuItem = m_menuConfiguration->show(m_treeSolution, event->getPosition());
+		const ui::MenuItem* menuItem = m_menuConfiguration->showModal(m_treeSolution, event->getPosition());
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
@@ -882,7 +882,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 		Ref< Project > project = selectedItem->getData< Project >(L"PROJECT");
 		T_ASSERT (project);
 
-		Ref< ui::MenuItem > menuItem = m_menuFilter->show(m_treeSolution, event->getPosition());
+		const ui::MenuItem* menuItem = m_menuFilter->showModal(m_treeSolution, event->getPosition());
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
@@ -958,7 +958,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 	Ref< sb::File > file = selectedItem->getData< sb::File >(L"PRIMARY");
 	if (file)
 	{
-		Ref< ui::MenuItem > menuItem = m_menuFile->show(m_treeSolution, event->getPosition());
+		const ui::MenuItem* menuItem = m_menuFile->showModal(m_treeSolution, event->getPosition());
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();
@@ -1025,7 +1025,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 	Ref< AggregationItem > aggregationItem = selectedItem->getData< AggregationItem >(L"PRIMARY");
 	if (aggregationItem)
 	{
-		Ref< ui::MenuItem > menuItem = m_menuAggregationItem->show(m_treeSolution, event->getPosition());
+		const ui::MenuItem* menuItem = m_menuAggregationItem->showModal(m_treeSolution, event->getPosition());
 		if (menuItem)
 		{
 			const ui::Command& command = menuItem->getCommand();

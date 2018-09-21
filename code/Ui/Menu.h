@@ -39,6 +39,8 @@ public:
 
 	const RefArray< MenuItem >& getItems() const;
 
+	Ref< Widget > show(Widget* parent, const Point& at) const;
+
 	/*! \brief Show menu.
 	 *
 	 * This method will not return until an menu item
@@ -48,7 +50,7 @@ public:
 	 * \param at Position of menu top-left corner, in parent coordinate space.
 	 * \return Selected menu item, null if menu was cancelled.
 	 */
-	MenuItem* show(Widget* parent, const Point& at);
+	const MenuItem* showModal(Widget* parent, const Point& at) const;
 
 private:
 	RefArray< MenuItem > m_items;

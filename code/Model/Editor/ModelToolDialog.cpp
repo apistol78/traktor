@@ -374,7 +374,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 	if (items.front()->getParent() == 0)
 	{
 		Ref< ui::custom::TreeViewItem > itemModel = items.front();
-		Ref< ui::MenuItem > selected = m_modelRootPopup->show(m_modelTree, event->getPosition());
+		const ui::MenuItem* selected = m_modelRootPopup->showModal(m_modelTree, event->getPosition());
 		if (selected)
 		{
 			const ui::Command& command = selected->getCommand();
@@ -484,7 +484,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 	{
 		Ref< ui::custom::TreeViewItem > itemOperation = items.front();
 		Ref< ui::custom::TreeViewItem > itemModel = itemOperation->getParent();
-		Ref< ui::MenuItem > selected = m_modelChildPopup->show(m_modelTree, event->getPosition());
+		const ui::MenuItem* selected = m_modelChildPopup->showModal(m_modelTree, event->getPosition());
 		if (selected)
 		{
 			const ui::Command& command = selected->getCommand();

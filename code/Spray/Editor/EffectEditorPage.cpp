@@ -707,8 +707,8 @@ void EffectEditorPage::eventSequencerButtonDown(ui::MouseButtonDownEvent* event)
 {
 	if (event->getButton() == ui::MbtRight)
 	{
-		Ref< ui::MenuItem > selectedItem = m_popupMenu->show(m_sequencer, event->getPosition());
-		if (selectedItem != 0)
+		const ui::MenuItem* selectedItem = m_popupMenu->showModal(m_sequencer, event->getPosition());
+		if (selectedItem != nullptr)
 			handleCommand(selectedItem->getCommand());
 	}
 }

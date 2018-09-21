@@ -1066,7 +1066,7 @@ void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	Ref< ui::MenuItem > selected = m_menuPopup->show(m_editorGraph, event->getPosition());
+	const ui::MenuItem* selected = m_menuPopup->showModal(m_editorGraph, event->getPosition());
 	if (!selected)
 		return;
 

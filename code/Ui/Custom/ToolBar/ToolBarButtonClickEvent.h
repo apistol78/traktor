@@ -37,15 +37,15 @@ class T_DLLCLASS ToolBarButtonClickEvent : public ButtonClickEvent
 	T_RTTI_CLASS;
 
 public:
-	ToolBarButtonClickEvent(EventSubject* sender, ToolBarItem* item, const Command& command, MenuItem* menuItem = 0);
+	ToolBarButtonClickEvent(EventSubject* sender, ToolBarItem* item, const Command& command, const MenuItem* menuItem = 0);
 
 	ToolBarItem* getItem() const;
 
-	MenuItem* getMenuItem() const;
+	const MenuItem* getMenuItem() const;
 
 private:
 	Ref< ToolBarItem > m_item;
-	Ref< MenuItem > m_menuItem;
+	Ref< const MenuItem > m_menuItem;
 };
 
 		}

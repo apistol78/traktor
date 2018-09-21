@@ -730,7 +730,7 @@ void ScriptEditorPage::eventScriptButtonUp(ui::MouseButtonUpEvent* event)
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	Ref< ui::MenuItem > menuItem = m_editMenu->show(m_edit, event->getPosition());
+	const ui::MenuItem* menuItem = m_editMenu->showModal(m_edit, event->getPosition());
 	if (menuItem)
 	{
 		if (menuItem->getCommand() == L"Script.Editor.AddUsingStatement")

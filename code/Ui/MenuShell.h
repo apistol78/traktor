@@ -37,6 +37,8 @@ public:
 
 	MenuItem* getItem(const Point& at) const;
 
+	bool getItemRect(const MenuItem* item, Rect& outItemRect) const;
+
 	virtual Size getMinimumSize() const T_OVERRIDE T_FINAL;
 
 	virtual Size getPreferedSize() const T_OVERRIDE T_FINAL;
@@ -44,6 +46,7 @@ public:
 private:
 	RefArray< MenuItem > m_items;
 	Ref< MenuItem > m_trackItem;
+	Ref< Widget > m_trackSubMenu;
 
 	void eventMouseMove(MouseMoveEvent* event);
 

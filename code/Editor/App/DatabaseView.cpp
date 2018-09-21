@@ -1652,14 +1652,14 @@ void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 		else
 			menuInstance = m_menuInstance;
 
-		Ref< ui::MenuItem > selected = menuInstance->show(m_treeDatabase, event->getPosition());
+		const ui::MenuItem* selected = menuInstance->showModal(m_treeDatabase, event->getPosition());
 		if (selected)
 			handleCommand(selected->getCommand());
 	}
 	else if (group)
 	{
 		bool showFavorites = m_toolFavoritesShow->isToggled();
-		Ref< ui::MenuItem > selected = m_menuGroup[showFavorites ? 1 : 0]->show(m_treeDatabase, event->getPosition());
+		const ui::MenuItem* selected = m_menuGroup[showFavorites ? 1 : 0]->showModal(m_treeDatabase, event->getPosition());
 		if (selected)
 			handleCommand(selected->getCommand());
 	}

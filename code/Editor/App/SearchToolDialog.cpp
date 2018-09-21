@@ -421,7 +421,7 @@ void SearchToolDialog::eventGridResultButtonUp(ui::MouseButtonUpEvent* event)
 		popupMenu->add(new ui::MenuItem(ui::Command(L"SearchTool.OpenInstance"), i18n::Text(L"EDITOR_SEARCH_TOOL_OPEN_INSTANCE")));
 		popupMenu->add(new ui::MenuItem(ui::Command(L"SearchTool.HighlightInstance"), i18n::Text(L"EDITOR_SEARCH_TOOL_HIGHLIGHT_INSTANCE")));
 		
-		Ref< ui::MenuItem > selectedItem = popupMenu->show(m_gridResults, event->getPosition());
+		const ui::MenuItem* selectedItem = popupMenu->showModal(m_gridResults, event->getPosition());
 		if (selectedItem)
 		{
 			if (selectedItem->getCommand() == L"SearchTool.OpenInstance")
