@@ -33,6 +33,12 @@ for i = 0, projects:size() - 1 do
 	end
 end
 
+-- Create "prevent jobs" target.
+if dialect == "make" then
+	output:printLn(".NOTPARALLEL:")
+	output:printLn("")
+end
+
 -- Create "all" target.
 if dialect == "nmake" then
 	output:print("all : .phony")
