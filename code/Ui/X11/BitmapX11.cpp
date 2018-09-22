@@ -69,32 +69,26 @@ void BitmapX11::copySubImage(drawing::Image* image, const Rect& srcRect, const P
 
 	cairo_surface_flush(m_surface);
 
-	const uint32_t* sourceBits = (const uint32_t*)(sourceImage->getData());
 	uint8_t* destinationBits = (uint8_t*)cairo_image_surface_get_data(m_surface);
 	uint32_t destinationPitch = cairo_image_surface_get_stride(m_surface);
-	uint32_t sourceWidth = sourceImage->getWidth();
 
+	Color4f c;
 	for (int y = rc.top; y < rc.bottom; ++y)
 	{
 		for (int x = rc.left; x < rc.right; ++x)
 		{
 			uint32_t dstOffset = (destPos.x + (x - rc.left)) * 4 + (destPos.y + (y - rc.top)) * destinationPitch;
 			uint32_t* dstBits = (uint32_t*)&destinationBits[dstOffset];
-			uint32_t c = sourceBits[x + y * sourceWidth];
 
-			if (!haveAlpha)
-				c |= 0xff000000;
+			sourceImage->getPixelUnsafe(x, y, c);
 
-			uint32_t pa = (c & 0xff000000) >> 24;
-			uint32_t pr = (c & 0x000000ff);
-			uint32_t pg = (c & 0x0000ff00) >> 8;
-			uint32_t pb = (c & 0x00ff0000) >> 16;
+			if (haveAlpha)
+				c *= c.aaa1();
+			else
+				c = c.rgb1();
 
-			pr = (pr * pa) >> 8;
-			pg = (pg * pa) >> 8;
-			pb = (pb * pa) >> 8;
-
-			*dstBits = c;
+			Color4ub u = c.toColor4ub();
+			*dstBits = u.getARGB();
 		}
 	}
 
@@ -115,14 +109,18 @@ Ref< drawing::Image > BitmapX11::getImage() const
 
 	const uint8_t* sourceBits = reinterpret_cast< const uint8_t* >(cairo_image_surface_get_data(m_surface));
 	uint32_t sourcePitch = cairo_image_surface_get_stride(m_surface);
-	uint32_t* destinationBits = static_cast< uint32_t* >(image->getData());
 
 	for (int y = 0; y < size.cy; ++y)
 	{
 		const uint32_t* sp = (const uint32_t*)&sourceBits[y * sourcePitch];
-		uint32_t* dp = (uint32_t*)&destinationBits[y * size.cx];
 		for (int x = 0; x < size.cx; ++x)
-			*dp++ = *sp++;
+		{
+			float rgba[4];
+			Color4ub(*sp++).getRGBA32F(rgba);
+			Color4f c(rgba);
+			c /= c.aaa1();
+			image->setPixelUnsafe(x, y, c);
+		}
 	}
 
 	return image;

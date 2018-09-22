@@ -105,6 +105,21 @@ T_MATH_INLINE Color4f Color4f::rgb1() const
 	return Color4f(m_data.xyz1());
 }
 
+T_MATH_INLINE Color4f Color4f::aaa0() const
+{
+	return aaaa().rgb0();
+}
+
+T_MATH_INLINE Color4f Color4f::aaa1() const
+{
+	return aaaa().rgb1();
+}
+
+T_MATH_INLINE Color4f Color4f::aaaa() const
+{
+	return Color4f(m_data.shuffle< 3, 3, 3, 3 >());
+}
+
 T_MATH_INLINE Color4ub Color4f::toColor4ub() const
 {
 	float T_MATH_ALIGN16 tmp[4];
@@ -167,6 +182,11 @@ T_MATH_INLINE Color4f Color4f::operator * (const Scalar& r) const
 	return Color4f(m_data * r);
 }
 
+T_MATH_INLINE Color4f Color4f::operator / (const Color4f& r) const
+{
+	return Color4f(m_data / r.m_data);
+}
+
 T_MATH_INLINE Color4f Color4f::operator / (const Scalar& r) const
 {
 	return Color4f(m_data / r);
@@ -184,9 +204,21 @@ T_MATH_INLINE Color4f& Color4f::operator -= (const Color4f& r)
 	return *this;
 }
 
+T_MATH_INLINE Color4f& Color4f::operator *= (const Color4f& r)
+{
+	m_data *= r.m_data;
+	return *this;
+}
+
 T_MATH_INLINE Color4f& Color4f::operator *= (const Scalar& r)
 {
 	m_data *= r;
+	return *this;
+}
+
+T_MATH_INLINE Color4f& Color4f::operator /= (const Color4f& r)
+{
+	m_data /= r.m_data;
 	return *this;
 }
 
