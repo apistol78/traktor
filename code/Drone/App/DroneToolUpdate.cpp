@@ -45,7 +45,7 @@ void DroneToolUpdate::getMenuItems(RefArray< ui::MenuItem >& outItems)
 	outItems.push_back(checkItem);
 }
 
-bool DroneToolUpdate::execute(ui::Widget* parent, ui::MenuItem* menuItem)
+bool DroneToolUpdate::execute(ui::Widget* parent, const ui::MenuItem* menuItem)
 {
 	T_ASSERT (menuItem);
 

@@ -23,8 +23,7 @@ bool MiniButton::create(Widget* parent, const std::wstring& text)
 	if (!Widget::create(parent))
 		return false;
 	
-	m_state = StReleased;
-	
+	m_pushed = false;
 	setText(text);
 	
 	addEventHandler< MouseButtonDownEvent >(this, &MiniButton::eventButtonDown);
@@ -39,7 +38,7 @@ bool MiniButton::create(Widget* parent, IBitmap* image)
 	if (!Widget::create(parent))
 		return false;
 	
-	m_state = StReleased;
+	m_pushed = false;
 	m_image  = image;
 	
 	addEventHandler< MouseButtonDownEvent >(this, &MiniButton::eventButtonDown);
@@ -64,7 +63,7 @@ Size MiniButton::getPreferedSize() const
 
 void MiniButton::eventButtonDown(MouseButtonDownEvent* event)
 {
-	m_state = StPushed;
+	m_pushed = true;
 	update();
 
 	setCapture();
@@ -75,9 +74,9 @@ void MiniButton::eventButtonUp(MouseButtonUpEvent* event)
 {
 	releaseCapture();
 
-	if (m_state == StPushed)
+	if (m_pushed)
 	{
-		m_state = StReleased;
+		m_pushed = false;
 		update();
 	
 		ButtonClickEvent clickEvent(this);
@@ -94,38 +93,23 @@ void MiniButton::eventPaint(PaintEvent* event)
 	
 	Rect rcInner = getInnerRect();
 	
-	canvas.setBackground(ss->getColor(this, L"background-color"));
-	canvas.fillRect(rcInner);
-
 	if (isEnable())
 	{
-		if (m_state == StReleased)
-		{
-			canvas.setForeground(ss->getColor(this, L"bevel-color"));
-			canvas.drawRect(rcInner);
-			
-			rcInner = rcInner.inflate(-1, -1);
+		canvas.setBackground(ss->getColor(this, m_pushed ? L"background-color-pushed" : L"background-color"));
+		canvas.fillRect(rcInner);
 
-			canvas.setForeground(ss->getColor(this, L"bevel-highlight-color"));
-			canvas.drawLine(rcInner.left, rcInner.bottom - 2, rcInner.left, rcInner.top);
-			canvas.drawLine(rcInner.left, rcInner.top, rcInner.right - 1, rcInner.top);
-			
-			canvas.setForeground(ss->getColor(this, L"bevel-shadow-color"));
-			canvas.drawLine(rcInner.left + 1, rcInner.bottom - 1, rcInner.right - 1, rcInner.bottom - 1);
-			canvas.drawLine(rcInner.right - 1, rcInner.bottom - 1, rcInner.right - 1, rcInner.top);
-		}
-		else
-		{
-			canvas.setForeground(ss->getColor(this, L"bevel-color"));
-			canvas.drawRect(rcInner);
-		
-			if (m_state == StPushed)
-				rcInner = rcInner.offset(1, 1);
-		}
+		canvas.setForeground(ss->getColor(this, L"border-color"));
+		canvas.drawRect(rcInner);
+
+		if (m_pushed)
+			rcInner = rcInner.offset(1, 1);
 	}
 	else
 	{
-		canvas.setForeground(ss->getColor(this, L"bevel-disabled-color"));
+		canvas.setBackground(ss->getColor(this, L"background-color-disabled"));
+		canvas.fillRect(rcInner);
+
+		canvas.setForeground(ss->getColor(this, L"border-color-disabled"));
 		canvas.drawRect(rcInner);
 	}
 

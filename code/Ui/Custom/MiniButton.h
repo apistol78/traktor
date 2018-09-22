@@ -41,13 +41,7 @@ public:
 	virtual Size getPreferedSize() const T_OVERRIDE;
 
 private:
-	enum State
-	{
-		StReleased,
-		StPushed
-	};
-	
-	State m_state;
+	bool m_pushed;
 	Ref< IBitmap > m_image;
 	
 	void eventButtonDown(MouseButtonDownEvent* event);

@@ -101,7 +101,7 @@ Ref< ui::NotificationIcon > g_notificationIcon;
 
 void eventNotificationButtonDown(ui::MouseButtonDownEvent* event)
 {
-	Ref< ui::MenuItem > item = g_popupMenu->show(nullptr, event->getPosition());
+	const ui::MenuItem* item = g_popupMenu->showModal(nullptr, event->getPosition());
 	if (!item)
 		return;
 

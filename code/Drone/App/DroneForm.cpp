@@ -118,8 +118,7 @@ void DroneForm::eventNotificationButtonDown(ui::MouseButtonDownEvent* event)
 	setFocus();
 	setForeground();
 
-	Ref< ui::MenuItem > item = m_menuTools->show(this, screenToClient(event->getPosition()));
-
+	const ui::MenuItem* item = m_menuTools->showModal(this, screenToClient(event->getPosition()));
 	if (!item)
 		return;
 

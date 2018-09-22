@@ -58,7 +58,7 @@ void DroneToolShortcut::getMenuItems(RefArray< ui::MenuItem >& outItems)
 	outItems.push_back(menuItem);
 }
 
-bool DroneToolShortcut::execute(ui::Widget* parent, ui::MenuItem* menuItem)
+bool DroneToolShortcut::execute(ui::Widget* parent, const ui::MenuItem* menuItem)
 {
 	std::wstring commandLine = m_command;
 	if (!m_commandArguments.empty())

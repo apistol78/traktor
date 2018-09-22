@@ -44,7 +44,7 @@ void DroneToolGroup::getMenuItems(RefArray< ui::MenuItem >& outItems)
 	outItems.push_back(menuItem);
 }
 
-bool DroneToolGroup::execute(ui::Widget* parent, ui::MenuItem* menuItem)
+bool DroneToolGroup::execute(ui::Widget* parent, const ui::MenuItem* menuItem)
 {
 	return false;
 }

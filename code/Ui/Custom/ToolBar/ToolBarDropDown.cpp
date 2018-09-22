@@ -139,7 +139,7 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 	canvas.setBackground(ss->getColor(toolBar, L"item-color-dropdown-arrow"));
 	canvas.fillPolygon(pnts, 3);
 
-	canvas.setForeground(ss->getColor(toolBar, L"color"));
+	canvas.setForeground(ss->getColor(toolBar, toolBar->isEnable() ? L"color" : L"color-disabled"));
 	canvas.drawText(rcText, getSelectedItem(), AnLeft, AnCenter);
 
 	m_dropPosition = rcButton.left;
