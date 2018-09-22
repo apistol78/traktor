@@ -51,7 +51,7 @@ class T_MATH_ALIGN16 T_DLLCLASS Color4f {
 
 	T_MATH_INLINE void set(float red, float green, float blue, float alpha = 0.0f);
 
-	T_MATH_INLINE void setRed(const Scalar &red);
+	T_MATH_INLINE void setRed(const Scalar& red);
 
 	T_MATH_INLINE void setGreen(const Scalar &green);
 
@@ -65,6 +65,12 @@ class T_MATH_ALIGN16 T_DLLCLASS Color4f {
 
 	T_MATH_INLINE Color4f rgb1() const;
 
+	T_MATH_INLINE Color4f aaa0() const;
+
+	T_MATH_INLINE Color4f aaa1() const;
+
+	T_MATH_INLINE Color4f aaaa() const;
+
 	T_MATH_INLINE Color4ub toColor4ub() const;
 
 	static T_MATH_INLINE Color4f loadAligned(const float *in);
@@ -75,33 +81,39 @@ class T_MATH_ALIGN16 T_DLLCLASS Color4f {
 
 	T_MATH_INLINE void storeUnaligned(float *out) const;
 
-	T_MATH_INLINE Color4f &operator=(const Color4f &src);
+	T_MATH_INLINE Color4f& operator = (const Color4f &src);
 
-	T_MATH_INLINE Color4f operator+(const Color4f &r) const;
+	T_MATH_INLINE Color4f operator + (const Color4f &r) const;
 
-	T_MATH_INLINE Color4f operator-(const Color4f &r) const;
+	T_MATH_INLINE Color4f operator - (const Color4f &r) const;
 
-	T_MATH_INLINE Color4f operator*(const Color4f &r) const;
+	T_MATH_INLINE Color4f operator * (const Color4f &r) const;
 
-	T_MATH_INLINE Color4f operator*(const Scalar &r) const;
+	T_MATH_INLINE Color4f operator * (const Scalar& r) const;
 
-	T_MATH_INLINE Color4f operator/(const Scalar &r) const;
+	T_MATH_INLINE Color4f operator / (const Color4f &r) const;
 
-	T_MATH_INLINE Color4f &operator+=(const Color4f &r);
+	T_MATH_INLINE Color4f operator / (const Scalar& r) const;
 
-	T_MATH_INLINE Color4f &operator-=(const Color4f &r);
+	T_MATH_INLINE Color4f& operator += (const Color4f &r);
 
-	T_MATH_INLINE Color4f &operator*=(const Scalar &r);
+	T_MATH_INLINE Color4f& operator -= (const Color4f &r);
 
-	T_MATH_INLINE Color4f &operator/=(const Scalar &r);
+	T_MATH_INLINE Color4f& operator *= (const Color4f &r);
 
-	T_MATH_INLINE bool operator==(const Color4f &r) const;
+	T_MATH_INLINE Color4f& operator *= (const Scalar& r);
 
-	T_MATH_INLINE bool operator!=(const Color4f &r) const;
+	T_MATH_INLINE Color4f& operator /= (const Color4f& r);
+
+	T_MATH_INLINE Color4f& operator /= (const Scalar& r);
+
+	T_MATH_INLINE bool operator == (const Color4f &r) const;
+
+	T_MATH_INLINE bool operator != (const Color4f &r) const;
 
 	T_MATH_INLINE operator const Vector4 &() const;
 
-      private:
+private:
 	Vector4 m_data;
 };
 
