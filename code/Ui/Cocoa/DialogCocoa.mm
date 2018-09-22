@@ -120,13 +120,9 @@ void DialogCocoa::setVisible(bool visible)
 		[m_window makeKeyAndOrderFront: nil];
 }
 
-bool DialogCocoa::isVisible(bool includingParents) const
+bool DialogCocoa::isVisible() const
 {
 	return false;
-}
-
-void DialogCocoa::setActive()
-{
 }
 
 void DialogCocoa::setEnable(bool enable)
@@ -139,11 +135,6 @@ bool DialogCocoa::isEnable() const
 }
 
 bool DialogCocoa::hasFocus() const
-{
-	return false;
-}
-
-bool DialogCocoa::containFocus() const
 {
 	return false;
 }
@@ -201,10 +192,6 @@ void DialogCocoa::stopTimer(int id)
 	}
 }
 
-void DialogCocoa::setOutline(const Point* p, int np)
-{
-}
-
 void DialogCocoa::setRect(const Rect& rect)
 {
 	[m_window setFrame: makeNSRect(rect) display: YES];
@@ -231,11 +218,6 @@ Rect DialogCocoa::getNormalRect() const
 	return Rect(0, 0, 0, 0);
 }
 
-Size DialogCocoa::getTextExtent(const std::wstring& text) const
-{
-	return Size(text.length() * 16, 16);
-}
-
 void DialogCocoa::setFont(const Font& font)
 {
 }
@@ -243,6 +225,11 @@ void DialogCocoa::setFont(const Font& font)
 Font DialogCocoa::getFont() const
 {
 	return Font();
+}
+
+const IFontMetric* DialogCocoa::getFontMetric() const
+{
+	return this;
 }
 
 void DialogCocoa::setCursor(Cursor cursor)
@@ -305,6 +292,27 @@ void* DialogCocoa::getInternalHandle()
 SystemWindow DialogCocoa::getSystemWindow()
 {
 	return SystemWindow(m_window);
+}
+
+void DialogCocoa::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
+{
+	outAscent = 0;
+	outDescent = 0;
+}
+
+int32_t DialogCocoa::getAdvance(wchar_t ch, wchar_t next) const
+{
+	return 0;
+}
+
+int32_t DialogCocoa::getLineSpacing() const
+{
+	return 0;
+}
+
+Size DialogCocoa::getExtent(const std::wstring& text) const
+{
+	return Size(0, 0);
 }
 
 void DialogCocoa::event_windowDidMove()

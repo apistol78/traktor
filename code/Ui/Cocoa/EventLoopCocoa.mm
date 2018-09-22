@@ -30,6 +30,11 @@ EventLoopCocoa::~EventLoopCocoa()
 	[pool release];
 }
 
+void EventLoopCocoa::destroy()
+{
+	delete this;
+}
+
 bool EventLoopCocoa::process(EventSubject* owner)
 {
 	if (m_launching)

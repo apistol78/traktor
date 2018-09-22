@@ -29,6 +29,8 @@ public:
 	
 	virtual ~EventLoopCocoa();
 
+	virtual void destroy() T_OVERRIDE T_FINAL;
+
 	virtual bool process(EventSubject* owner) T_OVERRIDE T_FINAL;
 
 	virtual int32_t execute(EventSubject* owner) T_OVERRIDE T_FINAL;

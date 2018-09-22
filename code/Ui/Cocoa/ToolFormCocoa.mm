@@ -46,9 +46,13 @@ bool ToolFormCocoa::create(IWidget* parent, const std::wstring& text, int width,
 	return true;
 }
 
-void ToolFormCocoa::center()
+int ToolFormCocoa::showModal()
 {
-	[m_window center];
+	return DrCancel;
+}
+
+void ToolFormCocoa::endModal(int result)
+{
 }
 
 // IWidget implementation
@@ -100,13 +104,9 @@ void ToolFormCocoa::setVisible(bool visible)
 		[m_window orderOut: nil];
 }
 
-bool ToolFormCocoa::isVisible(bool includingParents) const
+bool ToolFormCocoa::isVisible() const
 {
 	return false;
-}
-
-void ToolFormCocoa::setActive()
-{
 }
 
 void ToolFormCocoa::setEnable(bool enable)
@@ -119,11 +119,6 @@ bool ToolFormCocoa::isEnable() const
 }
 
 bool ToolFormCocoa::hasFocus() const
-{
-	return false;
-}
-
-bool ToolFormCocoa::containFocus() const
 {
 	return false;
 }
@@ -181,10 +176,6 @@ void ToolFormCocoa::stopTimer(int id)
 	}
 }
 
-void ToolFormCocoa::setOutline(const Point* p, int np)
-{
-}
-
 void ToolFormCocoa::setRect(const Rect& rect)
 {
 	[m_window setFrame: makeNSRect(rect) display: YES];
@@ -208,11 +199,6 @@ Rect ToolFormCocoa::getNormalRect() const
 	return Rect(0, 0, 0, 0);
 }
 
-Size ToolFormCocoa::getTextExtent(const std::wstring& text) const
-{
-	return Size(0, 0);
-}
-
 void ToolFormCocoa::setFont(const Font& font)
 {
 }
@@ -220,6 +206,11 @@ void ToolFormCocoa::setFont(const Font& font)
 Font ToolFormCocoa::getFont() const
 {
 	return Font();
+}
+
+const IFontMetric* ToolFormCocoa::getFontMetric() const
+{
+	return this;
 }
 
 void ToolFormCocoa::setCursor(Cursor cursor)
@@ -282,6 +273,27 @@ void* ToolFormCocoa::getInternalHandle()
 SystemWindow ToolFormCocoa::getSystemWindow()
 {
 	return SystemWindow(m_window);
+}
+
+void ToolFormCocoa::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
+{
+	outAscent = 0;
+	outDescent = 0;
+}
+
+int32_t ToolFormCocoa::getAdvance(wchar_t ch, wchar_t next) const
+{
+	return 0;
+}
+
+int32_t ToolFormCocoa::getLineSpacing() const
+{
+	return 0;
+}
+
+Size ToolFormCocoa::getExtent(const std::wstring& text) const
+{
+	return Size(0, 0);
 }
 
 void ToolFormCocoa::event_windowDidMove()

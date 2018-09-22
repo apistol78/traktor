@@ -76,7 +76,7 @@ ContextOpenGL::ContextOpenGL(ContextOpenGL* resourceContext, HWND hWnd, HDC hDC,
 ,	m_height(0)
 ,	m_maxAnisotropy(1.0f)
 ,	m_permitDepth(true)
-,	m_currentRenderStateList(~0UL)
+,	m_currentRenderStateList(~0U)
 
 #elif defined(__APPLE__)
 
@@ -87,7 +87,7 @@ ContextOpenGL::ContextOpenGL(ContextOpenGL* resourceContext, void* context)
 ,	m_height(0)
 ,	m_maxAnisotropy(1.0f)
 ,	m_permitDepth(true)
-,	m_currentRenderStateList(~0UL)
+,	m_currentRenderStateList(~0U)
 
 #elif defined(__LINUX__)
 

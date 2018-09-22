@@ -10,13 +10,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #import <Cocoa/Cocoa.h>
 
 #include <map>
+#include "Core/Log/Log.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/Cocoa/NSTargetProxy.h"
 #include "Ui/Cocoa/NSNotificationProxy.h"
+#include "Ui/Itf/IFontMetric.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Events/AllEvents.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -28,6 +29,7 @@ class EventSubject;
 template < typename ControlType, typename NSControlType, typename NSViewType = NSControlType >	
 class WidgetCocoaImpl
 :	public ControlType
+,	public IFontMetric
 ,	public INotificationProxyCallback
 {
 public:
@@ -116,16 +118,9 @@ public:
 		[getView() setHidden: visible ? NO : YES];
 	}
 
-	virtual bool isVisible(bool includingParents) const T_OVERRIDE
+	virtual bool isVisible() const T_OVERRIDE
 	{
-		if (!includingParents)
-			return [getView() isHidden] == NO;
-		else
-			return [getView() isHiddenOrHasHiddenAncestor] == NO;
-	}
-
-	virtual void setActive() T_OVERRIDE
-	{
+		return [getView() isHidden] == NO;
 	}
 
 	virtual void setEnable(bool enable) T_OVERRIDE
@@ -211,10 +206,6 @@ public:
 		}
 	}
 
-	virtual void setOutline(const Point* p, int np) T_OVERRIDE
-	{
-	}
-
 	virtual void setRect(const Rect& rect) T_OVERRIDE
 	{
 		[getView() setFrame: makeNSRect(rect)];
@@ -240,22 +231,6 @@ public:
 		return Rect(0, 0, 0, 0);
 	}
 
-	virtual Size getTextExtent(const std::wstring& text) const T_OVERRIDE
-	{
-		NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
-		
-		NSFont* font = [getControl() font];
-		if (!font)
-			font = [NSFont controlContentFontOfSize: 11];
-		
-		[attributes setObject: font forKey:NSFontAttributeName];
-
-		NSString* str = makeNSString(text);
-		NSSize sz = [str sizeWithAttributes: attributes];
-		
-		return fromNSSize(sz);
-	}
-
 	virtual void setFont(const Font& font) T_OVERRIDE
 	{
 		NSFont* nsfnt = [NSFont
@@ -278,6 +253,11 @@ public:
 			fromNSString([font fontName]),
 			[font pointSize]
 		);
+	}
+
+	virtual const IFontMetric* getFontMetric() const
+	{
+		return this;
 	}
 
 	virtual void setCursor(Cursor cursor) T_OVERRIDE
@@ -347,6 +327,54 @@ public:
 	virtual SystemWindow getSystemWindow() T_OVERRIDE
 	{
 		return SystemWindow(m_control);
+	}
+
+	// IFontMetric
+
+	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const T_OVERRIDE
+	{
+		NSFont* font = [getControl() font];
+		if (!font)
+			font = [NSFont controlContentFontOfSize: 11];
+
+		outAscent = [font ascender];
+		outDescent = [font descender];
+	}
+
+	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const T_OVERRIDE
+	{
+/*
+		NSFont* font = [getControl() font];
+		if (!font)
+			font = [NSFont controlContentFontOfSize: 11];
+		
+		uint8_t uc[IEncoding::MaxEncodingSize + 1] = { 0 };
+		int32_t nuc = Utf8Encoding().translate(&ch, 1, uc);
+		if (nuc <= 0)
+			return 0;
+*/
+		return 0;
+	}
+
+	virtual int32_t getLineSpacing() const T_OVERRIDE
+	{
+		return 0;
+	}
+
+	virtual Size getExtent(const std::wstring& text) const T_OVERRIDE
+	{
+		NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
+		
+		NSFont* font = [getControl() font];
+		if (!font)
+			font = [NSFont controlContentFontOfSize: 11];
+		
+		[attributes setObject: font forKey:NSFontAttributeName];
+
+		NSString* str = makeNSString(text);
+		NSSize sz = [str sizeWithAttributes: attributes];
+		
+		return fromNSSize(sz);
 	}
 
 protected:

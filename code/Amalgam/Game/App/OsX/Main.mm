@@ -197,7 +197,6 @@ int main(int argc, const char** argv)
 
 	// Initialize native UI.
 	ui::Application::getInstance()->initialize(
-		new ui::EventLoopCocoa(),
 		new ui::WidgetFactoryCocoa(),
 		0
 	);
