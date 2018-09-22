@@ -65,7 +65,7 @@ Ref< Widget > Menu::show(Widget* parent, const Point& at) const
 	return form;
 }
 
-const MenuItem* Menu::showModal(Widget* parent, const Point& at) const
+const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width) const
 {
 	const MenuItem* selectedItem = nullptr;
 
@@ -96,9 +96,12 @@ const MenuItem* Menu::showModal(Widget* parent, const Point& at) const
 
 	// Place form at given position.
 	auto rc = form->getRect();
+	auto sz = rc.getSize();
+	if (width >= 0)
+		sz.cx = width;
 	form->setRect(Rect(
 		parent->clientToScreen(at),
-		rc.getSize()
+		sz
 	));
 
 	// Show form.

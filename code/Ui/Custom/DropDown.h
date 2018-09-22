@@ -23,14 +23,14 @@ namespace traktor
 	namespace ui
 	{
 
-class Button;
-class Edit;
-class ToolForm;
+// class Button;
+// class Edit;
+// class ToolForm;
 
 		namespace custom
 		{
 
-class ListBox;
+// class ListBox;
 
 /*! \brief Drop down control.
  * \ingroup UIC
@@ -85,16 +85,22 @@ public:
 	virtual Size getPreferedSize() const T_OVERRIDE;
 
 private:
-	Ref< Button > m_buttonArrow;
-	Ref< Edit > m_edit;
-	Ref< ToolForm > m_listForm;
-	Ref< ListBox > m_listBox;
+	struct Item
+	{
+		std::wstring text;
+		Ref< Object > data;
+	};
 
-	void eventArrowClick(ButtonClickEvent* event);
+	std::vector< Item > m_items;
+	int32_t m_selected;
 
-	void eventListButtonDown(MouseButtonDownEvent* event);
+	void eventMouseMove(MouseMoveEvent* event);
 
-	void eventSize(SizeEvent* event);
+	void eventButtonDown(MouseButtonDownEvent* event);
+
+	void eventButtonUp(MouseButtonUpEvent* event);
+
+	void eventPaint(PaintEvent* event);
 };
 
 		}

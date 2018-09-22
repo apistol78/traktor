@@ -41,6 +41,7 @@ bool Edit::create(Widget* parent, const std::wstring& text, int style, const Edi
 	m_readOnly = bool((style & WsReadOnly) != 0);
 
 	addEventHandler< FocusEvent >(this, &Edit::eventFocus);
+	addEventHandler< MouseMoveEvent >(this, &Edit::eventMouseMove);
 	addEventHandler< MouseButtonDownEvent >(this, &Edit::eventButtonDown);
 	addEventHandler< KeyDownEvent >(this, &Edit::eventKeyDown);
 	addEventHandler< KeyEvent >(this, &Edit::eventKey);
@@ -127,6 +128,23 @@ void Edit::eventFocus(FocusEvent* event)
 		stopTimer();
 	}
 	update();
+}
+
+void Edit::eventMouseMove(MouseMoveEvent* event)
+{
+	if (!isEnable())
+		return;
+
+	if (!hasCapture())
+	{
+		setCapture();
+		update();
+	}
+	else if (!getInnerRect().inside(event->getPosition()))
+	{
+		releaseCapture();
+		update();
+	}
 }
 
 void Edit::eventButtonDown(MouseButtonDownEvent* event)
@@ -242,8 +260,10 @@ void Edit::eventPaint(PaintEvent* event)
 	Canvas& canvas = event->getCanvas();
 	FontMetric fm = getFontMetric();
 	Rect rcInner = getInnerRect();
+
+	bool hover = isEnable() && hasCapture();
 	
-	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.setBackground(ss->getColor(this, hover ? L"background-color-hover" : L"background-color"));
 	canvas.fillRect(rcInner);
 
 	canvas.setForeground(ss->getColor(this, L"border-color"));
@@ -251,7 +271,7 @@ void Edit::eventPaint(PaintEvent* event)
 
 	std::wstring text = getText();
 
-	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.setForeground(ss->getColor(this, isEnabled() ? L"color" : L"color-disabled"));
 
 	int32_t h = fm.getHeight();
 	int32_t x = dpi96(4);

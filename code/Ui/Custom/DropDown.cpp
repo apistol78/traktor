@@ -5,13 +5,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Ui/Application.h"
-#include "Ui/Button.h"
+#include "Ui/Canvas.h"
 #include "Ui/Command.h"
-#include "Ui/Edit.h"
-#include "Ui/FloodLayout.h"
-#include "Ui/ToolForm.h"
+#include "Ui/Menu.h"
+#include "Ui/MenuItem.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/Custom/DropDown.h"
-#include "Ui/Custom/ListBox/ListBox.h"
 
 namespace traktor
 {
@@ -23,6 +22,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.DropDown", DropDown, Widget)
 
 DropDown::DropDown()
+:	m_selected(-1)
 {
 }
 
@@ -31,76 +31,74 @@ bool DropDown::create(Widget* parent, int style)
 	if (!Widget::create(parent, style))
 		return false;
 
-	m_buttonArrow = new Button();
-	m_buttonArrow->create(this, L"...");
-	m_buttonArrow->addEventHandler< ButtonClickEvent >(this, &DropDown::eventArrowClick);
-
-	m_edit = new Edit();
-	m_edit->create(this, L"", Edit::WsReadOnly);
-
-	m_listForm = new ToolForm();
-	m_listForm->create(this, L"", 0, 0, WsNone, new FloodLayout());
-	m_listForm->setVisible(false);
-
-	m_listBox = new ListBox();
-	m_listBox->create(m_listForm);
-	m_listBox->addEventHandler< MouseButtonDownEvent >(this, &DropDown::eventListButtonDown);
-
-	addEventHandler< SizeEvent >(this, &DropDown::eventSize);
+	addEventHandler< MouseMoveEvent >(this, &DropDown::eventMouseMove);
+	addEventHandler< MouseButtonDownEvent >(this, &DropDown::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &DropDown::eventButtonUp);
+	addEventHandler< PaintEvent >(this, &DropDown::eventPaint);
 	return true;
 }
 
 int32_t DropDown::add(const std::wstring& item, Object* data)
 {
-	return m_listBox->add(item, data);
+	m_items.push_back({ item, data });
+	return int32_t(m_items.size() - 1);
 }
 
 bool DropDown::remove(int32_t index)
 {
-	return m_listBox->remove(index);
+	if (index >= int32_t(m_items.size()))
+		return false;
+
+	auto i = m_items.begin() + index;
+	m_items.erase(i);
+
+	if (index >= m_selected)
+		m_selected = -1;
+
+	return true;
 }
 
 void DropDown::removeAll()
 {
-	m_listBox->removeAll();
+	m_items.resize(0);
+	m_selected = -1;
 }
 
 int32_t DropDown::count() const
 {
-	return m_listBox->count();
+	return int32_t(m_items.size());
 }
 
 void DropDown::setItem(int32_t index, const std::wstring& item)
 {
-	m_listBox->setItem(index, item);
+	m_items[index].text = item;
 }
 
 void DropDown::setData(int32_t index, Object* data)
 {
-	m_listBox->setData(index, data);
+	m_items[index].data = data;
 }
 
 std::wstring DropDown::getItem(int32_t index) const
 {
-	return m_listBox->getItem(index);
+	return (index >= 0 && index < int32_t(m_items.size())) ? m_items[index].text : L"";
 }
 
 Ref< Object > DropDown::getData(int32_t index) const
 {
-	return m_listBox->getData(index);
+	return (index >= 0 && index < int32_t(m_items.size())) ? m_items[index].data : nullptr;
 }
 
 void DropDown::select(int32_t index)
 {
-	m_listBox->select(index);
-	m_edit->setText(m_listBox->getSelectedItem());
+	m_selected = index;
 }
 
 bool DropDown::select(const std::wstring& item)
 {
-	for (int32_t i = 0; i < m_listBox->count(); ++i)
+	for (int32_t i = 0; i < count(); ++i)
 	{
-		if (m_listBox->getItem(i) == item)
+		if (getItem(i) == item)
 		{
 			select(i);
 			return true;
@@ -112,52 +110,125 @@ bool DropDown::select(const std::wstring& item)
 
 int32_t DropDown::getSelected() const
 {
-	return m_listBox->getSelected();
+	return m_selected;
 }
 
 std::wstring DropDown::getSelectedItem() const
 {
-	return m_listBox->getSelectedItem();
+	return getItem(m_selected);
 }
 
 Ref< Object > DropDown::getSelectedData() const
 {
-	return m_listBox->getSelectedData();
+	return getData(m_selected);
 }
 
 Size DropDown::getPreferedSize() const
 {
-	int32_t h1 = m_edit->getPreferedSize().cy;
-	int32_t h2 = m_buttonArrow->getPreferedSize().cy;
-	return Size(dpi96(200), std::max(h1, h2));
+	const int32_t height = getFontMetric().getHeight() + dpi96(4) * 2;
+	return Size(dpi96(200), height);
 }
 
-void DropDown::eventArrowClick(ButtonClickEvent* event)
+void DropDown::eventMouseMove(MouseMoveEvent* event)
 {
-	const Size sz = getRect().getSize();
-	const int32_t h = sz.cy;
-	const int32_t lh = m_listBox->getItemHeight() * 8;
+	if (!isEnable())
+		return;
 
-	m_listForm->setRect(Rect(clientToScreen(Point(0, h)), Size(sz.cx, lh)));
-	m_listForm->show();
-
-	m_listBox->setCapture();
+	if (!hasCapture())
+	{
+		setCapture();
+		update();
+	}
+	else if (!getInnerRect().inside(event->getPosition()))
+	{
+		releaseCapture();
+		update();
+	}
 }
 
-void DropDown::eventListButtonDown(MouseButtonDownEvent* event)
+void DropDown::eventButtonDown(MouseButtonDownEvent* event)
 {
-	m_listBox->releaseCapture();
-	m_listForm->hide();
-	m_edit->setText(m_listBox->getSelectedItem());
+	if (!isEnable())
+		return;
+
+	if (m_items.empty())
+		return;
+
+	Menu menu;
+	for (uint32_t i = 0; i < uint32_t(m_items.size()); ++i)
+		menu.add(new MenuItem(Command(i), m_items[i].text));
+	
+	Rect rcInner = getInnerRect();
+	const MenuItem* selectedItem = menu.showModal(this, rcInner.getBottomLeft(), rcInner.getWidth());
+	if (selectedItem != nullptr && selectedItem->getCommand().getId() != m_selected)
+	{
+		m_selected = selectedItem->getCommand().getId();
+
+		SelectionChangeEvent selectionChangeEvent(this);
+		raiseEvent(&selectionChangeEvent);
+	}
+
+	update();
 }
 
-void DropDown::eventSize(SizeEvent* event)
+void DropDown::eventButtonUp(MouseButtonUpEvent* event)
 {
-	const Size sz = event->getSize();
-	const int32_t h = sz.cy;
+	if (!isEnable())
+		return;
 
-	m_edit->setRect(Rect(Point(0, 0), Size(sz.cx - h, h)));
-	m_buttonArrow->setRect(Rect(Point(sz.cx - h, 0), Size(h, h)));
+	update();
+}
+
+void DropDown::eventPaint(PaintEvent* event)
+{
+	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	Canvas& canvas = event->getCanvas();
+
+	Rect rcInner = getInnerRect();
+	Point at = rcInner.getTopLeft();
+	Size size = rcInner.getSize();
+	int32_t sep = ui::dpi96(14);
+	bool hover = isEnable() && hasCapture();
+
+	Rect rcText(
+		at.x + dpi96(4),
+		at.y + 2,
+		at.x + size.cx - sep - 2,
+		at.y + size.cy - 2
+	);
+	Rect rcButton(
+		at.x + size.cx - sep,
+		at.y + 1,
+		at.x + size.cx - 1,
+		at.y + size.cy - 1
+	);
+
+	canvas.setBackground(ss->getColor(this, hover ? L"background-color-hover" : L"background-color"));
+	canvas.fillRect(Rect(at, size));
+
+	canvas.setBackground(ss->getColor(this, L"background-color-button"));
+	canvas.fillRect(rcButton);
+
+	if (hover)
+	{
+		canvas.setForeground(ss->getColor(this, L"color-hover"));
+		canvas.drawRect(Rect(at, size));
+		canvas.drawLine(rcButton.left - 1, rcButton.top, rcButton.left - 1, rcButton.bottom);
+	}
+
+	Point center = rcButton.getCenter();
+	ui::Point pnts[] =
+	{
+		ui::Point(center.x - ui::dpi96(3), center.y - ui::dpi96(1)),
+		ui::Point(center.x + ui::dpi96(2), center.y - ui::dpi96(1)),
+		ui::Point(center.x - ui::dpi96(1), center.y + ui::dpi96(2))
+	};
+
+	canvas.setBackground(ss->getColor(this, L"color-arrow"));
+	canvas.fillPolygon(pnts, 3);
+
+	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.drawText(rcText, getSelectedItem(), AnLeft, AnCenter);
 }
 
 		}

@@ -19,6 +19,11 @@
 		</item>
 		<item>
 			<type>traktor.ui.Widget</type>
+			<element>background-color-hover</element>
+			<color>50, 50, 50, 255</color>
+		</item>		
+		<item>
+			<type>traktor.ui.Widget</type>
 			<element>background-color-disabled</element>
 			<color>55, 55, 55, 255</color>
 		</item>
@@ -26,6 +31,33 @@
 			<type>traktor.ui.Widget</type>
 			<element>border-color</element>
 			<color>160, 160, 160, 255</color>
+		</item>
+
+		<!-- DropDown -->
+		<item>
+			<type>traktor.ui.custom.DropDown</type>
+			<element>background-color</element>
+			<color>51, 51, 55, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.DropDown</type>
+			<element>background-color-hover</element>
+			<color>61, 61, 65, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.DropDown</type>
+			<element>color-hover</element>
+			<color>70, 70, 74, 255</color>
+		</item>		
+		<item>
+			<type>traktor.ui.custom.DropDown</type>
+			<element>background-color-button</element>
+			<color>61, 61, 65, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.custom.DropDown</type>
+			<element>color-arrow</element>
+			<color>153, 153, 153, 255</color>
 		</item>
 
 		<!-- MenuShell -->
@@ -87,6 +119,11 @@
 			<element>background-color</element>
 			<color>37, 37, 38, 255</color>
 		</item>
+		<item>
+			<type>traktor.ui.Edit</type>
+			<element>background-color-hover</element>
+			<color>42, 42, 42, 255</color>
+		</item>			
 		<item>
 			<type>traktor.ui.Edit</type>
 			<element>background-color-disabled</element>
