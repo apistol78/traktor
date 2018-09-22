@@ -227,7 +227,7 @@ void DropDown::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"color-arrow"));
 	canvas.fillPolygon(pnts, 3);
 
-	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.setForeground(ss->getColor(this, isEnable() ? L"color" : L"color-disabled"));
 	canvas.drawText(rcText, getSelectedItem(), AnLeft, AnCenter);
 }
 

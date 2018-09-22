@@ -271,7 +271,7 @@ void Edit::eventPaint(PaintEvent* event)
 
 	std::wstring text = getText();
 
-	canvas.setForeground(ss->getColor(this, isEnabled() ? L"color" : L"color-disabled"));
+	canvas.setForeground(ss->getColor(this, isEnable() ? L"color" : L"color-disabled"));
 
 	int32_t h = fm.getHeight();
 	int32_t x = dpi96(4);

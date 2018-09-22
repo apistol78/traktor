@@ -30,7 +30,7 @@ class DroneTool : public ISerializable
 public:
 	virtual void getMenuItems(RefArray< ui::MenuItem >& outItems) = 0;
 
-	virtual bool execute(ui::Widget* parent, ui::MenuItem* menuItem) = 0;
+	virtual bool execute(ui::Widget* parent, const ui::MenuItem* menuItem) = 0;
 };
 
 	}
