@@ -1,5 +1,12 @@
+#include <cstring>
+#include <X11/Xatom.h>
 #include <X11/Xutil.h>
+#include "Core/Containers/AlignedVector.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
+#include "Drawing/Filters/ScaleFilter.h"
 #include "Ui/Events/CloseEvent.h"
+#include "Ui/Itf/ISystemBitmap.h"
 #include "Ui/X11/FormX11.h"
 
 namespace traktor
@@ -74,6 +81,46 @@ void FormX11::setText(const std::wstring& text)
 
 void FormX11::setIcon(ISystemBitmap* icon)
 {
+	Ref< drawing::Image > ii = icon->getImage();
+	ii->convert(drawing::PixelFormat::getA8R8G8B8());
+	
+	const int32_t szs[] = { 16, 32, 64, 0 };
+	AlignedVector< uint32_t > data;
+
+	for (const int32_t* sz = szs; *sz != 0; ++sz)
+	{
+		int32_t w = *sz;
+		int32_t h = *sz;
+
+		drawing::ScaleFilter sf(
+			w,
+			h,
+			drawing::ScaleFilter::MnAverage,
+			drawing::ScaleFilter::MgLinear
+		);
+
+		Ref< drawing::Image > img = ii->clone();
+		img->apply(&sf);
+
+		data.push_back(w);
+		data.push_back(h);
+
+		uint32_t o = data.size();
+		data.resize(o + w * h);
+		std::memcpy(data.ptr() + o, img->getData(), w * h);
+	}
+
+	XChangeProperty(
+		m_display,
+		m_window,
+		XInternAtom(m_display, "_NET_WM_ICON", False),
+		XA_CARDINAL, 32,
+		PropModeReplace,
+		(unsigned char*)data.ptr(),
+		data.size()
+	);
+
+	XFlush(m_display);
 }
 
 void FormX11::maximize()

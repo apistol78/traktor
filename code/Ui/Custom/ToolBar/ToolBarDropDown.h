@@ -76,6 +76,7 @@ private:
 	bool m_hover;
 	int32_t m_dropPosition;
 	Point m_menuPosition;
+	int32_t m_menuWidth;
 };
 
 		}

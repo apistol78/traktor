@@ -65,6 +65,8 @@ private:
 
 	void eventFocus(FocusEvent* event);
 
+	void eventMouseMove(MouseMoveEvent* event);
+
 	void eventButtonDown(MouseButtonDownEvent* event);
 
 	void eventKeyDown(KeyDownEvent* event);

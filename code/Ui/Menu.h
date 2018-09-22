@@ -48,9 +48,10 @@ public:
 	 *
 	 * \param parent Parent widget.
 	 * \param at Position of menu top-left corner, in parent coordinate space.
+	 * \param width Optional width of menu, -1 if width should be calculated automatically.
 	 * \return Selected menu item, null if menu was cancelled.
 	 */
-	const MenuItem* showModal(Widget* parent, const Point& at) const;
+	const MenuItem* showModal(Widget* parent, const Point& at, int32_t width = -1) const;
 
 private:
 	RefArray< MenuItem > m_items;

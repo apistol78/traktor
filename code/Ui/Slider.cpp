@@ -46,13 +46,12 @@ bool Slider::create(Widget* parent, int32_t style)
 void Slider::setRange(int32_t minValue, int32_t maxValue)
 {
 	m_range = Range< int32_t >(minValue, maxValue);
-	m_value = m_range.clamp(m_value);
 	update();
 }
 
 void Slider::setValue(int32_t value)
 {
-	m_value = m_range.clamp(m_value);
+	m_value = value;
 	update();
 }
 
@@ -74,8 +73,9 @@ void Slider::eventButtonDown(MouseButtonDownEvent* event)
 	auto sz = getInnerRect().getSize();
 	const auto& pt = event->getPosition();
 
+	int32_t value = m_range.clamp(m_value);
 	int32_t dist = sz.cx - dpi96(c_margin) * 2;
-	int32_t knob = dpi96(c_margin) + int32_t(dist * float(m_value - m_range.min) / m_range.delta());
+	int32_t knob = dpi96(c_margin) + int32_t(dist * float(value - m_range.min) / m_range.delta());
 	int32_t knobL = knob - dpi96(c_knobWidth) / 2;
 	int32_t knobR = knob + dpi96(c_knobWidth) / 2;
 
@@ -134,8 +134,9 @@ void Slider::eventPaint(PaintEvent* event)
 		Point(rcInner.right - dpi96(c_margin), rcInner.getCenter().y)
 	);
 
+	int32_t value = m_range.clamp(m_value);
 	int32_t dist = rcInner.getSize().cx - dpi96(c_margin) * 2;
-	int32_t knob = dpi96(c_margin) + int32_t(dist * float(m_value - m_range.min) / m_range.delta());
+	int32_t knob = dpi96(c_margin) + int32_t(dist * float(value - m_range.min) / m_range.delta());
 	int32_t knobL = knob - dpi96(c_knobWidth) / 2;
 	int32_t knobR = knob + dpi96(c_knobWidth) / 2;
 

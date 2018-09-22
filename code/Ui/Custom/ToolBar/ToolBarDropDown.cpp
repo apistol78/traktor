@@ -29,6 +29,7 @@ ToolBarDropDown::ToolBarDropDown(const Command& command, int32_t width, const st
 ,	m_selected(-1)
 ,	m_hover(false)
 ,	m_dropPosition(0)
+,	m_menuWidth(0)
 {
 }
 
@@ -143,6 +144,7 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 
 	m_dropPosition = rcButton.left;
 	m_menuPosition = Point(at.x, at.y + size.cy);
+	m_menuWidth = size.cx;
 }
 
 bool ToolBarDropDown::mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent)
@@ -165,7 +167,7 @@ void ToolBarDropDown::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEv
 	for (uint32_t i = 0; i < uint32_t(m_items.size()); ++i)
 		menu.add(new MenuItem(Command(i), m_items[i]));
 		
-	const MenuItem* selectedItem = menu.showModal(toolBar, m_menuPosition);
+	const MenuItem* selectedItem = menu.showModal(toolBar, m_menuPosition, m_menuWidth);
 	if (selectedItem != nullptr)
 	{
 		m_selected = selectedItem->getCommand().getId();
