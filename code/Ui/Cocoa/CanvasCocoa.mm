@@ -42,6 +42,11 @@ void CanvasCocoa::setFont(const Font& font)
 	];
 }
 
+const IFontMetric* CanvasCocoa::getFontMetric() const
+{
+	return this;
+}
+
 void CanvasCocoa::setLineStyle(LineStyle lineStyle)
 {
 }
@@ -238,31 +243,29 @@ void CanvasCocoa::drawText(const Point& at, const std::wstring& text)
 	[str drawAtPoint: makeNSPoint(at) withAttributes: attributes];
 }
 
-void CanvasCocoa::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
+void* CanvasCocoa::getSystemHandle()
 {
-	NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
-	[attributes setObject: m_font forKey: NSFontAttributeName];
-	[attributes setObject: m_foregroundColor forKey: NSForegroundColorAttributeName];
-	
-	NSString* str = makeNSString(text);
-	
-	NSPoint ntl = makeNSPoint(rc.getTopLeft());
-	NSSize nsz = [str sizeWithAttributes: NULL];
-	
-	if (halign == AnCenter)
-		ntl.x += (rc.getWidth() - nsz.width) / 2;
-	else if (halign == AnRight)
-		ntl.x = (ntl.x + rc.getWidth()) - nsz.width;
-	
-	if (valign == AnCenter)
-		ntl.y += (rc.getHeight() - nsz.height) / 2;
-	else if (valign == AnBottom)
-		ntl.y = (ntl.y + rc.getHeight()) - nsz.height;
-
-	[str drawAtPoint: ntl withAttributes: attributes];
+	T_FATAL_ERROR;
+	return 0;
 }
 
-Size CanvasCocoa::getTextExtent(const std::wstring& text) const
+void CanvasCocoa::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
+{
+	outAscent = 0;
+	outDescent = 0;
+}
+
+int32_t CanvasCocoa::getAdvance(wchar_t ch, wchar_t next) const
+{
+	return 0;
+}
+
+int32_t CanvasCocoa::getLineSpacing() const
+{
+	return 0;
+}
+
+Size CanvasCocoa::getExtent(const std::wstring& text) const
 {
 	NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
 	[attributes setObject: m_font forKey:NSFontAttributeName];
@@ -271,12 +274,6 @@ Size CanvasCocoa::getTextExtent(const std::wstring& text) const
 	NSSize size = [str sizeWithAttributes: attributes];
 	
 	return fromNSSize(size);
-}
-
-void* CanvasCocoa::getSystemHandle()
-{
-	T_FATAL_ERROR;
-	return 0;
 }
 	
 	}

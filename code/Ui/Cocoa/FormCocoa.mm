@@ -128,13 +128,9 @@ void FormCocoa::setVisible(bool visible)
 	}
 }
 
-bool FormCocoa::isVisible(bool includingParents) const
+bool FormCocoa::isVisible() const
 {
 	return false;
-}
-
-void FormCocoa::setActive()
-{
 }
 
 void FormCocoa::setEnable(bool enable)
@@ -147,11 +143,6 @@ bool FormCocoa::isEnable() const
 }
 
 bool FormCocoa::hasFocus() const
-{
-	return false;
-}
-
-bool FormCocoa::containFocus() const
 {
 	return false;
 }
@@ -209,10 +200,6 @@ void FormCocoa::stopTimer(int id)
 	}
 }
 
-void FormCocoa::setOutline(const Point* p, int np)
-{
-}
-
 void FormCocoa::setRect(const Rect& rect)
 {
 	[m_window setFrame: makeNSRect(rect) display: YES];
@@ -237,11 +224,6 @@ Rect FormCocoa::getNormalRect() const
 	return fromNSRect(frame);
 }
 
-Size FormCocoa::getTextExtent(const std::wstring& text) const
-{
-	return Size(text.length() * 16, 16);
-}
-
 void FormCocoa::setFont(const Font& font)
 {
 }
@@ -249,6 +231,11 @@ void FormCocoa::setFont(const Font& font)
 Font FormCocoa::getFont() const
 {
 	return Font();
+}
+
+const IFontMetric* FormCocoa::getFontMetric() const
+{
+	return this;
 }
 
 void FormCocoa::setCursor(Cursor cursor)
@@ -311,6 +298,27 @@ void* FormCocoa::getInternalHandle()
 SystemWindow FormCocoa::getSystemWindow()
 {
 	return SystemWindow(m_window);
+}
+
+void FormCocoa::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
+{
+	outAscent = 0;
+	outDescent = 0;
+}
+
+int32_t FormCocoa::getAdvance(wchar_t ch, wchar_t next) const
+{
+	return 0;
+}
+
+int32_t FormCocoa::getLineSpacing() const
+{
+	return 0;
+}
+
+Size FormCocoa::getExtent(const std::wstring& text) const
+{
+	return Size(0, 0);
 }
 
 void FormCocoa::event_windowDidMove()

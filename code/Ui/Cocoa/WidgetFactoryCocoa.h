@@ -25,6 +25,8 @@ namespace traktor
 class T_DLLCLASS WidgetFactoryCocoa : public IWidgetFactory
 {
 public:
+	virtual IEventLoop* createEventLoop(EventSubject* owner) T_OVERRIDE T_FINAL;
+	
 	virtual IContainer* createContainer(EventSubject* owner) T_OVERRIDE T_FINAL;
 
 	virtual IDialog* createDialog(EventSubject* owner) T_OVERRIDE T_FINAL;

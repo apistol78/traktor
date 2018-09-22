@@ -1,19 +1,25 @@
-#include "Ui/Cocoa/WidgetFactoryCocoa.h"
 #include "Ui/Cocoa/ClipboardCocoa.h"
 #include "Ui/Cocoa/ContainerCocoa.h"
 #include "Ui/Cocoa/DialogCocoa.h"
+#include "Ui/Cocoa/EventLoopCocoa.h"
 #include "Ui/Cocoa/FormCocoa.h"
 #include "Ui/Cocoa/PathDialogCocoa.h"
 #include "Ui/Cocoa/ToolFormCocoa.h"
 #include "Ui/Cocoa/UserWidgetCocoa.h"
 #include "Ui/Cocoa/BitmapCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
+#include "Ui/Cocoa/WidgetFactoryCocoa.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
+IEventLoop* WidgetFactoryCocoa::createEventLoop(EventSubject* owner)
+{
+	return new EventLoopCocoa();
+
+}
 IContainer* WidgetFactoryCocoa::createContainer(EventSubject* owner)
 {
 	return new ContainerCocoa(owner);

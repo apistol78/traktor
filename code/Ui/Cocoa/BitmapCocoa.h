@@ -21,15 +21,15 @@ class BitmapCocoa : public ISystemBitmap
 public:
 	BitmapCocoa();
 
-	virtual bool create(uint32_t width, uint32_t height);
+	virtual bool create(uint32_t width, uint32_t height) T_OVERRIDE T_FINAL;
 
-	virtual void destroy();
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
-	virtual void copySubImage(drawing::Image* image, const Rect& srcRect, const Point& destPos);
+	virtual void copySubImage(drawing::Image* image, const Rect& srcRect, const Point& destPos) T_OVERRIDE T_FINAL;
 
-	virtual Ref< drawing::Image > getImage() const;
+	virtual Ref< drawing::Image > getImage() const T_OVERRIDE T_FINAL;
 
-	virtual Size getSize() const;
+	virtual Size getSize() const T_OVERRIDE T_FINAL;
 	
 	inline NSImage* getNSImage() const { return m_image; }
 	

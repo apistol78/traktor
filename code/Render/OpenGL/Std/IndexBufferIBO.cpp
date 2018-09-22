@@ -41,11 +41,13 @@ IndexBufferIBO::IndexBufferIBO(ContextOpenGL* resourceContext, IndexType indexTy
 {
 	T_OGL_SAFE(glGenBuffers(1, &m_name));
 	T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_name));
+#if !defined(__APPLE__)
 	if (!dynamic)
 	{
 		T_OGL_SAFE(glBufferStorage(GL_ELEMENT_ARRAY_BUFFER, bufferSize, 0,  GL_MAP_WRITE_BIT));
 	}
 	else
+#endif
 	{
 		T_OGL_SAFE(glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferSize, 0, GL_DYNAMIC_DRAW));
 	}

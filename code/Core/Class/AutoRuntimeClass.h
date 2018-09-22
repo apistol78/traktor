@@ -792,12 +792,12 @@ public:
 		return m_properties[propertyId].name;
 	}
 
-	const IRuntimeDispatch* getPropertyGetDispatch(uint32_t propertyId) const
+	const IRuntimeDispatch* getPropertyGetDispatch(uint32_t propertyId) const T_OVERRIDE T_FINAL
 	{
 		return m_properties[propertyId].getter;
 	}
 
-	const IRuntimeDispatch* getPropertySetDispatch(uint32_t propertyId) const
+	const IRuntimeDispatch* getPropertySetDispatch(uint32_t propertyId) const T_OVERRIDE T_FINAL
 	{
 		return m_properties[propertyId].setter;
 	}
