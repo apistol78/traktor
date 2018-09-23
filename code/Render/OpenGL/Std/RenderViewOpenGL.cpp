@@ -794,10 +794,17 @@ void RenderViewOpenGL::present()
 
 void RenderViewOpenGL::pushMarker(const char* const marker)
 {
+	glPushDebugGroup(
+		GL_DEBUG_SOURCE_APPLICATION,
+		1,
+		-1,
+		marker
+	);
 }
 
 void RenderViewOpenGL::popMarker()
 {
+	glPopDebugGroup();
 }
 
 void RenderViewOpenGL::getStatistics(RenderViewStatistics& outStatistics) const

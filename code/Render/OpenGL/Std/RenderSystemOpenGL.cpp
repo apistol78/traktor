@@ -45,6 +45,7 @@ RenderSystemOpenGL::RenderSystemOpenGL()
 #elif defined(__LINUX__)
 :	m_display(0)
 #endif
+,	m_useProgramCache(true)
 {
 }
 
@@ -251,6 +252,8 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 
 	m_resourceContext->leave();
 	m_resourceContext->setMaxAnisotropy((GLfloat)desc.maxAnisotropy);
+
+	m_useProgramCache = desc.useProgramCache;
 	return true;
 }
 
@@ -882,7 +885,7 @@ Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTar
 Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
-	return ProgramOpenGL::create(m_resourceContext, programResource, true);
+	return ProgramOpenGL::create(m_resourceContext, programResource, m_useProgramCache);
 }
 
 Ref< IProgramCompiler > RenderSystemOpenGL::createProgramCompiler() const

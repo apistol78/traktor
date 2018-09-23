@@ -113,5 +113,17 @@
 			<id>{BDFEFBE0-C5E9-2643-B445-DB02AC5C7687}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
+		<item>
+			<id>{149BCECD-8CD9-491B-BD8A-21ABCA3C0940}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{7ED68109-2926-41E3-8899-16F1593CE78D}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{8EB14BEA-97B1-4168-8937-AE3FDE4C6B91}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
 	</dependencies>
 </object>

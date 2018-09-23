@@ -99,8 +99,8 @@ void GlslShader::pushScope()
 
 void GlslShader::popScope()
 {
-	T_ASSERT (!m_variables.empty());
-	m_variables.pop_back();
+	if (!m_variables.empty())
+		m_variables.pop_back();
 }
 
 void GlslShader::addUniform(const std::wstring& uniform)
@@ -130,7 +130,8 @@ void GlslShader::pushOutputStream(BlockType blockType, StringOutputStream* outpu
 
 void GlslShader::popOutputStream(BlockType blockType)
 {
-	m_outputStreams[int(blockType)].pop_back();
+	if (!m_outputStreams[int(blockType)].empty())
+		m_outputStreams[int(blockType)].pop_back();
 }
 
 StringOutputStream& GlslShader::getOutputStream(BlockType blockType)

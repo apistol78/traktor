@@ -177,6 +177,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 
 	// Append application title.
 	applicationConfiguration->setProperty< PropertyString >(L"Render.Title", m_targetName);
+	applicationConfiguration->setProperty< PropertyBoolean >(L"Render.UseProgramCache", false);
 
 	// Append verbose resource manager.
 	if (m_globalSettings->getProperty< bool >(L"Amalgam.VerboseResourceManager", false))

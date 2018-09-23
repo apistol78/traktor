@@ -55,6 +55,7 @@ public:
 
 	void destroy();
 
+	/*! \brief Render a single light, with or without shadows. */
 	void renderLight(
 		render::IRenderView* renderView,
 		float time,
@@ -69,6 +70,20 @@ public:
 		render::ITexture* shadowMask
 	);
 
+	/*! \brief Render multiple, non-shadow, lights in batches. */
+	void renderNonShadowLights(
+		render::IRenderView* renderView,
+		float time,
+		const Matrix44& projection,
+		const Matrix44& view,
+		const AlignedVector< Light >& lights,
+		render::ITexture* depthMap,
+		render::ITexture* normalMap,
+		render::ITexture* miscMap,
+		render::ITexture* colorMap
+	);
+
+	/*! \brief Render screenspace reflections. */
 	void renderReflections(
 		render::IRenderView* renderView,
 		const Matrix44& projection,
@@ -84,6 +99,7 @@ public:
 		render::ITexture* colorMap
 	);
 
+	/*! \brief Render fog. */
 	void renderFog(
 		render::IRenderView* renderView,
 		const Matrix44& projection,
@@ -99,8 +115,11 @@ public:
 
 private:
 	resource::Proxy< render::Shader > m_lightDirectionalShader;
+	resource::Proxy< render::Shader > m_lightDirectionalsShader;
 	resource::Proxy< render::Shader > m_lightPointShader;
+	resource::Proxy< render::Shader > m_lightPointsShader;
 	resource::Proxy< render::Shader > m_lightSpotShader;
+	resource::Proxy< render::Shader > m_lightSpotsShader;
 	resource::Proxy< render::Shader > m_lightProbeShader;
 	resource::Proxy< render::Shader > m_reflectionShader;
 	resource::Proxy< render::Shader > m_fogShader;

@@ -920,11 +920,11 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 
 				m_motionBlurPrimeImageProcess->render(
 					m_renderView,
-					0,	// color
+					nullptr,	// color
 					m_gbufferTargetSet->getColorTexture(0),	// depth
-					0,	// normal
-					0,	// velocity
-					0,	// shadow mask
+					nullptr,	// normal
+					nullptr,	// velocity
+					nullptr,	// shadow mask
 					params
 				);
 			}
@@ -1001,8 +1001,8 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 							m_shadowTargetSet->getDepthTexture(),	// color
 							m_gbufferTargetSet->getColorTexture(0),	// depth
 							m_gbufferTargetSet->getColorTexture(1),	// normal
-							0,	// velocity
-							0,	// shadow mask
+							nullptr,	// velocity
+							nullptr,	// shadow mask
 							params
 						);
 
@@ -1033,8 +1033,8 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 						m_shadowMaskProjectTargetSet->getColorTexture(0),	// color
 						m_gbufferTargetSet->getColorTexture(0),	// depth
 						m_gbufferTargetSet->getColorTexture(1),	// normal
-						0,	// velocity
-						0,	// shadow mask
+						nullptr,	// velocity
+						nullptr,	// shadow mask
 						params
 					);
 					m_renderView->end();
@@ -1069,7 +1069,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 					m_gbufferTargetSet->getColorTexture(2),
 					m_gbufferTargetSet->getColorTexture(3),
 					shadowMask != 0 ? shadowMask->getWidth() : 0,
-					shadowMask != 0 ? shadowMask->getColorTexture(0) : 0
+					shadowMask != 0 ? shadowMask->getColorTexture(0) : nullptr
 				);
 				m_renderView->end();
 			}
@@ -1086,27 +1086,18 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 				firstLight = false;
 			}
 
-			for (uint32_t i = 0; i < f.lights.size(); ++i)
-			{
-				if (f.lights[i].castShadow)
-					continue;
-
-				T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (no shadow)");
-				m_lightRenderer->renderLight(
-					m_renderView,
-					f.time,
-					projection,
-					f.view,
-					f.lights[i],
-					m_gbufferTargetSet->getColorTexture(0),
-					m_gbufferTargetSet->getColorTexture(1),
-					m_gbufferTargetSet->getColorTexture(2),
-					m_gbufferTargetSet->getColorTexture(3),
-					0,
-					0
-				);
-				T_RENDER_POP_MARKER(m_renderView);
-			}
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (no shadow)");
+			m_lightRenderer->renderNonShadowLights(
+				m_renderView,
+				f.time,
+				projection,
+				f.view,
+				f.lights,
+				m_gbufferTargetSet->getColorTexture(0),
+				m_gbufferTargetSet->getColorTexture(1),
+				m_gbufferTargetSet->getColorTexture(2),
+				m_gbufferTargetSet->getColorTexture(3)
+			);
 
 			m_renderView->end();
 		}

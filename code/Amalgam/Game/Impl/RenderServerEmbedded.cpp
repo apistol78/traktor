@@ -108,6 +108,7 @@ bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, Property
 	rsd.adapter = settings->getProperty< int32_t >(L"Render.Adapter", -1);
 	rsd.mipBias = settings->getProperty< float >(L"Render.MipBias", 0.0f);
 	rsd.maxAnisotropy = maxAnisotropyFromQuality(textureQuality);
+	rsd.useProgramCache = settings->getProperty< bool >(L"Render.UseProgramCache", true);
 	rsd.verbose = true;
 
 	if (!renderSystem->create(rsd))
