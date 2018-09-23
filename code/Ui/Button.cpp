@@ -27,21 +27,13 @@ bool Button::create(Widget* parent, const std::wstring& text, int style)
 	if (!Widget::create(parent))
 		return false;
 
+	addEventHandler< MouseMoveEvent >(this, &Button::eventMouseMove);
 	addEventHandler< MouseButtonDownEvent >(this, &Button::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &Button::eventButtonUp);
 	addEventHandler< PaintEvent >(this, &Button::eventPaint);
 
 	setText(text);
 	return true;
-}
-
-void Button::setState(bool state)
-{
-}
-
-bool Button::getState() const
-{
-	return false;
 }
 
 Size Button::getPreferedSize() const
@@ -59,6 +51,23 @@ Size Button::getPreferedSize() const
 Size Button::getMaximumSize() const
 {
 	return getPreferedSize();
+}
+
+void Button::eventMouseMove(MouseMoveEvent* event)
+{
+	if (!isEnable())
+		return;
+
+	if (!hasCapture())
+	{
+		setCapture();
+		update();
+	}
+	else if (!getInnerRect().inside(event->getPosition()))
+	{
+		releaseCapture();
+		update();
+	}
 }
 
 void Button::eventButtonDown(MouseButtonDownEvent* event)
@@ -91,10 +100,15 @@ void Button::eventPaint(PaintEvent* event)
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
-	
 	Rect rcInner = getInnerRect();
-	
-	canvas.setBackground(ss->getColor(this, m_pushed ? L"background-color-pushed" : L"background-color"));
+
+	bool hover = isEnable() && hasCapture();
+
+	if (m_pushed)
+		canvas.setBackground(ss->getColor(this, L"background-color-pushed"));
+	else
+		canvas.setBackground(ss->getColor(this, hover ? L"background-color-hover" : L"background-color"));
+
 	canvas.fillRect(rcInner);
 
 	canvas.setForeground(ss->getColor(this, L"border-color"));
@@ -106,7 +120,7 @@ void Button::eventPaint(PaintEvent* event)
 		rcInner = rcInner.offset(offset, offset);
 	}
 
-	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.setForeground(ss->getColor(this, isEnable() ? L"color" : L"color-disabled"));
 	canvas.drawText(rcInner, getText(), AnCenter, AnCenter);
 
 	event->consume();

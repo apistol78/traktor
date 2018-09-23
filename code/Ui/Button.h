@@ -40,10 +40,6 @@ public:
 
 	bool create(Widget* parent, const std::wstring& text, int style = WsNone);
 
-	void setState(bool state);
-
-	bool getState() const;
-
 	virtual Size getPreferedSize() const T_OVERRIDE;
 
 	virtual Size getMaximumSize() const T_OVERRIDE;
@@ -51,6 +47,8 @@ public:
 private:
 	bool m_pushed;
 
+	void eventMouseMove(MouseMoveEvent* event);
+	
 	void eventButtonDown(MouseButtonDownEvent* event);
 
 	void eventButtonUp(MouseButtonUpEvent* event);
