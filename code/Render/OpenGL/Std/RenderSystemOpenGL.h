@@ -103,6 +103,7 @@ private:
 #endif
 
 	Ref< ContextOpenGL > m_resourceContext;
+	bool m_useProgramCache;
 };
 
 	}

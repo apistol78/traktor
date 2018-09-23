@@ -491,6 +491,7 @@ struct RenderSystemDesc
 	int32_t adapter;
 	float mipBias;
 	int32_t maxAnisotropy;
+	bool useProgramCache;
 	bool verbose;
 
 	RenderSystemDesc()
@@ -498,6 +499,7 @@ struct RenderSystemDesc
 	,	adapter(-1)
 	,	mipBias(0.0f)
 	,	maxAnisotropy(1)
+	,	useProgramCache(true)
 	,	verbose(false)
 	{
 	}
