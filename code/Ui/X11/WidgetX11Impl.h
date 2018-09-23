@@ -217,6 +217,8 @@ public:
 	virtual void startTimer(int interval, int id) T_OVERRIDE
 	{
 		m_timers[id] = Timers::getInstance().bind(interval, [&](int32_t){
+			if (!isVisible())
+				return;
 			TimerEvent timerEvent(m_owner, id);
 			m_owner->raiseEvent(&timerEvent);			
 		});
@@ -550,6 +552,8 @@ protected:
 
 		// Focus in.
 		a.bind(m_window, FocusIn, [&](XEvent& xe) {
+			if (xe.xfocus.detail != NotifyNonlinear)
+				return;
 			XSetICFocus(m_xic);
 			FocusEvent focusEvent(m_owner, true);
 			m_owner->raiseEvent(&focusEvent);
@@ -557,6 +561,8 @@ protected:
 
 		// Focus out.
 		a.bind(m_window, FocusOut, [&](XEvent& xe) {
+			if (xe.xfocus.detail != NotifyNonlinear)
+				return;
 			XUnsetICFocus(m_xic);
 			FocusEvent focusEvent(m_owner, false);
 			m_owner->raiseEvent(&focusEvent);
