@@ -42,10 +42,13 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemOpenGL", 0, RenderSy
 RenderSystemOpenGL::RenderSystemOpenGL()
 #if defined(__APPLE__)
 :	m_windowHandle(0)
+,	m_useProgramCache(true)
 #elif defined(__LINUX__)
 :	m_display(0)
-#endif
 ,	m_useProgramCache(true)
+#else
+:	m_useProgramCache(true)
+#endif
 {
 }
 
