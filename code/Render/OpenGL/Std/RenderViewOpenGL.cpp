@@ -794,17 +794,21 @@ void RenderViewOpenGL::present()
 
 void RenderViewOpenGL::pushMarker(const char* const marker)
 {
+#if !defined(__APPLE__)
 	glPushDebugGroup(
 		GL_DEBUG_SOURCE_APPLICATION,
 		1,
 		-1,
 		marker
 	);
+#endif
 }
 
 void RenderViewOpenGL::popMarker()
 {
+#if !defined(__APPLE__)
 	glPopDebugGroup();
+#endif
 }
 
 void RenderViewOpenGL::getStatistics(RenderViewStatistics& outStatistics) const
