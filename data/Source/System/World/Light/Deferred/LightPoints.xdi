@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>1116</first>
-				<second>-55</second>
+				<second>-54</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -14,7 +14,7 @@
 			<comment/>
 			<position>
 				<first>948</first>
-				<second>5</second>
+				<second>4</second>
 			</position>
 			<swizzle>xy00</swizzle>
 		</item>
@@ -22,8 +22,8 @@
 			<id>{CC68B80E-926D-8241-BEC0-7BE2F0EC8F60}</id>
 			<comment/>
 			<position>
-				<first>741</first>
-				<second>9</second>
+				<first>740</first>
+				<second>8</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
@@ -31,14 +31,14 @@
 			<comment/>
 			<position>
 				<first>484</first>
-				<second>69</second>
+				<second>68</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{584BD476-E7DA-BD4A-9F7D-548135581E31}</id>
 			<comment/>
 			<position>
-				<first>229</first>
+				<first>228</first>
 				<second>120</second>
 			</position>
 			<parameterName>World_MagicCoeffs</parameterName>
@@ -58,8 +58,8 @@
 			<id>{8DC24915-02A2-EF45-9A4A-C3CF0BF7749A}</id>
 			<comment/>
 			<position>
-				<first>3019</first>
-				<second>707</second>
+				<first>3018</first>
+				<second>706</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -106,7 +106,7 @@
 			<id>{35782D5C-1244-1145-BDB4-225F0AF2DE19}</id>
 			<comment/>
 			<position>
-				<first>-569</first>
+				<first>-568</first>
 				<second>586</second>
 			</position>
 			<swizzle>w</swizzle>
@@ -116,7 +116,7 @@
 			<comment/>
 			<position>
 				<first>494</first>
-				<second>619</second>
+				<second>618</second>
 			</position>
 			<fragmentGuid>{D0BC3830-8C89-3745-BF71-AAB4B5B985D9}</fragmentGuid>
 			<inputPins>
@@ -151,8 +151,8 @@
 			<id>{AB3A3BA6-2E68-534F-9E46-EE064A59EA1D}</id>
 			<comment/>
 			<position>
-				<first>1941</first>
-				<second>403</second>
+				<first>1940</first>
+				<second>402</second>
 			</position>
 			<fragmentGuid>{3BDB38CE-AE49-4D4D-A158-78E64469DF0A}</fragmentGuid>
 			<inputPins>
@@ -185,7 +185,7 @@
 			<comment/>
 			<position>
 				<first>-1090</first>
-				<second>417</second>
+				<second>416</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -218,7 +218,7 @@
 			<id>{2EFC7EAC-1B9C-D946-89F9-F92A905FE0C0}</id>
 			<comment/>
 			<position>
-				<first>-723</first>
+				<first>-722</first>
 				<second>436</second>
 			</position>
 		</item>
@@ -227,7 +227,7 @@
 			<comment/>
 			<position>
 				<first>38</first>
-				<second>521</second>
+				<second>520</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
@@ -239,14 +239,14 @@ Fall off
 			</comment>
 			<position>
 				<first>670</first>
-				<second>397</second>
+				<second>396</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{B959C5FC-FED2-684A-B6E0-B905E0C4BCF1}</id>
 			<comment/>
 			<position>
-				<first>1615</first>
+				<first>1614</first>
 				<second>560</second>
 			</position>
 		</item>
@@ -263,7 +263,7 @@ Fall off
 			<comment/>
 			<position>
 				<first>-94</first>
-				<second>699</second>
+				<second>698</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -271,7 +271,7 @@ Fall off
 			<id>{46A3615E-A2F8-D745-9A5A-6B346F822670}</id>
 			<comment/>
 			<position>
-				<first>-1389</first>
+				<first>-1388</first>
 				<second>-714</second>
 			</position>
 			<fragmentGuid>{ED628E05-EA7F-B24F-9E38-97F53A90CCDA}</fragmentGuid>
@@ -314,7 +314,7 @@ Fall off
 			<comment/>
 			<position>
 				<first>-1412</first>
-				<second>-587</second>
+				<second>-586</second>
 			</position>
 			<fragmentGuid>{83FA28CC-18FE-4A48-B00E-E3340D341B81}</fragmentGuid>
 			<inputPins>
@@ -335,7 +335,7 @@ Fall off
 			<comment/>
 			<position>
 				<first>-1408</first>
-				<second>-523</second>
+				<second>-522</second>
 			</position>
 			<fragmentGuid>{FDCA9563-2389-4B43-A8E5-5262EC02EC1F}</fragmentGuid>
 			<inputPins>
@@ -406,15 +406,15 @@ Fall off
 			<comment/>
 			<position>
 				<first>1666</first>
-				<second>835</second>
+				<second>834</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{0F316646-B6BC-CB4E-A878-3885EF3C8758}</id>
 			<comment/>
 			<position>
-				<first>1477</first>
-				<second>745</second>
+				<first>1476</first>
+				<second>744</second>
 			</position>
 			<swizzle>xxx</swizzle>
 		</item>
@@ -422,7 +422,7 @@ Fall off
 			<id>{6A0EFC67-2508-2047-945A-40D53D350B04}</id>
 			<comment/>
 			<position>
-				<first>2147</first>
+				<first>2146</first>
 				<second>630</second>
 			</position>
 		</item>
@@ -439,7 +439,7 @@ Fall off
 			<id>{BB04199D-D9E7-DE46-BBCF-EE38B15C417E}</id>
 			<comment/>
 			<position>
-				<first>2521</first>
+				<first>2520</first>
 				<second>674</second>
 			</position>
 		</item>
@@ -456,7 +456,7 @@ Fall off
 			<comment/>
 			<position>
 				<first>-1680</first>
-				<second>-563</second>
+				<second>-562</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -474,8 +474,8 @@ Fall off
 			<id>{3F5C34E8-0287-E042-84DA-B6BF139C830A}</id>
 			<comment/>
 			<position>
-				<first>952</first>
-				<second>744</second>
+				<first>844</first>
+				<second>714</second>
 			</position>
 		</item>
 		<item type="traktor.render.IndexedUniform" version="1,traktor.render.Node:1">
@@ -483,7 +483,7 @@ Fall off
 			<comment/>
 			<position>
 				<first>-1354</first>
-				<second>373</second>
+				<second>372</second>
 			</position>
 			<parameterName>World_LightPosition</parameterName>
 			<type>PtVector</type>
@@ -494,8 +494,8 @@ Fall off
 			<id>{5EC1E4B2-F648-4126-91B2-2CDBC4D831F3}</id>
 			<comment/>
 			<position>
-				<first>-877</first>
-				<second>537</second>
+				<first>-876</first>
+				<second>536</second>
 			</position>
 			<parameterName>World_LightDirectionAndRange</parameterName>
 			<type>PtVector</type>
@@ -506,8 +506,8 @@ Fall off
 			<id>{6298151F-7A1E-46FA-9C70-2CFAE9DCD703}</id>
 			<comment/>
 			<position>
-				<first>1535</first>
-				<second>273</second>
+				<first>1534</first>
+				<second>272</second>
 			</position>
 			<parameterName>World_LightShadowColor</parameterName>
 			<type>PtVector</type>
@@ -519,7 +519,7 @@ Fall off
 			<comment/>
 			<position>
 				<first>1552</first>
-				<second>357</second>
+				<second>356</second>
 			</position>
 			<parameterName>World_LightBaseColor</parameterName>
 			<type>PtVector</type>
@@ -530,8 +530,8 @@ Fall off
 			<id>{B460E3A7-6FC9-485A-BF4F-C8847AAD260A}</id>
 			<comment/>
 			<position>
-				<first>1557</first>
-				<second>441</second>
+				<first>1556</first>
+				<second>440</second>
 			</position>
 			<parameterName>World_LightSunColor</parameterName>
 			<type>PtVector</type>
@@ -543,7 +543,7 @@ Fall off
 			<comment/>
 			<position>
 				<first>2734</first>
-				<second>625</second>
+				<second>624</second>
 			</position>
 			<from>0</from>
 			<to>3</to>
@@ -552,8 +552,8 @@ Fall off
 			<id>{BB0ED871-ADAB-4271-8A12-28AF62977B52}</id>
 			<comment/>
 			<position>
-				<first>2927</first>
-				<second>571</second>
+				<first>2926</first>
+				<second>570</second>
 			</position>
 			<name>Index</name>
 		</item>
@@ -561,7 +561,7 @@ Fall off
 			<id>{7FBD4D27-610E-4DAB-B9DA-ED00448F3883}</id>
 			<comment/>
 			<position>
-				<first>1299</first>
+				<first>1298</first>
 				<second>376</second>
 			</position>
 			<name>Index</name>
@@ -589,7 +589,17 @@ Fall off
 			<comment/>
 			<position>
 				<first>916</first>
-				<second>431</second>
+				<second>430</second>
+			</position>
+			<min>0</min>
+			<max>1</max>
+		</item>
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{4838EC30-6DE6-BE4D-BA44-292547E19A00}</id>
+			<comment/>
+			<position>
+				<first>1028</first>
+				<second>719</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -1199,6 +1209,16 @@ Fall off
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[34]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[46]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[46]"/>
 				<name>Output</name>
 			</source>
 			<destination>

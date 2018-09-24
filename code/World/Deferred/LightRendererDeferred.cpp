@@ -409,17 +409,34 @@ void LightRendererDeferred::renderNonShadowLights(
 	for (uint32_t i = 0; i < lights.size(); ++i)
 	{
 		const Light& light = lights[i];
-		if (light.castShadow || light.cloudShadow != nullptr)
+		if (light.castShadow)
 			continue;
 
-		if (light.type == LtDirectional)
-			directional.push_back(i);
-		else if (light.type == LtPoint)
-			point.push_back(i);
-		else if (light.type == LtSpot)
-			spot.push_back(i);
+		if (light.cloudShadow == nullptr)
+		{
+			if (light.type == LtDirectional)
+				directional.push_back(i);
+			else if (light.type == LtPoint)
+				point.push_back(i);
+			else if (light.type == LtSpot)
+				spot.push_back(i);
+			else
+				continue;
+		}
 		else
-			continue;
+			renderLight(
+				renderView,
+				time,
+				projection,
+				view,
+				light,
+				depthMap,
+				normalMap,
+				miscMap,
+				colorMap,
+				0.0f,
+				nullptr
+			);
 	}
 
 	// Render directional lights.
