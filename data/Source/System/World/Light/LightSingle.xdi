@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>650</first>
-				<second>449</second>
+				<second>448</second>
 			</position>
 			<name>Diffuse</name>
 		</item>
@@ -24,8 +24,8 @@
 			<id>{CA7E87E4-4081-F24A-861E-B73B38A1764A}</id>
 			<comment/>
 			<position>
-				<first>-521</first>
-				<second>487</second>
+				<first>-510</first>
+				<second>486</second>
 			</position>
 			<name>LightDirection</name>
 			<connectable>true</connectable>
@@ -37,7 +37,7 @@
 			<id>{C0A95C97-4C59-3646-BBF4-06FAD2C4E1E2}</id>
 			<comment/>
 			<position>
-				<first>-486</first>
+				<first>-480</first>
 				<second>556</second>
 			</position>
 			<name>Normal</name>
@@ -50,7 +50,7 @@
 			<id>{B3D849E1-E521-5040-8EB9-8776FB373A7F}</id>
 			<comment/>
 			<position>
-				<first>2397</first>
+				<first>2396</first>
 				<second>508</second>
 			</position>
 			<name>Specular</name>
@@ -68,15 +68,15 @@
 			<comment/>
 			<position>
 				<first>1188</first>
-				<second>507</second>
+				<second>506</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{1B4FA9B5-053F-7B4A-806F-FA176E71DA9C}</id>
 			<comment/>
 			<position>
-				<first>820</first>
-				<second>517</second>
+				<first>822</first>
+				<second>516</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -88,7 +88,7 @@
 			<id>{29EF352B-DDA1-DA41-A360-98E9C81E2C0F}</id>
 			<comment/>
 			<position>
-				<first>925</first>
+				<first>932</first>
 				<second>556</second>
 			</position>
 			<value>32</value>
@@ -97,7 +97,7 @@
 			<id>{83D1B86F-8603-A641-A6F8-6DE03066A2BC}</id>
 			<comment/>
 			<position>
-				<first>1169</first>
+				<first>1168</first>
 				<second>600</second>
 			</position>
 		</item>
@@ -119,7 +119,7 @@ Spec. dot
 			]]>
 			</comment>
 			<position>
-				<first>173</first>
+				<first>172</first>
 				<second>654</second>
 			</position>
 		</item>
@@ -152,7 +152,7 @@ Spec. dot
 			<id>{14674D92-D526-8F43-A0F5-E01336B763B8}</id>
 			<comment/>
 			<position>
-				<first>-511</first>
+				<first>-510</first>
 				<second>688</second>
 			</position>
 			<name>EyeDirection</name>
@@ -165,16 +165,16 @@ Spec. dot
 			<id>{52BDC68A-8D98-8848-BC64-C4021D36638A}</id>
 			<comment/>
 			<position>
-				<first>664</first>
-				<second>564</second>
+				<first>732</first>
+				<second>570</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{86D94F77-C6E3-F241-B116-FE41A23A2B66}</id>
 			<comment/>
 			<position>
-				<first>533</first>
-				<second>558</second>
+				<first>549</first>
+				<second>566</second>
 			</position>
 			<value>0.05</value>
 		</item>
@@ -190,8 +190,8 @@ Spec. dot
 			<id>{646B5599-636B-1848-83C7-84E9D7369312}</id>
 			<comment/>
 			<position>
-				<first>943</first>
-				<second>423</second>
+				<first>942</first>
+				<second>422</second>
 			</position>
 			<value>8</value>
 		</item>
@@ -199,7 +199,7 @@ Spec. dot
 			<id>{1060B9A8-0CF3-7747-98CD-E3ED95BDBD3C}</id>
 			<comment/>
 			<position>
-				<first>1917</first>
+				<first>1916</first>
 				<second>458</second>
 			</position>
 		</item>
@@ -207,8 +207,8 @@ Spec. dot
 			<id>{BC9F636F-5056-9D49-9924-0BE1EAC95F88}</id>
 			<comment/>
 			<position>
-				<first>1691</first>
-				<second>519</second>
+				<first>1690</first>
+				<second>518</second>
 			</position>
 			<value>25.132742</value>
 		</item>
@@ -216,8 +216,8 @@ Spec. dot
 			<id>{8C64BBF8-8A29-0844-A5EF-C19B570C677C}</id>
 			<comment/>
 			<position>
-				<first>2157</first>
-				<second>497</second>
+				<first>2156</first>
+				<second>496</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1,traktor.render.Node:1">
