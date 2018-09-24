@@ -33,6 +33,7 @@ uint32_t ShaderGraphHash::calculate(const Node* node)
 {
 	Ref< Node > nodeCopy = DeepClone(node).create< Node >();
 
+	nodeCopy->setId(Guid());
 	nodeCopy->setPosition(std::make_pair(0, 0));
 	nodeCopy->setComment(L"");
 
