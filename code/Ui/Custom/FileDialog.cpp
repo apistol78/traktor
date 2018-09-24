@@ -96,19 +96,46 @@ void FileDialog::destroy()
 
 int FileDialog::showModal(Path& outPath)
 {
+	m_gridFiles->setMultiSelect(false);
+
 	if (ConfigDialog::showModal() != DrOk)
 		return DrCancel;
 
-	outPath = m_currentPath;
+	auto selectedRow = m_gridFiles->getSelectedRow();
+	if (selectedRow == nullptr)
+		return DrCancel;
+
+	auto file = selectedRow->getData< File >(L"FILE");
+	T_FATAL_ASSERT(file != nullptr);
+
+	if (file->isDirectory())
+		return DrCancel;
+
+	outPath = file->getPath();
 	return DrOk;
 }
 
 int FileDialog::showModal(std::vector< Path >& outPaths)
 {
+	m_gridFiles->setMultiSelect(true);
+
 	if (ConfigDialog::showModal() != DrOk)
 		return DrCancel;
 
-	outPaths.push_back(m_currentPath);
+	RefArray< ui::custom::GridRow > rows;
+	m_gridFiles->getRows(rows, ui::custom::GridView::GfSelectedOnly);
+
+	for (auto row : rows)
+	{
+		auto file = row->getData< File >(L"FILE");
+		T_FATAL_ASSERT(file != nullptr);
+
+		if (file->isDirectory())
+			continue;
+
+		outPaths.push_back(file->getPath());
+	}
+
 	return DrOk;
 }
 
@@ -120,9 +147,7 @@ void FileDialog::updatePath()
 	auto pn = m_currentPath.getPathNameNoVolume();
 
 	Path p;
-
-	StringSplit< std::wstring > ss(pn, L"/");
-	for (auto s : ss)
+	for (auto s : StringSplit< std::wstring >(pn, L"/"))
 	{
 		p = p + s;
 
