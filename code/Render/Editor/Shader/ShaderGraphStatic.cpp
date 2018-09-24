@@ -461,7 +461,8 @@ restart_iteration:
 							if (outputPinType != foldOutputPinType)
 							{
 								// Need to add a swizzle node in order to expand into expected type.
-								T_FATAL_ASSERT (foldOutputPinType < outputPinType);
+								if (foldOutputPinType >= outputPinType)
+									log::warning << L"Incorrect pin type of folding pin (foldOutputPinType < outputPinType); foldOutputPinType = " << int32_t(foldOutputPinType) << L", outputPinType = " << int32_t(outputPinType) << Endl;
 
 								if (foldOutputPinType == PntScalar1)
 								{
