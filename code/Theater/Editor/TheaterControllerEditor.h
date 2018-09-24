@@ -21,20 +21,15 @@ class PostFrameEvent;
 	namespace ui
 	{
 
-class SelectionChangeEvent;
-
-		namespace custom
-		{
-
 class CursorMoveEvent;
 class EditList;
 class EditListEditEvent;
 class KeyMoveEvent;
+class SelectionChangeEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
 class SequencerControl;
 
-		}
 	}
 
 	namespace theater
@@ -64,10 +59,10 @@ public:
 	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) T_OVERRIDE T_FINAL;
 
 private:
-	Ref< ui::custom::ToolBar > m_toolBarActs;
-	Ref< ui::custom::EditList > m_listActs;
-	Ref< ui::custom::ToolBar > m_toolBar;
-	Ref< ui::custom::SequencerControl > m_trackSequencer;
+	Ref< ui::ToolBar > m_toolBarActs;
+	Ref< ui::EditList > m_listActs;
+	Ref< ui::ToolBar > m_toolBar;
+	Ref< ui::SequencerControl > m_trackSequencer;
 	Ref< scene::SceneEditorContext > m_context;
 	float m_timeOffset;
 
@@ -91,13 +86,13 @@ private:
 
 	void eventActSelected(ui::SelectionChangeEvent* event);
 
-	void eventActEdit(ui::custom::EditListEditEvent* event);
+	void eventActEdit(ui::EditListEditEvent* event);
 
-	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 
-	void eventSequencerCursorMove(ui::custom::CursorMoveEvent* event);
+	void eventSequencerCursorMove(ui::CursorMoveEvent* event);
 
-	void eventSequencerKeyMove(ui::custom::KeyMoveEvent* event);
+	void eventSequencerKeyMove(ui::KeyMoveEvent* event);
 
 	void eventContextPostFrame(scene::PostFrameEvent* event);
 };

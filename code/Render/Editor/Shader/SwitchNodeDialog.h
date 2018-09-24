@@ -13,12 +13,9 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace custom
-		{
 
 class GridView;
 
-		}
 	}
 
 	namespace render
@@ -34,7 +31,7 @@ public:
 	bool create(ui::Widget* parent, Switch* switchNode);
 
 private:
-	Ref< ui::custom::GridView > m_caseList;
+	Ref< ui::GridView > m_caseList;
 };
 
 	}

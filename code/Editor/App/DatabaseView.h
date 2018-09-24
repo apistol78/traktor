@@ -19,14 +19,10 @@ class PropertyGroup;
 	{
 
 class Edit;
-class HierarchicalState;
-class Menu;
-
-		namespace custom
-		{
-
 class GridRowDoubleClickEvent;
 class GridView;
+class HierarchicalState;
+class Menu;
 class Splitter;
 class ToolBar;
 class ToolBarButton;
@@ -39,7 +35,6 @@ class TreeViewItem;
 class TreeViewItemActivateEvent;
 class TreeViewItemStateChangeEvent;
 
-		}
 	}
 
 	namespace db
@@ -90,16 +85,16 @@ public:
 
 private:
 	IEditor* m_editor;
-	Ref< ui::custom::ToolBar > m_toolSelection;
-	Ref< ui::custom::ToolBarButton > m_toolFilterType;
-	Ref< ui::custom::ToolBarButton > m_toolFilterAssets;
-	Ref< ui::custom::ToolBarButton > m_toolFilterShow;
-	Ref< ui::custom::ToolBarButton > m_toolFavoritesShow;
-	Ref< ui::custom::ToolBarDropDown > m_toolViewMode;
+	Ref< ui::ToolBar > m_toolSelection;
+	Ref< ui::ToolBarButton > m_toolFilterType;
+	Ref< ui::ToolBarButton > m_toolFilterAssets;
+	Ref< ui::ToolBarButton > m_toolFilterShow;
+	Ref< ui::ToolBarButton > m_toolFavoritesShow;
+	Ref< ui::ToolBarDropDown > m_toolViewMode;
 	Ref< ui::Edit > m_editFilter;
-	Ref< ui::custom::Splitter > m_splitter;
-	Ref< ui::custom::TreeView > m_treeDatabase;
-	Ref< ui::custom::GridView > m_gridInstances;
+	Ref< ui::Splitter > m_splitter;
+	Ref< ui::TreeView > m_treeDatabase;
+	Ref< ui::GridView > m_gridInstances;
 	Ref< ui::HierarchicalState > m_treeState;
 	Ref< ui::Menu > m_menuGroup[2];
 	Ref< ui::Menu > m_menuInstance;
@@ -116,9 +111,9 @@ private:
 
 	int32_t getIconIndex(const TypeInfo* instanceType) const;
 
-	Ref< ui::custom::TreeViewItem > buildTreeItem(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parentItem, db::Group* group);
+	Ref< ui::TreeViewItem > buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
 
-	Ref< ui::custom::TreeViewItem > buildTreeItemSplit(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parentItem, db::Group* group);
+	Ref< ui::TreeViewItem > buildTreeItemSplit(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
 
 	void updateTreeColors();
 
@@ -130,25 +125,25 @@ private:
 
 	void listInstanceDependents(db::Instance* instance);
 
-	void eventToolSelectionClicked(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event);
 
 	void eventFilterKey(ui::KeyUpEvent* event);
 
 	void eventTimer(ui::TimerEvent* event);
 
-	void eventInstanceActivate(ui::custom::TreeViewItemActivateEvent* event);
+	void eventInstanceActivate(ui::TreeViewItemActivateEvent* event);
 
-	void eventInstanceStateChange(ui::custom::TreeViewItemStateChangeEvent* event);
+	void eventInstanceStateChange(ui::TreeViewItemStateChangeEvent* event);
 
 	void eventInstanceSelect(ui::SelectionChangeEvent* event);
 
 	void eventInstanceButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventInstanceRenamed(ui::custom::TreeViewContentChangeEvent* event);
+	void eventInstanceRenamed(ui::TreeViewContentChangeEvent* event);
 
-	void eventInstanceDrag(ui::custom::TreeViewDragEvent* event);
+	void eventInstanceDrag(ui::TreeViewDragEvent* event);
 
-	void eventInstanceGridActivate(ui::custom::GridRowDoubleClickEvent* event);
+	void eventInstanceGridActivate(ui::GridRowDoubleClickEvent* event);
 };
 
 	}

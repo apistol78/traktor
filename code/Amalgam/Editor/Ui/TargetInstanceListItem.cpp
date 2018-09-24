@@ -26,7 +26,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Edit.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
-#include "Ui/Custom/Auto/AutoWidget.h"
+#include "Ui/Auto/AutoWidget.h"
 
 namespace traktor
 {
@@ -83,7 +83,7 @@ std::wstring formatPerformanceValue(float value)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetInstanceListItem", TargetInstanceListItem, ui::custom::AutoWidgetCell)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetInstanceListItem", TargetInstanceListItem, ui::AutoWidgetCell)
 
 TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, TargetInstance* instance)
 :	m_instance(instance)
@@ -114,7 +114,7 @@ ui::Size TargetInstanceListItem::getSize() const
 	return ui::Size(128, ui::dpi96(28 + connections.size() * (c_performanceHeight + c_commandHeight)));
 }
 
-void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui::Rect& rect)
+void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& rect)
 {
 	RefArray< TargetConnection > connections = m_instance->getConnections();
 
@@ -209,9 +209,9 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 		if (!m_editCells[i])
 		{
 			Ref< ui::Edit > edit = new ui::Edit();
-			edit->create(getWidget< ui::custom::AutoWidget >(), L"", ui::WsNone | ui::WsWantAllInput);
+			edit->create(getWidget< ui::AutoWidget >(), L"", ui::WsNone | ui::WsWantAllInput);
 			edit->addEventHandler< ui::KeyDownEvent >(this, &TargetInstanceListItem::eventCommandEditKeyDown);
-			m_editCells[i] = new ui::custom::ChildWidgetCell(edit);
+			m_editCells[i] = new ui::ChildWidgetCell(edit);
 		}
 
 		widget->placeCell(
@@ -259,7 +259,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 
 	ui::Rect controlRect = rect; controlRect.bottom = rect.top + ui::dpi96(28);
 
-	canvas.setBackground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"item-background-color"));
+	canvas.setBackground(ss->getColor(getWidget< ui::AutoWidget >(), L"item-background-color"));
 	canvas.fillRect(controlRect);
 
 	ui::Rect performanceRect = rect;
@@ -267,12 +267,12 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	performanceRect.bottom = performanceRect.top + ui::dpi96(c_performanceHeight + c_commandHeight);
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
-		canvas.setBackground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"item-connection-background-color"));
+		canvas.setBackground(ss->getColor(getWidget< ui::AutoWidget >(), L"item-connection-background-color"));
 		canvas.fillRect(performanceRect);
 		performanceRect = performanceRect.offset(0, performanceRect.getHeight());
 	}
 
-	canvas.setForeground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"item-seperator-color"));
+	canvas.setForeground(ss->getColor(getWidget< ui::AutoWidget >(), L"item-seperator-color"));
 	canvas.drawLine(rect.left, rect.bottom - 1, rect.right, rect.bottom - 1);
 
 	if (m_instance->getState() != m_lastInstanceState)
@@ -314,11 +314,11 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		textRect.left += logoSize + 10;
 		textRect.right -= ui::dpi96(24) * 3 - 8;
 
-		canvas.setForeground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"color"));
+		canvas.setForeground(ss->getColor(getWidget< ui::AutoWidget >(), L"color"));
 		canvas.drawText(textRect, targetConfiguration->getName(), ui::AnLeft, ui::AnCenter);
 	}
 
-	ui::Font widgetFont = getWidget< ui::custom::AutoWidget >()->getFont();
+	ui::Font widgetFont = getWidget< ui::AutoWidget >()->getFont();
 	ui::Font performanceFont = widgetFont; performanceFont.setSize(10);
 	ui::Font performanceBoldFont = performanceFont; performanceBoldFont.setBold(true);
 	ui::Font markerFont = widgetFont; markerFont.setSize(7);
@@ -328,7 +328,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	performanceRect.top = rect.top + ui::dpi96(28);
 	performanceRect.bottom = performanceRect.top + ui::dpi96(c_performanceHeight);
 
-	canvas.setForeground(ss->getColor(getWidget< ui::custom::AutoWidget >(), L"color"));
+	canvas.setForeground(ss->getColor(getWidget< ui::AutoWidget >(), L"color"));
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		const TargetPerformance& performance = connections[i]->getPerformance();

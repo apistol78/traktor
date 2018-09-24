@@ -39,19 +39,19 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/FileDialog.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/GridView/GridColumn.h"
-#include "Ui/Custom/GridView/GridItem.h"
-#include "Ui/Custom/GridView/GridRow.h"
-#include "Ui/Custom/GridView/GridView.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarDropDown.h"
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-#include "Ui/Custom/TreeView/TreeView.h"
-#include "Ui/Custom/TreeView/TreeViewItem.h"
+#include "Ui/FileDialog.h"
+#include "Ui/Splitter.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridView.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarDropDown.h"
+#include "Ui/ToolBar/ToolBarSeparator.h"
+#include "Ui/TreeView/TreeView.h"
+#include "Ui/TreeView/TreeViewItem.h"
 #include "Ui/Itf/IWidget.h"
 
 namespace traktor
@@ -88,72 +88,72 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 
 	addEventHandler< ui::CloseEvent >(this, &ModelToolDialog::eventDialogClose);
 
-	Ref< ui::custom::ToolBar > toolBar = new ui::custom::ToolBar();
+	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
 	toolBar->create(this);
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Load...", ui::Command(L"ModelTool.Load"), ui::custom::ToolBarButton::BsText));
-	toolBar->addItem(new ui::custom::ToolBarSeparator());
+	toolBar->addItem(new ui::ToolBarButton(L"Load...", ui::Command(L"ModelTool.Load"), ui::ToolBarButton::BsText));
+	toolBar->addItem(new ui::ToolBarSeparator());
 
-	m_toolSolid = new ui::custom::ToolBarButton(L"Solid", ui::Command(L"ModelTool.ToggleSolid"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled);
+	m_toolSolid = new ui::ToolBarButton(L"Solid", ui::Command(L"ModelTool.ToggleSolid"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolSolid);
 
-	m_toolWire = new ui::custom::ToolBarButton(L"Wire", ui::Command(L"ModelTool.ToggleWire"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled);
+	m_toolWire = new ui::ToolBarButton(L"Wire", ui::Command(L"ModelTool.ToggleWire"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolWire);
 
-	m_toolNormals = new ui::custom::ToolBarButton(L"Normals", ui::Command(L"ModelTool.ToggleNormals"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled);
+	m_toolNormals = new ui::ToolBarButton(L"Normals", ui::Command(L"ModelTool.ToggleNormals"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolNormals);
 
-	m_toolVertices = new ui::custom::ToolBarButton(L"Vertices", ui::Command(L"ModelTool.ToggleVertices"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled);
+	m_toolVertices = new ui::ToolBarButton(L"Vertices", ui::Command(L"ModelTool.ToggleVertices"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolVertices);
 
-	m_toolCull = new ui::custom::ToolBarButton(L"Cull Backfaces", ui::Command(L"ModelTool.ToggleCullBackfaces"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled);
+	m_toolCull = new ui::ToolBarButton(L"Cull Backfaces", ui::Command(L"ModelTool.ToggleCullBackfaces"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolCull);
 
-	m_toolNonSharedEdges = new ui::custom::ToolBarButton(L"Non-shared Edges", ui::Command(L"ModelTool.ToggleNonSharedEdges"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
+	m_toolNonSharedEdges = new ui::ToolBarButton(L"Non-shared Edges", ui::Command(L"ModelTool.ToggleNonSharedEdges"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolNonSharedEdges);
 
-	m_toolUV = new ui::custom::ToolBarButton(L"UV", ui::Command(L"ModelTool.ToggleUV"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
+	m_toolUV = new ui::ToolBarButton(L"UV", ui::Command(L"ModelTool.ToggleUV"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolUV);
 
-	m_toolWeight = new ui::custom::ToolBarButton(L"Weights", ui::Command(L"ModelTool.ToggleWeights"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
+	m_toolWeight = new ui::ToolBarButton(L"Weights", ui::Command(L"ModelTool.ToggleWeights"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolWeight);
 
-	m_toolJoint = new ui::custom::ToolBarDropDown(ui::Command(L"ModelTool.Joint"), ui::dpi96(200), L"Joints");
+	m_toolJoint = new ui::ToolBarDropDown(ui::Command(L"ModelTool.Joint"), ui::dpi96(200), L"Joints");
 	toolBar->addItem(m_toolJoint);
 
-	toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ModelToolDialog::eventToolBarClick);
+	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ModelToolDialog::eventToolBarClick);
 
-	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitter = new ui::Splitter();
 	splitter->create(this, true, ui::dpi96(300), false);
 
-	Ref< ui::custom::Splitter > splitterH = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitterH = new ui::Splitter();
 	splitterH->create(splitter, false, 50, true);
 
-	m_modelTree = new ui::custom::TreeView();
+	m_modelTree = new ui::TreeView();
 	m_modelTree->create(splitterH, ui::WsDoubleBuffer);
 	m_modelTree->addEventHandler< ui::MouseButtonDownEvent >(this, &ModelToolDialog::eventModelTreeButtonDown);
 	m_modelTree->addEventHandler< ui::SelectionChangeEvent >(this, &ModelToolDialog::eventModelTreeSelect);
 
-	m_materialGrid = new ui::custom::GridView();
-	m_materialGrid->create(splitterH, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Name", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Diffuse Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Specular Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Transparency Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Emissive Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Reflective Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Normal Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Light Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Color", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Diffuse Term", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Specular Term", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Specular Roughness", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Metalness", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Transparency", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Emissive", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Reflective", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Rim Light Intensity", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Blend Operator", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::custom::GridColumn(L"Double Sided", ui::dpi96(100)));
+	m_materialGrid = new ui::GridView();
+	m_materialGrid->create(splitterH, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
+	m_materialGrid->addColumn(new ui::GridColumn(L"Name", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Diffuse Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Specular Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Transparency Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Emissive Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Reflective Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Normal Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Light Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Color", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Diffuse Term", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Specular Term", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Specular Roughness", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Metalness", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Transparency", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Emissive", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Reflective", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Rim Light Intensity", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Blend Operator", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Double Sided", ui::dpi96(100)));
 
 	m_modelRootPopup = new ui::Menu();
 
@@ -225,7 +225,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 			Aabb3 boundingBox = model->getBoundingBox();
 			Transform(translate(-boundingBox.getCenter())).apply(*model);
 
-			Ref< ui::custom::TreeViewItem > item = m_modelTree->createItem(0, fileName, 0);
+			Ref< ui::TreeViewItem > item = m_modelTree->createItem(0, fileName, 0);
 			item->setData(L"MODEL", model);
 		}
 		else
@@ -246,7 +246,7 @@ void ModelToolDialog::destroy()
 
 bool ModelToolDialog::loadModel()
 {
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, L"Load model(s)...", L"All files;*.*"))
 		return false;
 
@@ -267,7 +267,7 @@ bool ModelToolDialog::loadModel()
 		Aabb3 boundingBox = model->getBoundingBox();
 		Transform(translate(-boundingBox.getCenter())).apply(*model);
 
-		Ref< ui::custom::TreeViewItem > item = m_modelTree->createItem(0, i->getFileName(), 0);
+		Ref< ui::TreeViewItem > item = m_modelTree->createItem(0, i->getFileName(), 0);
 		item->setData(L"MODEL", model);
 	}
 
@@ -277,7 +277,7 @@ bool ModelToolDialog::loadModel()
 
 bool ModelToolDialog::saveModel(Model* model)
 {
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, L"Save model as...", L"All files;*.*", true))
 		return false;
 
@@ -294,7 +294,7 @@ bool ModelToolDialog::saveModel(Model* model)
 
 void ModelToolDialog::bakeOcclusion(Model* model)
 {
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, L"Save occlusion image as...", L"All files;*.*", true))
 		return;
 
@@ -328,14 +328,14 @@ void ModelToolDialog::bakeOcclusion(Model* model)
 		log::error << L"Unable to bake occlusion" << Endl;
 }
 
-void ModelToolDialog::updateOperations(ui::custom::TreeViewItem* itemModel)
+void ModelToolDialog::updateOperations(ui::TreeViewItem* itemModel)
 {
 	T_ASSERT (itemModel->getParent() == 0);
 
 	Ref< Model > model = itemModel->getData< Model >(L"MODEL");
 
-	const RefArray< ui::custom::TreeViewItem >& children = itemModel->getChildren();
-	for (RefArray< ui::custom::TreeViewItem >::const_iterator i = children.begin(); i != children.end(); ++i)
+	const RefArray< ui::TreeViewItem >& children = itemModel->getChildren();
+	for (RefArray< ui::TreeViewItem >::const_iterator i = children.begin(); i != children.end(); ++i)
 	{
 		const IModelOperation* operation = (*i)->getData< IModelOperation >(L"OPERATION");
 		T_ASSERT (operation != 0);
@@ -352,7 +352,7 @@ void ModelToolDialog::eventDialogClose(ui::CloseEvent* event)
 	destroy();
 }
 
-void ModelToolDialog::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
+void ModelToolDialog::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	if (command == L"ModelTool.Load")
@@ -366,99 +366,99 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	RefArray< ui::custom::TreeViewItem > items;
-	if (m_modelTree->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) != 1)
+	RefArray< ui::TreeViewItem > items;
+	if (m_modelTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
 		return;
 
 	T_ASSERT (items.front());
 	if (items.front()->getParent() == 0)
 	{
-		Ref< ui::custom::TreeViewItem > itemModel = items.front();
+		Ref< ui::TreeViewItem > itemModel = items.front();
 		const ui::MenuItem* selected = m_modelRootPopup->showModal(m_modelTree, event->getPosition());
 		if (selected)
 		{
 			const ui::Command& command = selected->getCommand();
 			if (command == L"ModelTool.CalculateTangents")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Calculate Tangents", 0);
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Calculate Tangents", 0);
 				itemOperation->setData(L"OPERATION", new CalculateTangents());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.CleanDegenerate")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clean Degenerate", 0);
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clean Degenerate", 0);
 				itemOperation->setData(L"OPERATION", new CleanDegenerate());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.CleanDuplicates")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clean Duplicates", 0);
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clean Duplicates", 0);
 				itemOperation->setData(L"OPERATION", new CleanDuplicates(0.1f));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.ConvexHull")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Convex Hull", 0);
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Convex Hull", 0);
 				itemOperation->setData(L"OPERATION", new CalculateConvexHull());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.CullDistantFaces")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Cull Distant Faces", 0);
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Cull Distant Faces", 0);
 				itemOperation->setData(L"OPERATION", new CullDistantFaces(Aabb3()));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.FlattenDoubleSided")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Flatten Double Sided", 0);
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Flatten Double Sided", 0);
 				itemOperation->setData(L"OPERATION", new FlattenDoubleSided());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.MergeCoplanar")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Merge Coplanar", 0);
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Merge Coplanar", 0);
 				itemOperation->setData(L"OPERATION", new MergeCoplanarAdjacents(true));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.Occluder")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Occluder", 0);
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Occluder", 0);
 				itemOperation->setData(L"OPERATION", new CalculateOccluder());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.Quantize")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Quantize", 0);
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Quantize", 0);
 				itemOperation->setData(L"OPERATION", new Quantize(0.5f));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.Reduce")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Reduce", 0);
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Reduce", 0);
 				itemOperation->setData(L"OPERATION", new Reduce(0.5f));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.ScaleAlongNormal")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Scale Along Normal", 0);
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Scale Along Normal", 0);
 				itemOperation->setData(L"OPERATION", new ScaleAlongNormal(1.0f));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.Triangulate")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Triangulate", 0);
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Triangulate", 0);
 				itemOperation->setData(L"OPERATION", new Triangulate());
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.UnwrapUV")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Unwrap UV", 0);
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Unwrap UV", 0);
 				itemOperation->setData(L"OPERATION", new UnwrapUV(0, 0.01f, 0.0f, 0.0f));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.WeldHoles")
 			{
-				Ref< ui::custom::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Weld Holes", 0);
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Weld Holes", 0);
 				itemOperation->setData(L"OPERATION", new WeldHoles());
 				updateOperations(itemModel);
 			}
@@ -482,8 +482,8 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 	}
 	else
 	{
-		Ref< ui::custom::TreeViewItem > itemOperation = items.front();
-		Ref< ui::custom::TreeViewItem > itemModel = itemOperation->getParent();
+		Ref< ui::TreeViewItem > itemOperation = items.front();
+		Ref< ui::TreeViewItem > itemModel = itemOperation->getParent();
 		const ui::MenuItem* selected = m_modelChildPopup->showModal(m_modelTree, event->getPosition());
 		if (selected)
 		{
@@ -511,8 +511,8 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 
 void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::custom::TreeViewItem > items;
-	m_modelTree->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > items;
+	m_modelTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 
 	if (items.size() == 1)
 		m_model = items[0]->getData< Model >(L"MODEL");
@@ -540,26 +540,26 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 		const std::vector< Material >& materials = m_model->getMaterials();
 		for (std::vector< Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 		{
-			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-			row->add(new ui::custom::GridItem(i->getName()));
-			row->add(new ui::custom::GridItem(i->getDiffuseMap().name));
-			row->add(new ui::custom::GridItem(i->getSpecularMap().name));
-			row->add(new ui::custom::GridItem(i->getTransparencyMap().name));
-			row->add(new ui::custom::GridItem(i->getEmissiveMap().name));
-			row->add(new ui::custom::GridItem(i->getReflectiveMap().name));
-			row->add(new ui::custom::GridItem(i->getNormalMap().name));
-			row->add(new ui::custom::GridItem(i->getLightMap().name));
-			row->add(new ui::custom::GridItem(L"0, 0, 0, 0"));
-			row->add(new ui::custom::GridItem(toString(i->getDiffuseTerm())));
-			row->add(new ui::custom::GridItem(toString(i->getSpecularTerm())));
-			row->add(new ui::custom::GridItem(toString(i->getSpecularRoughness())));
-			row->add(new ui::custom::GridItem(toString(i->getMetalness())));
-			row->add(new ui::custom::GridItem(toString(i->getTransparency())));
-			row->add(new ui::custom::GridItem(toString(i->getEmissive())));
-			row->add(new ui::custom::GridItem(toString(i->getReflective())));
-			row->add(new ui::custom::GridItem(toString(i->getRimLightIntensity())));
-			row->add(new ui::custom::GridItem(L"Default"));
-			row->add(new ui::custom::GridItem(i->isDoubleSided() ? L"Yes" : L"No"));
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(new ui::GridItem(i->getName()));
+			row->add(new ui::GridItem(i->getDiffuseMap().name));
+			row->add(new ui::GridItem(i->getSpecularMap().name));
+			row->add(new ui::GridItem(i->getTransparencyMap().name));
+			row->add(new ui::GridItem(i->getEmissiveMap().name));
+			row->add(new ui::GridItem(i->getReflectiveMap().name));
+			row->add(new ui::GridItem(i->getNormalMap().name));
+			row->add(new ui::GridItem(i->getLightMap().name));
+			row->add(new ui::GridItem(L"0, 0, 0, 0"));
+			row->add(new ui::GridItem(toString(i->getDiffuseTerm())));
+			row->add(new ui::GridItem(toString(i->getSpecularTerm())));
+			row->add(new ui::GridItem(toString(i->getSpecularRoughness())));
+			row->add(new ui::GridItem(toString(i->getMetalness())));
+			row->add(new ui::GridItem(toString(i->getTransparency())));
+			row->add(new ui::GridItem(toString(i->getEmissive())));
+			row->add(new ui::GridItem(toString(i->getReflective())));
+			row->add(new ui::GridItem(toString(i->getRimLightIntensity())));
+			row->add(new ui::GridItem(L"Default"));
+			row->add(new ui::GridItem(i->isDoubleSided() ? L"Yes" : L"No"));
 			m_materialGrid->addRow(row);
 		}
 

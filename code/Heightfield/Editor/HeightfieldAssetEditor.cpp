@@ -17,10 +17,10 @@
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarSeparator.h"
 
 namespace traktor
 {
@@ -125,15 +125,15 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	Ref< ui::Static > staticSizeUnit = new ui::Static();
 	staticSizeUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_SIZE_UNIT"));
 
-	Ref< ui::custom::ToolBar > toolBar = new ui::custom::ToolBar();
+	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
 	toolBar->create(containerInner);
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Import...", ui::Command(L"HeightfieldAssetEditor.Import")));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Export...", ui::Command(L"HeightfieldAssetEditor.Export")));
-	toolBar->addItem(new ui::custom::ToolBarSeparator());
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Clear...", ui::Command(L"HeightfieldAssetEditor.Clear")));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Resize...", ui::Command(L"HeightfieldAssetEditor.Resize")));
-	toolBar->addItem(new ui::custom::ToolBarButton(L"Crop...", ui::Command(L"HeightfieldAssetEditor.Crop")));
-	toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &HeightfieldAssetEditor::eventToolBar);
+	toolBar->addItem(new ui::ToolBarButton(L"Import...", ui::Command(L"HeightfieldAssetEditor.Import")));
+	toolBar->addItem(new ui::ToolBarButton(L"Export...", ui::Command(L"HeightfieldAssetEditor.Export")));
+	toolBar->addItem(new ui::ToolBarSeparator());
+	toolBar->addItem(new ui::ToolBarButton(L"Clear...", ui::Command(L"HeightfieldAssetEditor.Clear")));
+	toolBar->addItem(new ui::ToolBarButton(L"Resize...", ui::Command(L"HeightfieldAssetEditor.Resize")));
+	toolBar->addItem(new ui::ToolBarButton(L"Crop...", ui::Command(L"HeightfieldAssetEditor.Crop")));
+	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &HeightfieldAssetEditor::eventToolBar);
 
 	m_imagePreview = new ui::Image();
 	m_imagePreview->create(
@@ -208,7 +208,7 @@ void HeightfieldAssetEditor::updatePreviewImage()
 	);
 }
 
-void HeightfieldAssetEditor::eventToolBar(ui::custom::ToolBarButtonClickEvent* event)
+void HeightfieldAssetEditor::eventToolBar(ui::ToolBarButtonClickEvent* event)
 {
 	handleCommand(event->getCommand());
 }

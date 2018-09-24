@@ -15,13 +15,8 @@ namespace traktor
 	{
 
 class Edit;
-
-		namespace custom
-		{
-
 class PreviewList;
 
-		}
 	}
 
 	namespace editor
@@ -37,7 +32,7 @@ public:
 	const std::wstring& getWorkspacePath() const;
 
 private:
-	Ref< ui::custom::PreviewList > m_templateList;
+	Ref< ui::PreviewList > m_templateList;
 	Ref< ui::Edit > m_editName;
 	Ref< ui::Edit > m_editPath;
 	std::wstring m_workspacePath;

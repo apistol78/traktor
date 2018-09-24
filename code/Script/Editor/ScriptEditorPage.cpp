@@ -45,19 +45,19 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Tab.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TabPage.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/GridView/GridColumn.h"
-#include "Ui/Custom/GridView/GridItem.h"
-#include "Ui/Custom/GridView/GridRow.h"
-#include "Ui/Custom/GridView/GridView.h"
-#include "Ui/Custom/Panel.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-#include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
-#include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageLua.h"
-#include "Ui/Custom/StatusBar/StatusBar.h"
+#include "Ui/Splitter.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridView.h"
+#include "Ui/Panel.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarSeparator.h"
+#include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
+#include "Ui/SyntaxRichEdit/SyntaxLanguageLua.h"
+#include "Ui/StatusBar/StatusBar.h"
 
 namespace traktor
 {
@@ -66,7 +66,7 @@ namespace traktor
 		namespace
 		{
 		
-struct DependencyCharacter : public RefCountImpl< ui::custom::RichEdit::ISpecialCharacter >
+struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacter >
 {
 	editor::IEditor* editor;
 	Guid id;
@@ -79,7 +79,7 @@ struct DependencyCharacter : public RefCountImpl< ui::custom::RichEdit::ISpecial
 	{
 	}
 
-	virtual int32_t measureWidth(const ui::custom::RichEdit* richEdit) const T_OVERRIDE T_FINAL
+	virtual int32_t measureWidth(const ui::RichEdit* richEdit) const T_OVERRIDE T_FINAL
 	{
 		return richEdit->getFontMetric().getExtent(path).cx;
 	}
@@ -146,12 +146,12 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	if (!tabOutline->create(tab, i18n::Text(L"SCRIPT_EDITOR_OUTLINE"), new ui::TableLayout(L"100%", L"100%", 0, 0)))
 		return false;
 
-	m_outlineGrid = new ui::custom::GridView();
-	if (!m_outlineGrid->create(tabOutline, ui::custom::GridView::WsColumnHeader |ui::WsDoubleBuffer))
+	m_outlineGrid = new ui::GridView();
+	if (!m_outlineGrid->create(tabOutline, ui::GridView::WsColumnHeader |ui::WsDoubleBuffer))
 		return false;
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(L"", ui::dpi96(30)));
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), ui::dpi96(165)));
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), ui::dpi96(45)));
+	m_outlineGrid->addColumn(new ui::GridColumn(L"", ui::dpi96(30)));
+	m_outlineGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), ui::dpi96(165)));
+	m_outlineGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), ui::dpi96(45)));
 	m_outlineGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventOutlineDoubleClick);
 
 	Ref< ui::TabPage > tabClasses = new ui::TabPage();
@@ -176,13 +176,13 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		if (!containerEdit->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
 			return false;
 
-		Ref< ui::custom::ToolBar > toolBarEdit = new ui::custom::ToolBar();
+		Ref< ui::ToolBar > toolBarEdit = new ui::ToolBar();
 		toolBarEdit->create(containerEdit);
 		toolBarEdit->addImage(new ui::StyleBitmap(L"Script.RemoveBreakpoints"), 1);
 		toolBarEdit->addImage(new ui::StyleBitmap(L"Script.ToggleComments"), 1);
-		toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_TOGGLE_COMMENTS"), 1, ui::Command(L"Script.Editor.ToggleComments")));
-		toolBarEdit->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_REMOVE_ALL_BREAKPOINTS"), 0, ui::Command(L"Script.Editor.RemoveAllBreakpoints")));
-		toolBarEdit->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventToolBarEditClick);
+		toolBarEdit->addItem(new ui::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_TOGGLE_COMMENTS"), 1, ui::Command(L"Script.Editor.ToggleComments")));
+		toolBarEdit->addItem(new ui::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_REMOVE_ALL_BREAKPOINTS"), 0, ui::Command(L"Script.Editor.RemoveAllBreakpoints")));
+		toolBarEdit->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ScriptEditorPage::eventToolBarEditClick);
 	}
 	else if (m_scriptAsset)
 	{
@@ -190,8 +190,8 @@ bool ScriptEditorPage::create(ui::Container* parent)
 			return false;
 	}
 
-	m_edit = new ui::custom::SyntaxRichEdit();
-	if (!m_edit->create(containerEdit, L"", ui::WsDoubleBuffer | ui::custom::SyntaxRichEdit::WsNoClipboard))
+	m_edit = new ui::SyntaxRichEdit();
+	if (!m_edit->create(containerEdit, L"", ui::WsDoubleBuffer | ui::SyntaxRichEdit::WsNoClipboard))
 		return false;
 	m_edit->addImage(new ui::StyleBitmap(L"Script.Breakpoint"), 1);
 
@@ -244,7 +244,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_editMenu = new ui::Menu();
 	m_editMenu->add(new ui::MenuItem(ui::Command(L"Script.Editor.AddUsingStatement"), i18n::Text(L"SCRIPT_EDITOR_ADD_USING")));
 
-	m_compileStatus = new ui::custom::StatusBar();
+	m_compileStatus = new ui::StatusBar();
 	if (!m_compileStatus->create(containerEdit))
 		return false;
 
@@ -254,7 +254,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		const TypeInfo* syntaxLanguageType = TypeInfo::find(syntaxLanguageTypeName.c_str());
 		if (syntaxLanguageType)
 		{
-			Ref< ui::custom::SyntaxLanguage > syntaxLanguage = dynamic_type_cast< ui::custom::SyntaxLanguage* >(syntaxLanguageType->createInstance());
+			Ref< ui::SyntaxLanguage > syntaxLanguage = dynamic_type_cast< ui::SyntaxLanguage* >(syntaxLanguageType->createInstance());
 			T_ASSERT (syntaxLanguage);
 			m_edit->setLanguage(syntaxLanguage);
 		}
@@ -354,7 +354,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 			[&] (wchar_t ch) -> std::wstring {
 				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
 			},
-			[&] (const ui::custom::RichEdit::ISpecialCharacter* sc) -> std::wstring {
+			[&] (const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
 				const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
 				return L"\\" + dc->id.format();
 			}
@@ -374,7 +374,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 			[&] (wchar_t ch) -> std::wstring {
 				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
 			},
-			[&] (const ui::custom::RichEdit::ISpecialCharacter* sc) -> std::wstring {
+			[&] (const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
 				const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
 				return L"\\" + dc->id.format();
 			}
@@ -576,17 +576,17 @@ void ScriptEditorPage::updateBreakpoints()
 	m_edit->update();
 }
 
-void ScriptEditorPage::buildOutlineGrid(ui::custom::GridView* grid, ui::custom::GridRow* parent, const IScriptOutline::Node* on)
+void ScriptEditorPage::buildOutlineGrid(ui::GridView* grid, ui::GridRow* parent, const IScriptOutline::Node* on)
 {
 	while (on)
 	{
 		if (const IScriptOutline::FunctionNode* fn = dynamic_type_cast< const IScriptOutline::FunctionNode* >(on))
 		{
-			Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
+			Ref< ui::GridRow > row = new ui::GridRow(0);
 
-			row->add(new ui::custom::GridItem(fn->isLocal() ? m_bitmapFunctionLocal : m_bitmapFunction));
-			row->add(new ui::custom::GridItem(fn->getName()));
-			row->add(new ui::custom::GridItem(toString(fn->getLine() + 1)));
+			row->add(new ui::GridItem(fn->isLocal() ? m_bitmapFunctionLocal : m_bitmapFunction));
+			row->add(new ui::GridItem(fn->getName()));
+			row->add(new ui::GridItem(toString(fn->getLine() + 1)));
 
 			buildOutlineGrid(grid, row, fn->getBody());
 
@@ -597,11 +597,11 @@ void ScriptEditorPage::buildOutlineGrid(ui::custom::GridView* grid, ui::custom::
 		}
 		else if (const IScriptOutline::FunctionReferenceNode* frn = dynamic_type_cast< const IScriptOutline::FunctionReferenceNode* >(on))
 		{
-			Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
+			Ref< ui::GridRow > row = new ui::GridRow(0);
 
-			row->add(new ui::custom::GridItem(m_bitmapFunctionReference));
-			row->add(new ui::custom::GridItem(frn->getName()));
-			row->add(new ui::custom::GridItem(toString(frn->getLine() + 1)));
+			row->add(new ui::GridItem(m_bitmapFunctionReference));
+			row->add(new ui::GridItem(frn->getName()));
+			row->add(new ui::GridItem(toString(frn->getLine() + 1)));
 
 			if (parent)
 				parent->addChild(row);
@@ -615,11 +615,11 @@ void ScriptEditorPage::buildOutlineGrid(ui::custom::GridView* grid, ui::custom::
 
 void ScriptEditorPage::eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event)
 {
-	const ui::custom::GridRow* selectedRow = m_outlineGrid->getSelectedRow();
+	const ui::GridRow* selectedRow = m_outlineGrid->getSelectedRow();
 	if (!selectedRow)
 		return;
 
-	const ui::custom::GridItem* lineItem = selectedRow->get(2);
+	const ui::GridItem* lineItem = selectedRow->get(2);
 	int32_t line = parseString< int32_t >(lineItem->getText()) - 1;
 	if (line >= 0)
 	{
@@ -628,7 +628,7 @@ void ScriptEditorPage::eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event)
 	}
 }
 
-void ScriptEditorPage::eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent* event)
+void ScriptEditorPage::eventToolBarEditClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	if (command == L"Script.Editor.ToggleComments")
@@ -687,7 +687,7 @@ void ScriptEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 		[&] (wchar_t ch) -> std::wstring {
 			return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
 		},
-		[&] (const ui::custom::RichEdit::ISpecialCharacter* sc) -> std::wstring {
+		[&] (const ui::RichEdit::ISpecialCharacter* sc) -> std::wstring {
 			const DependencyCharacter* dc = static_cast< const DependencyCharacter* >(sc);
 			return L"\\" + dc->id.format();
 		}

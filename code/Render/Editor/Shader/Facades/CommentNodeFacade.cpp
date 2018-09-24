@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Shader/Node.h"
 #include "Render/Editor/Shader/Facades/CommentNodeFacade.h"
 #include "Ui/Application.h"
-#include "Ui/Custom/Graph/Node.h"
-#include "Ui/Custom/Graph/CommentNodeShape.h"
+#include "Ui/Graph/Node.h"
+#include "Ui/Graph/CommentNodeShape.h"
 
 namespace traktor
 {
@@ -17,9 +17,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CommentNodeFacade", CommentNodeFacade, INodeFacade)
 
-CommentNodeFacade::CommentNodeFacade(ui::custom::GraphControl* graphControl)
+CommentNodeFacade::CommentNodeFacade(ui::GraphControl* graphControl)
 {
-	m_nodeShape = new ui::custom::CommentNodeShape(graphControl);
+	m_nodeShape = new ui::CommentNodeShape(graphControl);
 }
 
 Ref< Node > CommentNodeFacade::createShaderNode(
@@ -30,14 +30,14 @@ Ref< Node > CommentNodeFacade::createShaderNode(
 	return checked_type_cast< Node* >(nodeType->createInstance());
 }
 
-Ref< ui::custom::Node > CommentNodeFacade::createEditorNode(
+Ref< ui::Node > CommentNodeFacade::createEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
+	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
-	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
+	Ref< ui::Node > editorNode = new ui::Node(
 		L"",
 		L"",
 		ui::Point(
@@ -54,8 +54,8 @@ Ref< ui::custom::Node > CommentNodeFacade::createEditorNode(
 
 void CommentNodeFacade::editShaderNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -64,8 +64,8 @@ void CommentNodeFacade::editShaderNode(
 
 void CommentNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -75,7 +75,7 @@ void CommentNodeFacade::refreshEditorNode(
 }
 
 void CommentNodeFacade::setValidationIndicator(
-	ui::custom::Node* editorNode,
+	ui::Node* editorNode,
 	bool validationSucceeded
 )
 {

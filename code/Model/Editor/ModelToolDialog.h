@@ -32,19 +32,14 @@ class IResourceManager;
 	namespace ui
 	{
 
-class Menu;
-
-		namespace custom
-		{
-
 class GridView;
+class Menu;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
 class ToolBarDropDown;
 class TreeView;
 class TreeViewItem;
 
-		}
 	}
 
 	namespace model
@@ -74,17 +69,17 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	resource::Proxy< render::ITexture > m_textureDebug;
-	Ref< ui::custom::ToolBarButton > m_toolSolid;
-	Ref< ui::custom::ToolBarButton > m_toolWire;
-	Ref< ui::custom::ToolBarButton > m_toolNormals;
-	Ref< ui::custom::ToolBarButton > m_toolVertices;
-	Ref< ui::custom::ToolBarButton > m_toolCull;
-	Ref< ui::custom::ToolBarButton > m_toolNonSharedEdges;
-	Ref< ui::custom::ToolBarButton > m_toolUV;
-	Ref< ui::custom::ToolBarButton > m_toolWeight;
-	Ref< ui::custom::ToolBarDropDown > m_toolJoint;
-	Ref< ui::custom::TreeView > m_modelTree;
-	Ref< ui::custom::GridView > m_materialGrid;
+	Ref< ui::ToolBarButton > m_toolSolid;
+	Ref< ui::ToolBarButton > m_toolWire;
+	Ref< ui::ToolBarButton > m_toolNormals;
+	Ref< ui::ToolBarButton > m_toolVertices;
+	Ref< ui::ToolBarButton > m_toolCull;
+	Ref< ui::ToolBarButton > m_toolNonSharedEdges;
+	Ref< ui::ToolBarButton > m_toolUV;
+	Ref< ui::ToolBarButton > m_toolWeight;
+	Ref< ui::ToolBarDropDown > m_toolJoint;
+	Ref< ui::TreeView > m_modelTree;
+	Ref< ui::GridView > m_materialGrid;
 	Ref< ui::Menu > m_modelRootPopup;
 	Ref< ui::Menu > m_modelChildPopup;
 	Ref< ui::Widget > m_renderWidget;
@@ -103,11 +98,11 @@ private:
 
 	void bakeOcclusion(Model* model);
 
-	void updateOperations(ui::custom::TreeViewItem* itemModel);
+	void updateOperations(ui::TreeViewItem* itemModel);
 
 	void eventDialogClose(ui::CloseEvent* event);
 
-	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventModelTreeButtonDown(ui::MouseButtonDownEvent* event);
 

@@ -15,7 +15,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Script/Editor/ScriptClassWizardTool.h"
 #include "Ui/CharacterSetEditValidator.h"
 #include "Ui/StyleBitmap.h"
-#include "Ui/Custom/InputDialog.h"
+#include "Ui/InputDialog.h"
 
 namespace traktor
 {
@@ -24,7 +24,7 @@ namespace traktor
 		namespace
 		{
 
-class ClassValueEnumerator : public RefCountImpl< ui::custom::InputDialog::IValueEnumerator >
+class ClassValueEnumerator : public RefCountImpl< ui::InputDialog::IValueEnumerator >
 {
 public:
 	ClassValueEnumerator(const RefArray< db::Instance >& instances)
@@ -83,8 +83,8 @@ bool ScriptClassWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 	classNameValidator.add(L'_');
 	classNameValidator.add(L'.');
 
-	ui::custom::InputDialog inputDialog;
-	ui::custom::InputDialog::Field fields[] =
+	ui::InputDialog inputDialog;
+	ui::InputDialog::Field fields[] =
 	{
 		{
 			i18n::Text(L"SCRIPT_CLASS_WIZARDTOOL_CLASS_NAME"),

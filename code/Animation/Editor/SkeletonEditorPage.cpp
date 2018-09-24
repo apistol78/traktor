@@ -39,9 +39,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/HierarchicalState.h"
-#include "Ui/Custom/TreeView/TreeView.h"
-#include "Ui/Custom/TreeView/TreeViewContentChangeEvent.h"
-#include "Ui/Custom/TreeView/TreeViewItem.h"
+#include "Ui/TreeView/TreeView.h"
+#include "Ui/TreeView/TreeViewContentChangeEvent.h"
+#include "Ui/TreeView/TreeViewItem.h"
 #include "Ui/Itf/IWidget.h"
 
 namespace traktor
@@ -129,14 +129,14 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	m_skeletonPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0));
 	m_skeletonPanel->setText(i18n::Text(L"SKELETON_EDITOR_SKELETON"));
 
-	m_treeSkeleton = new ui::custom::TreeView();
-	m_treeSkeleton->create(m_skeletonPanel, (ui::custom::TreeView::WsDefault | ui::WsAccelerated) & ~ui::WsClientBorder);
+	m_treeSkeleton = new ui::TreeView();
+	m_treeSkeleton->create(m_skeletonPanel, (ui::TreeView::WsDefault | ui::WsAccelerated) & ~ui::WsClientBorder);
 	m_treeSkeleton->addImage(new ui::StyleBitmap(L"Animation.Bones"), 2);
 	m_treeSkeleton->addEventHandler< ui::MouseButtonDownEvent >(this, &SkeletonEditorPage::eventTreeButtonDown);
 	m_treeSkeleton->addEventHandler< ui::SelectionChangeEvent >(this, &SkeletonEditorPage::eventTreeSelect);
 
 	if (!m_skeletonAsset)
-		m_treeSkeleton->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &SkeletonEditorPage::eventTreeEdited);
+		m_treeSkeleton->addEventHandler< ui::TreeViewContentChangeEvent >(this, &SkeletonEditorPage::eventTreeEdited);
 
 	m_site->createAdditionalPanel(m_skeletonPanel, ui::dpi96(250), false);
 
@@ -244,8 +244,8 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 		if (m_skeletonAsset)
 			return false;
 
-		RefArray< ui::custom::TreeViewItem > selectedItems;
-		if (m_treeSkeleton->getItems(selectedItems, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) == 0)
+		RefArray< ui::TreeViewItem > selectedItems;
+		if (m_treeSkeleton->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) == 0)
 			return false;
 
 		m_document->push();
@@ -276,8 +276,8 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 		if (m_skeletonAsset)
 			return false;
 
-		RefArray< ui::custom::TreeViewItem > selectedItems;
-		if (m_treeSkeleton->getItems(selectedItems, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) != 1)
+		RefArray< ui::TreeViewItem > selectedItems;
+		if (m_treeSkeleton->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
 			return false;
 
 		m_document->push();
@@ -319,7 +319,7 @@ void SkeletonEditorPage::createSkeletonTreeNodes()
 
 	m_treeSkeleton->removeAllItems();
 
-	Ref< ui::custom::TreeViewItem > itemRoot = m_treeSkeleton->createItem(0, i18n::Text(L"SKELETON_EDITOR_ROOT"), 1);
+	Ref< ui::TreeViewItem > itemRoot = m_treeSkeleton->createItem(0, i18n::Text(L"SKELETON_EDITOR_ROOT"), 1);
 	itemRoot->setImage(0, 0);
 
 	createSkeletonTreeNodes(itemRoot, -1);
@@ -327,7 +327,7 @@ void SkeletonEditorPage::createSkeletonTreeNodes()
 	m_treeSkeleton->applyState(treeSkeletonState);
 }
 
-void SkeletonEditorPage::createSkeletonTreeNodes(ui::custom::TreeViewItem* parentItem, int parentNodeIndex)
+void SkeletonEditorPage::createSkeletonTreeNodes(ui::TreeViewItem* parentItem, int parentNodeIndex)
 {
 	int32_t jointCount = m_skeleton->getJointCount();
 	for (int32_t i = 0; i < jointCount; ++i)
@@ -335,7 +335,7 @@ void SkeletonEditorPage::createSkeletonTreeNodes(ui::custom::TreeViewItem* paren
 		Joint* joint = m_skeleton->getJoint(i);
 		if (joint->getParent() == parentNodeIndex)
 		{
-			Ref< ui::custom::TreeViewItem > itemJoint = m_treeSkeleton->createItem(parentItem, joint->getName(), 1);
+			Ref< ui::TreeViewItem > itemJoint = m_treeSkeleton->createItem(parentItem, joint->getName(), 1);
 			itemJoint->setImage(0, 1);
 			itemJoint->setData(L"JOINT", joint);
 
@@ -570,8 +570,8 @@ void SkeletonEditorPage::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 
 void SkeletonEditorPage::eventTreeSelect(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::custom::TreeViewItem > selectedItems;
-	if (m_treeSkeleton->getItems(selectedItems, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) != 1)
+	RefArray< ui::TreeViewItem > selectedItems;
+	if (m_treeSkeleton->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
 		return;
 
 	Joint* joint = selectedItems.front()->getData< Joint >(L"JOINT");
@@ -587,10 +587,10 @@ void SkeletonEditorPage::eventTreeSelect(ui::SelectionChangeEvent* event)
 	m_renderWidget->update();
 }
 
-void SkeletonEditorPage::eventTreeEdited(ui::custom::TreeViewContentChangeEvent* event)
+void SkeletonEditorPage::eventTreeEdited(ui::TreeViewContentChangeEvent* event)
 {
 	T_ASSERT (!m_skeletonAsset);
-	ui::custom::TreeViewItem* selectedItem = event->getItem();
+	ui::TreeViewItem* selectedItem = event->getItem();
 	Joint* joint = selectedItem->getData< Joint >(L"JOINT");
 	if (joint)
 	{

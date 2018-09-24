@@ -9,8 +9,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Shader/Node.h"
 #include "Render/Editor/Shader/Facades/InterpolatorNodeFacade.h"
 #include "Ui/Application.h"
-#include "Ui/Custom/Graph/Node.h"
-#include "Ui/Custom/Graph/IpolNodeShape.h"
+#include "Ui/Graph/Node.h"
+#include "Ui/Graph/IpolNodeShape.h"
 
 namespace traktor
 {
@@ -21,7 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.InterpolatorNodeFacade", InterpolatorNod
 
 InterpolatorNodeFacade::InterpolatorNodeFacade()
 {
-	m_nodeShape = new ui::custom::IpolNodeShape();
+	m_nodeShape = new ui::IpolNodeShape();
 }
 
 Ref< Node > InterpolatorNodeFacade::createShaderNode(
@@ -32,14 +32,14 @@ Ref< Node > InterpolatorNodeFacade::createShaderNode(
 	return checked_type_cast< Node* >(nodeType->createInstance());
 }
 
-Ref< ui::custom::Node > InterpolatorNodeFacade::createEditorNode(
+Ref< ui::Node > InterpolatorNodeFacade::createEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
+	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
-	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
+	Ref< ui::Node > editorNode = new ui::Node(
 		L"",
 		L"",
 		ui::Point(
@@ -73,8 +73,8 @@ Ref< ui::custom::Node > InterpolatorNodeFacade::createEditorNode(
 
 void InterpolatorNodeFacade::editShaderNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -83,8 +83,8 @@ void InterpolatorNodeFacade::editShaderNode(
 
 void InterpolatorNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -94,7 +94,7 @@ void InterpolatorNodeFacade::refreshEditorNode(
 }
 
 void InterpolatorNodeFacade::setValidationIndicator(
-	ui::custom::Node* editorNode,
+	ui::Node* editorNode,
 	bool validationSucceeded
 )
 {

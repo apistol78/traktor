@@ -58,21 +58,21 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/MessageBox.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarDropDown.h"
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-#include "Ui/Custom/Graph/GraphControl.h"
-#include "Ui/Custom/Graph/PaintSettings.h"
-#include "Ui/Custom/Graph/Node.h"
-#include "Ui/Custom/Graph/NodeActivateEvent.h"
-#include "Ui/Custom/Graph/NodeMovedEvent.h"
-#include "Ui/Custom/Graph/Edge.h"
-#include "Ui/Custom/Graph/EdgeConnectEvent.h"
-#include "Ui/Custom/Graph/EdgeDisconnectEvent.h"
-#include "Ui/Custom/Graph/Pin.h"
-#include "Ui/Custom/Graph/SelectEvent.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarDropDown.h"
+#include "Ui/ToolBar/ToolBarSeparator.h"
+#include "Ui/Graph/GraphControl.h"
+#include "Ui/Graph/PaintSettings.h"
+#include "Ui/Graph/Node.h"
+#include "Ui/Graph/NodeActivateEvent.h"
+#include "Ui/Graph/NodeMovedEvent.h"
+#include "Ui/Graph/Edge.h"
+#include "Ui/Graph/EdgeConnectEvent.h"
+#include "Ui/Graph/EdgeDisconnectEvent.h"
+#include "Ui/Graph/Pin.h"
+#include "Ui/Graph/SelectEvent.h"
 
 // Resources
 #include "Resources/Tools.h"
@@ -123,29 +123,29 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 	
 	// Create our custom toolbar.
-	m_toolBar = new ui::custom::ToolBar();
+	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(container);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Shader.Tools"), 14);
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CENTER"), 7, ui::Command(L"ShaderGraph.Editor.Center")));
-	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_ALIGN_LEFT"), 0, ui::Command(L"ShaderGraph.Editor.AlignLeft")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_ALIGN_RIGHT"), 1, ui::Command(L"ShaderGraph.Editor.AlignRight")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_ALIGN_TOP"), 2, ui::Command(L"ShaderGraph.Editor.AlignTop")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_ALIGN_BOTTOM"), 3, ui::Command(L"ShaderGraph.Editor.AlignBottom")));
-	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVEN_VERTICALLY"), 4, ui::Command(L"ShaderGraph.Editor.EvenSpaceVertically")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVEN_HORIZONTALLY"), 5, ui::Command(L"ShaderGraph.Editor.EventSpaceHorizontally")));
-	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_REMOVE_UNUSED_NODES"), 8, ui::Command(L"ShaderGraph.Editor.RemoveUnusedNodes")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_AUTO_MERGE_BRANCHES"), 9, ui::Command(L"ShaderGraph.Editor.AutoMergeBranches")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_UPDATE_FRAGMENTS"), 10, ui::Command(L"ShaderGraph.Editor.UpdateFragments")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CONSTANT_FOLD"), 11, ui::Command(L"ShaderGraph.Editor.ConstantFold")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CLEANUP_SWIZZLES"), 12, ui::Command(L"ShaderGraph.Editor.CleanupSwizzles")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_INSERT_INTERPOLATORS"), 13, ui::Command(L"ShaderGraph.Editor.InsertInterpolators")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_VARIABLES"), 13, ui::Command(L"ShaderGraph.Editor.ResolveVariables")));
-	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_CENTER"), 7, ui::Command(L"ShaderGraph.Editor.Center")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_ALIGN_LEFT"), 0, ui::Command(L"ShaderGraph.Editor.AlignLeft")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_ALIGN_RIGHT"), 1, ui::Command(L"ShaderGraph.Editor.AlignRight")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_ALIGN_TOP"), 2, ui::Command(L"ShaderGraph.Editor.AlignTop")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_ALIGN_BOTTOM"), 3, ui::Command(L"ShaderGraph.Editor.AlignBottom")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVEN_VERTICALLY"), 4, ui::Command(L"ShaderGraph.Editor.EvenSpaceVertically")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_EVEN_HORIZONTALLY"), 5, ui::Command(L"ShaderGraph.Editor.EventSpaceHorizontally")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_REMOVE_UNUSED_NODES"), 8, ui::Command(L"ShaderGraph.Editor.RemoveUnusedNodes")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_AUTO_MERGE_BRANCHES"), 9, ui::Command(L"ShaderGraph.Editor.AutoMergeBranches")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_UPDATE_FRAGMENTS"), 10, ui::Command(L"ShaderGraph.Editor.UpdateFragments")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_CONSTANT_FOLD"), 11, ui::Command(L"ShaderGraph.Editor.ConstantFold")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_CLEANUP_SWIZZLES"), 12, ui::Command(L"ShaderGraph.Editor.CleanupSwizzles")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_INSERT_INTERPOLATORS"), 13, ui::Command(L"ShaderGraph.Editor.InsertInterpolators")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_VARIABLES"), 13, ui::Command(L"ShaderGraph.Editor.ResolveVariables")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
 	
-	m_toolPlatform = new ui::custom::ToolBarDropDown(ui::Command(), ui::dpi96(80), i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
+	m_toolPlatform = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(80), i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
 	m_toolPlatform->add(L"DX9");
 	m_toolPlatform->add(L"DX9 Xbox360");
 	m_toolPlatform->add(L"DX11");
@@ -154,20 +154,20 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolPlatform->add(L"GCM");
 	m_toolPlatform->add(L"Software");
 	m_toolBar->addItem(m_toolPlatform);
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"), 10, ui::Command(L"ShaderGraph.Editor.PlatformPermutation")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"), 10, ui::Command(L"ShaderGraph.Editor.PlatformPermutation")));
 	
-	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ShaderGraphEditorPage::eventToolClick);
+	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ShaderGraphEditorPage::eventToolClick);
 
 	// Create shader graph editor control.
-	m_editorGraph = new ui::custom::GraphControl();
+	m_editorGraph = new ui::GraphControl();
 	m_editorGraph->create(container);
 	m_editorGraph->addEventHandler< ui::MouseMoveEvent >(this, &ShaderGraphEditorPage::eventMouseMove);
 	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &ShaderGraphEditorPage::eventButtonDown);
-	m_editorGraph->addEventHandler< ui::custom::SelectEvent >(this, &ShaderGraphEditorPage::eventSelect);
-	m_editorGraph->addEventHandler< ui::custom::NodeMovedEvent >(this, &ShaderGraphEditorPage::eventNodeMoved);
-	m_editorGraph->addEventHandler< ui::custom::NodeActivateEvent >(this, &ShaderGraphEditorPage::eventNodeDoubleClick);
-	m_editorGraph->addEventHandler< ui::custom::EdgeConnectEvent >(this, &ShaderGraphEditorPage::eventEdgeConnect);
-	m_editorGraph->addEventHandler< ui::custom::EdgeDisconnectEvent >(this, &ShaderGraphEditorPage::eventEdgeDisconnect);
+	m_editorGraph->addEventHandler< ui::SelectEvent >(this, &ShaderGraphEditorPage::eventSelect);
+	m_editorGraph->addEventHandler< ui::NodeMovedEvent >(this, &ShaderGraphEditorPage::eventNodeMoved);
+	m_editorGraph->addEventHandler< ui::NodeActivateEvent >(this, &ShaderGraphEditorPage::eventNodeDoubleClick);
+	m_editorGraph->addEventHandler< ui::EdgeConnectEvent >(this, &ShaderGraphEditorPage::eventEdgeConnect);
+	m_editorGraph->addEventHandler< ui::EdgeDisconnectEvent >(this, &ShaderGraphEditorPage::eventEdgeDisconnect);
 
 	// Create shader graph referee view.
 	m_dependencyPane = new ShaderDependencyPane(m_editor, m_document->getInstance(0)->getGuid());
@@ -182,7 +182,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_site->createAdditionalPanel(m_shaderViewer, ui::dpi96(400), false);
 
 	// Modify graph control settings.
-	Ref< ui::custom::PaintSettings > paintSettings = new ui::custom::PaintSettings(*m_editorGraph->getPaintSettings());
+	Ref< ui::PaintSettings > paintSettings = new ui::PaintSettings(*m_editorGraph->getPaintSettings());
 	paintSettings->setSmoothSpline(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.SmoothSpline"));
 	m_editorGraph->setPaintSettings(paintSettings);
 
@@ -288,7 +288,7 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
 		shaderNode->setPosition(std::make_pair(absolutePosition.x, absolutePosition.y));
 
-		Ref< ui::custom::Node > editorNode = createEditorNode(shaderNode);
+		Ref< ui::Node > editorNode = createEditorNode(shaderNode);
 		m_editorGraph->addNode(editorNode);
 
 		updateGraph();
@@ -312,7 +312,7 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
 		shaderNode->setPosition(std::make_pair(absolutePosition.x, absolutePosition.y));
 
-		Ref< ui::custom::Node > editorNode = createEditorNode(shaderNode);
+		Ref< ui::Node > editorNode = createEditorNode(shaderNode);
 		m_editorGraph->addNode(editorNode);
 
 		updateGraph();
@@ -339,17 +339,17 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
-		RefArray< ui::custom::Node > selectedNodes;
+		RefArray< ui::Node > selectedNodes;
 		if (m_editorGraph->getSelectedNodes(selectedNodes) > 0)
 		{
 			// Also copy edges which are affected by selected nodes.
-			RefArray< ui::custom::Edge > selectedEdges;
+			RefArray< ui::Edge > selectedEdges;
 			m_editorGraph->getConnectedEdges(selectedNodes, true, selectedEdges);
 
 			Ref< ShaderGraphEditorClipboardData > data = new ShaderGraphEditorClipboardData();
 			
 			ui::Rect bounds(0, 0, 0, 0);
-			for (RefArray< ui::custom::Node >::iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
+			for (RefArray< ui::Node >::iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
 			{
 				Ref< Node > shaderNode = (*i)->getData< Node >(L"SHADERNODE");
 				T_ASSERT (shaderNode);
@@ -369,7 +369,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 			data->setBounds(bounds);
 
-			for (RefArray< ui::custom::Edge >::iterator i = selectedEdges.begin(); i != selectedEdges.end(); ++i)
+			for (RefArray< ui::Edge >::iterator i = selectedEdges.begin(); i != selectedEdges.end(); ++i)
 			{
 				Ref< Edge > shaderEdge = (*i)->getData< Edge >(L"SHADEREDGE");
 				T_ASSERT (shaderEdge);
@@ -388,13 +388,13 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 				selectedEdges.resize(0);
 				m_editorGraph->getConnectedEdges(selectedNodes, false, selectedEdges);
 
-				for (RefArray< ui::custom::Edge >::iterator i = selectedEdges.begin(); i != selectedEdges.end(); ++i)
+				for (RefArray< ui::Edge >::iterator i = selectedEdges.begin(); i != selectedEdges.end(); ++i)
 				{
 					m_shaderGraph->removeEdge((*i)->getData< Edge >(L"SHADEREDGE"));
 					m_editorGraph->removeEdge(*i);
 				}
 
-				for (RefArray< ui::custom::Node >::iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
+				for (RefArray< ui::Node >::iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
 				{
 					m_shaderGraph->removeNode((*i)->getData< Node >(L"SHADERNODE"));
 					m_editorGraph->removeNode(*i);
@@ -450,7 +450,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Delete")
 	{
-		RefArray< ui::custom::Node > nodes;
+		RefArray< ui::Node > nodes;
 		if (m_editorGraph->getSelectedNodes(nodes) <= 0)
 			return false;
 
@@ -458,21 +458,21 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		m_document->push();
 
 		// Remove edges first which are connected to selected nodes.
-		RefArray< ui::custom::Edge > edges;
+		RefArray< ui::Edge > edges;
 		m_editorGraph->getConnectedEdges(nodes, false, edges);
 
-		for (RefArray< ui::custom::Edge >::iterator i = edges.begin(); i != edges.end(); ++i)
+		for (RefArray< ui::Edge >::iterator i = edges.begin(); i != edges.end(); ++i)
 		{
-			ui::custom::Edge* editorEdge = *i;
+			ui::Edge* editorEdge = *i;
 			Ref< Edge > shaderEdge = editorEdge->getData< Edge >(L"SHADEREDGE");
 
 			m_editorGraph->removeEdge(editorEdge);
 			m_shaderGraph->removeEdge(shaderEdge);
 		}
 
-		for (RefArray< ui::custom::Node >::iterator i = nodes.begin(); i != nodes.end(); ++i)
+		for (RefArray< ui::Node >::iterator i = nodes.begin(); i != nodes.end(); ++i)
 		{
-			ui::custom::Node* editorNode = *i;
+			ui::Node* editorNode = *i;
 			Ref< Node > shaderNode = editorNode->getData< Node >(L"SHADERNODE");
 
 			m_editorGraph->removeNode(editorNode);
@@ -508,32 +508,32 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"ShaderGraph.Editor.AlignLeft")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::custom::GraphControl::AnLeft);
+		m_editorGraph->alignNodes(ui::GraphControl::AnLeft);
 	}
 	else if (command == L"ShaderGraph.Editor.AlignRight")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::custom::GraphControl::AnRight);
+		m_editorGraph->alignNodes(ui::GraphControl::AnRight);
 	}
 	else if (command == L"ShaderGraph.Editor.AlignTop")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::custom::GraphControl::AnTop);
+		m_editorGraph->alignNodes(ui::GraphControl::AnTop);
 	}
 	else if (command == L"ShaderGraph.Editor.AlignBottom")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::custom::GraphControl::AnBottom);
+		m_editorGraph->alignNodes(ui::GraphControl::AnBottom);
 	}
 	else if (command == L"ShaderGraph.Editor.EvenSpaceVertically")
 	{
 		m_document->push();
-		m_editorGraph->evenSpace(ui::custom::GraphControl::EsVertically);
+		m_editorGraph->evenSpace(ui::GraphControl::EsVertically);
 	}
 	else if (command == L"ShaderGraph.Editor.EvenSpaceHorizontally")
 	{
 		m_document->push();
-		m_editorGraph->evenSpace(ui::custom::GraphControl::EsHorizontally);
+		m_editorGraph->evenSpace(ui::GraphControl::EsHorizontally);
 	}
 	else if (command == L"ShaderGraph.Editor.RemoveUnusedNodes")
 	{
@@ -559,12 +559,12 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"ShaderGraph.Editor.UpdateFragments")
 	{
-		RefArray< ui::custom::Node > selectedNodes;
+		RefArray< ui::Node > selectedNodes;
 		m_editorGraph->getSelectedNodes(selectedNodes);
 
 		// Get selected external nodes; ie fragments.
 		RefArray< External > selectedExternals;
-		for (RefArray< ui::custom::Node >::const_iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
+		for (RefArray< ui::Node >::const_iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
 		{
 			Ref< External > selectedExternal = (*i)->getData< External >(L"SHADERNODE");
 			if (selectedExternal)
@@ -659,11 +659,11 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"ShaderGraph.Editor.FindInDatabase")
 	{
-		RefArray< ui::custom::Node > nodes;
+		RefArray< ui::Node > nodes;
 		if (m_editorGraph->getSelectedNodes(nodes) <= 0)
 			return false;
 
-		for (RefArray< ui::custom::Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+		for (RefArray< ui::Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 		{
 			Ref< External > selectedExternal = (*i)->getData< External >(L"SHADERNODE");
 			if (selectedExternal)
@@ -705,13 +705,13 @@ void ShaderGraphEditorPage::createEditorGraph()
 void ShaderGraphEditorPage::createEditorNodes(const RefArray< Node >& shaderNodes, const RefArray< Edge >& shaderEdges)
 {
 	// Keep a map from shader nodes to editor nodes.
-	std::map< Ref< Node >, Ref< ui::custom::Node > > nodeMap;
+	std::map< Ref< Node >, Ref< ui::Node > > nodeMap;
 
 	// Create editor nodes for each shader node.
 	for (RefArray< Node >::const_iterator i = shaderNodes.begin(); i != shaderNodes.end(); ++i)
 	{
 		Node* shaderNode = *i;
-		Ref< ui::custom::Node > editorNode = createEditorNode(shaderNode);
+		Ref< ui::Node > editorNode = createEditorNode(shaderNode);
 		m_editorGraph->addNode(editorNode);
 		nodeMap[shaderNode] = editorNode;
 	}
@@ -735,47 +735,47 @@ void ShaderGraphEditorPage::createEditorNodes(const RefArray< Node >& shaderNode
 			continue;
 		}
 
-		Ref< ui::custom::Node > editorSourceNode = nodeMap[shaderSourcePin->getNode()];
+		Ref< ui::Node > editorSourceNode = nodeMap[shaderSourcePin->getNode()];
 		if (!editorSourceNode)
 		{
 			log::warning << L"Invalid shader pin, no editor source node found of pin \"" << shaderSourcePin->getName() << L"\"" << Endl;
 			continue;
 		}
 
-		Ref< ui::custom::Node > editorDestinationNode = nodeMap[shaderDestinationPin->getNode()];
+		Ref< ui::Node > editorDestinationNode = nodeMap[shaderDestinationPin->getNode()];
 		if (!editorDestinationNode)
 		{
 			log::warning << L"Invalid shader pin, no editor destination node found of pin \"" << shaderDestinationPin->getName() << L"\"" << Endl;
 			continue;
 		}
 
-		Ref< ui::custom::Pin > editorSourcePin = editorSourceNode->findOutputPin(shaderSourcePin->getName());
+		Ref< ui::Pin > editorSourcePin = editorSourceNode->findOutputPin(shaderSourcePin->getName());
 		if (!editorSourcePin)
 		{
 			log::warning << L"Unable to find editor source pin \"" << shaderSourcePin->getName() << L"\"" << Endl;
 			continue;
 		}
 
-		Ref< ui::custom::Pin > editorDestinationPin = editorDestinationNode->findInputPin(shaderDestinationPin->getName());
+		Ref< ui::Pin > editorDestinationPin = editorDestinationNode->findInputPin(shaderDestinationPin->getName());
 		if (!editorDestinationPin)
 		{
 			log::warning << L"Unable to find editor destination pin \"" << shaderDestinationPin->getName() << L"\"" << Endl;
 			continue;
 		}
 
-		Ref< ui::custom::Edge > editorEdge = new ui::custom::Edge(editorSourcePin, editorDestinationPin);
+		Ref< ui::Edge > editorEdge = new ui::Edge(editorSourcePin, editorDestinationPin);
 		editorEdge->setData(L"SHADEREDGE", shaderEdge);
 
 		m_editorGraph->addEdge(editorEdge);
 	}
 }
 
-Ref< ui::custom::Node > ShaderGraphEditorPage::createEditorNode(Node* shaderNode)
+Ref< ui::Node > ShaderGraphEditorPage::createEditorNode(Node* shaderNode)
 {
 	Ref< INodeFacade > nodeFacade = m_nodeFacades[&type_of(shaderNode)];
 	T_ASSERT_M (nodeFacade, L"No node facade class found");
 
-	Ref< ui::custom::Node > editorNode = nodeFacade->createEditorNode(
+	Ref< ui::Node > editorNode = nodeFacade->createEditorNode(
 		m_editor,
 		m_editorGraph,
 		m_shaderGraph,
@@ -805,7 +805,7 @@ void ShaderGraphEditorPage::createNode(const TypeInfo* nodeType, const ui::Point
 	m_shaderGraph->addNode(shaderNode);
 
 	// Create editor node from shader node.
-	Ref< ui::custom::Node > editorNode = createEditorNode(shaderNode);
+	Ref< ui::Node > editorNode = createEditorNode(shaderNode);
 	m_editorGraph->addNode(editorNode);
 	updateGraph();
 }
@@ -813,10 +813,10 @@ void ShaderGraphEditorPage::createNode(const TypeInfo* nodeType, const ui::Point
 void ShaderGraphEditorPage::refreshGraph()
 {
 	// Refresh editor nodes.
-	RefArray< ui::custom::Node >& editorNodes = m_editorGraph->getNodes();
-	for (RefArray< ui::custom::Node >::const_iterator i = editorNodes.begin(); i != editorNodes.end(); ++i)
+	RefArray< ui::Node >& editorNodes = m_editorGraph->getNodes();
+	for (RefArray< ui::Node >::const_iterator i = editorNodes.begin(); i != editorNodes.end(); ++i)
 	{
-		ui::custom::Node* editorNode = *i;
+		ui::Node* editorNode = *i;
 
 		Node* shaderNode = editorNode->getData< Node >(L"SHADERNODE");
 		INodeFacade* nodeFacade = editorNode->getData< INodeFacade >(L"FACADE");
@@ -850,8 +850,8 @@ void ShaderGraphEditorPage::updateGraph()
 	m_lastValidationResult = validationResult;
 
 	// Update validation indication of each node.
-	const RefArray< ui::custom::Node >& editorNodes = m_editorGraph->getNodes();
-	for (RefArray< ui::custom::Node >::const_iterator i = editorNodes.begin(); i != editorNodes.end(); ++i)
+	const RefArray< ui::Node >& editorNodes = m_editorGraph->getNodes();
+	for (RefArray< ui::Node >::const_iterator i = editorNodes.begin(); i != editorNodes.end(); ++i)
 	{
 		Ref< Node > shaderNode = (*i)->getData< Node >(L"SHADERNODE");
 		T_ASSERT (shaderNode);
@@ -992,7 +992,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 		external->createOutputPin((*i)->getName());
 }
 
-void ShaderGraphEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
+void ShaderGraphEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	handleCommand(command);
@@ -1000,10 +1000,10 @@ void ShaderGraphEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* 
 
 void ShaderGraphEditorPage::eventMouseMove(ui::MouseMoveEvent* event)
 {
-	ui::custom::Pin* pin = m_editorGraph->getPinAt(event->getPosition());
+	ui::Pin* pin = m_editorGraph->getPinAt(event->getPosition());
 	if (pin)
 	{
-		ui::custom::Node* node = pin->getNode();
+		ui::Node* node = pin->getNode();
 
 		Ref< Node > shaderNode = node->getData< Node >(L"SHADERNODE");
 		T_ASSERT (shaderNode);
@@ -1085,9 +1085,9 @@ void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 		handleCommand(command);
 }
 
-void ShaderGraphEditorPage::eventSelect(ui::custom::SelectEvent* event)
+void ShaderGraphEditorPage::eventSelect(ui::SelectEvent* event)
 {
-	RefArray< ui::custom::Node > nodes;
+	RefArray< ui::Node > nodes;
 	if (m_editorGraph->getSelectedNodes(nodes) == 1)
 	{
 		Ref< Node > shaderNode = nodes[0]->getData< Node >(L"SHADERNODE");
@@ -1099,9 +1099,9 @@ void ShaderGraphEditorPage::eventSelect(ui::custom::SelectEvent* event)
 		m_site->setPropertyObject(0);
 }
 
-void ShaderGraphEditorPage::eventNodeMoved(ui::custom::NodeMovedEvent* event)
+void ShaderGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 {
-	Ref< ui::custom::Node > editorNode = event->getNode();
+	Ref< ui::Node > editorNode = event->getNode();
 	T_ASSERT (editorNode);
 
 	// Get shader graph node from editor node.
@@ -1128,9 +1128,9 @@ void ShaderGraphEditorPage::eventNodeMoved(ui::custom::NodeMovedEvent* event)
 		m_site->setPropertyObject(shaderNode);
 }
 
-void ShaderGraphEditorPage::eventNodeDoubleClick(ui::custom::NodeActivateEvent* event)
+void ShaderGraphEditorPage::eventNodeDoubleClick(ui::NodeActivateEvent* event)
 {
-	Ref< ui::custom::Node > editorNode = event->getNode();
+	Ref< ui::Node > editorNode = event->getNode();
 	Ref< Node > shaderNode = editorNode->getData< Node >(L"SHADERNODE");
 	T_ASSERT (shaderNode);
 
@@ -1149,13 +1149,13 @@ void ShaderGraphEditorPage::eventNodeDoubleClick(ui::custom::NodeActivateEvent* 
 	refreshGraph();
 }
 
-void ShaderGraphEditorPage::eventEdgeConnect(ui::custom::EdgeConnectEvent* event)
+void ShaderGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 {
-	Ref< ui::custom::Edge > editorEdge = event->getEdge();
-	Ref< ui::custom::Pin > editorSourcePin = editorEdge->getSourcePin();
+	Ref< ui::Edge > editorEdge = event->getEdge();
+	Ref< ui::Pin > editorSourcePin = editorEdge->getSourcePin();
 	T_ASSERT (editorSourcePin);
 
-	Ref< ui::custom::Pin > editorDestinationPin = editorEdge->getDestinationPin();
+	Ref< ui::Pin > editorDestinationPin = editorEdge->getDestinationPin();
 	T_ASSERT (editorDestinationPin);
 
 	Ref< Node > shaderSourceNode = editorSourcePin->getNode()->getData< Node >(L"SHADERNODE");
@@ -1176,7 +1176,7 @@ void ShaderGraphEditorPage::eventEdgeConnect(ui::custom::EdgeConnectEvent* event
 	{
 		m_shaderGraph->removeEdge(shaderEdge);
 
-		RefArray< ui::custom::Edge > editorEdges;
+		RefArray< ui::Edge > editorEdges;
 		m_editorGraph->getConnectedEdges(editorDestinationPin, editorEdges);
 		T_ASSERT (editorEdges.size() == 1);
 
@@ -1194,9 +1194,9 @@ void ShaderGraphEditorPage::eventEdgeConnect(ui::custom::EdgeConnectEvent* event
 	updateGraph();
 }
 
-void ShaderGraphEditorPage::eventEdgeDisconnect(ui::custom::EdgeDisconnectEvent* event)
+void ShaderGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
 {
-	Ref< ui::custom::Edge > editorEdge = event->getEdge();
+	Ref< ui::Edge > editorEdge = event->getEdge();
 	Ref< Edge > shaderEdge = checked_type_cast< Edge* >(editorEdge->getData(L"SHADEREDGE"));
 
 	m_document->push();

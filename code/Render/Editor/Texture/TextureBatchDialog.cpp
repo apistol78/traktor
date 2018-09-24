@@ -15,13 +15,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/FloodLayout.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/FileDialog.h"
-#include "Ui/Custom/ListBox/ListBox.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/PropertyList/AutoPropertyList.h"
+#include "Ui/FileDialog.h"
+#include "Ui/ListBox/ListBox.h"
+#include "Ui/Splitter.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/PropertyList/AutoPropertyList.h"
 
 namespace traktor
 {
@@ -47,27 +47,27 @@ bool TextureBatchDialog::create(ui::Widget* parent)
 	))
 		return false;
 
-	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitter = new ui::Splitter();
 	splitter->create(this, true, ui::dpi96(200));
 
 	Ref< ui::Container > textureListContainer = new ui::Container();
 	textureListContainer->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
-	Ref< ui::custom::ToolBar > textureListTools = new ui::custom::ToolBar();
+	Ref< ui::ToolBar > textureListTools = new ui::ToolBar();
 	if (!textureListTools->create(textureListContainer))
 		return false;
 
 	textureListTools->addImage(new ui::StyleBitmap(L"Texture.PlusMinus"), 2);
-	textureListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TEXTURE_BATCH_ADD"), 0, ui::Command(L"TextureBatch.Add")));
-	textureListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TEXTURE_BATCH_REMOVE"), 1, ui::Command(L"TextureBatch.Remove")));
-	textureListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &TextureBatchDialog::eventTextureListToolClick);
+	textureListTools->addItem(new ui::ToolBarButton(i18n::Text(L"TEXTURE_BATCH_ADD"), 0, ui::Command(L"TextureBatch.Add")));
+	textureListTools->addItem(new ui::ToolBarButton(i18n::Text(L"TEXTURE_BATCH_REMOVE"), 1, ui::Command(L"TextureBatch.Remove")));
+	textureListTools->addEventHandler< ui::ToolBarButtonClickEvent >(this, &TextureBatchDialog::eventTextureListToolClick);
 
-	m_textureList = new ui::custom::ListBox();
-	m_textureList->create(textureListContainer, ui::custom::ListBox::WsExtended);
+	m_textureList = new ui::ListBox();
+	m_textureList->create(textureListContainer, ui::ListBox::WsExtended);
 	m_textureList->addEventHandler< ui::SelectionChangeEvent >(this, &TextureBatchDialog::eventTextureListSelect);
 
-	m_texturePropertyList = new ui::custom::AutoPropertyList();
-	m_texturePropertyList->create(splitter, ui::WsAccelerated | ui::custom::AutoPropertyList::WsColumnHeader);
+	m_texturePropertyList = new ui::AutoPropertyList();
+	m_texturePropertyList->create(splitter, ui::WsAccelerated | ui::AutoPropertyList::WsColumnHeader);
 	m_texturePropertyList->setSeparator(ui::dpi96(200));
 	m_texturePropertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_texturePropertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
@@ -95,7 +95,7 @@ bool TextureBatchDialog::showModal(RefArray< TextureAsset >& outAssets)
 
 void TextureBatchDialog::addTexture()
 {
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, i18n::Text(L"TEXTURE_BATCH_FILE_TITLE"), L"All files;*.*"))
 		return;
 
@@ -138,7 +138,7 @@ void TextureBatchDialog::removeTexture()
 		m_textureList->remove(index);
 }
 
-void TextureBatchDialog::eventTextureListToolClick(ui::custom::ToolBarButtonClickEvent* event)
+void TextureBatchDialog::eventTextureListToolClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& cmd = event->getCommand();
 	if (cmd == L"TextureBatch.Add")

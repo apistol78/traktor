@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Ui/Container.h>
 #include <Ui/StyleBitmap.h>
 #include <Ui/TableLayout.h>
-#include <Ui/Custom/InputDialog.h>
+#include <Ui/InputDialog.h>
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/Configuration.h"
@@ -36,8 +36,8 @@ bool ConfigurationsDialog::create(ui::Widget* parent, Solution* solution)
 
 	setIcon(new ui::StyleBitmap(L"SolutionBuilder.Icon"));
 
-	m_listConfigurations = new ui::custom::ListBox();
-	m_listConfigurations->create(this, ui::custom::ListBox::WsSingle);
+	m_listConfigurations = new ui::ListBox();
+	m_listConfigurations->create(this, ui::ListBox::WsSingle);
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(this, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0, 4));
@@ -86,12 +86,12 @@ void ConfigurationsDialog::eventButtonNew(ui::ButtonClickEvent* event)
 	std::wstring current = m_listConfigurations->getItem(selectedId);
 	T_ASSERT (!current.empty());
 
-	ui::custom::InputDialog::Field inputFields[] =
+	ui::InputDialog::Field inputFields[] =
 	{
-		ui::custom::InputDialog::Field(L"Name", current)
+		ui::InputDialog::Field(L"Name", current)
 	};
 
-	ui::custom::InputDialog inputDialog;
+	ui::InputDialog inputDialog;
 	inputDialog.create(
 		this,
 		L"Enter name",
@@ -120,12 +120,12 @@ void ConfigurationsDialog::eventButtonRename(ui::ButtonClickEvent* event)
 	std::wstring current = m_listConfigurations->getItem(selectedId);
 	T_ASSERT (!current.empty());
 
-	ui::custom::InputDialog::Field inputFields[] =
+	ui::InputDialog::Field inputFields[] =
 	{
-		ui::custom::InputDialog::Field(L"Name", current)
+		ui::InputDialog::Field(L"Name", current)
 	};
 
-	ui::custom::InputDialog inputDialog;
+	ui::InputDialog inputDialog;
 	inputDialog.create(
 		this,
 		L"Rename",

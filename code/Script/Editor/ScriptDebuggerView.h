@@ -23,18 +23,13 @@ class IEditor;
 	{
 
 class Command;
-class Menu;
-
-		namespace custom
-		{
-
 class GridRow;
 class GridRowStateChangeEvent;
 class GridView;
+class Menu;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace script
@@ -62,14 +57,14 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< IScriptDebugger > m_scriptDebugger;
-	Ref< ui::custom::ToolBar > m_debuggerTools;
-	Ref< ui::custom::GridView > m_callStackGrid;
-	Ref< ui::custom::GridView > m_localsGrid;
+	Ref< ui::ToolBar > m_debuggerTools;
+	Ref< ui::GridView > m_callStackGrid;
+	Ref< ui::GridView > m_localsGrid;
 	Ref< ui::Menu > m_localsPopup;
 	RefArray< StackFrame > m_stackFrames;
 	int32_t m_activeFrame;
 
-	Ref< ui::custom::GridRow > createVariableRow(const Variable* local);
+	Ref< ui::GridRow > createVariableRow(const Variable* local);
 
 	void updateLocals(int32_t depth);
 
@@ -80,11 +75,11 @@ private:
 
 	/*! \} */
 
-	void eventDebuggerToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventDebuggerToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventCallStackGridDoubleClick(ui::MouseDoubleClickEvent* event);
 
-	void eventLocalsGridStateChange(ui::custom::GridRowStateChangeEvent* event);
+	void eventLocalsGridStateChange(ui::GridRowStateChangeEvent* event);
 
 	void eventLocalsGridButtonDown(ui::MouseButtonDownEvent* event);
 };

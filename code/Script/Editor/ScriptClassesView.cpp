@@ -15,7 +15,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/TString.h"
 #include "Script/Editor/ScriptClassesView.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/TreeView/TreeView.h"
+#include "Ui/TreeView/TreeView.h"
 
 namespace traktor
 {
@@ -27,7 +27,7 @@ namespace traktor
 class CollectClassRegistrar : public IRuntimeClassRegistrar
 {
 public:
-	CollectClassRegistrar(ui::custom::TreeView* treeClasses)
+	CollectClassRegistrar(ui::TreeView* treeClasses)
 	:	m_treeClasses(treeClasses)
 	{
 	}
@@ -58,7 +58,7 @@ public:
 		else
 			ss << qname.back();
 
-		Ref< ui::custom::TreeViewItem > classItem = m_treeClasses->createItem(
+		Ref< ui::TreeViewItem > classItem = m_treeClasses->createItem(
 			(qname.size() >= 2) ? m_namespaceItems[qname[qname.size() - 2]] : 0,
 			ss.str(),
 			0
@@ -156,8 +156,8 @@ public:
 	}
 
 private:
-	ui::custom::TreeView* m_treeClasses;
-	std::map< std::wstring, Ref< ui::custom::TreeViewItem > > m_namespaceItems;
+	ui::TreeView* m_treeClasses;
+	std::map< std::wstring, Ref< ui::TreeViewItem > > m_namespaceItems;
 };
 
 		}
@@ -169,7 +169,7 @@ bool ScriptClassesView::create(ui::Widget* parent)
 	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0)))
 		return false;
 
-	m_treeClasses = new ui::custom::TreeView();
+	m_treeClasses = new ui::TreeView();
 	m_treeClasses->create(this, ui::WsDoubleBuffer);
 
 	CollectClassRegistrar registrar(m_treeClasses);

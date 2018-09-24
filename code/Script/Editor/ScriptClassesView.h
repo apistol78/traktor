@@ -13,12 +13,9 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace custom
-		{
 
 class TreeView;
 
-		}
 	}
 
 	namespace script
@@ -37,7 +34,7 @@ public:
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
 private:
-	Ref< ui::custom::TreeView > m_treeClasses;
+	Ref< ui::TreeView > m_treeClasses;
 };
 
 	}

@@ -42,23 +42,16 @@ class Instance;
 	namespace ui
 	{
 
-class Menu;
-class TreeView;
-class TreeViewItem;
-class Widget;
-
-		namespace custom
-		{
-
 class CursorMoveEvent;
+class Menu;
+class SequencerControl;
 class ToolBar;
 class ToolBarButtonClickEvent;
 class TreeView;
 class TreeViewContentChangeEvent;
 class TreeViewItem;
-class SequencerControl;
+class Widget;
 
-		}
 	}
 
 	namespace resource
@@ -110,10 +103,10 @@ private:
 	Ref< Skeleton > m_skeleton;
 	Ref< ui::Widget > m_renderWidgets[4];
 	Ref< ui::Container > m_skeletonPanel;
-	Ref< ui::custom::TreeView > m_treeSkeleton;
-	Ref< ui::custom::ToolBar > m_toolBarPlay;
+	Ref< ui::TreeView > m_treeSkeleton;
+	Ref< ui::ToolBar > m_toolBarPlay;
 	Ref< ui::Container > m_sequencerPanel;
-	Ref< ui::custom::SequencerControl > m_sequencer;
+	Ref< ui::SequencerControl > m_sequencer;
 	Ref< ui::Menu > m_menuPopup;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< resource::ResourceManager > m_resourceManager;
@@ -161,11 +154,11 @@ private:
 
 	void eventSequencerButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventSequencerCursorMove(ui::custom::CursorMoveEvent* event);
+	void eventSequencerCursorMove(ui::CursorMoveEvent* event);
 
 	void eventSequencerTimer(ui::TimerEvent* event);
 
-	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 };
 
 	}

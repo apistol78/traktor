@@ -14,12 +14,9 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace custom
-		{
 
 class BuildChartControl;
 
-		}
 	}
 
 	namespace editor
@@ -41,7 +38,7 @@ public:
 	void endBuild(uint32_t core, IPipelineBuilder::BuildResult result);
 
 private:
-	Ref< ui::custom::BuildChartControl > m_chartControl;
+	Ref< ui::BuildChartControl > m_chartControl;
 };
 
 	}

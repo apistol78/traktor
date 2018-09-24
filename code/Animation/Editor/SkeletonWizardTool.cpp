@@ -15,7 +15,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "I18N/Text.h"
-#include "Ui/Custom/FileDialog.h"
+#include "Ui/FileDialog.h"
 
 namespace traktor
 {
@@ -37,7 +37,7 @@ uint32_t SkeletonWizardTool::getFlags() const
 bool SkeletonWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* /*instance*/)
 {
 	// Select source skeleton.
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	if (!fileDialog.create(parent, i18n::Text(L"SKELETON_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
 		return 0;
 

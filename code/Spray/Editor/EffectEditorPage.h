@@ -32,13 +32,9 @@ class IDocument;
 	namespace ui
 	{
 
-class Menu;
-
-		namespace custom
-		{
-
 class CursorMoveEvent;
 class KeyMoveEvent;
+class Menu;
 class SequenceButtonClickEvent;
 class SequenceMovedEvent;
 class SequencerControl;
@@ -46,7 +42,6 @@ class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace resource
@@ -91,12 +86,12 @@ private:
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
 	Ref< EffectData > m_effectData;
-	Ref< ui::custom::ToolBar > m_toolBar;
-	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;
-	Ref< ui::custom::ToolBarButton > m_toolToggleMove;
-	Ref< ui::custom::ToolBarButton > m_toolToggleGroundClip;
+	Ref< ui::ToolBar > m_toolBar;
+	Ref< ui::ToolBarButton > m_toolToggleGuide;
+	Ref< ui::ToolBarButton > m_toolToggleMove;
+	Ref< ui::ToolBarButton > m_toolToggleGroundClip;
 	Ref< EffectPreviewControl > m_previewControl;
-	Ref< ui::custom::SequencerControl > m_sequencer;
+	Ref< ui::SequencerControl > m_sequencer;
 	Ref< ui::Menu > m_popupMenu;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< sound::SoundSystem > m_soundSystem;
@@ -111,17 +106,17 @@ private:
 
 	void updateProfile();
 
-	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventSequencerLayerSelect(ui::SelectionChangeEvent* event);
 
-	void eventSequencerTimeCursorMove(ui::custom::CursorMoveEvent* event);
+	void eventSequencerTimeCursorMove(ui::CursorMoveEvent* event);
 
-	void eventSequencerLayerRearranged(ui::custom::SequenceMovedEvent* event);
+	void eventSequencerLayerRearranged(ui::SequenceMovedEvent* event);
 
-	void eventSequencerKeyMove(ui::custom::KeyMoveEvent* event);
+	void eventSequencerKeyMove(ui::KeyMoveEvent* event);
 
-	void eventSequencerLayerClick(ui::custom::SequenceButtonClickEvent* event);
+	void eventSequencerLayerClick(ui::SequenceButtonClickEvent* event);
 
 	void eventSequencerButtonDown(ui::MouseButtonDownEvent* event);
 };

@@ -9,10 +9,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/StringOutputStream.h"
 #include "Ui/Application.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/BuildChart/BuildChartControl.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/BuildChart/BuildChartControl.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor
 {
@@ -47,12 +47,12 @@ bool ProfilerDialog::create(ui::Widget* parent)
 	if (!ui::Dialog::create(parent, L"Profiler", ui::dpi96(800), ui::dpi96(350), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
-	m_toolBar = new ui::custom::ToolBar();
+	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(this);
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Start/Stop", ui::Command(L"Amalgam.Profiler.Capture")));
-	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ProfilerDialog::eventToolClick);
+	m_toolBar->addItem(new ui::ToolBarButton(L"Start/Stop", ui::Command(L"Amalgam.Profiler.Capture")));
+	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ProfilerDialog::eventToolClick);
 
-	m_chart = new ui::custom::BuildChartControl();
+	m_chart = new ui::BuildChartControl();
 	m_chart->create(this, 4 * 8);
 	m_chart->begin();
 
@@ -106,7 +106,7 @@ void ProfilerDialog::receivedProfilerEvents(double currentTime, const AlignedVec
 	}
 }
 
-void ProfilerDialog::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
+void ProfilerDialog::eventToolClick(ui::ToolBarButtonClickEvent* event)
 {
 	if (event->getCommand() == L"Amalgam.Profiler.Capture")
 		m_recording = !m_recording;

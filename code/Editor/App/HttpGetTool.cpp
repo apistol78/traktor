@@ -11,8 +11,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "I18N/Text.h"
 #include "Net/Url.h"
 #include "Net/UrlConnection.h"
-#include "Ui/Custom/FileDialog.h"
-#include "Ui/Custom/InputDialog.h"
+#include "Ui/FileDialog.h"
+#include "Ui/InputDialog.h"
 
 namespace traktor
 {
@@ -38,10 +38,10 @@ bool HttpGetTool::needOutputResources(std::set< Guid >& outDependencies) const
 
 bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
 {
-	ui::custom::InputDialog inputDialog;
-	ui::custom::InputDialog::Field f[] =
+	ui::InputDialog inputDialog;
+	ui::InputDialog::Field f[] =
 	{
-		ui::custom::InputDialog::Field(
+		ui::InputDialog::Field(
 			i18n::Text(L"EDITOR_HTTP_GET_URL")
 		)
 	};
@@ -65,7 +65,7 @@ bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring
 
 	Path fileName = url.getFile();
 
-	ui::custom::FileDialog saveAsDialog;
+	ui::FileDialog saveAsDialog;
 	saveAsDialog.create(
 		parent,
 		i18n::Text(L"EDITOR_HTTP_GET_SAVE_AS"),

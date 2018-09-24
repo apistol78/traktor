@@ -13,8 +13,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Button.h"
 #include "Ui/Container.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/InputDialog.h"
-#include "Ui/Custom/ListBox/ListBox.h"
+#include "Ui/InputDialog.h"
+#include "Ui/ListBox/ListBox.h"
 
 namespace traktor
 {
@@ -29,8 +29,8 @@ bool ModulesSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, ui::dpi96(4))))
 		return false;
 
-	m_listModules = new ui::custom::ListBox();
-	m_listModules->create(container, ui::custom::ListBox::WsSingle | ui::custom::ListBox::WsSort);
+	m_listModules = new ui::ListBox();
+	m_listModules->create(container, ui::ListBox::WsSingle | ui::ListBox::WsSort);
 
 	Ref< ui::Container > containerModulesTools = new ui::Container();
 	containerModulesTools->create(container, ui::WsNone, new ui::TableLayout(L"*,*,*", L"100%", 0, ui::dpi96(4)));
@@ -72,12 +72,12 @@ bool ModulesSettingsPage::apply(PropertyGroup* settings)
 
 void ModulesSettingsPage::eventAddModule(ui::ButtonClickEvent* event)
 {
-	ui::custom::InputDialog::Field fields[] =
+	ui::InputDialog::Field fields[] =
 	{
-		ui::custom::InputDialog::Field(i18n::Text(L"EDITOR_SETTINGS_ADD_DEPENDENT_NAME"))
+		ui::InputDialog::Field(i18n::Text(L"EDITOR_SETTINGS_ADD_DEPENDENT_NAME"))
 	};
 
-	ui::custom::InputDialog inputDialog;
+	ui::InputDialog inputDialog;
 	inputDialog.create(
 		m_listModules,
 		i18n::Text(L"EDITOR_SETTINGS_ADD_DEPENDENT_TITLE"),

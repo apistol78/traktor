@@ -11,10 +11,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
 #include "Ui/Application.h"
-#include "Ui/Custom/Graph/Node.h"
-#include "Ui/Custom/Graph/DefaultNodeShape.h"
-#include "Ui/Custom/Graph/InputNodeShape.h"
-#include "Ui/Custom/Graph/OutputNodeShape.h"
+#include "Ui/Graph/Node.h"
+#include "Ui/Graph/DefaultNodeShape.h"
+#include "Ui/Graph/InputNodeShape.h"
+#include "Ui/Graph/OutputNodeShape.h"
 
 namespace traktor
 {
@@ -23,11 +23,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DefaultNodeFacade", DefaultNodeFacade, INodeFacade)
 
-DefaultNodeFacade::DefaultNodeFacade(ui::custom::GraphControl* graphControl)
+DefaultNodeFacade::DefaultNodeFacade(ui::GraphControl* graphControl)
 {
-	m_nodeShapes[0] = new ui::custom::DefaultNodeShape(graphControl);
-	m_nodeShapes[1] = new ui::custom::InputNodeShape(graphControl);
-	m_nodeShapes[2] = new ui::custom::OutputNodeShape(graphControl);
+	m_nodeShapes[0] = new ui::DefaultNodeShape(graphControl);
+	m_nodeShapes[1] = new ui::InputNodeShape(graphControl);
+	m_nodeShapes[2] = new ui::OutputNodeShape(graphControl);
 }
 
 Ref< Node > DefaultNodeFacade::createShaderNode(
@@ -38,9 +38,9 @@ Ref< Node > DefaultNodeFacade::createShaderNode(
 	return checked_type_cast< Node* >(nodeType->createInstance());
 }
 
-Ref< ui::custom::Node > DefaultNodeFacade::createEditorNode(
+Ref< ui::Node > DefaultNodeFacade::createEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
+	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -50,7 +50,7 @@ Ref< ui::custom::Node > DefaultNodeFacade::createEditorNode(
 	if (p > 0)
 		title = i18n::Text(L"SHADERGRAPH_NODE_" + toUpper(title.substr(p + 1)));
 
-	Ref< ui::custom::NodeShape > shape;
+	Ref< ui::NodeShape > shape;
 	if (shaderNode->getInputPinCount() == 1 && shaderNode->getOutputPinCount() == 0)
 		shape = m_nodeShapes[2];
 	else if (shaderNode->getInputPinCount() == 0 && shaderNode->getOutputPinCount() == 1)
@@ -58,7 +58,7 @@ Ref< ui::custom::Node > DefaultNodeFacade::createEditorNode(
 	else
 		shape = m_nodeShapes[0];
 
-	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
+	Ref< ui::Node > editorNode = new ui::Node(
 		title,
 		shaderNode->getInformation(),
 		ui::Point(
@@ -91,8 +91,8 @@ Ref< ui::custom::Node > DefaultNodeFacade::createEditorNode(
 
 void DefaultNodeFacade::editShaderNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -101,8 +101,8 @@ void DefaultNodeFacade::editShaderNode(
 
 void DefaultNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -112,7 +112,7 @@ void DefaultNodeFacade::refreshEditorNode(
 }
 
 void DefaultNodeFacade::setValidationIndicator(
-	ui::custom::Node* editorNode,
+	ui::Node* editorNode,
 	bool validationSucceeded
 )
 {

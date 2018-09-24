@@ -13,7 +13,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ProgressCell", ProgressCell, ui::custom::AutoWidgetCell)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ProgressCell", ProgressCell, ui::AutoWidgetCell)
 
 ProgressCell::ProgressCell()
 :	m_progress(-1)

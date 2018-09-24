@@ -13,13 +13,10 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace custom
-		{
 
 class PropertyCommandEvent;
 class PropertyList;
 
-		}
 	}
 
 	namespace editor
@@ -40,9 +37,9 @@ public:
 	virtual bool apply(PropertyGroup* settings) T_OVERRIDE T_FINAL;
 
 private:
-	Ref< ui::custom::PropertyList > m_colorList;
+	Ref< ui::PropertyList > m_colorList;
 
-	void eventPropertyCommand(ui::custom::PropertyCommandEvent* event);
+	void eventPropertyCommand(ui::PropertyCommandEvent* event);
 };
 
 	}

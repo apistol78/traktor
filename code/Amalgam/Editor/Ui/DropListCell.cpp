@@ -13,14 +13,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/StyleSheet.h"
-#include "Ui/Custom/Auto/AutoWidget.h"
+#include "Ui/Auto/AutoWidget.h"
 
 namespace traktor
 {
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.DropListCell", DropListCell, ui::custom::AutoWidgetCell)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.DropListCell", DropListCell, ui::AutoWidgetCell)
 
 DropListCell::DropListCell(HostEnumerator* hostEnumerator, TargetInstance* instance)
 :	m_hostEnumerator(hostEnumerator)
@@ -44,7 +44,7 @@ void DropListCell::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& p
 		}
 	}
 
-	const ui::MenuItem* selectedItem = menu.showModal(getWidget< ui::custom::AutoWidget >(), m_menuPosition);
+	const ui::MenuItem* selectedItem = menu.showModal(getWidget< ui::AutoWidget >(), m_menuPosition);
 	if (selectedItem)
 		m_instance->setDeployHostId(selectedItem->getCommand().getId());
 }

@@ -6,8 +6,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include <Ui/MenuItem.h>
 #include <Ui/MessageBox.h>
-#include <Ui/Custom/BackgroundWorkerDialog.h>
-#include <Ui/Custom/BackgroundWorkerStatus.h>
+#include <Ui/BackgroundWorkerDialog.h>
+#include <Ui/BackgroundWorkerStatus.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/BufferedStream.h>
 #include <Core/Thread/Thread.h>
@@ -76,7 +76,7 @@ bool DroneToolUpdate::execute(ui::Widget* parent, const ui::MenuItem* menuItem)
 		if (ui::MessageBox::show(parent, bundle->getDescription(), L"Update available, install?", ui::MbIconQuestion | ui::MbYesNo) != ui::DrYes)
 			return true;
 
-		ui::custom::BackgroundWorkerStatus status(bundle->getItems().size());
+		ui::BackgroundWorkerStatus status(bundle->getItems().size());
 
 		Thread* updateThread = ThreadManager::getInstance().create(makeFunctor(
 			this,
@@ -86,7 +86,7 @@ bool DroneToolUpdate::execute(ui::Widget* parent, const ui::MenuItem* menuItem)
 			&status
 		), L"Update thread");
 
-		ui::custom::BackgroundWorkerDialog updateDialog;
+		ui::BackgroundWorkerDialog updateDialog;
 		updateDialog.create(parent, L"Updating...", L"Downloading update...", ui::Dialog::WsDefaultFixed | ui::Dialog::WsCenterDesktop);
 		updateDialog.execute(updateThread, &status);
 		updateDialog.destroy();
@@ -105,7 +105,7 @@ void DroneToolUpdate::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"rootPath", m_rootPath);
 }
 
-void DroneToolUpdate::updateThread(ui::Widget* parent, UpdateBundle* bundle, ui::custom::BackgroundWorkerStatus* status)
+void DroneToolUpdate::updateThread(ui::Widget* parent, UpdateBundle* bundle, ui::BackgroundWorkerStatus* status)
 {
 	const std::vector< UpdateBundle::BundledItem >& bundledItems = bundle->getItems();
 	for (std::vector< UpdateBundle::BundledItem >::const_iterator i = bundledItems.begin(); i != bundledItems.end(); ++i)

@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include <Ui/CheckBox.h>
 #include <Ui/ConfigDialog.h>
-#include <Ui/Custom/ListBox/ListBox.h>
+#include <Ui/ListBox/ListBox.h>
 
 namespace traktor
 {
@@ -29,7 +29,7 @@ public:
 	void getSelectedProjects(RefArray< Project >& outProjects);
 
 private:
-	Ref< ui::custom::ListBox > m_listProjects;
+	Ref< ui::ListBox > m_listProjects;
 	Ref< ui::CheckBox > m_checkIncludeDependencies;
 };
 

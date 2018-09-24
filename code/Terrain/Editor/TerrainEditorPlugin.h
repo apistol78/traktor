@@ -22,19 +22,14 @@ class ModifierChangedEvent;
 	namespace ui
 	{
 
+class ColorControl;
 class Slider;
 class Static;
-
-		namespace custom
-		{
-
-class ColorControl;
 class ToolBarButton;
 class ToolBarDropDown;
 class ToolBarEmbed;
 class ToolBarItemGroup;
 
-		}
 	}
 
 	namespace terrain
@@ -49,7 +44,7 @@ class TerrainEditorPlugin : public scene::ISceneEditorPlugin
 public:
 	TerrainEditorPlugin(scene::SceneEditorContext* context);
 
-	virtual bool create(ui::Widget* parent, ui::custom::ToolBar* toolBar) T_OVERRIDE T_FINAL;
+	virtual bool create(ui::Widget* parent, ui::ToolBar* toolBar) T_OVERRIDE T_FINAL;
 
 	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
 
@@ -57,31 +52,31 @@ private:
 	scene::SceneEditorContext* m_context;
 	Ref< TerrainEditModifier > m_terrainEditModifier;
 	Ref< ui::Widget > m_parent;
-	Ref< ui::custom::ToolBarButton > m_toolToggleEditTerrain;
-	Ref< ui::custom::ToolBarButton > m_toolToggleSplat;
-	Ref< ui::custom::ToolBarButton > m_toolToggleColor;
-	Ref< ui::custom::ToolBarButton > m_toolToggleEmissive;
-	Ref< ui::custom::ToolBarButton > m_toolToggleElevate;
-	Ref< ui::custom::ToolBarButton > m_toolToggleFlatten;
-	Ref< ui::custom::ToolBarButton > m_toolToggleAverage;
-	Ref< ui::custom::ToolBarButton > m_toolToggleSmooth;
-	Ref< ui::custom::ToolBarButton > m_toolToggleNoise;
-	Ref< ui::custom::ToolBarButton > m_toolToggleErode;
-	Ref< ui::custom::ToolBarButton > m_toolToggleCut;
-	Ref< ui::custom::ToolBarButton > m_toolToggleMaterial;
-	Ref< ui::custom::ToolBarButton > m_toolToggleFallOffSmooth;
-	Ref< ui::custom::ToolBarButton > m_toolToggleFallOffSharp;
-	Ref< ui::custom::ToolBarButton > m_toolToggleFallOffImage;
-	Ref< ui::custom::ToolBarButton > m_toolToggleSymmetryX;
-	Ref< ui::custom::ToolBarButton > m_toolToggleSymmetryZ;
+	Ref< ui::ToolBarButton > m_toolToggleEditTerrain;
+	Ref< ui::ToolBarButton > m_toolToggleSplat;
+	Ref< ui::ToolBarButton > m_toolToggleColor;
+	Ref< ui::ToolBarButton > m_toolToggleEmissive;
+	Ref< ui::ToolBarButton > m_toolToggleElevate;
+	Ref< ui::ToolBarButton > m_toolToggleFlatten;
+	Ref< ui::ToolBarButton > m_toolToggleAverage;
+	Ref< ui::ToolBarButton > m_toolToggleSmooth;
+	Ref< ui::ToolBarButton > m_toolToggleNoise;
+	Ref< ui::ToolBarButton > m_toolToggleErode;
+	Ref< ui::ToolBarButton > m_toolToggleCut;
+	Ref< ui::ToolBarButton > m_toolToggleMaterial;
+	Ref< ui::ToolBarButton > m_toolToggleFallOffSmooth;
+	Ref< ui::ToolBarButton > m_toolToggleFallOffSharp;
+	Ref< ui::ToolBarButton > m_toolToggleFallOffImage;
+	Ref< ui::ToolBarButton > m_toolToggleSymmetryX;
+	Ref< ui::ToolBarButton > m_toolToggleSymmetryZ;
 	Ref< ui::Slider > m_sliderStrength;
 	Ref< ui::Static > m_staticStrength;
-	Ref< ui::custom::ToolBarEmbed > m_toolStrength;
-	Ref< ui::custom::ColorControl > m_colorControl;
-	Ref< ui::custom::ToolBarEmbed > m_toolColor;
-	Ref< ui::custom::ToolBarDropDown > m_toolMaterial;
-	Ref< ui::custom::ToolBarDropDown > m_toolVisualize;
-	Ref< ui::custom::ToolBarItemGroup > m_toolGroup;
+	Ref< ui::ToolBarEmbed > m_toolStrength;
+	Ref< ui::ColorControl > m_colorControl;
+	Ref< ui::ToolBarEmbed > m_toolColor;
+	Ref< ui::ToolBarDropDown > m_toolMaterial;
+	Ref< ui::ToolBarDropDown > m_toolVisualize;
+	Ref< ui::ToolBarItemGroup > m_toolGroup;
 
 	void updateModifierState();
 

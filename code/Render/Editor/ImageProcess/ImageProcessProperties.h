@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_ImageProcessProperties_H
 
 #include "Core/Object.h"
-#include "Ui/Custom/PropertyList/AutoPropertyList.h"
+#include "Ui/PropertyList/AutoPropertyList.h"
 
 namespace traktor
 {
@@ -21,13 +21,10 @@ class IEditor;
 
 	namespace ui
 	{
-		namespace custom
-		{
 
 class PropertyCommandEvent;
 class PropertyContentChangeEvent;
 
-		}
 	}
 
 	namespace render
@@ -35,7 +32,7 @@ class PropertyContentChangeEvent;
 
 class ImageProcessProperties
 :	public ui::EventSubject
-,	public ui::custom::PropertyList::IPropertyGuidResolver
+,	public ui::PropertyList::IPropertyGuidResolver
 {
 	T_RTTI_CLASS;
 
@@ -50,13 +47,13 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< ui::custom::AutoPropertyList > m_propertyList;
+	Ref< ui::AutoPropertyList > m_propertyList;
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const T_OVERRIDE T_FINAL;
 
-	void eventPropertyCommand(ui::custom::PropertyCommandEvent* event);
+	void eventPropertyCommand(ui::PropertyCommandEvent* event);
 
-	void eventPropertyChange(ui::custom::PropertyContentChangeEvent* event);
+	void eventPropertyChange(ui::PropertyContentChangeEvent* event);
 };
 
 	}

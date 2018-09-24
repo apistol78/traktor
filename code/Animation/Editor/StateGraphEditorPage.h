@@ -35,23 +35,18 @@ class IEditorPageSite;
 
 class ButtonClickEvent;
 class Container;
-class Menu;
-class MouseButtonDownEvent;
-class Point;
-class SelectionChangeEvent;
-
-		namespace custom
-		{
-
-class GraphControl;
 class EdgeConnectEvent;
 class EdgeDisconnectEvent;
+class GraphControl;
+class Menu;
+class MouseButtonDownEvent;
 class Node;
 class NodeMovedEvent;
+class Point;
+class SelectionChangeEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace animation
@@ -89,11 +84,11 @@ private:
 	editor::IDocument* m_document;
 	Ref< StateGraph > m_stateGraph;
 	Ref< StatePoseController > m_statePreviewController;
-	Ref< ui::custom::ToolBar > m_toolBarGraph;
-	Ref< ui::custom::GraphControl > m_editorGraph;
+	Ref< ui::ToolBar > m_toolBarGraph;
+	Ref< ui::GraphControl > m_editorGraph;
 	Ref< ui::Menu > m_menuPopup;
 	Ref< ui::Container > m_containerPreview;
-	Ref< ui::custom::ToolBar > m_toolBarPreview;
+	Ref< ui::ToolBar > m_toolBarPreview;
 	Ref< AnimationPreviewControl > m_previewControl;
 	Ref< ui::Container > m_previewConditions;
 
@@ -101,7 +96,7 @@ private:
 
 	void createEditorNodes(const RefArray< StateNode >& states, const RefArray< Transition >& transitions);
 
-	Ref< ui::custom::Node > createEditorNode(StateNode* state);
+	Ref< ui::Node > createEditorNode(StateNode* state);
 
 	void createState(const ui::Point& at);
 
@@ -109,19 +104,19 @@ private:
 
 	void updatePreviewConditions();
 
-	void eventToolBarGraphClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolBarGraphClick(ui::ToolBarButtonClickEvent* event);
 
-	void eventToolBarPreviewClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolBarPreviewClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
 
 	void eventSelect(ui::SelectionChangeEvent* event);
 
-	void eventNodeMoved(ui::custom::NodeMovedEvent* event);
+	void eventNodeMoved(ui::NodeMovedEvent* event);
 
-	void eventEdgeConnect(ui::custom::EdgeConnectEvent* event);
+	void eventEdgeConnect(ui::EdgeConnectEvent* event);
 
-	void eventEdgeDisconnect(ui::custom::EdgeDisconnectEvent* event);
+	void eventEdgeDisconnect(ui::EdgeDisconnectEvent* event);
 
 	void eventPreviewConditionClick(ui::ButtonClickEvent* event);
 };

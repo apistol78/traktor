@@ -15,13 +15,8 @@ namespace traktor
 	{
 	
 class Edit;
-
-		namespace custom
-		{
-		
 class ListBox;
 
-		}
 	}
 
 	namespace sb
@@ -44,7 +39,7 @@ public:
 	std::wstring getSolutionName() const;
 
 private:
-	Ref< ui::custom::ListBox > m_listProjects;
+	Ref< ui::ListBox > m_listProjects;
 	Ref< ui::Edit > m_editSolutionFile;
 	Ref< ui::Edit > m_editSolutionName;
 };

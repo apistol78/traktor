@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <Ui/MessageBox.h>
-#include <Ui/Custom/FileDialog.h>
+#include <Ui/FileDialog.h>
 #include <Xml/XmlDeserializer.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/IStream.h>
@@ -27,7 +27,7 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 {
 	bool result = false;
 
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	fileDialog.create(parent, L"Open other solution", L"SolutionBuilder solutions;*.xms");
 	
 	Path filePath;

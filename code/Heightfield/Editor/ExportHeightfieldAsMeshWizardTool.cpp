@@ -14,7 +14,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
-#include "Ui/Custom/FileDialog.h"
+#include "Ui/FileDialog.h"
 
 namespace traktor
 {
@@ -55,7 +55,7 @@ bool ExportHeightfieldAsMeshWizardTool::launch(ui::Widget* parent, editor::IEdit
 
 	Path fileName;
 
-	ui::custom::FileDialog saveAsDialog;
+	ui::FileDialog saveAsDialog;
 	saveAsDialog.create(parent, i18n::Text(L"EXPORT_HEIGHTFIELD_AS_MESH_WIZARDTOOL_FILE_TITLE"), L"All files;*.*", true);
 	if (saveAsDialog.showModal(fileName) != ui::DrOk)
 		return false;

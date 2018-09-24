@@ -6,18 +6,18 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Amalgam/Editor/Ui/TargetInstanceListItem.h"
 #include "Amalgam/Editor/Ui/TargetListControl.h"
-#include "Ui/Custom/Auto/AutoWidgetCell.h"
+#include "Ui/Auto/AutoWidgetCell.h"
 
 namespace traktor
 {
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetListControl", TargetListControl, ui::custom::AutoWidget)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetListControl", TargetListControl, ui::AutoWidget)
 
 bool TargetListControl::create(ui::Widget* parent)
 {
-	if (!ui::custom::AutoWidget::create(parent, ui::WsDoubleBuffer))
+	if (!ui::AutoWidget::create(parent, ui::WsDoubleBuffer))
 		return false;
 
 	return true;

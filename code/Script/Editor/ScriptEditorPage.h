@@ -13,7 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Script/IScriptManager.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
 #include "Script/Editor/IScriptOutline.h"
-#include "Ui/Custom/SyntaxRichEdit/SyntaxTypes.h"
+#include "Ui/SyntaxRichEdit/SyntaxTypes.h"
 #include "Ui/Events/AllEvents.h"
 
 // import/export mechanism.
@@ -39,21 +39,16 @@ class IEditorPageSite;
 	{
 
 class IBitmap;
-class Menu;
-class Tab;
-
-		namespace custom
-		{
-
 class GridRow;
 class GridView;
+class Menu;
 class Splitter;
 class SyntaxRichEdit;
 class StatusBar;
+class Tab;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace script
@@ -104,11 +99,11 @@ private:
 	Ref< ui::IBitmap > m_bitmapFunctionLocal;
 	Ref< ui::IBitmap > m_bitmapFunctionReference;
 	Ref< ui::Container > m_containerExplorer;
-	Ref< ui::custom::GridView > m_outlineGrid;
+	Ref< ui::GridView > m_outlineGrid;
 	Ref< ScriptClassesView > m_classesView;
-	Ref< ui::custom::SyntaxRichEdit > m_edit;
+	Ref< ui::SyntaxRichEdit > m_edit;
 	Ref< ui::Menu > m_editMenu;
-	Ref< ui::custom::StatusBar > m_compileStatus;
+	Ref< ui::StatusBar > m_compileStatus;
 	int32_t m_compileCountDown;
 	int32_t m_debugLineAttribute;
 	int32_t m_debugLineLast;
@@ -144,11 +139,11 @@ private:
 
 	void updateBreakpoints();
 
-	void buildOutlineGrid(ui::custom::GridView* grid, ui::custom::GridRow* parent, const IScriptOutline::Node* on);
+	void buildOutlineGrid(ui::GridView* grid, ui::GridRow* parent, const IScriptOutline::Node* on);
 
 	void eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event);
 
-	void eventToolBarEditClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolBarEditClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventScriptChange(ui::ContentChangeEvent* event);
 

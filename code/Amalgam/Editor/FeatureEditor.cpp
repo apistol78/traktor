@@ -21,11 +21,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/ListBox/ListBox.h"
-#include "Ui/Custom/EditList.h"
-#include "Ui/Custom/EditListEditEvent.h"
-#include "Ui/Custom/Panel.h"
-#include "Ui/Custom/Splitter.h"
+#include "Ui/ListBox/ListBox.h"
+#include "Ui/EditList.h"
+#include "Ui/EditListEditEvent.h"
+#include "Ui/Panel.h"
+#include "Ui/Splitter.h"
 
 namespace traktor
 {
@@ -50,7 +50,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", f, f));
 
-	Ref< ui::custom::Panel > containerName = new ui::custom::Panel();
+	Ref< ui::Panel > containerName = new ui::Panel();
 	containerName->create(container, L"Feature", new ui::TableLayout(L"*,100%", L"*", 2 * f, f));
 
 	Ref< ui::Static > staticName = new ui::Static();
@@ -71,14 +71,14 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 		m_feature->setPriority(parseString< int32_t >(m_editPriority->getText()));
 	});
 
-	Ref< ui::custom::Splitter > splitterInner = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitterInner = new ui::Splitter();
 	splitterInner->create(container, true, ui::dpi96(200));
 
 	Ref< ui::Container > containerPlatforms = new ui::Container();
 	containerPlatforms->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, f));
 
-	m_listPlatforms = new ui::custom::ListBox();
-	m_listPlatforms->create(containerPlatforms, ui::custom::ListBox::WsSort);
+	m_listPlatforms = new ui::ListBox();
+	m_listPlatforms->create(containerPlatforms, ui::ListBox::WsSort);
 	m_listPlatforms->addEventHandler< ui::SelectionChangeEvent >([&](ui::SelectionChangeEvent* event) {
 		Ref< db::Instance > platformInstance = m_listPlatforms->getSelectedData< db::Instance >();
 		Feature::Platform* platform = m_feature->getPlatform(platformInstance->getGuid());
@@ -125,7 +125,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 		}
 	});
 
-	Ref< ui::custom::Panel > containerEdit = new ui::custom::Panel();
+	Ref< ui::Panel > containerEdit = new ui::Panel();
 	containerEdit->create(splitterInner, L"Platform", new ui::TableLayout(L"100%", L"*,100%", 2 * f, f));
 
 	Ref< ui::Container > containerExecutable = new ui::Container();
@@ -141,15 +141,15 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 			m_selectedPlatform->executableFile = m_editExecutable->getText();
 	});
 
-	Ref< ui::custom::Splitter > splitterEnvironment = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitterEnvironment = new ui::Splitter();
 	splitterEnvironment->create(containerEdit, true, ui::dpi96(220));
 
-	m_listKeys = new ui::custom::EditList();
-	m_listKeys->create(splitterEnvironment, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove);
+	m_listKeys = new ui::EditList();
+	m_listKeys->create(splitterEnvironment, ui::EditList::WsAutoAdd | ui::EditList::WsAutoRemove);
 	m_listKeys->addEventHandler< ui::SelectionChangeEvent >([&](ui::SelectionChangeEvent* event) {
 		selectKey(m_listKeys->getSelectedItem());
 	});
-	m_listKeys->addEventHandler< ui::custom::EditListEditEvent >([&](ui::custom::EditListEditEvent* event) {
+	m_listKeys->addEventHandler< ui::EditListEditEvent >([&](ui::EditListEditEvent* event) {
 		if (!m_selectedPlatform)
 			return;
 
@@ -191,9 +191,9 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 		}
 	});
 
-	m_listValues = new ui::custom::EditList();
-	m_listValues->create(splitterEnvironment, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove);
-	m_listValues->addEventHandler< ui::custom::EditListEditEvent >([&](ui::custom::EditListEditEvent* event) {
+	m_listValues = new ui::EditList();
+	m_listValues->create(splitterEnvironment, ui::EditList::WsAutoAdd | ui::EditList::WsAutoRemove);
+	m_listValues->addEventHandler< ui::EditListEditEvent >([&](ui::EditListEditEvent* event) {
 		if (!m_selectedPlatform)
 			return;
 

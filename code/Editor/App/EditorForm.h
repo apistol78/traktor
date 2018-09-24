@@ -39,18 +39,13 @@ class Dock;
 class DockPane;
 class Menu;
 class MenuItem;
+class ProgressBar;
+class StatusBar;
 class Tab;
-
-		namespace custom
-		{
-
 class ToolBar;
 class ToolBarButtonClickEvent;
 class ToolBarMenu;
-class StatusBar;
-class ProgressBar;
 
-		}
 	}
 
 	namespace db
@@ -192,15 +187,15 @@ private:
 	Ref< ui::DockPane > m_paneWest;
 	Ref< ui::DockPane > m_paneEast;
 	Ref< ui::DockPane > m_paneSouth;
-	Ref< ui::custom::ToolBar > m_menuBar;
+	Ref< ui::ToolBar > m_menuBar;
 	Ref< ui::MenuItem > m_menuItemRecent;
 	Ref< ui::MenuItem > m_menuItemOtherPanels;
-	Ref< ui::custom::ToolBar > m_toolBar;
-	Ref< ui::custom::StatusBar > m_statusBar;
-	Ref< ui::custom::ProgressBar > m_buildProgress;
+	Ref< ui::ToolBar > m_toolBar;
+	Ref< ui::StatusBar > m_statusBar;
+	Ref< ui::ProgressBar > m_buildProgress;
 	Ref< ui::Tab > m_tab;
 	Ref< ui::Menu > m_menuTab;
-	Ref< ui::custom::ToolBarMenu > m_menuTools;
+	Ref< ui::ToolBarMenu > m_menuTools;
 	Ref< DatabaseView > m_dataBaseView;
 	Ref< PropertiesView > m_propertiesView;
 	Ref< ui::Tab > m_tabOutput;
@@ -294,9 +289,9 @@ private:
 
 	void eventShortcut(ui::ShortcutEvent* event);
 
-	void eventMenuClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventMenuClick(ui::ToolBarButtonClickEvent* event);
 
-	void eventToolClicked(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolClicked(ui::ToolBarButtonClickEvent* event);
 
 	void eventTabButtonDown(ui::MouseButtonDownEvent* event);
 

@@ -35,27 +35,27 @@
 
 		<!-- DropDown -->
 		<item>
-			<type>traktor.ui.custom.DropDown</type>
+			<type>traktor.ui.DropDown</type>
 			<element>background-color</element>
 			<color>51, 51, 55, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.DropDown</type>
+			<type>traktor.ui.DropDown</type>
 			<element>background-color-hover</element>
 			<color>61, 61, 65, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.DropDown</type>
+			<type>traktor.ui.DropDown</type>
 			<element>color-hover</element>
 			<color>70, 70, 74, 255</color>
 		</item>		
 		<item>
-			<type>traktor.ui.custom.DropDown</type>
+			<type>traktor.ui.DropDown</type>
 			<element>background-color-button</element>
 			<color>61, 61, 65, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.DropDown</type>
+			<type>traktor.ui.DropDown</type>
 			<element>color-arrow</element>
 			<color>153, 153, 153, 255</color>
 		</item>
@@ -191,247 +191,247 @@
 
 		<!-- Panel -->
 		<item>
-			<type>traktor.ui.custom.Panel</type>
+			<type>traktor.ui.Panel</type>
 			<element>caption-background-color-focus</element>
 			<color>0, 122, 204, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.Panel</type>
+			<type>traktor.ui.Panel</type>
 			<element>caption-background-color-no-focus</element>
 			<color>0, 122, 204, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.Panel</type>
+			<type>traktor.ui.Panel</type>
 			<element>caption-color-focus</element>
 			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.Panel</type>
+			<type>traktor.ui.Panel</type>
 			<element>caption-color-no-focus</element>
 			<color>208, 208, 208, 255</color>
 		</item>
 
 		<!-- BackgroundWorkerDialog -->
 		<item>
-			<type>traktor.ui.custom.BackgroundWorkerDialog</type>
+			<type>traktor.ui.BackgroundWorkerDialog</type>
 			<element>border-color</element>
 			<color>0, 122, 204, 255</color>
 		</item>
 
 		<!-- ToolBar -->
 		<item>
-			<type>traktor.ui.custom.ToolBar</type>
+			<type>traktor.ui.ToolBar</type>
 			<element>item-background-color-pushed</element>
 			<color>0, 122, 204, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ToolBar</type>
+			<type>traktor.ui.ToolBar</type>
 			<element>item-background-color-hover</element>
 			<color>62, 62, 64, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ToolBar</type>
+			<type>traktor.ui.ToolBar</type>
 			<element>item-color-toggled</element>
 			<color>51, 153, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ToolBar</type>
+			<type>traktor.ui.ToolBar</type>
 			<element>item-color-seperator</element>
 			<color>70, 70, 74, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ToolBar</type>
+			<type>traktor.ui.ToolBar</type>
 			<element>item-background-color-dropdown</element>
 			<color>51, 51, 55, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ToolBar</type>
+			<type>traktor.ui.ToolBar</type>
 			<element>item-background-color-dropdown-hover</element>
 			<color>61, 61, 65, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ToolBar</type>
+			<type>traktor.ui.ToolBar</type>
 			<element>item-color-dropdown-hover</element>
 			<color>70, 70, 74, 255</color>
 		</item>		
 		<item>
-			<type>traktor.ui.custom.ToolBar</type>
+			<type>traktor.ui.ToolBar</type>
 			<element>item-background-color-dropdown-button</element>
 			<color>61, 61, 65, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ToolBar</type>
+			<type>traktor.ui.ToolBar</type>
 			<element>item-color-dropdown-arrow</element>
 			<color>153, 153, 153, 255</color>
 		</item>
 
 		<!-- TreeView -->
 		<item>
-			<type>traktor.ui.custom.TreeView</type>
+			<type>traktor.ui.TreeView</type>
 			<element>background-color</element>
 			<color>37, 37, 38, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.TreeView</type>
+			<type>traktor.ui.TreeView</type>
 			<element>item-color-selected</element>
 			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.TreeView</type>
+			<type>traktor.ui.TreeView</type>
 			<element>item-color-selected-disabled</element>
 			<color>180, 180, 180, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.TreeView</type>
+			<type>traktor.ui.TreeView</type>
 			<element>item-background-color-selected</element>
 			<color>51, 153, 255, 255</color>
 		</item>
 
 		<!-- GradientStatic -->
 		<item>
-			<type>traktor.ui.custom.GradientStatic</type>
+			<type>traktor.ui.GradientStatic</type>
 			<element>background-color-left</element>
 			<color>45, 45, 45, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.GradientStatic</type>
+			<type>traktor.ui.GradientStatic</type>
 			<element>background-color-right</element>
 			<color>45, 45, 45, 255</color>
 		</item>
 
 		<!-- GridView -->
 		<item>
-			<type>traktor.ui.custom.GridView</type>
+			<type>traktor.ui.GridView</type>
 			<element>background-color</element>
 			<color>37, 37, 38, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.GridView</type>
+			<type>traktor.ui.GridView</type>
 			<element>header-background-color</element>
 			<color>60, 60, 62, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.GridView</type>
+			<type>traktor.ui.GridView</type>
 			<element>item-background-color-selected</element>
 			<color>51, 153, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.GridView</type>
+			<type>traktor.ui.GridView</type>
 			<element>line-color</element>
 			<color>40, 40, 41, 255</color>
 		</item>
 
 		<!-- LogList -->
 		<item>
-			<type>traktor.ui.custom.LogList</type>
+			<type>traktor.ui.LogList</type>
 			<element>background-color</element>
 			<color>37, 37, 38, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.LogList</type>
+			<type>traktor.ui.LogList</type>
 			<element>background-color-info</element>
 			<color>37, 37, 38, 0</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.LogList</type>
+			<type>traktor.ui.LogList</type>
 			<element>background-color-warning</element>
 			<color>71, 40, 0, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.LogList</type>
+			<type>traktor.ui.LogList</type>
 			<element>background-color-error</element>
 			<color>168, 0, 0, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.LogList</type>
+			<type>traktor.ui.LogList</type>
 			<element>color-info</element>
 			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.LogList</type>
+			<type>traktor.ui.LogList</type>
 			<element>color-warning</element>
 			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.LogList</type>
+			<type>traktor.ui.LogList</type>
 			<element>color-error</element>
 			<color>255, 255, 255, 255</color>
 		</item>		
 
 		<!-- ProfileControl -->
 		<item>
-			<type>traktor.ui.custom.ProfileControl</type>
+			<type>traktor.ui.ProfileControl</type>
 			<element>background-color</element>
 			<color>120, 120, 120, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ProfileControl</type>
+			<type>traktor.ui.ProfileControl</type>
 			<element>background-color</element>
 			<color>120, 120, 120, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ProfileControl</type>
+			<type>traktor.ui.ProfileControl</type>
 			<element>grid-color</element>
 			<color>128, 128, 128, 255</color>
 		</item>
 
 		<!-- PropertyList -->
 		<item>
-			<type>traktor.ui.custom.PropertyList</type>
+			<type>traktor.ui.PropertyList</type>
 			<element>background-color</element>
 			<color>45, 45, 45, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.PropertyList</type>
+			<type>traktor.ui.PropertyList</type>
 			<element>header-background-color</element>
 			<color>40, 40, 40, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.PropertyList</type>
+			<type>traktor.ui.PropertyList</type>
 			<element>item-color-selected</element>
 			<color>255, 255, 255, 255</color>
 		</item>		
 		<item>
-			<type>traktor.ui.custom.PropertyList</type>
+			<type>traktor.ui.PropertyList</type>
 			<element>item-background-color-selected</element>
 			<color>51, 153, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.PropertyList</type>
+			<type>traktor.ui.PropertyList</type>
 			<element>line-color</element>
 			<color>40, 40, 40, 255</color>
 		</item>
 
 		<!-- StatusBar -->
 		<item>
-			<type>traktor.ui.custom.StatusBar</type>
+			<type>traktor.ui.StatusBar</type>
 			<element>color</element>
 			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.StatusBar</type>
+			<type>traktor.ui.StatusBar</type>
 			<element>background-color</element>
 			<color>0, 122, 204, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.StatusBar</type>
+			<type>traktor.ui.StatusBar</type>
 			<element>background-color-alert</element>
 			<color>202, 81, 0, 255</color>
 		</item>
 
 		<!-- ListBox -->
 		<item>
-			<type>traktor.ui.custom.ListBox</type>
+			<type>traktor.ui.ListBox</type>
 			<element>background-color</element>
 			<color>37, 37, 38, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ListBox</type>
+			<type>traktor.ui.ListBox</type>
 			<element>item-color-selected</element>
 			<color>255, 255, 255, 255</color>
 		</item>		
 		<item>
-			<type>traktor.ui.custom.ListBox</type>
+			<type>traktor.ui.ListBox</type>
 			<element>item-background-color-selected</element>
 			<color>51, 153, 255, 255</color>
 		</item>
@@ -445,34 +445,34 @@
 
 		<!-- ProgressBar -->
 		<item>
-			<type>traktor.ui.custom.ProgressBar</type>
+			<type>traktor.ui.ProgressBar</type>
 			<element>background-color</element>
 			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ProgressBar</type>
+			<type>traktor.ui.ProgressBar</type>
 			<element>progress-color</element>
 			<color>0, 153, 0, 255</color>
 		</item>
 
 		<!-- PreviewList -->
 		<item>
-			<type>traktor.ui.custom.PreviewList</type>
+			<type>traktor.ui.PreviewList</type>
 			<element>background-color</element>
 			<color>37, 37, 38, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.PreviewList</type>
+			<type>traktor.ui.PreviewList</type>
 			<element>color</element>
 			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.PreviewList</type>
+			<type>traktor.ui.PreviewList</type>
 			<element>item-background-color</element>
 			<color>200, 200, 200, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.PreviewList</type>
+			<type>traktor.ui.PreviewList</type>
 			<element>item-background-color-selected</element>
 			<color>51, 153, 255, 255</color>
 		</item>		
@@ -496,215 +496,215 @@
 
 		<!-- MiniButton -->
     <item>
-      <type>traktor.ui.custom.MiniButton</type>
+      <type>traktor.ui.MiniButton</type>
       <element>background-color</element>
       <color>37, 37, 38, 255</color>
     </item>
     <item>
-      <type>traktor.ui.custom.MiniButton</type>
+      <type>traktor.ui.MiniButton</type>
       <element>background-color-disabled</element>
       <color>37, 37, 38, 255</color>
     </item>
     <item>
-      <type>traktor.ui.custom.MiniButton</type>
+      <type>traktor.ui.MiniButton</type>
       <element>background-color-pushed</element>
       <color>62, 62, 64, 255</color>
     </item>
     <item>
-      <type>traktor.ui.custom.MiniButton</type>
+      <type>traktor.ui.MiniButton</type>
       <element>color</element>
       <color>255, 255, 255, 255</color>
     </item>
     <item>
-      <type>traktor.ui.custom.MiniButton</type>
+      <type>traktor.ui.MiniButton</type>
       <element>color-disabled</element>
       <color>220, 220, 220, 255</color>
     </item>
   
 		<!-- ShortcutEdit -->
 		<item>
-			<type>traktor.ui.custom.ShortcutEdit</type>
+			<type>traktor.ui.ShortcutEdit</type>
 			<element>background-color</element>
 			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ShortcutEdit</type>
+			<type>traktor.ui.ShortcutEdit</type>
 			<element>background-color-focus</element>
 			<color>230, 230, 230, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ShortcutEdit</type>
+			<type>traktor.ui.ShortcutEdit</type>
 			<element>color</element>
 			<color>0, 0, 0, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ShortcutEdit</type>
+			<type>traktor.ui.ShortcutEdit</type>
 			<element>color-focus</element>
 			<color>0, 0, 0, 255</color>
 		</item>
 
 		<!-- RichEdit -->
 		<item>
-			<type>traktor.ui.custom.RichEdit</type>
+			<type>traktor.ui.RichEdit</type>
 			<element>background-color</element>
 			<color>30, 30, 30, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.RichEdit</type>
+			<type>traktor.ui.RichEdit</type>
 			<element>background-color-margin</element>
 			<color>34, 34, 34, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.RichEdit</type>
+			<type>traktor.ui.RichEdit</type>
 			<element>color-margin</element>
 			<color>36, 126, 175, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.RichEdit</type>
+			<type>traktor.ui.RichEdit</type>
 			<element>color-caret</element>
 			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.RichEdit</type>
+			<type>traktor.ui.RichEdit</type>
 			<element>color-selection</element>
 			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.RichEdit</type>
+			<type>traktor.ui.RichEdit</type>
 			<element>background-color-selection</element>
 			<color>38, 79, 120, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.RichEdit</type>
+			<type>traktor.ui.RichEdit</type>
 			<element>background-found-line</element>
 			<color>40, 80, 30, 255</color>
 		</item>
 
 		<!-- SyntaxRichEdit -->
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>color-default</element>
 			<color>218, 218, 218, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>background-color-default</element>
 			<color>30, 30, 30, 0</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>color-string</element>
 			<color>214, 157, 133, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>background-color-string</element>
 			<color>30, 30, 30, 0</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>color-number</element>
 			<color>181, 206, 168, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>background-color-number</element>
 			<color>30, 30, 30, 0</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>color-self</element>
 			<color>210, 150, 90, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>background-color-self</element>
 			<color>30, 30, 30, 0</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>color-comment</element>
 			<color>96, 139, 78, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>background-color-comment</element>
 			<color>30, 30, 30, 0</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>color-function</element>
 			<color>200, 200, 200, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>background-color-function</element>
 			<color>30, 30, 30, 0</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>color-type</element>
 			<color>53, 175, 176, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>background-color-type</element>
 			<color>30, 30, 30, 0</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>color-keyword</element>
 			<color>57, 135, 214, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>background-color-keyword</element>
 			<color>30, 30, 30, 0</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>color-special</element>
 			<color>189, 99, 197, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>background-color-special</element>
 			<color>30, 30, 30, 0</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>color-preprocessor</element>
 			<color>155, 155, 155, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>background-color-preprocessor</element>
 			<color>30, 30, 30, 0</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>color-error</element>
 			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.SyntaxRichEdit</type>
+			<type>traktor.ui.SyntaxRichEdit</type>
 			<element>background-color-error</element>
 			<color>255, 0, 0, 255</color>
 		</item>
 
 		<!-- ScrollBar -->
 		<item>
-			<type>traktor.ui.custom.ScrollBar</type>
+			<type>traktor.ui.ScrollBar</type>
 			<element>background-color</element>
 			<color>60, 60, 62, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ScrollBar</type>
+			<type>traktor.ui.ScrollBar</type>
 			<element>color-arrow</element>
 			<color>120, 120, 120, 255</color>
 		</item>
 		<item>
-			<type>traktor.ui.custom.ScrollBar</type>
+			<type>traktor.ui.ScrollBar</type>
 			<element>color-slider</element>
 			<color>120, 120, 120, 255</color>
 		</item>

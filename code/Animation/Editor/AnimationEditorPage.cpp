@@ -42,17 +42,17 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
 #include "Ui/StyleBitmap.h"
-#include "Ui/Custom/QuadSplitter.h"
-#include "Ui/Custom/Sequencer/CursorMoveEvent.h"
-#include "Ui/Custom/Sequencer/SequencerControl.h"
-#include "Ui/Custom/Sequencer/Sequence.h"
-#include "Ui/Custom/Sequencer/Tick.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-#include "Ui/Custom/TreeView/TreeView.h"
-#include "Ui/Custom/TreeView/TreeViewItem.h"
+#include "Ui/QuadSplitter.h"
+#include "Ui/Sequencer/CursorMoveEvent.h"
+#include "Ui/Sequencer/SequencerControl.h"
+#include "Ui/Sequencer/Sequence.h"
+#include "Ui/Sequencer/Tick.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarSeparator.h"
+#include "Ui/TreeView/TreeView.h"
+#include "Ui/TreeView/TreeViewItem.h"
 #include "Ui/Itf/IWidget.h"
 
 namespace traktor
@@ -172,7 +172,7 @@ bool AnimationEditorPage::create(ui::Container* parent)
 	if (!m_animation)
 		return false;
 
-	Ref< ui::custom::QuadSplitter > splitter = new ui::custom::QuadSplitter();
+	Ref< ui::QuadSplitter > splitter = new ui::QuadSplitter();
 	splitter->create(parent, ui::Point(50, 50), true);
 
 	for (int i = 0; i < 4; ++i)
@@ -195,12 +195,12 @@ bool AnimationEditorPage::create(ui::Container* parent)
 	m_skeletonPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0));
 	m_skeletonPanel->setText(i18n::Text(L"ANIMATION_EDITOR_SKELETON"));
 
-	m_treeSkeleton = new ui::custom::TreeView();
-	m_treeSkeleton->create(m_skeletonPanel, (ui::custom::TreeView::WsDefault | ui::WsAccelerated) & ~ui::WsClientBorder);
+	m_treeSkeleton = new ui::TreeView();
+	m_treeSkeleton->create(m_skeletonPanel, (ui::TreeView::WsDefault | ui::WsAccelerated) & ~ui::WsClientBorder);
 	m_treeSkeleton->addImage(new ui::StyleBitmap(L"Animation.Bones"), 2);
 	//m_treeSkeleton->addEventHandler< ui::MouseButtonDownEvent >(this, &SkeletonEditorPage::eventTreeButtonDown);
 	//m_treeSkeleton->addEventHandler< ui::SelectionChangeEvent >(this, &SkeletonEditorPage::eventTreeSelect);
-	//m_treeSkeleton->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &SkeletonEditorPage::eventTreeEdited);
+	//m_treeSkeleton->addEventHandler< ui::TreeViewContentChangeEvent >(this, &SkeletonEditorPage::eventTreeEdited);
 
 	m_site->createAdditionalPanel(m_skeletonPanel, ui::dpi96(300), false);
 
@@ -209,28 +209,28 @@ bool AnimationEditorPage::create(ui::Container* parent)
 	m_sequencerPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 	m_sequencerPanel->setText(i18n::Text(L"ANIMATION_EDITOR_SEQUENCER"));
 
-	m_toolBarPlay = new ui::custom::ToolBar();
+	m_toolBarPlay = new ui::ToolBar();
 	m_toolBarPlay->create(m_sequencerPanel);
 	m_toolBarPlay->addImage(new ui::StyleBitmap(L"Animation.Playback"), 6);
 	m_toolBarPlay->addImage(new ui::StyleBitmap(L"Animation.Skeleton"), 5);
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_REWIND"), 0, ui::Command(L"Animation.Editor.Rewind")));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_PLAY"), 1, ui::Command(L"Animation.Editor.Play")));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_STOP"), 2, ui::Command(L"Animation.Editor.Stop")));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_FORWARD"), 3, ui::Command(L"Animation.Editor.Forward")));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_BROWSE_SKELETON"), 6, ui::Command(L"Animation.Editor.BrowseSkeleton")));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_BROWSE_SKIN"), 9, ui::Command(L"Animation.Editor.BrowseSkin")));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_TRAIL"), 7, ui::Command(L"Animation.Editor.ToggleTrail"), m_showGhostTrail ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_TWIST_LOCK"), 8, ui::Command(L"Animation.Editor.ToggleTwistLock"), m_twistLock ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_IK"), 10, ui::Command(L"Animation.Editor.ToggleIK"), m_ikEnabled ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
-	m_toolBarPlay->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &AnimationEditorPage::eventToolClick);
+	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_REWIND"), 0, ui::Command(L"Animation.Editor.Rewind")));
+	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_PLAY"), 1, ui::Command(L"Animation.Editor.Play")));
+	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_STOP"), 2, ui::Command(L"Animation.Editor.Stop")));
+	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_FORWARD"), 3, ui::Command(L"Animation.Editor.Forward")));
+	m_toolBarPlay->addItem(new ui::ToolBarSeparator());
+	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_BROWSE_SKELETON"), 6, ui::Command(L"Animation.Editor.BrowseSkeleton")));
+	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_BROWSE_SKIN"), 9, ui::Command(L"Animation.Editor.BrowseSkin")));
+	m_toolBarPlay->addItem(new ui::ToolBarSeparator());
+	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_TRAIL"), 7, ui::Command(L"Animation.Editor.ToggleTrail"), m_showGhostTrail ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle));
+	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_TWIST_LOCK"), 8, ui::Command(L"Animation.Editor.ToggleTwistLock"), m_twistLock ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle));
+	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_IK"), 10, ui::Command(L"Animation.Editor.ToggleIK"), m_ikEnabled ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle));
+	m_toolBarPlay->addEventHandler< ui::ToolBarButtonClickEvent >(this, &AnimationEditorPage::eventToolClick);
 
-	m_sequencer = new ui::custom::SequencerControl();
+	m_sequencer = new ui::SequencerControl();
 	m_sequencer->create(m_sequencerPanel);
 	m_sequencer->setLength(c_animationLength);
 	m_sequencer->addEventHandler< ui::MouseButtonDownEvent >(this, &AnimationEditorPage::eventSequencerButtonDown);
-	m_sequencer->addEventHandler< ui::custom::CursorMoveEvent >(this, &AnimationEditorPage::eventSequencerCursorMove);
+	m_sequencer->addEventHandler< ui::CursorMoveEvent >(this, &AnimationEditorPage::eventSequencerCursorMove);
 	m_sequencer->addEventHandler< ui::TimerEvent >(this, &AnimationEditorPage::eventSequencerTimer);
 	m_sequencer->startTimer(30);
 
@@ -518,13 +518,13 @@ void AnimationEditorPage::setSkeleton(Skeleton* skeleton)
 
 bool AnimationEditorPage::getSelectedPoseId(int& outPoseId) const
 {
-	RefArray< ui::custom::SequenceItem > selectedItems;
-	m_sequencer->getSequenceItems(selectedItems, ui::custom::SequencerControl::GfSelectedOnly);
+	RefArray< ui::SequenceItem > selectedItems;
+	m_sequencer->getSequenceItems(selectedItems, ui::SequencerControl::GfSelectedOnly);
 	if (selectedItems.size() != 1)
 		return false;
 
-	Ref< ui::custom::Sequence > selectedSequence = checked_type_cast< ui::custom::Sequence* >(selectedItems.front());
-	Ref< ui::custom::Key > selectedKey = selectedSequence->getSelectedKey();
+	Ref< ui::Sequence > selectedSequence = checked_type_cast< ui::Sequence* >(selectedItems.front());
+	Ref< ui::Key > selectedKey = selectedSequence->getSelectedKey();
 	if (!selectedKey)
 		return false;
 
@@ -547,12 +547,12 @@ void AnimationEditorPage::updateSequencer()
 	if (!poseCount)
 		return;
 
-	Ref< ui::custom::Sequence > sequence = new ui::custom::Sequence(i18n::Text(L"ANIMATION_EDITOR_SEQUENCE"));
+	Ref< ui::Sequence > sequence = new ui::Sequence(i18n::Text(L"ANIMATION_EDITOR_SEQUENCE"));
 	for (uint32_t i = 0; i < poseCount; ++i)
 	{
 		int ms = int(m_animation->getKeyPose(i).at * 1000.0f);
 
-		Ref< ui::custom::Tick > tick = new ui::custom::Tick(ms, true);
+		Ref< ui::Tick > tick = new ui::Tick(ms, true);
 		tick->setData(L"ID", new PoseIdData(i));
 
 		sequence->addKey(tick);
@@ -1023,7 +1023,7 @@ void AnimationEditorPage::eventSequencerButtonDown(ui::MouseButtonDownEvent* eve
 	event->consume();
 }
 
-void AnimationEditorPage::eventSequencerCursorMove(ui::custom::CursorMoveEvent* event)
+void AnimationEditorPage::eventSequencerCursorMove(ui::CursorMoveEvent* event)
 {
 	updateRenderWidgets();
 }
@@ -1045,7 +1045,7 @@ void AnimationEditorPage::eventSequencerTimer(ui::TimerEvent* event)
 	updateRenderWidgets();
 }
 
-void AnimationEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
+void AnimationEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	handleCommand(command);

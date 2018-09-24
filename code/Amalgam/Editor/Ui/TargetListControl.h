@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_amalgam_TargetListControl_H
 
 #include "Core/RefArray.h"
-#include "Ui/Custom/Auto/AutoWidget.h"
+#include "Ui/Auto/AutoWidget.h"
 
 namespace traktor
 {
@@ -20,7 +20,7 @@ class TargetInstanceListItem;
 /*! \brief
  * \ingroup Amalgam
  */
-class TargetListControl : public ui::custom::AutoWidget
+class TargetListControl : public ui::AutoWidget
 {
 	T_RTTI_CLASS;
 

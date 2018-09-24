@@ -21,14 +21,11 @@ class IEditor;
 
 	namespace ui
 	{
-		namespace custom
-		{
 
 class AutoPropertyList;
 class ListBox;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace sound
@@ -51,14 +48,14 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< ui::custom::ListBox > m_soundList;
-	Ref< ui::custom::AutoPropertyList > m_soundPropertyList;
+	Ref< ui::ListBox > m_soundList;
+	Ref< ui::AutoPropertyList > m_soundPropertyList;
 
 	void addSound();
 
 	void removeSound();
 
-	void eventSoundListToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventSoundListToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventSoundListSelect(ui::SelectionChangeEvent* event);
 };

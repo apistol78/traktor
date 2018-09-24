@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Ui/Command.h"
 #include "Ui/IBitmap.h"
-#include "Ui/Custom/Auto/AutoWidgetCell.h"
+#include "Ui/Auto/AutoWidgetCell.h"
 
 namespace traktor
 {
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief
  * \ingroup Amalgam
  */
-class ButtonCell : public ui::custom::AutoWidgetCell
+class ButtonCell : public ui::AutoWidgetCell
 {
 	T_RTTI_CLASS;
 

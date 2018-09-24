@@ -44,15 +44,15 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Container.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/AspectLayout.h"
-#include "Ui/Custom/CenterLayout.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-#include "Ui/Custom/TreeView/TreeView.h"
-#include "Ui/Custom/TreeView/TreeViewItem.h"
+#include "Ui/AspectLayout.h"
+#include "Ui/CenterLayout.h"
+#include "Ui/Splitter.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarSeparator.h"
+#include "Ui/TreeView/TreeView.h"
+#include "Ui/TreeView/TreeViewItem.h"
 
 namespace traktor
 {
@@ -115,25 +115,25 @@ bool FlashEditorPage::create(ui::Container* parent)
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
-	m_toolBarPlay = new ui::custom::ToolBar();
+	m_toolBarPlay = new ui::ToolBar();
 	m_toolBarPlay->create(container);
 	m_toolBarPlay->addImage(new ui::StyleBitmap(L"Flash.Playback"), 6);
 	m_toolBarPlay->addImage(new ui::StyleBitmap(L"Flash.Flash"), 2);
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_EDITOR_REWIND"), 0, ui::Command(L"Flash.Editor.Rewind")));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_EDITOR_PLAY"), 1, ui::Command(L"Flash.Editor.Play")));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_EDITOR_STOP"), 2, ui::Command(L"Flash.Editor.Stop")));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_EDITOR_FORWARD"), 3, ui::Command(L"Flash.Editor.Forward")));
+	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"FLASH_EDITOR_REWIND"), 0, ui::Command(L"Flash.Editor.Rewind")));
+	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"FLASH_EDITOR_PLAY"), 1, ui::Command(L"Flash.Editor.Play")));
+	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"FLASH_EDITOR_STOP"), 2, ui::Command(L"Flash.Editor.Stop")));
+	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"FLASH_EDITOR_FORWARD"), 3, ui::Command(L"Flash.Editor.Forward")));
 
-	m_toolBarPlay->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &FlashEditorPage::eventToolClick);
+	m_toolBarPlay->addEventHandler< ui::ToolBarButtonClickEvent >(this, &FlashEditorPage::eventToolClick);
 
-	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitter = new ui::Splitter();
 	splitter->create(container, true, ui::dpi96(300));
 
-	Ref< ui::custom::Splitter > splitterV = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitterV = new ui::Splitter();
 	splitterV->create(splitter, false, ui::dpi96(-200));
 
-	m_treeMovie = new ui::custom::TreeView();
-	m_treeMovie->create(splitterV, ui::custom::TreeView::WsTreeButtons | ui::custom::TreeView::WsTreeLines | ui::WsDoubleBuffer);
+	m_treeMovie = new ui::TreeView();
+	m_treeMovie->create(splitterV, ui::TreeView::WsTreeButtons | ui::TreeView::WsTreeLines | ui::WsDoubleBuffer);
 	m_treeMovie->addEventHandler< ui::SelectionChangeEvent >(this, &FlashEditorPage::eventTreeMovieSelect);
 
 	m_pathControl = new FlashPathControl();
@@ -195,7 +195,7 @@ void FlashEditorPage::handleDatabaseEvent(db::Database* database, const Guid& ev
 		m_resourceManager->reload(eventId, false);
 }
 
-void FlashEditorPage::updateTreeObject(ui::custom::TreeViewItem* parentItem, const ActionObject* asObject, std::set< const ActionObject* >& objectStack, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash)
+void FlashEditorPage::updateTreeObject(ui::TreeViewItem* parentItem, const ActionObject* asObject, std::set< const ActionObject* >& objectStack, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash)
 {
 	if (!asObject)
 		return;
@@ -221,7 +221,7 @@ void FlashEditorPage::updateTreeObject(ui::custom::TreeViewItem* parentItem, con
 			}
 		}
 
-		Ref< ui::custom::TreeViewItem > memberItem = m_treeMovie->createItem(parentItem, ss.str(), 1);
+		Ref< ui::TreeViewItem > memberItem = m_treeMovie->createItem(parentItem, ss.str(), 1);
 		memberItem->setImage(0, 0);
 
 		if (i->second.isObject())
@@ -256,7 +256,7 @@ void FlashEditorPage::updateTreeObject(ui::custom::TreeViewItem* parentItem, con
 				}
 			}
 
-			Ref< ui::custom::TreeViewItem > memberItem = m_treeMovie->createItem(parentItem, ss.str(), 1);
+			Ref< ui::TreeViewItem > memberItem = m_treeMovie->createItem(parentItem, ss.str(), 1);
 			memberItem->setImage(0, 0);
 
 			if (asValues[i].isObject())
@@ -271,7 +271,7 @@ void FlashEditorPage::updateTreeObject(ui::custom::TreeViewItem* parentItem, con
 	}
 }
 
-void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, CharacterInstance* characterInstance, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash)
+void FlashEditorPage::updateTreeCharacter(ui::TreeViewItem* parentItem, CharacterInstance* characterInstance, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash)
 {
 	StringOutputStream ss;
 	ss << type_name(characterInstance);
@@ -293,7 +293,7 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 		}
 	}
 
-	Ref< ui::custom::TreeViewItem > characterItem = m_treeMovie->createItem(parentItem, ss.str(), 1);
+	Ref< ui::TreeViewItem > characterItem = m_treeMovie->createItem(parentItem, ss.str(), 1);
 	characterItem->setImage(0, 0);
 	characterItem->setData(L"CHARACTER", characterInstance);
 
@@ -370,7 +370,7 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 			uint32_t frameCount = sprite->getFrameCount();
 			m_treeMovie->createItem(characterItem, toString(frameCount) + L" frame(s)", 1);
 
-			Ref< ui::custom::TreeViewItem > labelsItem = m_treeMovie->createItem(characterItem, L"Label(s)", 1);
+			Ref< ui::TreeViewItem > labelsItem = m_treeMovie->createItem(characterItem, L"Label(s)", 1);
 			labelsItem->setImage(0, 0);
 
 			for (uint32_t i = 0; i < frameCount; ++i)
@@ -385,7 +385,7 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 			}
 		}
 
-		Ref< ui::custom::TreeViewItem > layersItem = m_treeMovie->createItem(characterItem, L"Layer(s)", 1);
+		Ref< ui::TreeViewItem > layersItem = m_treeMovie->createItem(characterItem, L"Layer(s)", 1);
 		layersItem->setImage(0, 0);
 
 		const DisplayList::layer_map_t& layers = spriteInstance->getDisplayList().getLayers();
@@ -396,7 +396,7 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 			if (i->second.clipDepth != 0)
 				ss << L", Clip depth: " << i->second.clipDepth << Endl;
 
-			Ref< ui::custom::TreeViewItem > layerItem = m_treeMovie->createItem(layersItem, ss.str(), 1);
+			Ref< ui::TreeViewItem > layerItem = m_treeMovie->createItem(layersItem, ss.str(), 1);
 			layerItem->setImage(0, 0);
 
 			if (i->second.instance)
@@ -412,7 +412,7 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 
 		m_treeMovie->createItem(characterItem, L"State " + toString(int32_t(buttonState)), 1);
 
-		Ref< ui::custom::TreeViewItem > layersItem = m_treeMovie->createItem(characterItem, L"Layers(s)", 1);
+		Ref< ui::TreeViewItem > layersItem = m_treeMovie->createItem(characterItem, L"Layers(s)", 1);
 		layersItem->setImage(0, 0);
 
 		const Button::button_layers_t& layers = button->getButtonLayers();
@@ -420,7 +420,7 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 		{
 			const Button::ButtonLayer& layer = layers[j];
 
-			Ref< ui::custom::TreeViewItem > layerItem = m_treeMovie->createItem(layersItem, toString(j) + L": " + toString(int32_t(layer.state)), 1);
+			Ref< ui::TreeViewItem > layerItem = m_treeMovie->createItem(layersItem, toString(j) + L": " + toString(int32_t(layer.state)), 1);
 			layerItem->setImage(0, 0);
 
 			CharacterInstance* referenceInstance = buttonInstance->getCharacterInstance(layer.characterId);
@@ -439,7 +439,7 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 		{
 			ss.reset();
 			ss << int32_t(fillStyles.size()) << L" fill(s)";
-			Ref< ui::custom::TreeViewItem > styleItem = m_treeMovie->createItem(characterItem, ss.str(), 1);
+			Ref< ui::TreeViewItem > styleItem = m_treeMovie->createItem(characterItem, ss.str(), 1);
 
 			for (uint32_t i = 0; i < uint32_t(fillStyles.size()); ++i)
 			{
@@ -455,7 +455,7 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 		const AlignedVector< Path >& paths = shape->getPaths();
 		if (!paths.empty())
 		{
-			Ref< ui::custom::TreeViewItem > pathsItem = m_treeMovie->createItem(characterItem, L"Path(s)", 1);
+			Ref< ui::TreeViewItem > pathsItem = m_treeMovie->createItem(characterItem, L"Path(s)", 1);
 			pathsItem->setImage(0, 0);
 
 			for (uint32_t i = 0; i < uint32_t(paths.size()); ++i)
@@ -465,7 +465,7 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 				ss.reset();
 				ss << i << L". " << int32_t(p.getPoints().size()) << L" point(s), " << int32_t(p.getSubPaths().size()) << L" subpath(s)";
 
-				Ref< ui::custom::TreeViewItem > pathItem = m_treeMovie->createItem(pathsItem, ss.str(), 1);
+				Ref< ui::TreeViewItem > pathItem = m_treeMovie->createItem(pathsItem, ss.str(), 1);
 				pathItem->setData(L"CHARACTER", characterInstance);
 				pathItem->setData(L"PATH", new PropertyInteger(i));
 			}
@@ -474,7 +474,7 @@ void FlashEditorPage::updateTreeCharacter(ui::custom::TreeViewItem* parentItem, 
 
 	if (asObject)
 	{
-		Ref< ui::custom::TreeViewItem > membersItem = m_treeMovie->createItem(characterItem, L"Member(s)", 1);
+		Ref< ui::TreeViewItem > membersItem = m_treeMovie->createItem(characterItem, L"Member(s)", 1);
 		membersItem->setImage(0, 0);
 
 		std::set< const ActionObject* > objectStack;
@@ -496,7 +496,7 @@ void FlashEditorPage::updateTreeMovie()
 				std::map< const void*, uint32_t > pointerHash;
 				uint32_t nextPointerHash = 0;
 
-				Ref< ui::custom::TreeViewItem > memberItemRoot = m_treeMovie->createItem(0, L"_root", 1);
+				Ref< ui::TreeViewItem > memberItemRoot = m_treeMovie->createItem(0, L"_root", 1);
 				memberItemRoot->setImage(0, 0);
 
 				updateTreeCharacter(memberItemRoot, movieInstance, pointerHash, nextPointerHash);
@@ -507,13 +507,13 @@ void FlashEditorPage::updateTreeMovie()
 				ActionObject* global = actionContext->getGlobal();
 				T_ASSERT (global);
 
-				Ref< ui::custom::TreeViewItem > memberItemGlobal = m_treeMovie->createItem(0, L"_global", 1);
+				Ref< ui::TreeViewItem > memberItemGlobal = m_treeMovie->createItem(0, L"_global", 1);
 				memberItemGlobal->setImage(0, 0);
 
 				std::set< const ActionObject* > objectStack;
 				updateTreeObject(memberItemGlobal, global, objectStack, pointerHash, nextPointerHash);
 
-				Ref< ui::custom::TreeViewItem > memberItemExports = m_treeMovie->createItem(0, L"Export(s)", 1);
+				Ref< ui::TreeViewItem > memberItemExports = m_treeMovie->createItem(0, L"Export(s)", 1);
 				memberItemExports->setImage(0, 0);
 
 				const SmallMap< std::string, uint16_t >& exports = m_movie->getExports();
@@ -532,7 +532,7 @@ void FlashEditorPage::updateTreeMovie()
 	}
 }
 
-void FlashEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
+void FlashEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	handleCommand(command);
@@ -540,8 +540,8 @@ void FlashEditorPage::eventToolClick(ui::custom::ToolBarButtonClickEvent* event)
 
 void FlashEditorPage::eventTreeMovieSelect(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::custom::TreeViewItem > selectedItems;
-	m_treeMovie->getItems(selectedItems, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > selectedItems;
+	m_treeMovie->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 
 	if (m_selectedCharacterInstance)
 	{

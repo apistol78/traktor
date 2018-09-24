@@ -23,16 +23,11 @@ class IEditor;
 	{
 
 class ButtonClickEvent;
-
-		namespace custom
-		{
-
 class GridItemContentChangeEvent;
 class GridRowDoubleClickEvent;
 class GridView;
 class SyntaxRichEdit;
 
-		}
 	}
 
 	namespace render
@@ -66,17 +61,17 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< Script > m_script;
-	Ref< ui::custom::GridView > m_inputPinList;
-	Ref< ui::custom::GridView > m_outputPinList;
-	Ref< ui::custom::SyntaxRichEdit > m_edit;
+	Ref< ui::GridView > m_inputPinList;
+	Ref< ui::GridView > m_outputPinList;
+	Ref< ui::SyntaxRichEdit > m_edit;
 	
-	void eventInputPinRowDoubleClick(ui::custom::GridRowDoubleClickEvent* event);
+	void eventInputPinRowDoubleClick(ui::GridRowDoubleClickEvent* event);
 
-	void eventInputPinEdit(ui::custom::GridItemContentChangeEvent* event);
+	void eventInputPinEdit(ui::GridItemContentChangeEvent* event);
 
-	void eventOutputPinRowDoubleClick(ui::custom::GridRowDoubleClickEvent* event);
+	void eventOutputPinRowDoubleClick(ui::GridRowDoubleClickEvent* event);
 
-	void eventOutputPinEdit(ui::custom::GridItemContentChangeEvent* event);
+	void eventOutputPinEdit(ui::GridItemContentChangeEvent* event);
 };
 
 	}

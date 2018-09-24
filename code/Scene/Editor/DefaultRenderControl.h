@@ -16,17 +16,12 @@ namespace traktor
 
 class Container;
 class MenuItem;
-class Widget;
-
-		namespace custom
-		{
-
 class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
 class ToolBarDropDown;
+class Widget;
 
-		}
 	}
 
 	namespace scene
@@ -70,11 +65,11 @@ private:
 	int32_t m_cameraId;
 	int32_t m_viewId;
 	Ref< ui::Container > m_container;
-	Ref< ui::custom::ToolBar > m_toolBar;
-	Ref< ui::custom::ToolBarButton > m_toolToggleGrid;
-	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;
-	Ref< ui::custom::ToolBarDropDown > m_toolView;
-	Ref< ui::custom::ToolBarDropDown > m_toolAspect;
+	Ref< ui::ToolBar > m_toolBar;
+	Ref< ui::ToolBarButton > m_toolToggleGrid;
+	Ref< ui::ToolBarButton > m_toolToggleGuide;
+	Ref< ui::ToolBarDropDown > m_toolView;
+	Ref< ui::ToolBarDropDown > m_toolAspect;
 	Ref< ui::MenuItem > m_menuPostProcess;
 	Ref< ui::MenuItem > m_menuMotionBlur;
 	Ref< ui::MenuItem > m_menuShadows;
@@ -85,7 +80,7 @@ private:
 
 	bool createRenderControl(int32_t type);
 
-	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 };
 
 	}

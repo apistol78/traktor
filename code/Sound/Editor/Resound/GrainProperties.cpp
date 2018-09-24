@@ -13,11 +13,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "I18N/Text.h"
 #include "Sound/Resound/IGrainData.h"
 #include "Sound/Editor/Resound/GrainProperties.h"
-#include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
-#include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
-#include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
-#include "Ui/Custom/PropertyList/PropertyCommandEvent.h"
-#include "Ui/Custom/PropertyList/PropertyContentChangeEvent.h"
+#include "Ui/PropertyList/ArrayPropertyItem.h"
+#include "Ui/PropertyList/BrowsePropertyItem.h"
+#include "Ui/PropertyList/ObjectPropertyItem.h"
+#include "Ui/PropertyList/PropertyCommandEvent.h"
+#include "Ui/PropertyList/PropertyContentChangeEvent.h"
 
 namespace traktor
 {
@@ -33,10 +33,10 @@ GrainProperties::GrainProperties(editor::IEditor* editor)
 
 bool GrainProperties::create(ui::Widget* parent)
 {
-	m_propertyList = new ui::custom::AutoPropertyList();
-	m_propertyList->create(parent, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
-	m_propertyList->addEventHandler< ui::custom::PropertyCommandEvent >(this, &GrainProperties::eventPropertyCommand);
-	m_propertyList->addEventHandler< ui::custom::PropertyContentChangeEvent >(this, &GrainProperties::eventPropertyChange);
+	m_propertyList = new ui::AutoPropertyList();
+	m_propertyList->create(parent, ui::WsDoubleBuffer | ui::AutoPropertyList::WsColumnHeader, this);
+	m_propertyList->addEventHandler< ui::PropertyCommandEvent >(this, &GrainProperties::eventPropertyCommand);
+	m_propertyList->addEventHandler< ui::PropertyContentChangeEvent >(this, &GrainProperties::eventPropertyChange);
 	m_propertyList->setSeparator(150);
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
@@ -101,12 +101,12 @@ bool GrainProperties::resolvePropertyGuid(const Guid& guid, std::wstring& resolv
 	return true;
 }
 
-void GrainProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* event)
+void GrainProperties::eventPropertyCommand(ui::PropertyCommandEvent* event)
 {
 	const ui::Command& cmd = event->getCommand();
 	if (cmd == L"Property.Add")
 	{
-		ui::custom::ArrayPropertyItem* arrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(event->getItem());
+		ui::ArrayPropertyItem* arrayItem = dynamic_type_cast< ui::ArrayPropertyItem* >(event->getItem());
 		if (arrayItem)
 		{
 			if (arrayItem->getElementType())
@@ -132,8 +132,8 @@ void GrainProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* eve
 	}
 	else if (cmd == L"Property.Remove")
 	{
-		ui::custom::PropertyItem* removeItem = event->getItem();
-		ui::custom::PropertyItem* parentItem = removeItem->getParentItem();
+		ui::PropertyItem* removeItem = event->getItem();
+		ui::PropertyItem* parentItem = removeItem->getParentItem();
 		if (parentItem)
 		{
 			m_propertyList->removePropertyItem(parentItem, removeItem);
@@ -142,7 +142,7 @@ void GrainProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* eve
 	}
 	else if (cmd == L"Property.Browse")
 	{
-		ui::custom::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::custom::BrowsePropertyItem* >(event->getItem());
+		ui::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::BrowsePropertyItem* >(event->getItem());
 		if (browseItem)
 		{
 			if (browseItem->getValue().isNull())
@@ -172,10 +172,10 @@ void GrainProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* eve
 		}
 
 		/*
-		ui::custom::FilePropertyItem* fileItem = dynamic_type_cast< ui::custom::FilePropertyItem* >(event->getItem());
+		ui::FilePropertyItem* fileItem = dynamic_type_cast< ui::FilePropertyItem* >(event->getItem());
 		if (fileItem)
 		{
-			ui::custom::FileDialog fileDialog;
+			ui::FileDialog fileDialog;
 			if (!fileDialog.create(m_propertyList, i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
 				return;
 
@@ -190,7 +190,7 @@ void GrainProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* eve
 		}
 		*/
 
-		ui::custom::ObjectPropertyItem* objectItem = dynamic_type_cast< ui::custom::ObjectPropertyItem* >(event->getItem());
+		ui::ObjectPropertyItem* objectItem = dynamic_type_cast< ui::ObjectPropertyItem* >(event->getItem());
 		if (objectItem)
 		{
 			const TypeInfo* objectType = objectItem->getObjectType();
@@ -214,7 +214,7 @@ void GrainProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* eve
 			}
 			else
 			{
-				if (ui::custom::ArrayPropertyItem* parentArrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(objectItem->getParentItem()))
+				if (ui::ArrayPropertyItem* parentArrayItem = dynamic_type_cast< ui::ArrayPropertyItem* >(objectItem->getParentItem()))
 					m_propertyList->removePropertyItem(parentArrayItem, objectItem);
 				else
 					objectItem->setObject(0);
@@ -226,7 +226,7 @@ void GrainProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* eve
 	}
 	else if (cmd == L"Property.Edit")
 	{
-		ui::custom::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::custom::BrowsePropertyItem* >(event->getItem());
+		ui::BrowsePropertyItem* browseItem = dynamic_type_cast< ui::BrowsePropertyItem* >(event->getItem());
 		if (browseItem)
 		{
 			Guid instanceGuid = browseItem->getValue();
@@ -241,7 +241,7 @@ void GrainProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* eve
 		}
 
 /*
-		ui::custom::TextPropertyItem* textItem = dynamic_type_cast< ui::custom::TextPropertyItem* >(event->getItem());
+		ui::TextPropertyItem* textItem = dynamic_type_cast< ui::TextPropertyItem* >(event->getItem());
 		if (textItem)
 		{
 			TextEditorDialog textEditorDialog;
@@ -254,11 +254,11 @@ void GrainProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* eve
 			textEditorDialog.destroy();
 		}
 
-		ui::custom::ColorPropertyItem* colorItem = dynamic_type_cast< ui::custom::ColorPropertyItem* >(event->getItem());
+		ui::ColorPropertyItem* colorItem = dynamic_type_cast< ui::ColorPropertyItem* >(event->getItem());
 		if (colorItem)
 		{
-			ui::custom::ColorDialog colorDialog;
-			colorDialog.create(m_propertyList, i18n::Text(L"COLOR_DIALOG_TEXT"), ui::custom::ColorDialog::WsDefaultFixed | ui::custom::ColorDialog::WsAlpha, colorItem->getValue());
+			ui::ColorDialog colorDialog;
+			colorDialog.create(m_propertyList, i18n::Text(L"COLOR_DIALOG_TEXT"), ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha, colorItem->getValue());
 			if (colorDialog.showModal() == ui::DrOk)
 			{
 				colorItem->setValue(colorDialog.getColor());
@@ -271,7 +271,7 @@ void GrainProperties::eventPropertyCommand(ui::custom::PropertyCommandEvent* eve
 	m_propertyList->update();
 }
 
-void GrainProperties::eventPropertyChange(ui::custom::PropertyContentChangeEvent* event)
+void GrainProperties::eventPropertyChange(ui::PropertyContentChangeEvent* event)
 {
 	m_propertyList->apply();
 

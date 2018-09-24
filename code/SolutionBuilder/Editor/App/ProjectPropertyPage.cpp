@@ -9,11 +9,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Ui/Static.h>
 #include <Ui/Button.h>
 #include <Ui/MessageBox.h>
-#include <Ui/Custom/FileDialog.h>
-#include <Ui/Custom/InputDialog.h>
-#include <Ui/Custom/GridView/GridColumn.h>
-#include <Ui/Custom/GridView/GridItem.h>
-#include <Ui/Custom/GridView/GridRow.h>
+#include <Ui/FileDialog.h>
+#include <Ui/InputDialog.h>
+#include <Ui/GridView/GridColumn.h>
+#include <Ui/GridView/GridItem.h>
+#include <Ui/GridView/GridRow.h>
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ProjectDependency.h"
@@ -77,13 +77,13 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 	Ref< ui::Static > staticDependencies = new ui::Static();
 	staticDependencies->create(container, L"Dependencies");
 
-	m_listDependencies = new ui::custom::GridView();
-	m_listDependencies->create(container, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader | ui::custom::GridView::WsMultiSelect);
-	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Dependency", ui::dpi96(160)));
-	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Location", ui::dpi96(200)));
-	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Inherit include paths", ui::dpi96(130)));
-	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Link", ui::dpi96(50)));
-	m_listDependencies->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &ProjectPropertyPage::eventDependencyDoubleClick);
+	m_listDependencies = new ui::GridView();
+	m_listDependencies->create(container, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsMultiSelect);
+	m_listDependencies->addColumn(new ui::GridColumn(L"Dependency", ui::dpi96(160)));
+	m_listDependencies->addColumn(new ui::GridColumn(L"Location", ui::dpi96(200)));
+	m_listDependencies->addColumn(new ui::GridColumn(L"Inherit include paths", ui::dpi96(130)));
+	m_listDependencies->addColumn(new ui::GridColumn(L"Link", ui::dpi96(50)));
+	m_listDependencies->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ProjectPropertyPage::eventDependencyDoubleClick);
 
 	Ref< ui::Static > staticAvailable = new ui::Static();
 	staticAvailable->create(container, L"Available");
@@ -91,7 +91,7 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 	Ref< ui::Container > containerAvailable = new ui::Container();
 	containerAvailable->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0, f));
 
-	m_dropAvailable = new ui::custom::DropDown();
+	m_dropAvailable = new ui::DropDown();
 	m_dropAvailable->create(containerAvailable);
 
 	Ref< ui::Button > buttonAdd = new ui::Button();
@@ -136,11 +136,11 @@ void ProjectPropertyPage::updateDependencyList()
 		if (is_a< ExternalDependency >(*i))
 			continue;
 
-		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem((*i)->getName()));
-		row->add(new ui::custom::GridItem((*i)->getLocation()));
-		row->add(new ui::custom::GridItem((*i)->getInheritIncludePaths() ? L"Yes" : L"No"));
-		row->add(new ui::custom::GridItem(c_link[(*i)->getLink()]));
+		Ref< ui::GridRow > row = new ui::GridRow();
+		row->add(new ui::GridItem((*i)->getName()));
+		row->add(new ui::GridItem((*i)->getLocation()));
+		row->add(new ui::GridItem((*i)->getInheritIncludePaths() ? L"Yes" : L"No"));
+		row->add(new ui::GridItem(c_link[(*i)->getLink()]));
 		row->setData(L"DEPENDENCY", *i);
 		m_listDependencies->addRow(row);
 	}
@@ -151,11 +151,11 @@ void ProjectPropertyPage::updateDependencyList()
 		if (is_a< ProjectDependency >(*i))
 			continue;
 
-		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem((*i)->getName()));
-		row->add(new ui::custom::GridItem((*i)->getLocation()));
-		row->add(new ui::custom::GridItem((*i)->getInheritIncludePaths() ? L"Yes" : L"No"));
-		row->add(new ui::custom::GridItem(c_link[(*i)->getLink()]));
+		Ref< ui::GridRow > row = new ui::GridRow();
+		row->add(new ui::GridItem((*i)->getName()));
+		row->add(new ui::GridItem((*i)->getLocation()));
+		row->add(new ui::GridItem((*i)->getInheritIncludePaths() ? L"Yes" : L"No"));
+		row->add(new ui::GridItem(c_link[(*i)->getLink()]));
 		row->setData(L"DEPENDENCY", *i);
 		m_listDependencies->addRow(row);
 	}
@@ -197,7 +197,7 @@ void ProjectPropertyPage::eventFocusSource(ui::FocusEvent* event)
 		m_project->setSourcePath(m_editSourcePath->getText());
 }
 
-void ProjectPropertyPage::eventDependencyDoubleClick(ui::custom::GridRowDoubleClickEvent* event)
+void ProjectPropertyPage::eventDependencyDoubleClick(ui::GridRowDoubleClickEvent* event)
 {
 	Ref< Dependency > dependency = event->getRow()->getData< Dependency >(L"DEPENDENCY");
 	if (!dependency)
@@ -213,12 +213,12 @@ void ProjectPropertyPage::eventDependencyDoubleClick(ui::custom::GridRowDoubleCl
 		if (!selectedDependency)
 			return;
 
-		ui::custom::InputDialog::Field inputFields[] =
+		ui::InputDialog::Field inputFields[] =
 		{
-			ui::custom::InputDialog::Field(L"Location", selectedDependency->getSolutionFileName())
+			ui::InputDialog::Field(L"Location", selectedDependency->getSolutionFileName())
 		};
 
-		ui::custom::InputDialog inputDialog;
+		ui::InputDialog inputDialog;
 		inputDialog.create(
 			this,
 			L"External dependency",
@@ -269,7 +269,7 @@ void ProjectPropertyPage::eventClickAdd(ui::ButtonClickEvent* event)
 
 void ProjectPropertyPage::eventClickRemove(ui::ButtonClickEvent* event)
 {
-	Ref< ui::custom::GridRow > selectedRow = m_listDependencies->getSelectedRow();
+	Ref< ui::GridRow > selectedRow = m_listDependencies->getSelectedRow();
 	if (!selectedRow)
 		return;
 
@@ -288,7 +288,7 @@ void ProjectPropertyPage::eventClickRemove(ui::ButtonClickEvent* event)
 
 void ProjectPropertyPage::eventClickAddExternal(ui::ButtonClickEvent* event)
 {
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	fileDialog.create(this, L"Select solution", L"SolutionBuilder solutions;*.xms");
 
 	Path filePath;

@@ -35,16 +35,11 @@ class DiscoveryManager;
 	{
 
 class TimerEvent;
-
-		namespace custom
-		{
-
 class ToolBar;
 class ToolBarButtonClickEvent;
 class ToolBarDropDown;
 class ToolBarDropMenu;
 
-		}
 	}
 
 	namespace amalgam
@@ -113,10 +108,10 @@ private:
 
 	// \name UI
 	// \{
-	Ref< ui::custom::ToolBar > m_toolBar;
-	Ref< ui::custom::ToolBarDropDown > m_toolTargets;
-	Ref< ui::custom::ToolBarDropMenu > m_toolTweaks;
-	Ref< ui::custom::ToolBarDropDown > m_toolLanguage;
+	Ref< ui::ToolBar > m_toolBar;
+	Ref< ui::ToolBarDropDown > m_toolTargets;
+	Ref< ui::ToolBarDropMenu > m_toolTweaks;
+	Ref< ui::ToolBarDropDown > m_toolLanguage;
 	Ref< TargetListControl > m_targetList;
 	// \}
 
@@ -149,7 +144,7 @@ private:
 
 	void updateTargetManagers();
 
-	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventTargetListBrowse(TargetBrowseEvent* event);
 

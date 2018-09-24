@@ -8,9 +8,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Editor/Shader/SwitchNodeDialog.h"
 #include "Render/Editor/Shader/Facades/SwitchNodeFacade.h"
 #include "Ui/Application.h"
-#include "Ui/Custom/Graph/GraphControl.h"
-#include "Ui/Custom/Graph/Node.h"
-#include "Ui/Custom/Graph/DefaultNodeShape.h"
+#include "Ui/Graph/GraphControl.h"
+#include "Ui/Graph/Node.h"
+#include "Ui/Graph/DefaultNodeShape.h"
 #include "I18N/Text.h"
 
 namespace traktor
@@ -20,9 +20,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SwitchNodeFacade", SwitchNodeFacade, INodeFacade)
 
-SwitchNodeFacade::SwitchNodeFacade(ui::custom::GraphControl* graphControl)
+SwitchNodeFacade::SwitchNodeFacade(ui::GraphControl* graphControl)
 {
-	m_nodeShape = new ui::custom::DefaultNodeShape(graphControl);
+	m_nodeShape = new ui::DefaultNodeShape(graphControl);
 }
 
 Ref< Node > SwitchNodeFacade::createShaderNode(
@@ -33,14 +33,14 @@ Ref< Node > SwitchNodeFacade::createShaderNode(
 	return new Switch();
 }
 
-Ref< ui::custom::Node > SwitchNodeFacade::createEditorNode(
+Ref< ui::Node > SwitchNodeFacade::createEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
+	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
-	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
+	Ref< ui::Node > editorNode = new ui::Node(
 		i18n::Text(L"SHADERGRAPH_NODE_SWITCH"),
 		shaderNode->getInformation(),
 		ui::Point(
@@ -74,8 +74,8 @@ Ref< ui::custom::Node > SwitchNodeFacade::createEditorNode(
 
 void SwitchNodeFacade::editShaderNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -91,8 +91,8 @@ void SwitchNodeFacade::editShaderNode(
 
 void SwitchNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -102,7 +102,7 @@ void SwitchNodeFacade::refreshEditorNode(
 }
 
 void SwitchNodeFacade::setValidationIndicator(
-	ui::custom::Node* editorNode,
+	ui::Node* editorNode,
 	bool validationSucceeded
 )
 {

@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define ConfigurationsDialog_H
 
 #include <Ui/ConfigDialog.h>
-#include <Ui/Custom/ListBox/ListBox.h>
+#include <Ui/ListBox/ListBox.h>
 
 namespace traktor
 {
@@ -41,7 +41,7 @@ public:
 	const std::vector< Action >& getActions() const;
 
 private:
-	Ref< ui::custom::ListBox > m_listConfigurations;
+	Ref< ui::ListBox > m_listConfigurations;
 	std::vector< Action > m_actions;
 
 	void eventButtonNew(ui::ButtonClickEvent* event);

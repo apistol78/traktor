@@ -32,8 +32,8 @@ bool ImportProjectDialog::create(ui::Widget* parent, const std::wstring& title, 
 
 	setIcon(new ui::StyleBitmap(L"SolutionBuilder.Icon"));
 
-	m_listProjects = new ui::custom::ListBox();
-	m_listProjects->create(this, ui::custom::ListBox::WsExtended | ui::custom::ListBox::WsSort);
+	m_listProjects = new ui::ListBox();
+	m_listProjects->create(this, ui::ListBox::WsExtended | ui::ListBox::WsSort);
 
 	m_checkIncludeDependencies = new ui::CheckBox();
 	m_checkIncludeDependencies->create(this, L"Include dependencies", false);

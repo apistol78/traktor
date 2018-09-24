@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Amalgam/Editor/TargetInstance.h"
 #include "Core/RefArray.h"
-#include "Ui/Custom/Auto/ChildWidgetCell.h"
+#include "Ui/Auto/ChildWidgetCell.h"
 
 namespace traktor
 {
@@ -31,7 +31,7 @@ class ProgressCell;
 /*! \brief
  * \ingroup Amalgam
  */
-class TargetInstanceListItem : public ui::custom::AutoWidgetCell
+class TargetInstanceListItem : public ui::AutoWidgetCell
 {
 	T_RTTI_CLASS;
 
@@ -40,7 +40,7 @@ public:
 
 	ui::Size getSize() const;
 
-	virtual void placeCells(ui::custom::AutoWidget* widget, const ui::Rect& rect) T_OVERRIDE T_FINAL;
+	virtual void placeCells(ui::AutoWidget* widget, const ui::Rect& rect) T_OVERRIDE T_FINAL;
 
 	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect) T_OVERRIDE T_FINAL;
 
@@ -53,7 +53,7 @@ private:
 	Ref< ButtonCell > m_browseCell;
 	RefArray< ButtonCell > m_stopCells;
 	RefArray< ButtonCell > m_captureCells;
-	RefArray< ui::custom::ChildWidgetCell > m_editCells;
+	RefArray< ui::ChildWidgetCell > m_editCells;
 	Ref< TargetInstance > m_instance;
 	TargetState m_lastInstanceState;
 

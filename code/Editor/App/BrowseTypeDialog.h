@@ -16,14 +16,11 @@ class PropertyGroup;
 
 	namespace ui
 	{
-		namespace custom
-		{
 
 class PreviewList;
 class TreeView;
 class TreeViewItem;
 
-		}
 	}
 
 	namespace editor
@@ -44,8 +41,8 @@ public:
 
 private:
 	Ref< PropertyGroup > m_settings;
-	Ref< ui::custom::TreeView > m_categoryTree;
-	Ref< ui::custom::PreviewList > m_typeList;
+	Ref< ui::TreeView > m_categoryTree;
+	Ref< ui::PreviewList > m_typeList;
 	const TypeInfo* m_type;
 
 	void updatePreviewList();

@@ -23,14 +23,9 @@ namespace traktor
 	namespace ui
 	{
 
+class ToolBar;
 class Widget;
 
-		namespace custom
-		{
-
-class ToolBar;
-
-		}
 	}
 
 	namespace scene
@@ -45,7 +40,7 @@ class T_DLLCLASS ISceneEditorPlugin : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(ui::Widget* parent, ui::custom::ToolBar* toolBar) = 0;
+	virtual bool create(ui::Widget* parent, ui::ToolBar* toolBar) = 0;
 
 	virtual bool handleCommand(const ui::Command& command) = 0;
 };

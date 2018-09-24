@@ -19,7 +19,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/DropDown.h"
+#include "Ui/DropDown.h"
 #include "Ui/Itf/IWidgetFactory.h"
 
 namespace traktor
@@ -64,7 +64,7 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	Ref< ui::Static > staticStyleSheet = new ui::Static();
 	staticStyleSheet->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_STYLESHEET"));
 
-	m_dropStyleSheet = new ui::custom::DropDown();
+	m_dropStyleSheet = new ui::DropDown();
 	m_dropStyleSheet->create(containerInner);
 
 	int32_t current = 0;
@@ -83,7 +83,7 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	if (!containerFont->create(containerInner, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, ui::dpi96(4))))
 		return false;
 
-	m_dropFonts = new ui::custom::DropDown();
+	m_dropFonts = new ui::DropDown();
 	m_dropFonts->create(containerFont);
 
 	std::list< std::wstring > fonts;

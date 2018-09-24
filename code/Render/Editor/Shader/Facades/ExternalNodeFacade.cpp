@@ -14,10 +14,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
 #include "Ui/Application.h"
-#include "Ui/Custom/Graph/GraphControl.h"
-#include "Ui/Custom/Graph/Node.h"
-#include "Ui/Custom/Graph/ExternalNodeShape.h"
-#include "Ui/Custom/Graph/PaintSettings.h"
+#include "Ui/Graph/GraphControl.h"
+#include "Ui/Graph/Node.h"
+#include "Ui/Graph/ExternalNodeShape.h"
+#include "Ui/Graph/PaintSettings.h"
 
 namespace traktor
 {
@@ -26,9 +26,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ExternalNodeFacade", ExternalNodeFacade, INodeFacade)
 
-ExternalNodeFacade::ExternalNodeFacade(ui::custom::GraphControl* graphControl)
+ExternalNodeFacade::ExternalNodeFacade(ui::GraphControl* graphControl)
 {
-	m_nodeShape = new ui::custom::ExternalNodeShape(graphControl);
+	m_nodeShape = new ui::ExternalNodeShape(graphControl);
 }
 
 Ref< Node > ExternalNodeFacade::createShaderNode(
@@ -51,9 +51,9 @@ Ref< Node > ExternalNodeFacade::createShaderNode(
 	);
 }
 
-Ref< ui::custom::Node > ExternalNodeFacade::createEditorNode(
+Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
+	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -68,7 +68,7 @@ Ref< ui::custom::Node > ExternalNodeFacade::createEditorNode(
 	else
 		title = fragmentGuid.format();
 
-	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
+	Ref< ui::Node > editorNode = new ui::Node(
 		title,
 		L"",
 		ui::Point(
@@ -102,8 +102,8 @@ Ref< ui::custom::Node > ExternalNodeFacade::createEditorNode(
 
 void ExternalNodeFacade::editShaderNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -117,8 +117,8 @@ void ExternalNodeFacade::editShaderNode(
 
 void ExternalNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -130,7 +130,7 @@ void ExternalNodeFacade::refreshEditorNode(
 }
 
 void ExternalNodeFacade::setValidationIndicator(
-	ui::custom::Node* editorNode,
+	ui::Node* editorNode,
 	bool validationSucceeded
 )
 {

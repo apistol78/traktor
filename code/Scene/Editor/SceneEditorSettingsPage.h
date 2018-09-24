@@ -24,15 +24,10 @@ namespace traktor
 
 class CheckBox;
 class ContentChangeEvent;
+class DropDown;
 class Slider;
 class Static;
 
-		namespace custom
-		{
-		
-class DropDown;
-
-		}
 	}
 
 	namespace scene
@@ -54,7 +49,7 @@ public:
 
 private:
 	Ref< ui::Container > m_container;
-	Ref< ui::custom::DropDown > m_dropWorldRenderer;
+	Ref< ui::DropDown > m_dropWorldRenderer;
 	Ref< ui::Slider > m_sliderFov;
 	Ref< ui::Slider > m_sliderMouseWheelRate;
 	Ref< ui::Static > m_staticFovValue;

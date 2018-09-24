@@ -17,7 +17,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/DropDown.h"
+#include "Ui/DropDown.h"
 #include "World/IWorldRenderer.h"
 
 namespace traktor
@@ -46,7 +46,7 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 	Ref< ui::Static > staticWorldRenderer = new ui::Static();
 	staticWorldRenderer->create(containerSliders, i18n::Text(L"SCENE_EDITOR_SETTINGS_WORLD_RENDERER"));
 
-	m_dropWorldRenderer = new ui::custom::DropDown();
+	m_dropWorldRenderer = new ui::DropDown();
 	m_dropWorldRenderer->create(containerSliders);
 
 	Ref< ui::Static > staticDummy = new ui::Static();

@@ -15,11 +15,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Command.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Container.h"
-#include "Ui/Custom/GridView/GridView.h"
-#include "Ui/Custom/GridView/GridColumn.h"
-#include "Ui/Custom/GridView/GridRow.h"
-#include "Ui/Custom/GridView/GridItem.h"
-#include "Ui/Custom/ShortcutEdit.h"
+#include "Ui/GridView/GridView.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridItem.h"
+#include "Ui/ShortcutEdit.h"
 
 namespace traktor
 {
@@ -34,17 +34,17 @@ bool ShortcutsSettingsPage::create(ui::Container* parent, const PropertyGroup* o
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, ui::dpi96(4))))
 		return false;
 
-	m_gridShortcuts = new ui::custom::GridView();
-	m_gridShortcuts->create(container, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_gridShortcuts->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SETTINGS_COMMAND"), ui::dpi96(200)));
-	m_gridShortcuts->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT"), ui::dpi96(200)));
+	m_gridShortcuts = new ui::GridView();
+	m_gridShortcuts->create(container, ui::GridView::WsColumnHeader | ui::WsDoubleBuffer);
+	m_gridShortcuts->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SETTINGS_COMMAND"), ui::dpi96(200)));
+	m_gridShortcuts->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT"), ui::dpi96(200)));
 	m_gridShortcuts->addEventHandler< ui::SelectionChangeEvent >(this, &ShortcutsSettingsPage::eventShortcutSelect);
 
 	Ref< ui::Container > containerEdit = new ui::Container();
 	if (!containerEdit->create(container, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, ui::dpi96(4))))
 		return false;
 
-	m_editShortcut = new ui::custom::ShortcutEdit();
+	m_editShortcut = new ui::ShortcutEdit();
 	m_editShortcut->create(containerEdit, 0, ui::VkNull);
 	m_editShortcut->addEventHandler< ui::ContentChangeEvent >(this, &ShortcutsSettingsPage::eventShortcutModified);
 
@@ -60,11 +60,11 @@ bool ShortcutsSettingsPage::create(ui::Container* parent, const PropertyGroup* o
 			Ref< const PropertyString > constPropertyKey = dynamic_type_cast< const PropertyString* >(shortcutGroup->getProperty(i->getName()));
 			Ref< PropertyString > propertyKey = new PropertyString(PropertyString::get(constPropertyKey));
 
-			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-			row->add(new ui::custom::GridItem(
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(new ui::GridItem(
 				i->getName()
 			));
-			row->add(new ui::custom::GridItem(
+			row->add(new ui::GridItem(
 				i18n::Text(L"EDITOR_SETTINGS_SHORTCUT_NOT_ASSIGNED")
 			));
 			row->setData(L"PROPERTYKEY", propertyKey);
@@ -86,10 +86,10 @@ void ShortcutsSettingsPage::destroy()
 
 bool ShortcutsSettingsPage::apply(PropertyGroup* settings)
 {
-	const RefArray< ui::custom::GridRow >& rows = m_gridShortcuts->getRows();
-	for (RefArray< ui::custom::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
+	const RefArray< ui::GridRow >& rows = m_gridShortcuts->getRows();
+	for (RefArray< ui::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
 	{
-		const RefArray< ui::custom::GridItem >& items = (*i)->get();
+		const RefArray< ui::GridItem >& items = (*i)->get();
 		T_ASSERT (items.size() == 2);
 
 		Ref< PropertyString > propertyKey = (*i)->getData< PropertyString >(L"PROPERTYKEY");
@@ -107,10 +107,10 @@ bool ShortcutsSettingsPage::apply(PropertyGroup* settings)
 
 void ShortcutsSettingsPage::updateShortcutGrid()
 {
-	const RefArray< ui::custom::GridRow >& rows = m_gridShortcuts->getRows();
-	for (RefArray< ui::custom::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
+	const RefArray< ui::GridRow >& rows = m_gridShortcuts->getRows();
+	for (RefArray< ui::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
 	{
-		const RefArray< ui::custom::GridItem >& items = (*i)->get();
+		const RefArray< ui::GridItem >& items = (*i)->get();
 		T_ASSERT (items.size() == 2);
 
 		Ref< PropertyString > propertyKey = (*i)->getData< PropertyString >(L"PROPERTYKEY");
@@ -149,8 +149,8 @@ void ShortcutsSettingsPage::updateShortcutGrid()
 
 void ShortcutsSettingsPage::eventShortcutSelect(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::custom::GridRow > selectedRows;
-	m_gridShortcuts->getRows(selectedRows, ui::custom::GridView::GfSelectedOnly);
+	RefArray< ui::GridRow > selectedRows;
+	m_gridShortcuts->getRows(selectedRows, ui::GridView::GfSelectedOnly);
 
 	if (selectedRows.size() == 1)
 	{
@@ -178,7 +178,7 @@ void ShortcutsSettingsPage::eventShortcutSelect(ui::SelectionChangeEvent* event)
 
 void ShortcutsSettingsPage::eventShortcutModified(ui::ContentChangeEvent* event)
 {
-	Ref< ui::custom::GridRow > gridRow = m_editShortcut->getData< ui::custom::GridRow >(L"GRIDROW");
+	Ref< ui::GridRow > gridRow = m_editShortcut->getData< ui::GridRow >(L"GRIDROW");
 	if (gridRow)
 	{
 		gridRow->setData(L"PROPERTYKEY", new PropertyString(describeShortcut(std::make_pair(
@@ -194,10 +194,10 @@ void ShortcutsSettingsPage::eventResetAll(ui::ButtonClickEvent* event)
 	Ref< const PropertyGroup > shortcutGroup = checked_type_cast< const PropertyGroup* >(m_originalSettings->getProperty(L"Editor.Shortcuts"));
 	if (shortcutGroup)
 	{
-		const RefArray< ui::custom::GridRow >& rows = m_gridShortcuts->getRows();
-		for (RefArray< ui::custom::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
+		const RefArray< ui::GridRow >& rows = m_gridShortcuts->getRows();
+		for (RefArray< ui::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
 		{
-			const RefArray< ui::custom::GridItem >& items = (*i)->get();
+			const RefArray< ui::GridItem >& items = (*i)->get();
 			T_ASSERT (items.size() == 2);
 
 			std::wstring value = m_originalSettings->getProperty< std::wstring >(L"Editor.Shortcuts/" + items[0]->getText());

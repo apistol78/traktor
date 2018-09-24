@@ -14,9 +14,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Editor/Shader/Facades/ScriptNodeDialog.h"
 #include "Render/Editor/Shader/Facades/ScriptNodeFacade.h"
 #include "Ui/Application.h"
-#include "Ui/Custom/Graph/DefaultNodeShape.h"
-#include "Ui/Custom/Graph/GraphControl.h"
-#include "Ui/Custom/Graph/Node.h"
+#include "Ui/Graph/DefaultNodeShape.h"
+#include "Ui/Graph/GraphControl.h"
+#include "Ui/Graph/Node.h"
 
 namespace traktor
 {
@@ -33,7 +33,7 @@ public:
 	ScriptNodeInstanceData(
 		editor::IEditor* editor,
 		ShaderGraphEditorPage* page,
-		ui::custom::GraphControl* graphControl,
+		ui::GraphControl* graphControl,
 		ShaderGraph* shaderGraph,
 		Script* scriptNode
 	)
@@ -64,7 +64,7 @@ public:
 private:
 	editor::IEditor* m_editor;
 	ShaderGraphEditorPage* m_page;
-	ui::custom::GraphControl* m_graphControl;
+	ui::GraphControl* m_graphControl;
 	ShaderGraph* m_shaderGraph;
 	Script* m_scriptNode;
 	Ref< ScriptNodeDialog > m_dialog;
@@ -194,10 +194,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ScriptNodeInstanceData", ScriptNodeInsta
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ScriptNodeFacade", ScriptNodeFacade, INodeFacade)
 
-ScriptNodeFacade::ScriptNodeFacade(ShaderGraphEditorPage* page, ui::custom::GraphControl* graphControl)
+ScriptNodeFacade::ScriptNodeFacade(ShaderGraphEditorPage* page, ui::GraphControl* graphControl)
 :	m_page(page)
 {
-	m_nodeShape = new ui::custom::DefaultNodeShape(graphControl);
+	m_nodeShape = new ui::DefaultNodeShape(graphControl);
 }
 
 Ref< Node > ScriptNodeFacade::createShaderNode(
@@ -208,16 +208,16 @@ Ref< Node > ScriptNodeFacade::createShaderNode(
 	return new Script();
 }
 
-Ref< ui::custom::Node > ScriptNodeFacade::createEditorNode(
+Ref< ui::Node > ScriptNodeFacade::createEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
+	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
 	Script* scriptNode = checked_type_cast< Script*, false >(shaderNode);
 
-	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
+	Ref< ui::Node > editorNode = new ui::Node(
 		scriptNode->getName(),
 		L"",
 		ui::Point(
@@ -252,8 +252,8 @@ Ref< ui::custom::Node > ScriptNodeFacade::createEditorNode(
 
 void ScriptNodeFacade::editShaderNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -266,8 +266,8 @@ void ScriptNodeFacade::editShaderNode(
 
 void ScriptNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -278,7 +278,7 @@ void ScriptNodeFacade::refreshEditorNode(
 }
 
 void ScriptNodeFacade::setValidationIndicator(
-	ui::custom::Node* editorNode,
+	ui::Node* editorNode,
 	bool validationSucceeded
 )
 {

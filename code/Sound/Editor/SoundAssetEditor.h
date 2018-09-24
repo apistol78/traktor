@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_sound_SoundAssetEditor_H
 
 #include "Editor/IObjectEditor.h"
-#include "Ui/Custom/PropertyList/AutoPropertyList.h"
+#include "Ui/PropertyList/AutoPropertyList.h"
 
 namespace traktor
 {
@@ -28,14 +28,11 @@ class IEditor;
 
 	namespace ui
 	{
-		namespace custom
-		{
 
 class PropertyCommandEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace sound
@@ -47,7 +44,7 @@ class SoundSystem;
 
 class SoundAssetEditor
 :	public editor::IObjectEditor
-,	public ui::custom::PropertyList::IPropertyGuidResolver
+,	public ui::PropertyList::IPropertyGuidResolver
 {
 	T_RTTI_CLASS;
 
@@ -70,14 +67,14 @@ private:
 	editor::IEditor* m_editor;
 	Ref< db::Instance > m_instance;
 	Ref< SoundAsset > m_asset;
-	Ref< ui::custom::ToolBar > m_toolBar;
-	Ref< ui::custom::AutoPropertyList > m_propertyList;
+	Ref< ui::ToolBar > m_toolBar;
+	Ref< ui::AutoPropertyList > m_propertyList;
 	Ref< SoundSystem > m_soundSystem;
 	Ref< SoundChannel > m_soundChannel;
 
-	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 
-	void eventPropertyCommand(ui::custom::PropertyCommandEvent* event);
+	void eventPropertyCommand(ui::PropertyCommandEvent* event);
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const T_OVERRIDE T_FINAL;
 };

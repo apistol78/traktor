@@ -22,13 +22,8 @@ class Instance;
 	{
 
 class Edit;
-
-		namespace custom
-		{
-
 class GridView;
 
-		}
 	}
 
 	namespace editor
@@ -50,7 +45,7 @@ public:
 private:
 	IEditor* m_editor;
 	Ref< ui::Edit > m_editFilter;
-	Ref< ui::custom::GridView > m_gridSuggestions;
+	Ref< ui::GridView > m_gridSuggestions;
 	RefArray< db::Instance > m_instances;
 
 	void updateSuggestions(const std::wstring& filter);

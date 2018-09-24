@@ -21,14 +21,11 @@ class IEditor;
 
 	namespace ui
 	{
-		namespace custom
-		{
 
 class AutoPropertyList;
 class ListBox;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace flash
@@ -51,14 +48,14 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< ui::custom::ListBox > m_movieList;
-	Ref< ui::custom::AutoPropertyList > m_moviePropertyList;
+	Ref< ui::ListBox > m_movieList;
+	Ref< ui::AutoPropertyList > m_moviePropertyList;
 
 	void addTexture();
 
 	void removeTexture();
 
-	void eventTextureListToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventTextureListToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventTextureListSelect(ui::SelectionChangeEvent* event);
 };

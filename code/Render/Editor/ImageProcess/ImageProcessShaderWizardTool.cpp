@@ -11,7 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "I18N/Text.h"
 #include "Render/Editor/ImageProcess/ImageProcessShaderWizardTool.h"
 #include "Render/Shader/ShaderGraph.h"
-#include "Ui/Custom/InputDialog.h"
+#include "Ui/InputDialog.h"
 
 namespace traktor
 {
@@ -32,10 +32,10 @@ uint32_t ImageProcessShaderWizardTool::getFlags() const
 
 bool ImageProcessShaderWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
-	ui::custom::InputDialog inputDialog;
-	ui::custom::InputDialog::Field fields[] =
+	ui::InputDialog inputDialog;
+	ui::InputDialog::Field fields[] =
 	{
-		ui::custom::InputDialog::Field(
+		ui::InputDialog::Field(
 			i18n::Text(L"RENDER_IMAGEPROCESS_SHADER_WIZARDTOOL_NAME")
 		)
 	};

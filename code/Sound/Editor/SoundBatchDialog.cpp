@@ -15,13 +15,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/FloodLayout.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/FileDialog.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/ListBox/ListBox.h"
-#include "Ui/Custom/PropertyList/AutoPropertyList.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/FileDialog.h"
+#include "Ui/Splitter.h"
+#include "Ui/ListBox/ListBox.h"
+#include "Ui/PropertyList/AutoPropertyList.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor
 {
@@ -47,27 +47,27 @@ bool SoundBatchDialog::create(ui::Widget* parent)
 	))
 		return false;
 
-	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitter = new ui::Splitter();
 	splitter->create(this, true, ui::dpi96(200));
 
 	Ref< ui::Container > soundListContainer = new ui::Container();
 	soundListContainer->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
-	Ref< ui::custom::ToolBar > soundListTools = new ui::custom::ToolBar();
+	Ref< ui::ToolBar > soundListTools = new ui::ToolBar();
 	if (!soundListTools->create(soundListContainer))
 		return false;
 
 	soundListTools->addImage(new ui::StyleBitmap(L"Sound.PlusMinus"), 2);
-	soundListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SOUND_BATCH_ADD"), 0, ui::Command(L"SoundBatch.Add")));
-	soundListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SOUND_BATCH_REMOVE"), 1, ui::Command(L"SoundBatch.Remove")));
-	soundListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SoundBatchDialog::eventSoundListToolClick);
+	soundListTools->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_BATCH_ADD"), 0, ui::Command(L"SoundBatch.Add")));
+	soundListTools->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_BATCH_REMOVE"), 1, ui::Command(L"SoundBatch.Remove")));
+	soundListTools->addEventHandler< ui::ToolBarButtonClickEvent >(this, &SoundBatchDialog::eventSoundListToolClick);
 
-	m_soundList = new ui::custom::ListBox();
-	m_soundList->create(soundListContainer, ui::custom::ListBox::WsExtended);
+	m_soundList = new ui::ListBox();
+	m_soundList->create(soundListContainer, ui::ListBox::WsExtended);
 	m_soundList->addEventHandler< ui::SelectionChangeEvent >(this, &SoundBatchDialog::eventSoundListSelect);
 
-	m_soundPropertyList = new ui::custom::AutoPropertyList();
-	m_soundPropertyList->create(splitter, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader);
+	m_soundPropertyList = new ui::AutoPropertyList();
+	m_soundPropertyList->create(splitter, ui::WsDoubleBuffer | ui::AutoPropertyList::WsColumnHeader);
 	m_soundPropertyList->setSeparator(ui::dpi96(200));
 	m_soundPropertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_soundPropertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
@@ -95,7 +95,7 @@ bool SoundBatchDialog::showModal(RefArray< SoundAsset >& outAssets)
 
 void SoundBatchDialog::addSound()
 {
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, i18n::Text(L"SOUND_BATCH_FILE_TITLE"), L"All files;*.*"))
 		return;
 
@@ -138,7 +138,7 @@ void SoundBatchDialog::removeSound()
 		m_soundList->remove(index);
 }
 
-void SoundBatchDialog::eventSoundListToolClick(ui::custom::ToolBarButtonClickEvent* event)
+void SoundBatchDialog::eventSoundListToolClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& cmd = event->getCommand();
 	if (cmd == L"SoundBatch.Add")

@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/StyleBitmap.h"
-#include "Ui/Custom/RichEdit/RichEdit.h"
+#include "Ui/RichEdit/RichEdit.h"
 
 namespace traktor
 {
@@ -25,7 +25,7 @@ bool TextEditorDialog::create(ui::Widget* parent, const std::wstring& initialTex
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
-	m_edit = new ui::custom::RichEdit();
+	m_edit = new ui::RichEdit();
 	if (!m_edit->create(this, initialText, ui::WsClientBorder))
 		return false;
 

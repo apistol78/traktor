@@ -31,15 +31,15 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Image.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/DropDown.h"
-#include "Ui/Custom/EditList.h"
-#include "Ui/Custom/EditListEditEvent.h"
-#include "Ui/Custom/FileDialog.h"
-#include "Ui/Custom/InputDialog.h"
-#include "Ui/Custom/MiniButton.h"
-#include "Ui/Custom/Panel.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/ListBox/ListBox.h"
+#include "Ui/DropDown.h"
+#include "Ui/EditList.h"
+#include "Ui/EditListEditEvent.h"
+#include "Ui/FileDialog.h"
+#include "Ui/InputDialog.h"
+#include "Ui/MiniButton.h"
+#include "Ui/Panel.h"
+#include "Ui/Splitter.h"
+#include "Ui/ListBox/ListBox.h"
 
 // Resources
 #include "Resources/NoIcon.h"
@@ -66,15 +66,15 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_containerOuter = new ui::Container();
 	m_containerOuter->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", f, f));
 
-	Ref< ui::custom::Splitter > splitterInner = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitterInner = new ui::Splitter();
 	splitterInner->create(m_containerOuter, true, ui::dpi96(200), false, ui::dpi96(100));
 
 	Ref< ui::Container > containerTargetConfigurations = new ui::Container();
 	containerTargetConfigurations->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, f));
 
-	m_listBoxTargetConfigurations = new ui::custom::EditList();
-	m_listBoxTargetConfigurations->create(containerTargetConfigurations, ui::custom::ListBox::WsSingle);
-	m_listBoxTargetConfigurations->addEventHandler< ui::custom::EditListEditEvent >(this, &TargetEditor::eventListBoxTargetConfigurationsEdit);
+	m_listBoxTargetConfigurations = new ui::EditList();
+	m_listBoxTargetConfigurations->create(containerTargetConfigurations, ui::ListBox::WsSingle);
+	m_listBoxTargetConfigurations->addEventHandler< ui::EditListEditEvent >(this, &TargetEditor::eventListBoxTargetConfigurationsEdit);
 	m_listBoxTargetConfigurations->addEventHandler< ui::SelectionChangeEvent >(this, &TargetEditor::eventListBoxTargetConfigurationsSelect);
 
 	Ref< ui::Container > containerManageTargetConfigurations = new ui::Container();
@@ -95,7 +95,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	Ref< ui::Container > containerEditTargetConfiguration = new ui::Container();
 	containerEditTargetConfiguration->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, f));
 
-	Ref< ui::custom::Panel > panelGeneral = new ui::custom::Panel();
+	Ref< ui::Panel > panelGeneral = new ui::Panel();
 	panelGeneral->create(containerEditTargetConfiguration, L"General", new ui::TableLayout(L"100%,128", L"*", 2 * f, f));
 
 	Ref< ui::Container > containerLeft = new ui::Container();
@@ -104,7 +104,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	Ref< ui::Static > staticPlatform = new ui::Static();
 	staticPlatform->create(containerLeft, L"Platform");
 
-	m_dropDownPlatform = new ui::custom::DropDown();
+	m_dropDownPlatform = new ui::DropDown();
 	m_dropDownPlatform->create(containerLeft);
 	m_dropDownPlatform->addEventHandler< ui::SelectionChangeEvent >(this, &TargetEditor::eventDropDownPlatformSelect);
 
@@ -118,7 +118,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_editBuildRootInstance->create(container1, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
 	m_editBuildRootInstance->setText(L"");
 
-	m_buttonBuildRootInstance = new ui::custom::MiniButton();
+	m_buttonBuildRootInstance = new ui::MiniButton();
 	m_buttonBuildRootInstance->create(container1, L"...");
 	m_buttonBuildRootInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseRootButtonClick);
 
@@ -132,7 +132,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_editStartupInstance->create(container2, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
 	m_editStartupInstance->setText(L"");
 
-	m_buttonStartupInstance = new ui::custom::MiniButton();
+	m_buttonStartupInstance = new ui::MiniButton();
 	m_buttonStartupInstance->create(container2, L"...");
 	m_buttonStartupInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseStartupButtonClick);
 
@@ -146,7 +146,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_editDefaultInputInstance->create(container3, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
 	m_editDefaultInputInstance->setText(L"");
 
-	m_buttonDefaultInputInstance = new ui::custom::MiniButton();
+	m_buttonDefaultInputInstance = new ui::MiniButton();
 	m_buttonDefaultInputInstance->create(container3, L"...");
 	m_buttonDefaultInputInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseDefaultInputButtonClick);
 
@@ -160,7 +160,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_editOnlineConfigInstance->create(container4, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
 	m_editOnlineConfigInstance->setText(L"");
 
-	m_buttonOnlineConfigInstance = new ui::custom::MiniButton();
+	m_buttonOnlineConfigInstance = new ui::MiniButton();
 	m_buttonOnlineConfigInstance->create(container4, L"...");
 	m_buttonOnlineConfigInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseOnlineConfigButtonClick);
 
@@ -170,7 +170,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_imageIcon->create(panelGeneral, m_bitmapNoIcon, ui::Image::WsTransparent | ui::WsDoubleBuffer);
 	m_imageIcon->addEventHandler< ui::MouseButtonDownEvent >(this, &TargetEditor::eventBrowseIconClick);
 
-	Ref< ui::custom::Panel > panelFeatures = new ui::custom::Panel();
+	Ref< ui::Panel > panelFeatures = new ui::Panel();
 	panelFeatures->create(containerEditTargetConfiguration, L"Features", new ui::TableLayout(L"100%,*,100%", L"100%", 2 * f, f));
 
 	Ref< ui::Container > containerAvailFeatures = new ui::Container();
@@ -179,8 +179,8 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	Ref< ui::Static > staticAvailFeatures = new ui::Static();
 	staticAvailFeatures->create(containerAvailFeatures, L"Available");
 
-	m_listBoxAvailFeatures = new ui::custom::ListBox();
-	m_listBoxAvailFeatures->create(containerAvailFeatures, ui::custom::ListBox::WsMultiple | ui::WsDoubleBuffer);
+	m_listBoxAvailFeatures = new ui::ListBox();
+	m_listBoxAvailFeatures->create(containerAvailFeatures, ui::ListBox::WsMultiple | ui::WsDoubleBuffer);
 
 	Ref< ui::Container > containerManageFeatures = new ui::Container();
 	containerManageFeatures->create(panelFeatures, ui::WsNone, new ui::TableLayout(L"*", L"*,*", 0, 0));
@@ -199,8 +199,8 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	Ref< ui::Static > staticUsedFeatures = new ui::Static();
 	staticUsedFeatures->create(containerUsedFeatures, L"Using");
 
-	m_listBoxUsedFeatures = new ui::custom::ListBox();
-	m_listBoxUsedFeatures->create(containerUsedFeatures, ui::custom::ListBox::WsMultiple | ui::WsDoubleBuffer);
+	m_listBoxUsedFeatures = new ui::ListBox();
+	m_listBoxUsedFeatures->create(containerUsedFeatures, ui::ListBox::WsMultiple | ui::WsDoubleBuffer);
 
 	// Collect all available platforms.
 	db::recursiveFindChildInstances(
@@ -441,7 +441,7 @@ void TargetEditor::selectPlatform(const Guid& platformGuid) const
 	m_dropDownPlatform->select(-1);
 }
 
-void TargetEditor::eventListBoxTargetConfigurationsEdit(ui::custom::EditListEditEvent* event)
+void TargetEditor::eventListBoxTargetConfigurationsEdit(ui::EditListEditEvent* event)
 {
 	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
 	if (targetConfiguration)
@@ -470,12 +470,12 @@ void TargetEditor::eventListBoxTargetConfigurationsSelect(ui::SelectionChangeEve
 
 void TargetEditor::eventButtonNewTargetConfigurationClick(ui::ButtonClickEvent* event)
 {
-	ui::custom::InputDialog::Field fields[] =
+	ui::InputDialog::Field fields[] =
 	{
-		ui::custom::InputDialog::Field(L"Name", L"")
+		ui::InputDialog::Field(L"Name", L"")
 	};
 
-	Ref< ui::custom::InputDialog > dialogInputName = new ui::custom::InputDialog();
+	Ref< ui::InputDialog > dialogInputName = new ui::InputDialog();
 	dialogInputName->create(m_containerOuter, L"Enter name", L"Enter configuration name", fields, sizeof_array(fields));
 	if (dialogInputName->showModal() == ui::DrOk)
 	{
@@ -503,12 +503,12 @@ void TargetEditor::eventButtonCloneTargetConfigurationClick(ui::ButtonClickEvent
 	targetConfiguration = DeepClone(targetConfiguration).create< TargetConfiguration >();
 	T_ASSERT (targetConfiguration);
 
-	ui::custom::InputDialog::Field fields[] =
+	ui::InputDialog::Field fields[] =
 	{
-		ui::custom::InputDialog::Field(L"Name", targetConfiguration->getName())
+		ui::InputDialog::Field(L"Name", targetConfiguration->getName())
 	};
 
-	Ref< ui::custom::InputDialog > dialogInputName = new ui::custom::InputDialog();
+	Ref< ui::InputDialog > dialogInputName = new ui::InputDialog();
 	dialogInputName->create(m_containerOuter, L"Enter name", L"Enter configuration name", fields, sizeof_array(fields));
 	if (dialogInputName->showModal() == ui::DrOk)
 	{
@@ -636,7 +636,7 @@ void TargetEditor::eventBrowseIconClick(ui::MouseButtonDownEvent* event)
 	if (!targetConfiguration)
 		return;
 
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	if (fileDialog.create(m_containerOuter, L"Select icon image", L"All files;*.*"))
 	{
 		Path fileName;

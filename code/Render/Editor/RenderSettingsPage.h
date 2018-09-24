@@ -22,14 +22,9 @@ namespace traktor
 	namespace ui
 	{
 
+class DropDown;
 class Edit;
 
-		namespace custom
-		{
-		
-class DropDown;
-
-		}
 	}
 
 	namespace render
@@ -50,8 +45,8 @@ public:
 	virtual bool apply(PropertyGroup* settings) T_OVERRIDE T_FINAL;
 
 private:
-	Ref< ui::custom::DropDown > m_dropRenderSystem;
-	Ref< ui::custom::DropDown > m_dropCompiler;
+	Ref< ui::DropDown > m_dropRenderSystem;
+	Ref< ui::DropDown > m_dropCompiler;
 	Ref< ui::Edit > m_editMipBias;
 	Ref< ui::Edit > m_editMaxAnisotropy;
 	Ref< ui::Edit > m_editMultiSample;

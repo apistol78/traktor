@@ -9,9 +9,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include <Ui/Container.h>
 #include <Ui/Edit.h>
-#include <Ui/Custom/DropDown.h>
-#include <Ui/Custom/EditList.h>
-#include <Ui/Custom/EditListEditEvent.h>
+#include <Ui/DropDown.h>
+#include <Ui/EditList.h>
+#include <Ui/EditListEditEvent.h>
 
 namespace traktor
 {
@@ -31,13 +31,13 @@ public:
 
 private:
 	Ref< Configuration > m_configuration;
-	Ref< ui::custom::DropDown > m_dropType;
-	Ref< ui::custom::DropDown > m_dropProfile;
-	Ref< ui::custom::EditList > m_listIncludePaths;
-	Ref< ui::custom::EditList > m_listDefinitions;
-	Ref< ui::custom::EditList > m_listLibraryPaths;
-	Ref< ui::custom::EditList > m_listLibraries;
-	Ref< ui::custom::DropDown > m_dropWarningLevel;
+	Ref< ui::DropDown > m_dropType;
+	Ref< ui::DropDown > m_dropProfile;
+	Ref< ui::EditList > m_listIncludePaths;
+	Ref< ui::EditList > m_listDefinitions;
+	Ref< ui::EditList > m_listLibraryPaths;
+	Ref< ui::EditList > m_listLibraries;
+	Ref< ui::DropDown > m_dropWarningLevel;
 	Ref< ui::Edit > m_editAdditionalCompilerOptions;
 	Ref< ui::Edit > m_editAdditionalLinkerOptions;
 	Ref< ui::Edit > m_editDebugExecutable;
@@ -50,13 +50,13 @@ private:
 
 	void eventSelectProfile(ui::SelectionChangeEvent* event);
 
-	void eventChangeIncludePath(ui::custom::EditListEditEvent* event);
+	void eventChangeIncludePath(ui::EditListEditEvent* event);
 
-	void eventChangeDefinitions(ui::custom::EditListEditEvent* event);
+	void eventChangeDefinitions(ui::EditListEditEvent* event);
 
-	void eventChangeLibraryPaths(ui::custom::EditListEditEvent* event);
+	void eventChangeLibraryPaths(ui::EditListEditEvent* event);
 
-	void eventChangeLibraries(ui::custom::EditListEditEvent* event);
+	void eventChangeLibraries(ui::EditListEditEvent* event);
 
 	void eventSelectWarningLevel(ui::SelectionChangeEvent* event);
 
