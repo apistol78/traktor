@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_sound_BankControl_H
 
 #include "Core/RefArray.h"
-#include "Ui/Custom/Auto/AutoWidget.h"
+#include "Ui/Auto/AutoWidget.h"
 
 namespace traktor
 {
@@ -17,7 +17,7 @@ namespace traktor
 
 class BankControlGrain;
 
-class BankControl : public ui::custom::AutoWidget
+class BankControl : public ui::AutoWidget
 {
 	T_RTTI_CLASS;
 

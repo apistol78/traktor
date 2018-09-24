@@ -14,14 +14,11 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace custom
-		{
 		
 class BuildChartControl;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace amalgam
@@ -45,15 +42,15 @@ public:
 
 private:
 	Ref< TargetConnection > m_connection;
-	Ref< ui::custom::ToolBar > m_toolBar;
-	Ref< ui::custom::BuildChartControl > m_chart;
+	Ref< ui::ToolBar > m_toolBar;
+	Ref< ui::BuildChartControl > m_chart;
 	std::map< uint32_t, int32_t > m_threadIdToLane;
 	int32_t m_nextThreadLane;
 	bool m_recording;
 
 	virtual void receivedProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events) T_OVERRIDE T_FINAL;
 
-	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventClose(ui::CloseEvent* event);
 };

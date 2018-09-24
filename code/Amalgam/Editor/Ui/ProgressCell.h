@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_amalgam_ProgressCell_H
 #define traktor_amalgam_ProgressCell_H
 
-#include "Ui/Custom/Auto/AutoWidgetCell.h"
+#include "Ui/Auto/AutoWidgetCell.h"
 
 namespace traktor
 {
@@ -17,7 +17,7 @@ namespace traktor
 /*! \brief
  * \ingroup Amalgam
  */
-class ProgressCell : public ui::custom::AutoWidgetCell
+class ProgressCell : public ui::AutoWidgetCell
 {
 	T_RTTI_CLASS;
 

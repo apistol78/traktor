@@ -25,14 +25,9 @@ class IEditor;
 	{
 
 class CheckBox;
-
-		namespace custom
-		{
-
 class DropDown;
 class SyntaxRichEdit;
 
-		}
 	}
 
 	namespace render
@@ -73,13 +68,13 @@ private:
 	};
 
 	editor::IEditor* m_editor;
-	Ref< ui::custom::DropDown > m_dropCompiler;
-	Ref< ui::custom::DropDown > m_dropTechniques;
+	Ref< ui::DropDown > m_dropCompiler;
+	Ref< ui::DropDown > m_dropTechniques;
 	Ref< ui::Container > m_containerCombinations;
 	RefArray< ui::CheckBox > m_checkCombinations;
-	Ref< ui::custom::SyntaxRichEdit > m_shaderEditVertex;
-	Ref< ui::custom::SyntaxRichEdit > m_shaderEditPixel;
-	Ref< ui::custom::SyntaxRichEdit > m_shaderEditCompute;
+	Ref< ui::SyntaxRichEdit > m_shaderEditVertex;
+	Ref< ui::SyntaxRichEdit > m_shaderEditPixel;
+	Ref< ui::SyntaxRichEdit > m_shaderEditCompute;
 	Ref< ShaderGraph > m_pendingShaderGraph;
 	Ref< ShaderGraph > m_lastShaderGraph;
 	Ref< Job > m_reflectJob;

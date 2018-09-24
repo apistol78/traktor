@@ -13,12 +13,9 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace custom
-		{
 
 class BackgroundWorkerStatus;
 
-		}
 	}
 
 	namespace drone
@@ -45,7 +42,7 @@ private:
 	std::wstring m_url;
 	std::wstring m_rootPath;
 
-	void updateThread(ui::Widget* parent, UpdateBundle* bundle, ui::custom::BackgroundWorkerStatus* status);
+	void updateThread(ui::Widget* parent, UpdateBundle* bundle, ui::BackgroundWorkerStatus* status);
 };
 
 	}

@@ -6,14 +6,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Amalgam/Editor/Ui/ButtonCell.h"
 #include "Ui/Application.h"
-#include "Ui/Custom/Auto/AutoWidget.h"
+#include "Ui/Auto/AutoWidget.h"
 
 namespace traktor
 {
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ButtonCell", ButtonCell, ui::custom::AutoWidgetCell)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ButtonCell", ButtonCell, ui::AutoWidgetCell)
 
 ButtonCell::ButtonCell(
 	ui::IBitmap* bitmap,

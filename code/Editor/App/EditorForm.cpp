@@ -98,16 +98,16 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/StyleSheet.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
-#include "Ui/Custom/BackgroundWorkerDialog.h"
-#include "Ui/Custom/FileDialog.h"
-#include "Ui/Custom/StatusBar/StatusBar.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarMenu.h"
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-#include "Ui/Custom/ProgressBar.h"
-#include "Ui/Custom/InputDialog.h"
+#include "Ui/BackgroundWorkerDialog.h"
+#include "Ui/FileDialog.h"
+#include "Ui/StatusBar/StatusBar.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarMenu.h"
+#include "Ui/ToolBar/ToolBarSeparator.h"
+#include "Ui/ProgressBar.h"
+#include "Ui/InputDialog.h"
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
 
@@ -158,7 +158,7 @@ private:
 	std::list< Log > m_logs;
 };
 
-class OpenWorkspaceStatus : public RefCountImpl< ui::custom::BackgroundWorkerDialog::IWorkerStatus >
+class OpenWorkspaceStatus : public RefCountImpl< ui::BackgroundWorkerDialog::IWorkerStatus >
 {
 public:
 	OpenWorkspaceStatus(int32_t& step)
@@ -177,7 +177,7 @@ private:
 	int32_t& m_step;
 };
 
-class BuildStatus : public RefCountImpl< ui::custom::BackgroundWorkerDialog::IWorkerStatus >
+class BuildStatus : public RefCountImpl< ui::BackgroundWorkerDialog::IWorkerStatus >
 {
 public:
 	BuildStatus(int32_t& step, std::wstring& message)
@@ -484,13 +484,13 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutTable->addEventHandler< ui::ShortcutEvent >(this, &EditorForm::eventShortcut);
 
 	// Create menu bar.
-	m_menuBar = new ui::custom::ToolBar();
+	m_menuBar = new ui::ToolBar();
 	m_menuBar->create(this);
-	m_menuBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EditorForm::eventMenuClick);
+	m_menuBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorForm::eventMenuClick);
 
 	m_menuItemRecent = new ui::MenuItem(i18n::Text(L"MENU_FILE_OPEN_RECENT_WORKSPACE"));
 
-	Ref< ui::custom::ToolBarMenu > menuFile = new ui::custom::ToolBarMenu(i18n::Text(L"MENU_FILE"), L"");
+	Ref< ui::ToolBarMenu > menuFile = new ui::ToolBarMenu(i18n::Text(L"MENU_FILE"), L"");
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.NewWorkspace"), i18n::Text(L"MENU_FILE_NEW_WORKSPACE")));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.OpenWorkspace"), i18n::Text(L"MENU_FILE_OPEN_WORKSPACE")));
 	menuFile->add(m_menuItemRecent);
@@ -501,7 +501,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Exit"), i18n::Text(L"MENU_FILE_EXIT")));
 	m_menuBar->addItem(menuFile);
 
-	Ref< ui::custom::ToolBarMenu > menuEdit = new ui::custom::ToolBarMenu(i18n::Text(L"MENU_EDIT"), L"");
+	Ref< ui::ToolBarMenu > menuEdit = new ui::ToolBarMenu(i18n::Text(L"MENU_EDIT"), L"");
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Undo"), i18n::Text(L"MENU_EDIT_UNDO")));
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Redo"), i18n::Text(L"MENU_EDIT_REDO")));
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Cut"), i18n::Text(L"MENU_EDIT_CUT")));
@@ -514,7 +514,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Settings"), i18n::Text(L"MENU_EDIT_SETTINGS")));
 	m_menuBar->addItem(menuEdit);
 
-	Ref< ui::custom::ToolBarMenu > menuView = new ui::custom::ToolBarMenu(i18n::Text(L"MENU_VIEW"), L"");
+	Ref< ui::ToolBarMenu > menuView = new ui::ToolBarMenu(i18n::Text(L"MENU_VIEW"), L"");
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewHome"), i18n::Text(L"MENU_VIEW_HOME")));
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewDatabase"), i18n::Text(L"MENU_VIEW_DATABASE")));
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewProperties"), i18n::Text(L"MENU_VIEW_PROPERTIES")));
@@ -524,13 +524,13 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuView->add(m_menuItemOtherPanels);
 	m_menuBar->addItem(menuView);
 
-	Ref< ui::custom::ToolBarMenu > menuBuild = new ui::custom::ToolBarMenu(i18n::Text(L"MENU_BUILD"), L"");
+	Ref< ui::ToolBarMenu > menuBuild = new ui::ToolBarMenu(i18n::Text(L"MENU_BUILD"), L"");
 	menuBuild->add(new ui::MenuItem(ui::Command(L"Editor.Build"), i18n::Text(L"MENU_BUILD_BUILD")));
 	menuBuild->add(new ui::MenuItem(ui::Command(L"Editor.Rebuild"), i18n::Text(L"MENU_BUILD_REBUILD")));
 	m_menuBar->addItem(menuBuild);
 
 	// Create toolbar.
-	m_toolBar = new ui::custom::ToolBar();
+	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(this, ui::WsNone);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Save"), 1);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Cut"), 1);
@@ -541,19 +541,19 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Build"), 1);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.CancelBuild"), 1);
 
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), 0, ui::Command(L"Editor.Save")));
-	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CUT"), 1, ui::Command(L"Editor.Cut")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 2, ui::Command(L"Editor.Copy")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_PASTE"), 3, ui::Command(L"Editor.Paste")));
-	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_UNDO"), 4, ui::Command(L"Editor.Undo")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_REDO"), 5, ui::Command(L"Editor.Redo")));
-	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), 6, ui::Command(L"Editor.Build")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), 7, ui::Command(L"Editor.CancelBuild")));
-	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EditorForm::eventToolClicked);
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), 0, ui::Command(L"Editor.Save")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_CUT"), 1, ui::Command(L"Editor.Cut")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 2, ui::Command(L"Editor.Copy")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_PASTE"), 3, ui::Command(L"Editor.Paste")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_UNDO"), 4, ui::Command(L"Editor.Undo")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_REDO"), 5, ui::Command(L"Editor.Redo")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), 6, ui::Command(L"Editor.Build")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), 7, ui::Command(L"Editor.CancelBuild")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorForm::eventToolClicked);
 
 	updateTitle();
 	updateMRU();
@@ -638,11 +638,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuTab->add(new ui::MenuItem(ui::Command(L"Editor.FindInDatabase"), i18n::Text(L"FIND_IN_DATABASE")));
 
 	// Create status bar.
-	m_statusBar = new ui::custom::StatusBar();
+	m_statusBar = new ui::StatusBar();
 	m_statusBar->create(this);
 	m_statusBar->setText(i18n::Text(L"STATUS_IDLE"));
 
-	m_buildProgress = new ui::custom::ProgressBar();
+	m_buildProgress = new ui::ProgressBar();
 	m_buildProgress->create(m_statusBar);
 	m_buildProgress->setVisible(false);
 
@@ -707,7 +707,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	type_of< IEditorTool >().findAllOf(toolTypes, false);
 	if (!toolTypes.empty())
 	{
-		m_menuTools = new ui::custom::ToolBarMenu(i18n::Text(L"MENU_TOOLS"), L"");
+		m_menuTools = new ui::ToolBarMenu(i18n::Text(L"MENU_TOOLS"), L"");
 
 		for (TypeInfoSet::iterator i = toolTypes.begin(); i != toolTypes.end(); ++i)
 		{
@@ -730,7 +730,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 			if (toolIcon)
 			{
 				int32_t iconIndex = m_toolBar->addImage(toolIcon, 1);
-				m_toolBar->addItem(new ui::custom::ToolBarButton(desc, iconIndex, ui::Command(i)));
+				m_toolBar->addItem(new ui::ToolBarButton(desc, iconIndex, ui::Command(i)));
 			}
 		}
 
@@ -1397,7 +1397,7 @@ bool EditorForm::createWorkspace()
 
 bool EditorForm::openWorkspace()
 {
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, i18n::Text(L"EDITOR_BROWSE_WORKSPACE"), L"Workspace files (*.workspace);*.workspace;All files (*.*);*.*"))
 		return false;
 
@@ -1434,7 +1434,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	thread->start();
 
 	// Show a dialog if processing seems to take more than N second(s).
-	ui::custom::BackgroundWorkerDialog dialog;
+	ui::BackgroundWorkerDialog dialog;
 	dialog.create(this, i18n::Text(L"EDITOR_WAIT_OPENING_WORKSPACE_TITLE"), i18n::Text(L"EDITOR_WAIT_OPENING_WORKSPACE_MESSAGE"), false);
 	dialog.execute(thread, new OpenWorkspaceStatus(progressStep));
 	dialog.destroy();
@@ -1873,7 +1873,7 @@ void EditorForm::buildWaitUntilFinished()
 	if (m_threadBuild)
 	{
 		// Show a dialog if processing seems to take more than N second(s).
-		ui::custom::BackgroundWorkerDialog dialog;
+		ui::BackgroundWorkerDialog dialog;
 		dialog.create(this, i18n::Text(L"EDITOR_WAIT_BUILDING_TITLE"), i18n::Text(L"EDITOR_WAIT_BUILDING_MESSAGE"), false);
 		dialog.execute(m_threadBuild, new BuildStatus(m_buildStep, m_buildStepMessage));
 		dialog.destroy();
@@ -2709,14 +2709,14 @@ void EditorForm::eventShortcut(ui::ShortcutEvent* event)
 		event->consume();
 }
 
-void EditorForm::eventMenuClick(ui::custom::ToolBarButtonClickEvent* event)
+void EditorForm::eventMenuClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	if (handleCommand(command))
 		event->consume();
 }
 
-void EditorForm::eventToolClicked(ui::custom::ToolBarButtonClickEvent* event)
+void EditorForm::eventToolClicked(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	if (handleCommand(command))

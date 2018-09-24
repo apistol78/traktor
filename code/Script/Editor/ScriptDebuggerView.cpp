@@ -26,15 +26,15 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/MenuItem.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/GridView/GridColumn.h"
-#include "Ui/Custom/GridView/GridItem.h"
-#include "Ui/Custom/GridView/GridRow.h"
-#include "Ui/Custom/GridView/GridRowStateChangeEvent.h"
-#include "Ui/Custom/GridView/GridView.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/Splitter.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridRowStateChangeEvent.h"
+#include "Ui/GridView/GridView.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor
 {
@@ -71,7 +71,7 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
 		return false;
 
-	m_debuggerTools = new ui::custom::ToolBar();
+	m_debuggerTools = new ui::ToolBar();
 	if (!m_debuggerTools->create(this))
 		return false;
 
@@ -79,30 +79,30 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugStepInto"), 1);
 	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugStepOver"), 1);
 	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugStop"), 1);
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_CONTINUE"), 0, ui::Command(L"Script.Editor.Continue")));
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_BREAK"), 3, ui::Command(L"Script.Editor.Break")));
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_INTO"), 1, ui::Command(L"Script.Editor.StepInto")));
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_OVER"), 2, ui::Command(L"Script.Editor.StepOver")));
-	m_debuggerTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ScriptDebuggerView::eventDebuggerToolClick);
+	m_debuggerTools->addItem(new ui::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_CONTINUE"), 0, ui::Command(L"Script.Editor.Continue")));
+	m_debuggerTools->addItem(new ui::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_BREAK"), 3, ui::Command(L"Script.Editor.Break")));
+	m_debuggerTools->addItem(new ui::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_INTO"), 1, ui::Command(L"Script.Editor.StepInto")));
+	m_debuggerTools->addItem(new ui::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_OVER"), 2, ui::Command(L"Script.Editor.StepOver")));
+	m_debuggerTools->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ScriptDebuggerView::eventDebuggerToolClick);
 
-	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitter = new ui::Splitter();
 	splitter->create(this, true, 50, true);
 
-	m_callStackGrid = new ui::custom::GridView();
-	m_callStackGrid->create(splitter, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_callStackGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_FUNCTION"), ui::dpi96(180)));
-	m_callStackGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LINE"), ui::dpi96(100)));
-	m_callStackGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_SCRIPT"), ui::dpi96(200)));
+	m_callStackGrid = new ui::GridView();
+	m_callStackGrid->create(splitter, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
+	m_callStackGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_FUNCTION"), ui::dpi96(180)));
+	m_callStackGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LINE"), ui::dpi96(100)));
+	m_callStackGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_SCRIPT"), ui::dpi96(200)));
 	m_callStackGrid->setEnable(false);
 	m_callStackGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptDebuggerView::eventCallStackGridDoubleClick);
 
-	m_localsGrid = new ui::custom::GridView();
-	m_localsGrid->create(splitter, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_NAME"), ui::dpi96(180)));
-	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_VALUE"), ui::dpi96(150)));
-	m_localsGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_TYPE"), ui::dpi96(150)));
+	m_localsGrid = new ui::GridView();
+	m_localsGrid->create(splitter, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
+	m_localsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_NAME"), ui::dpi96(180)));
+	m_localsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_VALUE"), ui::dpi96(150)));
+	m_localsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_TYPE"), ui::dpi96(150)));
 	m_localsGrid->setEnable(false);
-	m_localsGrid->addEventHandler< ui::custom::GridRowStateChangeEvent >(this, &ScriptDebuggerView::eventLocalsGridStateChange);
+	m_localsGrid->addEventHandler< ui::GridRowStateChangeEvent >(this, &ScriptDebuggerView::eventLocalsGridStateChange);
 	m_localsGrid->addEventHandler< ui::MouseButtonDownEvent >(this, &ScriptDebuggerView::eventLocalsGridButtonDown);
 
 	m_localsPopup = new ui::Menu();
@@ -138,22 +138,22 @@ bool ScriptDebuggerView::handleCommand(const ui::Command& command)
 	return true;
 }
 
-Ref< ui::custom::GridRow > ScriptDebuggerView::createVariableRow(const Variable* local)
+Ref< ui::GridRow > ScriptDebuggerView::createVariableRow(const Variable* local)
 {
-	Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
-	row->add(new ui::custom::GridItem(local->getName()));
+	Ref< ui::GridRow > row = new ui::GridRow(0);
+	row->add(new ui::GridItem(local->getName()));
 
 	if (const script::Value* value = dynamic_type_cast< const script::Value* >(local->getValue()))
 	{
-		row->add(new ui::custom::GridItem(value->getLiteral()));
-		row->add(new ui::custom::GridItem(local->getTypeName()));
+		row->add(new ui::GridItem(value->getLiteral()));
+		row->add(new ui::GridItem(local->getTypeName()));
 	}
 	else if (const script::ValueObject* valueObject = dynamic_type_cast< const script::ValueObject* >(local->getValue()))
 	{
-		row->add(new ui::custom::GridItem(valueObject->getValueOf()));
-		row->add(new ui::custom::GridItem(local->getTypeName()));
+		row->add(new ui::GridItem(valueObject->getValueOf()));
+		row->add(new ui::GridItem(local->getTypeName()));
 
-		Ref< ui::custom::GridRow > objectRow = new ui::custom::GridRow(0);
+		Ref< ui::GridRow > objectRow = new ui::GridRow(0);
 		objectRow->setData(L"OBJECT_REFERENCE", const_cast< script::ValueObject* >(valueObject));
 		row->addChild(objectRow);
 	}
@@ -172,7 +172,7 @@ void ScriptDebuggerView::updateLocals(int32_t depth)
 			locals.sort(VariablePred());
 			for (RefArray< Variable >::const_iterator j = locals.begin(); j != locals.end(); ++j)
 			{
-				Ref< ui::custom::GridRow > row = createVariableRow(*j);
+				Ref< ui::GridRow > row = createVariableRow(*j);
 				if (row)
 					m_localsGrid->addRow(row);
 			}
@@ -205,11 +205,11 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 		{
 			Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance((*i)->getScriptId());
 
-			Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
+			Ref< ui::GridRow > row = new ui::GridRow(0);
 
-			row->add(new ui::custom::GridItem((*i)->getFunctionName()));
-			row->add(new ui::custom::GridItem(toString((*i)->getLine() + 1)));
-			row->add(new ui::custom::GridItem(scriptInstance ? scriptInstance->getName() : L"(Unknown script)"));
+			row->add(new ui::GridItem((*i)->getFunctionName()));
+			row->add(new ui::GridItem(toString((*i)->getLine() + 1)));
+			row->add(new ui::GridItem(scriptInstance ? scriptInstance->getName() : L"(Unknown script)"));
 			row->setData(L"SCRIPT_ID", new PropertyString((*i)->getScriptId().format()));
 			row->setData(L"SCRIPT_LINE", new PropertyInteger((*i)->getLine()));
 			row->setData(L"FRAME_DEPTH", new PropertyInteger(depth++));
@@ -243,7 +243,7 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 	}
 }
 
-void ScriptDebuggerView::eventDebuggerToolClick(ui::custom::ToolBarButtonClickEvent* event)
+void ScriptDebuggerView::eventDebuggerToolClick(ui::ToolBarButtonClickEvent* event)
 {
 	handleCommand(event->getCommand());
 }
@@ -253,7 +253,7 @@ void ScriptDebuggerView::eventCallStackGridDoubleClick(ui::MouseDoubleClickEvent
 	if (!m_callStackGrid->isEnable())
 		return;
 
-	ui::custom::GridRow* selectedRow = m_callStackGrid->getSelectedRow();
+	ui::GridRow* selectedRow = m_callStackGrid->getSelectedRow();
 	if (selectedRow)
 	{
 		Guid scriptId = Guid(*(selectedRow->getData< PropertyString >(L"SCRIPT_ID")));
@@ -276,11 +276,11 @@ void ScriptDebuggerView::eventCallStackGridDoubleClick(ui::MouseDoubleClickEvent
 		updateLocals(0);
 }
 
-void ScriptDebuggerView::eventLocalsGridStateChange(ui::custom::GridRowStateChangeEvent* event)
+void ScriptDebuggerView::eventLocalsGridStateChange(ui::GridRowStateChangeEvent* event)
 {
-	Ref< ui::custom::GridRow > row = event->getRow();
+	Ref< ui::GridRow > row = event->getRow();
 
-	const RefArray< ui::custom::GridRow >& children = row->getChildren();
+	const RefArray< ui::GridRow >& children = row->getChildren();
 	if (children.size() == 1)
 	{
 		Ref< script::ValueObject > valueObject = children[0]->getData< script::ValueObject >(L"OBJECT_REFERENCE");
@@ -294,7 +294,7 @@ void ScriptDebuggerView::eventLocalsGridStateChange(ui::custom::GridRowStateChan
 				members.sort(VariablePred());
 				for (RefArray< Variable >::const_iterator j = members.begin(); j != members.end(); ++j)
 				{
-					Ref< ui::custom::GridRow > childRow = createVariableRow(*j);
+					Ref< ui::GridRow > childRow = createVariableRow(*j);
 					if (childRow)
 						row->addChild(childRow);
 				}
@@ -316,7 +316,7 @@ void ScriptDebuggerView::eventLocalsGridButtonDown(ui::MouseButtonDownEvent* eve
 
 	if (selected->getCommand() == L"Script.Editor.CopyLocalValue")
 	{
-		ui::custom::GridRow* selectedRow = m_localsGrid->getSelectedRow();
+		ui::GridRow* selectedRow = m_localsGrid->getSelectedRow();
 		if (selectedRow)
 		{
 			std::wstring value = selectedRow->get(1)->getText();

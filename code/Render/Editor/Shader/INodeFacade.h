@@ -21,13 +21,10 @@ class IEditor;
 
 	namespace ui
 	{
-		namespace custom
-		{
 
 class GraphControl;
 class Node;
 
-		}
 	}
 
 	namespace render
@@ -46,31 +43,31 @@ public:
 		editor::IEditor* editor
 	) = 0;
 
-	virtual Ref< ui::custom::Node > createEditorNode(
+	virtual Ref< ui::Node > createEditorNode(
 		editor::IEditor* editor,
-		ui::custom::GraphControl* graphControl,
+		ui::GraphControl* graphControl,
 		ShaderGraph* shaderGraph,
 		Node* shaderNode
 	) = 0;
 
 	virtual void editShaderNode(
 		editor::IEditor* editor,
-		ui::custom::GraphControl* graphControl,
-		ui::custom::Node* editorNode,
+		ui::GraphControl* graphControl,
+		ui::Node* editorNode,
 		ShaderGraph* shaderGraph,
 		Node* shaderNode
 	) = 0;
 
 	virtual void refreshEditorNode(
 		editor::IEditor* editor,
-		ui::custom::GraphControl* graphControl,
-		ui::custom::Node* editorNode,
+		ui::GraphControl* graphControl,
+		ui::Node* editorNode,
 		ShaderGraph* shaderGraph,
 		Node* shaderNode
 	) = 0;
 
 	virtual void setValidationIndicator(
-		ui::custom::Node* editorNode,
+		ui::Node* editorNode,
 		bool validationSucceeded
 	) = 0;
 };

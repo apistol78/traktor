@@ -29,14 +29,9 @@ class IEditor;
 	{
 
 class CheckBox;
+class DropDown;
 class Edit;
 
-		namespace custom
-		{
-		
-class DropDown;
-
-		}
 	}
 
 	namespace amalgam
@@ -57,7 +52,7 @@ private:
 	Ref< ui::Edit > m_editName;
 	Ref< ui::Edit > m_editVisualMesh;
 	Ref< ui::Edit > m_editCollisionMesh;
-	Ref< ui::custom::DropDown > m_dropPhysicsType;
+	Ref< ui::DropDown > m_dropPhysicsType;
 	Ref< ui::Edit > m_editCollisionGroup;
 	Ref< ui::Edit > m_editCollisionMask;
 	Ref< ui::Edit > m_editMaterial;

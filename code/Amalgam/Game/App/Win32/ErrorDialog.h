@@ -14,12 +14,9 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace custom
-		{
 
 class LogList;
 
-		}
 	}
 
 	namespace amalgam
@@ -35,7 +32,7 @@ public:
 	void addErrorString(const std::wstring& errorString);
 
 private:
-	Ref< ui::custom::LogList > m_listLog;
+	Ref< ui::LogList > m_listLog;
 
 	void eventButtonCopyQuit(ui::ButtonClickEvent* event);
 

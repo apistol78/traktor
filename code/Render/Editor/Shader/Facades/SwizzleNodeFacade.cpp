@@ -9,8 +9,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Shader/Node.h"
 #include "Render/Editor/Shader/Facades/SwizzleNodeFacade.h"
 #include "Ui/Application.h"
-#include "Ui/Custom/Graph/Node.h"
-#include "Ui/Custom/Graph/InOutNodeShape.h"
+#include "Ui/Graph/Node.h"
+#include "Ui/Graph/InOutNodeShape.h"
 
 namespace traktor
 {
@@ -19,9 +19,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SwizzleNodeFacade", SwizzleNodeFacade, INodeFacade)
 
-SwizzleNodeFacade::SwizzleNodeFacade(ui::custom::GraphControl* graphControl)
+SwizzleNodeFacade::SwizzleNodeFacade(ui::GraphControl* graphControl)
 {
-	m_nodeShape = new ui::custom::InOutNodeShape(graphControl);
+	m_nodeShape = new ui::InOutNodeShape(graphControl);
 }
 
 Ref< Node > SwizzleNodeFacade::createShaderNode(
@@ -32,14 +32,14 @@ Ref< Node > SwizzleNodeFacade::createShaderNode(
 	return checked_type_cast< Node* >(nodeType->createInstance());
 }
 
-Ref< ui::custom::Node > SwizzleNodeFacade::createEditorNode(
+Ref< ui::Node > SwizzleNodeFacade::createEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
+	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
-	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
+	Ref< ui::Node > editorNode = new ui::Node(
 		L"",
 		shaderNode->getInformation(),
 		ui::Point(
@@ -73,8 +73,8 @@ Ref< ui::custom::Node > SwizzleNodeFacade::createEditorNode(
 
 void SwizzleNodeFacade::editShaderNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -83,8 +83,8 @@ void SwizzleNodeFacade::editShaderNode(
 
 void SwizzleNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -94,7 +94,7 @@ void SwizzleNodeFacade::refreshEditorNode(
 }
 
 void SwizzleNodeFacade::setValidationIndicator(
-	ui::custom::Node* editorNode,
+	ui::Node* editorNode,
 	bool validationSucceeded
 )
 {

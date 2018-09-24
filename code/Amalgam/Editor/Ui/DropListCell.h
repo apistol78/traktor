@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_amalgam_DropListCell_H
 
 #include "Ui/Command.h"
-#include "Ui/Custom/Auto/AutoWidgetCell.h"
+#include "Ui/Auto/AutoWidgetCell.h"
 
 namespace traktor
 {
@@ -21,7 +21,7 @@ class TargetInstance;
 /*! \brief
  * \ingroup Amalgam
  */
-class DropListCell : public ui::custom::AutoWidgetCell
+class DropListCell : public ui::AutoWidgetCell
 {
 	T_RTTI_CLASS;
 

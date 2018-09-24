@@ -10,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <map>
 #include "Core/Ref.h"
 #include "Ui/Container.h"
-#include "Ui/Custom/PropertyList/AutoPropertyList.h"
+#include "Ui/PropertyList/AutoPropertyList.h"
 
 namespace traktor
 {
@@ -20,16 +20,11 @@ class ISerializable;
 	namespace ui
 	{
 
-class HierarchicalState;
-
-		namespace custom
-		{
-
 class GradientStatic;
+class HierarchicalState;
 class PropertyCommandEvent;
 class PropertyContentChangeEvent;
 
-		}
 	}
 
 	namespace editor
@@ -39,7 +34,7 @@ class IEditor;
 
 class PropertiesView
 :	public ui::Container
-,	public ui::custom::PropertyList::IPropertyGuidResolver
+,	public ui::PropertyList::IPropertyGuidResolver
 {
 	T_RTTI_CLASS;
 
@@ -60,16 +55,16 @@ public:
 
 private:
 	IEditor* m_editor;
-	Ref< ui::custom::AutoPropertyList > m_propertyList;
-	Ref< ui::custom::GradientStatic > m_staticHelp;
+	Ref< ui::AutoPropertyList > m_propertyList;
+	Ref< ui::GradientStatic > m_staticHelp;
 	Ref< ISerializable > m_propertyObject;
 	std::map< const TypeInfo*, Ref< ui::HierarchicalState > > m_states;
 
 	void updateHelp();
 
-	void eventPropertyCommand(ui::custom::PropertyCommandEvent* event);
+	void eventPropertyCommand(ui::PropertyCommandEvent* event);
 
-	void eventPropertyChange(ui::custom::PropertyContentChangeEvent* event);
+	void eventPropertyChange(ui::PropertyContentChangeEvent* event);
 
 	void eventPropertySelect(ui::SelectionChangeEvent* event);
 };

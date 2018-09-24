@@ -50,13 +50,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/Panel.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/Envelope/DefaultEnvelopeEvaluator.h"
-#include "Ui/Custom/Envelope/EnvelopeControl.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/Panel.h"
+#include "Ui/Splitter.h"
+#include "Ui/Envelope/DefaultEnvelopeEvaluator.h"
+#include "Ui/Envelope/EnvelopeControl.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor
 {
@@ -131,43 +131,43 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	parent->addEventHandler< ui::TimerEvent >(this, &BankAssetEditor::eventTimer);
 	parent->startTimer(30);
 
-	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitter = new ui::Splitter();
 	splitter->create(parent, true, ui::dpi96(180));
 
-	Ref< ui::custom::Splitter > splitterLeftH = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitterLeftH = new ui::Splitter();
 	splitterLeftH->create(splitter, false, ui::dpi96(-150));
 
-	Ref< ui::custom::Splitter > splitterRightH = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitterRightH = new ui::Splitter();
 	splitterRightH->create(splitter, false, ui::dpi96(-150));
 
-	Ref< ui::custom::Panel > containerBank = new ui::custom::Panel();
+	Ref< ui::Panel > containerBank = new ui::Panel();
 	containerBank->create(splitterLeftH, L"Grains", new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
-	m_toolBarItemPlay = new ui::custom::ToolBarButton(L"Play", 0, ui::Command(L"Bank.PlayGrain"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
-	m_toolBarItemRepeat = new ui::custom::ToolBarButton(L"Repeat", 0, ui::Command(L"Bank.RepeatGrain"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
+	m_toolBarItemPlay = new ui::ToolBarButton(L"Play", 0, ui::Command(L"Bank.PlayGrain"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
+	m_toolBarItemRepeat = new ui::ToolBarButton(L"Repeat", 0, ui::Command(L"Bank.RepeatGrain"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 
-	m_toolBar = new ui::custom::ToolBar();
+	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(containerBank);
 	m_toolBar->addItem(m_toolBarItemPlay);
 	m_toolBar->addItem(m_toolBarItemRepeat);
-	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &BankAssetEditor::eventToolBarClick);
+	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &BankAssetEditor::eventToolBarClick);
 
 	m_bankControl = new BankControl();
 	m_bankControl->create(containerBank);
 	m_bankControl->addEventHandler< ui::SelectionChangeEvent >(this, &BankAssetEditor::eventGrainSelect);
 	m_bankControl->addEventHandler< ui::MouseButtonUpEvent >(this, &BankAssetEditor::eventGrainButtonUp);
 
-	m_containerParameters = new ui::custom::Panel();
+	m_containerParameters = new ui::Panel();
 	m_containerParameters->create(splitterLeftH, L"Parameters", new ui::TableLayout(L"*,100%", L"*", ui::dpi96(4), 0));
 
-	Ref< ui::custom::Panel > m_containerGrainProperties = new ui::custom::Panel();
+	Ref< ui::Panel > m_containerGrainProperties = new ui::Panel();
 	m_containerGrainProperties->create(splitterRightH, L"Properties", new ui::TableLayout(L"100%", L"100%", 0, 0));
 
 	m_grainProperties = new GrainProperties(m_editor);
 	m_grainProperties->create(m_containerGrainProperties);
 	m_grainProperties->addEventHandler< ui::ContentChangeEvent >(this, &BankAssetEditor::eventGrainPropertiesChange);
 
-	m_containerGrainView = new ui::custom::Panel();
+	m_containerGrainView = new ui::Panel();
 	m_containerGrainView->create(splitterRightH, L"View", new ui::TableLayout(L"100%", L"100%", 0, 0));
 
 	m_menuGrains = new ui::Menu();
@@ -467,7 +467,7 @@ void BankAssetEditor::eventParameterChange(ui::ContentChangeEvent* event)
 		m_soundChannel->setParameter(id->get(), slider->getValue() / 100.0f);
 }
 
-void BankAssetEditor::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
+void BankAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 {
 	handleCommand(event->getCommand());
 }

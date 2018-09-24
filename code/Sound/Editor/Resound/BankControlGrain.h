@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Ref.h"
 #include "Ui/Bitmap.h"
-#include "Ui/Custom/Auto/AutoWidgetCell.h"
+#include "Ui/Auto/AutoWidgetCell.h"
 
 namespace traktor
 {
@@ -18,7 +18,7 @@ namespace traktor
 
 class IGrainData;
 
-class BankControlGrain : public ui::custom::AutoWidgetCell
+class BankControlGrain : public ui::AutoWidgetCell
 {
 	T_RTTI_CLASS;
 

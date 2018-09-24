@@ -32,25 +32,20 @@ class IEditorPageSite;
 	namespace ui
 	{
 
-class MouseButtonDownEvent;
-class Menu;
-class SelectionChangeEvent;
-
-		namespace custom
-		{
-
 class EdgeConnectEvent;
 class EdgeDisconnectEvent;
 class EditList;
 class EditListEditEvent;
 class GraphControl;
+class MouseButtonDownEvent;
+class Menu;
 class NodeActivateEvent;
 class NodeMovedEvent;
 class SelectEvent;
+class SelectionChangeEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace input
@@ -82,30 +77,30 @@ private:
 	editor::IDocument* m_document;
 	std::map< const TypeInfo*, Ref< const InputNodeTraits > > m_traits;
 	Ref< InputMappingAsset > m_mappingAsset;
-	Ref< ui::custom::ToolBar > m_toolBarGraph;
-	Ref< ui::custom::EditList > m_listValueSources;
-	Ref< ui::custom::GraphControl > m_graph;
+	Ref< ui::ToolBar > m_toolBarGraph;
+	Ref< ui::EditList > m_listValueSources;
+	Ref< ui::GraphControl > m_graph;
 	Ref< ui::Menu > m_menuPopup;
 
 	void updateGraphView();
 
-	void eventToolBarGraphClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolBarGraphClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
 
 	void eventListValueSourceSelect(ui::SelectionChangeEvent* event);
 
-	void eventListValueEdit(ui::custom::EditListEditEvent* event);
+	void eventListValueEdit(ui::EditListEditEvent* event);
 
-	void eventNodeSelect(ui::custom::SelectEvent* event);
+	void eventNodeSelect(ui::SelectEvent* event);
 
-	void eventNodeMoved(ui::custom::NodeMovedEvent* event);
+	void eventNodeMoved(ui::NodeMovedEvent* event);
 
-	void eventNodeActivated(ui::custom::NodeActivateEvent* event);
+	void eventNodeActivated(ui::NodeActivateEvent* event);
 
-	void eventEdgeConnected(ui::custom::EdgeConnectEvent* event);
+	void eventEdgeConnected(ui::EdgeConnectEvent* event);
 
-	void eventEdgeDisconnected(ui::custom::EdgeDisconnectEvent* event);
+	void eventEdgeDisconnected(ui::EdgeDisconnectEvent* event);
 };
 
 	}

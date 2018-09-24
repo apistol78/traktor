@@ -64,7 +64,7 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	Ref< ui::Static > staticType = new ui::Static();
 	staticType->create(tabPageBuild, L"Type");
 
-	m_dropType = new ui::custom::DropDown();
+	m_dropType = new ui::DropDown();
 	m_dropType->create(tabPageBuild);
 	m_dropType->add(L"Static library");
 	m_dropType->add(L"Shared library");
@@ -75,7 +75,7 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	Ref< ui::Static > staticProfile = new ui::Static();
 	staticProfile->create(tabPageBuild, L"Profile");
 
-	m_dropProfile = new ui::custom::DropDown();
+	m_dropProfile = new ui::DropDown();
 	m_dropProfile->create(tabPageBuild);
 	m_dropProfile->add(L"Debug");
 	m_dropProfile->add(L"Release");
@@ -85,35 +85,35 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	staticIncludePaths->create(tabPageBuild, L"Include paths");
 	staticIncludePaths->setVerticalAlign(ui::AnTop);
 
-	m_listIncludePaths = new ui::custom::EditList();
-	m_listIncludePaths->create(tabPageBuild, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
-	m_listIncludePaths->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeIncludePath);
+	m_listIncludePaths = new ui::EditList();
+	m_listIncludePaths->create(tabPageBuild, ui::EditList::WsAutoAdd | ui::EditList::WsAutoRemove | ui::EditList::WsSingle);
+	m_listIncludePaths->addEventHandler< ui::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeIncludePath);
 
 	Ref< ui::Static > staticDefinitions = new ui::Static();
 	staticDefinitions->create(tabPageBuild, L"Definitions");
 
-	m_listDefinitions = new ui::custom::EditList();
-	m_listDefinitions->create(tabPageBuild, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
-	m_listDefinitions->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeDefinitions);
+	m_listDefinitions = new ui::EditList();
+	m_listDefinitions->create(tabPageBuild, ui::EditList::WsAutoAdd | ui::EditList::WsAutoRemove | ui::EditList::WsSingle);
+	m_listDefinitions->addEventHandler< ui::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeDefinitions);
 
 	Ref< ui::Static > staticLibraryPaths = new ui::Static();
 	staticLibraryPaths->create(tabPageBuild, L"Library paths");
 
-	m_listLibraryPaths = new ui::custom::EditList();
-	m_listLibraryPaths->create(tabPageBuild, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
-	m_listLibraryPaths->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeLibraryPaths);
+	m_listLibraryPaths = new ui::EditList();
+	m_listLibraryPaths->create(tabPageBuild, ui::EditList::WsAutoAdd | ui::EditList::WsAutoRemove | ui::EditList::WsSingle);
+	m_listLibraryPaths->addEventHandler< ui::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeLibraryPaths);
 
 	Ref< ui::Static > staticLibraries = new ui::Static();
 	staticLibraries->create(tabPageBuild, L"Libraries");
 
-	m_listLibraries = new ui::custom::EditList();
-	m_listLibraries->create(tabPageBuild, ui::custom::EditList::WsAutoAdd | ui::custom::EditList::WsAutoRemove | ui::custom::EditList::WsSingle);
-	m_listLibraries->addEventHandler< ui::custom::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeLibraries);
+	m_listLibraries = new ui::EditList();
+	m_listLibraries->create(tabPageBuild, ui::EditList::WsAutoAdd | ui::EditList::WsAutoRemove | ui::EditList::WsSingle);
+	m_listLibraries->addEventHandler< ui::EditListEditEvent >(this, &ConfigurationPropertyPage::eventChangeLibraries);
 
 	Ref< ui::Static > staticWarningLevel = new ui::Static();
 	staticWarningLevel->create(tabPageBuild, L"Warning level");
 
-	m_dropWarningLevel = new ui::custom::DropDown();
+	m_dropWarningLevel = new ui::DropDown();
 	m_dropWarningLevel->create(tabPageBuild);
 	m_dropWarningLevel->add(L"No warnings");
 	m_dropWarningLevel->add(L"Critical warnings only");
@@ -241,7 +241,7 @@ void ConfigurationPropertyPage::eventSelectProfile(ui::SelectionChangeEvent* eve
 	m_configuration->setTargetProfile((Configuration::TargetProfile)id);
 }
 
-void ConfigurationPropertyPage::eventChangeIncludePath(ui::custom::EditListEditEvent* event)
+void ConfigurationPropertyPage::eventChangeIncludePath(ui::EditListEditEvent* event)
 {
 	std::vector< std::wstring > includePaths = m_configuration->getIncludePaths();
 	int32_t editId = event->getIndex();
@@ -259,7 +259,7 @@ void ConfigurationPropertyPage::eventChangeIncludePath(ui::custom::EditListEditE
 	event->consume();
 }
 
-void ConfigurationPropertyPage::eventChangeDefinitions(ui::custom::EditListEditEvent* event)
+void ConfigurationPropertyPage::eventChangeDefinitions(ui::EditListEditEvent* event)
 {
 	std::vector< std::wstring > definitions = m_configuration->getDefinitions();
 	int32_t editId = event->getIndex();
@@ -277,7 +277,7 @@ void ConfigurationPropertyPage::eventChangeDefinitions(ui::custom::EditListEditE
 	event->consume();
 }
 
-void ConfigurationPropertyPage::eventChangeLibraryPaths(ui::custom::EditListEditEvent* event)
+void ConfigurationPropertyPage::eventChangeLibraryPaths(ui::EditListEditEvent* event)
 {
 	std::vector< std::wstring > libraryPaths = m_configuration->getLibraryPaths();
 	int32_t editId = event->getIndex();
@@ -295,7 +295,7 @@ void ConfigurationPropertyPage::eventChangeLibraryPaths(ui::custom::EditListEdit
 	event->consume();
 }
 
-void ConfigurationPropertyPage::eventChangeLibraries(ui::custom::EditListEditEvent* event)
+void ConfigurationPropertyPage::eventChangeLibraries(ui::EditListEditEvent* event)
 {
 	std::vector< std::wstring > libraries = m_configuration->getLibraries();
 	int32_t editId = event->getIndex();

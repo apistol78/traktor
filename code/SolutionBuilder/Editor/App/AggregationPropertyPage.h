@@ -10,9 +10,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Ui/Container.h>
 #include <Ui/CheckBox.h>
 #include <Ui/Edit.h>
-#include <Ui/Custom/DropDown.h>
-#include <Ui/Custom/GridView/GridRowDoubleClickEvent.h>
-#include <Ui/Custom/GridView/GridView.h>
+#include <Ui/DropDown.h>
+#include <Ui/GridView/GridRowDoubleClickEvent.h>
+#include <Ui/GridView/GridView.h>
 
 namespace traktor
 {
@@ -35,14 +35,14 @@ private:
 	Ref< Solution > m_solution;
 	Ref< Aggregation > m_aggregation;
 	Ref< ui::CheckBox > m_checkEnable;
-	Ref< ui::custom::GridView > m_gridDependencies;
-	Ref< ui::custom::DropDown > m_dropAvailable;
+	Ref< ui::GridView > m_gridDependencies;
+	Ref< ui::DropDown > m_dropAvailable;
 
 	void updateDependencyList();
 
 	void eventEnableClick(ui::ButtonClickEvent* event);
 
-	void eventDependencyDoubleClick(ui::custom::GridRowDoubleClickEvent* event);
+	void eventDependencyDoubleClick(ui::GridRowDoubleClickEvent* event);
 
 	void eventClickAdd(ui::ButtonClickEvent* event);
 

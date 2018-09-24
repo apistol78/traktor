@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Sound/Editor/Resound/BankControlGrain.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
-#include "Ui/Custom/Auto/AutoWidget.h"
+#include "Ui/Auto/AutoWidget.h"
 
 // Resources
 #include "Resources/Grain.h"
@@ -18,7 +18,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BankControlGrain", BankControlGrain, ui::custom::AutoWidgetCell)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BankControlGrain", BankControlGrain, ui::AutoWidgetCell)
 
 BankControlGrain::BankControlGrain(BankControlGrain* parent, IGrainData* grain, const std::wstring& text, int32_t image)
 :	m_parent(parent)
@@ -57,13 +57,13 @@ void BankControlGrain::setActive(bool active)
 
 void BankControlGrain::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& position)
 {
-	ui::SelectionChangeEvent selectionChange(getWidget< ui::custom::AutoWidget >(), this);
-	getWidget< ui::custom::AutoWidget >()->raiseEvent(&selectionChange);
+	ui::SelectionChangeEvent selectionChange(getWidget< ui::AutoWidget >(), this);
+	getWidget< ui::AutoWidget >()->raiseEvent(&selectionChange);
 }
 
 void BankControlGrain::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
-	bool focus = bool(getWidget< ui::custom::AutoWidget >()->getFocusCell() == this);
+	bool focus = bool(getWidget< ui::AutoWidget >()->getFocusCell() == this);
 
 	ui::Size sz = m_bitmapGrain->getSize();
 	

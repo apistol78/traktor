@@ -35,13 +35,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
 #include "Ui/StyleBitmap.h"
-#include "Ui/Custom/FileDialog.h"
-#include "Ui/Custom/ProgressBar.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/GridView/GridColumn.h"
-#include "Ui/Custom/GridView/GridItem.h"
-#include "Ui/Custom/GridView/GridRow.h"
-#include "Ui/Custom/GridView/GridView.h"
+#include "Ui/FileDialog.h"
+#include "Ui/ProgressBar.h"
+#include "Ui/Splitter.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridView.h"
 
 namespace traktor
 {
@@ -153,7 +153,7 @@ bool match(const std::wstring& value, const std::wstring& needle, bool regExp, b
 	return false;
 }
 
-Ref< const ReflectionMember > searchMember(db::Instance* instance, Reflection* reflection, const ReflectionMember* member, RefSet< Object >& visited, const std::wstring& needle, bool regExp, bool caseSensitive, ui::custom::GridView* gridResults)
+Ref< const ReflectionMember > searchMember(db::Instance* instance, Reflection* reflection, const ReflectionMember* member, RefSet< Object >& visited, const std::wstring& needle, bool regExp, bool caseSensitive, ui::GridView* gridResults)
 {
 	if (match(stylizeMemberName(member->getName()), needle, regExp, caseSensitive))
 		return member;
@@ -203,7 +203,7 @@ Ref< const ReflectionMember > searchMember(db::Instance* instance, Reflection* r
 	return 0;
 }
 
-void searchInstance(db::Instance* instance, const std::wstring& needle, bool regExp, bool caseSensitive, ui::custom::GridView* gridResults)
+void searchInstance(db::Instance* instance, const std::wstring& needle, bool regExp, bool caseSensitive, ui::GridView* gridResults)
 {
 	Ref< ISerializable > object = instance->getObject();
 	if (!object)
@@ -223,15 +223,15 @@ void searchInstance(db::Instance* instance, const std::wstring& needle, bool reg
 		{
 			std::wstring value = getMemberValue(foundMember);
 
-			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-			row->add(new ui::custom::GridItem(instance->getPath()));
-			row->add(new ui::custom::GridItem(instance->getPrimaryType()->getName()));
-			row->add(new ui::custom::GridItem(stylizeMemberName(foundMember->getName())));
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(new ui::GridItem(instance->getPath()));
+			row->add(new ui::GridItem(instance->getPrimaryType()->getName()));
+			row->add(new ui::GridItem(stylizeMemberName(foundMember->getName())));
 			
 			if (value.find_first_of(L"\n\r") == value.npos)
-				row->add(new ui::custom::GridItem(getMemberValue(foundMember)));
+				row->add(new ui::GridItem(getMemberValue(foundMember)));
 			else
-				row->add(new ui::custom::GridItem(L"..."));
+				row->add(new ui::GridItem(L"..."));
 
 			row->setData(L"INSTANCE", instance);
 			gridResults->addRow(row);
@@ -239,7 +239,7 @@ void searchInstance(db::Instance* instance, const std::wstring& needle, bool reg
 	}
 }
 
-void searchGroup(db::Group* group, const std::wstring& needle, bool regExp, bool caseSensitive, ui::custom::ProgressBar* progressBar, ui::custom::GridView* gridResults)
+void searchGroup(db::Group* group, const std::wstring& needle, bool regExp, bool caseSensitive, ui::ProgressBar* progressBar, ui::GridView* gridResults)
 {
 	RefArray< db::Instance > childInstances;
 	db::recursiveFindChildInstances(group, db::FindInstanceAll(), childInstances);
@@ -278,7 +278,7 @@ bool SearchToolDialog::create(ui::Widget* parent)
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
-	Ref< ui::custom::Splitter > splitterV = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitterV = new ui::Splitter();
 	splitterV->create(this, true, ui::dpi96(220), false);
 
 	Ref< ui::Container > containerSearch = new ui::Container();
@@ -302,16 +302,16 @@ bool SearchToolDialog::create(ui::Widget* parent)
 	m_buttonSaveAs->create(containerSearch, i18n::Text(L"EDITOR_SEARCH_TOOL_SAVE_AS"));
 	m_buttonSaveAs->addEventHandler< ui::ButtonClickEvent >(this, &SearchToolDialog::eventButtonSaveAsClick);
 
-	m_progressBar = new ui::custom::ProgressBar();
+	m_progressBar = new ui::ProgressBar();
 	m_progressBar->create(containerSearch, ui::WsDoubleBuffer);
 	m_progressBar->setVisible(false);
 
-	m_gridResults = new ui::custom::GridView();
-	m_gridResults->create(splitterV, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_INSTANCE"), ui::dpi96(320)));
-	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_TYPE"), ui::dpi96(200)));
-	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_MEMBER"), ui::dpi96(200)));
-	m_gridResults->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_VALUE"), ui::dpi96(200)));
+	m_gridResults = new ui::GridView();
+	m_gridResults->create(splitterV, ui::GridView::WsColumnHeader | ui::WsDoubleBuffer);
+	m_gridResults->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_INSTANCE"), ui::dpi96(320)));
+	m_gridResults->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_TYPE"), ui::dpi96(200)));
+	m_gridResults->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_MEMBER"), ui::dpi96(200)));
+	m_gridResults->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_VALUE"), ui::dpi96(200)));
 	m_gridResults->addEventHandler< ui::MouseDoubleClickEvent >(this, &SearchToolDialog::eventGridResultDoubleClick);
 	m_gridResults->addEventHandler< ui::MouseButtonUpEvent >(this, &SearchToolDialog::eventGridResultButtonUp);
 
@@ -366,7 +366,7 @@ void SearchToolDialog::eventButtonSearchClick(ui::ButtonClickEvent* event)
 
 void SearchToolDialog::eventButtonSaveAsClick(ui::ButtonClickEvent* event)
 {
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, i18n::Text(L"EDITOR_SEARCH_TOOL_SAVE_AS_TITLE"), L"All files;*.*", true))
 		return;
 
@@ -383,8 +383,8 @@ void SearchToolDialog::eventButtonSaveAsClick(ui::ButtonClickEvent* event)
 	Utf8Encoding encoding;
 	FileOutputStream fos(file, &encoding);
 
-	const RefArray< ui::custom::GridRow >& rows = m_gridResults->getRows();
-	for (RefArray< ui::custom::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
+	const RefArray< ui::GridRow >& rows = m_gridResults->getRows();
+	for (RefArray< ui::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
 	{
 		fos <<
 			(*i)->get(0)->getText() << L";" <<
@@ -399,7 +399,7 @@ void SearchToolDialog::eventButtonSaveAsClick(ui::ButtonClickEvent* event)
 
 void SearchToolDialog::eventGridResultDoubleClick(ui::MouseDoubleClickEvent* event)
 {
-	Ref< ui::custom::GridRow > row = m_gridResults->getSelectedRow();
+	Ref< ui::GridRow > row = m_gridResults->getSelectedRow();
 	if (row)
 	{
 		Ref< db::Instance > instance = row->getData< db::Instance >(L"INSTANCE");
@@ -411,7 +411,7 @@ void SearchToolDialog::eventGridResultDoubleClick(ui::MouseDoubleClickEvent* eve
 
 void SearchToolDialog::eventGridResultButtonUp(ui::MouseButtonUpEvent* event)
 {
-	Ref< ui::custom::GridRow > row = m_gridResults->getSelectedRow();
+	Ref< ui::GridRow > row = m_gridResults->getSelectedRow();
 	if (row && event->getButton() == ui::MbtRight)
 	{
 		Ref< db::Instance > instance = row->getData< db::Instance >(L"INSTANCE");

@@ -16,13 +16,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/FloodLayout.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/FileDialog.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/ListBox/ListBox.h"
-#include "Ui/Custom/PropertyList/AutoPropertyList.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/FileDialog.h"
+#include "Ui/Splitter.h"
+#include "Ui/ListBox/ListBox.h"
+#include "Ui/PropertyList/AutoPropertyList.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor
 {
@@ -48,27 +48,27 @@ bool FlashBatchDialog::create(ui::Widget* parent)
 	))
 		return false;
 
-	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitter = new ui::Splitter();
 	splitter->create(this, true, ui::dpi96(200));
 
 	Ref< ui::Container > textureListContainer = new ui::Container();
 	textureListContainer->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
-	Ref< ui::custom::ToolBar > movieListTools = new ui::custom::ToolBar();
+	Ref< ui::ToolBar > movieListTools = new ui::ToolBar();
 	if (!movieListTools->create(textureListContainer))
 		return false;
 
 	movieListTools->addImage(new ui::StyleBitmap(L"Flash.PlusMinus"), 2);
-	movieListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_BATCH_ADD"), 0, ui::Command(L"FlashBatch.Add")));
-	movieListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"FLASH_BATCH_REMOVE"), 1, ui::Command(L"FlashBatch.Remove")));
-	movieListTools->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &FlashBatchDialog::eventTextureListToolClick);
+	movieListTools->addItem(new ui::ToolBarButton(i18n::Text(L"FLASH_BATCH_ADD"), 0, ui::Command(L"FlashBatch.Add")));
+	movieListTools->addItem(new ui::ToolBarButton(i18n::Text(L"FLASH_BATCH_REMOVE"), 1, ui::Command(L"FlashBatch.Remove")));
+	movieListTools->addEventHandler< ui::ToolBarButtonClickEvent >(this, &FlashBatchDialog::eventTextureListToolClick);
 
-	m_movieList = new ui::custom::ListBox();
-	m_movieList->create(textureListContainer, ui::custom::ListBox::WsExtended);
+	m_movieList = new ui::ListBox();
+	m_movieList->create(textureListContainer, ui::ListBox::WsExtended);
 	m_movieList->addEventHandler< ui::SelectionChangeEvent >(this, &FlashBatchDialog::eventTextureListSelect);
 
-	m_moviePropertyList = new ui::custom::AutoPropertyList();
-	m_moviePropertyList->create(splitter, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader);
+	m_moviePropertyList = new ui::AutoPropertyList();
+	m_moviePropertyList->create(splitter, ui::WsDoubleBuffer | ui::AutoPropertyList::WsColumnHeader);
 	m_moviePropertyList->setSeparator(ui::dpi96(200));
 	m_moviePropertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_moviePropertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
@@ -96,7 +96,7 @@ bool FlashBatchDialog::showModal(RefArray< FlashMovieAsset >& outAssets)
 
 void FlashBatchDialog::addTexture()
 {
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, i18n::Text(L"FLASH_BATCH_FILE_TITLE"), L"All files;*.*"))
 		return;
 
@@ -139,7 +139,7 @@ void FlashBatchDialog::removeTexture()
 		m_movieList->remove(index);
 }
 
-void FlashBatchDialog::eventTextureListToolClick(ui::custom::ToolBarButtonClickEvent* event)
+void FlashBatchDialog::eventTextureListToolClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& cmd = event->getCommand();
 	if (cmd == L"FlashBatch.Add")

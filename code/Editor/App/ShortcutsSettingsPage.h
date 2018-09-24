@@ -16,14 +16,9 @@ namespace traktor
 	{
 
 class Button;
-
-		namespace custom
-		{
-
 class GridView;
 class ShortcutEdit;
 
-		}
 	}
 
 	namespace editor
@@ -45,8 +40,8 @@ public:
 
 private:
 	Ref< const PropertyGroup > m_originalSettings;
-	Ref< ui::custom::GridView > m_gridShortcuts;
-	Ref< ui::custom::ShortcutEdit > m_editShortcut;
+	Ref< ui::GridView > m_gridShortcuts;
+	Ref< ui::ShortcutEdit > m_editShortcut;
 	Ref< ui::Button > m_buttonResetAll;
 
 	void updateShortcutGrid();

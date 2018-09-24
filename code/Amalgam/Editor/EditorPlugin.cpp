@@ -63,12 +63,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Container.h"
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarDropDown.h"
-#include "Ui/Custom/ToolBar/ToolBarDropMenu.h"
-#include "Ui/Custom/ToolBar/ToolBarEmbed.h"
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarDropDown.h"
+#include "Ui/ToolBar/ToolBarDropMenu.h"
+#include "Ui/ToolBar/ToolBarEmbed.h"
+#include "Ui/ToolBar/ToolBarSeparator.h"
 
 namespace traktor
 {
@@ -152,17 +152,17 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	container->setText(L"Targets");
 
 	// Create toolbar; add all targets as drop down items.
-	m_toolBar = new ui::custom::ToolBar();
+	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(container);
 	m_toolBar->setEnable(false);
-	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &EditorPlugin::eventToolBarClick);
+	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorPlugin::eventToolBarClick);
 
-	m_toolTargets = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Targets"), ui::dpi96(120), i18n::Text(L"AMALGAM_TARGETS"));
+	m_toolTargets = new ui::ToolBarDropDown(ui::Command(L"Amalgam.Targets"), ui::dpi96(120), i18n::Text(L"AMALGAM_TARGETS"));
 	m_toolBar->addItem(m_toolTargets);
 
-	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarSeparator());
 
-	m_toolTweaks = new ui::custom::ToolBarDropMenu(ui::dpi96(70), i18n::Text(L"AMALGAM_TWEAKS"), true, i18n::Text(L"AMALGAM_TWEAKS_TOOLTIP"));
+	m_toolTweaks = new ui::ToolBarDropMenu(ui::dpi96(70), i18n::Text(L"AMALGAM_TWEAKS"), true, i18n::Text(L"AMALGAM_TWEAKS_TOOLTIP"));
 	m_toolTweaks->add(createTweakMenuItem(L"Mute Audio", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Audio \"Write Out\"", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Force Render Thread Off", false));
@@ -177,7 +177,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(createTweakMenuItem(L"Launch With 1/4 Window", false));
 	m_toolBar->addItem(m_toolTweaks);
 
-	m_toolLanguage = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Language"), ui::dpi96(85), i18n::Text(L"AMALGAM_LANGUAGE"));
+	m_toolLanguage = new ui::ToolBarDropDown(ui::Command(L"Amalgam.Language"), ui::dpi96(85), i18n::Text(L"AMALGAM_LANGUAGE"));
 	m_toolLanguage->add(i18n::Text(L"AMALGAM_LANGUAGE_DEFAULT"));
 	for (uint32_t i = 0; i < sizeof_array(c_languageCodes); ++i)
 		m_toolLanguage->add(i18n::Text(c_languageCodes[i].human));
@@ -820,7 +820,7 @@ void EditorPlugin::eventTargetListCommand(TargetCommandEvent* event)
 	}
 }
 
-void EditorPlugin::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
+void EditorPlugin::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 {
 	int32_t selectedTargetIndex = m_toolTargets->getSelected();
 	if (selectedTargetIndex < 0 || selectedTargetIndex >= int32_t(m_targetInstances.size()))

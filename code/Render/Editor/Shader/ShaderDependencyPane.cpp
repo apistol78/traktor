@@ -10,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "I18N/Text.h"
 #include "Render/Editor/Shader/ShaderDependencyPane.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/ListBox/ListBox.h"
+#include "Ui/ListBox/ListBox.h"
 
 namespace traktor
 {
@@ -41,8 +41,8 @@ bool ShaderDependencyPane::create(ui::Widget* parent)
 
 	setText(i18n::Text(L"SHADERGRAPH_REFEREES"));
 
-	m_refereeList = new ui::custom::ListBox();
-	m_refereeList->create(this, ui::custom::ListBox::WsSingle);
+	m_refereeList = new ui::ListBox();
+	m_refereeList->create(this, ui::ListBox::WsSingle);
 
 	if (m_dependencyTracker)
 	{

@@ -31,15 +31,12 @@ class IEditorPageSite;
 
 	namespace ui
 	{
-		namespace custom
-		{
 
 class GridItemContentChangeEvent;
 class GridRowDoubleClickEvent;
 class GridView;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace i18n
@@ -68,17 +65,17 @@ private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
-	Ref< ui::custom::GridView > m_gridDictionary;
+	Ref< ui::GridView > m_gridDictionary;
 	Ref< Dictionary > m_dictionary;
 	Ref< Dictionary > m_referenceDictionary;
 
 	void updateGrid();
 
-	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 
-	void eventGridRowDoubleClick(ui::custom::GridRowDoubleClickEvent* event);
+	void eventGridRowDoubleClick(ui::GridRowDoubleClickEvent* event);
 
-	void eventGridItemChange(ui::custom::GridItemContentChangeEvent* event);
+	void eventGridItemChange(ui::GridItemContentChangeEvent* event);
 };
 
 	}

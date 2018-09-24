@@ -13,12 +13,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Ui/ShortcutTable.h>
 #include <Ui/Menu.h>
 #include <Ui/MenuItem.h>
-#include <Ui/Custom/ToolBar/ToolBar.h>
-#include <Ui/Custom/ToolBar/ToolBarButtonClickEvent.h>
-#include <Ui/Custom/TreeView/TreeView.h>
-#include <Ui/Custom/TreeView/TreeViewContentChangeEvent.h>
-#include <Ui/Custom/TreeView/TreeViewEditEvent.h>
-#include <Ui/Custom/TreeView/TreeViewItem.h>
+#include <Ui/ToolBar/ToolBar.h>
+#include <Ui/ToolBar/ToolBarButtonClickEvent.h>
+#include <Ui/TreeView/TreeView.h>
+#include <Ui/TreeView/TreeViewContentChangeEvent.h>
+#include <Ui/TreeView/TreeViewEditEvent.h>
+#include <Ui/TreeView/TreeViewItem.h>
 
 namespace traktor
 {
@@ -52,9 +52,9 @@ public:
 
 private:
 	Ref< ui::ShortcutTable > m_shortcutTable;
-	Ref< ui::custom::ToolBar > m_menuBar;
+	Ref< ui::ToolBar > m_menuBar;
 	Ref< ui::MenuItem > m_menuItemMRU;
-	Ref< ui::custom::TreeView > m_treeSolution;
+	Ref< ui::TreeView > m_treeSolution;
 	Ref< ui::Menu > m_menuSolution;
 	Ref< ui::Menu > m_menuProject;
 	Ref< ui::Menu > m_menuAggregation;
@@ -82,19 +82,19 @@ private:
 
 	bool isModified() const;
 
-	ui::custom::TreeViewItem* createTreeProjectItem(ui::custom::TreeViewItem* parentItem, Project* project);
+	ui::TreeViewItem* createTreeProjectItem(ui::TreeViewItem* parentItem, Project* project);
 
-	ui::custom::TreeViewItem* createTreeAggregationItem(ui::custom::TreeViewItem* parentItem, Aggregation* aggregation);
+	ui::TreeViewItem* createTreeAggregationItem(ui::TreeViewItem* parentItem, Aggregation* aggregation);
 
-	ui::custom::TreeViewItem* createTreeConfigurationItem(ui::custom::TreeViewItem* parentItem, Project* project, Configuration* configuration);
+	ui::TreeViewItem* createTreeConfigurationItem(ui::TreeViewItem* parentItem, Project* project, Configuration* configuration);
 
-	ui::custom::TreeViewItem* createTreeFilterItem(ui::custom::TreeViewItem* parentItem, Project* project, Filter* filter);
+	ui::TreeViewItem* createTreeFilterItem(ui::TreeViewItem* parentItem, Project* project, Filter* filter);
 
-	ui::custom::TreeViewItem* createTreeFileItem(ui::custom::TreeViewItem* parentItem, Project* project, sb::File* file);
+	ui::TreeViewItem* createTreeFileItem(ui::TreeViewItem* parentItem, Project* project, sb::File* file);
 
-	ui::custom::TreeViewItem* createTreeAggregationItemItem(ui::custom::TreeViewItem* parentItem, Aggregation* aggregation, AggregationItem* item);
+	ui::TreeViewItem* createTreeAggregationItemItem(ui::TreeViewItem* parentItem, Aggregation* aggregation, AggregationItem* item);
 
-	ui::custom::TreeViewItem* createTreeAggregationItemItem(ui::custom::TreeViewItem* parentItem, Project* project, Configuration* configuration, AggregationItem* item);
+	ui::TreeViewItem* createTreeAggregationItemItem(ui::TreeViewItem* parentItem, Project* project, Configuration* configuration, AggregationItem* item);
 
 	bool loadSolution(const Path& fileName);
 
@@ -112,13 +112,13 @@ private:
 
 	void eventShortcut(ui::ShortcutEvent*);
 
-	void eventMenuClick(ui::custom::ToolBarButtonClickEvent*);
+	void eventMenuClick(ui::ToolBarButtonClickEvent*);
 
 	void eventTreeButtonDown(ui::MouseButtonDownEvent*);
 
 	void eventTreeSelect(ui::SelectionChangeEvent*);
 
-	void eventTreeChange(ui::custom::TreeViewContentChangeEvent*);
+	void eventTreeChange(ui::TreeViewContentChangeEvent*);
 
 	void eventPropertyPageChange(ui::ContentChangeEvent*);
 };

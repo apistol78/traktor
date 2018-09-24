@@ -9,11 +9,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <Ui/Static.h>
 #include <Ui/Button.h>
 #include <Ui/MessageBox.h>
-#include <Ui/Custom/FileDialog.h>
-#include <Ui/Custom/InputDialog.h>
-#include <Ui/Custom/GridView/GridColumn.h>
-#include <Ui/Custom/GridView/GridItem.h>
-#include <Ui/Custom/GridView/GridRow.h>
+#include <Ui/FileDialog.h>
+#include <Ui/InputDialog.h>
+#include <Ui/GridView/GridColumn.h>
+#include <Ui/GridView/GridItem.h>
+#include <Ui/GridView/GridRow.h>
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Aggregation.h"
 #include "SolutionBuilder/Project.h"
@@ -71,12 +71,12 @@ bool AggregationPropertyPage::create(ui::Widget* parent)
 	Ref< ui::Static > staticDependencies = new ui::Static();
 	staticDependencies->create(container, L"Dependencies");
 
-	m_gridDependencies = new ui::custom::GridView();
-	m_gridDependencies->create(container, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader | ui::custom::GridView::WsMultiSelect);
-	m_gridDependencies->addColumn(new ui::custom::GridColumn(L"Dependency", ui::dpi96(130)));
-	m_gridDependencies->addColumn(new ui::custom::GridColumn(L"Location", ui::dpi96(270)));
-	m_gridDependencies->addColumn(new ui::custom::GridColumn(L"Link", ui::dpi96(50)));
-	m_gridDependencies->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &AggregationPropertyPage::eventDependencyDoubleClick);
+	m_gridDependencies = new ui::GridView();
+	m_gridDependencies->create(container, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsMultiSelect);
+	m_gridDependencies->addColumn(new ui::GridColumn(L"Dependency", ui::dpi96(130)));
+	m_gridDependencies->addColumn(new ui::GridColumn(L"Location", ui::dpi96(270)));
+	m_gridDependencies->addColumn(new ui::GridColumn(L"Link", ui::dpi96(50)));
+	m_gridDependencies->addEventHandler< ui::GridRowDoubleClickEvent >(this, &AggregationPropertyPage::eventDependencyDoubleClick);
 
 	Ref< ui::Static > staticAvailable = new ui::Static();
 	staticAvailable->create(container, L"Available");
@@ -84,7 +84,7 @@ bool AggregationPropertyPage::create(ui::Widget* parent)
 	Ref< ui::Container > containerAvailable = new ui::Container();
 	containerAvailable->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0, f));
 
-	m_dropAvailable = new ui::custom::DropDown();
+	m_dropAvailable = new ui::DropDown();
 	m_dropAvailable->create(containerAvailable);
 
 	Ref< ui::Button > buttonAdd = new ui::Button();
@@ -128,10 +128,10 @@ void AggregationPropertyPage::updateDependencyList()
 		if (is_a< ExternalDependency >(dependency))
 			continue;
 
-		Ref< ui::custom::GridRow > dependencyItem = new ui::custom::GridRow();
-		dependencyItem->add(new ui::custom::GridItem(dependency->getName()));
-		dependencyItem->add(new ui::custom::GridItem(dependency->getLocation()));
-		dependencyItem->add(new ui::custom::GridItem(c_link[dependency->getLink()]));
+		Ref< ui::GridRow > dependencyItem = new ui::GridRow();
+		dependencyItem->add(new ui::GridItem(dependency->getName()));
+		dependencyItem->add(new ui::GridItem(dependency->getLocation()));
+		dependencyItem->add(new ui::GridItem(c_link[dependency->getLink()]));
 		dependencyItem->setData(L"DEPENDENCY", dependency);
 		m_gridDependencies->addRow(dependencyItem);
 	}
@@ -142,10 +142,10 @@ void AggregationPropertyPage::updateDependencyList()
 		if (is_a< ProjectDependency >(dependency))
 			continue;
 
-		Ref< ui::custom::GridRow > dependencyItem = new ui::custom::GridRow();
-		dependencyItem->add(new ui::custom::GridItem(dependency->getName()));
-		dependencyItem->add(new ui::custom::GridItem(dependency->getLocation()));
-		dependencyItem->add(new ui::custom::GridItem(c_link[dependency->getLink()]));
+		Ref< ui::GridRow > dependencyItem = new ui::GridRow();
+		dependencyItem->add(new ui::GridItem(dependency->getName()));
+		dependencyItem->add(new ui::GridItem(dependency->getLocation()));
+		dependencyItem->add(new ui::GridItem(c_link[dependency->getLink()]));
 		dependencyItem->setData(L"DEPENDENCY", dependency);
 		m_gridDependencies->addRow(dependencyItem);
 	}
@@ -174,7 +174,7 @@ void AggregationPropertyPage::eventEnableClick(ui::ButtonClickEvent* event)
 	m_aggregation->setEnable(m_checkEnable->isChecked());
 }
 
-void AggregationPropertyPage::eventDependencyDoubleClick(ui::custom::GridRowDoubleClickEvent* event)
+void AggregationPropertyPage::eventDependencyDoubleClick(ui::GridRowDoubleClickEvent* event)
 {
 	Ref< Dependency > dependency = event->getRow()->getData< Dependency >(L"DEPENDENCY");
 	if (!dependency)
@@ -187,12 +187,12 @@ void AggregationPropertyPage::eventDependencyDoubleClick(ui::custom::GridRowDoub
 		if (!selectedDependency)
 			return;
 
-		ui::custom::InputDialog::Field inputFields[] =
+		ui::InputDialog::Field inputFields[] =
 		{
-			ui::custom::InputDialog::Field(L"Location", selectedDependency->getSolutionFileName())
+			ui::InputDialog::Field(L"Location", selectedDependency->getSolutionFileName())
 		};
 
-		ui::custom::InputDialog inputDialog;
+		ui::InputDialog inputDialog;
 		inputDialog.create(
 			this,
 			L"External dependency",
@@ -237,8 +237,8 @@ void AggregationPropertyPage::eventClickAdd(ui::ButtonClickEvent* event)
 
 void AggregationPropertyPage::eventClickRemove(ui::ButtonClickEvent* event)
 {
-	RefArray< ui::custom::GridRow > selectedRows;
-	m_gridDependencies->getRows(selectedRows, ui::custom::GridView::GfSelectedOnly);
+	RefArray< ui::GridRow > selectedRows;
+	m_gridDependencies->getRows(selectedRows, ui::GridView::GfSelectedOnly);
 
 	for (auto selectedRow : selectedRows)
 	{
@@ -258,7 +258,7 @@ void AggregationPropertyPage::eventClickRemove(ui::ButtonClickEvent* event)
 
 void AggregationPropertyPage::eventClickAddExternal(ui::ButtonClickEvent* event)
 {
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	fileDialog.create(this, L"Select solution", L"SolutionBuilder solutions;*.xms");
 
 	Path filePath;

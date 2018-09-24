@@ -34,19 +34,14 @@ class IEditor;
 
 class Bitmap;
 class Container;
-class Edit;
-class Image;
-
-		namespace custom
-		{
-
 class DropDown;
+class Edit;
 class EditList;
 class EditListEditEvent;
+class Image;
 class ListBox;
 class MiniButton;
 
-		}
 	}
 
 	namespace amalgam
@@ -95,19 +90,19 @@ private:
 	std::list< EditFeature > m_features;
 	Ref< ui::Bitmap > m_bitmapNoIcon;
 	Ref< ui::Container > m_containerOuter;
-	Ref< ui::custom::EditList > m_listBoxTargetConfigurations;
+	Ref< ui::EditList > m_listBoxTargetConfigurations;
 	Ref< ui::Image > m_imageIcon;
-	Ref< ui::custom::DropDown > m_dropDownPlatform;
-	Ref< ui::custom::MiniButton > m_buttonBuildRootInstance;
-	Ref< ui::custom::MiniButton > m_buttonStartupInstance;
-	Ref< ui::custom::MiniButton > m_buttonDefaultInputInstance;
-	Ref< ui::custom::MiniButton > m_buttonOnlineConfigInstance;
+	Ref< ui::DropDown > m_dropDownPlatform;
+	Ref< ui::MiniButton > m_buttonBuildRootInstance;
+	Ref< ui::MiniButton > m_buttonStartupInstance;
+	Ref< ui::MiniButton > m_buttonDefaultInputInstance;
+	Ref< ui::MiniButton > m_buttonOnlineConfigInstance;
 	Ref< ui::Edit > m_editBuildRootInstance;
 	Ref< ui::Edit > m_editStartupInstance;
 	Ref< ui::Edit > m_editDefaultInputInstance;
 	Ref< ui::Edit > m_editOnlineConfigInstance;
-	Ref< ui::custom::ListBox > m_listBoxAvailFeatures;
-	Ref< ui::custom::ListBox > m_listBoxUsedFeatures;
+	Ref< ui::ListBox > m_listBoxAvailFeatures;
+	Ref< ui::ListBox > m_listBoxUsedFeatures;
 
 	void updateTargetConfigurations();
 
@@ -121,7 +116,7 @@ private:
 
 	void selectPlatform(const Guid& platformGuid) const;
 
-	void eventListBoxTargetConfigurationsEdit(ui::custom::EditListEditEvent* event);
+	void eventListBoxTargetConfigurationsEdit(ui::EditListEditEvent* event);
 
 	void eventListBoxTargetConfigurationsSelect(ui::SelectionChangeEvent* event);
 

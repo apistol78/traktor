@@ -18,8 +18,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
-#include "Ui/Custom/Graph/DefaultNodeShape.h"
-#include "Ui/Custom/Graph/Node.h"
+#include "Ui/Graph/DefaultNodeShape.h"
+#include "Ui/Graph/Node.h"
 
 namespace traktor
 {
@@ -28,9 +28,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureNodeFacade", TextureNodeFacade, INodeFacade)
 
-TextureNodeFacade::TextureNodeFacade(ui::custom::GraphControl* graphControl)
+TextureNodeFacade::TextureNodeFacade(ui::GraphControl* graphControl)
 {
-	m_nodeShape = new ui::custom::DefaultNodeShape(graphControl);
+	m_nodeShape = new ui::DefaultNodeShape(graphControl);
 }
 
 Ref< Node > TextureNodeFacade::createShaderNode(
@@ -41,16 +41,16 @@ Ref< Node > TextureNodeFacade::createShaderNode(
 	return new Texture();
 }
 
-Ref< ui::custom::Node > TextureNodeFacade::createEditorNode(
+Ref< ui::Node > TextureNodeFacade::createEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
+	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
 	Texture* texture = checked_type_cast< Texture* >(shaderNode);
 
-	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
+	Ref< ui::Node > editorNode = new ui::Node(
 		i18n::Text(L"SHADERGRAPH_NODE_TEXTURE"),
 		shaderNode->getInformation(),
 		ui::Point(
@@ -86,8 +86,8 @@ Ref< ui::custom::Node > TextureNodeFacade::createEditorNode(
 
 void TextureNodeFacade::editShaderNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -99,8 +99,8 @@ void TextureNodeFacade::editShaderNode(
 
 void TextureNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -111,14 +111,14 @@ void TextureNodeFacade::refreshEditorNode(
 }
 
 void TextureNodeFacade::setValidationIndicator(
-	ui::custom::Node* editorNode,
+	ui::Node* editorNode,
 	bool validationSucceeded
 )
 {
 	editorNode->setState(validationSucceeded ? 0 : 1);
 }
 
-void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::custom::Node* editorNode, Texture* texture) const
+void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::Node* editorNode, Texture* texture) const
 {
 	Guid textureGuid = texture ? texture->getExternal() : Guid();
 	if (textureGuid.isValid() && !textureGuid.isNull())

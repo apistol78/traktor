@@ -3763,91 +3763,6 @@
 						</item>
 					</items>
 				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[7]"/>
-				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Ui.Custom</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Custom</sourcePath>
-			<configurations>
-				<item type="Configuration" version="5">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__ANDROID__</item>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Ui.Custom.a</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugstatic</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>__ANDROID__</item>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Ui.Custom.a</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releasestatic</consumerLibraryPath>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
 				<item type="Filter">
 					<name>ColorPicker</name>
 					<items>
@@ -4079,11 +3994,6 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[26]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -4475,7 +4385,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[33]"/>
+					<project ref="/object/projects/item[32]"/>
 				</item>
 				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -4803,17 +4713,17 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[36]"/>
+					<project ref="/object/projects/item[35]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[32]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[33]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[34]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4960,7 +4870,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[36]"/>
+					<project ref="/object/projects/item[35]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -5005,12 +4915,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[35]"/>
+					<project ref="/object/projects/item[34]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[28]"/>
+					<project ref="/object/projects/item[27]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -5334,7 +5244,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[38]"/>
+					<project ref="/object/projects/item[37]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -5346,14 +5256,9 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[27]"/>
-				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[38]/dependencies/item[22]/project"/>
+		<item ref="/object/projects/item[37]/dependencies/item[22]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Input.Android</name>
@@ -5522,7 +5427,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[38]/dependencies/item[25]/project"/>
+		<item ref="/object/projects/item[37]/dependencies/item[25]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Telemetry</name>
@@ -5766,7 +5671,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[36]"/>
+					<project ref="/object/projects/item[35]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>

@@ -7,10 +7,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/ColorNodeFacade.h"
 #include "Ui/Application.h"
-#include "Ui/Custom/Graph/GraphControl.h"
-#include "Ui/Custom/Graph/Node.h"
-#include "Ui/Custom/Graph/InputNodeShape.h"
-#include "Ui/Custom/ColorPicker/ColorDialog.h"
+#include "Ui/Graph/GraphControl.h"
+#include "Ui/Graph/Node.h"
+#include "Ui/Graph/InputNodeShape.h"
+#include "Ui/ColorPicker/ColorDialog.h"
 #include "I18N/Text.h"
 
 namespace traktor
@@ -20,9 +20,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ColorNodeFacade", ColorNodeFacade, INodeFacade)
 
-ColorNodeFacade::ColorNodeFacade(ui::custom::GraphControl* graphControl)
+ColorNodeFacade::ColorNodeFacade(ui::GraphControl* graphControl)
 {
-	m_nodeShape = new ui::custom::InputNodeShape(graphControl);
+	m_nodeShape = new ui::InputNodeShape(graphControl);
 }
 
 Ref< Node > ColorNodeFacade::createShaderNode(
@@ -33,14 +33,14 @@ Ref< Node > ColorNodeFacade::createShaderNode(
 	return new Color();
 }
 
-Ref< ui::custom::Node > ColorNodeFacade::createEditorNode(
+Ref< ui::Node > ColorNodeFacade::createEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
+	ui::GraphControl* graphControl,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
-	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
+	Ref< ui::Node > editorNode = new ui::Node(
 		i18n::Text(L"SHADERGRAPH_NODE_COLOR"),
 		shaderNode->getInformation(),
 		ui::Point(
@@ -74,19 +74,19 @@ Ref< ui::custom::Node > ColorNodeFacade::createEditorNode(
 
 void ColorNodeFacade::editShaderNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
 {
 	Ref< Color > colorNode = checked_type_cast< Color* >(shaderNode);
 
-	ui::custom::ColorDialog colorDialog;
+	ui::ColorDialog colorDialog;
 	colorDialog.create(
 		graphControl,
 		i18n::Text(L"COLOR_DIALOG_TEXT"),
-		ui::custom::ColorDialog::WsDefaultFixed | ui::custom::ColorDialog::WsAlpha,
+		ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha,
 		colorNode->getColor()
 	);
 	if (colorDialog.showModal() == ui::DrOk)
@@ -96,8 +96,8 @@ void ColorNodeFacade::editShaderNode(
 
 void ColorNodeFacade::refreshEditorNode(
 	editor::IEditor* editor,
-	ui::custom::GraphControl* graphControl,
-	ui::custom::Node* editorNode,
+	ui::GraphControl* graphControl,
+	ui::Node* editorNode,
 	ShaderGraph* shaderGraph,
 	Node* shaderNode
 )
@@ -107,7 +107,7 @@ void ColorNodeFacade::refreshEditorNode(
 }
 
 void ColorNodeFacade::setValidationIndicator(
-	ui::custom::Node* editorNode,
+	ui::Node* editorNode,
 	bool validationSucceeded
 )
 {

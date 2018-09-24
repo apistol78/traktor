@@ -13,13 +13,10 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace custom
-		{
 
 class GraphControl;
 class NodeShape;
 
-		}
 	}
 
 	namespace render
@@ -32,45 +29,45 @@ class TextureNodeFacade : public INodeFacade
 	T_RTTI_CLASS;
 
 public:
-	TextureNodeFacade(ui::custom::GraphControl* graphControl);
+	TextureNodeFacade(ui::GraphControl* graphControl);
 
 	virtual Ref< Node > createShaderNode(
 		const TypeInfo* nodeType,
 		editor::IEditor* editor
 	) T_OVERRIDE T_FINAL;
 
-	virtual Ref< ui::custom::Node > createEditorNode(
+	virtual Ref< ui::Node > createEditorNode(
 		editor::IEditor* editor,
-		ui::custom::GraphControl* graphControl,
+		ui::GraphControl* graphControl,
 		ShaderGraph* shaderGraph,
 		Node* shaderNode
 	) T_OVERRIDE T_FINAL;
 
 	virtual void editShaderNode(
 		editor::IEditor* editor,
-		ui::custom::GraphControl* graphControl,
-		ui::custom::Node* editorNode,
+		ui::GraphControl* graphControl,
+		ui::Node* editorNode,
 		ShaderGraph* shaderGraph,
 		Node* shaderNode
 	) T_OVERRIDE T_FINAL;
 
 	virtual void refreshEditorNode(
 		editor::IEditor* editor,
-		ui::custom::GraphControl* graphControl,
-		ui::custom::Node* editorNode,
+		ui::GraphControl* graphControl,
+		ui::Node* editorNode,
 		ShaderGraph* shaderGraph,
 		Node* shaderNode
 	) T_OVERRIDE T_FINAL;
 
 	virtual void setValidationIndicator(
-		ui::custom::Node* editorNode,
+		ui::Node* editorNode,
 		bool validationSucceeded
 	) T_OVERRIDE T_FINAL;
 
 private:
-	Ref< ui::custom::NodeShape > m_nodeShape;
+	Ref< ui::NodeShape > m_nodeShape;
 
-	void updateThumb(editor::IEditor* editor, ui::custom::Node* editorNode, Texture* texture) const;
+	void updateThumb(editor::IEditor* editor, ui::Node* editorNode, Texture* texture) const;
 };
 
 	}

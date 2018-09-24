@@ -24,9 +24,6 @@ class IEditor;
 
 class Tab;
 
-		namespace custom
-		{
-		}
 	}
 
 	namespace script

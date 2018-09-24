@@ -28,20 +28,20 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/NumericEditValidator.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/FileDialog.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/GridView/GridColumn.h"
-#include "Ui/Custom/GridView/GridItem.h"
-#include "Ui/Custom/GridView/GridRow.h"
-#include "Ui/Custom/GridView/GridView.h"
-#include "Ui/Custom/StatusBar/StatusBar.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarEmbed.h"
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-#include "Ui/Custom/TreeView/TreeView.h"
-#include "Ui/Custom/TreeView/TreeViewItem.h"
+#include "Ui/FileDialog.h"
+#include "Ui/Splitter.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridView.h"
+#include "Ui/StatusBar/StatusBar.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarEmbed.h"
+#include "Ui/ToolBar/ToolBarSeparator.h"
+#include "Ui/TreeView/TreeView.h"
+#include "Ui/TreeView/TreeViewItem.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
@@ -55,40 +55,40 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
-	m_toolBar = new ui::custom::ToolBar();
+	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(this);
 
 	m_toolBar->addImage(new ui::StyleBitmap(L"Flash.PreviousFrame"), 1);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Flash.NextFrame"), 1);
 
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Load", ui::Command(L"Traktor.Flash.Load")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Save", ui::Command(L"Traktor.Flash.Save")));
-	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Capture", ui::Command(L"Traktor.Flash.CaptureSingle")));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Previous Frame", 0, ui::Command(L"Traktor.Flash.PreviousFrame")));
+	m_toolBar->addItem(new ui::ToolBarButton(L"Load", ui::Command(L"Traktor.Flash.Load")));
+	m_toolBar->addItem(new ui::ToolBarButton(L"Save", ui::Command(L"Traktor.Flash.Save")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(L"Capture", ui::Command(L"Traktor.Flash.CaptureSingle")));
+	m_toolBar->addItem(new ui::ToolBarButton(L"Previous Frame", 0, ui::Command(L"Traktor.Flash.PreviousFrame")));
 
 	m_editFrame = new ui::Edit();
 	m_editFrame->create(m_toolBar, L"0", ui::WsNone, new ui::NumericEditValidator(false, 0));
 	m_editFrame->addEventHandler< ui::ContentChangeEvent >(this, &ClientPage::eventFrameChange);
-	m_toolBar->addItem(new ui::custom::ToolBarEmbed(m_editFrame, ui::dpi96(30)));
+	m_toolBar->addItem(new ui::ToolBarEmbed(m_editFrame, ui::dpi96(30)));
 
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Next Frame", 1, ui::Command(L"Traktor.Flash.NextFrame")));
-	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Selected Only", ui::Command(L"Traktor.Flash.ToggleShowSelectedOnly"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Visible Only", ui::Command(L"Traktor.Flash.ToggleShowVisibleOnly"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Outline", ui::Command(L"Traktor.Flash.ToggleShowOutline"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggled));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Masks", ui::Command(L"Traktor.Flash.ToggleShowMasks"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle));
+	m_toolBar->addItem(new ui::ToolBarButton(L"Next Frame", 1, ui::Command(L"Traktor.Flash.NextFrame")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(L"Selected Only", ui::Command(L"Traktor.Flash.ToggleShowSelectedOnly"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle));
+	m_toolBar->addItem(new ui::ToolBarButton(L"Visible Only", ui::Command(L"Traktor.Flash.ToggleShowVisibleOnly"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled));
+	m_toolBar->addItem(new ui::ToolBarButton(L"Outline", ui::Command(L"Traktor.Flash.ToggleShowOutline"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled));
+	m_toolBar->addItem(new ui::ToolBarButton(L"Masks", ui::Command(L"Traktor.Flash.ToggleShowMasks"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle));
 
-	m_toolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &ClientPage::eventToolBarClick);
+	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ClientPage::eventToolBarClick);
 
-	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitter = new ui::Splitter();
 	splitter->create(this, true, 30, true);
 
-	Ref< ui::custom::Splitter > splitter2 = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitter2 = new ui::Splitter();
 	splitter2->create(splitter, false, 50, true);
 
-	m_debugTree = new ui::custom::TreeView();
-	m_debugTree->create(splitter2, ui::custom::TreeView::WsTreeButtons | ui::custom::TreeView::WsTreeLines | ui::WsAccelerated);
+	m_debugTree = new ui::TreeView();
+	m_debugTree->create(splitter2, ui::TreeView::WsTreeButtons | ui::TreeView::WsTreeLines | ui::WsAccelerated);
 	m_debugTree->addEventHandler< ui::SelectionChangeEvent >(this, &ClientPage::eventDebugTreeSelectionChange);
 
 	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.MovieClip"), 1);
@@ -98,10 +98,10 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.Edit"), 1);
 	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.Button"), 1);
 
-	m_debugGrid = new ui::custom::GridView();
+	m_debugGrid = new ui::GridView();
 	m_debugGrid->create(splitter2, ui::WsDoubleBuffer);
-	m_debugGrid->addColumn(new ui::custom::GridColumn(L"Name", ui::dpi96(150)));
-	m_debugGrid->addColumn(new ui::custom::GridColumn(L"Value", ui::dpi96(300)));
+	m_debugGrid->addColumn(new ui::GridColumn(L"Name", ui::dpi96(150)));
+	m_debugGrid->addColumn(new ui::GridColumn(L"Value", ui::dpi96(300)));
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0));
@@ -110,7 +110,7 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	m_debugView->create(container);
 	m_debugView->addEventHandler< ui::PaintEvent >(this, &ClientPage::eventDebugViewPaint);
 
-	m_statusBar = new ui::custom::StatusBar();
+	m_statusBar = new ui::StatusBar();
 	m_statusBar->create(container, ui::WsDoubleBuffer);
 
 	m_transport = transport;
@@ -130,8 +130,8 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 
 void ClientPage::updateSelection()
 {
-	RefArray< ui::custom::TreeViewItem > items;
-	m_debugTree->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > items;
+	m_debugTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 
 	Ref< InstanceDebugInfo > debugInfo;
 	if (items.size() == 1)
@@ -154,14 +154,14 @@ void ClientPage::updateSelection()
 		auto cx = debugInfo->getColorTransform();
 		
 		StringOutputStream ss;
-		Ref< ui::custom::GridRow > row;
+		Ref< ui::GridRow > row;
 
 		ss.reset();
 		ss << mbstows(debugInfo->getName());
 
-		row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L"Name"));
-		row->add(new ui::custom::GridItem(ss.str()));
+		row = new ui::GridRow();
+		row->add(new ui::GridItem(L"Name"));
+		row->add(new ui::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
 
 		if (const SpriteInstanceDebugInfo* spriteDebugInfo = dynamic_type_cast< const SpriteInstanceDebugInfo* >(debugInfo))
@@ -169,24 +169,24 @@ void ClientPage::updateSelection()
 			ss.reset();
 			ss << mbstows(spriteDebugInfo->getClassName());
 
-			row = new ui::custom::GridRow();
-			row->add(new ui::custom::GridItem(L"Class"));
-			row->add(new ui::custom::GridItem(ss.str()));
+			row = new ui::GridRow();
+			row->add(new ui::GridItem(L"Class"));
+			row->add(new ui::GridItem(ss.str()));
 			m_debugGrid->addRow(row);
 
-			row = new ui::custom::GridRow();
-			row->add(new ui::custom::GridItem(L"Mask"));
-			row->add(new ui::custom::GridItem(spriteDebugInfo->getMask() ? L"Yes" : L"No"));
+			row = new ui::GridRow();
+			row->add(new ui::GridItem(L"Mask"));
+			row->add(new ui::GridItem(spriteDebugInfo->getMask() ? L"Yes" : L"No"));
 			m_debugGrid->addRow(row);
 
-			row = new ui::custom::GridRow();
-			row->add(new ui::custom::GridItem(L"Clipped"));
-			row->add(new ui::custom::GridItem(spriteDebugInfo->getClipped() ? L"Yes" : L"No"));
+			row = new ui::GridRow();
+			row->add(new ui::GridItem(L"Clipped"));
+			row->add(new ui::GridItem(spriteDebugInfo->getClipped() ? L"Yes" : L"No"));
 			m_debugGrid->addRow(row);
 
-			row = new ui::custom::GridRow();
-			row->add(new ui::custom::GridItem(L"9Grid Scaling"));
-			row->add(new ui::custom::GridItem(!spriteDebugInfo->getScalingGrid().empty() ? L"Yes" : L"No"));
+			row = new ui::GridRow();
+			row->add(new ui::GridItem(L"9Grid Scaling"));
+			row->add(new ui::GridItem(!spriteDebugInfo->getScalingGrid().empty() ? L"Yes" : L"No"));
 			m_debugGrid->addRow(row);
 		}
 
@@ -195,23 +195,23 @@ void ClientPage::updateSelection()
 			ss.reset();
 			ss << editDebugInfo->getText();
 
-			row = new ui::custom::GridRow();
-			row->add(new ui::custom::GridItem(L"Text"));
-			row->add(new ui::custom::GridItem(ss.str()));
+			row = new ui::GridRow();
+			row->add(new ui::GridItem(L"Text"));
+			row->add(new ui::GridItem(ss.str()));
 			m_debugGrid->addRow(row);
 
 			ss.reset();
 			ss << editDebugInfo->getTextColor().getRed() << L", " << editDebugInfo->getTextColor().getGreen() << L", " << editDebugInfo->getTextColor().getBlue() << L", " << editDebugInfo->getTextColor().getAlpha();
 
-			row = new ui::custom::GridRow();
-			row->add(new ui::custom::GridItem(L"Text Color"));
-			row->add(new ui::custom::GridItem(ss.str()));
+			row = new ui::GridRow();
+			row->add(new ui::GridItem(L"Text Color"));
+			row->add(new ui::GridItem(ss.str()));
 			m_debugGrid->addRow(row);
 		}
 
-		row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L"Visible"));
-		row->add(new ui::custom::GridItem(debugInfo->getVisible() ? L"Yes" : L"No"));
+		row = new ui::GridRow();
+		row->add(new ui::GridItem(L"Visible"));
+		row->add(new ui::GridItem(debugInfo->getVisible() ? L"Yes" : L"No"));
 		m_debugGrid->addRow(row);
 
 
@@ -220,25 +220,25 @@ void ClientPage::updateSelection()
 		ss.reset();
 		ss << lm.e11 << L", " << lm.e12 << L", " << lm.e13;
 
-		row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L"Local transform [11,12,13]"));
-		row->add(new ui::custom::GridItem(ss.str()));
+		row = new ui::GridRow();
+		row->add(new ui::GridItem(L"Local transform [11,12,13]"));
+		row->add(new ui::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << lm.e21 << L", " << lm.e22 << L", " << lm.e23;
 
-		row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L"Local transform [21,22,23]"));
-		row->add(new ui::custom::GridItem(ss.str()));
+		row = new ui::GridRow();
+		row->add(new ui::GridItem(L"Local transform [21,22,23]"));
+		row->add(new ui::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << lm.e31 << L", " << lm.e32 << L", " << lm.e33;
 
-		row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L"Local transform [31,32,33]"));
-		row->add(new ui::custom::GridItem(ss.str()));
+		row = new ui::GridRow();
+		row->add(new ui::GridItem(L"Local transform [31,32,33]"));
+		row->add(new ui::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
 
 
@@ -246,80 +246,80 @@ void ClientPage::updateSelection()
 		ss.reset();
 		ss << int(lt.x / 20.0f) << L", " << int(lt.y / 20.0f);
 
-		row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L"Local position"));
-		row->add(new ui::custom::GridItem(ss.str()));
+		row = new ui::GridRow();
+		row->add(new ui::GridItem(L"Local position"));
+		row->add(new ui::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << ls.x << L", " << ls.y;
 
-		row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L"Local scale"));
-		row->add(new ui::custom::GridItem(ss.str()));
+		row = new ui::GridRow();
+		row->add(new ui::GridItem(L"Local scale"));
+		row->add(new ui::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << rad2deg(lr);
 
-		row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L"Local rotatation"));
-		row->add(new ui::custom::GridItem(ss.str()));
+		row = new ui::GridRow();
+		row->add(new ui::GridItem(L"Local rotatation"));
+		row->add(new ui::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << int(lb.mn.x / 20.0f) << L", " << int(lb.mn.y / 20.0f) << L" - " << int(lb.mx.x / 20.0f) << L", " << int(lb.mx.y / 20.0f);
 
-		row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L"Local bounds"));
-		row->add(new ui::custom::GridItem(ss.str()));
+		row = new ui::GridRow();
+		row->add(new ui::GridItem(L"Local bounds"));
+		row->add(new ui::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << int(gt.x / 20.0f) << L", " << int(gt.y / 20.0f);
 
-		row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L"Global position"));
-		row->add(new ui::custom::GridItem(ss.str()));
+		row = new ui::GridRow();
+		row->add(new ui::GridItem(L"Global position"));
+		row->add(new ui::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << gs.x << L", " << gs.y;
 
-		row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L"Global scale"));
-		row->add(new ui::custom::GridItem(ss.str()));
+		row = new ui::GridRow();
+		row->add(new ui::GridItem(L"Global scale"));
+		row->add(new ui::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << rad2deg(gr);
 
-		row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L"Global rotatation"));
-		row->add(new ui::custom::GridItem(ss.str()));
+		row = new ui::GridRow();
+		row->add(new ui::GridItem(L"Global rotatation"));
+		row->add(new ui::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << int(gb.mn.x / 20.0f) << L", " << int(gb.mn.y / 20.0f) << L" - " << int(gb.mx.x / 20.0f) << L", " << int(gb.mx.y / 20.0f);
 
-		row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L"Global bounds"));
-		row->add(new ui::custom::GridItem(ss.str()));
+		row = new ui::GridRow();
+		row->add(new ui::GridItem(L"Global bounds"));
+		row->add(new ui::GridItem(ss.str()));
 		m_debugGrid->addRow(row);		
 
 		ss.reset();
 		ss << L"+[" << cx.add << L"], *[" << cx.mul << L"]";
 
-		row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L"Global color transform"));
-		row->add(new ui::custom::GridItem(ss.str()));
+		row = new ui::GridRow();
+		row->add(new ui::GridItem(L"Global color transform"));
+		row->add(new ui::GridItem(ss.str()));
 		m_debugGrid->addRow(row);
 	}
 	else
 		m_debugView->setHighlight(0);
 }
 
-void ClientPage::buildDebugTree(ui::custom::TreeViewItem* parent, const RefArray< InstanceDebugInfo >& instances)
+void ClientPage::buildDebugTree(ui::TreeViewItem* parent, const RefArray< InstanceDebugInfo >& instances)
 {
 	for (auto instance : instances)
 	{
@@ -344,7 +344,7 @@ void ClientPage::buildDebugTree(ui::custom::TreeViewItem* parent, const RefArray
 		else
 			ss << L"<unnamed>";
 
-		Ref< ui::custom::TreeViewItem > item = m_debugTree->createItem(parent, ss.str(), 1);
+		Ref< ui::TreeViewItem > item = m_debugTree->createItem(parent, ss.str(), 1);
 		item->setImage(0, image);
 		item->setData(L"DEBUGINFO", instance);
 
@@ -384,11 +384,11 @@ void ClientPage::eventFrameChange(ui::ContentChangeEvent* event)
 	selectFrame(parseString< int32_t >(m_editFrame->getText()));
 }
 
-void ClientPage::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
+void ClientPage::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 {
 	if (event->getCommand() == L"Traktor.Flash.Load")
 	{
-		ui::custom::FileDialog fileDialog;
+		ui::FileDialog fileDialog;
 		fileDialog.create(this, L"Load capture...", L"All files;*.*", false);
 
 		Path fileName;
@@ -424,7 +424,7 @@ void ClientPage::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 	{
 		//if (m_debugInfo)
 		//{
-		//	ui::custom::FileDialog fileDialog;
+		//	ui::FileDialog fileDialog;
 		//	fileDialog.create(this, L"Save capture as...", L"All files;*.*", true);
 
 		//	Path fileName;
@@ -458,25 +458,25 @@ void ClientPage::eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event)
 	}
 	else if (event->getCommand() == L"Traktor.Flash.ToggleShowSelectedOnly")
 	{
-		ui::custom::ToolBarButton* button = mandatory_non_null_type_cast< ui::custom::ToolBarButton* >(event->getItem());
+		ui::ToolBarButton* button = mandatory_non_null_type_cast< ui::ToolBarButton* >(event->getItem());
 		m_debugView->setHighlightOnly(button->isToggled());
 		m_debugView->update();
 	}
 	else if (event->getCommand() == L"Traktor.Flash.ToggleShowVisibleOnly")
 	{
-		ui::custom::ToolBarButton* button = mandatory_non_null_type_cast< ui::custom::ToolBarButton* >(event->getItem());
+		ui::ToolBarButton* button = mandatory_non_null_type_cast< ui::ToolBarButton* >(event->getItem());
 		m_debugView->setVisibleOnly(button->isToggled());
 		m_debugView->update();
 	}
 	else if (event->getCommand() == L"Traktor.Flash.ToggleShowOutline")
 	{
-		ui::custom::ToolBarButton* button = mandatory_non_null_type_cast< ui::custom::ToolBarButton* >(event->getItem());
+		ui::ToolBarButton* button = mandatory_non_null_type_cast< ui::ToolBarButton* >(event->getItem());
 		m_debugView->setOutline(button->isToggled());
 		m_debugView->update();
 	}
 	else if (event->getCommand() == L"Traktor.Flash.ToggleShowMasks")
 	{
-		ui::custom::ToolBarButton* button = mandatory_non_null_type_cast< ui::custom::ToolBarButton* >(event->getItem());
+		ui::ToolBarButton* button = mandatory_non_null_type_cast< ui::ToolBarButton* >(event->getItem());
 		m_debugView->setShowMasks(button->isToggled());
 		m_debugView->update();
 	}

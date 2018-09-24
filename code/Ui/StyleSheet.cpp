@@ -45,46 +45,46 @@ Ref< StyleSheet > StyleSheet::createDefault()
 	ss->setColor(L"traktor.ui.Tab", L"tab-color-active", Color4ub(255, 255, 255));
 	ss->setColor(L"traktor.ui.Tab", L"tab-color-inactive", Color4ub(30, 30, 30));
 
-	ss->setColor(L"traktor.ui.custom.BackgroundWorkerDialog", L"border-color", Color4ub(0, 122, 204));
+	ss->setColor(L"traktor.ui.BackgroundWorkerDialog", L"border-color", Color4ub(0, 122, 204));
 
-	ss->setColor(L"traktor.ui.custom.ToolBar", L"item-background-color-pushed", Color4ub(0, 122, 204));
-	ss->setColor(L"traktor.ui.custom.ToolBar", L"item-background-color-hover", Color4ub(254, 254, 254));
-	ss->setColor(L"traktor.ui.custom.ToolBar", L"item-color-toggled", Color4ub(51, 153, 255));
-	ss->setColor(L"traktor.ui.custom.ToolBar", L"item-color-seperator", Color4ub(160, 160, 160));
-	ss->setColor(L"traktor.ui.custom.ToolBar", L"item-background-color-dropdown", Color4ub(239, 239, 242));
-	ss->setColor(L"traktor.ui.custom.ToolBar", L"item-background-color-dropdown-hover", Color4ub(254, 254, 254));
-	ss->setColor(L"traktor.ui.custom.ToolBar", L"item-color-dropdown-hover", Color4ub(255, 255, 255));
-	ss->setColor(L"traktor.ui.custom.ToolBar", L"item-background-color-dropdown-button", Color4ub(243, 243, 246));
-	ss->setColor(L"traktor.ui.custom.ToolBar", L"item-color-dropdown-arrow", Color4ub(20, 20, 20));
+	ss->setColor(L"traktor.ui.ToolBar", L"item-background-color-pushed", Color4ub(0, 122, 204));
+	ss->setColor(L"traktor.ui.ToolBar", L"item-background-color-hover", Color4ub(254, 254, 254));
+	ss->setColor(L"traktor.ui.ToolBar", L"item-color-toggled", Color4ub(51, 153, 255));
+	ss->setColor(L"traktor.ui.ToolBar", L"item-color-seperator", Color4ub(160, 160, 160));
+	ss->setColor(L"traktor.ui.ToolBar", L"item-background-color-dropdown", Color4ub(239, 239, 242));
+	ss->setColor(L"traktor.ui.ToolBar", L"item-background-color-dropdown-hover", Color4ub(254, 254, 254));
+	ss->setColor(L"traktor.ui.ToolBar", L"item-color-dropdown-hover", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.ToolBar", L"item-background-color-dropdown-button", Color4ub(243, 243, 246));
+	ss->setColor(L"traktor.ui.ToolBar", L"item-color-dropdown-arrow", Color4ub(20, 20, 20));
 
-	ss->setColor(L"traktor.ui.custom.TreeView", L"background-color", Color4ub(246, 246, 246));
-	ss->setColor(L"traktor.ui.custom.TreeView", L"item-color-selected", Color4ub(255, 255, 255));
-	ss->setColor(L"traktor.ui.custom.TreeView", L"item-background-color-selected", Color4ub(51, 153, 255));
+	ss->setColor(L"traktor.ui.TreeView", L"background-color", Color4ub(246, 246, 246));
+	ss->setColor(L"traktor.ui.TreeView", L"item-color-selected", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.TreeView", L"item-background-color-selected", Color4ub(51, 153, 255));
 
-	ss->setColor(L"traktor.ui.custom.GradientStatic", L"background-color-left", Color4ub(239, 239, 242));
-	ss->setColor(L"traktor.ui.custom.GradientStatic", L"background-color-right", Color4ub(239, 239, 242));
+	ss->setColor(L"traktor.ui.GradientStatic", L"background-color-left", Color4ub(239, 239, 242));
+	ss->setColor(L"traktor.ui.GradientStatic", L"background-color-right", Color4ub(239, 239, 242));
 
-	ss->setColor(L"traktor.ui.custom.GridView", L"background-color", Color4ub(255, 255, 255));
-	ss->setColor(L"traktor.ui.custom.GridView", L"header-background-color", Color4ub(239, 239, 242));
-	ss->setColor(L"traktor.ui.custom.GridView", L"item-color-selected", Color4ub(255, 255, 255));
-	ss->setColor(L"traktor.ui.custom.GridView", L"item-background-color-selected", Color4ub(51, 153, 255));
-	ss->setColor(L"traktor.ui.custom.GridView", L"line-color", Color4ub(239, 239, 242));
+	ss->setColor(L"traktor.ui.GridView", L"background-color", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.GridView", L"header-background-color", Color4ub(239, 239, 242));
+	ss->setColor(L"traktor.ui.GridView", L"item-color-selected", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.GridView", L"item-background-color-selected", Color4ub(51, 153, 255));
+	ss->setColor(L"traktor.ui.GridView", L"line-color", Color4ub(239, 239, 242));
 
-	ss->setColor(L"traktor.ui.custom.ScrollBar", L"background-color", Color4ub(219, 219, 222));
-	ss->setColor(L"traktor.ui.custom.ScrollBar", L"color-arrow", Color4ub(120, 120, 120));
-	ss->setColor(L"traktor.ui.custom.ScrollBar", L"color-slider", Color4ub(189, 189, 192));
+	ss->setColor(L"traktor.ui.ScrollBar", L"background-color", Color4ub(219, 219, 222));
+	ss->setColor(L"traktor.ui.ScrollBar", L"color-arrow", Color4ub(120, 120, 120));
+	ss->setColor(L"traktor.ui.ScrollBar", L"color-slider", Color4ub(189, 189, 192));
 
-	ss->setColor(L"traktor.ui.custom.ListBox", L"background-color", Color4ub(255, 255, 255));
-	ss->setColor(L"traktor.ui.custom.ListBox", L"item-color-selected", Color4ub(255, 255, 255));
-	ss->setColor(L"traktor.ui.custom.ListBox", L"item-background-color-selected", Color4ub(51, 153, 255));
+	ss->setColor(L"traktor.ui.ListBox", L"background-color", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.ListBox", L"item-color-selected", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.ListBox", L"item-background-color-selected", Color4ub(51, 153, 255));
 
-	ss->setColor(L"traktor.ui.custom.LogList", L"background-color", Color4ub(255, 255, 255));
-	ss->setColor(L"traktor.ui.custom.LogList", L"background-color-info", Color4ub(255, 255, 255, 0));
-	ss->setColor(L"traktor.ui.custom.LogList", L"background-color-warning", Color4ub(255, 210, 87));
-	ss->setColor(L"traktor.ui.custom.LogList", L"background-color-error", Color4ub(255, 45, 45));
-	ss->setColor(L"traktor.ui.custom.LogList", L"color-info", Color4ub(0, 0, 0));
-	ss->setColor(L"traktor.ui.custom.LogList", L"color-warning", Color4ub(0, 0, 0));
-	ss->setColor(L"traktor.ui.custom.LogList", L"color-error", Color4ub(0, 0, 0));
+	ss->setColor(L"traktor.ui.LogList", L"background-color", Color4ub(255, 255, 255));
+	ss->setColor(L"traktor.ui.LogList", L"background-color-info", Color4ub(255, 255, 255, 0));
+	ss->setColor(L"traktor.ui.LogList", L"background-color-warning", Color4ub(255, 210, 87));
+	ss->setColor(L"traktor.ui.LogList", L"background-color-error", Color4ub(255, 45, 45));
+	ss->setColor(L"traktor.ui.LogList", L"color-info", Color4ub(0, 0, 0));
+	ss->setColor(L"traktor.ui.LogList", L"color-warning", Color4ub(0, 0, 0));
+	ss->setColor(L"traktor.ui.LogList", L"color-error", Color4ub(0, 0, 0));
 
 	return ss;
 }

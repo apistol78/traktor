@@ -45,24 +45,24 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/HierarchicalState.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/GridView/GridColumn.h"
-#include "Ui/Custom/GridView/GridItem.h"
-#include "Ui/Custom/GridView/GridRow.h"
-#include "Ui/Custom/GridView/GridRowDoubleClickEvent.h"
-#include "Ui/Custom/GridView/GridView.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarDropDown.h"
-#include "Ui/Custom/ToolBar/ToolBarEmbed.h"
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-#include "Ui/Custom/TreeView/TreeView.h"
-#include "Ui/Custom/TreeView/TreeViewContentChangeEvent.h"
-#include "Ui/Custom/TreeView/TreeViewDragEvent.h"
-#include "Ui/Custom/TreeView/TreeViewItem.h"
-#include "Ui/Custom/TreeView/TreeViewItemActivateEvent.h"
-#include "Ui/Custom/TreeView/TreeViewItemStateChangeEvent.h"
+#include "Ui/Splitter.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridRowDoubleClickEvent.h"
+#include "Ui/GridView/GridView.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarDropDown.h"
+#include "Ui/ToolBar/ToolBarEmbed.h"
+#include "Ui/ToolBar/ToolBarSeparator.h"
+#include "Ui/TreeView/TreeView.h"
+#include "Ui/TreeView/TreeViewContentChangeEvent.h"
+#include "Ui/TreeView/TreeViewDragEvent.h"
+#include "Ui/TreeView/TreeViewItem.h"
+#include "Ui/TreeView/TreeViewItemActivateEvent.h"
+#include "Ui/TreeView/TreeViewItemStateChangeEvent.h"
 
 namespace traktor
 {
@@ -344,7 +344,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
-	m_toolSelection = new ui::custom::ToolBar();
+	m_toolSelection = new ui::ToolBar();
 	if (!m_toolSelection->create(this))
 		return false;
 	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.NameFilter"), 1);
@@ -352,81 +352,81 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.ShowFiltered"), 1);
 	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.Favorites"), 1);
 
-	m_toolFilterType = new ui::custom::ToolBarButton(
+	m_toolFilterType = new ui::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER"),
 		0,
 		ui::Command(L"Database.Filter"),
-		ui::custom::ToolBarButton::BsDefaultToggle
+		ui::ToolBarButton::BsDefaultToggle
 	);
 	m_toolSelection->addItem(m_toolFilterType);
 
-	m_toolFilterAssets = new ui::custom::ToolBarButton(
+	m_toolFilterAssets = new ui::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER_ASSETS"),
 		1,
 		ui::Command(L"Database.FilterAssets"),
-		ui::custom::ToolBarButton::BsDefaultToggle
+		ui::ToolBarButton::BsDefaultToggle
 	);
 	m_toolSelection->addItem(m_toolFilterAssets);
 
-	m_toolFilterShow = new ui::custom::ToolBarButton(
+	m_toolFilterShow = new ui::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER_SHOW_FILTERED"),
 		2,
 		ui::Command(L"Database.ShowFiltered"),
-		ui::custom::ToolBarButton::BsDefaultToggle
+		ui::ToolBarButton::BsDefaultToggle
 	);
 	m_toolSelection->addItem(m_toolFilterShow);
 
-	m_toolFavoritesShow = new ui::custom::ToolBarButton(
+	m_toolFavoritesShow = new ui::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER_SHOW_FAVORITES"),
 		3,
 		ui::Command(L"Database.ShowFavorites"),
-		ui::custom::ToolBarButton::BsDefaultToggle
+		ui::ToolBarButton::BsDefaultToggle
 	);
 	m_toolSelection->addItem(m_toolFavoritesShow);
 
-	m_toolSelection->addItem(new ui::custom::ToolBarSeparator());
+	m_toolSelection->addItem(new ui::ToolBarSeparator());
 
 	m_editFilter = new ui::Edit();
 	m_editFilter->create(m_toolSelection, L"", ui::WsNone);
 	m_editFilter->addEventHandler< ui::KeyUpEvent >(this, &DatabaseView::eventFilterKey);
-	m_toolSelection->addItem(new ui::custom::ToolBarEmbed(m_editFilter, ui::dpi96(100)));
+	m_toolSelection->addItem(new ui::ToolBarEmbed(m_editFilter, ui::dpi96(100)));
 
-	m_toolSelection->addItem(new ui::custom::ToolBarSeparator());
+	m_toolSelection->addItem(new ui::ToolBarSeparator());
 
-	m_toolViewMode = new ui::custom::ToolBarDropDown(ui::Command(L"Editor.ViewModes"), ui::dpi96(80), i18n::Text(L"DATABASE_VIEW_MODE"));
+	m_toolViewMode = new ui::ToolBarDropDown(ui::Command(L"Editor.ViewModes"), ui::dpi96(80), i18n::Text(L"DATABASE_VIEW_MODE"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_HIERARCHY"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_CATEGORY"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_SPLIT"));
 	m_toolViewMode->select(0);
 	m_toolSelection->addItem(m_toolViewMode);
 
-	m_toolSelection->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &DatabaseView::eventToolSelectionClicked);
+	m_toolSelection->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DatabaseView::eventToolSelectionClicked);
 
-	m_splitter = new ui::custom::Splitter();
+	m_splitter = new ui::Splitter();
 	m_splitter->create(this, false, 50, true);
 
-	m_treeDatabase = new ui::custom::TreeView();
-	if (!m_treeDatabase->create(m_splitter, (ui::custom::TreeView::WsDefault | ui::custom::TreeView::WsDrag | ui::WsAccelerated) & ~ui::WsClientBorder))
+	m_treeDatabase = new ui::TreeView();
+	if (!m_treeDatabase->create(m_splitter, (ui::TreeView::WsDefault | ui::TreeView::WsDrag | ui::WsAccelerated) & ~ui::WsClientBorder))
 		return false;
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Folders"), 2);
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Types"), 23);
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.TypesHidden"), 23);
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.TreeColors"), 4);
-	m_treeDatabase->addEventHandler< ui::custom::TreeViewItemActivateEvent >(this, &DatabaseView::eventInstanceActivate);
-	m_treeDatabase->addEventHandler< ui::custom::TreeViewItemStateChangeEvent >(this, &DatabaseView::eventInstanceStateChange);
+	m_treeDatabase->addEventHandler< ui::TreeViewItemActivateEvent >(this, &DatabaseView::eventInstanceActivate);
+	m_treeDatabase->addEventHandler< ui::TreeViewItemStateChangeEvent >(this, &DatabaseView::eventInstanceStateChange);
 	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &DatabaseView::eventInstanceSelect);
 	m_treeDatabase->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
-	m_treeDatabase->addEventHandler< ui::custom::TreeViewContentChangeEvent >(this, &DatabaseView::eventInstanceRenamed);
-	m_treeDatabase->addEventHandler< ui::custom::TreeViewDragEvent >(this, &DatabaseView::eventInstanceDrag);
+	m_treeDatabase->addEventHandler< ui::TreeViewContentChangeEvent >(this, &DatabaseView::eventInstanceRenamed);
+	m_treeDatabase->addEventHandler< ui::TreeViewDragEvent >(this, &DatabaseView::eventInstanceDrag);
 	m_treeDatabase->setEnable(false);
 
-	m_gridInstances = new ui::custom::GridView();
-	if (!m_gridInstances->create(m_splitter, ui::custom::GridView::WsColumnHeader | ui::WsAccelerated))
+	m_gridInstances = new ui::GridView();
+	if (!m_gridInstances->create(m_splitter, ui::GridView::WsColumnHeader | ui::WsAccelerated))
 		return false;
-	m_gridInstances->addColumn(new ui::custom::GridColumn(L"", ui::dpi96(20)));
-	m_gridInstances->addColumn(new ui::custom::GridColumn(i18n::Text(L"DATABASE_INSTANCE_NAME"), ui::dpi96(240)));
-	m_gridInstances->addColumn(new ui::custom::GridColumn(i18n::Text(L"DATABASE_INSTANCE_TYPE"), ui::dpi96(100)));
-	m_gridInstances->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &DatabaseView::eventInstanceGridActivate);
+	m_gridInstances->addColumn(new ui::GridColumn(L"", ui::dpi96(20)));
+	m_gridInstances->addColumn(new ui::GridColumn(i18n::Text(L"DATABASE_INSTANCE_NAME"), ui::dpi96(240)));
+	m_gridInstances->addColumn(new ui::GridColumn(i18n::Text(L"DATABASE_INSTANCE_TYPE"), ui::dpi96(100)));
+	m_gridInstances->addEventHandler< ui::GridRowDoubleClickEvent >(this, &DatabaseView::eventInstanceGridActivate);
 	m_gridInstances->setVisible(false);
 
 	m_menuGroup[0] = new ui::Menu();
@@ -605,7 +605,7 @@ void DatabaseView::updateView()
 				const TypeInfo* instanceType = *i;
 				T_ASSERT (instanceType);
 
-				Ref< ui::custom::TreeViewItem > instanceTypeItem = m_treeDatabase->createItem(0, getCategoryText(instanceType), 1);
+				Ref< ui::TreeViewItem > instanceTypeItem = m_treeDatabase->createItem(0, getCategoryText(instanceType), 1);
 				instanceTypeItem->setImage(0, 0, 1);
 
 				RefArray< db::Instance > instances;
@@ -642,7 +642,7 @@ void DatabaseView::updateView()
 							iconIndex += 23;
 					}
 
-					Ref< ui::custom::TreeViewItem > instanceItem = m_treeDatabase->createItem(instanceTypeItem, (*j)->getName(), 2);
+					Ref< ui::TreeViewItem > instanceItem = m_treeDatabase->createItem(instanceTypeItem, (*j)->getName(), 2);
 					instanceItem->setImage(0, -1);
 					instanceItem->setImage(1, iconIndex);
 
@@ -679,10 +679,10 @@ void DatabaseView::updateView()
 
 bool DatabaseView::highlight(const db::Instance* instance)
 {
-	RefArray< ui::custom::TreeViewItem > items;
-	m_treeDatabase->getItems(items, ui::custom::TreeView::GfDescendants);
+	RefArray< ui::TreeViewItem > items;
+	m_treeDatabase->getItems(items, ui::TreeView::GfDescendants);
 
-	for (RefArray< ui::custom::TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
+	for (RefArray< ui::TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
 	{
 		if ((*i)->getData< db::Instance >(L"INSTANCE") == instance)
 		{
@@ -697,11 +697,11 @@ bool DatabaseView::highlight(const db::Instance* instance)
 
 bool DatabaseView::handleCommand(const ui::Command& command)
 {
-	RefArray< ui::custom::TreeViewItem > items;
-	if (m_treeDatabase->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) != 1)
+	RefArray< ui::TreeViewItem > items;
+	if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
 		return false;
 
-	Ref< ui::custom::TreeViewItem > treeItem = items.front();
+	Ref< ui::TreeViewItem > treeItem = items.front();
 	T_ASSERT (treeItem);
 
 	Ref< db::Group > group = treeItem->getData< db::Group >(L"GROUP");
@@ -806,7 +806,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				return false;
 			}
 
-			Ref< ui::custom::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem->getParent(), instanceClone->getName(), 2);
+			Ref< ui::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem->getParent(), instanceClone->getName(), 2);
 			treeCloneItem->setImage(0, -1);
 			treeCloneItem->setImage(1, treeItem->getImage(1), treeItem->getExpandedImage(1));
 			treeCloneItem->setEditable(true);
@@ -996,7 +996,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 					{
 						int32_t iconIndex = getIconIndex(type);
 
-						Ref< ui::custom::TreeViewItem > instanceItem = m_treeDatabase->createItem(treeItem, instanceName, 2);
+						Ref< ui::TreeViewItem > instanceItem = m_treeDatabase->createItem(treeItem, instanceName, 2);
 						instanceItem->setImage(0, -1);
 						instanceItem->setImage(1, iconIndex);
 						instanceItem->setEditable(true);
@@ -1015,7 +1015,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			Ref< db::Group > newGroup = group->createGroup(i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"));
 			if (newGroup)
 			{
-				Ref< ui::custom::TreeViewItem > groupItem = m_treeDatabase->createItem(treeItem, i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"), 1);
+				Ref< ui::TreeViewItem > groupItem = m_treeDatabase->createItem(treeItem, i18n::Text(L"DATABASE_NEW_GROUP_UNNAMED"), 1);
 				groupItem->setImage(0, 0, 1);
 				groupItem->setEditable(true);
 				groupItem->setData(L"GROUP", newGroup);
@@ -1088,7 +1088,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 				int32_t iconIndex = getIconIndex(&type_of(i->object));
 
-				Ref< ui::custom::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem, pasteName, 2);
+				Ref< ui::TreeViewItem > treeCloneItem = m_treeDatabase->createItem(treeItem, pasteName, 2);
 				treeCloneItem->setImage(0, -1);
 				treeCloneItem->setImage(1, iconIndex);
 				treeCloneItem->setEditable(true);
@@ -1170,9 +1170,9 @@ int32_t DatabaseView::getIconIndex(const TypeInfo* instanceType) const
 	return iconIndex;
 }
 
-Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItem(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parentItem, db::Group* group)
+Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group)
 {
-	Ref< ui::custom::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 1);
+	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 1);
 	groupItem->setImage(0, 0, 1);
 	groupItem->setEditable(true);
 	groupItem->setData(L"GROUP", group);
@@ -1227,7 +1227,7 @@ Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItem(ui::custom::TreeView
 				iconIndex += 23;
 		}
 
-		Ref< ui::custom::TreeViewItem > instanceItem = treeView->createItem(groupItem, (*i)->getName(), 2);
+		Ref< ui::TreeViewItem > instanceItem = treeView->createItem(groupItem, (*i)->getName(), 2);
 		instanceItem->setImage(0, -1);
 		instanceItem->setImage(1, iconIndex);
 
@@ -1249,9 +1249,9 @@ Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItem(ui::custom::TreeView
 	return groupItem;
 }
 
-Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parentItem, db::Group* group)
+Ref< ui::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group)
 {
-	Ref< ui::custom::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 1);
+	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 1);
 	groupItem->setImage(0, 0, 1);
 	groupItem->setEditable(true);
 	groupItem->setData(L"GROUP", group);
@@ -1303,7 +1303,7 @@ Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::custom::Tre
 				iconIndex += 23;
 		}
 
-		Ref< ui::custom::TreeViewItem > instanceItem = treeView->createItem(
+		Ref< ui::TreeViewItem > instanceItem = treeView->createItem(
 			groupItem,
 			(*i)->getName(),
 			iconIndex
@@ -1330,10 +1330,10 @@ Ref< ui::custom::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::custom::Tre
 
 void DatabaseView::updateTreeColors()
 {
-	RefArray< ui::custom::TreeViewItem > items;
-	m_treeDatabase->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfExpandedOnly);
+	RefArray< ui::TreeViewItem > items;
+	m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfExpandedOnly);
 
-	for (RefArray< ui::custom::TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
+	for (RefArray< ui::TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
 	{
 		db::Instance* instance = (*i)->getData< db::Instance >(L"INSTANCE");
 		if (instance)
@@ -1365,14 +1365,14 @@ void DatabaseView::updateGridInstances()
 
 	m_gridInstances->removeAllRows();
 
-	RefArray< ui::custom::TreeViewItem > items;
-	if (m_treeDatabase->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) <= 0)
+	RefArray< ui::TreeViewItem > items;
+	if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) <= 0)
 		return;
 
 	RefArray< db::Instance > childInstances;
-	for (RefArray< ui::custom::TreeViewItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	for (RefArray< ui::TreeViewItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
-		ui::custom::TreeViewItem* treeItem = *i;
+		ui::TreeViewItem* treeItem = *i;
 		T_ASSERT (treeItem);
 
 		db::Group* group = treeItem->getData< db::Group >(L"GROUP");
@@ -1418,10 +1418,10 @@ void DatabaseView::updateGridInstances()
 				iconIndex += 23;
 		}
 
-		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(L""));
-		row->add(new ui::custom::GridItem((*i)->getName()));
-		row->add(new ui::custom::GridItem(primaryType->getName()));
+		Ref< ui::GridRow > row = new ui::GridRow();
+		row->add(new ui::GridItem(L""));
+		row->add(new ui::GridItem((*i)->getName()));
+		row->add(new ui::GridItem(primaryType->getName()));
 		row->setData(L"INSTANCE", (*i));
 		m_gridInstances->addRow(row);
 	}
@@ -1507,7 +1507,7 @@ void DatabaseView::listInstanceDependents(db::Instance* instance)
 	}
 }
 
-void DatabaseView::eventToolSelectionClicked(ui::custom::ToolBarButtonClickEvent* event)
+void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& cmd = event->getCommand();
 	if (cmd == L"Database.Filter")
@@ -1603,9 +1603,9 @@ void DatabaseView::eventTimer(ui::TimerEvent* event)
 	}
 }
 
-void DatabaseView::eventInstanceActivate(ui::custom::TreeViewItemActivateEvent* event)
+void DatabaseView::eventInstanceActivate(ui::TreeViewItemActivateEvent* event)
 {
-	Ref< ui::custom::TreeViewItem > item = event->getItem();
+	Ref< ui::TreeViewItem > item = event->getItem();
 
 	Ref< db::Instance > instance = item->getData< db::Instance >(L"INSTANCE");
 	if (!instance)
@@ -1614,15 +1614,15 @@ void DatabaseView::eventInstanceActivate(ui::custom::TreeViewItemActivateEvent* 
 	m_editor->openEditor(instance);
 }
 
-void DatabaseView::eventInstanceStateChange(ui::custom::TreeViewItemStateChangeEvent* event)
+void DatabaseView::eventInstanceStateChange(ui::TreeViewItemStateChangeEvent* event)
 {
 	updateTreeColors();
 }
 
 void DatabaseView::eventInstanceSelect(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::custom::TreeViewItem > items;
-	if (m_treeDatabase->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) <= 0)
+	RefArray< ui::TreeViewItem > items;
+	if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) <= 0)
 		return;
 
 	updateGridInstances();
@@ -1633,11 +1633,11 @@ void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 	if (event->getButton() != ui::MbtRight)
 		return;
 
-	RefArray< ui::custom::TreeViewItem > items;
-	if (m_treeDatabase->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly) != 1)
+	RefArray< ui::TreeViewItem > items;
+	if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
 		return;
 
-	ui::custom::TreeViewItem* treeItem = items.front();
+	ui::TreeViewItem* treeItem = items.front();
 	T_ASSERT (treeItem);
 
 	Ref< db::Group > group = treeItem->getData< db::Group >(L"GROUP");
@@ -1667,9 +1667,9 @@ void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 	event->consume();
 }
 
-void DatabaseView::eventInstanceRenamed(ui::custom::TreeViewContentChangeEvent* event)
+void DatabaseView::eventInstanceRenamed(ui::TreeViewContentChangeEvent* event)
 {
-	Ref< ui::custom::TreeViewItem > treeItem = event->getItem();
+	Ref< ui::TreeViewItem > treeItem = event->getItem();
 	if (!treeItem)
 		return;
 
@@ -1693,17 +1693,17 @@ void DatabaseView::eventInstanceRenamed(ui::custom::TreeViewContentChangeEvent* 
 		event->consume();
 }
 
-void DatabaseView::eventInstanceDrag(ui::custom::TreeViewDragEvent* event)
+void DatabaseView::eventInstanceDrag(ui::TreeViewDragEvent* event)
 {
-	ui::custom::TreeViewItem* dragItem = event->getItem();
+	ui::TreeViewItem* dragItem = event->getItem();
 
-	if (event->getMoment() == ui::custom::TreeViewDragEvent::DmDrag)
+	if (event->getMoment() == ui::TreeViewDragEvent::DmDrag)
 	{
 		// Only instance nodes are allowed to be dragged.
 		if (!dragItem->getData< db::Instance >(L"INSTANCE"))
 			event->cancel();
 	}
-	else if (event->getMoment() == ui::custom::TreeViewDragEvent::DmDrop)
+	else if (event->getMoment() == ui::TreeViewDragEvent::DmDrop)
 	{
 		// @fixme Ensure drop target are active editor.
 
@@ -1718,9 +1718,9 @@ void DatabaseView::eventInstanceDrag(ui::custom::TreeViewDragEvent* event)
 	event->consume();
 }
 
-void DatabaseView::eventInstanceGridActivate(ui::custom::GridRowDoubleClickEvent* event)
+void DatabaseView::eventInstanceGridActivate(ui::GridRowDoubleClickEvent* event)
 {
-	Ref< ui::custom::GridRow > row = event->getRow();
+	Ref< ui::GridRow > row = event->getRow();
 
 	Ref< db::Instance > instance = row->getData< db::Instance >(L"INSTANCE");
 	if (!instance)

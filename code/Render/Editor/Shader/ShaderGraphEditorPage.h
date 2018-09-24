@@ -35,24 +35,19 @@ class IEditorPageSite;
 	{
 
 class Container;
-class Menu;
-class Point;
-
-		namespace custom
-		{
-
 class EdgeConnectEvent;
 class EdgeDisconnectEvent;
 class GraphControl;
+class Menu;
 class Node;
 class NodeActivateEvent;
 class NodeMovedEvent;
+class Point;
 class SelectEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
 class ToolBarDropDown;
 
-		}
 	}
 
 	namespace render
@@ -91,9 +86,9 @@ private:
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
 	Ref< ShaderGraph > m_shaderGraph;
-	Ref< ui::custom::ToolBar > m_toolBar;
-	Ref< ui::custom::ToolBarDropDown > m_toolPlatform;
-	Ref< ui::custom::GraphControl > m_editorGraph;
+	Ref< ui::ToolBar > m_toolBar;
+	Ref< ui::ToolBarDropDown > m_toolPlatform;
+	Ref< ui::GraphControl > m_editorGraph;
 	Ref< ShaderDependencyPane > m_dependencyPane;
 	Ref< ShaderViewer > m_shaderViewer;
 	Ref< ui::Menu > m_menuPopup;
@@ -103,7 +98,7 @@ private:
 
 	void createEditorNodes(const RefArray< Node >& shaderNodes, const RefArray< Edge >& shaderEdges);
 
-	Ref< ui::custom::Node > createEditorNode(Node* shaderNode);
+	Ref< ui::Node > createEditorNode(Node* shaderNode);
 
 	void createNode(const TypeInfo* nodeType, const ui::Point& at);
 
@@ -113,21 +108,21 @@ private:
 
 	void updateExternalNode(External* external);
 
-	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventMouseMove(ui::MouseMoveEvent* event);
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventSelect(ui::custom::SelectEvent* event);
+	void eventSelect(ui::SelectEvent* event);
 
-	void eventNodeMoved(ui::custom::NodeMovedEvent* event);
+	void eventNodeMoved(ui::NodeMovedEvent* event);
 
-	void eventNodeDoubleClick(ui::custom::NodeActivateEvent* event);
+	void eventNodeDoubleClick(ui::NodeActivateEvent* event);
 
-	void eventEdgeConnect(ui::custom::EdgeConnectEvent* event);
+	void eventEdgeConnect(ui::EdgeConnectEvent* event);
 
-	void eventEdgeDisconnect(ui::custom::EdgeDisconnectEvent* event);
+	void eventEdgeDisconnect(ui::EdgeDisconnectEvent* event);
 };
 
 	}

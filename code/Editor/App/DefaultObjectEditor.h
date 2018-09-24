@@ -8,18 +8,15 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_editor_DefaultObjectEditor_H
 
 #include "Editor/IObjectEditor.h"
-#include "Ui/Custom/PropertyList/AutoPropertyList.h"
+#include "Ui/PropertyList/AutoPropertyList.h"
 
 namespace traktor
 {
 	namespace ui
 	{
-		namespace custom
-		{
 
 class PropertyCommandEvent;
 
-		}
 	}
 
 	namespace editor
@@ -29,7 +26,7 @@ class IEditor;
 
 class DefaultObjectEditor
 :	public IObjectEditor
-,	public ui::custom::PropertyList::IPropertyGuidResolver
+,	public ui::PropertyList::IPropertyGuidResolver
 {
 	T_RTTI_CLASS;
 
@@ -52,11 +49,11 @@ private:
 	IEditor* m_editor;
 	Ref< db::Instance > m_instance;
 	Ref< ISerializable > m_object;
-	Ref< ui::custom::AutoPropertyList > m_propertyList;
+	Ref< ui::AutoPropertyList > m_propertyList;
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const T_OVERRIDE T_FINAL;
 
-	void eventPropertyCommand(ui::custom::PropertyCommandEvent* event);
+	void eventPropertyCommand(ui::PropertyCommandEvent* event);
 };
 
 	}

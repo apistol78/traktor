@@ -14,7 +14,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Terrain/Editor/CropTerrainWizardTool.h"
 #include "Terrain/Editor/TerrainAsset.h"
 #include "Ui/NumericEditValidator.h"
-#include "Ui/Custom/InputDialog.h"
+#include "Ui/InputDialog.h"
 
 namespace traktor
 {
@@ -102,14 +102,14 @@ bool CropTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 	}
 	T_ASSERT (originalSize > 0);
 
-	ui::custom::InputDialog::Field fields[] =
+	ui::InputDialog::Field fields[] =
 	{
-		ui::custom::InputDialog::Field(L"Left", L"0", new ui::NumericEditValidator(false)),
-		ui::custom::InputDialog::Field(L"Top", L"0", new ui::NumericEditValidator(false)),
-		ui::custom::InputDialog::Field(L"Size", toString(originalSize), new ui::NumericEditValidator(false, 1))
+		ui::InputDialog::Field(L"Left", L"0", new ui::NumericEditValidator(false)),
+		ui::InputDialog::Field(L"Top", L"0", new ui::NumericEditValidator(false)),
+		ui::InputDialog::Field(L"Size", toString(originalSize), new ui::NumericEditValidator(false, 1))
 	};
 
-	ui::custom::InputDialog inputDialog;
+	ui::InputDialog inputDialog;
 	inputDialog.create(
 		parent,
 		i18n::Text(L"CROP_TERRAIN_WIZARDTOOL_TITLE"),

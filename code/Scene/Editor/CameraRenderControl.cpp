@@ -41,7 +41,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/Widget.h"
-#include "Ui/Custom/AspectLayout.h"
+#include "Ui/AspectLayout.h"
 #include "Ui/Itf/IWidget.h"
 #include "World/Entity.h"
 #include "World/IEntityEventManager.h"
@@ -203,7 +203,7 @@ void CameraRenderControl::updateWorldRenderer()
 void CameraRenderControl::setAspect(float aspect)
 {
 	if (aspect > 0.0f)
-		m_containerAspect->setLayout(new ui::custom::AspectLayout(aspect));
+		m_containerAspect->setLayout(new ui::AspectLayout(aspect));
 	else
 		m_containerAspect->setLayout(new ui::FloodLayout());
 

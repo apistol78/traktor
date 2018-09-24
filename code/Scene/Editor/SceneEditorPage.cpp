@@ -52,18 +52,18 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/InputDialog.h"
-#include "Ui/Custom/StatusBar/StatusBar.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-#include "Ui/Custom/GridView/GridView.h"
-#include "Ui/Custom/GridView/GridColumn.h"
-#include "Ui/Custom/GridView/GridColumnClickEvent.h"
-#include "Ui/Custom/GridView/GridRow.h"
-#include "Ui/Custom/GridView/GridRowStateChangeEvent.h"
-#include "Ui/Custom/GridView/GridItem.h"
+#include "Ui/InputDialog.h"
+#include "Ui/StatusBar/StatusBar.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarSeparator.h"
+#include "Ui/GridView/GridView.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridColumnClickEvent.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridRowStateChangeEvent.h"
+#include "Ui/GridView/GridItem.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/EntityEventManager.h"
@@ -214,7 +214,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 		return false;
 	}
 
-	m_statusBar = new ui::custom::StatusBar();
+	m_statusBar = new ui::StatusBar();
 	m_statusBar->create(m_editPanel);
 
 	// Create entity panel.
@@ -237,34 +237,34 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.FindInDatabase"), i18n::Text(L"SCENE_EDITOR_FIND_IN_DATABASE")));
 
-	m_entityToolBar = new ui::custom::ToolBar();
+	m_entityToolBar = new ui::ToolBar();
 	m_entityToolBar->create(m_entityPanel);
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.RemoveEntity"), 1);
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveToEntity"), 1);
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.FilterEntity"), 1);
-	m_entityToolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), 0, ui::Command(L"Editor.Delete")));
-	m_entityToolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), 1, ui::Command(L"Scene.Editor.MoveToEntity")));
+	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), 0, ui::Command(L"Editor.Delete")));
+	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), 1, ui::Command(L"Scene.Editor.MoveToEntity")));
 	
-	m_buttonFilterEntity = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_FILTER_ENTITY"), 2, ui::Command(L"Scene.Editor.FilterEntity"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_buttonFilterEntity = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_FILTER_ENTITY"), 2, ui::Command(L"Scene.Editor.FilterEntity"), ui::ToolBarButton::BsDefaultToggle);
 	m_entityToolBar->addItem(m_buttonFilterEntity);
 
-	m_entityToolBar->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SceneEditorPage::eventEntityToolClick);
+	m_entityToolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &SceneEditorPage::eventEntityToolClick);
 
 	m_imageHidden = new ui::StyleBitmap(L"Scene.LayerHidden");
 	m_imageVisible = new ui::StyleBitmap(L"Scene.LayerVisible");
 	m_imageLocked = new ui::StyleBitmap(L"Scene.LayerLocked");
 	m_imageUnlocked = new ui::StyleBitmap(L"Scene.LayerUnlocked");
 
-	m_instanceGrid = new ui::custom::GridView();
-	m_instanceGrid->create(m_entityPanel, ui::custom::GridView::WsMultiSelect |ui::WsDoubleBuffer);
+	m_instanceGrid = new ui::GridView();
+	m_instanceGrid->create(m_entityPanel, ui::GridView::WsMultiSelect |ui::WsDoubleBuffer);
 	//m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
-	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::dpi96(200)));
-	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::dpi96(30)));
-	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::dpi96(30)));
+	m_instanceGrid->addColumn(new ui::GridColumn(L"", ui::dpi96(200)));
+	m_instanceGrid->addColumn(new ui::GridColumn(L"", ui::dpi96(30)));
+	m_instanceGrid->addColumn(new ui::GridColumn(L"", ui::dpi96(30)));
 	m_instanceGrid->addEventHandler< ui::SelectionChangeEvent >(this, &SceneEditorPage::eventInstanceSelect);
-	m_instanceGrid->addEventHandler< ui::custom::GridRowStateChangeEvent >(this, &SceneEditorPage::eventInstanceExpand);
+	m_instanceGrid->addEventHandler< ui::GridRowStateChangeEvent >(this, &SceneEditorPage::eventInstanceExpand);
 	m_instanceGrid->addEventHandler< ui::MouseButtonDownEvent >(this, &SceneEditorPage::eventInstanceButtonDown);
-	m_instanceGrid->addEventHandler< ui::custom::GridColumnClickEvent >(this, &SceneEditorPage::eventInstanceClick);
+	m_instanceGrid->addEventHandler< ui::GridColumnClickEvent >(this, &SceneEditorPage::eventInstanceClick);
 
 	m_instanceGridFontBold = new ui::Font(m_instanceGrid->getFont());
 	m_instanceGridFontBold->setBold(true);
@@ -289,23 +289,23 @@ bool SceneEditorPage::create(ui::Container* parent)
 	Ref< ui::TabPage > tabPageGuides = new ui::TabPage();
 	tabPageGuides->create(m_tabMisc, i18n::Text(L"SCENE_EDITOR_GUIDES"), new ui::FloodLayout());
 
-	m_gridGuides = new ui::custom::GridView();
+	m_gridGuides = new ui::GridView();
 	m_gridGuides->create(tabPageGuides, ui::WsDoubleBuffer | ui::WsTabStop);
-	m_gridGuides->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_NAME"), ui::dpi96(150)));
-	m_gridGuides->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_VISIBLE"), ui::dpi96(50)));
+	m_gridGuides->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_NAME"), ui::dpi96(150)));
+	m_gridGuides->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_VISIBLE"), ui::dpi96(50)));
 
 	for (std::set< std::wstring >::const_iterator i = guideIds.begin(); i != guideIds.end(); ++i)
 	{
 		bool shouldDraw = m_editor->getSettings()->getProperty< bool >(L"SceneEditor.Guides/" + *i, true);
 		m_context->setDrawGuide(*i, shouldDraw);
 
-		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(*i));
-		row->add(new ui::custom::GridItem(shouldDraw ? m_imageVisible : m_imageHidden));
+		Ref< ui::GridRow > row = new ui::GridRow();
+		row->add(new ui::GridItem(*i));
+		row->add(new ui::GridItem(shouldDraw ? m_imageVisible : m_imageHidden));
 		m_gridGuides->addRow(row);
 	}
 
-	m_gridGuides->addEventHandler< ui::custom::GridColumnClickEvent >(this, &SceneEditorPage::eventGuideClick);
+	m_gridGuides->addEventHandler< ui::GridColumnClickEvent >(this, &SceneEditorPage::eventGuideClick);
 
 	// Add pages.
 	m_tabMisc->addPage(tabPageDependencies);
@@ -389,8 +389,8 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		Ref< EntityAdapter > parentGroupAdapter;
 
 		// Get selected items, must be a single item.
-		RefArray< ui::custom::GridRow > selectedRows;
-		if (m_instanceGrid->getRows(selectedRows, ui::custom::GridView::GfDescendants | ui::custom::GridView::GfSelectedOnly) == 1)
+		RefArray< ui::GridRow > selectedRows;
+		if (m_instanceGrid->getRows(selectedRows, ui::GridView::GfDescendants | ui::GridView::GfSelectedOnly) == 1)
 		{
 			Ref< EntityAdapter > selectedEntity = selectedRows[0]->getData< EntityAdapter >(L"ENTITY");
 			T_ASSERT (selectedEntity);
@@ -865,16 +865,16 @@ void SceneEditorPage::updateScene()
 	}
 }
 
-Ref< ui::custom::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityAdapter)
+Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityAdapter)
 {
 	if (m_entityFilterType && !filterIncludeEntity(*m_entityFilterType, entityAdapter))
 		return 0;
 
-	Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
+	Ref< ui::GridRow > row = new ui::GridRow(0);
 	row->setData(L"ENTITY", entityAdapter);
 	row->setState(
-		(entityAdapter->isSelected() ? ui::custom::GridRow::RsSelected : 0) |
-		(entityAdapter->isExpanded() ? ui::custom::GridRow::RsExpanded : 0)
+		(entityAdapter->isSelected() ? ui::GridRow::RsSelected : 0) |
+		(entityAdapter->isExpanded() ? ui::GridRow::RsExpanded : 0)
 	);
 
 	std::wstring entityName = entityAdapter->getName();
@@ -882,24 +882,24 @@ Ref< ui::custom::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter*
 		entityName = i18n::Text(L"SCENE_EDITOR_UNNAMED_ENTITY");
 
 	if (entityAdapter->isExternal())
-		row->add(new ui::custom::GridItem(entityName, m_instanceGridFontBold/*, 1*/));
+		row->add(new ui::GridItem(entityName, m_instanceGridFontBold/*, 1*/));
 	else if (entityAdapter->isLayer())
 	{
-		row->add(new ui::custom::GridItem(entityName, m_instanceGridFontHuge/*, 4*/));
+		row->add(new ui::GridItem(entityName, m_instanceGridFontHuge/*, 4*/));
 		row->setMinimumHeight(ui::dpi96(32));
 	}
 	else if (entityAdapter->isGroup())
-		row->add(new ui::custom::GridItem(entityName/*, 2, 3*/));
+		row->add(new ui::GridItem(entityName/*, 2, 3*/));
 	else
-		row->add(new ui::custom::GridItem(entityName/*, 0*/));
+		row->add(new ui::GridItem(entityName/*, 0*/));
 
 	// Create "visible" check box.
-	row->add(new ui::custom::GridItem(
+	row->add(new ui::GridItem(
 		entityAdapter->isVisible(false) ? m_imageVisible : m_imageHidden
 	));
 
 	// Create "locked" check box.
-	row->add(new ui::custom::GridItem(
+	row->add(new ui::GridItem(
 		entityAdapter->isLocked(false) ? m_imageLocked : m_imageUnlocked
 	));
 
@@ -912,7 +912,7 @@ Ref< ui::custom::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter*
 		const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
 		for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
 		{
-			Ref< ui::custom::GridRow > child = createInstanceGridRow(*i);
+			Ref< ui::GridRow > child = createInstanceGridRow(*i);
 			if (child)
 				row->addChild(child);
 		}
@@ -928,7 +928,7 @@ void SceneEditorPage::createInstanceGrid()
 	const RefArray< EntityAdapter >& layerEntityAdapters = m_context->getLayerEntityAdapters();
 	for (RefArray< EntityAdapter >::const_iterator j = layerEntityAdapters.begin(); j != layerEntityAdapters.end(); ++j)
 	{
-		Ref< ui::custom::GridRow > entityRow = createInstanceGridRow(*j);
+		Ref< ui::GridRow > entityRow = createInstanceGridRow(*j);
 		if (entityRow)
 			m_instanceGrid->addRow(entityRow);
 	}
@@ -936,24 +936,24 @@ void SceneEditorPage::createInstanceGrid()
 	m_instanceGrid->update();
 }
 
-void SceneEditorPage::updateInstanceGridRow(ui::custom::GridRow* row)
+void SceneEditorPage::updateInstanceGridRow(ui::GridRow* row)
 {
 	EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 
 	row->setState(
-		(entityAdapter->isSelected() ? ui::custom::GridRow::RsSelected : 0) |
-		(entityAdapter->isExpanded() ? ui::custom::GridRow::RsExpanded : 0)
+		(entityAdapter->isSelected() ? ui::GridRow::RsSelected : 0) |
+		(entityAdapter->isExpanded() ? ui::GridRow::RsExpanded : 0)
 	);
 
-	const RefArray< ui::custom::GridRow >& childRows = row->getChildren();
-	for (RefArray< ui::custom::GridRow >::const_iterator i = childRows.begin(); i != childRows.end(); ++i)
+	const RefArray< ui::GridRow >& childRows = row->getChildren();
+	for (RefArray< ui::GridRow >::const_iterator i = childRows.begin(); i != childRows.end(); ++i)
 		updateInstanceGridRow(*i);
 }
 
 void SceneEditorPage::updateInstanceGrid()
 {
-	const RefArray< ui::custom::GridRow >& rows = m_instanceGrid->getRows();
-	for (RefArray< ui::custom::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
+	const RefArray< ui::GridRow >& rows = m_instanceGrid->getRows();
+	for (RefArray< ui::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
 		updateInstanceGridRow(*i);
 
 	m_instanceGrid->update();
@@ -1046,22 +1046,22 @@ bool SceneEditorPage::moveToEntity()
 	return true;
 }
 
-void SceneEditorPage::eventEntityToolClick(ui::custom::ToolBarButtonClickEvent* event)
+void SceneEditorPage::eventEntityToolClick(ui::ToolBarButtonClickEvent* event)
 {
 	handleCommand(event->getCommand());
 }
 
-void SceneEditorPage::eventGuideClick(ui::custom::GridColumnClickEvent* event)
+void SceneEditorPage::eventGuideClick(ui::GridColumnClickEvent* event)
 {
 	if (event->getColumn() == 1)
 	{
-		ui::custom::GridRow* row = event->getRow();
+		ui::GridRow* row = event->getRow();
 		std::wstring id = row->get(0)->getText();
 
 		bool shouldDraw = !m_context->shouldDrawGuide(id);
 		m_context->setDrawGuide(id, shouldDraw);
 
-		row->set(1, new ui::custom::GridItem(shouldDraw ? m_imageVisible : m_imageHidden));
+		row->set(1, new ui::GridItem(shouldDraw ? m_imageVisible : m_imageHidden));
 		m_gridGuides->requestUpdate();
 
 		m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"SceneEditor.Guides/" + id, shouldDraw);
@@ -1075,10 +1075,10 @@ void SceneEditorPage::eventInstanceSelect(ui::SelectionChangeEvent* event)
 	m_context->selectAllEntities(false);
 
 	// Select only entities which is selected in the grid.
-	RefArray< ui::custom::GridRow > selectedRows;
-	m_instanceGrid->getRows(selectedRows, ui::custom::GridView::GfDescendants | ui::custom::GridView::GfSelectedOnly);
+	RefArray< ui::GridRow > selectedRows;
+	m_instanceGrid->getRows(selectedRows, ui::GridView::GfDescendants | ui::GridView::GfSelectedOnly);
 
-	for (RefArray< ui::custom::GridRow >::iterator i = selectedRows.begin(); i != selectedRows.end(); ++i)
+	for (RefArray< ui::GridRow >::iterator i = selectedRows.begin(); i != selectedRows.end(); ++i)
 	{
 		EntityAdapter* entityAdapter = (*i)->getData< EntityAdapter >(L"ENTITY");
 		T_ASSERT (entityAdapter);
@@ -1090,11 +1090,11 @@ void SceneEditorPage::eventInstanceSelect(ui::SelectionChangeEvent* event)
 	m_context->raiseSelect();
 }
 
-void SceneEditorPage::eventInstanceExpand(ui::custom::GridRowStateChangeEvent* event)
+void SceneEditorPage::eventInstanceExpand(ui::GridRowStateChangeEvent* event)
 {
-	ui::custom::GridRow* row = event->getRow();
+	ui::GridRow* row = event->getRow();
 	EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
-	entityAdapter->setExpanded((row->getState() & ui::custom::GridRow::RsExpanded) != 0);
+	entityAdapter->setExpanded((row->getState() & ui::GridRow::RsExpanded) != 0);
 }
 
 void SceneEditorPage::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
@@ -1118,12 +1118,12 @@ void SceneEditorPage::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 	}
 }
 
-void SceneEditorPage::eventInstanceClick(ui::custom::GridColumnClickEvent* event)
+void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 {
 	if (event->getColumn() == 1)
 	{
-		ui::custom::GridRow* row = event->getRow();
-		ui::custom::GridItem* item = row->get(1);
+		ui::GridRow* row = event->getRow();
+		ui::GridItem* item = row->get(1);
 
 		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 		T_ASSERT (entityAdapter);
@@ -1143,8 +1143,8 @@ void SceneEditorPage::eventInstanceClick(ui::custom::GridColumnClickEvent* event
 	}
 	else if (event->getColumn() == 2)
 	{
-		ui::custom::GridRow* row = event->getRow();
-		ui::custom::GridItem* item = row->get(2);
+		ui::GridRow* row = event->getRow();
+		ui::GridItem* item = row->get(2);
 
 		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 		T_ASSERT (entityAdapter);

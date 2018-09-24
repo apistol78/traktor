@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #pragma once
 
 #include "Editor/IObjectEditor.h"
-#include "Ui/Custom/PropertyList/AutoPropertyList.h"
+#include "Ui/PropertyList/AutoPropertyList.h"
 
 namespace traktor
 {
@@ -27,12 +27,9 @@ class IEditor;
 
 	namespace ui
 	{
-		namespace custom
-		{
 
 class PropertyCommandEvent;
 
-		}
 	}
 
 	namespace render
@@ -43,7 +40,7 @@ class ProbeTexturePreviewControl;
 
 class ProbeTextureAssetEditor
 :	public editor::IObjectEditor
-,	public ui::custom::PropertyList::IPropertyGuidResolver
+,	public ui::PropertyList::IPropertyGuidResolver
 {
 	T_RTTI_CLASS;
 
@@ -67,11 +64,11 @@ private:
 	Ref< db::Instance > m_instance;
 	Ref< ProbeTextureAsset > m_asset;
 	Ref< ProbeTexturePreviewControl > m_previewControl;
-	Ref< ui::custom::AutoPropertyList > m_propertyList;
+	Ref< ui::AutoPropertyList > m_propertyList;
 
 	void updatePreview();
 
-	void eventPropertyCommand(ui::custom::PropertyCommandEvent* event);
+	void eventPropertyCommand(ui::PropertyCommandEvent* event);
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const T_OVERRIDE T_FINAL;
 };

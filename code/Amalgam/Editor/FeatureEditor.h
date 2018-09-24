@@ -26,14 +26,9 @@ class IEditor;
 	{
 	
 class Edit;
-	
-		namespace custom
-		{
-		
 class EditList;
 class ListBox;
 		
-		}
 	}
 
 	namespace amalgam
@@ -64,10 +59,10 @@ private:
 	Ref< Feature > m_feature;
 	Ref< ui::Edit > m_editName;
 	Ref< ui::Edit > m_editPriority;
-	Ref< ui::custom::ListBox > m_listPlatforms;
+	Ref< ui::ListBox > m_listPlatforms;
 	Ref< ui::Edit > m_editExecutable;
-	Ref< ui::custom::EditList > m_listKeys;
-	Ref< ui::custom::EditList > m_listValues;
+	Ref< ui::EditList > m_listKeys;
+	Ref< ui::EditList > m_listValues;
 
 	Feature::Platform* m_selectedPlatform;
 	std::wstring m_selectedKey;

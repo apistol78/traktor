@@ -23,16 +23,11 @@ class IEditor;
 	{
 
 class Command;
-
-		namespace custom
-		{
-
 class GridRow;
 class GridView;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace script
@@ -61,7 +56,7 @@ private:
 		uint64_t callCount;
 		double inclusiveDuration;
 		double exclusiveDuration;
-		Ref< ui::custom::GridRow > row;
+		Ref< ui::GridRow > row;
 
 		ProfileEntry()
 		:	callCount(0)
@@ -73,13 +68,13 @@ private:
 
 	editor::IEditor* m_editor;
 	Ref< IScriptProfiler > m_scriptProfiler;
-	Ref< ui::custom::ToolBar > m_profilerTools;
-	Ref< ui::custom::GridView > m_profileGrid;
+	Ref< ui::ToolBar > m_profilerTools;
+	Ref< ui::GridView > m_profileGrid;
 	std::map< std::pair< Guid, std::wstring >, ProfileEntry > m_profile;
 
 	void updateProfileGrid();
 
-	void eventProfilerToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventProfilerToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventProfileGridDoubleClick(ui::MouseDoubleClickEvent* event);
 

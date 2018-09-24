@@ -15,12 +15,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Static.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/PreviewList/PreviewItem.h"
-#include "Ui/Custom/PreviewList/PreviewItems.h"
-#include "Ui/Custom/PreviewList/PreviewList.h"
-#include "Ui/Custom/TreeView/TreeView.h"
-#include "Ui/Custom/TreeView/TreeViewItem.h"
+#include "Ui/Splitter.h"
+#include "Ui/PreviewList/PreviewItem.h"
+#include "Ui/PreviewList/PreviewItems.h"
+#include "Ui/PreviewList/PreviewList.h"
+#include "Ui/TreeView/TreeView.h"
+#include "Ui/TreeView/TreeViewItem.h"
 
 // Resources
 #include "Resources/Folders.h"
@@ -83,7 +83,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 
 	addEventHandler< ui::ButtonClickEvent >(this, &BrowseTypeDialog::eventDialogClick);
 
-	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitter = new ui::Splitter();
 	if (!splitter->create(this, true, ui::dpi96(200)))
 		return false;
 
@@ -95,7 +95,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 	if (!treeLabel->create(left, i18n::Text(L"BROWSE_TYPE_CATEGORY")))
 		return false;
 
-	m_categoryTree = new ui::custom::TreeView();
+	m_categoryTree = new ui::TreeView();
 	if (!m_categoryTree->create(left, ui::WsDoubleBuffer))
 		return false;
 	m_categoryTree->addImage(new ui::StyleBitmap(L"Editor.Database.Folders"), 2);
@@ -109,12 +109,12 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 	if (!listLabel->create(right, i18n::Text(L"BROWSE_TYPE_TYPES")))
 		return false;
 
-	m_typeList = new ui::custom::PreviewList();
+	m_typeList = new ui::PreviewList();
 	if (!m_typeList->create(right, ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
 	m_typeList->addEventHandler< ui::MouseDoubleClickEvent >(this, &BrowseTypeDialog::eventListDoubleClick);
 
-	Ref< ui::custom::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"BROWSE_TYPE_GLOBAL"), 1);
+	Ref< ui::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"BROWSE_TYPE_GLOBAL"), 1);
 	groupRoot->setImage(0, 0, 1);
 
 	for (TypeInfoSet::iterator i = types.begin(); i != types.end(); ++i)
@@ -132,10 +132,10 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 
 		std::wstring className = parts.back(); parts.pop_back();
 
-		Ref< ui::custom::TreeViewItem > group = groupRoot;
+		Ref< ui::TreeViewItem > group = groupRoot;
 		for (std::vector< std::wstring >::iterator j = parts.begin(); j != parts.end(); ++j)
 		{
-			Ref< ui::custom::TreeViewItem > child = group->findChild(*j);
+			Ref< ui::TreeViewItem > child = group->findChild(*j);
 			if (!child)
 			{
 				child = m_categoryTree->createItem(group, *j, 1);
@@ -145,14 +145,14 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 			group = child;
 		}
 
-		Ref< ui::custom::PreviewItems > items = group->getData< ui::custom::PreviewItems >(L"ITEMS");
+		Ref< ui::PreviewItems > items = group->getData< ui::PreviewItems >(L"ITEMS");
 		if (!items)
 		{
-			items = new ui::custom::PreviewItems();
+			items = new ui::PreviewItems();
 			group->setData(L"ITEMS", items);
 		}
 
-		Ref< ui::custom::PreviewItem > item = new ui::custom::PreviewItem(className);
+		Ref< ui::PreviewItem > item = new ui::PreviewItem(className);
 		item->setData(L"TYPE", new TypeInfoWrapper(*type));
 		
 		items->add(item);
@@ -161,12 +161,12 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 	groupRoot->sort(true);
 
 	// Expand all groups until a group with multiple children is found.
-	ui::custom::TreeViewItem* expandGroup = groupRoot;
+	ui::TreeViewItem* expandGroup = groupRoot;
 	while (expandGroup)
 	{
 		expandGroup->expand();
 
-		const RefArray< ui::custom::TreeViewItem >& children = expandGroup->getChildren();
+		const RefArray< ui::TreeViewItem >& children = expandGroup->getChildren();
 		if (children.size() == 1)
 			expandGroup = children[0];
 		else
@@ -202,11 +202,11 @@ const TypeInfo* BrowseTypeDialog::getSelectedType() const
 
 void BrowseTypeDialog::updatePreviewList()
 {
-	RefArray< ui::custom::TreeViewItem > items;
-	m_categoryTree->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > items;
+	m_categoryTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 	if (!items.empty())
 	{
-		Ref< ui::custom::PreviewItems > previewItems = items[0]->getData< ui::custom::PreviewItems >(L"ITEMS");
+		Ref< ui::PreviewItems > previewItems = items[0]->getData< ui::PreviewItems >(L"ITEMS");
 		m_typeList->setItems(previewItems);
 	}
 	else
@@ -215,7 +215,7 @@ void BrowseTypeDialog::updatePreviewList()
 
 void BrowseTypeDialog::eventDialogClick(ui::ButtonClickEvent* event)
 {
-	Ref< ui::custom::PreviewItem > item = m_typeList->getSelectedItem();
+	Ref< ui::PreviewItem > item = m_typeList->getSelectedItem();
 	if (!item)
 		return;
 		
@@ -233,7 +233,7 @@ void BrowseTypeDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event)
 
 void BrowseTypeDialog::eventListDoubleClick(ui::MouseDoubleClickEvent* event)
 {
-	Ref< ui::custom::PreviewItem > item = m_typeList->getSelectedItem();
+	Ref< ui::PreviewItem > item = m_typeList->getSelectedItem();
 	if (!item)
 		return;
 		

@@ -18,7 +18,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/DropDown.h"
+#include "Ui/DropDown.h"
 
 namespace traktor
 {
@@ -36,13 +36,13 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	Ref< ui::Static > staticRenderer = new ui::Static();
 	staticRenderer->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_TYPE"));
 
-	m_dropRenderSystem = new ui::custom::DropDown();
+	m_dropRenderSystem = new ui::DropDown();
 	m_dropRenderSystem->create(container);
 	
 	Ref< ui::Static > staticCompiler = new ui::Static();
 	staticCompiler->create(container, i18n::Text(L"EDITOR_SETTINGS_COMPILER_TYPE"));
 	
-	m_dropCompiler = new ui::custom::DropDown();
+	m_dropCompiler = new ui::DropDown();
 	m_dropCompiler->create(container);
 
 	Ref< ui::Static > staticMipBias = new ui::Static();

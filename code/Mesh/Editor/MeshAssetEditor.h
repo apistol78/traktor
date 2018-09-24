@@ -32,18 +32,13 @@ class IEditor;
 
 class Container;
 class CheckBox;
+class DropDown;
 class Edit;
+class GridView;
 class Slider;
 class Static;
-
-		namespace custom
-		{
-
-class DropDown;
-class GridView;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace model
@@ -84,7 +79,7 @@ private:
 	Ref< model::Model > m_model;
 	Ref< ui::Edit > m_editFileName;
 	Ref< ui::Container > m_containerMaterials;
-	Ref< ui::custom::DropDown > m_dropMeshType;
+	Ref< ui::DropDown > m_dropMeshType;
 	Ref< ui::CheckBox > m_checkBakeOcclusion;
 	Ref< ui::CheckBox > m_checkCullDistantFaces;
 	Ref< ui::Static > m_staticLodSteps;
@@ -92,8 +87,8 @@ private:
 	Ref< ui::Edit > m_editLodMaxDistance;
 	Ref< ui::Edit > m_editLodCullDistance;
 	Ref< ui::Edit > m_editScaleFactor;
-	Ref< ui::custom::GridView > m_materialShaderList;
-	Ref< ui::custom::GridView > m_materialTextureList;
+	Ref< ui::GridView > m_materialShaderList;
+	Ref< ui::GridView > m_materialTextureList;
 	std::wstring m_assetPath;
 
 	void updateModel();
@@ -128,11 +123,11 @@ private:
 
 	void eventEditModelClick(ui::ButtonClickEvent* event);
 
-	void eventMaterialShaderToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventMaterialShaderToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventMaterialShaderListDoubleClick(ui::MouseDoubleClickEvent* event);
 
-	void eventMaterialTextureToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventMaterialTextureToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventMaterialTextureListDoubleClick(ui::MouseDoubleClickEvent* event);
 };

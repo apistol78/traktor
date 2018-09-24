@@ -21,14 +21,11 @@ class IEditor;
 
 	namespace ui
 	{
-		namespace custom
-		{
 
 class AutoPropertyList;
 class ListBox;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace render
@@ -51,14 +48,14 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< ui::custom::ListBox > m_textureList;
-	Ref< ui::custom::AutoPropertyList > m_texturePropertyList;
+	Ref< ui::ListBox > m_textureList;
+	Ref< ui::AutoPropertyList > m_texturePropertyList;
 
 	void addTexture();
 
 	void removeTexture();
 
-	void eventTextureListToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventTextureListToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventTextureListSelect(ui::SelectionChangeEvent* event);
 };

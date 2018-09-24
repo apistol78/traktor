@@ -38,12 +38,8 @@ class Container;
 class Font;
 class IBitmap;
 class Menu;
-class Tab;
-
-		namespace custom
-		{
-
 class StatusBar;
+class Tab;
 class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
@@ -52,7 +48,6 @@ class GridView;
 class GridRow;
 class GridRowStateChangeEvent;
 
-		}
 	}
 
 	namespace world
@@ -99,21 +94,21 @@ private:
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::Container > m_editPanel;
 	Ref< ScenePreviewControl > m_editControl;
-	Ref< ui::custom::StatusBar > m_statusBar;
+	Ref< ui::StatusBar > m_statusBar;
 	Ref< ui::Container > m_entityPanel;
 	Ref< ui::Tab > m_tabMisc;
 	Ref< EntityDependencyInvestigator > m_entityDependencyPanel;
-	Ref< ui::custom::GridView > m_gridGuides;
+	Ref< ui::GridView > m_gridGuides;
 	Ref< ui::Menu > m_entityMenu;
 	Ref< ui::Menu > m_entityMenuExternal;
 	Ref< ui::Container > m_controllerPanel;
-	Ref< ui::custom::ToolBar > m_entityToolBar;
-	Ref< ui::custom::ToolBarButton > m_buttonFilterEntity;
+	Ref< ui::ToolBar > m_entityToolBar;
+	Ref< ui::ToolBarButton > m_buttonFilterEntity;
 	Ref< ui::IBitmap > m_imageHidden;
 	Ref< ui::IBitmap > m_imageVisible;
 	Ref< ui::IBitmap > m_imageLocked;
 	Ref< ui::IBitmap > m_imageUnlocked;
-	Ref< ui::custom::GridView > m_instanceGrid;
+	Ref< ui::GridView > m_instanceGrid;
 	Ref< ui::Font > m_instanceGridFontBold;
 	Ref< ui::Font > m_instanceGridFontHuge;
 	const TypeInfo* m_entityFilterType;
@@ -125,11 +120,11 @@ private:
 
 	void updateScene();
 
-	Ref< ui::custom::GridRow > createInstanceGridRow(EntityAdapter* entityAdapter);
+	Ref< ui::GridRow > createInstanceGridRow(EntityAdapter* entityAdapter);
 
 	void createInstanceGrid();
 
-	void updateInstanceGridRow(ui::custom::GridRow* row);
+	void updateInstanceGridRow(ui::GridRow* row);
 
 	void updateInstanceGrid();
 
@@ -141,17 +136,17 @@ private:
 
 	bool moveToEntity();
 
-	void eventEntityToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventEntityToolClick(ui::ToolBarButtonClickEvent* event);
 
-	void eventGuideClick(ui::custom::GridColumnClickEvent* event);
+	void eventGuideClick(ui::GridColumnClickEvent* event);
 
 	void eventInstanceSelect(ui::SelectionChangeEvent* event);
 
-	void eventInstanceExpand(ui::custom::GridRowStateChangeEvent* event);
+	void eventInstanceExpand(ui::GridRowStateChangeEvent* event);
 
 	void eventInstanceButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventInstanceClick(ui::custom::GridColumnClickEvent* event);
+	void eventInstanceClick(ui::GridColumnClickEvent* event);
 
 	void eventContextPostBuild(PostBuildEvent* event);
 

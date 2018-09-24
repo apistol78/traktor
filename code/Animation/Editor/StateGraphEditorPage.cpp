@@ -27,20 +27,20 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/MenuItem.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/AspectLayout.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/ToolBar/ToolBar.h"
-#include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarButtonClickEvent.h"
-#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-#include "Ui/Custom/Graph/GraphControl.h"
-#include "Ui/Custom/Graph/Node.h"
-#include "Ui/Custom/Graph/NodeMovedEvent.h"
-#include "Ui/Custom/Graph/Edge.h"
-#include "Ui/Custom/Graph/EdgeConnectEvent.h"
-#include "Ui/Custom/Graph/EdgeDisconnectEvent.h"
-#include "Ui/Custom/Graph/Pin.h"
-#include "Ui/Custom/Graph/DefaultNodeShape.h"
+#include "Ui/AspectLayout.h"
+#include "Ui/Splitter.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarSeparator.h"
+#include "Ui/Graph/GraphControl.h"
+#include "Ui/Graph/Node.h"
+#include "Ui/Graph/NodeMovedEvent.h"
+#include "Ui/Graph/Edge.h"
+#include "Ui/Graph/EdgeConnectEvent.h"
+#include "Ui/Graph/EdgeDisconnectEvent.h"
+#include "Ui/Graph/Pin.h"
+#include "Ui/Graph/DefaultNodeShape.h"
 
 namespace traktor
 {
@@ -69,26 +69,26 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
 	// Create our custom toolbar.
-	m_toolBarGraph = new ui::custom::ToolBar();
+	m_toolBarGraph = new ui::ToolBar();
 	m_toolBarGraph->create(container);
 	m_toolBarGraph->addImage(new ui::StyleBitmap(L"Animation.Alignment"), 6);
-	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_LEFT"), 0, ui::Command(L"StateGraph.Editor.AlignLeft")));
-	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_RIGHT"), 1, ui::Command(L"StateGraph.Editor.AlignRight")));
-	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_TOP"), 2, ui::Command(L"StateGraph.Editor.AlignTop")));
-	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_BOTTOM"), 3, ui::Command(L"StateGraph.Editor.AlignBottom")));
-	m_toolBarGraph->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_VERTICALLY"), 4, ui::Command(L"StateGraph.Editor.EvenSpaceVertically")));
-	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_HORIZONTALLY"), 5, ui::Command(L"StateGraph.Editor.EventSpaceHorizontally")));
-	m_toolBarGraph->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &StateGraphEditorPage::eventToolBarGraphClick);
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_LEFT"), 0, ui::Command(L"StateGraph.Editor.AlignLeft")));
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_RIGHT"), 1, ui::Command(L"StateGraph.Editor.AlignRight")));
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_TOP"), 2, ui::Command(L"StateGraph.Editor.AlignTop")));
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_BOTTOM"), 3, ui::Command(L"StateGraph.Editor.AlignBottom")));
+	m_toolBarGraph->addItem(new ui::ToolBarSeparator());
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_VERTICALLY"), 4, ui::Command(L"StateGraph.Editor.EvenSpaceVertically")));
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_HORIZONTALLY"), 5, ui::Command(L"StateGraph.Editor.EventSpaceHorizontally")));
+	m_toolBarGraph->addEventHandler< ui::ToolBarButtonClickEvent >(this, &StateGraphEditorPage::eventToolBarGraphClick);
 
 	// Create state graph editor control.
-	m_editorGraph = new ui::custom::GraphControl();
-	m_editorGraph->create(container, ui::custom::GraphControl::WsEdgeSelectable | ui::WsDoubleBuffer | ui::WsAccelerated);
+	m_editorGraph = new ui::GraphControl();
+	m_editorGraph->create(container, ui::GraphControl::WsEdgeSelectable | ui::WsDoubleBuffer | ui::WsAccelerated);
 	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &StateGraphEditorPage::eventButtonDown);
 	m_editorGraph->addEventHandler< ui::SelectionChangeEvent >(this, &StateGraphEditorPage::eventSelect);
-	m_editorGraph->addEventHandler< ui::custom::NodeMovedEvent >(this, &StateGraphEditorPage::eventNodeMoved);
-	m_editorGraph->addEventHandler< ui::custom::EdgeConnectEvent >(this, &StateGraphEditorPage::eventEdgeConnect);
-	m_editorGraph->addEventHandler< ui::custom::EdgeDisconnectEvent >(this, &StateGraphEditorPage::eventEdgeDisconnect);
+	m_editorGraph->addEventHandler< ui::NodeMovedEvent >(this, &StateGraphEditorPage::eventNodeMoved);
+	m_editorGraph->addEventHandler< ui::EdgeConnectEvent >(this, &StateGraphEditorPage::eventEdgeConnect);
+	m_editorGraph->addEventHandler< ui::EdgeDisconnectEvent >(this, &StateGraphEditorPage::eventEdgeDisconnect);
 
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();
@@ -102,11 +102,11 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_containerPreview->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0));
 	m_containerPreview->setText(L"Animation Preview");
 
-	m_toolBarPreview = new ui::custom::ToolBar();
+	m_toolBarPreview = new ui::ToolBar();
 	m_toolBarPreview->create(m_containerPreview);
-	m_toolBarPreview->addItem(new ui::custom::ToolBarButton(L"Mesh...", ui::Command(L"StateGraph.Editor.BrowseMesh")));
-	m_toolBarPreview->addItem(new ui::custom::ToolBarButton(L"Skeleton...", ui::Command(L"StateGraph.Editor.BrowseSkeleton")));
-	m_toolBarPreview->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &StateGraphEditorPage::eventToolBarPreviewClick);
+	m_toolBarPreview->addItem(new ui::ToolBarButton(L"Mesh...", ui::Command(L"StateGraph.Editor.BrowseMesh")));
+	m_toolBarPreview->addItem(new ui::ToolBarButton(L"Skeleton...", ui::Command(L"StateGraph.Editor.BrowseSkeleton")));
+	m_toolBarPreview->addEventHandler< ui::ToolBarButtonClickEvent >(this, &StateGraphEditorPage::eventToolBarPreviewClick);
 
 	m_previewControl = new AnimationPreviewControl(m_editor);
 	m_previewControl->create(m_containerPreview);
@@ -153,7 +153,7 @@ bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point&
 
 		m_stateGraph->addState(state);
 
-		Ref< ui::custom::Node > node = createEditorNode(state);
+		Ref< ui::Node > node = createEditorNode(state);
 		m_editorGraph->addNode(node);
 
 		bindStateNodes();
@@ -183,10 +183,10 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"Editor.PropertiesChanged")
 	{
 		// Refresh editor nodes.
-		RefArray< ui::custom::Node >& editorNodes = m_editorGraph->getNodes();
-		for (RefArray< ui::custom::Node >::const_iterator i = editorNodes.begin(); i != editorNodes.end(); ++i)
+		RefArray< ui::Node >& editorNodes = m_editorGraph->getNodes();
+		for (RefArray< ui::Node >::const_iterator i = editorNodes.begin(); i != editorNodes.end(); ++i)
 		{
-			Ref< ui::custom::Node > node = *i;
+			Ref< ui::Node > node = *i;
 
 			Ref< StateNode > state = node->getData< StateNode >(L"STATE");
 			node->setTitle(state->getName());
@@ -203,17 +203,17 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	//if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	//{
-	//	RefArray< ui::custom::Node > selectedNodes;
+	//	RefArray< ui::Node > selectedNodes;
 	//	if (m_editorGraph->getSelectedNodes(selectedNodes) > 0)
 	//	{
 	//		// Also copy edges which are affected by selected nodes.
-	//		RefArray< ui::custom::Edge > selectedEdges;
+	//		RefArray< ui::Edge > selectedEdges;
 	//		m_editorGraph->getSelectedEdges(selectedEdges, true);
 
 	//		Ref< ShaderGraphEditorClipboardData > data = new ShaderGraphEditorClipboardData();
 	//		
 	//		ui::Rect bounds(0, 0, 0, 0);
-	//		for (RefArray< ui::custom::Node >::iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
+	//		for (RefArray< ui::Node >::iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
 	//		{
 	//			Ref< Node > shaderNode = (*i)->getData< Node >(L"SHADERNODE");
 	//			T_ASSERT (shaderNode);
@@ -233,7 +233,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 
 	//		data->setBounds(bounds);
 
-	//		for (RefArray< ui::custom::Edge >::iterator i = selectedEdges.begin(); i != selectedEdges.end(); ++i)
+	//		for (RefArray< ui::Edge >::iterator i = selectedEdges.begin(); i != selectedEdges.end(); ++i)
 	//		{
 	//			Ref< Edge > shaderEdge = (*i)->getData< Edge >(L"SHADEREDGE");
 	//			T_ASSERT (shaderEdge);
@@ -252,13 +252,13 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	//			selectedEdges.resize(0);
 	//			m_editorGraph->getSelectedEdges(selectedEdges, false);
 
-	//			for (RefArray< ui::custom::Edge >::iterator i = selectedEdges.begin(); i != selectedEdges.end(); ++i)
+	//			for (RefArray< ui::Edge >::iterator i = selectedEdges.begin(); i != selectedEdges.end(); ++i)
 	//			{
 	//				m_shaderGraph->removeEdge((*i)->getData< Edge >(L"SHADEREDGE"));
 	//				m_editorGraph->removeEdge(*i);
 	//			}
 
-	//			for (RefArray< ui::custom::Node >::iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
+	//			for (RefArray< ui::Node >::iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
 	//			{
 	//				m_shaderGraph->removeNode((*i)->getData< Node >(L"SHADERNODE"));
 	//				m_editorGraph->removeNode(*i);
@@ -310,19 +310,19 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Delete")
 	{
-		RefArray< ui::custom::Node > nodes;
+		RefArray< ui::Node > nodes;
 		if (m_editorGraph->getSelectedNodes(nodes) <= 0)
 			return false;
 
 		m_document->push();
 
 		// First remove transitions which are connected to selected states.
-		RefArray< ui::custom::Edge > edges;
+		RefArray< ui::Edge > edges;
 		m_editorGraph->getConnectedEdges(nodes, false, edges);
 
-		for (RefArray< ui::custom::Edge >::iterator i = edges.begin(); i != edges.end(); ++i)
+		for (RefArray< ui::Edge >::iterator i = edges.begin(); i != edges.end(); ++i)
 		{
-			Ref< ui::custom::Edge > edge = *i;
+			Ref< ui::Edge > edge = *i;
 			Ref< Transition > transition = edge->getData< Transition >(L"TRANSITION");
 
 			m_editorGraph->removeEdge(edge);
@@ -330,9 +330,9 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 		}
 
 		// Then remove all states.
-		for (RefArray< ui::custom::Node >::iterator i = nodes.begin(); i != nodes.end(); ++i)
+		for (RefArray< ui::Node >::iterator i = nodes.begin(); i != nodes.end(); ++i)
 		{
-			Ref< ui::custom::Node > node = *i;
+			Ref< ui::Node > node = *i;
 			Ref< StateNode > state = node->getData< StateNode >(L"STATE");
 
 			m_editorGraph->removeNode(node);
@@ -391,7 +391,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	//}
 	else if (command == L"StateGraph.Editor.SetRoot")
 	{
-		RefArray< ui::custom::Node > selectedNodes;
+		RefArray< ui::Node > selectedNodes;
 		if (m_editorGraph->getSelectedNodes(selectedNodes) == 1)
 		{
 			Ref< StateNode > state = selectedNodes.front()->getData< StateNode >(L"STATE");
@@ -400,40 +400,40 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 			m_stateGraph->setRootState(state);
 
 			//// Update color to show which node is root.
-			//const RefArray< ui::custom::Node >& nodes = m_editorGraph->getNodes();
-			//for (RefArray< ui::custom::Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+			//const RefArray< ui::Node >& nodes = m_editorGraph->getNodes();
+			//for (RefArray< ui::Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 			//	(*i)->setColor(*i == selectedNodes.front() ? Color4ub(128, 255, 128) : Color4ub(255, 255, 255));
 		}
 	}
 	else if (command == L"StateGraph.Editor.AlignLeft")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::custom::GraphControl::AnLeft);
+		m_editorGraph->alignNodes(ui::GraphControl::AnLeft);
 	}
 	else if (command == L"StateGraph.Editor.AlignRight")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::custom::GraphControl::AnRight);
+		m_editorGraph->alignNodes(ui::GraphControl::AnRight);
 	}
 	else if (command == L"StateGraph.Editor.AlignTop")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::custom::GraphControl::AnTop);
+		m_editorGraph->alignNodes(ui::GraphControl::AnTop);
 	}
 	else if (command == L"StateGraph.Editor.AlignBottom")
 	{
 		m_document->push();
-		m_editorGraph->alignNodes(ui::custom::GraphControl::AnBottom);
+		m_editorGraph->alignNodes(ui::GraphControl::AnBottom);
 	}
 	else if (command == L"StateGraph.Editor.EvenSpaceVertically")
 	{
 		m_document->push();
-		m_editorGraph->evenSpace(ui::custom::GraphControl::EsVertically);
+		m_editorGraph->evenSpace(ui::GraphControl::EsVertically);
 	}
 	else if (command == L"StateGraph.Editor.EventSpaceHorizontally")
 	{
 		m_document->push();
-		m_editorGraph->evenSpace(ui::custom::GraphControl::EsHorizontally);
+		m_editorGraph->evenSpace(ui::GraphControl::EsHorizontally);
 	}
 	else if (command == L"StateGraph.Editor.BrowseMesh")
 	{
@@ -474,13 +474,13 @@ void StateGraphEditorPage::bindStateNodes()
 
 void StateGraphEditorPage::createEditorNodes(const RefArray< StateNode >& states, const RefArray< Transition >& transitions)
 {
-	std::map< Ref< StateNode >, Ref< ui::custom::Node > > nodeMap;
+	std::map< Ref< StateNode >, Ref< ui::Node > > nodeMap;
 
 	// Create editor nodes for each state.
 	for (RefArray< StateNode >::const_iterator i = states.begin(); i != states.end(); ++i)
 	{
 		Ref< StateNode > state = *i;
-		Ref< ui::custom::Node > node = createEditorNode(state);
+		Ref< ui::Node > node = createEditorNode(state);
 		m_editorGraph->addNode(node);
 		nodeMap[state] = node;
 	}
@@ -493,30 +493,30 @@ void StateGraphEditorPage::createEditorNodes(const RefArray< StateNode >& states
 		Ref< StateNode > from = transition->from();
 		Ref< StateNode > to = transition->to();
 
-		Ref< ui::custom::Node > fromNode = nodeMap[from];
-		Ref< ui::custom::Node > toNode = nodeMap[to];
+		Ref< ui::Node > fromNode = nodeMap[from];
+		Ref< ui::Node > toNode = nodeMap[to];
 
 		if (!fromNode || !toNode)
 			continue;
 
-		Ref< ui::custom::Pin > fromPin = fromNode->findOutputPin(L"Leave");
+		Ref< ui::Pin > fromPin = fromNode->findOutputPin(L"Leave");
 		T_ASSERT (fromPin);
 
-		Ref< ui::custom::Pin > toPin = toNode->findInputPin(L"Enter");
+		Ref< ui::Pin > toPin = toNode->findInputPin(L"Enter");
 		T_ASSERT (toPin);
 
-		Ref< ui::custom::Edge > transitionEdge = new ui::custom::Edge(fromPin, toPin);
+		Ref< ui::Edge > transitionEdge = new ui::Edge(fromPin, toPin);
 		transitionEdge->setData(L"TRANSITION", transition);
 
 		m_editorGraph->addEdge(transitionEdge);
 	}
 }
 
-Ref< ui::custom::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
+Ref< ui::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 {
-	Ref< ui::custom::NodeShape > shape = new ui::custom::DefaultNodeShape(m_editorGraph);
+	Ref< ui::NodeShape > shape = new ui::DefaultNodeShape(m_editorGraph);
 
-	Ref< ui::custom::Node > node = new ui::custom::Node(
+	Ref< ui::Node > node = new ui::Node(
 		state->getName(),
 		L"",
 		ui::Point(
@@ -540,7 +540,7 @@ void StateGraphEditorPage::createState(const ui::Point& at)
 	state->setPosition(std::pair< int, int >(at.x, at.y));
 	m_stateGraph->addState(state);
 
-	Ref< ui::custom::Node > node = createEditorNode(state);
+	Ref< ui::Node > node = createEditorNode(state);
 	m_editorGraph->addNode(node);
 
 	bindStateNodes();
@@ -593,13 +593,13 @@ void StateGraphEditorPage::updatePreviewConditions()
 	m_containerPreview->update();
 }
 
-void StateGraphEditorPage::eventToolBarGraphClick(ui::custom::ToolBarButtonClickEvent* event)
+void StateGraphEditorPage::eventToolBarGraphClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	handleCommand(command);
 }
 
-void StateGraphEditorPage::eventToolBarPreviewClick(ui::custom::ToolBarButtonClickEvent* event)
+void StateGraphEditorPage::eventToolBarPreviewClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	handleCommand(command);
@@ -626,8 +626,8 @@ void StateGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::custom::Node > nodes;
-	RefArray< ui::custom::Edge > edges;
+	RefArray< ui::Node > nodes;
+	RefArray< ui::Edge > edges;
 
 	if (m_editorGraph->getSelectedNodes(nodes) == 1)
 	{
@@ -652,9 +652,9 @@ void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 	}
 }
 
-void StateGraphEditorPage::eventNodeMoved(ui::custom::NodeMovedEvent* event)
+void StateGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 {
-	Ref< ui::custom::Node > node = event->getNode();
+	Ref< ui::Node > node = event->getNode();
 	T_ASSERT (node);
 
 	// Get state from editor node.
@@ -675,14 +675,14 @@ void StateGraphEditorPage::eventNodeMoved(ui::custom::NodeMovedEvent* event)
 		m_site->setPropertyObject(state);
 }
 
-void StateGraphEditorPage::eventEdgeConnect(ui::custom::EdgeConnectEvent* event)
+void StateGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 {
-	Ref< ui::custom::Edge > edge = event->getEdge();
+	Ref< ui::Edge > edge = event->getEdge();
 
-	Ref< ui::custom::Pin > leavePin = edge->getSourcePin();
+	Ref< ui::Pin > leavePin = edge->getSourcePin();
 	T_ASSERT (leavePin);
 
-	Ref< ui::custom::Pin > enterPin = edge->getDestinationPin();
+	Ref< ui::Pin > enterPin = edge->getDestinationPin();
 	T_ASSERT (enterPin);
 
 	Ref< StateNode > leaveState = leavePin->getNode()->getData< StateNode >(L"STATE");
@@ -700,9 +700,9 @@ void StateGraphEditorPage::eventEdgeConnect(ui::custom::EdgeConnectEvent* event)
 	updateGraph();
 }
 
-void StateGraphEditorPage::eventEdgeDisconnect(ui::custom::EdgeDisconnectEvent* event)
+void StateGraphEditorPage::eventEdgeDisconnect(ui::EdgeDisconnectEvent* event)
 {
-	Ref< ui::custom::Edge > edge = event->getEdge();
+	Ref< ui::Edge > edge = event->getEdge();
 
 	Ref< Transition > transition = checked_type_cast< Transition* >(edge->getData(L"TRANSITION"));
 	m_stateGraph->removeTransition(transition);

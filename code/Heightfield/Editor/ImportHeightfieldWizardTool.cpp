@@ -20,7 +20,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/ImportHeightfieldWizardTool.h"
-#include "Ui/Custom/FileDialog.h"
+#include "Ui/FileDialog.h"
 
 namespace traktor
 {
@@ -91,7 +91,7 @@ uint32_t ImportHeightfieldWizardTool::getFlags() const
 bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
 	// Select source heightfield.
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	if (!fileDialog.create(parent, i18n::Text(L"IMPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
 		return false;
 

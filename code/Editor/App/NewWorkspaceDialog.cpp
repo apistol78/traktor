@@ -21,10 +21,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Static.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/MiniButton.h"
-#include "Ui/Custom/PreviewList/PreviewList.h"
-#include "Ui/Custom/PreviewList/PreviewItem.h"
-#include "Ui/Custom/PreviewList/PreviewItems.h"
+#include "Ui/MiniButton.h"
+#include "Ui/PreviewList/PreviewList.h"
+#include "Ui/PreviewList/PreviewItem.h"
+#include "Ui/PreviewList/PreviewItems.h"
 #include "Xml/Document.h"
 #include "Xml/Element.h"
 
@@ -44,7 +44,7 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 
 	addEventHandler< ui::ButtonClickEvent >(this, &NewWorkspaceDialog::eventDialogClick);
 
-	m_templateList = new ui::custom::PreviewList();
+	m_templateList = new ui::PreviewList();
 	m_templateList->create(this, ui::WsDoubleBuffer);
 
 	Ref< ui::Container > containerInner = new ui::Container();
@@ -66,7 +66,7 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 	m_editPath = new ui::Edit();
 	m_editPath->create(containerPath, L"");
 
-	Ref< ui::custom::MiniButton > buttonBrowsePath = new ui::custom::MiniButton();
+	Ref< ui::MiniButton > buttonBrowsePath = new ui::MiniButton();
 	buttonBrowsePath->create(containerPath, L"...");
 	buttonBrowsePath->addEventHandler< ui::ButtonClickEvent >(this, &NewWorkspaceDialog::eventBrowsePathButtonClick);
 
@@ -74,7 +74,7 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 	RefArray< File > templateFiles;
 	FileSystem::getInstance().find(L"$(TRAKTOR_HOME)/resources/runtime/editor/templates/*.template", templateFiles);
 
-	Ref< ui::custom::PreviewItems > previewItems = new ui::custom::PreviewItems();
+	Ref< ui::PreviewItems > previewItems = new ui::PreviewItems();
 
 	for (RefArray< File >::const_iterator i = templateFiles.begin(); i != templateFiles.end(); ++i)
 	{
@@ -93,7 +93,7 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 		if (!image)
 			continue;
 
-		Ref< ui::custom::PreviewItem > previewItem = new ui::custom::PreviewItem();
+		Ref< ui::PreviewItem > previewItem = new ui::PreviewItem();
 		previewItem->setText(xdescription->getValue());
 		previewItem->setImage(new ui::Bitmap(image));
 		previewItem->setData(L"FILE", *i);
@@ -127,7 +127,7 @@ void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 {
 	if (event->getCommand() == ui::DrOk)
 	{
-		Ref< ui::custom::PreviewItem > selectedItem = m_templateList->getSelectedItem();
+		Ref< ui::PreviewItem > selectedItem = m_templateList->getSelectedItem();
 		if (selectedItem)
 		{
 			Ref< File > file = selectedItem->getData< File >(L"FILE");

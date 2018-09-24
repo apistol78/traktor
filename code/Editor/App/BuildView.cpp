@@ -6,7 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Editor/App/BuildView.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/BuildChart/BuildChartControl.h"
+#include "Ui/BuildChart/BuildChartControl.h"
 
 namespace traktor
 {
@@ -20,7 +20,7 @@ bool BuildView::create(ui::Widget* parent)
 	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0)))
 		return false;
 
-	m_chartControl = new ui::custom::BuildChartControl();
+	m_chartControl = new ui::BuildChartControl();
 	m_chartControl->create(this, 32);
 
 	return true;

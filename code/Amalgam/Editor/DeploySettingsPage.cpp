@@ -15,10 +15,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/GridView/GridColumn.h"
-#include "Ui/Custom/GridView/GridItem.h"
-#include "Ui/Custom/GridView/GridRow.h"
-#include "Ui/Custom/GridView/GridView.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridView.h"
 
 namespace traktor
 {
@@ -102,10 +102,10 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	Ref< ui::Static > staticEnvironment = new ui::Static();
 	staticEnvironment->create(containerEnvironment, L"Environment");
 
-	Ref< ui::custom::GridView > gridEnvironment = new ui::custom::GridView();
+	Ref< ui::GridView > gridEnvironment = new ui::GridView();
 	gridEnvironment->create(containerEnvironment, ui::WsDoubleBuffer);
-	gridEnvironment->addColumn(new ui::custom::GridColumn(L"Name", ui::dpi96(200)));
-	gridEnvironment->addColumn(new ui::custom::GridColumn(L"Value", ui::dpi96(400)));
+	gridEnvironment->addColumn(new ui::GridColumn(L"Name", ui::dpi96(200)));
+	gridEnvironment->addColumn(new ui::GridColumn(L"Value", ui::dpi96(400)));
 
 	Ref< PropertyGroup > settingsEnvironment = settings->getProperty< PropertyGroup >(L"Amalgam.Environment");
 	if (settingsEnvironment)
@@ -116,9 +116,9 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 			PropertyString* value = dynamic_type_cast< PropertyString* >(i->second);
 			if (value)
 			{
-				Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-				row->add(new ui::custom::GridItem(i->first));
-				row->add(new ui::custom::GridItem(PropertyString::get(value)));
+				Ref< ui::GridRow > row = new ui::GridRow();
+				row->add(new ui::GridItem(i->first));
+				row->add(new ui::GridItem(PropertyString::get(value)));
 				gridEnvironment->addRow(row);
 			}
 		}

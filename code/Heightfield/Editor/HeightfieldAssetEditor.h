@@ -18,13 +18,8 @@ class IEditor;
 	
 class Edit;
 class Image;
-
-		namespace custom
-		{
-		
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace hf
@@ -64,7 +59,7 @@ private:
 
 	void updatePreviewImage();
 
-	void eventToolBar(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolBar(ui::ToolBarButtonClickEvent* event);
 };
 
 	}

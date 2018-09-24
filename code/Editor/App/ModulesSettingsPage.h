@@ -15,13 +15,8 @@ namespace traktor
 	{
 
 class ButtonClickEvent;
-
-		namespace custom
-		{
-
 class ListBox;
 
-		}
 	}
 
 	namespace editor
@@ -43,7 +38,7 @@ public:
 
 private:
 	Ref< const PropertyGroup > m_originalSettings;
-	Ref< ui::custom::ListBox > m_listModules;
+	Ref< ui::ListBox > m_listModules;
 
 	void eventAddModule(ui::ButtonClickEvent* event);
 

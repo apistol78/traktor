@@ -15,14 +15,9 @@ namespace traktor
 	namespace ui
 	{
 
+class ToolBarButtonClickEvent;
 class WebBrowser;
 
-		namespace custom
-		{
-
-class ToolBarButtonClickEvent;
-
-		}
 	}
 
 	namespace editor
@@ -46,7 +41,7 @@ private:
 	IEditor* m_editor;
 	Ref< ui::WebBrowser > m_browser;
 
-	void eventToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 };
 
 	}

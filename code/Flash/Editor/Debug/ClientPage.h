@@ -16,10 +16,6 @@ namespace traktor
 	{
 
 class Edit;
-
-		namespace custom
-		{
-		
 class GridView;
 class StatusBar;
 class ToolBar;
@@ -27,7 +23,6 @@ class ToolBarButtonClickEvent;
 class TreeView;
 class TreeViewItem;
 		
-		}
 	}
 
 	namespace flash
@@ -47,12 +42,12 @@ public:
 
 private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
-	Ref< ui::custom::ToolBar > m_toolBar;
+	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::Edit > m_editFrame;
-	Ref< ui::custom::TreeView > m_debugTree;
-	Ref< ui::custom::GridView > m_debugGrid;
+	Ref< ui::TreeView > m_debugTree;
+	Ref< ui::GridView > m_debugGrid;
 	Ref< DebugView > m_debugView;
-	Ref< ui::custom::StatusBar > m_statusBar;
+	Ref< ui::StatusBar > m_statusBar;
 	RefArray< const FrameDebugInfo > m_frameInfos;
 	int32_t m_selectedFrame;
 
@@ -60,11 +55,11 @@ private:
 
 	void selectFrame(int32_t frame);
 
-	void buildDebugTree(ui::custom::TreeViewItem* parent, const RefArray< InstanceDebugInfo >& instances);
+	void buildDebugTree(ui::TreeViewItem* parent, const RefArray< InstanceDebugInfo >& instances);
 
 	void eventFrameChange(ui::ContentChangeEvent* event);
 
-	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventDebugTreeSelectionChange(ui::SelectionChangeEvent* event);
 

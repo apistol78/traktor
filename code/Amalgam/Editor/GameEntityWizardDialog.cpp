@@ -30,9 +30,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/FloodLayout.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/DropDown.h"
-#include "Ui/Custom/FileDialog.h"
-#include "Ui/Custom/MiniButton.h"
+#include "Ui/DropDown.h"
+#include "Ui/FileDialog.h"
+#include "Ui/MiniButton.h"
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/ScriptComponentData.h"
@@ -84,7 +84,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	m_editVisualMesh = new ui::Edit();
 	m_editVisualMesh->create(containerVisualMesh, L"");
 
-	Ref< ui::custom::MiniButton > buttonBrowseVisualMesh = new ui::custom::MiniButton();
+	Ref< ui::MiniButton > buttonBrowseVisualMesh = new ui::MiniButton();
 	buttonBrowseVisualMesh->create(containerVisualMesh, L"...");
 	buttonBrowseVisualMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventBrowseVisualMeshClick);
 
@@ -98,7 +98,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	m_editCollisionMesh = new ui::Edit();
 	m_editCollisionMesh->create(containerCollisionMesh, L"");
 
-	Ref< ui::custom::MiniButton > buttonBrowseCollisionMesh = new ui::custom::MiniButton();
+	Ref< ui::MiniButton > buttonBrowseCollisionMesh = new ui::MiniButton();
 	buttonBrowseCollisionMesh->create(containerCollisionMesh, L"...");
 	buttonBrowseCollisionMesh->addEventHandler< ui::ButtonClickEvent >(this, &GameEntityWizardDialog::eventBrowseCollisionMeshClick);
 
@@ -109,7 +109,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	Ref< ui::Static > staticPhysicsType = new ui::Static();
 	staticPhysicsType->create(containerPhysics, i18n::Text(L"GAMEENTITY_WIZARD_PHYSICS_TYPE"));
 
-	m_dropPhysicsType = new ui::custom::DropDown();
+	m_dropPhysicsType = new ui::DropDown();
 	m_dropPhysicsType->create(containerPhysics);
 	m_dropPhysicsType->add(i18n::Text(L"GAMEENTITY_WIZARD_PHYSICS_STATIC"));
 	m_dropPhysicsType->add(i18n::Text(L"GAMEENTITY_WIZARD_PHYSICS_KINEMATIC"));
@@ -158,7 +158,7 @@ void GameEntityWizardDialog::eventNameChange(ui::ContentChangeEvent* event)
 
 void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* event)
 {
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*"))
 		return;
 
@@ -186,7 +186,7 @@ void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* ev
 
 void GameEntityWizardDialog::eventBrowseCollisionMeshClick(ui::ButtonClickEvent* event)
 {
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*"))
 		return;
 

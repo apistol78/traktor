@@ -1,0 +1,137 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
+#ifndef traktor_ui_PropertyList_H
+#define traktor_ui_PropertyList_H
+
+#include "Ui/Widget.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_UI_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+
+class Guid;
+
+	namespace ui
+	{
+
+class HierarchicalState;
+class PropertyItem;
+class ScrollBar;
+
+/*! \brief Property list control.
+ * \ingroup UI
+ */
+class T_DLLCLASS PropertyList : public Widget
+{
+	T_RTTI_CLASS;
+
+public:
+	enum StyleFlags
+	{
+		WsColumnHeader = WsUser
+	};
+
+	enum GetPropertyItemFlags
+	{
+		GfDefault = 0,
+		GfDescendants = 1,
+		GfSelectedOnly = 2,
+		GfExpandedOnly = 4,
+		GfVisibleOnly = 8
+	};
+
+	struct IPropertyGuidResolver
+	{
+		virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const = 0;
+	};
+
+	PropertyList();
+
+	bool create(Widget* parent, int style = WsDoubleBuffer, IPropertyGuidResolver* guidResolver = 0);
+
+	virtual void destroy() T_OVERRIDE;
+
+	void addPropertyItem(PropertyItem* propertyItem);
+
+	void removePropertyItem(PropertyItem* propertyItem);
+
+	void addPropertyItem(PropertyItem* parentPropertyItem, PropertyItem* propertyItem);
+
+	void removePropertyItem(PropertyItem* parentPropertyItem, PropertyItem* propertyItem);
+
+	void removeAllPropertyItems();
+
+	int getPropertyItems(RefArray< PropertyItem >& propertyItems, int flags);
+
+	void setSeparator(int separator);
+
+	int getSeparator() const;
+
+	void setColumnName(int column, const std::wstring& name);
+
+	Ref< PropertyItem > getPropertyItemFromPosition(const Point& position);
+
+	bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;
+
+	Ref< HierarchicalState > captureState() const;
+
+	void applyState(const HierarchicalState* state);
+
+	virtual bool copy();
+
+	virtual bool paste();
+
+	virtual void update(const Rect* rc = 0, bool immediate = false) T_OVERRIDE;
+
+	virtual Size getMinimumSize() const T_OVERRIDE;
+	
+	virtual Size getPreferedSize() const T_OVERRIDE;
+
+private:
+	friend class PropertyItem;
+
+	IPropertyGuidResolver* m_guidResolver;
+	Ref< ScrollBar > m_scrollBar;
+	RefArray< PropertyItem > m_propertyItems;
+	Ref< PropertyItem > m_mousePropertyItem;
+	int m_separator;
+	int m_mode;
+	bool m_columnHeader;
+	std::wstring m_columnNames[2];
+
+	void updateScrollBar();
+
+	void placeItems();
+
+	void eventScroll(ScrollEvent* event);
+
+	void eventButtonDown(MouseButtonDownEvent* event);
+
+	void eventButtonUp(MouseButtonUpEvent* event);
+
+	void eventDoubleClick(MouseDoubleClickEvent* event);
+
+	void eventMouseMove(MouseMoveEvent* event);
+
+	void eventMouseWheel(MouseWheelEvent* event);
+
+	void eventSize(SizeEvent* event);
+
+	void eventPaint(PaintEvent* event);
+};
+
+	}
+}
+
+#endif	// traktor_ui_PropertyList_H

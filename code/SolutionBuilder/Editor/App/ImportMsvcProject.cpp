@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <Ui/MessageBox.h>
-#include <Ui/Custom/FileDialog.h>
+#include <Ui/FileDialog.h>
 #include <Xml/Document.h>
 #include <Xml/Element.h>
 #include <Xml/Attribute.h>
@@ -85,7 +85,7 @@ bool ImportMsvcProject::execute(ui::Widget* parent, Solution* solution, const st
 {
 	bool result = false;
 
-	ui::custom::FileDialog fileDialog;
+	ui::FileDialog fileDialog;
 	fileDialog.create(parent, L"Import MSVC project", L"MS Visual Studio projects;*.vcproj");
 	
 	Path filePath;

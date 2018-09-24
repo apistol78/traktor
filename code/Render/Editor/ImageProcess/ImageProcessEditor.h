@@ -31,15 +31,12 @@ class IEditor;
 
 	namespace ui
 	{
-		namespace custom
-		{
 
 class GridRow;
 class GridView;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace render
@@ -74,23 +71,23 @@ private:
 	editor::IEditor* m_editor;
 	Ref< db::Instance > m_instance;
 	Ref< ImageProcessSettings > m_asset;
-	Ref< ui::custom::ToolBar > m_toolBarSteps;
-	Ref< ui::custom::GridView > m_gridSteps;
-	Ref< ui::custom::ToolBar > m_toolBarDefinitions;
-	Ref< ui::custom::GridView > m_gridDefinitions;
+	Ref< ui::ToolBar > m_toolBarSteps;
+	Ref< ui::GridView > m_gridSteps;
+	Ref< ui::ToolBar > m_toolBarDefinitions;
+	Ref< ui::GridView > m_gridDefinitions;
 	Ref< ImageProcessProperties > m_properties;
 	std::map< const TypeInfo*, Ref< IImageProcessDefineFacade > > m_imageProcessDefineFacades;
 	std::map< const TypeInfo*, Ref< IImageProcessStepFacade > > m_imageProcessStepFacades;
 
-	void updateStepView(ui::custom::GridRow* parentStepRow, const RefArray< ImageProcessStep >& steps, int32_t& inoutOrder);
+	void updateStepView(ui::GridRow* parentStepRow, const RefArray< ImageProcessStep >& steps, int32_t& inoutOrder);
 
 	void updateViews();
 
-	void eventStepToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventStepToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventGridStepSelect(ui::SelectionChangeEvent* event);
 
-	void eventDefinitionToolClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventDefinitionToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventGridDefinitionSelect(ui::SelectionChangeEvent* event);
 

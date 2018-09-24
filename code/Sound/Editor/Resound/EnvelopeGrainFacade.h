@@ -13,12 +13,9 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace custom
-		{
 
 class EnvelopeContentChangeEvent;
 
-		}
 	}
 
 	namespace sound
@@ -46,7 +43,7 @@ public:
 	virtual bool getChildren(IGrainData* grain, RefArray< IGrainData >& outChildren) T_OVERRIDE T_FINAL;
 
 private:
-	void eventEnvelopeChange(ui::custom::EnvelopeContentChangeEvent* event);
+	void eventEnvelopeChange(ui::EnvelopeContentChangeEvent* event);
 };
 
 	}

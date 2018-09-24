@@ -11,8 +11,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Static.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/ListBox/ListBox.h"
+#include "Ui/Splitter.h"
+#include "Ui/ListBox/ListBox.h"
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/Editor/App/ExtractSolutionDialog.h"
@@ -50,11 +50,11 @@ bool ExtractSolutionDialog::create(ui::Widget* parent, Solution* solution)
 
 	setIcon(new ui::StyleBitmap(L"SolutionBuilder.Icon"));
 
-	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitter = new ui::Splitter();
 	splitter->create(this, true, ui::dpi96(300));
 
-	m_listProjects = new ui::custom::ListBox();
-	m_listProjects->create(splitter, ui::custom::ListBox::WsMultiple);
+	m_listProjects = new ui::ListBox();
+	m_listProjects->create(splitter, ui::ListBox::WsMultiple);
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(splitter, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", ui::dpi96(8), ui::dpi96(4)));

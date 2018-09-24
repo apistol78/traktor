@@ -17,15 +17,11 @@ class PropertyGroup;
 	namespace ui
 	{
 
-class ListView;
 class Edit;
-
-		namespace custom
-		{
-
+class ListView;
 class PreviewList;
 class TreeView;
-		}
+
 	}
 
 	namespace editor
@@ -48,8 +44,8 @@ public:
 
 private:
 	Ref< PropertyGroup > m_settings;
-	Ref< ui::custom::TreeView > m_categoryTree;
-	Ref< ui::custom::PreviewList > m_typeList;
+	Ref< ui::TreeView > m_categoryTree;
+	Ref< ui::PreviewList > m_typeList;
 	Ref< ui::Edit > m_editInstanceName;
 	const TypeInfo* m_type;
 	std::wstring m_instanceName;

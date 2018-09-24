@@ -23,13 +23,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Static.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/MiniButton.h"
-#include "Ui/Custom/PreviewList/PreviewItem.h"
-#include "Ui/Custom/PreviewList/PreviewItems.h"
-#include "Ui/Custom/PreviewList/PreviewList.h"
-#include "Ui/Custom/TreeView/TreeView.h"
-#include "Ui/Custom/TreeView/TreeViewItem.h"
+#include "Ui/Splitter.h"
+#include "Ui/MiniButton.h"
+#include "Ui/PreviewList/PreviewItem.h"
+#include "Ui/PreviewList/PreviewItems.h"
+#include "Ui/PreviewList/PreviewList.h"
+#include "Ui/TreeView/TreeView.h"
+#include "Ui/TreeView/TreeViewItem.h"
 
 // Resources
 #include "Resources/Folders.h"
@@ -94,7 +94,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
-	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitter = new ui::Splitter();
 	if (!splitter->create(this, true, ui::dpi96(200)))
 		return false;
 
@@ -106,7 +106,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	if (!treeLabel->create(left, i18n::Text(L"BROWSE_INSTANCE_GROUPS")))
 		return false;
 
-	m_treeDatabase = new ui::custom::TreeView();
+	m_treeDatabase = new ui::TreeView();
 	if (!m_treeDatabase->create(left, ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
 	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Folders"), 2);
@@ -120,10 +120,10 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	if (!listLabel->create(right, i18n::Text(L"BROWSE_INSTANCE_INSTANCES")))
 		return false;
 
-	m_listInstances = new ui::custom::PreviewList();
+	m_listInstances = new ui::PreviewList();
 	if (!m_listInstances->create(right, ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
-	m_listInstances->addEventHandler< ui::custom::PreviewSelectionChangeEvent >(this, &BrowseInstanceDialog::eventListItemSelected);
+	m_listInstances->addEventHandler< ui::PreviewSelectionChangeEvent >(this, &BrowseInstanceDialog::eventListItemSelected);
 	m_listInstances->addEventHandler< ui::MouseDoubleClickEvent >(this, &BrowseInstanceDialog::eventListDoubleClick);
 
 	// Create browse preview generators.
@@ -142,7 +142,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	);
 
 	// Traverse database and filter out items.
-	ui::custom::TreeViewItem* groupRoot = buildGroupItems(
+	ui::TreeViewItem* groupRoot = buildGroupItems(
 		m_treeDatabase,
 		0,
 		database->getRootGroup(),
@@ -153,12 +153,12 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 		groupRoot->sort(true);
 
 	// Expand all groups until a group with multiple children is found.
-	ui::custom::TreeViewItem* expandGroup = groupRoot;
+	ui::TreeViewItem* expandGroup = groupRoot;
 	while (expandGroup)
 	{
 		expandGroup->expand();
 
-		const RefArray< ui::custom::TreeViewItem >& children = expandGroup->getChildren();
+		const RefArray< ui::TreeViewItem >& children = expandGroup->getChildren();
 		if (children.size() == 1)
 			expandGroup = children[0];
 		else
@@ -198,7 +198,7 @@ Ref< db::Instance > BrowseInstanceDialog::getInstance()
 	return m_instance;
 }
 
-ui::custom::TreeViewItem* BrowseInstanceDialog::buildGroupItems(ui::custom::TreeView* treeView, ui::custom::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter)
+ui::TreeViewItem* BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter)
 {
 	if (filter && !recursiveIncludeGroup(group, filter))
 		return 0;
@@ -206,7 +206,7 @@ ui::custom::TreeViewItem* BrowseInstanceDialog::buildGroupItems(ui::custom::Tree
 	RefArray< db::Group > childGroups;
 	group->getChildGroups(childGroups);
 
-	Ref< ui::custom::TreeViewItem > groupItem = treeView->createItem(parent, group->getName(), 1);
+	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parent, group->getName(), 1);
 	groupItem->setImage(0, 0, 1);
 
 	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
@@ -215,12 +215,12 @@ ui::custom::TreeViewItem* BrowseInstanceDialog::buildGroupItems(ui::custom::Tree
 	RefArray< db::Instance > childInstances;
 	group->getChildInstances(childInstances);
 
-	Ref< ui::custom::PreviewItems > instanceItems = new ui::custom::PreviewItems();
+	Ref< ui::PreviewItems > instanceItems = new ui::PreviewItems();
 	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
 	{
 		if (!filter || filter->acceptable(*i))
 		{
-			Ref< ui::custom::PreviewItem > instanceItem = new ui::custom::PreviewItem((*i)->getName());
+			Ref< ui::PreviewItem > instanceItem = new ui::PreviewItem((*i)->getName());
 			instanceItem->setData(L"INSTANCE", (*i));
 			instanceItems->add(instanceItem);
 		}
@@ -232,15 +232,15 @@ ui::custom::TreeViewItem* BrowseInstanceDialog::buildGroupItems(ui::custom::Tree
 
 void BrowseInstanceDialog::updatePreviewList()
 {
-	RefArray< ui::custom::TreeViewItem > items;
-	m_treeDatabase->getItems(items, ui::custom::TreeView::GfDescendants | ui::custom::TreeView::GfSelectedOnly);
+	RefArray< ui::TreeViewItem > items;
+	m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 
 	// Stop all pending preview tasks.
 	m_previewTasks.clear();
 
 	if (!items.empty())
 	{
-		Ref< ui::custom::PreviewItems > previewItems = items[0]->getData< ui::custom::PreviewItems >(L"INSTANCE_ITEMS");
+		Ref< ui::PreviewItems > previewItems = items[0]->getData< ui::PreviewItems >(L"INSTANCE_ITEMS");
 		m_listInstances->setItems(previewItems);
 
 		// Create preview generator tasks.
@@ -248,7 +248,7 @@ void BrowseInstanceDialog::updatePreviewList()
 		{
 			for (int i = 0; i < previewItems->count(); ++i)
 			{
-				ui::custom::PreviewItem* item = previewItems->get(i);
+				ui::PreviewItem* item = previewItems->get(i);
 				if (!item->getImage())
 				{
 					m_previewTasks.put(makeFunctor(this, &BrowseInstanceDialog::taskGeneratePreview, item));
@@ -266,9 +266,9 @@ void BrowseInstanceDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event
 	updatePreviewList();
 }
 
-void BrowseInstanceDialog::eventListItemSelected(ui::custom::PreviewSelectionChangeEvent* event)
+void BrowseInstanceDialog::eventListItemSelected(ui::PreviewSelectionChangeEvent* event)
 {
-	Ref< ui::custom::PreviewItem > item = event->getItem();
+	Ref< ui::PreviewItem > item = event->getItem();
 	if (item)
 		m_instance = item->getData< db::Instance >(L"INSTANCE");
 	else
@@ -281,7 +281,7 @@ void BrowseInstanceDialog::eventListDoubleClick(ui::MouseDoubleClickEvent* event
 		endModal(ui::DrOk);
 }
 
-void BrowseInstanceDialog::taskGeneratePreview(ui::custom::PreviewItem* item)
+void BrowseInstanceDialog::taskGeneratePreview(ui::PreviewItem* item)
 {
 	Ref< db::Instance > instance = item->getData< db::Instance >(L"INSTANCE");
 	T_ASSERT (instance);

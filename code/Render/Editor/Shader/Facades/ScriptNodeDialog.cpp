@@ -13,15 +13,15 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Editor/Shader/Facades/ScriptNodeDialog.h"
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
-#include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/GridView/GridColumn.h"
-#include "Ui/Custom/GridView/GridItem.h"
-#include "Ui/Custom/GridView/GridItemContentChangeEvent.h"
-#include "Ui/Custom/GridView/GridRow.h"
-#include "Ui/Custom/GridView/GridRowDoubleClickEvent.h"
-#include "Ui/Custom/GridView/GridView.h"
-#include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageHlsl.h"
-#include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
+#include "Ui/Splitter.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridItemContentChangeEvent.h"
+#include "Ui/GridView/GridRow.h"
+#include "Ui/GridView/GridRowDoubleClickEvent.h"
+#include "Ui/GridView/GridView.h"
+#include "Ui/SyntaxRichEdit/SyntaxLanguageHlsl.h"
+#include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
 
 namespace traktor
 {
@@ -62,62 +62,62 @@ bool ScriptNodeDialog::create(ui::Widget* parent)
 	)
 		return false;
 
-	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitter = new ui::Splitter();
 	splitter->create(this, true, ui::dpi96(230));
 
-	Ref< ui::custom::Splitter > splitter2 = new ui::custom::Splitter();
+	Ref< ui::Splitter > splitter2 = new ui::Splitter();
 	splitter2->create(splitter, false, ui::dpi96(-20), true);
 
-	m_inputPinList = new ui::custom::GridView();
-	m_inputPinList->create(splitter2, ui::custom::GridView::WsColumnHeader | ui::custom::GridView::WsAutoEdit| ui::WsDoubleBuffer);
-	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Input", ui::dpi96(90), true));
-	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Type", ui::dpi96(70), false));
-	m_inputPinList->addColumn(new ui::custom::GridColumn(L"Sampler", ui::dpi96(110), false));
-	m_inputPinList->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &ScriptNodeDialog::eventInputPinRowDoubleClick);
-	m_inputPinList->addEventHandler< ui::custom::GridItemContentChangeEvent >(this, &ScriptNodeDialog::eventInputPinEdit);
+	m_inputPinList = new ui::GridView();
+	m_inputPinList->create(splitter2, ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit| ui::WsDoubleBuffer);
+	m_inputPinList->addColumn(new ui::GridColumn(L"Input", ui::dpi96(90), true));
+	m_inputPinList->addColumn(new ui::GridColumn(L"Type", ui::dpi96(70), false));
+	m_inputPinList->addColumn(new ui::GridColumn(L"Sampler", ui::dpi96(110), false));
+	m_inputPinList->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ScriptNodeDialog::eventInputPinRowDoubleClick);
+	m_inputPinList->addEventHandler< ui::GridItemContentChangeEvent >(this, &ScriptNodeDialog::eventInputPinEdit);
 
 	int32_t inputPinCount = m_script->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
-		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(m_script->getInputPin(i)->getName()));
-		row->add(new ui::custom::GridItem(c_parameterTypes[m_script->getInputPinType(i)]));
-		row->add(new ui::custom::GridItem(m_script->getInputPinSamplerId(i)));
+		Ref< ui::GridRow > row = new ui::GridRow();
+		row->add(new ui::GridItem(m_script->getInputPin(i)->getName()));
+		row->add(new ui::GridItem(c_parameterTypes[m_script->getInputPinType(i)]));
+		row->add(new ui::GridItem(m_script->getInputPinSamplerId(i)));
 		m_inputPinList->addRow(row);
 	}
 
-	Ref< ui::custom::GridRow > lastInputRow = new ui::custom::GridRow();
-	lastInputRow->add(new ui::custom::GridItem(L"(Add pin)"));
-	lastInputRow->add(new ui::custom::GridItem(L""));
-	lastInputRow->add(new ui::custom::GridItem(L""));
+	Ref< ui::GridRow > lastInputRow = new ui::GridRow();
+	lastInputRow->add(new ui::GridItem(L"(Add pin)"));
+	lastInputRow->add(new ui::GridItem(L""));
+	lastInputRow->add(new ui::GridItem(L""));
 	m_inputPinList->addRow(lastInputRow);
 
-	m_outputPinList = new ui::custom::GridView();
-	m_outputPinList->create(splitter2, ui::custom::GridView::WsColumnHeader | ui::custom::GridView::WsAutoEdit | ui::WsDoubleBuffer);
-	m_outputPinList->addColumn(new ui::custom::GridColumn(L"Output", ui::dpi96(90), true));
-	m_outputPinList->addColumn(new ui::custom::GridColumn(L"Type", ui::dpi96(70), false));
-	m_outputPinList->addEventHandler< ui::custom::GridRowDoubleClickEvent >(this, &ScriptNodeDialog::eventOutputPinRowDoubleClick);
-	m_outputPinList->addEventHandler< ui::custom::GridItemContentChangeEvent >(this, &ScriptNodeDialog::eventOutputPinEdit);
+	m_outputPinList = new ui::GridView();
+	m_outputPinList->create(splitter2, ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit | ui::WsDoubleBuffer);
+	m_outputPinList->addColumn(new ui::GridColumn(L"Output", ui::dpi96(90), true));
+	m_outputPinList->addColumn(new ui::GridColumn(L"Type", ui::dpi96(70), false));
+	m_outputPinList->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ScriptNodeDialog::eventOutputPinRowDoubleClick);
+	m_outputPinList->addEventHandler< ui::GridItemContentChangeEvent >(this, &ScriptNodeDialog::eventOutputPinEdit);
 
 	int32_t outputPinCount = m_script->getOutputPinCount();
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
-		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(m_script->getOutputPin(i)->getName()));
-		row->add(new ui::custom::GridItem(c_parameterTypes[m_script->getOutputPinType(i)]));
+		Ref< ui::GridRow > row = new ui::GridRow();
+		row->add(new ui::GridItem(m_script->getOutputPin(i)->getName()));
+		row->add(new ui::GridItem(c_parameterTypes[m_script->getOutputPinType(i)]));
 		m_outputPinList->addRow(row);
 	}
 
-	Ref< ui::custom::GridRow > lastOutputRow = new ui::custom::GridRow();
-	lastOutputRow->add(new ui::custom::GridItem(L"(Add pin)"));
-	lastOutputRow->add(new ui::custom::GridItem(L""));
+	Ref< ui::GridRow > lastOutputRow = new ui::GridRow();
+	lastOutputRow->add(new ui::GridItem(L"(Add pin)"));
+	lastOutputRow->add(new ui::GridItem(L""));
 	m_outputPinList->addRow(lastOutputRow);
 
-	m_edit = new ui::custom::SyntaxRichEdit();
+	m_edit = new ui::SyntaxRichEdit();
 	if (!m_edit->create(splitter, m_script->getScript(), ui::WsDoubleBuffer))
 		return false;
 
-	m_edit->setLanguage(new ui::custom::SyntaxLanguageHlsl());
+	m_edit->setLanguage(new ui::SyntaxLanguageHlsl());
 
 	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
 	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
@@ -139,7 +139,7 @@ int32_t ScriptNodeDialog::getInputPinCount() const
 
 std::wstring ScriptNodeDialog::getInputPinName(int32_t index) const
 {
-	ui::custom::GridRow* row = m_inputPinList->getRow(index);
+	ui::GridRow* row = m_inputPinList->getRow(index);
 	T_FATAL_ASSERT (row);
 
 	return row->get(0)->getText();
@@ -157,7 +157,7 @@ int32_t ScriptNodeDialog::getOutputPinCount() const
 
 std::wstring ScriptNodeDialog::getOutputPinName(int32_t index) const
 {
-	ui::custom::GridRow* row = m_outputPinList->getRow(index);
+	ui::GridRow* row = m_outputPinList->getRow(index);
 	T_FATAL_ASSERT (row);
 
 	return row->get(0)->getText();
@@ -168,46 +168,46 @@ ParameterType ScriptNodeDialog::getOutputPinType(int32_t index) const
 	return PtScalar;
 }
 
-void ScriptNodeDialog::eventInputPinRowDoubleClick(ui::custom::GridRowDoubleClickEvent* event)
+void ScriptNodeDialog::eventInputPinRowDoubleClick(ui::GridRowDoubleClickEvent* event)
 {
-	ui::custom::GridRow* row = event->getRow();
+	ui::GridRow* row = event->getRow();
 	if (m_inputPinList->getRows().back() != row)
 		return;
 
-	row->set(0, new ui::custom::GridItem(L"Unnamed"));
-	row->set(1, new ui::custom::GridItem(c_parameterTypes[0]));
-	row->set(2, new ui::custom::GridItem(L""));
+	row->set(0, new ui::GridItem(L"Unnamed"));
+	row->set(1, new ui::GridItem(c_parameterTypes[0]));
+	row->set(2, new ui::GridItem(L""));
 
-	Ref< ui::custom::GridRow > lastInputRow = new ui::custom::GridRow();
-	lastInputRow->add(new ui::custom::GridItem(L"(Add pin)"));
-	lastInputRow->add(new ui::custom::GridItem(L""));
-	lastInputRow->add(new ui::custom::GridItem(L""));
+	Ref< ui::GridRow > lastInputRow = new ui::GridRow();
+	lastInputRow->add(new ui::GridItem(L"(Add pin)"));
+	lastInputRow->add(new ui::GridItem(L""));
+	lastInputRow->add(new ui::GridItem(L""));
 	m_inputPinList->addRow(lastInputRow);
 }
 
-void ScriptNodeDialog::eventInputPinEdit(ui::custom::GridItemContentChangeEvent* event)
+void ScriptNodeDialog::eventInputPinEdit(ui::GridItemContentChangeEvent* event)
 {
 	event->consume();
-	//ui::custom::GridItem* item = event->getItem();
-	//ui::custom::GridRow* row = item->getRow();
+	//ui::GridItem* item = event->getItem();
+	//ui::GridRow* row = item->getRow();
 }
 
-void ScriptNodeDialog::eventOutputPinRowDoubleClick(ui::custom::GridRowDoubleClickEvent* event)
+void ScriptNodeDialog::eventOutputPinRowDoubleClick(ui::GridRowDoubleClickEvent* event)
 {
-	ui::custom::GridRow* row = event->getRow();
+	ui::GridRow* row = event->getRow();
 	if (m_outputPinList->getRows().back() != row)
 		return;
 
-	row->set(0, new ui::custom::GridItem(L"Unnamed"));
-	row->set(1, new ui::custom::GridItem(c_parameterTypes[0]));
+	row->set(0, new ui::GridItem(L"Unnamed"));
+	row->set(1, new ui::GridItem(c_parameterTypes[0]));
 
-	Ref< ui::custom::GridRow > lastOutputRow = new ui::custom::GridRow();
-	lastOutputRow->add(new ui::custom::GridItem(L"(Add pin)"));
-	lastOutputRow->add(new ui::custom::GridItem(L""));
+	Ref< ui::GridRow > lastOutputRow = new ui::GridRow();
+	lastOutputRow->add(new ui::GridItem(L"(Add pin)"));
+	lastOutputRow->add(new ui::GridItem(L""));
 	m_outputPinList->addRow(lastOutputRow);
 }
 
-void ScriptNodeDialog::eventOutputPinEdit(ui::custom::GridItemContentChangeEvent* event)
+void ScriptNodeDialog::eventOutputPinEdit(ui::GridItemContentChangeEvent* event)
 {
 	event->consume();
 }

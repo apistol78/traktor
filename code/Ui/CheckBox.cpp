@@ -18,13 +18,13 @@ namespace traktor
 {
 	namespace ui
 	{
-			namespace
-			{
+		namespace
+		{
 
 Ref< IBitmap > s_imageUnchecked;
 Ref< IBitmap > s_imageChecked;
 
-			}
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CheckBox", CheckBox, Widget)
 

@@ -34,17 +34,12 @@ class IResourceManager;
 class Command;
 class Container;
 class Menu;
-class Slider;
-
-		namespace custom
-		{
-
 class Panel;
+class Slider;
 class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
 
-		}
 	}
 
 	namespace sound
@@ -84,15 +79,15 @@ private:
 	editor::IEditor* m_editor;
 	Ref< db::Instance > m_instance;
 	Ref< BankAsset > m_asset;
-	Ref< ui::custom::ToolBar > m_toolBar;
-	Ref< ui::custom::ToolBarButton > m_toolBarItemPlay;
-	Ref< ui::custom::ToolBarButton > m_toolBarItemRepeat;
+	Ref< ui::ToolBar > m_toolBar;
+	Ref< ui::ToolBarButton > m_toolBarItemPlay;
+	Ref< ui::ToolBarButton > m_toolBarItemRepeat;
 	Ref< BankControl > m_bankControl;
-	Ref< ui::custom::Panel > m_containerParameters;
+	Ref< ui::Panel > m_containerParameters;
 	RefArray< ui::Slider > m_sliderParameters;
-	Ref< ui::custom::Panel > m_containerGrainProperties;
+	Ref< ui::Panel > m_containerGrainProperties;
 	Ref< GrainProperties > m_grainProperties;
-	Ref< ui::custom::Panel > m_containerGrainView;
+	Ref< ui::Panel > m_containerGrainView;
 	Ref< ui::Menu > m_menuGrains;
 	std::map< const TypeInfo*, Ref< IGrainFacade > > m_grainFacades;
 	Ref< ui::Widget > m_currentGrainView;
@@ -110,7 +105,7 @@ private:
 
 	void eventParameterChange(ui::ContentChangeEvent* event);
 
-	void eventToolBarClick(ui::custom::ToolBarButtonClickEvent* event);
+	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventGrainSelect(ui::SelectionChangeEvent* event);
 
