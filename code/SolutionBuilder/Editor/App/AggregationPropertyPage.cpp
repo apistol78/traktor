@@ -72,7 +72,7 @@ bool AggregationPropertyPage::create(ui::Widget* parent)
 	staticDependencies->create(container, L"Dependencies");
 
 	m_gridDependencies = new ui::custom::GridView();
-	m_gridDependencies->create(container, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
+	m_gridDependencies->create(container, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader | ui::custom::GridView::WsMultiSelect);
 	m_gridDependencies->addColumn(new ui::custom::GridColumn(L"Dependency", ui::dpi96(130)));
 	m_gridDependencies->addColumn(new ui::custom::GridColumn(L"Location", ui::dpi96(270)));
 	m_gridDependencies->addColumn(new ui::custom::GridColumn(L"Link", ui::dpi96(50)));

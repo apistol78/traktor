@@ -78,7 +78,7 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 	staticDependencies->create(container, L"Dependencies");
 
 	m_listDependencies = new ui::custom::GridView();
-	m_listDependencies->create(container, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
+	m_listDependencies->create(container, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader | ui::custom::GridView::WsMultiSelect);
 	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Dependency", ui::dpi96(160)));
 	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Location", ui::dpi96(200)));
 	m_listDependencies->addColumn(new ui::custom::GridColumn(L"Inherit include paths", ui::dpi96(130)));

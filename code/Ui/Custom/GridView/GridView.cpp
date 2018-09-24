@@ -96,6 +96,7 @@ GridView::GridView()
 ,	m_sortAscending(false)
 ,	m_sortMode(SmLexical)
 ,	m_autoEdit(false)
+,	m_multiSelect(false)
 {
 }
 
@@ -105,6 +106,7 @@ bool GridView::create(Widget* parent, uint32_t style)
 		return false;
 
 	m_autoEdit = bool((style & WsAutoEdit) == WsAutoEdit);
+	m_multiSelect = bool((style & WsMultiSelect) == WsMultiSelect);
 
 	addEventHandler< MouseButtonDownEvent >(this, &GridView::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &GridView::eventButtonUp);
@@ -254,6 +256,11 @@ void GridView::deselectAll()
 	requestUpdate();
 }
 
+void GridView::setMultiSelect(bool multiSelect)
+{
+	m_multiSelect = multiSelect;
+}
+
 void GridView::layoutCells(const Rect& rc)
 {
 	Rect rcLayout = rc;
@@ -355,9 +362,9 @@ void GridView::eventButtonDown(MouseButtonDownEvent* event)
 		}
 	}
 
-	// De-select all rows if no modifier key.
+	// De-select all rows if no modifier key or only single select.
 	bool modifier = bool((state & (KsShift | KsControl)) != 0);
-	if (!modifier)
+	if (!modifier || !m_multiSelect)
 	{
 		RefArray< GridRow > rows;
 		getRows(rows, GfDescendants);
@@ -372,7 +379,7 @@ void GridView::eventButtonDown(MouseButtonDownEvent* event)
 		getRows(rows, GfDescendants | GfExpandedOnly);
 
 		// Select range.
-		if ((state & KsShift) != 0 && m_clickRow)
+		if (m_multiSelect && (state & KsShift) != 0 && m_clickRow)
 		{
 			int32_t fromRowIndex = indexOf(rows, m_clickRow);
 			int32_t toRowIndex = indexOf(rows, row);

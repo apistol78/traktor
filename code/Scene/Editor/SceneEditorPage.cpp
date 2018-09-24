@@ -256,7 +256,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_imageUnlocked = new ui::StyleBitmap(L"Scene.LayerUnlocked");
 
 	m_instanceGrid = new ui::custom::GridView();
-	m_instanceGrid->create(m_entityPanel, ui::WsDoubleBuffer);
+	m_instanceGrid->create(m_entityPanel, ui::custom::GridView::WsMultiSelect |ui::WsDoubleBuffer);
 	//m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
 	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::dpi96(200)));
 	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", ui::dpi96(30)));

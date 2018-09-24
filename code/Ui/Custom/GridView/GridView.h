@@ -45,6 +45,7 @@ public:
 	{
 		WsColumnHeader = WsUser,
 		WsAutoEdit = WsUser << 1,
+		WsMultiSelect = WsUser << 2
 	};
 
 	enum GetFlags
@@ -93,6 +94,8 @@ public:
 
 	void deselectAll();
 
+	void setMultiSelect(bool multiSelect);
+
 private:
 	friend class GridItem;
 	friend class GridRow;
@@ -106,6 +109,7 @@ private:
 	bool m_sortAscending;
 	SortMode m_sortMode;
 	bool m_autoEdit;
+	bool m_multiSelect;
 	Ref< Edit > m_itemEditor;
 	Ref< GridItem > m_editItem;
 
