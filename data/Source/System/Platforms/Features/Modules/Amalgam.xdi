@@ -293,7 +293,6 @@
 								<item>Traktor.Theater</item>
 								<item>Traktor.Ui</item>
 								<item>Traktor.Ui.Cocoa</item>
-								<item>Traktor.Ui.Custom</item>
 								<item>Traktor.Video</item>
 								<item>Traktor.Weather</item>
 								<item>Traktor.World</item>
@@ -331,7 +330,6 @@
 								<item>libTraktor.Terrain.dylib</item>
 								<item>libTraktor.Theater.dylib</item>
 								<item>libTraktor.Ui.Cocoa.dylib</item>
-								<item>libTraktor.Ui.Custom.dylib</item>
 								<item>libTraktor.Ui.dylib</item>
 								<item>libTraktor.Video.dylib</item>
 								<item>libTraktor.Weather.dylib</item>
@@ -553,7 +551,6 @@
 								<item>Traktor.Terrain</item>
 								<item>Traktor.Theater</item>
 								<item>Traktor.Ui</item>
-								<item>Traktor.Ui.Custom</item>
 								<item>Traktor.Ui.Win32</item>
 								<item>Traktor.Video</item>
 								<item>Traktor.Weather</item>
@@ -591,7 +588,6 @@
 								<item>Traktor.Spray.dll</item>
 								<item>Traktor.Terrain.dll</item>
 								<item>Traktor.Theater.dll</item>
-								<item>Traktor.Ui.Custom.dll</item>
 								<item>Traktor.Ui.Win32.dll</item>
 								<item>Traktor.Ui.dll</item>
 								<item>Traktor.Video.dll</item>
@@ -662,7 +658,6 @@
 								<item>Traktor.Spray.lib</item>
 								<item>Traktor.Terrain.lib</item>
 								<item>Traktor.Theater.lib</item>
-								<item>Traktor.Ui.Custom.lib</item>
 								<item>Traktor.Ui.Win32.lib</item>
 								<item>Traktor.Ui.lib</item>
 								<item>Traktor.Video.lib</item>
@@ -726,7 +721,6 @@
 								<item>Traktor.Terrain</item>
 								<item>Traktor.Theater</item>
 								<item>Traktor.Ui</item>
-								<item>Traktor.Ui.Custom</item>
 								<item>Traktor.Ui.Win32</item>
 								<item>Traktor.Video</item>
 								<item>Traktor.Weather</item>
@@ -764,7 +758,6 @@
 								<item>Traktor.Spray.dll</item>
 								<item>Traktor.Terrain.dll</item>
 								<item>Traktor.Theater.dll</item>
-								<item>Traktor.Ui.Custom.dll</item>
 								<item>Traktor.Ui.Win32.dll</item>
 								<item>Traktor.Ui.dll</item>
 								<item>Traktor.Video.dll</item>
@@ -835,7 +828,6 @@
 								<item>Traktor.Spray.lib</item>
 								<item>Traktor.Terrain.lib</item>
 								<item>Traktor.Theater.lib</item>
-								<item>Traktor.Ui.Custom.lib</item>
 								<item>Traktor.Ui.Win32.lib</item>
 								<item>Traktor.Ui.lib</item>
 								<item>Traktor.Video.lib</item>
