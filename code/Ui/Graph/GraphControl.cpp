@@ -475,6 +475,11 @@ void GraphControl::evenSpace(EvenSpace space)
 	}
 }
 
+Size GraphControl::getOffset() const
+{
+	return m_offset;
+}
+
 Point GraphControl::clientToVirtual(const Point& cpt) const
 {
 	return cpt / m_scale - m_offset;
@@ -483,6 +488,15 @@ Point GraphControl::clientToVirtual(const Point& cpt) const
 Point GraphControl::virtualToClient(const Point& vpt) const
 {
 	return (vpt + m_offset) * m_scale;
+}
+
+Rect GraphControl::getVirtualRect() const
+{
+	Rect rcClient = getInnerRect();
+	return Rect(
+		clientToVirtual(rcClient.getTopLeft()),
+		clientToVirtual(rcClient.getBottomRight())
+	);
 }
 
 void GraphControl::beginSelectModification()

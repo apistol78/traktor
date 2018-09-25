@@ -414,9 +414,8 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 			const ui::Rect& bounds = data->getBounds();
 
-			ui::Size graphSize = m_editorGraph->getInnerRect().getSize();
-			int centerLeft = (graphSize.cx - bounds.getWidth()) / 2 - m_editorGraph->getOffset().cx;
-			int centerTop = (graphSize.cy - bounds.getHeight()) / 2 - m_editorGraph->getOffset().cy;
+			ui::Rect rcClient = m_editorGraph->getInnerRect();
+			ui::Point center = m_editorGraph->clientToVirtual(rcClient.getCenter());
 
 			for (RefArray< Node >::const_iterator i = data->getNodes().begin(); i != data->getNodes().end(); ++i)
 			{
@@ -425,8 +424,8 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 				// Place node in view.
 				std::pair< int, int > position = (*i)->getPosition();
-				position.first = (position.first - bounds.left) + centerLeft;
-				position.second = (position.second - bounds.top) + centerTop;
+				position.first = ui::invdpi96(center.x + ui::dpi96(position.first) - bounds.left - bounds.getWidth() / 2);
+				position.second = ui::invdpi96(center.y + ui::dpi96(position.second) - bounds.top - bounds.getHeight() / 2);
 				(*i)->setPosition(position);
 
 				// Add node to graph.
