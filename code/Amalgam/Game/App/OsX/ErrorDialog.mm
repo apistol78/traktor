@@ -5,7 +5,7 @@
 #include "Ui/Image.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/Custom/LogList/LogList.h"
+#include "Ui/LogList/LogList.h"
 
 // Resources
 #include "Resources/Error.h"
@@ -41,7 +41,7 @@ bool ErrorDialog::create()
 	Ref< ui::Static > staticText = new ui::Static();
 	staticText->create(containerText, L"Unfortunately there has been an error");
 
-	m_listLog = new ui::custom::LogList();
+	m_listLog = new ui::LogList();
 	m_listLog->create(containerText, ui::WsClientBorder, 0);
 
 	Ref< ui::Container > containerButtons = new ui::Container();
@@ -63,7 +63,7 @@ bool ErrorDialog::create()
 
 void ErrorDialog::addErrorString(const std::wstring& errorString)
 {
-	m_listLog->add(0, ui::custom::LogList::LvInfo, errorString);
+	m_listLog->add(0, ui::LogList::LvInfo, errorString);
 }
 
 void ErrorDialog::eventButtonCopyQuit(ui::ButtonClickEvent* event)
