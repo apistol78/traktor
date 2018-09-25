@@ -177,7 +177,27 @@ void DialogWin32::setVisible(bool visible)
 		return;
 
 	if (visible)
-		ShowWindow(m_hWnd, SW_SHOW);
+	{
+		HWND hParentWnd = GetParent(m_hWnd);
+		if (hParentWnd)
+		{
+			while (GetParent(hParentWnd))
+				hParentWnd = GetParent(hParentWnd);
+		}
+
+		HWND hCenterWnd = m_centerDesktop ? GetDesktopWindow() : hParentWnd;
+		if (!hCenterWnd)
+			hCenterWnd = GetDesktopWindow();
+
+		RECT rcParent;
+		GetWindowRect(hCenterWnd, &rcParent);
+		POINT pntPos =
+		{
+			rcParent.left + ((rcParent.right - rcParent.left) - getRect().getWidth()) / 2,
+			rcParent.top + ((rcParent.bottom - rcParent.top) - getRect().getHeight()) / 2
+		};
+		SetWindowPos(m_hWnd, NULL, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
+	}
 	else
 		ShowWindow(m_hWnd, SW_HIDE);
 }

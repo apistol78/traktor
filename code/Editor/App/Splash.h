@@ -7,14 +7,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_editor_Splash_H
 #define traktor_editor_Splash_H
 
-#include "Ui/ToolForm.h"
+#include "Ui/Dialog.h"
 
 namespace traktor
 {
 	namespace editor
 	{
 
-class Splash : public ui::ToolForm
+class Splash : public ui::Dialog
 {
 	T_RTTI_CLASS;
 

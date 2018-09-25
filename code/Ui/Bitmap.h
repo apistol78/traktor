@@ -108,7 +108,6 @@ public:
 
 private:
 	ISystemBitmap* m_bitmap;
-	bool m_cached;
 };
 
 	}

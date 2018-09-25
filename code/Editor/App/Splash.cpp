@@ -17,11 +17,11 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.Splash", Splash, ui::ToolForm)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.Splash", Splash, ui::Dialog)
 
 bool Splash::create()
 {
-	if (!ui::ToolForm::create(0, L"Splash", 0, 0, ui::WsTop, new ui::FloodLayout()))
+	if (!ui::Dialog::create(nullptr, L"", 0, 0, ui::WsTop | ui::Dialog::WsCenterDesktop, new ui::FloodLayout()))
 		return false;
 
 	Ref< ui::Bitmap > splash = ui::Bitmap::load(c_ResourceSplash, sizeof(c_ResourceSplash), L"png");
@@ -31,10 +31,9 @@ bool Splash::create()
 	image->create(this, splash, false);
 
 	fit();
-	//center();
 	show();
 
-	update(0, true);
+	update(nullptr, true);
 	return true;
 }
 

@@ -141,11 +141,13 @@ public:
 
 	void evenSpace(EvenSpace space);
 
-	const Size& getOffset() const { return m_offset; }
+	Size getOffset() const;
 
 	Point clientToVirtual(const Point& cpt) const;
 
 	Point virtualToClient(const Point& vpt) const;
+
+	Rect getVirtualRect() const;
 
 private:
 	Ref< const PaintSettings > m_paintSettings;
