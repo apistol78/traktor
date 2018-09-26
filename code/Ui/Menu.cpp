@@ -11,6 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/MenuItem.h"
 #include "Ui/MenuShell.h"
 #include "Ui/ToolForm.h"
+#include "Ui/Itf/IWidgetFactory.h"
 
 namespace traktor
 {
@@ -65,11 +66,11 @@ Ref< Widget > Menu::show(Widget* parent, const Point& at) const
 	return form;
 }
 
-const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width) const
+const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width, int32_t maxItems) const
 {
 	const MenuItem* selectedItem = nullptr;
 
-	if (!parent)
+	if (!parent || m_items.empty())
 		return nullptr;
 
 	Ref< ToolForm > form = new ToolForm();
@@ -77,7 +78,7 @@ const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width) 
 		return nullptr;
 
 	Ref< MenuShell > shell = new MenuShell();
-	if (!shell->create(form))
+	if (!shell->create(form, maxItems))
 		return nullptr;
 
 	shell->addEventHandler< MenuClickEvent >([&](MenuClickEvent* e) {
@@ -97,12 +98,31 @@ const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width) 
 	// Place form at given position.
 	auto rc = form->getRect();
 	auto sz = rc.getSize();
+	
 	if (width >= 0)
 		sz.cx = width;
-	form->setRect(Rect(
+
+	Rect rcForm(
 		parent->clientToScreen(at),
 		sz
-	));
+	);
+
+	// Ensure form is placed inside desktop.
+	std::list< Rect > desktopRects;
+	Application::getInstance()->getWidgetFactory()->getDesktopRects(desktopRects);
+	for (auto r : desktopRects)
+	{
+		if (rcForm.left < r.left)
+			rcForm = rcForm.offset(-(rcForm.left - r.left), 0);
+		if (rcForm.right > r.right)
+			rcForm = rcForm.offset(-(rcForm.right - r.right), 0);
+		if (rcForm.top < r.top)
+			rcForm = rcForm.offset(0, -(rcForm.top - r.top));
+		if (rcForm.bottom > r.bottom)
+			rcForm = rcForm.offset(0, -(rcForm.bottom - r.bottom));
+	}
+
+	form->setRect(rcForm);
 
 	// Show form.
 	form->show();

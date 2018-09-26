@@ -45,9 +45,13 @@ public:
 
 	const EditValidator* getValidator() const;
 
-	void setSelection(int from, int to);
+	void select(int from, int to);
 
 	void selectAll();
+
+	void deselect();
+
+	bool haveSelection() const;
 
 	void setBorderColor(const Color4ub& borderColor);
 

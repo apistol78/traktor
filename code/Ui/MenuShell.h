@@ -22,6 +22,7 @@ namespace traktor
 	{
 	
 class MenuItem;
+class ScrollBar;
 
 /*! \brief Menu shell
  * \ingroup UI
@@ -31,7 +32,9 @@ class T_DLLCLASS MenuShell : public Widget
 	T_RTTI_CLASS;
 
 public:
-	bool create(Widget* parent);
+	MenuShell();
+
+	bool create(Widget* parent, int32_t maxItems = -1);
 
 	void add(MenuItem* item);
 
@@ -44,7 +47,9 @@ public:
 	virtual Size getPreferedSize() const T_OVERRIDE T_FINAL;
 
 private:
+	int32_t m_maxItems;
 	RefArray< MenuItem > m_items;
+	Ref< ScrollBar > m_scrollBar;
 	Ref< MenuItem > m_trackItem;
 	Ref< Widget > m_trackSubMenu;
 
@@ -55,6 +60,10 @@ private:
 	void eventButtonUp(MouseButtonUpEvent* event);
 
 	void eventPaint(PaintEvent* e);
+
+	void eventSize(SizeEvent* e);
+
+	void eventScroll(ScrollEvent* e);
 };
 
 	}

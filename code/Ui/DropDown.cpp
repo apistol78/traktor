@@ -90,6 +90,7 @@ Ref< Object > DropDown::getData(int32_t index) const
 void DropDown::select(int32_t index)
 {
 	m_selected = index;
+	update(nullptr, false);
 }
 
 bool DropDown::select(const std::wstring& item)
@@ -157,7 +158,7 @@ void DropDown::eventButtonDown(MouseButtonDownEvent* event)
 		menu.add(new MenuItem(Command(i), m_items[i].text));
 	
 	Rect rcInner = getInnerRect();
-	const MenuItem* selectedItem = menu.showModal(this, rcInner.getBottomLeft(), rcInner.getWidth());
+	const MenuItem* selectedItem = menu.showModal(this, rcInner.getBottomLeft(), rcInner.getWidth(), 8);
 	if (selectedItem != nullptr && selectedItem->getCommand().getId() != m_selected)
 	{
 		m_selected = selectedItem->getCommand().getId();

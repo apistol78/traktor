@@ -586,6 +586,7 @@ protected:
 				uint8_t str[8] = { 0 };
 
 				Status status = 0;
+				xe.xkey.state &= ~(ControlMask | Mod1Mask | Mod5Mask);
 				const int n = Xutf8LookupString(m_xic, &xe.xkey, (char*)str, 8, ks, &status);
 				if (n > 0)
 				{

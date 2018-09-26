@@ -125,5 +125,9 @@ void WidgetFactoryWin32::getSystemFonts(std::list< std::wstring >& outFonts)
 	outFonts = std::list< std::wstring >(fonts.begin(), fonts.end());
 }
 
+void WidgetFactoryWin32::getDesktopRects(std::list< Rect >& outRects) const
+{
+}
+
 	}
 }
