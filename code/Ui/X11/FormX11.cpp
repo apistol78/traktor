@@ -84,8 +84,8 @@ void FormX11::setIcon(ISystemBitmap* icon)
 	Ref< drawing::Image > ii = icon->getImage();
 	ii->convert(drawing::PixelFormat::getA8R8G8B8());
 	
-	const int32_t szs[] = { 16, 32, 64, 0 };
-	AlignedVector< uint32_t > data;
+	const int32_t szs[] = { 16, 32, 64, 128, 256, 0 };
+	AlignedVector< unsigned long > data;
 
 	for (const int32_t* sz = szs; *sz != 0; ++sz)
 	{
@@ -107,7 +107,10 @@ void FormX11::setIcon(ISystemBitmap* icon)
 
 		uint32_t o = data.size();
 		data.resize(o + w * h);
-		std::memcpy(data.ptr() + o, img->getData(), w * h);
+
+		const uint32_t* src = static_cast< const uint32_t* >(img->getData());
+		for (uint32_t i = 0; i < w * h; ++i)
+			data[o + i] = (unsigned long)src[i];
 	}
 
 	XChangeProperty(
