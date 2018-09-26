@@ -1,4 +1,5 @@
 import(traktor)
+import(traktor.drawing)
 import(traktor.run)
 
 
@@ -21,6 +22,28 @@ end
 
 function string:endswith(send)
 	return #self >= #send and self:find(send, #self - #send + 1, true) and true or false
+end
+
+
+local function createIcon()
+	local projectRoot = os:getEnvironment("DEPLOY_PROJECT_ROOT")
+	assert (projectRoot ~= "")
+
+	local iconFile = os:getEnvironment("DEPLOY_PROJECT_ICON")
+	if #iconFile <= 0 then
+		iconFile = "$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/DefaultIcon.png"
+	end
+
+	iconFile = Path(projectRoot):concat(Path(iconFile)).pathName
+
+	local iconImage = Image.loadFromFile(iconFile)
+	if iconImage == nil then 
+		print("Unable to load image " .. iconFile)
+		return false
+	end
+
+	iconImage:apply(ScaleFilter(256, 256))
+	return iconImage:save("Default.png")
 end
 
 
@@ -64,6 +87,15 @@ function deploy(args)
 			if run:exitCode() ~= 0 then return run:exitCode() end
 		end
 	end
+
+	-- Create icon resource.
+	if not createIcon()	then
+		stderr:printLn("Unable to create product icon.")
+		return 1
+	end	
+
+	-- Default icon.
+	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" Default.png", "(null)")
 
 	-- Create launcher script.
 	local f = fileSystem:open(Path("launch.sh"), 2)
@@ -112,6 +144,12 @@ function migrate(args)
 			end
 		end
 	end
+
+	-- Create icon resource.
+	if not createIcon()	then
+		stderr:printLn("Unable to create product icon.")
+		return 1
+	end	
 
 	return 0
 end
