@@ -8,6 +8,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <unistd.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
+#include "Drawing/Filters/ScaleFilter.h"
 #include "Render/OpenGL/Std/Linux/Window.h"
 
 namespace traktor
@@ -87,6 +91,52 @@ bool Window::create(int32_t width, int32_t height)
 		m_window,
 		ExposureMask | StructureNotifyMask | FocusChangeMask
 	);
+
+	// Load icon; should be in working directory.
+	Ref< drawing::Image > icon = drawing::Image::load(L"Default.png");
+	if (icon != nullptr)
+	{
+		icon->convert(drawing::PixelFormat::getA8R8G8B8());
+		
+		const int32_t szs[] = { 16, 32, 64, 128, 256, 0 };
+		AlignedVector< unsigned long > data;
+
+		for (const int32_t* sz = szs; *sz != 0; ++sz)
+		{
+			int32_t w = *sz;
+			int32_t h = *sz;
+
+			drawing::ScaleFilter sf(
+				w,
+				h,
+				drawing::ScaleFilter::MnAverage,
+				drawing::ScaleFilter::MgLinear
+			);
+
+			Ref< drawing::Image > iconMip = icon->clone();
+			iconMip->apply(&sf);
+
+			data.push_back(w);
+			data.push_back(h);
+
+			uint32_t o = data.size();
+			data.resize(o + w * h);
+
+			const uint32_t* src = static_cast< const uint32_t* >(iconMip->getData());
+			for (uint32_t i = 0; i < w * h; ++i)
+				data[o + i] = (unsigned long)src[i];
+		}
+
+		XChangeProperty(
+			m_display,
+			m_window,
+			XInternAtom(m_display, "_NET_WM_ICON", False),
+			XA_CARDINAL, 32,
+			PropModeReplace,
+			(unsigned char*)data.ptr(),
+			data.size()
+		);
+	}
 
 	return true;
 }
