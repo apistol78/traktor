@@ -53,6 +53,16 @@ public:
 
 	bool haveSelection() const;
 
+	std::wstring getSelectedText() const;
+
+	void insert(const std::wstring& text);
+
+	void copy();
+
+	void cut();
+
+	void paste();
+
 	void setBorderColor(const Color4ub& borderColor);
 
 	virtual void setText(const std::wstring& text) T_OVERRIDE;

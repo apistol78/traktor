@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <cwctype>
 #include "Core/Log/Log.h"
 #include "Ui/Application.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Edit.h"
 #include "Ui/EditValidator.h"
 #include "Ui/StyleSheet.h"
@@ -111,6 +112,70 @@ bool Edit::haveSelection() const
 	return m_selectionStart >= 0;
 }
 
+std::wstring Edit::getSelectedText() const
+{
+	if (haveSelection())
+	{
+		std::wstring text = getText();
+		return text.substr(m_selectionStart, m_selectionEnd - m_selectionStart);
+	}
+	else
+		return L"";
+}
+
+void Edit::insert(const std::wstring& text)
+{
+	std::wstring current = getText();
+
+	if (!haveSelection())
+	{
+		if (m_caret >= current.length())
+			current += text;
+		else
+			current = current.substr(0, m_caret) + text + current.substr(m_caret);
+	}
+	else
+		current = current.substr(0, m_selectionStart) + text + current.substr(m_selectionEnd);
+
+	setText(current);
+}
+
+void Edit::copy()
+{
+	if (!haveSelection())
+		return;
+
+	auto clipboard = Application::getInstance()->getClipboard();
+	if (clipboard != nullptr)
+		clipboard->setText(getSelectedText());
+}
+
+void Edit::cut()
+{
+	if (!haveSelection())
+		return;
+
+	auto clipboard = Application::getInstance()->getClipboard();
+	if (clipboard != nullptr)
+	{
+		clipboard->setText(getSelectedText());
+
+		std::wstring current = getText();
+		current = current.substr(0, m_selectionStart) + current.substr(m_selectionEnd);
+		setText(current);	
+	}
+}
+
+void Edit::paste()
+{
+	auto clipboard = Application::getInstance()->getClipboard();
+	if (clipboard != nullptr)
+	{
+		if (clipboard->getContentType() == CtText)
+			insert(clipboard->getText());
+	}
+}
+
 void Edit::setBorderColor(const Color4ub& borderColor)
 {
 }
@@ -118,7 +183,12 @@ void Edit::setBorderColor(const Color4ub& borderColor)
 void Edit::setText(const std::wstring& text)
 {
 	Widget::setText(text);
-	update();
+
+	// Ensure caret position is clamped within text limits.
+	m_caret = std::min< int32_t >(m_caret, text.length());
+	m_caret = std::max< int32_t >(m_caret, 0);
+
+	deselect();
 }
 
 Size Edit::getPreferedSize() const
@@ -337,6 +407,12 @@ void Edit::eventKey(KeyEvent* event)
 	{
 		if (ch == L'a' || ch == L'A')
 			selectAll();
+		else if (ch == L'c' || ch == L'C')
+			copy();
+		else if (ch == L'x' || ch == L'X')
+			cut();
+		else if (ch == L'v' || ch == L'V')
+			paste();
 	}
 }
 
