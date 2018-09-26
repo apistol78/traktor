@@ -141,6 +141,16 @@ void WidgetFactoryX11::getSystemFonts(std::list< std::wstring >& outFonts)
 	FcFontSetDestroy(fs);
 }
 
+void WidgetFactoryX11::getDesktopRects(std::list< Rect >& outRects) const
+{
+	int32_t width = DisplayWidth(m_display, m_screen);
+	int32_t height = DisplayHeight(m_display, m_screen);
+	outRects.push_back(Rect(
+		0, 0,
+		width, height
+	));
+}
+
 	}
 }
 

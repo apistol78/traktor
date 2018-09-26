@@ -82,5 +82,9 @@ void WidgetFactoryCocoa::getSystemFonts(std::list< std::wstring >& outFonts)
 		outFonts.push_back(fromNSString(family));
 }
 
+void WidgetFactoryCocoa::getDesktopRects(std::list< Rect >& outRects) const
+{
+}
+
 	}
 }

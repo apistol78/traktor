@@ -56,6 +56,8 @@ public:
 
 	virtual void getSystemFonts(std::list< std::wstring >& outFonts) T_OVERRIDE T_FINAL;
 
+	virtual void getDesktopRects(std::list< Rect >& outRects) const T_OVERRIDE T_FINAL;
+
 private:
 	int32_t m_systemDPI;
 };

@@ -5,6 +5,7 @@
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MenuShell.h"
+#include "Ui/ScrollBar.h"
 #include "Ui/StyleSheet.h"
 
 namespace traktor
@@ -13,8 +14,13 @@ namespace traktor
 	{
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MenuShell", MenuShell, Widget)
-	
-bool MenuShell::create(Widget* parent)
+
+MenuShell::MenuShell()
+:	m_maxItems(-1)
+{
+}
+
+bool MenuShell::create(Widget* parent, int32_t maxItems)
 {
 	if (!Widget::create(parent, ui::WsDoubleBuffer))
 		return false;
@@ -23,6 +29,16 @@ bool MenuShell::create(Widget* parent)
 	addEventHandler< MouseButtonDownEvent >(this, &MenuShell::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &MenuShell::eventButtonUp);
 	addEventHandler< PaintEvent >(this, &MenuShell::eventPaint);
+	addEventHandler< SizeEvent >(this, &MenuShell::eventSize);
+
+	if ((m_maxItems = maxItems) > 0)
+	{
+		m_scrollBar = new ScrollBar();
+		if (!m_scrollBar->create(this, ScrollBar::WsVertical))
+			return false;
+
+		m_scrollBar->addEventHandler< ScrollEvent >(this, &MenuShell::eventScroll);
+	}
 
 	return true;
 }
@@ -30,29 +46,55 @@ bool MenuShell::create(Widget* parent)
 void MenuShell::add(MenuItem* item)
 {
 	m_items.push_back(item);
+
+	if (m_scrollBar)
+	{
+		m_scrollBar->setRange(m_items.size());
+		m_scrollBar->setPage(m_maxItems - 1);
+		m_scrollBar->setVisible(m_items.size() > m_maxItems);
+	}
 }
 
 MenuItem* MenuShell::getItem(const Point& at) const
 {
 	Rect rcInner = getInnerRect();
+
+	int32_t itemWidth = rcInner.getWidth() - 2;
 	Point itemTopLeft(1, 1);
+
+	if (m_scrollBar != nullptr && m_scrollBar->isVisible(false))
+	{
+		itemWidth -= m_scrollBar->getPreferedSize().cx;
+		itemTopLeft.y = 1 - m_scrollBar->getPosition() * m_items.front()->getSize(this).cy;
+	}
+
 	for (auto item : m_items)
 	{
-		Size itemSize(rcInner.getWidth() - 2, item->getSize(this).cy);
+		Size itemSize(itemWidth, item->getSize(this).cy);
 		if (Rect(itemTopLeft, itemSize).inside(at))
 			return item;
 		itemTopLeft.y += itemSize.cy;
 	}
-	return 0;
+
+	return nullptr;
 }
 
 bool MenuShell::getItemRect(const MenuItem* item, Rect& outItemRect) const
 {
 	Rect rcInner = getInnerRect();
+
+	int32_t itemWidth = rcInner.getWidth() - 2;
 	Point itemTopLeft(1, 1);
+
+	if (m_scrollBar != nullptr && m_scrollBar->isVisible(false))
+	{
+		itemWidth -= m_scrollBar->getPreferedSize().cx;
+		itemTopLeft.y = 1 - m_scrollBar->getPosition() * m_items.front()->getSize(this).cy;
+	}
+
 	for (auto it : m_items)
 	{
-		Size itemSize(rcInner.getWidth() - 2, item->getSize(this).cy);
+		Size itemSize(itemWidth, item->getSize(this).cy);
 		if (it == item)
 		{
 			outItemRect = Rect(itemTopLeft, itemSize);
@@ -60,6 +102,7 @@ bool MenuShell::getItemRect(const MenuItem* item, Rect& outItemRect) const
 		}
 		itemTopLeft.y += itemSize.cy;
 	}
+
 	return false;
 }
 
@@ -72,6 +115,15 @@ Size MenuShell::getMinimumSize() const
 		minimumSize.cx = std::max(minimumSize.cx, itemSize.cx);
 		minimumSize.cy += itemSize.cy;
 	}
+
+	// Limit maximum number of visible items; assume all items has same height.
+	if (m_maxItems > 0)
+	{
+		minimumSize.cy = m_items.front()->getSize(this).cy * m_maxItems;
+		if (m_scrollBar->isVisible(false))
+			minimumSize.cx += m_scrollBar->getPreferedSize().cx;
+	}
+
 	return minimumSize + Size(2, 2);
 }
 
@@ -148,13 +200,21 @@ void MenuShell::eventPaint(PaintEvent* e)
 	Canvas& canvas = e->getCanvas();
 	Rect rcInner = getInnerRect();
 
+	int32_t itemWidth = rcInner.getWidth() - 2;
+	Point itemTopLeft(1, 1);
+
+	if (m_scrollBar != nullptr && m_scrollBar->isVisible(false))
+	{
+		itemWidth -= m_scrollBar->getPreferedSize().cx;
+		itemTopLeft.y = 1 - m_scrollBar->getPosition() * m_items.front()->getSize(this).cy;
+	}
+
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rcInner);
 
-	Point itemTopLeft(1, 1);
 	for (auto item : m_items)
 	{
-		Size itemSize(rcInner.getWidth() - 2, item->getSize(this).cy);
+		Size itemSize(itemWidth, item->getSize(this).cy);
 		item->paint(this, canvas, Rect(itemTopLeft, itemSize), bool(item == m_trackItem));
 		itemTopLeft.y += itemSize.cy;
 	}
@@ -163,6 +223,25 @@ void MenuShell::eventPaint(PaintEvent* e)
 	canvas.drawRect(rcInner);
 
 	e->consume();
+}
+
+void MenuShell::eventSize(SizeEvent* e)
+{
+	if (m_scrollBar != nullptr)
+	{
+		Rect rcInner = getInnerRect();
+		Size szPreferred = m_scrollBar->getPreferedSize();
+
+		m_scrollBar->setRect(Rect(
+			rcInner.right - szPreferred.cx - 1, rcInner.top + 1,
+			rcInner.right - 1, rcInner.bottom - 1
+		));
+	}
+}
+
+void MenuShell::eventScroll(ScrollEvent* e)
+{
+	update(nullptr, false);
 }
 
 	}

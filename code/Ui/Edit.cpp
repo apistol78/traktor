@@ -68,7 +68,7 @@ const EditValidator* Edit::getValidator() const
 	return m_validator;
 }
 
-void Edit::setSelection(int from, int to)
+void Edit::select(int from, int to)
 {
 	if (from >= to)
 	{
@@ -99,6 +99,18 @@ void Edit::selectAll()
 	update();
 }
 
+void Edit::deselect()
+{
+	m_selectionStart =
+	m_selectionEnd = -1;
+	update();
+}
+
+bool Edit::haveSelection() const
+{
+	return m_selectionStart >= 0;
+}
+
 void Edit::setBorderColor(const Color4ub& borderColor)
 {
 }
@@ -126,6 +138,7 @@ void Edit::eventFocus(FocusEvent* event)
 	{
 		m_caretBlink = true;
 		stopTimer();
+		deselect();
 	}
 	update();
 }
@@ -151,9 +164,11 @@ void Edit::eventButtonDown(MouseButtonDownEvent* event)
 {
 	int32_t mx = event->getPosition().x;
 	int32_t x = dpi96(4);
+
+	int32_t caret = m_caret;
 	if (mx >= x)
 	{
-		m_caret = -1;
+		caret = -1;
 
 		std::wstring text = getText();
 		FontMetric fm = getFontMetric();
@@ -164,94 +179,165 @@ void Edit::eventButtonDown(MouseButtonDownEvent* event)
 			if (mx >= x && mx <= x + a)
 			{
 				if (mx <= x + a / 2)
-					m_caret = i;
+					caret = i;
 				else
-					m_caret = i + 1;
+					caret = i + 1;
 				break;
 			}
 			x += a;
 		}
-		if (m_caret < 0)
-			m_caret = int32_t(text.length());
+		if (caret < 0)
+			caret = int32_t(text.length());
 	}
 	else
-		m_caret = 0;
+		caret = 0;
+
+	if (caret != m_caret)
+	{
+		if ((event->getKeyState() & KsShift) != 0)
+		{
+			if (m_selectionStart == -1)
+			{
+				m_selectionStart = std::min< int32_t >(caret, m_caret);
+				m_selectionEnd = std::max< int32_t >(caret, m_caret);
+			}
+			else
+			{
+				m_selectionStart = std::min< int32_t >(m_selectionStart, caret);
+				m_selectionEnd = std::max< int32_t >(m_selectionEnd, caret);
+			}
+		}
+		else
+		{
+			deselect();
+		}
+
+		m_caret = caret;
+		update();		
+	}
 }
 
 void Edit::eventKeyDown(KeyDownEvent* event)
 {
+	int32_t caret = m_caret;
+
 	switch (event->getVirtualKey())
 	{
 	case VkLeft:
 		{
-			m_caret = std::max< int32_t >(m_caret - 1 , 0);
-			update();
+			caret = std::max< int32_t >(caret - 1 , 0);
 		}
 		break;
 
 	case VkRight:
 		{
 			std::wstring text = getText();
-			m_caret = std::min< int32_t >(m_caret + 1, text.length());
-			update();
+			caret = std::min< int32_t >(caret + 1, text.length());
 		}
 		break;
 
 	case VkHome:
 		{
-			m_caret = 0;
-			update();
+			caret = 0;
 		}
 		break;
 		
 	case VkEnd:
 		{
 			std::wstring text = getText();
-			m_caret = text.length();
-			update();
+			caret = text.length();
 		}
 		break;
 
 	default:
 		break;
 	}
+
+	if (caret != m_caret)
+	{
+		if ((event->getKeyState() & KsShift) != 0)
+		{
+			if (m_selectionStart == -1)
+			{
+				m_selectionStart = std::min< int32_t >(caret, m_caret);
+				m_selectionEnd = std::max< int32_t >(caret, m_caret);
+			}
+			else
+			{
+				m_selectionStart = std::min< int32_t >(m_selectionStart, caret);
+				m_selectionEnd = std::max< int32_t >(m_selectionEnd, caret);
+			}
+		}
+		else
+		{
+			deselect();
+		}
+
+		m_caret = caret;
+		update();
+	}
 }
 
 void Edit::eventKey(KeyEvent* event)
 {
 	wchar_t ch = event->getCharacter();
-	std::wstring text = getText();
+	if ((event->getKeyState() & KsControl) == 0)
+	{
+		std::wstring text = getText();
+		int32_t caret = m_caret;
 
-	if (ch != 8 && ch != 127)
-	{
-		if (m_caret >= text.length())
-			text += ch;
-		else
-			text = text.substr(0, m_caret) + ch + text.substr(m_caret);
-		++m_caret;
-	}
-	else if (ch == 8)
-	{
-		if (m_caret > 0)
+		if (ch != 8 && ch != 127)
 		{
-			text = text.substr(0, m_caret - 1) + text.substr(m_caret);
-			--m_caret;
+			if (!haveSelection())
+			{
+				if (caret >= text.length())
+					text += ch;
+				else
+					text = text.substr(0, caret) + ch + text.substr(caret);
+			}
+			else
+				text = text.substr(0, m_selectionStart) + ch + text.substr(m_selectionEnd);
+
+			++caret;
 		}
+		else if (ch == 8)
+		{
+			if (!haveSelection())
+			{
+				if (caret > 0)
+				{
+					text = text.substr(0, caret - 1) + text.substr(caret);
+					--caret;
+				}
+			}
+			else
+			{
+				text = text.substr(0, m_selectionStart) + text.substr(m_selectionEnd);
+			}
+		}
+
+		deselect();
+
+		// Ensure caret position is clamped within text limits.
+		caret = std::min< int32_t >(caret, text.length());
+		caret = std::max< int32_t >(caret, 0);
+
+		if (m_validator == nullptr || m_validator->validate(text) != EditValidator::VrInvalid)
+		{
+			setText(text);
+			m_caret = caret;
+
+			ContentChangeEvent contentChangeEvent(this);
+			raiseEvent(&contentChangeEvent);
+		}
+
+		update();
 	}
-
-	// Ensure caret position is clamped within text limits.
-	m_caret = std::min< int32_t >(m_caret, text.length());
-	m_caret = std::max< int32_t >(m_caret, 0);
-
-	if (m_validator == nullptr || m_validator->validate(text) != EditValidator::VrInvalid)
+	else
 	{
-		setText(text);
-
-		ContentChangeEvent contentChangeEvent(this);
-		raiseEvent(&contentChangeEvent);
+		if (ch == L'a' || ch == L'A')
+			selectAll();
 	}
-
-	update();
 }
 
 void Edit::eventPaint(PaintEvent* event)
@@ -280,13 +366,24 @@ void Edit::eventPaint(PaintEvent* event)
 
 	for (int32_t i = 0; i < text.length(); ++i)
 	{
+		int32_t w = fm.getAdvance(text[i], 0);
+
+		if (i >= m_selectionStart && i < m_selectionEnd)
+		{
+			canvas.setBackground(ss->getColor(this, L"background-color-selection"));
+			canvas.fillRect(Rect(
+				x, rcInner.top + 1,
+				x + w, rcInner.bottom - 1
+			));			
+		}
+
 		wchar_t chs[2] = { text[i], 0 };
 		canvas.drawText(Point(x, y), chs);
 
 		if (i == m_caret)
 			caretX = x;
 
-		x += fm.getAdvance(text[i], 0);
+		x += w;
 	}
 
 	if (m_caret >= text.length())

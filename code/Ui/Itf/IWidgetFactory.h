@@ -11,6 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <string>
 #include "Core/Config.h"
 #include "Ui/Enums.h"
+#include "Ui/Rect.h"
 
 namespace traktor
 {
@@ -64,6 +65,8 @@ public:
 	virtual int32_t getSystemDPI() const = 0;
 
 	virtual void getSystemFonts(std::list< std::wstring >& outFonts) = 0;
+
+	virtual void getDesktopRects(std::list< Rect >& outRects) const = 0;
 };
 
 	}
