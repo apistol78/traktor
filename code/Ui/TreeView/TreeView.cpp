@@ -227,7 +227,10 @@ void TreeView::beginEdit(TreeViewItem* item)
 
 	releaseCapturedCell();
 
-	m_itemEditor->setRect(item->calculateLabelRect());
+	Rect rcLabel = item->calculateLabelRect();
+	Rect rcItem = getCellClientRect(item);
+
+	m_itemEditor->setRect(Rect(rcLabel.left, rcItem.top, rcItem.right, rcItem.bottom));
 	m_itemEditor->setText(item->getText());
 	m_itemEditor->selectAll();
 	m_itemEditor->show();
