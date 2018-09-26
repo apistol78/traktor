@@ -1260,10 +1260,15 @@ g_Strength
 		</item>
 		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
 			<id>{AE1597FA-C889-FE47-AAC9-4E9A7B927406}</id>
-			<comment/>
+			<comment>
+			<![CDATA[
+Cull far pixels.
+
+			]]>
+			</comment>
 			<position>
-				<first>1001</first>
-				<second>13</second>
+				<first>987</first>
+				<second>20</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoLess</operator>
@@ -1272,8 +1277,8 @@ g_Strength
 			<id>{FD5C3706-20B9-3245-803A-06514368EABB}</id>
 			<comment/>
 			<position>
-				<first>842</first>
-				<second>25</second>
+				<first>828</first>
+				<second>32</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -1281,17 +1286,17 @@ g_Strength
 			<id>{089BC72C-A967-6D43-BC03-9DF093EE02D9}</id>
 			<comment/>
 			<position>
-				<first>851</first>
-				<second>69</second>
+				<first>837</first>
+				<second>76</second>
 			</position>
-			<value>90</value>
+			<value>100</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{19922ABE-2E93-0640-B17C-007B2A4F2601}</id>
 			<comment/>
 			<position>
-				<first>851</first>
-				<second>107</second>
+				<first>837</first>
+				<second>114</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -2736,16 +2741,6 @@ g_Strength
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[43]"/>
 				<name>Output</name>
 			</source>
@@ -2782,6 +2777,26 @@ g_Strength
 			<destination>
 				<node ref="/object/nodes/item[110]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[106]"/>
+				<name>CaseTrue</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[106]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
