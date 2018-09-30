@@ -7,9 +7,17 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_ProgramResourceCapture_H
 #define traktor_render_ProgramResourceCapture_H
 
-#include "Core/RefArray.h"
+#include <string>
+#include "Core/Ref.h"
 #include "Render/Resource/ProgramResource.h"
-#include "Render/Shader/Nodes.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RENDER_CAPTURE_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor
 {
@@ -19,7 +27,7 @@ namespace traktor
 /*! \brief
  * \ingroup Render
  */
-class ProgramResourceCapture : public ProgramResource
+class T_DLLCLASS ProgramResourceCapture : public ProgramResource
 {
 	T_RTTI_CLASS;
 
@@ -31,8 +39,6 @@ private:
 	friend class RenderSystemCapture;
 
 	Ref< ProgramResource > m_embedded;
-	RefArray< Uniform > m_uniforms;
-	RefArray< IndexedUniform > m_indexedUniforms;
 	std::wstring m_vertexShader;
 	std::wstring m_pixelShader;
 	std::wstring m_computeShader;

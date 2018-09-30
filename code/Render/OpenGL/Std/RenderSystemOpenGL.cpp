@@ -11,10 +11,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Render/VertexElement.h"
-#include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/Std/Platform.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/IndexBufferIBO.h"
-#include "Render/OpenGL/Std/ProgramCompilerOpenGL.h"
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
 #include "Render/OpenGL/Std/RenderSystemOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
@@ -889,11 +888,6 @@ Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* program
 {
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	return ProgramOpenGL::create(m_resourceContext, programResource, m_useProgramCache);
-}
-
-Ref< IProgramCompiler > RenderSystemOpenGL::createProgramCompiler() const
-{
-	return new ProgramCompilerOpenGL();
 }
 
 Ref< ITimeQuery > RenderSystemOpenGL::createTimeQuery() const

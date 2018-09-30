@@ -2963,24 +2963,6 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="Filter">
-					<name>ES2</name>
-					<items>
-						<item type="File">
-							<fileName>ES2/*.*</fileName>
-							<items/>
-						</item>
-						<item type="Filter">
-							<name>ES2/Emscripten/*.*</name>
-							<items>
-								<item type="File">
-									<fileName>ES2/Emscripten/*.*</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-					</items>
-				</item>
 				<item type="File">
 					<fileName>*.*</fileName>
 					<items/>

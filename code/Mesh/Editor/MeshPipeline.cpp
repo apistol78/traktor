@@ -39,16 +39,16 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Model/Operations/BakeVertexOcclusion.h"
 #include "Model/Operations/CullDistantFaces.h"
 #include "Model/Operations/Transform.h"
-#include "Render/IProgramCompiler.h"
-#include "Render/Shader/External.h"
-#include "Render/Shader/Nodes.h"
-#include "Render/Shader/ShaderGraph.h"
+#include "Render/Editor/IProgramCompiler.h"
+#include "Render/Editor/Shader/External.h"
+#include "Render/Editor/Shader/FragmentLinker.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphHash.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphTechniques.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
-#include "Render/Resource/FragmentLinker.h"
 
 namespace traktor
 {

@@ -10,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <list>
 #include <stack>
 #include "Render/IRenderView.h"
-#include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/ES2/Platform.h"
 
 #if defined(_WIN32)
 #	include "Render/OpenGL/ES2/Win32/Window.h"

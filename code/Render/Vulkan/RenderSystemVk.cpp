@@ -15,7 +15,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/IndexBufferVk.h"
 #include "Render/Vulkan/ProgramVk.h"
-#include "Render/Vulkan/ProgramCompilerVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/RenderSystemVk.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
@@ -25,9 +24,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/TimeQueryVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
+#include "Render/Vulkan/VertexAttributesVk.h"
 #include "Render/Vulkan/VertexBufferVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
-#include "Render/Vulkan/Glsl/GlslType.h"
+#include "Render/Vulkan/Editor/Glsl/GlslType.h"
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/Window.h"
 #endif
@@ -647,7 +647,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 		};
 
 		VkVertexInputAttributeDescription vertexAttributeDescription = {};
-		vertexAttributeDescription.location = glsl_vertex_attr_location(ve.getDataUsage(), ve.getIndex());
+		vertexAttributeDescription.location = VertexAttributesVk::getLocation(ve.getDataUsage(), ve.getIndex());
 		vertexAttributeDescription.binding = 0;
 		vertexAttributeDescription.format = c_formats[ve.getDataType()];
 		vertexAttributeDescription.offset = ve.getOffset();
@@ -741,11 +741,6 @@ Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programReso
 		return program;
 	else
 		return 0;
-}
-
-Ref< IProgramCompiler > RenderSystemVk::createProgramCompiler() const
-{
-	return new ProgramCompilerVk();
 }
 
 Ref< ITimeQuery > RenderSystemVk::createTimeQuery() const

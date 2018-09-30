@@ -22,7 +22,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
 #include "Render/ITexture.h"
-#include "Render/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Ui/Application.h"
 #include "Ui/Button.h"
 #include "Ui/CheckBox.h"

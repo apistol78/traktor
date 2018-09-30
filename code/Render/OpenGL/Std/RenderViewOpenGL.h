@@ -10,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <list>
 #include "Core/Containers/AlignedVector.h"
 #include "Render/IRenderView.h"
-#include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/Std/Platform.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 #if defined(_WIN32)
 #	include "Render/OpenGL/Std/Win32/Window.h"

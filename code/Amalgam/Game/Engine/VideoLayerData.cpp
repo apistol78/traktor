@@ -10,7 +10,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAabb.h"
 #include "Render/Shader.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Video/Video.h"

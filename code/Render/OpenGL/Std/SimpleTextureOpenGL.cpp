@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
-#include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/Std/Platform.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"

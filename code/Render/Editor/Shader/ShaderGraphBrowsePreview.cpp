@@ -11,11 +11,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Raster.h"
 #include "Render/Editor/Shader/ShaderGraphBrowsePreview.h"
-#include "Render/Shader/Edge.h"
-#include "Render/Shader/InputPin.h"
-#include "Render/Shader/Node.h"
-#include "Render/Shader/OutputPin.h"
-#include "Render/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/Edge.h"
+#include "Render/Editor/Shader/InputPin.h"
+#include "Render/Editor/Shader/Node.h"
+#include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Ui/Bitmap.h"
 
 namespace traktor

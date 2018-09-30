@@ -10,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Render/IProgram.h"
-#include "Render/OpenGL/TypesOpenGL.h"
+#include "Render/OpenGL/Std/TypesOpenGL.h"
 
 namespace traktor
 {
@@ -18,7 +18,6 @@ namespace traktor
 	{
 
 class ContextOpenGL;
-class GlslProgram;
 class ProgramResource;
 
 /*!
@@ -30,8 +29,6 @@ class ProgramOpenGL : public IProgram
 
 public:
 	virtual ~ProgramOpenGL();
-
-	static Ref< ProgramResource > compile(const GlslProgram& glslProgram, int optimize, bool validate);
 
 	static Ref< ProgramOpenGL > create(ContextOpenGL* resourceContext, const ProgramResource* resource, bool cacheEnable);
 

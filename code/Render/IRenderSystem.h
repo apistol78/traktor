@@ -28,7 +28,6 @@ namespace traktor
 class IndexBuffer;
 class ICubeTexture;
 class IProgram;
-class IProgramCompiler;
 class IRenderView;
 class ISimpleTexture;
 class ITimeQuery;
@@ -146,12 +145,6 @@ public:
 	 * \return Shader suitable for rendering with this render system.
 	 */
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag) = 0;
-
-	/*! \brief Create runtime program compiler.
-	 *
-	 * \return Runtime program compiler.
-	 */
-	virtual Ref< IProgramCompiler > createProgramCompiler() const = 0;
 
 	/*! \brief Create GPU time query object.
 	 *

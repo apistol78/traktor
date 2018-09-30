@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_IndexBufferOpenGLES2_H
 
 #include "Core/Misc/AutoPtr.h"
-#include "Render/OpenGL/IndexBufferOpenGL.h"
+#include "Render/IndexBuffer.h"
 
 namespace traktor
 {
@@ -21,7 +21,7 @@ class StateCache;
 /*!
  * \ingroup OGL
  */
-class IndexBufferOpenGLES2 : public IndexBufferOpenGL
+class IndexBufferOpenGLES2 : public IndexBuffer
 {
 	T_RTTI_CLASS;
 

@@ -9,7 +9,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Capture/Error.h"
 #include "Render/Capture/IndexBufferCapture.h"
 #include "Render/Capture/ProgramCapture.h"
-#include "Render/Capture/ProgramCompilerCapture.h"
 #include "Render/Capture/ProgramResourceCapture.h"
 #include "Render/Capture/RenderSystemCapture.h"
 #include "Render/Capture/RenderTargetSetCapture.h"
@@ -213,30 +212,21 @@ Ref< IProgram > RenderSystemCapture::createProgram(const ProgramResource* progra
 
 	Ref< ProgramCapture > programCapture = new ProgramCapture(program, tag);
 
-	for (RefArray< Uniform >::const_iterator i = resource->m_uniforms.begin(); i != resource->m_uniforms.end(); ++i)
-	{
-		handle_t handle = getParameterHandle(i->getParameterName());
-		programCapture->m_shadow[handle].uniform = *i;
-		programCapture->m_shadow[handle].undefined = (i->getParameterType() <= PtMatrix) ? true : false;	// Textures are allowed to be unset, should sample black.
-	}
+	// for (RefArray< Uniform >::const_iterator i = resource->m_uniforms.begin(); i != resource->m_uniforms.end(); ++i)
+	// {
+	// 	handle_t handle = getParameterHandle(i->getParameterName());
+	// 	programCapture->m_shadow[handle].uniform = *i;
+	// 	programCapture->m_shadow[handle].undefined = (i->getParameterType() <= PtMatrix) ? true : false;	// Textures are allowed to be unset, should sample black.
+	// }
 
-	for (RefArray< IndexedUniform >::const_iterator i = resource->m_indexedUniforms.begin(); i != resource->m_indexedUniforms.end(); ++i)
-	{
-		handle_t handle = getParameterHandle(i->getParameterName());
-		programCapture->m_shadow[handle].indexedUniform = *i;
-		programCapture->m_shadow[handle].undefined = (i->getParameterType() <= PtMatrix) ? true : false;	// Textures are allowed to be unset, should sample black.
-	}
+	// for (RefArray< IndexedUniform >::const_iterator i = resource->m_indexedUniforms.begin(); i != resource->m_indexedUniforms.end(); ++i)
+	// {
+	// 	handle_t handle = getParameterHandle(i->getParameterName());
+	// 	programCapture->m_shadow[handle].indexedUniform = *i;
+	// 	programCapture->m_shadow[handle].undefined = (i->getParameterType() <= PtMatrix) ? true : false;	// Textures are allowed to be unset, should sample black.
+	// }
 
 	return programCapture;
-}
-
-Ref< IProgramCompiler > RenderSystemCapture::createProgramCompiler() const
-{
-	Ref< IProgramCompiler > compiler = m_renderSystem->createProgramCompiler();
-	if (compiler)
-		return new ProgramCompilerCapture(compiler);
-	else
-		return 0;
 }
 
 Ref< ITimeQuery > RenderSystemCapture::createTimeQuery() const

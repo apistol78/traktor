@@ -13,6 +13,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Dx11/Platform.h"
 #include "Render/Resource/ProgramResource.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RENDER_DX11_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -23,7 +31,7 @@ class Blob;
 /*!
  * \ingroup DX11
  */
-class ProgramResourceDx11 : public ProgramResource
+class T_DLLCLASS ProgramResourceDx11 : public ProgramResource
 {
 	T_RTTI_CLASS;
 

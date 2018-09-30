@@ -10,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Render/IProgram.h"
-#include "Render/OpenGL/TypesOpenGL.h"
+#include "Render/OpenGL/ES2/TypesOpenGLES2.h"
 
 namespace traktor
 {
@@ -18,7 +18,6 @@ namespace traktor
 	{
 
 class ContextOpenGLES2;
-class GlslProgram;
 class ITexture;
 class ProgramResource;
 class StateCache;
@@ -32,8 +31,6 @@ class ProgramOpenGLES2 : public IProgram
 
 public:
 	virtual ~ProgramOpenGLES2();
-
-	static Ref< ProgramResource > compile(const GlslProgram& glslProgram, int optimize, bool validate);
 
 	static Ref< ProgramOpenGLES2 > create(ContextOpenGLES2* resourceContext, const ProgramResource* resource);
 

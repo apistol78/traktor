@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_RenderSystemOpenGL_H
 
 #include "Render/IRenderSystem.h"
-#include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/Std/Platform.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 
 // import/export mechanism.
@@ -71,8 +71,6 @@ public:
 	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc) T_OVERRIDE T_FINAL;
 
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag) T_OVERRIDE T_FINAL;
-
-	virtual Ref< IProgramCompiler > createProgramCompiler() const T_OVERRIDE T_FINAL;
 
 	virtual Ref< ITimeQuery > createTimeQuery() const T_OVERRIDE T_FINAL;
 

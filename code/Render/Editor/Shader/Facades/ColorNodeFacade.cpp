@@ -4,7 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Render/Shader/Nodes.h"
+#include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/ColorNodeFacade.h"
 #include "Ui/Application.h"
 #include "Ui/Graph/GraphControl.h"

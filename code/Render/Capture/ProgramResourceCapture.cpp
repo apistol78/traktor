@@ -14,8 +14,6 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceCapture", 0, Prog
 void ProgramResourceCapture::serialize(ISerializer& s)
 {
 	s >> MemberRef< ProgramResource >(L"embedded", m_embedded);
-	s >> MemberRefArray< Uniform >(L"uniforms", m_uniforms);
-	s >> MemberRefArray< IndexedUniform >(L"indexedUniforms", m_indexedUniforms);
 	s >> Member< std::wstring >(L"vertexShader", m_vertexShader);
 	s >> Member< std::wstring >(L"pixelShader", m_pixelShader);
 	s >> Member< std::wstring >(L"computeShader", m_computeShader);

@@ -32,10 +32,10 @@ struct DeleteBufferCallback : public ContextOpenGL::IDeleteCallback
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferIBO", IndexBufferIBO, IndexBufferOpenGL)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferIBO", IndexBufferIBO, IndexBuffer)
 
 IndexBufferIBO::IndexBufferIBO(ContextOpenGL* resourceContext, IndexType indexType, uint32_t bufferSize, bool dynamic)
-:	IndexBufferOpenGL(indexType, bufferSize)
+:	IndexBuffer(indexType, bufferSize)
 ,	m_resourceContext(resourceContext)
 ,	m_locked(false)
 {
@@ -97,11 +97,6 @@ void IndexBufferIBO::unlock()
 void IndexBufferIBO::bind()
 {
 	T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_name));
-}
-
-const GLvoid* IndexBufferIBO::getIndexData() const
-{
-	return 0;
 }
 
 	}

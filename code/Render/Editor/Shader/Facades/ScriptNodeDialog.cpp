@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
-#include "Render/Shader/Script.h"
+#include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/Facades/ScriptNodeDialog.h"
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"

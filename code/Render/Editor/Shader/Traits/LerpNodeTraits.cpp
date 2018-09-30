@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <algorithm>
-#include "Render/Shader/Nodes.h"
+#include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Traits/LerpNodeTraits.h"
 
 namespace traktor

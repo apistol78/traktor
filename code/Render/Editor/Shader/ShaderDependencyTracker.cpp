@@ -11,8 +11,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
-#include "Render/Shader/External.h"
-#include "Render/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/External.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderDependencyTracker.h"
 
 namespace traktor

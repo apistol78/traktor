@@ -6,9 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Database/Instance.h"
 #include "Render/IProgram.h"
-#include "Render/IProgramCompiler.h"
 #include "Render/IRenderSystem.h"
-#include "Render/Shader/Nodes.h"
 #include "Render/Shader.h"
 #include "Render/Resource/ProgramResource.h"
 #include "Render/Resource/ShaderFactory.h"

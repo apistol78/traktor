@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_ExtensionsGLES2_H
 #define traktor_render_ExtensionsGLES2_H
 
-#include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/ES2/Platform.h"
 
 namespace traktor
 {

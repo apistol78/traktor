@@ -17,7 +17,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Sw/SimpleTextureSw.h"
 #include "Render/Sw/RenderTargetSetSw.h"
 #include "Render/Sw/ProgramSw.h"
-#include "Render/Sw/ProgramCompilerSw.h"
 #include "Render/Sw/ProgramResourceSw.h"
 #include "Render/Sw/VolumeTextureSw.h"
 
@@ -313,11 +312,6 @@ Ref< IProgram > RenderSystemSw::createProgram(const ProgramResource* programReso
 		resource->getRenderState(),
 		resource->getInterpolatorCount()
 	);
-}
-
-Ref< IProgramCompiler > RenderSystemSw::createProgramCompiler() const
-{
-	return new ProgramCompilerSw();
 }
 
 Ref< ITimeQuery > RenderSystemSw::createTimeQuery() const

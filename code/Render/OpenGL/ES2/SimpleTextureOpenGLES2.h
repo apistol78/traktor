@@ -11,7 +11,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Math/Vector4.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Types.h"
-#include "Render/OpenGL/ITextureBinding.h"
+#include "Render/OpenGL/ES2/ITextureBinding.h"
 
 namespace traktor
 {

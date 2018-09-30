@@ -12,7 +12,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Dx11/IndexBufferDynamicDx11.h"
 #include "Render/Dx11/IndexBufferStaticDx11.h"
 #include "Render/Dx11/ProgramDx11.h"
-#include "Render/Dx11/ProgramCompilerDx11.h"
 #include "Render/Dx11/ProgramResourceDx11.h"
 #include "Render/Dx11/RenderSystemDx11.h"
 #include "Render/Dx11/RenderTargetSetDx11.h"
@@ -570,11 +569,6 @@ Ref< IProgram > RenderSystemDx11::createProgram(const ProgramResource* programRe
 		return 0;
 
 	return program;
-}
-
-Ref< IProgramCompiler > RenderSystemDx11::createProgramCompiler() const
-{
-	return new ProgramCompilerDx11();
 }
 
 Ref< ITimeQuery > RenderSystemDx11::createTimeQuery() const

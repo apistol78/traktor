@@ -6,9 +6,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Misc/String.h"
 #include "I18N/Text.h"
-#include "Render/Shader/InputPin.h"
-#include "Render/Shader/OutputPin.h"
-#include "Render/Shader/Nodes.h"
+#include "Render/Editor/Shader/InputPin.h"
+#include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
 #include "Ui/Application.h"
 #include "Ui/Graph/Node.h"

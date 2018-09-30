@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Atomic.h"
-#include "Render/Shader/Node.h"
+#include "Render/Editor/Shader/Node.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 
 namespace traktor

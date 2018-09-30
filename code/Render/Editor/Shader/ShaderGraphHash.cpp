@@ -7,9 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <list>
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
-#include "Render/Shader/Node.h"
-#include "Render/Shader/OutputPin.h"
-#include "Render/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/Node.h"
+#include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraphHash.h"
 

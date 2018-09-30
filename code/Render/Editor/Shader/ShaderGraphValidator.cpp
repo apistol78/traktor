@@ -9,12 +9,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <map>
 #include <stack>
 #include "Core/Log/Log.h"
-#include "Render/Shader/Edge.h"
-#include "Render/Shader/InputPin.h"
-#include "Render/Shader/Nodes.h"
-#include "Render/Shader/OutputPin.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Render/Shader/ShaderGraphTraverse.h"
+#include "Render/Editor/Shader/Edge.h"
+#include "Render/Editor/Shader/InputPin.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphTraverse.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
 
 namespace traktor

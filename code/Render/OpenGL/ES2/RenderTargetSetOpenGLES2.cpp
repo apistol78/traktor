@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/ES2/Platform.h"
 #include "Render/OpenGL/ES2/ExtensionsGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetDepthOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"

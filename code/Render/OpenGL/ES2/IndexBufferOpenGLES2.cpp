@@ -4,7 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/ES2/Platform.h"
 #include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
 #include "Render/OpenGL/ES2/StateCache.h"
 #if defined(__ANDROID__)
@@ -48,10 +48,10 @@ struct DeleteBufferCallback : public ContextOpenGLES2::IDeleteCallback
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferOpenGLES2", IndexBufferOpenGLES2, IndexBufferOpenGL)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferOpenGLES2", IndexBufferOpenGLES2, IndexBuffer)
 
 IndexBufferOpenGLES2::IndexBufferOpenGLES2(ContextOpenGLES2* context, IndexType indexType, uint32_t bufferSize, bool dynamic)
-:	IndexBufferOpenGL(indexType, bufferSize)
+:	IndexBuffer(indexType, bufferSize)
 ,	m_context(context)
 ,	m_dynamic(dynamic)
 {
