@@ -356,21 +356,7 @@ void Edit::eventKey(KeyEvent* event)
 		std::wstring text = getText();
 		int32_t caret = m_caret;
 
-		if (ch != 8 && ch != 127)
-		{
-			if (!haveSelection())
-			{
-				if (caret >= text.length())
-					text += ch;
-				else
-					text = text.substr(0, caret) + ch + text.substr(caret);
-			}
-			else
-				text = text.substr(0, m_selectionStart) + ch + text.substr(m_selectionEnd);
-
-			++caret;
-		}
-		else if (ch == 8)
+		if (ch == 8)
 		{
 			if (!haveSelection())
 			{
@@ -384,6 +370,22 @@ void Edit::eventKey(KeyEvent* event)
 			{
 				text = text.substr(0, m_selectionStart) + text.substr(m_selectionEnd);
 			}
+		}
+		else if (ch == 10 || ch == 13 || ch == 127)
+			return;
+		else
+		{
+			if (!haveSelection())
+			{
+				if (caret >= text.length())
+					text += ch;
+				else
+					text = text.substr(0, caret) + ch + text.substr(caret);
+			}
+			else
+				text = text.substr(0, m_selectionStart) + ch + text.substr(m_selectionEnd);
+
+			++caret;
 		}
 
 		deselect();

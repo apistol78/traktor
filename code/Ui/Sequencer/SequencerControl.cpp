@@ -233,13 +233,15 @@ void SequencerControl::eventSize(SizeEvent* event)
 
 void SequencerControl::updateScrollBars()
 {
+	int32_t sequenceHeight = dpi96(c_sequenceHeight);
+
 	// Get all items, including descendants.
 	RefArray< SequenceItem > sequenceItems;
 	getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
 
 	Size sequences(
 		m_separator + m_length / m_timeScale + c_endWidth,
-		int(sequenceItems.size() * c_sequenceHeight) + 1
+		int(sequenceItems.size() * sequenceHeight) + 1
 	);
 
 	Rect rc = getInnerRect();
@@ -250,7 +252,7 @@ void SequencerControl::updateScrollBars()
 	int overflowV = std::max< int >(0, sequences.cy - rc.getHeight() + scrollHeight);
 	m_scrollBarV->setRange(overflowV);
 	m_scrollBarV->setEnable(overflowV > 0);
-	m_scrollBarV->setPage(c_sequenceHeight);
+	m_scrollBarV->setPage(sequenceHeight);
 
 	int overflowH = std::max< int >(0, sequences.cx - rc.getWidth() + scrollWidth);
 	m_scrollBarH->setRange(overflowH);
@@ -263,6 +265,7 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 	if (event->getButton() != MbtLeft)
 		return;
 
+	int32_t sequenceHeight = dpi96(c_sequenceHeight);
 	Point position = event->getPosition();
 	Rect rc = getInnerRect();
 
@@ -286,7 +289,7 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 		}
 
 		// Ensure sequence is selected.
-		int sequenceId = (position.y + m_scrollBarV->getPosition()) / c_sequenceHeight;
+		int sequenceId = (position.y + m_scrollBarV->getPosition()) / sequenceHeight;
 		if (sequenceId >= 0 && sequenceId < int(sequenceItems.size()))
 		{
 			RefArray< SequenceItem >::iterator i = sequenceItems.begin();
@@ -303,13 +306,13 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 	}
 
 	// Issue local mouse down event on sequence item.
-	int sequenceId = (position.y + m_scrollBarV->getPosition()) / c_sequenceHeight;
+	int sequenceId = (position.y + m_scrollBarV->getPosition()) / sequenceHeight;
 	if (sequenceId >= 0 && sequenceId < int(sequenceItems.size()))
 	{
 		RefArray< SequenceItem >::iterator i = sequenceItems.begin();
 		std::advance(i, sequenceId);
 
-		m_mouseTrackItem.rc = Rect(rc.left, 0, rc.right - m_scrollBarV->getPreferedSize().cx, c_sequenceHeight).offset(0, rc.top - m_scrollBarV->getPosition() + c_sequenceHeight * sequenceId);
+		m_mouseTrackItem.rc = Rect(rc.left, 0, rc.right - m_scrollBarV->getPreferedSize().cx, sequenceHeight).offset(0, rc.top - m_scrollBarV->getPosition() + sequenceHeight * sequenceId);
 		m_mouseTrackItem.item = *i;
 		m_mouseTrackItem.item->mouseDown(
 			this,
@@ -413,6 +416,7 @@ void SequencerControl::eventMouseMove(MouseMoveEvent* event)
 
 	event->consume();
 
+	int32_t sequenceHeight = dpi96(c_sequenceHeight);
 	Point position = event->getPosition();
 
 	// Check if begin moving.
@@ -435,7 +439,7 @@ void SequencerControl::eventMouseMove(MouseMoveEvent* event)
 		RefArray< SequenceItem > sequenceItems;
 		getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
 
-		int sequenceId = (position.y + c_sequenceHeight / 2 + m_scrollBarV->getPosition()) / c_sequenceHeight;
+		int sequenceId = (position.y + sequenceHeight / 2 + m_scrollBarV->getPosition()) / sequenceHeight;
 		if (sequenceId >= 0 && sequenceId < int(sequenceItems.size()))
 			m_dropIndex = sequenceId;
 		else
@@ -497,6 +501,7 @@ void SequencerControl::eventMouseWheel(MouseWheelEvent* event)
 void SequencerControl::eventPaint(PaintEvent* event)
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
+	int32_t sequenceHeight = dpi96(c_sequenceHeight);
 	Canvas& canvas = event->getCanvas();
 
 	// Get all items, including descendants.
@@ -530,7 +535,7 @@ void SequencerControl::eventPaint(PaintEvent* event)
 		rc.left,
 		rc.top - scrollOffsetY,
 		rc.right - scrollWidth,
-		rc.top - scrollOffsetY + c_sequenceHeight
+		rc.top - scrollOffsetY + sequenceHeight
 	);
 	for (RefArray< SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
 	{
@@ -543,7 +548,7 @@ void SequencerControl::eventPaint(PaintEvent* event)
 
 		(*i)->paint(this, canvas, rcSequence, m_separator, scrollOffsetX);
 
-		rcSequence = rcSequence.offset(0, c_sequenceHeight);
+		rcSequence = rcSequence.offset(0, sequenceHeight);
 	}
 
 	canvas.resetClipRect();
@@ -568,7 +573,7 @@ void SequencerControl::eventPaint(PaintEvent* event)
 	// Draw drop position.
 	if (m_dropIndex >= 0)
 	{
-		int32_t y = rc.top - scrollOffsetY + m_dropIndex * c_sequenceHeight;
+		int32_t y = rc.top - scrollOffsetY + m_dropIndex * sequenceHeight;
 		canvas.setForeground(Color4ub(0, 0, 0));
 		canvas.drawLine(rc.left, y - 1, rc.right, y - 1);
 		canvas.drawLine(rc.left, y, rc.right, y);

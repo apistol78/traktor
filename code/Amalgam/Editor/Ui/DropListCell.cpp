@@ -30,10 +30,9 @@ DropListCell::DropListCell(HostEnumerator* hostEnumerator, TargetInstance* insta
 
 void DropListCell::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& position)
 {
-	ui::Menu menu;
-
 	std::wstring platformName = m_instance->getPlatformName();
 
+	ui::Menu menu;
 	int32_t count = m_hostEnumerator->count();
 	for (int32_t i = 0; i < count; ++i)
 	{
@@ -44,7 +43,8 @@ void DropListCell::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& p
 		}
 	}
 
-	const ui::MenuItem* selectedItem = menu.showModal(getWidget< ui::AutoWidget >(), m_menuPosition);
+	ui::Rect rcInner = getWidget< ui::AutoWidget >()->getCellClientRect(this);
+	const ui::MenuItem* selectedItem = menu.showModal(getWidget< ui::AutoWidget >(), rcInner.getBottomLeft(), rcInner.getWidth(), 8);
 	if (selectedItem)
 		m_instance->setDeployHostId(selectedItem->getCommand().getId());
 }
@@ -52,32 +52,37 @@ void DropListCell::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& p
 void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
 	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
-	ui::Size size = rect.getSize();
-
+	const ui::Rect& rcInner = rect;
+	ui::Point at = rcInner.getTopLeft();
+	ui::Size size = rcInner.getSize();
 	int32_t sep = ui::dpi96(14);
+	bool hover = false; //isEnable() && hasCapture();
 
 	ui::Rect rcText(
-		rect.left + 4,
-		rect.top + 1,
-		rect.right - sep - 2,
-		rect.bottom - 1
+		at.x + ui::dpi96(4),
+		at.y + 2,
+		at.x + size.cx - sep - 2,
+		at.y + size.cy - 2
 	);
 	ui::Rect rcButton(
-		rect.right - sep,
-		rect.top,
-		rect.right,
-		rect.bottom
+		at.x + size.cx - sep,
+		at.y + 1,
+		at.x + size.cx - 1,
+		at.y + size.cy - 1
 	);
 
-	canvas.setBackground(ss->getColor(this, L"background-color"));
-	canvas.fillRect(rect);
+	canvas.setBackground(ss->getColor(this, hover ? L"background-color-hover" : L"background-color"));
+	canvas.fillRect(rcInner);
 
-	canvas.setBackground(ss->getColor(this, L"background-color-button"));;
+	canvas.setBackground(ss->getColor(this, L"background-color-button"));
 	canvas.fillRect(rcButton);
 
-	canvas.setForeground(Color4ub(128, 128, 140));
-	canvas.drawRect(rect);
-	canvas.drawLine(rcButton.left - 1, rcButton.top, rcButton.left - 1, rcButton.bottom - 1);
+	if (hover)
+	{
+		canvas.setForeground(ss->getColor(this, L"color-hover"));
+		canvas.drawRect(rcInner);
+		canvas.drawLine(rcButton.left - 1, rcButton.top, rcButton.left - 1, rcButton.bottom);
+	}
 
 	ui::Point center = rcButton.getCenter();
 	ui::Point pnts[] =
@@ -87,18 +92,16 @@ void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		ui::Point(center.x - ui::dpi96(1), center.y + ui::dpi96(2))
 	};
 
-	canvas.setBackground(ss->getColor(this, L"color"));
+	canvas.setBackground(ss->getColor(this, L"color-arrow"));
 	canvas.fillPolygon(pnts, 3);
 
 	int32_t id = m_instance->getDeployHostId();
 	if (id >= 0)
 	{
 		const std::wstring& description = m_hostEnumerator->getDescription(id);
-		canvas.setForeground(ss->getColor(this, L"color"));
+		canvas.setForeground(ss->getColor(this, /*isEnable() ?*/ L"color" /*: L"color-disabled"*/));
 		canvas.drawText(rcText, description, ui::AnLeft, ui::AnCenter);
 	}
-
-	m_menuPosition = ui::Point(rect.left, rect.bottom);
 }
 
 	}

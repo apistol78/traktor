@@ -64,6 +64,7 @@ void CanvasX11::setPenThickness(int thickness)
 
 void CanvasX11::setClipRect(const Rect& rc)
 {
+	cairo_reset_clip(m_cr);
 	cairo_rectangle(m_cr, rc.left, rc.top, rc.getWidth(), rc.getHeight());
 	cairo_clip(m_cr);
 }

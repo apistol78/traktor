@@ -4,9 +4,10 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Ui/Application.h"
+#include "Ui/Canvas.h"
 #include "Ui/Sequencer/Range.h"
 #include "Ui/Sequencer/Sequence.h"
-#include "Ui/Canvas.h"
 
 namespace traktor
 {
@@ -15,7 +16,7 @@ namespace traktor
 		namespace
 		{
 
-const int c_sequenceHeight = 22;
+const int c_sequenceHeight = 40;
 
 		}
 
@@ -59,18 +60,21 @@ void Range::move(int offset)
 
 void Range::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const
 {
+	int32_t sequenceHeight = dpi96(c_sequenceHeight);
 	outRect.left = sequence->clientFromTime(m_start);
 	outRect.top = rcClient.top + 2;
 	outRect.right = sequence->clientFromTime(m_end);
-	outRect.bottom = rcClient.top + c_sequenceHeight - 3;
+	outRect.bottom = rcClient.top + sequenceHeight - 3;
 }
 
 void Range::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
 {
-	int x1 = sequence->clientFromTime(m_start) - scrollOffset;
-	int x2 = sequence->clientFromTime(m_end) - scrollOffset;
+	int32_t sequenceHeight = dpi96(c_sequenceHeight);
 
-	Rect rc(rcClient.left + x1, rcClient.top + 2, rcClient.left + x2, rcClient.top + c_sequenceHeight - 3);
+	int32_t x1 = sequence->clientFromTime(m_start) - scrollOffset;
+	int32_t x2 = sequence->clientFromTime(m_end) - scrollOffset;
+
+	Rect rc(rcClient.left + x1, rcClient.top + 2, rcClient.left + x2, rcClient.top + sequenceHeight - 3);
 
 	canvas.setForeground(Color4ub(220, 255, 220));
 	canvas.setBackground(Color4ub(180, 230, 180));
