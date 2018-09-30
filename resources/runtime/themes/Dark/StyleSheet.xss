@@ -384,7 +384,7 @@
 		<item>
 			<type>traktor.ui.PropertyList</type>
 			<element>background-color</element>
-			<color>45, 45, 45, 255</color>
+			<color>37, 37, 38, 255</color>
 		</item>
 		<item>
 			<type>traktor.ui.PropertyList</type>
@@ -482,49 +482,32 @@
 			<color>51, 153, 255, 255</color>
 		</item>		
 
-		<!-- TargetListControl -->
-		<item>
-			<type>traktor.amalgam.TargetListControl</type>
-			<element>item-background-color</element>
-			<color>60, 60, 60, 255</color>
-		</item>
-		<item>
-			<type>traktor.amalgam.TargetListControl</type>
-			<element>item-seperator-color</element>
-			<color>50, 50, 50, 255</color>
-		</item>		
-		<item>
-			<type>traktor.amalgam.TargetListControl</type>
-			<element>item-connection-background-color</element>
-			<color>55, 55, 55, 255</color>
-		</item>
-
 		<!-- MiniButton -->
-    <item>
-      <type>traktor.ui.MiniButton</type>
-      <element>background-color</element>
-      <color>37, 37, 38, 255</color>
-    </item>
-    <item>
-      <type>traktor.ui.MiniButton</type>
-      <element>background-color-disabled</element>
-      <color>37, 37, 38, 255</color>
-    </item>
-    <item>
-      <type>traktor.ui.MiniButton</type>
-      <element>background-color-pushed</element>
-      <color>62, 62, 64, 255</color>
-    </item>
-    <item>
-      <type>traktor.ui.MiniButton</type>
-      <element>color</element>
-      <color>255, 255, 255, 255</color>
-    </item>
-    <item>
-      <type>traktor.ui.MiniButton</type>
-      <element>color-disabled</element>
-      <color>220, 220, 220, 255</color>
-    </item>
+		<item>
+			<type>traktor.ui.MiniButton</type>
+			<element>background-color</element>
+			<color>37, 37, 38, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.MiniButton</type>
+			<element>background-color-disabled</element>
+			<color>37, 37, 38, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.MiniButton</type>
+			<element>background-color-pushed</element>
+			<color>62, 62, 64, 255</color>
+			</item>
+		<item>
+			<type>traktor.ui.MiniButton</type>
+			<element>color</element>
+			<color>255, 255, 255, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.MiniButton</type>
+			<element>color-disabled</element>
+			<color>220, 220, 220, 255</color>
+		</item>
   
 		<!-- ShortcutEdit -->
 		<item>
@@ -714,21 +697,53 @@
 			<color>120, 120, 120, 255</color>
 		</item>
 
+		<!-- TargetListControl -->
+		<item>
+			<type>traktor.amalgam.TargetListControl</type>
+			<element>background-color</element>
+			<color>37, 37, 38, 255</color>
+		</item>		
+		<item>
+			<type>traktor.amalgam.TargetListControl</type>
+			<element>item-background-color</element>
+			<color>37, 37, 38, 255</color>
+		</item>
+		<item>
+			<type>traktor.amalgam.TargetListControl</type>
+			<element>item-seperator-color</element>
+			<color>50, 50, 50, 255</color>
+		</item>		
+		<item>
+			<type>traktor.amalgam.TargetListControl</type>
+			<element>item-connection-background-color</element>
+			<color>55, 55, 55, 255</color>
+		</item>
+
 		<!-- DropListCell -->
 		<item>
 			<type>traktor.amalgam.DropListCell</type>
-			<element>color</element>
-			<color>255, 255, 255, 255</color>
+			<element>background-color</element>
+			<color>51, 51, 55, 255</color>
 		</item>
 		<item>
 			<type>traktor.amalgam.DropListCell</type>
-			<element>background-color</element>
-			<color>45, 45, 45, 255</color>
+			<element>background-color-hover</element>
+			<color>61, 61, 65, 255</color>
 		</item>
+		<item>
+			<type>traktor.amalgam.DropListCell</type>
+			<element>color-hover</element>
+			<color>70, 70, 74, 255</color>
+		</item>		
 		<item>
 			<type>traktor.amalgam.DropListCell</type>
 			<element>background-color-button</element>
-			<color>45, 45, 45, 255</color>
+			<color>61, 61, 65, 255</color>
+		</item>
+		<item>
+			<type>traktor.amalgam.DropListCell</type>
+			<element>color-arrow</element>
+			<color>153, 153, 153, 255</color>
 		</item>
 
 		<!-- Script editor -->

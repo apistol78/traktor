@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <algorithm>
+#include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/Sequencer/Sequence.h"
 #include "Ui/Sequencer/SequenceButtonClickEvent.h"
@@ -19,7 +20,7 @@ namespace traktor
 		namespace
 		{
 
-const int c_sequenceHeight = 22;
+const int c_sequenceHeight = 40;
 const int c_buttonSize = 18;
 
 		}
@@ -186,8 +187,8 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 	Rect rcSequence = rc;
 	Rect rcTick = rc;
 
-	rcSequence.bottom = rcSequence.top + c_sequenceHeight;
-	rcTick.top = rcTick.top + c_sequenceHeight;
+	rcSequence.bottom = rcSequence.top + dpi96(c_sequenceHeight);
+	rcTick.top = rcTick.top + dpi96(c_sequenceHeight);
 
 	// Save time scale here; it's used in client<->time conversion.
 	m_timeScale = sequencer->getTimeScale();
@@ -243,11 +244,13 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 	);
 
 	// Draw sequence buttons.
+	int32_t buttonSize = dpi96(c_buttonSize);
+
 	Rect rcButton;
-	rcButton.left = rc.left + separator - c_buttonSize - 4 - int32_t(m_buttons.size()) * (c_buttonSize + 2);
-	rcButton.top = rc.top + (rc.getHeight() - c_buttonSize) / 2;
-	rcButton.right = rcButton.left + c_buttonSize;
-	rcButton.bottom = rcButton.top + c_buttonSize;
+	rcButton.left = rc.left + separator - buttonSize - 4 - int32_t(m_buttons.size()) * (buttonSize + 2);
+	rcButton.top = rc.top + (rc.getHeight() - buttonSize) / 2;
+	rcButton.right = rcButton.left + buttonSize;
+	rcButton.bottom = rcButton.top + buttonSize;
 
 	for (int32_t i = 0; i < int32_t(m_buttons.size()); ++i)
 	{
@@ -260,7 +263,7 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 			m_buttons[i].state ? m_buttons[i].imageDown.ptr() : m_buttons[i].imageUp.ptr()
 		);
 
-		rcButton = rcButton.offset(-c_buttonSize - 2, 0);
+		rcButton = rcButton.offset(-buttonSize - 2, 0);
 	}
 
 	// Draw sequence keys.
@@ -280,7 +283,7 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 		if (cx > rc.right)
 			break;
 		int cya = (i % 1000 == 0) ? 4 : 0;
-		canvas.drawLine(cx, cy - 2 - cya, cx, cy + 1 + cya);
+		canvas.drawLine(cx, cy - dpi96(2 - cya), cx, cy + dpi96(1 + cya));
 	}
 
 	for (RefArray< Key >::const_iterator j = m_keys.begin(); j != m_keys.end(); ++j)

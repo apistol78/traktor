@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/Sequencer/Marker.h"
 #include "Ui/Sequencer/Sequence.h"
@@ -15,7 +16,7 @@ namespace traktor
 		namespace
 		{
 
-const int c_sequenceHeight = 22;
+const int c_sequenceHeight = 40;
 
 		}
 
@@ -45,18 +46,20 @@ void Marker::move(int offset)
 
 void Marker::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const
 {
-	int x = sequence->clientFromTime(m_time);
+	int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	int32_t x = sequence->clientFromTime(m_time);
 	outRect.left = x - 3;
-	outRect.top = rcClient.top + c_sequenceHeight + 2;
+	outRect.top = rcClient.top + sequenceHeight + 2;
 	outRect.right = x + 4;
 	outRect.bottom = rcClient.bottom - 3;
 }
 
 void Marker::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
 {
-	int x = sequence->clientFromTime(m_time) - scrollOffset;
+	int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	int32_t x = sequence->clientFromTime(m_time) - scrollOffset;
 
-	Rect rc(rcClient.left + x - 3, rcClient.top + c_sequenceHeight + 2, rcClient.left + x + 4, rcClient.bottom - 3);
+	Rect rc(rcClient.left + x - 3, rcClient.top + sequenceHeight + 2, rcClient.left + x + 4, rcClient.bottom - 3);
 
 	if (sequence->getSelectedKey() != this)
 	{
