@@ -45,7 +45,7 @@ OS& OS::getInstance()
 
 uint32_t OS::getCPUCoreCount() const
 {
-	return 4;
+	return (uint32_t)sysconf(_SC_NPROCESSORS_ONLN);
 }
 
 Path OS::getExecutable() const
@@ -130,7 +130,11 @@ bool OS::exploreFile(const std::wstring& file) const
 
 bool OS::setEnvironment(const std::wstring& name, const std::wstring& value) const
 {
-	return false;
+	return bool(setenv(
+		wstombs(name).c_str(),
+		wstombs(value).c_str(),
+		1
+	) == 0);
 }
 
 Ref< Environment > OS::getEnvironment() const
