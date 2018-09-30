@@ -10,12 +10,32 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/StateCachePs3.h"
 #include "Render/Ps3/VertexBufferPs3.h"
-#include "Render/Ps3/Editor/Cg/CgType.h"
 
 namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+int32_t cg_attr_index(DataUsage usage, int index)
+{
+	const int32_t base[] =
+	{
+		0,	// DuPosition
+		1,	// DuNormal
+		2,	// DuTangent
+		3,	// DuBinormal
+		4,	// DuColor
+		5,	// DuCustom
+		16	// Last attribute index
+	};
+	int32_t attr = base[int(usage)] + index;
+	T_ASSERT (attr < base[int(usage) + 1]);
+	return attr;
+}
+			
+		}
 
 VertexBufferPs3* VertexBufferPs3::ms_activeVertexBuffer = 0;
 
