@@ -108,7 +108,6 @@ ShaderGraphEditorPage::ShaderGraphEditorPage(editor::IEditor* editor, editor::IE
 :	m_editor(editor)
 ,	m_site(site)
 ,	m_document(document)
-,	m_lastValidationResult(true)
 {
 }
 
@@ -233,8 +232,6 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_nodeFacades[&type_of< Swizzle >()] = new SwizzleNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< External >()] = new ExternalNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Texture >()] = new TextureNodeFacade(m_editorGraph);
-
-	m_lastValidationResult = true;
 
 	createEditorNodes(
 		m_shaderGraph->getNodes(),
@@ -837,15 +834,6 @@ void ShaderGraphEditorPage::updateGraph()
 	// Validate shader graph.
 	std::vector< const Node* > errorNodes;
 	bool validationResult = ShaderGraphValidator(m_shaderGraph).validate(ShaderGraphValidator::SgtFragment, &errorNodes);
-
-	// Indicate if all errors has been corrected.
-	if (validationResult && !m_lastValidationResult)
-	{
-		uint32_t hash = ShaderGraphHash::calculate(m_shaderGraph);
-		log::info << L"Validation succeeded; hash " << hash << Endl;
-	}
-
-	m_lastValidationResult = validationResult;
 
 	// Update validation indication of each node.
 	const RefArray< ui::Node >& editorNodes = m_editorGraph->getNodes();
