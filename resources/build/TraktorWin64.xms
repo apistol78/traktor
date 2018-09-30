@@ -20740,7 +20740,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Render.Ps4.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Ps4/Editor</sourcePath>
 			<configurations>
@@ -20899,7 +20899,7 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project type="Project" version="1">
-						<enable>true</enable>
+						<enable>false</enable>
 						<name>Traktor.Render.Ps4</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Render/Ps4</sourcePath>
 						<configurations>

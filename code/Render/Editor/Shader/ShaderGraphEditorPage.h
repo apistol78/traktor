@@ -94,7 +94,6 @@ private:
 	Ref< ui::Menu > m_menuPopup;
 	Ref< QuickMenuTool > m_menuQuick;
 	std::map< const TypeInfo*, Ref< INodeFacade > > m_nodeFacades;
-	bool m_lastValidationResult;
 
 	void createEditorNodes(const RefArray< Node >& shaderNodes, const RefArray< Edge >& shaderEdges);
 
