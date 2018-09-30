@@ -15,7 +15,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Ps4/IndexBufferStaticPs4.h"
 #include "Render/PS4/MemoryHeapPs4.h"
 #include "Render/Ps4/ProgramPs4.h"
-#include "Render/Ps4/ProgramCompilerPs4.h"
 #include "Render/Ps4/ProgramResourcePs4.h"
 #include "Render/Ps4/RenderSystemPs4.h"
 #include "Render/Ps4/RenderTargetSetPs4.h"
@@ -228,11 +227,6 @@ Ref< IProgram > RenderSystemPs4::createProgram(const ProgramResource* programRes
 		return 0;
 
 	return program;
-}
-
-Ref< IProgramCompiler > RenderSystemPs4::createProgramCompiler() const
-{
-	return new ProgramCompilerPs4();
 }
 
 Ref< ITimeQuery > RenderSystemPs4::createTimeQuery() const

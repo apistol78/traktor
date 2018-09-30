@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Render/Editor/Shader/SwitchNodeDialog.h"
-#include "Render/Shader/Nodes.h"
+#include "Render/Editor/Shader/Nodes.h"
 #include "Ui/TableLayout.h"
 #include "Ui/GridView/GridView.h"
 #include "Ui/GridView/GridColumn.h"

@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
-#include "Render/Shader/Node.h"
-#include "Render/Shader/Edge.h"
+#include "Render/Editor/Shader/Node.h"
+#include "Render/Editor/Shader/Edge.h"
 
 namespace traktor
 {

@@ -4,9 +4,9 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Render/Shader/InputPin.h"
-#include "Render/Shader/OutputPin.h"
-#include "Render/Shader/Node.h"
+#include "Render/Editor/Shader/InputPin.h"
+#include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Editor/Shader/Node.h"
 #include "Render/Editor/Shader/Facades/InterpolatorNodeFacade.h"
 #include "Ui/Application.h"
 #include "Ui/Graph/Node.h"

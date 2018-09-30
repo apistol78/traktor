@@ -10,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/StateCachePs3.h"
 #include "Render/Ps3/VertexBufferPs3.h"
-#include "Render/Ps3/Cg/CgType.h"
+#include "Render/Ps3/Editor/Cg/CgType.h"
 
 namespace traktor
 {

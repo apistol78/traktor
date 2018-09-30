@@ -7,9 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <algorithm>
 #include <set>
 #include "Core/Log/Log.h"
-#include "Render/Shader/Edge.h"
-#include "Render/Shader/Nodes.h"
-#include "Render/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/Edge.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"

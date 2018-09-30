@@ -12,8 +12,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
-#include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/TypesOpenGL.h"
+#include "Render/OpenGL/ES2/Platform.h"
+#include "Render/OpenGL/ES2/TypesOpenGLES2.h"
 
 namespace traktor
 {

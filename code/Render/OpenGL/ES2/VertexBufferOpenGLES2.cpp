@@ -11,10 +11,10 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferOpenGLES2", VertexBufferOpenGLES2, VertexBufferOpenGL)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferOpenGLES2", VertexBufferOpenGLES2, VertexBuffer)
 
 VertexBufferOpenGLES2::VertexBufferOpenGLES2(uint32_t bufferSize)
-:	VertexBufferOpenGL(bufferSize)
+:	VertexBuffer(bufferSize)
 {
 }
 

@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_VertexBufferStaticVBO_H
 #define traktor_render_VertexBufferStaticVBO_H
 
-#include "Render/OpenGL/VertexBufferOpenGL.h"
+#include "Render/OpenGL/Std/VertexBufferOpenGL.h"
 
 namespace traktor
 {

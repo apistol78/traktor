@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_RenderStateDesc_H
 #define traktor_render_RenderStateDesc_H
 
-#include "Render/Shader/Nodes.h"
+#include "Render/Editor/Shader/Nodes.h"
 
 namespace traktor
 {

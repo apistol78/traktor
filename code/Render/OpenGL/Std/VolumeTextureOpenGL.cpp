@@ -4,7 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/Std/Platform.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"

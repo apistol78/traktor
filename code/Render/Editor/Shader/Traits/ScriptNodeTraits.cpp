@@ -5,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <cctype>
-#include "Render/Shader/Script.h"
+#include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/Traits/ScriptNodeTraits.h"
 
 namespace traktor

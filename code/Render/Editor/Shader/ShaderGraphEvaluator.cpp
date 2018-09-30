@@ -7,9 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Containers/SmallMap.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraphEvaluator.h"
-#include "Render/Shader/Edge.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Render/Shader/ShaderGraphTraverse.h"
+#include "Render/Editor/Shader/Edge.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphTraverse.h"
 
 namespace traktor
 {

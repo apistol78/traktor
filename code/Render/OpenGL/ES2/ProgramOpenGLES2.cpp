@@ -10,9 +10,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/Align.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Core/Serialization/DeepHash.h"
-#include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/ProgramResourceOpenGL.h"
+#include "Render/OpenGL/ES2/Platform.h"
+#include "Render/OpenGL/ES2/ProgramResourceOpenGLES2.h"
 #include "Render/OpenGL/ES2/CubeTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
@@ -20,8 +19,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 #include "Render/OpenGL/ES2/StateCache.h"
 #include "Render/OpenGL/ES2/VolumeTextureOpenGLES2.h"
-#include "Render/OpenGL/Glsl/GlslType.h"
-#include "Render/OpenGL/Glsl/GlslProgram.h"
 #if defined(__ANDROID__)
 #	include "Render/OpenGL/ES2/Android/ContextOpenGLES2.h"
 #elif defined(__IOS__)
@@ -105,9 +102,9 @@ bool storeIfNotEqual(const Matrix44* source, int length, float* dest)
 
 void bindAttribute(GLuint programObject, DataUsage usage, int32_t index)
 {
-	std::string attributeName = wstombs(glsl_vertex_attr_name(usage, index));	
+	std::string attributeName = wstombs(VertexAttribute::getName(usage, index));	
 
-	int32_t attributeLocation = glsl_vertex_attr_location(usage, index);
+	int32_t attributeLocation = VertexAttribute::getLocation(usage, index);
 	if (attributeLocation < 0)
 		return;
 	
@@ -129,28 +126,9 @@ ProgramOpenGLES2::~ProgramOpenGLES2()
 	destroy();
 }
 
-Ref< ProgramResource > ProgramOpenGLES2::compile(const GlslProgram& glslProgram, int optimize, bool validate)
-{
-	Ref< ProgramResourceOpenGL > resource;
-
-	resource = new ProgramResourceOpenGL(
-		wstombs(glslProgram.getVertexShader()),
-		wstombs(glslProgram.getFragmentShader()),
-		glslProgram.getTextures(),
-		glslProgram.getUniforms(),
-		glslProgram.getSamplers(),
-		glslProgram.getRenderState()
-	);
-
-	uint32_t hash = DeepHash(resource).get();
-	resource->setHash(hash);
-
-	return resource;
-}
-
 Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceContext, const ProgramResource* resource)
 {
-	const ProgramResourceOpenGL* resourceOpenGL = mandatory_non_null_type_cast< const ProgramResourceOpenGL* >(resource);
+	const ProgramResourceOpenGLES2* resourceOpenGL = mandatory_non_null_type_cast< const ProgramResourceOpenGLES2* >(resource);
 	char errorBuf[32000];
 	GLsizei errorBufLen;
 	GLint status;
@@ -433,7 +411,7 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 ,	m_locationPostTransform(0)
 ,	m_locationInstanceID(0)
 {
-	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
+	const ProgramResourceOpenGLES2* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGLES2* >(resource);
 
 	m_targetSize[0] =
 	m_targetSize[1] =

@@ -10,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/AutoPtr.h"
 #include "Render/IVolumeTexture.h"
 #include "Render/Types.h"
-#include "Render/OpenGL/ITextureBinding.h"
+#include "Render/OpenGL/Std/ITextureBinding.h"
 
 namespace traktor
 {

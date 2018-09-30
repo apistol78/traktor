@@ -6,7 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Log/Log.h"
 #include "Render/VertexElement.h"
-#include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/ES2/Platform.h"
 #include "Render/OpenGL/ES2/ExtensionsGLES2.h"
 #include "Render/OpenGL/ES2/StateCache.h"
 #include "Render/OpenGL/ES2/VertexBufferStaticOpenGLES2.h"
@@ -21,7 +21,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #elif defined(_WIN32)
 #	include "Render/OpenGL/ES2/Win32/ContextOpenGLES2.h"
 #endif
-#include "Render/OpenGL/Glsl/GlslType.h"
+#include "Render/OpenGL/ES2/Editor/Glsl/GlslType.h"
 
 namespace traktor
 {
@@ -98,7 +98,7 @@ VertexBufferStaticOpenGLES2::VertexBufferStaticOpenGLES2(ContextOpenGLES2* conte
 		}
 
 		AttributeDesc desc;
-		desc.location = glsl_vertex_attr_location(vertexElements[i].getDataUsage(), vertexElements[i].getIndex());
+		desc.location = VertexAttribute::getLocation(vertexElements[i].getDataUsage(), vertexElements[i].getIndex());
 		
 		switch (vertexElements[i].getDataType())
 		{

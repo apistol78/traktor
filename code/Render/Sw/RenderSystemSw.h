@@ -76,8 +76,6 @@ public:
 
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag);
 
-	virtual Ref< IProgramCompiler > createProgramCompiler() const;
-
 	virtual Ref< ITimeQuery > createTimeQuery() const;
 
 	virtual void purge();

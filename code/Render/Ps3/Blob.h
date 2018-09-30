@@ -9,6 +9,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Config.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RENDER_PS3_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 
@@ -17,7 +25,7 @@ class ISerializer;
 	namespace render
 	{
 
-class Blob
+class T_DLLCLASS Blob
 {
 public:
 	Blob();

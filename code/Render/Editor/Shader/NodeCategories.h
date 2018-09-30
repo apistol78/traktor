@@ -7,9 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_NodeCategories_H
 #define traktor_render_NodeCategories_H
 
-#include "Render/Shader/External.h"
-#include "Render/Shader/Nodes.h"
-#include "Render/Shader/Script.h"
+#include "Render/Editor/Shader/External.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/Script.h"
 
 namespace traktor
 {

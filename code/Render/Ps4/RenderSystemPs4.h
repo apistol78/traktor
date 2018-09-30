@@ -71,8 +71,6 @@ public:
 
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag) T_OVERRIDE T_FINAL;
 
-	virtual Ref< IProgramCompiler > createProgramCompiler() const T_OVERRIDE T_FINAL;
-
 	virtual Ref< ITimeQuery > createTimeQuery() const T_OVERRIDE T_FINAL;
 
 	virtual void purge() T_OVERRIDE T_FINAL;

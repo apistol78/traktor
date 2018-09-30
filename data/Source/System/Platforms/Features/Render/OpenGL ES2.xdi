@@ -397,6 +397,7 @@
 						<item>Traktor.Render</item>
 						<item>Traktor.Render.Editor</item>
 						<item>Traktor.Render.OpenGL.ES2</item>
+						<item>Traktor.Render.OpenGL.ES2.Editor</item>
 					</value>
 				</second>
 			</item>

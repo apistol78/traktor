@@ -12,6 +12,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Ps3/Blob.h"
 #include "Render/Resource/ProgramResource.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RENDER_PS3_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -20,7 +28,7 @@ namespace traktor
 /*!
  * \ingroup PS3
  */
-class ProgramResourcePs3 : public ProgramResource
+class T_DLLCLASS ProgramResourcePs3 : public ProgramResource
 {
 	T_RTTI_CLASS;
 

@@ -13,7 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Render/Sw/Core/IntrProgram.h"
-#include "Render/Sw/Emitter/EmitterVariable.h"
+#include "Render/Sw/Editor/Emitter/EmitterVariable.h"
 
 namespace traktor
 {

@@ -11,6 +11,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Types.h"
 #include "Render/Resource/ProgramResource.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RENDER_VULKAN_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -19,7 +27,7 @@ namespace traktor
 /*!
  * \ingroup Vulkan
  */
-class ProgramResourceVk : public ProgramResource
+class T_DLLCLASS ProgramResourceVk : public ProgramResource
 {
 	T_RTTI_CLASS;
 

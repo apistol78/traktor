@@ -12,10 +12,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Model/Material.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
-#include "Render/Resource/FragmentLinker.h"
-#include "Render/Shader/External.h"
-#include "Render/Shader/Nodes.h"
-#include "Render/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/External.h"
+#include "Render/Editor/Shader/FragmentLinker.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 
 namespace traktor
 {

@@ -10,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Render/Editor/ImageProcess/ImageProcessShaderWizardTool.h"
-#include "Render/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Ui/InputDialog.h"
 
 namespace traktor

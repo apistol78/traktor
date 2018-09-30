@@ -6,10 +6,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include <stack>
 #include "Core/Serialization/DeepClone.h"
-#include "Render/Shader/Edge.h"
-#include "Render/Shader/Nodes.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Render/Shader/ShaderGraphTraverse.h"
+#include "Render/Editor/Shader/Edge.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphTraverse.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"

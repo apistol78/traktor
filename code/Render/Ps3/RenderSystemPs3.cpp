@@ -14,7 +14,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Ps3/IndexBufferPs3.h"
 #include "Render/Ps3/MemoryHeap.h"
 #include "Render/Ps3/ProgramPs3.h"
-#include "Render/Ps3/ProgramCompilerPs3.h"
 #include "Render/Ps3/ProgramResourcePs3.h"
 #include "Render/Ps3/RenderSystemPs3.h"
 #include "Render/Ps3/RenderTargetSetPs3.h"
@@ -329,15 +328,6 @@ Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programRes
 		return 0;
 
 	return program;
-}
-
-Ref< IProgramCompiler > RenderSystemPs3::createProgramCompiler() const
-{
-#if !defined(_PS3)
-	return new ProgramCompilerPs3();
-#else
-	return 0;
-#endif
 }
 
 Ref< ITimeQuery > RenderSystemPs3::createTimeQuery() const

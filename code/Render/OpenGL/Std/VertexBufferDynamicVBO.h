@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_VertexBufferDynamicVBO_H
 
 #include "Core/Containers/AlignedVector.h"
-#include "Render/OpenGL/VertexBufferOpenGL.h"
+#include "Render/OpenGL/Std/VertexBufferOpenGL.h"
 
 namespace traktor
 {

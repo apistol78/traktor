@@ -83,6 +83,7 @@
 						<item>Traktor.Render</item>
 						<item>Traktor.Render.Editor</item>
 						<item>Traktor.Render.Ps4</item>
+						<item>Traktor.Render.Ps4.Editor</item>
 					</value>
 				</second>
 			</item>

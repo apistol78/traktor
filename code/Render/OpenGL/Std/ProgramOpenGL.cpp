@@ -15,11 +15,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/System/OS.h"
-#include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/ITextureBinding.h"
-#include "Render/OpenGL/ProgramResourceOpenGL.h"
-#include "Render/OpenGL/Glsl/GlslType.h"
-#include "Render/OpenGL/Glsl/GlslProgram.h"
+#include "Render/OpenGL/Std/Platform.h"
+#include "Render/OpenGL/Std/ITextureBinding.h"
+#include "Render/OpenGL/Std/ProgramResourceOpenGL.h"
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
@@ -111,25 +109,6 @@ ProgramOpenGL* ProgramOpenGL::ms_activeProgram = 0;
 ProgramOpenGL::~ProgramOpenGL()
 {
 	destroy();
-}
-
-Ref< ProgramResource > ProgramOpenGL::compile(const GlslProgram& glslProgram, int optimize, bool validate)
-{
-	Ref< ProgramResourceOpenGL > resource;
-
-	resource = new ProgramResourceOpenGL(
-		wstombs(glslProgram.getVertexShader()),
-		wstombs(glslProgram.getFragmentShader()),
-		glslProgram.getTextures(),
-		glslProgram.getUniforms(),
-		glslProgram.getSamplers(),
-		glslProgram.getRenderState()
-	);
-
-	uint32_t hash = DeepHash(resource).get();
-	resource->setHash(hash);
-
-	return resource;
 }
 
 Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const ProgramResource* resource, bool cacheEnable)
@@ -632,12 +611,12 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, con
 
 	for (int j = 0; j < T_OGL_MAX_INDEX; ++j)
 	{
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuPosition, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuPosition, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuNormal, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuNormal, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuTangent, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuTangent, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuBinormal, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuBinormal, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuColor, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuColor, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuCustom, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuCustom, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuPosition, j)] = glGetAttribLocation(m_program, wstombs(VertexAttribute::getName(DuPosition, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuNormal, j)] = glGetAttribLocation(m_program, wstombs(VertexAttribute::getName(DuNormal, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuTangent, j)] = glGetAttribLocation(m_program, wstombs(VertexAttribute::getName(DuTangent, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuBinormal, j)] = glGetAttribLocation(m_program, wstombs(VertexAttribute::getName(DuBinormal, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuColor, j)] = glGetAttribLocation(m_program, wstombs(VertexAttribute::getName(DuColor, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuCustom, j)] = glGetAttribLocation(m_program, wstombs(VertexAttribute::getName(DuCustom, j)).c_str());
 	}
 }
 

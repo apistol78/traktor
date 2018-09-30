@@ -164,6 +164,7 @@
 					<value>
 						<item>Traktor.Render</item>
 						<item>Traktor.Render.Dx11</item>
+						<item>Traktor.Render.Dx11.Editor</item>
 						<item>Traktor.Render.Editor</item>
 					</value>
 				</second>

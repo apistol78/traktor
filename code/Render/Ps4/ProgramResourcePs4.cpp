@@ -6,7 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Render/Ps4/BlobPs4.h"
 #include "Render/Ps4/ProgramResourcePs4.h"
-#include "Render/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"

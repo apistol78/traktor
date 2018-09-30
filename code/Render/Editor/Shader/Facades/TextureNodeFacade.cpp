@@ -13,7 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Editor/IThumbnailGenerator.h"
 #include "I18N/Text.h"
 #include "Render/ITexture.h"
-#include "Render/Shader/Nodes.h"
+#include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/TextureNodeFacade.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Ui/Application.h"

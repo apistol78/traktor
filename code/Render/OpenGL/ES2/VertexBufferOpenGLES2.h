@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_VertexBufferOpenGLES2_H
 #define traktor_render_VertexBufferOpenGLES2_H
 
-#include "Render/OpenGL/VertexBufferOpenGL.h"
+#include "Render/VertexBuffer.h"
 
 namespace traktor
 {
@@ -19,7 +19,7 @@ class StateCache;
 /*!
  * \ingroup OGL
  */
-class VertexBufferOpenGLES2 : public VertexBufferOpenGL
+class VertexBufferOpenGLES2 : public VertexBuffer
 {
 	T_RTTI_CLASS;
 

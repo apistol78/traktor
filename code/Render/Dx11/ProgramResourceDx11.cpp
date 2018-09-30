@@ -4,13 +4,13 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Render/Dx11/Blob.h"
-#include "Render/Dx11/ProgramResourceDx11.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Render/Dx11/Blob.h"
+#include "Render/Dx11/ProgramResourceDx11.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
 
 namespace traktor
 {

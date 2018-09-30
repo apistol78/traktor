@@ -8,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_RenderSystemOpenGLES2_H
 
 #include "Render/IRenderSystem.h"
-#include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/ES2/Platform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -70,8 +70,6 @@ public:
 	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc) T_OVERRIDE T_FINAL;
 
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag) T_OVERRIDE T_FINAL;
-
-	virtual Ref< IProgramCompiler > createProgramCompiler() const T_OVERRIDE T_FINAL;
 
 	virtual Ref< ITimeQuery > createTimeQuery() const T_OVERRIDE T_FINAL;
 

@@ -8,8 +8,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_StateCache_H
 
 #include "Core/Object.h"
-#include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/TypesOpenGL.h"
+#include "Render/OpenGL/Std/Platform.h"
+#include "Render/OpenGL/Std/TypesOpenGL.h"
 
 namespace traktor
 {

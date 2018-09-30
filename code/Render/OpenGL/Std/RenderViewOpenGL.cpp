@@ -6,9 +6,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/VertexBufferOpenGL.h"
-#include "Render/OpenGL/IndexBufferOpenGL.h"
+#include "Render/OpenGL/Std/Platform.h"
+#include "Render/OpenGL/Std/VertexBufferOpenGL.h"
+#include "Render/OpenGL/Std/IndexBufferIBO.h"
 #include "Render/OpenGL/Std/RenderViewOpenGL.h"
 #include "Render/OpenGL/Std/RenderSystemOpenGL.h"
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
@@ -550,7 +550,7 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const Color4f* color, float dep
 void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
 	VertexBufferOpenGL* vertexBufferGL = checked_type_cast< VertexBufferOpenGL* >(vertexBuffer);
-	IndexBufferOpenGL* indexBufferGL = checked_type_cast< IndexBufferOpenGL* >(indexBuffer);
+	IndexBufferIBO* indexBufferGL = checked_type_cast< IndexBufferIBO* >(indexBuffer);
 	ProgramOpenGL* programGL = checked_type_cast< ProgramOpenGL * >(program);
 
 	bindTargets();
@@ -653,7 +653,7 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
 	VertexBufferOpenGL* vertexBufferGL = checked_type_cast< VertexBufferOpenGL* >(vertexBuffer);
-	IndexBufferOpenGL* indexBufferGL = checked_type_cast< IndexBufferOpenGL* >(indexBuffer);
+	IndexBufferIBO* indexBufferGL = checked_type_cast< IndexBufferIBO* >(indexBuffer);
 	ProgramOpenGL* programGL = checked_type_cast< ProgramOpenGL * >(program);
 
 	bindTargets();

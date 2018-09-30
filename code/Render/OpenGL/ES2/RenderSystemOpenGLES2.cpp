@@ -10,11 +10,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Render/VertexElement.h"
-#include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/ES2/Platform.h"
 #include "Render/OpenGL/ES2/CubeTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderViewOpenGLES2.h"
-#include "Render/OpenGL/ES2/ProgramCompilerOpenGLES2.h"
 #include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
 #include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
 #include "Render/OpenGL/ES2/VertexBufferDynamicOpenGLES2.h"
@@ -235,11 +234,6 @@ Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* prog
 {
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);
 	return ProgramOpenGLES2::create(m_context, programResource);
-}
-
-Ref< IProgramCompiler > RenderSystemOpenGLES2::createProgramCompiler() const
-{
-	return new ProgramCompilerOpenGLES2();
 }
 
 Ref< ITimeQuery > RenderSystemOpenGLES2::createTimeQuery() const

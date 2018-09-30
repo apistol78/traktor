@@ -89,6 +89,7 @@
 						<item>Traktor.Render</item>
 						<item>Traktor.Render.Editor</item>
 						<item>Traktor.Render.Vulkan</item>
+						<item>Traktor.Render.Vulkan.Editor</item>
 					</value>
 				</second>
 			</item>

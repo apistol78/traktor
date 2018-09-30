@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_render_EAGLContextWrapper_H
 #define traktor_render_EAGLContextWrapper_H
 
-#include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/ES2/Platform.h"
 
 #ifdef __OBJC__
 typedef CAEAGLLayer CAEAGLLayer_t;

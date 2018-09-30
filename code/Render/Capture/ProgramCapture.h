@@ -15,9 +15,6 @@ namespace traktor
 	namespace render
 	{
 
-class Uniform;
-class IndexedUniform;
-
 class ProgramCapture : public IProgram
 {
 	T_RTTI_CLASS;
@@ -51,11 +48,11 @@ private:
 
 	struct Parameter
 	{
-		Ref< const Uniform > uniform;
-		Ref< const IndexedUniform > indexedUniform;
+		// Ref< const Uniform > uniform;
+		// Ref< const IndexedUniform > indexedUniform;
 		bool undefined;
 
-		std::wstring getName() const;
+		// std::wstring getName() const;
 	};
 
 	Ref< IProgram > m_program;
