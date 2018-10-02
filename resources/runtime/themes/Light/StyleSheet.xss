@@ -1304,5 +1304,13 @@
 			<name>UI.Graph.Background</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Background.image</value>
 		</item>
+		<item>
+			<name>UI.FileDialog.Directory</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Directory.image</value>
+		</item>
+		<item>
+			<name>UI.FileDialog.File</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/File.image</value>
+		</item>
 	</values>
 </object>
