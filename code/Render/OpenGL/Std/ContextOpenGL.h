@@ -149,6 +149,7 @@ private:
 	bool m_permitDepth;
 	uint32_t m_currentRenderStateList;
 	StateCache m_stateCache;
+	int32_t m_lastWaitVBlanks;
 };
 
 	}

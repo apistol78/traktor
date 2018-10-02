@@ -69,6 +69,7 @@ ContextOpenGL::ContextOpenGL(ContextOpenGL* resourceContext, HWND hWnd, HDC hDC,
 ,	m_maxAnisotropy(1.0f)
 ,	m_permitDepth(true)
 ,	m_currentRenderStateList(~0U)
+,	m_lastWaitVBlanks(-1)
 
 #elif defined(__APPLE__)
 
@@ -80,6 +81,7 @@ ContextOpenGL::ContextOpenGL(ContextOpenGL* resourceContext, void* context)
 ,	m_maxAnisotropy(1.0f)
 ,	m_permitDepth(true)
 ,	m_currentRenderStateList(~0U)
+,	m_lastWaitVBlanks(-1)
 
 #elif defined(__LINUX__)
 
@@ -93,6 +95,7 @@ ContextOpenGL::ContextOpenGL(ContextOpenGL* resourceContext, ::Display* display,
 ,	m_maxAnisotropy(1.0f)
 ,	m_permitDepth(true)
 ,	m_currentRenderStateList(~0U)
+,	m_lastWaitVBlanks(-1)
 
 #endif
 {
@@ -135,17 +138,29 @@ void ContextOpenGL::update(int32_t width, int32_t height)
 void ContextOpenGL::swapBuffers(int32_t waitVBlanks)
 {
 #if defined(_WIN32)
-	if (wglSwapIntervalEXT)
-		wglSwapIntervalEXT(waitVBlanks);
+	if (m_lastWaitVBlanks != waitVBlanks)
+	{
+		if (wglSwapIntervalEXT)
+			wglSwapIntervalEXT(waitVBlanks);
+	}
 	SwapBuffers(m_hDC);
 #elif defined(__APPLE__)
 	cglwSwapBuffers(m_context, waitVBlanks);
 #elif defined(__LINUX__)
-	if (glXSwapIntervalEXT != 0)
-		glXSwapIntervalEXT(m_display, m_window, waitVBlanks);
+	if (m_lastWaitVBlanks != waitVBlanks)
+	{
+		if (glXSwapIntervalEXT != 0)
+		{
+			unsigned int current = 0;
+			glXQueryDrawable(m_display, m_window, GLX_SWAP_INTERVAL_EXT, &current);
+			glXSwapIntervalEXT(m_display, m_window, current);
+			glXSwapIntervalEXT(m_display, m_window, waitVBlanks);
+		}
+	}
 	glXSwapBuffers(m_display, m_window);
 #endif
 	m_stateCache.reset();
+	m_lastWaitVBlanks = waitVBlanks;
 }
 
 void ContextOpenGL::destroy()
