@@ -19,6 +19,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+#if defined(__LINUX__)
+struct _XRRScreenResources;
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -97,6 +101,7 @@ private:
 	::Display* m_display;
 	Ref< Window > m_windowShared;
     Ref< Window > m_window;
+	struct _XRRScreenResources* m_screenResources;
 
 #endif
 

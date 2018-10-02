@@ -44,6 +44,7 @@ RenderSystemOpenGL::RenderSystemOpenGL()
 ,	m_useProgramCache(true)
 #elif defined(__LINUX__)
 :	m_display(0)
+,	m_screenResources(nullptr)
 ,	m_useProgramCache(true)
 #else
 :	m_useProgramCache(true)
@@ -212,6 +213,8 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 	if (glewInit() != GLEW_OK)
 		return false;
 
+	m_screenResources = XRRGetScreenResources(m_display, RootWindow(m_display, screen));
+
 #endif
 
 	log::info << L"OpenGL " << mbstows((const char *)glGetString(GL_VERSION)) << L" renderer created." << Endl;
@@ -289,6 +292,12 @@ void RenderSystemOpenGL::destroy()
 
 	m_windowShared = 0;
 
+	if (m_screenResources)
+	{
+		XRRFreeScreenResources(m_screenResources);
+		m_screenResources = nullptr;
+	}
+
 #endif
 }
 
@@ -324,17 +333,10 @@ uint32_t RenderSystemOpenGL::getDisplayModeCount() const
 
 #else
 
-	int screen = DefaultScreen(m_display);
-	int sizes = 0;
-
-	XRRScreenConfiguration* xrrc = XRRGetScreenInfo(m_display, RootWindow(m_display, screen));
-	if (xrrc)
-	{
-		XRRConfigSizes(xrrc, &sizes);
-		XRRFreeScreenConfigInfo(xrrc);
-	}
-
-	return sizes >= 0 ? uint32_t(sizes) : 0;
+	if (m_screenResources)
+		return m_screenResources->nmode;
+	else
+		return 0;
 
 #endif
 }
@@ -365,23 +367,17 @@ DisplayMode RenderSystemOpenGL::getDisplayMode(uint32_t index) const
 #else
 
 	DisplayMode dm;
-
-	int screen = DefaultScreen(m_display);
-	XRRScreenConfiguration* xrrc = XRRGetScreenInfo(m_display, RootWindow(m_display, screen));
-	if (xrrc)
+	if (m_screenResources != nullptr && index < m_screenResources->nmode)
 	{
-		int sizes;
-		XRRScreenSize* xrrss = XRRConfigSizes(xrrc, &sizes);
+		const auto& m = m_screenResources->modes[index];
 
-		if (index < sizes)
-		{
-			dm.width = xrrss[index].width;
-			dm.height = xrrss[index].height;
-			dm.refreshRate = 60;
-			dm.colorBits = 32;
-		}
+		dm.width = m.width;
+		dm.height = m.height;
+		dm.refreshRate = 0;
+		dm.colorBits = 32;
 
-		XRRFreeScreenConfigInfo(xrrc);
+		if (m.hTotal && m.vTotal)
+			dm.refreshRate = (int)((double)m.dotClock / ((double)m.hTotal * (double)m.vTotal));
 	}
 
 	return dm;
@@ -413,12 +409,8 @@ DisplayMode RenderSystemOpenGL::getCurrentDisplayMode() const
 
 #elif defined(__LINUX__)
 
-	int screen = 0; // DefaultScreen(m_display);
-	::Window root = RootWindow(m_display, screen);
-
-	XRRScreenResources* resources = XRRGetScreenResources(m_display, root);
-
-	XRRScreenConfiguration* xrrc = XRRGetScreenInfo(m_display, root);
+	int screen = DefaultScreen(m_display);
+	XRRScreenConfiguration* xrrc = XRRGetScreenInfo(m_display, RootWindow(m_display, screen));
 	if (xrrc)
 	{
 		Rotation rotation;
@@ -429,6 +421,8 @@ DisplayMode RenderSystemOpenGL::getCurrentDisplayMode() const
 
 		if (sizeId < sizes)
 		{
+			log::info << sizeId << L". " << xrrss[sizeId].width << L" * " << xrrss[sizeId].height << Endl;
+
 			DisplayMode dm;
 			dm.width = xrrss[sizeId].width;
 			dm.height = xrrss[sizeId].height;
@@ -476,39 +470,6 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	else
 		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
 
-#	if 0
-	if (desc.fullscreen)
-	{
-		DEVMODE dmgl;
-		std::memset(&dmgl, 0, sizeof(dmgl));
-		dmgl.dmSize = sizeof(dmgl);
-
-		for (UINT count = 0; EnumDisplaySettings(NULL, count, &dmgl); ++count)
-		{
-			if (
-				dmgl.dmPelsWidth == desc.displayMode.width &&
-				dmgl.dmPelsHeight == desc.displayMode.height
-			)
-			{
-				if (desc.displayMode.colorBits != 0 && dmgl.dmBitsPerPel != desc.displayMode.colorBits)
-					continue;
-				if (desc.displayMode.colorBits == 0 && dmgl.dmBitsPerPel < 24)
-					continue;
-				if (desc.displayMode.refreshRate != 0 && dmgl.dmDisplayFrequency != desc.displayMode.refreshRate)
-					continue;
-
-				if (ChangeDisplaySettings(&dmgl, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
-				{
-					log::error << L"createRenderView failed; unable to change display settings" << Endl;
-					return 0;
-				}
-
-				break;
-			}
-		}
-	}
-#	endif
-
 	PIXELFORMATDESCRIPTOR pfd =
 	{
 		sizeof(PIXELFORMATDESCRIPTOR),
@@ -553,8 +514,6 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 
 	const GLint attribs[] =
 	{
-		//WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
-		//WGL_CONTEXT_MINOR_VERSION_ARB, 0,
 		WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
 		WGL_CONTEXT_MINOR_VERSION_ARB, 2,
 		WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
