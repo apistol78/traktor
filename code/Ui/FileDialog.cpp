@@ -15,6 +15,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/TableLayout.h"
 #include "Ui/FileDialog.h"
 #include "Ui/Splitter.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridRow.h"
@@ -58,9 +59,11 @@ bool FileDialog::create(Widget* parent, const std::wstring& title, const std::ws
 
 	m_gridFiles = new GridView();
 	m_gridFiles->create(ct, GridView::WsColumnHeader | WsDoubleBuffer);
+	m_gridFiles->addColumn(new GridColumn(L"", dpi96(20)));
 	m_gridFiles->addColumn(new GridColumn(L"Filename", dpi96(300)));
 	m_gridFiles->addColumn(new GridColumn(L"Size", dpi96(100)));
 	m_gridFiles->addColumn(new GridColumn(L"Modified", dpi96(100)));
+	m_gridFiles->setSortColumn(1, false, GridView::SmLexical);
 	m_gridFiles->addEventHandler< GridRowDoubleClickEvent >([&](GridRowDoubleClickEvent* event) {
 
 		auto file = event->getRow()->getData< File >(L"FILE");
@@ -75,9 +78,12 @@ bool FileDialog::create(Widget* parent, const std::wstring& title, const std::ws
 		}
 		else
 		{
-			endModal(DrOk);		
+			endModal(DrOk);
 		}
 	});
+
+	m_bitmapDirectory = new ui::StyleBitmap(L"UI.FileDialog.Directory");
+	m_bitmapFile = new ui::StyleBitmap(L"UI.FileDialog.File");
 
 	m_currentPath = FileSystem::getInstance().getCurrentVolumeAndDirectory();
 
@@ -92,7 +98,7 @@ void FileDialog::destroy()
 	ConfigDialog::destroy();
 }
 
-int FileDialog::showModal(Path& outPath)
+int32_t FileDialog::showModal(Path& outPath)
 {
 	m_gridFiles->setMultiSelect(false);
 
@@ -113,7 +119,7 @@ int FileDialog::showModal(Path& outPath)
 	return DrOk;
 }
 
-int FileDialog::showModal(std::vector< Path >& outPaths)
+int32_t FileDialog::showModal(std::vector< Path >& outPaths)
 {
 	m_gridFiles->setMultiSelect(true);
 
@@ -174,6 +180,7 @@ void FileDialog::updateFiles()
 			continue;
 
 		Ref< GridRow > row = new GridRow();
+		row->add(new GridItem(file->isDirectory() ? m_bitmapDirectory : m_bitmapFile));
 		row->add(new GridItem(fn));
 
 		if (!file->isDirectory())
@@ -181,9 +188,12 @@ void FileDialog::updateFiles()
 		else
 			row->add(new GridItem());
 
-		row->add(new GridItem(
-			file->getLastWriteTime().format(L"%c")
-		));
+		if (!file->isDirectory())
+			row->add(new GridItem(
+				file->getLastWriteTime().format(L"%c")
+			));
+		else
+			row->add(new GridItem());
 
 		row->setData(L"FILE", file);
 
