@@ -49,10 +49,14 @@ function Slider:setRange(min, max)
 	return self
 end
 
-function Slider:setPosition(position)
+function Slider:setPosition(position, immediate)
 	local w = self._background_mc.width - self._knob_mc.width
 	local f = (position - self._range.min) / (self._range.max - self._range.min)
-	self:_moveKnob(w * f)
+	if immediate == true then
+		self:_moveKnobImmediate(w * f)
+	else
+		self:_moveKnob(w * f)
+	end
 	return self
 end
 
@@ -110,6 +114,11 @@ function Slider:_moveKnob(x)
 			self._knobTween:continueTo(x, d)
 		end
 	end
+	self._knobX = x
+end
+
+function Slider:_moveKnobImmediate(x)
+	self._knob_mc.X = x
 	self._knobX = x
 end
 
