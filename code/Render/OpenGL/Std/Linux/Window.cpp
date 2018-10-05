@@ -165,16 +165,17 @@ void Window::setFullScreenStyle()
 		setWmProperty(m_atomWmStateFullscreen, _NET_WM_STATE_ADD);
 
 		// Remove WM borders; ie WM control.
-		XSetWindowAttributes attr;
-		attr.override_redirect = True;
-		XChangeWindowAttributes(m_display, m_window, CWOverrideRedirect, &attr);
+		// XSetWindowAttributes attr;
+		// attr.override_redirect = True;
+		// XChangeWindowAttributes(m_display, m_window, CWOverrideRedirect, &attr);
 	}
+
+	XMoveResizeWindow(m_display, m_window, 0, 0, width, height);
+	XFlush(m_display);
 
 	m_width = width;
 	m_height = height;
 	m_fullScreen = true;
-
-	XFlush(m_display);
 }
 
 void Window::setWindowedStyle(int32_t width, int32_t height)
