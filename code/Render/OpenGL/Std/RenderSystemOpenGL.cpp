@@ -421,8 +421,6 @@ DisplayMode RenderSystemOpenGL::getCurrentDisplayMode() const
 
 		if (sizeId < sizes)
 		{
-			log::info << sizeId << L". " << xrrss[sizeId].width << L" * " << xrrss[sizeId].height << Endl;
-
 			DisplayMode dm;
 			dm.width = xrrss[sizeId].width;
 			dm.height = xrrss[sizeId].height;
@@ -601,9 +599,10 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	if (desc.fullscreen)
 		m_window->setFullScreenStyle();
 	else
+	{
 		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
-
-	m_window->center();
+		m_window->center();
+	}
 
 	int attribs[] = { GLX_RGBA, None };
 	XVisualInfo* visual = glXChooseVisual(m_display, DefaultScreen(m_display), attribs);
