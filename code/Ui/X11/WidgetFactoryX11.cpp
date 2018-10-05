@@ -1,4 +1,5 @@
 #include <fontconfig/fontconfig.h>
+#include <X11/Xresource.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Ui/X11/BitmapX11.h"
@@ -29,13 +30,47 @@ int xerrorHandler(Display*, XErrorEvent* ee)
 WidgetFactoryX11::WidgetFactoryX11()
 :	m_display(nullptr)
 ,	m_screen(0)
+,	m_dpi(96)
 {
+	// Open connection to X display.
 	m_display = XOpenDisplay(nullptr);
 	T_FATAL_ASSERT(m_display != nullptr);
 
     m_screen = DefaultScreen(m_display);
 
+	// Use our own X error handler.
 	XSetErrorHandler(xerrorHandler);
+
+#if 0
+	// Get DPI from X.
+	float wdots = (float)XDisplayWidth(m_display, m_screen);
+	float winch = (float)XDisplayWidthMM(m_display, m_screen) * 0.0393700787f;
+	m_dpi = (int32_t)(wdots / winch + 0.5f);
+
+	// Get DPI from Xft.dpi
+    XrmInitialize();
+    char* resourceString = XResourceManagerString(m_display);
+    XrmDatabase db = XrmGetStringDatabase(resourceString);
+    if (resourceString != nullptr)
+	{
+    	char* type = nullptr;
+	    XrmValue value;
+
+        if (XrmGetResource(db, "Xft.dpi", "String", &type, &value) == True)
+		{
+            if (value.addr != nullptr)
+                m_dpi = (int32_t)(std::atof(value.addr) + 0.5f);
+        }
+    }
+#else
+	// Get DPI from X, as dpi handling in X is severly broken we deduce either small or large only.
+	float wdots = (float)XDisplayWidth(m_display, m_screen);
+	float winch = (float)XDisplayWidthMM(m_display, m_screen) * 0.0393700787f;
+	if (wdots / winch > 96.0f)
+		m_dpi = 192;
+	else
+		m_dpi = 96;
+#endif
 }
 
 WidgetFactoryX11::~WidgetFactoryX11()
@@ -104,7 +139,7 @@ IClipboard* WidgetFactoryX11::createClipboard()
 
 int32_t WidgetFactoryX11::getSystemDPI() const
 {
-	return 96 * 2;
+    return m_dpi;
 }
 
 void WidgetFactoryX11::getSystemFonts(std::list< std::wstring >& outFonts)

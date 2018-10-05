@@ -55,6 +55,7 @@ public:
 private:
 	Display* m_display;
 	int32_t m_screen;
+	int32_t m_dpi;
 };
 
 	}
