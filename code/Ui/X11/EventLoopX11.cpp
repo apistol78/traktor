@@ -21,6 +21,7 @@ EventLoopX11::EventLoopX11(Display* display, int32_t screen)
 ,	m_screen(screen)
 ,	m_terminated(false)
 ,	m_exitCode(0)
+,	m_keyState(0)
 {
 	// Open input method.
 	XSetLocaleModifiers("");
@@ -77,7 +78,9 @@ bool EventLoopX11::process(EventSubject* owner)
 
 	XEvent e;
 	XNextEvent(m_display, &e);
-	Assoc::getInstance().dispatch(m_display, e);
+
+	if (!preTranslateEvent(owner, e))
+		Assoc::getInstance().dispatch(m_display, e);
 
 	return !m_terminated;
 }
@@ -116,58 +119,7 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 			{
 				XNextEvent(m_display, &e);
 
-				// Pre-translate events, necessary for shortcut manager etc.
-				bool consumed = false;
-				if (e.type == KeyPress)
-				{
-					int nkeysyms;
-					KeySym* ks = XGetKeyboardMapping(m_display, e.xkey.keycode, 1, &nkeysyms);
-					if (ks != nullptr)
-					{
-						VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
-						if (vk != VkNull)
-						{
-							KeyDownEvent keyDownEvent(owner, vk, e.xkey.keycode, 0);
-							owner->raiseEvent(&keyDownEvent);
-							consumed |= keyDownEvent.consumed();
-						}
-
-						uint8_t str[8] = { 0 };
-
-						Status status = 0;
-						const int n = Xutf8LookupString(m_xic, &e.xkey, (char*)str, 8, ks, &status);
-						if (n > 0)
-						{
-							wchar_t wch = 0;
-							if (Utf8Encoding().translate(str, n, wch) > 0)
-							{
-								KeyEvent keyEvent(owner, vk, e.xkey.keycode, wch);
-								owner->raiseEvent(&keyEvent);
-								consumed |= keyEvent.consumed();
-							}
-						}
-
-						XFree(ks);
-					}
-				}
-				else if (e.type == KeyRelease)
-				{
-					int nkeysyms;
-					KeySym* ks = XGetKeyboardMapping(m_display, e.xkey.keycode, 1, &nkeysyms);
-					if (ks != nullptr)
-					{
-						VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
-						if (vk != VkNull)
-						{
-							KeyUpEvent keyUpEvent(owner, vk, e.xkey.keycode, 0);
-							owner->raiseEvent(&keyUpEvent);
-							consumed |= keyUpEvent.consumed();
-						}
-						XFree(ks);
-					}
-				}
-
-				if (!consumed)
+				if (!preTranslateEvent(owner, e))
 					Assoc::getInstance().dispatch(m_display, e);
 
 				idle = true;
@@ -204,28 +156,13 @@ int32_t EventLoopX11::getExitCode() const
 
 int32_t EventLoopX11::getAsyncKeyState() const
 {
-	Window root, child;
-	int rootX, rootY;
-	int winX, winY;
-	unsigned int mask;
-
-	XQueryPointer(
-		m_display,
-		DefaultRootWindow(m_display),
-		&root,
-		&child,
-		&rootX, &rootY,
-		&winX, &winY,
-		&mask
-	);
-
 	int32_t keyState = KsNone;
 
-	if (mask & ShiftMask)
+	if (m_keyState & ShiftMask)
 		keyState |= KsShift;
-	if (mask & ControlMask)
+	if (m_keyState & ControlMask)
 		keyState |= KsControl | KsCommand;
-	if (mask & (Mod1Mask | Mod5Mask))
+	if (m_keyState & (Mod1Mask | Mod5Mask))
 		keyState |= KsMenu;
 
 	return keyState;
@@ -239,6 +176,74 @@ bool EventLoopX11::isKeyDown(VirtualKey vk) const
 Size EventLoopX11::getDesktopSize() const
 {
 	return Size(1280, 720);
+}
+
+bool EventLoopX11::preTranslateEvent(EventSubject* owner, XEvent& e)
+{
+	bool consumed = false;
+
+	if (e.type == KeyPress)
+	{
+		m_keyState = e.xkey.state;
+
+		int nkeysyms;
+		KeySym* ks = XGetKeyboardMapping(m_display, e.xkey.keycode, 1, &nkeysyms);
+		if (ks != nullptr)
+		{
+			VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
+			if (vk != VkNull)
+			{
+				KeyDownEvent keyDownEvent(owner, vk, e.xkey.keycode, 0);
+				owner->raiseEvent(&keyDownEvent);
+				consumed |= keyDownEvent.consumed();
+			}
+
+			uint8_t str[8] = { 0 };
+
+			Status status = 0;
+			const int n = Xutf8LookupString(m_xic, &e.xkey, (char*)str, 8, ks, &status);
+			if (n > 0)
+			{
+				wchar_t wch = 0;
+				if (Utf8Encoding().translate(str, n, wch) > 0)
+				{
+					KeyEvent keyEvent(owner, vk, e.xkey.keycode, wch);
+					owner->raiseEvent(&keyEvent);
+					consumed |= keyEvent.consumed();
+				}
+			}
+
+			XFree(ks);
+		}
+	}
+	else if (e.type == KeyRelease)
+	{
+		m_keyState = e.xkey.state;
+
+		int nkeysyms;
+		KeySym* ks = XGetKeyboardMapping(m_display, e.xkey.keycode, 1, &nkeysyms);
+		if (ks != nullptr)
+		{
+			VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
+			if (vk != VkNull)
+			{
+				KeyUpEvent keyUpEvent(owner, vk, e.xkey.keycode, 0);
+				owner->raiseEvent(&keyUpEvent);
+				consumed |= keyUpEvent.consumed();
+			}
+			XFree(ks);
+		}
+	}
+	else if (e.type == MotionNotify)
+	{
+		m_keyState = e.xmotion.state;
+	}
+	else if (e.type == ButtonPress || e.type == ButtonRelease)
+	{
+		m_keyState = e.xbutton.state;
+	}
+
+	return consumed;
 }
 
 	}
