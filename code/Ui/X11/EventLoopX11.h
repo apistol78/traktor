@@ -13,13 +13,6 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace X11
-{
-
-	class Main;
-
-}
-
 namespace traktor
 {
 	namespace ui
@@ -55,6 +48,9 @@ private:
 	XIC m_xic;
 	bool m_terminated;
 	int32_t m_exitCode;
+	int32_t m_keyState;
+
+	bool preTranslateEvent(EventSubject* owner, XEvent& e);
 };
 
 	}
