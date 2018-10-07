@@ -166,13 +166,6 @@ bool LocalInstance::getLastModifyDate(DateTime& outModifyDate) const
 uint32_t LocalInstance::getFlags() const
 {
 	return m_context->getFileStore()->flags(getInstanceObjectPath(m_instancePath));
-
-	//if (m_context->getFileStore()->locked(getInstanceObjectPath(m_instancePath)))
-	//	flags |= IfReadOnly;
-
-	//if (m_context->getFileStore()->pending(getInstanceObjectPath(m_instancePath)))
-	//	flags |= IfModified;
-
 }
 
 bool LocalInstance::remove()
