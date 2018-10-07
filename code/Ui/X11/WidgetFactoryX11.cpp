@@ -30,6 +30,7 @@ int xerrorHandler(Display*, XErrorEvent* ee)
 WidgetFactoryX11::WidgetFactoryX11()
 :	m_display(nullptr)
 ,	m_screen(0)
+,	m_xim(0)
 ,	m_dpi(96)
 {
 	// Open connection to X display.
@@ -71,10 +72,27 @@ WidgetFactoryX11::WidgetFactoryX11()
 	else
 		m_dpi = 96;
 #endif
+
+	// Open input method.
+	XSetLocaleModifiers("");
+	if ((m_xim = XOpenIM(m_display, nullptr, nullptr, nullptr)) == 0)
+	{
+		XSetLocaleModifiers("@im=");
+		if ((m_xim = XOpenIM(m_display, nullptr, nullptr, nullptr)) == 0)
+		{
+			log::error << L"Unable to open X11 input method." << Endl;
+		}
+	}
 }
 
 WidgetFactoryX11::~WidgetFactoryX11()
 {
+	if (m_xim != 0)
+	{
+		XCloseIM(m_xim);
+		m_xim = 0;
+	}
+	
 	if (m_display != nullptr)
 	{
 		XCloseDisplay(m_display);
@@ -89,17 +107,17 @@ IEventLoop* WidgetFactoryX11::createEventLoop(EventSubject* owner)
 
 IContainer* WidgetFactoryX11::createContainer(EventSubject* owner)
 {
-	return new ContainerX11(owner, m_display, m_screen);
+	return new ContainerX11(owner, m_display, m_screen, m_xim);
 }
 
 IDialog* WidgetFactoryX11::createDialog(EventSubject* owner)
 {
-	return new DialogX11(owner, m_display, m_screen);
+	return new DialogX11(owner, m_display, m_screen, m_xim);
 }
 
 IForm* WidgetFactoryX11::createForm(EventSubject* owner)
 {
-	return new FormX11(owner, m_display, m_screen);
+	return new FormX11(owner, m_display, m_screen, m_xim);
 }
 
 INotificationIcon* WidgetFactoryX11::createNotificationIcon(EventSubject* owner)
@@ -114,12 +132,12 @@ IPathDialog* WidgetFactoryX11::createPathDialog(EventSubject* owner)
 
 IToolForm* WidgetFactoryX11::createToolForm(EventSubject* owner)
 {
-	return new ToolFormX11(owner, m_display, m_screen);
+	return new ToolFormX11(owner, m_display, m_screen, m_xim);
 }
 
 IUserWidget* WidgetFactoryX11::createUserWidget(EventSubject* owner)
 {
-	return new UserWidgetX11(owner, m_display, m_screen);
+	return new UserWidgetX11(owner, m_display, m_screen, m_xim);
 }
 
 IWebBrowser* WidgetFactoryX11::createWebBrowser(EventSubject* owner)

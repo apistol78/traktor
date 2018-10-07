@@ -14,8 +14,8 @@ namespace traktor
 	namespace ui
 	{
 
-FormX11::FormX11(EventSubject* owner, Display* display, int32_t screen)
-:	WidgetX11Impl< IForm >(owner, display, screen)
+FormX11::FormX11(EventSubject* owner, Display* display, int32_t screen, XIM xim)
+:	WidgetX11Impl< IForm >(owner, display, screen, xim)
 {
 }
 

@@ -5,8 +5,8 @@ namespace traktor
 	namespace ui
 	{
 
-ContainerX11::ContainerX11(EventSubject* owner, Display* display, int32_t screen)
-:	WidgetX11Impl< IContainer >(owner, display, screen)
+ContainerX11::ContainerX11(EventSubject* owner, Display* display, int32_t screen, XIM xim)
+:	WidgetX11Impl< IContainer >(owner, display, screen, xim)
 {
 }
 
