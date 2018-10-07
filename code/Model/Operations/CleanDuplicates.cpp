@@ -25,12 +25,12 @@ bool CleanDuplicates::apply(Model& model) const
 	Model cleaned;
 	uint32_t id;
 
-	const std::vector< Material >& materials = model.getMaterials();
-	for (std::vector< Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
+	const AlignedVector< Material >& materials = model.getMaterials();
+	for (AlignedVector< Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 		cleaned.addMaterial(*i);
 
-	const std::vector< Polygon >& polygons = model.getPolygons();
-	for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	const AlignedVector< Polygon >& polygons = model.getPolygons();
+	for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{
 		Polygon cleanedPolygon;
 
@@ -40,8 +40,8 @@ bool CleanDuplicates::apply(Model& model) const
 		if (id != c_InvalidIndex)
 			cleanedPolygon.setNormal(cleaned.addUniqueNormal(model.getNormal(id).normalized()));
 
-		const std::vector< uint32_t >& vertices = i->getVertices();
-		for (std::vector< uint32_t >::const_iterator j = vertices.begin(); j != vertices.end(); ++j)
+		const AlignedVector< uint32_t >& vertices = i->getVertices();
+		for (AlignedVector< uint32_t >::const_iterator j = vertices.begin(); j != vertices.end(); ++j)
 		{
 			if (*j == c_InvalidIndex)
 				continue;

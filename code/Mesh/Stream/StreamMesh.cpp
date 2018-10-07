@@ -87,11 +87,11 @@ void StreamMesh::render(
 	if (!instance->mesh[0])
 		return;
 
-	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
+	SmallMap< render::handle_t, AlignedVector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT (it != m_parts.end());
 
 	const AlignedVector< render::Mesh::Part >& meshParts = instance->mesh[0]->getParts();
-	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+	for (AlignedVector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
 		m_shader->setTechnique(i->shaderTechnique);
 

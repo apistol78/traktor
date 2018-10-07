@@ -35,16 +35,16 @@ UnwrapUV::UnwrapUV(int32_t channel, float uvPerUnit, int32_t size, int32_t margi
 
 bool UnwrapUV::apply(Model& model) const
 {
-	std::vector< Polygon > originalPolygons = model.getPolygons();
+	AlignedVector< Polygon > originalPolygons = model.getPolygons();
 	AlignedVector< Winding2 > wuvs;
-	std::vector< int32_t > majors;
+	AlignedVector< int32_t > majors;
 
 	// Create windings, determine projection plane and calculate initial projected UV set.
 	for (uint32_t i = 0; i < originalPolygons.size(); ++i)
 	{
 		const Polygon& polygon = originalPolygons[i];
 
-		const std::vector< uint32_t >& vertexIds = polygon.getVertices();
+		const AlignedVector< uint32_t >& vertexIds = polygon.getVertices();
 		if (vertexIds.size() < 3)
 			return false;
 
@@ -114,8 +114,8 @@ bool UnwrapUV::apply(Model& model) const
 	T_FATAL_ASSERT (wuvs.size() == originalPolygons.size());
 
 	// Put neighbor polygons in same groups
-	std::vector< uint32_t > groups(originalPolygons.size(), c_InvalidIndex);
-	std::vector< uint32_t > sharedEdges;
+	AlignedVector< uint32_t > groups(originalPolygons.size(), c_InvalidIndex);
+	AlignedVector< uint32_t > sharedEdges;
 	uint32_t lastGroupId = 0;
 
 	ModelAdjacency adjacency(&model, ModelAdjacency::MdByPosition);
@@ -127,7 +127,7 @@ bool UnwrapUV::apply(Model& model) const
 		for (uint32_t edge = 0; edge < originalPolygons[i].getVertexCount(); ++edge)
 		{
 			adjacency.getSharedEdges(i, edge, sharedEdges);
-			for (std::vector< uint32_t >::const_iterator it = sharedEdges.begin(); it != sharedEdges.end(); ++it)
+			for (AlignedVector< uint32_t >::const_iterator it = sharedEdges.begin(); it != sharedEdges.end(); ++it)
 			{
 				uint32_t sharedPolygon = adjacency.getPolygon(*it);
 				T_FATAL_ASSERT (sharedPolygon != i);
@@ -215,7 +215,7 @@ bool UnwrapUV::apply(Model& model) const
 	stbrp_setup_allow_out_of_mem(packer.ptr(), 1);
 	stbrp_init_target(packer.ptr(), m_size, m_size, nodes.ptr(), m_size);
 
-	std::vector< stbrp_rect > rects;
+	AlignedVector< stbrp_rect > rects;
 	for (uint32_t i = 0; i < aabbuvs.size(); )
 	{
 		int32_t width = int32_t((aabbuvs[i].mx - aabbuvs[i].mn).x + 0.5f);
@@ -233,7 +233,7 @@ bool UnwrapUV::apply(Model& model) const
 	}
 
 	// Update UV for each polygon.
-	std::vector< Vertex > originalVertices = model.getVertices();
+	AlignedVector< Vertex > originalVertices = model.getVertices();
 	model.clear(Model::CfPolygons | Model::CfVertices);
 
 	for (uint32_t i = 0; i < originalPolygons.size(); ++i)

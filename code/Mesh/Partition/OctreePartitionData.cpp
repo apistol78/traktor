@@ -5,8 +5,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Mesh/Partition/OctreeNode.h"
 #include "Mesh/Partition/OctreeNodeData.h"
 #include "Mesh/Partition/OctreePartition.h"
@@ -29,7 +29,7 @@ Ref< IPartition > OctreePartitionData::createPartition() const
 
 void OctreePartitionData::serialize(ISerializer& s)
 {
-	s >> MemberStlVector< std::wstring >(L"worldTechniques", m_worldTechniques);
+	s >> MemberAlignedVector< std::wstring >(L"worldTechniques", m_worldTechniques);
 	s >> MemberRef< OctreeNodeData >(L"nodeData", m_nodeData);
 }
 

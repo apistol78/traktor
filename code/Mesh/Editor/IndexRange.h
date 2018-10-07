@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_mesh_IndexRange_H
 #define traktor_mesh_IndexRange_H
 
-#include <vector>
 #include "Core/Config.h"
+#include "Core/Containers/AlignedVector.h"
 
 namespace traktor
 {
@@ -25,7 +25,7 @@ struct IndexRange
 
 	IndexRange();
 
-	void mergeInto(std::vector< IndexRange >& ranges) const;
+	void mergeInto(AlignedVector< IndexRange >& ranges) const;
 
 	bool operator < (const IndexRange& rh) const;
 };

@@ -18,15 +18,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Triangulate", Triangulate, IModelOperatio
 
 bool Triangulate::apply(Model& model) const
 {
-	std::vector< Polygon > triangulatedPolygons;
-	std::vector< Triangulator::Triangle > triangles;
+	AlignedVector< Polygon > triangulatedPolygons;
+	AlignedVector< Triangulator::Triangle > triangles;
 
-	const std::vector< Polygon >& polygons = model.getPolygons();
+	const AlignedVector< Polygon >& polygons = model.getPolygons();
 	triangulatedPolygons.reserve(polygons.size());
 
-	for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{
-		const std::vector< uint32_t >& vertices = i->getVertices();
+		const AlignedVector< uint32_t >& vertices = i->getVertices();
 		if (vertices.size() > 3)
 		{
 			Winding3 polygonWinding;
@@ -54,7 +54,7 @@ bool Triangulate::apply(Model& model) const
 				triangles
 			);
 
-			for (std::vector< Triangulator::Triangle >::const_iterator j = triangles.begin(); j != triangles.end(); ++j)
+			for (AlignedVector< Triangulator::Triangle >::const_iterator j = triangles.begin(); j != triangles.end(); ++j)
 			{
 				Polygon triangulatedPolygon(
 					i->getMaterial(),

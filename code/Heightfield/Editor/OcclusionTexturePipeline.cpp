@@ -429,16 +429,16 @@ bool OcclusionTexturePipeline::buildOutput(
 
 				model::Triangulate().apply(*model);
 
-				const std::vector< model::Polygon >& polygons = model->getPolygons();
-				const std::vector< model::Vertex >& vertices = model->getVertices();
+				const AlignedVector< model::Polygon >& polygons = model->getPolygons();
+				const AlignedVector< model::Vertex >& vertices = model->getVertices();
 
 				AlignedVector< Winding3 > windings(polygons.size());
 				for (uint32_t j = 0; j < polygons.size(); ++j)
 				{
 					Winding3& w = windings[j];
 
-					const std::vector< uint32_t >& vertexIndices = polygons[j].getVertices();
-					for (std::vector< uint32_t >::const_iterator k = vertexIndices.begin(); k != vertexIndices.end(); ++k)
+					const AlignedVector< uint32_t >& vertexIndices = polygons[j].getVertices();
+					for (AlignedVector< uint32_t >::const_iterator k = vertexIndices.begin(); k != vertexIndices.end(); ++k)
 					{
 						const model::Vertex& polyVertex = vertices[*k];
 						Vector4 polyVertexPosition = model->getPosition(polyVertex.getPosition()).xyz1();

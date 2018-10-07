@@ -219,9 +219,9 @@ std::wstring getTextureName(const FbxTexture* texture)
 		return std::wstring(mbstows(texture->GetName()));
 }
 
-uint32_t uvChannel(std::vector< std::string >& inoutChannels, const std::string uvSet)
+uint32_t uvChannel(AlignedVector< std::string >& inoutChannels, const std::string uvSet)
 {
-	std::vector< std::string >::iterator i = std::find(inoutChannels.begin(), inoutChannels.end(), uvSet);
+	AlignedVector< std::string >::iterator i = std::find(inoutChannels.begin(), inoutChannels.end(), uvSet);
 	if (i != inoutChannels.end())
 		return uint32_t(std::distance(inoutChannels.begin(), i));
 
@@ -231,7 +231,7 @@ uint32_t uvChannel(std::vector< std::string >& inoutChannels, const std::string 
 	return channel;
 }
 
-bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matrix44& axisTransform, std::vector< std::string >& outChannels, uint32_t importFlags)
+bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matrix44& axisTransform, AlignedVector< std::string >& outChannels, uint32_t importFlags)
 {
 	int32_t vertexId = 0;
 
@@ -435,7 +435,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 	}
 
 	typedef std::map< uint32_t, float > bone_influences_t;
-	std::vector< bone_influences_t > vertexJoints;
+	AlignedVector< bone_influences_t > vertexJoints;
 
 	if (importFlags & ModelFormat::IfMeshBlendWeights)
 	{
@@ -738,7 +738,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 	return true;
 }
 
-bool convertMeshes(Model& outModel, FbxScene* scene, FbxNode* node, const Matrix44& axisTransform, std::vector< std::string >& outChannels, uint32_t importFlags)
+bool convertMeshes(Model& outModel, FbxScene* scene, FbxNode* node, const Matrix44& axisTransform, AlignedVector< std::string >& outChannels, uint32_t importFlags)
 {
 	if (!node)
 		return true;
@@ -928,7 +928,7 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 	}
 
 	Ref< Model > model = new Model();
-	std::vector< std::string > channels;
+	AlignedVector< std::string > channels;
 
 	FbxNode* node = s_scene->GetRootNode();
 	if (!convertMeshes(*model, s_scene, node, axisTransform, channels, importFlags))

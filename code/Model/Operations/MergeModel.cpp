@@ -47,15 +47,15 @@ bool MergeModel::apply(Model& model) const
 	std::map< uint32_t, uint32_t > materialMap;
 
 	// Merge materials.
-	const std::vector< Material >& sourceMaterials = m_sourceModel.getMaterials();
+	const AlignedVector< Material >& sourceMaterials = m_sourceModel.getMaterials();
 	for (uint32_t i = 0; i < sourceMaterials.size(); ++i)
 		materialMap[i] = model.addUniqueMaterial(sourceMaterials[i]);
 
 	// Merge geometry.
-	const std::vector< Polygon >& sourcePolygons = m_sourceModel.getPolygons();
-	const std::vector< Vertex >& sourceVertices = m_sourceModel.getVertices();
+	const AlignedVector< Polygon >& sourcePolygons = m_sourceModel.getPolygons();
+	const AlignedVector< Vertex >& sourceVertices = m_sourceModel.getVertices();
 
-	std::vector< uint32_t > vertexMap;
+	AlignedVector< uint32_t > vertexMap;
 	vertexMap.resize(sourceVertices.size(), c_InvalidIndex);
 
 	model.reservePositions(model.getPositionCount() + m_sourceModel.getPositionCount());
@@ -113,31 +113,31 @@ bool MergeModel::apply(Model& model) const
 		vertexMap[i] = model.addUniqueVertex(v);
 	}
 
-	std::vector< Polygon >& mergedPolygons = model.getPolygons();
+	AlignedVector< Polygon >& mergedPolygons = model.getPolygons();
 	mergedPolygons.reserve(mergedPolygons.size() + sourcePolygons.size());
 
-	std::vector< Polygon > outputPolygons;
+	AlignedVector< Polygon > outputPolygons;
 	outputPolygons.reserve(sourcePolygons.size());
 
-	for (uint32_t i = 0; i < sourcePolygons.size(); ++i)
+	for (size_t i = 0; i < sourcePolygons.size(); ++i)
 	{
 		const Polygon& sourcePolygon = sourcePolygons[i];
-		const std::vector< uint32_t >& sourceVertices = sourcePolygon.getVertices();
+		const AlignedVector< uint32_t >& sourceVertices = sourcePolygon.getVertices();
 
 		// Remap vertices.
-		std::vector< uint32_t > outputVertices(sourceVertices.size());
-		for (uint32_t j = 0; j < sourceVertices.size(); ++j)
+		AlignedVector< uint32_t > outputVertices(sourceVertices.size());
+		for (size_t j = 0; j < sourceVertices.size(); ++j)
 			outputVertices[j] = vertexMap[sourceVertices[j]];
 
 		// Rotate vertices; keep vertex with lowest geometrical position first.
-		uint32_t minPositionIndex = ~0UL;
+		uint32_t minPositionIndex = ~0U;
 		Vector4 minPosition = Vector4(
 			std::numeric_limits< float >::max(),
 			std::numeric_limits< float >::max(),
 			std::numeric_limits< float >::max()
 		);
 
-		for (uint32_t j = 0; j < outputVertices.size(); ++j)
+		for (size_t j = 0; j < outputVertices.size(); ++j)
 		{
 			const Vector4& position = model.getVertexPosition(outputVertices[j]);
 
@@ -156,7 +156,7 @@ bool MergeModel::apply(Model& model) const
 			}
 		}
 
-		std::rotate(outputVertices.begin(), outputVertices.begin() + minPositionIndex, outputVertices.end());
+		std::rotate(outputVertices.begin(), outputVertices.begin() + (size_t)minPositionIndex, outputVertices.end());
 
 		// Create polygon.
 		Polygon outputPolygon;
@@ -173,7 +173,7 @@ bool MergeModel::apply(Model& model) const
 		// Check if polygon is duplicated or canceling through opposite winding.
 		bool duplicate = false;
 
-		for (uint32_t j = 0; j < mergedPolygons.size(); ++j)
+		for (size_t j = 0; j < mergedPolygons.size(); ++j)
 		{
 			const Polygon& mergedPolygon = mergedPolygons[j];
 

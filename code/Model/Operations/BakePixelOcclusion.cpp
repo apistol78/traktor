@@ -71,8 +71,8 @@ BakePixelOcclusion::BakePixelOcclusion(
 
 bool BakePixelOcclusion::apply(Model& model) const
 {
-	const std::vector< Polygon >& polygons = model.getPolygons();
-	std::vector< Vertex > vertices = model.getVertices();
+	const AlignedVector< Polygon >& polygons = model.getPolygons();
+	AlignedVector< Vertex > vertices = model.getVertices();
 
 	AlignedVector< Vector4 > colors = model.getColors();
 	model.clear(Model::CfColors);
@@ -81,8 +81,8 @@ bool BakePixelOcclusion::apply(Model& model) const
 	for (uint32_t i = 0; i < polygons.size(); ++i)
 	{
 		Winding3& w = windings[i];
-		const std::vector< uint32_t >& vertexIndices = polygons[i].getVertices();
-		for (std::vector< uint32_t >::const_iterator j = vertexIndices.begin(); j != vertexIndices.end(); ++j)
+		const AlignedVector< uint32_t >& vertexIndices = polygons[i].getVertices();
+		for (AlignedVector< uint32_t >::const_iterator j = vertexIndices.begin(); j != vertexIndices.end(); ++j)
 		{
 			const Vertex& polyVertex = model.getVertex(*j);
 			const Vector4& polyVertexPosition = model.getPosition(polyVertex.getPosition());

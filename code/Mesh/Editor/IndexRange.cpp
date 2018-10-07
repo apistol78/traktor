@@ -21,7 +21,7 @@ IndexRange::IndexRange()
 {
 }
 
-void IndexRange::mergeInto(std::vector< IndexRange >& ranges) const
+void IndexRange::mergeInto(AlignedVector< IndexRange >& ranges) const
 {
 	ranges.push_back(*this);
 
@@ -29,7 +29,7 @@ void IndexRange::mergeInto(std::vector< IndexRange >& ranges) const
 	std::sort(ranges.begin(), ranges.end());
 
 	// Merge touching ranges.
-	for (uint32_t i = 0; i < ranges.size() - 1; )
+	for (size_t i = 0; i < ranges.size() - 1; )
 	{
 		if (
 			ranges[i].offsetLast == ranges[i + 1].offsetFirst &&

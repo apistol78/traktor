@@ -7,7 +7,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_Triangulator_H
 #define traktor_Triangulator_H
 
-#include <vector>
 #include "Core/Config.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
@@ -43,14 +42,14 @@ public:
 
 	void freeze(
 		const AlignedVector< Vector2 >& points,
-		std::vector< Triangle >& outTriangles,
+		AlignedVector< Triangle >& outTriangles,
 		uint32_t flags = TfSorted
 	);
 
 	void freeze(
 		const AlignedVector< Vector4 >& points,
 		const Vector4& normal,
-		std::vector< Triangle >& outTriangles,
+		AlignedVector< Triangle >& outTriangles,
 		uint32_t flags = TfSorted
 	);
 };

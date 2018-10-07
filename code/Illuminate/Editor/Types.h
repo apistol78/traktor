@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_illuminate_Types_H
 
 #include "Core/Ref.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
@@ -29,7 +30,7 @@ struct Surface
 	Color4f color;
 	Scalar emissive;
 	Scalar translucency;
-	std::vector< uint32_t > shared[16];
+	AlignedVector< uint32_t > shared[16];
 
 	Surface()
 	:	count(0)

@@ -525,6 +525,14 @@ public:
 		insert(begin(), src.begin(), src.end());
 	}
 
+	template < typename IteratorType >
+	AlignedVector(const IteratorType& from, const IteratorType& to)
+	{
+		reserve(std::distance(from, to));
+		for (IteratorType i = from; i != to; ++i)
+			push_back(*i);
+	}
+
 #if defined(T_CXX11)
 	AlignedVector(AlignedVector< ItemType >&& src)
 	:	m_data(src.m_data)
@@ -1007,6 +1015,25 @@ public:
 		return *this;
 	}
 #endif
+
+	bool operator == (const AlignedVector< ItemType >& rh) const
+	{
+		if (m_size != rh.size())
+			return false;
+
+		for (size_t i = 0; i < m_size; ++i)
+		{
+			if ((*this)[i] != rh[i])
+				return false;
+		}
+
+		return true;
+	}
+
+	bool operator != (const AlignedVector< ItemType >& rh) const
+	{
+		return !(*this == rh);
+	}
 
 private:
 	ItemType* m_data;

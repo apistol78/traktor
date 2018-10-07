@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_model_Polygon_H
 #define traktor_model_Polygon_H
 
-#include <vector>
 #include "Core/Config.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Model/Types.h"
 
 // import/export mechanism.
@@ -62,11 +62,11 @@ public:
 
 	uint32_t getVertexCount() const;
 
-	void setVertices(const std::vector< uint32_t >& vertices);
+	void setVertices(const AlignedVector< uint32_t >& vertices);
 
-	const std::vector< uint32_t >& getVertices() const;
+	const AlignedVector< uint32_t >& getVertices() const;
 
-	std::vector< uint32_t >& getVertices();
+	AlignedVector< uint32_t >& getVertices();
 
 	bool operator == (const Polygon& r) const;
 
@@ -74,7 +74,7 @@ private:
 	uint32_t m_material;
 	uint32_t m_normal;
 	uint32_t m_smoothGroup;
-	std::vector< uint32_t > m_vertices;
+	AlignedVector< uint32_t > m_vertices;
 };
 
 	}

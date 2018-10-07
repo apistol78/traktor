@@ -23,7 +23,7 @@ namespace traktor
 		{
 
 template < typename ValueType >
-inline void parseStringToArray(const std::wstring& text, std::vector< ValueType >& outValueArray)
+inline void parseStringToArray(const std::wstring& text, AlignedVector< ValueType >& outValueArray)
 {
 	outValueArray.reserve(64);
 	Split< std::wstring, ValueType >::any(text, L" \n", outValueArray);
@@ -126,7 +126,7 @@ public:
 
 private:
 	std::wstring m_id;
-	std::vector< float > m_data;
+	AlignedVector< float > m_data;
 	int m_stride;
 	int m_count;
 };
@@ -151,7 +151,7 @@ struct NameData
 			return false;
 	}
 	std::wstring id;
-	std::vector< std::wstring > data;
+	AlignedVector< std::wstring > data;
 };
 
 struct Input
@@ -298,7 +298,7 @@ public:
 		return false;
 	}
 
-	void setSourceData(const std::vector< FloatData >& sourceData, const std::pair< std::wstring, std::wstring >& vertexTranslation)
+	void setSourceData(const AlignedVector< FloatData >& sourceData, const std::pair< std::wstring, std::wstring >& vertexTranslation)
 	{
 		m_vertexDataInfo = findSourceData(L"VERTEX", 0, sourceData, vertexTranslation);
 		m_normalDataInfo = findSourceData(L"NORMAL", 0, sourceData, vertexTranslation);
@@ -338,11 +338,11 @@ public:
 		if (polyList->getSingle(L"vcount"))
 			parseStringToArray(polyList->getSingle(L"vcount")->getValue(), m_vertexCounts);
 		else if (polyIndexLists.size() == 1)
-			m_vertexCounts = std::vector< uint32_t >(polyCount, 3);
+			m_vertexCounts = AlignedVector< uint32_t >(polyCount, 3);
 		else
 		{
 			polyCount = polyIndexLists.size(); // to make sure we don't crash if there are polygons with holes.
-			m_vertexCounts = std::vector< uint32_t >(polyCount);
+			m_vertexCounts = AlignedVector< uint32_t >(polyCount);
 			uint32_t oldn = 0;
 			for (size_t i = 0; i < polyCount; i++)
 			{
@@ -362,7 +362,7 @@ private:
 	source_data_info_t findSourceData(
 		const std::wstring& semantic, 
 		int set,
-		const std::vector< FloatData >& sourceData,
+		const AlignedVector< FloatData >& sourceData,
 		const std::pair< std::wstring, std::wstring >& vertexTranslation
 		) const
 	{
@@ -418,9 +418,9 @@ private:
 	}
 
 private:
-	std::vector< uint32_t > m_vertexCounts;
-	std::vector< uint32_t > m_indicies; 
-	std::vector< Input > m_inputs;
+	AlignedVector< uint32_t > m_vertexCounts;
+	AlignedVector< uint32_t > m_indicies; 
+	AlignedVector< Input > m_inputs;
 	std::wstring m_material;
 	source_data_info_t m_vertexDataInfo;		
 	source_data_info_t m_normalDataInfo;		
@@ -517,8 +517,8 @@ public:
 		}
 	}
 
-	std::vector< uint32_t > m_vertexCounts;
-	std::vector< uint32_t > m_indicies; 
+	AlignedVector< uint32_t > m_vertexCounts;
+	AlignedVector< uint32_t > m_indicies; 
 	Input m_weightInput;
 	Input m_jointInput;
 };
@@ -558,7 +558,7 @@ public:
 		m_bindShapeMatrix = Matrix44::identity();
 		if (Ref< xml::Element > bindShapeMatrix = skin->getSingle(L"bind_shape_matrix"))
 		{
-			std::vector< float > floatArray;
+			AlignedVector< float > floatArray;
 			parseStringToArray(bindShapeMatrix->getValue(), floatArray);
 			if (floatArray.size() == 16)
 				m_bindShapeMatrix = Matrix44(
@@ -638,7 +638,7 @@ private:
 	FloatData m_weights;
 	FloatData m_invBindMatricies;
 	NameData m_jointNames;
-	std::vector< Input > m_jointInputs;
+	AlignedVector< Input > m_jointInputs;
 	VertexWeightData m_vertexWeightData;
 	JointData m_jointData;
 	Matrix44 m_bindShapeMatrix;
@@ -798,10 +798,10 @@ public:
 	}
 
 private:
-	std::vector< FloatData > m_vertexAttributeData;
-	std::vector< PolygonData > m_polygonData;
+	AlignedVector< FloatData > m_vertexAttributeData;
+	AlignedVector< PolygonData > m_polygonData;
 	std::pair< std::wstring, std::wstring > m_vertexSourceTranslation;
-	std::vector< uint32_t > m_positionIndicies; 
+	AlignedVector< uint32_t > m_positionIndicies; 
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ColladaMeshData", ColladaMeshData, Object)
@@ -822,7 +822,7 @@ void createMesh(
 		Matrix44 transform;
 		if (Ref< xml::Element > scaleE = instanceControllerNodes[i]->getSingle(L"scale"))
 		{
-			std::vector< float > scaleArray;
+			AlignedVector< float > scaleArray;
 			parseStringToArray(scaleE->getValue(), scaleArray);
 			transform = scale(scaleArray[0],scaleArray[1], scaleArray[2]);
 		}
@@ -901,7 +901,7 @@ void createMesh(
 		Matrix44 transform;
 		if (Ref< xml::Element > scaleE = instanceGeometryNodes[i]->getSingle(L"scale"))
 		{
-			std::vector< float > scaleArray;
+			AlignedVector< float > scaleArray;
 			parseStringToArray(scaleE->getValue(), scaleArray);
 			transform = scale(scaleArray[0],scaleArray[1], scaleArray[2]);
 		}
@@ -951,7 +951,7 @@ Ref< Model > ModelFormatCollada::read(IStream* stream, uint32_t importFlags) con
 		return 0;
 
 	// Find references to materials and geometries.
-	std::vector< material_ref_t > materialRefs;
+	AlignedVector< material_ref_t > materialRefs;
 	std::map< std::wstring, uint32_t> materialLookUp;
 	RefArray< xml::Element > instanceGeometries;
 	RefArray< xml::Element > instanceControllers;

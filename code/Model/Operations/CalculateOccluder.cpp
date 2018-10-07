@@ -131,10 +131,8 @@ bool CalculateOccluder::apply(Model& model) const
 		windings.push_back(winding);
 	}
 
-
 	Model strippedModel;
 	Model voxelModel;
-
 
 	Vector4 diag = boundingBox.getExtent();
 	Vector4 diagL = diag * Scalar(4.0f);
@@ -166,7 +164,6 @@ bool CalculateOccluder::apply(Model& model) const
 
 	AlignedVector< Winding3 > tunnelWindings;
 	AlignedVector< Winding3 > voxelWindings;
-
 
 	for (int32_t iy = 0; iy < nvy; ++iy)
 	{
@@ -261,8 +258,6 @@ bool CalculateOccluder::apply(Model& model) const
 			}
 		}
 	}
-
-
 
 	for (int32_t ix = 0; ix < nvx; ++ix)
 	{

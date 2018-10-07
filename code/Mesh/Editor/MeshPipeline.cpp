@@ -316,14 +316,14 @@ bool MeshPipeline::buildOutput(
 			model::CullDistantFaces(viewerRegion).apply(*model);
 		}
 
-		const std::vector< model::Material >& modelMaterials = model->getMaterials();
+		const AlignedVector< model::Material >& modelMaterials = model->getMaterials();
 		if (model->getMaterials().empty())
 		{
 			log::error << L"Mesh pipeline failed; no materials in source model(s)" << Endl;
 			return false;
 		}
 
-		for (std::vector< model::Material >::const_iterator j = modelMaterials.begin(); j != modelMaterials.end(); ++j)
+		for (AlignedVector< model::Material >::const_iterator j = modelMaterials.begin(); j != modelMaterials.end(); ++j)
 			materials[j->getName()] = *j;
 
 		boundingBox.contain(model->getBoundingBox());

@@ -17,15 +17,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.CleanDegenerate", CleanDegenerate, IModel
 
 bool CleanDegenerate::apply(Model& model) const
 {
-	std::vector< Polygon >& polygons = model.getPolygons();
-	for (uint32_t i = 0; i < polygons.size(); )
+	AlignedVector< Polygon >& polygons = model.getPolygons();
+	for (size_t i = 0; i < polygons.size(); )
 	{
 		Polygon& polygon = polygons[i];
 
-		std::vector< uint32_t >& vertices = polygon.getVertices();
+		AlignedVector< uint32_t >& vertices = polygon.getVertices();
 		if (vertices.size() > 1)
 		{
-			for (uint32_t j = 0; j < vertices.size(); )
+			for (size_t j = 0; j < vertices.size(); )
 			{
 				uint32_t p0 = model.getVertex(vertices[j]).getPosition();
 				uint32_t p1 = model.getVertex(vertices[(j + 1) % vertices.size()]).getPosition();

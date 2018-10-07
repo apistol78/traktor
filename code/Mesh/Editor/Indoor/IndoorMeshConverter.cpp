@@ -63,12 +63,12 @@ struct Hull
 {
 	typedef std::pair< size_t, size_t > edge_t;
 
-	typedef std::vector< size_t > polygon_t;
-	typedef std::vector< edge_t > portal_t;
+	typedef AlignedVector< size_t > polygon_t;
+	typedef AlignedVector< edge_t > portal_t;
 
 	AlignedVector< Vector4 > points;
-	std::vector< polygon_t > polygons;
-	std::vector< portal_t > portals;
+	AlignedVector< polygon_t > polygons;
+	AlignedVector< portal_t > portals;
 	BspTree bsp;
 };
 
@@ -79,7 +79,7 @@ void createHulls(const model::Model& model, std::map< std::wstring, Hull >& outH
 	/*-----------------------------------------------------------------------*/
 	log::info << L"Collecting hulls" << Endl;
 
-	for (std::vector< model::Polygon >::const_iterator i = model.getPolygons().begin(); i != model.getPolygons().end(); ++i)
+	for (AlignedVector< model::Polygon >::const_iterator i = model.getPolygons().begin(); i != model.getPolygons().end(); ++i)
 	{
 		std::wstring materialName = model.getMaterial(i->getMaterial()).getName();
 		if (!startsWith< std::wstring >(materialName, L"Hull"))
@@ -88,7 +88,7 @@ void createHulls(const model::Model& model, std::map< std::wstring, Hull >& outH
 		Hull& hull = outHulls[materialName];
 		hull.polygons.push_back(Hull::polygon_t());
 
-		for (std::vector< uint32_t >::const_iterator j = i->getVertices().begin(); j != i->getVertices().end(); ++j)
+		for (AlignedVector< uint32_t >::const_iterator j = i->getVertices().begin(); j != i->getVertices().end(); ++j)
 		{
 			const model::Vertex& vertex = model.getVertex(*j);
 			const Vector4& position = model.getPosition(vertex.getPosition());
@@ -112,14 +112,14 @@ void createHulls(const model::Model& model, std::map< std::wstring, Hull >& outH
 	for (std::map< std::wstring, Hull >::iterator i = outHulls.begin(); i != outHulls.end(); ++i)
 	{
 		std::map< unsigned, int > adjc;
-		for (std::vector< Hull::polygon_t >::const_iterator j = i->second.polygons.begin(); j != i->second.polygons.end(); ++j)
+		for (AlignedVector< Hull::polygon_t >::const_iterator j = i->second.polygons.begin(); j != i->second.polygons.end(); ++j)
 		{
 			for(size_t k = 0, m = j->size() - 1; k < j->size(); m = k++)
 				adjc[HASH((*j)[k], (*j)[m])]++;
 		}
 
 		std::list< Hull::edge_t > edges;
-		for (std::vector< Hull::polygon_t >::const_iterator j = i->second.polygons.begin(); j != i->second.polygons.end(); ++j)
+		for (AlignedVector< Hull::polygon_t >::const_iterator j = i->second.polygons.begin(); j != i->second.polygons.end(); ++j)
 		{
 			for(size_t k = 0, m = j->size() - 1; k < j->size(); m = k++)
 				if (adjc[HASH((*j)[k], (*j)[m])] == 1)
@@ -160,13 +160,13 @@ void createHulls(const model::Model& model, std::map< std::wstring, Hull >& outH
 	for (std::map< std::wstring, Hull >::iterator i = outHulls.begin(); i != outHulls.end(); ++i)
 	{
 		AlignedVector< Winding3 > bw;
-		for (std::vector< Hull::polygon_t >::const_iterator j = i->second.polygons.begin(); j != i->second.polygons.end(); ++j)
+		for (AlignedVector< Hull::polygon_t >::const_iterator j = i->second.polygons.begin(); j != i->second.polygons.end(); ++j)
 		{
 			bw.push_back(Winding3());
 			for (Hull::polygon_t::const_iterator k = j->begin(); k != j->end(); ++k)
 				bw.back().push(i->second.points[*k]);
 		}
-		for (std::vector< Hull::portal_t >::const_iterator j = i->second.portals.begin(); j != i->second.portals.end(); ++j)
+		for (AlignedVector< Hull::portal_t >::const_iterator j = i->second.portals.begin(); j != i->second.portals.end(); ++j)
 		{
 			bw.push_back(Winding3());
 			for (Hull::portal_t::const_iterator k = j->begin(); k != j->end(); ++k)
@@ -198,14 +198,14 @@ struct Vertex
 struct Polygon
 {
 	int material;
-	std::vector< size_t > indices;
+	AlignedVector< size_t > indices;
 };
 
 struct Sector
 {
 	std::wstring name;
 	AlignedVector< Vertex > vertices;
-	std::vector< Polygon > polygons;
+	AlignedVector< Polygon > polygons;
 	Aabb3 boundingBox;
 };
 
@@ -276,12 +276,12 @@ void createSectors(
 )
 {
 	AlignedVector< Vertex > vertices;
-	std::vector< Polygon > polygons;
+	AlignedVector< Polygon > polygons;
 
 	/*-----------------------------------------------------------------------*/
 	log::info << L"Collecting level polygons" << Endl;
 
-	for (std::vector< model::Polygon >::const_iterator i = model.getPolygons().begin(); i != model.getPolygons().end(); ++i)
+	for (AlignedVector< model::Polygon >::const_iterator i = model.getPolygons().begin(); i != model.getPolygons().end(); ++i)
 	{
 		std::wstring materialName = model.getMaterial(i->getMaterial()).getName();
 		if (startsWith< std::wstring >(materialName, L"Hull"))
@@ -290,7 +290,7 @@ void createSectors(
 		polygons.push_back(Polygon());
 		polygons.back().material = i->getMaterial();
 
-		for (std::vector< uint32_t >::const_iterator j = i->getVertices().begin(); j != i->getVertices().end(); ++j)
+		for (AlignedVector< uint32_t >::const_iterator j = i->getVertices().begin(); j != i->getVertices().end(); ++j)
 		{
 			const model::Vertex& mv = model.getVertex(*j);
 
@@ -312,10 +312,10 @@ void createSectors(
 	{
 		outSectors.push_back(Sector());
 		outSectors.back().name = i->first;
-		for (std::vector< Polygon >::const_iterator j = polygons.begin(); j != polygons.end(); ++j)
+		for (AlignedVector< Polygon >::const_iterator j = polygons.begin(); j != polygons.end(); ++j)
 		{
 			BspPolygon input;
-			for (std::vector< size_t >::const_iterator k = j->indices.begin(); k != j->indices.end(); ++k)
+			for (AlignedVector< size_t >::const_iterator k = j->indices.begin(); k != j->indices.end(); ++k)
 				input.vertices.push_back(vertices[*k]);
 
 			AlignedVector< BspPolygon > clipped;
@@ -345,7 +345,7 @@ void createSectors(
 	log::info << IncreaseIndent;
 
 	typedef std::pair< size_t, size_t > edge_t;
-	typedef std::vector< size_t > portal_t;
+	typedef AlignedVector< size_t > portal_t;
 
 	AlignedVector< Vector4 > points;
 	std::list< std::pair< size_t, portal_t > > portals;
@@ -353,7 +353,7 @@ void createSectors(
 	for (AlignedVector< Sector >::iterator i = outSectors.begin(); i != outSectors.end(); ++i)
 	{
 		const Hull& hull = hulls.find(i->name)->second;
-		for (std::vector< Hull::portal_t >::const_iterator j = hull.portals.begin(); j != hull.portals.end(); ++j)
+		for (AlignedVector< Hull::portal_t >::const_iterator j = hull.portals.begin(); j != hull.portals.end(); ++j)
 		{
 			Winding3 wp;
 			for (Hull::portal_t::const_iterator k = j->begin(); k != j->end(); ++k)
@@ -365,9 +365,9 @@ void createSectors(
 
 			// Collect points from level which is coplanar with hull portal.
 			AlignedVector< Vector4 > coplanarPoints;
-			for (std::vector< Polygon >::const_iterator k = i->polygons.begin(); k != i->polygons.end(); ++k)
+			for (AlignedVector< Polygon >::const_iterator k = i->polygons.begin(); k != i->polygons.end(); ++k)
 			{
-				for (std::vector< size_t >::const_iterator it = k->indices.begin(); it != k->indices.end(); ++it)
+				for (AlignedVector< size_t >::const_iterator it = k->indices.begin(); it != k->indices.end(); ++it)
 				{
 					const Vector4& p = i->vertices[*it].position;
 					if (abs(portalPlane.distance(p)) > FUZZY_EPSILON)
@@ -472,24 +472,24 @@ void createSectors(
 
 	for (AlignedVector< Sector >::iterator i = outSectors.begin(); i != outSectors.end(); ++i)
 	{
-		std::vector< Polygon > triangles;
-		for (std::vector< Polygon >::const_iterator j = i->polygons.begin(); j != i->polygons.end(); ++j)
+		AlignedVector< Polygon > triangles;
+		for (AlignedVector< Polygon >::const_iterator j = i->polygons.begin(); j != i->polygons.end(); ++j)
 		{
 			Winding3 winding;
-			for (std::vector< size_t >::const_iterator k = j->indices.begin(); k != j->indices.end(); ++k)
+			for (AlignedVector< size_t >::const_iterator k = j->indices.begin(); k != j->indices.end(); ++k)
 				winding.push(i->vertices[*k].position);
 
 			Plane windingPlane;
 			winding.getPlane(windingPlane);
 
-			std::vector< Triangulator::Triangle > triangulation;
+			AlignedVector< Triangulator::Triangle > triangulation;
 			Triangulator().freeze(
 				winding.getPoints(),
 				windingPlane.normal(),
 				triangulation
 			);
 
-			for (std::vector< Triangulator::Triangle >::const_iterator k = triangulation.begin(); k != triangulation.end(); ++k)
+			for (AlignedVector< Triangulator::Triangle >::const_iterator k = triangulation.begin(); k != triangulation.end(); ++k)
 			{
 				triangles.push_back(Polygon());
 				triangles.back().material = j->material;
@@ -624,7 +624,7 @@ bool IndoorMeshConverter::convert(
 			size_t maxIndex = 0;
 			size_t indexCount = 0;
 
-			for (std::vector< Polygon >::const_iterator j = i->polygons.begin(); j != i->polygons.end(); ++j)
+			for (AlignedVector< Polygon >::const_iterator j = i->polygons.begin(); j != i->polygons.end(); ++j)
 			{
 				if (j->material != material)
 					continue;

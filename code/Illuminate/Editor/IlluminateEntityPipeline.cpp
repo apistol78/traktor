@@ -296,18 +296,18 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		model::CleanDuplicates(0.01f).apply(*mergedModel);
 
 		// Create 3d windings.
-		const std::vector< model::Polygon >& polygons = mergedModel->getPolygons();
-		std::vector< model::Vertex > vertices = mergedModel->getVertices();
+		const AlignedVector< model::Polygon >& polygons = mergedModel->getPolygons();
+		AlignedVector< model::Vertex > vertices = mergedModel->getVertices();
 		AlignedVector< Winding3 > windings(polygons.size());
 		for (uint32_t j = 0; j < polygons.size(); ++j)
 		{
 			Winding3& w = windings[j];
 				
-			const std::vector< uint32_t >& vertexIndices = polygons[j].getVertices();
+			const AlignedVector< uint32_t >& vertexIndices = polygons[j].getVertices();
 			if (vertexIndices.size() < 3 || vertexIndices.size() > 16)
 				continue;
 
-			for (std::vector< uint32_t >::const_iterator k = vertexIndices.begin(); k != vertexIndices.end(); ++k)
+			for (AlignedVector< uint32_t >::const_iterator k = vertexIndices.begin(); k != vertexIndices.end(); ++k)
 			{
 				const model::Vertex& polyVertex = mergedModel->getVertex(*k);
 				const Vector4& polyVertexPosition = mergedModel->getPosition(polyVertex.getPosition());
@@ -354,7 +354,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		{
 			Surface& s = surfaces[j];
 
-			const std::vector< uint32_t >& vertexIndices = polygons[j].getVertices();
+			const AlignedVector< uint32_t >& vertexIndices = polygons[j].getVertices();
 			if (vertexIndices.size() < 3 || vertexIndices.size() > 16)
 				continue;
 
@@ -635,8 +635,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		);
 
 		// Modify model materials to use our illumination texture.
-		std::vector< model::Material > materials = mergedModel->getMaterials();
-		for (std::vector< model::Material >::iterator j = materials.begin(); j != materials.end(); ++j)
+		AlignedVector< model::Material > materials = mergedModel->getMaterials();
+		for (AlignedVector< model::Material >::iterator j = materials.begin(); j != materials.end(); ++j)
 		{
 			j->setLightMap(model::Material::Map(L"__Illumination__", channel, false), lumelRange);
 			j->setEmissive(0.0f);

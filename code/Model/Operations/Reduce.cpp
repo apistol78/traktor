@@ -34,7 +34,7 @@ Vector4 triangleNormal(const Model& model, uint32_t triangleId)
 	if (polygon.getVertexCount() < 3)
 		return Vector4::zero();
 
-	const std::vector< uint32_t >& vertices = polygon.getVertices();
+	const AlignedVector< uint32_t >& vertices = polygon.getVertices();
 	const Vertex* v[] =
 	{
 		&model.getVertex(vertices[0]),
@@ -91,7 +91,7 @@ Vector4 triangleTipPoint(const Model& model, const ModelAdjacency& adjacency, ui
 	Vector4 normal = triangleNormal(model, triangleId);
 	Vector4 midPoint = triangleMidPoint(model, triangleId);
 
-	std::vector< uint32_t > sharedEdges;
+	AlignedVector< uint32_t > sharedEdges;
 	Vector4 tipPoint = Vector4::zero();
 	int32_t count = 0;
 
@@ -135,14 +135,14 @@ Vector4 triangleTipPoint(const Model& model, const ModelAdjacency& adjacency, ui
 	return tipPoint;
 }
 
-void triangleEdgeNeighbors(const Model& model, const ModelAdjacency& adjacency, uint32_t triangleId, std::vector< uint32_t >& outNeighborTriangleIds)
+void triangleEdgeNeighbors(const Model& model, const ModelAdjacency& adjacency, uint32_t triangleId, AlignedVector< uint32_t >& outNeighborTriangleIds)
 {
 	const Polygon& polygon = model.getPolygon(triangleId);
 	if (polygon.getVertexCount() < 3)
 		return;
 
 	// Get edge neighbors.
-	std::vector< uint32_t > sharedEdges;
+	AlignedVector< uint32_t > sharedEdges;
 	for (uint32_t j = 0; j < 3; ++j)
 	{
 		adjacency.getSharedEdges(triangleId, j, sharedEdges);
@@ -154,7 +154,7 @@ void triangleEdgeNeighbors(const Model& model, const ModelAdjacency& adjacency, 
 	}
 }
 
-void triangleSingleVertexNeighbors(const Model& model, uint32_t triangleId, std::vector< std::pair< uint32_t, uint32_t > >& outNeighborTriangleIds)
+void triangleSingleVertexNeighbors(const Model& model, uint32_t triangleId, AlignedVector< std::pair< uint32_t, uint32_t > >& outNeighborTriangleIds)
 {
 	const Polygon& polygon = model.getPolygon(triangleId);
 	if (polygon.getVertexCount() < 3)
@@ -170,7 +170,7 @@ void triangleSingleVertexNeighbors(const Model& model, uint32_t triangleId, std:
 		if (i == triangleId)
 			continue;
 
-		const std::vector< uint32_t >& vertices = model.getPolygon(i).getVertices();
+		const AlignedVector< uint32_t >& vertices = model.getPolygon(i).getVertices();
 		if (vertices.size() != 3)
 			continue;
 
@@ -217,7 +217,7 @@ float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, u
 	);
 
 	// Accumulate volume errors of edge sharing triangles.
-	std::vector< uint32_t > sharedEdges;
+	AlignedVector< uint32_t > sharedEdges;
 	for (uint32_t j = 0; j < 3; ++j)
 	{
 		adjacency.getSharedEdges(triangleId, j, sharedEdges);
@@ -241,14 +241,14 @@ float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, u
 	}
 
 	// Accumulate volume errors of single vertex sharing triangles.
-	std::vector< std::pair< uint32_t, uint32_t > > neighborTriangleIds;
+	AlignedVector< std::pair< uint32_t, uint32_t > > neighborTriangleIds;
 	triangleSingleVertexNeighbors(model, triangleId, neighborTriangleIds);
 
 	// Triangle with less than 3 single vertex sharing triangles shouldn't be discarded; thus return max error.
 	if (neighborTriangleIds.size() < 3)
 		return std::numeric_limits< float >::max();
 
-	for (std::vector< std::pair< uint32_t, uint32_t > >::const_iterator i = neighborTriangleIds.begin(); i != neighborTriangleIds.end(); ++i)
+	for (AlignedVector< std::pair< uint32_t, uint32_t > >::const_iterator i = neighborTriangleIds.begin(); i != neighborTriangleIds.end(); ++i)
 	{
 		const Polygon& sharedTriangle = model.getPolygon(i->first);
 		error += tetrahedronVolume(
@@ -273,16 +273,16 @@ Reduce::Reduce(float target)
 
 bool Reduce::apply(Model& model) const
 {
-	std::vector< uint32_t > sharedEdges;
+	AlignedVector< uint32_t > sharedEdges;
 
 	// Model must be triangulated.
 	Triangulate().apply(model);
 
 	ModelAdjacency adjacency(&model, ModelAdjacency::MdByPosition);
-	std::vector< Polygon >& polygons = model.getPolygons();
+	AlignedVector< Polygon >& polygons = model.getPolygons();
 
 	// Calculate triangle errors.
-	std::vector< float > errors(polygons.size());
+	AlignedVector< float > errors(polygons.size());
 	for (uint32_t i = 0; i < polygons.size(); ++i)
 		errors[i] = triangleVolumeError(model, adjacency, i);
 
@@ -317,7 +317,7 @@ bool Reduce::apply(Model& model) const
 		Vector2 joinTexCoord = triangleMidTexCoord(model, minErrorTriangleId);
 
 		// All triangles which share a single vertex with the triangle is updated.
-		std::vector< std::pair< uint32_t, uint32_t > > singleNeighborTriangleIds;
+		AlignedVector< std::pair< uint32_t, uint32_t > > singleNeighborTriangleIds;
 		triangleSingleVertexNeighbors(model, minErrorTriangleId, singleNeighborTriangleIds);
 
 		// Discard first-order adjacent triangles which share edges with triangle.
@@ -342,7 +342,7 @@ bool Reduce::apply(Model& model) const
 		--currentPolygonCount;
 
 		// Update neighbor triangles.
-		for (std::vector< std::pair< uint32_t, uint32_t > >::iterator i = singleNeighborTriangleIds.begin(); i != singleNeighborTriangleIds.end(); ++i)
+		for (AlignedVector< std::pair< uint32_t, uint32_t > >::iterator i = singleNeighborTriangleIds.begin(); i != singleNeighborTriangleIds.end(); ++i)
 		{
 			Vertex vertex = model.getVertex(i->second);
 			vertex.setPosition(model.addUniquePosition(joinPoint));
@@ -353,14 +353,14 @@ bool Reduce::apply(Model& model) const
 
 			errors[i->first] = triangleVolumeError(model, adjacency, i->first);
 
-			std::vector< uint32_t > edgeNeighborTriangleIds;
+			AlignedVector< uint32_t > edgeNeighborTriangleIds;
 			triangleEdgeNeighbors(model, adjacency, i->first, edgeNeighborTriangleIds);
-			for (std::vector< uint32_t >::iterator j = edgeNeighborTriangleIds.begin(); j != edgeNeighborTriangleIds.end(); ++j)
+			for (AlignedVector< uint32_t >::iterator j = edgeNeighborTriangleIds.begin(); j != edgeNeighborTriangleIds.end(); ++j)
 				errors[*j] = triangleVolumeError(model, adjacency, *j);
 
-			std::vector< std::pair< uint32_t, uint32_t > > singleNeighborTriangleIds;
+			AlignedVector< std::pair< uint32_t, uint32_t > > singleNeighborTriangleIds;
 			triangleSingleVertexNeighbors(model, i->first, singleNeighborTriangleIds);
-			for (std::vector< std::pair< uint32_t, uint32_t > >::iterator j = singleNeighborTriangleIds.begin(); j != singleNeighborTriangleIds.end(); ++j)
+			for (AlignedVector< std::pair< uint32_t, uint32_t > >::iterator j = singleNeighborTriangleIds.begin(); j != singleNeighborTriangleIds.end(); ++j)
 				errors[j->first] = triangleVolumeError(model, adjacency, j->first);
 		}
 	}

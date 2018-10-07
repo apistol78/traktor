@@ -31,8 +31,8 @@ bool BakeVertexOcclusion::apply(Model& model) const
 {
 	RandomGeometry rnd;
 
-	const std::vector< Polygon >& polygons = model.getPolygons();
-	std::vector< Vertex > vertices = model.getVertices();
+	const AlignedVector< Polygon >& polygons = model.getPolygons();
+	AlignedVector< Vertex > vertices = model.getVertices();
 	
 	AlignedVector< Vector4 > colors = model.getColors();
 	model.clear(Model::CfColors);
@@ -41,8 +41,8 @@ bool BakeVertexOcclusion::apply(Model& model) const
 	for (uint32_t i = 0; i < polygons.size(); ++i)
 	{
 		Winding3& w = windings[i];
-		const std::vector< uint32_t >& vertexIndices = polygons[i].getVertices();
-		for (std::vector< uint32_t >::const_iterator j = vertexIndices.begin(); j != vertexIndices.end(); ++j)
+		const AlignedVector< uint32_t >& vertexIndices = polygons[i].getVertices();
+		for (AlignedVector< uint32_t >::const_iterator j = vertexIndices.begin(); j != vertexIndices.end(); ++j)
 		{
 			const Vertex& polyVertex = model.getVertex(*j);
 			const Vector4& polyVertexPosition = model.getPosition(polyVertex.getPosition());
@@ -55,7 +55,7 @@ bool BakeVertexOcclusion::apply(Model& model) const
 	sah.build(windings);
 	
 	SahTree::QueryCache cache;
-	for (std::vector< Vertex >::iterator i = vertices.begin(); i != vertices.end(); ++i)
+	for (AlignedVector< Vertex >::iterator i = vertices.begin(); i != vertices.end(); ++i)
 	{
 		const Vector4& position = model.getPosition(i->getPosition());
 		const Vector4& normal = model.getNormal(i->getNormal());

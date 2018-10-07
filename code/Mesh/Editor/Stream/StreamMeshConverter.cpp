@@ -49,7 +49,7 @@ bool StreamMeshConverter::convert(
 {
 	StreamMeshResource* streamMeshResource = checked_type_cast< StreamMeshResource*, false >(meshResource);
 
-	std::vector< uint32_t > frameOffsets;
+	AlignedVector< uint32_t > frameOffsets;
 	Aabb3 boundingBox;
 
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
@@ -90,7 +90,7 @@ bool StreamMeshConverter::convert(
 
 		// Create vertex buffer.
 		uint8_t* vertex = static_cast< uint8_t* >(mesh->getVertexBuffer()->lock());
-		for (std::vector< model::Vertex >::const_iterator i = model.getVertices().begin(); i != model.getVertices().end(); ++i)
+		for (AlignedVector< model::Vertex >::const_iterator i = model.getVertices().begin(); i != model.getVertices().end(); ++i)
 		{
 			std::memset(vertex, 0, vertexSize);
 
@@ -118,7 +118,7 @@ bool StreamMeshConverter::convert(
 		uint16_t* index = static_cast< unsigned short* >(mesh->getIndexBuffer()->lock());
 		uint16_t* indexFirst = index;
 
-		for (std::vector< model::Material >::const_iterator i = model.getMaterials().begin(); i != model.getMaterials().end(); ++i)
+		for (AlignedVector< model::Material >::const_iterator i = model.getMaterials().begin(); i != model.getMaterials().end(); ++i)
 		{
 			const model::Material& material = *i;
 
@@ -132,7 +132,7 @@ bool StreamMeshConverter::convert(
 			int minIndex =  std::numeric_limits< int >::max();
 			int maxIndex = -std::numeric_limits< int >::max();
 
-			for (std::vector< model::Polygon >::const_iterator j = model.getPolygons().begin(); j != model.getPolygons().end(); ++j)
+			for (AlignedVector< model::Polygon >::const_iterator j = model.getPolygons().begin(); j != model.getPolygons().end(); ++j)
 			{
 				const model::Polygon& polygon = *j;
 				T_ASSERT (polygon.getVertices().size() == 3);

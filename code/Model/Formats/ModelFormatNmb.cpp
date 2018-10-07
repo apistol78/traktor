@@ -139,7 +139,7 @@ uint8_t* parseA2V(Model& model, uint8_t* ptr, ModelBase& base)
 
 	log::info << L"Attribute \"" << mbstows(name) << L"\"; " << count << L" value(s)" << Endl;
 
-	std::vector< Vertex > vertices = model.getVertices();
+	AlignedVector< Vertex > vertices = model.getVertices();
 	if (base.vertexBase == c_InvalidIndex)
 	{
 		base.vertexBase = uint32_t(vertices.size());

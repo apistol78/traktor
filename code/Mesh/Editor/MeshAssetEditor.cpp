@@ -361,12 +361,12 @@ void MeshAssetEditor::updateMaterialList()
 
 	if (m_model)
 	{
-		const std::vector< model::Material >& materials = m_model->getMaterials();
+		const AlignedVector< model::Material >& materials = m_model->getMaterials();
 
 		const std::map< std::wstring, Guid >& materialTemplates = m_asset->getMaterialTemplates();
 		const std::map< std::wstring, Guid >& materialShaders = m_asset->getMaterialShaders();
 
-		for (std::vector< model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
+		for (AlignedVector< model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 		{
 			Ref< ui::GridRow > shaderItem = new ui::GridRow();
 			shaderItem->add(new ui::GridItem(i->getName()));
@@ -414,7 +414,7 @@ void MeshAssetEditor::updateMaterialList()
 
 		std::set< std::wstring > textureNames;
 		const std::map< std::wstring, Guid >& materialTextures = m_asset->getMaterialTextures();
-		for (std::vector< model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
+		for (AlignedVector< model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 		{
 			std::wstring modelTextures[] =
 			{
@@ -493,8 +493,8 @@ void MeshAssetEditor::createMaterialShader()
 	std::wstring materialName = selectedItem->get(0)->getText();
 
 	// Find model material to associate shader with.
-	const std::vector< model::Material >& materials = m_model->getMaterials();
-	std::vector< model::Material >::const_iterator it = std::find_if(materials.begin(), materials.end(), FindMaterialPred(materialName));
+	const AlignedVector< model::Material >& materials = m_model->getMaterials();
+	AlignedVector< model::Material >::const_iterator it = std::find_if(materials.begin(), materials.end(), FindMaterialPred(materialName));
 	if (it == materials.end())
 		return;
 

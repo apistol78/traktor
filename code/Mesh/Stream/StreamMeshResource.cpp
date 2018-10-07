@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Mesh/Stream/StreamMesh.h"
@@ -58,7 +59,7 @@ void StreamMeshResource::serialize(ISerializer& s)
 {
 	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
-	s >> MemberStlVector< uint32_t >(L"frameOffsets", m_frameOffsets);
+	s >> MemberAlignedVector< uint32_t >(L"frameOffsets", m_frameOffsets);
 	s >> Member< Vector4 >(L"boundingBoxMin", m_boundingBox.mn);
 	s >> Member< Vector4 >(L"boundingBoxMax", m_boundingBox.mx);
 	s >> MemberStlMap<

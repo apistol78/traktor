@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_model_Vertex_H
 #define traktor_model_Vertex_H
 
-#include <vector>
 #include "Core/Config.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/StaticVector.h"
 #include "Model/Types.h"
 
@@ -82,7 +82,7 @@ private:
 	uint32_t m_tangent;
 	uint32_t m_binormal;
 	StaticVector< uint32_t, 4 > m_texCoords;
-	std::vector< float > m_jointInfluences;
+	AlignedVector< float > m_jointInfluences;
 };
 
 	}

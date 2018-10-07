@@ -63,9 +63,9 @@ public:
 
 	const Material& getMaterial(uint32_t index) const { return m_materials[index]; }
 
-	void setMaterials(const std::vector< Material >& materials) { m_materials = materials; }
+	void setMaterials(const AlignedVector< Material >& materials) { m_materials = materials; }
 
-	const std::vector< Material >& getMaterials() const { return m_materials; }
+	const AlignedVector< Material >& getMaterials() const { return m_materials; }
 
 	void reserveVertices(uint32_t vertexCapacity) { m_vertices.reserve(vertexCapacity); }
 
@@ -79,9 +79,9 @@ public:
 
 	uint32_t getVertexCount() const { return uint32_t(m_vertices.size()); }
 
-	void setVertices(const std::vector< Vertex >& vertices) { m_vertices = vertices; }
+	void setVertices(const AlignedVector< Vertex >& vertices) { m_vertices = vertices; }
 
-	const std::vector< Vertex >& getVertices() const { return m_vertices; }
+	const AlignedVector< Vertex >& getVertices() const { return m_vertices; }
 
 	void reservePolygons(uint32_t polygonCapacity) { m_polygons.reserve(polygonCapacity); }
 
@@ -95,11 +95,11 @@ public:
 
 	uint32_t getPolygonCount() const { return uint32_t(m_polygons.size()); }
 
-	void setPolygons(const std::vector< Polygon >& polygons) { m_polygons = polygons; }
+	void setPolygons(const AlignedVector< Polygon >& polygons) { m_polygons = polygons; }
 
-	const std::vector< Polygon >& getPolygons() const { return m_polygons; }
+	const AlignedVector< Polygon >& getPolygons() const { return m_polygons; }
 
-	std::vector< Polygon >& getPolygons() { return m_polygons; }
+	AlignedVector< Polygon >& getPolygons() { return m_polygons; }
 
 	void reservePositions(uint32_t positionCapacity);
 
@@ -178,15 +178,15 @@ public:
 	const Vector4& getBlendTargetPosition(uint32_t blendTargetIndex, uint32_t positionIndex) const;
 
 private:
-	std::vector< Material > m_materials;
-	std::vector< Vertex > m_vertices;
-	std::vector< Polygon > m_polygons;
+	AlignedVector< Material > m_materials;
+	AlignedVector< Vertex > m_vertices;
+	AlignedVector< Polygon > m_polygons;
 	Grid3< Vector4 > m_positions;
 	Grid3< Vector4 > m_colors; 
 	Grid3< Vector4 > m_normals;
 	Grid2< Vector2 > m_texCoords;
-	std::vector< std::wstring > m_joints;
-	std::vector< std::wstring > m_blendTargets;
+	AlignedVector< std::wstring > m_joints;
+	AlignedVector< std::wstring > m_blendTargets;
 	std::map< uint32_t, AlignedVector< Vector4 > > m_blendTargetPositions;
 };
 
