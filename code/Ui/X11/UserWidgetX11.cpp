@@ -5,8 +5,8 @@ namespace traktor
 	namespace ui
 	{
 
-UserWidgetX11::UserWidgetX11(EventSubject* owner, Display* display, int32_t screen)
-:	WidgetX11Impl< IUserWidget >(owner, display, screen)
+UserWidgetX11::UserWidgetX11(EventSubject* owner, Display* display, int32_t screen, XIM xim)
+:	WidgetX11Impl< IUserWidget >(owner, display, screen, xim)
 {
 }
 

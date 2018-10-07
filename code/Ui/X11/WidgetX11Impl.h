@@ -36,12 +36,12 @@ class WidgetX11Impl
 ,	public IFontMetric
 {
 public:
-	WidgetX11Impl(EventSubject* owner, Display* display, int32_t screen)
+	WidgetX11Impl(EventSubject* owner, Display* display, int32_t screen, XIM xim)
 	:	m_owner(owner)
 	,	m_display(display)
 	,	m_screen(screen)
 	,	m_window(0)
-	,	m_xim(0)
+	,	m_xim(xim)
 	,	m_xic(0)
 	,	m_surface(nullptr)
 	,	m_context(nullptr)
@@ -86,12 +86,6 @@ public:
 		{
 			XDestroyIC(m_xic);
 			m_xic = 0;
-		}
-
-		if (m_xim != 0)
-		{
-			XCloseIM(m_xim);
-			m_xim = 0;
 		}
 
 		if (m_display != nullptr)
@@ -513,17 +507,6 @@ protected:
 	    	XMapWindow(m_display, window);
 
 		XFlush(m_display);
-
-		// Open input method.
-		XSetLocaleModifiers("");
-		if ((m_xim = XOpenIM(m_display, nullptr, nullptr, nullptr)) == 0)
-		{
-			XSetLocaleModifiers("@im=");
-			if ((m_xim = XOpenIM(m_display, nullptr, nullptr, nullptr)) == 0)
-			{
-				return false;
-			}
-		}
 
 		// Create input context.
 		if ((m_xic = XCreateIC(

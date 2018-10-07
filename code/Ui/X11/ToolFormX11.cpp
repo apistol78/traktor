@@ -6,8 +6,8 @@ namespace traktor
 	namespace ui
 	{
 
-ToolFormX11::ToolFormX11(EventSubject* owner, Display* display, int32_t screen)
-:	WidgetX11Impl< IToolForm >(owner, display, screen)
+ToolFormX11::ToolFormX11(EventSubject* owner, Display* display, int32_t screen, XIM xim)
+:	WidgetX11Impl< IToolForm >(owner, display, screen, xim)
 ,	m_result(0)
 ,	m_modal(false)
 {

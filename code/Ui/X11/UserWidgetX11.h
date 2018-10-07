@@ -12,7 +12,7 @@ namespace traktor
 class UserWidgetX11 : public WidgetX11Impl< IUserWidget >
 {
 public:
-	UserWidgetX11(EventSubject* owner, Display* display, int32_t screen);
+	UserWidgetX11(EventSubject* owner, Display* display, int32_t screen, XIM xim);
 
 	virtual bool create(IWidget* parent, int style) T_OVERRIDE T_FINAL;
 };
