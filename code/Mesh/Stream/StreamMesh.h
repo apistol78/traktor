@@ -7,7 +7,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_mesh_StreamMesh_H
 #define traktor_mesh_StreamMesh_H
 
-#include <vector>
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Matrix44.h"
@@ -95,9 +94,9 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 	Ref< IStream > m_stream;
 	Ref< render::MeshReader > m_meshReader;
-	std::vector< uint32_t > m_frameOffsets;
+	AlignedVector< uint32_t > m_frameOffsets;
 	Aabb3 m_boundingBox;
-	SmallMap< render::handle_t, std::vector< Part > > m_parts;
+	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
 };
 
 	}

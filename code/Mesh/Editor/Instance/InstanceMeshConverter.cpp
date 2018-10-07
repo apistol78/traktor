@@ -93,7 +93,7 @@ bool InstanceMeshConverter::convert(
 	// Create vertex buffer.
 	uint8_t* vertex = static_cast< uint8_t* >(renderMesh->getVertexBuffer()->lock());
 
-	for (std::vector< model::Vertex >::const_iterator i = model.getVertices().begin(); i != model.getVertices().end(); ++i)
+	for (AlignedVector< model::Vertex >::const_iterator i = model.getVertices().begin(); i != model.getVertices().end(); ++i)
 	{
 		std::memset(vertex, 0, vertexSize);
 
@@ -117,7 +117,7 @@ bool InstanceMeshConverter::convert(
 	renderMesh->getVertexBuffer()->unlock();
 
 	// Create index buffer.
-	std::map< std::wstring, std::vector< IndexRange > > techniqueRanges;
+	std::map< std::wstring, AlignedVector< IndexRange > > techniqueRanges;
 
 	uint16_t* index = static_cast< uint16_t* >(renderMesh->getIndexBuffer()->lock());
 	uint16_t* indexFirst = index;
@@ -131,7 +131,7 @@ bool InstanceMeshConverter::convert(
 		range.minIndex = std::numeric_limits< int32_t >::max();
 		range.maxIndex = -std::numeric_limits< int32_t >::max();
 
-		for (std::vector< model::Polygon >::const_iterator j = model.getPolygons().begin(); j != model.getPolygons().end(); ++j)
+		for (AlignedVector< model::Polygon >::const_iterator j = model.getPolygons().begin(); j != model.getPolygons().end(); ++j)
 		{
 			const model::Polygon& polygon = *j;
 			T_ASSERT (polygon.getVertices().size() == 3);
@@ -164,12 +164,12 @@ bool InstanceMeshConverter::convert(
 	AlignedVector< render::Mesh::Part > meshParts;
 	std::map< std::wstring, InstanceMeshResource::parts_t > parts;
 
-	for (std::map< std::wstring, std::vector< IndexRange > >::const_iterator i = techniqueRanges.begin(); i != techniqueRanges.end(); ++i)
+	for (std::map< std::wstring, AlignedVector< IndexRange > >::const_iterator i = techniqueRanges.begin(); i != techniqueRanges.end(); ++i)
 	{
 		std::wstring worldTechnique, shaderTechnique;
 		split(i->first, L'/', worldTechnique, shaderTechnique);
 
-		for (std::vector< IndexRange >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		for (AlignedVector< IndexRange >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
 		{
 			InstanceMeshResource::Part part;
 			part.shaderTechnique = shaderTechnique;

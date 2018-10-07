@@ -537,8 +537,8 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 		
 		m_normalScale = maxExtent / 10.0f;
 
-		const std::vector< Material >& materials = m_model->getMaterials();
-		for (std::vector< Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
+		const AlignedVector< Material >& materials = m_model->getMaterials();
+		for (AlignedVector< Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
 			row->add(new ui::GridItem(i->getName()));
@@ -686,16 +686,16 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				Vector4 eyePosition = viewTransform.inverse().translation().xyz1();	// Eye position in object space.
 				Vector4 lightDir = viewTransform.inverse().axisZ();	// Light direction in object space.
 
-				const std::vector< Vertex >& vertices = m_modelTris->getVertices();
-				const std::vector< Polygon >& polygons = m_modelTris->getPolygons();
+				const AlignedVector< Vertex >& vertices = m_modelTris->getVertices();
+				const AlignedVector< Polygon >& polygons = m_modelTris->getPolygons();
 				const AlignedVector< Vector4 >& positions = m_modelTris->getPositions();
 
 				int32_t weightJoint = m_toolJoint->getSelected();
 
 				m_primitiveRenderer->pushDepthState(true, true, false);
-				for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+				for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 				{
-					const std::vector< uint32_t >& indices = i->getVertices();
+					const AlignedVector< uint32_t >& indices = i->getVertices();
 					T_ASSERT (indices.size() == 3);
 
 					Vector4 p[3];
@@ -757,8 +757,8 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->popDepthState();
 			}
 
-			const std::vector< Vertex >& vertices = m_model->getVertices();
-			const std::vector< Polygon >& polygons = m_model->getPolygons();
+			const AlignedVector< Vertex >& vertices = m_model->getVertices();
+			const AlignedVector< Polygon >& polygons = m_model->getPolygons();
 			const AlignedVector< Vector4 >& positions = m_model->getPositions();
 			const AlignedVector< Vector4 >& normals = m_model->getNormals();
 			const AlignedVector< Vector2 >& texCoords = m_model->getTexCoords();
@@ -767,9 +767,9 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			if (m_toolWire->isToggled())
 			{
 				m_primitiveRenderer->pushDepthState(true, false, false);
-				for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+				for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 				{
-					const std::vector< uint32_t >& indices = i->getVertices();
+					const AlignedVector< uint32_t >& indices = i->getVertices();
 
 					for (uint32_t i = 0; i < indices.size(); ++i)
 					{
@@ -796,7 +796,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				for (uint32_t i = 0; i < polygons.size(); ++i)
 				{
 					const Polygon& polygon = polygons[i];
-					const std::vector< uint32_t >& indices = polygon.getVertices();
+					const AlignedVector< uint32_t >& indices = polygon.getVertices();
 
 					for (uint32_t j = 0; j < indices.size(); ++j)
 					{
@@ -819,7 +819,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			if (m_toolNormals->isToggled())
 			{
 				m_primitiveRenderer->pushDepthState(true, false, false);
-				for (std::vector< Vertex >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
+				for (AlignedVector< Vertex >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
 				{
 					if (i->getNormal() != c_InvalidIndex)
 					{
@@ -851,7 +851,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				for (uint32_t i = 0; i < polygons.size(); ++i)
 				{
 					const Polygon& polygon = polygons[i];
-					const std::vector< uint32_t >& indices = polygon.getVertices();
+					const AlignedVector< uint32_t >& indices = polygon.getVertices();
 
 					for (uint32_t j = 0; j < indices.size(); ++j)
 					{

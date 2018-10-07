@@ -57,22 +57,22 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 
 	drawing::Raster raster(meshThumb);
 
-	const std::vector< model::Polygon >& polygons = model->getPolygons();
-	const std::vector< model::Vertex >& vertices = model->getVertices();
+	const AlignedVector< model::Polygon >& polygons = model->getPolygons();
+	const AlignedVector< model::Vertex >& vertices = model->getVertices();
 	const AlignedVector< Vector4 >& positions = model->getPositions();
 	const AlignedVector< Vector4 >& normals = model->getNormals();
 
 	AlignedVector< Vector2 > screenVertices;
 
-	for (std::vector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	for (AlignedVector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{
-		const std::vector< uint32_t >& polygonVertices = i->getVertices();
+		const AlignedVector< uint32_t >& polygonVertices = i->getVertices();
 		if (polygonVertices.empty())
 			continue;
 
 		raster.clear();
 
-		for (uint32_t j = 0; j < polygonVertices.size(); ++j)
+		for (size_t j = 0; j < polygonVertices.size(); ++j)
 		{
 			const model::Vertex& vertex = vertices[polygonVertices[j]];
 			Vector4 position = positions[vertex.getPosition()];

@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_model_ModelAdjacency_H
 
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/StaticVector.h"
 
 // import/export mechanism.
@@ -40,7 +41,7 @@ public:
 
 	ModelAdjacency(const Model* model, Mode mode);
 
-	ModelAdjacency(const Model* model, const std::vector< uint32_t >& polygons, Mode mode);
+	ModelAdjacency(const Model* model, const AlignedVector< uint32_t >& polygons, Mode mode);
 
 	/*! \brief Insert a new polygon into adjacency structure.
 	 */
@@ -60,19 +61,19 @@ public:
 
 	/*! \brief Get edges "entering" given vertex.
 	 */
-	void getEnteringEdges(uint32_t vertexId, std::vector< uint32_t >& outEnteringEdges) const;
+	void getEnteringEdges(uint32_t vertexId, AlignedVector< uint32_t >& outEnteringEdges) const;
 
 	/*! \brief Get edges "leaving" given vertex.
 	 */
-	void getLeavingEdges(uint32_t vertexId, std::vector< uint32_t >& outLeavingEdges) const;
+	void getLeavingEdges(uint32_t vertexId, AlignedVector< uint32_t >& outLeavingEdges) const;
 
 	/*! \brief Get sharing edges; ie opposite edges.
 	 */
-	void getSharedEdges(uint32_t edge, std::vector< uint32_t >& outSharedEdges) const;
+	void getSharedEdges(uint32_t edge, AlignedVector< uint32_t >& outSharedEdges) const;
 
 	/*! \brief Get sharing edges; ie opposite edges.
 	 */
-	void getSharedEdges(uint32_t polygon, uint32_t polygonEdge, std::vector< uint32_t >& outSharedEdges) const;
+	void getSharedEdges(uint32_t polygon, uint32_t polygonEdge, AlignedVector< uint32_t >& outSharedEdges) const;
 
 	/*! \brief Count number of sharing edges.
 	 */
@@ -108,7 +109,7 @@ private:
 
 	Ref< const Model > m_model;
 	Mode m_mode;
-	std::vector< Edge > m_edges;
+	AlignedVector< Edge > m_edges;
 };
 
 	}

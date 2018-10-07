@@ -48,7 +48,7 @@ Ref< Model > ModelFormatObj::read(IStream* stream, uint32_t importFlags) const
 
 		if ((importFlags & IfMeshPositions) != 0 && startsWith< std::wstring >(str, L"v "))
 		{
-			std::vector< float > values;
+			AlignedVector< float > values;
 			if (Split< std::wstring, float >::any(str.substr(2), L" \t", values) >= 3)
 			{
 				md->addPosition(Vector4(
@@ -61,7 +61,7 @@ Ref< Model > ModelFormatObj::read(IStream* stream, uint32_t importFlags) const
 		}
 		else if ((importFlags & IfMeshPositions) != 0 && startsWith< std::wstring >(str, L"vt "))
 		{
-			std::vector< float > values;
+			AlignedVector< float > values;
 			if (Split< std::wstring, float >::any(str.substr(2), L" \t", values) >= 2)
 			{
 				md->addTexCoord(Vector2(
@@ -72,7 +72,7 @@ Ref< Model > ModelFormatObj::read(IStream* stream, uint32_t importFlags) const
 		}
 		else if ((importFlags & IfMeshPositions) != 0 && startsWith< std::wstring >(str, L"vn "))
 		{
-			std::vector< float > values;
+			AlignedVector< float > values;
 			if (Split< std::wstring, float >::any(str.substr(2), L" \t", values) >= 3)
 			{
 				md->addNormal(Vector4(
@@ -85,15 +85,15 @@ Ref< Model > ModelFormatObj::read(IStream* stream, uint32_t importFlags) const
 		}
 		else if ((importFlags & IfMeshPolygons) != 0 && startsWith< std::wstring >(str, L"f "))
 		{
-			std::vector< std::wstring > values;
+			AlignedVector< std::wstring > values;
 			if (Split< std::wstring >::any(str.substr(2), L" \t", values) > 0)
 			{
 				Polygon polygon;
 				polygon.setMaterial(materialId);
 
-				for (std::vector< std::wstring >::const_iterator i = values.begin(); i != values.end(); ++i)
+				for (AlignedVector< std::wstring >::const_iterator i = values.begin(); i != values.end(); ++i)
 				{
-					std::vector< int32_t > indices;
+					AlignedVector< int32_t > indices;
 					if (Split< std::wstring, int32_t >::any(*i, L"/", indices, true) > 0)
 					{
 						Vertex vertex;
@@ -114,7 +114,7 @@ Ref< Model > ModelFormatObj::read(IStream* stream, uint32_t importFlags) const
 			materialId = ~0U;
 
 			std::wstring materialName = str.substr(7);
-			const std::vector< Material >& materials = md->getMaterials();
+			const AlignedVector< Material >& materials = md->getMaterials();
 			for (uint32_t i = 0; i < uint32_t(materials.size()); ++i)
 			{
 				if (materials[i].getName() == materialName)
@@ -163,22 +163,22 @@ bool ModelFormatObj::write(IStream* stream, const Model* model) const
 	s << L"#	    Point/Line/Face list" << Endl;
 	s << Endl;
 
-	const std::vector< Material >& materials = model->getMaterials();
+	const AlignedVector< Material >& materials = model->getMaterials();
 	if (!materials.empty())
 	{
-		const std::vector< Polygon >& polygons = model->getPolygons();
+		const AlignedVector< Polygon >& polygons = model->getPolygons();
 		for (uint32_t material = 0; material < uint32_t(materials.size()); ++material)
 		{
 			s << L"usemtl " << materials[material].getName() << Endl;
-			for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+			for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 			{
 				if (i->getMaterial() != material)
 					continue;
 
-				const std::vector< uint32_t >& vertices = i->getVertices();
+				const AlignedVector< uint32_t >& vertices = i->getVertices();
 
 				s << L"f";
-				for (std::vector< uint32_t >::const_reverse_iterator j = vertices.rbegin(); j != vertices.rend(); ++j)
+				for (AlignedVector< uint32_t >::const_reverse_iterator j = vertices.rbegin(); j != vertices.rend(); ++j)
 				{
 					const Vertex& vertex = model->getVertex(*j);
 
@@ -202,13 +202,13 @@ bool ModelFormatObj::write(IStream* stream, const Model* model) const
 	}
 	else
 	{
-		const std::vector< Polygon >& polygons = model->getPolygons();
-		for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+		const AlignedVector< Polygon >& polygons = model->getPolygons();
+		for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 		{
-			const std::vector< uint32_t >& vertices = i->getVertices();
+			const AlignedVector< uint32_t >& vertices = i->getVertices();
 
 			s << L"f";
-			for (std::vector< uint32_t >::const_reverse_iterator j = vertices.rbegin(); j != vertices.rend(); ++j)
+			for (AlignedVector< uint32_t >::const_reverse_iterator j = vertices.rbegin(); j != vertices.rend(); ++j)
 			{
 				const Vertex& vertex = model->getVertex(*j);
 

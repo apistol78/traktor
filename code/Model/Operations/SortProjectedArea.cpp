@@ -64,16 +64,16 @@ bool SortProjectedArea::apply(Model& model) const
 
 	Aabb3 boundingBox = model.getBoundingBox();
 
-	std::vector< std::pair< uint32_t, uint32_t > > covers;
+	AlignedVector< std::pair< uint32_t, uint32_t > > covers;
 
-	std::vector< Material > materials = model.getMaterials();
-	std::vector< Polygon > polygons = model.getPolygons();
+	AlignedVector< Material > materials = model.getMaterials();
+	AlignedVector< Polygon > polygons = model.getPolygons();
 
 	for (uint32_t i = 0; i < materials.size(); ++i)
 	{
 		std::memset(face, 0, sizeof(face));
 
-		for (std::vector< Polygon >::const_iterator j = polygons.begin(); j != polygons.end(); ++j)
+		for (AlignedVector< Polygon >::const_iterator j = polygons.begin(); j != polygons.end(); ++j)
 		{
 			if (j->getMaterial() != i)
 				continue;
@@ -150,7 +150,7 @@ bool SortProjectedArea::apply(Model& model) const
 		materials[i] = model.getMaterial(covers[i].first);
 
 	// Update polygons with new material IDs.
-	for (std::vector< Polygon >::iterator i = polygons.begin(); i != polygons.end(); ++i)
+	for (AlignedVector< Polygon >::iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{
 		for (uint32_t j = 0; j < covers.size(); ++j)
 		{

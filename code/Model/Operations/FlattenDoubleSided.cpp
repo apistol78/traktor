@@ -16,10 +16,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.FlattenDoubleSided", FlattenDoubleSided, 
 
 bool FlattenDoubleSided::apply(Model& model) const
 {
-	const std::vector< Polygon >& polygons = model.getPolygons();
-	std::vector< Polygon > flatten; flatten.reserve(polygons.size());
+	const AlignedVector< Polygon >& polygons = model.getPolygons();
+	AlignedVector< Polygon > flatten; flatten.reserve(polygons.size());
 
-	for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{
 		uint32_t materialId = i->getMaterial();
 		const Material& material = model.getMaterial(materialId);
@@ -38,8 +38,8 @@ bool FlattenDoubleSided::apply(Model& model) const
 	flatten.insert(flatten.end(), polygons.begin(), polygons.end());
 	model.setPolygons(flatten);
 
-	std::vector< Material > materials = model.getMaterials();
-	for (std::vector< Material >::iterator i = materials.begin(); i != materials.end(); ++i)
+	AlignedVector< Material > materials = model.getMaterials();
+	for (AlignedVector< Material >::iterator i = materials.begin(); i != materials.end(); ++i)
 		i->setDoubleSided(false);
 
 	model.setMaterials(materials);

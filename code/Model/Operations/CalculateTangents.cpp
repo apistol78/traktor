@@ -34,7 +34,7 @@ bool findBaseIndex(const Model& model, const Polygon& polygon, uint32_t& outBase
 {
 	outBaseIndex = c_InvalidIndex;
 
-	const std::vector< uint32_t >& vertices = polygon.getVertices();
+	const AlignedVector< uint32_t >& vertices = polygon.getVertices();
 	for (uint32_t i = 0; i < uint32_t(vertices.size()); ++i)
 	{
 		const Vertex* v[] =
@@ -68,7 +68,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.CalculateTangents", CalculateTangents, IM
 
 bool CalculateTangents::apply(Model& model) const
 {
-	const std::vector< Polygon >& polygons = model.getPolygons();
+	const AlignedVector< Polygon >& polygons = model.getPolygons();
 	AlignedVector< TangentBase > polygonTangentBases;
 	AlignedVector< TangentBase > vertexTangentBases;
 	uint32_t degenerated = 0;
@@ -90,7 +90,7 @@ bool CalculateTangents::apply(Model& model) const
 			continue;
 		}
 
-		const std::vector< uint32_t >& vertices = polygon.getVertices();
+		const AlignedVector< uint32_t >& vertices = polygon.getVertices();
 		const Vertex* v[] =
 		{
 			&model.getVertex(vertices[baseIndex]),
@@ -196,8 +196,8 @@ bool CalculateTangents::apply(Model& model) const
 	{
 		const Polygon& polygon = polygons[i];
 
-		const std::vector< uint32_t >& vertices = polygon.getVertices();
-		for (std::vector< uint32_t >::const_iterator j = vertices.begin(); j != vertices.end(); ++j)
+		const AlignedVector< uint32_t >& vertices = polygon.getVertices();
+		for (AlignedVector< uint32_t >::const_iterator j = vertices.begin(); j != vertices.end(); ++j)
 		{
 			if (polygonTangentBases[i].normal.length() > FUZZY_EPSILON)
 				vertexTangentBases[*j].normal += polygonTangentBases[i].normal;

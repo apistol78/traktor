@@ -7,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_mesh_OctreePartitionData_H
 #define traktor_mesh_OctreePartitionData_H
 
-#include <map>
+#include "Core/Containers/AlignedVector.h"
 #include "Mesh/Partition/IPartitionData.h"
 
 // import/export mechanism.
@@ -37,7 +37,7 @@ public:
 private:
 	friend class PartitionMeshConverter;
 
-	std::vector< std::wstring > m_worldTechniques;
+	AlignedVector< std::wstring > m_worldTechniques;
 	Ref< OctreeNodeData > m_nodeData;
 };
 

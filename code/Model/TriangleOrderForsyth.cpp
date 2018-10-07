@@ -170,11 +170,11 @@ struct OptimizeVertexData
 
 			}
 
-void optimizeFaces(const std::vector< uint32_t >& indexList, uint32_t vertexCount, std::vector< uint32_t >& outNewIndexList, uint32_t lruCacheSize)
+void optimizeFaces(const AlignedVector< uint32_t >& indexList, uint32_t vertexCount, AlignedVector< uint32_t >& outNewIndexList, uint32_t lruCacheSize)
 {
 	T_ASSERT (indexList.size() == outNewIndexList.size());
 
-	std::vector< OptimizeVertexData > vertexDataList;
+	AlignedVector< OptimizeVertexData > vertexDataList;
 	vertexDataList.resize(vertexCount);
 
 	// Compute face count per vertex.
@@ -186,7 +186,7 @@ void optimizeFaces(const std::vector< uint32_t >& indexList, uint32_t vertexCoun
 		vertexData.activeFaceListSize++;
 	}
 
-	std::vector< uint32_t > activeFaceList;
+	AlignedVector< uint32_t > activeFaceList;
 
 	const uint32_t kEvictedCacheIndex = std::numeric_limits< uint32_t >::max();
 
@@ -218,7 +218,7 @@ void optimizeFaces(const std::vector< uint32_t >& indexList, uint32_t vertexCoun
 		}
 	}
 
-	std::vector< uint8_t > processedFaceList;
+	AlignedVector< uint8_t > processedFaceList;
 	processedFaceList.resize(indexList.size());
 
 	uint32_t vertexCacheBuffer[(kMaxVertexCacheSize + 3) * 2];

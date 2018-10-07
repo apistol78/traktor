@@ -98,7 +98,7 @@ bool SkinnedMeshConverter::convert(
 	// Create vertex buffer.
 	uint8_t* vertex = static_cast< uint8_t* >(mesh->getVertexBuffer()->lock());
 
-	for (std::vector< model::Vertex >::const_iterator i = model.getVertices().begin(); i != model.getVertices().end(); ++i)
+	for (AlignedVector< model::Vertex >::const_iterator i = model.getVertices().begin(); i != model.getVertices().end(); ++i)
 	{
 		std::memset(vertex, 0, vertexSize);
 
@@ -118,7 +118,7 @@ bool SkinnedMeshConverter::convert(
 
 		int jointCount = model.getJointCount();
 
-		std::vector< std::pair< int, float > > jointInfluences;
+		AlignedVector< std::pair< int, float > > jointInfluences;
 		for (int j = 0; j < jointCount; ++j)
 			jointInfluences.push_back(std::make_pair(j, i->getJointInfluence(j)));
 
@@ -167,7 +167,7 @@ bool SkinnedMeshConverter::convert(
 	mesh->getVertexBuffer()->unlock();
 
 	// Create index buffer.
-	std::map< std::wstring, std::vector< IndexRange > > techniqueRanges;
+	std::map< std::wstring, AlignedVector< IndexRange > > techniqueRanges;
 
 	uint16_t* index = static_cast< uint16_t* >(mesh->getIndexBuffer()->lock());
 	uint16_t* indexFirst = index;
@@ -181,7 +181,7 @@ bool SkinnedMeshConverter::convert(
 		range.minIndex = std::numeric_limits< int32_t >::max();
 		range.maxIndex = -std::numeric_limits< int32_t >::max();
 
-		for (std::vector< model::Polygon >::const_iterator j = model.getPolygons().begin(); j != model.getPolygons().end(); ++j)
+		for (AlignedVector< model::Polygon >::const_iterator j = model.getPolygons().begin(); j != model.getPolygons().end(); ++j)
 		{
 			const model::Polygon& polygon = *j;
 			T_ASSERT (polygon.getVertices().size() == 3);
@@ -214,12 +214,12 @@ bool SkinnedMeshConverter::convert(
 	AlignedVector< render::Mesh::Part > meshParts;
 	std::map< std::wstring, SkinnedMeshResource::parts_t > parts;
 
-	for (std::map< std::wstring, std::vector< IndexRange > >::const_iterator i = techniqueRanges.begin(); i != techniqueRanges.end(); ++i)
+	for (std::map< std::wstring, AlignedVector< IndexRange > >::const_iterator i = techniqueRanges.begin(); i != techniqueRanges.end(); ++i)
 	{
 		std::wstring worldTechnique, shaderTechnique;
 		split(i->first, L'/', worldTechnique, shaderTechnique);
 
-		for (std::vector< IndexRange >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		for (AlignedVector< IndexRange >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
 		{
 			SkinnedMeshResource::Part part;
 			part.shaderTechnique = shaderTechnique;

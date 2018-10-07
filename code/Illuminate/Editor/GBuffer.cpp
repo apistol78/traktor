@@ -42,7 +42,7 @@ GBuffer::GBuffer()
 
 bool GBuffer::create(const AlignedVector< Surface >& surfaces, int32_t width, int32_t height)
 {
-	std::vector< Triangulator::Triangle > triangles;
+	AlignedVector< Triangulator::Triangle > triangles;
 	const Vector2 dim(width, height);
 	const Vector2 half(0.5f, 0.5f);
 	Vector4 P[3], N[3];
@@ -66,7 +66,7 @@ bool GBuffer::create(const AlignedVector< Surface >& surfaces, int32_t width, in
 		triangles.resize(0);
 		Triangulator().freeze(texCoords, triangles);
 
-		for (std::vector< Triangulator::Triangle >::const_iterator k = triangles.begin(); k != triangles.end(); ++k)
+		for (AlignedVector< Triangulator::Triangle >::const_iterator k = triangles.begin(); k != triangles.end(); ++k)
 		{
 			size_t i0 = k->indices[0];
 			size_t i1 = k->indices[1];

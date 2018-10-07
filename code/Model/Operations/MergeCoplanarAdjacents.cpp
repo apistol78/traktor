@@ -41,13 +41,13 @@ MergeCoplanarAdjacents::MergeCoplanarAdjacents(bool allowConvexOnly)
 
 bool MergeCoplanarAdjacents::apply(Model& model) const
 {
-	std::vector< Polygon >& polygons = model.getPolygons();
+	AlignedVector< Polygon >& polygons = model.getPolygons();
 	Winding3 w;
 	Plane p;
 
 	// Calculate polygon normals.
 	AlignedVector< Vector4 > normals(polygons.size(), Vector4(0.0f, 0.0f, 1.0f));
-	for (uint32_t i = 0; i < uint32_t(polygons.size()); ++i)
+	for (size_t i = 0; i < polygons.size(); ++i)
 	{
 		const Polygon& polygon = polygons[i];
 		if (polygon.getVertexCount() < 3)
@@ -63,17 +63,17 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 
 	// Build model adjacency information.
 	ModelAdjacency adjacency(&model, ModelAdjacency::MdByPosition);
-	std::vector< uint32_t > sharedEdges;
-	std::vector< uint32_t > removeIndices;
+	AlignedVector< uint32_t > sharedEdges;
+	AlignedVector< uint32_t > removeIndices;
 
 	// Keep iterating until no more polygons are merged.
 	for (;;)
 	{
 		int32_t merged = 0;
-		for (uint32_t i = 0; i < uint32_t(polygons.size()); ++i)
+		for (size_t i = 0; i < polygons.size(); ++i)
 		{
 			Polygon& leftPolygon = polygons[i];
-			for (uint32_t j = 0; j < leftPolygon.getVertexCount(); ++j)
+			for (size_t j = 0; j < leftPolygon.getVertexCount(); ++j)
 			{
 				adjacency.getSharedEdges(i, j, sharedEdges);
 				if (sharedEdges.size() != 1)
@@ -92,25 +92,25 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 				{
 					Polygon& rightPolygon = polygons[sharedPolygon];
 
-					std::vector< uint32_t > leftVertices = leftPolygon.getVertices();
-					std::vector< uint32_t > rightVertices = rightPolygon.getVertices();
+					AlignedVector< uint32_t > leftVertices = leftPolygon.getVertices();
+					AlignedVector< uint32_t > rightVertices = rightPolygon.getVertices();
 
 					if (leftVertices.size() < 3 || rightVertices.size() < 3)
 						continue;
 
 					// Rotate polygons so sharing edge is first on both left and right polygon.
 					std::rotate(leftVertices.begin(), leftVertices.begin() + j, leftVertices.end());
-					std::rotate(rightVertices.begin(), rightVertices.begin() + adjacency.getPolygonEdge(sharedEdge), rightVertices.end());
+					std::rotate(rightVertices.begin(), rightVertices.begin() + (size_t)adjacency.getPolygonEdge(sharedEdge), rightVertices.end());
 
 					// Merge polygons, except sharing edges.
-					std::vector< uint32_t > mergedVertices;
+					AlignedVector< uint32_t > mergedVertices;
 					mergedVertices.insert(mergedVertices.end(), rightVertices.begin() + 1, rightVertices.end());
 					mergedVertices.insert(mergedVertices.end(), leftVertices.begin() + 1, leftVertices.end());
 					if (mergedVertices.size() <= 2)
 						continue;
 
 					// Remove internal loops.
-					for (uint32_t k = 0; k < mergedVertices.size(); ++k)
+					for (size_t k = 0; k < mergedVertices.size(); ++k)
 					{
 						uint32_t i0 = mergedVertices[k];
 						uint32_t i1 = mergedVertices[(k + 2) % mergedVertices.size()];
@@ -125,10 +125,10 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 					// Remove non-silhouette vertices.
 					removeIndices.resize(0);
 
-					for (uint32_t i0 = 0; i0 < mergedVertices.size(); ++i0)
+					for (size_t i0 = 0; i0 < mergedVertices.size(); ++i0)
 					{
-						uint32_t i1 = (i0 + 1) % mergedVertices.size();
-						uint32_t i2 = (i0 + 2) % mergedVertices.size();
+						size_t i1 = (i0 + 1) % mergedVertices.size();
+						size_t i2 = (i0 + 2) % mergedVertices.size();
 
 						const Vector4& v0 = model.getVertexPosition(mergedVertices[i0]);
 						const Vector4& v1 = model.getVertexPosition(mergedVertices[i1]);
@@ -150,18 +150,18 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 					if (!removeIndices.empty())
 					{
 						std::sort(removeIndices.begin(), removeIndices.end(), std::greater< uint32_t >());
-						for (std::vector< uint32_t >::const_iterator it = removeIndices.begin(); it != removeIndices.end(); ++it)
-							mergedVertices.erase(mergedVertices.begin() + *it);
+						for (AlignedVector< uint32_t >::const_iterator it = removeIndices.begin(); it != removeIndices.end(); ++it)
+							mergedVertices.erase(mergedVertices.begin() + (size_t)*it);
 					}
 
 					// Ensure merged polygon is still convex.
 					if (m_allowConvexOnly)
 					{
 						uint32_t sign = 0;
-						for (uint32_t i0 = 0; i0 < mergedVertices.size() && sign != 3; ++i0)
+						for (size_t i0 = 0; i0 < mergedVertices.size() && sign != 3; ++i0)
 						{
-							uint32_t i1 = (i0 + 1) % mergedVertices.size();
-							uint32_t i2 = (i0 + 2) % mergedVertices.size();
+							size_t i1 = (i0 + 1) % mergedVertices.size();
+							size_t i2 = (i0 + 2) % mergedVertices.size();
 
 							const Vector4& v0 = model.getVertexPosition(mergedVertices[i0]);
 							const Vector4& v1 = model.getVertexPosition(mergedVertices[i1]);
@@ -182,7 +182,7 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 					
 					// Set all vertices in left polygon and null out right polygon.
 					leftPolygon.setVertices(mergedVertices);
-					rightPolygon.setVertices(std::vector< uint32_t >());
+					rightPolygon.setVertices(AlignedVector< uint32_t >());
 
 					// Re-build adjacency.
 					adjacency.remove(sharedPolygon);
@@ -199,7 +199,7 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 	}
 
 	// Remove all polygons with no vertices.
-	std::vector< Polygon >::iterator it = std::remove_if(polygons.begin(), polygons.end(), NoVerticesPred());
+	AlignedVector< Polygon >::iterator it = std::remove_if(polygons.begin(), polygons.end(), NoVerticesPred());
 	polygons.erase(it, polygons.end());
 
 	// Cleanup model from unused vertices etc.

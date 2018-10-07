@@ -26,10 +26,10 @@ bool CullDistantFaces::apply(Model& model) const
 	Vector4 viewerCorners[8];
 	m_viewerRegion.getExtents(viewerCorners);
 
-	std::vector< Polygon > polygons = model.getPolygons();
-	uint32_t originalCount = polygons.size();
+	AlignedVector< Polygon > polygons = model.getPolygons();
+	size_t originalCount = polygons.size();
 
-	for (uint32_t i = 0; i < polygons.size(); )
+	for (size_t i = 0; i < polygons.size(); )
 	{
 		uint32_t vertexCount = polygons[i].getVertexCount();
 		if (vertexCount < 3)

@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_mesh_StreamMeshResource_H
 #define traktor_mesh_StreamMeshResource_H
 
-#include <vector>
 #include "Core/Guid.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb3.h"
 #include "Mesh/IMeshResource.h"
 #include "Resource/Id.h"
@@ -63,7 +63,7 @@ private:
 	typedef std::list< Part > parts_t;
 
 	resource::Id< render::Shader > m_shader;
-	std::vector< uint32_t > m_frameOffsets;
+	AlignedVector< uint32_t > m_frameOffsets;
 	Aabb3 m_boundingBox;
 	std::map< std::wstring, parts_t > m_parts;
 };

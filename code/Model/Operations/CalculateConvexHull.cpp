@@ -51,7 +51,7 @@ struct HullFaceAdjacency
 	}
 };
 
-uint32_t calculateAdjacency(const std::vector< HullFace >& faces, std::vector< HullFaceAdjacency >& outAdjacency)
+uint32_t calculateAdjacency(const AlignedVector< HullFace >& faces, AlignedVector< HullFaceAdjacency >& outAdjacency)
 {
 	uint32_t errorCount = 0;
 	for (uint32_t i = 0; i < uint32_t(faces.size()); ++i)
@@ -60,8 +60,8 @@ uint32_t calculateAdjacency(const std::vector< HullFace >& faces, std::vector< H
 
 		for (uint32_t j = 0; j < 3; ++j)
 		{
-			int a1 = faces[i].i[j];
-			int a2 = faces[i].i[(j + 1) % 3];
+			int32_t a1 = faces[i].i[j];
+			int32_t a2 = faces[i].i[(j + 1) % 3];
 
 			for (uint32_t k = 0; k < uint32_t(faces.size()) && adj.n[j] == ~0U; ++k)
 			{
@@ -132,21 +132,21 @@ bool CalculateConvexHull::apply(Model& model) const
 	if (it == ~0U)
 		return false;
 
-	std::vector< HullFace > faces;
+	AlignedVector< HullFace > faces;
 	faces.reserve(128);
 	faces.push_back(HullFace(i0, i1, i2));
 	faces.push_back(HullFace(i1, i0, it));
 	faces.push_back(HullFace(i2, i1, it));
 	faces.push_back(HullFace(i0, i2, it));
 
-	std::vector< HullFaceAdjacency > adjacency;
+	AlignedVector< HullFaceAdjacency > adjacency;
 	errorCount = calculateAdjacency(faces, adjacency);
 
 	if (errorCount > 0)
 		T_DEBUG(errorCount << L" adjanceny error(s)");
 
-	std::vector< bool > visible;
-	std::vector< std::pair< uint32_t, uint32_t > > silouette;
+	AlignedVector< bool > visible;
+	AlignedVector< std::pair< uint32_t, uint32_t > > silouette;
 
 	for (uint32_t i = 0; i < uint32_t(vertices.size()); ++i)
 	{
@@ -180,7 +180,7 @@ bool CalculateConvexHull::apply(Model& model) const
 			continue;
 
 		// Remove visible faces.
-		for (uint32_t j = 0; j < uint32_t(visible.size()); )
+		for (size_t j = 0; j < visible.size(); )
 		{
 			if (visible[j])
 			{
@@ -192,7 +192,7 @@ bool CalculateConvexHull::apply(Model& model) const
 		}
 
 		// Add new faces.
-		for (std::vector< std::pair< uint32_t, uint32_t > >::iterator j = silouette.begin(); j != silouette.end(); ++j)
+		for (AlignedVector< std::pair< uint32_t, uint32_t > >::iterator j = silouette.begin(); j != silouette.end(); ++j)
 		{
 			uint32_t idx[] = { j->second, j->first, i };
 			faces.push_back(HullFace(idx[0], idx[1], idx[2]));
@@ -211,7 +211,7 @@ bool CalculateConvexHull::apply(Model& model) const
 	model.reservePositions(faces.size() * 3);
 	model.reservePolygons(faces.size());
 
-	for (std::vector< HullFace >::iterator i = faces.begin(); i != faces.end(); ++i)
+	for (AlignedVector< HullFace >::iterator i = faces.begin(); i != faces.end(); ++i)
 	{
 		Vector4 v[] =
 		{

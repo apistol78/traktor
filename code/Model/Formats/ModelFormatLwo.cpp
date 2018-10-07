@@ -88,9 +88,9 @@ const lwVMapPt* findLwVMapPt(const lwVMapPt* vmaps, int nvmaps, const std::strin
 	return 0;
 }
 
-uint32_t uvChannel(std::vector< std::string >& inoutChannels, const std::string vmap)
+uint32_t uvChannel(AlignedVector< std::string >& inoutChannels, const std::string vmap)
 {
-	std::vector< std::string >::iterator i = std::find(inoutChannels.begin(), inoutChannels.end(), vmap);
+	AlignedVector< std::string >::iterator i = std::find(inoutChannels.begin(), inoutChannels.end(), vmap);
 	if (i != inoutChannels.end())
 		return uint32_t(std::distance(inoutChannels.begin(), i));
 
@@ -100,7 +100,7 @@ uint32_t uvChannel(std::vector< std::string >& inoutChannels, const std::string 
 	return channel;
 }
 
-bool createMaterials(const lwObject* lwo, Model* outModel, std::vector< std::string >& outChannels)
+bool createMaterials(const lwObject* lwo, Model* outModel, AlignedVector< std::string >& outChannels)
 {
 	uint32_t channel = 0;
 
@@ -259,7 +259,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, std::vector< std::str
 	return true;
 }
 
-bool createMesh(const lwObject* lwo, Model* outModel, std::vector< std::string >& inoutChannels, uint32_t importFlags)
+bool createMesh(const lwObject* lwo, Model* outModel, AlignedVector< std::string >& inoutChannels, uint32_t importFlags)
 {
 	uint32_t pointCount;
 	uint32_t polygonCount;
@@ -438,7 +438,7 @@ bool createMesh(const lwObject* lwo, Model* outModel, std::vector< std::string >
 						if (importFlags & ModelFormat::IfMeshBlendWeights)
 						{
 							// Collect weight map references for this point.
-							std::vector< lwVMapPt > weightRefs;
+							AlignedVector< lwVMapPt > weightRefs;
 							for (int i = 0; i < pnt->nvmaps; ++i)
 							{
 								if (pnt->vm[i].vmap->type == ID_WGHT)
@@ -446,7 +446,7 @@ bool createMesh(const lwObject* lwo, Model* outModel, std::vector< std::string >
 							}
 
 							// Add weights to vertex, also allocate bone index.
-							for (std::vector< lwVMapPt >::iterator i = weightRefs.begin(); i != weightRefs.end(); ++i)
+							for (AlignedVector< lwVMapPt >::iterator i = weightRefs.begin(); i != weightRefs.end(); ++i)
 							{
 								int jointIndex = outModel->addJoint(mbstows(i->vmap->name));
 								float jointInfluence = i->vmap->val[i->index][0];
@@ -518,7 +518,7 @@ Ref< Model > ModelFormatLwo::read(IStream* stream, uint32_t importFlags) const
 		return 0;
 
 	Ref< Model > md = new Model();
-	std::vector< std::string > channels;
+	AlignedVector< std::string > channels;
 
 	if (importFlags & IfMaterials)
 	{

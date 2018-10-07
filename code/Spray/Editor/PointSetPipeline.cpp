@@ -90,8 +90,8 @@ bool PointSetPipeline::buildOutput(
 	Ref< PointSet > pointSet = new PointSet();
 	if (!pointSetAsset->fromFaces())
 	{
-		const std::vector< model::Vertex >& vertices = model->getVertices();
-		for (std::vector< model::Vertex >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
+		const AlignedVector< model::Vertex >& vertices = model->getVertices();
+		for (AlignedVector< model::Vertex >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
 		{
 			PointSet::Point point;
 
@@ -112,17 +112,17 @@ bool PointSetPipeline::buildOutput(
 	}
 	else
 	{
-		const std::vector< model::Polygon >& polygons = model->getPolygons();
-		for (std::vector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+		const AlignedVector< model::Polygon >& polygons = model->getPolygons();
+		for (AlignedVector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 		{
-			const std::vector< uint32_t >& vertices = i->getVertices();
+			const AlignedVector< uint32_t >& vertices = i->getVertices();
 
 			PointSet::Point point;
 			point.position = Vector4::zero();
 			point.normal = Vector4::zero();
 			point.color = Vector4::zero();
 
-			for (std::vector< uint32_t >::const_iterator j = vertices.begin(); j != vertices.end(); ++j)
+			for (AlignedVector< uint32_t >::const_iterator j = vertices.begin(); j != vertices.end(); ++j)
 			{
 				const model::Vertex& vertex = model->getVertex(*j);
 

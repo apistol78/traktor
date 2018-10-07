@@ -101,7 +101,7 @@ void Model::clear(uint32_t clearFlags)
 	if (clearFlags & CfJoints)
 		m_joints.resize(0);
 
-	for (std::vector< Vertex >::iterator i = m_vertices.begin(); i != m_vertices.end(); ++i)
+	for (AlignedVector< Vertex >::iterator i = m_vertices.begin(); i != m_vertices.end(); ++i)
 	{
 		if (clearFlags & CfPositions)
 			i->setPosition(c_InvalidIndex);
@@ -119,7 +119,7 @@ void Model::clear(uint32_t clearFlags)
 			i->clearJointInfluences();
 	}
 
-	for (std::vector< Polygon >::iterator i = m_polygons.begin(); i != m_polygons.end(); ++i)
+	for (AlignedVector< Polygon >::iterator i = m_polygons.begin(); i != m_polygons.end(); ++i)
 	{
 		if (clearFlags & CfMaterials)
 			i->setMaterial(c_InvalidIndex);
@@ -173,7 +173,7 @@ uint32_t Model::addPolygon(const Polygon& polygon)
 
 uint32_t Model::addUniquePolygon(const Polygon& polygon)
 {
-	return addUniqueId< std::vector< Polygon >, Polygon, DefaultPredicate< Polygon > >(m_polygons, polygon);
+	return addUniqueId< AlignedVector< Polygon >, Polygon, DefaultPredicate< Polygon > >(m_polygons, polygon);
 }
 
 void Model::reservePositions(uint32_t positionCapacity)
@@ -245,7 +245,7 @@ uint32_t Model::getAvailableTexCoordChannel() const
 {
 	uint32_t channel = 0;
 
-	for (std::vector< model::Material >::const_iterator i = m_materials.begin(); i != m_materials.end(); ++i)
+	for (AlignedVector< model::Material >::const_iterator i = m_materials.begin(); i != m_materials.end(); ++i)
 	{
 		if (!i->getDiffuseMap().name.empty())
 			channel = traktor::max(channel, i->getDiffuseMap().channel + 1);
@@ -266,18 +266,18 @@ uint32_t Model::getAvailableTexCoordChannel() const
 
 uint32_t Model::addJoint(const std::wstring& jointName)
 {
-	return addUniqueId< std::vector< std::wstring >, std::wstring, DefaultPredicate< std::wstring > >(m_joints, jointName);
+	return addUniqueId< AlignedVector< std::wstring >, std::wstring, DefaultPredicate< std::wstring > >(m_joints, jointName);
 }
 
 uint32_t Model::findJointIndex(const std::wstring& jointName) const
 {
-	std::vector< std::wstring >::const_iterator i = std::find(m_joints.begin(), m_joints.end(), jointName);
+	AlignedVector< std::wstring >::const_iterator i = std::find(m_joints.begin(), m_joints.end(), jointName);
 	return i != m_joints.end() ? uint32_t(std::distance(m_joints.begin(), i)) : c_InvalidIndex;
 }
 
 uint32_t Model::addBlendTarget(const std::wstring& blendTargetName)
 {
-	std::vector< std::wstring >::iterator i = std::find(m_blendTargets.begin(), m_blendTargets.end(), blendTargetName);
+	AlignedVector< std::wstring >::iterator i = std::find(m_blendTargets.begin(), m_blendTargets.end(), blendTargetName);
 	if (i != m_blendTargets.end())
 		return uint32_t(std::distance(m_blendTargets.begin(), i));
 

@@ -90,7 +90,7 @@ bool BlendMeshConverter::convert(
 	// Create vertex buffer.
 	uint8_t* vertex = static_cast< uint8_t* >(baseMesh->getVertexBuffer()->lock());
 
-	for (std::vector< model::Vertex >::const_iterator i = model.getVertices().begin(); i != model.getVertices().end(); ++i)
+	for (AlignedVector< model::Vertex >::const_iterator i = model.getVertices().begin(); i != model.getVertices().end(); ++i)
 	{
 		std::memset(vertex, 0, vertexSize);
 
@@ -120,7 +120,7 @@ bool BlendMeshConverter::convert(
 	uint16_t* index = static_cast< uint16_t* >(baseMesh->getIndexBuffer()->lock());
 	uint16_t* indexFirst = index;
 
-	for (std::vector< model::Material >::const_iterator j = model.getMaterials().begin(); j != model.getMaterials().end(); ++j)
+	for (AlignedVector< model::Material >::const_iterator j = model.getMaterials().begin(); j != model.getMaterials().end(); ++j)
 	{
 		const model::Material& material = *j;
 
@@ -134,7 +134,7 @@ bool BlendMeshConverter::convert(
 		int minIndex =  std::numeric_limits< int >::max();
 		int maxIndex = -std::numeric_limits< int >::max();
 
-		for (std::vector< model::Polygon >::const_iterator k = model.getPolygons().begin(); k != model.getPolygons().end(); ++k)
+		for (AlignedVector< model::Polygon >::const_iterator k = model.getPolygons().begin(); k != model.getPolygons().end(); ++k)
 		{
 			const model::Polygon& polygon = *k;
 			T_ASSERT (polygon.getVertices().size() == 3);
@@ -195,7 +195,7 @@ bool BlendMeshConverter::convert(
 		// Create vertex buffer.
 		uint8_t* vertex = static_cast< uint8_t* >(targetMesh->getVertexBuffer()->lock());
 
-		for (std::vector< model::Vertex >::const_iterator j = model.getVertices().begin(); j != model.getVertices().end(); ++j)
+		for (AlignedVector< model::Vertex >::const_iterator j = model.getVertices().begin(); j != model.getVertices().end(); ++j)
 		{
 			std::memset(vertex, 0, vertexSize);
 

@@ -38,7 +38,7 @@ struct GatherFront
 
 void buildWindings(const Model& model, const Transform& transform, AlignedVector< Winding3 >& outWindings)
 {
-	const std::vector< Polygon >& polygons = model.getPolygons();
+	const AlignedVector< Polygon >& polygons = model.getPolygons();
 	outWindings.resize(polygons.size());
 	for (uint32_t i = 0; i < polygons.size(); ++i)
 	{

@@ -128,14 +128,14 @@ void splitPolygons(
 	model::Model& model,
 	int axis,
 	float splitDistance,
-	const std::vector< model::Polygon >& polygons,
-	std::vector< model::Polygon >& outBackPolygons,
-	std::vector< model::Polygon >& outFrontPolygons
+	const AlignedVector< model::Polygon >& polygons,
+	AlignedVector< model::Polygon >& outBackPolygons,
+	AlignedVector< model::Polygon >& outFrontPolygons
 )
 {
 	outBackPolygons.reserve((2 * polygons.size()) / 3);
 	outFrontPolygons.reserve((2 * polygons.size()) / 3);
-	for (std::vector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	for (AlignedVector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{
 		float range[2] = { std::numeric_limits< float >::max(), -std::numeric_limits< float >::max() };
 		
@@ -164,18 +164,18 @@ void splitPolygons(
 struct T_ALIGN16 OctreeNodeTemplate : public Object
 {
 	Aabb3 boundingBox;
-	std::vector< uint32_t > polygonIds;
+	AlignedVector< uint32_t > polygonIds;
 	Ref< OctreeNodeTemplate > children[8];
 };
 
 Ref< OctreeNodeTemplate > buildOctreeTemplate(
 	model::Model& model,
-	const std::vector< model::Polygon >& polygons,
+	const AlignedVector< model::Polygon >& polygons,
 	int32_t depth
 )
 {
 	Aabb3 boundingBox;
-	for (std::vector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	for (AlignedVector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{
 		for (uint32_t j = 0; j < i->getVertexCount(); ++j)
 		{
@@ -190,7 +190,7 @@ Ref< OctreeNodeTemplate > buildOctreeTemplate(
 	node->boundingBox = boundingBox;
 
 	// Add this level's polygons to model; Ensure we triangulate polygons (since they are already simple we use a naive triangulation).
-	for (std::vector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	for (AlignedVector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{
 		const model::Polygon& polygon = *i;
 		if (polygon.getVertexCount() > 3)
@@ -219,8 +219,8 @@ Ref< OctreeNodeTemplate > buildOctreeTemplate(
 	// Split polygons into eight buckets; polygons arn't actually split
 	// but instead put into "closest" bucket and instead it's bound are overlapped
 	// with it's neighbor.
-	std::vector< model::Polygon > backPolygons[3], frontPolygons[3];
-	std::vector< model::Polygon > octPolygons[8];
+	AlignedVector< model::Polygon > backPolygons[3], frontPolygons[3];
+	AlignedVector< model::Polygon > octPolygons[8];
 
 	splitPolygons(model, 0, center.x(), polygons, backPolygons[0], frontPolygons[0]);
 
@@ -257,10 +257,10 @@ Ref< OctreeNodeData > createOctreeParts(
 	uint8_t*& index,
 	AlignedVector< render::Mesh::Part >& renderParts,
 	AlignedVector< PartitionMeshResource::Part >& partitionParts,
-	std::vector< std::wstring >& worldTechniques
+	AlignedVector< std::wstring >& worldTechniques
 )
 {
-	std::map< std::wstring, std::vector< IndexRange > > techniqueRanges;
+	std::map< std::wstring, AlignedVector< IndexRange > > techniqueRanges;
 
 	uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
 
@@ -276,7 +276,7 @@ Ref< OctreeNodeData > createOctreeParts(
 		range.minIndex = std::numeric_limits< int32_t >::max();
 		range.maxIndex = -std::numeric_limits< int32_t >::max();
 
-		for (std::vector< uint32_t >::const_iterator j = nodeTemplate->polygonIds.begin(); j != nodeTemplate->polygonIds.end(); ++j)
+		for (AlignedVector< uint32_t >::const_iterator j = nodeTemplate->polygonIds.begin(); j != nodeTemplate->polygonIds.end(); ++j)
 		{
 			const model::Polygon& polygon = model.getPolygon(*j);
 
@@ -308,12 +308,12 @@ Ref< OctreeNodeData > createOctreeParts(
 		}
 	}
 
-	for (std::map< std::wstring, std::vector< IndexRange > >::const_iterator i = techniqueRanges.begin(); i != techniqueRanges.end(); ++i)
+	for (std::map< std::wstring, AlignedVector< IndexRange > >::const_iterator i = techniqueRanges.begin(); i != techniqueRanges.end(); ++i)
 	{
 		std::wstring worldTechnique, shaderTechnique;
 		split(i->first, L'/', worldTechnique, shaderTechnique);
 
-		for (std::vector< IndexRange >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		for (AlignedVector< IndexRange >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
 		{
 			PartitionMeshResource::Part partitionPart;
 			partitionPart.shaderTechnique = shaderTechnique;
@@ -345,7 +345,7 @@ Ref< OctreeNodeData > createOctreeParts(
 				renderParts.push_back(renderPart);
 			}
 
-			std::vector< std::wstring >::iterator it = std::find(worldTechniques.begin(), worldTechniques.end(), worldTechnique);
+			AlignedVector< std::wstring >::iterator it = std::find(worldTechniques.begin(), worldTechniques.end(), worldTechnique);
 			uint8_t worldTechniqueId;
 
 			if (it == worldTechniques.end())
@@ -420,7 +420,7 @@ bool PartitionMeshConverter::convert(
 
 	// Build octree of model; split triangles when necessary.
 	log::info << L"Building octree template..." << Endl;
-	std::vector< model::Polygon > polygons = model.getPolygons();
+	AlignedVector< model::Polygon > polygons = model.getPolygons();
 	model.clear(model::Model::CfPolygons | model::Model::CfJoints);
 	Ref< OctreeNodeTemplate > nodeTemplate = buildOctreeTemplate(model, polygons, 0);
 	T_ASSERT (nodeTemplate);
@@ -451,7 +451,7 @@ bool PartitionMeshConverter::convert(
 	// Create vertex buffer.
 	uint8_t* vertex = static_cast< uint8_t* >(mesh->getVertexBuffer()->lock());
 
-	for (std::vector< model::Vertex >::const_iterator i = model.getVertices().begin(); i != model.getVertices().end(); ++i)
+	for (AlignedVector< model::Vertex >::const_iterator i = model.getVertices().begin(); i != model.getVertices().end(); ++i)
 	{
 		std::memset(vertex, 0, vertexSize);
 

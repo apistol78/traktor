@@ -144,8 +144,8 @@ bool MeshPipeline::buildOutput(
 	AlignedVector< Mesh::Triangle > meshHullTriangles;
 	AlignedVector< uint32_t > meshHullIndices;
 
-	const std::vector< model::Polygon >& shapeTriangles = model->getPolygons();
-	for (std::vector< model::Polygon >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
+	const AlignedVector< model::Polygon >& shapeTriangles = model->getPolygons();
+	for (AlignedVector< model::Polygon >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
 	{
 		T_ASSERT (i->getVertices().size() == 3);
 
@@ -169,8 +169,8 @@ bool MeshPipeline::buildOutput(
 		model::CalculateConvexHull().apply(hull);
 
 		// Extract hull triangles.
-		const std::vector< model::Polygon >& hullTriangles = hull.getPolygons();
-		for (std::vector< model::Polygon >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
+		const AlignedVector< model::Polygon >& hullTriangles = hull.getPolygons();
+		for (AlignedVector< model::Polygon >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
 		{
 			T_ASSERT (i->getVertices().size() == 3);
 
@@ -183,7 +183,7 @@ bool MeshPipeline::buildOutput(
 
 		// Extract hull indices.
 		std::set< uint32_t > uniqueIndices;
-		for (std::vector< model::Polygon >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
+		for (AlignedVector< model::Polygon >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
 		{
 			for (int j = 0; j < 3; ++j)
 				uniqueIndices.insert(hull.getVertex(i->getVertex(j)).getPosition());

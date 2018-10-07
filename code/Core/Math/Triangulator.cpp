@@ -112,13 +112,13 @@ bool isClockWise(const AlignedVector< Vector2 >& points)
 
 void Triangulator::freeze(
 	const AlignedVector< Vector2 >& points,
-	std::vector< Triangle >& outTriangles,
+	AlignedVector< Triangle >& outTriangles,
 	uint32_t flags
 )
 {
 	size_t npoints = points.size();
 	AlignedVector< Vector2 > uncut(npoints);
-	std::vector< int32_t > indices(npoints);
+	AlignedVector< int32_t > indices(npoints);
 
 	// Ensure correct winding.
 	if (!isClockWise(points))
@@ -138,7 +138,7 @@ void Triangulator::freeze(
 		}
 	}
 
-	std::vector< int32_t > ears;
+	AlignedVector< int32_t > ears;
 	while (uncut.size() >= 3)
 	{
 		ears.resize(0);
@@ -154,7 +154,7 @@ void Triangulator::freeze(
 			getAdjacent(uncut, i, prev, next);
 
 			bool ear = true;
-			for (int j = 0; j < int32_t(uncut.size()) && ear; ++j)
+			for (int32_t j = 0; j < int32_t(uncut.size()) && ear; ++j)
 			{
 				if (j == prev || j == i || j == next)
 					continue;
@@ -200,7 +200,7 @@ void Triangulator::freeze(
 void Triangulator::freeze(
 	const AlignedVector< Vector4 >& points,
 	const Vector4& normal,
-	std::vector< Triangle >& outTriangles,
+	AlignedVector< Triangle >& outTriangles,
 	uint32_t flags
 )
 {
