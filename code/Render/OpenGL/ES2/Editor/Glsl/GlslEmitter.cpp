@@ -2121,7 +2121,7 @@ bool emitTargetSize(GlslContext& cx, TargetSize* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat2);
-	assign(f, out) << L"_gl_targetSize;" << Endl;
+	assign(f, out) << L"_gl_targetSize.xy;" << Endl;
 	return true;
 }
 
