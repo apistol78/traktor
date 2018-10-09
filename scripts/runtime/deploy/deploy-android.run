@@ -264,12 +264,12 @@ function deploy(args)
 	stdout:printLn("Building Android APK package...")
 
 	local result = true	
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/$(DEPLOY_ANDROID_APILEVEL)/android.jar\" -F $(DEPLOY_PROJECT_NAME).unsigned.apk") == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/armeabi-v7a/lib$(DEPLOY_EXECUTABLE).so", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/armeabi-v7a/libc++_shared.so", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add $(DEPLOY_PROJECT_NAME).unsigned.apk assets/Application.config", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/zipalign.exe -f -p 4 $(DEPLOY_PROJECT_NAME).unsigned.apk $(DEPLOY_PROJECT_NAME).aligned.apk", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/apksigner.bat sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out $(DEPLOY_PROJECT_NAME).apk $(DEPLOY_PROJECT_NAME).aligned.apk", nil) == 0)
+	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/$(DEPLOY_ANDROID_APILEVEL)/android.jar\" -F \"$(DEPLOY_PROJECT_NAME).unsigned.apk\"") == 0)
+	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/armeabi-v7a/lib$(DEPLOY_EXECUTABLE).so", nil) == 0)
+	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/armeabi-v7a/libc++_shared.so", nil) == 0)
+	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Application.config", nil) == 0)
+	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/zipalign.exe -f -p 4 \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
+	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/apksigner.bat sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"$(DEPLOY_PROJECT_NAME).apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
 
 	-- Cleanup intermediate files.
 	run:rm("$(DEPLOY_PROJECT_NAME).unsigned.apk")
@@ -376,13 +376,13 @@ function migrate(args)
 	stdout:printLn("Building Android APK package...")
 
 	local result = true	
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/$(DEPLOY_ANDROID_APILEVEL)/android.jar\" -F $(DEPLOY_PROJECT_NAME).unsigned.apk") == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/armeabi-v7a/lib$(DEPLOY_EXECUTABLE).so", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add $(DEPLOY_PROJECT_NAME).unsigned.apk lib/armeabi-v7a/libc++_shared.so", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add $(DEPLOY_PROJECT_NAME).unsigned.apk assets/Application.config", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add $(DEPLOY_PROJECT_NAME).unsigned.apk assets/Content.compact", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/zipalign.exe -f -p 4 $(DEPLOY_PROJECT_NAME).unsigned.apk $(DEPLOY_PROJECT_NAME).aligned.apk", nil) == 0)
-	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/apksigner.bat sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out $(DEPLOY_PROJECT_NAME).apk $(DEPLOY_PROJECT_NAME).aligned.apk", nil) == 0)
+	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe package -f -M AndroidManifest.xml -S res -I \"$(DEPLOY_ANDROID_HOME)/platforms/$(DEPLOY_ANDROID_APILEVEL)/android.jar\" -F \"$(DEPLOY_PROJECT_NAME).unsigned.apk\"") == 0)
+	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/armeabi-v7a/lib$(DEPLOY_EXECUTABLE).so", nil) == 0)
+	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" lib/armeabi-v7a/libc++_shared.so", nil) == 0)
+	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Application.config", nil) == 0)
+	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/aapt.exe add \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" assets/Content.compact", nil) == 0)
+	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/zipalign.exe -f -p 4 \"$(DEPLOY_PROJECT_NAME).unsigned.apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
+	result = result and (run:execute("$(DEPLOY_ANDROID_HOME)/build-tools/27.0.3/apksigner.bat sign --ks $(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/android/keystore.jks --ks-key-alias androidkey --ks-pass pass:android --key-pass pass:android --out \"$(DEPLOY_PROJECT_NAME).apk\" \"$(DEPLOY_PROJECT_NAME).aligned.apk\"", nil) == 0)
 
 	-- Cleanup intermediate files.
 	run:rm("$(DEPLOY_PROJECT_NAME).unsigned.apk")

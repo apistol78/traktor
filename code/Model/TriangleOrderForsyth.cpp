@@ -174,7 +174,7 @@ void optimizeFaces(const AlignedVector< uint32_t >& indexList, uint32_t vertexCo
 {
 	T_ASSERT (indexList.size() == outNewIndexList.size());
 
-	AlignedVector< OptimizeVertexData > vertexDataList;
+	std::vector< OptimizeVertexData > vertexDataList;
 	vertexDataList.resize(vertexCount);
 
 	// Compute face count per vertex.
@@ -186,7 +186,7 @@ void optimizeFaces(const AlignedVector< uint32_t >& indexList, uint32_t vertexCo
 		vertexData.activeFaceListSize++;
 	}
 
-	AlignedVector< uint32_t > activeFaceList;
+	std::vector< uint32_t > activeFaceList;
 
 	const uint32_t kEvictedCacheIndex = std::numeric_limits< uint32_t >::max();
 
@@ -218,7 +218,7 @@ void optimizeFaces(const AlignedVector< uint32_t >& indexList, uint32_t vertexCo
 		}
 	}
 
-	AlignedVector< uint8_t > processedFaceList;
+	std::vector< uint8_t > processedFaceList;
 	processedFaceList.resize(indexList.size());
 
 	uint32_t vertexCacheBuffer[(kMaxVertexCacheSize + 3) * 2];
@@ -321,13 +321,13 @@ void optimizeFaces(const AlignedVector< uint32_t >& indexList, uint32_t vertexCo
 			OptimizeVertexData& vertexData = vertexDataList[index];
 			vertexData.cachePos0 = vertexData.cachePos1;
 			vertexData.cachePos1 = kEvictedCacheIndex;
-			for (uint32_t j=0; j<vertexData.activeFaceListSize; ++j)
+			for (uint32_t j = 0; j < vertexData.activeFaceListSize; ++j)
 			{
-				uint32_t face = activeFaceList[vertexData.activeFaceListStart+j];
+				uint32_t face = activeFaceList[vertexData.activeFaceListStart + j];
 				float faceScore = 0.f;
-				for (uint32_t v=0; v<3; v++)
+				for (uint32_t v = 0; v < 3; v++)
 				{
-					uint32_t faceIndex = indexList[face+v];
+					uint32_t faceIndex = indexList[face + v];
 					OptimizeVertexData& faceVertexData = vertexDataList[faceIndex];
 					faceScore += faceVertexData.score;
 				}

@@ -527,8 +527,10 @@ public:
 
 	template < typename IteratorType >
 	AlignedVector(const IteratorType& from, const IteratorType& to)
+	:	m_data(0)
+	,	m_size(0)
+	,	m_capacity(0)
 	{
-		reserve(std::distance(from, to));
 		for (IteratorType i = from; i != to; ++i)
 			push_back(*i);
 	}
