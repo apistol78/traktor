@@ -349,6 +349,7 @@ Ref< IProcess > OS::execute(
 			&sa,
 			0
 		);
+		SetHandleInformation(hStdInWrite, HANDLE_FLAG_INHERIT, 0);
 		
 		CreatePipe(
 			&hStdOutRead,
@@ -356,6 +357,7 @@ Ref< IProcess > OS::execute(
 			&sa,
 			0
 		);
+		SetHandleInformation(hStdOutRead, HANDLE_FLAG_INHERIT, 0);
 		
 		CreatePipe(
 			&hStdErrRead,
@@ -363,6 +365,7 @@ Ref< IProcess > OS::execute(
 			&sa,
 			0
 		);
+		SetHandleInformation(hStdErrRead, HANDLE_FLAG_INHERIT, 0);
 	}
 
 	STARTUPINFO si;
