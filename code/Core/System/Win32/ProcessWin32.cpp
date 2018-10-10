@@ -58,41 +58,21 @@ public:
 
 	virtual int64_t read(void* block, int64_t nbytes)
 	{
-		bool processTerminated = (WaitForSingleObject(m_hProcess, 0) == WAIT_OBJECT_0);
-
-		DWORD dwPending = 0;
-		if (!PeekNamedPipe(m_hPipe, NULL, 0, NULL, &dwPending, NULL))
+		DWORD npending = 0;
+		if (!PeekNamedPipe(m_hPipe, nullptr, 0, nullptr, &npending, nullptr))
 			return -1;
 
-		DWORD dwSafeRead = min(nbytes, dwPending);
-		DWORD dwRead = 0;
-
-		if (dwSafeRead > 0)
+		if (npending == 0)
 		{
-			if (!ReadFile(m_hPipe, block, dwSafeRead, &dwRead, NULL))
-				return -1;
+			bool processTerminated = (WaitForSingleObject(m_hProcess, 0) == WAIT_OBJECT_0);
+			return processTerminated ? -1 : 0;
 		}
 
-		if (dwRead == 0 && processTerminated)
-		{
-			Sleep(100);
+		DWORD nread = 0;
+		if (!ReadFile(m_hPipe, block, min(npending, nbytes), &nread, NULL))
+			return -1;
 
-			if (!PeekNamedPipe(m_hPipe, NULL, 0, NULL, &dwPending, NULL))
-				return -1;
-
-			dwSafeRead = min(nbytes, dwPending);
-
-			if (dwSafeRead > 0)
-			{
-				if (!ReadFile(m_hPipe, block, dwSafeRead, &dwRead, NULL))
-					return -1;
-			}
-
-			if (dwRead == 0)
-				return -1;
-		}
-
-		return int64_t(dwRead);
+		return int64_t(nread);
 	}
 
 	virtual int64_t write(const void* block, int64_t nbytes)

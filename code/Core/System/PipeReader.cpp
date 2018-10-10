@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/System/PipeReader.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Core/Timer/Timer.h"
 
 namespace traktor
 {
@@ -27,7 +28,7 @@ PipeReader::~PipeReader()
 
 PipeReader::Result PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 {
-	char buffer[128];
+	char buffer[1024];
 
 	outLine.clear();
 
@@ -43,9 +44,11 @@ PipeReader::Result PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 	if (!m_stream)
 		return RtEnd;
 
+	Timer tt;
+	tt.start();
+
 	while (m_lines.empty())
 	{
-		std::memset(buffer, 0, sizeof(buffer));
 		int64_t nrecv = m_stream->read(buffer, sizeof(buffer));
 		if (nrecv < 0)
 		{
@@ -55,11 +58,10 @@ PipeReader::Result PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 
 		if (nrecv == 0)
 		{
-			if (timeout <= 0)
+			if (int32_t(tt.getElapsedTime() * 1000.0) >= timeout)
 				break;
 
-			timeout -= 10;
-			ThreadManager::getInstance().getCurrentThread()->sleep(10);
+			ThreadManager::getInstance().getCurrentThread()->sleep(1);
 			continue;
 		}
 
@@ -89,7 +91,7 @@ PipeReader::Result PipeReader::readLine(std::wstring& outLine, int32_t timeout)
 	}
 
 	if (m_lines.empty())
-		return RtTimeout;
+		return m_stream ? RtTimeout : RtEnd;
 
 	// Pop line from queue.
 	outLine = m_lines.front();
