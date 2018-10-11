@@ -27,6 +27,8 @@ public:
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
+	virtual void setVisible(bool visible) T_OVERRIDE T_FINAL;
+
 	virtual void setIcon(ISystemBitmap* icon) T_OVERRIDE T_FINAL;
 
 	virtual void maximize() T_OVERRIDE T_FINAL;

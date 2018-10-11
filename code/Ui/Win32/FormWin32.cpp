@@ -71,6 +71,17 @@ void FormWin32::destroy()
 	WidgetWin32Impl< IForm >::destroy();
 }
 
+void FormWin32::setVisible(bool visible)
+{
+	if (visible != isVisible())
+	{
+		ShowWindow(m_hWnd, visible ? SW_SHOW : SW_HIDE);
+
+		ShowEvent showEvent(m_owner, visible);
+		m_owner->raiseEvent(&showEvent);
+	}
+}
+
 void FormWin32::setIcon(ISystemBitmap* icon)
 {
 	BitmapWin32* bm = static_cast< BitmapWin32* >(icon);

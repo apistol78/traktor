@@ -87,26 +87,26 @@ bool EventLoopWin32::process(EventSubject* owner)
 		bool dispatch = !preTranslateMessage(owner, msg);
 		if (dispatch)
 		{
-			HWND hwndFocus = GetFocus();
-			HWND hwndTop = hwndFocus;
+			//HWND hwndFocus = GetFocus();
+			//HWND hwndTop = hwndFocus;
 
-			for (; GetParent(hwndTop) != NULL; hwndTop = GetParent(hwndTop))
-				;
+			//for (; GetParent(hwndTop) != NULL; hwndTop = GetParent(hwndTop))
+			//	;
 
-			BOOL handled = FALSE;
-			if (hwndTop != NULL)
-				handled = IsDialogMessage(hwndTop, &msg);
+			//BOOL handled = FALSE;
+			//if (hwndTop != NULL)
+			//	handled = IsDialogMessage(hwndTop, &msg);
 
-			if (!handled)
+			//if (!handled)
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 
-				if (hwndFocus != GetFocus())
-				{
-					FocusEvent focusEvent(owner, true);
-					owner->raiseEvent(&focusEvent);
-				}
+				//if (hwndFocus != GetFocus())
+				//{
+				//	FocusEvent focusEvent(owner, true);
+				//	owner->raiseEvent(&focusEvent);
+				//}
 			}
 		}
 	}
@@ -126,26 +126,26 @@ int32_t EventLoopWin32::execute(EventSubject* owner)
 			bool dispatch = !preTranslateMessage(owner, msg);
 			if (dispatch)
 			{
-				HWND hwndFocus = GetFocus();
-				HWND hwndTop = hwndFocus;
+				//HWND hwndFocus = GetFocus();
+				//HWND hwndTop = hwndFocus;
 
-				for (; hwndTop != NULL && GetParent(hwndTop) != NULL; hwndTop = GetParent(hwndTop))
-					;
+				//for (; hwndTop != NULL && GetParent(hwndTop) != NULL; hwndTop = GetParent(hwndTop))
+				//	;
 
-				BOOL handled = FALSE;
-				if (hwndTop != NULL)
-					handled = IsDialogMessage(hwndTop, &msg);
+				//BOOL handled = FALSE;
+				//if (hwndTop != NULL)
+				//	handled = IsDialogMessage(hwndTop, &msg);
 
-				if (!handled)
+				//if (!handled)
 				{
 					TranslateMessage(&msg);
 					DispatchMessage(&msg);
 
-					if (hwndFocus != GetFocus())
-					{
-						FocusEvent focusEvent(owner, true);
-						owner->raiseEvent(&focusEvent);
-					}
+					//if (hwndFocus != GetFocus())
+					//{
+					//	FocusEvent focusEvent(owner, true);
+					//	owner->raiseEvent(&focusEvent);
+					//}
 				}
 			}
 
