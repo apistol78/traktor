@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/AutoPtr.h"
@@ -30,6 +31,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Vulkan/Editor/Glsl/GlslType.h"
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/Window.h"
+#elif defined(__LINUX__)
+#	include "Render/Vulkan/Linux/Window.h"
 #endif
 
 namespace traktor
@@ -88,7 +91,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	for (uint32_t i = 0; i < layerCount; ++i)
 	{
 		log::info << i << L": " << mbstows(layersAvailable[i].layerName) << Endl;
-		if (strcmp(layersAvailable[i].layerName, c_validationLayerNames[0]) == 0)
+		if (std::strcmp(layersAvailable[i].layerName, c_validationLayerNames[0]) == 0)
 			m_haveValidationLayer = true;
 	}
 	log::info << DecreaseIndent;
@@ -105,7 +108,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	//uint32_t foundExtensions = 0;
 	//for (int i = 0; i < extensionCount; ++i)
 	//{
-	//	if(strcmp(extensionsAvailable[i].extensionName, extensions[i]) == 0)
+	//	if(std::strcmp(extensionsAvailable[i].extensionName, extensions[i]) == 0)
 	//		foundExtensions++;
 	//}
 	//if (foundExtensions != sizeof_array(extensions))
@@ -247,9 +250,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 void RenderSystemVk::destroy()
 {
-#if defined(_WIN32) || defined(__ANDROID__)
 	finalizeVulkanApi();
-#endif
 }
 
 bool RenderSystemVk::reset(const RenderSystemDesc& desc)
@@ -331,7 +332,7 @@ float RenderSystemVk::getDisplayAspectRatio() const
 
 Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc& desc)
 {
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 	VkSwapchainKHR swapChain = 0;
 	VkQueue presentQueue = 0;
 	VkCommandPool commandPool = 0;
@@ -429,7 +430,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	if (vkCreateSwapchainKHR(m_device, &swapChainCreateInfo, NULL, &swapChain) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create swap chain." << Endl;
-		return false;
+		return nullptr;
 	}
 	
 	// Get device submit queue.
@@ -546,7 +547,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	descriptorLayoutCreateInfo.bindingCount = sizeof_array(layoutBindings);
 	descriptorLayoutCreateInfo.pBindings = layoutBindings;
 	if (vkCreateDescriptorSetLayout(m_device, &descriptorLayoutCreateInfo, nullptr, &descriptorSetLayout) != VK_SUCCESS)
-		return false;
+		return nullptr;
 
 	VkDescriptorPoolSize descriptorPoolSize[1];
 	descriptorPoolSize[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -559,7 +560,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	descriptorPoolCreationInfo.poolSizeCount = 1;
 	descriptorPoolCreationInfo.pPoolSizes = descriptorPoolSize;
 	if (vkCreateDescriptorPool(m_device, &descriptorPoolCreationInfo, nullptr, &descriptorPool) != VK_SUCCESS)
-		return false;
+		return nullptr;
 
 	VkPipelineLayoutCreateInfo layoutCreateInfo = {};
 	layoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -568,7 +569,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	layoutCreateInfo.pushConstantRangeCount = 0;
 	layoutCreateInfo.pPushConstantRanges = nullptr;
 	if (vkCreatePipelineLayout(m_device, &layoutCreateInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
-		return false;
+		return nullptr;
 
 	Ref< RenderViewVk > renderView = new RenderViewVk(
 		m_window,

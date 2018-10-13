@@ -7,15 +7,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <cstring>
 #include <sstream>
 
-#if defined(_WIN32)
-#	include <glslang/Include/ShHandle.h>
-#	include <glslang/Include/revision.h>
-#	include <glslang/Public/ShaderLang.h>
-#	include <SPIRV/GlslangToSpv.h>
-#	include <SPIRV/GLSL.std.450.h>
-#	include <SPIRV/doc.h>
-#	include <SPIRV/disassemble.h>
-#endif
+#include <glslang/Include/ShHandle.h>
+#include <glslang/Include/revision.h>
+#include <glslang/Public/ShaderLang.h>
+#include <SPIRV/GlslangToSpv.h>
+#include <SPIRV/GLSL.std.450.h>
+#include <SPIRV/doc.h>
+#include <SPIRV/disassemble.h>
 
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
@@ -34,7 +32,6 @@ namespace traktor
 		namespace
 		{
 
-#if defined(_WIN32)
 const TBuiltInResource c_defaultTBuiltInResource =
 {
 	/* .MaxLights = */ 32,
@@ -132,7 +129,6 @@ const TBuiltInResource c_defaultTBuiltInResource =
 		/* .generalConstantMatrixVectorIndexing = */ 1,
     }
 };
-#endif
 
 		}
 
@@ -140,14 +136,12 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerVk", 0, ProgramCo
 
 ProgramCompilerVk::ProgramCompilerVk()
 {
-#if defined(_WIN32)
 	static bool s_initialized = false;
 	if (!s_initialized)
 	{
 		glslang::InitializeProcess();
 		s_initialized = true;
 	}
-#endif
 }
 
 const wchar_t* ProgramCompilerVk::getPlatformSignature() const
@@ -164,7 +158,6 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	Stats* outStats
 ) const
 {
-#if defined(_WIN32)
 	RefArray< VertexOutput > vertexOutputs;
 	RefArray< PixelOutput > pixelOutputs;
 
@@ -323,9 +316,6 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	delete vertexShader;
 
 	return programResource;
-#else
-	return 0;
-#endif
 }
 
 bool ProgramCompilerVk::generate(
