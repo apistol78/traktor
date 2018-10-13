@@ -14,9 +14,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Vulkan/RenderTargetSetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
 #include "Render/Vulkan/VertexBufferVk.h"
-#if defined(_WIN32)
-#	include "Render/Vulkan/Win32/Window.h"
-#endif
 
 namespace traktor
 {
@@ -44,7 +41,7 @@ struct RenderEventTypePred
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewVk", RenderViewVk, IRenderView)
 
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 RenderViewVk::RenderViewVk(
 	Window* window,
 	VkDevice device,
@@ -73,8 +70,10 @@ RenderViewVk::RenderViewVk(
 ,	m_targetStateDirty(false)
 ,	m_pipeline(0)
 {
+#	if defined(_WIN32)
 	if (m_window)
 		m_window->addListener(this);
+#	endif
 }
 #else
 RenderViewVk::RenderViewVk(VkDevice device)
@@ -429,7 +428,7 @@ void RenderViewVk::present()
     vkWaitForFences(m_device, 1, &renderFence, VK_TRUE, UINT64_MAX);
     vkDestroyFence(m_device, renderFence, nullptr);
  
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
     VkPresentInfoKHR presentInfo = {};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     presentInfo.waitSemaphoreCount = 1;

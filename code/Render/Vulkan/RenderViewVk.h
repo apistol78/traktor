@@ -11,6 +11,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define VK_USE_PLATFORM_WIN32_KHR
 #	define VK_NO_PROTOTYPES
 #	include <vulkan.h>
+#elif defined(__LINUX__)
+#	define VK_USE_PLATFORM_LINUX_KHR
+#	define VK_NO_PROTOTYPES
+#	include <vulkan.h>
 #elif defined(__ANDROID__)
 #	define VK_USE_PLATFORM_ANDROID_KHR
 #	define VK_NO_PROTOTYPES
@@ -22,6 +26,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/IRenderView.h"
 #if defined(_WIN32)
 #	include "Render/Vulkan/Win32/Window.h"
+#elif defined(__LINUX__)
+#	include "Render/Vulkan/Linux/Window.h"
 #endif
 
 namespace traktor
@@ -45,7 +51,7 @@ class RenderViewVk
 	T_RTTI_CLASS;
 
 public:
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 	RenderViewVk(
 		Window* window,
 		VkDevice device,
@@ -121,7 +127,7 @@ public:
 	virtual bool getBackBufferContent(void* buffer) const T_OVERRIDE T_FINAL;
 
 private:
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 	Ref< Window > m_window;
 #endif
 	VkDevice m_device;

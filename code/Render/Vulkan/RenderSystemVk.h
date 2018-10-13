@@ -11,6 +11,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define VK_USE_PLATFORM_WIN32_KHR
 #	define VK_NO_PROTOTYPES
 #	include <vulkan.h>
+#elif defined(__LINUX__)
+#	define VK_USE_PLATFORM_LINUX_KHR
+#	define VK_NO_PROTOTYPES
+#	include <vulkan.h>
 #elif defined(__ANDROID__)
 #	define VK_USE_PLATFORM_ANDROID_KHR
 #	define VK_NO_PROTOTYPES
@@ -35,7 +39,7 @@ namespace traktor
 
 class ContextVk;
 
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 class Window;
 #endif
 
@@ -92,7 +96,7 @@ public:
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const T_OVERRIDE T_FINAL;
 
 private:
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 	Ref< Window > m_window;
 #endif
 	VkInstance m_instance;
