@@ -488,15 +488,15 @@ void PropertyList::eventButtonUp(MouseButtonUpEvent* event)
 {
 	m_mode = MdNone;
 
+	if (hasCapture())
+		releaseCapture();
+
 	if (m_mousePropertyItem)
 	{
 		m_mousePropertyItem->mouseButtonUp(event);
 		m_mousePropertyItem = 0;
 		event->consume();
 	}
-
-	if (hasCapture())
-		releaseCapture();
 }
 
 void PropertyList::eventDoubleClick(MouseDoubleClickEvent* event)
