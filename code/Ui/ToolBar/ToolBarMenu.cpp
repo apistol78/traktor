@@ -97,13 +97,13 @@ void ToolBarMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitm
 	m_menuPosition = Point(at.x, at.y + size.cy);
 }
 
-bool ToolBarMenu::mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent)
+bool ToolBarMenu::mouseEnter(ToolBar* toolBar)
 {
 	m_hover = true;
 	return true;
 }
 
-void ToolBarMenu::mouseLeave(ToolBar* toolBar, MouseMoveEvent* mouseEvent)
+void ToolBarMenu::mouseLeave(ToolBar* toolBar)
 {
 	m_hover = false;
 }

@@ -46,8 +46,9 @@ public:
 
 private:
 	bool m_pushed;
+	bool m_hover;
 
-	void eventMouseMove(MouseMoveEvent* event);
+	void eventMouseTrack(MouseTrackEvent* event);
 	
 	void eventButtonDown(MouseButtonDownEvent* event);
 

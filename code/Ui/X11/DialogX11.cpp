@@ -1,7 +1,7 @@
 #include <X11/Xutil.h>
 #include "Core/Timer/Timer.h"
 #include "Ui/Dialog.h"
-#include "Ui/X11/Assoc.h"
+#include "Ui/X11/Context.h"
 #include "Ui/X11/DialogX11.h"
 #include "Ui/X11/Timers.h"
 
@@ -10,8 +10,8 @@ namespace traktor
 	namespace ui
 	{
 
-DialogX11::DialogX11(EventSubject* owner, Display* display, int32_t screen, XIM xim)
-:	WidgetX11Impl< IDialog >(owner, display, screen, xim)
+DialogX11::DialogX11(Context* context, EventSubject* owner)
+:	WidgetX11Impl< IDialog >(context, owner)
 ,	m_result(0)
 ,	m_modal(false)
 {
@@ -26,8 +26,8 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 	height = std::max< int32_t >(height, c_minHeight);
 
 	Window window = XCreateWindow(
-		m_display,
-		DefaultRootWindow(m_display),
+		m_context->getDisplay(),
+		DefaultRootWindow(m_context->getDisplay()),
 		0,
 		0,
 		width,
@@ -47,19 +47,19 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 	XTextProperty tp;
 	XStringListToTextProperty((char**)&csp, 1, &tp);
 
-	XSetWMName(m_display, window, &tp);
+	XSetWMName(m_context->getDisplay(), window, &tp);
 
 	// Make dialog on top of parent.
 	if (parent != nullptr)
 	{
-		Window parentWindow = (Window)parent->getInternalHandle();
-		XSetTransientForHint(m_display, window, parentWindow);
+		WidgetData* parentData = static_cast< WidgetData* >(parent->getInternalHandle());
+		XSetTransientForHint(m_context->getDisplay(), window, parentData->window);
 	}
 
 	// Register "delete window" window manager message.
-	m_atomWmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
+	m_atomWmDeleteWindow = XInternAtom(m_context->getDisplay(), "WM_DELETE_WINDOW", False);
 
-	Assoc::getInstance().bind(window, ClientMessage, [&](XEvent& xe){
+	m_context->bind(&m_data, ClientMessage, [&](XEvent& xe){
 		if ((Atom)xe.xclient.data.l[0] == m_atomWmDeleteWindow)
 		{
 			CloseEvent closeEvent(m_owner);
@@ -69,20 +69,23 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 		}		
 	});
 
-	XSetWMProtocols(m_display, window, &m_atomWmDeleteWindow, 1);
+	XSetWMProtocols(m_context->getDisplay(), window, &m_atomWmDeleteWindow, 1);
 
 	// Center dialog on parent or desktop.
-	Window parentWindow = DefaultRootWindow(m_display);
+	Window parentWindow = DefaultRootWindow(m_context->getDisplay());
 	Window root;
 	int px, py;
 	unsigned int pwidth, pheight;
 	unsigned int pborder, pdepth;
 
 	if (parent != nullptr && style & Dialog::WsCenterDesktop == 0)
-		parentWindow = (Window)parent->getInternalHandle();
+	{
+		WidgetData* parentData = static_cast< WidgetData* >(parent->getInternalHandle());
+		parentWindow = parentData->window;
+	}
 
 	XGetGeometry(
-		m_display,
+		m_context->getDisplay(),
 		parentWindow,
 		&root,
 		&px, &py,
@@ -94,7 +97,7 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 
 	Rect rc(Point(px + (pwidth - width) / 2, py + (pheight - height) / 2), Size(width, height));
 
-	return WidgetX11Impl< IDialog >::create(nullptr, style, window, rc, false);
+	return WidgetX11Impl< IDialog >::create(nullptr, style, window, rc, false, true);
 }
 
 void DialogX11::destroy()
@@ -111,9 +114,11 @@ int DialogX11::showModal()
 	setWmProperty("_NET_WM_STATE_MODAL", _NET_WM_STATE_ADD);
 	setVisible(true);
 
-	XFlush(m_display);
+	XFlush(m_context->getDisplay());
 
-	int fd = ConnectionNumber(m_display);
+	m_context->pushModal(&m_data);
+
+	int fd = ConnectionNumber(m_context->getDisplay());
 	XEvent e;
 
 	Timer timer;
@@ -122,7 +127,7 @@ int DialogX11::showModal()
 	for (m_modal = true; m_modal; )
 	{
         int nr = 0;
-		if (!XPending(m_display))
+		if (!XPending(m_context->getDisplay()))
 		{
 			fd_set fds;
 			FD_ZERO(&fds);
@@ -139,10 +144,10 @@ int DialogX11::showModal()
 
         if (nr > 0)
 		{
-			while (XPending(m_display))
+			while (XPending(m_context->getDisplay()))
 			{
-				XNextEvent(m_display, &e);
-				Assoc::getInstance().dispatch(m_display, e);
+				XNextEvent(m_context->getDisplay(), &e);
+				m_context->dispatch(e);
 			}
 		}
 
@@ -152,6 +157,8 @@ int DialogX11::showModal()
 
 	setVisible(false);
 	setWmProperty("_NET_WM_STATE_MODAL", _NET_WM_STATE_REMOVE);
+
+	m_context->popModal();
 
 	return m_result;
 }
@@ -168,7 +175,7 @@ void DialogX11::setMinSize(const Size& minSize)
 	sh.flags = PMinSize;
 	sh.min_width = minSize.cx;
 	sh.min_height = minSize.cy;
-	XSetWMNormalHints(m_display, m_window, &sh);
+	XSetWMNormalHints(m_context->getDisplay(), m_data.window, &sh);
 }
 
 	}

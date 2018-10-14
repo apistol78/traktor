@@ -6,8 +6,8 @@ namespace traktor
 	namespace ui
 	{
 
-ToolFormX11::ToolFormX11(EventSubject* owner, Display* display, int32_t screen, XIM xim)
-:	WidgetX11Impl< IToolForm >(owner, display, screen, xim)
+ToolFormX11::ToolFormX11(Context* context, EventSubject* owner)
+:	WidgetX11Impl< IToolForm >(context, owner)
 ,	m_result(0)
 ,	m_modal(false)
 {
@@ -22,8 +22,8 @@ bool ToolFormX11::create(IWidget* parent, const std::wstring& text, int width, i
 	height = std::max< int32_t >(height, c_minHeight);
 
 	Window window = XCreateWindow(
-		m_display,
-		DefaultRootWindow(m_display),
+		m_context->getDisplay(),
+		DefaultRootWindow(m_context->getDisplay()),
 		0,
 		0,
 		width,
@@ -37,18 +37,18 @@ bool ToolFormX11::create(IWidget* parent, const std::wstring& text, int width, i
 	);
 
 	// Change style of window, no WM chrome.
-    Atom type = XInternAtom(m_display,"_NET_WM_WINDOW_TYPE", False);
-    Atom value = XInternAtom(m_display,"_NET_WM_WINDOW_TYPE_DOCK", False);
-    XChangeProperty(m_display, window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
+    Atom type = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE", False);
+    Atom value = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE_DOCK", False);
+    XChangeProperty(m_context->getDisplay(), window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
 
 	// Make tool form on top of parent.
 	if (parent != nullptr)
 	{
-		Window parentWindow = (Window)parent->getInternalHandle();
-		XSetTransientForHint(m_display, window, parentWindow);
+		WidgetData* parentData = static_cast< WidgetData* >(parent->getInternalHandle());
+		XSetTransientForHint(m_context->getDisplay(), window, parentData->window);
 	}
 
-	return WidgetX11Impl< IToolForm >::create(nullptr, style, window, Rect(0, 0, width, height), false);
+	return WidgetX11Impl< IToolForm >::create(parent, style, window, Rect(0, 0, width, height), false, true);
 }
 
 void ToolFormX11::destroy()
@@ -61,9 +61,11 @@ int ToolFormX11::showModal()
 	setWmProperty("_NET_WM_STATE_MODAL", _NET_WM_STATE_ADD);
 	setVisible(true);
 
-	XFlush(m_display);
+	XFlush(m_context->getDisplay());
 
-	int fd = ConnectionNumber(m_display);
+	m_context->pushModal(&m_data);
+
+	int fd = ConnectionNumber(m_context->getDisplay());
 	XEvent e;
 
 	Timer timer;
@@ -72,7 +74,7 @@ int ToolFormX11::showModal()
 	for (m_modal = true; m_modal; )
 	{
         int nr = 0;
-		if (!XPending(m_display))
+		if (!XPending(m_context->getDisplay()))
 		{
 			fd_set fds;
 			FD_ZERO(&fds);
@@ -89,10 +91,10 @@ int ToolFormX11::showModal()
 
         if (nr > 0)
 		{
-			while (XPending(m_display))
+			while (XPending(m_context->getDisplay()))
 			{
-				XNextEvent(m_display, &e);
-				Assoc::getInstance().dispatch(m_display, e);
+				XNextEvent(m_context->getDisplay(), &e);
+				m_context->dispatch(e);
 			}
 		}
 
@@ -102,6 +104,8 @@ int ToolFormX11::showModal()
 
 	setVisible(false);
 	setWmProperty("_NET_WM_STATE_MODAL", _NET_WM_STATE_REMOVE);
+
+	m_context->popModal();
 
 	return m_result;
 }

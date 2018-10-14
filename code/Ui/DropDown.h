@@ -86,8 +86,9 @@ private:
 
 	std::vector< Item > m_items;
 	int32_t m_selected;
+	bool m_hover;
 
-	void eventMouseMove(MouseMoveEvent* event);
+	void eventMouseTrack(MouseTrackEvent* event);
 
 	void eventButtonDown(MouseButtonDownEvent* event);
 

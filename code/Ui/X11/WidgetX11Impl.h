@@ -15,9 +15,10 @@
 #include "Ui/Events/AllEvents.h"
 #include "Ui/Itf/IFontMetric.h"
 #include "Ui/Itf/IWidget.h"
-#include "Ui/X11/Assoc.h"
+#include "Ui/X11/Context.h"
 #include "Ui/X11/CanvasX11.h"
 #include "Ui/X11/Timers.h"
+#include "Ui/X11/TypesX11.h"
 #include "Ui/X11/UtilitiesX11.h"
 
 #define T_LIMIT_SCOPE_ENABLE
@@ -36,18 +37,12 @@ class WidgetX11Impl
 ,	public IFontMetric
 {
 public:
-	WidgetX11Impl(EventSubject* owner, Display* display, int32_t screen, XIM xim)
-	:	m_owner(owner)
-	,	m_display(display)
-	,	m_screen(screen)
-	,	m_window(0)
-	,	m_xim(xim)
+	WidgetX11Impl(Context* context, EventSubject* owner)
+	:	m_context(context)
+	,	m_owner(owner)
 	,	m_xic(0)
 	,	m_surface(nullptr)
-	,	m_context(nullptr)
-	,	m_visible(false)
-	,	m_enable(true)
-	,	m_grabbed(false)
+	,	m_cairo(nullptr)
 	,	m_lastMousePress(0)
 	,	m_lastMouseButton(0)
 	,	m_pendingExposure(false)
@@ -58,8 +53,7 @@ public:
 	{
 		T_FATAL_ASSERT(m_timers.empty());
 		T_FATAL_ASSERT(m_surface == nullptr);
-		T_FATAL_ASSERT(m_display == nullptr);
-		T_FATAL_ASSERT(m_grabbed == false);
+		T_FATAL_ASSERT(m_cairo == nullptr);
 	}
 
 	virtual void destroy() T_OVERRIDE
@@ -70,10 +64,10 @@ public:
 			Timers::getInstance().unbind(it.second);
 		m_timers.clear();
 
-		if (m_context != nullptr)
+		if (m_cairo != nullptr)
 		{
-			cairo_destroy(m_context);
-			m_context = nullptr;
+			cairo_destroy(m_cairo);
+			m_cairo = nullptr;
 		}
 
 		if (m_surface != nullptr)
@@ -88,12 +82,15 @@ public:
 			m_xic = 0;
 		}
 
-		if (m_display != nullptr)
+		if (m_context != nullptr)
 		{
-			Assoc::getInstance().unbind(m_window);
-			XDestroyWindow(m_display, m_window);
-			m_display = nullptr;
-			m_window = 0;
+			XDestroyWindow(m_context->getDisplay(), m_data.window);
+
+			m_context->unbind(&m_data);
+			m_context = nullptr;
+
+			m_data.window = None;
+			m_data.parent = nullptr;
 		}
 
 		delete this;
@@ -101,8 +98,9 @@ public:
 
 	virtual void setParent(IWidget* parent) T_OVERRIDE
 	{
-		Window parentWindow = (Window)parent->getInternalHandle();
-		XReparentWindow(m_display, m_window, parentWindow, 0, 0);
+		WidgetData* parentData = static_cast< WidgetData* >(parent->getInternalHandle());
+		XReparentWindow(m_context->getDisplay(), m_data.window, parentData->window, 0, 0);
+		m_data.parent = parentData;
 	}
 
 	virtual void setText(const std::wstring& text) T_OVERRIDE
@@ -126,69 +124,68 @@ public:
 
 	virtual void setVisible(bool visible) T_OVERRIDE
 	{
-		if (visible != m_visible)
+		if (visible != m_data.visible)
 		{
-			m_visible = visible;
+			m_data.visible = visible;
 			if (visible)
 			{
 				int32_t width = std::max< int32_t >(m_rect.getWidth(), 1);
 				int32_t height = std::max< int32_t >(m_rect.getHeight(), 1);
 
 				// Resize window.
-				XMapWindow(m_display, m_window);
-				XMoveResizeWindow(m_display, m_window, m_rect.left, m_rect.top, width, height);
+				XMapWindow(m_context->getDisplay(), m_data.window);
+				XMoveResizeWindow(m_context->getDisplay(), m_data.window, m_rect.left, m_rect.top, width, height);
 
 				// Resize surface.
 				cairo_xlib_surface_set_size(m_surface, width, height);
 			}
 			else
 			{
-				XUnmapWindow(m_display, m_window);
+				XUnmapWindow(m_context->getDisplay(), m_data.window);
 			}
 		}
 	}
 
 	virtual bool isVisible() const T_OVERRIDE
 	{
-		return m_visible;
+		return m_data.visible;
 	}
 
 	virtual void setEnable(bool enable) T_OVERRIDE
 	{
-		m_enable = enable;
-		Assoc::getInstance().setEnable(m_window, m_enable);
+		m_data.enable = enable;
 	}
 
 	virtual bool isEnable() const T_OVERRIDE
 	{
-		return m_enable;
+		return m_data.enable;
 	}
 
 	virtual bool hasFocus() const T_OVERRIDE
 	{
 		Window focusWindow; int revertTo;
-		XGetInputFocus(m_display, &focusWindow, &revertTo);
-		return bool(focusWindow == m_window);
+		XGetInputFocus(m_context->getDisplay(), &focusWindow, &revertTo);
+		return bool(focusWindow == m_data.window);
 	}
 
 	virtual void setFocus() T_OVERRIDE
 	{
-		XSetInputFocus(m_display, m_window, RevertToNone, CurrentTime);
+		XSetInputFocus(m_context->getDisplay(), m_data.window, RevertToNone, CurrentTime);
 	}
 
 	virtual bool hasCapture() const T_OVERRIDE
 	{
-		return m_grabbed;
+		return m_data.grabbed;
 	}
 
 	virtual void setCapture() T_OVERRIDE
 	{
-		if (m_grabbed)
+		if (m_data.grabbed)
 			return;
-		
-		m_grabbed = bool(XGrabPointer(
-			m_display,
-			m_window,
+
+		m_data.grabbed = bool(XGrabPointer(
+			m_context->getDisplay(),
+			m_data.window,
 			False,
 			ButtonPressMask | ButtonReleaseMask | PointerMotionMask,
 			GrabModeAsync,
@@ -197,15 +194,17 @@ public:
 			None,
 			CurrentTime
 		) == GrabSuccess);
+
+		log::info << L"setCapture " << type_name(m_owner) << L", " << m_data.grabbed << Endl;
 	}
 
 	virtual void releaseCapture() T_OVERRIDE
 	{
-		if (!m_grabbed)
+		if (!m_data.grabbed)
 			return;
 
-		XUngrabPointer(m_display, CurrentTime);
-		m_grabbed = false;
+		XUngrabPointer(m_context->getDisplay(), CurrentTime);
+		m_data.grabbed = false;
 	}
 
 	virtual void startTimer(int interval, int id) T_OVERRIDE
@@ -238,15 +237,15 @@ public:
 
 		m_rect = rect;
 
-		if (m_visible)
+		if (m_data.visible)
 		{
 			if (newWidth != oldWidth || newHeight != oldHeight)
 			{
-				XMoveResizeWindow(m_display, m_window, rect.left, rect.top, newWidth, newHeight);
+				XMoveResizeWindow(m_context->getDisplay(), m_data.window, rect.left, rect.top, newWidth, newHeight);
 			 	cairo_xlib_surface_set_size(m_surface, newWidth, newHeight);
 			}
 			else
-				XMoveWindow(m_display, m_window, rect.left, rect.top);
+				XMoveWindow(m_context->getDisplay(), m_data.window, rect.left, rect.top);
 		}
 
 		if (newWidth != oldWidth || newHeight != oldHeight)
@@ -276,14 +275,14 @@ public:
 		m_font = font;
 
 		cairo_select_font_face(
-			m_context,
+			m_cairo,
 			wstombs(m_font.getFace()).c_str(),
 			CAIRO_FONT_SLANT_NORMAL,
 			m_font.isBold() ? CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL
 		);
 
 		cairo_set_font_size(
-			m_context,
+			m_cairo,
 			dpi96(m_font.getSize())
 		);		
 	}
@@ -310,8 +309,8 @@ public:
 		unsigned int mask;
 
 		XQueryPointer(
-			m_display,
-			relative ? m_window : DefaultRootWindow(m_display),
+			m_context->getDisplay(),
+			relative ? m_data.window : DefaultRootWindow(m_context->getDisplay()),
 			&root,
 			&child,
 			&rootX, &rootY,
@@ -325,14 +324,14 @@ public:
 	virtual Point screenToClient(const Point& pt) const T_OVERRIDE
 	{
 		Window dw; int x, y;
-		XTranslateCoordinates(m_display, DefaultRootWindow(m_display), m_window, pt.x, pt.y, &x, &y, &dw);
+		XTranslateCoordinates(m_context->getDisplay(), DefaultRootWindow(m_context->getDisplay()), m_data.window, pt.x, pt.y, &x, &y, &dw);
 		return Point(x, y);
 	}
 
 	virtual Point clientToScreen(const Point& pt) const T_OVERRIDE
 	{
 		Window dw; int x, y;
-		XTranslateCoordinates(m_display, m_window, DefaultRootWindow(m_display), pt.x, pt.y, &x, &y, &dw);
+		XTranslateCoordinates(m_context->getDisplay(), m_data.window, DefaultRootWindow(m_context->getDisplay()), pt.x, pt.y, &x, &y, &dw);
 		return Point(x, y);
 	}
 
@@ -367,7 +366,7 @@ public:
 
 	virtual void update(const Rect* rc, bool immediate) T_OVERRIDE
 	{
-		if (!m_visible)
+		if (!m_data.visible)
 			return;
 
 		if (!immediate)
@@ -379,9 +378,9 @@ public:
 
 			XEvent xe = { 0 };
         	xe.type = Expose;
-        	xe.xexpose.window = m_window;
-        	XSendEvent(m_display, m_window, False, ExposureMask, &xe);
-			XFlush(m_display);
+        	xe.xexpose.window = m_data.window;
+        	XSendEvent(m_context->getDisplay(), m_data.window, False, ExposureMask, &xe);
+			XFlush(m_context->getDisplay());
 		}
 		else
 		{
@@ -391,13 +390,12 @@ public:
 
 	virtual void* getInternalHandle() T_OVERRIDE
 	{
-		T_FATAL_ASSERT(m_window != 0);
-		return (void*)m_window;
+		return (void*)&m_data;
 	}
 
 	virtual SystemWindow getSystemWindow() T_OVERRIDE
 	{
-		return SystemWindow(m_display, m_window);
+		return SystemWindow(m_context->getDisplay(), m_data.window);
 	}
 
 	// IFontMetric
@@ -407,7 +405,7 @@ public:
 		T_FATAL_ASSERT(m_surface != nullptr);
 		
 		cairo_font_extents_t x;
-		cairo_font_extents(m_context, &x);
+		cairo_font_extents(m_cairo, &x);
 
 		outAscent = (int32_t)x.ascent;
 		outDescent = (int32_t)x.descent;
@@ -423,7 +421,7 @@ public:
 			return 0;
 
 		cairo_text_extents_t tx;
-		cairo_text_extents(m_context, (const char*)uc, &tx);
+		cairo_text_extents(m_cairo, (const char*)uc, &tx);
 
 		return (int32_t)tx.x_advance;
 	}
@@ -433,7 +431,7 @@ public:
 		T_FATAL_ASSERT(m_surface != nullptr);
 		
 		cairo_font_extents_t x;
-		cairo_font_extents(m_context, &x);
+		cairo_font_extents(m_cairo, &x);
 
 		return (int32_t)x.height;
 	}
@@ -444,8 +442,8 @@ public:
 
 		cairo_font_extents_t fx;
 		cairo_text_extents_t tx;
-		cairo_font_extents(m_context, &fx);
-		cairo_text_extents(m_context, wstombs(text).c_str(), &tx);
+		cairo_font_extents(m_cairo, &fx);
+		cairo_text_extents(m_cairo, wstombs(text).c_str(), &tx);
 
 		return Size(tx.width, fx.height);
 	}
@@ -458,62 +456,82 @@ protected:
 		_NET_WM_STATE_TOGGLE = 2
 	};
 
+	Ref< Context > m_context;
 	EventSubject* m_owner;
-	Display* m_display;
-	int32_t m_screen;
-	Window m_window;
-	XIM m_xim;
+
+	WidgetData m_data;
 	XIC m_xic;
 
 	Rect m_rect;
 	Font m_font;
 
 	cairo_surface_t* m_surface;
-	cairo_t* m_context;
+	cairo_t* m_cairo;
 
 	std::wstring m_text;
-	bool m_visible;
-	bool m_enable;
-	bool m_grabbed;
-
 	std::map< int32_t, int32_t > m_timers;
 
 	int32_t m_lastMousePress;
 	int32_t m_lastMouseButton;
 	bool m_pendingExposure;
 
-	bool create(IWidget* parent, int32_t style, Window window, const Rect& rect, bool visible)
+	bool create(IWidget* parent, int32_t style, Window window, const Rect& rect, bool visible, bool topLevel)
 	{
-		if (window == 0)
+		if (window == None)
 			return false;
 
-		m_window = window;
-		m_rect = rect;
-		m_visible = visible;
+		m_data.window = window;
+		m_data.parent = (parent != nullptr ? static_cast< WidgetData* >(parent->getInternalHandle()) : nullptr);
+		m_data.topLevel = topLevel;
+		m_data.visible = visible;
 
-		XSelectInput(
-			m_display,
-			window, 
-			ButtonPressMask |
-			ButtonReleaseMask |
-			StructureNotifyMask |
-			KeyPressMask |
-			ExposureMask |
-			FocusChangeMask |
-			PointerMotionMask
-		);			
+		m_rect = rect;
+
+		if (topLevel)
+		{
+			XSelectInput(
+				m_context->getDisplay(),
+				m_data.window, 
+				ButtonPressMask |
+				ButtonReleaseMask |
+				StructureNotifyMask |
+				KeyPressMask |
+				KeyReleaseMask |
+				ExposureMask |
+				FocusChangeMask |
+				PointerMotionMask |
+				EnterWindowMask |
+				LeaveWindowMask
+			);			
+		}
+		else
+		{
+			XSelectInput(
+				m_context->getDisplay(),
+				m_data.window, 
+				ButtonPressMask |
+				ButtonReleaseMask |
+				KeyPressMask |
+				KeyReleaseMask |
+				ExposureMask |
+				FocusChangeMask |
+				PointerMotionMask |
+				EnterWindowMask |
+				LeaveWindowMask
+			);			
+		}
 
 		if (visible)
-	    	XMapWindow(m_display, window);
+	    	XMapWindow(m_context->getDisplay(), m_data.window);
 
-		XFlush(m_display);
+		XFlush(m_context->getDisplay());
 
 		// Create input context.
 		if ((m_xic = XCreateIC(
-			m_xim,
+			m_context->getXIM(),
 			XNInputStyle,   XIMPreeditNothing | XIMStatusNothing,
-			XNClientWindow, m_window,
-			XNFocusWindow,  m_window,
+			XNClientWindow, m_data.window,
+			XNFocusWindow,  m_data.window,
 			nullptr
 		)) == 0)
 		{
@@ -521,20 +539,18 @@ protected:
 		}
 
 		m_surface = cairo_xlib_surface_create(
-			m_display,
-			window,
-			DefaultVisual(m_display, m_screen),
+			m_context->getDisplay(),
+			m_data.window,
+			DefaultVisual(m_context->getDisplay(), m_context->getScreen()),
 			m_rect.getWidth(),
 			m_rect.getHeight()
 		);
 
-		m_context = cairo_create(m_surface);
+		m_cairo = cairo_create(m_surface);
 		setFont(Font(L"Ubuntu Regular", 11));
 
-		auto& a = Assoc::getInstance();
-
 		// Focus in.
-		a.bind(m_window, FocusIn, [&](XEvent& xe) {
+		m_context->bind(&m_data, FocusIn, [&](XEvent& xe) {
 			if (xe.xfocus.detail != NotifyNonlinear)
 				return;
 			XSetICFocus(m_xic);
@@ -543,7 +559,7 @@ protected:
 		});
 
 		// Focus out.
-		a.bind(m_window, FocusOut, [&](XEvent& xe) {
+		m_context->bind(&m_data, FocusOut, [&](XEvent& xe) {
 			if (xe.xfocus.detail != NotifyNonlinear)
 				return;
 			XUnsetICFocus(m_xic);
@@ -552,11 +568,11 @@ protected:
 		});
 
 		// Key press.
-		a.bind(m_window, KeyPress, [&](XEvent& xe) {
-			T_FATAL_ASSERT (m_enable);
+		m_context->bind(&m_data, KeyPress, [&](XEvent& xe) {
+			T_FATAL_ASSERT (m_data.enable);
 
 			int nkeysyms;
-			KeySym* ks = XGetKeyboardMapping(m_display, xe.xkey.keycode, 1, &nkeysyms);
+			KeySym* ks = XGetKeyboardMapping(m_context->getDisplay(), xe.xkey.keycode, 1, &nkeysyms);
 			if (ks != nullptr)
 			{
 				VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
@@ -586,11 +602,11 @@ protected:
 		});
 
 		// Key release.
-		a.bind(m_window, KeyRelease, [&](XEvent& xe) {
-			T_FATAL_ASSERT (m_enable);
+		m_context->bind(&m_data, KeyRelease, [&](XEvent& xe) {
+			T_FATAL_ASSERT (m_data.enable);
 
 			int nkeysyms;
-			KeySym* ks = XGetKeyboardMapping(m_display, xe.xkey.keycode, 1, &nkeysyms);
+			KeySym* ks = XGetKeyboardMapping(m_context->getDisplay(), xe.xkey.keycode, 1, &nkeysyms);
 			if (ks != nullptr)
 			{
 				VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
@@ -605,8 +621,8 @@ protected:
 		});
 
 		// Motion
-		a.bind(m_window, MotionNotify, [&](XEvent& xe){
-			T_FATAL_ASSERT (m_enable);
+		m_context->bind(&m_data, MotionNotify, [&](XEvent& xe){
+			T_FATAL_ASSERT (m_data.enable);
 
 			int32_t button = 0;
 			if ((xe.xmotion.state & Button1Mask) != 0)
@@ -624,9 +640,21 @@ protected:
 			m_owner->raiseEvent(&mouseMoveEvent);
 		});
 
+		// Enter
+		m_context->bind(&m_data, EnterNotify, [&](XEvent& xe){
+			MouseTrackEvent mouseTrackEvent(m_owner, true);
+			m_owner->raiseEvent(&mouseTrackEvent);
+		});
+
+		// Leave
+		m_context->bind(&m_data, LeaveNotify, [&](XEvent& xe){
+			MouseTrackEvent mouseTrackEvent(m_owner, false);
+			m_owner->raiseEvent(&mouseTrackEvent);
+		});
+
 		// Button press.
-		a.bind(m_window, ButtonPress, [&](XEvent& xe){
-			T_FATAL_ASSERT (m_enable);
+		m_context->bind(&m_data, ButtonPress, [&](XEvent& xe){
+			T_FATAL_ASSERT (m_data.enable);
 
 			if (xe.xbutton.button == 4 || xe.xbutton.button == 5)
 			{
@@ -684,8 +712,8 @@ protected:
 		});
 
 		// Button release.
-		a.bind(m_window, ButtonRelease, [&](XEvent& xe){
-			T_FATAL_ASSERT (m_enable);
+		m_context->bind(&m_data, ButtonRelease, [&](XEvent& xe){
+			T_FATAL_ASSERT (m_data.enable);
 
 			int32_t button = 0;
 			switch (xe.xbutton.button)
@@ -714,28 +742,36 @@ protected:
 			m_owner->raiseEvent(&mouseButtonUpEvent);
 		});
 
-		// Configure, only top windows.
-		if (parent == nullptr)
+		// Configure
+		if (topLevel)
 		{
-			a.bind(m_window, ConfigureNotify, [&](XEvent& xe){
-				m_rect = Rect(
+			m_context->bind(&m_data, ConfigureNotify, [&](XEvent& xe){
+				Rect rect(
 					Point(xe.xconfigure.x, xe.xconfigure.y),
 					Size(xe.xconfigure.width, xe.xconfigure.height)
 				);
 
-				int32_t newWidth = std::max< int32_t >(m_rect.getWidth(), 1);
-				int32_t newHeight = std::max< int32_t >(m_rect.getHeight(), 1);
+				int32_t oldWidth = std::max< int32_t >(m_rect.getWidth(), 1);
+				int32_t oldHeight = std::max< int32_t >(m_rect.getHeight(), 1);
 
-				if (m_visible)
-					cairo_xlib_surface_set_size(m_surface, newWidth, newHeight);
+				int32_t newWidth = std::max< int32_t >(rect.getWidth(), 1);
+				int32_t newHeight = std::max< int32_t >(rect.getHeight(), 1);
 
-				SizeEvent sizeEvent(m_owner, m_rect.getSize());
-				m_owner->raiseEvent(&sizeEvent);
+				if (oldWidth != newWidth || oldHeight != newHeight)
+				{
+					m_rect = rect;
+
+					if (m_data.visible)
+						cairo_xlib_surface_set_size(m_surface, newWidth, newHeight);
+
+					SizeEvent sizeEvent(m_owner, m_rect.getSize());
+					m_owner->raiseEvent(&sizeEvent);
+				}
 			});
 		}
 
 		// Expose
-		a.bind(m_window, Expose, [&](XEvent& xe){
+		m_context->bind(&m_data, Expose, [&](XEvent& xe){
 			draw();
 			if (xe.xexpose.send_event != 0)
 				m_pendingExposure = false;
@@ -750,13 +786,13 @@ protected:
 		T_LIMIT_SCOPE(100);
 
 		XWindowAttributes xa;
-		XGetWindowAttributes(m_display, m_window, &xa);
+		XGetWindowAttributes(m_context->getDisplay(), m_data.window, &xa);
 		if (xa.map_state != IsViewable)
 			return;
 
-		cairo_push_group(m_context);
+		cairo_push_group(m_cairo);
 
-		CanvasX11 canvasImpl(m_context);
+		CanvasX11 canvasImpl(m_cairo);
 		Canvas canvas(&canvasImpl);
 		PaintEvent paintEvent(
 			m_owner,
@@ -765,8 +801,8 @@ protected:
 		);
 		m_owner->raiseEvent(&paintEvent);
 
-		cairo_pop_group_to_source(m_context);
-		cairo_paint(m_context);
+		cairo_pop_group_to_source(m_cairo);
+		cairo_paint(m_cairo);
 
 		cairo_surface_flush(m_surface);
 	}
@@ -775,11 +811,11 @@ protected:
 	{
 		XEvent evt = { 0 };
 
-		Atom atomWmState = XInternAtom(m_display, "_NET_WM_STATE", False);
-		Atom atomWmProperty = XInternAtom(m_display, property, False);
+		Atom atomWmState = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE", False);
+		Atom atomWmProperty = XInternAtom(m_context->getDisplay(), property, False);
 
 		evt.type = ClientMessage;
-		evt.xclient.window = m_window;
+		evt.xclient.window = m_data.window;
 		evt.xclient.message_type = atomWmState;
 		evt.xclient.format = 32;
 		evt.xclient.data.l[0] = value;
@@ -789,8 +825,8 @@ protected:
 		evt.xclient.data.l[4] = 0;
 
 		XSendEvent(
-			m_display,
-			RootWindow(m_display, m_screen),
+			m_context->getDisplay(),
+			RootWindow(m_context->getDisplay(), m_context->getScreen()),
 			False,
 			SubstructureRedirectMask | SubstructureNotifyMask,
 			&evt
@@ -801,12 +837,12 @@ protected:
 	{
 		XEvent evt = { 0 };
 
-		Atom atomWmState = XInternAtom(m_display, "_NET_WM_STATE", False);
-		Atom atomWmProperty1 = XInternAtom(m_display, property1, False);
-		Atom atomWmProperty2 = XInternAtom(m_display, property2, False);
+		Atom atomWmState = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE", False);
+		Atom atomWmProperty1 = XInternAtom(m_context->getDisplay(), property1, False);
+		Atom atomWmProperty2 = XInternAtom(m_context->getDisplay(), property2, False);
 
 		evt.type = ClientMessage;
-		evt.xclient.window = m_window;
+		evt.xclient.window = m_data.window;
 		evt.xclient.message_type = atomWmState;
 		evt.xclient.format = 32;
 		evt.xclient.data.l[0] = value;
@@ -816,8 +852,8 @@ protected:
 		evt.xclient.data.l[4] = 0;
 
 		XSendEvent(
-			m_display,
-			RootWindow(m_display, m_screen),
+			m_context->getDisplay(),
+			RootWindow(m_context->getDisplay(), m_context->getScreen()),
 			False,
 			SubstructureRedirectMask | SubstructureNotifyMask,
 			&evt

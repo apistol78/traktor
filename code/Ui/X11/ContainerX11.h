@@ -12,7 +12,7 @@ namespace traktor
 class ContainerX11 : public WidgetX11Impl< IContainer >
 {
 public:
-	ContainerX11(EventSubject* owner, Display* display, int32_t screen, XIM xim);
+	ContainerX11(Context* context, EventSubject* owner);
 
 	virtual bool create(IWidget* parent, int style) T_OVERRIDE T_FINAL;
 };

@@ -28,96 +28,77 @@ int xerrorHandler(Display*, XErrorEvent* ee)
 		}
 
 WidgetFactoryX11::WidgetFactoryX11()
-:	m_display(nullptr)
-,	m_screen(0)
-,	m_xim(0)
-,	m_dpi(96)
+:	m_dpi(96)
 {
-	// Open connection to X display.
-	m_display = XOpenDisplay(nullptr);
-	T_FATAL_ASSERT(m_display != nullptr);
+	XIM xim;
 
-    m_screen = DefaultScreen(m_display);
+	// Open connection to X display.
+	Display* display = XOpenDisplay(nullptr);
+	T_FATAL_ASSERT(display != nullptr);
+
+    int screen = DefaultScreen(display);
 
 	// Use our own X error handler.
 	XSetErrorHandler(xerrorHandler);
 
-#if 0
-	// Get DPI from X.
-	float wdots = (float)XDisplayWidth(m_display, m_screen);
-	float winch = (float)XDisplayWidthMM(m_display, m_screen) * 0.0393700787f;
-	m_dpi = (int32_t)(wdots / winch + 0.5f);
-
-	// Get DPI from Xft.dpi
-    XrmInitialize();
-    char* resourceString = XResourceManagerString(m_display);
-    XrmDatabase db = XrmGetStringDatabase(resourceString);
-    if (resourceString != nullptr)
-	{
-    	char* type = nullptr;
-	    XrmValue value;
-
-        if (XrmGetResource(db, "Xft.dpi", "String", &type, &value) == True)
-		{
-            if (value.addr != nullptr)
-                m_dpi = (int32_t)(std::atof(value.addr) + 0.5f);
-        }
-    }
-#else
 	// Get DPI from X, as dpi handling in X is severly broken we deduce either small or large only.
-	float wdots = (float)XDisplayWidth(m_display, m_screen);
-	float winch = (float)XDisplayWidthMM(m_display, m_screen) * 0.0393700787f;
+	float wdots = (float)XDisplayWidth(display, screen);
+	float winch = (float)XDisplayWidthMM(display, screen) * 0.0393700787f;
 	if (wdots / winch > 96.0f)
 		m_dpi = 192;
 	else
 		m_dpi = 96;
-#endif
 
 	// Open input method.
 	XSetLocaleModifiers("");
-	if ((m_xim = XOpenIM(m_display, nullptr, nullptr, nullptr)) == 0)
+	if ((xim = XOpenIM(display, nullptr, nullptr, nullptr)) == 0)
 	{
 		XSetLocaleModifiers("@im=");
-		if ((m_xim = XOpenIM(m_display, nullptr, nullptr, nullptr)) == 0)
+		if ((xim = XOpenIM(display, nullptr, nullptr, nullptr)) == 0)
 		{
 			log::error << L"Unable to open X11 input method." << Endl;
 		}
 	}
+
+	// Create our context.
+	m_context = new Context(display, screen, xim);
 }
 
 WidgetFactoryX11::~WidgetFactoryX11()
 {
-	if (m_xim != 0)
-	{
-		XCloseIM(m_xim);
-		m_xim = 0;
-	}
+	// if (m_xim != 0)
+	// {
+	// 	XCloseIM(m_xim);
+	// 	m_xim = 0;
+	// }
 	
-	if (m_display != nullptr)
-	{
-		XCloseDisplay(m_display);
-		m_display = nullptr;
-	}
+	// if (m_context->getDisplay() != nullptr)
+	// {
+	// 	XCloseDisplay(m_context->getDisplay());
+	// 	m_context->getDisplay() = nullptr;
+	// }
+
+	m_context = nullptr;
 }
 
 IEventLoop* WidgetFactoryX11::createEventLoop(EventSubject* owner)
 {
-	return new EventLoopX11(m_display, m_screen);
+	return new EventLoopX11(m_context);
 }
 
 IContainer* WidgetFactoryX11::createContainer(EventSubject* owner)
 {
-	return new ContainerX11(owner, m_display, m_screen, m_xim);
+	return new ContainerX11(m_context, owner);
 }
 
 IDialog* WidgetFactoryX11::createDialog(EventSubject* owner)
 {
-	return new DialogX11(owner, m_display, m_screen, m_xim);
+	return new DialogX11(m_context, owner);
 }
 
 IForm* WidgetFactoryX11::createForm(EventSubject* owner)
 {
-	return new FormX11(owner, m_display, m_screen, m_xim);
+	return new FormX11(m_context, owner);
 }
 
 INotificationIcon* WidgetFactoryX11::createNotificationIcon(EventSubject* owner)
@@ -132,12 +113,12 @@ IPathDialog* WidgetFactoryX11::createPathDialog(EventSubject* owner)
 
 IToolForm* WidgetFactoryX11::createToolForm(EventSubject* owner)
 {
-	return new ToolFormX11(owner, m_display, m_screen, m_xim);
+	return new ToolFormX11(m_context, owner);
 }
 
 IUserWidget* WidgetFactoryX11::createUserWidget(EventSubject* owner)
 {
-	return new UserWidgetX11(owner, m_display, m_screen, m_xim);
+	return new UserWidgetX11(m_context, owner);
 }
 
 IWebBrowser* WidgetFactoryX11::createWebBrowser(EventSubject* owner)
@@ -196,8 +177,8 @@ void WidgetFactoryX11::getSystemFonts(std::list< std::wstring >& outFonts)
 
 void WidgetFactoryX11::getDesktopRects(std::list< Rect >& outRects) const
 {
-	int32_t width = DisplayWidth(m_display, m_screen);
-	int32_t height = DisplayHeight(m_display, m_screen);
+	int32_t width = DisplayWidth(m_context->getDisplay(), m_context->getScreen());
+	int32_t height = DisplayHeight(m_context->getDisplay(), m_context->getScreen());
 	outRects.push_back(Rect(
 		0, 0,
 		width, height

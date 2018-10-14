@@ -5,21 +5,21 @@ namespace traktor
 	namespace ui
 	{
 
-UserWidgetX11::UserWidgetX11(EventSubject* owner, Display* display, int32_t screen, XIM xim)
-:	WidgetX11Impl< IUserWidget >(owner, display, screen, xim)
+UserWidgetX11::UserWidgetX11(Context* context, EventSubject* owner)
+:	WidgetX11Impl< IUserWidget >(context, owner)
 {
 }
 
 bool UserWidgetX11::create(IWidget* parent, int style)
 {
-	Window parentWindow = (Window)parent->getInternalHandle();
+	WidgetData* parentData = static_cast< WidgetData* >(parent->getInternalHandle());
 
 	const int32_t c_defaultWidth = 64;
 	const int32_t c_defaultHeight = 64;
 
 	Window window = XCreateWindow(
-		m_display,
-		parentWindow,
+		m_context->getDisplay(),
+		parentData->window,
 		0,
 		0,
 		c_defaultWidth,
@@ -32,7 +32,7 @@ bool UserWidgetX11::create(IWidget* parent, int style)
 		nullptr
 	);
 
-	return WidgetX11Impl< IUserWidget >::create(parent, style, window, Rect(0, 0, c_defaultWidth, c_defaultHeight), true);
+	return WidgetX11Impl< IUserWidget >::create(parent, style, window, Rect(0, 0, c_defaultWidth, c_defaultHeight), true, false);
 }
 
 	}

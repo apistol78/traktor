@@ -12,7 +12,7 @@ namespace traktor
 class ToolFormX11 : public WidgetX11Impl< IToolForm >
 {
 public:
-	ToolFormX11(EventSubject* owner, Display* display, int32_t screen, XIM xim);
+	ToolFormX11(Context* context, EventSubject* owner);
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) T_OVERRIDE T_FINAL;
 

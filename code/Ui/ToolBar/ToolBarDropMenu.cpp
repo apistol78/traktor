@@ -147,13 +147,13 @@ void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 	m_menuPosition = Point(at.x, at.y + size.cy);
 }
 
-bool ToolBarDropMenu::mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent)
+bool ToolBarDropMenu::mouseEnter(ToolBar* toolBar)
 {
 	m_hover = true;
 	return true;
 }
 
-void ToolBarDropMenu::mouseLeave(ToolBar* toolBar, MouseMoveEvent* mouseEvent)
+void ToolBarDropMenu::mouseLeave(ToolBar* toolBar)
 {
 	m_hover = false;
 }

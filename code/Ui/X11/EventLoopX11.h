@@ -18,10 +18,12 @@ namespace traktor
 	namespace ui
 	{
 
+class Assoc;
+
 class T_DLLCLASS EventLoopX11 : public IEventLoop
 {
 public:
-	EventLoopX11(Display* display, int32_t screen);
+	EventLoopX11(Context* context);
 
 	virtual ~EventLoopX11();
 
@@ -42,9 +44,7 @@ public:
 	virtual Size getDesktopSize() const T_OVERRIDE T_FINAL;
 
 private:
-	Display* m_display;
-	int32_t m_screen;
-	XIM m_xim;
+	Ref< Context > m_context;
 	XIC m_xic;
 	bool m_terminated;
 	int32_t m_exitCode;
