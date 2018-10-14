@@ -43,6 +43,7 @@ bool ToolBar::create(Widget* parent, int style)
 	if (!Widget::create(parent, WsDoubleBuffer))
 		return false;
 
+	addEventHandler< MouseTrackEvent >(this, &ToolBar::eventMouseTrack);
 	addEventHandler< MouseMoveEvent >(this, &ToolBar::eventMouseMove);
 	addEventHandler< MouseButtonDownEvent >(this, &ToolBar::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &ToolBar::eventButtonUp);
@@ -168,6 +169,18 @@ Size ToolBar::getPreferedSize() const
 	return Size(width, height + dpi96(c_marginHeight * 2 + 1));
 }
 
+void ToolBar::eventMouseTrack(MouseTrackEvent* event)
+{
+	if (!event->entered())
+	{
+		if (m_trackItem)
+		{
+			m_trackItem->mouseLeave(this);
+			m_trackItem = nullptr;
+		}		
+	}
+}
+
 void ToolBar::eventMouseMove(MouseMoveEvent* event)
 {
 	if (!isEnable())
@@ -178,16 +191,14 @@ void ToolBar::eventMouseMove(MouseMoveEvent* event)
 	{
 		if (m_trackItem)
 		{
-			m_trackItem->mouseLeave(this, event);
-			m_trackItem = 0;
+			m_trackItem->mouseLeave(this);
+			m_trackItem = nullptr;
 		}
 
 		m_trackItem = item;
 
-		if (item && item->mouseEnter(this, event))
+		if (item && item->mouseEnter(this))
 		{
-			setCapture();
-
 			// Update tooltip if it's visible.
 			if (m_toolTip->isVisible(false))
 			{
@@ -201,10 +212,7 @@ void ToolBar::eventMouseMove(MouseMoveEvent* event)
 			m_trackItem = item;
 		}
 		else
-		{
 			m_toolTip->hide();
-			releaseCapture();
-		}
 
 		update();
 	}

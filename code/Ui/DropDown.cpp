@@ -21,6 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.DropDown", DropDown, Widget)
 
 DropDown::DropDown()
 :	m_selected(-1)
+,	m_hover(false)
 {
 }
 
@@ -29,7 +30,7 @@ bool DropDown::create(Widget* parent, int style)
 	if (!Widget::create(parent, style))
 		return false;
 
-	addEventHandler< MouseMoveEvent >(this, &DropDown::eventMouseMove);
+	addEventHandler< MouseTrackEvent >(this, &DropDown::eventMouseTrack);
 	addEventHandler< MouseButtonDownEvent >(this, &DropDown::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &DropDown::eventButtonUp);
 	addEventHandler< PaintEvent >(this, &DropDown::eventPaint);
@@ -128,21 +129,10 @@ Size DropDown::getPreferedSize() const
 	return Size(dpi96(200), height);
 }
 
-void DropDown::eventMouseMove(MouseMoveEvent* event)
+void DropDown::eventMouseTrack(MouseTrackEvent* event)
 {
-	if (!isEnable())
-		return;
-
-	if (!hasCapture())
-	{
-		setCapture();
-		update();
-	}
-	else if (!getInnerRect().inside(event->getPosition()))
-	{
-		releaseCapture();
-		update();
-	}
+	m_hover = event->entered();
+	update();
 }
 
 void DropDown::eventButtonDown(MouseButtonDownEvent* event)
@@ -187,7 +177,7 @@ void DropDown::eventPaint(PaintEvent* event)
 	Point at = rcInner.getTopLeft();
 	Size size = rcInner.getSize();
 	int32_t sep = ui::dpi96(14);
-	bool hover = isEnable() && hasCapture();
+	bool hover = isEnable() && m_hover;
 
 	Rect rcText(
 		at.x + dpi96(4),

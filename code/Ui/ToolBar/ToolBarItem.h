@@ -29,7 +29,7 @@ class IBitmap;
 class Point;
 class MouseButtonDownEvent;
 class MouseButtonUpEvent;
-class MouseMoveEvent;
+class MouseTrackEvent;
 class ToolBar;
 
 /*! \brief Tool bar item.
@@ -61,9 +61,9 @@ protected:
 	 *
 	 * \return True if tracking of item desired; false will not cause mouse to be captured.
 	 */
-	virtual bool mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent) = 0;
+	virtual bool mouseEnter(ToolBar* toolBar) = 0;
 
-	virtual void mouseLeave(ToolBar* toolBar, MouseMoveEvent* mouseEvent) = 0;
+	virtual void mouseLeave(ToolBar* toolBar) = 0;
 
 	virtual void buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent) = 0;
 

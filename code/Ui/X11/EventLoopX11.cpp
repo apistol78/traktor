@@ -6,7 +6,7 @@
 #include "Ui/Events/KeyDownEvent.h"
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Events/KeyUpEvent.h"
-#include "Ui/X11/Assoc.h"
+#include "Ui/X11/Context.h"
 #include "Ui/X11/EventLoopX11.h"
 #include "Ui/X11/Timers.h"
 #include "Ui/X11/UtilitiesX11.h"
@@ -16,28 +16,15 @@ namespace traktor
 	namespace ui
 	{
 
-EventLoopX11::EventLoopX11(Display* display, int32_t screen)
-:	m_display(display)
-,	m_screen(screen)
+EventLoopX11::EventLoopX11(Context* context)
+:	m_context(context)
 ,	m_terminated(false)
 ,	m_exitCode(0)
 ,	m_keyState(0)
 {
-	// Open input method.
-	XSetLocaleModifiers("");
-	if ((m_xim = XOpenIM(m_display, nullptr, nullptr, nullptr)) == 0)
-	{
-		XSetLocaleModifiers("@im=");
-		if ((m_xim = XOpenIM(m_display, nullptr, nullptr, nullptr)) == 0)
-		{
-			log::error << L"XOpenIM failed." << Endl;
-			return;
-		}
-	}
-
 	// Create input context.
 	if ((m_xic = XCreateIC(
-		m_xim,
+		m_context->getXIM(),
 		XNInputStyle, XIMPreeditNothing | XIMStatusNothing,
 		nullptr
 	)) == 0)
@@ -59,12 +46,6 @@ void EventLoopX11::destroy()
 		m_xic = 0;
 	}
 
-	if (m_xim != 0)
-	{
-		XCloseIM(m_xim);
-		m_xim = 0;
-	}
-
 	delete this;
 }
 
@@ -73,14 +54,14 @@ bool EventLoopX11::process(EventSubject* owner)
 	if (m_terminated)
 		return false;
 
-	if (!XPending(m_display))
+	if (!XPending(m_context->getDisplay()))
 		return !m_terminated;
 
 	XEvent e;
-	XNextEvent(m_display, &e);
+	XNextEvent(m_context->getDisplay(), &e);
 
 	if (!preTranslateEvent(owner, e))
-		Assoc::getInstance().dispatch(m_display, e);
+		m_context->dispatch(e);
 
 	return !m_terminated;
 }
@@ -89,7 +70,7 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 {
 	XEvent e;
 
-	int fd = ConnectionNumber(m_display);
+	int fd = ConnectionNumber(m_context->getDisplay());
 	bool idle = true;
 
 	Timer timer;
@@ -98,7 +79,7 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 	while (!m_terminated)
 	{
         int nr = 0;
-		if (!XPending(m_display))
+		if (!XPending(m_context->getDisplay()))
 		{
 			fd_set fds;
 			FD_ZERO(&fds);
@@ -115,12 +96,12 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 
         if (nr > 0)
 		{
-			while (XPending(m_display))
+			while (XPending(m_context->getDisplay()))
 			{
-				XNextEvent(m_display, &e);
+				XNextEvent(m_context->getDisplay(), &e);
 
 				if (!preTranslateEvent(owner, e))
-					Assoc::getInstance().dispatch(m_display, e);
+					m_context->dispatch(e);
 
 				idle = true;
 			}
@@ -187,7 +168,7 @@ bool EventLoopX11::preTranslateEvent(EventSubject* owner, XEvent& e)
 		m_keyState = e.xkey.state;
 
 		int nkeysyms;
-		KeySym* ks = XGetKeyboardMapping(m_display, e.xkey.keycode, 1, &nkeysyms);
+		KeySym* ks = XGetKeyboardMapping(m_context->getDisplay(), e.xkey.keycode, 1, &nkeysyms);
 		if (ks != nullptr)
 		{
 			VirtualKey vk = translateToVirtualKey(ks, nkeysyms);
@@ -221,7 +202,7 @@ bool EventLoopX11::preTranslateEvent(EventSubject* owner, XEvent& e)
 		m_keyState = e.xkey.state;
 
 		int nkeysyms;
-		KeySym* ks = XGetKeyboardMapping(m_display, e.xkey.keycode, 1, &nkeysyms);
+		KeySym* ks = XGetKeyboardMapping(m_context->getDisplay(), e.xkey.keycode, 1, &nkeysyms);
 		if (ks != nullptr)
 		{
 			VirtualKey vk = translateToVirtualKey(ks, nkeysyms);

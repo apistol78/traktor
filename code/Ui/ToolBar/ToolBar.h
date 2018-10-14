@@ -71,6 +71,8 @@ private:
 	RefArray< ToolBarItem > m_items;
 	Ref< ToolBarItem > m_trackItem;
 
+	void eventMouseTrack(MouseTrackEvent* event);
+
 	void eventMouseMove(MouseMoveEvent* event);
 
 	void eventButtonDown(MouseButtonDownEvent* event);

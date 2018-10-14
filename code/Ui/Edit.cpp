@@ -25,6 +25,7 @@ Edit::Edit()
 ,	m_caret(0)
 ,	m_caretBlink(true)
 ,	m_readOnly(false)
+,	m_hover(false)
 {
 }
 
@@ -42,7 +43,7 @@ bool Edit::create(Widget* parent, const std::wstring& text, int style, const Edi
 	m_readOnly = bool((style & WsReadOnly) != 0);
 
 	addEventHandler< FocusEvent >(this, &Edit::eventFocus);
-	addEventHandler< MouseMoveEvent >(this, &Edit::eventMouseMove);
+	addEventHandler< MouseTrackEvent >(this, &Edit::eventMouseTrack);
 	addEventHandler< MouseButtonDownEvent >(this, &Edit::eventButtonDown);
 	addEventHandler< KeyDownEvent >(this, &Edit::eventKeyDown);
 	addEventHandler< KeyEvent >(this, &Edit::eventKey);
@@ -213,21 +214,10 @@ void Edit::eventFocus(FocusEvent* event)
 	update();
 }
 
-void Edit::eventMouseMove(MouseMoveEvent* event)
+void Edit::eventMouseTrack(MouseTrackEvent* event)
 {
-	if (!isEnable())
-		return;
-
-	if (!hasCapture())
-	{
-		setCapture();
-		update();
-	}
-	else if (!getInnerRect().inside(event->getPosition()))
-	{
-		releaseCapture();
-		update();
-	}
+	m_hover = event->entered();
+	update();
 }
 
 void Edit::eventButtonDown(MouseButtonDownEvent* event)
@@ -425,7 +415,7 @@ void Edit::eventPaint(PaintEvent* event)
 	FontMetric fm = getFontMetric();
 	Rect rcInner = getInnerRect();
 
-	bool hover = isEnable() && hasCapture();
+	bool hover = isEnable() && m_hover;
 	
 	canvas.setBackground(ss->getColor(this, hover ? L"background-color-hover" : L"background-color"));
 	canvas.fillRect(rcInner);

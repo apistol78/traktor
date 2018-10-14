@@ -19,6 +19,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/Events/MouseButtonUpEvent.h"
 #include "Ui/Events/MouseDoubleClickEvent.h"
 #include "Ui/Events/MouseMoveEvent.h"
+#include "Ui/Events/MouseTrackEvent.h"
 #include "Ui/Events/MouseWheelEvent.h"
 #include "Ui/Events/MoveEvent.h"
 #include "Ui/Events/PaintEvent.h"

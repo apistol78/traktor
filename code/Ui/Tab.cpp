@@ -43,6 +43,7 @@ bool Tab::create(Widget* parent, int32_t style)
 	if (!Widget::create(parent, style & ~WsBorder))
 		return false;
 
+	addEventHandler< MouseTrackEvent >(this, &Tab::eventMouseTrack);
 	addEventHandler< MouseMoveEvent >(this, &Tab::eventMouseMove);
 	addEventHandler< MouseButtonDownEvent >(this, &Tab::eventButtonDown);
 	addEventHandler< SizeEvent >(this, &Tab::eventSize);
@@ -284,6 +285,18 @@ Size Tab::getPreferedSize() const
 	return Size(256, 256);
 }
 
+void Tab::eventMouseTrack(MouseTrackEvent* event)
+{
+	if (!event->entered())
+	{
+		if (m_hoverPage)
+		{
+			m_hoverPage = nullptr;
+			update();
+		}		
+	}
+}
+
 void Tab::eventMouseMove(MouseMoveEvent* event)
 {
 	Point pnt = event->getPosition();
@@ -301,24 +314,12 @@ void Tab::eventMouseMove(MouseMoveEvent* event)
 		y1 = inner.bottom;
 	}
 
-	if (inner.inside(pnt) && pnt.y >= y0 && pnt.y <= y1)
+	if (pnt.y >= y0 && pnt.y <= y1)
 	{
-		setCapture();
-
 		Ref< TabPage > hoverPage = getPageAt(pnt);
 		if (hoverPage != m_hoverPage)
 		{
 			m_hoverPage = hoverPage;
-			update();
-		}
-	}
-	else
-	{
-		releaseCapture();
-
-		if (m_hoverPage)
-		{
-			m_hoverPage = 0;
 			update();
 		}
 	}

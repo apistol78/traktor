@@ -137,9 +137,6 @@ void MenuShell::eventMouseMove(MouseMoveEvent* event)
 	MenuItem* item = getItem(event->getPosition());
 	if (item != m_trackItem)
 	{
-		//if (hasCapture())
-		//	releaseCapture();
-
 		safeDestroy(m_trackSubMenu);
 
 		if ((m_trackItem = item) != nullptr)
@@ -166,12 +163,11 @@ void MenuShell::eventMouseMove(MouseMoveEvent* event)
 					raiseEvent(&clickEvent);
 				});
 			}
-
-			//setCapture();
 		}
 
 		update();
 	}
+	// setCapture();
 }
 
 void MenuShell::eventButtonDown(MouseButtonDownEvent* event)

@@ -57,9 +57,9 @@ protected:
 
 	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight) T_OVERRIDE T_FINAL;
 
-	virtual bool mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent) T_OVERRIDE T_FINAL;
+	virtual bool mouseEnter(ToolBar* toolBar) T_OVERRIDE T_FINAL;
 
-	virtual void mouseLeave(ToolBar* toolBar, MouseMoveEvent* mouseEvent) T_OVERRIDE T_FINAL;
+	virtual void mouseLeave(ToolBar* toolBar) T_OVERRIDE T_FINAL;
 
 	virtual void buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent) T_OVERRIDE T_FINAL;
 

@@ -107,6 +107,8 @@ private:
 
 	PageState* findPageState(int32_t depth);
 
+	void eventMouseTrack(MouseTrackEvent* event);
+
 	void eventMouseMove(MouseMoveEvent* event);
 
 	void eventButtonDown(MouseButtonDownEvent* event);

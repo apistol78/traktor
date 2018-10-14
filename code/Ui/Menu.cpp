@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/FloodLayout.h"
@@ -47,13 +48,6 @@ Ref< Widget > Menu::show(Widget* parent, const Point& at) const
 		MenuClickEvent clickEvent(form, e->getItem(), e->getCommand());
 		form->raiseEvent(&clickEvent);
 	});
-	shell->addEventHandler< FocusEvent >([=](FocusEvent* e) {
-		if (!form->containFocus())
-		{
-			MenuClickEvent clickEvent(form, nullptr, Command());
-			form->raiseEvent(&clickEvent);
-		}
-	});
 
 	for (auto item : m_items)
 		shell->add(item);
@@ -71,16 +65,12 @@ Ref< Widget > Menu::show(Widget* parent, const Point& at) const
 	// Show form.
 	form->show();
 
-	// Set focus to shell, if it looses focus then we close menu.
-	shell->setFocus();
-
 	return form;
 }
 
 const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width, int32_t maxItems) const
 {
 	const MenuItem* selectedItem = nullptr;
-	bool going = true;
 
 	if (!parent || m_items.empty())
 		return nullptr;
@@ -95,14 +85,7 @@ const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width, 
 
 	shell->addEventHandler< MenuClickEvent >([&](MenuClickEvent* e) {
 		selectedItem = e->getItem();
-		going = false;
-	});
-	shell->addEventHandler< FocusEvent >([&](FocusEvent* e) {
-		if (!form->containFocus())
-		{
-			selectedItem = nullptr;
-			going = false;
-		}
+		form->endModal(DrOk);
 	});
 
 	for (auto item : m_items)
@@ -141,16 +124,7 @@ const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width, 
 	form->setRect(rcForm);
 
 	// Show form.
-	form->show();
-
-	// Set focus to shell, if it looses focus then we close menu.
-	shell->setFocus();
-
-	while (going)
-	{
-		if (!Application::getInstance()->process())
-			break;
-	}
+	form->showModal();
 
 	safeDestroy(form);
 	return selectedItem;

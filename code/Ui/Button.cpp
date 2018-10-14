@@ -19,6 +19,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Button", Button, Widget)
 
 Button::Button()
 :	m_pushed(false)
+,	m_hover(false)
 {
 }
 
@@ -27,7 +28,7 @@ bool Button::create(Widget* parent, const std::wstring& text, int style)
 	if (!Widget::create(parent))
 		return false;
 
-	addEventHandler< MouseMoveEvent >(this, &Button::eventMouseMove);
+	addEventHandler< MouseTrackEvent >(this, &Button::eventMouseTrack);
 	addEventHandler< MouseButtonDownEvent >(this, &Button::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &Button::eventButtonUp);
 	addEventHandler< PaintEvent >(this, &Button::eventPaint);
@@ -53,21 +54,10 @@ Size Button::getMaximumSize() const
 	return getPreferedSize();
 }
 
-void Button::eventMouseMove(MouseMoveEvent* event)
+void Button::eventMouseTrack(MouseTrackEvent* event)
 {
-	if (!isEnable())
-		return;
-
-	if (!hasCapture())
-	{
-		setCapture();
-		update();
-	}
-	else if (!getInnerRect().inside(event->getPosition()))
-	{
-		releaseCapture();
-		update();
-	}
+	m_hover = event->entered();
+	update();
 }
 
 void Button::eventButtonDown(MouseButtonDownEvent* event)
@@ -85,7 +75,6 @@ void Button::eventButtonUp(MouseButtonUpEvent* event)
 		return;
 
 	bool pushed = m_pushed;
-
 	m_pushed = false;
 	update();
 
@@ -102,7 +91,7 @@ void Button::eventPaint(PaintEvent* event)
 	Canvas& canvas = event->getCanvas();
 	Rect rcInner = getInnerRect();
 
-	bool hover = isEnable() && hasCapture();
+	bool hover = isEnable() && m_hover;
 
 	if (m_pushed)
 		canvas.setBackground(ss->getColor(this, L"background-color-pushed"));

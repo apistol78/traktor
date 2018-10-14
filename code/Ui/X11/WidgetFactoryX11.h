@@ -17,6 +17,8 @@ namespace traktor
 	namespace ui
 	{
 
+class Context;
+
 class T_DLLCLASS WidgetFactoryX11 : public IWidgetFactory
 {
 public:
@@ -53,9 +55,7 @@ public:
 	virtual void getDesktopRects(std::list< Rect >& outRects) const T_OVERRIDE T_FINAL;
 
 private:
-	Display* m_display;
-	int32_t m_screen;
-	XIM m_xim;
+	Ref< Context > m_context;
 	int32_t m_dpi;
 };
 

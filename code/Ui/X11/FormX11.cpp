@@ -14,8 +14,8 @@ namespace traktor
 	namespace ui
 	{
 
-FormX11::FormX11(EventSubject* owner, Display* display, int32_t screen, XIM xim)
-:	WidgetX11Impl< IForm >(owner, display, screen, xim)
+FormX11::FormX11(Context* context, EventSubject* owner)
+:	WidgetX11Impl< IForm >(context, owner)
 {
 }
 
@@ -30,8 +30,8 @@ bool FormX11::create(IWidget* parent, const std::wstring& text, int width, int h
 	height = std::max< int32_t >(height, c_minHeight);
 
 	Window window = XCreateWindow(
-		m_display,
-		DefaultRootWindow(m_display),
+		m_context->getDisplay(),
+		DefaultRootWindow(m_context->getDisplay()),
 		0,
 		0,
 		width,
@@ -45,9 +45,9 @@ bool FormX11::create(IWidget* parent, const std::wstring& text, int width, int h
 	);
 
 	// Register "delete window" window manager message.
-	m_atomWmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
+	m_atomWmDeleteWindow = XInternAtom(m_context->getDisplay(), "WM_DELETE_WINDOW", False);
 
-	Assoc::getInstance().bind(window, ClientMessage, [&](XEvent& xe){
+	m_context->bind(&m_data, ClientMessage, [&](XEvent& xe){
 		if ((Atom)xe.xclient.data.l[0] == m_atomWmDeleteWindow)
 		{
 			CloseEvent closeEvent(m_owner);
@@ -57,9 +57,9 @@ bool FormX11::create(IWidget* parent, const std::wstring& text, int width, int h
 		}		
 	});
 
-	XSetWMProtocols(m_display, window, &m_atomWmDeleteWindow, 1);
+	XSetWMProtocols(m_context->getDisplay(), window, &m_atomWmDeleteWindow, 1);
 
-	if (!WidgetX11Impl< IForm >::create(nullptr, style, window, Rect(0, 0, width, height), false))
+	if (!WidgetX11Impl< IForm >::create(nullptr, style, window, Rect(0, 0, width, height), false, true))
 		return false;
 
 	setText(text);
@@ -76,7 +76,7 @@ void FormX11::setText(const std::wstring& text)
 	XTextProperty tp;
 	XStringListToTextProperty((char**)&csp, 1, &tp);
 
-	XSetWMName(m_display, m_window, &tp);
+	XSetWMName(m_context->getDisplay(), m_data.window, &tp);
 }
 
 void FormX11::setIcon(ISystemBitmap* icon)
@@ -114,16 +114,16 @@ void FormX11::setIcon(ISystemBitmap* icon)
 	}
 
 	XChangeProperty(
-		m_display,
-		m_window,
-		XInternAtom(m_display, "_NET_WM_ICON", False),
+		m_context->getDisplay(),
+		m_data.window,
+		XInternAtom(m_context->getDisplay(), "_NET_WM_ICON", False),
 		XA_CARDINAL, 32,
 		PropModeReplace,
 		(unsigned char*)data.ptr(),
 		data.size()
 	);
 
-	XFlush(m_display);
+	XFlush(m_context->getDisplay());
 }
 
 void FormX11::maximize()

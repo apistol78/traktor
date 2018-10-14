@@ -145,13 +145,13 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 	m_menuWidth = size.cx;
 }
 
-bool ToolBarDropDown::mouseEnter(ToolBar* toolBar, MouseMoveEvent* mouseEvent)
+bool ToolBarDropDown::mouseEnter(ToolBar* toolBar)
 {
 	m_hover = true;
 	return true;
 }
 
-void ToolBarDropDown::mouseLeave(ToolBar* toolBar, MouseMoveEvent* mouseEvent)
+void ToolBarDropDown::mouseLeave(ToolBar* toolBar)
 {
 	m_hover = false;
 }

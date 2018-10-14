@@ -76,10 +76,11 @@ private:
 	int32_t m_caret;
 	bool m_caretBlink;
 	bool m_readOnly;
+	bool m_hover;
 
 	void eventFocus(FocusEvent* event);
 
-	void eventMouseMove(MouseMoveEvent* event);
+	void eventMouseTrack(MouseTrackEvent* event);
 
 	void eventButtonDown(MouseButtonDownEvent* event);
 
