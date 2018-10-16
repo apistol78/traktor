@@ -47,6 +47,12 @@ bool FormX11::create(IWidget* parent, const std::wstring& text, int width, int h
 	// Register "delete window" window manager message.
 	m_atomWmDeleteWindow = XInternAtom(m_context->getDisplay(), "WM_DELETE_WINDOW", False);
 
+	XSetWMProtocols(m_context->getDisplay(), window, &m_atomWmDeleteWindow, 1);
+
+	if (!WidgetX11Impl< IForm >::create(nullptr, style, window, Rect(0, 0, width, height), false, true))
+		return false;
+
+	// Listen to client messages when user tries to close form.
 	m_context->bind(&m_data, ClientMessage, [&](XEvent& xe){
 		if ((Atom)xe.xclient.data.l[0] == m_atomWmDeleteWindow)
 		{
@@ -56,11 +62,6 @@ bool FormX11::create(IWidget* parent, const std::wstring& text, int width, int h
 				destroy();
 		}		
 	});
-
-	XSetWMProtocols(m_context->getDisplay(), window, &m_atomWmDeleteWindow, 1);
-
-	if (!WidgetX11Impl< IForm >::create(nullptr, style, window, Rect(0, 0, width, height), false, true))
-		return false;
 
 	setText(text);
 	return true;
