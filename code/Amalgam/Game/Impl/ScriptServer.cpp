@@ -21,6 +21,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Input/IInputDevice.h"
+#include "Input/InputSystem.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptContext.h"
@@ -46,6 +48,7 @@ bool ScriptServer::create(
 	const PropertyGroup* settings,
 	bool debugger,
 	bool profiler,
+	input::InputSystem* inputSystem,
 	net::BidirectionalObjectTransport* transport
 )
 {
@@ -112,6 +115,10 @@ bool ScriptServer::create(
 
 	// Create shared script context.
 	m_scriptContext = m_scriptManager->createContext(true);
+
+	// Keep reference to input system as we want to be able to release all exclusive captured
+	// devices in case of runtime error.
+	m_inputSystem = inputSystem;
 	return true;
 }
 
@@ -121,23 +128,25 @@ void ScriptServer::destroy()
 	{
 		m_scriptDebuggerThread->stop();
 		ThreadManager::getInstance().destroy(m_scriptDebuggerThread);
-		m_scriptDebuggerThread = 0;
+		m_scriptDebuggerThread = nullptr;
 	}
 
 	if (m_scriptDebugger)
 	{
 		m_scriptDebugger->removeListener(this);
-		m_scriptDebugger = 0;
+		m_scriptDebugger = nullptr;
 	}
 
 	if (m_scriptProfiler)
 	{
 		m_scriptProfiler->removeListener(this);
-		m_scriptProfiler = 0;
+		m_scriptProfiler = nullptr;
 	}
 
 	safeDestroy(m_scriptContext);
 	safeDestroy(m_scriptManager);
+
+	m_inputSystem = nullptr;
 }
 
 void ScriptServer::createResourceFactories(IEnvironment* environment)
@@ -286,6 +295,18 @@ void ScriptServer::threadDebugger()
 
 void ScriptServer::debugeeStateChange(script::IScriptDebugger* scriptDebugger)
 {
+	// Ensure no device is captured exclusively in case debugger has stopped script execution.
+	if (!m_scriptDebugger->isRunning() && m_inputSystem != nullptr)
+	{
+		int32_t deviceCount = m_inputSystem->getDeviceCount();
+		for (int32_t i = 0; i < deviceCount; ++i)
+		{
+			Ref< input::IInputDevice > device = m_inputSystem->getDevice(i);
+			device->setExclusive(false);
+		}
+	}
+
+	// Notify target manager about state change.
 	ScriptDebuggerStateChange stateChange(m_scriptDebugger->isRunning());
 	m_transport->send(&stateChange);
 }
