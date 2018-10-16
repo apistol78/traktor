@@ -19,6 +19,13 @@ namespace traktor
 
 class PropertyGroup;
 
+	namespace input
+	{
+
+class InputSystem;
+
+	}
+
 	namespace net
 	{
 
@@ -49,6 +56,7 @@ public:
 		const PropertyGroup* settings,
 		bool debugger,
 		bool profiler,
+		input::InputSystem* inputSystem,
 		net::BidirectionalObjectTransport* transport
 	);
 
@@ -83,6 +91,7 @@ private:
 	Ref< script::IScriptContext > m_scriptContext;
 	Ref< script::IScriptDebugger > m_scriptDebugger;
 	Ref< script::IScriptProfiler > m_scriptProfiler;
+	Ref< input::InputSystem > m_inputSystem;
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	std::map< std::pair< Guid, std::wstring >, CallSample > m_callSamples[3];
 	int32_t m_callSamplesIndex;

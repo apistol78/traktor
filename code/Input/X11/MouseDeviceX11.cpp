@@ -278,7 +278,6 @@ void MouseDeviceX11::setExclusive(bool exclusive)
 			&evmask
 		);
 #endif
-
 	}
 	else
 	{
@@ -286,6 +285,7 @@ void MouseDeviceX11::setExclusive(bool exclusive)
 		XIUngrabDevice(m_display, m_deviceId, CurrentTime);
 #endif
 	}
+	XFlush(m_display);
 	m_exclusive = exclusive;
 }
 

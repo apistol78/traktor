@@ -21,7 +21,7 @@ KeyboardDeviceX11::KeyboardDeviceX11(Display* display, Window window, int device
 :	m_display(display)
 ,	m_window(window)
 ,	m_deviceId(deviceId)
-,	m_kbdesc(0)
+,	m_kbdesc(nullptr)
 ,	m_connected(true)
 ,	m_exclusive(false)
 ,	m_focus(true)
@@ -177,6 +177,7 @@ void KeyboardDeviceX11::setExclusive(bool exclusive)
 		XIUngrabDevice(m_display, m_deviceId, CurrentTime);
 #endif
 	}
+	XFlush(m_display);
 	m_exclusive = exclusive;
 }
 
