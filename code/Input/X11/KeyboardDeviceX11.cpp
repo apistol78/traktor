@@ -183,8 +183,11 @@ void KeyboardDeviceX11::setExclusive(bool exclusive)
 
 void KeyboardDeviceX11::consumeEvent(XEvent& evt)
 {
+	if (m_kbdesc == nullptr)
+		return;
+
 	XIDeviceEvent* event = (XIDeviceEvent*)evt.xcookie.data;
-	if (event->deviceid != m_deviceId)
+	if (event == nullptr || event->deviceid != m_deviceId)
 		return;
 
 	switch (event->evtype)
