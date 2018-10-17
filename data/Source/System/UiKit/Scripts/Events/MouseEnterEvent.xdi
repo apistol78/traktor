@@ -8,8 +8,6 @@
 MouseEnterEvent = MouseEnterEvent or class("MouseEnterEvent")
 
 MouseEnterEvent.mask = 0x00000008 | MouseMoveEvent.mask
-
-
 	]]>
 	</text>
 </object>

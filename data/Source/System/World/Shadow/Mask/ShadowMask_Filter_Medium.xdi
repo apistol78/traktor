@@ -22,18 +22,16 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Flip</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{7B24A14D-9B1D-7D41-8758-7EA20C944C04}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>InputColor</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>1.5, 0, 0, 0</direction>
@@ -43,18 +41,16 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Output</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{7B24A14D-9B1D-7D41-8758-7EA20C944C04}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Flip</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>0, 1.5, 0, 0</direction>

@@ -154,7 +154,6 @@ function Slider:_onMouseMove(event)
 
 	return true
 end
-
 	]]>
 	</text>
 </object>

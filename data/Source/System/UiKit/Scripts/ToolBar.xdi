@@ -52,7 +52,6 @@ function ToolBar:_initialize(parent, mc)
 	local inner_mc = mc:getMember("innerContainer_mc")
 	self._getInnerClip = function() return inner_mc end
 end
-
 	]]>
 	</text>
 </object>

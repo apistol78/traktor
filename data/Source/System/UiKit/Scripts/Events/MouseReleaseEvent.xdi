@@ -13,7 +13,6 @@ MouseReleaseEvent.mask = 0x00000080 | MouseDownEvent.mask | MouseUpEvent.mask
 function MouseReleaseEvent:new(inside)
 	self.inside = inside
 end
-
 	]]>
 	</text>
 </object>

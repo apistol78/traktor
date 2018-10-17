@@ -3,18 +3,16 @@
 	<requireHighRange>false</requireHighRange>
 	<definitions/>
 	<steps>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{E66AC7FE-921F-6546-AE29-C4FCD6627570}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>InputColor</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Velocity</param>
 					<source>InputVelocity</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>

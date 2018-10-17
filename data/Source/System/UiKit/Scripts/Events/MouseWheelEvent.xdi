@@ -13,7 +13,6 @@ function MouseWheelEvent:new(x, y, delta)
 	self.y = y
 	self.delta = delta
 end
-
 	]]>
 	</text>
 </object>

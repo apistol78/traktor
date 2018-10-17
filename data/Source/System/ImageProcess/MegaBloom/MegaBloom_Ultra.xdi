@@ -281,83 +281,76 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>InitialLuminance</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{9B02255F-8C06-1540-AE46-C971346D5B35}</shader>
 			<sources>
 				<item>
 					<param>ColorTexture</param>
 					<source>InputColor</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Illum64</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
 			<sources>
 				<item>
 					<param>SourceTexture</param>
 					<source>InitialLuminance</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Illum16</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
 			<sources>
 				<item>
 					<param>SourceTexture</param>
 					<source>Illum64</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Illum4</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
 			<sources>
 				<item>
 					<param>SourceTexture</param>
 					<source>Illum16</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Illum1</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
 			<sources>
 				<item>
 					<param>SourceTexture</param>
 					<source>Illum4</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Adapt2</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{E9D34A63-454C-6B4C-A508-009527334A5B}</shader>
 			<sources>
 				<item>
 					<param>SourceTexture</param>
 					<source>Illum1</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>CurrentIllumTexture</param>
 					<source>Adapt1</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
@@ -368,36 +361,32 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>FullPreDOF</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{EB500331-8E43-4540-A742-9E88EF4ABBF9}</shader>
 			<sources>
 				<item>
 					<param>ColorTexture</param>
 					<source>InputColor</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>CurrentIllumTexture</param>
 					<source>Adapt1</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Full</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{B56B7664-7B38-C240-AE01-AF9DE512B54C}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>FullPreDOF</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>1, 0, 0, 0</direction>
@@ -411,18 +400,16 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Full</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{B56B7664-7B38-C240-AE01-AF9DE512B54C}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>FullPreDOF</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>0, 1, 0, 0</direction>
@@ -432,65 +419,60 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Down_1</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{BC4BD33D-FDBF-AC41-8BDB-7FB27D502F10}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Full</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Down_2</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{CBC8D93D-4E3D-9B40-8D48-CCBA247F1BF0}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Down_1</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Down_3</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{CBC8D93D-4E3D-9B40-8D48-CCBA247F1BF0}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Down_2</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Down_4</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{CBC8D93D-4E3D-9B40-8D48-CCBA247F1BF0}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Down_3</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Blur_1x</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{D01376C0-C8AF-B749-B822-D45416C9CE4C}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Down_1</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>2, 0, 0, 0</direction>
@@ -500,13 +482,12 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Down_1</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{D01376C0-C8AF-B749-B822-D45416C9CE4C}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Blur_1x</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>0, 2, 0, 0</direction>
@@ -516,13 +497,12 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Blur_2x</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{D01376C0-C8AF-B749-B822-D45416C9CE4C}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Down_2</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>2, 0, 0, 0</direction>
@@ -532,13 +512,12 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Down_2</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{D01376C0-C8AF-B749-B822-D45416C9CE4C}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Blur_2x</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>0, 2, 0, 0</direction>
@@ -548,13 +527,12 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Blur_3x</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{D01376C0-C8AF-B749-B822-D45416C9CE4C}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Down_3</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>2, 0, 0, 0</direction>
@@ -564,13 +542,12 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Down_3</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{D01376C0-C8AF-B749-B822-D45416C9CE4C}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Blur_3x</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>0, 2, 0, 0</direction>
@@ -580,13 +557,12 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Blur_4x</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{D01376C0-C8AF-B749-B822-D45416C9CE4C}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Down_4</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>2, 0, 0, 0</direction>
@@ -596,13 +572,12 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Down_4</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{D01376C0-C8AF-B749-B822-D45416C9CE4C}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Blur_4x</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>0, 2, 0, 0</direction>
@@ -612,18 +587,16 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Blur_1x</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepGodRay">
+		<item type="traktor.render.ImageProcessStepGodRay" version="1">
 			<shader>{997BCFDE-7456-A64C-A0DA-24BD8E7A0C47}</shader>
 			<sources>
 				<item>
 					<param>Color</param>
 					<source>Down_1</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<lightDistance>1000</lightDistance>
@@ -631,13 +604,12 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Ray_2</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepGodRay">
+		<item type="traktor.render.ImageProcessStepGodRay" version="1">
 			<shader>{C9C67C7A-BC1E-654F-B175-EC0A978516D2}</shader>
 			<sources>
 				<item>
 					<param>Color</param>
 					<source>Blur_1x</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<lightDistance>1000</lightDistance>
@@ -645,90 +617,80 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Down_3</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{232AE75A-9F28-3041-A568-A780E61B2D84}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Down_4</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Down_2</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{232AE75A-9F28-3041-A568-A780E61B2D84}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Down_3</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Down_1</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{232AE75A-9F28-3041-A568-A780E61B2D84}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Down_2</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Blur_1x</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{5010FD92-D23F-8842-8125-FF736878A720}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Down_1</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Output</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepGrain">
+		<item type="traktor.render.ImageProcessStepGrain" version="1">
 			<shader>{54F4D2C1-06E6-5A4D-8F15-634C192D5ABC}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Full</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Down_1</param>
 					<source>Down_1</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Blur_1x</param>
 					<source>Blur_1x</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Ray_1</param>
 					<source>Ray_2</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>ColorTexture</param>
 					<source>InputColor</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>CurrentIllumTexture</param>
 					<source>Adapt1</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>

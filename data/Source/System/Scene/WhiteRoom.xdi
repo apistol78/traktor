@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="7">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="24">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="25">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<linearLighting>true</linearLighting>
-		<occlusionCulling>false</occlusionCulling>
 		<depthPass>true</depthPass>
 		<shadowSettings>
 			<disabled>

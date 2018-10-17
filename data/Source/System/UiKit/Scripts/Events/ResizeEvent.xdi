@@ -7,7 +7,6 @@
 ResizeEvent = ResizeEvent or class("ResizeEvent")
 
 ResizeEvent.mask = 0x00000400
-
 	]]>
 	</text>
 </object>

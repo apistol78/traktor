@@ -1263,7 +1263,6 @@ g_Strength
 			<comment>
 			<![CDATA[
 Cull far pixels.
-
 			]]>
 			</comment>
 			<position>
