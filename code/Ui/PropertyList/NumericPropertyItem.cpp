@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include <algorithm>
 #include <sstream>
+#include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
@@ -30,14 +31,14 @@ double trunc(double value)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.NumericPropertyItem", NumericPropertyItem, PropertyItem)
 
-NumericPropertyItem::NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint, bool hex, bool db)
+NumericPropertyItem::NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint, bool hex, Representation representation)
 :	PropertyItem(text)
 ,	m_value(value)
 ,	m_limitMin(limitMin)
 ,	m_limitMax(limitMax)
 ,	m_floatPoint(floatPoint)
 ,	m_hex(hex)
-,	m_db(db)
+,	m_representation(representation)
 ,	m_mouseAdjust(false)
 {
 }
@@ -127,7 +128,12 @@ void NumericPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 		if (m_hex)
 			ss << std::hex << uint32_t(value);
 		else
-			ss << value;
+		{
+			if (m_representation == RpAngle)
+				ss << rad2deg(value);
+			else
+				ss << value;
+		}
 
 		m_editor->setText(ss.str());
 		m_editor->setVisible(true);
@@ -170,9 +176,14 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	if (m_hex)
 		ss << L"0x" << std::hex << uint32_t(value);
 	else
-		ss << value;
+	{
+		if (m_representation == RpAngle)
+			ss << rad2deg(value) << L"\xb0";
+		else
+			ss << value;
+	}
 
-	if (m_db)
+	if (m_representation == RpDecibel)
 		ss << L" dB";
 	
 	canvas.drawText(rc.inflate(-2, 0), ss.str(), AnLeft, AnCenter);
@@ -239,7 +250,11 @@ void NumericPropertyItem::eventEditFocus(FocusEvent* event)
 			m_value = double(value);
 		}
 		else
+		{
 			ss >> m_value;
+			if (m_representation == RpDecibel)
+				m_value = deg2rad(m_value);
+		}
 		
 		m_editor->setVisible(false);
 
@@ -260,8 +275,12 @@ void NumericPropertyItem::eventEditKeyDownEvent(KeyDownEvent* event)
 			m_value = double(value);
 		}
 		else
+		{
 			ss >> m_value;
-		
+			if (m_representation == RpDecibel)
+				m_value = deg2rad(m_value);
+		}
+
 		m_editor->setVisible(false);
 
 		notifyChange();
