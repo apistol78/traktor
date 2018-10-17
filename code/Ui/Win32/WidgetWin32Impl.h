@@ -50,6 +50,7 @@ public:
 	,	m_canvasImpl(0)
 	,	m_hCursor(NULL)
 	,	m_ownCursor(false)
+	,	m_tracking(false)
 	{
 	}
 
@@ -478,6 +479,7 @@ protected:
 	SmartFont m_hFont;
 	HCURSOR m_hCursor;
 	bool m_ownCursor;
+	bool m_tracking;
 	std::map< uint32_t, uint32_t > m_timers;
 
 	static
@@ -540,6 +542,7 @@ protected:
 		m_hWnd.registerMessageHandler(WM_RBUTTONUP,     new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonUp));
 		m_hWnd.registerMessageHandler(WM_RBUTTONDBLCLK, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDblClk));
 		m_hWnd.registerMessageHandler(WM_MOUSEMOVE,     new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventMouseMove));
+		m_hWnd.registerMessageHandler(WM_MOUSELEAVE,    new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventMouseLeave));
 		m_hWnd.registerMessageHandler(WM_MOUSEWHEEL,    new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventMouseWheel));
 		m_hWnd.registerMessageHandler(WM_SETFOCUS,      new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventFocus));
 		m_hWnd.registerMessageHandler(WM_KILLFOCUS,     new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventFocus));
@@ -687,6 +690,20 @@ protected:
 
 	LRESULT eventMouseMove(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
+		if (!m_tracking)
+		{
+			TRACKMOUSEEVENT tme = { 0 };
+			tme.cbSize = sizeof(tme);
+			tme.dwFlags = TME_LEAVE;
+			tme.hwndTrack = m_hWnd;
+			tme.dwHoverTime = 0;
+			if (TrackMouseEvent(&tme))
+			{
+				MouseTrackEvent m(m_owner, true);
+				m_owner->raiseEvent(&m);
+			}
+		}
+
 		int32_t button = MbtNone;
 		if (wParam & MK_LBUTTON)
 			button |= MbtLeft;
@@ -709,6 +726,13 @@ protected:
 			SetCursor(m_hCursor);
 
 		return TRUE;
+	}
+
+	LRESULT eventMouseLeave(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
+	{
+		MouseTrackEvent m(m_owner, false);
+		m_owner->raiseEvent(&m);
+		return 0;
 	}
 
 	LRESULT eventMouseWheel(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)

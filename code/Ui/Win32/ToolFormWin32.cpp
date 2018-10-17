@@ -66,6 +66,9 @@ bool ToolFormWin32::create(IWidget* parent, const std::wstring& text, int width,
 int ToolFormWin32::showModal()
 {
 	MSG msg;
+
+	// Ensure tool form is visible.
+	setVisible(true);
 	
 	// Disable parent window, should be application main window.
 	HWND hParentWnd = GetParent(m_hWnd);
