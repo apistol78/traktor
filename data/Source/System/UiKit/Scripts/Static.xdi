@@ -42,7 +42,7 @@ function Static:place(x, y, width, height)
 		local sz = self._text_tb:measureText(self._text_tb.text, width * 20)
 		self._text_tb.textBounds = Aabb2(
 			Vector2(0, 0),
-			Vector2(sz.x * 20, sz.y * 20)
+			Vector2(math.min(sz.x, width) * 20, math.min(sz.y, height) * 20)
 		)
 		self:setText(self._text_tb.text)
 	else
@@ -167,6 +167,7 @@ function Static:_onMouseRelease(event)
 	if self._clickFn ~= nil then self._clickFn(self) end
 	return true
 end
+
 	]]>
 	</text>
 </object>

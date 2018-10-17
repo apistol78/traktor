@@ -127,7 +127,7 @@ void InspectReflector::operator >> (const Member< int8_t >& m)
 			max,
 			false,
 			false,
-			false
+			NumericPropertyItem::RpNormal
 		),
 		memberPrivate
 	);
@@ -157,7 +157,7 @@ void InspectReflector::operator >> (const Member< uint8_t >& m)
 			max,
 			false,
 			hex != 0,
-			false
+			NumericPropertyItem::RpNormal
 		),
 		memberPrivate
 	);
@@ -185,7 +185,7 @@ void InspectReflector::operator >> (const Member< int16_t >& m)
 			max,
 			false,
 			false,
-			false
+			NumericPropertyItem::RpNormal
 		),
 		memberPrivate
 	);
@@ -215,7 +215,7 @@ void InspectReflector::operator >> (const Member< uint16_t >& m)
 			max,
 			false,
 			hex != 0,
-			false
+			NumericPropertyItem::RpNormal
 		),
 		memberPrivate
 	);
@@ -243,7 +243,7 @@ void InspectReflector::operator >> (const Member< int32_t >& m)
 			max,
 			false,
 			false,
-			false
+			NumericPropertyItem::RpNormal
 		),
 		memberPrivate
 	);
@@ -273,7 +273,7 @@ void InspectReflector::operator >> (const Member< uint32_t >& m)
 			max,
 			false,
 			hex != 0,
-			false
+			NumericPropertyItem::RpNormal
 		),
 		memberPrivate
 	);
@@ -301,7 +301,7 @@ void InspectReflector::operator >> (const Member< int64_t >& m)
 			max,
 			false,
 			false,
-			false
+			NumericPropertyItem::RpNormal
 		),
 		memberPrivate
 	);
@@ -331,7 +331,7 @@ void InspectReflector::operator >> (const Member< uint64_t >& m)
 			max,
 			false,
 			hex != 0,
-			false
+			NumericPropertyItem::RpNormal
 		),
 		memberPrivate
 	);
@@ -351,6 +351,12 @@ void InspectReflector::operator >> (const Member< float >& m)
 		max = range->getMax();
 	}
 
+	NumericPropertyItem::Representation representation = NumericPropertyItem::RpNormal;
+	if (findAttribute< AttributeDecibel >(m) != nullptr)
+		representation = NumericPropertyItem::RpDecibel;
+	if (findAttribute< AttributeAngles >(m) != nullptr)
+		representation = NumericPropertyItem::RpAngle;
+
 	addPropertyItem(
 		new NumericPropertyItem(
 			stylizeMemberName(m.getName()),
@@ -359,7 +365,7 @@ void InspectReflector::operator >> (const Member< float >& m)
 			max,
 			true,
 			false,
-			bool(findAttribute< AttributeDecibel >(m) != 0)
+			representation
 		),
 		memberPrivate
 	);
@@ -379,6 +385,12 @@ void InspectReflector::operator >> (const Member< double >& m)
 		max = range->getMax();
 	}
 
+	NumericPropertyItem::Representation representation = NumericPropertyItem::RpNormal;
+	if (findAttribute< AttributeDecibel >(m) != nullptr)
+		representation = NumericPropertyItem::RpDecibel;
+	if (findAttribute< AttributeAngles >(m) != nullptr)
+		representation = NumericPropertyItem::RpAngle;
+
 	addPropertyItem(
 		new NumericPropertyItem(
 			stylizeMemberName(m.getName()),
@@ -387,7 +399,7 @@ void InspectReflector::operator >> (const Member< double >& m)
 			max,
 			true,
 			false,
-			bool(findAttribute< AttributeDecibel >(m) != 0)
+			representation
 		),
 		memberPrivate
 	);
@@ -477,6 +489,12 @@ void InspectReflector::operator >> (const Member< Scalar >& m)
 		max = range->getMax();
 	}
 
+	NumericPropertyItem::Representation representation = NumericPropertyItem::RpNormal;
+	if (findAttribute< AttributeDecibel >(m) != nullptr)
+		representation = NumericPropertyItem::RpDecibel;
+	if (findAttribute< AttributeAngles >(m) != nullptr)
+		representation = NumericPropertyItem::RpAngle;
+
 	Scalar& v = m;
 	addPropertyItem(
 		new NumericPropertyItem(
@@ -486,7 +504,7 @@ void InspectReflector::operator >> (const Member< Scalar >& m)
 			max,
 			true,
 			false,
-			bool(findAttribute< AttributeDecibel >(m) != 0)
+			representation
 		),
 		memberPrivate
 	);
