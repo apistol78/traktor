@@ -28,7 +28,6 @@ function Application:resolve(uri)
 
 	return dbi:readData(id)
 end
-
 	]]>
 	</text>
 </object>

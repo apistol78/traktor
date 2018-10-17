@@ -37,52 +37,48 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Edges</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{074F2B2C-2597-B54F-B0BF-FBFCCD184D86}</shader>
 			<sources/>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{5AEF4C24-AED0-FB41-A06E-9B047F7CFDDE}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>InputColor</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Blend</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{074F2B2C-2597-B54F-B0BF-FBFCCD184D86}</shader>
 			<sources/>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{B679C168-3995-4948-B108-B4A413040D74}</shader>
 			<sources>
 				<item>
 					<param>Edges</param>
 					<source>Edges</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Output</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{22826F79-6C55-0847-9788-3BF932DC838C}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>InputColor</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Blend</param>
 					<source>Blend</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>

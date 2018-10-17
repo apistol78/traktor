@@ -11,7 +11,6 @@ FocusEvent.mask = 0x00000001
 function FocusEvent:new(received)
 	self.received = received
 end
-
 	]]>
 	</text>
 </object>

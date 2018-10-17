@@ -82,26 +82,24 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>HalfColor</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{3308413C-5D12-9646-B2E4-E4FC7D90BA52}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>InputColor</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>BlurTemp</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{092C9D00-54FF-6A42-8DD6-FE02B8341FCF}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>HalfColor</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>1, 0, 0, 0</direction>
@@ -111,13 +109,12 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Blur_0</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{092C9D00-54FF-6A42-8DD6-FE02B8341FCF}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>BlurTemp</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>0, 1, 0, 0</direction>
@@ -127,13 +124,12 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>BlurTemp</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{092C9D00-54FF-6A42-8DD6-FE02B8341FCF}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Blur_0</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>1, 0, 0, 0</direction>
@@ -143,13 +139,12 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Blur_1</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{092C9D00-54FF-6A42-8DD6-FE02B8341FCF}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>BlurTemp</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>0, 1, 0, 0</direction>
@@ -159,76 +154,65 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>OffsetMap</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{5DB6C85E-85AE-8E4B-A696-DBDF712AB26F}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>InputColor</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Blur_0</param>
 					<source>Blur_0</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Output</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{E38CFE8C-35DE-8042-B862-FE19F38BD3E4}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>InputColor</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Blur_0</param>
 					<source>Blur_0</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Blur_1</param>
 					<source>Blur_1</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>OffsetMap</param>
 					<source>OffsetMap</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>
-		<item type="traktor.render.ImageProcessStepBokeh" version="1">
+		<item type="traktor.render.ImageProcessStepBokeh" version="2">
 			<shader>{750ED636-4EDE-5C40-B2AD-92365FCE659A}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>Blur_0</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>OffsetMap</param>
 					<source>OffsetMap</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>

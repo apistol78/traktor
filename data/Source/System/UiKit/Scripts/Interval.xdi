@@ -54,7 +54,6 @@ function Interval.update(dT)
 		end
 	end
 end
-
 	]]>
 	</text>
 </object>

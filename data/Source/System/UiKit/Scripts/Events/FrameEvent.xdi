@@ -7,8 +7,6 @@
 FrameEvent = FrameEvent or class("FrameEvent")
 
 FrameEvent.mask = 0x00000002
-
-
 	]]>
 	</text>
 </object>

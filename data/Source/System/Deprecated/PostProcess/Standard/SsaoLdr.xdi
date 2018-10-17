@@ -37,25 +37,23 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>3</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSsao" version="1">
+		<item type="traktor.render.ImageProcessStepSsao" version="2">
 			<shader>{74942CA7-6F3E-814F-A219-57E60FFDC7F3}</shader>
 			<sources/>
 		</item>
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>4</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{9165EBF1-FB28-584B-B259-0B580E2050D5}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>3</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>1, 0, 0, 0</direction>
@@ -65,18 +63,16 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>2</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepBlur" version="2">
+		<item type="traktor.render.ImageProcessStepBlur" version="3">
 			<shader>{9165EBF1-FB28-584B-B259-0B580E2050D5}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
 					<source>4</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
-					<index>0</index>
 				</item>
 			</sources>
 			<direction>0, 1, 0, 0</direction>
@@ -86,18 +82,16 @@
 		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>0</target>
 		</item>
-		<item type="traktor.render.ImageProcessStepSimple">
+		<item type="traktor.render.ImageProcessStepSimple" version="1">
 			<shader>{366B6057-17AB-194C-9630-EDBE4C055C58}</shader>
 			<sources>
 				<item>
 					<param>Frame</param>
 					<source>InputColor</source>
-					<index>0</index>
 				</item>
 				<item>
 					<param>Occlusion</param>
 					<source>3</source>
-					<index>0</index>
 				</item>
 			</sources>
 		</item>

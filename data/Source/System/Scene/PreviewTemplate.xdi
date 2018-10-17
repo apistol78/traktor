@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="7">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="24">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="25">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<linearLighting>true</linearLighting>
-		<occlusionCulling>false</occlusionCulling>
 		<depthPass>true</depthPass>
 		<shadowSettings>
 			<disabled>
@@ -104,9 +103,8 @@
 						<rotation>0, 0, 0, 1</rotation>
 					</transform>
 					<components>
-						<item type="traktor.weather.SkyComponentData">
+						<item type="traktor.weather.SkyComponentData" version="1">
 							<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
-							<sunDirection>0, 1, 0, 0</sunDirection>
 							<offset>0</offset>
 						</item>
 					</components>

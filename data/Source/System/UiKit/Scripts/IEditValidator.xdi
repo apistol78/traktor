@@ -8,7 +8,6 @@ IEditValidator = IEditValidator or class("IEditValidator")
 
 function IEditValidator:check(text)
 end
-
 	]]>
 	</text>
 </object>

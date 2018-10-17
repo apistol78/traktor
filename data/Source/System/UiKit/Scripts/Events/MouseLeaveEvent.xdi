@@ -8,8 +8,6 @@
 MouseLeaveEvent = MouseLeaveEvent or class("MouseLeaveEvent")
 
 MouseLeaveEvent.mask = 0x00000010 | MouseMoveEvent.mask
-
-
 	]]>
 	</text>
 </object>

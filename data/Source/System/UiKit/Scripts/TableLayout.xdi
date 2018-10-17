@@ -196,7 +196,6 @@ function TableLayout:_calculate(container, width, height)
 
 	return w, h
 end
-
 	]]>
 	</text>
 </object>

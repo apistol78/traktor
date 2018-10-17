@@ -20,7 +20,6 @@ function StaticScaffolding:setup(frame)
 
 	PushButton(ct, "Test")
 end
-
 	]]>
 	</text>
 </object>

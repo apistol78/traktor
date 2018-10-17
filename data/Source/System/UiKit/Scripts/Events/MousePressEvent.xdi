@@ -9,8 +9,6 @@
 MousePressEvent = MousePressEvent or class("MousePressEvent")
 
 MousePressEvent.mask = 0x00000040 | MouseDownEvent.mask | MouseUpEvent.mask
-
-
 	]]>
 	</text>
 </object>

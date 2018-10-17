@@ -11,7 +11,6 @@ NumericEditValidator = NumericEditValidator or class("NumericEditValidator", IEd
 function NumericEditValidator:check(text)
 	return tonumber(text) ~= nil
 end
-
 	]]>
 	</text>
 </object>
