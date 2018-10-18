@@ -151,7 +151,7 @@ bool Lobby::invite(const IUser* user)
 	if (m_matchMakingProvider && m_matchMakingProvider->inviteToLobby(m_handle, userImpl->m_handle))
 		return true;
 	else
-		return true;
+		return false;
 }
 
 bool Lobby::setOwner(const IUser* user)
