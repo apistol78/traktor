@@ -20,7 +20,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Edit", Edit, Widget)
 
 Edit::Edit()
-:	m_selectionStart(-1)
+:	m_borderColor(0, 0, 0, 0)
+,	m_selectionStart(-1)
 ,	m_selectionEnd(-1)
 ,	m_caret(0)
 ,	m_caretBlink(true)
@@ -179,6 +180,8 @@ void Edit::paste()
 
 void Edit::setBorderColor(const Color4ub& borderColor)
 {
+	m_borderColor = borderColor;
+	update();
 }
 
 void Edit::setText(const std::wstring& text)
@@ -420,7 +423,10 @@ void Edit::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, hover ? L"background-color-hover" : L"background-color"));
 	canvas.fillRect(rcInner);
 
-	canvas.setForeground(ss->getColor(this, L"border-color"));
+	if (m_borderColor.a != 0)
+		canvas.setForeground(m_borderColor);
+	else
+		canvas.setForeground(ss->getColor(this, L"border-color"));
 	canvas.drawRect(rcInner);
 
 	std::wstring text = getText();
