@@ -71,6 +71,7 @@ public:
 
 private:
 	Ref< const EditValidator > m_validator;
+	Color4ub m_borderColor;
 	int32_t m_selectionStart;
 	int32_t m_selectionEnd;
 	int32_t m_caret;
