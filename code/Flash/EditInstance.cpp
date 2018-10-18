@@ -147,20 +147,6 @@ void traverseHtmlDOM(
 	layout->setAttribute(font, textColor);
 }
 
-Aabb2 adjustForGutter(const Aabb2& aabb)
-{
-	return Aabb2(
-		Vector2(
-			aabb.mn.x + 2.0f * 20.0f,
-			aabb.mn.y + 2.0f * 20.0f
-		),
-		Vector2(
-			aabb.mx.x - 2.0f * 20.0f,
-			aabb.mx.y - 2.0f * 20.0f
-		)
-	);
-}
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.EditInstance", EditInstance, CharacterInstance)
@@ -362,7 +348,7 @@ Ref< TextLayout > EditInstance::prepareTextLayout() const
 
 	layout->begin();
 
-	layout->setBounds(adjustForGutter(m_textBounds));
+	layout->setBounds(m_textBounds);
 	layout->setLeading(m_edit->getLeading());
 	layout->setLetterSpacing(m_password ? 6 : m_letterSpacing);
 	layout->setFontHeight(m_fontHeight);
@@ -618,7 +604,7 @@ bool EditInstance::internalParseText(const std::wstring& text)
 
 	m_layout->begin();
 
-	m_layout->setBounds(adjustForGutter(m_textBounds));
+	m_layout->setBounds(m_textBounds);
 	m_layout->setLeading(m_edit->getLeading());
 	m_layout->setLetterSpacing(m_password ? 6 : m_letterSpacing);
 	m_layout->setFontHeight(m_fontHeight);
@@ -667,7 +653,7 @@ bool EditInstance::internalParseHtml(const std::wstring& html)
 
 	m_layout->begin();
 
-	m_layout->setBounds(adjustForGutter(m_textBounds));
+	m_layout->setBounds(m_textBounds);
 	m_layout->setLeading(m_edit->getLeading());
 	m_layout->setLetterSpacing(m_letterSpacing);
 	m_layout->setFontHeight(m_fontHeight);

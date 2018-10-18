@@ -687,7 +687,7 @@ void MovieRenderer::renderCharacter(
 
 				for (uint32_t k = 0; k < chars.size(); ++k)
 				{
-					caretEndPosition = textOffsetX + i->x + chars[k].x;
+					caretEndPosition = textOffsetX + i->offset + i->x + chars[k].x;
 
 					if (haveFocus && caret-- == 0)
 					{

@@ -224,7 +224,7 @@ void WireDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& tr
 							if (!glyphShape)
 								continue;
 
-							Matrix33 glyphTransform = transform * translate(textOffsetX + i->x + chars[k].x, textOffsetY + i->y) * scale(fontScale, fontScale);
+							Matrix33 glyphTransform = transform * translate(textOffsetX + i->offset + i->x + chars[k].x, textOffsetY + i->y) * scale(fontScale, fontScale);
 
 							const Aabb2& shapeBounds = glyphShape->getShapeBounds();
 
