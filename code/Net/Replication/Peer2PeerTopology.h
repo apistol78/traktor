@@ -32,8 +32,6 @@ class T_DLLCLASS Peer2PeerTopology : public INetworkTopology
 	T_RTTI_CLASS;
 
 public:
-	enum { MaxPeers = 32 };
-
 	struct Peer
 	{
 		net_handle_t handle;
