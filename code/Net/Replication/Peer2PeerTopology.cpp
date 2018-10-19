@@ -39,42 +39,49 @@ enum P2PMessageId
 #define MsgCMask_Connections(netSize)	( (netSize - (sizeof(uint8_t) + sizeof(net_handle_t) + sizeof(uint8_t))) / sizeof(net_handle_t) )
 
 #pragma pack(1)
+
+struct P2PMessageAny
+{
+	uint8_t data[MaxDataSize - 1];
+};
+
+struct P2PMessageDirect
+{
+	uint8_t data[MaxDataSize - 1];
+};
+
+struct P2PMessageRelay
+{
+	net_handle_t from;
+	net_handle_t target;
+	uint8_t data[MaxDataSize - 1 - 8 - 8];
+};
+
+struct P2PMessageIAm
+{
+	uint8_t sequence;
+};
+
+struct P2PMessageCMask
+{
+	net_handle_t of;
+	uint8_t sequence;
+	net_handle_t connections[(MaxDataSize - 1 - 8 - 1) / 8];
+};
+
 struct P2PMessage
 {
 	uint8_t id;
 	union
 	{
-		struct
-		{
-			uint8_t data[1];
-		}
-		direct;
-
-		struct
-		{
-			net_handle_t from;
-			net_handle_t target;
-			uint8_t data[1];
-		}
-		relay;
-
-		struct 
-		{
-			uint8_t sequence;
-		}
-		iam;
-
-		struct
-		{
-			net_handle_t of;
-			uint8_t sequence;
-			net_handle_t connections[1];
-		}
-		cmask;
-
+		P2PMessageDirect direct;
+		P2PMessageRelay relay;
+		P2PMessageIAm iam;
+		P2PMessageCMask cmask;
 		uint8_t data[MaxDataSize - 1];
 	};
 };
+
 #pragma pack()
 
 const uint32_t c_maxPendingIAm = 32;
