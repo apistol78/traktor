@@ -254,7 +254,11 @@ bool Peer2PeerTopology::update(double dT)
 	int32_t providerPeerCount = m_provider->getPeerCount();
 	m_providerPeers.resize(providerPeerCount);
 	for (int32_t i = 0; i < providerPeerCount; ++i)
+	{
 		m_providerPeers[i] = m_provider->getPeerHandle(i);
+		if (m_providerPeers[i] == 0)
+			log::error << L"Provider peer handle " << i << L" null." << Endl;
+	}
 
 	T_MEASURE_UNTIL(0.00025);
 
@@ -285,7 +289,7 @@ bool Peer2PeerTopology::update(double dT)
 		if (std::find(m_providerPeers.begin(), m_providerPeers.end(), peer.handle) == m_providerPeers.end())
 		{
 			// Remove from my list of direct connections.
-			std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), peer.handle);
+			auto it = myPeer.connections.find(peer.handle);
 			if (it != myPeer.connections.end())
 			{
 				myPeer.connections.erase(it);
@@ -337,7 +341,7 @@ bool Peer2PeerTopology::update(double dT)
 		{
 			log::info << getLogPrefix() << L"Failed to send \"I am\" to peer " << peer.handle << L" (1)." << Endl;
 
-			std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), peer.handle);
+			auto it = myPeer.connections.find(peer.handle);
 			if (it != myPeer.connections.end())
 			{
 				myPeer.connections.erase(it);
@@ -378,7 +382,7 @@ bool Peer2PeerTopology::update(double dT)
 		{
 			log::info << getLogPrefix() << L"Failed to send \"I am\" to peer " << peer.handle << L" (2)." << Endl;
 
-			std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), peer.handle);
+			auto it = myPeer.connections.find(peer.handle);
 			if (it != myPeer.connections.end())
 			{
 				myPeer.connections.erase(it);
@@ -413,7 +417,7 @@ bool Peer2PeerTopology::update(double dT)
 		// Check if peer doesn't respond to "I am" messages first.
 		if (peer.sentIAm >= c_maxPendingIAm)
 		{
-			std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), peer.handle);
+			auto it = myPeer.connections.find(peer.handle);
 			if (it != myPeer.connections.end())
 			{
 				log::info << getLogPrefix() << L"Peer " << peer.handle << L" no longer respond to \"I am\" messages." << Endl;
@@ -472,7 +476,7 @@ bool Peer2PeerTopology::update(double dT)
 				continue;
 
 			const Peer& otherPeer = m_peers[j];
-			if (std::find(otherPeer.connections.begin(), otherPeer.connections.end(), thisPeer.handle) != otherPeer.connections.end())
+			if (otherPeer.connections.count(thisPeer.handle) != 0)
 			{
 				thisReachable = true;
 				break;
@@ -559,15 +563,11 @@ bool Peer2PeerTopology::update(double dT)
 					Peer& peer = m_peers[peerIndex];
 					if (peer.sentIAm > 0)
 					{
-						std::vector< net_handle_t >::iterator it = std::find(myPeer.connections.begin(), myPeer.connections.end(), from);
-						if (it == myPeer.connections.end())
+						if (myPeer.connections.count(from) == 0)
 						{
-							myPeer.connections.push_back(from);
-							std::sort(myPeer.connections.begin(), myPeer.connections.end());
-
+							myPeer.connections.insert(from);
 							myPeer.whenPropagate = 0.0;
 							myPeer.sequence++;
-
 							updateRouting = 7;
 						}
 						peer.sentIAm = 0;
@@ -590,25 +590,20 @@ bool Peer2PeerTopology::update(double dT)
 					{
 						int32_t nconnections = MsgCMask_Connections(nrecv);
 
-						std::vector< net_handle_t > connections(nconnections);
+						StaticSet< net_handle_t, MaxPeers > connections;
 						for (int32_t j = 0; j < nconnections; ++j)
-							connections[j] = msg.cmask.connections[j];
+							connections.insert(msg.cmask.connections[j]);
 
-						std::sort(connections.begin(), connections.end());
-
-						bool equal = false;
-						if (connections.size() == ofPeer.connections.size())
-							equal = std::equal(connections.begin(), connections.end(), ofPeer.connections.begin());
-
+						bool equal = bool(connections == ofPeer.connections);
 						if (!equal)
-							ofPeer.connections = connections;
-
-						if (!equal || msg.cmask.sequence > ofPeer.sequence)
 						{
 							ofPeer.whenPropagate = 0.0;
-							if (!equal)
-								updateRouting = 8;
+							ofPeer.connections = connections;
+							updateRouting = 8;
 						}
+
+						if (msg.cmask.sequence > ofPeer.sequence)
+							ofPeer.whenPropagate = 0.0;
 
 						ofPeer.sequence = msg.cmask.sequence;
 					}
@@ -664,7 +659,6 @@ bool Peer2PeerTopology::update(double dT)
 #endif
 
 	m_nodes.resize(0);
-	m_nodes.reserve(m_peers.size());
 	for (int32_t i = 0; i < int32_t(m_peers.size()); ++i)
 	{
 		if (i != myIndex)
@@ -729,19 +723,28 @@ bool Peer2PeerTopology::update(double dT)
 bool Peer2PeerTopology::findOptimalRoute(net_handle_t from, net_handle_t to, net_handle_t& outNext) const
 {
 	if (from == to)
+	{
+		log::warning << getLogPrefix() << L"findOptimalRoute; no route, same source and target." << Endl;
 		return false;
+	}
 
 	int32_t fromPeerId = indexOf(from);
 	if (fromPeerId < 0)
+	{
+		log::warning << getLogPrefix() << L"findOptimalRoute; no route, unknown source." << Endl;
 		return false;
+	}
 
 	int32_t toPeerId = indexOf(to);
 	if (toPeerId < 0)
+	{
+		log::warning << getLogPrefix() << L"findOptimalRoute; no route, unknown target." << Endl;
 		return false;
+	}
 
 	// Check if "from" can send directly to "to".
 	const Peer& fromPeer = m_peers[fromPeerId];
-	if (std::find(fromPeer.connections.begin(), fromPeer.connections.end(), to) != fromPeer.connections.end())
+	if (fromPeer.connections.count(to) != 0)
 	{
 		outNext = to;
 		return true;
@@ -760,14 +763,17 @@ bool Peer2PeerTopology::findOptimalRoute(net_handle_t from, net_handle_t to, net
 			continue;
 
 		const Peer& checkPeer = m_peers[id];
-		if (std::find(checkPeer.connections.begin(), checkPeer.connections.end(), to) != checkPeer.connections.end())
+		if (checkPeer.connections.count(to) != 0)
 		{
 			throughPeerId = id;
 			break;
 		}
 	}
 	if (throughPeerId < 0)
+	{
+		log::warning << getLogPrefix() << L"findOptimalRoute; no route, no re-direct peer found." << Endl;
 		return false;
+	}
 
 	outNext = m_peers[throughPeerId].handle;
 	return true;

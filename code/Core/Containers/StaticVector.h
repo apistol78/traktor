@@ -271,7 +271,7 @@ public:
 	StaticVector(size_t size, const ItemType& value)
 	:	m_size(size)
 	{
-		for (uint32_t i = 0; i < m_size; ++i)
+		for (size_t i = 0; i < m_size; ++i)
 			m_items[i] = value;
 	}
 
@@ -282,6 +282,16 @@ public:
 	size_t size() const
 	{
 		return m_size;
+	}
+
+	/*! \brief Set number of elements in vector.
+	 */
+	void resize(size_t size)
+	{
+		for (size_t i = m_size; i < size; ++i)
+			m_items[i] = value_type();
+
+		m_size = size;
 	}
 
 	/*! \brief Get number of elements allocated by vector.
@@ -322,11 +332,11 @@ public:
 	 * \param size Size of vector.
 	 * \param value Value of each element.
 	 */
-	void assign(uint32_t size, const ItemType& value)
+	void assign(size_t size, const ItemType& value)
 	{
 		T_ASSERT (size < Capacity);
 		m_size = size;
-		for (uint32_t i = 0; i < m_size; ++i)
+		for (size_t i = 0; i < m_size; ++i)
 			m_items[i] = value;
 	}
 
@@ -487,6 +497,25 @@ public:
 			m_items[i] = src.m_items[i];
 		m_size = src.m_size;
 		return *this;
+	}
+
+	bool operator == (const StaticVector& rh) const
+	{
+		if (m_size != rh.m_size)
+			return false;
+
+		for (size_t i = 0; i < m_size; ++i)
+		{
+			if (m_items[i] != rh.m_items[i])
+				return false;
+		}
+
+		return true;
+	}
+
+	bool operator != (const StaticVector& rh) const
+	{
+		return !(*this == rh);
 	}
 
 private:
