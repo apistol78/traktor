@@ -59,8 +59,10 @@ function Container:layout()
 end
 
 function Container:setVisible(visible)
-	Widget.setVisible(self, visible)
-	self:layout()
+	if visible ~= self._visible then
+		Widget.setVisible(self, visible)
+		self:layout()
+	end
 	return self
 end
 
@@ -81,6 +83,7 @@ function Container:_removeChild(child)
 	Widget._removeChild(self, child)
 	self._cachedEstimate = nil
 end
+
 	]]>
 	</text>
 </object>
