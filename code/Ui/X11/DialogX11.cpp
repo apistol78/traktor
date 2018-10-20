@@ -59,16 +59,6 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 	// Register "delete window" window manager message.
 	m_atomWmDeleteWindow = XInternAtom(m_context->getDisplay(), "WM_DELETE_WINDOW", False);
 
-	m_context->bind(&m_data, ClientMessage, [&](XEvent& xe){
-		if ((Atom)xe.xclient.data.l[0] == m_atomWmDeleteWindow)
-		{
-			CloseEvent closeEvent(m_owner);
-			m_owner->raiseEvent(&closeEvent);
-			if (!(closeEvent.consumed() && closeEvent.cancelled()))
-				endModal(DrCancel);
-		}		
-	});
-
 	XSetWMProtocols(m_context->getDisplay(), window, &m_atomWmDeleteWindow, 1);
 
 	// Center dialog on parent or desktop.
@@ -97,7 +87,20 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 
 	Rect rc(Point(px + (pwidth - width) / 2, py + (pheight - height) / 2), Size(width, height));
 
-	return WidgetX11Impl< IDialog >::create(nullptr, style, window, rc, false, true);
+	if (!WidgetX11Impl< IDialog >::create(nullptr, style, window, rc, false, true))
+		return false;
+
+	m_context->bind(&m_data, ClientMessage, [&](XEvent& xe){
+		if ((Atom)xe.xclient.data.l[0] == m_atomWmDeleteWindow)
+		{
+			CloseEvent closeEvent(m_owner);
+			m_owner->raiseEvent(&closeEvent);
+			if (!(closeEvent.consumed() && closeEvent.cancelled()))
+				endModal(DrCancel);
+		}		
+	});
+
+	return true;
 }
 
 void DialogX11::destroy()
