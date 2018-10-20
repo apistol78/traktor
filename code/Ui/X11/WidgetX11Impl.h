@@ -194,8 +194,6 @@ public:
 			None,
 			CurrentTime
 		) == GrabSuccess);
-
-		log::info << L"setCapture " << type_name(m_owner) << L", " << m_data.grabbed << Endl;
 	}
 
 	virtual void releaseCapture() T_OVERRIDE
