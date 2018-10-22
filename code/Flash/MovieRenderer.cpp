@@ -73,9 +73,16 @@ void MovieRenderer::render(
 		dirtyRegion
 	);
 
+	const float fl = std::numeric_limits< float >::max();
+	const Aabb2 clipBounds(
+		Vector2(-fl, -fl),
+		Vector2( fl,  fl)
+	);
+
 	renderSprite(
 		movieInstance,
 		Matrix33::identity(),
+		clipBounds,
 		movieInstance->getColorTransform(),
 		false
 	);
@@ -86,6 +93,7 @@ void MovieRenderer::render(
 void MovieRenderer::renderSprite(
 	SpriteInstance* spriteInstance,
 	const Matrix33& transform,
+	const Aabb2& clipBounds,
 	const ColorTransform& cxTransform,
 	bool renderAsMask
 )
@@ -98,16 +106,17 @@ void MovieRenderer::renderSprite(
 	uint8_t blendMode = spriteInstance->getBlendMode();
 
 	if (blendMode == SbmLayer)
-		renderSpriteLayered(spriteInstance, transform, cxTransform, renderAsMask);
+		renderSpriteLayered(spriteInstance, transform, clipBounds, cxTransform, renderAsMask);
 	else if (!scalingGrid.empty())
-		renderSpriteWithScalingGrid(spriteInstance, transform, cxTransform, renderAsMask);
+		renderSpriteWithScalingGrid(spriteInstance, transform, clipBounds, cxTransform, renderAsMask);
 	else
-		renderSpriteDefault(spriteInstance, transform, cxTransform, renderAsMask);
+		renderSpriteDefault(spriteInstance, transform, clipBounds, cxTransform, renderAsMask);
 }
 
 void MovieRenderer::renderSpriteDefault(
 	SpriteInstance* spriteInstance,
 	const Matrix33& transform,
+	const Aabb2& clipBounds,
 	const ColorTransform& cxTransform,
 	bool renderAsMask
 )
@@ -136,6 +145,7 @@ void MovieRenderer::renderSpriteDefault(
 			renderCharacter(
 				layer.instance,
 				transform,
+				clipBounds,
 				cxTransform,
 				renderAsMask,
 				blendMode
@@ -149,6 +159,7 @@ void MovieRenderer::renderSpriteDefault(
 			renderCharacter(
 				layer.instance,
 				transform,
+				clipBounds,
 				cxTransform,
 				true,
 				blendMode
@@ -168,6 +179,7 @@ void MovieRenderer::renderSpriteDefault(
 				renderCharacter(
 					clippedLayer.instance,
 					transform,
+					clipBounds,
 					cxTransform,
 					renderAsMask,
 					blendMode
@@ -179,6 +191,7 @@ void MovieRenderer::renderSpriteDefault(
 			renderCharacter(
 				layer.instance,
 				transform,
+				clipBounds,
 				cxTransform,
 				true,
 				blendMode
@@ -205,6 +218,7 @@ void MovieRenderer::renderSpriteDefault(
 void MovieRenderer::renderSpriteLayered(
 	SpriteInstance* spriteInstance,
 	const Matrix33& transform,
+	const Aabb2& clipBounds,
 	const ColorTransform& cxTransform,
 	bool renderAsMask
 )
@@ -251,6 +265,7 @@ void MovieRenderer::renderSpriteLayered(
 				renderCharacter(
 					layer.instance,
 					transform,
+					clipBounds,
 					cxTransform,
 					renderAsMask,
 					SbmAlpha
@@ -265,6 +280,7 @@ void MovieRenderer::renderSpriteLayered(
 				renderCharacter(
 					ie->second.instance,
 					transform,
+					clipBounds,
 					cxTransform,
 					renderAsMask,
 					blendMode
@@ -283,6 +299,7 @@ void MovieRenderer::renderSpriteLayered(
 				renderCharacter(
 					layer.instance,
 					transform,
+					clipBounds,
 					cxTransform,
 					renderAsMask,
 					blendMode
@@ -305,6 +322,7 @@ void MovieRenderer::renderSpriteLayered(
 				renderCharacter(
 					layer.instance,
 					transform,
+					clipBounds,
 					cxTransform,
 					renderAsMask,
 					SbmDefault
@@ -332,6 +350,7 @@ void MovieRenderer::renderSpriteLayered(
 void MovieRenderer::renderSpriteWithScalingGrid(
 	SpriteInstance* spriteInstance,
 	const Matrix33& transform,
+	const Aabb2& clipBounds,
 	const ColorTransform& cxTransform,
 	bool renderAsMask
 )
@@ -410,10 +429,15 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 		Matrix33 Tt1 = translate(destinationBounds.mn);
 		Matrix33 T = transform * Tt1 * Ts * Tt0Inv;
 
-		// Increment stencil mask.
-		m_displayRenderer->beginMask(true);
-		m_displayRenderer->renderQuad(transform, destinationBounds, c_cxWhite);
-		m_displayRenderer->endMask();
+		Aabb2 subClipBounds(
+			sourceBounds.mn,
+			sourceBounds.mx
+		);
+
+		//// Increment stencil mask.
+		//m_displayRenderer->beginMask(true);
+		//m_displayRenderer->renderQuad(transform, destinationBounds, c_cxWhite);
+		//m_displayRenderer->endMask();
 
 		for (DisplayList::layer_map_t::const_iterator j = layers.begin(); j != layers.end(); )
 		{
@@ -429,6 +453,7 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 				renderCharacter(
 					layer.instance,
 					T,
+					subClipBounds,
 					cxTransform,
 					renderAsMask,
 					blendMode
@@ -442,6 +467,7 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 				renderCharacter(
 					layer.instance,
 					T,
+					subClipBounds,
 					cxTransform,
 					true,
 					blendMode
@@ -461,6 +487,7 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 					renderCharacter(
 						clippedLayer.instance,
 						T,
+						subClipBounds,
 						cxTransform,
 						renderAsMask,
 						blendMode
@@ -472,6 +499,7 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 				renderCharacter(
 					layer.instance,
 					T,
+					subClipBounds,
 					cxTransform,
 					true,
 					blendMode
@@ -480,10 +508,10 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 			}
 		}
 
-		// Decrement stencil mask.
-		m_displayRenderer->beginMask(false);
-		m_displayRenderer->renderQuad(transform, destinationBounds, c_cxWhite);
-		m_displayRenderer->endMask();
+		//// Decrement stencil mask.
+		//m_displayRenderer->beginMask(false);
+		//m_displayRenderer->renderQuad(transform, destinationBounds, c_cxWhite);
+		//m_displayRenderer->endMask();
 	}
 
 	Canvas* canvas = spriteInstance->getCanvas();
@@ -504,6 +532,7 @@ void MovieRenderer::renderSpriteWithScalingGrid(
 void MovieRenderer::renderCharacter(
 	CharacterInstance* characterInstance,
 	const Matrix33& transform,
+	const Aabb2& clipBounds,
 	const ColorTransform& cxTransform,
 	bool renderAsMask,
 	uint8_t blendMode
@@ -532,6 +561,7 @@ void MovieRenderer::renderCharacter(
 			renderSprite(
 				maskInstance,
 				transform * maskInstance->getTransform(),
+				clipBounds,
 				maskInstance->getColorTransform(),
 				true
 			);
@@ -541,6 +571,7 @@ void MovieRenderer::renderCharacter(
 		renderSprite(
 			spriteInstance,
 			transform * spriteInstance->getTransform(),
+			clipBounds,
 			cxTransform2,
 			false
 		);
@@ -551,6 +582,7 @@ void MovieRenderer::renderCharacter(
 			renderSprite(
 				maskInstance,
 				transform * maskInstance->getTransform(),
+				clipBounds,
 				maskInstance->getColorTransform(),
 				true
 			);
@@ -566,6 +598,7 @@ void MovieRenderer::renderCharacter(
 		m_displayRenderer->renderShape(
 			*dictionary,
 			transform * shapeInstance->getTransform(),
+			clipBounds,
 			*shapeInstance->getShape(),
 			cxTransform2,
 			blendMode
@@ -580,6 +613,7 @@ void MovieRenderer::renderCharacter(
 		m_displayRenderer->renderMorphShape(
 			*dictionary,
 			transform * morphInstance->getTransform(),
+			clipBounds,
 			*morphInstance->getShape(),
 			cxTransform2
 		);
@@ -610,6 +644,7 @@ void MovieRenderer::renderCharacter(
 			m_displayRenderer->renderGlyph(
 				*dictionary,
 				textTransform * translate(i->offsetX, i->offsetY),
+				clipBounds,
 				font,
 				glyph,
 				i->height,
@@ -673,6 +708,7 @@ void MovieRenderer::renderCharacter(
 					renderCharacter(
 						characters[j->c - 1],
 						editTransform * translate(textOffsetX + i->offset + i->x, textOffsetY + i->y),
+						clipBounds,
 						cxTransform,
 						renderAsMask,
 						blendMode
@@ -707,6 +743,7 @@ void MovieRenderer::renderCharacter(
 						m_displayRenderer->renderGlyph(
 							*dictionary,
 							editTransform * translate(textOffsetX + i->offset + i->x + chars[k].x, textOffsetY + i->y),
+							clipBounds,
 							attrib.font,
 							glyph,
 							layout->getFontHeight(),
@@ -760,6 +797,7 @@ void MovieRenderer::renderCharacter(
 			renderCharacter(
 				referenceInstance,
 				buttonTransform * layer.placeMatrix,
+				clipBounds,
 				cxTransform2,
 				renderAsMask,
 				buttonInstance->getBlendMode()

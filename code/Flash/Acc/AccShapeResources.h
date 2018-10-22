@@ -44,6 +44,7 @@ private:
 	resource::Proxy< render::Shader > m_shaderDecrementMask;
 
 	render::handle_t m_handleTransform;
+	render::handle_t m_handleClipBounds;
 	render::handle_t m_handleFrameBounds;
 	render::handle_t m_handleFrameTransform;
 	render::handle_t m_handleCxFormMul;

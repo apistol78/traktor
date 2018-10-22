@@ -57,6 +57,7 @@ private:
 	void renderSprite(
 		SpriteInstance* spriteInstance,
 		const Matrix33& transform,
+		const Aabb2& clipBounds,
 		const ColorTransform& cxTransform,
 		bool renderAsMask
 	);
@@ -64,6 +65,7 @@ private:
 	void renderSpriteDefault(
 		SpriteInstance* spriteInstance,
 		const Matrix33& transform,
+		const Aabb2& clipBounds,
 		const ColorTransform& cxTransform,
 		bool renderAsMask
 	);
@@ -71,6 +73,7 @@ private:
 	void renderSpriteLayered(
 		SpriteInstance* spriteInstance,
 		const Matrix33& transform,
+		const Aabb2& clipBounds,
 		const ColorTransform& cxTransform,
 		bool renderAsMask
 	);
@@ -78,6 +81,7 @@ private:
 	void renderSpriteWithScalingGrid(
 		SpriteInstance* spriteInstance,
 		const Matrix33& transform,
+		const Aabb2& clipBounds,
 		const ColorTransform& cxTransform,
 		bool renderAsMask
 	);
@@ -85,6 +89,7 @@ private:
 	void renderCharacter(
 		CharacterInstance* characterInstance,
 		const Matrix33& transform,
+		const Aabb2& clipBounds,
 		const ColorTransform& cxTransform,
 		bool renderAsMask,
 		uint8_t blendMode

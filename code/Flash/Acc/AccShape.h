@@ -125,6 +125,7 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		const Matrix33& transform,
+		const Vector4& clipBounds,
 		const Vector4& frameBounds,
 		const Vector4& frameTransform,
 		const ColorTransform& cxform,

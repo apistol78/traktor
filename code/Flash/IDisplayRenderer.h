@@ -96,7 +96,7 @@ public:
 	 * \param cxform Color transform.
 	 * \param blendMode Blend mode.
 	 */
-	virtual void renderShape(const Dictionary& dictionary, const Matrix33& transform, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode) = 0;
+	virtual void renderShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode) = 0;
 
 	/*! \brief Render morph shape.
 	 *
@@ -105,7 +105,7 @@ public:
 	 * \param shape Shape
 	 * \param cxform Color transform.
 	 */
-	virtual void renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const MorphShape& shape, const ColorTransform& cxform) = 0;
+	virtual void renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const MorphShape& shape, const ColorTransform& cxform) = 0;
 
 	/*! \brief Render glyph.
 	 *
@@ -123,6 +123,7 @@ public:
 	virtual void renderGlyph(
 		const Dictionary& dictionary,
 		const Matrix33& transform,
+		const Aabb2& clipBounds, 
 		const Font* font,
 		const Shape* glyph,
 		float fontHeight,

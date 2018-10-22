@@ -558,6 +558,7 @@ void AccShape::destroy()
 void AccShape::render(
 	render::RenderContext* renderContext,
 	const Matrix33& transform,
+	const Vector4& clipBounds,
 	const Vector4& frameBounds,
 	const Vector4& frameTransform,
 	const ColorTransform& cxform,
@@ -607,6 +608,7 @@ void AccShape::render(
 			renderBlockSolid->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlockSolid->programParams->beginParameters(renderContext);
 			renderBlockSolid->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
+			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleClipBounds, clipBounds);
 			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleFrameBounds, frameBounds);
 			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleFrameTransform, frameTransform);
 			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, cxform.mul);
@@ -627,6 +629,7 @@ void AccShape::render(
 			renderBlockTextured->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlockTextured->programParams->beginParameters(renderContext);
 			renderBlockTextured->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
+			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleClipBounds, clipBounds);
 			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleFrameBounds, frameBounds);
 			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleFrameTransform, frameTransform);
 			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, cxform.mul);
@@ -647,6 +650,7 @@ void AccShape::render(
 			renderBlockLine->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlockLine->programParams->beginParameters(renderContext);
 			renderBlockLine->programParams->setMatrixParameter(m_shapeResources->m_handleTransform, m);
+			renderBlockLine->programParams->setVectorParameter(m_shapeResources->m_handleClipBounds, clipBounds);
 			renderBlockLine->programParams->setVectorParameter(m_shapeResources->m_handleFrameBounds, frameBounds);
 			renderBlockLine->programParams->setVectorParameter(m_shapeResources->m_handleFrameTransform, frameTransform);
 			renderBlockLine->programParams->setVectorParameter(m_shapeResources->m_handleCxFormMul, cxform.mul);

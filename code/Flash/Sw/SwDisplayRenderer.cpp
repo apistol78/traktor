@@ -125,7 +125,7 @@ void SwDisplayRenderer::endMask()
 		m_raster->setMask(0);
 }
 
-void SwDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33& transform, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode)
+void SwDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode)
 {
 	if (!m_writeEnable)
 		return;
@@ -282,13 +282,14 @@ void SwDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33
 	}
 }
 
-void SwDisplayRenderer::renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const MorphShape& shape, const ColorTransform& cxform)
+void SwDisplayRenderer::renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const MorphShape& shape, const ColorTransform& cxform)
 {
 }
 
 void SwDisplayRenderer::renderGlyph(
 	const Dictionary& dictionary,
 	const Matrix33& transform,
+	const Aabb2& clipBounds,
 	const Font* font,
 	const Shape* glyph,
 	float fontHeight,

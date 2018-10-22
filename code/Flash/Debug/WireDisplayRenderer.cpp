@@ -259,7 +259,7 @@ void WireDisplayRenderer::endMask()
 {
 }
 
-void WireDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33& transform, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode)
+void WireDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode)
 {
 	if (m_wireEnable.top())
 	{
@@ -286,13 +286,14 @@ void WireDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix
 	}
 }
 
-void WireDisplayRenderer::renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const MorphShape& shape, const ColorTransform& cxform)
+void WireDisplayRenderer::renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const MorphShape& shape, const ColorTransform& cxform)
 {
 }
 
 void WireDisplayRenderer::renderGlyph(
 	const Dictionary& dictionary,
 	const Matrix33& transform,
+	const Aabb2& clipBounds,
 	const Font* font,
 	const Shape* glyph,
 	float fontHeight,
