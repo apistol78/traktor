@@ -183,31 +183,31 @@ void AccShapeRenderer::render(
 		);
 
 		Matrix33 delta = c.transform.inverse() * transform;
-		shape->render(
-			renderContext,
-			delta,
-			cacheFrameSize,
-			cacheViewOffset,
-			cxform,
-			maskWrite,
-			maskIncrement,
-			maskReference,
-			blendMode
-		);
+		//shape->render(
+		//	renderContext,
+		//	delta,
+		//	cacheFrameSize,
+		//	cacheViewOffset,
+		//	cxform,
+		//	maskWrite,
+		//	maskIncrement,
+		//	maskReference,
+		//	blendMode
+		//);
 	}
 	else if (m_renderFromSlot < 0)
 	{
-		shape->render(
-			renderContext,
-			transform,
-			frameBounds,
-			frameTransform,
-			cxform,
-			maskWrite,
-			maskIncrement,
-			maskReference,
-			blendMode
-		);
+		//shape->render(
+		//	renderContext,
+		//	transform,
+		//	frameBounds,
+		//	frameTransform,
+		//	cxform,
+		//	maskWrite,
+		//	maskIncrement,
+		//	maskReference,
+		//	blendMode
+		//);
 	}
 }
 

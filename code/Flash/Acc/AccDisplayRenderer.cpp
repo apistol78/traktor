@@ -465,7 +465,7 @@ void AccDisplayRenderer::endMask()
 	}
 }
 
-void AccDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33& transform, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode)
+void AccDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode)
 {
 	Ref< AccShape > accShape;
 
@@ -525,6 +525,7 @@ void AccDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix3
 		accShape->render(
 			m_renderContext,
 			transform,
+			Vector4(clipBounds.mn.x, clipBounds.mn.y, clipBounds.mx.x, clipBounds.mx.y),
 			m_frameBounds,
 			m_frameTransform,
 			cxform,
@@ -536,13 +537,14 @@ void AccDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix3
 	}
 }
 
-void AccDisplayRenderer::renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const MorphShape& shape, const ColorTransform& cxform)
+void AccDisplayRenderer::renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const MorphShape& shape, const ColorTransform& cxform)
 {
 }
 
 void AccDisplayRenderer::renderGlyph(
 	const Dictionary& dictionary,
 	const Matrix33& transform,
+	const Aabb2& clipBounds,
 	const Font* font,
 	const Shape* glyph,
 	float fontHeight,
@@ -665,6 +667,7 @@ void AccDisplayRenderer::renderGlyph(
 		accShape->render(
 			m_renderContext,
 			Matrix33::identity(),
+			Vector4(bounds.mn.x, bounds.mn.y, bounds.mx.x, bounds.mx.y),
 			frameSize,
 			viewOffsetWithMargin,
 			c_cxfYellow,
@@ -781,6 +784,7 @@ void AccDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& c
 		accShape->render(
 			m_renderContext,
 			transform,
+			m_frameBounds,
 			m_frameBounds,
 			m_frameTransform,
 			cxform,

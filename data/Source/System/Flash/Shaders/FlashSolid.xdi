@@ -24,7 +24,7 @@
 			<id>{96C994FF-BB26-3748-8F06-39A895F777D9}</id>
 			<comment/>
 			<position>
-				<first>569</first>
+				<first>568</first>
 				<second>394</second>
 			</position>
 			<parameterName>Flash_CxFormAdd</parameterName>
@@ -42,10 +42,13 @@
 			<inputPins/>
 			<outputPins>
 				<item>
-					<name>Output</name>
+					<name>Clip</name>
 				</item>
 				<item>
 					<name>Color</name>
+				</item>
+				<item>
+					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
@@ -54,7 +57,7 @@
 			<id>{4A0DA636-4718-A34B-9A20-979C348D2728}</id>
 			<comment/>
 			<position>
-				<first>669</first>
+				<first>668</first>
 				<second>-58</second>
 			</position>
 			<technique/>
@@ -64,7 +67,7 @@
 			<comment/>
 			<position>
 				<first>658</first>
-				<second>53</second>
+				<second>52</second>
 			</position>
 			<fragmentGuid>{6F008BFC-A1AD-814C-BF7D-010FAC0C7703}</fragmentGuid>
 			<inputPins>
@@ -87,8 +90,8 @@
 			<id>{0D92A5EC-6178-C94D-A036-2EB378B4FF43}</id>
 			<comment/>
 			<position>
-				<first>1449</first>
-				<second>89</second>
+				<first>1448</first>
+				<second>88</second>
 			</position>
 			<fragmentGuid>{AC47E91D-696B-A647-BB33-022614658D3B}</fragmentGuid>
 			<inputPins>
@@ -116,6 +119,14 @@
 					<second>0</second>
 				</item>
 			</values>
+		</item>
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{6F9569D9-C881-B640-A374-15D4484B9402}</id>
+			<comment/>
+			<position>
+				<first>952</first>
+				<second>-8</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -151,16 +162,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Color</name>
 			</source>
@@ -185,8 +186,38 @@
 				<name>Edge</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Clip</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Edge</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

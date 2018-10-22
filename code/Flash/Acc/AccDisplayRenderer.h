@@ -116,13 +116,14 @@ public:
 
 	virtual void endMask() T_OVERRIDE T_FINAL;
 
-	virtual void renderShape(const Dictionary& dictionary, const Matrix33& transform, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode) T_OVERRIDE T_FINAL;
+	virtual void renderShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode) T_OVERRIDE T_FINAL;
 
-	virtual void renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const MorphShape& shape, const ColorTransform& cxform) T_OVERRIDE T_FINAL;
+	virtual void renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const MorphShape& shape, const ColorTransform& cxform) T_OVERRIDE T_FINAL;
 
 	virtual void renderGlyph(
 		const Dictionary& dictionary,
 		const Matrix33& transform,
+		const Aabb2& clipBounds,
 		const Font* font,
 		const Shape* glyph,
 		float fontSize,

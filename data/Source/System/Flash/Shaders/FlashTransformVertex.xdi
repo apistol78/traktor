@@ -115,8 +115,8 @@
 			<id>{064A5E3D-F75E-9043-AAF9-1DCA6CFDDDE1}</id>
 			<comment/>
 			<position>
-				<first>657</first>
-				<second>416</second>
+				<first>758</first>
+				<second>403</second>
 			</position>
 			<value>2, -2, 0, 0</value>
 		</item>
@@ -124,8 +124,8 @@
 			<id>{6D3FFE12-009A-C149-9525-180C1D04AF55}</id>
 			<comment/>
 			<position>
-				<first>657</first>
-				<second>445</second>
+				<first>757</first>
+				<second>443</second>
 			</position>
 			<value>-1, 1, 0, 0</value>
 		</item>
@@ -216,6 +216,117 @@
 				<second>324</second>
 			</position>
 			<swizzle>xy</swizzle>
+		</item>
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{1323FC13-3948-6D4B-8D8A-605A8972B286}</id>
+			<comment/>
+			<position>
+				<first>-282</first>
+				<second>-186</second>
+			</position>
+			<parameterName>Flash_ClipBounds</parameterName>
+			<type>PtVector</type>
+			<frequency>UfDraw</frequency>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{1B62804B-E968-A048-AE44-69BB3DA16BBD}</id>
+			<comment/>
+			<position>
+				<first>644</first>
+				<second>-62</second>
+			</position>
+			<name>Clip</name>
+		</item>
+		<item type="traktor.render.Script" version="traktor.render.Node:1">
+			<id>{A3327A66-04B7-6B4D-8653-E604C90D353A}</id>
+			<comment/>
+			<position>
+				<first>107</first>
+				<second>-37</second>
+			</position>
+			<name>ClipBounds_OpenGL</name>
+			<inputPins>
+				<item>
+					<name>Bounds</name>
+					<type>PtVector</type>
+					<samplerId/>
+				</item>
+				<item>
+					<name>Position</name>
+					<type>PtVector</type>
+					<samplerId/>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Inside</name>
+					<type>PtScalar</type>
+				</item>
+			</outputPins>
+			<samplers/>
+			<script>
+			<![CDATA[
+ENTRY
+{
+	vec2 s = step(Bounds.xy, v) - step(Bounds.zw, v);
+	Inside = s.x * s.y;
+}
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.Script" version="traktor.render.Node:1">
+			<id>{C2207602-FA10-404D-AB88-22493AE59E6D}</id>
+			<comment/>
+			<position>
+				<first>116</first>
+				<second>-118</second>
+			</position>
+			<name>ClipBounds_Dx11</name>
+			<inputPins>
+				<item>
+					<name>Bounds</name>
+					<type>PtVector</type>
+					<samplerId/>
+				</item>
+				<item>
+					<name>Position</name>
+					<type>PtVector</type>
+					<samplerId/>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Inside</name>
+					<type>PtScalar</type>
+				</item>
+			</outputPins>
+			<samplers/>
+			<script>
+			<![CDATA[
+ENTRY
+{
+	float2 s = step(Bounds.xy, Position.xy) - step(Bounds.zw, Position.xy);
+	Inside = s.x * s.y;
+}
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.Platform" version="traktor.render.Node:1">
+			<id>{B571C090-663C-5C4D-8D54-560CE6A9FEAA}</id>
+			<comment/>
+			<position>
+				<first>338</first>
+				<second>-114</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{75F7EA6B-F82C-6E46-B541-26E56A530174}</id>
+			<comment/>
+			<position>
+				<first>170</first>
+				<second>56</second>
+			</position>
+			<value>1</value>
 		</item>
 	</nodes>
 	<edges>
@@ -447,6 +558,96 @@
 			<destination>
 				<node ref="/object/nodes/item[21]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Inside</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<name>DX11</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Inside</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<name>OpenGL</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Inside</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<name>OpenGL ES2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Bounds</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Bounds</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Position</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Position</name>
 			</destination>
 		</item>
 	</edges>
