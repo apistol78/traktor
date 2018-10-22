@@ -268,9 +268,10 @@
 			<![CDATA[
 ENTRY
 {
-	vec2 s = step(Bounds.xy, v) - step(Bounds.zw, v);
+	vec2 s = step(Bounds.xy, Position.xy) - step(Bounds.zw, Position.xy);
 	Inside = s.x * s.y;
 }
+
 			]]>
 			</script>
 		</item>
