@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <list>
 #include <map>
 #include <stack>
 #include <X11/Xlib.h>
@@ -27,6 +28,9 @@ public:
 
 	//! \brief Unbind all callbacks for specified window.
     void unbind(WidgetData* widget);
+
+	//! \brief Defer callback until all dispatches has finished.
+	void defer(const std::function< void() >& fn);
 
 	//! \brief Push modal widget.
 	void pushModal(WidgetData* widget);
@@ -63,6 +67,7 @@ private:
 	int m_screen;
 	XIM m_xim;
     std::map< Window, Binding > m_bindings;
+	std::list< std::function< void() > > m_deferred;
 	std::stack< WidgetData* > m_modal;
 
     void dispatch(Window window, int32_t eventType, bool always, XEvent& xe);
