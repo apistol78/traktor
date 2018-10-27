@@ -58,42 +58,46 @@ public:
 
 	virtual void destroy() T_OVERRIDE
 	{
-		releaseCapture();
-
-		for (auto it : m_timers)
-			Timers::getInstance().unbind(it.second);
-		m_timers.clear();
-
-		if (m_cairo != nullptr)
-		{
-			cairo_destroy(m_cairo);
-			m_cairo = nullptr;
-		}
-
-		if (m_surface != nullptr)
-		{
-			cairo_surface_destroy(m_surface);
-			m_surface = nullptr;
-		}
-
-		if (m_xic != 0)
-		{
-			XDestroyIC(m_xic);
-			m_xic = 0;
-		}
-
 		if (m_context != nullptr)
 		{
-			XDestroyWindow(m_context->getDisplay(), m_data.window);
+			m_context->defer([&]() {
+				releaseCapture();
 
-			m_context->unbind(&m_data);
-			m_context = nullptr;
+				for (auto it : m_timers)
+					Timers::getInstance().unbind(it.second);
+				m_timers.clear();
 
-			m_data.window = None;
-			m_data.parent = nullptr;
+				if (m_cairo != nullptr)
+				{
+					cairo_destroy(m_cairo);
+					m_cairo = nullptr;
+				}
+
+				if (m_surface != nullptr)
+				{
+					cairo_surface_destroy(m_surface);
+					m_surface = nullptr;
+				}
+
+				if (m_xic != 0)
+				{
+					XDestroyIC(m_xic);
+					m_xic = 0;
+				}
+
+				XDestroyWindow(m_context->getDisplay(), m_data.window);
+
+				m_context->unbind(&m_data);
+				m_context = nullptr;
+
+				m_data.window = None;
+				m_data.parent = nullptr;
+
+				delete this;
+			});
 		}
 
-		delete this;
+		m_owner = nullptr;
 	}
 
 	virtual void setParent(IWidget* parent) T_OVERRIDE
@@ -580,18 +584,22 @@ protected:
 					m_owner->raiseEvent(&keyDownEvent);
 				}
 
-				uint8_t str[8] = { 0 };
-
-				Status status = 0;
-				xe.xkey.state &= ~(ControlMask | Mod1Mask | Mod5Mask);
-				const int n = Xutf8LookupString(m_xic, &xe.xkey, (char*)str, 8, ks, &status);
-				if (n > 0)
+				// Ensure owner is still valid; widget might have been destroyed in key down event.
+				if (m_owner)
 				{
-					wchar_t wch = 0;
-					if (Utf8Encoding().translate(str, n, wch) > 0)
+					uint8_t str[8] = { 0 };
+
+					Status status = 0;
+					xe.xkey.state &= ~(ControlMask | Mod1Mask | Mod5Mask);
+					const int n = Xutf8LookupString(m_xic, &xe.xkey, (char*)str, 8, ks, &status);
+					if (n > 0)
 					{
-						KeyEvent keyEvent(m_owner, vk, xe.xkey.keycode, wch);
-						m_owner->raiseEvent(&keyEvent);
+						wchar_t wch = 0;
+						if (Utf8Encoding().translate(str, n, wch) > 0)
+						{
+							KeyEvent keyEvent(m_owner, vk, xe.xkey.keycode, wch);
+							m_owner->raiseEvent(&keyEvent);
+						}
 					}
 				}
 

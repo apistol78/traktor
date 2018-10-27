@@ -28,6 +28,11 @@ void Context::unbind(WidgetData* widget)
 	m_bindings.erase(widget->window);
 }
 
+void Context::defer(const std::function< void() >& fn)
+{
+	m_deferred.push_back(fn);
+}
+
 void Context::pushModal(WidgetData* widget)
 {
 	m_modal.push(widget);
@@ -98,6 +103,11 @@ void Context::dispatch(XEvent& xe)
     default:
         break;
     }
+
+	for (auto fn : m_deferred)
+		fn();
+
+	m_deferred.clear();
 }
 
 void Context::dispatch(Window window, int32_t eventType, bool always, XEvent& xe)
