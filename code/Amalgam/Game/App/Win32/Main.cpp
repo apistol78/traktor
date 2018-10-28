@@ -194,6 +194,12 @@ bool isWindows64bit(bool& out64bit)
 
 void logSystemInfo()
 {
+	// Log compiler.
+	log::info << L"Compiler" << Endl;
+	log::info << L"\t__DATE__ " << mbstows(__DATE__) << Endl;
+	log::info << L"\t_MSC_VER " << _MSC_VER << Endl;
+	log::info << L"\t_MSC_FULL_VER " << _MSC_FULL_VER << Endl;
+
 	// Log CPU info
 	char CPUString[0x20];
 	int cpuInfo[4] = {-1};
