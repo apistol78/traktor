@@ -75,13 +75,13 @@ void Video::destroy()
 	if (m_job)
 	{
 		m_job->wait();
-		m_job = 0;
+		m_job = nullptr;
 	}
 
 	for (uint32_t i = 0; i < sizeof_array(m_textures); ++i)
 		safeDestroy(m_textures[i]);
 
-	m_decoder = 0;
+	m_decoder = nullptr;
 	m_playing = false;
 	m_frameBuffer.release();
 }
@@ -98,7 +98,7 @@ bool Video::update(float deltaTime)
 		if (m_job)
 		{
 			m_job->wait();
-			m_job = 0;
+			m_job = nullptr;
 		}
 
 		// Enqueue new decoding job.

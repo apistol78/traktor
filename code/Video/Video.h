@@ -4,8 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_video_Video_H
-#define traktor_video_Video_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Misc/AutoPtr.h"
@@ -79,5 +78,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_video_Video_H

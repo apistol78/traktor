@@ -28,7 +28,7 @@ VideoTexture::VideoTexture()
 ,	m_lastDecodedFrame(0)
 ,	m_lastUploadedFrame(0)
 ,	m_current(0)
-,	m_thread(0)
+,	m_thread(nullptr)
 {
 }
 
@@ -81,7 +81,7 @@ void VideoTexture::destroy()
 	if (m_thread)
 	{
 		ThreadPool::getInstance().stop(m_thread);
-		m_thread = 0;
+		m_thread = nullptr;
 	}
 
 	for (uint32_t i = 0; i < sizeof_array(m_textures); ++i)
@@ -157,7 +157,6 @@ void VideoTexture::decodeThread()
 			}
 			m_lastDecodedFrame = frame;
 		}
-
 		m_thread->sleep(250 / m_rate);
 	}
 }

@@ -4,8 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_video_VideoAsset_H
-#define traktor_video_VideoAsset_H
+#pragma once
 
 #include "Editor/Asset.h"
 
@@ -32,5 +31,3 @@ class T_DLLCLASS VideoAsset : public editor::Asset
 
 	}
 }
-
-#endif	// traktor_video_VideoAsset_H

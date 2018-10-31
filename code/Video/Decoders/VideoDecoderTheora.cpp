@@ -38,8 +38,8 @@ class VideoDecoderTheoraImpl : public Object
 {
 public:
 	VideoDecoderTheoraImpl()
-	:	m_ts(0)
-	,	m_td(0)
+	:	m_ts(nullptr)
+	,	m_td(nullptr)
 	,	m_stateflag(0)
 	,	m_theora_p(0)
 	{
