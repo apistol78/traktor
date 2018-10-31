@@ -4,8 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_video_VideoPipeline_H
-#define traktor_video_VideoPipeline_H
+#pragma once
 
 #include "Editor/IPipeline.h"
 
@@ -65,5 +64,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_video_VideoPipeline_H

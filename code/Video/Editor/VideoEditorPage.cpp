@@ -113,15 +113,8 @@ bool VideoEditorPage::create(ui::Container* parent)
 void VideoEditorPage::destroy()
 {
 	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
-
 	safeDestroy(m_screenRenderer);
-
-	if (m_renderView)
-	{
-		m_renderView->close();
-		m_renderView = 0;
-	}
-
+	safeClose(m_renderView);
 	safeDestroy(m_renderWidget);
 }
 
