@@ -7966,8 +7966,6 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>msimg32.lib</item>
-						<item>comctl32.lib</item>
 						<item>gdiplus.lib</item>
 						<item>d2d1.lib</item>
 						<item>dwrite.lib</item>
@@ -8007,8 +8005,6 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>msimg32.lib</item>
-						<item>comctl32.lib</item>
 						<item>gdiplus.lib</item>
 						<item>d2d1.lib</item>
 						<item>dwrite.lib</item>
@@ -8048,8 +8044,6 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>msimg32.lib</item>
-						<item>comctl32.lib</item>
 						<item>gdiplus.lib</item>
 						<item>d2d1.lib</item>
 						<item>dwrite.lib</item>
@@ -8085,8 +8079,6 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>msimg32.lib</item>
-						<item>comctl32.lib</item>
 						<item>gdiplus.lib</item>
 						<item>d2d1.lib</item>
 						<item>dwrite.lib</item>

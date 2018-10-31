@@ -37,11 +37,11 @@ EventLoopWin32::EventLoopWin32()
 
 	OleInitialize(NULL);
 
-	INITCOMMONCONTROLSEX icc;
-	std::memset(&icc, 0, sizeof(icc));
-	icc.dwSize = sizeof(icc);
-	icc.dwICC = ICC_WIN95_CLASSES | ICC_COOL_CLASSES;
-	InitCommonControlsEx(&icc);
+	//INITCOMMONCONTROLSEX icc;
+	//std::memset(&icc, 0, sizeof(icc));
+	//icc.dwSize = sizeof(icc);
+	//icc.dwICC = ICC_WIN95_CLASSES | ICC_COOL_CLASSES;
+	//InitCommonControlsEx(&icc);
 
 #if defined(T_USE_DIRECT2D)
 	CanvasDirect2DWin32::startup();
