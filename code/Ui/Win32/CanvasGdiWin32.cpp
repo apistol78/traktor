@@ -377,26 +377,26 @@ void CanvasGdiWin32::fillRect(const Rect& rc)
 
 void CanvasGdiWin32::fillGradientRect(const Rect& rc, bool vertical)
 {
-	TRIVERTEX vert[2];
-	GRADIENT_RECT rect;
+	//TRIVERTEX vert[2];
+	//GRADIENT_RECT rect;
 
-	vert[0].x      = rc.left;
-	vert[0].y      = rc.top;
-	vert[0].Red    = m_foreGround.r << 8;
-	vert[0].Green  = m_foreGround.g << 8;
-	vert[0].Blue   = m_foreGround.b << 8;
-	vert[0].Alpha  = 0x0000;
+	//vert[0].x      = rc.left;
+	//vert[0].y      = rc.top;
+	//vert[0].Red    = m_foreGround.r << 8;
+	//vert[0].Green  = m_foreGround.g << 8;
+	//vert[0].Blue   = m_foreGround.b << 8;
+	//vert[0].Alpha  = 0x0000;
 
-	vert[1].x      = rc.right;
-	vert[1].y      = rc.bottom;
-	vert[1].Red    = m_backGround.r << 8;
-	vert[1].Green  = m_backGround.g << 8;
-	vert[1].Blue   = m_backGround.b << 8;
-	vert[1].Alpha  = 0x0000;
+	//vert[1].x      = rc.right;
+	//vert[1].y      = rc.bottom;
+	//vert[1].Red    = m_backGround.r << 8;
+	//vert[1].Green  = m_backGround.g << 8;
+	//vert[1].Blue   = m_backGround.b << 8;
+	//vert[1].Alpha  = 0x0000;
 
-	rect.UpperLeft  = 0;
-	rect.LowerRight = 1;
-	GradientFill(m_hDC, vert, 2, &rect, 1, vertical ? GRADIENT_FILL_RECT_V : GRADIENT_FILL_RECT_H);
+	//rect.UpperLeft  = 0;
+	//rect.LowerRight = 1;
+	//GradientFill(m_hDC, vert, 2, &rect, 1, vertical ? GRADIENT_FILL_RECT_V : GRADIENT_FILL_RECT_H);
 }
 
 void CanvasGdiWin32::drawRect(const Rect& rc)
@@ -477,39 +477,39 @@ void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Si
 
 		SelectObject(hImageDC, hCurrBitmap);
 	}
-	else
-	{
-		HBITMAP hBitmap = reinterpret_cast< BitmapWin32* >(bitmap)->getHBitmapPreMulAlpha();
-		if (!hBitmap)
-		{
-			DeleteDC(hImageDC);
-			return;
-		}
+	//else
+	//{
+	//	HBITMAP hBitmap = reinterpret_cast< BitmapWin32* >(bitmap)->getHBitmapPreMulAlpha();
+	//	if (!hBitmap)
+	//	{
+	//		DeleteDC(hImageDC);
+	//		return;
+	//	}
 
-		HGDIOBJ hCurrBitmap = SelectObject(hImageDC, hBitmap);
+	//	HGDIOBJ hCurrBitmap = SelectObject(hImageDC, hBitmap);
 
-		BLENDFUNCTION bf;
-		bf.BlendOp = AC_SRC_OVER;
-		bf.BlendFlags = 0;
-		bf.SourceConstantAlpha = 0xff;
-		bf.AlphaFormat = AC_SRC_ALPHA;
+	//	BLENDFUNCTION bf;
+	//	bf.BlendOp = AC_SRC_OVER;
+	//	bf.BlendFlags = 0;
+	//	bf.SourceConstantAlpha = 0xff;
+	//	bf.AlphaFormat = AC_SRC_ALPHA;
 
-		AlphaBlend(
-			m_hDC,
-			dstAt.x,
-			dstAt.y,
-			size.cx,
-			size.cy,
-			hImageDC,
-			srcAt.x,
-			srcAt.y,
-			size.cx,
-			size.cy,
-			bf
-		);
+	//	AlphaBlend(
+	//		m_hDC,
+	//		dstAt.x,
+	//		dstAt.y,
+	//		size.cx,
+	//		size.cy,
+	//		hImageDC,
+	//		srcAt.x,
+	//		srcAt.y,
+	//		size.cx,
+	//		size.cy,
+	//		bf
+	//	);
 
-		SelectObject(hImageDC, hCurrBitmap);
-	}
+	//	SelectObject(hImageDC, hCurrBitmap);
+	//}
 
 	DeleteDC(hImageDC);
 }
@@ -548,39 +548,39 @@ void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const P
 
 		SelectObject(hImageDC, hCurrBitmap);
 	}
-	else
-	{
-		HBITMAP hBitmap = reinterpret_cast< BitmapWin32* >(bitmap)->getHBitmapPreMulAlpha();
-		if (!hBitmap)
-		{
-			DeleteDC(hImageDC);
-			return;
-		}
+	//else
+	//{
+	//	HBITMAP hBitmap = reinterpret_cast< BitmapWin32* >(bitmap)->getHBitmapPreMulAlpha();
+	//	if (!hBitmap)
+	//	{
+	//		DeleteDC(hImageDC);
+	//		return;
+	//	}
 
-		HGDIOBJ hCurrBitmap = SelectObject(hImageDC, hBitmap);
+	//	HGDIOBJ hCurrBitmap = SelectObject(hImageDC, hBitmap);
 
-		BLENDFUNCTION bf;
-		bf.BlendOp = AC_SRC_OVER;
-		bf.BlendFlags = 0;
-		bf.SourceConstantAlpha = 0xff;
-		bf.AlphaFormat = AC_SRC_ALPHA;
+	//	BLENDFUNCTION bf;
+	//	bf.BlendOp = AC_SRC_OVER;
+	//	bf.BlendFlags = 0;
+	//	bf.SourceConstantAlpha = 0xff;
+	//	bf.AlphaFormat = AC_SRC_ALPHA;
 
-		AlphaBlend(
-			m_hDC,
-			dstAt.x,
-			dstAt.y,
-			dstSize.cx,
-			dstSize.cy,
-			hImageDC,
-			srcAt.x,
-			srcAt.y,
-			srcSize.cx,
-			srcSize.cy,
-			bf
-		);
+	//	AlphaBlend(
+	//		m_hDC,
+	//		dstAt.x,
+	//		dstAt.y,
+	//		dstSize.cx,
+	//		dstSize.cy,
+	//		hImageDC,
+	//		srcAt.x,
+	//		srcAt.y,
+	//		srcSize.cx,
+	//		srcSize.cy,
+	//		bf
+	//	);
 
-		SelectObject(hImageDC, hCurrBitmap);
-	}
+	//	SelectObject(hImageDC, hCurrBitmap);
+	//}
 
 	DeleteDC(hImageDC);
 }
