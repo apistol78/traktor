@@ -343,45 +343,8 @@ bool PerforceClient::getChangeLists(RefArray< PerforceChangeList >& outChangeLis
 
 	for (auto changeList : outChangeLists)
 	{
-		RefArray< PerforceChangeListFile > changeListFiles;
-
-		{
-			ChangeListDepotFilesAdapter depotFilesAdapter(m_lastError, changeListFiles);
-
-			char change[256];
-			sprintf(change, "%d", changeList->getChange());
-
-			char* const argv[] = { "-s", change };
-
-			m_p4client->SetArgv(sizeof_array(argv), argv);
-			m_p4client->Run("describe", &depotFilesAdapter);
-
-			if (depotFilesAdapter.failed())
-				return false;
-		}
-
-		for (auto changeListFile : changeListFiles)
-		{
-			std::wstring localPath;
-
-			{
-				DepotToWorkspaceFileAdapter changeListFileAdapter(m_lastError, localPath);
-
-				char depotFile[256];
-				strcpy(depotFile, wstombs(changeListFile->getDepotPath()).c_str());
-
-				char* const argv[] = { depotFile };
-				m_p4client->SetArgv(sizeof_array(argv), argv);
-				m_p4client->Run("where", &changeListFileAdapter);
-
-				if (changeListFileAdapter.failed())
-					return false;
-			}
-
-			changeListFile->setLocalPath(localPath);
-		}
-
-		changeList->setFiles(changeListFiles);
+		if (!refreshChangeList(changeList))
+			return false;
 	}
 
 	return true;
@@ -410,6 +373,28 @@ Ref< PerforceChangeList > PerforceClient::createChangeList(const std::wstring& d
 		m_clientDesc.m_client,
 		description
 	);
+}
+
+bool PerforceClient::revertChangeList(PerforceChangeList* changeList)
+{
+	if (!establishConnection())
+		return false;
+
+	ClientUserAdapter userAdapter(m_lastError);
+
+	char change[256];
+	sprintf(change, "%d", changeList->getChange());
+
+	{
+		char* const argv[] = { "-d", change };
+		m_p4client->SetArgv(sizeof_array(argv), argv);
+		m_p4client->Run("change", &userAdapter);
+	}
+
+	if (userAdapter.failed())
+		return false;
+
+	return true;
 }
 
 bool PerforceClient::whereIsLocalFile(const std::wstring& depotFile, std::wstring& outLocalPath)
@@ -456,7 +441,7 @@ bool PerforceClient::isOpened(const std::wstring& localFile, PerforceAction& out
 	return true;
 }
 
-bool PerforceClient::addFile(const PerforceChangeList* changeList, const std::wstring& localFile)
+bool PerforceClient::addFile(PerforceChangeList* changeList, const std::wstring& localFile)
 {
 	if (!establishConnection())
 		return false;
@@ -478,10 +463,10 @@ bool PerforceClient::addFile(const PerforceChangeList* changeList, const std::ws
 	if (userAdapter.failed())
 		return false;
 
-	return true;
+	return refreshChangeList(changeList);
 }
 
-bool PerforceClient::openForEdit(const PerforceChangeList* changeList, const std::wstring& localFile)
+bool PerforceClient::openForEdit(PerforceChangeList* changeList, const std::wstring& localFile)
 {
 	if (!establishConnection())
 		return false;
@@ -503,10 +488,10 @@ bool PerforceClient::openForEdit(const PerforceChangeList* changeList, const std
 	if (userAdapter.failed())
 		return false;
 
-	return true;
+	return refreshChangeList(changeList);
 }
 
-bool PerforceClient::openForDelete(const PerforceChangeList* changeList, const std::wstring& localFile)
+bool PerforceClient::openForDelete(PerforceChangeList* changeList, const std::wstring& localFile)
 {
 	if (!establishConnection())
 		return false;
@@ -528,10 +513,10 @@ bool PerforceClient::openForDelete(const PerforceChangeList* changeList, const s
 	if (userAdapter.failed())
 		return false;
 
-	return true;
+	return refreshChangeList(changeList);
 }
 
-bool PerforceClient::revertFile(const PerforceChangeList* changeList, const std::wstring& localFile)
+bool PerforceClient::revertFile(PerforceChangeList* changeList, const std::wstring& localFile)
 {
 	if (!establishConnection())
 		return false;
@@ -553,7 +538,29 @@ bool PerforceClient::revertFile(const PerforceChangeList* changeList, const std:
 	if (userAdapter.failed())
 		return false;
 
-	return true;
+	return refreshChangeList(changeList);
+}
+
+bool PerforceClient::revertUnmodifiedFiles(PerforceChangeList* changeList)
+{
+	if (!establishConnection())
+		return false;
+
+	ClientUserAdapter userAdapter(m_lastError);
+
+	char change[256];
+	sprintf(change, "%d", changeList->getChange());
+
+	{
+		char* const argv[] = { "-a", "-c", change };
+		m_p4client->SetArgv(sizeof_array(argv), argv);
+		m_p4client->Run("revert", &userAdapter);
+	}
+
+	if (userAdapter.failed())
+		return false;
+
+	return refreshChangeList(changeList);
 }
 
 bool PerforceClient::synchronize()
@@ -677,6 +684,50 @@ bool PerforceClient::establishConnection()
 	m_clientDesc.m_user = mbstows(m_p4client->GetUser().Text());
 
 	log::info << L"Perforce: Connected successfully" << Endl;
+	return true;
+}
+
+bool PerforceClient::refreshChangeList(PerforceChangeList* changeList)
+{
+	RefArray< PerforceChangeListFile > changeListFiles;
+
+	{
+		ChangeListDepotFilesAdapter depotFilesAdapter(m_lastError, changeListFiles);
+
+		char change[256];
+		sprintf(change, "%d", changeList->getChange());
+
+		char* const argv[] = { "-s", change };
+
+		m_p4client->SetArgv(sizeof_array(argv), argv);
+		m_p4client->Run("describe", &depotFilesAdapter);
+
+		if (depotFilesAdapter.failed())
+			return false;
+	}
+
+	for (auto changeListFile : changeListFiles)
+	{
+		std::wstring localPath;
+
+		{
+			DepotToWorkspaceFileAdapter changeListFileAdapter(m_lastError, localPath);
+
+			char depotFile[256];
+			strcpy(depotFile, wstombs(changeListFile->getDepotPath()).c_str());
+
+			char* const argv[] = { depotFile };
+			m_p4client->SetArgv(sizeof_array(argv), argv);
+			m_p4client->Run("where", &changeListFileAdapter);
+
+			if (changeListFileAdapter.failed())
+				return false;
+		}
+
+		changeListFile->setLocalPath(localPath);
+	}
+
+	changeList->setFiles(changeListFiles);
 	return true;
 }
 

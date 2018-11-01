@@ -72,8 +72,18 @@ bool PerforceFileStore::create(const ConnectionString& connectionString)
 
 void PerforceFileStore::destroy()
 {
-	m_p4changeList = 0;
-	m_p4client = 0;
+	if (m_p4client && m_p4changeList)
+	{
+		// Revert unmodified files from changelist.
+		m_p4client->revertUnmodifiedFiles(m_p4changeList);
+
+		// In case no files has been modified we revert entire changelist.
+		if (m_p4changeList->getFiles().empty())
+			m_p4client->revertChangeList(m_p4changeList);
+	}
+
+	m_p4changeList = nullptr;
+	m_p4client = nullptr;
 }
 
 uint32_t PerforceFileStore::flags(const Path& filePath)

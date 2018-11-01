@@ -40,17 +40,21 @@ public:
 
 	Ref< PerforceChangeList > createChangeList(const std::wstring& description);
 
+	bool revertChangeList(PerforceChangeList* changeList);
+
 	bool whereIsLocalFile(const std::wstring& depotFile, std::wstring& outLocalPath);
 
 	bool isOpened(const std::wstring& localFile, PerforceAction& outAction);
 
-	bool addFile(const PerforceChangeList* changeList, const std::wstring& localFile);
+	bool addFile(PerforceChangeList* changeList, const std::wstring& localFile);
 
-	bool openForEdit(const PerforceChangeList* changeList, const std::wstring& localFile);
+	bool openForEdit(PerforceChangeList* changeList, const std::wstring& localFile);
 
-	bool openForDelete(const PerforceChangeList* changeList, const std::wstring& localFile);
+	bool openForDelete(PerforceChangeList* changeList, const std::wstring& localFile);
 
-	bool revertFile(const PerforceChangeList* changeList, const std::wstring& localFile);
+	bool revertFile(PerforceChangeList* changeList, const std::wstring& localFile);
+
+	bool revertUnmodifiedFiles(PerforceChangeList* changeList);
 
 	bool synchronize();
 
@@ -62,6 +66,8 @@ private:
 	std::wstring m_lastError;
 
 	bool establishConnection();
+
+	bool refreshChangeList(PerforceChangeList* changeList);
 };
 
 	}
