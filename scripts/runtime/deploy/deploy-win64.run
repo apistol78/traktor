@@ -138,7 +138,7 @@ local function linkStaticProduct()
 		"/MACHINE:X64 " ..
 		"/SUBSYSTEM:WINDOWS"
 	if not debug then
-		cmd = cmd .. " /LTCG /OPT:REF"
+		cmd = cmd .. " /DEBUG /OPT:REF"
 	else
 		cmd = cmd .. " /DEBUG"
 	end

@@ -51,6 +51,17 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 
 					(*j)->setAggregationItems(items);
 				}
+				else if (compareIgnoreCase< std::wstring >(sourceFile, (*i)->getName() + L".lib") == 0)
+				{
+					RefArray< AggregationItem > items = (*j)->getAggregationItems();
+
+					Ref< AggregationItem > a = new AggregationItem();
+					a->setSourceFile((*i)->getName() + L".pdb");
+					a->setTargetPath(toLower((*j)->getName()));
+					items.push_front(a);
+
+					(*j)->setAggregationItems(items);
+				}
 
 				if ((*j)->getTargetFormat() == Configuration::TfStaticLibrary)
 				{
@@ -73,10 +84,18 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 						compareIgnoreCase< std::wstring >((*j)->getName(), L"ReleaseStatic") == 0
 					)
 					{
-						Ref< AggregationItem > a = new AggregationItem();
-						a->setSourceFile((*i)->getName() + L".lib");
-						a->setTargetPath(toLower((*j)->getName()));
-						(*j)->addAggregationItem(a);
+						{
+							Ref< AggregationItem > a = new AggregationItem();
+							a->setSourceFile((*i)->getName() + L".lib");
+							a->setTargetPath(toLower((*j)->getName()));
+							(*j)->addAggregationItem(a);
+						}
+						{
+							Ref< AggregationItem > a = new AggregationItem();
+							a->setSourceFile((*i)->getName() + L".pdb");
+							a->setTargetPath(toLower((*j)->getName()));
+							(*j)->addAggregationItem(a);
+						}
 					}
 					else
 						(*j)->setConsumerLibraryPath(L"");
@@ -94,19 +113,24 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 						a->setTargetPath(toLower((*j)->getName()));
 						(*j)->addAggregationItem(a);
 					}
+					{
+						Ref< AggregationItem > a = new AggregationItem();
+						a->setSourceFile((*i)->getName() + L".pdb");
+						a->setTargetPath(toLower((*j)->getName()));
+						(*j)->addAggregationItem(a);
+					}
 					break;
 				case Configuration::TfExecutable:
+				case Configuration::TfExecutableConsole:
 					{
 						Ref< AggregationItem > a = new AggregationItem();
 						a->setSourceFile((*i)->getName() + L".exe");
 						a->setTargetPath(toLower((*j)->getName()));
 						(*j)->addAggregationItem(a);
 					}
-					break;
-				case Configuration::TfExecutableConsole:
 					{
 						Ref< AggregationItem > a = new AggregationItem();
-						a->setSourceFile((*i)->getName() + L".exe");
+						a->setSourceFile((*i)->getName() + L".pdb");
 						a->setTargetPath(toLower((*j)->getName()));
 						(*j)->addAggregationItem(a);
 					}

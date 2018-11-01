@@ -30,6 +30,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Animation.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Animation.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -60,6 +64,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Animation.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Animation.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -92,6 +100,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Animation.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Animation.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -118,6 +130,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Animation.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Animation.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -220,6 +236,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Core.pdb</sourceFile>
+										<targetPath>debugshared</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Core.lib</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
@@ -254,6 +274,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Core.pdb</sourceFile>
+										<targetPath>releaseshared</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Core.lib</sourceFile>
 										<targetPath>releaseshared</targetPath>
@@ -290,6 +314,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Core.pdb</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Core.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
@@ -320,6 +348,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Core.pdb</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Core.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
@@ -618,6 +650,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.World.pdb</sourceFile>
+										<targetPath>debugshared</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.World.lib</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
@@ -648,6 +684,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.World.pdb</sourceFile>
+										<targetPath>releaseshared</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.World.lib</sourceFile>
 										<targetPath>releaseshared</targetPath>
@@ -680,6 +720,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.World.pdb</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.World.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
@@ -706,6 +750,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.World.pdb</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.World.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
@@ -791,6 +839,10 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
+													<sourceFile>Traktor.Render.pdb</sourceFile>
+													<targetPath>debugshared</targetPath>
+												</item>
+												<item type="AggregationItem">
 													<sourceFile>Traktor.Render.lib</sourceFile>
 													<targetPath>debugshared</targetPath>
 												</item>
@@ -821,6 +873,10 @@
 											<debugEnvironment/>
 											<debugWorkingDirectory/>
 											<aggregationItems>
+												<item type="AggregationItem">
+													<sourceFile>Traktor.Render.pdb</sourceFile>
+													<targetPath>releaseshared</targetPath>
+												</item>
 												<item type="AggregationItem">
 													<sourceFile>Traktor.Render.lib</sourceFile>
 													<targetPath>releaseshared</targetPath>
@@ -853,6 +909,10 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
+													<sourceFile>Traktor.Render.pdb</sourceFile>
+													<targetPath>debugstatic</targetPath>
+												</item>
+												<item type="AggregationItem">
 													<sourceFile>Traktor.Render.lib</sourceFile>
 													<targetPath>debugstatic</targetPath>
 												</item>
@@ -879,6 +939,10 @@
 											<debugEnvironment/>
 											<debugWorkingDirectory/>
 											<aggregationItems>
+												<item type="AggregationItem">
+													<sourceFile>Traktor.Render.pdb</sourceFile>
+													<targetPath>releasestatic</targetPath>
+												</item>
 												<item type="AggregationItem">
 													<sourceFile>Traktor.Render.lib</sourceFile>
 													<targetPath>releasestatic</targetPath>
@@ -982,6 +1046,10 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
+																<sourceFile>Traktor.Resource.pdb</sourceFile>
+																<targetPath>debugshared</targetPath>
+															</item>
+															<item type="AggregationItem">
 																<sourceFile>Traktor.Resource.lib</sourceFile>
 																<targetPath>debugshared</targetPath>
 															</item>
@@ -1012,6 +1080,10 @@
 														<debugEnvironment/>
 														<debugWorkingDirectory/>
 														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Resource.pdb</sourceFile>
+																<targetPath>releaseshared</targetPath>
+															</item>
 															<item type="AggregationItem">
 																<sourceFile>Traktor.Resource.lib</sourceFile>
 																<targetPath>releaseshared</targetPath>
@@ -1044,6 +1116,10 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
+																<sourceFile>Traktor.Resource.pdb</sourceFile>
+																<targetPath>debugstatic</targetPath>
+															</item>
+															<item type="AggregationItem">
 																<sourceFile>Traktor.Resource.lib</sourceFile>
 																<targetPath>debugstatic</targetPath>
 															</item>
@@ -1070,6 +1146,10 @@
 														<debugEnvironment/>
 														<debugWorkingDirectory/>
 														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Resource.pdb</sourceFile>
+																<targetPath>releasestatic</targetPath>
+															</item>
 															<item type="AggregationItem">
 																<sourceFile>Traktor.Resource.lib</sourceFile>
 																<targetPath>releasestatic</targetPath>
@@ -1122,6 +1202,10 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
+																<sourceFile>Traktor.Compress.pdb</sourceFile>
+																<targetPath>debugshared</targetPath>
+															</item>
+															<item type="AggregationItem">
 																<sourceFile>Traktor.Compress.lib</sourceFile>
 																<targetPath>debugshared</targetPath>
 															</item>
@@ -1152,6 +1236,10 @@
 														<debugEnvironment/>
 														<debugWorkingDirectory/>
 														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Compress.pdb</sourceFile>
+																<targetPath>releaseshared</targetPath>
+															</item>
 															<item type="AggregationItem">
 																<sourceFile>Traktor.Compress.lib</sourceFile>
 																<targetPath>releaseshared</targetPath>
@@ -1184,6 +1272,10 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
+																<sourceFile>Traktor.Compress.pdb</sourceFile>
+																<targetPath>debugstatic</targetPath>
+															</item>
+															<item type="AggregationItem">
 																<sourceFile>Traktor.Compress.lib</sourceFile>
 																<targetPath>debugstatic</targetPath>
 															</item>
@@ -1210,6 +1302,10 @@
 														<debugEnvironment/>
 														<debugWorkingDirectory/>
 														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Compress.pdb</sourceFile>
+																<targetPath>releasestatic</targetPath>
+															</item>
 															<item type="AggregationItem">
 																<sourceFile>Traktor.Compress.lib</sourceFile>
 																<targetPath>releasestatic</targetPath>
@@ -1315,6 +1411,10 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
+													<sourceFile>Traktor.Database.pdb</sourceFile>
+													<targetPath>debugshared</targetPath>
+												</item>
+												<item type="AggregationItem">
 													<sourceFile>Traktor.Database.lib</sourceFile>
 													<targetPath>debugshared</targetPath>
 												</item>
@@ -1345,6 +1445,10 @@
 											<debugEnvironment/>
 											<debugWorkingDirectory/>
 											<aggregationItems>
+												<item type="AggregationItem">
+													<sourceFile>Traktor.Database.pdb</sourceFile>
+													<targetPath>releaseshared</targetPath>
+												</item>
 												<item type="AggregationItem">
 													<sourceFile>Traktor.Database.lib</sourceFile>
 													<targetPath>releaseshared</targetPath>
@@ -1377,6 +1481,10 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
+													<sourceFile>Traktor.Database.pdb</sourceFile>
+													<targetPath>debugstatic</targetPath>
+												</item>
+												<item type="AggregationItem">
 													<sourceFile>Traktor.Database.lib</sourceFile>
 													<targetPath>debugstatic</targetPath>
 												</item>
@@ -1403,6 +1511,10 @@
 											<debugEnvironment/>
 											<debugWorkingDirectory/>
 											<aggregationItems>
+												<item type="AggregationItem">
+													<sourceFile>Traktor.Database.pdb</sourceFile>
+													<targetPath>releasestatic</targetPath>
+												</item>
 												<item type="AggregationItem">
 													<sourceFile>Traktor.Database.lib</sourceFile>
 													<targetPath>releasestatic</targetPath>
@@ -1470,6 +1582,10 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
+																<sourceFile>Traktor.Xml.pdb</sourceFile>
+																<targetPath>debugshared</targetPath>
+															</item>
+															<item type="AggregationItem">
 																<sourceFile>Traktor.Xml.lib</sourceFile>
 																<targetPath>debugshared</targetPath>
 															</item>
@@ -1500,6 +1616,10 @@
 														<debugEnvironment/>
 														<debugWorkingDirectory/>
 														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Xml.pdb</sourceFile>
+																<targetPath>releaseshared</targetPath>
+															</item>
 															<item type="AggregationItem">
 																<sourceFile>Traktor.Xml.lib</sourceFile>
 																<targetPath>releaseshared</targetPath>
@@ -1532,6 +1652,10 @@
 														<debugWorkingDirectory/>
 														<aggregationItems>
 															<item type="AggregationItem">
+																<sourceFile>Traktor.Xml.pdb</sourceFile>
+																<targetPath>debugstatic</targetPath>
+															</item>
+															<item type="AggregationItem">
 																<sourceFile>Traktor.Xml.lib</sourceFile>
 																<targetPath>debugstatic</targetPath>
 															</item>
@@ -1558,6 +1682,10 @@
 														<debugEnvironment/>
 														<debugWorkingDirectory/>
 														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Xml.pdb</sourceFile>
+																<targetPath>releasestatic</targetPath>
+															</item>
 															<item type="AggregationItem">
 																<sourceFile>Traktor.Xml.lib</sourceFile>
 																<targetPath>releasestatic</targetPath>
@@ -1622,6 +1750,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Mesh.pdb</sourceFile>
+										<targetPath>debugshared</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Mesh.lib</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
@@ -1652,6 +1784,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Mesh.pdb</sourceFile>
+										<targetPath>releaseshared</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Mesh.lib</sourceFile>
 										<targetPath>releaseshared</targetPath>
@@ -1684,6 +1820,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Mesh.pdb</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Mesh.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
@@ -1710,6 +1850,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Mesh.pdb</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Mesh.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
@@ -1868,6 +2012,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Physics.pdb</sourceFile>
+										<targetPath>debugshared</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Physics.lib</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
@@ -1898,6 +2046,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Physics.pdb</sourceFile>
+										<targetPath>releaseshared</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Physics.lib</sourceFile>
 										<targetPath>releaseshared</targetPath>
@@ -1930,6 +2082,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Physics.pdb</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Physics.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
@@ -1956,6 +2112,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Physics.pdb</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Physics.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
@@ -2047,6 +2207,10 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
+													<sourceFile>Traktor.Heightfield.pdb</sourceFile>
+													<targetPath>debugshared</targetPath>
+												</item>
+												<item type="AggregationItem">
 													<sourceFile>Traktor.Heightfield.lib</sourceFile>
 													<targetPath>debugshared</targetPath>
 												</item>
@@ -2077,6 +2241,10 @@
 											<debugEnvironment/>
 											<debugWorkingDirectory/>
 											<aggregationItems>
+												<item type="AggregationItem">
+													<sourceFile>Traktor.Heightfield.pdb</sourceFile>
+													<targetPath>releaseshared</targetPath>
+												</item>
 												<item type="AggregationItem">
 													<sourceFile>Traktor.Heightfield.lib</sourceFile>
 													<targetPath>releaseshared</targetPath>
@@ -2109,6 +2277,10 @@
 											<debugWorkingDirectory/>
 											<aggregationItems>
 												<item type="AggregationItem">
+													<sourceFile>Traktor.Heightfield.pdb</sourceFile>
+													<targetPath>debugstatic</targetPath>
+												</item>
+												<item type="AggregationItem">
 													<sourceFile>Traktor.Heightfield.lib</sourceFile>
 													<targetPath>debugstatic</targetPath>
 												</item>
@@ -2135,6 +2307,10 @@
 											<debugEnvironment/>
 											<debugWorkingDirectory/>
 											<aggregationItems>
+												<item type="AggregationItem">
+													<sourceFile>Traktor.Heightfield.pdb</sourceFile>
+													<targetPath>releasestatic</targetPath>
+												</item>
 												<item type="AggregationItem">
 													<sourceFile>Traktor.Heightfield.lib</sourceFile>
 													<targetPath>releasestatic</targetPath>
@@ -2201,6 +2377,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Compact.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Compact.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -2231,6 +2411,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Compact.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Compact.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -2263,6 +2447,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Compact.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Compact.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -2289,6 +2477,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Compact.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Compact.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -2347,6 +2539,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Local.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Local.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -2377,6 +2573,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Local.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Local.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -2409,6 +2609,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Local.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Local.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -2435,6 +2639,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Local.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Local.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -2493,6 +2701,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Remote.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Remote.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -2523,6 +2735,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Remote.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Remote.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -2555,6 +2771,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Remote.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Remote.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -2581,6 +2801,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Remote.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Remote.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -2642,6 +2866,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Net.pdb</sourceFile>
+										<targetPath>debugshared</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Net.lib</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
@@ -2675,6 +2903,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Net.pdb</sourceFile>
+										<targetPath>releaseshared</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Net.lib</sourceFile>
 										<targetPath>releaseshared</targetPath>
@@ -2710,6 +2942,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Net.pdb</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Net.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
@@ -2739,6 +2975,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Net.pdb</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Net.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
@@ -2867,6 +3107,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Remote.Client.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Remote.Client.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -2897,6 +3141,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Remote.Client.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Remote.Client.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -2929,6 +3177,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Remote.Client.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Remote.Client.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -2955,6 +3207,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Database.Remote.Client.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Database.Remote.Client.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -3018,6 +3274,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Drawing.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Drawing.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -3048,6 +3308,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Drawing.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Drawing.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -3080,6 +3344,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Drawing.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Drawing.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -3106,6 +3374,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Drawing.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Drawing.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -3213,6 +3485,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Flash.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Flash.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -3245,6 +3521,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Flash.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Flash.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -3279,6 +3559,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Flash.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Flash.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -3307,6 +3591,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Flash.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Flash.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -3462,6 +3750,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Html.pdb</sourceFile>
+										<targetPath>debugshared</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Html.lib</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
@@ -3492,6 +3784,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Html.pdb</sourceFile>
+										<targetPath>releaseshared</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Html.lib</sourceFile>
 										<targetPath>releaseshared</targetPath>
@@ -3524,6 +3820,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Html.pdb</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Html.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
@@ -3550,6 +3850,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Html.pdb</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Html.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
@@ -3603,6 +3907,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Sound.pdb</sourceFile>
+										<targetPath>debugshared</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Sound.lib</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
@@ -3634,6 +3942,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Sound.pdb</sourceFile>
+										<targetPath>releaseshared</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Sound.lib</sourceFile>
 										<targetPath>releaseshared</targetPath>
@@ -3667,6 +3979,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Sound.pdb</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Sound.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
@@ -3694,6 +4010,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Sound.pdb</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Sound.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
@@ -3814,6 +4134,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Graphics.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Graphics.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -3844,6 +4168,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Graphics.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Graphics.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -3876,6 +4204,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Graphics.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Graphics.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -3902,6 +4234,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Graphics.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Graphics.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -3950,6 +4286,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Graphics.Gdi.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Graphics.Gdi.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -3980,6 +4320,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Graphics.Gdi.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Graphics.Gdi.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -4012,6 +4356,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Graphics.Gdi.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Graphics.Gdi.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -4038,6 +4386,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Graphics.Gdi.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Graphics.Gdi.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -4092,6 +4444,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.I18N.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.I18N.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -4122,6 +4478,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.I18N.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.I18N.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -4154,6 +4514,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.I18N.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.I18N.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -4180,6 +4544,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.I18N.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.I18N.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -4228,6 +4596,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -4258,6 +4630,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -4290,6 +4666,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -4316,6 +4696,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -4385,6 +4769,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Di8.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Di8.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -4426,6 +4814,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Di8.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Di8.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -4469,6 +4861,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Di8.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Di8.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -4506,6 +4902,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Di8.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Di8.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -4563,6 +4963,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Win32.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Win32.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -4593,6 +4997,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Win32.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Win32.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -4625,6 +5033,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Win32.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Win32.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -4651,6 +5063,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Win32.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Win32.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -4710,6 +5126,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Xi.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Xi.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -4750,6 +5170,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Xi.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Xi.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -4792,6 +5216,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Xi.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Xi.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -4828,6 +5256,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Xi.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Xi.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -4888,6 +5320,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Physics.Bullet.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.Bullet.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -4918,6 +5354,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Physics.Bullet.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.Bullet.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -4950,6 +5390,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Physics.Bullet.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.Bullet.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -4976,6 +5420,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Physics.Bullet.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.Bullet.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -5064,6 +5512,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Physics.Havok.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.Havok.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -5113,6 +5565,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Physics.Havok.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.Havok.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -5164,6 +5620,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Physics.Havok.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.Havok.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -5209,6 +5669,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Physics.Havok.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.Havok.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -5283,6 +5747,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Physics.PhysX.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.PhysX.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -5327,6 +5795,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Physics.PhysX.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.PhysX.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -5374,6 +5846,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Physics.PhysX.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.PhysX.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -5414,6 +5890,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Physics.PhysX.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Physics.PhysX.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -5487,6 +5967,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.OpenGL.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.OpenGL.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -5522,6 +6006,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.OpenGL.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.OpenGL.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -5559,6 +6047,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.OpenGL.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.OpenGL.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -5590,6 +6082,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.OpenGL.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.OpenGL.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -5669,6 +6165,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.OpenGL.ES2.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.OpenGL.ES2.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -5701,6 +6201,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.OpenGL.ES2.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.OpenGL.ES2.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -5735,6 +6239,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.OpenGL.ES2.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.OpenGL.ES2.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -5763,6 +6271,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.OpenGL.ES2.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.OpenGL.ES2.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -5846,6 +6358,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.Sw.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.Sw.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -5876,6 +6392,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.Sw.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.Sw.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -5908,6 +6428,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.Sw.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.Sw.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -5934,6 +6458,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.Sw.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.Sw.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -6022,6 +6550,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Scene.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Scene.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -6052,6 +6584,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Scene.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Scene.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -6084,6 +6620,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Scene.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Scene.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -6110,6 +6650,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Scene.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Scene.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -6173,6 +6717,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Script.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Script.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -6203,6 +6751,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Script.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Script.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -6235,6 +6787,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Script.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Script.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -6261,6 +6817,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Script.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Script.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -6315,6 +6875,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Script.Lua.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Script.Lua.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -6346,6 +6910,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Script.Lua.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Script.Lua.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -6379,6 +6947,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Script.Lua.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Script.Lua.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -6406,6 +6978,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Script.Lua.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Script.Lua.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -6473,6 +7049,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.Ds8.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.Ds8.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -6514,6 +7094,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.Ds8.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.Ds8.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -6557,6 +7141,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.Ds8.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.Ds8.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -6594,6 +7182,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.Ds8.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.Ds8.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -6653,6 +7245,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.WinMM.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.WinMM.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -6685,6 +7281,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.WinMM.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.WinMM.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -6719,6 +7319,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.WinMM.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.WinMM.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -6747,6 +7351,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.WinMM.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.WinMM.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -6804,6 +7412,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.XAudio2.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.XAudio2.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -6842,6 +7454,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.XAudio2.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.XAudio2.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -6882,6 +7498,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.XAudio2.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.XAudio2.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -6916,6 +7536,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sound.XAudio2.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sound.XAudio2.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -6973,6 +7597,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -7003,6 +7631,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -7035,6 +7667,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -7061,6 +7697,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Spray.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Spray.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -7166,6 +7806,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Terrain.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Terrain.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -7196,6 +7840,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Terrain.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Terrain.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -7228,6 +7876,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Terrain.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Terrain.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -7254,6 +7906,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Terrain.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Terrain.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -7327,6 +7983,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Theater.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Theater.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -7357,6 +8017,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Theater.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Theater.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -7389,6 +8053,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Theater.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Theater.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -7415,6 +8083,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Theater.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Theater.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -7473,6 +8145,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Ui.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Ui.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -7503,6 +8179,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Ui.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Ui.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -7535,6 +8215,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Ui.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Ui.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -7561,6 +8245,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Ui.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Ui.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -7979,6 +8667,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Ui.Win32.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Ui.Win32.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -8017,6 +8709,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Ui.Win32.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Ui.Win32.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -8057,6 +8753,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Ui.Win32.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Ui.Win32.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -8091,6 +8791,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Ui.Win32.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Ui.Win32.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -8162,6 +8866,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Weather.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Weather.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -8192,6 +8900,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Weather.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Weather.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -8224,6 +8936,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Weather.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Weather.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -8250,6 +8966,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Weather.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Weather.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -8498,6 +9218,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.Capture.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.Capture.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -8528,6 +9252,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.Capture.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.Capture.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -8560,6 +9288,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.Capture.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.Capture.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -8586,6 +9318,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.Capture.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.Capture.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -8644,6 +9380,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Sql.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Sql.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -8674,6 +9414,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sql.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sql.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -8706,6 +9450,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Sql.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Sql.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -8732,6 +9480,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sql.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sql.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -8780,6 +9532,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Sql.Sqlite3.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Sql.Sqlite3.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -8810,6 +9566,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sql.Sqlite3.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sql.Sqlite3.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -8842,6 +9602,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Sql.Sqlite3.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Sql.Sqlite3.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -8868,6 +9632,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Sql.Sqlite3.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Sql.Sqlite3.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -8927,6 +9695,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Video.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Video.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -8957,6 +9729,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Video.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Video.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -8989,6 +9765,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Video.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Video.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -9015,6 +9795,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Video.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Video.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -9094,6 +9878,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -9124,6 +9912,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -9156,6 +9948,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -9182,6 +9978,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -9279,6 +10079,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Steam.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Steam.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -9320,6 +10124,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Steam.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Steam.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -9363,6 +10171,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Steam.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Steam.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -9404,6 +10216,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Steam.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Steam.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -9475,6 +10291,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Local.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Local.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -9505,6 +10325,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Local.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Local.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -9537,6 +10361,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Local.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Local.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -9563,6 +10391,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Local.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Local.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -9626,6 +10458,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Game.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Game.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -9656,6 +10492,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Game.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Game.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -9688,6 +10528,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Game.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Game.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -9714,6 +10558,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Game.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Game.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -9895,6 +10743,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Ai.pdb</sourceFile>
+										<targetPath>debugshared</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Ai.lib</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
@@ -9925,6 +10777,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Ai.pdb</sourceFile>
+										<targetPath>releaseshared</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Ai.lib</sourceFile>
 										<targetPath>releaseshared</targetPath>
@@ -9957,6 +10813,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Ai.pdb</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Ai.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
@@ -9983,6 +10843,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Ai.pdb</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Ai.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
@@ -10063,6 +10927,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Amalgam.pdb</sourceFile>
+										<targetPath>debugshared</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Amalgam.lib</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
@@ -10095,6 +10963,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Amalgam.pdb</sourceFile>
+										<targetPath>releaseshared</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Amalgam.lib</sourceFile>
 										<targetPath>releaseshared</targetPath>
@@ -10129,6 +11001,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Traktor.Amalgam.pdb</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Traktor.Amalgam.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
@@ -10157,6 +11033,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Traktor.Amalgam.pdb</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Amalgam.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
@@ -10228,6 +11108,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.Dx11.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.Dx11.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -10270,6 +11154,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.Dx11.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.Dx11.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -10316,6 +11204,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.Dx11.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.Dx11.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -10354,6 +11246,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Render.Dx11.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Render.Dx11.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -10464,6 +11360,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Game.App.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Game.App.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -10490,6 +11390,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Game.App.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Game.App.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -10585,6 +11489,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Gc.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Gc.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -10615,6 +11523,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Gc.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Gc.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -10647,6 +11559,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Gc.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Gc.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -10673,6 +11589,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Gc.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Gc.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -10730,6 +11650,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Psn.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Psn.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -10760,6 +11684,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Psn.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Psn.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -10792,6 +11720,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Psn.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Psn.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -10818,6 +11750,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Psn.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Psn.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -10875,6 +11811,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Lan.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Lan.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -10905,6 +11845,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Lan.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Lan.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -10937,6 +11881,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Lan.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Lan.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -10963,6 +11911,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Online.Lan.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Online.Lan.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -11029,6 +11981,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Telemetry.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Telemetry.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -11061,6 +12017,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Telemetry.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Telemetry.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -11095,6 +12055,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Telemetry.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Telemetry.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -11123,6 +12087,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Telemetry.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Telemetry.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -11179,6 +12147,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Json.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Json.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -11212,6 +12184,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Json.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Json.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -11247,6 +12223,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Json.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Json.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -11276,6 +12256,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Json.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Json.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -11326,6 +12310,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Run.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Run.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -11358,6 +12346,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Run.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Run.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -11392,6 +12384,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Run.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Run.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -11420,6 +12416,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Amalgam.Run.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Run.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -11662,6 +12662,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Tobii.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Tobii.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -11703,6 +12707,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Tobii.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Tobii.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
@@ -11746,6 +12754,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Tobii.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Tobii.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -11787,6 +12799,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Input.Tobii.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Input.Tobii.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>

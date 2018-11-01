@@ -350,6 +350,16 @@ for i = 0, configurations:size() - 1 do
 		end
 	end
 
+	-- Output PDB file for static library.
+	local compileOptionsPDB = ""
+	if not (toolchain == "gcc" or toolchain == "clang") then
+		if format == "StaticLibrary" then
+			local outputPath = Path(solution:getRootPath()):concat(Path(configuration:getName() .. "/" .. project:getName() .. ".pdb"))
+			outputPath = fileSystem:getAbsolutePath(outputPath)
+			compileOptionsPDB = compileOptionsPDB .. " /Fd\"" .. outputPath.pathName .. "\""
+		end
+	end
+
 	for _, file in ipairs(resourceFiles) do
 		local fileRel = fileSystem:getRelativePath(file, sourcePath)
 		assert (fileRel ~= nil)
@@ -395,7 +405,7 @@ ObjectList('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 <?--
 		else
 --?>
-	.CompilerOptions = '$CC_FLAGS_<?-- output:print(flags) --?>$ <?-- output:print(compileOptions) --?> "%1" /Fo"%2"'
+	.CompilerOptions = '$CC_FLAGS_<?-- output:print(flags) --?>$ <?-- output:print(compileOptions .. " " .. compileOptionsPDB) --?> "%1" /Fo"%2"'
 <?--
 		end
 --?>	

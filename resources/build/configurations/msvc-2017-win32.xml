@@ -228,6 +228,10 @@
 							<name>MultiProcessorCompilation</name>
 							<value>true</value>
 						</item>
+						<item>
+							<name>ProgramDataBaseFileName</name>
+							<value>$(OutDir)$(TargetName).pdb</value>
+						</item>
 					</options>
 				</item>
 				<item type="SolutionBuilderMsvcVCXDefinition">
@@ -601,6 +605,10 @@
 						<item>
 							<name>MultiProcessorCompilation</name>
 							<value>true</value>
+						</item>
+						<item>
+							<name>ProgramDataBaseFileName</name>
+							<value>$(OutDir)$(TargetName).pdb</value>
 						</item>
 					</options>
 				</item>
