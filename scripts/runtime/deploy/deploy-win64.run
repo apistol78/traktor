@@ -284,6 +284,7 @@ local function migrateStatic(args)
 	-- Copy binaries into "bin".
 	run:mkdir("bin64")
 	run:replace("$(DEPLOY_EXECUTABLE).exe", "bin64/$(DEPLOY_EXECUTABLE).exe")
+	run:replace("$(DEPLOY_EXECUTABLE).pdb", "bin64/$(DEPLOY_EXECUTABLE).pdb")
 
 	-- Get shared paths.
 	local paths = nil
