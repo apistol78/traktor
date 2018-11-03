@@ -186,7 +186,7 @@ end
 
 local function deployStatic(args)
 	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
-	
+
 	-- Link our product.
 	local r = linkStaticProduct()
 	if r ~= 0 then return r end
@@ -206,9 +206,6 @@ local function deployStatic(args)
 			local found = false
 			for _, p in ipairs(paths) do
 				local qf = Path(p):concat(Path(f))
-
-				stdout:printLn(qf.pathName)
-
 				if FileSystem.getInstance():exist(qf) then
 					run:pushd(p)
 					run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. f, nil)
@@ -288,6 +285,8 @@ end
 
 
 local function migrateStatic(args)
+	local debug = (os:getEnvironment("DEPLOY_DEBUG") ~= "")
+
 	-- Link our product.
 	local r = linkStaticProduct()
 	if r ~= 0 then return r end
@@ -303,13 +302,19 @@ local function migrateStatic(args)
 
 	-- Find files to deploy; qualitfy through paths.
 	local files = os:getEnvironment("DEPLOY_STATIC"):split("\n")
-	for _, p in ipairs(paths) do
-		for _, f in ipairs(files) do
-			if f ~= "" and not f:endswith(".lib") then
+	for _, f in ipairs(files) do
+		if f ~= "" and not f:endswith(".lib") then
+			local found = false
+			for _, p in ipairs(paths) do
 				local qf = Path(p):concat(Path(f))
 				if FileSystem.getInstance():exist(qf) then
 					run:replace(qf.pathName, "bin64/" .. f)
+					found = true
 				end
+			end
+			if not found then
+				stderr:printLn("Unable to migrate \"" .. f .. "\"; file not found.")
+				return 1
 			end
 		end
 	end
