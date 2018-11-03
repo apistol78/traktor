@@ -4,8 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_amalgam_ErrorDialog_H
-#define traktor_amalgam_ErrorDialog_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Ui/Dialog.h"
@@ -34,12 +33,12 @@ public:
 private:
 	Ref< ui::LogList > m_listLog;
 
-	void eventButtonCopyQuit(ui::ButtonClickEvent* event);
+	void eventButtonClickCopy(ui::ButtonClickEvent* event);
+
+	void eventButtonClickUpload(ui::ButtonClickEvent* event);
 
 	void eventButtonClickQuit(ui::ButtonClickEvent* event);
 };
 
 	}
 }
-
-#endif	// traktor_amalgam_ErrorDialog_H

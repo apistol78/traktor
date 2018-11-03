@@ -29,8 +29,8 @@ bool ErrorDialog::create()
 	if (!ui::Dialog::create(
 		0,
 		L"Error",
-		ui::dpi96(500),
-		ui::dpi96(300),
+		ui::dpi96(700),
+		ui::dpi96(450),
 		ui::Dialog::WsDefaultResizable,
 		new ui::TableLayout(L"*,100%", L"100%", 0, 0)
 	))
@@ -52,14 +52,18 @@ bool ErrorDialog::create()
 	m_listLog->create(containerText, ui::WsNone, 0);
 
 	Ref< ui::Container > containerButtons = new ui::Container();
-	containerButtons->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*", L"*", 0, 4));
+	containerButtons->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0, 4));
 
 	Ref< ui::Static > staticDummy = new ui::Static();
 	staticDummy->create(containerButtons, L"");
 
 	Ref< ui::Button > buttonCopy = new ui::Button();
 	buttonCopy->create(containerButtons, L"Copy to clipboard");
-	buttonCopy->addEventHandler< ui::ButtonClickEvent >(this, &ErrorDialog::eventButtonCopyQuit);
+	buttonCopy->addEventHandler< ui::ButtonClickEvent >(this, &ErrorDialog::eventButtonClickCopy);
+
+	Ref< ui::Button > buttonUpload = new ui::Button();
+	buttonUpload->create(containerButtons, L"Upload crash dump");
+	buttonUpload->addEventHandler< ui::ButtonClickEvent >(this, &ErrorDialog::eventButtonClickUpload);
 
 	Ref< ui::Button > buttonQuit = new ui::Button();
 	buttonQuit->create(containerButtons, L"Quit");
@@ -73,9 +77,13 @@ void ErrorDialog::addErrorString(const std::wstring& errorString)
 	m_listLog->add(0, ui::LogList::LvInfo, errorString);
 }
 
-void ErrorDialog::eventButtonCopyQuit(ui::ButtonClickEvent* event)
+void ErrorDialog::eventButtonClickCopy(ui::ButtonClickEvent* event)
 {
 	m_listLog->copyLog();
+}
+
+void ErrorDialog::eventButtonClickUpload(ui::ButtonClickEvent* event)
+{
 }
 
 void ErrorDialog::eventButtonClickQuit(ui::ButtonClickEvent* event)

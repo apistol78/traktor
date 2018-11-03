@@ -15952,12 +15952,18 @@
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>$(BUGSPLAT_SDK)/inc</item>
+					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(BUGSPLAT_SDK)/lib64</item>
+					</libraryPaths>
+					<libraries>
+						<item>BugSplat64.lib</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -15970,6 +15976,22 @@
 							<sourceFile>Traktor.Amalgam.Game.App.exe</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/lib64/BugSplat64.lib</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/bin64/BugSplat64.dll</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/bin64/BugSplatRc64.dll</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/bin64/BsSndRpt64.exe</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
 				</item>
@@ -15978,12 +16000,18 @@
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>$(BUGSPLAT_SDK)/inc</item>
+					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(BUGSPLAT_SDK)/lib64</item>
+					</libraryPaths>
+					<libraries>
+						<item>BugSplat64.lib</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -15996,6 +16024,22 @@
 							<sourceFile>Traktor.Amalgam.Game.App.exe</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/lib64/BugSplat64.lib</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/bin64/BugSplat64.dll</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/bin64/BugSplatRc64.dll</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/bin64/BsSndRpt64.exe</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 					</aggregationItems>
 					<consumerLibraryPath/>
 				</item>
@@ -16004,13 +16048,19 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>$(BUGSPLAT_SDK)/inc</item>
+					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(BUGSPLAT_SDK)/lib64</item>
+					</libraryPaths>
+					<libraries>
+						<item>BugSplat64.lib</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -16027,6 +16077,22 @@
 							<sourceFile>Traktor.Amalgam.Game.App.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/lib64/BugSplat64.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/bin64/BugSplat64.dll</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/bin64/BugSplatRc64.dll</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/bin64/BsSndRpt64.exe</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
@@ -16035,13 +16101,19 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths/>
+					<includePaths>
+						<item>$(BUGSPLAT_SDK)/inc</item>
+					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(BUGSPLAT_SDK)/lib64</item>
+					</libraryPaths>
+					<libraries>
+						<item>BugSplat64.lib</item>
+					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -16056,6 +16128,22 @@
 						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Amalgam.Game.App.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/lib64/BugSplat64.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/bin64/BugSplat64.dll</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/bin64/BugSplatRc64.dll</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(BUGSPLAT_SDK)/bin64/BsSndRpt64.exe</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
