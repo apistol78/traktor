@@ -5,8 +5,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <intrin.h>
-//#include <Windows.h>
-//#include <DbgHelp.h>
 #include <BugSplat.h>
 #include "Amalgam/Game/App/Win32/ErrorDialog.h"
 #include "Amalgam/Game/Impl/Application.h"
@@ -103,9 +101,8 @@ private:
 };
 
 Ref< LogTailTarget > g_logTail;
-//void* g_exceptionAddress = nullptr;
-//DWORD g_exceptionCode = 0;
 MiniDmpSender* g_sender = nullptr;
+Path g_logFilePath;
 
 /*! \brief
  */
@@ -317,179 +314,16 @@ void logSystemInfo()
 	log::info << L"\tSP version " << uint32_t(osvi.wServicePackMajor) << L"." << uint32_t(osvi.wServicePackMinor) << Endl;
 }
 
-/*! \brief
- */
-//std::wstring getExceptionString(DWORD exceptionCode)
-//{
-//	switch (exceptionCode)
-//	{
-//	case EXCEPTION_ACCESS_VIOLATION:
-//		return L"EXCEPTION_ACCESS_VIOLATION";
-//	case EXCEPTION_DATATYPE_MISALIGNMENT:
-//		return L"EXCEPTION_DATATYPE_MISALIGNMENT";
-//	case EXCEPTION_BREAKPOINT:
-//		return L"EXCEPTION_BREAKPOINT";
-//	case EXCEPTION_SINGLE_STEP:
-//		return L"EXCEPTION_SINGLE_STEP";
-//	case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
-//		return L"EXCEPTION_ARRAY_BOUNDS_EXCEEDED";
-//	case EXCEPTION_FLT_DENORMAL_OPERAND:
-//		return L"EXCEPTION_FLT_DENORMAL_OPERAND";
-//	case EXCEPTION_FLT_DIVIDE_BY_ZERO:
-//		return L"EXCEPTION_FLT_DIVIDE_BY_ZERO";
-//	case EXCEPTION_FLT_INEXACT_RESULT:
-//		return L"EXCEPTION_FLT_INEXACT_RESULT";
-//	case EXCEPTION_FLT_INVALID_OPERATION:
-//		return L"EXCEPTION_FLT_INVALID_OPERATION";
-//	case EXCEPTION_FLT_OVERFLOW:
-//		return L"EXCEPTION_FLT_OVERFLOW";
-//	case EXCEPTION_FLT_STACK_CHECK:
-//		return L"EXCEPTION_FLT_STACK_CHECK";
-//	case EXCEPTION_FLT_UNDERFLOW:
-//		return L"EXCEPTION_FLT_UNDERFLOW";
-//	case EXCEPTION_INT_DIVIDE_BY_ZERO:
-//		return L"EXCEPTION_INT_DIVIDE_BY_ZERO";
-//	case EXCEPTION_INT_OVERFLOW:
-//		return L"EXCEPTION_INT_OVERFLOW";
-//	case EXCEPTION_PRIV_INSTRUCTION:
-//		return L"EXCEPTION_PRIV_INSTRUCTION";
-//	case EXCEPTION_IN_PAGE_ERROR:
-//		return L"EXCEPTION_IN_PAGE_ERROR";
-//	case EXCEPTION_ILLEGAL_INSTRUCTION:
-//		return L"EXCEPTION_ILLEGAL_INSTRUCTION";
-//	case EXCEPTION_NONCONTINUABLE_EXCEPTION:
-//		return L"EXCEPTION_NONCONTINUABLE_EXCEPTION";
-//	case EXCEPTION_STACK_OVERFLOW:
-//		return L"EXCEPTION_STACK_OVERFLOW";
-//	case EXCEPTION_INVALID_DISPOSITION:
-//		return L"EXCEPTION_INVALID_DISPOSITION";
-//	case EXCEPTION_GUARD_PAGE:
-//		return L"EXCEPTION_GUARD_PAGE";
-//	default:
-//		return L"UNKNOWN EXCEPTION";					
-//	}
-//}
-
-/*! \brief
- */
-//bool writeMiniDump(_EXCEPTION_POINTERS* ep)
-//{
-//	typedef BOOL (*PMINIDUMPWRITEDUMPFN)( 
-//		HANDLE hProcess, 
-//		DWORD ProcessId, 
-//		HANDLE hFile, 
-//		MINIDUMP_TYPE DumpType, 
-//		PMINIDUMP_EXCEPTION_INFORMATION ExceptionParam, 
-//		PMINIDUMP_USER_STREAM_INFORMATION UserStreamParam, 
-//		PMINIDUMP_CALLBACK_INFORMATION CallbackParam
-//	);
-//
-//	HMODULE hDbgHelp = ::LoadLibrary(L"DbgHelp.dll");
-//	if (hDbgHelp == NULL)
-//		return false;
-//
-//	HANDLE hFile = CreateFile(_T("Crash.dmp"), GENERIC_READ | GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
-//	if (hFile == NULL || hFile == INVALID_HANDLE_VALUE)
-//		return false;
-//
-//	PMINIDUMPWRITEDUMPFN pMiniDumpWriteDump = (PMINIDUMPWRITEDUMPFN)GetProcAddress(hDbgHelp, "MiniDumpWriteDump");
-//	if (pMiniDumpWriteDump == nullptr)
-//	{
-//		CloseHandle(hFile);
-//		return false;
-//	}
-//
-//	MINIDUMP_EXCEPTION_INFORMATION mdei = { 0 };
-//	mdei.ThreadId = GetCurrentThreadId(); 
-//	mdei.ExceptionPointers = ep; 
-//	mdei.ClientPointers = TRUE; 
-//
-//	BOOL rv = (*pMiniDumpWriteDump)(
-//		GetCurrentProcess(),
-//		GetCurrentProcessId(),
-//		hFile,
-//		MiniDumpNormal,
-//		(ep != 0) ? &mdei : nullptr,
-//		nullptr,
-//		nullptr
-//	); 
-//
-//	CloseHandle(hFile); 
-//	return bool(rv == TRUE);
-//}
-
-/*! \brief
- */
-//LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
-//{
-//	g_exceptionAddress = (void*)ep->ExceptionRecord->ExceptionAddress;
-//	g_exceptionCode = ep->ExceptionRecord->ExceptionCode;
-//
-//	bool outputCallStack = false;
-//	switch (ep->ExceptionRecord->ExceptionCode)
-//	{
-//	case EXCEPTION_ACCESS_VIOLATION:		
-//	case EXCEPTION_DATATYPE_MISALIGNMENT:	
-//	case EXCEPTION_STACK_OVERFLOW:			
-//	case EXCEPTION_ILLEGAL_INSTRUCTION:		
-//	case EXCEPTION_PRIV_INSTRUCTION:		
-//	case EXCEPTION_IN_PAGE_ERROR:			
-//	case EXCEPTION_NONCONTINUABLE_EXCEPTION:
-//	case EXCEPTION_INVALID_DISPOSITION:		
-//	case EXCEPTION_GUARD_PAGE:				
-//	case EXCEPTION_INVALID_HANDLE:
-//	case EXCEPTION_BREAKPOINT:				
-//	case EXCEPTION_SINGLE_STEP:				
-//	case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:	
-//	case EXCEPTION_FLT_DENORMAL_OPERAND:	
-//	case EXCEPTION_FLT_DIVIDE_BY_ZERO:		
-//	case EXCEPTION_FLT_INEXACT_RESULT:		
-//	case EXCEPTION_FLT_INVALID_OPERATION:	
-//	case EXCEPTION_FLT_OVERFLOW:			
-//	case EXCEPTION_FLT_STACK_CHECK:			
-//	case EXCEPTION_FLT_UNDERFLOW:			
-//	case EXCEPTION_INT_DIVIDE_BY_ZERO:		
-//	case EXCEPTION_INT_OVERFLOW:			
-//		outputCallStack = true;
-//		break;
-//
-//	default:								
-//		break;
-//	}
-//
-//	if (outputCallStack)
-//	{
-//		HMODULE hCrashModule;
-//		if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, reinterpret_cast< LPCTSTR >(g_exceptionAddress), &hCrashModule))
-//		{
-//			TCHAR fileName[MAX_PATH];
-//			GetModuleFileName(hCrashModule, fileName, sizeof_array(fileName));
-//			log::info << L"Exception (" << getExceptionString(g_exceptionCode) << L") occurred at 0x"; FormatHex(log::info, (uint64_t)g_exceptionAddress, 8 * 2); log::info << L" in module " << fileName << Endl;
-//		}
-//		else
-//			log::info << L"Exception (" << getExceptionString(g_exceptionCode) << L") occurred at 0x"; FormatHex(log::info, (uint64_t)g_exceptionAddress, 8 * 2); log::info << Endl;
-//
-//		if (writeMiniDump(ep))
-//			log::info << L"Mini crashdump, \"Crash.dmp\", created." << Endl;
-//
-//		showErrorDialog();
-//	}
-//
-//	return EXCEPTION_CONTINUE_SEARCH;
-//}
-
-/*! \brief
- */
-//void pureVirtualCallHandler(void)
-//{
-//	log::info << L"Pure virtual call occured, possible memory/thread issue." << Endl;
-//
-//	if (writeMiniDump(nullptr))
-//		log::info << L"Mini crashdump, \"Crash.dmp\", created." << Endl;
-//
-//	showErrorDialog();
-//	exit(0);
-//}
+bool miniDmpExceptionCallback(UINT nCode, LPVOID lpVal1, LPVOID lpVal2)
+{
+	if (nCode == MDSCB_EXCEPTIONCODE)
+	{
+		std::wstring fn = g_logFilePath.getPathName();
+		if (!fn.empty())
+			g_sender->sendAdditionalFile(fn.c_str());
+	}
+	return false;
+}
 
 }
 
@@ -499,14 +333,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 {
 	// BugSplat crash reporting.
     g_sender = new MiniDmpSender(L"doctorentertainment_01", L"gearup", L"1.0.0", NULL, MDSF_LOGFILE);
-
-	//// Set optional default values for user, email, and user description of the crash.
-	//g_sender->setDefaultUserName(_T("Fred"));
-	//g_sender->setDefaultUserEmail(_T("fred@bedrock.com"));
-	//g_sender->setDefaultUserDescription(_T("This is the default user crash description."));
+	g_sender->setCallback(miniDmpExceptionCallback); 
 
 	// Our code begin here.
-
 	std::vector< std::wstring > argv;
 	SystemApplication sysapp;
 
@@ -574,10 +403,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 			log::warning.setGlobalTarget(logTarget);
 			log::error  .setGlobalTarget(logTarget);
 
-			log::info << L"Log file \"Application.log\" created" << Endl;
+			log::info << L"Log file \"" << ss.str() << L"\" created." << Endl;
+
+			g_logFilePath = FileSystem::getInstance().getAbsolutePath(ss.str());
 		}
 		else
-			log::error << L"Unable to create log file; logging only to std pipes" << Endl;
+			log::error << L"Unable to create log file; logging only to std pipes." << Endl;
 	}
 #endif
 
@@ -608,17 +439,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	);
 
 	Ref< amalgam::Application > application;
-
-#if !defined(_DEBUG)
-	//try
-#endif
 	{
-//#if !defined(_DEBUG)
-//		SetErrorMode(SEM_NOGPFAULTERRORBOX);
-//		PVOID eh = AddVectoredExceptionHandler(1, exceptionVectoredHandler);
-//#endif
-//		_set_purecall_handler(pureVirtualCallHandler);
-
 		Path currentPath = FileSystem::getInstance().getAbsolutePath(L".");
 		log::info << L"Working directory: " <<currentPath.getPathName() << Endl;
 
@@ -729,34 +550,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 			safeDestroy(application);
 			showErrorDialog();
 		}
-
-//#if !defined(_DEBUG)
-//		RemoveVectoredExceptionHandler(eh);
-//#endif
 	}
-//#if !defined(_DEBUG)
-//	catch (...)
-//	{
-//		// Log information about exception source.
-//		HMODULE hCrashModule;
-//		if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, reinterpret_cast< LPCTSTR >(g_exceptionAddress), &hCrashModule))
-//		{
-//			TCHAR fileName[MAX_PATH];
-//			GetModuleFileName(hCrashModule, fileName, sizeof_array(fileName));
-//			log::info << L"Exception (" << getExceptionString(g_exceptionCode) << L") occurred at 0x"; FormatHex(log::info, (uint64_t)g_exceptionAddress, 8 * 2); log::info << L" in module " << fileName << Endl;
-//		}
-//		else
-//			log::info << L"Exception (" << getExceptionString(g_exceptionCode) << L") occurred at 0x"; FormatHex(log::info, (uint64_t)g_exceptionAddress, 8 * 2); log::info << Endl;
-//
-//		// Write minidump; not generated in exception handler.
-//		if (writeMiniDump(nullptr))
-//			log::info << L"Mini crashdump, \"Crash.dmp\", created." << Endl;
-//
-//		// Show error dialog.
-//		safeDestroy(application);
-//		showErrorDialog();
-//	}
-//#endif
 
 	ui::Application::getInstance()->finalize();
 

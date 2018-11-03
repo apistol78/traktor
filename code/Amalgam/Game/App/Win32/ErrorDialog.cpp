@@ -64,6 +64,7 @@ bool ErrorDialog::create()
 	Ref< ui::Button > buttonUpload = new ui::Button();
 	buttonUpload->create(containerButtons, L"Upload crash dump");
 	buttonUpload->addEventHandler< ui::ButtonClickEvent >(this, &ErrorDialog::eventButtonClickUpload);
+	buttonUpload->setEnable(false);
 
 	Ref< ui::Button > buttonQuit = new ui::Button();
 	buttonQuit->create(containerButtons, L"Quit");
