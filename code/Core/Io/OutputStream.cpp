@@ -455,7 +455,7 @@ OutputStream& FormatMultipleLines(OutputStream& s, const std::wstring& str)
 	return s;
 }
 
-OutputStream& FormatHex(OutputStream& s, uint32_t number, uint8_t nibbles)
+OutputStream& FormatHex(OutputStream& s, uint64_t number, uint8_t nibbles)
 {
 	const wchar_t hex[] = { L"0123456789abcdef" };
 	for (uint32_t i = 0; i < nibbles; ++i)

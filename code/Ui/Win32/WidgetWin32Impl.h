@@ -701,6 +701,7 @@ protected:
 			{
 				MouseTrackEvent m(m_owner, true);
 				m_owner->raiseEvent(&m);
+				m_tracking = true;
 			}
 		}
 
@@ -730,8 +731,12 @@ protected:
 
 	LRESULT eventMouseLeave(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		MouseTrackEvent m(m_owner, false);
-		m_owner->raiseEvent(&m);
+		if (m_tracking)
+		{
+			MouseTrackEvent m(m_owner, false);
+			m_owner->raiseEvent(&m);
+			m_tracking = false;
+		}
 		return 0;
 	}
 
