@@ -57,7 +57,7 @@ end
 
 function Static:setText(text)
 	if text ~= nil then
-		self._text_tb:parseText(tostring(text))
+		self._text_tb:parseText(text)
 	else
 		self._text_tb:parseText("")
 	end
@@ -67,7 +67,7 @@ end
 
 function Static:setHtml(html)
 	if html ~= nil then
-		self._text_tb:parseHtml(tostring(html))
+		self._text_tb:parseHtml(html)
 	else
 		self._text_tb:parseHtml("")
 	end
