@@ -41,7 +41,8 @@ class AccTextureCache : public Object
 public:
 	AccTextureCache(
 		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem
+		render::IRenderSystem* renderSystem,
+		bool reuseTextures
 	);
 
 	virtual ~AccTextureCache();
@@ -58,6 +59,7 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	RefArray< render::ISimpleTexture > m_freeTextures;
+	bool m_reuseTextures;
 };
 
 	}
