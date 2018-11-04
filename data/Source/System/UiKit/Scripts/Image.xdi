@@ -45,28 +45,34 @@ function Image:setImage(image, mode)
 		mode = Image.MODE_DEFAULT
 	end
 
-	if self._image_mc ~= nil then
-		self._image_mc:removeMovieClip()
-		self._image_mc = nil
-	end
+	if image ~= self._image then
 
-	-- Create image resource.
-	if isa(image, traktor.drawing.Image) then
-		self._image_mc = Widget._createEmptyResource(self)
-		self._image_mc:attachBitmap(traktor.flash.BitmapImage(image), 0)
-
-	elseif isa(image, traktor.video.VideoTexture) then
-		self._image_mc = Widget._createEmptyResource(self)
-		self._image_mc:attachBitmap(traktor.flash.BitmapTexture(image), 0)
-
-	elseif isa(image, traktor.flash.Movie) then
-		self._image_mc = image:createExternalMovieClipInstance(self._mc, 0)
-
-	elseif type(image) == "string" then
-		self._image_mc = Widget._createResource(self, image)
+		-- Remove previous image.
+		if self._image_mc ~= nil then
+			self._image_mc:removeMovieClip()
+			self._image_mc = nil
+		end
+	
+		-- Create image resource.
+		if isa(image, traktor.drawing.Image) then
+			self._image_mc = Widget._createEmptyResource(self)
+			self._image_mc:attachBitmap(traktor.flash.BitmapImage(image), 0)
+	
+		elseif isa(image, traktor.video.VideoTexture) then
+			self._image_mc = Widget._createEmptyResource(self)
+			self._image_mc:attachBitmap(traktor.flash.BitmapTexture(image), 0)
+	
+		elseif isa(image, traktor.flash.Movie) then
+			self._image_mc = image:createExternalMovieClipInstance(self._mc, 0)
+	
+		elseif type(image) == "string" then
+			self._image_mc = Widget._createResource(self, image)
 #if defined(_DEBUG)
-		if self._image_mc == nil then print("No such image \\"" .. image .. "\\"") end
+			if self._image_mc == nil then print("No such image \\"" .. image .. "\\"") end
 #endif
+		end
+
+		self._image = image
 	end
 
 	if self._image_mc == nil then
@@ -151,6 +157,7 @@ function Image:_onMouseRelease(event)
 	self:releaseExclusive()
 	return true
 end
+
 	]]>
 	</text>
 </object>
