@@ -56,13 +56,21 @@ function Static:place(x, y, width, height)
 end
 
 function Static:setText(text)
-	self._text_tb:parseText(text)
+	if text ~= nil then
+		self._text_tb:parseText(tostring(text))
+	else
+		self._text_tb:parseText("")
+	end
 	self._html = false
 	return self
 end
 
 function Static:setHtml(html)
-	self._text_tb:parseHtml(html)
+	if html ~= nil then
+		self._text_tb:parseHtml(tostring(html))
+	else
+		self._text_tb:parseHtml("")
+	end
 	self._html = true
 	return self
 end
