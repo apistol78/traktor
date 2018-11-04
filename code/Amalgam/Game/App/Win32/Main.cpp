@@ -314,6 +314,62 @@ void logSystemInfo()
 	log::info << L"\tSP version " << uint32_t(osvi.wServicePackMajor) << L"." << uint32_t(osvi.wServicePackMinor) << Endl;
 }
 
+void logDriverVersion()
+{
+	typedef enum nvmlReturn_enum 
+	{
+		NVML_SUCCESS = 0,                   //!< The operation was successful
+		NVML_ERROR_UNINITIALIZED = 1,       //!< NVML was not first initialized with nvmlInit()
+		NVML_ERROR_INVALID_ARGUMENT = 2,    //!< A supplied argument is invalid
+		NVML_ERROR_NOT_SUPPORTED = 3,       //!< The requested operation is not available on target device
+		NVML_ERROR_NO_PERMISSION = 4,       //!< The current user does not have permission for operation
+		NVML_ERROR_ALREADY_INITIALIZED = 5, //!< Deprecated: Multiple initializations are now allowed through ref counting
+		NVML_ERROR_NOT_FOUND = 6,           //!< A query to find an object was unsuccessful
+		NVML_ERROR_INSUFFICIENT_SIZE = 7,   //!< An input argument is not large enough
+		NVML_ERROR_INSUFFICIENT_POWER = 8,  //!< A device's external power cables are not properly attached
+		NVML_ERROR_DRIVER_NOT_LOADED = 9,   //!< NVIDIA driver is not loaded
+		NVML_ERROR_TIMEOUT = 10,            //!< User provided timeout passed
+		NVML_ERROR_IRQ_ISSUE = 11,          //!< NVIDIA Kernel detected an interrupt issue with a GPU
+		NVML_ERROR_LIBRARY_NOT_FOUND = 12,  //!< NVML Shared Library couldn't be found or loaded
+		NVML_ERROR_FUNCTION_NOT_FOUND = 13, //!< Local version of NVML doesn't implement this function
+		NVML_ERROR_CORRUPTED_INFOROM = 14,  //!< infoROM is corrupted
+		NVML_ERROR_GPU_IS_LOST = 15,        //!< The GPU has fallen off the bus or has otherwise become inaccessible
+		NVML_ERROR_RESET_REQUIRED = 16,     //!< The GPU requires a reset before it can be used again
+		NVML_ERROR_UNKNOWN = 999            //!< An internal driver error occurred
+	} nvmlReturn_t;
+
+	typedef nvmlReturn_t (*PFNNVMLINIT)();
+	typedef nvmlReturn_t (*PFNNVMLSHUTDOWN)();
+	typedef nvmlReturn_t (*PFNNVMLSYSTEMGETDRIVERVERSION)(char *, unsigned);
+
+	std::wstring fn;
+	if (!OS::getInstance().getEnvironment(L"ProgramW6432", fn))
+		return;
+
+    fn += L"\\Nvidia Corporation\\nvsmi\\nvml.dll";
+ 
+	HMODULE hNVML = LoadLibrary(fn.c_str());
+	if (hNVML == NULL || hNVML == INVALID_HANDLE_VALUE)
+		return;
+
+	PFNNVMLINIT nvmlInit = (PFNNVMLINIT)GetProcAddress(hNVML, "nvmlInit");
+	PFNNVMLSHUTDOWN nvmlShutdown = (PFNNVMLSHUTDOWN)GetProcAddress(hNVML, "nvmlShutdown");
+	PFNNVMLSYSTEMGETDRIVERVERSION nvmlGetDriverVersion = (PFNNVMLSYSTEMGETDRIVERVERSION)GetProcAddress(hNVML, "nvmlSystemGetDriverVersion");
+	if (nvmlInit == nullptr || nvmlShutdown == nullptr || nvmlGetDriverVersion == nullptr)
+		return;
+
+	if (NVML_SUCCESS != nvmlInit())
+		return;
+
+	char buffer[81] = { 0 };
+    nvmlGetDriverVersion(buffer, sizeof(buffer));
+
+	log::info << L"Graphics Driver" << Endl;
+	log::info << L"\tNVidia " << mbstows(buffer) << Endl;
+
+	nvmlShutdown();
+}
+
 bool miniDmpExceptionCallback(UINT nCode, LPVOID lpVal1, LPVOID lpVal2)
 {
 	if (nCode == MDSCB_EXCEPTIONCODE)
@@ -413,6 +469,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #endif
 
 	logSystemInfo();
+	logDriverVersion();
 
 	g_logTail = new LogTailTarget();
 
