@@ -116,7 +116,7 @@ bool AccDisplayRenderer::create(
 	m_resourceManager = resourceManager;
 	m_renderSystem = renderSystem;
 	m_gradientCache = new AccGradientCache(m_renderSystem);
-	m_textureCache = new AccTextureCache(m_resourceManager, m_renderSystem);
+	m_textureCache = new AccTextureCache(m_resourceManager, m_renderSystem, false);
 	m_clearBackground = clearBackground;
 	m_clipToDirtyRegion = clipToDirtyRegion;
 

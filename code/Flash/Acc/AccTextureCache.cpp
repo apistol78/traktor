@@ -85,10 +85,12 @@ private:
 
 AccTextureCache::AccTextureCache(
 	resource::IResourceManager* resourceManager,
-	render::IRenderSystem* renderSystem
+	render::IRenderSystem* renderSystem,
+	bool reuseTextures
 )
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
+,	m_reuseTextures(reuseTextures)
 {
 }
 
@@ -159,13 +161,16 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 		Ref< render::ISimpleTexture > texture;
 
 		// Check if any free texture matching requested size.
-		for (RefArray< render::ISimpleTexture >::iterator i = m_freeTextures.begin(); i != m_freeTextures.end(); ++i)
+		if (m_reuseTextures)
 		{
-			if (i->getWidth() == bitmapData->getWidth() && i->getHeight() == bitmapData->getHeight())
+			for (RefArray< render::ISimpleTexture >::iterator i = m_freeTextures.begin(); i != m_freeTextures.end(); ++i)
 			{
-				texture = *i;
-				m_freeTextures.erase(i);
-				break;
+				if (i->getWidth() == bitmapData->getWidth() && i->getHeight() == bitmapData->getHeight())
+				{
+					texture = *i;
+					m_freeTextures.erase(i);
+					break;
+				}
 			}
 		}
 
@@ -219,7 +224,13 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 
 void AccTextureCache::freeTexture(render::ISimpleTexture* texture)
 {
-	m_freeTextures.push_back(texture);
+	if (!texture)
+		return;
+
+	if (m_reuseTextures)
+		m_freeTextures.push_back(texture);
+	else
+		texture->destroy();
 }
 
 	}
