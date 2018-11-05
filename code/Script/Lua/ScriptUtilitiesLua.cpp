@@ -21,36 +21,37 @@ namespace traktor
 void dumpStack(lua_State* luaState, OutputStream& os, int32_t base)
 {
 	int32_t top = lua_gettop(luaState);
-	for (int32_t i = base; i <= top; ++i)
+	for (int32_t i = base + 1; i <= top; ++i)
 	{
-		int t = lua_type(luaState, i);
+		int32_t r = -1 - (top - i);
+		int32_t t = lua_type(luaState, i);
 		switch (t)
 		{
 		case LUA_TSTRING:
-			os << i << L".\tstring: \"" << mbstows(lua_tostring(luaState, i)) << L"\"" << Endl;
+			os << i << L" [" << r << L"] .\tstring: \"" << mbstows(lua_tostring(luaState, i)) << L"\"" << Endl;
 			break;
 
 		case LUA_TBOOLEAN:
-			os << i << L".\tboolean: " << (lua_toboolean(luaState, i) ? L"true" : L"false") << Endl;
+			os << i << L" [" << r << L"] .\tboolean: " << (lua_toboolean(luaState, i) ? L"true" : L"false") << Endl;
 			break;
 
 		case LUA_TNUMBER:
-			os << i << L".\tnumber: " << lua_tonumber(luaState, i) << Endl;
+			os << i << L" [" << r << L"] .\tnumber: " << lua_tonumber(luaState, i) << Endl;
 			break;
 
 		case LUA_TTABLE:
-			os << i << L".\ttable" << Endl;
+			os << i << L" [" << r << L"] .\ttable" << Endl;
 
 			lua_pushstring(luaState, "__name");
-			lua_rawget(luaState, -2);
+			lua_rawget(luaState, i);
 			if (lua_isstring(luaState, -1))
-				os << i << L"\t\t__name \"" << mbstows(lua_tostring(luaState, -1)) << L"\"" << Endl;
+				os << L"\t\t\t.__name \"" << mbstows(lua_tostring(luaState, -1)) << L"\"" << Endl;
 			lua_pop(luaState, 1);
 
 			break;
 
 		default:  /* other values */
-			os << i << L".\tother: " << mbstows(lua_typename(luaState, t)) << Endl;
+			os << i << L" [" << r << L"] .\tother: " << mbstows(lua_typename(luaState, t)) << Endl;
 			break;
 		}
 	}
