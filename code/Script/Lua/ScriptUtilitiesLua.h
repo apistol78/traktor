@@ -86,7 +86,7 @@ private:
 	int32_t m_top;
 };
 
-void dumpStack(lua_State* luaState, OutputStream& os, int32_t base = 1);
+void dumpStack(lua_State* luaState, OutputStream& os, int32_t base = 0);
 
 #if defined(_DEBUG)
 #	define DUMP_LUA_STACK(state) stackDump(state)

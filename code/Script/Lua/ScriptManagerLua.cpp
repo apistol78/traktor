@@ -68,6 +68,77 @@ ITypedObject* toTypedObject(lua_State* luaState, int32_t index)
 	return object;
 }
 
+void getObjectRef(lua_State* L, int32_t objectTableRef, ITypedObject* object)
+{
+	CHECK_LUA_STACK(L, 1);
+
+	/*
+	*/
+	lua_rawgeti(L, LUA_REGISTRYINDEX, objectTableRef);
+
+	/*
+	[-1] = table
+	*/
+	lua_pushinteger(L, lua_Integer(object));
+
+	/*
+	[-1] = index
+	[-2] = table
+	*/
+	lua_rawget(L, -2);
+
+	/*
+	[-1] = object
+	[-2] = table
+	*/
+	lua_remove(L, -2);
+
+	/*
+	[-1] = object
+	*/
+}
+
+void putObjectRef(lua_State* L, int32_t objectTableRef, ITypedObject* object)
+{
+	CHECK_LUA_STACK(L, 0);
+
+	/*
+	[-1] = object
+	*/
+	lua_rawgeti(L, LUA_REGISTRYINDEX, objectTableRef);
+
+	/*
+	[-2] = object
+	[-1] = table
+	*/
+	lua_pushinteger(L, lua_Integer(object));
+
+	/*
+	[-3] = object
+	[-2] = table
+	[-1] = index
+	*/
+	lua_pushvalue(L, -3);
+
+	/*
+	[-4] = object
+	[-3] = table
+	[-2] = index
+	[-1] = object
+	*/
+	lua_rawset(L, -3);
+
+	/*
+	[-2] = object
+	[-1] = table
+	*/
+	lua_pop(L, 1);
+
+	/*
+	[-1] = object
+	*/
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptManagerLua, IScriptManager)
@@ -130,6 +201,12 @@ ScriptManagerLua::ScriptManagerLua()
 		CHECK_LUA_STACK(m_luaState, 0);
 
 		lua_newtable(m_luaState);
+
+#if defined(_DEBUG)
+		lua_pushstring(m_luaState, "native instance ref table");
+		lua_setfield(m_luaState, -2, "__name");
+#endif
+
 		m_objectTableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_objectTableRef);
 
@@ -568,15 +645,11 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 		return;
 	}
 
-	// Have we already pushed this object before and it's still alive in script-land then reuse it.
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_objectTableRef);
-	lua_rawgeti(m_luaState, -1, int32_t(uint64_t(object)));
+	// Get cached script-land table of this instance.
+	getObjectRef(m_luaState, m_objectTableRef, object);
 	if (lua_istable(m_luaState, -1))
-	{
-		lua_remove(m_luaState, -2);
 		return;
-	}
-	lua_pop(m_luaState, 2);
+	lua_pop(m_luaState, 1);
 
 	// Get class index.
 	uint32_t classId = 0;
@@ -593,6 +666,11 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 	// Create table to act as object instance in script-land.
 	lua_newtable(m_luaState);
 
+#if defined(_DEBUG)
+	lua_pushstring(m_luaState, "native instance");
+	lua_setfield(m_luaState, -2, "__name");
+#endif
+
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef);
 	lua_setmetatable(m_luaState, -2);
 
@@ -602,11 +680,7 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 	T_SAFE_ADDREF(object);
 
 	// Store object instance in weak table.
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_objectTableRef);
-	lua_insert(m_luaState, -2);
-	lua_rawseti(m_luaState, -2, int32_t(uint64_t(object)));
-	lua_rawgeti(m_luaState, -1, int32_t(uint64_t(object)));
-	lua_remove(m_luaState, -2);
+	putObjectRef(m_luaState, m_objectTableRef, object);
 }
 
 void ScriptManagerLua::pushAny(const Any& any)
@@ -942,12 +1016,8 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 		T_SAFE_ANONYMOUS_ADDREF(object);
 
 		// Store object instance in weak table.
-		lua_rawgeti(luaState, LUA_REGISTRYINDEX, manager->m_objectTableRef);
-		lua_insert(luaState, -2);
-		lua_rawseti(luaState, -2, int32_t(uint64_t(object.ptr())));
-		lua_rawgeti(luaState, -1, int32_t(uint64_t(object.ptr())));
-		lua_remove(luaState, -2);
-		return 0;
+		putObjectRef(luaState, manager->m_objectTableRef, object);
+		return 1;
 	}
 #if T_VERIFY_USING_EXCEPTIONS
 	catch(const RuntimeException& x)
