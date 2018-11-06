@@ -388,7 +388,7 @@ bool miniDmpExceptionCallback(UINT nCode, LPVOID lpVal1, LPVOID lpVal2)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 {
 	// BugSplat crash reporting.
-    g_sender = new MiniDmpSender(L"doctorentertainment_01", L"gearup", L"1.0.0", NULL, MDSF_LOGFILE);
+    g_sender = new MiniDmpSender(L"doctorentertainment_01", L"gearup", L"1.0.1", NULL, MDSF_LOGFILE);
 	g_sender->setCallback(miniDmpExceptionCallback); 
 
 	// Our code begin here.
@@ -469,7 +469,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #endif
 
 	logSystemInfo();
-	logDriverVersion();
+	//logDriverVersion();
 
 	g_logTail = new LogTailTarget();
 
