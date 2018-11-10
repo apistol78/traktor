@@ -1,0 +1,97 @@
+/*
+================================================================================================
+CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
+Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
+================================================================================================
+*/
+#pragma once
+
+#include "Core/Ref.h"
+#include "Editor/IEditorPage.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SOUND_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace editor
+	{
+
+class IDocument;
+class IEditor;
+class IEditorPageSite;
+
+	}
+
+	namespace ui
+	{
+
+class EdgeConnectEvent;
+class EdgeDisconnectEvent;
+class GraphControl;
+class MouseButtonDownEvent;
+class Menu;
+class NodeActivateEvent;
+class NodeMovedEvent;
+class SelectEvent;
+class SelectionChangeEvent;
+class ToolBar;
+class ToolBarButtonClickEvent;
+
+	}
+
+	namespace sound
+	{
+
+class GraphAsset;
+
+class T_DLLCLASS GraphEditor : public editor::IEditorPage
+{
+	T_RTTI_CLASS;
+
+public:
+	GraphEditor(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
+
+	virtual bool create(ui::Container* parent) T_OVERRIDE T_FINAL;
+
+	virtual void destroy() T_OVERRIDE T_FINAL;
+
+	virtual bool dropInstance(db::Instance* instance, const ui::Point& position) T_OVERRIDE T_FINAL;
+
+	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
+
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) T_OVERRIDE T_FINAL;
+
+private:
+	editor::IEditor* m_editor;
+	editor::IEditorPageSite* m_site;
+	editor::IDocument* m_document;
+	Ref< GraphAsset > m_graphAsset;
+	Ref< ui::ToolBar > m_toolBarGraph;
+	Ref< ui::GraphControl > m_graph;
+	Ref< ui::Menu > m_menuPopup;
+
+	void updateView();
+
+	void eventToolBarGraphClick(ui::ToolBarButtonClickEvent* event);
+
+	void eventButtonDown(ui::MouseButtonDownEvent* event);
+
+	void eventNodeSelect(ui::SelectEvent* event);
+
+	void eventNodeMoved(ui::NodeMovedEvent* event);
+
+	void eventNodeActivated(ui::NodeActivateEvent* event);
+
+	void eventEdgeConnected(ui::EdgeConnectEvent* event);
+
+	void eventEdgeDisconnected(ui::EdgeDisconnectEvent* event);
+};
+
+	}
+}
