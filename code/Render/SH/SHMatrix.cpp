@@ -4,9 +4,9 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Render/SH/SHMatrix.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Render/SH/SHMatrix.h"
 
 namespace traktor
 {
@@ -32,7 +32,7 @@ void SHMatrix::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"rows", m_rows);
 	s >> Member< int32_t >(L"columns", m_columns);
-	s >> MemberStlVector< float >(L"elements", m_elements);
+	s >> MemberAlignedVector< float >(L"elements", m_elements);
 }
 
 	}

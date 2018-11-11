@@ -6,12 +6,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #pragma once
 
-#include "Core/Math/Matrix44.h"
-#include "Render/SH/SHMatrix.h"
+#include "Render/SH/SHFunction.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RENDER_EXPORT)
+#if defined(T_RENDER_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -19,15 +18,32 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+	namespace drawing
+	{
+
+class Image;
+
+	}
+
 	namespace render
 	{
 
-/*! \brief Generate rotation SH matrix.
- * \ingroup Render
- *
- * Generate SH rotation matrix from Cartesian rotation matrix.
+/*!
+ * \brief "Image based lighting" probe.
  */
-SHMatrix T_DLLCLASS generateRotationSHMatrix(const Matrix44& matrix, int order);
+class T_DLLCLASS IBLProbe : public SHFunction
+{
+	T_RTTI_CLASS;
+
+public:
+	IBLProbe(drawing::Image* image, const Vector4& modulate);
+
+	virtual float evaluate(float phi, float theta, const Vector4& unit) const T_OVERRIDE T_FINAL;
+
+private:
+	Ref< drawing::Image > m_image;
+	Vector4 m_modulate;
+};
 
 	}
 }

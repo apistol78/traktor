@@ -4,10 +4,10 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Render/SH/SHCoeffs.h"
 #include "Render/SH/SHMatrix.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberStl.h"
 
 namespace traktor
 {
@@ -52,7 +52,7 @@ float SHCoeffs::operator * (const SHCoeffs& coeffs) const
 
 void SHCoeffs::serialize(ISerializer& s)
 {
-	s >> MemberStlVector< float >(L"coefficients", m_coefficients);
+	s >> MemberAlignedVector< float >(L"coefficients", m_coefficients);
 }
 
 	}
