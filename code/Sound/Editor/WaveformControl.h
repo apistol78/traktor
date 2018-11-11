@@ -5,11 +5,17 @@
 
 namespace traktor
 {
+	namespace ui
+	{
+
+class Bitmap;
+
+	}
+
 	namespace sound
 	{
 	
 class ISoundBuffer;
-class ISoundBufferCursor;
 
 class WaveformControl : public ui::Widget
 {
@@ -22,7 +28,9 @@ public:
 
 private:
 	Ref< const ISoundBuffer > m_buffer;
-	Ref< ISoundBufferCursor > m_cursor;
+	Ref< ui::Bitmap > m_waveform;
+
+	void render(int32_t width, int32_t height, float start);
 
 	void eventPaint(ui::PaintEvent* event);
 };
