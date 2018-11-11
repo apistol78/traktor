@@ -4,18 +4,17 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#ifndef traktor_render_SHCoeffs_H
-#define traktor_render_SHCoeffs_H
+#pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -45,15 +44,13 @@ public:
 
 	float operator [] (uint32_t index) const { return m_coefficients[index]; }
 
-	const std::vector< float >& get() const { return m_coefficients; }
+	const AlignedVector< float >& get() const { return m_coefficients; }
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
 private:
-	std::vector< float > m_coefficients;
+	AlignedVector< float > m_coefficients;
 };
 
 	}
 }
-
-#endif	// traktor_render_SHCoeffs_H
