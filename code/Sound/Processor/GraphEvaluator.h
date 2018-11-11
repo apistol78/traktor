@@ -5,6 +5,14 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Timer/Timer.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SOUND_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace sound

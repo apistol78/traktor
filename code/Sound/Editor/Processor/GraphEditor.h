@@ -28,6 +28,13 @@ class IEditorPageSite;
 
 	}
 
+	namespace resource
+	{
+	
+class IResourceManager;
+
+	}
+
 	namespace ui
 	{
 
@@ -49,6 +56,9 @@ class ToolBarButtonClickEvent;
 	{
 
 class GraphAsset;
+class SoundChannel;
+class SoundSystem;
+class WaveformControl;
 
 class T_DLLCLASS GraphEditor : public editor::IEditorPage
 {
@@ -72,9 +82,13 @@ private:
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
 	Ref< GraphAsset > m_graphAsset;
+	Ref< WaveformControl > m_waveform;
 	Ref< ui::ToolBar > m_toolBarGraph;
 	Ref< ui::GraphControl > m_graph;
 	Ref< ui::Menu > m_menuPopup;
+	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< SoundSystem > m_soundSystem;
+	Ref< SoundChannel > m_soundChannel;
 
 	void updateView();
 

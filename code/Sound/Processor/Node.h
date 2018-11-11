@@ -29,7 +29,7 @@ class InputPin;
 class ISoundBufferCursor;
 class ISoundMixer;
 class OutputPin;
-class SoundBlock;
+struct SoundBlock;
 
 /*! \brief Node instance.
  */

@@ -24,7 +24,7 @@ const TypeInfoSet GraphEditorFactory::getEditableTypes() const
 
 bool GraphEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
-	return false;
+	return true;
 }
 
 Ref< editor::IEditorPage > GraphEditorFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const

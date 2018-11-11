@@ -4,25 +4,35 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
+#include "Resource/ResourceManager.h"
+#include "Sound/SoundChannel.h"
+#include "Sound/SoundFactory.h"
+#include "Sound/SoundSystem.h"
+#include "Sound/Editor/WaveformControl.h"
 #include "Sound/Editor/Processor/GraphAsset.h"
 #include "Sound/Editor/Processor/GraphEditor.h"
 #include "Sound/Processor/Edge.h"
 #include "Sound/Processor/Graph.h"
+#include "Sound/Processor/GraphBuffer.h"
 #include "Sound/Processor/InputPin.h"
 #include "Sound/Processor/Node.h"
 #include "Sound/Processor/OutputPin.h"
 #include "Sound/Processor/Nodes/Scalar.h"
 #include "Sound/Processor/Nodes/Output.h"
+#include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/Splitter.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Graph/DefaultNodeShape.h"
@@ -100,16 +110,24 @@ bool GraphEditor::create(ui::Container* parent)
 	m_toolBarGraph->addItem(new ui::ToolBarSeparator());
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_EVEN_VERTICALLY"), 4, ui::Command(L"Sound.Processor.Editor.EvenSpaceVertically")));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_EVEN_HORIZONTALLY"), 5, ui::Command(L"Sound.Processor.Editor.EventSpaceHorizontally")));
+	m_toolBarGraph->addItem(new ui::ToolBarSeparator());
+	m_toolBarGraph->addItem(new ui::ToolBarButton(L"Update waveform", 5, ui::Command(L"Sound.Processor.Editor.UpdateWaveform")));
 	m_toolBarGraph->addEventHandler< ui::ToolBarButtonClickEvent >(this, &GraphEditor::eventToolBarGraphClick);
 
+	Ref< ui::Splitter > splitter = new ui::Splitter();
+	splitter->create(container, false, -ui::dpi96(100));
+
 	m_graph = new ui::GraphControl();
-	m_graph->create(container);
+	m_graph->create(splitter);
 	m_graph->addEventHandler< ui::MouseButtonDownEvent >(this, &GraphEditor::eventButtonDown);
 	m_graph->addEventHandler< ui::SelectEvent >(this, &GraphEditor::eventNodeSelect);
 	m_graph->addEventHandler< ui::NodeMovedEvent >(this, &GraphEditor::eventNodeMoved);
 	m_graph->addEventHandler< ui::NodeActivateEvent >(this, &GraphEditor::eventNodeActivated);
 	m_graph->addEventHandler< ui::EdgeConnectEvent >(this, &GraphEditor::eventEdgeConnected);
 	m_graph->addEventHandler< ui::EdgeDisconnectEvent >(this, &GraphEditor::eventEdgeDisconnected);
+
+	m_waveform = new WaveformControl();
+	m_waveform->create(splitter);
 
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();
@@ -132,12 +150,36 @@ bool GraphEditor::create(ui::Container* parent)
 	m_menuPopup->add(menuItemCreate);
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SOUND_PROCESSOR_EDITOR_DELETE_NODE")));
 
+	// Get sound system for preview.
+	m_soundSystem = m_editor->getStoreObject< SoundSystem >(L"SoundSystem");
+	if (m_soundSystem)
+	{
+		m_soundChannel = m_soundSystem->getChannel(0);
+		if (!m_soundChannel)
+			m_soundSystem = 0;
+	}
+	if (!m_soundSystem)
+		log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
+
+	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), true);
+	m_resourceManager->addFactory(new SoundFactory());
+
 	updateView();
 	return true;
 }
 
 void GraphEditor::destroy()
 {
+	if (m_soundChannel)
+	{
+		m_soundChannel->stop();
+		m_soundChannel = 0;
+	}
+
+	if (m_resourceManager)
+		m_resourceManager = 0;
+
+	m_soundSystem = 0;
 }
 
 bool GraphEditor::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -214,6 +256,19 @@ bool GraphEditor::handleCommand(const ui::Command& command)
 		m_document->push();
 		m_graph->evenSpace(ui::GraphControl::EsHorizontally);
 		m_graph->update();
+	}
+	else if (command == L"Sound.Processor.Editor.UpdateWaveform")
+	{
+		Ref< Graph > graph = DeepClone(m_graphAsset->getGraph()).create< Graph >();
+
+		for (auto node : graph->getNodes())
+		{
+			if (!node->bind(m_resourceManager))
+				return false;
+		}
+
+		Ref< GraphBuffer > graphBuffer = new GraphBuffer(graph);
+		m_waveform->setBuffer(graphBuffer);
 	}
 	else
 		return false;
