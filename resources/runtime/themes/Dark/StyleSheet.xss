@@ -32,6 +32,11 @@
 			<element>border-color</element>
 			<color>160, 160, 160, 255</color>
 		</item>
+		<item>
+			<type>traktor.ui.Widget</type>
+			<element>border-color-disabled</element>
+			<color>140, 140, 140, 255</color>
+		</item>
 
 		<!-- DropDown -->
 		<item>
