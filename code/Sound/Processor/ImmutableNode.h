@@ -14,7 +14,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_SOUND_EDITOR_EXPORT)
+#if defined(T_SOUND_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
