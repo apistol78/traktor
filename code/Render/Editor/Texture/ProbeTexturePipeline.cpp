@@ -4,6 +4,9 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include <cstring>
+#include <cmft/image.h>
+#include <cmft/cubemapfilter.h>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -14,6 +17,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Drawing/Image.h"
+#include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
@@ -98,8 +102,8 @@ bool ProbeTexturePipeline::buildOutput(
 		return false;
 	}
 
-	Ref< drawing::Image > image = drawing::Image::load(file, asset->getFileName().getExtension());
-	if (!image)
+	Ref< drawing::Image > assetImage = drawing::Image::load(file, asset->getFileName().getExtension());
+	if (!assetImage)
 	{
 		log::error << L"Probe texture asset pipeline failed; unable to load source image \"" << asset->getFileName().getOriginal() << L"\"" << Endl;
 		return false;
@@ -107,69 +111,81 @@ bool ProbeTexturePipeline::buildOutput(
 
 	file->close();
 
-	// Ensure source image has high dynamic range.
-	image->convert(drawing::PixelFormat::getARGBF32());
+	// Scale asset image if required.
+	drawing::ScaleFilter scaleFilter(
+		assetImage->getWidth() / 4,
+		assetImage->getHeight() / 4,
+		drawing::ScaleFilter::MnAverage,
+		drawing::ScaleFilter::MgLinear
+	);
+	assetImage->apply(&scaleFilter);
 
-	Ref< const CubeMap > cubeInput = new CubeMap(image);
-	Ref< CubeMap > cubeOutput = new CubeMap(cubeInput->getSize(), drawing::PixelFormat::getARGBF32());
+	// Convert image into 32-bit float point format.
+	assetImage->convert(drawing::PixelFormat::getRGBAF32());
+	assetImage->clearAlpha(0.0f);
 
-	// Calculate filter radius in pixel space.
-	int32_t filterRadius = int32_t(std::sin(asset->m_filterAngle) * cubeInput->getSize());
-	if (filterRadius <= 0)
-		filterRadius = 1;
-	else if (filterRadius > m_maxFilterRadius)
-		filterRadius = m_maxFilterRadius;
+	log::info << L"Probe image loaded successfully; size " << assetImage->getWidth() << L" * " << assetImage->getHeight() << Endl;
 
-	log::info << L"Probe filter radius " << filterRadius << L" pixel(s)." << Endl;
+	// Convert into cmft image.
+	cmft::Image tmp;
+	tmp.m_width    = (uint16_t)assetImage->getWidth();
+	tmp.m_height   = (uint16_t)assetImage->getHeight();
+	tmp.m_dataSize = assetImage->getDataSize();
+	tmp.m_format   = cmft::TextureFormat::RGBA32F;
+	tmp.m_numMips  = 1;
+	tmp.m_numFaces = 1;
+	tmp.m_data     = assetImage->getData();
 
-	// Create output probe by filtering input.
-	Random random;
-	for (int32_t side = 0; side < 6; ++side)
+	cmft::Image image;
+	cmft::imageCopy(image, tmp);
+
+	if (cmft::imageIsCubeCross(image, true))
+		cmft::imageCubemapFromCross(image);
+	else if (cmft::imageIsLatLong(image))
+		imageCubemapFromLatLong(image);
+	else if (cmft::imageIsHStrip(image))
+		cmft::imageCubemapFromStrip(image);
+	else if (cmft::imageIsVStrip(image))
+		cmft::imageCubemapFromStrip(image);
+	else if (cmft::imageIsOctant(image))
+		cmft::imageCubemapFromOctant(image);
+	else
 	{
-		for (int32_t y = 0; y < cubeInput->getSize(); ++y)
-		{
-			for (int32_t x = 0; x < cubeInput->getSize(); ++x)
-			{
-				Color4f accum(0.0f, 0.0f, 0.0f, 0.0f);
-				float accumWeight = 0.0f;
-
-				for (int32_t dky = -filterRadius; dky <= filterRadius; ++dky)
-				{
-					float fdky = dky / float(filterRadius);
-					for (int32_t dkx = -filterRadius; dkx <= filterRadius; ++dkx)
-					{
-						float fdkx = dkx / float(filterRadius);
-						float f = 1.0f - std::sqrt(fdkx * fdkx + fdky * fdky);
-						if (f <= 0.0f)
-							continue;
-
-						Vector4 d = cubeInput->getDirection(side, x + dkx, y + dky);
-
-						int32_t sampleSide, sampleX, sampleY;
-						cubeInput->getPosition(d, sampleSide, sampleX, sampleY);
-
-						Color4f sample;
-						cubeInput->getSide(sampleSide)->getPixelUnsafe(sampleX, sampleY, sample);
-
-						accum += sample * Scalar(f);
-						accumWeight += f;
-					}
-				}
-				accum /= Scalar(accumWeight);
-
-				cubeOutput->getSide(side)->setPixelUnsafe(x, y, accum);
-			}
-		}
-	}
-
-	// Create cubemap from output probe.
-	Ref< drawing::Image > cross = cubeOutput->createCrossImage();
-	if (!cross)
-	{
-		log::error << L"Probe texture asset pipeline failed; unable to create cross image." << Endl;
+		log::error << L"Probe texture asset pipeline failed; Image is not cubemap(6 faces), cubecross(ratio 3:4 or 4:3), latlong(ratio 2:1), hstrip(ratio 6:1), vstrip(ration 1:6)" << Endl;
 		return false;
 	}
 
+	// Execute conversion filter.
+	cmft::imageRadianceFilter(
+		image,
+		0,
+		(cmft::LightingModel::Enum)0, // inputParameters.m_lightingModel,
+		false, //(bool)inputParameters.m_excludeBase,
+		1, //(uint8_t)inputParameters.m_mipCount,
+		4, //(uint8_t)inputParameters.m_glossScale,	// smaller == blurry, 20 pretty sharp
+		1, //(uint8_t)inputParameters.m_glossBias,
+		(cmft::EdgeFixup::Enum)0, //inputParameters.m_edgeFixup,
+		255, // (int8_t)inputParameters.m_numCpuProcessingThreads,
+		nullptr // clContext
+	);
+
+	log::info << L"Probe filter complete" << Endl;
+
+	// Convert back into cross image.
+	cmft::imageCrossFromCubemap(image);
+
+	// Create output image.
+	Ref< drawing::Image > outputImage = new drawing::Image(drawing::PixelFormat::getRGBAF32(), image.m_width, image.m_height);
+	std::memcpy(outputImage->getData(), image.m_data, outputImage->getDataSize());
+
+	Ref< drawing::Image > debugImage = outputImage->clone();
+	debugImage->convert(drawing::PixelFormat::getR8G8B8A8());
+	debugImage->save(L"Probe.png");
+
+	// Cleanup.
+	cmft::imageUnload(image);
+
+	// Build runtime texture cube map.
 	output = new TextureOutput();
 	output->m_textureFormat = TfInvalid;
 	output->m_generateMips = true;
@@ -183,7 +199,7 @@ bool ProbeTexturePipeline::buildOutput(
 		output,
 		outputPath,
 		outputGuid,
-		cross
+		outputImage
 	);
 }
 
