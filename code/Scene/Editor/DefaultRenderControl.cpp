@@ -13,6 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "I18N/Text.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/CameraRenderControl.h"
+#include "Scene/Editor/CubicRenderControl.h"
 #include "Scene/Editor/DebugRenderControl.h"
 #include "Scene/Editor/DefaultRenderControl.h"
 #include "Scene/Editor/OrthogonalRenderControl.h"
@@ -94,6 +95,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_RIGHT"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_DEBUG"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_CAMERA"));
+	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_CUBIC"));
 	m_toolView->select(viewType);
 
 	m_toolToggleGrid = new ui::ToolBarButton(
@@ -365,6 +367,15 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	case 8:	// Camera
 		{
 			Ref< CameraRenderControl > renderControl = new CameraRenderControl();
+			if (!renderControl->create(m_container, m_context))
+				return false;
+			m_renderControl = renderControl;
+		}
+		break;
+
+	case 9:	// Cubic
+		{
+			Ref< CubicRenderControl > renderControl = new CubicRenderControl();
 			if (!renderControl->create(m_container, m_context))
 				return false;
 			m_renderControl = renderControl;

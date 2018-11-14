@@ -238,7 +238,17 @@ bool RenderTargetSetOpenGL::isContentValid() const
 
 bool RenderTargetSetOpenGL::read(int index, void* buffer) const
 {
-	return false;
+	GLenum internalFormat;
+	GLint format;
+	GLenum type;
+
+	if (!convertTargetFormat(m_desc.targets[index].format, internalFormat, format, type))
+		return false;
+
+	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_targetFBO));
+	T_OGL_SAFE(glReadBuffer((GLenum)GL_COLOR_ATTACHMENT0_EXT + index));
+	T_OGL_SAFE(glReadPixels(0, 0, m_desc.width, m_desc.height, GL_RGBA, GL_FLOAT, (GLvoid*)buffer));
+	return true;
 }
 
 bool RenderTargetSetOpenGL::bind(ContextOpenGL* renderContext, GLuint primaryDepthBuffer)

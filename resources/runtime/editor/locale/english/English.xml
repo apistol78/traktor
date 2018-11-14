@@ -2478,6 +2478,10 @@
       <second>Camera</second>
     </item>
     <item>
+        <first>SCENE_EDITOR_VIEW_CUBIC</first>
+        <second>Cube</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_VIEW_DEBUG</first>
       <second>Debug</second>
     </item>
