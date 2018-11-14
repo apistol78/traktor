@@ -92,17 +92,16 @@ bool CubeTextureOpenGL::create(const CubeTextureCreateDesc& desc)
 	}
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
+	T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+	T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
+
+	T_OGL_SAFE(glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+	T_OGL_SAFE(glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 
 	m_data.reset(new uint8_t [m_side * m_side * m_pixelSize]);
 
 	if (desc.immutable)
 	{
-		T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-		T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
-
-		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-
 		for (int face = 0; face < 6; ++face)
 		{
 			for (int i = 0; i < desc.mipCount; ++i)
@@ -182,6 +181,20 @@ bool CubeTextureOpenGL::lock(int side, int level, Lock& lock)
 
 void CubeTextureOpenGL::unlock(int side, int level)
 {
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
+	T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+	T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
+	T_OGL_SAFE(glTexImage2D(
+		c_cubeFaces[side],
+		level,
+		m_components,
+		m_side >> level,
+		m_side >> level,
+		0,
+		m_format,
+		m_type,
+		m_data.c_ptr()
+	));
 }
 
 void CubeTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
