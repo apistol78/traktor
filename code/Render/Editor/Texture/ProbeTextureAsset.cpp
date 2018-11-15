@@ -16,10 +16,12 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ProbeTextureAsset", 0, ProbeTextureAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ProbeTextureAsset", 1, ProbeTextureAsset, editor::Asset)
 
 ProbeTextureAsset::ProbeTextureAsset()
-:	m_filterAngle(deg2rad(20.0f))
+:	m_glossScale(10)
+,	m_glossBias(1)
+,	m_sizeDivisor(1)
 {
 }
 
@@ -27,7 +29,17 @@ void ProbeTextureAsset::serialize(ISerializer& s)
 {
 	editor::Asset::serialize(s);
 
-	s >> Member< float >(L"filterAngle", m_filterAngle, AttributeAngles() | AttributeRange(0.0f, HALF_PI));
+	if (s.getVersion< ProbeTextureAsset >() >= 1)
+	{
+		s >> Member< int32_t >(L"glossScale", m_glossScale);
+		s >> Member< int32_t >(L"glossBias", m_glossBias);
+		s >> Member< int32_t >(L"sizeDivisor", m_sizeDivisor);
+	}
+	else
+	{
+		float filterAngle;
+		s >> Member< float >(L"filterAngle", filterAngle);
+	}
 }
 
 	}
