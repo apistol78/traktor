@@ -151,8 +151,8 @@ bool WorldRendererDeferred::create(
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
 		rtscd.multiSample = desc.multiSample;
-		rtscd.createDepthStencil = false;
-		rtscd.usingPrimaryDepthStencil = true;
+		rtscd.createDepthStencil = !desc.usePrimaryDepth;
+		rtscd.usingPrimaryDepthStencil = desc.usePrimaryDepth;
 		rtscd.preferTiled = true;
 #if !defined(__PS3__)
 		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
@@ -196,8 +196,8 @@ bool WorldRendererDeferred::create(
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
 		rtscd.multiSample = 0;
-		rtscd.createDepthStencil = false;
-		rtscd.usingPrimaryDepthStencil = true;
+		rtscd.createDepthStencil = !desc.usePrimaryDepth;
+		rtscd.usingPrimaryDepthStencil = desc.usePrimaryDepth;
 		rtscd.preferTiled = true;
 		rtscd.targets[0].format = render::TfR16G16F;
 
@@ -670,8 +670,8 @@ bool WorldRendererDeferred::create(
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
 		rtscd.multiSample = desc.multiSample;
-		rtscd.createDepthStencil = false;
-		rtscd.usingPrimaryDepthStencil = true;
+		rtscd.createDepthStencil = !desc.usePrimaryDepth;
+		rtscd.usingPrimaryDepthStencil = desc.usePrimaryDepth;
 		rtscd.preferTiled = true;
 		rtscd.targets[0].format = render::TfR11G11B10F;
 
@@ -1469,7 +1469,7 @@ void WorldRendererDeferred::buildLightWithShadows(WorldRenderView& worldRenderVi
 		f.lights[i] = light;
 
 		if (
-			(light.type == LtDirectional || light.type == LtSpot) &&
+			(light.type == LtDirectional || light.type == LtSpot || light.type == LtProbe) &&
 			light.castShadow &&
 			i < MaxLightShadowCount
 		)

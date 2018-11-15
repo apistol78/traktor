@@ -122,8 +122,8 @@ bool WorldRendererForward::create(
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
 		rtscd.multiSample = desc.multiSample;
-		rtscd.createDepthStencil = false;
-		rtscd.usingPrimaryDepthStencil = true;
+		rtscd.createDepthStencil = !desc.usePrimaryDepth;
+		rtscd.usingPrimaryDepthStencil = desc.usePrimaryDepth;
 		rtscd.preferTiled = true;
 		rtscd.targets[0].format = render::TfR16F;
 
@@ -463,8 +463,8 @@ bool WorldRendererForward::create(
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
 		rtscd.multiSample = desc.multiSample;
-		rtscd.createDepthStencil = false;
-		rtscd.usingPrimaryDepthStencil = true;
+		rtscd.createDepthStencil = !desc.usePrimaryDepth;
+		rtscd.usingPrimaryDepthStencil = desc.usePrimaryDepth;
 		rtscd.preferTiled = true;
 
 		if (m_settings.linearLighting || (m_visualImageProcess && m_visualImageProcess->requireHighRange()))

@@ -367,6 +367,9 @@ void LightRendererDeferred::renderLight(
 	}
 	else if (light.type == LtProbe)
 	{
+		Vector4 lightDirectionAndRange = view * light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
+
+		m_lightProbeShader->setCombination(s_handleShadowEnable, shadowMask != 0);
 		m_lightProbeShader->setCombination(s_handleProbeDiffuseEnable, light.probeDiffuse != 0);
 		m_lightProbeShader->setCombination(s_handleProbeSpecularEnable, light.probeSpecular != 0);
 
@@ -381,6 +384,9 @@ void LightRendererDeferred::renderLight(
 		m_lightProbeShader->setTextureParameter(s_handleNormalMap, normalMap);
 		m_lightProbeShader->setTextureParameter(s_handleMiscMap, miscMap);
 		m_lightProbeShader->setTextureParameter(s_handleColorMap, colorMap);
+		m_lightProbeShader->setVectorParameter(s_handleLightDirectionAndRange, lightDirectionAndRange);
+		m_lightProbeShader->setVectorParameter(s_handleLightSunColor, sunColorAndIntensity);
+		m_lightProbeShader->setVectorParameter(s_handleLightShadowColor, light.shadowColor);
 
 		m_lightProbeShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 	}

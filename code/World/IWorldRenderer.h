@@ -74,6 +74,7 @@ struct WorldCreateDesc
 	uint32_t frameCount;
 	float gamma;
 	bool allTargetsPersistent;
+	bool usePrimaryDepth;	//!< Allow intermediate targets use primary depth, only valid for fullscreen applications.
 
 	WorldCreateDesc()
 	:	worldRenderSettings(0)
@@ -91,6 +92,7 @@ struct WorldCreateDesc
 	,	frameCount(0)
 	,	gamma(2.2f)
 	,	allTargetsPersistent(false)
+	,	usePrimaryDepth(true)
 	{
 	}
 };
