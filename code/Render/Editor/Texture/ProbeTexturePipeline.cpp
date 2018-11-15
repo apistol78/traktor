@@ -21,7 +21,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Render/Editor/Texture/CubeMap.h"
 #include "Render/Editor/Texture/ProbeTextureAsset.h"
 #include "Render/Editor/Texture/ProbeTexturePipeline.h"
 #include "Render/Editor/Texture/TextureOutput.h"
@@ -112,13 +111,16 @@ bool ProbeTexturePipeline::buildOutput(
 	file->close();
 
 	// Scale asset image if required.
-	drawing::ScaleFilter scaleFilter(
-		assetImage->getWidth() / 4,
-		assetImage->getHeight() / 4,
-		drawing::ScaleFilter::MnAverage,
-		drawing::ScaleFilter::MgLinear
-	);
-	assetImage->apply(&scaleFilter);
+	if (asset->m_sizeDivisor > 1)
+	{
+		drawing::ScaleFilter scaleFilter(
+			assetImage->getWidth() / asset->m_sizeDivisor,
+			assetImage->getHeight() / asset->m_sizeDivisor,
+			drawing::ScaleFilter::MnAverage,
+			drawing::ScaleFilter::MgLinear
+		);
+		assetImage->apply(&scaleFilter);
+	}
 
 	// Convert image into 32-bit float point format.
 	assetImage->convert(drawing::PixelFormat::getRGBAF32());
@@ -162,8 +164,8 @@ bool ProbeTexturePipeline::buildOutput(
 		(cmft::LightingModel::Enum)0, // inputParameters.m_lightingModel,
 		false, //(bool)inputParameters.m_excludeBase,
 		1, //(uint8_t)inputParameters.m_mipCount,
-		4, //(uint8_t)inputParameters.m_glossScale,	// smaller == blurry, 20 pretty sharp
-		1, //(uint8_t)inputParameters.m_glossBias,
+		asset->m_glossScale, //(uint8_t)inputParameters.m_glossScale,	// smaller == blurry, 20 pretty sharp
+		asset->m_glossBias, //(uint8_t)inputParameters.m_glossBias,
 		(cmft::EdgeFixup::Enum)0, //inputParameters.m_edgeFixup,
 		255, // (int8_t)inputParameters.m_numCpuProcessingThreads,
 		nullptr // clContext
@@ -177,10 +179,6 @@ bool ProbeTexturePipeline::buildOutput(
 	// Create output image.
 	Ref< drawing::Image > outputImage = new drawing::Image(drawing::PixelFormat::getRGBAF32(), image.m_width, image.m_height);
 	std::memcpy(outputImage->getData(), image.m_data, outputImage->getDataSize());
-
-	Ref< drawing::Image > debugImage = outputImage->clone();
-	debugImage->convert(drawing::PixelFormat::getR8G8B8A8());
-	debugImage->save(L"Probe.png");
 
 	// Cleanup.
 	cmft::imageUnload(image);

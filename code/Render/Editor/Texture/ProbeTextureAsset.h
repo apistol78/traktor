@@ -34,9 +34,10 @@ public:
 
 private:
 	friend class ProbeTexturePipeline;
-	friend class ProbeTextureAssetEditor;
 
-	float m_filterAngle;
+	int32_t m_glossScale;
+	int32_t m_glossBias;
+	int32_t m_sizeDivisor;
 };
 
 	}
