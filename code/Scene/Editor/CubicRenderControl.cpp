@@ -48,10 +48,12 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Scene/Editor/Events/FrameEvent.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
-#include "Ui/FloodLayout.h"
+#include "Ui/TableLayout.h"
 #include "Ui/Widget.h"
-#include "Ui/AspectLayout.h"
 #include "Ui/Itf/IWidget.h"
+#include "Ui/ToolBar/ToolBar.h"
+#include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "World/Entity.h"
 #include "World/IEntityEventManager.h"
 #include "World/IWorldRenderer.h"
@@ -141,11 +143,19 @@ bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	m_containerAspect = new ui::Container();
-	m_containerAspect->create(parent, ui::WsNone, new ui::FloodLayout());
+	m_container = new ui::Container();
+	if (!m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+		return false;
+
+	m_toolBar = new ui::ToolBar();
+	if (!m_toolBar->create(m_container))
+		return false;
+
+	m_toolBar->addItem(new ui::ToolBarButton(L"Save cubemap...", ui::Command(L"Scene.Editor.SaveCubeMap"), ui::ToolBarButton::BsText));
+	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &CubicRenderControl::eventToolClick);
 
 	m_renderWidget = new ui::Widget();
-	if (!m_renderWidget->create(m_containerAspect))
+	if (!m_renderWidget->create(m_container))
 		return false;
 
 	render::RenderViewEmbeddedDesc desc;
@@ -234,7 +244,7 @@ void CubicRenderControl::destroy()
 {
 	safeDestroy(m_worldRenderer);
 	safeClose(m_renderView);
-	safeDestroy(m_containerAspect);
+	safeDestroy(m_container);
 }
 
 void CubicRenderControl::updateWorldRenderer()
@@ -246,6 +256,10 @@ void CubicRenderControl::updateWorldRenderer()
 		return;
 
 	m_worldRenderSettings = *sceneInstance->getWorldRenderSettings();
+
+	// Remove all post processing.
+	for (int32_t i = 0; i < sizeof_array(m_worldRenderSettings.imageProcess); ++i)
+		m_worldRenderSettings.imageProcess[i] = resource::Id< render::ImageProcessSettings >();
 
 	// Create entity renderers.
 	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
@@ -264,7 +278,8 @@ void CubicRenderControl::updateWorldRenderer()
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
+	// \note Not able to use deferred renderer atm, cannot render properly as we cannot share depth targets between render target sets.
+	std::wstring worldRendererTypeName = L"traktor.world.WorldRendererForward"; //settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
 	
 	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
 	if (!worldRendererType)
@@ -288,6 +303,7 @@ void CubicRenderControl::updateWorldRenderer()
 	wcd.multiSample = 0;
 	wcd.frameCount = 1;
 	wcd.allTargetsPersistent = true;
+	wcd.usePrimaryDepth = false;
 
 	if (worldRenderer->create(
 		m_context->getResourceManager(),
@@ -302,12 +318,6 @@ void CubicRenderControl::updateWorldRenderer()
 
 void CubicRenderControl::setAspect(float aspect)
 {
-	if (aspect > 0.0f)
-		m_containerAspect->setLayout(new ui::AspectLayout(aspect));
-	else
-		m_containerAspect->setLayout(new ui::FloodLayout());
-
-	m_containerAspect->update();
 }
 
 void CubicRenderControl::setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
@@ -323,7 +333,17 @@ void CubicRenderControl::setQuality(world::Quality imageProcessQuality, world::Q
 
 bool CubicRenderControl::handleCommand(const ui::Command& command)
 {
-	return false;
+	if (command == L"Scene.Editor.SaveCubeMap")
+	{
+		Ref< drawing::Image > cm = new drawing::Image(drawing::PixelFormat::getRGBAF32(), 6 * 1024, 1024);
+		for (int32_t i = 0; i < 6; ++i)
+			cm->copy(m_cubeImages[i], i * 1024, 0, 0, 0, 1024, 1024);
+		cm->save(L"Cube.png");
+	}
+	else
+		return false;
+
+	return true;
 }
 
 void CubicRenderControl::update()
@@ -352,6 +372,11 @@ void CubicRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDel
 
 void CubicRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
+}
+
+void CubicRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
+{
+	handleCommand(event->getCommand());
 }
 
 void CubicRenderControl::eventButtonDown(ui::MouseButtonDownEvent* event)
@@ -393,11 +418,11 @@ void CubicRenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 
 	ui::Rect innerRect = m_renderWidget->getInnerRect();
 	Vector2 screenPosition(2.0f * float(mousePosition.x) / innerRect.getWidth() - 1.0f, 1.0f - 2.0f * float(mousePosition.y) / innerRect.getHeight());
-	Vector4 clipDelta = mouseDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f);
+	Vector4 clipDelta = mouseDelta * Vector4(2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f);
 
 	m_previewOrientation *=
-		Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f) * clipDelta.x()) *
-		Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f) * clipDelta.y());
+		Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f) * clipDelta.y()) *
+		Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f) * clipDelta.x());
 
 	m_mousePosition = mousePosition;
 }
@@ -442,7 +467,7 @@ void CubicRenderControl::eventPaint(ui::PaintEvent* event)
 	// Get pivot point from selection set.
 	RefArray< EntityAdapter > selectedEntities;
 	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly) > 0)
-		pivot = selectedEntities.front()->getTransform().translation().xyz1();
+		pivot = selectedEntities.front()->getTransform().inverse().translation().xyz1();
 
 	// Create world render view.
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();

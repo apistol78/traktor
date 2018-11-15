@@ -44,6 +44,9 @@ class VertexBuffer;
 	{
 
 class Container;
+class ToolBar;
+class ToolBarButton;
+class ToolBarButtonClickEvent;
 class Widget;
 
 	}
@@ -94,7 +97,8 @@ public:
 
 private:
 	Ref< SceneEditorContext > m_context;
-	Ref< ui::Container > m_containerAspect;
+	Ref< ui::Container > m_container;
+	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_renderTargetSet;
@@ -118,6 +122,8 @@ private:
 	Quaternion m_previewOrientation;
 	Timer m_timer;
 	ui::Size m_dirtySize;
+
+	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
 
