@@ -145,35 +145,37 @@ void QuadSplitter::update(const Rect* rc, bool immediate)
 	Ref< Widget > widgets[4];
 	getWidgets(widgets);
 
+	const int32_t splitterSize = dpi96(c_splitterSize);
+
 	Rect widgetRects[] =
 	{
 		Rect(
-			innerRect.left + splitterPosition.x + c_splitterSize / 2,
+			innerRect.left + splitterPosition.x + splitterSize / 2,
 			innerRect.top,
 			innerRect.right,
-			innerRect.top + splitterPosition.y - c_splitterSize / 2
+			innerRect.top + splitterPosition.y - splitterSize / 2
 		),
 		Rect(
 			innerRect.left,
 			innerRect.top,
-			innerRect.left + splitterPosition.x - c_splitterSize / 2,
-			innerRect.top + splitterPosition.y - c_splitterSize / 2
+			innerRect.left + splitterPosition.x - splitterSize / 2,
+			innerRect.top + splitterPosition.y - splitterSize / 2
 		),
 		Rect(
 			innerRect.left,
-			innerRect.top + splitterPosition.y + c_splitterSize / 2,
-			innerRect.left + splitterPosition.x - c_splitterSize / 2,
+			innerRect.top + splitterPosition.y + splitterSize / 2,
+			innerRect.left + splitterPosition.x - splitterSize / 2,
 			innerRect.bottom
 		),
 		Rect(
-			innerRect.left + splitterPosition.x + c_splitterSize / 2,
-			innerRect.top + splitterPosition.y + c_splitterSize / 2,
+			innerRect.left + splitterPosition.x + splitterSize / 2,
+			innerRect.top + splitterPosition.y + splitterSize / 2,
 			innerRect.right,
 			innerRect.bottom
 		)
 	};
 
-	for (int i = 0; i < 4; ++i)
+	for (int32_t i = 0; i < 4; ++i)
 	{
 		if (!widgets[i])
 			continue;
@@ -289,8 +291,10 @@ void QuadSplitter::eventMouseMove(MouseMoveEvent* event)
 	}
 	else
 	{
-		bool rangeX = traktor::abs(mousePosition.x - splitterPosition.x) <= c_splitterSize / 2;
-		bool rangeY = traktor::abs(mousePosition.y - splitterPosition.y) <= c_splitterSize / 2;
+		const int32_t splitterSize = dpi96(c_splitterSize);
+
+		bool rangeX = traktor::abs(mousePosition.x - splitterPosition.x) <= splitterSize / 2;
+		bool rangeY = traktor::abs(mousePosition.y - splitterPosition.y) <= splitterSize / 2;
 
 		if (rangeX || rangeY)
 		{
@@ -316,8 +320,10 @@ void QuadSplitter::eventButtonDown(MouseButtonDownEvent* event)
 	Point mousePosition = event->getPosition();
 	Point splitterPosition = getAbsolutePosition();
 
-	bool rangeX = traktor::abs(mousePosition.x - splitterPosition.x) <= c_splitterSize / 2;
-	bool rangeY = traktor::abs(mousePosition.y - splitterPosition.y) <= c_splitterSize / 2;
+	const int32_t splitterSize = dpi96(c_splitterSize);
+
+	bool rangeX = traktor::abs(mousePosition.x - splitterPosition.x) <= splitterSize / 2;
+	bool rangeY = traktor::abs(mousePosition.y - splitterPosition.y) <= splitterSize / 2;
 
 	if (rangeX || rangeY)
 	{
