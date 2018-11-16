@@ -7,7 +7,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #if !defined(_WIN32)
 #	include <cassert>
 #endif
-#if defined(__APPLE__)
+#if defined(__LINUX__)
+#	include <signal.h>
+#elif defined(__APPLE__)
 #	include <stdbool.h>
 #	include <sys/types.h>
 #	include <unistd.h>
@@ -33,6 +35,8 @@ void Debugger::assertionFailed(const char* const expression, const char* const f
 
 #if defined(_WIN32)
 	__debugbreak();
+#elif defined(__LINUX__)
+	raise(SIGTRAP);
 #else
 	// Fall back on assert macro
 	assert (0);
