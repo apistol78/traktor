@@ -128,11 +128,11 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_asset)
 		return false;
 
-	parent->addEventHandler< ui::TimerEvent >(this, &BankAssetEditor::eventTimer);
-	parent->startTimer(30);
-
 	Ref< ui::Splitter > splitter = new ui::Splitter();
 	splitter->create(parent, true, ui::dpi96(180));
+
+	splitter->addEventHandler< ui::TimerEvent >(this, &BankAssetEditor::eventTimer);
+	splitter->startTimer(30);
 
 	Ref< ui::Splitter > splitterLeftH = new ui::Splitter();
 	splitterLeftH->create(splitter, false, ui::dpi96(-150));
