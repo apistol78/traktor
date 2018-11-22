@@ -17,6 +17,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace cmft
+{
+
+struct ClContext;
+
+}
+
 namespace traktor
 {
 	namespace render
@@ -30,6 +37,8 @@ public:
 	ProbeTexturePipeline();
 
 	virtual bool create(const editor::IPipelineSettings* settings) T_OVERRIDE T_FINAL;
+
+	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	virtual TypeInfoSet getAssetTypes() const T_OVERRIDE T_FINAL;
 
@@ -56,7 +65,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
-	int32_t m_maxFilterRadius;
+    cmft::ClContext* m_clContext;
 };
 
 	}

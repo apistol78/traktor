@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <cstring>
 #include <cmft/image.h>
 #include <cmft/cubemapfilter.h>
+#include <cmft/clcontext.h>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -46,15 +47,39 @@ Vector4 randomCone(Random& r, const Vector4& direction, float coneAngle)
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProbeTexturePipeline", 1, ProbeTexturePipeline, editor::DefaultPipeline)
 
 ProbeTexturePipeline::ProbeTexturePipeline()
-:	m_maxFilterRadius(16)
+:	m_clContext(nullptr)
 {
 }
 
 bool ProbeTexturePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	m_maxFilterRadius = settings->getProperty< int32_t >(L"ProbeTexturePipeline.MaxFilterRadius", 16);
+
+	int32_t clLoaded = cmft::clLoad();
+	if (clLoaded)
+	{
+		m_clContext = cmft::clInit(
+			CMFT_CL_VENDOR_ANY_GPU,
+			CMFT_CL_DEVICE_TYPE_GPU | CMFT_CL_DEVICE_TYPE_ACCELERATOR,
+			0
+		);
+		if (!m_clContext)
+			log::warning << L"Probe texture asset pipeline; Unable to initialize OpenCL." << Endl;
+	}
+	else
+		log::warning << L"Probe texture asset pipeline; OpenCL not loaded." << Endl;
+
 	return true;
+}
+
+void ProbeTexturePipeline::destroy()
+{
+	if (m_clContext)
+	{
+		cmft::clUnload();
+		m_clContext = nullptr;
+	}
+	editor::DefaultPipeline::destroy();
 }
 
 TypeInfoSet ProbeTexturePipeline::getAssetTypes() const
@@ -168,7 +193,7 @@ bool ProbeTexturePipeline::buildOutput(
 		asset->m_glossBias, //(uint8_t)inputParameters.m_glossBias,
 		(cmft::EdgeFixup::Enum)0, //inputParameters.m_edgeFixup,
 		255, // (int8_t)inputParameters.m_numCpuProcessingThreads,
-		nullptr // clContext
+		m_clContext
 	);
 
 	log::info << L"Probe filter complete" << Endl;
