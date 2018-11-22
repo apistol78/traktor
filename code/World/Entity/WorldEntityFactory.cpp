@@ -212,7 +212,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 	{
 		resource::Proxy< render::Shader > shader;
 		if (!m_resourceManager->bind(decalComponentData->getShader(), shader))
-			return 0;
+			return nullptr;
 
 		Ref< DecalComponent > decalComponent = new DecalComponent(
 			decalComponentData->getSize(),
@@ -231,23 +231,17 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 	if (const LightComponentData* lightComponentData = dynamic_type_cast<const LightComponentData*>(&entityComponentData))
 	{
 		resource::Proxy< render::ITexture > probeDiffuseTexture;
-		resource::Proxy< render::ITexture > probeSpecularTexture;
 		resource::Proxy< render::ITexture > cloudShadowTexture;
 
 		if (lightComponentData->getProbeDiffuseTexture())
 		{
 			if (!m_resourceManager->bind(lightComponentData->getProbeDiffuseTexture(), probeDiffuseTexture))
-				return 0;
-		}
-		if (lightComponentData->getProbeSpecularTexture())
-		{
-			if (!m_resourceManager->bind(lightComponentData->getProbeSpecularTexture(), probeSpecularTexture))
-				return 0;
+				return nullptr;
 		}
 		if (lightComponentData->getCloudShadowTexture())
 		{
 			if (!m_resourceManager->bind(lightComponentData->getCloudShadowTexture(), cloudShadowTexture))
-				return 0;
+				return nullptr;
 		}
 
 		return new LightComponent(
@@ -256,7 +250,6 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 			lightComponentData->getBaseColor(),
 			lightComponentData->getShadowColor(),
 			probeDiffuseTexture,
-			probeSpecularTexture,
 			cloudShadowTexture,
 			lightComponentData->getCastShadow(),
 			lightComponentData->getRange(),
@@ -276,7 +269,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 	if (const VolumeComponentData* volumeComponentData = dynamic_type_cast< const VolumeComponentData* >(&entityComponentData))
 		return new VolumeComponent(volumeComponentData);
 
-	return 0;
+	return nullptr;
 }
 
 	}

@@ -55,8 +55,6 @@ render::handle_t s_handleShadowMask;
 render::handle_t s_handleCloudShadow;
 render::handle_t s_handleProbeDiffuseEnable;
 render::handle_t s_handleProbeDiffuse;
-render::handle_t s_handleProbeSpecularEnable;
-render::handle_t s_handleProbeSpecular;
 render::handle_t s_handleLightPosition;
 render::handle_t s_handleLightPositionAndRadius;
 render::handle_t s_handleLightDirectionAndRange;
@@ -100,8 +98,6 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleCloudShadow = render::getParameterHandle(L"World_CloudShadow");
 	s_handleProbeDiffuseEnable = render::getParameterHandle(L"World_ProbeDiffuseEnable");
 	s_handleProbeDiffuse = render::getParameterHandle(L"World_ProbeDiffuse");
-	s_handleProbeSpecularEnable = render::getParameterHandle(L"World_ProbeSpecularEnable");
-	s_handleProbeSpecular = render::getParameterHandle(L"World_ProbeSpecular");
 	s_handleLightPosition = render::getParameterHandle(L"World_LightPosition");
 	s_handleLightPositionAndRadius = render::getParameterHandle(L"World_LightPositionAndRadius");
 	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
@@ -370,16 +366,12 @@ void LightRendererDeferred::renderLight(
 		Vector4 lightDirectionAndRange = view * light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
 
 		m_lightProbeShader->setCombination(s_handleShadowEnable, shadowMask != 0);
-		m_lightProbeShader->setCombination(s_handleProbeDiffuseEnable, light.probeDiffuse != 0);
-		m_lightProbeShader->setCombination(s_handleProbeSpecularEnable, light.probeSpecular != 0);
-
 		m_lightProbeShader->setFloatParameter(s_handleTime, time);
 		m_lightProbeShader->setFloatParameter(s_handleShadowMaskSize, 0.5f / shadowMaskSize);
 		m_lightProbeShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 		m_lightProbeShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 		m_lightProbeShader->setTextureParameter(s_handleShadowMask, shadowMask);
 		m_lightProbeShader->setTextureParameter(s_handleProbeDiffuse, light.probeDiffuse);
-		m_lightProbeShader->setTextureParameter(s_handleProbeSpecular, light.probeSpecular);
 		m_lightProbeShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightProbeShader->setTextureParameter(s_handleNormalMap, normalMap);
 		m_lightProbeShader->setTextureParameter(s_handleMiscMap, miscMap);
@@ -387,7 +379,6 @@ void LightRendererDeferred::renderLight(
 		m_lightProbeShader->setVectorParameter(s_handleLightDirectionAndRange, lightDirectionAndRange);
 		m_lightProbeShader->setVectorParameter(s_handleLightSunColor, sunColorAndIntensity);
 		m_lightProbeShader->setVectorParameter(s_handleLightShadowColor, light.shadowColor);
-
 		m_lightProbeShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 	}
 }
@@ -421,29 +412,37 @@ void LightRendererDeferred::renderNonShadowLights(
 		if (light.cloudShadow == nullptr)
 		{
 			if (light.type == LtDirectional)
+			{
 				directional.push_back(i);
-			else if (light.type == LtPoint)
-				point.push_back(i);
-			else if (light.type == LtSpot)
-				spot.push_back(i);
-			else
 				continue;
+			}
+			else if (light.type == LtPoint)
+			{
+				point.push_back(i);
+				continue;
+			}
+			else if (light.type == LtSpot)
+			{
+				spot.push_back(i);
+				continue;
+			}
 		}
-		else
-			renderLight(
-				renderView,
-				time,
-				projection,
-				view,
-				light,
-				depthMap,
-				normalMap,
-				miscMap,
-				colorMap,
-				0.0f,
-				nullptr
-			);
-	}
+
+		// Unbatchable light; render one by one.
+		renderLight(
+			renderView,
+			time,
+			projection,
+			view,
+			light,
+			depthMap,
+			normalMap,
+			miscMap,
+			colorMap,
+			0.0f,
+			nullptr
+		);
+}
 
 	// Render directional lights.
 	for (uint32_t i = 0; i < directional.size(); i += 4)
