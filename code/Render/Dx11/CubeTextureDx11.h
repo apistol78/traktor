@@ -51,6 +51,7 @@ public:
 private:
 	Ref< ContextDx11 > m_context;
 	ComRef< ID3D11Texture2D > m_d3dTexture;
+	ComRef< ID3D11Texture2D > m_d3dTextureStaging;
 	ComRef< ID3D11ShaderResourceView > m_d3dTextureResourceView;
 	int m_side;
 	int m_mipCount;
