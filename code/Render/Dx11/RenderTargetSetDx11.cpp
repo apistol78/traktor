@@ -111,7 +111,7 @@ bool RenderTargetSetDx11::isContentValid() const
 
 bool RenderTargetSetDx11::read(int index, void* buffer) const
 {
-	return false;
+	return m_colorTextures[index]->read(buffer);
 }
 
 	}

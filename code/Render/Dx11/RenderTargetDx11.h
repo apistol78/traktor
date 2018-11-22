@@ -49,6 +49,8 @@ public:
 
 	void unbind();
 
+	bool read(void* buffer) const;
+
 	ID3D11RenderTargetView* getD3D11RenderTargetView() const {
 		return m_d3dRenderTargetView;
 	}
@@ -61,6 +63,7 @@ private:
 	Ref< ContextDx11 > m_context;
 	ComRef< ID3D11Texture2D > m_d3dTexture;
 	ComRef< ID3D11Texture2D > m_d3dTextureRead;
+	ComRef< ID3D11Texture2D > m_d3dTextureStaging;
 	ComRef< ID3D11RenderTargetView > m_d3dRenderTargetView;
 	ComRef< ID3D11ShaderResourceView > m_d3dTextureResourceView;
 	DXGI_FORMAT m_d3dColorFormat;

@@ -50,9 +50,9 @@ bool CubeTextureDx11::create(const CubeTextureCreateDesc& desc)
 	dtd.Format = dxgiTextureFormats[desc.format];
 	dtd.SampleDesc.Count = 1;
 	dtd.SampleDesc.Quality = 0;
-	dtd.Usage = desc.immutable ? D3D11_USAGE_IMMUTABLE : D3D11_USAGE_DYNAMIC;
+	dtd.Usage = desc.immutable ? D3D11_USAGE_IMMUTABLE : D3D11_USAGE_DEFAULT;
 	dtd.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	dtd.CPUAccessFlags = desc.immutable ? 0 : D3D11_CPU_ACCESS_WRITE;
+	dtd.CPUAccessFlags = 0;
 	dtd.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
 	hr = m_context->getD3DDevice()->CreateTexture2D(
@@ -64,6 +64,29 @@ bool CubeTextureDx11::create(const CubeTextureCreateDesc& desc)
 	{
 		log::error << L"Unable to create cube texture. HRESULT = " << int32_t(hr) << Endl;
 		return false;
+	}
+
+	if (!desc.immutable)
+	{
+		std::memset(&dtd, 0, sizeof(dtd));
+		dtd.Width = desc.side;
+		dtd.Height = desc.side;
+		dtd.MipLevels = desc.mipCount;
+		dtd.ArraySize = 1;
+		dtd.Format = dxgiTextureFormats[desc.format];
+		dtd.SampleDesc.Count = 1;
+		dtd.SampleDesc.Quality = 0;
+		dtd.Usage = D3D11_USAGE_STAGING;
+		dtd.BindFlags = 0;
+		dtd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE | D3D11_CPU_ACCESS_READ;
+		dtd.MiscFlags = 0;
+
+		hr = m_context->getD3DDevice()->CreateTexture2D(&dtd, NULL, &m_d3dTextureStaging.getAssign());
+		if (FAILED(hr))
+		{
+			log::error << L"Unable to create cube staging texture. HRESULT = " << int32_t(hr) << Endl;
+			return false;
+		}	
 	}
 
 	hr = m_context->getD3DDevice()->CreateShaderResourceView(m_d3dTexture, NULL, &m_d3dTextureResourceView.getAssign());
@@ -83,6 +106,7 @@ void CubeTextureDx11::destroy()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 	m_context->releaseComRef(m_d3dTexture);
+	m_context->releaseComRef(m_d3dTextureStaging);
 	m_context->releaseComRef(m_d3dTextureResourceView);
 }
 
@@ -111,7 +135,7 @@ bool CubeTextureDx11::lock(int side, int level, Lock& lock)
 	D3D11_MAPPED_SUBRESOURCE dm;
 	HRESULT hr;
 
-	hr = m_context->getD3DDeviceContext()->Map(m_d3dTexture, level, D3D11_MAP_WRITE_DISCARD, 0, &dm);
+	hr = m_context->getD3DDeviceContext()->Map(m_d3dTextureStaging, level, D3D11_MAP_WRITE, 0, &dm);
 	if (FAILED(hr))
 		return false;
 
@@ -123,7 +147,26 @@ bool CubeTextureDx11::lock(int side, int level, Lock& lock)
 
 void CubeTextureDx11::unlock(int side, int level)
 {
-	m_context->getD3DDeviceContext()->Unmap(m_d3dTexture, level);
+	m_context->getD3DDeviceContext()->Unmap(m_d3dTextureStaging, level);
+
+	D3D11_BOX sr;
+	sr.left = 0;
+	sr.right = m_side >> level;
+	sr.top = 0;
+	sr.bottom = m_side >> level;
+	sr.front = 0;
+	sr.back = 1;
+
+	m_context->getD3DDeviceContext()->CopySubresourceRegion(
+		m_d3dTexture,
+		D3D11CalcSubresource(level, side, m_mipCount),
+		0,
+		0,
+		0,
+		m_d3dTextureStaging,
+		level,
+		&sr
+	);
 }
 
 ID3D11ShaderResourceView* CubeTextureDx11::getD3D11TextureResourceView() const

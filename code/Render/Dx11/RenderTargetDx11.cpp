@@ -99,14 +99,14 @@ bool RenderTargetDx11::create(const RenderTargetSetCreateDesc& setDesc, const Re
 	);
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create render target, failed to create color texture" << Endl;
+		log::error << L"Unable to create render target, failed to create color texture. HRESULT = " << int32_t(hr) << Endl;
 		return false;
 	}
 
 	hr = m_context->getD3DDevice()->CreateRenderTargetView(m_d3dTexture, NULL, &m_d3dRenderTargetView.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create render target, failed to create render target view" << Endl;
+		log::error << L"Unable to create render target, failed to create render target view. HRESULT = " << int32_t(hr) << Endl;
 		return false;
 	}
 
@@ -132,7 +132,7 @@ bool RenderTargetDx11::create(const RenderTargetSetCreateDesc& setDesc, const Re
 		);
 		if (FAILED(hr))
 		{
-			log::error << L"Unable to create render target, failed to create read-back color texture" << Endl;
+			log::error << L"Unable to create render target, failed to create resolve color texture. HRESULT = " << int32_t(hr) << Endl;
 			return false;
 		}
 
@@ -143,6 +143,27 @@ bool RenderTargetDx11::create(const RenderTargetSetCreateDesc& setDesc, const Re
 		m_d3dTextureRead = m_d3dTexture;
 	}
 
+	// Create staging texture for cpu read-back.
+	std::memset(&dtd, 0, sizeof(dtd));
+	dtd.Width = setDesc.width;
+	dtd.Height = setDesc.height;
+	dtd.MipLevels = setDesc.generateMips ? 0 : 1;
+	dtd.ArraySize = 1;
+	dtd.Format = dxgiTextureFormats[desc.format];
+	dtd.SampleDesc.Count = 1;
+	dtd.SampleDesc.Quality = 0;
+	dtd.Usage = D3D11_USAGE_STAGING;
+	dtd.BindFlags = 0;
+	dtd.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+	dtd.MiscFlags = 0;
+
+	hr = m_context->getD3DDevice()->CreateTexture2D(&dtd, NULL, &m_d3dTextureStaging.getAssign());
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to create render target, failed to create staging texture. HRESULT = " << int32_t(hr) << Endl;
+		return false;
+	}	
+
 	// Create shader view to read from read-back texture.
 	dsrvd.Format = dtd.Format;
 	dsrvd.ViewDimension = /*dtd.SampleDesc.Count > 1 ? D3D11_SRV_DIMENSION_TEXTURE2DMS : */D3D11_SRV_DIMENSION_TEXTURE2D;
@@ -152,7 +173,7 @@ bool RenderTargetDx11::create(const RenderTargetSetCreateDesc& setDesc, const Re
 	hr = m_context->getD3DDevice()->CreateShaderResourceView(m_d3dTextureRead, &dsrvd, &m_d3dTextureResourceView.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create render target, failed to create shader resource view" << Endl;
+		log::error << L"Unable to create render target, failed to create shader resource view. HRESULT = " << int32_t(hr) << Endl;
 		return false;
 	}
 
@@ -220,6 +241,45 @@ void RenderTargetDx11::unbind()
 		m_context->getD3DDeviceContext()->OMSetRenderTargets(0, NULL, NULL);
 		m_context->getD3DDeviceContext()->GenerateMips(m_d3dTextureResourceView);
 	}
+}
+
+bool RenderTargetDx11::read(void* buffer) const
+{
+	//if (m_d3dTexture != m_d3dTextureRead)
+	//	m_context->getD3DDeviceContext()->CopyResource(m_d3dTextureStaging, m_d3dTextureRead);
+	//else
+	//	m_context->getD3DDeviceContext()->CopyResource(m_d3dTextureStaging, m_d3dTexture);
+
+	D3D11_BOX sr;
+	sr.left = 0;
+	sr.right = m_width;
+	sr.top = 0;
+	sr.bottom = m_height;
+	sr.front = 0;
+	sr.back = 1;
+
+	m_context->getD3DDeviceContext()->CopySubresourceRegion(
+		m_d3dTextureStaging,
+		0,
+		0,
+		0,
+		0,
+		m_d3dTexture,
+		0,
+		&sr
+	);
+
+	D3D11_MAPPED_SUBRESOURCE dm;
+	HRESULT hr;
+
+	hr = m_context->getD3DDeviceContext()->Map(m_d3dTextureStaging, 0, D3D11_MAP_READ, 0, &dm);
+	if (FAILED(hr))
+		return false;
+
+	std::memcpy(buffer, dm.pData, m_height * dm.RowPitch);
+
+	m_context->getD3DDeviceContext()->Unmap(m_d3dTextureStaging, 0);
+	return true;
 }
 
 	}
