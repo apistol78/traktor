@@ -55,8 +55,7 @@ void LightRenderer::render(
 		light.shadowColor = directionalLightEntity->getShadowColor();
 		light.range = Scalar(0.0f);
 		light.radius = Scalar(0.0f);
-		light.probeDiffuse = 0;
-		light.probeSpecular = 0;
+		light.probeDiffuse = nullptr;
 		light.cloudShadow = directionalLightEntity->getCloudShadowTexture();
 		light.castShadow = directionalLightEntity->getCastShadow();
 
@@ -79,9 +78,8 @@ void LightRenderer::render(
 		light.shadowColor = pointLightEntity->getShadowColor();
 		light.range = Scalar(pointLightEntity->getRange());
 		light.radius = Scalar(0.0f);
-		light.probeDiffuse = 0;
-		light.probeSpecular = 0;
-		light.cloudShadow = 0;
+		light.probeDiffuse = nullptr;
+		light.cloudShadow = nullptr;
 		light.castShadow = false;
 
 		if (pointLightEntity->getRandomFlicker() <= 1.0f - FUZZY_EPSILON)
@@ -111,9 +109,8 @@ void LightRenderer::render(
 		light.shadowColor = spotLightEntity->getShadowColor();
 		light.range = Scalar(spotLightEntity->getRange());
 		light.radius = Scalar(spotLightEntity->getRadius());
-		light.probeDiffuse = 0;
-		light.probeSpecular = 0;
-		light.cloudShadow = 0;
+		light.probeDiffuse = nullptr;
+		light.cloudShadow = nullptr;
 		light.castShadow = spotLightEntity->getCastShadow();
 
 		worldRenderView.addLight(light);
@@ -132,7 +129,6 @@ void LightRenderer::render(
 		light.range = Scalar(lightComponent->getRange());
 		light.radius = Scalar(lightComponent->getRadius());
 		light.probeDiffuse = lightComponent->getProbeDiffuseTexture();
-		light.probeSpecular = lightComponent->getProbeSpecularTexture();
 		light.cloudShadow = lightComponent->getCloudShadowTexture();
 		light.castShadow = lightComponent->getCastShadow();
 
