@@ -6529,6 +6529,15 @@
 												</item>
 											</items>
 										</item>
+										<item type="Filter">
+											<name>SH</name>
+											<items>
+												<item type="File">
+													<fileName>SH/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -6755,6 +6764,12 @@
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
 											<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
+										<item type="ExternalDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<solutionFileName>ExternOSX.xms</solutionFileName>
+											<projectName>Extern.cmft</projectName>
 										</item>
 									</dependencies>
 								</project>
