@@ -40,7 +40,10 @@ GridRow::GridRow(uint32_t initialState)
 GridRow::~GridRow()
 {
 	for (RefArray< GridItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
-		(*i)->m_row = 0;
+	{
+		if (*i)
+			(*i)->m_row = nullptr;
+	}
 }
 
 void GridRow::setState(uint32_t state)
@@ -61,14 +64,17 @@ void GridRow::setMinimumHeight(int32_t minimumHeight)
 int32_t GridRow::getHeight() const
 {
 	int32_t rowHeight = m_minimumHeight;
-	for (RefArray< GridItem >::const_iterator i = m_items.begin(); i != m_items.end(); ++i)
-		rowHeight = std::max(rowHeight, (*i)->getHeight());
+	for (auto item : m_items)
+	{
+		if (item)
+			rowHeight = std::max(rowHeight, item->getHeight());
+	}
 	return rowHeight;
 }
 
 uint32_t GridRow::add(GridItem* item)
 {
-	T_ASSERT (item->m_row == 0);
+	T_ASSERT (item->m_row == nullptr);
 	item->m_row = this;
 	item->placeCells(getWidget< GridView >(), Rect());
 	m_items.push_back(item);
@@ -77,22 +83,20 @@ uint32_t GridRow::add(GridItem* item)
 
 void GridRow::set(uint32_t index, GridItem* item)
 {
-	if (index < m_items.size())
+	m_items.resize(std::max< uint32_t >(m_items.size(), index + 1));
+	if (m_items[index])
 	{
-		if (m_items[index])
-		{
-			T_ASSERT (m_items[index]->m_row == this);
-			m_items[index]->m_row = 0;
-		}
-		T_ASSERT (item->m_row == 0);
-		item->m_row = this;
-		m_items[index] = item;
+		T_ASSERT (m_items[index]->m_row == this);
+		m_items[index]->m_row = nullptr;
 	}
+	T_ASSERT (item->m_row == nullptr);
+	item->m_row = this;
+	m_items[index] = item;
 }
 
 Ref< GridItem > GridRow::get(uint32_t index) const
 {
-	return index < m_items.size() ? m_items[index] : 0;
+	return index < m_items.size() ? m_items[index] : nullptr;
 }
 
 uint32_t GridRow::getIndex(const GridItem* item) const
@@ -133,13 +137,13 @@ void GridRow::removeChild(GridRow* row)
 	T_ASSERT (row->m_parent == this);
 	RefArray< GridRow >::iterator i = std::find(m_children.begin(), m_children.end(), row);
 	m_children.erase(i);
-	row->m_parent = 0;
+	row->m_parent = nullptr;
 }
 
 void GridRow::removeAllChildren()
 {
 	for (RefArray< GridRow >::iterator i = m_children.begin(); i != m_children.end(); ++i)
-		(*i)->m_parent = 0;
+		(*i)->m_parent = nullptr;
 	m_children.clear();
 }
 
@@ -175,10 +179,13 @@ void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 
 		rcCell.right = rcCell.left + width;
 
-		Rect rcCellLocal = rcCell;
-		if (i == 0)
-			rcCellLocal.left += depth * size;
-		widget->placeCell(m_items[i], rcCellLocal);
+		if (m_items[i])
+		{
+			Rect rcCellLocal = rcCell;
+			if (i == 0)
+				rcCellLocal.left += depth * size;
+			widget->placeCell(m_items[i], rcCellLocal);
+		}
 
 		rcCell.left = rcCell.right;
 	}
@@ -241,7 +248,7 @@ void GridRow::mouseUp(MouseButtonUpEvent* event, const Point& position)
 	if (m_editMode == 2)
 	{
 		int32_t index = getWidget< GridView >()->getColumnIndex(position.x);
-		if (index >= 0)
+		if (index >= 0 && m_items[index] != nullptr)
 		{
 			const GridColumn* column = getWidget< GridView >()->getColumn(index);
 			if (column && column->isEditable())
@@ -301,12 +308,12 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 		);
 	}
 
-	canvas.setForeground(ss->getColor(getWidget< GridView >(), L"line-color"));
+	canvas.setForeground(ss->getColor(getWidget< GridView >(), (m_state & GridRow::RsSelected) ? L"line-color-selected" : L"line-color"));
 
 	if (columns.size() >= 2)
 	{
 		int32_t left = rect.left;
-		for (RefArray< GridColumn >::const_iterator i = columns.begin(); i != columns.end() - 1; ++i)
+		for (RefArray< GridColumn >::const_iterator i = columns.begin(); i != columns.end(); ++i)
 		{
 			left += (*i)->getWidth();
 			canvas.drawLine(left, rect.top, left, rect.bottom - 1);

@@ -328,7 +328,12 @@
 		<item>
 			<type>traktor.ui.GridView</type>
 			<element>line-color</element>
-			<color>40, 40, 41, 255</color>
+			<color>50, 50, 51, 255</color>
+		</item>
+		<item>
+			<type>traktor.ui.GridView</type>
+			<element>line-color-selected</element>
+			<color>61, 163, 255, 255</color>
 		</item>
 
 		<!-- LogList -->

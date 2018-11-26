@@ -266,10 +266,7 @@ void GridView::layoutCells(const Rect& rc)
 	if (m_header)
 	{
 		m_header->setColumns(m_columns);
-
-		Rect rcHeader(rcLayout.left, rcLayout.top, rcLayout.right, rcLayout.top + dpi96(c_headerSize));
-		placeCell(m_header, rcHeader);
-
+		placeHeaderCell(m_header, dpi96(c_headerSize));
 		rcLayout.top += dpi96(c_headerSize);
 	}
 

@@ -157,7 +157,9 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 		else
 			canvas.setForeground(ss->getColor(getWidget< GridView >(), L"color-disabled"));
 
+		canvas.setClipRect(rcText);
 		canvas.drawText(rcText, m_text, AnLeft, AnCenter);
+		canvas.resetClipRect();
 
 		if (m_font)
 			canvas.setFont(getWidget< GridView >()->getFont());

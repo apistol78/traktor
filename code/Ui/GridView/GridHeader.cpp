@@ -28,10 +28,10 @@ void GridHeader::mouseDown(MouseButtonDownEvent* event, const Point& position)
 	if (m_columns.size() < 2)
 		return;
 
-	int32_t dx = dpi96(1);
+	int32_t dx = dpi96(2);
 	int32_t x = 0;
 
-	for (uint32_t i = 0; i < m_columns.size() - 1; ++i)
+	for (uint32_t i = 0; i < m_columns.size(); ++i)
 	{
 		GridColumn* column = m_columns[i];
 		x += column->getWidth();
@@ -79,17 +79,23 @@ void GridHeader::paint(Canvas& canvas, const Rect& rect)
 		if (m_columns.size() == 1)
 			width = rect.getWidth();
 
-		canvas.setForeground(ss->getColor(getWidget< AutoWidget >(), getWidget< AutoWidget >()->isEnable() ? L"color" : L"color-disabled"));
-		canvas.drawText(Rect(left + 2, rect.top, left + width - 2, rect.bottom), column->getTitle(), AnLeft, AnCenter);
+		Rect rcText(left + 2, rect.top, left + width - 2, rect.bottom);
 
-		if (i > 0)
-		{
-			canvas.setForeground(ss->getColor(getWidget< AutoWidget >(), L"line-color"));
-			canvas.drawLine(left, rect.top + 4, left, rect.bottom - 4);
-		}
+		canvas.setClipRect(rcText);
+
+		canvas.setForeground(ss->getColor(getWidget< AutoWidget >(), getWidget< AutoWidget >()->isEnable() ? L"color" : L"color-disabled"));
+		canvas.drawText(rcText, column->getTitle(), AnLeft, AnCenter);
+
+		canvas.resetClipRect();
+
+		canvas.setForeground(ss->getColor(getWidget< AutoWidget >(), L"line-color"));
+		canvas.drawLine(left, rect.top + 4, left, rect.bottom - 4);
 
 		left += width;
 	}
+
+	canvas.setForeground(ss->getColor(getWidget< AutoWidget >(), L"line-color"));
+	canvas.drawLine(left, rect.top + 4, left, rect.bottom - 4);
 }
 
 	}
