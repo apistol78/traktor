@@ -60,7 +60,7 @@ bool Thread::start(Priority priority)
 	int rc;
 
 	Internal* in = new Internal();
-
+	in->thread = 0;
 	in->functor = m_functor;
 	in->finished = false;
 
@@ -116,13 +116,13 @@ bool Thread::start(Priority priority)
 bool Thread::wait(int timeout)
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
-	if (!in)
+	if (!in || !in->thread)
 		return true;
 
 	void* dummy = 0;
 	int rc;
 
-	if (timeout >= 0)
+	if (timeout > 0)
 	{
 		pthread_mutex_lock(&in->mutex);
 
@@ -148,13 +148,21 @@ bool Thread::wait(int timeout)
 		if (!in->finished)
 			return false;
 	}
+	else if (timeout == 0)
+	{
+		if (!in->finished)
+			return false;
+	}
 
 	rc = pthread_join(
 		in->thread,
 		&dummy
 	);
+	if (rc != 0)
+		return false;
 
-	return bool(rc == 0);
+	in->thread = 0;
+	return true;
 }
 
 bool Thread::stop(int timeout)
