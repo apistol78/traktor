@@ -222,7 +222,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 	std::wstring systemFile = pathName.getPathNameNoExtension() + L"." + system + L"." + pathName.getExtension();
 
     // Read global properties.
-	if ((file = FileSystem::getInstance().open(globalFile, File::FmRead)) != 0)
+	if ((file = FileSystem::getInstance().open(globalFile, File::FmRead)) != nullptr)
 	{
 		outOriginalSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
 		file->close();
@@ -236,7 +236,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
         log::warning << L"Unable to read global properties \"" << globalFile << L"\"" << Endl;
 
     // Read system properties.
-    if ((file = FileSystem::getInstance().open(systemFile, File::FmRead)) != 0)
+    if ((file = FileSystem::getInstance().open(systemFile, File::FmRead)) != nullptr)
     {
         Ref< PropertyGroup > systemSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
         file->close();
@@ -271,7 +271,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 		T_FATAL_ASSERT (*outSettings);
 
 		// Read user properties.
-		if ((file = FileSystem::getInstance().open(userFile, File::FmRead)) != 0)
+		if ((file = FileSystem::getInstance().open(userFile, File::FmRead)) != nullptr)
 		{
 			Ref< PropertyGroup > userSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
 			file->close();
@@ -737,7 +737,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		if (!m_editorTools.empty())
 			m_menuBar->addItem(m_menuTools);
 		else
-			m_menuTools = 0;
+			m_menuTools = nullptr;
 	}
 
 	// Collect all shortcut commands from all editors.
@@ -845,7 +845,7 @@ void EditorForm::destroy()
 	{
 		while (!m_threadAssetMonitor->stop());
 		ThreadManager::getInstance().destroy(m_threadAssetMonitor);
-		m_threadAssetMonitor = 0;
+		m_threadAssetMonitor = nullptr;
 	}
 
 	closeWorkspace();
@@ -915,7 +915,7 @@ void EditorForm::revertWorkspaceSettings()
 
 Ref< ILogTarget > EditorForm::createLogTarget(const std::wstring& title)
 {
-	if (m_logTargets[title] == 0)
+	if (m_logTargets[title] == nullptr)
 	{
 		Ref< ui::TabPage > tabPageLog = new ui::TabPage();
 		if (!tabPageLog->create(m_tabOutput, title, new ui::FloodLayout()))
@@ -964,7 +964,7 @@ bool EditorForm::highlightInstance(const db::Instance* instance)
 
 const TypeInfo* EditorForm::browseType()
 {
-	const TypeInfo* type = 0;
+	const TypeInfo* type = nullptr;
 
 	BrowseTypeDialog dlgBrowse(m_mergedSettings);
 	if (dlgBrowse.create(this, 0, false, false))
@@ -979,7 +979,7 @@ const TypeInfo* EditorForm::browseType()
 
 const TypeInfo* EditorForm::browseType(const TypeInfoSet& base)
 {
-	const TypeInfo* type = 0;
+	const TypeInfo* type = nullptr;
 
 	BrowseTypeDialog dlgBrowse(m_mergedSettings);
 	if (dlgBrowse.create(this, &base, false, false))
@@ -1347,8 +1347,8 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 	setPropertyObject(0);
 
 	m_activeEditorPage = editorPage;
-	m_activeEditorPageSite = 0;
-	m_activeDocument = 0;
+	m_activeEditorPageSite = nullptr;
+	m_activeDocument = nullptr;
 
 	if (m_activeEditorPage)
 	{
@@ -1440,7 +1440,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	dialog.destroy();
 
 	ThreadManager::getInstance().destroy(thread);
-	thread = 0;
+	thread = nullptr;
 
 	if (!m_sourceDatabase || !m_outputDatabase)
 	{
@@ -1543,7 +1543,7 @@ void EditorForm::closeWorkspace()
 
 	// Close settings; restore merged as being global.
 	m_workspacePath = L"";
-	m_workspaceSettings = 0;
+	m_workspaceSettings = nullptr;
 	m_mergedSettings = m_globalSettings;
 
 	// Update UI views.
@@ -1736,7 +1736,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		if (!pipelineCache->create(m_mergedSettings))
 		{
 			traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled" << Endl;
-			pipelineCache = 0;
+			pipelineCache = nullptr;
 		}
 	}
 	if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
@@ -1745,7 +1745,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		if (!pipelineCache->create(m_mergedSettings))
 		{
 			traktor::log::warning << L"Unable to create pipeline file cache; cache disabled" << Endl;
-			pipelineCache = 0;
+			pipelineCache = nullptr;
 		}
 	}
 
@@ -1851,10 +1851,11 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 void EditorForm::buildCancel()
 {
-	if (m_threadBuild)
-	{
-		m_threadBuild->stop(0);
+	if (!m_threadBuild)
+		return;
 
+	if (!m_threadBuild->stop(0))
+	{
 		// Keep processing UI events until build has finished.
 		setEnable(false);
 		while (!m_threadBuild->wait(10))
@@ -1862,26 +1863,25 @@ void EditorForm::buildCancel()
 			ui::Application::getInstance()->process();
 		}
 		setEnable(true);
-
-		ThreadManager::getInstance().destroy(m_threadBuild);
-		m_threadBuild = 0;
 	}
+	ThreadManager::getInstance().destroy(m_threadBuild);
+	m_threadBuild = nullptr;
 }
 
 void EditorForm::buildWaitUntilFinished()
 {
-	if (m_threadBuild)
-	{
-		// Show a dialog if processing seems to take more than N second(s).
-		ui::BackgroundWorkerDialog dialog;
-		dialog.create(this, i18n::Text(L"EDITOR_WAIT_BUILDING_TITLE"), i18n::Text(L"EDITOR_WAIT_BUILDING_MESSAGE"), false);
-		dialog.execute(m_threadBuild, new BuildStatus(m_buildStep, m_buildStepMessage));
-		dialog.destroy();
+	if (!m_threadBuild)
+		return;
 
-		// As build thread is no longer in use we can safely release it's resources.
-		ThreadManager::getInstance().destroy(m_threadBuild);
-		m_threadBuild = 0;
-	}
+	// Show a dialog if processing seems to take more than N second(s).
+	ui::BackgroundWorkerDialog dialog;
+	dialog.create(this, i18n::Text(L"EDITOR_WAIT_BUILDING_TITLE"), i18n::Text(L"EDITOR_WAIT_BUILDING_MESSAGE"), false);
+	dialog.execute(m_threadBuild, new BuildStatus(m_buildStep, m_buildStepMessage));
+	dialog.destroy();
+
+	// As build thread is no longer in use we can safely release it's resources.
+	ThreadManager::getInstance().destroy(m_threadBuild);
+	m_threadBuild = nullptr;
 }
 
 void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild)
@@ -2178,17 +2178,17 @@ void EditorForm::closeCurrentEditor()
 
 	m_activeEditorPage->destroy();
 
-	m_activeEditorPageSite = 0;
-	m_activeEditorPage = 0;
+	m_activeEditorPageSite = nullptr;
+	m_activeEditorPage = nullptr;
 
 	m_activeDocument->close();
-	m_activeDocument = 0;
+	m_activeDocument = nullptr;
 
 	m_tab->removePage(tabPage);
 	m_tab->update();
 
 	tabPage->destroy();
-	tabPage = 0;
+	tabPage = nullptr;
 
 	tabPage = m_tab->getActivePage();
 	if (tabPage)
@@ -2209,7 +2209,7 @@ void EditorForm::closeAllEditors()
 	for (int32_t i = 0; i < m_tab->getPageCount(); ++i)
 	{
 		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-		if (tabPage->getData< IEditorPage >(L"EDITORPAGE") == 0)
+		if (tabPage->getData< IEditorPage >(L"EDITORPAGE") == nullptr)
 			continue;
 
 		closePages.push_back(tabPage);
@@ -2238,11 +2238,11 @@ void EditorForm::closeAllEditors()
 
 	m_tab->update();
 
-	m_activeEditorPage = 0;
-	m_activeEditorPageSite = 0;
-	m_activeDocument = 0;
+	m_activeEditorPage = nullptr;
+	m_activeEditorPageSite = nullptr;
+	m_activeDocument = nullptr;
 
-	setPropertyObject(0);
+	setPropertyObject(nullptr);
 }
 
 void EditorForm::closeAllOtherEditors()
@@ -2257,7 +2257,7 @@ void EditorForm::closeAllOtherEditors()
 	for (int32_t i = 0; i < m_tab->getPageCount(); ++i)
 	{
 		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-		if (tabPage == m_tab->getActivePage() || tabPage->getData< IEditorPage >(L"EDITORPAGE") == 0)
+		if (tabPage == m_tab->getActivePage() || tabPage->getData< IEditorPage >(L"EDITORPAGE") == nullptr)
 			continue;
 
 		closePages.push_back(tabPage);
@@ -2727,7 +2727,7 @@ void EditorForm::eventTabButtonDown(ui::MouseButtonDownEvent* event)
 {
 	if (event->getButton() == ui::MbtRight)
 	{
-		if (m_tab->getPageAt(event->getPosition()) != 0)
+		if (m_tab->getPageAt(event->getPosition()) != nullptr)
 		{
 			const ui::MenuItem* selectedItem = m_menuTab->showModal(m_tab, event->getPosition());
 			if (selectedItem)
@@ -2771,8 +2771,8 @@ void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 	{
 		T_ASSERT (m_activeEditorPage == editorPage);
 		editorPage->destroy();
-		editorPage = 0;
-		m_activeEditorPage = 0;
+		editorPage = nullptr;
+		m_activeEditorPage = nullptr;
 	}
 
 	Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
@@ -2780,12 +2780,12 @@ void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 	{
 		T_ASSERT (m_activeDocument == document);
 		document->close();
-		document = 0;
-		m_activeDocument = 0;
+		document = nullptr;
+		m_activeDocument = nullptr;
 	}
 
 	tabPage->destroy();
-	tabPage = 0;
+	tabPage = nullptr;
 
 	setPropertyObject(0);
 
@@ -2826,14 +2826,14 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 		if (editorPage)
 		{
 			editorPage->destroy();
-			editorPage = 0;
+			editorPage = nullptr;
 		}
 
 		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
 		if (document)
 		{
 			document->close();
-			document = 0;
+			document = nullptr;
 		}
 	}
 
