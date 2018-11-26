@@ -55,6 +55,10 @@ public:
 
 	void placeCell(AutoWidgetCell* cell, const Rect& rc);
 
+	void placeHeaderCell(AutoWidgetCell* cell, int32_t height);
+
+	void placeFooterCell(AutoWidgetCell* cell, int32_t height);
+
 	Rect getCellRect(const AutoWidgetCell* cell) const;
 
 	Rect getCellClientRect(const AutoWidgetCell* cell) const;
@@ -83,6 +87,8 @@ private:
 	};
 
 	std::vector< CellInstance > m_cells;
+	CellInstance m_headerCell;
+	CellInstance m_footerCell;
 	std::list< CellInterval > m_intervals;
 	Ref< AutoWidgetCell > m_focusCell;
 	Ref< AutoWidgetCell > m_captureCell;
