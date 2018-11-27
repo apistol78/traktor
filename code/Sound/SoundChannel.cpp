@@ -24,7 +24,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_outputSamplesBlockCount = 4;
+const uint32_t c_outputSamplesBlockCount = 16;
 
 inline void moveSamples(float* destSamples, const float* sourceSamples, int32_t samplesCount)
 {
@@ -52,6 +52,26 @@ inline void moveSamples(float* destSamples, const float* sourceSamples, int32_t 
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundChannel", SoundChannel, Object)
+
+SoundChannel::SoundChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameSamples)
+:	m_id(id)
+,	m_hwSampleRate(hwSampleRate)
+,	m_hwFrameSamples(hwFrameSamples)
+,	m_volume(1.0f)
+,	m_pitch(1.0f)
+,	m_playing(false)
+,	m_allowRepeat(false)
+,	m_outputSamplesIn(0)
+{
+	const uint32_t outputSamplesCount = hwFrameSamples * c_outputSamplesBlockCount;
+	const uint32_t outputSamplesSize = SbcMaxChannelCount * outputSamplesCount * sizeof(float);
+
+	m_outputSamples[0] = static_cast< float* >(Alloc::acquireAlign(outputSamplesSize, 16, T_FILE_LINE));
+	std::memset(m_outputSamples[0], 0, outputSamplesSize);
+
+	for (uint32_t i = 1; i < SbcMaxChannelCount; ++i)
+		m_outputSamples[i] = m_outputSamples[0] + outputSamplesCount * i;
+}
 
 SoundChannel::~SoundChannel()
 {
@@ -109,7 +129,8 @@ void SoundChannel::stop()
 	ss.volume = 0.0f;
 	ss.presence = 0.0f;
 	ss.presenceRate = 0.0f;
-	ss.repeat = 0;
+	ss.repeat = false;
+	ss.repeatFrom = 0;
 
 	m_playing = false;
 	m_allowRepeat = false;
@@ -140,7 +161,8 @@ bool SoundChannel::play(
 	float gain,
 	float presence,
 	float presenceRate,
-	uint32_t repeat
+	bool repeat,
+	uint32_t repeatFrom
 )
 {
 	if (!buffer)
@@ -158,7 +180,8 @@ bool SoundChannel::play(
 	ss.volume = decibelToLinear(gain);
 	ss.presence = presence;
 	ss.presenceRate = presenceRate;
-	ss.repeat = max< uint32_t >(repeat, 1);
+	ss.repeat = repeat;
+	ss.repeatFrom = repeatFrom;
 
 	m_allowRepeat = true;
 	m_playing = true;
@@ -168,29 +191,8 @@ bool SoundChannel::play(
 	return true;
 }
 
-SoundChannel::SoundChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameSamples)
-:	m_id(id)
-,	m_hwSampleRate(hwSampleRate)
-,	m_hwFrameSamples(hwFrameSamples)
-,	m_volume(1.0f)
-,	m_pitch(1.0f)
-,	m_playing(false)
-,	m_allowRepeat(false)
-,	m_outputSamplesIn(0)
-{
-	const uint32_t outputSamplesCount = hwFrameSamples * c_outputSamplesBlockCount;
-	const uint32_t outputSamplesSize = SbcMaxChannelCount * outputSamplesCount * sizeof(float);
-
-	m_outputSamples[0] = static_cast< float* >(Alloc::acquireAlign(outputSamplesSize, 16, T_FILE_LINE));
-	std::memset(m_outputSamples[0], 0, outputSamplesSize);
-
-	for (uint32_t i = 1; i < SbcMaxChannelCount; ++i)
-		m_outputSamples[i] = m_outputSamples[0] + outputSamplesCount * i;
-}
-
 bool SoundChannel::getBlock(
 	const ISoundMixer* mixer,
-	double time,
 	SoundBlock& outBlock,
 	SoundBlockMeta& outBlockMeta
 )
@@ -234,9 +236,26 @@ bool SoundChannel::getBlock(
 		if (!soundBuffer->getBlock(ss.cursor, mixer, soundBlock))
 		{
 			// No more blocks from sound buffer.
-			if (m_allowRepeat && --ss.repeat > 0)
+			if (m_allowRepeat && ss.repeat)
 			{
 				ss.cursor->reset();
+
+				// Skip samples when repeating.
+				uint32_t skip = ss.repeatFrom;
+				while (skip > 0)
+				{
+					SoundBlock skipSoundBlock = { { 0 }, m_hwFrameSamples, 0, 0 };
+					if (soundBuffer->getBlock(ss.cursor, mixer, skipSoundBlock))
+						skip -= min(skip, skipSoundBlock.samplesCount);
+					else
+					{
+						ss.buffer = 0;
+						ss.cursor = 0;
+						m_playing = false;
+						return false;						
+					}
+				}
+	
 				if (!soundBuffer->getBlock(ss.cursor, mixer, soundBlock))
 				{
 					ss.buffer = 0;

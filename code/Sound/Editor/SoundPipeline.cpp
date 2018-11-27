@@ -24,9 +24,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Sound/Editor/SoundCategory.h"
 #include "Sound/Editor/SoundPipeline.h"
 #include "Sound/Editor/Encoders/OggStreamEncoder.h"
+#include "Sound/Editor/Encoders/TssStreamEncoder.h"
 #include "Sound/Decoders/FlacStreamDecoder.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 #include "Sound/Decoders/OggStreamDecoder.h"
+#include "Sound/Decoders/TssStreamDecoder.h"
 #include "Sound/Decoders/WavStreamDecoder.h"
 
 namespace traktor
@@ -132,6 +134,8 @@ bool SoundPipeline::buildOutput(
 		decoder = new sound::Mp3StreamDecoder();
 	else if (compareIgnoreCase< std::wstring >(soundAsset->getFileName().getExtension(), L"ogg") == 0)
 		decoder = new sound::OggStreamDecoder();
+	else if (compareIgnoreCase< std::wstring >(soundAsset->getFileName().getExtension(), L"tss") == 0)
+		decoder = new sound::TssStreamDecoder();
 	else
 	{
 		log::error << L"Failed to build sound asset, unable to determine decoder from extension" << Endl;
@@ -265,7 +269,13 @@ bool SoundPipeline::buildOutput(
 		}
 
 		// Prepare encoder with destination stream.
-		Ref< IStreamEncoder > encoder = new OggStreamEncoder();
+		Ref< IStreamEncoder > encoder;
+
+		if (soundAsset->getCompressed())
+			encoder = new OggStreamEncoder();
+		else
+			encoder = new TssStreamEncoder();
+
 		if (!encoder->create(stream))
 		{
 			log::error << L"Failed to build sound asset, unable to create stream encoder" << Endl;
@@ -350,7 +360,11 @@ bool SoundPipeline::buildOutput(
 		resource->m_presence = presence;
 		resource->m_presenceRate = presenceRate;
 		resource->m_range = range;
-		resource->m_decoderType = &type_of< OggStreamDecoder >();
+
+		if (soundAsset->getCompressed())
+			resource->m_decoderType = &type_of< OggStreamDecoder >();
+		else
+			resource->m_decoderType = &type_of< TssStreamDecoder >();
 
 		int64_t dataOffsetEnd = stream->tell();
 		stream->close();

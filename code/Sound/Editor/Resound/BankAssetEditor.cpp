@@ -323,7 +323,7 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 			if (!grains.empty())
 			{
 				m_bankBuffer = new BankBuffer(grains);
-				m_soundChannel->play(m_bankBuffer, 0, 1.0f, 0.0f, 1.0f);
+				m_soundChannel->play(m_bankBuffer, 0, 1.0f, 0.0f, 1.0f, false, 0);
 
 				for (RefArray< ui::Slider >::const_iterator i = m_sliderParameters.begin(); i != m_sliderParameters.end(); ++i)
 				{
@@ -557,7 +557,7 @@ void BankAssetEditor::eventTimer(ui::TimerEvent* event)
 		else
 		{
 			T_ASSERT (m_bankBuffer);
-			m_soundChannel->play(m_bankBuffer, 0, 1.0f, 0.0f, 1.0f);
+			m_soundChannel->play(m_bankBuffer, 0, 1.0f, 0.0f, 1.0f, false, 0);
 
 			for (RefArray< ui::Slider >::const_iterator i = m_sliderParameters.begin(); i != m_sliderParameters.end(); ++i)
 			{
