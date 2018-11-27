@@ -32,6 +32,18 @@ public:
 
 	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 
+	void setStream(bool stream) { m_stream = stream; }
+
+	bool getStream() const { return m_stream; }
+
+	void setPreload(bool preload) { m_preload = preload; }
+
+	bool getPreload() const { return m_preload; }
+
+	void setCompressed(bool compressed) { m_compressed = compressed; }
+
+	bool getCompressed() const { return m_compressed; }
+
 	float getPresence() const { return m_presence; }
 
 	float getPresenceRate() const { return m_presenceRate; }
@@ -44,6 +56,7 @@ private:
 	Guid m_category;
 	bool m_stream;
 	bool m_preload;
+	bool m_compressed;
 	float m_presence;
 	float m_presenceRate;
 	float m_gain;

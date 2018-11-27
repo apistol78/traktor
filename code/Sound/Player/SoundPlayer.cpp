@@ -110,7 +110,9 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 					sound->getCategory(),
 					sound->getGain(),
 					sound->getPresence(),
-					sound->getPresenceRate()
+					sound->getPresenceRate(),
+					false,
+					0
 				);
 				i->soundChannel->setFilter(0);
 				i->soundChannel->setVolume(1.0f);
@@ -141,7 +143,9 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 					sound->getCategory(),
 					sound->getGain(),
 					sound->getPresence(),
-					sound->getPresenceRate()
+					sound->getPresenceRate(),
+					false,
+					0
 				);
 				i->soundChannel->setFilter(0);
 				i->soundChannel->setVolume(1.0f);
@@ -227,7 +231,9 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 					sound->getCategory(),
 					sound->getGain(),
 					presence,
-					sound->getPresenceRate()
+					sound->getPresenceRate(),
+					false,
+					0
 				);
 				i->soundChannel->setFilter(groupFilter);
 				i->soundChannel->setVolume(1.0f);
@@ -258,7 +264,9 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 					sound->getCategory(),
 					sound->getGain(),
 					presence,
-					sound->getPresenceRate()
+					sound->getPresenceRate(),
+					false,
+					0
 				);
 				i->soundChannel->setFilter(groupFilter);
 				i->soundChannel->setVolume(1.0f);
@@ -294,7 +302,9 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 					sound->getCategory(),
 					sound->getGain(),
 					presence,
-					sound->getPresenceRate()
+					sound->getPresenceRate(),
+					false,
+					0
 				);
 				i->soundChannel->setFilter(groupFilter);
 				i->soundChannel->setVolume(1.0f);

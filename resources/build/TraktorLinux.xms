@@ -5678,6 +5678,15 @@
 												</item>
 											</items>
 										</item>
+										<item type="Filter">
+											<name>Tracker</name>
+											<items>
+												<item type="File">
+													<fileName>Tracker/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
@@ -8126,6 +8135,15 @@
 								<items>
 									<item type="File">
 										<fileName>Processor/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Tracker</name>
+								<items>
+									<item type="File">
+										<fileName>Tracker/*.*</fileName>
 										<items/>
 									</item>
 								</items>

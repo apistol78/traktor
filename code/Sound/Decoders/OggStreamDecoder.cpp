@@ -18,6 +18,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #endif
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/AutoPtr.h"
@@ -383,7 +384,7 @@ public:
 	void destroy()
 	{
 		stb_vorbis_close(m_vorbis);
-		m_stream = 0;
+		m_stream = nullptr;
 	}
 
 	double getDuration() const
@@ -401,7 +402,10 @@ public:
 		}
 		m_consume = 0;
 
-		while (m_queued < outSoundBlock.samplesCount)
+		if (!m_stream)
+			return false;
+
+		while (m_stream != nullptr && m_queued < outSoundBlock.samplesCount)
 		{
 			int32_t decodedSamples = 0;
 			while (decodedSamples <= 0)
@@ -412,7 +416,10 @@ public:
 					if (read())
 						continue;
 					else
-						return false;
+					{
+						m_stream = nullptr;
+						break;
+					}
 				}
 
 				T_ASSERT (used > 0)
@@ -430,6 +437,7 @@ public:
 
 		outSoundBlock.maxChannel = m_channels;
 		outSoundBlock.sampleRate = m_info.sample_rate;
+		outSoundBlock.samplesCount = min< uint32_t >(outSoundBlock.samplesCount, m_queued);
 
 		m_consume = outSoundBlock.samplesCount;
 		return true;

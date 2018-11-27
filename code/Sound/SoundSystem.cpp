@@ -315,7 +315,7 @@ void SoundSystem::threadMixer()
 				m_requestBlockMeta[i].presence = 0.0f;
 				m_requestBlockMeta[i].presenceRate = 0.0f;
 
-				m_channels[i]->getBlock(m_mixer, m_time, m_requestBlocks[i], m_requestBlockMeta[i]);
+				m_channels[i]->getBlock(m_mixer, m_requestBlocks[i], m_requestBlockMeta[i]);
 
 				if (m_requestBlockMeta[i].presence > 0.0f)
 				{

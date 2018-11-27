@@ -45,6 +45,8 @@ class T_DLLCLASS SoundChannel : public Object
 	T_RTTI_CLASS;
 
 public:
+	SoundChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameSamples);
+
 	virtual ~SoundChannel();
 
 	/*! \brief Set channel volume. */
@@ -75,7 +77,8 @@ public:
 	 * \param gain Sound gain in dB.
 	 * \param presence Sound presence.
 	 * \param presenceRate Sound presence recover rate.
-	 * \param repeat Number of times to repeat sound.
+	 * \param repeat If sound is repeating.
+	 * \param repeatFrom Skip number of samples before repeat.
 	 * \return True if sound is playing successfully.
 	 */
 	bool play(
@@ -84,7 +87,8 @@ public:
 		float gain,
 		float presence,
 		float presenceRate,
-		uint32_t repeat = 0
+		bool repeat,
+		uint32_t repeatFrom
 	);
 
 	/*! \brief Check if there are a sound playing in this channel. */
@@ -95,6 +99,13 @@ public:
 
 	/*! \brief Return current playing sound's cursor. */
 	ISoundBufferCursor* getCursor();
+
+	/*! \brief Get next mixed and prepared sound block. */
+	bool getBlock(
+		const ISoundMixer* mixer,
+		SoundBlock& outBlock,
+		SoundBlockMeta& outBlockMeta
+	);
 
 private:
 	friend class SoundSystem;
@@ -113,14 +124,16 @@ private:
 		float volume;
 		float presence;
 		float presenceRate;
-		uint32_t repeat;
+		bool repeat;
+		uint32_t repeatFrom;
 
 		StateSound()
 		:	category(0)
 		,	volume(1.0f)
 		,	presence(0.0f)
 		,	presenceRate(1.0f)
-		,	repeat(0)
+		,	repeat(false)
+		,	repeatFrom(0)
 		{
 		}
 	};
@@ -142,15 +155,6 @@ private:
 	DoubleBuffer< StateParameter > m_stateParameters;
 	float* m_outputSamples[SbcMaxChannelCount];
 	uint32_t m_outputSamplesIn;
-
-	SoundChannel(uint32_t id, uint32_t hwSampleRate, uint32_t hwFrameSamples);
-
-	bool getBlock(
-		const ISoundMixer* mixer,
-		double time,
-		SoundBlock& outBlock,
-		SoundBlockMeta& outBlockMeta
-	);
 };
 
 	}
