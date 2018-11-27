@@ -29,7 +29,7 @@ public:
 	/*! \name Constants */
 	/*! \{ */
 
-	void addConstant(const char* const name, const Any& value);
+	void addConstant(const std::string& name, const Any& value);
 
 	/*! \} */
 
