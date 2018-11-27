@@ -4,7 +4,7 @@
 namespace traktor
 {
 
-void RuntimeClass::addConstant(const char* const name, const Any& value)
+void RuntimeClass::addConstant(const std::string& name, const Any& value)
 {
 	ConstInfo ci;
 	ci.name = name;
