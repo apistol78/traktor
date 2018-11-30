@@ -17,6 +17,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Physics/PhysicsClassFactory.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/World/ArticulatedEntity.h"
+#include "Physics/World/RigidBodyComponent.h"
 #include "Physics/World/RigidEntity.h"
 #include "Physics/World/Character/CharacterComponent.h"
 #include "Physics/World/Vehicle/VehicleComponent.h"
@@ -395,6 +396,10 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCharacterComponent->addProperty("headAngle", &CharacterComponent::setHeadAngle, &CharacterComponent::getHeadAngle);
 	classCharacterComponent->addProperty("grounded", &CharacterComponent::isGrounded);
 	registrar->registerClass(classCharacterComponent);
+
+	Ref< AutoRuntimeClass< RigidBodyComponent > > classRigidBodyComponent = new AutoRuntimeClass< RigidBodyComponent >();
+	classRigidBodyComponent->addProperty("body", &RigidBodyComponent::getBody);
+	registrar->registerClass(classRigidBodyComponent);
 
 	Ref< AutoRuntimeClass< VehicleComponent > > classVehicleComponent = new AutoRuntimeClass< VehicleComponent >();
 	classVehicleComponent->addProperty("steerAngle", &VehicleComponent::setSteerAngle, &VehicleComponent::getSteerAngle);

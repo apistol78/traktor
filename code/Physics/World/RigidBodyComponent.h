@@ -57,6 +57,8 @@ public:
 
 	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
 
+	Body* getBody() const { return m_body; }
+
 private:
 	world::Entity* m_owner;
 	Ref< Body > m_body;
