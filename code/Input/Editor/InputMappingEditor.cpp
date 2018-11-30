@@ -641,6 +641,7 @@ void InputMappingEditor::eventNodeActivated(ui::NodeActivateEvent* event)
 
 			updateGraphView();
 		}
+		inputDialog.destroy();
 	}
 }
 
