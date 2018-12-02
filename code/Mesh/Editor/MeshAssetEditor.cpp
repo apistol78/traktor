@@ -100,7 +100,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		return false;
 
 	Ref< ui::Container > containerFile = new ui::Container();
-	if (!containerFile->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 4, 4)))
+	if (!containerFile->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", ui::dpi96(4), ui::dpi96(4))))
 		return false;
 
 	Ref< ui::Static > staticFileName = new ui::Static();
@@ -108,7 +108,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		return false;
 
 	Ref< ui::Container > containerFileName = new ui::Container();
-	if (!containerFileName->create(containerFile, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0, 0)))
+	if (!containerFileName->create(containerFile, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0, ui::dpi96(4))))
 		return false;
 
 	m_editFileName = new ui::Edit();
@@ -180,19 +180,19 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	staticLodMaxDistance->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_LOD_MAX_DISTANCE"));
 
 	m_editLodMaxDistance = new ui::Edit();
-	m_editLodMaxDistance->create(containerRight, L"", ui::WsClientBorder, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
+	m_editLodMaxDistance->create(containerRight, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
 
 	Ref< ui::Static > staticLodCullDistance = new ui::Static();
 	staticLodCullDistance->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_LOD_CULL_DISTANCE"));
 
 	m_editLodCullDistance = new ui::Edit();
-	m_editLodCullDistance->create(containerRight, L"", ui::WsClientBorder, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
+	m_editLodCullDistance->create(containerRight, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
 
 	Ref< ui::Static > staticScaleFactor = new ui::Static();
 	staticScaleFactor->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_SCALE_FACTOR"));
 
 	m_editScaleFactor = new ui::Edit();
-	m_editScaleFactor->create(containerRight, L"", ui::WsClientBorder, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
+	m_editScaleFactor->create(containerRight, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
 
 	m_containerMaterials = new ui::Container();
 	if (!m_containerMaterials->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*,100%", 0, 0)))

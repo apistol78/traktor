@@ -41,6 +41,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/TableLayout.h"
 #include "Ui/FileDialog.h"
 #include "Ui/Splitter.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridRow.h"
@@ -86,6 +87,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 	if (!ui::Dialog::create(parent, L"Model Tool", ui::dpi96(1000), ui::dpi96(800), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
+	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 	addEventHandler< ui::CloseEvent >(this, &ModelToolDialog::eventDialogClose);
 
 	Ref< ui::ToolBar > toolBar = new ui::ToolBar();

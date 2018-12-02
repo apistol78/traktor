@@ -5,8 +5,8 @@
 			<id>{D34CB138-A5AE-FF4B-A07A-A6A3827DE1B1}</id>
 			<comment/>
 			<position>
-				<first>7255</first>
-				<second>-373</second>
+				<first>5285</first>
+				<second>-244</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -53,8 +53,8 @@
 			<id>{789EC3A5-F082-FE49-87B0-E3D8922F6C33}</id>
 			<comment/>
 			<position>
-				<first>-506</first>
-				<second>105</second>
+				<first>721</first>
+				<second>63</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -72,8 +72,8 @@
 			<id>{D4C2C2A3-AFE7-A644-B57B-3D3152BA8AFE}</id>
 			<comment/>
 			<position>
-				<first>4310</first>
-				<second>-319</second>
+				<first>3593</first>
+				<second>-167</second>
 			</position>
 			<name>RayCastFn_DX11</name>
 			<inputPins>
@@ -255,7 +255,7 @@ ENTRY
 	}
 
 	float2 uv = screenPosition / TargetSize.xy;
-	Color = ColorMap.SampleLevel(ColorMap_Sampler, uv, Roughness * 4.0f);
+	Color = ColorMap.SampleLevel(ColorMap_Sampler, uv, Roughness * 6.0f);
 }
 			]]>
 			</script>
@@ -264,8 +264,8 @@ ENTRY
 			<id>{BD979490-AB58-1F40-8FF8-14D5359A1FA4}</id>
 			<comment/>
 			<position>
-				<first>43</first>
-				<second>21</second>
+				<first>996</first>
+				<second>36</second>
 			</position>
 			<fragmentGuid>{B8A2B203-34E6-3543-8502-522D0F16791C}</fragmentGuid>
 			<inputPins>
@@ -285,8 +285,8 @@ ENTRY
 			<id>{21F138F8-9289-8B46-B339-5D1D0BB3319D}</id>
 			<comment/>
 			<position>
-				<first>2991</first>
-				<second>-939</second>
+				<first>2644</first>
+				<second>-692</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -319,8 +319,8 @@ ENTRY
 			<id>{6A4F4FF0-75EC-E748-B1BC-3055404AE51B}</id>
 			<comment/>
 			<position>
-				<first>61</first>
-				<second>-120</second>
+				<first>1000</first>
+				<second>-85</second>
 			</position>
 			<fragmentGuid>{ED628E05-EA7F-B24F-9E38-97F53A90CCDA}</fragmentGuid>
 			<inputPins>
@@ -349,24 +349,24 @@ ENTRY
 			<id>{3DBCA947-40D0-6F4B-8C48-1895E199E345}</id>
 			<comment/>
 			<position>
-				<first>1488</first>
-				<second>-269</second>
+				<first>1597</first>
+				<second>-263</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{5B3035F9-C03D-1243-8356-1F7BF977781D}</id>
 			<comment/>
 			<position>
-				<first>1120</first>
-				<second>-204</second>
+				<first>1401</first>
+				<second>-221</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{EF191D18-ADC0-1140-B4FB-043B0371611C}</id>
 			<comment/>
 			<position>
-				<first>351</first>
-				<second>-365</second>
+				<first>1033</first>
+				<second>-270</second>
 			</position>
 			<parameterName>World_MagicCoeffs</parameterName>
 			<type>PtVector</type>
@@ -376,8 +376,8 @@ ENTRY
 			<id>{82CF3396-77A6-5E4F-BAFE-E2358BC1469F}</id>
 			<comment/>
 			<position>
-				<first>3337</first>
-				<second>-475</second>
+				<first>2992</first>
+				<second>-245</second>
 			</position>
 			<parameterName>World_DepthMap</parameterName>
 			<type>PtTexture2D</type>
@@ -387,8 +387,8 @@ ENTRY
 			<id>{F3D87ACD-858D-904C-AF60-825A6AD4267B}</id>
 			<comment/>
 			<position>
-				<first>3346</first>
-				<second>-311</second>
+				<first>2998</first>
+				<second>-144</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
@@ -398,8 +398,8 @@ ENTRY
 			<id>{DE1096C1-C1F4-7443-B6F7-04C8C37BCE02}</id>
 			<comment/>
 			<position>
-				<first>4</first>
-				<second>254</second>
+				<first>978</first>
+				<second>128</second>
 			</position>
 			<fragmentGuid>{A8211EA4-C613-F54D-A5F2-AFB12E0BBE04}</fragmentGuid>
 			<inputPins>
@@ -419,8 +419,8 @@ ENTRY
 			<id>{C706AD47-90F2-BB42-B8ED-486393458F81}</id>
 			<comment/>
 			<position>
-				<first>6034</first>
-				<second>-508</second>
+				<first>4664</first>
+				<second>-304</second>
 			</position>
 			<parameterName>World_TraceReflections</parameterName>
 		</item>
@@ -428,8 +428,8 @@ ENTRY
 			<id>{7CA30909-5419-2640-A259-F3DCB944E8A0}</id>
 			<comment/>
 			<position>
-				<first>3330</first>
-				<second>-638</second>
+				<first>2994</first>
+				<second>-365</second>
 			</position>
 			<parameterName>World_ScreenMap</parameterName>
 			<type>PtTexture2D</type>
@@ -439,8 +439,8 @@ ENTRY
 			<id>{83FA00A7-9CD1-0F44-929B-70E67D5EC993}</id>
 			<comment/>
 			<position>
-				<first>4316</first>
-				<second>-939</second>
+				<first>2922</first>
+				<second>-651</second>
 			</position>
 			<fragmentGuid>{5961D8B7-FFC0-8742-B87F-1AD8B232D84E}</fragmentGuid>
 			<inputPins>
@@ -469,6 +469,10 @@ ENTRY
 					<optional>true</optional>
 				</item>
 				<item>
+					<name>Roughness</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<name>Scale</name>
 					<optional>true</optional>
 				</item>
@@ -492,6 +496,10 @@ ENTRY
 					<second>0</second>
 				</item>
 				<item>
+					<first>Roughness</first>
+					<second>0</second>
+				</item>
+				<item>
 					<first>Scale</first>
 					<second>1</second>
 				</item>
@@ -501,8 +509,8 @@ ENTRY
 			<id>{AB7BA090-5309-F949-A7CD-2029E4A6F72B}</id>
 			<comment/>
 			<position>
-				<first>4084</first>
-				<second>-775</second>
+				<first>2690</first>
+				<second>-487</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -510,16 +518,16 @@ ENTRY
 			<id>{B00B7A28-39E8-DD47-A59F-DAB111255375}</id>
 			<comment/>
 			<position>
-				<first>5669</first>
-				<second>-361</second>
+				<first>4434</first>
+				<second>-217</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{49C9987C-9D24-8642-8FAD-3A56E56B9129}</id>
 			<comment/>
 			<position>
-				<first>3960</first>
-				<second>128</second>
+				<first>3316</first>
+				<second>45</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -527,8 +535,8 @@ ENTRY
 			<id>{7460C866-27F2-134E-BA6E-D1B65DFC8187}</id>
 			<comment/>
 			<position>
-				<first>4000</first>
-				<second>-855</second>
+				<first>2606</first>
+				<second>-567</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 		</item>
@@ -536,16 +544,16 @@ ENTRY
 			<id>{D1195A35-2D43-8C42-9E08-2FC4713034FB}</id>
 			<comment/>
 			<position>
-				<first>3762</first>
-				<second>-83</second>
+				<first>3187</first>
+				<second>-81</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{9CCC097D-0F2E-2C44-81FA-79B0490B70AC}</id>
 			<comment/>
 			<position>
-				<first>4085</first>
-				<second>-106</second>
+				<first>3421</first>
+				<second>-74</second>
 			</position>
 			<swizzle>xy00</swizzle>
 		</item>
@@ -553,16 +561,16 @@ ENTRY
 			<id>{0EF34954-3709-EC4D-8F1F-A94187AC42E4}</id>
 			<comment/>
 			<position>
-				<first>3724</first>
-				<second>-164</second>
+				<first>3174</first>
+				<second>-129</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{B8E772CB-B5AE-1B4F-BD8E-A08638DBF148}</id>
 			<comment/>
 			<position>
-				<first>4089</first>
-				<second>-176</second>
+				<first>3447</first>
+				<second>-104</second>
 			</position>
 			<swizzle>xy00</swizzle>
 		</item>
@@ -570,8 +578,8 @@ ENTRY
 			<id>{A848C325-2B69-694B-8A9B-97767E29713B}</id>
 			<comment/>
 			<position>
-				<first>3330</first>
-				<second>-46</second>
+				<first>2675</first>
+				<second>196</second>
 			</position>
 			<name>ReflectionRay_DX11</name>
 			<inputPins>
@@ -616,8 +624,8 @@ ENTRY
 			<id>{C4AAF659-D614-BD4C-825C-4182C06D37DC}</id>
 			<comment/>
 			<position>
-				<first>3145</first>
-				<second>-19</second>
+				<first>2498</first>
+				<second>185</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -625,8 +633,8 @@ ENTRY
 			<id>{569B41ED-1BF1-5344-A0E2-792199730185}</id>
 			<comment/>
 			<position>
-				<first>3156</first>
-				<second>50</second>
+				<first>2497</first>
+				<second>256</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -634,24 +642,24 @@ ENTRY
 			<id>{E09F2304-6A06-3E4D-9DFC-57DB4C041004}</id>
 			<comment/>
 			<position>
-				<first>5085</first>
-				<second>211</second>
+				<first>4088</first>
+				<second>107</second>
 			</position>
 		</item>
 		<item type="traktor.render.Platform" version="traktor.render.Node:1">
 			<id>{CF9372D7-1684-164A-A46A-2CAB83845ADE}</id>
 			<comment/>
 			<position>
-				<first>5086</first>
-				<second>-230</second>
+				<first>4074</first>
+				<second>-127</second>
 			</position>
 		</item>
 		<item type="traktor.render.Color" version="traktor.render.Node:1">
 			<id>{A799B6BA-0F80-FA41-9C7A-D8E61B463817}</id>
 			<comment/>
 			<position>
-				<first>4533</first>
-				<second>177</second>
+				<first>3842</first>
+				<second>33</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 		</item>
@@ -659,8 +667,8 @@ ENTRY
 			<id>{878732EB-4A1E-EB49-B7C3-3DCECC9D06E3}</id>
 			<comment/>
 			<position>
-				<first>4620</first>
-				<second>631</second>
+				<first>3912</first>
+				<second>267</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -668,8 +676,8 @@ ENTRY
 			<id>{5466BDC9-FBBA-2748-B69F-A960A4089CFD}</id>
 			<comment/>
 			<position>
-				<first>16</first>
-				<second>420</second>
+				<first>987</first>
+				<second>219</second>
 			</position>
 			<fragmentGuid>{FDCA9563-2389-4B43-A8E5-5262EC02EC1F}</fragmentGuid>
 			<inputPins>
@@ -689,8 +697,8 @@ ENTRY
 			<id>{8A7D2FC1-AEFF-AE47-927D-2808D7DA92CD}</id>
 			<comment/>
 			<position>
-				<first>6593</first>
-				<second>-265</second>
+				<first>4936</first>
+				<second>-156</second>
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
@@ -698,8 +706,8 @@ ENTRY
 			<id>{5323F359-38C7-9B4F-A307-EE2A13A2FF03}</id>
 			<comment/>
 			<position>
-				<first>6595</first>
-				<second>-358</second>
+				<first>4938</first>
+				<second>-249</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -707,8 +715,8 @@ ENTRY
 			<id>{AB630B47-8A1F-7F47-87A9-E775F07CFE8D}</id>
 			<comment/>
 			<position>
-				<first>6804</first>
-				<second>-372</second>
+				<first>5084</first>
+				<second>-243</second>
 			</position>
 		</item>
 	</nodes>
@@ -1181,6 +1189,16 @@ ENTRY
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[34]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Roughness</name>
 			</destination>
 		</item>
 	</edges>
