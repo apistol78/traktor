@@ -8,23 +8,30 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <cmft/image.h>
 #include <cmft/cubemapfilter.h>
 #include <cmft/clcontext.h>
+#include "Compress/Lzf/DeflateStreamLzf.h"
 #include "Core/Io/IStream.h"
+#include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Thread/Thread.h"
-#include "Core/Thread/ThreadManager.h"
+//#include "Core/Thread/Thread.h"
+//#include "Core/Thread/ThreadManager.h"
+#include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
+#include "Render/Editor/Texture/DxtnCompressor.h"
+#include "Render/Editor/Texture/EtcCompressor.h"
 #include "Render/Editor/Texture/ProbeTextureAsset.h"
 #include "Render/Editor/Texture/ProbeTexturePipeline.h"
-#include "Render/Editor/Texture/TextureOutput.h"
+#include "Render/Editor/Texture/PvrtcCompressor.h"
+#include "Render/Editor/Texture/UnCompressor.h"
+#include "Render/Resource/TextureResource.h"
 
 namespace traktor
 {
@@ -182,13 +189,18 @@ bool ProbeTexturePipeline::buildOutput(
 		return false;
 	}
 
+	T_FATAL_ASSERT (image.m_width ==image.m_height);
+
+	uint32_t mipCount = log2(image.m_width) + 1;
+	T_ASSERT (mipCount >= 1);
+
 	// Execute conversion filter.
 	cmft::imageRadianceFilter(
 		image,
 		0,
 		(cmft::LightingModel::Enum)0, // inputParameters.m_lightingModel,
 		false, //(bool)inputParameters.m_excludeBase,
-		1, //(uint8_t)inputParameters.m_mipCount,
+		(uint8_t)mipCount, //(uint8_t)inputParameters.m_mipCount,
 		asset->m_glossScale, //(uint8_t)inputParameters.m_glossScale,	// smaller == blurry, 20 pretty sharp
 		asset->m_glossBias, //(uint8_t)inputParameters.m_glossBias,
 		(cmft::EdgeFixup::Enum)0, //inputParameters.m_edgeFixup,
@@ -198,32 +210,75 @@ bool ProbeTexturePipeline::buildOutput(
 
 	log::info << L"Probe filter complete" << Endl;
 
-	// Convert back into cross image.
-	cmft::imageCrossFromCubemap(image);
+	// Create output instance.
+	Ref< TextureResource > outputResource = new TextureResource();
+	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
+		outputPath,
+		outputGuid
+	);
+	if (!outputInstance)
+	{
+		log::error << L"Unable to create output instance" << Endl;
+		return false;
+	}
 
-	// Create output image.
-	Ref< drawing::Image > outputImage = new drawing::Image(drawing::PixelFormat::getRGBAF32(), image.m_width, image.m_height);
-	std::memcpy(outputImage->getData(), image.m_data, outputImage->getDataSize());
+	outputInstance->setObject(outputResource);
+
+	// Create output data stream.
+	Ref< IStream > stream = outputInstance->writeData(L"Data");
+	if (!stream)
+	{
+		log::error << L"Unable to create texture data stream" << Endl;
+		outputInstance->revert();
+		return false;
+	}
+
+	uint32_t sideSize = image.m_width;
+
+	Writer writer(stream);
+	writer << uint32_t(12);
+	writer << int32_t(sideSize);
+	writer << int32_t(sideSize);
+	writer << int32_t(6);
+	writer << int32_t(mipCount);
+	writer << int32_t(TfR32G32B32A32F);
+	writer << bool(false);
+	writer << uint8_t(TtCube);
+	writer << bool(true);
+	writer << bool(true);
+
+	// Create data writer, use deflate compression if enabled.
+	Ref< IStream > streamData = new compress::DeflateStreamLzf(stream);
+	Writer writerData(streamData);
+
+	uint32_t offsets[CUBE_FACE_NUM][MAX_MIP_NUM] = { 0 };
+	cmft::imageGetMipOffsets(offsets, image);
+
+	for (int side = 0; side < 6; ++side)
+	{
+		RefArray< drawing::Image > mipImages(mipCount);
+		for (int i = 0; i < mipCount; ++i)
+		{
+			uint32_t mipSize = sideSize >> i;
+			Ref< drawing::Image > mipImage = new drawing::Image(drawing::PixelFormat::getRGBAF32(), mipSize, mipSize);
+			std::memcpy(mipImage->getData(), (uint8_t*)image.m_data + offsets[side][i], mipImage->getDataSize());
+			mipImages[i] = mipImage;
+		}
+		UnCompressor().compress(writerData, mipImages, TfR32G32B32A32F, false, 1);
+	}
+
+	streamData->close();
 
 	// Cleanup.
 	cmft::imageUnload(image);
 
-	// Build runtime texture cube map.
-	output = new TextureOutput();
-	output->m_textureFormat = TfInvalid;
-	output->m_generateMips = true;
-	output->m_keepZeroAlpha = false;
-	output->m_textureType = TtCube;
-	output->m_hasAlpha = false;
-	output->m_enableCompression = true;
-	output->m_linearGamma = true;
+	if (!outputInstance->commit())
+	{
+		log::error << L"Unable to commit output instance" << Endl;
+		return false;
+	}
 
-	return pipelineBuilder->buildOutput(
-		output,
-		outputPath,
-		outputGuid,
-		outputImage
-	);
+	return true;
 }
 
 	}

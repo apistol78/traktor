@@ -19,9 +19,9 @@ namespace traktor
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ProbeTextureAsset", 1, ProbeTextureAsset, editor::Asset)
 
 ProbeTextureAsset::ProbeTextureAsset()
-:	m_glossScale(10)
+:	m_glossScale(20)
 ,	m_glossBias(1)
-,	m_sizeDivisor(1)
+,	m_sizeDivisor(8)
 {
 }
 

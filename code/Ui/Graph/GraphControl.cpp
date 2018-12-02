@@ -558,7 +558,7 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 		m_nodePositions[i] = m_nodes[i]->getPosition();
 
 	// If user holds down ALT we should move entire graph.
-	if ((event->getKeyState() & KsMenu) != 0)
+	if ((event->getKeyState() & KsMenu) != 0 || event->getButton() == MbtMiddle)
 	{
 		m_moveAll = true;
 		setCapture();

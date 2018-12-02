@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>-548</first>
-				<second>-453</second>
+				<second>-452</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -17,8 +17,8 @@
 			<id>{2DEDB987-BDE1-3743-86B0-ACDAB5E7B61A}</id>
 			<comment/>
 			<position>
-				<first>-960</first>
-				<second>153</second>
+				<first>-646</first>
+				<second>89</second>
 			</position>
 			<name>Color</name>
 			<usage>DuColor</usage>
@@ -30,7 +30,7 @@
 			<comment/>
 			<position>
 				<first>944</first>
-				<second>-445</second>
+				<second>-444</second>
 			</position>
 			<technique>Default</technique>
 		</item>
@@ -38,7 +38,7 @@
 			<id>{137E9C81-4791-E842-BB39-B76567FAE7D0}</id>
 			<comment/>
 			<position>
-				<first>1457</first>
+				<first>1456</first>
 				<second>-50</second>
 			</position>
 			<technique>Default</technique>
@@ -86,8 +86,8 @@
 			<id>{71D0B4B2-1CB2-7F4D-9566-86D8048BAED9}</id>
 			<comment/>
 			<position>
-				<first>-1027</first>
-				<second>10</second>
+				<first>-692</first>
+				<second>-62</second>
 			</position>
 			<name>TexCoord</name>
 			<usage>DuCustom</usage>
@@ -98,8 +98,8 @@
 			<id>{86B03D43-953E-314E-9CB2-43725B948408}</id>
 			<comment/>
 			<position>
-				<first>-547</first>
-				<second>-89</second>
+				<first>-326</first>
+				<second>-134</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -116,16 +116,16 @@
 			<id>{71E4B9C3-4BB8-E141-AE7E-1A0AC3DA8001}</id>
 			<comment/>
 			<position>
-				<first>183</first>
-				<second>-65</second>
+				<first>182</first>
+				<second>-64</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{6A86A7C3-FF6B-B045-B962-24858ECA28FD}</id>
 			<comment/>
 			<position>
-				<first>-985</first>
-				<second>-223</second>
+				<first>-642</first>
+				<second>-198</second>
 			</position>
 			<parameterName>Texture</parameterName>
 			<type>PtTexture2D</type>
@@ -135,8 +135,8 @@
 			<id>{8A96EF90-091A-5E40-B68B-EDDD28827C93}</id>
 			<comment/>
 			<position>
-				<first>-559</first>
-				<second>122</second>
+				<first>-340</first>
+				<second>42</second>
 			</position>
 			<fragmentGuid>{0F359947-AADA-6748-B492-44CE56038205}</fragmentGuid>
 			<inputPins>
@@ -156,7 +156,7 @@
 			<id>{E55C75D8-FBD9-4443-B76E-A916C5F8CB43}</id>
 			<comment/>
 			<position>
-				<first>-51</first>
+				<first>-50</first>
 				<second>272</second>
 			</position>
 			<priority>
@@ -202,7 +202,7 @@
 			<comment/>
 			<position>
 				<first>-52</first>
-				<second>343</second>
+				<second>342</second>
 			</position>
 			<priority>
 				<setup>false</setup>
@@ -256,7 +256,7 @@
 			<comment/>
 			<position>
 				<first>306</first>
-				<second>197</second>
+				<second>196</second>
 			</position>
 			<parameterName>DepthTest</parameterName>
 		</item>
@@ -265,7 +265,7 @@
 			<comment/>
 			<position>
 				<first>316</first>
-				<second>403</second>
+				<second>402</second>
 			</position>
 			<parameterName>DepthTest</parameterName>
 		</item>
@@ -273,8 +273,8 @@
 			<id>{B42D7E26-F9E8-AF43-8595-C9AE27EE070C}</id>
 			<comment/>
 			<position>
-				<first>-55</first>
-				<second>411</second>
+				<first>-54</first>
+				<second>410</second>
 			</position>
 			<priority>
 				<setup>false</setup>
@@ -381,8 +381,8 @@
 			<id>{2706067B-9B8A-524A-8BFC-9692CF2B4EFB}</id>
 			<comment/>
 			<position>
-				<first>-39</first>
-				<second>-313</second>
+				<first>-38</first>
+				<second>-312</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -390,15 +390,15 @@
 			<id>{C5C472A0-0B23-254C-A95F-1DFF5CDE0F7A}</id>
 			<comment/>
 			<position>
-				<first>173</first>
-				<second>-281</second>
+				<first>172</first>
+				<second>-280</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{7AE61008-858F-0344-8541-E04DFFC11DFF}</id>
 			<comment/>
 			<position>
-				<first>171</first>
+				<first>170</first>
 				<second>-474</second>
 			</position>
 			<parameterName>Projection</parameterName>
@@ -409,7 +409,7 @@
 			<id>{3B6979A0-D422-9748-9B2A-0C84505C73A7}</id>
 			<comment/>
 			<position>
-				<first>491</first>
+				<first>490</first>
 				<second>-562</second>
 			</position>
 		</item>
@@ -417,7 +417,7 @@
 			<id>{529A0451-2313-934D-92DC-37E77B195AD1}</id>
 			<comment/>
 			<position>
-				<first>1013</first>
+				<first>1012</first>
 				<second>160</second>
 			</position>
 			<parameterName>Depth</parameterName>
@@ -426,8 +426,8 @@
 			<id>{E0A606B7-4B4F-D54B-849A-31BFCFD9BF29}</id>
 			<comment/>
 			<position>
-				<first>625</first>
-				<second>165</second>
+				<first>624</first>
+				<second>164</second>
 			</position>
 			<priority>
 				<setup>false</setup>
@@ -466,15 +466,6 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{D91007F4-8586-6041-9A21-77599909FF1A}</id>
-			<comment/>
-			<position>
-				<first>-105</first>
-				<second>-148</second>
-			</position>
-			<swizzle>xyzx</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -711,16 +702,6 @@
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[24]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[24]"/>
 				<name>Output</name>
 			</source>
 			<destination>

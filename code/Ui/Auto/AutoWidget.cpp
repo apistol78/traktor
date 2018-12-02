@@ -425,9 +425,16 @@ void AutoWidget::eventPaint(PaintEvent* event)
 	}
 
 	if (m_headerCell.cell)
-		m_headerCell.cell->paint(canvas, m_headerCell.rc);
+	{
+		Rect rc = m_headerCell.rc.offset(m_scrollOffset.cx, 0);
+		m_headerCell.cell->paint(canvas, rc);
+	}
+
 	if (m_footerCell.cell)
-		m_footerCell.cell->paint(canvas, m_footerCell.rc);
+	{
+		Rect rc = m_footerCell.rc.offset(m_scrollOffset.cx, 0);
+		m_footerCell.cell->paint(canvas, rc);
+	}
 
 	event->consume();
 }
