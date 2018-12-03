@@ -151,6 +151,7 @@ bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 	if (!m_toolBar->create(m_container))
 		return false;
 
+	m_toolBar->addItem(new ui::ToolBarButton(L"Capture", ui::Command(L"Scene.Editor.Capture"), ui::ToolBarButton::BsText));
 	m_toolBar->addItem(new ui::ToolBarButton(L"Save cubemap...", ui::Command(L"Scene.Editor.SaveCubeMap"), ui::ToolBarButton::BsText));
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &CubicRenderControl::eventToolClick);
 
@@ -333,7 +334,12 @@ void CubicRenderControl::setQuality(world::Quality imageProcessQuality, world::Q
 
 bool CubicRenderControl::handleCommand(const ui::Command& command)
 {
-	if (command == L"Scene.Editor.SaveCubeMap")
+	if (command == L"Scene.Editor.Capture")
+	{
+		capture();
+		update();
+	}
+	else if (command == L"Scene.Editor.SaveCubeMap")
 	{
 		Ref< drawing::Image > cm = new drawing::Image(drawing::PixelFormat::getRGBAF32(), 6 * 1024, 1024);
 		for (int32_t i = 0; i < 6; ++i)
@@ -372,6 +378,133 @@ void CubicRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDel
 
 void CubicRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
+}
+
+void CubicRenderControl::capture()
+{
+	Ref< scene::Scene > sceneInstance = m_context->getScene();
+	if (!sceneInstance || !m_renderView)
+		return;
+
+	// Lazy create world renderer.
+	if (!m_worldRenderer)
+	{
+		updateWorldRenderer();
+		if (!m_worldRenderer)
+			return;
+	}
+
+	Vector4 pivot = Vector4::origo();
+
+	// Get pivot point from selection set.
+	RefArray< EntityAdapter > selectedEntities;
+	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly) > 0)
+		pivot = selectedEntities.front()->getTransform().inverse().translation().xyz1();
+
+	// Create world render view.
+	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
+	m_worldRenderView.setPerspective(
+		1024,
+		1024,
+		1.0f,
+		deg2rad(90.0f),
+		worldRenderSettings->viewNearZ,
+		worldRenderSettings->viewFarZ
+	);
+
+	// Render world.
+	if (m_renderView->begin(render::EtCyclop))
+	{
+		// Render all faces of cube map.
+		for (int32_t face = 0; face < 6; ++face)
+		{
+			if (m_renderView->begin(m_renderTargetSet, face))
+			{
+				Matrix44 view;
+				switch (face)
+				{
+				case 0:	// +X
+					view = rotateY(deg2rad(-90.0f));
+					break;
+				case 1:	// -X
+					view = rotateY(deg2rad( 90.0f));
+					break;
+				case 2:	// +Y
+					view = rotateX(deg2rad( 90.0f));
+					break;
+				case 3: // -Y
+					view = rotateX(deg2rad(-90.0f));
+					break;
+				case 4:	// +Z
+					view = Matrix44::identity();
+					break;
+				case 5:	// -Z
+					view = rotateY(deg2rad(180.0f));
+					break;
+				}
+
+				// Move to pivot point.
+				view = view * translate(pivot);
+
+				// Render entities.
+				m_worldRenderView.setTimes(0.0f, 1.0f / 60.0f, 1.0f);
+				m_worldRenderView.setView(view, view);
+
+				Ref< scene::Scene > sceneInstance = m_context->getScene();
+				if (sceneInstance)
+				{
+					// Build frame from scene entities.
+					m_worldRenderer->beginBuild();
+					m_worldRenderer->build(sceneInstance->getRootEntity());
+					m_context->getEntityEventManager()->build(m_worldRenderer);
+					m_worldRenderer->endBuild(m_worldRenderView, 0);
+
+					// Set post process parameters from scene instance.
+					render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
+					if (postProcess)
+					{
+						for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = sceneInstance->getImageProcessParams().begin(); i != sceneInstance->getImageProcessParams().end(); ++i)
+							postProcess->setTextureParameter(i->first, i->second);
+					}
+				}
+
+				m_worldRenderer->beginRender(
+					0,
+					render::EtCyclop,
+					Color4f(0.0f, 0.0f, 0.0f, 1.0f)
+				);
+
+				m_worldRenderer->render(
+					0,
+					render::EtCyclop
+				);
+
+				m_worldRenderer->endRender(0, render::EtCyclop, 1.0f / 60.0f);
+
+				m_renderView->end();
+			}
+		}
+
+		// Download each target and update cube texture.
+		for (int32_t side = 0; side < 6; ++side)
+		{
+			if (!m_renderTargetSet->read(side, m_cubeImages[side]->getData()))
+				log::error << L"Unable to read render target " << side << L" into cube image." << Endl;
+
+			m_cubeImages[side]->clearAlpha(1.0f);
+
+			render::ITexture::Lock lock;
+			if (m_cubeMapTexture->lock(side, 0, lock))
+			{
+				std::memcpy(lock.bits, m_cubeImages[side]->getData(), m_cubeImages[side]->getDataSize());
+				m_cubeMapTexture->unlock(side, 0);
+			}
+			else
+				log::error << L"Unable to lock cubemap side " << side << L"." << Endl;
+		}
+
+		m_renderView->end();
+	}
 }
 
 void CubicRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
@@ -446,131 +579,12 @@ void CubicRenderControl::eventSize(ui::SizeEvent* event)
 
 void CubicRenderControl::eventPaint(ui::PaintEvent* event)
 {
-	Ref< scene::Scene > sceneInstance = m_context->getScene();
-
-	float deltaTime = float(m_timer.getDeltaTime());
-	float scaledTime = m_context->getTime();
-
-	if (!sceneInstance || !m_renderView)
+	if (!m_renderView)
 		return;
-
-	// Lazy create world renderer.
-	if (!m_worldRenderer)
-	{
-		updateWorldRenderer();
-		if (!m_worldRenderer)
-			return;
-	}
-
-	Vector4 pivot = Vector4::origo();
-
-	// Get pivot point from selection set.
-	RefArray< EntityAdapter > selectedEntities;
-	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly) > 0)
-		pivot = selectedEntities.front()->getTransform().inverse().translation().xyz1();
-
-	// Create world render view.
-	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
-	m_worldRenderView.setPerspective(
-		1024,
-		1024,
-		1.0f,
-		deg2rad(90.0f),
-		worldRenderSettings->viewNearZ,
-		worldRenderSettings->viewFarZ
-	);
 
 	// Render world.
 	if (m_renderView->begin(render::EtCyclop))
 	{
-		// Render all faces of cube map.
-		for (int32_t face = 0; face < 6; ++face)
-		{
-			if (m_renderView->begin(m_renderTargetSet, face))
-			{
-				Matrix44 view;
-				switch (face)
-				{
-				case 0:	// +X
-					view = rotateY(deg2rad(-90.0f));
-					break;
-				case 1:	// -X
-					view = rotateY(deg2rad( 90.0f));
-					break;
-				case 2:	// +Y
-					view = rotateX(deg2rad( 90.0f));
-					break;
-				case 3: // -Y
-					view = rotateX(deg2rad(-90.0f));
-					break;
-				case 4:	// +Z
-					view = Matrix44::identity();
-					break;
-				case 5:	// -Z
-					view = rotateY(deg2rad(180.0f));
-					break;
-				}
-
-				// Move to pivot point.
-				view = view * translate(pivot);
-
-				// Render entities.
-				m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
-				m_worldRenderView.setView(view, view);
-
-				Ref< scene::Scene > sceneInstance = m_context->getScene();
-				if (sceneInstance)
-				{
-					// Build frame from scene entities.
-					m_worldRenderer->beginBuild();
-					m_worldRenderer->build(sceneInstance->getRootEntity());
-					m_context->getEntityEventManager()->build(m_worldRenderer);
-					m_worldRenderer->endBuild(m_worldRenderView, 0);
-
-					// Set post process parameters from scene instance.
-					render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
-					if (postProcess)
-					{
-						for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = sceneInstance->getImageProcessParams().begin(); i != sceneInstance->getImageProcessParams().end(); ++i)
-							postProcess->setTextureParameter(i->first, i->second);
-					}
-				}
-
-				m_worldRenderer->beginRender(
-					0,
-					render::EtCyclop,
-					Color4f(0.0f, 0.0f, 0.0f, 1.0f)
-				);
-
-				m_worldRenderer->render(
-					0,
-					render::EtCyclop
-				);
-
-				m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
-
-				m_renderView->end();
-			}
-		}
-
-		// Download each target and update cube texture.
-		for (int32_t side = 0; side < 6; ++side)
-		{
-			if (!m_renderTargetSet->read(side, m_cubeImages[side]->getData()))
-				log::error << L"Unable to read render target " << side << L" into cube image." << Endl;
-
-			m_cubeImages[side]->clearAlpha(1.0f);
-
-			render::ITexture::Lock lock;
-			if (m_cubeMapTexture->lock(side, 0, lock))
-			{
-				std::memcpy(lock.bits, m_cubeImages[side]->getData(), m_cubeImages[side]->getDataSize());
-				m_cubeMapTexture->unlock(side, 0);
-			}
-			else
-				log::error << L"Unable to lock cubemap side " << side << L"." << Endl;
-		}
-
 		// Render cube preview.
 		const Color4f clearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		m_renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
