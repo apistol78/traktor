@@ -123,6 +123,8 @@ private:
 	Timer m_timer;
 	ui::Size m_dirtySize;
 
+	void capture();
+
 	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
