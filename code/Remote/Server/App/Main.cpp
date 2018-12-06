@@ -416,8 +416,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #elif defined(__LINUX__)
 	platforms.push_back(L"Android");
 	platforms.push_back(L"Emscripten");
-	platforms.push_back(L"Linux32");
-	platforms.push_back(L"Linux64");
+	platforms.push_back(L"Linux");
 	platforms.push_back(L"PNaCl");
 #endif
 
