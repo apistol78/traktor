@@ -9,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Render/IRenderSystem.h"
 #include "Render/OpenGL/Std/Platform.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/ResourceContextOpenGL.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -105,7 +105,7 @@ private:
 
 #endif
 
-	Ref< ContextOpenGL > m_resourceContext;
+	Ref< ResourceContextOpenGL > m_resourceContext;
 	bool m_useProgramCache;
 };
 

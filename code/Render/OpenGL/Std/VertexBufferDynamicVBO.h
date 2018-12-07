@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-class ContextOpenGL;
+class ResourceContextOpenGL;
 class VertexElement;
 
 /*!
@@ -26,7 +26,7 @@ class VertexBufferDynamicVBO : public VertexBufferOpenGL
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferDynamicVBO(ContextOpenGL* resourceContext, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize);
+	VertexBufferDynamicVBO(ResourceContextOpenGL* resourceContext, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize);
 
 	virtual ~VertexBufferDynamicVBO();
 
@@ -38,7 +38,7 @@ public:
 
 	virtual void unlock() T_OVERRIDE T_FINAL;
 
-	virtual void activate(const GLint* attributeLocs) T_OVERRIDE T_FINAL;
+	virtual void activate(RenderContextOpenGL* renderContext, const GLint* attributeLocs, uint32_t attributeHash) T_OVERRIDE T_FINAL;
 
 private:
 	struct AttributeDesc
@@ -49,12 +49,11 @@ private:
 		GLuint offset;
 	};
 
-	Ref< ContextOpenGL > m_resourceContext;
-	GLuint m_array;
+	Ref< ResourceContextOpenGL > m_resourceContext;
 	GLuint m_buffer;
 	GLuint m_vertexStride;
 	AttributeDesc m_attributeDesc[T_OGL_MAX_USAGE_INDEX];
-	const GLint* m_attributeLocs;
+	uint32_t m_attributeHash;
 	uint8_t* m_lock;
 	GLvoid* m_mapped;
 	AlignedVector< uint8_t > m_data;

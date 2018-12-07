@@ -6,10 +6,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/RenderContextOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetDepthOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
+#include "Render/OpenGL/Std/ResourceContextOpenGL.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 
 namespace traktor
@@ -19,7 +20,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteRenderBufferCallback : public ContextOpenGL::IDeleteCallback
+struct DeleteRenderBufferCallback : public ResourceContextOpenGL::IDeleteCallback
 {
 	GLuint m_renderBufferName;
 
@@ -36,7 +37,7 @@ struct DeleteRenderBufferCallback : public ContextOpenGL::IDeleteCallback
 	}
 };
 
-struct DeleteFramebufferCallback : public ContextOpenGL::IDeleteCallback
+struct DeleteFramebufferCallback : public ResourceContextOpenGL::IDeleteCallback
 {
 	GLuint m_framebufferName;
 
@@ -59,7 +60,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGL", RenderTargetSetO
 
 uint32_t RenderTargetSetOpenGL::ms_primaryTargetTag = 1;
 
-RenderTargetSetOpenGL::RenderTargetSetOpenGL(ContextOpenGL* resourceContext)
+RenderTargetSetOpenGL::RenderTargetSetOpenGL(ResourceContextOpenGL* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_targetFBO(0)
 ,	m_depthBufferOrTexture(0)
@@ -251,7 +252,7 @@ bool RenderTargetSetOpenGL::read(int index, void* buffer) const
 	return true;
 }
 
-bool RenderTargetSetOpenGL::bind(ContextOpenGL* renderContext, GLuint primaryDepthBuffer)
+bool RenderTargetSetOpenGL::bind(RenderContextOpenGL* renderContext, GLuint primaryDepthBuffer)
 {
 	if (!createFramebuffer(primaryDepthBuffer))
 		return false;
@@ -294,7 +295,7 @@ bool RenderTargetSetOpenGL::bind(ContextOpenGL* renderContext, GLuint primaryDep
 	return true;
 }
 
-bool RenderTargetSetOpenGL::bind(ContextOpenGL* renderContext, GLuint primaryDepthBuffer, int32_t renderTarget)
+bool RenderTargetSetOpenGL::bind(RenderContextOpenGL* renderContext, GLuint primaryDepthBuffer, int32_t renderTarget)
 {
 	if (!createFramebuffer(primaryDepthBuffer))
 		return false;
@@ -337,7 +338,7 @@ bool RenderTargetSetOpenGL::bind(ContextOpenGL* renderContext, GLuint primaryDep
 	return true;
 }
 
-void RenderTargetSetOpenGL::blit(ContextOpenGL* renderContext)
+void RenderTargetSetOpenGL::blit(RenderContextOpenGL* renderContext)
 {
 	int32_t physicalWidth = renderContext->getPhysicalWidth();
 	int32_t physicalHeight = renderContext->getPhysicalHeight();

@@ -7,7 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Render/VertexElement.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/RenderContextOpenGL.h"
+#include "Render/OpenGL/Std/ResourceContextOpenGL.h"
 #include "Render/OpenGL/Std/VertexBufferStaticVBO.h"
 
 namespace traktor
@@ -17,7 +18,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteBufferCallback : public ContextOpenGL::IDeleteCallback
+struct DeleteBufferCallback : public ResourceContextOpenGL::IDeleteCallback
 {
 	GLuint m_buffer;
 
@@ -37,12 +38,11 @@ struct DeleteBufferCallback : public ContextOpenGL::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferStaticVBO", VertexBufferStaticVBO, VertexBufferOpenGL)
 
-VertexBufferStaticVBO::VertexBufferStaticVBO(ContextOpenGL* resourceContext, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize)
+VertexBufferStaticVBO::VertexBufferStaticVBO(ResourceContextOpenGL* resourceContext, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize)
 :	VertexBufferOpenGL(bufferSize)
 ,	m_resourceContext(resourceContext)
-,	m_array(0)
 ,	m_buffer(0)
-,	m_attributeLocs(0)
+,	m_attributeHash(0)
 ,	m_lock(0)
 {
 	m_vertexStride = getVertexSize(vertexElements);
@@ -189,23 +189,24 @@ void VertexBufferStaticVBO::unlock()
 	
 	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
 	T_OGL_SAFE(glUnmapBuffer(GL_ARRAY_BUFFER));
+	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	
 	m_lock = 0;
-	m_attributeLocs = 0;
+	m_attributeHash = 0;
 	
 	setContentValid(true);
 }
 
-void VertexBufferStaticVBO::activate(const GLint* attributeLocs)
+void VertexBufferStaticVBO::activate(RenderContextOpenGL* renderContext, const GLint* attributeLocs, uint32_t attributeHash)
 {
 	T_ASSERT_M(!m_lock, L"Vertex buffer still locked");
 
-	if (!m_array || attributeLocs != m_attributeLocs)
-	{
-		if (!m_array)
-			T_OGL_SAFE(glGenVertexArrays(1, &m_array));
+	// \note Vertex arrays are bound to render context thus we
+	// need different names for each render context.
+	renderContext->bindVertexArrayObject(m_id);
 
-		T_OGL_SAFE(glBindVertexArray(m_array));
+	if (attributeHash != m_attributeHash)
+	{
 		T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
 
 		for (int i = 0; i < T_OGL_MAX_USAGE_INDEX; ++i)
@@ -224,11 +225,7 @@ void VertexBufferStaticVBO::activate(const GLint* attributeLocs)
 			));
 		}
 
-		m_attributeLocs = attributeLocs;
-	}
-	else
-	{
-		T_OGL_SAFE(glBindVertexArray(m_array));
+		m_attributeHash = attributeHash;
 	}
 }
 

@@ -17,7 +17,7 @@ namespace traktor
 	namespace render
 	{
 
-class ContextOpenGL;
+class ResourceContextOpenGL;
 
 /*!
  * \ingroup OGL
@@ -29,7 +29,7 @@ class RenderTargetDepthOpenGL
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetDepthOpenGL(ContextOpenGL* resourceContext, GLuint depthTexture, int32_t width, int32_t height);
+	RenderTargetDepthOpenGL(ResourceContextOpenGL* resourceContext, GLuint depthTexture, int32_t width, int32_t height);
 
 	virtual ~RenderTargetDepthOpenGL();
 
@@ -47,12 +47,12 @@ public:
 
 	virtual void* getInternalHandle() T_OVERRIDE T_FINAL;
 
-	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage) T_OVERRIDE T_FINAL;
+	virtual void bindTexture(RenderContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage) T_OVERRIDE T_FINAL;
 
 	virtual void bindSize(GLint locationSize) T_OVERRIDE T_FINAL;
 	
 private:
-	Ref< ContextOpenGL > m_resourceContext;
+	Ref< ResourceContextOpenGL > m_resourceContext;
 	GLuint m_depthTexture;
 	int32_t m_width;
 	int32_t m_height;

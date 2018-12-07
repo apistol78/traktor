@@ -10,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Matrix44.h"
+#include "Core/Misc/Adler32.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
@@ -22,9 +23,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
+#include "Render/OpenGL/Std/RenderContextOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetDepthOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/ResourceContextOpenGL.h"
 
 namespace traktor
 {
@@ -33,7 +35,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteProgramCallback : public ContextOpenGL::IDeleteCallback
+struct DeleteProgramCallback : public ResourceContextOpenGL::IDeleteCallback
 {
 	GLuint m_programName;
 
@@ -104,14 +106,12 @@ ITextureBinding* getTextureBinding(ITexture* texture)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGL", ProgramOpenGL, IProgram)
 
-ProgramOpenGL* ProgramOpenGL::ms_activeProgram = 0;
-
 ProgramOpenGL::~ProgramOpenGL()
 {
 	destroy();
 }
 
-Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const ProgramResource* resource, bool cacheEnable)
+Ref< ProgramOpenGL > ProgramOpenGL::create(ResourceContextOpenGL* resourceContext, const ProgramResource* resource, bool cacheEnable)
 {
 	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
 	char errorBuf[32000];
@@ -233,9 +233,6 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 
 void ProgramOpenGL::destroy()
 {
-	if (ms_activeProgram == this)
-		ms_activeProgram = 0;
-
 	if (m_program)
 	{
 		if (m_resourceContext)
@@ -313,20 +310,15 @@ void ProgramOpenGL::setStencilReference(uint32_t stencilReference)
 	m_renderState.stencilRef = stencilReference;
 }
 
-bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
+bool ProgramOpenGL::activate(RenderContextOpenGL* renderContext, float targetSize[2])
 {
-	if (!m_program)
-		return false;
-	if (m_validated && !m_valid)
+	if (!m_program || (m_validated && !m_valid))
 		return false;
 
 	// Bind program.
 	T_OGL_SAFE(glUseProgram(m_program));
 
-	// Setup our render state.
-	if (m_renderStateList == 0)
-		m_renderStateList = m_resourceContext->createRenderStateObject(m_renderState);
-
+	// Set render state.
 	renderContext->bindRenderStateObject(m_renderStateList);
 	if (m_renderState.stencilTestEnable)
 	{
@@ -341,7 +333,7 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 	for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
 	{
 		if (!i->dirty)
-			continue;
+		 	continue;
 
 		const float* uniformData = &m_uniformData[i->offset];
 		switch (i->type)
@@ -377,22 +369,9 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 	}
 
 	// Bind textures.
-	if (m_textureDirty || ms_activeProgram != this)
+	if (m_textureDirty)	// \fixme Fail with multiple render contexts.
 	{
 		T_ASSERT (m_samplers.size() <= 16);
-
-		// First unbind previously bound textures.
-		if (ms_activeProgram != this && ms_activeProgram != nullptr)
-		{
-			uint32_t nsamplers = ms_activeProgram->m_samplers.size();
-			for (uint32_t i = 0; i < nsamplers; ++i)
-			{
-				const Sampler& sampler = ms_activeProgram->m_samplers[i];
-				T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + sampler.stage));
-				T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, 0));
-				T_OGL_SAFE(glBindSampler(sampler.stage, 0));
-			}
-		}
 
 		uint32_t nsamplers = m_samplers.size();
 		for (uint32_t i = 0; i < nsamplers; ++i)
@@ -408,9 +387,6 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 				continue;
 
 			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + sampler.stage));
-
-			if (sampler.object == 0)
-				sampler.object = m_resourceContext->createSamplerStateObject(m_renderState.samplerStates[sampler.stage]);
 
 			ITextureBinding* tb = getTextureBinding(resolved);
 			T_FATAL_ASSERT (tb);
@@ -471,20 +447,15 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 			return false;
 	}
 
-	ms_activeProgram = this;
 	return true;
 }
 
-const GLint* ProgramOpenGL::getAttributeLocs() const
-{
-	return m_attributeLocs;
-}
-
-ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, const ProgramResource* resource)
+ProgramOpenGL::ProgramOpenGL(ResourceContextOpenGL* resourceContext, GLuint program, const ProgramResource* resource)
 :	m_resourceContext(resourceContext)
 ,	m_program(program)
 ,	m_renderStateList(0)
 ,	m_locationTargetSize(0)
+,	m_attributeHash(0)
 ,	m_textureDirty(true)
 ,	m_validated(false)
 ,	m_valid(false)
@@ -494,7 +465,9 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, con
 	m_targetSize[0] =
 	m_targetSize[1] = 0.0f;
 
+	// Setup our render state.
 	m_renderState = resourceOpenGL->getRenderState();
+	m_renderStateList = resourceContext->createRenderStateObject(m_renderState);
 
 	// Get target size parameter.
 	m_locationTargetSize = glGetUniformLocation(m_program, "_gl_targetSize");
@@ -521,7 +494,7 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, con
 		sampler.location = glGetUniformLocation(m_program, wstombs(samplerName).c_str());
 		sampler.texture = m_parameterMap[handle];
 		sampler.stage = i->stage;
-		sampler.object = 0;
+		sampler.object = resourceContext->createSamplerStateObject(m_renderState.samplerStates[sampler.stage]);
 
 		m_samplers.push_back(sampler);
 
@@ -618,6 +591,12 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, con
 		m_attributeLocs[T_OGL_USAGE_INDEX(DuColor, j)] = glGetAttribLocation(m_program, wstombs(VertexAttribute::getName(DuColor, j)).c_str());
 		m_attributeLocs[T_OGL_USAGE_INDEX(DuCustom, j)] = glGetAttribLocation(m_program, wstombs(VertexAttribute::getName(DuCustom, j)).c_str());
 	}
+
+	Adler32 chk;
+	chk.begin();
+	chk.feed(m_attributeLocs, sizeof(m_attributeLocs));
+	chk.end();
+	m_attributeHash = chk.get();
 }
 
 	}

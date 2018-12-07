@@ -17,6 +17,8 @@ namespace traktor
 	namespace render
 	{
 
+class ResourceContextOpenGL;
+
 /*!
  * \ingroup OGL
  */
@@ -27,7 +29,7 @@ class CubeTextureOpenGL
 	T_RTTI_CLASS;
 
 public:
-	CubeTextureOpenGL(ContextOpenGL* resourceContext);
+	CubeTextureOpenGL(ResourceContextOpenGL* resourceContext);
 
 	virtual ~CubeTextureOpenGL();
 
@@ -49,12 +51,12 @@ public:
 	
 	// ITextureBinding
 	
-	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage) T_OVERRIDE T_FINAL;
+	virtual void bindTexture(RenderContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage) T_OVERRIDE T_FINAL;
 
 	virtual void bindSize(GLint locationSize) T_OVERRIDE T_FINAL;
 	
 private:
-	Ref< ContextOpenGL > m_resourceContext;
+	Ref< ResourceContextOpenGL > m_resourceContext;
 	GLuint m_textureName;
 	int32_t m_side;
 	int32_t m_pixelSize;

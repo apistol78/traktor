@@ -4,8 +4,9 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/RenderContextOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetDepthOpenGL.h"
+#include "Render/OpenGL/Std/ResourceContextOpenGL.h"
 
 namespace traktor
 {
@@ -14,7 +15,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteTextureCallback : public ContextOpenGL::IDeleteCallback
+struct DeleteTextureCallback : public ResourceContextOpenGL::IDeleteCallback
 {
 	GLuint m_textureName;
 
@@ -34,7 +35,7 @@ struct DeleteTextureCallback : public ContextOpenGL::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDepthOpenGL", RenderTargetDepthOpenGL, ISimpleTexture)
 
-RenderTargetDepthOpenGL::RenderTargetDepthOpenGL(ContextOpenGL* resourceContext, GLuint depthTexture, int32_t width, int32_t height)
+RenderTargetDepthOpenGL::RenderTargetDepthOpenGL(ResourceContextOpenGL* resourceContext, GLuint depthTexture, int32_t width, int32_t height)
 :	m_resourceContext(resourceContext)
 ,	m_depthTexture(depthTexture)
 ,	m_width(width)
@@ -86,7 +87,7 @@ void* RenderTargetDepthOpenGL::getInternalHandle()
 	return (void*)m_depthTexture;
 }
 
-void RenderTargetDepthOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
+void RenderTargetDepthOpenGL::bindTexture(RenderContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_depthTexture));
 	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, stage, false);

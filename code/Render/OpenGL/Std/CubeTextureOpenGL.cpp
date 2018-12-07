@@ -6,8 +6,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include <cstring>
 #include "Render/OpenGL/Std/Platform.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
+#include "Render/OpenGL/Std/RenderContextOpenGL.h"
+#include "Render/OpenGL/Std/ResourceContextOpenGL.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 
 namespace traktor
@@ -39,7 +40,7 @@ const GLenum c_cubeFaces[] =
 };
 #endif
 
-struct DeleteTextureCallback : public ContextOpenGL::IDeleteCallback
+struct DeleteTextureCallback : public ResourceContextOpenGL::IDeleteCallback
 {
 	GLuint m_textureName;
 
@@ -59,7 +60,7 @@ struct DeleteTextureCallback : public ContextOpenGL::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureOpenGL", CubeTextureOpenGL, ICubeTexture)
 
-CubeTextureOpenGL::CubeTextureOpenGL(ContextOpenGL* resourceContext)
+CubeTextureOpenGL::CubeTextureOpenGL(ResourceContextOpenGL* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_textureName(0)
 ,	m_side(0)
@@ -197,7 +198,7 @@ void CubeTextureOpenGL::unlock(int side, int level)
 	));
 }
 
-void CubeTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
+void CubeTextureOpenGL::bindTexture(RenderContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
 	renderContext->bindSamplerStateObject(GL_TEXTURE_CUBE_MAP, samplerObject, stage, m_mipCount > 1);

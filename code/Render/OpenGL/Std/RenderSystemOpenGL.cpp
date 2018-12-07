@@ -15,6 +15,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/IndexBufferIBO.h"
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
+#include "Render/OpenGL/Std/RenderContextOpenGL.h"
 #include "Render/OpenGL/Std/RenderSystemOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
 #include "Render/OpenGL/Std/RenderViewOpenGL.h"
@@ -119,7 +120,7 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 	HGLRC hSharedRC = wglCreateContextAttribsARB(hSharedDC, NULL, attribs);
 	T_ASSERT (hSharedRC);
 
-	m_resourceContext = new ContextOpenGL(0, *m_windowShared, hSharedDC, hSharedRC);
+	m_resourceContext = new ResourceContextOpenGL(*m_windowShared, hSharedDC, hSharedRC);
 	m_resourceContext->enter();
 
 #elif defined(__APPLE__)
@@ -131,7 +132,7 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
-	m_resourceContext = new ContextOpenGL(0, resourceContext);
+	m_resourceContext = new ResourceContextOpenGL(resourceContext);
 	m_resourceContext->enter();
 
 #elif defined(__LINUX__)
@@ -207,7 +208,7 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
-	m_resourceContext = new ContextOpenGL(0, m_windowShared->getDisplay(), m_windowShared->getWindow(), context);
+	m_resourceContext = new ResourceContextOpenGL(m_windowShared->getDisplay(), m_windowShared->getWindow(), context);
 	m_resourceContext->enter();
 
 	if (glewInit() != GLEW_OK)
@@ -273,31 +274,24 @@ void RenderSystemOpenGL::destroy()
 
 		// Destroy resource context.
 		m_resourceContext->destroy();
-		m_resourceContext = 0;
+		m_resourceContext = nullptr;
 	}
 
 #if defined(_WIN32)
-
 	m_windowShared = 0;
-
 #elif defined(__APPLE__)
-
 	if (m_windowHandle)
 	{
 		cglwDestroyWindow(m_windowHandle);
 		m_windowHandle = 0;
 	}
-
 #elif defined(__LINUX__)
-
 	m_windowShared = 0;
-
 	if (m_screenResources)
 	{
 		XRRFreeScreenResources(m_screenResources);
 		m_screenResources = nullptr;
 	}
-
 #endif
 }
 
@@ -315,7 +309,6 @@ void RenderSystemOpenGL::getInformation(RenderSystemInformation& outInfo) const
 uint32_t RenderSystemOpenGL::getDisplayModeCount() const
 {
 #if defined(_WIN32)
-
 	uint32_t count = 0;
 
 	DEVMODE dmgl;
@@ -326,25 +319,19 @@ uint32_t RenderSystemOpenGL::getDisplayModeCount() const
 		++count;
 
 	return count;
-
 #elif defined(__APPLE__)
-
 	return cglwGetDisplayModeCount();
-
 #else
-
 	if (m_screenResources)
 		return m_screenResources->nmode;
 	else
 		return 0;
-
 #endif
 }
 
 DisplayMode RenderSystemOpenGL::getDisplayMode(uint32_t index) const
 {
 #if defined(_WIN32)
-
 	DEVMODE dmgl;
 	std::memset(&dmgl, 0, sizeof(dmgl));
 	dmgl.dmSize = sizeof(dmgl);
@@ -357,15 +344,11 @@ DisplayMode RenderSystemOpenGL::getDisplayMode(uint32_t index) const
 	dm.refreshRate = (uint16_t)dmgl.dmDisplayFrequency;
 	dm.colorBits = (uint16_t)dmgl.dmBitsPerPel;
 	return dm;
-
 #elif defined(__APPLE__)
-
 	DisplayMode dm;
 	cglwGetDisplayMode(index, dm);
 	return dm;
-
 #else
-
 	DisplayMode dm;
 	if (m_screenResources != nullptr && index < m_screenResources->nmode)
 	{
@@ -387,7 +370,6 @@ DisplayMode RenderSystemOpenGL::getDisplayMode(uint32_t index) const
 DisplayMode RenderSystemOpenGL::getCurrentDisplayMode() const
 {
 #if defined(_WIN32)
-
 	DEVMODE dmgl;
 	std::memset(&dmgl, 0, sizeof(dmgl));
 	dmgl.dmSize = sizeof(dmgl);
@@ -400,15 +382,11 @@ DisplayMode RenderSystemOpenGL::getCurrentDisplayMode() const
 	dm.refreshRate = (uint16_t)dmgl.dmDisplayFrequency;
 	dm.colorBits = (uint16_t)dmgl.dmBitsPerPel;
 	return dm;
-
 #elif defined(__APPLE__)
-
 	DisplayMode dm;
 	cglwGetCurrentDisplayMode(dm);
 	return dm;
-
 #elif defined(__LINUX__)
-
 	int screen = DefaultScreen(m_display);
 	XRRScreenConfiguration* xrrc = XRRGetScreenInfo(m_display, RootWindow(m_display, screen));
 	if (xrrc)
@@ -436,7 +414,6 @@ DisplayMode RenderSystemOpenGL::getCurrentDisplayMode() const
 	dm.refreshRate = 60;
 	dm.colorBits = 32;
 	return dm;
-
 #else
 	return DisplayMode();
 #endif
@@ -526,12 +503,13 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 		return 0;
 	}
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, *m_window, hDC, hRC);
+	Ref< RenderContextOpenGL > context = new RenderContextOpenGL(m_resourceContext, *m_window, hDC, hRC);
 	context->enter();
 
 	if (glewInit() != GLEW_OK)
 		return 0;
 
+	context->allocateVertexArrayObjects();
 	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_window, context, m_resourceContext);
@@ -570,7 +548,10 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 		return 0;
 	}
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, glcontext);
+	Ref< RenderContextOpenGL > context = new RenderContextOpenGL(m_resourceContext, glcontext);
+	context->enter();
+	context->allocateVertexArrayObjects();
+	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_windowHandle, context, m_resourceContext);
 	if (renderView->reset(desc))
@@ -613,12 +594,13 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	if (!glcontext)
 		return 0;
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, m_window->getDisplay(), m_window->getWindow(), glcontext);
+	Ref< RenderContextOpenGL > context = new RenderContextOpenGL(m_resourceContext, m_window->getDisplay(), m_window->getWindow(), glcontext);
 	context->enter();
 
 	if (glewInit() != GLEW_OK)
 		return 0;
 
+	context->allocateVertexArrayObjects();
 	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_window, context, m_resourceContext);
@@ -685,12 +667,13 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		return 0;
 	}
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, (HWND)desc.syswin.hWnd, hDC, hRC);
+	Ref< RenderContextOpenGL > context = new RenderContextOpenGL(m_resourceContext, (HWND)desc.syswin.hWnd, hDC, hRC);
 	context->enter();
 
 	if (glewInit() != GLEW_OK)
 		return 0;
 
+	context->allocateVertexArrayObjects();
 	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext);
@@ -713,6 +696,9 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		return 0;
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, glcontext);
+	context->enter();
+	context->allocateVertexArrayObjects();
+	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext);
 	if (renderView->reset(16, 16))
@@ -762,12 +748,13 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		return 0;
 	}
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, m_display, (::Window)desc.syswin.window, glcontext);
+	Ref< RenderContextOpenGL > context = new RenderContextOpenGL(m_resourceContext, m_display, (::Window)desc.syswin.window, glcontext);
 	context->enter();
 
 	if (glewInit() != GLEW_OK)
 		return 0;
 
+	context->allocateVertexArrayObjects();
 	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext);

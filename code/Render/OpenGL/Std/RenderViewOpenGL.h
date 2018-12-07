@@ -11,7 +11,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Containers/AlignedVector.h"
 #include "Render/IRenderView.h"
 #include "Render/OpenGL/Std/Platform.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/RenderContextOpenGL.h"
+#include "Render/OpenGL/Std/ResourceContextOpenGL.h"
 #if defined(_WIN32)
 #	include "Render/OpenGL/Std/Win32/Window.h"
 #elif defined(__LINUX__)
@@ -43,32 +44,26 @@ class RenderViewOpenGL
 
 public:
 #if defined(_WIN32)
-
 	RenderViewOpenGL(
 		const RenderViewDesc& desc,
 		Window* window,
-		ContextOpenGL* renderContext,
-		ContextOpenGL* resourceContext
+		RenderContextOpenGL* renderContext,
+		ResourceContextOpenGL* resourceContext
 	);
-
 #elif defined(__APPLE__)
-
 	RenderViewOpenGL(
 		const RenderViewDesc& desc,
 		void* windowHandle,
-		ContextOpenGL* renderContext,
-		ContextOpenGL* resourceContext
+		RenderContextOpenGL* renderContext,
+		ResourceContextOpenGL* resourceContext
 	);
-
 #elif defined(__LINUX__)
-
 	RenderViewOpenGL(
 		const RenderViewDesc& desc,
 		Window* window,
-		ContextOpenGL* renderContext,
-		ContextOpenGL* resourceContext
+		RenderContextOpenGL* renderContext,
+		ResourceContextOpenGL* resourceContext
 	);
-
 #endif
 
 	virtual ~RenderViewOpenGL();
@@ -135,7 +130,7 @@ private:
 		Ref< RenderTargetSetOpenGL > renderTargetSet;
 		int32_t renderTarget;
 		uint32_t clearMask;
-		Color4f clearColor;
+		Color4f clearColor[8];
 		float clearDepth;
 		int32_t clearStencil;
 	};
@@ -147,8 +142,8 @@ private:
 #elif defined(__LINUX__)
     Ref< Window > m_window;
 #endif
-	Ref< ContextOpenGL > m_renderContext;
-	Ref< ContextOpenGL > m_resourceContext;
+	Ref< RenderContextOpenGL > m_renderContext;
+	Ref< ResourceContextOpenGL > m_resourceContext;
 	RenderTargetSetCreateDesc m_primaryTargetDesc;
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;
 	AlignedVector< TargetScope > m_targetStack;

@@ -8,13 +8,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define traktor_render_IndexBufferIBO_H
 
 #include "Render/IndexBuffer.h"
+#include "Render/OpenGL/Std/Platform.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-class ContextOpenGL;
+class ResourceContextOpenGL;
 
 /*!
  * \ingroup OGL
@@ -24,7 +25,7 @@ class IndexBufferIBO : public IndexBuffer
 	T_RTTI_CLASS;
 
 public:
-	IndexBufferIBO(ContextOpenGL* resourceContext, IndexType indexType, uint32_t bufferSize, bool dynamic);
+	IndexBufferIBO(ResourceContextOpenGL* resourceContext, IndexType indexType, uint32_t bufferSize, bool dynamic);
 
 	virtual ~IndexBufferIBO();
 
@@ -37,7 +38,7 @@ public:
 	void bind();
 
 private:
-	Ref< ContextOpenGL > m_resourceContext;
+	Ref< ResourceContextOpenGL > m_resourceContext;
 	GLuint m_name;
 	bool m_locked;
 };
