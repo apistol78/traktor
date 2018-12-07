@@ -5,7 +5,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Render/OpenGL/Std/Platform.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/RenderContextOpenGL.h"
+#include "Render/OpenGL/Std/ResourceContextOpenGL.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
 
@@ -16,7 +17,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteTextureCallback : public ContextOpenGL::IDeleteCallback
+struct DeleteTextureCallback : public ResourceContextOpenGL::IDeleteCallback
 {
 	GLuint m_textureName;
 
@@ -36,7 +37,7 @@ struct DeleteTextureCallback : public ContextOpenGL::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureOpenGL", VolumeTextureOpenGL, IVolumeTexture)
 
-VolumeTextureOpenGL::VolumeTextureOpenGL(ContextOpenGL* resourceContext)
+VolumeTextureOpenGL::VolumeTextureOpenGL(ResourceContextOpenGL* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_textureName(0)
 ,	m_width(0)
@@ -145,7 +146,7 @@ int VolumeTextureOpenGL::getDepth() const
 	return m_depth;
 }
 
-void VolumeTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
+void VolumeTextureOpenGL::bindTexture(RenderContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D, m_textureName));
 	renderContext->bindSamplerStateObject(GL_TEXTURE_3D, samplerObject, stage, false);

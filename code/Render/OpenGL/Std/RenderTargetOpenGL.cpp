@@ -4,8 +4,9 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/RenderContextOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
+#include "Render/OpenGL/Std/ResourceContextOpenGL.h"
 
 namespace traktor
 {
@@ -14,7 +15,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteTextureCallback : public ContextOpenGL::IDeleteCallback
+struct DeleteTextureCallback : public ResourceContextOpenGL::IDeleteCallback
 {
 	GLuint m_textureName;
 
@@ -34,7 +35,7 @@ struct DeleteTextureCallback : public ContextOpenGL::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGL", RenderTargetOpenGL, ISimpleTexture)
 
-RenderTargetOpenGL::RenderTargetOpenGL(ContextOpenGL* resourceContext, GLuint colorTexture, int32_t width, int32_t height)
+RenderTargetOpenGL::RenderTargetOpenGL(ResourceContextOpenGL* resourceContext, GLuint colorTexture, int32_t width, int32_t height)
 :	m_resourceContext(resourceContext)
 ,	m_colorTexture(colorTexture)
 ,	m_width(width)
@@ -86,7 +87,7 @@ void* RenderTargetOpenGL::getInternalHandle()
 	return (void*)m_colorTexture;
 }
 
-void RenderTargetOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
+void RenderTargetOpenGL::bindTexture(RenderContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_colorTexture));
 	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, stage, false);

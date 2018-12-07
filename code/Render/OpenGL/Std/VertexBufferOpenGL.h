@@ -15,7 +15,7 @@ namespace traktor
 	namespace render
 	{
 
-class VertexElement;
+class RenderContextOpenGL;
 
 /*!
  * \ingroup OGL
@@ -27,7 +27,12 @@ class VertexBufferOpenGL : public VertexBuffer
 public:
 	VertexBufferOpenGL(uint32_t bufferSize);
 
-	virtual void activate(const GLint* attributeLocs) = 0;
+	virtual ~VertexBufferOpenGL();
+
+	virtual void activate(RenderContextOpenGL* renderContext, const GLint* attributeLocs, uint32_t attributeHash) = 0;
+
+protected:
+	uint32_t m_id;
 };
 	
 	}

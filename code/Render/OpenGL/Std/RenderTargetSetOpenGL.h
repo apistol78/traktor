@@ -17,9 +17,10 @@ namespace traktor
 	namespace render
 	{
 
-class ContextOpenGL;
+class RenderContextOpenGL;
 class RenderTargetDepthOpenGL;
 class RenderTargetOpenGL;
+class ResourceContextOpenGL;
 
 /*!
  * \ingroup OGL
@@ -31,7 +32,7 @@ class RenderTargetSetOpenGL : public RenderTargetSet
 public:
 	static uint32_t ms_primaryTargetTag;	//!< Tag to indicate state of primary depth buffer; each time the depth buffer is resized this needs to be incremented.
 
-	RenderTargetSetOpenGL(ContextOpenGL* resourceContext);
+	RenderTargetSetOpenGL(ResourceContextOpenGL* resourceContext);
 
 	virtual ~RenderTargetSetOpenGL();
 
@@ -55,18 +56,18 @@ public:
 
 	virtual bool read(int index, void* buffer) const T_OVERRIDE T_FINAL;
 
-	bool bind(ContextOpenGL* renderContext, GLuint primaryDepthBuffer);
+	bool bind(RenderContextOpenGL* renderContext, GLuint primaryDepthBuffer);
 
-	bool bind(ContextOpenGL* renderContext, GLuint primaryDepthBuffer, int32_t renderTarget);
+	bool bind(RenderContextOpenGL* renderContext, GLuint primaryDepthBuffer, int32_t renderTarget);
 
-	void blit(ContextOpenGL* renderContext);
+	void blit(RenderContextOpenGL* renderContext);
 
 	GLuint getDepthBuffer() const { return m_depthBufferOrTexture; }
 
 	void setContentValid(bool contentValid) { m_contentValid = contentValid; }
 
 private:
-	Ref< ContextOpenGL > m_resourceContext;
+	Ref< ResourceContextOpenGL > m_resourceContext;
 	RenderTargetSetCreateDesc m_desc;
 	GLuint m_targetFBO;
 	GLuint m_depthBufferOrTexture;

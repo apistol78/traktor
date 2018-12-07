@@ -4,8 +4,8 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/IndexBufferIBO.h"
+#include "Render/OpenGL/Std/ResourceContextOpenGL.h"
 
 namespace traktor
 {
@@ -14,7 +14,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteBufferCallback : public ContextOpenGL::IDeleteCallback
+struct DeleteBufferCallback : public ResourceContextOpenGL::IDeleteCallback
 {
 	GLuint m_bufferName;
 
@@ -34,7 +34,7 @@ struct DeleteBufferCallback : public ContextOpenGL::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferIBO", IndexBufferIBO, IndexBuffer)
 
-IndexBufferIBO::IndexBufferIBO(ContextOpenGL* resourceContext, IndexType indexType, uint32_t bufferSize, bool dynamic)
+IndexBufferIBO::IndexBufferIBO(ResourceContextOpenGL* resourceContext, IndexType indexType, uint32_t bufferSize, bool dynamic)
 :	IndexBuffer(indexType, bufferSize)
 ,	m_resourceContext(resourceContext)
 ,	m_locked(false)

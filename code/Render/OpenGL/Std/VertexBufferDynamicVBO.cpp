@@ -8,7 +8,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Log/Log.h"
 #include "Core/Math/MathConfig.h"
 #include "Render/VertexElement.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/RenderContextOpenGL.h"
+#include "Render/OpenGL/Std/ResourceContextOpenGL.h"
 #include "Render/OpenGL/Std/VertexBufferDynamicVBO.h"
 
 namespace traktor
@@ -18,7 +19,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteBufferCallback : public ContextOpenGL::IDeleteCallback
+struct DeleteBufferCallback : public ResourceContextOpenGL::IDeleteCallback
 {
 	GLuint m_buffer;
 
@@ -82,13 +83,12 @@ void copyBuffer(uint8_t* dst, const uint8_t* src, uint32_t size)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferDynamicVBO", VertexBufferDynamicVBO, VertexBufferOpenGL)
 
-VertexBufferDynamicVBO::VertexBufferDynamicVBO(ContextOpenGL* resourceContext, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize)
+VertexBufferDynamicVBO::VertexBufferDynamicVBO(ResourceContextOpenGL* resourceContext, const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize)
 :	VertexBufferOpenGL(bufferSize)
 ,	m_resourceContext(resourceContext)
-,	m_array(0)
 ,	m_buffer(0)
 ,	m_vertexStride(0)
-,	m_attributeLocs(0)
+,	m_attributeHash(0)
 ,	m_lock(0)
 ,	m_mapped(0)
 ,	m_dirty(false)
@@ -258,21 +258,21 @@ void VertexBufferDynamicVBO::unlock()
 
 	m_lock = 0;
 	m_dirty = true;
-	m_attributeLocs = 0;
+	m_attributeHash = 0;
 
 	setContentValid(true);
 }
 
-void VertexBufferDynamicVBO::activate(const GLint* attributeLocs)
+void VertexBufferDynamicVBO::activate(RenderContextOpenGL* renderContext, const GLint* attributeLocs, uint32_t attributeHash)
 {
 	T_ASSERT_M(!m_lock, L"Vertex buffer still locked");
 
-	if (!m_array || attributeLocs != m_attributeLocs || m_dirty)
-	{
-		if (!m_array)
-			T_OGL_SAFE(glGenVertexArrays(1, &m_array));
+	// \note Vertex arrays are bound to render context thus we
+	// need different names for each render context.
+	renderContext->bindVertexArrayObject(m_id);
 
-		T_OGL_SAFE(glBindVertexArray(m_array));
+	if (attributeHash != m_attributeHash || m_dirty)
+	{
 		T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
 
 		if (m_dirty)
@@ -317,10 +317,8 @@ void VertexBufferDynamicVBO::activate(const GLint* attributeLocs)
 				(GLvoid*)m_attributeDesc[i].offset
 			));
 		}
-	}
-	else
-	{
-		T_OGL_SAFE(glBindVertexArray(m_array));
+
+		m_attributeHash = attributeHash;
 	}
 }
 

@@ -47,12 +47,11 @@ struct RenderEventTypePred
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGL", RenderViewOpenGL, IRenderView)
 
 #if defined(_WIN32)
-
 RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc& desc,
 	Window* window,
-	ContextOpenGL* renderContext,
-	ContextOpenGL* resourceContext
+	RenderContextOpenGL* renderContext,
+	ResourceContextOpenGL* resourceContext
 )
 :	m_window(window)
 ,	m_renderContext(renderContext)
@@ -77,14 +76,12 @@ RenderViewOpenGL::RenderViewOpenGL(
 	if (m_window)
 		m_window->addListener(this);
 }
-
 #elif defined(__APPLE__)
-
 RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc& desc,
 	void* windowHandle,
-	ContextOpenGL* renderContext,
-	ContextOpenGL* resourceContext
+	RenderContextOpenGL* renderContext,
+	ResourceContextOpenGL* resourceContext
 )
 :	m_windowHandle(windowHandle)
 ,	m_renderContext(renderContext)
@@ -103,14 +100,12 @@ RenderViewOpenGL::RenderViewOpenGL(
 	m_primaryTargetDesc.ignoreStencil = bool(desc.stencilBits == 0);
 	m_waitVBlanks = desc.waitVBlanks;
 }
-
 #elif defined(__LINUX__)
-
 RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc& desc,
 	Window* window,
-	ContextOpenGL* renderContext,
-	ContextOpenGL* resourceContext
+	RenderContextOpenGL* renderContext,
+	ResourceContextOpenGL* resourceContext
 )
 :   m_window(window)
 ,	m_renderContext(renderContext)
@@ -130,7 +125,6 @@ RenderViewOpenGL::RenderViewOpenGL(
 	m_primaryTargetDesc.ignoreStencil = bool(desc.stencilBits == 0);
 	m_waitVBlanks = desc.waitVBlanks;
 }
-
 #endif
 
 RenderViewOpenGL::~RenderViewOpenGL()
@@ -141,7 +135,6 @@ RenderViewOpenGL::~RenderViewOpenGL()
 bool RenderViewOpenGL::nextEvent(RenderEvent& outEvent)
 {
 #if defined(_WIN32)
-
 	MSG msg;
 	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
@@ -157,7 +150,6 @@ bool RenderViewOpenGL::nextEvent(RenderEvent& outEvent)
 	}
 	else
 		return false;
-
 #elif defined(__APPLE__)
 	return cglwUpdateWindow(m_windowHandle, outEvent);
 #elif defined(__LINUX__)
@@ -170,13 +162,11 @@ bool RenderViewOpenGL::nextEvent(RenderEvent& outEvent)
 void RenderViewOpenGL::close()
 {
 #if defined(_WIN32)
-
 	if (m_window)
 	{
 		m_window->removeListener(this);
 		m_window = 0;
 	}
-
 #endif
 
 	safeDestroy(m_primaryTarget);
@@ -490,59 +480,57 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 
 void RenderViewOpenGL::clear(uint32_t clearMask, const Color4f* color, float depth, int32_t stencil)
 {
-	const GLuint c_clearMask[] =
-	{
-		0,
-		GL_COLOR_BUFFER_BIT,
-		GL_DEPTH_BUFFER_BIT,
-		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
-		GL_STENCIL_BUFFER_BIT,
-		GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
-		GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
-		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT
-	};
-
-	GLuint cm = c_clearMask[clearMask];
+	T_FATAL_ASSERT(!m_targetStack.empty());
+	TargetScope& ts = m_targetStack.back();
 
 	if (!m_targetsDirty)
 	{
-		if (cm & GL_COLOR_BUFFER_BIT)
+		if (clearMask & CfColor)
 		{
-			float r = color->getRed();
-			float g = color->getGreen();
-			float b = color->getBlue();
-			float a = color->getAlpha();
-			T_OGL_SAFE(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
-			T_OGL_SAFE(glClearColor(r, g, b, a));
+			for (int32_t i = 0; i < 8; ++i)
+			{
+				if (!ts.renderTargetSet->getColorTexture(i))
+					continue;
+
+				float T_ALIGN16 cl[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+				color[i].storeAligned(cl);
+
+				T_OGL_SAFE(glClearBufferfv(GL_COLOR, i, cl));
+			}
 		}
 
-		if (cm & GL_DEPTH_BUFFER_BIT)
+		if (clearMask & CfDepth)
 		{
 			T_OGL_SAFE(glDepthMask(GL_TRUE));
 			T_OGL_SAFE(glClearDepth(depth));
+			T_OGL_SAFE(glClear(GL_DEPTH_BUFFER_BIT));
 		}
 
-		if (cm & GL_STENCIL_BUFFER_BIT)
+		if (clearMask & CfStencil)
 		{
 			T_OGL_SAFE(glStencilMask(~0U));
 			T_OGL_SAFE(glClearStencil(stencil));
+			T_OGL_SAFE(glClear(GL_STENCIL_BUFFER_BIT));
 		}
-
-		T_OGL_SAFE(glClear(cm));
 	}
 	else
 	{
 		// As targets are not bound yet we defer clearing until they become bound.
-		TargetScope& ts = m_targetStack.back();
 		ts.clearMask |= clearMask;
 
-		if (cm & GL_COLOR_BUFFER_BIT)
-			ts.clearColor = *color;
+		if (clearMask & CfColor)
+		{
+			for (int32_t i = 0; i < 8; ++i)
+			{
+				if (ts.renderTargetSet->getColorTexture(i))
+					ts.clearColor[i] = color[i];
+			}
+		}
 
-		if (cm & GL_DEPTH_BUFFER_BIT)
+		if (clearMask & CfDepth)
 			ts.clearDepth = depth;
 
-		if (cm & GL_STENCIL_BUFFER_BIT)
+		if (clearMask & CfStencil)
 			ts.clearStencil = stencil;
 	}
 }
@@ -563,7 +551,9 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 	};
 
 	vertexBufferGL->activate(
-		programGL->getAttributeLocs()
+		m_renderContext,
+		programGL->getAttributeLocs(),
+		programGL->getAttributeHash()
 	);
 
 	GLenum primitiveType;
@@ -666,7 +656,9 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 	};
 
 	vertexBufferGL->activate(
-		programGL->getAttributeLocs()
+		m_renderContext,
+		programGL->getAttributeLocs(),
+		programGL->getAttributeHash()
 	);
 
 	GLenum primitiveType;
@@ -794,21 +786,21 @@ void RenderViewOpenGL::present()
 
 void RenderViewOpenGL::pushMarker(const char* const marker)
 {
-#if !defined(__APPLE__)
-	glPushDebugGroup(
-		GL_DEBUG_SOURCE_APPLICATION,
-		1,
-		-1,
-		marker
-	);
-#endif
+// #if !defined(__APPLE__)
+// 	glPushDebugGroup(
+// 		GL_DEBUG_SOURCE_APPLICATION,
+// 		1,
+// 		-1,
+// 		marker
+// 	);
+// #endif
 }
 
 void RenderViewOpenGL::popMarker()
 {
-#if !defined(__APPLE__)
-	glPopDebugGroup();
-#endif
+// #if !defined(__APPLE__)
+// 	glPopDebugGroup();
+// #endif
 }
 
 void RenderViewOpenGL::getStatistics(RenderViewStatistics& outStatistics) const
@@ -847,7 +839,7 @@ void RenderViewOpenGL::bindTargets()
 	{
 		clear(
 			ts.clearMask,
-			&ts.clearColor,
+			ts.clearColor,
 			ts.clearDepth,
 			ts.clearStencil
 		);

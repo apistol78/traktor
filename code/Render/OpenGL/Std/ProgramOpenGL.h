@@ -17,8 +17,9 @@ namespace traktor
 	namespace render
 	{
 
-class ContextOpenGL;
 class ProgramResource;
+class RenderContextOpenGL;
+class ResourceContextOpenGL;
 
 /*!
  * \ingroup OGL
@@ -30,7 +31,7 @@ class ProgramOpenGL : public IProgram
 public:
 	virtual ~ProgramOpenGL();
 
-	static Ref< ProgramOpenGL > create(ContextOpenGL* resourceContext, const ProgramResource* resource, bool cacheEnable);
+	static Ref< ProgramOpenGL > create(ResourceContextOpenGL* resourceContext, const ProgramResource* resource, bool cacheEnable);
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
@@ -50,9 +51,11 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference) T_OVERRIDE T_FINAL;
 
-	bool activate(ContextOpenGL* renderContext, float targetSize[2]);
+	bool activate(RenderContextOpenGL* renderContext, float targetSize[2]);
 
-	const GLint* getAttributeLocs() const;
+	const GLint* getAttributeLocs() const { return m_attributeLocs; }
+
+	uint32_t getAttributeHash() const { return m_attributeHash; }
 
 private:
 	struct Uniform
@@ -101,12 +104,13 @@ private:
 		}
 	};
 
-	Ref< ContextOpenGL > m_resourceContext;
+	Ref< ResourceContextOpenGL > m_resourceContext;
 	GLuint m_program;
 	RenderStateOpenGL m_renderState;
 	GLuint m_renderStateList;
 	GLint m_locationTargetSize;
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];			//!< Vertex attribute locations.
+	uint32_t m_attributeHash;
 	SmallMap< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
 	std::vector< Uniform > m_uniforms;						//!< Scalar uniforms.
 	std::vector< Sampler > m_samplers;						//!< Samplers.
@@ -117,9 +121,8 @@ private:
 	bool m_textureDirty;
 	bool m_validated;
 	bool m_valid;
-	static ProgramOpenGL* ms_activeProgram;
 	
-	ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, const ProgramResource* resource);
+	ProgramOpenGL(ResourceContextOpenGL* resourceContext, GLuint program, const ProgramResource* resource);
 };
 
 	}

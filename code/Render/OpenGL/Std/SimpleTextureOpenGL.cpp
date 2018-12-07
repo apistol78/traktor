@@ -8,7 +8,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Render/OpenGL/Std/Platform.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/RenderContextOpenGL.h"
+#include "Render/OpenGL/Std/ResourceContextOpenGL.h"
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 
@@ -19,7 +20,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteTextureCallback : public ContextOpenGL::IDeleteCallback
+struct DeleteTextureCallback : public ResourceContextOpenGL::IDeleteCallback
 {
 	GLuint m_textureName;
 
@@ -39,7 +40,7 @@ struct DeleteTextureCallback : public ContextOpenGL::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureOpenGL", SimpleTextureOpenGL, ISimpleTexture)
 
-SimpleTextureOpenGL::SimpleTextureOpenGL(ContextOpenGL* resourceContext)
+SimpleTextureOpenGL::SimpleTextureOpenGL(ResourceContextOpenGL* resourceContext)
 :	m_resourceContext(resourceContext)
 ,	m_textureName(0)
 ,	m_width(0)
@@ -185,7 +186,7 @@ void* SimpleTextureOpenGL::getInternalHandle()
 	return (void*)m_textureName;
 }
 
-void SimpleTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
+void SimpleTextureOpenGL::bindTexture(RenderContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
 	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, stage, m_mipCount > 1);

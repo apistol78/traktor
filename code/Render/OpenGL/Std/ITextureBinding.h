@@ -14,12 +14,12 @@ namespace traktor
 	namespace render
 	{
 
-class ContextOpenGL;
+class RenderContextOpenGL;
 
 class ITextureBinding
 {
 public:
-	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage) = 0;
+	virtual void bindTexture(RenderContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage) = 0;
 
 	virtual void bindSize(GLint locationSize) = 0;
 };

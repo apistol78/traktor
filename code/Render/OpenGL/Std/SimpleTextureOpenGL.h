@@ -18,6 +18,8 @@ namespace traktor
 	namespace render
 	{
 
+class ResourceContextOpenGL;
+
 /*!
  * \ingroup OGL
  */
@@ -28,7 +30,7 @@ class SimpleTextureOpenGL
 	T_RTTI_CLASS;
 
 public:
-	SimpleTextureOpenGL(ContextOpenGL* resourceContext);
+	SimpleTextureOpenGL(ResourceContextOpenGL* resourceContext);
 
 	virtual ~SimpleTextureOpenGL();
 	
@@ -48,12 +50,12 @@ public:
 
 	virtual void* getInternalHandle() T_OVERRIDE T_FINAL;
 
-	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage) T_OVERRIDE T_FINAL;
+	virtual void bindTexture(RenderContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage) T_OVERRIDE T_FINAL;
 
 	virtual void bindSize(GLint locationSize) T_OVERRIDE T_FINAL;
 
 private:
-	Ref< ContextOpenGL > m_resourceContext;
+	Ref< ResourceContextOpenGL > m_resourceContext;
 	GLuint m_textureName;
 	int m_width;
 	int m_height;
