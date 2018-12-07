@@ -20,6 +20,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	include "Render/OpenGL/ES2/PNaCl/ContextOpenGLES2.h"
 #elif defined(_WIN32)
 #	include "Render/OpenGL/ES2/Win32/ContextOpenGLES2.h"
+#elif defined(__LINUX__)
+#	include "Render/OpenGL/ES2/Linux/ContextOpenGLES2.h"
 #endif
 #include "Render/OpenGL/ES2/Editor/Glsl/GlslType.h"
 
@@ -50,7 +52,7 @@ struct DeleteBufferCallback : public ContextOpenGLES2::IDeleteCallback
 	}
 };
 
-#if defined(GL_OES_vertex_array_object) && !defined(_WIN32) && !defined(__EMSCRIPTEN__)
+#if defined(GL_OES_vertex_array_object) && !defined(_WIN32) && !defined(__EMSCRIPTEN__) && !defined(__LINUX__)
 struct DeleteVertexArrayCallback : public ContextOpenGLES2::IDeleteCallback
 {
 	GLuint m_arrayName;
@@ -199,7 +201,7 @@ void VertexBufferStaticOpenGLES2::destroy()
 			m_context->deleteResource(new DeleteBufferCallback(m_bufferObject));
 		m_bufferObject = 0;
 	}
-#if defined(GL_OES_vertex_array_object) && !defined(_WIN32) && !defined(__EMSCRIPTEN__)
+#if defined(GL_OES_vertex_array_object) && !defined(_WIN32) && !defined(__EMSCRIPTEN__) && !defined(__LINUX__)
 	if (m_arrayObject)
 	{
 		if (m_context)
@@ -271,7 +273,7 @@ void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 		}
 		m_buffer.release();
 	
-#if defined(GL_OES_vertex_array_object) && !defined(_WIN32) && !defined(__EMSCRIPTEN__)
+#if defined(GL_OES_vertex_array_object) && !defined(_WIN32) && !defined(__EMSCRIPTEN__) && !defined(__LINUX__)
 		if (m_arrayObject)
 		{
 			if (m_context)
@@ -282,7 +284,7 @@ void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 		m_dirty = false;
 	}
 
-#if defined(GL_OES_vertex_array_object) && !defined(_WIN32) && !defined(__EMSCRIPTEN__)
+#if defined(GL_OES_vertex_array_object) && !defined(_WIN32) && !defined(__EMSCRIPTEN__) && !defined(__LINUX__)
 	if (m_arrayObject == 0 && g_glGenVertexArraysOES != 0)
 	{
 		T_OGL_SAFE(g_glGenVertexArraysOES(1, &m_arrayObject));

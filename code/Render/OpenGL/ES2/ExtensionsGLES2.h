@@ -26,7 +26,7 @@ extern PFNGLGENVERTEXARRAYSOESPROC g_glGenVertexArraysOES;
 #	endif
 #endif
 
-#if defined(__ANDROID__)
+#if defined(__ANDROID__) || defined(__LINUX__)
 extern PFNGLDISCARDFRAMEBUFFEREXTPROC s_glDiscardFramebufferEXT;
 extern PFNGLDRAWELEMENTSINSTANCEDEXTPROC s_glDrawElementsInstancedEXT;
 extern PFNGLDRAWARRAYSINSTANCEDEXTPROC s_glDrawArraysInstancedEXT;

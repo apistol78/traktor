@@ -25,6 +25,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	include "Render/OpenGL/ES2/PNaCl/ContextOpenGLES2.h"
 #elif defined(_WIN32)
 #	include "Render/OpenGL/ES2/Win32/ContextOpenGLES2.h"
+#elif defined(__LINUX__)
+#	include "Render/OpenGL/ES2/Linux/ContextOpenGLES2.h"
 #endif
 
 namespace traktor
@@ -98,6 +100,19 @@ bool RenderViewOpenGLES2::nextEvent(RenderEvent& outEvent)
 		DispatchMessage(&msg);
 	}
 
+	if (!m_eventQueue.empty())
+	{
+		outEvent = m_eventQueue.front();
+		m_eventQueue.pop_front();
+		return true;
+	}
+	else
+		return false;
+
+#elif defined(__LINUX__)
+
+	return m_context ? m_context->getWindow()->update(outEvent) : false;
+
 #elif defined(__IOS__) || defined(__ANDROID__)
 
 	int32_t width = m_context->getWidth();
@@ -128,15 +143,7 @@ bool RenderViewOpenGLES2::nextEvent(RenderEvent& outEvent)
 	}
 
 #endif
-
-	if (!m_eventQueue.empty())
-	{
-		outEvent = m_eventQueue.front();
-		m_eventQueue.pop_front();
-		return true;
-	}
-	else
-		return false;
+	return false;
 }
 
 void RenderViewOpenGLES2::close()
@@ -150,7 +157,7 @@ void RenderViewOpenGLES2::close()
 
 bool RenderViewOpenGLES2::reset(const RenderViewDefaultDesc& desc)
 {
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 	m_context->getWindow()->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL ES 2.0 Renderer");
 	if (desc.fullscreen)
 		m_context->getWindow()->setFullScreenStyle();
@@ -257,6 +264,11 @@ SystemWindow RenderViewOpenGLES2::getSystemWindow()
 #if defined(_WIN32)
 	SystemWindow sw;
 	sw.hWnd = *m_context->getWindow();
+	return sw;
+#elif defined(__LINUX__)
+	SystemWindow sw;
+	sw.display = m_context->getWindow()->getDisplay();
+	sw.window = m_context->getWindow()->getWindow();
 	return sw;
 #else
 	return SystemWindow();
