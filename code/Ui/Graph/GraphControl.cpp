@@ -1009,18 +1009,18 @@ void GraphControl::eventPaint(PaintEvent* event)
 	// Also prepare scaled canvas.
 	graphCanvas.setFont(m_paintSettings->getFont());
 
-	// Draw edges.
-	for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
-	{
-		if (!(*i)->isSelected())
-			(*i)->paint(&graphCanvas, m_offset);
-	}
-
 	// Node shapes.
 	Rect cullRc = rc / m_scale;
 	for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
 	{
 		if ((*i)->calculateRect().offset(m_offset).intersect(cullRc))
+			(*i)->paint(&graphCanvas, m_offset);
+	}
+
+	// Draw edges.
+	for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+	{
+		if (!(*i)->isSelected())
 			(*i)->paint(&graphCanvas, m_offset);
 	}
 

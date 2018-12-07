@@ -50,9 +50,9 @@ Point InOutNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 	Point pt;
 
 	if (pin->getDirection() == Pin::DrInput)
-		pt = Point(rc.left, rc.getCenter().y);
+		pt = Point(rc.left + ui::dpi96(c_marginWidth), rc.getCenter().y);
 	else // DrOutput
-		pt = Point(rc.right, rc.getCenter().y);
+		pt = Point(rc.right - ui::dpi96(c_marginWidth), rc.getCenter().y);
 
 	return pt;
 }

@@ -42,7 +42,7 @@ Point IpolNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
 	
-	int32_t f = dpi96(4);
+	int32_t f = dpi96(0);
 	int32_t x = pin->getDirection() == Pin::DrInput ? -f : rc.getWidth() + f;
 	int32_t y = rc.getHeight() / 2;
 
