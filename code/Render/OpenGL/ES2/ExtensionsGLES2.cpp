@@ -4,7 +4,8 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#if defined(__ANDROID__)
+#include <cstring>
+#if defined(__ANDROID__) || defined(__LINUX__)
 #	include <dlfcn.h>
 #endif
 #include "Core/Log/Log.h"
@@ -22,7 +23,7 @@ PFNGLDELETEVERTEXARRAYSOESPROC g_glDeleteVertexArraysOES = 0;
 PFNGLGENVERTEXARRAYSOESPROC g_glGenVertexArraysOES = 0;
 #endif
 
-#if defined(__ANDROID__)
+#if defined(__ANDROID__) || defined(__LINUX__)
 PFNGLDISCARDFRAMEBUFFEREXTPROC s_glDiscardFramebufferEXT = 0;
 PFNGLDRAWELEMENTSINSTANCEDEXTPROC s_glDrawElementsInstancedEXT = 0;
 PFNGLDRAWARRAYSINSTANCEDEXTPROC s_glDrawArraysInstancedEXT = 0;
@@ -56,7 +57,7 @@ void initializeExtensions()
 		}
 	}
 
-#if defined(__ANDROID__)
+#if defined(__ANDROID__) || defined(__LINUX__)
 	void* libhandle = dlopen("libGLESv2.so", RTLD_LAZY);
 	if (libhandle)
 	{

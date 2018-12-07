@@ -21,7 +21,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/OpenGL/ES2/VolumeTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
-
 #if defined(__ANDROID__)
 #	include "Render/OpenGL/ES2/Android/ContextOpenGLES2.h"
 #elif defined(__IOS__)
@@ -33,6 +32,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	include "Render/OpenGL/ES2/PNaCl/ContextOpenGLES2.h"
 #elif defined(_WIN32)
 #	include "Render/OpenGL/ES2/Win32/ContextOpenGLES2.h"
+#elif defined(__LINUX__)
+#	include "Render/OpenGL/ES2/Linux/ContextOpenGLES2.h"
 #endif
 
 namespace traktor

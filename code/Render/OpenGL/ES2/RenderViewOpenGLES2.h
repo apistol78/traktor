@@ -14,6 +14,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #if defined(_WIN32)
 #	include "Render/OpenGL/ES2/Win32/Window.h"
+#elif defined(__LINUX__)
+#	include "Render/OpenGL/ES2/Linux/Window.h"
 #endif
 
 namespace traktor

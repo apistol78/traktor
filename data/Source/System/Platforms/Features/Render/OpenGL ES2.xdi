@@ -231,13 +231,6 @@
 			</deploy>
 		</item>
 		<item>
-			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
-			<executableFile/>
-			<deploy type="traktor.PropertyGroup">
-				<value/>
-			</deploy>
-		</item>
-		<item>
 			<platform>{1C5EBC43-2395-9549-8FF7-BA51A6C30B7B}</platform>
 			<executableFile/>
 			<deploy type="traktor.PropertyGroup">
@@ -381,6 +374,82 @@
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>$(TRAKTOR_HOME)/bin/latest/win64/releasestatic</item>
+							</value>
+						</second>
+					</item>
+				</value>
+			</deploy>
+		</item>
+		<item>
+			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
+			<executableFile/>
+			<deploy type="traktor.PropertyGroup">
+				<value>
+					<item>
+						<first>DEPLOY_MODULES</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>Traktor.Compress</item>
+								<item>Traktor.Core</item>
+								<item>Traktor.Render</item>
+								<item>Traktor.Render.OpenGL.ES2</item>
+								<item>Traktor.Resource</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Compress.so</item>
+								<item>libTraktor.Core.so</item>
+								<item>libTraktor.Render.OpenGL.ES2.so</item>
+								<item>libTraktor.Render.so</item>
+								<item>libTraktor.Resource.so</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux/debugshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_SHARED_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux/releaseshared</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>libTraktor.Compress.a</item>
+								<item>libTraktor.Core.a</item>
+								<item>libTraktor.Render.OpenGL.ES2.a</item>
+								<item>libTraktor.Render.a</item>
+								<item>libTraktor.Resource.a</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_DEBUG</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux/debugstatic</item>
+							</value>
+						</second>
+					</item>
+					<item>
+						<first>DEPLOY_STATIC_PATH_RELEASE</first>
+						<second type="traktor.PropertyStringSet">
+							<value>
+								<item>$(TRAKTOR_HOME)/bin/latest/linux/releasestatic</item>
 							</value>
 						</second>
 					</item>
@@ -539,6 +608,12 @@
 			</item>
 			<item>
 				<first>World.AmbientOcclusionQuality</first>
+				<second type="traktor.PropertyInteger">
+					<value>0</value>
+				</second>
+			</item>
+			<item>
+				<first>World.AntiAliasQuality</first>
 				<second type="traktor.PropertyInteger">
 					<value>0</value>
 				</second>
