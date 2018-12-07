@@ -82,36 +82,13 @@ void calculateLinearSpline(Point s1, Point d1, std::vector< Point >& outSpline)
 		}
 	}
 
-	const int32_t c_six = dpi96(6);
-
 	outSpline.resize(6);
-	outSpline[0] = Point(s1.x + c_six, s1.y);
+	outSpline[0] = Point(s1.x, s1.y);
 	outSpline[1] = s;
 	outSpline[2] = m1;
 	outSpline[3] = m2;
 	outSpline[4] = d;
-	outSpline[5] = Point(d1.x - c_six, d1.y);
-}
-
-void calculateSmoothSpline(Point s1, Point d1, std::vector< Point >& outSpline)
-{
-	Envelope< Vector2, HermiteEvaluator< Vector2 > > envelope;
-
-	int dx = d1.x - s1.x;
-	int dy = d1.y - s1.y;
-
-	envelope.addKey(0.0f, Vector2(float(s1.x), float(s1.y)));
-	envelope.addKey(0.2f, Vector2(s1.x + dx * 0.25f, s1.y + dy * 0.1f));
-	envelope.addKey(0.5f, Vector2((s1.x + d1.x) / 2.0f, (s1.y + d1.y) / 2.0f));
-	envelope.addKey(0.8f, Vector2(d1.x - dx * 0.25f, d1.y - dy * 0.1f));
-	envelope.addKey(1.0f, Vector2(float(d1.x), float(d1.y)));
-
-	outSpline.resize(30);
-	for (int i = 0; i < 30; ++i)
-	{
-		Vector2 p = envelope(i / 29.0f);
-		outSpline[i] = Point(int(p.x), int(p.y));
-	}
+	outSpline[5] = Point(d1.x - dpi96(6), d1.y);
 }
 
 		}
@@ -169,10 +146,7 @@ bool Edge::hit(const PaintSettings* paintSettings, const Point& p) const
 {
 	Vector2 P(float(p.x), float(p.y));
 
-	if (paintSettings->getSmoothSpline())
-		calculateSmoothSpline(m_source->getPosition(), m_destination->getPosition(), m_spline);
-	else
-		calculateLinearSpline(m_source->getPosition(), m_destination->getPosition(), m_spline);
+	calculateLinearSpline(m_source->getPosition(), m_destination->getPosition(), m_spline);
 
 	const float c_hitWidth = float(dpi96(4));
 
@@ -223,11 +197,7 @@ void Edge::paint(GraphCanvas* canvas, const Size& offset) const
 	Point s = m_source->getPosition() + offset;
 	Point d = m_destination->getPosition() + offset;
 
-	if (settings->getSmoothSpline())
-		calculateSmoothSpline(s, d, m_spline);
-	else
-		calculateLinearSpline(s, d, m_spline);
-
+	calculateLinearSpline(s, d, m_spline);
 	canvas->drawLines(m_spline, dpi96(2));
 
 	Point at = m_destination->getPosition() + offset;

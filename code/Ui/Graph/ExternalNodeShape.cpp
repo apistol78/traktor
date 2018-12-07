@@ -58,18 +58,16 @@ Point ExternalNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 	if (node->getImage())
 		top += node->getImage()->getSize().cy;
 
-	Size pinSize = m_imagePin->getSize();
-
 	int32_t x = pin->getDirection() == Pin::DrInput ?
-		-pinSize.cx / 2 + ui::dpi96(c_marginWidth) :
-		rc.getWidth() - pinSize.cx / 2 - ui::dpi96(c_marginWidth);
+		rc.left + ui::dpi96(c_marginWidth) - 1 :
+		rc.right - ui::dpi96(c_marginWidth);
 
 	const RefArray< Pin >& pins = (pin->getDirection() == Pin::DrInput) ? node->getInputPins() : node->getOutputPins();
 	RefArray< Pin >::const_iterator i = std::find(pins.begin(), pins.end(), pin);
 
 	top += int(std::distance(pins.begin(), i)) * textHeight;
 
-	return Point(rc.left + x, rc.top + top);
+	return Point(x, rc.top + top);
 }
 
 Pin* ExternalNodeShape::getPinAt(const Node* node, const Point& pt) const

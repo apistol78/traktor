@@ -108,10 +108,6 @@ public:
 
 	const Color4ub& getGuideCursor() const;
 
-	void setSmoothSpline(bool smoothSpline);
-
-	bool getSmoothSpline() const;
-	
 private:
 	Size m_gridSize;
 	ui::Font m_font;
@@ -132,7 +128,6 @@ private:
 	Color4ub m_edgeCursor;
 	Color4ub m_selectionCursor;
 	Color4ub m_guideCursor;
-	bool m_smoothSpline;
 };
 		
 	}

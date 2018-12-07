@@ -18,7 +18,6 @@ PaintSettings::PaintSettings(const ui::Font& font)
 ,	m_fontBold(font.getFace(), font.getSize(), true, false, false)
 ,	m_fontUnderline(font.getFace(), font.getSize(), false, false, true)
 ,	m_fontProbe(font.getFace(), font.getSize(), false, false, false)
-,	m_smoothSpline(false)
 {
 	m_gridBackground = Color4ub(220, 220, 220);
 	m_nodeShadow = Color4ub(100, 100, 100);
@@ -214,16 +213,6 @@ void PaintSettings::setGuideCursor(const Color4ub& guideCursor)
 const Color4ub& PaintSettings::getGuideCursor() const
 {
 	return m_guideCursor;
-}
-
-void PaintSettings::setSmoothSpline(bool smoothSpline)
-{
-	m_smoothSpline = smoothSpline;
-}
-
-bool PaintSettings::getSmoothSpline() const
-{
-	return m_smoothSpline;
 }
 
 	}

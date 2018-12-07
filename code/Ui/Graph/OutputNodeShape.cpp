@@ -49,7 +49,7 @@ OutputNodeShape::OutputNodeShape(GraphControl* graphControl)
 Point OutputNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
-	return Point(rc.left, rc.getCenter().y);
+	return Point(rc.left + ui::dpi96(c_marginWidth), rc.getCenter().y);
 }
 
 Pin* OutputNodeShape::getPinAt(const Node* node, const Point& pt) const

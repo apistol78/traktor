@@ -50,7 +50,7 @@ InputNodeShape::InputNodeShape(GraphControl* graphControl)
 Point InputNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
-	return Point(rc.right, rc.getCenter().y);
+	return Point(rc.right - ui::dpi96(c_marginWidth), rc.getCenter().y);
 }
 
 Pin* InputNodeShape::getPinAt(const Node* node, const Point& pt) const

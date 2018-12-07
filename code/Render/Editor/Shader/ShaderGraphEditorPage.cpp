@@ -179,11 +179,6 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_shaderViewer->setVisible(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.ShaderViewVisible", true));
 	m_site->createAdditionalPanel(m_shaderViewer, ui::dpi96(400), false);
 
-	// Modify graph control settings.
-	Ref< ui::PaintSettings > paintSettings = new ui::PaintSettings(*m_editorGraph->getPaintSettings());
-	paintSettings->setSmoothSpline(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.SmoothSpline"));
-	m_editorGraph->setPaintSettings(paintSettings);
-
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"SHADERGRAPH_CREATE_NODE"));
