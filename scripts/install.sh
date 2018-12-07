@@ -9,6 +9,10 @@ PACKAGES="
     libasound2-dev
     libopenal-dev
     libpulse-dev
+    libvulkan1
+    mesa-vulkan-drivers
+    vulkan-utils
+    libgles2-mesa-dev
 "
 
 apt-get install $PACKAGES
