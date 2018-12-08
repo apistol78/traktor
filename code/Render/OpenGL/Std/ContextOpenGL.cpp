@@ -9,6 +9,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Misc/TString.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 
+#if defined(__APPLE__)
+#	include "Render/OpenGL/Std/OsX/CGLWrapper.h"
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -55,7 +59,7 @@ ContextOpenGL::ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 ,	m_hRC(hRC)
 #elif defined(__APPLE__)
 ContextOpenGL::ContextOpenGL(void* context)
-,	m_context(context)
+:	m_context(context)
 #elif defined(__LINUX__)
 ContextOpenGL::ContextOpenGL(::Display* display, ::Window window, GLXContext context)
 :	m_display(display)

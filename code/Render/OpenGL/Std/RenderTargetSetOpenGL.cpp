@@ -239,6 +239,7 @@ bool RenderTargetSetOpenGL::isContentValid() const
 
 bool RenderTargetSetOpenGL::read(int index, void* buffer) const
 {
+#if !defined(__APPLE__)
 	GLenum internalFormat;
 	GLint format;
 	GLenum type;
@@ -250,6 +251,9 @@ bool RenderTargetSetOpenGL::read(int index, void* buffer) const
 	T_OGL_SAFE(glReadBuffer((GLenum)GL_COLOR_ATTACHMENT0_EXT + index));
 	T_OGL_SAFE(glReadPixels(0, 0, m_desc.width, m_desc.height, GL_RGBA, GL_FLOAT, (GLvoid*)buffer));
 	return true;
+#else
+	return false;
+#endif
 }
 
 bool RenderTargetSetOpenGL::bind(RenderContextOpenGL* renderContext, GLuint primaryDepthBuffer)

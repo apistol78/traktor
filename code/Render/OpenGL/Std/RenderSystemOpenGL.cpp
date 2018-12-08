@@ -695,7 +695,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	if (!glcontext)
 		return 0;
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(m_resourceContext, glcontext);
+	Ref< RenderContextOpenGL > context = new RenderContextOpenGL(m_resourceContext, glcontext);
 	context->enter();
 	context->allocateVertexArrayObjects();
 	context->leave();
