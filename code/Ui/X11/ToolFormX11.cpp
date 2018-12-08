@@ -1,4 +1,5 @@
 #include <X11/Xatom.h>
+#include "Core/Timer/Timer.h"
 #include "Ui/X11/ToolFormX11.h"
 
 namespace traktor
@@ -53,6 +54,7 @@ bool ToolFormX11::create(IWidget* parent, const std::wstring& text, int width, i
 
 void ToolFormX11::destroy()
 {
+	T_FATAL_ASSERT (m_modal == false);
 	WidgetX11Impl< IToolForm >::destroy();
 }
 

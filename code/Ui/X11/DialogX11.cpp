@@ -105,6 +105,7 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 
 void DialogX11::destroy()
 {
+	T_FATAL_ASSERT (m_modal == false);
 	WidgetX11Impl< IDialog >::destroy();
 }
 
