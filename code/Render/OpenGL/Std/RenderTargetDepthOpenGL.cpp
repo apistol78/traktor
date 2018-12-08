@@ -87,15 +87,19 @@ void* RenderTargetDepthOpenGL::getInternalHandle()
 	return (void*)m_depthTexture;
 }
 
-void RenderTargetDepthOpenGL::bindTexture(RenderContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
+void RenderTargetDepthOpenGL::bindTexture() const
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_depthTexture));
-	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, stage, false);
 }
 
-void RenderTargetDepthOpenGL::bindSize(GLint locationSize)
+void RenderTargetDepthOpenGL::bindSize(GLint locationSize) const
 {
 	T_OGL_SAFE(glUniform4f(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(1.0f), GLfloat(1.0f)));
+}
+
+bool RenderTargetDepthOpenGL::haveMips() const
+{
+	return false;
 }
 
 	}

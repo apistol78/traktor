@@ -186,15 +186,19 @@ void* SimpleTextureOpenGL::getInternalHandle()
 	return (void*)m_textureName;
 }
 
-void SimpleTextureOpenGL::bindTexture(RenderContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
+void SimpleTextureOpenGL::bindTexture() const
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
-	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, stage, m_mipCount > 1);
 }
 
-void SimpleTextureOpenGL::bindSize(GLint locationSize)
+void SimpleTextureOpenGL::bindSize(GLint locationSize) const
 {
 	T_OGL_SAFE(glUniform4f(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(1.0f), GLfloat(1.0f)));
+}
+
+bool SimpleTextureOpenGL::haveMips() const
+{
+	return m_mipCount > 1;
 }
 
 	}

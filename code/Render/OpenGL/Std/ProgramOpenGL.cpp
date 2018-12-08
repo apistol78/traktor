@@ -315,8 +315,14 @@ bool ProgramOpenGL::activate(RenderContextOpenGL* renderContext, float targetSiz
 	if (!m_program || (m_validated && !m_valid))
 		return false;
 
+	// "Bind" ourself to render context; return true if program is already active.
+	bool alreadyActive = renderContext->programActivate(this);
+
 	// Bind program.
-	T_OGL_SAFE(glUseProgram(m_program));
+	if (!alreadyActive)
+	{
+		T_OGL_SAFE(glUseProgram(m_program));
+	}
 
 	// Set render state.
 	renderContext->bindRenderStateObject(m_renderStateList);
@@ -330,31 +336,31 @@ bool ProgramOpenGL::activate(RenderContextOpenGL* renderContext, float targetSiz
 	}
 
 	// Update dirty uniforms.
-	for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
+	for (auto& uniform : m_uniforms)
 	{
-		if (!i->dirty)
+		if (!uniform.dirty)
 		 	continue;
 
-		const float* uniformData = &m_uniformData[i->offset];
-		switch (i->type)
+		const float* uniformData = &m_uniformData[uniform.offset];
+		switch (uniform.type)
 		{
 		case GL_FLOAT:
-			T_OGL_SAFE(glUniform1fv(i->location, i->length, uniformData));
+			T_OGL_SAFE(glUniform1fv(uniform.location, uniform.length, uniformData));
 			break;
 
 		case GL_FLOAT_VEC4:
-			T_OGL_SAFE(glUniform4fv(i->location, i->length, uniformData));
+			T_OGL_SAFE(glUniform4fv(uniform.location, uniform.length, uniformData));
 			break;
 
 		case GL_FLOAT_MAT4:
-			T_OGL_SAFE(glUniformMatrix4fv(i->location, i->length, GL_FALSE, uniformData));
+			T_OGL_SAFE(glUniformMatrix4fv(uniform.location, uniform.length, GL_FALSE, uniformData));
 			break;
 
 		default:
 			T_ASSERT (0);
 		}
 
-		i->dirty = false;
+		uniform.dirty = false;
 	}
 
 	// Update target size uniform if necessary.
@@ -369,15 +375,12 @@ bool ProgramOpenGL::activate(RenderContextOpenGL* renderContext, float targetSiz
 	}
 
 	// Bind textures.
-	if (m_textureDirty)	// \fixme Fail with multiple render contexts.
+	if (!alreadyActive || m_textureDirty)
 	{
 		T_ASSERT (m_samplers.size() <= 16);
 
-		uint32_t nsamplers = m_samplers.size();
-		for (uint32_t i = 0; i < nsamplers; ++i)
+		for (const auto& sampler : m_samplers)
 		{
-			Sampler& sampler = m_samplers[i];
-
 			ITexture* texture = m_textures[sampler.texture];
 			if (!texture)
 				continue;
@@ -386,20 +389,19 @@ bool ProgramOpenGL::activate(RenderContextOpenGL* renderContext, float targetSiz
 			if (!resolved)
 				continue;
 
+			const ITextureBinding* tb = getTextureBinding(resolved);
+			T_ASSERT (tb);
+
 			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + sampler.stage));
+			tb->bindTexture();
 
-			ITextureBinding* tb = getTextureBinding(resolved);
-			T_FATAL_ASSERT (tb);
+			renderContext->bindSamplerStateObject(sampler.object, sampler.stage, tb->haveMips());
 
-			tb->bindTexture(renderContext, sampler.object, sampler.stage);
 			T_OGL_SAFE(glUniform1i(sampler.location, sampler.stage));
 		}
 
-		uint32_t ntextureSize = m_textureSize.size();
-		for (uint32_t i = 0; i < ntextureSize; ++i)
+		for (const auto& textureSize : m_textureSize)
 		{
-			const TextureSize& textureSize = m_textureSize[i];
-
 			ITexture* texture = m_textures[textureSize.texture];
 			if (!texture)
 				continue;
@@ -408,8 +410,8 @@ bool ProgramOpenGL::activate(RenderContextOpenGL* renderContext, float targetSiz
 			if (!resolved)
 				continue;
 
-			ITextureBinding* tb = getTextureBinding(resolved);
-			T_FATAL_ASSERT (tb);
+			const ITextureBinding* tb = getTextureBinding(resolved);
+			T_ASSERT (tb);
 
 			tb->bindSize(textureSize.location);
 		}
@@ -474,38 +476,34 @@ ProgramOpenGL::ProgramOpenGL(ResourceContextOpenGL* resourceContext, GLuint prog
 
 	const std::vector< std::wstring >& textures = resourceOpenGL->getTextures();
 	const std::vector< SamplerBindingOpenGL >& samplers = resourceOpenGL->getSamplers();
+	const std::vector< NamedUniformType >& uniforms = resourceOpenGL->getUniforms();
 
 	// Map texture parameters.
-	for (std::vector< SamplerBindingOpenGL >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
+	for (const auto& sb : samplers)
 	{
-		const std::wstring& texture = textures[i->texture];
+		const std::wstring& texture = textures[sb.texture];
 
 		// Get texture parameter handle.
 		handle_t handle = getParameterHandle(texture);
 		if (m_parameterMap.find(handle) == m_parameterMap.end())
 		{
 			m_parameterMap[handle] = m_textures.size();
-			m_textures.push_back(0);
+			m_textures.push_back(nullptr);
 		}
 
-		std::wstring samplerName = i->name; // L"_gl_sampler_" + texture + L"_" + toString(i->stage);
-
-		Sampler sampler;
-		sampler.location = glGetUniformLocation(m_program, wstombs(samplerName).c_str());
+		Sampler& sampler = m_samplers.push_back();
+		sampler.location = glGetUniformLocation(m_program, wstombs(sb.name).c_str());
 		sampler.texture = m_parameterMap[handle];
-		sampler.stage = i->stage;
-		sampler.object = resourceContext->createSamplerStateObject(m_renderState.samplerStates[sampler.stage]);
-
-		m_samplers.push_back(sampler);
+		sampler.stage = sb.stage;
+		sampler.object = resourceContext->createSamplerStateObject(m_renderState.samplerStates[sb.stage]);
 
 		if (sampler.location < 0)
 			log::warning << L"No GL sampler defined for texture \"" << texture << L"\"" << Endl;
 	}
 
 	// Map texture size parameters.
-	for (std::vector< std::wstring >::const_iterator i = textures.begin(); i != textures.end(); ++i)
+	for (const auto& texture : textures)
 	{
-		const std::wstring& texture = *i;
 		std::wstring textureSizeName = L"_gl_textureSize_" + texture;
 
 		GLint location = glGetUniformLocation(m_program, wstombs(textureSizeName).c_str());
@@ -520,14 +518,12 @@ ProgramOpenGL::ProgramOpenGL(ResourceContextOpenGL* resourceContext, GLuint prog
 			m_textures.push_back(0);
 		}
 
-		TextureSize textureSize;
+		TextureSize& textureSize = m_textureSize.push_back();
 		textureSize.location = location;
 		textureSize.texture = m_parameterMap[handle];
-
-		m_textureSize.push_back(textureSize);
 	}
 
-	const std::vector< NamedUniformType >& uniforms = resourceOpenGL->getUniforms();
+	// Map uniforms.
 	for (uint32_t i = 0; i < uint32_t(uniforms.size()); ++i)
 	{
 		handle_t handle = getParameterHandle(uniforms[i].name);
@@ -569,20 +565,20 @@ ProgramOpenGL::ProgramOpenGL(ResourceContextOpenGL* resourceContext, GLuint prog
 
 		m_parameterMap[handle] = offsetUniform;
 
-		m_uniforms.push_back(Uniform());
-		m_uniforms.back().location = location;
-		m_uniforms.back().type = uniforms[i].type;
-		m_uniforms.back().offset = offsetData;
-		m_uniforms.back().length = uniforms[i].length;
-		m_uniforms.back().dirty = true;
+		Uniform& uniform = m_uniforms.push_back();
+		uniform.location = location;
+		uniform.type = uniforms[i].type;
+		uniform.offset = offsetData;
+		uniform.length = uniforms[i].length;
+		uniform.dirty = true;
 
 		m_uniformData.resize(offsetData + allocSize, 0.0f);
 	}
 
-	for (int j = 0; j < sizeof_array(m_attributeLocs); ++j)
+	for (int32_t j = 0; j < sizeof_array(m_attributeLocs); ++j)
 		m_attributeLocs[j] = -1;
 
-	for (int j = 0; j < T_OGL_MAX_INDEX; ++j)
+	for (int32_t j = 0; j < T_OGL_MAX_INDEX; ++j)
 	{
 		m_attributeLocs[T_OGL_USAGE_INDEX(DuPosition, j)] = glGetAttribLocation(m_program, wstombs(VertexAttribute::getName(DuPosition, j)).c_str());
 		m_attributeLocs[T_OGL_USAGE_INDEX(DuNormal, j)] = glGetAttribLocation(m_program, wstombs(VertexAttribute::getName(DuNormal, j)).c_str());

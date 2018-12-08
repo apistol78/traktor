@@ -146,15 +146,19 @@ int VolumeTextureOpenGL::getDepth() const
 	return m_depth;
 }
 
-void VolumeTextureOpenGL::bindTexture(RenderContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
+void VolumeTextureOpenGL::bindTexture() const
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D, m_textureName));
-	renderContext->bindSamplerStateObject(GL_TEXTURE_3D, samplerObject, stage, false);
 }
 
-void VolumeTextureOpenGL::bindSize(GLint locationSize)
+void VolumeTextureOpenGL::bindSize(GLint locationSize) const
 {
 	T_OGL_SAFE(glUniform4f(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(m_depth), GLfloat(1.0f)));
+}
+
+bool VolumeTextureOpenGL::haveMips() const
+{
+	return false;
 }
 
 	}

@@ -51,9 +51,11 @@ public:
 	
 	// ITextureBinding
 	
-	virtual void bindTexture(RenderContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage) T_OVERRIDE T_FINAL;
+	virtual void bindTexture() const T_OVERRIDE T_FINAL;
 
-	virtual void bindSize(GLint locationSize) T_OVERRIDE T_FINAL;
+	virtual void bindSize(GLint locationSize) const T_OVERRIDE T_FINAL;
+
+	virtual bool haveMips() const T_OVERRIDE T_FINAL;
 	
 private:
 	Ref< ResourceContextOpenGL > m_resourceContext;
