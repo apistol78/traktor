@@ -112,9 +112,9 @@ private:
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];			//!< Vertex attribute locations.
 	uint32_t m_attributeHash;
 	SmallMap< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
-	std::vector< Uniform > m_uniforms;						//!< Scalar uniforms.
-	std::vector< Sampler > m_samplers;						//!< Samplers.
-	std::vector< TextureSize > m_textureSize;
+	AlignedVector< Uniform > m_uniforms;					//!< Scalar uniforms.
+	AlignedVector< Sampler > m_samplers;					//!< Samplers.
+	AlignedVector< TextureSize > m_textureSize;
 	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
 	RefArray< ITexture > m_textures;
 	float m_targetSize[2];

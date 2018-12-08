@@ -509,7 +509,6 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	if (glewInit() != GLEW_OK)
 		return 0;
 
-	context->allocateVertexArrayObjects();
 	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_window, context, m_resourceContext);
@@ -549,9 +548,6 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	}
 
 	Ref< RenderContextOpenGL > context = new RenderContextOpenGL(m_resourceContext, glcontext);
-	context->enter();
-	context->allocateVertexArrayObjects();
-	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_windowHandle, context, m_resourceContext);
 	if (renderView->reset(desc))
@@ -600,7 +596,6 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	if (glewInit() != GLEW_OK)
 		return 0;
 
-	context->allocateVertexArrayObjects();
 	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_window, context, m_resourceContext);
@@ -673,7 +668,6 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	if (glewInit() != GLEW_OK)
 		return 0;
 
-	context->allocateVertexArrayObjects();
 	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext);
@@ -696,9 +690,6 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		return 0;
 
 	Ref< RenderContextOpenGL > context = new RenderContextOpenGL(m_resourceContext, glcontext);
-	context->enter();
-	context->allocateVertexArrayObjects();
-	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext);
 	if (renderView->reset(16, 16))
@@ -754,7 +745,6 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	if (glewInit() != GLEW_OK)
 		return 0;
 
-	context->allocateVertexArrayObjects();
 	context->leave();
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext);

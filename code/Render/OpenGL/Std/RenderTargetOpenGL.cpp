@@ -87,15 +87,19 @@ void* RenderTargetOpenGL::getInternalHandle()
 	return (void*)m_colorTexture;
 }
 
-void RenderTargetOpenGL::bindTexture(RenderContextOpenGL* renderContext, uint32_t samplerObject, uint32_t stage)
+void RenderTargetOpenGL::bindTexture() const
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_colorTexture));
-	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, stage, false);
 }
 
-void RenderTargetOpenGL::bindSize(GLint locationSize)
+void RenderTargetOpenGL::bindSize(GLint locationSize) const
 {
 	T_OGL_SAFE(glUniform4f(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(1.0f), GLfloat(1.0f)));
+}
+
+bool RenderTargetOpenGL::haveMips() const
+{
+	return false;
 }
 
 	}

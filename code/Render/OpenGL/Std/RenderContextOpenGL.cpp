@@ -32,18 +32,13 @@ RenderContextOpenGL::RenderContextOpenGL(ResourceContextOpenGL* resourceContext,
 ,	m_width(0)
 ,	m_height(0)
 ,	m_permitDepth(true)
+,	m_currentProgram(nullptr)
 ,	m_currentRenderStateList(~0U)
 ,	m_lastWaitVBlanks(-1)
 {
 #if !defined(__LINUX__)
 	update();
 #endif
-}
-
-bool RenderContextOpenGL::allocateVertexArrayObjects()
-{
-	T_OGL_SAFE(glGenVertexArrays(sizeof_array(m_vertexArrayObjects), m_vertexArrayObjects));
-	return true;
 }
 
 #if !defined(__LINUX__)
@@ -91,6 +86,13 @@ void RenderContextOpenGL::swapBuffers(int32_t waitVBlanks)
 	glXSwapBuffers(m_display, m_window);
 #endif
 	m_lastWaitVBlanks = waitVBlanks;
+}
+
+bool RenderContextOpenGL::programActivate(const ProgramOpenGL* program)
+{
+	bool alreadyActive = bool(program == m_currentProgram);
+	m_currentProgram = program;
+	return alreadyActive;
 }
 
 void RenderContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
@@ -146,24 +148,38 @@ void RenderContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 	m_currentRenderStateList = renderStateObject;
 }
 
-void RenderContextOpenGL::bindSamplerStateObject(GLenum textureTarget, uint32_t samplerStateObject, uint32_t stage, bool haveMips)
+void RenderContextOpenGL::bindSamplerStateObject(uint32_t samplerStateObject, uint32_t stage, bool haveMips)
 {
-	SmallMap< uint32_t, ResourceContextOpenGL::SamplerStateObject >::const_iterator i = m_resourceContext->getSamplerStateObjects().find(samplerStateObject);
+	auto it = m_resourceContext->getSamplerStateObjects().find(samplerStateObject);
 	if (haveMips)
 	{
-		T_ASSERT(glIsSampler(i->second.samplers[0]) == GL_TRUE);
-		T_OGL_SAFE(glBindSampler(stage, i->second.samplers[0]));
+		T_ASSERT(glIsSampler(it->second.samplers[0]) == GL_TRUE);
+		T_OGL_SAFE(glBindSampler(stage, it->second.samplers[0]));
 	}
 	else
 	{
-		T_ASSERT(glIsSampler(i->second.samplers[1]) == GL_TRUE);
-		T_OGL_SAFE(glBindSampler(stage, i->second.samplers[1]));
+		T_ASSERT(glIsSampler(it->second.samplers[1]) == GL_TRUE);
+		T_OGL_SAFE(glBindSampler(stage, it->second.samplers[1]));
 	}
 }
 
-void RenderContextOpenGL::bindVertexArrayObject(uint32_t vertexBufferId)
+bool RenderContextOpenGL::bindVertexArrayObject(uint32_t vertexBufferId)
 {
-	T_OGL_SAFE(glBindVertexArray(m_vertexArrayObjects[vertexBufferId]));
+	auto it = m_vertexArrayObjects.find(vertexBufferId);
+	if (it != m_vertexArrayObjects.end())
+	{
+		T_ASSERT(glIsVertexArray(it->second) == GL_TRUE);
+		T_OGL_SAFE(glBindVertexArray(it->second));
+		return true;
+	}
+	else
+	{
+		GLuint vertexArrayObject;
+		T_OGL_SAFE(glGenVertexArrays(1, &vertexArrayObject));
+		T_OGL_SAFE(glBindVertexArray(vertexArrayObject));
+		m_vertexArrayObjects.insert(vertexBufferId, vertexArrayObject);
+		return false;
+	}
 }
 
 void RenderContextOpenGL::setPermitDepth(bool permitDepth)

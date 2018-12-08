@@ -203,9 +203,9 @@ void VertexBufferStaticVBO::activate(RenderContextOpenGL* renderContext, const G
 
 	// \note Vertex arrays are bound to render context thus we
 	// need different names for each render context.
-	renderContext->bindVertexArrayObject(m_id);
+	bool refresh = renderContext->bindVertexArrayObject(m_id);
 
-	if (attributeHash != m_attributeHash)
+	if (refresh || attributeHash != m_attributeHash)
 	{
 		T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
 
