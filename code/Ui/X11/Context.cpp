@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Assert.h"
 #include "Ui/X11/Context.h"
 
@@ -12,6 +13,8 @@ Context::Context(Display* display, int screen, XIM xim)
 :	m_display(display)
 ,	m_screen(screen)
 ,	m_xim(xim)
+,	m_grabbed(nullptr)
+,	m_focused(nullptr)
 {
 }
 
@@ -24,8 +27,17 @@ void Context::bind(WidgetData* widget, int32_t eventType, const std::function< v
 
 void Context::unbind(WidgetData* widget)
 {
-	T_FATAL_ASSERT(m_modal.empty());
+	auto it = std::find(m_modal.begin(), m_modal.end(), widget);
+	if (it != m_modal.end())
+		m_modal.erase(it);
+
 	m_bindings.erase(widget->window);
+	
+	if (m_grabbed == widget)
+		m_grabbed = nullptr;
+
+	if (m_focused == widget)
+		m_focused = nullptr;
 }
 
 void Context::defer(const std::function< void() >& fn)
@@ -35,25 +47,122 @@ void Context::defer(const std::function< void() >& fn)
 
 void Context::pushModal(WidgetData* widget)
 {
-	m_modal.push(widget);
+	m_modal.push_back(widget);
 }
 
 void Context::popModal()
 {
 	T_FATAL_ASSERT(!m_modal.empty());
-	m_modal.pop();
+	m_modal.pop_back();
+}
+
+void Context::grab(WidgetData* widget)
+{
+	T_FATAL_ASSERT(!widget->grabbed);
+
+#if !defined(_DEBUG)
+	widget->grabbed = bool(XGrabPointer(
+		m_display,
+		widget->window,
+		False,
+		ButtonPressMask | ButtonReleaseMask | PointerMotionMask,
+		GrabModeAsync,
+		GrabModeAsync,
+		None,
+		None,
+		CurrentTime
+	) == GrabSuccess);
+#else
+	widget->grabbed = true;
+#endif
+
+	if (widget->grabbed)
+	{
+		if (m_grabbed)
+		{
+			m_grabbed->grabbed = false;
+			m_grabbed = nullptr;
+		}
+		m_grabbed = widget;
+	}
+}
+
+void Context::ungrab(WidgetData* widget)
+{
+	T_FATAL_ASSERT(widget->grabbed);
+	T_FATAL_ASSERT(widget == m_grabbed);
+
+#if !defined(_DEBUG)
+	XUngrabPointer(m_display, CurrentTime);
+#endif
+
+	widget->grabbed = false;
+	m_grabbed = nullptr;
+}
+
+void Context::setFocus(WidgetData* widget)
+{
+	if (m_focused != nullptr)
+	{
+		if (m_focused == widget)
+			return;
+
+		m_focused->focus = false;
+
+		XEvent xevent;
+		xevent.type = FocusOut;
+		dispatch(m_focused->window, FocusOut, true, xevent);
+
+		m_focused = nullptr;
+	}
+
+	if (widget != nullptr)
+	{
+		m_focused = widget;
+		m_focused->focus = true;
+
+		XSetInputFocus(m_display, m_focused->window, RevertToNone, CurrentTime);
+
+		XEvent xevent;
+		xevent.type = FocusIn;
+		dispatch(m_focused->window, FocusIn, true, xevent);
+	}
 }
 
 void Context::dispatch(XEvent& xe)
 {
-    switch (xe.type)
+	switch (xe.type)
     {
     case FocusIn:
-        dispatch(xe.xfocus.window, FocusIn, true, xe);
-        break;
+		{
+			Window focusWindow; int revertTo;
+			XGetInputFocus(m_display, &focusWindow, &revertTo);
+			
+			if (m_focused != nullptr)
+			{
+				if (m_focused->window == focusWindow)
+					break;
 
-    case FocusOut:
-        dispatch(xe.xfocus.window, FocusOut, true, xe);
+				m_focused->focus = false;
+
+				XEvent xevent;
+				xevent.type = FocusOut;
+				dispatch(m_focused->window, FocusOut, true, xevent);
+
+				m_focused = nullptr;
+			}
+
+			auto b = m_bindings.find(focusWindow);
+			if (b != m_bindings.end())
+			{
+				m_focused = b->second.widget;
+				m_focused->focus = true;
+
+				XEvent xevent;
+				xevent.type = FocusIn;
+				dispatch(m_focused->window, FocusIn, true, xevent);				
+			}
+		}
         break;
 
     case KeyPress:
@@ -118,7 +227,7 @@ void Context::dispatch(Window window, int32_t eventType, bool always, XEvent& xe
 
 	T_FATAL_ASSERT(b->second.widget != nullptr);
 
-	if (!always)
+	if (!always && b->second.widget != m_grabbed)
 	{
 		// If widget or parents is disabled then ignore event.
 		for (const WidgetData* w = b->second.widget; w != nullptr; w = w->parent)
@@ -133,7 +242,7 @@ void Context::dispatch(Window window, int32_t eventType, bool always, XEvent& xe
 			bool p = false;
 			for (const WidgetData* w = b->second.widget; w != nullptr; w = w->parent)
 			{
-				if (w == m_modal.top())
+				if (w == m_modal.back())
 				{
 					p = true;
 					break;

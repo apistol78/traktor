@@ -1,5 +1,6 @@
 #include <fontconfig/fontconfig.h>
 #include <X11/Xresource.h>
+#include <X11/extensions/Xrandr.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Ui/X11/BitmapX11.h"
@@ -25,6 +26,28 @@ int xerrorHandler(Display*, XErrorEvent* ee)
 	return 0;
 }
 
+double getSystemDpi(Display* display)
+{
+    char* resourceString = XResourceManagerString(display);
+	if (!resourceString)
+		return 96.0;
+
+    XrmValue value;
+    char* type = nullptr;
+    double dpi = 96.0;
+
+    XrmInitialize();
+    XrmDatabase db = XrmGetStringDatabase(resourceString);
+
+	if (XrmGetResource(db, "Xft.dpi", "String", &type, &value) == True)
+	{
+		if (value.addr)
+			dpi = atof(value.addr) * 2.0;
+	}
+
+	return dpi;
+}
+
 		}
 
 WidgetFactoryX11::WidgetFactoryX11()
@@ -41,13 +64,8 @@ WidgetFactoryX11::WidgetFactoryX11()
 	// Use our own X error handler.
 	XSetErrorHandler(xerrorHandler);
 
-	// Get DPI from X, as dpi handling in X is severly broken we deduce either small or large only.
-	float wdots = (float)XDisplayWidth(display, screen);
-	float winch = (float)XDisplayWidthMM(display, screen) * 0.0393700787f;
-	if (wdots / winch > 96.0f)
-		m_dpi = 192;
-	else
-		m_dpi = 96;
+	// Get system dpi.
+	m_dpi = (int32_t)getSystemDpi(display);
 
 	// Open input method.
 	XSetLocaleModifiers("");

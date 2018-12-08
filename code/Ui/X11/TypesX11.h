@@ -15,6 +15,7 @@ struct WidgetData
 	bool visible;
 	bool enable;
 	bool grabbed;
+	bool focus;
 
 	WidgetData()
 	:	parent(nullptr)
@@ -23,6 +24,7 @@ struct WidgetData
 	,	visible(false)
 	,	enable(true)
 	,	grabbed(false)
+	,	focus(false)
 	{
 	}
 };

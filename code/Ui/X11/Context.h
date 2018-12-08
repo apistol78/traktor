@@ -3,7 +3,7 @@
 #include <functional>
 #include <list>
 #include <map>
-#include <stack>
+#include <vector>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include "Core/Object.h"
@@ -38,6 +38,15 @@ public:
 	//! \brief Pop modal widget.
 	void popModal();
 
+	//! \brief Grab input to widget.
+	void grab(WidgetData* widget);
+
+	//! \brief Ungrab input.
+	void ungrab(WidgetData* widget);
+
+	//! \brief Set focus.
+	void setFocus(WidgetData* widget);
+
 	//! \brief Dispatch event to callbacks.
     void dispatch(XEvent& xe);
 
@@ -68,7 +77,9 @@ private:
 	XIM m_xim;
     std::map< Window, Binding > m_bindings;
 	std::list< std::function< void() > > m_deferred;
-	std::stack< WidgetData* > m_modal;
+	std::vector< WidgetData* > m_modal;
+	WidgetData* m_grabbed;
+	WidgetData* m_focused;
 
     void dispatch(Window window, int32_t eventType, bool always, XEvent& xe);
 };

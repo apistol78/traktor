@@ -21,9 +21,6 @@
 #include "Ui/X11/TypesX11.h"
 #include "Ui/X11/UtilitiesX11.h"
 
-#define T_LIMIT_SCOPE_ENABLE
-#include "Core/Timer/LimitScope.h"
-
 namespace traktor
 {
 	namespace ui
@@ -54,19 +51,23 @@ public:
 		T_FATAL_ASSERT(m_timers.empty());
 		T_FATAL_ASSERT(m_surface == nullptr);
 		T_FATAL_ASSERT(m_cairo == nullptr);
+		T_FATAL_ASSERT(m_data.grabbed == false);
 	}
 
 	virtual void destroy() T_OVERRIDE
 	{
+		for (auto it : m_timers)
+			Timers::getInstance().unbind(it.second);
+		m_timers.clear();
+
+		releaseCapture();
+
+		if (hasFocus())
+			m_context->setFocus(nullptr);
+
 		if (m_context != nullptr)
 		{
 			m_context->defer([&]() {
-				releaseCapture();
-
-				for (auto it : m_timers)
-					Timers::getInstance().unbind(it.second);
-				m_timers.clear();
-
 				if (m_cairo != nullptr)
 				{
 					cairo_destroy(m_cairo);
@@ -167,14 +168,12 @@ public:
 
 	virtual bool hasFocus() const T_OVERRIDE
 	{
-		Window focusWindow; int revertTo;
-		XGetInputFocus(m_context->getDisplay(), &focusWindow, &revertTo);
-		return bool(focusWindow == m_data.window);
+		return m_data.focus;
 	}
 
 	virtual void setFocus() T_OVERRIDE
 	{
-		XSetInputFocus(m_context->getDisplay(), m_data.window, RevertToNone, CurrentTime);
+		m_context->setFocus(&m_data);
 	}
 
 	virtual bool hasCapture() const T_OVERRIDE
@@ -184,29 +183,14 @@ public:
 
 	virtual void setCapture() T_OVERRIDE
 	{
-		if (m_data.grabbed)
-			return;
-
-		m_data.grabbed = bool(XGrabPointer(
-			m_context->getDisplay(),
-			m_data.window,
-			False,
-			ButtonPressMask | ButtonReleaseMask | PointerMotionMask,
-			GrabModeAsync,
-			GrabModeAsync,
-			None,
-			None,
-			CurrentTime
-		) == GrabSuccess);
+		if (!m_data.grabbed)
+			m_context->grab(&m_data);
 	}
 
 	virtual void releaseCapture() T_OVERRIDE
 	{
-		if (!m_data.grabbed)
-			return;
-
-		XUngrabPointer(m_context->getDisplay(), CurrentTime);
-		m_data.grabbed = false;
+		if (m_data.grabbed)
+			m_context->ungrab(&m_data);
 	}
 
 	virtual void startTimer(int interval, int id) T_OVERRIDE
@@ -386,7 +370,7 @@ public:
 		}
 		else
 		{
-			draw();
+			draw(rc);
 		}
 	}
 
@@ -553,8 +537,6 @@ protected:
 
 		// Focus in.
 		m_context->bind(&m_data, FocusIn, [&](XEvent& xe) {
-			if (xe.xfocus.detail != NotifyNonlinear)
-				return;
 			XSetICFocus(m_xic);
 			FocusEvent focusEvent(m_owner, true);
 			m_owner->raiseEvent(&focusEvent);
@@ -562,8 +544,6 @@ protected:
 
 		// Focus out.
 		m_context->bind(&m_data, FocusOut, [&](XEvent& xe) {
-			if (xe.xfocus.detail != NotifyNonlinear)
-				return;
 			XUnsetICFocus(m_xic);
 			FocusEvent focusEvent(m_owner, false);
 			m_owner->raiseEvent(&focusEvent);
@@ -778,7 +758,9 @@ protected:
 
 		// Expose
 		m_context->bind(&m_data, Expose, [&](XEvent& xe){
-			draw();
+			if (xe.xexpose.count != 0)
+				return;
+			draw(nullptr);
 			if (xe.xexpose.send_event != 0)
 				m_pendingExposure = false;
 		});
@@ -786,10 +768,9 @@ protected:
 		return true;
 	}
 
-	void draw()
+	void draw(const Rect* rc)
 	{
 		T_FATAL_ASSERT(m_surface != nullptr);
-		T_LIMIT_SCOPE(100);
 
 		XWindowAttributes xa;
 		XGetWindowAttributes(m_context->getDisplay(), m_data.window, &xa);
@@ -803,9 +784,22 @@ protected:
 		PaintEvent paintEvent(
 			m_owner,
 			canvas,
-			Rect(Point(0, 0), m_rect.getSize())
+			rc != nullptr ? *rc : Rect(Point(0, 0), m_rect.getSize())
 		);
 		m_owner->raiseEvent(&paintEvent);
+
+#if defined(_DEBUG)
+		if (m_data.grabbed)
+		{
+			canvas.setBackground(Color4ub(255, 0, 0, 128));
+			canvas.fillRect(Rect(Point(0, 0), m_rect.getSize()));
+		}
+		else if (m_data.focus)
+		{
+			canvas.setBackground(Color4ub(0, 0, 255, 128));
+			canvas.fillRect(Rect(Point(0, 0), m_rect.getSize()));
+		}
+#endif
 
 		cairo_pop_group_to_source(m_cairo);
 		cairo_paint(m_cairo);
