@@ -154,11 +154,6 @@ bool EventLoopX11::isKeyDown(VirtualKey vk) const
 	return false;
 }
 
-Size EventLoopX11::getDesktopSize() const
-{
-	return Size(1280, 720);
-}
-
 bool EventLoopX11::preTranslateEvent(EventSubject* owner, XEvent& e)
 {
 	bool consumed = false;

@@ -41,8 +41,6 @@ public:
 
 	virtual bool isKeyDown(VirtualKey vk) const T_OVERRIDE T_FINAL;
 
-	virtual Size getDesktopSize() const T_OVERRIDE T_FINAL;
-
 private:
 	Ref< Context > m_context;
 	XIC m_xic;
