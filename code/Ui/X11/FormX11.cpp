@@ -1,3 +1,4 @@
+#include <climits>
 #include <cstring>
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
@@ -13,6 +14,21 @@ namespace traktor
 {
 	namespace ui
 	{
+		namespace
+		{
+
+bool haveProperty(Display* display, const Atom* properties, unsigned long nproperties, const char* tokenName)
+{
+	Atom token = XInternAtom(display, tokenName, False);
+	for (unsigned long i = 0; i < nproperties; ++i)
+	{
+		if (properties[i] == token)
+			return true;
+	}
+	return false;
+}
+
+		}
 
 FormX11::FormX11(Context* context, EventSubject* owner)
 :	WidgetX11Impl< IForm >(context, owner)
@@ -129,24 +145,111 @@ void FormX11::setIcon(ISystemBitmap* icon)
 
 void FormX11::maximize()
 {
+	XEvent event;
+	event.xclient.type = ClientMessage;
+	event.xclient.window = m_data.window;
+	event.xclient.message_type = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE", False);
+	event.xclient.format = 32;
+	event.xclient.data.l[0] = 0;
+	event.xclient.data.l[1] = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE_HIDDEN", False);
+	event.xclient.data.l[2] = 0;
+	XSendEvent(m_context->getDisplay(), m_context->getRootWindow(), False, SubstructureRedirectMask, &event);	
+
+	event.xclient.type = ClientMessage;
+	event.xclient.window = m_data.window;
+	event.xclient.message_type = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE", False);
+	event.xclient.format = 32;
+	event.xclient.data.l[0] = 1;
+	event.xclient.data.l[1] = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE_MAXIMIZED_VERT", False);
+	event.xclient.data.l[2] = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE_MAXIMIZED_HORZ", False);
+	event.xclient.data.l[3] = 0;
+	XSendEvent(m_context->getDisplay(), m_context->getRootWindow(), False, SubstructureRedirectMask, &event);	
 }
 
 void FormX11::minimize()
 {
+	XEvent event;
+	event.xclient.type = ClientMessage;
+	event.xclient.window = m_data.window;
+	event.xclient.message_type = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE", False);
+	event.xclient.format = 32;
+	event.xclient.data.l[0] = 1;
+	event.xclient.data.l[1] = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE_HIDDEN", False);
+	event.xclient.data.l[2] = 0;
+	XSendEvent(m_context->getDisplay(), m_context->getRootWindow(), False, SubstructureRedirectMask, &event);	
 }
 
 void FormX11::restore()
 {
+	XEvent event;
+	event.xclient.type = ClientMessage;
+	event.xclient.window = m_data.window;
+	event.xclient.message_type = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE", False);
+	event.xclient.format = 32;
+	event.xclient.data.l[0] = 0;
+	event.xclient.data.l[1] = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE_HIDDEN", False);
+	event.xclient.data.l[2] = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE_MAXIMIZED_VERT", False);
+	event.xclient.data.l[3] = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE_MAXIMIZED_HORZ", False);
+	event.xclient.data.l[4] = 0;
+	XSendEvent(m_context->getDisplay(), m_context->getRootWindow(), False, SubstructureRedirectMask, &event);	
 }
 
 bool FormX11::isMaximized() const
 {
-	return false;
+	Atom type;
+	int format;
+	unsigned long nItem, bytesAfter;
+	Atom *properties = nullptr;
+
+	XGetWindowProperty(
+		m_context->getDisplay(),
+		m_data.window,
+		XInternAtom(m_context->getDisplay(), "_NET_WM_STATE", False),
+		0,
+		LONG_MAX,
+		False,
+		XA_ATOM,
+		&type,
+		&format,
+		&nItem,
+		&bytesAfter,
+		(unsigned char **)&properties
+	);
+
+	bool maximized =
+		haveProperty(m_context->getDisplay(), properties, nItem, "_NET_WM_STATE_MAXIMIZED_VERT") &&
+		haveProperty(m_context->getDisplay(), properties, nItem, "_NET_WM_STATE_MAXIMIZED_HORZ");
+
+	XFree(properties);
+	return maximized;
 }
 
 bool FormX11::isMinimized() const
 {
-	return false;
+	Atom type;
+	int format;
+	unsigned long nItem, bytesAfter;
+	Atom *properties = nullptr;
+
+	XGetWindowProperty(
+		m_context->getDisplay(),
+		m_data.window,
+		XInternAtom(m_context->getDisplay(), "_NET_WM_STATE", False),
+		0,
+		LONG_MAX,
+		False,
+		XA_ATOM,
+		&type,
+		&format,
+		&nItem,
+		&bytesAfter,
+		(unsigned char **)&properties
+	);
+
+	bool minimized = haveProperty(m_context->getDisplay(), properties, nItem, "_NET_WM_STATE_HIDDEN");
+
+	XFree(properties);
+	return minimized;
 }
 
 void FormX11::hideProgress()

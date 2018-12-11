@@ -56,6 +56,8 @@ public:
 
 	int getScreen() const { return m_screen; }
 
+	Window getRootWindow() const;
+
 	XIM getXIM() const { return m_xim; }
 
 	//@}
