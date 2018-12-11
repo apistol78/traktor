@@ -13,7 +13,6 @@ set PHYSX_SDK=%TRAKTOR_HOME%\3rdp\PhysX-3.3.1
 set ANGLE_SDK=%TRAKTOR_HOME%\3rdp\angle-master-160921
 set GLSL_OPTIMIZER=%TRAKTOR_HOME%\3rdp\glsl-optimizer-master-20160321
 set SQLITE_SDK=%TRAKTOR_HOME%\3rdp\sqlite-3.8.7.2
-set WXWIDGETS_SDK=%TRAKTOR_HOME%\3rdp\wxWidgets-3.0.2
 set SIMPLYGON_SDK=%TRAKTOR_HOME%\3rdp\SimplygonSDK
 set LUA_SDK=%TRAKTOR_HOME%\3rdp\lua-5.3.5
 set GLEW_SDK=%TRAKTOR_HOME%\3rdp\glew-1.13.0
