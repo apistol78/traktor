@@ -185,11 +185,6 @@ bool EventLoopCocoa::isKeyDown(VirtualKey vk) const
 	return false;	
 }
 
-Size EventLoopCocoa::getDesktopSize() const
-{
-	return Size(1280, 720);
-}
-
 bool EventLoopCocoa::handleGlobalEvents(EventSubject* owner, void* event)
 {
 	NSEvent* evt = (NSEvent*)event;

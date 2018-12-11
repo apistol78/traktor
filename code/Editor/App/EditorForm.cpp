@@ -391,6 +391,21 @@ bool findShortcutCommandMapping(const PropertyGroup* settings, const std::wstrin
 	return true;
 }
 
+ui::Size getDesktopSizeEstimate()
+{
+	std::list< ui::Rect > desktopRects;
+	ui::Application::getInstance()->getWidgetFactory()->getDesktopRects(desktopRects);
+	
+	ui::Size sz(0, 0);
+	for (auto rc : desktopRects)
+	{
+		sz.cx = std::max(sz.cx, rc.right);
+		sz.cy = std::max(sz.cy, rc.bottom);
+	}
+
+	return sz;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.EditorForm", EditorForm, ui::Form)
@@ -800,7 +815,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	int32_t x = 0, y = 0, width = ui::dpi96(1280), height = ui::dpi96(900);
 	bool maximized = false;
 
-	ui::Size desktopSize = ui::Application::getInstance()->getEventLoop()->getDesktopSize();
+	const auto desktopSize = getDesktopSizeEstimate();
 	if (
 		desktopSize.cx == m_mergedSettings->getProperty< int32_t >(L"Editor.LastDesktopWidth", -1) &&
 		desktopSize.cy == m_mergedSettings->getProperty< int32_t >(L"Editor.LastDesktopHeight", -1)
@@ -2851,7 +2866,7 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 	m_globalSettings->setProperty< PropertyInteger >(L"Editor.SizeHeight", rc.getHeight());
 
 	// Save desktop size.
-	ui::Size desktopSize = ui::Application::getInstance()->getEventLoop()->getDesktopSize();
+	const auto desktopSize = getDesktopSizeEstimate();
 	m_globalSettings->setProperty< PropertyInteger >(L"Editor.LastDesktopWidth", desktopSize.cx);
 	m_globalSettings->setProperty< PropertyInteger >(L"Editor.LastDesktopHeight", desktopSize.cy);
 

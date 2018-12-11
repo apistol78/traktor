@@ -57,12 +57,28 @@ Ref< Widget > Menu::show(Widget* parent, const Point& at) const
 
 	// Place form at given position.
 	auto rc = form->getRect();
-	form->setRect(Rect(
+	Rect rcForm(
 		parent->clientToScreen(at),
 		rc.getSize()
-	));
+	);
+
+	// Ensure form is placed inside desktop.
+	std::list< Rect > desktopRects;
+	Application::getInstance()->getWidgetFactory()->getDesktopRects(desktopRects);
+	for (auto r : desktopRects)
+	{
+		if (rcForm.left < r.left)
+			rcForm = rcForm.offset(-(rcForm.left - r.left), 0);
+		if (rcForm.right > r.right)
+			rcForm = rcForm.offset(-(rcForm.right - r.right), 0);
+		if (rcForm.top < r.top)
+			rcForm = rcForm.offset(0, -(rcForm.top - r.top));
+		if (rcForm.bottom > r.bottom)
+			rcForm = rcForm.offset(0, -(rcForm.bottom - r.bottom));
+	}	
 
 	// Show form.
+	form->setRect(rcForm);
 	form->show();
 
 	return form;
