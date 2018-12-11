@@ -7,8 +7,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_SharedMemoryLinux_H
 #define traktor_SharedMemoryLinux_H
 
+#include <string>
 #include "Core/System/ISharedMemory.h"
-#include "Core/Misc/AutoPtr.h"
 
 namespace traktor
 {
@@ -18,7 +18,9 @@ class SharedMemoryLinux : public ISharedMemory
 	T_RTTI_CLASS;
 
 public:
-	SharedMemoryLinux(uint32_t size);
+	SharedMemoryLinux(const std::wstring& name, uint32_t size);
+
+	virtual ~SharedMemoryLinux();
 
 	virtual Ref< IStream > read(bool exclusive);
 
@@ -27,7 +29,9 @@ public:
 	virtual bool clear();
 
 private:
-	AutoArrayPtr< uint8_t > m_data;
+	std::wstring m_name;
+	int m_fd;
+	void* m_ptr;
 	uint32_t m_size;
 };
 
