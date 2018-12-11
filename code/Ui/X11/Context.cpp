@@ -261,5 +261,10 @@ void Context::dispatch(Window window, int32_t eventType, bool always, XEvent& xe
 	fn(xe);
 }
 
+Window Context::getRootWindow() const
+{
+	return RootWindow(m_display, m_screen);
+}
+
     }
 }
