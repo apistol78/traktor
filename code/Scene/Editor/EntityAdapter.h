@@ -142,6 +142,8 @@ public:
 
 	bool isLayer() const;
 
+	bool inDynamicLayer() const;
+
 	//@}
 
 	/*! \name Relationship. */

@@ -187,6 +187,16 @@ bool EntityAdapter::isLayer() const
 	return is_a< world::LayerEntityData >(m_entityData);
 }
 
+bool EntityAdapter::inDynamicLayer() const
+{
+	if (const world::LayerEntityData* layerData = dynamic_type_cast< const world::LayerEntityData* >(m_entityData))
+	{
+		if (layerData->isDynamic())
+			return true;
+	}
+	return m_parent ? m_parent->inDynamicLayer() : false;
+}
+
 bool EntityAdapter::isChildrenPrivate() const
 {
 	return m_entityEditor ? m_entityEditor->isChildrenPrivate() : false;

@@ -194,7 +194,9 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
 		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
 		{
-			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(entityRendererCache, *j);
+			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(entityRendererCache, *j, [&](const EntityAdapter* adapter) {
+				return adapter->isVisible();
+			});
 			worldEntityRenderers->add(entityRenderer);
 		}
 	}

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #ifndef traktor_scene_EntityRendererAdapter_H
 #define traktor_scene_EntityRendererAdapter_H
 
+#include <functional>
 #include <Core/Ref.h>
 #include <World/IEntityRenderer.h>
 
@@ -22,7 +23,7 @@ class EntityRendererAdapter : public world::IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	EntityRendererAdapter(EntityRendererCache* cache, world::IEntityRenderer* entityRenderer);
+	EntityRendererAdapter(EntityRendererCache* cache, world::IEntityRenderer* entityRenderer, const std::function< bool(const EntityAdapter*) >& filter);
 	
 	virtual const TypeInfoSet getRenderableTypes() const T_OVERRIDE T_FINAL;
 
@@ -42,6 +43,7 @@ public:
 private:
 	Ref< EntityRendererCache > m_cache;
 	Ref< world::IEntityRenderer > m_entityRenderer;
+	std::function< bool(const EntityAdapter*) > m_filter;
 };
 	
 	}
