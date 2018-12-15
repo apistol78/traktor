@@ -24,9 +24,9 @@ namespace traktor
 		namespace
 		{
 
-FbxManager* s_fbxManager = 0;
-FbxIOSettings* s_ioSettings = 0;
-FbxScene* s_scene = 0;
+FbxManager* s_fbxManager = nullptr;
+FbxIOSettings* s_ioSettings = nullptr;
+FbxScene* s_scene = nullptr;
 
 class FbxIStreamWrap : public FbxStream
 {
@@ -39,7 +39,7 @@ public:
 
 	virtual ~FbxIStreamWrap()
 	{
-		m_stream = 0;
+		m_stream = nullptr;
 	}
 
 	virtual EState GetState()
@@ -49,9 +49,7 @@ public:
 
 	virtual bool Open(void* pStreamData)
 	{
-		T_ASSERT (!m_stream);
-		if (!m_stream)
-			m_stream = static_cast< IStream* >(pStreamData);
+		m_stream = static_cast< IStream* >(pStreamData);
 		m_stream->seek(IStream::SeekSet, 0);
 		m_state = eOpen;
 		return true;
@@ -221,6 +219,11 @@ std::wstring getTextureName(const FbxTexture* texture)
 
 uint32_t uvChannel(AlignedVector< std::string >& inoutChannels, const std::string uvSet)
 {
+	// In case "default" uv set requested then assume first but do NOT add to inoutChannels
+	// in order to when first named UVSet is extracted it will get 0 index.
+	if (uvSet == "default")
+		return 0;
+
 	AlignedVector< std::string >::iterator i = std::find(inoutChannels.begin(), inoutChannels.end(), uvSet);
 	if (i != inoutChannels.end())
 		return uint32_t(std::distance(inoutChannels.begin(), i));
