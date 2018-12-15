@@ -232,7 +232,7 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 		std::wstring line;
 
 		ui::FileDialog fileDialog;
-		if (!fileDialog.create(m_gridDictionary, Text(L"DICTIONARY_EDITOR_IMPORT_DICTIONARY_DIALOG"), L"All files;*.*"))
+		if (!fileDialog.create(m_gridDictionary, type_name(this), Text(L"DICTIONARY_EDITOR_IMPORT_DICTIONARY_DIALOG"), L"All files;*.*"))
 			return;
 
 		Path fileName;
@@ -256,7 +256,7 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	else if (cmd == L"I18N.Editor.Export")
 	{
 		ui::FileDialog fileDialog;
-		if (!fileDialog.create(m_gridDictionary, Text(L"DICTIONARY_EDITOR_EXPORT_DICTIONARY_DIALOG"), L"All files;*.*", true))
+		if (!fileDialog.create(m_gridDictionary, type_name(this), Text(L"DICTIONARY_EDITOR_EXPORT_DICTIONARY_DIALOG"), L"All files;*.*", true))
 			return;
 
 		Path fileName;

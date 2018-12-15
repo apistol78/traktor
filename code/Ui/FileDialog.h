@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #pragma once
 
 #include <vector>
+#include "Core/Ref.h"
 #include "Core/Io/Path.h"
 #include "Ui/ConfigDialog.h"
 
@@ -37,6 +38,7 @@ class T_DLLCLASS FileDialog : public ConfigDialog
 public:
 	bool create(
 		Widget* parent,
+		const std::wstring& key,
 		const std::wstring& title,
 		const std::wstring& filters,
 		bool save = false
@@ -53,6 +55,7 @@ private:
 	Ref< GridView > m_gridFiles;
 	Ref< IBitmap > m_bitmapDirectory;
 	Ref< IBitmap > m_bitmapFile;
+	std::wstring m_key;
 	Path m_currentPath;
 
 	void updatePath();

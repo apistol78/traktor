@@ -97,7 +97,7 @@ bool FlashBatchDialog::showModal(RefArray< FlashMovieAsset >& outAssets)
 void FlashBatchDialog::addTexture()
 {
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, i18n::Text(L"FLASH_BATCH_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(this, type_name(this), i18n::Text(L"FLASH_BATCH_FILE_TITLE"), L"All files;*.*"))
 		return;
 
 	std::vector< Path > fileNames;

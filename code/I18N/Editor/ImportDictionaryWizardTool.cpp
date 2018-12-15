@@ -34,7 +34,7 @@ bool ImportDictionaryWizardTool::launch(ui::Widget* parent, editor::IEditor* edi
 	std::wstring line;
 
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(parent, Text(L"IMPORT_DICTIONARY_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(parent, type_name(this), Text(L"IMPORT_DICTIONARY_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
 		return false;
 
 	Path fileName;

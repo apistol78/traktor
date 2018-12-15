@@ -38,7 +38,7 @@ bool SkeletonWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db:
 {
 	// Select source skeleton.
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(parent, i18n::Text(L"SKELETON_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(parent, type_name(this), i18n::Text(L"SKELETON_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
 		return 0;
 
 	Path fileName;

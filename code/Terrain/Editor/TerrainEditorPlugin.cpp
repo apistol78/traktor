@@ -226,7 +226,7 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 		{
 			ui::FileDialog fileDialog;
 
-			if (!fileDialog.create(m_parent, i18n::Text(L"TERRAIN_EDITOR_BROWSE_IMAGE"), L"All files (*.*);*.*"))
+			if (!fileDialog.create(m_parent, type_name(this), i18n::Text(L"TERRAIN_EDITOR_BROWSE_IMAGE"), L"All files (*.*);*.*"))
 				return false;
 
 			Path path;

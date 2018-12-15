@@ -91,7 +91,7 @@ bool ExportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 	Path fileName;
 
 	ui::FileDialog saveAsDialog;
-	saveAsDialog.create(parent, i18n::Text(L"EXPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE"), L"All files;*.*", true);
+	saveAsDialog.create(parent, type_name(this), i18n::Text(L"EXPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE"), L"All files;*.*", true);
 	if (saveAsDialog.showModal(fileName) != ui::DrOk)
 		return false;
 

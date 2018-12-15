@@ -92,7 +92,7 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 {
 	// Select source heightfield.
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(parent, i18n::Text(L"IMPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(parent, type_name(this), i18n::Text(L"IMPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE"), L"All files;*.*"))
 		return false;
 
 	Path fileName;

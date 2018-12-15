@@ -68,6 +68,7 @@ bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring
 	ui::FileDialog saveAsDialog;
 	saveAsDialog.create(
 		parent,
+		type_name(this), 
 		i18n::Text(L"EDITOR_HTTP_GET_SAVE_AS"),
 		L"All files (*.*);*.*",
 		true
