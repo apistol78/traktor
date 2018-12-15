@@ -154,6 +154,9 @@ void FileDialog::updatePath()
 #endif
 
 	std::wstring p;
+#if !defined(_WIN32)
+	p = L"/";
+#endif
 	for (auto s : StringSplit< std::wstring >(pn, L"/"))
 	{
 		if (!p.empty())

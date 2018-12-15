@@ -29,7 +29,7 @@ bool ImportSongWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, d
 	Path pathName;
 
 	ui::FileDialog fileDialog;
-	fileDialog.create(parent, L"Select MOD to import...", L"All files;*.*");
+	fileDialog.create(parent, type_name(this), L"Select MOD to import...", L"All files;*.*");
 	fileDialog.showModal(pathName);
 	fileDialog.destroy();
 
