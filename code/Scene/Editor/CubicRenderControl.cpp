@@ -151,7 +151,8 @@ bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 	if (!m_toolBar->create(m_container))
 		return false;
 
-	m_toolBar->addItem(new ui::ToolBarButton(L"Capture", ui::Command(L"Scene.Editor.Capture"), ui::ToolBarButton::BsText));
+	m_toolBar->addItem(new ui::ToolBarButton(L"Capture at origo", ui::Command(L"Scene.Editor.CaptureAtOrigo"), ui::ToolBarButton::BsText));
+	m_toolBar->addItem(new ui::ToolBarButton(L"Capture at selected", ui::Command(L"Scene.Editor.CaptureAtSelected"), ui::ToolBarButton::BsText));
 	m_toolBar->addItem(new ui::ToolBarButton(L"Save cubemap...", ui::Command(L"Scene.Editor.SaveCubeMap"), ui::ToolBarButton::BsText));
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &CubicRenderControl::eventToolClick);
 
@@ -271,7 +272,9 @@ void CubicRenderControl::updateWorldRenderer()
 		(*i)->createEntityRenderers(m_context, m_renderView, nullptr, entityRenderers);
 		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
 		{
-			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(entityRendererCache, *j);
+			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(entityRendererCache, *j, [&](const EntityAdapter* adapter) {
+				return !adapter->inDynamicLayer() && adapter->isVisible();
+			});
 			worldEntityRenderers->add(entityRenderer);
 		}
 	}
@@ -334,10 +337,22 @@ void CubicRenderControl::setQuality(world::Quality imageProcessQuality, world::Q
 
 bool CubicRenderControl::handleCommand(const ui::Command& command)
 {
-	if (command == L"Scene.Editor.Capture")
+	if (command == L"Scene.Editor.CaptureAtOrigo")
 	{
-		capture();
+		capture(Vector4::origo());
 		update();
+	}
+	else if (command == L"Scene.Editor.CaptureAtSelected")
+	{
+		RefArray< EntityAdapter > selectedEntities;
+		if (m_context->getEntities(selectedEntities, SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly) > 0)
+		{
+			Vector4 pivot = selectedEntities.front()->getTransform().inverse().translation().xyz1();
+			capture(pivot);
+			update();
+		}
+		else
+			log::warning << L"No entity selected; cannot capture." << Endl;
 	}
 	else if (command == L"Scene.Editor.SaveCubeMap")
 	{
@@ -380,7 +395,7 @@ void CubicRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 }
 
-void CubicRenderControl::capture()
+void CubicRenderControl::capture(const Vector4& pivot)
 {
 	Ref< scene::Scene > sceneInstance = m_context->getScene();
 	if (!sceneInstance || !m_renderView)
@@ -393,13 +408,6 @@ void CubicRenderControl::capture()
 		if (!m_worldRenderer)
 			return;
 	}
-
-	Vector4 pivot = Vector4::origo();
-
-	// Get pivot point from selection set.
-	RefArray< EntityAdapter > selectedEntities;
-	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly) > 0)
-		pivot = selectedEntities.front()->getTransform().inverse().translation().xyz1();
 
 	// Create world render view.
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();

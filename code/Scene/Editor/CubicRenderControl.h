@@ -123,7 +123,7 @@ private:
 	Timer m_timer;
 	ui::Size m_dirtySize;
 
-	void capture();
+	void capture(const Vector4& capture);
 
 	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 

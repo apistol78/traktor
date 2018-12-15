@@ -15,9 +15,10 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityRendererAdapter", EntityRendererAdapter, world::IEntityRenderer)
 
-EntityRendererAdapter::EntityRendererAdapter(EntityRendererCache* cache, world::IEntityRenderer* entityRenderer)
+EntityRendererAdapter::EntityRendererAdapter(EntityRendererCache* cache, world::IEntityRenderer* entityRenderer, const std::function< bool(const EntityAdapter*) >& filter)
 :	m_cache(cache)
 ,	m_entityRenderer(entityRenderer)
+,	m_filter(filter)
 {
 }
 
@@ -34,7 +35,7 @@ void EntityRendererAdapter::render(
 )
 {
 	EntityAdapter* entityAdapter = m_cache->begin(renderable);
-	if (!entityAdapter || entityAdapter->isVisible())
+	if (!entityAdapter || m_filter(entityAdapter))
 	{
 		m_entityRenderer->render(
 			worldContext,
