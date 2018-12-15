@@ -28,7 +28,7 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 	bool result = false;
 
 	ui::FileDialog fileDialog;
-	fileDialog.create(parent, L"Open other solution", L"SolutionBuilder solutions;*.xms");
+	fileDialog.create(parent, type_name(this), L"Open other solution", L"SolutionBuilder solutions;*.xms");
 	
 	Path filePath;
 	if (fileDialog.showModal(filePath))

@@ -159,7 +159,7 @@ void GameEntityWizardDialog::eventNameChange(ui::ContentChangeEvent* event)
 void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* event)
 {
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(this, type_name(this), i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*"))
 		return;
 
 	Path fileName;
@@ -187,7 +187,7 @@ void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* ev
 void GameEntityWizardDialog::eventBrowseCollisionMeshClick(ui::ButtonClickEvent* event)
 {
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(this, type_name(this), i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*"))
 		return;
 
 	Path fileName;

@@ -235,7 +235,7 @@ void TextureAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 		if (fileItem)
 		{
 			ui::FileDialog fileDialog;
-			if (!fileDialog.create(m_propertyList, i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
+			if (!fileDialog.create(m_propertyList, type_name(this), i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
 				return;
 
 			Path path = fileItem->getPath();

@@ -289,7 +289,7 @@ void ProjectPropertyPage::eventClickRemove(ui::ButtonClickEvent* event)
 void ProjectPropertyPage::eventClickAddExternal(ui::ButtonClickEvent* event)
 {
 	ui::FileDialog fileDialog;
-	fileDialog.create(this, L"Select solution", L"SolutionBuilder solutions;*.xms");
+	fileDialog.create(this, type_name(this), L"Select solution", L"SolutionBuilder solutions;*.xms");
 
 	Path filePath;
 	if (fileDialog.showModal(filePath))

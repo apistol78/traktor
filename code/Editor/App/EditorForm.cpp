@@ -1413,7 +1413,7 @@ bool EditorForm::createWorkspace()
 bool EditorForm::openWorkspace()
 {
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, i18n::Text(L"EDITOR_BROWSE_WORKSPACE"), L"Workspace files (*.workspace);*.workspace;All files (*.*);*.*"))
+	if (!fileDialog.create(this, type_name(this), i18n::Text(L"EDITOR_BROWSE_WORKSPACE"), L"Workspace files (*.workspace);*.workspace;All files (*.*);*.*"))
 		return false;
 
 	Path path;

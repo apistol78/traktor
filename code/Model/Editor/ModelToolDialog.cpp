@@ -249,7 +249,7 @@ void ModelToolDialog::destroy()
 bool ModelToolDialog::loadModel()
 {
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, L"Load model(s)...", L"All files;*.*"))
+	if (!fileDialog.create(this, type_name(this), L"Load model(s)...", L"All files;*.*"))
 		return false;
 
 	std::vector< Path > fileNames;
@@ -280,7 +280,7 @@ bool ModelToolDialog::loadModel()
 bool ModelToolDialog::saveModel(Model* model)
 {
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, L"Save model as...", L"All files;*.*", true))
+	if (!fileDialog.create(this, type_name(this), L"Save model as...", L"All files;*.*", true))
 		return false;
 
 	Path fileName;
@@ -297,7 +297,7 @@ bool ModelToolDialog::saveModel(Model* model)
 void ModelToolDialog::bakeOcclusion(Model* model)
 {
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, L"Save occlusion image as...", L"All files;*.*", true))
+	if (!fileDialog.create(this, type_name(this), L"Save occlusion image as...", L"All files;*.*", true))
 		return;
 
 	Path fileName;

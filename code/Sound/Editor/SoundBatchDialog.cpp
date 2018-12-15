@@ -96,7 +96,7 @@ bool SoundBatchDialog::showModal(RefArray< SoundAsset >& outAssets)
 void SoundBatchDialog::addSound()
 {
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, i18n::Text(L"SOUND_BATCH_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(this, type_name(this), i18n::Text(L"SOUND_BATCH_FILE_TITLE"), L"All files;*.*"))
 		return;
 
 	std::vector< Path > fileNames;

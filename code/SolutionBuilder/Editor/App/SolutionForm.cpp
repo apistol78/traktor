@@ -494,7 +494,7 @@ void SolutionForm::commandOpen()
 	}
 
 	ui::FileDialog fileDialog;
-	fileDialog.create(this, L"Open solution", L"SolutionBuilder solutions;*.xms;All files;*.*");
+	fileDialog.create(this, type_name(this), L"Open solution", L"SolutionBuilder solutions;*.xms;All files;*.*");
 	
 	Path filePath;
 	if (fileDialog.showModal(filePath))
@@ -517,7 +517,7 @@ void SolutionForm::commandSave(bool saveAs)
 	if (saveAs || m_solutionFileName.empty())
 	{
 		ui::FileDialog fileDialog;
-		fileDialog.create(this, L"Save solution as", L"SolutionBuilder solutions;*.xms", true);
+		fileDialog.create(this, type_name(this), L"Save solution as", L"SolutionBuilder solutions;*.xms", true);
 		cancelled = !(fileDialog.showModal(filePath) == ui::DrOk);
 		fileDialog.destroy();
 	}
@@ -757,7 +757,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			else if (command == L"Project.AddExistingFiles")
 			{
 				ui::FileDialog fileDialog;
-				if (fileDialog.create(this, L"Select file(s)...", L"All files;*.*"))
+				if (fileDialog.create(this, type_name(this), L"Select file(s)...", L"All files;*.*"))
 				{
 					std::vector< Path > paths;
 					if (fileDialog.showModal(paths) == ui::DrOk)
@@ -812,7 +812,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			else if (command == L"Aggregation.AddExistingFiles")
 			{
 				ui::FileDialog fileDialog;
-				if (fileDialog.create(this, L"Select file(s)...", L"All files;*.*"))
+				if (fileDialog.create(this, type_name(this), L"Select file(s)...", L"All files;*.*"))
 				{
 					std::vector< Path > paths;
 					if (fileDialog.showModal(paths) == ui::DrOk)
@@ -909,7 +909,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			else if (command == L"Filter.AddExistingFiles")
 			{
 				ui::FileDialog fileDialog;
-				if (fileDialog.create(this, L"Select file(s)...", L"All files;*.*"))
+				if (fileDialog.create(this, type_name(this), L"Select file(s)...", L"All files;*.*"))
 				{
 					std::vector< Path > paths;
 					if (fileDialog.showModal(paths) == ui::DrOk)

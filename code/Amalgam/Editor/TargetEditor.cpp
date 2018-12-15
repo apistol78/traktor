@@ -637,7 +637,7 @@ void TargetEditor::eventBrowseIconClick(ui::MouseButtonDownEvent* event)
 		return;
 
 	ui::FileDialog fileDialog;
-	if (fileDialog.create(m_containerOuter, L"Select icon image", L"All files;*.*"))
+	if (fileDialog.create(m_containerOuter, type_name(this), L"Select icon image", L"All files;*.*"))
 	{
 		Path fileName;
 		if (fileDialog.showModal(fileName) == ui::DrOk)

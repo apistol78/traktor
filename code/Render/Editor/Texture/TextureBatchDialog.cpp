@@ -96,7 +96,7 @@ bool TextureBatchDialog::showModal(RefArray< TextureAsset >& outAssets)
 void TextureBatchDialog::addTexture()
 {
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, i18n::Text(L"TEXTURE_BATCH_FILE_TITLE"), L"All files;*.*"))
+	if (!fileDialog.create(this, type_name(this), i18n::Text(L"TEXTURE_BATCH_FILE_TITLE"), L"All files;*.*"))
 		return;
 
 	std::vector< Path > fileNames;

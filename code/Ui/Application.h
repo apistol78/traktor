@@ -27,6 +27,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+
+class PropertyGroup;
+
 	namespace ui
 	{
 
@@ -99,6 +102,9 @@ public:
 	/*! \brief Get style sheet. */
 	const StyleSheet* getStyleSheet() const;
 
+	/*! \brief Get properties. */
+	PropertyGroup* getProperties();
+
 	/*! \name Virtual key translation. */
 	//@{
 
@@ -121,6 +127,7 @@ private:
 	IWidgetFactory* m_widgetFactory;
 	Ref< Clipboard > m_clipboard;
 	Ref< const StyleSheet > m_styleSheet;
+	Ref< PropertyGroup > m_properties;
 };
 
 /*! \brief Convenience wrappers. */

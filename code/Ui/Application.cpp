@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/StyleSheet.h"
@@ -63,6 +64,7 @@ bool Application::initialize(IWidgetFactory* widgetFactory, const StyleSheet* st
 	m_widgetFactory = widgetFactory;
 	m_eventLoop = widgetFactory->createEventLoop(this);
 	m_clipboard = new Clipboard(widgetFactory->createClipboard());
+	m_properties = new PropertyGroup();
 	setStyleSheet(styleSheet);
 	return true;
 }
@@ -129,6 +131,11 @@ void Application::setStyleSheet(const StyleSheet* styleSheet)
 const StyleSheet* Application::getStyleSheet() const
 {
 	return m_styleSheet;
+}
+
+PropertyGroup* Application::getProperties()
+{
+	return m_properties;
 }
 
 VirtualKey Application::translateVirtualKey(const std::wstring& keyName) const

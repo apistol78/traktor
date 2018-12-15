@@ -618,12 +618,18 @@ void MeshAssetEditor::eventLodStepsChange(ui::ContentChangeEvent* event)
 void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)
 {
 	ui::FileDialog fileDialog;
-	if (!fileDialog.create(m_editFileName, i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
+	if (!fileDialog.create(m_editFileName, type_name(this), i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
 		return;
 
 	Path path = m_editFileName->getText();
 	if (fileDialog.showModal(path) == ui::DrOk)
 	{
+		// Try get path relative to asset path.
+		Path relPath;
+		Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath);
+		if (FileSystem::getInstance().getRelativePath(path, assetPath, relPath))
+			path = relPath;
+
 		m_editFileName->setText(path.getOriginal());
 		m_asset->setFileName(path);
 

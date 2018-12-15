@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include <limits>
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Scene/Editor/DebugRenderControl.h"
@@ -280,7 +281,9 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 			int32_t x = innerSize.cx * (ox * 0.5f + 0.5f);
 			int32_t y = innerSize.cy * (0.5f - oy * 0.5f) - ext.cy;
 
-			canvas.drawText(ui::Point(x, y), debugTargets[i].name);
+			StringOutputStream ss;
+			ss << debugTargets[i].name << L" (" << type_name(debugTargets[i].texture) << L")";
+			canvas.drawText(ui::Point(x, y), ss.str());
 		}
 	}
 
