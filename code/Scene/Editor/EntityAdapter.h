@@ -39,6 +39,7 @@ class Entity;
 class EntityData;
 class IEntityComponent;
 class IEntityComponentData;
+class ILayerAttribute;
 
 	}
 
@@ -142,7 +143,13 @@ public:
 
 	bool isLayer() const;
 
-	bool inDynamicLayer() const;
+	const world::ILayerAttribute* getLayerAttribute(const TypeInfo& attributeType) const;
+
+	template < typename AttributeType >
+	const AttributeType* getLayerAttribute() const
+	{
+		return checked_type_cast< const AttributeType*, true >(getLayerAttribute(type_of< AttributeType >()));
+	}
 
 	//@}
 
