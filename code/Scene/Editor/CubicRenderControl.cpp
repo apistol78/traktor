@@ -43,6 +43,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/CubicRenderControl.h"
+#include "Scene/Editor/ProbeLayerAttribute.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Scene/Editor/Events/FrameEvent.h"
@@ -273,7 +274,7 @@ void CubicRenderControl::updateWorldRenderer()
 		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
 		{
 			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(entityRendererCache, *j, [&](const EntityAdapter* adapter) {
-				return !adapter->inDynamicLayer() && adapter->isVisible();
+				return adapter->isVisible() && adapter->getLayerAttribute< ProbeLayerAttribute >() != nullptr;
 			});
 			worldEntityRenderers->add(entityRenderer);
 		}
