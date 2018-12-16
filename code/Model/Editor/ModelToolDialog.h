@@ -76,6 +76,7 @@ private:
 	Ref< ui::ToolBarButton > m_toolCull;
 	Ref< ui::ToolBarButton > m_toolNonSharedEdges;
 	Ref< ui::ToolBarButton > m_toolUV;
+	Ref< ui::ToolBarDropDown > m_toolChannel;
 	Ref< ui::ToolBarButton > m_toolWeight;
 	Ref< ui::ToolBarDropDown > m_toolJoint;
 	Ref< ui::TreeView > m_modelTree;

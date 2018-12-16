@@ -60,6 +60,8 @@ public:
 		,	anisotropic(anisotropic_)
 		{
 		}
+
+		void serialize(ISerializer& s);
 	};
 
 	Material();
@@ -143,6 +145,8 @@ public:
 	void setDoubleSided(bool doubleSided);
 
 	bool isDoubleSided() const;
+
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
 	
 private:
 	std::wstring m_name;

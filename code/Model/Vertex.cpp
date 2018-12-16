@@ -1,11 +1,9 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include "Core/Misc/Adler32.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberStaticVector.h"
 #include "Model/Vertex.h"
 
 namespace traktor
@@ -101,6 +99,17 @@ uint32_t Vertex::getHash() const
 	adler.end();
 
 	return adler.get();
+}
+
+void Vertex::serialize(ISerializer& s)
+{
+	s >> Member< uint32_t >(L"position", m_position);
+	s >> Member< uint32_t >(L"color", m_color);
+	s >> Member< uint32_t >(L"normal", m_normal);
+	s >> Member< uint32_t >(L"tangent", m_tangent);
+	s >> Member< uint32_t >(L"binormal", m_binormal);
+	s >> MemberStaticVector< uint32_t, 4 >(L"texCoords", m_texCoords);
+	s >> MemberAlignedVector< float >(L"jointInfluences", m_jointInfluences);
 }
 
 bool Vertex::operator == (const Vertex& r) const

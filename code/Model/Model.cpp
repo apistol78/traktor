@@ -6,6 +6,11 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include <algorithm>
 #include "Core/Math/Const.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Model/ContainerHelpers.h"
 #include "Model/Model.h"
 
@@ -72,7 +77,7 @@ bool shouldReplace(const Vertex& existing, const Vertex& replaceWith)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Model", Model, Object)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Model", 0, Model, ISerializable)
 
 Model::Model()
 :	m_positions(2.0f)
@@ -259,6 +264,8 @@ uint32_t Model::getAvailableTexCoordChannel() const
 			channel = traktor::max(channel, i->getReflectiveMap().channel + 1);
 		if (!i->getNormalMap().name.empty())
 			channel = traktor::max(channel, i->getNormalMap().channel + 1);
+		if (!i->getLightMap().name.empty())
+			channel = traktor::max(channel, i->getLightMap().channel + 1);
 	}
 
 	return channel;
@@ -300,6 +307,43 @@ const Vector4& Model::getBlendTargetPosition(uint32_t blendTargetIndex, uint32_t
 {
 	std::map< uint32_t, AlignedVector< Vector4 > >::const_iterator i = m_blendTargetPositions.find(blendTargetIndex);
 	return i->second[positionIndex];
+}
+
+void Model::serialize(ISerializer& s)
+{
+	s >> MemberAlignedVector< Material, MemberComposite< Material > >(L"materials", m_materials);
+	s >> MemberAlignedVector< Vertex, MemberComposite< Vertex > >(L"vertices", m_vertices);
+	s >> MemberAlignedVector< Polygon, MemberComposite< Polygon > >(L"polygons", m_polygons);
+
+	AlignedVector< Vector4 > positions = m_positions.values();
+	s >> MemberAlignedVector< Vector4 >(L"positions", positions);
+	m_positions.replace(positions);
+
+	AlignedVector< Vector4 > colors = m_colors.values();
+	s >> MemberAlignedVector< Vector4 >(L"colors", colors);
+	m_colors.replace(colors);
+
+	AlignedVector< Vector4 > normals = m_normals.values();
+	s >> MemberAlignedVector< Vector4 >(L"normals", normals);
+	m_normals.replace(normals);
+
+	AlignedVector< Vector2 > texCoords = m_texCoords.values();
+	s >> MemberAlignedVector< Vector2 >(L"texCoords", texCoords);
+	m_texCoords.replace(texCoords);
+
+	s >> MemberAlignedVector< std::wstring >(L"joints", m_joints);
+	s >> MemberAlignedVector< std::wstring >(L"blendTargets", m_blendTargets);
+
+	s >> MemberStlMap<
+		uint32_t,
+		AlignedVector< Vector4 >,
+		MemberStlPair< 
+			uint32_t,
+			AlignedVector< Vector4 >,
+			Member< uint32_t >,
+			MemberAlignedVector< Vector4 >
+		>
+	>(L"blendTargetPositions", m_blendTargetPositions);
 }
 
 	}

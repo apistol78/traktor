@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_model_Polygon_H
-#define traktor_model_Polygon_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Containers/AlignedVector.h"
@@ -21,6 +14,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+
+class ISerializer;
+
 	namespace model
 	{
 
@@ -68,6 +64,8 @@ public:
 
 	AlignedVector< uint32_t >& getVertices();
 
+	void serialize(ISerializer& s);
+
 	bool operator == (const Polygon& r) const;
 
 private:
@@ -79,5 +77,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_model_Polygon_H

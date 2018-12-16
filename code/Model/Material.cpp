@@ -1,9 +1,7 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Model/Material.h"
 
 namespace traktor
@@ -11,7 +9,7 @@ namespace traktor
 	namespace model
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Material", Material, PropertyGroup)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Material", 0, Material, PropertyGroup)
 		
 Material::Material()
 :	m_name(L"")
@@ -241,6 +239,48 @@ void Material::setDoubleSided(bool doubleSided)
 bool Material::isDoubleSided() const
 {
 	return m_doubleSided;
+}
+
+void Material::serialize(ISerializer& s)
+{
+	const MemberEnum< BlendOperator >::Key c_BlendOperatorKeys[] =
+	{
+		{ L"BoDecal", BoDecal },
+		{ L"BoAdd", BoAdd },
+		{ L"BoMultiply", BoMultiply },
+		{ L"BoAlpha", BoAlpha },
+		{ 0 }
+	};
+
+	PropertyGroup::serialize(s);
+
+	s >> Member< std::wstring >(L"name", m_name);
+	s >> MemberComposite< Map >(L"diffuseMap", m_diffuseMap);
+	s >> MemberComposite< Map >(L"specularMap", m_specularMap);
+	s >> MemberComposite< Map >(L"transparencyMap", m_transparencyMap);
+	s >> MemberComposite< Map >(L"emissiveMap", m_emissiveMap);
+	s >> MemberComposite< Map >(L"reflectiveMap", m_reflectiveMap);
+	s >> MemberComposite< Map >(L"normalMap", m_normalMap);
+	s >> MemberComposite< Map >(L"lightMap", m_lightMap);
+	s >> Member< float >(L"lightMapRange", m_lightMapRange);
+	s >> Member< Color4ub >(L"color", m_color);
+	s >> Member< float >(L"diffuseTerm", m_diffuseTerm);
+	s >> Member< float >(L"specularTerm", m_specularTerm);
+	s >> Member< float >(L"specularRoughness", m_specularRoughness);
+	s >> Member< float >(L"metalness", m_metalness);
+	s >> Member< float >(L"transparency", m_transparency);
+	s >> Member< float >(L"emissive", m_emissive);
+	s >> Member< float >(L"reflective", m_reflective);
+	s >> Member< float >(L"rimLightIntensity", m_rimLightIntensity);
+	s >> MemberEnum< BlendOperator >(L"blendOperator", m_blendOperator, c_BlendOperatorKeys);
+	s >> Member< bool >(L"doubleSided", m_doubleSided);
+}
+
+void Material::Map::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"name", name);
+	s >> Member< uint32_t >(L"channel", channel);
+	s >> Member< bool >(L"anisotropic", anisotropic);
 }
 
 	}
