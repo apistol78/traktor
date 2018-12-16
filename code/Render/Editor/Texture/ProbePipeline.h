@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ProbeTexturePipeline_H
-#define traktor_render_ProbeTexturePipeline_H
+#pragma once
 
 #include "Editor/DefaultPipeline.h"
 
@@ -29,12 +22,12 @@ namespace traktor
 	namespace render
 	{
 
-class T_DLLCLASS ProbeTexturePipeline : public editor::DefaultPipeline
+class T_DLLCLASS ProbePipeline : public editor::DefaultPipeline
 {
 	T_RTTI_CLASS;
 
 public:
-	ProbeTexturePipeline();
+	ProbePipeline();
 
 	virtual bool create(const editor::IPipelineSettings* settings) T_OVERRIDE T_FINAL;
 
@@ -70,5 +63,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_ProbeTexturePipeline_H
