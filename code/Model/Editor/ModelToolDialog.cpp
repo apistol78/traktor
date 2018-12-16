@@ -116,6 +116,9 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 	m_toolUV = new ui::ToolBarButton(L"UV", ui::Command(L"ModelTool.ToggleUV"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolUV);
 
+	m_toolChannel = new ui::ToolBarDropDown(ui::Command(L"ModelTool.Channel"), ui::dpi96(100), L"Channels");
+	toolBar->addItem(m_toolChannel);	
+
 	m_toolWeight = new ui::ToolBarButton(L"Weights", ui::Command(L"ModelTool.ToggleWeights"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolWeight);
 
@@ -526,6 +529,7 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 	}
 
 	m_materialGrid->removeAllRows();
+	m_toolChannel->removeAll();
 	m_toolJoint->removeAll();
 
 	if (m_model)
@@ -564,6 +568,18 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 			row->add(new ui::GridItem(i->isDoubleSided() ? L"Yes" : L"No"));
 			m_materialGrid->addRow(row);
 		}
+
+		uint32_t nextChannel = m_model->getAvailableTexCoordChannel();
+		if (nextChannel > 0)
+		{
+			for (uint32_t i = 0; i < nextChannel; ++i)
+				m_toolChannel->add(toString(i));
+
+			m_toolChannel->select(0);
+			m_toolChannel->setEnable(true);
+		}
+		else
+			m_toolChannel->setEnable(false);
 
 		uint32_t jointCount = m_model->getJointCount();
 		if (jointCount > 0)
@@ -692,6 +708,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				const AlignedVector< Polygon >& polygons = m_modelTris->getPolygons();
 				const AlignedVector< Vector4 >& positions = m_modelTris->getPositions();
 
+				int32_t channel = m_toolChannel->getSelected();
 				int32_t weightJoint = m_toolJoint->getSelected();
 
 				m_primitiveRenderer->pushDepthState(true, true, false);
@@ -719,12 +736,12 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 
 					if (!m_toolWeight->isToggled())
 					{
-						if (vertices[indices[0]].getTexCoordCount() > 0)
+						if (vertices[indices[0]].getTexCoordCount() > channel)
 						{
 							m_primitiveRenderer->drawTextureTriangle(
-								p[2], m_modelTris->getTexCoord(vertices[indices[2]].getTexCoord(0)),
-								p[1], m_modelTris->getTexCoord(vertices[indices[1]].getTexCoord(0)),
-								p[0], m_modelTris->getTexCoord(vertices[indices[0]].getTexCoord(0)),
+								p[2], m_modelTris->getTexCoord(vertices[indices[2]].getTexCoord(channel)),
+								p[1], m_modelTris->getTexCoord(vertices[indices[1]].getTexCoord(channel)),
+								p[0], m_modelTris->getTexCoord(vertices[indices[0]].getTexCoord(channel)),
 								Color4ub(
 									int32_t(diffuse * 255),
 									int32_t(diffuse * 255),
@@ -846,6 +863,8 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 
 			if (m_toolUV->isToggled())
 			{
+				int32_t channel = m_toolChannel->getSelected();
+
 				m_primitiveRenderer->setProjection(orthoLh(-2.0f, 2.0f, 2.0f, -2.0f, 0.0f, 1.0f));
 				m_primitiveRenderer->pushView(Matrix44::identity());
 				m_primitiveRenderer->pushDepthState(false, false, false);
@@ -860,10 +879,10 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 						const Vertex& vx0 = vertices[indices[j]];
 						const Vertex& vx1 = vertices[indices[(j + 1) % indices.size()]];
 
-						if (vx0.getTexCoord(0) != c_InvalidIndex && vx1.getTexCoord(0) != c_InvalidIndex)
+						if (vx0.getTexCoord(channel) != c_InvalidIndex && vx1.getTexCoord(channel) != c_InvalidIndex)
 						{
-							const Vector2& uv0 = texCoords[vx0.getTexCoord(0)];
-							const Vector2& uv1 = texCoords[vx1.getTexCoord(0)];
+							const Vector2& uv0 = texCoords[vx0.getTexCoord(channel)];
+							const Vector2& uv1 = texCoords[vx1.getTexCoord(channel)];
 
 							m_primitiveRenderer->drawLine(
 								Vector4(uv0.x, uv0.y, 0.5f, 1.0f),

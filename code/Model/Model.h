@@ -1,15 +1,8 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_model_Model_H
-#define traktor_model_Model_H
+#pragma once
 
 #include <map>
-#include "Core/Object.h"
 #include "Core/Math/Aabb3.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Model/Types.h"
 #include "Model/Grid2.h"
 #include "Model/Grid3.h"
@@ -33,7 +26,7 @@ namespace traktor
 /*! \brief Intermediate 3D model.
  * \ingroup Model
  */
-class T_DLLCLASS Model : public Object
+class T_DLLCLASS Model : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -177,6 +170,8 @@ public:
 
 	const Vector4& getBlendTargetPosition(uint32_t blendTargetIndex, uint32_t positionIndex) const;
 
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+
 private:
 	AlignedVector< Material > m_materials;
 	AlignedVector< Vertex > m_vertices;
@@ -192,5 +187,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_model_Model_H

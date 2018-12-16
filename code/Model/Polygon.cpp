@@ -1,10 +1,7 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Model/Polygon.h"
 
 namespace traktor
@@ -127,6 +124,14 @@ const AlignedVector< uint32_t >& Polygon::getVertices() const
 AlignedVector< uint32_t >& Polygon::getVertices()
 {
 	return m_vertices;
+}
+
+void Polygon::serialize(ISerializer& s)
+{
+	s >> Member< uint32_t >(L"material", m_material);
+	s >> Member< uint32_t >(L"normal", m_normal);
+	s >> Member< uint32_t >(L"smoothGroup", m_smoothGroup);
+	s >> MemberAlignedVector< uint32_t >(L"vertices", m_vertices);
 }
 
 bool Polygon::operator == (const Polygon& r) const

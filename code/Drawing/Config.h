@@ -29,7 +29,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define DRAWING_INCLUDE_ICO
 #	define DRAWING_INCLUDE_JPEG
 #	define DRAWING_INCLUDE_GIF
-//#	define DRAWING_INCLUDE_EXR
+#	define DRAWING_INCLUDE_EXR
 #endif
 
 // Santiy check

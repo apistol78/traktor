@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_model_Vertex_H
-#define traktor_model_Vertex_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Containers/AlignedVector.h"
@@ -22,6 +15,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+
+class ISerializer;
+
 	namespace model
 	{
 
@@ -73,6 +69,8 @@ public:
 
 	uint32_t getHash() const;
 
+	void serialize(ISerializer& s);
+
 	bool operator == (const Vertex& r) const;
 
 private:
@@ -87,5 +85,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_model_Vertex_H

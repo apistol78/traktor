@@ -3135,6 +3135,12 @@
 														<solutionFileName>ExternLinux.xms</solutionFileName>
 														<projectName>Extern.agg</projectName>
 													</item>
+													<item type="ExternalDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<solutionFileName>ExternLinux.xms</solutionFileName>
+														<projectName>Extern.OpenEXR</projectName>
+													</item>
 												</dependencies>
 											</project>
 										</item>
@@ -17445,7 +17451,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.Vulkan.Editor.lib</sourceFile>
+							<sourceFile>libTraktor.Render.Vulkan.Editor.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -17474,7 +17480,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Render.Vulkan.Editor.lib</sourceFile>
+							<sourceFile>libTraktor.Render.Vulkan.Editor.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

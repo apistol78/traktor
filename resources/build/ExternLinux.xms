@@ -5213,6 +5213,364 @@
 			</items>
 			<dependencies/>
 		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.OpenEXR</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0</sourcePath>
+			<configurations>
+				<item type="Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0/IlmImf</item>
+						<item>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0/config</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlNoWarnings</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0/IlmImf</item>
+						<item>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0/config</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlNoWarnings</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0/IlmImf</item>
+						<item>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0/config</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Half</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Imath</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Iex</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/config</item>
+						<item>$(ZLIB_SDK)</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/IlmThread</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlNoWarnings</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libExtern.OpenEXR.a</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0/IlmImf</item>
+						<item>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0/config</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlNoWarnings</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libExtern.OpenEXR.a</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>IlmImf</name>
+					<items>
+						<item type="File">
+							<fileName>IlmImf/*.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>IlmImf/*.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.ilmbase</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0</sourcePath>
+						<configurations>
+							<item type="Configuration" version="5">
+								<name>DebugShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/config</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Half</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Imath</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Iex</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/IlmThread</item>
+								</includePaths>
+								<definitions>
+									<item>T_ILMBASE_EXPORT</item>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<warningLevel>WlNoWarnings</warningLevel>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems/>
+								<consumerLibraryPath/>
+							</item>
+							<item type="Configuration" version="5">
+								<name>ReleaseShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/config</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Half</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Imath</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Iex</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/IlmThread</item>
+								</includePaths>
+								<definitions>
+									<item>T_ILMBASE_EXPORT</item>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<warningLevel>WlNoWarnings</warningLevel>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems/>
+								<consumerLibraryPath/>
+							</item>
+							<item type="Configuration" version="5">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/config</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Half</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Imath</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Iex</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/IlmThread</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<warningLevel>WlNoWarnings</warningLevel>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>libExtern.ilmbase.a</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+								</aggregationItems>
+								<consumerLibraryPath>debugstatic</consumerLibraryPath>
+							</item>
+							<item type="Configuration" version="5">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/config</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Half</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Imath</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Iex</item>
+									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/IlmThread</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<warningLevel>WlNoWarnings</warningLevel>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+								<debugExecutable/>
+								<debugArguments/>
+								<debugEnvironment/>
+								<debugWorkingDirectory/>
+								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>libExtern.ilmbase.a</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
+								</aggregationItems>
+								<consumerLibraryPath>releasestatic</consumerLibraryPath>
+							</item>
+						</configurations>
+						<items>
+							<item type="Filter">
+								<name>Half</name>
+								<items>
+									<item type="File">
+										<fileName>Half/half.cpp</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Half/*.h</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Imath</name>
+								<items>
+									<item type="File">
+										<fileName>Imath/*.cpp</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Imath/*.h</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Iex</name>
+								<items>
+									<item type="File">
+										<fileName>Iex/*.cpp</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Iex/*.h</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>IlmThread</name>
+								<items>
+									<item type="File">
+										<fileName>IlmThread/*.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>IlmThread/IlmThread.cpp</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>IlmThread/IlmThreadMutex.cpp</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>IlmThread/IlmThreadMutexPosix.cpp</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>IlmThread/IlmThreadPool.cpp</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>IlmThread/IlmThreadSemaphore.cpp</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>IlmThread/IlmThreadSemaphorePosix.cpp</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>IlmThread/IlmThreadPosix.cpp</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item[26]/dependencies/item[1]/project"/>
 	</projects>
 	<aggregations/>
 </object>
