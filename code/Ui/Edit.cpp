@@ -435,7 +435,7 @@ void Edit::eventPaint(PaintEvent* event)
 
 	int32_t h = fm.getHeight();
 	int32_t x = dpi96(4);
-	int32_t y = dpi96(4);
+	int32_t y = (rcInner.getHeight() - h) / 2;
 	int32_t caretX = 0;
 
 	for (int32_t i = 0; i < text.length(); ++i)
