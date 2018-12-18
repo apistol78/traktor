@@ -788,7 +788,7 @@ protected:
 		);
 		m_owner->raiseEvent(&paintEvent);
 
-#if defined(_DEBUG)
+#if 0
 		if (m_data.grabbed)
 		{
 			canvas.setBackground(Color4ub(255, 0, 0, 128));
