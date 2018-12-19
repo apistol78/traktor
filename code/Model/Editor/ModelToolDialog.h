@@ -81,6 +81,7 @@ private:
 	Ref< ui::ToolBarDropDown > m_toolJoint;
 	Ref< ui::TreeView > m_modelTree;
 	Ref< ui::GridView > m_materialGrid;
+	Ref< ui::GridView > m_statisticGrid;
 	Ref< ui::Menu > m_modelRootPopup;
 	Ref< ui::Menu > m_modelChildPopup;
 	Ref< ui::Widget > m_renderWidget;
@@ -100,6 +101,8 @@ private:
 	void bakeOcclusion(Model* model);
 
 	void updateOperations(ui::TreeViewItem* itemModel);
+
+	void addStatistic(const std::wstring& name, const std::wstring& value);
 
 	void eventDialogClose(ui::CloseEvent* event);
 

@@ -1,12 +1,6 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_illuminate_IlluminateEntityPipeline_H
-#define traktor_illuminate_IlluminateEntityPipeline_H
+#pragma once
 
+#include "Core/Ref.h"
 #include "World/Editor/EntityPipeline.h"
 
 // import/export mechanism.
@@ -19,6 +13,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+	namespace render
+	{
+
+class ProbeProcessor;
+
+	}
+
 	namespace illuminate
 	{
 
@@ -49,9 +50,8 @@ public:
 private:
 	std::wstring m_assetPath;
 	bool m_build;
+	Ref< render::ProbeProcessor > m_processor;
 };
 
 	}
 }
-
-#endif	// traktor_illuminate_IlluminateEntityPipeline_H

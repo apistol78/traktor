@@ -19,8 +19,15 @@ class T_DLLCLASS IrradianceProbeAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
 
+public:
+	IrradianceProbeAsset();
+
+	float getFactor() const { return m_factor; }
+
+	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+
 private:
-	friend class ProbePipeline;
+	float m_factor;
 };
 
 	}

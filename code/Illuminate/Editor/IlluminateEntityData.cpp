@@ -4,6 +4,7 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -15,7 +16,7 @@ namespace traktor
 	namespace illuminate
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.illuminate.IlluminateEntityData", 3, IlluminateEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.illuminate.IlluminateEntityData", 4, IlluminateEntityData, world::EntityData)
 
 IlluminateEntityData::IlluminateEntityData()
 :	m_seedGuid(Guid::create())
@@ -25,10 +26,6 @@ IlluminateEntityData::IlluminateEntityData()
 ,	m_lumelDensity(8.0f)
 ,	m_pointLightRadius(0.02f)
 ,	m_shadowSamples(64)
-,	m_probeSamples(64)
-,	m_probeCoeff(0.001f)
-,	m_probeSpread(0.5f)
-,	m_probeShadowSpread(0.5f)
 ,	m_directConvolveRadius(0)
 ,	m_indirectTraceSamples(64)
 ,	m_indirectTraceIterations(1)
@@ -71,7 +68,7 @@ void IlluminateEntityData::serialize(ISerializer& s)
 {
 	world::EntityData::serialize(s);
 	
-	s >> Member< Guid >(L"seedGuid", m_seedGuid);
+	s >> Member< Guid >(L"seedGuid", m_seedGuid, AttributePrivate());
 
 	if (s.getVersion() >= 3)
 		s >> Member< bool >(L"occlusion", m_occlusion);
@@ -85,12 +82,17 @@ void IlluminateEntityData::serialize(ISerializer& s)
 	s >> Member< float >(L"pointLightRadius", m_pointLightRadius);
 	s >> Member< int32_t >(L"shadowSamples", m_shadowSamples, AttributeRange(0));
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion() >= 1 && s.getVersion() < 4)
 	{
-		s >> Member< int32_t >(L"probeSamples", m_probeSamples, AttributeRange(1));
-		s >> Member< float >(L"probeCoeff", m_probeCoeff, AttributeRange(0.0f));
-		s >> Member< float >(L"probeSpread", m_probeSpread, AttributeRange(0.0f, 1.0f));
-		s >> Member< float >(L"probeShadowSpread", m_probeShadowSpread, AttributeRange(0.0f, 1.0f));
+		int32_t probeSamples = 0;
+		float probeCoeff = 0.0f;
+		float probeSpread = 0.0f;
+		float probeShadowSpread = 0.0f;
+
+		s >> Member< int32_t >(L"probeSamples", probeSamples, AttributeRange(1));
+		s >> Member< float >(L"probeCoeff", probeCoeff, AttributeRange(0.0f));
+		s >> Member< float >(L"probeSpread", probeSpread, AttributeRange(0.0f, 1.0f));
+		s >> Member< float >(L"probeShadowSpread", probeShadowSpread, AttributeRange(0.0f, 1.0f));
 	}
 
 	s >> Member< int32_t >(L"directConvolveRadius", m_directConvolveRadius, AttributeRange(0));

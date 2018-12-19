@@ -18,17 +18,12 @@ namespace traktor
 /*! \brief
  * \ingroup Model
  */
-class T_DLLCLASS UnwrapUV : public IModelOperation
+class T_DLLCLASS Unweld : public IModelOperation
 {
 	T_RTTI_CLASS;
 
 public:
-	UnwrapUV(int32_t channel);
-
 	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
-
-private:
-	int32_t m_channel;
 };
 
 	}

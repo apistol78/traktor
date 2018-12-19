@@ -24,6 +24,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
 #include "Drawing/Filters/DilateFilter.h"
+#include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/Asset.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -42,7 +43,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/MergeModel.h"
+#include "Model/Operations/Triangulate.h"
 #include "Model/Operations/UnwrapUV.h"
+#include "Render/Editor/Texture/IrradianceProbeAsset.h"
+#include "Render/Editor/Texture/ProbeProcessor.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "World/Entity/ComponentEntityData.h"
@@ -142,6 +146,14 @@ bool IlluminateEntityPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_build = settings->getProperty< bool >(L"IlluminatePipeline.Build", true);
+
+	if (m_build)
+	{
+		m_processor = new render::ProbeProcessor();
+		if (!m_processor->create())
+			return false;
+	}
+
 	return true;
 }
 
@@ -227,9 +239,12 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			}
 			else if (lightComponentData->getLightType() == world::LtProbe)
 			{
-				Ref< const editor::Asset > probeAsset = pipelineBuilder->getObjectReadOnly< editor::Asset >(lightComponentData->getProbeDiffuseTexture());
+				Ref< const render::IrradianceProbeAsset > probeAsset = pipelineBuilder->getObjectReadOnly< render::IrradianceProbeAsset >(lightComponentData->getProbeDiffuseTexture());
 				if (!probeAsset)
+				{
+					log::error << L"IlluminateEntityPipeline failed; unable to read irradiance probe asset." << Endl;
 					return 0;
+				}
 
 				Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), probeAsset->getFileName().getOriginal());
 				if (!file)
@@ -247,8 +262,20 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 				file->close();
 
+				RefArray< render::CubeMap > cubeMips;
+				if (!m_processor->irradiance(image, probeAsset->getFactor(), 256, cubeMips))
+				{
+					log::error << L"IlluminateEntityPipeline failed; unable to generate irradiance probe." << Endl;
+					return 0;
+				}
+				if (cubeMips.empty())
+				{
+					log::error << L"IlluminateEntityPipeline failed; unable to generate irradiance probe, no mips." << Endl;
+					return 0;
+				}
+
 				light.type = 2;
-				light.probe = new CubeProbe(image);
+				light.probe = new CubeProbe(cubeMips.front());
 				lights.push_back(light);
 			}
 		}
@@ -283,7 +310,9 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 			model->clear(model::Model::CfColors | model::Model::CfJoints);
 
-			if (!model::MergeModel(*model, (*i)->getTransform(), 0.01f).apply(*mergedModel))
+			model::Triangulate().apply(*model);
+
+			if (!model::MergeModel(*model, (*i)->getTransform(), 0.001f).apply(*mergedModel))
 				return 0;
 
 			meshMaterialTextures.insert(
@@ -292,8 +321,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			);
 		}
 
+		model::CleanDuplicates(0.001f).apply(*mergedModel);
 		model::CleanDegenerate().apply(*mergedModel);
-		model::CleanDuplicates(0.01f).apply(*mergedModel);
 
 		// Create 3d windings.
 		const AlignedVector< model::Polygon >& polygons = mergedModel->getPolygons();
@@ -327,23 +356,15 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		float totalLightMapArea = sourceIlluminateEntityData->getLumelDensity() * sourceIlluminateEntityData->getLumelDensity() * totalWorldArea;
 		float size = std::sqrt(totalLightMapArea);
 
-		int32_t initialOutputSize = alignUp(int32_t(size + 0.5f), c_jobTileSize);
-		log::info << L"Lumel density " << sourceIlluminateEntityData->getLumelDensity() << L" lumels/unit => initial lightmap size " << initialOutputSize << Endl;
+		int32_t outputSize = alignUp(int32_t(size + 0.5f), c_jobTileSize);
+		log::info << L"Lumel density " << sourceIlluminateEntityData->getLumelDensity() << L" lumels/unit => lightmap size " << outputSize << Endl;
 
 		// UV unwrap entire model.
-		int32_t outputSize = initialOutputSize;
-		if (!model::UnwrapUV(channel, sourceIlluminateEntityData->getLumelDensity(), outputSize, margin).apply(*mergedModel))
+		if (!model::UnwrapUV(channel).apply(*mergedModel))
 		{
-			outputSize *= 2;
-			log::info << L"First UV unwrapping attempt failed, enlarging lightmap to " << outputSize << Endl;
-			if (!model::UnwrapUV(channel, sourceIlluminateEntityData->getLumelDensity(), outputSize, margin).apply(*mergedModel))
-			{
-				log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV." << Endl;
-				return 0;
-			}
+			log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV." << Endl;
+			return 0;
 		}
-
-		model::ModelFormat::writeAny(Path(L"./MergedModel.obj"), mergedModel);
 
 		// Setup tracer.
 		log::info << L"Preparing tracer..." << Endl;
@@ -462,11 +483,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 					outputImageRadiance,
 					outputImageOcclusion,
 					sourceIlluminateEntityData->getPointLightRadius(),
-					sourceIlluminateEntityData->getShadowSamples(),
-					sourceIlluminateEntityData->getProbeSamples(),
-					sourceIlluminateEntityData->getProbeCoeff(),
-					sourceIlluminateEntityData->getProbeSpread(),
-					sourceIlluminateEntityData->getProbeShadowSpread()
+					sourceIlluminateEntityData->getShadowSamples()
 				);
 
 				Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceDirect >(trace, &JobTraceDirect::execute));
@@ -495,7 +512,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			outputImageRadiance->apply(drawing::ConvolutionFilter::createGaussianBlur(illumEntityData->getDirectConvolveRadius()));
 		}
 
-		outputImageRadiance->save(L"Direct.png");
+		outputImageRadiance->clearAlpha(1.0f);
+		outputImageRadiance->save(L"Direct.exr");
 
 		if (illumEntityData->traceIndirectLighting())
 		{
@@ -556,7 +574,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 					outputImageIndirectTarget->apply(drawing::ConvolutionFilter::createGaussianBlur(illumEntityData->getIndirectConvolveRadius()));
 				}
 
-				outputImageIndirectTarget->save(L"Indirect_" + toString(i) + L".png");
+				outputImageIndirectTarget->clearAlpha(1.0f);
+				outputImageIndirectTarget->save(L"Indirect_" + toString(i) + L".exr");
 
 				log::info << L"Merging direct and indirect lighting..." << Endl;
 				for (int32_t y = 0; y < outputSize; ++y)
@@ -573,12 +592,6 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				imageIrradiance = outputImageIndirectTarget;
 			}
 		}
-
-#if defined(_DEBUG)
-		// Save light-map for debugging.
-		outputImageRadiance->save(illumEntityData->getSeedGuid().format() + L".png");
-		model::ModelFormat::writeAny(illumEntityData->getSeedGuid().format() + L".obj", mergedModel);
-#endif
 
 		log::info << L"Creating resources..." << Endl;
 
@@ -663,6 +676,9 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		outputEntityData->setComponent(new mesh::MeshComponentData(
 			resource::Id< mesh::IMesh >(illumEntityData->getSeedGuid().permutate(1))
 		));
+
+		// Save our merged model for debugging.
+		model::ModelFormat::writeAny(Path(L"./MergedModel.tmd"), mergedModel);
 
 		// Replace entire illuminate entity group with fresh baked mesh entity.
 		return outputEntityData;

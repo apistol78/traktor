@@ -56,14 +56,6 @@ public:
 
 	int32_t getShadowSamples() const { return m_shadowSamples; }
 
-	int32_t getProbeSamples() const { return m_probeSamples; }
-
-	float getProbeCoeff() const { return m_probeCoeff; }
-
-	float getProbeSpread() const { return m_probeSpread; }
-
-	float getProbeShadowSpread() const { return m_probeShadowSpread; }
-
 	int32_t getDirectConvolveRadius() const { return m_directConvolveRadius; }
 
 	int32_t getIndirectTraceSamples() const { return m_indirectTraceSamples; }
@@ -86,10 +78,6 @@ private:
 	float m_lumelDensity;
 	float m_pointLightRadius;
 	int32_t m_shadowSamples;
-	int32_t m_probeSamples;
-	float m_probeCoeff;
-	float m_probeSpread;
-	float m_probeShadowSpread;
 	int32_t m_directConvolveRadius;
 	int32_t m_indirectTraceSamples;
 	int32_t m_indirectTraceIterations;

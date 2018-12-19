@@ -39,11 +39,7 @@ public:
 		drawing::Image* outputImageDirect,
 		const drawing::Image* imageOcclusion,
 		float pointLightRadius,
-		int32_t shadowSamples,
-		int32_t probeSamples,
-		float probeCoeff,
-		float probeSpread,
-		float probeShadowSpread
+		int32_t shadowSamples
 	);
 
 	void execute();
@@ -58,10 +54,6 @@ private:
 	const drawing::Image* m_imageOcclusion;
 	float m_pointLightRadius;
 	int32_t m_shadowSamples;
-	int32_t m_probeSamples;
-	float m_probeCoeff;
-	float m_probeSpread;
-	float m_probeShadowSpread;
 };
 
 	}

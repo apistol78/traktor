@@ -20,6 +20,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
+#include "Model/Operations/Clear.h"
 #include "Model/Operations/CullDistantFaces.h"
 #include "Model/Operations/FlattenDoubleSided.h"
 #include "Model/Operations/Quantize.h"
@@ -29,6 +30,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Model/Operations/Transform.h"
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/MergeCoplanarAdjacents.h"
+#include "Model/Operations/Unweld.h"
 #include "Model/Operations/UnwrapUV.h"
 #include "Model/Operations/WeldHoles.h"
 #include "Render/IRenderSystem.h"
@@ -40,12 +42,15 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Ui/MenuItem.h"
 #include "Ui/TableLayout.h"
 #include "Ui/FileDialog.h"
+#include "Ui/FloodLayout.h"
 #include "Ui/Splitter.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridView.h"
+#include "Ui/Tab.h"
+#include "Ui/TabPage.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -138,8 +143,15 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 	m_modelTree->addEventHandler< ui::MouseButtonDownEvent >(this, &ModelToolDialog::eventModelTreeButtonDown);
 	m_modelTree->addEventHandler< ui::SelectionChangeEvent >(this, &ModelToolDialog::eventModelTreeSelect);
 
+	Ref< ui::Tab > tab = new ui::Tab();
+	tab->create(splitterH, ui::WsDoubleBuffer);
+
+	Ref< ui::TabPage > tabPageMaterial = new ui::TabPage();
+	tabPageMaterial->create(tab, L"Materials", new ui::FloodLayout());
+	tab->addPage(tabPageMaterial);
+
 	m_materialGrid = new ui::GridView();
-	m_materialGrid->create(splitterH, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
+	m_materialGrid->create(tabPageMaterial, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
 	m_materialGrid->addColumn(new ui::GridColumn(L"Name", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Diffuse Map", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Specular Map", ui::dpi96(100)));
@@ -160,9 +172,21 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 	m_materialGrid->addColumn(new ui::GridColumn(L"Blend Operator", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Double Sided", ui::dpi96(100)));
 
+	Ref< ui::TabPage > tabPageStatistics = new ui::TabPage();
+	tabPageStatistics->create(tab, L"Statistics", new ui::FloodLayout());
+	tab->addPage(tabPageStatistics);
+
+	m_statisticGrid = new ui::GridView();
+	m_statisticGrid->create(tabPageStatistics, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
+	m_statisticGrid->addColumn(new ui::GridColumn(L"Name", ui::dpi96(120)));
+	m_statisticGrid->addColumn(new ui::GridColumn(L"Value", ui::dpi96(400)));
+
+	tab->setActivePage(tabPageMaterial);
+
 	m_modelRootPopup = new ui::Menu();
 
 	Ref< ui::MenuItem > modelRootPopupAdd = new ui::MenuItem(L"Add Operation...");
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Clear"), L"Clear"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CalculateTangents"), L"Calculate Tangents"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CleanDegenerate"), L"Clean Degenerate"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CleanDuplicates"), L"Clean Duplicates"));
@@ -175,6 +199,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Reduce"), L"Reduce"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.ScaleAlongNormal"), L"Scale Along Normal"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Triangulate"), L"Triangulate"));
+	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Unweld"), L"Unweld"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.UnwrapUV"), L"Unwrap UV"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.WeldHoles"), L"Weld Holes"));
 	m_modelRootPopup->add(modelRootPopupAdd);
@@ -294,7 +319,23 @@ bool ModelToolDialog::saveModel(Model* model)
 	}
 	fileDialog.destroy();
 
-	return ModelFormat::writeAny(fileName, model);
+	Model clone = *model;
+
+	int32_t channel = m_toolChannel->getSelected();
+	if (channel >= 0)
+	{
+		auto vertices = clone.getVertices();
+		for (auto& vertex : vertices)
+		{
+			uint32_t tc = vertex.getTexCoord(channel);
+			vertex.clearTexCoords();
+			vertex.setTexCoord(0, tc);
+		}
+		clone.setVertices(vertices);
+		CleanDuplicates(0.01f).apply(clone);
+	}
+
+	return ModelFormat::writeAny(fileName, &clone);
 }
 
 void ModelToolDialog::bakeOcclusion(Model* model)
@@ -352,6 +393,14 @@ void ModelToolDialog::updateOperations(ui::TreeViewItem* itemModel)
 	}
 }
 
+void ModelToolDialog::addStatistic(const std::wstring& name, const std::wstring& value)
+{
+	Ref< ui::GridRow > row = new ui::GridRow();
+	row->add(new ui::GridItem(name));
+	row->add(new ui::GridItem(value));
+	m_statisticGrid->addRow(row);
+}
+
 void ModelToolDialog::eventDialogClose(ui::CloseEvent* event)
 {
 	destroy();
@@ -383,7 +432,13 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 		if (selected)
 		{
 			const ui::Command& command = selected->getCommand();
-			if (command == L"ModelTool.CalculateTangents")
+			if (command == L"ModelTool.Clear")
+			{
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clear", 0);
+				itemOperation->setData(L"OPERATION", new Clear( Model::CfMaterials | Model::CfColors | Model::CfNormals | Model::CfTexCoords | Model::CfJoints ));
+				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.CalculateTangents")
 			{
 				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Calculate Tangents", 0);
 				itemOperation->setData(L"OPERATION", new CalculateTangents());
@@ -398,7 +453,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 			else if (command == L"ModelTool.CleanDuplicates")
 			{
 				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Clean Duplicates", 0);
-				itemOperation->setData(L"OPERATION", new CleanDuplicates(0.1f));
+				itemOperation->setData(L"OPERATION", new CleanDuplicates(0.001f));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.ConvexHull")
@@ -455,10 +510,16 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 				itemOperation->setData(L"OPERATION", new Triangulate());
 				updateOperations(itemModel);
 			}
+			else if (command == L"ModelTool.Unweld")
+			{
+				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Unweld", 0);
+				itemOperation->setData(L"OPERATION", new Unweld());
+				updateOperations(itemModel);
+			}
 			else if (command == L"ModelTool.UnwrapUV")
 			{
 				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Unwrap UV", 0);
-				itemOperation->setData(L"OPERATION", new UnwrapUV(0, 0.01f, 0.0f, 0.0f));
+				itemOperation->setData(L"OPERATION", new UnwrapUV(0));
 				updateOperations(itemModel);
 			}
 			else if (command == L"ModelTool.WeldHoles")
@@ -471,7 +532,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 			{
 				bakeOcclusion(itemModel->getData< Model >(L"MODEL"));
 			}
-			else if (command == L"ModelTool.Save")
+			else if (command == L"ModelTool.SaveAs")
 			{
 				saveModel(itemModel->getData< Model >(L"MODEL"));
 			}
@@ -497,7 +558,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 			{
 				bakeOcclusion(itemOperation->getData< Model >(L"MODEL"));
 			}
-			else if (command == L"ModelTool.Save")
+			else if (command == L"ModelTool.SaveAs")
 			{
 				saveModel(itemModel->getData< Model >(L"MODEL"));
 			}
@@ -529,6 +590,7 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 	}
 
 	m_materialGrid->removeAllRows();
+	m_statisticGrid->removeAllRows();
 	m_toolChannel->removeAll();
 	m_toolJoint->removeAll();
 
@@ -569,7 +631,28 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 			m_materialGrid->addRow(row);
 		}
 
-		uint32_t nextChannel = m_model->getAvailableTexCoordChannel();
+		{
+			addStatistic(L"# materials", toString(m_model->getMaterials().size()));
+			addStatistic(L"# vertices", toString(m_model->getVertexCount()));
+			addStatistic(L"# polygons", toString(m_model->getPolygonCount()));
+
+			std::map< uint32_t, uint32_t > polSizes;
+			for (const auto& pol : m_model->getPolygons())
+				polSizes[pol.getVertexCount()]++;
+
+			for (auto polSize : polSizes)
+				addStatistic(L"# " + toString(polSize.first) + L"-polygons", toString(polSize.second));
+
+			addStatistic(L"# positions", toString(m_model->getPositionCount()));
+			addStatistic(L"# colors", toString(m_model->getColorCount()));
+			addStatistic(L"# normals", toString(m_model->getNormalCount()));
+			addStatistic(L"# texcoords", toString(m_model->getTexCoords().size()));
+			addStatistic(L"# texture channels", toString(m_model->getAvailableTexCoordChannel()));
+			addStatistic(L"# joints", toString(m_model->getJointCount()));
+			addStatistic(L"# blend targets", toString(m_model->getBlendTargetCount()));
+		}
+
+		uint32_t nextChannel = 8; // m_model->getAvailableTexCoordChannel();
 		if (nextChannel > 0)
 		{
 			for (uint32_t i = 0; i < nextChannel; ++i)
@@ -809,7 +892,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			{
 				// Lazy create adjacency information as it's pretty costly.
 				if (!m_modelAdjacency)
-					m_modelAdjacency = new ModelAdjacency(m_model, ModelAdjacency::MdByVertex);
+					m_modelAdjacency = new ModelAdjacency(m_model, ModelAdjacency::MdByPosition);
 
 				m_primitiveRenderer->pushDepthState(true, false, false);
 				for (uint32_t i = 0; i < polygons.size(); ++i)
