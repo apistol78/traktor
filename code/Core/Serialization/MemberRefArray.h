@@ -33,7 +33,8 @@ public:
 	}
 
 	MemberRefArray(const wchar_t* const name, value_type& ref, const Attribute& attributes)
-	:	MemberArray(name, &attributes)
+	:	MemberArray(name, &(m_attribute | attributes))
+	,	m_attribute(type_of< Class >())
 	,	m_ref(ref)
 	,	m_index(0)
 	{

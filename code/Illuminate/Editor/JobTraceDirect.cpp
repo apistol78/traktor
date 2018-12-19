@@ -33,11 +33,7 @@ JobTraceDirect::JobTraceDirect(
 	drawing::Image* outputImageDirect,
 	const drawing::Image* imageOcclusion,
 	float pointLightRadius,
-	int32_t shadowSamples,
-	int32_t probeSamples,
-	float probeCoeff,
-	float probeSpread,
-	float probeShadowSpread
+	int32_t shadowSamples
 )
 :	m_tileX(tileX)
 ,	m_tileY(tileY)
@@ -48,10 +44,6 @@ JobTraceDirect::JobTraceDirect(
 ,	m_imageOcclusion(imageOcclusion)
 ,	m_pointLightRadius(pointLightRadius)
 ,	m_shadowSamples(shadowSamples)
-,	m_probeSamples(probeSamples)
-,	m_probeCoeff(probeCoeff)
-,	m_probeSpread(probeSpread)
-,	m_probeShadowSpread(probeShadowSpread)
 {
 }
 
@@ -76,11 +68,11 @@ void JobTraceDirect::execute()
 
 			Color4f radiance(0.0f, 0.0f, 0.0f, 0.0f);
 
-			for (AlignedVector< Light >::const_iterator i = m_lights.begin(); i != m_lights.end(); ++i)
+			for (const auto& light : m_lights)
 			{
-				if (i->type == 0)	// Directional
+				if (light.type == 0)	// Directional
 				{
-					Vector4 lightDirection = -i->direction;
+					Vector4 lightDirection = -light.direction;
 
 					// Cosine
 					Scalar phi = dot3(lightDirection, gb.normal);
@@ -109,18 +101,18 @@ void JobTraceDirect::execute()
 					}
 					Scalar shadowAttenuate = Scalar(1.0f - float(shadowCount) / m_shadowSamples);
 
-					radiance += i->sunColor * shadowAttenuate * phi;
+					radiance += light.sunColor * shadowAttenuate * phi;
 				}
-				else if (i->type == 1)	// Point
+				else if (light.type == 1)	// Point
 				{
-					Vector4 lightDirection = (i->position - gb.position).xyz0();
+					Vector4 lightDirection = (light.position - gb.position).xyz0();
 
 					// Distance
 					Scalar lightDistance = lightDirection.normalize();
-					if (lightDistance >= i->range)
+					if (lightDistance >= light.range)
 						continue;
 
-					Scalar distanceAttenuate = Scalar(1.0f) - lightDistance / i->range;
+					Scalar distanceAttenuate = Scalar(1.0f) - lightDistance / light.range;
 
 					// Cosine
 					Scalar phi = dot3(lightDirection, gb.normal);
@@ -145,7 +137,7 @@ void JobTraceDirect::execute()
 							}
 							while ((a * a) + (b * b) > 1.0f);
 
-							Vector4 shadowDirection = (i->position + u * Scalar(a * m_pointLightRadius) + v * Scalar(b * m_pointLightRadius) - gb.position).xyz0();
+							Vector4 shadowDirection = (light.position + u * Scalar(a * m_pointLightRadius) + v * Scalar(b * m_pointLightRadius) - gb.position).xyz0();
 
 							if (m_sah.queryAnyIntersection(gb.position + gb.normal * c_traceOffset, shadowDirection.normalized(), lightDistance - FUZZY_EPSILON, gb.surfaceIndex, cache))
 								shadowCount++;
@@ -153,11 +145,11 @@ void JobTraceDirect::execute()
 						shadowAttenuate = Scalar(1.0f - float(shadowCount) / m_shadowSamples);
 					}
 
-					radiance += i->sunColor * shadowAttenuate * distanceAttenuate * phi;
+					radiance += light.sunColor * shadowAttenuate * distanceAttenuate * phi;
 				}
-				else if (i->type == 2)	// Probe
+				else if (light.type == 2)	// Probe
 				{
-					radiance += i->probe->sample(gb.normal) * Scalar(m_probeCoeff);
+					radiance += light.probe->sample(gb.normal);
 				}
 			}
 

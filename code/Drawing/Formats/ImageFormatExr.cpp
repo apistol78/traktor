@@ -170,7 +170,7 @@ bool ImageFormatExr::write(IStream* stream, Image* image)
 	file.setFrameBuffer(frameBuffer);
 	file.writePixels(clone->getHeight());
 
-	return false;
+	return true;
 }
 
 	}

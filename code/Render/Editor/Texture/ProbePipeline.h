@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Ref.h"
 #include "Editor/DefaultPipeline.h"
 
 // import/export mechanism.
@@ -10,17 +11,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace cmft
-{
-
-struct ClContext;
-
-}
-
 namespace traktor
 {
 	namespace render
 	{
+
+class ProbeProcessor;
 
 class T_DLLCLASS ProbePipeline : public editor::DefaultPipeline
 {
@@ -58,7 +54,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
-    cmft::ClContext* m_clContext;
+    Ref< ProbeProcessor > m_processor;
 };
 
 	}

@@ -4,19 +4,14 @@ CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERM
 Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
-#define STB_RECT_PACK_IMPLEMENTATION
 #include <cmath>
-#include <stb_rect_pack.h>
+#include <thekla/thekla_atlas.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
-#include "Core/Math/Const.h"
-#include "Core/Math/Log2.h"
-#include "Core/Math/Winding2.h"
-#include "Core/Math/Winding3.h"
-#include "Core/Misc/AutoPtr.h"
 #include "Model/Model.h"
-#include "Model/ModelAdjacency.h"
 #include "Model/Operations/UnwrapUV.h"
+
+using namespace Thekla;
 
 namespace traktor
 {
@@ -25,238 +20,122 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.UnwrapUV", UnwrapUV, IModelOperation)
 
-UnwrapUV::UnwrapUV(int32_t channel, float uvPerUnit, int32_t size, int32_t margin)
+UnwrapUV::UnwrapUV(int32_t channel)
 :	m_channel(channel)
-,	m_uvPerUnit(uvPerUnit)
-,	m_size(size)
-,	m_margin(margin)
 {
 }
 
 bool UnwrapUV::apply(Model& model) const
 {
-	AlignedVector< Polygon > originalPolygons = model.getPolygons();
-	AlignedVector< Winding2 > wuvs;
-	AlignedVector< int32_t > majors;
+	Atlas_Options options;
+	atlas_set_default_options(&options);
 
-	// Create windings, determine projection plane and calculate initial projected UV set.
-	for (uint32_t i = 0; i < originalPolygons.size(); ++i)
+	AlignedVector< Atlas_Input_Vertex > inputVertices;
+
+	const auto& vertices = model.getVertices();
+	for (int32_t i = 0; i < int32_t(vertices.size()); ++i)
 	{
-		const Polygon& polygon = originalPolygons[i];
+		const auto& vertex = vertices[i];
 
-		const AlignedVector< uint32_t >& vertexIds = polygon.getVertices();
-		if (vertexIds.size() < 3)
-			return false;
+		auto& aiv = inputVertices.push_back();
 
-		Winding3 w;
-		for (uint32_t j = 0; j < vertexIds.size(); ++j)
+		const auto& p = model.getPosition(vertex.getPosition());
+		aiv.position[0] = p.x();
+		aiv.position[1] = p.y();
+		aiv.position[2] = p.z();
+
+		// \tbd Using normals cause weird artifacts, should probably be face normals?
+		// const auto& n = model.getNormal(vertex.getNormal());
+		// aiv.normal[0] = n.x();
+		// aiv.normal[1] = n.y();
+		// aiv.normal[2] = n.z();
+
+		aiv.normal[0] = 0.0f;
+		aiv.normal[1] = 0.0f;
+		aiv.normal[2] = 0.0f;
+
+		aiv.uv[0] = 0.0f;
+		aiv.uv[1] = 0.0f;
+
+		if (vertex.getTexCoordCount() > 0)
 		{
-			const Vector4& position = model.getVertexPosition(vertexIds[j]);
-			w.push(position);
+			const auto& tc = model.getTexCoord(vertex.getTexCoord(0));
+			aiv.uv[0] = tc.x;
+			aiv.uv[1] = tc.y;
 		}
 
-		Plane wp;
-		if (!w.getPlane(wp))
-			return false;
-
-		int32_t major = majorAxis3(wp.normal());
-
-		if (wp.normal().get(major) > 0.0f)
-			majors.push_back((major + 1));
-		else
-			majors.push_back(-(major + 1));
-
-		Winding2 wuv;
-		for (uint32_t j = 0; j < w.size(); ++j)
+		aiv.first_colocal = i;
+		for (int32_t j = 0; j < i; ++j)
 		{
-			switch (major)
+			if (vertices[j].getPosition() == vertex.getPosition())
 			{
-			case 0:	// X-axis
-				{
-					float u = w[j].y();
-					float v = w[j].z();
-					if (wp.normal().x() < 0.0f)
-						wuv.points.push_back(Vector2(u, v) * m_uvPerUnit);
-					else
-						wuv.points.push_back(Vector2(u, -v) * m_uvPerUnit);
-				}
+				aiv.first_colocal = j;
 				break;
-
-			case 1:	// Y-axis
-				{
-					float u = w[j].x();
-					float v = w[j].z();
-					if (wp.normal().y() > 0.0f)
-						wuv.points.push_back(Vector2(u, v) * m_uvPerUnit);
-					else
-						wuv.points.push_back(Vector2(u, -v) * m_uvPerUnit);
-				}
-				break;
-
-			case 2:	// Z-axis
-				{
-					float u = w[j].x();
-					float v = w[j].y();
-					if (wp.normal().z() < 0.0f)
-						wuv.points.push_back(Vector2(u, v) * m_uvPerUnit);
-					else
-						wuv.points.push_back(Vector2(u, -v) * m_uvPerUnit);
-				}
-				break;
-
-			default:
-				return false;
 			}
 		}
-		wuvs.push_back(wuv);
 	}
 
-	T_FATAL_ASSERT (wuvs.size() == originalPolygons.size());
-
-	// Put neighbor polygons in same groups
-	AlignedVector< uint32_t > groups(originalPolygons.size(), c_InvalidIndex);
-	AlignedVector< uint32_t > sharedEdges;
-	uint32_t lastGroupId = 0;
-
-	ModelAdjacency adjacency(&model, ModelAdjacency::MdByPosition);
-	for (uint32_t i = 0; i < originalPolygons.size(); ++i)
+	AlignedVector< Atlas_Input_Face > inputFaces;
+	for (const auto& pol : model.getPolygons())
 	{
-		if (groups[i] == c_InvalidIndex)
-			groups[i] = lastGroupId++;
+		auto& aif = inputFaces.push_back();
 
-		for (uint32_t edge = 0; edge < originalPolygons[i].getVertexCount(); ++edge)
+		aif.vertex_index[0] = pol.getVertex(0);
+		aif.vertex_index[1] = pol.getVertex(1);
+		aif.vertex_index[2] = pol.getVertex(2);
+		aif.material_index = 0;
+	}
+
+	Atlas_Input_Mesh input;
+    input.vertex_count = (int)inputVertices.size();
+    input.vertex_array = inputVertices.ptr();
+    input.face_count = (int)inputFaces.size();
+    input.face_array = inputFaces.ptr();
+
+	Atlas_Error error = Atlas_Error_Success;
+	Atlas_Output_Mesh* output = atlas_generate(&input, &options, &error);
+	if (!output || error != Atlas_Error_Success)
+		return false;
+
+	// Calculate bounding box of generated texcoords.
+	Aabb2 uvbb;
+	for (int32_t i = 0; i < output->vertex_count; ++i)
+	{
+		const auto& aov = output->vertex_array[i];
+		uvbb.contain(Vector2(aov.uv[0], aov.uv[1]));
+	}
+
+	// Insert normalized texcoords into model.
+	{
+		AlignedVector< Vertex > vertices;
+		for (int32_t i = 0; i < output->vertex_count; ++i)
 		{
-			adjacency.getSharedEdges(i, edge, sharedEdges);
-			for (AlignedVector< uint32_t >::const_iterator it = sharedEdges.begin(); it != sharedEdges.end(); ++it)
+			const auto& aov = output->vertex_array[i];
+
+			Vector2 uv(aov.uv[0], aov.uv[1]);
+			uv -= uvbb.mn;
+			uv /= uvbb.mx - uvbb.mn;
+
+			Vertex vx = model.getVertex(aov.xref);
+			vx.setTexCoord(m_channel, model.addTexCoord(uv));
+			vertices.push_back(vx);
+		}
+
+		AlignedVector< Polygon > polygons = model.getPolygons();
+		for (int32_t i = 0; i < int32_t(polygons.size()); ++i)
+		{
+			for (int32_t j = 0; j < 3; ++j)
 			{
-				uint32_t sharedPolygon = adjacency.getPolygon(*it);
-				T_FATAL_ASSERT (sharedPolygon != i);
-
-				if (majors[sharedPolygon] == majors[i] && groups[sharedPolygon] == c_InvalidIndex)
-					groups[sharedPolygon] = groups[i];
-			}
-		}
-	}
-
-	T_FATAL_ASSERT (groups.size() == originalPolygons.size());
-
-	// Rotate each group so longest edge of it's hull is horizontal.
-	for (uint32_t i = 0; i < lastGroupId; ++i)
-	{
-		AlignedVector< Vector2 > pnts;
-		for (uint32_t j = 0; j < originalPolygons.size(); ++j)
-		{
-			if (groups[j] == i)
-			{
-				for (uint32_t k = 0; k < wuvs[j].points.size(); ++k)
-					pnts.push_back(wuvs[j].points[k]);
+				T_FATAL_ASSERT(output->index_array[i * 3 + j] < vertices.size());
+				polygons[i].setVertex(j, output->index_array[i * 3 + j]);
 			}
 		}
 
-		T_FATAL_ASSERT (pnts.size() >= 3);
-
-		Winding2 hull = Winding2::convexHull(pnts);
-
-		float mln = 0.0f;
-		float angle = 0.0f;
-
-		for (uint32_t j = 0; j < hull.points.size(); ++j)
-		{
-			uint32_t k = (j + 1) % hull.points.size();
-			Vector2 edge = hull.points[k] - hull.points[j];
-			float ln = edge.length();
-			if (ln > mln)
-			{
-				mln = ln;
-				angle = std::atan2(edge.y, edge.x);
-			}
-		}
-
-		for (uint32_t j = 0; j < originalPolygons.size(); ++j)
-		{
-			if (groups[j] == i)
-			{
-				for (uint32_t k = 0; k < wuvs[j].points.size(); ++k)
-					wuvs[j].points[k] = rotate(-angle) * wuvs[j].points[k];
-			}
-		}
+		model.setVertices(vertices);
+		model.setPolygons(polygons);
 	}
 
-	// Quantize all UVs to be center of texel.
-	for (uint32_t i = 0; i < originalPolygons.size(); ++i)
-	{
-		for (uint32_t j = 0; j < wuvs[i].points.size(); ++j)
-		{
-			wuvs[i].points[j].x = std::floor(wuvs[i].points[j].x * m_size) / m_size;
-			wuvs[i].points[j].y = std::floor(wuvs[i].points[j].y * m_size) / m_size;
-		}
-	}
-
-	// For each group calculate bounding boxes.
-	AlignedVector< Aabb2 > aabbuvs(lastGroupId);
-	for (uint32_t i = 0; i < lastGroupId; ++i)
-	{
-		Aabb2& aabbuv = aabbuvs[i];
-		for (uint32_t j = 0; j < originalPolygons.size(); ++j)
-		{
-			if (groups[j] == i)
-			{
-				for (uint32_t k = 0; k < wuvs[j].points.size(); ++k)
-					aabbuv.contain(wuvs[j].points[k]);
-			}
-		}
-		T_FATAL_ASSERT (!aabbuv.empty());
-	}
-	
-	// Pack each group into a separate rectangle.
-	AutoPtr< stbrp_context > packer(new stbrp_context());
-	AutoArrayPtr< stbrp_node > nodes(new stbrp_node [m_size]);
-
-	stbrp_setup_allow_out_of_mem(packer.ptr(), 1);
-	stbrp_init_target(packer.ptr(), m_size, m_size, nodes.ptr(), m_size);
-
-	AlignedVector< stbrp_rect > rects;
-	for (uint32_t i = 0; i < aabbuvs.size(); )
-	{
-		int32_t width = int32_t((aabbuvs[i].mx - aabbuvs[i].mn).x + 0.5f);
-		int32_t height = int32_t((aabbuvs[i].mx - aabbuvs[i].mn).y + 0.5f);
-
-		stbrp_rect r = { 0 };
-		r.w = width + m_margin * 2;
-		r.h = height + m_margin * 2;
-		stbrp_pack_rects(packer.ptr(), &r, 1);
-		if (!r.was_packed)
-			return false;
-
-		rects.push_back(r);
-		++i;
-	}
-
-	// Update UV for each polygon.
-	AlignedVector< Vertex > originalVertices = model.getVertices();
-	model.clear(Model::CfPolygons | Model::CfVertices);
-
-	for (uint32_t i = 0; i < originalPolygons.size(); ++i)
-	{
-		uint32_t g = groups[i];
-		const stbrp_rect& packedRect = rects[g];
-		for (uint32_t j = 0; j < wuvs[i].points.size(); ++j)
-		{
-			Vertex vertex = originalVertices[originalPolygons[i].getVertex(j)];
-
-			Vector2 uv = (wuvs[i].points[j] - aabbuvs[g].mn) / (aabbuvs[g].mx - aabbuvs[g].mn);
-			T_FATAL_ASSERT (uv.x >= -FUZZY_EPSILON && uv.x <= 1.0f + FUZZY_EPSILON);
-			T_FATAL_ASSERT (uv.y >= -FUZZY_EPSILON && uv.y <= 1.0f + FUZZY_EPSILON);
-
-			uv.x = (uv.x * (packedRect.w - m_margin * 2) + packedRect.x + m_margin) / m_size;
-			uv.y = (uv.y * (packedRect.h - m_margin * 2) + packedRect.y + m_margin) / m_size;
-
-			vertex.setTexCoord(m_channel, model.addUniqueTexCoord(uv));
-			originalPolygons[i].setVertex(j, model.addUniqueVertex(vertex));
-		}
-	}
-
-	model.setPolygons(originalPolygons);
+	atlas_free(output);
 	return true;
 }
 
