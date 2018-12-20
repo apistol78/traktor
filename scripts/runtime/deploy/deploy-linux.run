@@ -63,7 +63,7 @@ function deploy(args)
 
 	-- Deploy application configuration to target.
 	stdout:printLn("Deploying resources to target host...")
-	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" Application.config", "(null)")
+	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" Application.config", nil)
 	if run:exitCode() ~= 0 then return run:exitCode() end
 
 	-- Get shared paths.
@@ -82,7 +82,7 @@ function deploy(args)
 		end
 		if deployFiles ~= "" then
 			run:pushd(p)
-			run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles) -- , nil)
+			run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, nil)
 			run:popd()
 			if run:exitCode() ~= 0 then return run:exitCode() end
 		end
@@ -95,7 +95,7 @@ function deploy(args)
 	end	
 
 	-- Default icon.
-	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" Default.png", "(null)")
+	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" Default.png", nil)
 
 	-- Create launcher script.
 	local f = fileSystem:open(Path("launch.sh"), 2)
@@ -105,7 +105,7 @@ function deploy(args)
 	f:close()
 
 	-- Deploy launcher script.
-	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh", "(null)")
+	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" launch.sh", nil)
 	return 0
 end
 
