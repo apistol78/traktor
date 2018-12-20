@@ -545,8 +545,8 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 	m_moveAll = false;
 	m_moveSelected = false;
 
-	m_selectedEdge = 0;
-	m_selectedNode = 0;
+	m_selectedEdge = nullptr;
+	m_selectedNode = nullptr;
 
 	// Save origin of drag and where the cursor is currently at.
 	m_cursor =
@@ -651,7 +651,7 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 						if ((event->getKeyState() & KsShift) == 0)
 						{
 							m_mode = MdNothing;
-							m_selectedPin = 0;
+							m_selectedPin = nullptr;
 							releaseCapture();
 						}
 
@@ -878,6 +878,9 @@ void GraphControl::eventDoubleClick(MouseDoubleClickEvent* event)
 {
 	if (event->getButton() != MbtLeft || !m_selectedNode)
 		return;
+
+	m_moveAll = false;
+	m_moveSelected = false;		
 
 	NodeActivateEvent activateEvent(this, m_selectedNode);
 	raiseEvent(&activateEvent);
