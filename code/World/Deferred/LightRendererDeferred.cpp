@@ -29,6 +29,7 @@ const resource::Id< render::Shader > c_lightPointsShader(Guid(L"{7ED68109-2926-4
 const resource::Id< render::Shader > c_lightSpotShader(Guid(L"{3FD07AEE-3FB5-C84D-87E1-3F9A2F0CAD5E}"));
 const resource::Id< render::Shader > c_lightSpotsShader(Guid(L"{8EB14BEA-97B1-4168-8937-AE3FDE4C6B91}"));
 const resource::Id< render::Shader > c_lightProbeShader(Guid(L"{673434A8-2663-9141-8E23-91A2F38A7B69}"));
+const resource::Id< render::Shader > c_finalColorShader(Guid(L"{AA7A6074-6CFC-1947-857C-8D9903D0880F}"));
 const resource::Id< render::Shader > c_reflectionShader(Guid(L"{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}"));
 const resource::Id< render::Shader > c_fogShader(Guid(L"{9453D74C-76C4-8748-9A5B-9E3D6D4F9406}"));
 
@@ -50,6 +51,7 @@ render::handle_t s_handleDepthMap;
 render::handle_t s_handleNormalMap;
 render::handle_t s_handleMiscMap;
 render::handle_t s_handleColorMap;
+render::handle_t s_handleLightMap;
 render::handle_t s_handleShadowMaskSize;
 render::handle_t s_handleShadowMask;
 render::handle_t s_handleCloudShadow;
@@ -93,6 +95,7 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleNormalMap = render::getParameterHandle(L"World_NormalMap");
 	s_handleMiscMap = render::getParameterHandle(L"World_MiscMap");
 	s_handleColorMap = render::getParameterHandle(L"World_ColorMap");
+	s_handleLightMap = render::getParameterHandle(L"World_LightMap");
 	s_handleShadowMaskSize = render::getParameterHandle(L"World_ShadowMaskSize");
 	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
 	s_handleCloudShadow = render::getParameterHandle(L"World_CloudShadow");
@@ -126,6 +129,8 @@ bool LightRendererDeferred::create(
 	if (!resourceManager->bind(c_lightSpotsShader, m_lightSpotsShader))
 		return false;
 	if (!resourceManager->bind(c_lightProbeShader, m_lightProbeShader))
+		return false;
+	if (!resourceManager->bind(c_finalColorShader, m_finalColorShader))
 		return false;
 	if (!resourceManager->bind(c_reflectionShader, m_reflectionShader))
 		return false;
@@ -589,6 +594,33 @@ void LightRendererDeferred::renderNonShadowLights(
 
 		m_lightSpotsShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);			
 	}	
+}
+
+void LightRendererDeferred::renderFinalColor(
+	render::IRenderView* renderView,
+	float time,
+	const Matrix44& projection,
+	const Matrix44& view,
+	render::ITexture* depthMap,
+	render::ITexture* normalMap,
+	render::ITexture* miscMap,
+	render::ITexture* colorMap,
+	render::ITexture* lightMap
+)
+{
+	Scalar p11 = projection.get(0, 0);
+	Scalar p22 = projection.get(1, 1);
+
+	m_finalColorShader->setMatrixParameter(s_handleProjection, projection);
+	m_finalColorShader->setMatrixParameter(s_handleViewInverse, view.inverse());
+	m_finalColorShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	m_finalColorShader->setTextureParameter(s_handleDepthMap, depthMap);
+	m_finalColorShader->setTextureParameter(s_handleNormalMap, normalMap);
+	m_finalColorShader->setTextureParameter(s_handleMiscMap, miscMap);
+	m_finalColorShader->setTextureParameter(s_handleColorMap, colorMap);
+	m_finalColorShader->setTextureParameter(s_handleLightMap, lightMap);
+
+	m_finalColorShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 }
 
 void LightRendererDeferred::renderReflections(

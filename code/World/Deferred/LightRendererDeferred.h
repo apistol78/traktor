@@ -83,6 +83,19 @@ public:
 		render::ITexture* colorMap
 	);
 
+	/*! \brief Render lit final colors. */
+	void renderFinalColor(
+		render::IRenderView* renderView,
+		float time,
+		const Matrix44& projection,
+		const Matrix44& view,
+		render::ITexture* depthMap,
+		render::ITexture* normalMap,
+		render::ITexture* miscMap,
+		render::ITexture* colorMap,
+		render::ITexture* lightMap
+	);
+
 	/*! \brief Render screenspace reflections. */
 	void renderReflections(
 		render::IRenderView* renderView,
@@ -121,6 +134,7 @@ private:
 	resource::Proxy< render::Shader > m_lightSpotShader;
 	resource::Proxy< render::Shader > m_lightSpotsShader;
 	resource::Proxy< render::Shader > m_lightProbeShader;
+	resource::Proxy< render::Shader > m_finalColorShader;
 	resource::Proxy< render::Shader > m_reflectionShader;
 	resource::Proxy< render::Shader > m_fogShader;
 	Ref< render::VertexBuffer > m_vertexBufferQuad;

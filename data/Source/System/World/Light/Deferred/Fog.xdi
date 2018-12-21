@@ -5,8 +5,8 @@
 			<id>{817BA2A4-6056-994C-921D-4BE931CFA178}</id>
 			<comment/>
 			<position>
-				<first>-218</first>
-				<second>65</second>
+				<first>1122</first>
+				<second>-171</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -24,8 +24,8 @@
 			<id>{F8CF17CC-3D01-AC46-B709-19AD7FA90015}</id>
 			<comment/>
 			<position>
-				<first>3677</first>
-				<second>-361</second>
+				<first>3518</first>
+				<second>-294</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -72,8 +72,8 @@
 			<id>{E8471FEC-2A82-B449-8859-25D59B516D62}</id>
 			<comment/>
 			<position>
-				<first>1804</first>
-				<second>-319</second>
+				<first>2106</first>
+				<second>-278</second>
 			</position>
 			<swizzle>00x1</swizzle>
 		</item>
@@ -81,8 +81,8 @@
 			<id>{07BCF6B5-EF35-E342-9427-33173EF2C98C}</id>
 			<comment/>
 			<position>
-				<first>351</first>
-				<second>-365</second>
+				<first>1320</first>
+				<second>-308</second>
 			</position>
 			<parameterName>World_MagicCoeffs</parameterName>
 			<type>PtVector</type>
@@ -92,24 +92,24 @@
 			<id>{A3077E86-2371-F644-94F6-6D61048A789A}</id>
 			<comment/>
 			<position>
-				<first>1120</first>
-				<second>-204</second>
+				<first>1630</first>
+				<second>-186</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{3FE1500C-C172-9B47-A8DC-080679C775E5}</id>
 			<comment/>
 			<position>
-				<first>1488</first>
-				<second>-269</second>
+				<first>1927</first>
+				<second>-236</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{9AC1539A-36B9-964A-8EA4-D573AF17C5D1}</id>
 			<comment/>
 			<position>
-				<first>1804</first>
-				<second>-259</second>
+				<first>2106</first>
+				<second>-218</second>
 			</position>
 			<swizzle>xy00</swizzle>
 		</item>
@@ -117,8 +117,8 @@
 			<id>{6181FE69-564E-714C-9199-CF5DFE7AD87C}</id>
 			<comment/>
 			<position>
-				<first>1937</first>
-				<second>-366</second>
+				<first>2212</first>
+				<second>-274</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1,traktor.render.Node:1">
@@ -126,7 +126,7 @@
 			<comment/>
 			<position>
 				<first>2464</first>
-				<second>-317</second>
+				<second>-316</second>
 			</position>
 			<fragmentGuid>{AFD5FE57-FE20-134A-9C0F-5E25CAB9B3F2}</fragmentGuid>
 			<inputPins>
@@ -153,8 +153,8 @@
 			<id>{BA60C40B-BD4B-1A44-BDB2-3BD0504AA1D1}</id>
 			<comment/>
 			<position>
-				<first>349</first>
-				<second>-160</second>
+				<first>1318</first>
+				<second>-104</second>
 			</position>
 			<fragmentGuid>{ED628E05-EA7F-B24F-9E38-97F53A90CCDA}</fragmentGuid>
 			<inputPins>
@@ -174,8 +174,8 @@
 			<id>{A1FEDA28-49CB-FE4D-B8E8-717590ACAE0B}</id>
 			<comment/>
 			<position>
-				<first>2789</first>
-				<second>-302</second>
+				<first>3120</first>
+				<second>-192</second>
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
@@ -183,7 +183,7 @@
 			<id>{DF0FE992-46EF-AE40-A5A0-1BBD1B5CE788}</id>
 			<comment/>
 			<position>
-				<first>2231</first>
+				<first>2230</first>
 				<second>-362</second>
 			</position>
 			<value>0</value>
@@ -192,8 +192,8 @@
 			<id>{1B6B1173-C8EA-2946-8744-AE1199A6B23D}</id>
 			<comment/>
 			<position>
-				<first>2461</first>
-				<second>-468</second>
+				<first>2854</first>
+				<second>-300</second>
 			</position>
 			<parameterName>World_FogColor</parameterName>
 			<type>PtVector</type>
@@ -203,8 +203,8 @@
 			<id>{3BC7CEBC-8649-6146-803D-D14211E242EA}</id>
 			<comment/>
 			<position>
-				<first>2791</first>
-				<second>-403</second>
+				<first>3121</first>
+				<second>-236</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -212,8 +212,8 @@
 			<id>{6387D35E-36DA-2346-9A46-B601B6441330}</id>
 			<comment/>
 			<position>
-				<first>2935</first>
-				<second>-416</second>
+				<first>3265</first>
+				<second>-249</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">

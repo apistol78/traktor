@@ -259,6 +259,10 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 		ui::Canvas& canvas = event->getCanvas();
 		canvas.setForeground(Color4ub(0, 0, 0, 255));
 
+		ui::Font fnt = m_renderWidget->getFont();
+		fnt.setSize((2 * fnt.getSize()) / 3);
+		canvas.setFont(fnt);
+
 		int32_t size = int32_t(std::sqrt(float(debugTargets.size())) + 0.5f);
 		for (uint32_t i = 0; i < debugTargets.size(); ++i)
 		{
@@ -282,7 +286,7 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 			int32_t y = innerSize.cy * (0.5f - oy * 0.5f) - ext.cy;
 
 			StringOutputStream ss;
-			ss << debugTargets[i].name << L" (" << type_name(debugTargets[i].texture) << L")";
+			ss << debugTargets[i].name;
 			canvas.drawText(ui::Point(x, y), ss.str());
 		}
 	}
