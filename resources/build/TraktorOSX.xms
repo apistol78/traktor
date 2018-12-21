@@ -6303,6 +6303,12 @@
 											<link>LnkYes</link>
 											<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
+										<item type="ExternalDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<solutionFileName>ExternOSX.xms</solutionFileName>
+											<projectName>Extern.thekla_atlas</projectName>
+										</item>
 									</dependencies>
 								</project>
 							</item>

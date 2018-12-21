@@ -88,6 +88,7 @@ private:
 	{
 		Slice slice[MaxSliceCount];
 		Ref< WorldContext > gbuffer;
+		Ref< WorldContext > irradiance;
 		Ref< WorldContext > velocity;
 		Ref< WorldContext > visual;
 		float time;
@@ -100,6 +101,7 @@ private:
 		AlignedVector< Light > lights;
 		Vector4 godRayDirection;
 		bool haveGBuffer;
+		bool haveIrradiance;
 		bool haveVelocity;
 
 		Frame()
@@ -107,6 +109,7 @@ private:
 		,	A(0.0f)
 		,	B(0.0f)
 		,	haveGBuffer(false)
+		,	haveIrradiance(false)
 		,	haveVelocity(false)
 		{
 		}
@@ -114,6 +117,7 @@ private:
 
 	static render::handle_t ms_techniqueDeferredColor;
 	static render::handle_t ms_techniqueDeferredGBufferWrite;
+	static render::handle_t ms_techniqueIrradianceWrite;
 	static render::handle_t ms_techniqueVelocityWrite;
 	static render::handle_t ms_techniqueShadow;
 	static render::handle_t ms_handleTime;
@@ -148,6 +152,7 @@ private:
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskFilterTargetSet;
+	Ref< render::RenderTargetSet > m_lightAccumulationTargetSet;
 	Ref< render::RenderContext > m_globalContext;
 	resource::Proxy< render::ITexture > m_reflectionMap;
 	Ref< render::ImageProcess > m_shadowMaskProject;
@@ -169,6 +174,8 @@ private:
 	bool m_includeObjectVelocity;
 
 	void buildGBuffer(WorldRenderView& worldRenderView, int frame);
+
+	void buildIrradiance(WorldRenderView& worldRenderView, int frame);
 
 	void buildVelocity(WorldRenderView& worldRenderView, int frame);
 
