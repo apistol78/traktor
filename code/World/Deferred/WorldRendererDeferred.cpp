@@ -928,7 +928,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			m_renderView->clear(render::CfColor, &lightClear, 0.0f, 0);
 
 			if (f.haveIrradiance)
-				f.gbuffer->getRenderContext()->render(m_renderView, render::RpOpaque, &irradianceProgramParams);
+				f.irradiance->getRenderContext()->render(m_renderView, render::RpOpaque, &irradianceProgramParams);
 
 			m_renderView->end();
 		}
