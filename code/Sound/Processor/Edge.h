@@ -36,7 +36,7 @@ public:
 
 	const InputPin* getDestination() const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	const OutputPin* m_source;

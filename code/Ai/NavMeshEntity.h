@@ -40,9 +40,9 @@ public:
 
 	NavMeshEntity(const resource::Proxy< NavMesh >& navMesh);
 
-	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
+	virtual void update(const world::UpdateParams& update) override final;
 
 	/*! \brief Get navigation mesh.
 	 *

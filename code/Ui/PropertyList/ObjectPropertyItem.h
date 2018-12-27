@@ -43,17 +43,17 @@ public:
 	Ref< Object > getObject() const;
 
 protected:
-	virtual void createInPlaceControls(Widget* parent) T_OVERRIDE;
+	virtual void createInPlaceControls(Widget* parent) override;
 
-	virtual void destroyInPlaceControls() T_OVERRIDE;
+	virtual void destroyInPlaceControls() override;
 
-	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects) T_OVERRIDE;
+	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects) override;
 
-	virtual void paintValue(Canvas& canvas, const Rect& rc) T_OVERRIDE;
+	virtual void paintValue(Canvas& canvas, const Rect& rc) override;
 
-	virtual bool copy() T_OVERRIDE;
+	virtual bool copy() override;
 
-	virtual bool paste() T_OVERRIDE;
+	virtual bool paste() override;
 
 private:
 	Ref< MiniButton > m_buttonEdit;

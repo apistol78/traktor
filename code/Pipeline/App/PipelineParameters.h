@@ -29,7 +29,7 @@ public:
 		const std::vector< Guid >& roots
 	);
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const std::wstring& getWorkingDirectory() const { return m_workingDirectory; }
 

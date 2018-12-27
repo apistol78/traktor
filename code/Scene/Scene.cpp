@@ -44,19 +44,19 @@ Scene::Scene(ISceneController* controller, Scene* scene)
 
 Scene::~Scene()
 {
-	m_rootEntity = 0;
-	m_entitySchema = 0;
-	m_controller = 0;
-	m_worldRenderSettings = 0;
+	m_rootEntity = nullptr;
+	m_entitySchema = nullptr;
+	m_controller = nullptr;
+	m_worldRenderSettings = nullptr;
 	m_imageProcessParams.clear();
 }
 
 void Scene::destroy()
 {
 	safeDestroy(m_rootEntity);
-	m_entitySchema = 0;
-	m_controller = 0;
-	m_worldRenderSettings = 0;
+	m_entitySchema = nullptr;
+	m_controller = nullptr;
+	m_worldRenderSettings = nullptr;
 	m_imageProcessParams.clear();
 }
 

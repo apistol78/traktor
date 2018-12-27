@@ -44,17 +44,17 @@ public:
 
 	bool create(SoundSystem* soundSystem, SurroundEnvironment* surroundEnvironment);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual Ref< ISoundHandle > play(const Sound* sound, uint32_t priority) T_OVERRIDE T_FINAL;
+	virtual Ref< ISoundHandle > play(const Sound* sound, uint32_t priority) override final;
 
-	virtual Ref< ISoundHandle > play3d(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar) T_OVERRIDE T_FINAL;
+	virtual Ref< ISoundHandle > play3d(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar) override final;
 
-	virtual void setListenerTransform(const Transform& listenerTransform) T_OVERRIDE T_FINAL;
+	virtual void setListenerTransform(const Transform& listenerTransform) override final;
 
-	virtual Transform getListenerTransform() const T_OVERRIDE T_FINAL;
+	virtual Transform getListenerTransform() const override final;
 
-	virtual void update(float dT) T_OVERRIDE T_FINAL;
+	virtual void update(float dT) override final;
 
 private:
 	struct Channel

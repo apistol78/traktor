@@ -26,25 +26,25 @@ public:
 
 	virtual ~Document();
 
-	virtual void editInstance(db::Instance* instance, ISerializable* object) T_OVERRIDE T_FINAL;
+	virtual void editInstance(db::Instance* instance, ISerializable* object) override final;
 
-	virtual bool containInstance(db::Instance* instance) const T_OVERRIDE T_FINAL;
+	virtual bool containInstance(db::Instance* instance) const override final;
 
-	virtual uint32_t getInstanceCount() const T_OVERRIDE T_FINAL;
+	virtual uint32_t getInstanceCount() const override final;
 
-	virtual db::Instance* getInstance(uint32_t index) const T_OVERRIDE T_FINAL;
+	virtual db::Instance* getInstance(uint32_t index) const override final;
 
-	virtual ISerializable* getObject(uint32_t index) const T_OVERRIDE T_FINAL;
+	virtual ISerializable* getObject(uint32_t index) const override final;
 
-	virtual bool setObject(uint32_t index, ISerializable* object) T_OVERRIDE T_FINAL;
+	virtual bool setObject(uint32_t index, ISerializable* object) override final;
 
-	virtual void setModified() T_OVERRIDE T_FINAL;
+	virtual void setModified() override final;
 
-	virtual void push(const ISerializable* meta) T_OVERRIDE T_FINAL;
+	virtual void push(const ISerializable* meta) override final;
 
-	virtual bool undo(const ISerializable* redoMeta, Ref< const ISerializable >* outMeta) T_OVERRIDE T_FINAL;
+	virtual bool undo(const ISerializable* redoMeta, Ref< const ISerializable >* outMeta) override final;
 
-	virtual bool redo(Ref< const ISerializable >* outMeta) T_OVERRIDE T_FINAL;
+	virtual bool redo(Ref< const ISerializable >* outMeta) override final;
 
 	bool save();
 

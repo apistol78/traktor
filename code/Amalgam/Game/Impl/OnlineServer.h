@@ -43,7 +43,7 @@ public:
 
 	int32_t reconfigure(const PropertyGroup* settings);
 
-	virtual online::ISessionManager* getSessionManager() T_OVERRIDE T_FINAL;
+	virtual online::ISessionManager* getSessionManager() override final;
 
 private:
 	Ref< online::ISessionManager > m_sessionManager;

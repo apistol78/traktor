@@ -41,7 +41,7 @@ public:
 
 	bool create(ui::Widget* parent);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	ILogTarget* getLogTarget() const { return m_logTarget; }
 
@@ -59,7 +59,7 @@ private:
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
 
-	virtual bool lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) const T_OVERRIDE T_FINAL;
+	virtual bool lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) const override final;
 };
 
 	}

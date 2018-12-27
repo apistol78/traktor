@@ -31,25 +31,25 @@ class T_DLLCLASS MeasureP2PProvider : public IPeer2PeerProvider
 public:
 	MeasureP2PProvider(IPeer2PeerProvider* provider);
 
-	virtual bool update() T_OVERRIDE T_FINAL;
+	virtual bool update() override final;
 
-	virtual net_handle_t getLocalHandle() const T_OVERRIDE T_FINAL;
+	virtual net_handle_t getLocalHandle() const override final;
 
-	virtual int32_t getPeerCount() const T_OVERRIDE T_FINAL;
+	virtual int32_t getPeerCount() const override final;
 
-	virtual net_handle_t getPeerHandle(int32_t index) const T_OVERRIDE T_FINAL;
+	virtual net_handle_t getPeerHandle(int32_t index) const override final;
 
-	virtual std::wstring getPeerName(int32_t index) const T_OVERRIDE T_FINAL;
+	virtual std::wstring getPeerName(int32_t index) const override final;
 
-	virtual Object* getPeerUser(int32_t index) const T_OVERRIDE T_FINAL;
+	virtual Object* getPeerUser(int32_t index) const override final;
 
-	virtual bool setPrimaryPeerHandle(net_handle_t node) T_OVERRIDE T_FINAL;
+	virtual bool setPrimaryPeerHandle(net_handle_t node) override final;
 
-	virtual net_handle_t getPrimaryPeerHandle() const T_OVERRIDE T_FINAL;
+	virtual net_handle_t getPrimaryPeerHandle() const override final;
 
-	virtual bool send(net_handle_t node, const void* data, int32_t size) T_OVERRIDE T_FINAL;
+	virtual bool send(net_handle_t node, const void* data, int32_t size) override final;
 
-	virtual int32_t recv(void* data, int32_t size, net_handle_t& outNode) T_OVERRIDE T_FINAL;
+	virtual int32_t recv(void* data, int32_t size, net_handle_t& outNode) override final;
 
 	float getSendBitsPerSecond() const;
 

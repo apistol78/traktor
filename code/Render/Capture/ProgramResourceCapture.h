@@ -32,7 +32,7 @@ class T_DLLCLASS ProgramResourceCapture : public ProgramResource
 	T_RTTI_CLASS;
 
 public:
-	virtual void serialize(ISerializer& s) T_OVERRIDE;
+	virtual void serialize(ISerializer& s) override;
 
 private:
 	friend class ProgramCompilerCapture;

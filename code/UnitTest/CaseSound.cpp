@@ -32,20 +32,20 @@ public:
 	{
 	}
 
-	virtual bool create(const SystemApplication& sysapp, const sound::SoundDriverCreateDesc& desc, Ref< sound::ISoundMixer >& outMixer) T_OVERRIDE T_FINAL
+	virtual bool create(const SystemApplication& sysapp, const sound::SoundDriverCreateDesc& desc, Ref< sound::ISoundMixer >& outMixer) override final
 	{
 		return true;
 	}
 
-	virtual void destroy() T_OVERRIDE T_FINAL
+	virtual void destroy() override final
 	{
 	}
 
-	virtual void wait() T_OVERRIDE T_FINAL
+	virtual void wait() override final
 	{
 	}
 
-	virtual void submit(const sound::SoundBlock& soundBlock) T_OVERRIDE T_FINAL
+	virtual void submit(const sound::SoundBlock& soundBlock) override final
 	{
 		if (m_signal.wait(0))
 			return;
@@ -72,12 +72,12 @@ public:
 			m_block[i] = 2.0f;
 	}
 
-	virtual Ref< sound::ISoundBufferCursor > createCursor() const T_OVERRIDE T_FINAL
+	virtual Ref< sound::ISoundBufferCursor > createCursor() const override final
 	{
 		return 0;
 	}
 
-	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const T_OVERRIDE T_FINAL
+	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const override final
 	{
 		outBlock.samples[0] = m_block;
 		outBlock.samplesCount = sizeof_array(m_block);

@@ -34,17 +34,17 @@ class RenderEditorPlugin : public editor::IEditorPlugin
 public:
 	RenderEditorPlugin(editor::IEditor* editor);
 
-	virtual bool create(ui::Widget* parent, editor::IEditorPageSite* site) T_OVERRIDE T_FINAL;
+	virtual bool create(ui::Widget* parent, editor::IEditorPageSite* site) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual bool handleCommand(const ui::Command& command, bool result) T_OVERRIDE T_FINAL;
+	virtual bool handleCommand(const ui::Command& command, bool result) override final;
 
-	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) T_OVERRIDE T_FINAL;
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) override final;
 
-	virtual void handleWorkspaceOpened() T_OVERRIDE T_FINAL;
+	virtual void handleWorkspaceOpened() override final;
 
-	virtual void handleWorkspaceClosed() T_OVERRIDE T_FINAL;
+	virtual void handleWorkspaceClosed() override final;
 
 private:
 	editor::IEditor* m_editor;

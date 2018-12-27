@@ -39,11 +39,11 @@ public:
 			luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_classRef);
 	}
 
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_PROFILER_SCOPE(L"Script invoke");
 
@@ -106,11 +106,11 @@ public:
 		luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_ref);
 	}
 
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_PROFILER_SCOPE(L"Script invoke");
 		return m_scriptContext->executeMethod(

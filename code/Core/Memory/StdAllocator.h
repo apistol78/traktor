@@ -21,9 +21,9 @@ namespace traktor
 class StdAllocator : public RefCountImpl< IAllocator >
 {
 public:
-	virtual void* alloc(size_t size, size_t align, const char* const tag) T_OVERRIDE T_FINAL;
+	virtual void* alloc(size_t size, size_t align, const char* const tag) override final;
 	
-	virtual void free(void* ptr) T_OVERRIDE T_FINAL;
+	virtual void free(void* ptr) override final;
 };
 
 }

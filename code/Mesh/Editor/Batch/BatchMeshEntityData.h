@@ -31,9 +31,9 @@ class T_DLLCLASS BatchMeshEntityData : public world::EntityData
 public:
 	BatchMeshEntityData();
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 	
-	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+	virtual void setTransform(const Transform& transform) override final;
 
 	const Guid& getOutputGuid() const { return m_outputGuid; }
 

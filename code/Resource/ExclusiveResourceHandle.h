@@ -36,7 +36,7 @@ class T_DLLCLASS ExclusiveResourceHandle : public ResourceHandle
 public:
 	ExclusiveResourceHandle(const TypeInfo& type);
 
-	virtual void release(void* owner) const T_OVERRIDE T_FINAL;
+	virtual void release(void* owner) const override final;
 
 	const TypeInfo& getProductType() const { return m_resourceType; }
 

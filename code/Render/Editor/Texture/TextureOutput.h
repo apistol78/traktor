@@ -58,7 +58,7 @@ public:
 
 	TextureOutput();
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE;
+	virtual void serialize(ISerializer& s) override;
 };
 
 	}

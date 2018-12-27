@@ -43,11 +43,11 @@ public:
 
 	bool create(Widget* parent, Bitmap* image = 0, int style = WsNone);
 	
-	virtual Size getMinimumSize() const T_OVERRIDE;
+	virtual Size getMinimumSize() const override;
 	
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 	
-	virtual Size getMaximumSize() const T_OVERRIDE;
+	virtual Size getMaximumSize() const override;
 
 	bool setImage(Bitmap* image, bool transparent = false);
 

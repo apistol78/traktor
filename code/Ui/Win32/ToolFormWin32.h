@@ -23,11 +23,11 @@ class ToolFormWin32 : public WidgetWin32Impl< IToolForm >
 public:
 	ToolFormWin32(EventSubject* owner);
 
-	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) T_OVERRIDE T_FINAL;
+	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override final;
 
-	virtual int showModal() T_OVERRIDE T_FINAL;
+	virtual int showModal() override final;
 
-	virtual void endModal(int result) T_OVERRIDE T_FINAL;
+	virtual void endModal(int result) override final;
 
 private:
 	bool m_modal;

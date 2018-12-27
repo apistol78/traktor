@@ -96,12 +96,12 @@ public:
 	{
 	}
 
-	virtual Ref< IHandle > loadAsync(const std::wstring& url) const T_OVERRIDE T_FINAL
+	virtual Ref< IHandle > loadAsync(const std::wstring& url) const override final
 	{
 		return 0;
 	}
 
-	virtual Ref< flash::Movie > load(const std::wstring& url) const T_OVERRIDE T_FINAL
+	virtual Ref< flash::Movie > load(const std::wstring& url) const override final
 	{
 		std::map< std::wstring, resource::Proxy< flash::Movie > >::const_iterator i = m_externalMovies.find(url);
 		if (i != m_externalMovies.end())

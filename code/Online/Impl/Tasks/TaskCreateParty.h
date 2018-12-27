@@ -30,7 +30,7 @@ public:
 		PartyResult* result
 	);
 
-	virtual void execute(TaskQueue* taskQueue) T_OVERRIDE T_FINAL;
+	virtual void execute(TaskQueue* taskQueue) override final;
 
 private:
 	Ref< IMatchMakingProvider > m_matchMakingProvider;

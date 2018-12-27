@@ -36,13 +36,13 @@ class T_DLLCLASS Dock : public Widget
 public:
 	bool create(Widget* parent);
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 
 	DockPane* getPane();
 
 	void dumpLayout();
 
-	virtual void update(const Rect* rc = 0, bool immediate = false) T_OVERRIDE;
+	virtual void update(const Rect* rc = 0, bool immediate = false) override;
 
 private:
 	Ref< DockPane > m_pane;

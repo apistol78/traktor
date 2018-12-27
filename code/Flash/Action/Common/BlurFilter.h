@@ -33,7 +33,7 @@ class T_DLLCLASS BlurFilter : public BitmapFilter
 public:
 	BlurFilter(float blurX, float blurY, int32_t quality);
 
-	virtual Ref< BitmapFilter > clone() T_OVERRIDE T_FINAL;
+	virtual Ref< BitmapFilter > clone() override final;
 
 	float getBlurX();
 

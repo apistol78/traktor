@@ -265,9 +265,9 @@ private:
 
 	std::wstring getLogPrefix() const;
 
-	virtual bool nodeConnected(INetworkTopology* topology, net_handle_t node) T_OVERRIDE T_FINAL;
+	virtual bool nodeConnected(INetworkTopology* topology, net_handle_t node) override final;
 
-	virtual bool nodeDisconnected(INetworkTopology* topology, net_handle_t node) T_OVERRIDE T_FINAL;
+	virtual bool nodeDisconnected(INetworkTopology* topology, net_handle_t node) override final;
 };
 
 	}

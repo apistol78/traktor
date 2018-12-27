@@ -32,11 +32,11 @@ class T_DLLCLASS Comment : public Node
 public:
 	Comment(const std::wstring& text);
 
-	virtual std::wstring getName() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getName() const override final;
 
-	virtual std::wstring getValue() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getValue() const override final;
 
-	virtual void toString(OutputStream& os) const T_OVERRIDE T_FINAL;
+	virtual void toString(OutputStream& os) const override final;
 
 private:
 	std::wstring m_text;

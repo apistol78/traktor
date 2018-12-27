@@ -80,7 +80,7 @@ public:
 
 	/*! \brief
 	 */
-	virtual void serialize(ISerializer& s) T_OVERRIDE;
+	virtual void serialize(ISerializer& s) override;
 
 private:
 	uint16_t m_id;

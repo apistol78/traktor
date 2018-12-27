@@ -36,7 +36,7 @@ public:
 	NormalMapFilter(float scale);
 
 protected:
-	virtual void apply(Image* image) const T_OVERRIDE T_FINAL;
+	virtual void apply(Image* image) const override final;
 
 private:
 	float m_scale;

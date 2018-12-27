@@ -19,7 +19,7 @@ class DiscSourceRenderer : public SourceRenderer
 	T_RTTI_CLASS;
 
 public:
-	virtual void render(render::PrimitiveRenderer* primitiveRenderer, const SourceData* sourceData) const T_OVERRIDE T_FINAL;
+	virtual void render(render::PrimitiveRenderer* primitiveRenderer, const SourceData* sourceData) const override final;
 };
 
 	}

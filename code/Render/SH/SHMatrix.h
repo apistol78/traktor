@@ -49,7 +49,7 @@ public:
 
 	float& w(int32_t row, int32_t column) { return m_elements[row + column * m_rows]; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	int32_t m_rows;

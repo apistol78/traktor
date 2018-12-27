@@ -34,9 +34,9 @@ class T_DLLCLASS Element : public Node
 public:
 	Element(const std::wstring& name);
 
-	virtual std::wstring getName() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getName() const override final;
 	
-	virtual std::wstring getValue() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getValue() const override final;
 
 	bool hasAttribute(const std::wstring& name) const;
 	
@@ -58,7 +58,7 @@ public:
 
 	void innerHTML(OutputStream& os) const;
 
-	virtual void toString(OutputStream& os) const T_OVERRIDE T_FINAL;
+	virtual void toString(OutputStream& os) const override final;
 
 private:
 	std::wstring m_name;

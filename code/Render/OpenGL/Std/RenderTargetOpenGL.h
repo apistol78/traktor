@@ -33,27 +33,27 @@ public:
 
 	virtual ~RenderTargetOpenGL();
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual ITexture* resolve() T_OVERRIDE T_FINAL;
+	virtual ITexture* resolve() override final;
 
-	virtual int getWidth() const T_OVERRIDE T_FINAL;
+	virtual int getWidth() const override final;
 	
-	virtual int getHeight() const T_OVERRIDE T_FINAL;
+	virtual int getHeight() const override final;
 	
-	virtual bool lock(int level, Lock& lock) T_OVERRIDE T_FINAL;
+	virtual bool lock(int level, Lock& lock) override final;
 
-	virtual void unlock(int level) T_OVERRIDE T_FINAL;
+	virtual void unlock(int level) override final;
 
-	virtual void* getInternalHandle() T_OVERRIDE T_FINAL;
+	virtual void* getInternalHandle() override final;
 
 	// ITextureBinding
 
-	virtual void bindTexture() const T_OVERRIDE T_FINAL;
+	virtual void bindTexture() const override final;
 
-	virtual void bindSize(GLint locationSize) const T_OVERRIDE T_FINAL;
+	virtual void bindSize(GLint locationSize) const override final;
 
-	virtual bool haveMips() const T_OVERRIDE T_FINAL;
+	virtual bool haveMips() const override final;
 	
 private:
 	Ref< ResourceContextOpenGL > m_resourceContext;

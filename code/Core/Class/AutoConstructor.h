@@ -24,11 +24,11 @@ template<
 >
 struct Constructor_0 : public IRuntimeDispatch
 {
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		return Any::fromObject(new ClassType());
 	}
@@ -40,12 +40,12 @@ template<
 >
 struct Constructor_1 : public IRuntimeDispatch
 {
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
 		CastAny< Argument1Type >::typeName(ss);
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(1)
 		T_VERIFY_ARGUMENT_TYPE(0, Argument1Type)
@@ -63,13 +63,13 @@ template<
 >
 struct Constructor_2 : public IRuntimeDispatch
 {
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
 		CastAny< Argument1Type >::typeName(ss); ss << L",";
 		CastAny< Argument2Type >::typeName(ss);
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(2)
 		T_VERIFY_ARGUMENT_TYPE(0, Argument1Type)
@@ -90,14 +90,14 @@ template<
 >
 struct Constructor_3 : public IRuntimeDispatch
 {
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
 		CastAny< Argument1Type >::typeName(ss); ss << L",";
 		CastAny< Argument2Type >::typeName(ss); ss << L",";
 		CastAny< Argument3Type >::typeName(ss);
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(3)
 		T_VERIFY_ARGUMENT_TYPE(0, Argument1Type)
@@ -121,7 +121,7 @@ template<
 >
 struct Constructor_4 : public IRuntimeDispatch
 {
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
 		CastAny< Argument1Type >::typeName(ss); ss << L",";
 		CastAny< Argument2Type >::typeName(ss); ss << L",";
@@ -129,7 +129,7 @@ struct Constructor_4 : public IRuntimeDispatch
 		CastAny< Argument4Type >::typeName(ss);
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(4)
 		T_VERIFY_ARGUMENT_TYPE(0, Argument1Type)
@@ -156,7 +156,7 @@ template<
 >
 struct Constructor_5 : public IRuntimeDispatch
 {
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
 		CastAny< Argument1Type >::typeName(ss); ss << L",";
 		CastAny< Argument2Type >::typeName(ss); ss << L",";
@@ -165,7 +165,7 @@ struct Constructor_5 : public IRuntimeDispatch
 		CastAny< Argument5Type >::typeName(ss);
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(5)
 		T_VERIFY_ARGUMENT_TYPE(0, Argument1Type)
@@ -195,7 +195,7 @@ template<
 >
 struct Constructor_6 : public IRuntimeDispatch
 {
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
  		CastAny< Argument1Type >::typeName(ss); ss << L",";
 		CastAny< Argument2Type >::typeName(ss); ss << L",";
@@ -205,7 +205,7 @@ struct Constructor_6 : public IRuntimeDispatch
 		CastAny< Argument6Type >::typeName(ss);
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(6)
 		T_VERIFY_ARGUMENT_TYPE(0, Argument1Type)
@@ -242,12 +242,12 @@ struct FnConstructor_1 : public IRuntimeDispatch
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
  		CastAny< Argument1Type >::typeName(ss);
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(1)
 		T_VERIFY_ARGUMENT_TYPE(0, Argument1Type)
@@ -275,13 +275,13 @@ struct FnConstructor_2 : public IRuntimeDispatch
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
  		CastAny< Argument1Type >::typeName(ss); ss << L",";
 		CastAny< Argument2Type >::typeName(ss);
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(2)
 		T_VERIFY_ARGUMENT_TYPE(0, Argument1Type)
@@ -312,14 +312,14 @@ struct FnConstructor_3 : public IRuntimeDispatch
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
  		CastAny< Argument1Type >::typeName(ss); ss << L",";
 		CastAny< Argument2Type >::typeName(ss); ss << L",";
 		CastAny< Argument3Type >::typeName(ss);
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(3)
 		T_VERIFY_ARGUMENT_TYPE(0, Argument1Type)
@@ -353,7 +353,7 @@ struct FnConstructor_4 : public IRuntimeDispatch
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
  		CastAny< Argument1Type >::typeName(ss); ss << L",";
 		CastAny< Argument2Type >::typeName(ss); ss << L",";
@@ -361,7 +361,7 @@ struct FnConstructor_4 : public IRuntimeDispatch
 		CastAny< Argument4Type >::typeName(ss);
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(4)
 		T_VERIFY_ARGUMENT_TYPE(0, Argument1Type)

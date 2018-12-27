@@ -60,16 +60,16 @@ public:
 	bool create(Widget* parent, const std::wstring& text = L"", int32_t style = WsClientBorder | WsDoubleBuffer);
 
 	/*! \brief Set text content of text editor. */
-	virtual void setText(const std::wstring& text) T_OVERRIDE;
+	virtual void setText(const std::wstring& text) override;
 
 	/*! \brief Get textual content of text editor. */
-	virtual std::wstring getText() const T_OVERRIDE;
+	virtual std::wstring getText() const override;
 
 	/*! \brief Get textual content of text editor. */
 	std::wstring getText(std::function< std::wstring (wchar_t) > cfn, std::function< std::wstring (const ISpecialCharacter*) > scfn) const;
 
 	/*! \brief Set font. */
-	virtual void setFont(const Font& font) T_OVERRIDE;
+	virtual void setFont(const Font& font) override;
 	
 	/*! \brief Define a new text attribute. */
 	int32_t addTextAttribute(const Color4ub& textColor, bool bold, bool italic, bool underline);

@@ -35,11 +35,11 @@ class T_DLLCLASS PartitionMeshComponent : public MeshComponent
 public:
 	PartitionMeshComponent(const resource::Proxy< PartitionMesh >& mesh, bool screenSpaceCulling);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) T_OVERRIDE T_FINAL;
+	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) override final;
 
 private:
 	resource::Proxy< PartitionMesh > m_mesh;

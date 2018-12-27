@@ -41,7 +41,7 @@ public:
 
 	virtual const wchar_t* const get() const = 0;
 
-	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) const override final;
 
 private:
 	const Key* m_keys;
@@ -102,7 +102,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
+	virtual void serialize(ISerializer& s) const override final
 	{
 		ValueType value = static_cast< ValueType >(m_en);
 		s >> Member< ValueType >(getName(), value);

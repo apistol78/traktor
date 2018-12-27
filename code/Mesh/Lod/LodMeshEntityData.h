@@ -30,11 +30,11 @@ class T_DLLCLASS LodMeshEntityData : public AbstractMeshEntityData
 public:
 	LodMeshEntityData();
 
-	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, const world::IEntityBuilder* builder) const T_OVERRIDE T_FINAL;
+	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, const world::IEntityBuilder* builder) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 	
-	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+	virtual void setTransform(const Transform& transform) override final;
 
 	const RefArray< AbstractMeshEntityData >& getLods() const { return m_lods; }
 

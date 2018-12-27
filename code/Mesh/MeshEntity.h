@@ -50,11 +50,11 @@ class T_DLLCLASS MeshEntity : public world::Entity
 public:
 	MeshEntity(const Transform& transform, bool screenSpaceCulling);
 
-	virtual void update(const world::UpdateParams& update) T_OVERRIDE;
+	virtual void update(const world::UpdateParams& update) override;
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE;
+	virtual void setTransform(const Transform& transform) override;
 
-	virtual bool getTransform(Transform& outTransform) const T_OVERRIDE T_FINAL;
+	virtual bool getTransform(Transform& outTransform) const override final;
 
 	virtual bool supportTechnique(render::handle_t technique) const = 0;
 

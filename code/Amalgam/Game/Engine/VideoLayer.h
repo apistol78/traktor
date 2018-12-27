@@ -67,7 +67,7 @@ public:
 		bool repeat
 	);
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 
 	void play();
 
@@ -91,25 +91,25 @@ public:
 
 	bool getRepeat() const;
 
-	virtual void transition(Layer* fromLayer) T_OVERRIDE T_FINAL;
+	virtual void transition(Layer* fromLayer) override final;
 
-	virtual void prepare(const UpdateInfo& info) T_OVERRIDE T_FINAL;
+	virtual void prepare(const UpdateInfo& info) override final;
 
-	virtual void update(const UpdateInfo& info) T_OVERRIDE T_FINAL;
+	virtual void update(const UpdateInfo& info) override final;
 
-	virtual void build(const UpdateInfo& info, uint32_t frame) T_OVERRIDE T_FINAL;
+	virtual void build(const UpdateInfo& info, uint32_t frame) override final;
 
-	virtual void render(render::EyeType eye, uint32_t frame) T_OVERRIDE T_FINAL;
+	virtual void render(render::EyeType eye, uint32_t frame) override final;
 
-	virtual void flush() T_OVERRIDE T_FINAL;
+	virtual void flush() override final;
 
-	virtual void preReconfigured() T_OVERRIDE T_FINAL;
+	virtual void preReconfigured() override final;
 
-	virtual void postReconfigured() T_OVERRIDE T_FINAL;
+	virtual void postReconfigured() override final;
 
-	virtual void suspend() T_OVERRIDE T_FINAL;
+	virtual void suspend() override final;
 
-	virtual void resume() T_OVERRIDE T_FINAL;
+	virtual void resume() override final;
 
 private:
 	Ref< IEnvironment > m_environment;

@@ -23,7 +23,7 @@ class LocalFileLink : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	inline const std::wstring& getPath() const { return m_path; }
 

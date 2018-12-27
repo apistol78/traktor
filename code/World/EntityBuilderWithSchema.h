@@ -40,23 +40,23 @@ public:
 
 	EntityBuilderWithSchema(IEntityBuilder* entityBuilder, IEntitySchema* entitySchema, std::map< const world::EntityData*, Ref< world::Entity > >& outEntityProducts);
 
-	virtual void addFactory(const IEntityFactory* entityFactory) T_OVERRIDE;
+	virtual void addFactory(const IEntityFactory* entityFactory) override;
 
-	virtual void removeFactory(const IEntityFactory* entityFactory) T_OVERRIDE;
+	virtual void removeFactory(const IEntityFactory* entityFactory) override;
 
-	virtual const IEntityFactory* getFactory(const EntityData* entityData) const T_OVERRIDE;
+	virtual const IEntityFactory* getFactory(const EntityData* entityData) const override;
 
-	virtual const IEntityFactory* getFactory(const IEntityEventData* entityEventData) const T_OVERRIDE;
+	virtual const IEntityFactory* getFactory(const IEntityEventData* entityEventData) const override;
 
-	virtual const IEntityFactory* getFactory(const IEntityComponentData* entityComponentData) const T_OVERRIDE;
+	virtual const IEntityFactory* getFactory(const IEntityComponentData* entityComponentData) const override;
 
-	virtual Ref< Entity > create(const EntityData* entityData) const T_OVERRIDE;
+	virtual Ref< Entity > create(const EntityData* entityData) const override;
 
-	virtual Ref< IEntityEvent > create(const IEntityEventData* entityEventData) const T_OVERRIDE;
+	virtual Ref< IEntityEvent > create(const IEntityEventData* entityEventData) const override;
 
-	virtual Ref< IEntityComponent > create(const IEntityComponentData* entityComponentData) const T_OVERRIDE;
+	virtual Ref< IEntityComponent > create(const IEntityComponentData* entityComponentData) const override;
 
-	virtual const IEntityBuilder* getCompositeEntityBuilder() const T_OVERRIDE;
+	virtual const IEntityBuilder* getCompositeEntityBuilder() const override;
 
 private:
 	typedef std::list< std::pair< std::wstring, Ref< Entity > > > scope_t;

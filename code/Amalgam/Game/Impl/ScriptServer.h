@@ -68,9 +68,9 @@ public:
 
 	void cleanup(bool full);
 
-	virtual script::IScriptManager* getScriptManager() T_OVERRIDE T_FINAL;
+	virtual script::IScriptManager* getScriptManager() override final;
 
-	virtual script::IScriptContext* getScriptContext() T_OVERRIDE T_FINAL;
+	virtual script::IScriptContext* getScriptContext() override final;
 
 private:
 	struct CallSample
@@ -99,13 +99,13 @@ private:
 	
 	void threadDebugger();
 
-	virtual void debugeeStateChange(script::IScriptDebugger* scriptDebugger) T_OVERRIDE T_FINAL;
+	virtual void debugeeStateChange(script::IScriptDebugger* scriptDebugger) override final;
 
-	virtual void callEnter(const Guid& scriptId, const std::wstring& function) T_OVERRIDE T_FINAL;
+	virtual void callEnter(const Guid& scriptId, const std::wstring& function) override final;
 
-	virtual void callLeave(const Guid& scriptId, const std::wstring& function) T_OVERRIDE T_FINAL;
+	virtual void callLeave(const Guid& scriptId, const std::wstring& function) override final;
 
-	virtual void callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration) T_OVERRIDE T_FINAL;
+	virtual void callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration) override final;
 };
 
 	}

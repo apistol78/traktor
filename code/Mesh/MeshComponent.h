@@ -46,13 +46,13 @@ class T_DLLCLASS MeshComponent : public world::IEntityComponent
 public:
 	MeshComponent(bool screenSpaceCulling);
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 
-	virtual void setOwner(world::Entity* owner) T_OVERRIDE T_FINAL;
+	virtual void setOwner(world::Entity* owner) override final;
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE;
+	virtual void setTransform(const Transform& transform) override;
 
-	virtual void update(const world::UpdateParams& update) T_OVERRIDE;
+	virtual void update(const world::UpdateParams& update) override;
 
 	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) = 0;
 

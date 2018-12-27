@@ -42,7 +42,7 @@ public:
 
 	const std::list< Pattern >& getPatterns() const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::list< Pattern > m_patterns;

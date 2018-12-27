@@ -19,11 +19,11 @@ const ImmutableNode::OutputPinDesc c_Scalar_o[] =
 class ScalarCursor : public RefCountImpl< ISoundBufferCursor >
 {
 public:
-	virtual void setParameter(handle_t id, float parameter) T_OVERRIDE T_FINAL {}
+	virtual void setParameter(handle_t id, float parameter) override final {}
 
-	virtual void disableRepeat() T_OVERRIDE T_FINAL {}
+	virtual void disableRepeat() override final {}
 
-	virtual void reset() T_OVERRIDE T_FINAL {}
+	virtual void reset() override final {}
 };
 
 		}

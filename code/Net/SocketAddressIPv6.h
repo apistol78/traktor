@@ -42,9 +42,9 @@ public:
 
 	virtual ~SocketAddressIPv6();
 	
-	virtual bool valid() const T_OVERRIDE T_FINAL;
+	virtual bool valid() const override final;
 
-	virtual std::wstring getHostName() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getHostName() const override final;
 
 	const addrinfo* getAddrInfo(int socktype) const;
 	

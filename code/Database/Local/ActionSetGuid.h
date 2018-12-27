@@ -26,13 +26,13 @@ class ActionSetGuid : public Action
 public:
 	ActionSetGuid(const Path& instancePath, const Guid& newGuid, bool create);
 
-	virtual bool execute(Context* context) T_OVERRIDE T_FINAL;
+	virtual bool execute(Context* context) override final;
 
-	virtual bool undo(Context* context) T_OVERRIDE T_FINAL;
+	virtual bool undo(Context* context) override final;
 
-	virtual void clean(Context* context) T_OVERRIDE T_FINAL;
+	virtual void clean(Context* context) override final;
 
-	virtual bool redundant(const Action* action) const T_OVERRIDE T_FINAL;
+	virtual bool redundant(const Action* action) const override final;
 
 private:
 	Path m_instancePath;

@@ -38,11 +38,11 @@ struct Operator : public IRuntimeDispatch
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(1)
 

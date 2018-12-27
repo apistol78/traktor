@@ -21,7 +21,7 @@ class ThumbnailGenerator : public IThumbnailGenerator
 public:
 	ThumbnailGenerator(const Path& thumbsPath);
 
-	virtual Ref< drawing::Image > get(const Path& fileName, int32_t width, int32_t height, AlphaMode alphaMode) T_OVERRIDE T_FINAL;
+	virtual Ref< drawing::Image > get(const Path& fileName, int32_t width, int32_t height, AlphaMode alphaMode) override final;
 
 private:
 	Path m_thumbsPath;

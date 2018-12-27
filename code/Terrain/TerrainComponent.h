@@ -131,15 +131,15 @@ public:
 
 	uint32_t getPatchCount() const { return m_patchCount; }
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void setOwner(world::Entity* owner) T_OVERRIDE T_FINAL;
+	virtual void setOwner(world::Entity* owner) override final;
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+	virtual void setTransform(const Transform& transform) override final;
 
-	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
+	virtual void update(const world::UpdateParams& update) override final;
 
 private:
 	friend class TerrainEditModifier;

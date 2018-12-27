@@ -712,7 +712,7 @@ public:
 			op = new Operator< ClassType, ReturnType, Argument1Type >(method);
 	}
 
-	virtual const TypeInfo& getExportType() const T_OVERRIDE T_FINAL
+	virtual const TypeInfo& getExportType() const override final
 	{
 		return type_of< ClassType >();
 	}

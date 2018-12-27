@@ -27,9 +27,9 @@ class T_DLLCLASS GraphBuffer : public ISoundBuffer
 public:
 	GraphBuffer(const Graph* graph);
 
-	virtual Ref< ISoundBufferCursor > createCursor() const T_OVERRIDE T_FINAL;
+	virtual Ref< ISoundBufferCursor > createCursor() const override final;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
+	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const override final;
 
 private:
 	Ref< const Graph > m_graph;

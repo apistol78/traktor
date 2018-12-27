@@ -24,11 +24,11 @@ class IndexBufferCapture : public IndexBuffer
 public:
 	IndexBufferCapture(IndexBuffer* indexBuffer, IndexType indexType, uint32_t bufferSize);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void* lock() T_OVERRIDE T_FINAL;
+	virtual void* lock() override final;
 	
-	virtual void unlock() T_OVERRIDE T_FINAL;
+	virtual void unlock() override final;
 
 	IndexBuffer* getIndexBuffer() const { return m_indexBuffer; }
 

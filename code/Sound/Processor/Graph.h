@@ -149,7 +149,7 @@ public:
 	void rewire(const OutputPin* outputPin, const OutputPin* newOutputPin);
 
 	/*! \brief */
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	/*! \brief */
 	const RefArray< Node >& getNodes() const { return m_nodes; }

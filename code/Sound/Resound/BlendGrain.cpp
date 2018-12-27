@@ -44,7 +44,7 @@ struct BlendGrainCursor : public RefCountImpl< ISoundBufferCursor >
 			Alloc::freeAlign(m_outputSamples[0]);
 	}
 
-	virtual void setParameter(handle_t id, float parameter) T_OVERRIDE T_FINAL
+	virtual void setParameter(handle_t id, float parameter) override final
 	{
 		if (id == m_id)
 			m_parameter = parameter;
@@ -53,13 +53,13 @@ struct BlendGrainCursor : public RefCountImpl< ISoundBufferCursor >
 		m_cursors[1]->setParameter(id, parameter);
 	}
 
-	virtual void disableRepeat() T_OVERRIDE T_FINAL
+	virtual void disableRepeat() override final
 	{
 		m_cursors[0]->disableRepeat();
 		m_cursors[1]->disableRepeat();
 	}
 
-	virtual void reset() T_OVERRIDE T_FINAL
+	virtual void reset() override final
 	{
 		m_cursors[0]->reset();
 		m_cursors[1]->reset();

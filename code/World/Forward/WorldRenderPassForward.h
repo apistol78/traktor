@@ -62,19 +62,19 @@ public:
 		render::ISimpleTexture* depthMap
 	);
 
-	virtual render::handle_t getTechnique() const T_OVERRIDE T_FINAL;
+	virtual render::handle_t getTechnique() const override final;
 
-	virtual uint32_t getPassFlags() const T_OVERRIDE T_FINAL;
+	virtual uint32_t getPassFlags() const override final;
 
-	virtual void setShaderTechnique(render::Shader* shader) const T_OVERRIDE T_FINAL;
+	virtual void setShaderTechnique(render::Shader* shader) const override final;
 
-	virtual void setShaderCombination(render::Shader* shader) const T_OVERRIDE T_FINAL;
+	virtual void setShaderCombination(render::Shader* shader) const override final;
 
-	virtual void setShaderCombination(render::Shader* shader, const Transform& world, const Aabb3& bounds) const T_OVERRIDE T_FINAL;
+	virtual void setShaderCombination(render::Shader* shader, const Transform& world, const Aabb3& bounds) const override final;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams) const T_OVERRIDE T_FINAL;
+	virtual void setProgramParameters(render::ProgramParameters* programParams) const override final;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world, const Aabb3& bounds) const T_OVERRIDE T_FINAL;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world, const Aabb3& bounds) const override final;
 
 private:
 	render::handle_t m_technique;

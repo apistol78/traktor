@@ -48,13 +48,13 @@ public:
 
 	ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc* outputPins);
 
-	virtual size_t getInputPinCount() const T_OVERRIDE T_FINAL;
+	virtual size_t getInputPinCount() const override final;
 
-	virtual const InputPin* getInputPin(size_t index) const T_OVERRIDE T_FINAL;
+	virtual const InputPin* getInputPin(size_t index) const override final;
 
-	virtual size_t getOutputPinCount() const T_OVERRIDE T_FINAL;
+	virtual size_t getOutputPinCount() const override final;
 
-	virtual const OutputPin* getOutputPin(size_t index) const T_OVERRIDE T_FINAL;
+	virtual const OutputPin* getOutputPin(size_t index) const override final;
 
 private:
 	RefArray< InputPin > m_inputPins;

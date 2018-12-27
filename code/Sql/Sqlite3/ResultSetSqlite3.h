@@ -33,23 +33,23 @@ class T_DLLCLASS ResultSetSqlite3 : public IResultSet
 	T_RTTI_CLASS;
 
 public:
-	virtual bool next() T_OVERRIDE T_FINAL;
+	virtual bool next() override final;
 
-	virtual int32_t getColumnCount() const T_OVERRIDE T_FINAL;
+	virtual int32_t getColumnCount() const override final;
 
-	virtual std::wstring getColumnName(int32_t columnIndex) const T_OVERRIDE T_FINAL;
+	virtual std::wstring getColumnName(int32_t columnIndex) const override final;
 
-	virtual ColumnType getColumnType(int32_t columnIndex) const T_OVERRIDE T_FINAL;
+	virtual ColumnType getColumnType(int32_t columnIndex) const override final;
 
-	virtual int32_t getInt32(int32_t columnIndex) const T_OVERRIDE T_FINAL;
+	virtual int32_t getInt32(int32_t columnIndex) const override final;
 
-	virtual int64_t getInt64(int32_t columnIndex) const T_OVERRIDE T_FINAL;
+	virtual int64_t getInt64(int32_t columnIndex) const override final;
 
-	virtual float getFloat(int32_t columnIndex) const T_OVERRIDE T_FINAL;
+	virtual float getFloat(int32_t columnIndex) const override final;
 
-	virtual double getDouble(int32_t columnIndex) const T_OVERRIDE T_FINAL;
+	virtual double getDouble(int32_t columnIndex) const override final;
 
-	virtual std::wstring getString(int32_t columnIndex) const T_OVERRIDE T_FINAL;
+	virtual std::wstring getString(int32_t columnIndex) const override final;
 
 private:
 	friend class ConnectionSqlite3;

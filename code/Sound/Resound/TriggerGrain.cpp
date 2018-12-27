@@ -26,7 +26,7 @@ struct TriggerGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	float m_parameter;
 	bool m_active;
 
-	virtual void setParameter(handle_t id, float parameter) T_OVERRIDE T_FINAL
+	virtual void setParameter(handle_t id, float parameter) override final
 	{
 		if (id == m_id)
 		{
@@ -53,13 +53,13 @@ struct TriggerGrainCursor : public RefCountImpl< ISoundBufferCursor >
 			m_cursor->setParameter(id, parameter);
 	}
 
-	virtual void disableRepeat() T_OVERRIDE T_FINAL
+	virtual void disableRepeat() override final
 	{
 		if (m_cursor)
 			m_cursor->disableRepeat();
 	}
 
-	virtual void reset() T_OVERRIDE T_FINAL
+	virtual void reset() override final
 	{
 		if (m_cursor)
 			m_cursor->reset();

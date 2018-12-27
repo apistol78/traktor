@@ -49,19 +49,19 @@ public:
 	MenuItem* get(int32_t index) const;
 
 protected:
-	virtual bool getToolTip(std::wstring& outToolTip) const T_OVERRIDE T_FINAL;
+	virtual bool getToolTip(std::wstring& outToolTip) const override final;
 
-	virtual Size getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const T_OVERRIDE T_FINAL;
+	virtual Size getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const override final;
 
-	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight) T_OVERRIDE T_FINAL;
+	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight) override final;
 
-	virtual bool mouseEnter(ToolBar* toolBar) T_OVERRIDE T_FINAL;
+	virtual bool mouseEnter(ToolBar* toolBar) override final;
 
-	virtual void mouseLeave(ToolBar* toolBar) T_OVERRIDE T_FINAL;
+	virtual void mouseLeave(ToolBar* toolBar) override final;
 
-	virtual void buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent) T_OVERRIDE T_FINAL;
+	virtual void buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent) override final;
 
-	virtual void buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent) T_OVERRIDE T_FINAL;
+	virtual void buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent) override final;
 
 private:
 	Command m_command;

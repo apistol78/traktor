@@ -60,7 +60,7 @@ public:
 
 	bool create(Widget* parent, int style = WsDoubleBuffer, IPropertyGuidResolver* guidResolver = 0);
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 
 	void addPropertyItem(PropertyItem* propertyItem);
 
@@ -92,11 +92,11 @@ public:
 
 	virtual bool paste();
 
-	virtual void update(const Rect* rc = 0, bool immediate = false) T_OVERRIDE;
+	virtual void update(const Rect* rc = 0, bool immediate = false) override;
 
-	virtual Size getMinimumSize() const T_OVERRIDE;
+	virtual Size getMinimumSize() const override;
 	
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 private:
 	friend class PropertyItem;

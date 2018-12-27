@@ -37,9 +37,9 @@ public:
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,
 		const Transform& worldTransform
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	IPoseControllerData* getTrackPoseController() const { return m_trackPoseController; }
 

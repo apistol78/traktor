@@ -71,7 +71,7 @@ public:
 
 	bool create(ui::Widget* parent);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	void setDatabase(db::Database* db);
 
@@ -81,7 +81,7 @@ public:
 
 	bool handleCommand(const ui::Command& command);
 
-	virtual void setEnable(bool enable) T_OVERRIDE T_FINAL;
+	virtual void setEnable(bool enable) override final;
 
 private:
 	IEditor* m_editor;

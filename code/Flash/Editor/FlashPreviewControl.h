@@ -100,7 +100,7 @@ public:
 		sound::ISoundPlayer* soundPlayer
 	);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	void setMovie(Movie* movie);
 
@@ -114,7 +114,7 @@ public:
 
 	bool playing() const;
 
-	virtual ui::Size getPreferedSize() const T_OVERRIDE T_FINAL;
+	virtual ui::Size getPreferedSize() const override final;
 
 	MoviePlayer* getMoviePlayer() const { return m_moviePlayer; }
 

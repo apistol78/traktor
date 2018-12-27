@@ -32,7 +32,7 @@ class T_DLLCLASS GradientStatic : public Widget
 public:
 	bool create(Widget* parent, const std::wstring& text, int style = WsNone);
 
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 private:
 	void eventPaint(PaintEvent* event);

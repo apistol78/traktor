@@ -33,16 +33,16 @@ class T_DLLCLASS InCombine : public IInputNode
 public:
 	InCombine();
 
-	virtual Ref< Instance > createInstance() const T_OVERRIDE T_FINAL;
+	virtual Ref< Instance > createInstance() const override final;
 
 	virtual float evaluate(
 		Instance* instance,
 		const InputValueSet& valueSet,
 		float T,
 		float dT
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 	
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 	
 private:
 	friend class InCombineTraits;

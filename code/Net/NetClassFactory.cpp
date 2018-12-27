@@ -208,7 +208,7 @@ public:
 	{
 	}
 
-	virtual void notify(Replicator* replicator, float eventTime, uint32_t eventId, ReplicatorProxy* proxy, const Object* eventObject) T_FINAL
+	virtual void notify(Replicator* replicator, float eventTime, uint32_t eventId, ReplicatorProxy* proxy, const Object* eventObject) final
 	{
 		Any argv[] =
 		{
@@ -236,7 +236,7 @@ public:
 	{
 	}
 
-	virtual bool notify(Replicator* replicator, float eventTime, ReplicatorProxy* fromProxy, const Object* eventObject) T_FINAL
+	virtual bool notify(Replicator* replicator, float eventTime, ReplicatorProxy* fromProxy, const Object* eventObject) final
 	{
 		Any argv[] =
 		{

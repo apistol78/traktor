@@ -38,19 +38,19 @@ public:
 		Stage* stage
 	);
 
-	virtual void enter() T_OVERRIDE T_FINAL;
+	virtual void enter() override final;
 
-	virtual void leave() T_OVERRIDE T_FINAL;
+	virtual void leave() override final;
 
-	virtual UpdateResult update(IStateManager* stateManager, const UpdateInfo& info) T_OVERRIDE T_FINAL;
+	virtual UpdateResult update(IStateManager* stateManager, const UpdateInfo& info) override final;
 
-	virtual BuildResult build(uint32_t frame, const UpdateInfo& info) T_OVERRIDE T_FINAL;
+	virtual BuildResult build(uint32_t frame, const UpdateInfo& info) override final;
 
-	virtual bool render(uint32_t frame, render::EyeType eye, const UpdateInfo& info) T_OVERRIDE T_FINAL;
+	virtual bool render(uint32_t frame, render::EyeType eye, const UpdateInfo& info) override final;
 
-	virtual void flush() T_OVERRIDE T_FINAL;
+	virtual void flush() override final;
 
-	virtual bool take(const Object* event) T_OVERRIDE T_FINAL;
+	virtual bool take(const Object* event) override final;
 
 private:
 	Ref< IEnvironment > m_environment;

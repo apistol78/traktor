@@ -56,25 +56,25 @@ public:
 
 	virtual ~OnlinePeer2PeerProvider();
 
-	virtual bool update() T_OVERRIDE T_FINAL;
+	virtual bool update() override final;
 
-	virtual net::net_handle_t getLocalHandle() const T_OVERRIDE T_FINAL;
+	virtual net::net_handle_t getLocalHandle() const override final;
 
-	virtual int32_t getPeerCount() const T_OVERRIDE T_FINAL;
+	virtual int32_t getPeerCount() const override final;
 
-	virtual net::net_handle_t getPeerHandle(int32_t index) const T_OVERRIDE T_FINAL;
+	virtual net::net_handle_t getPeerHandle(int32_t index) const override final;
 
-	virtual std::wstring getPeerName(int32_t index) const T_OVERRIDE T_FINAL;
+	virtual std::wstring getPeerName(int32_t index) const override final;
 
-	virtual Object* getPeerUser(int32_t index) const T_OVERRIDE T_FINAL;
+	virtual Object* getPeerUser(int32_t index) const override final;
 
-	virtual bool setPrimaryPeerHandle(net::net_handle_t node) T_OVERRIDE T_FINAL;
+	virtual bool setPrimaryPeerHandle(net::net_handle_t node) override final;
 
-	virtual net::net_handle_t getPrimaryPeerHandle() const T_OVERRIDE T_FINAL;
+	virtual net::net_handle_t getPrimaryPeerHandle() const override final;
 
-	virtual bool send(net::net_handle_t node, const void* data, int32_t size) T_OVERRIDE T_FINAL;
+	virtual bool send(net::net_handle_t node, const void* data, int32_t size) override final;
 
-	virtual int32_t recv(void* data, int32_t size, net::net_handle_t& outNode) T_OVERRIDE T_FINAL;
+	virtual int32_t recv(void* data, int32_t size, net::net_handle_t& outNode) override final;
 
 private:
 	Ref< ISessionManager > m_sessionManager;

@@ -47,11 +47,11 @@ public:
 		bool autoStopFar
 	);
 
-	virtual bool update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
+	virtual bool update(const world::UpdateParams& update) override final;
 
-	virtual void build(world::IWorldRenderer* worldRenderer) T_OVERRIDE T_FINAL;
+	virtual void build(world::IWorldRenderer* worldRenderer) override final;
 
-	virtual void cancel(world::CancelType when) T_OVERRIDE T_FINAL;
+	virtual void cancel(world::CancelType when) override final;
 
 private:
 	Ref< world::Entity > m_sender;

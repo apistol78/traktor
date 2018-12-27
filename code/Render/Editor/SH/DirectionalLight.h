@@ -31,7 +31,7 @@ class T_DLLCLASS DirectionalLight : public SHFunction
 public:
 	DirectionalLight(const Vector4& direction, float cutOffAngle);
 
-	virtual float evaluate(float phi, float theta, const Vector4& unit) const T_OVERRIDE T_FINAL;
+	virtual float evaluate(float phi, float theta, const Vector4& unit) const override final;
 
 private:
 	Vector4 m_direction;

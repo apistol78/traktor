@@ -35,7 +35,7 @@ public:
 
 	void addRange(wchar_t from, wchar_t to);
 
-	virtual EditValidator::Result validate(const std::wstring& text) const T_OVERRIDE;
+	virtual EditValidator::Result validate(const std::wstring& text) const override;
 
 private:
 	std::set< wchar_t > m_set;

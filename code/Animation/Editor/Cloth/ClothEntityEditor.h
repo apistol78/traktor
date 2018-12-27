@@ -32,9 +32,9 @@ class T_DLLEXPORT ClothEntityEditor : public scene::DefaultEntityEditor
 public:
 	ClothEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
-	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
+	virtual bool handleCommand(const ui::Command& command) override final;
 
-	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const T_OVERRIDE T_FINAL;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
 };
 
 	}

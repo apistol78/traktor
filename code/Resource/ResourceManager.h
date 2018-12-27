@@ -50,27 +50,27 @@ public:
 
 	virtual ~ResourceManager();
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void addFactory(const IResourceFactory* factory) T_OVERRIDE T_FINAL;
+	virtual void addFactory(const IResourceFactory* factory) override final;
 
-	virtual void removeFactory(const IResourceFactory* factory) T_OVERRIDE T_FINAL;
+	virtual void removeFactory(const IResourceFactory* factory) override final;
 
-	virtual void removeAllFactories() T_OVERRIDE T_FINAL;
+	virtual void removeAllFactories() override final;
 
-	virtual bool load(const ResourceBundle* bundle) T_OVERRIDE T_FINAL;
+	virtual bool load(const ResourceBundle* bundle) override final;
 	
-	virtual Ref< ResourceHandle > bind(const TypeInfo& productType, const Guid& guid) T_OVERRIDE T_FINAL;
+	virtual Ref< ResourceHandle > bind(const TypeInfo& productType, const Guid& guid) override final;
 
-	virtual void reload(const Guid& guid, bool flushedOnly) T_OVERRIDE T_FINAL;
+	virtual void reload(const Guid& guid, bool flushedOnly) override final;
 
-	virtual void reload(const TypeInfo& productType, bool flushedOnly) T_OVERRIDE T_FINAL;
+	virtual void reload(const TypeInfo& productType, bool flushedOnly) override final;
 
-	virtual void unload(const TypeInfo& productType) T_OVERRIDE T_FINAL;
+	virtual void unload(const TypeInfo& productType) override final;
 
-	virtual void unloadUnusedResident() T_OVERRIDE T_FINAL;
+	virtual void unloadUnusedResident() override final;
 	
-	virtual void getStatistics(ResourceManagerStatistics& outStatistics) const T_OVERRIDE T_FINAL;
+	virtual void getStatistics(ResourceManagerStatistics& outStatistics) const override final;
 
 private:
 	Ref< db::Database > m_database;

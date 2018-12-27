@@ -29,13 +29,13 @@ class ActionWriteObject : public Action
 public:
 	ActionWriteObject(const Path& instancePath, const std::wstring& primaryTypeName);
 
-	virtual bool execute(Context* context) T_OVERRIDE T_FINAL;
+	virtual bool execute(Context* context) override final;
 
-	virtual bool undo(Context* context) T_OVERRIDE T_FINAL;
+	virtual bool undo(Context* context) override final;
 
-	virtual void clean(Context* context) T_OVERRIDE T_FINAL;
+	virtual void clean(Context* context) override final;
 
-	virtual bool redundant(const Action* action) const T_OVERRIDE T_FINAL;
+	virtual bool redundant(const Action* action) const override final;
 
 	const AlignedVector< uint8_t >& getBuffer() const { return m_objectBuffer; }
 

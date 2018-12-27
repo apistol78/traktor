@@ -32,7 +32,7 @@ class T_DLLCLASS PointLightEntityData : public EntityData
 public:
 	PointLightEntityData();
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const Vector4& getSunColor() const { return m_sunColor; }
 

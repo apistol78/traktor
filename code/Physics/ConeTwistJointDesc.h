@@ -43,7 +43,7 @@ public:
 
 	void setTwistAngle(float twistAngle);
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const Vector4& getAnchor() const { return m_anchor; }
 

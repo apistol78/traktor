@@ -22,9 +22,9 @@ class TextureProxy : public ITexture
 public:
 	TextureProxy(const resource::Proxy< ITexture >& texture);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual ITexture* resolve() T_OVERRIDE T_FINAL;
+	virtual ITexture* resolve() override final;
 
 private:
 	resource::Proxy< ITexture > m_texture;

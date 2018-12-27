@@ -37,9 +37,9 @@ public:
 
 	FlowLayout(int marginX, int marginY, int padX, int padY);
 	
-	virtual bool fit(Widget* widget, const Size& bounds, Size& result) T_OVERRIDE;
+	virtual bool fit(Widget* widget, const Size& bounds, Size& result) override;
 	
-	virtual void update(Widget* widget) T_OVERRIDE;
+	virtual void update(Widget* widget) override;
 	
 private:
 	Size m_margin;

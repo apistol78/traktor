@@ -86,11 +86,11 @@ class StackWalkerToConsole : public StackWalker
 {
 protected:
 	// Overload to get less output by stackwalker.
-	virtual void OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUserName) T_OVERRIDE T_FINAL {}
-	virtual void OnDbgHelpErr(LPCSTR szFuncName, DWORD gle, DWORD64 addr) T_OVERRIDE T_FINAL {}
-	virtual void OnLoadModule(LPCSTR img, LPCSTR mod, DWORD64 baseAddr, DWORD size, DWORD result, LPCSTR symType, LPCSTR pdbName, ULONGLONG fileVersion) T_OVERRIDE T_FINAL {}
+	virtual void OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUserName) override final {}
+	virtual void OnDbgHelpErr(LPCSTR szFuncName, DWORD gle, DWORD64 addr) override final {}
+	virtual void OnLoadModule(LPCSTR img, LPCSTR mod, DWORD64 baseAddr, DWORD size, DWORD result, LPCSTR symType, LPCSTR pdbName, ULONGLONG fileVersion) override final {}
 
-	virtual void OnOutput(LPCSTR szText) T_OVERRIDE T_FINAL
+	virtual void OnOutput(LPCSTR szText) override final
 	{
 		log::info << mbstows(szText);
 	}
@@ -185,7 +185,7 @@ public:
 	{
 	}
 
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) override final
 	{
 		if (m_originalTarget)
 			m_originalTarget->log(threadId, level, str);
@@ -209,7 +209,7 @@ struct StatusListener : public editor::IPipelineBuilder::IListener
 		int32_t index,
 		int32_t count,
 		const editor::PipelineDependency* dependency
-	) T_OVERRIDE T_FINAL
+	) override final
 	{
 		log::info << L":" << index << L":" << count << Endl;
 	}
@@ -220,7 +220,7 @@ struct StatusListener : public editor::IPipelineBuilder::IListener
 		int32_t count,
 		const editor::PipelineDependency* dependency,
 		editor::IPipelineBuilder::BuildResult result
-	) T_OVERRIDE T_FINAL
+	) override final
 	{
 	}
 };

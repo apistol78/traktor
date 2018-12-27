@@ -82,14 +82,14 @@ public:
 
 	Ref< PropertyGroup > difference(const PropertyGroup* rightGroup) const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE;
+	virtual void serialize(ISerializer& s) override;
 
 	const std::map< std::wstring, Ref< IPropertyValue > >& getValues() const { return m_value; }
 
 protected:
-	virtual Ref< IPropertyValue > join(const IPropertyValue* rightGroup) const T_OVERRIDE T_FINAL;
+	virtual Ref< IPropertyValue > join(const IPropertyValue* rightGroup) const override final;
 
-	virtual Ref< IPropertyValue > clone() const T_OVERRIDE T_FINAL;
+	virtual Ref< IPropertyValue > clone() const override final;
 
 private:
 	std::map< std::wstring, Ref< IPropertyValue > > m_value;

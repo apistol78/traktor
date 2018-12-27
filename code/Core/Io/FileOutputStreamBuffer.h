@@ -36,7 +36,7 @@ public:
 
 	void close();
 
-	virtual int32_t overflow(const wchar_t* buffer, int32_t count) T_OVERRIDE T_FINAL;
+	virtual int32_t overflow(const wchar_t* buffer, int32_t count) override final;
 
 private:
 	Semaphore m_lock;

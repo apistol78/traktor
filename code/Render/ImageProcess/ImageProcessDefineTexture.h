@@ -34,9 +34,9 @@ class T_DLLCLASS ImageProcessDefineTexture : public ImageProcessDefine
 	T_RTTI_CLASS;
 
 public:
-	virtual bool define(ImageProcess* imageProcess, resource::IResourceManager* resourceManager, IRenderSystem* renderSystem, uint32_t screenWidth, uint32_t screenHeight) T_OVERRIDE T_FINAL;
+	virtual bool define(ImageProcess* imageProcess, resource::IResourceManager* resourceManager, IRenderSystem* renderSystem, uint32_t screenWidth, uint32_t screenHeight) override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const resource::Id< ITexture >& getTexture() const { return m_texture; }
 

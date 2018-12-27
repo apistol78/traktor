@@ -13,9 +13,9 @@ class PrefabEntityEditorFactory : public scene::IEntityEditorFactory
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfoSet getEntityDataTypes() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getEntityDataTypes() const override final;
 
-	virtual Ref< scene::IEntityEditor > createEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter) const T_OVERRIDE T_FINAL;
+	virtual Ref< scene::IEntityEditor > createEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter) const override final;
 };
 
 	}

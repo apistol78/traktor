@@ -87,7 +87,7 @@ public:
 	 */
 	const float getRadius() const { return m_radius; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	int32_t m_parent;

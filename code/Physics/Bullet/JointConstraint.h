@@ -29,17 +29,17 @@ public:
 
 	void setJointSolver(JointSolver* jointSolver);
 
-	virtual void buildJacobian() T_OVERRIDE T_FINAL;
+	virtual void buildJacobian() override final;
 
-	virtual void getInfo1(btConstraintInfo1* info) T_OVERRIDE T_FINAL;
+	virtual void getInfo1(btConstraintInfo1* info) override final;
 
-	virtual void getInfo2(btConstraintInfo2* info) T_OVERRIDE T_FINAL;
+	virtual void getInfo2(btConstraintInfo2* info) override final;
 
-	virtual	void solveConstraintObsolete(btSolverBody& bodyA, btSolverBody& bodyB, btScalar timeStep) T_OVERRIDE T_FINAL;
+	virtual	void solveConstraintObsolete(btSolverBody& bodyA, btSolverBody& bodyB, btScalar timeStep) override final;
 
-	virtual	void setParam(int num, btScalar value, int axis) T_OVERRIDE T_FINAL;
+	virtual	void setParam(int num, btScalar value, int axis) override final;
 
-	virtual	btScalar getParam(int num, int axis) const T_OVERRIDE T_FINAL;
+	virtual	btScalar getParam(int num, int axis) const override final;
 
 private:
 	JointSolver* m_jointSolver;

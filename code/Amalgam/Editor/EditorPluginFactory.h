@@ -30,9 +30,9 @@ class T_DLLCLASS EditorPluginFactory : public editor::IEditorPluginFactory
 	T_RTTI_CLASS;
 
 public:
-	virtual void getCommands(std::list< ui::Command >& outCommands) const T_OVERRIDE T_FINAL;
+	virtual void getCommands(std::list< ui::Command >& outCommands) const override final;
 
-	virtual Ref< editor::IEditorPlugin > createEditorPlugin(editor::IEditor* editor) const T_OVERRIDE T_FINAL;
+	virtual Ref< editor::IEditorPlugin > createEditorPlugin(editor::IEditor* editor) const override final;
 };
 
 	}

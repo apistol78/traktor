@@ -41,7 +41,7 @@ public:
 		int decimals = 8
 	);
 
-	virtual EditValidator::Result validate(const std::wstring& text) const T_OVERRIDE;
+	virtual EditValidator::Result validate(const std::wstring& text) const override;
 
 private:
 	bool m_floatPoint;

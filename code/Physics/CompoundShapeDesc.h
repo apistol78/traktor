@@ -31,7 +31,7 @@ class T_DLLCLASS CompoundShapeDesc : public ShapeDesc
 	T_RTTI_CLASS;
 
 public:
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	RefArray< ShapeDesc > m_shapes;

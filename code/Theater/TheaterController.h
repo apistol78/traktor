@@ -35,7 +35,7 @@ class T_DLLCLASS TheaterController : public scene::ISceneController
 public:
 	TheaterController(const RefArray< const Act >& acts, bool repeatActs);
 
-	virtual void update(scene::Scene* scene, float time, float deltaTime) T_OVERRIDE T_FINAL;
+	virtual void update(scene::Scene* scene, float time, float deltaTime) override final;
 
 private:
 	RefArray< const Act > m_acts;

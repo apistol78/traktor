@@ -39,11 +39,11 @@ public:
 		float wet
 	);
 
-	virtual Ref< IFilterInstance > createInstance() const T_OVERRIDE T_FINAL;
+	virtual Ref< IFilterInstance > createInstance() const override final;
 
-	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
+	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	int32_t m_delay;

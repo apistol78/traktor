@@ -30,7 +30,7 @@ extern void NSLogCpp(const wchar_t* s);
 class LogTargetConsole : public ILogTarget
 {
 public:
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) override final
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		if (level == 0)
@@ -65,7 +65,7 @@ private:
 class LogTargetDebug : public ILogTarget
 {
 public:
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) override final
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 #if defined(_WIN32) && !defined(_XBOX_ONE)
@@ -104,37 +104,37 @@ public:
 		m_localTarget = target;
 	}
 
-	virtual int32_t getIndent() const T_OVERRIDE T_FINAL
+	virtual int32_t getIndent() const override final
 	{
 		return m_buffer.getIndent();
 	}
 
-	virtual void setIndent(int32_t indent) T_OVERRIDE T_FINAL
+	virtual void setIndent(int32_t indent) override final
 	{
 		m_buffer.setIndent(indent);
 	}
 
-	virtual int32_t getDecimals() const T_OVERRIDE T_FINAL
+	virtual int32_t getDecimals() const override final
 	{
 		return m_buffer.getDecimals();
 	}
 
-	virtual void setDecimals(int32_t decimals) T_OVERRIDE T_FINAL
+	virtual void setDecimals(int32_t decimals) override final
 	{
 		m_buffer.setDecimals(decimals);
 	}
 
-	virtual bool getPushIndent() const T_OVERRIDE T_FINAL
+	virtual bool getPushIndent() const override final
 	{
 		return m_buffer.getPushIndent();
 	}
 
-	virtual void setPushIndent(bool pushIndent) T_OVERRIDE T_FINAL
+	virtual void setPushIndent(bool pushIndent) override final
 	{
 		m_buffer.setPushIndent(pushIndent);
 	}
 
-	virtual int32_t overflow(const wchar_t* buffer, int32_t count) T_OVERRIDE T_FINAL
+	virtual int32_t overflow(const wchar_t* buffer, int32_t count) override final
 	{
 		for (int32_t i = 0; i < count; ++i)
 		{
@@ -195,37 +195,37 @@ public:
 		return os;
 	}
 
-	virtual int32_t getIndent() const T_OVERRIDE T_FINAL
+	virtual int32_t getIndent() const override final
 	{
 		return getThreadLocalBuffer()->getIndent();
 	}
 
-	virtual void setIndent(int32_t indent) T_OVERRIDE T_FINAL
+	virtual void setIndent(int32_t indent) override final
 	{
 		getThreadLocalBuffer()->setIndent(indent);
 	}
 
-	virtual int32_t getDecimals() const T_OVERRIDE T_FINAL
+	virtual int32_t getDecimals() const override final
 	{
 		return getThreadLocalBuffer()->getDecimals();
 	}
 
-	virtual void setDecimals(int32_t decimals) T_OVERRIDE T_FINAL
+	virtual void setDecimals(int32_t decimals) override final
 	{
 		getThreadLocalBuffer()->setDecimals(decimals);
 	}
 
-	virtual bool getPushIndent() const T_OVERRIDE T_FINAL
+	virtual bool getPushIndent() const override final
 	{
 		return getThreadLocalBuffer()->getPushIndent();
 	}
 
-	virtual void setPushIndent(bool pushIndent) T_OVERRIDE T_FINAL
+	virtual void setPushIndent(bool pushIndent) override final
 	{
 		getThreadLocalBuffer()->setPushIndent(pushIndent);
 	}
 
-	virtual int32_t overflow(const wchar_t* buffer, int32_t count) T_OVERRIDE T_FINAL
+	virtual int32_t overflow(const wchar_t* buffer, int32_t count) override final
 	{
 		return getThreadLocalBuffer()->overflow(buffer, count);
 	}

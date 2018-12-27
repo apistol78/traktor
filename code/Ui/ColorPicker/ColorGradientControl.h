@@ -41,7 +41,7 @@ class T_DLLCLASS ColorGradientControl : public Widget
 public:
 	bool create(Widget* parent, int style, const Color4ub& color);
 
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 	void setColor(const Color4ub& color, bool updateCursor);
 

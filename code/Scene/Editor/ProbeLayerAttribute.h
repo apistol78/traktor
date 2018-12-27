@@ -20,7 +20,7 @@ class T_DLLCLASS ProbeLayerAttribute : public world::ILayerAttribute
 	T_RTTI_CLASS;
 
 public:
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 };
 
 	}

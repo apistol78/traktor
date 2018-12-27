@@ -27,11 +27,11 @@ class AsString : public ActionClass
 public:
 	AsString(ActionContext* context);
 
-	virtual void initialize(ActionObject* self) T_OVERRIDE T_FINAL;
+	virtual void initialize(ActionObject* self) override final;
 
-	virtual void construct(ActionObject* self, const ActionValueArray& args) T_OVERRIDE T_FINAL;
+	virtual void construct(ActionObject* self, const ActionValueArray& args) override final;
 
-	virtual ActionValue xplicit(const ActionValueArray& args) T_OVERRIDE T_FINAL;
+	virtual ActionValue xplicit(const ActionValueArray& args) override final;
 
 private:
 	void String_fromCharCode(CallArgs& ca);

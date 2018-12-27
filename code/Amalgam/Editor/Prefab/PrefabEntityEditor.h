@@ -23,13 +23,13 @@ class T_DLLCLASS PrefabEntityEditor : public scene::DefaultEntityEditor
 public:
 	PrefabEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
-	virtual bool isPickable() const T_OVERRIDE T_FINAL;
+	virtual bool isPickable() const override final;
 
-	virtual bool isGroup() const T_OVERRIDE T_FINAL;
+	virtual bool isGroup() const override final;
 
-	virtual bool addChildEntity(scene::EntityAdapter* childEntityAdapter) const T_OVERRIDE T_FINAL;
+	virtual bool addChildEntity(scene::EntityAdapter* childEntityAdapter) const override final;
 
-	virtual bool removeChildEntity(scene::EntityAdapter* childEntityAdapter) const T_OVERRIDE T_FINAL;
+	virtual bool removeChildEntity(scene::EntityAdapter* childEntityAdapter) const override final;
 };
 
 	}

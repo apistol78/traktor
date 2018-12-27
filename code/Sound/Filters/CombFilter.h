@@ -32,11 +32,11 @@ class T_DLLCLASS CombFilter : public IFilter
 public:
 	CombFilter(uint32_t samplesLength = 10, float feedback = 0.0f, float damp = 0.0f);
 
-	virtual Ref< IFilterInstance > createInstance() const T_OVERRIDE T_FINAL;
+	virtual Ref< IFilterInstance > createInstance() const override final;
 
-	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
+	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	uint32_t m_samplesLength;

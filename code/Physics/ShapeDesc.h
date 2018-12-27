@@ -55,7 +55,7 @@ public:
 
 	int32_t getMaterial() const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE;
+	virtual void serialize(ISerializer& s) override;
 
 private:
 	Transform m_localTransform;

@@ -56,7 +56,7 @@ public:
 
 	Ref< LayerItem > getLayerItem(int index, bool includeChildren = true);
 
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 private:
 	Ref< ScrollBar > m_scrollBar;

@@ -47,16 +47,16 @@ public:
 		const TerrainComponent& terrainComponent
 	);
 
-	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
+	virtual void update(const world::UpdateParams& update) override final;
 
 	virtual void render(
 		TerrainComponent& terrainComponent,
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
-	virtual void updatePatches(const TerrainComponent& terrainComponent) T_OVERRIDE T_FINAL;
+	virtual void updatePatches(const TerrainComponent& terrainComponent) override final;
 
 private:
 	struct RubbleMesh

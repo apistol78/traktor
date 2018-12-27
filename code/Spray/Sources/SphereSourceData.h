@@ -34,9 +34,9 @@ class T_DLLCLASS SphereSourceData : public SourceData
 public:
 	SphereSourceData();
 
-	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const T_OVERRIDE T_FINAL;
+	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	friend class SphereSourceRenderer;

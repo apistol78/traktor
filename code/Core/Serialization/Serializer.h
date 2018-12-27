@@ -39,11 +39,11 @@ public:
 
 	bool writeObject(const ISerializable* o);
 
-	virtual int32_t getVersion() const T_OVERRIDE;
+	virtual int32_t getVersion() const override;
 
-	virtual int32_t getVersion(const TypeInfo& typeInfo) const T_OVERRIDE;
+	virtual int32_t getVersion(const TypeInfo& typeInfo) const override;
 
-	virtual void failure() T_OVERRIDE;
+	virtual void failure() override;
 
 	template < typename T >
 	Ref< T > readObject()

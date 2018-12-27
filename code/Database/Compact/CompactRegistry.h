@@ -40,7 +40,7 @@ public:
 
 	inline uint32_t getBlockId() const { return m_blockId; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	uint32_t m_blockId;
@@ -66,7 +66,7 @@ public:
 
 	inline const RefArray< CompactInstanceEntry >& getChildInstances() const { return m_childInstances; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::wstring m_name;
@@ -100,7 +100,7 @@ public:
 
 	inline std::map< std::wstring, Ref< CompactBlockEntry > >& getDataBlocks() { return m_dataBlocks; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::wstring m_name;
@@ -140,7 +140,7 @@ public:
 
 	inline const RefArray< CompactBlockEntry >& getBlockEntries() const { return m_blockEntries; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Ref< CompactGroupEntry > m_rootGroup;

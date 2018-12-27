@@ -151,7 +151,7 @@ public:
 	void rewire(const OutputPin* outputPin, const OutputPin* newOutputPin);
 
 	/*! \brief Serialize graph. */
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	/*! \brief Get all nodes.
 	 *

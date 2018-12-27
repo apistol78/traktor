@@ -99,9 +99,9 @@ public:
 
 	void setTopLeft(const Point* pt);
 
-	virtual bool setMember(ActionContext* context, uint32_t memberName, const ActionValue& memberValue) T_OVERRIDE T_FINAL;
+	virtual bool setMember(ActionContext* context, uint32_t memberName, const ActionValue& memberValue) override final;
 
-	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) T_OVERRIDE T_FINAL;
+	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) override final;
 };
 
 	}

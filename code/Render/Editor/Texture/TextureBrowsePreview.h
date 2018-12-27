@@ -27,9 +27,9 @@ class T_DLLCLASS TextureBrowsePreview : public editor::IBrowsePreview
 	T_RTTI_CLASS;
 
 public:
-	virtual TypeInfoSet getPreviewTypes() const T_OVERRIDE T_FINAL;
+	virtual TypeInfoSet getPreviewTypes() const override final;
 
-	virtual Ref< ui::Bitmap > generate(const editor::IEditor* editor, db::Instance* instance) const T_OVERRIDE T_FINAL;
+	virtual Ref< ui::Bitmap > generate(const editor::IEditor* editor, db::Instance* instance) const override final;
 };
 
 	}

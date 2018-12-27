@@ -78,7 +78,7 @@ public:
 	bool create(drawing::Image* image, const ui::Rect& srcRect);
 
 	/*! \brief Destroy bitmap. */
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	/*! \brief Copy image into bitmap. */
 	void copyImage(drawing::Image* image);
@@ -92,13 +92,13 @@ public:
 	void copySubImage(drawing::Image* image, const ui::Rect& srcRect, const ui::Point& destPos);
 
 	/*! \brief Get image from bitmap. */
-	virtual Ref< drawing::Image > getImage() const T_OVERRIDE T_FINAL;
+	virtual Ref< drawing::Image > getImage() const override final;
 
 	/*! \brief Get size of bitmap in pixels. */
-	virtual Size getSize() const T_OVERRIDE T_FINAL;
+	virtual Size getSize() const override final;
 
 	/*! \brief Get system bitmap. */
-	virtual ISystemBitmap* getSystemBitmap() const T_OVERRIDE T_FINAL;
+	virtual ISystemBitmap* getSystemBitmap() const override final;
 
 	/*! \brief Load bitmap from file. */
 	static Ref< Bitmap > load(const std::wstring& fileName);

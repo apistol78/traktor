@@ -44,7 +44,7 @@ public:
 
 	const RefArray< script::Variable >& getLocals() const { return m_locals; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	RefArray< script::Variable > m_locals;

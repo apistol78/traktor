@@ -32,7 +32,7 @@ public:
 	{
 	}
 
-	virtual bool getValue(size_t index, std::wstring& outKey, std::wstring& outValue) const T_OVERRIDE T_FINAL
+	virtual bool getValue(size_t index, std::wstring& outKey, std::wstring& outValue) const override final
 	{
 		if (index < m_instances.size())
 		{

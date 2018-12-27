@@ -41,7 +41,7 @@ public:
 		bool useRotation
 	);
 
-	virtual Ref< world::IEntityEventInstance > createInstance(world::IEntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const T_OVERRIDE T_FINAL;
+	virtual Ref< world::IEntityEventInstance > createInstance(world::IEntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const override final;
 
 private:
 	friend class SpawnEffectEventInstance;

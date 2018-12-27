@@ -27,39 +27,39 @@ class ScriptClassLua : public IRuntimeClass
 public:
 	static Ref< ScriptClassLua > createFromStack(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState);
 
-	virtual const TypeInfo& getExportType() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfo& getExportType() const override final;
 
-	virtual const IRuntimeDispatch* getConstructorDispatch() const T_OVERRIDE T_FINAL;
+	virtual const IRuntimeDispatch* getConstructorDispatch() const override final;
 
-	virtual uint32_t getConstantCount() const T_OVERRIDE T_FINAL;
+	virtual uint32_t getConstantCount() const override final;
 
-	virtual std::string getConstantName(uint32_t constId) const T_OVERRIDE T_FINAL;
+	virtual std::string getConstantName(uint32_t constId) const override final;
 
-	virtual Any getConstantValue(uint32_t constId) const T_OVERRIDE T_FINAL;
+	virtual Any getConstantValue(uint32_t constId) const override final;
 
-	virtual uint32_t getMethodCount() const T_OVERRIDE T_FINAL;
+	virtual uint32_t getMethodCount() const override final;
 
-	virtual std::string getMethodName(uint32_t methodId) const T_OVERRIDE T_FINAL;
+	virtual std::string getMethodName(uint32_t methodId) const override final;
 
-	virtual const IRuntimeDispatch* getMethodDispatch(uint32_t methodId) const T_OVERRIDE T_FINAL;
+	virtual const IRuntimeDispatch* getMethodDispatch(uint32_t methodId) const override final;
 
-	virtual uint32_t getStaticMethodCount() const T_OVERRIDE T_FINAL;
+	virtual uint32_t getStaticMethodCount() const override final;
 
-	virtual std::string getStaticMethodName(uint32_t methodId) const T_OVERRIDE T_FINAL;
+	virtual std::string getStaticMethodName(uint32_t methodId) const override final;
 
-	virtual const IRuntimeDispatch* getStaticMethodDispatch(uint32_t methodId) const T_OVERRIDE T_FINAL;
+	virtual const IRuntimeDispatch* getStaticMethodDispatch(uint32_t methodId) const override final;
 
-	virtual uint32_t getPropertiesCount() const T_OVERRIDE T_FINAL;
+	virtual uint32_t getPropertiesCount() const override final;
 
-	virtual std::string getPropertyName(uint32_t propertyId) const T_OVERRIDE T_FINAL;
+	virtual std::string getPropertyName(uint32_t propertyId) const override final;
 
-	virtual const IRuntimeDispatch* getPropertyGetDispatch(uint32_t propertyId) const T_OVERRIDE T_FINAL;
+	virtual const IRuntimeDispatch* getPropertyGetDispatch(uint32_t propertyId) const override final;
 
-	virtual const IRuntimeDispatch* getPropertySetDispatch(uint32_t propertyId) const T_OVERRIDE T_FINAL;
+	virtual const IRuntimeDispatch* getPropertySetDispatch(uint32_t propertyId) const override final;
 
-	virtual const IRuntimeDispatch* getUnknownDispatch() const T_OVERRIDE T_FINAL;
+	virtual const IRuntimeDispatch* getUnknownDispatch() const override final;
 
-	virtual const IRuntimeDispatch* getOperatorDispatch(OperatorType op) const T_OVERRIDE T_FINAL;
+	virtual const IRuntimeDispatch* getOperatorDispatch(OperatorType op) const override final;
 
 private:
 	struct Method

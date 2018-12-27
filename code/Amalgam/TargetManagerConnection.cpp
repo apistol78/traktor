@@ -33,7 +33,7 @@ public:
 	{
 	}
 
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) override final
 	{
 		if (m_originalTarget)
 			m_originalTarget->log(threadId, level, str);

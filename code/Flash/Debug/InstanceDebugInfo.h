@@ -48,7 +48,7 @@ public:
 
 	bool getVisible() const { return m_visible; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE;
+	virtual void serialize(ISerializer& s) override;
 
 protected:
 	std::string m_name;

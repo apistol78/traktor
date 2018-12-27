@@ -29,11 +29,11 @@ class T_DLLCLASS FeedbackManager : public IFeedbackManager
 	T_RTTI_CLASS;
 
 public:
-	virtual void addListener(FeedbackType type, IFeedbackListener* listener) T_OVERRIDE T_FINAL;
+	virtual void addListener(FeedbackType type, IFeedbackListener* listener) override final;
 
-	virtual void removeListener(FeedbackType type, IFeedbackListener* listener) T_OVERRIDE T_FINAL;
+	virtual void removeListener(FeedbackType type, IFeedbackListener* listener) override final;
 
-	virtual void apply(FeedbackType type, const float* values, int32_t count) T_OVERRIDE T_FINAL;
+	virtual void apply(FeedbackType type, const float* values, int32_t count) override final;
 
 private:
 	std::map< FeedbackType, std::vector< IFeedbackListener* > > m_listeners;

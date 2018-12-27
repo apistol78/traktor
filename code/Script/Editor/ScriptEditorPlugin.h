@@ -38,28 +38,28 @@ class ScriptEditorPlugin
 public:
 	ScriptEditorPlugin(editor::IEditor* editor);
 
-	virtual bool create(ui::Widget* parent, editor::IEditorPageSite* site) T_OVERRIDE T_FINAL;
+	virtual bool create(ui::Widget* parent, editor::IEditorPageSite* site) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual bool handleCommand(const ui::Command& command, bool result) T_OVERRIDE T_FINAL;
+	virtual bool handleCommand(const ui::Command& command, bool result) override final;
 
-	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) T_OVERRIDE T_FINAL;
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) override final;
 
-	virtual void handleWorkspaceOpened() T_OVERRIDE T_FINAL;
+	virtual void handleWorkspaceOpened() override final;
 
-	virtual void handleWorkspaceClosed() T_OVERRIDE T_FINAL;
+	virtual void handleWorkspaceClosed() override final;
 
 	/*! IScriptDebuggerSessions::IListener */
 	// \{
 
-	virtual void notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) T_OVERRIDE T_FINAL;
+	virtual void notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) override final;
 
-	virtual void notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) T_OVERRIDE T_FINAL;
+	virtual void notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) override final;
 
-	virtual void notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
+	virtual void notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
 
-	virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
+	virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
 
 	// \}
 

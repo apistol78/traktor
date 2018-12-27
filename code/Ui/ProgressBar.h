@@ -44,7 +44,7 @@ public:
 
 	int32_t getProgress() const;
 
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 private:
 	int32_t m_minProgress;

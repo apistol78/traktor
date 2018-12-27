@@ -25,7 +25,7 @@ class T_DLLCLASS WidgetScaffolding : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const resource::Id< IRuntimeClass >& getScaffoldingClass() const { return m_scaffoldingClass; }
 

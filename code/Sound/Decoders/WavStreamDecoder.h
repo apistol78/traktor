@@ -46,15 +46,15 @@ class T_DLLCLASS WavStreamDecoder : public IStreamDecoder
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(IStream* stream) T_OVERRIDE T_FINAL;
+	virtual bool create(IStream* stream) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual double getDuration() const T_OVERRIDE T_FINAL;
+	virtual double getDuration() const override final;
 
-	virtual bool getBlock(SoundBlock& outSoundBlock) T_OVERRIDE T_FINAL;
+	virtual bool getBlock(SoundBlock& outSoundBlock) override final;
 
-	virtual void rewind() T_OVERRIDE T_FINAL;
+	virtual void rewind() override final;
 
 private:
 	Ref< IStream > m_stream;

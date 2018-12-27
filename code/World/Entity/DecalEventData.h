@@ -40,7 +40,7 @@ class T_DLLCLASS DecalEventData : public IEntityEventData
 public:
 	DecalEventData();
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	float getSize() const { return m_size; }
 

@@ -34,29 +34,29 @@ public:
 
 	void update();
 
-	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
+	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
 
-	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
+	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
 
-	virtual bool captureStackFrame(uint32_t depth, Ref< script::StackFrame >& outStackFrame) T_OVERRIDE T_FINAL;
+	virtual bool captureStackFrame(uint32_t depth, Ref< script::StackFrame >& outStackFrame) override final;
 
-	virtual bool captureLocals(uint32_t depth, RefArray< script::Variable >& outLocals) T_OVERRIDE T_FINAL;
+	virtual bool captureLocals(uint32_t depth, RefArray< script::Variable >& outLocals) override final;
 
-	virtual bool captureObject(uint32_t object, RefArray< script::Variable >& outMembers) T_OVERRIDE T_FINAL;
+	virtual bool captureObject(uint32_t object, RefArray< script::Variable >& outMembers) override final;
 
-	virtual bool isRunning() const T_OVERRIDE T_FINAL;
+	virtual bool isRunning() const override final;
 
-	virtual bool actionBreak() T_OVERRIDE T_FINAL;
+	virtual bool actionBreak() override final;
 
-	virtual bool actionContinue() T_OVERRIDE T_FINAL;
+	virtual bool actionContinue() override final;
 
-	virtual bool actionStepInto() T_OVERRIDE T_FINAL;
+	virtual bool actionStepInto() override final;
 
-	virtual bool actionStepOver() T_OVERRIDE T_FINAL;
+	virtual bool actionStepOver() override final;
 
-	virtual void addListener(IListener* listener) T_OVERRIDE T_FINAL;
+	virtual void addListener(IListener* listener) override final;
 
-	virtual void removeListener(IListener* listener) T_OVERRIDE T_FINAL;
+	virtual void removeListener(IListener* listener) override final;
 
 private:
 	Ref< net::BidirectionalObjectTransport > m_transport;

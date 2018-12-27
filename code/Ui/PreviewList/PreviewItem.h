@@ -45,7 +45,7 @@ public:
 
 	bool isSelected() const;
 
-	virtual void paint(Canvas& canvas, const Rect& rect) T_OVERRIDE;
+	virtual void paint(Canvas& canvas, const Rect& rect) override;
 
 private:
 	std::wstring m_text;

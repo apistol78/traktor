@@ -47,7 +47,7 @@ public:
 		{
 		}
 
-		virtual bool getValue(size_t index, std::wstring& outKey, std::wstring& outValue) const T_OVERRIDE
+		virtual bool getValue(size_t index, std::wstring& outKey, std::wstring& outValue) const override
 		{
 			if (m_values[index])
 			{
@@ -71,7 +71,7 @@ public:
 		{
 		}
 
-		virtual bool getValue(size_t index, std::wstring& outKey, std::wstring& outValue) const T_OVERRIDE
+		virtual bool getValue(size_t index, std::wstring& outKey, std::wstring& outValue) const override
 		{
 			if (m_values[index * 2])
 			{
@@ -129,7 +129,7 @@ public:
 		uint32_t outFieldsCount
 	);
 
-	virtual int showModal() T_OVERRIDE;
+	virtual int showModal() override;
 
 private:
 	Field* m_outFields;

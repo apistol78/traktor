@@ -59,7 +59,7 @@ public:
 
 	Ref< Stage > createInstance(IEnvironment* environment, const Object* params) const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const std::wstring& getName() const { return m_name; }
 

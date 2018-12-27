@@ -39,7 +39,7 @@ struct EnvelopeGrainCursor : public RefCountImpl< ISoundBufferCursor >
 		Alloc::freeAlign(m_outputSamples[0]);
 	}
 
-	virtual void setParameter(handle_t id, float parameter) T_OVERRIDE T_FINAL
+	virtual void setParameter(handle_t id, float parameter) override final
 	{
 		if (m_id == id)
 			m_parameter = parameter;
@@ -48,13 +48,13 @@ struct EnvelopeGrainCursor : public RefCountImpl< ISoundBufferCursor >
 			(*i)->setParameter(id, parameter);
 	}
 
-	virtual void disableRepeat() T_OVERRIDE T_FINAL
+	virtual void disableRepeat() override final
 	{
 		for (RefArray< ISoundBufferCursor >::iterator i = m_cursors.begin(); i != m_cursors.end(); ++i)
 			(*i)->disableRepeat();
 	}
 
-	virtual void reset() T_OVERRIDE T_FINAL
+	virtual void reset() override final
 	{
 		for (RefArray< ISoundBufferCursor >::iterator i = m_cursors.begin(); i != m_cursors.end(); ++i)
 			(*i)->reset();

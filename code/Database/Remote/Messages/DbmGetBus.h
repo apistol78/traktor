@@ -30,7 +30,7 @@ class T_DLLCLASS DbmGetBus : public IMessage
 	T_RTTI_CLASS;
 
 public:
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 };
 
 	}

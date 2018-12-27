@@ -42,7 +42,7 @@ public:
 private:
 	Ref< PreviewItems > m_items;
 
-	virtual void layoutCells(const Rect& rc) T_OVERRIDE T_FINAL;
+	virtual void layoutCells(const Rect& rc) override final;
 
 	void eventButtonDown(MouseButtonDownEvent* event);
 };

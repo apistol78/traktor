@@ -30,7 +30,7 @@ class T_DLLCLASS FlashEmptyMovieAsset : public ISerializable
 public:
 	FlashEmptyMovieAsset();
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	int32_t getStageWidth() const { return m_stageWidth; }
 

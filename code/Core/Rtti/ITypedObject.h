@@ -30,7 +30,7 @@ namespace traktor
 #define T_RTTI_CLASS														\
 	public:																	\
 		static const traktor::TypeInfo& getClassTypeInfo();					\
-		virtual const traktor::TypeInfo& getTypeInfo() const T_OVERRIDE;	\
+		virtual const traktor::TypeInfo& getTypeInfo() const override;	\
 	private:																\
 		static traktor::TypeInfo ms_typeInfo;
 	

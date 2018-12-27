@@ -37,7 +37,7 @@ public:
 
 	Ref< const ShapeDesc > getShape() const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE;
+	virtual void serialize(ISerializer& s) override;
 
 private:
 	Ref< ShapeDesc > m_shape;

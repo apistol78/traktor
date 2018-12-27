@@ -33,7 +33,7 @@ class T_DLLCLASS NavMeshAsset : public ISerializable
 public:
 	NavMeshAsset();
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	friend class NavMeshPipeline;

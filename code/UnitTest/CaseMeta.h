@@ -15,7 +15,7 @@ namespace traktor
 class CaseMeta : public Case
 {
 public:
-	virtual void run() T_OVERRIDE T_FINAL;
+	virtual void run() override final;
 };
 
 }

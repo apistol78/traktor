@@ -42,23 +42,23 @@ class T_DLLCLASS OpenVRCompositor : public IVRCompositor
 public:
 	OpenVRCompositor();
 
-	virtual bool create(IRenderSystem* renderSystem, IRenderView* renderView) T_OVERRIDE T_FINAL;
+	virtual bool create(IRenderSystem* renderSystem, IRenderView* renderView) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual int32_t getWidth() const T_OVERRIDE T_FINAL;
+	virtual int32_t getWidth() const override final;
 
-	virtual int32_t getHeight() const T_OVERRIDE T_FINAL;
+	virtual int32_t getHeight() const override final;
 
-	virtual Matrix44 getProjection(int32_t eye, float nearZ, float farZ) const T_OVERRIDE T_FINAL;
+	virtual Matrix44 getProjection(int32_t eye, float nearZ, float farZ) const override final;
 
-	virtual Matrix44 getEyeToHead(int32_t eye) const T_OVERRIDE T_FINAL;
+	virtual Matrix44 getEyeToHead(int32_t eye) const override final;
 
-	virtual bool beginRenderEye(IRenderView* renderView, int32_t eye) T_OVERRIDE T_FINAL;
+	virtual bool beginRenderEye(IRenderView* renderView, int32_t eye) override final;
 
-	virtual bool endRenderEye(IRenderView* renderView, int32_t eye) T_OVERRIDE T_FINAL;
+	virtual bool endRenderEye(IRenderView* renderView, int32_t eye) override final;
 
-	virtual bool presentCompositeOutput(IRenderView* renderView) T_OVERRIDE T_FINAL;
+	virtual bool presentCompositeOutput(IRenderView* renderView) override final;
 
 private:
 	vr::IVRSystem* m_vr;

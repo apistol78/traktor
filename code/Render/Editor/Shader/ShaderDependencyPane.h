@@ -40,7 +40,7 @@ class ShaderDependencyPane
 public:
 	ShaderDependencyPane(editor::IEditor* editor, const Guid& shaderId);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	bool create(ui::Widget* parent);
 
@@ -50,9 +50,9 @@ private:
 	Ref< ShaderDependencyTracker > m_dependencyTracker;
 	Ref< ui::ListBox > m_refereeList;
 
-	virtual void dependencyAdded(const Guid& fromShader, const Guid& toShader) T_OVERRIDE T_FINAL;
+	virtual void dependencyAdded(const Guid& fromShader, const Guid& toShader) override final;
 
-	virtual void dependencyRemoved(const Guid& fromShader, const Guid& toShader) T_OVERRIDE T_FINAL;
+	virtual void dependencyRemoved(const Guid& fromShader, const Guid& toShader) override final;
 
 	void eventRefereeListDoubleClick(ui::MouseDoubleClickEvent* event);
 };

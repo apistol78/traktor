@@ -31,12 +31,12 @@ public:
 	{
 	}
 
-	virtual Vector4 getSize() const T_OVERRIDE T_FINAL
+	virtual Vector4 getSize() const override final
 	{
 		return Vector4(float(m_width), float(m_height), 0.0f, 0.0f);
 	}
 
-	virtual Vector4 get(const Vector4& texCoord) const T_OVERRIDE T_FINAL
+	virtual Vector4 get(const Vector4& texCoord) const override final
 	{
 		int x = int(m_width * texCoord.x());
 		int y = int(m_height * texCoord.y());

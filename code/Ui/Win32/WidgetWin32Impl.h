@@ -59,22 +59,22 @@ public:
 		delete m_canvasImpl;
 	}
 
-	virtual void destroy() T_OVERRIDE
+	virtual void destroy() override
 	{
 		delete this;
 	}
 
-	virtual void setParent(IWidget* parent) T_OVERRIDE
+	virtual void setParent(IWidget* parent) override
 	{
 		SetParent(m_hWnd, static_cast< HWND >(parent->getInternalHandle()));
 	}
 
-	virtual void setText(const std::wstring& text) T_OVERRIDE
+	virtual void setText(const std::wstring& text) override
 	{
 		SetWindowText(m_hWnd, wstots(text).c_str());
 	}
 
-	virtual std::wstring getText() const T_OVERRIDE
+	virtual std::wstring getText() const override
 	{
 		int length = GetWindowTextLength(m_hWnd);
 		if (length <= 0)
@@ -86,17 +86,17 @@ public:
 		return tstows(buffer.ptr());
 	}
 
-	virtual void setForeground() T_OVERRIDE
+	virtual void setForeground() override
 	{
 		SetForegroundWindow(m_hWnd);
 	}
 
-	virtual bool isForeground() const T_OVERRIDE
+	virtual bool isForeground() const override
 	{
 		return bool(GetForegroundWindow() == m_hWnd);
 	}
 
-	virtual void setVisible(bool visible) T_OVERRIDE
+	virtual void setVisible(bool visible) override
 	{
 		if (visible != isVisible())
 		{
@@ -107,54 +107,54 @@ public:
 		}
 	}
 
-	virtual bool isVisible() const T_OVERRIDE
+	virtual bool isVisible() const override
 	{
 		return bool((GetWindowLong(m_hWnd, GWL_STYLE) & WS_VISIBLE) == WS_VISIBLE);
 	}
 
-	virtual void setEnable(bool enable) T_OVERRIDE
+	virtual void setEnable(bool enable) override
 	{
 		EnableWindow(m_hWnd, enable);
 	}
 
-	virtual bool isEnable() const T_OVERRIDE
+	virtual bool isEnable() const override
 	{
 		return bool(IsWindowEnabled(m_hWnd) != FALSE);
 	}
 
-	virtual bool hasFocus() const T_OVERRIDE
+	virtual bool hasFocus() const override
 	{
 		return bool(GetFocus() == m_hWnd);
 	}
 
-	virtual void setFocus() T_OVERRIDE
+	virtual void setFocus() override
 	{
 		SetFocus(m_hWnd);
 	}
 
-	virtual bool hasCapture() const T_OVERRIDE
+	virtual bool hasCapture() const override
 	{
 		return bool(GetCapture() == m_hWnd);
 	}
 
-	virtual void setCapture() T_OVERRIDE
+	virtual void setCapture() override
 	{
 		SetCapture(m_hWnd);
 	}
 
-	virtual void releaseCapture() T_OVERRIDE
+	virtual void releaseCapture() override
 	{
 		if (hasCapture())
 			ReleaseCapture();
 	}
 
-	virtual void startTimer(int interval, int id) T_OVERRIDE
+	virtual void startTimer(int interval, int id) override
 	{
 		SetTimer(m_hWnd, 1000 + id, interval, NULL);
 		m_timers[id] = interval;
 	}
 
-	virtual void stopTimer(int id) T_OVERRIDE
+	virtual void stopTimer(int id) override
 	{
 		std::map< uint32_t, uint32_t >::iterator i = m_timers.find(id);
 		if (i != m_timers.end())
@@ -164,7 +164,7 @@ public:
 		}
 	}
 
-	virtual void setRect(const Rect& rect) T_OVERRIDE
+	virtual void setRect(const Rect& rect) override
 	{
 		SetWindowPos(
 			m_hWnd,
@@ -177,7 +177,7 @@ public:
 		);
 	}
 
-	virtual Rect getRect() const T_OVERRIDE
+	virtual Rect getRect() const override
 	{
 		RECT rc;
 		GetWindowRect(m_hWnd, &rc);
@@ -193,14 +193,14 @@ public:
 		return Rect(rc.left, rc.top, rc.right, rc.bottom);
 	}
 
-	virtual Rect getInnerRect() const T_OVERRIDE
+	virtual Rect getInnerRect() const override
 	{
 		RECT rc;
 		GetClientRect(m_hWnd, &rc);
 		return Rect(rc.left, rc.top, rc.right, rc.bottom);
 	}
 
-	virtual Rect getNormalRect() const T_OVERRIDE
+	virtual Rect getNormalRect() const override
 	{
 		WINDOWPLACEMENT wp;
 		std::memset(&wp, 0, sizeof(wp));
@@ -210,7 +210,7 @@ public:
 		return Rect(rc.left, rc.top, rc.right, rc.bottom);
 	}
 
-	virtual void setFont(const Font& font) T_OVERRIDE
+	virtual void setFont(const Font& font) override
 	{
 		LOGFONT lf;
 
@@ -237,7 +237,7 @@ public:
 		m_hWnd.setFont(m_hFont);
 	}
 
-	virtual Font getFont() const T_OVERRIDE
+	virtual Font getFont() const override
 	{
 		LOGFONT lf;
 
@@ -270,12 +270,12 @@ public:
 		);
 	}
 
-	virtual const IFontMetric* getFontMetric() const T_OVERRIDE
+	virtual const IFontMetric* getFontMetric() const override
 	{
 		return this;
 	}
 
-	virtual void setCursor(Cursor cursor) T_OVERRIDE
+	virtual void setCursor(Cursor cursor) override
 	{
 		HCURSOR hCursor = NULL;
 		switch (cursor)
@@ -336,7 +336,7 @@ public:
 		m_hCursor = hCursor;
 	}
 	
-	virtual Point getMousePosition(bool relative) const T_OVERRIDE
+	virtual Point getMousePosition(bool relative) const override
 	{
 		POINT pnt;
 		GetCursorPos(&pnt);
@@ -345,27 +345,27 @@ public:
 		return Point(pnt.x, pnt.y);
 	}
 
-	virtual Point screenToClient(const Point& pt) const T_OVERRIDE
+	virtual Point screenToClient(const Point& pt) const override
 	{
 		POINT pnt = { pt.x, pt.y };
 		ScreenToClient(m_hWnd, &pnt);
 		return Point(pnt.x, pnt.y);
 	}
 
-	virtual Point clientToScreen(const Point& pt) const T_OVERRIDE
+	virtual Point clientToScreen(const Point& pt) const override
 	{
 		POINT pnt = { pt.x, pt.y };
 		ClientToScreen(m_hWnd, &pnt);
 		return Point(pnt.x, pnt.y);
 	}
 
-	virtual bool hitTest(const Point& pt) const T_OVERRIDE
+	virtual bool hitTest(const Point& pt) const override
 	{
 		POINT pnt = { pt.x, pt.y };
 		return bool(WindowFromPoint(pnt) == m_hWnd);
 	}
 
-	virtual void setChildRects(const std::vector< IWidgetRect >& childRects) T_OVERRIDE
+	virtual void setChildRects(const std::vector< IWidgetRect >& childRects) override
 	{
 		HDWP hdwp = BeginDeferWindowPos(int(childRects.size()));
 		if (hdwp)
@@ -407,22 +407,22 @@ public:
 		}
 	}
 
-	virtual Size getMinimumSize() const T_OVERRIDE
+	virtual Size getMinimumSize() const override
 	{
 		return Size(0, 0);
 	}
 
-	virtual Size getPreferedSize() const T_OVERRIDE
+	virtual Size getPreferedSize() const override
 	{
 		return Size(0, 0);
 	}
 
-	virtual Size getMaximumSize() const T_OVERRIDE
+	virtual Size getMaximumSize() const override
 	{
 		return Size(65535, 65535);
 	}
 
-	virtual void update(const Rect* rc, bool immediate) T_OVERRIDE
+	virtual void update(const Rect* rc, bool immediate) override
 	{
 		if (rc)
 		{
@@ -439,34 +439,34 @@ public:
 		}
 	}
 
-	virtual void* getInternalHandle() T_OVERRIDE
+	virtual void* getInternalHandle() override
 	{
 		return static_cast< void* >((HWND)m_hWnd);
 	}
 
-	virtual SystemWindow getSystemWindow() T_OVERRIDE
+	virtual SystemWindow getSystemWindow() override
 	{
 		return SystemWindow(m_hWnd);
 	}
 
 	// IFontMetric
 
-	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const T_OVERRIDE
+	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const override
 	{
 		m_canvasImpl->getAscentAndDescent(m_hWnd, outAscent, outDescent);
 	}
 
-	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const T_OVERRIDE
+	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const override
 	{
 		return m_canvasImpl->getAdvance(m_hWnd, ch, next);
 	}
 
-	virtual int32_t getLineSpacing() const T_OVERRIDE
+	virtual int32_t getLineSpacing() const override
 	{
 		return m_canvasImpl->getLineSpacing(m_hWnd);
 	}
 
-	virtual Size getExtent(const std::wstring& text) const T_OVERRIDE
+	virtual Size getExtent(const std::wstring& text) const override
 	{
 		return m_canvasImpl->getExtent(m_hWnd, text);
 	}

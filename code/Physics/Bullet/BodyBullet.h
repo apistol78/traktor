@@ -52,61 +52,61 @@ public:
 		int32_t material
 	);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+	virtual void setTransform(const Transform& transform) override final;
 
-	virtual Transform getTransform() const T_OVERRIDE T_FINAL;
+	virtual Transform getTransform() const override final;
 
-	virtual Transform getCenterTransform() const T_OVERRIDE T_FINAL;
+	virtual Transform getCenterTransform() const override final;
 
-	virtual void setKinematic(bool kinematic) T_OVERRIDE T_FINAL;
+	virtual void setKinematic(bool kinematic) override final;
 
-	virtual bool isStatic() const T_OVERRIDE T_FINAL;
+	virtual bool isStatic() const override final;
 
-	virtual bool isKinematic() const T_OVERRIDE T_FINAL;
+	virtual bool isKinematic() const override final;
 
-	virtual void setActive(bool active) T_OVERRIDE T_FINAL;
+	virtual void setActive(bool active) override final;
 
-	virtual bool isActive() const T_OVERRIDE T_FINAL;
+	virtual bool isActive() const override final;
 
-	virtual void setEnable(bool enable) T_OVERRIDE T_FINAL;
+	virtual void setEnable(bool enable) override final;
 
-	virtual bool isEnable() const T_OVERRIDE T_FINAL;
+	virtual bool isEnable() const override final;
 
-	virtual void reset() T_OVERRIDE T_FINAL;
+	virtual void reset() override final;
 
-	virtual void setMass(float mass, const Vector4& inertiaTensor) T_OVERRIDE T_FINAL;
+	virtual void setMass(float mass, const Vector4& inertiaTensor) override final;
 
-	virtual float getInverseMass() const T_OVERRIDE T_FINAL;
+	virtual float getInverseMass() const override final;
 
-	virtual Matrix33 getInertiaTensorInverseWorld() const T_OVERRIDE T_FINAL;
+	virtual Matrix33 getInertiaTensorInverseWorld() const override final;
 
-	virtual void addForceAt(const Vector4& at, const Vector4& force, bool localSpace) T_OVERRIDE T_FINAL;
+	virtual void addForceAt(const Vector4& at, const Vector4& force, bool localSpace) override final;
 
-	virtual void addTorque(const Vector4& torque, bool localSpace) T_OVERRIDE T_FINAL;
+	virtual void addTorque(const Vector4& torque, bool localSpace) override final;
 
-	virtual void addLinearImpulse(const Vector4& linearImpulse, bool localSpace) T_OVERRIDE T_FINAL;
+	virtual void addLinearImpulse(const Vector4& linearImpulse, bool localSpace) override final;
 
-	virtual void addAngularImpulse(const Vector4& angularImpulse, bool localSpace) T_OVERRIDE T_FINAL;
+	virtual void addAngularImpulse(const Vector4& angularImpulse, bool localSpace) override final;
 
-	virtual void addImpulse(const Vector4& at, const Vector4& impulse, bool localSpace) T_OVERRIDE T_FINAL;
+	virtual void addImpulse(const Vector4& at, const Vector4& impulse, bool localSpace) override final;
 
-	virtual void setLinearVelocity(const Vector4& linearVelocity) T_OVERRIDE T_FINAL;
+	virtual void setLinearVelocity(const Vector4& linearVelocity) override final;
 
-	virtual Vector4 getLinearVelocity() const T_OVERRIDE T_FINAL;
+	virtual Vector4 getLinearVelocity() const override final;
 
-	virtual void setAngularVelocity(const Vector4& angularVelocity) T_OVERRIDE T_FINAL;
+	virtual void setAngularVelocity(const Vector4& angularVelocity) override final;
 
-	virtual Vector4 getAngularVelocity() const T_OVERRIDE T_FINAL;
+	virtual Vector4 getAngularVelocity() const override final;
 
-	virtual Vector4 getVelocityAt(const Vector4& at, bool localSpace) const T_OVERRIDE T_FINAL;
+	virtual Vector4 getVelocityAt(const Vector4& at, bool localSpace) const override final;
 
-	virtual bool setState(const BodyState& state) T_OVERRIDE T_FINAL;
+	virtual bool setState(const BodyState& state) override final;
 
-	virtual BodyState getState() const T_OVERRIDE T_FINAL;
+	virtual BodyState getState() const override final;
 
-	virtual void integrate(float deltaTime) T_OVERRIDE T_FINAL;
+	virtual void integrate(float deltaTime) override final;
 
 	void addConstraint(btTypedConstraint* constraint);
 

@@ -33,17 +33,17 @@ public:
 
 	virtual ~HeightfieldShapeBullet();
 
-	virtual void setLocalScaling(const btVector3& scaling) T_OVERRIDE T_FINAL;
+	virtual void setLocalScaling(const btVector3& scaling) override final;
 
-	virtual const btVector3& getLocalScaling() const T_OVERRIDE T_FINAL;
+	virtual const btVector3& getLocalScaling() const override final;
 
-	virtual void getAabb(const btTransform& t, btVector3& aabbMin, btVector3& aabbMax) const T_OVERRIDE T_FINAL;
+	virtual void getAabb(const btTransform& t, btVector3& aabbMin, btVector3& aabbMax) const override final;
 
-	virtual void processAllTriangles(btTriangleCallback* callback, const btVector3& aabbMin, const btVector3& aabbMax) const T_OVERRIDE T_FINAL;
+	virtual void processAllTriangles(btTriangleCallback* callback, const btVector3& aabbMin, const btVector3& aabbMax) const override final;
 
-	virtual void calculateLocalInertia(btScalar mass, btVector3& inertia) const T_OVERRIDE T_FINAL;
+	virtual void calculateLocalInertia(btScalar mass, btVector3& inertia) const override final;
 
-	virtual const char*	getName() const T_OVERRIDE T_FINAL;
+	virtual const char*	getName() const override final;
 
 private:
 	resource::Proxy< hf::Heightfield > m_heightfield;

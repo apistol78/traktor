@@ -53,7 +53,7 @@ public:
 
 	RiverComponentData();
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 

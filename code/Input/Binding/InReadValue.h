@@ -35,16 +35,16 @@ public:
 	
 	InReadValue(const std::wstring& valueId);
 	
-	virtual Ref< Instance > createInstance() const T_OVERRIDE T_FINAL;
+	virtual Ref< Instance > createInstance() const override final;
 
 	virtual float evaluate(
 		Instance* instance,
 		const InputValueSet& valueSet,
 		float T,
 		float dT
-	) const T_OVERRIDE T_FINAL;	
+	) const override final;	
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const std::wstring& getValueId() const { return m_valueId; }
 	

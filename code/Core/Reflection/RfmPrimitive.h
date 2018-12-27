@@ -41,7 +41,7 @@ public:
 
 	const type_t& get() const { return m_value; }
 
-	virtual bool replace(const ReflectionMember* source) T_OVERRIDE T_FINAL
+	virtual bool replace(const ReflectionMember* source) override final
 	{
 		if (const class_type_t* sourceType = dynamic_type_cast< const class_type_t* >(source))
 		{

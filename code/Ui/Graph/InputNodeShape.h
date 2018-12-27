@@ -35,13 +35,13 @@ class T_DLLCLASS InputNodeShape : public NodeShape
 public:
 	InputNodeShape(GraphControl* graphControl);
 
-	virtual Point getPinPosition(const Node* node, const Pin* pin) const T_OVERRIDE T_FINAL;
+	virtual Point getPinPosition(const Node* node, const Pin* pin) const override final;
 
-	virtual Pin* getPinAt(const Node* node, const Point& pt) const T_OVERRIDE T_FINAL;
+	virtual Pin* getPinAt(const Node* node, const Point& pt) const override final;
 
-	virtual void paint(const Node* node, GraphCanvas* canvas, const Size& offset) const T_OVERRIDE T_FINAL;
+	virtual void paint(const Node* node, GraphCanvas* canvas, const Size& offset) const override final;
 
-	virtual Size calculateSize(const Node* node) const T_OVERRIDE T_FINAL;
+	virtual Size calculateSize(const Node* node) const override final;
 
 private:
 	GraphControl* m_graphControl;

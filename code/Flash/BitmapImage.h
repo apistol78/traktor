@@ -47,7 +47,7 @@ public:
 
 	const drawing::Image* getImage() const { return m_image; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Ref< drawing::Image > m_image;

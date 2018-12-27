@@ -45,7 +45,7 @@ public:
 
 	bool isModal() const;
 
-	virtual bool acceptLayout() const T_OVERRIDE;
+	virtual bool acceptLayout() const override;
 
 private:
 	bool m_modal;

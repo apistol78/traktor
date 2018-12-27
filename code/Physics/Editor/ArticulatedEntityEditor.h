@@ -30,7 +30,7 @@ class T_DLLCLASS ArticulatedEntityEditor : public scene::DefaultEntityEditor
 public:
 	ArticulatedEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
-	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const T_OVERRIDE T_FINAL;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
 
 private:
 	PhysicsRenderer m_physicsRenderer;

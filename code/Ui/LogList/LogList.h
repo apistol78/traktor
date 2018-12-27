@@ -65,7 +65,7 @@ public:
 
 	bool copyLog(uint32_t filter = ~0U);
 
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 private:
 	struct Entry

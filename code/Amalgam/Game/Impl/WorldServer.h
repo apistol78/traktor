@@ -57,23 +57,23 @@ public:
 
 	int32_t reconfigure(const PropertyGroup* settings);
 
-	virtual void addEntityFactory(world::IEntityFactory* entityFactory) T_OVERRIDE T_FINAL;
+	virtual void addEntityFactory(world::IEntityFactory* entityFactory) override final;
 
-	virtual void removeEntityFactory(world::IEntityFactory* entityFactory) T_OVERRIDE T_FINAL;
+	virtual void removeEntityFactory(world::IEntityFactory* entityFactory) override final;
 
-	virtual void addEntityRenderer(world::IEntityRenderer* entityRenderer) T_OVERRIDE T_FINAL;
+	virtual void addEntityRenderer(world::IEntityRenderer* entityRenderer) override final;
 
-	virtual void removeEntityRenderer(world::IEntityRenderer* entityRenderer) T_OVERRIDE T_FINAL;
+	virtual void removeEntityRenderer(world::IEntityRenderer* entityRenderer) override final;
 
-	virtual const world::IEntityBuilder* getEntityBuilder() T_OVERRIDE T_FINAL;
+	virtual const world::IEntityBuilder* getEntityBuilder() override final;
 
-	virtual world::WorldEntityRenderers* getEntityRenderers() T_OVERRIDE T_FINAL;
+	virtual world::WorldEntityRenderers* getEntityRenderers() override final;
 
-	virtual world::IEntityEventManager* getEntityEventManager() T_OVERRIDE T_FINAL;
+	virtual world::IEntityEventManager* getEntityEventManager() override final;
 
-	virtual spray::IFeedbackManager* getFeedbackManager() T_OVERRIDE T_FINAL;
+	virtual spray::IFeedbackManager* getFeedbackManager() override final;
 
-	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings) T_OVERRIDE T_FINAL;
+	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings) override final;
 
 private:
 	Ref< world::IEntityBuilder > m_entityBuilder;

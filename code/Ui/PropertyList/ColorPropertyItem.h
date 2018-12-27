@@ -37,9 +37,9 @@ public:
 	const Color4ub& getValue() const;
 
 protected:
-	virtual void mouseButtonUp(MouseButtonUpEvent* event) T_OVERRIDE;
+	virtual void mouseButtonUp(MouseButtonUpEvent* event) override;
 
-	virtual void paintValue(Canvas& canvas, const Rect& rc) T_OVERRIDE;
+	virtual void paintValue(Canvas& canvas, const Rect& rc) override;
 
 private:
 	Color4ub m_value;

@@ -31,9 +31,9 @@ public:
 
 	virtual ~ScriptProfilerLua();
 
-	virtual void addListener(IListener* listener) T_OVERRIDE T_FINAL;
+	virtual void addListener(IListener* listener) override final;
 
-	virtual void removeListener(IListener* listener) T_OVERRIDE T_FINAL;
+	virtual void removeListener(IListener* listener) override final;
 
 	void notifyCallEnter();
 

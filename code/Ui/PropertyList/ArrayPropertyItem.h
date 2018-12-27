@@ -39,15 +39,15 @@ public:
 	const TypeInfo* getElementType() const;
 
 protected:
-	virtual bool needRemoveChildButton() const T_OVERRIDE;
+	virtual bool needRemoveChildButton() const override;
 
-	virtual void createInPlaceControls(Widget* parent) T_OVERRIDE;
+	virtual void createInPlaceControls(Widget* parent) override;
 
-	virtual void destroyInPlaceControls() T_OVERRIDE;
+	virtual void destroyInPlaceControls() override;
 
-	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects) T_OVERRIDE;
+	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects) override;
 
-	virtual void paintValue(Canvas& canvas, const Rect& rc) T_OVERRIDE;
+	virtual void paintValue(Canvas& canvas, const Rect& rc) override;
 
 private:
 	const TypeInfo* m_elementType;

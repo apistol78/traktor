@@ -30,7 +30,7 @@ class T_DLLCLASS PremultiplyAlphaFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 protected:
-	virtual void apply(Image* image) const T_OVERRIDE T_FINAL;
+	virtual void apply(Image* image) const override final;
 };
 	
 	}

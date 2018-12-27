@@ -31,7 +31,7 @@ class T_DLLCLASS CloudParticleData : public ISerializable
 public:
 	CloudParticleData();
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	uint32_t getCount() const { return m_count; }
 

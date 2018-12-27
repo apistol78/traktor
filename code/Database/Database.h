@@ -151,22 +151,22 @@ private:
 	// \name IInstanceEventListener
 	// \{
 
-	virtual void instanceEventCreated(Instance* instance) T_OVERRIDE T_FINAL;
+	virtual void instanceEventCreated(Instance* instance) override final;
 
-	virtual void instanceEventRemoved(Instance* instance) T_OVERRIDE T_FINAL;
+	virtual void instanceEventRemoved(Instance* instance) override final;
 
-	virtual void instanceEventGuidChanged(Instance* instance, const Guid& previousGuid) T_OVERRIDE T_FINAL;
+	virtual void instanceEventGuidChanged(Instance* instance, const Guid& previousGuid) override final;
 
-	virtual void instanceEventRenamed(Instance* instance, const std::wstring& previousName) T_OVERRIDE T_FINAL;
+	virtual void instanceEventRenamed(Instance* instance, const std::wstring& previousName) override final;
 
-	virtual void instanceEventCommitted(Instance* instance) T_OVERRIDE T_FINAL;
+	virtual void instanceEventCommitted(Instance* instance) override final;
 
 	// \}
 
 	// \name IGroupEventListener
 	// \{
 
-	virtual void groupEventRenamed(Group* group, const std::wstring& previousName) T_OVERRIDE T_FINAL;
+	virtual void groupEventRenamed(Group* group, const std::wstring& previousName) override final;
 
 	// \}
 };

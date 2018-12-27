@@ -31,7 +31,7 @@ class ScriptClassesView : public ui::Container
 public:
 	bool create(ui::Widget* parent);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 private:
 	Ref< ui::TreeView > m_treeClasses;

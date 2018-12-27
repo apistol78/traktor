@@ -33,7 +33,7 @@ class T_DLLCLASS SkeletonAsset : public editor::Asset
 public:
 	SkeletonAsset();
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const Vector4& getOffset() const { return m_offset; }
 

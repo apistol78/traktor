@@ -27,7 +27,7 @@ class T_DLLCLASS MeshEntityPipeline : public world::EntityPipeline
 	T_RTTI_CLASS;
 
 public:
-	virtual TypeInfoSet getAssetTypes() const T_OVERRIDE T_FINAL;
+	virtual TypeInfoSet getAssetTypes() const override final;
 
 	virtual bool buildDependencies(
 		editor::IPipelineDepends* pipelineDepends,
@@ -35,7 +35,7 @@ public:
 		const ISerializable* sourceAsset,
 		const std::wstring& outputPath,
 		const Guid& outputGuid
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 };
 
 	}

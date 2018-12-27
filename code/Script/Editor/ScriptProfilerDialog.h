@@ -40,7 +40,7 @@ class ScriptProfilerDialog
 public:
 	ScriptProfilerDialog(editor::IEditor* editor);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	bool create(ui::Widget* parent);
 
@@ -49,13 +49,13 @@ private:
 	Ref< IScriptDebuggerSessions > m_scriptDebuggerSessions;
 	Ref< ui::Tab > m_tabSessions;
 
-	virtual void notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) T_OVERRIDE T_FINAL;
+	virtual void notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) override final;
 
-	virtual void notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) T_OVERRIDE T_FINAL;
+	virtual void notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) override final;
 
-	virtual void notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
+	virtual void notifySetBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
 
-	virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
+	virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
 };
 
 	}

@@ -23,11 +23,11 @@ class T_DLLCLASS TssStreamEncoder : public IStreamEncoder
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(IStream* stream) T_OVERRIDE T_FINAL;
+	virtual bool create(IStream* stream) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual bool putBlock(SoundBlock& block) T_OVERRIDE T_FINAL;
+	virtual bool putBlock(SoundBlock& block) override final;
 
 private:
 	Ref< IStream > m_stream;

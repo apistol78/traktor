@@ -38,16 +38,16 @@ public:
 
 	const AlignedVector< float >& getBlendWeights() const;
 
-	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual bool supportTechnique(render::handle_t technique) const T_OVERRIDE T_FINAL;
+	virtual bool supportTechnique(render::handle_t technique) const override final;
 
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass,
 		float distance
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 private:
 	resource::Proxy< BlendMesh > m_mesh;

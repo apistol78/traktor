@@ -48,7 +48,7 @@ public:
 
 	void updateLanguage(int32_t fromLine, int32_t toLine);
 
-	virtual void setText(const std::wstring& text) T_OVERRIDE;
+	virtual void setText(const std::wstring& text) override;
 
 private:
 	Ref< const SyntaxLanguage > m_language;

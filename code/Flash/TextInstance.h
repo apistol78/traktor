@@ -36,7 +36,7 @@ public:
 
 	const Text* getText() const;
 
-	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
+	virtual Aabb2 getBounds() const override final;
 
 private:
 	Ref< const Text > m_text;

@@ -22,7 +22,7 @@ class CubeProbe : public IProbe
 public:
 	CubeProbe(const render::CubeMap* cubeMap);
 
-	virtual Color4f sample(const Vector4& direction) const T_OVERRIDE T_FINAL;
+	virtual Color4f sample(const Vector4& direction) const override final;
 
 private:
 	Ref< const render::CubeMap > m_cubeMap;

@@ -70,7 +70,7 @@ public:
 class T_DLLCLASS NullRenderBlock : public RenderBlock
 {
 public:
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const T_OVERRIDE T_FINAL;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
 /*! \brief Simple render block.
@@ -83,7 +83,7 @@ public:
 	Ref< VertexBuffer > vertexBuffer;
 	Primitives primitives;
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const T_OVERRIDE T_FINAL;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
 /*! \brief Instancing render block.
@@ -102,7 +102,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const T_OVERRIDE T_FINAL;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
 /*! \brief Instancing render block.
@@ -132,7 +132,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const T_OVERRIDE T_FINAL;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
 /*! \brief Non-indexed primitives render block.
@@ -154,7 +154,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const T_OVERRIDE T_FINAL;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
 /*! \brief Indexed primitives render block.
@@ -182,7 +182,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const T_OVERRIDE T_FINAL;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
 /*! \brief Begin target render block.
@@ -201,7 +201,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const T_OVERRIDE T_FINAL;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
 /*! \brief End target render block.
@@ -210,7 +210,7 @@ public:
 class T_DLLCLASS TargetEndRenderBlock : public RenderBlock
 {
 public:
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const T_OVERRIDE T_FINAL;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
 /*! \brief Clear target render block.
@@ -233,7 +233,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const T_OVERRIDE T_FINAL;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
 /*! \brief Chain render block.
@@ -252,7 +252,7 @@ public:
 	{
 	}
 
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const T_OVERRIDE T_FINAL;
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
 	}

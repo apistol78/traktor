@@ -32,11 +32,11 @@ class T_DLLCLASS AssetsPipeline : public IPipeline
 public:
 	AssetsPipeline();
 
-	virtual bool create(const IPipelineSettings* settings) T_OVERRIDE T_FINAL;
+	virtual bool create(const IPipelineSettings* settings) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual TypeInfoSet getAssetTypes() const T_OVERRIDE T_FINAL;
+	virtual TypeInfoSet getAssetTypes() const override final;
 
 	virtual bool buildDependencies(
 		IPipelineDepends* pipelineDepends,
@@ -44,7 +44,7 @@ public:
 		const ISerializable* sourceAsset,
 		const std::wstring& outputPath,
 		const Guid& outputGuid
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual bool buildOutput(
 		IPipelineBuilder* pipelineBuilder,
@@ -57,12 +57,12 @@ public:
 		const Guid& outputGuid,
 		const Object* buildParams,
 		uint32_t reason
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual Ref< ISerializable > buildOutput(
 		IPipelineBuilder* pipelineBuilder,
 		const ISerializable* sourceAsset
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 private:
 	bool m_editorDeploy;

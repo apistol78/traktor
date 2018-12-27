@@ -48,45 +48,45 @@ public:
 
 	virtual void addDependency(
 		const ISerializable* sourceAsset
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 	virtual void addDependency(
 		const ISerializable* sourceAsset,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
 		uint32_t flags
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 	virtual void addDependency(
 		db::Instance* sourceAssetInstance,
 		uint32_t flags
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 	virtual void addDependency(
 		const Guid& sourceAssetGuid,
 		uint32_t flags
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 	virtual void addDependency(
 		const Path& basePath,
 		const std::wstring& fileName
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 	virtual void addDependency(
 		const TypeInfo& sourceAssetType
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
-	virtual bool waitUntilFinished() T_OVERRIDE T_FINAL;
+	virtual bool waitUntilFinished() override final;
 
-	virtual Ref< db::Database > getSourceDatabase() const T_OVERRIDE T_FINAL;
+	virtual Ref< db::Database > getSourceDatabase() const override final;
 
-	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) T_OVERRIDE T_FINAL;
+	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
 
-	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName) T_OVERRIDE T_FINAL;
+	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName) override final;
 
-	virtual Ref< IStream > createTemporaryFile(const std::wstring& fileName) T_OVERRIDE T_FINAL;
+	virtual Ref< IStream > createTemporaryFile(const std::wstring& fileName) override final;
 
-	virtual Ref< IStream > openTemporaryFile(const std::wstring& fileName) T_OVERRIDE T_FINAL;
+	virtual Ref< IStream > openTemporaryFile(const std::wstring& fileName) override final;
 
 private:
 	Ref< PipelineFactory > m_pipelineFactory;

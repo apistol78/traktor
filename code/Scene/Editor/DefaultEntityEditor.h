@@ -33,27 +33,27 @@ class T_DLLCLASS DefaultEntityEditor : public IEntityEditor
 public:
 	DefaultEntityEditor(SceneEditorContext* context, EntityAdapter* entityAdapter);
 
-	virtual bool isPickable() const T_OVERRIDE;
+	virtual bool isPickable() const override;
 
-	virtual bool isGroup() const T_OVERRIDE;
+	virtual bool isGroup() const override;
 
-	virtual bool isChildrenPrivate() const T_OVERRIDE;
+	virtual bool isChildrenPrivate() const override;
 
-	virtual bool addChildEntity(EntityAdapter* childEntityAdapter) const T_OVERRIDE;
+	virtual bool addChildEntity(EntityAdapter* childEntityAdapter) const override;
 
-	virtual bool removeChildEntity(EntityAdapter* childEntityAdapter) const T_OVERRIDE;
+	virtual bool removeChildEntity(EntityAdapter* childEntityAdapter) const override;
 
-	virtual bool queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const T_OVERRIDE;
+	virtual bool queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const override;
 
-	virtual bool queryFrustum(const Frustum& worldFrustum) const T_OVERRIDE;
+	virtual bool queryFrustum(const Frustum& worldFrustum) const override;
 
-	virtual void entitySelected(bool selected) T_OVERRIDE;
+	virtual void entitySelected(bool selected) override;
 
-	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE;
+	virtual bool handleCommand(const ui::Command& command) override;
 
-	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const T_OVERRIDE;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override;
 
-	virtual bool getStatusText(std::wstring& outStatusText) const T_OVERRIDE;
+	virtual bool getStatusText(std::wstring& outStatusText) const override;
 
 protected:
 	SceneEditorContext* getContext() { return m_context; }

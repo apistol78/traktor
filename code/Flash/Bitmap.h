@@ -51,7 +51,7 @@ public:
 
 	uint32_t getHeight() const { return m_height; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE;
+	virtual void serialize(ISerializer& s) override;
 
 protected:
 	mutable Ref< IRefCount > m_cacheObject;

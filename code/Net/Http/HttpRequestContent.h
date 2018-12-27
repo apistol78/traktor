@@ -36,7 +36,7 @@ public:
 
 	void set(const std::wstring& content);
 
-	virtual std::wstring getUrlEncodedContent() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getUrlEncodedContent() const override final;
 
 private:
 	std::wstring m_content;

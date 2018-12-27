@@ -34,11 +34,11 @@ class T_DLLCLASS AsObject : public ActionClass
 public:
 	AsObject(ActionContext* context);
 
-	virtual void initialize(ActionObject* self) T_OVERRIDE T_FINAL;
+	virtual void initialize(ActionObject* self) override final;
 
-	virtual void construct(ActionObject* self, const ActionValueArray& args) T_OVERRIDE T_FINAL;
+	virtual void construct(ActionObject* self, const ActionValueArray& args) override final;
 
-	virtual ActionValue xplicit(const ActionValueArray& args) T_OVERRIDE T_FINAL;
+	virtual ActionValue xplicit(const ActionValueArray& args) override final;
 
 private:
 	void Object_addProperty(ActionObject* self, const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet) const;

@@ -33,7 +33,7 @@ public:
 
 	TypeBrowseFilter(const TypeInfo& typeInfo);
 
-	virtual bool acceptable(db::Instance* instance) const T_OVERRIDE T_FINAL;
+	virtual bool acceptable(db::Instance* instance) const override final;
 
 private:
 	TypeInfoSet m_typeSet;

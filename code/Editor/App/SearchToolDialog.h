@@ -37,11 +37,11 @@ class SearchToolDialog : public ui::Dialog
 public:
 	SearchToolDialog(IEditor* editor);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	bool create(ui::Widget* parent);
 
-	virtual void show() T_OVERRIDE T_FINAL;
+	virtual void show() override final;
 
 private:
 	IEditor* m_editor;

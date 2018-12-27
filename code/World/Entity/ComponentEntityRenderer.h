@@ -30,20 +30,20 @@ class T_DLLCLASS ComponentEntityRenderer : public IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfoSet getRenderableTypes() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void render(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
 		IWorldRenderPass& worldRenderPass,
 		Object* renderable
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 	virtual void flush(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
 		IWorldRenderPass& worldRenderPass
-	) T_OVERRIDE T_FINAL;
+	) override final;
 };
 
 	}

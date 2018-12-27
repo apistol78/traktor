@@ -39,15 +39,15 @@ public:
 		const resource::Proxy< render::Shader >& shader
 	);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void setOwner(Entity* owner) T_OVERRIDE T_FINAL;
+	virtual void setOwner(Entity* owner) override final;
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+	virtual void setTransform(const Transform& transform) override final;
 
-	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual void update(const UpdateParams& update) T_OVERRIDE T_FINAL;
+	virtual void update(const UpdateParams& update) override final;
 
 	float getSize() const { return m_size; }
 

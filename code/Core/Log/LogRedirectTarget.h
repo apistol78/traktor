@@ -22,7 +22,7 @@ public:
 
 	explicit LogRedirectTarget(ILogTarget* target1, ILogTarget* target2);
 
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL;
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) override final;
 
 private:
 	RefArray< ILogTarget > m_targets;

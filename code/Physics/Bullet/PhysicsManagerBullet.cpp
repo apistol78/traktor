@@ -393,13 +393,13 @@ struct ContactResultCallback : public btCollisionWorld::ContactResultCallback
 	{
 	}
 
-	virtual bool needsCollision(btBroadphaseProxy* proxy0) const T_OVERRIDE T_FINAL
+	virtual bool needsCollision(btBroadphaseProxy* proxy0) const override final
 	{
 		return true;
 	}
 
 #if 0
-	virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0, int partId0, int index0, const btCollisionObjectWrapper* colObj1, int partId1, int index1) T_OVERRIDE T_FINAL
+	virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0, int partId0, int index0, const btCollisionObjectWrapper* colObj1, int partId1, int index1) override final
 	{
 		if (m_colObj == colObj0->getCollisionObject())
 		{
@@ -422,7 +422,7 @@ struct ContactResultCallback : public btCollisionWorld::ContactResultCallback
 		return 0.0f;
 	}
 #else
-	virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper* colObj1Wrap, int partId1, int index1) T_OVERRIDE T_FINAL
+	virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0Wrap, int partId0, int index0, const btCollisionObjectWrapper* colObj1Wrap, int partId1, int index1) override final
 	{
 		const btCollisionObject* colObj0 = colObj0Wrap->getCollisionObject();
 		const btCollisionObject* colObj1 = colObj1Wrap->getCollisionObject();

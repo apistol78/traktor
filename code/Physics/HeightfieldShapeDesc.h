@@ -47,7 +47,7 @@ public:
 
 	const resource::Id< hf::MaterialMask >& getMaterialMask() const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	resource::Id< hf::Heightfield > m_heightfield;

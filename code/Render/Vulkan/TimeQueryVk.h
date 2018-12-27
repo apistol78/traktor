@@ -26,15 +26,15 @@ public:
 
 	bool create();
 
-	virtual void begin() T_OVERRIDE T_FINAL;
+	virtual void begin() override final;
 
-	virtual int32_t stamp() T_OVERRIDE T_FINAL;
+	virtual int32_t stamp() override final;
 
-	virtual void end() T_OVERRIDE T_FINAL;	
+	virtual void end() override final;	
 
-	virtual bool ready() const T_OVERRIDE T_FINAL;
+	virtual bool ready() const override final;
 
-	virtual uint64_t get(int32_t index) const T_OVERRIDE T_FINAL;
+	virtual uint64_t get(int32_t index) const override final;
 };
 
 	}

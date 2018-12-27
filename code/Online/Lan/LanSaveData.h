@@ -21,13 +21,13 @@ class LanSaveData : public ISaveDataProvider
 public:
 	LanSaveData();
 
-	virtual bool enumerate(std::set< std::wstring >& outSaveDataIds) T_OVERRIDE T_FINAL;
+	virtual bool enumerate(std::set< std::wstring >& outSaveDataIds) override final;
 
-	virtual bool get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment) T_OVERRIDE T_FINAL;
+	virtual bool get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment) override final;
 
-	virtual bool set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace) T_OVERRIDE T_FINAL;
+	virtual bool set(const std::wstring& saveDataId, const SaveDataDesc& saveDataDesc, const ISerializable* attachment, bool replace) override final;
 
-	virtual bool remove(const std::wstring& saveDataId) T_OVERRIDE T_FINAL;
+	virtual bool remove(const std::wstring& saveDataId) override final;
 };
 
 	}

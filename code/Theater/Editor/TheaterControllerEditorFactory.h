@@ -21,9 +21,9 @@ class TheaterControllerEditorFactory : public scene::ISceneControllerEditorFacto
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfoSet getControllerDataTypes() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getControllerDataTypes() const override final;
 
-	virtual Ref< scene::ISceneControllerEditor > createControllerEditor(const TypeInfo& controllerDataType) const T_OVERRIDE T_FINAL;
+	virtual Ref< scene::ISceneControllerEditor > createControllerEditor(const TypeInfo& controllerDataType) const override final;
 };
 
 	}

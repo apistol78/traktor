@@ -170,7 +170,7 @@ public:
 
 	const Vector4& getBlendTargetPosition(uint32_t blendTargetIndex, uint32_t positionIndex) const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	AlignedVector< Material > m_materials;

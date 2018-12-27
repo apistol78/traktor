@@ -25,7 +25,7 @@ public:
 
 	virtual ~ScriptObjectLua();
 
-	virtual Ref< const IRuntimeClass > getRuntimeClass() const T_OVERRIDE T_FINAL;
+	virtual Ref< const IRuntimeClass > getRuntimeClass() const override final;
 
 	void push() const;
 

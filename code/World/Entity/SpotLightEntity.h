@@ -40,13 +40,13 @@ public:
 		bool castShadow
 	);
 
-	virtual void update(const UpdateParams& update) T_OVERRIDE T_FINAL;
+	virtual void update(const UpdateParams& update) override final;
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+	virtual void setTransform(const Transform& transform) override final;
 
-	virtual bool getTransform(Transform& outTransform) const T_OVERRIDE T_FINAL;
+	virtual bool getTransform(Transform& outTransform) const override final;
 
-	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+	virtual Aabb3 getBoundingBox() const override final;
 
 	const Vector4& getSunColor() const { return m_sunColor; }
 

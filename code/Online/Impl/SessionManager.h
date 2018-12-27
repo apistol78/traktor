@@ -51,51 +51,51 @@ public:
 		const std::wstring& overrideLanguageCode
 	);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual bool update() T_OVERRIDE T_FINAL;
+	virtual bool update() override final;
 
-	virtual std::wstring getLanguageCode() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getLanguageCode() const override final;
 
-	virtual bool isConnected() const T_OVERRIDE T_FINAL;
+	virtual bool isConnected() const override final;
 
-	virtual bool requireFullScreen() const T_OVERRIDE T_FINAL;
+	virtual bool requireFullScreen() const override final;
 
-	virtual bool requireUserAttention() const T_OVERRIDE T_FINAL;
+	virtual bool requireUserAttention() const override final;
 
-	virtual bool haveDLC(const std::wstring& id) const T_OVERRIDE T_FINAL;
+	virtual bool haveDLC(const std::wstring& id) const override final;
 
-	virtual bool buyDLC(const std::wstring& id) const T_OVERRIDE T_FINAL;
+	virtual bool buyDLC(const std::wstring& id) const override final;
 
-	virtual void overrideDLC(const std::wstring& id, bool set, bool enable) T_OVERRIDE T_FINAL;
+	virtual void overrideDLC(const std::wstring& id, bool set, bool enable) override final;
 
-	virtual bool navigateUrl(const net::Url& url) const T_OVERRIDE T_FINAL;
+	virtual bool navigateUrl(const net::Url& url) const override final;
 
-	virtual bool getFriends(RefArray< IUser >& outFriends, bool onlineOnly) const T_OVERRIDE T_FINAL;
+	virtual bool getFriends(RefArray< IUser >& outFriends, bool onlineOnly) const override final;
 
-	virtual bool findFriend(const std::wstring& name, Ref< IUser >& outFriend) const T_OVERRIDE T_FINAL;
+	virtual bool findFriend(const std::wstring& name, Ref< IUser >& outFriend) const override final;
 
-	virtual bool haveP2PData() const T_OVERRIDE T_FINAL;
+	virtual bool haveP2PData() const override final;
 
-	virtual uint32_t receiveP2PData(void* data, uint32_t size, Ref< IUser >& outFromUser) const T_OVERRIDE T_FINAL;
+	virtual uint32_t receiveP2PData(void* data, uint32_t size, Ref< IUser >& outFromUser) const override final;
 
-	virtual uint32_t getCurrentGameCount() const T_OVERRIDE T_FINAL;
+	virtual uint32_t getCurrentGameCount() const override final;
 
-	virtual IAchievements* getAchievements() const T_OVERRIDE T_FINAL;
+	virtual IAchievements* getAchievements() const override final;
 
-	virtual ILeaderboards* getLeaderboards() const T_OVERRIDE T_FINAL;
+	virtual ILeaderboards* getLeaderboards() const override final;
 
-	virtual IMatchMaking* getMatchMaking() const T_OVERRIDE T_FINAL;
+	virtual IMatchMaking* getMatchMaking() const override final;
 
-	virtual ISaveData* getSaveData() const T_OVERRIDE T_FINAL;
+	virtual ISaveData* getSaveData() const override final;
 
-	virtual IStatistics* getStatistics() const T_OVERRIDE T_FINAL;
+	virtual IStatistics* getStatistics() const override final;
 
-	virtual IUser* getUser() const T_OVERRIDE T_FINAL;
+	virtual IUser* getUser() const override final;
 
-	virtual IVideoSharing* getVideoSharing() const T_OVERRIDE T_FINAL;
+	virtual IVideoSharing* getVideoSharing() const override final;
 
-	virtual IVoiceChat* getVoiceChat() const T_OVERRIDE T_FINAL;
+	virtual IVoiceChat* getVoiceChat() const override final;
 
 private:
 	Ref< ISessionManagerProvider > m_provider;

@@ -57,7 +57,7 @@ class T_DLLCLASS EffectEntityData : public world::EntityData
 public:
 	Ref< EffectEntity > createEntity(resource::IResourceManager* resourceManager, world::IEntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer) const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const resource::Id< Effect >& getEffect() const { return m_effect; }
 

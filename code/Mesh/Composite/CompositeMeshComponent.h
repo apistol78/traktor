@@ -33,15 +33,15 @@ class T_DLLCLASS CompositeMeshComponent : public MeshComponent
 public:
 	CompositeMeshComponent();
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+	virtual void setTransform(const Transform& transform) override final;
 
-	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
+	virtual void update(const world::UpdateParams& update) override final;
 
-	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) T_OVERRIDE T_FINAL;
+	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) override final;
 
 	void removeAll();
 

@@ -33,7 +33,7 @@ class EntityDependencyInvestigator : public ui::Container
 public:
 	EntityDependencyInvestigator(SceneEditorContext* context);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	bool create(ui::Widget* parent);
 

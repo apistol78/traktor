@@ -56,7 +56,7 @@ public:
 	BlendFunction(Factor sourceFactor, Factor destinationFactor, Operation operation);
 
 protected:
-	virtual void evaluate(const Color4f& in, Color4f& out) const T_OVERRIDE T_FINAL;
+	virtual void evaluate(const Color4f& in, Color4f& out) const override final;
 
 private:
 	Factor m_sourceFactor;

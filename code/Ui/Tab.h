@@ -45,7 +45,7 @@ public:
 
 	bool create(Widget* parent, int32_t style = WsDefault);
 
-	virtual Rect getInnerRect() const T_OVERRIDE;
+	virtual Rect getInnerRect() const override;
 
 	int32_t addImage(IBitmap* image, int32_t imageCount);
 	
@@ -71,9 +71,9 @@ public:
 
 	void addCloseEventHandler(EventHandler* eventHandler);
 
-	virtual Size getMinimumSize() const T_OVERRIDE;
+	virtual Size getMinimumSize() const override;
 	
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 private:
 	struct PageState

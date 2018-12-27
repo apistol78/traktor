@@ -36,7 +36,7 @@ public:
 
 	const std::map< std::wstring, std::wstring >& getEnvironment() const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::wstring m_executable;

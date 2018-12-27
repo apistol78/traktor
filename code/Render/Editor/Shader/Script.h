@@ -65,17 +65,17 @@ public:
 
 	ParameterType getOutputPinType(int index) const;
 
-	virtual int getInputPinCount() const T_OVERRIDE T_FINAL;
+	virtual int getInputPinCount() const override final;
 
-	virtual const InputPin* getInputPin(int index) const T_OVERRIDE T_FINAL;
+	virtual const InputPin* getInputPin(int index) const override final;
 
-	virtual int getOutputPinCount() const T_OVERRIDE T_FINAL;
+	virtual int getOutputPinCount() const override final;
 
-	virtual const OutputPin* getOutputPin(int index) const T_OVERRIDE T_FINAL;
+	virtual const OutputPin* getOutputPin(int index) const override final;
 
 	const std::map< std::wstring, SamplerState >& getSamplers() const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::wstring m_name;

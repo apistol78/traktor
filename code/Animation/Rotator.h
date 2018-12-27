@@ -58,7 +58,7 @@ public:
 
 	static Rotator fromHeadPitchBank(float head, float pitch, float bank);
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Vector4 m_A;

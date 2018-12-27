@@ -40,7 +40,7 @@ public:
 
 	void setEvaluationPoint(const Vector4& position, const Vector4& normal);
 
-	virtual float evaluate(float phi, float theta, const Vector4& unit) const T_OVERRIDE T_FINAL;
+	virtual float evaluate(float phi, float theta, const Vector4& unit) const override final;
 
 private:
 	Ref< model::Model > m_model;

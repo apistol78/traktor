@@ -38,15 +38,15 @@ class T_DLLCLASS CompactDatabase : public IProviderDatabase
 public:
 	CompactDatabase();
 
-	virtual bool create(const ConnectionString& connectionString) T_OVERRIDE T_FINAL;
+	virtual bool create(const ConnectionString& connectionString) override final;
 
-	virtual bool open(const ConnectionString& connectionString) T_OVERRIDE T_FINAL;
+	virtual bool open(const ConnectionString& connectionString) override final;
 
-	virtual void close() T_OVERRIDE T_FINAL;
+	virtual void close() override final;
 
-	virtual Ref< IProviderBus > getBus() T_OVERRIDE T_FINAL;
+	virtual Ref< IProviderBus > getBus() override final;
 
-	virtual Ref< IProviderGroup > getRootGroup() T_OVERRIDE T_FINAL;
+	virtual Ref< IProviderGroup > getRootGroup() override final;
 
 private:
 	Ref< CompactContext > m_context;

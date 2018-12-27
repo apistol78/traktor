@@ -19,7 +19,7 @@ class SphereMapFilter : public drawing::IImageFilter
 	T_RTTI_CLASS;
 
 protected:
-	virtual void apply(drawing::Image* image) const T_OVERRIDE T_FINAL;
+	virtual void apply(drawing::Image* image) const override final;
 };
 
 	}

@@ -36,7 +36,7 @@ public:
 
 	const std::wstring& getSerializerTypeName() const { return m_serializerTypeName; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	uint32_t m_streamId;

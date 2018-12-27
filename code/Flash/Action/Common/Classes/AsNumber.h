@@ -26,11 +26,11 @@ class AsNumber : public ActionClass
 public:
 	AsNumber(ActionContext* context);
 
-	virtual void initialize(ActionObject* self) T_OVERRIDE T_FINAL;
+	virtual void initialize(ActionObject* self) override final;
 
-	virtual void construct(ActionObject* self, const ActionValueArray& args) T_OVERRIDE T_FINAL;
+	virtual void construct(ActionObject* self, const ActionValueArray& args) override final;
 
-	virtual ActionValue xplicit(const ActionValueArray& args) T_OVERRIDE T_FINAL;
+	virtual ActionValue xplicit(const ActionValueArray& args) override final;
 
 private:
 	std::wstring Number_toString(const Number* self) const;

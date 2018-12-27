@@ -39,15 +39,15 @@ class T_DLLCLASS Element : public Node
 public:
 	Element(const std::wstring& name);
 	
-	virtual std::wstring getName() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getName() const override final;
 
-	virtual void setName(const std::wstring& name) T_OVERRIDE T_FINAL;
+	virtual void setName(const std::wstring& name) override final;
 
-	virtual std::wstring getValue() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getValue() const override final;
 
-	virtual void setValue(const std::wstring& value) T_OVERRIDE T_FINAL;
+	virtual void setValue(const std::wstring& value) override final;
 
-	virtual void write(OutputStream& os) const T_OVERRIDE T_FINAL;
+	virtual void write(OutputStream& os) const override final;
 
 	int32_t get(const std::wstring& path, RefArray< Element >& outElements) const;
 	
@@ -86,7 +86,7 @@ public:
 	Ref< Element > clone() const;
 
 protected:
-	virtual Ref< Node > cloneUntyped() const T_OVERRIDE T_FINAL;
+	virtual Ref< Node > cloneUntyped() const override final;
 
 private:
 	std::wstring m_name;

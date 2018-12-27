@@ -43,7 +43,7 @@ public:
 
 	MeshAsset();
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	void setMeshType(MeshType meshType) { m_meshType = meshType; }
 

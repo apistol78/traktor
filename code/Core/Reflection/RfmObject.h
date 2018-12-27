@@ -37,7 +37,7 @@ public:
 
 	ISerializable* get() const { return m_value; }
 
-	virtual bool replace(const ReflectionMember* source) T_OVERRIDE T_FINAL;
+	virtual bool replace(const ReflectionMember* source) override final;
 
 private:
 	Ref< ISerializable > m_value;

@@ -34,9 +34,9 @@ class T_DLLCLASS PolymorphicDispatch : public IRuntimeDispatch
 public:
 	void set(uint32_t argc, const IRuntimeDispatch* dispatch);
 
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL;
+	virtual void signature(OutputStream& ss) const override final;
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL;
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final;
 
 private:
 	RefArray< const IRuntimeDispatch > m_dispatches;

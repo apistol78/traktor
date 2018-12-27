@@ -35,7 +35,7 @@ public:
 
 	bool create(ui::Widget* parent, const TypeInfoSet* base, bool onlyEditable, bool onlyInstantiable);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	const TypeInfo* getSelectedType() const;
 

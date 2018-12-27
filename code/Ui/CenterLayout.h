@@ -39,9 +39,9 @@ public:
 
 	CenterLayout(uint32_t centerAxis = CaBoth);
 
-	virtual bool fit(Widget* widget, const Size& bounds, Size& result) T_OVERRIDE;
+	virtual bool fit(Widget* widget, const Size& bounds, Size& result) override;
 
-	virtual void update(Widget* widget) T_OVERRIDE;
+	virtual void update(Widget* widget) override;
 
 private:
 	uint32_t m_centerAxis;

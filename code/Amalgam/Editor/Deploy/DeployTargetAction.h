@@ -61,7 +61,7 @@ public:
 		const PropertyGroup* tweakSettings
 	);
 
-	virtual bool execute(IProgressListener* progressListener) T_OVERRIDE T_FINAL;
+	virtual bool execute(IProgressListener* progressListener) override final;
 
 private:
 	Ref< db::Database > m_database;

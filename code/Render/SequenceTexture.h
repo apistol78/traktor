@@ -33,9 +33,9 @@ class T_DLLCLASS SequenceTexture : public ITexture
 	T_RTTI_CLASS;
 
 public:
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual ITexture* resolve() T_OVERRIDE T_FINAL;
+	virtual ITexture* resolve() override final;
 
 private:
 	friend class SequenceTextureFactory;

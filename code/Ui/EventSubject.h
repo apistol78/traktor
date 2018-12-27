@@ -58,7 +58,7 @@ public:
 		{
 		}
 
-		virtual void notify(Event* event) T_OVERRIDE
+		virtual void notify(Event* event) override
 		{
 			(*m_fn)(
 				mandatory_non_null_type_cast< EventType* >(event)
@@ -81,7 +81,7 @@ public:
 		{
 		}
 
-		virtual void notify(Event* event) T_OVERRIDE
+		virtual void notify(Event* event) override
 		{
 			(m_target->*m_method)(
 				mandatory_non_null_type_cast< EventType* >(event)
@@ -103,7 +103,7 @@ public:
 		{
 		}
 
-		virtual void notify(Event* event) T_OVERRIDE
+		virtual void notify(Event* event) override
 		{
 			m_fn(
 				mandatory_non_null_type_cast< EventType* >(event)

@@ -26,23 +26,23 @@ class Leaderboards : public ILeaderboards
 	T_RTTI_CLASS;
 
 public:
-	virtual bool ready() const T_OVERRIDE T_FINAL;
+	virtual bool ready() const override final;
 
-	virtual bool enumerate(std::set< std::wstring >& outLeaderboardIds) const T_OVERRIDE T_FINAL;
+	virtual bool enumerate(std::set< std::wstring >& outLeaderboardIds) const override final;
 
-	virtual bool create(const std::wstring& leaderboardId) T_OVERRIDE T_FINAL;
+	virtual bool create(const std::wstring& leaderboardId) override final;
 
-	virtual bool getRank(const std::wstring& leaderboardId, uint32_t& outRank) const T_OVERRIDE T_FINAL;
+	virtual bool getRank(const std::wstring& leaderboardId, uint32_t& outRank) const override final;
 
-	virtual bool getScore(const std::wstring& leaderboardId, int32_t& outScore) const T_OVERRIDE T_FINAL;
+	virtual bool getScore(const std::wstring& leaderboardId, int32_t& outScore) const override final;
 
-	virtual Ref< Result > setScore(const std::wstring& leaderboardId, int32_t score) T_OVERRIDE T_FINAL;
+	virtual Ref< Result > setScore(const std::wstring& leaderboardId, int32_t score) override final;
 
-	virtual Ref< Result > addScore(const std::wstring& leaderboardId, int32_t score) T_OVERRIDE T_FINAL;
+	virtual Ref< Result > addScore(const std::wstring& leaderboardId, int32_t score) override final;
 
-	virtual Ref< ScoreArrayResult > getGlobalScores(const std::wstring& leaderboardId, int32_t from, int32_t to) T_OVERRIDE T_FINAL;
+	virtual Ref< ScoreArrayResult > getGlobalScores(const std::wstring& leaderboardId, int32_t from, int32_t to) override final;
 
-	virtual Ref< ScoreArrayResult > getFriendScores(const std::wstring& leaderboardId, int32_t from, int32_t to) T_OVERRIDE T_FINAL;
+	virtual Ref< ScoreArrayResult > getFriendScores(const std::wstring& leaderboardId, int32_t from, int32_t to) override final;
 
 private:
 	friend class SessionManager;

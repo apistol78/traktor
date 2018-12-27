@@ -54,7 +54,7 @@ public:
 	void flush();
 
 protected:
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 private:
 	Semaphore m_lock;

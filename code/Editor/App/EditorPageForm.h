@@ -24,7 +24,7 @@ class EditorPageForm : public ui::Form
 public:
 	bool create(ui::Widget* parent);
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 };
 	
 	}

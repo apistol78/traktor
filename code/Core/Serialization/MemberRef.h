@@ -29,7 +29,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
+	virtual void serialize(ISerializer& s) const override final
 	{
 		Ref< ISerializable > object = (ISerializable*)m_ref.ptr();
 		s >> Member< ISerializable* >(

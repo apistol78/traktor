@@ -29,15 +29,15 @@ struct SoundBufferCursor : public RefCountImpl< sound::ISoundBufferCursor >
 		m_samples[1].reset((float*)getAllocator()->alloc(4096 * sizeof(float), 16, T_FILE_LINE));
 	}
 
-	virtual void setParameter(sound::handle_t id, float parameter) T_OVERRIDE T_FINAL
+	virtual void setParameter(sound::handle_t id, float parameter) override final
 	{
 	}
 
-	virtual void disableRepeat() T_OVERRIDE T_FINAL
+	virtual void disableRepeat() override final
 	{
 	}
 
-	virtual void reset() T_OVERRIDE T_FINAL
+	virtual void reset() override final
 	{
 		m_position = 0;
 	}

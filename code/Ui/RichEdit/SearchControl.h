@@ -48,11 +48,11 @@ public:
 
 	void setAnyMatchingHint(bool hint);
 
-	virtual void setFocus() T_OVERRIDE T_FINAL;
+	virtual void setFocus() override final;
 
-	virtual void show() T_OVERRIDE T_FINAL;
+	virtual void show() override final;
 
-	virtual ui::Size getPreferedSize() const T_OVERRIDE T_FINAL;
+	virtual ui::Size getPreferedSize() const override final;
 
 private:
 	Ref< ui::Edit > m_editSearch;

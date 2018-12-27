@@ -42,7 +42,7 @@ class T_DLLCLASS LightComponentData : public IEntityComponentData
 public:
 	LightComponentData();
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	void setLightType(LightType lightType) { m_lightType = lightType; }
 

@@ -37,15 +37,15 @@ public:
 		IGrain* grain
 	);
 
-	virtual Ref< ISoundBufferCursor > createCursor() const T_OVERRIDE T_FINAL;
+	virtual Ref< ISoundBufferCursor > createCursor() const override final;
 
-	virtual void updateCursor(ISoundBufferCursor* cursor) const T_OVERRIDE T_FINAL;
+	virtual void updateCursor(ISoundBufferCursor* cursor) const override final;
 
-	virtual const IGrain* getCurrentGrain(const ISoundBufferCursor* cursor) const T_OVERRIDE T_FINAL;
+	virtual const IGrain* getCurrentGrain(const ISoundBufferCursor* cursor) const override final;
 
-	virtual void getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const T_OVERRIDE T_FINAL;
+	virtual void getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const override final;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
+	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const override final;
 
 private:
 	uint32_t m_count;

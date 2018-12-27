@@ -39,7 +39,7 @@ public:
 
 	void update(float simulationDeltaTime);
 
-	virtual physics::PhysicsManager* getPhysicsManager() T_OVERRIDE T_FINAL;
+	virtual physics::PhysicsManager* getPhysicsManager() override final;
 
 private:
 	Ref< physics::PhysicsManager > m_physicsManager;

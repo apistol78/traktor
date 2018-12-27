@@ -43,9 +43,9 @@ public:
 		const Matrix33& transform,
 		const ActionObject* initObject,
 		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
-	virtual void removeInstance(CharacterInstance* instance, int32_t depth) const T_OVERRIDE T_FINAL;
+	virtual void removeInstance(CharacterInstance* instance, int32_t depth) const override final;
 };
 	
 	}

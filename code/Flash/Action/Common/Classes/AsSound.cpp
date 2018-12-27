@@ -34,7 +34,7 @@ public:
 	const Sound* getSound() const { return m_sound; }
 
 protected:
-	virtual void dereference() T_OVERRIDE T_FINAL
+	virtual void dereference() override final
 	{
 		m_sound = 0;
 		ActionObjectRelay::dereference();
