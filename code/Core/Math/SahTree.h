@@ -97,20 +97,35 @@ public:
 	 *
 	 * \param origin Ray origin.
 	 * \param direction Ray direction.
+	 * \param maxDistance Intersection must occur prior to this distance from origin, 0 distance is infinite.
 	 * \param ignore Ignore intersection with winding.
 	 * \param outResult Intersection result.
 	 * \return True if any intersection found.
 	 */
-	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, int32_t ignore, QueryResult& outResult, QueryCache& inoutCache) const;
+	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, int32_t ignore, QueryResult& outResult, QueryCache& inoutCache) const;
 
-		/*! \brief Query for closest intersection.
+	/*! \brief Query for closest intersection.
+	 *
+	 * \param origin Ray origin.
+	 * \param direction Ray direction.
+	 * \param ignore Ignore intersection with winding.
+	 * \param outResult Intersection result.
+	 * \return True if any intersection found.
+	 */
+	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, int32_t ignore, QueryResult& outResult, QueryCache& inoutCache) const {
+		return queryClosestIntersection(origin, direction, 0.0f, -1, outResult, inoutCache);
+	}
+
+	/*! \brief Query for closest intersection.
 	 *
 	 * \param origin Ray origin.
 	 * \param direction Ray direction.
 	 * \param outResult Intersection result.
 	 * \return True if any intersection found.
 	 */
-	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, QueryResult& outResult, QueryCache& inoutCache) const { return queryClosestIntersection(origin, direction, -1, outResult, inoutCache); }
+	bool queryClosestIntersection(const Vector4& origin, const Vector4& direction, QueryResult& outResult, QueryCache& inoutCache) const {
+		return queryClosestIntersection(origin, direction, -1, outResult, inoutCache);
+	}
 
 	/*! \brief Query for any intersection.
 	 *
@@ -129,7 +144,9 @@ public:
 	 * \param maxDistance Intersection must occur prior to this distance from origin, 0 distance is infinite.
 	 * \return True if any intersection found.
 	 */
-	bool queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, QueryCache& inoutCache) const { return queryAnyIntersection(origin, direction, maxDistance, -1, inoutCache); }
+	bool queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, QueryCache& inoutCache) const {
+		return queryAnyIntersection(origin, direction, maxDistance, -1, inoutCache);
+	}
 
 	/*! \brief Check if point is within winding.
 	 *

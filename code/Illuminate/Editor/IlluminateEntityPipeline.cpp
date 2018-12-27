@@ -37,6 +37,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Illuminate/Editor/JobTraceIndirect.h"
 #include "Illuminate/Editor/JobTraceOcclusion.h"
 #include "Mesh/MeshComponentData.h"
+#include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
@@ -172,6 +173,9 @@ bool IlluminateEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
+	// Add dependencies to mesh material generator fragments.
+	mesh::MaterialShaderGenerator().addDependencies(pipelineDepends);
+
 	return world::EntityPipeline::buildDependencies(
 		pipelineDepends,
 		sourceInstance,
@@ -517,22 +521,17 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 
 		if (illumEntityData->traceIndirectLighting())
 		{
+			const int32_t niterations = illumEntityData->getIndirectTraceIterations();
+
 			log::info << L"Tracing indirect lighting..." << Endl;
-			std::list< JobTraceIndirect* > tracesIndirect;
 
-			Ref< drawing::Image > outputImageIndirect[] = 
+			RefArray< drawing::Image > outputImageIndirect(niterations);
+			for (int32_t i = 0; i < niterations; ++i)
 			{
-				new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize),
-				new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize)
-			};
+				outputImageIndirect[i] = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
+				outputImageIndirect[i]->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-			Ref< drawing::Image > imageIrradiance = outputImageRadiance;
-
-			for (int32_t i = 0; i < illumEntityData->getIndirectTraceIterations(); ++i)
-			{
-				Ref< drawing::Image > outputImageIndirectTarget = outputImageIndirect[i % 2];
-				outputImageIndirectTarget->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-
+				std::list< JobTraceIndirect* > tracesIndirect;
 				for (int32_t y = 0; y < outputSize; y += c_jobTileSize)
 				{
 					for (int32_t x = 0; x < outputSize; x += c_jobTileSize)
@@ -543,8 +542,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 							sah,
 							gbuffer,
 							surfaces,
-							imageIrradiance,
-							outputImageIndirectTarget,
+							(i == 0) ? outputImageRadiance : outputImageIndirect[i - 1],
+							outputImageIndirect[i],
 							illumEntityData->getIndirectTraceSamples()
 						);
 
@@ -557,41 +556,43 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 					}
 				}
 
-				for (RefArray< Job >::iterator j = jobs.begin(); j != jobs.end(); ++j)
-					(*j)->wait();
+				for (auto job : jobs)
+					job->wait();
 
-				for(std::list< JobTraceIndirect* >::iterator j = tracesIndirect.begin(); j != tracesIndirect.end(); ++j)
-					delete *j;
+				for (auto task : tracesIndirect)
+					delete task;
 
-				tracesIndirect.clear();
 				jobs.clear();
 
 				if (illumEntityData->getIndirectConvolveRadius() > 0)
 				{
 					log::info << L"Convolving indirect lighting..." << Endl;
 					drawing::DilateFilter dilateFilter(illumEntityData->getIndirectConvolveRadius());
-					outputImageIndirectTarget->apply(&dilateFilter);
-					outputImageIndirectTarget->apply(drawing::ConvolutionFilter::createGaussianBlur(illumEntityData->getIndirectConvolveRadius()));
+					outputImageIndirect[i]->apply(&dilateFilter);
+					outputImageIndirect[i]->apply(drawing::ConvolutionFilter::createGaussianBlur(illumEntityData->getIndirectConvolveRadius()));
 				}
+			}
 
-				outputImageIndirectTarget->clearAlpha(1.0f);
-				outputImageIndirectTarget->save(L"Indirect_" + toString(i) + L".exr");
-
-				log::info << L"Merging direct and indirect lighting..." << Endl;
-				for (int32_t y = 0; y < outputSize; ++y)
+			log::info << L"Merging direct and indirect lighting..." << Endl;
+			for (int32_t y = 0; y < outputSize; ++y)
+			{
+				for (int32_t x = 0; x < outputSize; ++x)
 				{
-					for (int32_t x = 0; x < outputSize; ++x)
+					Color4f cr(0.0f, 0.0f, 0.0f, 0.0f);
+					outputImageRadiance->getPixelUnsafe(x, y, cr);
+					for (int32_t i = 0; i < niterations; ++i)
 					{
-						Color4f inA, inB;
-						outputImageIndirectTarget->getPixelUnsafe(x, y, inA);
-						imageIrradiance->getPixelUnsafe(x, y, inB);
-						outputImageRadiance->setPixelUnsafe(x, y, (inA + inB) * Color4f(1.0f, 1.0f, 1.0f, 0.0f) + Color4f(0.0f, 0.0f, 0.0f, 1.0f));
+						Color4f tmp;
+						outputImageIndirect[i]->getPixelUnsafe(x, y, tmp);
+						cr += tmp;
 					}
+					outputImageRadiance->setPixelUnsafe(x, y, cr);
 				}
-
-				imageIrradiance = outputImageIndirectTarget;
 			}
 		}
+
+		outputImageRadiance->clearAlpha(1.0f);
+		outputImageRadiance->save(L"Irradiance.exr");
 
 		log::info << L"Creating resources..." << Endl;
 
@@ -609,7 +610,6 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		textureOutput->m_generateMips = false;
 
 		// Measure max range of illumination texture, also encode lightmap with RGBM encoding.
-		float lumelRange = 1.0f;
 		if (!illumEntityData->highDynamicRange())
 		{
 			for (int32_t y = 0; y < outputSize; ++y)
@@ -651,8 +651,8 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		AlignedVector< model::Material > materials = mergedModel->getMaterials();
 		for (AlignedVector< model::Material >::iterator j = materials.begin(); j != materials.end(); ++j)
 		{
-			j->setLightMap(model::Material::Map(L"__Illumination__", channel, false), lumelRange);
-			j->setEmissive(0.0f);
+			j->setBlendOperator(model::Material::BoDecal);
+			j->setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
 		}
 		mergedModel->setMaterials(materials);
 

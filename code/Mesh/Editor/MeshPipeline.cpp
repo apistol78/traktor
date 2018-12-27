@@ -192,8 +192,10 @@ bool MeshPipeline::buildDependencies(
 		log::error << L"Mesh pipeline failed; unknown mesh asset type" << Endl;
 		return false;
 	}
-
 	pipelineDepends->addDependency(vertexShaderGuid, editor::PdfUse);
+
+	// Add dependencies to generator fragments.
+	MaterialShaderGenerator().addDependencies(pipelineDepends);
 	
 	// Add dependencies to material templates.
 	if (m_enableCustomTemplates)
