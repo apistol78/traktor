@@ -68,15 +68,13 @@ bool ScenePipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	Ref< const SceneAsset > sceneAsset = checked_type_cast< const SceneAsset* >(sourceAsset);
+	const SceneAsset* sceneAsset = mandatory_non_null_type_cast< const SceneAsset* >(sourceAsset);
 
-	const SmallMap< std::wstring, resource::Id< render::ITexture > >& params = sceneAsset->getImageProcessParams();
-	for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = params.begin(); i != params.end(); ++i)
-		pipelineDepends->addDependency(i->second, editor::PdfBuild | editor::PdfResource);
+	for (const auto& param : sceneAsset->getImageProcessParams())
+		pipelineDepends->addDependency(param.second, editor::PdfBuild | editor::PdfResource);
 
-	const RefArray< world::LayerEntityData >& layers = sceneAsset->getLayers();
-	for (RefArray< world::LayerEntityData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
-		pipelineDepends->addDependency(*i);
+	for (const auto& layer : sceneAsset->getLayers())
+		pipelineDepends->addDependency(layer);
 
 	pipelineDepends->addDependency(sceneAsset->getControllerData());
 
@@ -121,30 +119,29 @@ bool ScenePipeline::buildOutput(
 	Ref< world::GroupEntityData > groupEntityData = new world::GroupEntityData();
 
 	// Build each layer of entity data; merge into a single output group.
-	const RefArray< world::LayerEntityData >& layers = sceneAsset->getLayers();
-	for (RefArray< world::LayerEntityData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	for (const auto& layer : sceneAsset->getLayers())
 	{
-		if (!(*i))
+		if (!layer)
 			continue;
 
-		if ((*i)->isInclude() || m_targetEditor)
+		if (layer->isInclude() || m_targetEditor)
 		{
-			log::info << L"Building layer \"" << (*i)->getName() << L"\"..." << Endl;
-			const RefArray< world::EntityData >& entityData = (*i)->getEntityData();
-			for (RefArray< world::EntityData >::const_iterator j = entityData.begin(); j != entityData.end(); ++j)
+			log::info << L"Building layer \"" << layer->getName() << L"\"..." << Endl;
+			for (const auto& assetEntityData : layer->getEntityData())
 			{
-				Ref< world::EntityData > entityData = checked_type_cast< world::EntityData*, true >(pipelineBuilder->buildOutput(*j));
-				if (entityData)
-					groupEntityData->addEntityData(entityData);
+				Ref< world::EntityData > outputEntityData = checked_type_cast< world::EntityData*, true >(pipelineBuilder->buildOutput(assetEntityData));
+				if (outputEntityData)
+					groupEntityData->addEntityData(outputEntityData);
 			}
 		}
 		else
-			log::info << L"Layer \"" << (*i)->getName() << L"\" skipped" << Endl;
+			log::info << L"Layer \"" << layer->getName() << L"\" skipped." << Endl;
 	}
 
 	// Build controller data.
 	Ref< ISceneControllerData > controllerData = checked_type_cast< ISceneControllerData*, true >(pipelineBuilder->buildOutput(sceneAsset->getControllerData()));
 
+	// Create output scene resource.
 	Ref< SceneResource > sceneResource = new SceneResource();
 	sceneResource->setWorldRenderSettings(sceneAsset->getWorldRenderSettings());
 	sceneResource->setImageProcessParams(sceneAsset->getImageProcessParams());
@@ -154,12 +151,12 @@ bool ScenePipeline::buildOutput(
 	if (m_suppressLinearLighting && sceneResource->getWorldRenderSettings()->linearLighting)
 	{
 		sceneResource->getWorldRenderSettings()->linearLighting = false;
-		log::info << L"Linear lighting suppressed" << Endl;
+		log::info << L"Linear lighting suppressed." << Endl;
 	}
 	if (m_suppressDepthPass && sceneResource->getWorldRenderSettings()->depthPass)
 	{
 		sceneResource->getWorldRenderSettings()->depthPass = false;
-		log::info << L"Depth pass suppressed" << Endl;
+		log::info << L"Depth pass suppressed." << Endl;
 	}
 
 	for (uint32_t i = 0; i < world::QuLast; ++i)
@@ -187,7 +184,7 @@ bool ScenePipeline::buildOutput(
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!outputInstance)
 	{
-		log::error << L"Unable to create output instance" << Endl;
+		log::error << L"Unable to create output instance \"" << outputPath << L"\"." << Endl;
 		return false;
 	}
 
@@ -195,7 +192,7 @@ bool ScenePipeline::buildOutput(
 
 	if (!outputInstance->commit())
 	{
-		log::error << L"Unable to commit output instance" << Endl;
+		log::error << L"Unable to commit output instance \"" << outputPath << L"\"." << Endl;
 		return false;
 	}
 
