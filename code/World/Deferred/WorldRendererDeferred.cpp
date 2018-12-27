@@ -388,8 +388,8 @@ bool WorldRendererDeferred::create(
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
 		rtscd.multiSample = 0;
-		rtscd.createDepthStencil = false;
-		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.createDepthStencil = !desc.usePrimaryDepth;
+		rtscd.usingPrimaryDepthStencil = desc.usePrimaryDepth;
 		rtscd.preferTiled = true;
 		rtscd.targets[0].format = render::TfR16G16B16A16F;
 

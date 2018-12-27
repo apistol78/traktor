@@ -19,7 +19,7 @@ namespace traktor
 		{
 
 const int32_t c_jobTileSize = 128;
-const Scalar c_maxIndirectDistance(200.0f);
+const Scalar c_maxIndirectDistance(100.0f);
 const Scalar c_traceOffset(0.01f);
 
 		}

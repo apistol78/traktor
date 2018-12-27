@@ -28,7 +28,7 @@
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
-				<blue>false</blue>
+				<blue>true</blue>
 				<alpha>false</alpha>
 			</colorWriteMask>
 			<depthEnable>true</depthEnable>

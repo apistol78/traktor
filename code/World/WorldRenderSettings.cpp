@@ -88,7 +88,7 @@ void WorldRenderSettings::serialize(ISerializer& s)
 		if (s.getVersion() < 25)
 		{
 			bool dummy = false;
-			s >> Member< bool >(L"occlusionCulling", dummy);
+			s >> Member< bool >(L"occlusionCullingEnabled", dummy);
 		}
 		s >> Member< bool >(L"depthPassEnabled", depthPass);
 	}

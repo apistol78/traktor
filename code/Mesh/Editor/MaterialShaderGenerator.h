@@ -9,6 +9,14 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 #include "Core/Object.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_MESH_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace db
@@ -42,7 +50,7 @@ class Material;
 	namespace mesh
 	{
 
-class MaterialShaderGenerator : public Object
+class T_DLLCLASS MaterialShaderGenerator : public Object
 {
 	T_RTTI_CLASS;
 

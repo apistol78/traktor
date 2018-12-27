@@ -70,7 +70,7 @@ void SahTree::build(const AlignedVector< Winding3 >& polygons)
 	buildNode(m_root, 0);
 }
 
-bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& direction, int32_t ignore, QueryResult& outResult, QueryCache& inoutCache) const
+bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& direction, float maxDistance, int32_t ignore, QueryResult& outResult, QueryCache& inoutCache) const
 {
 	#define IS_LEAF(node) ((node)->leftChild == 0)
 
@@ -81,7 +81,7 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 	Vector4 p;
 
 	outResult.index = -1;
-	outResult.distance = Scalar(std::numeric_limits< float >::max());
+	outResult.distance = Scalar(maxDistance > FUZZY_EPSILON ? maxDistance : std::numeric_limits< float >::max());
 
 	if (!m_root->aabb.intersectRay(origin, direction, nearT, farT) || farT < 0.0f)
 		return false;
