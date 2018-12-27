@@ -40,15 +40,15 @@ public:
 
 	void hide();
 
-	virtual void setPropertyObject(Object* properties) T_OVERRIDE T_FINAL;
+	virtual void setPropertyObject(Object* properties) override final;
 
-	virtual void createAdditionalPanel(ui::Widget* widget, int size, bool south) T_OVERRIDE T_FINAL;
+	virtual void createAdditionalPanel(ui::Widget* widget, int size, bool south) override final;
 
-	virtual void destroyAdditionalPanel(ui::Widget* widget) T_OVERRIDE T_FINAL;
+	virtual void destroyAdditionalPanel(ui::Widget* widget) override final;
 
-	virtual void showAdditionalPanel(ui::Widget* widget) T_OVERRIDE T_FINAL;
+	virtual void showAdditionalPanel(ui::Widget* widget) override final;
 
-	virtual void hideAdditionalPanel(ui::Widget* widget) T_OVERRIDE T_FINAL;
+	virtual void hideAdditionalPanel(ui::Widget* widget) override final;
 
 	const std::map< Ref< ui::Widget >, bool >& getPanelWidgets() const { return m_panelWidgets; }
 

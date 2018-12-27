@@ -93,75 +93,75 @@ public:
 
 	bool create(const CommandLine& cmdLine);
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 
 	/*! \name IEditor implementation */
 	//@{
 
-	virtual Ref< const PropertyGroup > getSettings() const T_OVERRIDE T_FINAL;
+	virtual Ref< const PropertyGroup > getSettings() const override final;
 
-	virtual Ref< PropertyGroup > checkoutGlobalSettings() T_OVERRIDE T_FINAL;
+	virtual Ref< PropertyGroup > checkoutGlobalSettings() override final;
 
-	virtual void commitGlobalSettings() T_OVERRIDE T_FINAL;
+	virtual void commitGlobalSettings() override final;
 
-	virtual void revertGlobalSettings() T_OVERRIDE T_FINAL;
+	virtual void revertGlobalSettings() override final;
 
-	virtual Ref< PropertyGroup > checkoutWorkspaceSettings() T_OVERRIDE T_FINAL;
+	virtual Ref< PropertyGroup > checkoutWorkspaceSettings() override final;
 
-	virtual void commitWorkspaceSettings() T_OVERRIDE T_FINAL;
+	virtual void commitWorkspaceSettings() override final;
 
-	virtual void revertWorkspaceSettings() T_OVERRIDE T_FINAL;
+	virtual void revertWorkspaceSettings() override final;
 
-	virtual Ref< ILogTarget > createLogTarget(const std::wstring& title) T_OVERRIDE T_FINAL;
+	virtual Ref< ILogTarget > createLogTarget(const std::wstring& title) override final;
 
-	virtual Ref< db::Database > getSourceDatabase() const T_OVERRIDE T_FINAL;
+	virtual Ref< db::Database > getSourceDatabase() const override final;
 
-	virtual Ref< db::Database > getOutputDatabase() const T_OVERRIDE T_FINAL;
+	virtual Ref< db::Database > getOutputDatabase() const override final;
 
-	virtual void updateDatabaseView() T_OVERRIDE T_FINAL;
+	virtual void updateDatabaseView() override final;
 
-	virtual bool highlightInstance(const db::Instance* instance) T_OVERRIDE T_FINAL;
+	virtual bool highlightInstance(const db::Instance* instance) override final;
 
-	virtual const TypeInfo* browseType() T_OVERRIDE T_FINAL;
+	virtual const TypeInfo* browseType() override final;
 
-	virtual const TypeInfo* browseType(const TypeInfoSet& base) T_OVERRIDE T_FINAL;
+	virtual const TypeInfo* browseType(const TypeInfoSet& base) override final;
 
-	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType) T_OVERRIDE T_FINAL;
+	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType) override final;
 
-	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter) T_OVERRIDE T_FINAL;
+	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter) override final;
 
-	virtual bool openEditor(db::Instance* instance) T_OVERRIDE T_FINAL;
+	virtual bool openEditor(db::Instance* instance) override final;
 
-	virtual bool openDefaultEditor(db::Instance* instance) T_OVERRIDE T_FINAL;
+	virtual bool openDefaultEditor(db::Instance* instance) override final;
 
-	virtual bool openTool(const std::wstring& toolType, const std::wstring& param) T_OVERRIDE T_FINAL;
+	virtual bool openTool(const std::wstring& toolType, const std::wstring& param) override final;
 
-	virtual bool openBrowser(const net::Url& url) T_OVERRIDE T_FINAL;
+	virtual bool openBrowser(const net::Url& url) override final;
 
-	virtual Ref< IEditorPage > getActiveEditorPage() T_OVERRIDE T_FINAL;
+	virtual Ref< IEditorPage > getActiveEditorPage() override final;
 
-	virtual void setActiveEditorPage(IEditorPage* editorPage) T_OVERRIDE T_FINAL;
+	virtual void setActiveEditorPage(IEditorPage* editorPage) override final;
 
-	virtual void buildAssets(const std::vector< Guid >& assetGuids, bool rebuild) T_OVERRIDE T_FINAL;
+	virtual void buildAssets(const std::vector< Guid >& assetGuids, bool rebuild) override final;
 
-	virtual void buildAsset(const Guid& assetGuid, bool rebuild) T_OVERRIDE T_FINAL;
+	virtual void buildAsset(const Guid& assetGuid, bool rebuild) override final;
 
-	virtual void buildAssets(bool rebuild) T_OVERRIDE T_FINAL;
+	virtual void buildAssets(bool rebuild) override final;
 
-	virtual Ref< IPipelineDependencySet > buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth) T_OVERRIDE T_FINAL;
+	virtual Ref< IPipelineDependencySet > buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth) override final;
 
-	virtual void setStoreObject(const std::wstring& name, Object* object) T_OVERRIDE T_FINAL;
+	virtual void setStoreObject(const std::wstring& name, Object* object) override final;
 
-	virtual Object* getStoreObject(const std::wstring& name) const T_OVERRIDE T_FINAL;
+	virtual Object* getStoreObject(const std::wstring& name) const override final;
 
 	//@}
 
 	/*! \name IPipelineBuilder::IListener implementation */
 	//@{
 
-	virtual void beginBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency) T_OVERRIDE T_FINAL;
+	virtual void beginBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency) override final;
 
-	virtual void endBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency, IPipelineBuilder::BuildResult result) T_OVERRIDE T_FINAL;
+	virtual void endBuild(int32_t core, int32_t index, int32_t count, const PipelineDependency* dependency, IPipelineBuilder::BuildResult result) override final;
 
 	//@}
 

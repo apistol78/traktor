@@ -32,7 +32,7 @@ public:
 
 	HeightfieldAsset(const Vector4& worldExtent);
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
 

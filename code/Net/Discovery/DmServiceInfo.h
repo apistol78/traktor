@@ -32,7 +32,7 @@ public:
 
 	IService* getService() const { return m_service; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Guid m_serviceGuid;

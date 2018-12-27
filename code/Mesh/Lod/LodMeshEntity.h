@@ -35,20 +35,20 @@ public:
 		float lodCullDistance
 	);
 	
-	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+	virtual void setTransform(const Transform& transform) override final;
 
-	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual bool supportTechnique(render::handle_t technique) const T_OVERRIDE T_FINAL;
+	virtual bool supportTechnique(render::handle_t technique) const override final;
 
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass,
 		float distance
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
-	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
+	virtual void update(const world::UpdateParams& update) override final;
 
 private:
 	RefArray< MeshEntity > m_lods;

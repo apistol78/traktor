@@ -85,9 +85,9 @@ public:
 	XMLNode* getPreviousSibling() const;
 
 protected:
-	virtual void trace(visitor_t visitor) const T_OVERRIDE T_FINAL;
+	virtual void trace(visitor_t visitor) const override final;
 
-	virtual void dereference() T_OVERRIDE T_FINAL;
+	virtual void dereference() override final;
 
 private:
 	NodeType m_nodeType;

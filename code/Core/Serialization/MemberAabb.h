@@ -24,7 +24,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
+	virtual void serialize(ISerializer& s) const override final
 	{
 		s >> Member< Vector2 >(L"mn", m_ref.mn);
 		s >> Member< Vector2 >(L"mx", m_ref.mx);
@@ -43,7 +43,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
+	virtual void serialize(ISerializer& s) const override final
 	{
 		s >> Member< Vector4 >(L"mn", m_ref.mn, AttributePoint());
 		s >> Member< Vector4 >(L"mx", m_ref.mx, AttributePoint());

@@ -19,15 +19,15 @@ class MetaNodeTraits : public INodeTraits
 	T_RTTI_CLASS;
 
 public:
-	virtual TypeInfoSet getNodeTypes() const T_OVERRIDE T_FINAL;
+	virtual TypeInfoSet getNodeTypes() const override final;
 
-	virtual bool isRoot(const ShaderGraph* shaderGraph, const Node* node) const T_OVERRIDE T_FINAL;
+	virtual bool isRoot(const ShaderGraph* shaderGraph, const Node* node) const override final;
 
 	virtual PinType getOutputPinType(
 		const Node* node,
 		const OutputPin* outputPin,
 		const PinType* inputPinTypes
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 	
 	virtual PinType getInputPinType(
 		const ShaderGraph* shaderGraph,
@@ -35,13 +35,13 @@ public:
 		const InputPin* inputPin,
 		const PinType* inputPinTypes,
 		const PinType* outputPinTypes
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual int32_t getInputPinGroup(
 		const ShaderGraph* shaderGraph,
 		const Node* node,
 		const InputPin* inputPin
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual bool evaluatePartial(
 		const ShaderGraph* shaderGraph,
@@ -49,7 +49,7 @@ public:
 		const OutputPin* nodeOutputPin,
 		const Constant* inputConstants,
 		Constant& outputConstant
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual bool evaluatePartial(
 		const ShaderGraph* shaderGraph,
@@ -58,7 +58,7 @@ public:
 		const OutputPin** inputOutputPins,
 		const Constant* inputConstants,
 		const OutputPin*& foldOutputPin
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual PinOrderType evaluateOrder(
 		const ShaderGraph* shaderGraph,
@@ -66,7 +66,7 @@ public:
 		const OutputPin* nodeOutputPin,
 		const PinOrderType* inputPinOrders,
 		bool frequentAsLinear
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 };
 
 	}

@@ -54,7 +54,7 @@ public:
 
 	Ref< MeshComponent > createComponent(resource::IResourceManager* resourceManager) const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const resource::Id< IMesh >& getMesh() const { return m_mesh; }
 

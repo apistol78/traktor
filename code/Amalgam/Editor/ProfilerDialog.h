@@ -38,7 +38,7 @@ public:
 
 	bool create(ui::Widget* parent);
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 
 private:
 	Ref< TargetConnection > m_connection;
@@ -48,7 +48,7 @@ private:
 	int32_t m_nextThreadLane;
 	bool m_recording;
 
-	virtual void receivedProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events) T_OVERRIDE T_FINAL;
+	virtual void receivedProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events) override final;
 
 	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 

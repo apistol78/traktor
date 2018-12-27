@@ -65,29 +65,29 @@ public:
 
 	void setPropagateCMaskInterval(double interval, double flux);
 
-	virtual void setCallback(INetworkCallback* callback) T_OVERRIDE T_FINAL;
+	virtual void setCallback(INetworkCallback* callback) override final;
 
-	virtual net_handle_t getLocalHandle() const T_OVERRIDE T_FINAL;
+	virtual net_handle_t getLocalHandle() const override final;
 
-	virtual bool setPrimaryHandle(net_handle_t node) T_OVERRIDE T_FINAL;
+	virtual bool setPrimaryHandle(net_handle_t node) override final;
 
-	virtual net_handle_t getPrimaryHandle() const T_OVERRIDE T_FINAL;
+	virtual net_handle_t getPrimaryHandle() const override final;
 
-	virtual int32_t getNodeCount() const T_OVERRIDE T_FINAL;
+	virtual int32_t getNodeCount() const override final;
 
-	virtual net_handle_t getNodeHandle(int32_t index) const T_OVERRIDE T_FINAL;
+	virtual net_handle_t getNodeHandle(int32_t index) const override final;
 
-	virtual std::wstring getNodeName(int32_t index) const T_OVERRIDE T_FINAL;
+	virtual std::wstring getNodeName(int32_t index) const override final;
 
-	virtual Object* getNodeUser(int32_t index) const T_OVERRIDE T_FINAL;
+	virtual Object* getNodeUser(int32_t index) const override final;
 
-	virtual bool isNodeRelayed(int32_t index) const T_OVERRIDE T_FINAL;
+	virtual bool isNodeRelayed(int32_t index) const override final;
 
-	virtual bool send(net_handle_t node, const void* data, int32_t size) T_OVERRIDE T_FINAL;
+	virtual bool send(net_handle_t node, const void* data, int32_t size) override final;
 
-	virtual int32_t recv(void* data, int32_t size, net_handle_t& outNode) T_OVERRIDE T_FINAL;
+	virtual int32_t recv(void* data, int32_t size, net_handle_t& outNode) override final;
 
-	virtual bool update(double dT) T_OVERRIDE T_FINAL;
+	virtual bool update(double dT) override final;
 
 	const StaticVector< Peer, MaxPeers >& getPeers() const { return m_peers; }
 

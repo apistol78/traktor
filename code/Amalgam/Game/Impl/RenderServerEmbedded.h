@@ -26,33 +26,33 @@ public:
 
 	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, const SystemApplication& sysapp, const SystemWindow& syswin);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void createResourceFactories(IEnvironment* environment) T_OVERRIDE T_FINAL;
+	virtual void createResourceFactories(IEnvironment* environment) override final;
 
-	virtual int32_t reconfigure(IEnvironment* environment, const PropertyGroup* settings) T_OVERRIDE T_FINAL;
+	virtual int32_t reconfigure(IEnvironment* environment, const PropertyGroup* settings) override final;
 
-	virtual UpdateResult update(PropertyGroup* settings) T_OVERRIDE T_FINAL;
+	virtual UpdateResult update(PropertyGroup* settings) override final;
 
-	virtual render::IRenderSystem* getRenderSystem() T_OVERRIDE T_FINAL;
+	virtual render::IRenderSystem* getRenderSystem() override final;
 
-	virtual render::IRenderView* getRenderView() T_OVERRIDE T_FINAL;
+	virtual render::IRenderView* getRenderView() override final;
 
-	virtual render::IVRCompositor* getVRCompositor() T_OVERRIDE T_FINAL;
+	virtual render::IVRCompositor* getVRCompositor() override final;
 
-	virtual int32_t getWidth() const T_OVERRIDE T_FINAL;
+	virtual int32_t getWidth() const override final;
 
-	virtual int32_t getHeight() const T_OVERRIDE T_FINAL;
+	virtual int32_t getHeight() const override final;
 
-	virtual float getScreenAspectRatio() const T_OVERRIDE T_FINAL;
+	virtual float getScreenAspectRatio() const override final;
 
-	virtual float getViewAspectRatio() const T_OVERRIDE T_FINAL;
+	virtual float getViewAspectRatio() const override final;
 
-	virtual float getAspectRatio() const T_OVERRIDE T_FINAL;
+	virtual float getAspectRatio() const override final;
 
-	virtual bool getStereoscopic() const T_OVERRIDE T_FINAL;
+	virtual bool getStereoscopic() const override final;
 
-	virtual int32_t getMultiSample() const T_OVERRIDE T_FINAL;
+	virtual int32_t getMultiSample() const override final;
 
 private:
 	render::DisplayMode m_originalDisplayMode;

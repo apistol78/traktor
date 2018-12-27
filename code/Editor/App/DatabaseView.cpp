@@ -105,12 +105,12 @@ class DefaultFilter : public DatabaseView::Filter
 	T_RTTI_CLASS;
 
 public:
-	virtual bool acceptInstance(const db::Instance* instance) const T_OVERRIDE T_FINAL
+	virtual bool acceptInstance(const db::Instance* instance) const override final
 	{
 		return is_type_of< ISerializable >(*instance->getPrimaryType());
 	}
 
-	virtual bool acceptEmptyGroups() const T_OVERRIDE T_FINAL
+	virtual bool acceptEmptyGroups() const override final
 	{
 		return true;
 	}
@@ -128,12 +128,12 @@ public:
 	{
 	}
 
-	virtual bool acceptInstance(const db::Instance* instance) const T_OVERRIDE T_FINAL
+	virtual bool acceptInstance(const db::Instance* instance) const override final
 	{
 		return m_filter.match(instance->getName());
 	}
 
-	virtual bool acceptEmptyGroups() const T_OVERRIDE T_FINAL
+	virtual bool acceptEmptyGroups() const override final
 	{
 		return false;
 	}
@@ -154,12 +154,12 @@ public:
 	{
 	}
 
-	virtual bool acceptInstance(const db::Instance* instance) const T_OVERRIDE T_FINAL
+	virtual bool acceptInstance(const db::Instance* instance) const override final
 	{
 		return m_filter == instance->getGuid();
 	}
 
-	virtual bool acceptEmptyGroups() const T_OVERRIDE T_FINAL
+	virtual bool acceptEmptyGroups() const override final
 	{
 		return false;
 	}
@@ -180,7 +180,7 @@ public:
 	{
 	}
 
-	virtual bool acceptInstance(const db::Instance* instance) const T_OVERRIDE T_FINAL
+	virtual bool acceptInstance(const db::Instance* instance) const override final
 	{
 		const TypeInfo* instanceType = instance->getPrimaryType();
 		if (!instanceType)
@@ -195,7 +195,7 @@ public:
 		return false;
 	}
 
-	virtual bool acceptEmptyGroups() const T_OVERRIDE T_FINAL
+	virtual bool acceptEmptyGroups() const override final
 	{
 		return false;
 	}
@@ -216,12 +216,12 @@ public:
 	{
 	}
 
-	virtual bool acceptInstance(const db::Instance* instance) const T_OVERRIDE T_FINAL
+	virtual bool acceptInstance(const db::Instance* instance) const override final
 	{
 		return m_guidSet.find(instance->getGuid()) != m_guidSet.end();
 	}
 
-	virtual bool acceptEmptyGroups() const T_OVERRIDE T_FINAL
+	virtual bool acceptEmptyGroups() const override final
 	{
 		return false;
 	}

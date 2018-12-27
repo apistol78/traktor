@@ -23,9 +23,9 @@ class ProduceOutput : public IOutput
 	T_RTTI_CLASS;
 
 public:
-	virtual void print(const std::wstring& s) T_OVERRIDE T_FINAL;
+	virtual void print(const std::wstring& s) override final;
 
-	virtual void printLn(const std::wstring& s) T_OVERRIDE T_FINAL;
+	virtual void printLn(const std::wstring& s) override final;
 
 	void printSection(int32_t id);
 

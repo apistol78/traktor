@@ -87,7 +87,7 @@ public:
 		sound::SoundSystem* soundSystem
 	);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	void setEffect(const EffectData* effectData, Effect* effect);
 

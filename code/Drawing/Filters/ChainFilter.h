@@ -34,7 +34,7 @@ public:
 	void add(IImageFilter* filter);
 
 protected:
-	virtual void apply(Image* image) const T_OVERRIDE T_FINAL;
+	virtual void apply(Image* image) const override final;
 
 private:
 	RefArray< IImageFilter > m_filters;

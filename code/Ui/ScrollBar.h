@@ -52,7 +52,7 @@ public:
 
 	int32_t getPosition() const;
 
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 private:
 	bool m_vertical;

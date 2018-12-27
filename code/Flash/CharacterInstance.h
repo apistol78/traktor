@@ -266,7 +266,7 @@ public:
 
 	//@}
 
-	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) T_OVERRIDE;
+	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) override;
 
 	/*! \brief Check if character has associated script event.
 	 */
@@ -277,9 +277,9 @@ public:
 	bool executeScriptEvent(uint32_t eventName, const ActionValue& arg);
 
 protected:
-	virtual void trace(visitor_t visitor) const T_OVERRIDE;
+	virtual void trace(visitor_t visitor) const override;
 
-	virtual void dereference() T_OVERRIDE;
+	virtual void dereference() override;
 
 private:
 	static int32_t ms_instanceCount;

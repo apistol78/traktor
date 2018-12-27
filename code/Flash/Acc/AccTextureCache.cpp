@@ -37,7 +37,7 @@ public:
 		destroy();
 	}
 
-	virtual void destroy() T_OVERRIDE T_FINAL
+	virtual void destroy() override final
 	{
 		if (m_texture)
 		{
@@ -46,32 +46,32 @@ public:
 		}
 	}
 
-	virtual render::ITexture* resolve() T_OVERRIDE T_FINAL
+	virtual render::ITexture* resolve() override final
 	{
 		return m_texture;
 	}
 
-	virtual int getWidth() const T_OVERRIDE T_FINAL
+	virtual int getWidth() const override final
 	{
 		return m_texture->getWidth();
 	}
 
-	virtual int getHeight() const T_OVERRIDE T_FINAL
+	virtual int getHeight() const override final
 	{
 		return m_texture->getHeight();
 	}
 
-	virtual bool lock(int level, Lock& lock) T_OVERRIDE T_FINAL
+	virtual bool lock(int level, Lock& lock) override final
 	{
 		return m_texture->lock(level, lock);
 	}
 
-	virtual void unlock(int level) T_OVERRIDE T_FINAL
+	virtual void unlock(int level) override final
 	{
 		m_texture->unlock(level);
 	}
 
-	virtual void* getInternalHandle() T_OVERRIDE T_FINAL
+	virtual void* getInternalHandle() override final
 	{
 		return m_texture->getInternalHandle();
 	}

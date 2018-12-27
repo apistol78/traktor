@@ -37,11 +37,11 @@ class SharedBufferHeapDx11 : public IBufferHeapDx11
 public:
 	SharedBufferHeapDx11(ContextDx11* context, const D3D11_BUFFER_DESC& dbd);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual bool alloc(uint32_t bufferSize, uint32_t vertexStride, Chunk& outChunk) T_OVERRIDE T_FINAL;
+	virtual bool alloc(uint32_t bufferSize, uint32_t vertexStride, Chunk& outChunk) override final;
 
-	virtual void free(Chunk& chunk) T_OVERRIDE T_FINAL;
+	virtual void free(Chunk& chunk) override final;
 
 private:
 	struct FreeList

@@ -30,9 +30,9 @@ class T_DLLCLASS Utf32Encoding : public IEncoding
 public:
 	Utf32Encoding() {}
 
-	virtual int translate(const wchar_t* chars, int count, uint8_t* out) const T_OVERRIDE T_FINAL;
+	virtual int translate(const wchar_t* chars, int count, uint8_t* out) const override final;
 
-	virtual int translate(const uint8_t in[MaxEncodingSize], int count, wchar_t& out) const T_OVERRIDE T_FINAL;
+	virtual int translate(const uint8_t in[MaxEncodingSize], int count, wchar_t& out) const override final;
 };
 
 }

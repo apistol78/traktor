@@ -37,13 +37,13 @@ public:
 
 	explicit StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual Size getSize() const T_OVERRIDE T_FINAL;
+	virtual Size getSize() const override final;
 
-	virtual Ref< drawing::Image > getImage() const T_OVERRIDE T_FINAL;
+	virtual Ref< drawing::Image > getImage() const override final;
 
-	virtual ISystemBitmap* getSystemBitmap() const T_OVERRIDE T_FINAL;
+	virtual ISystemBitmap* getSystemBitmap() const override final;
 
 private:
 	const wchar_t* const m_name;

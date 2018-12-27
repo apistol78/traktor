@@ -33,15 +33,15 @@ public:
 		ScriptServer* scriptServer
 	);
 
-	virtual db::Database* getDatabase() T_OVERRIDE T_FINAL;
+	virtual db::Database* getDatabase() override final;
 
-	virtual IResourceServer* getResource() T_OVERRIDE T_FINAL;
+	virtual IResourceServer* getResource() override final;
 
-	virtual IScriptServer* getScript() T_OVERRIDE T_FINAL;
+	virtual IScriptServer* getScript() override final;
 
-	virtual PropertyGroup* getSettings() T_OVERRIDE T_FINAL;
+	virtual PropertyGroup* getSettings() override final;
 
-	virtual bool alive() const T_OVERRIDE T_FINAL;
+	virtual bool alive() const override final;
 
 private:
 	friend class Application;

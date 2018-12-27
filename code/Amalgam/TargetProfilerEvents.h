@@ -39,7 +39,7 @@ public:
 
 	const AlignedVector< Profiler::Event >& getEvents() const { return m_events; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	double m_currentTime;

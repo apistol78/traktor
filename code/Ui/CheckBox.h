@@ -38,7 +38,7 @@ public:
 	
 	bool isChecked() const;
 
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 private:
 	bool m_checked;

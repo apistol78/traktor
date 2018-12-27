@@ -41,7 +41,7 @@ public:
 	{
 	}
 
-	virtual bool create() T_OVERRIDE T_FINAL
+	virtual bool create() override final
 	{
 		if (!(m_appClass = m_app->getRuntimeClass()))
 			return false;
@@ -52,12 +52,12 @@ public:
 		return true;
 	}
 
-	virtual void destroy() T_OVERRIDE T_FINAL
+	virtual void destroy() override final
 	{
 		m_appClass = 0;
 	}
 
-	virtual Widget* getRootWidget() const T_OVERRIDE T_FINAL
+	virtual Widget* getRootWidget() const override final
 	{
 		if (!m_appClass || m_methodGetRootWidget == 0)
 			return 0;
@@ -67,7 +67,7 @@ public:
 		);
 	}
 
-	virtual Ref< IStream > resolve(const std::wstring& uri) const T_OVERRIDE T_FINAL
+	virtual Ref< IStream > resolve(const std::wstring& uri) const override final
 	{
 		if (!m_appClass || m_methodResolve == 0)
 			return 0;

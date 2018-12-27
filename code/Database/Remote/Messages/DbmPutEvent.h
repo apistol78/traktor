@@ -39,7 +39,7 @@ public:
 
 	const IEvent* getEvent() const { return m_event; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	uint32_t m_handle;

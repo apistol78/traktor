@@ -24,7 +24,7 @@ class EventTask : public ITask
 public:
 	EventTask(const std::wstring& serverHost, const std::wstring& client, const std::wstring& symbol);
 
-	virtual TaskResult execute() T_OVERRIDE T_FINAL;
+	virtual TaskResult execute() override final;
 
 private:
 	std::wstring m_serverHost;

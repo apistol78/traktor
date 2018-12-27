@@ -39,17 +39,17 @@ class T_DLLCLASS WorldEntityFactory : public IEntityFactory
 public:
 	WorldEntityFactory(resource::IResourceManager* resourceManager, bool editor);
 
-	virtual const TypeInfoSet getEntityTypes() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getEntityTypes() const override final;
 
-	virtual const TypeInfoSet getEntityEventTypes() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getEntityEventTypes() const override final;
 
-	virtual const TypeInfoSet getEntityComponentTypes() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getEntityComponentTypes() const override final;
 
-	virtual Ref< Entity > createEntity(const IEntityBuilder* builder, const EntityData& entityData) const T_OVERRIDE T_FINAL;
+	virtual Ref< Entity > createEntity(const IEntityBuilder* builder, const EntityData& entityData) const override final;
 
-	virtual Ref< IEntityEvent > createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const T_OVERRIDE T_FINAL;
+	virtual Ref< IEntityEvent > createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const override final;
 
-	virtual Ref< IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const IEntityComponentData& entityComponentData) const T_OVERRIDE T_FINAL;
+	virtual Ref< IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const IEntityComponentData& entityComponentData) const override final;
 
 private:
 	mutable Ref< resource::IResourceManager > m_resourceManager;

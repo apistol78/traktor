@@ -75,7 +75,7 @@ public:
 		return dynamic_type_cast< T* >(getSelectedData());
 	}
 
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 private:
 	struct Item

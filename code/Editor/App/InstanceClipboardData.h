@@ -35,7 +35,7 @@ public:
 
 	void addInstance(const std::wstring& name, ISerializable* object, const Guid& id = Guid());
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const std::list< Instance >& getInstances() const { return m_instances; }
 

@@ -34,25 +34,25 @@ public:
 	
 	virtual ~MemoryStream();
 
-	virtual void close() T_OVERRIDE;
+	virtual void close() override;
 
-	virtual bool canRead() const T_OVERRIDE;
+	virtual bool canRead() const override;
 
-	virtual bool canWrite() const T_OVERRIDE;
+	virtual bool canWrite() const override;
 
-	virtual bool canSeek() const T_OVERRIDE;
+	virtual bool canSeek() const override;
 
-	virtual int64_t tell() const T_OVERRIDE;
+	virtual int64_t tell() const override;
 
-	virtual int64_t available() const T_OVERRIDE;
+	virtual int64_t available() const override;
 
-	virtual int64_t seek(SeekOriginType origin, int64_t offset) T_OVERRIDE;
+	virtual int64_t seek(SeekOriginType origin, int64_t offset) override;
 
-	virtual int64_t read(void* block, int64_t nbytes) T_OVERRIDE;
+	virtual int64_t read(void* block, int64_t nbytes) override;
 
-	virtual int64_t write(const void* block, int64_t nbytes) T_OVERRIDE;
+	virtual int64_t write(const void* block, int64_t nbytes) override;
 
-	virtual void flush() T_OVERRIDE;
+	virtual void flush() override;
 
 private:
 	uint8_t* m_buffer;

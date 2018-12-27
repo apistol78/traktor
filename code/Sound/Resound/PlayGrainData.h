@@ -35,9 +35,9 @@ class T_DLLCLASS PlayGrainData : public IGrainData
 public:
 	PlayGrainData();
 
-	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const T_OVERRIDE T_FINAL;
+	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const resource::Id< Sound >& getSound() const { return m_sound; }
 

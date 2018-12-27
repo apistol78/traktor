@@ -30,15 +30,15 @@ public:
 
 	bool create(const VolumeTextureCreateDesc& desc);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual ITexture* resolve() T_OVERRIDE T_FINAL;
+	virtual ITexture* resolve() override final;
 
-	virtual int getWidth() const T_OVERRIDE T_FINAL;
+	virtual int getWidth() const override final;
 	
-	virtual int getHeight() const T_OVERRIDE T_FINAL;
+	virtual int getHeight() const override final;
 	
-	virtual int getDepth() const T_OVERRIDE T_FINAL;
+	virtual int getDepth() const override final;
 };
 		
 	}

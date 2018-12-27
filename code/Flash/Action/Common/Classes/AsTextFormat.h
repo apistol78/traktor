@@ -26,11 +26,11 @@ class AsTextFormat : public ActionClass
 public:
 	AsTextFormat(ActionContext* context);
 
-	virtual void construct(ActionObject* self, const ActionValueArray& args) T_OVERRIDE T_FINAL;
+	virtual void construct(ActionObject* self, const ActionValueArray& args) override final;
 
-	virtual void initialize(ActionObject* self) T_OVERRIDE T_FINAL;
+	virtual void initialize(ActionObject* self) override final;
 
-	virtual ActionValue xplicit(const ActionValueArray& args) T_OVERRIDE T_FINAL;
+	virtual ActionValue xplicit(const ActionValueArray& args) override final;
 
 private:
 	std::string TextFormat_get_align(TextFormat* self) const;

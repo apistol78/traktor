@@ -36,15 +36,15 @@ class T_DLLCLASS EntityEventManager : public IEntityEventManager
 public:
 	EntityEventManager(uint32_t maxEventsInstances);
 
-	virtual IEntityEventInstance* raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset) T_OVERRIDE T_FINAL;
+	virtual IEntityEventInstance* raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset) override final;
 
-	virtual IEntityEventInstance* raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset) T_OVERRIDE T_FINAL;
+	virtual IEntityEventInstance* raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset) override final;
 
-	virtual void update(const UpdateParams& update) T_OVERRIDE T_FINAL;
+	virtual void update(const UpdateParams& update) override final;
 
-	virtual void build(IWorldRenderer* worldRenderer) T_OVERRIDE T_FINAL;
+	virtual void build(IWorldRenderer* worldRenderer) override final;
 
-	virtual void cancelAll(CancelType when) T_OVERRIDE T_FINAL;
+	virtual void cancelAll(CancelType when) override final;
 
 private:
 	uint32_t m_maxEventInstances;

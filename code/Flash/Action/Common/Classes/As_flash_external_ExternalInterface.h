@@ -36,9 +36,9 @@ public:
 	ActionValue dispatchCallback(const std::string& methodName, int32_t argc, const ActionValue* argv);
 
 protected:
-	virtual void trace(visitor_t visitor) const T_OVERRIDE T_FINAL;
+	virtual void trace(visitor_t visitor) const override final;
 
-	virtual void dereference() T_OVERRIDE T_FINAL;
+	virtual void dereference() override final;
 
 private:
 	struct Callback

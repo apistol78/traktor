@@ -30,7 +30,7 @@ class T_DLLCLASS RfpObjectType : public ReflectionMemberPredicate
 public:
 	RfpObjectType(const TypeInfo& objectType);
 
-	virtual bool operator () (const ReflectionMember* member) const T_OVERRIDE T_FINAL;
+	virtual bool operator () (const ReflectionMember* member) const override final;
 
 private:
 	const TypeInfo& m_objectType;

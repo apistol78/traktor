@@ -51,27 +51,27 @@ public:
 		ReadOnlyObjectCache* objectCache
 	);
 
-	virtual bool build(const editor::IPipelineDependencySet* dependencySet, bool rebuild) T_OVERRIDE T_FINAL;
+	virtual bool build(const editor::IPipelineDependencySet* dependencySet, bool rebuild) override final;
 
-	virtual Ref< ISerializable > buildOutput(const ISerializable* sourceAsset) T_OVERRIDE T_FINAL;
+	virtual Ref< ISerializable > buildOutput(const ISerializable* sourceAsset) override final;
 
-	virtual bool buildOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams) T_OVERRIDE T_FINAL;
+	virtual bool buildOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams) override final;
 
-	virtual Ref< ISerializable > getBuildProduct(const ISerializable* sourceAsset) T_OVERRIDE T_FINAL;
+	virtual Ref< ISerializable > getBuildProduct(const ISerializable* sourceAsset) override final;
 
-	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) T_OVERRIDE T_FINAL;
+	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) override final;
 
-	virtual Ref< db::Database > getOutputDatabase() const T_OVERRIDE T_FINAL;
+	virtual Ref< db::Database > getOutputDatabase() const override final;
 
-	virtual Ref< db::Database > getSourceDatabase() const T_OVERRIDE T_FINAL;
+	virtual Ref< db::Database > getSourceDatabase() const override final;
 
-	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) T_OVERRIDE T_FINAL;
+	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
 
-	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName) T_OVERRIDE T_FINAL;
+	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName) override final;
 
-	virtual Ref< IStream > createTemporaryFile(const std::wstring& fileName) T_OVERRIDE T_FINAL;
+	virtual Ref< IStream > createTemporaryFile(const std::wstring& fileName) override final;
 
-	virtual Ref< IStream > openTemporaryFile(const std::wstring& fileName) T_OVERRIDE T_FINAL;
+	virtual Ref< IStream > openTemporaryFile(const std::wstring& fileName) override final;
 
 private:
 	struct BuiltCacheEntry

@@ -24,7 +24,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
+	virtual void serialize(ISerializer& s) const override final
 	{
 		s >> Member< std::wstring >(L"name", m_ref.name);
 		s >> Member< uint32_t >(L"threadId", m_ref.threadId);

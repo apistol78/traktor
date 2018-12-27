@@ -45,7 +45,7 @@ public:
 	 */
 	bool addObject(PropertyItem* parent, ISerializable* object);
 
-	virtual bool paste() T_OVERRIDE;
+	virtual bool paste() override;
 	
 private:
 	Ref< ISerializable > m_object;

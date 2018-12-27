@@ -44,7 +44,7 @@ public:
 		BooleanOperation operation
 	);
 
-	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
+	virtual bool apply(Model& model) const override final;
 
 private:
 	const Model& m_modelA;

@@ -38,21 +38,21 @@ class T_DLLCLASS PipelineDb : public IPipelineDb
 public:
 	PipelineDb();
 
-	virtual bool open(const std::wstring& connectionString) T_OVERRIDE T_FINAL;
+	virtual bool open(const std::wstring& connectionString) override final;
 
-	virtual void close() T_OVERRIDE T_FINAL;
+	virtual void close() override final;
 
-	virtual void beginTransaction() T_OVERRIDE T_FINAL;
+	virtual void beginTransaction() override final;
 
-	virtual void endTransaction() T_OVERRIDE T_FINAL;
+	virtual void endTransaction() override final;
 
-	virtual void setDependency(const Guid& guid, const PipelineDependencyHash& hash) T_OVERRIDE T_FINAL;
+	virtual void setDependency(const Guid& guid, const PipelineDependencyHash& hash) override final;
 
-	virtual bool getDependency(const Guid& guid, PipelineDependencyHash& outHash) const T_OVERRIDE T_FINAL;
+	virtual bool getDependency(const Guid& guid, PipelineDependencyHash& outHash) const override final;
 
-	virtual void setFile(const Path& path, const PipelineFileHash& file) T_OVERRIDE T_FINAL;
+	virtual void setFile(const Path& path, const PipelineFileHash& file) override final;
 
-	virtual bool getFile(const Path& path, PipelineFileHash& outFile) T_OVERRIDE T_FINAL;
+	virtual bool getFile(const Path& path, PipelineFileHash& outFile) override final;
 
 private:
 	mutable ReaderWriterLock m_lock;

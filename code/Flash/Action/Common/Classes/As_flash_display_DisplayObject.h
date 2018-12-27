@@ -21,11 +21,11 @@ class As_flash_display_DisplayObject : public ActionClass
 public:
 	As_flash_display_DisplayObject(ActionContext* context);
 
-	virtual void initialize(ActionObject* self) T_OVERRIDE T_FINAL;
+	virtual void initialize(ActionObject* self) override final;
 
-	virtual void construct(ActionObject* self, const ActionValueArray& args) T_OVERRIDE T_FINAL;
+	virtual void construct(ActionObject* self, const ActionValueArray& args) override final;
 
-	virtual ActionValue xplicit(const ActionValueArray& args) T_OVERRIDE T_FINAL;
+	virtual ActionValue xplicit(const ActionValueArray& args) override final;
 
 private:
 	void DisplayObject_getBounds(CallArgs& ca);

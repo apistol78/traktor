@@ -37,12 +37,12 @@ struct PropertySet : public IRuntimeDispatch
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
 		CastAny< ValueType >::typeName(ss);
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(1)
 		T_VERIFY_ARGUMENT_TYPE(0, ValueType)
@@ -72,12 +72,12 @@ struct PropertyGet : public IRuntimeDispatch
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
 		CastAny< ValueType >::typeName(ss);
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(0)
 
@@ -103,12 +103,12 @@ struct FnPropertySet : public IRuntimeDispatch
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
 		CastAny< ValueType >::typeName(ss);
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(1)
 		T_VERIFY_ARGUMENT_TYPE(0, ValueType)
@@ -138,12 +138,12 @@ struct FnPropertyGet : public IRuntimeDispatch
 	{
 	}
 
-	virtual void signature(OutputStream& ss) const T_OVERRIDE T_FINAL
+	virtual void signature(OutputStream& ss) const override final
 	{
 		CastAny< ValueType >::typeName(ss);
 	}
 
-	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const T_OVERRIDE T_FINAL
+	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(0)
 

@@ -29,13 +29,13 @@ class T_DLLCLASS FilePipelineCache : public IPipelineCache
 public:
 	FilePipelineCache();
 
-	virtual bool create(const PropertyGroup* settings) T_OVERRIDE T_FINAL;
+	virtual bool create(const PropertyGroup* settings) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual Ref< IStream > get(const Guid& guid, const PipelineDependencyHash& hash) T_OVERRIDE T_FINAL;
+	virtual Ref< IStream > get(const Guid& guid, const PipelineDependencyHash& hash) override final;
 
-	virtual Ref< IStream > put(const Guid& guid, const PipelineDependencyHash& hash) T_OVERRIDE T_FINAL;
+	virtual Ref< IStream > put(const Guid& guid, const PipelineDependencyHash& hash) override final;
 
 private:
 	bool m_accessRead;

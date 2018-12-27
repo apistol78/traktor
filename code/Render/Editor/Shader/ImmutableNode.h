@@ -52,13 +52,13 @@ public:
 
 	virtual ~ImmutableNode();
 
-	virtual int getInputPinCount() const T_OVERRIDE T_FINAL;
+	virtual int getInputPinCount() const override final;
 
-	virtual const InputPin* getInputPin(int index) const T_OVERRIDE T_FINAL;
+	virtual const InputPin* getInputPin(int index) const override final;
 
-	virtual int getOutputPinCount() const T_OVERRIDE T_FINAL;
+	virtual int getOutputPinCount() const override final;
 
-	virtual const OutputPin* getOutputPin(int index) const T_OVERRIDE T_FINAL;
+	virtual const OutputPin* getOutputPin(int index) const override final;
 
 private:
 	std::vector< InputPin* > m_inputPins;

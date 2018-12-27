@@ -42,9 +42,9 @@ public:
 
 	bool getItemRect(const MenuItem* item, Rect& outItemRect) const;
 
-	virtual Size getMinimumSize() const T_OVERRIDE T_FINAL;
+	virtual Size getMinimumSize() const override final;
 
-	virtual Size getPreferedSize() const T_OVERRIDE T_FINAL;
+	virtual Size getPreferedSize() const override final;
 
 private:
 	int32_t m_maxItems;

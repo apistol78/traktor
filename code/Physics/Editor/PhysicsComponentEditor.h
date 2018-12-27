@@ -37,7 +37,7 @@ class PhysicsComponentEditor : public scene::IComponentEditor
 public:
 	PhysicsComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
 
-	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const T_OVERRIDE T_FINAL;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
 
 private:
 	scene::SceneEditorContext* m_context;

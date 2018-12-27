@@ -34,14 +34,14 @@ public:
 
 	static value_type_t get(const IPropertyValue* value);
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	operator value_type_t () const { return m_value; }
 
 protected:
-	virtual Ref< IPropertyValue > join(const IPropertyValue* right) const T_OVERRIDE T_FINAL;
+	virtual Ref< IPropertyValue > join(const IPropertyValue* right) const override final;
 
-	virtual Ref< IPropertyValue > clone() const T_OVERRIDE T_FINAL;
+	virtual Ref< IPropertyValue > clone() const override final;
 
 private:
 	value_type_t m_value;

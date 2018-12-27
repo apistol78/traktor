@@ -34,14 +34,14 @@ public:
 	virtual Ref< Node > createShaderNode(
 		const TypeInfo* nodeType,
 		editor::IEditor* editor
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 	virtual Ref< ui::Node > createEditorNode(
 		editor::IEditor* editor,
 		ui::GraphControl* graphControl,
 		ShaderGraph* shaderGraph,
 		Node* shaderNode
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 	virtual void editShaderNode(
 		editor::IEditor* editor,
@@ -49,7 +49,7 @@ public:
 		ui::Node* editorNode,
 		ShaderGraph* shaderGraph,
 		Node* shaderNode
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 	virtual void refreshEditorNode(
 		editor::IEditor* editor,
@@ -57,12 +57,12 @@ public:
 		ui::Node* editorNode,
 		ShaderGraph* shaderGraph,
 		Node* shaderNode
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 	virtual void setValidationIndicator(
 		ui::Node* editorNode,
 		bool validationSucceeded
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 private:
 	ShaderGraphEditorPage* m_page;

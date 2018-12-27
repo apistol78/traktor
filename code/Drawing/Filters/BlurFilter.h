@@ -33,7 +33,7 @@ public:
 	BlurFilter(int32_t x, int32_t y);
 
 protected:
-	virtual void apply(Image* image) const T_OVERRIDE T_FINAL;
+	virtual void apply(Image* image) const override final;
 
 private:
 	int32_t m_x;

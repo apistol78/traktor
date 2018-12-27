@@ -25,9 +25,9 @@ class StdOutput : public IOutput
 public:
 	StdOutput(FILE* handle);
 
-	virtual void print(const std::wstring& s) T_OVERRIDE T_FINAL;
+	virtual void print(const std::wstring& s) override final;
 
-	virtual void printLn(const std::wstring& s) T_OVERRIDE T_FINAL;
+	virtual void printLn(const std::wstring& s) override final;
 
 private:
 	FILE* m_handle;

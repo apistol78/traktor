@@ -179,7 +179,7 @@ protected:
 
 	virtual ~OS();
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 private:
 	void* m_handle;

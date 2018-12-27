@@ -33,23 +33,23 @@ class T_DLLCLASS EntityBuilder : public IEntityBuilder
 	T_RTTI_CLASS;
 
 public:
-	virtual void addFactory(const IEntityFactory* entityFactory) T_OVERRIDE T_FINAL;
+	virtual void addFactory(const IEntityFactory* entityFactory) override final;
 
-	virtual void removeFactory(const IEntityFactory* entityFactory) T_OVERRIDE T_FINAL;
+	virtual void removeFactory(const IEntityFactory* entityFactory) override final;
 
-	virtual const IEntityFactory* getFactory(const EntityData* entityData) const T_OVERRIDE T_FINAL;
+	virtual const IEntityFactory* getFactory(const EntityData* entityData) const override final;
 
-	virtual const IEntityFactory* getFactory(const IEntityEventData* entityEventData) const T_OVERRIDE T_FINAL;
+	virtual const IEntityFactory* getFactory(const IEntityEventData* entityEventData) const override final;
 
-	virtual const IEntityFactory* getFactory(const IEntityComponentData* entityComponentData) const T_OVERRIDE T_FINAL;
+	virtual const IEntityFactory* getFactory(const IEntityComponentData* entityComponentData) const override final;
 
-	virtual Ref< Entity > create(const EntityData* entityData) const T_OVERRIDE T_FINAL;
+	virtual Ref< Entity > create(const EntityData* entityData) const override final;
 
-	virtual Ref< IEntityEvent > create(const IEntityEventData* entityEventData) const T_OVERRIDE T_FINAL;
+	virtual Ref< IEntityEvent > create(const IEntityEventData* entityEventData) const override final;
 
-	virtual Ref< IEntityComponent > create(const IEntityComponentData* entityComponentData) const T_OVERRIDE T_FINAL;
+	virtual Ref< IEntityComponent > create(const IEntityComponentData* entityComponentData) const override final;
 
-	virtual const IEntityBuilder* getCompositeEntityBuilder() const T_OVERRIDE T_FINAL;
+	virtual const IEntityBuilder* getCompositeEntityBuilder() const override final;
 
 private:
 	mutable Semaphore m_lock;

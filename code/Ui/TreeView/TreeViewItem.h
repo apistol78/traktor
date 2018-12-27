@@ -154,17 +154,17 @@ private:
 
 	int32_t calculateWidth() const;
 
-	virtual void interval() T_OVERRIDE T_FINAL;
+	virtual void interval() override final;
 
-	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position) T_OVERRIDE T_FINAL;
+	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position) override final;
 
-	virtual void mouseUp(MouseButtonUpEvent* event, const Point& position) T_OVERRIDE T_FINAL;
+	virtual void mouseUp(MouseButtonUpEvent* event, const Point& position) override final;
 
-	virtual void mouseDoubleClick(MouseDoubleClickEvent* event, const Point& position) T_OVERRIDE T_FINAL;
+	virtual void mouseDoubleClick(MouseDoubleClickEvent* event, const Point& position) override final;
 
-	virtual void mouseMove(MouseMoveEvent* event, const Point& position) T_OVERRIDE T_FINAL;
+	virtual void mouseMove(MouseMoveEvent* event, const Point& position) override final;
 
-	virtual void paint(Canvas& canvas, const Rect& rect) T_OVERRIDE T_FINAL;
+	virtual void paint(Canvas& canvas, const Rect& rect) override final;
 };
 
 	}

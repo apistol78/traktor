@@ -37,13 +37,13 @@ public:
 
 	StateNodeAnimation(const std::wstring& name, const resource::IdProxy< Animation >& animation, bool linearInterpolation);
 
-	virtual bool bind(resource::IResourceManager* resourceManager) T_OVERRIDE T_FINAL;
+	virtual bool bind(resource::IResourceManager* resourceManager) override final;
 
-	virtual bool prepareContext(StateContext& outContext) T_OVERRIDE T_FINAL;
+	virtual bool prepareContext(StateContext& outContext) override final;
 
-	virtual void evaluate(StateContext& context, Pose& outPose) T_OVERRIDE T_FINAL;
+	virtual void evaluate(StateContext& context, Pose& outPose) override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const resource::IdProxy< Animation >& getAnimation() const { return m_animation; }
 

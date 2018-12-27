@@ -40,9 +40,9 @@ public:
 
 	int16_t* getSamplesData(uint32_t channel);
 
-	virtual Ref< ISoundBufferCursor > createCursor() const T_OVERRIDE T_FINAL;
+	virtual Ref< ISoundBufferCursor > createCursor() const override final;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
+	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const override final;
 
 private:
 	int32_t m_sampleRate;

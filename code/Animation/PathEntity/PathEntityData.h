@@ -42,7 +42,7 @@ public:
 
 	Ref< PathEntity > createEntity(const world::IEntityBuilder* builder) const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	TransformPath& getPath() { return m_path; }
 

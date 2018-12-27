@@ -109,7 +109,7 @@ public:
 	 */
 	const RefArray< JsonMember >& get() const { return m_members; }
 
-	virtual bool write(OutputStream& os) const T_OVERRIDE;
+	virtual bool write(OutputStream& os) const override;
 
 private:
 	RefArray< JsonMember > m_members;

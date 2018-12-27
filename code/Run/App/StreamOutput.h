@@ -27,9 +27,9 @@ public:
 
 	StreamOutput(IStream* stream, IEncoding* encoding, const std::wstring& lineEnding);
 
-	virtual void print(const std::wstring& s) T_OVERRIDE T_FINAL;
+	virtual void print(const std::wstring& s) override final;
 
-	virtual void printLn(const std::wstring& s) T_OVERRIDE T_FINAL;
+	virtual void printLn(const std::wstring& s) override final;
 
 private:
 	FileOutputStream m_output;

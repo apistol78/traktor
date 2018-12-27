@@ -23,17 +23,17 @@ class MatchMaking : public IMatchMaking
 	T_RTTI_CLASS;
 
 public:
-	virtual bool ready() const T_OVERRIDE T_FINAL;
+	virtual bool ready() const override final;
 
-	virtual Ref< LobbyArrayResult > findMatchingLobbies(const LobbyFilter* filter) T_OVERRIDE T_FINAL;
+	virtual Ref< LobbyArrayResult > findMatchingLobbies(const LobbyFilter* filter) override final;
 
-	virtual Ref< LobbyResult > createLobby(uint32_t maxUsers, LobbyAccess access) T_OVERRIDE T_FINAL;
+	virtual Ref< LobbyResult > createLobby(uint32_t maxUsers, LobbyAccess access) override final;
 
-	virtual Ref< ILobby > acceptLobby() T_OVERRIDE T_FINAL;
+	virtual Ref< ILobby > acceptLobby() override final;
 
-	virtual Ref< PartyResult > createParty() T_OVERRIDE T_FINAL;
+	virtual Ref< PartyResult > createParty() override final;
 
-	virtual Ref< IParty > acceptParty() T_OVERRIDE T_FINAL;
+	virtual Ref< IParty > acceptParty() override final;
 
 private:
 	friend class SessionManager;

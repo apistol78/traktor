@@ -38,7 +38,7 @@ public:
 
 	virtual ~ButtonInstance();
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 
 	/*! \brief Get button.
 	 *
@@ -65,18 +65,18 @@ public:
 	 */
 	CharacterInstance* getCharacterInstance(uint16_t referenceId) const;
 
-	virtual void eventMouseDown(int x, int y, int button) T_OVERRIDE T_FINAL;
+	virtual void eventMouseDown(int x, int y, int button) override final;
 
-	virtual void eventMouseUp(int x, int y, int button) T_OVERRIDE T_FINAL;
+	virtual void eventMouseUp(int x, int y, int button) override final;
 
-	virtual void eventMouseMove(int x, int y, int button) T_OVERRIDE T_FINAL;
+	virtual void eventMouseMove(int x, int y, int button) override final;
 
-	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
+	virtual Aabb2 getBounds() const override final;
 
 protected:
-	virtual void trace(visitor_t visitor) const T_OVERRIDE T_FINAL;
+	virtual void trace(visitor_t visitor) const override final;
 
-	virtual void dereference() T_OVERRIDE T_FINAL;
+	virtual void dereference() override final;
 
 private:
 	Ref< const Button > m_button;

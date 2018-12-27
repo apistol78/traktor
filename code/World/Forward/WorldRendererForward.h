@@ -69,25 +69,25 @@ public:
 		render::IRenderSystem* renderSystem,
 		render::IRenderView* renderView,
 		const WorldCreateDesc& desc
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual bool beginBuild() T_OVERRIDE T_FINAL;
+	virtual bool beginBuild() override final;
 
-	virtual void build(Entity* entity) T_OVERRIDE T_FINAL;
+	virtual void build(Entity* entity) override final;
 
-	virtual void endBuild(WorldRenderView& worldRenderView, int frame) T_OVERRIDE T_FINAL;
+	virtual void endBuild(WorldRenderView& worldRenderView, int frame) override final;
 
-	virtual bool beginRender(int frame, render::EyeType eye, const Color4f& clearColor) T_OVERRIDE T_FINAL;
+	virtual bool beginRender(int frame, render::EyeType eye, const Color4f& clearColor) override final;
 
-	virtual void render(int frame, render::EyeType eye) T_OVERRIDE T_FINAL;
+	virtual void render(int frame, render::EyeType eye) override final;
 
-	virtual void endRender(int frame, render::EyeType eye, float deltaTime) T_OVERRIDE T_FINAL;
+	virtual void endRender(int frame, render::EyeType eye, float deltaTime) override final;
 
-	virtual render::ImageProcess* getVisualImageProcess() T_OVERRIDE T_FINAL;
+	virtual render::ImageProcess* getVisualImageProcess() override final;
 
-	virtual void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const T_OVERRIDE T_FINAL;
+	virtual void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const override final;
 
 private:
 	struct Slice

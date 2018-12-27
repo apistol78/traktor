@@ -70,9 +70,9 @@ private:
 	Ref< Font > m_font;
 	Ref< IBitmap > m_image;
 
-	virtual AutoWidgetCell* hitTest(const Point& position) T_OVERRIDE T_FINAL;
+	virtual AutoWidgetCell* hitTest(const Point& position) override final;
 
-	virtual void paint(Canvas& canvas, const Rect& rect) T_OVERRIDE T_FINAL;
+	virtual void paint(Canvas& canvas, const Rect& rect) override final;
 };
 
 	}

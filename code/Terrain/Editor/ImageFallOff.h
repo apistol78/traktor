@@ -28,7 +28,7 @@ class ImageFallOff : public IFallOff
 public:
 	ImageFallOff(const drawing::Image* image);
 
-	virtual float evaluate(float x, float y) const T_OVERRIDE T_FINAL;
+	virtual float evaluate(float x, float y) const override final;
 
 private:
 	Ref< const drawing::Image > m_image;

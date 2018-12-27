@@ -46,13 +46,13 @@ public:
 		const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions
 	);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void* lock() T_OVERRIDE T_FINAL;
+	virtual void* lock() override final;
 
-	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount) T_OVERRIDE T_FINAL;
+	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount) override final;
 
-	virtual void unlock() T_OVERRIDE T_FINAL;
+	virtual void unlock() override final;
 
 	VkBuffer getVkBuffer() const { return m_vertexBuffer; }
 

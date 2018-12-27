@@ -26,9 +26,9 @@ public:
 
 	void addImport(SolutionBuilderMsvcVCXImportCommon* import);
 
-	virtual bool generate(OutputStream& os) const T_OVERRIDE T_FINAL;
+	virtual bool generate(OutputStream& os) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::wstring m_label;

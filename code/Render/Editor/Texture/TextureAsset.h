@@ -30,7 +30,7 @@ class T_DLLCLASS TextureAsset : public editor::Asset
 public:
 	TextureOutput m_output;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 };
 
 	}

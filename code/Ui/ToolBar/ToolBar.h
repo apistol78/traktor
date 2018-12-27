@@ -46,7 +46,7 @@ public:
 
 	bool create(Widget* parent, int style = WsNone);
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 
 	uint32_t addImage(IBitmap* image, uint32_t imageCount);
 
@@ -58,7 +58,7 @@ public:
 
 	Ref< ToolBarItem > getItem(const Point& at);
 
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 private:
 	Ref< ToolTip > m_toolTip;

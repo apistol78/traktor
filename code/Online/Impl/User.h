@@ -21,31 +21,31 @@ class User : public IUser
 	T_RTTI_CLASS;
 
 public:
-	virtual bool getName(std::wstring& outName) const T_OVERRIDE T_FINAL;
+	virtual bool getName(std::wstring& outName) const override final;
 
-	virtual Ref< drawing::Image > getImage() const T_OVERRIDE T_FINAL;
+	virtual Ref< drawing::Image > getImage() const override final;
 
-	virtual uint64_t getGlobalId() const T_OVERRIDE T_FINAL;
+	virtual uint64_t getGlobalId() const override final;
 
-	virtual bool isFriend() const T_OVERRIDE T_FINAL;
+	virtual bool isFriend() const override final;
 
-	virtual bool isMemberOfGroup(const std::wstring& groupName) const T_OVERRIDE T_FINAL;
+	virtual bool isMemberOfGroup(const std::wstring& groupName) const override final;
 
-	virtual bool joinGroup(const std::wstring& groupName) T_OVERRIDE T_FINAL;
+	virtual bool joinGroup(const std::wstring& groupName) override final;
 
-	virtual bool invite() T_OVERRIDE T_FINAL;
+	virtual bool invite() override final;
 
-	virtual bool setPresenceValue(const std::wstring& key, const std::wstring& value) T_OVERRIDE T_FINAL;
+	virtual bool setPresenceValue(const std::wstring& key, const std::wstring& value) override final;
 
-	virtual bool getPresenceValue(const std::wstring& key, std::wstring& outValue) const T_OVERRIDE T_FINAL;
+	virtual bool getPresenceValue(const std::wstring& key, std::wstring& outValue) const override final;
 
-	virtual void setP2PEnable(bool enable) T_OVERRIDE T_FINAL;
+	virtual void setP2PEnable(bool enable) override final;
 
-	virtual bool isP2PAllowed() const T_OVERRIDE T_FINAL;
+	virtual bool isP2PAllowed() const override final;
 
-	virtual bool isP2PRelayed() const T_OVERRIDE T_FINAL;
+	virtual bool isP2PRelayed() const override final;
 
-	virtual bool sendP2PData(const void* data, size_t size, bool reliable) T_OVERRIDE T_FINAL;
+	virtual bool sendP2PData(const void* data, size_t size, bool reliable) override final;
 
 private:
 	friend class Lobby;

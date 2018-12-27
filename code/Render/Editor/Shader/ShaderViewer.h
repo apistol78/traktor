@@ -43,7 +43,7 @@ class ShaderViewer : public ui::Container
 public:
 	ShaderViewer(editor::IEditor* editor);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	bool create(ui::Widget* parent);
 

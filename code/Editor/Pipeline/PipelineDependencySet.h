@@ -27,19 +27,19 @@ class T_DLLCLASS PipelineDependencySet : public IPipelineDependencySet
 	T_RTTI_CLASS;
 
 public:
-	virtual uint32_t add(PipelineDependency* dependency) T_OVERRIDE T_FINAL;
+	virtual uint32_t add(PipelineDependency* dependency) override final;
 
-	virtual uint32_t add(const Guid& dependencyGuid, PipelineDependency* dependency) T_OVERRIDE T_FINAL;
+	virtual uint32_t add(const Guid& dependencyGuid, PipelineDependency* dependency) override final;
 
-	virtual PipelineDependency* get(uint32_t index) const T_OVERRIDE T_FINAL;
+	virtual PipelineDependency* get(uint32_t index) const override final;
 
-	virtual uint32_t get(const Guid& dependencyGuid) const T_OVERRIDE T_FINAL;
+	virtual uint32_t get(const Guid& dependencyGuid) const override final;
 
-	virtual uint32_t size() const T_OVERRIDE T_FINAL;
+	virtual uint32_t size() const override final;
 
-	virtual void dump(OutputStream& os) const T_OVERRIDE T_FINAL;
+	virtual void dump(OutputStream& os) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	RefArray< PipelineDependency > m_dependencies;

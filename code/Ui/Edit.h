@@ -65,9 +65,9 @@ public:
 
 	void setBorderColor(const Color4ub& borderColor);
 
-	virtual void setText(const std::wstring& text) T_OVERRIDE;
+	virtual void setText(const std::wstring& text) override;
 
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 private:
 	Ref< const EditValidator > m_validator;

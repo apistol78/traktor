@@ -40,11 +40,11 @@ public:
 
 	int getEnd() const;
 
-	virtual void move(int offset) T_OVERRIDE;
+	virtual void move(int offset) override;
 
-	virtual void getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const T_OVERRIDE;
+	virtual void getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const override;
 
-	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) T_OVERRIDE;
+	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) override;
 
 private:
 	int m_start;

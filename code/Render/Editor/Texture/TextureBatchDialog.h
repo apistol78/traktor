@@ -42,7 +42,7 @@ public:
 
 	bool create(ui::Widget* parent);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	bool showModal(RefArray< TextureAsset >& outAssets);
 

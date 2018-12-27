@@ -38,13 +38,13 @@ class T_DLLCLASS InputDriverXi : public IInputDriver
 public:
 	InputDriverXi(DWORD deviceCount = 4);
 
-	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) T_OVERRIDE T_FINAL;
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) override final;
 
-	virtual int getDeviceCount() T_OVERRIDE T_FINAL;
+	virtual int getDeviceCount() override final;
 
-	virtual Ref< IInputDevice > getDevice(int index) T_OVERRIDE T_FINAL;
+	virtual Ref< IInputDevice > getDevice(int index) override final;
 
-	virtual UpdateResult update() T_OVERRIDE T_FINAL;
+	virtual UpdateResult update() override final;
 
 private:
 	RefArray< InputDeviceXi > m_devices;

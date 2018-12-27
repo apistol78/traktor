@@ -93,7 +93,7 @@ void WorldLayer::destroy()
 		feedbackManager->removeListener(spray::FbtCamera, this);
 	}
 
-	m_environment = 0;
+	m_environment = nullptr;
 
 	if (m_scene)
 	{
@@ -121,7 +121,7 @@ void WorldLayer::transition(Layer* fromLayer)
 		m_worldRenderer = fromWorldLayer->m_worldRenderer;
 		m_worldRenderView = fromWorldLayer->m_worldRenderView;
 
-		fromWorldLayer->m_worldRenderer = 0;
+		fromWorldLayer->m_worldRenderer = nullptr;
 
 		// Create render entity group; contain scene root as well as dynamic entities.
 		m_renderGroup = new world::GroupEntity();
@@ -143,7 +143,7 @@ void WorldLayer::prepare(const UpdateInfo& info)
 		if (m_renderGroup)
 		{
 			m_renderGroup->removeAllEntities();
-			m_renderGroup = 0;
+			m_renderGroup = nullptr;
 		}
 
 		// Create render entity group; contain scene root as well as dynamic entities.
@@ -152,7 +152,7 @@ void WorldLayer::prepare(const UpdateInfo& info)
 		m_renderGroup->addEntity(m_dynamicEntities);
 
 		// Scene has been successfully validated; drop existing world renderer if we've been flushed.
-		m_worldRenderer = 0;
+		m_worldRenderer = nullptr;
 		m_scene.consume();
 
 		// Get initial camera.
@@ -174,8 +174,8 @@ void WorldLayer::prepare(const UpdateInfo& info)
 
 	// Update world view.
 	m_worldRenderView.setPerspective(
-		width,
-		height,
+		float(width),
+		float(height),
 		m_environment->getRender()->getAspectRatio(),
 		deg2rad(m_fieldOfView),
 		m_scene->getWorldRenderSettings()->viewNearZ,
@@ -199,8 +199,8 @@ void WorldLayer::prepare(const UpdateInfo& info)
 			else // CtPerspective
 			{
 				m_worldRenderView.setPerspective(
-					width,
-					height,
+					float(width),
+					float(height),
 					m_environment->getRender()->getAspectRatio(),
 					camera->getFieldOfView(),
 					m_scene->getWorldRenderSettings()->viewNearZ,
@@ -336,8 +336,8 @@ void WorldLayer::render(render::EyeType eye, uint32_t frame)
 		render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
 		if (postProcess)
 		{
-			for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = m_scene->getImageProcessParams().begin(); i != m_scene->getImageProcessParams().end(); ++i)
-				postProcess->setTextureParameter(i->first, i->second);
+			for (const auto param : m_scene->getImageProcessParams())
+				postProcess->setTextureParameter(param.first, param.second);
 		}
 
 		// Render world.
@@ -389,7 +389,7 @@ Ref< world::EntityData > WorldLayer::getEntityData(const std::wstring& name) con
 	if (i != m_entities.end())
 		return DeepClone(i->second.getResource()).create< world::EntityData >();
 	else
-		return 0;
+		return nullptr;
 }
 
 world::Entity* WorldLayer::getEntity(const std::wstring& name) const
@@ -422,7 +422,7 @@ Ref< world::Entity > WorldLayer::createEntity(const std::wstring& name, world::I
 
 	std::map< std::wstring, resource::Proxy< world::EntityData > >::iterator i = m_entities.find(name);
 	if (i == m_entities.end())
-		return 0;
+		return nullptr;
 
 	const world::IEntityBuilder* entityBuilder = m_environment->getWorld()->getEntityBuilder();
 	T_ASSERT (entityBuilder);

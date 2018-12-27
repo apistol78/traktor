@@ -40,7 +40,7 @@ public:
 
 	bool isSelected() const;
 
-	virtual void paint(Canvas& canvas, const Rect& rect) T_OVERRIDE T_FINAL;
+	virtual void paint(Canvas& canvas, const Rect& rect) override final;
 
 private:
 	std::wstring m_text;

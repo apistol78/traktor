@@ -35,7 +35,7 @@ public:
 	explicit GaussianBlurFilter(int32_t radius);
 
 protected:
-	virtual void apply(Image* image) const T_OVERRIDE T_FINAL;
+	virtual void apply(Image* image) const override final;
 
 private:
 	AlignedVector< Scalar > m_kernel;

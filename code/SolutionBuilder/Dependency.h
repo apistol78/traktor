@@ -55,7 +55,7 @@ public:
 
 	virtual bool resolve(const Path& referringSolutionPath, SolutionLoader* solutionLoader) = 0;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE;
+	virtual void serialize(ISerializer& s) override;
 
 private:
 	bool m_inheritIncludePaths;

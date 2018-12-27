@@ -61,7 +61,7 @@ public:
 class TagSetBackgroundColor : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagDefineShape : public Tag
@@ -69,7 +69,7 @@ class TagDefineShape : public Tag
 public:
 	TagDefineShape(int shapeType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 
 private:
 	int m_shapeType;
@@ -80,7 +80,7 @@ class TagDefineMorphShape : public Tag
 public:
 	TagDefineMorphShape(int shapeType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 
 private:
 	int m_shapeType;
@@ -91,7 +91,7 @@ class TagDefineFont : public Tag
 public:
 	TagDefineFont(int fontType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 
 private:
 	int m_fontType;
@@ -100,7 +100,7 @@ private:
 class TagDefineScalingGrid : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagDefineText : public Tag
@@ -108,7 +108,7 @@ class TagDefineText : public Tag
 public:
 	TagDefineText(int textType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 
 private:
 	int m_textType;
@@ -117,7 +117,7 @@ private:
 class TagDefineEditText : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagDefineButton : public Tag
@@ -125,7 +125,7 @@ class TagDefineButton : public Tag
 public:
 	TagDefineButton(int buttonType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 
 private:
 	int m_buttonType;
@@ -134,7 +134,7 @@ private:
 class TagJpegTables : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagDefineBitsJpeg : public Tag
@@ -142,7 +142,7 @@ class TagDefineBitsJpeg : public Tag
 public:
 	TagDefineBitsJpeg(int bitsType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 
 private:
 	int m_bitsType;
@@ -153,7 +153,7 @@ class TagDefineBitsLossLess : public Tag
 public:
 	TagDefineBitsLossLess(int bitsType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 
 private:
 	int m_bitsType;
@@ -162,7 +162,7 @@ private:
 class TagDefineSprite : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagPlaceObject : public Tag
@@ -170,7 +170,7 @@ class TagPlaceObject : public Tag
 public:
 	TagPlaceObject(int placeType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 
 private:
 	int m_placeType;
@@ -181,7 +181,7 @@ class TagRemoveObject : public Tag
 public:
 	TagRemoveObject(int removeType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 
 private:
 	int m_removeType;
@@ -190,19 +190,19 @@ private:
 class TagShowFrame : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagDoAction : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagExportAssets : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagImportAssets : public Tag
@@ -210,7 +210,7 @@ class TagImportAssets : public Tag
 public:
 	TagImportAssets(int importType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 
 private:
 	int m_importType;
@@ -219,7 +219,7 @@ private:
 class TagInitAction : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagProtect : public Tag
@@ -227,25 +227,25 @@ class TagProtect : public Tag
 public:
 	TagProtect(int protectType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagFrameLabel : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagDoABC : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagDefineSound : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagStartSound : public Tag
@@ -253,7 +253,7 @@ class TagStartSound : public Tag
 public:
 	TagStartSound(int32_t startType);
 
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 
 private:
 	int32_t m_startType;
@@ -262,25 +262,25 @@ private:
 class TagDefineSceneAndFrameLabelData : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagSymbolClass : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagMetaData : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagFileAttributes : public Tag
 {
 public:
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 };
 
 class TagUnsupported : public Tag
@@ -288,7 +288,7 @@ class TagUnsupported : public Tag
 public:
 	TagUnsupported(int32_t tagId);
 
-	virtual bool read(SwfReader* swf, ReadContext& context) T_OVERRIDE T_FINAL;
+	virtual bool read(SwfReader* swf, ReadContext& context) override final;
 
 private:
 	int32_t m_tagId;

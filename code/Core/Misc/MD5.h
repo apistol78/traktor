@@ -44,17 +44,17 @@ public:
 	bool createFromString(const std::wstring& str);
 
 	/*! \brief Begin feeding data for MD5 checksum calculation. */
-	virtual void begin() T_OVERRIDE T_FINAL;
+	virtual void begin() override final;
 
 	/*! \brief Feed data to MD5 checksum calculation.
 	 *
 	 * \param buffer Pointer to data.
 	 * \param bufferSize Amount of data in bytes.
 	 */
-	virtual void feed(const void* buffer, uint64_t bufferSize) T_OVERRIDE T_FINAL;
+	virtual void feed(const void* buffer, uint64_t bufferSize) override final;
 
 	/*! \brief End feeding data for MD5 checksum calculation. */
-	virtual void end() T_OVERRIDE T_FINAL;
+	virtual void end() override final;
 
 	/*! \brief Get pointer to MD5 checksum. */
 	const uint32_t* get() const;

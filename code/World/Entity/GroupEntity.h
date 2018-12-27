@@ -35,7 +35,7 @@ public:
 
 	virtual ~GroupEntity();
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 
 	void addEntity(Entity* entity);
 	
@@ -49,13 +49,13 @@ public:
 	
 	Entity* getFirstEntityOf(const TypeInfo& entityType) const;
 	
-	virtual void update(const UpdateParams& update) T_OVERRIDE;
+	virtual void update(const UpdateParams& update) override;
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE;
+	virtual void setTransform(const Transform& transform) override;
 
-	virtual bool getTransform(Transform& outTransform) const T_OVERRIDE;
+	virtual bool getTransform(Transform& outTransform) const override;
 
-	virtual Aabb3 getBoundingBox() const T_OVERRIDE;
+	virtual Aabb3 getBoundingBox() const override;
 
 	template < typename EntityType >
 	int getEntitiesOf(RefArray< EntityType >& outEntities) const

@@ -37,9 +37,9 @@ public:
 
 	void close();
 
-	virtual bool putEvent(const IEvent* event) T_OVERRIDE T_FINAL;
+	virtual bool putEvent(const IEvent* event) override final;
 
-	virtual bool getEvent(Ref< const IEvent >& outEvent, bool& outRemote) T_OVERRIDE T_FINAL;
+	virtual bool getEvent(Ref< const IEvent >& outEvent, bool& outRemote) override final;
 
 private:
 	struct Event

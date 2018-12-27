@@ -33,7 +33,7 @@ class T_DLLCLASS HttpRequestParameters : public IHttpRequestContent
 public:
 	void set(const std::wstring& key, const std::wstring& value);
 
-	virtual std::wstring getUrlEncodedContent() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getUrlEncodedContent() const override final;
 
 private:
 	std::map< std::wstring, std::wstring > m_parameters;

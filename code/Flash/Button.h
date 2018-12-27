@@ -129,9 +129,9 @@ public:
 		const Matrix33& transform,
 		const ActionObject* initObject,
 		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	button_layers_t m_layers;

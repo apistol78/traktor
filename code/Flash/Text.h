@@ -64,13 +64,13 @@ public:
 		const Matrix33& transform,
 		const ActionObject* initObject,
 		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	const Aabb2& getTextBounds() const;
 
 	const Matrix33& getTextMatrix() const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Aabb2 m_textBounds;

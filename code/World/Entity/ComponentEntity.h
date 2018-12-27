@@ -41,15 +41,15 @@ public:
 
 	ComponentEntity(const Transform& transform);
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE;
+	virtual void setTransform(const Transform& transform) override;
 
-	virtual bool getTransform(Transform& outTransform) const T_OVERRIDE;
+	virtual bool getTransform(Transform& outTransform) const override;
 
-	virtual Aabb3 getBoundingBox() const T_OVERRIDE;
+	virtual Aabb3 getBoundingBox() const override;
 
-	virtual void update(const UpdateParams& update) T_OVERRIDE;
+	virtual void update(const UpdateParams& update) override;
 
 	/*! \brief Set component in character instance.
 	 */

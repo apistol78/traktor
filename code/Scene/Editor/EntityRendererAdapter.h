@@ -25,20 +25,20 @@ class EntityRendererAdapter : public world::IEntityRenderer
 public:
 	EntityRendererAdapter(EntityRendererCache* cache, world::IEntityRenderer* entityRenderer, const std::function< bool(const EntityAdapter*) >& filter);
 	
-	virtual const TypeInfoSet getRenderableTypes() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass,
 		Object* renderable
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 	virtual void flush(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 private:
 	Ref< EntityRendererCache > m_cache;

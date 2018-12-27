@@ -25,11 +25,11 @@ class SkeletonFormatLws : public SkeletonFormat
 public:
 	Ref< Skeleton > create(LwsDocument* document) const;
 
-	virtual void getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const T_OVERRIDE T_FINAL;
+	virtual void getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const override final;
 
-	virtual bool supportFormat(const std::wstring& extension) const T_OVERRIDE T_FINAL;
+	virtual bool supportFormat(const std::wstring& extension) const override final;
 
-	virtual Ref< Skeleton > read(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const T_OVERRIDE T_FINAL;
+	virtual Ref< Skeleton > read(IStream* stream, const Vector4& offset, float scale, float radius, bool invertX, bool invertZ) const override final;
 };
 
 	}

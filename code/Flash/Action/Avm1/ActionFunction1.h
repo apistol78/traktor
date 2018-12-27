@@ -43,12 +43,12 @@ public:
 		const ActionDictionary* dictionary
 	);
 
-	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args) T_OVERRIDE T_FINAL;
+	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args) override final;
 
 protected:
-	virtual void trace(visitor_t visitor) const T_OVERRIDE T_FINAL;
+	virtual void trace(visitor_t visitor) const override final;
 
-	virtual void dereference() T_OVERRIDE T_FINAL;
+	virtual void dereference() override final;
 
 private:
 	Ref< const IActionVMImage > m_image;

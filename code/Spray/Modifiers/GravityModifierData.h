@@ -33,9 +33,9 @@ class T_DLLCLASS GravityModifierData : public ModifierData
 public:
 	GravityModifierData();
 
-	virtual Ref< const Modifier > createModifier(resource::IResourceManager* resourceManager) const T_OVERRIDE T_FINAL;
+	virtual Ref< const Modifier > createModifier(resource::IResourceManager* resourceManager) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Vector4 m_gravity;

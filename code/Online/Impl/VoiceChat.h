@@ -35,17 +35,17 @@ class VoiceChat
 public:
 	void destroy();
 
-	virtual void setSoundPlayer(sound::ISoundPlayer* soundPlayer) T_OVERRIDE T_FINAL;
+	virtual void setSoundPlayer(sound::ISoundPlayer* soundPlayer) override final;
 
-	virtual void setAudience(const RefArray< IUser >& audience) T_OVERRIDE T_FINAL;
+	virtual void setAudience(const RefArray< IUser >& audience) override final;
 
-	virtual void beginTransmission() T_OVERRIDE T_FINAL;
+	virtual void beginTransmission() override final;
 
-	virtual void endTransmission() T_OVERRIDE T_FINAL;
+	virtual void endTransmission() override final;
 
-	virtual void setMute(bool mute) T_OVERRIDE T_FINAL;
+	virtual void setMute(bool mute) override final;
 
-	virtual bool isTransmitting(IUser* user) T_OVERRIDE T_FINAL;
+	virtual bool isTransmitting(IUser* user) override final;
 
 private:
 	friend class SessionManager;
@@ -69,7 +69,7 @@ private:
 
 	virtual ~VoiceChat();
 
-	virtual void onVoiceReceived(uint64_t fromUserHandle, const int16_t* samples, uint32_t samplesCount, uint32_t sampleRate) T_OVERRIDE T_FINAL;
+	virtual void onVoiceReceived(uint64_t fromUserHandle, const int16_t* samples, uint32_t samplesCount, uint32_t sampleRate) override final;
 };
 
 	}

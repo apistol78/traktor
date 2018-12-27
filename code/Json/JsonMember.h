@@ -50,7 +50,7 @@ public:
 	 */
 	const Any& getValue() const { return m_value; }
 
-	virtual bool write(OutputStream& os) const T_OVERRIDE;
+	virtual bool write(OutputStream& os) const override;
 
 private:
 	std::wstring m_name;

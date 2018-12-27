@@ -24,7 +24,7 @@ public:
 
 	float getFactor() const { return m_factor; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	float m_factor;

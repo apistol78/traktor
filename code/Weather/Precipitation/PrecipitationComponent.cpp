@@ -30,9 +30,9 @@ public:
 	float m_opacity;
 	float* m_layerAngle;
 
-	virtual void setCombination(render::Shader* shader) const T_FINAL {}
+	virtual void setCombination(render::Shader* shader) const final {}
 
-	virtual void setParameters(render::ProgramParameters* programParameters) const T_FINAL
+	virtual void setParameters(render::ProgramParameters* programParameters) const final
 	{
 		programParameters->setVectorArrayParameter(L"Precipitation_FrustumEdges", m_frustumEdges, sizeof_array(m_frustumEdges));
 		programParameters->setFloatParameter(L"Precipitation_ParallaxDistance", m_parallaxDistance);

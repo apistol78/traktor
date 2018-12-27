@@ -34,7 +34,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
+	virtual void serialize(ISerializer& s) const override final
 	{
 		s >> Member< Vector4 >(L"position", m_refPosition, AttributePoint());
 		s >> Member< Vector4 >(L"orientation", m_refOrientation, AttributeAngles());

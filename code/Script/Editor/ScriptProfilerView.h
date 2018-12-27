@@ -46,7 +46,7 @@ public:
 
 	bool create(ui::Widget* parent);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	bool handleCommand(const ui::Command& command);
 
@@ -81,11 +81,11 @@ private:
 	/*! \name IScriptProfiler::IListener */
 	/*! \{ */
 
-	virtual void callEnter(const Guid& scriptId, const std::wstring& function) T_OVERRIDE T_FINAL;
+	virtual void callEnter(const Guid& scriptId, const std::wstring& function) override final;
 
-	virtual void callLeave(const Guid& scriptId, const std::wstring& function) T_OVERRIDE T_FINAL;
+	virtual void callLeave(const Guid& scriptId, const std::wstring& function) override final;
 
-	virtual void callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration) T_OVERRIDE T_FINAL;
+	virtual void callMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration) override final;
 
 	/*! \} */
 };

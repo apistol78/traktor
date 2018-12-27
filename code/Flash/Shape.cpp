@@ -37,7 +37,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
+	virtual void serialize(ISerializer& s) const override final
 	{
 		s >> MemberStaticArray< Vector2, 3 >(L"v", m_ref.v);
 		s >> Member< uint8_t >(L"type", m_ref.type);
@@ -57,7 +57,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
+	virtual void serialize(ISerializer& s) const override final
 	{
 		s >> MemberStaticArray< Vector2, 2 >(L"v", m_ref.v);
 		s >> Member< uint16_t >(L"lineStyle", m_ref.lineStyle);

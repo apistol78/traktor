@@ -43,9 +43,9 @@ public:
 
 	const RefArray< EntityData >& getEntityData() const;
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE;
+	virtual void setTransform(const Transform& transform) override;
 	
-	virtual void serialize(ISerializer& s) T_OVERRIDE;
+	virtual void serialize(ISerializer& s) override;
 	
 private:
 	RefArray< EntityData > m_entityData;

@@ -34,30 +34,30 @@ public:
 	{
 	}
 	
-	virtual void reserve(size_t size, size_t capacity) const T_OVERRIDE T_FINAL
+	virtual void reserve(size_t size, size_t capacity) const override final
 	{
 		m_ref.clear();
 	}
 
-	virtual size_t size() const T_OVERRIDE T_FINAL
+	virtual size_t size() const override final
 	{
 		return m_ref.size();
 	}
 
-	virtual void read(ISerializer& s) const T_OVERRIDE T_FINAL
+	virtual void read(ISerializer& s) const override final
 	{
 		ValueType item;
 		s >> ValueMember(L"item", item);
 		m_ref.insert(item);
 	}
 
-	virtual void write(ISerializer& s) const T_OVERRIDE T_FINAL
+	virtual void write(ISerializer& s) const override final
 	{
 		ValueType v = *m_iter++;
 		s >> ValueMember(L"item", v);
 	}
 
-	virtual bool insert() const T_OVERRIDE T_FINAL
+	virtual bool insert() const override final
 	{
 		m_ref.insert(ValueType());
 		return true;

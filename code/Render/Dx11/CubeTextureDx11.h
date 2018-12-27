@@ -32,19 +32,19 @@ public:
 
 	bool create(const CubeTextureCreateDesc& desc);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual ITexture* resolve() T_OVERRIDE T_FINAL;
+	virtual ITexture* resolve() override final;
 
-	virtual int getWidth() const T_OVERRIDE T_FINAL;
+	virtual int getWidth() const override final;
 	
-	virtual int getHeight() const T_OVERRIDE T_FINAL;
+	virtual int getHeight() const override final;
 	
-	virtual int getDepth() const T_OVERRIDE T_FINAL;
+	virtual int getDepth() const override final;
 
-	virtual bool lock(int side, int level, Lock& lock) T_OVERRIDE T_FINAL;
+	virtual bool lock(int side, int level, Lock& lock) override final;
 
-	virtual void unlock(int side, int level) T_OVERRIDE T_FINAL;
+	virtual void unlock(int side, int level) override final;
 
 	ID3D11ShaderResourceView* getD3D11TextureResourceView() const;
 

@@ -40,11 +40,11 @@ public:
 
 	bool create(Widget* parent, const std::wstring& text, int width, int height, int style, Layout* layout);
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 
-	virtual void update(const Rect* rc = 0, bool immediate = false) T_OVERRIDE;
+	virtual void update(const Rect* rc = 0, bool immediate = false) override;
 	
-	virtual Rect getInnerRect() const T_OVERRIDE;
+	virtual Rect getInnerRect() const override;
 	
 private:
 	Ref< Button > m_ok;

@@ -27,17 +27,17 @@ class LocalGroup : public IProviderGroup
 public:
 	LocalGroup(Context* contex, const Path& groupPath);
 
-	virtual std::wstring getName() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getName() const override final;
 
-	virtual bool rename(const std::wstring& name) T_OVERRIDE T_FINAL;
+	virtual bool rename(const std::wstring& name) override final;
 
-	virtual bool remove() T_OVERRIDE T_FINAL;
+	virtual bool remove() override final;
 
-	virtual Ref< IProviderGroup > createGroup(const std::wstring& groupName) T_OVERRIDE T_FINAL;
+	virtual Ref< IProviderGroup > createGroup(const std::wstring& groupName) override final;
 
-	virtual Ref< IProviderInstance > createInstance(const std::wstring& instanceName, const Guid& instanceGuid) T_OVERRIDE T_FINAL;
+	virtual Ref< IProviderInstance > createInstance(const std::wstring& instanceName, const Guid& instanceGuid) override final;
 
-	virtual bool getChildren(RefArray< IProviderGroup >& outChildGroups, RefArray< IProviderInstance >& outChildInstances) T_OVERRIDE T_FINAL;
+	virtual bool getChildren(RefArray< IProviderGroup >& outChildGroups, RefArray< IProviderInstance >& outChildInstances) override final;
 
 private:
 	Ref< Context > m_context;

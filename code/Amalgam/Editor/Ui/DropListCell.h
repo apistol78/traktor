@@ -29,9 +29,9 @@ public:
 	DropListCell(HostEnumerator* hostEnumerator, TargetInstance* instance);
 
 protected:
-	virtual void mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& position)  T_OVERRIDE T_FINAL;
+	virtual void mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& position)  override final;
 
-	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect)  T_OVERRIDE T_FINAL;
+	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect)  override final;
 
 private:
 	Ref< HostEnumerator > m_hostEnumerator;

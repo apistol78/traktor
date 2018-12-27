@@ -32,21 +32,21 @@ class T_DLLCLASS DefaultFileStore : public IFileStore
 public:
 	DefaultFileStore();
 
-	virtual bool create(const ConnectionString& connectionString) T_OVERRIDE T_FINAL;
+	virtual bool create(const ConnectionString& connectionString) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual uint32_t flags(const Path& filePath) T_OVERRIDE T_FINAL;
+	virtual uint32_t flags(const Path& filePath) override final;
 
-	virtual bool add(const Path& filePath) T_OVERRIDE T_FINAL;
+	virtual bool add(const Path& filePath) override final;
 
-	virtual bool remove(const Path& filePath) T_OVERRIDE T_FINAL;
+	virtual bool remove(const Path& filePath) override final;
 
-	virtual bool edit(const Path& filePath) T_OVERRIDE T_FINAL;
+	virtual bool edit(const Path& filePath) override final;
 
-	virtual bool rollback(const Path& filePath) T_OVERRIDE T_FINAL;
+	virtual bool rollback(const Path& filePath) override final;
 
-	virtual bool clean(const Path& filePath) T_OVERRIDE T_FINAL;
+	virtual bool clean(const Path& filePath) override final;
 
 private:
 	bool m_editReadOnly;

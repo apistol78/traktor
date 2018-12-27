@@ -31,11 +31,11 @@ class T_DLLCLASS Adler32 : public IHash
 public:
 	Adler32();
 
-	virtual void begin() T_OVERRIDE T_FINAL;
+	virtual void begin() override final;
 
-	virtual void feed(const void* buffer, uint64_t bufferSize) T_OVERRIDE T_FINAL;
+	virtual void feed(const void* buffer, uint64_t bufferSize) override final;
 
-	virtual void end() T_OVERRIDE T_FINAL;
+	virtual void end() override final;
 
 	uint32_t get() const;
 

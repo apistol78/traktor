@@ -24,7 +24,7 @@ public:
 	{
 	}
 
-	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args) T_OVERRIDE T_FINAL
+	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args) override final
 	{
 		Any argv[16];
 		for (uint32_t i = 0; i < args.size(); ++i)
@@ -39,7 +39,7 @@ public:
 	}
 
 protected:
-	virtual void dereference() T_OVERRIDE
+	virtual void dereference() override
 	{
 		m_delegate = 0;
 		ActionFunction::dereference();

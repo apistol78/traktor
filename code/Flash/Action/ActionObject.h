@@ -128,9 +128,9 @@ public:
 protected:
 	friend class ActionObjectRelay;
 
-	virtual void trace(visitor_t visitor) const T_OVERRIDE;
+	virtual void trace(visitor_t visitor) const override;
 
-	virtual void dereference() T_OVERRIDE;
+	virtual void dereference() override;
 
 	void setOverrideRelay(ActionObjectRelay* relay);
 

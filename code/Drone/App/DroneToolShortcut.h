@@ -34,11 +34,11 @@ public:
 
 	const std::wstring& getWorkingDirectory() const;
 
-	virtual void getMenuItems(RefArray< ui::MenuItem >& outItems) T_OVERRIDE T_FINAL;
+	virtual void getMenuItems(RefArray< ui::MenuItem >& outItems) override final;
 
-	virtual bool execute(ui::Widget* parent, const ui::MenuItem* menuItem) T_OVERRIDE T_FINAL;
+	virtual bool execute(ui::Widget* parent, const ui::MenuItem* menuItem) override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::wstring m_title;

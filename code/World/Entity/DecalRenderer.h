@@ -44,20 +44,20 @@ class T_DLLCLASS DecalRenderer : public IEntityRenderer
 public:
 	DecalRenderer(render::IRenderSystem* renderSystem);
 
-	virtual const TypeInfoSet getRenderableTypes() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void render(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
 		IWorldRenderPass& worldRenderPass,
 		Object* renderable
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 	virtual void flush(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,
 		IWorldRenderPass& worldRenderPass
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 private:
 	Ref< render::VertexBuffer > m_vertexBuffer;

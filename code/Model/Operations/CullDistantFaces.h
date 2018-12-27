@@ -33,7 +33,7 @@ class T_DLLCLASS CullDistantFaces : public IModelOperation
 public:
 	CullDistantFaces(const Aabb3& viewerRegion);
 
-	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
+	virtual bool apply(Model& model) const override final;
 
 private:
 	Aabb3 m_viewerRegion;

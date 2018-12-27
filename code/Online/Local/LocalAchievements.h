@@ -29,9 +29,9 @@ class LocalAchievements : public IAchievementsProvider
 public:
 	LocalAchievements(sql::IConnection* db);
 
-	virtual bool enumerate(std::map< std::wstring, bool >& outAchievements) T_OVERRIDE T_FINAL;
+	virtual bool enumerate(std::map< std::wstring, bool >& outAchievements) override final;
 
-	virtual bool set(const std::wstring& achievementId, bool reward) T_OVERRIDE T_FINAL;
+	virtual bool set(const std::wstring& achievementId, bool reward) override final;
 
 private:
 	Ref< sql::IConnection > m_db;

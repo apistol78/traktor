@@ -52,9 +52,9 @@ public:
 
 	virtual ~Collectable();
 
-	virtual void addRef(void* owner) const T_OVERRIDE T_FINAL;
+	virtual void addRef(void* owner) const override final;
 
-	virtual void release(void* owner) const T_OVERRIDE T_FINAL;
+	virtual void release(void* owner) const override final;
 
 	/*! \brief Register a weak reference. */
 	void addWeakRef(IWeakRefDispose* weakRefDispose);

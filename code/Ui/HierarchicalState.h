@@ -54,7 +54,7 @@ public:
 	 */
 	Ref< HierarchicalState > merge(const HierarchicalState* state) const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE;
+	virtual void serialize(ISerializer& s) override;
 
 private:
 	int32_t m_scrollPosition;

@@ -71,7 +71,7 @@ public:
 
 	bool create(ui::Widget* parent);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	void setMesh(const resource::Id< mesh::SkinnedMesh >& mesh);
 

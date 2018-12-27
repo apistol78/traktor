@@ -30,16 +30,16 @@ public:
 	/*! \name Notifications */
 	//\{
 
-	virtual void selectionChanged() T_OVERRIDE T_FINAL;
+	virtual void selectionChanged() override final;
 
 	virtual bool cursorMoved(
 		const TransformChain& transformChain,
 		const Vector2& cursorPosition,
 		const Vector4& worldRayOrigin,
 		const Vector4& worldRayDirection
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
-	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
+	virtual bool handleCommand(const ui::Command& command) override final;
 
 	//\}
 
@@ -49,7 +49,7 @@ public:
 	virtual bool begin(
 		const TransformChain& transformChain,
 		int32_t mouseButton
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 	virtual void apply(
 		const TransformChain& transformChain,
@@ -58,16 +58,16 @@ public:
 		const Vector4& worldRayDirection,
 		const Vector4& screenDelta,
 		const Vector4& viewDelta
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
-	virtual void end(const TransformChain& transformChain) T_OVERRIDE T_FINAL;
+	virtual void end(const TransformChain& transformChain) override final;
 
 	//\}
 
 	/*! \name Preview */
 	//\{
 
-	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) const T_OVERRIDE T_FINAL;
+	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) const override final;
 
 	//\}
 

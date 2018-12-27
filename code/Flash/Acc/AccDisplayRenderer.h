@@ -92,7 +92,7 @@ public:
 	// \name IDisplayRenderer
 	// \{
 
-	virtual bool wantDirtyRegion() const T_OVERRIDE T_FINAL;
+	virtual bool wantDirtyRegion() const override final;
 	
 	virtual void begin(
 		const Dictionary& dictionary,
@@ -102,23 +102,23 @@ public:
 		float viewWidth,
 		float viewHeight,
 		const Aabb2& dirtyRegion
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
-	virtual void beginSprite(const SpriteInstance& sprite, const Matrix33& transform) T_OVERRIDE T_FINAL;
+	virtual void beginSprite(const SpriteInstance& sprite, const Matrix33& transform) override final;
 
-	virtual void endSprite(const SpriteInstance& sprite, const Matrix33& transform) T_OVERRIDE T_FINAL;
+	virtual void endSprite(const SpriteInstance& sprite, const Matrix33& transform) override final;
 
-	virtual void beginEdit(const EditInstance& edit, const Matrix33& transform) T_OVERRIDE T_FINAL;
+	virtual void beginEdit(const EditInstance& edit, const Matrix33& transform) override final;
 
-	virtual void endEdit(const EditInstance& edit, const Matrix33& transform) T_OVERRIDE T_FINAL;
+	virtual void endEdit(const EditInstance& edit, const Matrix33& transform) override final;
 
-	virtual void beginMask(bool increment) T_OVERRIDE T_FINAL;
+	virtual void beginMask(bool increment) override final;
 
-	virtual void endMask() T_OVERRIDE T_FINAL;
+	virtual void endMask() override final;
 
-	virtual void renderShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode) T_OVERRIDE T_FINAL;
+	virtual void renderShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const Shape& shape, const ColorTransform& cxform, uint8_t blendMode) override final;
 
-	virtual void renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const MorphShape& shape, const ColorTransform& cxform) T_OVERRIDE T_FINAL;
+	virtual void renderMorphShape(const Dictionary& dictionary, const Matrix33& transform, const Aabb2& clipBounds, const MorphShape& shape, const ColorTransform& cxform) override final;
 
 	virtual void renderGlyph(
 		const Dictionary& dictionary,
@@ -132,13 +132,13 @@ public:
 		const ColorTransform& cxform,
 		uint8_t filter,
 		const Color4f& filterColor
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
-	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform) T_OVERRIDE T_FINAL;
+	virtual void renderQuad(const Matrix33& transform, const Aabb2& bounds, const ColorTransform& cxform) override final;
 
-	virtual void renderCanvas(const Matrix33& transform, const Canvas& canvas, const ColorTransform& cxform, uint8_t blendMode) T_OVERRIDE T_FINAL;
+	virtual void renderCanvas(const Matrix33& transform, const Canvas& canvas, const ColorTransform& cxform, uint8_t blendMode) override final;
 
-	virtual void end() T_OVERRIDE T_FINAL;
+	virtual void end() override final;
 
 	// \}
 

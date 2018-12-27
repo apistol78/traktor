@@ -40,9 +40,9 @@ class T_DLLCLASS SoundRenderer : public ISoundRenderer
 public:
 	bool create(sound::ISoundPlayer* soundPlayer);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void play(const Sound* sound) T_OVERRIDE T_FINAL;
+	virtual void play(const Sound* sound) override final;
 
 private:
 	Ref< sound::ISoundPlayer > m_soundPlayer;

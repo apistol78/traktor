@@ -23,21 +23,21 @@ class Party : public IParty
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< Result > setMetaValue(const std::wstring& key, const std::wstring& value) T_OVERRIDE T_FINAL;
+	virtual Ref< Result > setMetaValue(const std::wstring& key, const std::wstring& value) override final;
 
-	virtual bool getMetaValue(const std::wstring& key, std::wstring& outValue) const T_OVERRIDE T_FINAL;
+	virtual bool getMetaValue(const std::wstring& key, std::wstring& outValue) const override final;
 
-	virtual Ref< Result > setParticipantMetaValue(const std::wstring& key, const std::wstring& value) T_OVERRIDE T_FINAL;
+	virtual Ref< Result > setParticipantMetaValue(const std::wstring& key, const std::wstring& value) override final;
 
-	virtual bool getParticipantMetaValue(const IUser* user, const std::wstring& key, std::wstring& outValue) const T_OVERRIDE T_FINAL;
+	virtual bool getParticipantMetaValue(const IUser* user, const std::wstring& key, std::wstring& outValue) const override final;
 
-	virtual bool leave() T_OVERRIDE T_FINAL;
+	virtual bool leave() override final;
 
-	virtual bool getParticipants(RefArray< IUser >& outUsers) T_OVERRIDE T_FINAL;
+	virtual bool getParticipants(RefArray< IUser >& outUsers) override final;
 
-	virtual uint32_t getParticipantCount() const T_OVERRIDE T_FINAL;
+	virtual uint32_t getParticipantCount() const override final;
 
-	virtual bool invite(const IUser* user) T_OVERRIDE T_FINAL;
+	virtual bool invite(const IUser* user) override final;
 
 private:
 	friend class MatchMaking;

@@ -44,17 +44,17 @@ public:
 
 	virtual ~ProcessWin32();
 
-	virtual bool setPriority(Priority priority) T_OVERRIDE T_FINAL;
+	virtual bool setPriority(Priority priority) override final;
 
-	virtual bool wait(int32_t timeout) T_OVERRIDE T_FINAL;
+	virtual bool wait(int32_t timeout) override final;
 
-	virtual Ref< IStream > getPipeStream(StdPipe pipe) T_OVERRIDE T_FINAL;
+	virtual Ref< IStream > getPipeStream(StdPipe pipe) override final;
 
-	virtual bool signal(SignalType signalType) T_OVERRIDE T_FINAL;
+	virtual bool signal(SignalType signalType) override final;
 
-	virtual bool terminate(int32_t exitCode) T_OVERRIDE T_FINAL;
+	virtual bool terminate(int32_t exitCode) override final;
 
-	virtual int32_t exitCode() const T_OVERRIDE T_FINAL;
+	virtual int32_t exitCode() const override final;
 
 private:
 	HANDLE m_hProcess;

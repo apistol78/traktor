@@ -34,7 +34,7 @@ public:
 	SwizzleFilter(const std::wstring& swizzle);
 
 protected:
-	virtual void apply(Image* image) const T_OVERRIDE T_FINAL;
+	virtual void apply(Image* image) const override final;
 
 private:
 	wchar_t m_swizzle[4];

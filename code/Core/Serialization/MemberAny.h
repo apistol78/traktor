@@ -27,7 +27,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const T_OVERRIDE T_FINAL
+	virtual void serialize(ISerializer& s) const override final
 	{
 		const MemberEnum< Any::AnyType >::Key c_AnyType_Keys[] =
 		{

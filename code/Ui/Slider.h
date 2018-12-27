@@ -41,7 +41,7 @@ public:
 
 	int32_t getValue() const;
 
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 private:
 	Range< int32_t > m_range;

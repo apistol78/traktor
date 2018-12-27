@@ -79,7 +79,7 @@ public:
 	 */
 	const AlignedVector< Any >& get() const { return m_array; }
 
-	virtual bool write(OutputStream& os) const T_OVERRIDE;
+	virtual bool write(OutputStream& os) const override;
 
 private:
 	AlignedVector< Any > m_array;

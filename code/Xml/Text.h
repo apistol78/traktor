@@ -32,16 +32,16 @@ class T_DLLCLASS Text : public Node
 public:
 	Text(const std::wstring& text);
 	
-	virtual std::wstring getValue() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getValue() const override final;
 
-	virtual void setValue(const std::wstring& value) T_OVERRIDE T_FINAL;
+	virtual void setValue(const std::wstring& value) override final;
 
-	virtual void write(OutputStream& os) const T_OVERRIDE T_FINAL;
+	virtual void write(OutputStream& os) const override final;
 
 	Ref< Text > clone() const;
 
 protected:
-	virtual Ref< Node > cloneUntyped() const T_OVERRIDE T_FINAL;
+	virtual Ref< Node > cloneUntyped() const override final;
 
 private:
 	std::wstring m_text;

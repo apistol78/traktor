@@ -35,14 +35,14 @@ public:
 	public:
 		InstanceRepeat(uint32_t count, Instance* instance);
 
-		virtual void destroy() T_OVERRIDE T_FINAL;
+		virtual void destroy() override final;
 
 		virtual void render(
 			ImageProcess* imageProcess,
 			IRenderView* renderView,
 			ScreenRenderer* screenRenderer,
 			const RenderParams& params
-		) T_OVERRIDE T_FINAL;
+		) override final;
 
 	private:
 		uint32_t m_count;
@@ -56,9 +56,9 @@ public:
 		IRenderSystem* renderSystem,
 		uint32_t width,
 		uint32_t height
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const Ref< ImageProcessStep >& getStep() const { return m_step; }
 

@@ -51,17 +51,17 @@ class SoundAssetEditor
 public:
 	SoundAssetEditor(editor::IEditor* editor);
 
-	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object) T_OVERRIDE T_FINAL;
+	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void apply() T_OVERRIDE T_FINAL;
+	virtual void apply() override final;
 
-	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
+	virtual bool handleCommand(const ui::Command& command) override final;
 
-	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) T_OVERRIDE T_FINAL;
+	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) override final;
 
-	virtual ui::Size getPreferredSize() const T_OVERRIDE T_FINAL;
+	virtual ui::Size getPreferredSize() const override final;
 
 private:
 	editor::IEditor* m_editor;
@@ -76,7 +76,7 @@ private:
 
 	void eventPropertyCommand(ui::PropertyCommandEvent* event);
 
-	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const T_OVERRIDE T_FINAL;
+	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const override final;
 };
 
 	}

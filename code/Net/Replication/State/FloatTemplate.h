@@ -40,17 +40,17 @@ public:
 
 	explicit FloatTemplate(const wchar_t* const tag, float threshold, float min, float max, FloatTemplatePrecision precision, bool cyclic);
 
-	virtual const TypeInfo& getValueType() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfo& getValueType() const override final;
 
-	virtual uint32_t getMaxPackedDataSize() const T_OVERRIDE T_FINAL;
+	virtual uint32_t getMaxPackedDataSize() const override final;
 
-	virtual void pack(BitWriter& writer, const IValue* V) const T_OVERRIDE T_FINAL;
+	virtual void pack(BitWriter& writer, const IValue* V) const override final;
 
-	virtual Ref< const IValue > unpack(BitReader& reader) const T_OVERRIDE T_FINAL;
+	virtual Ref< const IValue > unpack(BitReader& reader) const override final;
 
-	virtual Ref< const IValue > extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const T_OVERRIDE T_FINAL;
+	virtual Ref< const IValue > extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const override final;
 
-	virtual bool threshold(const IValue* Vn1, const IValue* V) const T_OVERRIDE T_FINAL;
+	virtual bool threshold(const IValue* Vn1, const IValue* V) const override final;
 
 private:
 	const wchar_t* const m_tag;

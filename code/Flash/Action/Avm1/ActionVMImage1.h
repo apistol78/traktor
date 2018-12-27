@@ -31,9 +31,9 @@ public:
 
 	const ActionValue& getConstData(uint16_t index) const { return m_constData[index]; }
 
-	virtual void execute(ActionFrame* frame) const T_OVERRIDE T_FINAL;
+	virtual void execute(ActionFrame* frame) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	friend class ActionVM1;

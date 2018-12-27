@@ -39,7 +39,7 @@ public:
 	 */
 	const Guid& getInstanceGuid() const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE;
+	virtual void serialize(ISerializer& s) override;
 
 private:
 	Guid m_instanceGuid;

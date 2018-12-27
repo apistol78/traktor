@@ -30,9 +30,9 @@ class T_DLLCLASS DefaultComponentEditorFactory : public IComponentEditorFactory
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfoSet getComponentDataTypes() const T_OVERRIDE T_FINAL;
+	virtual const TypeInfoSet getComponentDataTypes() const override final;
 
-	virtual Ref< IComponentEditor > createComponentEditor(SceneEditorContext* context, EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const T_OVERRIDE T_FINAL;
+	virtual Ref< IComponentEditor > createComponentEditor(SceneEditorContext* context, EntityAdapter* entityAdapter, world::IEntityComponentData* componentData) const override final;
 };
 
 	}

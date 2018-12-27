@@ -34,7 +34,7 @@ class T_DLLCLASS ActionClass : public ActionFunction
 public:
 	ActionClass(ActionContext* context, const char* className);
 
-	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args) T_OVERRIDE;
+	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args) override;
 
 	/*! \brief Initialize instance of class.
 	 *

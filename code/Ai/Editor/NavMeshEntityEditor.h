@@ -24,7 +24,7 @@ class NavMeshEntityEditor : public scene::DefaultEntityEditor
 public:
 	NavMeshEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
-	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const T_OVERRIDE T_FINAL;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
 };
 
 	}

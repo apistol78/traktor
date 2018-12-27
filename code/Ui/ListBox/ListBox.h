@@ -46,7 +46,7 @@ public:
 
 	bool create(Widget* parent, int32_t style = WsDefault);
 	
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 	int32_t add(const std::wstring& item, Object* data = 0);
 
@@ -101,7 +101,7 @@ private:
 
 	void eventButtonDown(MouseButtonDownEvent* event);
 
-	virtual void layoutCells(const Rect& rc) T_OVERRIDE;
+	virtual void layoutCells(const Rect& rc) override;
 };
 
 	}

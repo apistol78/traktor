@@ -145,11 +145,11 @@ public:
 	/*! \brief Get render clip mask enable. */
 	bool getRenderClipMask() const { return m_renderClipMask; }
 
-	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
+	virtual Aabb2 getBounds() const override final;
 
-	virtual void eventKey(wchar_t unicode) T_OVERRIDE T_FINAL;
+	virtual void eventKey(wchar_t unicode) override final;
 
-	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button) T_OVERRIDE T_FINAL;
+	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button) override final;
 
 	/*! \group Convenience methods, commonly used by scripting. */
 	//@{
@@ -203,9 +203,9 @@ public:
 	//@}
 
 protected:
-	virtual void trace(visitor_t visitor) const T_OVERRIDE;
+	virtual void trace(visitor_t visitor) const override;
 
-	virtual void dereference() T_OVERRIDE;
+	virtual void dereference() override;
 
 private:
 	Ref< const Edit > m_edit;

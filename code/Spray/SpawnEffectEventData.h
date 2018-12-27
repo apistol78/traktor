@@ -36,7 +36,7 @@ class T_DLLCLASS SpawnEffectEventData : public world::IEntityEventData
 public:
 	SpawnEffectEventData();
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const resource::Id< Effect >& getEffect() const { return m_effect; }
 

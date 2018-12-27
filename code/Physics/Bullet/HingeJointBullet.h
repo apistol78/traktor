@@ -33,15 +33,15 @@ class T_DLLCLASS HingeJointBullet : public JointBullet< HingeJoint, btHingeConst
 public:
 	HingeJointBullet(IWorldCallback* callback, btHingeConstraint* constraint, BodyBullet* body1, BodyBullet* body2);
 
-	virtual Vector4 getAnchor() const T_OVERRIDE T_FINAL;
+	virtual Vector4 getAnchor() const override final;
 
-	virtual Vector4 getAxis() const T_OVERRIDE T_FINAL;
+	virtual Vector4 getAxis() const override final;
 
-	virtual float getAngle() const T_OVERRIDE T_FINAL;
+	virtual float getAngle() const override final;
 
-	virtual float getAngleVelocity() const T_OVERRIDE T_FINAL;
+	virtual float getAngleVelocity() const override final;
 
-	virtual void setMotor(float targetVelocity, float maxImpulse) T_OVERRIDE T_FINAL;
+	virtual void setMotor(float targetVelocity, float maxImpulse) override final;
 };
 
 	}

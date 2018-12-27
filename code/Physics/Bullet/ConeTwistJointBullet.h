@@ -40,9 +40,9 @@ public:
 
 	ConeTwistJointBullet(IWorldCallback* callback, JointConstraint* constraint, const Transform& transform, BodyBullet* body1, BodyBullet* body2, const ConeTwistJointDesc* desc);
 
-	virtual void prepare() T_OVERRIDE T_FINAL;
+	virtual void prepare() override final;
 
-	virtual void update(float deltaTime) T_OVERRIDE T_FINAL;
+	virtual void update(float deltaTime) override final;
 
 private:
 	struct Jacobian

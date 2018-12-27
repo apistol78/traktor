@@ -50,31 +50,31 @@ public:
 
 	virtual ~PhysicsManagerBullet();
 
-	virtual bool create(const PhysicsCreateDesc& desc) T_OVERRIDE T_FINAL;
+	virtual bool create(const PhysicsCreateDesc& desc) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void setGravity(const Vector4& gravity) T_OVERRIDE T_FINAL;
+	virtual void setGravity(const Vector4& gravity) override final;
 
-	virtual Vector4 getGravity() const T_OVERRIDE T_FINAL;
+	virtual Vector4 getGravity() const override final;
 
-	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag) T_OVERRIDE T_FINAL;
+	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag) override final;
 
-	virtual Ref< Joint > createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2) T_OVERRIDE T_FINAL;
+	virtual Ref< Joint > createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2) override final;
 
-	virtual void update(float simulationDeltaTime, bool issueCollisionEvents) T_OVERRIDE T_FINAL;
+	virtual void update(float simulationDeltaTime, bool issueCollisionEvents) override final;
 
-	virtual void solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints) T_OVERRIDE T_FINAL;
+	virtual void solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints) override final;
 
-	virtual RefArray< Body > getBodies() const T_OVERRIDE T_FINAL;
+	virtual RefArray< Body > getBodies() const override final;
 
-	virtual uint32_t getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const T_OVERRIDE T_FINAL;
+	virtual uint32_t getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const override final;
 
 	virtual bool queryPoint(
 		const Vector4& at,
 		float margin,
 		QueryResult& outResult
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual bool queryRay(
 		const Vector4& at,
@@ -83,7 +83,7 @@ public:
 		const QueryFilter& queryFilter,
 		bool ignoreBackFace,
 		QueryResult& outResult
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual bool queryShadowRay(
 		const Vector4& at,
@@ -91,7 +91,7 @@ public:
 		float maxLength,
 		const QueryFilter& queryFilter,
 		uint32_t queryTypes
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual uint32_t querySphere(
 		const Vector4& at,
@@ -99,7 +99,7 @@ public:
 		const QueryFilter& queryFilter,
 		uint32_t queryTypes,
 		RefArray< Body >& outBodies
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual bool querySweep(
 		const Vector4& at,
@@ -108,7 +108,7 @@ public:
 		float radius,
 		const QueryFilter& queryFilter,
 		QueryResult& outResult
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual bool querySweep(
 		const Body* body,
@@ -118,7 +118,7 @@ public:
 		float maxLength,
 		const QueryFilter& queryFilter,
 		QueryResult& outResult
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual void querySweep(
 		const Vector4& at,
@@ -127,20 +127,20 @@ public:
 		float radius,
 		const QueryFilter& queryFilter,
 		AlignedVector< QueryResult >& outResult
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual void queryOverlap(
 		const Body* body,
 		RefArray< Body >& outResult
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	void queryTriangles(
 		const Vector4& center,
 		float radius,
 		AlignedVector< TriangleResult >& outTriangles
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
-	virtual void getStatistics(PhysicsStatistics& outStatistics) const T_OVERRIDE T_FINAL;
+	virtual void getStatistics(PhysicsStatistics& outStatistics) const override final;
 
 private:
 	float m_timeScale;
@@ -159,17 +159,17 @@ private:
 
 	static void nearCallback(btBroadphasePair& collisionPair, btCollisionDispatcher& dispatcher, const btDispatcherInfo& dispatchInfo);
 
-	virtual void insertBody(btRigidBody* rigidBody, uint16_t collisionGroup, uint16_t collisionFilter) T_OVERRIDE T_FINAL;
+	virtual void insertBody(btRigidBody* rigidBody, uint16_t collisionGroup, uint16_t collisionFilter) override final;
 
-	virtual void removeBody(btRigidBody* rigidBody) T_OVERRIDE T_FINAL;
+	virtual void removeBody(btRigidBody* rigidBody) override final;
 
-	virtual void insertConstraint(btTypedConstraint* constraint) T_OVERRIDE T_FINAL;
+	virtual void insertConstraint(btTypedConstraint* constraint) override final;
 
-	virtual void removeConstraint(btTypedConstraint* constraint) T_OVERRIDE T_FINAL;
+	virtual void removeConstraint(btTypedConstraint* constraint) override final;
 
-	virtual void destroyBody(BodyBullet* body, btRigidBody* rigidBody, btCollisionShape* shape) T_OVERRIDE T_FINAL;
+	virtual void destroyBody(BodyBullet* body, btRigidBody* rigidBody, btCollisionShape* shape) override final;
 
-	virtual void destroyConstraint(Joint* joint, btTypedConstraint* constraint) T_OVERRIDE T_FINAL;
+	virtual void destroyConstraint(Joint* joint, btTypedConstraint* constraint) override final;
 };
 
 	}

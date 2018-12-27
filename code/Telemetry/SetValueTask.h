@@ -24,7 +24,7 @@ class SetValueTask : public ITask
 public:
 	SetValueTask(const std::wstring& serverHost, const std::wstring& client, const std::wstring& symbol, int32_t value);
 
-	virtual TaskResult execute() T_OVERRIDE T_FINAL;
+	virtual TaskResult execute() override final;
 
 private:
 	std::wstring m_serverHost;

@@ -64,7 +64,7 @@ public:
 
 	void showProgress(int32_t current, int32_t total);
 
-	virtual bool acceptLayout() const T_OVERRIDE;
+	virtual bool acceptLayout() const override;
 };
 
 	}

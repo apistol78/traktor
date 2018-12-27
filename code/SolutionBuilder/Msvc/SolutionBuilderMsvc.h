@@ -32,11 +32,11 @@ class T_DLLCLASS SolutionBuilderMsvc : public SolutionBuilder
 public:
 	SolutionBuilderMsvc();
 
-	virtual bool create(const CommandLine& cmdLine) T_OVERRIDE T_FINAL;
+	virtual bool create(const CommandLine& cmdLine) override final;
 
-	virtual bool generate(Solution* solution) T_OVERRIDE T_FINAL;
+	virtual bool generate(Solution* solution) override final;
 
-	virtual void showOptions() const T_OVERRIDE T_FINAL;
+	virtual void showOptions() const override final;
 
 private:
 	Ref< SolutionBuilderMsvcSettings > m_settings;

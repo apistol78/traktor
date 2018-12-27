@@ -27,9 +27,9 @@ public:
 		Project* project,
 		Configuration* configuration,
 		OutputStream& os
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::map< std::wstring, std::wstring > m_staticOptions;

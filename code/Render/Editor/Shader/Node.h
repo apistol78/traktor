@@ -119,7 +119,7 @@ public:
 	 */
 	const OutputPin* findOutputPin(const std::wstring& name) const;
 	
-	virtual void serialize(ISerializer& s) T_OVERRIDE;
+	virtual void serialize(ISerializer& s) override;
 
 private:
 	Guid m_id;

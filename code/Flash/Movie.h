@@ -75,7 +75,7 @@ public:
 
 	const SmallMap< std::string, uint16_t >& getExports() const { return m_exports; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Aabb2 m_frameBounds;

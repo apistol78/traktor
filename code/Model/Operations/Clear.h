@@ -25,7 +25,7 @@ class T_DLLCLASS Clear : public IModelOperation
 public:
 	Clear(uint32_t clearFlags);
 
-	virtual bool apply(Model& model) const T_OVERRIDE T_FINAL;
+	virtual bool apply(Model& model) const override final;
 
 private:
 	uint32_t m_clearFlags;

@@ -33,23 +33,23 @@ public:
 
 	virtual ~EntityAdapterBuilder();
 
-	virtual void addFactory(const world::IEntityFactory* entityFactory) T_OVERRIDE T_FINAL;
+	virtual void addFactory(const world::IEntityFactory* entityFactory) override final;
 
-	virtual void removeFactory(const world::IEntityFactory* entityFactory) T_OVERRIDE T_FINAL;
+	virtual void removeFactory(const world::IEntityFactory* entityFactory) override final;
 
-	virtual const world::IEntityFactory* getFactory(const world::EntityData* entityData) const T_OVERRIDE T_FINAL;
+	virtual const world::IEntityFactory* getFactory(const world::EntityData* entityData) const override final;
 
-	virtual const world::IEntityFactory* getFactory(const world::IEntityEventData* entityEventData) const T_OVERRIDE T_FINAL;
+	virtual const world::IEntityFactory* getFactory(const world::IEntityEventData* entityEventData) const override final;
 
-	virtual const world::IEntityFactory* getFactory(const world::IEntityComponentData* entityComponentData) const T_OVERRIDE T_FINAL;
+	virtual const world::IEntityFactory* getFactory(const world::IEntityComponentData* entityComponentData) const override final;
 
-	virtual Ref< world::Entity > create(const world::EntityData* entityData) const T_OVERRIDE T_FINAL;
+	virtual Ref< world::Entity > create(const world::EntityData* entityData) const override final;
 
-	virtual Ref< world::IEntityEvent > create(const world::IEntityEventData* entityEventData) const T_OVERRIDE T_FINAL;
+	virtual Ref< world::IEntityEvent > create(const world::IEntityEventData* entityEventData) const override final;
 
-	virtual Ref< world::IEntityComponent > create(const world::IEntityComponentData* entityComponentData) const T_OVERRIDE T_FINAL;
+	virtual Ref< world::IEntityComponent > create(const world::IEntityComponentData* entityComponentData) const override final;
 
-	virtual const world::IEntityBuilder* getCompositeEntityBuilder() const T_OVERRIDE T_FINAL;
+	virtual const world::IEntityBuilder* getCompositeEntityBuilder() const override final;
 
 	EntityAdapter* getRootAdapter() const { return m_rootAdapter; }
 

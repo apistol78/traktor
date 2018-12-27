@@ -32,7 +32,7 @@ class DecalEvent : public IEntityEvent
 public:
 	DecalEvent();
 
-	virtual Ref< IEntityEventInstance > createInstance(IEntityEventManager* eventManager, Entity* sender, const Transform& Toffset) const T_OVERRIDE T_FINAL;
+	virtual Ref< IEntityEventInstance > createInstance(IEntityEventManager* eventManager, Entity* sender, const Transform& Toffset) const override final;
 
 	float getSize() const { return m_size; }
 

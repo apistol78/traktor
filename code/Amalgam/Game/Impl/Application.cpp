@@ -77,7 +77,7 @@ public:
 	{
 	}
 
-	virtual void reportProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events) T_OVERRIDE T_FINAL
+	virtual void reportProfilerEvents(double currentTime, const AlignedVector< Profiler::Event >& events) override final
 	{
 		TargetProfilerEvents targetProfilerEvents(currentTime, events);
 		m_targetManagerConnection->getTransport()->send(&targetProfilerEvents);

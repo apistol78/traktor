@@ -17,7 +17,7 @@ namespace traktor
 class IndoorMeshConverter : public IMeshConverter
 {
 public:
-	virtual Ref< IMeshResource > createResource() const T_OVERRIDE T_FINAL;
+	virtual Ref< IMeshResource > createResource() const override final;
 
 	virtual bool convert(
 		const MeshAsset* meshAsset,
@@ -28,7 +28,7 @@ public:
 		int32_t maxInstanceCount,
 		IMeshResource* meshResource,
 		IStream* meshResourceStream
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 };
 
 	}

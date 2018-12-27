@@ -59,7 +59,7 @@ private:
 	Ref< IGrainData > m_grain;
 	std::map< const TypeInfo*, Ref< ui::HierarchicalState > > m_states;
 
-	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const T_OVERRIDE T_FINAL;
+	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const override final;
 
 	void eventPropertyCommand(ui::PropertyCommandEvent* event);
 

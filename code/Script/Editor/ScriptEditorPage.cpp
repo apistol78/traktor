@@ -79,12 +79,12 @@ struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacte
 	{
 	}
 
-	virtual int32_t measureWidth(const ui::RichEdit* richEdit) const T_OVERRIDE T_FINAL
+	virtual int32_t measureWidth(const ui::RichEdit* richEdit) const override final
 	{
 		return richEdit->getFontMetric().getExtent(path).cx;
 	}
 
-	virtual void draw(ui::Canvas& canvas, const ui::Rect& rc) const T_OVERRIDE T_FINAL
+	virtual void draw(ui::Canvas& canvas, const ui::Rect& rc) const override final
 	{
 		int32_t h = ui::dpi96(1);
 		canvas.setBackground(canvas.getForeground());
@@ -92,15 +92,15 @@ struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacte
 		canvas.drawText(rc, path, ui::AnCenter, ui::AnCenter);
 	}
 
-	virtual void mouseButtonDown(ui::MouseButtonDownEvent* event) const T_OVERRIDE T_FINAL
+	virtual void mouseButtonDown(ui::MouseButtonDownEvent* event) const override final
 	{
 	}
 
-	virtual void mouseButtonUp(ui::MouseButtonUpEvent* event) const T_OVERRIDE T_FINAL
+	virtual void mouseButtonUp(ui::MouseButtonUpEvent* event) const override final
 	{
 	}
 
-	virtual void mouseDoubleClick(ui::MouseDoubleClickEvent* event) const T_OVERRIDE T_FINAL
+	virtual void mouseDoubleClick(ui::MouseDoubleClickEvent* event) const override final
 	{
 		Ref< db::Instance > instance = editor->getSourceDatabase()->getInstance(id);
 		if (instance)

@@ -32,7 +32,7 @@ class T_DLLCLASS PipelineSettings : public IPipelineSettings
 public:
 	PipelineSettings(const PropertyGroup* settings);
 
-	virtual Ref< const IPropertyValue > getProperty(const std::wstring& propertyName) const T_OVERRIDE T_FINAL;
+	virtual Ref< const IPropertyValue > getProperty(const std::wstring& propertyName) const override final;
 
 	uint32_t getHash() const;
 

@@ -31,7 +31,7 @@ public:
 	/*! \brief Get most recently used file; return empty string if no file used. */
 	Path getMostRecentlyUseFile() const;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::vector< std::wstring > m_filePaths;

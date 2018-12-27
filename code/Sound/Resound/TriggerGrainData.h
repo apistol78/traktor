@@ -30,9 +30,9 @@ class T_DLLCLASS TriggerGrainData : public IGrainData
 public:
 	TriggerGrainData();
 
-	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const T_OVERRIDE T_FINAL;
+	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	const std::wstring& getId() const { return m_id; }
 

@@ -33,21 +33,21 @@ class T_DLLCLASS ScriptDebuggerSessions : public IScriptDebuggerSessions
 	T_RTTI_CLASS;
 
 public:
-	virtual void beginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) T_OVERRIDE T_FINAL;
+	virtual void beginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) override final;
 
-	virtual void endSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) T_OVERRIDE T_FINAL;
+	virtual void endSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler) override final;
 
-	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
+	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
 
-	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) T_OVERRIDE T_FINAL;
+	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
 
-	virtual bool removeAllBreakpoints(const Guid& scriptId) T_OVERRIDE T_FINAL;
+	virtual bool removeAllBreakpoints(const Guid& scriptId) override final;
 
-	virtual bool haveBreakpoint(const Guid& scriptId, int32_t lineNumber) const T_OVERRIDE T_FINAL;
+	virtual bool haveBreakpoint(const Guid& scriptId, int32_t lineNumber) const override final;
 
-	virtual void addListener(IListener* listener) T_OVERRIDE T_FINAL;
+	virtual void addListener(IListener* listener) override final;
 
-	virtual void removeListener(IListener* listener) T_OVERRIDE T_FINAL;
+	virtual void removeListener(IListener* listener) override final;
 
 private:
 	struct Session

@@ -48,7 +48,7 @@ public:
 
 	void setMarker(int32_t marker);
 
-	virtual Size getPreferedSize() const T_OVERRIDE;
+	virtual Size getPreferedSize() const override;
 
 	void updateGradient();
 

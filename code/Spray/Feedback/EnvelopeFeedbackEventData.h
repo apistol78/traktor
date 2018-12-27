@@ -41,7 +41,7 @@ public:
 
 	EnvelopeFeedbackEventData();
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	FeedbackType getType() const { return m_type; }
 

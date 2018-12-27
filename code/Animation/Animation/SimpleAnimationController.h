@@ -38,9 +38,9 @@ class T_DLLCLASS SimpleAnimationController : public IPoseController
 public:
 	SimpleAnimationController(const resource::Proxy< Animation >& animation, bool linearInterpolation);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+	virtual void setTransform(const Transform& transform) override final;
 
 	virtual bool evaluate(
 		float deltaTime,
@@ -49,12 +49,12 @@ public:
 		const AlignedVector< Transform >& jointTransforms,
 		AlignedVector< Transform >& outPoseTransforms,
 		bool& outUpdateController
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 	virtual void estimateVelocities(
 		const Skeleton* skeleton,
 		AlignedVector< Velocity >& outVelocities
-	) T_OVERRIDE T_FINAL;
+	) override final;
 
 private:
 	resource::Proxy< Animation > m_animation;

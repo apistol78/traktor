@@ -22,15 +22,15 @@ class T_DLLCLASS Scalar : public ImmutableNode
 public:
 	Scalar();
 
-	virtual bool bind(resource::IResourceManager* resourceManager) T_OVERRIDE T_FINAL;
+	virtual bool bind(resource::IResourceManager* resourceManager) override final;
 
-	virtual Ref< ISoundBufferCursor > createCursor() const T_OVERRIDE T_FINAL;
+	virtual Ref< ISoundBufferCursor > createCursor() const override final;
 
-	virtual bool getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const T_OVERRIDE T_FINAL;
+	virtual bool getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const override final;
 	
-	virtual bool getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
+	virtual bool getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const override final;
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 	float getValue() const { return m_value; }
 

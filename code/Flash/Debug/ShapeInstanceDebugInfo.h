@@ -43,7 +43,7 @@ public:
 
 	bool getClipped() const { return m_clipped; }
 
-	virtual void serialize(ISerializer& s) T_OVERRIDE T_FINAL;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Ref< const Shape > m_shape;

@@ -22,13 +22,13 @@ class VideoSharing : public IVideoSharing
 	T_RTTI_CLASS;
 
 public:
-	virtual bool beginCapture(int32_t duration) T_OVERRIDE T_FINAL;
+	virtual bool beginCapture(int32_t duration) override final;
 
-	virtual void endCapture(const PropertyGroup* metaData) T_OVERRIDE T_FINAL;
+	virtual void endCapture(const PropertyGroup* metaData) override final;
 
-	virtual bool isCapturing() const T_OVERRIDE T_FINAL;
+	virtual bool isCapturing() const override final;
 
-	virtual bool showShareUI() T_OVERRIDE T_FINAL;
+	virtual bool showShareUI() override final;
 
 private:
 	friend class SessionManager;

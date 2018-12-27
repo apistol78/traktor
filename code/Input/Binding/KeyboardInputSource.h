@@ -43,11 +43,11 @@ public:
 	
 	virtual ~KeyboardInputSource();
 	
-	virtual std::wstring getDescription() const T_OVERRIDE T_FINAL;
+	virtual std::wstring getDescription() const override final;
 	
-	virtual void prepare(float T, float dT) T_OVERRIDE T_FINAL;
+	virtual void prepare(float T, float dT) override final;
 
-	virtual float read(float T, float dT) T_OVERRIDE T_FINAL;
+	virtual float read(float T, float dT) override final;
 	
 private:
 	struct Key

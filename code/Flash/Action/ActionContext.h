@@ -126,9 +126,9 @@ public:
 	ActionValuePool& getPool() { return m_pool; }
 
 protected:
-	virtual void trace(visitor_t visitor) const T_OVERRIDE;
+	virtual void trace(visitor_t visitor) const override;
 
-	virtual void dereference() T_OVERRIDE;
+	virtual void dereference() override;
 
 private:
 	struct FrameListener

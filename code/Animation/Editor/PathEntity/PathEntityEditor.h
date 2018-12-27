@@ -32,11 +32,11 @@ class T_DLLCLASS PathEntityEditor : public scene::DefaultEntityEditor
 public:
 	PathEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
-	virtual void entitySelected(bool selected) T_OVERRIDE T_FINAL;
+	virtual void entitySelected(bool selected) override final;
 
-	virtual bool handleCommand(const ui::Command& command) T_OVERRIDE T_FINAL;
+	virtual bool handleCommand(const ui::Command& command) override final;
 
-	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const T_OVERRIDE T_FINAL;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
 
 private:
 	float m_time;

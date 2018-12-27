@@ -27,11 +27,11 @@ class T_DLLCLASS EntityPipeline : public editor::IPipeline
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const editor::IPipelineSettings* settings) T_OVERRIDE;
+	virtual bool create(const editor::IPipelineSettings* settings) override;
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 
-	virtual TypeInfoSet getAssetTypes() const T_OVERRIDE;
+	virtual TypeInfoSet getAssetTypes() const override;
 
 	virtual bool buildDependencies(
 		editor::IPipelineDepends* pipelineDepends,
@@ -39,7 +39,7 @@ public:
 		const ISerializable* sourceAsset,
 		const std::wstring& outputPath,
 		const Guid& outputGuid
-	) const T_OVERRIDE;
+	) const override;
 
 	virtual bool buildOutput(
 		editor::IPipelineBuilder* pipelineBuilder,
@@ -52,12 +52,12 @@ public:
 		const Guid& outputGuid,
 		const Object* buildParams,
 		uint32_t reason
-	) const T_OVERRIDE;
+	) const override;
 
 	virtual Ref< ISerializable > buildOutput(
 		editor::IPipelineBuilder* pipelineBuilder,
 		const ISerializable* sourceAsset
-	) const T_OVERRIDE;
+	) const override;
 };
 
 	}

@@ -49,7 +49,7 @@ private:
 	editor::IEditor* m_editor;
 	Ref< ui::AutoPropertyList > m_propertyList;
 
-	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const T_OVERRIDE T_FINAL;
+	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const override final;
 
 	void eventPropertyCommand(ui::PropertyCommandEvent* event);
 

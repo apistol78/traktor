@@ -100,7 +100,7 @@ public:
 	{
 	}
 
-	virtual void generateSpan(agg::gray8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
+	virtual void generateSpan(agg::gray8* span, int x, int y, unsigned len) const override final
 	{
 		for (unsigned i = 0; i < len; ++i)
 			span[i] = m_color;
@@ -125,7 +125,7 @@ public:
 	{
 	}
 
-	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
+	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const override final
 	{
 		for (unsigned i = 0; i < len; ++i)
 			span[i] = m_color;
@@ -148,7 +148,7 @@ public:
 			i->first *= Scalar(255.0f);
 	}
 
-	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
+	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const override final
 	{
 		float s = m_colors.front().second;
 		float e = m_colors.back().second;
@@ -192,7 +192,7 @@ public:
 			i->first *= Scalar(255.0f);
 	}
 
-	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
+	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const override final
 	{
 		float s = m_colors.front().second;
 		float e = m_colors.back().second;
@@ -233,7 +233,7 @@ public:
 	{
 	}
 
-	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
+	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const override final
 	{
 		Color4f c(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -276,7 +276,7 @@ public:
 	{
 	}
 
-	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const T_OVERRIDE T_FINAL
+	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const override final
 	{
 		Color4f c(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -436,85 +436,85 @@ public:
 	{
 	}
 
-	virtual void setMask(Image* image) T_OVERRIDE T_FINAL
+	virtual void setMask(Image* image) override final
 	{
 		m_mask = image;
 	}
 
-	virtual void clearStyles() T_OVERRIDE T_FINAL
+	virtual void clearStyles() override final
 	{
 		m_styleHandler.clearStyles();
 	}
 
-	virtual int32_t defineSolidStyle(const Color4f& color) T_OVERRIDE T_FINAL
+	virtual int32_t defineSolidStyle(const Color4f& color) override final
 	{
 		return m_styleHandler.defineSolidStyle(color);
 	}
 
-	virtual int32_t defineLinearGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors) T_OVERRIDE T_FINAL
+	virtual int32_t defineLinearGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors) override final
 	{
 		return m_styleHandler.defineLinearGradientStyle(gradientMatrix, colors);
 	}
 
-	virtual int32_t defineRadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors) T_OVERRIDE T_FINAL
+	virtual int32_t defineRadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors) override final
 	{
 		return m_styleHandler.defineRadialGradientStyle(gradientMatrix, colors);
 	}
 
-	virtual int32_t defineImageStyle(const Matrix33& imageMatrix, const Image* image, bool repeat) T_OVERRIDE T_FINAL
+	virtual int32_t defineImageStyle(const Matrix33& imageMatrix, const Image* image, bool repeat) override final
 	{
 		return m_styleHandler.defineImageStyle(imageMatrix, image, repeat);
 	}
 
-	virtual void clear() T_OVERRIDE T_FINAL
+	virtual void clear() override final
 	{
 		m_path.remove_all();
 	}
 
-	virtual void moveTo(float x, float y) T_OVERRIDE T_FINAL
+	virtual void moveTo(float x, float y) override final
 	{
 		m_path.move_to(x, y);
 	}
 
-	virtual void lineTo(float x, float y) T_OVERRIDE T_FINAL
+	virtual void lineTo(float x, float y) override final
 	{
 		m_path.line_to(x, y);
 	}
 
-	virtual void quadricTo(float x1, float y1, float x, float y) T_OVERRIDE T_FINAL
+	virtual void quadricTo(float x1, float y1, float x, float y) override final
 	{
 		m_path.curve3(x1, y1, x, y);
 	}
 
-	virtual void quadricTo(float x, float y) T_OVERRIDE T_FINAL
+	virtual void quadricTo(float x, float y) override final
 	{
 		m_path.curve3(x, y);
 	}
 
-	virtual void cubicTo(float x1, float y1, float x2, float y2, float x, float y) T_OVERRIDE T_FINAL
+	virtual void cubicTo(float x1, float y1, float x2, float y2, float x, float y) override final
 	{
 		m_path.curve4(x1, y1, x2, y2, x, y);
 	}
 
-	virtual void cubicTo(float x2, float y2, float x, float y) T_OVERRIDE T_FINAL
+	virtual void cubicTo(float x2, float y2, float x, float y) override final
 	{
 		m_path.curve4(x2, y2, x, y);
 	}
 
-	virtual void close() T_OVERRIDE T_FINAL
+	virtual void close() override final
 	{
 		m_path.close_polygon();
 	}
 
-	virtual void rect(float x, float y, float width, float height, float radius) T_OVERRIDE T_FINAL
+	virtual void rect(float x, float y, float width, float height, float radius) override final
 	{
 	}
 
-	virtual void circle(float x, float y, float radius) T_OVERRIDE T_FINAL
+	virtual void circle(float x, float y, float radius) override final
 	{
 	}
 
-	virtual void fill(int32_t style0, int32_t style1, Raster::FillRuleType fillRule) T_OVERRIDE T_FINAL
+	virtual void fill(int32_t style0, int32_t style1, Raster::FillRuleType fillRule) override final
 	{
 		agg::conv_curve< agg::path_storage > curve(m_path);
 		
@@ -527,7 +527,7 @@ public:
 		m_rasterizer.add_path(curve);
 	}
 
-	virtual void stroke(int32_t style, float width, Raster::StrokeCapType cap) T_OVERRIDE T_FINAL
+	virtual void stroke(int32_t style, float width, Raster::StrokeCapType cap) override final
 	{
 		agg::conv_stroke< agg::path_storage > outline(m_path);
 		outline.width(width);
@@ -555,7 +555,7 @@ public:
 		m_rasterizer.add_path(outline);
 	}
 
-	virtual void submit() T_OVERRIDE T_FINAL
+	virtual void submit() override final
 	{
 		agg::span_allocator< color_type > alloc;
 		if (!m_mask)

@@ -34,11 +34,11 @@ public:
 
 	bool create(const std::wstring& name, uint32_t size);
 
-	virtual Ref< IStream > read(bool exclusive) T_OVERRIDE T_FINAL;
+	virtual Ref< IStream > read(bool exclusive) override final;
 
-	virtual Ref< IStream > write() T_OVERRIDE T_FINAL;
+	virtual Ref< IStream > write() override final;
 
-	virtual bool clear() T_OVERRIDE T_FINAL;
+	virtual bool clear() override final;
 
 private:
 	HANDLE m_hMap;

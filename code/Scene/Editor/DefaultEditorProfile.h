@@ -24,58 +24,58 @@ public:
 
 	virtual void getCommands(
 		std::list< ui::Command >& outCommands
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual void getGuideDrawIds(
 		std::set< std::wstring >& outIds
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual void createEditorPlugins(
 		SceneEditorContext* context,
 		RefArray< ISceneEditorPlugin >& outEditorPlugins
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual void createResourceFactories(
 		SceneEditorContext* context,
 		RefArray< const resource::IResourceFactory >& outResourceFactories
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual void createEntityFactories(
 		SceneEditorContext* context,
 		RefArray< const world::IEntityFactory >& outEntityFactories
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual void createEntityRenderers(
 		SceneEditorContext* context,
 		render::IRenderView* renderView,
 		render::PrimitiveRenderer* primitiveRenderer,
 		RefArray< world::IEntityRenderer >& outEntityRenderers
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual void createControllerEditorFactories(
 		SceneEditorContext* context,
 		RefArray< const ISceneControllerEditorFactory >& outControllerEditorFactories
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual void createEntityEditorFactories(
 		SceneEditorContext* context,
 		RefArray< const IEntityEditorFactory >& outEntityEditorFactories
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual void createComponentEditorFactories(
 		SceneEditorContext* context,
 		RefArray< const IComponentEditorFactory >& outComponentEditorFactories
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual Ref< world::EntityData > createEntityData(
 		SceneEditorContext* context,
 		db::Instance* instance
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 
 	virtual void getDebugTargets(
 		SceneEditorContext* context,
 		std::vector< render::DebugTarget >& outDebugTargets
-	) const T_OVERRIDE T_FINAL;
+	) const override final;
 };
 
 	}

@@ -51,7 +51,7 @@ struct DeleteTextureCallback : public ContextOpenGLES2::IDeleteCallback
 	{
 	}
 
-	virtual void deleteResource() T_OVERRIDE T_FINAL
+	virtual void deleteResource() override final
 	{
 		T_OGL_SAFE(glDeleteTextures(1, &m_textureName));
 		delete this;

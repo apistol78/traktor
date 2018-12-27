@@ -28,7 +28,7 @@ class SettingsDialog : public ui::ConfigDialog
 public:
 	bool create(ui::Widget* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 private:
 	Ref< PropertyGroup > m_settings;

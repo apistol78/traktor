@@ -37,11 +37,11 @@ class T_DLLCLASS ScriptSettingsPage : public editor::ISettingsPage
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands) T_OVERRIDE T_FINAL;
+	virtual bool create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual bool apply(PropertyGroup* settings) T_OVERRIDE T_FINAL;
+	virtual bool apply(PropertyGroup* settings) override final;
 
 private:
 	Ref< ui::CheckBox > m_checkAutoOpenDebugger;

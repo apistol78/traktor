@@ -83,27 +83,27 @@ public:
 		uint32_t contextSize
 	);
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 
-	virtual void transition(Layer* fromLayer) T_OVERRIDE T_FINAL;
+	virtual void transition(Layer* fromLayer) override final;
 
-	virtual void prepare(const UpdateInfo& info) T_OVERRIDE T_FINAL;
+	virtual void prepare(const UpdateInfo& info) override final;
 
-	virtual void update(const UpdateInfo& info) T_OVERRIDE T_FINAL;
+	virtual void update(const UpdateInfo& info) override final;
 
-	virtual void build(const UpdateInfo& info, uint32_t frame) T_OVERRIDE T_FINAL;
+	virtual void build(const UpdateInfo& info, uint32_t frame) override final;
 
-	virtual void render(render::EyeType eye, uint32_t frame) T_OVERRIDE T_FINAL;
+	virtual void render(render::EyeType eye, uint32_t frame) override final;
 
-	virtual void flush() T_OVERRIDE T_FINAL;
+	virtual void flush() override final;
 
-	virtual void preReconfigured() T_OVERRIDE T_FINAL;
+	virtual void preReconfigured() override final;
 
-	virtual void postReconfigured() T_OVERRIDE T_FINAL;
+	virtual void postReconfigured() override final;
 
-	virtual void suspend() T_OVERRIDE T_FINAL;
+	virtual void suspend() override final;
 
-	virtual void resume() T_OVERRIDE T_FINAL;
+	virtual void resume() override final;
 
 	/*! \brief Get reference to current Flash movie player.
 	 * 
@@ -200,9 +200,9 @@ private:
 
 	void createMoviePlayer();
 
-	virtual flash::ActionValue dispatchExternalCall(const std::string& methodName, int32_t argc, const flash::ActionValue* argv) T_OVERRIDE T_FINAL;
+	virtual flash::ActionValue dispatchExternalCall(const std::string& methodName, int32_t argc, const flash::ActionValue* argv) override final;
 
-	virtual void feedbackValues(spray::FeedbackType type, const float* values, int32_t count) T_OVERRIDE T_FINAL;
+	virtual void feedbackValues(spray::FeedbackType type, const float* values, int32_t count) override final;
 };
 
 	}

@@ -30,7 +30,7 @@ public:
 	 *
 	 * \param state New state.
 	 */
-	virtual void enter(IState* state) T_OVERRIDE T_FINAL;
+	virtual void enter(IState* state) override final;
 
 	/*! \brief Get current state.
 	 *

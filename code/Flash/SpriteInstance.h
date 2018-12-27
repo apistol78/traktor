@@ -44,7 +44,7 @@ public:
 
 	virtual ~SpriteInstance();
 
-	virtual void destroy() T_OVERRIDE;
+	virtual void destroy() override;
 
 	const Sprite* getSprite() const { return m_sprite; }
 
@@ -104,33 +104,33 @@ public:
 
 	int32_t getMouseY() const { return m_mouseY; }
 
-	virtual void clearCacheObject() T_OVERRIDE;
+	virtual void clearCacheObject() override;
 
-	virtual bool enumerateMembers(AlignedVector< uint32_t >& outMemberNames) const T_OVERRIDE T_FINAL;
+	virtual bool enumerateMembers(AlignedVector< uint32_t >& outMemberNames) const override final;
 
-	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) T_OVERRIDE T_FINAL;
+	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue) override final;
 
-	virtual void eventInit() T_OVERRIDE T_FINAL;
+	virtual void eventInit() override final;
 
-	virtual void eventConstruct() T_OVERRIDE T_FINAL;
+	virtual void eventConstruct() override final;
 
-	virtual void eventLoad() T_OVERRIDE T_FINAL;
+	virtual void eventLoad() override final;
 
-	virtual void eventFrame() T_OVERRIDE T_FINAL;
+	virtual void eventFrame() override final;
 
-	virtual void eventKey(wchar_t unicode) T_OVERRIDE T_FINAL;
+	virtual void eventKey(wchar_t unicode) override final;
 
-	virtual void eventKeyDown(int32_t keyCode) T_OVERRIDE T_FINAL;
+	virtual void eventKeyDown(int32_t keyCode) override final;
 
-	virtual void eventKeyUp(int32_t keyCode) T_OVERRIDE T_FINAL;
+	virtual void eventKeyUp(int32_t keyCode) override final;
 
-	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button) T_OVERRIDE T_FINAL;
+	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button) override final;
 
-	virtual void eventMouseUp(int32_t x, int32_t y, int32_t button) T_OVERRIDE T_FINAL;
+	virtual void eventMouseUp(int32_t x, int32_t y, int32_t button) override final;
 
-	virtual void eventMouseMove(int32_t x, int32_t y, int32_t button) T_OVERRIDE T_FINAL;
+	virtual void eventMouseMove(int32_t x, int32_t y, int32_t button) override final;
 
-	virtual Aabb2 getBounds() const T_OVERRIDE T_FINAL;
+	virtual Aabb2 getBounds() const override final;
 
 	/*! \group Convenience methods, commonly used by scripting. */
 	//@{
@@ -178,9 +178,9 @@ public:
 	//@}
 
 protected:
-	virtual void trace(visitor_t visitor) const T_OVERRIDE T_FINAL;
+	virtual void trace(visitor_t visitor) const override final;
 
-	virtual void dereference() T_OVERRIDE T_FINAL;
+	virtual void dereference() override final;
 
 private:
 	Ref< const Sprite > m_sprite;

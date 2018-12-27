@@ -142,7 +142,7 @@ public:
 			intoTarget->log(log.threadId, log.level, log.str);
 	}
 
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
+	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) override final
 	{
 		m_logs.push_back({ threadId, level, str });
 	}
@@ -166,7 +166,7 @@ public:
 	{
 	}
 
-	virtual bool read(int32_t& outStep, std::wstring& outStatus) T_OVERRIDE T_FINAL
+	virtual bool read(int32_t& outStep, std::wstring& outStatus) override final
 	{
 		outStep = m_step;
 		outStatus = i18n::Text(L"EDITOR_WAIT_OPENING_WORKSPACE_PROGRESS_" + toString(m_step), L"...");
@@ -186,7 +186,7 @@ public:
 	{
 	}
 
-	virtual bool read(int32_t& outStep, std::wstring& outStatus) T_OVERRIDE T_FINAL
+	virtual bool read(int32_t& outStep, std::wstring& outStatus) override final
 	{
 		outStep = m_step;
 		outStatus = !m_message.empty() ? m_message : L"...";

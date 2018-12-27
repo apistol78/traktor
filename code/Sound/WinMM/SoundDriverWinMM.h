@@ -33,13 +33,13 @@ class T_DLLCLASS SoundDriverWinMM : public ISoundDriver
 public:
 	SoundDriverWinMM();
 
-	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer) T_OVERRIDE T_FINAL;
+	virtual bool create(const SystemApplication& sysapp, const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer) override final;
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void wait() T_OVERRIDE T_FINAL;
+	virtual void wait() override final;
 
-	virtual void submit(const SoundBlock& soundBlock) T_OVERRIDE T_FINAL;
+	virtual void submit(const SoundBlock& soundBlock) override final;
 
 private:
 	HWAVEOUT m_wo;

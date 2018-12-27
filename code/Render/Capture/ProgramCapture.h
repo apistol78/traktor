@@ -22,23 +22,23 @@ class ProgramCapture : public IProgram
 public:
 	ProgramCapture(IProgram* program, const wchar_t* const tag);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual void setFloatParameter(handle_t handle, float param) T_OVERRIDE T_FINAL;
+	virtual void setFloatParameter(handle_t handle, float param) override final;
 
-	virtual void setFloatArrayParameter(handle_t handle, const float* param, int length) T_OVERRIDE T_FINAL;
+	virtual void setFloatArrayParameter(handle_t handle, const float* param, int length) override final;
 
-	virtual void setVectorParameter(handle_t handle, const Vector4& param) T_OVERRIDE T_FINAL;
+	virtual void setVectorParameter(handle_t handle, const Vector4& param) override final;
 
-	virtual void setVectorArrayParameter(handle_t handle, const Vector4* param, int length) T_OVERRIDE T_FINAL;
+	virtual void setVectorArrayParameter(handle_t handle, const Vector4* param, int length) override final;
 
-	virtual void setMatrixParameter(handle_t handle, const Matrix44& param) T_OVERRIDE T_FINAL;
+	virtual void setMatrixParameter(handle_t handle, const Matrix44& param) override final;
 
-	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length) T_OVERRIDE T_FINAL;
+	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length) override final;
 
-	virtual void setTextureParameter(handle_t handle, ITexture* texture) T_OVERRIDE T_FINAL;
+	virtual void setTextureParameter(handle_t handle, ITexture* texture) override final;
 
-	virtual void setStencilReference(uint32_t stencilReference) T_OVERRIDE T_FINAL;
+	virtual void setStencilReference(uint32_t stencilReference) override final;
 
 	void verify();
 

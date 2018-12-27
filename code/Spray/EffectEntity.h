@@ -64,7 +64,7 @@ class T_DLLCLASS EffectEntity : public world::Entity
 public:
 	EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, world::IEntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	void render(
 		render::handle_t technique,
@@ -75,15 +75,15 @@ public:
 		TrailRenderer* trailRenderer
 	);
 
-	virtual void setTransform(const Transform& transform) T_OVERRIDE T_FINAL;
+	virtual void setTransform(const Transform& transform) override final;
 
-	virtual bool getTransform(Transform& outTransform) const T_OVERRIDE T_FINAL;
+	virtual bool getTransform(Transform& outTransform) const override final;
 
-	virtual Aabb3 getBoundingBox() const T_OVERRIDE T_FINAL;
+	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual Aabb3 getWorldBoundingBox() const T_OVERRIDE T_FINAL;
+	virtual Aabb3 getWorldBoundingBox() const override final;
 
-	virtual void update(const world::UpdateParams& update) T_OVERRIDE T_FINAL;
+	virtual void update(const world::UpdateParams& update) override final;
 
 	void setLoopEnable(bool loopEnable);
 

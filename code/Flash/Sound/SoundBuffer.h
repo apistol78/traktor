@@ -23,9 +23,9 @@ class SoundBuffer : public sound::ISoundBuffer
 public:
 	SoundBuffer(const Sound* sound);
 
-	virtual Ref< sound::ISoundBufferCursor > createCursor() const T_OVERRIDE T_FINAL;
+	virtual Ref< sound::ISoundBufferCursor > createCursor() const override final;
 
-	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const T_OVERRIDE T_FINAL;
+	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const override final;
 
 private:
 	Ref< const Sound > m_sound;

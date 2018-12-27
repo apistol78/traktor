@@ -35,7 +35,7 @@ public:
 
 	virtual ~ChildWidgetCell();
 
-	virtual void placeCells(AutoWidget* widget, const Rect& rect) T_OVERRIDE;
+	virtual void placeCells(AutoWidget* widget, const Rect& rect) override;
 
 	Widget* getChild() const;
 

@@ -46,22 +46,22 @@ public:
 		m_job = JobManager::getInstance().add(makeFunctor< MovieLoaderHandle >(this, &MovieLoaderHandle::loader));
 	}
 
-	virtual bool wait() T_OVERRIDE T_FINAL
+	virtual bool wait() override final
 	{
 		return m_job ? m_job->wait() : true;
 	}
 
-	virtual bool ready() T_OVERRIDE T_FINAL
+	virtual bool ready() override final
 	{
 		return m_job ? m_job->stopped() : true;
 	}
 
-	virtual bool succeeded() T_OVERRIDE T_FINAL
+	virtual bool succeeded() override final
 	{
 		return wait() ? (m_movie != 0) : false;
 	}
 
-	virtual Ref< Movie > get() T_OVERRIDE T_FINAL
+	virtual Ref< Movie > get() override final
 	{
 		return wait() ? m_movie : 0;
 	}

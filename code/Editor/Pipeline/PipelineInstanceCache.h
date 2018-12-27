@@ -43,9 +43,9 @@ public:
 
 	virtual ~PipelineInstanceCache();
 
-	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) T_OVERRIDE T_FINAL;
+	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
 
-	virtual void flush(const Guid& instanceGuid) T_OVERRIDE T_FINAL;
+	virtual void flush(const Guid& instanceGuid) override final;
 
 private:
 	struct CacheEntry
