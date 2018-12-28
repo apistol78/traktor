@@ -24,23 +24,19 @@ const Scalar c_traceOffset(0.01f);
 		}
 
 JobTraceOcclusion::JobTraceOcclusion(
-	int32_t tileX,
-	int32_t tileY,
 	const SahTree& sah,
 	const GBuffer& gbuffer,
 	drawing::Image* outputImageOcclusion,
 	int32_t occlusionSamples
 )
-:	m_tileX(tileX)
-,	m_tileY(tileY)
-,	m_sah(sah)
+:	m_sah(sah)
 ,	m_gbuffer(gbuffer)
 ,	m_outputImageOcclusion(outputImageOcclusion)
 ,	m_occlusionSamples(occlusionSamples)
 {
 }
 
-void JobTraceOcclusion::execute()
+void JobTraceOcclusion::execute(int32_t tileX, int32_t tileY) const
 {
 	RandomGeometry random(std::clock());
 	SahTree::QueryCache cache;
@@ -48,9 +44,9 @@ void JobTraceOcclusion::execute()
 
 	const Scalar traceDistance(4.0f);
 
-	for (int32_t y = m_tileY; y < m_tileY + c_jobTileSize; ++y)
+	for (int32_t y = tileY; y < tileY + c_jobTileSize; ++y)
 	{
-		for (int32_t x = m_tileX; x < m_tileX + c_jobTileSize; ++x)
+		for (int32_t x = tileX; x < tileX + c_jobTileSize; ++x)
 		{
 			const GBuffer::Element& gb = m_gbuffer.get(x, y);
 

@@ -134,6 +134,112 @@ void collectTraceEntities(
 	}
 }
 
+bool createLights(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const std::wstring& assetPath,
+	const render::ProbeProcessor* processor,
+	const RefArray< world::ComponentEntityData >& lightEntityData,
+	AlignedVector< Light >& outLights
+)
+{
+	for (const auto led : lightEntityData)
+	{
+		world::LightComponentData* lightComponentData = led->getComponent< world::LightComponentData >();
+		T_FATAL_ASSERT (lightComponentData != 0);
+
+		Light light;
+		if (lightComponentData->getLightType() == world::LtDirectional)
+		{
+			light.type = 0;
+			light.position = Vector4::origo();
+			light.direction = led->getTransform().rotation() * Vector4(0.0f, -1.0f, 0.0f);
+			light.sunColor = Color4f(lightComponentData->getSunColor());
+			light.baseColor = Color4f(lightComponentData->getBaseColor());
+			light.shadowColor = Color4f(lightComponentData->getShadowColor());
+			light.range = Scalar(0.0f);
+			outLights.push_back(light);
+		}
+		else if (lightComponentData->getLightType() == world::LtPoint)
+		{
+			light.type = 1;
+			light.position = led->getTransform().translation().xyz1();
+			light.direction = Vector4::zero();
+			light.sunColor = Color4f(lightComponentData->getSunColor());
+			light.range = Scalar(lightComponentData->getRange());
+			outLights.push_back(light);
+		}
+		else if (lightComponentData->getLightType() == world::LtProbe)
+		{
+			Ref< const render::IrradianceProbeAsset > probeAsset = pipelineBuilder->getObjectReadOnly< render::IrradianceProbeAsset >(lightComponentData->getProbeDiffuseTexture());
+			if (!probeAsset)
+			{
+				log::error << L"IlluminateEntityPipeline failed; unable to read irradiance probe asset." << Endl;
+				return false;
+			}
+
+			Ref< IStream > file = pipelineBuilder->openFile(Path(assetPath), probeAsset->getFileName().getOriginal());
+			if (!file)
+			{
+				log::error << L"IlluminateEntityPipeline failed; unable to open source image \"" << probeAsset->getFileName().getOriginal() << L"\"" << Endl;
+				return false;
+			}
+
+			Ref< drawing::Image > image = drawing::Image::load(file, probeAsset->getFileName().getExtension());
+			if (!image)
+			{
+				log::error << L"IlluminateEntityPipeline failed; unable to load source image \"" << probeAsset->getFileName().getOriginal() << L"\"" << Endl;
+				return false;
+			}
+
+			file->close();
+
+			RefArray< render::CubeMap > cubeMips;
+			if (!processor->irradiance(image, probeAsset->getFactor(), 256, cubeMips))
+			{
+				log::error << L"IlluminateEntityPipeline failed; unable to generate irradiance probe." << Endl;
+				return false;
+			}
+			if (cubeMips.empty())
+			{
+				log::error << L"IlluminateEntityPipeline failed; unable to generate irradiance probe, no mips." << Endl;
+				return false;
+			}
+
+			light.type = 2;
+			light.probe = new CubeProbe(cubeMips.front());
+			outLights.push_back(light);
+		}
+	}
+	return true;
+}
+
+template < typename JobType >
+bool executeTileJobs(int32_t outputSize, const JobType& jb)
+{
+	RefArray< Job > jobs;
+
+	// Spawn jobs.
+	for (int32_t y = 0; y < outputSize; y += c_jobTileSize)
+	{
+		for (int32_t x = 0; x < outputSize; x += c_jobTileSize)
+		{
+			Ref< Job > job = JobManager::getInstance().add(makeFunctor([=]() {
+				jb.execute(x, y);
+			}));
+			if (job)
+				jobs.push_back(job);
+			else
+				return false;
+		}
+	}
+
+	// Join jobs.
+	for (const auto job : jobs)
+		job->wait();
+
+	return true;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.illuminate.IlluminateEntityPipeline", 0, IlluminateEntityPipeline, world::EntityPipeline)
@@ -190,7 +296,6 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 	const ISerializable* sourceAsset
 ) const
 {
-	RefArray< Job > jobs;
 	if (m_build)
 	{
 		const IlluminateEntityData* sourceIlluminateEntityData = checked_type_cast< const IlluminateEntityData* >(sourceAsset);
@@ -200,7 +305,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		if (!illumEntityData)
 		{
 			log::error << L"IlluminateEntityPipeline failed; unable to resolve all external entities" << Endl;
-			return 0;
+			return nullptr;
 		}
 
 		int32_t margin = 1;
@@ -212,77 +317,10 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		RefArray< world::ComponentEntityData > meshEntityData;
 		collectTraceEntities(illumEntityData, lightEntityData, meshEntityData);
 
-		// Setup lights.
+		// Create traceable lights.
 		AlignedVector< Light > lights;
-
-		for (RefArray< world::ComponentEntityData >::const_iterator i = lightEntityData.begin(); i != lightEntityData.end(); ++i)
-		{
-			world::LightComponentData* lightComponentData = (*i)->getComponent< world::LightComponentData >();
-			T_FATAL_ASSERT (lightComponentData != 0);
-
-			Light light;
-			if (lightComponentData->getLightType() == world::LtDirectional)
-			{
-				light.type = 0;
-				light.position = Vector4::origo();
-				light.direction = (*i)->getTransform().rotation() * Vector4(0.0f, -1.0f, 0.0f);
-				light.sunColor = Color4f(lightComponentData->getSunColor());
-				light.baseColor = Color4f(lightComponentData->getBaseColor());
-				light.shadowColor = Color4f(lightComponentData->getShadowColor());
-				light.range = Scalar(0.0f);
-				lights.push_back(light);
-			}
-			else if (lightComponentData->getLightType() == world::LtPoint)
-			{
-				light.type = 1;
-				light.position = (*i)->getTransform().translation().xyz1();
-				light.direction = Vector4::zero();
-				light.sunColor = Color4f(lightComponentData->getSunColor());
-				light.range = Scalar(lightComponentData->getRange());
-				lights.push_back(light);
-			}
-			else if (lightComponentData->getLightType() == world::LtProbe)
-			{
-				Ref< const render::IrradianceProbeAsset > probeAsset = pipelineBuilder->getObjectReadOnly< render::IrradianceProbeAsset >(lightComponentData->getProbeDiffuseTexture());
-				if (!probeAsset)
-				{
-					log::error << L"IlluminateEntityPipeline failed; unable to read irradiance probe asset." << Endl;
-					return 0;
-				}
-
-				Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), probeAsset->getFileName().getOriginal());
-				if (!file)
-				{
-					log::error << L"IlluminateEntityPipeline failed; unable to open source image \"" << probeAsset->getFileName().getOriginal() << L"\"" << Endl;
-					return 0;
-				}
-
-				Ref< drawing::Image > image = drawing::Image::load(file, probeAsset->getFileName().getExtension());
-				if (!image)
-				{
-					log::error << L"IlluminateEntityPipeline failed; unable to load source image \"" << probeAsset->getFileName().getOriginal() << L"\"" << Endl;
-					return 0;
-				}
-
-				file->close();
-
-				RefArray< render::CubeMap > cubeMips;
-				if (!m_processor->irradiance(image, probeAsset->getFactor(), 256, cubeMips))
-				{
-					log::error << L"IlluminateEntityPipeline failed; unable to generate irradiance probe." << Endl;
-					return 0;
-				}
-				if (cubeMips.empty())
-				{
-					log::error << L"IlluminateEntityPipeline failed; unable to generate irradiance probe, no mips." << Endl;
-					return 0;
-				}
-
-				light.type = 2;
-				light.probe = new CubeProbe(cubeMips.front());
-				lights.push_back(light);
-			}
-		}
+		if (!createLights(pipelineBuilder, m_assetPath, m_processor, lightEntityData, lights))
+			return nullptr;
 
 		Ref< model::Model > mergedModel = new model::Model();
 		std::map< std::wstring, Guid > meshMaterialTextures;
@@ -429,37 +467,13 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		if (sourceIlluminateEntityData->traceOcclusion())
 		{
 			log::info << L"Tracing occlusion..." << Endl;
-			std::list< JobTraceOcclusion* > tracesOcclusion;
-			for (int32_t y = 0; y < outputSize; y += c_jobTileSize)
-			{
-				for (int32_t x = 0; x < outputSize; x += c_jobTileSize)
-				{
-					JobTraceOcclusion* trace = new JobTraceOcclusion(
-						x,
-						y,
-						sah,
-						gbuffer,
-						outputImageOcclusion,
-						64
-					);
-
-					Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceOcclusion >(trace, &JobTraceOcclusion::execute));
-					if (!job)
-						return 0;
-
-					tracesOcclusion.push_back(trace);
-					jobs.push_back(job);
-				}
-			}
-
-			for (RefArray< Job >::iterator j = jobs.begin(); j != jobs.end(); ++j)
-				(*j)->wait();
-
-			for(std::list< JobTraceOcclusion* >::iterator j = tracesOcclusion.begin(); j != tracesOcclusion.end(); ++j)
-				delete *j;
-
-			tracesOcclusion.clear();
-			jobs.clear();
+			if (!executeTileJobs(outputSize, JobTraceOcclusion(
+				sah,
+				gbuffer,
+				outputImageOcclusion,
+				64
+			)))
+				return nullptr;
 
 			if (illumEntityData->getDirectConvolveRadius() > 0)
 			{
@@ -473,40 +487,16 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		}
 
 		log::info << L"Tracing direct lighting..." << Endl;
-		std::list< JobTraceDirect* > tracesDirect;
-		for (int32_t y = 0; y < outputSize; y += c_jobTileSize)
-		{
-			for (int32_t x = 0; x < outputSize; x += c_jobTileSize)
-			{
-				JobTraceDirect* trace = new JobTraceDirect(
-					x,
-					y,
-					sah,
-					gbuffer,
-					lights,
-					outputImageRadiance,
-					outputImageOcclusion,
-					sourceIlluminateEntityData->getPointLightRadius(),
-					sourceIlluminateEntityData->getShadowSamples()
-				);
-
-				Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceDirect >(trace, &JobTraceDirect::execute));
-				if (!job)
-					return 0;
-
-				tracesDirect.push_back(trace);
-				jobs.push_back(job);
-			}
-		}
-
-		for (RefArray< Job >::iterator j = jobs.begin(); j != jobs.end(); ++j)
-			(*j)->wait();
-
-		for(std::list< JobTraceDirect* >::iterator j = tracesDirect.begin(); j != tracesDirect.end(); ++j)
-			delete *j;
-
-		tracesDirect.clear();
-		jobs.clear();
+		if (!executeTileJobs(outputSize, JobTraceDirect(
+			sah,
+			gbuffer,
+			lights,
+			outputImageRadiance,
+			outputImageOcclusion,
+			sourceIlluminateEntityData->getPointLightRadius(),
+			sourceIlluminateEntityData->getShadowSamples()
+		)))
+			return nullptr;
 
 		if (illumEntityData->getDirectConvolveRadius() > 0)
 		{
@@ -531,38 +521,15 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 				outputImageIndirect[i] = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
 				outputImageIndirect[i]->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-				std::list< JobTraceIndirect* > tracesIndirect;
-				for (int32_t y = 0; y < outputSize; y += c_jobTileSize)
-				{
-					for (int32_t x = 0; x < outputSize; x += c_jobTileSize)
-					{
-						JobTraceIndirect* trace = new JobTraceIndirect(
-							x,
-							y,
-							sah,
-							gbuffer,
-							surfaces,
-							(i == 0) ? outputImageRadiance : outputImageIndirect[i - 1],
-							outputImageIndirect[i],
-							illumEntityData->getIndirectTraceSamples()
-						);
-
-						Ref< Job > job = JobManager::getInstance().add(makeFunctor< JobTraceIndirect >(trace, &JobTraceIndirect::execute));
-						if (!job)
-							return 0;
-
-						tracesIndirect.push_back(trace);
-						jobs.push_back(job);
-					}
-				}
-
-				for (auto job : jobs)
-					job->wait();
-
-				for (auto task : tracesIndirect)
-					delete task;
-
-				jobs.clear();
+				if (!executeTileJobs(outputSize, JobTraceIndirect(
+					sah,
+					gbuffer,
+					surfaces,
+					(i == 0) ? outputImageRadiance : outputImageIndirect[i - 1],
+					outputImageIndirect[i],
+					illumEntityData->getIndirectTraceSamples()
+				)))
+					return nullptr;
 
 				if (illumEntityData->getIndirectConvolveRadius() > 0)
 				{
