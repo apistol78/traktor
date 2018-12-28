@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Spray/Feedback/OscillateFeedbackEventData.h"
 

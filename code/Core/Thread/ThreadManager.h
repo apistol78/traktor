@@ -1,13 +1,5 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ThreadManager_H
-#define traktor_ThreadManager_H
+#pragma once
 
-#include <string>
 #include <vector>
 #include "Core/Functor/Functor.h"
 #include "Core/Singleton/ISingleton.h"
@@ -48,7 +40,7 @@ public:
 	 * \param hardwareCore Preferred hardware core, -1 = any core.
 	 * \return Thread object.
 	 */
-	Thread* create(Functor* functor, const std::wstring& name = L"Unnamed", int hardwareCore = -1);
+	Thread* create(Functor* functor, const wchar_t* const name = L"Unnamed", int hardwareCore = -1);
 
 	/*! \brief Destroy thread.
 	 *
@@ -83,5 +75,3 @@ private:
 };
 
 }
-
-#endif	// traktor_ThreadManager_H

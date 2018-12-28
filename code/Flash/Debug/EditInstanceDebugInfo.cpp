@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Flash/EditInstance.h"
 #include "Flash/TextLayout.h"
 #include "Flash/Debug/EditInstanceDebugInfo.h"

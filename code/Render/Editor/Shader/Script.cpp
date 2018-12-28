@@ -8,6 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributeReadOnly.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Render/Editor/Shader/Script.h"
 
@@ -48,7 +49,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const override final
 	{
 		const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
 		{
@@ -121,7 +122,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const override final
 	{
 		const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
 		{
@@ -189,30 +190,30 @@ public:
 	{
 	}
 
-	virtual void reserve(size_t size, size_t capacity) const
+	virtual void reserve(size_t size, size_t capacity) const override final
 	{
 		m_pins.reserve(capacity);
 	}
 
-	virtual size_t size() const
+	virtual size_t size() const override final
 	{
 		return m_pins.size();
 	}
 
-	virtual void read(ISerializer& s) const
+	virtual void read(ISerializer& s) const override final
 	{
 		if (m_index >= m_pins.size())
 			m_pins.push_back(0);
 		s >> PinMember(L"item", m_node, m_pins[m_index++]);
 	}
 
-	virtual void write(ISerializer& s) const
+	virtual void write(ISerializer& s) const override final
 	{
 		if (s.ensure(m_index < m_pins.size()))
 			s >> PinMember(L"item", m_node, m_pins[m_index++]);
 	}
 
-	virtual bool insert() const
+	virtual bool insert() const override final
 	{
 		return false;
 	}
@@ -233,7 +234,7 @@ public:
 	{
 	}
 
-	virtual void serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const override final
 	{
 		const MemberEnum< Filter >::Key kFilter[] =
 		{

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 
 namespace traktor

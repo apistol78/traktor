@@ -101,7 +101,7 @@ bool TargetConnection::update()
 	{
 		Ref< TargetLog > tlog;
 		while (m_transport->recv< TargetLog >(0, tlog) == net::BidirectionalObjectTransport::RtSuccess)
-			m_targetLog->log(tlog->getThreadId(), tlog->getLevel(), tlog->getText());
+			m_targetLog->log(tlog->getThreadId(), tlog->getLevel(), tlog->getText().c_str());
 	}
 
 	{

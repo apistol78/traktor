@@ -1,13 +1,5 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Thread_H
-#define traktor_Thread_H
+#pragma once
 
-#include <string>
 #include "Core/Ref.h"
 #include "Core/Thread/IWaitable.h"
 
@@ -63,7 +55,7 @@ public:
 
 	uint32_t id() const { return m_id; }
 
-	const std::string& name() const { return m_name; }
+	const wchar_t* name() const { return m_name; }
 
 	int32_t hardwareCore() const { return m_hardwareCore; }
 
@@ -74,14 +66,12 @@ private:
 	uint32_t m_id;
 	bool m_stopped;
 	Ref< Functor > m_functor;
-	std::string m_name;
+	const wchar_t* const m_name;
 	int32_t m_hardwareCore;
 
-	Thread(Functor* functor, const std::wstring& name, int32_t hardwareCore);
+	Thread(Functor* functor, const wchar_t* const name, int32_t hardwareCore);
 	
 	~Thread();
 };
 
 }
-
-#endif	// traktor_Thread_H

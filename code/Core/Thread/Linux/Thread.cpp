@@ -40,19 +40,6 @@ void* trampoline(void* data)
 
 	}
 
-Thread::Thread(Functor* functor, const std::wstring& name, int hardwareCore)
-:	m_handle(0)
-,	m_id(0)
-,	m_stopped(false)
-,	m_functor(functor)
-{
-}
-
-Thread::~Thread()
-{
-	delete reinterpret_cast< Internal* >(m_handle);
-}
-
 bool Thread::start(Priority priority)
 {
 	pthread_attr_t attr;
@@ -214,6 +201,21 @@ bool Thread::finished() const
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 	return in ? in->finished : true;
+}
+
+Thread::Thread(Functor* functor, const wchar_t* const name, int hardwareCore)
+:	m_handle(0)
+,	m_id(0)
+,	m_stopped(false)
+,	m_functor(functor)
+,	m_name(name)
+,	m_hardwareCore(hardwareCore)
+{
+}
+
+Thread::~Thread()
+{
+	delete reinterpret_cast< Internal* >(m_handle);
 }
 
 }

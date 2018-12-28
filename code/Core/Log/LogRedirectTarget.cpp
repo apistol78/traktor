@@ -14,10 +14,10 @@ LogRedirectTarget::LogRedirectTarget(ILogTarget* target1, ILogTarget* target2)
 	m_targets.push_back(target2);
 }
 
-void LogRedirectTarget::log(uint32_t threadId, int32_t level, const std::wstring& str)
+void LogRedirectTarget::log(uint32_t threadId, int32_t level, const wchar_t* str)
 {
-	for (RefArray< ILogTarget >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
-		(*i)->log(threadId, level, str);
+	for (const auto& target : m_targets)
+		target->log(threadId, level, str);
 }
 
 }

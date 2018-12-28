@@ -209,6 +209,48 @@ void TypeInfo::setTag(uint32_t tag) const
 	m_tag = tag;
 }
 
+TypeInfoSet makeTypeInfoSet(const TypeInfo& t1)
+{
+	TypeInfoSet typeSet;
+	typeSet.insert(&t1);
+	return typeSet;
+}
+
+TypeInfoSet makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2)
+{
+	TypeInfoSet typeSet;
+	typeSet.insert(&t1);
+	typeSet.insert(&t2);
+	return typeSet;
+}
+
+TypeInfoSet makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2, const TypeInfo& t3)
+{
+	TypeInfoSet typeSet;
+	typeSet.insert(&t1);
+	typeSet.insert(&t2);
+	typeSet.insert(&t3);
+	return typeSet;
+}
+
+uint32_t type_difference(const TypeInfo& base, const TypeInfo& type)
+{
+	uint32_t difference = 0;
+
+	// Traverse up in inheritance chain from until we reach base type.
+	for (const TypeInfo* i = &type; i; i = i->getSuper(), ++difference)
+	{
+		if (i == &base)
+			return difference;
+	}
+
+	// Unable to reach base type; add inheritance depth of base type.
+	for (const TypeInfo* i = &base; i; i = i->getSuper())
+		++difference;
+
+	return difference;
+}
+
 void __forceLinkReference(const TypeInfo& type)
 {
 #if !defined(__EMSCRIPTEN__) && !defined(_XBOX)

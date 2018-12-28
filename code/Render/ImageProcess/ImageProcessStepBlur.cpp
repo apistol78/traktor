@@ -9,6 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Math/Random.h"
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Render/RenderTargetSet.h"

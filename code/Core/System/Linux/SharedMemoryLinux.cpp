@@ -38,9 +38,6 @@ SharedMemoryLinux::SharedMemoryLinux(const std::wstring& name, uint32_t size)
 		m_ptr = mmap(nullptr, m_size, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0);
 		if (!m_ptr)
 			log::error << L"SharedMemoryLinux failed; mmap of \"" << m_name << L"\" failed." << Endl;
-
-		else
-			log::info << L"\"" << m_name << L"\" mapped successfully." << Endl;
 	}
 	else
 		log::error << L"SharedMemoryLinux failed; ftruncate of \"" << m_name << L"\" failed." << Endl;

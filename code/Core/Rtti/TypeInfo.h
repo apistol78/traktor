@@ -1,12 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #pragma once
-#ifndef traktor_TypeInfo_H
-#define traktor_TypeInfo_H
 
 #include <set>
 #include "Core/Config.h"
@@ -24,17 +16,6 @@ namespace traktor
 {
 
 class ITypedObject;
-
-/*! \brief Force linker to keep reference to type.
- * \ingroup Core
- */
-//@{
-
-void T_DLLCLASS __forceLinkReference(const class TypeInfo& type);
-#define T_FORCE_LINK_REF(CLASS) \
-	traktor::__forceLinkReference(traktor::type_of< CLASS >());
-
-//@}
 
 /*! \brief Instance factory.
  * \ingroup Core
@@ -169,35 +150,17 @@ typedef std::set< const TypeInfo* > TypeInfoSet;
 /*! \brief Create type info set from single type.
  * \ingroup Core
  */
-inline TypeInfoSet makeTypeInfoSet(const TypeInfo& t1)
-{
-	TypeInfoSet typeSet;
-	typeSet.insert(&t1);
-	return typeSet;
-}
+TypeInfoSet T_DLLCLASS makeTypeInfoSet(const TypeInfo& t1);
 
 /*! \brief Create type info set from single type.
  * \ingroup Core
  */
-inline TypeInfoSet makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2)
-{
-	TypeInfoSet typeSet;
-	typeSet.insert(&t1);
-	typeSet.insert(&t2);
-	return typeSet;
-}
+TypeInfoSet T_DLLCLASS makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2);
 
 /*! \brief Create type info set from single type.
  * \ingroup Core
  */
-inline TypeInfoSet makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2, const TypeInfo& t3)
-{
-	TypeInfoSet typeSet;
-	typeSet.insert(&t1);
-	typeSet.insert(&t2);
-	typeSet.insert(&t3);
-	return typeSet;
-}
+TypeInfoSet T_DLLCLASS makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2, const TypeInfo& t3);
 
 /*! \brief Check if type is identical.
  * \ingroup Core
@@ -224,26 +187,18 @@ inline bool is_type_of(const TypeInfo& base, const TypeInfo& type)
 /*! \brief Return type difference.
  * \ingroup Core
  */
-inline uint32_t type_difference(const TypeInfo& base, const TypeInfo& type)
-{
-	uint32_t difference = 0;
+uint32_t T_DLLCLASS type_difference(const TypeInfo& base, const TypeInfo& type);
 
-	// Traverse up in inheritance chain from until we reach base type.
-	for (const TypeInfo* i = &type; i; i = i->getSuper(), ++difference)
-	{
-		if (i == &base)
-			return difference;
-	}
 
-	// Unable to reach base type; add inheritance depth of base type.
-	for (const TypeInfo* i = &base; i; i = i->getSuper())
-		++difference;
+/*! \brief Force linker to keep reference to type.
+ * \ingroup Core
+ */
+//@{
 
-	return difference;
-}
+void T_DLLCLASS __forceLinkReference(const class TypeInfo& type);
+#define T_FORCE_LINK_REF(CLASS) \
+	traktor::__forceLinkReference(traktor::type_of< CLASS >());
 
 //@}
 
 }
-
-#endif	// traktor_TypeInfo_H
