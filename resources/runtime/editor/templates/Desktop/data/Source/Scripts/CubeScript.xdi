@@ -13,10 +13,10 @@ end
 
 function CubeScript:update(totalTime, deltaTime)
 	self.angle = self.angle + deltaTime
-	self:setTransform(Transform(
+	self.transform = Transform(
 		Vector4.zero,
 		Quaternion.fromEulerAngles(self.angle, self.angle * 0.66, self.angle * 0.33)
-	))
+	)
 end
 
 function CubeScript:reset()
