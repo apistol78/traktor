@@ -9,7 +9,7 @@ LogStreamTarget::LogStreamTarget(OutputStream* stream)
 {
 }
 
-void LogStreamTarget::log(uint32_t threadId, int32_t level, const std::wstring& str)
+void LogStreamTarget::log(uint32_t threadId, int32_t level, const wchar_t* str)
 {
 	(*m_stream) << str << Endl;
 }

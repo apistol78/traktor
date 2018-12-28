@@ -30,22 +30,22 @@ extern void NSLogCpp(const wchar_t* s);
 class LogTargetConsole : public ILogTarget
 {
 public:
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) override final
+	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		if (level == 0)
 		{
-			fwprintf(stdout, L"%ls\n", str.c_str());
+			fwprintf(stdout, L"%ls\n", str);
 			fflush(stdout);
 		}
 		else if (level == 1)
 		{
-			fwprintf(stdout, L"(WARN) %ls\n", str.c_str());
+			fwprintf(stdout, L"(WARN) %ls\n", str);
 			fflush(stdout);
 		}
 		else
 		{
-			fwprintf(stderr, L"(ERROR) %ls\n", str.c_str());
+			fwprintf(stderr, L"(ERROR) %ls\n", str);
 			fflush(stderr);
 		}
 #if defined(__IOS__)
@@ -65,7 +65,7 @@ private:
 class LogTargetDebug : public ILogTarget
 {
 public:
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) override final
+	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 #if defined(_WIN32) && !defined(_XBOX_ONE)
@@ -77,7 +77,7 @@ public:
 #elif defined(__ANDROID__)
 		__android_log_print(ANDROID_LOG_DEBUG, "Traktor", "%s", wstombs(str).c_str());
 #elif defined(_DEBUG)
-		fwprintf(stdout, L"(DEBUG) %ls\n", str.c_str());
+		fwprintf(stdout, L"(DEBUG) %ls\n", str);
 #endif
 	}
 
@@ -144,10 +144,10 @@ public:
 				uint32_t threadId = ThreadManager::getInstance().getCurrentThread()->id();
 
 				if (m_globalTarget)
-					m_globalTarget->log(threadId, m_level, m_buffer.str());
+					m_globalTarget->log(threadId, m_level, m_buffer.c_str());
 				
 				if (m_localTarget)
-					m_localTarget->log(threadId, m_level, m_buffer.str());
+					m_localTarget->log(threadId, m_level, m_buffer.c_str());
 
 				m_buffer.reset();
 			}

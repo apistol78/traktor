@@ -1,5 +1,4 @@
-#ifndef traktor_LogStreamTarget_H
-#define traktor_LogStreamTarget_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Log/Log.h"
@@ -22,12 +21,10 @@ class T_DLLCLASS LogStreamTarget : public ILogTarget
 public:
 	LogStreamTarget(OutputStream* stream);
 
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) override final;
+	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final;
 
 private:
 	Ref< OutputStream > m_stream;
 };
 
 }
-
-#endif	// traktor_LogStreamTarget_H

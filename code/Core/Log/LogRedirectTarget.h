@@ -1,5 +1,4 @@
-#ifndef traktor_LogRedirectTarget_H
-#define traktor_LogRedirectTarget_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Core/Log/Log.h"
@@ -22,12 +21,10 @@ public:
 
 	explicit LogRedirectTarget(ILogTarget* target1, ILogTarget* target2);
 
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) override final;
+	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final;
 
 private:
 	RefArray< ILogTarget > m_targets;
 };
 
 }
-
-#endif	// traktor_LogRedirectTarget_H

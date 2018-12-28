@@ -1,12 +1,6 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_ScenePipeline_H
-#define traktor_scene_ScenePipeline_H
+#pragma once
 
+#include "Core/RefArray.h"
 #include "Editor/IPipeline.h"
 
 // import/export mechanism.
@@ -21,6 +15,8 @@ namespace traktor
 {
 	namespace scene
 	{
+
+class IScenePipelineOperator;
 
 class T_DLLCLASS ScenePipeline : public editor::IPipeline
 {
@@ -69,9 +65,10 @@ private:
 	bool m_suppressImageProcess;
 	int32_t m_shadowMapSizeDenom;
 	int32_t m_shadowMapMaxSlices;
+	RefArray< IScenePipelineOperator > m_operators;
+
+	const IScenePipelineOperator* findOperator(const TypeInfo& operationType) const;
 };
 
 	}
 }
-
-#endif	// traktor_scene_ScenePipeline_H

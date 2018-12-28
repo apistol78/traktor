@@ -22,7 +22,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", 7, SceneAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", 8, SceneAsset, ISerializable)
 
 SceneAsset::SceneAsset()
 :	m_worldRenderSettings(new world::WorldRenderSettings())
@@ -69,13 +69,27 @@ Ref< ISceneControllerData > SceneAsset::getControllerData() const
 	return m_controllerData;
 }
 
+void SceneAsset::setOperationData(const RefArray< ISerializable >& operationData)
+{
+	m_operationData = operationData;
+}
+
+const RefArray< ISerializable >& SceneAsset::getOperationData() const
+{
+	return m_operationData;
+}
+
 void SceneAsset::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 7);
+	T_FATAL_ASSERT (s.getVersion() >= 7);
+
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
 	s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"imageProcessParams", m_imageProcessParams);
 	s >> MemberRefArray< world::LayerEntityData >(L"layers", m_layers);
 	s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
+
+	if (s.getVersion() >= 8)
+		s >> MemberRefArray< ISerializable >(L"operationData", m_operationData);
 }
 
 	}

@@ -7,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Input/Binding/InCombine.h"

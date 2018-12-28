@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Atomic_H
-#define traktor_Atomic_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -84,5 +77,3 @@ struct T_DLLCLASS Atomic
 #		include "Core/Thread/Linux/Atomic.inl"
 #	endif
 #endif
-
-#endif	// traktor_Atomic_H

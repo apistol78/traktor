@@ -41,7 +41,7 @@ public:
 	{
 	}
 
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
+	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) T_OVERRIDE T_FINAL
 	{
 		(*m_stream) << str << Endl;
 	}
@@ -59,7 +59,7 @@ public:
 	{
 	}
 
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) T_OVERRIDE T_FINAL
+	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) T_OVERRIDE T_FINAL
 	{
 		m_target1->log(threadId, level, str);
 		m_target2->log(threadId, level, str);

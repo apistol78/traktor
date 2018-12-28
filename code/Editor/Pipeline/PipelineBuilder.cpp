@@ -49,7 +49,7 @@ public:
 	{
 	}
 
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) override final
+	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final
 	{
 		++m_count;
 		if (m_target)

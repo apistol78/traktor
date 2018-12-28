@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ISerializer_H
-#define traktor_ISerializer_H
+#pragma once
 
 #include "Core/Guid.h"
 #include "Core/Io/Path.h"
@@ -17,9 +10,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Object.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberArray.h"
-#include "Core/Serialization/MemberComplex.h"
-#include "Core/Serialization/MemberEnum.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,6 +21,10 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+
+class MemberArray;
+class MemberComplex;
+class MemberEnumBase;
 
 /*! \brief Serializer interface.
  * \ingroup Core
@@ -129,5 +123,3 @@ public:
 };
 
 }
-
-#endif	// traktor_ISerializer_H

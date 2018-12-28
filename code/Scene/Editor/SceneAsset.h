@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_SceneAsset_H
-#define traktor_scene_SceneAsset_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
@@ -67,6 +60,10 @@ public:
 
 	Ref< ISceneControllerData > getControllerData() const;
 
+	void setOperationData(const RefArray< ISerializable >& operationData);
+
+	const RefArray< ISerializable >& getOperationData() const;
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -74,9 +71,9 @@ private:
 	SmallMap< std::wstring, resource::Id< render::ITexture > > m_imageProcessParams;
 	RefArray< world::LayerEntityData > m_layers;
 	Ref< ISceneControllerData > m_controllerData;
+	RefArray< ISerializable > m_operationData;
 };
 
 	}
 }
 
-#endif	// traktor_scene_SceneAsset_H

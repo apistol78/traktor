@@ -35,7 +35,7 @@ public:
 	{
 	}
 
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) override final
+	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final
 	{
 		m_logList->add(threadId, (ui::LogList::LogLevel)(1 << level), str);
 	}

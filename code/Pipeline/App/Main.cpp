@@ -185,7 +185,7 @@ public:
 	{
 	}
 
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) override final
+	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final
 	{
 		if (m_originalTarget)
 			m_originalTarget->log(threadId, level, str);
@@ -792,16 +792,16 @@ int master(const CommandLine& cmdLine)
 			{
 			default:
 			case 0:
-				traktor::log::info.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText());
+				traktor::log::info.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText().c_str());
 				break;
 			case 1:
-				traktor::log::warning.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText());
+				traktor::log::warning.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText().c_str());
 				break;
 			case 2:
-				traktor::log::error.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText());
+				traktor::log::error.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText().c_str());
 				break;
 			case 3:
-				traktor::log::debug.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText());
+				traktor::log::debug.getGlobalTarget()->log(slaveLog->getThreadId(), slaveLog->getLevel(), slaveLog->getText().c_str());
 				break;
 			}
 		}

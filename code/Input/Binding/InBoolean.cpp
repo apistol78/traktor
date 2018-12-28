@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Input/Binding/InBoolean.h"
 #include "Input/Binding/InputValueSet.h"

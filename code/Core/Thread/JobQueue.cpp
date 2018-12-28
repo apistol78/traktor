@@ -1,10 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#include "Core/Misc/String.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobQueue.h"
 #include "Core/Thread/ThreadManager.h"
@@ -34,7 +27,7 @@ bool JobQueue::create(uint32_t workerThreads, Thread::Priority priority)
 				this,
 				&JobQueue::threadWorker
 			),
-			L"Job queue, worker thread " + toString(i)
+			L"Job queue, worker thread"
 		);
 		if (m_workerThreads[i])
 			m_workerThreads[i]->start(priority);

@@ -1,15 +1,8 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_StringOutputStream_H
-#define traktor_StringOutputStream_H
+#pragma once
 
-#include "Core/Containers/AlignedVector.h"
 #include "Core/Io/OutputStream.h"
 #include "Core/Io/OutputStreamBuffer.h"
+#include "Core/Misc/AutoPtr.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,6 +27,8 @@ public:
 
 	std::wstring str() const;
 
+	const wchar_t* c_str() const;
+
 	void reset();
 
 	virtual int32_t overflow(const wchar_t* buffer, int32_t count);
@@ -41,7 +36,9 @@ public:
 private:
 	friend class StringOutputStream;
 
-	AlignedVector< wchar_t > m_internal;
+	AutoArrayPtr< wchar_t > m_buffer;
+	size_t m_capacity;
+	size_t m_tail;
 };
 
 /*! \brief Formatting string stream.
@@ -60,6 +57,8 @@ public:
 
 	std::wstring str() const;
 
+	const wchar_t* c_str() const;
+
 	void reset();
 
 private:
@@ -67,5 +66,3 @@ private:
 };
 
 }
-
-#endif	// traktor_StringOutputStream_H

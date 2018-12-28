@@ -1,14 +1,5 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Log_H
-#define traktor_Log_H
+#pragma once
 
-#include <string>
-#include <vector>
 #include "Core/Io/OutputStream.h"
 
 // import/export mechanism.
@@ -28,7 +19,7 @@ namespace traktor
 class T_DLLCLASS ILogTarget : public Object
 {
 public:
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) = 0;
+	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) = 0;
 };
 
 /*! \brief Log stream.
@@ -75,5 +66,3 @@ extern T_DLLCLASS LogStream debug;
 
 	}
 }
-
-#endif	// traktor_Log_H

@@ -18,6 +18,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/AttributePrecision.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/CompactSerializer.h"
+#include "Core/Serialization/MemberArray.h"
+#include "Core/Serialization/MemberComplex.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/PackedUnitVector.h"
 
 namespace traktor

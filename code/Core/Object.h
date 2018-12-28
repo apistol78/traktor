@@ -1,12 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #pragma once
-#ifndef traktor_Object_H
-#define traktor_Object_H
 
 #include "Core/Rtti/ITypedObject.h"
 
@@ -92,5 +84,3 @@ private:
 };	
 
 }
-
-#endif	// traktor_Object_H

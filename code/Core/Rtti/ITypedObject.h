@@ -1,12 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #pragma once
-#ifndef traktor_ITypedObject_H
-#define traktor_ITypedObject_H
 
 #include "Core/Meta/Traits.h"
 #include "Core/Rtti/TypeInfo.h"
@@ -387,5 +379,3 @@ T mandatory_non_null_type_cast(const T0* obj)
 }
 
 }
-
-#endif	// traktor_ITypedObject_H

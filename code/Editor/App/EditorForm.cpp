@@ -139,10 +139,10 @@ public:
 	void replay(ILogTarget* intoTarget) const
 	{
 		for (auto log : m_logs)
-			intoTarget->log(log.threadId, log.level, log.str);
+			intoTarget->log(log.threadId, log.level, log.str.c_str());
 	}
 
-	virtual void log(uint32_t threadId, int32_t level, const std::wstring& str) override final
+	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final
 	{
 		m_logs.push_back({ threadId, level, str });
 	}

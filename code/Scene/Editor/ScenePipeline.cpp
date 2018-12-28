@@ -14,6 +14,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Editor/IPipelineSettings.h"
 #include "Scene/ISceneControllerData.h"
 #include "Scene/SceneResource.h"
+#include "Scene/Editor/IScenePipelineOperator.h"
 #include "Scene/Editor/ScenePipeline.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "World/WorldRenderSettings.h"
@@ -46,11 +47,34 @@ bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 	m_suppressImageProcess = settings->getProperty< bool >(L"ScenePipeline.SuppressImageProcess");
 	m_shadowMapSizeDenom = settings->getProperty< int32_t >(L"ScenePipeline.ShadowMapSizeDenom", 1);
 	m_shadowMapMaxSlices = settings->getProperty< int32_t >(L"ScenePipeline.ShadowMapMaxSlices", 0);
+
+	// Instantiate scene pipeline operators.
+	TypeInfoSet operatorTypes;
+	type_of< IScenePipelineOperator >().findAllOf(operatorTypes, false);
+	for (auto operatorType : operatorTypes)
+	{
+		Ref< IScenePipelineOperator > spo = dynamic_type_cast< IScenePipelineOperator* >(operatorType->createInstance());
+		if (!spo)
+		{
+			log::error << L"Failed to create scene pipeline; unable to instantiate operator \"" << operatorType->getName() << L"\"." << Endl;
+			return false;
+		}
+		if (!spo->create(settings))
+		{
+			log::error << L"Failed to create scene pipeline; unable to create operator \"" << operatorType->getName() << L"\"." << Endl;
+			return false;
+		}
+		m_operators.push_back(spo);
+	}
+
 	return true;
 }
 
 void ScenePipeline::destroy()
 {
+	for (auto op : m_operators)
+		op->destroy();
+	m_operators.clear();
 }
 
 TypeInfoSet ScenePipeline::getAssetTypes() const
@@ -114,11 +138,22 @@ bool ScenePipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	const SceneAsset* sceneAsset = checked_type_cast< const SceneAsset*, false >(sourceAsset);
+	// Create clone of asset which operators can modify.
+	Ref< SceneAsset > sceneAsset = DeepClone(sourceAsset).create< SceneAsset >();
+	T_FATAL_ASSERT (sceneAsset != nullptr);
 
-	Ref< world::GroupEntityData > groupEntityData = new world::GroupEntityData();
+	// Execute operations on scene.
+	for (const auto op : sceneAsset->getOperationData())
+	{
+		const IScenePipelineOperator* spo = findOperator(type_of(op));
+		if (!spo)
+			return false;
+		if (!spo->build(sceneAsset))
+			return false;
+	}
 
 	// Build each layer of entity data; merge into a single output group.
+	Ref< world::GroupEntityData > groupEntityData = new world::GroupEntityData();
 	for (const auto& layer : sceneAsset->getLayers())
 	{
 		if (!layer)
@@ -205,6 +240,19 @@ Ref< ISerializable > ScenePipeline::buildOutput(
 ) const
 {
 	return DeepClone(sourceAsset).create< SceneAsset >();
+}
+
+const IScenePipelineOperator* ScenePipeline::findOperator(const TypeInfo& operationType) const
+{
+	for (const auto sop : m_operators)
+	{
+		for (const auto ts : sop->getOperatorTypes())
+		{
+			if (is_type_a(*ts, operationType))
+				return sop;
+		}
+	}
+	return nullptr;
 }
 
 	}
