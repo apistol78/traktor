@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_illuminate_JobTraceDirect_H
-#define traktor_illuminate_JobTraceDirect_H
+#pragma once
 
 #include "Core/Containers/AlignedVector.h"
 #include "Illuminate/Editor/Types.h"
@@ -31,8 +24,6 @@ class JobTraceDirect
 {
 public:
 	JobTraceDirect(
-		int32_t tileX,
-		int32_t tileY,
 		const SahTree& sah,
 		const GBuffer& gbuffer,
 		const AlignedVector< Light >& lights,
@@ -42,11 +33,9 @@ public:
 		int32_t shadowSamples
 	);
 
-	void execute();
+	void execute(int32_t tileX, int32_t tileY) const;
 
 private:
-	int32_t m_tileX;
-	int32_t m_tileY;
 	const SahTree& m_sah;
 	const GBuffer& m_gbuffer;
 	const AlignedVector< Light >& m_lights;
@@ -58,5 +47,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_illuminate_JobTraceDirect_H

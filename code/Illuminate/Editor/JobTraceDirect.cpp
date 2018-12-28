@@ -25,8 +25,6 @@ const Scalar c_traceOffset(0.01f);
 		}
 
 JobTraceDirect::JobTraceDirect(
-	int32_t tileX,
-	int32_t tileY,
 	const SahTree& sah,
 	const GBuffer& gbuffer,
 	const AlignedVector< Light >& lights,
@@ -35,9 +33,7 @@ JobTraceDirect::JobTraceDirect(
 	float pointLightRadius,
 	int32_t shadowSamples
 )
-:	m_tileX(tileX)
-,	m_tileY(tileY)
-,	m_sah(sah)
+:	m_sah(sah)
 ,	m_gbuffer(gbuffer)
 ,	m_lights(lights)
 ,	m_outputImageDirect(outputImageDirect)
@@ -47,16 +43,16 @@ JobTraceDirect::JobTraceDirect(
 {
 }
 
-void JobTraceDirect::execute()
+void JobTraceDirect::execute(int32_t tileX, int32_t tileY) const
 {
 	RandomGeometry random(std::clock());
 	SahTree::QueryCache cache;
 	SahTree::QueryResult result;
 	Color4f tmp;
 
-	for (int32_t y = m_tileY; y < m_tileY + c_jobTileSize; ++y)
+	for (int32_t y = tileY; y < tileY + c_jobTileSize; ++y)
 	{
-		for (int32_t x = m_tileX; x < m_tileX + c_jobTileSize; ++x)
+		for (int32_t x = tileX; x < tileX + c_jobTileSize; ++x)
 		{
 			const GBuffer::Element& gb = m_gbuffer.get(x, y);
 
