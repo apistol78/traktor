@@ -44,8 +44,16 @@ private:
 	value_type& m_ref;
 };
 
+#if !defined(__LINUX__)
+
 #define DEF_DUMP_FN(op) \
-	void dump_##op##(OutputStream& os, uint32_t offset, const Instruction& inst, const AlignedVector< Vector4 >& constants, const std::map< std::wstring, EmitterVariable* >& uniforms)
+	void dump_ ## op ## (OutputStream& os, uint32_t offset, const Instruction& inst, const AlignedVector< Vector4 >& constants, const std::map< std::wstring, EmitterVariable* >& uniforms)
+
+#define DECL_DUMP_FN(op) \
+	{ \
+		op, \
+		&dump_ ## op ## \
+	}
 
 DEF_DUMP_FN(OpFetchConstant)
 {
@@ -358,9 +366,6 @@ DEF_DUMP_FN(OpTrace)
 	os << offset << L": OpTrace               " << int32_t(inst.dest) << Endl;
 }
 
-#define DECL_DUMP_FN(op) \
-	{ op, &dump_##op## }
-
 const struct DumpInfo
 {
 	uint8_t op;
@@ -419,6 +424,8 @@ c_dumpInfo[] =
 	DECL_DUMP_FN(OpTrace)
 };
 
+#endif
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IntrProgram", 0, IntrProgram, ISerializable)
@@ -451,6 +458,7 @@ void IntrProgram::setConstant(uint32_t index, const Vector4& value)
 
 void IntrProgram::dump(OutputStream& os, const std::map< std::wstring, EmitterVariable* >& uniforms) const
 {
+#if !defined(__LINUX__)
 	os << L"--- Begin ---" << Endl;
 
 	os << L"# Constants" << Endl;
@@ -481,6 +489,7 @@ void IntrProgram::dump(OutputStream& os, const std::map< std::wstring, EmitterVa
 	}
 
 	os << L"--- End ---" << Endl;
+#endif
 }
 
 void IntrProgram::serialize(ISerializer& s)

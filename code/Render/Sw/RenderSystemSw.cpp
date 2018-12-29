@@ -41,7 +41,9 @@ namespace traktor
 		namespace
 		{
 
+#if defined(_WIN32)
 const TCHAR* c_windowClassName = _T("TraktorRenderSystem");
+#endif
 
 		}
 

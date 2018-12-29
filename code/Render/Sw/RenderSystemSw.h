@@ -12,6 +12,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	include <windows.h>
 #	include <tchar.h>
 #	include "Graphics/IGraphicsSystem.h"
+#elif defined(__LINUX__)
+#	include "Graphics/IGraphicsSystem.h"
 #endif
 #include "Render/IRenderSystem.h"
 
