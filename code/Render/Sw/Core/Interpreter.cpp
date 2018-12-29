@@ -44,7 +44,7 @@ float T_FORCE_INLINE frac(float v)
 
 float T_FORCE_INLINE fpow(float a, float b)
 {
-	return std::powf(a, b);
+	return std::pow(a, b);
 }
 
 void T_FORCE_INLINE checkRegister(const Vector4& r)
@@ -469,10 +469,10 @@ bool Interpreter::execute(
 
 		case OpTrunc:
 			{
-				float x = std::floorf(R(i->src[0]).x());
-				float y = std::floorf(R(i->src[0]).y());
-				float z = std::floorf(R(i->src[0]).z());
-				float w = std::floorf(R(i->src[0]).w());
+				float x = std::floor(R(i->src[0]).x());
+				float y = std::floor(R(i->src[0]).y());
+				float z = std::floor(R(i->src[0]).z());
+				float w = std::floor(R(i->src[0]).w());
 				dest.set(x, y, z, w);
 				CHECK(dest);
 			}
@@ -480,10 +480,10 @@ bool Interpreter::execute(
 
 		case OpRound:
 			{
-				float x = std::floorf(R(i->src[0]).x() + 0.5f);
-				float y = std::floorf(R(i->src[0]).y() + 0.5f);
-				float z = std::floorf(R(i->src[0]).z() + 0.5f);
-				float w = std::floorf(R(i->src[0]).w() + 0.5f);
+				float x = std::floor(R(i->src[0]).x() + 0.5f);
+				float y = std::floor(R(i->src[0]).y() + 0.5f);
+				float z = std::floor(R(i->src[0]).z() + 0.5f);
+				float w = std::floor(R(i->src[0]).w() + 0.5f);
 				dest.set(x, y, z, w);
 				CHECK(dest);
 			}

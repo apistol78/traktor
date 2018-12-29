@@ -97,7 +97,9 @@ ISimpleTexture* RenderTargetSetSw::getDepthTexture() const
 
 void RenderTargetSetSw::swap(int index1, int index2)
 {
-	std::swap(m_colorTargets[index1], m_colorTargets[index2]);
+	Ref< RenderTargetSw > tmp = m_colorTargets[index1];
+	m_colorTargets[index1] = m_colorTargets[index2];
+	m_colorTargets[index2] = tmp;
 }
 
 void RenderTargetSetSw::discard()
