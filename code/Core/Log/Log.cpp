@@ -49,7 +49,7 @@ public:
 			fflush(stderr);
 		}
 #if defined(__IOS__)
-		NSLogCpp(str.c_str());
+		NSLogCpp(str);
 #elif defined(__ANDROID__)
 		__android_log_print(ANDROID_LOG_INFO, "Traktor", "%s", wstombs(str).c_str());
 #elif defined(_WIN32) && !defined(_XBOX_ONE)
@@ -73,7 +73,7 @@ public:
 		ss << L"(" << uint32_t(GetCurrentThreadId()) << L") " << str << Endl;
 		OutputDebugString(wstots(ss.str()).c_str());
 #elif defined(__IOS__)
-		NSLogCpp(str.c_str());
+		NSLogCpp(str);
 #elif defined(__ANDROID__)
 		__android_log_print(ANDROID_LOG_DEBUG, "Traktor", "%s", wstombs(str).c_str());
 #elif defined(_DEBUG)
