@@ -43,8 +43,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.XmlDeserializer", XmlDeserializer, Serializ
 #define T_CHECK_STATUS \
 	if (failed()) return;
 
-XmlDeserializer::XmlDeserializer(IStream* stream)
-:	m_xpp(stream)
+XmlDeserializer::XmlDeserializer(IStream* stream, const std::wstring& name)
+:	m_xpp(stream, name)
 ,	m_stackPointer(0)
 {
 	T_ASSERT_M (stream->canRead(), L"Incorrect direction on input stream");

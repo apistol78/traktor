@@ -36,7 +36,7 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 		Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
 		if (file)
 		{
-			Ref< Solution > otherSolution = xml::XmlDeserializer(file).readObject< Solution >();
+			Ref< Solution > otherSolution = xml::XmlDeserializer(file, filePath.getPathName()).readObject< Solution >();
 			file->close();
 
 			ImportProjectDialog importDialog;

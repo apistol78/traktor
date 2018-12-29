@@ -39,9 +39,9 @@ class T_DLLCLASS Document : public Object
 public:
 	bool loadFromFile(const Path& fileName);
 	
-	bool loadFromStream(IStream* stream);
+	bool loadFromStream(IStream* stream, const std::wstring& name = L"");
 	
-	bool loadFromText(const std::wstring& text);
+	bool loadFromText(const std::wstring& text, const std::wstring& name = L"");
 	
 	bool saveAsFile(const Path& fileName);
 

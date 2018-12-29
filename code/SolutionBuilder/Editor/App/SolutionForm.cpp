@@ -74,7 +74,7 @@ Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
 {
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(pathName, traktor::File::FmRead);
 	if (file)
-		return xml::XmlDeserializer(file).readObject< ui::StyleSheet >();
+		return xml::XmlDeserializer(file, pathName.getPathName()).readObject< ui::StyleSheet >();
 	else
 		return 0;
 }

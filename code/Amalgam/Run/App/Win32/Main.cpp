@@ -71,7 +71,7 @@ Ref< PropertyGroup > loadSettings(const Path& settingsFile)
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(settingsFile, File::FmRead);
 	if (file)
 	{
-		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		settings = xml::XmlDeserializer(file, settingsFile.getPathName()).readObject< PropertyGroup >();
 		file->close();
 	}
 

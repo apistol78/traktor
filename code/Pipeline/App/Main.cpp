@@ -245,7 +245,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 	// First try to read user configuration; contain both global and system.
 	if ((file = FileSystem::getInstance().open(userConfig, File::FmRead)) != 0)
 	{
-		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		settings = xml::XmlDeserializer(file, userConfig).readObject< PropertyGroup >();
 		if (!settings)
 			log::warning << userConfig << L" corrupt!" << Endl;
 		file->close();
@@ -259,7 +259,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 
 	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
 	{
-		globalSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		globalSettings = xml::XmlDeserializer(file, globalConfig).readObject< PropertyGroup >();
 		if (!globalSettings)
 			log::warning << globalConfig << L" corrupt!" << Endl;
 		file->close();
@@ -268,7 +268,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
     // Read system properties.
     if ((file = FileSystem::getInstance().open(systemConfig, File::FmRead)) != 0)
     {
-        systemSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+        systemSettings = xml::XmlDeserializer(file, systemConfig).readObject< PropertyGroup >();
 		if (!systemSettings)
 			log::warning << systemConfig << L" corrupt!" << Endl;
         file->close();

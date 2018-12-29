@@ -224,7 +224,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
     // Read global properties.
 	if ((file = FileSystem::getInstance().open(globalFile, File::FmRead)) != nullptr)
 	{
-		outOriginalSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		outOriginalSettings = xml::XmlDeserializer(file, globalFile).readObject< PropertyGroup >();
 		file->close();
 
 		if (!outOriginalSettings)
@@ -238,7 +238,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
     // Read system properties.
     if ((file = FileSystem::getInstance().open(systemFile, File::FmRead)) != nullptr)
     {
-        Ref< PropertyGroup > systemSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+        Ref< PropertyGroup > systemSettings = xml::XmlDeserializer(file, systemFile).readObject< PropertyGroup >();
         file->close();
 
         if (systemSettings)
@@ -273,7 +273,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 		// Read user properties.
 		if ((file = FileSystem::getInstance().open(userFile, File::FmRead)) != nullptr)
 		{
-			Ref< PropertyGroup > userSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+			Ref< PropertyGroup > userSettings = xml::XmlDeserializer(file, userFile).readObject< PropertyGroup >();
 			file->close();
 
 			if (!userSettings)
@@ -328,7 +328,7 @@ Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
 {
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(pathName, File::FmRead);
 	if (file)
-		return xml::XmlDeserializer(file).readObject< ui::StyleSheet >();
+		return xml::XmlDeserializer(file, pathName.getPathName()).readObject< ui::StyleSheet >();
 	else
 		return 0;
 }
@@ -351,7 +351,7 @@ Ref< MRU > loadRecent(const std::wstring& recentFile)
 	Ref< IStream > file = FileSystem::getInstance().open(recentFile, File::FmRead);
 	if (file)
 	{
-		mru = xml::XmlDeserializer(file).readObject< MRU >();
+		mru = xml::XmlDeserializer(file, recentFile).readObject< MRU >();
 		file->close();
 	}
 
@@ -2364,7 +2364,7 @@ void EditorForm::loadLanguageDictionary()
 		return;
 	}
 
-	Ref< i18n::Dictionary > dictionary = dynamic_type_cast< i18n::Dictionary* >(xml::XmlDeserializer(file).readObject());
+	Ref< i18n::Dictionary > dictionary = dynamic_type_cast< i18n::Dictionary* >(xml::XmlDeserializer(file, dictionaryFile).readObject());
 	file->close();
 
 	if (dictionary)
@@ -2386,7 +2386,7 @@ void EditorForm::loadHelpDictionary()
 		return;
 	}
 
-	Ref< i18n::Dictionary > dictionary = dynamic_type_cast< i18n::Dictionary* >(xml::XmlDeserializer(file).readObject());
+	Ref< i18n::Dictionary > dictionary = dynamic_type_cast< i18n::Dictionary* >(xml::XmlDeserializer(file, helpFile).readObject());
 	file->close();
 
 	if (dictionary)

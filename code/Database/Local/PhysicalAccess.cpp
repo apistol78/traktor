@@ -53,7 +53,7 @@ Ref< ISerializable > readPhysicalObject(const Path& objectPath)
 	if (std::memcmp(head, "<?xml", sizeof(head)) != 0)
 		object = BinarySerializer(&bs).readObject();
 	else
-		object = xml::XmlDeserializer(&bs).readObject();
+		object = xml::XmlDeserializer(&bs, objectPath.getPathName()).readObject();
 
 	objectStream->close();
 	return object;
