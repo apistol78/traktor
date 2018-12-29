@@ -53,8 +53,8 @@ public:
 #elif defined(__ANDROID__)
 		__android_log_print(ANDROID_LOG_INFO, "Traktor", "%s", wstombs(str).c_str());
 #elif defined(_WIN32) && !defined(_XBOX_ONE)
-		tstring tss = wstots(str + L"\n");
-		OutputDebugString(tss.c_str());
+		OutputDebugStringW(str);
+		OutputDebugStringW(L"\n");
 #endif
 	}
 
@@ -71,7 +71,7 @@ public:
 #if defined(_WIN32) && !defined(_XBOX_ONE)
 		StringOutputStream ss;
 		ss << L"(" << uint32_t(GetCurrentThreadId()) << L") " << str << Endl;
-		OutputDebugString(wstots(ss.str()).c_str());
+		OutputDebugStringW(ss.str().c_str());
 #elif defined(__IOS__)
 		NSLogCpp(str);
 #elif defined(__ANDROID__)

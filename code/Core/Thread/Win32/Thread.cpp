@@ -32,12 +32,12 @@ unsigned __stdcall threadProc(void* lparam)
 
 	}
 
-Thread::Thread(Functor* functor, const std::wstring& name, int32_t hardwareCore)
+Thread::Thread(Functor* functor, const wchar_t* const name, int32_t hardwareCore)
 :	m_handle(0)
 ,	m_id(0)
 ,	m_stopped(false)
 ,	m_functor(functor)
-,	m_name(wstombs(name))
+,	m_name(name)
 ,	m_hardwareCore(hardwareCore)
 {
 }
@@ -73,7 +73,7 @@ bool Thread::start(Priority priority)
 
 	THREADNAME_INFO threadInfo;
 	threadInfo.dwType = 0x1000;
-	threadInfo.szName = m_name.c_str();
+	//threadInfo.szName = m_name;
 	threadInfo.dwThreadID = m_id;
 	threadInfo.dwFlags = 0;
 	__try { RaiseException(0x406D1388, 0, sizeof(threadInfo) / sizeof(DWORD), (const ULONG_PTR*)&threadInfo); }
