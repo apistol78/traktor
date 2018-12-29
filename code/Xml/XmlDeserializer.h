@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_xml_XmlDeserializer_H
-#define traktor_xml_XmlDeserializer_H
+#pragma once
 
 #include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/Serializer.h"
@@ -32,7 +25,7 @@ class T_DLLCLASS XmlDeserializer : public Serializer
 	T_RTTI_CLASS;
 
 public:
-	XmlDeserializer(IStream* stream);
+	XmlDeserializer(IStream* stream, const std::wstring& name = L"");
 
 	virtual Direction getDirection() const override final;
 
@@ -121,5 +114,3 @@ private:
 	
 	}
 }
-
-#endif	// traktor_xml_XmlDeserializer_H

@@ -35,7 +35,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 {
 	Ref< IStream > file = FileSystem::getInstance().open(settingsFile, File::FmRead);
 	if (file)
-		return xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		return xml::XmlDeserializer(file, settingsFile).readObject< PropertyGroup >();
 	else
 		return 0;
 }

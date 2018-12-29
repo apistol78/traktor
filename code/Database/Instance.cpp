@@ -134,7 +134,7 @@ Ref< ISerializable > Instance::getObject() const
 	if (serializerType == &type_of< BinarySerializer >())
 		serializer = new BinarySerializer(&bs);
 	else if (serializerType == &type_of< xml::XmlDeserializer >())
-		serializer = new xml::XmlDeserializer(&bs);
+		serializer = new xml::XmlDeserializer(&bs, getPath());
 	else
 	{
 		stream->close();

@@ -27,7 +27,7 @@ Ref< PropertyGroup > loadSettings(const Path& settingsPath)
 	Ref< IStream > file = FileSystem::getInstance().open(settingsPath, File::FmRead);
 	if (file)
 	{
-		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		settings = xml::XmlDeserializer(file, settingsPath.getPathName()).readObject< PropertyGroup >();
 		file->close();
 	}
 	return settings;

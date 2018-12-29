@@ -33,7 +33,7 @@ Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
 {
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(pathName, traktor::File::FmRead);
 	if (file)
-		return xml::XmlDeserializer(file).readObject< ui::StyleSheet >();
+		return xml::XmlDeserializer(file, pathName.getPathName()).readObject< ui::StyleSheet >();
 	else
 		return 0;
 }
@@ -70,7 +70,7 @@ bool DroneForm::create(const CommandLine& cmdLine)
 		return false;
 	}
 
-	m_settings = xml::XmlDeserializer(file).readObject< DroneSettings >();
+	m_settings = xml::XmlDeserializer(file, configurationFile).readObject< DroneSettings >();
 	
 	file->close();
 

@@ -39,7 +39,7 @@ inline std::wstring xmltows(const XML_Char* xmlstr)
 class XmlPullParserImpl
 {
 public:
-	XmlPullParserImpl(IStream* stream);
+	XmlPullParserImpl(IStream* stream, const std::wstring& name);
 
 	~XmlPullParserImpl();
 
@@ -47,6 +47,7 @@ public:
 
 private:
 	Ref< IStream > m_stream;
+	std::wstring m_name;
 	XML_Parser m_parser;
 	uint8_t m_buf[4096];
 	bool m_done;
@@ -72,8 +73,9 @@ private:
 	static int XMLCALL unknownEncoding(void* userData, const XML_Char* name, XML_Encoding* info);
 };
 
-XmlPullParserImpl::XmlPullParserImpl(IStream* stream)
+XmlPullParserImpl::XmlPullParserImpl(IStream* stream, const std::wstring& name)
 :	m_stream(stream)
+,	m_name(name)
 ,	m_parser(0)
 ,	m_done(false)
 ,	m_eventQueueHead(0)
@@ -116,7 +118,7 @@ bool XmlPullParserImpl::parse()
 		int nread = m_stream->read(m_buf, sizeof(m_buf));
 		if (nread < 0)
 		{
-			log::error << L"Unexpected out-of-data in XML parser" << Endl;
+			log::error << L"Unexpected out-of-data in XML parser (" << m_name << L")." << Endl;
 			return false;
 		}
 
@@ -124,7 +126,7 @@ bool XmlPullParserImpl::parse()
 		if (XML_Parse(m_parser, (const char*)m_buf, nread, m_done) == XML_STATUS_ERROR)
 		{
 			XML_Size line = XML_GetCurrentLineNumber(m_parser);
-			log::error << L"XML parse error at line " << int32_t(line) << Endl;
+			log::error << L"XML parse error at line " << int32_t(line) << L" (" << m_name << L")." << Endl;
 
 			XmlPullParser::Event* evt = allocEvent();
 			if (!evt)
@@ -263,8 +265,8 @@ int XMLCALL XmlPullParserImpl::unknownEncoding(void* userData, const XML_Char* n
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.XmlPullParser", XmlPullParser, Object)
 
-XmlPullParser::XmlPullParser(IStream* stream)
-:	m_impl(new XmlPullParserImpl(stream))
+XmlPullParser::XmlPullParser(IStream* stream, const std::wstring& name)
+:	m_impl(new XmlPullParserImpl(stream, name))
 ,	m_pushed(0)
 {
 }

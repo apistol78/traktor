@@ -29,17 +29,17 @@ bool Document::loadFromFile(const Path& fileName)
 	
 	if (file != 0)
 	{
-		result = loadFromStream(file);
+		result = loadFromStream(file, fileName.getPathName());
 		file->close();
 	}
 	
 	return result;
 }
 
-bool Document::loadFromStream(IStream* stream)
+bool Document::loadFromStream(IStream* stream, const std::wstring& name)
 {
 	RefArray< Element > stack;
-	XmlPullParser xpp(stream);
+	XmlPullParser xpp(stream, name);
 
 	for (;;)
 	{
@@ -93,14 +93,14 @@ bool Document::loadFromStream(IStream* stream)
 	return true;
 }
 
-bool Document::loadFromText(const std::wstring& text)
+bool Document::loadFromText(const std::wstring& text, const std::wstring& name)
 {
 	return loadFromStream(new MemoryStream(
 		(void*)text.c_str(),
 		int(text.length() * sizeof(wchar_t)),
 		true,
 		false
-	));
+	), name);
 }
 
 bool Document::saveAsFile(const Path& fileName)

@@ -237,7 +237,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 
 	if ((file = FileSystem::getInstance().open(userConfig, File::FmRead)) != 0)
 	{
-		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		settings = xml::XmlDeserializer(file, settingsFile.getPathName()).readObject< PropertyGroup >();
 		file->close();
 	}
 
@@ -249,7 +249,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 
 	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
 	{
-		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		settings = xml::XmlDeserializer(file, settingsFile.getPathName()).readObject< PropertyGroup >();
 		file->close();
 	}
 

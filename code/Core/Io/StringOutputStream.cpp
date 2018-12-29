@@ -6,6 +6,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 */
 #include <cstring>
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/Align.h"
 
 namespace traktor
 {
@@ -15,7 +16,7 @@ StringOutputStreamBuffer::StringOutputStreamBuffer()
 ,	m_capacity(1024)
 ,	m_tail(0)
 {
-	m_buffer[m_tail] = L'\0';
+	m_buffer[0] = L'\0';
 }
 
 bool StringOutputStreamBuffer::empty() const
@@ -36,6 +37,7 @@ const wchar_t* StringOutputStreamBuffer::c_str() const
 void StringOutputStreamBuffer::reset()
 {
 	m_tail = 0;
+	m_buffer[0] = L'\0';
 }
 
 int32_t StringOutputStreamBuffer::overflow(const wchar_t* buffer, int32_t count)
@@ -43,13 +45,13 @@ int32_t StringOutputStreamBuffer::overflow(const wchar_t* buffer, int32_t count)
 	size_t newTail = m_tail + count;
 	if (newTail + 1 >= m_capacity)
 	{
-		size_t newCapacity = m_capacity + 1024;
+		size_t newCapacity = alignUp(newTail, 1024);
 
 		// Allocate a new bigger buffer.
-		AutoArrayPtr< wchar_t > buffer(new wchar_t [newCapacity]);
-		std::memcpy(buffer.ptr(), m_buffer.c_ptr(), (m_tail + 1) * sizeof(wchar_t));
+		AutoArrayPtr< wchar_t > newBuffer(new wchar_t [newCapacity]);
+		std::memcpy(newBuffer.ptr(), m_buffer.c_ptr(), m_tail * sizeof(wchar_t));
 
-		m_buffer.move(buffer);
+		m_buffer.move(newBuffer);
 		m_capacity = newCapacity;
 	}
 

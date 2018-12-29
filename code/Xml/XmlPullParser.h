@@ -61,7 +61,7 @@ public:
 		}
 	};
 
-	XmlPullParser(IStream* stream);
+	XmlPullParser(IStream* stream, const std::wstring& name = L"");
 
 	virtual ~XmlPullParser();
 
