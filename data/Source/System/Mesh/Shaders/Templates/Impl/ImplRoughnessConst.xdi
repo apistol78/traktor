@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{9A56C56D-030D-5746-A8C1-1BBB418D0C59}</id>
+			<comment/>
+			<position>
+				<first>859</first>
+				<second>423</second>
+			</position>
+			<name>T_Roughness</name>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{BB4E9854-6F1D-FF4F-B8F6-73BC566E81A4}</id>
+			<comment>
+			<![CDATA[
+Tag_Roughness
+			]]>
+			</comment>
+			<position>
+				<first>468</first>
+				<second>392</second>
+			</position>
+			<value>0</value>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{93088A3B-EC85-C842-AE60-52205D2FDB87}</id>
+			<comment/>
+			<position>
+				<first>226</first>
+				<second>490</second>
+			</position>
+			<name>T_TexCoord0</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{B2C88C67-5571-8B4E-A436-66B4AA836EC5}</id>
+			<comment/>
+			<position>
+				<first>226</first>
+				<second>529</second>
+			</position>
+			<name>T_TexCoord1</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{A3854773-894F-B94F-8BC2-74AF668BAAEC}</id>
+			<comment/>
+			<position>
+				<first>641</first>
+				<second>376</second>
+			</position>
+			<parameterName>Mesh_Roughness</parameterName>
+			<type>PtScalar</type>
+			<frequency>UfFrame</frequency>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Initial</name>
+			</destination>
+		</item>
+	</edges>
+</object>

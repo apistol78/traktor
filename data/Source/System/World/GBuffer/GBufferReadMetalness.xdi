@@ -5,8 +5,8 @@
 			<id>{520ED0D2-881F-D044-B213-28592C3F0C9C}</id>
 			<comment/>
 			<position>
-				<first>813</first>
-				<second>286</second>
+				<first>1337</first>
+				<second>180</second>
 			</position>
 			<name>UV</name>
 			<connectable>true</connectable>
@@ -18,8 +18,8 @@
 			<id>{66678BA7-49BD-6A4E-BF71-3A7C57F06519}</id>
 			<comment/>
 			<position>
-				<first>2370</first>
-				<second>199</second>
+				<first>2167</first>
+				<second>190</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -27,8 +27,8 @@
 			<id>{CCC7BC7D-BACE-7248-A77B-8CBA2B3715D6}</id>
 			<comment/>
 			<position>
-				<first>705</first>
-				<second>24</second>
+				<first>1331</first>
+				<second>73</second>
 			</position>
 			<parameterName>World_MiscMap</parameterName>
 			<type>PtTexture2D</type>
@@ -38,8 +38,8 @@
 			<id>{387CCEF1-C339-2541-87DF-E7B88E0085FC}</id>
 			<comment/>
 			<position>
-				<first>1266</first>
-				<second>85</second>
+				<first>1577</first>
+				<second>114</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -56,17 +56,17 @@
 			<id>{4A8DB041-6090-B143-B1A8-84A7499C6C06}</id>
 			<comment/>
 			<position>
-				<first>1699</first>
-				<second>160</second>
+				<first>1814</first>
+				<second>158</second>
 			</position>
-			<swizzle>w</swizzle>
+			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{AF4886C9-831A-8647-A366-7FCA92975987}</id>
 			<comment/>
 			<position>
-				<first>1742</first>
-				<second>233</second>
+				<first>1755</first>
+				<second>230</second>
 			</position>
 			<value>1</value>
 		</item>

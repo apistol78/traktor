@@ -282,6 +282,24 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 				prop = meshNode->GetNextProperty(prop);
 			}
 
+			// \note In case weird FBX show up with un-standard texture names.
+			//{
+			//FbxProperty prop = material->GetFirstProperty();
+			//while (prop.IsValid())
+			//{
+			//	int userTag = prop.GetUserTag();
+			//	std::wstring propName = mbstows(prop.GetNameAsCStr());
+
+			//	log::info << L"\"" << propName << L"\"" << Endl;
+
+			//	const FbxTexture* texture = getTexture(material, prop.GetNameAsCStr());
+			//	if (texture)
+			//		log::info << L"\t as texture \"" << getTextureName(texture) << L"\"" << Endl;
+
+			//	prop = material->GetNextProperty(prop);
+			//}
+			//}
+
 			const FbxTexture* diffuseTexture = getTexture(material, FbxSurfaceMaterial::sDiffuse);
 			if (diffuseTexture)
 			{
@@ -294,6 +312,20 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 			{
 				uint32_t channel = uvChannel(outChannels, specularTexture->UVSet.Get().Buffer());
 				mm.setSpecularMap(Material::Map(getTextureName(specularTexture), channel, false));
+			}
+
+			const FbxTexture* shininessTexture = getTexture(material, FbxSurfaceMaterial::sShininess);
+			if (shininessTexture)
+			{
+				uint32_t channel = uvChannel(outChannels, shininessTexture->UVSet.Get().Buffer());
+				mm.setRoughnessMap(Material::Map(getTextureName(shininessTexture), channel, false));
+			}
+
+			const FbxTexture* reflectionFactorTexture = getTexture(material, FbxSurfaceMaterial::sReflectionFactor);
+			if (reflectionFactorTexture)
+			{
+				uint32_t channel = uvChannel(outChannels, reflectionFactorTexture->UVSet.Get().Buffer());
+				mm.setMetalnessMap(Material::Map(getTextureName(reflectionFactorTexture), channel, false));
 			}
 
 			const FbxTexture* normalTexture = getTexture(material, FbxSurfaceMaterial::sNormalMap);
@@ -352,7 +384,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 				if (phongShininess.IsValid())
 				{
 					FbxDouble shininess = phongShininess.Get();
-					mm.setSpecularRoughness(max(float(shininess / 16.0), 0.2f));
+					mm.setRoughness(max(float(shininess / 16.0), 0.2f));
 				}
 
 				FbxPropertyT<FbxDouble3> phongEmissive = mayaExported ? phongMaterial->Ambient : phongMaterial->Emissive;

@@ -155,6 +155,8 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 	m_materialGrid->addColumn(new ui::GridColumn(L"Name", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Diffuse Map", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Specular Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Roughness Map", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Metalness Map", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Transparency Map", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Emissive Map", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Reflective Map", ui::dpi96(100)));
@@ -163,7 +165,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 	m_materialGrid->addColumn(new ui::GridColumn(L"Color", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Diffuse Term", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Specular Term", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Specular Roughness", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Roughness", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Metalness", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Transparency", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Emissive", ui::dpi96(100)));
@@ -612,6 +614,8 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 			row->add(new ui::GridItem(i->getName()));
 			row->add(new ui::GridItem(i->getDiffuseMap().name));
 			row->add(new ui::GridItem(i->getSpecularMap().name));
+			row->add(new ui::GridItem(i->getRoughnessMap().name));
+			row->add(new ui::GridItem(i->getMetalnessMap().name));
 			row->add(new ui::GridItem(i->getTransparencyMap().name));
 			row->add(new ui::GridItem(i->getEmissiveMap().name));
 			row->add(new ui::GridItem(i->getReflectiveMap().name));
@@ -620,7 +624,7 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 			row->add(new ui::GridItem(L"0, 0, 0, 0"));
 			row->add(new ui::GridItem(toString(i->getDiffuseTerm())));
 			row->add(new ui::GridItem(toString(i->getSpecularTerm())));
-			row->add(new ui::GridItem(toString(i->getSpecularRoughness())));
+			row->add(new ui::GridItem(toString(i->getRoughness())));
 			row->add(new ui::GridItem(toString(i->getMetalness())));
 			row->add(new ui::GridItem(toString(i->getTransparency())));
 			row->add(new ui::GridItem(toString(i->getEmissive())));

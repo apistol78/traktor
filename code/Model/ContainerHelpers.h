@@ -68,6 +68,10 @@ struct MaterialPredicate
 			a.getDiffuseMap().channel == b.getDiffuseMap().channel &&
 			a.getSpecularMap().name == b.getSpecularMap().name &&
 			a.getSpecularMap().channel == b.getSpecularMap().channel &&
+			a.getRoughnessMap().name == b.getRoughnessMap().name &&
+			a.getRoughnessMap().channel == b.getRoughnessMap().channel &&
+			a.getMetalnessMap().name == b.getMetalnessMap().name &&
+			a.getMetalnessMap().channel == b.getMetalnessMap().channel &&
 			a.getTransparencyMap().name == b.getTransparencyMap().name &&
 			a.getTransparencyMap().channel == b.getTransparencyMap().channel &&
 			a.getEmissiveMap().name == b.getEmissiveMap().name &&
@@ -79,7 +83,7 @@ struct MaterialPredicate
 			a.getColor() == b.getColor() &&
 			compare(a.getDiffuseTerm(), b.getDiffuseTerm()) &&
 			compare(a.getSpecularTerm(), b.getSpecularTerm()) &&
-			compare(a.getSpecularRoughness(), b.getSpecularRoughness()) &&
+			compare(a.getRoughness(), b.getRoughness()) &&
 			compare(a.getTransparency(), b.getTransparency()) &&
 			compare(a.getEmissive(), b.getEmissive()) &&
 			compare(a.getReflective(), b.getReflective()) &&

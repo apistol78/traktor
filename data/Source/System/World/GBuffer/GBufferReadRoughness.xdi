@@ -5,8 +5,8 @@
 			<id>{97DC9817-9348-4045-84D1-5E3E34942BEF}</id>
 			<comment/>
 			<position>
-				<first>813</first>
-				<second>286</second>
+				<first>1244</first>
+				<second>170</second>
 			</position>
 			<name>UV</name>
 			<connectable>true</connectable>
@@ -18,8 +18,8 @@
 			<id>{DA71CC25-EA8C-574D-AFFD-02F27FC9C7F4}</id>
 			<comment/>
 			<position>
-				<first>2498</first>
-				<second>207</second>
+				<first>2078</first>
+				<second>195</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -27,8 +27,8 @@
 			<id>{E179CA16-D5BD-8D4A-8F11-66ACD4341201}</id>
 			<comment/>
 			<position>
-				<first>705</first>
-				<second>24</second>
+				<first>1237</first>
+				<second>67</second>
 			</position>
 			<parameterName>World_MiscMap</parameterName>
 			<type>PtTexture2D</type>
@@ -38,8 +38,8 @@
 			<id>{8A78D031-3902-BD47-B62F-6B36A47E779E}</id>
 			<comment/>
 			<position>
-				<first>1266</first>
-				<second>85</second>
+				<first>1460</first>
+				<second>108</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -65,8 +65,8 @@
 			<id>{634D1C14-7A5D-5A4F-8D28-E47DA6AFFE9E}</id>
 			<comment/>
 			<position>
-				<first>1944</first>
-				<second>289</second>
+				<first>1661</first>
+				<second>238</second>
 			</position>
 			<value>64</value>
 		</item>
@@ -74,8 +74,8 @@
 			<id>{57A46D82-8AEE-4849-8445-6EB97D77726D}</id>
 			<comment/>
 			<position>
-				<first>2143</first>
-				<second>208</second>
+				<first>1860</first>
+				<second>157</second>
 			</position>
 		</item>
 	</nodes>

@@ -55,8 +55,8 @@
 			<id>{92E4D4CE-99F4-FF4C-9426-9F2C824ABFDA}</id>
 			<comment/>
 			<position>
-				<first>286</first>
-				<second>405</second>
+				<first>306</first>
+				<second>409</second>
 			</position>
 			<name>T_SurfaceColor</name>
 			<connectable>true</connectable>
@@ -68,7 +68,7 @@
 			<id>{8E8A8D1B-B1B5-CC46-B547-3F864E45A204}</id>
 			<comment/>
 			<position>
-				<first>296</first>
+				<first>306</first>
 				<second>339</second>
 			</position>
 			<name>T_ViewNormal</name>
@@ -81,8 +81,8 @@
 			<id>{3C0B33B1-F3CD-E842-8018-F7DB3FF29A2F}</id>
 			<comment/>
 			<position>
-				<first>286</first>
-				<second>372</second>
+				<first>306</first>
+				<second>374</second>
 			</position>
 			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
@@ -94,8 +94,8 @@
 			<id>{490D63E8-0389-914C-ADDF-D8D560F2C532}</id>
 			<comment/>
 			<position>
-				<first>296</first>
-				<second>438</second>
+				<first>316</first>
+				<second>444</second>
 			</position>
 			<name>T_DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -107,8 +107,8 @@
 			<id>{AF540A76-DD59-A24D-8E29-2B6782DD733F}</id>
 			<comment/>
 			<position>
-				<first>316</first>
-				<second>636</second>
+				<first>326</first>
+				<second>654</second>
 			</position>
 			<name>T_RimColor</name>
 			<connectable>true</connectable>
@@ -120,8 +120,8 @@
 			<id>{D85EA9B5-84F4-184E-A0A6-E4D54AAD867F}</id>
 			<comment/>
 			<position>
-				<first>296</first>
-				<second>669</second>
+				<first>306</first>
+				<second>689</second>
 			</position>
 			<name>T_RimIntensity</name>
 			<connectable>true</connectable>
@@ -133,10 +133,10 @@
 			<id>{92602A9C-DF5E-0C4E-B46F-ECA8AA72F795}</id>
 			<comment/>
 			<position>
-				<first>236</first>
-				<second>471</second>
+				<first>316</first>
+				<second>479</second>
 			</position>
-			<name>T_SpecularRoughness</name>
+			<name>T_Roughness</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -146,8 +146,8 @@
 			<id>{B019F090-3FEB-A144-BC9E-1276D505F614}</id>
 			<comment/>
 			<position>
-				<first>286</first>
-				<second>504</second>
+				<first>306</first>
+				<second>514</second>
 			</position>
 			<name>T_SpecularTerm</name>
 			<connectable>true</connectable>
@@ -160,22 +160,9 @@
 			<comment/>
 			<position>
 				<first>326</first>
-				<second>603</second>
+				<second>619</second>
 			</position>
 			<name>T_Emissive</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{B5B9BD53-DBCD-2342-8369-6C8FDB0B354D}</id>
-			<comment/>
-			<position>
-				<first>316</first>
-				<second>702</second>
-			</position>
-			<name>T_Reflective</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -185,8 +172,8 @@
 			<id>{72EC9C69-6E18-934A-9130-65438CB2A23D}</id>
 			<comment/>
 			<position>
-				<first>286</first>
-				<second>570</second>
+				<first>306</first>
+				<second>584</second>
 			</position>
 			<name>T_Transparency</name>
 			<connectable>true</connectable>
@@ -198,8 +185,8 @@
 			<id>{B4046651-152F-8149-8AF3-28E508D57B4E}</id>
 			<comment/>
 			<position>
-				<first>316</first>
-				<second>735</second>
+				<first>326</first>
+				<second>724</second>
 			</position>
 			<name>T_Irradiance</name>
 			<connectable>true</connectable>
@@ -211,8 +198,8 @@
 			<id>{5EC9477B-246A-1B40-8F60-06D1C2BD2AB8}</id>
 			<comment/>
 			<position>
-				<first>306</first>
-				<second>537</second>
+				<first>326</first>
+				<second>549</second>
 			</position>
 			<name>T_Metalness</name>
 			<connectable>true</connectable>
@@ -224,8 +211,8 @@
 			<id>{0352C675-3C02-5344-B39E-74A5FF5CAEB4}</id>
 			<comment/>
 			<position>
-				<first>302</first>
-				<second>769</second>
+				<first>306</first>
+				<second>759</second>
 			</position>
 			<name>T_ViewVelocity</name>
 			<connectable>true</connectable>

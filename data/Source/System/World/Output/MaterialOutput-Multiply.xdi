@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>253</first>
-				<second>623</second>
+				<second>627</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -56,8 +56,8 @@
 			<id>{A3D7B857-BFA3-BE49-8FA5-4AE5E99CB8F6}</id>
 			<comment/>
 			<position>
-				<first>256</first>
-				<second>527</second>
+				<first>263</first>
+				<second>528</second>
 			</position>
 			<name>DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -77,8 +77,8 @@
 			<id>{86DD4F8A-8AA1-4842-99AC-DE574BE0D4A9}</id>
 			<comment/>
 			<position>
-				<first>248</first>
-				<second>559</second>
+				<first>253</first>
+				<second>561</second>
 			</position>
 			<name>SpecularTerm</name>
 			<connectable>true</connectable>
@@ -90,8 +90,8 @@
 			<id>{127CAC19-2500-EC40-A3B0-F912F00F2B54}</id>
 			<comment/>
 			<position>
-				<first>256</first>
-				<second>655</second>
+				<first>263</first>
+				<second>660</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -103,8 +103,8 @@
 			<id>{A569B001-F727-C645-9239-50B26E04B3DD}</id>
 			<comment/>
 			<position>
-				<first>217</first>
-				<second>591</second>
+				<first>223</first>
+				<second>594</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>

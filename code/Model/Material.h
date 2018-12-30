@@ -80,6 +80,14 @@ public:
 
 	const Map& getSpecularMap() const;
 
+	void setRoughnessMap(const Map& roughnessMap);
+
+	const Map& getRoughnessMap() const;
+
+	void setMetalnessMap(const Map& metalnessMap);
+
+	const Map& getMetalnessMap() const;
+
 	void setTransparencyMap(const Map& transparencyMap);
 
 	const Map& getTransparencyMap() const;
@@ -114,9 +122,9 @@ public:
 
 	float getSpecularTerm() const;
 
-	void setSpecularRoughness(float specularRoughness);
+	void setRoughness(float roughness);
 
-	float getSpecularRoughness() const;
+	float getRoughness() const;
 
 	void setMetalness(float metalness);
 
@@ -152,6 +160,8 @@ private:
 	std::wstring m_name;
 	Map m_diffuseMap;
 	Map m_specularMap;
+	Map m_roughnessMap;
+	Map m_metalnessMap;
 	Map m_transparencyMap;
 	Map m_emissiveMap;
 	Map m_reflectiveMap;
@@ -161,7 +171,7 @@ private:
 	Color4ub m_color;
 	float m_diffuseTerm;
 	float m_specularTerm;
-	float m_specularRoughness;
+	float m_roughness;
 	float m_metalness;
 	float m_transparency;
 	float m_emissive;

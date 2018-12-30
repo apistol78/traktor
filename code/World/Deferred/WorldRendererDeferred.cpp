@@ -159,12 +159,12 @@ bool WorldRendererDeferred::create(
 #if !defined(__PS3__)
 		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
 		rtscd.targets[1].format = render::TfR10G10B10A2;	// Normals (RGB)
-		rtscd.targets[2].format = render::TfR8G8B8A8;		// Specular term (R), Reflectivity (G), Roughness (B), Metalness (A)
+		rtscd.targets[2].format = render::TfR11G11B10F;		// Specular term (R), Metalness (G), Roughness (B)
 		rtscd.targets[3].format = render::TfR11G11B10F;		// Surface color (RGB)
 #else
 		rtscd.targets[0].format = render::TfR8G8B8A8;		// Encoded depth
 		rtscd.targets[1].format = render::TfR8G8B8A8;		// Normals (RGB), Unused (A)
-		rtscd.targets[2].format = render::TfR8G8B8A8;		// Specular term (R), Reflectivity (G), Roughness (B), Metalness (A)
+		rtscd.targets[2].format = render::TfR8G8B8A8;		//  Specular term (R), Metalness (G), Roughness (B), Unused (A)
 		rtscd.targets[3].format = render::TfR8G8B8A8;		// Surface color (RGB), Unused (A)
 #endif
 
@@ -1407,9 +1407,8 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 		outTargets.push_back(render::DebugTarget(L"GBuffer depth", render::DtvViewDepth, m_gbufferTargetSet->getColorTexture(0)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer normals", render::DtvNormals, m_gbufferTargetSet->getColorTexture(1)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer specular term", render::DtvDeferredSpecularTerm, m_gbufferTargetSet->getColorTexture(2)));
-		outTargets.push_back(render::DebugTarget(L"GBuffer reflectivity", render::DtvDeferredReflectivity, m_gbufferTargetSet->getColorTexture(2)));
-		outTargets.push_back(render::DebugTarget(L"GBuffer roughness", render::DtvDeferredSpecularRoughness, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer metalness", render::DtvDeferredMetalness, m_gbufferTargetSet->getColorTexture(2)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer roughness", render::DtvDeferredSpecularRoughness, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer surface color", render::DtvDefault, m_gbufferTargetSet->getColorTexture(3)));
 	}
 
