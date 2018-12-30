@@ -321,14 +321,9 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			StringOutputStream ss;
 			ss << L"-- " << name << Endl;
 			ss << Endl;
-			ss << name << L" = " << name << L" or inherit(traktor.world.ComponentEntity)" << Endl;
-			ss << name << L"_meta = " << name << L"_meta or { __index = " << name << L" }" << Endl;
+			ss << name << L" = " << name << L" or class(\"" << name << L"\", traktor.world.ComponentEntity)" << Endl;
 			ss << Endl;
-			ss << L"function " << name << L".new(o)" << Endl;
-			ss << L"\to = o or {}" << Endl;
-			ss << L"\tsetmetatable(o, " << name << L"_meta)" << Endl;
-			ss << Endl;
-			ss << L"\treturn o" << Endl;
+			ss << L"function " << name << L":new()" << Endl;
 			ss << L"end" << Endl;
 			ss << Endl;
 			ss << L"function " << name << L":update(totalTime, deltaTime)" << Endl;
