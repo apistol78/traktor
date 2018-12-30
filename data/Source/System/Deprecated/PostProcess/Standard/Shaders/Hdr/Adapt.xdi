@@ -5,8 +5,8 @@
 			<id>{FD37798D-AF87-8D46-B6E9-0AAC129DAA0D}</id>
 			<comment/>
 			<position>
-				<first>985</first>
-				<second>160</second>
+				<first>983</first>
+				<second>158</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -53,8 +53,8 @@
 			<id>{86EC0B94-9806-4844-B7C2-E0DE3825ABEF}</id>
 			<comment/>
 			<position>
-				<first>187</first>
-				<second>125</second>
+				<first>185</first>
+				<second>123</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -71,8 +71,8 @@
 			<id>{DC53300F-6A41-EB45-8178-D7C64FAAB57A}</id>
 			<comment/>
 			<position>
-				<first>185</first>
-				<second>232</second>
+				<first>183</first>
+				<second>230</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -89,16 +89,16 @@
 			<id>{C90B50E1-08C6-1C4F-A142-B585DFD07B6C}</id>
 			<comment/>
 			<position>
-				<first>722</first>
-				<second>176</second>
+				<first>720</first>
+				<second>174</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{CC1485EC-9AE7-4047-85BB-B39F1E4816B0}</id>
 			<comment/>
 			<position>
-				<first>221</first>
-				<second>421</second>
+				<first>198</first>
+				<second>418</second>
 			</position>
 			<value>0.65</value>
 		</item>
@@ -106,8 +106,8 @@
 			<id>{22930DAF-46D9-7D4E-AEF3-67E7731FF23F}</id>
 			<comment/>
 			<position>
-				<first>166</first>
-				<second>364</second>
+				<first>197</first>
+				<second>344</second>
 			</position>
 			<parameterName>DeltaTime</parameterName>
 			<type>PtScalar</type>
@@ -117,16 +117,16 @@
 			<id>{02AAD0C3-30F8-A34E-923A-475745E9C4C1}</id>
 			<comment/>
 			<position>
-				<first>351</first>
-				<second>370</second>
+				<first>350</first>
+				<second>369</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1,traktor.render.Node:1">
 			<id>{5E402774-310B-D240-9728-F505FB84AE36}</id>
 			<comment/>
 			<position>
-				<first>-88</first>
-				<second>198</second>
+				<first>-9</first>
+				<second>320</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -144,8 +144,8 @@
 			<id>{303B7F48-264B-CB44-B04B-F46878E210FA}</id>
 			<comment/>
 			<position>
-				<first>396</first>
-				<second>179</second>
+				<first>395</first>
+				<second>178</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -153,8 +153,8 @@
 			<id>{55ECF7B6-B461-2543-9A21-0C320DFC9EAD}</id>
 			<comment/>
 			<position>
-				<first>394</first>
-				<second>223</second>
+				<first>393</first>
+				<second>222</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -162,8 +162,8 @@
 			<id>{F9DA4DE6-003B-FD49-AAFC-660E59E5F4CC}</id>
 			<comment/>
 			<position>
-				<first>534</first>
-				<second>335</second>
+				<first>533</first>
+				<second>334</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -172,8 +172,8 @@
 			<id>{A04B14D0-B28D-A347-AB91-477153FDC48B}</id>
 			<comment/>
 			<position>
-				<first>-34</first>
-				<second>65</second>
+				<first>-33</first>
+				<second>64</second>
 			</position>
 			<parameterName>SourceTexture</parameterName>
 			<type>PtTexture2D</type>
@@ -183,8 +183,8 @@
 			<id>{D17CD4F7-C89F-BC47-915C-E276F8B2899A}</id>
 			<comment/>
 			<position>
-				<first>-64</first>
-				<second>118</second>
+				<first>-57</first>
+				<second>223</second>
 			</position>
 			<parameterName>CurrentIllumTexture</parameterName>
 			<type>PtTexture2D</type>

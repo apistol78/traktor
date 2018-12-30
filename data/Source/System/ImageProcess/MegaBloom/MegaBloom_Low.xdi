@@ -264,7 +264,7 @@
 			<target>Illum64</target>
 		</item>
 		<item type="traktor.render.ImageProcessStepSimple" version="1">
-			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
+			<shader>{1B84E078-B811-4EBF-996B-6BA11E45B2DC}</shader>
 			<sources>
 				<item>
 					<param>SourceTexture</param>
@@ -276,7 +276,7 @@
 			<target>Illum16</target>
 		</item>
 		<item type="traktor.render.ImageProcessStepSimple" version="1">
-			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
+			<shader>{1B84E078-B811-4EBF-996B-6BA11E45B2DC}</shader>
 			<sources>
 				<item>
 					<param>SourceTexture</param>
