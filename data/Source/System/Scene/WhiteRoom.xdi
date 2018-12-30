@@ -104,11 +104,11 @@
 					</transform>
 					<components>
 						<item type="traktor.world.LightComponentData" version="3">
-							<lightType>LtDirectional</lightType>
+							<lightType>LtProbe</lightType>
 							<sunColor>1, 1, 1, 0</sunColor>
 							<baseColor>0.5, 0.5, 0.5, 0</baseColor>
 							<shadowColor>0.25, 0.25, 0.25, 0</shadowColor>
-							<probeDiffuseTexture>{00000000-0000-0000-0000-000000000000}</probeDiffuseTexture>
+							<probeDiffuseTexture>{1BCA1D09-83D0-974C-B2CE-032EA1F71B1B}</probeDiffuseTexture>
 							<cloudShadowTexture>{00000000-0000-0000-0000-000000000000}</cloudShadowTexture>
 							<castShadow>true</castShadow>
 							<range>10</range>
