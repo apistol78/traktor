@@ -2,35 +2,13 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{9A56C56D-030D-5746-A8C1-1BBB418D0C59}</id>
-			<comment/>
-			<position>
-				<first>1169</first>
-				<second>415</second>
-			</position>
-			<name>T_SpecularRoughness</name>
-		</item>
-		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{C3FED130-41CA-B24E-8B33-13BDC6538CB7}</id>
 			<comment/>
 			<position>
-				<first>1169</first>
-				<second>371</second>
+				<first>781</first>
+				<second>451</second>
 			</position>
 			<name>T_SpecularTerm</name>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{BB4E9854-6F1D-FF4F-B8F6-73BC566E81A4}</id>
-			<comment>
-			<![CDATA[
-Tag_SpecularRoughness
-			]]>
-			</comment>
-			<position>
-				<first>490</first>
-				<second>366</second>
-			</position>
-			<value>0</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{0D5E1F49-D988-9048-AA7E-6FBDF84D62D3}</id>
@@ -40,8 +18,8 @@ Tag_SpecularTerm
 			]]>
 			</comment>
 			<position>
-				<first>490</first>
-				<second>278</second>
+				<first>295</first>
+				<second>416</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -75,54 +53,10 @@ Tag_SpecularTerm
 			<id>{4C18E6B6-024B-3B45-8A22-9643F8ADF94A}</id>
 			<comment/>
 			<position>
-				<first>749</first>
-				<second>248</second>
+				<first>490</first>
+				<second>397</second>
 			</position>
 			<parameterName>Mesh_SpecularTerm</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
-		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
-			<id>{A3854773-894F-B94F-8BC2-74AF668BAAEC}</id>
-			<comment/>
-			<position>
-				<first>726</first>
-				<second>353</second>
-			</position>
-			<parameterName>Mesh_SpecularRoughness</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
-		</item>
-		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{7A12AE49-505A-E547-9216-ED181717258B}</id>
-			<comment/>
-			<position>
-				<first>1169</first>
-				<second>459</second>
-			</position>
-			<name>T_Metalness</name>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{A66F16CB-8574-7246-B6EF-8DF30F3B39C5}</id>
-			<comment>
-			<![CDATA[
-Tag_Metalness
-			]]>
-			</comment>
-			<position>
-				<first>493</first>
-				<second>472</second>
-			</position>
-			<value>0</value>
-		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
-			<id>{ECACFDAE-84D3-BB4C-B2FC-BF5CA9BCEEDB}</id>
-			<comment/>
-			<position>
-				<first>762</first>
-				<second>461</second>
-			</position>
-			<parameterName>Mesh_Metalness</parameterName>
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
@@ -130,61 +64,21 @@ Tag_Metalness
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Initial</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Initial</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Initial</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
 				<name>Input</name>
 			</destination>
 		</item>

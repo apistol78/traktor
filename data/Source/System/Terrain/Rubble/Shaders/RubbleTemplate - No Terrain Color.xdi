@@ -56,7 +56,7 @@
 					<name>T_Metalness</name>
 				</item>
 				<item>
-					<name>T_SpecularRoughness</name>
+					<name>T_Roughness</name>
 				</item>
 				<item>
 					<name>T_SpecularTerm</name>
@@ -196,10 +196,6 @@
 					<optional>false</optional>
 				</item>
 				<item>
-					<name>T_SpecularRoughness</name>
-					<optional>false</optional>
-				</item>
-				<item>
 					<name>T_SpecularTerm</name>
 					<optional>false</optional>
 				</item>
@@ -219,9 +215,22 @@
 					<name>T_ViewPosition</name>
 					<optional>false</optional>
 				</item>
+				<item>
+					<name>T_Roughness</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>T_ViewVelocity</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
-			<values/>
+			<values>
+				<item>
+					<first>T_Roughness</first>
+					<second>0</second>
+				</item>
+			</values>
 		</item>
 		<item type="traktor.render.External" version="1,traktor.render.Node:1">
 			<id>{48FD1FD5-0F7D-C14A-ABEB-F30D0BEB725D}</id>
@@ -401,16 +410,6 @@
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<name>T_RimIntensity</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>T_SpecularRoughness</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>T_SpecularRoughness</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">

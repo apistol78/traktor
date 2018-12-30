@@ -235,6 +235,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 
 	m_materialTextureList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NAME"), ui::dpi96(180)));
 	m_materialTextureList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_ASSET"), ui::dpi96(300)));
+	m_materialTextureList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_USAGE"), ui::dpi96(300)));
 	m_materialTextureList->addEventHandler< ui::MouseDoubleClickEvent >(this, &MeshAssetEditor::eventMaterialTextureListDoubleClick);
 
 	updateModel();
@@ -420,6 +421,8 @@ void MeshAssetEditor::updateMaterialList()
 			{
 				i->getDiffuseMap().name,
 				i->getSpecularMap().name,
+				i->getRoughnessMap().name,
+				i->getMetalnessMap().name,
 				i->getTransparencyMap().name,
 				i->getEmissiveMap().name,
 				i->getReflectiveMap().name,
@@ -447,6 +450,26 @@ void MeshAssetEditor::updateMaterialList()
 				Ref< ui::GridRow > textureItem = new ui::GridRow();
 				textureItem->add(new ui::GridItem(modelTextures[j]));
 				textureItem->add(new ui::GridItem(materialTexture));
+
+				StringOutputStream ss;
+				if (modelTextures[j] == i->getDiffuseMap().name)
+					ss << L" | Diffuse";
+				if (modelTextures[j] == i->getSpecularMap().name)
+					ss << L" | Specular";
+				if (modelTextures[j] == i->getRoughnessMap().name)
+					ss << L" | Roughness";
+				if (modelTextures[j] == i->getMetalnessMap().name)
+					ss << L" | Metalness";
+				if (modelTextures[j] == i->getTransparencyMap().name)
+					ss << L" | Transparency";
+				if (modelTextures[j] == i->getEmissiveMap().name)
+					ss << L" | Emissive";
+				if (modelTextures[j] == i->getReflectiveMap().name)
+					ss << L" | Reflective";
+				if (modelTextures[j] == i->getNormalMap().name)
+					ss << L" | Normal";
+				textureItem->add(new ui::GridItem(ss.str().substr(3)));
+
 				textureItem->setData(L"INSTANCE", materialTextureInstance);
 				m_materialTextureList->addRow(textureItem);
 			}

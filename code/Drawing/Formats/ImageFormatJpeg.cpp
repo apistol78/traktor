@@ -189,6 +189,8 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(IStream* stream)
 #elif defined(T_BIG_ENDIAN)
 		pixelFormat = PixelFormat::getR8G8B8();
 #endif
+	else if (m_cinfo.output_components == 1)
+		pixelFormat = PixelFormat::getR8();
 	else
 	{
 		log::error << L"Unsupported number of components, must be either 3 or 4" << Endl;

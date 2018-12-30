@@ -1958,6 +1958,10 @@
       <second>[ No texture ]</second>
     </item>
     <item>
+      <first>MESHASSET_EDITOR_TEXTURE_USAGE</first>
+      <second>Usage</second>
+    </item>
+    <item>
       <first>MESHASSET_WIZARDTOOL_DESCRIPTION</first>
       <second>Create mesh asset...</second>
     </item>

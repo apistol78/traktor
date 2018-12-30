@@ -18,8 +18,8 @@ Tag_SpecularTerm
 			]]>
 			</comment>
 			<position>
-				<first>612</first>
-				<second>335</second>
+				<first>646</first>
+				<second>245</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -76,8 +76,8 @@ Tag_SpecularMap
 			<id>{D83B4A29-82DF-0C4C-B0DA-55BDAC00A853}</id>
 			<comment/>
 			<position>
-				<first>-97</first>
-				<second>250</second>
+				<first>49</first>
+				<second>209</second>
 			</position>
 			<name>T_TexCoord0</name>
 			<connectable>true</connectable>
@@ -89,80 +89,14 @@ Tag_SpecularMap
 			<id>{9A98C86A-DA85-E64D-9A52-07E3C06B0003}</id>
 			<comment/>
 			<position>
-				<first>-97</first>
-				<second>289</second>
+				<first>49</first>
+				<second>248</second>
 			</position>
 			<name>T_TexCoord1</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{5EF3E2A9-ABA9-0D43-9983-85C8300672C0}</id>
-			<comment>
-			<![CDATA[
-Tag_SpecularRoughness
-			]]>
-			</comment>
-			<position>
-				<first>177</first>
-				<second>432</second>
-			</position>
-			<value>0</value>
-		</item>
-		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{B52FD0F3-E53F-FA4B-AB07-E8E2B8451412}</id>
-			<comment/>
-			<position>
-				<first>856</first>
-				<second>481</second>
-			</position>
-			<name>T_SpecularRoughness</name>
-		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
-			<id>{19CC1D9C-D924-A84D-97EC-9F7B2E58EE79}</id>
-			<comment/>
-			<position>
-				<first>413</first>
-				<second>419</second>
-			</position>
-			<parameterName>Mesh_SpecularRoughness</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
-		</item>
-		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{C9B3A891-B828-BB49-9128-18417DC83164}</id>
-			<comment/>
-			<position>
-				<first>856</first>
-				<second>525</second>
-			</position>
-			<name>T_Metalness</name>
-		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
-			<id>{91605F7D-18A5-864A-94E9-37F17C2BE0B7}</id>
-			<comment/>
-			<position>
-				<first>449</first>
-				<second>527</second>
-			</position>
-			<parameterName>Mesh_Metalness</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{0B3FFC21-CEEB-2641-9E7A-5FE8578DAD55}</id>
-			<comment>
-			<![CDATA[
-Tag_Metalness
-			]]>
-			</comment>
-			<position>
-				<first>180</first>
-				<second>538</second>
-			</position>
-			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -224,46 +158,6 @@ Tag_Metalness
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<name>TexCoord</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Initial</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Initial</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

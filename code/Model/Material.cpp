@@ -17,7 +17,7 @@ Material::Material()
 ,	m_color(255, 255, 255, 255)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
-,	m_specularRoughness(0.8f)
+,	m_roughness(0.8f)
 ,	m_metalness(0.0f)
 ,	m_transparency(0.0f)
 ,	m_emissive(0.0f)
@@ -34,7 +34,7 @@ Material::Material(const std::wstring& name)
 ,	m_color(255, 255, 255, 255)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
-,	m_specularRoughness(0.8f)
+,	m_roughness(0.8f)
 ,	m_metalness(0.0f)
 ,	m_transparency(0.0f)
 ,	m_emissive(0.0f)
@@ -83,6 +83,26 @@ void Material::setSpecularMap(const Map& specularMap)
 const Material::Map& Material::getSpecularMap() const
 {
 	return m_specularMap;
+}
+
+void Material::setRoughnessMap(const Map& roughnessMap)
+{
+	m_roughnessMap = roughnessMap;
+}
+
+const Material::Map& Material::getRoughnessMap() const
+{
+	return m_roughnessMap;
+}
+
+void Material::setMetalnessMap(const Map& metalnessMap)
+{
+	m_metalnessMap = metalnessMap;
+}
+
+const Material::Map& Material::getMetalnessMap() const
+{
+	return m_metalnessMap;
 }
 
 void Material::setReflectiveMap(const Map& reflectiveMap)
@@ -161,14 +181,14 @@ float Material::getSpecularTerm() const
 	return m_specularTerm;
 }
 
-void Material::setSpecularRoughness(float specularRoughness)
+void Material::setRoughness(float roughness)
 {
-	m_specularRoughness = specularRoughness;
+	m_roughness = roughness;
 }
 
-float Material::getSpecularRoughness() const
+float Material::getRoughness() const
 {
-	return m_specularRoughness;
+	return m_roughness;
 }
 
 void Material::setMetalness(float metalness)
@@ -257,6 +277,8 @@ void Material::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberComposite< Map >(L"diffuseMap", m_diffuseMap);
 	s >> MemberComposite< Map >(L"specularMap", m_specularMap);
+	s >> MemberComposite< Map >(L"roughnessMap", m_roughnessMap);
+	s >> MemberComposite< Map >(L"metalnessMap", m_metalnessMap);
 	s >> MemberComposite< Map >(L"transparencyMap", m_transparencyMap);
 	s >> MemberComposite< Map >(L"emissiveMap", m_emissiveMap);
 	s >> MemberComposite< Map >(L"reflectiveMap", m_reflectiveMap);
@@ -266,7 +288,7 @@ void Material::serialize(ISerializer& s)
 	s >> Member< Color4ub >(L"color", m_color);
 	s >> Member< float >(L"diffuseTerm", m_diffuseTerm);
 	s >> Member< float >(L"specularTerm", m_specularTerm);
-	s >> Member< float >(L"specularRoughness", m_specularRoughness);
+	s >> Member< float >(L"roughness", m_roughness);
 	s >> Member< float >(L"metalness", m_metalness);
 	s >> Member< float >(L"transparency", m_transparency);
 	s >> Member< float >(L"emissive", m_emissive);

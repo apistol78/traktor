@@ -852,7 +852,7 @@ Disabled emissive for now as it doesn't work on OpenGL
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>Reflection</name>
+					<name>Metalness</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -879,7 +879,7 @@ Disabled emissive for now as it doesn't work on OpenGL
 					<second>0</second>
 				</item>
 				<item>
-					<first>Reflection</first>
+					<first>Metalness</first>
 					<second>0</second>
 				</item>
 				<item>
@@ -943,10 +943,6 @@ Disabled emissive for now as it doesn't work on OpenGL
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>Reflection</name>
-					<optional>true</optional>
-				</item>
-				<item>
 					<name>RimColor</name>
 					<optional>true</optional>
 				</item>
@@ -962,10 +958,6 @@ Disabled emissive for now as it doesn't work on OpenGL
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
-				<item>
-					<name>State</name>
-					<optional>true</optional>
-				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
@@ -975,10 +967,6 @@ Disabled emissive for now as it doesn't work on OpenGL
 				</item>
 				<item>
 					<first>Emissive</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Reflection</first>
 					<second>0</second>
 				</item>
 				<item>
@@ -995,10 +983,6 @@ Disabled emissive for now as it doesn't work on OpenGL
 				</item>
 				<item>
 					<first>SpecularTerm</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>State</first>
 					<second>0</second>
 				</item>
 			</values>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.db.LocalInstanceMeta">
+	<guid>{67B5BA16-0AA5-EC48-8279-E98FD0EE663C}</guid>
+	<primaryType>traktor.render.RadianceProbeAsset</primaryType>
+	<blobs/>
+</object>

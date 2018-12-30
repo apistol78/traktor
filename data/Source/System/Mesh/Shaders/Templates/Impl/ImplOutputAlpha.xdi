@@ -63,8 +63,8 @@
 			<id>{A9818275-ECCB-CE44-9A9B-10D31FE400F2}</id>
 			<comment/>
 			<position>
-				<first>279</first>
-				<second>644</second>
+				<first>289</first>
+				<second>662</second>
 			</position>
 			<name>T_RimColor</name>
 			<connectable>true</connectable>
@@ -76,8 +76,8 @@
 			<id>{ED00815E-498A-C146-8E41-8B6F82464348}</id>
 			<comment/>
 			<position>
-				<first>259</first>
-				<second>677</second>
+				<first>269</first>
+				<second>697</second>
 			</position>
 			<name>T_RimIntensity</name>
 			<connectable>true</connectable>
@@ -89,8 +89,8 @@
 			<id>{83FBE321-4AB9-ED40-A8A0-4C52158819C5}</id>
 			<comment/>
 			<position>
-				<first>249</first>
-				<second>413</second>
+				<first>269</first>
+				<second>417</second>
 			</position>
 			<name>T_SurfaceColor</name>
 			<connectable>true</connectable>
@@ -102,7 +102,7 @@
 			<id>{7CB8C9CF-A3B8-EF45-8706-1AA8A7093828}</id>
 			<comment/>
 			<position>
-				<first>259</first>
+				<first>269</first>
 				<second>347</second>
 			</position>
 			<name>T_ViewNormal</name>
@@ -115,8 +115,8 @@
 			<id>{52BDC625-DDFF-4F4D-BC2D-D07508371F99}</id>
 			<comment/>
 			<position>
-				<first>249</first>
-				<second>380</second>
+				<first>269</first>
+				<second>382</second>
 			</position>
 			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
@@ -128,8 +128,8 @@
 			<id>{70127F26-81E0-994D-9A7F-B44FB9EADCAA}</id>
 			<comment/>
 			<position>
-				<first>259</first>
-				<second>446</second>
+				<first>279</first>
+				<second>452</second>
 			</position>
 			<name>T_DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -141,10 +141,10 @@
 			<id>{4E9F4AE4-4A62-B04C-8695-A58EA756E97C}</id>
 			<comment/>
 			<position>
-				<first>199</first>
-				<second>512</second>
+				<first>279</first>
+				<second>522</second>
 			</position>
-			<name>T_SpecularRoughness</name>
+			<name>T_Roughness</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -154,8 +154,8 @@
 			<id>{25542486-32CD-2E4D-A338-2B1CAC7E1782}</id>
 			<comment/>
 			<position>
-				<first>249</first>
-				<second>545</second>
+				<first>269</first>
+				<second>557</second>
 			</position>
 			<name>T_SpecularTerm</name>
 			<connectable>true</connectable>
@@ -168,22 +168,9 @@
 			<comment/>
 			<position>
 				<first>289</first>
-				<second>611</second>
+				<second>627</second>
 			</position>
 			<name>T_Emissive</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{811274D6-11C8-4C4D-B3D4-A0F12A38581C}</id>
-			<comment/>
-			<position>
-				<first>279</first>
-				<second>710</second>
-			</position>
-			<name>T_Reflective</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -193,8 +180,8 @@
 			<id>{191BE52B-8314-B24C-8C9C-AE719B88B4B5}</id>
 			<comment/>
 			<position>
-				<first>249</first>
-				<second>479</second>
+				<first>269</first>
+				<second>487</second>
 			</position>
 			<name>T_Transparency</name>
 			<connectable>true</connectable>
@@ -206,8 +193,8 @@
 			<id>{BE6CBFD7-AB79-C94A-8F7C-B5CEF3DEEA2C}</id>
 			<comment/>
 			<position>
-				<first>279</first>
-				<second>743</second>
+				<first>289</first>
+				<second>732</second>
 			</position>
 			<name>T_Irradiance</name>
 			<connectable>true</connectable>
@@ -219,8 +206,8 @@
 			<id>{1172FBBE-D528-4141-B5EE-F4724ECC0504}</id>
 			<comment/>
 			<position>
-				<first>269</first>
-				<second>578</second>
+				<first>289</first>
+				<second>592</second>
 			</position>
 			<name>T_Metalness</name>
 			<connectable>true</connectable>
@@ -232,8 +219,8 @@
 			<id>{13EB9978-9FBD-AF40-8036-FF2C7EDB4239}</id>
 			<comment/>
 			<position>
-				<first>260</first>
-				<second>776</second>
+				<first>269</first>
+				<second>767</second>
 			</position>
 			<name>T_ViewVelocity</name>
 			<connectable>true</connectable>
@@ -301,16 +288,6 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>SpecularTerm</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Reflection</name>
 			</destination>
 		</item>
 	</edges>
