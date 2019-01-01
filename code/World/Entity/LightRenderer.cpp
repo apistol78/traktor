@@ -55,7 +55,8 @@ void LightRenderer::render(
 		light.shadowColor = directionalLightEntity->getShadowColor();
 		light.range = Scalar(0.0f);
 		light.radius = Scalar(0.0f);
-		light.probeDiffuse = nullptr;
+		light.probe.diffuse = nullptr;
+		light.probe.specular = nullptr;
 		light.cloudShadow = directionalLightEntity->getCloudShadowTexture();
 		light.castShadow = directionalLightEntity->getCastShadow();
 
@@ -78,7 +79,8 @@ void LightRenderer::render(
 		light.shadowColor = pointLightEntity->getShadowColor();
 		light.range = Scalar(pointLightEntity->getRange());
 		light.radius = Scalar(0.0f);
-		light.probeDiffuse = nullptr;
+		light.probe.diffuse = nullptr;
+		light.probe.specular = nullptr;
 		light.cloudShadow = nullptr;
 		light.castShadow = false;
 
@@ -109,14 +111,15 @@ void LightRenderer::render(
 		light.shadowColor = spotLightEntity->getShadowColor();
 		light.range = Scalar(spotLightEntity->getRange());
 		light.radius = Scalar(spotLightEntity->getRadius());
-		light.probeDiffuse = nullptr;
+		light.probe.diffuse = nullptr;
+		light.probe.specular = nullptr;
 		light.cloudShadow = nullptr;
 		light.castShadow = spotLightEntity->getCastShadow();
 
 		worldRenderView.addLight(light);
 	}
 
-	else if (const LightComponent* lightComponent = dynamic_type_cast<const LightComponent*>(renderable))
+	else if (const LightComponent* lightComponent = dynamic_type_cast< const LightComponent* >(renderable))
 	{
 		Transform transform = lightComponent->getTransform();
 
@@ -128,7 +131,8 @@ void LightRenderer::render(
 		light.shadowColor = lightComponent->getShadowColor();
 		light.range = Scalar(lightComponent->getRange());
 		light.radius = Scalar(lightComponent->getRadius());
-		light.probeDiffuse = lightComponent->getProbeDiffuseTexture();
+		light.probe.diffuse = lightComponent->getProbeDiffuseTexture();
+		light.probe.specular = lightComponent->getProbeSpecularTexture();
 		light.cloudShadow = lightComponent->getCloudShadowTexture();
 		light.castShadow = lightComponent->getCastShadow();
 

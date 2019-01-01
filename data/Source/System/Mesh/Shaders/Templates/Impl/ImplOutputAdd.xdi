@@ -52,32 +52,6 @@
 			</values>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{7E8064F4-F193-6340-A3D0-782ABEAB2CE7}</id>
-			<comment/>
-			<position>
-				<first>306</first>
-				<second>677</second>
-			</position>
-			<name>T_RimIntensity</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{DDF66227-1635-3F49-802C-CE45A5345020}</id>
-			<comment/>
-			<position>
-				<first>326</first>
-				<second>643</second>
-			</position>
-			<name>T_RimColor</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{EEC09A36-47C3-3B4A-BC1B-FF66D89FD25E}</id>
 			<comment/>
 			<position>
@@ -133,8 +107,8 @@
 			<id>{8E81BC77-67C8-9E48-8057-FCB13663D21D}</id>
 			<comment/>
 			<position>
-				<first>306</first>
-				<second>337</second>
+				<first>315</first>
+				<second>336</second>
 			</position>
 			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
@@ -146,8 +120,8 @@
 			<id>{01A9D722-2C14-124B-AC02-C6FC13350DCB}</id>
 			<comment/>
 			<position>
-				<first>306</first>
-				<second>371</second>
+				<first>315</first>
+				<second>370</second>
 			</position>
 			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
@@ -159,7 +133,7 @@
 			<id>{FBAE6CC9-E031-E944-92A1-485B1C97D74A}</id>
 			<comment/>
 			<position>
-				<first>326</first>
+				<first>335</first>
 				<second>609</second>
 			</position>
 			<name>T_Emissive</name>
@@ -172,7 +146,7 @@
 			<id>{B5C99709-F888-FA47-9845-FECF723385DA}</id>
 			<comment/>
 			<position>
-				<first>306</first>
+				<first>305</first>
 				<second>575</second>
 			</position>
 			<name>T_Transparency</name>
@@ -185,8 +159,8 @@
 			<id>{D179009D-BC57-ED43-B133-49F84A58786C}</id>
 			<comment/>
 			<position>
-				<first>326</first>
-				<second>711</second>
+				<first>325</first>
+				<second>643</second>
 			</position>
 			<name>T_Irradiance</name>
 			<connectable>true</connectable>
@@ -198,7 +172,7 @@
 			<id>{5ADB548A-1D29-5F4D-B258-421F56EF947A}</id>
 			<comment/>
 			<position>
-				<first>326</first>
+				<first>325</first>
 				<second>541</second>
 			</position>
 			<name>T_Metalness</name>
@@ -211,8 +185,8 @@
 			<id>{29F51C24-A2BA-F348-9E96-E86B980ABFFC}</id>
 			<comment/>
 			<position>
-				<first>306</first>
-				<second>745</second>
+				<first>305</first>
+				<second>677</second>
 			</position>
 			<name>T_ViewVelocity</name>
 			<connectable>true</connectable>
@@ -224,7 +198,7 @@
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -234,7 +208,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -244,7 +218,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -254,7 +228,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -264,7 +238,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -274,7 +248,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<name>Output</name>
 			</source>
 			<destination>

@@ -70,19 +70,6 @@ public:
 		render::ITexture* shadowMask
 	);
 
-	/*! \brief Render multiple, non-shadow, lights in batches. */
-	void renderNonShadowLights(
-		render::IRenderView* renderView,
-		float time,
-		const Matrix44& projection,
-		const Matrix44& view,
-		const AlignedVector< Light >& lights,
-		render::ITexture* depthMap,
-		render::ITexture* normalMap,
-		render::ITexture* miscMap,
-		render::ITexture* colorMap
-	);
-
 	/*! \brief Render lit final colors. */
 	void renderFinalColor(
 		render::IRenderView* renderView,
@@ -93,7 +80,8 @@ public:
 		render::ITexture* normalMap,
 		render::ITexture* miscMap,
 		render::ITexture* colorMap,
-		render::ITexture* lightMap
+		render::ITexture* lightDiffuseMap,
+		render::ITexture* lightSpecularMap
 	);
 
 	/*! \brief Render screenspace reflections. */
@@ -128,11 +116,8 @@ public:
 
 private:
 	resource::Proxy< render::Shader > m_lightDirectionalShader;
-	resource::Proxy< render::Shader > m_lightDirectionalsShader;
 	resource::Proxy< render::Shader > m_lightPointShader;
-	resource::Proxy< render::Shader > m_lightPointsShader;
 	resource::Proxy< render::Shader > m_lightSpotShader;
-	resource::Proxy< render::Shader > m_lightSpotsShader;
 	resource::Proxy< render::Shader > m_lightProbeShader;
 	resource::Proxy< render::Shader > m_finalColorShader;
 	resource::Proxy< render::Shader > m_reflectionShader;

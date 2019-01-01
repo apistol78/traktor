@@ -5,8 +5,8 @@
 			<id>{EFADEA70-B7DB-2A42-8B74-C935A18BBCC1}</id>
 			<comment/>
 			<position>
-				<first>-347</first>
-				<second>439</second>
+				<first>-343</first>
+				<second>435</second>
 			</position>
 			<name>Amount</name>
 			<connectable>true</connectable>
@@ -17,9 +17,9 @@
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{00AD412E-0109-4B47-98C4-6F3F7B96F036}</id>
 			<comment/>
-			<position>L
-				<first>-344</first>
-				<second>405</second>
+			<position>
+				<first>-340</first>
+				<second>401</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
@@ -31,8 +31,8 @@
 			<id>{1256F445-5AEB-514A-B40E-030D15B87159}</id>
 			<comment/>
 			<position>
-				<first>-371</first>
-				<second>541</second>
+				<first>-367</first>
+				<second>537</second>
 			</position>
 			<name>EyeDirection</name>
 			<connectable>true</connectable>
@@ -44,8 +44,8 @@
 			<id>{5FF10FC5-3D98-314A-AEF7-045646104333}</id>
 			<comment/>
 			<position>
-				<first>-332</first>
-				<second>371</second>
+				<first>-328</first>
+				<second>367</second>
 			</position>
 			<name>Input</name>
 			<connectable>true</connectable>
@@ -57,8 +57,8 @@
 			<id>{A34DED7A-53D1-A941-9F63-5CBFEA6CCB6D}</id>
 			<comment/>
 			<position>
-				<first>1857</first>
-				<second>307</second>
+				<first>1853</first>
+				<second>303</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -66,32 +66,32 @@
 			<id>{73947D43-2CA4-1B44-B223-7839AC142A91}</id>
 			<comment/>
 			<position>
-				<first>1588</first>
-				<second>216</second>
+				<first>1584</first>
+				<second>212</second>
 			</position>
 		</item>
 		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
 			<id>{EE6CEBDD-1BFC-6442-8921-E9D2E073C1CE}</id>
 			<comment/>
 			<position>
-				<first>1314</first>
-				<second>394</second>
+				<first>1310</first>
+				<second>390</second>
 			</position>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{464A33D7-6052-2C42-B233-874E36D46352}</id>
 			<comment/>
 			<position>
-				<first>1023</first>
-				<second>546</second>
+				<first>1019</first>
+				<second>542</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{C89A45DF-6C49-424F-89A5-6F9A5DC37B83}</id>
 			<comment/>
 			<position>
-				<first>743</first>
-				<second>501</second>
+				<first>739</first>
+				<second>497</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -101,23 +101,23 @@
 			<addressW>AdClamp</addressW>
 			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
-			<ignoreMips>false</ignoreMips>
+			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Type" version="traktor.render.Node:1">
 			<id>{50A51D3B-B8DB-5349-AC29-E1CC1D52C4F9}</id>
 			<comment/>
 			<position>
-				<first>446</first>
-				<second>124</second>
+				<first>443</first>
+				<second>121</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{179852CD-3130-3B45-9D02-18572025A565}</id>
 			<comment/>
 			<position>
-				<first>-11</first>
-				<second>188</second>
+				<first>-8</first>
+				<second>185</second>
 			</position>
 			<name>ReflectionMap</name>
 			<connectable>true</connectable>
@@ -129,8 +129,8 @@
 			<id>{6CBDBFD7-C28B-CD4F-A7B2-4A191261A3A3}</id>
 			<comment/>
 			<position>
-				<first>-5</first>
-				<second>269</second>
+				<first>-2</first>
+				<second>266</second>
 			</position>
 			<parameterName>World_ReflectionMap</parameterName>
 			<type>PtTextureCube</type>
@@ -140,16 +140,16 @@
 			<id>{CE028D5A-1A6E-F24B-AD5E-02D34729F325}</id>
 			<comment/>
 			<position>
-				<first>483</first>
-				<second>627</second>
+				<first>316</first>
+				<second>623</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{794F3795-805B-AF48-AEB7-B9E145A12EA2}</id>
 			<comment/>
 			<position>
-				<first>353</first>
-				<second>601</second>
+				<first>186</first>
+				<second>597</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -157,16 +157,16 @@
 			<id>{5925CAC0-C412-794D-87B4-0FF199458B03}</id>
 			<comment/>
 			<position>
-				<first>88</first>
-				<second>549</second>
+				<first>-78</first>
+				<second>545</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{BCB367D7-6C4B-FF41-8565-BB69017347F3}</id>
 			<comment/>
 			<position>
-				<first>190</first>
-				<second>651</second>
+				<first>23</first>
+				<second>647</second>
 			</position>
 			<parameterName>World_ViewInverse</parameterName>
 			<type>PtMatrix</type>
@@ -176,8 +176,8 @@
 			<id>{B87C4ACD-6A80-344C-97DB-D14A875EA659}</id>
 			<comment/>
 			<position>
-				<first>-334</first>
-				<second>475</second>
+				<first>-332</first>
+				<second>473</second>
 			</position>
 			<name>Scale</name>
 			<connectable>true</connectable>
@@ -189,8 +189,8 @@
 			<id>{B3F94580-6109-DA41-AB99-82E95458722C}</id>
 			<comment/>
 			<position>
-				<first>-338</first>
-				<second>509</second>
+				<first>-336</first>
+				<second>507</second>
 			</position>
 			<name>Offset</name>
 			<connectable>true</connectable>
@@ -202,8 +202,8 @@
 			<id>{BA403A48-8034-FA43-BB30-F9434742E6F8}</id>
 			<comment/>
 			<position>
-				<first>27</first>
-				<second>758</second>
+				<first>25</first>
+				<second>756</second>
 			</position>
 			<name>Roughness</name>
 			<connectable>true</connectable>
@@ -215,17 +215,17 @@
 			<id>{66431DA1-48C3-3B43-BFB4-2BD549C0F405}</id>
 			<comment/>
 			<position>
-				<first>108</first>
-				<second>803</second>
+				<first>106</first>
+				<second>801</second>
 			</position>
-			<value>6</value>
+			<value>9</value>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{54016A57-3F50-F54D-9A4B-D53860AF8FCF}</id>
 			<comment/>
 			<position>
-				<first>266</first>
-				<second>751</second>
+				<first>264</first>
+				<second>749</second>
 			</position>
 		</item>
 	</nodes>

@@ -376,7 +376,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 				FbxPropertyT<FbxDouble> phongSpecularFactor = phongMaterial->SpecularFactor;
 				if (phongSpecularFactor.IsValid())
 				{
-					FbxDouble specularFactor = phongSpecularFactor.Get();
+					FbxDouble specularFactor = phongSpecularFactor.Get() * 2.0f;
 					mm.setSpecularTerm(clamp(float(specularFactor), 0.0f, 1.0f));
 				}
 
@@ -384,7 +384,15 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 				if (phongShininess.IsValid())
 				{
 					FbxDouble shininess = phongShininess.Get();
-					mm.setRoughness(max(float(shininess / 16.0), 0.2f));
+					float roughness = std::pow(1.0f - shininess / 100.0f, 2.0f);
+					mm.setRoughness(clamp(roughness, 0.0f, 1.0f));
+				}
+
+				FbxPropertyT<FbxDouble> reflectionFactor = phongMaterial->ReflectionFactor;
+				if (reflectionFactor.IsValid())
+				{
+					FbxDouble reflection = reflectionFactor.Get();
+					mm.setMetalness(clamp(float(reflection), 0.0f, 1.0f));
 				}
 
 				FbxPropertyT<FbxDouble3> phongEmissive = mayaExported ? phongMaterial->Ambient : phongMaterial->Emissive;

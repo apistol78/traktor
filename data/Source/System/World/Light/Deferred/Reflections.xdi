@@ -5,8 +5,8 @@
 			<id>{D34CB138-A5AE-FF4B-A07A-A6A3827DE1B1}</id>
 			<comment/>
 			<position>
-				<first>5782</first>
-				<second>-204</second>
+				<first>5892</first>
+				<second>-61</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -802,6 +802,15 @@ ENTRY
 				<second>-335</second>
 			</position>
 		</item>
+		<item type="traktor.render.Color" version="traktor.render.Node:1">
+			<id>{3548B7F9-3631-4638-A770-EFB46E211DCD}</id>
+			<comment/>
+			<position>
+				<first>5573</first>
+				<second>-2</second>
+			</position>
+			<color>0, 0, 0, 0</color>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -1266,16 +1275,6 @@ ENTRY
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[37]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[40]"/>
 				<name>Output</name>
 			</source>
@@ -1361,6 +1360,16 @@ ENTRY
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[35]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[46]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
 				<name>Input</name>
 			</destination>
 		</item>

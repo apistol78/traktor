@@ -29,7 +29,6 @@ const Guid c_tplDiffuseParams(L"{4AC7418D-FF43-FE40-ADDC-33A162636FDC}");
 const Guid c_tplEmissiveParams(L"{1E35F0A7-23A9-EA49-A518-125A77BAD564}");
 const Guid c_tplNormalParams(L"{77489017-FBE8-4A4F-B11A-FDE48C69E021}");
 const Guid c_tplOutput(L"{6DA4BE0A-BE19-4440-9B08-FC3FD1FFECDC}");
-const Guid c_tplRimParams(L"{57310F3A-FEB0-7644-B641-EC3876773470}");
 const Guid c_tplSpecularParams(L"{68DA66E7-1D9E-FD4C-9692-D947BEA3EBAD}");
 const Guid c_tplTransparencyParams(L"{052265E6-233C-754C-A297-9369803ADB88}");
 const Guid c_tplLightMapParams(L"{2449B257-5B2A-5242-86F9-32105E1F1771}");
@@ -46,7 +45,6 @@ const Guid c_implEmissiveMap1(L"{A08C4322-7F81-1849-9228-34EA1DE93019}");
 const Guid c_implNormalConst(L"{5D881AE1-B99D-8941-B949-4E95AEF1CB7A}");
 const Guid c_implNormalMap0(L"{8CA655BD-E17B-5A48-B6C6-3FDBC1D4F97D}");
 const Guid c_implNormalMap1(L"{C9B1BA07-716A-0349-8A34-BDEAAB818714}");
-const Guid c_implRimConst(L"{449F16EF-5C14-4940-A5E1-E1ABF73CC5D7}");
 const Guid c_implOutputAdd(L"{321B8969-32D7-D44A-BF91-B056E4728DE2}");
 const Guid c_implOutputAlpha(L"{1CDA749C-D713-974F-8E84-895AFEE8D552}");
 const Guid c_implOutputDecal(L"{31FD2B2B-3D3C-024F-9AA6-544B73D6009C}");
@@ -197,8 +195,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			else
 				(*i)->setFragmentGuid(c_implOutputLightMapDecal);
 		}
-		else if (fragmentGuid == c_tplRimParams)
-			(*i)->setFragmentGuid(c_implRimConst);
 		else if (fragmentGuid == c_tplSpecularParams)
 		{
 			if (specularTexture.isNull())
@@ -288,12 +284,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			normalTextureNode->setExternal(normalTexture);
 			propagateAnisotropic(materialShaderGraph, normalTextureNode, material.getNormalMap().anisotropic);
 		}
-		else if (comment == L"Tag_RimIntensity")
-		{
-			render::Scalar* rimIntensityNode = checked_type_cast< render::Scalar* >(*i);
-			rimIntensityNode->setComment(L"");
-			rimIntensityNode->set(material.getRimLightIntensity());
-		}
 		else if (comment == L"Tag_SpecularTerm")
 		{
 			render::Scalar* specularTermNode = checked_type_cast< render::Scalar* >(*i);
@@ -372,7 +362,6 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_tplEmissiveParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplNormalParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplOutput, editor::PdfUse);
-	pipelineDepends->addDependency(c_tplRimParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplSpecularParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplTransparencyParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplLightMapParams, editor::PdfUse);
@@ -389,7 +378,6 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_implNormalConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implNormalMap0, editor::PdfUse);
 	pipelineDepends->addDependency(c_implNormalMap1, editor::PdfUse);
-	pipelineDepends->addDependency(c_implRimConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputAdd, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputAlpha, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputDecal, editor::PdfUse);

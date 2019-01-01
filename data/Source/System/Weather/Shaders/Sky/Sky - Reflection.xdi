@@ -5,8 +5,8 @@
 			<id>{251DC3A5-4551-4A42-96D5-CE2303695168}</id>
 			<comment/>
 			<position>
-				<first>-232</first>
-				<second>-305</second>
+				<first>-231</first>
+				<second>-304</second>
 			</position>
 			<fragmentGuid>{D9D861EF-1A71-9C4F-9D94-47812EF465EF}</fragmentGuid>
 			<inputPins>
@@ -34,8 +34,8 @@
 			<id>{09AF143F-5FF0-4A4B-8C6B-A7052ADD6ACA}</id>
 			<comment/>
 			<position>
-				<first>-579</first>
-				<second>-242</second>
+				<first>-578</first>
+				<second>-241</second>
 			</position>
 			<parameterName>SkyDomeRadius</parameterName>
 			<type>PtScalar</type>
@@ -45,8 +45,8 @@
 			<id>{8E59AC0A-F488-0643-81E7-8D604DA68C3E}</id>
 			<comment/>
 			<position>
-				<first>-587</first>
-				<second>-332</second>
+				<first>-586</first>
+				<second>-331</second>
 			</position>
 			<fragmentGuid>{7F401326-4C07-AC4C-9315-B2FCD61B9250}</fragmentGuid>
 			<inputPins>
@@ -73,16 +73,16 @@
 			<id>{2C6D4CA1-9554-4E42-8CE9-CFC41318D000}</id>
 			<comment/>
 			<position>
-				<first>-788</first>
-				<second>-369</second>
+				<first>-787</first>
+				<second>-368</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
 			<id>{E79BE794-0C97-FC4D-A151-42C716D0EFB7}</id>
 			<comment/>
 			<position>
-				<first>-1124</first>
-				<second>-388</second>
+				<first>-1123</first>
+				<second>-387</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -93,8 +93,8 @@
 			<id>{971CB036-429B-5243-AF04-0A65FC35D27B}</id>
 			<comment/>
 			<position>
-				<first>435</first>
-				<second>-360</second>
+				<first>434</first>
+				<second>-359</second>
 			</position>
 			<technique/>
 		</item>
@@ -102,16 +102,16 @@
 			<id>{7BA8FEE1-AB98-164B-8767-AE0481D2279E}</id>
 			<comment/>
 			<position>
-				<first>-56</first>
-				<second>-177</second>
+				<first>-55</first>
+				<second>-176</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{FE0789FC-772E-4541-A069-034AF72D25E6}</id>
 			<comment/>
 			<position>
-				<first>-80</first>
-				<second>430</second>
+				<first>-79</first>
+				<second>429</second>
 			</position>
 			<parameterName>SunDirection</parameterName>
 			<type>PtVector</type>
@@ -121,8 +121,8 @@
 			<id>{DD6E9B03-4D3F-C745-9B3A-B17583365A93}</id>
 			<comment/>
 			<position>
-				<first>418</first>
-				<second>-106</second>
+				<first>437</first>
+				<second>-104</second>
 			</position>
 			<fragmentGuid>{CBB01418-3E3B-2947-9CA1-B75CEFF77C4E}</fragmentGuid>
 			<inputPins>
@@ -147,8 +147,8 @@
 			<id>{A1BFC98E-AFF5-6341-876E-A69672DADCB1}</id>
 			<comment/>
 			<position>
-				<first>245</first>
-				<second>-47</second>
+				<first>244</first>
+				<second>-46</second>
 			</position>
 			<priority>
 				<setup>false</setup>
@@ -192,8 +192,8 @@
 			<id>{12C70892-F365-E84C-B88C-4E6581310499}</id>
 			<comment/>
 			<position>
-				<first>120</first>
-				<second>-349</second>
+				<first>119</first>
+				<second>-348</second>
 			</position>
 			<fragmentGuid>{93C8C2C3-BE05-EA45-9C6C-BE87B6E6D412}</fragmentGuid>
 			<inputPins>
@@ -240,8 +240,8 @@
 			<id>{EF310D2D-679E-0747-BB88-2270A290561B}</id>
 			<comment/>
 			<position>
-				<first>-370</first>
-				<second>-32</second>
+				<first>-369</first>
+				<second>-31</second>
 			</position>
 			<parameterName>World_ReflectionMap</parameterName>
 			<type>PtTextureCube</type>
@@ -251,8 +251,8 @@
 			<id>{70AB8D8F-DC8F-1C4A-AEB8-B6D1C29CAC5A}</id>
 			<comment/>
 			<position>
-				<first>36</first>
-				<second>-122</second>
+				<first>34</first>
+				<second>-120</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -379,22 +379,22 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item"/>
 				<name>Cartesian</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
 			</destination>
 		</item>
 	</edges>

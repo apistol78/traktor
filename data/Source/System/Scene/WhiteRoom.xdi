@@ -103,14 +103,15 @@
 						<rotation>-0.364972, 0.277816, 0.115075, 0.88112</rotation>
 					</transform>
 					<components>
-						<item type="traktor.world.LightComponentData" version="3">
+						<item type="traktor.world.LightComponentData" version="4">
 							<lightType>LtProbe</lightType>
 							<sunColor>1, 1, 1, 0</sunColor>
 							<baseColor>0.5, 0.5, 0.5, 0</baseColor>
 							<shadowColor>0.25, 0.25, 0.25, 0</shadowColor>
 							<probeDiffuseTexture>{1BCA1D09-83D0-974C-B2CE-032EA1F71B1B}</probeDiffuseTexture>
+							<probeSpecularTexture>{67B5BA16-0AA5-EC48-8279-E98FD0EE663C}</probeSpecularTexture>
 							<cloudShadowTexture>{00000000-0000-0000-0000-000000000000}</cloudShadowTexture>
-							<castShadow>true</castShadow>
+							<castShadow>false</castShadow>
 							<range>10</range>
 							<radius>1.570796</radius>
 							<flickerAmount>0</flickerAmount>

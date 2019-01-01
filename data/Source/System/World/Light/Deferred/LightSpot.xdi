@@ -239,6 +239,9 @@ Fall off
 					<name>EyeDirection</name>
 				</item>
 				<item>
+					<name>Metalness</name>
+				</item>
+				<item>
 					<name>Roughness</name>
 				</item>
 				<item>
@@ -475,6 +478,15 @@ Fall off
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Color" version="traktor.render.Node:1">
+			<id>{5D85CDE5-3B8B-4775-A2B1-3EC933493A37}</id>
+			<comment/>
+			<position>
+				<first>2016</first>
+				<second>628</second>
+			</position>
+			<color>0, 0, 0, 0</color>
 		</item>
 	</nodes>
 	<edges>
@@ -916,6 +928,16 @@ Fall off
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

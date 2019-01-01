@@ -5,8 +5,8 @@
 			<id>{7497664D-9DE5-494B-8EB7-23B84D45EF74}</id>
 			<comment/>
 			<position>
-				<first>1319</first>
-				<second>388</second>
+				<first>1318</first>
+				<second>387</second>
 			</position>
 			<fragmentGuid>{8CECB482-4FD6-3948-A2FB-7157E123D4A3}</fragmentGuid>
 			<inputPins>
@@ -27,10 +27,6 @@
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>Reflection</name>
-					<optional>true</optional>
-				</item>
-				<item>
 					<name>Refractive</name>
 					<optional>true</optional>
 				</item>
@@ -44,14 +40,6 @@
 				</item>
 				<item>
 					<name>RefractiveTintColor</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<name>RimColor</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<name>RimIntensity</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -90,10 +78,6 @@
 					<second>0</second>
 				</item>
 				<item>
-					<first>Reflection</first>
-					<second>0</second>
-				</item>
-				<item>
 					<first>Refractive</first>
 					<second>0</second>
 				</item>
@@ -110,14 +94,6 @@
 					<second>1</second>
 				</item>
 				<item>
-					<first>RimColor</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>RimIntensity</first>
-					<second>0</second>
-				</item>
-				<item>
 					<first>SpecularRoughness</first>
 					<second>0.8</second>
 				</item>
@@ -131,8 +107,8 @@
 			<id>{AD1ABECD-6D90-D140-903D-3DA6A8FDE722}</id>
 			<comment/>
 			<position>
-				<first>822</first>
-				<second>818</second>
+				<first>824</first>
+				<second>721</second>
 			</position>
 			<name>T_ViewVelocity</name>
 			<connectable>true</connectable>
@@ -144,7 +120,7 @@
 			<id>{A878C5F1-62E6-A143-9193-0643398BF15E}</id>
 			<comment/>
 			<position>
-				<first>842</first>
+				<first>844</first>
 				<second>426</second>
 			</position>
 			<name>T_Metalness</name>
@@ -157,8 +133,8 @@
 			<id>{31FBDF37-B5EC-1E49-8DFA-253263FDC095}</id>
 			<comment/>
 			<position>
-				<first>842</first>
-				<second>573</second>
+				<first>844</first>
+				<second>475</second>
 			</position>
 			<name>T_Irradiance</name>
 			<connectable>true</connectable>
@@ -170,7 +146,7 @@
 			<id>{64D6FE12-0DBA-6149-BB15-7A6682802193}</id>
 			<comment/>
 			<position>
-				<first>822</first>
+				<first>824</first>
 				<second>328</second>
 			</position>
 			<name>T_Transparency</name>
@@ -183,7 +159,7 @@
 			<id>{EE28B802-7156-444F-A902-B26326FDDAA7}</id>
 			<comment/>
 			<position>
-				<first>842</first>
+				<first>854</first>
 				<second>377</second>
 			</position>
 			<name>T_Emissive</name>
@@ -196,8 +172,8 @@
 			<id>{F55D9D62-A6BC-EB4D-AA23-910634E204C4}</id>
 			<comment/>
 			<position>
-				<first>822</first>
-				<second>671</second>
+				<first>824</first>
+				<second>574</second>
 			</position>
 			<name>T_SpecularTerm</name>
 			<connectable>true</connectable>
@@ -209,8 +185,8 @@
 			<id>{319A3C87-9BC6-D54B-830F-EACE8DA2857B}</id>
 			<comment/>
 			<position>
-				<first>832</first>
-				<second>622</second>
+				<first>834</first>
+				<second>524</second>
 			</position>
 			<name>T_Roughness</name>
 			<connectable>true</connectable>
@@ -222,7 +198,7 @@
 			<id>{1BA5FC7C-3621-EE48-AB73-775ED5207739}</id>
 			<comment/>
 			<position>
-				<first>832</first>
+				<first>834</first>
 				<second>279</second>
 			</position>
 			<name>T_DiffuseTerm</name>
@@ -235,8 +211,8 @@
 			<id>{9AA4AB8E-AF94-5943-ADEA-3A3F18747291}</id>
 			<comment/>
 			<position>
-				<first>822</first>
-				<second>769</second>
+				<first>834</first>
+				<second>672</second>
 			</position>
 			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
@@ -248,8 +224,8 @@
 			<id>{2A4B54E8-7C1D-DB4B-91C4-CF245D557A26}</id>
 			<comment/>
 			<position>
-				<first>822</first>
-				<second>720</second>
+				<first>834</first>
+				<second>623</second>
 			</position>
 			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
@@ -261,8 +237,8 @@
 			<id>{4A3EA5BA-B708-5946-87F2-D98CE0F16C9F}</id>
 			<comment/>
 			<position>
-				<first>822</first>
-				<second>230</second>
+				<first>824</first>
+				<second>229</second>
 			</position>
 			<name>T_SurfaceColor</name>
 			<connectable>true</connectable>
@@ -270,38 +246,12 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{12C856EC-390A-C645-9E17-71FEC637EEC8}</id>
-			<comment/>
-			<position>
-				<first>842</first>
-				<second>475</second>
-			</position>
-			<name>T_RimColor</name>
-			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{9738C4DF-6673-E24E-8E04-B7C9622598C4}</id>
-			<comment/>
-			<position>
-				<first>822</first>
-				<second>524</second>
-			</position>
-			<name>T_RimIntensity</name>
-			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
 		<item type="traktor.render.External" version="1,traktor.render.Node:1">
 			<id>{BBAF4804-16AA-2D48-84C3-410BE8744280}</id>
 			<comment/>
 			<position>
-				<first>1319</first>
-				<second>716</second>
+				<first>1337</first>
+				<second>636</second>
 			</position>
 			<fragmentGuid>{3C686137-97F0-FD40-A34A-0D745E7FE333}</fragmentGuid>
 			<inputPins>
@@ -367,26 +317,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>RimIntensity</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>RimColor</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
@@ -431,7 +361,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[14]"/>
+				<node ref="/object/nodes/item[12]"/>
 				<name>Irradiance</name>
 			</destination>
 		</item>

@@ -189,6 +189,7 @@ void ListPropertyItem::eventDropClick(ButtonClickEvent* event)
 
 void ListPropertyItem::eventSelect(SelectionChangeEvent* event)
 {
+	m_selected = m_listBox->getSelected();
 	m_listForm->setVisible(false);
 	notifyChange();
 	notifyUpdate();
@@ -197,10 +198,7 @@ void ListPropertyItem::eventSelect(SelectionChangeEvent* event)
 void ListPropertyItem::eventFocus(FocusEvent* event)
 {
 	if (event->lostFocus())
-	{
-		m_selected = m_listBox->getSelected();
 		m_listForm->setVisible(false);
-	}
 }
 
 	}

@@ -23,11 +23,8 @@ namespace traktor
 		{
 
 const resource::Id< render::Shader > c_lightDirectionalShader(Guid(L"{F4F7C11E-BCB3-1045-9C78-1F0658D34229}"));
-const resource::Id< render::Shader > c_lightDirectionalsShader(Guid(L"{149BCECD-8CD9-491B-BD8A-21ABCA3C0940}"));
 const resource::Id< render::Shader > c_lightPointShader(Guid(L"{E00C6B91-3266-A044-BE9E-56C8E70CA539}"));
-const resource::Id< render::Shader > c_lightPointsShader(Guid(L"{7ED68109-2926-41E3-8899-16F1593CE78D}"));
 const resource::Id< render::Shader > c_lightSpotShader(Guid(L"{3FD07AEE-3FB5-C84D-87E1-3F9A2F0CAD5E}"));
-const resource::Id< render::Shader > c_lightSpotsShader(Guid(L"{8EB14BEA-97B1-4168-8937-AE3FDE4C6B91}"));
 const resource::Id< render::Shader > c_lightProbeShader(Guid(L"{673434A8-2663-9141-8E23-91A2F38A7B69}"));
 const resource::Id< render::Shader > c_finalColorShader(Guid(L"{AA7A6074-6CFC-1947-857C-8D9903D0880F}"));
 const resource::Id< render::Shader > c_reflectionShader(Guid(L"{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}"));
@@ -51,12 +48,13 @@ render::handle_t s_handleDepthMap;
 render::handle_t s_handleNormalMap;
 render::handle_t s_handleMiscMap;
 render::handle_t s_handleColorMap;
-render::handle_t s_handleLightMap;
+render::handle_t s_handleLightDiffuseMap;
+render::handle_t s_handleLightSpecularMap;
 render::handle_t s_handleShadowMaskSize;
 render::handle_t s_handleShadowMask;
 render::handle_t s_handleCloudShadow;
-render::handle_t s_handleProbeDiffuseEnable;
 render::handle_t s_handleProbeDiffuse;
+render::handle_t s_handleProbeSpecular;
 render::handle_t s_handleLightPosition;
 render::handle_t s_handleLightPositionAndRadius;
 render::handle_t s_handleLightDirectionAndRange;
@@ -95,12 +93,13 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleNormalMap = render::getParameterHandle(L"World_NormalMap");
 	s_handleMiscMap = render::getParameterHandle(L"World_MiscMap");
 	s_handleColorMap = render::getParameterHandle(L"World_ColorMap");
-	s_handleLightMap = render::getParameterHandle(L"World_LightMap");
+	s_handleLightDiffuseMap = render::getParameterHandle(L"World_LightDiffuseMap");
+	s_handleLightSpecularMap = render::getParameterHandle(L"World_LightSpecularMap");
 	s_handleShadowMaskSize = render::getParameterHandle(L"World_ShadowMaskSize");
 	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
 	s_handleCloudShadow = render::getParameterHandle(L"World_CloudShadow");
-	s_handleProbeDiffuseEnable = render::getParameterHandle(L"World_ProbeDiffuseEnable");
 	s_handleProbeDiffuse = render::getParameterHandle(L"World_ProbeDiffuse");
+	s_handleProbeSpecular = render::getParameterHandle(L"World_ProbeSpecular");
 	s_handleLightPosition = render::getParameterHandle(L"World_LightPosition");
 	s_handleLightPositionAndRadius = render::getParameterHandle(L"World_LightPositionAndRadius");
 	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
@@ -118,15 +117,9 @@ bool LightRendererDeferred::create(
 {
 	if (!resourceManager->bind(c_lightDirectionalShader, m_lightDirectionalShader))
 		return false;
-	if (!resourceManager->bind(c_lightDirectionalsShader, m_lightDirectionalsShader))
-		return false;
 	if (!resourceManager->bind(c_lightPointShader, m_lightPointShader))
 		return false;
-	if (!resourceManager->bind(c_lightPointsShader, m_lightPointsShader))
-		return false;
 	if (!resourceManager->bind(c_lightSpotShader, m_lightSpotShader))
-		return false;
-	if (!resourceManager->bind(c_lightSpotsShader, m_lightSpotsShader))
 		return false;
 	if (!resourceManager->bind(c_lightProbeShader, m_lightProbeShader))
 		return false;
@@ -368,232 +361,17 @@ void LightRendererDeferred::renderLight(
 	}
 	else if (light.type == LtProbe)
 	{
-		Vector4 lightDirectionAndRange = view * light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
-
-		m_lightProbeShader->setCombination(s_handleShadowEnable, shadowMask != 0);
 		m_lightProbeShader->setFloatParameter(s_handleTime, time);
-		m_lightProbeShader->setFloatParameter(s_handleShadowMaskSize, 0.5f / shadowMaskSize);
 		m_lightProbeShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 		m_lightProbeShader->setMatrixParameter(s_handleViewInverse, view.inverse());
-		m_lightProbeShader->setTextureParameter(s_handleShadowMask, shadowMask);
-		m_lightProbeShader->setTextureParameter(s_handleProbeDiffuse, light.probeDiffuse);
+		m_lightProbeShader->setTextureParameter(s_handleProbeDiffuse, light.probe.diffuse);
+		m_lightProbeShader->setTextureParameter(s_handleProbeSpecular, light.probe.specular);
 		m_lightProbeShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightProbeShader->setTextureParameter(s_handleNormalMap, normalMap);
 		m_lightProbeShader->setTextureParameter(s_handleMiscMap, miscMap);
 		m_lightProbeShader->setTextureParameter(s_handleColorMap, colorMap);
-		m_lightProbeShader->setVectorParameter(s_handleLightDirectionAndRange, lightDirectionAndRange);
-		m_lightProbeShader->setVectorParameter(s_handleLightSunColor, sunColorAndIntensity);
-		m_lightProbeShader->setVectorParameter(s_handleLightShadowColor, light.shadowColor);
 		m_lightProbeShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 	}
-}
-
-void LightRendererDeferred::renderNonShadowLights(
-	render::IRenderView* renderView,
-	float time,
-	const Matrix44& projection,
-	const Matrix44& view,
-	const AlignedVector< Light >& lights,
-	render::ITexture* depthMap,
-	render::ITexture* normalMap,
-	render::ITexture* miscMap,
-	render::ITexture* colorMap
-)
-{
-	Scalar p11 = projection.get(0, 0);
-	Scalar p22 = projection.get(1, 1);
-
-	// Gather non-shadow lights by type.
-	AlignedVector< uint32_t > directional;
-	AlignedVector< uint32_t > point;
-	AlignedVector< uint32_t > spot;
-
-	for (uint32_t i = 0; i < lights.size(); ++i)
-	{
-		const Light& light = lights[i];
-		if (light.castShadow)
-			continue;
-
-		if (light.cloudShadow == nullptr)
-		{
-			if (light.type == LtDirectional)
-			{
-				directional.push_back(i);
-				continue;
-			}
-			else if (light.type == LtPoint)
-			{
-				point.push_back(i);
-				continue;
-			}
-			else if (light.type == LtSpot)
-			{
-				spot.push_back(i);
-				continue;
-			}
-		}
-
-		// Unbatchable light; render one by one.
-		renderLight(
-			renderView,
-			time,
-			projection,
-			view,
-			light,
-			depthMap,
-			normalMap,
-			miscMap,
-			colorMap,
-			0.0f,
-			nullptr
-		);
-}
-
-	// Render directional lights.
-	for (uint32_t i = 0; i < directional.size(); i += 4)
-	{
-		uint32_t n = std::min< uint32_t >(directional.size() - i, 4);
-		T_ASSERT(n > 0);
-
-		Vector4 lightDirectionAndRange[4];
-		Vector4 sunColorAndIntensity[4];
-		Vector4 baseColor[4];
-		Vector4 shadowColor[4];
-
-		for (uint32_t j = 0; j < n; ++j)
-		{
-			const Light& light = lights[directional[i + j]];
-
-			lightDirectionAndRange[j] = view * light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
-
-			sunColorAndIntensity[j] = light.sunColor;
-			sunColorAndIntensity[j].set(3, dot3(light.sunColor, Vector4(0.2125f, 0.7154f, 0.0721f, 0.0f)));
-
-			baseColor[j] = light.baseColor;
-			shadowColor[j] = light.shadowColor;
-		}
-		for (uint32_t j = n; j < 4; ++j)
-		{
-			lightDirectionAndRange[j] = Vector4::zero();
-			sunColorAndIntensity[j] = Vector4::zero();
-			baseColor[j] = Vector4::zero();
-			shadowColor[j] = Vector4::zero();
-		}
-
-		m_lightDirectionalsShader->setFloatParameter(s_handleTime, time);
-		m_lightDirectionalsShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-		m_lightDirectionalsShader->setMatrixParameter(s_handleViewInverse, view.inverse());
-		m_lightDirectionalsShader->setTextureParameter(s_handleDepthMap, depthMap);
-		m_lightDirectionalsShader->setTextureParameter(s_handleNormalMap, normalMap);
-		m_lightDirectionalsShader->setTextureParameter(s_handleMiscMap, miscMap);
-		m_lightDirectionalsShader->setTextureParameter(s_handleColorMap, colorMap);
-		m_lightDirectionalsShader->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, 4);
-		m_lightDirectionalsShader->setVectorArrayParameter(s_handleLightSunColor, sunColorAndIntensity, 4);
-		m_lightDirectionalsShader->setVectorArrayParameter(s_handleLightBaseColor, baseColor, 4);
-		m_lightDirectionalsShader->setVectorArrayParameter(s_handleLightShadowColor, shadowColor, 4);
-
-		m_lightDirectionalsShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);		
-	}
-
-	// Render point lights.
-	for (uint32_t i = 0; i < point.size(); i += 4)
-	{
-		uint32_t n = std::min< uint32_t >(point.size() - i, 4);
-		T_ASSERT(n > 0);
-
-		Vector4 lightPosition[4];
-		Vector4 lightDirectionAndRange[4];
-		Vector4 sunColorAndIntensity[4];
-		Vector4 baseColor[4];
-		Vector4 shadowColor[4];
-
-		for (uint32_t j = 0; j < n; ++j)
-		{
-			const Light& light = lights[point[i + j]];
-
-			lightPosition[j] = view * light.position.xyz1();
-			lightDirectionAndRange[j] = view * light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
-
-			sunColorAndIntensity[j] = light.sunColor;
-			sunColorAndIntensity[j].set(3, dot3(light.sunColor, Vector4(0.2125f, 0.7154f, 0.0721f, 0.0f)));
-
-			baseColor[j] = light.baseColor;
-			shadowColor[j] = light.shadowColor;
-		}
-		for (uint32_t j = n; j < 4; ++j)
-		{
-			lightPosition[j] = Vector4::zero();
-			lightDirectionAndRange[j] = Vector4::zero();
-			sunColorAndIntensity[j] = Vector4::zero();
-			baseColor[j] = Vector4::zero();
-			shadowColor[j] = Vector4::zero();
-		}
-
-		m_lightPointsShader->setFloatParameter(s_handleTime, time);
-		m_lightPointsShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-		m_lightPointsShader->setMatrixParameter(s_handleViewInverse, view.inverse());
-		m_lightPointsShader->setTextureParameter(s_handleDepthMap, depthMap);
-		m_lightPointsShader->setTextureParameter(s_handleNormalMap, normalMap);
-		m_lightPointsShader->setTextureParameter(s_handleMiscMap, miscMap);
-		m_lightPointsShader->setTextureParameter(s_handleColorMap, colorMap);
-		m_lightPointsShader->setVectorArrayParameter(s_handleLightPosition, lightPosition, 4);
-		m_lightPointsShader->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, 4);
-		m_lightPointsShader->setVectorArrayParameter(s_handleLightSunColor, sunColorAndIntensity, 4);
-		m_lightPointsShader->setVectorArrayParameter(s_handleLightBaseColor, baseColor, 4);
-		m_lightPointsShader->setVectorArrayParameter(s_handleLightShadowColor, shadowColor, 4);
-
-		m_lightPointsShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);		
-	}
-
-	// Render spot lights.
-	for (uint32_t i = 0; i < spot.size(); i += 4)
-	{
-		uint32_t n = std::min< uint32_t >(spot.size() - i, 4);
-		T_ASSERT(n > 0);
-
-		Vector4 lightPositionAndRadius[4];
-		Vector4 lightDirectionAndRange[4];
-		Vector4 sunColorAndIntensity[4];
-		Vector4 baseColor[4];
-		Vector4 shadowColor[4];
-
-		for (uint32_t j = 0; j < n; ++j)
-		{
-			const Light& light = lights[spot[i + j]];
-
-			lightPositionAndRadius[j] = (view * light.position.xyz1()).xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.radius);
-			lightDirectionAndRange[j] = view * light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
-
-			sunColorAndIntensity[j] = light.sunColor;
-			sunColorAndIntensity[j].set(3, dot3(light.sunColor, Vector4(0.2125f, 0.7154f, 0.0721f, 0.0f)));
-
-			baseColor[j] = light.baseColor;
-			shadowColor[j] = light.shadowColor;
-		}
-		for (uint32_t j = n; j < 4; ++j)
-		{
-			lightPositionAndRadius[j] = Vector4::zero();
-			lightDirectionAndRange[j] = Vector4::zero();
-			sunColorAndIntensity[j] = Vector4::zero();
-			baseColor[j] = Vector4::zero();
-			shadowColor[j] = Vector4::zero();
-		}
-
-		m_lightSpotsShader->setFloatParameter(s_handleTime, time);
-		m_lightSpotsShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-		m_lightSpotsShader->setMatrixParameter(s_handleViewInverse, view.inverse());
-		m_lightSpotsShader->setTextureParameter(s_handleDepthMap, depthMap);
-		m_lightSpotsShader->setTextureParameter(s_handleNormalMap, normalMap);
-		m_lightSpotsShader->setTextureParameter(s_handleMiscMap, miscMap);
-		m_lightSpotsShader->setTextureParameter(s_handleColorMap, colorMap);
-		m_lightSpotsShader->setVectorArrayParameter(s_handleLightPositionAndRadius, lightPositionAndRadius, 4);
-		m_lightSpotsShader->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, 4);
-		m_lightSpotsShader->setVectorArrayParameter(s_handleLightSunColor, sunColorAndIntensity, 4);
-		m_lightSpotsShader->setVectorArrayParameter(s_handleLightBaseColor, baseColor, 4);
-		m_lightSpotsShader->setVectorArrayParameter(s_handleLightShadowColor, shadowColor, 4);
-
-		m_lightSpotsShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);			
-	}	
 }
 
 void LightRendererDeferred::renderFinalColor(
@@ -605,7 +383,8 @@ void LightRendererDeferred::renderFinalColor(
 	render::ITexture* normalMap,
 	render::ITexture* miscMap,
 	render::ITexture* colorMap,
-	render::ITexture* lightMap
+	render::ITexture* lightDiffuseMap,
+	render::ITexture* lightSpecularMap
 )
 {
 	Scalar p11 = projection.get(0, 0);
@@ -618,7 +397,8 @@ void LightRendererDeferred::renderFinalColor(
 	m_finalColorShader->setTextureParameter(s_handleNormalMap, normalMap);
 	m_finalColorShader->setTextureParameter(s_handleMiscMap, miscMap);
 	m_finalColorShader->setTextureParameter(s_handleColorMap, colorMap);
-	m_finalColorShader->setTextureParameter(s_handleLightMap, lightMap);
+	m_finalColorShader->setTextureParameter(s_handleLightDiffuseMap, lightDiffuseMap);
+	m_finalColorShader->setTextureParameter(s_handleLightSpecularMap, lightSpecularMap);
 
 	m_finalColorShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 }
