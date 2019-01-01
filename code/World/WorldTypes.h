@@ -58,6 +58,12 @@ enum LightType
 	LtProbe = 4
 };
 
+struct LightProbe
+{
+	render::ITexture* diffuse;	/*!< Irradiance */
+	render::ITexture* specular;	/*!< Radiance */
+};
+
 struct Light
 {
 	LightType type;
@@ -68,7 +74,7 @@ struct Light
 	Vector4 shadowColor;
 	Scalar range;
 	Scalar radius;
-	render::ITexture* probeDiffuse;
+	LightProbe probe;
 	render::ITexture* cloudShadow;
 	bool castShadow;
 };
@@ -76,9 +82,9 @@ struct Light
 /*! \brief Update parameters. */
 struct UpdateParams
 {
-	float totalTime;		/*! \brief Total time since first update. */
-	float deltaTime;		/*! \brief Delta time since last update. */
-	float alternateTime;	/*! \brief Alternative absolute time. */
+	float totalTime;		/*!< Total time since first update. */
+	float deltaTime;		/*!< Delta time since last update. */
+	float alternateTime;	/*!< Alternative absolute time. */
 };
 
 	}

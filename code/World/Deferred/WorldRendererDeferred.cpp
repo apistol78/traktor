@@ -384,18 +384,22 @@ bool WorldRendererDeferred::create(
 	{
 		render::RenderTargetSetCreateDesc rtscd;
 		
-		rtscd.count = 1;
+		rtscd.count = 2;
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
 		rtscd.multiSample = 0;
 		rtscd.createDepthStencil = !desc.usePrimaryDepth;
 		rtscd.usingPrimaryDepthStencil = desc.usePrimaryDepth;
 		rtscd.preferTiled = true;
-		rtscd.targets[0].format = render::TfR16G16B16A16F;
+		rtscd.targets[0].format = render::TfR11G11B10F;	// Diffuse radiance
+		rtscd.targets[1].format = render::TfR11G11B10F;	// Specular radiance
 
 		m_lightAccumulationTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_lightAccumulationTargetSet)
+		{
+			log::error << L"Unable to create light accumulation render target." << Endl;
 			return false;
+		}
 	}
 
 	// Create "color read-back" copy processing.
@@ -911,7 +915,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 
-	// Render irradiance into light accumulation buffer.
+	// Render light accumulation buffer.
 	{
 		render::ProgramParameters irradianceProgramParams;
 		irradianceProgramParams.beginParameters(m_globalContext);
@@ -921,11 +925,11 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		irradianceProgramParams.setMatrixParameter(ms_handleProjection, projection);
 		irradianceProgramParams.endParameters(m_globalContext);
 
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Irradiance");
-		if (m_renderView->begin(m_lightAccumulationTargetSet, 0))
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Light accumulation (irradiance)");
+		if (m_renderView->begin(m_lightAccumulationTargetSet))
 		{
-			const Color4f lightClear(0.0f, 0.0f, 0.0f, 0.0f);
-			m_renderView->clear(render::CfColor, &lightClear, 0.0f, 0);
+			const Color4f lightClear[] = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
+			m_renderView->clear(render::CfColor, lightClear, 1.0f, 0);
 
 			if (f.haveIrradiance)
 				f.irradiance->getRenderContext()->render(m_renderView, render::RpOpaque, &irradianceProgramParams);
@@ -1085,7 +1089,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			}
 
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (shadow)");
-			if (m_renderView->begin(m_lightAccumulationTargetSet, 0))
+			if (m_renderView->begin(m_lightAccumulationTargetSet))
 			{
 				render::RenderTargetSet* shadowMask = nullptr;
 				if (m_shadowMaskFilterTargetSet)
@@ -1112,21 +1116,28 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		}
 
 		// Then render all non-shadowing lights; no need to rebind render target for each light.
-		if (m_renderView->begin(m_lightAccumulationTargetSet, 0))
+		if (m_renderView->begin(m_lightAccumulationTargetSet))
 		{
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (no shadow)");
-			m_lightRenderer->renderNonShadowLights(
-				m_renderView,
-				f.time,
-				projection,
-				f.view,
-				f.lights,
-				m_gbufferTargetSet->getColorTexture(0),
-				m_gbufferTargetSet->getColorTexture(1),
-				m_gbufferTargetSet->getColorTexture(2),
-				m_gbufferTargetSet->getColorTexture(3)
-			);
+			for (const auto& light : f.lights)
+			{
+				if (light.castShadow)
+					continue;
 
+				m_lightRenderer->renderLight(
+					m_renderView,
+					f.time,
+					projection,
+					f.view,
+					light,
+					m_gbufferTargetSet->getColorTexture(0),
+					m_gbufferTargetSet->getColorTexture(1),
+					m_gbufferTargetSet->getColorTexture(2),
+					m_gbufferTargetSet->getColorTexture(3),
+					0.0f,
+					nullptr
+				);
+			}
 			m_renderView->end();
 		}
 	}
@@ -1144,7 +1155,8 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			m_gbufferTargetSet->getColorTexture(1),
 			m_gbufferTargetSet->getColorTexture(2),
 			m_gbufferTargetSet->getColorTexture(3),
-			m_lightAccumulationTargetSet->getColorTexture(0)
+			m_lightAccumulationTargetSet->getColorTexture(0),
+			m_lightAccumulationTargetSet->getColorTexture(1)
 		);		
 		m_renderView->end();
 	}
@@ -1172,26 +1184,9 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		m_renderView->end();
 	}
 
-	// Render reflections and fog.
+	// Render fog.
 	if (m_renderView->begin(m_visualTargetSet, 0))
 	{
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Reflections");
-		m_lightRenderer->renderReflections(
-			m_renderView,
-			projection,
-			f.view,
-			m_fogDistanceAndDensity,
-			m_fogColor,
-			bool(m_reflectionsQuality >= QuHigh),
-			m_colorTargetSet->getColorTexture(0),
-			m_reflectionMap,
-			m_gbufferTargetSet->getColorTexture(0),
-			m_gbufferTargetSet->getColorTexture(1),
-			m_gbufferTargetSet->getColorTexture(2),
-			m_gbufferTargetSet->getColorTexture(3)
-		);
-		T_RENDER_POP_MARKER(m_renderView);
-
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Fog");
 		m_lightRenderer->renderFog(
 			m_renderView,
@@ -1428,7 +1423,10 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 		outTargets.push_back(render::DebugTarget(L"Shadow mask (SS filtered)", render::DtvShadowMask, m_shadowMaskFilterTargetSet->getColorTexture(0)));
 
 	if (m_lightAccumulationTargetSet)
-		outTargets.push_back(render::DebugTarget(L"Light accumulation", render::DtvDefault, m_lightAccumulationTargetSet->getColorTexture(0)));
+	{
+		outTargets.push_back(render::DebugTarget(L"Light accumulation (diffuse)", render::DtvDefault, m_lightAccumulationTargetSet->getColorTexture(0)));
+		outTargets.push_back(render::DebugTarget(L"Light accumulation (specular)", render::DtvDefault, m_lightAccumulationTargetSet->getColorTexture(1)));
+	}
 
 	if (m_shadowMaskProject)
 		m_shadowMaskProject->getDebugTargets(outTargets);
@@ -1523,8 +1521,9 @@ void WorldRendererDeferred::buildLightWithShadows(WorldRenderView& worldRenderVi
 		const Light& light = worldRenderView.getLight(i);
 		f.lights[i] = light;
 
+		// Build shadow map context.
 		if (
-			(light.type == LtDirectional || light.type == LtSpot || light.type == LtProbe) &&
+			(light.type == LtDirectional || light.type == LtSpot) &&
 			light.castShadow &&
 			i < MaxLightShadowCount
 		)
