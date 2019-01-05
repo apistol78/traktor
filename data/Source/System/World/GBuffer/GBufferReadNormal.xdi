@@ -23,7 +23,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{3599DB31-534A-F444-B864-75DEECFC3417}</id>
 			<comment/>
 			<position>
@@ -33,16 +33,19 @@
 			<fragmentGuid>{D5AA3EC3-E59A-5B45-A5C5-D863B4E91EE3}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{DD499BAF-B821-9347-B77D-24251AB7655D}</id>
 					<name>NormalMap</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{09242AE3-59FE-CB4F-A36A-17F581C6FF17}</id>
 					<name>NormalMapUV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{FA70D12A-71FB-1E48-B18B-1D3780FD5943}</id>
 					<name>Normal</name>
 				</item>
 			</outputPins>

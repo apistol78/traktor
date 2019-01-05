@@ -49,7 +49,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{AB3A3BA6-2E68-534F-9E46-EE064A59EA1D}</id>
 			<comment/>
 			<position>
@@ -59,24 +59,29 @@
 			<fragmentGuid>{3BDB38CE-AE49-4D4D-A158-78E64469DF0A}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{E26BF610-EE95-0D4A-BD32-F7095A91EFB3}</id>
 					<name>Input1</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{6A94B8A2-4897-294D-AB99-F1E6D9A0D205}</id>
 					<name>Input2</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D2425621-59E5-1E4B-9FC8-799103ACFDA1}</id>
 					<name>Input3</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{0E76DF35-1F1E-1A44-AEC8-6D07B6DDB3F5}</id>
 					<name>Blend</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{DF034004-5A73-764E-974D-E115BDEBBA7E}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -205,7 +210,7 @@ Fall off
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{BA01DB10-82D8-C848-BB67-2B72E6505FF8}</id>
 			<comment/>
 			<position>
@@ -216,24 +221,31 @@ Fall off
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{17931F9B-C0AB-AB4B-B2D4-49280C198DE1}</id>
 					<name>Depth</name>
 				</item>
 				<item>
+					<id>{CBAF67A0-4CD2-D746-A1B5-4F585CAA3199}</id>
 					<name>EyeDirection</name>
 				</item>
 				<item>
+					<id>{E25BC49C-C55C-41F2-96B8-15E4C572AF23}</id>
 					<name>Metalness</name>
 				</item>
 				<item>
+					<id>{F4CC0B28-0DE2-BB4F-A6B3-5C7DBE57A96F}</id>
 					<name>Roughness</name>
 				</item>
 				<item>
+					<id>{F2EBB748-8DAC-EA48-B858-0C14479CE443}</id>
 					<name>SpecularTerm</name>
 				</item>
 				<item>
+					<id>{F26708F9-F91E-8E4F-9D47-3FCBAA6CE65A}</id>
 					<name>ViewNormal</name>
 				</item>
 				<item>
+					<id>{568AAF2D-6F5A-4449-B191-A0F65D964B18}</id>
 					<name>ViewPosition</name>
 				</item>
 			</outputPins>
@@ -277,7 +289,7 @@ Fall off
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D4F3E40E-5A49-BD42-9BDE-4BA7AE35FDE5}</id>
 			<comment/>
 			<position>
@@ -287,27 +299,33 @@ Fall off
 			<fragmentGuid>{D0BC3830-8C89-3745-BF71-AAB4B5B985D9}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{14674D92-D526-8F43-A0F5-E01336B763B8}</id>
 					<name>EyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{CA7E87E4-4081-F24A-861E-B73B38A1764A}</id>
 					<name>LightDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{C0A95C97-4C59-3646-BBF4-06FAD2C4E1E2}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{1B4FA9B5-053F-7B4A-806F-FA176E71DA9C}</id>
 					<name>SpecularRoughness</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{16BC4333-E312-8140-BB94-882EC6E1285E}</id>
 					<name>Diffuse</name>
 				</item>
 				<item>
+					<id>{B3D849E1-E521-5040-8EB9-8776FB373A7F}</id>
 					<name>Specular</name>
 				</item>
 			</outputPins>

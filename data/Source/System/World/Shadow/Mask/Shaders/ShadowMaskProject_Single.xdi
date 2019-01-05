@@ -57,7 +57,7 @@
 				<second>587</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{726F3473-32B9-6541-9CBA-233F7DC1DA53}</id>
 			<comment/>
 			<position>
@@ -67,16 +67,19 @@
 			<fragmentGuid>{9DB2FD24-E52F-0048-A1AF-82A82CDD24E8}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{770B842D-4CD8-0049-A6F3-F1C0B1E8ECB5}</id>
 					<name>ReferenceZ</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{762AE495-C2A9-5547-AF06-AA55ED4C1348}</id>
 					<name>ShadowMapUV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{F1660D27-E2BA-D845-8F2A-7600D318A110}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -103,7 +106,7 @@ Light space position
 				<second>425</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{11FA904F-4612-C947-A66D-1BF913141425}</id>
 			<comment/>
 			<position>
@@ -114,9 +117,11 @@ Light space position
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{4E5512E8-7A14-ED4D-B1E0-2048733C717F}</id>
 					<name>Depth</name>
 				</item>
 				<item>
+					<id>{EB7C21FD-ED93-5040-AF65-E04A18CB961C}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -130,7 +135,7 @@ Light space position
 				<second>441</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{8870D4CE-AC16-4B42-9F16-7F3C86E70298}</id>
 			<comment/>
 			<position>
@@ -140,12 +145,14 @@ Light space position
 			<fragmentGuid>{25697192-5E06-844D-9AE3-25337E046F6C}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{A07B5CEF-C74A-1547-988A-47532D7FD1A9}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{F826FA52-F83F-B748-893E-F977E0D4E27E}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

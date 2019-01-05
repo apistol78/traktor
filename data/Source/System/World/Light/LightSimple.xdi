@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{6D7C9DB1-B45C-2544-92C4-069E00A018C4}</id>
 			<comment/>
 			<position>
@@ -11,24 +11,29 @@
 			<fragmentGuid>{3BDB38CE-AE49-4D4D-A158-78E64469DF0A}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{E26BF610-EE95-0D4A-BD32-F7095A91EFB3}</id>
 					<name>Input1</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{6A94B8A2-4897-294D-AB99-F1E6D9A0D205}</id>
 					<name>Input2</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D2425621-59E5-1E4B-9FC8-799103ACFDA1}</id>
 					<name>Input3</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{0E76DF35-1F1E-1A44-AEC8-6D07B6DDB3F5}</id>
 					<name>Blend</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{DF034004-5A73-764E-974D-E115BDEBBA7E}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -69,7 +74,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C68AD7C9-EA94-2640-9600-488B9A41C74C}</id>
 			<comment/>
 			<position>
@@ -79,30 +84,38 @@
 			<fragmentGuid>{3F793E9D-73C9-8A44-B342-907FB4A2190D}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{230E7D55-5AF1-084F-9F07-74D13185A760}</id>
 					<name>Index</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{390D3546-C311-5C46-828F-A72F5E1F6050}</id>
 					<name>SunColor</name>
 				</item>
 				<item>
+					<id>{6F0BEB64-246B-D64B-A75A-AC7C2D803953}</id>
 					<name>BaseColor</name>
 				</item>
 				<item>
+					<id>{151EFDA1-ED94-1642-B80E-B18AFD0663BF}</id>
 					<name>ShadowColor</name>
 				</item>
 				<item>
+					<id>{CAEDFA17-F623-DB47-951B-0441218F1AB0}</id>
 					<name>Type</name>
 				</item>
 				<item>
+					<id>{02EB2288-A84C-7F4F-AE1C-0B331EE5CF85}</id>
 					<name>Range</name>
 				</item>
 				<item>
+					<id>{2564BE93-3D10-8B40-95ED-C515C8434DB3}</id>
 					<name>Direction</name>
 				</item>
 				<item>
+					<id>{F46BBF72-B290-6843-940C-0AC9D9508E61}</id>
 					<name>Position</name>
 				</item>
 			</outputPins>
@@ -143,7 +156,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{318485F6-CBE2-AC49-BCD3-DDFDDC58DBFC}</id>
 			<comment/>
 			<position>
@@ -153,33 +166,39 @@
 			<fragmentGuid>{D0BC3830-8C89-3745-BF71-AAB4B5B985D9}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{14674D92-D526-8F43-A0F5-E01336B763B8}</id>
 					<name>EyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{CA7E87E4-4081-F24A-861E-B73B38A1764A}</id>
 					<name>LightDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{C0A95C97-4C59-3646-BBF4-06FAD2C4E1E2}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{1B4FA9B5-053F-7B4A-806F-FA176E71DA9C}</id>
 					<name>SpecularRoughness</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{16BC4333-E312-8140-BB94-882EC6E1285E}</id>
 					<name>Diffuse</name>
 				</item>
 				<item>
+					<id>{B3D849E1-E521-5040-8EB9-8776FB373A7F}</id>
 					<name>Specular</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{74F7D11E-1B73-DD48-90F7-0A0FFBA02545}</id>
 			<comment/>
 			<position>
@@ -189,23 +208,28 @@
 			<fragmentGuid>{B5FB3B51-18B3-1D44-A060-5E83D267C7D4}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{469E8EE5-5394-E345-AE38-7149D025FFF7}</id>
 					<name>Diffuse</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{6BF04DDD-AADD-1D49-8054-ACB85CEA7CC3}</id>
 					<name>Shadow</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{8ABA4C43-B22D-DE4A-AA9E-A563465C8068}</id>
 					<name>Specular</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{CFD7C699-DEC9-C942-9104-455F9058C029}</id>
 					<name>Diffuse</name>
 				</item>
 				<item>
+					<id>{CC8FAAE2-4BB9-9D49-A5AD-BC0A703EEF43}</id>
 					<name>Specular</name>
 				</item>
 			</outputPins>

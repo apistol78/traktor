@@ -53,7 +53,7 @@
 			</position>
 			<value>9</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D5809F58-3DAB-0D4E-8EDE-DA4AD2EE4796}</id>
 			<comment/>
 			<position>
@@ -63,12 +63,14 @@
 			<fragmentGuid>{3964A615-B081-5B42-AC2E-E569C1BAE4EA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{DC86CD51-DFE1-3349-9134-3EE083055CB1}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{7B68F1DC-74C5-A24D-B4AD-B6998229ABAB}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -124,7 +126,7 @@
 				<second>571</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{49A3E8C4-47C4-E740-BCE4-30F2F78C9430}</id>
 			<comment/>
 			<position>
@@ -134,12 +136,14 @@
 			<fragmentGuid>{3964A615-B081-5B42-AC2E-E569C1BAE4EA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{DC86CD51-DFE1-3349-9134-3EE083055CB1}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{7B68F1DC-74C5-A24D-B4AD-B6998229ABAB}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -153,7 +157,7 @@
 				<second>479</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{DC3F6B74-DF2F-CE49-B32D-6A28021DA8EB}</id>
 			<comment/>
 			<position>
@@ -163,18 +167,20 @@
 			<fragmentGuid>{3964A615-B081-5B42-AC2E-E569C1BAE4EA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{DC86CD51-DFE1-3349-9134-3EE083055CB1}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{7B68F1DC-74C5-A24D-B4AD-B6998229ABAB}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{5E9C03FD-DBC0-5440-815B-1072E961B6C1}</id>
 			<comment/>
 			<position>
@@ -184,18 +190,20 @@
 			<fragmentGuid>{3964A615-B081-5B42-AC2E-E569C1BAE4EA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{DC86CD51-DFE1-3349-9134-3EE083055CB1}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{7B68F1DC-74C5-A24D-B4AD-B6998229ABAB}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{BC66D866-27CF-794C-AE87-D4C1753095E2}</id>
 			<comment/>
 			<position>
@@ -205,18 +213,20 @@
 			<fragmentGuid>{3964A615-B081-5B42-AC2E-E569C1BAE4EA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{DC86CD51-DFE1-3349-9134-3EE083055CB1}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{7B68F1DC-74C5-A24D-B4AD-B6998229ABAB}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{A83C29D7-1B26-D844-B121-2388C3ACD255}</id>
 			<comment/>
 			<position>
@@ -226,12 +236,14 @@
 			<fragmentGuid>{3964A615-B081-5B42-AC2E-E569C1BAE4EA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{DC86CD51-DFE1-3349-9134-3EE083055CB1}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{7B68F1DC-74C5-A24D-B4AD-B6998229ABAB}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

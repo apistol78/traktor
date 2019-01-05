@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9DE796BA-83D6-E941-AEF9-D2DA38CB18D3}</id>
 			<comment/>
 			<position>
@@ -11,30 +11,37 @@
 			<fragmentGuid>{DB61FE22-1D18-0000-A7CB-095CD836EEAD}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>
 					<name>SurfaceColor</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{C15FFA71-480D-3948-BF4B-5D1FD2F40B3C}</id>
 					<name>ViewNormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{505DD2CD-E305-084F-8673-848F43B149F0}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{36CB6501-1ACE-0F4F-9110-D7D21B31336F}</id>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{56C3CC9D-B88C-0042-BB60-AC1A1C9B410E}</id>
 					<name>Emissive</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{28AF9CD6-D160-E641-AF57-D097F6C47895}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{FE6B863D-B937-E24A-97C2-9A9E5200BE7C}</id>
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
@@ -59,7 +66,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{652D6DA5-492A-5743-B786-D0856DE904AD}</id>
 			<comment/>
 			<position>
@@ -69,6 +76,7 @@
 			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{0F124D64-F889-B346-A287-1E1E13CCA54F}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
@@ -76,7 +84,7 @@
 			<outputPins/>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C4D99A5A-C459-E447-B875-BE9334DD3955}</id>
 			<comment/>
 			<position>
@@ -86,6 +94,7 @@
 			<fragmentGuid>{6EF33326-74C7-B640-BB38-5C57D2199FB4}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{71B4E6DB-4E21-5D47-BEF1-6516DAFA5B42}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
@@ -184,7 +193,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{035F2CD0-A9C5-384E-81BD-9F344767D1B6}</id>
 			<comment/>
 			<position>
@@ -194,34 +203,42 @@
 			<fragmentGuid>{A18C08DA-399A-B949-AD8D-4E22CFCC2FE4}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{30E85928-7B55-E740-9734-68440CE06674}</id>
 					<name>ViewNormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{DF015B38-4B91-6C48-BB5E-81FC8355D961}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{864A6CC9-7DC1-FA49-8649-F53FC12125D2}</id>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{9EA06B20-B8BC-DC46-81C1-F02597463823}</id>
 					<name>Emissive</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{327CBB43-0B18-0F4A-9C61-ADEAD84B701C}</id>
 					<name>Metalness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{8D3DC51D-D9AA-DC4F-B3E3-558D3B60192F}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{4F244615-5B23-874A-B667-39314EB84650}</id>
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{57731852-250E-7240-B13E-F2E3F9BFD492}</id>
 					<name>SurfaceColor</name>
 					<optional>true</optional>
 				</item>
@@ -315,7 +332,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0.025</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D54E130C-9D4F-E849-A646-418F6319231E}</id>
 			<comment/>
 			<position>
@@ -325,46 +342,57 @@
 			<fragmentGuid>{D0106B3E-E48F-C24E-AA07-165B6053E8D3}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{FAE3C154-6362-3E45-A336-CF191501407E}</id>
 					<name>SurfaceColor</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{1DBCF979-A98B-4742-8C8A-D4A6121397FB}</id>
 					<name>ViewNormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{86F70340-5A81-BF41-A764-9EEB557559FF}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{6CDEA4D2-8BCE-A047-9F48-BCDCEC31F7B3}</id>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{D3A54911-FF19-DD41-A206-79F9A8670738}</id>
 					<name>Emissive</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{58222DBB-D1B1-B847-8F7D-AD0D46635D5D}</id>
 					<name>Refractive</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{1C22D497-B18F-8E45-ACE2-3CD086CFFD85}</id>
 					<name>RefractiveAmount</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{B5ECD725-6A9B-4544-9163-564CCDB2B997}</id>
 					<name>RefractiveCoefficient</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{9D953ABA-B1A5-214A-8737-7E84EA33AF8E}</id>
 					<name>RefractiveTintColor</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{99AC051B-D7E2-5B4E-8F42-04DEB30A5387}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{7500C977-E627-FE47-9FB7-434536FD2E25}</id>
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
@@ -440,7 +468,7 @@ shadow write, depth write and gbuffer write.
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{EF182E5B-A5E8-5A46-9C97-E8A7128AFA53}</id>
 			<comment/>
 			<position>
@@ -450,6 +478,7 @@ shadow write, depth write and gbuffer write.
 			<fragmentGuid>{E3C34875-BEFA-3C4E-BB51-8D334C1FD4D6}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{55606599-DA57-584A-9A22-85DB6F4829EF}</id>
 					<name>ViewVelocity</name>
 					<optional>false</optional>
 				</item>

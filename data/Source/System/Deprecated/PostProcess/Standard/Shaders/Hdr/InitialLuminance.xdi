@@ -63,7 +63,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9A498E31-52C2-4E48-8813-0DCE9F95238A}</id>
 			<comment/>
 			<position>
@@ -74,9 +74,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -192,7 +194,7 @@ Iterate V
 			</position>
 			<swizzle>xxxx</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{07AA47D3-3BB7-4BF4-BBD3-5829238C7D3A}</id>
 			<comment/>
 			<position>
@@ -202,12 +204,14 @@ Iterate V
 			<fragmentGuid>{D3DAC6EE-8F3F-754C-B0D9-04B6F7867D0F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{E9711D6F-F18A-574F-B270-B270C70C239A}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{653E9830-471D-574B-AE12-AA835F4FFFEE}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

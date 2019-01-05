@@ -208,7 +208,7 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{2403378C-9CBF-DC41-8CC4-92CBC48D75FE}</id>
 			<comment/>
 			<position>
@@ -218,12 +218,14 @@
 			<fragmentGuid>{71AFC92B-B3BF-8C4E-989A-7AC6AFB5FBD2}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{588D29E9-E625-A348-898E-C7EF17F31BFA}</id>
 					<name>Deg</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{FA2A3E4A-B89F-4945-B8DF-1B7C561890C8}</id>
 					<name>Rad</name>
 				</item>
 			</outputPins>
@@ -246,7 +248,7 @@
 				<second>994</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{71265196-C260-BC4D-BB3C-0006BC0D34E8}</id>
 			<comment/>
 			<position>
@@ -256,12 +258,14 @@
 			<fragmentGuid>{71AFC92B-B3BF-8C4E-989A-7AC6AFB5FBD2}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{588D29E9-E625-A348-898E-C7EF17F31BFA}</id>
 					<name>Deg</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{FA2A3E4A-B89F-4945-B8DF-1B7C561890C8}</id>
 					<name>Rad</name>
 				</item>
 			</outputPins>

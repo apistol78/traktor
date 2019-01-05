@@ -51,7 +51,7 @@
 			</position>
 			<swizzle>xy0</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{E82964D4-E7FF-3944-B5C3-0490A106C4DD}</id>
 			<comment/>
 			<position>
@@ -61,16 +61,19 @@
 			<fragmentGuid>{F69FB000-4750-764C-AB54-75CEFE6C1F2A}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{ED32B114-1165-E341-92C9-BD684C26B19A}</id>
 					<name>Angle</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{DE25C017-660D-654C-91C2-EB740BFAD5DD}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{F78C1D3D-284D-0941-BB2A-27E07F798F8A}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

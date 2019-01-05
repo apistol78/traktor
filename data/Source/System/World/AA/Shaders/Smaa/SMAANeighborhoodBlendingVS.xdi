@@ -14,7 +14,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{6EB347C3-A343-4348-8743-F20445E3040F}</id>
 			<comment/>
 			<position>
@@ -25,6 +25,7 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{6619DE61-A71A-8F43-B86D-6EBD0FE12ED1}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

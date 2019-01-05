@@ -130,7 +130,7 @@
 				<second>-184</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{61FA4C44-325D-134A-8419-1BC1CB380A9E}</id>
 			<comment/>
 			<position>
@@ -140,16 +140,19 @@
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{C90B489B-ADED-9F47-8C78-07B3088D3A1F}</id>
 					<name>DepthMap</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{315B0CBC-40D3-AF48-A6A4-8A54299BFE42}</id>
 					<name>DepthMapUV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{65D75CE0-358E-3B4B-9620-C21C0710FCDC}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -163,7 +166,7 @@
 				<second>343</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{5A1F6CF0-9F96-EF4F-B369-58AADB946E8D}</id>
 			<comment/>
 			<position>
@@ -174,9 +177,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -221,7 +226,7 @@
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{8788D50A-B147-564D-9602-8445979DAB82}</id>
 			<comment/>
 			<position>
@@ -231,16 +236,19 @@
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{C90B489B-ADED-9F47-8C78-07B3088D3A1F}</id>
 					<name>DepthMap</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{315B0CBC-40D3-AF48-A6A4-8A54299BFE42}</id>
 					<name>DepthMapUV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{65D75CE0-358E-3B4B-9620-C21C0710FCDC}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -342,7 +350,7 @@ discontinuitites.
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{75E8D879-0002-5149-A96B-B983394DEF1F}</id>
 			<comment/>
 			<position>
@@ -353,6 +361,7 @@ discontinuitites.
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{9343C32C-960F-C746-9408-24A53589C2DA}</id>
 					<name>Depth discontinuity threshold</name>
 				</item>
 			</outputPins>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{69F91AC5-7295-B14A-832D-3806AB0FEC8C}</id>
 			<comment/>
 			<position>
@@ -11,20 +11,24 @@
 			<fragmentGuid>{F707BC8C-1C03-9345-8D1C-6D0659F70483}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{5D8E3C60-0D89-A84C-8844-2B1F523B4967}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{BCB0119B-9FE8-F448-9B1B-3BE2E20C1D15}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{667DAC86-4E14-3246-A978-B50F7724E8D4}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{BFB65610-5B0C-8748-8AA7-1A185759BA38}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -56,7 +60,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{E87FAF07-D3E4-1841-BBA5-A4DE065E17F4}</id>
 			<comment/>
 			<position>
@@ -67,24 +71,31 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{0159F5DB-1B1F-C24D-B603-7F1E71025329}</id>
 					<name>SMAA_LOCAL_CONTRAST_ADAPTATION_FACTOR</name>
 				</item>
 				<item>
+					<id>{39B4E5FA-87DF-1447-9984-0C60320E8845}</id>
 					<name>SMAA_MAX_SEARCH_STEPS</name>
 				</item>
 				<item>
+					<id>{51C5B72E-EFDB-FC4A-8F15-DA2F6D5108FA}</id>
 					<name>SMAA_PREDICATION</name>
 				</item>
 				<item>
+					<id>{8FEF8AF3-618A-5E4E-B0B5-E6EFE344E8A2}</id>
 					<name>SMAA_PREDICATION_SCALE</name>
 				</item>
 				<item>
+					<id>{93A243F3-52DF-4147-8379-78DE8BF46D9A}</id>
 					<name>SMAA_PREDICATION_STRENGTH</name>
 				</item>
 				<item>
+					<id>{6A3E1598-184C-594A-8166-26F16E1BB712}</id>
 					<name>SMAA_PREDICATION_THRESHOLD</name>
 				</item>
 				<item>
+					<id>{A4DB638B-9C22-AC47-9852-1D1E109FE377}</id>
 					<name>SMAA_THRESHOLD</name>
 				</item>
 			</outputPins>
@@ -108,7 +119,7 @@
 			</position>
 			<value>0.2126, 0.7152, 0.0722, 0</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{49E30606-F330-094C-819D-4F0FD99C7E6B}</id>
 			<comment/>
 			<position>
@@ -118,16 +129,19 @@
 			<fragmentGuid>{6A5D94A5-F586-4B4A-BA14-00AF6E3DF96D}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{BF547D79-5F49-CD48-A7B2-2602918041EE}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{803A0F61-1A29-8441-AE30-709477C103F5}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{E5251BAE-0544-7B40-946A-E32D182B6B26}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -154,7 +168,7 @@
 				<second>545</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D048AB0A-3706-6442-9924-341DDF66AEA8}</id>
 			<comment/>
 			<position>
@@ -164,22 +178,25 @@
 			<fragmentGuid>{6A5D94A5-F586-4B4A-BA14-00AF6E3DF96D}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{BF547D79-5F49-CD48-A7B2-2602918041EE}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{803A0F61-1A29-8441-AE30-709477C103F5}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{E5251BAE-0544-7B40-946A-E32D182B6B26}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7F8D61EB-A897-AA4D-8228-A06DF46EABB1}</id>
 			<comment/>
 			<position>
@@ -189,16 +206,19 @@
 			<fragmentGuid>{6A5D94A5-F586-4B4A-BA14-00AF6E3DF96D}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{BF547D79-5F49-CD48-A7B2-2602918041EE}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{803A0F61-1A29-8441-AE30-709477C103F5}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{E5251BAE-0544-7B40-946A-E32D182B6B26}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -390,7 +410,7 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{29935AC7-FA86-964F-92E5-B05011DF6638}</id>
 			<comment/>
 			<position>
@@ -400,22 +420,25 @@
 			<fragmentGuid>{6A5D94A5-F586-4B4A-BA14-00AF6E3DF96D}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{BF547D79-5F49-CD48-A7B2-2602918041EE}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{803A0F61-1A29-8441-AE30-709477C103F5}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{E5251BAE-0544-7B40-946A-E32D182B6B26}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{62C95DCE-0C65-2F4E-BC34-114FF343EE44}</id>
 			<comment/>
 			<position>
@@ -425,16 +448,19 @@
 			<fragmentGuid>{6A5D94A5-F586-4B4A-BA14-00AF6E3DF96D}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{BF547D79-5F49-CD48-A7B2-2602918041EE}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{803A0F61-1A29-8441-AE30-709477C103F5}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{E5251BAE-0544-7B40-946A-E32D182B6B26}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -629,7 +655,7 @@
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C61C4B44-A918-6B4F-916F-0847B4411B25}</id>
 			<comment/>
 			<position>
@@ -639,22 +665,25 @@
 			<fragmentGuid>{6A5D94A5-F586-4B4A-BA14-00AF6E3DF96D}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{BF547D79-5F49-CD48-A7B2-2602918041EE}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{803A0F61-1A29-8441-AE30-709477C103F5}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{E5251BAE-0544-7B40-946A-E32D182B6B26}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{5FF8448B-5BB9-C04D-AE3E-64FDF401BE6A}</id>
 			<comment/>
 			<position>
@@ -664,16 +693,19 @@
 			<fragmentGuid>{6A5D94A5-F586-4B4A-BA14-00AF6E3DF96D}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{BF547D79-5F49-CD48-A7B2-2602918041EE}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{803A0F61-1A29-8441-AE30-709477C103F5}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{E5251BAE-0544-7B40-946A-E32D182B6B26}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -851,7 +883,7 @@
 				<second>3457</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{104C8877-6758-D34B-922A-DE8AA0B1FFDF}</id>
 			<comment/>
 			<position>
@@ -862,24 +894,31 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{0159F5DB-1B1F-C24D-B603-7F1E71025329}</id>
 					<name>SMAA_LOCAL_CONTRAST_ADAPTATION_FACTOR</name>
 				</item>
 				<item>
+					<id>{39B4E5FA-87DF-1447-9984-0C60320E8845}</id>
 					<name>SMAA_MAX_SEARCH_STEPS</name>
 				</item>
 				<item>
+					<id>{51C5B72E-EFDB-FC4A-8F15-DA2F6D5108FA}</id>
 					<name>SMAA_PREDICATION</name>
 				</item>
 				<item>
+					<id>{8FEF8AF3-618A-5E4E-B0B5-E6EFE344E8A2}</id>
 					<name>SMAA_PREDICATION_SCALE</name>
 				</item>
 				<item>
+					<id>{93A243F3-52DF-4147-8379-78DE8BF46D9A}</id>
 					<name>SMAA_PREDICATION_STRENGTH</name>
 				</item>
 				<item>
+					<id>{6A3E1598-184C-594A-8166-26F16E1BB712}</id>
 					<name>SMAA_PREDICATION_THRESHOLD</name>
 				</item>
 				<item>
+					<id>{A4DB638B-9C22-AC47-9852-1D1E109FE377}</id>
 					<name>SMAA_THRESHOLD</name>
 				</item>
 			</outputPins>

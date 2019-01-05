@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{2F00B17C-E366-F144-8B0A-7167685FAEDE}</id>
 			<comment/>
 			<position>
@@ -11,50 +11,62 @@
 			<fragmentGuid>{0B35548E-B9A0-C149-A141-89C7C4D5C434}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{F22510E6-10A7-E24E-92B9-215909A952C4}</id>
 					<name>DeepColor</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{676F944D-DC30-214F-B4FB-5176765FFD72}</id>
 					<name>DeepOffset</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{55D530E7-63C4-CA41-9B7C-6DA70B43576C}</id>
 					<name>DeepRange</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{A3C151AA-B9D7-344A-8F98-AD7347F42C9E}</id>
 					<name>Depth</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{03E9A9BF-41C4-E141-8984-E8DEFDF8FC31}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{E71CB9BC-0EA0-AC42-AF2F-CB7838CDDEA1}</id>
 					<name>ViewDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{F319493E-7E78-9C4D-A513-01DC52453F69}</id>
 					<name>ViewNormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{3D647458-BB83-8E42-A9D5-91C503E2205C}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{FD9A11FD-5293-9847-A314-C5A94D4A0944}</id>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{5E7CFF47-B7ED-ED40-BA11-EB5952CFB79F}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{C2E7A5FC-01FC-9D41-A676-BDE8E13B2D9B}</id>
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{227DE124-5733-4F47-B6DF-10E8303B39C0}</id>
 					<name>View</name>
 					<optional>true</optional>
 				</item>
@@ -126,7 +138,7 @@
 				<second>432</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{06629F8E-7F01-3240-811B-AFDF192BBB82}</id>
 			<comment/>
 			<position>
@@ -136,16 +148,19 @@
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{C90B489B-ADED-9F47-8C78-07B3088D3A1F}</id>
 					<name>DepthMap</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{315B0CBC-40D3-AF48-A6A4-8A54299BFE42}</id>
 					<name>DepthMapUV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{65D75CE0-358E-3B4B-9620-C21C0710FCDC}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -162,7 +177,7 @@
 			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{94378758-6B49-C946-B85C-15255FAC1BE0}</id>
 			<comment/>
 			<position>
@@ -173,9 +188,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -307,7 +324,7 @@ Surface point
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9915AEAB-E70A-3B48-AD05-AB1EEB4F7F16}</id>
 			<comment/>
 			<position>
@@ -317,12 +334,14 @@ Surface point
 			<fragmentGuid>{099A92E7-736C-4E46-8165-7EAA069F654B}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{DB2CEE98-32A8-E74B-8C88-63E90D06AC83}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{F829EDE2-6A49-BA46-91D5-CE35887592DF}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -430,7 +449,7 @@ Surface point
 				<second>686</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{75C10766-B87A-CE4C-9E3F-D24948C92C69}</id>
 			<comment/>
 			<position>
@@ -440,12 +459,14 @@ Surface point
 			<fragmentGuid>{FD433300-0061-C447-A01D-1A6DCE7FC255}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{AF516311-3657-A844-878A-3C112C50F112}</id>
 					<name>Position</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{D4B47116-0074-3541-8BEA-5A79D147140C}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

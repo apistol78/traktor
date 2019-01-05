@@ -73,7 +73,7 @@
 			</position>
 			<name>Position</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{23855AF6-7786-DD4C-8EF8-8009F5F5F642}</id>
 			<comment/>
 			<position>
@@ -84,30 +84,39 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{3D321314-D5BB-F24B-BF8C-067E0EF35ECF}</id>
 					<name>Color</name>
 				</item>
 				<item>
+					<id>{8F43AC41-086E-C540-847D-D35ADF9176EF}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{FB7A0FFB-6AA6-7046-981B-7ED6A4945473}</id>
 					<name>TexCoord0</name>
 				</item>
 				<item>
+					<id>{08C82BAA-6634-B848-926F-B5D0A51F810F}</id>
 					<name>TexCoord1</name>
 				</item>
 				<item>
+					<id>{D6A4BC05-EBF0-F548-ACDE-95B4A89CC3E2}</id>
 					<name>ViewBinormal</name>
 				</item>
 				<item>
+					<id>{BBFBF99B-EA7F-0C41-B1B2-0144E04E27B2}</id>
 					<name>ViewNormal</name>
 				</item>
 				<item>
+					<id>{82181B8A-EE5B-4741-BF5F-31B31BC51B56}</id>
 					<name>ViewPosition</name>
 				</item>
 				<item>
+					<id>{8FC0CA82-973E-9B44-B0EE-CD5C4552173A}</id>
 					<name>ViewTangent</name>
 				</item>
 				<item>
+					<id>{52B9557A-88FD-B84A-8E6F-DCAACCDB571D}</id>
 					<name>ViewVelocity</name>
 				</item>
 			</outputPins>

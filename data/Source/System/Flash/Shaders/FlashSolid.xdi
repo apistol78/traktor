@@ -31,7 +31,7 @@
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{92F1019A-BBC5-E240-96B2-CA2ADC377460}</id>
 			<comment/>
 			<position>
@@ -42,12 +42,15 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{1B62804B-E968-A048-AE44-69BB3DA16BBD}</id>
 					<name>Clip</name>
 				</item>
 				<item>
+					<id>{AEEEAEE3-B113-B448-A524-0472D0E37FED}</id>
 					<name>Color</name>
 				</item>
 				<item>
+					<id>{CDEB28FB-B15B-0A4D-A58B-98516E1F743C}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -62,7 +65,7 @@
 			</position>
 			<technique/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{2DBCEC5B-BBC4-684C-8947-9771B8CD57F1}</id>
 			<comment/>
 			<position>
@@ -72,21 +75,24 @@
 			<fragmentGuid>{6F008BFC-A1AD-814C-BF7D-010FAC0C7703}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{1E0DD8A4-7B4A-6D44-8D4D-5C90B8135E59}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{A0D0623D-B0CF-8844-B4A1-168531A99E4F}</id>
 					<name>Edge</name>
 				</item>
 				<item>
+					<id>{9367AC58-367E-014F-9038-973DAE61D65D}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{0D92A5EC-6178-C94D-A036-2EB378B4FF43}</id>
 			<comment/>
 			<position>
@@ -96,14 +102,17 @@
 			<fragmentGuid>{AC47E91D-696B-A647-BB33-022614658D3B}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{04537ED0-B1C7-CC42-AB99-20C72C29B62B}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{3B53CCE3-9C7B-0049-B2B1-05430FAF23DB}</id>
 					<name>Edge</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{39122197-B72A-344A-86F6-8946CFDD418D}</id>
 					<name>Opaque</name>
 					<optional>true</optional>
 				</item>

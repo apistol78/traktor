@@ -96,7 +96,7 @@
 				<second>-2069</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{8A4DB95E-0926-584E-A7A7-3DC132A243FB}</id>
 			<comment/>
 			<position>
@@ -106,12 +106,14 @@
 			<fragmentGuid>{3964A615-B081-5B42-AC2E-E569C1BAE4EA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{DC86CD51-DFE1-3349-9134-3EE083055CB1}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{7B68F1DC-74C5-A24D-B4AD-B6998229ABAB}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -263,7 +265,7 @@
 			</position>
 			<value>-1.5, -1.5, 0, 0</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9238952F-F1F8-1543-B41D-DF49133C0759}</id>
 			<comment/>
 			<position>
@@ -273,12 +275,14 @@
 			<fragmentGuid>{6417530E-E82E-8A46-836A-A2B5F97A8D9F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{B44A33F6-E87D-B448-A5BF-0D2B6E835C85}</id>
 					<name>Offset</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{3F41DE16-ED47-0847-9516-A10AA8A41698}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -390,7 +394,7 @@
 			<registerCount>48</registerCount>
 			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{AB9FDD0E-0569-7A45-86CC-D9752BF0C0EF}</id>
 			<comment/>
 			<position>
@@ -401,6 +405,7 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{270B0234-BC97-4F43-A9F4-220A3EF2FDC2}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -415,7 +420,7 @@
 			</position>
 			<technique/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D156D6CB-CD42-914B-BAD4-941F1984E878}</id>
 			<comment/>
 			<position>
@@ -425,12 +430,14 @@
 			<fragmentGuid>{6417530E-E82E-8A46-836A-A2B5F97A8D9F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{B44A33F6-E87D-B448-A5BF-0D2B6E835C85}</id>
 					<name>Offset</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{3F41DE16-ED47-0847-9516-A10AA8A41698}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

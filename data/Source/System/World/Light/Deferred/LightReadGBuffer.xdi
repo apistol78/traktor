@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{E5527C99-990D-5540-A9E8-741DFC4CE547}</id>
 			<comment/>
 			<position>
@@ -12,15 +12,17 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C1A5D7C6-4EF4-284A-A094-1327ECBED212}</id>
 			<comment/>
 			<position>
@@ -30,18 +32,20 @@
 			<fragmentGuid>{ED628E05-EA7F-B24F-9E38-97F53A90CCDA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{CA354600-15AE-DE42-AB5A-FA83AE931572}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{68FEE0D6-C712-9F4A-8713-0869C8607AA1}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9B7F2F9B-720A-964A-99AA-C33238BCC68F}</id>
 			<comment/>
 			<position>
@@ -51,18 +55,20 @@
 			<fragmentGuid>{B8A2B203-34E6-3543-8502-522D0F16791C}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{39749CD5-03F0-D045-99EC-E01C2D775486}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{B350D788-DF12-6A40-922B-5737E4CB7880}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{B3597F88-A0B5-944C-9DBE-706CD9F32F3F}</id>
 			<comment/>
 			<position>
@@ -72,18 +78,20 @@
 			<fragmentGuid>{83FA28CC-18FE-4A48-B00E-E3340D341B81}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{8A52C8C0-1F58-A248-8A0E-9AA09B474A20}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{3D007387-A0FB-3D49-B2E8-0D20A7DC1315}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{4347F93E-B4CD-2749-9FEC-2AEB9C237ADC}</id>
 			<comment/>
 			<position>
@@ -93,12 +101,14 @@
 			<fragmentGuid>{FDCA9563-2389-4B43-A8E5-5262EC02EC1F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{97DC9817-9348-4045-84D1-5E3E34942BEF}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{DA71CC25-EA8C-574D-AFFD-02F27FC9C7F4}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -236,7 +246,7 @@
 			</position>
 			<name>Depth</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{390927E0-37D2-4370-AC2E-667ACCFD1856}</id>
 			<comment/>
 			<position>
@@ -246,12 +256,14 @@
 			<fragmentGuid>{42F70BA2-042F-F74D-9FEB-2A8DA946AF95}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{520ED0D2-881F-D044-B213-28592C3F0C9C}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{66678BA7-49BD-6A4E-BF71-3A7C57F06519}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -266,7 +278,7 @@
 			</position>
 			<name>Metalness</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9057D628-8B47-4B77-A7D9-6622A5ECF7DD}</id>
 			<comment/>
 			<position>
@@ -276,12 +288,14 @@
 			<fragmentGuid>{197F1BBB-E153-A846-90E9-23789D16EE15}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{87F95874-19AD-C341-9810-BEA4004128A4}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{1EC4E04A-4CC5-074C-A796-97B89309F7D9}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

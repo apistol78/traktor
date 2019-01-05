@@ -144,7 +144,7 @@
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{BBA48373-C078-9749-AEEA-21298BBCA15F}</id>
 			<comment/>
 			<position>
@@ -154,54 +154,67 @@
 			<fragmentGuid>{8CECB482-4FD6-3948-A2FB-7157E123D4A3}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
 					<name>SurfaceColor</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{F974F342-573A-364A-A946-6E1B158B78FF}</id>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{A5F0E607-E44E-4D43-8743-2CE73EC070EC}</id>
 					<name>Emissive</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{3C90103C-96CA-CD4F-88BF-928235B168E7}</id>
 					<name>Metalness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{6873327D-6C03-6D46-9BF3-A202FC42EDE8}</id>
 					<name>Refractive</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{78C08AE1-DFEA-EE48-8342-8A83176F63D1}</id>
 					<name>RefractiveAmount</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{9435518F-307E-D045-988B-55E8832DFC53}</id>
 					<name>RefractiveCoefficient</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{F1D61065-DB6E-9B40-951C-034BD682AE6D}</id>
 					<name>RefractiveTintColor</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{86A497C0-B521-514D-8F75-464E8EDD28D8}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{7AA3E7B4-480A-574C-8D97-B282D63AF27E}</id>
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{D9D1FD13-4CD0-B949-A524-3276089CD08A}</id>
 					<name>ViewNormal</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{86D35046-A057-024C-ADA3-9585DB3208BB}</id>
 					<name>ViewPosition</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{21B82E2F-6A92-574E-98B6-CBE4A37D9C1E}</id>
 					<name>ViewVelocity</name>
 					<optional>true</optional>
 				</item>

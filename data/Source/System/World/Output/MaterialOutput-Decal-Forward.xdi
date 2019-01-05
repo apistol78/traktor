@@ -117,7 +117,7 @@ Eye direction
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>1</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{974A9D25-1257-9B49-806D-15B4D77ED82B}</id>
 			<comment/>
 			<position>
@@ -127,31 +127,38 @@ Eye direction
 			<fragmentGuid>{BC060F9A-456E-B747-92C9-5BD78E172A26}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{EDF06616-1C90-1E45-AC94-3D539248395C}</id>
 					<name>EyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{C4B09B4D-EEDF-A542-BD33-1686A00BA987}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D37BD4E6-ECC7-ED40-B94D-C24E65374C6F}</id>
 					<name>Position</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{06CA250C-639F-6247-A21E-61A11A98D04F}</id>
 					<name>Shadow</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{DA74135F-816D-3443-B405-591DFA6BA749}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{CA1A6519-45A6-674B-9168-17F2AE22830D}</id>
 					<name>Diffuse</name>
 				</item>
 				<item>
+					<id>{97454B31-6F36-7342-9C10-681428D1C6C2}</id>
 					<name>Specular</name>
 				</item>
 			</outputPins>
@@ -179,7 +186,7 @@ Eye direction
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{F8E2BBA8-F31F-4140-9E10-03F538AA5C29}</id>
 			<comment/>
 			<position>
@@ -190,6 +197,7 @@ Eye direction
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{92C8DC39-D05A-3144-8E36-752006124284}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

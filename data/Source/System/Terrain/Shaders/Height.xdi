@@ -151,7 +151,7 @@
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{CE8B14F3-5CD2-684D-90DE-4EBB2CC2A86C}</id>
 			<comment/>
 			<position>
@@ -161,20 +161,24 @@
 			<fragmentGuid>{2C7E2EE3-D483-1C4D-9A3A-2ACC67B3AB70}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{84689BDD-A452-AA44-A618-0354CFED5060}</id>
 					<name>Value</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{7516D622-58A5-7844-B233-4CD18DE0A47F}</id>
 					<name>Range Max</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{7E4256DF-A222-B740-A0CD-70FB516E730B}</id>
 					<name>Range Min</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{C4CCD9E0-78A4-AD4A-912A-7FC929B58426}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

@@ -136,7 +136,7 @@ Generated texture from surface cache.
 				<second>-238</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{8ED215C4-2D88-5C44-8019-7257ABE146D0}</id>
 			<comment/>
 			<position>
@@ -146,31 +146,38 @@ Generated texture from surface cache.
 			<fragmentGuid>{23790224-9E2A-4C43-9C3B-F659BE962E10}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{5B0F7E0B-4BD2-5F49-80CB-173E05D74159}</id>
 					<name>T_Height</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{0F740AA1-AF96-F141-B047-9F2E0FFAA003}</id>
 					<name>T_Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{5E3C7A16-8233-0946-9F8E-656A2F545AD8}</id>
 					<name>T_PatchTexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{8F2904B3-D860-A043-98F0-4AE6AC0D4ED1}</id>
 					<name>T_WorldEyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{8230C4D0-206C-CD4A-9A60-1B39BCCA921F}</id>
 					<name>T_WorldTexCoord</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{10231020-AD85-D648-98B2-E9B028704052}</id>
 					<name>T_Color</name>
 				</item>
 				<item>
+					<id>{524CBBA2-C160-CB43-ADE9-BE7299EFF622}</id>
 					<name>T_Normal</name>
 				</item>
 			</outputPins>
@@ -224,7 +231,7 @@ Generated texture from surface cache.
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{3ED8F0A6-5558-8241-81E0-C71FB7B70211}</id>
 			<comment/>
 			<position>
@@ -234,12 +241,14 @@ Generated texture from surface cache.
 			<fragmentGuid>{53930A33-0CD2-0247-838C-3561FD095306}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{FDC5017A-52BB-5442-BD52-BE105519E49E}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{831220B5-72C3-C442-9900-CC1E3BFE0386}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -253,7 +262,7 @@ Generated texture from surface cache.
 				<second>-344</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7DB92FD0-9F9D-5E4B-9497-E883021F5ECB}</id>
 			<comment/>
 			<position>
@@ -263,12 +272,14 @@ Generated texture from surface cache.
 			<fragmentGuid>{E848C73B-E979-E445-AD18-E843CECF0928}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{A7C58665-DE2C-1B4B-90BA-E27FCE2CA687}</id>
 					<name>WorldPosition</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{D9A0E443-C5DA-B742-9179-9B9EEC290E1B}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -778,7 +789,7 @@ Disabled emissive for now as it doesn't work on OpenGL
 				<second>-26</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7719686C-8CEB-9244-8170-E4DC37A03947}</id>
 			<comment/>
 			<position>
@@ -788,45 +799,55 @@ Disabled emissive for now as it doesn't work on OpenGL
 			<fragmentGuid>{93C8C2C3-BE05-EA45-9C6C-BE87B6E6D412}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{BCD7AD3C-20EF-2045-AA9D-3F9E50BC0A9B}</id>
 					<name>Position</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{6C9DEC8F-7CD7-EC42-9478-FCB2FBD80AA9}</id>
 					<name>Binormal</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{AFE59FA6-25AE-8A48-B0AC-92A5B3CDAFF7}</id>
 					<name>Normal</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{808710AB-C367-7E4A-8C4C-4653156A583C}</id>
 					<name>Tangent</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{1AC3512B-4C97-CB48-96DB-556B6435976A}</id>
 					<name>ClipPosition</name>
 				</item>
 				<item>
+					<id>{85780AFE-3DC6-F448-8805-9A8136B871B8}</id>
 					<name>ClipVelocity</name>
 				</item>
 				<item>
+					<id>{BAB1B9B3-E3FB-B745-9F56-B0EF26BAF2C6}</id>
 					<name>ViewBinormal</name>
 				</item>
 				<item>
+					<id>{64FF9F9F-41F4-CA4E-9206-A2CE15474347}</id>
 					<name>ViewNormal</name>
 				</item>
 				<item>
+					<id>{11847877-E3BA-4043-9A6C-85800E0116BB}</id>
 					<name>ViewPosition</name>
 				</item>
 				<item>
+					<id>{5172DC2C-EB40-174A-97E2-34D0AA84201E}</id>
 					<name>ViewTangent</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{CFAC0FCD-E6A6-004B-B8F3-33DE9D8DDF17}</id>
 			<comment/>
 			<position>
@@ -836,34 +857,42 @@ Disabled emissive for now as it doesn't work on OpenGL
 			<fragmentGuid>{A18C08DA-399A-B949-AD8D-4E22CFCC2FE4}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{30E85928-7B55-E740-9734-68440CE06674}</id>
 					<name>ViewNormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{DF015B38-4B91-6C48-BB5E-81FC8355D961}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{864A6CC9-7DC1-FA49-8649-F53FC12125D2}</id>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{9EA06B20-B8BC-DC46-81C1-F02597463823}</id>
 					<name>Emissive</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{327CBB43-0B18-0F4A-9C61-ADEAD84B701C}</id>
 					<name>Metalness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{8D3DC51D-D9AA-DC4F-B3E3-558D3B60192F}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{4F244615-5B23-874A-B667-39314EB84650}</id>
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{57731852-250E-7240-B13E-F2E3F9BFD492}</id>
 					<name>SurfaceColor</name>
 					<optional>true</optional>
 				</item>
@@ -896,7 +925,7 @@ Disabled emissive for now as it doesn't work on OpenGL
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{496ABB3D-8249-1849-B273-3BBA3E92EB9F}</id>
 			<comment/>
 			<position>
@@ -906,6 +935,7 @@ Disabled emissive for now as it doesn't work on OpenGL
 			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{0F124D64-F889-B346-A287-1E1E13CCA54F}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
@@ -913,7 +943,7 @@ Disabled emissive for now as it doesn't work on OpenGL
 			<outputPins/>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{A54B9F6E-5F87-9B47-B61C-682933DA88C0}</id>
 			<comment/>
 			<position>
@@ -923,38 +953,37 @@ Disabled emissive for now as it doesn't work on OpenGL
 			<fragmentGuid>{DB61FE22-1D18-0000-A7CB-095CD836EEAD}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>
 					<name>SurfaceColor</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{C15FFA71-480D-3948-BF4B-5D1FD2F40B3C}</id>
 					<name>ViewNormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{505DD2CD-E305-084F-8673-848F43B149F0}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{36CB6501-1ACE-0F4F-9110-D7D21B31336F}</id>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{56C3CC9D-B88C-0042-BB60-AC1A1C9B410E}</id>
 					<name>Emissive</name>
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>RimColor</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<name>RimIntensity</name>
-					<optional>true</optional>
-				</item>
-				<item>
+					<id>{28AF9CD6-D160-E641-AF57-D097F6C47895}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{FE6B863D-B937-E24A-97C2-9A9E5200BE7C}</id>
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
@@ -967,14 +996,6 @@ Disabled emissive for now as it doesn't work on OpenGL
 				</item>
 				<item>
 					<first>Emissive</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>RimColor</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>RimIntensity</first>
 					<second>0</second>
 				</item>
 				<item>

@@ -274,7 +274,7 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{546A1F60-F1BA-6F48-9A95-5E199F9C4BFA}</id>
 			<comment/>
 			<position>
@@ -285,6 +285,7 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{A8A5B244-60B8-694D-B957-7F4E53EA9C65}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -449,7 +450,7 @@
 				<second>731</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="traktor.render.Node:1">
+		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
 			<id>{C648123C-46F2-4844-B5C7-AFBC5DE49779}</id>
 			<comment/>
 			<position>
@@ -459,21 +460,25 @@
 			<name>RayPlaneIntersect</name>
 			<inputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Origin</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Direction</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>N</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>D</name>
 					<type>PtScalar</type>
 					<samplerId/>
@@ -481,6 +486,7 @@
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Output</name>
 					<type>PtVector</type>
 				</item>

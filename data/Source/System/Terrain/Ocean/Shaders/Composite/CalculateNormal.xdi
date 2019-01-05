@@ -60,7 +60,7 @@
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7E571D00-E7BD-DB40-9C2E-7E1E468F6B53}</id>
 			<comment/>
 			<position>
@@ -70,12 +70,14 @@
 			<fragmentGuid>{D934947E-5481-1143-B5C6-2594394B706F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{0E1DD1C2-A1C5-C141-B1AC-2F8D5E94D74B}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{75EEF50B-9372-D44C-86B7-DC6E234B36AE}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -205,7 +207,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C8BE6F74-F63D-134F-A43B-1ACDA77CDB46}</id>
 			<comment/>
 			<position>
@@ -215,12 +217,14 @@
 			<fragmentGuid>{D934947E-5481-1143-B5C6-2594394B706F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{0E1DD1C2-A1C5-C141-B1AC-2F8D5E94D74B}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{75EEF50B-9372-D44C-86B7-DC6E234B36AE}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

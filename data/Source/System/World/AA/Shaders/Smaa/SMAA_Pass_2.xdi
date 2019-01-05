@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{AB49A5AB-4D0F-764A-BC73-27BC30637555}</id>
 			<comment/>
 			<position>
@@ -12,9 +12,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -68,7 +70,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{2674AD51-CDFE-FD44-B9B2-A765F90531C5}</id>
 			<comment/>
 			<position>
@@ -78,27 +80,32 @@
 			<fragmentGuid>{5898C6C9-882D-EE47-804F-C44594310D40}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{D6639971-CB4F-7146-A1F9-54D8C0C40A6B}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{327C05F2-534C-7144-AA68-53622030C2CA}</id>
 					<name>Offset_0</name>
 				</item>
 				<item>
+					<id>{DF87B3BE-F405-1E44-8355-A039A58B988B}</id>
 					<name>Offset_1</name>
 				</item>
 				<item>
+					<id>{F70A4238-D6CE-A446-A639-EDA1C8206AAD}</id>
 					<name>Offset_2</name>
 				</item>
 				<item>
+					<id>{1E6133AB-5C13-9043-BA74-F65D13D0A590}</id>
 					<name>PixCoord</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{FC0A81BE-AC43-AF4A-A6D4-0AD9673E19FB}</id>
 			<comment/>
 			<position>
@@ -108,44 +115,54 @@
 			<fragmentGuid>{C9259F7F-0D11-EE40-9E27-2C6CC07C9D04}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{3AA0A1B0-BBA9-7545-A25C-C566BE5B1520}</id>
 					<name>AreaTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{5F7D713E-B855-D540-A8F3-030484E0DA00}</id>
 					<name>EdgesTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{7BC23AF0-4438-594F-B65E-56418001C460}</id>
 					<name>Offset_0</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{75170A96-D951-604B-BE5D-7BD96796D2A4}</id>
 					<name>Offset_1</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D03DA04F-07B3-9141-A92F-310C58EB9212}</id>
 					<name>Offset_2</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{937FC832-DFF3-CC41-9558-469D6222019D}</id>
 					<name>PixCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{0C6DDCDE-D724-174E-B2C0-3E860B2EE44C}</id>
 					<name>SearchTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{44BB40AA-BEE2-4248-B8FF-36193AF245DD}</id>
 					<name>SubsampleIndices</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{6FDBEDF2-86B1-F94B-9040-34E44460B895}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{F322A752-D970-874E-B7D6-760CE262C83D}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

@@ -101,7 +101,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{48FEB86F-3078-2A4B-8380-E4F45D6D1B63}</id>
 			<comment/>
 			<position>
@@ -111,23 +111,28 @@
 			<fragmentGuid>{25C2C49B-95F6-D641-871B-9931058C77DA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{C6EFA042-9409-384F-A55B-2F2ED7138D07}</id>
 					<name>ColorMap</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{B8F7658C-AE8C-044A-B8EF-84431C9C2B88}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{4990114A-759E-6E49-8B35-BFCA525CC2D8}</id>
 					<name>NormalMap</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{709ABEBA-568B-B64C-91F3-A1A94DC8CB4C}</id>
 					<name>Color</name>
 				</item>
 				<item>
+					<id>{75081155-EEF4-154C-8CCD-B5851DFDE202}</id>
 					<name>Normal</name>
 				</item>
 			</outputPins>
@@ -138,7 +143,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{728ECD68-8116-6A4D-95E1-D374A6CB89E9}</id>
 			<comment/>
 			<position>
@@ -148,23 +153,28 @@
 			<fragmentGuid>{25C2C49B-95F6-D641-871B-9931058C77DA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{C6EFA042-9409-384F-A55B-2F2ED7138D07}</id>
 					<name>ColorMap</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{B8F7658C-AE8C-044A-B8EF-84431C9C2B88}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{4990114A-759E-6E49-8B35-BFCA525CC2D8}</id>
 					<name>NormalMap</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{709ABEBA-568B-B64C-91F3-A1A94DC8CB4C}</id>
 					<name>Color</name>
 				</item>
 				<item>
+					<id>{75081155-EEF4-154C-8CCD-B5851DFDE202}</id>
 					<name>Normal</name>
 				</item>
 			</outputPins>
@@ -175,7 +185,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{30CF78A2-54DA-1A47-8B06-AE4183057B91}</id>
 			<comment/>
 			<position>
@@ -185,23 +195,28 @@
 			<fragmentGuid>{25C2C49B-95F6-D641-871B-9931058C77DA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{C6EFA042-9409-384F-A55B-2F2ED7138D07}</id>
 					<name>ColorMap</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{B8F7658C-AE8C-044A-B8EF-84431C9C2B88}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{4990114A-759E-6E49-8B35-BFCA525CC2D8}</id>
 					<name>NormalMap</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{709ABEBA-568B-B64C-91F3-A1A94DC8CB4C}</id>
 					<name>Color</name>
 				</item>
 				<item>
+					<id>{75081155-EEF4-154C-8CCD-B5851DFDE202}</id>
 					<name>Normal</name>
 				</item>
 			</outputPins>
@@ -212,7 +227,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{4257E017-9301-BA45-A95F-0E58D2E70AF5}</id>
 			<comment/>
 			<position>
@@ -222,23 +237,28 @@
 			<fragmentGuid>{25C2C49B-95F6-D641-871B-9931058C77DA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{C6EFA042-9409-384F-A55B-2F2ED7138D07}</id>
 					<name>ColorMap</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{B8F7658C-AE8C-044A-B8EF-84431C9C2B88}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{4990114A-759E-6E49-8B35-BFCA525CC2D8}</id>
 					<name>NormalMap</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{709ABEBA-568B-B64C-91F3-A1A94DC8CB4C}</id>
 					<name>Color</name>
 				</item>
 				<item>
+					<id>{75081155-EEF4-154C-8CCD-B5851DFDE202}</id>
 					<name>Normal</name>
 				</item>
 			</outputPins>
@@ -249,7 +269,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{0FC86384-517B-8242-9E6E-11CDFF310A08}</id>
 			<comment/>
 			<position>
@@ -259,55 +279,68 @@
 			<fragmentGuid>{27F2AA63-1D29-1F48-A97A-66F90E026773}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{93E8F1BA-512F-7E46-AA96-26B54316E8EB}</id>
 					<name>WorldTexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{AA37DD13-4A4C-6345-AC16-BC2721126D3F}</id>
 					<name>CavityMap</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{40A984D2-962E-2D4D-9F1B-8B95EF41685F}</id>
 					<name>Color1</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{E6CB8A72-B530-9049-AA2F-328F5F442B54}</id>
 					<name>Color2</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{D57D7772-EA57-034D-BE6D-92E8047644CF}</id>
 					<name>Color3</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{B2E804A6-DE0D-E547-8F68-55DAD645FD60}</id>
 					<name>Color4</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{42C2FACD-C1FC-8B4C-A02A-B2A192A26AD3}</id>
 					<name>Normal1</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{19DA10F3-42BF-5B40-A868-72B98E847930}</id>
 					<name>Normal2</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{795FC4B0-5D25-7240-83A5-7B2DBF4FB562}</id>
 					<name>Normal3</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{9FE81FD8-3A29-9A47-85A6-70ED6E9B0AC2}</id>
 					<name>Normal4</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{2ACFE341-37C9-EF41-9FB2-F2EBE4B8D7C5}</id>
 					<name>OcclusionMap</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{AD201E1C-2252-DD4A-A92C-177D6ED35838}</id>
 					<name>Color</name>
 				</item>
 				<item>
+					<id>{33ED69BF-F760-3443-A3C1-35BBE2A71B6B}</id>
 					<name>Normal</name>
 				</item>
 			</outputPins>

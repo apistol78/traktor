@@ -123,7 +123,7 @@ Spec. dot
 				<second>654</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D1F5EF1A-879C-6841-A964-C873E03C0BEB}</id>
 			<comment/>
 			<position>
@@ -133,16 +133,19 @@ Spec. dot
 			<fragmentGuid>{A3FDEEFB-60E9-924E-89C4-322C12BC33A1}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{5441B110-9A4B-F148-BA1E-8CCB529671F8}</id>
 					<name>ViewDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D59B06A3-9536-9449-9354-6C32FADE423D}</id>
 					<name>LightDirection</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{0713AC1A-17E6-BA4A-BB66-C2BF61924A46}</id>
 					<name>HalfAngleVector</name>
 				</item>
 			</outputPins>
@@ -220,7 +223,7 @@ Spec. dot
 				<second>496</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{F9CB6C2B-4ACA-6840-8844-B213532C690D}</id>
 			<comment/>
 			<position>
@@ -230,24 +233,29 @@ Spec. dot
 			<fragmentGuid>{50714E2B-9865-FE43-8430-3414D7154B62}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{8BDBDF2F-1A2A-6346-9F2C-B435FEA75A6B}</id>
 					<name>EyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{E254A735-D7E9-C14E-A252-3D723D16D3A8}</id>
 					<name>LightDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{4666D0EC-DE58-214D-8EE2-5BD6FCD2E21A}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{CD70F62C-2726-1E47-999D-D4DAFEC87EDB}</id>
 					<name>Roughness</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{165F6581-BBA4-084E-928A-32D4EC7A2273}</id>
 					<name>Diffuse</name>
 				</item>
 			</outputPins>

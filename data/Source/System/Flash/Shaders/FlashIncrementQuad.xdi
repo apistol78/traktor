@@ -12,7 +12,7 @@
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{2B1A53AD-61B7-304A-B7CB-1D2D89AB5707}</id>
 			<comment/>
 			<position>
@@ -23,9 +23,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{CDEB28FB-B15B-0A4D-A58B-98516E1F743C}</id>
 					<name>Output</name>
 				</item>
 				<item>
+					<id>{AEEEAEE3-B113-B448-A524-0472D0E37FED}</id>
 					<name>Color</name>
 				</item>
 			</outputPins>

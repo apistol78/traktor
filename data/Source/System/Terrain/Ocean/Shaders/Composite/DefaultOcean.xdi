@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{0282EAEF-F097-5241-BE67-94E4F07C2B36}</id>
 			<comment/>
 			<position>
@@ -11,14 +11,17 @@
 			<fragmentGuid>{A83199A9-70BA-B442-B9A2-3958B910766C}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{E8465568-D7CB-3D44-BDB2-38CE658E6C0C}</id>
 					<name>DeepColor</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{FA6A0D6B-4F1B-5640-89EE-918BE4EFA066}</id>
 					<name>DeepOffset</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{281DBFFE-0B7E-B648-B70D-837FE905EE17}</id>
 					<name>DeepRange</name>
 					<optional>false</optional>
 				</item>

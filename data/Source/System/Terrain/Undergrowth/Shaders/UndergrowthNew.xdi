@@ -118,7 +118,7 @@
 				<second>289</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{1DBE7265-52FF-3047-8ECF-7D48C19B7FD8}</id>
 			<comment/>
 			<position>
@@ -129,12 +129,15 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{F7E130B5-97AB-484D-96C5-F43ED4B4CC1E}</id>
 					<name>Random</name>
 				</item>
 				<item>
+					<id>{223ACA00-0AA3-3343-8217-282E0C5050BF}</id>
 					<name>Scale</name>
 				</item>
 				<item>
+					<id>{B12D2FD5-3801-5741-99E7-C84B5A7B789E}</id>
 					<name>x0z</name>
 				</item>
 			</outputPins>
@@ -310,7 +313,7 @@
 				<second>431</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D0E41332-563E-8044-A10A-D3357521AA34}</id>
 			<comment/>
 			<position>
@@ -320,16 +323,19 @@
 			<fragmentGuid>{7D6F4AA0-9627-CD42-8972-0E638FF867D5}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{3C21FB1B-016C-4B4C-988A-A71CCA99324E}</id>
 					<name>Angle</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{62D9169A-CC93-EC4F-8DCC-37F423CC260E}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{06FF6DE6-2E54-2F4D-A301-C049C364A0A0}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -537,7 +543,7 @@
 				<second>205</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D3117B90-81F3-F946-B1EB-F1D29E715528}</id>
 			<comment/>
 			<position>
@@ -547,21 +553,26 @@
 			<fragmentGuid>{FA245B32-0CEF-BD4C-98DB-B84D7A62B15F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{349FD249-5446-D749-8B0C-0FE7F2782639}</id>
 					<name>x0z</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{3FB9D546-6F49-9548-86F2-45E9B9C8F50A}</id>
 					<name>Color</name>
 				</item>
 				<item>
+					<id>{01CD9BE4-992F-CA4E-AD4F-D20FE28BE893}</id>
 					<name>Normal</name>
 				</item>
 				<item>
+					<id>{F0403C19-C18F-1849-9737-B979B135C58E}</id>
 					<name>xyz</name>
 				</item>
 				<item>
+					<id>{BA7055AC-8659-1E4D-A416-A4B8682130D2}</id>
 					<name>y</name>
 				</item>
 			</outputPins>
@@ -759,7 +770,7 @@ Surface modulated
 				<second>1260</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{4C14EDCC-575B-C340-880C-3374F4936D31}</id>
 			<comment/>
 			<position>
@@ -769,16 +780,19 @@ Surface modulated
 			<fragmentGuid>{7D6F4AA0-9627-CD42-8972-0E638FF867D5}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{3C21FB1B-016C-4B4C-988A-A71CCA99324E}</id>
 					<name>Angle</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{62D9169A-CC93-EC4F-8DCC-37F423CC260E}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{06FF6DE6-2E54-2F4D-A301-C049C364A0A0}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -801,7 +815,7 @@ Surface modulated
 				<second>1300</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{038F81E8-0805-B647-BCE9-BC0A4F3250D3}</id>
 			<comment/>
 			<position>
@@ -811,31 +825,38 @@ Surface modulated
 			<fragmentGuid>{036D3453-15CB-164C-85AF-C08268AED664}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{3B4670EB-F2F6-3149-A660-70780B6F5F88}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{B7A805D3-8C98-3947-91C3-EEDA4E8F04D8}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{EA8728D2-5DD0-6C4F-A619-A00E15DAE507}</id>
 					<name>Binormal</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{798A79B3-87DC-244A-8893-F0079983A4B1}</id>
 					<name>Normal</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{E3FAEDAD-4391-1E40-9321-8E25D1D6E6DB}</id>
 					<name>Tangent</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{3AFF3C86-6D4D-5D4D-BF7D-56E769F65F7B}</id>
 					<name>Alpha</name>
 				</item>
 				<item>
+					<id>{9F9F54FB-F1C4-884A-BFB0-BD2D94D07B79}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -905,7 +926,7 @@ Surface modulated
 			</position>
 			<swizzle>x1</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{AE690398-9184-1D46-8D8B-59A2036BC4D9}</id>
 			<comment/>
 			<position>
@@ -915,50 +936,47 @@ Surface modulated
 			<fragmentGuid>{A71C0579-3F50-D046-A53B-B5298E52A90D}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{F1CD55EE-A916-EB45-8018-115CAEC32C9C}</id>
 					<name>Alpha</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{7B124512-40EC-6C48-A4A0-523242F14A06}</id>
 					<name>SurfaceColor</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{22938571-FEAF-F141-9C35-F9E9B0C8B2E8}</id>
 					<name>ViewNormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{B607FBF2-B21C-A145-A8DF-B3448456A2F2}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{BBB759CD-5C7D-DA41-8844-10F0712732CF}</id>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{CCC8ED05-BA5F-1146-BA4A-D7DC22944EDA}</id>
 					<name>Emissive</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{42390E16-69F9-8943-84B4-7CA502B472E0}</id>
 					<name>Metalness</name>
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>Reflection</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<name>RimColor</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<name>RimIntensity</name>
-					<optional>true</optional>
-				</item>
-				<item>
+					<id>{B07D3C3D-434D-5547-AB31-85F9C13CDF39}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{BD110455-8CA2-7D4A-B451-35D62906A796}</id>
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
@@ -975,18 +993,6 @@ Surface modulated
 				</item>
 				<item>
 					<first>Metalness</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Reflection</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>RimColor</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>RimIntensity</first>
 					<second>0</second>
 				</item>
 				<item>

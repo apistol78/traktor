@@ -31,7 +31,7 @@
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{3FFA1598-C757-3A4A-9797-2D4F8FF0A1AE}</id>
 			<comment/>
 			<position>
@@ -42,9 +42,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{CDEB28FB-B15B-0A4D-A58B-98516E1F743C}</id>
 					<name>Output</name>
 				</item>
 				<item>
+					<id>{AEEEAEE3-B113-B448-A524-0472D0E37FED}</id>
 					<name>Color</name>
 				</item>
 			</outputPins>
@@ -59,7 +61,7 @@
 			</position>
 			<technique/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C4C3BACB-A683-B14B-B7FF-8F98A921F3E0}</id>
 			<comment/>
 			<position>
@@ -69,14 +71,17 @@
 			<fragmentGuid>{AC47E91D-696B-A647-BB33-022614658D3B}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{04537ED0-B1C7-CC42-AB99-20C72C29B62B}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{3B53CCE3-9C7B-0049-B2B1-05430FAF23DB}</id>
 					<name>Edge</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{39122197-B72A-344A-86F6-8946CFDD418D}</id>
 					<name>Opaque</name>
 					<optional>true</optional>
 				</item>
@@ -114,7 +119,7 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Script" version="traktor.render.Node:1">
+		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
 			<id>{19749137-9CB2-374F-B260-623743177045}</id>
 			<comment/>
 			<position>
@@ -124,16 +129,19 @@
 			<name>DistanceToLine</name>
 			<inputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>LineStart</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>LineEnd</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Position</name>
 					<type>PtVector</type>
 					<samplerId/>
@@ -141,6 +149,7 @@
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Distance</name>
 					<type>PtScalar</type>
 				</item>
@@ -248,7 +257,7 @@ ENTRY
 				<second>-623</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{17A90B08-B12E-6743-AD92-2234408C9BDF}</id>
 			<comment/>
 			<position>
@@ -258,19 +267,23 @@ ENTRY
 			<fragmentGuid>{C25370AB-CFDA-674E-87C2-054D8A5DEA6A}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{E93673E9-6B6D-574E-BB61-D367C9A6FF95}</id>
 					<name>Index</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{3DE503AA-84C6-294F-A5DD-A1AE636EC5F5}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{E2EB7321-45B9-F642-8FF8-A011EBA543BC}</id>
 					<name>End</name>
 				</item>
 				<item>
+					<id>{C0A3D0BB-1F2F-8D49-A969-65F3B4BCBC2F}</id>
 					<name>Start</name>
 				</item>
 			</outputPins>

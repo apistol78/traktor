@@ -142,7 +142,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{450A501F-CEDF-FE44-947A-8FF5363475F4}</id>
 			<comment/>
 			<position>
@@ -152,31 +152,38 @@
 			<fragmentGuid>{23790224-9E2A-4C43-9C3B-F659BE962E10}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{5B0F7E0B-4BD2-5F49-80CB-173E05D74159}</id>
 					<name>T_Height</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{0F740AA1-AF96-F141-B047-9F2E0FFAA003}</id>
 					<name>T_Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{5E3C7A16-8233-0946-9F8E-656A2F545AD8}</id>
 					<name>T_PatchTexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{8F2904B3-D860-A043-98F0-4AE6AC0D4ED1}</id>
 					<name>T_WorldEyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{8230C4D0-206C-CD4A-9A60-1B39BCCA921F}</id>
 					<name>T_WorldTexCoord</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{10231020-AD85-D648-98B2-E9B028704052}</id>
 					<name>T_Color</name>
 				</item>
 				<item>
+					<id>{524CBBA2-C160-CB43-ADE9-BE7299EFF622}</id>
 					<name>T_Normal</name>
 				</item>
 			</outputPins>
@@ -220,7 +227,7 @@
 			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7793C1D2-1DC7-634D-8652-9C53F1953C8C}</id>
 			<comment/>
 			<position>
@@ -230,12 +237,14 @@
 			<fragmentGuid>{E848C73B-E979-E445-AD18-E843CECF0928}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{A7C58665-DE2C-1B4B-90BA-E27FCE2CA687}</id>
 					<name>WorldPosition</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{D9A0E443-C5DA-B742-9179-9B9EEC290E1B}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -280,7 +289,7 @@
 			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{A142ECBF-26EE-764E-91CA-2F9E6F3A1D38}</id>
 			<comment/>
 			<position>
@@ -290,12 +299,14 @@
 			<fragmentGuid>{53930A33-0CD2-0247-838C-3561FD095306}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{FDC5017A-52BB-5442-BD52-BE105519E49E}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{831220B5-72C3-C442-9900-CC1E3BFE0386}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -399,7 +410,7 @@
 				<second>500</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{1236E7ED-D3E4-8045-9B9C-7609C65A8A4A}</id>
 			<comment/>
 			<position>
@@ -409,20 +420,24 @@
 			<fragmentGuid>{2C7E2EE3-D483-1C4D-9A3A-2ACC67B3AB70}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{84689BDD-A452-AA44-A618-0354CFED5060}</id>
 					<name>Value</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{7516D622-58A5-7844-B233-4CD18DE0A47F}</id>
 					<name>Range Max</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{7E4256DF-A222-B740-A0CD-70FB516E730B}</id>
 					<name>Range Min</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{C4CCD9E0-78A4-AD4A-912A-7FC929B58426}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

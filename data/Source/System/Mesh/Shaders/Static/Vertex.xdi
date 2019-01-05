@@ -135,7 +135,7 @@
 			</position>
 			<name>Color</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{4471ED5E-181A-7F4D-9285-0A80AC612BAC}</id>
 			<comment/>
 			<position>
@@ -145,12 +145,14 @@
 			<fragmentGuid>{0F359947-AADA-6748-B492-44CE56038205}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{CC5DC130-E372-0B4F-807D-3646BE794EA7}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{97544039-E417-514E-BA37-0529DAA2C665}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -286,7 +288,7 @@ to provide values to material output fragments.
 			</position>
 			<name>Vertex_ViewBinormal</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7B4FFACE-E593-6D47-A07E-3A82BD12C62F}</id>
 			<comment/>
 			<position>
@@ -296,39 +298,49 @@ to provide values to material output fragments.
 			<fragmentGuid>{93C8C2C3-BE05-EA45-9C6C-BE87B6E6D412}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{BCD7AD3C-20EF-2045-AA9D-3F9E50BC0A9B}</id>
 					<name>Position</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{6C9DEC8F-7CD7-EC42-9478-FCB2FBD80AA9}</id>
 					<name>Binormal</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{AFE59FA6-25AE-8A48-B0AC-92A5B3CDAFF7}</id>
 					<name>Normal</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{808710AB-C367-7E4A-8C4C-4653156A583C}</id>
 					<name>Tangent</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{1AC3512B-4C97-CB48-96DB-556B6435976A}</id>
 					<name>ClipPosition</name>
 				</item>
 				<item>
+					<id>{85780AFE-3DC6-F448-8805-9A8136B871B8}</id>
 					<name>ClipVelocity</name>
 				</item>
 				<item>
+					<id>{BAB1B9B3-E3FB-B745-9F56-B0EF26BAF2C6}</id>
 					<name>ViewBinormal</name>
 				</item>
 				<item>
+					<id>{64FF9F9F-41F4-CA4E-9206-A2CE15474347}</id>
 					<name>ViewNormal</name>
 				</item>
 				<item>
+					<id>{11847877-E3BA-4043-9A6C-85800E0116BB}</id>
 					<name>ViewPosition</name>
 				</item>
 				<item>
+					<id>{5172DC2C-EB40-174A-97E2-34D0AA84201E}</id>
 					<name>ViewTangent</name>
 				</item>
 			</outputPins>

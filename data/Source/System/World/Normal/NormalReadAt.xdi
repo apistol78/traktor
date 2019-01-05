@@ -5,27 +5,29 @@
 			<id>{FA70D12A-71FB-1E48-B18B-1D3780FD5943}</id>
 			<comment/>
 			<position>
-				<first>1190</first>
-				<second>166</second>
+				<first>1041</first>
+				<second>194</second>
 			</position>
 			<name>Normal</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{498D9767-698C-E746-8DD0-B7B3768A4612}</id>
 			<comment/>
 			<position>
-				<first>767</first>
-				<second>145</second>
+				<first>768</first>
+				<second>219</second>
 			</position>
 			<fragmentGuid>{5C2C9CD8-185C-D14A-9FF0-3E564E2DB442}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{7F540E6D-CEED-F940-9F6E-D583628E89C4}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{055A9009-9EDC-1949-B3DF-B2D8D2C9694D}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -44,8 +46,8 @@
 			<id>{411C17F6-BCE6-E345-8182-C5A54BAD603B}</id>
 			<comment/>
 			<position>
-				<first>132</first>
-				<second>198</second>
+				<first>367</first>
+				<second>233</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -62,8 +64,8 @@
 			<id>{DD499BAF-B821-9347-B77D-24251AB7655D}</id>
 			<comment/>
 			<position>
-				<first>-329</first>
-				<second>216</second>
+				<first>135</first>
+				<second>221</second>
 			</position>
 			<name>NormalMap</name>
 			<connectable>true</connectable>
@@ -75,8 +77,8 @@
 			<id>{09242AE3-59FE-CB4F-A36A-17F581C6FF17}</id>
 			<comment/>
 			<position>
-				<first>-356</first>
-				<second>301</second>
+				<first>108</first>
+				<second>306</second>
 			</position>
 			<name>NormalMapUV</name>
 			<connectable>true</connectable>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{3A92C6B3-2115-F44C-86C4-80047968C27A}</id>
 			<comment/>
 			<position>
@@ -11,24 +11,28 @@
 			<fragmentGuid>{3CA36443-BA88-E642-A1C5-9CEA61DF534C}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{2C9DBAAA-7106-E046-BDDA-E7E39E6D7233}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{8FB95022-3890-E74A-90F6-741D260C880F}</id>
 					<name>Offset_0</name>
 				</item>
 				<item>
+					<id>{940DAA75-C725-664B-97B6-6C31E174C3A2}</id>
 					<name>Offset_1</name>
 				</item>
 				<item>
+					<id>{D951CAB3-1ED6-6544-8DB3-863A31161D13}</id>
 					<name>Offset_2</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{201CB914-10A6-9043-BD3A-6BFC77AA3C30}</id>
 			<comment/>
 			<position>
@@ -39,9 +43,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -106,7 +112,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{15796A28-1FED-2F4B-969E-0388AA9D9698}</id>
 			<comment/>
 			<position>
@@ -116,32 +122,39 @@
 			<fragmentGuid>{48249BE1-5BB3-8142-ABB8-D7109632AC58}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{5908AA58-E51B-E143-9D45-C00089ED9234}</id>
 					<name>ColorTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D200861B-82B7-9A46-B2F9-575589872714}</id>
 					<name>Offset_0</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{E819A486-90B4-5C41-87F2-F6DA41FF4D41}</id>
 					<name>Offset_1</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{2070A742-F088-0741-9E6A-62C8AEA53B1F}</id>
 					<name>Offset_2</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{15383D7F-33FC-F444-ACDD-54798F3B9204}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{1FE86678-1E84-B743-9718-A410976B8CFE}</id>
 					<name>PredicationTexture</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{0B2360C7-513A-4B47-BD76-F63F4943204A}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

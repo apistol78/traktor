@@ -10,7 +10,7 @@
 			</position>
 			<technique/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{BFE2F27C-D766-2D44-A9FA-28635FCF73F2}</id>
 			<comment/>
 			<position>
@@ -21,18 +21,21 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{1B62804B-E968-A048-AE44-69BB3DA16BBD}</id>
 					<name>Clip</name>
 				</item>
 				<item>
+					<id>{AEEEAEE3-B113-B448-A524-0472D0E37FED}</id>
 					<name>Color</name>
 				</item>
 				<item>
+					<id>{CDEB28FB-B15B-0A4D-A58B-98516E1F743C}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{0B2B8B61-74F1-BA49-A4F9-E1414E63BF34}</id>
 			<comment/>
 			<position>
@@ -42,14 +45,17 @@
 			<fragmentGuid>{AC47E91D-696B-A647-BB33-022614658D3B}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{04537ED0-B1C7-CC42-AB99-20C72C29B62B}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{3B53CCE3-9C7B-0049-B2B1-05430FAF23DB}</id>
 					<name>Edge</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{39122197-B72A-344A-86F6-8946CFDD418D}</id>
 					<name>Opaque</name>
 					<optional>true</optional>
 				</item>
@@ -66,7 +72,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{616D25A3-59CD-D44E-A103-365D1874DDCC}</id>
 			<comment/>
 			<position>
@@ -76,15 +82,18 @@
 			<fragmentGuid>{6F008BFC-A1AD-814C-BF7D-010FAC0C7703}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{1E0DD8A4-7B4A-6D44-8D4D-5C90B8135E59}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{A0D0623D-B0CF-8844-B4A1-168531A99E4F}</id>
 					<name>Edge</name>
 				</item>
 				<item>
+					<id>{9367AC58-367E-014F-9038-973DAE61D65D}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -106,7 +115,7 @@
 				<second>100</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{E1FF206B-CD72-944F-9308-3348938C74A7}</id>
 			<comment/>
 			<position>
@@ -116,16 +125,19 @@
 			<fragmentGuid>{5C7DF289-D6CE-384F-A65C-B10EF915438E}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{348A79F5-90F4-5C4C-92A8-7B8064FE058E}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{632A70C2-CB5C-2947-A211-7E4DA9052047}</id>
 					<name>Clamp</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{C0E76848-2899-B74D-891F-822C4CA7660C}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -178,7 +190,7 @@
 			<type>DtFloat2</type>
 			<index>1</index>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7E16FF53-A601-8C4A-8F54-D986B310126B}</id>
 			<comment/>
 			<position>
@@ -188,16 +200,19 @@
 			<fragmentGuid>{5C7DF289-D6CE-384F-A65C-B10EF915438E}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{348A79F5-90F4-5C4C-92A8-7B8064FE058E}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{632A70C2-CB5C-2947-A211-7E4DA9052047}</id>
 					<name>Clamp</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{C0E76848-2899-B74D-891F-822C4CA7660C}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

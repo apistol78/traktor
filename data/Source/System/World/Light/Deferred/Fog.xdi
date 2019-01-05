@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{817BA2A4-6056-994C-921D-4BE931CFA178}</id>
 			<comment/>
 			<position>
@@ -12,9 +12,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -121,7 +123,7 @@
 				<second>-274</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{32FDEB40-D089-DA49-8563-43E8F75ECFFC}</id>
 			<comment/>
 			<position>
@@ -131,25 +133,29 @@
 			<fragmentGuid>{AFD5FE57-FE20-134A-9C0F-5E25CAB9B3F2}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{AFF255D0-F99A-7B4E-BB42-5C8D3D7B7336}</id>
 					<name>Color</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{6D9C5BED-2B3B-3546-B807-CD618017F552}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{A983BA51-1DCB-104F-96C3-53E44704D60D}</id>
 					<name>Factor</name>
 				</item>
 				<item>
+					<id>{25E94043-C1B8-794D-8327-6864707AAFAB}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{BA60C40B-BD4B-1A44-BDB2-3BD0504AA1D1}</id>
 			<comment/>
 			<position>
@@ -159,12 +165,14 @@
 			<fragmentGuid>{ED628E05-EA7F-B24F-9E38-97F53A90CCDA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{CA354600-15AE-DE42-AB5A-FA83AE931572}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{68FEE0D6-C712-9F4A-8713-0869C8607AA1}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

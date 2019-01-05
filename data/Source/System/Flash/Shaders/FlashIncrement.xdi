@@ -58,7 +58,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhLow</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C89EA181-AD0A-394B-9E48-9C67B93D33AA}</id>
 			<comment/>
 			<position>
@@ -69,9 +69,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{CDEB28FB-B15B-0A4D-A58B-98516E1F743C}</id>
 					<name>Output</name>
 				</item>
 				<item>
+					<id>{AEEEAEE3-B113-B448-A524-0472D0E37FED}</id>
 					<name>Color</name>
 				</item>
 			</outputPins>

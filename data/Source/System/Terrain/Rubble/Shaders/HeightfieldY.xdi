@@ -208,7 +208,7 @@
 			</position>
 			<swizzle>x0z</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{69D24853-3749-7343-8162-5901FA2B7BCD}</id>
 			<comment/>
 			<position>
@@ -218,12 +218,14 @@
 			<fragmentGuid>{53930A33-0CD2-0247-838C-3561FD095306}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{FDC5017A-52BB-5442-BD52-BE105519E49E}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{831220B5-72C3-C442-9900-CC1E3BFE0386}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

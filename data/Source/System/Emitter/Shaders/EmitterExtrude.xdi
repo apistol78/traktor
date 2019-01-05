@@ -170,7 +170,7 @@ Alpha
 			</position>
 			<name>Depth</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C7639751-B5D7-A942-A2F8-34BDA1C1F176}</id>
 			<comment/>
 			<position>
@@ -181,6 +181,7 @@ Alpha
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{A8A5B244-60B8-694D-B957-7F4E53EA9C65}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

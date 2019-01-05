@@ -67,7 +67,7 @@
 				<second>343</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{EAAAB753-EF2E-5E43-95E0-B4E33B3F3300}</id>
 			<comment/>
 			<position>
@@ -77,15 +77,18 @@
 			<fragmentGuid>{03C8878E-A611-0000-6B1C-E9A3CADFF480}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{0779E8CC-08F1-1245-8827-057DC5896B61}</id>
 					<name>Tap</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{AE58FD90-42B0-A643-AAA2-C4DA66384195}</id>
 					<name>Offset</name>
 				</item>
 				<item>
+					<id>{C6FCFDF9-5CEA-4347-BCC5-466407D381E0}</id>
 					<name>Weight</name>
 				</item>
 			</outputPins>
@@ -126,7 +129,7 @@
 				<second>308</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{A84BABA8-3D8E-DD4D-A39D-0BE3177D348C}</id>
 			<comment/>
 			<position>
@@ -137,9 +140,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>

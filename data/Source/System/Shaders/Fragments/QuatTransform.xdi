@@ -44,7 +44,7 @@ As quaternion
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{363EFAAB-3E35-6B4F-BBBB-C646A3AC6886}</id>
 			<comment/>
 			<position>
@@ -54,12 +54,14 @@ As quaternion
 			<fragmentGuid>{3894D81A-6A40-494C-961B-C0B28F38CCA1}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{E85C6C59-4013-1943-BEE7-049660D82696}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{010E72D0-68B9-A94A-8957-ED8168B5F473}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -92,7 +94,7 @@ As quaternion
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{EA28E173-9C32-DB43-9453-763357655A3E}</id>
 			<comment/>
 			<position>
@@ -102,22 +104,25 @@ As quaternion
 			<fragmentGuid>{3920BAE9-35F9-084B-ABA0-3AFA8A74AACA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{35E7F019-D328-6746-AA1B-D005FE549BA4}</id>
 					<name>Input1</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{7EB4B54B-0FF5-A744-9095-B50F9D5DED04}</id>
 					<name>Input2</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{986891D0-90B2-6649-9063-41A54AE30AB2}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{8C4B0E6A-E47F-FE48-8656-9CE94C8825D7}</id>
 			<comment/>
 			<position>
@@ -127,16 +132,19 @@ As quaternion
 			<fragmentGuid>{3920BAE9-35F9-084B-ABA0-3AFA8A74AACA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{35E7F019-D328-6746-AA1B-D005FE549BA4}</id>
 					<name>Input1</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{7EB4B54B-0FF5-A744-9095-B50F9D5DED04}</id>
 					<name>Input2</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{986891D0-90B2-6649-9063-41A54AE30AB2}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

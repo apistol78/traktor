@@ -97,7 +97,7 @@ Shadow; adjusted for msaa.
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{AEF9D76A-04BA-A842-8DD4-301BFE113B5E}</id>
 			<comment/>
 			<position>
@@ -107,16 +107,19 @@ Shadow; adjusted for msaa.
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{C90B489B-ADED-9F47-8C78-07B3088D3A1F}</id>
 					<name>DepthMap</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{315B0CBC-40D3-AF48-A6A4-8A54299BFE42}</id>
 					<name>DepthMapUV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{65D75CE0-358E-3B4B-9620-C21C0710FCDC}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -161,7 +164,7 @@ Shadow; adjusted for msaa.
 				<second>256</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9CE0721B-ECE5-C64B-9F7E-8CD0187F8988}</id>
 			<comment/>
 			<position>
@@ -172,9 +175,11 @@ Shadow; adjusted for msaa.
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -188,7 +193,7 @@ Shadow; adjusted for msaa.
 				<second>284</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{A9832A55-2A81-9A45-BCC0-65C6F2A37279}</id>
 			<comment/>
 			<position>
@@ -198,16 +203,19 @@ Shadow; adjusted for msaa.
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{C90B489B-ADED-9F47-8C78-07B3088D3A1F}</id>
 					<name>DepthMap</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{315B0CBC-40D3-AF48-A6A4-8A54299BFE42}</id>
 					<name>DepthMapUV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{65D75CE0-358E-3B4B-9620-C21C0710FCDC}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -342,7 +350,7 @@ Shadow; adjusted for msaa.
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{B28B2A36-44D6-A143-B7AA-6CB3811832B7}</id>
 			<comment/>
 			<position>
@@ -353,6 +361,7 @@ Shadow; adjusted for msaa.
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{9343C32C-960F-C746-9408-24A53589C2DA}</id>
 					<name>Depth discontinuity threshold</name>
 				</item>
 			</outputPins>

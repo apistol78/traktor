@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9EB8C3B6-4217-DE49-AE49-4D717820B6AF}</id>
 			<comment/>
 			<position>
@@ -11,30 +11,37 @@
 			<fragmentGuid>{0B552995-1A4A-0B4D-B76A-520FA6A7267F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{37956E17-8BEC-F84C-949D-76362E23FC23}</id>
 					<name>SurfaceColor</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{1ABF7EE1-C51F-CB48-AC02-DCD9EEC3B04B}</id>
 					<name>ViewNormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{A82E2006-031E-C242-B3BB-F144682F5C8E}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{33CDA80C-CB85-BF46-B7CB-A81B795CF2EF}</id>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{664F75F6-5376-5344-B5FC-1AE9106BB813}</id>
 					<name>Reflection</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{1C78FC81-09C2-5F4B-9489-F2C7A0B076E5}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{13B17DE1-C1AC-4C48-8042-0679FDEE36B5}</id>
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>

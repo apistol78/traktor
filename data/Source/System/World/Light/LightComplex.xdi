@@ -110,7 +110,7 @@
 				<second>-237</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{897485BE-8081-B748-BA6C-599C489EA2DB}</id>
 			<comment/>
 			<position>
@@ -120,24 +120,29 @@
 			<fragmentGuid>{97D2620D-2DE1-654A-BECB-C457230EA5A4}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{3088729D-23E6-0941-A9A2-335485841147}</id>
 					<name>EyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{64D5F014-3B9B-6D46-99D6-E064C83C3245}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{CB1F6D72-0140-D74E-BD65-377CB09E8ECE}</id>
 					<name>Shadow</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{6D8EDB16-7949-1346-8EE3-B75E5DF7104E}</id>
 					<name>SpecularRoughness</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{6CC3CFF0-9311-F543-A14F-E724070212CE}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -148,7 +153,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{16687765-851D-D342-88D7-8D998D33ABA5}</id>
 			<comment/>
 			<position>
@@ -158,28 +163,34 @@
 			<fragmentGuid>{6D80EC90-441B-0000-6B1C-E9A3CADFF480}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{0A01DE09-0906-3E4A-8E7B-E0D73DBBF541}</id>
 					<name>EyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{46D8CD3B-CCA1-2A4D-87EF-A97598684BE2}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{AB109C40-8CD3-DA46-9321-8CB178D988D3}</id>
 					<name>Position</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{5C6E2564-68E3-2B49-83A7-FB815F338F33}</id>
 					<name>Shadow</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{267D777F-0027-F140-8E74-00726DD45CC1}</id>
 					<name>SpecularRoughness</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{DCFD0CF8-ABC5-4D42-B8D1-D26EC0CD4140}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
