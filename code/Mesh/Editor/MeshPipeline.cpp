@@ -62,33 +62,25 @@ const static Guid c_guidVertexInterfaceGuid(L"{0A9BE5B4-4B45-B84A-AE16-57F648343
 class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
 {
 public:
-	FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder, const Guid& vertexFragmentGuid)
+	FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder)
 	:	m_pipelineBuilder(pipelineBuilder)
-	,	m_vertexFragmentGuid(vertexFragmentGuid)
 	{
 	}
 
 	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid) const
 	{
-		Ref< const render::ShaderGraph > shaderGraph;
-		
-		if (fragmentGuid == c_guidVertexInterfaceGuid)
-			shaderGraph = m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(m_vertexFragmentGuid);
-		else
-			shaderGraph = m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
-
+		Ref< const render::ShaderGraph > shaderGraph = m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
 		if (!shaderGraph)
-			return 0;
+			return nullptr;
 
 		if (render::ShaderGraphValidator(shaderGraph).validateIntegrity())
 			return shaderGraph;
 		else
-			return 0;
+			return nullptr;
 	}
 
 private:
 	Ref< editor::IPipelineBuilder > m_pipelineBuilder;
-	Guid m_vertexFragmentGuid;
 };
 
 bool haveVertexColors(const model::Model& model)
@@ -399,8 +391,17 @@ bool MeshPipeline::buildOutput(
 			}
 		}
 
-		// Link shader fragments, also replace abstract vertex fragments with real implementation.
-		FragmentReaderAdapter fragmentReader(pipelineBuilder, vertexShaderGuid);
+		// Set vertex fragment reference.
+		RefArray< render::External > externals;
+		materialShaderGraph->findNodesOf< render::External >(externals);
+		for (auto external : externals)
+		{
+			if (external->getFragmentGuid() == c_guidVertexInterfaceGuid)
+				external->setFragmentGuid(vertexShaderGuid);
+		}
+
+		// Link shader fragments.
+		FragmentReaderAdapter fragmentReader(pipelineBuilder);
 		materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, true);
 		if (!materialShaderGraph)
 		{
