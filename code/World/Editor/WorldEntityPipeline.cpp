@@ -62,6 +62,7 @@ bool WorldEntityPipeline::buildDependencies(
 	else if (const LightComponentData* lightComponentData = dynamic_type_cast<const LightComponentData*>(sourceAsset))
 	{
 		pipelineDepends->addDependency(lightComponentData->getProbeDiffuseTexture(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(lightComponentData->getProbeSpecularTexture(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(lightComponentData->getCloudShadowTexture(), editor::PdfBuild | editor::PdfResource);
 	}
 	return true;

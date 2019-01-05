@@ -1,14 +1,7 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_OutputPin_H
-#define traktor_render_OutputPin_H
+#pragma once
 
 #include <string>
-#include "Core/Config.h"
+#include "Core/Guid.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,18 +26,19 @@ class T_DLLCLASS OutputPin
 public:
 	OutputPin();
 
-	OutputPin(Node* node, const std::wstring& name);
+	OutputPin(Node* node, const Guid& id, const std::wstring& name);
 	
 	Node* getNode() const;
+
+	const Guid& getId() const;
 	
 	const std::wstring& getName() const;
 
 private:
 	Node* m_node;
+	Guid m_id;
 	std::wstring m_name;
 };
 
 	}
 }
-
-#endif	// traktor_render_OutputPin_H

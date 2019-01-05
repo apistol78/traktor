@@ -23,6 +23,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Edge.h"
+#include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/INodeFacade.h"
 #include "Render/Editor/Shader/NodeCategories.h"
 #include "Render/Editor/Shader/ShaderDependencyPane.h"
@@ -83,6 +84,23 @@ namespace traktor
 		namespace
 		{
 
+class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
+{
+public:
+	FragmentReaderAdapter(db::Database* db)
+	:	m_db(db)
+	{
+	}
+
+	virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) const
+	{
+		return m_db->getObjectReadOnly< ShaderGraph >(fragmentGuid);
+	}
+
+private:
+	Ref< db::Database > m_db;
+};
+
 struct RemoveInputPortPred
 {
 	bool m_connectable;
@@ -141,6 +159,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_CLEANUP_SWIZZLES"), 12, ui::Command(L"ShaderGraph.Editor.CleanupSwizzles")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_INSERT_INTERPOLATORS"), 13, ui::Command(L"ShaderGraph.Editor.InsertInterpolators")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_VARIABLES"), 13, ui::Command(L"ShaderGraph.Editor.ResolveVariables")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_EXTERNALS"), 13, ui::Command(L"ShaderGraph.Editor.ResolveExternals")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	
 	m_toolPlatform = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(80), i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
@@ -621,6 +640,20 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 		createEditorGraph();
 	}
+	else if (command == L"ShaderGraph.Editor.ResolveExternals")
+	{
+		FragmentReaderAdapter reader(m_editor->getSourceDatabase());
+		Ref< ShaderGraph > shaderGraph = FragmentLinker(reader).resolve(m_shaderGraph, false);
+		if (shaderGraph)
+		{
+			m_document->push();
+			m_shaderGraph = shaderGraph;
+			m_document->setObject(0, m_shaderGraph);
+			createEditorGraph();
+		}
+		else
+			log::error << L"Fragment linker failed." << Endl;
+	}
 	else if (command == L"ShaderGraph.Editor.PlatformPermutation")
 	{
 		m_document->push();
@@ -898,7 +931,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 		std::vector< const InputPin* >::iterator j = externalInputPins.begin();
 		while (j != externalInputPins.end())
 		{
-			if ((*i)->getName() == (*j)->getName())
+			if ((*i)->getId() == (*j)->getId())
 				break;
 			++j;
 		}
@@ -917,7 +950,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 		std::vector< const OutputPin* >::iterator j = externalOutputPins.begin();
 		while (j != externalOutputPins.end())
 		{
-			if ((*i)->getName() == (*j)->getName())
+			if ((*i)->getId() == (*j)->getId())
 				break;
 			++j;
 		}
@@ -946,6 +979,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 		if (edge)
 			m_shaderGraph->removeEdge(edge);
 
+		external->removeValue(externalInputPins.back()->getId().format());
 		external->removeValue(externalInputPins.back()->getName());
 		external->removeInputPin(externalInputPins.back());
 
@@ -955,22 +989,22 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 	{
 		RefSet< Edge > edges;
 		m_shaderGraph->findEdges(externalOutputPins.back(), edges);
-		for (RefSet< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
-			m_shaderGraph->removeEdge(*i);
+		for (auto edge : edges)
+			m_shaderGraph->removeEdge(edge);
 
 		external->removeOutputPin(externalOutputPins.back());
 		externalOutputPins.pop_back();
 	}
 
 	// Add new pins for new ports.
-	for (RefArray< InputPort >::iterator i = fragmentInputs.begin(); i != fragmentInputs.end(); ++i)
+	for (const auto& inputPort : fragmentInputs)
 	{
-		external->createInputPin((*i)->getName(), (*i)->isOptional());
-		if ((*i)->isOptional() && (*i)->haveDefaultValue())
-			external->setValue((*i)->getName(), (*i)->getDefaultValue());
+		external->createInputPin(inputPort->getId(), inputPort->getName(), inputPort->isOptional());
+		if (inputPort->isOptional() && inputPort->haveDefaultValue())
+			external->setValue(inputPort->getId().format(), inputPort->getDefaultValue());
 	}
-	for (RefArray< OutputPort >::iterator i = fragmentOutputs.begin(); i != fragmentOutputs.end(); ++i)
-		external->createOutputPin((*i)->getName());
+	for (const auto& outputPort : fragmentOutputs)
+		external->createOutputPin(outputPort->getId(), outputPort->getName());
 }
 
 void ShaderGraphEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)

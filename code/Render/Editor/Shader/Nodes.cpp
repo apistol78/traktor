@@ -1757,9 +1757,10 @@ Switch::Switch()
 :	m_branch(BrAuto)
 {
 	// @fixme Leak...
-	m_inputPins.push_back(new InputPin(this, L"Select", false));
-	m_inputPins.push_back(new InputPin(this, L"Default", false));
-	m_outputPin = new OutputPin(this, L"Output");
+	const Guid c_null;
+	m_inputPins.push_back(new InputPin(this, c_null, L"Select", false));
+	m_inputPins.push_back(new InputPin(this, c_null, L"Default", false));
+	m_outputPin = new OutputPin(this, c_null, L"Output");
 }
 
 void Switch::setBranch(Branch branch)
@@ -1777,7 +1778,7 @@ void Switch::addCase(int32_t value)
 	StringOutputStream ss;
 	ss << L"Case " << value;
 	m_cases.push_back(value);
-	m_inputPins.push_back(new InputPin(this, ss.str(), false));
+	m_inputPins.push_back(new InputPin(this, Guid(), ss.str(), false));
 }
 
 const std::vector< int32_t >& Switch::getCases() const
@@ -1824,12 +1825,13 @@ void Switch::serialize(ISerializer& s)
 
 	if (s.getDirection() == ISerializer::SdRead)
 	{
+		const Guid c_null;
 		m_inputPins.resize(2 + m_cases.size());
 		for (uint32_t i = 0; i < uint32_t(m_cases.size()); ++i)
 		{
 			StringOutputStream ss;
 			ss << L"Case " << m_cases[i];
-			m_inputPins[2 + i] = new InputPin(this, ss.str(), false);
+			m_inputPins[2 + i] = new InputPin(this, c_null, ss.str(), false);
 		}
 	}
 }

@@ -1,17 +1,8 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ShaderGraph_H
-#define traktor_render_ShaderGraph_H
+#pragma once
 
 #include <vector>
-#include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/RefSet.h"
-#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -168,14 +159,7 @@ public:
 private:
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;
-	
-	SmallMap< const InputPin*, Edge* > m_inputPinEdge;
-	SmallMap< const OutputPin*, RefSet< Edge >* > m_outputPinEdges;	//!< \note Allocating RefSets in order to reduce number of copies.
-
-	void updateAdjacency();
 };
 
 	}
 }
-
-#endif	// traktor_render_ShaderGraph_H

@@ -333,18 +333,18 @@ bool ShaderGraphValidator::validateIntegrity() const
 
 		if (!sourcePin || !destinationPin)
 		{
-			log::error << L"Invalid edge found in shader graph" << Endl;
+			log::error << L"Invalid edge found in shader graph." << Endl;
 			return false;
 		}
 
 		if (std::find(nodes.begin(), nodes.end(), sourcePin->getNode()) == nodes.end())
 		{
-			log::error << L"Source node (" << type_name(sourcePin->getNode()) << L") of edge (Pin \"" << sourcePin->getName() << L"\") not part of shader graph" << Endl;
+			log::error << L"Source node " << sourcePin->getNode()->getId().format() << L" (" << type_name(sourcePin->getNode()) << L") of edge (pin \"" << sourcePin->getName() << L"\") not part of shader graph." << Endl;
 			return false;
 		}
 		if (std::find(nodes.begin(), nodes.end(), destinationPin->getNode()) == nodes.end())
 		{
-			log::error << L"Destination node (" << type_name(destinationPin->getNode()) << L") of edge (Pin " << destinationPin->getName() << L") not part of shader graph" << Endl;
+			log::error << L"Destination node " << destinationPin->getNode()->getId().format() << L" (" << type_name(destinationPin->getNode()) << L") of edge (pin \"" << destinationPin->getName() << L"\") not part of shader graph." << Endl;
 			return false;
 		}
 	}

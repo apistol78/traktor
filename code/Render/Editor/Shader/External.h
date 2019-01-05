@@ -56,9 +56,9 @@ public:
 
 	void removeValue(const std::wstring& name);
 
-	const InputPin* createInputPin(const std::wstring& name, bool optional);
+	const InputPin* createInputPin(const Guid& id, const std::wstring& name, bool optional);
 
-	const OutputPin* createOutputPin(const std::wstring& name);
+	const OutputPin* createOutputPin(const Guid& id, const std::wstring& name);
 
 	void removeInputPin(const InputPin* inputPin);
 
@@ -76,7 +76,11 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	inline const std::map< std::wstring, float >& getValues() const { return m_values; }
+	std::vector< InputPin* >& getInputPins() { return m_inputPins; }
+
+	std::vector< OutputPin* >& getOutputPins() { return m_outputPins; }
+
+	const std::map< std::wstring, float >& getValues() const { return m_values; }
 
 private:
 	Guid m_fragmentGuid;

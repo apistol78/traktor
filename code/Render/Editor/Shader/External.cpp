@@ -41,8 +41,12 @@ public:
 	{
 		if (s.getDirection() == ISerializer::SdWrite)
 		{
+			Guid id = m_pin->getId();
 			std::wstring name = m_pin->getName();
 			bool optional = m_pin->isOptional();
+
+			if (s.getVersion() >= 2)
+				s >> Member< Guid >(L"id", id);
 
 			s >> Member< std::wstring >(L"name", name);
 
@@ -51,8 +55,12 @@ public:
 		}
 		else	// SdRead
 		{
+			Guid id;
 			std::wstring name = L"";
 			bool optional = false;
+
+			if (s.getVersion() >= 2)
+				s >> Member< Guid >(L"id", id);
 
 			s >> Member< std::wstring >(L"name", name);
 
@@ -63,6 +71,7 @@ public:
 			{
 				*m_pin = InputPin(
 					m_node,
+					id,
 					name,
 					optional
 				);
@@ -71,6 +80,7 @@ public:
 			{
 				m_pin = new InputPin(
 					m_node,
+					id,
 					name,
 					optional
 				);
@@ -99,17 +109,29 @@ public:
 	{
 		if (s.getDirection() == ISerializer::SdWrite)
 		{
+			Guid id = m_pin->getId();
 			std::wstring name = m_pin->getName();
+
+			if (s.getVersion() >= 2)
+				s >> Member< Guid >(L"id", id);
+
 			s >> Member< std::wstring >(L"name", name);
 		}
 		else	// SdRead
 		{
+			Guid id;
 			std::wstring name;
+
+			if (s.getVersion() >= 2)
+				s >> Member< Guid >(L"id", id);
+
 			s >> Member< std::wstring >(L"name", name);
+
 			if (m_pin)
 			{
 				*m_pin = OutputPin(
 					m_node,
+					id,
 					name
 				);
 			}
@@ -117,6 +139,7 @@ public:
 			{
 				m_pin = new OutputPin(
 					m_node,
+					id,
 					name
 				);
 			}
@@ -202,7 +225,7 @@ struct SortOutputPinPredicate
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.External", 1, External, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.External", 2, External, Node)
 
 External::External()
 {
@@ -217,12 +240,14 @@ External::External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph)
 		const Node* fragmentNode = *i;
 		if (const InputPort* inputPort = dynamic_type_cast< const InputPort* >(fragmentNode))
 		{
+			const Guid& id = inputPort->getId();
 			std::wstring name = inputPort->getName();
 
 			if (inputPort->isConnectable())
 			{
 				m_inputPins.push_back(new InputPin(
 					this,
+					id,
 					name,
 					inputPort->isOptional()
 				));
@@ -233,9 +258,12 @@ External::External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph)
 		}
 		else if (const OutputPort* outputPort = dynamic_type_cast< const OutputPort* >(fragmentNode))
 		{
+			const Guid& id = outputPort->getId();
 			std::wstring name = outputPort->getName();
+
 			m_outputPins.push_back(new OutputPin(
 				this,
+				id,
 				name
 			));
 		}
@@ -274,9 +302,9 @@ void External::removeValue(const std::wstring& name)
 		m_values.erase(i);
 }
 
-const InputPin* External::createInputPin(const std::wstring& name, bool optional)
+const InputPin* External::createInputPin(const Guid& id, const std::wstring& name, bool optional)
 {
-	InputPin* inputPin = new InputPin(this, name, optional);
+	InputPin* inputPin = new InputPin(this, id, name, optional);
 
 	m_inputPins.push_back(inputPin);
 	std::sort(m_inputPins.begin(), m_inputPins.end(), SortInputPinPredicate());
@@ -284,9 +312,9 @@ const InputPin* External::createInputPin(const std::wstring& name, bool optional
 	return inputPin;
 }
 
-const OutputPin* External::createOutputPin(const std::wstring& name)
+const OutputPin* External::createOutputPin(const Guid& id, const std::wstring& name)
 {
-	OutputPin* outputPin = new OutputPin(this, name);
+	OutputPin* outputPin = new OutputPin(this, id, name);
 
 	m_outputPins.push_back(outputPin);
 	std::sort(m_outputPins.begin(), m_outputPins.end(), SortOutputPinPredicate());

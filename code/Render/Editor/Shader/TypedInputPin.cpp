@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Editor/Shader/TypedInputPin.h"
 
 namespace traktor
@@ -11,8 +5,8 @@ namespace traktor
 	namespace render
 	{
 
-TypedInputPin::TypedInputPin(Node* node, const std::wstring& name, bool optional, ParameterType type, const std::wstring& samplerId)
-:	InputPin(node, name, optional)
+TypedInputPin::TypedInputPin(Node* node, const Guid& id, const std::wstring& name, bool optional, ParameterType type, const std::wstring& samplerId)
+:	InputPin(node, id, name, optional)
 ,	m_type(type)
 ,	m_samplerId(samplerId)
 {

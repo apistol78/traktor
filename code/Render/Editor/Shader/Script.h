@@ -47,9 +47,9 @@ public:
 
 	const std::wstring& getScript() const;
 
-	const InputPin* addInputPin(const std::wstring& name, ParameterType type);
+	const InputPin* addInputPin(const Guid& id, const std::wstring& name, ParameterType type);
 
-	const OutputPin* addOutputPin(const std::wstring& name, ParameterType type);
+	const OutputPin* addOutputPin(const Guid& id, const std::wstring& name, ParameterType type);
 
 	void removeInputPin(const std::wstring& name);
 

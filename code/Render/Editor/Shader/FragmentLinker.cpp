@@ -1,14 +1,7 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#include <algorithm>
-#include <map>
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphValidator.h"
 #include "Render/Editor/Shader/Node.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/External.h"
@@ -22,55 +15,77 @@ namespace traktor
 		namespace
 		{
 
-const ImmutableNode::InputPinDesc c_PortConnectionNode_i[] = { { L"Input", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_PortConnectionNode_o[] = { { L"Output" }, { 0 } };
+const ImmutableNode::InputPinDesc c_PortConnector_i[] = { { L"Input", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_PortConnector_o[] = { { L"Output" }, { 0 } };
 
-class PortConnectionNode : public ImmutableNode
+class PortConnector : public ImmutableNode
 {
 	T_RTTI_CLASS;
 
 public:
-	PortConnectionNode()
-	:	ImmutableNode(c_PortConnectionNode_i, c_PortConnectionNode_o)
+	PortConnector()
+	:	ImmutableNode(c_PortConnector_i, c_PortConnector_o)
 	{
 	}
 };
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.FragmentLinker.PortConnectionNode", 0, PortConnectionNode, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.FragmentLinker.PortConnector", 0, PortConnector, ImmutableNode)
 
-template < typename NodeType >
-struct NodeTypePred
+const InputPin* findExternalInputPin(const External* externalNode, const InputPort* fragmentInputPort)
 {
-	bool operator () (Node* node) const
+	const int32_t inputPinCount = externalNode->getInputPinCount();
+	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
-		return &type_of(node) == &type_of< NodeType >();
+		const InputPin* inputPin = externalNode->getInputPin(i);
+		if (
+			inputPin->getId().isNotNull() &&
+			inputPin->getId() == fragmentInputPort->getId()
+		)
+		{
+			return inputPin;
+		}
 	}
-};
-
-#if defined(_DEBUG)
-
-void validateShaderGraph(const ShaderGraph* shaderGraph, bool noExternalAllowed)
-{
-	const RefArray< Node >& nodes = shaderGraph->getNodes();
-	const RefArray< Edge >& edges = shaderGraph->getEdges();
-
-	for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
+	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
-		RefArray< Node >::const_iterator i0 = std::find(nodes.begin(), nodes.end(), (*i)->getSource()->getNode());
-		T_ASSERT (i0 != nodes.end());
-
-		RefArray< Node >::const_iterator i1 = std::find(nodes.begin(), nodes.end(), (*i)->getDestination()->getNode());
-		T_ASSERT (i1 != nodes.end());
+		const InputPin* inputPin = externalNode->getInputPin(i);
+		if (
+			inputPin->getId().isNull() &&
+			inputPin->getName() == fragmentInputPort->getName()
+		)
+		{
+			return inputPin;
+		}
 	}
-
-	if (noExternalAllowed)
-	{
-		for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
-			T_ASSERT (!is_a< External >(*i));
-	}
+	return nullptr;
 }
 
-#endif
+const OutputPin* findExternalOutputPin(const External* externalNode, const OutputPort* fragmentOutputPort)
+{
+	const int32_t outputPinCount = externalNode->getOutputPinCount();
+	for (int32_t i = 0; i < outputPinCount; ++i)
+	{
+		const OutputPin* outputPin = externalNode->getOutputPin(i);
+		if (
+			outputPin->getId().isNotNull() &&
+			outputPin->getId() == fragmentOutputPort->getId()
+		)
+		{
+			return outputPin;
+		}
+	}
+	for (int32_t i = 0; i < outputPinCount; ++i)
+	{
+		const OutputPin* outputPin = externalNode->getOutputPin(i);
+		if (
+			outputPin->getId().isNull() &&
+			outputPin->getName() == fragmentOutputPort->getName()
+		)
+		{
+			return outputPin;
+		}
+	}
+	return nullptr;
+}
 
 		}
 
@@ -88,253 +103,165 @@ FragmentLinker::FragmentLinker(const IFragmentReader& fragmentReader)
 
 Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool fullResolve, const Guid* optionalShaderGraphGuid) const
 {
-	Ref< ShaderGraph > originalShaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
-	RefArray< Edge > resolvedEdges = originalShaderGraph->getEdges();
-	RefArray< Node > resolvedNodes;
+	std::wstring errorPrefix;
+	if (optionalShaderGraphGuid)
+		errorPrefix = L"Fragment linkage of \"" + optionalShaderGraphGuid->format() + L"\" failed; ";
+	else
+		errorPrefix = L"Fragment linkage failed; ";
 
-	// Move over nodes; import external fragments when external nodes is encountered.
-	const RefArray< Node >& originalNodes = originalShaderGraph->getNodes();
-	for (RefArray< Node >::const_iterator i = originalNodes.begin(); i != originalNodes.end(); ++i)
+	Ref< ShaderGraph > mutableShaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
+
+	RefArray< External > externalNodes;
+	mutableShaderGraph->findNodesOf< External >(externalNodes);
+	for (auto externalNode : externalNodes)
 	{
-		const External* externalNode = dynamic_type_cast< const External* >(*i);
-		if (externalNode)
+		Ref< const ShaderGraph > fragmentShaderGraph = m_fragmentReader->read(externalNode->getFragmentGuid());
+		if (!fragmentShaderGraph)
 		{
-			// Read external fragment graph.
-			Ref< const ShaderGraph > fragmentShaderGraph = m_fragmentReader->read(externalNode->getFragmentGuid());
+			log::error << errorPrefix << L"unable to read fragment \"" << externalNode->getFragmentGuid().format() << L"\"" << Endl;
+			return nullptr;
+		}
+		if (fullResolve)
+		{
+			fragmentShaderGraph = resolve(fragmentShaderGraph, fullResolve, &externalNode->getFragmentGuid());
 			if (!fragmentShaderGraph)
 			{
-				if (optionalShaderGraphGuid)
-					log::error << L"Fragment linkage of \"" << optionalShaderGraphGuid->format() << L"\" failed; unable to read fragment \"" << externalNode->getFragmentGuid().format() << L"\"" << Endl;
-				else
-					log::error << L"Fragment linkage failed; unable to read fragment \"" << externalNode->getFragmentGuid().format() << L"\"" << Endl;
-				return 0;
-			}
-
-#if defined(_DEBUG)
-			validateShaderGraph(fragmentShaderGraph, false);
-#endif
-
-			// Recursively resolve externals in fragment graph.
-			if (fullResolve)
-			{
-				fragmentShaderGraph = resolve(fragmentShaderGraph, fullResolve, &externalNode->getFragmentGuid());
-				if (!fragmentShaderGraph)
-					return 0;
-
-#if defined(_DEBUG)
-				validateShaderGraph(fragmentShaderGraph, true);
-#endif
-			}
-
-			std::map< std::wstring, Ref< Node > > inputEstablishedPorts;
-			std::map< std::wstring, Ref< Node > > outputEstablishedPorts;
-
-			RefArray< InputPort > fragmentInputPorts;
-			fragmentShaderGraph->findNodesOf< InputPort >(fragmentInputPorts);
-
-			for (RefArray< InputPort >::const_iterator j = fragmentInputPorts.begin(); j != fragmentInputPorts.end(); ++j)
-			{
-				std::wstring inputPortName = (*j)->getName();
-				bool replaceWithValue = true;
-
-				if ((*j)->isConnectable())
-				{
-					// Find input pin by input port.
-					const InputPin* externalInputPin = externalNode->findInputPin(inputPortName);
-					if (externalInputPin)
-					{
-						// Create "established port" node and move all edges from input port to established port.
-						Ref< PortConnectionNode > inputPortConnectionNode = new PortConnectionNode();
-						for (RefArray< Edge >::iterator k = resolvedEdges.begin(); k != resolvedEdges.end(); ++k)
-						{
-							if ((*k)->getDestination() == externalInputPin)
-							{
-								(*k)->setDestination(inputPortConnectionNode->getInputPin(0));
-								replaceWithValue = false;
-							}
-						}
-						if (!replaceWithValue)
-						{
-							T_ASSERT (inputEstablishedPorts[inputPortName] == 0);
-							inputEstablishedPorts[inputPortName] = inputPortConnectionNode;
-							resolvedNodes.push_back(inputPortConnectionNode);
-						}
-						else if (!(*j)->isOptional())
-						{
-							if (optionalShaderGraphGuid)
-								log::error << L"Fragment linkage of \"" << optionalShaderGraphGuid->format() << L"\" non-optional pin \"" << inputPortName << L"\" unconnected." << Endl;
-							else
-								log::error << L"Fragment linkage failed;  non-optional pin \"" << inputPortName << L"\" unconnected." << Endl;
-							return 0;
-						}
-					}
-					else if (!(*j)->isOptional())
-					{
-						if (optionalShaderGraphGuid)
-							log::error << L"Fragment linkage of \"" << optionalShaderGraphGuid->format() << L"\" failed; no such pin \"" << inputPortName << L"\"." << Endl;
-						else
-							log::error << L"Fragment linkage failed; no such pin \"" << inputPortName << L"\"." << Endl;
-						return 0;
-					}
-				}
-
-				// Non-connected or value-only input port; replace with scalar value node.
-				if (replaceWithValue && (*j)->haveDefaultValue())
-				{
-					float value = externalNode->getValue(inputPortName, (*j)->getDefaultValue());
-					Ref< Scalar > valueNode = new Scalar(value);
-					T_ASSERT (inputEstablishedPorts[inputPortName] == 0);
-					inputEstablishedPorts[inputPortName] = valueNode;
-					resolvedNodes.push_back(valueNode);
-				}
-			}
-
-			for (int j = 0; j < externalNode->getOutputPinCount(); ++j)
-			{
-				std::wstring outputPortName = externalNode->getOutputPin(j)->getName();
-
-				Ref< PortConnectionNode > outputPortConnectionNode = new PortConnectionNode();
-				T_ASSERT (outputEstablishedPorts[outputPortName] == 0);
-				outputEstablishedPorts[outputPortName] = outputPortConnectionNode;
-				resolvedNodes.push_back(outputPortConnectionNode);
-
-				for (RefArray< Edge >::iterator k = resolvedEdges.begin(); k != resolvedEdges.end(); ++k)
-				{
-					if ((*k)->getSource() == externalNode->getOutputPin(j))
-						(*k)->setSource(outputPortConnectionNode->getOutputPin(0));
-				}
-			}
-			
-			// Move over edges, if "established port" nodes encountered replace with proper pins.
-			const RefArray< Edge >& fragmentEdges = fragmentShaderGraph->getEdges();
-			for (RefArray< Edge >::const_iterator j = fragmentEdges.begin(); j != fragmentEdges.end(); ++j)
-			{
-				if (
-					!(*j)->getSource() ||
-					!(*j)->getDestination()
-				)
-					continue;
-
-				const OutputPin* sourcePin;
-				const InputPin* destinationPin;
-
-				if (const InputPort* inputPort = dynamic_type_cast< const InputPort* >((*j)->getSource()->getNode()))
-				{
-					std::map< std::wstring, Ref< Node > >::iterator it = inputEstablishedPorts.find(inputPort->getName());
-					sourcePin = (it != inputEstablishedPorts.end()) ? it->second->getOutputPin(0) : 0;
-				}
-				else
-					sourcePin = (*j)->getSource();
-
-				if (const OutputPort* outputPort = dynamic_type_cast< const OutputPort* >((*j)->getDestination()->getNode()))
-				{
-					std::map< std::wstring, Ref< Node > >::iterator it = outputEstablishedPorts.find(outputPort->getName());
-					destinationPin = (it != outputEstablishedPorts.end()) ? it->second->getInputPin(0) : 0;
-				}
-				else
-					destinationPin = (*j)->getDestination();
-
-				if (sourcePin && destinationPin)
-					resolvedEdges.push_back(new Edge(
-						sourcePin,
-						destinationPin
-					));
-			}
-
-			// Move over all non-port nodes as-is.
-			const RefArray< Node >& fragmentNodes = fragmentShaderGraph->getNodes();
-			for (RefArray< Node >::const_iterator j = fragmentNodes.begin(); j != fragmentNodes.end(); ++j)
-			{
-				T_ASSERT (!fullResolve || !is_a< External >(*j));
-				if (
-					!is_a< InputPort >(*j) &&
-					!is_a< OutputPort >(*j)
-				)
-					resolvedNodes.push_back(*j);
+				log::error << errorPrefix << L"unable to resolve fragment \"" << externalNode->getFragmentGuid().format() << L"\"" << Endl;
+				return nullptr;
 			}
 		}
-		else
-		{
-			// Move over non-external nodes as-is.
-			resolvedNodes.push_back(*i);
-		}
-	}
 
-	// Re-wire edges which has been temporarily connected to a "port connection" node.
-	RefArray< Node >::iterator i = std::find_if(resolvedNodes.begin(), resolvedNodes.end(), NodeTypePred< PortConnectionNode >());
-	while (i != resolvedNodes.end())
-	{
-		const OutputPin* sourcePin = 0;
-		std::vector< const InputPin* > destinationPins;
-
-		for (RefArray< Edge >::iterator j = resolvedEdges.begin(); j != resolvedEdges.end(); )
+		// Move over fragment edges, transform input/output ports into temporary connectors, replace with values if necessary.
+		for (auto edge : fragmentShaderGraph->getEdges())
 		{
-			if ((*j)->getSource()->getNode() == *i)
+			if (!edge->getSource() || !edge->getDestination())
+				continue;
+
+			const OutputPin* sourcePin = nullptr;
+			const InputPin* destinationPin = nullptr;
+
+			if (const InputPort* inputPort = dynamic_type_cast< const InputPort* >(edge->getSource()->getNode()))
 			{
-				destinationPins.push_back((*j)->getDestination());
-				j = resolvedEdges.erase(j);
-			}
-			else if ((*j)->getDestination()->getNode() == *i)
-			{
-				T_ASSERT (!sourcePin);
-				sourcePin = (*j)->getSource();
-				j = resolvedEdges.erase(j);
+				if (inputPort->isConnectable())
+				{
+					const InputPin* externalInputPin = findExternalInputPin(externalNode, inputPort);
+					const OutputPin* externalSourcePin = mutableShaderGraph->findSourcePin(externalInputPin);
+					if (externalInputPin && externalSourcePin)
+					{
+						Ref< PortConnector > connector = new PortConnector();
+						mutableShaderGraph->addNode(connector);
+						mutableShaderGraph->addEdge(new Edge(externalSourcePin, connector->getInputPin(0)));
+						sourcePin = connector->getOutputPin(0);
+					}
+					else if (inputPort->isOptional())
+					{
+						Ref< Scalar > scalarNode;
+
+						const auto& values = externalNode->getValues();
+						auto it = values.find(inputPort->getId().format());
+						if (it == values.end())
+							it = values.find(inputPort->getName());
+						if (it != values.end())
+							scalarNode = new Scalar(it->second);
+						else if (inputPort->haveDefaultValue())
+							scalarNode = new Scalar(inputPort->getDefaultValue());
+
+						if (scalarNode)
+						{
+							mutableShaderGraph->addNode(scalarNode);
+							sourcePin = scalarNode->getOutputPin(0);
+						}
+					}
+					else
+					{
+						log::error << errorPrefix << L"mandatory input \"" << inputPort->getName() << L"\" of fragment \"" << externalNode->getFragmentGuid().format() << L"\" not connected." << Endl;
+						return nullptr;
+					}
+				}
+				else
+				{
+					Ref< Scalar > scalarNode;
+
+					const auto& values = externalNode->getValues();
+					auto it = values.find(inputPort->getId().format());
+					if (it == values.end())
+						it = values.find(inputPort->getName());
+					if (it != values.end())
+						scalarNode = new Scalar(it->second);
+					else if (inputPort->haveDefaultValue())
+						scalarNode = new Scalar(inputPort->getDefaultValue());
+
+					if (scalarNode)
+					{
+						mutableShaderGraph->addNode(scalarNode);
+						sourcePin = scalarNode->getOutputPin(0);
+					}
+				}
 			}
 			else
-				++j;
-		}
+				sourcePin = edge->getSource();
 
-		if (sourcePin)
-		{
-			for (std::vector< const InputPin* >::const_iterator j = destinationPins.begin(); j != destinationPins.end(); ++j)
-				resolvedEdges.push_back(new Edge(
+			if (const OutputPort* outputPort = dynamic_type_cast< const OutputPort* >(edge->getDestination()->getNode()))
+			{
+				const OutputPin* externalOutputPin = findExternalOutputPin(externalNode, outputPort);
+				
+				std::vector< const InputPin* > externalDestinationPins;
+				mutableShaderGraph->findDestinationPins(externalOutputPin, externalDestinationPins);
+
+				if (externalOutputPin && !externalDestinationPins.empty())
+				{
+					Ref< PortConnector > connector = new PortConnector();
+					mutableShaderGraph->addNode(connector);
+					for (auto externalDestinationPin : externalDestinationPins)
+						mutableShaderGraph->addEdge(new Edge(connector->getOutputPin(0), externalDestinationPin));
+					destinationPin = connector->getInputPin(0);
+				}
+			}
+			else
+				destinationPin = edge->getDestination();
+
+			if (sourcePin && destinationPin)
+				mutableShaderGraph->addEdge(new Edge(
 					sourcePin,
-					*j
+					destinationPin
 				));
 		}
 
-		resolvedNodes.erase(i);
-		i = std::find_if(resolvedNodes.begin(), resolvedNodes.end(), NodeTypePred< PortConnectionNode >());
+		// Move over all non-port nodes from fragment as-is.
+		for (auto node : fragmentShaderGraph->getNodes())
+		{
+			if (!is_a< InputPort >(node) && !is_a< OutputPort >(node))
+				mutableShaderGraph->addNode(node);
+		}
+
+		// Remove external node.
+		mutableShaderGraph->detach(externalNode);
+		mutableShaderGraph->removeNode(externalNode);
 	}
 
-	// In case there still are unresolved edges to external nodes left then there is a mismatch
-	// of external inputs and edges thus we need to fail.
-	if (fullResolve)
+	// Re-wire edges which has been temporarily connected to a "port connection" node.
+	RefArray< PortConnector > connectors;
+	mutableShaderGraph->findNodesOf< PortConnector >(connectors);
+	for (auto connector : connectors)
 	{
-		std::map< const External*, std::set< std::wstring > > unresolvedExternalPins;
-		for (RefArray< Edge >::const_iterator it = resolvedEdges.begin(); it != resolvedEdges.end(); ++it)
-		{
-			if (External* externalNode1 = dynamic_type_cast< External* >((*it)->getSource()->getNode()))
-				unresolvedExternalPins[externalNode1].insert((*it)->getSource()->getName());
-			else if (External* externalNode2 = dynamic_type_cast< External* >((*it)->getDestination()->getNode()))
-				unresolvedExternalPins[externalNode2].insert((*it)->getDestination()->getName());
-		}
-		if (!unresolvedExternalPins.empty())
-		{
-			for (std::map< const External*, std::set< std::wstring > >::const_iterator it = unresolvedExternalPins.begin(); it != unresolvedExternalPins.end(); ++it)
-			{
-				if (optionalShaderGraphGuid)
-					log::error << L"Fragment linkage of \"" << optionalShaderGraphGuid->format() << L"\" failed; unresolved edges, signature with fragment \"" << it->first->getFragmentGuid().format() << L"\" mismatch" << Endl;
-				else
-					log::error << L"Fragment linkage failed; unresolved edges, signature with fragment \"" << it->first->getFragmentGuid().format() << L"\" mismatch" << Endl;
+		const OutputPin* sourcePin = mutableShaderGraph->findSourcePin(connector->getInputPin(0));
 
-				for (std::set< std::wstring >::const_iterator j = it->second.begin(); j != it->second.end(); ++j)
-					log::error << L"\tPort \"" << *j << L"\" not defined" << Endl;
-			}
-			return 0;
+		std::vector< const InputPin* > destinationPins;		
+		mutableShaderGraph->findDestinationPins(connector->getOutputPin(0), destinationPins);
+
+		mutableShaderGraph->detach(connector);
+		mutableShaderGraph->removeNode(connector);
+
+		for (auto destinationPin : destinationPins)
+		{
+			mutableShaderGraph->addEdge(new Edge(
+				sourcePin,
+				destinationPin
+			));
 		}
 	}
 
-	Ref< ShaderGraph > outputShaderGraph = new ShaderGraph(
-		resolvedNodes,
-		resolvedEdges
-	);
-
-#if defined(_DEBUG)
-	validateShaderGraph(outputShaderGraph, fullResolve);
-#endif
-
-	return outputShaderGraph;
+	return mutableShaderGraph;
 }
 
 	}

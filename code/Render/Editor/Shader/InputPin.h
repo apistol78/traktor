@@ -1,14 +1,7 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_InputPin_H
-#define traktor_render_InputPin_H
+#pragma once
 
 #include <string>
-#include "Core/Config.h"
+#include "Core/Guid.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,9 +24,11 @@ class Node;
 class T_DLLCLASS InputPin
 {
 public:
-	InputPin(Node* node, const std::wstring& name, bool optional);
+	InputPin(Node* node, const Guid& id, const std::wstring& name, bool optional);
 	
 	Node* getNode() const;
+
+	const Guid& getId() const;
 	
 	const std::wstring& getName() const;
 
@@ -41,11 +36,10 @@ public:
 
 private:
 	Node* m_node;
+	Guid m_id;
 	std::wstring m_name;
 	bool m_optional;
 };
 
 	}
 }
-
-#endif	// traktor_render_InputPin_H

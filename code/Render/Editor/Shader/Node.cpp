@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
@@ -60,6 +54,24 @@ const std::pair< int, int >& Node::getPosition() const
 	return m_position;
 }
 
+const InputPin* Node::findInputPin(const Guid& id) const
+{
+	if (id.isNull() || !id.isValid())
+		return nullptr;
+
+	int count = getInputPinCount();
+	for (int i = 0; i < count; ++i)
+	{
+		const InputPin* inputPin = getInputPin(i);
+		T_ASSERT (inputPin);
+
+		if (inputPin->getId() == id)
+			return inputPin;
+	}
+
+	return nullptr;
+}
+
 const InputPin* Node::findInputPin(const std::wstring& name) const
 {
 	int count = getInputPinCount();
@@ -71,7 +83,25 @@ const InputPin* Node::findInputPin(const std::wstring& name) const
 		if (inputPin->getName() == name)
 			return inputPin;
 	}
-	return 0;
+	return nullptr;
+}
+
+const OutputPin* Node::findOutputPin(const Guid& id) const
+{
+	if (id.isNull() || !id.isValid())
+		return nullptr;
+	
+	int count = getOutputPinCount();
+	for (int i = 0; i < count; ++i)
+	{
+		const OutputPin* outputPin = getOutputPin(i);
+		T_ASSERT (outputPin);
+
+		if (outputPin->getId() == id)
+			return outputPin;
+	}
+
+	return nullptr;
 }
 
 const OutputPin* Node::findOutputPin(const std::wstring& name) const
@@ -85,7 +115,7 @@ const OutputPin* Node::findOutputPin(const std::wstring& name) const
 		if (outputPin->getName() == name)
 			return outputPin;
 	}
-	return 0;
+	return nullptr;
 }
 
 void Node::serialize(ISerializer& s)

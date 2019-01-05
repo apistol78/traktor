@@ -67,9 +67,9 @@ bool ProbePipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	 if (const IrradianceProbeAsset* irradianceAsset = checked_type_cast< const IrradianceProbeAsset* >(sourceAsset))
+	 if (const IrradianceProbeAsset* irradianceAsset = dynamic_type_cast< const IrradianceProbeAsset* >(sourceAsset))
 		pipelineDepends->addDependency(Path(m_assetPath), irradianceAsset->getFileName().getOriginal());
-	else if (const RadianceProbeAsset* radianceAsset = checked_type_cast< const RadianceProbeAsset* >(sourceAsset))
+	else if (const RadianceProbeAsset* radianceAsset = dynamic_type_cast< const RadianceProbeAsset* >(sourceAsset))
 		pipelineDepends->addDependency(Path(m_assetPath), radianceAsset->getFileName().getOriginal());
 	else
 		return false;
