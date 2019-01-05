@@ -117,7 +117,7 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{DE3400F8-FB40-7646-8048-1AB2BA28182F}</id>
 			<comment/>
 			<position>
@@ -128,9 +128,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -163,7 +165,7 @@
 			</position>
 			<value>0.7</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{F9E814A5-B055-044F-BA7A-87ADEE163236}</id>
 			<comment/>
 			<position>
@@ -173,16 +175,19 @@
 			<fragmentGuid>{6BCFD0DF-374A-8749-8FEA-01768C1748FD}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{810280B5-9BAA-8B4A-91CE-3501B08F422D}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D567927C-FD66-3646-AE55-4E13A7CE2F68}</id>
 					<name>LUT</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{9FFC9877-C807-E344-96A3-A4601B0CB72D}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

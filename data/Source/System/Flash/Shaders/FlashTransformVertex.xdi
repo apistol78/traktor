@@ -150,7 +150,7 @@
 			</position>
 			<name>Color</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{5E6C7830-3B8C-F744-AECE-2F77DB137FB8}</id>
 			<comment/>
 			<position>
@@ -160,12 +160,14 @@
 			<fragmentGuid>{0F359947-AADA-6748-B492-44CE56038205}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{CC5DC130-E372-0B4F-807D-3646BE794EA7}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{97544039-E417-514E-BA37-0529DAA2C665}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -237,7 +239,7 @@
 			</position>
 			<name>Clip</name>
 		</item>
-		<item type="traktor.render.Script" version="traktor.render.Node:1">
+		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
 			<id>{A3327A66-04B7-6B4D-8653-E604C90D353A}</id>
 			<comment/>
 			<position>
@@ -247,11 +249,13 @@
 			<name>ClipBounds_OpenGL</name>
 			<inputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Bounds</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Position</name>
 					<type>PtVector</type>
 					<samplerId/>
@@ -259,6 +263,7 @@
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Inside</name>
 					<type>PtScalar</type>
 				</item>
@@ -271,11 +276,10 @@ ENTRY
 	vec2 s = step(Bounds.xy, Position.xy) - step(Bounds.zw, Position.xy);
 	Inside = s.x * s.y;
 }
-
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="traktor.render.Node:1">
+		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
 			<id>{C2207602-FA10-404D-AB88-22493AE59E6D}</id>
 			<comment/>
 			<position>
@@ -285,11 +289,13 @@ ENTRY
 			<name>ClipBounds_Dx11</name>
 			<inputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Bounds</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Position</name>
 					<type>PtVector</type>
 					<samplerId/>
@@ -297,6 +303,7 @@ ENTRY
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Inside</name>
 					<type>PtScalar</type>
 				</item>

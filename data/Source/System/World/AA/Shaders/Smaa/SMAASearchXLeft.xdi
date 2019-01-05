@@ -186,7 +186,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{CC70C880-796B-5242-A0DA-8C1006016E71}</id>
 			<comment/>
 			<position>
@@ -196,16 +196,19 @@
 			<fragmentGuid>{A4D53CB3-443B-C343-801E-70B5B8CD3175}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{138030B7-1242-1F42-BF3A-6D30B53DD8FE}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{C914255D-1E24-E844-A38F-BE29A1F4D2A4}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{7C29420D-C9A7-2144-8608-640BDE3D374C}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -237,7 +240,7 @@
 			</position>
 			<value>-2, 0, 0, 0</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{81A1D634-B70D-004B-9045-38F01030F0BC}</id>
 			<comment/>
 			<position>
@@ -248,6 +251,7 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{6619DE61-A71A-8F43-B86D-6EBD0FE12ED1}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -322,7 +326,7 @@
 			</position>
 			<name>e</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9FC250C2-E6FD-7847-A16B-3A03581D2DE5}</id>
 			<comment/>
 			<position>
@@ -332,20 +336,24 @@
 			<fragmentGuid>{A7D1F00D-7F1C-2B43-950F-B471708BD0E9}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{62D7655D-6142-8942-9E94-F573CDAB7148}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{3A098A1E-0DEB-114C-B039-0C93189C8EA4}</id>
 					<name>SearchTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{107B03C6-B3B5-A249-9C11-6FCFFA95251F}</id>
 					<name>e</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{08CFC4E9-0210-854E-A795-5B267932CDD5}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -409,7 +417,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{8A80BEC8-8562-1745-A93D-E47A64B0EE99}</id>
 			<comment/>
 			<position>
@@ -420,6 +428,7 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{6619DE61-A71A-8F43-B86D-6EBD0FE12ED1}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

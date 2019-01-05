@@ -151,7 +151,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{4C00273C-14AF-3C44-AEBF-BC98DDF47540}</id>
 			<comment/>
 			<position>
@@ -161,16 +161,19 @@
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{C90B489B-ADED-9F47-8C78-07B3088D3A1F}</id>
 					<name>DepthMap</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{315B0CBC-40D3-AF48-A6A4-8A54299BFE42}</id>
 					<name>DepthMapUV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{65D75CE0-358E-3B4B-9620-C21C0710FCDC}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -304,7 +307,7 @@ Clip space
 			<frequency>UfFrame</frequency>
 			<length>32</length>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{F40A2D69-875A-174F-B7FA-1F4324705D3F}</id>
 			<comment/>
 			<position>
@@ -314,12 +317,14 @@ Clip space
 			<fragmentGuid>{D934947E-5481-1143-B5C6-2594394B706F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{0E1DD1C2-A1C5-C141-B1AC-2F8D5E94D74B}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{75EEF50B-9372-D44C-86B7-DC6E234B36AE}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -439,7 +444,7 @@ Clip space
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{2830A97C-E198-D94E-9F3B-9CA7CA446375}</id>
 			<comment/>
 			<position>
@@ -450,9 +455,11 @@ Clip space
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -467,7 +474,7 @@ Clip space
 			</position>
 			<swizzle>00x1</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{84C61D45-A62D-2F4B-A52A-52DD513E0835}</id>
 			<comment/>
 			<position>
@@ -477,16 +484,19 @@ Clip space
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{C90B489B-ADED-9F47-8C78-07B3088D3A1F}</id>
 					<name>DepthMap</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{315B0CBC-40D3-AF48-A6A4-8A54299BFE42}</id>
 					<name>DepthMapUV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{65D75CE0-358E-3B4B-9620-C21C0710FCDC}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

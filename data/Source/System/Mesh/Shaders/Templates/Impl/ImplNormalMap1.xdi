@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D5FF26BF-4308-A741-9D93-FD4671A0F850}</id>
 			<comment/>
 			<position>
@@ -11,31 +11,38 @@
 			<fragmentGuid>{036D3453-15CB-164C-85AF-C08268AED664}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{3B4670EB-F2F6-3149-A660-70780B6F5F88}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{B7A805D3-8C98-3947-91C3-EEDA4E8F04D8}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{EA8728D2-5DD0-6C4F-A619-A00E15DAE507}</id>
 					<name>Binormal</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{798A79B3-87DC-244A-8893-F0079983A4B1}</id>
 					<name>Normal</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{E3FAEDAD-4391-1E40-9321-8E25D1D6E6DB}</id>
 					<name>Tangent</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{3AFF3C86-6D4D-5D4D-BF7D-56E769F65F7B}</id>
 					<name>Alpha</name>
 				</item>
 				<item>
+					<id>{9F9F54FB-F1C4-884A-BFB0-BD2D94D07B79}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

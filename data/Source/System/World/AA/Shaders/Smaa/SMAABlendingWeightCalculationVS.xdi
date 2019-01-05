@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{435AF0B6-8C2F-F647-8312-3434352C356A}</id>
 			<comment/>
 			<position>
@@ -12,6 +12,7 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{6619DE61-A71A-8F43-B86D-6EBD0FE12ED1}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -126,7 +127,7 @@
 			</position>
 			<swizzle>xyxy</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{A1FF0931-71DB-8D40-88B9-8F38343B84AF}</id>
 			<comment/>
 			<position>
@@ -137,18 +138,23 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{39B4E5FA-87DF-1447-9984-0C60320E8845}</id>
 					<name>SMAA_MAX_SEARCH_STEPS</name>
 				</item>
 				<item>
+					<id>{8FEF8AF3-618A-5E4E-B0B5-E6EFE344E8A2}</id>
 					<name>SMAA_PREDICATION_SCALE</name>
 				</item>
 				<item>
+					<id>{93A243F3-52DF-4147-8379-78DE8BF46D9A}</id>
 					<name>SMAA_PREDICATION_STRENGTH</name>
 				</item>
 				<item>
+					<id>{6A3E1598-184C-594A-8166-26F16E1BB712}</id>
 					<name>SMAA_PREDICATION_THRESHOLD</name>
 				</item>
 				<item>
+					<id>{A4DB638B-9C22-AC47-9852-1D1E109FE377}</id>
 					<name>SMAA_THRESHOLD</name>
 				</item>
 			</outputPins>
@@ -205,7 +211,7 @@
 				<second>1004</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{15A4BDBA-EB7F-0845-896D-3F55C0863BB7}</id>
 			<comment/>
 			<position>
@@ -216,6 +222,7 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{6619DE61-A71A-8F43-B86D-6EBD0FE12ED1}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

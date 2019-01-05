@@ -66,7 +66,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{04970A1B-D5DD-824C-A94D-CEE25A5DE9CE}</id>
 			<comment/>
 			<position>
@@ -76,18 +76,20 @@
 			<fragmentGuid>{1AD06988-0F76-3D4A-BE56-00F49B91863C}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{F0ACE969-5BB2-2F43-992C-323A51C860D7}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{E666AE3F-B432-9543-B7AC-15DF393C600A}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7F960414-2916-FA42-9110-4F074464F22B}</id>
 			<comment/>
 			<position>
@@ -97,24 +99,29 @@
 			<fragmentGuid>{BD883566-EA6E-DD43-A15E-3873712F773C}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{DD0AF368-BF98-0E41-8C44-705163297C3C}</id>
 					<name>Binormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{BD11E286-94D8-DE48-8C54-4825690E0774}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{A525106E-8E60-7B4D-9FA0-17718532C635}</id>
 					<name>Tangent</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{23915FA8-1C9E-AD47-89D0-3B96028FC6BD}</id>
 					<name>TangentSpaceNormal</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{0071A575-37A9-1049-8E5B-F1647E3A4478}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

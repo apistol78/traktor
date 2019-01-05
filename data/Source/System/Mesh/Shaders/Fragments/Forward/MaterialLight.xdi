@@ -128,7 +128,7 @@
 			</position>
 			<swizzle>xxx</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{3B10324E-8EE5-844F-B239-0A2FB22042B0}</id>
 			<comment/>
 			<position>
@@ -138,38 +138,47 @@
 			<fragmentGuid>{B1228F14-DD2E-7C48-B068-5936321EBADA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{34220229-E8C0-E243-841B-D4E82E5CEE2F}</id>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{666EF700-70E7-7740-8AAA-7CC51955B7C4}</id>
 					<name>EyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{0A12DAA9-C014-034B-A23E-E94F97FFDFFC}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{B16BCDBC-8915-1442-AB84-7F0F993848A4}</id>
 					<name>Position</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{41E40409-0B0F-A04E-8A8B-DD41FBE08975}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{2F0C66E0-0AC9-4D44-AAC7-C1965D14EF68}</id>
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{2D12540D-FD00-3B41-816B-D76486121A04}</id>
 					<name>Diffuse</name>
 				</item>
 				<item>
+					<id>{C530E70A-0C6E-5441-A9F4-92A525DCFEC7}</id>
 					<name>Specular</name>
 				</item>
 				<item>
+					<id>{66DC0E3B-334B-5942-9E7F-B5B412EC4CD4}</id>
 					<name>Shadow</name>
 				</item>
 			</outputPins>

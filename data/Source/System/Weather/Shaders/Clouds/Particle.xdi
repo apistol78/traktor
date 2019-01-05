@@ -102,7 +102,7 @@
 				<second>31</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{A797FFC6-7579-AB4A-B990-87FAA2971117}</id>
 			<comment/>
 			<position>
@@ -112,16 +112,19 @@
 			<fragmentGuid>{F69FB000-4750-764C-AB54-75CEFE6C1F2A}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{ED32B114-1165-E341-92C9-BD684C26B19A}</id>
 					<name>Angle</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{DE25C017-660D-654C-91C2-EB740BFAD5DD}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{F78C1D3D-284D-0941-BB2A-27E07F798F8A}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -143,7 +146,7 @@
 				<second>224</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{2330A08D-C4B4-CF41-A0DC-3E8F754B38CF}</id>
 			<comment/>
 			<position>
@@ -154,18 +157,23 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{34490221-583A-6246-AB9D-427A5B34634C}</id>
 					<name>ParticlePosition</name>
 				</item>
 				<item>
+					<id>{1C2A654A-9B69-4945-ADD7-AA49C0D4E769}</id>
 					<name>ParticleRadius</name>
 				</item>
 				<item>
+					<id>{60E88494-0C4F-514D-8581-3EB80477E8FB}</id>
 					<name>ParticleRotation</name>
 				</item>
 				<item>
+					<id>{B49FD4C9-C1CD-E14F-8189-319F0C817F5E}</id>
 					<name>ParticleUV</name>
 				</item>
 				<item>
+					<id>{091D6ABD-FF59-074E-9B4B-FF44710333DA}</id>
 					<name>ParticleOpacity</name>
 				</item>
 			</outputPins>
@@ -293,7 +301,7 @@ Particle gradient
 			</position>
 			<value>0.5</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{08624E7C-0D32-244B-ADDF-55E19943B34D}</id>
 			<comment/>
 			<position>
@@ -303,16 +311,19 @@ Particle gradient
 			<fragmentGuid>{F63EF37A-672E-6541-81FE-257D4A9139FC}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{A71D68CB-02AC-A14F-AEA9-3A47B613D828}</id>
 					<name>ParticleAlpha</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{C502622E-A96C-0A41-9D1A-C6EE94EB19F2}</id>
 					<name>ParticleRadius</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{3DBFDFF4-5488-9A41-885A-87D72C5EA1B6}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -389,7 +400,7 @@ Particle gradient
 			</position>
 			<technique>Default</technique>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D5804558-EBDF-0C42-88ED-38E415281A76}</id>
 			<comment/>
 			<position>
@@ -399,30 +410,38 @@ Particle gradient
 			<fragmentGuid>{3F793E9D-73C9-8A44-B342-907FB4A2190D}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{230E7D55-5AF1-084F-9F07-74D13185A760}</id>
 					<name>Index</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{6F0BEB64-246B-D64B-A75A-AC7C2D803953}</id>
 					<name>BaseColor</name>
 				</item>
 				<item>
+					<id>{2564BE93-3D10-8B40-95ED-C515C8434DB3}</id>
 					<name>Direction</name>
 				</item>
 				<item>
+					<id>{F46BBF72-B290-6843-940C-0AC9D9508E61}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{02EB2288-A84C-7F4F-AE1C-0B331EE5CF85}</id>
 					<name>Range</name>
 				</item>
 				<item>
+					<id>{151EFDA1-ED94-1642-B80E-B18AFD0663BF}</id>
 					<name>ShadowColor</name>
 				</item>
 				<item>
+					<id>{390D3546-C311-5C46-828F-A72F5E1F6050}</id>
 					<name>SunColor</name>
 				</item>
 				<item>
+					<id>{CAEDFA17-F623-DB47-951B-0441218F1AB0}</id>
 					<name>Type</name>
 				</item>
 			</outputPins>
@@ -534,7 +553,7 @@ Light gradient
 			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{32776D27-DE73-1240-B2B4-CC3908905BC8}</id>
 			<comment/>
 			<position>
@@ -544,19 +563,23 @@ Light gradient
 			<fragmentGuid>{337A1029-8AA4-EC4A-AAD1-9D66393C4D6B}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{88F39CC8-9C43-264F-B6C8-703D02194236}</id>
 					<name>ParticleExtent</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{2E0DDD73-B610-9F4B-94A9-F4B01BDC2E5A}</id>
 					<name>ParticleUV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{72C76DBC-43F9-D644-93AD-E3065471E8DD}</id>
 					<name>Alpha</name>
 				</item>
 				<item>
+					<id>{B9BAAA87-1657-C14F-BF9C-388AD6D20C90}</id>
 					<name>Normal</name>
 				</item>
 			</outputPins>
@@ -578,7 +601,7 @@ Light gradient
 				<second>546</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{0BA7C76C-9FAA-EA40-B803-3C2923CA8AC3}</id>
 			<comment/>
 			<position>
@@ -588,16 +611,19 @@ Light gradient
 			<fragmentGuid>{F69FB000-4750-764C-AB54-75CEFE6C1F2A}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{ED32B114-1165-E341-92C9-BD684C26B19A}</id>
 					<name>Angle</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{DE25C017-660D-654C-91C2-EB740BFAD5DD}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{F78C1D3D-284D-0941-BB2A-27E07F798F8A}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

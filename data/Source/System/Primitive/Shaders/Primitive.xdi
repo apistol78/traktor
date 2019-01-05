@@ -131,7 +131,7 @@
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{8A96EF90-091A-5E40-B68B-EDDD28827C93}</id>
 			<comment/>
 			<position>
@@ -141,12 +141,14 @@
 			<fragmentGuid>{0F359947-AADA-6748-B492-44CE56038205}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{CC5DC130-E372-0B4F-807D-3646BE794EA7}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{97544039-E417-514E-BA37-0529DAA2C665}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

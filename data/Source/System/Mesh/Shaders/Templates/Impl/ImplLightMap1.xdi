@@ -89,7 +89,7 @@ Tag_LightMapRange
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7B70C65D-1D18-7F45-A031-89EC63AC4A8D}</id>
 			<comment/>
 			<position>
@@ -99,12 +99,14 @@ Tag_LightMapRange
 			<fragmentGuid>{21CA659B-13A1-4D49-8115-FBA0ACB3CF0E}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{A5384FAC-5CFF-4641-868B-B4C27EE7F4E7}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{8AF87759-86E6-694A-92BB-159E518E1E26}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

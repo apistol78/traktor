@@ -49,7 +49,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhHigh</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{789EC3A5-F082-FE49-87B0-E3D8922F6C33}</id>
 			<comment/>
 			<position>
@@ -60,15 +60,17 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Script" version="traktor.render.Node:1">
+		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
 			<id>{D4C2C2A3-AFE7-A644-B57B-3D3152BA8AFE}</id>
 			<comment/>
 			<position>
@@ -78,46 +80,55 @@
 			<name>RayCastFn_DX11</name>
 			<inputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>ColorMap</name>
 					<type>PtTexture2D</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>DepthMap</name>
 					<type>PtTexture2D</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>FragmentPosition</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>TargetSize</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Projection</name>
 					<type>PtMatrix</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Origin</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Direction</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Reflectivity</name>
 					<type>PtScalar</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Roughness</name>
 					<type>PtScalar</type>
 					<samplerId/>
@@ -125,10 +136,12 @@
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Color</name>
 					<type>PtVector</type>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Hit</name>
 					<type>PtScalar</type>
 				</item>
@@ -260,7 +273,7 @@ ENTRY
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{BD979490-AB58-1F40-8FF8-14D5359A1FA4}</id>
 			<comment/>
 			<position>
@@ -270,12 +283,14 @@ ENTRY
 			<fragmentGuid>{B8A2B203-34E6-3543-8502-522D0F16791C}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{39749CD5-03F0-D045-99EC-E01C2D775486}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{B350D788-DF12-6A40-922B-5737E4CB7880}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -315,7 +330,7 @@ ENTRY
 			</position>
 			<swizzle>00x</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{6A4F4FF0-75EC-E748-B1BC-3055404AE51B}</id>
 			<comment/>
 			<position>
@@ -325,12 +340,14 @@ ENTRY
 			<fragmentGuid>{ED628E05-EA7F-B24F-9E38-97F53A90CCDA}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{CA354600-15AE-DE42-AB5A-FA83AE931572}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{68FEE0D6-C712-9F4A-8713-0869C8607AA1}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -414,7 +431,7 @@ ENTRY
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{83FA00A7-9CD1-0F44-929B-70E67D5EC993}</id>
 			<comment/>
 			<position>
@@ -424,40 +441,49 @@ ENTRY
 			<fragmentGuid>{5961D8B7-FFC0-8742-B87F-1AD8B232D84E}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{1256F445-5AEB-514A-B40E-030D15B87159}</id>
 					<name>EyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{5FF10FC5-3D98-314A-AEF7-045646104333}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{00AD412E-0109-4B47-98C4-6F3F7B96F036}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{EFADEA70-B7DB-2A42-8B74-C935A18BBCC1}</id>
 					<name>Amount</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{B3F94580-6109-DA41-AB99-82E95458722C}</id>
 					<name>Offset</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{179852CD-3130-3B45-9D02-18572025A565}</id>
 					<name>ReflectionMap</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{BA403A48-8034-FA43-BB30-F9434742E6F8}</id>
 					<name>Roughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{B87C4ACD-6A80-344C-97DB-D14A875EA659}</id>
 					<name>Scale</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{A34DED7A-53D1-A941-9F63-5CBFEA6CCB6D}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -553,7 +579,7 @@ ENTRY
 			</position>
 			<swizzle>xy00</swizzle>
 		</item>
-		<item type="traktor.render.Script" version="traktor.render.Node:1">
+		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
 			<id>{A848C325-2B69-694B-8A9B-97767E29713B}</id>
 			<comment/>
 			<position>
@@ -563,11 +589,13 @@ ENTRY
 			<name>ReflectionRay_DX11</name>
 			<inputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>ViewPosition</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>ViewNormal</name>
 					<type>PtVector</type>
 					<samplerId/>
@@ -575,10 +603,12 @@ ENTRY
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>RayOrigin</name>
 					<type>PtVector</type>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>RayDirection</name>
 					<type>PtVector</type>
 				</item>
@@ -651,7 +681,7 @@ ENTRY
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{5466BDC9-FBBA-2748-B69F-A960A4089CFD}</id>
 			<comment/>
 			<position>
@@ -661,12 +691,14 @@ ENTRY
 			<fragmentGuid>{FDCA9563-2389-4B43-A8E5-5262EC02EC1F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{97DC9817-9348-4045-84D1-5E3E34942BEF}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{DA71CC25-EA8C-574D-AFFD-02F27FC9C7F4}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -734,7 +766,7 @@ ENTRY
 			</position>
 			<name>Metalness</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{8C62132D-F953-E246-B48C-B295A6ACE9AC}</id>
 			<comment/>
 			<position>
@@ -744,18 +776,20 @@ ENTRY
 			<fragmentGuid>{42F70BA2-042F-F74D-9FEB-2A8DA946AF95}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{520ED0D2-881F-D044-B213-28592C3F0C9C}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{66678BA7-49BD-6A4E-BF71-3A7C57F06519}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9D6485A5-FF81-4A28-B939-7128FECC9B35}</id>
 			<comment/>
 			<position>
@@ -765,12 +799,14 @@ ENTRY
 			<fragmentGuid>{197F1BBB-E153-A846-90E9-23789D16EE15}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{87F95874-19AD-C341-9810-BEA4004128A4}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{1EC4E04A-4CC5-074C-A796-97B89309F7D9}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

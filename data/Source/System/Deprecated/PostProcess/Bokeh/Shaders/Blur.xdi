@@ -93,7 +93,7 @@
 				<second>275</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D019B503-DE1D-DD41-9850-A003E147B1CE}</id>
 			<comment/>
 			<position>
@@ -104,9 +104,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -211,7 +213,7 @@
 				<second>420</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{4FDE3EB5-8724-144A-A8AF-EDE64DC70730}</id>
 			<comment/>
 			<position>
@@ -221,15 +223,18 @@
 			<fragmentGuid>{E116B1E4-B111-2447-81EA-240DD0E2ED3F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{7E67A3B5-DBCA-504B-B93A-EF6809B0EF6B}</id>
 					<name>Tap</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{6405F199-3EB1-7F45-A25C-781DAA1BA141}</id>
 					<name>Offset</name>
 				</item>
 				<item>
+					<id>{FFD32F2E-C39F-004A-9E81-D859EF26B7A1}</id>
 					<name>Weight</name>
 				</item>
 			</outputPins>
@@ -244,7 +249,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{81ED8319-8543-214D-AE72-657FB1898741}</id>
 			<comment/>
 			<position>
@@ -254,15 +259,18 @@
 			<fragmentGuid>{E116B1E4-B111-2447-81EA-240DD0E2ED3F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{7E67A3B5-DBCA-504B-B93A-EF6809B0EF6B}</id>
 					<name>Tap</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{6405F199-3EB1-7F45-A25C-781DAA1BA141}</id>
 					<name>Offset</name>
 				</item>
 				<item>
+					<id>{FFD32F2E-C39F-004A-9E81-D859EF26B7A1}</id>
 					<name>Weight</name>
 				</item>
 			</outputPins>

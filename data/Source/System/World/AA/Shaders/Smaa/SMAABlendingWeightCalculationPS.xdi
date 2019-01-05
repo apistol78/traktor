@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9D0D9E0F-4AA4-504E-A6FB-910D8FFDCA03}</id>
 			<comment/>
 			<position>
@@ -11,16 +11,19 @@
 			<fragmentGuid>{89F5EEEC-9CCF-3B4A-9CF4-576BF0D4950A}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{CD5299E9-2F01-854F-80BE-3B39AD32FF38}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{3F558B80-4764-3347-93BB-5886FECFB914}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{FAF888CD-CDC9-E544-8177-1C873B7C131E}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -48,7 +51,7 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C1A8FCCA-1636-6642-835C-B9E70A857926}</id>
 			<comment/>
 			<position>
@@ -58,24 +61,29 @@
 			<fragmentGuid>{B8356D5F-4487-E841-B833-5A273D8F15FF}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{597949DA-88BA-0446-9ABE-02ACF2E1B0A3}</id>
 					<name>EdgesTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{C1D8AB24-85C3-914A-B535-28EDC413FAB8}</id>
 					<name>End</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{754D516F-6617-674B-86FC-71B1DFD76A7D}</id>
 					<name>SearchTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{C5E00B6A-80D5-3647-9870-BBB0DC1BFA02}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{F72886E1-6B2D-0741-BC47-C9D1A9E6E01F}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -125,7 +133,7 @@
 				<second>749</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{B0D10A6A-FD64-5F43-9FD6-F489BCD9D508}</id>
 			<comment/>
 			<position>
@@ -135,16 +143,19 @@
 			<fragmentGuid>{A4D53CB3-443B-C343-801E-70B5B8CD3175}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{138030B7-1242-1F42-BF3A-6D30B53DD8FE}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{C914255D-1E24-E844-A38F-BE29A1F4D2A4}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{7C29420D-C9A7-2144-8608-640BDE3D374C}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -159,7 +170,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{3FB5D3F2-923F-4A49-907D-09D9B4CA7E61}</id>
 			<comment/>
 			<position>
@@ -169,24 +180,29 @@
 			<fragmentGuid>{B8DE7BAF-6DB3-0043-9125-EE9E7726DDB2}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{F483342C-2DED-3145-AFCC-B083818886D8}</id>
 					<name>EdgesTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{8A88B824-64DA-5D49-81C2-7EA9D7B5C636}</id>
 					<name>End</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{1152B851-6BFF-6F44-BC9A-B8C3C1A1E2BB}</id>
 					<name>SearchTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{A75B75A4-5036-4642-B1EF-17EF3EC42281}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{9F6BECAA-18B4-0640-A980-42D075A471E6}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -246,7 +262,7 @@
 			</position>
 			<name>d_y</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{74721874-EDDB-9143-B72B-B9281264F271}</id>
 			<comment/>
 			<position>
@@ -257,6 +273,7 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{6619DE61-A71A-8F43-B86D-6EBD0FE12ED1}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -346,7 +363,7 @@
 				<second>2352</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{27B65B28-D281-8A4C-A684-F1BA6402374A}</id>
 			<comment/>
 			<position>
@@ -356,20 +373,24 @@
 			<fragmentGuid>{4DCD4CEB-9884-9344-839F-BC0C978034BB}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{36EBF98B-49EF-A648-BD52-D1E2809A16EF}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{0C3AD8EF-8F5E-2C40-9CAA-732255A2ED2F}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{776C371C-EA75-7F48-8B5A-7DB0225F5964}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{E60660E3-F831-6340-A32B-1DBE6C88E5B8}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -531,7 +552,7 @@
 			</position>
 			<name>EdgesTexture</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{50763D56-2004-5341-8C32-49C4ADE0EB82}</id>
 			<comment/>
 			<position>
@@ -541,28 +562,34 @@
 			<fragmentGuid>{5BA41B67-4C29-E941-A025-BB56E2D9D0D6}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{83CCB0DA-FB60-A847-8DA5-F03F9E988F97}</id>
 					<name>AreaTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{1C813484-28FF-5F4B-BC11-7DE3DE05D112}</id>
 					<name>Dist</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{163D2074-F6D4-1E4B-B970-D1B762279B2B}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{95C8006C-5D19-1D4A-9124-22A449A4250D}</id>
 					<name>e1</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{EF9547C0-F1B0-9441-8E26-B9AD6562D5E1}</id>
 					<name>e2</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{71DBEB0C-CEE0-6346-8745-E6CEDC044684}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -739,7 +766,7 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7B054A73-B0F7-8A41-8481-B8E1F1AEA215}</id>
 			<comment/>
 			<position>
@@ -749,24 +776,29 @@
 			<fragmentGuid>{62986AA6-811A-934D-8633-8072AAF7670F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{7D7D9D86-42A9-8C4D-B38A-F50792005B58}</id>
 					<name>EdgesTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{FA8E48BD-F694-A941-92AC-7CE558A87095}</id>
 					<name>End</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{FED8B43C-25C6-FB41-92F8-83670EFDCAFE}</id>
 					<name>SearchTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{6E3667AE-86C1-8647-B62A-7CA80B377C73}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{1F0601E5-A754-E14F-9384-BA9DA8ED83ED}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -973,7 +1005,7 @@
 			</position>
 			<name>y_d_x</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{A2737B6D-9A87-DB4E-A1C9-864B85A85A68}</id>
 			<comment/>
 			<position>
@@ -983,16 +1015,19 @@
 			<fragmentGuid>{A4D53CB3-443B-C343-801E-70B5B8CD3175}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{138030B7-1242-1F42-BF3A-6D30B53DD8FE}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{C914255D-1E24-E844-A38F-BE29A1F4D2A4}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{7C29420D-C9A7-2144-8608-640BDE3D374C}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -1051,7 +1086,7 @@
 			</position>
 			<name>y_e_1</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{6E10C690-5B5E-5F48-9409-508D36D171F9}</id>
 			<comment/>
 			<position>
@@ -1061,24 +1096,29 @@
 			<fragmentGuid>{3F2992BD-14E6-E245-A8AB-84DA81D15431}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{13C4D136-40C6-E841-88C0-1E75EBE71533}</id>
 					<name>EdgesTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{A2112FDE-0CA9-164F-B808-28C47A5B4E98}</id>
 					<name>End</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{EFAC42C7-76CD-8544-93AC-61D9CEA5388F}</id>
 					<name>SearchTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{BF4283B8-5579-804F-84DA-881AEDE8F150}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{B7A2CAF0-B8CC-CF43-B7AD-5C6D3A77814D}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -1156,7 +1196,7 @@
 			</position>
 			<name>y_d_y</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{93F409E6-7FCC-6442-AF3C-78007C3A9963}</id>
 			<comment/>
 			<position>
@@ -1166,20 +1206,24 @@
 			<fragmentGuid>{4DCD4CEB-9884-9344-839F-BC0C978034BB}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{36EBF98B-49EF-A648-BD52-D1E2809A16EF}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{0C3AD8EF-8F5E-2C40-9CAA-732255A2ED2F}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{776C371C-EA75-7F48-8B5A-7DB0225F5964}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{E60660E3-F831-6340-A32B-1DBE6C88E5B8}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -1314,7 +1358,7 @@
 			</position>
 			<swizzle>ww</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{78B2CCA8-2269-5E4D-B696-A4B1F9D45281}</id>
 			<comment/>
 			<position>
@@ -1325,6 +1369,7 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{6619DE61-A71A-8F43-B86D-6EBD0FE12ED1}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -1446,7 +1491,7 @@
 			</position>
 			<name>Edges</name>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{DF0102EE-77D1-7B44-AD53-9BCA1F0B5419}</id>
 			<comment/>
 			<position>
@@ -1456,28 +1501,34 @@
 			<fragmentGuid>{5BA41B67-4C29-E941-A025-BB56E2D9D0D6}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{83CCB0DA-FB60-A847-8DA5-F03F9E988F97}</id>
 					<name>AreaTexture</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{1C813484-28FF-5F4B-BC11-7DE3DE05D112}</id>
 					<name>Dist</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{163D2074-F6D4-1E4B-B970-D1B762279B2B}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{95C8006C-5D19-1D4A-9124-22A449A4250D}</id>
 					<name>e1</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{EF9547C0-F1B0-9441-8E26-B9AD6562D5E1}</id>
 					<name>e2</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{71DBEB0C-CEE0-6346-8745-E6CEDC044684}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

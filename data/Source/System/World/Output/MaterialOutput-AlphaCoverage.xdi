@@ -100,7 +100,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{87ED6473-3A04-8C40-9FAC-630BB2AE78A3}</id>
 			<comment/>
 			<position>
@@ -110,31 +110,38 @@
 			<fragmentGuid>{BC060F9A-456E-B747-92C9-5BD78E172A26}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{EDF06616-1C90-1E45-AC94-3D539248395C}</id>
 					<name>EyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{C4B09B4D-EEDF-A542-BD33-1686A00BA987}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D37BD4E6-ECC7-ED40-B94D-C24E65374C6F}</id>
 					<name>Position</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{06CA250C-639F-6247-A21E-61A11A98D04F}</id>
 					<name>Shadow</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{DA74135F-816D-3443-B405-591DFA6BA749}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{CA1A6519-45A6-674B-9168-17F2AE22830D}</id>
 					<name>Diffuse</name>
 				</item>
 				<item>
+					<id>{97454B31-6F36-7342-9C10-681428D1C6C2}</id>
 					<name>Specular</name>
 				</item>
 			</outputPins>
@@ -178,7 +185,7 @@
 				<second>271</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{91C26A92-92C4-DE4F-A8F1-9E63F41DE46A}</id>
 			<comment/>
 			<position>
@@ -188,16 +195,19 @@
 			<fragmentGuid>{AFD5FE57-FE20-134A-9C0F-5E25CAB9B3F2}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{AFF255D0-F99A-7B4E-BB42-5C8D3D7B7336}</id>
 					<name>Color</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{6D9C5BED-2B3B-3546-B807-CD618017F552}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{25E94043-C1B8-794D-8327-6864707AAFAB}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -242,7 +252,7 @@
 				<second>269</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{91D12A1F-BAD5-5C4A-8334-0658943427D0}</id>
 			<comment/>
 			<position>
@@ -252,6 +262,7 @@
 			<fragmentGuid>{AF0EED7C-AEF3-C24C-9B05-7AB313CDEA1C}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{D8C685ED-AABA-244F-804D-66E10C720576}</id>
 					<name>Output</name>
 					<optional>false</optional>
 				</item>
@@ -259,7 +270,7 @@
 			<outputPins/>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{5105DF18-7435-5D49-AE57-4377C84876E6}</id>
 			<comment/>
 			<position>
@@ -269,32 +280,39 @@
 			<fragmentGuid>{5961D8B7-FFC0-8742-B87F-1AD8B232D84E}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{1256F445-5AEB-514A-B40E-030D15B87159}</id>
 					<name>EyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{5FF10FC5-3D98-314A-AEF7-045646104333}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{00AD412E-0109-4B47-98C4-6F3F7B96F036}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{EFADEA70-B7DB-2A42-8B74-C935A18BBCC1}</id>
 					<name>Amount</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{B3F94580-6109-DA41-AB99-82E95458722C}</id>
 					<name>Offset</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{B87C4ACD-6A80-344C-97DB-D14A875EA659}</id>
 					<name>Scale</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{A34DED7A-53D1-A941-9F63-5CBFEA6CCB6D}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

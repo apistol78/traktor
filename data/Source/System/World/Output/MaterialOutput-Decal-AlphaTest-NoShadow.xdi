@@ -1,52 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{57765117-1765-334A-8C4A-20A8943EDE75}</id>
 			<comment/>
 			<position>
-				<first>394</first>
-				<second>81</second>
+				<first>392</first>
+				<second>79</second>
 			</position>
 			<fragmentGuid>{DB61FE22-1D18-0000-A7CB-095CD836EEAD}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>
 					<name>SurfaceColor</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{C15FFA71-480D-3948-BF4B-5D1FD2F40B3C}</id>
 					<name>ViewNormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{505DD2CD-E305-084F-8673-848F43B149F0}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{36CB6501-1ACE-0F4F-9110-D7D21B31336F}</id>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{56C3CC9D-B88C-0042-BB60-AC1A1C9B410E}</id>
 					<name>Emissive</name>
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>Reflection</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<name>RimColor</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<name>RimIntensity</name>
-					<optional>true</optional>
-				</item>
-				<item>
+					<id>{28AF9CD6-D160-E641-AF57-D097F6C47895}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{FE6B863D-B937-E24A-97C2-9A9E5200BE7C}</id>
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
@@ -59,18 +54,6 @@
 				</item>
 				<item>
 					<first>Emissive</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Reflection</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>RimColor</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>RimIntensity</first>
 					<second>0</second>
 				</item>
 				<item>
@@ -87,8 +70,8 @@
 			<id>{7B124512-40EC-6C48-A4A0-523242F14A06}</id>
 			<comment/>
 			<position>
-				<first>-556</first>
-				<second>315</second>
+				<first>-554</first>
+				<second>313</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -100,8 +83,8 @@
 			<id>{BBB759CD-5C7D-DA41-8844-10F0712732CF}</id>
 			<comment/>
 			<position>
-				<first>-556</first>
-				<second>351</second>
+				<first>-554</first>
+				<second>349</second>
 			</position>
 			<name>DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -113,8 +96,8 @@
 			<id>{BD110455-8CA2-7D4A-B451-35D62906A796}</id>
 			<comment/>
 			<position>
-				<first>-566</first>
-				<second>388</second>
+				<first>-564</first>
+				<second>386</second>
 			</position>
 			<name>SpecularTerm</name>
 			<connectable>true</connectable>
@@ -126,8 +109,8 @@
 			<id>{B07D3C3D-434D-5547-AB31-85F9C13CDF39}</id>
 			<comment/>
 			<position>
-				<first>-596</first>
-				<second>424</second>
+				<first>-594</first>
+				<second>422</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -139,8 +122,8 @@
 			<id>{CCC8ED05-BA5F-1146-BA4A-D7DC22944EDA}</id>
 			<comment/>
 			<position>
-				<first>-536</first>
-				<second>461</second>
+				<first>-534</first>
+				<second>459</second>
 			</position>
 			<name>Emissive</name>
 			<connectable>true</connectable>
@@ -152,8 +135,8 @@
 			<id>{F1CD55EE-A916-EB45-8018-115CAEC32C9C}</id>
 			<comment/>
 			<position>
-				<first>-516</first>
-				<second>279</second>
+				<first>-514</first>
+				<second>277</second>
 			</position>
 			<name>Alpha</name>
 			<connectable>true</connectable>
@@ -165,8 +148,8 @@
 			<id>{E9263B51-0D5F-DA47-AF72-BA2F1AF97FE6}</id>
 			<comment/>
 			<position>
-				<first>-169</first>
-				<second>745</second>
+				<first>-167</first>
+				<second>743</second>
 			</position>
 			<operator>CoGreaterEqual</operator>
 		</item>
@@ -174,8 +157,8 @@
 			<id>{7E6A6F65-73B5-7A43-AC69-8F4733FD8CC1}</id>
 			<comment/>
 			<position>
-				<first>-352</first>
-				<second>44</second>
+				<first>-350</first>
+				<second>42</second>
 			</position>
 			<value>0.5</value>
 		</item>
@@ -183,8 +166,8 @@
 			<id>{C70F38AC-4483-0A49-B60D-9CEBBEEB367C}</id>
 			<comment/>
 			<position>
-				<first>-275</first>
-				<second>1089</second>
+				<first>-273</first>
+				<second>1087</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
@@ -194,15 +177,15 @@
 			<id>{304C5013-5CEE-A146-8701-782317855C41}</id>
 			<comment/>
 			<position>
-				<first>-7</first>
-				<second>1031</second>
+				<first>-5</first>
+				<second>1029</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
 			<id>{0867B9AE-9D24-6C49-982C-BDCA0C983AE3}</id>
 			<comment/>
 			<position>
-				<first>239</first>
+				<first>237</first>
 				<second>1056</second>
 			</position>
 			<technique>World_DepthWrite</technique>
@@ -211,8 +194,8 @@
 			<id>{01C91719-F4D7-FD44-AC4F-55F79BD55662}</id>
 			<comment/>
 			<position>
-				<first>156</first>
-				<second>800</second>
+				<first>154</first>
+				<second>798</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -220,8 +203,8 @@
 			<id>{3987ECF5-17B5-6644-965A-B506EDAB57F7}</id>
 			<comment/>
 			<position>
-				<first>339</first>
-				<second>805</second>
+				<first>337</first>
+				<second>803</second>
 			</position>
 			<technique>World_DepthWrite</technique>
 			<priority>
@@ -268,57 +251,62 @@
 			<id>{8D926281-C5E1-9A4C-ADB5-B4341AC8984C}</id>
 			<comment/>
 			<position>
-				<first>-136</first>
-				<second>-40</second>
+				<first>-134</first>
+				<second>-38</second>
 			</position>
 			<operator>CoGreaterEqual</operator>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{2E21D52F-DD1E-2B4A-85FC-A2581F4E2578}</id>
 			<comment/>
 			<position>
-				<first>394</first>
-				<second>396</second>
+				<first>409</first>
+				<second>340</second>
 			</position>
 			<fragmentGuid>{775F874A-7FE5-0141-B4B7-42FFE8DE1340}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{D4FA0DF0-1304-4D49-85D1-9B7E5E547658}</id>
 					<name>Alpha</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{250E966B-9AB6-F545-A043-7E00B32A1497}</id>
 					<name>ViewNormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{BD9355FE-753F-8C4B-8DC5-C9CF54C76373}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{4CB2A6DA-843E-BE46-8742-30969E493799}</id>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{B3A55B68-CF37-494B-93EC-63B312BAE4B9}</id>
 					<name>Emissive</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{F7C85916-CC4B-8342-B016-17B9EA099C7C}</id>
 					<name>Metalness</name>
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>Reflection</name>
-					<optional>true</optional>
-				</item>
-				<item>
+					<id>{1B8D4AAF-53C5-2042-8128-C668D13B1AA5}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{AA210BB0-1AF9-FE4D-8A0F-895B8FCF58BB}</id>
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{DCFB8A86-90BF-734C-BE8E-465522D9DBC0}</id>
 					<name>SurfaceColor</name>
 					<optional>true</optional>
 				</item>
@@ -335,10 +323,6 @@
 				</item>
 				<item>
 					<first>Metalness</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Reflection</first>
 					<second>0</second>
 				</item>
 				<item>

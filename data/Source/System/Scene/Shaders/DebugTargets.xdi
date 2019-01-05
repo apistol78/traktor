@@ -663,7 +663,7 @@
 			</position>
 			<swizzle>xxx</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{F7181389-CADC-154B-BD30-CA3D4FA5ACBA}</id>
 			<comment/>
 			<position>
@@ -673,12 +673,14 @@
 			<fragmentGuid>{5C2C9CD8-185C-D14A-9FF0-3E564E2DB442}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{7F540E6D-CEED-F940-9F6E-D583628E89C4}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{055A9009-9EDC-1949-B3DF-B2D8D2C9694D}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

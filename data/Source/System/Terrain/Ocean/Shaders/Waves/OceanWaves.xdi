@@ -49,7 +49,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D807BF0F-FF79-B440-9C3B-2CBC1119F919}</id>
 			<comment/>
 			<position>
@@ -59,21 +59,24 @@
 			<fragmentGuid>{C9FA5AE3-E563-8B4F-88A2-7E7D9FCA8BF6}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{E922A476-B076-834B-950C-736AD73DFDA4}</id>
 					<name>x0</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{69287FE6-3BD7-7A49-A66A-C4ACFE307162}</id>
 					<name>x</name>
 				</item>
 				<item>
+					<id>{FEB5B59B-CA41-D442-A3DB-C47FE2DFC665}</id>
 					<name>y</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{49B5A646-68E4-9049-B03B-EC45AAED6F4E}</id>
 			<comment/>
 			<position>
@@ -84,9 +87,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>

@@ -137,7 +137,7 @@ Above horizon
 			<branch>BrDynamic</branch>
 			<operator>CoGreater</operator>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{16EBBBC8-06ED-8E4F-B3C7-2D362F0CFF56}</id>
 			<comment/>
 			<position>
@@ -147,12 +147,14 @@ Above horizon
 			<fragmentGuid>{CFED139F-87C5-2F4C-B7E1-03D79C41CECE}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{E1D6A2E5-C972-C241-8C23-EC005A0A0636}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{4DD4DAD4-5640-7940-88B4-CCE31D325F9B}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -166,7 +168,7 @@ Above horizon
 				<second>536</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{3E487F1E-3F50-D74E-B093-6E459E743AA5}</id>
 			<comment/>
 			<position>
@@ -176,12 +178,14 @@ Above horizon
 			<fragmentGuid>{80B5A533-58DE-694C-B8A6-C9224527879F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{EFA75610-467C-2646-815C-3FDF07121D59}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{14495B5A-EE63-5B4A-9EA5-8F5152D77E3A}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -336,7 +340,7 @@ dUV
 				<second>-282</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{1E692105-49CB-314E-A90E-942E4C22DFB6}</id>
 			<comment/>
 			<position>
@@ -347,9 +351,11 @@ dUV
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -493,7 +499,7 @@ AO radius; approx with disc.
 			</position>
 			<swizzle>z</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9E1A6773-8EE5-E945-A2AD-9EC3BB237AF0}</id>
 			<comment>
 			<![CDATA[
@@ -507,12 +513,14 @@ P
 			<fragmentGuid>{80B5A533-58DE-694C-B8A6-C9224527879F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{EFA75610-467C-2646-815C-3FDF07121D59}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{14495B5A-EE63-5B4A-9EA5-8F5152D77E3A}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -634,7 +642,7 @@ Within distance
 				<second>809</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7191CFCF-69EC-E84F-802F-CF65FC8C6544}</id>
 			<comment/>
 			<position>
@@ -644,18 +652,20 @@ Within distance
 			<fragmentGuid>{FB3915CA-923F-E84E-848A-26322D515EBF}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{DC7A0254-1BCE-954F-84F1-811DDE9B17AC}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{9F7F1473-5960-4546-8907-C167F9D3671E}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{420050BE-9D01-4E4B-A47E-BF6999221C7B}</id>
 			<comment/>
 			<position>
@@ -665,12 +675,14 @@ Within distance
 			<fragmentGuid>{FB3915CA-923F-E84E-848A-26322D515EBF}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{DC7A0254-1BCE-954F-84F1-811DDE9B17AC}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{9F7F1473-5960-4546-8907-C167F9D3671E}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -696,7 +708,7 @@ tanH
 				<second>1073</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{FA4FE44C-2803-0B45-984C-0A86E88190E8}</id>
 			<comment/>
 			<position>
@@ -706,12 +718,14 @@ tanH
 			<fragmentGuid>{CFED139F-87C5-2F4C-B7E1-03D79C41CECE}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{E1D6A2E5-C972-C241-8C23-EC005A0A0636}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{4DD4DAD4-5640-7940-88B4-CCE31D325F9B}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -746,7 +760,7 @@ T
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{BB7545F3-67CC-CD47-9AF3-E39CC1DC4D4E}</id>
 			<comment>
 			<![CDATA[
@@ -760,26 +774,30 @@ dPdu
 			<fragmentGuid>{82F0A665-510D-3F48-95C5-02B83E062858}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{7D1456B4-00BC-EB43-AF43-D96D6967585F}</id>
 					<name>P</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{4B0F9AEE-B96A-5A4B-88BD-DEED3EDB47EF}</id>
 					<name>P0</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{0B4528F4-9C56-274E-805C-550B806664C8}</id>
 					<name>P1</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{1E589C46-9143-6246-9907-9393EECA6D12}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{21A31020-463E-B641-B2A2-0534F316F302}</id>
 			<comment>
 			<![CDATA[
@@ -793,12 +811,14 @@ Pr
 			<fragmentGuid>{80B5A533-58DE-694C-B8A6-C9224527879F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{EFA75610-467C-2646-815C-3FDF07121D59}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{14495B5A-EE63-5B4A-9EA5-8F5152D77E3A}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -821,7 +841,7 @@ Pr
 			</position>
 			<swizzle>x0</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{AD7CCFEF-3E3E-4D44-99E0-84E5D63D4546}</id>
 			<comment>
 			<![CDATA[
@@ -835,12 +855,14 @@ Pl
 			<fragmentGuid>{80B5A533-58DE-694C-B8A6-C9224527879F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{EFA75610-467C-2646-815C-3FDF07121D59}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{14495B5A-EE63-5B4A-9EA5-8F5152D77E3A}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -879,7 +901,7 @@ Pl
 				<second>1212</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D0EC4644-089F-9849-BFBC-B32FDEA0AA42}</id>
 			<comment>
 			<![CDATA[
@@ -893,26 +915,30 @@ dPdv
 			<fragmentGuid>{82F0A665-510D-3F48-95C5-02B83E062858}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{7D1456B4-00BC-EB43-AF43-D96D6967585F}</id>
 					<name>P</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{4B0F9AEE-B96A-5A4B-88BD-DEED3EDB47EF}</id>
 					<name>P0</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{0B4528F4-9C56-274E-805C-550B806664C8}</id>
 					<name>P1</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{1E589C46-9143-6246-9907-9393EECA6D12}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{EB1A0078-45E1-4B4A-AC61-77372BEDA0DC}</id>
 			<comment>
 			<![CDATA[
@@ -926,12 +952,14 @@ Pt
 			<fragmentGuid>{80B5A533-58DE-694C-B8A6-C9224527879F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{EFA75610-467C-2646-815C-3FDF07121D59}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{14495B5A-EE63-5B4A-9EA5-8F5152D77E3A}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -954,7 +982,7 @@ Pt
 			</position>
 			<swizzle>0y</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{164348EF-C738-5441-A757-814648A67AD0}</id>
 			<comment>
 			<![CDATA[
@@ -968,12 +996,14 @@ Pb
 			<fragmentGuid>{80B5A533-58DE-694C-B8A6-C9224527879F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{EFA75610-467C-2646-815C-3FDF07121D59}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{14495B5A-EE63-5B4A-9EA5-8F5152D77E3A}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -1057,7 +1087,7 @@ Pb
 				<second>757</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{5EC673FB-A952-8E45-85E9-57CEAA8549A7}</id>
 			<comment/>
 			<position>
@@ -1067,16 +1097,19 @@ Pb
 			<fragmentGuid>{A0F86461-AB79-1141-A406-EBBC2AE9315D}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{A846685B-AFA8-AF44-9795-0ECB670804EE}</id>
 					<name>Size</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D07D941E-DF6D-9C4A-B781-3939CE7C42BE}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{06727363-47CB-994D-BE49-A002ED8B2C8F}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -1107,7 +1140,7 @@ Pb
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C188E1C5-2C47-7441-A4FF-5513ED8ED754}</id>
 			<comment/>
 			<position>
@@ -1117,12 +1150,14 @@ Pb
 			<fragmentGuid>{75CC9A09-18C9-A24A-ADD4-E000FA130CB8}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{36AA509D-DBE9-8F48-8B58-3D22222E4358}</id>
 					<name>d2</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{7E19375A-4A02-F14A-BEC1-733CDAF1E7DA}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -1200,7 +1235,7 @@ g_Strength
 				<second>577</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{821875AC-2D35-3942-9622-AF5C9BFF05E8}</id>
 			<comment/>
 			<position>
@@ -1210,16 +1245,19 @@ g_Strength
 			<fragmentGuid>{A0F86461-AB79-1141-A406-EBBC2AE9315D}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{A846685B-AFA8-AF44-9795-0ECB670804EE}</id>
 					<name>Size</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D07D941E-DF6D-9C4A-B781-3939CE7C42BE}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{06727363-47CB-994D-BE49-A002ED8B2C8F}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

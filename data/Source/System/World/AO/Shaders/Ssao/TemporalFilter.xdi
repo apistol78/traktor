@@ -49,7 +49,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{82FCC023-9988-6147-883E-BF180971F250}</id>
 			<comment/>
 			<position>
@@ -60,9 +60,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -125,7 +127,7 @@
 			<type>PtMatrix</type>
 			<frequency>UfDraw</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{DEBD9B39-9FB4-F542-9378-D134EFED454C}</id>
 			<comment>
 			<![CDATA[
@@ -139,12 +141,14 @@ P
 			<fragmentGuid>{80B5A533-58DE-694C-B8A6-C9224527879F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{EFA75610-467C-2646-815C-3FDF07121D59}</id>
 					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{14495B5A-EE63-5B4A-9EA5-8F5152D77E3A}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

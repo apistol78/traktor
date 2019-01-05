@@ -61,7 +61,7 @@
 				<second>-281</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{5C3EF533-0879-0E4A-9340-650049452C05}</id>
 			<comment/>
 			<position>
@@ -72,12 +72,15 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{6A5FB759-20AC-AB49-8E42-40222FFDD822}</id>
 					<name>Depth</name>
 				</item>
 				<item>
+					<id>{660846D2-8F0F-7241-A231-CE69CF52716C}</id>
 					<name>Normal</name>
 				</item>
 				<item>
+					<id>{CE660437-4012-ED43-B4DB-02A0752C5F25}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -497,7 +500,7 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7B9037C5-199F-F446-B2B0-5019255B58E2}</id>
 			<comment/>
 			<position>
@@ -508,15 +511,19 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{D051A873-AA64-974A-A2F4-4C2807548D5C}</id>
 					<name>Age</name>
 				</item>
 				<item>
+					<id>{DC4A9C6F-906B-F048-B554-8105A4E9CB09}</id>
 					<name>Alpha</name>
 				</item>
 				<item>
+					<id>{68312C09-4D39-BB4C-ABF3-E5957BA5B1B3}</id>
 					<name>Size</name>
 				</item>
 				<item>
+					<id>{D570412E-6287-9249-9B9D-1FFEBBD20F57}</id>
 					<name>Thickness</name>
 				</item>
 			</outputPins>

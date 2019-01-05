@@ -67,7 +67,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{E3DFEFE4-E2C6-DE4E-89A4-D007002C7690}</id>
 			<comment/>
 			<position>
@@ -78,9 +78,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -228,7 +230,7 @@
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{37D4E6CA-0A8B-C64F-B2A7-5764036F6A22}</id>
 			<comment/>
 			<position>
@@ -238,24 +240,29 @@
 			<fragmentGuid>{3BDB38CE-AE49-4D4D-A158-78E64469DF0A}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{0E76DF35-1F1E-1A44-AEC8-6D07B6DDB3F5}</id>
 					<name>Blend</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{E26BF610-EE95-0D4A-BD32-F7095A91EFB3}</id>
 					<name>Input1</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{6A94B8A2-4897-294D-AB99-F1E6D9A0D205}</id>
 					<name>Input2</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D2425621-59E5-1E4B-9FC8-799103ACFDA1}</id>
 					<name>Input3</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{DF034004-5A73-764E-974D-E115BDEBBA7E}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

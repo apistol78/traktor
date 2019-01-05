@@ -67,7 +67,7 @@
 			<registerCount>0</registerCount>
 			<precisionHint>PhUndefined</precisionHint>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{68FEDBD7-F9B7-5A4B-8E76-EEE0383E7E43}</id>
 			<comment/>
 			<position>
@@ -77,18 +77,20 @@
 			<fragmentGuid>{5BCC8344-7E21-3747-8FBA-F42F459D6C3D}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{42EABBD3-7384-FE49-86C0-20140A3354DE}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{9A961206-A8E6-6A4F-A3C0-45099E47E9D4}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{4DB5D804-F43B-BB4E-9D25-27ABAB87DD97}</id>
 			<comment/>
 			<position>
@@ -99,9 +101,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>

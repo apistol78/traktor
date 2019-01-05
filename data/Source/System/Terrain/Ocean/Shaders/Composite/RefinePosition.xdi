@@ -34,7 +34,7 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{A75EB840-FB0E-B74E-B0F2-DFA8D64A02A1}</id>
 			<comment/>
 			<position>
@@ -44,12 +44,14 @@
 			<fragmentGuid>{C499205C-35EF-8E47-9361-61B67F803CA7}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{B19F98CB-9DB4-7D40-BD04-BF12B02ECB09}</id>
 					<name>Position</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{98DABBBB-B326-9043-8DBB-1797F22F2414}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

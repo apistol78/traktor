@@ -86,7 +86,7 @@
 				<second>112</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{AC2F4079-913F-4C5A-854C-CC85D8A64129}</id>
 			<comment/>
 			<position>
@@ -97,24 +97,31 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{17931F9B-C0AB-AB4B-B2D4-49280C198DE1}</id>
 					<name>Depth</name>
 				</item>
 				<item>
+					<id>{CBAF67A0-4CD2-D746-A1B5-4F585CAA3199}</id>
 					<name>EyeDirection</name>
 				</item>
 				<item>
+					<id>{E25BC49C-C55C-41F2-96B8-15E4C572AF23}</id>
 					<name>Metalness</name>
 				</item>
 				<item>
+					<id>{F4CC0B28-0DE2-BB4F-A6B3-5C7DBE57A96F}</id>
 					<name>Roughness</name>
 				</item>
 				<item>
+					<id>{F2EBB748-8DAC-EA48-B858-0C14479CE443}</id>
 					<name>SpecularTerm</name>
 				</item>
 				<item>
+					<id>{F26708F9-F91E-8E4F-9D47-3FCBAA6CE65A}</id>
 					<name>ViewNormal</name>
 				</item>
 				<item>
+					<id>{568AAF2D-6F5A-4449-B191-A0F65D964B18}</id>
 					<name>ViewPosition</name>
 				</item>
 			</outputPins>

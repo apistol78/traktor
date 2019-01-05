@@ -56,7 +56,7 @@
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Script" version="traktor.render.Node:1">
+		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
 			<id>{5405C490-382C-D543-B15D-B13A6B75402E}</id>
 			<comment/>
 			<position>
@@ -66,16 +66,19 @@
 			<name>SampleData_DX11</name>
 			<inputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>LineData</name>
 					<type>PtTexture2D</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Offset</name>
 					<type>PtScalar</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Index</name>
 					<type>PtScalar</type>
 					<samplerId/>
@@ -83,18 +86,22 @@
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Start</name>
 					<type>PtVector</type>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>End</name>
 					<type>PtVector</type>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Width</name>
 					<type>PtScalar</type>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Color</name>
 					<type>PtVector</type>
 				</item>

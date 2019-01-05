@@ -85,7 +85,7 @@
 				<second>294</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{FFD206CC-6EDD-B446-9919-0C1E61B9E3D1}</id>
 			<comment/>
 			<position>
@@ -95,12 +95,14 @@
 			<fragmentGuid>{DE7C9D55-4AB8-4749-85C4-43A6E40B9596}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{3FC8275C-094C-DD40-B5F6-B690D4CFBBB3}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{387A6024-3741-494A-A599-54E161EA80AB}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

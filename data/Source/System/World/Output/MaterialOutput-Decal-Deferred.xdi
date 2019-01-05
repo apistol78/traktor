@@ -17,7 +17,7 @@
 				<second>1344</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{1CE59C7A-AC9E-F447-8E9D-134A7CB9E5D6}</id>
 			<comment/>
 			<position>
@@ -27,32 +27,39 @@
 			<fragmentGuid>{5961D8B7-FFC0-8742-B87F-1AD8B232D84E}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{1256F445-5AEB-514A-B40E-030D15B87159}</id>
 					<name>EyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{5FF10FC5-3D98-314A-AEF7-045646104333}</id>
 					<name>Input</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{00AD412E-0109-4B47-98C4-6F3F7B96F036}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{EFADEA70-B7DB-2A42-8B74-C935A18BBCC1}</id>
 					<name>Amount</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{B3F94580-6109-DA41-AB99-82E95458722C}</id>
 					<name>Offset</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{B87C4ACD-6A80-344C-97DB-D14A875EA659}</id>
 					<name>Scale</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{A34DED7A-53D1-A941-9F63-5CBFEA6CCB6D}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -175,7 +182,7 @@
 				<second>1175</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{E87D556C-3626-1F45-8DC4-BC73480182BD}</id>
 			<comment/>
 			<position>
@@ -185,12 +192,14 @@
 			<fragmentGuid>{645D00CF-9F76-0F49-9451-04C9945D5E8A}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{7BC0B2EA-D9D4-3446-8B0F-331517509710}</id>
 					<name>ColorUV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{E634037D-5768-0741-AB8F-8919EA76164E}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -238,7 +247,7 @@
 				<second>936</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9683F2EB-D3A8-9D44-BFD5-B5028BE1512D}</id>
 			<comment/>
 			<position>
@@ -248,31 +257,38 @@
 			<fragmentGuid>{BC060F9A-456E-B747-92C9-5BD78E172A26}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{EDF06616-1C90-1E45-AC94-3D539248395C}</id>
 					<name>EyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{C4B09B4D-EEDF-A542-BD33-1686A00BA987}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D37BD4E6-ECC7-ED40-B94D-C24E65374C6F}</id>
 					<name>Position</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{06CA250C-639F-6247-A21E-61A11A98D04F}</id>
 					<name>Shadow</name>
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{DA74135F-816D-3443-B405-591DFA6BA749}</id>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{CA1A6519-45A6-674B-9168-17F2AE22830D}</id>
 					<name>Diffuse</name>
 				</item>
 				<item>
+					<id>{97454B31-6F36-7342-9C10-681428D1C6C2}</id>
 					<name>Specular</name>
 				</item>
 			</outputPins>
@@ -287,7 +303,7 @@
 				</item>
 			</values>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{6B224CC3-2ED0-664E-B8AD-E05FF617F6E6}</id>
 			<comment/>
 			<position>
@@ -298,6 +314,7 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{92C8DC39-D05A-3144-8E36-752006124284}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -423,7 +440,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{48E92CC4-E2F5-0949-BA1B-43F49B0AB31B}</id>
 			<comment/>
 			<position>
@@ -433,16 +450,19 @@
 			<fragmentGuid>{AFD5FE57-FE20-134A-9C0F-5E25CAB9B3F2}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{AFF255D0-F99A-7B4E-BB42-5C8D3D7B7336}</id>
 					<name>Color</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{6D9C5BED-2B3B-3546-B807-CD618017F552}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{25E94043-C1B8-794D-8327-6864707AAFAB}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

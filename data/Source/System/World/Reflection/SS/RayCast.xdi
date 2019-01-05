@@ -90,7 +90,7 @@
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Script" version="traktor.render.Node:1">
+		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
 			<id>{4CB98F79-EFCF-1149-BC58-D8C79BBA1B41}</id>
 			<comment/>
 			<position>
@@ -100,26 +100,31 @@
 			<name>RayCastFn_OpenGL</name>
 			<inputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Direction</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Origin</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>DepthMap</name>
 					<type>PtTexture2D</type>
 					<samplerId>DepthMap_Sampler</samplerId>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Projection</name>
 					<type>PtMatrix</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>ColorMap</name>
 					<type>PtTexture2D</type>
 					<samplerId>ColorMap_Sampler</samplerId>
@@ -127,6 +132,7 @@
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Hit</name>
 					<type>PtVector</type>
 				</item>
@@ -229,7 +235,7 @@ ENTRY
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
-		<item type="traktor.render.Script" version="traktor.render.Node:1">
+		<item type="traktor.render.Script" version="1,traktor.render.Node:1">
 			<id>{CEE78239-3BF3-6F4E-9BF3-896D991DB8A3}</id>
 			<comment/>
 			<position>
@@ -239,26 +245,31 @@ ENTRY
 			<name>RayCastFn_DX11</name>
 			<inputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Direction</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Origin</name>
 					<type>PtVector</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>DepthMap</name>
 					<type>PtTexture2D</type>
 					<samplerId>DepthMap_Sampler</samplerId>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Projection</name>
 					<type>PtMatrix</type>
 					<samplerId/>
 				</item>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>ColorMap</name>
 					<type>PtTexture2D</type>
 					<samplerId>ColorMap_Sampler</samplerId>
@@ -266,6 +277,7 @@ ENTRY
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{00000000-0000-0000-0000-000000000000}</id>
 					<name>Hit</name>
 					<type>PtVector</type>
 				</item>

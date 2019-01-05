@@ -142,7 +142,7 @@
 				<second>-34</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{EDFC91BF-C923-5D46-9E00-C67F9B65B68B}</id>
 			<comment/>
 			<position>
@@ -153,15 +153,19 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{D051A873-AA64-974A-A2F4-4C2807548D5C}</id>
 					<name>Age</name>
 				</item>
 				<item>
+					<id>{DC4A9C6F-906B-F048-B554-8105A4E9CB09}</id>
 					<name>Alpha</name>
 				</item>
 				<item>
+					<id>{68312C09-4D39-BB4C-ABF3-E5957BA5B1B3}</id>
 					<name>Size</name>
 				</item>
 				<item>
+					<id>{D570412E-6287-9249-9B9D-1FFEBBD20F57}</id>
 					<name>Thickness</name>
 				</item>
 			</outputPins>

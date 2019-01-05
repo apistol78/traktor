@@ -27,7 +27,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{38E22329-0D4C-F745-806D-2825605D0BB0}</id>
 			<comment/>
 			<position>
@@ -37,20 +37,24 @@
 			<fragmentGuid>{9B2CF3DE-FC94-F648-BF7F-C7AD6F0E6C09}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{45A45776-C1EC-254B-8662-33C86CA4544C}</id>
 					<name>Offset</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{72F00D41-DCFC-4542-B841-A0EFCCE9D4D1}</id>
 					<name>TexCoord</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{C4AD9ABC-E5AA-BA4A-B636-E32F1AAACB5C}</id>
 					<name>Texture</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{95C28769-DF75-514E-8A7C-CCBD88F79C55}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -129,7 +133,7 @@
 				<second>813</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{1C2ACF49-D9FD-C348-B004-8953D6B03BD3}</id>
 			<comment/>
 			<position>
@@ -140,27 +144,35 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{D4C2103E-1BF1-2841-BE67-35B24869EBF7}</id>
 					<name>SMAA_DEPTH_THRESHOLD</name>
 				</item>
 				<item>
+					<id>{0159F5DB-1B1F-C24D-B603-7F1E71025329}</id>
 					<name>SMAA_LOCAL_CONTRAST_ADAPTATION_FACTOR</name>
 				</item>
 				<item>
+					<id>{39B4E5FA-87DF-1447-9984-0C60320E8845}</id>
 					<name>SMAA_MAX_SEARCH_STEPS</name>
 				</item>
 				<item>
+					<id>{51C5B72E-EFDB-FC4A-8F15-DA2F6D5108FA}</id>
 					<name>SMAA_PREDICATION</name>
 				</item>
 				<item>
+					<id>{8FEF8AF3-618A-5E4E-B0B5-E6EFE344E8A2}</id>
 					<name>SMAA_PREDICATION_SCALE</name>
 				</item>
 				<item>
+					<id>{93A243F3-52DF-4147-8379-78DE8BF46D9A}</id>
 					<name>SMAA_PREDICATION_STRENGTH</name>
 				</item>
 				<item>
+					<id>{6A3E1598-184C-594A-8166-26F16E1BB712}</id>
 					<name>SMAA_PREDICATION_THRESHOLD</name>
 				</item>
 				<item>
+					<id>{A4DB638B-9C22-AC47-9852-1D1E109FE377}</id>
 					<name>SMAA_THRESHOLD</name>
 				</item>
 			</outputPins>

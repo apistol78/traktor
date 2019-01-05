@@ -27,7 +27,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{40810D51-5C47-F545-8FD4-37505D8C3548}</id>
 			<comment/>
 			<position>
@@ -37,32 +37,38 @@
 			<fragmentGuid>{297E9BD9-ABED-F04B-B8BD-16E426407B6E}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{569FB0B2-E440-E049-89AD-4840EF81C56F}</id>
 					<name>MarchDistance</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D55BC3A7-AD1B-3A4F-81A9-5A8A7C080B5D}</id>
 					<name>ViewOrigin</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{3C36C602-1C79-0F49-9D12-1781431974F7}</id>
 					<name>ViewStepDirection</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{725C8266-24A2-9541-A562-55649F56547C}</id>
 					<name>Depth</name>
 				</item>
 				<item>
+					<id>{D4E2ECF9-EFB2-DA4E-A9E5-6A9CA9509116}</id>
 					<name>Output</name>
 				</item>
 				<item>
+					<id>{E9EA9B48-95C6-9E4F-95A2-30EA1AE6F3CF}</id>
 					<name>SubMarchDistance</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{BD1ED034-91C1-604B-9493-F2065C582EEC}</id>
 			<comment/>
 			<position>
@@ -72,26 +78,32 @@
 			<fragmentGuid>{297E9BD9-ABED-F04B-B8BD-16E426407B6E}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{569FB0B2-E440-E049-89AD-4840EF81C56F}</id>
 					<name>MarchDistance</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D55BC3A7-AD1B-3A4F-81A9-5A8A7C080B5D}</id>
 					<name>ViewOrigin</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{3C36C602-1C79-0F49-9D12-1781431974F7}</id>
 					<name>ViewStepDirection</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{725C8266-24A2-9541-A562-55649F56547C}</id>
 					<name>Depth</name>
 				</item>
 				<item>
+					<id>{D4E2ECF9-EFB2-DA4E-A9E5-6A9CA9509116}</id>
 					<name>Output</name>
 				</item>
 				<item>
+					<id>{E9EA9B48-95C6-9E4F-95A2-30EA1AE6F3CF}</id>
 					<name>SubMarchDistance</name>
 				</item>
 			</outputPins>

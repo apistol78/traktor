@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{00961895-E0CE-2444-98FC-D5865F8C4412}</id>
 			<comment>
 			<![CDATA[
@@ -15,26 +15,30 @@ Microfacet Distribution Function
 			<fragmentGuid>{8F2D7451-5AC2-3741-8EFE-F0900501311F}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{10E270E2-9166-8745-A936-21B2612DC9E7}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{B7F47EBB-C9CC-7D4B-B5F3-77FE39EC2F22}</id>
 					<name>HalfAngleVector</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{260FD127-99D7-324B-9DE2-01CB7F387AAC}</id>
 					<name>Roughness</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{3A5C7144-8529-6E4F-90A3-0064F909ADB6}</id>
 					<name>D</name>
 				</item>
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{FED8A1E1-2072-2B46-8C42-3F8A9B15E64D}</id>
 			<comment>
 			<![CDATA[
@@ -48,20 +52,24 @@ Fresnel Reflection
 			<fragmentGuid>{8223B01C-0FD8-9743-8C4F-B8B9B2EF452E}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{8EEA610B-3789-9943-8CCC-E16E51ED850C}</id>
 					<name>LightDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{FCF97AFC-4FB4-554E-909A-3F25A5E99A2B}</id>
 					<name>HalfAngleVector</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{004DC8C7-DE1F-A340-B59C-AF7E9E16F0CD}</id>
 					<name>RefractionIndex</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{408D1DA8-2C54-7A4D-B089-8A1D38FD1396}</id>
 					<name>F</name>
 				</item>
 			</outputPins>

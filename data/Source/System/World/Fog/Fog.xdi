@@ -107,7 +107,7 @@ Fog density
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{D6185642-830B-CE4A-B2B0-723091D4C7A0}</id>
 			<comment/>
 			<position>
@@ -117,16 +117,19 @@ Fog density
 			<fragmentGuid>{45537BBC-34C2-7F4F-B6A2-E1DFAD414348}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{D809F4D9-90FA-494B-9F22-DB08167D0708}</id>
 					<name>Density</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{498DB440-34E8-DE45-8D94-5F7E53F4147C}</id>
 					<name>Distance</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{F2B39EF6-AA99-D64C-8324-919D3B44BEAB}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
@@ -208,7 +211,7 @@ Fog density
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{B5C4FA7F-2749-114E-B2FF-AA96E145752F}</id>
 			<comment/>
 			<position>
@@ -218,16 +221,19 @@ Fog density
 			<fragmentGuid>{45537BBC-34C2-7F4F-B6A2-E1DFAD414348}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{D809F4D9-90FA-494B-9F22-DB08167D0708}</id>
 					<name>Density</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{498DB440-34E8-DE45-8D94-5F7E53F4147C}</id>
 					<name>Distance</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{F2B39EF6-AA99-D64C-8324-919D3B44BEAB}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

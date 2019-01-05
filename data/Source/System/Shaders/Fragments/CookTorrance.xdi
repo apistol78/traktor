@@ -200,7 +200,7 @@ Percentage of specular light reflected
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{14300CE4-658B-7D4D-A138-7A307A724D99}</id>
 			<comment>
 			<![CDATA[
@@ -214,28 +214,34 @@ Cook Torrance Specular
 			<fragmentGuid>{8618C2AA-0899-6F44-8DC4-CE705CC4E3E2}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{C7EEEBD9-B838-3F4C-8BFF-2B75DA526F03}</id>
 					<name>Roughness</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{4B17CBAF-9066-F347-AC0D-8BE9F3B325BB}</id>
 					<name>HalfAngleVector</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{F47AB404-856E-B149-8DEF-5131CD77F152}</id>
 					<name>Normal</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{D6EAD7C8-368E-7B42-8EBA-5F068FAC231E}</id>
 					<name>ViewDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{38C270E2-56BE-6946-B694-F0BC93A4E02F}</id>
 					<name>RefractionIndex</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{F713EAA0-88B4-DE4E-865D-C70F59073986}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>

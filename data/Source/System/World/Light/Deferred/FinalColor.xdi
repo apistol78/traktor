@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{817BA2A4-6056-994C-921D-4BE931CFA178}</id>
 			<comment/>
 			<position>
@@ -12,9 +12,11 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
 					<name>Position</name>
 				</item>
 				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
@@ -143,7 +145,7 @@
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.External" version="1,traktor.render.Node:1">
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{3BF4E301-3F88-49CA-B7A3-69E865B7304E}</id>
 			<comment/>
 			<position>
@@ -154,27 +156,35 @@
 			<inputPins/>
 			<outputPins>
 				<item>
+					<id>{011933FB-5EDC-4E0F-84A4-0352D345A548}</id>
 					<name>Color</name>
 				</item>
 				<item>
+					<id>{17931F9B-C0AB-AB4B-B2D4-49280C198DE1}</id>
 					<name>Depth</name>
 				</item>
 				<item>
+					<id>{CBAF67A0-4CD2-D746-A1B5-4F585CAA3199}</id>
 					<name>EyeDirection</name>
 				</item>
 				<item>
+					<id>{E25BC49C-C55C-41F2-96B8-15E4C572AF23}</id>
 					<name>Metalness</name>
 				</item>
 				<item>
+					<id>{F4CC0B28-0DE2-BB4F-A6B3-5C7DBE57A96F}</id>
 					<name>Roughness</name>
 				</item>
 				<item>
+					<id>{F2EBB748-8DAC-EA48-B858-0C14479CE443}</id>
 					<name>SpecularTerm</name>
 				</item>
 				<item>
+					<id>{F26708F9-F91E-8E4F-9D47-3FCBAA6CE65A}</id>
 					<name>ViewNormal</name>
 				</item>
 				<item>
+					<id>{568AAF2D-6F5A-4449-B191-A0F65D964B18}</id>
 					<name>ViewPosition</name>
 				</item>
 			</outputPins>
