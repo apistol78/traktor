@@ -37,24 +37,8 @@ const InputPin* findExternalInputPin(const External* externalNode, const InputPo
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
 		const InputPin* inputPin = externalNode->getInputPin(i);
-		if (
-			inputPin->getId().isNotNull() &&
-			inputPin->getId() == fragmentInputPort->getId()
-		)
-		{
+		if (inputPin->getName() == fragmentInputPort->getName())
 			return inputPin;
-		}
-	}
-	for (int32_t i = 0; i < inputPinCount; ++i)
-	{
-		const InputPin* inputPin = externalNode->getInputPin(i);
-		if (
-			inputPin->getId().isNull() &&
-			inputPin->getName() == fragmentInputPort->getName()
-		)
-		{
-			return inputPin;
-		}
 	}
 	return nullptr;
 }
@@ -65,24 +49,8 @@ const OutputPin* findExternalOutputPin(const External* externalNode, const Outpu
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
 		const OutputPin* outputPin = externalNode->getOutputPin(i);
-		if (
-			outputPin->getId().isNotNull() &&
-			outputPin->getId() == fragmentOutputPort->getId()
-		)
-		{
+		if (outputPin->getName() == fragmentOutputPort->getName())
 			return outputPin;
-		}
-	}
-	for (int32_t i = 0; i < outputPinCount; ++i)
-	{
-		const OutputPin* outputPin = externalNode->getOutputPin(i);
-		if (
-			outputPin->getId().isNull() &&
-			outputPin->getName() == fragmentOutputPort->getName()
-		)
-		{
-			return outputPin;
-		}
 	}
 	return nullptr;
 }
@@ -158,9 +126,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 						Ref< Scalar > scalarNode;
 
 						const auto& values = externalNode->getValues();
-						auto it = values.find(inputPort->getId().format());
-						if (it == values.end())
-							it = values.find(inputPort->getName());
+						auto it = values.find(inputPort->getName());
 						if (it != values.end())
 							scalarNode = new Scalar(it->second);
 						else if (inputPort->haveDefaultValue())
@@ -183,9 +149,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 					Ref< Scalar > scalarNode;
 
 					const auto& values = externalNode->getValues();
-					auto it = values.find(inputPort->getId().format());
-					if (it == values.end())
-						it = values.find(inputPort->getName());
+					auto it = values.find(inputPort->getName());
 					if (it != values.end())
 						scalarNode = new Scalar(it->second);
 					else if (inputPort->haveDefaultValue())

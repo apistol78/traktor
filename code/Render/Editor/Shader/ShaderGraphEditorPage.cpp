@@ -931,7 +931,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 		std::vector< const InputPin* >::iterator j = externalInputPins.begin();
 		while (j != externalInputPins.end())
 		{
-			if ((*i)->getId() == (*j)->getId())
+			if ((*i)->getName() == (*j)->getName())
 				break;
 			++j;
 		}
@@ -950,7 +950,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 		std::vector< const OutputPin* >::iterator j = externalOutputPins.begin();
 		while (j != externalOutputPins.end())
 		{
-			if ((*i)->getId() == (*j)->getId())
+			if ((*i)->getName() == (*j)->getName())
 				break;
 			++j;
 		}
@@ -979,7 +979,6 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 		if (edge)
 			m_shaderGraph->removeEdge(edge);
 
-		external->removeValue(externalInputPins.back()->getId().format());
 		external->removeValue(externalInputPins.back()->getName());
 		external->removeInputPin(externalInputPins.back());
 
@@ -1001,7 +1000,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 	{
 		external->createInputPin(inputPort->getId(), inputPort->getName(), inputPort->isOptional());
 		if (inputPort->isOptional() && inputPort->haveDefaultValue())
-			external->setValue(inputPort->getId().format(), inputPort->getDefaultValue());
+			external->setValue(inputPort->getName(), inputPort->getDefaultValue());
 	}
 	for (const auto& outputPort : fragmentOutputs)
 		external->createOutputPin(outputPort->getId(), outputPort->getName());
