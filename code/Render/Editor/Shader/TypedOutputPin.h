@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_TypedOutputPin_H
-#define traktor_render_TypedOutputPin_H
+#pragma once
 
 #include <string>
 #include "Render/Types.h"
@@ -32,7 +25,7 @@ class T_DLLCLASS TypedOutputPin : public OutputPin
 public:
 	TypedOutputPin();
 
-	TypedOutputPin(Node* node, const std::wstring& name, ParameterType type);
+	TypedOutputPin(Node* node, const Guid& id, const std::wstring& name, ParameterType type);
 
 	ParameterType getType() const;
 
@@ -42,5 +35,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_TypedOutputPin_H

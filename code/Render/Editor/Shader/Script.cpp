@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributeReadOnly.h"
@@ -64,9 +58,13 @@ public:
 
 		if (s.getDirection() == ISerializer::SdWrite)
 		{
+			Guid id = m_pin->getId();
 			std::wstring name = m_pin->getName();
 			ParameterType type = m_pin->getType();
 			std::wstring samplerId = m_pin->getSamplerId();
+
+			if (s.getVersion() >= 1)
+				s >> Member< Guid >(L"id", id);
 
 			s >> Member< std::wstring >(L"name", name);
 			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
@@ -74,9 +72,13 @@ public:
 		}
 		else	// SdRead
 		{
+			Guid id;
 			std::wstring name = L"";
 			ParameterType type;
 			std::wstring samplerId = L"";
+
+			if (s.getVersion() >= 1)
+				s >> Member< Guid >(L"id", id);
 
 			s >> Member< std::wstring >(L"name", name);
 			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
@@ -86,6 +88,7 @@ public:
 			{
 				*m_pin = TypedInputPin(
 					m_node,
+					id,
 					name,
 					false,
 					type,
@@ -96,6 +99,7 @@ public:
 			{
 				m_pin = new TypedInputPin(
 					m_node,
+					id,
 					name,
 					false,
 					type,
@@ -137,16 +141,24 @@ public:
 
 		if (s.getDirection() == ISerializer::SdWrite)
 		{
+			Guid id = m_pin->getId();
 			std::wstring name = m_pin->getName();
 			ParameterType type = m_pin->getType();
+
+			if (s.getVersion() >= 1)
+				s >> Member< Guid >(L"id", id);
 
 			s >> Member< std::wstring >(L"name", name);
 			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
 		}
 		else	// SdRead
 		{
+			Guid id;
 			std::wstring name;
 			ParameterType type;
+
+			if (s.getVersion() >= 1)
+				s >> Member< Guid >(L"id", id);
 
 			s >> Member< std::wstring >(L"name", name);
 			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
@@ -155,6 +167,7 @@ public:
 			{
 				*m_pin = TypedOutputPin(
 					m_node,
+					id,
 					name,
 					type
 				);
@@ -163,6 +176,7 @@ public:
 			{
 				m_pin = new TypedOutputPin(
 					m_node,
+					id,
 					name,
 					type
 				);
@@ -284,14 +298,14 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 0, Script, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 1, Script, Node)
 
 Script::~Script()
 {
-	for (std::vector< TypedInputPin* >::iterator i = m_inputPins.begin(); i != m_inputPins.end(); ++i)
-		delete *i;
-	for (std::vector< TypedOutputPin* >::iterator i = m_outputPins.begin(); i != m_outputPins.end(); ++i)
-		delete *i;
+	for (auto& inputPin : m_inputPins)
+		delete inputPin;
+	for (auto& outputPin : m_outputPins)
+		delete outputPin;
 }
 
 const std::wstring& Script::getName() const
@@ -309,16 +323,16 @@ const std::wstring& Script::getScript() const
 	return m_script;
 }
 
-const InputPin* Script::addInputPin(const std::wstring& name, ParameterType type)
+const InputPin* Script::addInputPin(const Guid& id, const std::wstring& name, ParameterType type)
 {
-	TypedInputPin* inputPin = new TypedInputPin(this, name, false, type);
+	TypedInputPin* inputPin = new TypedInputPin(this, id, name, false, type);
 	m_inputPins.push_back(inputPin);
 	return inputPin;
 }
 
-const OutputPin* Script::addOutputPin(const std::wstring& name, ParameterType type)
+const OutputPin* Script::addOutputPin(const Guid& id, const std::wstring& name, ParameterType type)
 {
-	TypedOutputPin* outputPin = new TypedOutputPin(this, name, type);
+	TypedOutputPin* outputPin = new TypedOutputPin(this, id, name, type);
 	m_outputPins.push_back(outputPin);
 	return outputPin;
 }
@@ -335,15 +349,15 @@ void Script::removeInputPin(const std::wstring& name)
 
 void Script::removeAllInputPins()
 {
-	for (std::vector< TypedInputPin* >::iterator i = m_inputPins.begin(); i != m_inputPins.end(); ++i)
-		delete *i;
+	for (auto& inputPin : m_inputPins)
+		delete inputPin;
 	m_inputPins.clear();
 }
 
 void Script::removeAllOutputPins()
 {
-	for (std::vector< TypedOutputPin* >::iterator i = m_outputPins.begin(); i != m_outputPins.end(); ++i)
-		delete *i;
+	for (auto& outputPin : m_outputPins)
+		delete outputPin;
 	m_outputPins.clear();
 }
 

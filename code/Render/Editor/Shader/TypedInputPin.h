@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_TypedInputPin_H
-#define traktor_render_TypedInputPin_H
+#pragma once
 
 #include <string>
 #include "Render/Types.h"
@@ -30,7 +23,7 @@ namespace traktor
 class T_DLLCLASS TypedInputPin : public InputPin
 {
 public:
-	TypedInputPin(Node* node, const std::wstring& name, bool optional, ParameterType type, const std::wstring& samplerId = L"");
+	TypedInputPin(Node* node, const Guid& id, const std::wstring& name, bool optional, ParameterType type, const std::wstring& samplerId = L"");
 
 	ParameterType getType() const;
 
@@ -43,5 +36,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_TypedInputPin_H

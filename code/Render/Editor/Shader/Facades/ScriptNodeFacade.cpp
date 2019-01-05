@@ -145,9 +145,10 @@ private:
 				}
 				if (!pinExist)
 				{
+					const Guid c_null;
 					std::wstring pinName = m_dialog->getInputPinName(i);
 					ParameterType pinType = m_dialog->getInputPinType(i);
-					m_scriptNode->addInputPin(pinName, pinType);
+					m_scriptNode->addInputPin(c_null, pinName, pinType);
 					needCompleteRebuild = true;
 				}
 			}
@@ -167,9 +168,10 @@ private:
 				}
 				if (!pinExist)
 				{
+					const Guid c_null;
 					std::wstring pinName = m_dialog->getOutputPinName(i);
 					ParameterType pinType = m_dialog->getOutputPinType(i);
-					m_scriptNode->addOutputPin(pinName, pinType);
+					m_scriptNode->addOutputPin(c_null, pinName, pinType);
 					needCompleteRebuild = true;
 				}
 			}

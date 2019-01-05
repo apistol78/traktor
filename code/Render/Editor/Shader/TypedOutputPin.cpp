@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Editor/Shader/TypedOutputPin.h"
 
 namespace traktor
@@ -17,8 +11,8 @@ TypedOutputPin::TypedOutputPin()
 {
 }
 
-TypedOutputPin::TypedOutputPin(Node* node, const std::wstring& name, ParameterType type)
-:	OutputPin(node, name)
+TypedOutputPin::TypedOutputPin(Node* node, const Guid& id, const std::wstring& name, ParameterType type)
+:	OutputPin(node, id, name)
 ,	m_type(type)
 {
 }

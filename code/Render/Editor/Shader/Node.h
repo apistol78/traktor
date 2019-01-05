@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_Node_H
-#define traktor_render_Node_H
+#pragma once
 
 #include <string>
 #include "Core/Guid.h"
@@ -105,12 +98,26 @@ public:
 	 */
 	virtual const OutputPin* getOutputPin(int index) const = 0;
 
+	/*! \brief Find input pin by id.
+	 *
+	 * \param id Id of input pin.
+	 * \return Pointer to input pin, null if no such input pin.
+	 */
+	const InputPin* findInputPin(const Guid& id) const;
+
 	/*! \brief Find input pin by name.
 	 *
 	 * \param name Name of input pin.
 	 * \return Pointer to input pin, null if no such input pin.
 	 */
 	const InputPin* findInputPin(const std::wstring& name) const;
+
+	/*! \brief Find output pin by id.
+	 *
+	 * \param id Id of output pin.
+	 * \return Pointer to output pin, null if no such output pin.
+	 */
+	const OutputPin* findOutputPin(const Guid& id) const;
 
 	/*! \brief Find output pin by name.
 	 *
@@ -129,5 +136,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_Node_H

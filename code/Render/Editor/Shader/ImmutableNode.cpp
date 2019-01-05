@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Editor/Shader/ImmutableNode.h"
 
 namespace traktor
@@ -15,24 +9,25 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImmutableNode", ImmutableNode, Node)
 
 ImmutableNode::ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc* outputPins)
 {
+	const Guid c_null;
 	while (inputPins && inputPins->name)
 	{
-		m_inputPins.push_back(new InputPin(this, inputPins->name, inputPins->optional));
+		m_inputPins.push_back(new InputPin(this, c_null, inputPins->name, inputPins->optional));
 		++inputPins;
 	}
 	while (outputPins && outputPins->name)
 	{
-		m_outputPins.push_back(new OutputPin(this, outputPins->name));
+		m_outputPins.push_back(new OutputPin(this, c_null, outputPins->name));
 		++outputPins;
 	}
 }
 
 ImmutableNode::~ImmutableNode()
 {
-	for (std::vector< InputPin* >::iterator i = m_inputPins.begin(); i != m_inputPins.end(); ++i)
-		delete *i;
-	for (std::vector< OutputPin* >::iterator i = m_outputPins.begin(); i != m_outputPins.end(); ++i)
-		delete *i;
+	for (auto& inputPin : m_inputPins)
+		delete inputPin;
+	for (auto& outputPin : m_outputPins)
+		delete outputPin;
 }
 
 int ImmutableNode::getInputPinCount() const
