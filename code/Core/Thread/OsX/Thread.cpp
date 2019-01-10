@@ -48,27 +48,6 @@ void* trampoline(void* data)
 
 	}
 
-Thread::Thread(Functor* functor, const std::wstring& name, int hardwareCore)
-:	m_handle(0)
-,	m_id(0)
-,	m_stopped(false)
-,	m_functor(functor)
-{
-	Internal* in = new Internal();
-#if defined(_DEBUG)
-	std::strcpy(in->name, !name.empty() ? wstombs(name).c_str() : "Unnamed");
-#endif
-	in->functor = m_functor;
-	in->finished = false;
-	m_handle = in;
-}
-
-Thread::~Thread()
-{
-	Internal* in = reinterpret_cast< Internal* >(m_handle);
-	delete in;
-}
-
 bool Thread::start(Priority priority)
 {
 	pthread_attr_t attr;
@@ -214,6 +193,27 @@ bool Thread::finished() const
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 	return in->finished;
+}
+
+Thread::Thread(Functor* functor, const wchar_t* const name, int32_t hardwareCore)
+:	m_handle(0)
+,	m_id(0)
+,	m_stopped(false)
+,	m_functor(functor)
+{
+	Internal* in = new Internal();
+#if defined(_DEBUG)
+	std::strcpy(in->name, name ? wstombs(name).c_str() : "Unnamed");
+#endif
+	in->functor = m_functor;
+	in->finished = false;
+	m_handle = in;
+}
+
+Thread::~Thread()
+{
+	Internal* in = reinterpret_cast< Internal* >(m_handle);
+	delete in;
 }
 
 }
