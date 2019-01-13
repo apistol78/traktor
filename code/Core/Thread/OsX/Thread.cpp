@@ -200,6 +200,8 @@ Thread::Thread(Functor* functor, const wchar_t* const name, int32_t hardwareCore
 ,	m_id(0)
 ,	m_stopped(false)
 ,	m_functor(functor)
+,	m_name(name)
+,	m_hardwareCore(hardwareCore)
 {
 	Internal* in = new Internal();
 #if defined(_DEBUG)

@@ -101,8 +101,7 @@ bool SwizzleNodeTraits::evaluatePartial(
 ) const
 {
 	const std::wstring& pattern = checked_type_cast< const Swizzle* >(node)->get();
-
-	for (size_t i = 0; i < pattern.length(); ++i)
+	for (int32_t i = 0; i < int32_t(pattern.length()); ++i)
 	{
 		switch (std::tolower(pattern[i]))
 		{
@@ -138,7 +137,6 @@ bool SwizzleNodeTraits::evaluatePartial(
 			break;
 		}
 	}
-
 	return true;
 }
 
