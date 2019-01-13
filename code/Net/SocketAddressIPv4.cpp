@@ -16,7 +16,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	include <iphlpapi.h>
 #endif
 
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(__APPLE__)
 #   include <sys/ioctl.h>
 #   include <sys/sysctl.h>
 #   include <net/if.h>
@@ -186,44 +186,7 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 		outInterfaces.push_back(itf);
 	}
 
-#elif TARGET_OS_MAC
-
-	char hostName[200];
-	if (gethostname(hostName, sizeof(hostName)) == 0)
-	{
-#	if defined(_WIN32)
-		LPHOSTENT host;
-#	else
-		hostent* host;
-#	endif
-		host = gethostbyname(hostName);
-		if (host && host->h_addr)
-		{
-			in_addr* ptr = (in_addr*)host->h_addr;
-
-			sockaddr_in addr;
-			addr.sin_port = 0;
-			addr.sin_addr = *ptr;
-
-			Interface itf;
-			itf.type = ItDefault;
-			itf.addr = new SocketAddressIPv4(addr);
-
-			outInterfaces.push_back(itf);
-		}
-		else
-		{
-			log::error << L"Unable to get network interface(s); gethostbyname failed." << Endl;
-			return false;
-		}
-	}
-	else
-	{
-		log::error << L"Unable to get network interface(s); gethostname failed." << Endl;
-		return false;
-	}
-
-#elif defined(__LINUX__) || defined(__ANDROID__)
+#elif defined(__LINUX__) || defined(__ANDROID__) || defined(__APPLE__)
 
     uint8_t buf[1024] = { 0 };
     struct ifconf ifc = { 0 };
@@ -253,27 +216,31 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
     for (uint32_t i = 0; i < nnic; ++i)
     {
         struct ifreq& r = ifr[i];
-        struct sockaddr& sa = r.ifr_addr;
+
+	if (ioctl(s, SIOCGIFADDR, &r) != 0)
+		continue;
+
+	struct sockaddr& sa = r.ifr_addr;
         if (sa.sa_family == AF_INET)
         {
-			Interface n;
-			n.type = ItDefault;
-			n.addr = new SocketAddressIPv4(*(sockaddr_in*)&sa);
+		Interface n;
+		n.type = ItDefault;
+		n.addr = new SocketAddressIPv4(*(sockaddr_in*)&sa);
 
-			if (ioctl(s, SIOCGIFFLAGS, &r) >= 0)
-			{
-                if (r.ifr_flags & IFF_POINTOPOINT)
-                    n.type = ItVPN;
-                if (r.ifr_flags & IFF_LOOPBACK)
-                    n.type = ItLoopback;
-			}
-			else
-                T_DEBUG(L"Unable to query interface flags; assuming wired interface");
+		if (ioctl(s, SIOCGIFFLAGS, &r) >= 0)
+		{
+                	if (r.ifr_flags & IFF_POINTOPOINT)
+				n.type = ItVPN;
+			if (r.ifr_flags & IFF_LOOPBACK)
+				n.type = ItLoopback;
+		}
+		else
+                	T_DEBUG(L"Unable to query interface flags; assuming wired interface");
 
-            outInterfaces.push_back(n);
+		outInterfaces.push_back(n);
         }
         else
-            T_DEBUG(L"Interface " << i << L" not IPv4; skipped");
+		T_DEBUG(L"Interface " << i << L" not IPv4; skipped");
     }
 
     ::close(s);
