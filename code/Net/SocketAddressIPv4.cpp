@@ -16,7 +16,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	include <iphlpapi.h>
 #endif
 
-#if defined(__LINUX__) || defined(__APPLE__)
+#if defined(__LINUX__) || defined(__APPLE__) && !defined(__IOS__)
 #   include <sys/ioctl.h>
 #   include <sys/sysctl.h>
 #   include <net/if.h>
@@ -186,7 +186,7 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 		outInterfaces.push_back(itf);
 	}
 
-#elif defined(__LINUX__) || defined(__ANDROID__) || defined(__APPLE__)
+#elif defined(__LINUX__) || defined(__ANDROID__) || defined(__APPLE__) && !defined(__IOS__)
 
     uint8_t buf[1024] = { 0 };
     struct ifconf ifc = { 0 };
