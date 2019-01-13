@@ -1,12 +1,6 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_telemetry_Telemetry_H
-#define traktor_telemetry_Telemetry_H
+#pragma once
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Singleton/ISingleton.h"
@@ -70,5 +64,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_telemetry_Telemetry_H

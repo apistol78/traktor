@@ -1,12 +1,6 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_telemetry_AddValueTask_H
-#define traktor_telemetry_AddValueTask_H
+#pragma once
 
+#include <string>
 #include "Telemetry/ITask.h"
 
 namespace traktor
@@ -36,5 +30,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_telemetry_AddValueTask_H
