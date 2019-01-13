@@ -340,7 +340,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	if (cmdLine.getCount() <= 0)
 	{
-		log::error << L"Usage: Traktor.Remote.Server.App [-k|--keyword=(Filter keyword)] (Scratch directory)" << Endl;
+		log::error << L"Usage: Traktor.Remote.Server.App [-k|--keyword=(Filter keyword)] [-v|--verbose] (Scratch directory)" << Endl;
 		return 1;
 	}
 
@@ -420,8 +420,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	platforms.push_back(L"PNaCl");
 #endif
 
+	int32_t mode = net::MdPublishServices;
+	if (cmdLine.hasOption(L'v', L"verbose"))
+		mode |= net::MdVerbose;
+
 	Ref< net::DiscoveryManager > discoveryManager = new net::DiscoveryManager();
-	if (!discoveryManager->create(net::MdPublishServices))
+	if (!discoveryManager->create(mode))
 	{
 		log::error << L"Unable to create discovery manager" << Endl;
 		return 5;
