@@ -77,11 +77,15 @@ public:
 
 	Ref< Pin > createInputPin(const std::wstring& name, bool mandatory);
 
+	Ref< Pin > createInputPin(const std::wstring& name, const std::wstring& label, bool mandatory);
+
 	const RefArray< Pin >& getInputPins() const;
 
 	Pin* findInputPin(const std::wstring& name) const;
 
 	Ref< Pin > createOutputPin(const std::wstring& name);
+
+	Ref< Pin > createOutputPin(const std::wstring& name, const std::wstring& label);
 
 	const RefArray< Pin >& getOutputPins() const;
 

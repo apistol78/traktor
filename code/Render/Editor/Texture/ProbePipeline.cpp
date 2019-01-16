@@ -3,12 +3,14 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Range.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/ScaleFilter.h"
+#include "Drawing/Filters/TransformFilter.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
@@ -27,6 +29,33 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+Range< Scalar > measureDynamicRange(const CubeMap* cubeMap)
+{
+	Scalar mn( std::numeric_limits< float >::max());
+	Scalar mx(-std::numeric_limits< float >::max());
+	for (int32_t side = 0; side < 6; ++side)
+	{
+		const drawing::Image* mip = cubeMap->getSide(side);
+		for (int32_t y = 0; y < mip->getHeight(); ++y)
+		{
+			for (int32_t x = 0; x < mip->getWidth(); ++x)
+			{
+				Color4f c;
+				mip->getPixelUnsafe(x, y, c);
+				Scalar a = Vector4(c).shuffle< 0, 1, 2, 0 >().max();
+				mn = min(mn, a);
+				mx = max(mx, a);
+			}
+		}
+	}
+	T_ASSERT(mn <= mx);
+	return Range< Scalar >(mn, mx);
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProbePipeline", 1, ProbePipeline, editor::DefaultPipeline)
 
@@ -136,6 +165,31 @@ bool ProbePipeline::buildOutput(
 	if (cubeMips.empty())
 		return false;
 
+	// Divide (ir-)radiance by PI.
+	const Scalar nf(1.0f / PI);
+	const drawing::TransformFilter tf(
+		Color4f(nf, nf, nf, 1.0f),
+		Color4f(0.0f, 0.0f, 0.0f, 0.0f)
+	);
+	for (auto cubeMip : cubeMips)
+	{
+		for (int32_t side = 0; side < 6; ++side)
+			cubeMip->getSide(side)->apply(&tf);
+	}		
+
+	const uint32_t sideSize = cubeMips.front()->getSize();
+	const uint32_t mipCount = uint32_t(cubeMips.size());
+
+	// Measure probe mips.
+	log::info << L"Probe dynamic range (per mip)" << Endl;
+	log::info << IncreaseIndent;
+	for (uint32_t i = 0; i < mipCount; ++i)
+	{
+		auto r = measureDynamicRange(cubeMips[i]);
+		log::info << i << L". " << r.delta() << L" (min " << r.min << L", max " << r.max << L")" << Endl;
+	}
+	log::info << DecreaseIndent;
+
 	// Create output instance.
 	Ref< TextureResource > outputResource = new TextureResource();
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
@@ -158,9 +212,6 @@ bool ProbePipeline::buildOutput(
 		outputInstance->revert();
 		return false;
 	}
-
-	const uint32_t sideSize = cubeMips.front()->getSize();
-	const uint32_t mipCount = uint32_t(cubeMips.size());
 
 	Writer writer(stream);
 	writer << uint32_t(12);

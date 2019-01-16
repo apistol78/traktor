@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{7F2C3FFF-96E7-1F46-B792-8306C5E3F4F6}</id>
+			<comment/>
+			<position>
+				<first>1035</first>
+				<second>960</second>
+			</position>
+			<fragmentGuid>{88DD6534-8298-F346-8E8B-8DA935471DA8}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{B62871FF-7B52-4365-9444-7030E20F5F56}</id>
+					<name>Color</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{7C29B8BC-2670-49C0-A2A4-3642ECACE839}</id>
+					<name>LightDirection</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{0F623E3C-D688-44CB-8634-E40527C24C4A}</id>
+					<name>Normal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{0F6DB567-0796-1147-9E7B-34263DF0C4CB}</id>
+					<name>Roughness</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{AAC53845-9987-4338-854A-B42A06F4E0E2}</id>
+					<name>ViewDirection</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{C64B9266-858C-AC4A-8E6A-D91B399FE609}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{D51A84EB-F2C1-BD43-A02A-D96C0E287721}</id>
+			<comment/>
+			<position>
+				<first>687</first>
+				<second>955</second>
+			</position>
+			<name>Roughness</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{3B4C0403-67AA-CB44-818C-9B964C8D6DB0}</id>
+			<comment/>
+			<position>
+				<first>677</first>
+				<second>745</second>
+			</position>
+			<name>LightDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{0B7F136F-35F1-1E48-B986-D08DC6D503F1}</id>
+			<comment/>
+			<position>
+				<first>678</first>
+				<second>1061</second>
+			</position>
+			<name>ViewDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{E721D5E2-A499-5B4D-A50F-80AB306E601F}</id>
+			<comment/>
+			<position>
+				<first>707</first>
+				<second>850</second>
+			</position>
+			<name>Normal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{C6DE8FE3-9C49-904C-B74E-0DDC172CFFB7}</id>
+			<comment/>
+			<position>
+				<first>1291</first>
+				<second>696</second>
+			</position>
+			<name>Diffuse</name>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{65F5B4AC-8C99-4240-9D24-F84530B9E6C0}</id>
+			<comment/>
+			<position>
+				<first>1294</first>
+				<second>954</second>
+			</position>
+			<name>Specular</name>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{CFCF6CC7-6465-0F43-9743-44655C7AF145}</id>
+			<comment/>
+			<position>
+				<first>718</first>
+				<second>641</second>
+			</position>
+			<name>Color</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{0877F1DF-AC72-EB4E-8B98-505273DEE979}</id>
+			<comment/>
+			<position>
+				<first>1037</first>
+				<second>660</second>
+			</position>
+			<fragmentGuid>{3FB72BB4-649E-4742-B00F-A3E068A4BE57}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{07E82B9A-1B0B-984B-99ED-EFC4DB74E81E}</id>
+					<name>Color</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{8A6BC3E6-470E-4F45-ABE9-A4A4453B7225}</id>
+					<name>LightDirection</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{CC4EAEB2-9480-344D-89C9-ECA71B58E83F}</id>
+					<name>Normal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{92D13D29-5CFD-BC4A-AA4C-4C2158630F19}</id>
+					<name>Roughness</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{815F5D80-0332-FF47-8D44-3569DB5C5222}</id>
+					<name>ViewDirection</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{3DB96A00-6F0B-A149-99C1-7F01A7A92B28}</id>
+					<name>Diffuse</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>ViewDirection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Roughness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Normal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>LightDirection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Diffuse</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Color</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>LightDirection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Roughness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Normal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>ViewDirection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Color</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_WorldRendererForward_H
-#define traktor_world_WorldRendererForward_H
+#pragma once
 
 #include "Core/Containers/AlignedVector.h"
 #include "World/IWorldRenderer.h"
@@ -149,7 +142,6 @@ private:
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];
 	uint32_t m_count;
-	Vector4 m_fogColor;
 
 	void buildDepth(WorldRenderView& worldRenderView, int frame);
 
@@ -160,5 +152,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_world_WorldRendererForward_H

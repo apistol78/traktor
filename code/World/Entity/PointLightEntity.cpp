@@ -16,17 +16,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PointLightEntity", PointLightEntity, Enti
 
 PointLightEntity::PointLightEntity(
 	const Transform& transform,
-	const Vector4& sunColor,
-	const Vector4& baseColor,
-	const Vector4& shadowColor,
+	const Vector4& color,
 	float range,
 	float randomFlickerAmount,
 	float randomFlickerFilter
 )
 :	m_transform(transform)
-,	m_sunColor(sunColor)
-,	m_baseColor(baseColor)
-,	m_shadowColor(shadowColor)
+,	m_color(color)
 ,	m_range(range)
 ,	m_randomFlickerAmount(randomFlickerAmount)
 ,	m_randomFlickerFilter(randomFlickerFilter)

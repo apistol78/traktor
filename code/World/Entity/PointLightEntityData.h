@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_PointLightEntityData_H
-#define traktor_world_PointLightEntityData_H
+#pragma once
 
 #include "World/EntityData.h"
 
@@ -34,11 +27,7 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	const Vector4& getSunColor() const { return m_sunColor; }
-
-	const Vector4& getBaseColor() const { return m_baseColor; }
-
-	const Vector4& getShadowColor() const { return m_shadowColor; }
+	const Vector4& getColor() const { return m_color; }
 
 	float getRange() const { return m_range; }
 
@@ -47,9 +36,7 @@ public:
 	float getRandomFlickerFilter() const { return m_randomFlickerFilter; }
 
 private:
-	Vector4 m_sunColor;
-	Vector4 m_baseColor;
-	Vector4 m_shadowColor;
+	Vector4 m_color;
 	float m_range;
 	float m_randomFlickerAmount;
 	float m_randomFlickerFilter;
@@ -57,5 +44,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_world_PointLightEntityData_H

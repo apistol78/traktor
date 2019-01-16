@@ -1,15 +1,11 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
+#include "Core/Io/StringOutputStream.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/InputPin.h"
+#include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/OutputPin.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
@@ -58,13 +54,21 @@ Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
+	External* externalNode = mandatory_non_null_type_cast< External* >(shaderNode);
 	std::wstring title;
 
-	Guid fragmentGuid = checked_type_cast< External* >(shaderNode)->getFragmentGuid();
+	Guid fragmentGuid = externalNode->getFragmentGuid();
+
+	Ref< ShaderGraph > fragmentGraph;
+	RefArray< InputPort > inputPorts;
 
 	Ref< db::Instance > instance = editor->getSourceDatabase()->getInstance(fragmentGuid);
 	if (instance)
+	{
 		title = instance->getName();
+		fragmentGraph = instance->getObject< ShaderGraph >();
+		fragmentGraph->findNodesOf< InputPort >(inputPorts);
+	}
 	else
 		title = fragmentGuid.format();
 
@@ -81,8 +85,36 @@ Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
 	{
 		const InputPin* inputPin = shaderNode->getInputPin(j);
+
+		StringOutputStream ss;
+		ss << inputPin->getName();
+
+		if (inputPin->isOptional())
+		{		
+			const auto& values = externalNode->getValues();
+			const auto it = values.find(inputPin->getName());
+			if (it != values.end())
+				ss << L" (" << it->second << L")";
+			else if (fragmentGraph)
+			{
+				auto it = std::find_if(inputPorts.begin(), inputPorts.end(), [=](InputPort* inputPort) {
+					return inputPort->getName() == inputPin->getName();
+				});
+				if (it != inputPorts.end())
+				{
+					if (it->haveDefaultValue())
+						ss << L" (" << it->getDefaultValue() << L")";
+				}
+				else
+					ss << L" (N/A)";	
+			}
+			else
+				ss << L" (N/A)";
+		}
+
 		editorNode->createInputPin(
 			inputPin->getName(),
+			ss.str(),
 			!inputPin->isOptional()
 		);
 	}
@@ -91,6 +123,7 @@ Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 	{
 		const OutputPin* outputPin = shaderNode->getOutputPin(j);
 		editorNode->createOutputPin(
+			outputPin->getName(),
 			outputPin->getName()
 		);
 	}

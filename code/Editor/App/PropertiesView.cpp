@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -377,7 +371,12 @@ void PropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event)
 		if (colorItem)
 		{
 			ui::ColorDialog colorDialog;
-			colorDialog.create(this, i18n::Text(L"COLOR_DIALOG_TEXT"), ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha, colorItem->getValue());
+			colorDialog.create(
+				this,
+				i18n::Text(L"COLOR_DIALOG_TEXT"),
+				ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha | (colorItem->getHighDynamicRange() ? ui::ColorDialog::WsHDR : 0),
+				colorItem->getValue()
+			);
 			if (colorDialog.showModal() == ui::DrOk)
 			{
 				colorItem->setValue(colorDialog.getColor());

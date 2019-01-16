@@ -11,15 +11,6 @@
 			<value>0</value>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{21B71951-91F4-2B46-8586-239793CB9D93}</id>
-			<comment/>
-			<position>
-				<first>629</first>
-				<second>251</second>
-			</position>
-			<name>T_DiffuseTerm</name>
-		</item>
-		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{F4B09EBA-C01C-124B-927E-B4589CDFFFED}</id>
 			<comment/>
 			<position>
@@ -76,16 +67,6 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
 				<name>Input</name>
 			</destination>
 		</item>

@@ -5,8 +5,8 @@
 			<id>{EAE95A01-9DDB-9F4D-9AED-662D3D8E874D}</id>
 			<comment/>
 			<position>
-				<first>784</first>
-				<second>285</second>
+				<first>779</first>
+				<second>280</second>
 			</position>
 			<technique/>
 		</item>
@@ -14,16 +14,16 @@
 			<id>{B243D8E2-D285-C147-9002-C7532C16ADB2}</id>
 			<comment/>
 			<position>
-				<first>590</first>
-				<second>250</second>
+				<first>585</first>
+				<second>245</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{2DC80AF2-9ECB-DC41-B8C8-90325B910D85}</id>
 			<comment/>
 			<position>
-				<first>361</first>
-				<second>206</second>
+				<first>356</first>
+				<second>201</second>
 			</position>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
@@ -31,23 +31,23 @@
 			<comment/>
 			<position>
 				<first>192</first>
-				<second>172</second>
+				<second>167</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{EF1D0360-27B2-E646-8287-13C71B8D2E54}</id>
 			<comment/>
 			<position>
-				<first>34</first>
-				<second>135</second>
+				<first>29</first>
+				<second>130</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{2A10A240-0030-7944-AE20-AA80A15A95AD}</id>
 			<comment/>
 			<position>
-				<first>-956</first>
-				<second>54</second>
+				<first>-951</first>
+				<second>49</second>
 			</position>
 			<swizzle>x0y1</swizzle>
 		</item>
@@ -55,8 +55,8 @@
 			<id>{FF0635CA-EAAC-0049-BF52-A29E5284D3E7}</id>
 			<comment/>
 			<position>
-				<first>-1162</first>
-				<second>-26</second>
+				<first>-1157</first>
+				<second>-21</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -67,8 +67,8 @@
 			<id>{5D4AB9B8-EB56-D148-87EF-BCB405979C35}</id>
 			<comment/>
 			<position>
-				<first>-46</first>
-				<second>180</second>
+				<first>-41</first>
+				<second>175</second>
 			</position>
 			<swizzle>0x00</swizzle>
 		</item>
@@ -76,8 +76,8 @@
 			<id>{6D44EE25-CFC1-C248-987A-ADD3CDFE6D9B}</id>
 			<comment/>
 			<position>
-				<first>-209</first>
-				<second>176</second>
+				<first>-204</first>
+				<second>171</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -94,8 +94,8 @@
 			<id>{3C0FE29D-2A22-D248-A648-71705268F14B}</id>
 			<comment/>
 			<position>
-				<first>-440</first>
-				<second>177</second>
+				<first>-435</first>
+				<second>172</second>
 			</position>
 			<parameterName>Heightfield</parameterName>
 			<type>PtTexture2D</type>
@@ -106,7 +106,7 @@
 			<comment/>
 			<position>
 				<first>-672</first>
-				<second>175</second>
+				<second>170</second>
 			</position>
 			<fragmentGuid>{E848C73B-E979-E445-AD18-E843CECF0928}</fragmentGuid>
 			<inputPins>
@@ -128,16 +128,16 @@
 			<id>{40EB4E15-1037-074E-907B-0AB205EEF761}</id>
 			<comment/>
 			<position>
-				<first>-848</first>
-				<second>227</second>
+				<first>-843</first>
+				<second>222</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{6684C5C6-F3B7-8140-9653-3989F2BB2F3A}</id>
 			<comment/>
 			<position>
-				<first>-1045</first>
-				<second>258</second>
+				<first>-1046</first>
+				<second>242</second>
 			</position>
 			<parameterName>PatchExtent</parameterName>
 			<type>PtVector</type>
@@ -147,8 +147,8 @@
 			<id>{258EF322-3028-2A40-AC54-1559CCB2DD10}</id>
 			<comment/>
 			<position>
-				<first>-1060</first>
-				<second>321</second>
+				<first>-1056</first>
+				<second>317</second>
 			</position>
 			<parameterName>PatchOrigin</parameterName>
 			<type>PtVector</type>
@@ -158,8 +158,8 @@
 			<id>{680F9D53-7F14-9D4D-9578-B08395BEDE19}</id>
 			<comment/>
 			<position>
-				<first>-29</first>
-				<second>243</second>
+				<first>-25</first>
+				<second>239</second>
 			</position>
 			<parameterName>PatchExtent</parameterName>
 			<type>PtVector</type>
@@ -169,8 +169,8 @@
 			<id>{17209A50-5667-6C49-9196-811BDE3EAD67}</id>
 			<comment/>
 			<position>
-				<first>203</first>
-				<second>267</second>
+				<first>199</first>
+				<second>263</second>
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
@@ -180,8 +180,8 @@
 			<id>{73C87553-D473-D747-A948-E76EB7050175}</id>
 			<comment/>
 			<position>
-				<first>402</first>
-				<second>309</second>
+				<first>398</first>
+				<second>305</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
@@ -191,8 +191,8 @@
 			<id>{8411307A-2E51-5D40-B70B-B30C843D387B}</id>
 			<comment/>
 			<position>
-				<first>1396</first>
-				<second>14</second>
+				<first>1440</first>
+				<second>22</second>
 			</position>
 			<fragmentGuid>{B633DBF6-FC42-5341-B0D8-940670973041}</fragmentGuid>
 			<inputPins>
@@ -212,23 +212,13 @@
 					<optional>false</optional>
 				</item>
 				<item>
-					<id>{C3C942BE-A112-684F-B71F-A47567C47624}</id>
-					<name>DiffuseTerm</name>
-					<optional>true</optional>
-				</item>
-				<item>
 					<id>{6BC40E77-6473-A34D-88CB-4257CE0DCF00}</id>
 					<name>Emissive</name>
 					<optional>true</optional>
 				</item>
 				<item>
 					<id>{EDD21F44-8417-304E-8F5C-43CE5C6A054A}</id>
-					<name>SpecularRoughness</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{527CA63B-A2C3-7845-86A9-B93658D87149}</id>
-					<name>SpecularTerm</name>
+					<name>Roughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -240,20 +230,12 @@
 			<outputPins/>
 			<values>
 				<item>
-					<first>DiffuseTerm</first>
-					<second>1</second>
-				</item>
-				<item>
 					<first>Emissive</first>
 					<second>0</second>
 				</item>
 				<item>
-					<first>SpecularRoughness</first>
+					<first>Roughness</first>
 					<second>0.8</second>
-				</item>
-				<item>
-					<first>SpecularTerm</first>
-					<second>0</second>
 				</item>
 			</values>
 		</item>
@@ -261,8 +243,8 @@
 			<id>{0ADD7A39-D8FC-974F-B59A-5A22613CE24E}</id>
 			<comment/>
 			<position>
-				<first>1095</first>
-				<second>42</second>
+				<first>1094</first>
+				<second>41</second>
 			</position>
 			<parameterName>VisualizeLods</parameterName>
 		</item>
@@ -270,8 +252,8 @@
 			<id>{E51F843A-7990-2D4C-8085-9AA31A47746D}</id>
 			<comment/>
 			<position>
-				<first>891</first>
-				<second>25</second>
+				<first>890</first>
+				<second>24</second>
 			</position>
 			<parameterName>DebugPatchColor</parameterName>
 			<type>PtVector</type>
@@ -285,8 +267,8 @@ Generated texture from surface cache.
 			]]>
 			</comment>
 			<position>
-				<first>623</first>
-				<second>-35</second>
+				<first>622</first>
+				<second>-34</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -303,8 +285,8 @@ Generated texture from surface cache.
 			<id>{BEBFBBD6-18C0-D24E-B228-B3A8EFF315CD}</id>
 			<comment/>
 			<position>
-				<first>385</first>
-				<second>-73</second>
+				<first>384</first>
+				<second>-72</second>
 			</position>
 			<parameterName>Surface</parameterName>
 			<type>PtTexture2D</type>
@@ -314,24 +296,24 @@ Generated texture from surface cache.
 			<id>{2F90DE66-14DF-C74F-B2C2-79D508298D5D}</id>
 			<comment/>
 			<position>
-				<first>544</first>
-				<second>10</second>
+				<first>543</first>
+				<second>9</second>
 			</position>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{511F8D6C-2429-F746-A683-0BF37E378AD2}</id>
 			<comment/>
 			<position>
-				<first>398</first>
-				<second>4</second>
+				<first>397</first>
+				<second>3</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{C044A3DC-E2A1-0142-AFB6-3DB1A6DF0FC6}</id>
 			<comment/>
 			<position>
-				<first>-857</first>
-				<second>-26</second>
+				<first>-856</first>
+				<second>-25</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -340,7 +322,7 @@ Generated texture from surface cache.
 			<comment/>
 			<position>
 				<first>288</first>
-				<second>47</second>
+				<second>46</second>
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
@@ -348,8 +330,8 @@ Generated texture from surface cache.
 			<id>{76F6B87C-BA42-8F4C-8594-8F3052FBA34B}</id>
 			<comment/>
 			<position>
-				<first>57</first>
-				<second>61</second>
+				<first>56</first>
+				<second>60</second>
 			</position>
 			<parameterName>SurfaceOffset</parameterName>
 			<type>PtVector</type>
@@ -359,8 +341,8 @@ Generated texture from surface cache.
 			<id>{1C5D8E9A-720B-E043-9372-2AAF3F53B57B}</id>
 			<comment/>
 			<position>
-				<first>283</first>
-				<second>82</second>
+				<first>282</first>
+				<second>81</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -368,16 +350,16 @@ Generated texture from surface cache.
 			<id>{180FE1F2-614A-514D-8E2F-ED363C0245BA}</id>
 			<comment/>
 			<position>
-				<first>1075</first>
-				<second>140</second>
+				<first>1074</first>
+				<second>139</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{19A79279-80E8-E141-A954-9E18A85AA347}</id>
 			<comment/>
 			<position>
-				<first>389</first>
-				<second>-191</second>
+				<first>388</first>
+				<second>-190</second>
 			</position>
 			<fragmentGuid>{53930A33-0CD2-0247-838C-3561FD095306}</fragmentGuid>
 			<inputPins>
@@ -399,16 +381,16 @@ Generated texture from surface cache.
 			<id>{9638EE19-69BE-CF49-8606-546B48AAC882}</id>
 			<comment/>
 			<position>
-				<first>294</first>
-				<second>-136</second>
+				<first>293</first>
+				<second>-135</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{62A562A9-FB71-EB42-80E7-98A5AF9F5287}</id>
 			<comment/>
 			<position>
-				<first>886</first>
-				<second>173</second>
+				<first>885</first>
+				<second>172</second>
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
@@ -418,16 +400,16 @@ Generated texture from surface cache.
 			<id>{2F341E6D-5047-7546-BE18-494473AE21D9}</id>
 			<comment/>
 			<position>
-				<first>1156</first>
-				<second>-14</second>
+				<first>1155</first>
+				<second>-13</second>
 			</position>
 		</item>
 		<item type="traktor.render.Branch" version="traktor.render.Node:1">
 			<id>{4FD45F4B-2F70-0243-9BE2-B583DDE005EA}</id>
 			<comment/>
 			<position>
-				<first>1177</first>
-				<second>-169</second>
+				<first>1176</first>
+				<second>-168</second>
 			</position>
 			<parameterName>VisualizeMap</parameterName>
 		</item>
@@ -435,8 +417,8 @@ Generated texture from surface cache.
 			<id>{AFC8B224-C4BB-4A48-9AA4-6515EE308310}</id>
 			<comment/>
 			<position>
-				<first>695</first>
-				<second>-359</second>
+				<first>694</first>
+				<second>-358</second>
 			</position>
 			<parameterName>DebugMap</parameterName>
 			<type>PtTexture2D</type>
@@ -446,8 +428,8 @@ Generated texture from surface cache.
 			<id>{71553750-AD5D-7648-A6DC-CE12B7E7ED6C}</id>
 			<comment/>
 			<position>
-				<first>893</first>
-				<second>-307</second>
+				<first>892</first>
+				<second>-306</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -464,8 +446,8 @@ Generated texture from surface cache.
 			<id>{23EE7E19-1FBF-2D41-9B0B-9E6B2000880C}</id>
 			<comment/>
 			<position>
-				<first>1237</first>
-				<second>251</second>
+				<first>1249</first>
+				<second>207</second>
 			</position>
 			<value>0</value>
 		</item>

@@ -5,8 +5,8 @@
 			<id>{FA70D12A-71FB-1E48-B18B-1D3780FD5943}</id>
 			<comment/>
 			<position>
-				<first>1041</first>
-				<second>194</second>
+				<first>933</first>
+				<second>218</second>
 			</position>
 			<name>Normal</name>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{498D9767-698C-E746-8DD0-B7B3768A4612}</id>
 			<comment/>
 			<position>
-				<first>768</first>
-				<second>219</second>
+				<first>702</first>
+				<second>227</second>
 			</position>
 			<fragmentGuid>{5C2C9CD8-185C-D14A-9FF0-3E564E2DB442}</fragmentGuid>
 			<inputPins>
@@ -37,17 +37,17 @@
 			<id>{9ACBBD47-B278-074F-882A-20925EA31BF2}</id>
 			<comment/>
 			<position>
-				<first>609</first>
-				<second>220</second>
+				<first>578</first>
+				<second>229</second>
 			</position>
-			<swizzle>xyz</swizzle>
+			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{411C17F6-BCE6-E345-8182-C5A54BAD603B}</id>
 			<comment/>
 			<position>
-				<first>367</first>
-				<second>233</second>
+				<first>366</first>
+				<second>232</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -64,8 +64,8 @@
 			<id>{DD499BAF-B821-9347-B77D-24251AB7655D}</id>
 			<comment/>
 			<position>
-				<first>135</first>
-				<second>221</second>
+				<first>134</first>
+				<second>220</second>
 			</position>
 			<name>NormalMap</name>
 			<connectable>true</connectable>
@@ -77,8 +77,8 @@
 			<id>{09242AE3-59FE-CB4F-A36A-17F581C6FF17}</id>
 			<comment/>
 			<position>
-				<first>108</first>
-				<second>306</second>
+				<first>115</first>
+				<second>292</second>
 			</position>
 			<name>NormalMapUV</name>
 			<connectable>true</connectable>

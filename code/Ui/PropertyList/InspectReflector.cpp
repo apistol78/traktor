@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include <sstream>
 #include "Core/Io/StringOutputStream.h"
@@ -11,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Serialization/AttributeAngles.h"
 #include "Core/Serialization/AttributeDecibel.h"
 #include "Core/Serialization/AttributeDirection.h"
+#include "Core/Serialization/AttributeHdr.h"
 #include "Core/Serialization/AttributeHex.h"
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributePoint.h"
@@ -454,8 +449,14 @@ void InspectReflector::operator >> (const Member< Path >& m)
 void InspectReflector::operator >> (const Member< Color4ub >& m)
 {
 	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	Color4f value(
+		m->r / 255.0f,
+		m->g / 255.0f,
+		m->b / 255.0f,
+		m->a / 255.0f
+	);
 	addPropertyItem(
-		new ColorPropertyItem(stylizeMemberName(m.getName()), m),
+		new ColorPropertyItem(stylizeMemberName(m.getName()), value, false),
 		memberPrivate
 	);
 }
@@ -463,14 +464,9 @@ void InspectReflector::operator >> (const Member< Color4ub >& m)
 void InspectReflector::operator >> (const Member< Color4f >& m)
 {
 	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
-	Color4ub value(
-		uint8_t(m->getRed() * 255),
-		uint8_t(m->getGreen() * 255),
-		uint8_t(m->getBlue() * 255),
-		uint8_t(m->getAlpha() * 255)
-	);
+	const bool memberHdr = bool(findAttribute< AttributeHdr >(m) != 0);
 	addPropertyItem(
-		new ColorPropertyItem(stylizeMemberName(m.getName()), value),
+		new ColorPropertyItem(stylizeMemberName(m.getName()), m, memberHdr),
 		memberPrivate
 	);
 }

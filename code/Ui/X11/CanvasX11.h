@@ -1,5 +1,4 @@
-#ifndef traktor_ui_CanvasX11_H
-#define traktor_ui_CanvasX11_H
+#pragma once
 
 #include <cairo.h>
 #include "Ui/Itf/ICanvas.h"
@@ -83,9 +82,9 @@ private:
 	cairo_t* m_cr;
 	Color4ub m_foreground;
 	Color4ub m_background;
+	int32_t m_thickness;
+	bool m_underline;
 };
 
 	}
 }
-
-#endif	// traktor_ui_CanvasX11_H

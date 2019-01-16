@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/Split.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
@@ -136,14 +130,13 @@ void ApplyReflector::operator >> (const Member< Path >& m)
 void ApplyReflector::operator >> (const Member< Color4ub >& m)
 {
 	ColorPropertyItem* propertyItem = checked_type_cast< ColorPropertyItem*, false >(*m_propertyItemIterator++);
-	m = propertyItem->getValue();
+	m = propertyItem->getValue().toColor4ub();
 }
 
 void ApplyReflector::operator >> (const Member< Color4f >& m)
 {
 	ColorPropertyItem* propertyItem = checked_type_cast< ColorPropertyItem*, false >(*m_propertyItemIterator++);
-	const Color4ub& value = propertyItem->getValue();
-	m = Color4f(value.r / 255.0f, value.g / 255.0f, value.b / 255.0f, value.a / 255.0f);
+	m = propertyItem->getValue();
 }
 
 void ApplyReflector::operator >> (const Member< Scalar >& m)

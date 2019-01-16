@@ -1,9 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
+#include "Core/Serialization/AttributeHdr.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -51,19 +46,20 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 25, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 26, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
 ,	viewFarZ(100.0f)
 ,	linearLighting(true)
 ,	depthPass(true)
+,	ambientColor(0.0f, 0.0f, 0.0f)
 ,	fog(false)
 ,	fogDistanceY(0.0f)
 ,	fogDistanceZ(90.0f)
 ,	fogDensityY(0.0f)
 ,	fogDensityZ(0.0f)
-,	fogColor(255, 255, 255, 255)
+,	fogColor(1.0f, 1.0f, 1.0f)
 {
 }
 
@@ -99,6 +95,9 @@ void WorldRenderSettings::serialize(ISerializer& s)
 	else
 		s >> MemberStaticArray< ShadowSettings, sizeof_array(shadowSettings), MemberComposite< ShadowSettings > >(L"shadowSettings", shadowSettings, c_ShadowSettings_elementNames18);
 
+	if (s.getVersion() >= 26)
+		s >> Member< Color4f >(L"ambientColor", ambientColor, AttributeHdr());
+
 	if (s.getVersion() >= 23)
 	{
 		if (s.getVersion() < 24)
@@ -124,7 +123,14 @@ void WorldRenderSettings::serialize(ISerializer& s)
 		s >> Member< float >(L"fogDensityZ", fogDensityZ, AttributeRange(0.0f, 1.0f));
 	}
 
-	s >> Member< Color4ub >(L"fogColor", fogColor);
+	if (s.getVersion() >= 26)
+		s >> Member< Color4f >(L"fogColor", fogColor, AttributeHdr());
+	else
+	{
+		Color4ub fc;
+		s >> Member< Color4ub >(L"fogColor", fc);
+		fogColor = Color4f(fc.r / 255.0f, fc.g / 255.0f, fc.b / 255.0f, fc.a / 255.0f);
+	}
 
 	if (s.getVersion() >= 20)
 		s >> resource::Member< render::ITexture >(L"reflectionMap", reflectionMap);

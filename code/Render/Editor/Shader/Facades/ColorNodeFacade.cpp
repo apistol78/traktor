@@ -87,10 +87,10 @@ void ColorNodeFacade::editShaderNode(
 		graphControl,
 		i18n::Text(L"COLOR_DIALOG_TEXT"),
 		ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha,
-		colorNode->getColor()
+		Color4f::fromColor4ub(colorNode->getColor())
 	);
 	if (colorDialog.showModal() == ui::DrOk)
-		colorNode->setColor(colorDialog.getColor());
+		colorNode->setColor(colorDialog.getColor().toColor4ub());
 	colorDialog.destroy();
 }
 

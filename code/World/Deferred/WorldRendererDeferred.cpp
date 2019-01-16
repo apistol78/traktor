@@ -137,10 +137,7 @@ bool WorldRendererDeferred::create(
 		m_settings.fogDensityY,
 		m_settings.fogDensityZ
 	);
-
-	float fogColor[4];
-	m_settings.fogColor.getRGBA32F(fogColor);
-	m_fogColor = Vector4::loadUnaligned(fogColor);
+	m_fogColor = m_settings.fogColor;
 
 	// Create post process target pool to enable sharing of targets between multiple processes.
 	Ref< render::ImageProcessTargetPool > postProcessTargetPool = new render::ImageProcessTargetPool(renderSystem);
@@ -158,13 +155,13 @@ bool WorldRendererDeferred::create(
 		rtscd.preferTiled = true;
 #if !defined(__PS3__)
 		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
-		rtscd.targets[1].format = render::TfR10G10B10A2;	// Normals (RGB)
-		rtscd.targets[2].format = render::TfR11G11B10F;		// Specular term (R), Metalness (G), Roughness (B)
+		rtscd.targets[1].format = render::TfR16G16F;		// Normals (RG)
+		rtscd.targets[2].format = render::TfR16G16F;		// Metalness (R), Roughness (G)
 		rtscd.targets[3].format = render::TfR11G11B10F;		// Surface color (RGB)
 #else
 		rtscd.targets[0].format = render::TfR8G8B8A8;		// Encoded depth
 		rtscd.targets[1].format = render::TfR8G8B8A8;		// Normals (RGB), Unused (A)
-		rtscd.targets[2].format = render::TfR8G8B8A8;		//  Specular term (R), Metalness (G), Roughness (B), Unused (A)
+		rtscd.targets[2].format = render::TfR8G8B8A8;		// Metalness (R), Roughness (G), Unused (B), Unused (A)
 		rtscd.targets[3].format = render::TfR8G8B8A8;		// Surface color (RGB), Unused (A)
 #endif
 
@@ -1142,6 +1139,35 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		}
 	}
 
+	// Render AO to light target.
+	if (m_ambientOcclusion)
+	{
+		if (m_renderView->begin(m_lightAccumulationTargetSet))
+		{
+			T_RENDER_PUSH_MARKER(m_renderView, "World: AO");
+
+			render::ImageProcessStep::Instance::RenderParams params;
+			params.viewFrustum = f.viewFrustum;
+			params.lastView = f.lastView;
+			params.view = f.view;
+			params.projection = projection;
+			params.deltaTime = 0.0f;
+
+			m_ambientOcclusion->render(
+				m_renderView,
+				nullptr,	// color
+				m_gbufferTargetSet->getColorTexture(0),	// depth
+				m_gbufferTargetSet->getColorTexture(1),	// normal
+				nullptr,	// velocity
+				nullptr,	// shadow mask
+				params
+			);
+
+			T_RENDER_POP_MARKER(m_renderView);		
+			m_renderView->end();
+		}
+	}
+
 	// Calculate visual image by combining lighting and color.
 	if (m_renderView->begin(m_visualTargetSet, 0))
 	{
@@ -1151,6 +1177,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			f.time,
 			projection,
 			f.view,
+			m_settings.ambientColor,
 			m_gbufferTargetSet->getColorTexture(0),
 			m_gbufferTargetSet->getColorTexture(1),
 			m_gbufferTargetSet->getColorTexture(2),
@@ -1173,10 +1200,10 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		m_colorTargetCopy->render(
 			m_renderView,
 			m_visualTargetSet->getColorTexture(0),	// color
-			0,	// depth
-			0,	// normal
-			0,	// velocity
-			0,	// shadow mask
+			nullptr,	// depth
+			nullptr,	// normal
+			nullptr,	// velocity
+			nullptr,	// shadow mask
 			params
 		);
 		T_RENDER_POP_MARKER(m_renderView);
@@ -1237,10 +1264,10 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		m_colorTargetCopy->render(
 			m_renderView,
 			m_visualTargetSet->getColorTexture(0),	// color
-			0,	// depth
-			0,	// normal
-			0,	// velocity
-			0,	// shadow
+			nullptr,	// depth
+			nullptr,	// normal
+			nullptr,	// velocity
+			nullptr,	// shadow
 			params
 		);
 
@@ -1251,30 +1278,6 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post opaque");
 		f.visual->getRenderContext()->render(m_renderView, render::RpPostOpaque, &visualProgramParams);
 		T_RENDER_POP_MARKER(m_renderView);
-
-		if (m_ambientOcclusion)
-		{
-			T_RENDER_PUSH_MARKER(m_renderView, "World: AO");
-
-			render::ImageProcessStep::Instance::RenderParams params;
-			params.viewFrustum = f.viewFrustum;
-			params.lastView = f.lastView;
-			params.view = f.view;
-			params.projection = projection;
-			params.deltaTime = 0.0f;
-
-			m_ambientOcclusion->render(
-				m_renderView,
-				m_visualTargetSet->getColorTexture(0),	// color
-				m_gbufferTargetSet->getColorTexture(0),	// depth
-				m_gbufferTargetSet->getColorTexture(1),	// normal
-				0,	// velocity
-				0,	// shadow mask
-				params
-			);
-
-			T_RENDER_POP_MARKER(m_renderView);
-		}
 	}
 
 	// Render alpha blend visuals.
@@ -1309,10 +1312,10 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		m_colorTargetCopy->render(
 			m_renderView,
 			m_visualTargetSet->getColorTexture(0),	// color
-			0,	// depth
-			0,	// normal
-			0,	// velocity
-			0,	// shadow mask
+			nullptr,	// depth
+			nullptr,	// normal
+			nullptr,	// velocity
+			nullptr,	// shadow mask
 			params
 		);
 
@@ -1369,8 +1372,8 @@ void WorldRendererDeferred::endRender(int frame, render::EyeType eye, float delt
 			sourceTargetSet->getColorTexture(0),		// color
 			m_gbufferTargetSet->getColorTexture(0),		// depth
 			m_gbufferTargetSet->getColorTexture(1),		// normal
-			m_velocityTargetSet ? m_velocityTargetSet->getColorTexture(0) : 0,	// velocity
-			0,		// shadow mask
+			m_velocityTargetSet ? m_velocityTargetSet->getColorTexture(0) : nullptr,	// velocity
+			nullptr,		// shadow mask
 			params
 		);
 
@@ -1401,9 +1404,8 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 	{
 		outTargets.push_back(render::DebugTarget(L"GBuffer depth", render::DtvViewDepth, m_gbufferTargetSet->getColorTexture(0)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer normals", render::DtvNormals, m_gbufferTargetSet->getColorTexture(1)));
-		outTargets.push_back(render::DebugTarget(L"GBuffer specular term", render::DtvDeferredSpecularTerm, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer metalness", render::DtvDeferredMetalness, m_gbufferTargetSet->getColorTexture(2)));
-		outTargets.push_back(render::DebugTarget(L"GBuffer roughness", render::DtvDeferredSpecularRoughness, m_gbufferTargetSet->getColorTexture(2)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer roughness", render::DtvDeferredRoughness, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer surface color", render::DtvDefault, m_gbufferTargetSet->getColorTexture(3)));
 	}
 

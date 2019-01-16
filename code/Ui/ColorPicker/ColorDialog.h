@@ -1,12 +1,6 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ColorDialog_H
-#define traktor_ui_ColorDialog_H
+#pragma once
 
+#include "Core/Math/Color4f.h"
 #include "Ui/ConfigDialog.h"
 
 // import/export mechanism.
@@ -41,22 +35,23 @@ class T_DLLCLASS ColorDialog : public ConfigDialog
 public:
 	enum StyleFlags
 	{
-		WsAlpha = WsUser
+		WsAlpha = WsUser,
+		WsHDR = (WsUser << 1)
 	};
 
-	bool create(Widget* parent, const std::wstring& text, int style = WsDefaultFixed, const Color4ub& initialColor = Color4ub(255, 255, 255, 255));
+	bool create(Widget* parent, const std::wstring& text, int32_t style = WsDefaultFixed, const Color4f& initialColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 
-	Color4ub getColor() const;
+	Color4f getColor() const;
 
 private:
 	Ref< ColorGradientControl > m_gradientControl;
 	Ref< ColorSliderControl > m_sliderColorControl;
 	Ref< ColorSliderControl > m_sliderAlphaControl;
 	Ref< ColorControl > m_colorControl;
-	Ref< Edit > m_editColor[4];
+	Ref< Edit > m_editColor[5];
 	Ref< ColorGradient > m_colorGradient;
 	Ref< AlphaGradient > m_alphaGradient;
-	Color4ub m_color;
+	Color4f m_color;
 
 	void updateControls();
 
@@ -71,5 +66,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_ui_ColorDialog_H

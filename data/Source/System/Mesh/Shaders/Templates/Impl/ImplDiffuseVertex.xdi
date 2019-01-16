@@ -2,35 +2,13 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{88F53C09-7B34-804F-8305-E172C84B0FCE}</id>
-			<comment/>
-			<position>
-				<first>918</first>
-				<second>445</second>
-			</position>
-			<name>T_DiffuseTerm</name>
-		</item>
-		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{0C3499D6-7A46-CE4D-980A-D39BCE8A9374}</id>
 			<comment/>
 			<position>
-				<first>918</first>
-				<second>404</second>
+				<first>762</first>
+				<second>289</second>
 			</position>
 			<name>T_DiffuseColor</name>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{DE8FCA8B-92EF-3848-BDA0-9451AAF64D94}</id>
-			<comment>
-			<![CDATA[
-Tag_DiffuseTerm
-			]]>
-			</comment>
-			<position>
-				<first>548</first>
-				<second>450</second>
-			</position>
-			<value>0</value>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{3C061940-2423-BC4A-98C3-74F828B050D1}</id>
@@ -58,17 +36,6 @@ Tag_DiffuseTerm
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
-			<id>{9A11E567-177E-1945-8CB3-D3A3476E22B9}</id>
-			<comment/>
-			<position>
-				<first>692</first>
-				<second>454</second>
-			</position>
-			<parameterName>Mesh_DiffuseTerm</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
-		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{BFD21E4D-01A9-0B42-9023-5E129A8EAF62}</id>
 			<comment/>
@@ -86,31 +53,11 @@ Tag_DiffuseTerm
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Initial</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
 				<name>Input</name>
 			</destination>
 		</item>

@@ -16,9 +16,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightComponent", LightComponent, IEntityC
 
 LightComponent::LightComponent(
 	LightType lightType,
-	const Vector4& sunColor,
-	const Vector4& baseColor,
-	const Vector4& shadowColor,
+	const Vector4& color,
 	const resource::Proxy< render::ITexture >& probeDiffuseTexture,
 	const resource::Proxy< render::ITexture >& probeSpecularTexture,
 	const resource::Proxy< render::ITexture >& cloudShadowTexture,
@@ -30,9 +28,7 @@ LightComponent::LightComponent(
 )
 :	m_owner(0)
 ,	m_lightType(lightType)
-,	m_sunColor(sunColor)
-,	m_baseColor(baseColor)
-,	m_shadowColor(shadowColor)
+,	m_color(color)
 ,	m_probeDiffuseTexture(probeDiffuseTexture)
 ,	m_probeSpecularTexture(probeSpecularTexture)
 ,	m_cloudShadowTexture(cloudShadowTexture)

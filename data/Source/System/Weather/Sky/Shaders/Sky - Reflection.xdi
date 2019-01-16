@@ -5,8 +5,8 @@
 			<id>{251DC3A5-4551-4A42-96D5-CE2303695168}</id>
 			<comment/>
 			<position>
-				<first>-230</first>
-				<second>-303</second>
+				<first>-228</first>
+				<second>-301</second>
 			</position>
 			<fragmentGuid>{D9D861EF-1A71-9C4F-9D94-47812EF465EF}</fragmentGuid>
 			<inputPins>
@@ -38,8 +38,8 @@
 			<id>{09AF143F-5FF0-4A4B-8C6B-A7052ADD6ACA}</id>
 			<comment/>
 			<position>
-				<first>-577</first>
-				<second>-240</second>
+				<first>-576</first>
+				<second>-238</second>
 			</position>
 			<parameterName>SkyDomeRadius</parameterName>
 			<type>PtScalar</type>
@@ -49,8 +49,8 @@
 			<id>{8E59AC0A-F488-0643-81E7-8D604DA68C3E}</id>
 			<comment/>
 			<position>
-				<first>-585</first>
-				<second>-330</second>
+				<first>-583</first>
+				<second>-328</second>
 			</position>
 			<fragmentGuid>{7F401326-4C07-AC4C-9315-B2FCD61B9250}</fragmentGuid>
 			<inputPins>
@@ -81,16 +81,16 @@
 			<id>{2C6D4CA1-9554-4E42-8CE9-CFC41318D000}</id>
 			<comment/>
 			<position>
-				<first>-786</first>
-				<second>-367</second>
+				<first>-784</first>
+				<second>-365</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexInput" version="traktor.render.Node:1">
 			<id>{E79BE794-0C97-FC4D-A151-42C716D0EFB7}</id>
 			<comment/>
 			<position>
-				<first>-1122</first>
-				<second>-386</second>
+				<first>-1120</first>
+				<second>-384</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -101,8 +101,8 @@
 			<id>{971CB036-429B-5243-AF04-0A65FC35D27B}</id>
 			<comment/>
 			<position>
-				<first>433</first>
-				<second>-358</second>
+				<first>431</first>
+				<second>-356</second>
 			</position>
 			<technique/>
 		</item>
@@ -110,16 +110,16 @@
 			<id>{7BA8FEE1-AB98-164B-8767-AE0481D2279E}</id>
 			<comment/>
 			<position>
-				<first>-54</first>
-				<second>-175</second>
+				<first>-52</first>
+				<second>-173</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{DD6E9B03-4D3F-C745-9B3A-B17583365A93}</id>
 			<comment/>
 			<position>
-				<first>437</first>
-				<second>-104</second>
+				<first>435</first>
+				<second>-102</second>
 			</position>
 			<fragmentGuid>{CBB01418-3E3B-2947-9CA1-B75CEFF77C4E}</fragmentGuid>
 			<inputPins>
@@ -146,8 +146,8 @@
 			<id>{A1BFC98E-AFF5-6341-876E-A69672DADCB1}</id>
 			<comment/>
 			<position>
-				<first>244</first>
-				<second>-46</second>
+				<first>242</first>
+				<second>-44</second>
 			</position>
 			<priority>
 				<setup>false</setup>
@@ -191,8 +191,8 @@
 			<id>{12C70892-F365-E84C-B88C-4E6581310499}</id>
 			<comment/>
 			<position>
-				<first>119</first>
-				<second>-348</second>
+				<first>117</first>
+				<second>-346</second>
 			</position>
 			<fragmentGuid>{93C8C2C3-BE05-EA45-9C6C-BE87B6E6D412}</fragmentGuid>
 			<inputPins>
@@ -249,8 +249,8 @@
 			<id>{EF310D2D-679E-0747-BB88-2270A290561B}</id>
 			<comment/>
 			<position>
-				<first>-369</first>
-				<second>-31</second>
+				<first>-367</first>
+				<second>-29</second>
 			</position>
 			<parameterName>World_ReflectionMap</parameterName>
 			<type>PtTextureCube</type>
@@ -260,8 +260,8 @@
 			<id>{70AB8D8F-DC8F-1C4A-AEB8-B6D1C29CAC5A}</id>
 			<comment/>
 			<position>
-				<first>34</first>
-				<second>-120</second>
+				<first>32</first>
+				<second>-118</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -378,16 +378,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Texture</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item"/>
 				<name>Cartesian</name>
 			</source>
@@ -404,6 +394,16 @@
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

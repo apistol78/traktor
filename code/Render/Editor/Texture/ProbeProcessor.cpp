@@ -95,7 +95,7 @@ bool ProbeProcessor::radiance(const drawing::Image* cubeImage, int32_t glossScal
 	cmft::imageRadianceFilter(
 		image,
 		0,
-		(cmft::LightingModel::Enum)0,
+		(cmft::LightingModel::Enum)cmft::LightingModel::Phong, //Brdf,
 		false,
 		(uint8_t)mipCount,
 		glossScale,

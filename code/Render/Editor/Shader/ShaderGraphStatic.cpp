@@ -140,9 +140,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphStatic", ShaderGraphStatic, O
 
 ShaderGraphStatic::ShaderGraphStatic(const ShaderGraph* shaderGraph)
 {
-	T_ASSERT (ShaderGraphValidator(shaderGraph).validateIntegrity());
+	T_ASSERT(ShaderGraphValidator(shaderGraph).validateIntegrity());
 	m_shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
-	T_ASSERT (ShaderGraphValidator(m_shaderGraph).validateIntegrity());
+	T_ASSERT(ShaderGraphValidator(m_shaderGraph).validateIntegrity());
 }
 
 Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring& platform) const
@@ -151,35 +151,36 @@ Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring&
 
 	RefArray< Platform > nodes;
 	shaderGraph->findNodesOf< Platform >(nodes);
-	for (RefArray< Platform >::iterator i = nodes.begin(); i != nodes.end(); ++i)
+
+	for (const auto node : nodes)
 	{
-		const InputPin* inputPin = (*i)->findInputPin(platform);
-		T_ASSERT (inputPin);
+		const InputPin* inputPin = node->findInputPin(platform);
+		T_ASSERT(inputPin);
 
 		Ref< Edge > sourceEdge = shaderGraph->findEdge(inputPin);
 		if (!sourceEdge)
 		{
-			inputPin = (*i)->findInputPin(L"Other");
-			T_ASSERT (inputPin);
+			inputPin = node->findInputPin(L"Other");
+			T_ASSERT(inputPin);
 
 			sourceEdge = shaderGraph->findEdge(inputPin);
 			if (!sourceEdge)
-				return 0;
+				return nullptr;
 		}
 
-		const OutputPin* outputPin = (*i)->findOutputPin(L"Output");
-		T_ASSERT (outputPin);
+		const OutputPin* outputPin = node->findOutputPin(L"Output");
+		T_ASSERT(outputPin);
 
 		RefSet< Edge > destinationEdges;
 		shaderGraph->findEdges(outputPin, destinationEdges);
 
 		shaderGraph->removeEdge(sourceEdge);
-		for (RefSet< Edge >::const_iterator j = destinationEdges.begin(); j != destinationEdges.end(); ++j)
+		for (const auto destinationEdge : destinationEdges)
 		{
-			shaderGraph->removeEdge(*j);
+			shaderGraph->removeEdge(destinationEdge);
 			shaderGraph->addEdge(new Edge(
 				sourceEdge->getSource(),
-				(*j)->getDestination()
+				destinationEdge->getDestination()
 			));
 		}
 	}
@@ -195,32 +196,43 @@ Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 	if (shaderGraph->findNodesOf< Connected >(nodes) <= 0)
 		return shaderGraph;
 
-	for (RefArray< Connected >::iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (const auto node : nodes)
 	{
-		const InputPin* inputPin = (*i)->findInputPin(L"Input");
-		T_ASSERT (inputPin);
+		const InputPin* inputPin = node->findInputPin(L"Input");
+		T_ASSERT(inputPin);
 
-		bool inputConnected = bool(shaderGraph->findEdge(inputPin) != 0);
-		inputPin = (*i)->findInputPin(inputConnected ? L"True" : L"False");
-		T_ASSERT (inputPin);
+		bool inputConnected = bool(shaderGraph->findEdge(inputPin) != nullptr);
+
+		inputPin = node->findInputPin(inputConnected ? L"True" : L"False");
+		T_ASSERT(inputPin);
+
+		const OutputPin* sourceOutputPin = nullptr;
 
 		Ref< Edge > sourceEdge = shaderGraph->findEdge(inputPin);
-		if (!sourceEdge)
-			return 0;
+		if (sourceEdge)
+		{
+			sourceOutputPin = sourceEdge->getSource();
+			shaderGraph->removeEdge(sourceEdge);
+		}
+		else
+		{
+			Ref< Scalar > scalarNode = new Scalar(inputConnected ? 1.0f : 0.0f);
+			shaderGraph->addNode(scalarNode);
+			sourceOutputPin = scalarNode->getOutputPin(0);
+		}
 
-		const OutputPin* outputPin = (*i)->findOutputPin(L"Output");
-		T_ASSERT (outputPin);
+		const OutputPin* outputPin = node->findOutputPin(L"Output");
+		T_ASSERT(outputPin);
 
 		RefSet< Edge > destinationEdges;
 		shaderGraph->findEdges(outputPin, destinationEdges);
 
-		shaderGraph->removeEdge(sourceEdge);
-		for (RefSet< Edge >::const_iterator j = destinationEdges.begin(); j != destinationEdges.end(); ++j)
+		for (const auto destinationEdge : destinationEdges)
 		{
-			shaderGraph->removeEdge(*j);
+			shaderGraph->removeEdge(destinationEdge);
 			shaderGraph->addEdge(new Edge(
-				sourceEdge->getSource(),
-				(*j)->getDestination()
+				sourceOutputPin,
+				destinationEdge->getDestination()
 			));
 		}
 	}
@@ -237,63 +249,63 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 		return shaderGraph;
 
 	ShaderGraphTypeEvaluator evaluator(shaderGraph);
-	for (RefArray< Type >::iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (const auto node : nodes)
 	{
-		const OutputPin* outputPin = (*i)->findOutputPin(L"Output");
-		T_ASSERT (outputPin);
+		const OutputPin* outputPin = node->findOutputPin(L"Output");
+		T_ASSERT(outputPin);
 
-		PinType inputType = evaluator.evaluate(*i, L"Type");
+		PinType inputType = evaluator.evaluate(node, L"Type");
 
-		const InputPin* inputPin = 0;
+		const InputPin* inputPin = nullptr;
 
 		if (isPinTypeScalar(inputType))
 		{
 			if (getPinTypeWidth(inputType) <= 1)
-				inputPin = (*i)->findInputPin(L"Scalar");
+				inputPin = node->findInputPin(L"Scalar");
 			else
-				inputPin = (*i)->findInputPin(L"Vector");
+				inputPin = node->findInputPin(L"Vector");
 		}
 		else if (inputType == PntMatrix)
 		{
-			inputPin = (*i)->findInputPin(L"Matrix");
+			inputPin = node->findInputPin(L"Matrix");
 		}
 		else if (isPinTypeTexture(inputType))
 		{
-			inputPin = (*i)->findInputPin(L"Texture");
+			inputPin = node->findInputPin(L"Texture");
 		}
 		else if (isPinTypeState(inputType))
 		{
-			inputPin = (*i)->findInputPin(L"State");
+			inputPin = node->findInputPin(L"State");
 		}
 		else if (inputType == PntVoid)
 		{
-			inputPin = (*i)->findInputPin(L"Default");
+			inputPin = node->findInputPin(L"Default");
 		}
 
 		if (!inputPin)
-			return 0;
+			return nullptr;
 
 		Ref< Edge > sourceEdge = shaderGraph->findEdge(inputPin);
 		if (!sourceEdge)
 		{
-			inputPin = (*i)->findInputPin(L"Default");
-			T_ASSERT (inputPin);
+			inputPin = node->findInputPin(L"Default");
+			T_ASSERT(inputPin);
 
 			sourceEdge = shaderGraph->findEdge(inputPin);
 			if (!sourceEdge)
-				return 0;
+				return nullptr;
 		}
 
 		RefSet< Edge > destinationEdges;
 		shaderGraph->findEdges(outputPin, destinationEdges);
 
 		shaderGraph->removeEdge(sourceEdge);
-		for (RefSet< Edge >::const_iterator j = destinationEdges.begin(); j != destinationEdges.end(); ++j)
+		for (const auto destinationEdge : destinationEdges)
 		{
-			shaderGraph->removeEdge(*j);
+			shaderGraph->removeEdge(destinationEdge);
 			shaderGraph->addEdge(new Edge(
 				sourceEdge->getSource(),
-				(*j)->getDestination()
+				destinationEdge->getDestination()
 			));
 		}
 	}
@@ -354,24 +366,24 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 	std::vector< const OutputPin* > inputOutputPins;
 
 	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
-	T_ASSERT (shaderGraph);
-	T_ASSERT (ShaderGraphValidator(shaderGraph).validateIntegrity());
+	T_ASSERT(shaderGraph);
+	T_ASSERT(ShaderGraphValidator(shaderGraph).validateIntegrity());
 
 	ShaderGraphTypePropagation typePropagation(shaderGraph);
 	const RefArray< Node >& nodes = shaderGraph->getNodes();
 
 	// Setup map of all output pin "constants"; each such constant has proper width and
 	// are initially set to be completely variant.
-	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (const auto node : nodes)
 	{
-		const INodeTraits* nodeTraits = INodeTraits::find(*i);
+		const INodeTraits* nodeTraits = INodeTraits::find(node);
 		T_FATAL_ASSERT (nodeTraits);
 
-		int32_t outputPinCount = (*i)->getOutputPinCount();
-		for (int32_t j = 0; j < outputPinCount; ++j)
+		int32_t outputPinCount = node->getOutputPinCount();
+		for (int32_t i = 0; i < outputPinCount; ++i)
 		{
-			const OutputPin* outputPin = (*i)->getOutputPin(j);
-			T_ASSERT (outputPin);
+			const OutputPin* outputPin = node->getOutputPin(i);
+			T_ASSERT(outputPin);
 
 			PinType outputPinType = typePropagation.evaluate(outputPin);
 			outputConstants[outputPin] = Constant(outputPinType);
@@ -386,23 +398,23 @@ restart_iteration:
 
 		constantPropagationCount = 0;
 
-		for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+		for (const auto node : nodes)
 		{
-			const INodeTraits* nodeTraits = INodeTraits::find(*i);
-			T_ASSERT (nodeTraits);
+			const INodeTraits* nodeTraits = INodeTraits::find(node);
+			T_ASSERT(nodeTraits);
 
-			int32_t inputPinCount = (*i)->getInputPinCount();
+			int32_t inputPinCount = node->getInputPinCount();
 
 			// Get set of input constants and source pins.
 			inputConstants.resize(inputPinCount);
 			inputOutputPins.resize(inputPinCount);
 			for (int32_t j = 0; j < inputPinCount; ++j)
 			{
-				const InputPin* inputPin = (*i)->getInputPin(j);
-				T_ASSERT (inputPin);
+				const InputPin* inputPin = node->getInputPin(j);
+				T_ASSERT(inputPin);
 
 				inputConstants[j] = Constant();
-				inputOutputPins[j] = 0;
+				inputOutputPins[j] = nullptr;
 
 				const OutputPin* outputPin = shaderGraph->findSourcePin(inputPin);
 				if (outputPin)
@@ -421,26 +433,26 @@ restart_iteration:
 			}
 
 			// Evaluate result of all output pins.
-			int32_t outputPinCount = (*i)->getOutputPinCount();
+			int32_t outputPinCount = node->getOutputPinCount();
 			for (int32_t j = 0; j < outputPinCount; ++j)
 			{
-				const OutputPin* outputPin = (*i)->getOutputPin(j);
-				T_ASSERT (outputPin);
+				const OutputPin* outputPin = node->getOutputPin(j);
+				T_ASSERT(outputPin);
 
 				// Don't evaluate output if it's not connected to anything.
 				if (shaderGraph->getDestinationCount(outputPin) <= 0)
 					continue;
 
 				PinType outputPinType = typePropagation.evaluate(outputPin);
-				T_ASSERT (outputPinType != PntVoid);
+				T_ASSERT(outputPinType != PntVoid);
 
 				// First attempt to evaluate re-wiring to circumvent this node entirely.
 				if (inputPinCount > 0)
 				{
-					const OutputPin* foldOutputPin = 0;
+					const OutputPin* foldOutputPin = nullptr;
 					if (nodeTraits->evaluatePartial(
 						shaderGraph,
-						*i,
+						node,
 						outputPin,
 						&inputOutputPins[0],
 						&inputConstants[0],
@@ -448,10 +460,6 @@ restart_iteration:
 					))
 					{
 						Ref< Swizzle > swizzleNode;
-
-						// In case re-wire to pin is returned null then entire graph is folded/discarded.
-						if (!foldOutputPin)
-							return 0;
 
 						PinType outputPinType = typePropagation.evaluate(outputPin);
 						PinType foldOutputPinType = typePropagation.evaluate(foldOutputPin);
@@ -522,9 +530,9 @@ restart_iteration:
 				Constant outputConstant(outputPinType);
 				if (nodeTraits->evaluatePartial(
 					shaderGraph,
-					*i,
+					node,
 					outputPin,
-					inputPinCount > 0 ? &inputConstants[0] : 0,
+					inputPinCount > 0 ? &inputConstants[0] : nullptr,
 					outputConstant
 				))
 				{
@@ -542,20 +550,20 @@ restart_iteration:
 
 	// Collect root nodes.
 	RefArray< Node > roots;
-	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (const auto node : nodes)
 	{
-		const INodeTraits* traits = INodeTraits::find(*i);
+		const INodeTraits* traits = INodeTraits::find(node);
 		T_FATAL_ASSERT (traits);
 
-		if (traits->isRoot(shaderGraph, *i))
-			roots.push_back(*i);
+		if (traits->isRoot(shaderGraph, node))
+			roots.push_back(node);
 	}
 
 	// Traverse copy shader graph; replace inputs if constant.
 	ConstantFoldingVisitor visitor(new ShaderGraph(), outputConstants);
 	ShaderGraphTraverse(shaderGraph, roots).preorder(visitor);
 
-	T_ASSERT (ShaderGraphValidator(visitor.m_shaderGraph).validateIntegrity());
+	T_ASSERT(ShaderGraphValidator(visitor.m_shaderGraph).validateIntegrity());
 	return visitor.m_shaderGraph;
 }
 
@@ -569,13 +577,13 @@ Ref< ShaderGraph > ShaderGraphStatic::cleanupRedundantSwizzles() const
 	for (RefArray< Swizzle >::iterator i = swizzleNodes.begin(); i != swizzleNodes.end(); )
 	{
 		Swizzle* swizzleRightNode = *i;
-		T_ASSERT (swizzleRightNode);
+		T_ASSERT(swizzleRightNode);
 
 		const InputPin* swizzleInput = swizzleRightNode->getInputPin(0);
-		T_ASSERT (swizzleInput);
+		T_ASSERT(swizzleInput);
 
 		const OutputPin* swizzleOutput = swizzleRightNode->getOutputPin(0);
-		T_ASSERT (swizzleOutput);
+		T_ASSERT(swizzleOutput);
 
 		Edge* sourceEdge = shaderGraph->findEdge(swizzleInput);
 		if (!sourceEdge || !sourceEdge->getSource())
@@ -621,7 +629,7 @@ Ref< ShaderGraph > ShaderGraphStatic::cleanupRedundantSwizzles() const
 			swizzleRightNode->getInputPin(0)
 		));
 
-		T_ASSERT (ShaderGraphValidator(shaderGraph).validateIntegrity());
+		T_ASSERT(ShaderGraphValidator(shaderGraph).validateIntegrity());
 
 		// Restart iteration as it's possible we have rewired to another swizzler.
 		i = swizzleNodes.begin();
@@ -637,9 +645,9 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 	RefArray< PixelOutput > pixelOutputNodes;
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
 
-	for (RefArray< PixelOutput >::iterator i = pixelOutputNodes.begin(); i != pixelOutputNodes.end(); ++i)
+	for (const auto pixelOutputNode : pixelOutputNodes)
 	{
-		Ref< Edge > edge = shaderGraph->findEdge((*i)->getInputPin(4));
+		Ref< Edge > edge = shaderGraph->findEdge(pixelOutputNode->getInputPin(4));
 		if (!edge)
 			continue;
 
@@ -647,13 +655,13 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 		if (!state)
 			continue;
 
-		(*i)->setPriority(state->getPriority());
-		(*i)->setRenderState(state->getRenderState());
+		pixelOutputNode->setPriority(state->getPriority());
+		pixelOutputNode->setRenderState(state->getRenderState());
 
 		shaderGraph->removeEdge(edge);
 		shaderGraph->removeNode(state);
 
-		T_ASSERT (ShaderGraphValidator(shaderGraph).validateIntegrity());
+		T_ASSERT(ShaderGraphValidator(shaderGraph).validateIntegrity());
 	}
 
 	return shaderGraph;
@@ -667,14 +675,14 @@ Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved() const
 	shaderGraph->findNodesOf< Variable >(variableNodes);
 
 	// Join variable references.
-	for (RefArray< Variable >::iterator i = variableNodes.begin(); i != variableNodes.end(); ++i)
+	for (const auto variableNode : variableNodes)
 	{
-		const OutputPin* variableOutput = (*i)->getOutputPin(0);
-		T_ASSERT (variableOutput);
+		const OutputPin* variableOutput = variableNode->getOutputPin(0);
+		T_ASSERT(variableOutput);
 
 		if (shaderGraph->getDestinationCount(variableOutput) > 0)
 		{
-			RefArray< Variable >::iterator j = std::find_if(variableNodes.begin(), variableNodes.end(), ReadVariablePred(shaderGraph, (*i)->getName()));
+			RefArray< Variable >::iterator j = std::find_if(variableNodes.begin(), variableNodes.end(), ReadVariablePred(shaderGraph, variableNode->getName()));
 			if (j != variableNodes.end())
 			{
 				const InputPin* variableInput = (*j)->getInputPin(0);
@@ -688,17 +696,50 @@ Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved() const
 			else
 			{
 				// Variable is undefined, disconnect output.
-				shaderGraph->rewire(variableOutput, 0);
+				shaderGraph->rewire(variableOutput, nullptr);
 			}
 		}
 	}
 
 	// Remove all variables.
-	for (RefArray< Variable >::iterator i = variableNodes.begin(); i != variableNodes.end(); ++i)
+	for (const auto variableNode : variableNodes)
 	{
-		shaderGraph->detach(*i);
-		shaderGraph->removeNode(*i);
+		shaderGraph->detach(variableNode);
+		shaderGraph->removeNode(variableNode);
 	};
+
+	return shaderGraph;
+}
+
+Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
+{
+	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+
+	RefArray< PixelOutput > pixelOutputNodes;
+	shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
+
+	for (const auto pixelOutputNode : pixelOutputNodes)
+	{
+		const OutputPin* enableSource = shaderGraph->findSourcePin(pixelOutputNode->getInputPin(0));
+		if (!enableSource)
+		{
+			// Keep outputs with unconnected "Enable" pin, enabled by default.
+			continue;
+		}
+
+		const Scalar* scalar = dynamic_type_cast< const Scalar* >(enableSource->getNode());
+		if (scalar)
+		{
+			if (scalar->get() < FUZZY_EPSILON)
+			{
+				// Zero as input to "Enable" pin, remove output.
+				shaderGraph->detach(pixelOutputNode);
+				shaderGraph->removeNode(pixelOutputNode);
+			}
+		}
+		else
+			log::warning << L"Unsupported node type of input; Only Scalar nodes can be connected to \"Enable\" of \"traktor.render.PixelOutput\". " << type_name(enableSource->getNode()) << L" not supported." << Endl;
+	}
 
 	return shaderGraph;
 }

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_PointLightEntity_H
-#define traktor_world_PointLightEntity_H
+#pragma once
 
 #include "Core/Math/Random.h"
 #include "World/Entity.h"
@@ -33,9 +26,7 @@ class T_DLLCLASS PointLightEntity : public Entity
 public:
 	PointLightEntity(
 		const Transform& transform,
-		const Vector4& sunColor,
-		const Vector4& baseColor,
-		const Vector4& shadowColor,
+		const Vector4& color,
 		float range,
 		float randomFlickerAmount,
 		float randomFlickerFilter
@@ -49,11 +40,7 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override final;
 
-	const Vector4& getSunColor() const { return m_sunColor; }
-
-	const Vector4& getBaseColor() const { return m_baseColor; }
-
-	const Vector4& getShadowColor() const { return m_shadowColor; }
+	const Vector4& getColor() const { return m_color; }
 
 	float getRange() const { return m_range; }
 
@@ -61,9 +48,7 @@ public:
 
 private:
 	Transform m_transform;
-	Vector4 m_sunColor;
-	Vector4 m_baseColor;
-	Vector4 m_shadowColor;
+	Vector4 m_color;
 	float m_range;
 	float m_randomFlickerAmount;
 	float m_randomFlickerFilter;
@@ -74,5 +59,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_world_PointLightEntity_H

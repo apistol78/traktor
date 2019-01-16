@@ -64,7 +64,7 @@ PinType PixelNodeTraits::getInputPinType(
 
 	RenderState rs = pixelOutputNode->getRenderState();
 
-	const OutputPin* statePin = shaderGraph->findSourcePin(pixelOutputNode->getInputPin(4));
+	const OutputPin* statePin = shaderGraph->findSourcePin(pixelOutputNode->getInputPin(5));
 	if (statePin)
 	{
 		const State* state = dynamic_type_cast< const State* >(statePin->getNode());

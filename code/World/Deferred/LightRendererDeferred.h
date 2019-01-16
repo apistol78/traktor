@@ -76,6 +76,7 @@ public:
 		float time,
 		const Matrix44& projection,
 		const Matrix44& view,
+		const Vector4& ambientColor,
 		render::ITexture* depthMap,
 		render::ITexture* normalMap,
 		render::ITexture* miscMap,

@@ -1,10 +1,5 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Const.h"
+#include "Core/Serialization/AttributeHdr.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
@@ -17,13 +12,11 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 4, LightComponentData, IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 5, LightComponentData, IEntityComponentData)
 
 LightComponentData::LightComponentData()
 :	m_lightType(LtDisabled)
-,	m_sunColor(1.0f, 1.0f, 1.0f, 0.0f)
-,	m_baseColor(0.5f, 0.5f, 0.5f, 0.0f)
-,	m_shadowColor(0.0f, 0.0f, 0.0f, 0.0f)
+,	m_color(1.0f, 1.0f, 1.0f, 0.0f)
 ,	m_castShadow(false)
 ,	m_range(10.0f)
 ,	m_radius(HALF_PI)
@@ -45,9 +38,21 @@ void LightComponentData::serialize(ISerializer& s)
 	};
 
 	s >> MemberEnum< LightType >(L"lightType", m_lightType, c_LightType_Keys);
-	s >> Member< Vector4 >(L"sunColor", m_sunColor);
-	s >> Member< Vector4 >(L"baseColor", m_baseColor);
-	s >> Member< Vector4 >(L"shadowColor", m_shadowColor);
+
+	if (s.getVersion() >= 5)
+		s >> Member< Color4f >(L"color", m_color, AttributeHdr());
+	else
+	{
+		Vector4 sunColor = Vector4::zero();
+		Vector4 baseColor = Vector4::zero();
+		Vector4 shadowColor = Vector4::zero();
+
+		s >> Member< Vector4 >(L"sunColor", sunColor);
+		s >> Member< Vector4 >(L"baseColor", baseColor);
+		s >> Member< Vector4 >(L"shadowColor", shadowColor);
+
+		m_color = Color4f(sunColor);
+	}
 
 	if (s.getVersion() >= 1)
 	{

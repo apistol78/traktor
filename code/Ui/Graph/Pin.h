@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Pin_H
-#define traktor_ui_Pin_H
+#pragma once
 
 #include <string>
 #include <map>
@@ -45,11 +38,13 @@ public:
 		DrOutput
 	};
 
-	Pin(Node* node, const std::wstring& name, Direction direction, bool mandatory);
+	explicit Pin(Node* node, const std::wstring& name, const std::wstring& label, Direction direction, bool mandatory);
 
 	Node* getNode() const;
 
 	const std::wstring& getName() const;
+
+	const std::wstring& getLabel() const;
 
 	Direction getDirection() const;
 
@@ -60,11 +55,10 @@ public:
 private:
 	Node* m_node;
 	std::wstring m_name;
+	std::wstring m_label;
 	Direction m_direction;
 	bool m_mandatory;
 };
 
 	}
 }
-
-#endif	// traktor_ui_Pin_H

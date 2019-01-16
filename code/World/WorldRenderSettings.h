@@ -1,14 +1,7 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #pragma once
 
 #include "Core/Serialization/ISerializable.h"
-#include "Core/Math/Color4ub.h"
-#include "Core/Math/Vector4.h"
+#include "Core/Math/Color4f.h"
 #include "Resource/Id.h"
 #include "World/WorldTypes.h"
 
@@ -78,12 +71,13 @@ public:
 	bool linearLighting;
 	bool depthPass;
 	ShadowSettings shadowSettings[QuLast];
+	Color4f ambientColor;
 	bool fog;
 	float fogDistanceY;
 	float fogDistanceZ;
 	float fogDensityY;
 	float fogDensityZ;
-	Color4ub fogColor;
+	Color4f fogColor;
 	resource::Id< render::ITexture > reflectionMap;
 	resource::Id< render::ImageProcessSettings > imageProcess[QuLast];
 

@@ -495,7 +495,7 @@ void Conditional::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Connected", 0, Connected, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Connected_i[] = { { L"Input", true }, { L"True", false }, { L"False", false }, { 0 } };
+const ImmutableNode::InputPinDesc c_Connected_i[] = { { L"Input", true }, { L"True", true }, { L"False", true }, { 0 } };
 const ImmutableNode::OutputPinDesc c_Connected_o[] = { { L"Output" }, { 0 } };
 
 Connected::Connected()
@@ -1261,7 +1261,7 @@ void OutputPort::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 7, PixelOutput, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Input", false }, { L"Input1", true }, { L"Input2", true }, { L"Input3", true }, { L"State", true }, { 0 } };
+const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Enable", true }, { L"Input", false }, { L"Input1", true }, { L"Input2", true }, { L"Input3", true }, { L"State", true }, { 0 } };
 
 PixelOutput::PixelOutput()
 :	ImmutableNode(c_PixelOutput_i, 0)

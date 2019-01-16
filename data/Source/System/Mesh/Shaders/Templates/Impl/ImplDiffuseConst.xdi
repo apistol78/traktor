@@ -2,35 +2,13 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{B79F461F-D6B3-B343-87CD-58350F51ABAF}</id>
-			<comment/>
-			<position>
-				<first>918</first>
-				<second>445</second>
-			</position>
-			<name>T_DiffuseTerm</name>
-		</item>
-		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{1C406491-8E2C-2B45-971D-00B1D72F0623}</id>
 			<comment/>
 			<position>
-				<first>918</first>
-				<second>404</second>
+				<first>904</first>
+				<second>324</second>
 			</position>
 			<name>T_DiffuseColor</name>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{865F5A57-6EFB-D147-AFF6-7F61591C1A57}</id>
-			<comment>
-			<![CDATA[
-Tag_DiffuseTerm
-			]]>
-			</comment>
-			<position>
-				<first>550</first>
-				<second>333</second>
-			</position>
-			<value>0</value>
 		</item>
 		<item type="traktor.render.Color" version="traktor.render.Node:1">
 			<id>{6D6E3E5B-EFA2-7F4E-8040-F35BAA88199E}</id>
@@ -40,8 +18,8 @@ Tag_DiffuseColor
 			]]>
 			</comment>
 			<position>
-				<first>518</first>
-				<second>231</second>
+				<first>515</first>
+				<second>276</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 		</item>
@@ -75,22 +53,11 @@ Tag_DiffuseColor
 			<id>{D791ACB9-E455-A84F-BC76-EDAF8563412F}</id>
 			<comment/>
 			<position>
-				<first>694</first>
-				<second>232</second>
+				<first>691</first>
+				<second>277</second>
 			</position>
 			<parameterName>Mesh_DiffuseColor</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
-		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
-			<id>{6F28EC31-FFC8-7D41-A9B9-066E0408A4EB}</id>
-			<comment/>
-			<position>
-				<first>694</first>
-				<second>337</second>
-			</position>
-			<parameterName>Mesh_DiffuseTerm</parameterName>
-			<type>PtScalar</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
@@ -110,37 +77,17 @@ Tag_DiffuseColor
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Initial</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[1]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Initial</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>

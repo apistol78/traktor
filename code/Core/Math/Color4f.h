@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Color4f_H
-#define traktor_Color4f_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Math/Color4ub.h"
@@ -15,18 +8,20 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor {
+namespace traktor
+{
 
-/*! \brief High range color.
+/*! \brief 4 channel, 32-bit, color.
  * \ingroup Core
  */
-class T_MATH_ALIGN16 T_DLLCLASS Color4f {
-      public:
+class T_MATH_ALIGN16 T_DLLCLASS Color4f
+{
+public:
 	T_MATH_INLINE Color4f();
 
 	T_MATH_INLINE Color4f(const Color4f &src);
@@ -59,6 +54,10 @@ class T_MATH_ALIGN16 T_DLLCLASS Color4f {
 
 	T_MATH_INLINE void setAlpha(const Scalar &alpha);
 
+	T_MATH_INLINE Scalar getEV() const;
+
+	T_MATH_INLINE void setEV(const Scalar& ev);
+
 	T_MATH_INLINE Color4f saturated() const;
 
 	T_MATH_INLINE Color4f rgb0() const;
@@ -76,6 +75,8 @@ class T_MATH_ALIGN16 T_DLLCLASS Color4f {
 	static T_MATH_INLINE Color4f loadAligned(const float *in);
 
 	static T_MATH_INLINE Color4f loadUnaligned(const float *in);
+
+	static T_MATH_INLINE Color4f fromColor4ub(const Color4ub& in);
 
 	T_MATH_INLINE void storeAligned(float *out) const;
 
@@ -132,5 +133,3 @@ T_MATH_INLINE T_DLLCLASS Color4f max(const Color4f &l, const Color4f &r);
 #if defined(T_MATH_USE_INLINE)
 #	include "Core/Math/Std/Color4f.inl"
 #endif
-
-#endif // traktor_Color4f_H

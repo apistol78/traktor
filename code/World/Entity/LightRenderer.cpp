@@ -50,9 +50,7 @@ void LightRenderer::render(
 		light.type = LtDirectional;
 		light.position = transform.translation();
 		light.direction = transform.rotation() * Vector4(0.0f, 1.0f, 0.0f);
-		light.sunColor = directionalLightEntity->getSunColor();
-		light.baseColor = directionalLightEntity->getBaseColor();
-		light.shadowColor = directionalLightEntity->getShadowColor();
+		light.color = directionalLightEntity->getColor();
 		light.range = Scalar(0.0f);
 		light.radius = Scalar(0.0f);
 		light.probe.diffuse = nullptr;
@@ -74,9 +72,7 @@ void LightRenderer::render(
 		light.type = LtPoint;
 		light.position = transform.translation();
 		light.direction = Vector4::zero();
-		light.sunColor = pointLightEntity->getSunColor();
-		light.baseColor = pointLightEntity->getBaseColor();
-		light.shadowColor = pointLightEntity->getShadowColor();
+		light.color = pointLightEntity->getColor();
 		light.range = Scalar(pointLightEntity->getRange());
 		light.radius = Scalar(0.0f);
 		light.probe.diffuse = nullptr;
@@ -87,9 +83,7 @@ void LightRenderer::render(
 		if (pointLightEntity->getRandomFlicker() <= 1.0f - FUZZY_EPSILON)
 		{
 			Scalar randomFlicker(pointLightEntity->getRandomFlicker());
-			light.sunColor *= randomFlicker;
-			light.baseColor *= randomFlicker;
-			light.shadowColor *= randomFlicker;
+			light.color *= randomFlicker;
 		}
 
 		worldRenderView.addLight(light);
@@ -106,9 +100,7 @@ void LightRenderer::render(
 		light.type = LtSpot;
 		light.position = transform.translation();
 		light.direction = transform.rotation() * Vector4(0.0f, 1.0f, 0.0f);
-		light.sunColor = spotLightEntity->getSunColor();
-		light.baseColor = spotLightEntity->getBaseColor();
-		light.shadowColor = spotLightEntity->getShadowColor();
+		light.color = spotLightEntity->getColor();
 		light.range = Scalar(spotLightEntity->getRange());
 		light.radius = Scalar(spotLightEntity->getRadius());
 		light.probe.diffuse = nullptr;
@@ -126,9 +118,7 @@ void LightRenderer::render(
 		light.type = lightComponent->getLightType();
 		light.position = transform.translation();
 		light.direction = transform.rotation() * Vector4(0.0f, 1.0f, 0.0f);
-		light.sunColor = lightComponent->getSunColor();
-		light.baseColor = lightComponent->getBaseColor();
-		light.shadowColor = lightComponent->getShadowColor();
+		light.color = lightComponent->getColor();
 		light.range = Scalar(lightComponent->getRange());
 		light.radius = Scalar(lightComponent->getRadius());
 		light.probe.diffuse = lightComponent->getProbeDiffuseTexture();

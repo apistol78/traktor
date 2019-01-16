@@ -5,16 +5,16 @@
 			<id>{C0C43D2C-4572-6F4B-BD32-4D2CF07A026C}</id>
 			<comment/>
 			<position>
-				<first>3166</first>
-				<second>222</second>
+				<first>3161</first>
+				<second>217</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{3E01893B-1210-D647-9D3B-AA8C4E95105F}</id>
 			<comment/>
 			<position>
-				<first>2751</first>
-				<second>908</second>
+				<first>2746</first>
+				<second>903</second>
 			</position>
 			<fragmentGuid>{645D00CF-9F76-0F49-9451-04C9945D5E8A}</fragmentGuid>
 			<inputPins>
@@ -36,16 +36,16 @@
 			<id>{D338A835-1D14-E148-8BD3-8E24D4CAE35E}</id>
 			<comment/>
 			<position>
-				<first>2446</first>
-				<second>987</second>
+				<first>2441</first>
+				<second>982</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{03E9A9BF-41C4-E141-8984-E8DEFDF8FC31}</id>
 			<comment/>
 			<position>
-				<first>2250</first>
-				<second>953</second>
+				<first>2245</first>
+				<second>948</second>
 			</position>
 			<name>UV</name>
 			<connectable>true</connectable>
@@ -57,24 +57,24 @@
 			<id>{E3885177-EE33-9F44-BD6F-96FF3815308C}</id>
 			<comment/>
 			<position>
-				<first>2260</first>
-				<second>1015</second>
+				<first>2255</first>
+				<second>1010</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{47490889-19AF-2641-A0CD-C47B5FEA179B}</id>
 			<comment/>
 			<position>
-				<first>2081</first>
-				<second>970</second>
+				<first>2076</first>
+				<second>965</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{B44702B2-5758-7940-8B3A-0DA26F6FD600}</id>
 			<comment/>
 			<position>
-				<first>1771</first>
-				<second>957</second>
+				<first>1766</first>
+				<second>952</second>
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
@@ -82,8 +82,8 @@
 			<id>{E71CB9BC-0EA0-AC42-AF2F-CB7838CDDEA1}</id>
 			<comment/>
 			<position>
-				<first>1199</first>
-				<second>974</second>
+				<first>1194</first>
+				<second>969</second>
 			</position>
 			<name>ViewDirection</name>
 			<connectable>true</connectable>
@@ -95,16 +95,16 @@
 			<id>{30D4408F-688C-DE4C-8A26-80005FC4C9E8}</id>
 			<comment/>
 			<position>
-				<first>1730</first>
-				<second>999</second>
+				<first>1728</first>
+				<second>994</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{F319493E-7E78-9C4D-A513-01DC52453F69}</id>
 			<comment/>
 			<position>
-				<first>93</first>
-				<second>738</second>
+				<first>91</first>
+				<second>723</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -120,16 +120,16 @@ Lerp refraction amount on depth
 			]]>
 			</comment>
 			<position>
-				<first>2085</first>
-				<second>1067</second>
+				<first>2080</first>
+				<second>1062</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{F27F2749-5A6E-0B48-B0D6-655E3F3D703D}</id>
 			<comment/>
 			<position>
-				<first>1894</first>
-				<second>1075</second>
+				<first>1889</first>
+				<second>1070</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -137,8 +137,8 @@ Lerp refraction amount on depth
 			<id>{EFDBBBCF-8418-EE49-A66F-87D96509B96C}</id>
 			<comment/>
 			<position>
-				<first>1885</first>
-				<second>1106</second>
+				<first>1880</first>
+				<second>1101</second>
 			</position>
 			<value>0.1</value>
 		</item>
@@ -146,8 +146,8 @@ Lerp refraction amount on depth
 			<id>{C2D31C5E-1CBE-0B4F-9643-81202768D422}</id>
 			<comment/>
 			<position>
-				<first>1896</first>
-				<second>1142</second>
+				<first>1891</first>
+				<second>1137</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -156,16 +156,16 @@ Lerp refraction amount on depth
 			<id>{02AC8E21-08FD-234B-92BD-AC892A2B6364}</id>
 			<comment/>
 			<position>
-				<first>1715</first>
-				<second>1134</second>
+				<first>1710</first>
+				<second>1129</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{A3C151AA-B9D7-344A-8F98-AD7347F42C9E}</id>
 			<comment/>
 			<position>
-				<first>1313</first>
-				<second>908</second>
+				<first>1308</first>
+				<second>903</second>
 			</position>
 			<name>Depth</name>
 			<connectable>true</connectable>
@@ -177,7 +177,7 @@ Lerp refraction amount on depth
 			<id>{39A48E1F-C68A-8041-9A90-C943C213A0FC}</id>
 			<comment/>
 			<position>
-				<first>1587</first>
+				<first>1555</first>
 				<second>1184</second>
 			</position>
 			<value>0.2</value>
@@ -186,8 +186,8 @@ Lerp refraction amount on depth
 			<id>{5F6A8293-BD07-9A4F-8638-930D96F57D78}</id>
 			<comment/>
 			<position>
-				<first>2650</first>
-				<second>238</second>
+				<first>2645</first>
+				<second>233</second>
 			</position>
 			<fragmentGuid>{AFD5FE57-FE20-134A-9C0F-5E25CAB9B3F2}</fragmentGuid>
 			<inputPins>
@@ -218,8 +218,8 @@ Lerp refraction amount on depth
 			<id>{C14D6CC1-AA3E-8447-8225-ACDB5AC45851}</id>
 			<comment/>
 			<position>
-				<first>2557</first>
-				<second>600</second>
+				<first>2552</first>
+				<second>595</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -227,8 +227,8 @@ Lerp refraction amount on depth
 			<id>{5C249CFB-E508-B24E-AC2D-AB99DFF0DA46}</id>
 			<comment/>
 			<position>
-				<first>2383</first>
-				<second>580</second>
+				<first>2378</first>
+				<second>576</second>
 			</position>
 			<parameterName>ReflectionEnable</parameterName>
 		</item>
@@ -236,16 +236,16 @@ Lerp refraction amount on depth
 			<id>{21D3255A-C8E9-704E-8BA1-5902A225E200}</id>
 			<comment/>
 			<position>
-				<first>2175</first>
-				<second>667</second>
+				<first>2170</first>
+				<second>662</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{521BDBD9-EB6F-2647-AE5E-DB5977836F7D}</id>
 			<comment/>
 			<position>
-				<first>1707</first>
-				<second>1337</second>
+				<first>1702</first>
+				<second>1332</second>
 			</position>
 			<fragmentGuid>{645D00CF-9F76-0F49-9451-04C9945D5E8A}</fragmentGuid>
 			<inputPins>
@@ -267,32 +267,32 @@ Lerp refraction amount on depth
 			<id>{8197943A-3877-044A-B878-E9D7CC2D43AE}</id>
 			<comment/>
 			<position>
-				<first>1532</first>
-				<second>1369</second>
+				<first>1527</first>
+				<second>1364</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{2A6B569B-A3F7-9740-A3B4-D544FE0ADD74}</id>
 			<comment/>
 			<position>
-				<first>1186</first>
-				<second>1358</second>
+				<first>1181</first>
+				<second>1353</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{409CA27B-1A10-2A4F-9CF3-E07EB33102AB}</id>
 			<comment/>
 			<position>
-				<first>904</first>
-				<second>1371</second>
+				<first>899</first>
+				<second>1366</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{FFD0450A-56E6-1449-9650-B91C4F927535}</id>
 			<comment/>
 			<position>
-				<first>744</first>
-				<second>1369</second>
+				<first>739</first>
+				<second>1364</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -300,8 +300,8 @@ Lerp refraction amount on depth
 			<id>{48EA2A7C-87B1-764A-B3FF-7CB553A930A7}</id>
 			<comment/>
 			<position>
-				<first>454</first>
-				<second>1325</second>
+				<first>449</first>
+				<second>1320</second>
 			</position>
 			<fragmentGuid>{79FD2C76-8242-214C-B3A5-4A5B5CD34F0C}</fragmentGuid>
 			<inputPins>
@@ -328,8 +328,8 @@ Lerp refraction amount on depth
 			<id>{3D647458-BB83-8E42-A9D5-91C503E2205C}</id>
 			<comment/>
 			<position>
-				<first>90</first>
-				<second>696</second>
+				<first>91</first>
+				<second>672</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -341,24 +341,24 @@ Lerp refraction amount on depth
 			<id>{FB33D7DA-731C-414D-B860-1C0598C23100}</id>
 			<comment/>
 			<position>
-				<first>226</first>
-				<second>1363</second>
+				<first>221</first>
+				<second>1358</second>
 			</position>
 		</item>
 		<item type="traktor.render.Normalize" version="traktor.render.Node:1">
 			<id>{99338D41-9F41-1B46-9EDB-7862027EC4BA}</id>
 			<comment/>
 			<position>
-				<first>452</first>
-				<second>869</second>
+				<first>447</first>
+				<second>864</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{6D7CC81A-0BE6-924C-99C1-A22687379ED9}</id>
 			<comment/>
 			<position>
-				<first>357</first>
-				<second>889</second>
+				<first>352</first>
+				<second>884</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -366,8 +366,8 @@ Lerp refraction amount on depth
 			<id>{86ACB7E8-639A-334B-B30B-7E664CB34C91}</id>
 			<comment/>
 			<position>
-				<first>683</first>
-				<second>1432</second>
+				<first>678</first>
+				<second>1427</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
@@ -377,8 +377,8 @@ Lerp refraction amount on depth
 			<id>{D085F65E-77AA-0145-B57F-42976D6E71DE}</id>
 			<comment/>
 			<position>
-				<first>1078</first>
-				<second>1434</second>
+				<first>1073</first>
+				<second>1429</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
@@ -386,8 +386,8 @@ Lerp refraction amount on depth
 			<id>{15292D08-648C-5A41-9771-5A9EBF62D31D}</id>
 			<comment/>
 			<position>
-				<first>1315</first>
-				<second>1418</second>
+				<first>1313</first>
+				<second>1409</second>
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
@@ -396,7 +396,7 @@ Lerp refraction amount on depth
 			<comment/>
 			<position>
 				<first>1319</first>
-				<second>1445</second>
+				<second>1442</second>
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
@@ -404,32 +404,32 @@ Lerp refraction amount on depth
 			<id>{BD3E39FB-1AB0-504A-B1CB-12504901E466}</id>
 			<comment/>
 			<position>
-				<first>602</first>
-				<second>825</second>
+				<first>597</first>
+				<second>820</second>
 			</position>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{0B1076CB-1A5F-E047-A5E7-4B171E23044B}</id>
 			<comment/>
 			<position>
-				<first>1515</first>
-				<second>557</second>
+				<first>1510</first>
+				<second>552</second>
 			</position>
 		</item>
 		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
 			<id>{25A94898-0DE0-2C4D-A412-82E4004925EB}</id>
 			<comment/>
 			<position>
-				<first>2901</first>
-				<second>710</second>
+				<first>2896</first>
+				<second>705</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{F22510E6-10A7-E24E-92B9-215909A952C4}</id>
 			<comment/>
 			<position>
-				<first>2604</first>
-				<second>701</second>
+				<first>2599</first>
+				<second>696</second>
 			</position>
 			<name>DeepColor</name>
 			<connectable>true</connectable>
@@ -441,8 +441,8 @@ Lerp refraction amount on depth
 			<id>{B383FBD4-CDE8-0D46-8FBB-6FB973C50574}</id>
 			<comment/>
 			<position>
-				<first>2627</first>
-				<second>757</second>
+				<first>2622</first>
+				<second>752</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -451,24 +451,24 @@ Lerp refraction amount on depth
 			<id>{549019B6-7C80-DD4B-ACDD-E2C05BDE4BBA}</id>
 			<comment/>
 			<position>
-				<first>2474</first>
-				<second>759</second>
+				<first>2469</first>
+				<second>754</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{144C2EDC-3D6C-EB4B-AD0D-D31499A50EA4}</id>
 			<comment/>
 			<position>
-				<first>2305</first>
-				<second>728</second>
+				<first>2304</first>
+				<second>723</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{676F944D-DC30-214F-B4FB-5176765FFD72}</id>
 			<comment/>
 			<position>
-				<first>2116</first>
-				<second>776</second>
+				<first>2112</first>
+				<second>771</second>
 			</position>
 			<name>DeepOffset</name>
 			<connectable>true</connectable>
@@ -480,8 +480,8 @@ Lerp refraction amount on depth
 			<id>{55D530E7-63C4-CA41-9B7C-6DA70B43576C}</id>
 			<comment/>
 			<position>
-				<first>2274</first>
-				<second>808</second>
+				<first>2269</first>
+				<second>803</second>
 			</position>
 			<name>DeepRange</name>
 			<connectable>true</connectable>
@@ -489,33 +489,12 @@ Lerp refraction amount on depth
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Mul" version="traktor.render.Node:1">
-			<id>{2C1F5BEF-7101-5645-B00F-583BBAA05559}</id>
-			<comment/>
-			<position>
-				<first>1208</first>
-				<second>573</second>
-			</position>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{FD9A11FD-5293-9847-A314-C5A94D4A0944}</id>
-			<comment/>
-			<position>
-				<first>93</first>
-				<second>570</second>
-			</position>
-			<name>DiffuseTerm</name>
-			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>1</defaultValue>
-		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{BA531670-C58A-664B-8C5A-90E38DA932F8}</id>
 			<comment/>
 			<position>
-				<first>912</first>
-				<second>616</second>
+				<first>907</first>
+				<second>613</second>
 			</position>
 			<fragmentGuid>{BC060F9A-456E-B747-92C9-5BD78E172A26}</fragmentGuid>
 			<inputPins>
@@ -535,13 +514,13 @@ Lerp refraction amount on depth
 					<optional>false</optional>
 				</item>
 				<item>
-					<id>{06CA250C-639F-6247-A21E-61A11A98D04F}</id>
-					<name>Shadow</name>
+					<id>{DA74135F-816D-3443-B405-591DFA6BA749}</id>
+					<name>Roughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
-					<id>{DA74135F-816D-3443-B405-591DFA6BA749}</id>
-					<name>SpecularRoughness</name>
+					<id>{06CA250C-639F-6247-A21E-61A11A98D04F}</id>
+					<name>Shadow</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
@@ -557,12 +536,12 @@ Lerp refraction amount on depth
 			</outputPins>
 			<values>
 				<item>
-					<first>Shadow</first>
-					<second>0</second>
+					<first>Roughness</first>
+					<second>0.8</second>
 				</item>
 				<item>
-					<first>SpecularRoughness</first>
-					<second>0.8</second>
+					<first>Shadow</first>
+					<second>0</second>
 				</item>
 			</values>
 		</item>
@@ -570,8 +549,8 @@ Lerp refraction amount on depth
 			<id>{7FF5ACE8-ED72-214F-BDE5-6E08439E752F}</id>
 			<comment/>
 			<position>
-				<first>695</first>
-				<second>684</second>
+				<first>707</first>
+				<second>695</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -579,10 +558,10 @@ Lerp refraction amount on depth
 			<id>{5E7CFF47-B7ED-ED40-BA11-EB5952CFB79F}</id>
 			<comment/>
 			<position>
-				<first>54</first>
-				<second>654</second>
+				<first>102</first>
+				<second>619</second>
 			</position>
-			<name>SpecularRoughness</name>
+			<name>Roughness</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -592,31 +571,10 @@ Lerp refraction amount on depth
 			<id>{E0E35CD7-3A13-FA41-BC52-F6181072865F}</id>
 			<comment/>
 			<position>
-				<first>1378</first>
-				<second>663</second>
+				<first>1377</first>
+				<second>662</second>
 			</position>
 			<swizzle>xxx</swizzle>
-		</item>
-		<item type="traktor.render.Mul" version="traktor.render.Node:1">
-			<id>{5739924C-FD7A-7347-A21B-117BD3CFE163}</id>
-			<comment/>
-			<position>
-				<first>1208</first>
-				<second>652</second>
-			</position>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{C2E7A5FC-01FC-9D41-A676-BDE8E13B2D9B}</id>
-			<comment/>
-			<position>
-				<first>85</first>
-				<second>612</second>
-			</position>
-			<name>SpecularTerm</name>
-			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>1</defaultValue>
 		</item>
 		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
 			<id>{336AFAC9-1199-8046-8998-1EE2F1E72020}</id>
@@ -1462,41 +1420,11 @@ Distance to fog plane
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[44]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[36]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[45]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[44]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[46]"/>
-				<name>Diffuse</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[44]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[35]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>EyeDirection</name>
 			</destination>
 		</item>
@@ -1506,7 +1434,7 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Normal</name>
 			</destination>
 		</item>
@@ -1516,33 +1444,23 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Position</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[47]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Shadow</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[48]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[46]"/>
-				<name>SpecularRoughness</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[47]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1552,12 +1470,12 @@ Distance to fog plane
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[50]"/>
+				<node ref="/object/nodes/item[49]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[48]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1566,47 +1484,17 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[50]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[46]"/>
-				<name>Specular</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[50]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[53]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[52]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[55]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[52]"/>
+				<node ref="/object/nodes/item[48]"/>
 				<name>Blend</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[56]"/>
+				<node ref="/object/nodes/item[52]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[55]"/>
+				<node ref="/object/nodes/item[51]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1616,7 +1504,7 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[56]"/>
+				<node ref="/object/nodes/item[52]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -1626,13 +1514,13 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[56]"/>
+				<node ref="/object/nodes/item[52]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[58]"/>
+				<node ref="/object/nodes/item[54]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1642,41 +1530,41 @@ Distance to fog plane
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[59]"/>
+				<node ref="/object/nodes/item[55]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[58]"/>
+				<node ref="/object/nodes/item[54]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[60]"/>
+				<node ref="/object/nodes/item[56]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[58]"/>
+				<node ref="/object/nodes/item[54]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[61]"/>
+				<node ref="/object/nodes/item[57]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[60]"/>
+				<node ref="/object/nodes/item[56]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[64]"/>
+				<node ref="/object/nodes/item[60]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[63]"/>
+				<node ref="/object/nodes/item[59]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -1686,17 +1574,17 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[64]"/>
+				<node ref="/object/nodes/item[60]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[65]"/>
+				<node ref="/object/nodes/item[61]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[63]"/>
+				<node ref="/object/nodes/item[59]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -1706,27 +1594,27 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[65]"/>
+				<node ref="/object/nodes/item[61]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[66]"/>
+				<node ref="/object/nodes/item[62]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[62]"/>
+				<node ref="/object/nodes/item[58]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[67]"/>
+				<node ref="/object/nodes/item[63]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[61]"/>
+				<node ref="/object/nodes/item[57]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -1742,12 +1630,52 @@ Distance to fog plane
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[68]"/>
+				<node ref="/object/nodes/item[64]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Blend</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[65]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[64]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[66]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[65]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[67]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[66]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[68]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[66]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1782,6 +1710,16 @@ Distance to fog plane
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[71]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[72]"/>
 				<name>Output</name>
 			</source>
@@ -1806,77 +1744,27 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[73]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[75]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[74]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[27]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[75]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[76]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[74]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[77]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[76]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[78]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[73]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[79]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[69]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[80]"/>
+				<node ref="/object/nodes/item[75]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[79]"/>
+				<node ref="/object/nodes/item[65]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[76]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[75]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1886,17 +1774,17 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[80]"/>
+				<node ref="/object/nodes/item[76]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[81]"/>
+				<node ref="/object/nodes/item[77]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[80]"/>
+				<node ref="/object/nodes/item[76]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -1912,7 +1800,7 @@ Distance to fog plane
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[83]"/>
+				<node ref="/object/nodes/item[79]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1926,7 +1814,7 @@ Distance to fog plane
 				<name>Factor</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[83]"/>
+				<node ref="/object/nodes/item[79]"/>
 				<name>Blend</name>
 			</destination>
 		</item>
@@ -1936,7 +1824,7 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[83]"/>
+				<node ref="/object/nodes/item[79]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -1946,7 +1834,7 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[83]"/>
+				<node ref="/object/nodes/item[79]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -1966,7 +1854,7 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[82]"/>
+				<node ref="/object/nodes/item[78]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1976,7 +1864,7 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[84]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<name>Normal</name>
 			</destination>
 		</item>
@@ -1986,7 +1874,7 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[84]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1996,13 +1884,13 @@ Distance to fog plane
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[84]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<name>EyeDirection</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[84]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -2012,7 +1900,7 @@ Distance to fog plane
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[84]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -2022,42 +1910,72 @@ Distance to fog plane
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[52]"/>
+				<node ref="/object/nodes/item[48]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[84]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<name>Amount</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[54]"/>
+				<node ref="/object/nodes/item[50]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[52]"/>
+				<node ref="/object/nodes/item[48]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[63]"/>
+				<node ref="/object/nodes/item[59]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[85]"/>
+				<node ref="/object/nodes/item[81]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[85]"/>
+				<node ref="/object/nodes/item[81]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[61]"/>
+				<node ref="/object/nodes/item[57]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[44]"/>
+				<name>Specular</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[47]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[46]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[44]"/>
+				<name>Roughness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[44]"/>
+				<name>Diffuse</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

@@ -5,8 +5,8 @@
 			<id>{4F257A94-BC66-BA48-8547-1A25C1E18957}</id>
 			<comment/>
 			<position>
-				<first>985</first>
-				<second>35</second>
+				<first>982</first>
+				<second>32</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -14,24 +14,24 @@
 			<id>{754CE226-1C88-7A46-B88A-61177E4C3DA6}</id>
 			<comment/>
 			<position>
-				<first>835</first>
-				<second>15</second>
+				<first>832</first>
+				<second>12</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{CF93FADA-8711-EE4F-A9B5-6A2DEFF289CA}</id>
 			<comment/>
 			<position>
-				<first>521</first>
-				<second>58</second>
+				<first>568</first>
+				<second>53</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{826BE3B9-B3CA-8545-87DD-94DC4BB3C148}</id>
 			<comment/>
 			<position>
-				<first>157</first>
-				<second>156</second>
+				<first>110</first>
+				<second>158</second>
 			</position>
 			<value>0.001</value>
 		</item>
@@ -39,8 +39,8 @@
 			<id>{747ECD24-A611-CD4D-845B-F9C0DA4C7DB1}</id>
 			<comment/>
 			<position>
-				<first>196</first>
-				<second>115</second>
+				<first>194</first>
+				<second>113</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -48,8 +48,8 @@
 			<id>{15D97393-3E2F-2C4D-B7FD-1058659D2674}</id>
 			<comment/>
 			<position>
-				<first>-26</first>
-				<second>115</second>
+				<first>-67</first>
+				<second>109</second>
 			</position>
 			<name>Current luminance</name>
 			<connectable>true</connectable>
@@ -65,8 +65,8 @@ Middle gray
 			]]>
 			</comment>
 			<position>
-				<first>395</first>
-				<second>56</second>
+				<first>392</first>
+				<second>53</second>
 			</position>
 			<value>0.35</value>
 		</item>
@@ -74,24 +74,14 @@ Middle gray
 			<id>{B6AA73FC-EA74-FF40-BD7B-71298F0FBA85}</id>
 			<comment/>
 			<position>
-				<first>629</first>
-				<second>-1</second>
+				<first>628</first>
+				<second>0</second>
 			</position>
 			<name>Input</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
-			<id>{636A0209-7A54-D048-B5C8-2EE35B853304}</id>
-			<comment/>
-			<position>
-				<first>659</first>
-				<second>42</second>
-			</position>
-			<min>0.3</min>
-			<max>2</max>
 		</item>
 		<item type="traktor.render.Max" version="traktor.render.Node:1">
 			<id>{4254E42D-6608-E742-99B9-3B30663FA436}</id>
@@ -145,21 +135,11 @@ Middle gray
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -169,7 +149,7 @@ Middle gray
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -179,17 +159,17 @@ Middle gray
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<name>Input2</name>
 			</destination>
 		</item>

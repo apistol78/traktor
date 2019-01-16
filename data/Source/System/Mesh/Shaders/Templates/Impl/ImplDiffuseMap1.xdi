@@ -2,20 +2,11 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{256E09AE-939C-614F-B27C-7A6E3401CD16}</id>
-			<comment/>
-			<position>
-				<first>1016</first>
-				<second>269</second>
-			</position>
-			<name>T_DiffuseTerm</name>
-		</item>
-		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{16D70EC5-7CDB-3C45-86DD-C5ED438CD1BB}</id>
 			<comment/>
 			<position>
-				<first>1016</first>
-				<second>226</second>
+				<first>1015</first>
+				<second>225</second>
 			</position>
 			<name>T_DiffuseColor</name>
 		</item>
@@ -27,8 +18,8 @@ Tag_DiffuseMap
 			]]>
 			</comment>
 			<position>
-				<first>497</first>
-				<second>114</second>
+				<first>496</first>
+				<second>113</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>PtTexture2D</type>
@@ -37,8 +28,8 @@ Tag_DiffuseMap
 			<id>{BA87573E-AA38-0648-B5B5-910A2F3B2B95}</id>
 			<comment/>
 			<position>
-				<first>651</first>
-				<second>133</second>
+				<first>650</first>
+				<second>132</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -55,16 +46,16 @@ Tag_DiffuseMap
 			<id>{B0F08831-585E-A349-9EC5-9DEF362AD95C}</id>
 			<comment/>
 			<position>
-				<first>856</first>
-				<second>193</second>
+				<first>855</first>
+				<second>192</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{71358FEB-E182-E04A-8F70-2608862FAE1F}</id>
 			<comment/>
 			<position>
-				<first>303</first>
-				<second>249</second>
+				<first>302</first>
+				<second>248</second>
 			</position>
 			<name>T_TexCoord0</name>
 			<connectable>true</connectable>
@@ -76,8 +67,8 @@ Tag_DiffuseMap
 			<id>{38C363F6-2002-6543-9E8B-41A54888DDFC}</id>
 			<comment/>
 			<position>
-				<first>303</first>
-				<second>286</second>
+				<first>302</first>
+				<second>285</second>
 			</position>
 			<name>T_TexCoord1</name>
 			<connectable>true</connectable>
@@ -89,8 +80,8 @@ Tag_DiffuseMap
 			<id>{4AAE8B40-D29D-524A-B3D5-5DC2E94983A5}</id>
 			<comment/>
 			<position>
-				<first>298</first>
-				<second>212</second>
+				<first>297</first>
+				<second>211</second>
 			</position>
 			<name>T_VertexColor</name>
 			<connectable>true</connectable>
@@ -102,8 +93,8 @@ Tag_DiffuseMap
 			<id>{C0D8EE4E-D844-8C42-82B1-1C9E4E033812}</id>
 			<comment/>
 			<position>
-				<first>637</first>
-				<second>273</second>
+				<first>636</first>
+				<second>272</second>
 			</position>
 			<parameterName>Mesh_DiffuseColor</parameterName>
 			<type>PtVector</type>
@@ -117,37 +108,33 @@ Tag_DiffuseColor
 			]]>
 			</comment>
 			<position>
-				<first>474</first>
-				<second>354</second>
+				<first>434</first>
+				<second>344</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 		</item>
-		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
-			<id>{49B1E545-7530-D045-A05C-780624113A5A}</id>
-			<comment/>
-			<position>
-				<first>695</first>
-				<second>366</second>
-			</position>
-			<parameterName>Mesh_DiffuseTerm</parameterName>
-			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{ACF82C63-4162-FC42-945A-1C748F7753A6}</id>
-			<comment>
-			<![CDATA[
-Tag_DiffuseTerm
-			]]>
-			</comment>
-			<position>
-				<first>524</first>
-				<second>437</second>
-			</position>
-			<value>0</value>
-		</item>
 	</nodes>
 	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
@@ -155,77 +142,37 @@ Tag_DiffuseTerm
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
-				<name>Texture</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<name>TexCoord</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Initial</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Initial</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

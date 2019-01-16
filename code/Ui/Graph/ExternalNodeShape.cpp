@@ -237,8 +237,8 @@ void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size&
 			top + i * textHeight
 		);
 
-		const std::wstring& name = pin->getName();
-		Size extent = canvas->getTextExtent(name);
+		const std::wstring& label = pin->getLabel();
+		Size extent = canvas->getTextExtent(label);
 
 		if (pin->isMandatory())
 			canvas->setFont(settings->getFontUnderline());
@@ -248,7 +248,7 @@ void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size&
 				Point(pos.x + ui::dpi96(c_pinNamePad), pos.y - extent.cy / 2),
 				extent
 			),
-			name,
+			label,
 			AnLeft,
 			AnCenter
 		);
@@ -264,15 +264,15 @@ void ExternalNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size&
 			top + i * textHeight
 		);
 
-		const std::wstring& name = pin->getName();
-		Size extent = canvas->getTextExtent(name);
+		const std::wstring& label = pin->getLabel();
+		Size extent = canvas->getTextExtent(label);
 
 		canvas->drawText(
 			Rect(
 				Point(pos.x - extent.cx - ui::dpi96(c_pinNamePad), pos.y - extent.cy / 2),
 				extent
 			),
-			name,
+			label,
 			AnLeft,
 			AnCenter
 		);
@@ -300,9 +300,9 @@ Size ExternalNodeShape::calculateSize(const Node* node) const
 
 	int maxWidthPins[2] = { 0, 0 };
 	for (RefArray< Pin >::const_iterator i = node->getInputPins().begin(); i != node->getInputPins().end(); ++i)
-		maxWidthPins[0] = std::max< int32_t >(maxWidthPins[0], m_graphControl->getFontMetric().getExtent((*i)->getName()).cx);
+		maxWidthPins[0] = std::max< int32_t >(maxWidthPins[0], m_graphControl->getFontMetric().getExtent((*i)->getLabel()).cx);
 	for (RefArray< Pin >::const_iterator i = node->getOutputPins().begin(); i != node->getOutputPins().end(); ++i)
-		maxWidthPins[1] = std::max< int32_t >(maxWidthPins[1], m_graphControl->getFontMetric().getExtent((*i)->getName()).cx);
+		maxWidthPins[1] = std::max< int32_t >(maxWidthPins[1], m_graphControl->getFontMetric().getExtent((*i)->getLabel()).cx);
 
 	int32_t width = maxWidthPins[0] + maxWidthPins[1];
 

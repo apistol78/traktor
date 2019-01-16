@@ -126,9 +126,14 @@ bool Node::isSelected() const
 
 Ref< Pin > Node::createInputPin(const std::wstring& name, bool mandatory)
 {
+	return createInputPin(name, name, mandatory);
+}
+
+Ref< Pin > Node::createInputPin(const std::wstring& name, const std::wstring& label, bool mandatory)
+{
 	T_ASSERT (m_shape);
 
-	Ref< Pin > pin = new Pin(this, name, Pin::DrInput, mandatory);
+	Ref< Pin > pin = new Pin(this, name, label, Pin::DrInput, mandatory);
 	m_inputPins.push_back(pin);
 
 	m_size = m_shape->calculateSize(this);
@@ -153,9 +158,14 @@ Pin* Node::findInputPin(const std::wstring& name) const
 
 Ref< Pin > Node::createOutputPin(const std::wstring& name)
 {
+	return createOutputPin(name, name);
+}
+
+Ref< Pin > Node::createOutputPin(const std::wstring& name, const std::wstring& label)
+{
 	T_ASSERT (m_shape);
 
-	Ref< Pin > pin = new Pin(this, name, Pin::DrOutput, false);
+	Ref< Pin > pin = new Pin(this, name, label, Pin::DrOutput, false);
 	m_outputPins.push_back(pin);
 
 	m_size = m_shape->calculateSize(this);

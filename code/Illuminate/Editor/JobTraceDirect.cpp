@@ -97,7 +97,7 @@ void JobTraceDirect::execute(int32_t tileX, int32_t tileY) const
 					}
 					Scalar shadowAttenuate = Scalar(1.0f - float(shadowCount) / m_shadowSamples);
 
-					radiance += light.sunColor * shadowAttenuate * phi;
+					radiance += light.color * shadowAttenuate * phi;
 				}
 				else if (light.type == 1)	// Point
 				{
@@ -141,7 +141,7 @@ void JobTraceDirect::execute(int32_t tileX, int32_t tileY) const
 						shadowAttenuate = Scalar(1.0f - float(shadowCount) / m_shadowSamples);
 					}
 
-					radiance += light.sunColor * shadowAttenuate * distanceAttenuate * phi;
+					radiance += light.color * shadowAttenuate * distanceAttenuate * phi;
 				}
 				else if (light.type == 2)	// Probe
 				{

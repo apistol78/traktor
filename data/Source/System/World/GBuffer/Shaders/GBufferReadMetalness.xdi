@@ -59,7 +59,7 @@
 				<first>1814</first>
 				<second>158</second>
 			</position>
-			<swizzle>y</swizzle>
+			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{AF4886C9-831A-8647-A366-7FCA92975987}</id>

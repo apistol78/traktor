@@ -1,12 +1,6 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ColorPropertyItem_H
-#define traktor_ui_ColorPropertyItem_H
+#pragma once
 
+#include "Core/Math/Color4f.h"
 #include "Ui/PropertyList/PropertyItem.h"
 
 // import/export mechanism.
@@ -30,11 +24,13 @@ class T_DLLCLASS ColorPropertyItem : public PropertyItem
 	T_RTTI_CLASS;
 
 public:
-	ColorPropertyItem(const std::wstring& text, const Color4ub& value);
+	ColorPropertyItem(const std::wstring& text, const Color4f& value, bool hdr);
 
-	void setValue(const Color4ub& value);
+	void setValue(const Color4f& value);
 
-	const Color4ub& getValue() const;
+	const Color4f& getValue() const;
+
+	bool getHighDynamicRange() const;
 
 protected:
 	virtual void mouseButtonUp(MouseButtonUpEvent* event) override;
@@ -42,11 +38,10 @@ protected:
 	virtual void paintValue(Canvas& canvas, const Rect& rc) override;
 
 private:
-	Color4ub m_value;
+	Color4f m_value;
+	bool m_hdr;
 	Rect m_rcColor;
 };
 
 	}
 }
-
-#endif	// traktor_ui_ColorPropertyItem_H
