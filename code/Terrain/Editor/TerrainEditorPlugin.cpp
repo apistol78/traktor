@@ -350,11 +350,11 @@ void TerrainEditorPlugin::eventColorClick(ui::MouseButtonUpEvent* event)
 		m_parent,
 		i18n::Text(L"COLOR_DIALOG_TEXT"),
 		ui::ColorDialog::WsDefaultFixed,
-		m_colorControl->getColor()
+		Color4f::fromColor4ub(m_colorControl->getColor())
 	);
 	if (colorDialog.showModal() == ui::DrOk)
 	{
-		Color4ub color = colorDialog.getColor();
+		Color4ub color = colorDialog.getColor().toColor4ub();
 		m_colorControl->setColor(color);
 		m_terrainEditModifier->setColor(Color4f(
 			color.r / 255.0f,

@@ -131,9 +131,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 
 		return new DirectionalLightEntity(
 			directionalLightData->getTransform(),
-			directionalLightData->getSunColor(),
-			directionalLightData->getBaseColor(),
-			directionalLightData->getShadowColor(),
+			directionalLightData->getColor(),
 			cloudShadowTexture,
 			directionalLightData->getCastShadow()
 		);
@@ -143,9 +141,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 	{
 		return new PointLightEntity(
 			pointLightData->getTransform(),
-			pointLightData->getSunColor(),
-			pointLightData->getBaseColor(),
-			pointLightData->getShadowColor(),
+			pointLightData->getColor(),
 			pointLightData->getRange(),
 			pointLightData->getRandomFlickerAmount(),
 			pointLightData->getRandomFlickerFilter()
@@ -156,9 +152,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 	{
 		return new SpotLightEntity(
 			spotLightData->getTransform(),
-			spotLightData->getSunColor(),
-			spotLightData->getBaseColor(),
-			spotLightData->getShadowColor(),
+			spotLightData->getColor(),
 			spotLightData->getRange(),
 			spotLightData->getRadius(),
 			spotLightData->getCastShadow()
@@ -252,9 +246,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 
 		return new LightComponent(
 			lightComponentData->getLightType(),
-			lightComponentData->getSunColor(),
-			lightComponentData->getBaseColor(),
-			lightComponentData->getShadowColor(),
+			lightComponentData->getColor(),
 			probeDiffuseTexture,
 			probeSpecularTexture,
 			cloudShadowTexture,

@@ -352,9 +352,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		light.type = world::LtDirectional;
 		light.position = Vector4::origo();
 		light.direction = Vector4(0.0f, 1.0f, 0.0f);
-		light.sunColor = Vector4(1.0f, 1.0f, 1.0f);
-		light.baseColor = Vector4(0.6f, 0.6f, 0.6f);
-		light.shadowColor = Vector4(0.3f, 0.3f, 0.3f);
+		light.color = Vector4(1.0f, 1.0f, 1.0f);
 		light.range = Scalar(0.0f);
 		light.radius = Scalar(0.0f);
 		light.castShadow = false;

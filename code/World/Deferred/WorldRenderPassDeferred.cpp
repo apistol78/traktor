@@ -30,9 +30,7 @@ render::handle_t s_handleFogEnable;
 render::handle_t s_handleDepthEnable;
 render::handle_t s_handleLightPositionAndType;
 render::handle_t s_handleLightDirectionAndRange;
-render::handle_t s_handleLightSunColor;
-render::handle_t s_handleLightBaseColor;
-render::handle_t s_handleLightShadowColor;
+render::handle_t s_handleLightColor;
 
 void initializeHandles()
 {
@@ -50,9 +48,7 @@ void initializeHandles()
 	s_handleDepthEnable = render::getParameterHandle(L"World_DepthEnable");
 	s_handleLightPositionAndType = render::getParameterHandle(L"World_LightPositionAndType");
 	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
-	s_handleLightSunColor = render::getParameterHandle(L"World_LightSunColor");
-	s_handleLightBaseColor = render::getParameterHandle(L"World_LightBaseColor");
-	s_handleLightShadowColor = render::getParameterHandle(L"World_LightShadowColor");
+	s_handleLightColor = render::getParameterHandle(L"World_LightColor");
 
 	s_handlesInitialized = true;
 }
@@ -159,9 +155,7 @@ void WorldRenderPassDeferred::setLightProgramParameters(render::ProgramParameter
 	// Pack light parameters.
 	Vector4 lightPositionAndType[MaxForwardLightCount], *lightPositionAndTypePtr = lightPositionAndType;
 	Vector4 lightDirectionAndRange[MaxForwardLightCount], *lightDirectionAndRangePtr = lightDirectionAndRange;
-	Vector4 lightSunColor[MaxForwardLightCount], *lightSunColorPtr = lightSunColor;
-	Vector4 lightBaseColor[MaxForwardLightCount], *lightBaseColorPtr = lightBaseColor;
-	Vector4 lightShadowColor[MaxForwardLightCount], *lightShadowColorPtr = lightShadowColor;
+	Vector4 lightColor[MaxForwardLightCount], *lightColorPtr = lightColor;
 
 	int lightCount = std::min< int >(m_worldRenderView.getLightCount(), MaxForwardLightCount);
 	for (int i = 0; i < lightCount; ++i)
@@ -169,9 +163,7 @@ void WorldRenderPassDeferred::setLightProgramParameters(render::ProgramParameter
 		const Light& light = m_worldRenderView.getLight(i);
 		*lightPositionAndTypePtr++ = (view * light.position).xyz0() + Vector4(0.0f, 0.0f, 0.0f, float(light.type));
 		*lightDirectionAndRangePtr++ = (view * light.direction).xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
-		*lightSunColorPtr++ = light.sunColor;
-		*lightBaseColorPtr++ = light.baseColor;
-		*lightShadowColorPtr++ = light.shadowColor;
+		*lightColorPtr++ = light.color;
 	}
 
 	// Disable excessive lights.
@@ -180,17 +172,13 @@ void WorldRenderPassDeferred::setLightProgramParameters(render::ProgramParameter
 		const static Vector4 c_typeDisabled(0.0f, 0.0f, 0.0f, float(LtDisabled));
 		*lightPositionAndTypePtr++ = c_typeDisabled;
 		*lightDirectionAndRangePtr++ = Vector4::zero();
-		*lightSunColorPtr++ = Vector4::zero();
-		*lightBaseColorPtr++ = Vector4::zero();
-		*lightShadowColorPtr++ = Vector4::zero();
+		*lightColorPtr++ = Vector4::zero();
 	}
 
 	// Finally set shader parameters.
 	programParams->setVectorArrayParameter(s_handleLightPositionAndType, lightPositionAndType, MaxForwardLightCount);
 	programParams->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, MaxForwardLightCount);
-	programParams->setVectorArrayParameter(s_handleLightSunColor, lightSunColor, MaxForwardLightCount);
-	programParams->setVectorArrayParameter(s_handleLightBaseColor, lightBaseColor, MaxForwardLightCount);
-	programParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, MaxForwardLightCount);
+	programParams->setVectorArrayParameter(s_handleLightColor, lightColor, MaxForwardLightCount);
 }
 
 	}

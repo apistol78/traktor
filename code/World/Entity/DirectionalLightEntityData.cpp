@@ -1,9 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
+#include "Core/Serialization/AttributeHdr.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Render/ITexture.h"
@@ -15,12 +10,10 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.DirectionalLightEntityData", 2, DirectionalLightEntityData, EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.DirectionalLightEntityData", 3, DirectionalLightEntityData, EntityData)
 
 DirectionalLightEntityData::DirectionalLightEntityData()
-:	m_sunColor(1.0f, 1.0f, 1.0f, 0.0f)
-,	m_baseColor(0.5f, 0.5f, 0.5f, 0.0f)
-,	m_shadowColor(0.0f, 0.0f, 0.0f, 0.0f)
+:	m_color(1.0f, 1.0f, 1.0f, 0.0f)
 ,	m_castShadow(true)
 {
 }
@@ -29,9 +22,17 @@ void DirectionalLightEntityData::serialize(ISerializer& s)
 {
 	EntityData::serialize(s);
 
-	s >> Member< Vector4 >(L"sunColor", m_sunColor);
-	s >> Member< Vector4 >(L"baseColor", m_baseColor);
-	s >> Member< Vector4 >(L"shadowColor", m_shadowColor);
+	if (s.getVersion() >= 3)
+		s >> Member< Vector4 >(L"color", m_color, AttributeHdr());
+	else
+	{
+		Vector4 baseColor = Vector4::zero();
+		Vector4 shadowColor = Vector4::zero();
+
+		s >> Member< Vector4 >(L"sunColor", m_color);
+		s >> Member< Vector4 >(L"baseColor", baseColor);
+		s >> Member< Vector4 >(L"shadowColor", shadowColor);
+	}
 
 	if (s.getVersion() >= 2)
 		s >> resource::Member< render::ITexture >(L"cloudShadowTexture", m_cloudShadowTexture);

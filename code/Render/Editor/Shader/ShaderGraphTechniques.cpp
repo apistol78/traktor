@@ -47,81 +47,80 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 {
 	Ref< ShaderGraph > shaderGraphOpt = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
 
+	// Constant fold entire graph so disabled outputs can be efficiently evaluated.
+	if (shaderGraphOpt)
+		shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt).getConstantFolded();
+	if (shaderGraphOpt)
+		shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt).removeDisabledOutputs();
+	
 	// Get all technique names.
-	std::set< std::wstring > names;
-
-	const RefArray< Node >& nodes = shaderGraphOpt->getNodes();
-	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	if (shaderGraphOpt)
 	{
-		if (VertexOutput* vertexOutput = dynamic_type_cast< VertexOutput* >(*i))
+		std::set< std::wstring > names;
+
+		const RefArray< Node >& nodes = shaderGraphOpt->getNodes();
+		for (const auto node : nodes)
 		{
-			if (!vertexOutput->getTechnique().empty())
-				names.insert(vertexOutput->getTechnique());
-		}
-		else if (PixelOutput* pixelOutput = dynamic_type_cast< PixelOutput* >(*i))
-			names.insert(pixelOutput->getTechnique());
-		else if (ComputeOutput* computeOutput = dynamic_type_cast< ComputeOutput* >(*i))
-			names.insert(computeOutput->getTechnique());
-	}
-
-	// Generate each technique.
-	for (std::set< std::wstring >::const_iterator i = names.begin(); i != names.end(); ++i)
-	{
-		RefArray< Node > roots;
-
-		bool foundNamedVertexOutput = false;
-
-		// Find named output nodes.
-		for (RefArray< Node >::const_iterator j = nodes.begin(); j != nodes.end(); ++j)
-		{
-			if (VertexOutput* vertexOutput = dynamic_type_cast< VertexOutput* >(*j))
-			{
-				if (vertexOutput->getTechnique() == *i)
-				{
-					roots.push_back(vertexOutput);
-					foundNamedVertexOutput = true;
-				}
-			}
-			else if (PixelOutput* pixelOutput = dynamic_type_cast< PixelOutput* >(*j))
-			{
-				if (pixelOutput->getTechnique() == *i)
-					roots.push_back(pixelOutput);
-			}
-			else if (ComputeOutput* computeOutput = dynamic_type_cast< ComputeOutput* >(*j))
-			{
-				if (computeOutput->getTechnique() == *i)
-					roots.push_back(computeOutput);
-			}
-			else
-			{
-				const INodeTraits* traits = INodeTraits::find(*j);
-				T_FATAL_ASSERT (traits);
-
-				if (traits->isRoot(shaderGraphOpt, *j))
-					roots.push_back(*j);
-			}
+			if (PixelOutput* pixelOutput = dynamic_type_cast< PixelOutput* >(node))
+				names.insert(pixelOutput->getTechnique());
+			else if (ComputeOutput* computeOutput = dynamic_type_cast< ComputeOutput* >(node))
+				names.insert(computeOutput->getTechnique());
 		}
 
-		// If no explicit named vertex output we'll try to find an unnamed vertex output.
-		if (!foundNamedVertexOutput)
+		// Generate each technique.
+		for (const auto& name : names)
 		{
+			RefArray< Node > roots;
+
+			bool foundNamedVertexOutput = false;
+
+			// Find named output nodes.
 			for (RefArray< Node >::const_iterator j = nodes.begin(); j != nodes.end(); ++j)
 			{
-				VertexOutput* vertexOutput = dynamic_type_cast< VertexOutput* >(*j);
-				if (vertexOutput && vertexOutput->getTechnique().empty())
-					roots.push_back(vertexOutput);
+				if (VertexOutput* vertexOutput = dynamic_type_cast< VertexOutput* >(*j))
+				{
+					if (vertexOutput->getTechnique() == name)
+					{
+						roots.push_back(vertexOutput);
+						foundNamedVertexOutput = true;
+					}
+				}
+				else if (PixelOutput* pixelOutput = dynamic_type_cast< PixelOutput* >(*j))
+				{
+					if (pixelOutput->getTechnique() == name)
+						roots.push_back(pixelOutput);
+				}
+				else if (ComputeOutput* computeOutput = dynamic_type_cast< ComputeOutput* >(*j))
+				{
+					if (computeOutput->getTechnique() == name)
+						roots.push_back(computeOutput);
+				}
+				else
+				{
+					const INodeTraits* traits = INodeTraits::find(*j);
+					T_FATAL_ASSERT (traits);
+
+					if (traits->isRoot(shaderGraphOpt, *j))
+						roots.push_back(*j);
+				}
 			}
+
+			// If no explicit named vertex output we'll try to find an unnamed vertex output.
+			if (!foundNamedVertexOutput)
+			{
+				for (RefArray< Node >::const_iterator j = nodes.begin(); j != nodes.end(); ++j)
+				{
+					VertexOutput* vertexOutput = dynamic_type_cast< VertexOutput* >(*j);
+					if (vertexOutput && vertexOutput->getTechnique().empty())
+						roots.push_back(vertexOutput);
+				}
+			}
+
+			CopyVisitor visitor;
+			visitor.m_shaderGraph = new ShaderGraph();
+			ShaderGraphTraverse(shaderGraphOpt, roots).preorder(visitor);
+			m_techniques[name] = visitor.m_shaderGraph;
 		}
-
-		CopyVisitor visitor;
-		visitor.m_shaderGraph = new ShaderGraph();
-		ShaderGraphTraverse(shaderGraphOpt, roots).preorder(visitor);
-
-		// Finally constant fold technique; this might return null which is fully valid as the
-		// entire graph is collapsed to void, i.e doesn't produce any output, thus we ignore this technique.
-		Ref< ShaderGraph > shaderGraphTechnique = ShaderGraphStatic(visitor.m_shaderGraph).getConstantFolded();
-		if (shaderGraphTechnique)
-			m_techniques[*i] = shaderGraphTechnique;
 	}
 }
 

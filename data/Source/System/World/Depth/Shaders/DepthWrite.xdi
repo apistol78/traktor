@@ -5,8 +5,8 @@
 			<id>{65E44F43-651C-9A46-99C8-3C1441AD8CD3}</id>
 			<comment/>
 			<position>
-				<first>675</first>
-				<second>313</second>
+				<first>674</first>
+				<second>312</second>
 			</position>
 			<technique>World_DepthWrite</technique>
 			<priority>
@@ -53,8 +53,8 @@
 			<id>{C74C6FD3-F49C-A141-A38F-8B58F3DC1925}</id>
 			<comment/>
 			<position>
-				<first>318</first>
-				<second>349</second>
+				<first>317</first>
+				<second>348</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -62,8 +62,8 @@
 			<id>{0F124D64-F889-B346-A287-1E1E13CCA54F}</id>
 			<comment/>
 			<position>
-				<first>-24</first>
-				<second>349</second>
+				<first>-23</first>
+				<second>348</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -75,8 +75,8 @@
 			<id>{02ABC34A-FAA4-B049-AEEF-CA0790E14D57}</id>
 			<comment/>
 			<position>
-				<first>402</first>
-				<second>417</second>
+				<first>401</first>
+				<second>416</second>
 			</position>
 			<technique>World_DepthWrite</technique>
 		</item>
@@ -84,16 +84,16 @@
 			<id>{5035E4C1-5676-8F41-80AA-ACA3CC43C029}</id>
 			<comment/>
 			<position>
-				<first>193</first>
-				<second>397</second>
+				<first>192</first>
+				<second>396</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{E81E7A46-B74E-CD4A-8DDF-C1CD865A30C8}</id>
 			<comment/>
 			<position>
-				<first>-75</first>
-				<second>455</second>
+				<first>-74</first>
+				<second>454</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
@@ -103,9 +103,22 @@
 			<id>{F7EF15CA-9975-B44D-A0C7-EC9F82BF02DB}</id>
 			<comment/>
 			<position>
-				<first>405</first>
-				<second>349</second>
+				<first>404</first>
+				<second>348</second>
 			</position>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{6B023479-472A-46EF-B61F-6DB53ADA26DE}</id>
+			<comment/>
+			<position>
+				<first>405</first>
+				<second>283</second>
+			</position>
+			<name>Enable</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -167,6 +180,16 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Enable</name>
 			</destination>
 		</item>
 	</edges>

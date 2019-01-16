@@ -71,10 +71,6 @@
 			<shader>{682F3EA4-A7C6-4D44-9079-E0B2DBA32911}</shader>
 			<sources>
 				<item>
-					<param>Source</param>
-					<source>InputColor</source>
-				</item>
-				<item>
 					<param>Depth</param>
 					<source>InputDepth</source>
 				</item>

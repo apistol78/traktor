@@ -275,49 +275,6 @@ bool ConditionalNodeTraits::evaluatePartial(
 			return true;
 		}
 	}
-	else if (const Discard* discard = dynamic_type_cast< const Discard* >(node))
-	{
-		if (inputConstants[0].isConst(0) && inputConstants[1].isConst(0))
-		{
-			bool result = false;
-			switch (discard->getOperator())
-			{
-			case Discard::CoLess:
-				result = inputConstants[0].x() < inputConstants[1].x();
-				break;
-
-			case Discard::CoLessEqual:
-				result = inputConstants[0].x() <= inputConstants[1].x();
-				break;
-
-			case Discard::CoEqual:
-				result = inputConstants[0].x() == inputConstants[1].x();
-				break;
-
-			case Discard::CoNotEqual:
-				result = inputConstants[0].x() != inputConstants[1].x();
-				break;
-
-			case Discard::CoGreater:
-				result = inputConstants[0].x() > inputConstants[1].x();
-				break;
-
-			case Discard::CoGreaterEqual:
-				result = inputConstants[0].x() >= inputConstants[1].x();
-				break;
-
-			default:
-				return false;
-			}
-
-			if (result)
-				foldOutputPin = inputOutputPins[2];
-			else
-				foldOutputPin = 0;
-
-			return true;
-		}
-	}
 	return false;
 }
 

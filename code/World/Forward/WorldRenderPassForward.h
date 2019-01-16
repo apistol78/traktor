@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_WorldRenderPassForward_H
-#define traktor_world_WorldRenderPassForward_H
+#pragma once
 
 #include "World/IWorldRenderPass.h"
 
@@ -43,6 +36,7 @@ public:
 		render::handle_t technique,
 		const WorldRenderView& worldRenderView,
 		uint32_t passFlags,
+		const Vector4& ambientColor,
 		bool fogEnabled,
 		float fogDistanceY,
 		float fogDistanceZ,
@@ -81,6 +75,7 @@ private:
 	const WorldRenderView& m_worldRenderView;
 	Matrix44 m_viewInverse;
 	uint32_t m_passFlags;
+	Vector4 m_ambientColor;
 	bool m_fogEnabled;
 	float m_fogDistanceY;
 	float m_fogDistanceZ;
@@ -108,5 +103,3 @@ private:
 	
 	}
 }
-
-#endif	// traktor_world_WorldRenderPassForward_H

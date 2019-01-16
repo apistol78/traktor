@@ -90,6 +90,30 @@ T_MATH_INLINE void Color4f::setAlpha(const Scalar& alpha)
 	m_data.set(3, alpha);
 }
 
+T_MATH_INLINE Scalar Color4f::getEV() const
+{
+	float ev = 0.0f;
+	float mx = 1.0f;
+	float mg = m_data.xyz0().max();
+	while (mg > mx)
+	{
+		ev += 1.0f;
+		mx = std::pow(2.0f, ev + 1.0f);
+	}
+	return Scalar(ev);
+}
+
+T_MATH_INLINE void Color4f::setEV(const Scalar& ev)
+{
+	Scalar ev0 = getEV();
+
+	float mn0 = ev0 > 0.0f ? std::pow(2.0f, ev0) : 0.0f;
+	m_data -= Vector4(mn0, mn0, mn0, 0.0f);
+
+	float mn = ev > 0.0f ? std::pow(2.0f, ev) : 0.0f;
+	m_data += Vector4(mn, mn, mn, 0.0f);
+}
+
 T_MATH_INLINE Color4f Color4f::saturated() const
 {
 	return Color4f(traktor::max(traktor::min(m_data, Vector4(1.0f, 1.0f, 1.0f, 1.0f)), Vector4(0.0f, 0.0f, 0.0f, 0.0f)));
@@ -142,6 +166,16 @@ T_MATH_INLINE Color4f Color4f::loadUnaligned(const float* in)
 {
 	T_ASSERT (in);
 	return Color4f(Vector4::loadUnaligned(in));
+}
+
+T_MATH_INLINE Color4f Color4f::fromColor4ub(const Color4ub& in)
+{
+	return Color4f(
+		float(in.r) / 255.0f,
+		float(in.g) / 255.0f,
+		float(in.b) / 255.0f,
+		float(in.a) / 255.0f
+	);
 }
 
 T_MATH_INLINE void Color4f::storeAligned(float* out) const

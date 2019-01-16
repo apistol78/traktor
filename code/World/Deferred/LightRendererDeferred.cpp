@@ -58,9 +58,8 @@ render::handle_t s_handleProbeSpecular;
 render::handle_t s_handleLightPosition;
 render::handle_t s_handleLightPositionAndRadius;
 render::handle_t s_handleLightDirectionAndRange;
-render::handle_t s_handleLightSunColor;
-render::handle_t s_handleLightBaseColor;
-render::handle_t s_handleLightShadowColor;
+render::handle_t s_handleLightColor;
+render::handle_t s_handleLightAmbientColor;
 render::handle_t s_handleFogDistanceAndDensity;
 render::handle_t s_handleFogColor;
 
@@ -103,9 +102,8 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleLightPosition = render::getParameterHandle(L"World_LightPosition");
 	s_handleLightPositionAndRadius = render::getParameterHandle(L"World_LightPositionAndRadius");
 	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
-	s_handleLightSunColor = render::getParameterHandle(L"World_LightSunColor");
-	s_handleLightBaseColor = render::getParameterHandle(L"World_LightBaseColor");
-	s_handleLightShadowColor = render::getParameterHandle(L"World_LightShadowColor");
+	s_handleLightColor = render::getParameterHandle(L"World_LightColor");
+	s_handleLightAmbientColor = render::getParameterHandle(L"World_LightAmbientColor");
 	s_handleFogDistanceAndDensity = render::getParameterHandle(L"World_FogDistanceAndDensity");
 	s_handleFogColor = render::getParameterHandle(L"World_FogColor");
 }
@@ -178,8 +176,8 @@ void LightRendererDeferred::renderLight(
 	Scalar p11 = projection.get(0, 0);
 	Scalar p22 = projection.get(1, 1);
 
-	Vector4 sunColorAndIntensity = light.sunColor;
-	sunColorAndIntensity.set(3, dot3(light.sunColor, Vector4(0.2125f, 0.7154f, 0.0721f, 0.0f)));
+	Vector4 colorAndIntensity = light.color;
+	colorAndIntensity.set(3, dot3(light.color, Vector4(0.2125f, 0.7154f, 0.0721f, 0.0f)));
 
 	if (light.type == LtDirectional)
 	{
@@ -198,9 +196,7 @@ void LightRendererDeferred::renderLight(
 		m_lightDirectionalShader->setTextureParameter(s_handleMiscMap, miscMap);
 		m_lightDirectionalShader->setTextureParameter(s_handleColorMap, colorMap);
 		m_lightDirectionalShader->setVectorParameter(s_handleLightDirectionAndRange, lightDirectionAndRange);
-		m_lightDirectionalShader->setVectorParameter(s_handleLightSunColor, sunColorAndIntensity);
-		m_lightDirectionalShader->setVectorParameter(s_handleLightBaseColor, light.baseColor);
-		m_lightDirectionalShader->setVectorParameter(s_handleLightShadowColor, light.shadowColor);
+		m_lightDirectionalShader->setVectorParameter(s_handleLightColor, colorAndIntensity);
 
 		m_lightDirectionalShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 	}
@@ -274,9 +270,7 @@ void LightRendererDeferred::renderLight(
 		m_lightPointShader->setTextureParameter(s_handleColorMap, colorMap);
 		m_lightPointShader->setVectorParameter(s_handleLightPosition, lightPosition);
 		m_lightPointShader->setVectorParameter(s_handleLightDirectionAndRange, lightDirectionAndRange);
-		m_lightPointShader->setVectorParameter(s_handleLightSunColor, sunColorAndIntensity);
-		m_lightPointShader->setVectorParameter(s_handleLightBaseColor, light.baseColor);
-		m_lightPointShader->setVectorParameter(s_handleLightShadowColor, light.shadowColor);
+		m_lightPointShader->setVectorParameter(s_handleLightColor, colorAndIntensity);
 
 		m_lightPointShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 	}
@@ -353,9 +347,7 @@ void LightRendererDeferred::renderLight(
 		m_lightSpotShader->setTextureParameter(s_handleColorMap, colorMap);
 		m_lightSpotShader->setVectorParameter(s_handleLightPositionAndRadius, lightPositionAndRadius);
 		m_lightSpotShader->setVectorParameter(s_handleLightDirectionAndRange, lightDirectionAndRange);
-		m_lightSpotShader->setVectorParameter(s_handleLightSunColor, sunColorAndIntensity);
-		m_lightSpotShader->setVectorParameter(s_handleLightBaseColor, light.baseColor);
-		m_lightSpotShader->setVectorParameter(s_handleLightShadowColor, light.shadowColor);
+		m_lightSpotShader->setVectorParameter(s_handleLightColor, colorAndIntensity);
 
 		m_lightSpotShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 	}
@@ -379,6 +371,7 @@ void LightRendererDeferred::renderFinalColor(
 	float time,
 	const Matrix44& projection,
 	const Matrix44& view,
+	const Vector4& ambientColor,
 	render::ITexture* depthMap,
 	render::ITexture* normalMap,
 	render::ITexture* miscMap,
@@ -393,6 +386,7 @@ void LightRendererDeferred::renderFinalColor(
 	m_finalColorShader->setMatrixParameter(s_handleProjection, projection);
 	m_finalColorShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 	m_finalColorShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	m_finalColorShader->setVectorParameter(s_handleLightAmbientColor, ambientColor);
 	m_finalColorShader->setTextureParameter(s_handleDepthMap, depthMap);
 	m_finalColorShader->setTextureParameter(s_handleNormalMap, normalMap);
 	m_finalColorShader->setTextureParameter(s_handleMiscMap, miscMap);

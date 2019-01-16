@@ -5,8 +5,8 @@
 			<id>{39749CD5-03F0-D045-99EC-E01C2D775486}</id>
 			<comment/>
 			<position>
-				<first>813</first>
-				<second>286</second>
+				<first>1042</first>
+				<second>161</second>
 			</position>
 			<name>UV</name>
 			<connectable>true</connectable>
@@ -18,8 +18,8 @@
 			<id>{B350D788-DF12-6A40-922B-5737E4CB7880}</id>
 			<comment/>
 			<position>
-				<first>1893</first>
-				<second>185</second>
+				<first>1546</first>
+				<second>146</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -27,8 +27,8 @@
 			<id>{3599DB31-534A-F444-B864-75DEECFC3417}</id>
 			<comment/>
 			<position>
-				<first>1310</first>
-				<second>115</second>
+				<first>1308</first>
+				<second>113</second>
 			</position>
 			<fragmentGuid>{D5AA3EC3-E59A-5B45-A5C5-D863B4E91EE3}</fragmentGuid>
 			<inputPins>
@@ -55,8 +55,8 @@
 			<id>{FD8EF879-3ABA-7C43-99D8-DE17D5DCDF86}</id>
 			<comment/>
 			<position>
-				<first>705</first>
-				<second>24</second>
+				<first>1022</first>
+				<second>65</second>
 			</position>
 			<parameterName>World_NormalMap</parameterName>
 			<type>PtTexture2D</type>

@@ -106,10 +106,6 @@ bool WorldRendererForward::create(
 
 	m_frames.resize(desc.frameCount);
 
-	float fogColor[4];
-	m_settings.fogColor.getRGBA32F(fogColor);
-	m_fogColor = Vector4::loadUnaligned(fogColor);
-
 	// Create post process target pool to enable sharing of targets between multiple processes.
 	Ref< render::ImageProcessTargetPool > postProcessTargetPool = new render::ImageProcessTargetPool(renderSystem);
 
@@ -1010,12 +1006,13 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int fr
 		s_techniqueDefault,
 		worldRenderView,
 		IWorldRenderPass::PfLast,
+		m_settings.ambientColor,
 		m_settings.fog,
 		m_settings.fogDistanceY,
 		m_settings.fogDistanceZ,
 		m_settings.fogDensityY,
 		m_settings.fogDensityZ,
-		m_fogColor,
+		m_settings.fogColor,
 		0,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
 		shadowMask->getColorTexture(0)
@@ -1040,12 +1037,13 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, int 
 		s_techniqueDefault,
 		worldRenderView,
 		(!m_settings.depthPass && m_shadowsQuality == QuDisabled) ? (IWorldRenderPass::PfFirst | IWorldRenderPass::PfLast) : IWorldRenderPass::PfLast,
+		m_settings.ambientColor,
 		m_settings.fog,
 		m_settings.fogDistanceY,
 		m_settings.fogDistanceZ,
 		m_settings.fogDensityY,
 		m_settings.fogDensityZ,
-		m_fogColor,
+		m_settings.fogColor,
 		0,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
 		0

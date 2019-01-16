@@ -69,9 +69,7 @@ struct Light
 	LightType type;
 	Vector4 position;
 	Vector4 direction;
-	Vector4 sunColor;
-	Vector4 baseColor;
-	Vector4 shadowColor;
+	Vector4 color;
 	Scalar range;
 	Scalar radius;
 	LightProbe probe;

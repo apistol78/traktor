@@ -15,17 +15,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.SpotLightEntity", SpotLightEntity, Entity
 
 SpotLightEntity::SpotLightEntity(
 	const Transform& transform,
-	const Vector4& sunColor,
-	const Vector4& baseColor,
-	const Vector4& shadowColor,
+	const Vector4& color,
 	float range,
 	float radius,
 	bool castShadow
 )
 :	m_transform(transform)
-,	m_sunColor(sunColor)
-,	m_baseColor(baseColor)
-,	m_shadowColor(shadowColor)
+,	m_color(color)
 ,	m_range(range)
 ,	m_radius(radius)
 ,	m_castShadow(castShadow)

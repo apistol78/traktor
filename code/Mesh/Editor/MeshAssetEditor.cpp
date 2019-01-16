@@ -455,7 +455,7 @@ void MeshAssetEditor::updateMaterialList()
 				if (modelTextures[j] == i->getDiffuseMap().name)
 					ss << L" | Diffuse";
 				if (modelTextures[j] == i->getSpecularMap().name)
-					ss << L" | Specular";
+					ss << L" | Specular (*)";
 				if (modelTextures[j] == i->getRoughnessMap().name)
 					ss << L" | Roughness";
 				if (modelTextures[j] == i->getMetalnessMap().name)
@@ -465,7 +465,7 @@ void MeshAssetEditor::updateMaterialList()
 				if (modelTextures[j] == i->getEmissiveMap().name)
 					ss << L" | Emissive";
 				if (modelTextures[j] == i->getReflectiveMap().name)
-					ss << L" | Reflective";
+					ss << L" | Reflective (*)";
 				if (modelTextures[j] == i->getNormalMap().name)
 					ss << L" | Normal";
 				textureItem->add(new ui::GridItem(ss.str().substr(3)));

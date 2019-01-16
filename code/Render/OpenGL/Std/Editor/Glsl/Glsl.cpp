@@ -32,7 +32,7 @@ bool Glsl::generate(
 
 	if (vertexOutputs.size() != 1 || pixelOutputs.size() != 1)
 	{
-		log::error << L"Unable to generate GLSL shader; incorrect number of outputs" << Endl;
+		log::error << L"Unable to generate GLSL shader; incorrect number of outputs (" << vertexOutputs.size() << L" vertex-, " << pixelOutputs.size() << L" pixel outputs)." << Endl;
 		return false;
 	}
 

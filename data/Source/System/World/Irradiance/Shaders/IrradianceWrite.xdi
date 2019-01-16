@@ -5,8 +5,8 @@
 			<id>{3A13FF6D-318D-BA4A-AD8C-EE4BA9531795}</id>
 			<comment/>
 			<position>
-				<first>1464</first>
-				<second>618</second>
+				<first>1463</first>
+				<second>617</second>
 			</position>
 			<technique>World_IrradianceWrite</technique>
 			<priority>
@@ -54,12 +54,25 @@
 			<comment/>
 			<position>
 				<first>1050</first>
-				<second>646</second>
+				<second>645</second>
 			</position>
 			<name>Irradiance</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{D2F30CBD-E1C1-4AD0-81DA-FA92D9C627C5}</id>
+			<comment/>
+			<position>
+				<first>1070</first>
+				<second>606</second>
+			</position>
+			<name>Enable</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
@@ -72,6 +85,16 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Enable</name>
 			</destination>
 		</item>
 	</edges>

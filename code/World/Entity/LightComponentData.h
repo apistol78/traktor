@@ -1,13 +1,6 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_LightComponentData_H
-#define traktor_world_LightComponentData_H
+#pragma once
 
-#include "Core/Math/Vector4.h"
+#include "Core/Math/Color4f.h"
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
 #include "World/WorldTypes.h"
@@ -48,17 +41,9 @@ public:
 
 	LightType getLightType() const { return m_lightType; }
 
-	void setSunColor(const Vector4& sunColor) { m_sunColor = sunColor; }
+	void setColor(const Color4f& color) { m_color = color; }
 
-	const Vector4& getSunColor() const { return m_sunColor; }
-
-	void setBaseColor(const Vector4& baseColor) { m_baseColor = baseColor; }
-
-	const Vector4& getBaseColor() const { return m_baseColor; }
-
-	void setShadowColor(const Vector4& shadowColor) { m_shadowColor = shadowColor; }
-
-	const Vector4& getShadowColor() const { return m_shadowColor; }
+	const Color4f& getColor() const { return m_color; }
 
 	void setProbeDiffuseTexture(const resource::Id< render::ITexture >& probeTexture) { m_probeDiffuseTexture = probeTexture; }
 
@@ -94,9 +79,7 @@ public:
 
 private:
 	LightType m_lightType;
-	Vector4 m_sunColor;
-	Vector4 m_baseColor;
-	Vector4 m_shadowColor;
+	Color4f m_color;
 	resource::Id< render::ITexture > m_probeDiffuseTexture;
 	resource::Id< render::ITexture > m_probeSpecularTexture;
 	resource::Id< render::ITexture > m_cloudShadowTexture;
@@ -109,5 +92,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_world_LightComponentData_H

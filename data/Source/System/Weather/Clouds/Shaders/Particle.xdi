@@ -5,8 +5,8 @@
 			<id>{8A2194D7-49D9-B643-A76C-23294ED59CDC}</id>
 			<comment/>
 			<position>
-				<first>132</first>
-				<second>-159</second>
+				<first>130</first>
+				<second>-157</second>
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
@@ -16,8 +16,8 @@
 			<id>{B5135F46-4AF4-6748-8F8A-76D628EC5A8F}</id>
 			<comment/>
 			<position>
-				<first>-307</first>
-				<second>11</second>
+				<first>-305</first>
+				<second>9</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -28,24 +28,24 @@
 			<id>{DEB359F9-BBE2-0546-B27B-475428D27588}</id>
 			<comment/>
 			<position>
-				<first>303</first>
-				<second>-242</second>
+				<first>301</first>
+				<second>-240</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{1C59ECC4-4154-524A-9139-E311BF7301C6}</id>
 			<comment/>
 			<position>
-				<first>475</first>
-				<second>-242</second>
+				<first>473</first>
+				<second>-240</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1,traktor.render.Node:1">
 			<id>{84815E21-983D-414A-BEC7-45638AFD13EC}</id>
 			<comment/>
 			<position>
-				<first>902</first>
-				<second>-246</second>
+				<first>900</first>
+				<second>-244</second>
 			</position>
 			<technique>Opacity</technique>
 		</item>
@@ -53,8 +53,8 @@
 			<id>{B1B71D89-E82E-1545-9670-CA828AE2752A}</id>
 			<comment/>
 			<position>
-				<first>-150</first>
-				<second>95</second>
+				<first>-148</first>
+				<second>93</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -62,8 +62,8 @@
 			<id>{2109547B-EB6D-DC41-8E46-4592714B1266}</id>
 			<comment/>
 			<position>
-				<first>-71</first>
-				<second>34</second>
+				<first>-69</first>
+				<second>32</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -71,16 +71,16 @@
 			<id>{8B0593CE-10A1-B048-9553-D038B3755F14}</id>
 			<comment/>
 			<position>
-				<first>626</first>
-				<second>-242</second>
+				<first>624</first>
+				<second>-240</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{2F2398CD-EF2D-0547-BA7B-A4681CFCFE8D}</id>
 			<comment/>
 			<position>
-				<first>399</first>
-				<second>-158</second>
+				<first>397</first>
+				<second>-156</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
 			<type>PtMatrix</type>
@@ -90,24 +90,24 @@
 			<id>{3FA8E545-4553-DB41-A337-C6B8B8793215}</id>
 			<comment/>
 			<position>
-				<first>234</first>
-				<second>187</second>
+				<first>232</first>
+				<second>185</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{C9BA7AD7-ECD5-9A47-B117-600D3882EECC}</id>
 			<comment/>
 			<position>
-				<first>130</first>
-				<second>31</second>
+				<first>128</first>
+				<second>29</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{A797FFC6-7579-AB4A-B990-87FAA2971117}</id>
 			<comment/>
 			<position>
-				<first>261</first>
-				<second>-40</second>
+				<first>259</first>
+				<second>-38</second>
 			</position>
 			<fragmentGuid>{F69FB000-4750-764C-AB54-75CEFE6C1F2A}</fragmentGuid>
 			<inputPins>
@@ -134,24 +134,24 @@
 			<id>{D62AF3B7-961D-294B-A5EA-214FEA84C9AB}</id>
 			<comment/>
 			<position>
-				<first>234</first>
-				<second>261</second>
+				<first>232</first>
+				<second>259</second>
 			</position>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{C91DDF5D-7103-9A43-A09D-5A32F8783832}</id>
 			<comment/>
 			<position>
-				<first>234</first>
-				<second>224</second>
+				<first>232</first>
+				<second>222</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{2330A08D-C4B4-CF41-A0DC-3E8F754B38CF}</id>
 			<comment/>
 			<position>
-				<first>-304</first>
-				<second>88</second>
+				<first>-302</first>
+				<second>86</second>
 			</position>
 			<fragmentGuid>{D6B137B9-3D1E-4F4B-B972-0790A200E92B}</fragmentGuid>
 			<inputPins/>
@@ -183,8 +183,8 @@
 			<id>{4A08104C-A105-2249-9166-FBB8249F4AD4}</id>
 			<comment/>
 			<position>
-				<first>-74</first>
-				<second>-158</second>
+				<first>-72</first>
+				<second>-156</second>
 			</position>
 			<parameterName>World_World</parameterName>
 			<type>PtMatrix</type>
@@ -194,16 +194,16 @@
 			<id>{5C8BD44B-B201-8C40-BBF0-127054C338C5}</id>
 			<comment/>
 			<position>
-				<first>131</first>
-				<second>-242</second>
+				<first>129</first>
+				<second>-240</second>
 			</position>
 		</item>
 		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
 			<id>{11C7B4D3-7BC0-8742-B822-AA1EE11CD408}</id>
 			<comment/>
 			<position>
-				<first>1616</first>
-				<second>424</second>
+				<first>1691</first>
+				<second>420</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -250,8 +250,8 @@
 			<id>{E11206CF-C82A-DE4E-8DC8-78BB1CBF644A}</id>
 			<comment/>
 			<position>
-				<first>1259</first>
-				<second>231</second>
+				<first>1257</first>
+				<second>229</second>
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
@@ -259,8 +259,8 @@
 			<id>{BB4E1B11-5DD0-A943-A6B0-CDF37C04E251}</id>
 			<comment/>
 			<position>
-				<first>1470</first>
-				<second>394</second>
+				<first>1487</first>
+				<second>398</second>
 			</position>
 		</item>
 		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
@@ -271,16 +271,16 @@ Particle gradient
 			]]>
 			</comment>
 			<position>
-				<first>820</first>
-				<second>381</second>
+				<first>818</first>
+				<second>379</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{79EC86EF-64CB-FE44-9156-AAA9C42FAF37}</id>
 			<comment/>
 			<position>
-				<first>410</first>
-				<second>327</second>
+				<first>408</first>
+				<second>325</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -288,16 +288,16 @@ Particle gradient
 			<id>{74CBE156-7430-8644-914A-313CBAF5CC9C}</id>
 			<comment/>
 			<position>
-				<first>606</first>
-				<second>432</second>
+				<first>613</first>
+				<second>439</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{7BCFB4F1-8B32-EF44-B9B5-E0C59F487411}</id>
 			<comment/>
 			<position>
-				<first>479</first>
-				<second>477</second>
+				<first>415</first>
+				<second>475</second>
 			</position>
 			<value>0.5</value>
 		</item>
@@ -305,8 +305,8 @@ Particle gradient
 			<id>{08624E7C-0D32-244B-ADDF-55E19943B34D}</id>
 			<comment/>
 			<position>
-				<first>904</first>
-				<second>165</second>
+				<first>902</first>
+				<second>163</second>
 			</position>
 			<fragmentGuid>{F63EF37A-672E-6541-81FE-257D4A9139FC}</fragmentGuid>
 			<inputPins>
@@ -338,8 +338,8 @@ Particle gradient
 			<id>{EFA9B090-F204-874F-8D2D-9C6F5E53F3AA}</id>
 			<comment/>
 			<position>
-				<first>1374</first>
-				<second>467</second>
+				<first>1372</first>
+				<second>465</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -347,8 +347,8 @@ Particle gradient
 			<id>{B0D061B9-B932-0240-A5F7-8C21EF1B085F}</id>
 			<comment/>
 			<position>
-				<first>1500</first>
-				<second>139</second>
+				<first>1498</first>
+				<second>137</second>
 			</position>
 			<technique>Opacity</technique>
 			<priority>
@@ -395,8 +395,8 @@ Particle gradient
 			<id>{CABAF013-6C68-9844-9441-18EA51B5140C}</id>
 			<comment/>
 			<position>
-				<first>916</first>
-				<second>-190</second>
+				<first>914</first>
+				<second>-188</second>
 			</position>
 			<technique>Default</technique>
 		</item>
@@ -404,8 +404,8 @@ Particle gradient
 			<id>{D5804558-EBDF-0C42-88ED-38E415281A76}</id>
 			<comment/>
 			<position>
-				<first>-327</first>
-				<second>557</second>
+				<first>-355</first>
+				<second>558</second>
 			</position>
 			<fragmentGuid>{3F793E9D-73C9-8A44-B342-907FB4A2190D}</fragmentGuid>
 			<inputPins>
@@ -417,8 +417,8 @@ Particle gradient
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{6F0BEB64-246B-D64B-A75A-AC7C2D803953}</id>
-					<name>BaseColor</name>
+					<id>{390D3546-C311-5C46-828F-A72F5E1F6050}</id>
+					<name>Color</name>
 				</item>
 				<item>
 					<id>{2564BE93-3D10-8B40-95ED-C515C8434DB3}</id>
@@ -431,14 +431,6 @@ Particle gradient
 				<item>
 					<id>{02EB2288-A84C-7F4F-AE1C-0B331EE5CF85}</id>
 					<name>Range</name>
-				</item>
-				<item>
-					<id>{151EFDA1-ED94-1642-B80E-B18AFD0663BF}</id>
-					<name>ShadowColor</name>
-				</item>
-				<item>
-					<id>{390D3546-C311-5C46-828F-A72F5E1F6050}</id>
-					<name>SunColor</name>
 				</item>
 				<item>
 					<id>{CAEDFA17-F623-DB47-951B-0441218F1AB0}</id>
@@ -460,16 +452,16 @@ View space light direction
 			]]>
 			</comment>
 			<position>
-				<first>15</first>
-				<second>557</second>
+				<first>13</first>
+				<second>555</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{B0B46155-ECDD-634C-85F0-AB3273A2EBD2}</id>
 			<comment/>
 			<position>
-				<first>-138</first>
-				<second>617</second>
+				<first>-136</first>
+				<second>615</second>
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>PtMatrix</type>
@@ -479,8 +471,8 @@ View space light direction
 			<id>{36A3B899-332D-5C4A-B744-50F34C00A0E6}</id>
 			<comment/>
 			<position>
-				<first>514</first>
-				<second>642</second>
+				<first>486</first>
+				<second>641</second>
 			</position>
 			<value>0.5</value>
 		</item>
@@ -488,36 +480,24 @@ View space light direction
 			<id>{8D7301FC-E837-5943-BD8F-72B4B808117A}</id>
 			<comment/>
 			<position>
-				<first>646</first>
-				<second>597</second>
-			</position>
-		</item>
-		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
-			<id>{41FE6E5B-CE27-FD4C-A4E0-D2118BDD76F8}</id>
-			<comment>
-			<![CDATA[
-Light gradient
-			]]>
-			</comment>
-			<position>
-				<first>820</first>
-				<second>507</second>
+				<first>644</first>
+				<second>595</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{17C1B9A0-2851-7A47-9E18-AC514040087B}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
-				<second>492</second>
+				<first>1186</first>
+				<second>491</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{89431DFE-8624-E948-AE32-29F55BEF7493}</id>
 			<comment/>
 			<position>
-				<first>629</first>
-				<second>376</second>
+				<first>624</first>
+				<second>373</second>
 			</position>
 			<parameterName>SkyColor</parameterName>
 			<type>PtVector</type>
@@ -527,8 +507,8 @@ Light gradient
 			<id>{F847E53F-960B-7D43-BED2-347C75E9D50C}</id>
 			<comment/>
 			<position>
-				<first>607</first>
-				<second>345</second>
+				<first>618</first>
+				<second>301</second>
 			</position>
 			<parameterName>GroundColor</parameterName>
 			<type>PtVector</type>
@@ -687,6 +667,14 @@ Light gradient
 				<second>119</second>
 			</position>
 			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{0F27B72A-C53E-4488-A744-78771C993E4A}</id>
+			<comment/>
+			<position>
+				<first>824</first>
+				<second>536</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -952,31 +940,11 @@ Light gradient
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[28]"/>
-				<name>ShadowColor</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[33]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[28]"/>
-				<name>SunColor</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[33]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[20]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[34]"/>
+				<node ref="/object/nodes/item[33]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -992,7 +960,7 @@ Light gradient
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[36]"/>
+				<node ref="/object/nodes/item[35]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1002,7 +970,7 @@ Light gradient
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[35]"/>
+				<node ref="/object/nodes/item[34]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1012,21 +980,21 @@ Light gradient
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[38]"/>
+				<node ref="/object/nodes/item[37]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[37]"/>
+				<node ref="/object/nodes/item[36]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[37]"/>
+				<node ref="/object/nodes/item[36]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[34]"/>
+				<node ref="/object/nodes/item[33]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -1036,7 +1004,7 @@ Light gradient
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[39]"/>
+				<node ref="/object/nodes/item[38]"/>
 				<name>ParticleExtent</name>
 			</destination>
 		</item>
@@ -1046,13 +1014,13 @@ Light gradient
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[39]"/>
+				<node ref="/object/nodes/item[38]"/>
 				<name>ParticleUV</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[39]"/>
+				<node ref="/object/nodes/item[38]"/>
 				<name>Alpha</name>
 			</source>
 			<destination>
@@ -1066,13 +1034,33 @@ Light gradient
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Normal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[41]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[39]"/>
+				<node ref="/object/nodes/item[38]"/>
 				<name>Normal</name>
 			</source>
 			<destination>
@@ -1082,51 +1070,31 @@ Light gradient
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[43]"/>
+				<node ref="/object/nodes/item[41]"/>
 				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[42]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[39]"/>
-				<name>Normal</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[44]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[42]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[45]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[44]"/>
+				<node ref="/object/nodes/item[43]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[45]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[45]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[40]"/>
+				<node ref="/object/nodes/item[39]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -1136,38 +1104,28 @@ Light gradient
 				<name>ParticleRotation</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[42]"/>
+				<node ref="/object/nodes/item[41]"/>
 				<name>Angle</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[40]"/>
+				<node ref="/object/nodes/item[39]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[32]"/>
 				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[32]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[33]"/>
-				<name>Blend</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1182,27 +1140,17 @@ Light gradient
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[41]"/>
+				<node ref="/object/nodes/item[40]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[40]"/>
+				<node ref="/object/nodes/item[39]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[33]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[37]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[34]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1216,13 +1164,13 @@ Light gradient
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[47]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[47]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1256,13 +1204,13 @@ Light gradient
 				<name>ParticleOpacity</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[48]"/>
+				<node ref="/object/nodes/item[47]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[48]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1276,7 +1224,7 @@ Light gradient
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[48]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1298,6 +1246,36 @@ Light gradient
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Color</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[49]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[49]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[49]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

@@ -226,18 +226,14 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classGroupEntity);
 
 	Ref< AutoRuntimeClass< PointLightEntity > > classPointLightEntity = new AutoRuntimeClass< PointLightEntity >();
-	classPointLightEntity->addProperty("sunColor", &PointLightEntity::getSunColor);
-	classPointLightEntity->addProperty("baseColor", &PointLightEntity::getBaseColor);
-	classPointLightEntity->addProperty("shadowColor", &PointLightEntity::getShadowColor);
+	classPointLightEntity->addProperty("color", &PointLightEntity::getColor);
 	classPointLightEntity->addProperty("range", &PointLightEntity::getRange);
 	classPointLightEntity->addProperty("randomFlicker", &PointLightEntity::getRandomFlicker);
 	registrar->registerClass(classPointLightEntity);
 
 	Ref< AutoRuntimeClass< DirectionalLightEntity > > classDirectionalLightEntity = new AutoRuntimeClass< DirectionalLightEntity >();
 	//classDirectionalLightEntity->addConstructor< const Transform&, const Vector4&, const Vector4&, const Vector4&, bool >();
-	classDirectionalLightEntity->addProperty("sunColor", &DirectionalLightEntity::setSunColor, &DirectionalLightEntity::getSunColor);
-	classDirectionalLightEntity->addProperty("baseColor", &DirectionalLightEntity::setBaseColor, &DirectionalLightEntity::getBaseColor);
-	classDirectionalLightEntity->addProperty("shadowColor", &DirectionalLightEntity::setShadowColor, &DirectionalLightEntity::getShadowColor);
+	classDirectionalLightEntity->addProperty("color", &DirectionalLightEntity::setColor, &DirectionalLightEntity::getColor);
 	classDirectionalLightEntity->addProperty("castShadow", &DirectionalLightEntity::setCastShadow, &DirectionalLightEntity::getCastShadow);
 	registrar->registerClass(classDirectionalLightEntity);
 
@@ -269,9 +265,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classCameraComponent);
 
 	Ref< AutoRuntimeClass< LightComponentData > > classLightComponentData = new AutoRuntimeClass< LightComponentData >();
-	classLightComponentData->addProperty("sunColor", &LightComponentData::setSunColor, &LightComponentData::getSunColor);
-	classLightComponentData->addProperty("baseColor", &LightComponentData::setBaseColor, &LightComponentData::getBaseColor);
-	classLightComponentData->addProperty("shadowColor", &LightComponentData::setShadowColor, &LightComponentData::getShadowColor);
+	classLightComponentData->addProperty("color", &LightComponentData::setColor, &LightComponentData::getColor);
 	classLightComponentData->addProperty("castShadow", &LightComponentData::setCastShadow, &LightComponentData::getCastShadow);
 	classLightComponentData->addProperty("range", &LightComponentData::setRange, &LightComponentData::getRange);
 	classLightComponentData->addProperty("radius", &LightComponentData::setRadius, &LightComponentData::getRadius);
@@ -280,9 +274,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classLightComponentData);
 
 	Ref< AutoRuntimeClass< LightComponent > > classLightComponent = new AutoRuntimeClass< LightComponent >();
-	classLightComponent->addProperty("sunColor", &LightComponent::setSunColor, &LightComponent::getSunColor);
-	classLightComponent->addProperty("baseColor", &LightComponent::setBaseColor, &LightComponent::getBaseColor);
-	classLightComponent->addProperty("shadowColor", &LightComponent::setShadowColor, &LightComponent::getShadowColor);
+	classLightComponent->addProperty("color", &LightComponent::setColor, &LightComponent::getColor);
 	classLightComponent->addProperty("castShadow", &LightComponent::setCastShadow, &LightComponent::getCastShadow);
 	classLightComponent->addProperty("range", &LightComponent::setRange, &LightComponent::getRange);
 	classLightComponent->addProperty("radius", &LightComponent::setRadius, &LightComponent::getRadius);

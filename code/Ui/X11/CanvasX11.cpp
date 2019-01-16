@@ -14,6 +14,8 @@ CanvasX11::CanvasX11(cairo_t* cr)
 :	m_cr(cr)
 ,	m_foreground(255, 255, 255, 255)
 ,	m_background(255, 255, 255, 255)
+,	m_thickness(1)
+,	m_underline(false)
 {
 	cairo_reset_clip(m_cr);
 	cairo_set_line_width(m_cr, 1);
@@ -46,6 +48,7 @@ void CanvasX11::setFont(const Font& font)
 		m_cr,
 		dpi96(font.getSize())
 	);
+	m_underline = font.isUnderline();
 }
 
 const IFontMetric* CanvasX11::getFontMetric() const
@@ -60,6 +63,7 @@ void CanvasX11::setLineStyle(LineStyle lineStyle)
 void CanvasX11::setPenThickness(int thickness)
 {
 	cairo_set_line_width(m_cr, thickness);
+	m_thickness = thickness;
 }
 
 void CanvasX11::setClipRect(const Rect& rc)
@@ -227,6 +231,21 @@ void CanvasX11::drawText(const Point& at, const std::wstring& text)
 	cairo_move_to(m_cr, at.x, at.y + x.ascent);
 
 	cairo_show_text(m_cr, wstombs(text).c_str());
+
+	if (m_underline)
+	{
+		cairo_text_extents_t tx;
+		cairo_text_extents(m_cr, wstombs(text).c_str(), &tx);
+
+		int32_t thickness = std::max< int32_t >(1, x.ascent / 10);
+		cairo_set_line_width(m_cr, thickness);
+
+		cairo_move_to(m_cr, at.x, at.y + x.ascent + thickness);
+		cairo_line_to(m_cr, at.x + tx.width, at.y + x.ascent + thickness);
+		cairo_stroke(m_cr);
+
+		cairo_set_line_width(m_cr, m_thickness);
+	}
 }
 
 void* CanvasX11::getSystemHandle()

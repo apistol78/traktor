@@ -116,6 +116,19 @@
 			</position>
 			<swizzle>z</swizzle>
 		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{1E4CDB6E-7BF6-4A07-B523-90C1C4E9C379}</id>
+			<comment/>
+			<position>
+				<first>417</first>
+				<second>584</second>
+			</position>
+			<name>Enable</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -186,6 +199,16 @@
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Enable</name>
 			</destination>
 		</item>
 	</edges>

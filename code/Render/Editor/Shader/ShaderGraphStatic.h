@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ShaderGraphStatic_H
-#define traktor_render_ShaderGraphStatic_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -35,21 +28,32 @@ class T_DLLCLASS ShaderGraphStatic : public Object
 public:
 	ShaderGraphStatic(const ShaderGraph* shaderGraph);
 
+	/*! \brief Get permutation of shader graph for given platform. */
 	Ref< ShaderGraph > getPlatformPermutation(const std::wstring& platform) const;
 
+	/*! \brief Replace all "Connected" nodes with direct connections. */
 	Ref< ShaderGraph > getConnectedPermutation() const;
 
+	/*! \brief Replace all "Type" nodes with direct connections based on input type. */
 	Ref< ShaderGraph > getTypePermutation() const;
 
+	/*! \brief Insert swizzle nodes for all inputs to ensure widths are as small as possible. */
 	Ref< ShaderGraph > getSwizzledPermutation() const;
 
+	/*! \brief Calculate constant branches and replace with simpler branches. */
 	Ref< ShaderGraph > getConstantFolded() const;
 
+	/*! \brief Remove redundant swizzle nodes. */
 	Ref< ShaderGraph > cleanupRedundantSwizzles() const;
 
+	/*! \brief Propagate state given as input into PixelOutput. */
 	Ref< ShaderGraph > getStateResolved() const;
 
+	/*! \brief Replace variable nodes with direct connections. */
 	Ref< ShaderGraph > getVariableResolved() const;
+
+	/*! \brief Remove disabled outputs. */
+	Ref< ShaderGraph > removeDisabledOutputs() const;
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
@@ -58,5 +62,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_ShaderGraphStatic_H

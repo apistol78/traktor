@@ -29,7 +29,6 @@ const Guid c_tplDiffuseParams(L"{4AC7418D-FF43-FE40-ADDC-33A162636FDC}");
 const Guid c_tplEmissiveParams(L"{1E35F0A7-23A9-EA49-A518-125A77BAD564}");
 const Guid c_tplNormalParams(L"{77489017-FBE8-4A4F-B11A-FDE48C69E021}");
 const Guid c_tplOutput(L"{6DA4BE0A-BE19-4440-9B08-FC3FD1FFECDC}");
-const Guid c_tplSpecularParams(L"{68DA66E7-1D9E-FD4C-9692-D947BEA3EBAD}");
 const Guid c_tplTransparencyParams(L"{052265E6-233C-754C-A297-9369803ADB88}");
 const Guid c_tplLightMapParams(L"{2449B257-5B2A-5242-86F9-32105E1F1771}");
 const Guid c_tplRoughnessParams(L"{709A171A-6050-1249-AAA7-5AAE428B956C}");
@@ -50,9 +49,6 @@ const Guid c_implOutputAlpha(L"{1CDA749C-D713-974F-8E84-895AFEE8D552}");
 const Guid c_implOutputDecal(L"{31FD2B2B-3D3C-024F-9AA6-544B73D6009C}");
 const Guid c_implOutputMultiply(L"{C635E09A-8DFD-BF40-A863-81301D2388AC}");
 const Guid c_implOutputLightMapDecal(L"{4FFCDA64-4B42-DA46-973E-63C740B06A16}");
-const Guid c_implSpecularConst(L"{6D818781-04A2-2E48-9340-BEFB493F1F9E}");
-const Guid c_implSpecularMap0(L"{208A6FD9-8591-294F-BEAB-B2B872992960}");
-const Guid c_implSpecularMap1(L"{11FB0173-2120-704D-A310-B63172A20768}");
 const Guid c_implTransparencyConst(L"{FD6737C4-582B-0C41-B1C8-9D4E91B93DD2}");
 const Guid c_implTransparencyMap0(L"{F7F9394F-912A-9243-A38D-0A1527920FEF}");
 const Guid c_implTransparencyMap1(L"{63451E3C-CC4E-A245-B721-8498E0AE5D0D}");
@@ -129,7 +125,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 
 	// Patch material template shader with concrete implementations of value fetching fragments.
 	Guid diffuseTexture = lookupTexture(textures, material.getDiffuseMap().name);
-	Guid specularTexture = lookupTexture(textures, material.getSpecularMap().name);
 	Guid roughnessTexture = lookupTexture(textures, material.getRoughnessMap().name);
 	Guid metalnessTexture = lookupTexture(textures, material.getMetalnessMap().name);
 	Guid transparencyTexture = lookupTexture(textures, material.getTransparencyMap().name);
@@ -195,13 +190,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			else
 				(*i)->setFragmentGuid(c_implOutputLightMapDecal);
 		}
-		else if (fragmentGuid == c_tplSpecularParams)
-		{
-			if (specularTexture.isNull())
-				(*i)->setFragmentGuid(c_implSpecularConst);
-			else
-				(*i)->setFragmentGuid(material.getSpecularMap().channel == 0 ? c_implSpecularMap0 : c_implSpecularMap1);
-		}
 		else if (fragmentGuid == c_tplTransparencyParams)
 		{
 			if (transparencyTexture.isNull())
@@ -251,12 +239,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			colorNode->setComment(L"");
 			colorNode->setColor(material.getColor());
 		}
-		else if (comment == L"Tag_DiffuseTerm")
-		{
-			render::Scalar* diffuseTermNode = checked_type_cast< render::Scalar* >(*i);
-			diffuseTermNode->setComment(L"");
-			diffuseTermNode->set(material.getDiffuseTerm());
-		}
 		else if (comment == L"Tag_DiffuseMap")
 		{
 			render::Texture* diffuseTextureNode = checked_type_cast< render::Texture* >(*i);
@@ -283,19 +265,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			normalTextureNode->setComment(L"");
 			normalTextureNode->setExternal(normalTexture);
 			propagateAnisotropic(materialShaderGraph, normalTextureNode, material.getNormalMap().anisotropic);
-		}
-		else if (comment == L"Tag_SpecularTerm")
-		{
-			render::Scalar* specularTermNode = checked_type_cast< render::Scalar* >(*i);
-			specularTermNode->setComment(L"");
-			specularTermNode->set(material.getSpecularTerm());
-		}
-		else if (comment == L"Tag_SpecularMap")
-		{
-			render::Texture* specularTextureNode = checked_type_cast< render::Texture* >(*i);
-			specularTextureNode->setComment(L"");
-			specularTextureNode->setExternal(specularTexture);
-			propagateAnisotropic(materialShaderGraph, specularTextureNode, material.getSpecularMap().anisotropic);
 		}
 		else if (comment == L"Tag_Roughness")
 		{
@@ -362,7 +331,6 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_tplEmissiveParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplNormalParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplOutput, editor::PdfUse);
-	pipelineDepends->addDependency(c_tplSpecularParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplTransparencyParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplLightMapParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplRoughnessParams, editor::PdfUse);
@@ -383,9 +351,6 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_implOutputDecal, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputMultiply, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputLightMapDecal, editor::PdfUse);
-	pipelineDepends->addDependency(c_implSpecularConst, editor::PdfUse);
-	pipelineDepends->addDependency(c_implSpecularMap0, editor::PdfUse);
-	pipelineDepends->addDependency(c_implSpecularMap1, editor::PdfUse);
 	pipelineDepends->addDependency(c_implTransparencyConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implTransparencyMap0, editor::PdfUse);
 	pipelineDepends->addDependency(c_implTransparencyMap1, editor::PdfUse);

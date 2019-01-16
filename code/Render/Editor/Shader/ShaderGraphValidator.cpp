@@ -304,7 +304,7 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Nod
 	Report report(outErrorNodes);
 
 	EdgeNodes().check(report, m_shaderGraph, visitor.m_nodes);
-	UniqueTechniques().check(report, m_shaderGraph, visitor.m_nodes);
+	// UniqueTechniques().check(report, m_shaderGraph, visitor.m_nodes);
 	NonOptionalInputs().check(report, m_shaderGraph, visitor.m_nodes);
 	SwizzlePatterns().check(report, m_shaderGraph, visitor.m_nodes);
 	ParameterNames().check(report, m_shaderGraph, visitor.m_nodes);

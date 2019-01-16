@@ -34,8 +34,7 @@ const wchar_t* c_visualizeTechniques[] =
 	L"ViewDepth",
 	L"Normals",
 	L"Velocity",
-	L"SpecularRoughness",
-	L"SpecularTerm",
+	L"Roughness",
 	L"Metalness",
 	L"ShadowMap",
 	L"ShadowMask"

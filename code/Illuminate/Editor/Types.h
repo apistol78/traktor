@@ -45,9 +45,7 @@ struct Light
 	int32_t type;		//<! 0 - directional, 1 - point
 	Vector4 position;
 	Vector4 direction;
-	Color4f sunColor;
-	Color4f baseColor;
-	Color4f shadowColor;
+	Color4f color;
 	Scalar range;
 	Ref< IProbe > probe;
 	int32_t surface;

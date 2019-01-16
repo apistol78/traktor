@@ -153,9 +153,7 @@ bool createLights(
 			light.type = 0;
 			light.position = Vector4::origo();
 			light.direction = led->getTransform().rotation() * Vector4(0.0f, -1.0f, 0.0f);
-			light.sunColor = Color4f(lightComponentData->getSunColor());
-			light.baseColor = Color4f(lightComponentData->getBaseColor());
-			light.shadowColor = Color4f(lightComponentData->getShadowColor());
+			light.color = Color4f(lightComponentData->getColor());
 			light.range = Scalar(0.0f);
 			outLights.push_back(light);
 		}
@@ -164,7 +162,7 @@ bool createLights(
 			light.type = 1;
 			light.position = led->getTransform().translation().xyz1();
 			light.direction = Vector4::zero();
-			light.sunColor = Color4f(lightComponentData->getSunColor());
+			light.color = Color4f(lightComponentData->getColor());
 			light.range = Scalar(lightComponentData->getRange());
 			outLights.push_back(light);
 		}
