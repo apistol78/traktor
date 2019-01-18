@@ -798,6 +798,8 @@ void SceneEditorPage::createControllerEditor()
 		m_context->setControllerEditor(0);
 	}
 
+	m_site->hideAdditionalPanel(m_controllerPanel);
+
 	Ref< SceneAsset > sceneAsset = m_context->getSceneAsset();
 	if (sceneAsset)
 	{
@@ -831,7 +833,7 @@ void SceneEditorPage::createControllerEditor()
 				))
 				{
 					m_context->setControllerEditor(controllerEditor);
-					m_controllerPanel->update();
+					m_site->showAdditionalPanel(m_controllerPanel);
 				}
 				else
 					log::error << L"Unable to create controller editor; create failed" << Endl;
@@ -840,6 +842,8 @@ void SceneEditorPage::createControllerEditor()
 				T_DEBUG(L"Unable to find controller editor for type \"" << type_name(controllerData) << L"\"");
 		}
 	}
+
+	m_controllerPanel->update();
 }
 
 void SceneEditorPage::updateScene()
