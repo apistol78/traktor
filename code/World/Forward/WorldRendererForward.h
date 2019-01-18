@@ -129,11 +129,9 @@ private:
 	Ref< render::RenderTargetSet > m_depthTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
-	Ref< render::RenderTargetSet > m_shadowMaskFilterTargetSet;
 	Ref< render::RenderContext > m_globalContext;
 	resource::Proxy< render::ITexture > m_reflectionMap;
 	Ref< render::ImageProcess > m_shadowMaskProject;
-	Ref< render::ImageProcess > m_shadowMaskFilter;
 	Ref< render::ImageProcess > m_ambientOcclusion;
 	Ref< render::ImageProcess > m_antiAlias;
 	Ref< render::ImageProcess > m_visualImageProcess;

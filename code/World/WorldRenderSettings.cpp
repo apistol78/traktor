@@ -46,7 +46,7 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 26, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 27, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
@@ -175,7 +175,12 @@ void WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
 	s >> Member< bool >(L"quantizeProjection", quantizeProjection);
 	s >> Member< int32_t >(L"maskDenominator", maskDenominator, AttributeRange(1));
 	s >> resource::Member< render::ImageProcessSettings >(L"maskProject", maskProject);
-	s >> resource::Member< render::ImageProcessSettings >(L"maskFilter", maskFilter);
+
+	if (s.getVersion() < 27)
+	{
+		resource::Id< render::ImageProcessSettings > maskFilter;
+		s >> resource::Member< render::ImageProcessSettings >(L"maskFilter", maskFilter);
+	}
 }
 
 	}
