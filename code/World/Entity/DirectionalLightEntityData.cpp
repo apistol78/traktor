@@ -10,7 +10,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.DirectionalLightEntityData", 3, DirectionalLightEntityData, EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.DirectionalLightEntityData", 4, DirectionalLightEntityData, EntityData)
 
 DirectionalLightEntityData::DirectionalLightEntityData()
 :	m_color(1.0f, 1.0f, 1.0f, 0.0f)
@@ -34,8 +34,11 @@ void DirectionalLightEntityData::serialize(ISerializer& s)
 		s >> Member< Vector4 >(L"shadowColor", shadowColor);
 	}
 
-	if (s.getVersion() >= 2)
-		s >> resource::Member< render::ITexture >(L"cloudShadowTexture", m_cloudShadowTexture);
+	if (s.getVersion() >= 2 && s.getVersion() < 4)
+	{
+		resource::Id< render::ITexture > cloudShadowTexture;
+		s >> resource::Member< render::ITexture >(L"cloudShadowTexture", cloudShadowTexture);
+	}
 
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"castShadow", m_castShadow);

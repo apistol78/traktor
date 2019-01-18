@@ -37,13 +37,10 @@ public:
 
 	const Vector4& getColor() const { return m_color; }
 
-	const resource::Id< render::ITexture >& getCloudShadowTexture() const { return m_cloudShadowTexture; }
-
 	bool getCastShadow() const { return m_castShadow; }
 
 private:
 	Vector4 m_color;
-	resource::Id< render::ITexture > m_cloudShadowTexture;
 	bool m_castShadow;
 };
 

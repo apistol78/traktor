@@ -73,7 +73,6 @@ struct Light
 	Scalar range;
 	Scalar radius;
 	LightProbe probe;
-	render::ITexture* cloudShadow;
 	bool castShadow;
 };
 
