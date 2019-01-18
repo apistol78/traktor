@@ -109,10 +109,7 @@ bool ScenePipeline::buildDependencies(
 		if (!m_suppressShadows)
 		{
 			for (int32_t i = 0; i < sizeof_array(wrs->shadowSettings); ++i)
-			{
 				pipelineDepends->addDependency(wrs->shadowSettings[i].maskProject, editor::PdfBuild | editor::PdfResource);
-				pipelineDepends->addDependency(wrs->shadowSettings[i].maskFilter, editor::PdfBuild | editor::PdfResource);
-			}
 		}
 		if (!m_suppressImageProcess)
 		{
@@ -210,10 +207,7 @@ bool ScenePipeline::buildOutput(
 				shadowSetting.cascadingSlices = std::min(shadowSetting.cascadingSlices, m_shadowMapMaxSlices);
 		}
 		else
-		{
 			shadowSetting.maskProject = resource::Id< render::ImageProcessSettings >();
-			shadowSetting.maskFilter = resource::Id< render::ImageProcessSettings >();
-		}
 	}
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);

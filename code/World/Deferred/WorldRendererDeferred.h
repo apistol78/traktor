@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_WorldRendererDeferred_H
-#define traktor_world_WorldRendererDeferred_H
+#pragma once
 
 #include "Core/Containers/AlignedVector.h"
 #include "Resource/Proxy.h"
@@ -151,12 +144,10 @@ private:
 	Ref< render::RenderTargetSet > m_colorTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
-	Ref< render::RenderTargetSet > m_shadowMaskFilterTargetSet;
 	Ref< render::RenderTargetSet > m_lightAccumulationTargetSet;
 	Ref< render::RenderContext > m_globalContext;
 	resource::Proxy< render::ITexture > m_reflectionMap;
 	Ref< render::ImageProcess > m_shadowMaskProject;
-	Ref< render::ImageProcess > m_shadowMaskFilter;
 	Ref< render::ImageProcess > m_colorTargetCopy;
 	Ref< render::ImageProcess > m_ambientOcclusion;
 	Ref< render::ImageProcess > m_antiAlias;
@@ -188,5 +179,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_world_WorldRendererDeferred_H

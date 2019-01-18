@@ -145,21 +145,9 @@ bool WorldRendererForward::create(
 
 	// Create projection and filter processes.
 	resource::Proxy< render::ImageProcessSettings > shadowMaskProject;
-	resource::Proxy< render::ImageProcessSettings > shadowMaskFilter;
-
 	if (!resourceManager->bind(m_shadowSettings.maskProject, shadowMaskProject))
 	{
 		log::warning << L"Unable to create shadow project process; shadows disabled" << Endl;
-		m_shadowsQuality = QuDisabled;
-	}
-
-	if (
-		m_shadowsQuality > QuDisabled &&
-		m_shadowSettings.maskFilter &&
-		!resourceManager->bind(m_shadowSettings.maskFilter, shadowMaskFilter)
-	)
-	{
-		log::warning << L"Unable to create shadow filter process; shadows disabled" << Endl;
 		m_shadowsQuality = QuDisabled;
 	}
 
@@ -218,33 +206,6 @@ bool WorldRendererForward::create(
 		// Use "shadow map is a depth texture" combination.
 		m_shadowMaskProject->setCombination(render::getParameterHandle(L"World_ShadowMapDepthTexture"), true);
 
-		if (shadowMaskFilter)
-		{
-			// Create filtered shadow mask target.
-			rtscd.count = 1;
-			rtscd.multiSample = 0;
-			rtscd.createDepthStencil = false;
-			rtscd.usingPrimaryDepthStencil = false;
-			rtscd.targets[0].format = render::TfR8;
-			rtscd.preferTiled = true;
-			m_shadowMaskFilterTargetSet = renderSystem->createRenderTargetSet(rtscd);
-
-			m_shadowMaskFilter = new render::ImageProcess();
-			if (!m_shadowMaskFilter->create(
-				shadowMaskFilter,
-				postProcessTargetPool,
-				resourceManager,
-				renderSystem,
-				rtscd.width,
-				rtscd.height,
-				desc.allTargetsPersistent
-			))
-			{
-				log::warning << L"Unable to create shadow filter process; shadows disabled (3)" << Endl;
-				m_shadowsQuality = QuDisabled;
-			}
-		}
-
 		if (m_shadowsQuality > QuDisabled)
 		{
 			switch (m_shadowSettings.projection)
@@ -273,7 +234,6 @@ bool WorldRendererForward::create(
 		{
 			safeDestroy(m_shadowTargetSet);
 			safeDestroy(m_shadowMaskProjectTargetSet);
-			safeDestroy(m_shadowMaskFilterTargetSet);
 		}
 	}
 
@@ -528,10 +488,8 @@ void WorldRendererForward::destroy()
 
 	safeDestroy(m_gammaCorrectionImageProcess);
 	safeDestroy(m_visualImageProcess);
-	safeDestroy(m_shadowMaskFilter);
 	safeDestroy(m_shadowMaskProject);
 	m_reflectionMap.clear();
-	safeDestroy(m_shadowMaskFilterTargetSet);
 	safeDestroy(m_shadowMaskProjectTargetSet);
 	safeDestroy(m_shadowTargetSet);
 	safeDestroy(m_depthTargetSet);
@@ -719,33 +677,6 @@ void WorldRendererForward::render(int frame, render::EyeType eye)
 				}
 				T_RENDER_POP_MARKER(m_renderView);
 			}
-
-			if (m_shadowMaskFilterTargetSet)
-			{
-				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask filter");
-				if (m_renderView->begin(m_shadowMaskFilterTargetSet, 0))
-				{
-					render::ImageProcessStep::Instance::RenderParams params;
-					params.viewFrustum = f.viewFrustum;
-					params.projection = projection;
-					params.sliceNearZ = 0.0f;
-					params.sliceFarZ = m_shadowSettings.farZ;
-					params.shadowMapBias = m_shadowSettings.bias;
-					params.deltaTime = 0.0f;
-
-					m_shadowMaskFilter->render(
-						m_renderView,
-						m_shadowMaskProjectTargetSet->getColorTexture(0),	// color
-						m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0,	// depth
-						0,	// normal
-						0,	// velocity
-						0,	// shadow mask
-						params
-					);
-					m_renderView->end();
-				}
-				T_RENDER_POP_MARKER(m_renderView);
-			}
 		}
 	}
 
@@ -885,9 +816,6 @@ void WorldRendererForward::getDebugTargets(std::vector< render::DebugTarget >& o
 	
 	if (m_shadowMaskProjectTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Shadow mask (projection)",render:: DtvShadowMask, m_shadowMaskProjectTargetSet->getColorTexture(0)));
-
-	if (m_shadowMaskFilterTargetSet)
-		outTargets.push_back(render::DebugTarget(L"Shadow mask (SS filtered)", render::DtvShadowMask, m_shadowMaskFilterTargetSet->getColorTexture(0)));
 }
 
 void WorldRendererForward::buildDepth(WorldRenderView& worldRenderView, int frame)
@@ -995,12 +923,6 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int fr
 
 	worldRenderView.resetLights();
 
-	render::RenderTargetSet* shadowMask = 0;
-	if (m_shadowMaskFilterTargetSet)
-		shadowMask = m_shadowMaskFilterTargetSet;
-	else
-		shadowMask = m_shadowMaskProjectTargetSet;
-
 	// Render visuals.
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
@@ -1015,7 +937,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int fr
 		m_settings.fogColor,
 		0,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
-		shadowMask->getColorTexture(0)
+		m_shadowMaskProjectTargetSet->getColorTexture(0)
 	);
 	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
 		f.visual->build(worldRenderView, defaultPass, *i);

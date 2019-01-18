@@ -2,26 +2,6 @@
 <object type="traktor.editor.Assets" version="1">
 	<dependencies>
 		<item>
-			<id>{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}</id>
-			<editorDeployOnly>false</editorDeployOnly>
-		</item>
-		<item>
-			<id>{57FD53AF-547A-9F46-8C94-B4D24EFB63BC}</id>
-			<editorDeployOnly>false</editorDeployOnly>
-		</item>
-		<item>
-			<id>{7D4D38B9-1E43-8046-B1A4-705CFEF9B8EB}</id>
-			<editorDeployOnly>false</editorDeployOnly>
-		</item>
-		<item>
-			<id>{19222311-363F-CB45-86E5-34D376CDA8AD}</id>
-			<editorDeployOnly>false</editorDeployOnly>
-		</item>
-		<item>
-			<id>{5AFC153E-6FCE-3142-9E1B-DD3722DA447F}</id>
-			<editorDeployOnly>false</editorDeployOnly>
-		</item>
-		<item>
 			<id>{37F82A38-D632-5541-9B29-E77C2F74B0C0}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>

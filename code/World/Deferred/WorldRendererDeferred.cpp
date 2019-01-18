@@ -244,23 +244,11 @@ bool WorldRendererDeferred::create(
 		int32_t resolution = min< int32_t >(nearestLog2(int32_t(max< int32_t >(desc.width, desc.height) * 1.9f)), maxResolution);
 		T_DEBUG(L"Using shadow map resolution " << resolution);
 
-		// Create projection and filter processes.
+		// Create projection processes.
 		resource::Proxy< render::ImageProcessSettings > shadowMaskProject;
-		resource::Proxy< render::ImageProcessSettings > shadowMaskFilter;
-
 		if (!resourceManager->bind(m_shadowSettings.maskProject, shadowMaskProject))
 		{
 			log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
-			m_shadowsQuality = QuDisabled;
-		}
-
-		if (
-			m_shadowsQuality > QuDisabled &&
-			m_shadowSettings.maskFilter &&
-			!resourceManager->bind(m_shadowSettings.maskFilter, shadowMaskFilter)
-		)
-		{
-			log::warning << L"Unable to create shadow filter process; shadows disabled." << Endl;
 			m_shadowsQuality = QuDisabled;
 		}
 
@@ -310,37 +298,6 @@ bool WorldRendererDeferred::create(
 
 			// Use "shadow map is a depth texture" combination.
 			m_shadowMaskProject->setCombination(render::getParameterHandle(L"World_ShadowMapDepthTexture"), true);
-
-			if (shadowMaskFilter)
-			{
-				// Create filtered shadow mask target.
-				rtscd.count = 1;
-				rtscd.width = desc.width / m_shadowSettings.maskDenominator;
-				rtscd.height = desc.height / m_shadowSettings.maskDenominator;
-				rtscd.multiSample = 0;
-				rtscd.createDepthStencil = false;
-				rtscd.usingDepthStencilAsTexture = false;
-				rtscd.usingPrimaryDepthStencil = false;
-				rtscd.ignoreStencil = true;
-				rtscd.preferTiled = true;
-				rtscd.targets[0].format = render::TfR8;
-				m_shadowMaskFilterTargetSet = renderSystem->createRenderTargetSet(rtscd);
-				
-				m_shadowMaskFilter = new render::ImageProcess();
-				if (!m_shadowMaskFilter->create(
-					shadowMaskFilter,
-					postProcessTargetPool,
-					resourceManager,
-					renderSystem,
-					rtscd.width,
-					rtscd.height,
-					desc.allTargetsPersistent
-				))
-				{
-					log::warning << L"Unable to create shadow filter process; shadows disabled." << Endl;
-					m_shadowsQuality = QuDisabled;
-				}
-			}
 		}
 
 		if (m_shadowsQuality > QuDisabled)
@@ -373,7 +330,6 @@ bool WorldRendererDeferred::create(
 		{
 			safeDestroy(m_shadowTargetSet);
 			safeDestroy(m_shadowMaskProjectTargetSet);
-			safeDestroy(m_shadowMaskFilterTargetSet);
 		}
 	}
 
@@ -761,14 +717,12 @@ void WorldRendererDeferred::destroy()
 	safeDestroy(m_antiAlias);
 	safeDestroy(m_ambientOcclusion);
 	safeDestroy(m_colorTargetCopy);
-	safeDestroy(m_shadowMaskFilter);
 	safeDestroy(m_shadowMaskProject);
 
 	m_reflectionMap.clear();
 	m_globalContext = nullptr;
 
 	safeDestroy(m_lightAccumulationTargetSet);
-	safeDestroy(m_shadowMaskFilterTargetSet);
 	safeDestroy(m_shadowMaskProjectTargetSet);
 	safeDestroy(m_shadowTargetSet);
 	safeDestroy(m_colorTargetSet);
@@ -1055,45 +1009,9 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 				}
 			}
 
-			if (m_shadowMaskFilterTargetSet)
-			{
-				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask filter");
-				if (m_renderView->begin(m_shadowMaskFilterTargetSet, 0))
-				{
-					const Color4f maskClear(1.0f, 1.0f, 1.0f, 1.0f);
-					m_renderView->clear(render::CfColor, &maskClear, 0.0f, 0);
-
-					render::ImageProcessStep::Instance::RenderParams params;
-					params.viewFrustum = f.viewFrustum;
-					params.projection = projection;
-					params.sliceNearZ = 0.0f;
-					params.sliceFarZ = m_shadowSettings.farZ;
-					params.shadowMapBias = m_shadowSettings.bias;
-					params.deltaTime = 0.0f;
-
-					m_shadowMaskFilter->render(
-						m_renderView,
-						m_shadowMaskProjectTargetSet->getColorTexture(0),	// color
-						m_gbufferTargetSet->getColorTexture(0),	// depth
-						m_gbufferTargetSet->getColorTexture(1),	// normal
-						nullptr,	// velocity
-						nullptr,	// shadow mask
-						params
-					);
-					m_renderView->end();
-				}
-				T_RENDER_POP_MARKER(m_renderView);
-			}
-
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (shadow)");
 			if (m_renderView->begin(m_lightAccumulationTargetSet))
 			{
-				render::RenderTargetSet* shadowMask = nullptr;
-				if (m_shadowMaskFilterTargetSet)
-					shadowMask = m_shadowMaskFilterTargetSet;
-				else
-					shadowMask = m_shadowMaskProjectTargetSet;
-
 				m_lightRenderer->renderLight(
 					m_renderView,
 					f.time,
@@ -1104,8 +1022,8 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 					m_gbufferTargetSet->getColorTexture(1),
 					m_gbufferTargetSet->getColorTexture(2),
 					m_gbufferTargetSet->getColorTexture(3),
-					shadowMask != nullptr ? shadowMask->getWidth() : 0.0f,
-					shadowMask != nullptr ? shadowMask->getColorTexture(0) : nullptr
+					m_shadowMaskProjectTargetSet != nullptr ? m_shadowMaskProjectTargetSet->getWidth() : 0.0f,
+					m_shadowMaskProjectTargetSet != nullptr ? m_shadowMaskProjectTargetSet->getColorTexture(0) : nullptr
 				);
 				m_renderView->end();
 			}
@@ -1421,9 +1339,6 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 	if (m_shadowMaskProjectTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Shadow mask (projection)", render::DtvShadowMask, m_shadowMaskProjectTargetSet->getColorTexture(0)));
 
-	if (m_shadowMaskFilterTargetSet)
-		outTargets.push_back(render::DebugTarget(L"Shadow mask (SS filtered)", render::DtvShadowMask, m_shadowMaskFilterTargetSet->getColorTexture(0)));
-
 	if (m_lightAccumulationTargetSet)
 	{
 		outTargets.push_back(render::DebugTarget(L"Light accumulation (diffuse)", render::DtvDefault, m_lightAccumulationTargetSet->getColorTexture(0)));
@@ -1432,9 +1347,6 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 
 	if (m_shadowMaskProject)
 		m_shadowMaskProject->getDebugTargets(outTargets);
-
-	if (m_shadowMaskFilter)
-		m_shadowMaskFilter->getDebugTargets(outTargets);
 
 	if (m_colorTargetCopy)
 		m_colorTargetCopy->getDebugTargets(outTargets);

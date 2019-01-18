@@ -59,7 +59,6 @@ public:
 		bool quantizeProjection;
 		int32_t maskDenominator;
 		resource::Id< render::ImageProcessSettings > maskProject;
-		resource::Id< render::ImageProcessSettings > maskFilter;
 
 		ShadowSettings();
 
