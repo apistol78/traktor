@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_LightComponent_H
-#define traktor_world_LightComponent_H
+#pragma once
 
 #include "Resource/Proxy.h"
 #include "World/IEntityComponent.h"
@@ -45,7 +38,6 @@ public:
 		const Vector4& color,
 		const resource::Proxy< render::ITexture >& probeDiffuseTexture,
 		const resource::Proxy< render::ITexture >& probeSpecularTexture,
-		const resource::Proxy< render::ITexture >& cloudShadowTexture,
 		bool castShadow,
 		float range,
 		float radius,
@@ -81,10 +73,6 @@ public:
 
 	const resource::Proxy< render::ITexture >& getProbeSpecularTexture() const { return m_probeSpecularTexture; }
 
-	void setCloudShadowTexture(const resource::Proxy< render::ITexture >& cloudShadowTexture) { m_cloudShadowTexture = cloudShadowTexture; }
-
-	const resource::Proxy< render::ITexture >& getCloudShadowTexture() const { return m_cloudShadowTexture; }
-
 	void setCastShadow(bool castShadow) { m_castShadow = castShadow; }
 
 	bool getCastShadow() const { return m_castShadow; }
@@ -111,7 +99,6 @@ private:
 	Vector4 m_color;
 	resource::Proxy< render::ITexture > m_probeDiffuseTexture;
 	resource::Proxy< render::ITexture > m_probeSpecularTexture;
-	resource::Proxy< render::ITexture > m_cloudShadowTexture;
 	bool m_castShadow;
 	float m_range;
 	float m_radius;
@@ -121,5 +108,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_world_LightComponent_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "World/Entity.h"
 #include "World/Entity/LightComponent.h"
 
@@ -19,7 +13,6 @@ LightComponent::LightComponent(
 	const Vector4& color,
 	const resource::Proxy< render::ITexture >& probeDiffuseTexture,
 	const resource::Proxy< render::ITexture >& probeSpecularTexture,
-	const resource::Proxy< render::ITexture >& cloudShadowTexture,
 	bool castShadow,
 	float range,
 	float radius,
@@ -31,7 +24,6 @@ LightComponent::LightComponent(
 ,	m_color(color)
 ,	m_probeDiffuseTexture(probeDiffuseTexture)
 ,	m_probeSpecularTexture(probeSpecularTexture)
-,	m_cloudShadowTexture(cloudShadowTexture)
 ,	m_castShadow(castShadow)
 ,	m_range(range)
 ,	m_radius(radius)

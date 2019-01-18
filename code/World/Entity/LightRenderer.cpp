@@ -55,7 +55,6 @@ void LightRenderer::render(
 		light.radius = Scalar(0.0f);
 		light.probe.diffuse = nullptr;
 		light.probe.specular = nullptr;
-		light.cloudShadow = directionalLightEntity->getCloudShadowTexture();
 		light.castShadow = directionalLightEntity->getCastShadow();
 
 		worldRenderView.addLight(light);
@@ -77,7 +76,6 @@ void LightRenderer::render(
 		light.radius = Scalar(0.0f);
 		light.probe.diffuse = nullptr;
 		light.probe.specular = nullptr;
-		light.cloudShadow = nullptr;
 		light.castShadow = false;
 
 		if (pointLightEntity->getRandomFlicker() <= 1.0f - FUZZY_EPSILON)
@@ -105,7 +103,6 @@ void LightRenderer::render(
 		light.radius = Scalar(spotLightEntity->getRadius());
 		light.probe.diffuse = nullptr;
 		light.probe.specular = nullptr;
-		light.cloudShadow = nullptr;
 		light.castShadow = spotLightEntity->getCastShadow();
 
 		worldRenderView.addLight(light);
@@ -123,7 +120,6 @@ void LightRenderer::render(
 		light.radius = Scalar(lightComponent->getRadius());
 		light.probe.diffuse = lightComponent->getProbeDiffuseTexture();
 		light.probe.specular = lightComponent->getProbeSpecularTexture();
-		light.cloudShadow = lightComponent->getCloudShadowTexture();
 		light.castShadow = lightComponent->getCastShadow();
 
 		worldRenderView.addLight(light);

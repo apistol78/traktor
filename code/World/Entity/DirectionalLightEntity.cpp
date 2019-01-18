@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "World/Entity/DirectionalLightEntity.h"
 
 namespace traktor
@@ -16,12 +10,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DirectionalLightEntity", DirectionalLight
 DirectionalLightEntity::DirectionalLightEntity(
 	const Transform& transform,
 	const Vector4& color,
-	const resource::Proxy< render::ITexture >& cloudShadowTexture,
 	bool castShadow
 )
 :	m_transform(transform)
 ,	m_color(color)
-,	m_cloudShadowTexture(cloudShadowTexture)
 ,	m_castShadow(castShadow)
 {
 }

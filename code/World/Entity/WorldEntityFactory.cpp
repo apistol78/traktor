@@ -122,17 +122,9 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 
 	if (const DirectionalLightEntityData* directionalLightData = dynamic_type_cast< const DirectionalLightEntityData* >(&entityData))
 	{
-		resource::Proxy< render::ITexture > cloudShadowTexture;
-		if (directionalLightData->getCloudShadowTexture())
-		{
-			if (!m_resourceManager->bind(directionalLightData->getCloudShadowTexture(), cloudShadowTexture))
-				return 0;
-		}
-
 		return new DirectionalLightEntity(
 			directionalLightData->getTransform(),
 			directionalLightData->getColor(),
-			cloudShadowTexture,
 			directionalLightData->getCastShadow()
 		);
 	}
@@ -226,7 +218,6 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 	{
 		resource::Proxy< render::ITexture > probeDiffuseTexture;
 		resource::Proxy< render::ITexture > probeSpecularTexture;
-		resource::Proxy< render::ITexture > cloudShadowTexture;
 
 		if (lightComponentData->getProbeDiffuseTexture())
 		{
@@ -238,18 +229,12 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 			if (!m_resourceManager->bind(lightComponentData->getProbeSpecularTexture(), probeSpecularTexture))
 				return nullptr;
 		}
-		if (lightComponentData->getCloudShadowTexture())
-		{
-			if (!m_resourceManager->bind(lightComponentData->getCloudShadowTexture(), cloudShadowTexture))
-				return nullptr;
-		}
 
 		return new LightComponent(
 			lightComponentData->getLightType(),
 			lightComponentData->getColor(),
 			probeDiffuseTexture,
 			probeSpecularTexture,
-			cloudShadowTexture,
 			lightComponentData->getCastShadow(),
 			lightComponentData->getRange(),
 			lightComponentData->getRadius(),

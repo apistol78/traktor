@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Resource/Proxy.h"
 #include "World/Entity.h"
 
 // import/export mechanism.
@@ -13,13 +12,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class ITexture;
-
-	}
-
 	namespace world
 	{
 
@@ -34,7 +26,6 @@ public:
 	DirectionalLightEntity(
 		const Transform& transform,
 		const Vector4& color,
-		const resource::Proxy< render::ITexture >& cloudShadowTexture,
 		bool castShadow
 	);
 
@@ -50,10 +41,6 @@ public:
 
 	const Vector4& getColor() const { return m_color; }
 
-	void setCloudShadowTexture(const resource::Proxy< render::ITexture >& cloudShadowTexture) { m_cloudShadowTexture = cloudShadowTexture; }
-
-	const resource::Proxy< render::ITexture >& getCloudShadowTexture() const { return m_cloudShadowTexture; }
-
 	void setCastShadow(bool castShadow) { m_castShadow = castShadow; }
 
 	bool getCastShadow() const { return m_castShadow; }
@@ -61,7 +48,6 @@ public:
 private:
 	Transform m_transform;
 	Vector4 m_color;
-	resource::Proxy< render::ITexture > m_cloudShadowTexture;
 	bool m_castShadow;
 };
 

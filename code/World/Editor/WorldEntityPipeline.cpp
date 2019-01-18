@@ -49,8 +49,6 @@ bool WorldEntityPipeline::buildDependencies(
 		pipelineDepends->addDependency(decalComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 	else if (const DecalEventData* decalEventData = dynamic_type_cast< const DecalEventData* >(sourceAsset))
 		pipelineDepends->addDependency(decalEventData->getShader(), editor::PdfBuild | editor::PdfResource);
-	else if (const DirectionalLightEntityData* directionalLightEntityData = dynamic_type_cast< const DirectionalLightEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(directionalLightEntityData->getCloudShadowTexture(), editor::PdfBuild | editor::PdfResource);
 	else if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(sourceAsset))
 		pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfBuild);
 	else if (const GroupEntityData* groupEntityData = dynamic_type_cast< const GroupEntityData* >(sourceAsset))
@@ -63,7 +61,6 @@ bool WorldEntityPipeline::buildDependencies(
 	{
 		pipelineDepends->addDependency(lightComponentData->getProbeDiffuseTexture(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(lightComponentData->getProbeSpecularTexture(), editor::PdfBuild | editor::PdfResource);
-		pipelineDepends->addDependency(lightComponentData->getCloudShadowTexture(), editor::PdfBuild | editor::PdfResource);
 	}
 	return true;
 }

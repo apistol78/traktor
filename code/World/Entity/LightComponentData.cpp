@@ -12,7 +12,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 5, LightComponentData, IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 6, LightComponentData, IEntityComponentData)
 
 LightComponentData::LightComponentData()
 :	m_lightType(LtDisabled)
@@ -73,7 +73,12 @@ void LightComponentData::serialize(ISerializer& s)
 			s >> resource::Member< render::ITexture >(L"probeTexture", m_probeDiffuseTexture);
 	}
 
-	s >> resource::Member< render::ITexture >(L"cloudShadowTexture", m_cloudShadowTexture);
+	if (s.getVersion() < 6)
+	{
+		resource::Id< render::ITexture > cloudShadowTexture;
+		s >> resource::Member< render::ITexture >(L"cloudShadowTexture", cloudShadowTexture);
+	}
+
 	s >> Member< bool >(L"castShadow", m_castShadow);
 	s >> Member< float >(L"range", m_range);
 	s >> Member< float >(L"radius", m_radius);

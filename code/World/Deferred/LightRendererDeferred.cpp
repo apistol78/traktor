@@ -35,7 +35,6 @@ const float c_pointLightScreenAreaThreshold = 4.0f * (c_pointLightScreenAreaThre
 
 render::handle_t s_handleTime;
 render::handle_t s_handleShadowEnable;
-render::handle_t s_handleCloudShadowEnable;
 render::handle_t s_handleTraceReflections;
 render::handle_t s_handleExtent;
 render::handle_t s_handleProjection;
@@ -52,7 +51,6 @@ render::handle_t s_handleLightDiffuseMap;
 render::handle_t s_handleLightSpecularMap;
 render::handle_t s_handleShadowMaskSize;
 render::handle_t s_handleShadowMask;
-render::handle_t s_handleCloudShadow;
 render::handle_t s_handleProbeDiffuse;
 render::handle_t s_handleProbeSpecular;
 render::handle_t s_handleLightPosition;
@@ -79,7 +77,6 @@ LightRendererDeferred::LightRendererDeferred()
 {
 	s_handleTime = render::getParameterHandle(L"World_Time");
 	s_handleShadowEnable = render::getParameterHandle(L"World_ShadowEnable");
-	s_handleCloudShadowEnable = render::getParameterHandle(L"World_CloudShadowEnable");
 	s_handleTraceReflections = render::getParameterHandle(L"World_TraceReflections");
 	s_handleExtent = render::getParameterHandle(L"World_Extent");
 	s_handleProjection = render::getParameterHandle(L"World_Projection");
@@ -96,7 +93,6 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleLightSpecularMap = render::getParameterHandle(L"World_LightSpecularMap");
 	s_handleShadowMaskSize = render::getParameterHandle(L"World_ShadowMaskSize");
 	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
-	s_handleCloudShadow = render::getParameterHandle(L"World_CloudShadow");
 	s_handleProbeDiffuse = render::getParameterHandle(L"World_ProbeDiffuse");
 	s_handleProbeSpecular = render::getParameterHandle(L"World_ProbeSpecular");
 	s_handleLightPosition = render::getParameterHandle(L"World_LightPosition");
@@ -184,13 +180,11 @@ void LightRendererDeferred::renderLight(
 		Vector4 lightDirectionAndRange = view * light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
 
 		m_lightDirectionalShader->setCombination(s_handleShadowEnable, shadowMask != 0);
-		m_lightDirectionalShader->setCombination(s_handleCloudShadowEnable, light.cloudShadow != 0);
 		m_lightDirectionalShader->setFloatParameter(s_handleTime, time);
 		m_lightDirectionalShader->setFloatParameter(s_handleShadowMaskSize, 0.5f / shadowMaskSize);
 		m_lightDirectionalShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 		m_lightDirectionalShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 		m_lightDirectionalShader->setTextureParameter(s_handleShadowMask, shadowMask);
-		m_lightDirectionalShader->setTextureParameter(s_handleCloudShadow, light.cloudShadow);
 		m_lightDirectionalShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightDirectionalShader->setTextureParameter(s_handleNormalMap, normalMap);
 		m_lightDirectionalShader->setTextureParameter(s_handleMiscMap, miscMap);
