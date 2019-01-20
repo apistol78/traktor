@@ -1,9 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
+#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
@@ -179,7 +174,7 @@ bool ImageProcessEditor::handleCommand(const ui::Command& command)
 		ui::GridRow* selectedRow = m_gridSteps->getSelectedRow();
 		if (selectedRow)
 		{
-			if (selectedRow->getParent() == 0)
+			if (selectedRow->getParent() == nullptr)
 			{
 				RefArray< ImageProcessStep > steps = m_asset->getSteps();
 				steps.remove(selectedRow->getData< ImageProcessStep >(L"STEP"));
@@ -197,7 +192,7 @@ bool ImageProcessEditor::handleCommand(const ui::Command& command)
 		ui::GridRow* selectedRow = m_gridSteps->getSelectedRow();
 		if (selectedRow)
 		{
-			if (selectedRow->getParent() == 0)
+			if (selectedRow->getParent() == nullptr)
 			{
 				RefArray< ImageProcessStep > steps = m_asset->getSteps();
 				for (uint32_t i = 1; i < steps.size(); ++i)
@@ -224,7 +219,7 @@ bool ImageProcessEditor::handleCommand(const ui::Command& command)
 		ui::GridRow* selectedRow = m_gridSteps->getSelectedRow();
 		if (selectedRow)
 		{
-			if (selectedRow->getParent() == 0)
+			if (selectedRow->getParent() == nullptr)
 			{
 				RefArray< ImageProcessStep > steps = m_asset->getSteps();
 				if (!steps.empty())
@@ -288,16 +283,68 @@ void ImageProcessEditor::handleDatabaseEvent(db::Database* database, const Guid&
 
 void ImageProcessEditor::updateStepView(ui::GridRow* parentStepRow, const RefArray< ImageProcessStep >& steps, int32_t& inoutOrder)
 {
-	for (RefArray< ImageProcessStep >::const_iterator i = steps.begin(); i != steps.end(); ++i)
+	for (const auto step : steps)
 	{
-		const IImageProcessStepFacade* stepFacade = m_imageProcessStepFacades[&type_of(*i)];
+		const IImageProcessStepFacade* stepFacade = m_imageProcessStepFacades[&type_of(step)];
 		if (!stepFacade)
 			continue;
 
 		Ref< ui::GridRow > stepRow = new ui::GridRow();
 		stepRow->add(new ui::GridItem(toString(inoutOrder++)/*stepFacade->getImage(*i)*/));
-		stepRow->add(new ui::GridItem(stepFacade->getText(m_editor, *i)));
-		stepRow->setData(L"STEP", *i);
+		stepRow->add(new ui::GridItem(stepFacade->getText(m_editor, step)));
+		stepRow->setData(L"STEP", step);
+
+		// Check if step is complete; ie all sources is defined.
+		std::vector< std::wstring > sources;
+		stepFacade->getSources(step, sources);
+
+		bool complete = true;
+		for (const auto source : sources)
+		{
+			// First check implicit sources.
+			if (
+				source == L"InputColor" ||
+				source == L"InputDepth" ||
+				source == L"InputNormal" ||
+				source == L"InputVelocity" ||
+				source == L"InputShadowMask"
+			)
+				continue;
+
+			// Check for user defined targets.
+			auto it = std::find_if(m_asset->getDefinitions().begin(), m_asset->getDefinitions().end(), [&](const ImageProcessDefine* def) {
+				const ImageProcessDefineTarget* defTarget = dynamic_type_cast< const ImageProcessDefineTarget* >(def);
+				return defTarget != nullptr && defTarget->getId() == source;
+			});
+			if (it == m_asset->getDefinitions().end())
+			{
+				log::warning << L"Step \"" << stepFacade->getText(m_editor, step) << L"\" use undefined source \"" << source << L"\"." << Endl;
+				complete = false;
+			}
+		}		
+
+		// Also check "set target" step.
+		const ImageProcessStepSetTarget* setTarget = dynamic_type_cast< const ImageProcessStepSetTarget* >(step);
+		if (setTarget)
+		{
+			const std::wstring& target = setTarget->getTarget();
+			if (target != L"Output")
+			{
+				auto it = std::find_if(m_asset->getDefinitions().begin(), m_asset->getDefinitions().end(), [&](const ImageProcessDefine* def) {
+					const ImageProcessDefineTarget* defTarget = dynamic_type_cast< const ImageProcessDefineTarget* >(def);
+					return defTarget != nullptr && defTarget->getId() == target;
+				});
+				if (it == m_asset->getDefinitions().end())
+				{
+					log::warning << L"Step \"" << stepFacade->getText(m_editor, step) << L"\" trying to bind undefined target \"" << target << L"\"." << Endl;
+					complete = false;
+				}
+			}
+		}
+
+		// Incomplete rows should have red background to indicate state.
+		if (!complete)
+			stepRow->setBackground(Color4ub(255, 0, 0, 255));
 
 		if (parentStepRow)
 			parentStepRow->addChild(stepRow);
@@ -305,7 +352,7 @@ void ImageProcessEditor::updateStepView(ui::GridRow* parentStepRow, const RefArr
 			m_gridSteps->addRow(stepRow);
 
 		RefArray< ImageProcessStep > children;
-		if (stepFacade->getChildren(*i, children))
+		if (stepFacade->getChildren(step, children))
 			updateStepView(stepRow, children, inoutOrder);
 	}
 }
@@ -315,9 +362,8 @@ void ImageProcessEditor::updateViews()
 	m_gridSteps->removeAllRows();
 	m_gridDefinitions->removeAllRows();
 
-	const RefArray< ImageProcessStep >& steps = m_asset->getSteps();
 	int32_t order = 0;
-	updateStepView(0, steps, order);
+	updateStepView(0, m_asset->getSteps(), order);
 
 	// Add implicit, read-only, definitions.
 	const wchar_t* c_implicitDefinitions[] = { L"Output", L"InputColor", L"InputDepth", L"InputNormal", L"InputVelocity", L"InputShadowMask" };
@@ -326,22 +372,21 @@ void ImageProcessEditor::updateViews()
 		Ref< ui::GridRow > definitionRow = new ui::GridRow();
 		definitionRow->add(new ui::GridItem(L"(Implicit)"));
 		definitionRow->add(new ui::GridItem(c_implicitDefinitions[i]));
-		definitionRow->setData(L"DEFINITION", 0);
+		definitionRow->setData(L"DEFINITION", nullptr);
 		m_gridDefinitions->addRow(definitionRow);
 	}
 
 	// Add user definitions.
-	const RefArray< ImageProcessDefine >& definitions = m_asset->getDefinitions();
-	for (RefArray< ImageProcessDefine >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
+	for (const auto definition : m_asset->getDefinitions())
 	{
-		const IImageProcessDefineFacade* defineFacade = m_imageProcessDefineFacades[&type_of(*i)];
+		const IImageProcessDefineFacade* defineFacade = m_imageProcessDefineFacades[&type_of(definition)];
 		if (!defineFacade)
 			continue;
 
 		Ref< ui::GridRow > definitionRow = new ui::GridRow();
 		definitionRow->add(new ui::GridItem(L"(User)"));
-		definitionRow->add(new ui::GridItem(defineFacade->getText(m_editor, *i)));
-		definitionRow->setData(L"DEFINITION", *i);
+		definitionRow->add(new ui::GridItem(defineFacade->getText(m_editor, definition)));
+		definitionRow->setData(L"DEFINITION", definition);
 		m_gridDefinitions->addRow(definitionRow);
 	}
 }
@@ -359,7 +404,7 @@ void ImageProcessEditor::eventGridStepSelect(ui::SelectionChangeEvent* event)
 	if (selectedRow)
 		m_properties->set(selectedRow->getData< ImageProcessStep >(L"STEP"));
 	else
-		m_properties->set(0);
+		m_properties->set(nullptr);
 }
 
 void ImageProcessEditor::eventDefinitionToolClick(ui::ToolBarButtonClickEvent* event)
@@ -375,7 +420,7 @@ void ImageProcessEditor::eventGridDefinitionSelect(ui::SelectionChangeEvent* eve
 	if (selectedRow)
 		m_properties->set(selectedRow->getData< ImageProcessDefine >(L"DEFINITION"));
 	else
-		m_properties->set(0);
+		m_properties->set(nullptr);
 }
 
 void ImageProcessEditor::eventStepPropertiesChange(ui::ContentChangeEvent* event)

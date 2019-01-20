@@ -88,6 +88,10 @@ public:
 
 	void applyState(const HierarchicalState* state);
 
+	void expandAll();
+
+	void collapseAll();
+
 	virtual bool copy();
 
 	virtual bool paste();
