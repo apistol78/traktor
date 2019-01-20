@@ -47,7 +47,7 @@ Ref< IImageProcessStepFacade > createFacade(const ImageProcessStep* step)
 	if (facadeType)
 		return checked_type_cast< IImageProcessStepFacade* >(facadeType->createInstance());
 	else
-		return 0;
+		return nullptr;
 }
 
 void gatherSources(const ImageProcessStep* step, std::vector< std::wstring >& outSources)
@@ -65,8 +65,8 @@ void gatherSources(const ImageProcessStep* step, std::vector< std::wstring >& ou
 
 void gatherSources(const RefArray< ImageProcessStep >& steps, std::vector< std::wstring >& outSources)
 {
-	for (RefArray< ImageProcessStep >::const_iterator i = steps.begin(); i != steps.end(); ++i)
-		gatherSources(*i, outSources);
+	for (const auto step : steps)
+		gatherSources(step, outSources);
 }
 
 		}
@@ -100,18 +100,15 @@ bool ImageProcessPipeline::buildDependencies(
 	const ImageProcessSettings* postProcessSettings = checked_type_cast< const ImageProcessSettings* >(sourceAsset);
 	T_FATAL_ASSERT (postProcessSettings);
 
-	const RefArray< ImageProcessDefine >& definitions = postProcessSettings->getDefinitions();
-	for (RefArray< ImageProcessDefine >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
+	for (const auto definition : postProcessSettings->getDefinitions())
 	{
-		if (const ImageProcessDefineTexture* defineTexture = dynamic_type_cast< const ImageProcessDefineTexture* >(*i))
+		if (const ImageProcessDefineTexture* defineTexture = dynamic_type_cast< const ImageProcessDefineTexture* >(definition))
 			pipelineDepends->addDependency(defineTexture->getTexture(), editor::PdfBuild | editor::PdfResource);
 	}
 	
 	RefArray< ImageProcessStep > ss;
-
-	const RefArray< ImageProcessStep >& steps = postProcessSettings->getSteps();
-	for (RefArray< ImageProcessStep >::const_iterator i = steps.begin(); i != steps.end(); ++i)
-		ss.push_back(*i);
+	for (const auto step : postProcessSettings->getSteps())
+		ss.push_back(step);
 
 	while (!ss.empty())
 	{
@@ -123,9 +120,8 @@ bool ImageProcessPipeline::buildDependencies(
 			pipelineDepends->addDependency(stepBokeh->getShader(), editor::PdfBuild | editor::PdfResource);
 		else if (const ImageProcessStepChain* stepChain = dynamic_type_cast< const ImageProcessStepChain* >(step))
 		{
-			const RefArray< ImageProcessStep >& steps = stepChain->getSteps();
-			for (RefArray< ImageProcessStep >::const_iterator i = steps.begin(); i != steps.end(); ++i)
-				ss.push_back(*i);
+			for (const auto step : stepChain->getSteps())
+				ss.push_back(step);
 		}
 		else if (const ImageProcessStepGodRay* stepGodRay = dynamic_type_cast< const ImageProcessStepGodRay* >(step))
 			pipelineDepends->addDependency(stepGodRay->getShader(), editor::PdfBuild | editor::PdfResource);
@@ -170,10 +166,9 @@ bool ImageProcessPipeline::buildOutput(
 	std::set< std::wstring > targets;
 
 	// Get all user defined, non-persistent, targets.
-	const RefArray< ImageProcessDefine >& definitions = pp->getDefinitions();
-	for (RefArray< ImageProcessDefine >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
+	for (const auto definition : pp->getDefinitions())
 	{
-		if (const ImageProcessDefineTarget* defineTarget = dynamic_type_cast< const ImageProcessDefineTarget* >(*i))
+		if (const ImageProcessDefineTarget* defineTarget = dynamic_type_cast< const ImageProcessDefineTarget* >(definition))
 		{
 			if (!defineTarget->persistent())
 				targets.insert(defineTarget->getId());

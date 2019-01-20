@@ -1,11 +1,5 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#include "Render/ImageProcess/ImageProcessStepSwapTargets.h"
 #include "Render/Editor/ImageProcess/ImageProcessStepSwapTargetsFacade.h"
+#include "Render/ImageProcess/ImageProcessStepSwapTargets.h"
 
 namespace traktor
 {
@@ -27,6 +21,9 @@ std::wstring ImageProcessStepSwapTargetsFacade::getText(editor::IEditor* editor,
 
 void ImageProcessStepSwapTargetsFacade::getSources(const ImageProcessStep* step, std::vector< std::wstring >& outSources) const
 {
+	const ImageProcessStepSwapTargets* swapStep = mandatory_non_null_type_cast< const ImageProcessStepSwapTargets* >(step);
+	outSources.push_back(swapStep->getDestination());
+	outSources.push_back(swapStep->getSource());
 }
 
 bool ImageProcessStepSwapTargetsFacade::canHaveChildren() const

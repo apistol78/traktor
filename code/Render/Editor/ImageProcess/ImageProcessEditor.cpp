@@ -387,6 +387,29 @@ void ImageProcessEditor::updateViews()
 		definitionRow->add(new ui::GridItem(L"(User)"));
 		definitionRow->add(new ui::GridItem(defineFacade->getText(m_editor, definition)));
 		definitionRow->setData(L"DEFINITION", definition);
+
+		if (const ImageProcessDefineTarget* defTarget = dynamic_type_cast< const ImageProcessDefineTarget* >(definition))
+		{
+			bool complete = false;
+			for (const auto step : m_asset->getSteps())
+			{
+				const IImageProcessStepFacade* stepFacade = m_imageProcessStepFacades[&type_of(step)];
+				if (!stepFacade)
+					continue;
+
+				std::vector< std::wstring > sources;
+				stepFacade->getSources(step, sources);
+
+				if (std::find(sources.begin(), sources.end(), defTarget->getId()) != sources.end())
+					complete = true;
+			}
+			if (!complete)
+			{
+				log::warning << L"Target definition \"" << defTarget->getId() << L"\" not used by any step." << Endl;
+				definitionRow->setBackground(Color4ub(255, 0, 0, 255));
+			}
+		}
+
 		m_gridDefinitions->addRow(definitionRow);
 	}
 }
