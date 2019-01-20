@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <stack>
 #include "Core/Misc/String.h"
@@ -58,9 +52,8 @@ void recursiveCaptureState(const PropertyItem* item, HierarchicalState* outState
 	std::wstring path = buildPath(item);
 	outState->addState(path, item->isExpanded(), item->isSelected());
 
-	const RefArray< PropertyItem >& children = item->getChildItems();
-	for (RefArray< PropertyItem >::const_iterator i = children.begin(); i != children.end(); ++i)
-		recursiveCaptureState(*i, outState);
+	for (const auto childItem : item->getChildItems())
+		recursiveCaptureState(childItem, outState);
 }
 
 void recursiveApplyState(PropertyItem* item, const HierarchicalState* state)
@@ -68,9 +61,8 @@ void recursiveApplyState(PropertyItem* item, const HierarchicalState* state)
 	if (!item)
 		return;
 
-	RefArray< PropertyItem >& children = item->getChildItems();
-	for (RefArray< PropertyItem >::iterator i = children.begin(); i != children.end(); ++i)
-		recursiveApplyState(*i, state);
+	for (const auto childItem : item->getChildItems())
+		recursiveApplyState(childItem, state);
 
 	std::wstring path = buildPath(item);
 
@@ -83,6 +75,28 @@ void recursiveApplyState(PropertyItem* item, const HierarchicalState* state)
 		item->setSelected(true);
 	else
 		item->setSelected(false);
+}
+
+void recursiveExpand(PropertyItem* item)
+{
+	if (!item)
+		return;
+
+	for (const auto childItem : item->getChildItems())
+		recursiveExpand(childItem);
+
+	item->expand();
+}
+
+void recursiveCollapse(PropertyItem* item)
+{
+	if (!item)
+		return;
+
+	for (const auto childItem : item->getChildItems())
+		recursiveCollapse(childItem);
+
+	item->collapse();
 }
 
 		}
@@ -270,10 +284,10 @@ Ref< PropertyItem > PropertyList::getPropertyItemFromPosition(const Point& posit
 	}
 
 	int32_t id = (y + scrollBarOffset) / dpi96(c_propertyItemHeight);
-	for (RefArray< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
+	for (const auto item : propertyItems)
 	{
 		if (id-- <= 0)
-			return *i;
+			return item;
 	}
 
 	return 0;
@@ -281,10 +295,10 @@ Ref< PropertyItem > PropertyList::getPropertyItemFromPosition(const Point& posit
 
 bool PropertyList::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
 {
-	if (!m_guidResolver)
+	if (m_guidResolver)
+		return m_guidResolver->resolvePropertyGuid(guid, resolved);
+	else
 		return false;
-
-	return m_guidResolver->resolvePropertyGuid(guid, resolved);
 }
 
 Ref< HierarchicalState > PropertyList::captureState() const
@@ -292,19 +306,35 @@ Ref< HierarchicalState > PropertyList::captureState() const
 	Ref< HierarchicalState > state = new HierarchicalState();
 	
 	state->setScrollPosition(m_scrollBar->getPosition());
-	for (RefArray< PropertyItem >::const_iterator i = m_propertyItems.begin(); i != m_propertyItems.end(); ++i)
-		recursiveCaptureState(*i, state);
+	for (const auto item : m_propertyItems)
+		recursiveCaptureState(item, state);
 
 	return state;
 }
 
 void PropertyList::applyState(const HierarchicalState* state)
 {
-	for (RefArray< PropertyItem >::iterator i = m_propertyItems.begin(); i != m_propertyItems.end(); ++i)
-		recursiveApplyState(*i, state);
+	for (const auto item : m_propertyItems)
+		recursiveApplyState(item, state);
 
 	updateScrollBar();
 	m_scrollBar->setPosition(state->getScrollPosition());
+}
+
+void PropertyList::expandAll()
+{
+	for (const auto item : m_propertyItems)
+		recursiveExpand(item);
+
+	updateScrollBar();
+}
+
+void PropertyList::collapseAll()
+{
+	for (const auto item : m_propertyItems)
+		recursiveCollapse(item);
+
+	updateScrollBar();
 }
 
 bool PropertyList::copy()
@@ -389,10 +419,10 @@ void PropertyList::placeItems()
 		rcInner.left, -scrollBarOffset + top,
 		rcInner.right - scrollBarWidth, -scrollBarOffset + top + dpi96(c_propertyItemHeight) - 1
 	);
-	for (RefArray< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
+	for (auto item : propertyItems)
 	{
 		Rect rcValue (rcItem.left + m_separator + 1, rcItem.top, rcItem.right, rcItem.bottom);
-		(*i)->resizeInPlaceControls(rcValue, childRects);
+		item->resizeInPlaceControls(rcValue, childRects);
 
 		rcItem = rcItem.offset(0, dpi96(c_propertyItemHeight));
 	}

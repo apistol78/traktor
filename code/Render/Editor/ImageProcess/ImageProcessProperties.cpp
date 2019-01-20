@@ -51,6 +51,7 @@ void ImageProcessProperties::destroy()
 void ImageProcessProperties::set(ISerializable* object)
 {
 	m_propertyList->bind(object);
+	m_propertyList->expandAll();
 }
 
 bool ImageProcessProperties::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
