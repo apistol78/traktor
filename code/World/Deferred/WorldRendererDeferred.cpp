@@ -59,6 +59,7 @@ const resource::Id< render::ImageProcessSettings > c_motionBlurLow(Guid(L"{BDFEF
 const resource::Id< render::ImageProcessSettings > c_motionBlurMedium(Guid(L"{A70CBA02-B75A-E246-A9B6-99B8B2B98D2A}"));
 const resource::Id< render::ImageProcessSettings > c_motionBlurHigh(Guid(L"{E893B98C-90A3-9848-B4F3-3D8C0CE57CE8}"));
 const resource::Id< render::ImageProcessSettings > c_motionBlurUltra(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
+const resource::Id< render::ImageProcessSettings > c_toneMap(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
 
 		}
 
@@ -632,6 +633,36 @@ bool WorldRendererDeferred::create(
 		}
 	}
 
+	// Create tone map processing.
+	{
+		resource::Proxy< render::ImageProcessSettings > toneMap;
+		if (!resourceManager->bind(c_toneMap, toneMap))
+			log::warning << L"Unable to create tone map process." << Endl;
+
+		if (toneMap)
+		{
+			m_toneMapImageProcess = new render::ImageProcess();
+			if (m_toneMapImageProcess->create(
+				toneMap,
+				postProcessTargetPool,
+				resourceManager,
+				renderSystem,
+				desc.width,
+				desc.height,
+				desc.allTargetsPersistent
+			))
+				m_toneMapImageProcess->setFloatParameter(
+					render::getParameterHandle(L"World_ExposureBias"),
+					m_settings.exposureBias
+				);
+			else
+			{
+				log::warning << L"Unable to create tone map process." << Endl;
+				m_toneMapImageProcess = nullptr;
+			}
+		}		
+	}
+
 	// Create global reflection map.
 	if (m_settings.reflectionMap)
 	{
@@ -710,6 +741,7 @@ void WorldRendererDeferred::destroy()
 	m_buildEntities.clear();
 
 	safeDestroy(m_lightRenderer);
+	safeDestroy(m_toneMapImageProcess);
 	safeDestroy(m_motionBlurPrimeImageProcess);
 	safeDestroy(m_motionBlurImageProcess);
 	safeDestroy(m_gammaCorrectionImageProcess);
@@ -807,10 +839,6 @@ void WorldRendererDeferred::endBuild(WorldRenderView& worldRenderView, int frame
 
 bool WorldRendererDeferred::beginRender(int frame, render::EyeType eye, const Color4f& clearColor)
 {
-	if (!m_renderView->begin(m_visualTargetSet, 0))
-		return false;
-
-	m_renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
 	return true;
 }
 
@@ -1089,6 +1117,9 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 	// Calculate visual image by combining lighting and color.
 	if (m_renderView->begin(m_visualTargetSet, 0))
 	{
+		const Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		m_renderView->clear(render::CfColor, &clearColor, 1.0f, 0);
+
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Final lit color");
 		m_lightRenderer->renderFinalColor(
 			m_renderView,
@@ -1102,7 +1133,9 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			m_gbufferTargetSet->getColorTexture(3),
 			m_lightAccumulationTargetSet->getColorTexture(0),
 			m_lightAccumulationTargetSet->getColorTexture(1)
-		);		
+		);	
+		T_RENDER_POP_MARKER(m_renderView);
+
 		m_renderView->end();
 	}
 
@@ -1151,6 +1184,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 	}
 
 	// Render opaque visuals.
+	if (m_renderView->begin(m_visualTargetSet, 0))
 	{
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
@@ -1170,15 +1204,18 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		f.visual->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &visualProgramParams);
 		T_RENDER_POP_MARKER(m_renderView);
 
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (1)");
 		m_renderView->end();
-		m_renderView->begin(m_colorTargetSet, 0);
+	}
 
+	// Copy color into off target.
+	if (m_renderView->begin(m_colorTargetSet, 0))
+	{
 		render::ImageProcessStep::Instance::RenderParams params;
 		params.viewFrustum = f.viewFrustum;
 		params.projection = projection;
 		params.deltaTime = 0.0f;
 
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (1)");
 		m_colorTargetCopy->render(
 			m_renderView,
 			m_visualTargetSet->getColorTexture(0),	// color
@@ -1188,17 +1225,13 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			nullptr,	// shadow
 			params
 		);
+		T_RENDER_POP_MARKER(m_renderView);
 
 		m_renderView->end();
-		m_renderView->begin(m_visualTargetSet, 0);
-		T_RENDER_POP_MARKER(m_renderView);
-
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post opaque");
-		f.visual->getRenderContext()->render(m_renderView, render::RpPostOpaque, &visualProgramParams);
-		T_RENDER_POP_MARKER(m_renderView);
 	}
 
-	// Render alpha blend visuals.
+	// Render post opaque + alpha visuals.
+	if (m_renderView->begin(m_visualTargetSet, 0))
 	{
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
@@ -1214,19 +1247,26 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		visualProgramParams.setTextureParameter(ms_handleReflectionMap, m_reflectionMap);
 		visualProgramParams.endParameters(m_globalContext);
 
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post opaque");
+		f.visual->getRenderContext()->render(m_renderView, render::RpPostOpaque, &visualProgramParams);
+		T_RENDER_POP_MARKER(m_renderView);
+
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual alpha blend");
 		f.visual->getRenderContext()->render(m_renderView, render::RpAlphaBlend, &visualProgramParams);
 		T_RENDER_POP_MARKER(m_renderView);
 
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (2)");
 		m_renderView->end();
-		m_renderView->begin(m_colorTargetSet, 0);
+	}
 
+	// Copy color into off target.
+	if (m_renderView->begin(m_colorTargetSet, 0))
+	{
 		render::ImageProcessStep::Instance::RenderParams params;
 		params.viewFrustum = f.viewFrustum;
 		params.projection = projection;
 		params.deltaTime = 0.0f;
 
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (2)");
 		m_colorTargetCopy->render(
 			m_renderView,
 			m_visualTargetSet->getColorTexture(0),	// color
@@ -1236,14 +1276,33 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			nullptr,	// shadow mask
 			params
 		);
+		T_RENDER_POP_MARKER(m_renderView);
 
 		m_renderView->end();
-		m_renderView->begin(m_visualTargetSet, 0);
-		T_RENDER_POP_MARKER(m_renderView);
+	}
+
+	// Render post alpha visuals.
+	if (m_renderView->begin(m_visualTargetSet, 0))
+	{
+		render::ProgramParameters visualProgramParams;
+		visualProgramParams.beginParameters(m_globalContext);
+		visualProgramParams.setFloatParameter(ms_handleTime, f.time);
+		visualProgramParams.setVectorParameter(ms_handleFogDistanceAndDensity, m_fogDistanceAndDensity);
+		visualProgramParams.setVectorParameter(ms_handleFogColor, m_fogColor);
+		visualProgramParams.setMatrixParameter(ms_handleView, f.view);
+		visualProgramParams.setMatrixParameter(ms_handleViewInverse, f.view.inverse());
+		visualProgramParams.setMatrixParameter(ms_handleProjection, projection);
+		visualProgramParams.setTextureParameter(ms_handleColorMap, m_colorTargetSet->getColorTexture(0));
+		visualProgramParams.setTextureParameter(ms_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
+		visualProgramParams.setTextureParameter(ms_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
+		visualProgramParams.setTextureParameter(ms_handleReflectionMap, m_reflectionMap);
+		visualProgramParams.endParameters(m_globalContext);
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post alpha blend");
 		f.visual->getRenderContext()->render(m_renderView, render::RpPostAlphaBlend | render::RpOverlay, &visualProgramParams);
 		T_RENDER_POP_MARKER(m_renderView);
+
+		m_renderView->end();
 	}
 
 	m_globalContext->flush();
@@ -1261,15 +1320,15 @@ void WorldRendererDeferred::endRender(int frame, render::EyeType eye, float delt
 	params.godRayDirection = f.godRayDirection;
 	params.deltaTime = deltaTime;
 
-	m_renderView->end();
-
 	render::RenderTargetSet* sourceTargetSet = m_visualTargetSet;
 	render::RenderTargetSet* outputTargetSet = m_intermediateTargetSet;
 	T_ASSERT (sourceTargetSet);
 
-	StaticVector< render::ImageProcess*, 4 > processes;
+	StaticVector< render::ImageProcess*, 5 > processes;
 	if (m_motionBlurImageProcess)
 		processes.push_back(m_motionBlurImageProcess);
+	if (m_toneMapImageProcess)
+		processes.push_back(m_toneMapImageProcess);
 	if (m_visualImageProcess)
 		processes.push_back(m_visualImageProcess);
 	if (m_gammaCorrectionImageProcess)
@@ -1362,6 +1421,15 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 
 	if (m_gammaCorrectionImageProcess)
 		m_gammaCorrectionImageProcess->getDebugTargets(outTargets);
+
+	if (m_motionBlurPrimeImageProcess)
+		m_motionBlurPrimeImageProcess->getDebugTargets(outTargets);
+
+	if (m_motionBlurImageProcess)
+		m_motionBlurImageProcess->getDebugTargets(outTargets);
+
+	if (m_toneMapImageProcess)
+		m_toneMapImageProcess->getDebugTargets(outTargets);
 }
 
 void WorldRendererDeferred::buildGBuffer(WorldRenderView& worldRenderView, int frame)

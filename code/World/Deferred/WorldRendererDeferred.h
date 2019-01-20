@@ -155,6 +155,7 @@ private:
 	Ref< render::ImageProcess > m_gammaCorrectionImageProcess;
 	Ref< render::ImageProcess > m_motionBlurPrimeImageProcess;
 	Ref< render::ImageProcess > m_motionBlurImageProcess;
+	Ref< render::ImageProcess > m_toneMapImageProcess;
 	Ref< LightRendererDeferred > m_lightRenderer;
 	RefArray< Entity > m_buildEntities;
 	AlignedVector< Frame > m_frames;

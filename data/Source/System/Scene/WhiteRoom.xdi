@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="8">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="26">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="27">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<linearLighting>true</linearLighting>
@@ -17,7 +17,6 @@
 				<quantizeProjection>false</quantizeProjection>
 				<maskDenominator>1</maskDenominator>
 				<maskProject>{00000000-0000-0000-0000-000000000000}</maskProject>
-				<maskFilter>{00000000-0000-0000-0000-000000000000}</maskFilter>
 			</disabled>
 			<low>
 				<projection>SpUniform</projection>
@@ -30,7 +29,6 @@
 				<quantizeProjection>false</quantizeProjection>
 				<maskDenominator>2</maskDenominator>
 				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
-				<maskFilter>{7D4D38B9-1E43-8046-B1A4-705CFEF9B8EB}</maskFilter>
 			</low>
 			<medium>
 				<projection>SpUniform</projection>
@@ -43,7 +41,6 @@
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>2</maskDenominator>
 				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
-				<maskFilter>{57FD53AF-547A-9F46-8C94-B4D24EFB63BC}</maskFilter>
 			</medium>
 			<high>
 				<projection>SpUniform</projection>
@@ -56,7 +53,6 @@
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>1</maskDenominator>
 				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
-				<maskFilter>{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}</maskFilter>
 			</high>
 			<ultra>
 				<projection>SpUniform</projection>
@@ -69,10 +65,9 @@
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>1</maskDenominator>
 				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
-				<maskFilter>{5AFC153E-6FCE-3142-9E1B-DD3722DA447F}</maskFilter>
 			</ultra>
 		</shadowSettings>
-		<ambientColor>0.196078, 0.196078, 0.196078, 1</ambientColor>
+		<ambientColor>0, 0, 0, 0</ambientColor>
 		<fog>false</fog>
 		<fogDistanceY>0</fogDistanceY>
 		<fogDistanceZ>90</fogDistanceZ>
@@ -104,12 +99,11 @@
 						<rotation>-0.364972, 0.277816, 0.115075, 0.88112</rotation>
 					</transform>
 					<components>
-						<item type="traktor.world.LightComponentData" version="5">
+						<item type="traktor.world.LightComponentData" version="6">
 							<lightType>LtProbe</lightType>
 							<color>1, 1, 1, 0</color>
 							<probeDiffuseTexture>{1BCA1D09-83D0-974C-B2CE-032EA1F71B1B}</probeDiffuseTexture>
 							<probeSpecularTexture>{67B5BA16-0AA5-EC48-8279-E98FD0EE663C}</probeSpecularTexture>
-							<cloudShadowTexture>{00000000-0000-0000-0000-000000000000}</cloudShadowTexture>
 							<castShadow>false</castShadow>
 							<range>10</range>
 							<radius>1.570796</radius>

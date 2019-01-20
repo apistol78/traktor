@@ -46,12 +46,13 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 27, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 28, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
 ,	viewFarZ(100.0f)
 ,	linearLighting(true)
+,	exposureBias(2.0f)
 ,	depthPass(true)
 ,	ambientColor(0.0f, 0.0f, 0.0f)
 ,	fog(false)
@@ -70,6 +71,9 @@ void WorldRenderSettings::serialize(ISerializer& s)
 	s >> Member< float >(L"viewNearZ", viewNearZ, AttributeRange(0.0f));
 	s >> Member< float >(L"viewFarZ", viewFarZ, AttributeRange(0.0f));
 	s >> Member< bool >(L"linearLighting", linearLighting);
+
+	if (s.getVersion() >= 28)
+		s >> Member< float >(L"exposureBias", exposureBias, AttributeRange(0.0f));
 
 	if (s.getVersion() >= 23)
 	{

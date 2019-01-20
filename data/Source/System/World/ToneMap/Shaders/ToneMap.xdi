@@ -5,8 +5,8 @@
 			<id>{A1B0BF4E-3685-9D43-80C3-B22E5110D8B9}</id>
 			<comment/>
 			<position>
-				<first>2199</first>
-				<second>394</second>
+				<first>2194</first>
+				<second>389</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -53,8 +53,8 @@
 			<id>{AC7B207D-E2EA-B849-BF43-7A4B9FB71AD5}</id>
 			<comment/>
 			<position>
-				<first>688</first>
-				<second>530</second>
+				<first>683</first>
+				<second>525</second>
 			</position>
 			<fragmentGuid>{33B9D7E0-397C-FE49-A47C-E2D5D0C7E2A9}</fragmentGuid>
 			<inputPins>
@@ -81,8 +81,8 @@
 			<id>{4997F9D3-60D1-3F41-8294-E64EA7129F70}</id>
 			<comment/>
 			<position>
-				<first>340</first>
-				<second>622</second>
+				<first>335</first>
+				<second>617</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -99,8 +99,8 @@
 			<id>{02DEDA05-2823-0745-B30B-5FC90C02D156}</id>
 			<comment/>
 			<position>
-				<first>-47</first>
-				<second>516</second>
+				<first>-42</first>
+				<second>511</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -120,8 +120,8 @@
 			<id>{A82A3983-A547-3A41-9941-E8FF0089C8BB}</id>
 			<comment/>
 			<position>
-				<first>-50</first>
-				<second>627</second>
+				<first>-45</first>
+				<second>622</second>
 			</position>
 			<parameterName>ColorTexture</parameterName>
 			<type>PtTexture2D</type>
@@ -131,8 +131,8 @@
 			<id>{F80CF0D7-4D2E-DD42-AE45-1F30E5AE59A6}</id>
 			<comment/>
 			<position>
-				<first>362</first>
-				<second>446</second>
+				<first>357</first>
+				<second>441</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -149,8 +149,8 @@
 			<id>{A4328CB5-7FD6-424D-A37B-94412F422263}</id>
 			<comment/>
 			<position>
-				<first>-30</first>
-				<second>385</second>
+				<first>-25</first>
+				<second>384</second>
 			</position>
 			<parameterName>CurrentIllumTexture</parameterName>
 			<type>PtTexture2D</type>
@@ -160,8 +160,8 @@
 			<id>{5C1ACEAB-A501-314F-8A24-21A5587ED7D7}</id>
 			<comment/>
 			<position>
-				<first>1263</first>
-				<second>496</second>
+				<first>1258</first>
+				<second>491</second>
 			</position>
 			<fragmentGuid>{B5946C59-A7C3-2549-83F9-44105CCBD422}</fragmentGuid>
 			<inputPins>
@@ -187,25 +187,25 @@ Exposure bias
 			]]>
 			</comment>
 			<position>
-				<first>767</first>
-				<second>436</second>
+				<first>527</first>
+				<second>396</second>
 			</position>
-			<value>2.05</value>
+			<value>2</value>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{FD65039D-59AC-254B-B500-2C0C12AA5462}</id>
 			<comment/>
 			<position>
-				<first>970</first>
-				<second>445</second>
+				<first>967</first>
+				<second>442</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{0C64B9E8-3543-5F49-B820-67A5A5A4229B}</id>
 			<comment/>
 			<position>
-				<first>1424</first>
-				<second>309</second>
+				<first>1421</first>
+				<second>306</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -213,16 +213,16 @@ Exposure bias
 			<id>{D0ADF16F-DC68-8241-91B9-C603D525FB07}</id>
 			<comment/>
 			<position>
-				<first>1592</first>
-				<second>345</second>
+				<first>1589</first>
+				<second>342</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{B1862643-6889-494E-89CA-785522238022}</id>
 			<comment/>
 			<position>
-				<first>1256</first>
-				<second>406</second>
+				<first>1253</first>
+				<second>403</second>
 			</position>
 			<fragmentGuid>{B5946C59-A7C3-2549-83F9-44105CCBD422}</fragmentGuid>
 			<inputPins>
@@ -244,8 +244,8 @@ Exposure bias
 			<id>{0DD7D26B-3CE3-7545-A67B-22EC53BD5D07}</id>
 			<comment/>
 			<position>
-				<first>1912</first>
-				<second>425</second>
+				<first>1909</first>
+				<second>422</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
@@ -256,10 +256,21 @@ W
 			]]>
 			</comment>
 			<position>
-				<first>943</first>
-				<second>401</second>
+				<first>939</first>
+				<second>397</second>
 			</position>
-			<value>1.4</value>
+			<value>11.2</value>
+		</item>
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{23833684-88A7-4C94-A8C8-09F9F6B33460}</id>
+			<comment/>
+			<position>
+				<first>696</first>
+				<second>397</second>
+			</position>
+			<parameterName>World_ExposureBias</parameterName>
+			<type>PtScalar</type>
+			<frequency>UfOnce</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -321,16 +332,6 @@ W
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<name>TexCoord</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -411,6 +412,26 @@ W
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Initial</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

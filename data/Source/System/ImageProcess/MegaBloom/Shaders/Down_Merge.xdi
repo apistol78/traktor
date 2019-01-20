@@ -5,8 +5,8 @@
 			<id>{B2A34F23-1A1C-3246-879F-4984ED68DCFF}</id>
 			<comment/>
 			<position>
-				<first>286</first>
-				<second>300</second>
+				<first>375</first>
+				<second>317</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -26,8 +26,8 @@
 			<id>{B7533633-0945-714E-ACDF-5D9FE6C15B3B}</id>
 			<comment/>
 			<position>
-				<first>388</first>
-				<second>270</second>
+				<first>383</first>
+				<second>242</second>
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture2D</type>
@@ -37,8 +37,8 @@
 			<id>{25ADF222-0495-E044-ADDA-D0CC14AD6E42}</id>
 			<comment/>
 			<position>
-				<first>583</first>
-				<second>279</second>
+				<first>582</first>
+				<second>278</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -55,8 +55,8 @@
 			<id>{07BD9C2C-1315-BF42-B6DD-04BCE38DDD0A}</id>
 			<comment/>
 			<position>
-				<first>790</first>
-				<second>272</second>
+				<first>788</first>
+				<second>271</second>
 			</position>
 			<technique>Default</technique>
 			<priority>

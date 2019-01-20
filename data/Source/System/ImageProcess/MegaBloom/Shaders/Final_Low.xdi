@@ -5,8 +5,8 @@
 			<id>{A6C0B451-AB12-7941-B251-39A2DD2BCC95}</id>
 			<comment/>
 			<position>
-				<first>4052</first>
-				<second>355</second>
+				<first>3832</first>
+				<second>384</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -300,8 +300,8 @@
 			<id>{6CC8557B-E6A2-6242-A326-FCAE208E12C8}</id>
 			<comment/>
 			<position>
-				<first>3558</first>
-				<second>358</second>
+				<first>3557</first>
+				<second>357</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
@@ -576,16 +576,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
@@ -612,6 +602,16 @@
 			<destination>
 				<node ref="/object/nodes/item[24]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
