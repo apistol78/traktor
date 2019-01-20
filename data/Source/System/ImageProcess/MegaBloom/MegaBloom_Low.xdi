@@ -3,126 +3,6 @@
 	<requireHighRange>true</requireHighRange>
 	<definitions>
 		<item type="traktor.render.ImageProcessDefineTarget" version="4">
-			<id>InitialLuminance</id>
-			<width>0</width>
-			<height>0</height>
-			<screenWidthDenom>8</screenWidthDenom>
-			<screenHeightDenom>8</screenHeightDenom>
-			<maxWidth>160</maxWidth>
-			<maxHeight>90</maxHeight>
-			<format>TfR16F</format>
-			<depthStencil>false</depthStencil>
-			<preferTiled>false</preferTiled>
-			<multiSample>0</multiSample>
-			<clearColor>0.6, 0.6, 0.6, 0.6</clearColor>
-			<persistent>false</persistent>
-		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="4">
-			<id>Illum64</id>
-			<width>64</width>
-			<height>64</height>
-			<screenWidthDenom>0</screenWidthDenom>
-			<screenHeightDenom>0</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<format>TfR16F</format>
-			<depthStencil>false</depthStencil>
-			<preferTiled>false</preferTiled>
-			<multiSample>0</multiSample>
-			<clearColor>0.6, 0.6, 0.6, 0.6</clearColor>
-			<persistent>false</persistent>
-		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="4">
-			<id>Illum16</id>
-			<width>16</width>
-			<height>16</height>
-			<screenWidthDenom>0</screenWidthDenom>
-			<screenHeightDenom>0</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<format>TfR16F</format>
-			<depthStencil>false</depthStencil>
-			<preferTiled>false</preferTiled>
-			<multiSample>0</multiSample>
-			<clearColor>0.6, 0.6, 0.6, 0.6</clearColor>
-			<persistent>false</persistent>
-		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="4">
-			<id>Illum4</id>
-			<width>4</width>
-			<height>4</height>
-			<screenWidthDenom>0</screenWidthDenom>
-			<screenHeightDenom>0</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<format>TfR16F</format>
-			<depthStencil>false</depthStencil>
-			<preferTiled>false</preferTiled>
-			<multiSample>0</multiSample>
-			<clearColor>0.6, 0.6, 0.6, 0.6</clearColor>
-			<persistent>false</persistent>
-		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="4">
-			<id>Illum1</id>
-			<width>1</width>
-			<height>1</height>
-			<screenWidthDenom>0</screenWidthDenom>
-			<screenHeightDenom>0</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<format>TfR16F</format>
-			<depthStencil>false</depthStencil>
-			<preferTiled>false</preferTiled>
-			<multiSample>0</multiSample>
-			<clearColor>0.6, 0.6, 0.6, 0.6</clearColor>
-			<persistent>true</persistent>
-		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="4">
-			<id>Adapt1</id>
-			<width>1</width>
-			<height>1</height>
-			<screenWidthDenom>0</screenWidthDenom>
-			<screenHeightDenom>0</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<format>TfR16F</format>
-			<depthStencil>false</depthStencil>
-			<preferTiled>false</preferTiled>
-			<multiSample>0</multiSample>
-			<clearColor>0.6, 0.6, 0.6, 0.6</clearColor>
-			<persistent>true</persistent>
-		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="4">
-			<id>Adapt2</id>
-			<width>1</width>
-			<height>1</height>
-			<screenWidthDenom>0</screenWidthDenom>
-			<screenHeightDenom>0</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<format>TfR16F</format>
-			<depthStencil>false</depthStencil>
-			<preferTiled>false</preferTiled>
-			<multiSample>0</multiSample>
-			<clearColor>0.6, 0.6, 0.6, 0.6</clearColor>
-			<persistent>true</persistent>
-		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="4">
-			<id>Full</id>
-			<width>0</width>
-			<height>0</height>
-			<screenWidthDenom>1</screenWidthDenom>
-			<screenHeightDenom>1</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<format>TfR11G11B10F</format>
-			<depthStencil>false</depthStencil>
-			<preferTiled>false</preferTiled>
-			<multiSample>0</multiSample>
-			<clearColor>0, 0, 0, 0</clearColor>
-			<persistent>false</persistent>
-		</item>
-		<item type="traktor.render.ImageProcessDefineTarget" version="4">
 			<id>Down_1</id>
 			<width>0</width>
 			<height>0</height>
@@ -249,102 +129,6 @@
 	</definitions>
 	<steps>
 		<item type="traktor.render.ImageProcessStepSetTarget">
-			<target>InitialLuminance</target>
-		</item>
-		<item type="traktor.render.ImageProcessStepSimple" version="1">
-			<shader>{9B02255F-8C06-1540-AE46-C971346D5B35}</shader>
-			<sources>
-				<item>
-					<param>ColorTexture</param>
-					<source>InputColor</source>
-				</item>
-			</sources>
-		</item>
-		<item type="traktor.render.ImageProcessStepSetTarget">
-			<target>Illum64</target>
-		</item>
-		<item type="traktor.render.ImageProcessStepSimple" version="1">
-			<shader>{1B84E078-B811-4EBF-996B-6BA11E45B2DC}</shader>
-			<sources>
-				<item>
-					<param>SourceTexture</param>
-					<source>InitialLuminance</source>
-				</item>
-			</sources>
-		</item>
-		<item type="traktor.render.ImageProcessStepSetTarget">
-			<target>Illum16</target>
-		</item>
-		<item type="traktor.render.ImageProcessStepSimple" version="1">
-			<shader>{1B84E078-B811-4EBF-996B-6BA11E45B2DC}</shader>
-			<sources>
-				<item>
-					<param>SourceTexture</param>
-					<source>Illum64</source>
-				</item>
-			</sources>
-		</item>
-		<item type="traktor.render.ImageProcessStepSetTarget">
-			<target>Illum4</target>
-		</item>
-		<item type="traktor.render.ImageProcessStepSimple" version="1">
-			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
-			<sources>
-				<item>
-					<param>SourceTexture</param>
-					<source>Illum16</source>
-				</item>
-			</sources>
-		</item>
-		<item type="traktor.render.ImageProcessStepSetTarget">
-			<target>Illum1</target>
-		</item>
-		<item type="traktor.render.ImageProcessStepSimple" version="1">
-			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
-			<sources>
-				<item>
-					<param>SourceTexture</param>
-					<source>Illum4</source>
-				</item>
-			</sources>
-		</item>
-		<item type="traktor.render.ImageProcessStepSetTarget">
-			<target>Adapt2</target>
-		</item>
-		<item type="traktor.render.ImageProcessStepSimple" version="1">
-			<shader>{E9D34A63-454C-6B4C-A508-009527334A5B}</shader>
-			<sources>
-				<item>
-					<param>SourceTexture</param>
-					<source>Illum1</source>
-				</item>
-				<item>
-					<param>CurrentIllumTexture</param>
-					<source>Adapt1</source>
-				</item>
-			</sources>
-		</item>
-		<item type="traktor.render.ImageProcessStepSwapTargets">
-			<destination>Adapt1</destination>
-			<source>Adapt2</source>
-		</item>
-		<item type="traktor.render.ImageProcessStepSetTarget">
-			<target>Full</target>
-		</item>
-		<item type="traktor.render.ImageProcessStepSimple" version="1">
-			<shader>{EB500331-8E43-4540-A742-9E88EF4ABBF9}</shader>
-			<sources>
-				<item>
-					<param>ColorTexture</param>
-					<source>InputColor</source>
-				</item>
-				<item>
-					<param>CurrentIllumTexture</param>
-					<source>Adapt1</source>
-				</item>
-			</sources>
-		</item>
-		<item type="traktor.render.ImageProcessStepSetTarget">
 			<target>Down_1</target>
 		</item>
 		<item type="traktor.render.ImageProcessStepSimple" version="1">
@@ -352,7 +136,7 @@
 			<sources>
 				<item>
 					<param>Source</param>
-					<source>Full</source>
+					<source>InputColor</source>
 				</item>
 			</sources>
 		</item>
@@ -556,19 +340,11 @@
 			<sources>
 				<item>
 					<param>Source</param>
-					<source>Full</source>
+					<source>InputColor</source>
 				</item>
 				<item>
 					<param>Down_1</param>
 					<source>Down_1</source>
-				</item>
-				<item>
-					<param>ColorTexture</param>
-					<source>InputColor</source>
-				</item>
-				<item>
-					<param>CurrentIllumTexture</param>
-					<source>Adapt1</source>
 				</item>
 			</sources>
 		</item>

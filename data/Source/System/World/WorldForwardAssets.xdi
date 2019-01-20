@@ -53,5 +53,9 @@
 			<id>{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
+		<item>
+			<id>{BC4FA128-A976-4023-A422-637581ADFD7E}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
 	</dependencies>
 </object>

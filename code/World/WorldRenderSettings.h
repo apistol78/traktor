@@ -68,6 +68,7 @@ public:
 	float viewNearZ;
 	float viewFarZ;
 	bool linearLighting;
+	float exposureBias;
 	bool depthPass;
 	ShadowSettings shadowSettings[QuLast];
 	Color4f ambientColor;

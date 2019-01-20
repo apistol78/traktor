@@ -30,8 +30,8 @@
 			<id>{826BE3B9-B3CA-8545-87DD-94DC4BB3C148}</id>
 			<comment/>
 			<position>
-				<first>110</first>
-				<second>158</second>
+				<first>109</first>
+				<second>157</second>
 			</position>
 			<value>0.001</value>
 		</item>
@@ -39,8 +39,8 @@
 			<id>{747ECD24-A611-CD4D-845B-F9C0DA4C7DB1}</id>
 			<comment/>
 			<position>
-				<first>194</first>
-				<second>113</second>
+				<first>193</first>
+				<second>112</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -48,8 +48,8 @@
 			<id>{15D97393-3E2F-2C4D-B7FD-1058659D2674}</id>
 			<comment/>
 			<position>
-				<first>-67</first>
-				<second>109</second>
+				<first>-66</first>
+				<second>108</second>
 			</position>
 			<name>Current luminance</name>
 			<connectable>true</connectable>
