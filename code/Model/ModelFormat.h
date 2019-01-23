@@ -1,12 +1,6 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_model_ModelFormat_H
-#define traktor_model_ModelFormat_H
+#pragma once
 
+#include <functional>
 #include <vector>
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -73,7 +67,7 @@ public:
 	 * \param importFlags Import flags.
 	 * \return Read model.
 	 */
-	virtual Ref< Model > read(IStream* stream, uint32_t importFlags = IfAll) const = 0;
+	virtual Ref< Model > read(const Path& filePath, uint32_t importFlags, const std::function< Ref< IStream >(const Path&) >& openStream) const = 0;
 
 	/*! \brief Write model.
 	 *
@@ -93,12 +87,12 @@ public:
 
 	/*! \brief Automatically read model using appropriate format.
 	 *
-	 * \param file Source stream.
-	 * \param extension File format extension.
+	 * \param filePath Path to model file.
 	 * \param importFlags Import flags.
+	 * \param openStreamFn Open stream function.
 	 * \return Read model.
 	 */
-	static Ref< Model > readAny(IStream* stream, const std::wstring& extension, uint32_t importFlags = IfAll);
+	static Ref< Model > readAny(const Path& filePath, uint32_t importFlags, const std::function< Ref< IStream >(const Path&) >& openStream);
 
 	/*! \brief Automatically write model using format based on filename extension.
 	 *
@@ -119,5 +113,3 @@ public:
 
 	}
 }
-
-#endif	// traktor_model_ModelFormat_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
 #include "Model/ModelFormat.h"
@@ -17,30 +11,25 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelFormat", ModelFormat, Object)
 
 Ref< Model > ModelFormat::readAny(const Path& filePath, uint32_t importFlags)
 {
-	Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
-	if (file)
-		return readAny(file, filePath.getExtension(), importFlags);
-	else
-		return 0;
+	return readAny(filePath, importFlags, [&](const Path& p) -> Ref< IStream >{
+		return FileSystem::getInstance().open(p, File::FmRead);
+	});
 }
 
-Ref< Model > ModelFormat::readAny(IStream* stream, const std::wstring& extension, uint32_t importFlags)
+Ref< Model > ModelFormat::readAny(const Path& filePath, uint32_t importFlags, const std::function< Ref< IStream >(const Path&) >& openStream)
 {
 	Ref< Model > md;
 
 	TypeInfoSet formatTypes;
 	type_of< ModelFormat >().findAllOf(formatTypes, false);
 
-	for (TypeInfoSet::iterator i = formatTypes.begin(); i != formatTypes.end(); ++i)
+	for (const auto formatType : formatTypes)
 	{
-		Ref< ModelFormat > modelFormat = dynamic_type_cast< ModelFormat* >((*i)->createInstance());
-		if (!modelFormat)
+		Ref< ModelFormat > modelFormat = dynamic_type_cast< ModelFormat* >(formatType->createInstance());
+		if (!modelFormat || !modelFormat->supportFormat(filePath.getExtension()))
 			continue;
 
-		if (!modelFormat->supportFormat(extension))
-			continue;
-
-		md = modelFormat->read(stream, importFlags);
+		md = modelFormat->read(filePath, importFlags, openStream);
 		if (md)
 			break;
 	}
@@ -62,9 +51,9 @@ bool ModelFormat::writeAny(IStream* stream, const std::wstring& extension, const
 	TypeInfoSet formatTypes;
 	type_of< ModelFormat >().findAllOf(formatTypes);
 
-	for (TypeInfoSet::iterator i = formatTypes.begin(); i != formatTypes.end(); ++i)
+	for (const auto formatType : formatTypes)
 	{
-		Ref< ModelFormat > modelFormat = dynamic_type_cast< ModelFormat* >((*i)->createInstance());
+		Ref< ModelFormat > modelFormat = dynamic_type_cast< ModelFormat* >(formatType->createInstance());
 		if (!modelFormat)
 			continue;
 
@@ -72,9 +61,9 @@ bool ModelFormat::writeAny(IStream* stream, const std::wstring& extension, const
 		std::vector< std::wstring > extensions;
 		modelFormat->getExtensions(description, extensions);
 
-		for (std::vector< std::wstring >::const_iterator j = extensions.begin(); j != extensions.end(); ++j)
+		for (const auto& ext : extensions)
 		{
-			if (compareIgnoreCase(extension, *j) == 0)
+			if (compareIgnoreCase(extension, ext) == 0)
 				return modelFormat->write(stream, model);
 		}
 	}

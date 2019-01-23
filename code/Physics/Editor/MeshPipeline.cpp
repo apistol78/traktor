@@ -90,14 +90,9 @@ bool MeshPipeline::buildOutput(
 	}
 	else
 	{
-		Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), meshAsset->getFileName().getOriginal());
-		if (!file)
-		{
-			log::error << L"Phys mesh pipeline failed; unable to open source model (" << meshAsset->getFileName().getOriginal() << L")" << Endl;
-			return false;
-		}
-
-		model = model::ModelFormat::readAny(file, meshAsset->getFileName().getExtension());
+		model = model::ModelFormat::readAny(meshAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+			return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+		});
 	}
 
 	if (!model)

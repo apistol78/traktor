@@ -31,15 +31,19 @@ bool ModelFormatStl::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase< std::wstring >(extension, L"stl") == 0;
 }
 
-Ref< Model > ModelFormatStl::read(IStream* stream, uint32_t importFlags) const
+Ref< Model > ModelFormatStl::read(const Path& filePath, uint32_t importFlags, const std::function< Ref< IStream >(const Path&) >& openStream) const
 {
+	Ref< IStream > stream = openStream(filePath);
+	if (!stream)
+		return nullptr;
+
 	BufferedStream bs(stream);
 	StringReader sr(&bs, new AnsiEncoding());
 	std::wstring str;
 
 	sr.readLine(str);
 	if (!startsWith< std::wstring >(str, L"solid "))
-		return 0;
+		return nullptr;
 
 	Ref< Model > md = new Model();
 

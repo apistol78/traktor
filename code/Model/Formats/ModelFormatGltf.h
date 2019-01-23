@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_model_ModelFormatScad_H
-#define traktor_model_ModelFormatScad_H
+#pragma once
 
 #include "Model/ModelFormat.h"
 
@@ -22,10 +15,10 @@ namespace traktor
 	namespace model
 	{
 
-/*! \brief OpenSCAD model format.
+/*! \brief glTF 2.0 model format.
  * \ingroup Model
  */
-class T_DLLCLASS ModelFormatScad : public ModelFormat
+class T_DLLCLASS ModelFormatGltf : public ModelFormat
 {
 	T_RTTI_CLASS;
 
@@ -41,5 +34,3 @@ public:
 
 	}
 }
-
-#endif	// traktor_model_ModelFormatScad_H

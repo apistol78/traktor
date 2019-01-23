@@ -932,23 +932,27 @@ bool ModelFormatCollada::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase< std::wstring >(extension, L"dae") == 0;
 }
 
-Ref< Model > ModelFormatCollada::read(IStream* stream, uint32_t importFlags) const
+Ref< Model > ModelFormatCollada::read(const Path& filePath, uint32_t importFlags, const std::function< Ref< IStream >(const Path&) >& openStream) const
 {
 	xml::Document doc;
+
+	Ref< IStream > stream = openStream(filePath);
+	if (!stream)
+		return nullptr;
 	
 	if (!doc.loadFromStream(stream))
-		return 0;
+		return nullptr;
 
 	Ref< xml::Element > scene = doc.getSingle(L"scene");
 	if (!scene)
-		return 0;
+		return nullptr;
 
 	Ref< xml::Element > instanceVisualScene = scene->getSingle(L"instance_visual_scene");
 	std::wstring visualSceneRef = instanceVisualScene->getAttribute(L"url", L"")->getValue();
 
 	Ref< xml::Element > visualScene = doc.getSingle(L"library_visual_scenes/visual_scene[@id=" + dereference(visualSceneRef) + L"]");
 	if (!visualScene)
-		return 0;
+		return nullptr;
 
 	// Find references to materials and geometries.
 	AlignedVector< material_ref_t > materialRefs;

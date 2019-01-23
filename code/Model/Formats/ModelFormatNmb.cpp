@@ -361,14 +361,18 @@ bool ModelFormatNmb::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase< std::wstring >(extension, L"nmb") == 0;
 }
 
-Ref< Model > ModelFormatNmb::read(IStream* stream, uint32_t importFlags) const
+Ref< Model > ModelFormatNmb::read(const Path& filePath, uint32_t importFlags, const std::function< Ref< IStream >(const Path&) >& openStream) const
 {
+	Ref< IStream > stream = openStream(filePath);
+	if (!stream)
+		return nullptr;
+
 	// Read entire file into memory.
 	int32_t nbytes = stream->available();
 
 	AutoPtr< uint8_t > buffer(new uint8_t [nbytes]);
 	if (stream->read(buffer.ptr(), nbytes) != nbytes)
-		return 0;
+		return nullptr;
 
 	stream->close();
 
@@ -383,7 +387,7 @@ Ref< Model > ModelFormatNmb::read(IStream* stream, uint32_t importFlags) const
 	{
 		ptr = parseChunk(*model, ptr);
 		if (!ptr)
-			return 0;
+			return nullptr;
 
 		T_ASSERT (ptr <= buffer.ptr() + nbytes);
 	}

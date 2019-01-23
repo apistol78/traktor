@@ -21,9 +21,13 @@ bool ModelFormatTmd::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase< std::wstring >(extension, L"tmd") == 0;
 }
 
-Ref< Model > ModelFormatTmd::read(IStream* stream, uint32_t importFlags) const
+Ref< Model > ModelFormatTmd::read(const Path& filePath, uint32_t importFlags, const std::function< Ref< IStream >(const Path&) >& openStream) const
 {
-	return BinarySerializer(stream).readObject< Model >();
+	Ref< IStream > stream = openStream(filePath);
+	if (stream)
+		return BinarySerializer(stream).readObject< Model >();
+	else
+		return nullptr;
 }
 
 bool ModelFormatTmd::write(IStream* stream, const Model* model) const

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Any_H
-#define traktor_Any_H
+#pragma once
 
 #include <string>
 #include "Core/Config.h"
@@ -86,7 +79,10 @@ public:
 
 	std::wstring getWideString() const;
 
-	ITypedObject* getObject() const { return m_type == AtObject ? m_data.m_object : 0; }
+	ITypedObject* getObject() const { return m_type == AtObject ? m_data.m_object : nullptr; }
+
+	template < typename ObjectType >
+	ObjectType* getObject() const { return m_type == AtObject ? dynamic_type_cast< ObjectType* >(m_data.m_object) : nullptr; }
 
 	AnyType getType() const { return m_type; }
 
@@ -104,7 +100,7 @@ public:
 
 	bool isObject() const { return m_type == AtObject; }
 
-	template< typename ObjectType >
+	template < typename ObjectType >
 	bool isObject() const { return m_type == AtObject && is_a< ObjectType >(m_data.m_object); }
 
 	bool isNumeric() const { return isInt32() || isInt64() || isFloat(); }
@@ -153,5 +149,3 @@ private:
 };
 
 }
-
-#endif	// traktor_Any_H

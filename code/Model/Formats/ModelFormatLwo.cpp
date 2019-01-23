@@ -489,7 +489,7 @@ bool ModelFormatLwo::supportFormat(const std::wstring& extension) const
 		compareIgnoreCase< std::wstring >(extension, L"lw") == 0;
 }
 
-Ref< Model > ModelFormatLwo::read(IStream* stream, uint32_t importFlags) const
+Ref< Model > ModelFormatLwo::read(const Path& filePath, uint32_t importFlags, const std::function< Ref< IStream >(const Path&) >& openStream) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
 
@@ -499,23 +499,27 @@ Ref< Model > ModelFormatLwo::read(IStream* stream, uint32_t importFlags) const
 	char* tmp = tempnam("/tmp", "lwo");
 #endif
 	if (!tmp)
-		return 0;
+		return nullptr;
+
+	Ref< IStream > stream = openStream(filePath);
+	if (!stream)
+		return nullptr;
 
 	Ref< IStream > tmpFile = FileSystem::getInstance().open(mbstows(tmp), File::FmWrite);
 	if (!tmpFile)
-		return 0;
+		return nullptr;
 
 	if (!StreamCopy(tmpFile, stream).execute())
-		return 0;
+		return nullptr;
 
 	tmpFile->close();
-	tmpFile = 0;
+	tmpFile = nullptr;
 
 	lwObject* lwo = lwGetObject(tmp, 0, 0);
 	FileSystem::getInstance().remove(mbstows(tmp));
 
 	if (!lwo)
-		return 0;
+		return nullptr;
 
 	Ref< Model > md = new Model();
 	AlignedVector< std::string > channels;
@@ -525,7 +529,7 @@ Ref< Model > ModelFormatLwo::read(IStream* stream, uint32_t importFlags) const
 		if (!createMaterials(lwo, md, channels))
 		{
 			lwFreeObject(lwo);
-			return 0;
+			return nullptr;
 		}
 	}
 
@@ -534,7 +538,7 @@ Ref< Model > ModelFormatLwo::read(IStream* stream, uint32_t importFlags) const
 		if (!createMesh(lwo, md, channels, importFlags))
 		{
 			lwFreeObject(lwo);
-			return 0;
+			return nullptr;
 		}
 	}
 

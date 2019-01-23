@@ -259,17 +259,11 @@ bool MeshPipeline::buildOutput(
 	}
 	else
 	{
-		Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), asset->getFileName().getOriginal());
-		if (!file)
-		{
-			log::error << L"Mesh pipeline failed; unable to open source model (" << asset->getFileName().getOriginal() << L")" << Endl;
-			return false;
-		}
-
 		// Import source model(s); merge all materials into a single list (duplicates will be overridden).
 		log::info << L"Loading model \"" << asset->getFileName().getFileName() << L"\"..." << Endl;
-
-		Ref< model::Model > model = model::ModelFormat::readAny(file, asset->getFileName().getExtension());
+		Ref< model::Model > model = model::ModelFormat::readAny(asset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+			return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+		});
 		if (!model)
 		{
 			log::error << L"Mesh pipeline failed; unable to read source model (" << asset->getFileName().getOriginal() << L")" << Endl;
