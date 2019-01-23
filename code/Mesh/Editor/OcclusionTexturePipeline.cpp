@@ -72,15 +72,10 @@ bool OcclusionTexturePipeline::buildOutput(
 		return 0;
 	}
 
-	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), asset->getFileName().getOriginal());
-	if (!file)
-	{
-		log::error << L"Occlusion texture asset pipeline failed; unable to open source model \"" << asset->getFileName().getOriginal() << L"\"" << Endl;
-		return false;
-	}
-
 	// Read source model.
-	Ref< model::Model > model = model::ModelFormat::readAny(file, asset->getFileName().getExtension());
+	Ref< model::Model > model = model::ModelFormat::readAny(asset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+		return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+	});
 	if (!model)
 	{
 		log::error << L"Occlusion texture pipeline failed; unable to read source model (" << asset->getFileName().getOriginal() << L")" << Endl;

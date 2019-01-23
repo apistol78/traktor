@@ -76,11 +76,9 @@ bool PointSetPipeline::buildOutput(
 		return false;
 	}
 
-	Ref< model::Model > model = model::ModelFormat::readAny(
-		file,
-		pointSetAsset->getFileName().getExtension(),
-		model::ModelFormat::IfMeshPositions | model::ModelFormat::IfMeshVertices | model::ModelFormat::IfMeshPolygons
-	);
+	Ref< model::Model > model = model::ModelFormat::readAny(pointSetAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+		return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+	});
 	if (!model)
 	{
 		log::error << L"PointSet pipeline failed; unable to read source model (" << pointSetAsset->getFileName().getOriginal() << L")" << Endl;

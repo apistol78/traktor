@@ -822,7 +822,7 @@ bool ModelFormatFbx::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase< std::wstring >(extension, L"fbx") == 0;
 }
 
-Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
+Ref< Model > ModelFormatFbx::read(const Path& filePath, uint32_t importFlags, const std::function< Ref< IStream >(const Path&) >& openStream) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_fbxLock);
 
@@ -832,7 +832,7 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 		if (!s_fbxManager)
 		{
 			log::error << L"Unable to import FBX model; failed to create FBX SDK instance." << Endl;
-			return 0;
+			return nullptr;
 		}
 
 		s_ioSettings = FbxIOSettings::Create(s_fbxManager, IOSROOT);
@@ -846,28 +846,31 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
     if (readerID < 0)
 	{
 		log::error << L"Unable to import FBX model; no reader for \"fbx\" extension registered." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	FbxImporter* importer = FbxImporter::Create(s_fbxManager, "");
 	if (!importer)
 	{
 		log::error << L"Unable to import FBX model; failed to create FBX importer instance." << Endl;
-		return 0;
+		return nullptr;
 	}
+
+	Ref< IStream > stream = openStream(filePath);
+	if (!stream)
+		return nullptr;
 
 	// Wrap source stream into a buffered stream if necessary as
 	// FBX keep reading very small chunks.
-	Ref< IStream > rs = stream;
-	if (!is_a< BufferedStream >(rs))
-		rs = new BufferedStream(stream);
+	if (!is_a< BufferedStream >(stream))
+		stream = new BufferedStream(stream);
 
 	AutoPtr< FbxStream > fbxStream(new FbxIStreamWrap());
-	bool status = importer->Initialize(fbxStream.ptr(), rs, readerID, s_fbxManager->GetIOSettings());
+	bool status = importer->Initialize(fbxStream.ptr(), stream, readerID, s_fbxManager->GetIOSettings());
 	if (!status)
 	{
 		log::error << L"Unable to import FBX model; failed to initialize FBX importer (" << mbstows(importer->GetStatus().GetErrorString()) << L")." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	s_scene->Clear();
@@ -876,11 +879,11 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 	if (!status)
 	{
 		log::error << L"Unable to import FBX model; FBX importer failed (" << mbstows(importer->GetStatus().GetErrorString()) << L")." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	importer->Destroy();
-	importer = 0;
+	importer = nullptr;
 
 	// Calculate axis transformation.
 	FbxAxisSystem axisSystem = s_scene->GetGlobalSettings().GetAxisSystem();
@@ -977,7 +980,7 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 	if (!convertMeshes(*model, s_scene, node, axisTransform, channels, importFlags))
 	{
 		log::error << L"Unable to import FBX model; failed to convert mesh" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	// Create and assign default material if anonymous faces has been created.

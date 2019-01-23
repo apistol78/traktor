@@ -31,8 +31,12 @@ bool ModelFormatObj::supportFormat(const std::wstring& extension) const
 	return compareIgnoreCase< std::wstring >(extension, L"obj") == 0;
 }
 
-Ref< Model > ModelFormatObj::read(IStream* stream, uint32_t importFlags) const
+Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags, const std::function< Ref< IStream >(const Path&) >& openStream) const
 {
+	Ref< IStream > stream = openStream(filePath);
+	if (!stream)
+		return nullptr;
+	
 	BufferedStream bs(stream);
 	StringReader sr(&bs, new AnsiEncoding());
 	std::wstring str;

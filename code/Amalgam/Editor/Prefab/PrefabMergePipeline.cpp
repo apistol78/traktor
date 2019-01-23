@@ -169,18 +169,9 @@ bool PrefabMergePipeline::buildOutput(
 			}
 			else
 			{
-				Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), meshAsset->getFileName().getOriginal());
-				if (!file)
-				{
-					log::warning << L"Unable to open file \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
-					continue;
-				}
-
-				Ref< model::Model > partModel = model::ModelFormat::readAny(
-					file,
-					meshAsset->getFileName().getExtension(),
-					model::ModelFormat::IfMaterials | model::ModelFormat::IfMeshPositions | model::ModelFormat::IfMeshVertices | model::ModelFormat::IfMeshPolygons
-				);
+				Ref< model::Model > partModel = model::ModelFormat::readAny(meshAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+					return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+				});
 				if (!partModel)
 				{
 					log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
@@ -239,18 +230,9 @@ bool PrefabMergePipeline::buildOutput(
 			}
 			else
 			{
-				Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), meshShapeAsset->getFileName().getOriginal());
-				if (!file)
-				{
-					log::warning << L"Unable to open file \"" << meshShapeAsset->getFileName().getOriginal() << L"\"" << Endl;
-					continue;
-				}
-
-				Ref< model::Model > partModel = model::ModelFormat::readAny(
-					file,
-					meshShapeAsset->getFileName().getExtension(),
-					model::ModelFormat::IfMeshPositions | model::ModelFormat::IfMeshVertices | model::ModelFormat::IfMeshPolygons
-				);
+				Ref< model::Model > partModel = model::ModelFormat::readAny(meshShapeAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+					return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+				});
 				if (!partModel)
 				{
 					log::warning << L"Unable to read model \"" << meshShapeAsset->getFileName().getOriginal() << L"\"" << Endl;

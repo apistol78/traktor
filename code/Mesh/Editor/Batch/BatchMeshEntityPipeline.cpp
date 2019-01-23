@@ -155,12 +155,12 @@ Ref< ISerializable > BatchMeshEntityPipeline::buildOutput(
 		for (std::map< std::wstring, Guid >::const_iterator j = materialTextures.begin(); j != materialTextures.end(); ++j)
 			mergedMaterialTextures[j->first] = j->second;
 
-		Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, meshAsset->getFileName());
-
-		Ref< model::Model > partModel = model::ModelFormat::readAny(fileName);
+		Ref< model::Model > partModel = model::ModelFormat::readAny(meshAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+			return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+		});
 		if (!partModel)
 		{
-			log::warning << L"Unable to read model \"" << fileName.getPathName() << L"\"" << Endl;
+			log::warning << L"Unable to read model \"" << meshAsset->getFileName().getPathName() << L"\"" << Endl;
 			continue;
 		}
 

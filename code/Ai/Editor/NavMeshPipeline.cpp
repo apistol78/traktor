@@ -290,20 +290,9 @@ bool NavMeshPipeline::buildOutput(
 				}
 				else
 				{
-					Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), meshAsset->getFileName().getOriginal());
-					if (!file)
-					{
-						log::warning << L"Unable to open file \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
-						continue;
-					}
-
-					Ref< model::Model > meshModel = model::ModelFormat::readAny(
-						file,
-						meshAsset->getFileName().getExtension(),
-						model::ModelFormat::IfMeshPositions |
-						model::ModelFormat::IfMeshVertices |
-						model::ModelFormat::IfMeshPolygons
-					);
+					Ref< model::Model > meshModel = model::ModelFormat::readAny(meshAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+						return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+					});
 					if (!meshModel)
 					{
 						log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
@@ -331,20 +320,9 @@ bool NavMeshPipeline::buildOutput(
 				}
 				else
 				{
-					Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), meshAsset->getFileName().getOriginal());
-					if (!file)
-					{
-						log::warning << L"Unable to open file \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
-						continue;
-					}
-
-					Ref< model::Model > meshModel = model::ModelFormat::readAny(
-						file,
-						meshAsset->getFileName().getExtension(),
-						model::ModelFormat::IfMeshPositions |
-						model::ModelFormat::IfMeshVertices |
-						model::ModelFormat::IfMeshPolygons
-					);
+					Ref< model::Model > meshModel = model::ModelFormat::readAny(meshAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+						return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+					});
 					if (!meshModel)
 					{
 						log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
@@ -374,20 +352,9 @@ bool NavMeshPipeline::buildOutput(
 					}
 					else
 					{
-						Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), meshAsset->getFileName().getOriginal());
-						if (!file)
-						{
-							log::warning << L"Unable to open file \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
-							continue;
-						}
-
-						Ref< model::Model > meshModel = model::ModelFormat::readAny(
-							file,
-							meshAsset->getFileName().getExtension(),
-							model::ModelFormat::IfMeshPositions |
-							model::ModelFormat::IfMeshVertices |
-							model::ModelFormat::IfMeshPolygons
-						);
+						Ref< model::Model > meshModel = model::ModelFormat::readAny(meshAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+							return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+						});
 						if (!meshModel)
 						{
 							log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
