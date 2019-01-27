@@ -1,15 +1,8 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_GlslProgram_H
-#define traktor_render_GlslProgram_H
+#pragma once
 
 #include <string>
 #include <vector>
- #include "Render/OpenGL/Std/TypesOpenGL.h"
+#include "Render/OpenGL/Std/TypesOpenGL.h"
 
 namespace traktor
 {
@@ -27,6 +20,7 @@ public:
 	GlslProgram(
 		const std::wstring& vertexShader,
 		const std::wstring& fragmentShader,
+		const std::wstring& computeShader,
 		const std::vector< std::wstring >& textures,
 		const std::vector< NamedUniformType >& uniforms,
 		const std::vector< SamplerBindingOpenGL >& samplers,
@@ -36,6 +30,8 @@ public:
 	const std::wstring& getVertexShader() const;
 
 	const std::wstring& getFragmentShader() const;
+
+	const std::wstring& getComputeShader() const;
 
 	const std::vector< std::wstring >& getTextures() const;
 
@@ -48,6 +44,7 @@ public:
 private:
 	std::wstring m_vertexShader;
 	std::wstring m_fragmentShader;
+	std::wstring m_computeShader;
 	std::vector< std::wstring > m_textures;
 	std::vector< NamedUniformType > m_uniforms;
 	std::vector< SamplerBindingOpenGL > m_samplers;
@@ -56,5 +53,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_GlslProgram_H

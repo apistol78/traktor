@@ -725,6 +725,10 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 	m_primitiveCount += primitives.count * instanceCount;
 }
 
+void RenderViewOpenGLES2::compute(IProgram* program, int32_t x, int32_t y, int32_t z)
+{
+}
+
 void RenderViewOpenGLES2::end()
 {
 	if (m_renderTargetStack.empty())

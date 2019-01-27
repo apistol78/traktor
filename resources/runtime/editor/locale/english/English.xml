@@ -2814,6 +2814,10 @@
       <second>Comment</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_COMPUTEOUTPUT</first>
+      <second>Compute output</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_CONDITIONAL</first>
       <second>Conditional</second>
     </item>

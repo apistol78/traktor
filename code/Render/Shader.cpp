@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Shader.h"
 #include "Render/IProgram.h"
 #include "Render/IRenderView.h"
@@ -18,8 +12,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Shader", Shader, Object)
 
 Shader::Shader()
 :	m_parameterValue(0)
-,	m_currentTechnique(0)
-,	m_currentProgram(0)
+,	m_currentTechnique(nullptr)
+,	m_currentProgram(nullptr)
 ,	m_currentPriority(0)
 {
 }
@@ -31,21 +25,18 @@ Shader::~Shader()
 
 void Shader::destroy()
 {
-	m_currentTechnique = 0;
-	m_currentProgram = 0;
+	m_currentTechnique = nullptr;
+	m_currentProgram = nullptr;
 	m_currentPriority = 0;
 
-	for (SmallMap< handle_t, Technique >::iterator i = m_techniques.begin(); i != m_techniques.end(); ++i)
+	for (auto& technique : m_techniques)
 	{
-		for (AlignedVector< Combination >::iterator j = i->second.combinations.begin(); j != i->second.combinations.end(); ++j)
+		for (auto& combination : technique.second.combinations)
 		{
-			if (j->program)
-			{
-				j->program->destroy();
-				j->program = 0;
-			}
+			if (combination.program)
+				combination.program->destroy();
 		}
-		i->second.combinations.resize(0);
+		technique.second.combinations.resize(0);
 	}
 
 	m_techniques.clear();
@@ -59,14 +50,14 @@ bool Shader::hasTechnique(handle_t handle) const
 void Shader::setTechnique(handle_t handle)
 {
 	SmallMap< handle_t, Technique >::iterator i = m_techniques.find(handle);
-	m_currentTechnique = (i != m_techniques.end()) ? &i->second : 0;
+	m_currentTechnique = (i != m_techniques.end()) ? &i->second : nullptr;
 	updateCurrentProgram();
 }
 
 void Shader::getTechniques(std::set< handle_t >& outHandles) const
 {
-	for (SmallMap< handle_t, Technique >::const_iterator i = m_techniques.begin(); i != m_techniques.end(); ++i)
-		outHandles.insert(i->first);
+	for (const auto& technique : m_techniques)
+		outHandles.insert(technique.first);
 }
 
 void Shader::setCombination(handle_t handle, bool param)
@@ -156,18 +147,18 @@ void Shader::draw(IRenderView* renderView, VertexBuffer* vertexBuffer, IndexBuff
 
 void Shader::updateCurrentProgram()
 {
-	m_currentProgram = 0;
+	m_currentProgram = nullptr;
 	m_currentPriority = 0;
 
 	if (!m_currentTechnique)
 		return;
 
-	for (AlignedVector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
+	for (const auto& combination : m_currentTechnique->combinations)
 	{
-		if ((m_parameterValue & i->mask) == i->value)
+		if ((m_parameterValue & combination.mask) == combination.value)
 		{
-			m_currentProgram = i->program;
-			m_currentPriority = i->priority;
+			m_currentProgram = combination.program;
+			m_currentPriority = combination.priority;
 			break;
 		}
 	}

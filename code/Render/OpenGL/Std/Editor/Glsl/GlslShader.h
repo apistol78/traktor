@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_GlslShader_H
-#define traktor_render_GlslShader_H
+#pragma once
 
 #include <list>
 #include <map>
@@ -13,7 +6,6 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <string>
 #include "Core/RefArray.h"
 #include "Core/Io/StringOutputStream.h"
-// #include "Render/Types.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslType.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslVariable.h"
 
@@ -36,7 +28,8 @@ public:
 	enum ShaderType
 	{
 		StVertex,
-		StFragment
+		StFragment,
+		StCompute
 	};
 
 	enum BlockType
@@ -101,5 +94,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_GlslShader_H

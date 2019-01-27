@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/OpenGL/Std/Editor/Glsl/GlslProgram.h"
 
 namespace traktor
@@ -18,6 +12,7 @@ GlslProgram::GlslProgram()
 GlslProgram::GlslProgram(
 	const std::wstring& vertexShader,
 	const std::wstring& fragmentShader,
+	const std::wstring& computeShader,
 	const std::vector< std::wstring >& textures,
 	const std::vector< NamedUniformType >& uniforms,
 	const std::vector< SamplerBindingOpenGL >& samplers,
@@ -25,6 +20,7 @@ GlslProgram::GlslProgram(
 )
 :	m_vertexShader(vertexShader)
 ,	m_fragmentShader(fragmentShader)
+,	m_computeShader(computeShader)
 ,	m_textures(textures)
 ,	m_uniforms(uniforms)
 ,	m_samplers(samplers)
@@ -40,6 +36,11 @@ const std::wstring& GlslProgram::getVertexShader() const
 const std::wstring& GlslProgram::getFragmentShader() const
 {
 	return m_fragmentShader;
+}
+
+const std::wstring& GlslProgram::getComputeShader() const
+{
+	return m_computeShader;
 }
 
 const std::vector< std::wstring >& GlslProgram::getTextures() const

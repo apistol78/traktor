@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslContext.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslShader.h"
@@ -34,6 +28,7 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 ,	m_settings(settings)
 ,	m_vertexShader(GlslShader::StVertex)
 ,	m_fragmentShader(GlslShader::StFragment)
+,	m_computeShader(GlslShader::StCompute)
 ,	m_currentShader(0)
 ,	m_nextStage(0)
 {
@@ -174,14 +169,24 @@ void GlslContext::enterFragment()
 	m_currentShader = &m_fragmentShader;
 }
 
+void GlslContext::enterCompute()
+{
+	m_currentShader = &m_computeShader;
+}
+
 bool GlslContext::inVertex() const
 {
-	return bool(m_currentShader == &m_vertexShader);
+	return (bool)(m_currentShader == &m_vertexShader);
 }
 
 bool GlslContext::inFragment() const
 {
-	return bool(m_currentShader == &m_fragmentShader);
+	return (bool)(m_currentShader == &m_fragmentShader);
+}
+
+bool GlslContext::inCompute() const
+{
+	return (bool)(m_currentShader == &m_computeShader);
 }
 
 bool GlslContext::allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset)
@@ -233,6 +238,11 @@ GlslShader& GlslContext::getVertexShader()
 GlslShader& GlslContext::getFragmentShader()
 {
 	return m_fragmentShader;
+}
+
+GlslShader& GlslContext::getComputeShader()
+{
+	return m_computeShader;
 }
 
 GlslShader& GlslContext::getShader()

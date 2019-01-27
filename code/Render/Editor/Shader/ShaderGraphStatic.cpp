@@ -741,6 +741,32 @@ Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
 			log::warning << L"Unsupported node type of input; Only Scalar nodes can be connected to \"Enable\" of \"traktor.render.PixelOutput\". " << type_name(enableSource->getNode()) << L" not supported." << Endl;
 	}
 
+	RefArray< ComputeOutput > computeOutputNodes;
+	shaderGraph->findNodesOf< ComputeOutput >(computeOutputNodes);
+
+	for (const auto computeOutputNode : computeOutputNodes)
+	{
+		const OutputPin* enableSource = shaderGraph->findSourcePin(computeOutputNode->getInputPin(0));
+		if (!enableSource)
+		{
+			// Keep outputs with unconnected "Enable" pin, enabled by default.
+			continue;
+		}
+
+		const Scalar* scalar = dynamic_type_cast< const Scalar* >(enableSource->getNode());
+		if (scalar)
+		{
+			if (scalar->get() < FUZZY_EPSILON)
+			{
+				// Zero as input to "Enable" pin, remove output.
+				shaderGraph->detach(computeOutputNode);
+				shaderGraph->removeNode(computeOutputNode);
+			}
+		}
+		else
+			log::warning << L"Unsupported node type of input; Only Scalar nodes can be connected to \"Enable\" of \"traktor.render.ComputeOutput\". " << type_name(enableSource->getNode()) << L" not supported." << Endl;
+	}
+
 	return shaderGraph;
 }
 

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -162,28 +156,45 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ResourceContextOpenGL* resourceContex
 	{
 		const std::string& vertexShader = resourceOpenGL->getVertexShader();
 		const std::string& fragmentShader = resourceOpenGL->getFragmentShader();
+		const std::string& computeShader = resourceOpenGL->getComputeShader();
 
-		GLuint vertexObject = resourceContext->createShaderObject(vertexShader.c_str(), GL_VERTEX_SHADER);
-		if (!vertexObject)
+		if (!vertexShader.empty() && !fragmentShader.empty())
 		{
-			log::error << L"Unable to create vertex object" << Endl;
-			return 0;
-		}
+			GLuint vertexObject = resourceContext->createShaderObject(vertexShader.c_str(), GL_VERTEX_SHADER);
+			if (!vertexObject)
+			{
+				log::error << L"Unable to create vertex object" << Endl;
+				return nullptr;
+			}
 
-		GLuint fragmentObject = resourceContext->createShaderObject(fragmentShader.c_str(), GL_FRAGMENT_SHADER);
-		if (!fragmentObject)
+			GLuint fragmentObject = resourceContext->createShaderObject(fragmentShader.c_str(), GL_FRAGMENT_SHADER);
+			if (!fragmentObject)
+			{
+				log::error << L"Unable to create fragment object" << Endl;
+				return nullptr;
+			}
+
+			T_OGL_SAFE(glAttachShader(programObject, vertexObject));
+			T_OGL_SAFE(glAttachShader(programObject, fragmentObject));
+
+			T_OGL_SAFE(glBindFragDataLocation(programObject, 0, "_gl_FragData_0"));
+			T_OGL_SAFE(glBindFragDataLocation(programObject, 1, "_gl_FragData_1"));
+			T_OGL_SAFE(glBindFragDataLocation(programObject, 2, "_gl_FragData_2"));
+			T_OGL_SAFE(glBindFragDataLocation(programObject, 3, "_gl_FragData_3"));
+		}
+		else if (!computeShader.empty())
 		{
-			log::error << L"Unable to create fragment object" << Endl;
-			return 0;
+			GLuint computeObject = resourceContext->createShaderObject(computeShader.c_str(), GL_COMPUTE_SHADER);
+			if (!computeObject)
+			{
+				log::error << L"Unable to create compute object" << Endl;
+				return nullptr;
+			}
+
+			T_OGL_SAFE(glAttachShader(programObject, computeObject));
 		}
-
-		T_OGL_SAFE(glAttachShader(programObject, vertexObject));
-		T_OGL_SAFE(glAttachShader(programObject, fragmentObject));
-
-		T_OGL_SAFE(glBindFragDataLocation(programObject, 0, "_gl_FragData_0"));
-		T_OGL_SAFE(glBindFragDataLocation(programObject, 1, "_gl_FragData_1"));
-		T_OGL_SAFE(glBindFragDataLocation(programObject, 2, "_gl_FragData_2"));
-		T_OGL_SAFE(glBindFragDataLocation(programObject, 3, "_gl_FragData_3"));
+		else
+			return nullptr;
 
 #if defined(GL_ARB_get_program_binary)
 		if (cacheEnable && formats > 0)
@@ -200,7 +211,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ResourceContextOpenGL* resourceContex
 			{
 				log::error << L"GLSL program link failed :" << Endl;
 				log::error << mbstows(errorBuf) << Endl;
-				return 0;
+				return nullptr;
 			}
 		}
 	}

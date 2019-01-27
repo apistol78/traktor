@@ -390,6 +390,10 @@ void RenderViewSw::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	m_primitiveCount += primitives.count * instanceCount;
 }
 
+void RenderViewSw::compute(IProgram* program, int32_t x, int32_t y, int32_t z)
+{
+}
+
 void RenderViewSw::end()
 {
 	T_ASSERT (!m_renderStateStack.empty());

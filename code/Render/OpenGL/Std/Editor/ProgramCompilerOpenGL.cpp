@@ -67,6 +67,7 @@ bool ProgramCompilerOpenGL::generate(
 
 	outVertexShader = glslProgram.getVertexShader();
 	outPixelShader = glslProgram.getFragmentShader();
+	outComputeShader = glslProgram.getComputeShader();
 	return true;
 }
 

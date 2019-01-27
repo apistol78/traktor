@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_IRenderView_H
-#define traktor_render_IRenderView_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Platform.h"
@@ -155,6 +148,14 @@ public:
 	 */
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount) = 0;
 
+	/*! \brief Enqueue compute task.
+	 *
+	 * \param x Work group dimension.
+	 * \param y Work group dimension.
+	 * \param z Work group dimension.
+	 */
+	virtual void compute(IProgram* program, int32_t x, int32_t y, int32_t z) = 0;
+
 	/*! \brief End rendering. */
 	virtual void end() = 0;
 
@@ -181,5 +182,3 @@ public:
 
 	}
 }
-
-#endif	// traktor_render_IRenderView_H

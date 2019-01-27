@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_RenderViewSw_H
-#define traktor_render_RenderViewSw_H
+#pragma once
 
 #include <cstring>
 #include <vector>
@@ -89,6 +82,8 @@ public:
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives) override final;
 
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount) override final;
+
+	virtual void compute(IProgram* program, int32_t x, int32_t y, int32_t z) override final;
 
 	virtual void end() override final;
 
@@ -184,5 +179,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_RenderViewSw_H

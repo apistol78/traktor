@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStaticArray.h"
@@ -123,7 +117,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 10, ProgramResourceOpenGL, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 11, ProgramResourceOpenGL, ProgramResource)
 
 ProgramResourceOpenGL::ProgramResourceOpenGL()
 :	m_hash(0)
@@ -148,12 +142,27 @@ ProgramResourceOpenGL::ProgramResourceOpenGL(
 {
 }
 
+ProgramResourceOpenGL::ProgramResourceOpenGL(
+	const std::string& computeShader,
+	const std::vector< std::wstring >& textures,
+	const std::vector< NamedUniformType >& uniforms,
+	const std::vector< SamplerBindingOpenGL >& samplers
+)
+:	m_computeShader(computeShader)
+,	m_textures(textures)
+,	m_uniforms(uniforms)
+,	m_samplers(samplers)
+,	m_hash(0)
+{
+}
+
 void ProgramResourceOpenGL::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 10);
+	T_ASSERT (s.getVersion() >= 11);
 
 	s >> Member< std::string >(L"vertexShader", m_vertexShader);
 	s >> Member< std::string >(L"fragmentShader", m_fragmentShader);
+	s >> Member< std::string >(L"computeShader", m_computeShader);
 	s >> MemberStlVector< std::wstring >(L"textures", m_textures);
 	s >> MemberStlVector< NamedUniformType, MemberNamedUniformTypeOpenGL >(L"uniforms", m_uniforms);
 	s >> MemberStlVector< SamplerBindingOpenGL, MemberSamplerBindingOpenGL >(L"samplers", m_samplers);

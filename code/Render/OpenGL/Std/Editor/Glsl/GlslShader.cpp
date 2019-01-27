@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslShader.h"
@@ -150,17 +144,31 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 {
 	StringOutputStream ss;
 
-	ss << L"#version 150" << Endl;
-	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
-	if (!name.empty())
-		ss << L"// " << name << Endl;
-	ss << Endl;
+	if (m_shaderType == StVertex || m_shaderType == StFragment)
+	{
+		ss << L"#version 150" << Endl;
+		ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
+		if (!name.empty())
+			ss << L"// " << name << Endl;
+		ss << Endl;
 
-	ss << L"precision highp float;" << Endl;
-	ss << Endl;
+		ss << L"precision highp float;" << Endl;
+		ss << Endl;
 
-	ss << L"uniform vec2 _gl_targetSize;" << Endl;
-	ss << Endl;
+		ss << L"uniform vec2 _gl_targetSize;" << Endl;
+		ss << Endl;
+	}
+	else if (m_shaderType == StCompute)
+	{
+		ss << L"#version 430" << Endl;
+		ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
+		if (!name.empty())
+			ss << L"// " << name << Endl;
+		ss << Endl;
+
+		ss << L"layout(local_size_x = 1, local_size_y = 1) in;" << Endl;
+		ss << Endl;
+	}
 
 	if (m_shaderType == StVertex)
 	{
@@ -190,7 +198,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 			ss << Endl;
 		}
 	}
-	else
+	else if (m_shaderType == StFragment)
 	{
 		// Add fragment outputs.
 		ss << L"out vec4 _gl_FragData_0;" << Endl;

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_Shader_H
-#define traktor_render_Shader_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
@@ -35,7 +28,7 @@ class VertexBuffer;
 /*! \brief Shader
  * \ingroup Render
  *
- * An shader is actually only a facadé for several
+ * An shader is actually only a facadï¿½ for several
  * programs which is different combinations of a
  * source shader graph.
  */
@@ -180,5 +173,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_Shader_H
