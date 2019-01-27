@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Math/Format.h"
 #include "Core/Serialization/AttributeRange.h"
@@ -397,7 +391,7 @@ Comment::Comment()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ComputeOutput", 0, ComputeOutput, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_ComputeOutput_i[] = { { L"Input", true }, { 0 } };
+const ImmutableNode::InputPinDesc c_ComputeOutput_i[] = { { L"Enable", true }, { L"Storage", false }, { L"Offset", false }, { L"Input", false }, { 0 } };
 const ImmutableNode::OutputPinDesc c_ComputeOutput_o[] = { { 0 } };
 
 ComputeOutput::ComputeOutput()
@@ -420,7 +414,6 @@ void ComputeOutput::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"technique", m_technique);
 }
-
 
 /*---------------------------------------------------------------------------*/
 

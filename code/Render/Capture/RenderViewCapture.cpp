@@ -294,6 +294,21 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 	m_renderView->draw(vb->getVertexBuffer(), ib ? ib->getIndexBuffer() : 0, programCapture->m_program, primitives, instanceCount);
 }
 
+void RenderViewCapture::compute(IProgram* program, int32_t x, int32_t y, int32_t z)
+{
+	T_CAPTURE_ASSERT (m_targetDepth >= 1, L"Cannot compute outside of begin/end.");
+
+	ProgramCapture* programCapture = dynamic_type_cast< ProgramCapture* >(program);
+	T_CAPTURE_ASSERT (programCapture, L"Incorrect program type.");
+
+	if (!programCapture)
+		return;
+
+	programCapture->verify();
+
+	m_renderView->compute(programCapture->m_program, x, y, z);
+}
+
 void RenderViewCapture::end()
 {
 	T_CAPTURE_ASSERT (m_targetDepth >= 1, L"Cannot end without begin.");

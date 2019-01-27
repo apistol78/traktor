@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ProgramResourceOpenGL_H
-#define traktor_render_ProgramResourceOpenGL_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -44,9 +37,18 @@ public:
 		const RenderStateOpenGL& renderState
 	);
 
+	ProgramResourceOpenGL(
+		const std::string& computeShader,
+		const std::vector< std::wstring >& textures,
+		const std::vector< NamedUniformType >& uniforms,
+		const std::vector< SamplerBindingOpenGL >& samplers
+	);
+
 	const std::string& getVertexShader() const { return m_vertexShader; }
 
 	const std::string& getFragmentShader() const { return m_fragmentShader; }
+
+	const std::string& getComputeShader() const { return m_computeShader; }
 
 	const std::vector< std::wstring >& getTextures() const { return m_textures; }
 
@@ -65,6 +67,7 @@ public:
 private:
 	std::string m_vertexShader;
 	std::string m_fragmentShader;
+	std::string m_computeShader;
 	std::vector< std::wstring > m_textures;
 	std::vector< NamedUniformType > m_uniforms;
 	std::vector< SamplerBindingOpenGL > m_samplers;
@@ -74,5 +77,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_ProgramResourceOpenGL_H

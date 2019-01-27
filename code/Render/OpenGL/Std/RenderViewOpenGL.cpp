@@ -747,6 +747,10 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 	m_primitiveCount += primitives.count * instanceCount;
 }
 
+void RenderViewOpenGL::compute(IProgram* program, int32_t x, int32_t y, int32_t z)
+{
+}
+
 void RenderViewOpenGL::end()
 {
 	T_ASSERT (!m_targetStack.empty());

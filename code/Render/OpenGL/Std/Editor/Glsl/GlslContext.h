@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_GlslContext_H
-#define traktor_render_GlslContext_H
+#pragma once
 
 #include <map>
 #include <vector>
@@ -57,9 +50,13 @@ public:
 
 	void enterFragment();
 
+	void enterCompute();
+
 	bool inVertex() const;
 
 	bool inFragment() const;
+
+	bool inCompute() const;
 	
 	bool allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset);
 
@@ -72,6 +69,8 @@ public:
 	GlslShader& getVertexShader();
 
 	GlslShader& getFragmentShader();
+
+	GlslShader& getComputeShader();
 
 	GlslShader& getShader();
 
@@ -116,6 +115,7 @@ private:
 	Ref< const PropertyGroup > m_settings;
 	GlslShader m_vertexShader;
 	GlslShader m_fragmentShader;
+	GlslShader m_computeShader;
 	GlslShader* m_currentShader;
 	GlslEmitter m_emitter;
 	RenderStateOpenGL m_renderState;
@@ -132,5 +132,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_GlslContext_H

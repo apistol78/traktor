@@ -128,6 +128,31 @@ bool emitColor(GlslContext& cx, Color* node)
 	return true;
 }
 
+bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
+{
+	cx.enterCompute();
+
+	GlslVariable* storage = cx.emitInput(node, L"Storage");
+	if (!storage || storage->getType() < GtTexture2D)
+		return false;
+
+	GlslVariable* offset = cx.emitInput(node, L"Offset");
+	if (!offset)
+		return false;
+
+	GlslVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+
+	StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
+	fu << L"layout(rgba32f, binding = 0) uniform image2D " << storage->getName() << L";" << Endl;
+
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	f << L"imageStore(L" << storage->getName() << L", " << offset->getName() << L", " << in->getName() << L");" << Endl;
+
+	return true;
+}
+
 bool emitConditional(GlslContext& cx, Conditional* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -2372,6 +2397,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< ArcusTan >()] = new EmitterCast< ArcusTan >(emitArcusTan);
 	m_emitters[&type_of< Clamp >()] = new EmitterCast< Clamp >(emitClamp);
 	m_emitters[&type_of< Color >()] = new EmitterCast< Color >(emitColor);
+	m_emitters[&type_of< ComputeOutput >()] = new EmitterCast< ComputeOutput >(emitComputeOutput);
 	m_emitters[&type_of< Conditional >()] = new EmitterCast< Conditional >(emitConditional);
 	m_emitters[&type_of< Cos >()] = new EmitterCast< Cos >(emitCos);
 	m_emitters[&type_of< Cross >()] = new EmitterCast< Cross >(emitCross);

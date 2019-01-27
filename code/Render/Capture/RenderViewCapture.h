@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_RenderViewCapture_H
-#define traktor_render_RenderViewCapture_H
+#pragma once
 
 #include "Render/IRenderView.h"
 
@@ -78,6 +71,8 @@ public:
 
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount) override final;
 
+	virtual void compute(IProgram* program, int32_t x, int32_t y, int32_t z) override final;
+
 	virtual void end() override final;
 
 	virtual void present() override final;
@@ -107,5 +102,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_RenderViewCapture_H
