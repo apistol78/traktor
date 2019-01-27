@@ -5,8 +5,8 @@
 			<id>{A654265B-84CF-8248-A8E5-84D8C4F0FD3F}</id>
 			<comment/>
 			<position>
-				<first>1467</first>
-				<second>568</second>
+				<first>1466</first>
+				<second>567</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -53,16 +53,16 @@
 			<id>{B7B66C54-8EEA-A14D-819D-8FF0F8D2025B}</id>
 			<comment/>
 			<position>
-				<first>1032</first>
-				<second>432</second>
+				<first>1031</first>
+				<second>431</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{CEB486E4-7653-7C41-83B7-F3C6079E63C2}</id>
 			<comment/>
 			<position>
-				<first>509</first>
-				<second>374</second>
+				<first>508</first>
+				<second>373</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -79,8 +79,8 @@
 			<id>{0AD91931-DD0B-B541-BB1E-75F7257E1C7A}</id>
 			<comment/>
 			<position>
-				<first>307</first>
-				<second>338</second>
+				<first>306</first>
+				<second>337</second>
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture2D</type>
@@ -90,16 +90,16 @@
 			<id>{FC2E00BB-2F96-D343-963C-DED769403677}</id>
 			<comment/>
 			<position>
-				<first>273</first>
-				<second>438</second>
+				<first>272</first>
+				<second>437</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{41FC2486-3C0E-FD45-9D4A-E32E75651E06}</id>
 			<comment/>
 			<position>
-				<first>103</first>
-				<second>395</second>
+				<first>102</first>
+				<second>394</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -119,7 +119,7 @@
 			<id>{91A9CECD-2E6A-9147-87CF-EB0E85DC3294}</id>
 			<comment/>
 			<position>
-				<first>103</first>
+				<first>102</first>
 				<second>480</second>
 			</position>
 		</item>
@@ -127,24 +127,24 @@
 			<id>{07D737AC-C8EA-DB4E-801D-7C122BF63FF3}</id>
 			<comment/>
 			<position>
-				<first>1235</first>
-				<second>489</second>
+				<first>1234</first>
+				<second>488</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{4A9457EE-DDAE-904F-8AA7-324E44254905}</id>
 			<comment/>
 			<position>
-				<first>-87</first>
-				<second>542</second>
+				<first>-86</first>
+				<second>541</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{9DEF659F-BBCE-7E4B-B466-017D4C0CA5F9}</id>
 			<comment/>
 			<position>
-				<first>-264</first>
-				<second>535</second>
+				<first>-263</first>
+				<second>534</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -152,16 +152,16 @@
 			<id>{2B4C4A20-63AE-0E46-BB47-EAEC974293FB}</id>
 			<comment/>
 			<position>
-				<first>-280</first>
-				<second>587</second>
+				<first>-279</first>
+				<second>586</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{36350A75-116A-9340-8789-CA0060C6687E}</id>
 			<comment/>
 			<position>
-				<first>624</first>
-				<second>469</second>
+				<first>623</first>
+				<second>468</second>
 			</position>
 			<value>2</value>
 		</item>
@@ -169,16 +169,16 @@
 			<id>{4FD7753B-6A0F-494E-B763-EA3649F4297B}</id>
 			<comment/>
 			<position>
-				<first>791</first>
-				<second>402</second>
+				<first>790</first>
+				<second>401</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{BE03C0B5-3819-104F-B998-9F2D989DD36E}</id>
 			<comment/>
 			<position>
-				<first>811</first>
-				<second>629</second>
+				<first>810</first>
+				<second>628</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -186,10 +186,10 @@
 			<id>{DEDB276E-5545-974D-B5C4-5CD58D6FAAC0}</id>
 			<comment/>
 			<position>
-				<first>625</first>
-				<second>509</second>
+				<first>624</first>
+				<second>508</second>
 			</position>
-			<value>-1</value>
+			<value>-1.4</value>
 		</item>
 		<item type="traktor.render.Iterate2d" version="traktor.render.Node:1">
 			<id>{191FF870-2550-40EB-B2D0-8B756481BF30}</id>
