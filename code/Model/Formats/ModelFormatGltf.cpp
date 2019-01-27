@@ -195,12 +195,12 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, uint32_t importFlags, c
 			if (normalTexture)
 			{
 				int32_t index = normalTexture->getMemberValue(L"index").getInt32();
-				if (!textures || index < 0 || index >= textures->size())
+				if (!textures || index < 0 || index >= (int32_t)textures->size())
 					return nullptr;
 
 				auto texture = textures->get(index).getObject< json::JsonObject >();
 				int32_t source = texture->getMemberValue(L"source").getInt32();
-				if (!images || source < 0 || source >= images->size())
+				if (!images || source < 0 || source >= (int32_t)images->size())
 					return nullptr;
 
 				auto image = images->get(source).getObject< json::JsonObject >();
@@ -215,12 +215,12 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, uint32_t importFlags, c
 				if (baseColorTexture)
 				{
 					int32_t index = baseColorTexture->getMemberValue(L"index").getInt32();
-					if (!textures || index < 0 || index >= textures->size())
+					if (!textures || index < 0 || index >= (int32_t)textures->size())
 						return nullptr;
 
 					auto texture = textures->get(index).getObject< json::JsonObject >();
 					int32_t source = texture->getMemberValue(L"source").getInt32();
-					if (!images || source < 0 || source >= images->size())
+					if (!images || source < 0 || source >= (int32_t)images->size())
 						return nullptr;
 
 					auto image = images->get(source).getObject< json::JsonObject >();
@@ -232,12 +232,12 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, uint32_t importFlags, c
 				if (metallicRoughnessTexture)
 				{
 					int32_t index = metallicRoughnessTexture->getMemberValue(L"index").getInt32();
-					if (!textures || index < 0 || index >= textures->size())
+					if (!textures || index < 0 || index >= (int32_t)textures->size())
 						return nullptr;
 
 					auto texture = textures->get(index).getObject< json::JsonObject >();
 					int32_t source = texture->getMemberValue(L"source").getInt32();
-					if (!images || source < 0 || source >= images->size())
+					if (!images || source < 0 || source >= (int32_t)images->size())
 						return nullptr;
 
 					auto image = images->get(source).getObject< json::JsonObject >();
@@ -319,7 +319,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, uint32_t importFlags, c
 				for (uint32_t k = 0; k < dataPositions.size(); ++k)
 				{
 					Vertex vx;
-					vx.setPosition(md->addPosition(dataPositions[k]));
+					vx.setPosition(md->addPosition(dataPositions[k] * Vector4(-1.0f, 1.0f, 1.0f, 0.0f) + Vector4(0.0f, 0.0f, 0.0f, 1.0f)));
 
 					if (dataNormals.size() == dataPositions.size())
 						vx.setNormal(md->addUniqueNormal(dataNormals[k]));
@@ -338,12 +338,10 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, uint32_t importFlags, c
 				for (uint32_t k = 0; k < dataIndices.size(); k += 3)
 				{
 					Polygon pol;
-
 					pol.setMaterial(material);
-					pol.addVertex(dataIndices[k + 2]);
-					pol.addVertex(dataIndices[k + 1]);
 					pol.addVertex(dataIndices[k + 0]);
-
+					pol.addVertex(dataIndices[k + 1]);
+					pol.addVertex(dataIndices[k + 2]);
 					md->addPolygon(pol);
 				}
 			}
