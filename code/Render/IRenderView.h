@@ -150,11 +150,9 @@ public:
 
 	/*! \brief Enqueue compute task.
 	 *
-	 * \param x Work group dimension.
-	 * \param y Work group dimension.
-	 * \param z Work group dimension.
+	 * \param workSize Work size, 3 dimensional size.
 	 */
-	virtual void compute(IProgram* program, int32_t x, int32_t y, int32_t z) = 0;
+	virtual void compute(IProgram* program, const int32_t* workSize) = 0;
 
 	/*! \brief End rendering. */
 	virtual void end() = 0;

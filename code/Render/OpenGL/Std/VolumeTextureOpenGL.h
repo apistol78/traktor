@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_VolumeTextureOpenGL_H
-#define traktor_render_VolumeTextureOpenGL_H
+#pragma once
 
 #include "Core/Misc/AutoPtr.h"
 #include "Render/IVolumeTexture.h"
@@ -47,7 +40,9 @@ public:
 
 	// ITextureBinding
 
-	virtual void bindTexture() const override final;
+	virtual void bindTexture(GLuint textureUnit) const override final;
+
+	virtual void bindImage(GLuint imageUnit) const override final;
 
 	virtual void bindSize(GLint locationSize) const override final;
 
@@ -67,5 +62,3 @@ private:
 		
 	}
 }
-
-#endif	// traktor_render_VolumeTextureOpenGL_H

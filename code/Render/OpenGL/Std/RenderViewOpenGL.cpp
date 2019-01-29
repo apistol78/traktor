@@ -613,7 +613,7 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 
 		indexBufferGL->bind();
 
-		if (!programGL->activate(m_renderContext, targetSize))
+		if (!programGL->activateRender(m_renderContext, targetSize))
 			return;
 
 		const GLubyte* indices = reinterpret_cast< const GLubyte* >(primitives.offset * offsetMultiplier);
@@ -628,7 +628,7 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 	}
 	else
 	{
-		if (!programGL->activate(m_renderContext, targetSize))
+		if (!programGL->activateRender(m_renderContext, targetSize))
 			return;
 
 		T_OGL_SAFE(glDrawArrays(
@@ -718,7 +718,7 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 
 		indexBufferGL->bind();
 
-		if (!programGL->activate(m_renderContext, targetSize))
+		if (!programGL->activateRender(m_renderContext, targetSize))
 			return;
 
 		const GLubyte* indices = reinterpret_cast< const GLubyte* >(primitives.offset * offsetMultiplier);
@@ -732,7 +732,7 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 	}
 	else
 	{
-		if (!programGL->activate(m_renderContext, targetSize))
+		if (!programGL->activateRender(m_renderContext, targetSize))
 			return;
 
 		T_OGL_SAFE(glDrawArraysInstanced(
@@ -747,8 +747,18 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 	m_primitiveCount += primitives.count * instanceCount;
 }
 
-void RenderViewOpenGL::compute(IProgram* program, int32_t x, int32_t y, int32_t z)
+void RenderViewOpenGL::compute(IProgram* program, const int32_t* workSize)
 {
+	ProgramOpenGL* programGL = checked_type_cast< ProgramOpenGL * >(program);
+
+	if (!programGL->activateCompute(m_renderContext))
+		return;
+
+	T_OGL_SAFE(glDispatchCompute(
+		workSize[0],
+		workSize[1],
+		workSize[2]
+	));
 }
 
 void RenderViewOpenGL::end()

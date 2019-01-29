@@ -2842,6 +2842,10 @@
       <second>Discard</second>
     </item>
     <item>
+        <first>SHADERGRAPH_NODE_DISPATCHINDEX</first>
+        <second>Dispatch index</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_DIV</first>
       <second>Div</second>
     </item>

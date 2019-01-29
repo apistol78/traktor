@@ -34,16 +34,35 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 {
 	GlslProgram glslProgram;
 	if (!Glsl().generate(shaderGraph, settings, name, glslProgram))
-		return 0;
+		return nullptr;
 
-	Ref< ProgramResourceOpenGL > resource = new ProgramResourceOpenGL(
-		wstombs(glslProgram.getVertexShader()),
-		wstombs(glslProgram.getFragmentShader()),
-		glslProgram.getTextures(),
-		glslProgram.getUniforms(),
-		glslProgram.getSamplers(),
-		glslProgram.getRenderState()
-	);
+	const auto& vertexShader = glslProgram.getVertexShader();
+	const auto& fragmentShader = glslProgram.getFragmentShader();
+	const auto& computeShader = glslProgram.getComputeShader();
+
+	Ref< ProgramResourceOpenGL > resource;
+	if (!vertexShader.empty() && !fragmentShader.empty())
+	{
+		resource = new ProgramResourceOpenGL(
+			wstombs(glslProgram.getVertexShader()),
+			wstombs(glslProgram.getFragmentShader()),
+			glslProgram.getTextures(),
+			glslProgram.getUniforms(),
+			glslProgram.getSamplers(),
+			glslProgram.getRenderState()
+		);
+	}
+	else if (!computeShader.empty())
+	{
+		resource = new ProgramResourceOpenGL(
+			wstombs(glslProgram.getComputeShader()),
+			glslProgram.getTextures(),
+			glslProgram.getUniforms(),
+			glslProgram.getSamplers()
+		);		
+	}
+	if (!resource)
+		return nullptr;
 
 	uint32_t hash = DeepHash(resource).get();
 	resource->setHash(hash);

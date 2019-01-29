@@ -148,7 +148,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 	fu << L"layout(rgba32f, binding = 0) uniform image2D " << storage->getName() << L";" << Endl;
 
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	f << L"imageStore(L" << storage->getName() << L", " << offset->getName() << L", " << in->getName() << L");" << Endl;
+	f << L"imageStore(" << storage->getName() << L", " << offset->castToInteger(GtFloat2) << L", " << in->cast(GtFloat4) << L");" << Endl;
 
 	return true;
 }
@@ -346,6 +346,18 @@ bool emitDiscard(GlslContext& cx, Discard* node)
 
 	GlslVariable* out = cx.emitOutput(node, L"Output", pass->getType());
 	assign(f, out) << pass->getName() << L";" << Endl;
+
+	return true;
+}
+
+bool emitDispatchIndex(GlslContext& cx, DispatchIndex* node)
+{
+	if (!cx.inCompute())
+		return false;
+
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat3);
+	assign(f, out) << L"vec3(gl_GlobalInvocationID.xyz);" << Endl;
 
 	return true;
 }
@@ -2402,8 +2414,9 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Cos >()] = new EmitterCast< Cos >(emitCos);
 	m_emitters[&type_of< Cross >()] = new EmitterCast< Cross >(emitCross);
 	m_emitters[&type_of< Derivative >()] = new EmitterCast< Derivative >(emitDerivative);
-	m_emitters[&type_of< Div >()] = new EmitterCast< Div >(emitDiv);
 	m_emitters[&type_of< Discard >()] = new EmitterCast< Discard >(emitDiscard);
+	m_emitters[&type_of< DispatchIndex >()] = new EmitterCast< DispatchIndex >(emitDispatchIndex);
+	m_emitters[&type_of< Div >()] = new EmitterCast< Div >(emitDiv);
 	m_emitters[&type_of< Dot >()] = new EmitterCast< Dot >(emitDot);
 	m_emitters[&type_of< Exp >()] = new EmitterCast< Exp >(emitExp);
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);

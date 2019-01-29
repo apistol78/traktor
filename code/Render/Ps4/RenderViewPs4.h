@@ -70,7 +70,7 @@ public:
 
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount) override final;
 
-	virtual void compute(IProgram* program, int32_t x, int32_t y, int32_t z) override final;
+	virtual void compute(IProgram* program, const int32_t* workSize) override final;
 
 	virtual void end() override final;
 

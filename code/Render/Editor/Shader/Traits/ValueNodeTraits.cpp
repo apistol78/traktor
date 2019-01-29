@@ -17,6 +17,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ValueNodeTraits", 0, ValueNodeTr
 TypeInfoSet ValueNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< DispatchIndex >());
 	typeSet.insert(&type_of< FragmentPosition >());
 	typeSet.insert(&type_of< FrontFace >());
 	return typeSet;
@@ -33,10 +34,12 @@ PinType ValueNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	if (is_a< FrontFace >(node))
-		return PntScalar1;
+	if (is_a< DispatchIndex >(node))
+		return PntScalar3;
 	else if (is_a< FragmentPosition >(node))
 		return PntScalar2;
+	else if (is_a< FrontFace >(node))
+		return PntScalar1;
 	else
 		return PntVoid;
 }

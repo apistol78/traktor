@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/OpenGL/Std/Platform.h"
 #include "Render/OpenGL/Std/RenderContextOpenGL.h"
 #include "Render/OpenGL/Std/ResourceContextOpenGL.h"
@@ -146,9 +140,14 @@ int VolumeTextureOpenGL::getDepth() const
 	return m_depth;
 }
 
-void VolumeTextureOpenGL::bindTexture() const
+void VolumeTextureOpenGL::bindTexture(GLuint textureUnit) const
 {
+	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + textureUnit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D, m_textureName));
+}
+
+void VolumeTextureOpenGL::bindImage(GLuint imageUnit) const
+{
 }
 
 void VolumeTextureOpenGL::bindSize(GLint locationSize) const

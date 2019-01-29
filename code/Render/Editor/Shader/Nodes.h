@@ -152,6 +152,8 @@ public:
 
 	const std::wstring& getTechnique() const;
 
+	virtual std::wstring getInformation() const override final;
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -279,6 +281,15 @@ public:
 
 private:
 	Operator m_operator;
+};
+
+/*! \brief Compute dispatch index. */
+class T_DLLCLASS DispatchIndex : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	DispatchIndex();
 };
 
 /*! \brief Divide. */

@@ -1014,7 +1014,7 @@ void RenderViewPs3::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, I
 	}
 }
 
-void RenderViewPs3::compute(IProgram* program, int32_t x, int32_t y, int32_t z)
+void RenderViewPs3::compute(IProgram* program, const int32_t* workSize)
 {
 }
 

@@ -871,7 +871,7 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 	m_primitiveCount += primitives.count * instanceCount;
 }
 
-void RenderViewDx11::compute(IProgram* program, int32_t x, int32_t y, int32_t z)
+void RenderViewDx11::compute(IProgram* program, const int32_t* workSize)
 {
 }
 

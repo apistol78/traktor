@@ -291,7 +291,7 @@ bool GlslContext::defineSampler(const std::wstring& name, uint32_t stateHash, GL
 		const SamplerBindingOpenGL& sampler = m_samplers[i];
 		if (m_samplerStateHashes[i] == stateHash && sampler.target == target && sampler.texture == textureId)
 		{
-			outStage = sampler.stage;
+			outStage = sampler.unit;
 			return false;
 		}
 	}
@@ -300,7 +300,7 @@ bool GlslContext::defineSampler(const std::wstring& name, uint32_t stateHash, GL
 
 	SamplerBindingOpenGL sb;
 	sb.name = name;
-	sb.stage = outStage;
+	sb.unit = outStage;
 	sb.target = target;
 	sb.texture = textureId;
 	m_samplers.push_back(sb);

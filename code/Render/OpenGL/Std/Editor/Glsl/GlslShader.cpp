@@ -144,6 +144,9 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 {
 	StringOutputStream ss;
 
+	if (getOutputStream(BtBody).empty())
+		return L"";
+
 	if (m_shaderType == StVertex || m_shaderType == StFragment)
 	{
 		ss << L"#version 150" << Endl;
