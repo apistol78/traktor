@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
@@ -186,9 +180,15 @@ void* SimpleTextureOpenGL::getInternalHandle()
 	return (void*)m_textureName;
 }
 
-void SimpleTextureOpenGL::bindTexture() const
+void SimpleTextureOpenGL::bindTexture(GLuint textureUnit) const
 {
+	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + textureUnit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
+}
+
+void SimpleTextureOpenGL::bindImage(GLuint imageUnit) const
+{
+	T_OGL_SAFE(glBindImageTexture(imageUnit, m_textureName, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F));
 }
 
 void SimpleTextureOpenGL::bindSize(GLint locationSize) const

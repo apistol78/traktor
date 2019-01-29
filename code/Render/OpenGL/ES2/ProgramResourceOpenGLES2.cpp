@@ -49,7 +49,7 @@ public:
 	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< std::wstring >(L"name", m_ref.name);
-		s >> Member< GLuint >(L"stage", m_ref.stage);
+		s >> Member< GLuint >(L"unit", m_ref.unit);
 		s >> Member< GLenum >(L"target", m_ref.target);
 		s >> Member< int32_t >(L"texture", m_ref.texture);
 	}

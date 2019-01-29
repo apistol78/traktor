@@ -5,6 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 ================================================================================================
 */
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -50,6 +51,7 @@ bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 	desc.mipBias = m_editor->getSettings()->getProperty< float >(L"Editor.MipBias", 0.0f);
 	desc.maxAnisotropy = m_editor->getSettings()->getProperty< int32_t >(L"Editor.MaxAnisotropy", 1);
 	desc.maxAnisotropy = std::max(desc.maxAnisotropy, 1);
+	desc.useProgramCache = m_editor->getSettings()->getProperty< bool >(L"Editor.UseProgramCache", false);
 
 	//if (!renderSystemCapture->create(desc))
 	if (!renderSystem->create(desc))

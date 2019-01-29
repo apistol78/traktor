@@ -42,12 +42,12 @@ struct NamedUniformType
 struct SamplerBindingOpenGL
 {
 	std::wstring name;
-	GLuint stage;
+	GLuint unit;
 	GLenum target;
 	int32_t texture;
 
 	SamplerBindingOpenGL()
-	:	stage(0)
+	:	unit(0)
 	,	target(GL_INVALID_ENUM)
 	,	texture(0)
 	{

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_GlslVariable_H
-#define traktor_render_GlslVariable_H
+#pragma once
 
 #include <string>
 #include "Core/Object.h"
@@ -34,6 +27,8 @@ public:
 
 	std::wstring cast(GlslType to) const;
 
+	std::wstring castToInteger(GlslType to) const;
+
 private:
 	std::wstring m_name;
 	GlslType m_type;
@@ -41,5 +36,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_GlslVariable_H

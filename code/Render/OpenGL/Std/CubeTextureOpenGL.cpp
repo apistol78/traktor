@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Render/OpenGL/Std/Platform.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
@@ -198,9 +192,14 @@ void CubeTextureOpenGL::unlock(int side, int level)
 	));
 }
 
-void CubeTextureOpenGL::bindTexture() const
+void CubeTextureOpenGL::bindTexture(GLuint textureUnit) const
 {
+	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + textureUnit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
+}
+
+void CubeTextureOpenGL::bindImage(GLuint imageUnit) const
+{
 }
 
 void CubeTextureOpenGL::bindSize(GLint locationSize) const

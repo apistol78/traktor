@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/OpenGL/Std/RenderContextOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetDepthOpenGL.h"
 #include "Render/OpenGL/Std/ResourceContextOpenGL.h"
@@ -87,9 +81,15 @@ void* RenderTargetDepthOpenGL::getInternalHandle()
 	return (void*)m_depthTexture;
 }
 
-void RenderTargetDepthOpenGL::bindTexture() const
+void RenderTargetDepthOpenGL::bindTexture(GLuint textureUnit) const
 {
+	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + textureUnit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_depthTexture));
+}
+
+void RenderTargetDepthOpenGL::bindImage(GLuint imageUnit) const
+{
+	T_OGL_SAFE(glBindImageTexture(imageUnit, m_depthTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F));
 }
 
 void RenderTargetDepthOpenGL::bindSize(GLint locationSize) const

@@ -3,6 +3,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Range.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyInteger.h"

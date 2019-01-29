@@ -321,7 +321,7 @@ void ProgramOpenGL::setStencilReference(uint32_t stencilReference)
 	m_renderState.stencilRef = stencilReference;
 }
 
-bool ProgramOpenGL::activate(RenderContextOpenGL* renderContext, float targetSize[2])
+bool ProgramOpenGL::activateRender(RenderContextOpenGL* renderContext, float targetSize[2])
 {
 	if (!m_program || (m_validated && !m_valid))
 		return false;
@@ -403,12 +403,124 @@ bool ProgramOpenGL::activate(RenderContextOpenGL* renderContext, float targetSiz
 			const ITextureBinding* tb = getTextureBinding(resolved);
 			T_ASSERT (tb);
 
-			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + sampler.stage));
-			tb->bindTexture();
+			tb->bindTexture(sampler.unit);
+			renderContext->bindSamplerStateObject(sampler.object, sampler.unit, tb->haveMips());
 
-			renderContext->bindSamplerStateObject(sampler.object, sampler.stage, tb->haveMips());
+			T_OGL_SAFE(glUniform1i(sampler.location, sampler.unit));
+		}
 
-			T_OGL_SAFE(glUniform1i(sampler.location, sampler.stage));
+		for (const auto& textureSize : m_textureSize)
+		{
+			ITexture* texture = m_textures[textureSize.texture];
+			if (!texture)
+				continue;
+
+			Ref< ITexture > resolved = texture->resolve();
+			if (!resolved)
+				continue;
+
+			const ITextureBinding* tb = getTextureBinding(resolved);
+			T_ASSERT (tb);
+
+			tb->bindSize(textureSize.location);
+		}
+
+		m_textureDirty = false;
+	}
+
+	// Check if program and state is valid.
+	if (!m_validated)
+	{
+		GLint status;
+		
+		T_OGL_SAFE(glValidateProgram(m_program));
+		T_OGL_SAFE(glGetProgramiv(m_program, GL_VALIDATE_STATUS, &status));
+
+		m_validated = true;
+		m_valid = bool(status == GL_TRUE);
+
+#if defined(_DEBUG)
+		if (!m_valid)
+		{
+			GLchar errorBuf[512];
+			GLint errorBufLen;
+
+			T_OGL_SAFE(glGetProgramInfoLog(m_program, sizeof(errorBuf), &errorBufLen, errorBuf));
+			if (errorBufLen > 0)
+			{
+				log::error << L"GLSL program validate failed :" << Endl;
+				log::error << mbstows(errorBuf) << Endl;
+			}
+		}
+#endif
+
+		if (!m_valid)
+			return false;
+	}
+
+	return true;
+}
+
+bool ProgramOpenGL::activateCompute(RenderContextOpenGL* renderContext)
+{
+	if (!m_program || (m_validated && !m_valid))
+		return false;
+
+	// "Bind" ourself to render context; return true if program is already active.
+	bool alreadyActive = renderContext->programActivate(this);
+
+	// Bind program.
+	if (!alreadyActive)
+	{
+		T_OGL_SAFE(glUseProgram(m_program));
+	}
+
+	// Update dirty uniforms.
+	for (auto& uniform : m_uniforms)
+	{
+		if (!uniform.dirty)
+		 	continue;
+
+		const float* uniformData = &m_uniformData[uniform.offset];
+		switch (uniform.type)
+		{
+		case GL_FLOAT:
+			T_OGL_SAFE(glUniform1fv(uniform.location, uniform.length, uniformData));
+			break;
+
+		case GL_FLOAT_VEC4:
+			T_OGL_SAFE(glUniform4fv(uniform.location, uniform.length, uniformData));
+			break;
+
+		case GL_FLOAT_MAT4:
+			T_OGL_SAFE(glUniformMatrix4fv(uniform.location, uniform.length, GL_FALSE, uniformData));
+			break;
+
+		default:
+			T_ASSERT (0);
+		}
+
+		uniform.dirty = false;
+	}
+
+	// Bind textures.
+	if (!alreadyActive || m_textureDirty)
+	{
+		for (uint32_t unit = 0; unit < m_textures.size(); ++unit)
+		{
+			ITexture* texture = m_textures[unit];
+			if (!texture)
+				continue;
+
+			Ref< ITexture > resolved = texture->resolve();
+			if (!resolved)
+				continue;
+
+			const ITextureBinding* tb = getTextureBinding(resolved);
+			T_ASSERT (tb);
+
+			// T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
+			tb->bindImage(unit);
 		}
 
 		for (const auto& textureSize : m_textureSize)
@@ -490,26 +602,28 @@ ProgramOpenGL::ProgramOpenGL(ResourceContextOpenGL* resourceContext, GLuint prog
 	const std::vector< NamedUniformType >& uniforms = resourceOpenGL->getUniforms();
 
 	// Map texture parameters.
-	for (const auto& sb : samplers)
+	for (const auto& texture : textures)
 	{
-		const std::wstring& texture = textures[sb.texture];
-
-		// Get texture parameter handle.
 		handle_t handle = getParameterHandle(texture);
-		if (m_parameterMap.find(handle) == m_parameterMap.end())
-		{
-			m_parameterMap[handle] = m_textures.size();
-			m_textures.push_back(nullptr);
-		}
+		T_ASSERT(m_parameterMap.find(handle) == m_parameterMap.end());
+		m_parameterMap[handle] = m_textures.size();
+		m_textures.push_back(nullptr);
+	}
 
-		Sampler& sampler = m_samplers.push_back();
-		sampler.location = glGetUniformLocation(m_program, wstombs(sb.name).c_str());
-		sampler.texture = m_parameterMap[handle];
-		sampler.stage = sb.stage;
-		sampler.object = resourceContext->createSamplerStateObject(m_renderState.samplerStates[sb.stage]);
+	// Map sampler parameters.
+	for (const auto& sampler : samplers)
+	{
+		const std::wstring& texture = textures[sampler.texture];
+		handle_t handle = getParameterHandle(texture);
 
-		if (sampler.location < 0)
-			log::warning << L"No GL sampler defined for texture \"" << texture << L"\"" << Endl;
+		Sampler& s = m_samplers.push_back();
+		s.location = glGetUniformLocation(m_program, wstombs(sampler.name).c_str());
+		s.texture = m_parameterMap[handle];
+		s.unit = sampler.unit;
+		s.object = resourceContext->createSamplerStateObject(m_renderState.samplerStates[sampler.unit]);
+
+		if (s.location < 0)
+			log::warning << L"No GL sampler defined for texture \"" << texture << L"\"." << Endl;
 	}
 
 	// Map texture size parameters.

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/RefArray.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
@@ -19,6 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Render/ImageProcess/ImageProcessStepBlur.h"
 #include "Render/ImageProcess/ImageProcessStepBokeh.h"
 #include "Render/ImageProcess/ImageProcessStepChain.h"
+#include "Render/ImageProcess/ImageProcessStepCompute.h"
 #include "Render/ImageProcess/ImageProcessStepDiscardTarget.h"
 #include "Render/ImageProcess/ImageProcessStepGodRay.h"
 #include "Render/ImageProcess/ImageProcessStepGrain.h"
@@ -123,6 +118,8 @@ bool ImageProcessPipeline::buildDependencies(
 			for (const auto step : stepChain->getSteps())
 				ss.push_back(step);
 		}
+		else if (const ImageProcessStepCompute* stepCompute = dynamic_type_cast< const ImageProcessStepCompute* >(step))
+			pipelineDepends->addDependency(stepCompute->getShader(), editor::PdfBuild | editor::PdfResource);
 		else if (const ImageProcessStepGodRay* stepGodRay = dynamic_type_cast< const ImageProcessStepGodRay* >(step))
 			pipelineDepends->addDependency(stepGodRay->getShader(), editor::PdfBuild | editor::PdfResource);
 		else if (const ImageProcessStepGrain* stepGrain = dynamic_type_cast< const ImageProcessStepGrain* >(step))

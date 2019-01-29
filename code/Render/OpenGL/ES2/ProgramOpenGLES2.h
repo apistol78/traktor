@@ -68,7 +68,7 @@ private:
 	{
 		GLint locationTexture;
 		uint32_t texture;
-		uint32_t stage;
+		uint32_t unit;
 	};
 
 	struct TextureSize

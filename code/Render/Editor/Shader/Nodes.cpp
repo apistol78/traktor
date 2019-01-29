@@ -300,7 +300,7 @@ std::wstring Clamp::getInformation() const
 
 void Clamp::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 
 	s >> Member< float >(L"min", m_min);
 	s >> Member< float >(L"max", m_max);
@@ -336,7 +336,7 @@ std::wstring Branch::getInformation() const
 
 void Branch::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
 }
 
@@ -371,7 +371,7 @@ std::wstring Color::getInformation() const
 
 void Color::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 	s >> Member< traktor::Color4ub >(L"color", m_color);
 }
 
@@ -410,8 +410,14 @@ const std::wstring& ComputeOutput::getTechnique() const
 	return m_technique;
 }
 
+std::wstring ComputeOutput::getInformation() const
+{
+	return m_technique;
+}
+
 void ComputeOutput::serialize(ISerializer& s)
 {
+	ImmutableNode::serialize(s);
 	s >> Member< std::wstring >(L"technique", m_technique);
 }
 
@@ -613,6 +619,18 @@ void Discard::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DispatchIndex", 0, DispatchIndex, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_DispatchIndex_i[] = { { 0 } };
+const ImmutableNode::OutputPinDesc c_DispatchIndex_o[] = { { L"Output" }, { 0 } };
+
+DispatchIndex::DispatchIndex()
+:	ImmutableNode(c_DispatchIndex_i, c_DispatchIndex_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Div", 0, Div, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Div_i[] = { { L"Input1", false }, { L"Input2", false }, { 0 } };
@@ -751,7 +769,7 @@ std::wstring IndexedUniform::getInformation() const
 
 void IndexedUniform::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 
 	const MemberEnum< ParameterType >::Key kParameterType_Keys[] =
 	{
@@ -861,7 +879,7 @@ std::wstring InputPort::getInformation() const
 
 void InputPort::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 
 	s >> Member< std::wstring >(L"name", m_name);
 
@@ -945,7 +963,7 @@ std::wstring Iterate::getInformation() const
 
 void Iterate::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 
 	s >> Member< int32_t >(L"from", m_from);
 	s >> Member< int32_t >(L"to", m_to);
@@ -1016,7 +1034,7 @@ std::wstring Iterate2d::getInformation() const
 
 void Iterate2d::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 
 	s >> Member< int32_t >(L"fromX", m_fromX);
 	s >> Member< int32_t >(L"toX", m_toX);
@@ -1084,7 +1102,7 @@ std::wstring Log::getInformation() const
 
 void Log::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 
 	const MemberEnum< Base >::Key kBase[] =
 	{
@@ -1246,7 +1264,7 @@ std::wstring OutputPort::getInformation() const
 
 void OutputPort::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 	s >> Member< std::wstring >(L"name", m_name);
 }
 
@@ -1322,7 +1340,7 @@ std::wstring PixelOutput::getInformation() const
 
 void PixelOutput::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 
 	s >> Member< std::wstring >(L"technique", m_technique);
 
@@ -1486,7 +1504,7 @@ const SamplerState& Sampler::getSamplerState() const
 
 void Sampler::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 
 	if (s.getVersion() >= 5)
 		s >> MemberSamplerState(m_state);
@@ -1574,7 +1592,7 @@ std::wstring Scalar::getInformation() const
 
 void Scalar::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 	s >> Member< float >(L"value", m_value);
 }
 
@@ -1649,7 +1667,7 @@ const RenderState& State::getRenderState() const
 
 void State::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 
 	if (s.getVersion() >= 5)
 	{
@@ -1736,7 +1754,7 @@ std::wstring Sum::getInformation() const
 
 void Sum::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 
 	s >> Member< int32_t >(L"from", m_from);
 	s >> Member< int32_t >(L"to", m_to);
@@ -1859,7 +1877,7 @@ std::wstring Swizzle::getInformation() const
 
 void Swizzle::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 	s >> Member< std::wstring >(L"swizzle", m_swizzle);
 }
 
@@ -1923,7 +1941,7 @@ ParameterType Texture::getParameterType() const
 
 void Texture::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 
 	const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
 	{
@@ -2053,7 +2071,7 @@ std::wstring Uniform::getInformation() const
 
 void Uniform::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 
 	const MemberEnum< ParameterType >::Key kParameterType_Keys[] =
 	{
@@ -2110,7 +2128,7 @@ std::wstring Variable::getInformation() const
 
 void Variable::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 	s >> Member< std::wstring >(L"name", m_name);
 }
 
@@ -2145,7 +2163,7 @@ std::wstring Vector::getInformation() const
 
 void Vector::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 	s >> Member< Vector4 >(L"value", m_value);
 }
 
@@ -2211,7 +2229,7 @@ std::wstring VertexInput::getInformation() const
 
 void VertexInput::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 
 	const MemberEnum< DataUsage >::Key kDataUsage[] =
 	{
@@ -2276,7 +2294,7 @@ std::wstring VertexOutput::getInformation() const
 
 void VertexOutput::serialize(ISerializer& s)
 {
-	Node::serialize(s);
+	ImmutableNode::serialize(s);
 
 	if (s.getVersion() >= 1)
 		s >> Member< std::wstring >(L"technique", m_technique);

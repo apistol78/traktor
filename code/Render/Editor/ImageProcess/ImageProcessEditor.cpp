@@ -22,6 +22,7 @@
 #include "Render/ImageProcess/ImageProcessStepBlur.h"
 #include "Render/ImageProcess/ImageProcessStepBokeh.h"
 #include "Render/ImageProcess/ImageProcessStepChain.h"
+#include "Render/ImageProcess/ImageProcessStepCompute.h"
 #include "Render/ImageProcess/ImageProcessStepGodRay.h"
 #include "Render/ImageProcess/ImageProcessStepGrain.h"
 #include "Render/ImageProcess/ImageProcessStepLuminance.h"
@@ -38,6 +39,7 @@
 #include "Render/Editor/ImageProcess/ImageProcessStepBlurFacade.h"
 #include "Render/Editor/ImageProcess/ImageProcessStepBokehFacade.h"
 #include "Render/Editor/ImageProcess/ImageProcessStepChainFacade.h"
+#include "Render/Editor/ImageProcess/ImageProcessStepComputeFacade.h"
 #include "Render/Editor/ImageProcess/ImageProcessStepGodRayFacade.h"
 #include "Render/Editor/ImageProcess/ImageProcessStepGrainFacade.h"
 #include "Render/Editor/ImageProcess/ImageProcessStepLuminanceFacade.h"
@@ -126,6 +128,7 @@ bool ImageProcessEditor::create(ui::Widget* parent, db::Instance* instance, ISer
 	m_imageProcessStepFacades[&type_of< ImageProcessStepBlur >()] = new ImageProcessStepBlurFacade();
 	m_imageProcessStepFacades[&type_of< ImageProcessStepBokeh >()] = new ImageProcessStepBokehFacade();
 	m_imageProcessStepFacades[&type_of< ImageProcessStepChain >()] = new ImageProcessStepChainFacade();
+	m_imageProcessStepFacades[&type_of< ImageProcessStepCompute >()] = new ImageProcessStepComputeFacade();
 	m_imageProcessStepFacades[&type_of< ImageProcessStepGodRay >()] = new ImageProcessStepGodRayFacade();
 	m_imageProcessStepFacades[&type_of< ImageProcessStepGrain >()] = new ImageProcessStepGrainFacade();
 	m_imageProcessStepFacades[&type_of< ImageProcessStepLuminance >()] = new ImageProcessStepLuminanceFacade();

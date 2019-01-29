@@ -51,17 +51,50 @@ void EventLoopX11::destroy()
 
 bool EventLoopX11::process(EventSubject* owner)
 {
-	if (m_terminated)
-		return false;
-
-	if (!XPending(m_context->getDisplay()))
-		return !m_terminated;
-
 	XEvent e;
-	XNextEvent(m_context->getDisplay(), &e);
 
-	if (!preTranslateEvent(owner, e))
-		m_context->dispatch(e);
+	int fd = ConnectionNumber(m_context->getDisplay());
+	bool idle = true;
+
+	Timer timer;
+	timer.start();
+
+	while (!m_terminated)
+	{
+        int nr = 0;
+		if (!XPending(m_context->getDisplay()))
+		{
+			fd_set fds;
+			FD_ZERO(&fds);
+			FD_SET(fd, &fds);
+
+			struct timeval tv;
+			tv.tv_usec = 1 * 1000;
+			tv.tv_sec = 0;
+
+			nr = select(fd + 1, &fds, nullptr, nullptr, &tv);
+		}
+		else
+			nr = 1;
+
+        if (nr > 0)
+		{
+			while (XPending(m_context->getDisplay()))
+			{
+				XNextEvent(m_context->getDisplay(), &e);
+
+				if (!preTranslateEvent(owner, e))
+					m_context->dispatch(e);
+
+				idle = true;
+			}
+		}
+		else
+			break;
+
+		double dt = timer.getDeltaTime();
+		Timers::getInstance().update(dt);
+	}
 
 	return !m_terminated;
 }

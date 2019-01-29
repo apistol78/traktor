@@ -294,9 +294,10 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 	m_renderView->draw(vb->getVertexBuffer(), ib ? ib->getIndexBuffer() : 0, programCapture->m_program, primitives, instanceCount);
 }
 
-void RenderViewCapture::compute(IProgram* program, int32_t x, int32_t y, int32_t z)
+void RenderViewCapture::compute(IProgram* program, const int32_t* workSize)
 {
 	T_CAPTURE_ASSERT (m_targetDepth >= 1, L"Cannot compute outside of begin/end.");
+	T_CAPTURE_ASSERT (workSize != nullptr, L"Incorrect argument; workSize null.");
 
 	ProgramCapture* programCapture = dynamic_type_cast< ProgramCapture* >(program);
 	T_CAPTURE_ASSERT (programCapture, L"Incorrect program type.");
@@ -306,7 +307,7 @@ void RenderViewCapture::compute(IProgram* program, int32_t x, int32_t y, int32_t
 
 	programCapture->verify();
 
-	m_renderView->compute(programCapture->m_program, x, y, z);
+	m_renderView->compute(programCapture->m_program, workSize);
 }
 
 void RenderViewCapture::end()

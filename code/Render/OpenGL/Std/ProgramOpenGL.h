@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ProgramOpenGL_H
-#define traktor_render_ProgramOpenGL_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
@@ -51,7 +44,9 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference) override final;
 
-	bool activate(RenderContextOpenGL* renderContext, float targetSize[2]);
+	bool activateRender(RenderContextOpenGL* renderContext, float targetSize[2]);
+
+	bool activateCompute(RenderContextOpenGL* renderContext);
 
 	const GLint* getAttributeLocs() const { return m_attributeLocs; }
 
@@ -80,13 +75,13 @@ private:
 	{
 		GLint location;
 		uint32_t texture;
-		uint32_t stage;
+		uint32_t unit;
 		GLuint object;
 
 		Sampler()
 		:	location(0)
 		,	texture(0)
-		,	stage(0)
+		,	unit(0)
 		,	object(0)
 		{
 		}
@@ -127,5 +122,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_ProgramOpenGL_H

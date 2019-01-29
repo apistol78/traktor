@@ -1,10 +1,5 @@
-// #include "Core/Io/BufferedStream.h"
-// #include "Core/Io/FileOutputStream.h"
-// #include "Core/Io/StringReader.h"
-// #include "Core/Io/AnsiEncoding.h"
 #include "Core/Io/IStream.h"
 #include "Core/Misc/String.h"
-// #include "Core/Misc/Split.h"
 #include "Core/Log/Log.h"
 #include "Json/JsonDocument.h"
 #include "Json/JsonObject.h"
@@ -322,7 +317,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, uint32_t importFlags, c
 					vx.setPosition(md->addPosition(dataPositions[k] * Vector4(-1.0f, 1.0f, 1.0f, 0.0f) + Vector4(0.0f, 0.0f, 0.0f, 1.0f)));
 
 					if (dataNormals.size() == dataPositions.size())
-						vx.setNormal(md->addUniqueNormal(dataNormals[k]));
+						vx.setNormal(md->addUniqueNormal(dataNormals[k] * Vector4(-1.0f, 1.0f, 1.0f, 0.0f)));
 
 					if (dataTexCoord0s.size() == dataPositions.size())
 						vx.setTexCoord(0, md->addUniqueTexCoord(
