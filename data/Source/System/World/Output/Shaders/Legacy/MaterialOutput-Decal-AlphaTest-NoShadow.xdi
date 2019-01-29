@@ -310,11 +310,6 @@
 					<optional>true</optional>
 				</item>
 				<item>
-					<id>{9EA06B20-B8BC-DC46-81C1-F02597463823}</id>
-					<name>Emissive</name>
-					<optional>true</optional>
-				</item>
-				<item>
 					<id>{0533A842-649E-41EB-848E-C14E9F7A6DF9}</id>
 					<name>Enable</name>
 					<optional>true</optional>
@@ -340,10 +335,6 @@
 				<item>
 					<first>Alpha</first>
 					<second>1</second>
-				</item>
-				<item>
-					<first>Emissive</first>
-					<second>0</second>
 				</item>
 				<item>
 					<first>Metalness</first>
@@ -609,16 +600,6 @@
 			<destination>
 				<node ref="/object/nodes/item[20]"/>
 				<name>Metalness</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[20]"/>
-				<name>Emissive</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">

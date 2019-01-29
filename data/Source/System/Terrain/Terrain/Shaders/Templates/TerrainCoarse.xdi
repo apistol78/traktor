@@ -502,11 +502,6 @@ Disabled emissive for now as it doesn't work on OpenGL
 					<optional>true</optional>
 				</item>
 				<item>
-					<id>{9EA06B20-B8BC-DC46-81C1-F02597463823}</id>
-					<name>Emissive</name>
-					<optional>true</optional>
-				</item>
-				<item>
 					<id>{0533A842-649E-41EB-848E-C14E9F7A6DF9}</id>
 					<name>Enable</name>
 					<optional>true</optional>
@@ -532,10 +527,6 @@ Disabled emissive for now as it doesn't work on OpenGL
 				<item>
 					<first>Alpha</first>
 					<second>1</second>
-				</item>
-				<item>
-					<first>Emissive</first>
-					<second>0</second>
 				</item>
 				<item>
 					<first>Metalness</first>
