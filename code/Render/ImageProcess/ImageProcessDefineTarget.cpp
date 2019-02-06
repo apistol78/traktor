@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -17,7 +11,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageProcessDefineTarget", 4, ImageProcessDefineTarget, ImageProcessDefine)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageProcessDefineTarget", 5, ImageProcessDefineTarget, ImageProcessDefine)
 
 ImageProcessDefineTarget::ImageProcessDefineTarget()
 :	m_width(0)
@@ -29,6 +23,7 @@ ImageProcessDefineTarget::ImageProcessDefineTarget()
 ,	m_format(TfR8)
 ,	m_depthStencil(false)
 ,	m_preferTiled(false)
+,	m_generateMips(false)
 ,	m_multiSample(0)
 ,	m_clearColor(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_persistent(false)
@@ -45,8 +40,9 @@ bool ImageProcessDefineTarget::define(ImageProcess* imageProcess, resource::IRes
 	rtscd.multiSample = m_multiSample;
 	rtscd.createDepthStencil = m_depthStencil;
 	rtscd.usingPrimaryDepthStencil = false;
-	rtscd.ignoreStencil = true;
 	rtscd.preferTiled = m_preferTiled;
+	rtscd.ignoreStencil = true;
+	rtscd.generateMips = m_generateMips;
 	rtscd.targets[0].format = m_format;
 
 	if (m_maxWidth > 0)
@@ -105,6 +101,9 @@ void ImageProcessDefineTarget::serialize(ISerializer& s)
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"preferTiled", m_preferTiled);
 	
+	if (s.getVersion() >= 5)
+		s >> Member< bool >(L"generateMips", m_generateMips);
+
 	s >> Member< int32_t >(L"multiSample", m_multiSample);
 
 	if (s.getVersion() >= 2)
