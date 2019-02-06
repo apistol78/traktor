@@ -96,7 +96,6 @@ bool RenderViewVk::nextEvent(RenderEvent& outEvent)
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
-#endif
 
 	if (!m_eventQueue.empty())
 	{
@@ -106,6 +105,11 @@ bool RenderViewVk::nextEvent(RenderEvent& outEvent)
 	}
 	else
 		return false;
+#elif defined(__LINUX__)
+	return m_window ? m_window->update(outEvent) : false;
+#else
+	return false;
+#endif
 }
 
 void RenderViewVk::close()
@@ -191,6 +195,8 @@ SystemWindow RenderViewVk::getSystemWindow()
 {
 #if defined(_WIN32)
 	return SystemWindow(*m_window);
+#elif defined(__LINUX__)
+	return SystemWindow(m_window->getDisplay(), m_window->getWindow());
 #else
 	return SystemWindow();
 #endif
@@ -198,7 +204,7 @@ SystemWindow RenderViewVk::getSystemWindow()
 
 bool RenderViewVk::begin(EyeType eye)
 {
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 	VkSemaphoreCreateInfo semaphoreCreateInfo = { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, 0, 0 };
     vkCreateSemaphore(m_device, &semaphoreCreateInfo, nullptr, &m_presentCompleteSemaphore);
     vkCreateSemaphore(m_device, &semaphoreCreateInfo, nullptr, &m_renderingCompleteSemaphore);
@@ -385,6 +391,10 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
 	validateTargetState();
+}
+
+void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
+{
 }
 
 void RenderViewVk::end()

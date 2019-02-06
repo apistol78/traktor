@@ -43,8 +43,73 @@ namespace traktor
 		{
 
 const char* c_validationLayerNames[] = /*{ "VK_LAYER_RENDERDOC_Capture" };*/ { "VK_LAYER_LUNARG_standard_validation" };
+#if defined(_WIN32)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_report" };
+#elif defined(__LINUX__)
+const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_xlib_surface", "VK_EXT_debug_report" };
+#else
+const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_report" };
+#endif
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
+
+const wchar_t* vulkanHumanResult(VkResult result)
+{
+	switch (result)
+	{
+	case VK_SUCCESS:
+		return L"VK_SUCCESS";
+	case VK_NOT_READY:
+		return L"VK_NOT_READY";
+	case VK_TIMEOUT:
+		return L"VK_TIMEOUT";
+	case VK_EVENT_SET:
+		return L"VK_EVENT_SET";
+	case VK_EVENT_RESET:
+		return L"VK_EVENT_RESET";
+	case VK_INCOMPLETE:
+		return L"VK_INCOMPLETE";
+	case VK_ERROR_OUT_OF_HOST_MEMORY:
+		return L"VK_ERROR_OUT_OF_HOST_MEMORY";
+	case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+		return L"VK_ERROR_OUT_OF_DEVICE_MEMORY";
+	case VK_ERROR_INITIALIZATION_FAILED:
+		return L"VK_ERROR_INITIALIZATION_FAILED";
+	case VK_ERROR_DEVICE_LOST:
+		return L"VK_ERROR_DEVICE_LOST";
+	case VK_ERROR_MEMORY_MAP_FAILED:
+		return L"VK_ERROR_MEMORY_MAP_FAILED";
+	case VK_ERROR_LAYER_NOT_PRESENT:
+		return L"VK_ERROR_LAYER_NOT_PRESENT";
+	case VK_ERROR_EXTENSION_NOT_PRESENT:
+		return L"VK_ERROR_EXTENSION_NOT_PRESENT";
+	case VK_ERROR_FEATURE_NOT_PRESENT:
+		return L"VK_ERROR_FEATURE_NOT_PRESENT";
+	case VK_ERROR_INCOMPATIBLE_DRIVER:
+		return L"VK_ERROR_INCOMPATIBLE_DRIVER";
+	case VK_ERROR_TOO_MANY_OBJECTS:
+		return L"VK_ERROR_TOO_MANY_OBJECTS";
+	case VK_ERROR_FORMAT_NOT_SUPPORTED:
+		return L"VK_ERROR_FORMAT_NOT_SUPPORTED";
+	case VK_ERROR_FRAGMENTED_POOL:
+		return L"VK_ERROR_FRAGMENTED_POOL";
+	case VK_ERROR_SURFACE_LOST_KHR:
+		return L"VK_ERROR_SURFACE_LOST_KHR";
+	case VK_ERROR_NATIVE_WINDOW_IN_USE_KHR:
+		return L"VK_ERROR_NATIVE_WINDOW_IN_USE_KHR";
+	case VK_SUBOPTIMAL_KHR:
+		return L"VK_SUBOPTIMAL_KHR";
+	case VK_ERROR_OUT_OF_DATE_KHR:
+		return L"VK_ERROR_OUT_OF_DATE_KHR";
+	case VK_ERROR_INCOMPATIBLE_DISPLAY_KHR:
+		return L"VK_ERROR_INCOMPATIBLE_DISPLAY_KHR";
+	case VK_ERROR_VALIDATION_FAILED_EXT:
+		return L"VK_ERROR_VALIDATION_FAILED_EXT";
+	case VK_ERROR_INVALID_SHADER_NV:
+		return L"VK_ERROR_INVALID_SHADER_NV";
+	default:
+		return L"**unknown**";
+	}
+}
 
 		}
 
@@ -62,10 +127,23 @@ RenderSystemVk::RenderSystemVk()
 
 bool RenderSystemVk::create(const RenderSystemDesc& desc)
 {
-#if defined(_WIN32)
+	VkResult result;
+
+#if defined(__LINUX__)
+	::Display* display = XOpenDisplay(0);
+	if (!display)
+	{
+		log::error << L"Unable to create OpenGL renderer; Failed to open X display" << Endl;
+		return 0;
+	}
+#endif
+
+#if defined(_WIN32) || defined(__LINUX__)
 	if (!initializeVulkanApi())
 		return false;
+#endif
 
+#if defined(_WIN32)
 	// Create render window; used by default render view and also by shared context.
 	m_window = new Window();
 	if (!m_window->create())
@@ -73,15 +151,24 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		log::error << L"Failed to create render window." << Endl;
 		return false;
 	}
+#elif defined(__LINUX__)
+	// Create render window; used by default render view and also by shared context.
+	m_window = new Window(display);
+	if (!m_window->create(640, 480))
+	{
+		log::error << L"Failed to create render window." << Endl;
+		return false;
+	}
+	m_window->show();
 #endif
 
 	uint32_t layerCount = 0;
 	vkEnumerateInstanceLayerProperties(&layerCount, 0);
-	if (layerCount == 0)
-	{
-		log::error << L"Failed to create Vulkan instance layer properties." << Endl;
-		return false;
-	}
+	// if (layerCount == 0)
+	// {
+	// 	log::error << L"Failed to create Vulkan instance layer properties." << Endl;
+	// 	return false;
+	// }
 	log::info << layerCount << L" vulkan layer(s)" << Endl;
  
 	AutoArrayPtr< VkLayerProperties > layersAvailable(new VkLayerProperties[layerCount]);
@@ -140,9 +227,9 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 	
 	// Create Vulkan instance.
-	if (vkCreateInstance(&instanceInfo, 0, &m_instance) != VK_SUCCESS)
+	if ((result = vkCreateInstance(&instanceInfo, 0, &m_instance)) != VK_SUCCESS)
 	{
-		log::error << L"Failed to create Vulkan instance." << Endl;
+		log::error << L"Failed to create Vulkan instance (" << vulkanHumanResult(result) << L")." << Endl;
 		return false;
 	}
 
@@ -157,14 +244,27 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	// Create Windows renderable surface.
     VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = {};
     surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-    surfaceCreateInfo.hinstance = GetModuleHandle(NULL);
+    surfaceCreateInfo.hinstance = GetModuleHandle(nullptr);
     surfaceCreateInfo.hwnd = (HWND)*m_window;
-    if (vkCreateWin32SurfaceKHR(m_instance, &surfaceCreateInfo, NULL, &m_surface) != VK_SUCCESS)
+    if (vkCreateWin32SurfaceKHR(m_instance, &surfaceCreateInfo, nullptr, &m_surface) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface." << Endl;
 		return false;
 	}
+#elif defined(__LINUX__)
+	// Create X11 renderable surface.
+	VkXlibSurfaceCreateInfoKHR surfaceCreateInfo = {};
+	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+	surfaceCreateInfo.dpy = m_window->getDisplay();
+	surfaceCreateInfo.window = m_window->getWindow();
+    if (vkCreateXlibSurfaceKHR(m_instance, &surfaceCreateInfo, nullptr, &m_surface) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface." << Endl;
+		return false;
+	}	
+#endif
 
+#if defined(_WIN32) || defined(__LINUX__)
 	// Find Vulkan physical device.
 	uint32_t physicalDeviceCount = 0;
 	vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, 0);
@@ -242,9 +342,9 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		log::error << L"Failed to create Vulkan; unable to create device." << Endl;
 		return false;
 	}
-#elif defined(__ANDROID__)
 #endif
 
+	log::info << L"Vulkan render system created successfully." << Endl;
 	return true;
 }
 
@@ -276,7 +376,7 @@ uint32_t RenderSystemVk::getDisplayModeCount() const
 	std::memset(&dmgl, 0, sizeof(dmgl));
 	dmgl.dmSize = sizeof(dmgl);
 
-	while (EnumDisplaySettings(NULL, count, &dmgl))
+	while (EnumDisplaySettings(nullptr, count, &dmgl))
 		++count;
 
 	return count;
@@ -292,7 +392,7 @@ DisplayMode RenderSystemVk::getDisplayMode(uint32_t index) const
 	std::memset(&dmgl, 0, sizeof(dmgl));
 	dmgl.dmSize = sizeof(dmgl);
 
-	EnumDisplaySettings(NULL, index, &dmgl);
+	EnumDisplaySettings(nullptr, index, &dmgl);
 
 	DisplayMode dm;
 	dm.width = dmgl.dmPelsWidth;
@@ -312,7 +412,7 @@ DisplayMode RenderSystemVk::getCurrentDisplayMode() const
 	std::memset(&dmgl, 0, sizeof(dmgl));
 	dmgl.dmSize = sizeof(dmgl);
 
-	EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dmgl);
+	EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dmgl);
 
 	DisplayMode dm;
 	dm.width = dmgl.dmPelsWidth;
@@ -427,7 +527,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	swapChainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 	swapChainCreateInfo.presentMode = presentationMode;
 	swapChainCreateInfo.clipped = true;
-	if (vkCreateSwapchainKHR(m_device, &swapChainCreateInfo, NULL, &swapChain) != VK_SUCCESS)
+	if (vkCreateSwapchainKHR(m_device, &swapChainCreateInfo, nullptr, &swapChain) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create swap chain." << Endl;
 		return nullptr;
