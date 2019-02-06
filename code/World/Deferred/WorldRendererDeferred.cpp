@@ -1400,8 +1400,8 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 
 	if (m_lightAccumulationTargetSet)
 	{
-		outTargets.push_back(render::DebugTarget(L"Light accumulation (diffuse)", render::DtvDefault, m_lightAccumulationTargetSet->getColorTexture(0)));
-		outTargets.push_back(render::DebugTarget(L"Light accumulation (specular)", render::DtvDefault, m_lightAccumulationTargetSet->getColorTexture(1)));
+		outTargets.push_back(render::DebugTarget(L"Light acc. (diffuse)", render::DtvDefault, m_lightAccumulationTargetSet->getColorTexture(0)));
+		outTargets.push_back(render::DebugTarget(L"Light acc. (specular)", render::DtvDefault, m_lightAccumulationTargetSet->getColorTexture(1)));
 	}
 
 	if (m_shadowMaskProject)
