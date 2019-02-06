@@ -771,6 +771,9 @@ void RenderViewOpenGL::end()
 	if (m_targetsDirty && ts.clearMask != 0)
 		bindTargets();
 
+	if (!m_targetsDirty)
+		m_targetStack.back().renderTargetSet->unbind();
+
 	m_targetStack.pop_back();
 
 	if (!m_targetStack.empty())

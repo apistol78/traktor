@@ -1,10 +1,5 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/OpenGL/Std/RenderContextOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetDepthOpenGL.h"
@@ -164,11 +159,19 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 			NULL
 		));
 
+		int32_t mips = 1;
+		if (desc.generateMips)
+		{
+			T_OGL_SAFE(glGenerateMipmap(GL_TEXTURE_2D));
+			mips = 1 + log2(std::max(m_desc.width, m_desc.height));
+		}
+
 		m_colorTargets[i] = new RenderTargetOpenGL(
 			m_resourceContext,
 			m_targetTextures[i],
 			m_desc.width,
-			m_desc.height
+			m_desc.height,
+			mips
 		);
 	}
 
@@ -340,6 +343,15 @@ bool RenderTargetSetOpenGL::bind(RenderContextOpenGL* renderContext, GLuint prim
 		renderContext->setPermitDepth(false);
 
 	return true;
+}
+
+void RenderTargetSetOpenGL::unbind()
+{
+	if (m_desc.generateMips)
+	{
+		for (int32_t i = 0; i < m_desc.count; ++i)
+			T_OGL_SAFE(glGenerateTextureMipmap(m_targetTextures[i]));
+	}
 }
 
 void RenderTargetSetOpenGL::blit(RenderContextOpenGL* renderContext)

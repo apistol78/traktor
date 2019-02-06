@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_RenderTargetSetOpenGL_H
-#define traktor_render_RenderTargetSetOpenGL_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Core/Math/Vector4.h"
@@ -60,6 +53,8 @@ public:
 
 	bool bind(RenderContextOpenGL* renderContext, GLuint primaryDepthBuffer, int32_t renderTarget);
 
+	void unbind();
+
 	void blit(RenderContextOpenGL* renderContext);
 
 	GLuint getDepthBuffer() const { return m_depthBufferOrTexture; }
@@ -82,5 +77,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_RenderTargetSetOpenGL_H
