@@ -41,14 +41,17 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 	);
 	
 	// Notify WM about form title.
-	std::string cs = wstombs(text);
-	const char* csp = cs.c_str();
+	if ((style & WsCaption) != 0)
+	{
+		std::string cs = wstombs(text);
+		const char* csp = cs.c_str();
 
-	XTextProperty tp;
-	XStringListToTextProperty((char**)&csp, 1, &tp);
+		XTextProperty tp;
+		XStringListToTextProperty((char**)&csp, 1, &tp);
 
-	XSetWMName(m_context->getDisplay(), window, &tp);
-
+		XSetWMName(m_context->getDisplay(), window, &tp);
+	}
+	
 	// Make dialog on top of parent.
 	if (parent != nullptr)
 	{

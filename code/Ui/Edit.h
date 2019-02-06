@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Edit_H
-#define traktor_ui_Edit_H
+#pragma once
 
 #include "Ui/Widget.h"
 
@@ -85,6 +78,8 @@ private:
 
 	void eventButtonDown(MouseButtonDownEvent* event);
 
+	void eventDoubleClick(MouseDoubleClickEvent* event);
+
 	void eventKeyDown(KeyDownEvent* event);
 
 	void eventKey(KeyEvent* event);
@@ -96,5 +91,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_ui_Edit_H
