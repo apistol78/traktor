@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ImageProcessDefineTarget_H
-#define traktor_render_ImageProcessDefineTarget_H
+#pragma once
 
 #include "Core/Math/Color4f.h"
 #include "Render/Types.h"
@@ -53,6 +46,7 @@ private:
 	TextureFormat m_format;
 	bool m_depthStencil;
 	bool m_preferTiled;
+	bool m_generateMips;
 	int32_t m_multiSample;
 	Color4f m_clearColor;
 	bool m_persistent;
@@ -60,5 +54,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_ImageProcessDefineTarget_H
