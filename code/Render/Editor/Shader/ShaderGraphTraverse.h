@@ -1,12 +1,6 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ShaderGraphUtilities_H
-#define traktor_render_ShaderGraphUtilities_H
+#pragma once
 
+#include <functional>
 #include <set>
 #include "Core/RefArray.h"
 #include "Render/Editor/Shader/Edge.h"
@@ -54,6 +48,12 @@ public:
 			postorderImpl(*i, visitor, visited);
 	}
 
+	void postorder(const std::function< bool(const Node*) >& fn)
+	{
+		LambdaVisitor visitor(fn);
+		postorder(visitor);
+	}
+
 	template < typename VisitorType >
 	void breadthFirst(VisitorType& visitor)
 	{
@@ -64,6 +64,28 @@ public:
 private:
 	const ShaderGraph* m_shaderGraph;
 	RefArray< Node > m_roots;
+
+	class LambdaVisitor
+	{
+	public:
+		LambdaVisitor(const std::function< bool(const Node*) >& fn)
+		:	m_fn(fn)
+		{
+		}
+
+		bool operator () (const Node* node)
+		{
+			return m_fn(node);
+		}
+
+		bool operator () (const Edge* edge)
+		{
+			return true;
+		}
+
+	private:
+		std::function< bool(const Node*) > m_fn;
+	};
 
 	template < typename VisitorType >
 	void preorderImpl(Node* node, VisitorType& visitor, std::set< Node* >& visited)
@@ -384,5 +406,3 @@ inline void getNonDependentOutputs(const ShaderGraph* shaderGraph, const InputPi
 
 	}
 }
-
-#endif	// traktor_render_ShaderGraphUtilities_H
