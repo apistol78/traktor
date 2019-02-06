@@ -8358,142 +8358,6 @@
 				</item>
 			</dependencies>
 		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Graphics</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Graphics</sourcePath>
-			<configurations>
-				<item type="Configuration" version="5">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_GRAPHICS_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Graphics.so</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_GRAPHICS_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Graphics.so</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Graphics.a</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugstatic</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Graphics.a</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releasestatic</consumerLibraryPath>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item/dependencies/item/project"/>
-				</item>
-			</dependencies>
-		</item>
 		<item ref="/object/projects/item[13]/dependencies/item[6]/project"/>
 		<item ref="/object/projects/item[1]/dependencies/item[6]/project/dependencies/item[11]/project"/>
 		<item type="Project" version="1">
@@ -9659,7 +9523,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[33]"/>
+					<project ref="/object/projects/item[32]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -9818,7 +9682,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[33]"/>
+					<project ref="/object/projects/item[32]"/>
 				</item>
 				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -10333,7 +10197,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[39]"/>
+					<project ref="/object/projects/item[38]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -11055,7 +10919,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[43]"/>
+					<project ref="/object/projects/item[42]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -11405,7 +11269,7 @@
 		</item>
 		<item ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[4]/project"/>
 		<item ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[5]/project"/>
-		<item ref="/object/projects/item[42]/dependencies/item[10]/project"/>
+		<item ref="/object/projects/item[41]/dependencies/item[10]/project"/>
 		<item ref="/object/projects/item/dependencies/item[5]/project/dependencies/item[4]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
@@ -11611,17 +11475,17 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]"/>
+					<project ref="/object/projects/item[18]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[32]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[33]"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[34]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -11815,7 +11679,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[19]"/>
+								<project ref="/object/projects/item[18]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -11850,7 +11714,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[33]"/>
+								<project ref="/object/projects/item[32]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -11860,7 +11724,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[39]"/>
+								<project ref="/object/projects/item[38]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -12077,7 +11941,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[43]"/>
+								<project ref="/object/projects/item[42]"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -12379,7 +12243,7 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[33]"/>
+											<project ref="/object/projects/item[32]"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
@@ -12527,7 +12391,7 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[57]/dependencies/item[13]/project/dependencies/item[24]/project"/>
+								<project ref="/object/projects/item[56]/dependencies/item[13]/project/dependencies/item[24]/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
@@ -12550,7 +12414,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[57]/dependencies/item[13]/project/dependencies/item[24]/project"/>
+					<project ref="/object/projects/item[56]/dependencies/item[13]/project/dependencies/item[24]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -12570,7 +12434,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[26]"/>
+					<project ref="/object/projects/item[25]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -12589,7 +12453,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[57]/dependencies/item[13]/project"/>
+		<item ref="/object/projects/item[56]/dependencies/item[13]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Amalgam.Game.App</name>
@@ -12751,7 +12615,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[57]/dependencies/item[13]/project"/>
+					<project ref="/object/projects/item[56]/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -12761,11 +12625,11 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[57]/dependencies/item[13]/project/dependencies/item[21]/project"/>
+					<project ref="/object/projects/item[56]/dependencies/item[13]/project/dependencies/item[21]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[57]/dependencies/item[13]/project/dependencies/item[21]/project"/>
+		<item ref="/object/projects/item[56]/dependencies/item[13]/project/dependencies/item[21]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Online.Local</name>
@@ -12903,7 +12767,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[57]/dependencies/item[13]/project/dependencies/item[21]/project"/>
+					<project ref="/object/projects/item[56]/dependencies/item[13]/project/dependencies/item[21]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -13073,7 +12937,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]"/>
+					<project ref="/object/projects/item[18]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -13717,7 +13581,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[19]"/>
+					<project ref="/object/projects/item[18]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -13898,7 +13762,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[57]/dependencies/item[13]/project/dependencies/item[21]/project"/>
+					<project ref="/object/projects/item[56]/dependencies/item[13]/project/dependencies/item[21]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -14065,7 +13929,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[57]/dependencies/item[13]/project/dependencies/item[23]/project"/>
+		<item ref="/object/projects/item[56]/dependencies/item[13]/project/dependencies/item[23]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Ai.Editor</name>
@@ -14253,7 +14117,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[57]/dependencies/item[13]/project/dependencies/item[23]/project"/>
+					<project ref="/object/projects/item[56]/dependencies/item[13]/project/dependencies/item[23]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -14268,7 +14132,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[42]/dependencies/item[10]/project"/>
+					<project ref="/object/projects/item[41]/dependencies/item[10]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -14278,7 +14142,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[42]"/>
+					<project ref="/object/projects/item[41]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -14619,7 +14483,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[57]/dependencies/item[13]/project/dependencies/item[21]/project"/>
+					<project ref="/object/projects/item[56]/dependencies/item[13]/project/dependencies/item[21]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -14911,7 +14775,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[57]/dependencies/item[13]/project/dependencies/item[21]/project"/>
+					<project ref="/object/projects/item[56]/dependencies/item[13]/project/dependencies/item[21]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -14920,7 +14784,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[57]/dependencies/item[13]/project/dependencies/item[24]/project"/>
+		<item ref="/object/projects/item[56]/dependencies/item[13]/project/dependencies/item[24]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Telemetry</name>
@@ -15209,12 +15073,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[33]"/>
+					<project ref="/object/projects/item[32]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[35]"/>
+					<project ref="/object/projects/item[34]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -15268,7 +15132,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[57]/dependencies/item[14]/project"/>
+		<item ref="/object/projects/item[56]/dependencies/item[14]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Amalgam.Deploy.App</name>
@@ -15399,12 +15263,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[57]/dependencies/item[13]/project/dependencies/item[24]/project"/>
+					<project ref="/object/projects/item[56]/dependencies/item[13]/project/dependencies/item[24]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[57]/dependencies/item[14]/project"/>
+					<project ref="/object/projects/item[56]/dependencies/item[14]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16110,12 +15974,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[33]"/>
+					<project ref="/object/projects/item[32]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[35]"/>
+					<project ref="/object/projects/item[34]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16256,7 +16120,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[86]"/>
+					<project ref="/object/projects/item[85]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16402,7 +16266,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[86]"/>
+					<project ref="/object/projects/item[85]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16573,12 +16437,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[33]"/>
+					<project ref="/object/projects/item[32]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[34]"/>
+					<project ref="/object/projects/item[33]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16598,7 +16462,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[35]"/>
+					<project ref="/object/projects/item[34]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16917,7 +16781,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[29]"/>
+					<project ref="/object/projects/item[28]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -17527,7 +17391,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[95]"/>
+					<project ref="/object/projects/item[94]"/>
 				</item>
 				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -17853,320 +17717,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[97]"/>
+					<project ref="/object/projects/item[96]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[13]/project/dependencies/item[7]/project"/>
-				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Render.Sw</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Render/Sw</sourcePath>
-			<configurations>
-				<item type="Configuration" version="5">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths/>
-					<definitions>
-						<item>T_RENDER_SW_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Sw.so</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths/>
-					<definitions>
-						<item>T_RENDER_SW_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Sw.so</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths/>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Sw.a</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugstatic</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths/>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Sw.a</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releasestatic</consumerLibraryPath>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-				<item type="Filter">
-					<name>Core</name>
-					<items>
-						<item type="File">
-							<fileName>Core/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[15]"/>
-				</item>
-				<item type="ExternalDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<solutionFileName>ExternLinux.xms</solutionFileName>
-					<projectName>Extern.squish-1.10</projectName>
-				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Render.Sw.Editor</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Render/Sw/Editor</sourcePath>
-			<configurations>
-				<item type="Configuration" version="5">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_RENDER_SW_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Sw.Editor.so</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_RENDER_SW_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Sw.Editor.so</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Sw.Editor.a</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugstatic</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>libTraktor.Render.Sw.Editor.a</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releasestatic</consumerLibraryPath>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-				<item type="Filter">
-					<name>Emitter</name>
-					<items>
-						<item type="File">
-							<fileName>Emitter/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[13]/project/dependencies/item[7]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[99]"/>
 				</item>
 			</dependencies>
 		</item>

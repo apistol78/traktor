@@ -1390,7 +1390,6 @@ const ImmutableNode::InputPinDesc c_Platform_i[] =
 	{ L"Vulkan", true },
 	{ L"GCM", true },
 	{ L"GNM", true },
-	{ L"Software", true },
 	{ L"Other", false },
 	{ 0 }
 };
