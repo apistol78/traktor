@@ -12,7 +12,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define VK_NO_PROTOTYPES
 #	include <vulkan.h>
 #elif defined(__LINUX__)
-#	define VK_USE_PLATFORM_LINUX_KHR
+#	define VK_USE_PLATFORM_XLIB_KHR
 #	define VK_NO_PROTOTYPES
 #	include <vulkan.h>
 #elif defined(__ANDROID__)
