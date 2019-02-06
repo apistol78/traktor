@@ -354,9 +354,37 @@ void PrimitiveRenderer::drawArrowHead(
 
 	float radius = d.length() * (1.0f - sharpness);
 
-	Scalar diffuse = dot3(-dn, Vector4(0.0f, 1.0f, 0.0f)) * Scalar(0.25f) + Scalar(0.75f);
-	uint8_t mcap = uint8_t(diffuse * 255);
+	// Cull backward face.
+	Vector4 vn = m_worldView * dn.xyz0();
+	if (vn.z() >= 0.0f)
+	{
+		Scalar diffuse = dot3(-dn, Vector4(0.0f, 1.0f, 0.0f)) * Scalar(0.25f) + Scalar(0.75f);
+		uint8_t mcap = uint8_t(diffuse * 255);
 
+		// Render cap
+		for (int32_t i = 0; i < 16; ++i)
+		{
+			float a0 = (i / 16.0f) * TWO_PI;
+			float a1 = a0 + (1.0f / 16.0f) * TWO_PI;
+
+			float u0 = cosf(a0);
+			float v0 = sinf(a0);
+			float u1 = cosf(a1);
+			float v1 = sinf(a1);
+
+			Vector4 w0 = start + u * Scalar(u0 * radius) + v * Scalar(v0 * radius);
+			Vector4 w1 = start + u * Scalar(u1 * radius) + v * Scalar(v1 * radius);
+
+			drawSolidTriangle(
+				w0,
+				w1,
+				start,
+				color * Color4ub(mcap, mcap, mcap, 255)
+			);
+		}
+	}
+
+	Vector4 eye = m_worldView.inverse() * Vector4::origo();
 	for (int32_t i = 0; i < 16; ++i)
 	{
 		float a0 = (i / 16.0f) * TWO_PI;
@@ -376,6 +404,12 @@ void PrimitiveRenderer::drawArrowHead(
 		Plane plane;
 		w.getPlane(plane);
 
+		// Cull backward face.
+		Vector4 n = m_worldView * plane.normal();
+		if (n.z() >= 0.0f)
+			continue;
+
+		// Calculate lighting from above.
 		Scalar diffuse = dot3(plane.normal(), Vector4(0.0f, 1.0f, 0.0f)) * Scalar(0.25f) + Scalar(0.75f);
 		uint8_t m = uint8_t(diffuse * 255);
 
@@ -384,13 +418,6 @@ void PrimitiveRenderer::drawArrowHead(
 			w[1],
 			w[2],
 			color * Color4ub(m, m, m, 255)
-		);
-
-		drawSolidTriangle(
-			w[0],
-			w[1],
-			start,
-			color * Color4ub(mcap, mcap, mcap, 255)
 		);
 	}
 }
@@ -631,20 +658,36 @@ void PrimitiveRenderer::drawSolidPoint(
 {
 	Vector4 cv = m_worldView * center.xyz1();
 	Vector4 cc = m_currentFrame->projections.back() * cv;
-
 	Scalar dx = cc.w() * Scalar(size / 500.0f);
-	Scalar dy = cc.w() * Scalar(size / 500.0f);
+	Vector4 normal = m_worldView.inverse() * Vector4(0.0f, 0.0f, -1.0f, 0.0f);
 
-	Vertex* v = allocBatch(PtTriangles, 2, 0);
-	if (!v)
-		return;
+	const Vector4 c_axis[] =
+	{
+		Vector4(0.0f, 1.0f, 0.0f),
+		Vector4(1.0f, 0.0f, 0.0f),
+		Vector4(0.0f, 1.0f, 0.0f)
+	};
 
-	v++->set(cv + Vector4(-dx, -dy, 0.0f), color);
-	v++->set(cv + Vector4( dx, -dy, 0.0f), color);
-	v++->set(cv + Vector4(-dx,  dy, 0.0f), color);
-	v++->set(cv + Vector4( dx, -dy, 0.0f), color);
-	v++->set(cv + Vector4( dx,  dy, 0.0f), color);
-	v++->set(cv + Vector4(-dx,  dy, 0.0f), color);
+	Vector4 u = cross(normal, c_axis[majorAxis3(normal)]).normalized();
+	Vector4 v = cross(u, normal).normalized();
+
+	for (int32_t i = 0; i < 16; ++i)
+	{
+		float a0 = (i / 16.0f) * TWO_PI;
+		float a1 = a0 + (1.0f / 16.0f) * TWO_PI;
+
+		float u0 = cosf(a0);
+		float v0 = sinf(a0);
+		float u1 = cosf(a1);
+		float v1 = sinf(a1);
+
+		drawSolidTriangle(
+			center + u * Scalar(u0 * dx) + v * Scalar(v0 * dx),
+			center + u * Scalar(u1 * dx) + v * Scalar(v1 * dx),
+			center,
+			color
+		);
+	}
 }
 
 void PrimitiveRenderer::drawSolidAabb(
