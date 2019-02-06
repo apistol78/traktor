@@ -91,7 +91,7 @@
 				<first>1103</first>
 				<second>292</second>
 			</position>
-			<value>9</value>
+			<value>16</value>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{EA7EE9F2-784F-3142-9CBE-C8BE73BD33E5}</id>
@@ -197,10 +197,10 @@
 				<first>901</first>
 				<second>171</second>
 			</position>
-			<fromX>-1</fromX>
-			<toX>1</toX>
-			<fromY>-1</fromY>
-			<toY>1</toY>
+			<fromX>0</fromX>
+			<toX>3</toX>
+			<fromY>0</fromY>
+			<toY>3</toY>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{4A87DC31-FC66-4B1A-A79C-D806347C3158}</id>
