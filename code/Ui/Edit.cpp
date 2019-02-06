@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cwctype>
 #include "Core/Log/Log.h"
 #include "Ui/Application.h"
@@ -46,6 +40,7 @@ bool Edit::create(Widget* parent, const std::wstring& text, int style, const Edi
 	addEventHandler< FocusEvent >(this, &Edit::eventFocus);
 	addEventHandler< MouseTrackEvent >(this, &Edit::eventMouseTrack);
 	addEventHandler< MouseButtonDownEvent >(this, &Edit::eventButtonDown);
+	addEventHandler< MouseDoubleClickEvent >(this, &Edit::eventDoubleClick);
 	addEventHandler< KeyDownEvent >(this, &Edit::eventKeyDown);
 	addEventHandler< KeyEvent >(this, &Edit::eventKey);
 	addEventHandler< PaintEvent >(this, &Edit::eventPaint);
@@ -132,12 +127,22 @@ void Edit::insert(const std::wstring& text)
 	if (!haveSelection())
 	{
 		if (m_caret >= current.length())
+		{
 			current += text;
+			m_caret = current.length();
+		}
 		else
+		{
 			current = current.substr(0, m_caret) + text + current.substr(m_caret);
+			m_caret = m_caret + text.length();
+		}
 	}
 	else
+	{
 		current = current.substr(0, m_selectionStart) + text + current.substr(m_selectionEnd);
+		m_caret = m_selectionStart + text.length();
+		deselect();
+	}
 
 	setText(current);
 }
@@ -280,6 +285,11 @@ void Edit::eventButtonDown(MouseButtonDownEvent* event)
 	}
 }
 
+void Edit::eventDoubleClick(MouseDoubleClickEvent* event)
+{
+	selectAll();
+}
+
 void Edit::eventKeyDown(KeyDownEvent* event)
 {
 	int32_t caret = m_caret;
@@ -400,13 +410,13 @@ void Edit::eventKey(KeyEvent* event)
 	}
 	else
 	{
-		if (ch == L'a' || ch == L'A')
+		if (event->getVirtualKey() == VkA)
 			selectAll();
-		else if (ch == L'c' || ch == L'C')
+		else if (event->getVirtualKey() == VkC)
 			copy();
-		else if (ch == L'x' || ch == L'X')
+		else if (event->getVirtualKey() == VkX)
 			cut();
-		else if (ch == L'v' || ch == L'V')
+		else if (event->getVirtualKey() == VkV)
 			paste();
 	}
 }

@@ -1,5 +1,4 @@
-#ifndef traktor_ui_WidgetX11Impl_H
-#define traktor_ui_WidgetX11Impl_H
+#pragma once
 
 #include <map>
 #include <X11/Xlib.h>
@@ -862,5 +861,3 @@ protected:
 
 	}
 }
-
-#endif	// traktor_ui_WidgetX11Impl_H
