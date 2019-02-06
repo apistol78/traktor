@@ -504,30 +504,6 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		worldRenderSettings->viewFarZ
 	);
 
-	// Update automatic camera movement.
-	if (m_renderWidget->hasFocus())
-	{
-		Vector4 movement(0.0f, 0.0f, 0.0f, 0.0f);
-
-		ui::IEventLoop* eventLoop = ui::Application::getInstance()->getEventLoop();
-		if (!eventLoop->isKeyDown(ui::VkControl))
-		{
-			if (eventLoop->isKeyDown(ui::VkA))
-				movement += Vector4(-1.0f, 0.0f, 0.0f);
-			if (eventLoop->isKeyDown(ui::VkD))
-				movement += Vector4(1.0f, 0.0f, 0.0f);
-			if (eventLoop->isKeyDown(ui::VkW))
-				movement += Vector4(0.0f, 0.0f, 1.0f);
-			if (eventLoop->isKeyDown(ui::VkS))
-				movement += Vector4(0.0f, 0.0f, -1.0f);
-			if (eventLoop->isKeyDown(ui::VkShift))
-				movement *= Scalar(3.0f);
-		}
-
-		if (movement.length2() > FUZZY_EPSILON)
-			m_camera->move(movement * Scalar(60.0f * deltaTime));
-	}
-
 	// Get current transformations.
 	Matrix44 projection = getProjectionTransform();
 	Matrix44 view = getViewTransform();
@@ -598,6 +574,70 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 					m_colorGrid
 				);
 			}
+
+			// Draw frame.
+			const float c_arrowLength = 0.4f;
+			const float c_frameSize = 0.2f;
+
+			float w = 2.0f * float(sz.cx) / sz.cy;
+			float h = 2.0f;
+
+			m_primitiveRenderer->setProjection(orthoLh(-w / 2.0f, -h / 2.0f, w / 2.0f, h / 2.0f, 0.0f, 1.0f));
+			m_primitiveRenderer->pushWorld(Matrix44::identity());
+			m_primitiveRenderer->pushView(
+				translate(w / 2.0f - c_frameSize, h / 2.0f - c_frameSize, 0.0f) *
+				scale(c_frameSize, c_frameSize, c_frameSize)
+			);
+			m_primitiveRenderer->pushDepthState(false, false, false);
+
+			m_primitiveRenderer->drawSolidQuad(
+				Vector4(-1.0f,  1.0f, 0.5f, 1.0f),
+				Vector4( 1.0f,  1.0f, 0.5f, 1.0f),
+				Vector4( 1.0f, -1.0f, 0.5f, 1.0f),
+				Vector4(-1.0f, -1.0f, 0.5f, 1.0f),
+				Color4ub(0, 0, 0, 64)
+			);
+
+			m_primitiveRenderer->drawLine(
+				Vector4::origo(),
+				Vector4::origo() + view.axisX() * Scalar(1.0f - c_arrowLength),
+				Color4ub(255, 0, 0, 255)
+			);
+			m_primitiveRenderer->drawArrowHead(
+				Vector4::origo() + view.axisX() * Scalar(1.0f - c_arrowLength),
+				Vector4::origo() + view.axisX(),
+				0.8f,
+				Color4ub(255, 0, 0, 255)
+			);
+
+			m_primitiveRenderer->drawLine(
+				Vector4::origo(),
+				Vector4::origo() + view.axisY() * Scalar(1.0f - c_arrowLength),
+				Color4ub(0, 255, 0, 255)
+			);
+			m_primitiveRenderer->drawArrowHead(
+				Vector4::origo() + view.axisY() * Scalar(1.0f - c_arrowLength),
+				Vector4::origo() + view.axisY(),
+				0.8f,
+				Color4ub(0, 255, 0, 255)
+			);
+
+			m_primitiveRenderer->drawLine(
+				Vector4::origo(),
+				Vector4::origo() + view.axisZ() * Scalar(1.0f - c_arrowLength),
+				Color4ub(0, 0, 255, 255)
+			);
+			m_primitiveRenderer->drawArrowHead(
+				Vector4::origo() + view.axisZ() * Scalar(1.0f - c_arrowLength),
+				Vector4::origo() + view.axisZ(),
+				0.8f,
+				Color4ub(0, 0, 255, 255)
+			);
+
+			m_primitiveRenderer->popWorld();
+			m_primitiveRenderer->popView();
+			m_primitiveRenderer->popDepthState();
+			m_primitiveRenderer->setProjection(projection);
 		}
 
 		// Draw guides.
