@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_RenderTargetDepthPs4_H
-#define traktor_render_RenderTargetDepthPs4_H
+#pragma once
 
 #include <gnm.h>
 #include "Render/ISimpleTexture.h"
@@ -37,13 +30,15 @@ public:
 
 	virtual ITexture* resolve() T_OVERRIDE T_FINAL;
 
-	virtual int getWidth() const T_OVERRIDE T_FINAL;
+	virtual int32_t getWidth() const T_OVERRIDE T_FINAL;
 	
-	virtual int getHeight() const T_OVERRIDE T_FINAL;
+	virtual int32_t getHeight() const T_OVERRIDE T_FINAL;
 
-	virtual bool lock(int level, Lock& lock) T_OVERRIDE T_FINAL;
+	virtual int32_t getMips() const T_OVERRIDE T_FINAL;
 
-	virtual void unlock(int level) T_OVERRIDE T_FINAL;
+	virtual bool lock(int32_t level, Lock& lock) T_OVERRIDE T_FINAL;
+
+	virtual void unlock(int32_t level) T_OVERRIDE T_FINAL;
 
 	virtual void* getInternalHandle() T_OVERRIDE T_FINAL;
 
@@ -61,5 +56,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_RenderTargetDepthPs4_H

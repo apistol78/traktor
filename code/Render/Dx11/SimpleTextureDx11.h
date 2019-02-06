@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_SimpleTextureDx11_H
-#define traktor_render_SimpleTextureDx11_H
+#pragma once
 
 #include "Core/Misc/ComRef.h"
 #include "Render/ISimpleTexture.h"
@@ -36,13 +29,15 @@ public:
 
 	virtual ITexture* resolve() override final;
 
-	virtual int getWidth() const override final;
+	virtual int32_t getWidth() const override final;
 	
-	virtual int getHeight() const override final;
-	
-	virtual bool lock(int level, Lock& lock) override final;
+	virtual int32_t getHeight() const override final;
 
-	virtual void unlock(int level) override final;
+	virtual int32_t getMips() const override final;
+	
+	virtual bool lock(int32_t level, Lock& lock) override final;
+
+	virtual void unlock(int32_t level) override final;
 
 	virtual void* getInternalHandle() override final;
 
@@ -52,11 +47,10 @@ private:
 	Ref< ContextDx11 > m_context;
 	ComRef< ID3D11Texture2D > m_d3dTexture;
 	ComRef< ID3D11ShaderResourceView > m_d3dTextureResourceView;
-	int m_width;
-	int m_height;
+	int32_t m_width;
+	int32_t m_height;
+	int32_t m_mips;
 };
 		
 	}
 }
-
-#endif	// traktor_render_SimpleTextureDx11_H

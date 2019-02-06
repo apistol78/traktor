@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
@@ -89,22 +83,27 @@ ITexture* SimpleTextureVk::resolve()
 	return this;
 }
 
-int SimpleTextureVk::getWidth() const
+int32_t SimpleTextureVk::getWidth() const
 {
 	return m_width;
 }
 
-int SimpleTextureVk::getHeight() const
+int32_t SimpleTextureVk::getHeight() const
 {
 	return m_height;
 }
 
-bool SimpleTextureVk::lock(int level, Lock& lock)
+int32_t SimpleTextureVk::getMips() const
+{
+	return 1;
+}
+
+bool SimpleTextureVk::lock(int32_t level, Lock& lock)
 {
 	return true;
 }
 
-void SimpleTextureVk::unlock(int level)
+void SimpleTextureVk::unlock(int32_t level)
 {
 }
 

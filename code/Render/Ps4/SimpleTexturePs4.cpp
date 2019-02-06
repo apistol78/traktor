@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Ps4/ContextPs4.h"
 #include "Render/Ps4/SimpleTexturePs4.h"
 
@@ -38,22 +32,27 @@ ITexture* SimpleTexturePs4::resolve()
 	return this;
 }
 
-int SimpleTexturePs4::getWidth() const
+int32_t SimpleTexturePs4::getWidth() const
 {
 	return 0;
 }
 
-int SimpleTexturePs4::getHeight() const
+int32_t SimpleTexturePs4::getHeight() const
 {
 	return 0;
 }
 
-bool SimpleTexturePs4::lock(int level, Lock& lock)
+int32_t SimpleTexturePs4::getMips() const
+{
+	return 0;
+}
+
+bool SimpleTexturePs4::lock(int32_t level, Lock& lock)
 {
 	return true;
 }
 
-void SimpleTexturePs4::unlock(int level)
+void SimpleTexturePs4::unlock(int32_t level)
 {
 }
 

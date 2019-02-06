@@ -1384,11 +1384,10 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Platform", 0, Platform, Immutabl
 
 const ImmutableNode::InputPinDesc c_Platform_i[] =
 {
-	{ L"DX9", true },
-	{ L"DX9 Xbox360", true },
 	{ L"DX11", true },
 	{ L"OpenGL", true },
 	{ L"OpenGL ES2", true },
+	{ L"Vulkan", true },
 	{ L"GCM", true },
 	{ L"GNM", true },
 	{ L"Software", true },

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Types.h"
 #include "Render/Ps4/ContextPs4.h"
 #include "Render/Ps4/MemoryHeapPs4.h"
@@ -87,22 +81,27 @@ ITexture* RenderTargetPs4::resolve()
 	return this;
 }
 
-int RenderTargetPs4::getWidth() const
+int32_t RenderTargetPs4::getWidth() const
 {
 	return m_width;
 }
 
-int RenderTargetPs4::getHeight() const
+int32_t RenderTargetPs4::getHeight() const
 {
 	return m_height;
 }
 
-bool RenderTargetPs4::lock(int level, Lock& lock)
+int32_t RenderTargetPs4::getMips() const
+{
+	return 1;
+}
+
+bool RenderTargetPs4::lock(int32_t level, Lock& lock)
 {
 	return false;
 }
 
-void RenderTargetPs4::unlock(int level)
+void RenderTargetPs4::unlock(int32_t level)
 {
 }
 

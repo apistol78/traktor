@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Sw/RenderTargetSw.h"
 #include "Render/Sw/Samplers.h"
 #include "Render/Sw/TypesSw.h"
@@ -90,22 +84,27 @@ ITexture* RenderTargetSw::resolve()
 	return this;
 }
 
-int RenderTargetSw::getWidth() const
+int32_t RenderTargetSw::getWidth() const
 {
 	return m_width;
 }
 
-int RenderTargetSw::getHeight() const
+int32_t RenderTargetSw::getHeight() const
 {
 	return m_height;
 }
 
-bool RenderTargetSw::lock(int level, Lock& lock)
+int32_t RenderTargetSw::getMips() const
+{
+	return 1;
+}
+
+bool RenderTargetSw::lock(int32_t level, Lock& lock)
 {
 	return false;
 }
 
-void RenderTargetSw::unlock(int level)
+void RenderTargetSw::unlock(int32_t level)
 {
 }
 

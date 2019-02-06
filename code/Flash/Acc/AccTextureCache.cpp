@@ -51,22 +51,27 @@ public:
 		return m_texture;
 	}
 
-	virtual int getWidth() const override final
+	virtual int32_t getWidth() const override final
 	{
 		return m_texture->getWidth();
 	}
 
-	virtual int getHeight() const override final
+	virtual int32_t getHeight() const override final
 	{
 		return m_texture->getHeight();
 	}
 
-	virtual bool lock(int level, Lock& lock) override final
+	virtual int32_t getMips() const override final
+	{
+		return m_texture->getMips();
+	}
+
+	virtual bool lock(int32_t level, Lock& lock) override final
 	{
 		return m_texture->lock(level, lock);
 	}
 
-	virtual void unlock(int level) override final
+	virtual void unlock(int32_t level) override final
 	{
 		m_texture->unlock(level);
 	}

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_RenderTargetPs3_H
-#define traktor_render_RenderTargetPs3_H
+#pragma once
 
 #include "Render/ISimpleTexture.h"
 #include "Render/Ps3/TileArea.h"
@@ -42,13 +35,15 @@ public:
 
 	virtual ITexture* resolve();
 
-	virtual int getWidth() const;
+	virtual int32_t getWidth() const;
 	
-	virtual int getHeight() const;
+	virtual int32_t getHeight() const;
 
-	virtual bool lock(int level, Lock& lock);
+	virtual int32_t getMips() const;
 
-	virtual void unlock(int level);
+	virtual bool lock(int32_t level, Lock& lock);
+
+	virtual void unlock(int32_t level);
 
 	virtual void* getInternalHandle();
 
@@ -91,5 +86,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_RenderTargetPs3_H

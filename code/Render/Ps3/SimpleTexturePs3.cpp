@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
@@ -186,17 +180,22 @@ ITexture* SimpleTexturePs3::resolve()
 	return this;
 }
 
-int SimpleTexturePs3::getWidth() const
+int32_t SimpleTexturePs3::getWidth() const
 {
 	return m_texture.width;
 }
 
-int SimpleTexturePs3::getHeight() const
+int32_t SimpleTexturePs3::getHeight() const
 {
 	return m_texture.height;
 }
 
-bool SimpleTexturePs3::lock(int level, Lock& lock)
+int32_t SimpleTexturePs3::getMips() const
+{
+	return m_texture.mipmap;
+}
+
+bool SimpleTexturePs3::lock(int32_t level, Lock& lock)
 {
 	if (m_texture.pitch != 0 && level == 0)
 	{
@@ -209,7 +208,7 @@ bool SimpleTexturePs3::lock(int level, Lock& lock)
 		return false;
 }
 
-void SimpleTexturePs3::unlock(int level)
+void SimpleTexturePs3::unlock(int32_t level)
 {
 }
 

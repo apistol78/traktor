@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Math/Half.h"
 #include "Render/Sw/Samplers.h"
@@ -264,17 +258,22 @@ ITexture* SimpleTextureSw::resolve()
 	return this;
 }
 
-int SimpleTextureSw::getWidth() const
+int32_t SimpleTextureSw::getWidth() const
 {
 	return m_width;
 }
 
-int SimpleTextureSw::getHeight() const
+int32_t SimpleTextureSw::getHeight() const
 {
 	return m_height;
 }
 
-bool SimpleTextureSw::lock(int level, Lock& lock)
+int32_t SimpleTextureSw::getMips() const
+{
+	return 1;
+}
+
+bool SimpleTextureSw::lock(int32_t level, Lock& lock)
 {
 	if (m_lock)
 		return false;
@@ -287,7 +286,7 @@ bool SimpleTextureSw::lock(int level, Lock& lock)
 	return true;
 }
 
-void SimpleTextureSw::unlock(int level)
+void SimpleTextureSw::unlock(int32_t level)
 {
 	if (!m_lock)
 		return;

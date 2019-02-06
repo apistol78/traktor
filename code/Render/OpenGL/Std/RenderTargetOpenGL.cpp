@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/OpenGL/Std/RenderContextOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
 #include "Render/OpenGL/Std/ResourceContextOpenGL.h"
@@ -63,22 +57,27 @@ ITexture* RenderTargetOpenGL::resolve()
 	return this;
 }
 
-int RenderTargetOpenGL::getWidth() const
+int32_t RenderTargetOpenGL::getWidth() const
 {
 	return m_width;
 }
 
-int RenderTargetOpenGL::getHeight() const
+int32_t RenderTargetOpenGL::getHeight() const
 {
 	return m_height;
 }
 
-bool RenderTargetOpenGL::lock(int level, Lock& lock)
+int32_t RenderTargetOpenGL::getMips() const
+{
+	return 1;
+}
+
+bool RenderTargetOpenGL::lock(int32_t level, Lock& lock)
 {
 	return false;
 }
 
-void RenderTargetOpenGL::unlock(int level)
+void RenderTargetOpenGL::unlock(int32_t level)
 {
 }
 

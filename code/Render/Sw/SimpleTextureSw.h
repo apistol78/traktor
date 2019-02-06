@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_SimpleTextureSw_H
-#define traktor_render_SimpleTextureSw_H
+#pragma once
 
 #include "Render/ISimpleTexture.h"
 #include "Render/Types.h"
@@ -35,13 +28,15 @@ public:
 
 	virtual ITexture* resolve() override final;
 
-	virtual int getWidth() const override final;
+	virtual int32_t getWidth() const override final;
 	
-	virtual int getHeight() const override final;
-	
-	virtual bool lock(int level, Lock& lock) override final;
+	virtual int32_t getHeight() const override final;
 
-	virtual void unlock(int level) override final;
+	virtual int32_t getMips() const override final;
+
+	virtual bool lock(int32_t level, Lock& lock) override final;
+
+	virtual void unlock(int32_t level) override final;
 
 	virtual void* getInternalHandle() override final;
 
@@ -50,8 +45,8 @@ public:
 	const uint8_t* getData() const { return m_data; }
 
 private:
-	int m_width;
-	int m_height;
+	int32_t m_width;
+	int32_t m_height;
 	TextureFormat m_format;
 	uint8_t* m_data;
 	uint8_t* m_lock;
@@ -59,5 +54,3 @@ private:
 		
 	}
 }
-
-#endif	// traktor_render_SimpleTextureSw_H

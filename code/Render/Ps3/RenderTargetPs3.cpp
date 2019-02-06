@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
 #include "Render/Ps3/MemoryHeap.h"
@@ -211,22 +205,27 @@ ITexture* RenderTargetPs3::resolve()
 	return this;
 }
 
-int RenderTargetPs3::getWidth() const
+int32_t RenderTargetPs3::getWidth() const
 {
 	return m_width;
 }
 
-int RenderTargetPs3::getHeight() const
+int32_t RenderTargetPs3::getHeight() const
 {
 	return m_height;
 }
 
-bool RenderTargetPs3::lock(int level, Lock& lock)
+int32_t RenderTargetPs3::getMips() const
+{
+	return 1;
+}
+
+bool RenderTargetPs3::lock(int32_t level, Lock& lock)
 {
 	return false;
 }
 
-void RenderTargetPs3::unlock(int level)
+void RenderTargetPs3::unlock(int32_t level)
 {
 }
 

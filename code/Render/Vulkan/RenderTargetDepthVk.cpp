@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
@@ -142,22 +136,27 @@ ITexture* RenderTargetDepthVk::resolve()
 	return this;
 }
 
-int RenderTargetDepthVk::getWidth() const
+int32_t RenderTargetDepthVk::getWidth() const
 {
 	return m_width;
 }
 
-int RenderTargetDepthVk::getHeight() const
+int32_t RenderTargetDepthVk::getHeight() const
 {
 	return m_height;
 }
 
-bool RenderTargetDepthVk::lock(int level, Lock& lock)
+int32_t RenderTargetDepthVk::getMips() const
+{
+	return 1;
+}
+
+bool RenderTargetDepthVk::lock(int32_t level, Lock& lock)
 {
 	return false;
 }
 
-void RenderTargetDepthVk::unlock(int level)
+void RenderTargetDepthVk::unlock(int32_t level)
 {
 }
 
