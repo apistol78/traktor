@@ -1,13 +1,5 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_WorldLayer_H
-#define traktor_amalgam_WorldLayer_H
+#pragma once
 
-#include <map>
 #include "Amalgam/Game/Engine/Layer.h"
 #include "Core/RefArray.h"
 #include "Core/Math/IntervalTransform.h"
@@ -76,8 +68,7 @@ public:
 		const std::wstring& name,
 		bool permitTransition,
 		IEnvironment* environment,
-		const resource::Proxy< scene::Scene >& scene,
-		const std::map< std::wstring, resource::Proxy< world::EntityData > >& entities
+		const resource::Proxy< scene::Scene >& scene
 	);
 
 	virtual void destroy() override;
@@ -102,8 +93,6 @@ public:
 
 	virtual void resume() override final;
 
-	Ref< world::EntityData > getEntityData(const std::wstring& name) const;
-
 	world::Entity* getEntity(const std::wstring& name) const;
 
 	world::Entity* getEntity(const std::wstring& name, int32_t index) const;
@@ -111,8 +100,6 @@ public:
 	RefArray< world::Entity > getEntities(const std::wstring& name) const;
 
 	RefArray< world::Entity > getEntitiesOf(const TypeInfo& entityType) const;
-
-	Ref< world::Entity > createEntity(const std::wstring& name, world::IEntitySchema* entitySchema);
 
 	int32_t getEntityIndex(const world::Entity* entity) const;
 
@@ -176,7 +163,6 @@ protected:
 private:
 	Ref< IEnvironment > m_environment;
 	resource::Proxy< scene::Scene > m_scene;
-	std::map< std::wstring, resource::Proxy< world::EntityData > > m_entities;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
 	Ref< world::GroupEntity > m_renderGroup;
@@ -195,5 +181,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_amalgam_WorldLayer_H

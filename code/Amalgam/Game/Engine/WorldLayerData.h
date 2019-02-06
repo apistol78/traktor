@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_WorldLayerData_H
-#define traktor_amalgam_WorldLayerData_H
+#pragma once
 
 #include <map>
 #include "Amalgam/Game/Engine/LayerData.h"
@@ -28,13 +21,6 @@ class Scene;
 
 	}
 
-	namespace world
-	{
-
-class EntityData;
-
-	}
-
 	namespace amalgam
 	{
 
@@ -54,10 +40,7 @@ private:
 	friend class StagePipeline;
 
 	resource::Id< scene::Scene > m_scene;
-	std::map< std::wstring, resource::Id< world::EntityData > > m_entities;
 };
 
 	}
 }
-
-#endif	// traktor_amalgam_WorldLayerData_H

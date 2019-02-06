@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/Engine/FlashLayer.h"
 #include "Amalgam/Game/Engine/FlashLayerData.h"
@@ -19,7 +13,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.FlashLayerData", LayerData::Version, FlashLayerData, LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.FlashLayerData", 0, FlashLayerData, LayerData)
 
 FlashLayerData::FlashLayerData()
 :	m_clearBackground(false)
@@ -78,32 +72,23 @@ void FlashLayerData::serialize(ISerializer& s)
 
 	s >> resource::Member< flash::Movie >(L"movie", m_movie);
 
-	if (s.getVersion() >= 1)
-		s >> MemberStlMap<
+	s >> MemberStlMap<
+		std::wstring,
+		resource::Id< flash::Movie >,
+		MemberStlPair<
 			std::wstring,
 			resource::Id< flash::Movie >,
-			MemberStlPair<
-				std::wstring,
-				resource::Id< flash::Movie >,
-				Member< std::wstring >,
-				resource::Member< flash::Movie >
-			>
-		>(L"externalMovies", m_externalMovies);
+			Member< std::wstring >,
+			resource::Member< flash::Movie >
+		>
+	>(L"externalMovies", m_externalMovies);
 
-	if (s.getVersion() >= 2)
-		s >> resource::Member< render::ImageProcessSettings >(L"imageProcess", m_imageProcess);
-
+	s >> resource::Member< render::ImageProcessSettings >(L"imageProcess", m_imageProcess);
 	s >> Member< bool >(L"clearBackground", m_clearBackground);
 	s >> Member< bool >(L"enableSound", m_enableSound);
-
-	if (s.getVersion() >= 5)
-		s >> Member< bool >(L"enableShapeCache", m_enableShapeCache);
-
-	if (s.getVersion() >= 6)
-		s >> Member< bool >(L"enableDirtyRegions", m_enableDirtyRegions);
-
-	if (s.getVersion() >= 4)
-		s >> Member< uint32_t >(L"contextSize", m_contextSize);
+	s >> Member< bool >(L"enableShapeCache", m_enableShapeCache);
+	s >> Member< bool >(L"enableDirtyRegions", m_enableDirtyRegions);
+	s >> Member< uint32_t >(L"contextSize", m_contextSize);
 }
 
 	}

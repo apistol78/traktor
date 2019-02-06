@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Game/GameClassFactory.h"
 #include "Amalgam/Game/IAudioServer.h"
 #include "Amalgam/Game/IEnvironment.h"
@@ -110,16 +104,6 @@ world::Entity* WorldLayer_getEntity_1(WorldLayer* self, const std::wstring& name
 world::Entity* WorldLayer_getEntity_2(WorldLayer* self, const std::wstring& name, int32_t index)
 {
 	return self->getEntity(name, index);
-}
-
-Ref< world::Entity > WorldLayer_createEntity1(WorldLayer* self, const std::wstring& name, world::IEntitySchema* entitySchema)
-{
-	return self->createEntity(name, entitySchema);
-}
-
-Ref< world::Entity > WorldLayer_createEntity2(WorldLayer* self, const std::wstring& name)
-{
-	return self->createEntity(name, 0);
 }
 
 Ref< BoxedVector4 > WorldLayer_worldToView(WorldLayer* self, const Vector4& worldPosition)
@@ -337,13 +321,10 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorldLayer->addProperty< float >("feedbackScale", &WorldLayer::setFeedbackScale, &WorldLayer::getFeedbackScale);
 	classWorldLayer->addProperty< const world::Entity* >("camera", &WorldLayer::setCamera, &WorldLayer::getCamera);
 	classWorldLayer->addProperty< const world::Entity* >("listener", &WorldLayer::setListener, &WorldLayer::getListener);
-	classWorldLayer->addMethod("getEntityData", &WorldLayer::getEntityData);
 	classWorldLayer->addMethod("getEntity", &WorldLayer_getEntity_1);
 	classWorldLayer->addMethod("getEntity", &WorldLayer_getEntity_2);
 	classWorldLayer->addMethod("getEntities", &WorldLayer::getEntities);
 	classWorldLayer->addMethod("getEntitiesOf", &WorldLayer::getEntitiesOf);
-	classWorldLayer->addMethod("createEntity", &WorldLayer_createEntity1);
-	classWorldLayer->addMethod("createEntity", &WorldLayer_createEntity2);
 	classWorldLayer->addMethod("getEntityIndex", &WorldLayer::getEntityIndex);
 	classWorldLayer->addMethod("getEntityIndexOf", &WorldLayer::getEntityIndexOf);
 	classWorldLayer->addMethod("getEntityByIndex", &WorldLayer::getEntityByIndex);

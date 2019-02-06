@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Editor/StagePipeline.h"
 #include "Amalgam/Game/Engine/AudioLayerData.h"
 #include "Amalgam/Game/Engine/FlashLayerData.h"
@@ -125,11 +119,7 @@ bool StagePipeline::buildDependencies(
 			pipelineDepends->addDependency(videoLayer->m_shader, editor::PdfBuild | editor::PdfResource);
 		}
 		else if (const WorldLayerData* worldLayer = dynamic_type_cast< const WorldLayerData* >(*i))
-		{
 			pipelineDepends->addDependency(worldLayer->m_scene, editor::PdfBuild);
-			for (std::map< std::wstring, resource::Id< world::EntityData > >::const_iterator j = worldLayer->m_entities.begin(); j != worldLayer->m_entities.end(); ++j)
-				pipelineDepends->addDependency(j->second, editor::PdfBuild);
-		}
 	}
 
 	pipelineDepends->addDependency(stageData->m_resourceBundle, editor::PdfBuild);
