@@ -141,7 +141,9 @@ bool NativeVolume::remove(const Path& filename)
 
 bool NativeVolume::move(const Path& fileName, const std::wstring& newName, bool overwrite)
 {
-	return false;
+	std::wstring sourceName = getSystemPath(fileName);
+	std::wstring destinationName = getSystemPath(fileName.getPathOnly() + L"/" + newName);
+	return bool(rename(wstombs(sourceName).c_str(), wstombs(destinationName).c_str()) == 0);
 }
 
 bool NativeVolume::copy(const Path& fileName, const std::wstring& newName, bool overwrite)
@@ -172,7 +174,9 @@ bool NativeVolume::removeDirectory(const Path& directory)
 
 bool NativeVolume::renameDirectory(const Path& directory, const std::wstring& newName)
 {
-	return false;
+	std::wstring sourceName = getSystemPath(directory);
+	std::wstring destinationName = getSystemPath(directory.getPathOnly() + L"/" + newName);
+	return bool(rename(wstombs(sourceName).c_str(), wstombs(destinationName).c_str()) == 0);
 }
 
 bool NativeVolume::setCurrentDirectory(const Path& directory)
