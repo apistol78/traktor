@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Functor/Functor.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -117,22 +111,27 @@ render::ITexture* VideoTexture::resolve()
 		return m_textures[m_current];
 }
 
-int VideoTexture::getWidth() const
+int32_t VideoTexture::getWidth() const
 {
 	return m_textures[0]->getWidth();
 }
 
-int VideoTexture::getHeight() const
+int32_t VideoTexture::getHeight() const
 {
 	return m_textures[0]->getHeight();
 }
 
-bool VideoTexture::lock(int level, render::ITexture::Lock& lock)
+int32_t VideoTexture::getMips() const
+{
+	return m_textures[0]->getMips();
+}
+
+bool VideoTexture::lock(int32_t level, render::ITexture::Lock& lock)
 {
 	return false;
 }
 
-void VideoTexture::unlock(int level)
+void VideoTexture::unlock(int32_t level)
 {
 }
 

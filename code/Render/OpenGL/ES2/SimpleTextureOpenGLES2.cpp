@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <cstring>
 #include "Core/Log/Log.h"
@@ -295,17 +289,22 @@ ITexture* SimpleTextureOpenGLES2::resolve()
 	return this;
 }
 
-int SimpleTextureOpenGLES2::getWidth() const
+int32_t SimpleTextureOpenGLES2::getWidth() const
 {
 	return m_width;
 }
 
-int SimpleTextureOpenGLES2::getHeight() const
+int32_t SimpleTextureOpenGLES2::getHeight() const
 {
 	return m_height;
 }
 
-bool SimpleTextureOpenGLES2::lock(int level, Lock& lock)
+int32_t SimpleTextureOpenGLES2::getMips() const
+{
+	return m_mipCount;
+}
+
+bool SimpleTextureOpenGLES2::lock(int32_t level, Lock& lock)
 {
 	if (m_data.empty() || level >= m_mipCount)
 		return false;
@@ -315,7 +314,7 @@ bool SimpleTextureOpenGLES2::lock(int level, Lock& lock)
 	return true;
 }
 
-void SimpleTextureOpenGLES2::unlock(int level)
+void SimpleTextureOpenGLES2::unlock(int32_t level)
 {
 	m_dirty = level;
 }

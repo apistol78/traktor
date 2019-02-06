@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ISimpleTexture_H
-#define traktor_render_ISimpleTexture_H
+#pragma once
 
 #include "Render/ITexture.h"
 
@@ -34,13 +27,19 @@ public:
 	 *
 	 * \return Texture width in pixels.
 	 */
-	virtual int getWidth() const = 0;
+	virtual int32_t getWidth() const = 0;
 
 	/*! \brief Get height in pixels of texture.
 	 *
 	 * \return Texture height in pixels.
 	 */
-	virtual int getHeight() const = 0;
+	virtual int32_t getHeight() const = 0;
+
+	/*! \brief Get number of mip maps.
+	 *
+	 * \return Number of mips.
+	 */
+	virtual int32_t getMips() const = 0;
 
 	/*! \brief Lock access to texture data.
 	 *
@@ -48,13 +47,13 @@ public:
 	 * \param lock Information about locked region.
 	 * \return True if locked.
 	 */
-	virtual bool lock(int level, Lock& lock) = 0;
+	virtual bool lock(int32_t level, Lock& lock) = 0;
 
 	/*! \brief Unlock access to texture data.
 	 *
 	 * \param level Mip level.
 	 */
-	virtual void unlock(int level) = 0;
+	virtual void unlock(int32_t level) = 0;
 
 	/*! \brief Get API specific internal handle.
 	 *
@@ -65,5 +64,3 @@ public:
 
 	}
 }
-
-#endif	// traktor_render_ISimpleTexture_H

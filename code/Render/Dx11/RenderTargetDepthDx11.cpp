@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/Types.h"
@@ -148,22 +142,27 @@ ITexture* RenderTargetDepthDx11::resolve()
 	return this;
 }
 
-int RenderTargetDepthDx11::getWidth() const
+int32_t RenderTargetDepthDx11::getWidth() const
 {
 	return m_width;
 }
 
-int RenderTargetDepthDx11::getHeight() const
+int32_t RenderTargetDepthDx11::getHeight() const
 {
 	return m_height;
 }
 
-bool RenderTargetDepthDx11::lock(int level, Lock& lock)
+int32_t RenderTargetDepthDx11::getMips() const
+{
+	return 1;
+}
+
+bool RenderTargetDepthDx11::lock(int32_t level, Lock& lock)
 {
 	return false;
 }
 
-void RenderTargetDepthDx11::unlock(int level)
+void RenderTargetDepthDx11::unlock(int32_t level)
 {
 }
 

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 #if defined(__ANDROID__)
@@ -80,22 +74,27 @@ ITexture* RenderTargetOpenGLES2::resolve()
 	return this;
 }
 
-int RenderTargetOpenGLES2::getWidth() const
+int32_t RenderTargetOpenGLES2::getWidth() const
 {
 	return m_width;
 }
 
-int RenderTargetOpenGLES2::getHeight() const
+int32_t RenderTargetOpenGLES2::getHeight() const
 {
 	return m_height;
 }
 
-bool RenderTargetOpenGLES2::lock(int level, Lock& lock)
+int32_t RenderTargetOpenGLES2::getMips() const
+{
+	return 1;
+}
+
+bool RenderTargetOpenGLES2::lock(int32_t level, Lock& lock)
 {
 	return false;
 }
 
-void RenderTargetOpenGLES2::unlock(int level)
+void RenderTargetOpenGLES2::unlock(int32_t level)
 {
 }
 

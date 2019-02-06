@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Capture/Error.h"
 #include "Render/Capture/SimpleTextureCapture.h"
@@ -33,19 +27,25 @@ ITexture* SimpleTextureCapture::resolve()
 	return this;
 }
 
-int SimpleTextureCapture::getWidth() const
+int32_t SimpleTextureCapture::getWidth() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	return m_texture ? m_texture->getWidth() : 0;
 }
 	
-int SimpleTextureCapture::getHeight() const
+int32_t SimpleTextureCapture::getHeight() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	return m_texture ? m_texture->getHeight() : 0;
 }
-	
-bool SimpleTextureCapture::lock(int level, Lock& lock)
+
+int32_t SimpleTextureCapture::getMips() const
+{
+	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
+	return m_texture ? m_texture->getMips() : 0;
+}
+
+bool SimpleTextureCapture::lock(int32_t level, Lock& lock)
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	T_CAPTURE_ASSERT (level >= 0, L"Invalid mip level.");
@@ -53,7 +53,7 @@ bool SimpleTextureCapture::lock(int level, Lock& lock)
 	return m_texture ? m_texture->lock(level, lock) : false;
 }
 
-void SimpleTextureCapture::unlock(int level)
+void SimpleTextureCapture::unlock(int32_t level)
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	T_CAPTURE_ASSERT (level >= 0, L"Invalid mip level.");

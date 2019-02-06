@@ -57,22 +57,27 @@ ITexture* RenderTargetDepthOpenGL::resolve()
 	return this;
 }
 
-int RenderTargetDepthOpenGL::getWidth() const
+int32_t RenderTargetDepthOpenGL::getWidth() const
 {
 	return m_width;
 }
 
-int RenderTargetDepthOpenGL::getHeight() const
+int32_t RenderTargetDepthOpenGL::getHeight() const
 {
 	return m_height;
 }
 
-bool RenderTargetDepthOpenGL::lock(int level, Lock& lock)
+int32_t RenderTargetDepthOpenGL::getMips() const
+{
+	return 1;
+}
+
+bool RenderTargetDepthOpenGL::lock(int32_t level, Lock& lock)
 {
 	return false;
 }
 
-void RenderTargetDepthOpenGL::unlock(int level)
+void RenderTargetDepthOpenGL::unlock(int32_t level)
 {
 }
 

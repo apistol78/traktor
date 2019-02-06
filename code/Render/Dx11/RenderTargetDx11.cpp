@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/Types.h"
@@ -197,22 +191,29 @@ ITexture* RenderTargetDx11::resolve()
 	return this;
 }
 
-int RenderTargetDx11::getWidth() const
+int32_t RenderTargetDx11::getWidth() const
 {
 	return m_width;
 }
 
-int RenderTargetDx11::getHeight() const
+int32_t RenderTargetDx11::getHeight() const
 {
 	return m_height;
 }
 
-bool RenderTargetDx11::lock(int level, Lock& lock)
+int32_t RenderTargetDx11::getMips() const
+{
+	D3D11_TEXTURE2D_DESC dtd = { 0 };
+	m_d3dTextureRead->GetDesc(&dtd);
+	return (int32_t)dtd.MipLevels;
+}
+
+bool RenderTargetDx11::lock(int32_t level, Lock& lock)
 {
 	return false;
 }
 
-void RenderTargetDx11::unlock(int level)
+void RenderTargetDx11::unlock(int32_t level)
 {
 }
 
@@ -245,11 +246,6 @@ void RenderTargetDx11::unbind()
 
 bool RenderTargetDx11::read(void* buffer) const
 {
-	//if (m_d3dTexture != m_d3dTextureRead)
-	//	m_context->getD3DDeviceContext()->CopyResource(m_d3dTextureStaging, m_d3dTextureRead);
-	//else
-	//	m_context->getD3DDeviceContext()->CopyResource(m_d3dTextureStaging, m_d3dTexture);
-
 	D3D11_BOX sr;
 	sr.left = 0;
 	sr.right = m_width;

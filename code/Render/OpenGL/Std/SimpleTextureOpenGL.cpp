@@ -133,17 +133,22 @@ ITexture* SimpleTextureOpenGL::resolve()
 	return this;
 }
 
-int SimpleTextureOpenGL::getWidth() const
+int32_t SimpleTextureOpenGL::getWidth() const
 {
 	return m_width;
 }
 
-int SimpleTextureOpenGL::getHeight() const
+int32_t SimpleTextureOpenGL::getHeight() const
 {
 	return m_height;
 }
 
-bool SimpleTextureOpenGL::lock(int level, Lock& lock)
+int32_t SimpleTextureOpenGL::getMips() const
+{
+	return m_mipCount;
+}
+
+bool SimpleTextureOpenGL::lock(int32_t level, Lock& lock)
 {
 	if (!m_data.ptr())
 	{
@@ -157,7 +162,7 @@ bool SimpleTextureOpenGL::lock(int level, Lock& lock)
 	return true;
 }
 
-void SimpleTextureOpenGL::unlock(int level)
+void SimpleTextureOpenGL::unlock(int32_t level)
 {
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));

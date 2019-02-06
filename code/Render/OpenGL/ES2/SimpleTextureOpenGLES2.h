@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_SimpleTextureOpenGLES2_H
-#define traktor_render_SimpleTextureOpenGLES2_H
+#pragma once
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
@@ -40,13 +33,15 @@ public:
 
 	virtual ITexture* resolve() override final;
 
-	virtual int getWidth() const override final;
+	virtual int32_t getWidth() const override final;
 	
-	virtual int getHeight() const override final;
+	virtual int32_t getHeight() const override final;
 
-	virtual bool lock(int level, Lock& lock) override final;
+	virtual int32_t getMips() const override final;
 
-	virtual void unlock(int level) override final;
+	virtual bool lock(int32_t level, Lock& lock) override final;
+
+	virtual void unlock(int32_t level) override final;
 
 	virtual void* getInternalHandle() override final;
 
@@ -58,10 +53,10 @@ private:
 	Ref< ContextOpenGLES2 > m_context;
 	GLuint m_textureName;
 	bool m_pot;
-	int m_dirty;
-	int m_width;
-	int m_height;
-	int m_pixelSize;
+	int32_t m_dirty;
+	int32_t m_width;
+	int32_t m_height;
+	int32_t m_pixelSize;
 	GLint m_components;
 	GLenum m_format;
 	GLenum m_type;
@@ -72,5 +67,3 @@ private:
 		
 	}
 }
-
-#endif	// traktor_render_SimpleTextureOpenGLES2_H

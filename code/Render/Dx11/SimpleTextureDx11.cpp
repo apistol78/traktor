@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/Types.h"
@@ -23,6 +17,7 @@ SimpleTextureDx11::SimpleTextureDx11(ContextDx11* context)
 :	m_context(context)
 ,	m_width(0)
 ,	m_height(0)
+,	m_mips(0)
 {
 }
 
@@ -90,6 +85,7 @@ bool SimpleTextureDx11::create(const SimpleTextureCreateDesc& desc)
 
 	m_width = desc.width;
 	m_height = desc.height;
+	m_mips = desc.mipCount;
 
 	return true;
 }
@@ -106,17 +102,22 @@ ITexture* SimpleTextureDx11::resolve()
 	return this;
 }
 
-int SimpleTextureDx11::getWidth() const
+int32_t SimpleTextureDx11::getWidth() const
 {
 	return m_width;
 }
 
-int SimpleTextureDx11::getHeight() const
+int32_t SimpleTextureDx11::getHeight() const
 {
 	return m_height;
 }
 
-bool SimpleTextureDx11::lock(int level, Lock& lock)
+int32_t SimpleTextureDx11::getMips() const
+{
+	return m_mips;
+}
+
+bool SimpleTextureDx11::lock(int32_t level, Lock& lock)
 {
 	D3D11_MAPPED_SUBRESOURCE dm;
 	HRESULT hr;
@@ -131,7 +132,7 @@ bool SimpleTextureDx11::lock(int level, Lock& lock)
 	return true;
 }
 
-void SimpleTextureDx11::unlock(int level)
+void SimpleTextureDx11::unlock(int32_t level)
 {
 	m_context->getD3DDeviceContext()->Unmap(m_d3dTexture, level);
 }

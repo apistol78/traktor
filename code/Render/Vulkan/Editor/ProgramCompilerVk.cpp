@@ -146,7 +146,7 @@ ProgramCompilerVk::ProgramCompilerVk()
 
 const wchar_t* ProgramCompilerVk::getPlatformSignature() const
 {
-	return L"Vulkan GLSL";
+	return L"Vulkan";
 }
 
 Ref< ProgramResource > ProgramCompilerVk::compile(
