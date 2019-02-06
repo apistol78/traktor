@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Game/Engine/AudioLayer.h"
 #include "Amalgam/Game/Engine/AudioLayerData.h"
 #include "Resource/IResourceManager.h"
@@ -15,7 +9,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.AudioLayerData", LayerData::Version, AudioLayerData, LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.AudioLayerData", 0, AudioLayerData, LayerData)
 
 AudioLayerData::AudioLayerData()
 :	m_autoPlay(true)
@@ -49,10 +43,8 @@ void AudioLayerData::serialize(ISerializer& s)
 	LayerData::serialize(s);
 
 	s >> resource::Member< sound::Sound >(L"sound", m_sound);
-	if (s.getVersion() >= 1)
-		s >> Member< bool >(L"autoPlay", m_autoPlay);
-	if (s.getVersion() >= 2)
-		s >> Member< bool >(L"repeat", m_repeat);
+	s >> Member< bool >(L"autoPlay", m_autoPlay);
+	s >> Member< bool >(L"repeat", m_repeat);
 }
 
 	}

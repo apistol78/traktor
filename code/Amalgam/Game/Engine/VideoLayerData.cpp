@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/Engine/VideoLayer.h"
 #include "Amalgam/Game/Engine/VideoLayerData.h"
@@ -20,7 +14,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.VideoLayerData", LayerData::Version, VideoLayerData, LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.VideoLayerData", 0, VideoLayerData, LayerData)
 
 VideoLayerData::VideoLayerData()
 :	m_screenBounds(Vector2(0.0f, 0.0f), Vector2(1.0f, 1.0f))

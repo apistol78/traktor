@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Game/IAudioServer.h"
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/UpdateInfo.h"
@@ -53,13 +47,11 @@ WorldLayer::WorldLayer(
 	const std::wstring& name,
 	bool permitTransition,
 	IEnvironment* environment,
-	const resource::Proxy< scene::Scene >& scene,
-	const std::map< std::wstring, resource::Proxy< world::EntityData > >& entities
+	const resource::Proxy< scene::Scene >& scene
 )
 :	Layer(stage, name, permitTransition)
 ,	m_environment(environment)
 ,	m_scene(scene)
-,	m_entities(entities)
 ,	m_dynamicEntities(new world::GroupEntity())
 ,	m_alternateTime(0.0f)
 ,	m_deltaTime(0.0f)
@@ -101,7 +93,6 @@ void WorldLayer::destroy()
 		m_scene.clear();
 	}
 
-	m_entities.clear();
 	safeDestroy(m_worldRenderer);
 	safeDestroy(m_renderGroup);
 	safeDestroy(m_dynamicEntities);
@@ -383,15 +374,6 @@ void WorldLayer::resume()
 {
 }
 
-Ref< world::EntityData > WorldLayer::getEntityData(const std::wstring& name) const
-{
-	std::map< std::wstring, resource::Proxy< world::EntityData > >::const_iterator i = m_entities.find(name);
-	if (i != m_entities.end())
-		return DeepClone(i->second.getResource()).create< world::EntityData >();
-	else
-		return nullptr;
-}
-
 world::Entity* WorldLayer::getEntity(const std::wstring& name) const
 {
 	return m_scene->getEntitySchema()->getEntity(name);
@@ -414,20 +396,6 @@ RefArray< world::Entity > WorldLayer::getEntitiesOf(const TypeInfo& entityType) 
 	RefArray< world::Entity > entities;
 	m_scene->getEntitySchema()->getEntities(entityType, entities);
 	return entities;
-}
-
-Ref< world::Entity > WorldLayer::createEntity(const std::wstring& name, world::IEntitySchema* entitySchema)
-{
-	T_PROFILER_SCOPE(L"WorldLayer createEntity");
-
-	std::map< std::wstring, resource::Proxy< world::EntityData > >::iterator i = m_entities.find(name);
-	if (i == m_entities.end())
-		return nullptr;
-
-	const world::IEntityBuilder* entityBuilder = m_environment->getWorld()->getEntityBuilder();
-	T_ASSERT (entityBuilder);
-
-	return entityBuilder->create(i->second);
 }
 
 int32_t WorldLayer::getEntityIndex(const world::Entity* entity) const

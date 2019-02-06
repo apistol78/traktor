@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Game/Engine/LayerData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -23,9 +17,7 @@ LayerData::LayerData()
 void LayerData::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
-
-	if (s.getVersion() >= 3)
-		s >> Member< bool >(L"permitTransition", m_permitTransition);
+	s >> Member< bool >(L"permitTransition", m_permitTransition);
 }
 
 	}
