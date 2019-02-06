@@ -29,11 +29,12 @@ struct DeleteTextureCallback : public ResourceContextOpenGL::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGL", RenderTargetOpenGL, ISimpleTexture)
 
-RenderTargetOpenGL::RenderTargetOpenGL(ResourceContextOpenGL* resourceContext, GLuint colorTexture, int32_t width, int32_t height)
+RenderTargetOpenGL::RenderTargetOpenGL(ResourceContextOpenGL* resourceContext, GLuint colorTexture, int32_t width, int32_t height, int32_t mips)
 :	m_resourceContext(resourceContext)
 ,	m_colorTexture(colorTexture)
 ,	m_width(width)
 ,	m_height(height)
+,	m_mips(mips)
 {
 }
 
@@ -69,7 +70,7 @@ int32_t RenderTargetOpenGL::getHeight() const
 
 int32_t RenderTargetOpenGL::getMips() const
 {
-	return 1;
+	return m_mips;
 }
 
 bool RenderTargetOpenGL::lock(int32_t level, Lock& lock)

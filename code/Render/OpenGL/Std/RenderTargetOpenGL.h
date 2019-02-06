@@ -22,7 +22,7 @@ class RenderTargetOpenGL
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetOpenGL(ResourceContextOpenGL* resourceContext, GLuint colorTexture, int32_t width, int32_t height);
+	RenderTargetOpenGL(ResourceContextOpenGL* resourceContext, GLuint colorTexture, int32_t width, int32_t height, int32_t mips);
 
 	virtual ~RenderTargetOpenGL();
 
@@ -57,6 +57,7 @@ private:
 	GLuint m_colorTexture;
 	int32_t m_width;
 	int32_t m_height;
+	int32_t m_mips;
 };
 
 	}

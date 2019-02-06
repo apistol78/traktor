@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Log2_H
-#define traktor_Log2_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -60,5 +53,3 @@ uint32_t T_FORCE_INLINE previousLog2(uint32_t num)
 }
 
 }
-
-#endif	// traktor_Log2_H
