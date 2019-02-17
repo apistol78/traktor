@@ -1,13 +1,5 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_animation_AnimationAsset_H
-#define traktor_animation_AnimationAsset_H
+#pragma once
 
-#include "Core/Math/Vector4.h"
 #include "Editor/Asset.h"
 
 // import/export mechanism.
@@ -35,22 +27,14 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	const Vector4& getOffset() const { return m_offset; }
+	const std::wstring& getAnimation() const { return m_animation; }
 
-	bool getInvertX() const { return m_invertX; }
-
-	bool getInvertZ() const { return m_invertZ; }
-
-	bool shouldAutoCenterKeyPoses() const { return m_autoCenterKeyPoses; }
+	float getScale() const { return m_scale; }
 
 private:
-	Vector4 m_offset;
-	bool m_invertX;
-	bool m_invertZ;
-	bool m_autoCenterKeyPoses;
+	std::wstring m_animation;
+	float m_scale;
 };
 
 	}
 }
-
-#endif	// traktor_animation_AnimationAsset_H

@@ -35,7 +35,7 @@ bool TouchAllTool::needOutputResources(std::set< Guid >& outDependencies) const
 	return false;
 }
 
-bool TouchAllTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
+bool TouchAllTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGroup* param)
 {
 	Ref< db::Database > database = editor->getSourceDatabase();
 	if (!database)

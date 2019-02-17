@@ -1307,7 +1307,7 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 	return true;
 }
 
-bool EditorForm::openTool(const std::wstring& toolType, const std::wstring& param)
+bool EditorForm::openTool(const std::wstring& toolType, const PropertyGroup* param)
 {
 	for (RefArray< IEditorTool >::const_iterator i = m_editorTools.begin(); i != m_editorTools.end(); ++i)
 	{
@@ -2644,7 +2644,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 			buildWaitUntilFinished();
 		}
 
-		if (tool->launch(this, this, L""))
+		if (tool->launch(this, this, nullptr))
 			m_dataBaseView->updateView();
 		else
 			result = false;

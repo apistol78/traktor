@@ -93,7 +93,7 @@ void ScriptEditorPlugin::notifyBeginSession(IScriptDebugger* scriptDebugger, ISc
 {
 	bool autoOpenDebugger = m_editor->getSettings()->getProperty< bool >(L"Editor.AutoOpenDebugger", false);
 	if (autoOpenDebugger)
-		m_editor->openTool(L"traktor.script.ScriptDebuggerTool", L"");
+		m_editor->openTool(L"traktor.script.ScriptDebuggerTool", nullptr);
 }
 
 void ScriptEditorPlugin::notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)

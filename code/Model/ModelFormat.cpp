@@ -9,14 +9,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelFormat", ModelFormat, Object)
 
-Ref< Model > ModelFormat::readAny(const Path& filePath, uint32_t importFlags)
+Ref< Model > ModelFormat::readAny(const Path& filePath)
 {
-	return readAny(filePath, importFlags, [&](const Path& p) -> Ref< IStream >{
+	return readAny(filePath, [&](const Path& p) -> Ref< IStream >{
 		return FileSystem::getInstance().open(p, File::FmRead);
 	});
 }
 
-Ref< Model > ModelFormat::readAny(const Path& filePath, uint32_t importFlags, const std::function< Ref< IStream >(const Path&) >& openStream)
+Ref< Model > ModelFormat::readAny(const Path& filePath, const std::function< Ref< IStream >(const Path&) >& openStream)
 {
 	Ref< Model > md;
 
@@ -29,7 +29,7 @@ Ref< Model > ModelFormat::readAny(const Path& filePath, uint32_t importFlags, co
 		if (!modelFormat || !modelFormat->supportFormat(filePath.getExtension()))
 			continue;
 
-		md = modelFormat->read(filePath, importFlags, openStream);
+		md = modelFormat->read(filePath, openStream);
 		if (md)
 			break;
 	}

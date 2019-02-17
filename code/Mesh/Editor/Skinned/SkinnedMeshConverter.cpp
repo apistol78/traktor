@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <cstring>
 #include <limits>
@@ -116,34 +110,37 @@ bool SkinnedMeshConverter::convert(
 		if (i->getTexCoord(1) != model::c_InvalidIndex)
 			writeVertexData(vertexElements, vertex, render::DuCustom, 3, model.getTexCoord(i->getTexCoord(1)));
 
-		int jointCount = model.getJointCount();
+		uint32_t jointCount = model.getJointCount();
 
 		AlignedVector< std::pair< int, float > > jointInfluences;
 		for (int j = 0; j < jointCount; ++j)
-			jointInfluences.push_back(std::make_pair(j, i->getJointInfluence(j)));
+		{
+			float w = i->getJointInfluence(j);
+			if (std::abs(w) > FUZZY_EPSILON)
+				jointInfluences.push_back(std::make_pair(j, w));
+		}
 
 		std::sort(jointInfluences.begin(), jointInfluences.end(), InfluencePredicate());
 
-		jointCount = std::min(4, jointCount);
+		jointCount = (uint32_t)jointInfluences.size();
+		jointCount = std::min< uint32_t >(4, jointCount);
 
 		float totalInfluence = 0.0f;
-		for (int j = 0; j < jointCount; ++j)
+		for (uint32_t j = 0; j < jointCount; ++j)
 			totalInfluence += jointInfluences[j].second;
 
-		float blendIndices[4], blendWeights[4];
-		if (std::fabs(totalInfluence) > FUZZY_EPSILON)
-		{
-			// Don't normalize single bone vertices; skinned with world.
-			if (jointCount <= 1)
-				totalInfluence = 1.0f;
+		log::info << (int)std::distance(model.getVertices().begin(), i) << L". " << jointInfluences.size() << L" joint(s), " << totalInfluence << Endl;
 
-			for (int j = 0; j < jointCount; ++j)
+		float blendIndices[4], blendWeights[4];
+		if (std::abs(totalInfluence) > FUZZY_EPSILON)
+		{
+			for (uint32_t j = 0; j < jointCount; ++j)
 			{
-				blendIndices[j] = float(jointInfluences[j].first);
+				blendIndices[j] = (float)jointInfluences[j].first;
 				blendWeights[j] = jointInfluences[j].second / totalInfluence;
 			}
 
-			for (int j = jointCount; j < 4; ++j)
+			for (uint32_t j = jointCount; j < 4; ++j)
 			{
 				blendIndices[j] =
 				blendWeights[j] = 0.0f;
@@ -151,7 +148,7 @@ bool SkinnedMeshConverter::convert(
 		}
 		else
 		{
-			for (int j = 0; j < 4; ++j)
+			for (uint32_t j = 0; j < 4; ++j)
 			{
 				blendIndices[j] =
 				blendWeights[j] = 0.0f;
@@ -263,7 +260,7 @@ bool SkinnedMeshConverter::convert(
 	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_parts = parts;
 	for (uint32_t i = 0; i < model.getJointCount(); ++i)
-		checked_type_cast< SkinnedMeshResource* >(meshResource)->m_jointMap[model.getJoint(i)] = i;
+		checked_type_cast< SkinnedMeshResource* >(meshResource)->m_jointMap[model.getJoint(i).getName()] = i;
 
 	return true;
 }

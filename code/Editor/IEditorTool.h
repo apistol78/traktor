@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_IEditorTool_H
-#define traktor_editor_IEditorTool_H
+#pragma once
 
 #include <set>
 #include <string>
@@ -23,6 +16,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
+
+class PropertyGroup;
+
 	namespace ui
 	{
 
@@ -50,10 +46,8 @@ public:
 
 	virtual bool needOutputResources(std::set< Guid >& outDependencies) const = 0;
 
-	virtual bool launch(ui::Widget* parent, IEditor* editor, const std::wstring& param) = 0;
+	virtual bool launch(ui::Widget* parent, IEditor* editor, const PropertyGroup* param) = 0;
 };
 
 	}
 }
-
-#endif	// traktor_editor_IEditorTool_H

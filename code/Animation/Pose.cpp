@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Animation/Pose.h"
 #include "Core/Serialization/AttributeAngles.h"
 #include "Core/Serialization/AttributeDirection.h"
@@ -18,28 +12,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Pose", 0, Pose, ISerializable)
 
-void Pose::setJointOffset(uint32_t jointIndex, const Vector4& jointOffset)
+void Pose::setJointTransform(uint32_t jointIndex, const Transform& jointTransform)
 {
 	Joint& joint = getEditJoint(jointIndex);
-	joint.offset = jointOffset;
+	joint.transform = jointTransform;
 }
 
-Vector4 Pose::getJointOffset(uint32_t jointIndex) const
+Transform Pose::getJointTransform(uint32_t jointIndex) const
 {
 	const Joint* joint = getJoint(jointIndex);
-	return joint ? joint->offset : Vector4::zero();
-}
-
-void Pose::setJointOrientation(uint32_t jointIndex, const Rotator& jointOrientation)
-{
-	Joint& joint = getEditJoint(jointIndex);
-	joint.orientation = jointOrientation;
-}
-
-Rotator Pose::getJointOrientation(uint32_t jointIndex) const
-{
-	const Joint* joint = getJoint(jointIndex);
-	return joint ? joint->orientation : Rotator();
+	return joint ? joint->transform : Transform::identity();
 }
 
 uint32_t Pose::getMaxIndex() const
@@ -102,8 +84,7 @@ void Pose::serialize(ISerializer& s)
 void Pose::Joint::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"index", index);
-	s >> Member< Vector4 >(L"offset", offset, AttributeDirection());
-	s >> MemberComposite< Rotator >(L"orientation", orientation);
+	s >> MemberComposite< Transform  >(L"transform", transform);
 }
 
 	}

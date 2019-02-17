@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Animation/Joint.h"
 #include "Animation/Pose.h"
@@ -57,10 +51,8 @@ void calculatePoseLocalTransforms(
 	outJointLocalTransforms.resize(skeleton->getJointCount());
 	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 	{
-		Transform p0(pose->getJointOffset(i));
-		Transform p1(pose->getJointOrientation(i).toQuaternion());
-		Transform poseTransform = p1 * p0;
-		outJointLocalTransforms[i] = skeleton->getJoint(i)->getTransform() * poseTransform;
+		Transform poseTransform = pose->getJointTransform(i);
+		outJointLocalTransforms[i] = poseTransform * skeleton->getJoint(i)->getTransform();
 	}
 }
 
@@ -151,13 +143,9 @@ void blendPoses(
 		if (!indices(i))
 			continue;
 
-		Vector4 o1 = pose1->getJointOffset(i);
-		Vector4 o2 = pose2->getJointOffset(i);
-		outPose->setJointOffset(i, lerp(o1, o2, blend));
-
-		Rotator r1 = pose1->getJointOrientation(i);
-		Rotator r2 = pose2->getJointOrientation(i);
-		outPose->setJointOrientation(i, lerp(r1, r2, blend));
+		Transform t1 = pose1->getJointTransform(i);
+		Transform t2 = pose2->getJointTransform(i);
+		outPose->setJointTransform(i, lerp(t1, t2, blend));
 	}
 }
 

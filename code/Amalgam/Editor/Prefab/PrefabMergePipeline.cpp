@@ -169,7 +169,7 @@ bool PrefabMergePipeline::buildOutput(
 			}
 			else
 			{
-				Ref< model::Model > partModel = model::ModelFormat::readAny(meshAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+				Ref< model::Model > partModel = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
 					return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 				});
 				if (!partModel)
@@ -230,7 +230,7 @@ bool PrefabMergePipeline::buildOutput(
 			}
 			else
 			{
-				Ref< model::Model > partModel = model::ModelFormat::readAny(meshShapeAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+				Ref< model::Model > partModel = model::ModelFormat::readAny(meshShapeAsset->getFileName(), [&](const Path& p) {
 					return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 				});
 				if (!partModel)

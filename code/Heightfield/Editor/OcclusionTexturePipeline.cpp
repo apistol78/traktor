@@ -407,7 +407,7 @@ bool OcclusionTexturePipeline::buildOutput(
 			{
 				log::info << L"Loading \"" << meshAsset->getFileName().getFileName() << L"\"..." << Endl;
 
-				Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+				Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
 					return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 				});
 				if (!model)

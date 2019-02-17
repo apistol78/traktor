@@ -67,7 +67,7 @@ public:
 
 	virtual bool openDefaultEditor(db::Instance* instance) override final;
 
-	virtual bool openTool(const std::wstring& toolType, const std::wstring& param) override final;
+	virtual bool openTool(const std::wstring& toolType, const PropertyGroup* param) override final;
 
 	virtual bool openBrowser(const net::Url& url) override final;
 

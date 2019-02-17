@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_PrimitiveRenderer_H
-#define traktor_render_PrimitiveRenderer_H
+#pragma once
 
 #include <stack>
 #include "Core/RefArray.h"
@@ -23,9 +16,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -283,6 +276,12 @@ public:
 		const Color4ub& colorHint
 	);
 
+	void drawBone(
+		const Matrix44& bone,
+		float length,
+		const Color4ub& color
+	);
+
 	void drawCone(
 		const Matrix44& frame,
 		float angleX,
@@ -381,5 +380,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_PrimitiveRenderer_H

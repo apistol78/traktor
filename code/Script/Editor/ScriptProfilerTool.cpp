@@ -33,7 +33,7 @@ bool ScriptProfilerTool::needOutputResources(std::set< Guid >& outDependencies) 
 	return false;
 }
 
-bool ScriptProfilerTool::launch(ui::Widget* parent, editor::IEditor* script, const std::wstring& param)
+bool ScriptProfilerTool::launch(ui::Widget* parent, editor::IEditor* script, const PropertyGroup* param)
 {
 	// If profiler dialog is already created then we only need to show it.
 	if (m_profilerDialog)

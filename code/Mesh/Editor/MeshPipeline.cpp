@@ -261,7 +261,7 @@ bool MeshPipeline::buildOutput(
 	{
 		// Import source model(s); merge all materials into a single list (duplicates will be overridden).
 		log::info << L"Loading model \"" << asset->getFileName().getFileName() << L"\"..." << Endl;
-		Ref< model::Model > model = model::ModelFormat::readAny(asset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+		Ref< model::Model > model = model::ModelFormat::readAny(asset->getFileName(), [&](const Path& p) {
 			return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 		});
 		if (!model)

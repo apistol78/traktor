@@ -39,7 +39,7 @@ bool CheckAssetsTool::needOutputResources(std::set< Guid >& outDependencies) con
 	return false;
 }
 
-bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
+bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGroup* param)
 {
 	Ref< db::Database > database = editor->getSourceDatabase();
 	if (!database)

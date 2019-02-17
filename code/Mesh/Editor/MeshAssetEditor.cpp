@@ -1,12 +1,7 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/System/OS.h"
@@ -322,10 +317,7 @@ ui::Size MeshAssetEditor::getPreferredSize() const
 void MeshAssetEditor::updateModel()
 {
 	Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath, m_asset->getFileName());
-	m_model = model::ModelFormat::readAny(
-		assetPath,
-		model::ModelFormat::IfMaterials
-	);
+	m_model = model::ModelFormat::readAny(assetPath);
 }
 
 void MeshAssetEditor::updateFile()
@@ -667,7 +659,12 @@ void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)
 void MeshAssetEditor::eventPreviewModelClick(ui::ButtonClickEvent* event)
 {
 	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	m_editor->openTool(L"traktor.model.ModelTool", assetPath + L"/" + m_editFileName->getText());
+
+	Ref< PropertyGroup > params = new PropertyGroup();
+	params->setProperty< PropertyString >(L"fileName", assetPath + L"/" + m_editFileName->getText());
+	params->setProperty< PropertyFloat >(L"scale", m_asset->getScaleFactor());
+
+	m_editor->openTool(L"traktor.model.ModelTool", params);
 }
 
 void MeshAssetEditor::eventEditModelClick(ui::ButtonClickEvent* event)

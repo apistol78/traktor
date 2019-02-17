@@ -36,7 +36,7 @@ bool HttpGetTool::needOutputResources(std::set< Guid >& outDependencies) const
 	return false;
 }
 
-bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
+bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGroup* param)
 {
 	ui::InputDialog inputDialog;
 	ui::InputDialog::Field f[] =

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_animation_SkeletonAsset_H
-#define traktor_animation_SkeletonAsset_H
+#pragma once
 
 #include "Core/Math/Vector4.h"
 #include "Editor/Asset.h"
@@ -55,5 +48,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_animation_SkeletonAsset_H

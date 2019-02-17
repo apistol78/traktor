@@ -1,11 +1,14 @@
 #pragma once
 
 #include <map>
+#include "Core/RefArray.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Model/Animation.h"
 #include "Model/Types.h"
 #include "Model/Grid2.h"
 #include "Model/Grid3.h"
+#include "Model/Joint.h"
 #include "Model/Material.h"
 #include "Model/Polygon.h"
 #include "Model/Vertex.h"
@@ -150,25 +153,64 @@ public:
 
 	const AlignedVector< Vector2 >& getTexCoords() const { return m_texCoords.values(); }
 
-	uint32_t getAvailableTexCoordChannel() const;
+	uint32_t addUniqueTexCoordChannel(const std::wstring& channelId);
 
-	uint32_t addJoint(const std::wstring& jointName);
+	uint32_t getTexCoordChannel(const std::wstring& channelId) const;
 
-	uint32_t getJointCount() const { return int(m_joints.size()); }
+	const AlignedVector< std::wstring >& getTexCoordChannels() const;
 
-	const std::wstring& getJoint(uint32_t jointIndex) const { return m_joints[jointIndex]; }
+	/*! \name Skeleton joints. */
+	//!@{
+
+	uint32_t addJoint(const Joint& joint);
+
+	uint32_t addUniqueJoint(const Joint& joint);
+
+	uint32_t getJointCount() const { return (uint32_t)m_joints.size(); }
+
+	const Joint& getJoint(uint32_t jointIndex) const { return m_joints[jointIndex]; }
+
+	void setJoints(const AlignedVector< Joint >& joints);
+
+	const AlignedVector< Joint >& getJoints() const { return m_joints; }
 
 	uint32_t findJointIndex(const std::wstring& jointName) const;
 
+	void findChildJoints(uint32_t jointId, AlignedVector< uint32_t >& outChildJoints) const;
+
+	Transform getJointGlobalTransform(uint32_t jointId) const;
+
+	//!@}
+
+	/*! \name Animations. */
+	//!@{
+
+	uint32_t addAnimation(Animation* animation);
+
+	uint32_t getAnimationCount() const { return (uint32_t)m_animations.size(); }
+
+	const Animation* getAnimation(uint32_t animationIndex) const { return m_animations[animationIndex]; }
+
+	const Animation* findAnimation(const std::wstring& animationName) const;
+
+	const RefArray< Animation >& getAnimations() const { return m_animations; }
+
+	//!@}
+
+	/*! \name Blend targets, aka morphs. */
+	//!@{
+
 	uint32_t addBlendTarget(const std::wstring& blendTargetName);
 
-	uint32_t getBlendTargetCount() const { return uint32_t(m_blendTargets.size()); }
+	uint32_t getBlendTargetCount() const { return (uint32_t)m_blendTargets.size(); }
 
 	const std::wstring& getBlendTarget(uint32_t blendTargetIndex) { return m_blendTargets[blendTargetIndex]; }
 
 	void setBlendTargetPosition(uint32_t blendTargetIndex, uint32_t positionIndex, const Vector4& position);
 
 	const Vector4& getBlendTargetPosition(uint32_t blendTargetIndex, uint32_t positionIndex) const;
+
+	//!@}
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -180,7 +222,9 @@ private:
 	Grid3< Vector4 > m_colors; 
 	Grid3< Vector4 > m_normals;
 	Grid2< Vector2 > m_texCoords;
-	AlignedVector< std::wstring > m_joints;
+	AlignedVector< std::wstring > m_texCoordChannels;
+	AlignedVector< Joint > m_joints;
+	RefArray< Animation > m_animations;
 	AlignedVector< std::wstring > m_blendTargets;
 	std::map< uint32_t, AlignedVector< Vector4 > > m_blendTargetPositions;
 };

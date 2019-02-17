@@ -34,7 +34,7 @@ bool CheckSerializableTool::needOutputResources(std::set< Guid >& outDependencie
 	return false;
 }
 
-bool CheckSerializableTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
+bool CheckSerializableTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGroup* param)
 {
 	AutoArrayPtr< uint8_t, AllocFreeAlign > memory((uint8_t*)Alloc::acquireAlign(1024 * 1024, 16, T_FILE_LINE));
 

@@ -1,0 +1,62 @@
+#pragma once
+
+#include <string>
+#include "Core/Math/Transform.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_MODEL_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+
+class ISerializer;
+
+	namespace model
+	{
+
+/*! \brief Joint
+ * \ingroup Model
+ */
+class T_DLLCLASS Joint
+{
+public:
+	Joint();
+
+	explicit Joint(const std::wstring& name);
+
+	explicit Joint(uint32_t parent, const std::wstring& name, const Transform& transform, float length);
+
+	void setParent(uint32_t parent);
+
+	uint32_t getParent() const;
+
+	void setName(const std::wstring& name);
+
+	const std::wstring& getName() const;
+
+	void setTransform(const Transform& transform);
+
+	const Transform& getTransform() const;
+
+	void setLength(float length);
+
+	float getLength() const;
+
+	void serialize(ISerializer& s);
+
+	bool operator == (const Joint& rh) const;
+
+private:
+	uint32_t m_parent;
+	std::wstring m_name;
+	Transform m_transform;
+	float m_length;
+};
+
+	}
+}

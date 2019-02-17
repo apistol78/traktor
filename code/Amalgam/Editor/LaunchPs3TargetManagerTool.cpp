@@ -1,23 +1,5 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Editor/LaunchPs3TargetManagerTool.h"
-//#include "Amalgam/Editor/Deploy/Feature.h"
-//#include "Core/Io/Path.h"
-//#include "Core/Log/Log.h"
-//#include "Core/Misc/String.h"
-//#include "Core/Settings/PropertyGroup.h"
-//#include "Core/Settings/PropertyStringSet.h"
 #include "Core/System/OS.h"
-//#include "Database/Database.h"
-//#include "Database/Group.h"
-//#include "Database/Instance.h"
-//#include "Database/Traverse.h"
-//#include "Editor/IEditor.h"
-//#include "I18N/Text.h"
 
 namespace traktor
 {
@@ -33,7 +15,7 @@ std::wstring LaunchPs3TargetManagerTool::getDescription() const
 
 Ref< ui::IBitmap > LaunchPs3TargetManagerTool::getIcon() const
 {
-	return 0;
+	return nullptr;
 }
 
 bool LaunchPs3TargetManagerTool::needOutputResources(std::set< Guid >& outDependencies) const
@@ -41,7 +23,7 @@ bool LaunchPs3TargetManagerTool::needOutputResources(std::set< Guid >& outDepend
 	return false;
 }
 
-bool LaunchPs3TargetManagerTool::launch(ui::Widget* parent, editor::IEditor* amalgam, const std::wstring& param)
+bool LaunchPs3TargetManagerTool::launch(ui::Widget* parent, editor::IEditor* amalgam, const PropertyGroup* param)
 {
 	return OS::getInstance().execute(L"\"$(SN_PS3_PATH)/bin/ps3tm.exe\"", L"$(SN_PS3_PATH)/bin", 0, false, false, false) != 0;
 }

@@ -37,7 +37,7 @@ public:
 
 	virtual bool needOutputResources(std::set< Guid >& outDependencies) const override final;
 
-	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, const std::wstring& param) override final;
+	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, const PropertyGroup* param) override final;
 
 private:
 	Ref< ModelToolDialog > m_dialog;

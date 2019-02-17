@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Animation/AnimatedMeshEntityFactory.h"
 #include "Animation/Animation/AnimationFactory.h"
 #include "Animation/Boids/BoidsEntityFactory.h"
@@ -29,12 +23,6 @@ void AnimationEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
 ) const
 {
-	outCommands.push_back(ui::Command(L"Animation.Editor.StepForward"));
-	outCommands.push_back(ui::Command(L"Animation.Editor.StepBack"));
-	outCommands.push_back(ui::Command(L"Animation.Editor.GotoPreviousKey"));
-	outCommands.push_back(ui::Command(L"Animation.Editor.GotoNextKey"));
-	outCommands.push_back(ui::Command(L"Animation.Editor.InsertKey"));
-	outCommands.push_back(ui::Command(L"Animation.Editor.Reset"));
 }
 
 void AnimationEditorProfile::getGuideDrawIds(

@@ -1,15 +1,10 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Model/ContainerHelpers.h"
 #include "Model/Model.h"
@@ -246,45 +241,89 @@ uint32_t Model::addUniqueTexCoord(const Vector2& texCoord)
 	return id != m_texCoords.InvalidIndex ? id : m_texCoords.add(texCoord);
 }
 
-uint32_t Model::getAvailableTexCoordChannel() const
+uint32_t Model::addUniqueTexCoordChannel(const std::wstring& channelId)
 {
-	uint32_t channel = 0;
-
-	for (AlignedVector< model::Material >::const_iterator i = m_materials.begin(); i != m_materials.end(); ++i)
+	uint32_t id = getTexCoordChannel(channelId);
+	if (id == c_InvalidIndex)
 	{
-		if (!i->getDiffuseMap().name.empty())
-			channel = traktor::max(channel, i->getDiffuseMap().channel + 1);
-		if (!i->getSpecularMap().name.empty())
-			channel = traktor::max(channel, i->getSpecularMap().channel + 1);
-		if (!i->getTransparencyMap().name.empty())
-			channel = traktor::max(channel, i->getTransparencyMap().channel + 1);
-		if (!i->getEmissiveMap().name.empty())
-			channel = traktor::max(channel, i->getEmissiveMap().channel + 1);
-		if (!i->getReflectiveMap().name.empty())
-			channel = traktor::max(channel, i->getReflectiveMap().channel + 1);
-		if (!i->getNormalMap().name.empty())
-			channel = traktor::max(channel, i->getNormalMap().channel + 1);
-		if (!i->getLightMap().name.empty())
-			channel = traktor::max(channel, i->getLightMap().channel + 1);
+		id = (uint32_t)m_texCoordChannels.size();
+		m_texCoordChannels.push_back(channelId);
 	}
-
-	return channel;
+	return id;
 }
 
-uint32_t Model::addJoint(const std::wstring& jointName)
+uint32_t Model::getTexCoordChannel(const std::wstring& channelId) const
 {
-	return addUniqueId< AlignedVector< std::wstring >, std::wstring, DefaultPredicate< std::wstring > >(m_joints, jointName);
+	const auto it = std::find(m_texCoordChannels.begin(), m_texCoordChannels.end(), channelId);
+	return it != m_texCoordChannels.end() ? (uint32_t)std::distance(m_texCoordChannels.begin(), it) : c_InvalidIndex;
+}
+
+const AlignedVector< std::wstring >& Model::getTexCoordChannels() const
+{
+	return m_texCoordChannels;
+}
+
+uint32_t Model::addJoint(const Joint& joint)
+{
+	return addId(m_joints, joint);
+}
+
+uint32_t Model::addUniqueJoint(const Joint& joint)
+{
+	return addUniqueId< AlignedVector< Joint >, Joint, DefaultPredicate< Joint > >(m_joints, joint);
+}
+
+void Model::setJoints(const AlignedVector< Joint >& joints)
+{
+	m_joints = joints;
 }
 
 uint32_t Model::findJointIndex(const std::wstring& jointName) const
 {
-	AlignedVector< std::wstring >::const_iterator i = std::find(m_joints.begin(), m_joints.end(), jointName);
+	const auto i = std::find_if(m_joints.begin(), m_joints.end(), [&](const Joint& j) {
+		return j.getName() == jointName;
+	});
 	return i != m_joints.end() ? uint32_t(std::distance(m_joints.begin(), i)) : c_InvalidIndex;
+}
+
+void Model::findChildJoints(uint32_t jointId, AlignedVector< uint32_t >& outChildJoints) const
+{
+	for (uint32_t i = 0; i < m_joints.size(); ++i)
+	{
+		if (m_joints[i].getParent() == jointId)
+			outChildJoints.push_back(i);
+	}
+}
+
+Transform Model::getJointGlobalTransform(uint32_t jointId) const
+{
+	Transform Tglobal = Transform::identity();
+	while (jointId != c_InvalidIndex)
+	{
+		Tglobal = Tglobal * m_joints[jointId].getTransform();
+		jointId = m_joints[jointId].getParent();
+	}
+	return Tglobal;
+}
+
+uint32_t Model::addAnimation(Animation* animation)
+{
+	uint32_t id = (uint32_t)m_animations.size();
+	m_animations.push_back(animation);
+	return id;
+}
+
+const Animation* Model::findAnimation(const std::wstring& animationName) const
+{
+	const auto i = std::find_if(m_animations.begin(), m_animations.end(), [&](const Animation* anim) {
+		return anim->getName() == animationName;
+	});
+	return i != m_animations.end() ? *i : nullptr;
 }
 
 uint32_t Model::addBlendTarget(const std::wstring& blendTargetName)
 {
-	AlignedVector< std::wstring >::iterator i = std::find(m_blendTargets.begin(), m_blendTargets.end(), blendTargetName);
+	const auto i = std::find(m_blendTargets.begin(), m_blendTargets.end(), blendTargetName);
 	if (i != m_blendTargets.end())
 		return uint32_t(std::distance(m_blendTargets.begin(), i));
 
@@ -331,7 +370,12 @@ void Model::serialize(ISerializer& s)
 	s >> MemberAlignedVector< Vector2 >(L"texCoords", texCoords);
 	m_texCoords.replace(texCoords);
 
-	s >> MemberAlignedVector< std::wstring >(L"joints", m_joints);
+	s >> MemberAlignedVector< std::wstring >(L"texCoordChannels", m_texCoordChannels);
+	
+	s >> MemberAlignedVector< Joint, MemberComposite< Joint > >(L"joints", m_joints);
+
+	s >> MemberRefArray< Animation >(L"animations", m_animations);
+
 	s >> MemberAlignedVector< std::wstring >(L"blendTargets", m_blendTargets);
 
 	s >> MemberStlMap<

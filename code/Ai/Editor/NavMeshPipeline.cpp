@@ -290,7 +290,7 @@ bool NavMeshPipeline::buildOutput(
 				}
 				else
 				{
-					Ref< model::Model > meshModel = model::ModelFormat::readAny(meshAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+					Ref< model::Model > meshModel = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
 						return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 					});
 					if (!meshModel)
@@ -320,7 +320,7 @@ bool NavMeshPipeline::buildOutput(
 				}
 				else
 				{
-					Ref< model::Model > meshModel = model::ModelFormat::readAny(meshAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+					Ref< model::Model > meshModel = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
 						return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 					});
 					if (!meshModel)
@@ -352,7 +352,7 @@ bool NavMeshPipeline::buildOutput(
 					}
 					else
 					{
-						Ref< model::Model > meshModel = model::ModelFormat::readAny(meshAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+						Ref< model::Model > meshModel = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
 							return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 						});
 						if (!meshModel)
