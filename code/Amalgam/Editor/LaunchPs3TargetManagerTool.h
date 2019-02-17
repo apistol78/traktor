@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_LaunchPs3TargetManagerTool_H
-#define traktor_amalgam_LaunchPs3TargetManagerTool_H
+#pragma once
 
 #include "Editor/IEditorTool.h"
 
@@ -25,11 +18,8 @@ public:
 
 	virtual bool needOutputResources(std::set< Guid >& outDependencies) const override final;
 
-	virtual bool launch(ui::Widget* parent, editor::IEditor* amalgam, const std::wstring& param) override final;
+	virtual bool launch(ui::Widget* parent, editor::IEditor* amalgam, const PropertyGroup* param) override final;
 };
 
 	}
 }
-
-#endif	// traktor_amalgam_LaunchPs3TargetManagerTool_H
-

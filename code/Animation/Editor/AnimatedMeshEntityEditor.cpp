@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Animation/Editor/AnimatedMeshEntityEditor.h"
 #include "Animation/AnimatedMeshEntityData.h"
 #include "Animation/AnimatedMeshEntity.h"
@@ -68,38 +62,12 @@ void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 
 					primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
 
-					if (joint->getParent() >= 0)
+					// if (joint->getParent() >= 0)
 					{
-						const Joint* parent = skeleton->getJoint(joint->getParent());
-						T_ASSERT (parent);
+						// const Joint* parent = skeleton->getJoint(joint->getParent());
+						// T_ASSERT (parent);
 
-						Vector4 start = poseTransforms[joint->getParent()].translation().xyz1();
-						Vector4 end = poseTransforms[i].translation().xyz1();
-
-						Vector4 z = (end - start).normalized();
-
-						Vector4 x, y;
-						orthogonalFrame(z, x, y);
-
-						Scalar radius(parent->getRadius());
-						x *= radius;
-						y *= radius;
-						z *= radius;
-
-						primitiveRenderer->drawLine(start, start + z + x + y, color);
-						primitiveRenderer->drawLine(start, start + z - x + y, color);
-						primitiveRenderer->drawLine(start, start + z + x - y, color);
-						primitiveRenderer->drawLine(start, start + z - x - y, color);
-
-						primitiveRenderer->drawLine(start + z + x + y, end, color);
-						primitiveRenderer->drawLine(start + z - x + y, end, color);
-						primitiveRenderer->drawLine(start + z + x - y, end, color);
-						primitiveRenderer->drawLine(start + z - x - y, end, color);
-
-						primitiveRenderer->drawLine(start + z + x + y, start + z - x + y, color);
-						primitiveRenderer->drawLine(start + z - x + y, start + z - x - y, color);
-						primitiveRenderer->drawLine(start + z - x - y, start + z + x - y, color);
-						primitiveRenderer->drawLine(start + z + x - y, start + z + x + y, color);
+						primitiveRenderer->drawBone(poseTransforms[i].toMatrix44(), 10.0f, color);
 					}
 				}
 			}

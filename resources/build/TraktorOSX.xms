@@ -2456,33 +2456,6 @@
 					</items>
 				</item>
 				<item type="Filter">
-					<name>LwsParser</name>
-					<items>
-						<item type="File">
-							<fileName>LwsParser/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Resources</name>
-					<items>
-						<item type="File">
-							<fileName>Resources/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>BvhParser</name>
-					<items>
-						<item type="File">
-							<fileName>BvhParser/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
 					<name>Cloth</name>
 					<items>
 						<item type="File">
@@ -6268,6 +6241,51 @@
 												<item type="File">
 													<fileName>Formats/*.*</fileName>
 													<items/>
+												</item>
+												<item type="Filter">
+													<name>Fbx</name>
+													<items>
+														<item type="File">
+															<fileName>Formats/Fbx/*.*</fileName>
+															<items/>
+														</item>
+													</items>
+												</item>
+												<item type="Filter">
+													<name>Gltf</name>
+													<items>
+														<item type="File">
+															<fileName>Formats/Gltf/*.*</fileName>
+															<items/>
+														</item>
+													</items>
+												</item>
+												<item type="Filter">
+													<name>Lwo</name>
+													<items>
+														<item type="File">
+															<fileName>Formats/Lwo/*.*</fileName>
+															<items/>
+														</item>
+													</items>
+												</item>
+												<item type="Filter">
+													<name>Obj</name>
+													<items>
+														<item type="File">
+															<fileName>Formats/Obj/*.*</fileName>
+															<items/>
+														</item>
+													</items>
+												</item>
+												<item type="Filter">
+													<name>Tmd</name>
+													<items>
+														<item type="File">
+															<fileName>Formats/Tmd/*.*</fileName>
+															<items/>
+														</item>
+													</items>
 												</item>
 											</items>
 										</item>

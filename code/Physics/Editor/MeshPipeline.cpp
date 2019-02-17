@@ -90,7 +90,7 @@ bool MeshPipeline::buildOutput(
 	}
 	else
 	{
-		model = model::ModelFormat::readAny(meshAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+		model = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
 			return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 		});
 	}

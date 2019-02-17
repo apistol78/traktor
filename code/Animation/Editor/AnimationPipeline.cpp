@@ -1,25 +1,19 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Animation/Animation/Animation.h"
 #include "Animation/Editor/AnimationAsset.h"
-#include "Animation/Editor/AnimationFormatBvh.h"
-#include "Animation/Editor/AnimationFormatLws.h"
 #include "Animation/Editor/AnimationPipeline.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
+// #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
-#include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
+#include "Model/Model.h"
+#include "Model/ModelFormat.h"
+#include "Model/Pose.h"
+#include "Model/Operations/Transform.h"
 
 namespace traktor
 {
@@ -72,125 +66,130 @@ bool AnimationPipeline::buildOutput(
 ) const
 {
 	Ref< const AnimationAsset > animationAsset = checked_type_cast< const AnimationAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, animationAsset->getFileName());
 
-	Ref< IAnimationFormat > format;
-
-	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"bvh") == 0)
-		format = new AnimationFormatBvh();
-	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"lws") == 0)
-		format = new AnimationFormatLws();
-
-	if (!format)
+	Ref< model::Model > model = model::ModelFormat::readAny(animationAsset->getFileName(), [&](const Path& p) {
+		return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+	});
+	if (!model)
 	{
-		log::error << L"Unable to build animation; unsupported format \"" << fileName.getExtension() << L"\"" << Endl;
+		log::error << L"Unable to build animation; no such file \"" << animationAsset->getFileName().getPathName() << L"\"." << Endl;
 		return false;
 	}
 
-	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
-	if (!file)
+	// Scale model according to scale factor in asset.
+	model::Transform(scale(animationAsset->getScale(), animationAsset->getScale(), animationAsset->getScale())).apply(*model);
+
+	const std::wstring name = animationAsset->getAnimation();
+
+	Ref< const model::Animation > modelAnim = model->findAnimation(name);
+	if (!modelAnim)
 	{
-		log::error << L"Unable to build animation; no such file \"" << fileName.getPathName() << L"\"" << Endl;
-		return false;
+		log::error << L"Unable to build animation; no such animation \"" << name << L"\" in file \"" << animationAsset->getFileName().getPathName() << L"\"." << Endl;
+		return false;		
 	}
 
-	Ref< Animation > anim = format->import(
-		file, 
-		animationAsset->getOffset(),
-		animationAsset->getInvertX(),
-		animationAsset->getInvertZ(),
-		animationAsset->shouldAutoCenterKeyPoses()
-	);
+	const uint32_t jointCount = model->getJointCount();
 
-	file->close();
+	Ref< Animation > anim = new Animation();
 
-	if (!anim)
+	for (uint32_t i = 0; i < modelAnim->getKeyFrameCount(); ++i)
 	{
-		log::error << L"Unable to build animation; import failed \"" << fileName.getPathName() << L"\"" << Endl;
-		return false;
+		float time = modelAnim->getKeyFrameTime(i);
+		const model::Pose* pose = modelAnim->getKeyFramePose(i);
+
+		Animation::KeyPose kp;
+		kp.at = time;
+
+		for (uint32_t j = 0; j < jointCount; ++j)
+		{
+			const Transform& jointTransform = pose->getJointTransform(j);
+			kp.pose.setJointTransform(j, jointTransform);
+		}
+
+		anim->addKeyPose(kp);
 	}
 
 	// Discard redundant key poses.
 	uint32_t uncompressedCount = anim->getKeyPoseCount();
-	if (uncompressedCount > 2)
-	{
-		bool anyRemoved = true;
+	// if (uncompressedCount > 2)
+	// {
+	// 	bool anyRemoved = true;
 
-		while (anyRemoved)
-		{
-			anyRemoved = false;
+	// 	while (anyRemoved)
+	// 	{
+	// 		anyRemoved = false;
 
-			int32_t indexHint = -1;
+	// 		int32_t indexHint = -1;
 
-			uint32_t count = anim->getKeyPoseCount();
-			for (uint32_t i = 0; i < count - 2; ++i)
-			{
-				Animation::KeyPose k0 = anim->getKeyPose(i);
-				Animation::KeyPose k1 = anim->getKeyPose(i + 1);
-				Animation::KeyPose k2 = anim->getKeyPose(i + 2);
+	// 		uint32_t count = anim->getKeyPoseCount();
+	// 		for (uint32_t i = 0; i < count - 2; ++i)
+	// 		{
+	// 			Animation::KeyPose k0 = anim->getKeyPose(i);
+	// 			Animation::KeyPose k1 = anim->getKeyPose(i + 1);
+	// 			Animation::KeyPose k2 = anim->getKeyPose(i + 2);
 
-				uint32_t jointCount = max(max(k0.pose.getMaxIndex(), k1.pose.getMaxIndex()), k2.pose.getMaxIndex()) + 1;
+	// 			uint32_t jointCount = max(max(k0.pose.getMaxIndex(), k1.pose.getMaxIndex()), k2.pose.getMaxIndex()) + 1;
 
-				// Evaluate reference path.
-				AlignedVector< Pose > ref;
+	// 			// Evaluate reference path.
+	// 			AlignedVector< Pose > ref;
 
-				indexHint = -1;
-				for (float T = k0.at; T <= k2.at; T += 1.0f / 60.0f)
-				{
-					Pose pose;
-					anim->getPose(T, false, indexHint, pose);
-					ref.push_back(pose);
-				}
+	// 			indexHint = -1;
+	// 			for (float T = k0.at; T <= k2.at; T += 1.0f / 60.0f)
+	// 			{
+	// 				Pose pose;
+	// 				anim->getPose(T, false, indexHint, pose);
+	// 				ref.push_back(pose);
+	// 			}
 
-				// Remove middle key pose and re-evaluate.
-				anim->removeKeyPose(i + 1);
+	// 			// Remove middle key pose and re-evaluate.
+	// 			anim->removeKeyPose(i + 1);
 
-				AlignedVector< Pose >::const_iterator ir = ref.begin();
+	// 			AlignedVector< Pose >::const_iterator ir = ref.begin();
 
-				Scalar totalOffsetError(0.0f);
-				Scalar totalOrientationError(0.0f);
+	// 			Scalar totalOffsetError(0.0f);
+	// 			Scalar totalOrientationError(0.0f);
 
-				indexHint = -1;
-				for (float T = k0.at; T <= k2.at; T += 1.0f / 60.0f)
-				{
-					if (ir == ref.end())
-					{
-						totalOffsetError = Scalar(std::numeric_limits< float >::max());
-						totalOrientationError = Scalar(std::numeric_limits< float >::max());
-						break;
-					}
+	// 			indexHint = -1;
+	// 			for (float T = k0.at; T <= k2.at; T += 1.0f / 60.0f)
+	// 			{
+	// 				if (ir == ref.end())
+	// 				{
+	// 					totalOffsetError = Scalar(std::numeric_limits< float >::max());
+	// 					totalOrientationError = Scalar(std::numeric_limits< float >::max());
+	// 					break;
+	// 				}
 
-					Pose pose;
-					anim->getPose(T, false, indexHint, pose);
+	// 				Pose pose;
+	// 				anim->getPose(T, false, indexHint, pose);
 
-					for (uint32_t j = 0; j < jointCount; ++j)
-					{
-						Vector4 jointOffsetRef = ir->getJointOffset(j);
-						Vector4 jointOffsetCheck = pose.getJointOffset(j);
+	// 				for (uint32_t j = 0; j < jointCount; ++j)
+	// 				{
+	// 					Vector4 jointOffsetRef = ir->getJointOffset(j);
+	// 					Vector4 jointOffsetCheck = pose.getJointOffset(j);
 
-						Rotator jointOrientationRef = ir->getJointOrientation(j);
-						Rotator jointOrientationCheck = pose.getJointOrientation(j);
+	// 					Rotator jointOrientationRef = ir->getJointOrientation(j);
+	// 					Rotator jointOrientationCheck = pose.getJointOrientation(j);
 
-						Scalar offsetError = (jointOffsetRef - jointOffsetCheck).length();
-						Scalar orientationError = (jointOrientationRef.toQuaternion().inverse() * jointOrientationCheck.toQuaternion()).toAxisAngle().length();
+	// 					Scalar offsetError = (jointOffsetRef - jointOffsetCheck).length();
+	// 					Scalar orientationError = (jointOrientationRef.toQuaternion().inverse() * jointOrientationCheck.toQuaternion()).toAxisAngle().length();
 
-						totalOffsetError += offsetError;
-						totalOrientationError += orientationError;
-					}
+	// 					totalOffsetError += offsetError;
+	// 					totalOrientationError += orientationError;
+	// 				}
 
-					++ir;
-				}
+	// 				++ir;
+	// 			}
 
-				if (totalOffsetError > FUZZY_EPSILON || totalOrientationError > FUZZY_EPSILON)
-					anim->addKeyPose(k1);
-				else
-				{
-					anyRemoved = true;
-					break;
-				}
-			}
-		}
-	}
+	// 			if (totalOffsetError > FUZZY_EPSILON || totalOrientationError > FUZZY_EPSILON)
+	// 				anim->addKeyPose(k1);
+	// 			else
+	// 			{
+	// 				anyRemoved = true;
+	// 				break;
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	if (uncompressedCount != anim->getKeyPoseCount())
 		log::info << L"Removed " << (uncompressedCount - anim->getKeyPoseCount()) << L" redundant key poses in animation; was " << uncompressedCount << L", now " << anim->getKeyPoseCount() << Endl;

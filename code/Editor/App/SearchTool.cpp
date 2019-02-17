@@ -33,7 +33,7 @@ bool SearchTool::needOutputResources(std::set< Guid >& outDependencies) const
 	return false;
 }
 
-bool SearchTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
+bool SearchTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGroup* param)
 {
 	safeDestroy(m_searchDialog);
 

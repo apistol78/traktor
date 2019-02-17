@@ -1,17 +1,9 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_animation_Pose_H
-#define traktor_animation_Pose_H
+#pragma once
 
 #include "Animation/BitSet.h"
-#include "Animation/Rotator.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Core/Math/Vector4.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,13 +26,9 @@ class T_DLLCLASS Pose : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	void setJointOffset(uint32_t jointIndex, const Vector4& jointOffset);
+	void setJointTransform(uint32_t jointIndex, const Transform& jointTransform);
 
-	Vector4 getJointOffset(uint32_t jointIndex) const;
-
-	void setJointOrientation(uint32_t jointIndex, const Rotator& jointOrientation);
-
-	Rotator getJointOrientation(uint32_t jointIndex) const;
+	Transform getJointTransform(uint32_t jointIndex) const;
 
 	uint32_t getMaxIndex() const;
 
@@ -52,12 +40,11 @@ private:
 	struct Joint
 	{
 		uint32_t index;
-		Vector4 offset;
-		Rotator orientation;
+		Transform transform;
 
 		Joint(uint32_t index_ = 0)
 		:	index(index_)
-		,	offset(0.0f, 0.0f, 0.0f, 0.0f)
+		,	transform(Transform::identity())
 		{
 		}
 
@@ -73,5 +60,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_animation_Pose_H

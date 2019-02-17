@@ -35,18 +35,6 @@ class T_DLLCLASS ModelFormat : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum ImportFlags
-	{
-		IfMaterials = 1,
-		IfMeshPositions = 2,
-		IfMeshVertices = 4,
-		IfMeshPolygons = 8,
-		IfMeshBlendTargets = 16,
-		IfMeshBlendWeights = 32,
-		IfMesh = (IfMeshPositions | IfMeshVertices | IfMeshPolygons | IfMeshBlendTargets | IfMeshBlendWeights),
-		IfAll = (IfMaterials | IfMesh)
-	};
-
 	/*! \brief Get list of common extensions of implemented format.
 	 *
 	 * \param outDescription Human readable description of format.
@@ -64,10 +52,9 @@ public:
 	/*! \brief Read model.
 	 *
 	 * \param stream Source stream.
-	 * \param importFlags Import flags.
 	 * \return Read model.
 	 */
-	virtual Ref< Model > read(const Path& filePath, uint32_t importFlags, const std::function< Ref< IStream >(const Path&) >& openStream) const = 0;
+	virtual Ref< Model > read(const Path& filePath, const std::function< Ref< IStream >(const Path&) >& openStream) const = 0;
 
 	/*! \brief Write model.
 	 *
@@ -80,19 +67,17 @@ public:
 	/*! \brief Automatically read model using appropriate format.
 	 *
 	 * \param filePath Path to model file.
-	 * \param importFlags Import flags.
 	 * \return Read model.
 	 */
-	static Ref< Model > readAny(const Path& filePath, uint32_t importFlags = IfAll);
+	static Ref< Model > readAny(const Path& filePath);
 
 	/*! \brief Automatically read model using appropriate format.
 	 *
 	 * \param filePath Path to model file.
-	 * \param importFlags Import flags.
 	 * \param openStreamFn Open stream function.
 	 * \return Read model.
 	 */
-	static Ref< Model > readAny(const Path& filePath, uint32_t importFlags, const std::function< Ref< IStream >(const Path&) >& openStream);
+	static Ref< Model > readAny(const Path& filePath, const std::function< Ref< IStream >(const Path&) >& openStream);
 
 	/*! \brief Automatically write model using format based on filename extension.
 	 *

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/AnsiEncoding.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Half.h"
@@ -944,6 +938,42 @@ void PrimitiveRenderer::drawProtractor(
 		vxe[2],
 		colorHint
 	);
+}
+
+void PrimitiveRenderer::drawBone(
+	const Matrix44& bone,
+	float length,
+	const Color4ub& color
+)
+{
+	Vector4 start = bone * Vector4::origo();
+	Vector4 end = bone * Vector4(0.0f, 0.0f, length, 1.0f);
+
+	Vector4 z = (end - start).normalized();
+	Vector4 x = bone.axisX();
+	Vector4 y = bone.axisY();
+
+	Scalar radius(length * 0.1f);
+	x *= radius;
+	y *= radius;
+	z *= radius;
+
+	const float c_lineWidth = 0.0f;
+
+	drawLine(start, start + z + x + y, c_lineWidth, color);
+	drawLine(start, start + z - x + y, c_lineWidth, color);
+	drawLine(start, start + z + x - y, c_lineWidth, color);
+	drawLine(start, start + z - x - y, c_lineWidth, color);
+
+	drawLine(start + z + x + y, end, c_lineWidth, color);
+	drawLine(start + z - x + y, end, c_lineWidth, color);
+	drawLine(start + z + x - y, end, c_lineWidth, color);
+	drawLine(start + z - x - y, end, c_lineWidth, color);
+
+	drawLine(start + z + x + y, start + z - x + y, c_lineWidth, color);
+	drawLine(start + z - x + y, start + z - x - y, c_lineWidth, color);
+	drawLine(start + z - x - y, start + z + x - y, c_lineWidth, color);
+	drawLine(start + z + x - y, start + z + x + y, c_lineWidth, color);
 }
 
 void PrimitiveRenderer::drawCone(

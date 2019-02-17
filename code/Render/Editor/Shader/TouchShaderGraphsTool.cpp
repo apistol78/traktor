@@ -32,7 +32,7 @@ bool TouchShaderGraphsTool::needOutputResources(std::set< Guid >& outDependencie
 	return false;
 }
 
-bool TouchShaderGraphsTool::launch(ui::Widget* parent, editor::IEditor* editor, const std::wstring& param)
+bool TouchShaderGraphsTool::launch(ui::Widget* parent, editor::IEditor* editor, const PropertyGroup* param)
 {
 	Ref< db::Database > database = editor->getSourceDatabase();
 	if (!database)

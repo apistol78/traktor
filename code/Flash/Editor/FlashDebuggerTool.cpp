@@ -32,7 +32,7 @@ bool FlashDebuggerTool::needOutputResources(std::set< Guid >& outDependencies) c
 	return false;
 }
 
-bool FlashDebuggerTool::launch(ui::Widget* parent, editor::IEditor* editor, const std::wstring& param)
+bool FlashDebuggerTool::launch(ui::Widget* parent, editor::IEditor* editor, const PropertyGroup* param)
 {
 	//// If debugger dialog is already created then we only need to show it.
 	//if (m_debuggerDialog)

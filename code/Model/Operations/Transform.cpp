@@ -1,10 +1,6 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
+#include "Core/Serialization/DeepClone.h"
 #include "Model/Model.h"
+#include "Model/Pose.h"
 #include "Model/Operations/Transform.h"
 
 namespace traktor
@@ -22,14 +18,48 @@ Transform::Transform(const Matrix44& tf)
 bool Transform::apply(Model& model) const
 {
 	AlignedVector< Vector4 > positions = model.getPositions();
-	for (AlignedVector< Vector4 >::iterator i = positions.begin(); i != positions.end(); ++i)
-		*i = m_transform * (*i);
+	for (auto& position : positions)
+		position = m_transform * position;
 	model.setPositions(positions);
 
 	AlignedVector< Vector4 > normals = model.getNormals();
-	for (AlignedVector< Vector4 >::iterator i = normals.begin(); i != normals.end(); ++i)
-		*i = (m_transform * (*i)).normalized();
+	for (auto& normal : normals)
+		normal = (m_transform * normal).normalized();
 	model.setNormals(normals);
+
+	AlignedVector< Joint > joints = model.getJoints();
+	for (auto& joint : joints)
+	{
+		traktor::Transform jt0 = joint.getTransform();
+		traktor::Transform jt1(
+			m_transform * jt0.translation().xyz1(),
+			jt0.rotation()
+		);
+		joint.setTransform(jt1);
+	}
+	model.setJoints(joints);
+
+	auto animations = model.getAnimations();
+	for (auto animation : animations)
+	{
+		for (uint32_t i = 0; i < animation->getKeyFrameCount(); ++i)
+		{
+			Ref< Pose > pose = DeepClone(animation->getKeyFramePose(i)).create< Pose >();
+
+			for (uint32_t j = 0; j < model.getJointCount(); ++j)
+			{
+				traktor::Transform jt0 = pose->getJointTransform(j);
+				traktor::Transform jt1(
+					m_transform * jt0.translation().xyz1(),
+					jt0.rotation()
+				);
+				pose->setJointTransform(j, jt1);
+			}
+
+			animation->setKeyFramePose(i, pose);
+		}
+	}
+
 	return true;
 }
 

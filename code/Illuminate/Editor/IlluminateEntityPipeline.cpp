@@ -331,7 +331,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			if (!meshAsset)
 				continue;
 
-			Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+			Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
 				return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 			});
 			if (!model)
@@ -377,7 +377,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		}
 
 		// Get next free channel to store lightmap UV.
-		uint32_t channel = mergedModel->getAvailableTexCoordChannel();
+		uint32_t channel = mergedModel->addUniqueTexCoordChannel(L"Illuminate_LightmapUV");
 		log::info << L"UV unwrapping, using channel " << channel << L"..." << Endl;
 
 		// Calculate output size from lumel density.

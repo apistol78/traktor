@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/SafeDestroy.h"
 #include "Script/Editor/ScriptDebuggerTool.h"
 #include "Script/Editor/ScriptDebuggerDialog.h"
@@ -33,7 +27,7 @@ bool ScriptDebuggerTool::needOutputResources(std::set< Guid >& outDependencies) 
 	return false;
 }
 
-bool ScriptDebuggerTool::launch(ui::Widget* parent, editor::IEditor* script, const std::wstring& param)
+bool ScriptDebuggerTool::launch(ui::Widget* parent, editor::IEditor* script, const PropertyGroup* param)
 {
 	// If debugger dialog is already created then we only need to show it.
 	if (m_debuggerDialog)

@@ -1,10 +1,7 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyFloat.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "Model/Editor/ModelTool.h"
 #include "Model/Editor/ModelToolDialog.h"
@@ -43,7 +40,7 @@ bool ModelTool::needOutputResources(std::set< Guid >& outDependencies) const
 	return true;
 }
 
-bool ModelTool::launch(ui::Widget* parent, editor::IEditor* editor, const std::wstring& param)
+bool ModelTool::launch(ui::Widget* parent, editor::IEditor* editor, const PropertyGroup* param)
 {
 	safeDestroy(m_dialog);
 
@@ -59,8 +56,17 @@ bool ModelTool::launch(ui::Widget* parent, editor::IEditor* editor, const std::w
 	resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
 	resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 
+	std::wstring fileName;
+	float scale = 1.0f;
+
+	if (param)
+	{
+		fileName = param->getProperty< std::wstring >(L"fileName", L"");
+		scale = param->getProperty< float >(L"scale", 1.0f);
+	}
+
 	m_dialog = new ModelToolDialog(resourceManager, renderSystem);
-	if (!m_dialog->create(parent, param))
+	if (!m_dialog->create(parent, fileName, scale))
 	{
 		safeDestroy(m_dialog);
 		return false;

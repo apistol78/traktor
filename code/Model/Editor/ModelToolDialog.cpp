@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -13,6 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
 #include "Model/ModelFormat.h"
+#include "Model/Pose.h"
 #include "Model/Editor/ModelToolDialog.h"
 #include "Model/Operations/BakePixelOcclusion.h"
 #include "Model/Operations/CalculateConvexHull.h"
@@ -87,7 +82,7 @@ ModelToolDialog::ModelToolDialog(
 {
 }
 
-bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
+bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, float scale)
 {
 	if (!ui::Dialog::create(parent, L"Model Tool", ui::dpi96(1000), ui::dpi96(800), ui::Dialog::WsDefaultResizable, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
@@ -129,6 +124,9 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 
 	m_toolJoint = new ui::ToolBarDropDown(ui::Command(L"ModelTool.Joint"), ui::dpi96(200), L"Joints");
 	toolBar->addItem(m_toolJoint);
+
+	m_toolJointRest = new ui::ToolBarButton(L"Rest", ui::Command(L"ModelTool.ToggleJointRest"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
+	toolBar->addItem(m_toolJointRest);
 
 	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ModelToolDialog::eventToolBarClick);
 
@@ -254,8 +252,8 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName)
 		Ref< Model > model = ModelFormat::readAny(fileName);
 		if (model)
 		{
-			Aabb3 boundingBox = model->getBoundingBox();
-			Transform(translate(-boundingBox.getCenter())).apply(*model);
+			if (std::abs(scale - 1.0f) > FUZZY_EPSILON)
+				Transform(traktor::scale(scale, scale, scale)).apply(*model);
 
 			Ref< ui::TreeViewItem > item = m_modelTree->createItem(0, fileName, 0);
 			item->setData(L"MODEL", model);
@@ -295,9 +293,6 @@ bool ModelToolDialog::loadModel()
 		Ref< Model > model = ModelFormat::readAny(*i);
 		if (!model)
 			continue;
-
-		Aabb3 boundingBox = model->getBoundingBox();
-		Transform(translate(-boundingBox.getCenter())).apply(*model);
 
 		Ref< ui::TreeViewItem > item = m_modelTree->createItem(0, i->getFileName(), 0);
 		item->setData(L"MODEL", model);
@@ -651,8 +646,9 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 			addStatistic(L"# colors", toString(m_model->getColorCount()));
 			addStatistic(L"# normals", toString(m_model->getNormalCount()));
 			addStatistic(L"# texcoords", toString(m_model->getTexCoords().size()));
-			addStatistic(L"# texture channels", toString(m_model->getAvailableTexCoordChannel()));
+			addStatistic(L"# texture channels", toString(m_model->getTexCoordChannels().size()));
 			addStatistic(L"# joints", toString(m_model->getJointCount()));
+			addStatistic(L"# animations ", toString(m_model->getAnimationCount()));
 			addStatistic(L"# blend targets", toString(m_model->getBlendTargetCount()));
 		}
 
@@ -672,7 +668,7 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 		if (jointCount > 0)
 		{
 			for (uint32_t i = 0; i < jointCount; ++i)
-				m_toolJoint->add(m_model->getJoint(i));
+				m_toolJoint->add(m_model->getJoint(i).getName());
 
 			m_toolJoint->select(0);
 			m_toolJoint->setEnable(true);
@@ -770,11 +766,13 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			m_primitiveRenderer->drawLine(
 				Vector4(float(x), 0.0f, -10.0f, 1.0f),
 				Vector4(float(x), 0.0f, 10.0f, 1.0f),
+				(x == 0) ? 2.0f : 0.0f,
 				Color4ub(0, 0, 0, 80)
 			);
 			m_primitiveRenderer->drawLine(
 				Vector4(-10.0f, 0.0f, float(x), 1.0f),
 				Vector4(10.0f, 0.0f, float(x), 1.0f),
+				(x == 0) ? 2.0f : 0.0f,
 				Color4ub(0, 0, 0, 80)
 			);
 		}
@@ -868,6 +866,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			const AlignedVector< Vector4 >& positions = m_model->getPositions();
 			const AlignedVector< Vector4 >& normals = m_model->getNormals();
 			const AlignedVector< Vector2 >& texCoords = m_model->getTexCoords();
+			const AlignedVector< Joint >& joints = m_model->getJoints();
 
 			// Render wire-frame.
 			if (m_toolWire->isToggled())
@@ -877,6 +876,32 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				{
 					const AlignedVector< uint32_t >& indices = i->getVertices();
 
+
+					// if (m_model->getAnimationCount() > 0)
+					// {
+					// 	const Animation* anim = m_model->getAnimation(0);
+					// 	const Pose* pose = anim->getKeyFramePose(0);
+
+					// 	for (uint32_t i = 0; i < indices.size(); ++i)
+					// 	{
+					// 		const Vertex& vx = vertices[indices[i]];
+
+					// 		for (uint32_t j = 0; j < joints.size(); ++j)
+					// 		{
+					// 			float w = vx.getJointInfluence(j);
+					// 			if (std::abs(w) > FUZZY_EPSILON)
+					// 			{
+
+					// 				//auto Tglobal = joint.getTransform();
+					// 				auto Tdelta = pose->getJointTransform(i);
+					// 				//auto Tfinal = Tglobal : Tdelta;									
+
+					// 			}
+					// 		}
+					// 	}
+					// }
+
+
 					for (uint32_t i = 0; i < indices.size(); ++i)
 					{
 						const Vertex& vx0 = vertices[indices[i]];
@@ -884,6 +909,10 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 
 						const Vector4& p0 = positions[vx0.getPosition()];
 						const Vector4& p1 = positions[vx1.getPosition()];
+
+
+
+
 
 						m_primitiveRenderer->drawLine(p0, p1, Color4ub(255, 255, 255, 200));
 					}
@@ -946,6 +975,37 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 					m_primitiveRenderer->drawSolidPoint(*i, 3.0f, Color4ub(255, 255, 0, 200));
 				}
 				m_primitiveRenderer->popDepthState();
+			}
+
+			//if (true /*joints*/)
+			if (m_modelTris->getAnimationCount() > 0)
+			{
+				int32_t selectedJoint = m_toolJoint->getSelected();
+				bool showRest = m_toolJointRest->isToggled();
+
+				const Animation* anim = m_modelTris->getAnimation(0);
+				const Pose* pose = anim->getKeyFramePose(0);
+
+				m_primitiveRenderer->pushDepthState(true, false, false);
+				for (uint32_t i = 0; i < joints.size(); ++i)
+				{
+					const auto& joint = joints[i];
+					const auto color = (i == selectedJoint) ? Color4ub(255, 255, 80, 255) : Color4ub(255, 180, 120, 255);
+
+					AlignedVector< uint32_t > childJointIds;
+					m_modelTris->findChildJoints(i, childJointIds);
+
+					auto Tglobal = joint.getTransform();
+					auto Tdelta = pose->getJointTransform(i);
+					auto Tfinal = showRest ? Tglobal : Tdelta * Tglobal;
+
+					m_primitiveRenderer->drawBone(
+						Tfinal.toMatrix44(),
+						joint.getLength(),
+						color
+					);
+				}
+				m_primitiveRenderer->popDepthState();			
 			}
 
 			if (m_toolUV->isToggled())

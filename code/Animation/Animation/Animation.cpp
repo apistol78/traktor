@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Animation/Animation/Animation.h"
 #include "Animation/SkeletonUtils.h"
 #include "Core/Math/Hermite.h"
@@ -61,8 +55,18 @@ struct KeyPoseAccessor
 			if (!indices(i))
 				continue;
 
-			pose.setJointOffset(i, v0.getJointOffset(i) * sw0 + v1.getJointOffset(i) * sw1 + v2.getJointOffset(i) * sw2 + v3.getJointOffset(i) * sw3);
-			pose.setJointOrientation(i, v0.getJointOrientation(i) * sw0 + v1.getJointOrientation(i) * sw1 + v2.getJointOrientation(i) * sw2 + v3.getJointOrientation(i) * sw3);
+			const auto t0 = v0.getJointTransform(i);
+			const auto t1 = v1.getJointTransform(i);
+			const auto t2 = v2.getJointTransform(i);
+			const auto t3 = v3.getJointTransform(i);
+
+			pose.setJointTransform(
+				i,
+				Transform(
+					t0.translation() * sw0 + t1.translation() * sw1 + t2.translation() * sw2 + t3.translation() * sw3,
+					(t0.rotation() * sw0 + t1.rotation() * sw1 + t2.rotation() * sw2 + t3.rotation() * sw3).normalized()
+				)
+			);
 		}
 
 		return pose;
@@ -71,7 +75,7 @@ struct KeyPoseAccessor
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.Animation", 0, Animation, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Animation", 0, Animation, ISerializable)
 
 uint32_t Animation::addKeyPose(const KeyPose& pose)
 {

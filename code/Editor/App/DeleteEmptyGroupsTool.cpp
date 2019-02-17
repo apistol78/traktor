@@ -59,7 +59,7 @@ bool DeleteEmptyGroupsTool::needOutputResources(std::set< Guid >& outDependencie
 	return false;
 }
 
-bool DeleteEmptyGroupsTool::launch(ui::Widget* parent, IEditor* editor, const std::wstring& param)
+bool DeleteEmptyGroupsTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGroup* param)
 {
 	db::Database* db = editor->getSourceDatabase();
 	if (!db)

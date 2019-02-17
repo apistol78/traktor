@@ -155,7 +155,7 @@ Ref< ISerializable > BatchMeshEntityPipeline::buildOutput(
 		for (std::map< std::wstring, Guid >::const_iterator j = materialTextures.begin(); j != materialTextures.end(); ++j)
 			mergedMaterialTextures[j->first] = j->second;
 
-		Ref< model::Model > partModel = model::ModelFormat::readAny(meshAsset->getFileName(), model::ModelFormat::IfAll, [&](const Path& p) {
+		Ref< model::Model > partModel = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
 			return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 		});
 		if (!partModel)

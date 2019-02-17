@@ -1,14 +1,7 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
+#include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/Editor/SkeletonAsset.h"
-#include "Animation/Editor/SkeletonFormat.h"
 #include "Animation/Editor/SkeletonPipeline.h"
-#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyString.h"
@@ -16,6 +9,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
+#include "Model/Model.h"
+#include "Model/ModelFormat.h"
+#include "Model/Operations/Transform.h"
 
 namespace traktor
 {
@@ -69,35 +65,45 @@ bool SkeletonPipeline::buildOutput(
 {
 	Ref< const SkeletonAsset > skeletonAsset = checked_type_cast< const SkeletonAsset* >(sourceAsset);
 
-	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), skeletonAsset->getFileName().getOriginal());
-	if (!file)
+	Ref< model::Model > model = model::ModelFormat::readAny(skeletonAsset->getFileName(), [&](const Path& p) {
+		return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+	});
+	if (!model)
 	{
-		log::error << L"Unable to build skeleton; no such file" << Endl;
+		log::error << L"Unable to build skeleton; no such file \"" << skeletonAsset->getFileName().getPathName() << L"\"." << Endl;
 		return false;
 	}
 
-	Ref< Skeleton > skeleton = SkeletonFormat::readAny(
-		file,
-		skeletonAsset->getFileName().getExtension(),
-		skeletonAsset->getOffset(),
-		skeletonAsset->getScale(),
-		skeletonAsset->getRadius(),
-		skeletonAsset->getInvertX(),
-		skeletonAsset->getInvertZ()
-	);
+	// Scale model according to scale factor in asset.
+	model::Transform(scale(skeletonAsset->getScale(), skeletonAsset->getScale(), skeletonAsset->getScale())).apply(*model);
 
-	file->close();
+	Ref< Skeleton > skeleton = new Skeleton();
+
+	for (const auto& modelJoint : model->getJoints())
+	{
+		Ref< Joint > joint = new Joint();
+
+		float ln = modelJoint.getTransform().rotation().e.length();
+		log::info << ln << Endl;
+
+		//joint->setParent(modelJoint.getParent());
+		joint->setName(modelJoint.getName());
+		joint->setTransform(modelJoint.getTransform());
+		joint->setRadius(0.1f);
+
+		skeleton->addJoint(joint);
+	}
 
 	if (!skeleton)
 	{
-		log::error << L"Unable to build skeleton; import failed" << Endl;
+		log::error << L"Unable to build skeleton; import failed." << Endl;
 		return false;
 	}
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!instance)
 	{
-		log::error << L"Unable to build skeleton; unable to create output instance" << Endl;
+		log::error << L"Unable to build skeleton; unable to create output instance." << Endl;
 		return false;
 	}
 
@@ -105,7 +111,7 @@ bool SkeletonPipeline::buildOutput(
 
 	if (!instance->commit())
 	{
-		log::error << L"Unable to build skeleton; unable to commit output instance" << Endl;
+		log::error << L"Unable to build skeleton; unable to commit output instance." << Endl;
 		return false;
 	}
 

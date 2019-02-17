@@ -59,7 +59,7 @@ public:
 		render::IRenderSystem* renderSystem
 	);
 
-	bool create(ui::Widget* parent, const std::wstring& fileName);
+	bool create(ui::Widget* parent, const std::wstring& fileName, float scale);
 
 	void destroy();
 
@@ -79,6 +79,7 @@ private:
 	Ref< ui::ToolBarDropDown > m_toolChannel;
 	Ref< ui::ToolBarButton > m_toolWeight;
 	Ref< ui::ToolBarDropDown > m_toolJoint;
+	Ref< ui::ToolBarButton > m_toolJointRest;
 	Ref< ui::TreeView > m_modelTree;
 	Ref< ui::GridView > m_materialGrid;
 	Ref< ui::GridView > m_statisticGrid;
