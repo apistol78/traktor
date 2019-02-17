@@ -569,8 +569,15 @@ else -- No architectures
 			output:print("\t" .. configuration:getName() .. "/" .. OBJNAME(f))
 		end
 		output:printLn("")
+		output:printLn("")
 
+		output:printLn(".PHONY: " .. configuration:getName())
 		output:printLn(configuration:getName() .. " : \\")
+		output:printLn("\t../" .. configuration:getName() .. "/" .. PRODUCTNAME(solution, project, configuration))
+
+		output:printLn("")
+
+		output:printLn("../" .. configuration:getName() .. "/" .. PRODUCTNAME(solution, project, configuration) .. " : \\")
 		output:printLn("\t$(" .. configuration:getName() .. "_OBJS)")
 
 		printWithColor(35, "Assembling " .. project:getName() .. "...")

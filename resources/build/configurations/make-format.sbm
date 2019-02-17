@@ -108,6 +108,31 @@ function CC(solution, project, configuration, architecture, filePath, outputPath
 	end
 end
 
+function LINK_OUTPUT(solution, project, configuration, architecture)
+	local productName
+	if format == "StaticLibrary" then
+		local staticLibraryFile = OS.getInstance():getEnvironment("MAKE_STATIC_LIBRARY_FILE")
+		productName = string.format(staticLibraryFile, project:getName())
+	elseif format == "SharedLibrary" then
+		local sharedLibraryFile = OS.getInstance():getEnvironment("MAKE_SHARED_LIBRARY_FILE")
+		productName = string.format(sharedLibraryFile, project:getName())
+	elseif format == "Executable" then
+		local executableFile = OS.getInstance():getEnvironment("MAKE_EXECUTABLE_FILE")
+		productName = string.format(executableFile, project:getName())
+	elseif format == "ExecutableConsole" then
+		local executableFile = OS.getInstance():getEnvironment("MAKE_EXECUTABLE_FILE")
+		productName = string.format(executableFile, project:getName())
+	end	
+	assert(productName ~= nil)
+
+	local ao = ""
+	if architecture ~= nil then
+		ao = "_" .. architecture
+	end
+		
+	return "../" .. configuration:getName() .. ao .. "/" .. productName
+end
+
 function LINK(solution, project, configuration, architecture, sourcePath, sourceFiles, libraryPaths, libraries, externalLibraries, definitionFile, output)
 	local os = OS.getInstance():getEnvironment("MAKE_OS")
 	local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
