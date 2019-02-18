@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Serialization/ISerializable.h"
