@@ -53,6 +53,7 @@ render::handle_t s_handleShadowMaskSize;
 render::handle_t s_handleShadowMask;
 render::handle_t s_handleProbeDiffuse;
 render::handle_t s_handleProbeSpecular;
+render::handle_t s_handleProbeSpecularMips;
 render::handle_t s_handleLightPosition;
 render::handle_t s_handleLightPositionAndRadius;
 render::handle_t s_handleLightDirectionAndRange;
@@ -95,6 +96,7 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
 	s_handleProbeDiffuse = render::getParameterHandle(L"World_ProbeDiffuse");
 	s_handleProbeSpecular = render::getParameterHandle(L"World_ProbeSpecular");
+	s_handleProbeSpecularMips = render::getParameterHandle(L"World_ProbeSpecularMips");
 	s_handleLightPosition = render::getParameterHandle(L"World_LightPosition");
 	s_handleLightPositionAndRadius = render::getParameterHandle(L"World_LightPositionAndRadius");
 	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
@@ -348,6 +350,7 @@ void LightRendererDeferred::renderLight(
 	else if (light.type == LtProbe)
 	{
 		m_lightProbeShader->setFloatParameter(s_handleTime, time);
+		m_lightProbeShader->setFloatParameter(s_handleProbeSpecularMips, light.probe.specular != nullptr ? (float)light.probe.specular->getMips() : 0.0f);
 		m_lightProbeShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 		m_lightProbeShader->setMatrixParameter(s_handleViewInverse, view.inverse());
 		m_lightProbeShader->setTextureParameter(s_handleProbeDiffuse, light.probe.diffuse);

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Render/Types.h"
 #include "Render/Ps4/ContextPs4.h"
@@ -40,27 +34,22 @@ ITexture* CubeTexturePs4::resolve()
 	return this;
 }
 
-int CubeTexturePs4::getWidth() const
+int32_t CubeTexturePs4::getMips() const
 {
 	return 0;
 }
 
-int CubeTexturePs4::getHeight() const
+int32_t CubeTexturePs4::getSide() const
 {
 	return 0;
 }
 
-int CubeTexturePs4::getDepth() const
-{
-	return 0;
-}
-
-bool CubeTexturePs4::lock(int side, int level, Lock& lock)
+bool CubeTexturePs4::lock(int32_t side, int32_t level, Lock& lock)
 {
 	return true;
 }
 
-void CubeTexturePs4::unlock(int side, int level)
+void CubeTexturePs4::unlock(int32_t side, int32_t level)
 {
 }
 

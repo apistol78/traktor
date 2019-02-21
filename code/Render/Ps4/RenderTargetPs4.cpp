@@ -81,6 +81,11 @@ ITexture* RenderTargetPs4::resolve()
 	return this;
 }
 
+int32_t RenderTargetPs4::getMips() const
+{
+	return 1;
+}
+
 int32_t RenderTargetPs4::getWidth() const
 {
 	return m_width;
@@ -89,11 +94,6 @@ int32_t RenderTargetPs4::getWidth() const
 int32_t RenderTargetPs4::getHeight() const
 {
 	return m_height;
-}
-
-int32_t RenderTargetPs4::getMips() const
-{
-	return 1;
 }
 
 bool RenderTargetPs4::lock(int32_t level, Lock& lock)

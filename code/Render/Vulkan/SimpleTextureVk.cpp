@@ -83,6 +83,11 @@ ITexture* SimpleTextureVk::resolve()
 	return this;
 }
 
+int32_t SimpleTextureVk::getMips() const
+{
+	return 1;
+}
+
 int32_t SimpleTextureVk::getWidth() const
 {
 	return m_width;
@@ -91,11 +96,6 @@ int32_t SimpleTextureVk::getWidth() const
 int32_t SimpleTextureVk::getHeight() const
 {
 	return m_height;
-}
-
-int32_t SimpleTextureVk::getMips() const
-{
-	return 1;
 }
 
 bool SimpleTextureVk::lock(int32_t level, Lock& lock)

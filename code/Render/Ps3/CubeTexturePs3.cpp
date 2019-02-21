@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
@@ -172,27 +166,22 @@ ITexture* CubeTexturePs3::resolve()
 	return this;
 }
 
-int CubeTexturePs3::getWidth() const
-{
-	return m_texture.width;
-}
-
-int CubeTexturePs3::getHeight() const
-{
-	return m_texture.height;
-}
-
-int CubeTexturePs3::getDepth() const
+int32_t CubeTexturePs3::getMips() const
 {
 	return 1;
 }
 
-bool CubeTexturePs3::lock(int side, int level, Lock& lock)
+int32_t CubeTexturePs3::getSide() const
+{
+	return m_texture.width;
+}
+
+bool CubeTexturePs3::lock(int32_t side, int32_t level, Lock& lock)
 {
 	return false;
 }
 
-void CubeTexturePs3::unlock(int side, int level)
+void CubeTexturePs3::unlock(int32_t side, int32_t level)
 {
 }
 

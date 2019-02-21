@@ -205,6 +205,11 @@ ITexture* RenderTargetPs3::resolve()
 	return this;
 }
 
+int32_t RenderTargetPs3::getMips() const
+{
+	return 1;
+}
+
 int32_t RenderTargetPs3::getWidth() const
 {
 	return m_width;
@@ -213,11 +218,6 @@ int32_t RenderTargetPs3::getWidth() const
 int32_t RenderTargetPs3::getHeight() const
 {
 	return m_height;
-}
-
-int32_t RenderTargetPs3::getMips() const
-{
-	return 1;
 }
 
 bool RenderTargetPs3::lock(int32_t level, Lock& lock)

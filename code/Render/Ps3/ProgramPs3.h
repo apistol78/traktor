@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ProgramPs3_H
-#define traktor_render_ProgramPs3_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
@@ -44,23 +37,23 @@ public:
 
 	bool create(MemoryHeap* memoryHeapLocal, MemoryHeap* memoryHeapMain, const ProgramResourcePs3* resource);
 
-	virtual void destroy();
+	virtual void destroy() override final;
 
-	virtual void setFloatParameter(handle_t handle, float param);
+	virtual void setFloatParameter(handle_t handle, float param) override final;
 
-	virtual void setFloatArrayParameter(handle_t handle, const float* param, int length);
+	virtual void setFloatArrayParameter(handle_t handle, const float* param, int length) override final;
 
-	virtual void setVectorParameter(handle_t handle, const Vector4& param);
+	virtual void setVectorParameter(handle_t handle, const Vector4& param) override final;
 
-	virtual void setVectorArrayParameter(handle_t handle, const Vector4* param, int length);
+	virtual void setVectorArrayParameter(handle_t handle, const Vector4* param, int length) override final;
 
-	virtual void setMatrixParameter(handle_t handle, const Matrix44& param);
+	virtual void setMatrixParameter(handle_t handle, const Matrix44& param) override final;
 
-	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
+	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length) override final;
 
-	virtual void setTextureParameter(handle_t handle, ITexture* texture);
+	virtual void setTextureParameter(handle_t handle, ITexture* texture) override final;
 
-	virtual void setStencilReference(uint32_t stencilReference);
+	virtual void setStencilReference(uint32_t stencilReference) override final;
 
 	void bind(StateCachePs3& stateCache, const float targetSize[], uint32_t frameCounter, uint32_t& outPatchCounter);
 
@@ -116,5 +109,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_render_ProgramPs3_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_CubeTexturePs3_H
-#define traktor_render_CubeTexturePs3_H
+#pragma once
 
 #include "Render/ICubeTexture.h"
 #include "Render/Types.h"
@@ -39,19 +32,17 @@ public:
 	
 	bool create(MemoryHeap* memoryHeap, const CubeTextureCreateDesc& desc);
 
-	virtual void destroy();
+	virtual void destroy() override final;
 
-	virtual ITexture* resolve();
+	virtual ITexture* resolve() override final;
 
-	virtual int getWidth() const;
-	
-	virtual int getHeight() const;
+	virtual int32_t getMips() const override final;
 
-	virtual int getDepth() const;
+	virtual int32_t getSide() const override final;
 
-	virtual bool lock(int side, int level, Lock& lock);
+	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
 
-	virtual void unlock(int side, int level);
+	virtual void unlock(int32_t side, int32_t level) override final;
 
 	void bind(StateCachePs3& stateCache, int stage, const SamplerStateGCM& samplerState);
 
@@ -63,5 +54,3 @@ private:
 		
 	}
 }
-
-#endif	// traktor_render_CubeTexturePs3_H

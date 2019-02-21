@@ -32,17 +32,17 @@ ITexture* SimpleTexturePs4::resolve()
 	return this;
 }
 
+int32_t SimpleTexturePs4::getMips() const
+{
+	return 0;
+}
+
 int32_t SimpleTexturePs4::getWidth() const
 {
 	return 0;
 }
 
 int32_t SimpleTexturePs4::getHeight() const
-{
-	return 0;
-}
-
-int32_t SimpleTexturePs4::getMips() const
 {
 	return 0;
 }

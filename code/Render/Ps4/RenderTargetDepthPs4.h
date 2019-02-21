@@ -26,21 +26,21 @@ public:
 
 	bool create(const RenderTargetSetCreateDesc& setDesc);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual ITexture* resolve() T_OVERRIDE T_FINAL;
+	virtual ITexture* resolve() override final;
 
-	virtual int32_t getWidth() const T_OVERRIDE T_FINAL;
+	virtual int32_t getMips() const override final;
+
+	virtual int32_t getWidth() const override final;
 	
-	virtual int32_t getHeight() const T_OVERRIDE T_FINAL;
+	virtual int32_t getHeight() const override final;
 
-	virtual int32_t getMips() const T_OVERRIDE T_FINAL;
+	virtual bool lock(int32_t level, Lock& lock) override final;
 
-	virtual bool lock(int32_t level, Lock& lock) T_OVERRIDE T_FINAL;
+	virtual void unlock(int32_t level) override final;
 
-	virtual void unlock(int32_t level) T_OVERRIDE T_FINAL;
-
-	virtual void* getInternalHandle() T_OVERRIDE T_FINAL;
+	virtual void* getInternalHandle() override final;
 
 	const sce::Gnm::DepthRenderTarget& getDepthTargetGnm() const { return m_depthTarget; }
 

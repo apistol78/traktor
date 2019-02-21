@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Resource/TextureProxy.h"
 
 namespace traktor
@@ -26,6 +20,11 @@ void TextureProxy::destroy()
 ITexture* TextureProxy::resolve()
 {
 	return m_texture->resolve();
+}
+
+int32_t TextureProxy::getMips() const
+{
+	return m_texture->getMips();
 }
 
 	}

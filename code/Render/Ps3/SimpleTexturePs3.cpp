@@ -180,6 +180,11 @@ ITexture* SimpleTexturePs3::resolve()
 	return this;
 }
 
+int32_t SimpleTexturePs3::getMips() const
+{
+	return m_texture.mipmap;
+}
+
 int32_t SimpleTexturePs3::getWidth() const
 {
 	return m_texture.width;
@@ -188,11 +193,6 @@ int32_t SimpleTexturePs3::getWidth() const
 int32_t SimpleTexturePs3::getHeight() const
 {
 	return m_texture.height;
-}
-
-int32_t SimpleTexturePs3::getMips() const
-{
-	return m_texture.mipmap;
 }
 
 bool SimpleTexturePs3::lock(int32_t level, Lock& lock)

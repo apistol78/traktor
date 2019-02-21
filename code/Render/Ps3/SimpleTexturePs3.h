@@ -36,11 +36,11 @@ public:
 
 	virtual ITexture* resolve();
 
+	virtual int32_t getMips() const;
+
 	virtual int32_t getWidth() const;
 	
 	virtual int32_t getHeight() const;
-
-	virtual int32_t getMips() const;
 
 	virtual bool lock(int32_t level, Lock& lock);
 

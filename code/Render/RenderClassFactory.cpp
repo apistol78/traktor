@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Render/IRenderSystem.h"
@@ -73,46 +67,45 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderClassFactory", 0, RenderCl
 void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	Ref< AutoRuntimeClass< BoxedDisplayMode > > classBoxedDisplayMode = new AutoRuntimeClass< BoxedDisplayMode >();
-	classBoxedDisplayMode->addMethod("getWidth", &BoxedDisplayMode::getWidth);
-	classBoxedDisplayMode->addMethod("getHeight", &BoxedDisplayMode::getHeight);
-	classBoxedDisplayMode->addMethod("getRefreshRate", &BoxedDisplayMode::getRefreshRate);
-	classBoxedDisplayMode->addMethod("getColorBits", &BoxedDisplayMode::getColorBits);
+	classBoxedDisplayMode->addProperty("width", &BoxedDisplayMode::getWidth);
+	classBoxedDisplayMode->addProperty("height", &BoxedDisplayMode::getHeight);
+	classBoxedDisplayMode->addProperty("refreshRate", &BoxedDisplayMode::getRefreshRate);
+	classBoxedDisplayMode->addProperty("colorBits", &BoxedDisplayMode::getColorBits);
 	registrar->registerClass(classBoxedDisplayMode);
 
 	Ref< AutoRuntimeClass< ITexture > > classITexture = new AutoRuntimeClass< ITexture >();
+	classITexture->addProperty("mips", &ITexture::getMips);
 	registrar->registerClass(classITexture);
 
 	Ref< AutoRuntimeClass< ICubeTexture > > classICubeTexture = new AutoRuntimeClass< ICubeTexture >();
-	classICubeTexture->addMethod("getWidth", &ICubeTexture::getWidth);
-	classICubeTexture->addMethod("getHeight", &ICubeTexture::getHeight);
-	classICubeTexture->addMethod("getDepth", &ICubeTexture::getDepth);
+	classICubeTexture->addProperty("side", &ICubeTexture::getSide);
 	registrar->registerClass(classICubeTexture);
 
 	Ref< AutoRuntimeClass< ISimpleTexture > > classISimpleTexture = new AutoRuntimeClass< ISimpleTexture >();
-	classISimpleTexture->addMethod("getWidth", &ISimpleTexture::getWidth);
-	classISimpleTexture->addMethod("getHeight", &ISimpleTexture::getHeight);
+	classISimpleTexture->addProperty("width", &ISimpleTexture::getWidth);
+	classISimpleTexture->addProperty("height", &ISimpleTexture::getHeight);
 	registrar->registerClass(classISimpleTexture);
 
 	Ref< AutoRuntimeClass< IVolumeTexture > > classIVolumeTexture = new AutoRuntimeClass< IVolumeTexture >();
-	classIVolumeTexture->addMethod("getWidth", &IVolumeTexture::getWidth);
-	classIVolumeTexture->addMethod("getHeight", &IVolumeTexture::getHeight);
-	classIVolumeTexture->addMethod("getDepth", &IVolumeTexture::getDepth);
+	classIVolumeTexture->addProperty("width", &IVolumeTexture::getWidth);
+	classIVolumeTexture->addProperty("height", &IVolumeTexture::getHeight);
+	classIVolumeTexture->addProperty("depth", &IVolumeTexture::getDepth);
 	registrar->registerClass(classIVolumeTexture);
 
 	Ref< AutoRuntimeClass< IRenderSystem > > classIRenderSystem = new AutoRuntimeClass< IRenderSystem >();
-	classIRenderSystem->addMethod("getDisplayModeCount", &IRenderSystem::getDisplayModeCount);
+	classIRenderSystem->addProperty("displayModeCount", &IRenderSystem::getDisplayModeCount);
+	classIRenderSystem->addProperty("currentDisplayMode", &IRenderSystem_getCurrentDisplayMode);
+	classIRenderSystem->addProperty("displayAspectRatio", &IRenderSystem::getDisplayAspectRatio);
 	classIRenderSystem->addMethod("getDisplayMode", &IRenderSystem_getDisplayMode);
-	classIRenderSystem->addMethod("getCurrentDisplayMode", &IRenderSystem_getCurrentDisplayMode);
-	classIRenderSystem->addMethod("getDisplayAspectRatio", &IRenderSystem::getDisplayAspectRatio);
 	registrar->registerClass(classIRenderSystem);
 
 	Ref< AutoRuntimeClass< IRenderView > > classIRenderView = new AutoRuntimeClass< IRenderView >();
+	classIRenderView->addProperty("width", &IRenderView::getWidth);
+	classIRenderView->addProperty("height", &IRenderView::getHeight);
+	classIRenderView->addProperty("isActive", &IRenderView::isActive);
+	classIRenderView->addProperty("isMinimized", &IRenderView::isMinimized);
+	classIRenderView->addProperty("isFullScreen", &IRenderView::isFullScreen);
 	classIRenderView->addMethod("close", &IRenderView::close);
-	classIRenderView->addMethod("getWidth", &IRenderView::getWidth);
-	classIRenderView->addMethod("getHeight", &IRenderView::getHeight);
-	classIRenderView->addMethod("isActive", &IRenderView::isActive);
-	classIRenderView->addMethod("isMinimized", &IRenderView::isMinimized);
-	classIRenderView->addMethod("isFullScreen", &IRenderView::isFullScreen);
 	classIRenderView->addMethod("showCursor", &IRenderView::showCursor);
 	classIRenderView->addMethod("hideCursor", &IRenderView::hideCursor);
 	classIRenderView->addMethod("isCursorVisible", &IRenderView::isCursorVisible);

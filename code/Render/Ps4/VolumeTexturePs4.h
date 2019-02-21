@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_VolumeTexturePs4_H
-#define traktor_render_VolumeTexturePs4_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Render/IVolumeTexture.h"
@@ -32,15 +25,17 @@ public:
 
 	bool create(const VolumeTextureCreateDesc& desc);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual ITexture* resolve() T_OVERRIDE T_FINAL;
+	virtual ITexture* resolve() override final;
 
-	virtual int getWidth() const T_OVERRIDE T_FINAL;
+	virtual int32_t getMips() const override final;
+
+	virtual int32_t getWidth() const override final;
 	
-	virtual int getHeight() const T_OVERRIDE T_FINAL;
+	virtual int32_t getHeight() const override final;
 	
-	virtual int getDepth() const T_OVERRIDE T_FINAL;
+	virtual int32_t getDepth() const override final;
 
 private:
 	Ref< ContextPs4 > m_context;
@@ -48,5 +43,3 @@ private:
 		
 	}
 }
-
-#endif	// traktor_render_VolumeTexturePs4_H

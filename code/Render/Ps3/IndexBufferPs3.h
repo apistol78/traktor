@@ -33,11 +33,11 @@ public:
 
 	virtual ~IndexBufferPs3();
 
-	virtual void destroy();
+	virtual void destroy() override final;
 
-	virtual void* lock();
+	virtual void* lock() override final;
 	
-	virtual void unlock();
+	virtual void unlock() override final;
 
 	uint8_t getLocation() const;
 

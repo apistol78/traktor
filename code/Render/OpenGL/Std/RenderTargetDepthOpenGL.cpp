@@ -57,6 +57,11 @@ ITexture* RenderTargetDepthOpenGL::resolve()
 	return this;
 }
 
+int32_t RenderTargetDepthOpenGL::getMips() const
+{
+	return 1;
+}
+
 int32_t RenderTargetDepthOpenGL::getWidth() const
 {
 	return m_width;
@@ -65,11 +70,6 @@ int32_t RenderTargetDepthOpenGL::getWidth() const
 int32_t RenderTargetDepthOpenGL::getHeight() const
 {
 	return m_height;
-}
-
-int32_t RenderTargetDepthOpenGL::getMips() const
-{
-	return 1;
 }
 
 bool RenderTargetDepthOpenGL::lock(int32_t level, Lock& lock)

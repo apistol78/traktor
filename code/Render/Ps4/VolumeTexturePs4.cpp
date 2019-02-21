@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Ps4/VolumeTexturePs4.h"
 
 namespace traktor
@@ -37,17 +31,22 @@ ITexture* VolumeTexturePs4::resolve()
 	return this;
 }
 
-int VolumeTexturePs4::getWidth() const
+int32_t VolumeTexturePs4::getMips() const
 {
 	return 0;
 }
 
-int VolumeTexturePs4::getHeight() const
+int32_t VolumeTexturePs4::getWidth() const
 {
 	return 0;
 }
 
-int VolumeTexturePs4::getDepth() const
+int32_t VolumeTexturePs4::getHeight() const
+{
+	return 0;
+}
+
+int32_t VolumeTexturePs4::getDepth() const
 {
 	return 0;
 }

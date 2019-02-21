@@ -191,6 +191,13 @@ ITexture* RenderTargetDx11::resolve()
 	return this;
 }
 
+int32_t RenderTargetDx11::getMips() const
+{
+	D3D11_TEXTURE2D_DESC dtd = { 0 };
+	m_d3dTextureRead->GetDesc(&dtd);
+	return (int32_t)dtd.MipLevels;
+}
+
 int32_t RenderTargetDx11::getWidth() const
 {
 	return m_width;
@@ -199,13 +206,6 @@ int32_t RenderTargetDx11::getWidth() const
 int32_t RenderTargetDx11::getHeight() const
 {
 	return m_height;
-}
-
-int32_t RenderTargetDx11::getMips() const
-{
-	D3D11_TEXTURE2D_DESC dtd = { 0 };
-	m_d3dTextureRead->GetDesc(&dtd);
-	return (int32_t)dtd.MipLevels;
 }
 
 bool RenderTargetDx11::lock(int32_t level, Lock& lock)

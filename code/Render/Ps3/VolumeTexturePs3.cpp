@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
@@ -175,17 +169,22 @@ ITexture* VolumeTexturePs3::resolve()
 	return this;
 }
 
-int VolumeTexturePs3::getWidth() const
+int32_t VolumeTexturePs3::getMips() const
+{
+	return 1;
+}
+
+int32_t VolumeTexturePs3::getWidth() const
 {
 	return m_texture.width;
 }
 
-int VolumeTexturePs3::getHeight() const
+int32_t VolumeTexturePs3::getHeight() const
 {
 	return m_texture.height;
 }
 
-int VolumeTexturePs3::getDepth() const
+int32_t VolumeTexturePs3::getDepth() const
 {
 	return m_texture.depth;
 }

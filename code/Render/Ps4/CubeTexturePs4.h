@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_CubeTexturePs4_H
-#define traktor_render_CubeTexturePs4_H
+#pragma once
 
 #include "Render/ICubeTexture.h"
 
@@ -31,19 +24,17 @@ public:
 
 	bool create(const CubeTextureCreateDesc& desc);
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
-	virtual ITexture* resolve() T_OVERRIDE T_FINAL;
+	virtual ITexture* resolve() override final;
 
-	virtual int getWidth() const T_OVERRIDE T_FINAL;
-	
-	virtual int getHeight() const T_OVERRIDE T_FINAL;
-	
-	virtual int getDepth() const T_OVERRIDE T_FINAL;
+	virtual int32_t getMips() const override final;
 
-	virtual bool lock(int side, int level, Lock& lock) T_OVERRIDE T_FINAL;
+	virtual int32_t getSide() const override final;
 
-	virtual void unlock(int side, int level) T_OVERRIDE T_FINAL;
+	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
+
+	virtual void unlock(int32_t side, int32_t level) override final;
 
 private:
 	Ref< ContextPs4 > m_context;
@@ -51,5 +42,3 @@ private:
 		
 	}
 }
-
-#endif	// traktor_render_CubeTexturePs4_H

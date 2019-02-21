@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/Types.h"
@@ -115,22 +109,17 @@ ITexture* CubeTextureDx11::resolve()
 	return this;
 }
 
-int CubeTextureDx11::getWidth() const
+int32_t CubeTextureDx1::getMips() const
+{
+	return m_mipCount;
+}
+
+int32_t CubeTextureDx11::getSide() const
 {
 	return m_side;
 }
 
-int CubeTextureDx11::getHeight() const
-{
-	return m_side;
-}
-
-int CubeTextureDx11::getDepth() const
-{
-	return m_side;
-}
-
-bool CubeTextureDx11::lock(int side, int level, Lock& lock)
+bool CubeTextureDx11::lock(int32_t side, int32_t level, Lock& lock)
 {
 	D3D11_MAPPED_SUBRESOURCE dm;
 	HRESULT hr;
@@ -145,7 +134,7 @@ bool CubeTextureDx11::lock(int side, int level, Lock& lock)
 	return true;
 }
 
-void CubeTextureDx11::unlock(int side, int level)
+void CubeTextureDx11::unlock(int32_t side, int32_t level)
 {
 	m_context->getD3DDeviceContext()->Unmap(m_d3dTextureStaging, level);
 

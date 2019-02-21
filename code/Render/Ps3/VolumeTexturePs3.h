@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_VolumeTexturePs3_H
-#define traktor_render_VolumeTexturePs3_H
+#pragma once
 
 #include "Render/IVolumeTexture.h"
 #include "Render/Types.h"
@@ -43,11 +36,13 @@ public:
 
 	virtual ITexture* resolve();
 
-	virtual int getWidth() const;
-	
-	virtual int getHeight() const;
+	virtual int32_t getMips() const override final;
 
-	virtual int getDepth() const;
+	virtual int32_t getWidth() const;
+	
+	virtual int32_t getHeight() const;
+
+	virtual int32_t getDepth() const;
 
 	void bind(StateCachePs3& stateCache, int stage, const SamplerStateGCM& samplerState);
 
@@ -59,5 +54,3 @@ private:
 		
 	}
 }
-
-#endif	// traktor_render_VolumeTexturePs3_H

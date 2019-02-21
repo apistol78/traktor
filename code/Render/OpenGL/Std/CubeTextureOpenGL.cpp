@@ -152,29 +152,24 @@ ITexture* CubeTextureOpenGL::resolve()
 	return this;
 }
 
-int CubeTextureOpenGL::getWidth() const
+int32_t CubeTextureOpenGL::getMips() const
+{
+	return m_mipCount;
+}
+
+int32_t CubeTextureOpenGL::getSide() const
 {
 	return m_side;
 }
 
-int CubeTextureOpenGL::getHeight() const
-{
-	return m_side;
-}
-
-int CubeTextureOpenGL::getDepth() const
-{
-	return 1;
-}
-
-bool CubeTextureOpenGL::lock(int side, int level, Lock& lock)
+bool CubeTextureOpenGL::lock(int32_t side, int32_t level, Lock& lock)
 {
 	lock.pitch = (m_side >> level) * m_pixelSize;
 	lock.bits = m_data.ptr();
 	return true;
 }
 
-void CubeTextureOpenGL::unlock(int side, int level)
+void CubeTextureOpenGL::unlock(int32_t side, int32_t level)
 {
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
