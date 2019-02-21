@@ -958,7 +958,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				const Animation* anim = m_modelTris->getAnimation(0);
 				const Pose* pose = anim->getKeyFramePose(0);
 
-				m_primitiveRenderer->pushDepthState(true, false, false);
+				m_primitiveRenderer->pushDepthState(false, false, false);
 				for (uint32_t i = 0; i < joints.size(); ++i)
 				{
 					const auto& joint = joints[i];
