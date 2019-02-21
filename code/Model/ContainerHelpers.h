@@ -64,6 +64,7 @@ struct MaterialPredicate
 	inline bool operator () (const Material& a, const Material& b) const
 	{
 		return
+			a.getName() == b.getName() &&
 			a.getDiffuseMap().name == b.getDiffuseMap().name &&
 			a.getDiffuseMap().channel == b.getDiffuseMap().channel &&
 			a.getSpecularMap().name == b.getSpecularMap().name &&

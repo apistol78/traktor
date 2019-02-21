@@ -10,7 +10,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 3, AnimationAsset, editor::Asset)
 
 AnimationAsset::AnimationAsset()
-:	m_animation(L"Animation")
+:	m_take(L"Animation")
 ,	m_scale(1.0f)
 {
 }
@@ -21,7 +21,7 @@ void AnimationAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 3)
 	{
-		s >> Member< std::wstring >(L"animation", m_animation);
+		s >> Member< std::wstring >(L"take", m_take);
 		s >> Member< float >(L"scale", m_scale);
 	}
 	else

@@ -83,10 +83,9 @@ bool SkeletonPipeline::buildOutput(
 	{
 		Ref< Joint > joint = new Joint();
 
-		float ln = modelJoint.getTransform().rotation().e.length();
-		log::info << ln << Endl;
+		if (modelJoint.getParent() != model::c_InvalidIndex)
+			joint->setParent(modelJoint.getParent());
 
-		//joint->setParent(modelJoint.getParent());
 		joint->setName(modelJoint.getName());
 		joint->setTransform(modelJoint.getTransform());
 		joint->setRadius(0.1f);

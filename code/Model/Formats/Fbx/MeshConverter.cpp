@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/TString.h"
 #include "Model/Model.h"
@@ -46,9 +47,10 @@ bool convertMesh(
 		return false;
 
 	uint32_t positionBase = uint32_t(outModel.getPositions().size());
-	uint32_t materialBase = uint32_t(outModel.getMaterials().size());
 
-	if (!convertMaterials(outModel, meshNode))
+	// Convert materials.
+	std::map< int32_t, int32_t > materialMap;
+	if (!convertMaterials(outModel, materialMap, meshNode))
 		return false;
 
 	FbxAMatrix nodeTransform = meshNode->EvaluateGlobalTransform();
@@ -103,7 +105,10 @@ bool convertMesh(
 
 			uint32_t jointIndex = outModel.findJointIndex(jointName);
 			if (jointIndex == c_InvalidIndex)
+			{
+				log::warning << L"Unable to set vertex weight; no such joint \"" << jointName << L"\"." << Endl;
 				continue;
+			}
 
 			const double* weights = cluster->GetControlPointWeights();
 			const int32_t* indices = cluster->GetControlPointIndices();
@@ -131,7 +136,7 @@ bool convertMesh(
 			if (layerMaterials)
 			{
 				int32_t materialIndex = layerMaterials->GetIndexArray().GetAt(i);
-				polygon.setMaterial(materialBase + materialIndex);
+				polygon.setMaterial(materialMap[materialIndex]);
 			}
 		}
 

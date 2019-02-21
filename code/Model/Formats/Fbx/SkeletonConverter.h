@@ -17,7 +17,7 @@ class Pose;
 bool convertSkeleton(
 	Model& outModel,
 	FbxScene* scene,
-	FbxNode* meshNode,
+	FbxNode* skeletonNode,
 	const Matrix44& axisTransform
 );
 

@@ -160,7 +160,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_materialGrid->addColumn(new ui::GridColumn(L"Reflective Map", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Normal Map", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Light Map", ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(L"Color", ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(L"Color", ui::dpi96(110)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Diffuse Term", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Specular Term", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Roughness", ui::dpi96(100)));
@@ -605,6 +605,8 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 		const AlignedVector< Material >& materials = m_model->getMaterials();
 		for (AlignedVector< Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 		{
+			const auto& cl = i->getColor();
+
 			Ref< ui::GridRow > row = new ui::GridRow();
 			row->add(new ui::GridItem(i->getName()));
 			row->add(new ui::GridItem(i->getDiffuseMap().name));
@@ -616,7 +618,7 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 			row->add(new ui::GridItem(i->getReflectiveMap().name));
 			row->add(new ui::GridItem(i->getNormalMap().name));
 			row->add(new ui::GridItem(i->getLightMap().name));
-			row->add(new ui::GridItem(L"0, 0, 0, 0"));
+			row->add(new ui::GridItem( toString((int32_t)cl.r) + L", " + toString((int32_t)cl.g) + L", " + toString((int32_t)cl.b) + L", " + toString((int32_t)cl.a)));
 			row->add(new ui::GridItem(toString(i->getDiffuseTerm())));
 			row->add(new ui::GridItem(toString(i->getSpecularTerm())));
 			row->add(new ui::GridItem(toString(i->getRoughness())));
@@ -876,32 +878,6 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				{
 					const AlignedVector< uint32_t >& indices = i->getVertices();
 
-
-					// if (m_model->getAnimationCount() > 0)
-					// {
-					// 	const Animation* anim = m_model->getAnimation(0);
-					// 	const Pose* pose = anim->getKeyFramePose(0);
-
-					// 	for (uint32_t i = 0; i < indices.size(); ++i)
-					// 	{
-					// 		const Vertex& vx = vertices[indices[i]];
-
-					// 		for (uint32_t j = 0; j < joints.size(); ++j)
-					// 		{
-					// 			float w = vx.getJointInfluence(j);
-					// 			if (std::abs(w) > FUZZY_EPSILON)
-					// 			{
-
-					// 				//auto Tglobal = joint.getTransform();
-					// 				auto Tdelta = pose->getJointTransform(i);
-					// 				//auto Tfinal = Tglobal : Tdelta;									
-
-					// 			}
-					// 		}
-					// 	}
-					// }
-
-
 					for (uint32_t i = 0; i < indices.size(); ++i)
 					{
 						const Vertex& vx0 = vertices[indices[i]];
@@ -909,10 +885,6 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 
 						const Vector4& p0 = positions[vx0.getPosition()];
 						const Vector4& p1 = positions[vx1.getPosition()];
-
-
-
-
 
 						m_primitiveRenderer->drawLine(p0, p1, Color4ub(255, 255, 255, 200));
 					}
@@ -972,7 +944,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->pushDepthState(true, false, false);
 				for (AlignedVector< Vector4 >::const_iterator i = positions.begin(); i != positions.end(); ++i)
 				{
-					m_primitiveRenderer->drawSolidPoint(*i, 3.0f, Color4ub(255, 255, 0, 200));
+					m_primitiveRenderer->drawSolidPoint(*i, 2.0f, Color4ub(255, 255, 0, 200));
 				}
 				m_primitiveRenderer->popDepthState();
 			}
@@ -981,7 +953,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			if (m_modelTris->getAnimationCount() > 0)
 			{
 				int32_t selectedJoint = m_toolJoint->getSelected();
-				bool showRest = m_toolJointRest->isToggled();
+				bool showOnlyRest = m_toolJointRest->isToggled();
 
 				const Animation* anim = m_modelTris->getAnimation(0);
 				const Pose* pose = anim->getKeyFramePose(0);
@@ -990,20 +962,45 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				for (uint32_t i = 0; i < joints.size(); ++i)
 				{
 					const auto& joint = joints[i];
-					const auto color = (i == selectedJoint) ? Color4ub(255, 255, 80, 255) : Color4ub(255, 180, 120, 255);
+					const auto colorRest = (i == selectedJoint) ? Color4ub(80, 255, 80, 255) : Color4ub(120, 255, 120, 255);
+					const auto colorPose = (i == selectedJoint) ? Color4ub(255, 255, 80, 255) : Color4ub(255, 180, 120, 255);
 
 					AlignedVector< uint32_t > childJointIds;
 					m_modelTris->findChildJoints(i, childJointIds);
 
-					auto Tglobal = joint.getTransform();
-					auto Tdelta = pose->getJointTransform(i);
-					auto Tfinal = showRest ? Tglobal : Tdelta * Tglobal;
+					auto Tjoint = m_modelTris->getJointGlobalTransform(i);
+					for (auto childId : childJointIds)
+					{
+						auto Tchild = m_modelTris->getJointGlobalTransform(childId);
 
-					m_primitiveRenderer->drawBone(
-						Tfinal.toMatrix44(),
-						joint.getLength(),
-						color
-					);
+						m_primitiveRenderer->drawLine(
+							Tjoint.translation(),
+							Tchild.translation(),
+							2.0f,
+							colorRest
+						);						
+					}
+
+					if (!showOnlyRest)
+					{
+						traktor::Transform TjointPose = traktor::Transform::identity();
+						for (uint32_t jointId = i; jointId != c_InvalidIndex; jointId = joints[jointId].getParent())
+							TjointPose = joints[jointId].getTransform() * pose->getJointTransform(jointId) * TjointPose;	// ABC order (A root)
+
+						for (auto childId : childJointIds)
+						{
+							traktor::Transform TchildPose = traktor::Transform::identity();
+							for (uint32_t jointId = childId; jointId != c_InvalidIndex; jointId = joints[jointId].getParent())
+								TchildPose = joints[jointId].getTransform() * pose->getJointTransform(jointId) * TchildPose;	// ABC order (A root)
+
+							m_primitiveRenderer->drawLine(
+								TjointPose.translation(),
+								TchildPose.translation(),
+								2.0f,
+								colorPose
+							);						
+						}
+					}
 				}
 				m_primitiveRenderer->popDepthState();			
 			}

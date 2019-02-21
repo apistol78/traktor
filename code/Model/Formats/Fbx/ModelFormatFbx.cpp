@@ -218,48 +218,54 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref
 
 	bool result = true;
 
-	// Convert skeleton.
-	result &= traverse(rootNode, [&](FbxNode* node) {
-		if (node->GetNodeAttribute() && node->GetVisibility())
-		{
-			FbxNodeAttribute::EType attributeType = node->GetNodeAttribute()->GetAttributeType();
-			if (attributeType == FbxNodeAttribute::eMesh)
-			{
-				if (!convertSkeleton(*model, s_scene, node, axisTransform))
-					return false;
-			}
-		}
-		return true;
-	});	
-
-	// Convert animations.
+	// Convert skeleton and animations.
 	FbxNode* skeletonNode = search(rootNode, [&](FbxNode* node) {
 		return (node->GetNodeAttribute() != nullptr && node->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eSkeleton);
 	});
 	if (skeletonNode)
 	{
+		if (!convertSkeleton(*model, s_scene, skeletonNode, axisTransform))
+			return nullptr;
+
 		for(int32_t i = 0; i < importer->GetAnimStackCount(); i++) 
 		{
 			FbxTakeInfo* takeInfo = importer->GetTakeInfo(i);
-			log::info << i << L". " << mbstows((const char*)takeInfo->mName) << Endl;
-		}
-
-		Ref< Animation > anim = new Animation();
-		anim->setName(L"Animation");
-
-		for (int32_t frame = 0; frame < 120; ++frame)
-		{
-			FbxTime time;
-			time.SetSecondDouble(frame / 30.0f);
-
-			Ref< Pose > pose = convertPose(*model, s_scene, skeletonNode, time, axisTransform);
-			if (!pose)
+			if (!takeInfo)
 				return nullptr;
 
-			anim->insertKeyFrame(frame / 30.0f, pose);
-		}
+			s_scene->SetTakeInfo(*takeInfo);
 
-		model->addAnimation(anim);
+			std::wstring takeName = mbstows((const char*)takeInfo->mName);
+
+			size_t p = takeName.find(L'|');
+			if (p != std::wstring::npos)
+				takeName = takeName.substr(p + 1);
+
+			FbxTime start = takeInfo->mLocalTimeSpan.GetStart();
+			FbxTime end = takeInfo->mLocalTimeSpan.GetStop();
+
+			int32_t startFrame = start.GetFrameCount(FbxTime::eFrames30);
+			int32_t endFrame = end.GetFrameCount(FbxTime::eFrames30);
+
+			Ref< Animation > anim = new Animation();
+			anim->setName(takeName);
+
+			log::info << L"take " << takeName << L", " << startFrame << L" -> " << endFrame << Endl;
+
+			for (int32_t frame = startFrame; frame <= endFrame; ++frame)
+			{
+				FbxTime time;
+				time.SetFrame(frame, FbxTime::eFrames30);
+
+				Ref< Pose > pose = convertPose(*model, s_scene, skeletonNode, time, axisTransform);
+				if (!pose)
+					return nullptr;
+
+				anim->insertKeyFrame(frame / 30.0f, pose);
+			}
+
+			model->addAnimation(anim);
+		}
 	}
 
 	// Convert and merge all meshes.

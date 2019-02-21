@@ -15,14 +15,6 @@ namespace traktor
 		namespace
 		{
 
-FbxMatrix getGeometricTransform(const FbxNode* fbxNode)
-{
-	FbxVector4 t = fbxNode->GetGeometricTranslation(FbxNode::eSourcePivot);
-	FbxVector4 r = fbxNode->GetGeometricRotation(FbxNode::eSourcePivot);
-	FbxVector4 s = fbxNode->GetGeometricScaling(FbxNode::eSourcePivot);
-	return FbxMatrix(t, r, s);
-}
-
 bool traverse(FbxNode* parent, FbxNode* node, const std::function< bool (FbxNode* parent, FbxNode* node) >& visitor)
 {
 	if (!node)
@@ -45,66 +37,103 @@ bool traverse(FbxNode* parent, FbxNode* node, const std::function< bool (FbxNode
 	return true;
 }
 
+std::wstring getJointName(FbxNode* node)
+{
+	std::wstring jointName = mbstows(node->GetName());
+
+	size_t p = jointName.find(L':');
+	if (p != std::wstring::npos)
+		jointName = jointName.substr(p + 1);
+
+	return jointName;
+}
+
 		}
 
 bool convertSkeleton(
 	Model& outModel,
 	FbxScene* scene,
-	FbxNode* meshNode,
+	FbxNode* skeletonNode,
 	const Matrix44& axisTransform
 )
 {
-	FbxMesh* mesh = static_cast< FbxMesh* >(meshNode->GetNodeAttribute());
-	if (!mesh)
+	FbxSkeleton* skeleton = skeletonNode->GetSkeleton();
+	if (!skeleton)
 		return false;
 
-	int32_t deformerCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
-	for (int32_t i = 0; i < deformerCount; ++i)
-	{
-		FbxSkin* skinDeformer = (FbxSkin*)mesh->GetDeformer(i, FbxDeformer::eSkin);
-		if (!skinDeformer)
-			continue;
-
-		int32_t clusterCount = skinDeformer->GetClusterCount();
-		for (int32_t j = 0; j < clusterCount; ++j)
+	// Find bind pose.
+	FbxPose* bindPose = nullptr;
+	int32_t poseCount = scene->GetPoseCount();
+    for (int32_t i = 0; i < poseCount; i++)
+    {
+        FbxPose* pose = scene->GetPose(i);
+		if (pose->IsBindPose())
 		{
-			FbxCluster* cluster = skinDeformer->GetCluster(j);
-			if (!cluster)
-				continue;
-
-			const FbxNode* jointNode = cluster->GetLink();
-			T_ASSERT (jointNode);
-
-			std::wstring jointName = mbstows(jointNode->GetName());
-
-			size_t p = jointName.find(L':');
-			if (p != std::wstring::npos)
-				jointName = jointName.substr(p + 1);
-
-			if (outModel.findJointIndex(jointName) != c_InvalidIndex)
-				continue;
-
-			FbxAMatrix jointRestTransform;
-			cluster->GetTransformLinkMatrix(jointRestTransform);
-
-			Matrix44 Mnode = convertMatrix(jointRestTransform);
-			Matrix44 Mrx90 = rotateX(deg2rad(-90.0f));
-			Matrix44 Mjoint = axisTransform * (Mnode * Mrx90) * axisTransform.inverse();
-
-			Transform Tjoint(Mjoint);
-
-			// Normalize transformation in case scaling involved.
-			Tjoint = Transform(
-				Tjoint.translation(),
-				Tjoint.rotation().normalized()
-			);
-
-			Joint joint;
-			joint.setName(jointName);
-			joint.setTransform(Tjoint);
-			outModel.addJoint(joint);	
+			bindPose = pose;
+			break;
 		}
 	}
+	if (!bindPose)
+		return false;
+
+	bool result = traverse(nullptr, skeletonNode, [&](FbxNode* parent, FbxNode* node) {
+		std::wstring jointName = getJointName(node);
+
+		// Calculate joint transformation.
+		FbxMatrix nodeTransform;
+
+		int32_t id = bindPose->Find(node);
+		if (id >= 0)
+			nodeTransform = bindPose->GetMatrix(id);
+		else
+		{
+			id = bindPose->Find(parent);
+			if (id < 0)
+			{
+				log::error << L"Parent of \"" << jointName << L"\" doesn't have a bind pose matrix, cannot synthesize bind pose matrix." << Endl;
+				return true;
+			}
+			nodeTransform = bindPose->GetMatrix(id) * node->EvaluateLocalTransform();
+		}
+		
+		Matrix44 Mnode = convertMatrix(nodeTransform);
+		Matrix44 Mrx90 = rotateX(deg2rad(-90.0f));
+		Matrix44 Mjoint = axisTransform * (Mnode * Mrx90) * axisTransform.inverse();
+
+		const Vector4 S(
+			1.0f / Mjoint.axisX().length(),
+			1.0f / Mjoint.axisY().length(),
+			1.0f / Mjoint.axisZ().length()
+		);
+		Transform Tjoint(Mjoint * scale(S));
+
+		// Normalize transformation in case scaling involved.
+		Tjoint = Transform(
+			Tjoint.translation(),
+			Tjoint.rotation().normalized()
+		);
+
+		uint32_t parentId = c_InvalidIndex;
+		if (parent != nullptr)
+		{
+			std::wstring parentJointName = getJointName(parent);
+			parentId = outModel.findJointIndex(parentJointName);
+			if (parentId != c_InvalidIndex)
+			{
+				Transform Tparent = outModel.getJointGlobalTransform(parentId);
+				Tjoint = Tparent.inverse() * Tjoint;	// Cl = Bg-1 * Cg
+			}
+			else
+				log::warning << L"Unable to bind parent joint; no such joint \"" << parentJointName << L"\"." << Endl;
+		}
+
+		Joint joint;
+		joint.setParent(parentId);
+		joint.setName(jointName);
+		joint.setTransform(Tjoint);
+		outModel.addJoint(joint);	
+		return true;
+	});	
 
 	return true;
 }
@@ -138,7 +167,10 @@ Ref< Pose > convertPose(
 
 		uint32_t jointId = model.findJointIndex(jointName);
 		if (jointId == c_InvalidIndex)
+		{
+			log::warning << L"Unable to find joint \"" << jointName << L"\" in skeleton; unable to save pose for joint." << Endl;
 			return true;
+		}
 
 		const Joint& joint = model.getJoint(jointId);
 
@@ -155,11 +187,22 @@ Ref< Pose > convertPose(
 			Tjoint.rotation().normalized()
 		);
 
-		Transform TjointRest = joint.getTransform();
-		Transform TjointDelta = Tjoint * TjointRest.inverse();
+		// Calculate pose delta transformation matrix.
+		Transform Tglobal = Transform::identity();
+		for (
+			uint32_t parentId = joint.getParent();
+			parentId != c_InvalidIndex;
+			parentId = model.getJoint(parentId).getParent()
+		)
+		{
+			Tglobal = model.getJoint(parentId).getTransform() * pose->getJointTransform(parentId) * Tglobal;	// ABC order (A root)
+		}
+		
+		Tglobal = Tglobal * joint.getTransform();
+		Tglobal = Tglobal.inverse();
+		Tglobal = Tglobal * Tjoint;
 
-		pose->setJointTransform(jointId, TjointDelta);
-
+		pose->setJointTransform(jointId, Tglobal);
 		return true;
 	});
 	

@@ -300,7 +300,7 @@ Transform Model::getJointGlobalTransform(uint32_t jointId) const
 	Transform Tglobal = Transform::identity();
 	while (jointId != c_InvalidIndex)
 	{
-		Tglobal = Tglobal * m_joints[jointId].getTransform();
+		Tglobal = m_joints[jointId].getTransform() * Tglobal;	// ABC order (A root)
 		jointId = m_joints[jointId].getParent();
 	}
 	return Tglobal;
