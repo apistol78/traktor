@@ -642,7 +642,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 
 	for (const auto pixelOutputNode : pixelOutputNodes)
 	{
-		Ref< Edge > edge = shaderGraph->findEdge(pixelOutputNode->getInputPin(4));
+		Ref< Edge > edge = shaderGraph->findEdge(pixelOutputNode->findInputPin(L"State"));
 		if (!edge)
 			continue;
 
