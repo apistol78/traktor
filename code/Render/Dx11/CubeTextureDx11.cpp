@@ -109,7 +109,7 @@ ITexture* CubeTextureDx11::resolve()
 	return this;
 }
 
-int32_t CubeTextureDx1::getMips() const
+int32_t CubeTextureDx11::getMips() const
 {
 	return m_mipCount;
 }
