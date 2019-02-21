@@ -193,7 +193,9 @@ void SimpleTextureOpenGL::bindTexture(GLuint textureUnit) const
 
 void SimpleTextureOpenGL::bindImage(GLuint imageUnit) const
 {
+#if !defined(__APPLE__)
 	T_OGL_SAFE(glBindImageTexture(imageUnit, m_textureName, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F));
+#endif
 }
 
 void SimpleTextureOpenGL::bindSize(GLint locationSize) const

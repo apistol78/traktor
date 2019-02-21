@@ -94,7 +94,9 @@ void RenderTargetDepthOpenGL::bindTexture(GLuint textureUnit) const
 
 void RenderTargetDepthOpenGL::bindImage(GLuint imageUnit) const
 {
+#if !defined(__APPLE__)
 	T_OGL_SAFE(glBindImageTexture(imageUnit, m_depthTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F));
+#endif
 }
 
 void RenderTargetDepthOpenGL::bindSize(GLint locationSize) const
