@@ -82,7 +82,7 @@ ITexture* VolumeTextureDx11::resolve()
 	return this;
 }
 
-int32_t VolumeTextureDx1::getMips() const
+int32_t VolumeTextureDx11::getMips() const
 {
 	return 1;
 }
