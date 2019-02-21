@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Render/OpenGL/ES2/Platform.h"
 #include "Render/OpenGL/ES2/CubeTextureOpenGLES2.h"
@@ -234,29 +228,24 @@ ITexture* CubeTextureOpenGLES2::resolve()
 	return this;
 }
 
-int CubeTextureOpenGLES2::getWidth() const
+int32_t CubeTextureOpenGLES2::getMips() const
+{
+	return m_mipCount;
+}
+
+int32_t CubeTextureOpenGLES2::getSide() const
 {
 	return m_side;
 }
 
-int CubeTextureOpenGLES2::getHeight() const
-{
-	return m_side;
-}
-
-int CubeTextureOpenGLES2::getDepth() const
-{
-	return 1;
-}
-
-bool CubeTextureOpenGLES2::lock(int side, int level, Lock& lock)
+bool CubeTextureOpenGLES2::lock(int32_t side, int32_t level, Lock& lock)
 {
 	lock.pitch = (m_side >> level) * m_pixelSize;
 	lock.bits = m_data.ptr();
 	return true;
 }
 
-void CubeTextureOpenGLES2::unlock(int side, int level)
+void CubeTextureOpenGLES2::unlock(int32_t side, int32_t level)
 {
 }
 

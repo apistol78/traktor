@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_TextureProxy_H
-#define traktor_render_TextureProxy_H
+#pragma once
 
 #include "Render/ITexture.h"
 #include "Resource/Proxy.h"
@@ -26,11 +19,11 @@ public:
 
 	virtual ITexture* resolve() override final;
 
+	virtual int32_t getMips() const override final;
+
 private:
 	resource::Proxy< ITexture > m_texture;
 };
 
 	}
 }
-
-#endif	// traktor_render_TextureProxy_H

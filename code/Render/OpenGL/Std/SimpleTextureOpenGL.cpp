@@ -133,6 +133,11 @@ ITexture* SimpleTextureOpenGL::resolve()
 	return this;
 }
 
+int32_t SimpleTextureOpenGL::getMips() const
+{
+	return m_mipCount;
+}
+
 int32_t SimpleTextureOpenGL::getWidth() const
 {
 	return m_width;
@@ -141,11 +146,6 @@ int32_t SimpleTextureOpenGL::getWidth() const
 int32_t SimpleTextureOpenGL::getHeight() const
 {
 	return m_height;
-}
-
-int32_t SimpleTextureOpenGL::getMips() const
-{
-	return m_mipCount;
 }
 
 bool SimpleTextureOpenGL::lock(int32_t level, Lock& lock)

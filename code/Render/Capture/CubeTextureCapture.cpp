@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Capture/CubeTextureCapture.h"
 #include "Render/Capture/Error.h"
@@ -35,25 +29,19 @@ ITexture* CubeTextureCapture::resolve()
 	return this;
 }
 
-int CubeTextureCapture::getWidth() const
+int32_t CubeTextureCapture::getMips() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
-	return m_texture ? m_texture->getWidth() : 0;
-}
-	
-int CubeTextureCapture::getHeight() const
-{
-	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
-	return m_texture ? m_texture->getHeight() : 0;
-}
-	
-int CubeTextureCapture::getDepth() const
-{
-	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
-	return m_texture ? m_texture->getDepth() : 0;
+	return m_texture ? m_texture->getMips() : 0;
 }
 
-bool CubeTextureCapture::lock(int side, int level, Lock& lock)
+int32_t CubeTextureCapture::getSide() const
+{
+	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
+	return m_texture ? m_texture->getSide() : 0;
+}
+
+bool CubeTextureCapture::lock(int32_t side, int32_t level, Lock& lock)
 {
 	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
 	T_CAPTURE_ASSERT (side >= 0, L"Invalid side index.");
@@ -68,7 +56,7 @@ bool CubeTextureCapture::lock(int side, int level, Lock& lock)
 		return false;
 }
 
-void CubeTextureCapture::unlock(int side, int level)
+void CubeTextureCapture::unlock(int32_t side, int32_t level)
 {
 	T_CAPTURE_ASSERT (m_texture, L"Cube texture destroyed.");
 	T_CAPTURE_ASSERT (side >= 0, L"Invalid side index.");

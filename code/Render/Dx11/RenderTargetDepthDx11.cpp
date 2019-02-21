@@ -142,6 +142,11 @@ ITexture* RenderTargetDepthDx11::resolve()
 	return this;
 }
 
+int32_t RenderTargetDepthDx11::getMips() const
+{
+	return 1;
+}
+
 int32_t RenderTargetDepthDx11::getWidth() const
 {
 	return m_width;
@@ -150,11 +155,6 @@ int32_t RenderTargetDepthDx11::getWidth() const
 int32_t RenderTargetDepthDx11::getHeight() const
 {
 	return m_height;
-}
-
-int32_t RenderTargetDepthDx11::getMips() const
-{
-	return 1;
 }
 
 bool RenderTargetDepthDx11::lock(int32_t level, Lock& lock)

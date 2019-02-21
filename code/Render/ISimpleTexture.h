@@ -35,12 +35,6 @@ public:
 	 */
 	virtual int32_t getHeight() const = 0;
 
-	/*! \brief Get number of mip maps.
-	 *
-	 * \return Number of mips.
-	 */
-	virtual int32_t getMips() const = 0;
-
 	/*! \brief Lock access to texture data.
 	 *
 	 * \param level Mip level.

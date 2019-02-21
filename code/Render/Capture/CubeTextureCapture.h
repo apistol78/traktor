@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_CubeTextureCapture_H
-#define traktor_render_CubeTextureCapture_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Render/ICubeTexture.h"
@@ -29,15 +22,13 @@ public:
 
 	virtual ITexture* resolve() override final;
 
-	virtual int getWidth() const override final;
-	
-	virtual int getHeight() const override final;
-	
-	virtual int getDepth() const override final;
+	virtual int32_t getMips() const override final;
 
-	virtual bool lock(int side, int level, Lock& lock) override final;
+	virtual int32_t getSide() const override final;
 
-	virtual void unlock(int side, int level) override final;
+	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
+
+	virtual void unlock(int32_t side, int32_t level) override final;
 
 	ICubeTexture* getTexture() const { return m_texture; }
 
@@ -48,5 +39,3 @@ private:
 		
 	}
 }
-
-#endif	// traktor_render_CubeTextureCapture_H

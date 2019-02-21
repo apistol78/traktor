@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ICubeTexture_H
-#define traktor_render_ICubeTexture_H
+#pragma once
 
 #include "Render/ITexture.h"
 
@@ -40,18 +33,26 @@ public:
 		SdNegativeZ = 5
 	};
 
-	virtual int getWidth() const = 0;
+	/*! \brief Size of cube map side in pixels.
+	 */
+	virtual int32_t getSide() const = 0;
 
-	virtual int getHeight() const = 0;
+	/*! \brief Lock access to texture data.
+	 *
+	 * \param side Cube side.
+	 * \param level Mip level.
+	 * \param lock Information about locked region.
+	 * \return True if locked.
+	 */
+	virtual bool lock(int32_t side, int32_t level, Lock& lock) = 0;
 
-	virtual int getDepth() const = 0;
-
-	virtual bool lock(int side, int level, Lock& lock) = 0;
-
-	virtual void unlock(int side, int level) = 0;
+	/*! \brief Unlock access to texture data.
+	 *
+	 * \param side Cube side.
+	 * \param level Mip level.
+	 */
+	virtual void unlock(int32_t side, int32_t level) = 0;
 };
 	
 	}
 }
-
-#endif	// traktor_render_ICubeTexture_H

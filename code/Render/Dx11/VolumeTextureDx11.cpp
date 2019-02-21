@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/Types.h"
@@ -88,17 +82,22 @@ ITexture* VolumeTextureDx11::resolve()
 	return this;
 }
 
-int VolumeTextureDx11::getWidth() const
+int32_t VolumeTextureDx1::getMips() const
+{
+	return 1;
+}
+
+int32_t VolumeTextureDx11::getWidth() const
 {
 	return m_width;
 }
 
-int VolumeTextureDx11::getHeight() const
+int32_t VolumeTextureDx11::getHeight() const
 {
 	return m_height;
 }
 
-int VolumeTextureDx11::getDepth() const
+int32_t VolumeTextureDx11::getDepth() const
 {
 	return m_depth;
 }

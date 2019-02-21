@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_CubeTextureDx11_H
-#define traktor_render_CubeTextureDx11_H
+#pragma once
 
 #include "Core/Misc/ComRef.h"
 #include "Render/ICubeTexture.h"
@@ -36,15 +29,13 @@ public:
 
 	virtual ITexture* resolve() override final;
 
-	virtual int getWidth() const override final;
-	
-	virtual int getHeight() const override final;
-	
-	virtual int getDepth() const override final;
+	virtual int32_t getMips() const override final;
 
-	virtual bool lock(int side, int level, Lock& lock) override final;
+	virtual int32_t getSide() const override final;
 
-	virtual void unlock(int side, int level) override final;
+	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
+
+	virtual void unlock(int32_t side, int32_t level) override final;
 
 	ID3D11ShaderResourceView* getD3D11TextureResourceView() const;
 
@@ -53,11 +44,9 @@ private:
 	ComRef< ID3D11Texture2D > m_d3dTexture;
 	ComRef< ID3D11Texture2D > m_d3dTextureStaging;
 	ComRef< ID3D11ShaderResourceView > m_d3dTextureResourceView;
-	int m_side;
-	int m_mipCount;
+	int32_t m_side;
+	int32_t m_mipCount;
 };
 		
 	}
 }
-
-#endif	// traktor_render_CubeTextureDx11_H

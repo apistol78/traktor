@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Types.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 
@@ -37,27 +31,22 @@ ITexture* CubeTextureVk::resolve()
 	return this;
 }
 
-int CubeTextureVk::getWidth() const
+int32_t CubeTextureVk::getMips() const
 {
 	return 0;
 }
 
-int CubeTextureVk::getHeight() const
+int32_t CubeTextureVk::getSide() const
 {
 	return 0;
 }
 
-int CubeTextureVk::getDepth() const
-{
-	return 0;
-}
-
-bool CubeTextureVk::lock(int side, int level, Lock& lock)
+bool CubeTextureVk::lock(int32_t side, int32_t level, Lock& lock)
 {
 	return true;
 }
 
-void CubeTextureVk::unlock(int side, int level)
+void CubeTextureVk::unlock(int32_t side, int32_t level)
 {
 }
 

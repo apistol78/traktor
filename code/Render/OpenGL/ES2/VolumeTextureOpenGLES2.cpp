@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Render/OpenGL/ES2/Platform.h"
@@ -231,17 +225,22 @@ ITexture* VolumeTextureOpenGLES2::resolve()
 	return this;
 }
 
-int VolumeTextureOpenGLES2::getWidth() const
+int32_t VolumeTextureOpenGLES2::getMips() const
+{
+	return 1;
+}
+
+int32_t VolumeTextureOpenGLES2::getWidth() const
 {
 	return m_width;
 }
 
-int VolumeTextureOpenGLES2::getHeight() const
+int32_t VolumeTextureOpenGLES2::getHeight() const
 {
 	return m_height;
 }
 
-int VolumeTextureOpenGLES2::getDepth() const
+int32_t VolumeTextureOpenGLES2::getDepth() const
 {
 	return m_depth;
 }

@@ -27,6 +27,12 @@ ITexture* SimpleTextureCapture::resolve()
 	return this;
 }
 
+int32_t SimpleTextureCapture::getMips() const
+{
+	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
+	return m_texture ? m_texture->getMips() : 0;
+}
+
 int32_t SimpleTextureCapture::getWidth() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
@@ -37,12 +43,6 @@ int32_t SimpleTextureCapture::getHeight() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	return m_texture ? m_texture->getHeight() : 0;
-}
-
-int32_t SimpleTextureCapture::getMips() const
-{
-	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
-	return m_texture ? m_texture->getMips() : 0;
 }
 
 bool SimpleTextureCapture::lock(int32_t level, Lock& lock)

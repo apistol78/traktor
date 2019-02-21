@@ -74,6 +74,11 @@ ITexture* RenderTargetOpenGLES2::resolve()
 	return this;
 }
 
+int32_t RenderTargetOpenGLES2::getMips() const
+{
+	return 1;
+}
+
 int32_t RenderTargetOpenGLES2::getWidth() const
 {
 	return m_width;
@@ -82,11 +87,6 @@ int32_t RenderTargetOpenGLES2::getWidth() const
 int32_t RenderTargetOpenGLES2::getHeight() const
 {
 	return m_height;
-}
-
-int32_t RenderTargetOpenGLES2::getMips() const
-{
-	return 1;
 }
 
 bool RenderTargetOpenGLES2::lock(int32_t level, Lock& lock)

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_IVolumeTexture_H
-#define traktor_render_IVolumeTexture_H
+#pragma once
 
 #include "Render/ITexture.h"
 
@@ -30,14 +23,12 @@ class T_DLLCLASS IVolumeTexture : public ITexture
 	T_RTTI_CLASS;
 
 public:
-	virtual int getWidth() const = 0;
+	virtual int32_t getWidth() const = 0;
 
-	virtual int getHeight() const = 0;
+	virtual int32_t getHeight() const = 0;
 
-	virtual int getDepth() const = 0;
+	virtual int32_t getDepth() const = 0;
 };
 	
 	}
 }
-
-#endif	// traktor_render_IVolumeTexture_H

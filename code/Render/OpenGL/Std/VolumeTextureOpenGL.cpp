@@ -125,17 +125,22 @@ ITexture* VolumeTextureOpenGL::resolve()
 	return this;
 }
 
-int VolumeTextureOpenGL::getWidth() const
+int32_t VolumeTextureOpenGL::getMips() const
+{
+	return 1;
+}
+
+int32_t VolumeTextureOpenGL::getWidth() const
 {
 	return m_width;
 }
 
-int VolumeTextureOpenGL::getHeight() const
+int32_t VolumeTextureOpenGL::getHeight() const
 {
 	return m_height;
 }
 
-int VolumeTextureOpenGL::getDepth() const
+int32_t VolumeTextureOpenGL::getDepth() const
 {
 	return m_depth;
 }

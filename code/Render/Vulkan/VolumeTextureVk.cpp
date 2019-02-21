@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Vulkan/VolumeTextureVk.h"
 
 namespace traktor
@@ -36,17 +30,22 @@ ITexture* VolumeTextureVk::resolve()
 	return this;
 }
 
-int VolumeTextureVk::getWidth() const
+int32_t VolumeTextureVk::getMips() const
 {
 	return 0;
 }
 
-int VolumeTextureVk::getHeight() const
+int32_t VolumeTextureVk::getWidth() const
 {
 	return 0;
 }
 
-int VolumeTextureVk::getDepth() const
+int32_t VolumeTextureVk::getHeight() const
+{
+	return 0;
+}
+
+int32_t VolumeTextureVk::getDepth() const
 {
 	return 0;
 }

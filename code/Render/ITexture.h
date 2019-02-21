@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ITexture_H
-#define traktor_render_ITexture_H
+#pragma once
 
 #include "Core/Object.h"
 
@@ -36,12 +29,22 @@ public:
 		void* bits;
 	};
 
+	/*! \brief Destroy texture.
+	 */
 	virtual void destroy() = 0;
 
+	/*! \brief Resolve render texture.
+	 *
+	 * \return Render texture.
+	 */
 	virtual ITexture* resolve() = 0;
+
+	/*! \brief Get number of mip maps.
+	 *
+	 * \return Number of mips.
+	 */
+	virtual int32_t getMips() const = 0;
 };
 	
 	}
 }
-
-#endif	// traktor_render_ITexture_H

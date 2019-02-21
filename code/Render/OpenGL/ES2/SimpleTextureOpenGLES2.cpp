@@ -289,6 +289,11 @@ ITexture* SimpleTextureOpenGLES2::resolve()
 	return this;
 }
 
+int32_t SimpleTextureOpenGLES2::getMips() const
+{
+	return m_mipCount;
+}
+
 int32_t SimpleTextureOpenGLES2::getWidth() const
 {
 	return m_width;
@@ -297,11 +302,6 @@ int32_t SimpleTextureOpenGLES2::getWidth() const
 int32_t SimpleTextureOpenGLES2::getHeight() const
 {
 	return m_height;
-}
-
-int32_t SimpleTextureOpenGLES2::getMips() const
-{
-	return m_mipCount;
 }
 
 bool SimpleTextureOpenGLES2::lock(int32_t level, Lock& lock)
