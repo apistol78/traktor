@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <fbxsdk.h>
 
 namespace traktor
@@ -9,7 +10,7 @@ namespace traktor
 
 class Model;
 
-bool convertMaterials(Model& outModel, FbxNode* meshNode);
+bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterialMap, FbxNode* meshNode);
 
 	}
 }

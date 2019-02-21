@@ -129,11 +129,13 @@ bool SkinnedMeshConverter::convert(
 		for (uint32_t j = 0; j < jointCount; ++j)
 			totalInfluence += jointInfluences[j].second;
 
-		log::info << (int)std::distance(model.getVertices().begin(), i) << L". " << jointInfluences.size() << L" joint(s), " << totalInfluence << Endl;
-
 		float blendIndices[4], blendWeights[4];
 		if (std::abs(totalInfluence) > FUZZY_EPSILON)
 		{
+			// Don't normalize single bone vertices; skinned with world.
+			if (jointCount <= 1)
+				totalInfluence = 1.0f;
+			
 			for (uint32_t j = 0; j < jointCount; ++j)
 			{
 				blendIndices[j] = (float)jointInfluences[j].first;

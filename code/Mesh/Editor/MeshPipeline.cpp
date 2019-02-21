@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <list>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -458,20 +452,14 @@ bool MeshPipeline::buildOutput(
 					// will cost more than excessive parameters.
 					int32_t uniformJointCount = alignUp(jointCount, 4);
 					if (uniformJointCount * 2 != indexedUniform->getLength())
-					{
 						indexedUniform->setLength(uniformJointCount * 2);		// Each bone is represented of a quaternion and a vector thus multiply by 2.
-						log::info << L"Found \"Joints\" uniform parameter in material \"" << i->first << L"\"; setting length to " << uniformJointCount * 2 << L" entries." << Endl;
-					}
 				}
 				else if (indexedUniform->getParameterName() == L"InstanceWorld")
 				{
 					// Determine how many instances we can use when rendering instanced meshed
 					// based on how many entries in uniform.
 					if (maxInstanceCount <= 0 || maxInstanceCount > indexedUniform->getLength() / 2)
-					{
 						maxInstanceCount = indexedUniform->getLength() / 2;		// Length of uniform is twice of max number of instances.
-						log::info << L"Found \"InstanceWorld\" uniform parameter in material \"" << i->first << L"\"; using max batch size " << maxInstanceCount << L" of instance(s)." << Endl;
-					}
 				}
 			}
 		}

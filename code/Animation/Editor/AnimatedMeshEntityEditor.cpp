@@ -48,26 +48,52 @@ void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 		{
 			const resource::Proxy< Skeleton >& skeleton = animatedEntity->getSkeleton();
 
-			AlignedVector< Transform > poseTransforms = animatedEntity->getPoseTransforms();
-			if (poseTransforms.empty())
-				calculateJointTransforms(skeleton, poseTransforms);
-
-			if (poseTransforms.size() == skeleton->getJointCount())
+#if 0
+			// Draw bind skeleton.
+			const auto& jointTransforms = animatedEntity->getJointTransforms();
+			if (jointTransforms.size() == skeleton->getJointCount())
 			{
+				const Color4ub color(0, 255, 0, 255);
 				for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 				{
 					const Joint* joint = skeleton->getJoint(i);
-
-					Color4ub color = Color4ub(255, 255, 0, 128);
-
-					primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
-
-					// if (joint->getParent() >= 0)
+					primitiveRenderer->drawWireFrame(jointTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
+					if (joint->getParent() >= 0)
 					{
-						// const Joint* parent = skeleton->getJoint(joint->getParent());
-						// T_ASSERT (parent);
+						const Joint* parent = skeleton->getJoint(joint->getParent());
+						T_ASSERT (parent != nullptr);
 
-						primitiveRenderer->drawBone(poseTransforms[i].toMatrix44(), 10.0f, color);
+						primitiveRenderer->drawLine(
+							jointTransforms[joint->getParent()].translation(),
+							jointTransforms[i].translation(),
+							2.0f,
+							color
+						);
+					}
+				}
+			}
+#endif
+
+			// Draw current pose.
+			AlignedVector< Transform > poseTransforms = animatedEntity->getPoseTransforms();
+			if (poseTransforms.size() == skeleton->getJointCount())
+			{
+				const Color4ub color(255, 255, 0, 255);
+				for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+				{
+					const Joint* joint = skeleton->getJoint(i);
+					primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
+					if (joint->getParent() >= 0)
+					{
+						const Joint* parent = skeleton->getJoint(joint->getParent());
+						T_ASSERT (parent != nullptr);
+
+						primitiveRenderer->drawLine(
+							poseTransforms[joint->getParent()].translation(),
+							poseTransforms[i].translation(),
+							2.0f,
+							color
+						);
 					}
 				}
 			}

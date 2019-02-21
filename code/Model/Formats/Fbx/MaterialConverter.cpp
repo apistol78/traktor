@@ -15,11 +15,11 @@ namespace traktor
 const FbxTexture* getTexture(const FbxSurfaceMaterial* material, const char* fbxPropertyName)
 {
 	if (!material || !fbxPropertyName)
-		return 0;
+		return nullptr;
 
 	const FbxProperty prop = material->FindProperty(fbxPropertyName);
 	if (!prop.IsValid())
-		return 0;
+		return nullptr;
 
 	int fileTextureCount = prop.GetSrcObjectCount< FbxFileTexture >();
 	for (int i = 0; i < fileTextureCount; ++i)
@@ -40,7 +40,7 @@ const FbxTexture* getTexture(const FbxSurfaceMaterial* material, const char* fbx
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
 std::wstring getTextureName(const FbxTexture* texture)
@@ -67,7 +67,7 @@ uint32_t uvChannel(Model& outModel, const std::string& uvSet)
 
 		}
 
-bool convertMaterials(Model& outModel, FbxNode* meshNode)
+bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterialMap, FbxNode* meshNode)
 {
 	int32_t materialCount = meshNode->GetMaterialCount();
 	for (int32_t i = 0; i < materialCount; ++i)
@@ -264,7 +264,7 @@ bool convertMaterials(Model& outModel, FbxNode* meshNode)
 			mm.setSpecularTerm(0.0f);
 		}
 
-		outModel.addMaterial(mm);
+		outMaterialMap[i] = outModel.addUniqueMaterial(mm);
 	}
 
 	return true;

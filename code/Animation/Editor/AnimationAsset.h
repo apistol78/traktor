@@ -27,12 +27,12 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	const std::wstring& getAnimation() const { return m_animation; }
+	const std::wstring& getTake() const { return m_take; }
 
 	float getScale() const { return m_scale; }
 
 private:
-	std::wstring m_animation;
+	std::wstring m_take;
 	float m_scale;
 };
 
