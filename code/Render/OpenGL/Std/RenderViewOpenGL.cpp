@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/OpenGL/Std/Platform.h"
@@ -749,6 +743,7 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 
 void RenderViewOpenGL::compute(IProgram* program, const int32_t* workSize)
 {
+#if !defined(__APPLE__)
 	ProgramOpenGL* programGL = checked_type_cast< ProgramOpenGL * >(program);
 
 	if (!programGL->activateCompute(m_renderContext))
@@ -759,6 +754,7 @@ void RenderViewOpenGL::compute(IProgram* program, const int32_t* workSize)
 		workSize[1],
 		workSize[2]
 	));
+#endif
 }
 
 void RenderViewOpenGL::end()

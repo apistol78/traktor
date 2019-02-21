@@ -182,6 +182,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ResourceContextOpenGL* resourceContex
 			T_OGL_SAFE(glBindFragDataLocation(programObject, 2, "_gl_FragData_2"));
 			T_OGL_SAFE(glBindFragDataLocation(programObject, 3, "_gl_FragData_3"));
 		}
+#if !defined(__APPLE__)
 		else if (!computeShader.empty())
 		{
 			GLuint computeObject = resourceContext->createShaderObject(computeShader.c_str(), GL_COMPUTE_SHADER);
@@ -193,6 +194,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ResourceContextOpenGL* resourceContex
 
 			T_OGL_SAFE(glAttachShader(programObject, computeObject));
 		}
+#endif
 		else
 			return nullptr;
 

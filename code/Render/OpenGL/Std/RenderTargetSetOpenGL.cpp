@@ -347,11 +347,13 @@ bool RenderTargetSetOpenGL::bind(RenderContextOpenGL* renderContext, GLuint prim
 
 void RenderTargetSetOpenGL::unbind()
 {
+#if !defined(__APPLE__)
 	if (m_desc.generateMips)
 	{
 		for (int32_t i = 0; i < m_desc.count; ++i)
 			T_OGL_SAFE(glGenerateTextureMipmap(m_targetTextures[i]));
 	}
+#endif
 }
 
 void RenderTargetSetOpenGL::blit(RenderContextOpenGL* renderContext)
