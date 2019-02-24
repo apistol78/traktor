@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/../code/**",
+				"${workspaceFolder}/../3rdp/vulkan/Vulkan-Docs/src/vulkan",
+                "/usr/include/gtk-3.0",
+				"/usr/include/glib-2.0"
+            ],
+            "defines": [
+				"__LINUX__"
+			],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}

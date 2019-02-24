@@ -1,0 +1,122 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": "Editor - DebugShared",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "/home/apistol/private/traktor/bin/latest/linux/debugshared/Traktor.Editor.App",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "/home/apistol/private/traktor",
+			"environment": [{"name":"TRAKTOR_HOME", "value":"/home/apistol/private/traktor"}],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			]
+		},
+		{
+			"name": "Editor - ReleaseShared",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "/home/apistol/private/traktor/bin/latest/linux/releaseshared/Traktor.Editor.App",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "/home/apistol/private/traktor",
+			"environment": [{"name":"TRAKTOR_HOME", "value":"/home/apistol/private/traktor"}],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			]
+		},
+		{
+			"name": "SolutionBuilder - DebugShared",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "/home/apistol/private/traktor/bin/latest/linux/debugshared/Traktor.SolutionBuilder.Editor.App",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "/home/apistol/private/traktor",
+			"environment": [{"name":"TRAKTOR_HOME", "value":"/home/apistol/private/traktor"}],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			]
+		},
+		{
+			"name": "SolutionBuilder - ReleaseShared",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "/home/apistol/private/traktor/bin/latest/linux/releaseshared/Traktor.SolutionBuilder.Editor.App",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "/home/apistol/private/traktor",
+			"environment": [{"name":"TRAKTOR_HOME", "value":"/home/apistol/private/traktor"}],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			]
+		},
+		{
+			"name": "Game - DebugShared",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "/home/apistol/private/traktor/bin/latest/linux/debugshared/Traktor.Amalgam.Game.App",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "/home/apistol/private/personal/apistol/isabelle/output/Isabelle/Linux",
+			"environment": [{"name":"TRAKTOR_HOME", "value":"/home/apistol/private/traktor"}],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			]
+		},
+		{
+			"name": "Game - ReleaseShared",
+			"type": "cppdbg",
+			"request": "launch",
+			"program": "/home/apistol/private/traktor/bin/latest/linux/releaseshared/Traktor.Amalgam.Game.App",
+			"args": [],
+			"stopAtEntry": false,
+			"cwd": "/home/apistol/private/personal/apistol/isabelle/output/Isabelle/Linux",
+			"environment": [{"name":"TRAKTOR_HOME", "value":"/home/apistol/private/traktor"}],
+			"externalConsole": false,
+			"MIMode": "gdb",
+			"setupCommands": [
+				{
+					"description": "Enable pretty-printing for gdb",
+					"text": "-enable-pretty-printing",
+					"ignoreFailures": true
+				}
+			]
+		}		
+	]
+}
