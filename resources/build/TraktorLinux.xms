@@ -7429,7 +7429,7 @@
 										<targetPath>debugshared</targetPath>
 									</item>
 								</aggregationItems>
-								<consumerLibraryPath/>
+								<consumerLibraryPath>debugshared</consumerLibraryPath>
 							</item>
 							<item type="Configuration" version="5">
 								<name>ReleaseShared</name>
@@ -7462,7 +7462,7 @@
 										<targetPath>releaseshared</targetPath>
 									</item>
 								</aggregationItems>
-								<consumerLibraryPath/>
+								<consumerLibraryPath>releaseshared</consumerLibraryPath>
 							</item>
 							<item type="Configuration" version="5">
 								<name>DebugStatic</name>
@@ -7495,7 +7495,7 @@
 										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
-								<consumerLibraryPath/>
+								<consumerLibraryPath>debugstatic</consumerLibraryPath>
 							</item>
 							<item type="Configuration" version="5">
 								<name>ReleaseStatic</name>
@@ -7528,7 +7528,7 @@
 										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
-								<consumerLibraryPath/>
+								<consumerLibraryPath>releasestatic</consumerLibraryPath>
 							</item>
 						</configurations>
 						<items>
@@ -16672,7 +16672,7 @@
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
-					<consumerLibraryPath/>
+					<consumerLibraryPath>debugshared</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -16701,7 +16701,7 @@
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
-					<consumerLibraryPath/>
+					<consumerLibraryPath>releaseshared</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -16730,7 +16730,7 @@
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
-					<consumerLibraryPath/>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
@@ -16759,7 +16759,7 @@
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
-					<consumerLibraryPath/>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -16821,8 +16821,13 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Render.Capture.Editor.so</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugshared</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseShared</name>
@@ -16845,8 +16850,13 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Render.Capture.Editor.so</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releaseshared</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
@@ -16869,8 +16879,13 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Render.Capture.Editor.a</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
@@ -16893,8 +16908,13 @@
 					<debugArguments/>
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
-					<aggregationItems/>
-					<consumerLibraryPath/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Render.Capture.Editor.a</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 			</configurations>
 			<items>
@@ -17733,6 +17753,316 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[13]/project/dependencies/item[7]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Shape</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Shape</sourcePath>
+			<configurations>
+				<item type="Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_SHAPE_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Shape.so</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugshared</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_SHAPE_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Shape.so</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Shape.a</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Shape.a</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>Spline</name>
+					<items>
+						<item type="File">
+							<fileName>Spline/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Shape.Editor</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Shape/Editor</sourcePath>
+			<configurations>
+				<item type="Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_SHAPE_EDITOR_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Shape.Editor.so</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugshared</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_SHAPE_EDITOR_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Shape.Editor.so</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Shape.Editor.a</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Shape.Editor.a</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>Spline</name>
+					<items>
+						<item type="File">
+							<fileName>Spline/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[98]"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[1]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_WorldEntityRenderers_H
-#define traktor_world_WorldEntityRenderers_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
@@ -51,5 +44,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_world_WorldEntityRenderers_H

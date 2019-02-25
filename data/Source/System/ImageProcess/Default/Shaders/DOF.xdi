@@ -5,7 +5,7 @@
 			<id>{61E3D180-FD03-094F-BFBB-4BE2B1CA2ECA}</id>
 			<comment/>
 			<position>
-				<first>1604</first>
+				<first>1603</first>
 				<second>-69</second>
 			</position>
 			<technique>Default</technique>
@@ -53,7 +53,7 @@
 			<id>{C4F8B588-F0CB-D441-8815-C05AE565412D}</id>
 			<comment/>
 			<position>
-				<first>1276</first>
+				<first>1275</first>
 				<second>-99</second>
 			</position>
 			<from>0</from>
@@ -64,15 +64,15 @@
 			<comment/>
 			<position>
 				<first>993</first>
-				<second>-121</second>
+				<second>-120</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{EBE23EAF-AF3E-DA4B-B328-3ADE1E5BA808}</id>
 			<comment/>
 			<position>
-				<first>850</first>
-				<second>-127</second>
+				<first>849</first>
+				<second>-126</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -80,8 +80,8 @@
 			<id>{3816B653-1194-8D48-A536-FEAF65FD6040}</id>
 			<comment/>
 			<position>
-				<first>580</first>
-				<second>-251</second>
+				<first>579</first>
+				<second>-250</second>
 			</position>
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>PtVector</type>
@@ -92,8 +92,8 @@
 			<id>{EA2CFA97-2613-154F-B752-5F1FAF7A7072}</id>
 			<comment/>
 			<position>
-				<first>668</first>
-				<second>-92</second>
+				<first>667</first>
+				<second>-91</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -110,7 +110,7 @@
 			<id>{478B06AA-98BD-BC40-B082-7ED2580E73CC}</id>
 			<comment/>
 			<position>
-				<first>380</first>
+				<first>379</first>
 				<second>-66</second>
 			</position>
 			<parameterName>Source</parameterName>
@@ -122,7 +122,7 @@
 			<comment/>
 			<position>
 				<first>375</first>
-				<second>-149</second>
+				<second>-148</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
@@ -130,22 +130,22 @@
 			<comment/>
 			<position>
 				<first>1230</first>
-				<second>-226</second>
+				<second>-225</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{74F9D262-6159-3B4C-B771-5695B413C986}</id>
 			<comment/>
 			<position>
-				<first>952</first>
-				<second>-319</second>
+				<first>951</first>
+				<second>-318</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{9AB3F929-0045-4049-8989-809F5E19E214}</id>
 			<comment/>
 			<position>
-				<first>839</first>
+				<first>838</first>
 				<second>-324</second>
 			</position>
 			<swizzle>xy</swizzle>
@@ -155,15 +155,15 @@
 			<comment/>
 			<position>
 				<first>663</first>
-				<second>-370</second>
+				<second>-369</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{076F94A1-5EA2-6445-99C1-4F03D33CE98A}</id>
 			<comment/>
 			<position>
-				<first>497</first>
-				<second>-400</second>
+				<first>496</first>
+				<second>-399</second>
 			</position>
 			<parameterName>Direction</parameterName>
 			<type>PtVector</type>
@@ -174,7 +174,7 @@
 			<comment/>
 			<position>
 				<first>507</first>
-				<second>-314</second>
+				<second>-313</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -182,8 +182,8 @@
 			<id>{5C36A885-A488-6249-83F7-8D7C52C3DB90}</id>
 			<comment/>
 			<position>
-				<first>847</first>
-				<second>-256</second>
+				<first>846</first>
+				<second>-255</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -191,7 +191,7 @@
 			<id>{C0AC1CB0-0F39-5D49-9806-B1486A4945DE}</id>
 			<comment/>
 			<position>
-				<first>1049</first>
+				<first>1048</first>
 				<second>192</second>
 			</position>
 		</item>
@@ -199,7 +199,7 @@
 			<id>{24BB0E9C-3707-4E49-952A-84185ADD455F}</id>
 			<comment/>
 			<position>
-				<first>854</first>
+				<first>853</first>
 				<second>198</second>
 			</position>
 			<min>0</min>
@@ -209,16 +209,16 @@
 			<id>{03027B58-EAEA-1B4E-A101-6EA85A5BD429}</id>
 			<comment/>
 			<position>
-				<first>655</first>
-				<second>191</second>
+				<first>654</first>
+				<second>190</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{EA97562A-DEC8-4844-A7F6-1241284499DF}</id>
 			<comment/>
 			<position>
-				<first>353</first>
-				<second>125</second>
+				<first>352</first>
+				<second>124</second>
 			</position>
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
@@ -278,9 +278,9 @@
 			<comment/>
 			<position>
 				<first>273</first>
-				<second>206</second>
+				<second>205</second>
 			</position>
-			<value>0.005</value>
+			<value>0.0004</value>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{B2DC19D7-C874-E348-BECB-06F6C696C649}</id>

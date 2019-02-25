@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "World/IEntityRenderer.h"
 #include "World/WorldEntityRenderers.h"
@@ -22,16 +16,18 @@ void updateEntityRendererMap(
 )
 {
 	outEntityRendererMap.clear();
-	for (RefArray< IEntityRenderer >::const_iterator i = entityRenderers.begin(); i != entityRenderers.end(); ++i)
+	for (const auto entityRenderer : entityRenderers)
 	{
-		TypeInfoSet entityTypes = (*i)->getRenderableTypes();
-		for (TypeInfoSet::const_iterator j = entityTypes.begin(); j != entityTypes.end(); ++j)
+		TypeInfoSet entityTypes = entityRenderer->getRenderableTypes();
+		for (const auto entityType : entityTypes)
 		{
 			TypeInfoSet renderableTypes;
-			(*j)->findAllOf(renderableTypes);
-
-			for (TypeInfoSet::const_iterator k = renderableTypes.begin(); k != renderableTypes.end(); ++k)
-				outEntityRendererMap[*k] = *i;
+			entityType->findAllOf(renderableTypes);
+			for (const auto renderableType : renderableTypes)
+			{
+				if (outEntityRendererMap[renderableType] == nullptr)
+					outEntityRendererMap[renderableType] = entityRenderer;
+			}
 		}
 	}
 }
@@ -48,16 +44,16 @@ void WorldEntityRenderers::add(IEntityRenderer* entityRenderer)
 
 void WorldEntityRenderers::remove(IEntityRenderer* entityRenderer)
 {
-	RefArray< IEntityRenderer >::iterator i = std::find(m_entityRenderers.begin(), m_entityRenderers.end(), entityRenderer);
-	T_ASSERT_M (i != m_entityRenderers.end(), L"No such entity renderer");
+	const auto i = std::find(m_entityRenderers.begin(), m_entityRenderers.end(), entityRenderer);
+	T_ASSERT_M(i != m_entityRenderers.end(), L"No such entity renderer");
 	m_entityRenderers.erase(i);
 	updateEntityRendererMap(m_entityRenderers, m_entityRendererMap);
 }
 
 IEntityRenderer* WorldEntityRenderers::find(const TypeInfo& entityType) const
 {
-	entity_renderer_map_t::const_iterator i = m_entityRendererMap.find(&entityType);
-	return i != m_entityRendererMap.end() ? i->second : 0;
+	const auto i = m_entityRendererMap.find(&entityType);
+	return i != m_entityRendererMap.end() ? i->second : nullptr;
 }
 
 	}

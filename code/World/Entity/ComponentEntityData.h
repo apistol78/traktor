@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_ComponentEntityData_H
-#define traktor_world_ComponentEntityData_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "World/EntityData.h"
@@ -53,7 +46,7 @@ public:
 	 */
 	const RefArray< IEntityComponentData >& getComponents() const;
 
-	virtual void serialize(ISerializer& s) override final;
+	virtual void serialize(ISerializer& s) override;
 
 private:
 	friend class ComponentEntityPipeline;
@@ -64,5 +57,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_world_ComponentEntityData_H
