@@ -162,7 +162,7 @@ bool ImageProcessEditor::handleCommand(const ui::Command& command)
 {
 	if (command == L"Render.ImageProcess.AddStep")
 	{
-		const TypeInfo* stepType = m_editor->browseType(makeTypeInfoSet< ImageProcessStep >());
+		const TypeInfo* stepType = m_editor->browseType(makeTypeInfoSet< ImageProcessStep >(), false, true);
 		if (stepType)
 		{
 			Ref< ImageProcessStep > step = checked_type_cast< ImageProcessStep*, false >(stepType->createInstance());

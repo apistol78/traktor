@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_EditorForm_H
-#define traktor_editor_EditorForm_H
+#pragma once
 
 #include <list>
 #include "Core/Guid.h"
@@ -124,7 +117,7 @@ public:
 
 	virtual const TypeInfo* browseType() override final;
 
-	virtual const TypeInfo* browseType(const TypeInfoSet& base) override final;
+	virtual const TypeInfo* browseType(const TypeInfoSet& base, bool onlyEditable, bool onlyInstantiable) override final;
 
 	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType) override final;
 
@@ -322,5 +315,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_editor_EditorForm_H

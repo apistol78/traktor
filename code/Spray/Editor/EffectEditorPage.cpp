@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -311,7 +305,7 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Effect.Editor.ReplaceEmitterSource")
 	{
-		const TypeInfo* sourceType = m_editor->browseType(makeTypeInfoSet< SourceData >());
+		const TypeInfo* sourceType = m_editor->browseType(makeTypeInfoSet< SourceData >(), false, true);
 		if (sourceType)
 		{
 			RefArray< ui::SequenceItem > selectedItems;

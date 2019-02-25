@@ -111,7 +111,7 @@ void GrainProperties::eventPropertyCommand(ui::PropertyCommandEvent* event)
 		{
 			if (arrayItem->getElementType())
 			{
-				const TypeInfo* objectType = m_editor->browseType(makeTypeInfoSet(*arrayItem->getElementType()));
+				const TypeInfo* objectType = m_editor->browseType(makeTypeInfoSet(*arrayItem->getElementType()), false, true);
 				if (objectType)
 				{
 					Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
@@ -199,7 +199,7 @@ void GrainProperties::eventPropertyCommand(ui::PropertyCommandEvent* event)
 
 			if (!objectItem->getObject())
 			{
-				objectType = m_editor->browseType(makeTypeInfoSet(*objectType));
+				objectType = m_editor->browseType(makeTypeInfoSet(*objectType), false, true);
 				if (objectType)
 				{
 					Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());

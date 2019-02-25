@@ -74,7 +74,7 @@ void ImageProcessProperties::eventPropertyCommand(ui::PropertyCommandEvent* even
 		{
 			if (arrayItem->getElementType())
 			{
-				const TypeInfo* objectType = m_editor->browseType(makeTypeInfoSet(*arrayItem->getElementType()));
+				const TypeInfo* objectType = m_editor->browseType(makeTypeInfoSet(*arrayItem->getElementType()), false, true);
 				if (objectType)
 				{
 					Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
@@ -162,7 +162,7 @@ void ImageProcessProperties::eventPropertyCommand(ui::PropertyCommandEvent* even
 
 			if (!objectItem->getObject())
 			{
-				objectType = m_editor->browseType(makeTypeInfoSet(*objectType));
+				objectType = m_editor->browseType(makeTypeInfoSet(*objectType), false, true);
 				if (objectType)
 				{
 					Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());

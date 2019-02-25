@@ -1514,7 +1514,7 @@ void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 	{
 		if (m_toolFilterType->isToggled())
 		{
-			const TypeInfo* filterType = m_editor->browseType(makeTypeInfoSet< ISerializable >());
+			const TypeInfo* filterType = m_editor->browseType(makeTypeInfoSet< ISerializable >(), false, false);
 			if (filterType)
 			{
 				TypeInfoSet typeSet;

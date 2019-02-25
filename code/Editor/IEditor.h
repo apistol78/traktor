@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_IEditor_H
-#define traktor_editor_IEditor_H
+#pragma once
 
 #include <set>
 #include <vector>
@@ -94,7 +87,7 @@ public:
 	virtual const TypeInfo* browseType() = 0;
 
 	/*! \brief Browse for rtti type. */
-	virtual const TypeInfo* browseType(const TypeInfoSet& base) = 0;
+	virtual const TypeInfo* browseType(const TypeInfoSet& base, bool onlyEditable, bool onlyInstantiable) = 0;
 
 	/*! \brief Browse database instance. */
 	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType) = 0;
@@ -165,5 +158,3 @@ public:
 
 	}
 }
-
-#endif	// traktor_editor_IEditor_H

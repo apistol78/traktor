@@ -88,10 +88,10 @@ const TypeInfo* ObjectEditor::browseType()
 	return browsedType;
 }
 
-const TypeInfo* ObjectEditor::browseType(const TypeInfoSet& base)
+const TypeInfo* ObjectEditor::browseType(const TypeInfoSet& base, bool onlyEditable, bool onlyInstantiable)
 {
 	m_parent->setEnable(false);
-	const TypeInfo* browsedType = m_editor->browseType(base);
+	const TypeInfo* browsedType = m_editor->browseType(base, onlyEditable, onlyInstantiable);
 	m_parent->setEnable(true);
 	return browsedType;
 }

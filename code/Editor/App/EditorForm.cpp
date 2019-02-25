@@ -982,7 +982,7 @@ const TypeInfo* EditorForm::browseType()
 	const TypeInfo* type = nullptr;
 
 	BrowseTypeDialog dlgBrowse(m_mergedSettings);
-	if (dlgBrowse.create(this, 0, false, false))
+	if (dlgBrowse.create(this, nullptr, false, false))
 	{
 		if (dlgBrowse.showModal() == ui::DrOk)
 			type = dlgBrowse.getSelectedType();
@@ -992,12 +992,12 @@ const TypeInfo* EditorForm::browseType()
 	return type;
 }
 
-const TypeInfo* EditorForm::browseType(const TypeInfoSet& base)
+const TypeInfo* EditorForm::browseType(const TypeInfoSet& base, bool onlyEditable, bool onlyInstantiable)
 {
 	const TypeInfo* type = nullptr;
 
 	BrowseTypeDialog dlgBrowse(m_mergedSettings);
-	if (dlgBrowse.create(this, &base, false, false))
+	if (dlgBrowse.create(this, &base, onlyEditable, onlyInstantiable))
 	{
 		if (dlgBrowse.showModal() == ui::DrOk)
 			type = dlgBrowse.getSelectedType();
@@ -1023,7 +1023,7 @@ Ref< db::Instance > EditorForm::browseInstance(const TypeInfo& filterType)
 			for (PropertyStringSet::value_type_t::const_iterator i = v.begin(); i != v.end(); ++i)
 			{
 				const TypeInfo* browseType = TypeInfo::find(i->c_str());
-				if (browseType)
+				if (browseType && browseType->isInstantiable())
 					browseTypes.insert(browseType);
 			}
 		}
