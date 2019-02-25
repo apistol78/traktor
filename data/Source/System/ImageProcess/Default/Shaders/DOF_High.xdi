@@ -280,7 +280,7 @@
 				<first>400</first>
 				<second>412</second>
 			</position>
-			<value>0.005</value>
+			<value>0.0015</value>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{B2DC19D7-C874-E348-BECB-06F6C696C649}</id>

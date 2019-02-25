@@ -1,9 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
+#include "Core/Log/Log.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityRendererCache.h"
 #include "Scene/Editor/SceneEditorContext.h"
@@ -28,7 +23,7 @@ EntityAdapter* EntityRendererCache::begin(const Object* renderable)
 		EntityAdapter* parentRenderAdapter = m_context->findAdapterFromEntity(entity);
 		if (parentRenderAdapter)
 		{
-			EntityAdapter* currentEntityAdapter = 0;
+			EntityAdapter* currentEntityAdapter = nullptr;
 
 			if (parentRenderAdapter->getEntity() == entity)
 				currentEntityAdapter = parentRenderAdapter;
@@ -38,7 +33,7 @@ EntityAdapter* EntityRendererCache::begin(const Object* renderable)
 			return currentEntityAdapter;
 		}
 	}
-	return 0;
+	return nullptr;
 }
 
 void EntityRendererCache::end()
