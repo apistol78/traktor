@@ -621,7 +621,11 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"Scene.Editor.FilterEntity")
 	{
 		if (m_buttonFilterEntity->isToggled())
-			m_entityFilterType = m_editor->browseType(makeTypeInfoSet< world::Entity, world::IEntityComponent >());
+			m_entityFilterType = m_editor->browseType(
+				makeTypeInfoSet< world::Entity, world::IEntityComponent >(),
+				false,
+				false
+			);
 		else
 			m_entityFilterType = 0;
 
@@ -1021,7 +1025,7 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 	// Select type of entity to create.
 	if (!entityType)
 	{
-		if ((entityType = m_context->getEditor()->browseType(makeTypeInfoSet< world::EntityData >())) == 0)
+		if ((entityType = m_context->getEditor()->browseType(makeTypeInfoSet< world::EntityData >(), false, true)) == nullptr)
 			return false;
 	}
 
