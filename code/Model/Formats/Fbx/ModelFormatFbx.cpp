@@ -206,7 +206,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref
 	if (!rootNode)
 		return nullptr;
 
-	// // Dump fbx hierarchy.
+	// Dump fbx hierarchy.
 	// dump(rootNode);
 
 	Matrix44 axisTransform = calculateAxisTransform(
@@ -249,8 +249,6 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref
 
 			Ref< Animation > anim = new Animation();
 			anim->setName(takeName);
-
-			log::info << L"take " << takeName << L", " << startFrame << L" -> " << endFrame << Endl;
 
 			for (int32_t frame = startFrame; frame <= endFrame; ++frame)
 			{

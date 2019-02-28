@@ -6181,6 +6181,15 @@
 														</item>
 													</items>
 												</item>
+												<item type="Filter">
+													<name>Bvh</name>
+													<items>
+														<item type="File">
+															<fileName>Formats/Bvh/*.*</fileName>
+															<items/>
+														</item>
+													</items>
+												</item>
 											</items>
 										</item>
 										<item type="Filter">

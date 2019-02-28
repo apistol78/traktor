@@ -63,7 +63,28 @@ namespace traktor
 		{
 	
 const resource::Id< render::ITexture > c_textureDebug(Guid(L"{0163BEDD-9297-A64F-AAD5-360E27E37C6E}"));
-		
+
+void updateSkeletonTree(Model* model, ui::TreeView* treeView, ui::TreeViewItem* parentItem, uint32_t parentNodeIndex)
+{
+	int32_t jointCount = model->getJointCount();
+	for (int32_t i = 0; i < jointCount; ++i)
+	{
+		const Joint& joint = model->getJoint(i);
+		if (joint.getParent() == parentNodeIndex)
+		{
+			Ref< ui::TreeViewItem > itemJoint = treeView->createItem(
+				parentItem,
+				joint.getName(),
+				1
+			);
+			// itemJoint->setImage(0, 1);
+			// itemJoint->setData(L"JOINT", joint);
+
+			updateSkeletonTree(model, treeView, itemJoint, i);
+		}
+	}
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelToolDialog", ModelToolDialog, ui::Dialog)
@@ -122,8 +143,8 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_toolWeight = new ui::ToolBarButton(L"Weights", ui::Command(L"ModelTool.ToggleWeights"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolWeight);
 
-	m_toolJoint = new ui::ToolBarDropDown(ui::Command(L"ModelTool.Joint"), ui::dpi96(200), L"Joints");
-	toolBar->addItem(m_toolJoint);
+	// m_toolJoint = new ui::ToolBarDropDown(ui::Command(L"ModelTool.Joint"), ui::dpi96(200), L"Joints");
+	// toolBar->addItem(m_toolJoint);
 
 	m_toolJointRest = new ui::ToolBarButton(L"Rest", ui::Command(L"ModelTool.ToggleJointRest"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolJointRest);
@@ -134,7 +155,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	splitter->create(this, true, ui::dpi96(300), false);
 
 	Ref< ui::Splitter > splitterH = new ui::Splitter();
-	splitterH->create(splitter, false, 50, true);
+	splitterH->create(splitter, false, 30, true);
 
 	m_modelTree = new ui::TreeView();
 	m_modelTree->create(splitterH, ui::WsDoubleBuffer);
@@ -144,6 +165,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	Ref< ui::Tab > tab = new ui::Tab();
 	tab->create(splitterH, ui::WsDoubleBuffer);
 
+	// Material tab.
 	Ref< ui::TabPage > tabPageMaterial = new ui::TabPage();
 	tabPageMaterial->create(tab, L"Materials", new ui::FloodLayout());
 	tab->addPage(tabPageMaterial);
@@ -172,6 +194,15 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_materialGrid->addColumn(new ui::GridColumn(L"Blend Operator", ui::dpi96(100)));
 	m_materialGrid->addColumn(new ui::GridColumn(L"Double Sided", ui::dpi96(100)));
 
+	// Skeleton tab.
+	Ref< ui::TabPage > tabPageSkeleton = new ui::TabPage();
+	tabPageSkeleton->create(tab, L"Skeleton", new ui::FloodLayout());
+	tab->addPage(tabPageSkeleton);
+
+	m_skeletonTree = new ui::TreeView();
+	m_skeletonTree->create(tabPageSkeleton, ui::WsDoubleBuffer);
+
+	// Statistic tab.
 	Ref< ui::TabPage > tabPageStatistics = new ui::TabPage();
 	tabPageStatistics->create(tab, L"Statistics", new ui::FloodLayout());
 	tab->addPage(tabPageStatistics);
@@ -261,6 +292,8 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 		else
 			log::error << L"Unable to load \"" << fileName << L"\"." << Endl;
 	}
+
+	m_timer.start();
 
 	update();
 	show();
@@ -589,7 +622,8 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 	m_materialGrid->removeAllRows();
 	m_statisticGrid->removeAllRows();
 	m_toolChannel->removeAll();
-	m_toolJoint->removeAll();
+	// m_toolJoint->removeAll();
+	m_skeletonTree->removeAllItems();
 
 	if (m_model)
 	{
@@ -666,17 +700,7 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 		else
 			m_toolChannel->setEnable(false);
 
-		uint32_t jointCount = m_model->getJointCount();
-		if (jointCount > 0)
-		{
-			for (uint32_t i = 0; i < jointCount; ++i)
-				m_toolJoint->add(m_model->getJoint(i).getName());
-
-			m_toolJoint->select(0);
-			m_toolJoint->setEnable(true);
-		}
-		else
-			m_toolJoint->setEnable(false);
+		updateSkeletonTree(m_model, m_skeletonTree, nullptr, c_InvalidIndex);
 	}
 
 	m_renderWidget->update();
@@ -796,7 +820,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				const AlignedVector< Vector4 >& positions = m_modelTris->getPositions();
 
 				int32_t channel = m_toolChannel->getSelected();
-				int32_t weightJoint = m_toolJoint->getSelected();
+				int32_t weightJoint = 0; //m_toolJoint->getSelected();
 
 				m_primitiveRenderer->pushDepthState(true, true, false);
 				for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
@@ -850,13 +874,14 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 					}
 					else
 					{
+						const Color4ub c_errorWeight(0, 0, 255, 255);
 						const Color4ub c_noWeight(0, 255, 0, 255);
 						const Color4ub c_fullWeight(255, 0, 0, 255);
 
 						m_primitiveRenderer->drawSolidTriangle(
-							p[2], lerp(c_noWeight, c_fullWeight, vertices[indices[2]].getJointInfluence(weightJoint)),
-							p[1], lerp(c_noWeight, c_fullWeight, vertices[indices[1]].getJointInfluence(weightJoint)),
-							p[0], lerp(c_noWeight, c_fullWeight, vertices[indices[0]].getJointInfluence(weightJoint))
+							p[2], (vertices[indices[2]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[2]].getJointInfluence(weightJoint)) : c_errorWeight,
+							p[1], (vertices[indices[1]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[1]].getJointInfluence(weightJoint)) : c_errorWeight,
+							p[0], (vertices[indices[0]].getJointInfluenceCount() > 0) ? lerp(c_noWeight, c_fullWeight, vertices[indices[0]].getJointInfluence(weightJoint)) : c_errorWeight
 						);
 					}
 				}
@@ -949,59 +974,85 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->popDepthState();
 			}
 
-			//if (true /*joints*/)
-			if (m_modelTris->getAnimationCount() > 0)
+			if (true /*joints*/)
 			{
-				int32_t selectedJoint = m_toolJoint->getSelected();
+				AlignedVector< uint32_t > childJointIds;
+
+				int32_t selectedJoint = 0; // m_toolJoint->getSelected();
 				bool showOnlyRest = m_toolJointRest->isToggled();
 
-				const Animation* anim = m_modelTris->getAnimation(0);
-				const Pose* pose = anim->getKeyFramePose(0);
-
 				m_primitiveRenderer->pushDepthState(false, false, false);
+
 				for (uint32_t i = 0; i < joints.size(); ++i)
 				{
-					const auto& joint = joints[i];
 					const auto colorRest = (i == selectedJoint) ? Color4ub(80, 255, 80, 255) : Color4ub(120, 255, 120, 255);
-					const auto colorPose = (i == selectedJoint) ? Color4ub(255, 255, 80, 255) : Color4ub(255, 180, 120, 255);
 
-					AlignedVector< uint32_t > childJointIds;
+					childJointIds.resize(0);
 					m_modelTris->findChildJoints(i, childJointIds);
 
 					auto Tjoint = m_modelTris->getJointGlobalTransform(i);
-					for (auto childId : childJointIds)
+					if (!childJointIds.empty())
 					{
-						auto Tchild = m_modelTris->getJointGlobalTransform(childId);
-
-						m_primitiveRenderer->drawLine(
-							Tjoint.translation(),
-							Tchild.translation(),
-							2.0f,
-							colorRest
-						);						
-					}
-
-					if (!showOnlyRest)
-					{
-						traktor::Transform TjointPose = traktor::Transform::identity();
-						for (uint32_t jointId = i; jointId != c_InvalidIndex; jointId = joints[jointId].getParent())
-							TjointPose = joints[jointId].getTransform() * pose->getJointTransform(jointId) * TjointPose;	// ABC order (A root)
-
 						for (auto childId : childJointIds)
 						{
-							traktor::Transform TchildPose = traktor::Transform::identity();
-							for (uint32_t jointId = childId; jointId != c_InvalidIndex; jointId = joints[jointId].getParent())
-								TchildPose = joints[jointId].getTransform() * pose->getJointTransform(jointId) * TchildPose;	// ABC order (A root)
+							auto Tchild = m_modelTris->getJointGlobalTransform(childId);
 
 							m_primitiveRenderer->drawLine(
-								TjointPose.translation(),
-								TchildPose.translation(),
+								Tjoint.translation(),
+								Tchild.translation(),
 								2.0f,
-								colorPose
+								colorRest
 							);						
 						}
 					}
+					else
+						m_primitiveRenderer->drawSolidPoint(
+							Tjoint.translation(),
+							2.0f,
+							colorRest
+						);
 				}
+
+				if (!showOnlyRest && m_modelTris->getAnimationCount() > 0)
+				{
+					const Animation* anim = m_modelTris->getAnimation(0);
+
+					int32_t frame = (int32_t)(m_timer.getElapsedTime() * 10.0f);
+					frame %= anim->getKeyFrameCount();
+
+					const Pose* pose = anim->getKeyFramePose(frame);
+
+					for (uint32_t i = 0; i < joints.size(); ++i)
+					{
+						const auto colorPose = (i == selectedJoint) ? Color4ub(255, 255, 80, 255) : Color4ub(255, 180, 120, 255);
+
+						childJointIds.resize(0);
+						m_modelTris->findChildJoints(i, childJointIds);
+
+						auto TjointPose = pose->getJointGlobalTransform(m_modelTris, i);
+						if (!childJointIds.empty())
+						{
+							for (auto childId : childJointIds)
+							{
+								auto TchildPose = pose->getJointGlobalTransform(m_modelTris, childId);
+
+								m_primitiveRenderer->drawLine(
+									TjointPose.translation(),
+									TchildPose.translation(),
+									2.0f,
+									colorPose
+								);						
+							}
+						}
+						else
+							m_primitiveRenderer->drawSolidPoint(
+								TjointPose.translation(),
+								2.0f,
+								colorPose
+							);
+					}
+				}
+
 				m_primitiveRenderer->popDepthState();			
 			}
 
