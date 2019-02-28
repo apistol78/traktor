@@ -26,6 +26,23 @@ namespace traktor
  */
 struct T_DLLCLASS Atomic
 {
+private:
+	template < typename T, int Tsize >
+	struct S
+	{
+	};
+
+	template < typename T > struct S < T, 4 >
+	{
+		inline static T exchange(T& s, T v) { return (T)Atomic::exchange(*(uint32_t*)&s, *(uint32_t*)&v); }
+	};
+
+	template < typename T > struct S < T, 8 >
+	{
+		inline static T exchange(T& s, T v) { return (T)Atomic::exchange(*(uint64_t*)&s, *(uint64_t*)&v); }
+	};
+
+public:
 	/*! \brief Increment variable.
 	 *
 	 * \return Result value of variable.
@@ -57,10 +74,7 @@ struct T_DLLCLASS Atomic
 	template < typename T >
 	static T exchange(T& s, T v)
 	{
-		if (sizeof(T) <= sizeof(uint32_t))
-			return (T)exchange(*(uint32_t*)&s, *(uint32_t*)&v);
-		else
-			return (T)exchange(*(uint64_t*)&s, *(uint64_t*)&v);
+		return S< T, sizeof(T) >::exchange(s, v);
 	}
 };
 
