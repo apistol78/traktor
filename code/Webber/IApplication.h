@@ -1,6 +1,6 @@
-#ifndef traktor_wbr_IApplication_H
-#define traktor_wbr_IApplication_H
+#pragma once
 
+#include <string>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 
@@ -45,5 +45,3 @@ public:
 
 	}
 }
-
-#endif	// traktor_wbr_IApplication_H
