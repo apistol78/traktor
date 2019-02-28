@@ -2,6 +2,7 @@
 #include "Animation/Animation/Animation.h"
 #include "Animation/Editor/AnimationAsset.h"
 #include "Animation/Editor/AnimationPipeline.h"
+#include "Animation/Editor/SkeletonAsset.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
@@ -48,7 +49,14 @@ bool AnimationPipeline::buildDependencies(
 ) const
 {
 	Ref< const AnimationAsset > animationAsset = checked_type_cast< const AnimationAsset* >(sourceAsset);
+	
+	// Animation source data.
 	pipelineDepends->addDependency(m_assetPath, animationAsset->getFileName().getPathName());
+
+	// Remapping skeleton if skeleton in animation data differ from mesh skeleton.
+	if (animationAsset->getSkeleton().isNotNull())
+		pipelineDepends->addDependency(animationAsset->getSkeleton(), editor::PdfUse);
+
 	return true;
 }
 
@@ -67,51 +75,85 @@ bool AnimationPipeline::buildOutput(
 {
 	Ref< const AnimationAsset > animationAsset = checked_type_cast< const AnimationAsset* >(sourceAsset);
 
-	Ref< model::Model > model = model::ModelFormat::readAny(animationAsset->getFileName(), [&](const Path& p) {
+	// Read source model.
+	Ref< model::Model > modelAnimation = model::ModelFormat::readAny(animationAsset->getFileName(), [&](const Path& p) {
 		return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
 	});
-	if (!model)
+	if (!modelAnimation)
 	{
 		log::error << L"Unable to build animation; no such file \"" << animationAsset->getFileName().getPathName() << L"\"." << Endl;
 		return false;
 	}
 
-	// Scale model according to scale factor in asset.
-	model::Transform(scale(animationAsset->getScale(), animationAsset->getScale(), animationAsset->getScale())).apply(*model);
+	// Read skeleton model.
+	Ref< model::Model > modelSkeleton = modelAnimation;
+	if (animationAsset->getSkeleton().isNotNull())
+	{
+		Ref< const SkeletonAsset > skeletonAsset = pipelineBuilder->getObjectReadOnly< SkeletonAsset >(animationAsset->getSkeleton());
+		if (!skeletonAsset)
+		{
+			log::error << L"Unable to build animation; no such skeleton asset." << Endl;
+			return false;
+		}
 
+		modelSkeleton = model::ModelFormat::readAny(skeletonAsset->getFileName(), [&](const Path& p) {
+			return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+		});
+		if (!modelSkeleton)
+		{
+			log::error << L"Unable to build animation; no such file \"" << skeletonAsset->getFileName().getPathName() << L"\"." << Endl;
+			return false;
+		}		
+	}
+
+	// Scale models according to scale factor in asset.
+	model::Transform(scale(animationAsset->getScale(), animationAsset->getScale(), animationAsset->getScale())).apply(*modelAnimation);
+	if (modelSkeleton != modelAnimation)
+		model::Transform(scale(animationAsset->getScale(), animationAsset->getScale(), animationAsset->getScale())).apply(*modelSkeleton);
+
+	// Find animation take.
 	const std::wstring take = animationAsset->getTake();
 
-	Ref< const model::Animation > modelAnim = model->findAnimation(take);
-	if (!modelAnim)
+	Ref< const model::Animation > ma = modelAnimation->findAnimation(take);
+	if (!ma)
 	{
 		log::error << L"Unable to build animation; no such animation \"" << take << L"\" in file \"" << animationAsset->getFileName().getPathName() << L"\"." << Endl;
 		log::error << L"Available animations are:" << Endl;
-		for (const auto anim : model->getAnimations())
+		for (const auto anim : modelAnimation->getAnimations())
 			log::error << L"\t\"" << anim->getName() << L"\"" << Endl;
 		return false;		
 	}
 
-	const uint32_t jointCount = model->getJointCount();
+	// Generate key poses.
+	const auto& skeletonMeshJoints = modelSkeleton->getJoints();
+	const auto& skeletonAnimJoints = modelAnimation->getJoints();
 
 	Ref< Animation > anim = new Animation();
 
-	for (uint32_t i = 0; i < modelAnim->getKeyFrameCount(); ++i)
+	for (uint32_t i = 0; i < ma->getKeyFrameCount(); ++i)
 	{
-		float time = modelAnim->getKeyFrameTime(i);
-		const model::Pose* pose = modelAnim->getKeyFramePose(i);
+		float time = ma->getKeyFrameTime(i);
+		const model::Pose* mp = ma->getKeyFramePose(i);
 
 		Animation::KeyPose kp;
 		kp.at = time;
 
-		for (uint32_t j = 0; j < jointCount; ++j)
+		for (uint32_t j = 0; j < skeletonMeshJoints.size(); ++j)
 		{
-			const Transform& jointTransform = pose->getJointTransform(j);
-			kp.pose.setJointTransform(j, jointTransform);
+			const auto& name = skeletonMeshJoints[j].getName();
+
+			uint32_t k = modelAnimation->findJointIndex(name);
+			if (k != model::c_InvalidIndex)
+			{
+				const Transform& P = mp->getJointTransform(k);
+				kp.pose.setJointTransform(j, P);
+			}
 		}
 
 		anim->addKeyPose(kp);
 	}
 
+	/*
 	// Discard redundant key poses.
 	uint32_t uncompressedCount = anim->getKeyPoseCount();
 	if (uncompressedCount > 2)
@@ -193,6 +235,7 @@ bool AnimationPipeline::buildOutput(
 
 	if (uncompressedCount != anim->getKeyPoseCount())
 		log::info << L"Removed " << (uncompressedCount - anim->getKeyPoseCount()) << L" redundant key poses in animation; was " << uncompressedCount << L", now " << anim->getKeyPoseCount() << Endl;
+	*/
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!instance)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Guid.h"
 #include "Editor/Asset.h"
 
 // import/export mechanism.
@@ -27,11 +28,14 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
+	const Guid& getSkeleton() const { return m_skeleton; }
+
 	const std::wstring& getTake() const { return m_take; }
 
 	float getScale() const { return m_scale; }
 
 private:
+	Guid m_skeleton;
 	std::wstring m_take;
 	float m_scale;
 };

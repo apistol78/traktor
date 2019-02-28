@@ -73,7 +73,8 @@ Matrix44 calculateAxisTransform(const FbxAxisSystem& axisSystem)
 	int frontSign;
 	FbxAxisSystem::EFrontVector front = axisSystem.GetFrontVector(frontSign);
 
-	bool leftHanded = bool(axisSystem.GetCoorSystem() == FbxAxisSystem::eLeftHanded);
+	auto coordSystem = axisSystem.GetCoorSystem();
+	bool leftHanded = bool(coordSystem == FbxAxisSystem::eLeftHanded);
 
 	float sign = upSign < 0 ? -1.0f : 1.0f;
 	float scale = leftHanded ? 1.0f : -1.0f;

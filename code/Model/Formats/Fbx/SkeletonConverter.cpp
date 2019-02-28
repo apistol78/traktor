@@ -95,6 +95,8 @@ bool convertSkeleton(
 			}
 			nodeTransform = bindPose->GetMatrix(id) * node->EvaluateLocalTransform();
 		}
+
+		// FbxAMatrix nodeTransform = node->EvaluateGlobalTransform();
 		
 		Matrix44 Mnode = convertMatrix(nodeTransform);
 		Matrix44 Mrx90 = rotateX(deg2rad(-90.0f));
@@ -172,7 +174,7 @@ Ref< Pose > convertPose(
 			return true;
 		}
 
-		const Joint& joint = model.getJoint(jointId);
+		// const Joint& joint = model.getJoint(jointId);
 
 		const Vector4 S(
 			1.0f / Mjoint.axisX().length(),
@@ -187,22 +189,21 @@ Ref< Pose > convertPose(
 			Tjoint.rotation().normalized()
 		);
 
-		// Calculate pose delta transformation matrix.
-		Transform Tglobal = Transform::identity();
-		for (
-			uint32_t parentId = joint.getParent();
-			parentId != c_InvalidIndex;
-			parentId = model.getJoint(parentId).getParent()
-		)
+		uint32_t parentId = c_InvalidIndex;
+		if (parent != nullptr)
 		{
-			Tglobal = model.getJoint(parentId).getTransform() * pose->getJointTransform(parentId) * Tglobal;	// ABC order (A root)
+			std::wstring parentJointName = getJointName(parent);
+			parentId = model.findJointIndex(parentJointName);
+			if (parentId != c_InvalidIndex)
+			{
+				Transform Tparent = pose->getJointGlobalTransform(&model, parentId);
+				Tjoint = Tparent.inverse() * Tjoint;	// Cl = Bg-1 * Cg
+			}
+			else
+				log::warning << L"Unable to bind parent joint; no such joint \"" << parentJointName << L"\"." << Endl;
 		}
-		
-		Tglobal = Tglobal * joint.getTransform();
-		Tglobal = Tglobal.inverse();
-		Tglobal = Tglobal * Tjoint;
 
-		pose->setJointTransform(jointId, Tglobal);
+		pose->setJointTransform(jointId, Tjoint);
 		return true;
 	});
 	

@@ -1,12 +1,6 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_model_ModelToolDialog_H
-#define traktor_model_ModelToolDialog_H
+#pragma once
 
+#include "Core/Timer/Timer.h"
 #include "Resource/Proxy.h"
 #include "Ui/Dialog.h"
 
@@ -78,10 +72,10 @@ private:
 	Ref< ui::ToolBarButton > m_toolUV;
 	Ref< ui::ToolBarDropDown > m_toolChannel;
 	Ref< ui::ToolBarButton > m_toolWeight;
-	Ref< ui::ToolBarDropDown > m_toolJoint;
 	Ref< ui::ToolBarButton > m_toolJointRest;
 	Ref< ui::TreeView > m_modelTree;
 	Ref< ui::GridView > m_materialGrid;
+	Ref< ui::TreeView > m_skeletonTree;
 	Ref< ui::GridView > m_statisticGrid;
 	Ref< ui::Menu > m_modelRootPopup;
 	Ref< ui::Menu > m_modelChildPopup;
@@ -94,6 +88,7 @@ private:
 	float m_cameraZ;
 	float m_normalScale;
 	ui::Point m_lastMousePosition;
+	Timer m_timer;
 
 	bool loadModel();
 
@@ -126,5 +121,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_model_ModelToolDialog_H

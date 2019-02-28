@@ -50,10 +50,7 @@ void calculatePoseLocalTransforms(
 
 	outJointLocalTransforms.resize(skeleton->getJointCount());
 	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
-	{
-		Transform poseTransform = pose->getJointTransform(i);
-		outJointLocalTransforms[i] = skeleton->getJoint(i)->getTransform() * poseTransform;
-	}
+		outJointLocalTransforms[i] = pose->getJointTransform(i);
 }
 
 void calculatePoseTransforms(

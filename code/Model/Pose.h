@@ -17,6 +17,8 @@ namespace traktor
 	namespace model
 	{
 
+class Model;
+
 /*! \brief Pose
  * \ingroup Model
  */
@@ -28,6 +30,8 @@ public:
 	void setJointTransform(uint32_t jointId, const Transform& jointTransform);
 
 	const Transform& getJointTransform(uint32_t jointId) const;
+
+	Transform getJointGlobalTransform(const Model* model, uint32_t jointId) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

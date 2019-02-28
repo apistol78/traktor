@@ -2,6 +2,7 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Model/Model.h"
 #include "Model/Pose.h"
 
 namespace traktor
@@ -20,7 +21,21 @@ void Pose::setJointTransform(uint32_t jointId, const Transform& jointTransform)
 
 const Transform& Pose::getJointTransform(uint32_t jointId) const
 {
-	return m_jointTransforms[jointId];
+	return jointId < m_jointTransforms.size() ? m_jointTransforms[jointId] : Transform::identity();
+}
+
+Transform Pose::getJointGlobalTransform(const Model* model, uint32_t jointId) const
+{
+	const auto& joints = model->getJoints();
+
+	Transform Tglobal = Transform::identity();
+	while (jointId != c_InvalidIndex)
+	{
+		Tglobal = getJointTransform(jointId) * Tglobal;	// ABC order (A root)
+		jointId = joints[jointId].getParent();
+	}
+
+	return Tglobal;
 }
 
 void Pose::serialize(ISerializer& s)
