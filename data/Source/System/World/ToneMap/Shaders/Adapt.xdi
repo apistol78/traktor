@@ -5,7 +5,7 @@
 			<id>{FD37798D-AF87-8D46-B6E9-0AAC129DAA0D}</id>
 			<comment/>
 			<position>
-				<first>981</first>
+				<first>980</first>
 				<second>156</second>
 			</position>
 			<technique>Default</technique>
@@ -53,8 +53,8 @@
 			<id>{86EC0B94-9806-4844-B7C2-E0DE3825ABEF}</id>
 			<comment/>
 			<position>
-				<first>183</first>
-				<second>121</second>
+				<first>182</first>
+				<second>120</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -71,7 +71,7 @@
 			<id>{DC53300F-6A41-EB45-8178-D7C64FAAB57A}</id>
 			<comment/>
 			<position>
-				<first>181</first>
+				<first>180</first>
 				<second>228</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
@@ -106,7 +106,7 @@
 			<id>{22930DAF-46D9-7D4E-AEF3-67E7731FF23F}</id>
 			<comment/>
 			<position>
-				<first>195</first>
+				<first>194</first>
 				<second>342</second>
 			</position>
 			<parameterName>DeltaTime</parameterName>
@@ -118,14 +118,14 @@
 			<comment/>
 			<position>
 				<first>348</first>
-				<second>367</second>
+				<second>366</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{5E402774-310B-D240-9728-F505FB84AE36}</id>
 			<comment/>
 			<position>
-				<first>-7</first>
+				<first>-6</first>
 				<second>318</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
@@ -146,7 +146,7 @@
 			<id>{303B7F48-264B-CB44-B04B-F46878E210FA}</id>
 			<comment/>
 			<position>
-				<first>393</first>
+				<first>392</first>
 				<second>176</second>
 			</position>
 			<swizzle>x</swizzle>
@@ -155,7 +155,7 @@
 			<id>{55ECF7B6-B461-2543-9A21-0C320DFC9EAD}</id>
 			<comment/>
 			<position>
-				<first>391</first>
+				<first>390</first>
 				<second>220</second>
 			</position>
 			<swizzle>x</swizzle>
@@ -164,7 +164,7 @@
 			<id>{F9DA4DE6-003B-FD49-AAFC-660E59E5F4CC}</id>
 			<comment/>
 			<position>
-				<first>531</first>
+				<first>530</first>
 				<second>332</second>
 			</position>
 			<min>0</min>
@@ -174,7 +174,7 @@
 			<id>{A04B14D0-B28D-A347-AB91-477153FDC48B}</id>
 			<comment/>
 			<position>
-				<first>-31</first>
+				<first>-30</first>
 				<second>62</second>
 			</position>
 			<parameterName>SourceTexture</parameterName>
@@ -185,8 +185,8 @@
 			<id>{D17CD4F7-C89F-BC47-915C-E276F8B2899A}</id>
 			<comment/>
 			<position>
-				<first>-55</first>
-				<second>221</second>
+				<first>-54</first>
+				<second>220</second>
 			</position>
 			<parameterName>CurrentIllumTexture</parameterName>
 			<type>PtTexture2D</type>
@@ -206,17 +206,9 @@
 			<comment/>
 			<position>
 				<first>16</first>
-				<second>159</second>
+				<second>158</second>
 			</position>
 			<value>0</value>
-		</item>
-		<item type="traktor.render.Exp" version="traktor.render.Node:1">
-			<id>{6EB2C7BD-0B9B-46DB-B881-C542A2B70E4F}</id>
-			<comment/>
-			<position>
-				<first>513</first>
-				<second>138</second>
-			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -353,16 +345,6 @@
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
 				<name>Output</name>
 			</source>
 			<destination>
