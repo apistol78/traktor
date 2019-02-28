@@ -2,6 +2,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Model/Model.h"
@@ -72,13 +73,20 @@ void updateSkeletonTree(Model* model, ui::TreeView* treeView, ui::TreeViewItem* 
 		const Joint& joint = model->getJoint(i);
 		if (joint.getParent() == parentNodeIndex)
 		{
+			int32_t affecting = 0;
+			for (const auto vtx : model->getVertices())
+			{
+				if (vtx.getJointInfluence(i) > FUZZY_EPSILON)
+					++affecting;
+			}
+
 			Ref< ui::TreeViewItem > itemJoint = treeView->createItem(
 				parentItem,
-				joint.getName(),
+				joint.getName() + L" (" + toString(affecting) + L")",
 				1
 			);
-			// itemJoint->setImage(0, 1);
-			// itemJoint->setData(L"JOINT", joint);
+			itemJoint->setImage(0, 1);
+			itemJoint->setData(L"JOINT", new PropertyInteger(i));
 
 			updateSkeletonTree(model, treeView, itemJoint, i);
 		}
@@ -143,9 +151,6 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_toolWeight = new ui::ToolBarButton(L"Weights", ui::Command(L"ModelTool.ToggleWeights"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolWeight);
 
-	// m_toolJoint = new ui::ToolBarDropDown(ui::Command(L"ModelTool.Joint"), ui::dpi96(200), L"Joints");
-	// toolBar->addItem(m_toolJoint);
-
 	m_toolJointRest = new ui::ToolBarButton(L"Rest", ui::Command(L"ModelTool.ToggleJointRest"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolJointRest);
 
@@ -201,7 +206,8 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 
 	m_skeletonTree = new ui::TreeView();
 	m_skeletonTree->create(tabPageSkeleton, ui::WsDoubleBuffer);
-
+	m_skeletonTree->addImage(new ui::StyleBitmap(L"Animation.Bones"), 2);
+	
 	// Statistic tab.
 	Ref< ui::TabPage > tabPageStatistics = new ui::TabPage();
 	tabPageStatistics->create(tab, L"Statistics", new ui::FloodLayout());
@@ -622,7 +628,6 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 	m_materialGrid->removeAllRows();
 	m_statisticGrid->removeAllRows();
 	m_toolChannel->removeAll();
-	// m_toolJoint->removeAll();
 	m_skeletonTree->removeAllItems();
 
 	if (m_model)
@@ -807,6 +812,15 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 		{
 			T_ASSERT (m_modelTris);
 
+			int32_t channel = m_toolChannel->getSelected();
+
+			RefArray< ui::TreeViewItem > selectedItems;
+			m_skeletonTree->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
+			
+			int32_t weightJoint = -1;
+			if (selectedItems.size() == 1)
+				weightJoint = *selectedItems.front()->getData< PropertyInteger >(L"JOINT");
+
 			// Render solid.
 			if (m_toolSolid->isToggled())
 			{
@@ -818,9 +832,6 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				const AlignedVector< Vertex >& vertices = m_modelTris->getVertices();
 				const AlignedVector< Polygon >& polygons = m_modelTris->getPolygons();
 				const AlignedVector< Vector4 >& positions = m_modelTris->getPositions();
-
-				int32_t channel = m_toolChannel->getSelected();
-				int32_t weightJoint = 0; //m_toolJoint->getSelected();
 
 				m_primitiveRenderer->pushDepthState(true, true, false);
 				for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
@@ -978,14 +989,11 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 			{
 				AlignedVector< uint32_t > childJointIds;
 
-				int32_t selectedJoint = 0; // m_toolJoint->getSelected();
-				bool showOnlyRest = m_toolJointRest->isToggled();
-
 				m_primitiveRenderer->pushDepthState(false, false, false);
 
 				for (uint32_t i = 0; i < joints.size(); ++i)
 				{
-					const auto colorRest = (i == selectedJoint) ? Color4ub(80, 255, 80, 255) : Color4ub(120, 255, 120, 255);
+					const auto colorRest = (i == weightJoint) ? Color4ub(80, 255, 80, 255) : Color4ub(120, 255, 120, 255);
 
 					childJointIds.resize(0);
 					m_modelTris->findChildJoints(i, childJointIds);
@@ -1013,6 +1021,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 						);
 				}
 
+				bool showOnlyRest = m_toolJointRest->isToggled();
 				if (!showOnlyRest && m_modelTris->getAnimationCount() > 0)
 				{
 					const Animation* anim = m_modelTris->getAnimation(0);
@@ -1024,7 +1033,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 
 					for (uint32_t i = 0; i < joints.size(); ++i)
 					{
-						const auto colorPose = (i == selectedJoint) ? Color4ub(255, 255, 80, 255) : Color4ub(255, 180, 120, 255);
+						const auto colorPose = (i == weightJoint) ? Color4ub(255, 255, 80, 255) : Color4ub(255, 180, 120, 255);
 
 						childJointIds.resize(0);
 						m_modelTris->findChildJoints(i, childJointIds);
