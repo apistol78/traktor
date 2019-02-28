@@ -1,6 +1,7 @@
 #include <numeric>
 #include "Core/Log/Log.h"
 #include "Core/Math/Vector2.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
@@ -59,8 +60,10 @@ void ExtrudeShapeLayer::pathChanged()
 	if (keys.size() < 2)
 		return;
 
-	const uint32_t nsegments = keys.size() - 1;
+	safeDestroy(m_vertexBuffer);
+	safeDestroy(m_indexBuffer);
 
+	const uint32_t nsegments = (uint32_t)(keys.size() - 1);
 	AlignedVector< uint32_t > stepsPerSegment;
 
 	// Calculate number of steps per segment.
@@ -89,6 +92,10 @@ void ExtrudeShapeLayer::pathChanged()
 		);
 	}
 
+	int32_t nsteps = std::accumulate(stepsPerSegment.begin(), stepsPerSegment.end(), 0);
+	if (nsteps <= 1)
+		return;
+
 	// Extrude shape.
 	AlignedVector< Vector2 > shape;
 	for (int32_t i = 0; i < 16; ++i)
@@ -100,9 +107,7 @@ void ExtrudeShapeLayer::pathChanged()
 		));
 	}
 
-	uint32_t nedges = shape.size();
-	uint32_t nsteps = std::accumulate(stepsPerSegment.begin(), stepsPerSegment.end(), 0);
-
+	uint32_t nedges = (uint32_t)shape.size();
 	uint32_t nvertices = nsteps * nedges;
 	uint32_t ntriangles = (nsteps - 1) * nedges * 2;
 
@@ -131,8 +136,10 @@ void ExtrudeShapeLayer::pathChanged()
 
 			if (m_automaticOrientation)
 			{
-				Transform Tn = path.evaluate(at + 0.001f).transform();
-				T = lookAt(T.translation().xyz1(), Tn.translation().xyz1()).inverse();
+				const float c_atDelta = 0.001f;
+				Transform Tp = path.evaluate(std::max(at - c_atDelta, 0.0f)).transform();
+				Transform Tn = path.evaluate(std::min(at + c_atDelta, 1.0f)).transform();
+				T = lookAt(Tp.translation().xyz1(), Tn.translation().xyz1()).inverse();
 			}
 
 			for (uint32_t i = 0; i < nedges; ++i)
@@ -164,7 +171,7 @@ void ExtrudeShapeLayer::pathChanged()
 	m_indexBuffer = m_renderSystem->createIndexBuffer(render::ItUInt16, ntriangles * 3 * sizeof(uint16_t), false);
 
 	uint16_t* index = (uint16_t*)m_indexBuffer->lock();
-	for (uint32_t ring = 0; ring < nsteps - 1; ++ring)
+	for (int32_t ring = 0; ring < nsteps - 1; ++ring)
 	{
 		const uint16_t b0 = ring * nedges;
 		const uint16_t b1 = (ring + 1) * nedges;
