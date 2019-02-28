@@ -1,13 +1,7 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_PropertyGroup_H
-#define traktor_PropertyGroup_H
+#pragma once
 
 #include <map>
+#include <string>
 #include "Core/Settings/IPropertyValue.h"
 
 // import/export mechanism.
@@ -118,5 +112,3 @@ struct PropertyTrait< Ref< PropertyGroup > >
 };
 
 }
-
-#endif	// traktor_PropertyGroup_H

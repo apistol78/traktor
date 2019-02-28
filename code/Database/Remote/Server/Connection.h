@@ -1,13 +1,7 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_Connection_H
-#define traktor_db_Connection_H
+#pragma once
 
 #include <map>
+#include <string>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 
@@ -89,5 +83,3 @@ private:
 
 	}
 }
-
-#endif	// traktor_db_Connection_H
