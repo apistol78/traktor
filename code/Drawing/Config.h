@@ -22,7 +22,9 @@
 #	define DRAWING_INCLUDE_ICO
 #	define DRAWING_INCLUDE_JPEG
 #	define DRAWING_INCLUDE_GIF
-#	define DRAWING_INCLUDE_EXR
+#	if !defined(__ANDROID__)
+#		define DRAWING_INCLUDE_EXR
+#	endif
 #endif
 
 // Santiy check
