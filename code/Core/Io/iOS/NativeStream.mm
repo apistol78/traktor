@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstdio>
 #include "Core/Io/File.h"
 #include "Core/Io/iOS/NativeStream.h"
@@ -83,11 +77,11 @@ int64_t NativeStream::read(void* block, int64_t nbytes)
 	return int64_t(fread(block, 1, nbytes, m_fp));
 }
 
-int64_t NativeStream::write(const void* block, int64_t nbytes)	
+int64_t NativeStream::write(const void* block, int64_t nbytes)
 {
 	if (m_fp == 0)
 		return 0;
-		
+
 	return int64_t(fwrite(block, 1, nbytes, m_fp));
 }
 

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_VertexElement_H
-#define traktor_render_VertexElement_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
@@ -42,13 +35,13 @@ public:
 	uint32_t getSize() const;
 
 	DataUsage getDataUsage() const { return m_usage; }
-	
+
 	DataType getDataType() const { return m_type; }
-	
+
 	uint32_t getOffset() const { return m_offset; }
-	
+
 	uint32_t getIndex() const { return m_index; }
-	
+
 private:
 	DataUsage m_usage;
 	DataType m_type;
@@ -71,4 +64,3 @@ AlignedVector< VertexElement >::const_iterator T_DLLCLASS findVertexElement(
 	}
 }
 
-#endif	// traktor_render_VertexElement_H

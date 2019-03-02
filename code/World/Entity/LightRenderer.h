@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_LightRenderer_H
-#define traktor_world_LightRenderer_H
+#pragma once
 
 #include "World/IEntityRenderer.h"
 
@@ -49,4 +42,3 @@ public:
 	}
 }
 
-#endif	// traktor_world_LightRenderer_H

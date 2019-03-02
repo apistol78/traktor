@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drone_UpdateBundle_H
-#define traktor_drone_UpdateBundle_H
+#pragma once
 
 #include <Core/Serialization/ISerializable.h>
 #include <Net/Url.h>
@@ -47,4 +40,3 @@ private:
 	}
 }
 
-#endif	// traktor_drone_UpdateBundle_H

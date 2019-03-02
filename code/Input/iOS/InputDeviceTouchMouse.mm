@@ -180,7 +180,7 @@ void InputDeviceTouchMouse::touchesBegan(NSSet* touches, UIEvent* event)
 			m_positionX = m_height - location.y;
 			m_positionY = location.x;
 		}
-		
+
 		m_button = true;
 	}
 }

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_GlslType_H
-#define traktor_render_GlslType_H
+#pragma once
 
 #include <string>
 #include "Render/Types.h"
@@ -64,4 +57,3 @@ GlslType glsl_from_parameter_type(ParameterType type);
 	}
 }
 
-#endif	// traktor_render_GlslType_H

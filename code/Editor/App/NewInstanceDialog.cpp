@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/Split.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -150,7 +144,7 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 
 		Ref< ui::PreviewItem > item = new ui::PreviewItem(className);
 		item->setData(L"TYPE", new TypeInfoWrapper(*type));
-		
+
 		items->add(item);
 	}
 
@@ -204,7 +198,7 @@ const std::wstring& NewInstanceDialog::getInstanceName() const
 void NewInstanceDialog::updatePreviewList()
 {
 	RefArray< ui::TreeViewItem > items;
-	
+
 	m_categoryTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
 	if (!items.empty())
 	{

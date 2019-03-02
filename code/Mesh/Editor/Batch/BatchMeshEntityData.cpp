@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Mesh/Editor/Batch/BatchMeshEntityData.h"
@@ -35,7 +29,7 @@ void BatchMeshEntityData::setTransform(const Transform& transform)
 void BatchMeshEntityData::serialize(ISerializer& s)
 {
 	world::EntityData::serialize(s);
-	
+
 	s >> Member< Guid >(L"outputGuid", m_outputGuid);
 	s >> MemberRefArray< world::EntityData >(L"entityData", m_entityData);
 }

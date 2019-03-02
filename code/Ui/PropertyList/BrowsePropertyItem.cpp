@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
@@ -61,7 +55,7 @@ void BrowsePropertyItem::createInPlaceControls(Widget* parent)
 	m_buttonEdit->create(parent, new ui::StyleBitmap(L"UI.SmallPen", c_ResourceSmallPen, sizeof(c_ResourceSmallPen)));
 	m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &BrowsePropertyItem::eventEditClick);
 	m_buttonEdit->setEnable(!m_value.isNull());
-	
+
 	T_ASSERT (!m_buttonBrowse);
 	m_buttonBrowse = new MiniButton();
 	m_buttonBrowse->create(parent,new ui::StyleBitmap(L"UI.SmallDots", c_ResourceSmallDots, sizeof(c_ResourceSmallDots)));

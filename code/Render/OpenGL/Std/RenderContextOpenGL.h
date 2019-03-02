@@ -54,7 +54,7 @@ private:
 	const ProgramOpenGL* m_currentProgram;
 	uint32_t m_currentRenderStateList;
 	int32_t m_lastWaitVBlanks;
-	// GLuint m_vertexArrayObjects[4096];	
+	// GLuint m_vertexArrayObjects[4096];
 	SmallMap< uint32_t, GLuint > m_vertexArrayObjects;
 };
 

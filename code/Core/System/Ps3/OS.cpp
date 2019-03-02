@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cell/sysmodule.h>
 #include <sysutil/sysutil_common.h>
 #include <sysutil/sysutil_sysparam.h>
@@ -121,7 +115,7 @@ Ref< Environment > OS::getEnvironment() const
 bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 {
 	OSData* data = static_cast< OSData* >(m_handle);
-	
+
 	if (name == L"CONTENT_PATH")
 	{
 		outValue = data->contentPath;

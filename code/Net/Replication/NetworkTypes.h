@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_NetworkTypes_H
-#define traktor_net_NetworkTypes_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -22,4 +15,3 @@ typedef uint64_t net_handle_t;	//!< Globally unique handle.
 	}
 }
 
-#endif	// traktor_net_NetworkTypes_H

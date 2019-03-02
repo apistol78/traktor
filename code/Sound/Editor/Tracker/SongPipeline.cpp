@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Database/Instance.h"
@@ -40,7 +34,7 @@ bool SongPipeline::buildDependencies(
 ) const
 {
 	const SongAsset* songAsset = checked_type_cast< const SongAsset*, false >(sourceAsset);
-	
+
 	// Add dependencies to instruments.
 	for (const auto& pattern : songAsset->m_patterns)
 	{
@@ -94,7 +88,7 @@ bool SongPipeline::buildOutput(
 	float range = 0.0f;
 
 	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(songAsset->m_category);
-	
+
 	if (category)
 		configurationId = category->getConfigurationId();
 

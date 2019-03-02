@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_MouseTrackEvent_H
-#define traktor_ui_MouseTrackEvent_H
+#pragma once
 
 #include "Ui/Event.h"
 
@@ -21,24 +14,23 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 /*! \brief Mouse event.
  * \ingroup UI
  */
 class T_DLLCLASS MouseTrackEvent : public Event
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	MouseTrackEvent(EventSubject* sender, bool entered);
-	
+
 	bool entered() const;
 
 private:
 	bool m_entered;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_MouseTrackEvent_H

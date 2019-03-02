@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <stack>
 #include "Core/RefArray.h"
 #include "Core/Io/StringOutputStream.h"
@@ -172,7 +166,7 @@ int32_t evaluateAtoms(Tokenizer& t, const std::map< std::wstring, int32_t >& def
 			if (t.next() == L'(')
 			{
 				error |= (t.next() != Tokenizer::TkWord);
-				
+
 				std::wstring arg = t.word;
 
 				error |= (t.next() != L')');

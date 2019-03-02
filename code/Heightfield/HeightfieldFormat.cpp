@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
@@ -28,7 +22,7 @@ Ref< Heightfield > HeightfieldFormat::read(IStream* stream, const Vector4& world
 {
 	int32_t version;
 	Reader(stream) >> version;
-	
+
 	if (version != 1 && version != 2)
 		return 0;
 

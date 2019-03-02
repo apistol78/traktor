@@ -87,7 +87,7 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 }
 
 @interface EAGLView ()
-{    
+{
 @private
 	traktor::Thread* m_thread;
 }

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_EditorPageForm_H
-#define traktor_editor_EditorPageForm_H
+#pragma once
 
 #include "Ui/Form.h"
 
@@ -13,7 +6,7 @@ namespace traktor
 {
 	namespace editor
 	{
-	
+
 /*! \brief
  * \ingroup Editor
  */
@@ -26,8 +19,7 @@ public:
 
 	virtual void destroy() override;
 };
-	
+
 	}
 }
 
-#endif	// traktor_editor_EditorPageForm_H

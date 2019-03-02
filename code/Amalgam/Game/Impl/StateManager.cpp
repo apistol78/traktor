@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Thread/Acquire.h"
 #include "Amalgam/Game/IState.h"
 #include "Amalgam/Game/Impl/StateManager.h"
@@ -19,7 +13,7 @@ void StateManager::destroy()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (!m_next);
-	
+
 	if (m_current)
 	{
 		m_current->flush();

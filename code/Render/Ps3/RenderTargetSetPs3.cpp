@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
 #include "Render/Ps3/MemoryHeap.h"
@@ -83,7 +77,7 @@ bool RenderTargetSetPs3::create(
 			depthWidth *= 2;
 
 		m_depthTexture.format = CELL_GCM_TEXTURE_LN;
-		
+
 		if (desc.ignoreStencil && allowZ16)
 			m_depthTexture.format |= CELL_GCM_TEXTURE_DEPTH16;
 		else
@@ -206,7 +200,7 @@ void RenderTargetSetPs3::destroy()
 
 	for (RefArray< RenderTargetPs3 >::iterator i = m_renderTargets.begin(); i != m_renderTargets.end(); ++i)
 		(*i)->destroy();
-	
+
 	m_renderTargets.clear();
 }
 

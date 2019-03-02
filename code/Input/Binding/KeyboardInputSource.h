@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_KeyboardInputSource_H
-#define traktor_input_KeyboardInputSource_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Input/Binding/IInputSource.h"
@@ -40,25 +33,25 @@ public:
 		const std::vector< InputDefaultControlType >& controlTypes,
 		DeviceControlManager* deviceControlManager
 	);
-	
+
 	virtual ~KeyboardInputSource();
-	
+
 	virtual std::wstring getDescription() const override final;
-	
+
 	virtual void prepare(float T, float dT) override final;
 
 	virtual float read(float T, float dT) override final;
-	
+
 private:
 	struct Key
 	{
 		InputDefaultControlType controlType;
 		RefArray< DeviceControl > deviceControls;
 		bool state;
-		
+
 		bool operator == (const Key& rh) const;
 	};
-	
+
 	Ref< DeviceControlManager > m_deviceControlManager;
 	int32_t m_deviceCount;
 	std::vector< Key > m_keys;
@@ -68,4 +61,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_KeyboardInputSource_H

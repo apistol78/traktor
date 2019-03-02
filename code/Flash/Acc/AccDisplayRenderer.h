@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_AccDisplayRenderer_H
-#define traktor_flash_AccDisplayRenderer_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
@@ -93,7 +86,7 @@ public:
 	// \{
 
 	virtual bool wantDirtyRegion() const override final;
-	
+
 	virtual void begin(
 		const Dictionary& dictionary,
 		const Color4f& backgroundColor,
@@ -193,4 +186,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_AccDisplayRenderer_H

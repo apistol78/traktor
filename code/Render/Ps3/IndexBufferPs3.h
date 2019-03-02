@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_IndexBufferPs3_H
-#define traktor_render_IndexBufferPs3_H
+#pragma once
 
 #include "Render/IndexBuffer.h"
 
@@ -36,19 +29,18 @@ public:
 	virtual void destroy() override final;
 
 	virtual void* lock() override final;
-	
+
 	virtual void unlock() override final;
 
 	uint8_t getLocation() const;
 
 	uint32_t getOffset() const;
-	
+
 private:
 	MemoryHeapObject* m_ibo;
 	int32_t& m_counter;
 };
-	
+
 	}
 }
 
-#endif	// traktor_render_IndexBufferPs3_H

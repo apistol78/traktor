@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/MathConfig.h"
@@ -113,7 +107,7 @@ VertexBufferDynamicVBO::VertexBufferDynamicVBO(ResourceContextOpenGL* resourceCo
 // #endif
 	{
 		T_OGL_SAFE(glBufferData(
-			GL_ARRAY_BUFFER, 
+			GL_ARRAY_BUFFER,
 			bufferSize,
 			0,
 			GL_DYNAMIC_DRAW

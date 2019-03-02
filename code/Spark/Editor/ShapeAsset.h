@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_ShapeAsset_H
-#define traktor_spark_ShapeAsset_H
+#pragma once
 
 #include "Editor/Asset.h"
 
@@ -33,4 +26,3 @@ class T_DLLCLASS ShapeAsset : public editor::Asset
 	}
 }
 
-#endif	// traktor_spark_ShapeAsset_H

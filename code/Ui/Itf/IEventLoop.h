@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_IEventLoop_H
-#define traktor_ui_IEventLoop_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Ui/Enums.h"
@@ -31,7 +24,7 @@ public:
 	virtual bool process(EventSubject* owner) = 0;
 
 	virtual int32_t execute(EventSubject* owner) = 0;
-	
+
 	virtual void exit(int32_t exitCode) = 0;
 
 	virtual int32_t getExitCode() const = 0;
@@ -44,4 +37,3 @@ public:
 	}
 }
 
-#endif	// traktor_ui_IEventLoop_H

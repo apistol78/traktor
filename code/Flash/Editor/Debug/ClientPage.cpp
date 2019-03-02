@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
@@ -152,7 +146,7 @@ void ClientPage::updateSelection()
 		Aabb2 gb = debugInfo->getGlobalTransform() * lb;
 
 		auto cx = debugInfo->getColorTransform();
-		
+
 		StringOutputStream ss;
 		Ref< ui::GridRow > row;
 
@@ -305,7 +299,7 @@ void ClientPage::updateSelection()
 		row = new ui::GridRow();
 		row->add(new ui::GridItem(L"Global bounds"));
 		row->add(new ui::GridItem(ss.str()));
-		m_debugGrid->addRow(row);		
+		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << L"+[" << cx.add << L"], *[" << cx.mul << L"]";
@@ -413,7 +407,7 @@ void ClientPage::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 				//	updateSelection();
 
 				//	m_debugView->setDebugInfo(m_debugInfo);
-				//	m_debugView->update();				
+				//	m_debugView->update();
 				//}
 			}
 		}

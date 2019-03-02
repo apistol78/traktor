@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Net/UdpSocket.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketAddressIPv6.h"
@@ -32,7 +26,7 @@ void UdpSocket::close()
 bool UdpSocket::bind(const SocketAddressIPv4& socketAddress)
 {
 	struct sockaddr_in local = socketAddress.getSockAddr();
-	
+
 	if (m_socket == INVALID_SOCKET)
 	{
 		m_socket = ::socket(AF_INET, SOCK_DGRAM, 0);

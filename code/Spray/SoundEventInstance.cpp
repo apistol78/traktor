@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Sound/Sound.h"
 #include "Sound/Player/ISoundHandle.h"
 #include "Sound/Player/ISoundPlayer.h"
@@ -61,7 +55,7 @@ bool SoundEventInstance::update(const world::UpdateParams& update)
 		m_handle->setPosition((T * m_Toffset).translation());
 	}
 
-	return true;		
+	return true;
 }
 
 void SoundEventInstance::build(world::IWorldRenderer* worldRenderer)

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/SafeDestroy.h"
 #include "Flash/EditInstance.h"
 #include "Flash/Font.h"
@@ -20,7 +14,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 Vector4 transformIntoView(const Aabb2& frameBounds, const Vector4& frameTransform, const Matrix33& transform, const Vector2& pt)
 {
 	Vector2 pt1 = transform * pt;
@@ -105,7 +99,7 @@ void WireDisplayRenderer::beginSprite(const SpriteInstance& sprite, const Matrix
 {
 	bool parentWireEnable = m_wireEnable.top();
 
-	ActionValue wireOutline;	
+	ActionValue wireOutline;
 	if (sprite.getAsObject()->getMember("__renderWireOutline", wireOutline) && wireOutline.getBoolean())
 		m_wireEnable.push(true);
 	else
@@ -163,7 +157,7 @@ void WireDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& tr
 {
 	bool parentWireEnable = m_wireEnable.top();
 
-	ActionValue wireOutline;	
+	ActionValue wireOutline;
 	if (edit.getAsObject()->getMember("__renderWireOutline", wireOutline) && wireOutline.getBoolean())
 		m_wireEnable.push(true);
 	else

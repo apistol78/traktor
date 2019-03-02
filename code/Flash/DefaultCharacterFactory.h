@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #ifndef traktor_flash_DefaultCharacterFactory_H
 #define traktor_flash_DefaultCharacterFactory_H
 
@@ -27,7 +21,7 @@ class Matrix33;
 
 /*! \brief
  * \ingroup Flash
- */	
+ */
 class T_DLLCLASS DefaultCharacterFactory : public ICharacterFactory
 {
 	T_RTTI_CLASS;
@@ -47,7 +41,7 @@ public:
 
 	virtual void removeInstance(CharacterInstance* instance, int32_t depth) const override final;
 };
-	
+
 	}
 }
 

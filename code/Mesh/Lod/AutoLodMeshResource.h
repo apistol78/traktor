@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_AutoLodMeshResource_H
-#define traktor_mesh_AutoLodMeshResource_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Core/Math/Aabb3.h"
@@ -55,4 +48,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_AutoLodMeshResource_H

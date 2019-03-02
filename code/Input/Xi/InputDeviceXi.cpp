@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Input/Xi/InputDeviceXi.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
@@ -117,7 +111,7 @@ float InputDeviceXi::getControlValue(int32_t control)
 		{
 		case -1:
 			return adjustDeadZone(m_state.Gamepad.sThumbLX / 32767.0f);
-			
+
 		case -2:
 			return adjustDeadZone(m_state.Gamepad.sThumbLY / 32767.0f);
 

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Ui/Win32/Window.h"
 
@@ -370,7 +364,7 @@ LRESULT CALLBACK Window::wndProcSubClass(HWND hWnd, UINT message, WPARAM wParam,
 				lParam
 			);
 	}
-	
+
 	// Unable to get original window procedure, call default window procedure.
 	return DefWindowProc(
 		hWnd,

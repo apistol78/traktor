@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Platform.h"
 #include "Core/Timer/Timer.h"
 
@@ -58,12 +52,12 @@ double Timer::getDeltaTime()
 {
 	int64_t curr;
 	QueryPerformanceCounter(reinterpret_cast< LARGE_INTEGER* >(&curr));
-	
+
 	double delta = double(curr - m_last) / m_frequency;
 	m_last = curr;
 
 	return delta >= 0.0 ? delta : 0.0;
 }
-	
+
 }
 

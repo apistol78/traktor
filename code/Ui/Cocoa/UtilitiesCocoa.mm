@@ -149,7 +149,7 @@ VirtualKey translateKeyCode(NSUInteger keyCode)
 		{ 111, VkF12 },
 		//{ 0, VkNumLock },
 		//{ 0, VkScroll },
-		
+
 		{ 0, VkA },
 		{ 11, VkB },
 		{ 8, VkC },
@@ -187,13 +187,13 @@ VirtualKey translateKeyCode(NSUInteger keyCode)
 		{ 28, Vk8 },
 		{ 25, Vk9 }
 	};
-	
+
 	for (int i = 0; i < sizeof_array(c_translateTable); ++i)
 	{
 		if (c_translateTable[i].keyCode == keyCode)
 			return c_translateTable[i].vkey;
 	}
-	
+
 	return VkNull;
 }
 

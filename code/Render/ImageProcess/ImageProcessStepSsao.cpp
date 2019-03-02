@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Const.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Misc/AutoPtr.h"
@@ -128,7 +122,7 @@ Ref< ImageProcessStep::Instance > ImageProcessStepSsao::create(
 void ImageProcessStepSsao::serialize(ISerializer& s)
 {
 	s >> resource::Member< Shader >(L"shader", m_shader);
-	
+
 	if (s.getVersion() >= 1)
 		s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
 }

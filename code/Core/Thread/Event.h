@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Event_H
-#define traktor_Event_H
+#pragma once
 
 #if defined(__PS3__)
 #	include <sys/synchronization.h>
@@ -34,7 +27,7 @@ public:
 	Event();
 
 	virtual ~Event();
-	
+
 	void pulse(int count = 1);
 
 	void broadcast();
@@ -42,7 +35,7 @@ public:
 	void reset();
 
 	virtual bool wait(int32_t timeout = -1);
-	
+
 private:
 #if defined(__PS3__)
 	sys_lwmutex_t m_mutex;
@@ -61,4 +54,3 @@ private:
 
 }
 
-#endif	// traktor_Event_H

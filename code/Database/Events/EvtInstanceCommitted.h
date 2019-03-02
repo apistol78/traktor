@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_EvtInstanceCommitted_H
-#define traktor_db_EvtInstanceCommitted_H
+#pragma once
 
 #include "Database/Events/EvtInstance.h"
 
@@ -36,4 +29,3 @@ public:
 	}
 }
 
-#endif	// traktor_db_EvtInstanceCommitted_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sound_IFilter_H
-#define traktor_sound_IFilter_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
@@ -47,4 +40,3 @@ public:
 	}
 }
 
-#endif	// traktor_sound_IFilter_H

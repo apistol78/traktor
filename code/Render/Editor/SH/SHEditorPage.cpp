@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
 #include "Render/PrimitiveRenderer.h"
@@ -120,7 +114,7 @@ bool SHEditorPage::create(ui::Container* parent)
 
 	//	IBLProbe functionR(ibl, Vector4(1.0f, 0.0f, 0.0f, 0.0f));
 	//	m_engine->generateCoefficients(&functionR, coeffs[0]);
-	//	
+	//
 	//	IBLProbe functionG(ibl, Vector4(0.0f, 1.0f, 0.0f, 0.0f));
 	//	m_engine->generateCoefficients(&functionG, coeffs[1]);
 
@@ -425,6 +419,6 @@ void SHEditorPage::eventRender4(RenderControlEvent* event)
 
 	// primitiveRenderer->drawWireAabb(Vector4(0.0f, 0.0f, 0.0f, 1.0f), Vector4(1.0f, 1.0f, 1.0f, 0.0f), 0xffff00);
 }
-		
+
 	}
 }

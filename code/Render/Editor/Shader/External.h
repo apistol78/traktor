@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_External_H
-#define traktor_render_External_H
+#pragma once
 
 #include <map>
 #include <string>
@@ -72,7 +65,7 @@ public:
 
 	virtual int getOutputPinCount() const override final;
 
-	virtual const OutputPin* getOutputPin(int index) const override final;	
+	virtual const OutputPin* getOutputPin(int index) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -92,4 +85,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_External_H

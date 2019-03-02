@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_TextData_H
-#define traktor_spark_TextData_H
+#pragma once
 
 #include "Core/Math/Vector2.h"
 #include "Resource/Id.h"
@@ -55,4 +48,3 @@ private:
 	}
 }
 
-#endif	// traktor_spark_TextData_H

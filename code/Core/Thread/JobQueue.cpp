@@ -135,7 +135,7 @@ void JobQueue::threadWorker()
 
 				if (!job->m_stopped)
 					(*job->m_functor)();
-	
+
 				job->m_finished = true;
 				job->m_stopped = true;
 				job->m_functor = 0;

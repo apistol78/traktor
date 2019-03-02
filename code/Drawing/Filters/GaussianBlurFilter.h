@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_GaussianBlurFilter_H
-#define traktor_drawing_GaussianBlurFilter_H
+#pragma once
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Scalar.h"
@@ -23,7 +16,7 @@ namespace traktor
 {
 	namespace drawing
 	{
-	
+
 /*! \brief Gaussian blur filter.
  * \ingroup Drawing
  */
@@ -41,8 +34,7 @@ private:
 	AlignedVector< Scalar > m_kernel;
 	int32_t m_size;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_GaussianBlurFilter_H

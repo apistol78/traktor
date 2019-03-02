@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ShortcutEvent_H
-#define traktor_ui_ShortcutEvent_H
+#pragma once
 
 #include "Ui/Event.h"
 #include "Ui/Command.h"
@@ -22,24 +15,23 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 /*! \brief Command event.
  * \ingroup UI
  */
 class T_DLLCLASS ShortcutEvent : public Event
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	ShortcutEvent(EventSubject* sender, const Command& command);
-	
+
 	const Command& getCommand() const;
-	
+
 private:
 	Command m_command;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_ShortcutEvent_H

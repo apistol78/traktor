@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_PointSet_H
-#define traktor_spray_PointSet_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
@@ -47,9 +40,9 @@ public:
 	void add(const Point& point);
 
 	const AlignedVector< Point >& get() const { return m_points; }
-	
+
 	bool read(IStream* stream);
-	
+
 	bool write(IStream* stream) const;
 
 private:
@@ -59,4 +52,3 @@ private:
 	}
 }
 
-#endif	// traktor_spray_PointSet_H

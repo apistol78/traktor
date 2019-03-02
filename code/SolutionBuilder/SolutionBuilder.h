@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef SolutionBuilder_H
-#define SolutionBuilder_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Misc/CommandLine.h"
@@ -46,4 +39,3 @@ public:
 	}
 }
 
-#endif	// SolutionBuilder_H

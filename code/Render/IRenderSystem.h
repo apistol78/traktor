@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_IRenderSystem_H
-#define traktor_render_IRenderSystem_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
@@ -79,13 +72,13 @@ public:
 	 * and monitor.
 	 */
 	virtual uint32_t getDisplayModeCount() const = 0;
-	
+
 	/*! \brief Get display mode.
 	 *
 	 * Get information about display mode from index 0 - (getDisplayMode() - 1).
 	 */
 	virtual DisplayMode getDisplayMode(uint32_t index) const = 0;
-	
+
 	/*! \brief Get current display mode.
 	 *
 	 * Get information about currently set display mode.
@@ -94,18 +87,18 @@ public:
 
 	/*! \brief Get display aspect ratio. */
 	virtual float getDisplayAspectRatio() const = 0;
-	
+
 	//@}
 
 	/*! \name Render view creation. */
 	//@{
-	
+
 	/*! \brief Create default render view. */
 	virtual Ref< IRenderView > createRenderView(const RenderViewDefaultDesc& desc) = 0;
 
 	/*! \brief Create embedded render view. */
 	virtual Ref< IRenderView > createRenderView(const RenderViewEmbeddedDesc& desc) = 0;
-	
+
 	//@}
 
 	/*! \name Factory methods. */
@@ -132,7 +125,7 @@ public:
 
 	/*! \brief Create cube texture. */
 	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc) = 0;
-	
+
 	/*! \brief Create volume texture. */
 	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc) = 0;
 
@@ -169,4 +162,3 @@ public:
 	}
 }
 
-#endif	// traktor_render_IRenderSystem_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_StreamMeshEntity_H
-#define traktor_mesh_StreamMeshEntity_H
+#pragma once
 
 #include "Resource/Proxy.h"
 #include "Mesh/MeshEntity.h"
@@ -34,7 +27,7 @@ public:
 	uint32_t getFrameCount() const;
 
 	void setFrame(uint32_t frame);
-	
+
 	virtual Aabb3 getBoundingBox() const override final;
 
 	virtual bool supportTechnique(render::handle_t technique) const override final;
@@ -55,4 +48,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_StreamMeshEntity_H

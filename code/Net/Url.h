@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_Url_H
-#define traktor_net_Url_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -37,7 +30,7 @@ public:
 	Url(const std::wstring& spec);
 
 	bool set(const std::wstring& spec);
-	
+
 	bool valid() const;
 
 	int32_t getDefaultPort() const;
@@ -69,7 +62,7 @@ public:
 	static std::vector< uint8_t > decodeBytes(const std::wstring& text);
 
 	static std::wstring decodeString(const std::wstring& text);
-	
+
 private:
 	bool m_valid;
 	std::wstring m_protocol;
@@ -85,4 +78,3 @@ private:
 	}
 }
 
-#endif	// traktor_net_Url_H

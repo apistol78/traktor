@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -120,7 +114,7 @@ void TrackData::serialize(ISerializer& s)
 		s >> MemberRef< world::EntityData >(L"lookAtEntityData", m_lookAtEntityData);
 
 	s >> MemberComposite< TransformPath >(L"path", m_path);
-	
+
 	if (s.getVersion() >= 1)
 	{
 		s >> Member< float >(L"loopStart", m_loopStart);

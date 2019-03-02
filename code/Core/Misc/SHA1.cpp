@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <sstream>
 #include <iomanip>
@@ -74,7 +68,7 @@ void sha1_hashBlock(sha1info* s)
 			t = ((b & c) | (d & (b | c))) + SHA1_K40;
 		else
 			t = (b ^ c ^ d) + SHA1_K60;
-		
+
 		t += sha1_rol32(a, 5) + e + s->buffer[i & 15];
 
 		e = d;
@@ -199,7 +193,7 @@ std::wstring SHA1::format() const
 	std::wstringstream ss;
 	for (int i = 0; i < 20; ++i)
 		ss << std::hex << std::setfill(L'0') << std::setw(2)<< r[i];
-	return ss.str();    
+	return ss.str();
 }
 
 }

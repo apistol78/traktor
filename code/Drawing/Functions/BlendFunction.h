@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_BlendFunction_H
-#define traktor_drawing_BlendFunction_H
+#pragma once
 
 #include "Drawing/ITransferFunction.h"
 
@@ -50,7 +43,7 @@ public:
 		BoSubtract,
 		BoReverseSubtract,
 		BoMin,
-		BoMax	
+		BoMax
 	};
 
 	BlendFunction(Factor sourceFactor, Factor destinationFactor, Operation operation);
@@ -63,8 +56,7 @@ private:
 	Factor m_destinationFactor;
 	Operation m_operation;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_BlendFunction_H

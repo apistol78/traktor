@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sstream>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -158,7 +152,7 @@ bool FileSystem::exist(const Path& fileName)
 	return volume ? volume->exist(fileName) : false;
 }
 
-bool FileSystem::remove(const Path& fileName)	
+bool FileSystem::remove(const Path& fileName)
 {
 	Ref< IVolume > volume = getVolume(fileName);
 	return volume ? volume->remove(fileName) : false;
@@ -314,7 +308,7 @@ bool FileSystem::getRelativePath(const Path& absolutePath, const Path& relativeT
 {
 	if (absolutePath.isRelative() || relativeToPath.isRelative())
 		return false;
-		
+
 	if (absolutePath.hasVolume() || relativeToPath.hasVolume())
 	{
 		if (!absolutePath.hasVolume() || !relativeToPath.hasVolume())
@@ -336,10 +330,10 @@ bool FileSystem::getRelativePath(const Path& absolutePath, const Path& relativeT
 		i1 = absoluteParts.erase(i1);
 		i2 = relativeParts.erase(i2);
 	}
-	
+
 	if (i1 == absoluteParts.end() && i2 == relativeParts.end())
 		return true;
-	
+
 	for (; i2 != relativeParts.end(); ++i2)
 		absoluteParts.insert(absoluteParts.begin(), L"..");
 
@@ -348,7 +342,7 @@ bool FileSystem::getRelativePath(const Path& absolutePath, const Path& relativeT
 	ss << *j++;
 	for (; j != absoluteParts.end(); ++j)
 		ss << L"/" << *j;
-		
+
 	relativePath = ss.str();
 	return true;
 }
@@ -361,7 +355,7 @@ void FileSystem::destroy()
 IVolume* FileSystem::getVolume(const Path& path) const
 {
 	IVolume* volume = 0;
-	
+
 	if (path.hasVolume() == true)
 	{
 		std::map< std::wstring, Ref< IVolume > >::const_iterator it = m_volumes.find(toLower(path.getVolume()));

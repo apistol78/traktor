@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <vec_types.h>
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
@@ -30,7 +24,7 @@ bool compareExchangeEqual4(float* ptr1, const float* ptr2, size_t count)
 	{
 		vec_float4 vs = vec_ld(0, ptr2);
 		vec_float4 vd = vec_ld(0, ptr1);
-		
+
 		if (vec_all_eq(vs, vd) == 0)
 		{
 			equal = false;

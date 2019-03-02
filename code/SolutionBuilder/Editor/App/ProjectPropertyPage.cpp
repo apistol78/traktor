@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <Ui/Application.h>
 #include <Ui/TableLayout.h>
 #include <Ui/Static.h>
@@ -282,7 +276,7 @@ void ProjectPropertyPage::eventClickRemove(ui::ButtonClickEvent* event)
 
 	dependencies.erase(i);
 	m_project->setDependencies(dependencies);
-	
+
 	updateDependencyList();
 }
 

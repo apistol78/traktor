@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_AutoLodMeshEntity_H
-#define traktor_mesh_AutoLodMeshEntity_H
+#pragma once
 
 #include "Resource/Proxy.h"
 #include "Mesh/MeshEntity.h"
@@ -31,7 +24,7 @@ class T_DLLCLASS AutoLodMeshEntity : public MeshEntity
 
 public:
 	AutoLodMeshEntity(const Transform& transform, bool screenSpaceCulling, const resource::Proxy< AutoLodMesh >& mesh);
-	
+
 	virtual Aabb3 getBoundingBox() const override final;
 
 	virtual bool supportTechnique(render::handle_t technique) const override final;
@@ -51,4 +44,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_AutoLodMeshEntity_H

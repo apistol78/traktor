@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_FixedJoint_H
-#define traktor_physics_FixedJoint_H
+#pragma once
 
 #include "Physics/Joint.h"
 
@@ -33,4 +26,3 @@ class T_DLLCLASS FixedJoint : public Joint
 	}
 }
 
-#endif	// traktor_physics_FixedJoint_H

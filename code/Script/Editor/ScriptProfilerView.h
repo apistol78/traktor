@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_script_ScriptProfilerView_H
-#define traktor_script_ScriptProfilerView_H
+#pragma once
 
 #include "Script/IScriptProfiler.h"
 #include "Ui/Container.h"
@@ -93,4 +86,3 @@ private:
 	}
 }
 
-#endif	// traktor_script_ScriptProfilerView_H

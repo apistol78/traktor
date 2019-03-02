@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Render/Ps3/MemoryHeap.h"
@@ -87,7 +81,7 @@ bool Resolve2xMSAA::create(MemoryHeap* memoryHeap)
 
 	cellGcmCgGetUCode(m_fragmentProgram, &ucode, &ucodeSize);
 	m_fragmentProgramUcode = memoryHeap->alloc(ucodeSize, 64, false);
-	std::memcpy(m_fragmentProgramUcode->getPointer(), ucode, ucodeSize); 
+	std::memcpy(m_fragmentProgramUcode->getPointer(), ucode, ucodeSize);
 
 	m_positionIndex = getParameterIndex(m_vertexProgram, "position", CG_ATTR0);
 	m_tex0Index = getParameterIndex(m_vertexProgram, "tex0", CG_ATTR0);
@@ -186,7 +180,7 @@ void Resolve2xMSAA::resolve(StateCachePs3& stateCache, const CellGcmTexture* res
 			sizeof(Vertex),
 			2,
 			CELL_GCM_VERTEX_F,
-			m_quadBuffer[m_quadBufferCounter]->getLocation(), 
+			m_quadBuffer[m_quadBufferCounter]->getLocation(),
 			m_quadBuffer[m_quadBufferCounter]->getOffset() + offsetof(Vertex, position)
 		);
 	}
@@ -197,7 +191,7 @@ void Resolve2xMSAA::resolve(StateCachePs3& stateCache, const CellGcmTexture* res
 			sizeof(Vertex),
 			2,
 			CELL_GCM_VERTEX_F,
-			m_quadBuffer[m_quadBufferCounter]->getLocation(), 
+			m_quadBuffer[m_quadBufferCounter]->getLocation(),
 			m_quadBuffer[m_quadBufferCounter]->getOffset() + offsetof(Vertex, tex0)
 		);
 	}

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_AutoLodMeshConverter_H
-#define traktor_mesh_AutoLodMeshConverter_H
+#pragma once
 
 #include "Mesh/Editor/IMeshConverter.h"
 
@@ -34,4 +27,3 @@ public:
 	}
 }
 
-#endif	// traktor_mesh_AutoLodMeshConverter_H

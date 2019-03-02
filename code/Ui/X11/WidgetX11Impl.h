@@ -198,7 +198,7 @@ public:
 			if (!isVisible())
 				return;
 			TimerEvent timerEvent(m_owner, id);
-			m_owner->raiseEvent(&timerEvent);			
+			m_owner->raiseEvent(&timerEvent);
 		});
 	}
 
@@ -269,7 +269,7 @@ public:
 		cairo_set_font_size(
 			m_cairo,
 			dpi96(m_font.getSize())
-		);		
+		);
 	}
 
 	virtual Font getFont() const T_OVERRIDE
@@ -388,7 +388,7 @@ public:
 	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const T_OVERRIDE
 	{
 		T_FATAL_ASSERT(m_surface != nullptr);
-		
+
 		cairo_font_extents_t x;
 		cairo_font_extents(m_cairo, &x);
 
@@ -399,7 +399,7 @@ public:
 	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const T_OVERRIDE
 	{
 		T_FATAL_ASSERT(m_surface != nullptr);
-		
+
 		uint8_t uc[IEncoding::MaxEncodingSize + 1] = { 0 };
 		int32_t nuc = Utf8Encoding().translate(&ch, 1, uc);
 		if (nuc <= 0)
@@ -414,7 +414,7 @@ public:
 	virtual int32_t getLineSpacing() const T_OVERRIDE
 	{
 		T_FATAL_ASSERT(m_surface != nullptr);
-		
+
 		cairo_font_extents_t x;
 		cairo_font_extents(m_cairo, &x);
 
@@ -476,7 +476,7 @@ protected:
 		{
 			XSelectInput(
 				m_context->getDisplay(),
-				m_data.window, 
+				m_data.window,
 				ButtonPressMask |
 				ButtonReleaseMask |
 				StructureNotifyMask |
@@ -487,13 +487,13 @@ protected:
 				PointerMotionMask |
 				EnterWindowMask |
 				LeaveWindowMask
-			);			
+			);
 		}
 		else
 		{
 			XSelectInput(
 				m_context->getDisplay(),
-				m_data.window, 
+				m_data.window,
 				ButtonPressMask |
 				ButtonReleaseMask |
 				KeyPressMask |
@@ -503,7 +503,7 @@ protected:
 				PointerMotionMask |
 				EnterWindowMask |
 				LeaveWindowMask
-			);			
+			);
 		}
 
 		if (visible)

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_Palette_H
-#define traktor_drawing_Palette_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
@@ -35,13 +28,13 @@ public:
 	Palette(int32_t size = 256);
 
 	int32_t getSize() const;
-	
+
 	void set(int32_t index, const Color4f& c);
-	
+
 	const Color4f& get(int32_t index) const;
-	
+
 	int32_t find(const Color4f& c, bool exact = false) const;
-	
+
 private:
 	AlignedVector< Color4f > m_colors;
 };
@@ -49,4 +42,3 @@ private:
 	}
 }
 
-#endif	// traktor_drawing_Palette_H

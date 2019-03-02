@@ -37,7 +37,7 @@ c_joystickControlMap[] =
 	{ DtLeft, -8, false, L"Left" },
 	{ DtRight, -6, false, L"Right" }
 };
-		
+
 float adjustDeadZone(float value)
 {
 	if (value >= -0.2f && value <= 0.2f)
@@ -180,17 +180,17 @@ void InputDeviceJoystickOsX::callbackRemoval(void* context, IOReturn result, voi
 void InputDeviceJoystickOsX::callbackValue(void* context, IOReturn result, void* sender, IOHIDValueRef value)
 {
 	InputDeviceJoystickOsX* this_ = static_cast< InputDeviceJoystickOsX* >(context);
-	
+
 	IOHIDElementRef element = IOHIDValueGetElement(value);
 	if (!element)
 		return;
-		
+
 	uint32_t usage = (uint32_t)IOHIDElementGetUsage(element);
 	if (usage == uint32_t(~0UL))
 		return;
-		
+
 	int32_t v = (int32_t)IOHIDValueGetIntegerValue(value);
-		
+
 	if (usage == 1)
 		this_->m_button[0] = bool(v != 0);
 	else if (usage == 2)
@@ -223,7 +223,7 @@ void InputDeviceJoystickOsX::callbackValue(void* context, IOReturn result, void*
 	{
 		int32_t min = IOHIDElementGetLogicalMin(element);
 		int32_t max = IOHIDElementGetLogicalMax(element);
-		
+
 		if (max > min)
 		{
 			float fv = 2.0f * float(v - min) / (max - min) - 1.0f;

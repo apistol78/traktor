@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_ConvolutionFilter_H
-#define traktor_drawing_ConvolutionFilter_H
+#pragma once
 
 #include <vector>
 #include "Core/Math/Matrix33.h"
@@ -23,7 +16,7 @@ namespace traktor
 {
 	namespace drawing
 	{
-	
+
 /*! \brief Convolution filter.
  * \ingroup Drawing
  */
@@ -51,8 +44,7 @@ private:
 	std::vector< float > m_matrix;
 	int32_t m_size;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_ConvolutionFilter_H

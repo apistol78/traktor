@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_IComponentEditor_H
-#define traktor_scene_IComponentEditor_H
+#pragma once
 
 #include "Core/Object.h"
 
@@ -28,10 +21,10 @@ class PrimitiveRenderer;
 
 	namespace scene
 	{
-	
+
 /*! \brief
  * \ingroup Scene
- */	
+ */
 class T_DLLCLASS IComponentEditor : public Object
 {
 	T_RTTI_CLASS;
@@ -50,4 +43,3 @@ public:
 	}
 }
 
-#endif	// traktor_scene_IComponentEditor_H

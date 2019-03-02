@@ -156,7 +156,7 @@ bool RenderTargetDx11::create(const RenderTargetSetCreateDesc& setDesc, const Re
 	{
 		log::error << L"Unable to create render target, failed to create staging texture. HRESULT = " << int32_t(hr) << Endl;
 		return false;
-	}	
+	}
 
 	// Create shader view to read from read-back texture.
 	dsrvd.Format = dtd.Format;

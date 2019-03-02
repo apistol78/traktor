@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include "Animation/AnimatedMeshEntity.h"
 #include "Animation/Skeleton.h"
@@ -88,7 +82,7 @@ AnimatedMeshEntity::~AnimatedMeshEntity()
 void AnimatedMeshEntity::destroy()
 {
 	synchronize();
-	
+
 	safeDestroy(m_poseController);
 
 	for (std::vector< Binding >::iterator i = m_bindings.begin(); i != m_bindings.end(); ++i)
@@ -292,7 +286,7 @@ bool AnimatedMeshEntity::getSkinTransform(render::handle_t jointName, Transform&
 
 	Quaternion tmp;
 	m_skinTransforms[m_index][skinIndex * 2 + 0].storeAligned((float*)&tmp);
-	
+
 	outTransform = Transform(
 		m_skinTransforms[m_index][skinIndex * 2 + 1],
 		tmp
@@ -364,7 +358,7 @@ void AnimatedMeshEntity::updatePoseController(int32_t index, float deltaTime)
 
 		size_t skeletonJointCount = m_jointTransforms.size();
 		size_t skinJointCount = m_mesh->getJointCount();
-		
+
 		// Ensure we have same number of pose transforms as b/ones.
 		for (size_t i = m_poseTransforms.size(); i < skeletonJointCount; ++i)
 			m_poseTransforms.push_back(m_jointTransforms[i]);
@@ -376,7 +370,7 @@ void AnimatedMeshEntity::updatePoseController(int32_t index, float deltaTime)
 			for (size_t i = 0; i < skeletonJointCount; ++i)
 				poseOffset += m_poseTransforms[i].translation();
 			poseOffset /= Scalar(float(skeletonJointCount));
-	
+
 			// Normalize pose transforms; update entity transform from offset.
 			for (size_t i = 0; i < skeletonJointCount; ++i)
 			{
@@ -385,7 +379,7 @@ void AnimatedMeshEntity::updatePoseController(int32_t index, float deltaTime)
 					m_poseTransforms[i].rotation()
 				);
 			}
-	
+
 			if (m_normalizeTransform)
 				m_transform.set(Transform(
 					m_transform.get().translation() + poseOffset.xyz1(),

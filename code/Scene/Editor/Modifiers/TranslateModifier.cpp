@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <numeric>
 #include "Core/Math/Line2.h"
 #include "Core/Math/Winding2.h"
@@ -194,7 +188,7 @@ bool TranslateModifier::handleCommand(const ui::Command& command)
 			(m_axisHot & 4) ? offset : 0.0f,
 			0.0f
 		);
-	
+
 		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
 		{
 			Transform T = m_entityAdapters[i]->getTransform();

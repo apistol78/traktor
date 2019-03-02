@@ -90,7 +90,7 @@ const OutputPin* Node::findOutputPin(const Guid& id) const
 {
 	if (id.isNull() || !id.isValid())
 		return nullptr;
-	
+
 	int count = getOutputPinCount();
 	for (int i = 0; i < count; ++i)
 	{

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Mesh/MeshCulling.h"
 #include "Mesh/Static/StaticMesh.h"
 #include "Mesh/Static/StaticMeshComponent.h"
@@ -17,7 +11,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 static render::handle_t s_techniqueVelocityWrite = 0;
 
 		}

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Input/Binding/IInputNode.h"
 #include "Input/Binding/InputState.h"
 #include "Input/Binding/InputStateData.h"
@@ -34,7 +28,7 @@ bool InputState::create(const InputStateData* data)
 void InputState::update(const InputValueSet& valueSet, float T, float dT)
 {
 	m_previousValue = m_currentValue;
-	
+
 	// Evaluate source nodes to get new state value.
 	m_currentValue = m_data->getSource()->evaluate(
 		m_instance,

@@ -1,5 +1,4 @@
-#ifndef traktor_uikit_WidgetScaffolding_H
-#define traktor_uikit_WidgetScaffolding_H
+#pragma once
 
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
@@ -36,4 +35,3 @@ private:
 	}
 }
 
-#endif	// traktor_uikit_WidgetScaffolding_H

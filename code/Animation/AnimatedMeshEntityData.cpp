@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Animation/AnimatedMeshEntity.h"
 #include "Animation/AnimatedMeshEntityData.h"
 #include "Animation/IPoseControllerData.h"
@@ -94,7 +88,7 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 void AnimatedMeshEntityData::serialize(ISerializer& s)
 {
 	world::EntityData::serialize(s);
-	
+
 	s >> resource::Member< mesh::SkinnedMesh >(L"mesh", m_mesh);
 	s >> resource::Member< Skeleton >(L"skeleton", m_skeleton);
 	s >> MemberRef< IPoseControllerData >(L"poseController", m_poseController);

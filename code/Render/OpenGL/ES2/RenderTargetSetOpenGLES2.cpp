@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
@@ -70,14 +64,14 @@ bool haveExtension(const char* extension)
 			if ((++end - supported) >= 200)
 				break;
 		}
-		
+
 		int32_t length = end - supported;
 		if (
 			length == extensionLength &&
 			strncmp(supported, extension, length) == 0
 		)
 			return true;
-			
+
 		supported = end;
 		while (*supported == ' ')
 		{
@@ -87,7 +81,7 @@ bool haveExtension(const char* extension)
 	}
 	return false;
 }
-	
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGLES2", RenderTargetSetOpenGLES2, RenderTargetSet)
@@ -428,7 +422,7 @@ bool RenderTargetSetOpenGLES2::createFramebuffer(GLuint primaryDepthBuffer)
 	// Already created?
 	if (m_targetFBO[0] != 0)
 		return true;
-	
+
 	if (m_desc.count > 0)
 	{
 		T_OGL_SAFE(glGenFramebuffers(m_desc.count, m_targetFBO));

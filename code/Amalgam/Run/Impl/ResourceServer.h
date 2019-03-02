@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_ResourceServer_H
-#define traktor_amalgam_ResourceServer_H
+#pragma once
 
 #include "Amalgam/Run/IResourceServer.h"
 #include "Core/Ref.h"
@@ -17,7 +10,7 @@ class PropertyGroup;
 
 	namespace db
 	{
-	
+
 class Database;
 
 	}
@@ -48,4 +41,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_ResourceServer_H

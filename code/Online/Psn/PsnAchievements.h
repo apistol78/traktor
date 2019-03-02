@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_online_PsnAchievements_H
-#define traktor_online_PsnAchievements_H
+#pragma once
 
 #include "Online/Provider/IAchievementsProvider.h"
 #include "Online/Psn/PsnTypes.h"
@@ -37,4 +30,3 @@ private:
 	}
 }
 
-#endif	// traktor_online_PsnAchievements_H

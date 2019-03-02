@@ -1,10 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-
 #import <Cocoa/Cocoa.h>
 
 #include <string>
@@ -12,9 +5,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 struct IComboBoxDataCallback
 {
 	virtual int comboBox_indexOf(const std::wstring& value) const = 0;
-	
+
 	virtual std::wstring comboBox_valueAt(int index) const = 0;
-	
+
 	virtual int comboBox_numberOfItems() const = 0;
 };
 

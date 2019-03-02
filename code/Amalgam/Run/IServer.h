@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_IServer_H
-#define traktor_amalgam_IServer_H
+#pragma once
 
 #include "Core/Object.h"
 
@@ -39,4 +32,3 @@ class T_DLLCLASS IServer : public Object
 	}
 }
 
-#endif	// traktor_amalgam_IServer_H

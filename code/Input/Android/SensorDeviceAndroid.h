@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_SensorDeviceAndroid_H
-#define traktor_input_SensorDeviceAndroid_H
+#pragma once
 
 //#include <android/looper.h>
 #include <android/sensor.h>
@@ -73,4 +66,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_SensorDeviceAndroid_H

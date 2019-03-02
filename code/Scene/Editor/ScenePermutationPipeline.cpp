@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Editor/IPipelineBuilder.h"
@@ -99,7 +93,7 @@ Ref< ISerializable > ScenePermutationPipeline::buildOutput(
 ) const
 {
 	const ScenePermutationAsset* scenePermutationAsset = checked_type_cast< const ScenePermutationAsset*, false >(sourceAsset);
-	
+
 	Ref< const SceneAsset > templateScene = pipelineBuilder->getObjectReadOnly< SceneAsset >(scenePermutationAsset->m_scene);
 	T_ASSERT (templateScene);
 
@@ -116,7 +110,7 @@ Ref< ISerializable > ScenePermutationPipeline::buildOutput(
 	const SmallMap< std::wstring, resource::Id< render::ITexture > >& overrideParams = scenePermutationAsset->m_overrideImageProcessParams;
 	for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = overrideParams.begin(); i != overrideParams.end(); ++i)
 		params[i->first] = i->second;
-	
+
 	scenePermutation->setImageProcessParams(params);
 
 	const RefArray< world::LayerEntityData >& layers = scenePermutation->getLayers();

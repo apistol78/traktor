@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Animation/Animation/Animation.h"
 #include "Animation/Animation/StateGraph.h"
 #include "Animation/Animation/StateNodeAnimation.h"
@@ -211,7 +205,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	//		m_editorGraph->getSelectedEdges(selectedEdges, true);
 
 	//		Ref< ShaderGraphEditorClipboardData > data = new ShaderGraphEditorClipboardData();
-	//		
+	//
 	//		ui::Rect bounds(0, 0, 0, 0);
 	//		for (RefArray< ui::Node >::iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
 	//		{

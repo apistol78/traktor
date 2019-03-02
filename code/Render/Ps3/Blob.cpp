@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Render/Ps3/Blob.h"
@@ -77,7 +71,7 @@ Blob& Blob::operator = (const Blob& blob)
 	m_data = new uint8_t [m_size];
 
 	std::memcpy(m_data, blob.m_data, m_size);
-	
+
 	return *this;
 }
 

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_AxisJointBullet_H
-#define traktor_physics_AxisJointBullet_H
+#pragma once
 
 #include "Physics/AxisJoint.h"
 #include "Physics/Bullet/JointBullet.h"
@@ -39,4 +32,3 @@ public:
 	}
 }
 
-#endif	// traktor_physics_AxisJointBullet_H

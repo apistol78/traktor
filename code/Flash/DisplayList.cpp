@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Log/Log.h"
 #include "Flash/Dictionary.h"
@@ -75,7 +69,7 @@ void DisplayList::updateEnd()
 				i->second.instance->clearCacheObject();
 			}
 			i = m_layers.erase(i);
-		} 
+		}
 		else
 			i++;
 	}

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_html_Node_H
-#define traktor_html_Node_H
+#pragma once
 
 #include <string>
 #include "Core/Object.h"
@@ -36,25 +29,25 @@ class T_DLLCLASS Node : public Object
 
 public:
 	Node();
-	
+
 	virtual std::wstring getName() const;
 
 	virtual std::wstring getValue() const;
 
 	void addChild(Node* child);
-	
+
 	void insertBefore(Node* child, Node* node);
-	
+
 	void insertAfter(Node* child, Node* node);
 
 	Node* getParent() const;
-	
+
 	Node* getPreviousSibling() const;
-	
+
 	Node* getNextSibling() const;
-	
+
 	Node* getFirstChild() const;
-	
+
 	Node* getLastChild() const;
 
 	virtual void toString(OutputStream& os) const;
@@ -70,4 +63,3 @@ private:
 	}
 }
 
-#endif	// traktor_html_Node_H

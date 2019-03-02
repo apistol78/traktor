@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_animation_AnimatedMeshEntity_H
-#define traktor_animation_AnimatedMeshEntity_H
+#pragma once
 
 #include <vector>
 #include "Animation/Pose.h"
@@ -66,7 +59,7 @@ public:
 	virtual ~AnimatedMeshEntity();
 
 	virtual void destroy() override final;
-	
+
 	virtual Aabb3 getBoundingBox() const override final;
 
 	virtual bool supportTechnique(render::handle_t technique) const override final;
@@ -124,4 +117,3 @@ private:
 	}
 }
 
-#endif	// traktor_animation_AnimatedMeshEntity_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Functor/Functor.h"
 #include "Core/Io/IStream.h"
@@ -363,7 +357,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		for (uint32_t j = 0; j < polygons.size(); ++j)
 		{
 			Winding3& w = windings[j];
-				
+
 			const AlignedVector< uint32_t >& vertexIndices = polygons[j].getVertices();
 			if (vertexIndices.size() < 3 || vertexIndices.size() > 16)
 				continue;

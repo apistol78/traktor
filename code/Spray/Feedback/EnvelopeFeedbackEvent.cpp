@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Spray/Feedback/EnvelopeFeedbackEvent.h"
 #include "Spray/Feedback/EnvelopeFeedbackEventInstance.h"
 

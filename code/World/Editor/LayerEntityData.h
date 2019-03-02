@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_LayerEntityData_H
-#define traktor_world_LayerEntityData_H
+#pragma once
 
 #include "World/Entity/GroupEntityData.h"
 
@@ -76,4 +69,3 @@ private:
 	}
 }
 
-#endif	// traktor_world_LayerEntityData_H

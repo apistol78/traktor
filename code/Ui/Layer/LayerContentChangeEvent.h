@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_LayerContentChangeEvent_H
-#define traktor_ui_LayerContentChangeEvent_H
+#pragma once
 
 #include "Ui/Events/ContentChangeEvent.h"
 
@@ -30,10 +23,10 @@ class LayerItem;
 class T_DLLCLASS LayerContentChangeEvent : public ContentChangeEvent
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	LayerContentChangeEvent(EventSubject* sender, LayerItem* item);
-	
+
 	LayerItem* getItem() const;
 
 private:
@@ -43,4 +36,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_LayerContentChangeEvent_H

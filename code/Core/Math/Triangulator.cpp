@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <cmath>
 #include "Core/Log/Log.h"
@@ -73,7 +67,7 @@ struct SortInternalAngle
 	bool operator () (int32_t a, int32_t b)
 	{
 		int32_t pa, na, pb, nb;
-		
+
 		getAdjacent(m_points, a, pa, na);
 		getAdjacent(m_points, b, pb, nb);
 

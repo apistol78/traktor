@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_CombinedInputSource_H
-#define traktor_input_CombinedInputSource_H
+#pragma once
 
 #include <list>
 #include "Core/RefArray.h"
@@ -42,11 +35,11 @@ public:
 	CombinedInputSource(const RefArray< IInputSource >& sources, CombineMode mode);
 
 	virtual std::wstring getDescription() const override final;
-	
+
 	virtual void prepare(float T, float dT) override final;
 
 	virtual float read(float T, float dT) override final;
-	
+
 private:
 	RefArray< IInputSource > m_sources;
 	CombineMode m_mode;
@@ -55,4 +48,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_CombinedInputSource_H

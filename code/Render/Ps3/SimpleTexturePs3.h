@@ -20,7 +20,7 @@ namespace traktor
 class MemoryHeap;
 class MemoryHeapObject;
 class StateCachePs3;
-		
+
 class T_DLLCLASS SimpleTexturePs3 : public ISimpleTexture
 {
 	T_RTTI_CLASS;
@@ -29,7 +29,7 @@ public:
 	SimpleTexturePs3(int32_t& counter);
 
 	virtual ~SimpleTexturePs3();
-	
+
 	bool create(MemoryHeap* memoryHeap, const SimpleTextureCreateDesc& desc);
 
 	virtual void destroy();
@@ -39,7 +39,7 @@ public:
 	virtual int32_t getMips() const;
 
 	virtual int32_t getWidth() const;
-	
+
 	virtual int32_t getHeight() const;
 
 	virtual bool lock(int32_t level, Lock& lock);
@@ -55,6 +55,6 @@ private:
 	CellGcmTexture m_texture;
 	int32_t& m_counter;
 };
-		
+
 	}
 }

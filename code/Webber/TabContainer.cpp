@@ -7,7 +7,7 @@ namespace traktor
 {
 	namespace wbr
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.wbr.TabContainer", TabContainer, Container)
 
 void TabContainer::build(html::Element* parent) const

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
@@ -316,7 +310,7 @@ bool SteamMatchMaking::getLobbyFriendsCount(uint64_t lobbyHandle, uint32_t& outC
 	outCount = 0;
 
 	int32_t friendsCount = SteamFriends()->GetFriendCount(k_EFriendFlagImmediate);
-	for (int32_t i = 0; i < friendsCount; ++i) 
+	for (int32_t i = 0; i < friendsCount; ++i)
 	{
 		FriendGameInfo_t friendGameInfo;
 		CSteamID steamIDFriend = SteamFriends()->GetFriendByIndex(i, k_EFriendFlagImmediate);

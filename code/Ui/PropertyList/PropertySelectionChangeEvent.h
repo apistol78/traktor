@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_PropertySelectionChangeEvent_H
-#define traktor_ui_PropertySelectionChangeEvent_H
+#pragma once
 
 #include "Ui/Events/SelectionChangeEvent.h"
 
@@ -30,10 +23,10 @@ class PropertyItem;
 class T_DLLCLASS PropertySelectionChangeEvent : public SelectionChangeEvent
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	PropertySelectionChangeEvent(EventSubject* sender, PropertyItem* item, int32_t index);
-	
+
 	PropertyItem* getItem() const;
 
 	int32_t getIndex() const;
@@ -46,4 +39,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_PropertySelectionChangeEvent_H

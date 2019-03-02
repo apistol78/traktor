@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/BufferedStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
@@ -25,10 +19,10 @@ namespace traktor
 {
 	namespace
 	{
-	
+
 const uint16_t c_databasePort = 38000;
 const uint16_t c_agentPort = 39000;
-		
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.PipelineBuilderWrapper", PipelineBuilderWrapper, editor::IPipelineBuilder)

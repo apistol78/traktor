@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_Constant_H
-#define traktor_render_Constant_H
+#pragma once
 
 #include "Render/Editor/Shader/PinType.h"
 
@@ -66,7 +59,7 @@ public:
 	float x() const { return getValue(0); }
 
 	float y() const { return getValue(1); }
-	
+
 	float z() const { return getValue(2); }
 
 	float w() const { return getValue(3); }
@@ -80,4 +73,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_Constant_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_Types_H
-#define traktor_render_Types_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Guid.h"
@@ -863,4 +856,3 @@ uint32_t T_DLLCLASS getTextureSize(TextureFormat format, uint32_t textureWidth, 
 	}
 }
 
-#endif	// traktor_render_Types_H

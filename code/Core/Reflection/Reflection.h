@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Reflection_H
-#define traktor_Reflection_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Reflection/RfmCompound.h"
@@ -16,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
-#endif 
+#endif
 
 namespace traktor
 {
@@ -68,4 +61,3 @@ private:
 
 }
 
-#endif	// traktor_Reflection_H

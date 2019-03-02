@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_NSNotificationProxy_H
-#define traktor_ui_NSNotificationProxy_H
+#pragma once
 
 #import <Cocoa/Cocoa.h>
 
@@ -13,7 +6,7 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 struct INotificationProxyCallback
 {
 	virtual void notificationProxy_recv(::NSNotification* notification) = 0;
@@ -30,12 +23,12 @@ public:
 	,	m_recv(recv)
 	{
 	}
-	
+
 	virtual void notificationProxy_recv(::NSNotification* notification)
 	{
 		(m_this->*m_recv)(notification);
 	}
-	
+
 private:
 	TargetType* m_this;
 	method_t m_recv;
@@ -59,4 +52,3 @@ typedef traktor::ui::INotificationProxyCallback proxy_callback_t;
 
 @end
 
-#endif	// traktor_ui_NSNotificationProxy_H

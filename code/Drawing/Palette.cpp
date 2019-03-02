@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include <limits>
 #include "Drawing/Palette.h"
@@ -45,7 +39,7 @@ int32_t Palette::find(const Color4f& c, bool exact) const
 			std::abs(c.getGreen() - i->getGreen()) +
 			std::abs(c.getBlue() - i->getBlue()) +
 			std::abs(c.getAlpha() - i->getAlpha());
-			
+
 		if (diff < mn.first)
 		{
 			mn.first = diff;
@@ -54,6 +48,6 @@ int32_t Palette::find(const Color4f& c, bool exact) const
 	}
 	return (exact && mn.first != 0.0f) ? -1 : mn.second;
 }
-	
+
 	}
 }

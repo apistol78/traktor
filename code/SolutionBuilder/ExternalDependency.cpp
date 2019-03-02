@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
@@ -114,7 +108,7 @@ bool ExternalDependency::resolve(const Path& referringSolutionPath, SolutionLoad
 
 	// Replace dependencies with resolved dependencies.
 	m_project->setDependencies(resolvedDependencies);
-		
+
 	return true;
 }
 

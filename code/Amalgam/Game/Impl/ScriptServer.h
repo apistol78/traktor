@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_ScriptServer_H
-#define traktor_amalgam_ScriptServer_H
+#pragma once
 
 #include <map>
 #include "Amalgam/Game/IScriptServer.h"
@@ -96,7 +89,7 @@ private:
 	std::map< std::pair< Guid, std::wstring >, CallSample > m_callSamples[3];
 	int32_t m_callSamplesIndex;
 	Thread* m_scriptDebuggerThread;
-	
+
 	void threadDebugger();
 
 	virtual void debugeeStateChange(script::IScriptDebugger* scriptDebugger) override final;
@@ -111,4 +104,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_ScriptServer_H

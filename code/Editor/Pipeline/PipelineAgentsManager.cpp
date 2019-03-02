@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -98,7 +92,7 @@ int32_t PipelineAgentsManager::getAgentCount() const
 	{
 		PipelineAgent* agent = i->second;
 		T_ASSERT (agent);
-		
+
 		if (agent->isConnected())
 			++count;
 	}

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_SpursManager_H
-#define traktor_SpursManager_H
+#pragma once
 
 #include <cell/spurs.h>
 #include "Core/Ref.h"
@@ -60,4 +53,3 @@ private:
 
 }
 
-#endif	// traktor_SpursManager_H

@@ -97,7 +97,7 @@ bool convertSkeleton(
 		}
 
 		// FbxAMatrix nodeTransform = node->EvaluateGlobalTransform();
-		
+
 		Matrix44 Mnode = convertMatrix(nodeTransform);
 		Matrix44 Mrx90 = rotateX(deg2rad(-90.0f));
 		Matrix44 Mjoint = axisTransform * (Mnode * Mrx90) * axisTransform.inverse();
@@ -133,9 +133,9 @@ bool convertSkeleton(
 		joint.setParent(parentId);
 		joint.setName(jointName);
 		joint.setTransform(Tjoint);
-		outModel.addJoint(joint);	
+		outModel.addJoint(joint);
 		return true;
-	});	
+	});
 
 	return true;
 }
@@ -206,7 +206,7 @@ Ref< Pose > convertPose(
 		pose->setJointTransform(jointId, Tjoint);
 		return true;
 	});
-	
+
 	return pose;
 }
 

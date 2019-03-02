@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_BufferedStream_H
-#define traktor_BufferedStream_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Io/IStream.h"
@@ -74,4 +67,3 @@ private:
 
 }
 
-#endif	// traktor_BufferedStream_H

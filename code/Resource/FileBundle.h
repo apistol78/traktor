@@ -16,7 +16,7 @@ namespace traktor
 {
 	namespace resource
 	{
-	
+
 class T_DLLCLASS FileBundle : public ISerializable
 {
 	T_RTTI_CLASS;
@@ -31,7 +31,7 @@ private:
 
 	std::map< std::wstring, std::wstring > m_dataIds;
 };
-	
+
 	}
 }
 

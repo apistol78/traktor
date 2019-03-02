@@ -11,7 +11,7 @@ namespace traktor
 	{
 
 class ContextOpenGLES2;
-		
+
 /*!
  * \ingroup OGL
  */
@@ -39,13 +39,13 @@ public:
 	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
 
 	virtual void unlock(int32_t side, int32_t level) override final;
-	
+
 	// ITextureBinding
-	
+
 	virtual void bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture) override final;
 
 	virtual void bindSize(GLint locationSize) override final;
-	
+
 private:
 	Ref< ContextOpenGLES2 > m_resourceContext;
 	GLuint m_textureName;

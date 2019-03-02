@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ContextVk_H
-#define traktor_render_ContextVk_H
+#pragma once
 
 #if defined(_WIN32)
 #	define VK_USE_PLATFORM_WIN32_KHR
@@ -57,4 +50,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_ContextVk_H

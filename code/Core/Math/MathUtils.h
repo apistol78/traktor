@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_MathUtils_H
-#define traktor_MathUtils_H
+#pragma once
 
 #include <cmath>
 #if defined(_XBOX)
@@ -214,4 +207,3 @@ inline float powf(float x, float e)
 
 }
 
-#endif	// traktor_MathUtils_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InClamp_H
-#define traktor_input_InClamp_H
+#pragma once
 
 #include "Input/Binding/IInputNode.h"
 
@@ -28,12 +21,12 @@ namespace traktor
 class T_DLLCLASS InClamp : public IInputNode
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	InClamp();
 
 	InClamp(IInputNode* source, float limitMin, float limitMax);
-	
+
 	virtual Ref< Instance > createInstance() const override final;
 
 	virtual float evaluate(
@@ -55,4 +48,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_InClamp_H

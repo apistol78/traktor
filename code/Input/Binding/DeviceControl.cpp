@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Input/IInputDevice.h"
 #include "Input/Binding/DeviceControl.h"
 
@@ -29,12 +23,12 @@ InputDefaultControlType DeviceControl::getControlType() const
 {
 	return m_controlType;
 }
-	
+
 bool DeviceControl::isAnalogue() const
 {
 	return m_analogue;
 }
-	
+
 int32_t DeviceControl::getIndex() const
 {
 	return m_index;

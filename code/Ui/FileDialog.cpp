@@ -57,7 +57,7 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 		{
 			m_currentPath = file->getPath();
 			updatePath();
-			updateFiles();			
+			updateFiles();
 		}
 		else
 			endModal(DrOk);

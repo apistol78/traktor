@@ -26,7 +26,7 @@ DialogCocoa::DialogCocoa(EventSubject* owner)
 bool DialogCocoa::create(IWidget* parent, const std::wstring& text, int width, int height, int style)
 {
 	uint32_t styleMask = NSTitledWindowMask | NSClosableWindowMask;
-	
+
 	if (style & WsResizable)
 		styleMask |= NSResizableWindowMask;
 
@@ -38,15 +38,15 @@ bool DialogCocoa::create(IWidget* parent, const std::wstring& text, int width, i
 	];
 
 	[m_window setTitle:makeNSString(text)];
-	
+
 	NSWindowDelegateProxy* proxy = [[NSWindowDelegateProxy alloc] init];
 	[proxy setCallback: this];
-	
+
 	[m_window setDelegate: proxy];
 
 	NSView* contentView = [[NSCustomControl alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_window setContentView: contentView];
-	
+
 	return true;
 }
 
@@ -80,9 +80,9 @@ void DialogCocoa::destroy()
 	// Release all timers.
 	for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
 		[i->second invalidate];
-		
+
 	m_timers.clear();
-	
+
 	// Release objects.
 	if (m_window)
 	{
@@ -166,7 +166,7 @@ void DialogCocoa::startTimer(int interval, int id)
 
 	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
 	[targetProxy setCallback: targetCallback];
-		
+
 	NSTimer* timer = [[NSTimer alloc]
 		initWithFireDate: nil
 		interval: (double)interval / 1000.0
@@ -175,10 +175,10 @@ void DialogCocoa::startTimer(int interval, int id)
 		userInfo: nil
 		repeats: YES
 	];
-		
+
 	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSDefaultRunLoopMode];
 	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSModalPanelRunLoopMode];
-	
+
 	m_timers[id] = timer;
 }
 
@@ -211,7 +211,7 @@ Rect DialogCocoa::getInnerRect() const
 	contentFrame.size.width -= 1;
 	contentFrame.size.height -= 1;
 	return fromNSRect(contentFrame);
-}	
+}
 
 Rect DialogCocoa::getNormalRect() const
 {
@@ -337,7 +337,7 @@ bool DialogCocoa::event_windowShouldClose()
 	{
 		if ([NSApp modalWindow] == m_window)
 			[NSApp stopModal];
-		
+
 		m_result = DrCancel;
 		return true;
 	}
@@ -354,15 +354,15 @@ void DialogCocoa::callbackTimer(void* controlId)
 void DialogCocoa::event_windowDidBecomeKey()
 {
 }
-	
+
 void DialogCocoa::event_windowDidResignKey()
 {
 }
-	
+
 void DialogCocoa::event_windowDidBecomeMain()
 {
 }
-	
+
 void DialogCocoa::event_windowDidResignMain()
 {
 }

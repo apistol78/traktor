@@ -5,7 +5,7 @@ namespace traktor
 {
 	namespace net
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.HttpClientResult", HttpClientResult, Result)
 
 void HttpClientResult::succeed(const HttpResponse* response, IStream* stream)

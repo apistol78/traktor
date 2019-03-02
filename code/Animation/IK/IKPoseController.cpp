@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
@@ -91,7 +85,7 @@ bool IKPoseController::evaluate(
 	//	if (joint->getParent() >= 0)
 	//	{
 	//		T_ASSERT (joint->getParent() < int(edges.size()));
-	//		
+	//
 	//		Vector4 s = outPoseTransforms[joint->getParent()].translation();
 	//		Vector4 e = outPoseTransforms[i].translation();
 

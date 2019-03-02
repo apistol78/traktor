@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/String.h"
 #include "Drawing/Image.h"
 #include "I18N/Text.h"
@@ -116,7 +110,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	m_toolVisualize->add(L"Cut Map");
 	m_toolVisualize->add(L"Material Map");
 	m_toolVisualize->select(0);
-	
+
 	m_toolToggleElevate->setToggled(true);
 	m_toolToggleFallOffSmooth->setToggled(true);
 

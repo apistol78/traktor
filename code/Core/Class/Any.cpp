@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Class/Any.h"
 #include "Core/Io/StringOutputStream.h"
@@ -23,7 +17,7 @@ namespace traktor
 char* refStringCreate(const char* s)
 {
 	size_t len = strlen(s);
-	
+
 	void* ptr = getAllocator()->alloc(sizeof(uint16_t) + (len + 1) * sizeof(char), 4, T_FILE_LINE);
 	if (!ptr)
 		return 0;
@@ -90,7 +84,7 @@ Any::Any(Any&& src)
 Any::~Any()
 {
 	T_EXCEPTION_GUARD_BEGIN
-	
+
 	if (m_type == AtString)
 		refStringDec(m_data.m_string);
 	else if (m_type == AtObject)

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_PhysicsComponentEditor_H
-#define traktor_physics_PhysicsComponentEditor_H
+#pragma once
 
 #include "Physics/Editor/PhysicsRenderer.h"
 #include "Scene/Editor/IComponentEditor.h"
@@ -22,14 +15,14 @@ class SceneEditorContext;
 
 	namespace world
 	{
-	
+
 class IEntityComponentData;
 
 	}
 
 	namespace physics
 	{
-	
+
 class PhysicsComponentEditor : public scene::IComponentEditor
 {
 	T_RTTI_CLASS;
@@ -49,4 +42,3 @@ private:
 	}
 }
 
-#endif	// traktor_physics_PhysicsComponentEditor_H

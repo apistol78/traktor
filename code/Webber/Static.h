@@ -1,5 +1,4 @@
-#ifndef traktor_wbr_Static_H
-#define traktor_wbr_Static_H
+#pragma once
 
 #include "Webber/Widget.h"
 
@@ -15,7 +14,7 @@ namespace traktor
 {
 	namespace wbr
 	{
-	
+
 class T_DLLCLASS Static : public Widget
 {
 	T_RTTI_CLASS;
@@ -38,4 +37,3 @@ private:
 	}
 }
 
-#endif	// traktor_wbr_Static_H

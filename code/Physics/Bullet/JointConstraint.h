@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_JointConstraint_H
-#define traktor_physics_JointConstraint_H
+#pragma once
 
 #include "Core/Config.h"
 #include <BulletDynamics/ConstraintSolver/btTypedConstraint.h>
@@ -48,4 +41,3 @@ private:
 	}
 }
 
-#endif	// traktor_physics_JointConstraint_H

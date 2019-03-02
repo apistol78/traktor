@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #pragma once
 
 #include "Core/Class/AutoVerify.h"
@@ -43,7 +37,7 @@ struct Unknown : public IRuntimeDispatch
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		T_VERIFY_ARGUMENT_COUNT(1)
-		
+
 		std::string methodName = argv[0].getString();
 
 		return (*m_unknown)(

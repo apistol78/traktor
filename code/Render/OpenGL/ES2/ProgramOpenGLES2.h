@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ProgramOpenGLES2_H
-#define traktor_render_ProgramOpenGLES2_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
@@ -39,7 +32,7 @@ public:
 	virtual void setFloatParameter(handle_t handle, float param) override final;
 
 	virtual void setFloatArrayParameter(handle_t handle, const float* param, int length) override final;
-	
+
 	virtual void setVectorParameter(handle_t handle, const Vector4& param) override final;
 
 	virtual void setVectorArrayParameter(handle_t handle, const Vector4* param, int length) override final;
@@ -105,11 +98,10 @@ private:
 	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
 	RefArray< ITexture > m_textures;
 	float m_targetSize[4];
-	
+
 	ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint program, const ProgramResource* resource);
 };
 
 	}
 }
 
-#endif	// traktor_render_ProgramOpenGLES2_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/SahTree.h"
 #include "Model/Model.h"
@@ -33,10 +27,10 @@ bool BakeVertexOcclusion::apply(Model& model) const
 
 	const AlignedVector< Polygon >& polygons = model.getPolygons();
 	AlignedVector< Vertex > vertices = model.getVertices();
-	
+
 	AlignedVector< Vector4 > colors = model.getColors();
 	model.clear(Model::CfColors);
-	
+
 	AlignedVector< Winding3 > windings(polygons.size());
 	for (uint32_t i = 0; i < polygons.size(); ++i)
 	{
@@ -53,13 +47,13 @@ bool BakeVertexOcclusion::apply(Model& model) const
 	// Build acceleration tree.
 	SahTree sah;
 	sah.build(windings);
-	
+
 	SahTree::QueryCache cache;
 	for (AlignedVector< Vertex >::iterator i = vertices.begin(); i != vertices.end(); ++i)
 	{
 		const Vector4& position = model.getPosition(i->getPosition());
 		const Vector4& normal = model.getNormal(i->getNormal());
-		
+
 		int32_t occluded = 0;
 		for (int32_t j = 0; j < m_rayCount; ++j)
 		{
@@ -68,19 +62,19 @@ bool BakeVertexOcclusion::apply(Model& model) const
 			if (sah.queryAnyIntersection(rayOrigin, rayDirection, 0.0f, cache))
 				occluded++;
 		}
-		
+
 		Vector4 color = Vector4::one();
-		
+
 		if (i->getColor() != c_InvalidIndex)
 			color = colors[i->getColor()];
-			
+
 		color.set(3, Scalar(
 			1.0f - occluded / float(m_rayCount)
 		));
-		
+
 		i->setColor(model.addUniqueColor(color));
 	}
-	
+
 	model.setVertices(vertices);
 	return true;
 }

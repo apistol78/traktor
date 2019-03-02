@@ -39,6 +39,6 @@ public:
 private:
 	Ref< ContextPs4 > m_context;
 };
-		
+
 	}
 }

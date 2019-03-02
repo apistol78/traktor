@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_online_ISaveData_H
-#define traktor_online_ISaveData_H
+#pragma once
 
 #include "Online/AttachmentResult.h"
 #include "Online/Types.h"
@@ -16,7 +9,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
-#endif 
+#endif
 
 namespace traktor
 {
@@ -49,4 +42,3 @@ public:
 	}
 }
 
-#endif	// traktor_online_ISaveData_H

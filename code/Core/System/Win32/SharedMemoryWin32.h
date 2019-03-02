@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_SharedMemoryWin32_H
-#define traktor_SharedMemoryWin32_H
+#pragma once
 
 #define _WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -48,4 +41,3 @@ private:
 
 }
 
-#endif	// traktor_SharedMemoryWin32_H

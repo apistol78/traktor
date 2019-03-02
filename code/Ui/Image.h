@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Image_H
-#define traktor_ui_Image_H
+#pragma once
 
 #include "Ui/Widget.h"
 
@@ -42,11 +35,11 @@ public:
 	Image();
 
 	bool create(Widget* parent, Bitmap* image = 0, int style = WsNone);
-	
+
 	virtual Size getMinimumSize() const override;
-	
+
 	virtual Size getPreferedSize() const override;
-	
+
 	virtual Size getMaximumSize() const override;
 
 	bool setImage(Bitmap* image, bool transparent = false);
@@ -69,4 +62,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_Image_H

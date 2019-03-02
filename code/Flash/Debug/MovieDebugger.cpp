@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/RefArray.h"
 #include "Flash/ButtonInstance.h"
 #include "Flash/Dictionary.h"
@@ -32,7 +26,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 void collectDebugInfo(const CharacterInstance* instance, bool mask, bool clipped, RefArray< InstanceDebugInfo >& outDebugInfo)
 {
 	if (const ButtonInstance* buttonInstance = dynamic_type_cast< const ButtonInstance* >(instance))
@@ -97,7 +91,7 @@ void collectDebugInfo(const CharacterInstance* instance, bool mask, bool clipped
 		outDebugInfo.push_back(new TextInstanceDebugInfo(textInstance));
 	}
 }
-		
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.MovieDebugger", MovieDebugger, Object)

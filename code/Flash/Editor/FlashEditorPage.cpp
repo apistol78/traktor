@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Math/Format.h"
@@ -275,7 +269,7 @@ void FlashEditorPage::updateTreeCharacter(ui::TreeViewItem* parentItem, Characte
 {
 	StringOutputStream ss;
 	ss << type_name(characterInstance);
-	
+
 	if (!characterInstance->getName().empty())
 		ss << std::wstring(L" \"") << mbstows(characterInstance->getName()) << std::wstring(L"\"");
 

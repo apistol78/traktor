@@ -1,5 +1,4 @@
-#ifndef traktor_uikit_WidgetScaffoldingPipeline_H
-#define traktor_uikit_WidgetScaffoldingPipeline_H
+#pragma once
 
 #include "Editor/IPipeline.h"
 
@@ -15,7 +14,7 @@ namespace traktor
 {
 	namespace uikit
 	{
-	
+
 class T_DLLCLASS WidgetScaffoldingPipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS;
@@ -53,8 +52,7 @@ public:
 		const ISerializable* sourceAsset
 	) const override final;
 };
-	
+
 	}
 }
 
-#endif	// traktor_uikit_WidgetScaffoldingPipeline_H

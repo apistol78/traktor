@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <openvr.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -19,7 +13,7 @@ namespace traktor
 	{
 		namespace
 		{
-	
+
 const vr::Hmd_Eye c_eyes[] = { vr::Eye_Left, vr::Eye_Left, vr::Eye_Right };
 
 		}

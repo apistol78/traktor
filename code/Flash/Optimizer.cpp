@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <stack>
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
@@ -100,7 +94,7 @@ void MergeQueue::beginMask()
 	m_maskSprite = new Sprite(maskId, 1);
 	m_maskSprite->addFrame(m_maskFrame);
 	m_outputMovie->defineCharacter(maskId, m_maskSprite);
-	
+
 	place.hasFlags = Frame::PfHasCharacterId | Frame::PfHasClipDepth;
 	place.depth = m_nextDepth++;
 	place.characterId = maskId;
@@ -182,7 +176,7 @@ uint16_t MergeQueue::cloneShape(const Shape& shape)
 
 	Ref< Shape > outputShape = new Shape(shape);
 	m_outputMovie->defineCharacter(m_nextShapeId, outputShape);
-		
+
 	m_usedIds.insert(std::make_pair(&shape, m_nextShapeId));
 	return m_nextShapeId++;
 }

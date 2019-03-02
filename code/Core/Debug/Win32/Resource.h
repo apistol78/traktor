@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
 // Used by Traktor.Core.rc
@@ -18,7 +12,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #define IDC_FILE                        1006
 
 // Next default values for new objects
-// 
+//
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        102

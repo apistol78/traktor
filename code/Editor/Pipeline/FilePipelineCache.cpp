@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
@@ -30,7 +24,7 @@ FilePipelineCache::FilePipelineCache()
 bool FilePipelineCache::create(const PropertyGroup* settings)
 {
 	m_accessRead = settings->getProperty< bool >(L"Pipeline.FileCache.Read", true);
-	m_accessWrite = settings->getProperty< bool >(L"Pipeline.FileCache.Write", true);	
+	m_accessWrite = settings->getProperty< bool >(L"Pipeline.FileCache.Write", true);
 	m_path = settings->getProperty< std::wstring >(L"Pipeline.FileCache.Path");
 	return true;
 }
@@ -53,7 +47,7 @@ Ref< IStream > FilePipelineCache::get(const Guid& guid, const PipelineDependency
 	StringOutputStream ss;
 	ss << m_path << L"/" << fa << L"/" << fb << L"/" << gs << L"_" << hash.pipelineHash << L"_" << hash.sourceAssetHash << L"_" << hash.sourceDataHash << L"_" << hash.filesHash << L".cache";
 
-	// Open cached file.	
+	// Open cached file.
 	Ref< IStream > fileStream = FileSystem::getInstance().open(ss.str(), File::FmRead);
 	if (!fileStream)
 		return 0;

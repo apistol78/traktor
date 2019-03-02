@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Animation/AnimationClassFactory.h"
 #include "Animation/AnimatedMeshEntity.h"
 #include "Animation/Animation/StatePoseController.h"
@@ -120,7 +114,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationClassFactory", 0, An
 
 void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< AnimatedMeshEntity > > classAnimatedMeshEntity = new AutoRuntimeClass< AnimatedMeshEntity >();
+	auto classAnimatedMeshEntity = new AutoRuntimeClass< AnimatedMeshEntity >();
 	classAnimatedMeshEntity->addMethod("getJointTransform", &animation_AnimatedMeshEntity_getJointTransform);
 	classAnimatedMeshEntity->addMethod("getPoseTransform", &animation_AnimatedMeshEntity_getPoseTransform);
 	classAnimatedMeshEntity->addMethod("getSkinTransform", &animation_AnimatedMeshEntity_getSkinTransform);
@@ -129,23 +123,23 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classAnimatedMeshEntity->addMethod("getPoseController", &AnimatedMeshEntity::getPoseController);
 	registrar->registerClass(classAnimatedMeshEntity);
 
-	Ref< AutoRuntimeClass< IPoseController > > classPoseController = new AutoRuntimeClass< IPoseController >();
+	auto classPoseController = new AutoRuntimeClass< IPoseController >();
 	classPoseController->addMethod("setTransform", &IPoseController::setTransform);
 	registrar->registerClass(classPoseController);
 
-	Ref< AutoRuntimeClass< IKPoseController > > classIKPoseController = new AutoRuntimeClass< IKPoseController >();
+	auto classIKPoseController = new AutoRuntimeClass< IKPoseController >();
 	classIKPoseController->addConstructor< physics::PhysicsManager*, IPoseController*, uint32_t >();
 	classIKPoseController->addMethod("setIgnoreBody", &IKPoseController::setIgnoreBody);
 	classIKPoseController->addMethod("getNeutralPoseController", &IKPoseController::getNeutralPoseController);
 	registrar->registerClass(classIKPoseController);
 
-	Ref< AutoRuntimeClass< RagDollPoseController > > classRagDollPoseController = new AutoRuntimeClass< RagDollPoseController >();
+	auto classRagDollPoseController = new AutoRuntimeClass< RagDollPoseController >();
 	classRagDollPoseController->addMethod("setEnable", &RagDollPoseController::setEnable);
 	classRagDollPoseController->addMethod("isEnable", &RagDollPoseController::isEnable);
 	classRagDollPoseController->addMethod("getLimbs", &RagDollPoseController::getLimbs);
 	registrar->registerClass(classRagDollPoseController);
 
-	Ref< AutoRuntimeClass< StatePoseController > > classStatePoseController = new AutoRuntimeClass< StatePoseController >();
+	auto classStatePoseController = new AutoRuntimeClass< StatePoseController >();
 	classStatePoseController->addMethod("setState", &StatePoseController::setState);
 	classStatePoseController->addMethod("setCondition", &StatePoseController::setCondition);
 	classStatePoseController->addMethod("setTime", &StatePoseController::setTime);
@@ -154,15 +148,15 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classStatePoseController->addMethod("getTimeFactor", &StatePoseController::getTimeFactor);
 	registrar->registerClass(classStatePoseController);
 
-	Ref< AutoRuntimeClass< BoidsEntity > > classBoidsEntity = new AutoRuntimeClass< BoidsEntity >();
+	auto classBoidsEntity = new AutoRuntimeClass< BoidsEntity >();
 	registrar->registerClass(classBoidsEntity);
 
-	Ref< AutoRuntimeClass< ClothEntity > > classClothEntity = new AutoRuntimeClass< ClothEntity >();
+	auto classClothEntity = new AutoRuntimeClass< ClothEntity >();
 	classClothEntity->addMethod("reset", &ClothEntity::reset);
 	classClothEntity->addMethod("setNodeInvMass", &ClothEntity::setNodeInvMass);
 	registrar->registerClass(classClothEntity);
 
-	Ref< AutoRuntimeClass< PathEntity > > classPathEntity = new AutoRuntimeClass< PathEntity >();
+	auto classPathEntity = new AutoRuntimeClass< PathEntity >();
 	classPathEntity->addMethod("setTimeMode", &animation_PathEntity_setTimeMode);
 	classPathEntity->addMethod("getTimeMode", &animation_PathEntity_getTimeMode);
 	classPathEntity->addMethod("setTimeScale", &PathEntity::setTimeScale);
@@ -173,14 +167,14 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classPathEntity->addMethod("setListener", &animation_PathEntity_setListener);
 	registrar->registerClass(classPathEntity);
 
-	Ref< AutoRuntimeClass< PathEntityData > > classPathEntityData = new AutoRuntimeClass< PathEntityData >();
+	auto classPathEntityData = new AutoRuntimeClass< PathEntityData >();
 	classPathEntityData->addConstructor();
 	registrar->registerClass(classPathEntityData);
 
-	Ref< AutoRuntimeClass< PathComponent > > classPathComponent = new AutoRuntimeClass< PathComponent >();
+	auto classPathComponent = new AutoRuntimeClass< PathComponent >();
 	registrar->registerClass(classPathComponent);
 
-	Ref< AutoRuntimeClass< PathComponentData > > classPathComponentData = new AutoRuntimeClass< PathComponentData >();
+	auto classPathComponentData = new AutoRuntimeClass< PathComponentData >();
 	registrar->registerClass(classPathComponentData);
 }
 

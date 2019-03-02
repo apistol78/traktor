@@ -1,5 +1,4 @@
-#ifndef traktor_wbr_Event_H
-#define traktor_wbr_Event_H
+#pragma once
 
 #include <functional>
 #include <vector>
@@ -17,7 +16,7 @@ namespace traktor
 {
 	namespace wbr
 	{
-	
+
 class T_DLLCLASS Event : public Object
 {
 	T_RTTI_CLASS;
@@ -34,4 +33,3 @@ private:
 	}
 }
 
-#endif	// traktor_wbr_Event_H

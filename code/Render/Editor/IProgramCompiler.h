@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_IProgramCompiler_H
-#define traktor_render_IProgramCompiler_H
+#pragma once
 
 #include <string>
 #include "Core/Object.h"
@@ -109,4 +102,3 @@ public:
 	}
 }
 
-#endif	// traktor_render_IProgramCompiler_H

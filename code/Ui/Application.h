@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Application_H
-#define traktor_ui_Application_H
+#pragma once
 
 #include "Ui/Enums.h"
 #include "Ui/EventSubject.h"
@@ -60,7 +53,7 @@ public:
 	 * \return True if application initialization succeeded.
 	 */
 	bool initialize(IWidgetFactory* widgetFactory, const StyleSheet* styleSheet);
-	
+
 	/*! \brief Cleanup UI application. */
 	void finalize();
 
@@ -153,4 +146,3 @@ inline int32_t invdpi96(int32_t measure)
 	}
 }
 
-#endif	// traktor_ui_Application_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_CollisionSpecification_H
-#define traktor_physics_CollisionSpecification_H
+#pragma once
 
 #include "Core/Serialization/ISerializable.h"
 
@@ -31,7 +24,7 @@ class T_DLLCLASS CollisionSpecification : public ISerializable
 
 public:
 	CollisionSpecification();
-	
+
 	explicit CollisionSpecification(uint32_t bitMask);
 
 	uint32_t getBitMask() const;
@@ -45,4 +38,3 @@ private:
 	}
 }
 
-#endif	// traktor_physics_CollisionSpecification_H

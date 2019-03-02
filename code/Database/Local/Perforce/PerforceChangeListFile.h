@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_PerforceChangeListFile_H
-#define traktor_db_PerforceChangeListFile_H
+#pragma once
 
 #include "Core/Serialization/ISerializable.h"
 #include "Database/Local/Perforce/PerforceTypes.h"
@@ -48,4 +41,3 @@ private:
 	}
 }
 
-#endif	// traktor_db_PerforceChangeListFile_H

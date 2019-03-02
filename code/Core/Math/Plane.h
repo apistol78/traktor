@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Plane_H
-#define traktor_Plane_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Math/MathConfig.h"
@@ -35,9 +28,9 @@ class T_DLLCLASS Plane
 {
 public:
 	T_MATH_INLINE Plane();
-	
+
 	T_MATH_INLINE Plane(const Plane& src);
-	
+
 	explicit T_MATH_INLINE Plane(const Vector4& normal, const Scalar& distance);
 
 	explicit T_MATH_INLINE Plane(const Vector4& normal, const Vector4& pointInPlane);
@@ -100,4 +93,3 @@ T_MATH_INLINE T_DLLCLASS Plane operator * (const Matrix44& m, const Plane& pl);
 #	include "Core/Math/Std/Plane.inl"
 #endif
 
-#endif	// traktor_Plane_H

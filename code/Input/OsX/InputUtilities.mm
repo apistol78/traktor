@@ -26,7 +26,7 @@ bool isInputAllowed()
 		mouseLocationScreen.y > contentRect.origin.y + contentRect.size.height
 	)
 		return false;
-	
+
 	return true;
 }
 
@@ -48,15 +48,15 @@ bool getMousePosition(NSPoint& outMousePositionGlobal, NSPoint& outMousePosition
 	NSWindow* keyWindow = [NSApp keyWindow];
 	if (!keyWindow)
 		return false;
-    
+
 	outMousePositionGlobal = [NSEvent mouseLocation];
-	
+
 	NSRect frameRect = [keyWindow frame];
 	NSRect contentRect = [keyWindow contentRectForFrameRect: frameRect];
-    
+
     outMousePositionLocal.x = outMousePositionGlobal.x - contentRect.origin.x;
     outMousePositionLocal.y = contentRect.origin.y + contentRect.size.height - outMousePositionGlobal.y;
-    
+
     return true;
 }
 

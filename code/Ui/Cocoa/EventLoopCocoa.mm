@@ -90,10 +90,10 @@ bool EventLoopCocoa::process(EventSubject* owner)
 			}
 			m_idleMode = true;
 		}
-		
+
 		[pool release];
 	}
-	
+
 	return true;
 }
 
@@ -104,7 +104,7 @@ int EventLoopCocoa::execute(EventSubject* owner)
 		[NSApp finishLaunching];
 		m_launching = false;
 	}
-		
+
 	while (!m_terminated)
 	{
 		NSDebugAutoreleasePool* pool = [[NSDebugAutoreleasePool alloc] init];
@@ -167,7 +167,7 @@ int32_t EventLoopCocoa::getExitCode() const
 int32_t EventLoopCocoa::getAsyncKeyState() const
 {
 	int32_t keyState = KsNone;
-	
+
 	if (m_modifierFlags & NSControlKeyMask)
 		keyState |= KsControl;
 	if (m_modifierFlags & NSAlternateKeyMask)
@@ -182,16 +182,16 @@ int32_t EventLoopCocoa::getAsyncKeyState() const
 
 bool EventLoopCocoa::isKeyDown(VirtualKey vk) const
 {
-	return false;	
+	return false;
 }
 
 bool EventLoopCocoa::handleGlobalEvents(EventSubject* owner, void* event)
 {
 	NSEvent* evt = (NSEvent*)event;
-	
+
 	// Record modifier flags.
 	m_modifierFlags = [evt modifierFlags];
-	
+
 	// Process key events; if they are globally consumed we don't dispatch further.
 	NSEventType eventType = [evt type];
 	if (eventType == NSKeyDown || eventType == NSKeyUp)
@@ -199,7 +199,7 @@ bool EventLoopCocoa::handleGlobalEvents(EventSubject* owner, void* event)
 		uint32_t systemKey = [evt keyCode];
 		VirtualKey virtualKey = translateKeyCode(systemKey);
 		std::wstring chs = fromNSString([evt characters]);
-		
+
 		if (eventType == NSKeyDown)
 		{
 			KeyDownEvent keyEvent(

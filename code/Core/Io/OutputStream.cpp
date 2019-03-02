@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include "Core/Io/IOutputStreamBuffer.h"
 #include "Core/Io/OutputStream.h"
@@ -138,7 +132,7 @@ const wchar_t* ftoa__(T value, int fractions, wchar_t* buf)
 
 	if (vi)
 	{
-		do 
+		do
 		{
 			*p-- = wchar_t(L'0' + vi % 10);
 			vi /= 10;
@@ -295,7 +289,7 @@ void OutputStream::put(wchar_t ch)
 			m_buffer->overflow(c_indents, m_buffer->getIndent());
 		m_buffer->setPushIndent(false);
 	}
-	
+
 	m_buffer->overflow(&ch, 1);
 
 	if (isEol(ch))
@@ -387,7 +381,7 @@ bool OutputStream::isEol(wchar_t ch) const
 	case LeMac:
 		eol = bool(ch == L'\r');
 		break;
-	
+
 	case LeAuto:
 	default:
 		break;
@@ -421,7 +415,7 @@ OutputStream& Endl(OutputStream& s)
 	case OutputStream::LeUnix:
 		s.put(L'\n');
 		break;
-		
+
 	default:
 		break;
 	}

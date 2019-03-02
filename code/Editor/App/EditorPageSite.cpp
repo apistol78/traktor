@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Editor/App/EditorPageSite.h"
 #include "Editor/App/EditorForm.h"
 
@@ -26,7 +20,7 @@ void EditorPageSite::show()
 		return;
 
 	m_editor->setPropertyObject(m_properties);
-	
+
 	for (std::map< Ref< ui::Widget >, bool >::iterator i = m_panelWidgets.begin(); i != m_panelWidgets.end(); ++i)
 	{
 		if (i->second)

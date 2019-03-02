@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputDeviceKeyboardOsX_H
-#define traktor_input_InputDeviceKeyboardOsX_H
+#pragma once
 
 #import <Cocoa/Cocoa.h>
 #include "Core/Containers/CircularVector.h"
@@ -15,11 +8,11 @@ namespace traktor
 {
 	namespace input
 	{
-	
+
 class InputDeviceKeyboardOsX : public IInputDevice
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	InputDeviceKeyboardOsX();
 
@@ -52,17 +45,16 @@ public:
 	virtual bool supportRumble() const;
 
 	virtual void setRumble(const InputRumble& rumble);
-	
+
 	virtual void setExclusive(bool exclusive);
-	
+
 	void consumeEvent(NSEvent* event);
 
 private:
 	uint8_t m_data[256];
 	CircularVector< KeyEvent, 16 > m_keyEvents;
 };
-	
+
 	}
 }
 
-#endif	// traktor_input_InputDeviceKeyboardOsX_H

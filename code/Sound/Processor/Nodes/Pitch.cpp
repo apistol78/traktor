@@ -19,7 +19,7 @@ const ImmutableNode::InputPinDesc c_Pitch_i[] =
 const ImmutableNode::OutputPinDesc c_Pitch_o[] =
 {
 	{ L"Output", NptSignal },
-	{ 0 } 
+	{ 0 }
 };
 
 class PitchCursor : public RefCountImpl< ISoundBufferCursor >
@@ -46,7 +46,7 @@ bool Pitch::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Pitch::createCursor() const 
+Ref< ISoundBufferCursor > Pitch::createCursor() const
 {
 	return new PitchCursor();
 }

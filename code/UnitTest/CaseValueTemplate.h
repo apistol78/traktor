@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_CaseValueTemplate_H
-#define traktor_CaseValueTemplate_H
+#pragma once
 
 #include "UnitTest/Case.h"
 
@@ -20,4 +13,3 @@ public:
 
 }
 
-#endif	// traktor_CaseValueTemplate_H

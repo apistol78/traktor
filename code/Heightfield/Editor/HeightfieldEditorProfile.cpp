@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Heightfield/HeightfieldFactory.h"
 #include "Heightfield/Editor/HeightfieldEditorProfile.h"
 #include "Scene/Editor/SceneEditorContext.h"

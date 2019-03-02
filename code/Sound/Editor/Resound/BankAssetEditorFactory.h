@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sound_BankAssetEditorFactory_H
-#define traktor_sound_BankAssetEditorFactory_H
+#pragma once
 
 #include "Editor/IObjectEditorFactory.h"
 
@@ -39,4 +32,3 @@ public:
 	}
 }
 
-#endif	// traktor_sound_BankAssetEditorFactory_H

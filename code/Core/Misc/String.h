@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_String_H
-#define traktor_String_H
+#pragma once
 
 #include <algorithm>
 #include <cctype>
@@ -318,4 +311,3 @@ inline bool split(const std::wstring& str, wchar_t delim, std::wstring& outLeft,
 
 }
 
-#endif	// traktor_String_H

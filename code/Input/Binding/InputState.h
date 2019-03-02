@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputState_H
-#define traktor_input_InputState_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Input/Binding/IInputNode.h"
@@ -22,7 +15,7 @@ namespace traktor
 {
 	namespace input
 	{
-	
+
 class InputStateData;
 class InputValueSet;
 
@@ -35,27 +28,27 @@ class T_DLLCLASS InputState : public Object
 
 public:
 	InputState();
-	
+
 	bool create(const InputStateData* data);
 
 	void update(const InputValueSet& valueSet, float T, float dT);
 
 	void reset();
-	
+
 	float getValue() const { return m_currentValue; }
-	
+
 	float getPreviousValue() const { return m_previousValue; }
-	
+
 	bool isDown() const;
-	
+
 	bool isUp() const;
-	
+
 	bool isPressed() const;
-	
+
 	bool isReleased() const;
 
 	bool hasChanged() const;
-	
+
 private:
 	Ref< const InputStateData > m_data;
 	Ref< IInputNode::Instance > m_instance;
@@ -67,4 +60,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_InputState_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_animation_IPoseControllerData_H
-#define traktor_animation_IPoseControllerData_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Math/Transform.h"
@@ -60,4 +53,3 @@ public:
 	}
 }
 
-#endif	// traktor_animation_IPoseControllerData_H

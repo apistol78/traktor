@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -387,7 +381,7 @@ void paintInstanceOutline(ui::Canvas& canvas, const Matrix33& rasterTransform, c
 
 		const Aabb2& scalingGrid = spriteInstance->getScalingGrid();
 		if (!scalingGrid.empty())
-		{ 
+		{
 			Vector2 gx[4];
 			scalingGrid.getExtents(gx);
 
@@ -558,7 +552,7 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 			Vector2 p = rasterTransform * (m_highlightInstance->getGlobalTransform() * Vector2(0.0f, 0.0f));
 			ui::Point pivot = targetRect.getTopLeft() + ui::Size(p.x, p.y);
 			ui::Size sz = m_bitmapPivot->getSize();
-			canvas.drawBitmap(pivot + ui::Size(-sz.cx / 2, -sz.cy / 2), ui::Point(0, 0), sz, m_bitmapPivot);		
+			canvas.drawBitmap(pivot + ui::Size(-sz.cx / 2, -sz.cy / 2), ui::Point(0, 0), sz, m_bitmapPivot);
 		}
 
 		// Frame

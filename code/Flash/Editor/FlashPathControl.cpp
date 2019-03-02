@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <cfloat>
 #include "Core/Log/Log.h"
@@ -51,7 +45,7 @@ public:
 		Vector2 c1 = project(p1);
 
 		Vector2 d = (c1 - c0);
-		
+
 		float ln = d.length();
 		if (ln > m_tail * 2.0f)
 		{
@@ -415,7 +409,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 
 				float y0 = sl.v[0].y;
 				float y1 = sl.v[1].y;
-				
+
 				if (y0 >= y1)
 					continue;
 

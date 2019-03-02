@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <kernel.h>
 #include "Core/Timer/Timer.h"
 
@@ -60,6 +54,6 @@ double Timer::getDeltaTime()
 	m_last = curr;
 	return delta >= 0.0 ? delta : 0.0;
 }
-	
+
 }
 

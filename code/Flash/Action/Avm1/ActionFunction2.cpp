@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Flash/SpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
@@ -104,7 +98,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 
 	if (m_flags & AffPreloadRoot)
 	{
-		ActionValue root; 
+		ActionValue root;
 		cx->getGlobal()->getLocalMember(ActionContext::IdRoot, root);
 		callFrame.setRegister(preloadRegister++, root);
 	}

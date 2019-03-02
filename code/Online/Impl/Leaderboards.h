@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_online_Leaderboards_H
-#define traktor_online_Leaderboards_H
+#pragma once
 
 #include <map>
 #include "Core/Thread/Semaphore.h"
@@ -64,4 +57,3 @@ private:
 	}
 }
 
-#endif	// traktor_online_Leaderboards_H

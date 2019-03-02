@@ -1,5 +1,4 @@
-#ifndef traktor_uikit_WidgetPreviewControl_H
-#define traktor_uikit_WidgetPreviewControl_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Timer/Timer.h"
@@ -109,4 +108,3 @@ private:
 	}
 }
 
-#endif	// traktor_uikit_WidgetPreviewControl_H

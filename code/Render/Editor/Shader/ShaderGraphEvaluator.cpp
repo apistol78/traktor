@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Containers/SmallMap.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraphEvaluator.h"

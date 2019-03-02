@@ -1,17 +1,10 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ISpline_H
-#define traktor_ISpline_H
+#pragma once
 
 namespace traktor
 {
 
 template
-< 
+<
 	typename Value
 >
 class ISpline
@@ -24,4 +17,3 @@ public:
 
 }
 
-#endif	// traktor_ISpline_H

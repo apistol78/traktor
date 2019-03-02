@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_GrayScaleFilter_H
-#define traktor_drawing_GrayScaleFilter_H
+#pragma once
 
 #include "Drawing/IImageFilter.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace drawing
 	{
-	
+
 /*! \brief Gray scale filter.
  * \ingroup Drawing
  */
@@ -32,8 +25,7 @@ class T_DLLCLASS GrayscaleFilter : public IImageFilter
 protected:
 	virtual void apply(Image* image) const override final;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_GrayScaleFilter_H

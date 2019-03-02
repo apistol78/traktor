@@ -19,7 +19,7 @@ namespace traktor
 class IEntityBuilder;
 
 	}
-	
+
 	namespace shape
 	{
 

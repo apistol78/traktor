@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ICanvas_H
-#define traktor_ui_ICanvas_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -45,7 +38,7 @@ public:
 	virtual void setClipRect(const Rect& rc) = 0;
 
 	virtual void resetClipRect() = 0;
-	
+
 	virtual void drawPixel(int x, int y, const Color4ub& c) = 0;
 
 	virtual void drawLine(int x1, int y1, int x2, int y2) = 0;
@@ -80,8 +73,7 @@ public:
 
 	virtual void* getSystemHandle() = 0;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_ICanvas_H

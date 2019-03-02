@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_As_flash_geom_Transform_H
-#define traktor_flash_As_flash_geom_Transform_H
+#pragma once
 
 #include "Flash/Action/ActionClass.h"
 
@@ -39,4 +32,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_As_flash_geom_Transform_H

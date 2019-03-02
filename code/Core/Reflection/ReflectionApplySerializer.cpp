@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Reflection/ReflectionApplySerializer.h"
 #include "Core/Reflection/RfmArray.h"
 #include "Core/Reflection/RfmEnum.h"
@@ -209,7 +203,7 @@ void ReflectionApplySerializer::operator >> (const MemberArray& m)
 
 	uint32_t currentMemberIndex = m_memberIndex;
 	Ref< const RfmCompound > currentCompoundMember = m_compoundMember;
-	
+
 	m_memberIndex = 0;
 	m_compoundMember = arrayMember;
 

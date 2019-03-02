@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sstream>
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/String.h"
@@ -201,7 +195,7 @@ void ColorDialog::updateControls()
 void ColorDialog::eventGradientColorSelect(ColorEvent* event)
 {
 	Color4ub color = event->getColor();
-	
+
 	m_color = Color4f::fromColor4ub(color);
 	if (m_editColor[4])
 	{

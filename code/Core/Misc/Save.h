@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Save_H
-#define traktor_Save_H
+#pragma once
 
 namespace traktor
 {
@@ -43,7 +36,7 @@ public:
 	{
 		m_ref = m_val;
 	}
-	
+
 private:
 	T& m_ref;
 	T m_val;
@@ -51,4 +44,3 @@ private:
 
 }
 
-#endif	// traktor_Save_H

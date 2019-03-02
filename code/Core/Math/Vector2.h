@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Vector2_H
-#define traktor_Vector2_H
+#pragma once
 
 #include <cmath>
 #include "Core/Config.h"
@@ -47,7 +40,7 @@ public:
 #if defined (_MSC_VER)
 #	pragma warning( default:4201 )
 #endif
-	
+
 	T_MATH_INLINE Vector2();
 
 	T_MATH_INLINE Vector2(const Vector2& v);
@@ -71,13 +64,13 @@ public:
 	T_MATH_INLINE float length2() const;
 
 	T_MATH_INLINE Vector2 normalized() const;
-	
+
 	T_MATH_INLINE Vector2 perpendicular() const;
 
 	T_MATH_INLINE Vector2& operator = (const Vector2& v);
 
 	T_MATH_INLINE Vector2 operator - () const;
-	
+
 	T_MATH_INLINE Vector2& operator += (float scalar);
 
 	T_MATH_INLINE Vector2& operator += (const Vector2& v);
@@ -141,4 +134,3 @@ T_MATH_INLINE T_DLLCLASS Vector2 max(const Vector2& l, const Vector2& r);
 #	include "Core/Math/Std/Vector2.inl"
 #endif
 
-#endif	// traktor_Vector2_H

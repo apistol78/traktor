@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Containers/CircularVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Vector2.h"
@@ -168,6 +162,6 @@ void InGestureSwipe::serialize(ISerializer& s)
 	s >> MemberRef< IInputNode >(L"sourceY", m_sourceY);
 	s >> MemberEnum< SwipeDirection >(L"direction", m_direction, c_SwipeDirection_Keys);
 }
-	
+
 	}
 }

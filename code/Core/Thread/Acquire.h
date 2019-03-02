@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Acquire_H
-#define traktor_Acquire_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -27,7 +20,7 @@ public:
 	{
 		m_lock.wait();
 	}
-	
+
 	T_FORCE_INLINE ~Acquire< T >()
 	{
 		m_lock.release();
@@ -52,7 +45,7 @@ public:
 	{
 		m_lock.release();
 	}
-	
+
 	T_FORCE_INLINE ~Release< T >()
 	{
 		m_lock.wait();
@@ -64,4 +57,3 @@ private:
 
 }
 
-#endif	// traktor_Acquire_H

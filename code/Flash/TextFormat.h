@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_TextFormat_H
-#define traktor_flash_TextFormat_H
+#pragma once
 
 #include "Flash/SwfTypes.h"
 #include "Flash/Action/ActionObjectRelay.h"
@@ -51,4 +44,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_TextFormat_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_FontResource_H
-#define traktor_spark_FontResource_H
+#pragma once
 
 #include <vector>
 #include "Core/Serialization/ISerializable.h"
@@ -73,10 +66,9 @@ private:
 	resource::Id< render::ISimpleTexture > m_texture;
 	resource::Id< render::Shader > m_shader;
 	std::vector< Glyph > m_glyphs;
-	
+
 };
 
 	}
 }
 
-#endif	// traktor_spark_FontResource_H

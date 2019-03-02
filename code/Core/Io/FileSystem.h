@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_FileSystem_H
-#define traktor_FileSystem_H
+#pragma once
 
 #include <map>
 #include "Core/Ref.h"
@@ -52,7 +45,7 @@ public:
 	 * \param volume Mount volume.
 	 */
 	void mount(const std::wstring& id, IVolume* volume);
-	
+
 	/*! \brief Unmount volume.
 	 *
 	 * \param id Mount identifier.
@@ -78,13 +71,13 @@ public:
 	 * \return Volume mount identifier.
 	 */
 	std::wstring getVolumeId(int32_t index) const;
-	
+
 	/*! \brief Set volume as current volume.
 	 *
 	 * \param volume Current volume.
 	 */
 	void setCurrentVolume(IVolume* volume);
-	
+
 	/*! \brief Get current volume.
 	 *
 	 * \return Current volume.
@@ -101,7 +94,7 @@ public:
 	/*! \brief Get current volume and directory.
 	 */
 	Path getCurrentVolumeAndDirectory() const;
-	
+
 	/*! \brief Get file description.
 	 *
 	 * \param fileName Path to file to query.
@@ -132,14 +125,14 @@ public:
 	 * \return Stream to file, null if unable to access file.
 	 */
 	Ref< IStream > open(const Path& fileName, uint32_t mode);
-	
+
 	/*! \brief Return true if file exists.
 	 *
 	 * \param fileName Path to file.
 	 * \return True if file exists.
 	 */
 	bool exist(const Path& fileName);
-	
+
 	/*! \brief Remove file.
 	 *
 	 * \param fileName Path to file.
@@ -193,7 +186,7 @@ public:
 	 * \return True if directory was successfully renamed.
 	 */
 	bool renameDirectory(const Path& directory, const std::wstring& newName);
-	
+
 	/*! \brief Translate a relative path to an absolute path.
 	 *
 	 * \param relativePath Relative path.
@@ -236,4 +229,3 @@ private:
 
 }
 
-#endif	// traktor_FileSystem_H

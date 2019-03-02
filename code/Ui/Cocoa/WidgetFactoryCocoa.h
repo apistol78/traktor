@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_WidgetFactoryCocoa_H
-#define traktor_ui_WidgetFactoryCocoa_H
+#pragma once
 
 #include "Ui/Itf/IWidgetFactory.h"
 
@@ -26,7 +19,7 @@ class T_DLLCLASS WidgetFactoryCocoa : public IWidgetFactory
 {
 public:
 	virtual IEventLoop* createEventLoop(EventSubject* owner) T_OVERRIDE T_FINAL;
-	
+
 	virtual IContainer* createContainer(EventSubject* owner) T_OVERRIDE T_FINAL;
 
 	virtual IDialog* createDialog(EventSubject* owner) T_OVERRIDE T_FINAL;
@@ -57,4 +50,3 @@ public:
 	}
 }
 
-#endif	// traktor_ui_WidgetFactoryCocoa_H

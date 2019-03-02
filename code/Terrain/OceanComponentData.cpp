@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStaticArray.h"
@@ -40,7 +34,7 @@ void OceanComponentData::serialize(ISerializer& s)
 
 	s >> Member< Color4f >(L"shallowTint", m_shallowTint);
 	s >> Member< Color4f >(L"reflectionTint", m_reflectionTint);
-	
+
 	if (s.getVersion() >= 1)
 		s >> Member< Color4f >(L"shadowTint", m_shadowTint);
 

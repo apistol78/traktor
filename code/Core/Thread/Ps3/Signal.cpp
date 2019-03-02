@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sys/synchronization.h>
 #include "Core/Thread/Signal.h"
 
@@ -11,14 +5,14 @@ namespace traktor
 {
 	namespace
 	{
-	
+
 struct Internal
 {
 	sys_mutex_t mutex;
 	sys_cond_t cond;
 	uint32_t signal;
 };
-	
+
 	}
 
 Signal::Signal()
@@ -56,7 +50,7 @@ void Signal::set()
 	T_ASSERT (in);
 
 	sys_mutex_lock(in->mutex, SYS_NO_TIMEOUT);
-	
+
 	in->signal = 1;
 	sys_cond_signal_all(in->cond);
 
@@ -69,7 +63,7 @@ void Signal::reset()
 	T_ASSERT (in);
 
 	sys_mutex_lock(in->mutex, SYS_NO_TIMEOUT);
-	
+
 	in->signal = 0;
 
 	sys_mutex_unlock(in->mutex);
@@ -92,7 +86,7 @@ bool Signal::wait(int32_t timeout)
 	}
 
 	sys_mutex_unlock(in->mutex);
-	
+
 	return bool(rc == CELL_OK);
 }
 

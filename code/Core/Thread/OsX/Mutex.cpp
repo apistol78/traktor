@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <pthread.h>
 #include "Core/Thread/Mutex.h"
 #include "Core/Misc/TString.h"
@@ -19,7 +13,7 @@ struct InternalData
 };
 
 	}
-	
+
 Mutex::Mutex()
 :	m_existing(false)
 ,	m_handle(0)

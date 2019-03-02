@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_PropertyString_H
-#define traktor_PropertyString_H
+#pragma once
 
 #include <string>
 #include "Core/Settings/IPropertyValue.h"
@@ -61,4 +54,3 @@ struct PropertyTrait< std::wstring >
 
 }
 
-#endif	// traktor_PropertyString_H

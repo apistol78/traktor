@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_terrain_ITerrainLayerData_H
-#define traktor_terrain_ITerrainLayerData_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
@@ -56,4 +49,3 @@ public:
 	}
 }
 
-#endif	// traktor_terrain_ITerrainLayerData_H

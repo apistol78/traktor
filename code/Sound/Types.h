@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sound_Types_H
-#define traktor_sound_Types_H
+#pragma once
 
 #include <cmath>
 #include <string>
@@ -151,4 +144,3 @@ inline float decibelToLinear(float db) {
 	}
 }
 
-#endif	// traktor_sound_Types_H

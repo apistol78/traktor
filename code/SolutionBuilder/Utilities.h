@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef Utilities_H
-#define Utilities_H
+#pragma once
 
 #include "Core/Containers/AlignedVector.h"
 
@@ -19,4 +12,3 @@ bool writeFileIfMismatch(const std::wstring& fileName, const AlignedVector< uint
 	}
 }
 
-#endif	// Utilities_H

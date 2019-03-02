@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <mad.h>
 #include "Core/Io/IStream.h"
@@ -104,7 +98,7 @@ public:
 
 		while (
 			(m_decodedCount < outSoundBlock.samplesCount || m_sampleRate == 0) &&
-			m_decodedCount < sizeof_array(m_decoded[0]) 
+			m_decodedCount < sizeof_array(m_decoded[0])
 		)
 		{
 			if (!m_mad_stream.buffer || m_mad_stream.error == MAD_ERROR_BUFLEN)

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef SolutionForm_H
-#define SolutionForm_H
+#pragma once
 
 #include <Core/Misc/CommandLine.h>
 #include <Core/Io/Path.h>
@@ -62,6 +55,7 @@ private:
 	Ref< ui::Menu > m_menuFilter;
 	Ref< ui::Menu > m_menuFile;
 	Ref< ui::Menu > m_menuAggregationItem;
+	Ref< ui::Container > m_pageContainer;
 	Ref< AggregationPropertyPage > m_pageAggregation;
 	Ref< AggregationItemPropertyPage > m_pageAggregationItem;
 	Ref< ConfigurationPropertyPage > m_pageConfiguration;
@@ -126,4 +120,3 @@ private:
 	}
 }
 
-#endif	// SolutionForm_H

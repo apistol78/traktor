@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/IndexBufferVk.h"
 
@@ -31,7 +25,7 @@ void* IndexBufferVk::lock()
 	void* ptr = 0;
 	return (vkMapMemory(m_device, m_indexBufferMemory, 0, VK_WHOLE_SIZE, 0, &ptr) == VK_SUCCESS) ? ptr : 0;
 }
-	
+
 void IndexBufferVk::unlock()
 {
 	vkUnmapMemory(m_device, m_indexBufferMemory);

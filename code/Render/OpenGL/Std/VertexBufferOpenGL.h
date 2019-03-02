@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_VertexBufferOpenGL_H
-#define traktor_render_VertexBufferOpenGL_H
+#pragma once
 
 #include "Render/VertexBuffer.h"
 #include "Render/OpenGL/Std/Platform.h"
@@ -34,8 +27,7 @@ public:
 protected:
 	uint32_t m_id;
 };
-	
+
 	}
 }
 
-#endif	// traktor_render_VertexBufferOpenGL_H

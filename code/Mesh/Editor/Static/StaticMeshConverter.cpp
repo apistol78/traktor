@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <limits>
 #include "Core/Log/Log.h"
@@ -124,7 +118,7 @@ bool StaticMeshConverter::convert(
 	for (std::map< std::wstring, std::list< MeshMaterialTechnique > >::const_iterator i = materialTechniqueMap.begin(); i != materialTechniqueMap.end(); ++i)
 	{
 		IndexRange range;
-		
+
 		range.offsetFirst = uint32_t(index - indexFirst) / indexSize;
 		range.offsetLast = 0;
 		range.minIndex = std::numeric_limits< int32_t >::max();
@@ -173,7 +167,7 @@ bool StaticMeshConverter::convert(
 	for (std::map< std::wstring, AlignedVector< IndexRange > >::const_iterator i = techniqueRanges.begin(); i != techniqueRanges.end(); ++i)
 	{
 		log::info << L"\"" << i->first << L"\"" << Endl;
-	
+
 		log::info << IncreaseIndent;
 		for (uint32_t j = 0; j < i->second.size(); ++j)
 		{

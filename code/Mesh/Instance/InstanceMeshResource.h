@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_InstanceMeshResource_H
-#define traktor_mesh_InstanceMeshResource_H
+#pragma once
 
 #include "Core/Guid.h"
 #include "Mesh/IMeshResource.h"
@@ -71,4 +64,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_InstanceMeshResource_H

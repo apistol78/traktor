@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef ExternalDependency_H
-#define ExternalDependency_H
+#pragma once
 
 #include <Core/RefArray.h>
 #include "Dependency.h"
@@ -60,4 +53,3 @@ private:
 	}
 }
 
-#endif	// ExternalDependency_H

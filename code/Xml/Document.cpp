@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/RefArray.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/FileOutputStream.h"
@@ -26,13 +20,13 @@ bool Document::loadFromFile(const Path& fileName)
 {
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	bool result = false;
-	
+
 	if (file != 0)
 	{
 		result = loadFromStream(file, fileName.getPathName());
 		file->close();
 	}
-	
+
 	return result;
 }
 
@@ -84,7 +78,7 @@ bool Document::loadFromStream(IStream* stream, const std::wstring& name)
 				stack.pop_back();
 			}
 			break;
-			
+
 		default:
 			break;
 		}

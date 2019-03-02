@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -72,7 +66,7 @@ void Aggregation::setDependencies(const RefArray< Dependency >& dependencies)
 {
 	m_dependencies = dependencies;
 }
-	
+
 const RefArray< Dependency >& Aggregation::getDependencies() const
 {
 	return m_dependencies;
@@ -82,7 +76,7 @@ void Aggregation::serialize(ISerializer& s)
 {
 	s >> Member< bool >(L"enable", m_enable);
 	s >> Member< std::wstring >(L"name", m_name);
-	
+
 	if (s.getVersion() >= 1)
 		s >> MemberRefArray< AggregationItem >(L"items", m_items);
 

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_AssetsPipeline_H
-#define traktor_editor_AssetsPipeline_H
+#pragma once
 
 #include "Editor/IPipeline.h"
 
@@ -71,4 +64,3 @@ private:
 	}
 }
 
-#endif	// traktor_editor_AssetsPipeline_H

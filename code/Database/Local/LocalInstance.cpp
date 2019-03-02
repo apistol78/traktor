@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <cstring>
 #include "Core/Io/DynamicMemoryStream.h"
@@ -92,7 +86,7 @@ bool LocalInstance::commitTransaction()
 		log::error << L"commitTransaction failed; commit failed" << Endl;
 		return false;
 	}
-	
+
 	if (!m_transactionName.empty())
 		m_instancePath = m_instancePath.getPathOnly() + L"/" + m_transactionName;
 
@@ -103,7 +97,7 @@ bool LocalInstance::closeTransaction()
 {
 	if (!m_transaction)
 		return false;
-	
+
 	m_transaction->destroy();
 	m_transaction = 0;
 
@@ -143,7 +137,7 @@ bool LocalInstance::setGuid(const Guid& guid)
 		return false;
 
 	m_transaction->add(new ActionSetGuid(
-		m_instancePath, 
+		m_instancePath,
 		guid,
 		false
 	));

@@ -1,5 +1,4 @@
-#ifndef traktor_ui_ContainerX11_H
-#define traktor_ui_ContainerX11_H
+#pragma once
 
 #include "Ui/X11/WidgetX11Impl.h"
 #include "Ui/Itf/IContainer.h"
@@ -20,4 +19,3 @@ public:
 	}
 }
 
-#endif	// traktor_ui_ContainerX11_H

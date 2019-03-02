@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Spark/SpriteData.h"
 #include "Spark/Editor/SparkEditorPage.h"
 #include "Spark/Editor/SparkEditorPageFactory.h"

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_Scene_H
-#define traktor_scene_Scene_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
@@ -73,7 +66,7 @@ public:
 	void destroy();
 
 	void updateController(const world::UpdateParams& update);
-	
+
 	void updateEntity(const world::UpdateParams& update);
 
 	world::IEntitySchema* getEntitySchema() const;
@@ -97,4 +90,3 @@ private:
 	}
 }
 
-#endif	// traktor_scene_Scene_H

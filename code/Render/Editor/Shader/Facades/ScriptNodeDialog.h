@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_ScriptNodeDialog_H
-#define traktor_editor_ScriptNodeDialog_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Ui/ConfigDialog.h"
@@ -64,7 +57,7 @@ private:
 	Ref< ui::GridView > m_inputPinList;
 	Ref< ui::GridView > m_outputPinList;
 	Ref< ui::SyntaxRichEdit > m_edit;
-	
+
 	void eventInputPinRowDoubleClick(ui::GridRowDoubleClickEvent* event);
 
 	void eventInputPinEdit(ui::GridItemContentChangeEvent* event);
@@ -77,4 +70,3 @@ private:
 	}
 }
 
-#endif	// traktor_editor_ScriptNodeDialog_H

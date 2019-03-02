@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include <limits>
 #include "Core/Math/Const.h"
@@ -520,6 +514,17 @@ T_MATH_INLINE Vector4 reflect(const Vector4& v, const Vector4& at)
 	return V - v;
 }
 
+T_MATH_INLINE int32_t minorAxis3(const Vector4& v)
+{
+	Vector4 a = v.absolute();
+	if (a._x < a._y && a._x < a._z)
+		return 0;
+	else if (a._y < a._x && a._y < a._z)
+		return 1;
+	else
+		return 2;
+}
+
 T_MATH_INLINE int majorAxis3(const Vector4& v)
 {
 	VALIDATE(v);
@@ -572,7 +577,7 @@ T_MATH_INLINE Vector4 select(const Vector4& condition, const Vector4& negative, 
 		condition._y < 0.0f ? negative._y : positive._y,
 		condition._z < 0.0f ? negative._z : positive._z,
 		condition._w < 0.0f ? negative._w : positive._w
-	);		
+	);
 }
 
 T_MATH_INLINE bool compareAllGreaterEqual(const Vector4& l, const Vector4& r)

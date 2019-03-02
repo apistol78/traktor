@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstdlib>
 #include <cstring>
 #include "Compress/Zip/InflateStreamZip.h"
@@ -263,7 +257,7 @@ bool SwfReader::readMorphGradientRecord(SwfGradientRecord*& outStartGradientReco
 bool SwfReader::readMorphGradient(SwfGradient*& outStartGradient, SwfGradient*& outEndGradient)
 {
 	uint8_t numGradientRecords = m_bs->readUInt8();
-	
+
 	outStartGradient = m_pool->alloc< SwfGradient >();
 	outStartGradient->numGradientRecords = numGradientRecords;
 	outStartGradient->gradientRecords = m_pool->allocArray< SwfGradientRecord >(numGradientRecords);
@@ -388,14 +382,14 @@ bool SwfReader::readMorphStyles(SwfStyles*& outStartStyles, SwfStyles*& outEndSt
 		if (!readMorphFillStyle(outStartStyles->fillStyles[i], outEndStyles->fillStyles[i], shapeType))
 			return false;
 	}
-	
+
 	uint16_t numLineStyles = m_bs->readUInt8();
 	if (numLineStyles == 0xff)
 		numLineStyles = m_bs->readUInt16();
 
 	outStartStyles->numLineStyles = numLineStyles;
 	outStartStyles->lineStyles = m_pool->allocArray< SwfLineStyle >(numLineStyles);
-	
+
 	outEndStyles->numLineStyles = numLineStyles;
 	outEndStyles->lineStyles = m_pool->allocArray< SwfLineStyle >(numLineStyles);
 
@@ -502,7 +496,7 @@ bool SwfReader::readShapeWithStyle(SwfShape*& outShape, SwfStyles*& outStyles, i
 			!shapeRecord->edgeFlag &&
 			!shapeRecord->style.stateNewStyles &&
 			!shapeRecord->style.stateLineStyle &&
-			!shapeRecord->style.stateFillStyle1 && 
+			!shapeRecord->style.stateFillStyle1 &&
 			!shapeRecord->style.stateFillStyle0 &&
 			!shapeRecord->style.stateMoveTo
 		)
@@ -544,7 +538,7 @@ SwfShape* SwfReader::readShape(int shapeType)
 			!shapeRecord->edgeFlag &&
 			!shapeRecord->style.stateNewStyles &&
 			!shapeRecord->style.stateLineStyle &&
-			!shapeRecord->style.stateFillStyle1 && 
+			!shapeRecord->style.stateFillStyle1 &&
 			!shapeRecord->style.stateFillStyle0 &&
 			!shapeRecord->style.stateMoveTo
 		)
@@ -726,7 +720,7 @@ SwfSoundInfo* SwfReader::readSoundInfo()
 	bool hasLoops = m_bs->readBit();
 	bool hasOutPoint = m_bs->readBit();
 	bool hasInPoint = m_bs->readBit();
-	
+
 	if (hasInPoint)
 		{ uint32_t inPoint = m_bs->readUInt32(); }
 
@@ -945,7 +939,7 @@ uint32_t SwfReader::readEncodedU32()
 {
 	uint32_t v = 0;
 	uint32_t b;
-	
+
 	b = m_bs->readUInt8();
 	v = b;
 	if ((v & 0x00000080) == 0)

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
@@ -48,7 +42,7 @@ bool Tab::create(Widget* parent, int32_t style)
 	addEventHandler< MouseButtonDownEvent >(this, &Tab::eventButtonDown);
 	addEventHandler< SizeEvent >(this, &Tab::eventSize);
 	addEventHandler< PaintEvent >(this, &Tab::eventPaint);
-	
+
 	m_fontBold = getFont();
 	m_fontBold.setBold(true);
 
@@ -56,7 +50,7 @@ bool Tab::create(Widget* parent, int32_t style)
 	m_drawBorder = bool((style & WsBorder) == WsBorder);
 	m_drawLine = bool((style & WsLine) == WsLine);
 	m_bottom = bool((style & WsBottom) == WsBottom);
-	
+
 	m_bitmapClose = new StyleBitmap(L"UI.TabClose", c_ResourceTabClose, sizeof(c_ResourceTabClose));
 	T_FATAL_ASSERT (m_bitmapClose);
 
@@ -71,7 +65,7 @@ Rect Tab::getInnerRect() const
 int32_t Tab::addImage(IBitmap* image, int32_t imageCount)
 {
 	uint32_t width = 0, height = 0;
-	
+
 	// Resize existing image.
 	if (m_bitmapImages)
 	{
@@ -293,7 +287,7 @@ void Tab::eventMouseTrack(MouseTrackEvent* event)
 		{
 			m_hoverPage = nullptr;
 			update();
-		}		
+		}
 	}
 }
 
@@ -329,7 +323,7 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 {
 	Point pnt = event->getPosition();
 	Rect inner = Widget::getInnerRect();
-	
+
 	int32_t y0, y1;
 	if (!m_bottom)
 	{
@@ -450,14 +444,14 @@ void Tab::eventPaint(PaintEvent* event)
 	// Fill tab background.
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rcTabs);
-	
+
 	/*
 	// White separator.
 	canvas.setForeground(Color4ub(255, 255, 255));
 	canvas.setBackground(getSystemColor(ScButtonFace));
 	canvas.drawLine(Point(rcTabs.left, rcTabs.bottom), Point(rcTabs.right, rcTabs.bottom));
 	*/
-	
+
 	// Draw tab pages.
 	if (!m_pages.empty())
 	{
@@ -477,7 +471,7 @@ void Tab::eventPaint(PaintEvent* event)
 			}
 
 			int32_t tabWidth = tabWidthNoMargin + dpi96(4 * 2);
-						
+
 			// Save right separator position in vector.
 			i->right = left + tabWidth;
 
@@ -489,7 +483,7 @@ void Tab::eventPaint(PaintEvent* event)
 					left,
 					rcTabs.top,
 					left + tabWidth,
-					rcTabs.bottom 
+					rcTabs.bottom
 				);
 				if (m_drawLine)
 				{
@@ -498,7 +492,7 @@ void Tab::eventPaint(PaintEvent* event)
 					else
 						rcTab.top += 2;
 				}
-				
+
 				// Highlight selected tab.
 				if (page == m_selectedPage)
 				{
@@ -523,7 +517,7 @@ void Tab::eventPaint(PaintEvent* event)
 						BmAlpha
 					);
 				}
-			
+
 				// Draw text.
 				Rect rcTabText(
 					left + dpi96(4),
@@ -540,7 +534,7 @@ void Tab::eventPaint(PaintEvent* event)
 				{
 					canvas.setForeground(Color4ub(250, 250, 250));
 					canvas.drawText(rcTabText, text, AnLeft, AnCenter);
-					
+
 					rcTabText.left -= 1;
 					rcTabText.top -= 1;
 					canvas.setForeground(Color4ub(120, 120, 120));
@@ -579,7 +573,7 @@ void Tab::eventPaint(PaintEvent* event)
 			canvas.drawLine(rcTabs.left, rcTabs.top + 1, rcTabs.right, rcTabs.top + 1);
 		}
 	}
-	
+
 	// Draw surrounding gray border.
 	if (m_drawBorder)
 	{

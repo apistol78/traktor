@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_LocalMemoryManager_H
-#define traktor_render_LocalMemoryManager_H
+#pragma once
 
 #include <vector>
 #include "Core/Object.h"
@@ -49,4 +42,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_LocalMemoryManager_H

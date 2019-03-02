@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
@@ -153,14 +147,14 @@ bool PointSetPipeline::buildOutput(
 		return false;
 
 	instance->setObject(new PointSetResource());
-	
+
 	Ref< IStream > stream = instance->writeData(L"Data");
 	if (!stream)
 	{
 		instance->revert();
 		return false;
 	}
-		
+
 	if (!pointSet->write(stream))
 	{
 		instance->revert();

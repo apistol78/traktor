@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_PropertyFloat_H
-#define traktor_PropertyFloat_H
+#pragma once
 
 #include "Core/Settings/IPropertyValue.h"
 
@@ -60,4 +53,3 @@ struct PropertyTrait< float >
 
 }
 
-#endif	// traktor_PropertyFloat_H

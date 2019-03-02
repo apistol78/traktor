@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_math_Float_H
-#define traktor_math_Float_H
+#pragma once
 
 namespace traktor
 {
@@ -39,4 +32,3 @@ inline float lerp(float a, float b, float c)
 
 }
 
-#endif	// traktor_math_Float_H

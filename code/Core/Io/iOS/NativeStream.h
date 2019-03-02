@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_NativeStream_H
-#define traktor_NativeStream_H
+#pragma once
 
 #include <cstdio>
 #include "Core/Io/IStream.h"
@@ -27,7 +20,7 @@ class T_DLLCLASS NativeStream : public IStream
 
 public:
 	NativeStream(std::FILE* fp, uint32_t mode);
-	
+
 	virtual ~NativeStream();
 
 	virtual void close();
@@ -49,7 +42,7 @@ public:
 	virtual int64_t write(const void* block, int64_t nbytes);
 
 	virtual void flush();
-	
+
 private:
 	std::FILE* m_fp;
 	uint32_t m_mode;
@@ -58,4 +51,3 @@ private:
 
 }
 
-#endif	// traktor_NativeStream_H

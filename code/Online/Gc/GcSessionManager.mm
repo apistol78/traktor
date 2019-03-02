@@ -22,7 +22,7 @@
 
 - (void)gameCenterViewControllerDidFinish: (GKGameCenterViewController*)gameCenterViewController
 {
-	UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
+	UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
 	[rootViewController dismissViewControllerAnimated: YES completion: nil];
 }
 
@@ -34,7 +34,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 NSString* makeNSString(const std::wstring& str)
 {
 	return [[[NSString alloc] initWithBytes: str.data() length: str.size() * sizeof(wchar_t) encoding: NSUTF32LittleEndianStringEncoding] autorelease];
@@ -62,12 +62,12 @@ bool GcSessionManager::create(const IGameConfiguration* configuration)
 		log::error << L"GameCenter API missing; unable to create GameCenter session manager" << Endl;
 		return false;
 	}
-	
+
 	// Ensure iOS 4.1 or later.
 	NSString* requiredVersion = @"4.1";
 	NSString* currentVersion = [[UIDevice currentDevice] systemVersion];
 	BOOL versionSupported = ([currentVersion compare: requiredVersion options:NSNumericSearch] != NSOrderedAscending);
-	if (!versionSupported)	
+	if (!versionSupported)
 	{
 		log::error << L"Old iOS version; at least 4.1 is required" << Endl;
 		return false;
@@ -102,7 +102,7 @@ bool GcSessionManager::create(const IGameConfiguration* configuration)
 			}
 		};
 	}
-	
+
 	// Create provider wrappers.
 	m_achievements = new GcAchievements(gcgc->m_achievementIds);
 	m_leaderboards = new GcLeaderboards(gcgc->m_leaderboardIds);
@@ -175,9 +175,9 @@ bool GcSessionManager::navigateUrl(const net::Url& url) const
 			gameCenterController.gameCenterDelegate = [[[GameCenterViewDelegate alloc] init] autorelease];
 			gameCenterController.viewState = GKGameCenterViewControllerStateDefault;
 
-			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
+			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
 			[rootViewController presentViewController: gameCenterController animated: YES completion: nil];
-		}		
+		}
 	}
 	if (url.getString() == L"gamecenter://leaderboards/")
 	{
@@ -187,9 +187,9 @@ bool GcSessionManager::navigateUrl(const net::Url& url) const
 			gameCenterController.gameCenterDelegate = [[[GameCenterViewDelegate alloc] init] autorelease];
 			gameCenterController.viewState = GKGameCenterViewControllerStateLeaderboards;
 
-			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
+			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
 			[rootViewController presentViewController: gameCenterController animated: YES completion: nil];
-		}		
+		}
 	}
 	else if (url.getString() == L"gamecenter://achievements/")
 	{
@@ -199,9 +199,9 @@ bool GcSessionManager::navigateUrl(const net::Url& url) const
 			gameCenterController.gameCenterDelegate = [[[GameCenterViewDelegate alloc] init] autorelease];
 			gameCenterController.viewState = GKGameCenterViewControllerStateAchievements;
 
-			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
+			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
 			[rootViewController presentViewController: gameCenterController animated: YES completion: nil];
-		}		
+		}
 	}
 	else if (url.getString() == L"gamecenter://challenges/")
 	{
@@ -211,9 +211,9 @@ bool GcSessionManager::navigateUrl(const net::Url& url) const
 			gameCenterController.gameCenterDelegate = [[[GameCenterViewDelegate alloc] init] autorelease];
 			gameCenterController.viewState = GKGameCenterViewControllerStateChallenges;
 
-			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;				
+			UIViewController* rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
 			[rootViewController presentViewController: gameCenterController animated: YES completion: nil];
-		}		
+		}
 	}
 	else
 		return false;

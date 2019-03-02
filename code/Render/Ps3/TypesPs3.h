@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_TypesPs3_H
-#define traktor_render_TypesPs3_H
+#pragma once
 
 #include "Core/Containers/AlignedVector.h"
 #include "Render/Ps3/PlatformPs3.h"
@@ -143,4 +136,3 @@ std::wstring lookupGcmError(int32_t err);
 	}
 }
 
-#endif	// traktor_render_TypesPs3_H

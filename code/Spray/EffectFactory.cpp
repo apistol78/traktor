@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/Reader.h"
 #include "Database/Instance.h"
 #include "Spray/Effect.h"
@@ -59,7 +53,7 @@ Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager,
 		Ref< IStream > stream = instance->readData(L"Data");
 		if (!stream)
 			return 0;
-			
+
 		Ref< PointSet > pointSet = new PointSet();
 		if (!pointSet->read(stream))
 			return 0;

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_VideoLayer_H
-#define traktor_amalgam_VideoLayer_H
+#pragma once
 
 #include "Amalgam/Game/Engine/Layer.h"
 #include "Core/Math/Aabb2.h"
@@ -125,4 +118,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_VideoLayer_H

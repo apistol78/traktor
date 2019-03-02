@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_EntityBuilderWithSchema_H
-#define traktor_world_EntityBuilderWithSchema_H
+#pragma once
 
 #include <list>
 #include <map>
@@ -70,4 +63,3 @@ private:
 	}
 }
 
-#endif	// traktor_world_EntityBuilderWithSchema_H

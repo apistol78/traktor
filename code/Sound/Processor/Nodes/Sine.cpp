@@ -62,7 +62,7 @@ bool Sine::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Sine::createCursor() const 
+Ref< ISoundBufferCursor > Sine::createCursor() const
 {
 	Ref< SineCursor > sineCursor = new SineCursor();
 

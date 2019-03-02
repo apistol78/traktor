@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_model_ContainerHelpers_H
-#define traktor_model_ContainerHelpers_H
+#pragma once
 
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
@@ -99,4 +92,3 @@ struct MaterialPredicate
 	}
 }
 
-#endif	// traktor_model_ContainerHelpers_H

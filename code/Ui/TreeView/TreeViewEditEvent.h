@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_TreeViewEditEvent_H
-#define traktor_ui_TreeViewEditEvent_H
+#pragma once
 
 #include "Ui/Event.h"
 
@@ -30,22 +23,21 @@ class TreeViewItem;
 class T_DLLCLASS TreeViewEditEvent : public Event
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	TreeViewEditEvent(EventSubject* sender, TreeViewItem* item);
 
 	TreeViewItem* getItem() const;
 
 	void cancel();
-	
-	bool cancelled() const;	
+
+	bool cancelled() const;
 
 private:
 	Ref< TreeViewItem > m_item;
 	bool m_cancelled;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_TreeViewEditEvent_H

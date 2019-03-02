@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_script_ScriptAsset_H
-#define traktor_script_ScriptAsset_H
+#pragma once
 
 #include "Editor/Asset.h"
 
@@ -33,4 +26,3 @@ class T_DLLCLASS ScriptAsset : public editor::Asset
 	}
 }
 
-#endif	// traktor_script_ScriptAsset_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputMappingSourceData_H
-#define traktor_input_InputMappingSourceData_H
+#pragma once
 
 #include <map>
 #include "Core/Serialization/ISerializable.h"
@@ -22,7 +15,7 @@ namespace traktor
 {
 	namespace input
 	{
-	
+
 class IInputSourceData;
 
 /*! \brief Input mapping source data.
@@ -38,7 +31,7 @@ public:
 	void setSourceData(const std::wstring& id, IInputSourceData* data);
 
 	IInputSourceData* getSourceData(const std::wstring& id);
-	
+
 	const std::map< std::wstring, Ref< IInputSourceData > >& getSourceData() const;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -50,4 +43,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_InputMappingSourceData_H

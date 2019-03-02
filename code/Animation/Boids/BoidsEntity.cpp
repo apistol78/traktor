@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Animation/Boids/BoidsEntity.h"
 #include "Core/Math/RandomGeometry.h"
 #include "World/WorldContext.h"
@@ -89,7 +83,7 @@ bool BoidsEntity::getTransform(Transform& outTransform) const
 Aabb3 BoidsEntity::getBoundingBox() const
 {
 	Transform transformInv = m_transform.inverse();
-	
+
 	Aabb3 aabb;
 	for (uint32_t i = 0; i < uint32_t(m_boids.size()); ++i)
 		aabb.contain(transformInv * m_boids[i].position);

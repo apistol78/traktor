@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sys/ppu_thread.h>
 #include <sys/synchronization.h>
 #include <sys/process.h>
@@ -40,7 +34,7 @@ void threadEntry(uint64_t data)
 
 	sys_ppu_thread_exit(0);
 }
-	
+
 	}
 
 bool Thread::start(Priority priority)

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
@@ -283,7 +277,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 			}
 
 			*outSettings = (*outSettings)->merge(userSettings, PropertyGroup::MmReplace);
-			T_FATAL_ASSERT (*outSettings);  
+			T_FATAL_ASSERT (*outSettings);
 		}
 	}
 
@@ -395,7 +389,7 @@ ui::Size getDesktopSizeEstimate()
 {
 	std::list< ui::Rect > desktopRects;
 	ui::Application::getInstance()->getWidgetFactory()->getDesktopRects(desktopRects);
-	
+
 	ui::Size sz(0, 0);
 	for (auto rc : desktopRects)
 	{
@@ -427,7 +421,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	Ref< LogRecordTarget > infoLog = new LogRecordTarget();
 	Ref< LogRecordTarget > warningLog = new LogRecordTarget();
 	Ref< LogRecordTarget > errorLog = new LogRecordTarget();
-	
+
 	log::info.setGlobalTarget(new LogRedirectTarget(defaultInfoLog, infoLog));
 	log::warning.setGlobalTarget(new LogRedirectTarget(defaultWarningLog, warningLog));
 	log::error.setGlobalTarget(new LogRedirectTarget(defaultErrorLog, errorLog));

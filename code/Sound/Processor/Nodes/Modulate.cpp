@@ -20,7 +20,7 @@ const ImmutableNode::InputPinDesc c_Modulate_i[] =
 const ImmutableNode::OutputPinDesc c_Modulate_o[] =
 {
 	{ L"Output", NptSignal },
-	{ 0 } 
+	{ 0 }
 };
 
 class ModulateCursor : public RefCountImpl< ISoundBufferCursor >
@@ -60,7 +60,7 @@ bool Modulate::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Modulate::createCursor() const 
+Ref< ISoundBufferCursor > Modulate::createCursor() const
 {
 	Ref< ModulateCursor > modulateCursor = new ModulateCursor();
 

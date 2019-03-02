@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_TextureOutputPipeline_H
-#define traktor_render_TextureOutputPipeline_H
+#pragma once
 
 #include "Editor/IPipeline.h"
 
@@ -82,4 +75,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_TextureOutputPipeline_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_VolumeComponentData_H
-#define traktor_world_VolumeComponentData_H
+#pragma once
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb3.h"
@@ -43,4 +36,3 @@ private:
 	}
 }
 
-#endif	// traktor_world_VolumeComponentData_H

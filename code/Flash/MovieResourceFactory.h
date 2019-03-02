@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_MovieResourceFactory_H
-#define traktor_flash_MovieResourceFactory_H
+#pragma once
 
 #include "Resource/IResourceFactory.h"
 
@@ -42,4 +35,3 @@ public:
 	}
 }
 
-#endif	// traktor_flash_MovieResourceFactory_H

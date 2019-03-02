@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Render/Dx11/Window.h"
 
@@ -104,7 +98,7 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 		windowHeight = (windowHeight - realClientHeight) + height;
 		SetWindowPos(m_hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOMOVE | SWP_NOZORDER);
 	}
-	
+
 	// Ensure window is shown when starting from editor.
     HWND hCurWnd = GetForegroundWindow();
     DWORD dwMyID = GetCurrentThreadId();

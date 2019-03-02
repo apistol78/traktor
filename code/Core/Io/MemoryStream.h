@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_MemoryStream_H
-#define traktor_MemoryStream_H
+#pragma once
 
 #include "Core/Io/IStream.h"
 
@@ -31,7 +24,7 @@ public:
 	MemoryStream(void* buffer, int64_t bufferSize, bool readAllowed = true, bool writeAllowed = true, bool own = false);
 
 	MemoryStream(const void* buffer, int64_t bufferSize);
-	
+
 	virtual ~MemoryStream();
 
 	virtual void close() override;
@@ -65,4 +58,3 @@ private:
 
 }
 
-#endif	// traktor_MemoryStream_H

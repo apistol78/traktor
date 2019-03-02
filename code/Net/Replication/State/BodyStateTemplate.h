@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_BodyStateTemplate_H
-#define traktor_net_BodyStateTemplate_H
+#pragma once
 
 #include "Net/Replication/State/IValueTemplate.h"
 
@@ -48,4 +41,3 @@ private:
 	}
 }
 
-#endif	// traktor_net_BodyStateTemplate_H

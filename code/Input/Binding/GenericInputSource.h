@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_GenericInputSource_H
-#define traktor_input_GenericInputSource_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Input/Binding/IInputSource.h"
@@ -38,13 +31,13 @@ class T_DLLCLASS GenericInputSource : public IInputSource
 
 public:
 	GenericInputSource(const GenericInputSourceData* data, DeviceControlManager* deviceControlManager);
-	
+
 	virtual std::wstring getDescription() const override final;
 
 	virtual void prepare(float T, float dT) override final;
 
 	virtual float read(float T, float dT) override final;
-	
+
 private:
 	Ref< const GenericInputSourceData > m_data;
 	Ref< DeviceControlManager > m_deviceControlManager;
@@ -56,4 +49,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_GenericInputSource_H

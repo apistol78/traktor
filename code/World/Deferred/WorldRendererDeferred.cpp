@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
@@ -337,7 +331,7 @@ bool WorldRendererDeferred::create(
 	// Create "light accumulation" target.
 	{
 		render::RenderTargetSetCreateDesc rtscd;
-		
+
 		rtscd.count = 2;
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
@@ -660,7 +654,7 @@ bool WorldRendererDeferred::create(
 				log::warning << L"Unable to create tone map process." << Endl;
 				m_toneMapImageProcess = nullptr;
 			}
-		}		
+		}
 	}
 
 	// Create global reflection map.
@@ -673,7 +667,7 @@ bool WorldRendererDeferred::create(
 	// Create "visual" and "intermediate" target.
 	{
 		render::RenderTargetSetCreateDesc rtscd;
-		
+
 		rtscd.count = 1;
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
@@ -1109,7 +1103,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 				params
 			);
 
-			T_RENDER_POP_MARKER(m_renderView);		
+			T_RENDER_POP_MARKER(m_renderView);
 			m_renderView->end();
 		}
 	}
@@ -1133,7 +1127,7 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			m_gbufferTargetSet->getColorTexture(3),
 			m_lightAccumulationTargetSet->getColorTexture(0),
 			m_lightAccumulationTargetSet->getColorTexture(1)
-		);	
+		);
 		T_RENDER_POP_MARKER(m_renderView);
 
 		m_renderView->end();
@@ -1394,7 +1388,7 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 
 	if (m_shadowTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Shadow map (last cascade)", render::DtvShadowMap, m_shadowTargetSet->getDepthTexture()));
-	
+
 	if (m_shadowMaskProjectTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Shadow mask (projection)", render::DtvShadowMask, m_shadowMaskProjectTargetSet->getColorTexture(0)));
 
@@ -1560,7 +1554,7 @@ void WorldRendererDeferred::buildLightWithShadows(WorldRenderView& worldRenderVi
 				for (auto entity : m_buildEntities)
 					f.slice[slice].shadow[i]->build(shadowRenderView, shadowPass, entity);
 				f.slice[slice].shadow[i]->flush(shadowRenderView, shadowPass);
-				
+
 				f.slice[slice].shadowLightView[i] = shadowLightView;
 				f.slice[slice].shadowLightProjection[i] = shadowLightProjection;
 				f.slice[slice].viewToLightSpace[i] = shadowLightProjection * shadowLightView * viewInverse;

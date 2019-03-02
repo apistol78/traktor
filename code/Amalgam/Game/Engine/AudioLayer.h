@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_AudioLayer_H
-#define traktor_amalgam_AudioLayer_H
+#pragma once
 
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/Engine/Layer.h"
@@ -120,4 +113,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_AudioLayer_H

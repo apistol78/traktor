@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_PipelineBuilder_H
-#define traktor_editor_PipelineBuilder_H
+#pragma once
 
 #include <list>
 #include <map>
@@ -103,7 +96,7 @@ private:
 	Ref< IPipelineInstanceCache > m_instanceCache;
 	IListener* m_listener;
 	bool m_threadedBuildEnable;
-	
+
 	Semaphore m_createOutputLock;
 	ReaderWriterLock m_readCacheLock;
 	Semaphore m_builtCacheLock;
@@ -141,4 +134,3 @@ private:
 	}
 }
 
-#endif	// traktor_editor_PipelineBuilder_H

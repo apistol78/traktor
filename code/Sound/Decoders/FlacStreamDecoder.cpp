@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <cstring>
 #include <FLAC/stream_decoder.h>
@@ -73,7 +67,7 @@ public:
 	void destroy()
 	{
 		FLAC__stream_decoder_delete(m_decoder);
-		
+
 		Alloc::freeAlign(m_decoded[0]);
 		Alloc::freeAlign(m_decoded[1]);
 
@@ -120,7 +114,7 @@ private:
 	float* m_decoded[2];
 	uint32_t m_decodedCount;
 	uint32_t m_keepOffset;
-	
+
 	static FLAC__StreamDecoderReadStatus readCallback(const FLAC__StreamDecoder* decoder, FLAC__byte buffer[], size_t* bytes, void* clientData)
 	{
 		FlacStreamDecoderImpl* this_ = reinterpret_cast< FlacStreamDecoderImpl* >(clientData);

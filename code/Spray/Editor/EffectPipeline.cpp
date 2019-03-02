@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Database/Instance.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
@@ -150,7 +144,7 @@ bool EffectPipeline::buildOutput(
 	const EffectData* effectData = checked_type_cast< const EffectData* >(sourceAsset);
 
 	RefArray< EffectLayerData > effectLayers = effectData->getLayers();
-	
+
 	RefArray< EffectLayerData >::iterator i = std::remove_if(effectLayers.begin(), effectLayers.end(), effectLayerPred);
 	effectLayers.erase(i, effectLayers.end());
 

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Io/IStream.h"
@@ -70,7 +64,7 @@ int64_t StringReader::readLine(std::wstring& out)
 				return -1;
 			}
 		}
-		
+
 		if (m_count <= 0)
 			break;
 

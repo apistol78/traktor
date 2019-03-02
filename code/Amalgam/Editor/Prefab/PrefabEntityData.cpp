@@ -51,7 +51,7 @@ void PrefabEntityData::setTransform(const Transform& transform)
 void PrefabEntityData::serialize(ISerializer& s)
 {
 	world::EntityData::serialize(s);
-	
+
 	s >> MemberStaticArray< Guid, 2 >(L"outputGuid", m_outputGuid, AttributePrivate());
 	s >> MemberRefArray< world::EntityData >(L"entityData", m_entityData);
 	s >> Member< bool >(L"partitionMesh", m_partitionMesh);

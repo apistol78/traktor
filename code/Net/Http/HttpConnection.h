@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_HttpConnection_H
-#define traktor_net_HttpConnection_H
+#pragma once
 
 #include "Net/UrlConnection.h"
 #include "Net/TcpSocket.h"
@@ -33,7 +26,7 @@ public:
 	virtual Url getUrl() const override final;
 
 	virtual Ref< IStream > getStream() override final;
-	
+
 private:
 	Ref< TcpSocket > m_socket;
 	Ref< IStream > m_stream;
@@ -43,4 +36,3 @@ private:
 	}
 }
 
-#endif	// traktor_net_HttpConnection_H

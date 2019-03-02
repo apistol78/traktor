@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_TreeViewDragEvent_H
-#define traktor_ui_TreeViewDragEvent_H
+#pragma once
 
 #include "Ui/Event.h"
 #include "Ui/Point.h"
@@ -31,7 +24,7 @@ class TreeViewItem;
 class T_DLLCLASS TreeViewDragEvent : public Event
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	enum DragMoment
 	{
@@ -57,8 +50,7 @@ private:
 	Point m_position;
 	bool m_cancelled;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_TreeViewDragEvent_H

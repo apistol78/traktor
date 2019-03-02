@@ -35,6 +35,6 @@ public:
 
 	virtual void unlock(int32_t side, int32_t level) override final;
 };
-		
+
 	}
 }

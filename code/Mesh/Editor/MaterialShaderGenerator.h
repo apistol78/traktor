@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_MaterialShaderGenerator_H
-#define traktor_mesh_MaterialShaderGenerator_H
+#pragma once
 
 #include "Core/Object.h"
 
@@ -25,12 +18,12 @@ namespace traktor
 class Database;
 
 	}
-	
+
 	namespace editor
 	{
-	
+
 class IPipelineDepends;
-	
+
 	}
 
 	namespace render
@@ -62,11 +55,10 @@ public:
 		const std::map< std::wstring, Guid >& textures,
 		bool vertexColor
 	) const;
-	
+
 	void addDependencies(editor::IPipelineDepends* pipelineDepends);
 };
 
 	}
 }
 
-#endif	// traktor_mesh_MaterialShaderGenerator_H

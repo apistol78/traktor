@@ -5,7 +5,7 @@ namespace traktor
 {
 	namespace editor
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.EditorPageForm", EditorPageForm, ui::Form)
 
 bool EditorPageForm::create(ui::Widget* parent)

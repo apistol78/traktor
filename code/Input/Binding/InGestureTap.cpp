@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Serialization/ISerializer.h"
@@ -72,7 +66,7 @@ float InGestureTap::evaluate(
 	if (!asBoolean(V))
 	{
 		bool result = swipeInstance->valid;
-		
+
 		swipeInstance->valid = false;
 		swipeInstance->haveFirst = false;
 
@@ -112,6 +106,6 @@ void InGestureTap::serialize(ISerializer& s)
 	s >> MemberRef< IInputNode >(L"fixedX", m_fixedX);
 	s >> MemberRef< IInputNode >(L"fixedY", m_fixedY);
 }
-	
+
 	}
 }

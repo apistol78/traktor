@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -98,7 +92,7 @@ HeightfieldTexturePipeline::HeightfieldTexturePipeline()
 bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	
+
 	std::wstring hf = settings->getProperty< std::wstring >(L"HeightfieldTexturePipeline.HeightFormat", L"HtFloat16");
 	if (hf == L"HtFloat16")
 		m_heightFormat = HfFloat16;

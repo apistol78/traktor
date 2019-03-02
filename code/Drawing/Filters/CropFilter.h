@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_CropFilter_H
-#define traktor_drawing_CropFilter_H
+#pragma once
 
 #include "Drawing/IImageFilter.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace drawing
 	{
-	
+
 /*! \brief Crop filter.
  * \ingroup Drawing
  */
@@ -55,8 +48,7 @@ private:
 	int32_t m_width;
 	int32_t m_height;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_CropFilter_H

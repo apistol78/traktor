@@ -50,6 +50,6 @@ public:
 private:
 	const IFontMetric* m_metric;
 };
-	
+
 	}
 }

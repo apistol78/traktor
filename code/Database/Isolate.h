@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_Isolate_H
-#define traktor_db_Isolate_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Ref.h"
@@ -42,4 +35,3 @@ struct T_DLLCLASS Isolate
 	}
 }
 
-#endif	// traktor_db_Isolate_H

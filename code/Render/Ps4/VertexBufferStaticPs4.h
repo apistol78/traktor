@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_VertexBufferStaticPs4_H
-#define traktor_render_VertexBufferStaticPs4_H
+#pragma once
 
 #include "Render/VertexElement.h"
 #include "Render/Ps4/VertexBufferPs4.h"
@@ -38,7 +31,7 @@ public:
 	virtual void* lock() T_OVERRIDE T_FINAL;
 
 	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount) T_OVERRIDE T_FINAL;
-	
+
 	virtual void unlock() T_OVERRIDE T_FINAL;
 
 	virtual void prepare() T_OVERRIDE T_FINAL;
@@ -48,8 +41,7 @@ private:
 
 	VertexBufferStaticPs4(uint32_t bufferSize);
 };
-	
+
 	}
 }
 
-#endif	// traktor_render_VertexBufferStaticPs4_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_MemberSmallSet_H
-#define traktor_MemberSmallSet_H
+#pragma once
 
 #include "Core/Containers/SmallSet.h"
 #include "Core/Serialization/MemberArray.h"
@@ -33,7 +26,7 @@ public:
 	,	m_iter(m_ref.begin())
 	{
 	}
-	
+
 	virtual void reserve(size_t size, size_t capacity) const override final
 	{
 		m_ref.clear();
@@ -62,7 +55,7 @@ public:
 		m_ref.insert(ValueType());
 		return true;
 	}
-	
+
 private:
 	value_type& m_ref;
 	mutable typename value_type::iterator m_iter;
@@ -70,4 +63,3 @@ private:
 
 }
 
-#endif	// traktor_MemberSmallSet_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
@@ -108,7 +102,7 @@ void Widget::setVisible(bool visible)
 bool Widget::isVisible(bool includingParents) const
 {
 	T_ASSERT (m_widget);
-	
+
 	if (!m_widget->isVisible())
 		return false;
 
@@ -375,7 +369,7 @@ void Widget::unlink()
 		if (m_parent->m_lastChild == this)
 			m_parent->m_lastChild = m_previousSibling;
 	}
-	
+
 	if (m_nextSibling)
 		m_nextSibling->m_previousSibling = m_previousSibling;
 	if (m_previousSibling)

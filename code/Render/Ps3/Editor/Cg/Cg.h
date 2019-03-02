@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_Cg_H
-#define traktor_render_Cg_H
+#pragma once
 
 namespace traktor
 {
@@ -30,4 +23,3 @@ public:
 	}
 }
 
-#endif	// traktor_render_Cg_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_PixelFormat_H
-#define traktor_drawing_PixelFormat_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -24,7 +17,7 @@ class Color4f;
 
 	namespace drawing
 	{
-	
+
 class Palette;
 
 /*! \brief Pixel format description.
@@ -103,15 +96,15 @@ public:
 	const int getColorBits() const {
 		return m_colorBits;
 	}
-	
+
 	const int getByteSize() const {
 		return m_byteSize;
 	}
-	
+
 	const int getRedBits() const {
 		return m_redBits;
 	}
-	
+
 	const int getRedShift() const {
 		return m_redShift;
 	}
@@ -119,7 +112,7 @@ public:
 	const int getGreenBits() const {
 		return m_greenBits;
 	}
-	
+
 	const int getGreenShift() const {
 		return m_greenShift;
 	}
@@ -127,7 +120,7 @@ public:
 	const int getBlueBits() const {
 		return m_blueBits;
 	}
-	
+
 	const int getBlueShift() const {
 		return m_blueShift;
 	}
@@ -135,7 +128,7 @@ public:
 	const int getAlphaBits() const {
 		return m_alphaBits;
 	}
-	
+
 	const int getAlphaShift() const {
 		return m_alphaShift;
 	}
@@ -265,7 +258,7 @@ private:
 	bool m_palettized;	/**< If pixel format is describing palettized pixels. */
 	bool m_floatPoint;
 	int m_colorBits;	/**< Number of bits for an entire pixel. */
-	int m_byteSize;		/**< Number of bytes for an entire pixel. */ 
+	int m_byteSize;		/**< Number of bytes for an entire pixel. */
 	int m_redBits;		/**< Red bits, only valid for non-palettized pixels. */
 	int m_redShift;
 	int m_greenBits;
@@ -306,8 +299,7 @@ private:
 	static const PixelFormat ms_pfABGRF16;
 	static const PixelFormat ms_pfABGRF32;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_PixelFormat_H

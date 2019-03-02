@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Const.h"
@@ -224,7 +218,7 @@ void ConeTwistJointBullet::update(float deltaTime)
 
 	// Solve twist constraint.
 	Scalar twistAngleLimit = Scalar(m_desc->getTwistAngle());
-	do 
+	do
 	{
 		Vector4 coneAxis2in1 = Quaternion(twistAxis2, twistAxis1) * coneAxis2;
 		Vector4 coneAxis1ref = -cross(coneAxis1, twistAxis1).normalized();

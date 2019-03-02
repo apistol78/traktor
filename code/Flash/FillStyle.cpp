@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -63,13 +57,13 @@ bool FillStyle::create(const SwfFillStyle* fillStyle)
 		Color4f dummy(1.0f, 1.0f, 1.0f, 1.0f);
 		m_colorRecords.push_back(ColorRecord(0.0f, dummy));
 	}
-	
+
 	if (
 		fillStyle->type == FstTiledBitmap || fillStyle->type == FstClippedBitmap ||
 		fillStyle->type == FstTiledBitmapHard || fillStyle->type == FstClippedBitmapHard
 	)
 	{
-		m_fillBitmap = fillStyle->bitmap.bitmapId; 
+		m_fillBitmap = fillStyle->bitmap.bitmapId;
 		m_fillBitmapMatrix = Matrix33(fillStyle->bitmap.bitmapMatrix.m);
 		m_fillBitmapRepeat = bool(fillStyle->type == FstTiledBitmap || fillStyle->type == FstTiledBitmapHard);
 	}

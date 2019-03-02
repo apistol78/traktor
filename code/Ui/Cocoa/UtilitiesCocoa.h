@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_UtilitiesCocoa_H
-#define traktor_ui_UtilitiesCocoa_H
+#pragma once
 
 #include <string>
 #include "Ui/Rect.h"
@@ -40,4 +33,3 @@ VirtualKey translateKeyCode(NSUInteger keyCode);
 	}
 }
 
-#endif	// traktor_ui_UtilitiesCocoa_H

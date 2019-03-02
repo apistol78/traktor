@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
@@ -30,7 +24,7 @@ std::wstring Group::getName() const
 std::wstring Group::getPath() const
 {
 	T_ASSERT (m_providerGroup);
-	
+
 	if (!m_parent)
 		return L"";
 
@@ -47,7 +41,7 @@ std::wstring Group::getPath() const
 bool Group::rename(const std::wstring& name)
 {
 	T_ASSERT (m_providerGroup);
-	
+
 	if (!m_providerGroup->rename(name))
 		return false;
 
@@ -87,15 +81,15 @@ Ref< Group > Group::createGroup(const std::wstring& groupName)
 
 	Ref< Group > group = getGroup(groupName);
 	if (group)
-		return group; 
+		return group;
 
 	Ref< IProviderGroup > providerGroup = m_providerGroup->createGroup(groupName);
 	if (!providerGroup)
-		return 0;
+		return nullptr;
 
 	group = new Group(m_groupEventListener, m_instanceEventListener);
 	if (!group->internalCreate(providerGroup, this))
-		return 0;
+		return nullptr;
 
 	m_childGroups.push_back(group);
 	return group;
@@ -110,7 +104,7 @@ Ref< Instance > Group::getInstance(const std::wstring& instanceName, const TypeI
 	{
 		Ref< Instance > instance = findChildInstance(this, FindInstanceByName(instanceName));
 		if (!instance || !is_type_of(*primaryType, *instance->getPrimaryType()))
-			return 0;
+			return nullptr;
 		return instance;
 	}
 }
@@ -125,7 +119,7 @@ Ref< Instance > Group::createInstance(const std::wstring& instanceName, uint32_t
 	if (instanceGuid.isNull() || !instanceGuid.isValid())
 	{
 		log::error << L"Not allowed to create instance with invalid guid" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	// Remove existing instance if we're about to replace it.
@@ -135,16 +129,16 @@ Ref< Instance > Group::createInstance(const std::wstring& instanceName, uint32_t
 		if (instance)
 		{
 			if (!instance->checkout())
-				return 0;
+				return nullptr;
 
 			if (!(flags & CifKeepExistingGuid))
 			{
 				if (!instance->setGuid(instanceGuid))
-					return 0;
+					return nullptr;
 			}
 
 			if (!instance->removeAllData())
-				return 0;
+				return nullptr;
 
 			return instance;
 		}
@@ -153,14 +147,14 @@ Ref< Instance > Group::createInstance(const std::wstring& instanceName, uint32_t
 	// Create provider instance.
 	Ref< IProviderInstance > providerInstance = m_providerGroup->createInstance(instanceName, instanceGuid);
 	if (!providerInstance)
-		return 0;
+		return nullptr;
 
 	// Create instance object.
 	if (!instance)
 		instance = new Instance(this);
 
 	if (!instance->internalCreateNew(providerInstance, this))
-		return 0;
+		return nullptr;
 
 	return instance;
 }
@@ -188,7 +182,7 @@ bool Group::getChildInstances(RefArray< Instance >& outChildInstances)
 Group::Group(IGroupEventListener* groupEventListener, IInstanceEventListener* instanceEventListener)
 :	m_groupEventListener(groupEventListener)
 ,	m_instanceEventListener(instanceEventListener)
-,	m_parent(0)
+,	m_parent(nullptr)
 {
 }
 
@@ -199,7 +193,7 @@ bool Group::internalCreate(IProviderGroup* providerGroup, Group* parent)
 	m_providerGroup = providerGroup;
 	m_parent = parent;
 	m_name = m_providerGroup->getName();
-	
+
 	m_childGroups.resize(0);
 	m_childInstances.resize(0);
 
@@ -208,20 +202,20 @@ bool Group::internalCreate(IProviderGroup* providerGroup, Group* parent)
 	m_providerGroup->getChildren(providerChildGroups, providerChildInstances);
 
 	m_childGroups.reserve(providerChildGroups.size());
-	for (RefArray< IProviderGroup >::iterator i = providerChildGroups.begin(); i != providerChildGroups.end(); ++i)
+	for (const auto providerChildGroup : providerChildGroups)
 	{
 		Ref< Group > childGroup = new Group(m_groupEventListener, m_instanceEventListener);
-		if (!childGroup->internalCreate(*i, this))
+		if (!childGroup->internalCreate(providerChildGroup, this))
 			return false;
 
 		m_childGroups.push_back(childGroup);
 	}
 
 	m_childInstances.reserve(providerChildInstances.size());
-	for (RefArray< IProviderInstance >::iterator i = providerChildInstances.begin(); i != providerChildInstances.end(); ++i)
+	for (const auto providerChildInstance : providerChildInstances)
 	{
 		Ref< Instance > childInstance = new Instance(this);
-		if (!childInstance->internalCreateExisting(*i, this))
+		if (!childInstance->internalCreateExisting(providerChildInstance, this))
 			return false;
 
 		m_childInstances.push_back(childInstance);
@@ -234,18 +228,18 @@ void Group::internalDestroy()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	m_instanceEventListener = 0;
-	m_providerGroup = 0;
-	m_parent = 0;
+	m_instanceEventListener = nullptr;
+	m_providerGroup = nullptr;
+	m_parent = nullptr;
 	m_name = L"";
 
-	for (RefArray< Group >::iterator i = m_childGroups.begin(); i != m_childGroups.end(); ++i)
-		(*i)->internalDestroy();
+	for (auto childGroup : m_childGroups)
+		childGroup->internalDestroy();
 
 	m_childGroups.resize(0);
 
-	for (RefArray< Instance >::iterator i = m_childInstances.begin(); i != m_childInstances.end(); ++i)
-		(*i)->internalDestroy();
+	for (auto childInstance : m_childInstances)
+		childInstance->internalDestroy();
 
 	m_childInstances.resize(0);
 }
@@ -259,10 +253,10 @@ bool Group::internalFlushChildInstances()
 	m_providerGroup->getChildren(providerChildGroups, providerChildInstances);
 
 	m_childInstances.reserve(providerChildInstances.size());
-	for (RefArray< IProviderInstance >::iterator i = providerChildInstances.begin(); i != providerChildInstances.end(); ++i)
+	for (auto providerChildInstance : providerChildInstances)
 	{
 		Ref< Instance > childInstance = new Instance(this);
-		if (!childInstance->internalCreateExisting(*i, this))
+		if (!childInstance->internalCreateExisting(providerChildInstance, this))
 			return false;
 
 		m_childInstances.push_back(childInstance);
@@ -279,12 +273,12 @@ bool Group::internalAddExtGroup(const std::wstring& groupName)
 	RefArray< IProviderInstance > providerChildInstances;
 	m_providerGroup->getChildren(providerChildGroups, providerChildInstances);
 
-	for (RefArray< IProviderGroup >::iterator i = providerChildGroups.begin(); i != providerChildGroups.end(); ++i)
+	for (auto providerChildGroup : providerChildGroups)
 	{
-		if ((*i)->getName() == groupName)
+		if (providerChildGroup->getName() == groupName)
 		{
 			Ref< Group > childGroup = new Group(m_groupEventListener, m_instanceEventListener);
-			if (!childGroup->internalCreate(*i, this))
+			if (!childGroup->internalCreate(providerChildGroup, this))
 				return false;
 
 			m_childGroups.push_back(childGroup);
@@ -303,12 +297,12 @@ bool Group::internalAddExtInstance(const Guid& instanceGuid)
 	RefArray< IProviderInstance > providerChildInstances;
 	m_providerGroup->getChildren(providerChildGroups, providerChildInstances);
 
-	for (RefArray< IProviderInstance >::iterator i = providerChildInstances.begin(); i != providerChildInstances.end(); ++i)
+	for (auto providerChildInstance : providerChildInstances)
 	{
-		if ((*i)->getGuid() == instanceGuid)
+		if (providerChildInstance->getGuid() == instanceGuid)
 		{
 			Ref< Instance > childInstance = new Instance(this);
-			if (!childInstance->internalCreateExisting(*i, this))
+			if (!childInstance->internalCreateExisting(providerChildInstance, this))
 				return false;
 
 			m_childInstances.push_back(childInstance);
@@ -334,7 +328,7 @@ void Group::instanceEventRemoved(Instance* instance)
 	// Remove child instance from list.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		RefArray< Instance >::iterator i = std::find(m_childInstances.begin(), m_childInstances.end(), instance);
+		auto i = std::find(m_childInstances.begin(), m_childInstances.end(), instance);
 		T_ASSERT (i != m_childInstances.end());
 		m_childInstances.erase(i);
 	}

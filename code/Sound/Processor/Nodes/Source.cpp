@@ -55,7 +55,7 @@ bool Source::bind(resource::IResourceManager* resourceManager)
 	return resourceManager->bind(m_sound);
 }
 
-Ref< ISoundBufferCursor > Source::createCursor() const 
+Ref< ISoundBufferCursor > Source::createCursor() const
 {
 	if (!m_sound)
 		return nullptr;

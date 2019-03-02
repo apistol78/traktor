@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Matrix44.h"
@@ -85,7 +79,7 @@ bool storeIfNotEqual(const Vector4* source, int length, float* dest)
 			return true;
 		}
 	}
-	return false;	
+	return false;
 }
 
 bool storeIfNotEqual(const Matrix44* source, int length, float* dest)
@@ -104,12 +98,12 @@ bool storeIfNotEqual(const Matrix44* source, int length, float* dest)
 
 void bindAttribute(GLuint programObject, DataUsage usage, int32_t index)
 {
-	std::string attributeName = wstombs(VertexAttribute::getName(usage, index));	
+	std::string attributeName = wstombs(VertexAttribute::getName(usage, index));
 
 	int32_t attributeLocation = VertexAttribute::getLocation(usage, index);
 	if (attributeLocation < 0)
 		return;
-	
+
 	T_OGL_SAFE(glBindAttribLocation(
 		programObject,
 		attributeLocation,
@@ -134,7 +128,7 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 	char errorBuf[32000];
 	GLsizei errorBufLen;
 	GLint status;
-	
+
 	const std::string& vertexShader = resourceOpenGL->getVertexShader();
 	const std::string& fragmentShader = resourceOpenGL->getFragmentShader();
 
@@ -144,7 +138,7 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 		log::error << L"Unable to create vertex object" << Endl;
 		return 0;
 	}
-		
+
 	GLuint fragmentObject = resourceContext->createShaderObject(fragmentShader.c_str(), GL_FRAGMENT_SHADER);
 	if (!fragmentObject)
 	{
@@ -157,7 +151,7 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 
 	T_OGL_SAFE(glAttachShader(programObject, vertexObject));
 	T_OGL_SAFE(glAttachShader(programObject, fragmentObject));
-	
+
 	for (int j = 0; j < T_OGL_MAX_INDEX; ++j)
 	{
 		bindAttribute(programObject, DuPosition, j);
@@ -167,7 +161,7 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 		bindAttribute(programObject, DuColor, j);
 		bindAttribute(programObject, DuCustom, j);
 	}
-	
+
 	T_OGL_SAFE(glLinkProgram(programObject));
 
 	T_OGL_SAFE(glGetProgramiv(programObject, GL_LINK_STATUS, &status));
@@ -220,7 +214,7 @@ void ProgramOpenGLES2::setFloatArrayParameter(handle_t handle, const float* para
 	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
-		
+
 	Uniform& uniform = m_uniforms[i->second];
 	length = std::min< int >(length, uniform.length);
 
@@ -238,7 +232,7 @@ void ProgramOpenGLES2::setVectorArrayParameter(handle_t handle, const Vector4* p
 	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
-		
+
 	Uniform& uniform = m_uniforms[i->second];
 	length = std::min< int >(length, uniform.length);
 
@@ -256,7 +250,7 @@ void ProgramOpenGLES2::setMatrixArrayParameter(handle_t handle, const Matrix44* 
 	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
-		
+
 	Uniform& uniform = m_uniforms[i->second];
 	length = std::min< int >(length, uniform.length);
 
@@ -281,13 +275,13 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 	// Bind program and set state display list.
 	stateCache->setRenderState(m_renderState, invertCull);
 	stateCache->setProgram(m_program);
-	
+
 	// Update dirty uniforms.
 	for (AlignedVector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
 	{
 		if (!i->dirty)
 			continue;
-			
+
 		const float* uniformData = &m_uniformData[i->offset];
 		switch (i->type)
 		{
@@ -306,7 +300,7 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 		default:
 			T_ASSERT (0);
 		}
-		
+
 		i->dirty = false;
 	}
 
@@ -320,7 +314,7 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 			T_OGL_SAFE(glUniform4fv(m_locationTargetSize, 1, m_targetSize));
 		}
 	}
-	
+
 	// Update post transform.
 	if (m_locationPostTransform != -1)
 	{
@@ -360,7 +354,7 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 			binding = static_cast< ITextureBinding* >(rt);
 		else if (RenderTargetDepthOpenGLES2* rtd = dynamic_type_cast< RenderTargetDepthOpenGLES2* >(resolved))
 			binding = static_cast< ITextureBinding* >(rtd);
-			
+
 		if (binding)
 		{
 			binding->bindSampler(
@@ -419,7 +413,7 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 	m_targetSize[1] =
 	m_targetSize[2] =
 	m_targetSize[3] = 0.0f;
-	
+
 	// Get target size parameter.
 	m_locationTargetSize = glGetUniformLocation(m_program, "_gl_targetSize");
 	m_locationPostTransform = glGetUniformLocation(m_program, "_gl_postTransform");
@@ -439,9 +433,9 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 			m_parameterMap[handle] = m_textures.size();
 			m_textures.push_back(0);
 		}
-		
+
 		std::wstring samplerName = i->name;
-		
+
 		Sampler sampler;
 		sampler.locationTexture = glGetUniformLocation(m_program, wstombs(samplerName).c_str());
 		sampler.texture = m_parameterMap[handle];

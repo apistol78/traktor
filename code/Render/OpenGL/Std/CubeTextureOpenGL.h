@@ -39,9 +39,9 @@ public:
 	virtual bool lock(int32_t side, int32_t level, Lock& lock) override final;
 
 	virtual void unlock(int32_t side, int32_t level) override final;
-	
+
 	// ITextureBinding
-	
+
 	virtual void bindTexture(GLuint textureUnit) const override final;
 
 	virtual void bindImage(GLuint imageUnit) const override final;
@@ -49,7 +49,7 @@ public:
 	virtual void bindSize(GLint locationSize) const override final;
 
 	virtual bool haveMips() const override final;
-	
+
 private:
 	Ref< ResourceContextOpenGL > m_resourceContext;
 	GLuint m_textureName;

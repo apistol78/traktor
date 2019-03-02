@@ -53,7 +53,7 @@ bool Parameter::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Parameter::createCursor() const 
+Ref< ISoundBufferCursor > Parameter::createCursor() const
 {
 	return new ParameterCursor(getParameterHandle(m_name));
 }

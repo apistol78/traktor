@@ -20,7 +20,7 @@ namespace traktor
 class MemoryHeap;
 class MemoryHeapObject;
 class StateCachePs3;
-		
+
 class T_DLLCLASS CubeTexturePs3 : public ICubeTexture
 {
 	T_RTTI_CLASS;
@@ -29,7 +29,7 @@ public:
 	CubeTexturePs3(int32_t& counter);
 
 	virtual ~CubeTexturePs3();
-	
+
 	bool create(MemoryHeap* memoryHeap, const CubeTextureCreateDesc& desc);
 
 	virtual void destroy() override final;
@@ -51,6 +51,6 @@ private:
 	CellGcmTexture m_texture;
 	int32_t& m_counter;
 };
-		
+
 	}
 }

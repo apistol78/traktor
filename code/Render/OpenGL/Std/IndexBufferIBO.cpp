@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/OpenGL/Std/IndexBufferIBO.h"
 #include "Render/OpenGL/Std/ResourceContextOpenGL.h"
 
@@ -72,7 +66,7 @@ void IndexBufferIBO::destroy()
 void* IndexBufferIBO::lock()
 {
 	T_ASSERT_M (!m_locked, L"Index buffer already locked");
-	
+
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 	T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_name));
 

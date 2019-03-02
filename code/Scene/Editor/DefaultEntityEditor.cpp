@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Math/Const.h"
 #include "Core/Reflection/Reflection.h"
@@ -147,7 +141,7 @@ bool DefaultEntityEditor::queryFrustum(const Frustum& worldFrustum) const
 	Plane objectPlanes[6];
 	for (int32_t i = 0; i < 6; ++i)
 		objectPlanes[i] = worldInv.toMatrix44() * worldFrustum.planes[i];
-	
+
 	// Get entity bounding box.
 	Aabb3 boundingBox = m_entityAdapter->getBoundingBox();
 	if (boundingBox.empty())
@@ -174,7 +168,7 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 	const Vector4 c_expandBoundingBox(0.001f, 0.001f, 0.001f, 0.0f);
 
 	Transform transform = m_entityAdapter->getTransform();
-	
+
 	Aabb3 boundingBox = m_entityAdapter->getBoundingBox();
 	boundingBox.mn -= c_expandBoundingBox;
 	boundingBox.mx += c_expandBoundingBox;

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_model_CullDistantFaces_H
-#define traktor_model_CullDistantFaces_H
+#pragma once
 
 #include "Core/Math/Aabb3.h"
 #include "Model/IModelOperation.h"
@@ -42,4 +35,3 @@ private:
 	}
 }
 
-#endif	// traktor_model_CullDistantFaces_H

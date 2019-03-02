@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_IPeer2PeerProvider_H
-#define traktor_net_IPeer2PeerProvider_H
+#pragma once
 
 #include <string>
 #include "Core/Object.h"
@@ -53,4 +46,3 @@ public:
 	}
 }
 
-#endif	// traktor_net_IPeer2PeerProvider_H

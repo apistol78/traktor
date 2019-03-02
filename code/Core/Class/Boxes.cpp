@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/CastAny.h"
@@ -159,7 +153,7 @@ Ref< BoxedRefArray > BoxedTypeInfo::findAllOf(const BoxedTypeInfo* typeInfo, boo
 	Ref< BoxedRefArray > boxedTypes = new BoxedRefArray();
 	for (std::set< const TypeInfo* >::const_iterator i = types.begin(); i != types.end(); ++i)
 		boxedTypes->push_back(new BoxedTypeInfo(*(*i)));
-	
+
 	return boxedTypes;
 }
 
@@ -492,7 +486,7 @@ Ref< BoxedVector4 > BoxedPlane::rayIntersection(
 {
 	Vector4 result;
 	Scalar k;
-	
+
 	if (m_value.rayIntersection(origin, direction, k, &result))
 		return new BoxedVector4(result);
 	else
@@ -506,7 +500,7 @@ Ref< BoxedVector4 > BoxedPlane::segmentIntersection(
 {
 	Vector4 result;
 	Scalar k;
-	
+
 	if (m_value.segmentIntersection(a, b, k, &result))
 		return new BoxedVector4(result);
 	else
@@ -1465,11 +1459,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.BoxesClassFactory", 0, BoxesClassFactor
 
 void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< Boxed > > classBoxed = new AutoRuntimeClass< Boxed >();
+	auto classBoxed = new AutoRuntimeClass< Boxed >();
 	classBoxed->addMethod("toString", &Boxed::toString);
 	registrar->registerClass(classBoxed);
 
-	Ref< AutoRuntimeClass< BoxedTypeInfo > > classBoxedTypeInfo = new AutoRuntimeClass< BoxedTypeInfo >();
+	auto classBoxedTypeInfo = new AutoRuntimeClass< BoxedTypeInfo >();
 	classBoxedTypeInfo->addProperty("name", &BoxedTypeInfo::getName);
 	classBoxedTypeInfo->addProperty("size", &BoxedTypeInfo::getSize);
 	classBoxedTypeInfo->addProperty("version", &BoxedTypeInfo::getVersion);
@@ -1478,7 +1472,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedTypeInfo->addStaticMethod("findAllOf", &BoxedTypeInfo::findAllOf);
 	registrar->registerClass(classBoxedTypeInfo);
 
-	Ref< AutoRuntimeClass< BoxedGuid > > classBoxedGuid = new AutoRuntimeClass< BoxedGuid >();
+	auto classBoxedGuid = new AutoRuntimeClass< BoxedGuid >();
 	classBoxedGuid->addConstructor();
 	classBoxedGuid->addConstructor< const std::wstring& >();
 	classBoxedGuid->addStaticMethod("create", &BoxedGuid::create);
@@ -1489,7 +1483,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedGuid->addMethod("isNotNull", &BoxedGuid::isNotNull);
 	registrar->registerClass(classBoxedGuid);
 
-	Ref< AutoRuntimeClass< BoxedVector2 > > classBoxedVector2 = new AutoRuntimeClass< BoxedVector2 >();
+	auto classBoxedVector2 = new AutoRuntimeClass< BoxedVector2 >();
 	classBoxedVector2->addConstructor();
 	classBoxedVector2->addConstructor< float, float >();
 	classBoxedVector2->addConstant("zero", CastAny< Vector2 >::set(Vector2::zero()));
@@ -1521,7 +1515,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector2->addOperator< Vector2, float >('/', &BoxedVector2::div);
 	registrar->registerClass(classBoxedVector2);
 
-	Ref< AutoRuntimeClass< BoxedVector4 > > classBoxedVector4 = new AutoRuntimeClass< BoxedVector4 >();
+	auto classBoxedVector4 = new AutoRuntimeClass< BoxedVector4 >();
 	classBoxedVector4->addConstructor();
 	classBoxedVector4->addConstructor< float, float, float >();
 	classBoxedVector4->addConstructor< float, float, float, float >();
@@ -1560,7 +1554,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector4->addOperator< Vector4, float >('/', &BoxedVector4::div);
 	registrar->registerClass(classBoxedVector4);
 
-	Ref< AutoRuntimeClass< BoxedVector4Array > > classBoxedVector4Array = new AutoRuntimeClass< BoxedVector4Array >();
+	auto classBoxedVector4Array = new AutoRuntimeClass< BoxedVector4Array >();
 	classBoxedVector4Array->addConstructor();
 	classBoxedVector4Array->addConstructor< uint32_t >();
 	classBoxedVector4Array->addMethod("reserve", &BoxedVector4Array::reserve);
@@ -1575,7 +1569,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedVector4Array->addMethod("get", &BoxedVector4Array::get);
 	registrar->registerClass(classBoxedVector4Array);
 
-	Ref< AutoRuntimeClass< BoxedQuaternion > > classBoxedQuaternion = new AutoRuntimeClass< BoxedQuaternion >();
+	auto classBoxedQuaternion = new AutoRuntimeClass< BoxedQuaternion >();
 	classBoxedQuaternion->addConstructor();
 	classBoxedQuaternion->addConstructor< float, float, float, float >();
 	classBoxedQuaternion->addConstructor< const BoxedVector4*, float >();
@@ -1601,7 +1595,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedQuaternion->addOperator< Quaternion, const BoxedQuaternion* >('*', &BoxedQuaternion::concat);
 	registrar->registerClass(classBoxedQuaternion);
 
-	Ref< AutoRuntimeClass< BoxedPlane > > classBoxedPlane = new AutoRuntimeClass< BoxedPlane >();
+	auto classBoxedPlane = new AutoRuntimeClass< BoxedPlane >();
 	classBoxedPlane->addConstructor();
 	classBoxedPlane->addConstructor< const Plane& >();
 	classBoxedPlane->addConstructor< const Vector4&, float >();
@@ -1617,7 +1611,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedPlane->addStaticMethod("uniqueIntersectionPoint", &BoxedPlane::uniqueIntersectionPoint);
 	registrar->registerClass(classBoxedPlane);
 
-	Ref< AutoRuntimeClass< BoxedTransform > > classBoxedTransform = new AutoRuntimeClass< BoxedTransform >();
+	auto classBoxedTransform = new AutoRuntimeClass< BoxedTransform >();
 	classBoxedTransform->addConstructor();
 	classBoxedTransform->addConstructor< const BoxedVector4*, const BoxedQuaternion* >();
 	classBoxedTransform->addConstructor< const BoxedMatrix44* >();
@@ -1639,7 +1633,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedTransform->addOperator< Transform, const BoxedTransform* >('*', &BoxedTransform::concat);
 	registrar->registerClass(classBoxedTransform);
 
-	Ref< AutoRuntimeClass< BoxedAabb2 > > classBoxedAabb2 = new AutoRuntimeClass< BoxedAabb2 >();
+	auto classBoxedAabb2 = new AutoRuntimeClass< BoxedAabb2 >();
 	classBoxedAabb2->addConstructor();
 	classBoxedAabb2->addConstructor< const BoxedVector2*, const BoxedVector2* >();
 	classBoxedAabb2->addProperty("min", &BoxedAabb2::min);
@@ -1651,7 +1645,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedAabb2->addMethod("contain", &BoxedAabb2::contain);
 	registrar->registerClass(classBoxedAabb2);
 
-	Ref< AutoRuntimeClass< BoxedAabb3 > > classBoxedAabb3 = new AutoRuntimeClass< BoxedAabb3 >();
+	auto classBoxedAabb3 = new AutoRuntimeClass< BoxedAabb3 >();
 	classBoxedAabb3->addConstructor();
 	classBoxedAabb3->addConstructor< const BoxedVector4*, const BoxedVector4* >();
 	classBoxedAabb3->addProperty("min", &BoxedAabb3::min);
@@ -1670,7 +1664,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedAabb3->addMethod("intersectRay", &BoxedAabb3::intersectRay);
 	registrar->registerClass(classBoxedAabb3);
 
-	Ref< AutoRuntimeClass< BoxedFrustum > > classBoxedFrustum = new AutoRuntimeClass< BoxedFrustum >();
+	auto classBoxedFrustum = new AutoRuntimeClass< BoxedFrustum >();
 	classBoxedFrustum->addConstructor();
 	classBoxedFrustum->addProperty("nearZ", &BoxedFrustum::setNearZ, &BoxedFrustum::getNearZ);
 	classBoxedFrustum->addProperty("farZ", &BoxedFrustum::setFarZ, &BoxedFrustum::getFarZ);
@@ -1684,7 +1678,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedFrustum->addMethod("getCenter", &BoxedFrustum::getCenter);
 	registrar->registerClass(classBoxedFrustum);
 
-	Ref< AutoRuntimeClass< BoxedMatrix33 > > classBoxedMatrix33 = new AutoRuntimeClass< BoxedMatrix33 >();
+	auto classBoxedMatrix33 = new AutoRuntimeClass< BoxedMatrix33 >();
 	classBoxedMatrix33->addConstructor();
 	classBoxedMatrix33->addConstant("zero", CastAny< Matrix33 >::set(Matrix33::zero()));
 	classBoxedMatrix33->addConstant("identity", CastAny< Matrix33 >::set(Matrix33::identity()));
@@ -1703,7 +1697,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedMatrix33->addOperator< Matrix33, const BoxedMatrix33* >('*', &BoxedMatrix33::concat);
 	registrar->registerClass(classBoxedMatrix33);
 
-	Ref< AutoRuntimeClass< BoxedMatrix44 > > classBoxedMatrix44 = new AutoRuntimeClass< BoxedMatrix44 >();
+	auto classBoxedMatrix44 = new AutoRuntimeClass< BoxedMatrix44 >();
 	classBoxedMatrix44->addConstructor();
 	classBoxedMatrix44->addConstructor< const BoxedVector4*, const BoxedVector4*, const BoxedVector4*, const BoxedVector4* >();
 	classBoxedMatrix44->addConstant("zero", CastAny< Matrix44 >::set(Matrix44::zero()));
@@ -1732,7 +1726,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedMatrix44->addOperator< Matrix44, const BoxedMatrix44* >('*', &BoxedMatrix44::concat);
 	registrar->registerClass(classBoxedMatrix44);
 
-	Ref< AutoRuntimeClass< BoxedColor4f > > classBoxedColor4f = new AutoRuntimeClass< BoxedColor4f >();
+	auto classBoxedColor4f = new AutoRuntimeClass< BoxedColor4f >();
 	classBoxedColor4f->addConstructor();
 	classBoxedColor4f->addConstructor< float, float, float >();
 	classBoxedColor4f->addConstructor< float, float, float, float >();
@@ -1745,7 +1739,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedColor4f->addStaticMethod("lerp", &BoxedColor4f::lerp);
 	registrar->registerClass(classBoxedColor4f);
 
-	Ref< AutoRuntimeClass< BoxedColor4ub > > classBoxedColor4ub = new AutoRuntimeClass< BoxedColor4ub >();
+	auto classBoxedColor4ub = new AutoRuntimeClass< BoxedColor4ub >();
 	classBoxedColor4ub->addConstructor();
 	classBoxedColor4ub->addConstructor< uint8_t, uint8_t, uint8_t >();
 	classBoxedColor4ub->addConstructor< uint8_t, uint8_t, uint8_t, uint8_t >();
@@ -1758,21 +1752,21 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedColor4ub->addMethod("formatARGB", &BoxedColor4ub::formatARGB);
 	registrar->registerClass(classBoxedColor4ub);
 
-	Ref< AutoRuntimeClass< BoxedRandom > > classBoxedRandom = new AutoRuntimeClass< BoxedRandom >();
+	auto classBoxedRandom = new AutoRuntimeClass< BoxedRandom >();
 	classBoxedRandom->addConstructor();
 	classBoxedRandom->addConstructor< uint32_t >();
 	classBoxedRandom->addMethod("next", &BoxedRandom::next);
 	classBoxedRandom->addMethod("nextFloat", &BoxedRandom::nextFloat);
 	registrar->registerClass(classBoxedRandom);
 
-	Ref< AutoRuntimeClass< BoxedRandomGeometry > > classBoxedRandomGeometry = new AutoRuntimeClass< BoxedRandomGeometry >();
+	auto classBoxedRandomGeometry = new AutoRuntimeClass< BoxedRandomGeometry >();
 	classBoxedRandomGeometry->addConstructor();
 	classBoxedRandomGeometry->addConstructor< uint32_t >();
 	classBoxedRandomGeometry->addMethod("nextUnit", &BoxedRandomGeometry::nextUnit);
 	classBoxedRandomGeometry->addMethod("nextHemi", &BoxedRandomGeometry::nextHemi);
 	registrar->registerClass(classBoxedRandomGeometry);
 
-	Ref< AutoRuntimeClass< BoxedRay3 > > classBoxedRay3 = new AutoRuntimeClass< BoxedRay3 >();
+	auto classBoxedRay3 = new AutoRuntimeClass< BoxedRay3 >();
 	classBoxedRay3->addConstructor();
 	classBoxedRay3->addConstructor< const Ray3& >();
 	classBoxedRay3->addProperty("origin", &BoxedRay3::origin);
@@ -1781,13 +1775,13 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedRay3->addOperator< Vector4, float >('*', &BoxedRay3::mul);
 	registrar->registerClass(classBoxedRay3);
 
-	Ref< AutoRuntimeClass< BoxedRange > > classBoxedRange = new AutoRuntimeClass< BoxedRange >();
+	auto classBoxedRange = new AutoRuntimeClass< BoxedRange >();
 	classBoxedRange->addConstructor();
 	classBoxedRange->addProperty("min", &BoxedRange::min);
 	classBoxedRange->addProperty("max", &BoxedRange::max);
 	registrar->registerClass(classBoxedRange);
 
-	Ref< AutoRuntimeClass< BoxedRefArray > > classBoxedRefArray = new AutoRuntimeClass< BoxedRefArray >();
+	auto classBoxedRefArray = new AutoRuntimeClass< BoxedRefArray >();
 	classBoxedRefArray->addConstructor();
 	classBoxedRefArray->addConstructor< const RefArray< Object >& >();
 	classBoxedRefArray->addMethod("size", &BoxedRefArray::size);
@@ -1801,7 +1795,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedRefArray->addMethod("popBack", &BoxedRefArray::pop_back);		// \deprecated
 	registrar->registerClass(classBoxedRefArray);
 
-	Ref< AutoRuntimeClass< BoxedStdVector > > classBoxedStdVector = new AutoRuntimeClass< BoxedStdVector >();
+	auto classBoxedStdVector = new AutoRuntimeClass< BoxedStdVector >();
 	classBoxedStdVector->addConstructor();
 	classBoxedStdVector->addConstructor< uint32_t >();
 	classBoxedStdVector->addMethod("reserve", &BoxedStdVector::reserve);
@@ -1817,7 +1811,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedStdVector->addMethod("get", &BoxedStdVector::get);
 	registrar->registerClass(classBoxedStdVector);
 
-	Ref< AutoRuntimeClass< BoxedAlignedVector > > classBoxedAlignedVector = new AutoRuntimeClass< BoxedAlignedVector >();
+	auto classBoxedAlignedVector = new AutoRuntimeClass< BoxedAlignedVector >();
 	classBoxedAlignedVector->addConstructor();
 	classBoxedAlignedVector->addConstructor< uint32_t >();
 	classBoxedAlignedVector->addMethod("reserve", &BoxedAlignedVector::reserve);

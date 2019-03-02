@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_WidgetCocoaImpl_H
-#define traktor_ui_WidgetCocoaImpl_H
+#pragma once
 
 #import <Cocoa/Cocoa.h>
 
@@ -23,10 +16,10 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 class EventSubject;
 
-template < typename ControlType, typename NSControlType, typename NSViewType = NSControlType >	
+template < typename ControlType, typename NSControlType, typename NSViewType = NSControlType >
 class WidgetCocoaImpl
 :	public ControlType
 ,	public IFontMetric
@@ -44,7 +37,7 @@ public:
 	,	m_tracking(false)
 	{
 	}
-		
+
 	virtual void destroy() T_OVERRIDE
 	{
 		// Remove notification observer.
@@ -52,7 +45,7 @@ public:
 		{
 			NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
 			[notificationCenter removeObserver: m_notificationProxy];
-			
+
 			[m_notificationProxy autorelease];
 			m_notificationProxy = 0;
 		}
@@ -60,21 +53,21 @@ public:
 		// Release all timers.
 		for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
 			[i->second invalidate];
-			
+
 		m_timers.clear();
-		
+
 		// Remove widget from parent.
 		NSView* view = getView();
 		if (view)
 			[view removeFromSuperview];
-		
+
 		// Release objects.
 		if (m_control)
 		{
 			[m_control autorelease];
 			m_control = 0;
 		}
-		
+
 		if (m_view)
 		{
 			[m_view autorelease];
@@ -85,12 +78,12 @@ public:
 	virtual void setParent(IWidget* parent) T_OVERRIDE
 	{
 		NSView* view = getView();
-		
+
 		[view removeFromSuperview];
-	
+
 		NSView* contentView = (NSView*)parent->getInternalHandle();
 		T_ASSERT (contentView);
-		
+
 		[contentView addSubview: view];
 	}
 
@@ -138,13 +131,13 @@ public:
 		NSWindow* window = [getControl() window];
 		if (!window)
 			return false;
-			
+
 		for (NSResponder* responder = [window firstResponder]; responder; responder = [responder nextResponder])
 		{
 			if (responder == m_control)
 				return true;
 		}
-		
+
 		return false;
 	}
 
@@ -177,10 +170,10 @@ public:
 			&class_t::callbackTimer,
 			0
 		);
-	
+
 		NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
 		[targetProxy setCallback: targetCallback];
-		
+
 		NSTimer* timer = [[NSTimer alloc]
 			initWithFireDate: [NSDate date]
 			interval: (double)interval / 1000.0
@@ -189,13 +182,13 @@ public:
 			userInfo: nil
 			repeats: YES
 		];
-		
+
 		[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSDefaultRunLoopMode];
 		[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSModalPanelRunLoopMode];
-		
+
 		m_timers[id] = timer;
 	}
-	
+
 	virtual void stopTimer(int id) T_OVERRIDE
 	{
 		std::map< int, NSTimer* >::iterator i = m_timers.find(id);
@@ -239,7 +232,7 @@ public:
 		];
 		if (!nsfnt)
 			return;
-		
+
 		[getControl() setFont: nsfnt];
 	}
 
@@ -347,7 +340,7 @@ public:
 		NSFont* font = [getControl() font];
 		if (!font)
 			font = [NSFont controlContentFontOfSize: 11];
-		
+
 		uint8_t uc[IEncoding::MaxEncodingSize + 1] = { 0 };
 		int32_t nuc = Utf8Encoding().translate(&ch, 1, uc);
 		if (nuc <= 0)
@@ -364,16 +357,16 @@ public:
 	virtual Size getExtent(const std::wstring& text) const T_OVERRIDE
 	{
 		NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
-		
+
 		NSFont* font = [getControl() font];
 		if (!font)
 			font = [NSFont controlContentFontOfSize: 11];
-		
+
 		[attributes setObject: font forKey:NSFontAttributeName];
 
 		NSString* str = makeNSString(text);
 		NSSize sz = [str sizeWithAttributes: attributes];
-		
+
 		return fromNSSize(sz);
 	}
 
@@ -385,7 +378,7 @@ protected:
 	std::map< int, NSTimer* > m_timers;
 	bool m_haveFocus;
 	bool m_tracking;
-	
+
 	bool internalCreate()
 	{
 		m_notificationProxy = [[NSNotificationProxy alloc] init];
@@ -398,27 +391,27 @@ protected:
 			name: NSWindowDidUpdateNotification
 			object: [m_control window]
 		];
-		
+
 		return true;
 	}
-	
+
 	NSControl* getControl() const
 	{
 		return m_control;
 	}
-	
+
 	NSView* getView() const
 	{
 		return m_view != 0 ? m_view : (NSView*)m_control;
 	}
-	
+
 	void raiseSizeEvent()
 	{
 		Size sz = getRect().getSize();
 		SizeEvent s(m_owner, sz);
 		m_owner->raiseEvent(&s);
 	}
-	
+
 	void notificationProxy_recv(NSNotification* notification)
 	{
 		bool haveFocus = hasFocus();
@@ -436,8 +429,7 @@ protected:
 		m_owner->raiseEvent(&timerEvent);
 	}
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_WidgetCocoaImpl_H

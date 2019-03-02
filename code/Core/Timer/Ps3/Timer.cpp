@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sys/sys_time.h>
 #include <sys/time_util.h>
 #include "Core/Timer/Timer.h"
@@ -50,7 +44,7 @@ double Timer::getDeltaTime()
 {
 	uint64_t curr;
 	SYS_TIMEBASE_GET(curr);
-	
+
 	double delta = double(curr - m_last) / m_frequency;
 	m_last = curr;
 

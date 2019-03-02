@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Timer_H
-#define traktor_Timer_H
+#pragma once
 
 #include "Core/Object.h"
 
@@ -32,29 +25,28 @@ public:
 
 	/*! \brief Start timer. */
 	void start();
-	
+
 	/*! \brief Pause timer. */
 	void pause();
-	
+
 	/*! \brief Stop timer. */
 	void stop();
 
 	/*! \brief Is timer started? */
 	bool started() const { return !m_paused; }
-	
+
 	/*! \brief Get number of seconds since timer started. */
 	double getElapsedTime() const;
-	
+
 	/*! \brief Get number of seconds since last call to this method. */
 	double getDeltaTime();
-	
+
 private:
 	int64_t m_frequency;
 	int64_t m_first;
 	int64_t m_last;
 	bool m_paused;
 };
-	
+
 }
 
-#endif	// traktor_Timer_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/SafeDestroy.h"
 #include "I18N/Text.h"
 #include "Render/Editor/Shader/InputPin.h"
@@ -60,7 +54,7 @@ public:
 		m_dialog->addEventHandler< ui::ButtonClickEvent >(this, &ScriptNodeInstanceData::eventClick);
 		m_dialog->addEventHandler< ui::CloseEvent >(this, &ScriptNodeInstanceData::eventCloseDialog);
 	}
-	
+
 private:
 	editor::IEditor* m_editor;
 	ShaderGraphEditorPage* m_page;

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Frustum_H
-#define traktor_Frustum_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Containers/StaticVector.h"
@@ -69,9 +62,9 @@ public:
 	Scalar getFarZ() const;
 
 	InsideResult inside(const Vector4& point) const;
-	
+
 	InsideResult inside(const Vector4& center_, const Scalar& radius) const;
-	
+
 	InsideResult inside(const Aabb3& aabb) const;
 
 private:
@@ -80,4 +73,3 @@ private:
 
 }
 
-#endif	// traktor_Frustum_H

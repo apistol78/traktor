@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sql_ResultSetSqlite3_H
-#define traktor_sql_ResultSetSqlite3_H
+#pragma once
 
 #include "Sql/IResultSet.h"
 
@@ -65,4 +58,3 @@ private:
 	}
 }
 
-#endif	// traktor_sql_ResultSetSqlite3_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_SparkRenderer_H
-#define traktor_spark_SparkRenderer_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
@@ -67,4 +60,3 @@ private:
 	}
 }
 
-#endif	// traktor_spark_SparkRenderer_H

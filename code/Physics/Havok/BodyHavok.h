@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_BodyHavok_H
-#define traktor_physics_BodyHavok_H
+#pragma once
 
 #include "Physics/Body.h"
 #include "Physics/Havok/Types.h"
@@ -49,7 +42,7 @@ public:
 	virtual Transform getCenterTransform() const;
 
 	virtual void setKinematic(bool kinematic);
-	
+
 	virtual bool isStatic() const;
 
 	virtual bool isKinematic() const;
@@ -109,4 +102,3 @@ private:
 	}
 }
 
-#endif	// traktor_physics_BodyHavok_H

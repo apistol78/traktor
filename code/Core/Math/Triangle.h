@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Triangle_H
-#define traktor_Triangle_H
+#pragma once
 
 #include "Core/Math/Vector2.h"
 
@@ -125,4 +118,3 @@ void triangle(
 
 }
 
-#endif	// traktor_Triangle_H

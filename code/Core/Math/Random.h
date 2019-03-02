@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Random_H
-#define traktor_Random_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -19,7 +12,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
-	
+
 /*! \brief Random number generator.
  * \ingroup Core
  *
@@ -34,24 +27,23 @@ class T_DLLCLASS Random
 {
 public:
 	Random(uint32_t seed = 5489UL);
-	
+
 	uint32_t next();
-	
+
 	double nextDouble();
 
 	inline float nextFloat() { return float(nextDouble()); }
-	
+
 private:
 	const static int32_t N = 624;
 	const static int32_t M = 397;
 	const static uint32_t MATRIX_A = 0x9908b0dfUL;
 	const static uint32_t UPPER_MASK = 0x80000000UL;
 	const static uint32_t LOWER_MASK = 0x7fffffffUL;
-	
+
 	uint32_t m_mt[N];
 	int32_t m_mti;
 };
-	
+
 }
 
-#endif	// traktor_Random_H

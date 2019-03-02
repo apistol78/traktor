@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InHysteresis_H
-#define traktor_input_InHysteresis_H
+#pragma once
 
 #include "Input/Binding/IInputNode.h"
 
@@ -28,12 +21,12 @@ namespace traktor
 class T_DLLCLASS InHysteresis : public IInputNode
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	InHysteresis();
 
 	InHysteresis(IInputNode* source, float limitMin, float limitMax, float outputMin, float outputMax);
-	
+
 	virtual Ref< Instance > createInstance() const override final;
 
 	virtual float evaluate(
@@ -44,7 +37,7 @@ public:
 	) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
-	
+
 private:
 	friend class InHysteresisTraits;
 
@@ -56,4 +49,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_InHysteresis_H

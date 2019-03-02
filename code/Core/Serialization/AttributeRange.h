@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_AttributeRange_H
-#define traktor_AttributeRange_H
+#pragma once
 
 #include <limits>
 #include "Core/Serialization/Attribute.h"
@@ -45,4 +38,3 @@ private:
 
 }
 
-#endif	// traktor_AttributeRange_H

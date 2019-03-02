@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Math/Matrix44.h"
 #include "Render/Vulkan/ApiLoader.h"
@@ -43,7 +37,7 @@ bool storeIfNotEqual(const Vector4* source, int length, float* dest)
 			return true;
 		}
 	}
-	return false;	
+	return false;
 }
 
 		}

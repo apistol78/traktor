@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sstream>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -80,15 +74,15 @@ Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, const PipelineDepen
 	if (m_accessRead)
 	{
 		Ref< MemCachedGetStream > stream = new MemCachedGetStream(m_proto, generateKey(guid, hash));
-		
+
 		// Request end block; do not try to open non-finished cache streams.
 		if (!stream->requestEndBlock())
 			return 0;
-			
+
 		// Request first block of data.
 		if (!stream->requestNextBlock())
 			return 0;
-			
+
 		return stream;
 	}
 	else

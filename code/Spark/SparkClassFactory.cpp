@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -84,39 +78,39 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.SparkClassFactory", 0, SparkClass
 
 void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< Context > > classContext = new AutoRuntimeClass< Context >();
+	auto classContext = new AutoRuntimeClass< Context >();
 	classContext->addMethod("getResourceManager", &Context::getResourceManager);
 	classContext->addMethod("getRenderSystem", &Context::getRenderSystem);
 	classContext->addMethod("getSoundPlayer", &Context::getSoundPlayer);
 	registrar->registerClass(classContext);
 
-	Ref< AutoRuntimeClass< IComponentData > > classIComponentData = new AutoRuntimeClass< IComponentData >();
+	auto classIComponentData = new AutoRuntimeClass< IComponentData >();
 	classIComponentData->addMethod("createInstance", &IComponentData::createInstance);
 	registrar->registerClass(classIComponentData);
 
-	Ref< AutoRuntimeClass< IComponent > > classIComponent = new AutoRuntimeClass< IComponent >();
+	auto classIComponent = new AutoRuntimeClass< IComponent >();
 	classIComponent->addMethod("update", &IComponent::update);
 	registrar->registerClass(classIComponent);
 
-	Ref< AutoRuntimeClass< ScriptComponentData > > classScriptComponentData = new AutoRuntimeClass< ScriptComponentData >();
+	auto classScriptComponentData = new AutoRuntimeClass< ScriptComponentData >();
 	registrar->registerClass(classScriptComponentData);
 
-	Ref< AutoRuntimeClass< ScriptComponent > > classScriptComponent = new AutoRuntimeClass< ScriptComponent >();
+	auto classScriptComponent = new AutoRuntimeClass< ScriptComponent >();
 	registrar->registerClass(classScriptComponent);
 
-	Ref< AutoRuntimeClass< SoundComponentData > > classSoundComponentData = new AutoRuntimeClass< SoundComponentData >();
+	auto classSoundComponentData = new AutoRuntimeClass< SoundComponentData >();
 	registrar->registerClass(classSoundComponentData);
 
-	Ref< AutoRuntimeClass< SoundComponent > > classSoundComponent = new AutoRuntimeClass< SoundComponent >();
+	auto classSoundComponent = new AutoRuntimeClass< SoundComponent >();
 	classSoundComponent->addMethod("play", &SoundComponent::play);
 	registrar->registerClass(classSoundComponent);
 
-	Ref< AutoRuntimeClass< CharacterData > > classCharacterData = new AutoRuntimeClass< CharacterData >();
+	auto classCharacterData = new AutoRuntimeClass< CharacterData >();
 	classCharacterData->addMethod("setTransform", &CharacterData::setTransform);
 	classCharacterData->addMethod("getTransform", &CharacterData::getTransform);
 	registrar->registerClass(classCharacterData);
 
-	Ref< AutoRuntimeClass< Character > > classCharacter = new AutoRuntimeClass< Character >();
+	auto classCharacter = new AutoRuntimeClass< Character >();
 	classCharacter->addMethod("getParent", &Character::getParent);
 	classCharacter->addMethod("setName", &Character::setName);
 	classCharacter->addMethod("getName", &Character::getName);
@@ -136,11 +130,11 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCharacter->addMethod("getBounds", &Character::getBounds);
 	registrar->registerClass(classCharacter);
 
-	Ref< AutoRuntimeClass< Shape > > classShape = new AutoRuntimeClass< Shape >();
+	auto classShape = new AutoRuntimeClass< Shape >();
 	classShape->addMethod("getBounds", &Shape::getBounds);
 	registrar->registerClass(classShape);
 
-	Ref< AutoRuntimeClass< SpriteData > > classSpriteData = new AutoRuntimeClass< SpriteData >();
+	auto classSpriteData = new AutoRuntimeClass< SpriteData >();
 	classSpriteData->addConstructor();
 	classSpriteData->addMethod("getBounds", &SpriteData::getBounds);
 	classSpriteData->addMethod("getCharacter", &SpriteData::getCharacter);
@@ -148,7 +142,7 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSpriteData->addMethod("remove", &SpriteData::remove);
 	registrar->registerClass(classSpriteData);
 
-	Ref< AutoRuntimeClass< Sprite > > classSprite = new AutoRuntimeClass< Sprite >();
+	auto classSprite = new AutoRuntimeClass< Sprite >();
 	classSprite->addMethod("getContext", &Sprite::getContext);
 	classSprite->addMethod("setShape", &Sprite::setShape);
 	classSprite->addMethod("getShape", &Sprite_getShape);
@@ -161,11 +155,11 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSprite->addMethod("getComponent", &Sprite::getComponent);
 	registrar->registerClass(classSprite);
 
-	Ref< AutoRuntimeClass< TextData > > classTextData = new AutoRuntimeClass< TextData >();
+	auto classTextData = new AutoRuntimeClass< TextData >();
 	classTextData->addConstructor();
 	registrar->registerClass(classTextData);
 
-	Ref< AutoRuntimeClass< Text > > classText = new AutoRuntimeClass< Text >();
+	auto classText = new AutoRuntimeClass< Text >();
 	classText->addMethod("setText", &Text::setText);
 	classText->addMethod("getText", &Text::getText);
 	classText->addMethod("setHeight", &Text::setHeight);
@@ -175,7 +169,7 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classText->addMethod("getAlpha", &Text::getAlpha);
 	registrar->registerClass(classText);
 
-	Ref< AutoRuntimeClass< Canvas > > classCanvas = new AutoRuntimeClass< Canvas >();
+	auto classCanvas = new AutoRuntimeClass< Canvas >();
 	classCanvas->addConstructor();
 	classCanvas->addMethod("clear", &Canvas::clear);
 	classCanvas->addMethod("moveTo", &Canvas::moveTo);

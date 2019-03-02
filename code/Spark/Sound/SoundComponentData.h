@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_SoundComponentData_H
-#define traktor_spark_SoundComponentData_H
+#pragma once
 
 #include "Core/Containers/SmallMap.h"
 #include "Resource/Id.h"
@@ -52,4 +45,3 @@ private:
 	}
 }
 
-#endif	// traktor_spark_SoundComponentData_H

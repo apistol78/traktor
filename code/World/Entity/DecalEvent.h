@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_DecalEvent_H
-#define traktor_spray_DecalEvent_H
+#pragma once
 
 #include "Resource/Proxy.h"
 #include "World/IEntityEvent.h"
@@ -57,4 +50,3 @@ private:
 	}
 }
 
-#endif	// traktor_spray_DecalEvent_H

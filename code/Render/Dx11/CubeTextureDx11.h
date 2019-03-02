@@ -47,6 +47,6 @@ private:
 	int32_t m_side;
 	int32_t m_mipCount;
 };
-		
+
 	}
 }

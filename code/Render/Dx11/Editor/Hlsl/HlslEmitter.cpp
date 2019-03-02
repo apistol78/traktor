@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/Adler32.h"
@@ -168,7 +162,7 @@ bool emitConditional(HlslContext& cx, Conditional* node)
 
 	// Create output variable.
 	HlslType outputType = std::max< HlslType >(caseTrue.getType(), caseFalse.getType());
-	
+
 	HlslVariable* out = cx.emitOutput(node, L"Output", outputType);
 	f << hlsl_type_name(out->getType(), cx.inPixel()) << L" " << out->getName() << L";" << Endl;
 
@@ -216,7 +210,7 @@ bool emitConditional(HlslContext& cx, Conditional* node)
 
 	f << caseFalseBranch;
 	f << out->getName() << L" = " << caseFalse.cast(outputType) << L";" << Endl;
-	
+
 	f << DecreaseIndent;
 	f << L"}" << Endl;
 
@@ -561,7 +555,7 @@ bool emitIterate(HlslContext& cx, Iterate* node)
 	f << out->getName() << L" = " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
-	f << L"}" << Endl;	
+	f << L"}" << Endl;
 
 	return true;
 }
@@ -648,7 +642,7 @@ bool emitIterate2d(HlslContext& cx, Iterate2d* node)
 	f << out->getName() << L" = " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
-	f << L"}" << Endl;	
+	f << L"}" << Endl;
 
 	// Emit outer loop post condition.
 	if (condition)
@@ -658,7 +652,7 @@ bool emitIterate2d(HlslContext& cx, Iterate2d* node)
 	}
 
 	f << DecreaseIndent;
-	f << L"}" << Endl;	
+	f << L"}" << Endl;
 
 	return true;
 }
@@ -1091,7 +1085,7 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 		d3dWriteMask |= D3D11_COLOR_WRITE_ENABLE_RED;
 	if (rs.colorWriteMask & CwGreen)
 		d3dWriteMask |= D3D11_COLOR_WRITE_ENABLE_GREEN;
-	if (rs.colorWriteMask & CwBlue)	
+	if (rs.colorWriteMask & CwBlue)
 		d3dWriteMask |= D3D11_COLOR_WRITE_ENABLE_BLUE;
 	if (rs.colorWriteMask & CwAlpha)
 		d3dWriteMask |= D3D11_COLOR_WRITE_ENABLE_ALPHA;
@@ -1140,7 +1134,7 @@ bool emitPow(HlslContext& cx, Pow* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 	HlslVariable* exponent = cx.emitInput(node, L"Exponent");
-	
+
 	const Node* inputNode = cx.getInputNode(node, L"Input");
 	if (!inputNode)
 		return false;
@@ -1165,7 +1159,7 @@ bool emitPow(HlslContext& cx, Pow* node)
 		}
 	}
 
-	// Non-trivial base.	
+	// Non-trivial base.
 	HlslVariable* in = cx.emitInput(node, L"Input");
 	if (!exponent || !in)
 		return false;
@@ -1271,7 +1265,7 @@ bool emitRepeat(HlslContext& cx, Repeat* node)
 	f << out->getName() << L" = " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
-	f << L"}" << Endl;	
+	f << L"}" << Endl;
 
 	return true;
 }
@@ -1806,7 +1800,7 @@ bool emitSum(HlslContext& cx, Sum* node)
 	f << out->getName() << L" += " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
-	f << L"}" << Endl;	
+	f << L"}" << Endl;
 
 	return true;
 }

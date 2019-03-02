@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include <stack>
 #include "Core/Log/Log.h"
@@ -237,7 +231,7 @@ void SceneEditorContext::moveToEntityAdapter(EntityAdapter* entityAdapter)
 		return;
 
 	Scalar distance = boundingBox.getExtent().get(majorAxis3(boundingBox.getExtent())) * Scalar(3.0f);
-	
+
 	Transform T = entityAdapter->getTransform();
 
 	for (uint32_t i = 0; i < sizeof_array(m_cameras); ++i)

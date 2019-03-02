@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_MeshEntity_H
-#define traktor_mesh_MeshEntity_H
+#pragma once
 
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/IntervalTransform.h"
@@ -80,4 +73,3 @@ protected:
 	}
 }
 
-#endif	// traktor_mesh_MeshEntity_H

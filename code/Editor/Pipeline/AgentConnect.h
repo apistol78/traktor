@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_AgentConnect_H
-#define traktor_editor_AgentConnect_H
+#pragma once
 
 #include "Core/Guid.h"
 #include "Core/Serialization/ISerializable.h"
@@ -67,4 +60,3 @@ private:
 	}
 }
 
-#endif	// traktor_editor_AgentConnect_H

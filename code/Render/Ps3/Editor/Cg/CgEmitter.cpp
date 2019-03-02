@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Ps3/Editor/Cg/CgContext.h"
 #include "Render/Ps3/Editor/Cg/CgEmitter.h"
 
@@ -148,7 +142,7 @@ bool emitConditional(CgContext& cx, Conditional* node)
 
 	// Create output variable.
 	CgType outputType = std::max< CgType >(caseTrue.getType(), caseFalse.getType());
-	
+
 	CgVariable* out = cx.emitOutput(node, L"Output", outputType);
 	f << cg_type_name(out->getType()) << L" " << out->getName() << L";" << Endl;
 
@@ -196,7 +190,7 @@ bool emitConditional(CgContext& cx, Conditional* node)
 
 	f << caseFalseBranch;
 	f << out->getName() << L" = " << caseFalse.cast(outputType) << L";" << Endl;
-	
+
 	f << DecreaseIndent;
 	f << L"}" << Endl;
 
@@ -540,7 +534,7 @@ bool emitIterate(CgContext& cx, Iterate* node)
 	f << out->getName() << L" = " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
-	f << L"}" << Endl;	
+	f << L"}" << Endl;
 
 	return true;
 }
@@ -623,7 +617,7 @@ bool emitIterate2d(CgContext& cx, Iterate2d* node)
 	f << out->getName() << L" = " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
-	f << L"}" << Endl;	
+	f << L"}" << Endl;
 
 	// Emit outer loop post condition.
 	if (condition)
@@ -633,7 +627,7 @@ bool emitIterate2d(CgContext& cx, Iterate2d* node)
 	}
 
 	f << DecreaseIndent;
-	f << L"}" << Endl;	
+	f << L"}" << Endl;
 
 	return true;
 }
@@ -867,7 +861,7 @@ bool emitNormalize(CgContext& cx, Normalize* node)
 	CgVariable* in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	
+
 	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << in->getName() << L" * rsqrt(dot(" << in->getName() << L", " << in->getName() << L"));" << Endl;
 
@@ -1128,7 +1122,7 @@ bool emitRepeat(CgContext& cx, Repeat* node)
 	f << out->getName() << L" = " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
-	f << L"}" << Endl;	
+	f << L"}" << Endl;
 
 	return true;
 }
@@ -1453,7 +1447,7 @@ bool emitSum(CgContext& cx, Sum* node)
 	f << out->getName() << L" += " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
-	f << L"}" << Endl;	
+	f << L"}" << Endl;
 
 	return true;
 }

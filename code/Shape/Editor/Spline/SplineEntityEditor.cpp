@@ -81,7 +81,7 @@ void SplineEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer)
 				Color4ub(170, 170, 255, 255)
 			);
 		}
-	}	
+	}
 
 	primitiveRenderer->popDepthState();
 

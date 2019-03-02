@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
@@ -139,7 +133,7 @@ float InputDevicePs3::getControlValue(int32_t control)
 		case 0:
 			thumb = m_padData.button[6] / 128.0f - 1.0f;
 			break;
-			
+
 		case 1:
 			thumb = -(m_padData.button[7] / 128.0f - 1.0f);
 			break;

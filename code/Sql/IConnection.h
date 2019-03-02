@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sql_IConnection_H
-#define traktor_sql_IConnection_H
+#pragma once
 
 #include <string>
 #include "Core/Object.h"
@@ -79,4 +72,3 @@ public:
 	}
 }
 
-#endif	// traktor_sql_IConnection_H

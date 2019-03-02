@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Editor/SH/RayLeighPhaseFunction.h"
 
 namespace traktor
@@ -20,6 +14,6 @@ float RayLeighPhaseFunction::evaluate(float phi, float theta, const Vector4& uni
 	//return 1.0f - (a * a + 1.0f) * 3.0f / 4.0f;
 	return max(a, 0.0f);
 }
-		
+
 	}
 }

@@ -29,6 +29,6 @@ public:
 
 	virtual int32_t getDepth() const = 0;
 };
-	
+
 	}
 }

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_CompositeMeshEntity_H
-#define traktor_mesh_CompositeMeshEntity_H
+#pragma once
 
 #include <map>
 #include "Mesh/MeshEntity.h"
@@ -29,7 +22,7 @@ class T_DLLCLASS CompositeMeshEntity : public MeshEntity
 
 public:
 	CompositeMeshEntity(const Transform& transform);
-	
+
 	virtual void setTransform(const Transform& transform) override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
@@ -58,4 +51,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_CompositeMeshEntity_H

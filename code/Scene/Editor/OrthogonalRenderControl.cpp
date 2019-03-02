@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Math/Log2.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -438,7 +432,7 @@ void OrthogonalRenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 void OrthogonalRenderControl::eventMouseWheel(ui::MouseWheelEvent* event)
 {
 	int rotation = event->getRotation();
-	
+
 	float delta = m_magnification / 10.0f;
 
 	if (m_context->getEditor()->getSettings()->getProperty(L"SceneEditor.InvertMouseWheel"))
@@ -672,7 +666,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 			ui::Rect innerRect = m_renderWidget->getInnerRect();
 
 			m_primitiveRenderer->setProjection(orthoLh(-1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f));
-			
+
 			m_primitiveRenderer->pushView(Matrix44::identity());
 			m_primitiveRenderer->pushDepthState(false, false, false);
 

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Editor/SH/SHEditorPage.h"
 #include "Render/Editor/SH/SHEditorPageFactory.h"
 #include "Render/Editor/SH/SHStage.h"
@@ -37,6 +31,6 @@ Ref< editor::IEditorPage > SHEditorPageFactory::createEditorPage(editor::IEditor
 void SHEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
 }
-		
+
 	}
 }

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_AttributePrecision_H
-#define traktor_AttributePrecision_H
+#pragma once
 
 #include "Core/Serialization/Attribute.h"
 
@@ -44,4 +37,3 @@ private:
 
 }
 
-#endif	// traktor_AttributePrecision_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 
@@ -28,13 +22,13 @@ uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFla
 		}
 		memoryTypeBits = memoryTypeBits >> 1;
 	}
-	return 0; 
+	return 0;
 }
 
 bool changeImageLayout(VkDevice device, VkQueue presentQueue, VkCommandBuffer setupCmdBuffer, VkImage image, VkAccessFlags dstAccessMask, VkImageLayout newLayout)
 {
 	VkFence submitFence;
- 
+
 	VkFenceCreateInfo fenceCreateInfo = {};
 	fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	vkCreateFence(device, &fenceCreateInfo, nullptr, &submitFence);
@@ -57,17 +51,17 @@ bool changeImageLayout(VkDevice device, VkQueue presentQueue, VkCommandBuffer se
 	layoutTransitionBarrier.subresourceRange = resourceRange;
 
 	vkCmdPipelineBarrier(
-		setupCmdBuffer, 
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
+		setupCmdBuffer,
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		0,
 		0, nullptr,
-		0, nullptr, 
+		0, nullptr,
 		1, &layoutTransitionBarrier
 	);
- 
+
 	vkEndCommandBuffer(setupCmdBuffer);
- 
+
 	VkPipelineStageFlags waitStageMask[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 	VkSubmitInfo submitInfo = {};
 	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -80,7 +74,7 @@ bool changeImageLayout(VkDevice device, VkQueue presentQueue, VkCommandBuffer se
 	submitInfo.pSignalSemaphores = nullptr;
 	if (vkQueueSubmit(presentQueue, 1, &submitInfo, submitFence) != VK_SUCCESS)
 		return false;
- 
+
 	vkWaitForFences(device, 1, &submitFence, VK_TRUE, UINT64_MAX);
 	vkResetFences(device, 1, &submitFence);
 	vkResetCommandBuffer(setupCmdBuffer, 0);

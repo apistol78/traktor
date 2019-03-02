@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Application.h"
 #include "Ui/Event.h"
 #include "Ui/Itf/IEventLoop.h"
@@ -12,7 +6,7 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Event", Event, Object)
 
 Event::Event(EventSubject* sender)
@@ -42,6 +36,6 @@ bool Event::consumed() const
 {
 	return m_consumed;
 }
-	
+
 	}
 }

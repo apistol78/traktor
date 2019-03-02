@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/BspTree.h"
 #include "Core/Math/Const.h"
@@ -73,7 +67,7 @@ Ref< BspTree::BspNode > BspTree::recursiveBuild(AlignedVector< Winding3 >& polyg
 		{
 			T_ASSERT (cf == Winding3::CfSpan);
 			Winding3 f, b;
-			
+
 			polygons[i].split(p, f, b);
 			T_ASSERT (f.size() >= 3);
 			T_ASSERT (b.size() >= 3);

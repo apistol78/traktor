@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Editor/Deploy/Feature.h"
 #include "Amalgam/Editor/FeatureEditor.h"
 #include "Amalgam/Editor/FeatureEditorFactory.h"

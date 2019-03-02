@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <intrin.h>
 #include <BugSplat.h>
 #include "Amalgam/Game/App/Win32/ErrorDialog.h"
@@ -132,7 +126,7 @@ bool saveSettings(const PropertyGroup* settings, const Path& settingsFile)
 
 	bool result = xml::XmlSerializer(file).writeObject(settings);
 	file->close();
-	
+
 	return result;
 }
 
@@ -149,7 +143,7 @@ void showErrorDialog()
 			for (const auto& s : tail)
 				errorDialog.addErrorString(s);
 		}
-			
+
 		errorDialog.addErrorString(L"Please copy this information and contact");
 		errorDialog.addErrorString(L"support@doctorentertainment.com");
 
@@ -225,14 +219,14 @@ void logSystemInfo()
 	log::info << L"CPU" << Endl;
 	log::info << L"\tString \"" << trim(mbstows(CPUString)) << L"\""  << Endl;
 
-	if  (nIds >= 1) 
+	if  (nIds >= 1)
 	{
 		__cpuid(cpuInfo, 1);
 		log::info << L"\tFamily " << ((cpuInfo[0] >> 8)  & 0xf) << Endl;
 		log::info << L"\tModel " << ((cpuInfo[0] >> 4) & 0xf) << Endl;
 		log::info << L"\tStepping " << (cpuInfo[0] & 0xf) << Endl;
 	}
-	if  (nIds >= 4) 
+	if  (nIds >= 4)
 	{
 		// Get number of cores
 		__cpuidex(cpuInfo, 0x4, 0);
@@ -277,7 +271,7 @@ void logSystemInfo()
 	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
 	GetVersionEx((OSVERSIONINFO *) &osvi);
 	log::info << L"Operating System" << Endl;
-	if (osvi.wProductType == VER_NT_WORKSTATION) 
+	if (osvi.wProductType == VER_NT_WORKSTATION)
 	{
 		if (osvi.dwMajorVersion == 10 && osvi.dwMinorVersion == 0)
 			log::info << L"\tWindows 10";
@@ -299,7 +293,7 @@ void logSystemInfo()
 		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1)
 			log::info << L"\tWindows Server 2008 R2";
 		else if (osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0)
-			log::info << L"\tWindows Server 2008";		
+			log::info << L"\tWindows Server 2008";
 	}
 
 	bool is64bit = false;
@@ -308,7 +302,7 @@ void logSystemInfo()
 
 	if (osvi.szCSDVersion)
 		log::info << L" " << osvi.szCSDVersion << Endl;
-	else 
+	else
 		log::info << Endl;
 	log::info << L"\tOS version " << uint32_t(osvi.dwMajorVersion) << L"." << uint32_t(osvi.dwMinorVersion) << L"." << uint32_t(osvi.dwBuildNumber) << Endl;
 	log::info << L"\tSP version " << uint32_t(osvi.wServicePackMajor) << L"." << uint32_t(osvi.wServicePackMinor) << Endl;
@@ -316,7 +310,7 @@ void logSystemInfo()
 
 void logDriverVersion()
 {
-	typedef enum nvmlReturn_enum 
+	typedef enum nvmlReturn_enum
 	{
 		NVML_SUCCESS = 0,                   //!< The operation was successful
 		NVML_ERROR_UNINITIALIZED = 1,       //!< NVML was not first initialized with nvmlInit()
@@ -347,7 +341,7 @@ void logDriverVersion()
 		return;
 
     fn += L"\\Nvidia Corporation\\nvsmi\\nvml.dll";
- 
+
 	HMODULE hNVML = LoadLibrary(fn.c_str());
 	if (hNVML == NULL || hNVML == INVALID_HANDLE_VALUE)
 		return;
@@ -389,7 +383,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 {
 	// BugSplat crash reporting.
     g_sender = new MiniDmpSender(L"doctorentertainment_01", L"gearup", L"1.0.1", NULL, MDSF_LOGFILE);
-	g_sender->setCallback(miniDmpExceptionCallback); 
+	g_sender->setCallback(miniDmpExceptionCallback);
 
 	// Our code begin here.
 	std::vector< std::wstring > argv;
@@ -538,7 +532,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 			// the main executable.
 			userSettingsPath = settingsPath.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
 			userSettings = loadSettings(userSettingsPath);
-	
+
 			// Try to load user settings from user's application data path; sometimes it's not possible
 			// to store user settings alongside executable due to restrictive privileges.
 			if (!userSettings)

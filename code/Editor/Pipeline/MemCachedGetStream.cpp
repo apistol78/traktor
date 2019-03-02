@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <sstream>
 #include "Editor/Pipeline/MemCachedGetStream.h"
@@ -38,7 +32,7 @@ bool MemCachedGetStream::requestEndBlock()
 	std::string reply;
 
 	ss << "get " << m_key << ":END";
-	
+
 	command = ss.str();
 	T_DEBUG(mbstows(command));
 
@@ -87,13 +81,13 @@ bool MemCachedGetStream::requestEndBlock()
 				log::error << L"Unable to request cache block; unable to receive data" << Endl;
 				return false;
 			}
-			
+
 			if (endData != 0xfe)
 			{
 				log::error << L"Unable to request cache block; invalid end block" << Endl;
 				return false;
 			}
-			
+
 			gotEndBlock = true;
 		}
 		else
@@ -103,7 +97,7 @@ bool MemCachedGetStream::requestEndBlock()
 			break;
 		}
 	}
-	
+
 	return gotEndBlock;
 }
 
@@ -116,7 +110,7 @@ bool MemCachedGetStream::requestNextBlock()
 	std::string reply;
 
 	ss << "get " << m_key << ":" << m_index;
-	
+
 	command = ss.str();
 	T_DEBUG(mbstows(command));
 

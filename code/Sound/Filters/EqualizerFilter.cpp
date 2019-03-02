@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
@@ -60,7 +54,7 @@ void EqualizerFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) con
 		for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
 		{
 			float filtered = samples[j] + 2 * efi->m_historySamples[i][0] + efi->m_historySamples[i][1] - (1.0f / 4.0f) * efi->m_historyFiltered[i][0] + (3.0f / 8.0f) * efi->m_historyFiltered[i][1];
-			
+
 			efi->m_historySamples[i][1] = efi->m_historySamples[i][0];
 			efi->m_historySamples[i][0] = samples[j];
 

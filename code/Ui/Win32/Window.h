@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Window_H
-#define traktor_ui_Window_H
+#pragma once
 
 #define _WIN32_LEAN_AND_MEAN
 #ifndef _WIN32_WINNT
@@ -132,4 +125,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_Window_H

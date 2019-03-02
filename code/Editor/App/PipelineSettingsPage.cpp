@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Editor/App/PipelineSettingsPage.h"
 #include "Ui/Container.h"
 #include "Ui/CheckBox.h"
@@ -74,10 +68,10 @@ bool PipelineSettingsPage::create(ui::Container* parent, const PropertyGroup* or
 	m_checkMemCachedWrite->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_CACHE_WRITE"));
 	m_checkMemCachedWrite->setChecked(settings->getProperty< bool >(L"Pipeline.MemCached.Write", true));
 	m_checkMemCachedWrite->setEnable(memCachedEnable);
-	
+
 	// File cache
 	bool fileCacheEnable = settings->getProperty< bool >(L"Pipeline.FileCache", false);
-	
+
 	m_checkUseFileCache = new ui::CheckBox();
 	m_checkUseFileCache->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_ENABLE_FILE_CACHE"));
 	m_checkUseFileCache->setChecked(fileCacheEnable);
@@ -132,7 +126,7 @@ void PipelineSettingsPage::eventUseCacheClick(ui::ButtonClickEvent* event)
 	m_editMemCachedPort->setEnable(memCachedEnable);
 	m_checkMemCachedRead->setEnable(memCachedEnable);
 	m_checkMemCachedWrite->setEnable(memCachedEnable);
-	
+
 	bool fileCacheEnable = m_checkUseFileCache->isChecked();
 	m_editFileCachePath->setEnable(fileCacheEnable);
 	m_checkFileCacheRead->setEnable(fileCacheEnable);

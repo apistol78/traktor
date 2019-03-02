@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <limits>
 #include "Core/RefArray.h"
@@ -667,7 +661,7 @@ void TerrainEditModifier::apply(
 		if (m_colorMap->lock(0, cl))
 		{
 			m_colorImageLowPrecision->copy(m_colorImage, mnx, mnz, mnx, mnz, mxx - mnx, mxz - mnz);
-			
+
 			const uint8_t* src = static_cast< const uint8_t* >(m_colorImageLowPrecision->getData());
 			uint8_t* dst = static_cast< uint8_t* >(cl.bits);
 

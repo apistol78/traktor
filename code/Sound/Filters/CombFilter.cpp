@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Serialization/ISerializer.h"
@@ -69,7 +63,7 @@ void CombFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 		{
 			cfi->m_last[j] = cfi->m_history[j][cfi->m_index[j]] * (1.0f - m_damp) + cfi->m_last[j] * m_damp;
 			cfi->m_history[j][cfi->m_index[j]] = outBlock.samples[j][i] + cfi->m_last[j] * m_feedback;
-			
+
 			if (++cfi->m_index[j] >= cfi->m_history[j].size())
 				cfi->m_index[j] = 0;
 

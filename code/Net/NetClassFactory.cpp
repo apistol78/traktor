@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -280,7 +274,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.NetClassFactory", 0, NetClassFactor
 
 void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< Socket > > classSocket = new AutoRuntimeClass< Socket >();
+	auto classSocket = new AutoRuntimeClass< Socket >();
 	classSocket->addMethod("close", &Socket::close);
 	classSocket->addMethod("select", &Socket::select);
 	//classSocket->addMethod("send", &Socket::send);
@@ -289,7 +283,7 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	//classSocket->addMethod("recv", &Socket::recv);
 	registrar->registerClass(classSocket);
 
-	Ref< AutoRuntimeClass< IcmpSocket > > classIcmpSocket = new AutoRuntimeClass< IcmpSocket >();
+	auto classIcmpSocket = new AutoRuntimeClass< IcmpSocket >();
 	classIcmpSocket->addConstructor();
 	//classIcmpSocket->addMethod("bind", &IcmpSocket::bind);
 	//classIcmpSocket->addMethod("bind", &IcmpSocket::bind);
@@ -299,7 +293,7 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	//classIcmpSocket->addMethod("recvFrom", &IcmpSocket::recv);
 	registrar->registerClass(classIcmpSocket);
 
-	Ref< AutoRuntimeClass< TcpSocket > > classTcpSocket = new AutoRuntimeClass< TcpSocket >();
+	auto classTcpSocket = new AutoRuntimeClass< TcpSocket >();
 	classTcpSocket->addConstructor();
 	classTcpSocket->addProperty("localAddress", &TcpSocket::getLocalAddress);
 	classTcpSocket->addProperty("remoteAddress", &TcpSocket::getRemoteAddress);
@@ -312,7 +306,7 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classTcpSocket->addMethod("setNoDelay", &TcpSocket::setNoDelay);
 	registrar->registerClass(classTcpSocket);
 
-	Ref< AutoRuntimeClass< UdpSocket > > classUdpSocket = new AutoRuntimeClass< UdpSocket >();
+	auto classUdpSocket = new AutoRuntimeClass< UdpSocket >();
 	classUdpSocket->addConstructor();
 	//classUdpSocket->addMethod("bind", &UdpSocket::bind);
 	//classUdpSocket->addMethod("bind", &UdpSocket::bind);
@@ -322,21 +316,21 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	//classUdpSocket->addMethod("recvFrom", &UdpSocket::recv);
 	registrar->registerClass(classUdpSocket);
 
-	Ref< AutoRuntimeClass< MulticastUdpSocket > > classMulticastUdpSocket = new AutoRuntimeClass< MulticastUdpSocket >();
+	auto classMulticastUdpSocket = new AutoRuntimeClass< MulticastUdpSocket >();
 	registrar->registerClass(classMulticastUdpSocket);
 
-	Ref< AutoRuntimeClass< SocketAddress > > classSocketAddress = new AutoRuntimeClass< SocketAddress >();
+	auto classSocketAddress = new AutoRuntimeClass< SocketAddress >();
 	registrar->registerClass(classSocketAddress);
 
-	Ref< AutoRuntimeClass< SocketAddressIPv4 > > classSocketAddressIPv4 = new AutoRuntimeClass< SocketAddressIPv4 >();
+	auto classSocketAddressIPv4 = new AutoRuntimeClass< SocketAddressIPv4 >();
 	classSocketAddressIPv4->addConstructor< uint16_t >();
 	classSocketAddressIPv4->addConstructor< const std::wstring&, uint16_t >();
 	registrar->registerClass(classSocketAddressIPv4);
 
-	Ref< AutoRuntimeClass< SocketAddressIPv6 > > classSocketAddressIPv6 = new AutoRuntimeClass< SocketAddressIPv6 >();
+	auto classSocketAddressIPv6 = new AutoRuntimeClass< SocketAddressIPv6 >();
 	registrar->registerClass(classSocketAddressIPv6);
 
-	Ref< AutoRuntimeClass< SocketSet > > classSocketSet = new AutoRuntimeClass< SocketSet >();
+	auto classSocketSet = new AutoRuntimeClass< SocketSet >();
 	classSocketSet->addMethod("add", &SocketSet::add);
 	classSocketSet->addMethod("remove", &SocketSet::remove);
 	classSocketSet->addMethod("count", &SocketSet::count);
@@ -344,7 +338,7 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSocketSet->addMethod("contain", &SocketSet::contain);
 	registrar->registerClass(classSocketSet);
 
-	Ref< AutoRuntimeClass< Url > > classUrl = new AutoRuntimeClass< Url >();
+	auto classUrl = new AutoRuntimeClass< Url >();
 	classUrl->addConstructor();
 	classUrl->addConstructor< const std::wstring& >();
 	classUrl->addProperty("valid", &Url::valid);
@@ -364,27 +358,27 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	//classUrl->addStaticMethod("decode", &Url::decode);
 	registrar->registerClass(classUrl);
 
-	Ref< AutoRuntimeClass< UrlConnection > > classUrlConnection = new AutoRuntimeClass< UrlConnection >();
+	auto classUrlConnection = new AutoRuntimeClass< UrlConnection >();
 	classUrlConnection->addStaticMethod("open", &UrlConnection::open);
 	classUrlConnection->addProperty("url", &UrlConnection::getUrl);
 	classUrlConnection->addProperty("stream", &UrlConnection::getStream);
 	registrar->registerClass(classUrlConnection);
 
-	Ref< AutoRuntimeClass< IHttpRequestContent > > classIHttpRequestContent = new AutoRuntimeClass< IHttpRequestContent >();
+	auto classIHttpRequestContent = new AutoRuntimeClass< IHttpRequestContent >();
 	classIHttpRequestContent->addProperty("urlEncodedContent", &IHttpRequestContent::getUrlEncodedContent);
 	registrar->registerClass(classIHttpRequestContent);
 
-	Ref< AutoRuntimeClass< HttpRequestContent > > classHttpRequestContent = new AutoRuntimeClass< HttpRequestContent >();
+	auto classHttpRequestContent = new AutoRuntimeClass< HttpRequestContent >();
 	classHttpRequestContent->addConstructor();
 	classHttpRequestContent->addConstructor< const std::wstring& >();
 	registrar->registerClass(classHttpRequestContent);
 
-	Ref< AutoRuntimeClass< HttpRequestParameters > > classHttpRequestParameters = new AutoRuntimeClass< HttpRequestParameters >();
+	auto classHttpRequestParameters = new AutoRuntimeClass< HttpRequestParameters >();
 	classHttpRequestParameters->addConstructor();
 	classHttpRequestParameters->addMethod("set", &HttpRequestParameters::set);
 	registrar->registerClass(classHttpRequestParameters);
 
-	Ref< AutoRuntimeClass< HttpClient > > classHttpClient = new AutoRuntimeClass< HttpClient >();
+	auto classHttpClient = new AutoRuntimeClass< HttpClient >();
 	classHttpClient->addConstructor();
 	classHttpClient->addMethod("get", &net_HttpClient_get_2);
 	classHttpClient->addMethod("get", &net_HttpClient_get_3);
@@ -394,12 +388,12 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classHttpClient->addMethod("post", &net_HttpClient_post_3);
 	registrar->registerClass(classHttpClient);
 
-	Ref< AutoRuntimeClass< HttpClientResult > > classHttpClientResult = new AutoRuntimeClass< HttpClientResult >();
+	auto classHttpClientResult = new AutoRuntimeClass< HttpClientResult >();
 	classHttpClientResult->addProperty("response", &HttpClientResult::getResponse);
 	classHttpClientResult->addProperty("stream", &HttpClientResult::getStream);
 	registrar->registerClass(classHttpClientResult);
 
-	Ref< AutoRuntimeClass< HttpResponse > > classHttpResponse = new AutoRuntimeClass< HttpResponse >();
+	auto classHttpResponse = new AutoRuntimeClass< HttpResponse >();
 	classHttpResponse->addConstructor();
 	classHttpResponse->addProperty("statusCode", &HttpResponse::getStatusCode);
 	classHttpResponse->addProperty("statusMessage", &HttpResponse::getStatusMessage);
@@ -408,7 +402,7 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classHttpResponse->addMethod("get", &HttpResponse::get);
 	registrar->registerClass(classHttpResponse);
 
-	Ref< AutoRuntimeClass< HttpRequest > > classHttpRequest = new AutoRuntimeClass< HttpRequest >();
+	auto classHttpRequest = new AutoRuntimeClass< HttpRequest >();
 	classHttpRequest->addProperty("method", &net_HttpRequest_getMethod);
 	classHttpRequest->addProperty("resource", &HttpRequest::getResource);
 	classHttpRequest->addMethod("hasValue", &HttpRequest::hasValue);
@@ -420,7 +414,7 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	Ref< AutoRuntimeClass< HttpServer::IRequestListener > > classHttpServer_IRequestListener = new AutoRuntimeClass< HttpServer::IRequestListener >();
 	registrar->registerClass(classHttpServer_IRequestListener);
 
-	Ref< AutoRuntimeClass< HttpServer > > classHttpServer = new AutoRuntimeClass< HttpServer >();
+	auto classHttpServer = new AutoRuntimeClass< HttpServer >();
 	classHttpServer->addConstructor();
 	classHttpServer->addMethod("create", &net_HttpServer_create);
 	classHttpServer->addMethod("destroy", &HttpServer::destroy);
@@ -428,32 +422,32 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classHttpServer->addMethod("update", &HttpServer::update);
 	registrar->registerClass(classHttpServer);
 
-	Ref< AutoRuntimeClass< State > > classState = new AutoRuntimeClass< State >();
+	auto classState = new AutoRuntimeClass< State >();
 	registrar->registerClass(classState);
 
-	Ref< AutoRuntimeClass< StateTemplate > > classStateTemplate = new AutoRuntimeClass< StateTemplate >();
+	auto classStateTemplate = new AutoRuntimeClass< StateTemplate >();
 	classStateTemplate->addMethod("extrapolate", &StateTemplate::extrapolate);
 	registrar->registerClass(classStateTemplate);
 
-	Ref< AutoRuntimeClass< INetworkTopology > > classINetworkTopology = new AutoRuntimeClass< INetworkTopology >();
+	auto classINetworkTopology = new AutoRuntimeClass< INetworkTopology >();
 	registrar->registerClass(classINetworkTopology);
 
-	Ref< AutoRuntimeClass< IPeer2PeerProvider > > classIPeer2PeerProvider = new AutoRuntimeClass< IPeer2PeerProvider >();
+	auto classIPeer2PeerProvider = new AutoRuntimeClass< IPeer2PeerProvider >();
 	registrar->registerClass(classIPeer2PeerProvider);
 
-	Ref< AutoRuntimeClass< MeasureP2PProvider > > classMeasureP2PProvider = new AutoRuntimeClass< MeasureP2PProvider >();
+	auto classMeasureP2PProvider = new AutoRuntimeClass< MeasureP2PProvider >();
 	classMeasureP2PProvider->addConstructor< IPeer2PeerProvider* >();
 	classMeasureP2PProvider->addMethod("getSendBitsPerSecond", &MeasureP2PProvider::getSendBitsPerSecond);
 	classMeasureP2PProvider->addMethod("getRecvBitsPerSecond", &MeasureP2PProvider::getRecvBitsPerSecond);
 	registrar->registerClass(classMeasureP2PProvider);
 
-	Ref< AutoRuntimeClass< Peer2PeerTopology > > classPeer2PeerTopology = new AutoRuntimeClass< Peer2PeerTopology >();
+	auto classPeer2PeerTopology = new AutoRuntimeClass< Peer2PeerTopology >();
 	classPeer2PeerTopology->addConstructor< IPeer2PeerProvider* >();
 	classPeer2PeerTopology->addMethod("setIAmInterval", &Peer2PeerTopology::setIAmInterval);
 	classPeer2PeerTopology->addMethod("setPropagateCMaskInterval", &Peer2PeerTopology::setPropagateCMaskInterval);
 	registrar->registerClass(classPeer2PeerTopology);
 
-	Ref< AutoRuntimeClass< ReplicatorProxy > > classReplicatorProxy = new AutoRuntimeClass< ReplicatorProxy >();
+	auto classReplicatorProxy = new AutoRuntimeClass< ReplicatorProxy >();
 	classReplicatorProxy->addMethod("getHandle", &ReplicatorProxy::getHandle);
 	classReplicatorProxy->addMethod("getName", &ReplicatorProxy::getName);
 	classReplicatorProxy->addMethod("getUser", &ReplicatorProxy::getUser);
@@ -482,13 +476,13 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classReplicatorProxy->addMethod("sendEvent", &ReplicatorProxy::sendEvent);
 	registrar->registerClass(classReplicatorProxy);
 
-	Ref< AutoRuntimeClass< IReplicatorStateListener > > classIReplicatorStateListener = new AutoRuntimeClass< IReplicatorStateListener >();
+	auto classIReplicatorStateListener = new AutoRuntimeClass< IReplicatorStateListener >();
 	registrar->registerClass(classIReplicatorStateListener);
 
-	Ref< AutoRuntimeClass< IReplicatorEventListener > > classIReplicatorEventListener = new AutoRuntimeClass< IReplicatorEventListener >();
+	auto classIReplicatorEventListener = new AutoRuntimeClass< IReplicatorEventListener >();
 	registrar->registerClass(classIReplicatorEventListener);
 
-	Ref< AutoRuntimeClass< ReplicatorConfiguration > > classReplicatorConfiguration = new AutoRuntimeClass< ReplicatorConfiguration >();
+	auto classReplicatorConfiguration = new AutoRuntimeClass< ReplicatorConfiguration >();
 	classReplicatorConfiguration->addConstructor();
 	classReplicatorConfiguration->addMethod("setTimeVarianceThreshold", &ReplicatorConfiguration::setTimeVarianceThreshold);
 	classReplicatorConfiguration->addMethod("getTimeVarianceThreshold", &ReplicatorConfiguration::getTimeVarianceThreshold);
@@ -506,15 +500,15 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classReplicatorConfiguration->addMethod("getTimeUntilTxPing", &ReplicatorConfiguration::getTimeUntilTxPing);
 	registrar->registerClass(classReplicatorConfiguration);
 
-	Ref< AutoRuntimeClass< ReplicatorListener > > classReplicatorListener = new AutoRuntimeClass< ReplicatorListener >();
+	auto classReplicatorListener = new AutoRuntimeClass< ReplicatorListener >();
 	classReplicatorListener->addConstructor< IRuntimeDelegate* >();
 	registrar->registerClass(classReplicatorListener);
 
-	Ref< AutoRuntimeClass< ReplicatorEventListener > > classReplicatorEventListener = new AutoRuntimeClass< ReplicatorEventListener >();
+	auto classReplicatorEventListener = new AutoRuntimeClass< ReplicatorEventListener >();
 	classReplicatorEventListener->addConstructor< IRuntimeDelegate* >();
 	registrar->registerClass(classReplicatorEventListener);
 
-	Ref< AutoRuntimeClass< Replicator > > classReplicator = new AutoRuntimeClass< Replicator >();
+	auto classReplicator = new AutoRuntimeClass< Replicator >();
 	classReplicator->addConstructor();
 	classReplicator->addMethod("create", &net_Replicator_create);
 	classReplicator->addMethod("destroy", &Replicator::destroy);

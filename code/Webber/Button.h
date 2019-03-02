@@ -1,5 +1,4 @@
-#ifndef traktor_wbr_Button_H
-#define traktor_wbr_Button_H
+#pragma once
 
 #include "Webber/Event.h"
 #include "Webber/Widget.h"
@@ -34,8 +33,7 @@ private:
 	std::wstring m_text;
 	Event m_clicked;
 };
-		
+
 	}
 }
 
-#endif	// traktor_wbr_Button_H

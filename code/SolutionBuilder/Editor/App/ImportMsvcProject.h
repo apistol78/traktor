@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef ImportMsvcProject_H
-#define ImportMsvcProject_H
+#pragma once
 
 #include "CustomTool.h"
 
@@ -27,4 +20,3 @@ public:
 	}
 }
 
-#endif	// ImportMsvcProject_H

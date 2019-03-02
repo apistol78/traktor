@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <limits>
 #include "Core/Math/Const.h"
@@ -34,11 +28,11 @@ enum LineBreak
 // http://xml.ascc.net/en/utf-8/faq/zhl10n-faq-xsl.html#lb
 int32_t isBreakableUnicode(wchar_t c)
 {
-	bool breakable = false; 
+	bool breakable = false;
 
 	// Break after any punctuation or spaces characters...
 	if (c >= 0x2000)
-	{ 
+	{
 		if (
 			((c >= 0x2000) && (c <= 0x2006)) ||
 			((c >= 0x2008) && (c <= 0x2010)) ||
@@ -62,49 +56,49 @@ int32_t isBreakableUnicode(wchar_t c)
 			((c >= 0xFF3B) && (c <= 0xFF3D)) ||
 			((c >= 0xFF61) && (c <= 0xFF65))
 		)
-		{ 
-			breakable = true; 
-		} 
+		{
+			breakable = true;
+		}
 		else
 		{
 			switch (c)
 			{
-			case 0xFE63: case 0xFE68: case 0x3030: 
-			case 0x30FB: case 0xFF3F: case 0xFF5B: 
-			case 0xFF5D: 
-				breakable=true; 
-			} 
+			case 0xFE63: case 0xFE68: case 0x3030:
+			case 0x30FB: case 0xFF3F: case 0xFF5B:
+			case 0xFF5D:
+				breakable=true;
+			}
 		}
 
 		// ...but break before a left punctuation.
 		if (breakable == true)
-		{ 
+		{
 			if (
 				((c >= 0x201A) && ( c <= 0x201C )) ||
 				((c >= 0x201E) && ( c <= 0x201F ))
 			)
-			{ 
-					return BreakBefore; 
-			} 
+			{
+					return BreakBefore;
+			}
 			else
 			{
 				switch (c)
-				{ 
-				case 0x2018: case 0x2039: case 0x2045: 
-				case 0x207D: case 0x208D: case 0x2329: 
-				case 0x3008: case 0x300A: case 0x300C: 
-				case 0x300E: case 0x3010: case 0x3014: 
-				case 0x3016: case 0x3018: case 0x301A: 
-				case 0x301D: case 0xFD3E: case 0xFE35: 
-				case 0xFE37: case 0xFE39: case 0xFE3B: 
-				case 0xFE3D: case 0xFE3F: case 0xFE41: 
-				case 0xFE43: case 0xFE59: case 0xFE5B: 
-				case 0xFE5D: case 0xFF08: case 0xFF3B: 
-				case 0xFF5B: case 0xFF62: 
-					return BreakBefore; 
+				{
+				case 0x2018: case 0x2039: case 0x2045:
+				case 0x207D: case 0x208D: case 0x2329:
+				case 0x3008: case 0x300A: case 0x300C:
+				case 0x300E: case 0x3010: case 0x3014:
+				case 0x3016: case 0x3018: case 0x301A:
+				case 0x301D: case 0xFD3E: case 0xFE35:
+				case 0xFE37: case 0xFE39: case 0xFE3B:
+				case 0xFE3D: case 0xFE3F: case 0xFE41:
+				case 0xFE43: case 0xFE59: case 0xFE5B:
+				case 0xFE5D: case 0xFF08: case 0xFF3B:
+				case 0xFF5B: case 0xFF62:
+					return BreakBefore;
 				}
 			}
-		} 
+		}
 		if (breakable == true)
 			return BreakAfter;
 		else

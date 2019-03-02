@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <functional>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -85,7 +79,7 @@ bool GraphPipeline::buildOutput(
 	float range = 0.0f;
 
 	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(graphAsset->getCategory());
-	
+
 	if (category)
 		configurationId = category->getConfigurationId();
 

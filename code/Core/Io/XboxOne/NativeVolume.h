@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_NativeVolume_H
-#define traktor_NativeVolume_H
+#pragma once
 
 #include "Core/Io/IVolume.h"
 
@@ -19,9 +12,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
-	
+
 class FileSystem;
-	
+
 /*! \brief Native Win32 file volume.
  * \ingroup Core
  */
@@ -31,7 +24,7 @@ class T_DLLCLASS NativeVolume : public IVolume
 
 public:
 	NativeVolume(const Path& currentDirectory);
-	
+
 	virtual std::wstring getDescription() const;
 
 	virtual Ref< File > get(const Path& path);
@@ -39,17 +32,17 @@ public:
 	virtual int find(const Path& mask, RefArray< File >& out);
 
 	virtual bool modify(const Path& fileName, uint32_t flags);
-	
+
 	virtual Ref< IStream > open(const Path& fileName, uint32_t mode);
-	
+
 	virtual bool exist(const Path& fileName);
-	
+
 	virtual bool remove(const Path& fileName);
 
 	virtual bool move(const Path& fileName, const std::wstring& newName, bool overwrite);
 
 	virtual bool copy(const Path& fileName, const std::wstring& newName, bool overwrite);
-	
+
 	virtual bool makeDirectory(const Path& directory);
 
 	virtual bool removeDirectory(const Path& directory);
@@ -57,15 +50,14 @@ public:
 	virtual bool renameDirectory(const Path& directory, const std::wstring& newName);
 
 	virtual bool setCurrentDirectory(const Path& directory);
-	
+
 	virtual Path getCurrentDirectory() const;
-	
+
 	static void mountVolumes(FileSystem& fileSystem);
-	
+
 private:
 	Path m_currentDirectory;
 };
-	
+
 }
 
-#endif	// traktor_NativeVolume_H

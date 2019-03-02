@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputStateData_H
-#define traktor_input_InputStateData_H
+#pragma once
 
 #include "Core/Serialization/ISerializable.h"
 
@@ -30,10 +23,10 @@ class IInputNode;
 class T_DLLCLASS InputStateData : public ISerializable
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	InputStateData();
-	
+
 	InputStateData(IInputNode* source);
 
 	void setSource(IInputNode* source);
@@ -41,12 +34,11 @@ public:
 	const IInputNode* getSource() const;
 
 	virtual void serialize(ISerializer& s) override final;
-	
+
 private:
 	Ref< IInputNode > m_source;
 };
-	
+
 	}
 }
 
-#endif	// traktor_input_InputStateData_H

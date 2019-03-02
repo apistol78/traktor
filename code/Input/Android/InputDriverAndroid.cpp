@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <android/looper.h>
 #include <android_native_app_glue.h>
 #include "Core/Log/Log.h"
@@ -71,7 +65,7 @@ bool InputDriverAndroid::create(const SystemApplication& sysapp, const SystemWin
 		ASensorList sensorList = nullptr;
 		int32_t sensorCount = ASensorManager_getSensorList(sensorManager, &sensorList);
 		log::info << L"Found " << sensorCount << L" supported sensors." << Endl;
-		
+
 		m_sensorQueue = ASensorManager_createEventQueue(
 			sensorManager,
 			m_instance->getApplication()->looper,

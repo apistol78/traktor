@@ -62,7 +62,7 @@ namespace traktor
 	{
 		namespace
 		{
-	
+
 const resource::Id< render::ITexture > c_textureDebug(Guid(L"{0163BEDD-9297-A64F-AAD5-360E27E37C6E}"));
 
 void updateSkeletonTree(Model* model, ui::TreeView* treeView, ui::TreeViewItem* parentItem, uint32_t parentNodeIndex)
@@ -146,7 +146,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	toolBar->addItem(m_toolUV);
 
 	m_toolChannel = new ui::ToolBarDropDown(ui::Command(L"ModelTool.Channel"), ui::dpi96(100), L"Channels");
-	toolBar->addItem(m_toolChannel);	
+	toolBar->addItem(m_toolChannel);
 
 	m_toolWeight = new ui::ToolBarButton(L"Weights", ui::Command(L"ModelTool.ToggleWeights"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolWeight);
@@ -207,7 +207,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_skeletonTree = new ui::TreeView();
 	m_skeletonTree->create(tabPageSkeleton, ui::WsDoubleBuffer);
 	m_skeletonTree->addImage(new ui::StyleBitmap(L"Animation.Bones"), 2);
-	
+
 	// Statistic tab.
 	Ref< ui::TabPage > tabPageStatistics = new ui::TabPage();
 	tabPageStatistics->create(tab, L"Statistics", new ui::FloodLayout());
@@ -637,9 +637,8 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 
 		Aabb3 boundingBox = m_model->getBoundingBox();
 		Vector4 extent = boundingBox.getExtent();
-		float maxExtent = extent[majorAxis3(extent)];
-		
-		m_normalScale = maxExtent / 10.0f;
+		float minExtent = extent[minorAxis3(extent)];
+		m_normalScale = minExtent / 10.0f;
 
 		const AlignedVector< Material >& materials = m_model->getMaterials();
 		for (AlignedVector< Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
@@ -816,7 +815,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 
 			RefArray< ui::TreeViewItem > selectedItems;
 			m_skeletonTree->getItems(selectedItems, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly);
-			
+
 			int32_t weightJoint = -1;
 			if (selectedItems.size() == 1)
 				weightJoint = *selectedItems.front()->getData< PropertyInteger >(L"JOINT");
@@ -1010,7 +1009,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 								Tchild.translation(),
 								2.0f,
 								colorRest
-							);						
+							);
 						}
 					}
 					else
@@ -1050,7 +1049,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 									TchildPose.translation(),
 									2.0f,
 									colorPose
-								);						
+								);
 							}
 						}
 						else
@@ -1062,7 +1061,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 					}
 				}
 
-				m_primitiveRenderer->popDepthState();			
+				m_primitiveRenderer->popDepthState();
 			}
 
 			if (m_toolUV->isToggled())

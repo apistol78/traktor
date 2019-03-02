@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/ImageProcess/ImageProcessSettings.h"
 #include "Render/Editor/ImageProcess/ImageProcessEditor.h"
 #include "Render/Editor/ImageProcess/ImageProcessEditorFactory.h"

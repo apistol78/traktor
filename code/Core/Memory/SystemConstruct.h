@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_SystemConstruct_H
-#define traktor_SystemConstruct_H
+#pragma once
 
 #include "Core/Memory/Alloc.h"
 
@@ -45,4 +38,3 @@ void freeDestruct(T* t)
 
 }
 
-#endif	// traktor_SystemConstruct_H

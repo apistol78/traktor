@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/Menu.h"
@@ -164,7 +158,7 @@ void ToolBarDropDown::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEv
 	Menu menu;
 	for (uint32_t i = 0; i < uint32_t(m_items.size()); ++i)
 		menu.add(new MenuItem(Command(i), m_items[i]));
-		
+
 	const MenuItem* selectedItem = menu.showModal(toolBar, m_menuPosition, m_menuWidth);
 	if (selectedItem != nullptr)
 	{

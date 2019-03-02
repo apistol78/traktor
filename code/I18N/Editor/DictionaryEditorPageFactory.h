@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_i18n_DictionaryEditorPageFactory_H
-#define traktor_i18n_DictionaryEditorPageFactory_H
+#pragma once
 
 #include "Editor/IEditorPageFactory.h"
 
@@ -39,4 +32,3 @@ public:
 	}
 }
 
-#endif	// traktor_i18n_DictionaryEditorPageFactory_H

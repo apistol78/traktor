@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/CoreClassFactory.h"
@@ -121,7 +115,7 @@ RefArray< Path > File_getSystemFiles(sb::File* file, const std::wstring& sourceP
 {
 	std::set< Path > systemFiles;
 	file->getSystemFiles(sourcePath, systemFiles);
-		
+
 	RefArray< Path > systemFilesOut;
 	for (std::set< Path >::const_iterator i = systemFiles.begin(); i != systemFiles.end(); ++i)
 		systemFilesOut.push_back(new Path(*i));
@@ -159,20 +153,20 @@ bool ScriptProcessor::create()
 	BoxesClassFactory().createClasses(m_scriptManager);
 	CoreClassFactory().createClasses(m_scriptManager);
 
-	Ref< AutoRuntimeClass< Output > > classOutput = new AutoRuntimeClass< Output >();
+	auto classOutput = new AutoRuntimeClass< Output >();
 	classOutput->addMethod("print", &Output::print);
 	classOutput->addMethod("printLn", &Output::printLn);
 	classOutput->addMethod("printSection", &Output::printSection);
 	m_scriptManager->registerClass(classOutput);
 
-	Ref< AutoRuntimeClass< Solution > > classSolution = new AutoRuntimeClass< Solution >();
+	auto classSolution = new AutoRuntimeClass< Solution >();
 	classSolution->addMethod("getName", &Solution::getName);
 	classSolution->addMethod("getRootPath", &Solution::getRootPath);
 	classSolution->addMethod("getAggregateOutputPath", &Solution::getAggregateOutputPath);
 	classSolution->addMethod("getProjects", &Solution::getProjects);
 	m_scriptManager->registerClass(classSolution);
 
-	Ref< AutoRuntimeClass< Project > > classProject = new AutoRuntimeClass< Project >();
+	auto classProject = new AutoRuntimeClass< Project >();
 	classProject->addMethod("getEnable", &Project::getEnable);
 	classProject->addMethod("getName", &Project::getName);
 	classProject->addMethod("getSourcePath", &Project::getSourcePath);
@@ -182,7 +176,7 @@ bool ScriptProcessor::create()
 	classProject->addMethod("getDependencies", &Project::getDependencies);
 	m_scriptManager->registerClass(classProject);
 
-	Ref< AutoRuntimeClass< Configuration > > classConfiguration = new AutoRuntimeClass< Configuration >();
+	auto classConfiguration = new AutoRuntimeClass< Configuration >();
 	classConfiguration->addMethod("getName", &Configuration::getName);
 	classConfiguration->addMethod("getTargetFormat", &Configuration_getTargetFormat);
 	classConfiguration->addMethod("getTargetProfile", &Configuration_getTargetProfile);
@@ -201,7 +195,7 @@ bool ScriptProcessor::create()
 	classConfiguration->addMethod("getConsumerLibraryPath", &Configuration::getConsumerLibraryPath);
 	m_scriptManager->registerClass(classConfiguration);
 
-	Ref< AutoRuntimeClass< ProjectItem > > classProjectItem = new AutoRuntimeClass< ProjectItem >();
+	auto classProjectItem = new AutoRuntimeClass< ProjectItem >();
 	classProjectItem->addMethod("getItems", &ProjectItem::getItems);
 	m_scriptManager->registerClass(classProjectItem);
 
@@ -210,28 +204,28 @@ bool ScriptProcessor::create()
 	classFile->addMethod("getSystemFiles", &File_getSystemFiles);
 	m_scriptManager->registerClass(classFile);
 
-	Ref< AutoRuntimeClass< Filter > > classFilter = new AutoRuntimeClass< Filter >();
+	auto classFilter = new AutoRuntimeClass< Filter >();
 	classFilter->addMethod("getName", &Filter::getName);
 	m_scriptManager->registerClass(classFilter);
 
-	Ref< AutoRuntimeClass< AggregationItem > > classAggregationItem = new AutoRuntimeClass< AggregationItem >();
+	auto classAggregationItem = new AutoRuntimeClass< AggregationItem >();
 	classAggregationItem->addMethod("getSourceFile", &AggregationItem::getSourceFile);
 	classAggregationItem->addMethod("getTargetPath", &AggregationItem::getTargetPath);
 	m_scriptManager->registerClass(classAggregationItem);
 
-	Ref< AutoRuntimeClass< Dependency > > classDependency = new AutoRuntimeClass< Dependency >();
+	auto classDependency = new AutoRuntimeClass< Dependency >();
 	classDependency->addMethod("getLink", &Dependency_getLink);
 	classDependency->addMethod("getName", &Dependency::getName);
 	classDependency->addMethod("getLocation", &Dependency::getLocation);
 	m_scriptManager->registerClass(classDependency);
 
-	Ref< AutoRuntimeClass< ExternalDependency > > classExternalDependency = new AutoRuntimeClass< ExternalDependency >();
+	auto classExternalDependency = new AutoRuntimeClass< ExternalDependency >();
 	classExternalDependency->addMethod("getSolutionFileName", &ExternalDependency::getSolutionFileName);
 	classExternalDependency->addMethod("getSolution", &ExternalDependency::getSolution);
 	classExternalDependency->addMethod("getProject", &ExternalDependency::getProject);
 	m_scriptManager->registerClass(classExternalDependency);
 
-	Ref< AutoRuntimeClass< ProjectDependency > > classProjectDependency = new AutoRuntimeClass< ProjectDependency >();
+	auto classProjectDependency = new AutoRuntimeClass< ProjectDependency >();
 	classProjectDependency->addMethod("getProject", &ProjectDependency::getProject);
 	m_scriptManager->registerClass(classProjectDependency);
 

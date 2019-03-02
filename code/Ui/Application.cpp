@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Ui/Application.h"
@@ -145,11 +139,11 @@ VirtualKey Application::translateVirtualKey(const std::wstring& keyName) const
 		if (compareIgnoreCase< std::wstring >(keyName, c_keyTranslateTable[i].name) == 0)
 			return c_keyTranslateTable[i].vkey;
 	}
-	
+
 	wchar_t ch = keyName[0];
 	if ((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z'))
 		return (VirtualKey)ch;
-		
+
 	return VkNull;
 }
 
@@ -160,13 +154,13 @@ std::wstring Application::translateVirtualKey(VirtualKey virtualKey) const
 		if (virtualKey == c_keyTranslateTable[i].vkey)
 			return c_keyTranslateTable[i].name;
 	}
-	
+
 	if ((virtualKey >= Vk0 && virtualKey <= Vk9) || (virtualKey >= VkA && virtualKey <= VkZ))
 	{
 		wchar_t tmp[] = { wchar_t(virtualKey), L'\0' };
 		return tmp;
 	}
-	
+
 	return L"";
 }
 

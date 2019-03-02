@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_ActionFunctionNative_H
-#define traktor_flash_ActionFunctionNative_H
+#pragma once
 
 #include "Core/Log/Log.h"
 #include "Core/Meta/Traits.h"
@@ -1282,4 +1275,3 @@ Ref< ActionFunctionNative > T_DLLCLASS createPolymorphicFunction(
 	}
 }
 
-#endif	// traktor_flash_ActionFunctionNative_H

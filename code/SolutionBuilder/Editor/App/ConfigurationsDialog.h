@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef ConfigurationsDialog_H
-#define ConfigurationsDialog_H
+#pragma once
 
 #include <Ui/ConfigDialog.h>
 #include <Ui/ListBox/ListBox.h>
@@ -54,4 +47,3 @@ private:
 	}
 }
 
-#endif	// ConfigurationsDialog_H

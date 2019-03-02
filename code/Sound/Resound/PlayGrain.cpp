@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Const.h"
 #include "Sound/IFilter.h"
 #include "Sound/ISoundBuffer.h"
@@ -96,7 +90,7 @@ Ref< ISoundBufferCursor > PlayGrain::createCursor() const
 void PlayGrain::updateCursor(ISoundBufferCursor* cursor) const
 {
 	PlayGrainCursor* playCursor = static_cast< PlayGrainCursor* >(cursor);
-	
+
 	playCursor->m_filterInstances.resize(0);
 	for (RefArray< IFilter >::const_iterator i = m_filters.begin(); i != m_filters.end(); ++i)
 		playCursor->m_filterInstances.push_back((*i) ? (*i)->createInstance() : 0);

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Editor/TargetEditor.h"
 #include "Amalgam/Editor/Deploy/Feature.h"
 #include "Amalgam/Editor/Deploy/Platform.h"
@@ -165,7 +159,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_buttonOnlineConfigInstance->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventBrowseOnlineConfigButtonClick);
 
 	m_bitmapNoIcon = ui::Bitmap::load(c_ResourceNoIcon, sizeof(c_ResourceNoIcon), L"png");
-	
+
 	m_imageIcon = new ui::Image();
 	m_imageIcon->create(panelGeneral, m_bitmapNoIcon, ui::Image::WsTransparent | ui::WsDoubleBuffer);
 	m_imageIcon->addEventHandler< ui::MouseButtonDownEvent >(this, &TargetEditor::eventBrowseIconClick);
@@ -241,7 +235,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 			*i
 		);
 	}
-	
+
 	updateTargetConfigurations();
 	updateAvailableFeatures();
 	updateUsedFeatures();

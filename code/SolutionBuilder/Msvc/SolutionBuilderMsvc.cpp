@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/RefSet.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/MD5.h"
@@ -255,7 +249,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 
 	os << L"Microsoft Visual Studio Solution File, Format Version " << m_settings->getSLNVersion() << Endl;
 	os << L"# Visual Studio " << m_settings->getVSVersion() << Endl;
-	
+
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		Ref< Project > project = *i;
@@ -495,7 +489,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 
 	os << DecreaseIndent;
 	os << IncreaseIndent;
-	
+
 	os << L"GlobalSection(SolutionProperties) = preSolution" << Endl;
 	os << IncreaseIndent;
 	os << L"HideSolutionNode = FALSE" << Endl;

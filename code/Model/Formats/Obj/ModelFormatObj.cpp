@@ -30,7 +30,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, const std::function< Ref
 	Ref< IStream > stream = openStream(filePath);
 	if (!stream)
 		return nullptr;
-	
+
 	BufferedStream bs(stream);
 	StringReader sr(&bs, new AnsiEncoding());
 	std::wstring str;

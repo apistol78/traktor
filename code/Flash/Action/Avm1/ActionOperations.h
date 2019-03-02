@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_ActionOperations_H
-#define traktor_flash_ActionOperations_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Flash/Action/Avm1/ActionOpcodes.h"
@@ -70,4 +63,3 @@ extern const OperationInfo c_operationInfos[];
 	}
 }
 
-#endif	// traktor_flash_ActionOperations_H

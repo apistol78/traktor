@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #define SQUISH_COMPRESSOR	1
 #define STB_DXT_COMPRESSOR	2
 #define USE_DXT_COMPRESSOR	SQUISH_COMPRESSOR //STB_DXT_COMPRESSOR
@@ -122,7 +116,7 @@ struct CompressTextureTask : public Object
 					block[5] = (rgba[2][3][3] & 0xf0) | (rgba[2][2][3] >> 4);
 					block[6] = (rgba[3][1][3] & 0xf0) | (rgba[3][0][3] >> 4);
 					block[7] = (rgba[3][3][3] & 0xf0) | (rgba[3][2][3] >> 4);
-					
+
 					stb_compress_dxt_block(
 						&block[8],
 						(const unsigned char*)rgba,

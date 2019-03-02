@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_RenderControlModel_H
-#define traktor_scene_RenderControlModel_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Ui/Point.h"
@@ -64,4 +57,3 @@ private:
 	}
 }
 
-#endif	// traktor_scene_RenderControlModel_H

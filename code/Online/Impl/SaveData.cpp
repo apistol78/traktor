@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Thread/Acquire.h"
 #include "Online/AttachmentResult.h"
 #include "Online/Impl/SaveData.h"
@@ -89,7 +83,7 @@ Ref< Result > SaveData::remove(const std::wstring& saveDataId)
 	if (m_taskQueue->add(new TaskRemoveSaveData(m_provider, saveDataId, result)))
 		return result;
 	else
-		return 0;	
+		return 0;
 }
 
 SaveData::SaveData(ISaveDataProvider* provider, TaskQueue* taskQueue)
@@ -105,7 +99,7 @@ void SaveData::enqueueEnumeration()
 		m_provider,
 		this,
 		(TaskEnumSaveData::sink_method_t)&SaveData::callbackEnumSaveData
-	));	
+	));
 }
 
 void SaveData::callbackEnumSaveData(const std::set< std::wstring >& saveDataIds)

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <emscripten.h>
 #include "Amalgam/Game/IOnlineServer.h"
 #include "Amalgam/Game/Impl/Application.h"
@@ -23,7 +17,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 using namespace traktor;
 
-extern "C" void __traktor__emscripten__linkage__(); 
+extern "C" void __traktor__emscripten__linkage__();
 
 namespace
 {

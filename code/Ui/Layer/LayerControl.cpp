@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <stack>
 #include "Drawing/Image.h"
@@ -56,7 +50,7 @@ void LayerControl::addLayerItem(LayerItem* layerItem)
 {
 	T_ASSERT (!layerItem->getParentLayer());
 	m_layers.push_back(layerItem);
-	
+
 	updateScrollBar();
 }
 
@@ -70,7 +64,7 @@ void LayerControl::removeLayerItem(LayerItem* layerItem)
 	}
 	else
 		layerItem->getParentLayer()->removeChildLayer(layerItem);
-	
+
 	updateScrollBar();
 }
 
@@ -124,7 +118,7 @@ int LayerControl::getItems(RefArray< LayerItem >& outItems, int flags)
 Ref< LayerItem > LayerControl::getLayerItem(int index, bool includeChildren)
 {
 	typedef std::pair< RefArray< LayerItem >::iterator, RefArray< LayerItem >::iterator > range_t;
-	
+
 	std::stack< range_t > stack;
 	stack.push(std::make_pair(m_layers.begin(), m_layers.end()));
 
@@ -266,7 +260,7 @@ void LayerControl::eventButtonDown(MouseButtonDownEvent* event)
 		{
 			layerItem->setSelected(true);
 			layerItem->setEnable(!layerItem->isEnabled());
-			
+
 			LayerContentChangeEvent changeEvent(this, layerItem);
 			raiseEvent(&changeEvent);
 		}

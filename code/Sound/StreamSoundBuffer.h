@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sound_StreamSoundBuffer_H
-#define traktor_sound_StreamSoundBuffer_H
+#pragma once
 
 #include "Sound/ISoundBuffer.h"
 
@@ -33,7 +26,7 @@ class T_DLLCLASS StreamSoundBuffer : public ISoundBuffer
 
 public:
 	StreamSoundBuffer();
-	
+
 	virtual ~StreamSoundBuffer();
 
 	bool create(IStreamDecoder* streamDecoder);
@@ -52,4 +45,3 @@ private:
 	}
 }
 
-#endif	// traktor_sound_StreamSoundBuffer_H

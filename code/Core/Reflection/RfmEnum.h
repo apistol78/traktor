@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_RfmEnum_H
-#define traktor_RfmEnum_H
+#pragma once
 
 #include <string>
 #include "Core/Reflection/ReflectionMember.h"
@@ -43,4 +36,3 @@ private:
 
 }
 
-#endif	// traktor_RfmEnum_H

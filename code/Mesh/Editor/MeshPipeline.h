@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_MeshPipeline_H
-#define traktor_mesh_MeshPipeline_H
+#pragma once
 
 #include "Core/Thread/Semaphore.h"
 #include "Editor/IPipeline.h"
@@ -90,4 +83,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_MeshPipeline_H

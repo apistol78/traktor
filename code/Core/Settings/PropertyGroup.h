@@ -14,7 +14,7 @@
 
 namespace traktor
 {
-	
+
 /*! \brief Property value map.
  * \ingroup Core
  */

@@ -9,9 +9,9 @@ namespace traktor
 {
 	namespace physics
 	{
-	
+
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.WheelData", 0, WheelData, ISerializable)
-	
+
 WheelData::WheelData()
 :	m_steer(false)
 ,	m_drive(false)

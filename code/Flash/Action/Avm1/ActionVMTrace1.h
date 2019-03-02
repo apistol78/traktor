@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_ActionVMTrace1_H
-#define traktor_flash_ActionVMTrace1_H
+#pragma once
 
 #include <vector>
 #include "Core/Object.h"
@@ -36,11 +29,11 @@ public:
 	void endDispatcher();
 
 	void preDispatch(const ExecutionState& state, const OperationInfo& info);
-	
+
 	void postDispatch(const ExecutionState& state, const OperationInfo& info);
 
 	OutputStream& getTraceStream();
-	
+
 private:
 	Ref< OutputStream > m_stream;
 };
@@ -48,4 +41,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_ActionVMTrace1_H

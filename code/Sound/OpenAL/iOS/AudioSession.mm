@@ -20,7 +20,7 @@ void activateAudioSession()
 		[[AVAudioSession sharedInstance] setActive: YES error: nil];
 	}
 	else
-		log::error << L"OpenAL error detected; application inactive." << Endl;	
+		log::error << L"OpenAL error detected; application inactive." << Endl;
 }
 
 	}

@@ -151,7 +151,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 
 	Ref< ui::Container > containerLeft = new ui::Container();
 	containerLeft->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*", L"*", 0, 4));
-	
+
 	m_checkBakeOcclusion = new ui::CheckBox();
 	if (!m_checkBakeOcclusion->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_BAKE_OCCLUSION")))
 		return false;
@@ -323,7 +323,7 @@ void MeshAssetEditor::updateModel()
 void MeshAssetEditor::updateFile()
 {
 	Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath, m_asset->getFileName());
-	
+
 	Path assetRelPath;
 	if (!FileSystem::getInstance().getRelativePath(assetPath, m_assetPath, assetRelPath))
 		assetRelPath = m_asset->getFileName().getOriginal();
@@ -332,15 +332,15 @@ void MeshAssetEditor::updateFile()
 	m_dropMeshType->select(m_asset->getMeshType());
 	m_checkBakeOcclusion->setChecked(m_asset->getBakeOcclusion());
 	m_checkCullDistantFaces->setChecked(m_asset->getCullDistantFaces());
-	
+
 	m_staticLodSteps->setText(i18n::Format(L"MESHASSET_EDITOR_LOD_STEPS", m_asset->getLodSteps()));
 
 	m_sliderLodSteps->setEnable(m_asset->getMeshType() == MeshAsset::MtLod);
 	m_sliderLodSteps->setValue(m_asset->getLodSteps());
-	
+
 	m_editLodMaxDistance->setEnable(m_asset->getMeshType() == MeshAsset::MtLod);
 	m_editLodMaxDistance->setText(toString(m_asset->getLodMaxDistance()));
-	
+
 	m_editLodCullDistance->setEnable(m_asset->getMeshType() == MeshAsset::MtLod);
 	m_editLodCullDistance->setText(toString(m_asset->getLodCullDistance()));
 

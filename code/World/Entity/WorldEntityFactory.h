@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_WorldEntityFactory_H
-#define traktor_world_WorldEntityFactory_H
+#pragma once
 
 #include "World/IEntityFactory.h"
 
@@ -35,7 +28,7 @@ class IResourceManager;
 class T_DLLCLASS WorldEntityFactory : public IEntityFactory
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	WorldEntityFactory(resource::IResourceManager* resourceManager, bool editor);
 
@@ -55,8 +48,7 @@ private:
 	mutable Ref< resource::IResourceManager > m_resourceManager;
 	bool m_editor;
 };
-	
+
 	}
 }
 
-#endif	// traktor_world_WorldEntityFactory_H

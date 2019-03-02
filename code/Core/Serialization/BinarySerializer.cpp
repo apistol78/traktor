@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #if defined(_PS3)
 #	include <alloca.h>
 #endif
@@ -243,7 +237,7 @@ bool read_string(const Ref< IStream >& stream, std::wstring& outString)
 bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 {
 	T_ASSERT (str.length() <= std::numeric_limits< uint16_t >::max());
-	
+
 	uint32_t length = uint32_t(str.length());
 	if (length > 0)
 	{
@@ -255,7 +249,7 @@ bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 
 		uint8_t* u8str = (uint8_t*)buf;
 		uint32_t u8len;
-		
+
 		Utf8Encoding utf8enc;
 		u8len = utf8enc.translate(str.c_str(), length, u8str);
 		T_FATAL_ASSERT (u8len <= length * 6);
@@ -306,7 +300,7 @@ bool read_string(const Ref< IStream >& stream, std::string& outString)
 bool write_string(const Ref< IStream >& stream, const std::string& str)
 {
 	T_ASSERT (str.length() <= std::numeric_limits< uint16_t >::max());
-	
+
 	uint32_t length = uint32_t(str.length());
 	if (length > 0)
 	{
@@ -472,7 +466,7 @@ void BinarySerializer::operator >> (const Member< Guid >& m)
 	if (m_direction == SdRead)
 	{
 		bool validGuid = false;
-		
+
 		if (!read_primitive< bool >(m_stream, validGuid))
 			return;
 
@@ -697,7 +691,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				}
 
 				T_ASSERT (type);
-				
+
 				object = checked_type_cast< ISerializable* >(type->createInstance());
 				if (!ensure(object != 0))
 				{
@@ -869,10 +863,10 @@ void BinarySerializer::operator >> (const Member< void* >& m)
 	if (m_direction == SdRead)
 	{
 		uint32_t size;
-			
+
 		if (!ensure(read_primitive< uint32_t >(m_stream, size)))
 			return;
-		
+
 		if (!ensure(size <= m.getBlobSize()))
 			return;
 
@@ -903,7 +897,7 @@ void BinarySerializer::operator >> (const MemberArray& m)
 
 		if (!ensure(read_primitive< uint32_t >(m_stream, size)))
 			return;
-		
+
 		m.reserve(size, size);
 		for (uint32_t i = 0; i < size; ++i)
 		{

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_IndexBufferStaticDx11_H
-#define traktor_render_IndexBufferStaticDx11_H
+#pragma once
 
 #include "Core/Misc/AutoPtr.h"
 #include "Render/Dx11/IBufferHeapDx11.h"
@@ -34,7 +27,7 @@ public:
 	virtual void destroy() override final;
 
 	virtual void* lock() override final;
-	
+
 	virtual void unlock() override final;
 
 	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache& stateCache) override final;
@@ -47,8 +40,7 @@ private:
 
 	IndexBufferStaticDx11(IndexType indexType, uint32_t bufferSize);
 };
-	
+
 	}
 }
 
-#endif	// traktor_render_IndexBufferStaticDx11_H

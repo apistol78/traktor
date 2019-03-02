@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ThreadsafeFifo_H
-#define traktor_ThreadsafeFifo_H
+#pragma once
 
 #include <list>
 #include "Core/Thread/Acquire.h"
@@ -67,11 +60,10 @@ public:
 	}
 
 private:
-	mutable LockType m_lock; 
+	mutable LockType m_lock;
 	mutable uint32_t m_size;
 	std::list< ItemType > m_items;
 };
 
 }
 
-#endif	// traktor_ThreadsafeFifo_H

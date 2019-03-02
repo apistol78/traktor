@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Sequence_H
-#define traktor_ui_Sequence_H
+#pragma once
 
 #include <vector>
 #include "Core/RefArray.h"
@@ -51,7 +44,7 @@ public:
 	bool getButtonState(int32_t buttonIndex) const;
 
 	void addKey(Key* key);
-	
+
 	void removeKey(Key* key);
 
 	void removeAllKeys();
@@ -97,4 +90,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_Sequence_H

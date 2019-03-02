@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_resource_MemberIdProxy_H
-#define traktor_resource_MemberIdProxy_H
+#pragma once
 
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
@@ -40,7 +33,7 @@ public:
 	,	m_ref(ref)
 	{
 	}
-	
+
 	virtual void serialize(ISerializer& s) const
 	{
 		Guid id = m_ref.getId();
@@ -52,7 +45,7 @@ public:
 		);
 		m_ref = IdProxy< Class >(handle, id);
 	}
-	
+
 private:
 	value_type& m_ref;
 };
@@ -60,4 +53,3 @@ private:
 	}
 }
 
-#endif	// traktor_resource_MemberIdProxy_H

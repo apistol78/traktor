@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_TabSelectionChangeEvent_H
-#define traktor_ui_TabSelectionChangeEvent_H
+#pragma once
 
 #include "Ui/Events/SelectionChangeEvent.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 class TabPage;
 
 /*! \brief
@@ -30,7 +23,7 @@ class TabPage;
 class T_DLLCLASS TabSelectionChangeEvent : public SelectionChangeEvent
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	TabSelectionChangeEvent(EventSubject* sender, TabPage* tabPage);
 
@@ -39,8 +32,7 @@ public:
 private:
 	Ref< TabPage > m_tabPage;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_TabSelectionChangeEvent_H

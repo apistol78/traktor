@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_PlatformPs3_H
-#define traktor_render_PlatformPs3_H
+#pragma once
 
 #if defined(_PS3)
 #	include <cell/gcm.h>
@@ -36,4 +29,3 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 //#define T_GCM_CALL(fnc) fnc##Inline
 #define T_GCM_CALL(fnc) fnc##UnsafeInline
 
-#endif	// traktor_render_PlatformPs3_H

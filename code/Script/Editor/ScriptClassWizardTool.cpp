@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/StringOutputStream.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -130,7 +124,7 @@ bool ScriptClassWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 	}
 
 	StringOutputStream ss;
-	
+
 	if (inheritClassInstance != nullptr)
 		ss << L"#using \\" << inheritClassInstance->getGuid().format() << Endl;
 

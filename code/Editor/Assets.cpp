@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Editor/Assets.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -24,7 +18,7 @@ void Assets::serialize(ISerializer& s)
 	{
 		std::vector< Guid > dependencies;
 		s >> MemberStlVector< Guid >(L"dependencies", dependencies);
-		
+
 		m_dependencies.resize(dependencies.size());
 		for (size_t i = 0; i < dependencies.size(); ++i)
 		{

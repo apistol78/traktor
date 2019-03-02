@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -266,7 +260,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drawing.DrawingClassFactory", 0, Drawin
 
 void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< BoxedPixelFormat > > classBoxedPixelFormat = new AutoRuntimeClass< BoxedPixelFormat >();
+	auto classBoxedPixelFormat = new AutoRuntimeClass< BoxedPixelFormat >();
 	classBoxedPixelFormat->addStaticMethod("getP4", &BoxedPixelFormat::getP4);
 	classBoxedPixelFormat->addStaticMethod("getP8", &BoxedPixelFormat::getP8);
 	classBoxedPixelFormat->addStaticMethod("getA8", &BoxedPixelFormat::getA8);
@@ -297,13 +291,13 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedPixelFormat->addStaticMethod("getABGRF32", &BoxedPixelFormat::getABGRF32);
 	registrar->registerClass(classBoxedPixelFormat);
 
-	Ref< AutoRuntimeClass< IImageFilter > > classIImageFilter = new AutoRuntimeClass< IImageFilter >();
+	auto classIImageFilter = new AutoRuntimeClass< IImageFilter >();
 	registrar->registerClass(classIImageFilter);
 
-	Ref< AutoRuntimeClass< ITransferFunction > > classITransferFunction = new AutoRuntimeClass< ITransferFunction >();
+	auto classITransferFunction = new AutoRuntimeClass< ITransferFunction >();
 	registrar->registerClass(classITransferFunction);
 
-	Ref< AutoRuntimeClass< Image > > classImage = new AutoRuntimeClass< Image >();
+	auto classImage = new AutoRuntimeClass< Image >();
 	classImage->addConstructor();
 	classImage->addConstructor< const BoxedPixelFormat*, uint32_t, uint32_t >(&Image_constructor_3);
 	classImage->addMethod("clone", &Image::clone);
@@ -324,99 +318,99 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classImage->addMethod("getHeight", &Image::getHeight);
 	registrar->registerClass(classImage);
 
-	Ref< AutoRuntimeClass< BlurFilter > > classBlurFilter = new AutoRuntimeClass< BlurFilter >();
+	auto classBlurFilter = new AutoRuntimeClass< BlurFilter >();
 	classBlurFilter->addConstructor< int32_t, int32_t >();
 	registrar->registerClass(classBlurFilter);
 
-	Ref< AutoRuntimeClass< BrightnessContrastFilter > > classBrightnessContrastFilter = new AutoRuntimeClass< BrightnessContrastFilter >();
+	auto classBrightnessContrastFilter = new AutoRuntimeClass< BrightnessContrastFilter >();
 	classBrightnessContrastFilter->addConstructor< float, float >();
 	registrar->registerClass(classBrightnessContrastFilter);
 
-	Ref< AutoRuntimeClass< ChainFilter > > classChainFilter = new AutoRuntimeClass< ChainFilter >();
+	auto classChainFilter = new AutoRuntimeClass< ChainFilter >();
 	classChainFilter->addConstructor();
 	classChainFilter->addMethod("add", &ChainFilter::add);
 	registrar->registerClass(classChainFilter);
 
-	Ref< AutoRuntimeClass< ConvolutionFilter > > classConvolutionFilter = new AutoRuntimeClass< ConvolutionFilter >();
+	auto classConvolutionFilter = new AutoRuntimeClass< ConvolutionFilter >();
 	classConvolutionFilter->addStaticMethod("createGaussianBlur3", &ConvolutionFilter::createGaussianBlur3);
 	classConvolutionFilter->addStaticMethod("createGaussianBlur5", &ConvolutionFilter::createGaussianBlur5);
 	classConvolutionFilter->addStaticMethod("createEmboss", &ConvolutionFilter::createEmboss);
 	registrar->registerClass(classConvolutionFilter);
 
-	Ref< AutoRuntimeClass< CropFilter > > classCropFilter = new AutoRuntimeClass< CropFilter >();
+	auto classCropFilter = new AutoRuntimeClass< CropFilter >();
 	classCropFilter->addConstructor< int32_t, int32_t, int32_t, int32_t >(&CropFilter_constructor);
 	registrar->registerClass(classCropFilter);
 
-	Ref< AutoRuntimeClass< DilateFilter > > classDilateFilter = new AutoRuntimeClass< DilateFilter >();
+	auto classDilateFilter = new AutoRuntimeClass< DilateFilter >();
 	classDilateFilter->addConstructor< int32_t >();
 	registrar->registerClass(classDilateFilter);
 
-	Ref< AutoRuntimeClass< GammaFilter > > classGammaFilter = new AutoRuntimeClass< GammaFilter >();
+	auto classGammaFilter = new AutoRuntimeClass< GammaFilter >();
 	classGammaFilter->addConstructor< float >();
 	//classGammaFilter->addConstructor< float, float, float, float >();
 	registrar->registerClass(classGammaFilter);
 
-	Ref< AutoRuntimeClass< GaussianBlurFilter > > classGaussianBlurFilter = new AutoRuntimeClass< GaussianBlurFilter >();
+	auto classGaussianBlurFilter = new AutoRuntimeClass< GaussianBlurFilter >();
 	classGaussianBlurFilter->addConstructor< int32_t >();
 	registrar->registerClass(classGaussianBlurFilter);
 
-	Ref< AutoRuntimeClass< GrayscaleFilter > > classGrayscaleFilter = new AutoRuntimeClass< GrayscaleFilter >();
+	auto classGrayscaleFilter = new AutoRuntimeClass< GrayscaleFilter >();
 	classGrayscaleFilter->addConstructor();
 	registrar->registerClass(classGrayscaleFilter);
 
-	Ref< AutoRuntimeClass< MirrorFilter > > classMirrorFilter = new AutoRuntimeClass< MirrorFilter >();
+	auto classMirrorFilter = new AutoRuntimeClass< MirrorFilter >();
 	classMirrorFilter->addConstructor< bool, bool >();
 	registrar->registerClass(classMirrorFilter);
 
-	Ref< AutoRuntimeClass< NoiseFilter > > classNoiseFilter = new AutoRuntimeClass< NoiseFilter >();
+	auto classNoiseFilter = new AutoRuntimeClass< NoiseFilter >();
 	classNoiseFilter->addConstructor< float >();
 	registrar->registerClass(classNoiseFilter);
 
-	Ref< AutoRuntimeClass< NormalizeFilter > > classNormalizeFilter = new AutoRuntimeClass< NormalizeFilter >();
+	auto classNormalizeFilter = new AutoRuntimeClass< NormalizeFilter >();
 	classNormalizeFilter->addConstructor();
 	registrar->registerClass(classNormalizeFilter);
 
-	Ref< AutoRuntimeClass< NormalMapFilter > > classNormalMapFilter = new AutoRuntimeClass< NormalMapFilter >();
+	auto classNormalMapFilter = new AutoRuntimeClass< NormalMapFilter >();
 	classNormalMapFilter->addConstructor< float >();
 	registrar->registerClass(classNormalMapFilter);
 
-	Ref< AutoRuntimeClass< PerlinNoiseFilter > > classPerlinNoiseFilter = new AutoRuntimeClass< PerlinNoiseFilter >();
+	auto classPerlinNoiseFilter = new AutoRuntimeClass< PerlinNoiseFilter >();
 	classPerlinNoiseFilter->addConstructor< int, float, float >();
 	registrar->registerClass(classPerlinNoiseFilter);
 
-	Ref< AutoRuntimeClass< PremultiplyAlphaFilter > > classPremultiplyAlphaFilter = new AutoRuntimeClass< PremultiplyAlphaFilter >();
+	auto classPremultiplyAlphaFilter = new AutoRuntimeClass< PremultiplyAlphaFilter >();
 	classPremultiplyAlphaFilter->addConstructor();
 	registrar->registerClass(classPremultiplyAlphaFilter);
 
-	Ref< AutoRuntimeClass< QuantizeFilter > > classQuantizeFilter = new AutoRuntimeClass< QuantizeFilter >();
+	auto classQuantizeFilter = new AutoRuntimeClass< QuantizeFilter >();
 	classQuantizeFilter->addConstructor< int >();
 	registrar->registerClass(classQuantizeFilter);
 
-	Ref< AutoRuntimeClass< ScaleFilter > > classScaleFilter = new AutoRuntimeClass< ScaleFilter >();
+	auto classScaleFilter = new AutoRuntimeClass< ScaleFilter >();
 	classScaleFilter->addConstructor< int32_t, int32_t >(&ScaleFilter_constructor);
 	registrar->registerClass(classScaleFilter);
 
-	Ref< AutoRuntimeClass< SeparateAlphaFilter > > classSeparateAlphaFilter = new AutoRuntimeClass< SeparateAlphaFilter >();
+	auto classSeparateAlphaFilter = new AutoRuntimeClass< SeparateAlphaFilter >();
 	classSeparateAlphaFilter->addConstructor();
 	registrar->registerClass(classSeparateAlphaFilter);
 
-	Ref< AutoRuntimeClass< SharpenFilter > > classSharpenFilter = new AutoRuntimeClass< SharpenFilter >();
+	auto classSharpenFilter = new AutoRuntimeClass< SharpenFilter >();
 	classSharpenFilter->addConstructor< int, float >();
 	registrar->registerClass(classSharpenFilter);
 
-	Ref< AutoRuntimeClass< SwizzleFilter > > classSwizzleFilter = new AutoRuntimeClass< SwizzleFilter >();
+	auto classSwizzleFilter = new AutoRuntimeClass< SwizzleFilter >();
 	classSwizzleFilter->addConstructor< const std::wstring& >();
 	registrar->registerClass(classSwizzleFilter);
 
-	Ref< AutoRuntimeClass< TonemapFilter > > classTonemapFilter = new AutoRuntimeClass< TonemapFilter >();
+	auto classTonemapFilter = new AutoRuntimeClass< TonemapFilter >();
 	classTonemapFilter->addConstructor();
 	registrar->registerClass(classTonemapFilter);
 
-	Ref< AutoRuntimeClass< TransformFilter > > classTransformFilter = new AutoRuntimeClass< TransformFilter >();
+	auto classTransformFilter = new AutoRuntimeClass< TransformFilter >();
 	classTransformFilter->addConstructor< const Color4f&, const Color4f& >();
 	registrar->registerClass(classTransformFilter);
 
-	Ref< AutoRuntimeClass< BlendFunction > > classBlendFunction = new AutoRuntimeClass< BlendFunction >();
+	auto classBlendFunction = new AutoRuntimeClass< BlendFunction >();
 	classBlendFunction->addConstant("BfOne", Any::fromInt32(BlendFunction::BfOne));
 	classBlendFunction->addConstant("BfZero", Any::fromInt32(BlendFunction::BfZero));
 	classBlendFunction->addConstant("BfSourceColor", Any::fromInt32(BlendFunction::BfSourceColor));
@@ -435,7 +429,7 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBlendFunction->addConstructor< int32_t, int32_t, int32_t >(&BlendFunction_constructor);
 	registrar->registerClass(classBlendFunction);
 
-	Ref< AutoRuntimeClass< Raster > > classRaster = new AutoRuntimeClass< Raster >();
+	auto classRaster = new AutoRuntimeClass< Raster >();
 	classRaster->addConstant("ScButt", Any::fromInt32(Raster::ScButt));
 	classRaster->addConstant("ScSquare", Any::fromInt32(Raster::ScSquare));
 	classRaster->addConstant("ScRound", Any::fromInt32(Raster::ScRound));

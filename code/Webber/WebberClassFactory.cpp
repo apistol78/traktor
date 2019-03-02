@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -127,16 +121,16 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.wbr.WebberClassFactory", 0, WebberClass
 
 void WebberClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< Button > > classButton = new AutoRuntimeClass< Button >();
+	auto classButton = new AutoRuntimeClass< Button >();
 	classButton->addConstructor< const std::wstring& >();
 	classButton->addProperty< Event* >("clicked", 0, &Button_get_clicked);
 	registrar->registerClass(classButton);
 
-	Ref< AutoRuntimeClass< Canvas > > classCanvas = new AutoRuntimeClass< Canvas >();
+	auto classCanvas = new AutoRuntimeClass< Canvas >();
 	classCanvas->addConstructor();
 	registrar->registerClass(classCanvas);
 
-	Ref< AutoRuntimeClass< Container > > classContainer = new AutoRuntimeClass< Container >();
+	auto classContainer = new AutoRuntimeClass< Container >();
 	classContainer->addConstructor();
 	classContainer->addMethod("setLayout", &Container::setLayout);
 	classContainer->addMethod("addChild", &Container_addChild);
@@ -144,40 +138,40 @@ void WebberClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classContainer->addMethod("getChildren", &Container::getChildren);
 	registrar->registerClass(classContainer);
 
-	Ref< AutoRuntimeClass< Event > > classEvent = new AutoRuntimeClass< Event >();
+	auto classEvent = new AutoRuntimeClass< Event >();
 	classEvent->addMethod("add", &Event_add);
 	registrar->registerClass(classEvent);
 
-	Ref< AutoRuntimeClass< Float > > classFloat = new AutoRuntimeClass< Float >();
+	auto classFloat = new AutoRuntimeClass< Float >();
 	classFloat->addConstructor();
 	registrar->registerClass(classFloat);
 
-	Ref< AutoRuntimeClass< HttpRequestListener > > classHttpRequestListener = new AutoRuntimeClass< HttpRequestListener >();
+	auto classHttpRequestListener = new AutoRuntimeClass< HttpRequestListener >();
 	classHttpRequestListener->addConstructor< Ref< IRuntimeDelegate >, bool >(&HttpRequestListener_constructor);
 	registrar->registerClass(classHttpRequestListener);
 
-	Ref< AutoRuntimeClass< IApplication > > classIApplication = new AutoRuntimeClass< IApplication >();
+	auto classIApplication = new AutoRuntimeClass< IApplication >();
 	registrar->registerClass(classIApplication);
 
-	Ref< AutoRuntimeClass< ILayout > > classILayout = new AutoRuntimeClass< ILayout >();
+	auto classILayout = new AutoRuntimeClass< ILayout >();
 	registrar->registerClass(classILayout);
 
-	Ref< AutoRuntimeClass< Splitter > > classSplitter = new AutoRuntimeClass< Splitter >();
+	auto classSplitter = new AutoRuntimeClass< Splitter >();
 	registrar->registerClass(classSplitter);
 
-	Ref< AutoRuntimeClass< Static > > classStatic = new AutoRuntimeClass< Static >();
+	auto classStatic = new AutoRuntimeClass< Static >();
 	classStatic->addConstructor< const std::wstring& >();
 	classStatic->addProperty("text", &Static::setText, &Static::getText);
 	registrar->registerClass(classStatic);
 
-	Ref< AutoRuntimeClass< TreeView > > classTreeView = new AutoRuntimeClass< TreeView >();
+	auto classTreeView = new AutoRuntimeClass< TreeView >();
 	classTreeView->addConstructor();
 	classTreeView->addMethod("addChild", &TreeView::addChild);
 	classTreeView->addMethod("removeChild", &TreeView::removeChild);
 	classTreeView->addMethod("getChildren", &TreeView::getChildren);
 	registrar->registerClass(classTreeView);
 
-	Ref< AutoRuntimeClass< TreeViewItem > > classTreeViewItem = new AutoRuntimeClass< TreeViewItem >();
+	auto classTreeViewItem = new AutoRuntimeClass< TreeViewItem >();
 	classTreeViewItem->addConstructor< const std::wstring& >();
 	classTreeViewItem->addProperty("text", &TreeViewItem::setText, &TreeViewItem::getText);
 	classTreeViewItem->addProperty("expanded", &TreeViewItem::setExpanded, &TreeViewItem::isExpanded);
@@ -186,12 +180,12 @@ void WebberClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classTreeViewItem->addMethod("getChildren", &TreeViewItem::getChildren);
 	registrar->registerClass(classTreeViewItem);
 
-	Ref< AutoRuntimeClass< TextArea > > classTextArea = new AutoRuntimeClass< TextArea >();
+	auto classTextArea = new AutoRuntimeClass< TextArea >();
 	classTextArea->addConstructor();
 	classTextArea->addProperty("text", &TextArea::setText, &TextArea::getText);
 	registrar->registerClass(classTextArea);
 
-	Ref< AutoRuntimeClass< Widget > > classWidget = new AutoRuntimeClass< Widget >();
+	auto classWidget = new AutoRuntimeClass< Widget >();
 	classWidget->addProperty< int32_t >("id", 0, &Widget::getId);
 	classWidget->addMethod("build", &Widget::build);
 	classWidget->addMethod("consume", &Widget::consume);

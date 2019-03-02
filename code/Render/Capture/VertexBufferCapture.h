@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #ifndef traktor_render_VertexBufferCapture_H
 #define traktor_render_VertexBufferCapture_H
 
@@ -41,7 +35,7 @@ protected:
 	uint32_t m_vertexSize;
 	bool m_locked;
 };
-	
+
 	}
 }
 

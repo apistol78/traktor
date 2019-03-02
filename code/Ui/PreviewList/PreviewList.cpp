@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Application.h"
 #include "Ui/PreviewList/PreviewItem.h"
 #include "Ui/PreviewList/PreviewItems.h"
@@ -54,13 +48,13 @@ PreviewItem* PreviewList::getSelectedItem() const
 {
 	if (!m_items)
 		return 0;
-		
+
 	for (int32_t i = 0; i < m_items->count(); ++i)
 	{
 		if (m_items->get(i)->isSelected())
 			return m_items->get(i);
 	}
-	
+
 	return 0;
 }
 

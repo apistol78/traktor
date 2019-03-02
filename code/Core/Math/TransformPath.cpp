@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Hermite.h"
@@ -24,7 +18,7 @@ namespace traktor
 	{
 
 /*! \brief Key value wrapped into separate member to be compatible with legacy data. */
-class MemberKeyValue : public MemberComplex  
+class MemberKeyValue : public MemberComplex
 {
 public:
 	MemberKeyValue(const wchar_t* const name, Vector4& refPosition, Vector4& refOrientation)

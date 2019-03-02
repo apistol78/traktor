@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_PropertyStringSet_H
-#define traktor_PropertyStringSet_H
+#pragma once
 
 #include <set>
 #include "Core/Settings/IPropertyValue.h"
@@ -59,4 +52,3 @@ struct PropertyTrait< std::set< std::wstring > >
 
 }
 
-#endif	// traktor_PropertyStringSet_H

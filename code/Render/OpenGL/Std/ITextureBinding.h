@@ -18,6 +18,6 @@ public:
 
 	virtual bool haveMips() const = 0;
 };
-	
+
 	}
 }

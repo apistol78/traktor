@@ -6,9 +6,9 @@ namespace traktor
 {
 	namespace flash
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.DefaultCharacterFactory", DefaultCharacterFactory, ICharacterFactory)
-	
+
 Ref< CharacterInstance > DefaultCharacterFactory::createInstance(
 	const Character* character,
 	int32_t depth,

@@ -643,7 +643,7 @@ void InspectReflector::operator >> (const MemberArray& m)
 		memberReadOnly ? true : false
 	);
 	addPropertyItem(propertyItem, memberPrivate);
-	
+
 	m_propertyItemStack.push_back(propertyItem);
 	for (size_t i = 0; i < m.size(); ++i)
 		m.write(*this);

@@ -7,7 +7,7 @@ namespace traktor
 {
 	namespace render
 	{
-		
+
 class ContextPs4;
 struct VolumeTextureCreateDesc;
 
@@ -17,7 +17,7 @@ struct VolumeTextureCreateDesc;
 class VolumeTexturePs4 : public IVolumeTexture
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	VolumeTexturePs4(ContextPs4* context);
 
@@ -32,14 +32,14 @@ public:
 	virtual int32_t getMips() const override final;
 
 	virtual int32_t getWidth() const override final;
-	
+
 	virtual int32_t getHeight() const override final;
-	
+
 	virtual int32_t getDepth() const override final;
 
 private:
 	Ref< ContextPs4 > m_context;
 };
-		
+
 	}
 }

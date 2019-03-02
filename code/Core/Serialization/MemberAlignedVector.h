@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_MemberAlignedVector_H
-#define traktor_MemberAlignedVector_H
+#pragma once
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Serialization/MemberArray.h"
@@ -48,7 +41,7 @@ public:
 	{
 		return m_ref.size();
 	}
-	
+
 	virtual void read(ISerializer& s) const override final
 	{
 		if (m_index < m_ref.size())
@@ -72,7 +65,7 @@ public:
 		m_ref.push_back(ValueType());
 		return true;
 	}
-	
+
 private:
 	value_type& m_ref;
 	mutable size_t m_index;
@@ -82,4 +75,3 @@ private:
 
 }
 
-#endif	// traktor_MemberAlignedVector_H

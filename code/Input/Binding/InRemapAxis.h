@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InRemapAxis_H
-#define traktor_input_InRemapAxis_H
+#pragma once
 
 #include "Input/Binding/IInputNode.h"
 
@@ -28,12 +21,12 @@ namespace traktor
 class T_DLLCLASS InRemapAxis : public IInputNode
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	InRemapAxis();
 
 	InRemapAxis(IInputNode* source, float limitMin, float limitMax, float outputMin, float outputMid, float outputMax);
-	
+
 	virtual Ref< Instance > createInstance() const override final;
 
 	virtual float evaluate(
@@ -56,4 +49,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_InRemapAxis_H

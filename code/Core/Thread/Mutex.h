@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Mutex_H
-#define traktor_Mutex_H
+#pragma once
 
 #if defined(__PS3__)
 #	include <sys/synchronization.h>
@@ -34,13 +27,13 @@ class T_DLLCLASS Mutex : public IWaitable
 {
 public:
 	Mutex();
-	
+
 	Mutex(const Guid& id);
-	
+
 	virtual ~Mutex();
 
 	virtual bool wait(int32_t timeout = -1);
-	
+
 	void release();
 
 	bool existing() const;
@@ -58,4 +51,3 @@ private:
 
 }
 
-#endif	// traktor_Mutex_H

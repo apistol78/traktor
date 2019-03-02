@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_BrightnessContrastFilter_H
-#define traktor_drawing_BrightnessContrastFilter_H
+#pragma once
 
 #include "Drawing/IImageFilter.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace drawing
 	{
-	
+
 /*! \brief Brightness & Contrast filter.
  * \ingroup Drawing
  */
@@ -39,8 +32,7 @@ private:
 	float m_brightness;
 	float m_contrast;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_BrightnessContrastFilter_H

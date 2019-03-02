@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileOutputStream.h"
@@ -92,7 +86,7 @@ bool SolutionBuilderMsvcVCXProj::generate(
 {
 	if (!generateProject(context, solution, project))
 		return false;
-	
+
 	if (!generateFilters(context, solution, project))
 		return false;
 
@@ -112,7 +106,7 @@ void SolutionBuilderMsvcVCXProj::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 8)
 		s >> Member< std::wstring >(L"windowsTargetPlatformVersion", m_windowsTargetPlatformVersion);
-	
+
 	if (s.getVersion() >= 1 && s.getVersion() < 3)
 		s >> Member< std::wstring >(L"toolset", toolset);
 
@@ -702,7 +696,7 @@ bool SolutionBuilderMsvcVCXProj::generateUser(
 	{
 		os << L"<PropertyGroup Condition=\"'$(Configuration)'=='" << (*i)->getName() << L"'\">" << Endl;
 		os << IncreaseIndent;
-		
+
 		os << L"<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>" << Endl;
 
 		if (!(*i)->getDebugEnvironment().empty())

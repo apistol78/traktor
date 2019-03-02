@@ -109,9 +109,9 @@ bool GcLeaderboards::set(const uint64_t handle, int32_t score)
 
     GKScore* gks = [[GKScore alloc] initWithLeaderboardIdentifier: makeNSString(*i)];
     gks.value = score;
- 
+
 	bevent = &event;
-   
+
     [GKScore reportScores:@[gks] withCompletionHandler:^(NSError *error)
     {
         if (error == nil)

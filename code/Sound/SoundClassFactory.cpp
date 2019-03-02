@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -57,7 +51,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundClassFactory", 0, SoundClass
 
 void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< Sound > > classSound = new AutoRuntimeClass< Sound >();
+	auto classSound = new AutoRuntimeClass< Sound >();
 	classSound->addConstructor< ISoundBuffer*, handle_t, float, float, float, float >();
 	classSound->addProperty("buffer", &Sound::getBuffer);
 	classSound->addProperty("category", &Sound::getCategory);
@@ -67,30 +61,30 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSound->addProperty("range", &Sound::getRange);
 	registrar->registerClass(classSound);
 
-	Ref< AutoRuntimeClass< SoundSystem > > classSoundSystem = new AutoRuntimeClass< SoundSystem >();
+	auto classSoundSystem = new AutoRuntimeClass< SoundSystem >();
 	classSoundSystem->addMethod("getChannel", &SoundSystem::getChannel);
 	registrar->registerClass(classSoundSystem);
 
-	Ref< AutoRuntimeClass< SoundChannel > > classSoundChannel = new AutoRuntimeClass< SoundChannel >();
+	auto classSoundChannel = new AutoRuntimeClass< SoundChannel >();
 	classSoundChannel->addProperty("volume", &SoundChannel::setVolume, &SoundChannel::getVolume);
 	classSoundChannel->addProperty("playing", &SoundChannel::isPlaying);
 	classSoundChannel->addMethod("setFilter", &SoundChannel::setFilter);
 	classSoundChannel->addMethod("stop", &SoundChannel::stop);
 	registrar->registerClass(classSoundChannel);
 
-	Ref< AutoRuntimeClass< ISoundBuffer > > classISoundBuffer = new AutoRuntimeClass< ISoundBuffer >();
+	auto classISoundBuffer = new AutoRuntimeClass< ISoundBuffer >();
 	registrar->registerClass(classISoundBuffer);
 
-	Ref< AutoRuntimeClass< ISoundDriver > > classISoundDriver = new AutoRuntimeClass< ISoundDriver >();
+	auto classISoundDriver = new AutoRuntimeClass< ISoundDriver >();
 	registrar->registerClass(classISoundDriver);
 
-	Ref< AutoRuntimeClass< ISoundMixer > > classISoundMixer = new AutoRuntimeClass< ISoundMixer >();
+	auto classISoundMixer = new AutoRuntimeClass< ISoundMixer >();
 	registrar->registerClass(classISoundMixer);
 
-	Ref< AutoRuntimeClass< IFilter > > classIFilter = new AutoRuntimeClass< IFilter >();
+	auto classIFilter = new AutoRuntimeClass< IFilter >();
 	registrar->registerClass(classIFilter);
 
-	Ref< AutoRuntimeClass< SurroundEnvironment > > classSurroundEnvironment = new AutoRuntimeClass< SurroundEnvironment >();
+	auto classSurroundEnvironment = new AutoRuntimeClass< SurroundEnvironment >();
 	classSurroundEnvironment->addProperty("maxDistance", &SurroundEnvironment::setMaxDistance, &SurroundEnvironment::getMaxDistance);
 	classSurroundEnvironment->addProperty("innerRadius", &SurroundEnvironment::setInnerRadius, &SurroundEnvironment::getInnerRadius);
 	classSurroundEnvironment->addProperty("fullSurround", &SurroundEnvironment::setFullSurround, &SurroundEnvironment::getFullSurround);
@@ -98,40 +92,40 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSurroundEnvironment->addProperty("listenerTransformInv", &SurroundEnvironment::getListenerTransformInv);
 	registrar->registerClass(classSurroundEnvironment);
 
-	Ref< AutoRuntimeClass< CombFilter > > classCombFilter = new AutoRuntimeClass< CombFilter >();
+	auto classCombFilter = new AutoRuntimeClass< CombFilter >();
 	classCombFilter->addConstructor();
 	classCombFilter->addConstructor< uint32_t >();
 	classCombFilter->addConstructor< uint32_t, float >();
 	classCombFilter->addConstructor< uint32_t, float, float >();
 	registrar->registerClass(classCombFilter);
 
-	Ref< AutoRuntimeClass< DitherFilter > > classDitherFilter = new AutoRuntimeClass< DitherFilter >();
+	auto classDitherFilter = new AutoRuntimeClass< DitherFilter >();
 	classDitherFilter->addConstructor();
 	classDitherFilter->addConstructor< uint32_t >();
 	registrar->registerClass(classDitherFilter);
 
-	Ref< AutoRuntimeClass< EqualizerFilter > > classEqualizerFilter = new AutoRuntimeClass< EqualizerFilter >();
+	auto classEqualizerFilter = new AutoRuntimeClass< EqualizerFilter >();
 	classEqualizerFilter->addConstructor();
 	classEqualizerFilter->addConstructor< float >();
 	registrar->registerClass(classEqualizerFilter);
 
-	Ref< AutoRuntimeClass< FFTFilter > > classFFTFilter = new AutoRuntimeClass< FFTFilter >();
+	auto classFFTFilter = new AutoRuntimeClass< FFTFilter >();
 	classFFTFilter->addConstructor();
 	classFFTFilter->addConstructor< uint32_t >();
 	registrar->registerClass(classFFTFilter);
 
-	Ref< AutoRuntimeClass< GroupFilter > > classGroupFilter = new AutoRuntimeClass< GroupFilter >();
+	auto classGroupFilter = new AutoRuntimeClass< GroupFilter >();
 	classGroupFilter->addConstructor();
 	classGroupFilter->addMethod("addFilter", &GroupFilter::addFilter);
 	registrar->registerClass(classGroupFilter);
 
-	Ref< AutoRuntimeClass< LowPassFilter > > classLowPassFilter = new AutoRuntimeClass< LowPassFilter >();
+	auto classLowPassFilter = new AutoRuntimeClass< LowPassFilter >();
 	classLowPassFilter->addConstructor();
 	classLowPassFilter->addConstructor< float >();
 	classLowPassFilter->addProperty("cutOff", &LowPassFilter::setCutOff, &LowPassFilter::getCutOff);
 	registrar->registerClass(classLowPassFilter);
 
-	Ref< AutoRuntimeClass< NormalizationFilter > > classNormalizationFilter = new AutoRuntimeClass< NormalizationFilter >();
+	auto classNormalizationFilter = new AutoRuntimeClass< NormalizationFilter >();
 	classNormalizationFilter->addConstructor();
 	classNormalizationFilter->addConstructor< float >();
 	classNormalizationFilter->addConstructor< float, float >();
@@ -141,19 +135,19 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classNormalizationFilter->addProperty("attackRate", &NormalizationFilter::getAttackRate);
 	registrar->registerClass(classNormalizationFilter);
 
-	Ref< AutoRuntimeClass< RingModulationFilter > > classRingModulationFilter = new AutoRuntimeClass< RingModulationFilter >();
+	auto classRingModulationFilter = new AutoRuntimeClass< RingModulationFilter >();
 	classRingModulationFilter->addConstructor();
 	classRingModulationFilter->addConstructor< uint32_t >();
 	classRingModulationFilter->addConstructor< uint32_t, uint32_t >();
 	registrar->registerClass(classRingModulationFilter);
 
-	Ref< AutoRuntimeClass< SurroundFilter > > classSurroundFilter = new AutoRuntimeClass< SurroundFilter >();
+	auto classSurroundFilter = new AutoRuntimeClass< SurroundFilter >();
 	classSurroundFilter->addConstructor< SurroundEnvironment*, const Vector4&, float >();
 	classSurroundFilter->addMethod("setSpeakerPosition", &SurroundFilter::setSpeakerPosition);
 	classSurroundFilter->addMethod("setMaxDistance", &SurroundFilter::setMaxDistance);
 	registrar->registerClass(classSurroundFilter);
 
-	Ref< AutoRuntimeClass< ISoundHandle > > classISoundHandle = new AutoRuntimeClass< ISoundHandle >();
+	auto classISoundHandle = new AutoRuntimeClass< ISoundHandle >();
 	classISoundHandle->addMethod("stop", &ISoundHandle::stop);
 	classISoundHandle->addMethod("fadeOff", &ISoundHandle::fadeOff);
 	classISoundHandle->addMethod("isPlaying", &ISoundHandle::isPlaying);
@@ -163,89 +157,89 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classISoundHandle->addMethod("setParameter", &ISoundHandle::setParameter);
 	registrar->registerClass(classISoundHandle);
 
-	Ref< AutoRuntimeClass< ISoundPlayer > > classISoundPlayer = new AutoRuntimeClass< ISoundPlayer >();
+	auto classISoundPlayer = new AutoRuntimeClass< ISoundPlayer >();
 	classISoundPlayer->addProperty("listenerTransform", &ISoundPlayer::setListenerTransform, &ISoundPlayer::getListenerTransform);
 	classISoundPlayer->addMethod("play", &ISoundPlayer::play);
 	classISoundPlayer->addMethod("play3d", &ISoundPlayer::play3d);
 	registrar->registerClass(classISoundPlayer);
 
-	Ref< AutoRuntimeClass< BankBuffer > > classBankBuffer = new AutoRuntimeClass< BankBuffer >();
+	auto classBankBuffer = new AutoRuntimeClass< BankBuffer >();
 	classBankBuffer->addConstructor< const RefArray< IGrain >& >();
 	registrar->registerClass(classBankBuffer);
 
-	Ref< AutoRuntimeClass< IGrain > > classIGrain = new AutoRuntimeClass< IGrain >();
+	auto classIGrain = new AutoRuntimeClass< IGrain >();
 	registrar->registerClass(classIGrain);
 
-	Ref< AutoRuntimeClass< IGrainData > > classIGrainData = new AutoRuntimeClass< IGrainData >();
+	auto classIGrainData = new AutoRuntimeClass< IGrainData >();
 	registrar->registerClass(classIGrainData);
 
-	Ref< AutoRuntimeClass< BlendGrain > > classBlendGrain = new AutoRuntimeClass< BlendGrain >();
+	auto classBlendGrain = new AutoRuntimeClass< BlendGrain >();
 	registrar->registerClass(classBlendGrain);
 
-	Ref< AutoRuntimeClass< BlendGrainData > > classBlendGrainData = new AutoRuntimeClass< BlendGrainData >();
+	auto classBlendGrainData = new AutoRuntimeClass< BlendGrainData >();
 	classBlendGrainData->addConstructor();
 	registrar->registerClass(classBlendGrainData);
 
-	Ref< AutoRuntimeClass< EnvelopeGrain > > classEnvelopeGrain = new AutoRuntimeClass< EnvelopeGrain >();
+	auto classEnvelopeGrain = new AutoRuntimeClass< EnvelopeGrain >();
 	registrar->registerClass(classEnvelopeGrain);
 
-	Ref< AutoRuntimeClass< EnvelopeGrainData > > classEnvelopeGrainData = new AutoRuntimeClass< EnvelopeGrainData >();
+	auto classEnvelopeGrainData = new AutoRuntimeClass< EnvelopeGrainData >();
 	classEnvelopeGrainData->addConstructor();
 	registrar->registerClass(classEnvelopeGrainData);
 
-	Ref< AutoRuntimeClass< InLoopOutGrain > > classInLoopOutGrain = new AutoRuntimeClass< InLoopOutGrain >();
+	auto classInLoopOutGrain = new AutoRuntimeClass< InLoopOutGrain >();
 	registrar->registerClass(classInLoopOutGrain);
 
-	Ref< AutoRuntimeClass< InLoopOutGrainData > > classInLoopOutGrainData = new AutoRuntimeClass< InLoopOutGrainData >();
+	auto classInLoopOutGrainData = new AutoRuntimeClass< InLoopOutGrainData >();
 	classInLoopOutGrainData->addConstructor();
 	registrar->registerClass(classInLoopOutGrainData);
 
-	Ref< AutoRuntimeClass< MuteGrain > > classMuteGrain = new AutoRuntimeClass< MuteGrain >();
+	auto classMuteGrain = new AutoRuntimeClass< MuteGrain >();
 	registrar->registerClass(classMuteGrain);
 
-	Ref< AutoRuntimeClass< MuteGrainData > > classMuteGrainData = new AutoRuntimeClass< MuteGrainData >();
+	auto classMuteGrainData = new AutoRuntimeClass< MuteGrainData >();
 	classMuteGrainData->addConstructor();
 	registrar->registerClass(classMuteGrainData);
 
-	Ref< AutoRuntimeClass< PlayGrain > > classPlayGrain = new AutoRuntimeClass< PlayGrain >();
+	auto classPlayGrain = new AutoRuntimeClass< PlayGrain >();
 	registrar->registerClass(classPlayGrain);
 
-	Ref< AutoRuntimeClass< PlayGrainData > > classPlayGrainData = new AutoRuntimeClass< PlayGrainData >();
+	auto classPlayGrainData = new AutoRuntimeClass< PlayGrainData >();
 	classPlayGrainData->addConstructor();
 	registrar->registerClass(classPlayGrainData);
 
-	Ref< AutoRuntimeClass< RandomGrain > > classRandomGrain = new AutoRuntimeClass< RandomGrain >();
+	auto classRandomGrain = new AutoRuntimeClass< RandomGrain >();
 	registrar->registerClass(classRandomGrain);
 
-	Ref< AutoRuntimeClass< RandomGrainData > > classRandomGrainData = new AutoRuntimeClass< RandomGrainData >();
+	auto classRandomGrainData = new AutoRuntimeClass< RandomGrainData >();
 	classRandomGrainData->addConstructor();
 	registrar->registerClass(classRandomGrainData);
 
-	Ref< AutoRuntimeClass< RepeatGrain > > classRepeatGrain = new AutoRuntimeClass< RepeatGrain >();
+	auto classRepeatGrain = new AutoRuntimeClass< RepeatGrain >();
 	registrar->registerClass(classRepeatGrain);
 
-	Ref< AutoRuntimeClass< RepeatGrainData > > classRepeatGrainData = new AutoRuntimeClass< RepeatGrainData >();
+	auto classRepeatGrainData = new AutoRuntimeClass< RepeatGrainData >();
 	classRepeatGrainData->addConstructor();
 	registrar->registerClass(classRepeatGrainData);
 
-	Ref< AutoRuntimeClass< SequenceGrain > > classSequenceGrain = new AutoRuntimeClass< SequenceGrain >();
+	auto classSequenceGrain = new AutoRuntimeClass< SequenceGrain >();
 	registrar->registerClass(classSequenceGrain);
 
-	Ref< AutoRuntimeClass< SequenceGrainData > > classSequenceGrainData = new AutoRuntimeClass< SequenceGrainData >();
+	auto classSequenceGrainData = new AutoRuntimeClass< SequenceGrainData >();
 	classSequenceGrainData->addConstructor();
 	registrar->registerClass(classSequenceGrainData);
 
-	Ref< AutoRuntimeClass< SimultaneousGrain > > classSimultaneousGrain = new AutoRuntimeClass< SimultaneousGrain >();
+	auto classSimultaneousGrain = new AutoRuntimeClass< SimultaneousGrain >();
 	registrar->registerClass(classSimultaneousGrain);
 
-	Ref< AutoRuntimeClass< SimultaneousGrainData > > classSimultaneousGrainData = new AutoRuntimeClass< SimultaneousGrainData >();
+	auto classSimultaneousGrainData = new AutoRuntimeClass< SimultaneousGrainData >();
 	classSimultaneousGrainData->addConstructor();
 	registrar->registerClass(classSimultaneousGrainData);
 
-	Ref< AutoRuntimeClass< TriggerGrain > > classTriggerGrain = new AutoRuntimeClass< TriggerGrain >();
+	auto classTriggerGrain = new AutoRuntimeClass< TriggerGrain >();
 	registrar->registerClass(classTriggerGrain);
 
-	Ref< AutoRuntimeClass< TriggerGrainData > > classTriggerGrainData = new AutoRuntimeClass< TriggerGrainData >();
+	auto classTriggerGrainData = new AutoRuntimeClass< TriggerGrainData >();
 	classTriggerGrainData->addConstructor();
 	registrar->registerClass(classTriggerGrainData);
 }

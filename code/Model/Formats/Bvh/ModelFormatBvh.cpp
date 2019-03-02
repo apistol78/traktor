@@ -26,7 +26,7 @@ std::wstring getJointName(const BvhJoint* bvhJoint)
 	if (jointName.empty() && bvhJoint->getParent() != nullptr)
 		jointName = getJointName(bvhJoint->getParent()) + L"_END";
 
-	return jointName;	
+	return jointName;
 }
 
 void createJoints(
@@ -133,7 +133,7 @@ Ref< Model > ModelFormatBvh::read(const Path& filePath, const std::function< Ref
 	Ref< IStream > stream = openStream(filePath);
 	if (!stream)
 		return nullptr;
-	
+
 	Ref< BvhDocument > document = BvhDocument::parse(stream);
 	if (!document)
 		return nullptr;

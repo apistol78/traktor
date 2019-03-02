@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_CheckBox_H
-#define traktor_ui_CheckBox_H
+#pragma once
 
 #include "Ui/Widget.h"
 
@@ -33,9 +26,9 @@ public:
 	CheckBox();
 
 	bool create(Widget* parent, const std::wstring& text = L"", bool checked = false);
-	
+
 	void setChecked(bool checked);
-	
+
 	bool isChecked() const;
 
 	virtual Size getPreferedSize() const override;
@@ -53,4 +46,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_CheckBox_H

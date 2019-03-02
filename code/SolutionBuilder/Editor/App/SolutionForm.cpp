@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sstream>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/MemoryStream.h>
@@ -199,29 +193,29 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 	m_menuAggregationItem = new ui::Menu();
 	m_menuAggregationItem->add(new ui::MenuItem(ui::Command(L"AggregationItem.Remove"), L"Remove"));
 
-	Ref< ui::Container > pageContainer = new ui::Container();
-	pageContainer->create(splitter, ui::WsNone, new ui::FloodLayout());
+	m_pageContainer = new ui::Container();
+	m_pageContainer->create(splitter, ui::WsNone, new ui::FloodLayout());
 
 	m_pageSolution = new SolutionPropertyPage();
-	m_pageSolution->create(pageContainer);
+	m_pageSolution->create(m_pageContainer);
 	m_pageSolution->hide();
 
 	m_pageProject = new ProjectPropertyPage();
-	m_pageProject->create(pageContainer);
+	m_pageProject->create(m_pageContainer);
 	m_pageProject->addEventHandler< ui::ContentChangeEvent >(this, &SolutionForm::eventPropertyPageChange);
 	m_pageProject->hide();
 
 	m_pageAggregation = new AggregationPropertyPage();
-	m_pageAggregation->create(pageContainer);
+	m_pageAggregation->create(m_pageContainer);
 	m_pageAggregation->hide();
 
 	m_pageAggregationItem = new AggregationItemPropertyPage();
-	m_pageAggregationItem->create(pageContainer);
+	m_pageAggregationItem->create(m_pageContainer);
 	m_pageAggregationItem->addEventHandler< ui::ContentChangeEvent >(this, &SolutionForm::eventPropertyPageChange);
 	m_pageAggregationItem->hide();
 
 	m_pageConfiguration = new ConfigurationPropertyPage();
-	m_pageConfiguration->create(pageContainer);
+	m_pageConfiguration->create(m_pageContainer);
 	m_pageConfiguration->hide();
 
 	// Load MRU registry.
@@ -269,7 +263,7 @@ void SolutionForm::hideAllPages()
 void SolutionForm::updateTitle()
 {
 	std::wstringstream ss;
-	
+
 	ss << SB_TITLE;
 
 	if (m_solution)
@@ -292,7 +286,7 @@ void SolutionForm::updateSolutionTree()
 	treeSolution->setImage(0, 0);
 	treeSolution->setData(L"PRIMARY", m_solution);
 	treeSolution->setData(L"SOLUTION", m_solution);
-	
+
 	RefArray< Project > projects = m_solution->getProjects();
 	projects.sort(ProjectSortPredicate());
 
@@ -476,7 +470,7 @@ void SolutionForm::commandNew()
 
 	m_solution = new Solution();
 	m_solution->setName(L"Unnamed");
-	
+
 	m_solutionHash = DeepHash(m_solution).get();
 	m_solutionFileName = L"";
 
@@ -495,7 +489,7 @@ void SolutionForm::commandOpen()
 
 	ui::FileDialog fileDialog;
 	fileDialog.create(this, type_name(this), L"Open solution", L"SolutionBuilder solutions;*.xms;All files;*.*");
-	
+
 	Path filePath;
 	if (fileDialog.showModal(filePath))
 	{
@@ -1106,7 +1100,7 @@ void SolutionForm::eventTreeSelect(ui::SelectionChangeEvent* event)
 		m_pageAggregationItem->set(aggregationItem);
 	}
 
-	update();
+	m_pageContainer->update();
 }
 
 void SolutionForm::eventTreeChange(ui::TreeViewContentChangeEvent* event)

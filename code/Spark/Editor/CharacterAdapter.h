@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_CharacterAdapter_H
-#define traktor_spark_CharacterAdapter_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
@@ -64,7 +57,7 @@ public:
 	void detachGizmo();
 
 	void mouseDown(ui::Widget* widget, const Vector2& position);
-	
+
 	void mouseUp(ui::Widget* widget, const Vector2& position);
 
 	void mouseMove(ui::Widget* widget, const Vector2& position);
@@ -94,4 +87,3 @@ private:
 	}
 }
 
-#endif	// traktor_spark_CharacterAdapter_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <kernel.h>
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
@@ -38,7 +32,7 @@ void* threadEntry(void* data)
 	scePthreadExit(0);
 	return 0;
 }
-	
+
 	}
 
 bool Thread::start(Priority priority)

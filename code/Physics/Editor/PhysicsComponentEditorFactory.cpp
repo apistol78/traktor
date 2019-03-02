@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Physics/Editor/PhysicsComponentEditor.h"
 #include "Physics/Editor/PhysicsComponentEditorFactory.h"
 #include "Physics/World/RigidBodyComponentData.h"
@@ -19,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.PhysicsComponentEditorFactory", Physics
 
 const TypeInfoSet PhysicsComponentEditorFactory::getComponentDataTypes() const
 {
-	return makeTypeInfoSet< 
+	return makeTypeInfoSet<
 		CharacterComponentData,
 		RigidBodyComponentData,
 		VehicleComponentData

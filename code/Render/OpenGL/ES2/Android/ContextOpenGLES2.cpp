@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Platform.h"
 #include "Core/RefArray.h"
@@ -48,7 +42,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 		return 0;
 	}
 
-	if (!eglInitialize(context->m_display, 0, 0)) 
+	if (!eglInitialize(context->m_display, 0, 0))
 	{
 		EGLint error = eglGetError();
 		log::error << L"Create OpenGL ES2.0 failed; unable to initialize EGL (" << getEGLErrorString(error) << L")" << Endl;
@@ -131,7 +125,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 
 	eglBindAPI(EGL_OPENGL_ES_API);
 
-	const EGLint contextAttribs[] = 
+	const EGLint contextAttribs[] =
 	{
 		EGL_CONTEXT_CLIENT_VERSION, 2,
 		EGL_NONE
@@ -157,7 +151,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 		return 0;
 	initializeExtensions();
 	context->leave();
-    
+
 	if (desc.depthBits >= 24)
 		context->m_primaryDepthFormat = (desc.stencilBits > 0) ? GL_DEPTH24_STENCIL8_OES : GL_DEPTH_COMPONENT24_OES;
 	else

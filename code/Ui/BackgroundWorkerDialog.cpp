@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Thread/IWaitable.h"
 #include "Ui/Application.h"
 #include "Ui/Button.h"
@@ -60,7 +54,7 @@ bool BackgroundWorkerDialog::execute(IWaitable* waitable, IWorkerStatus* status)
 	m_waitables.push_back(waitable);
 
 	showModal();
-	
+
 	m_status = 0;
 	m_waitables.resize(0);
 	return true;
@@ -81,7 +75,7 @@ bool BackgroundWorkerDialog::execute(const std::vector< IWaitable* >& waitables,
 void BackgroundWorkerDialog::eventAbortClick(ButtonClickEvent* event)
 {
 	m_buttonAbort->setEnable(false);
-	
+
 	stopTimer();
 	endModal(DrCancel);
 }
@@ -104,7 +98,7 @@ void BackgroundWorkerDialog::eventTimer(TimerEvent* event)
 	{
 		std::wstring status = L"";
 		int32_t step = -1;
-		
+
 		if (m_status->read(step, status))
 		{
 			m_labelStatus->setText(status);

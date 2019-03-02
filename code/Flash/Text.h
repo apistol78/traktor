@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_Text_H
-#define traktor_flash_Text_H
+#pragma once
 
 #include "Core/Math/Matrix33.h"
 #include "Flash/Character.h"
@@ -81,4 +74,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_Text_H

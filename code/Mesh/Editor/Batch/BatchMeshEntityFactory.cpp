@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Mesh/Editor/Batch/BatchMeshEntityData.h"
 #include "Mesh/Editor/Batch/BatchMeshEntityFactory.h"
 #include "World/IEntityBuilder.h"
@@ -41,7 +35,7 @@ const TypeInfoSet BatchMeshEntityFactory::getEntityComponentTypes() const
 Ref< world::Entity > BatchMeshEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	const BatchMeshEntityData* batchMeshEntityData = checked_type_cast< const BatchMeshEntityData* >(&entityData);
-	
+
 	Ref< world::GroupEntity > batchEntity = new world::GroupEntity(batchMeshEntityData->getTransform());
 
 	const RefArray< world::EntityData >& childEntityData = batchMeshEntityData->getEntityData();

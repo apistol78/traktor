@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include <limits>
 #include "Core/Math/Aabb3.h"
@@ -95,7 +89,7 @@ float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
 		igridZ = int32_t(m_size) - 2;
 
 	int32_t offset = igridX + igridZ * m_size;
-	
+
 	height_t hts[] =
 	{
 		m_heights[offset],

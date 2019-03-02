@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_CombinedInputSourceData_H
-#define traktor_input_CombinedInputSourceData_H
+#pragma once
 
 #include "Input/InputTypes.h"
 #include "Input/Binding/CombinedInputSource.h"
@@ -23,7 +16,7 @@ namespace traktor
 {
 	namespace input
 	{
-	
+
 /*! \brief Boolean combination of multiple input sources.
  * \ingroup Input
  */
@@ -35,13 +28,13 @@ public:
 	CombinedInputSourceData();
 
 	CombinedInputSourceData(CombinedInputSource::CombineMode mode);
-	
+
 	CombinedInputSourceData(const RefArray< IInputSourceData >& sources, CombinedInputSource::CombineMode mode);
 
 	void addSource(IInputSourceData* source);
 
 	const RefArray< IInputSourceData >& getSources() const;
-	
+
 	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -54,4 +47,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_CombinedInputSourceData_H

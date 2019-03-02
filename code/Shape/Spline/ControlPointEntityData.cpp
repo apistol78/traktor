@@ -20,7 +20,7 @@ Ref< ControlPointEntity > ControlPointEntityData::createEntity(const world::IEnt
 			continue;
 		entity->setComponent(component);
 	}
-	
+
 	return entity;
 }
 

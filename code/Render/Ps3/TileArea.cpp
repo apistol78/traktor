@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
 #include "Core/Thread/Acquire.h"
@@ -40,8 +34,8 @@ bool TileArea::alloc(uint32_t size, uint32_t alignment, TileInfo& outTileInfo)
 		log::error << L"Unable to allocate tile area; out of tag space" << Endl;
 		return false;
 	}
-	
-	uint32_t index = ~0UL;	
+
+	uint32_t index = ~0UL;
 	for (uint32_t i = 0; i < m_areaCount; ++i)
 	{
 		if ((m_allocated & (1 << i)) == 0)
@@ -57,11 +51,11 @@ bool TileArea::alloc(uint32_t size, uint32_t alignment, TileInfo& outTileInfo)
 	}
 
 	m_allocated |= 1 << index;
-	
-	m_tiles[index].base = base; 
+
+	m_tiles[index].base = base;
 	m_tiles[index].size = size;
 	m_tiles[index].dramBank = m_dramBank++ % 4;
-	
+
 	outTileInfo = m_tiles[index];
 	return true;
 }
@@ -72,11 +66,11 @@ void TileArea::free(uint32_t index)
 	if (m_allocated & (1 << index))
 	{
 		m_tag.free(m_tiles[index].base);
-		
+
 		m_tiles[index].base = 0;
 		m_tiles[index].size = 0;
 		m_tiles[index].dramBank = 0;
-		
+
 		m_allocated &= ~(1 << index);
 	}
 }

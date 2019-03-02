@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_NSCustomControl_H
-#define traktor_ui_NSCustomControl_H
+#pragma once
 
 #import <Cocoa/Cocoa.h>
 
@@ -13,23 +6,23 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 struct INSControlEventsCallback
 {
 	virtual bool event_drawRect(const NSRect& rect) = 0;
 
 	virtual bool event_viewDidEndLiveResize() = 0;
-	
+
 	virtual bool event_mouseDown(NSEvent* theEvent, int button) = 0;
-	
+
 	virtual bool event_mouseUp(NSEvent* theEvent, int button) = 0;
-		
+
 	virtual bool event_mouseMoved(NSEvent* theEvent, int button) = 0;
-	
+
 	virtual bool event_keyDown(NSEvent* theEvent) = 0;
-	
+
 	virtual bool event_keyUp(NSEvent* theEvent) = 0;
-	
+
 	virtual bool event_performKeyEquivalent(NSEvent* theEvent) = 0;
 };
 
@@ -83,4 +76,3 @@ struct INSControlEventsCallback
 
 @end
 
-#endif	// traktor_ui_NSCustomControl_H

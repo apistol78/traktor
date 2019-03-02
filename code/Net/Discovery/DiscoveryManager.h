@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_DiscoveryManager_H
-#define traktor_net_DiscoveryManager_H
+#pragma once
 
 #include <list>
 #include <map>
@@ -69,7 +62,7 @@ public:
 	void removeAllServices();
 
 	bool findServices(const TypeInfo& serviceType, RefArray< IService >& outServices);
-	
+
 	template < typename ServiceType >
 	bool findServices(RefArray< ServiceType >& outServices)
 	{
@@ -113,4 +106,3 @@ private:
 	}
 }
 
-#endif	// traktor_net_DiscoveryManager_H

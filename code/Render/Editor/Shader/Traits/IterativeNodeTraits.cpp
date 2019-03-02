@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Traits/IterativeNodeTraits.h"
@@ -133,7 +127,7 @@ PinOrderType IterativeNodeTraits::evaluateOrder(
 		nodeOutputPin->getName() == L"Y"
 	)
 		return PotConstant;
-	
+
 	if (
 		is_a< Iterate >(node) ||
 		is_a< Iterate2d >(node) ||

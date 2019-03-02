@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #ifndef traktor_flash_EditInstanceDebugInfo_H
 #define traktor_flash_EditInstanceDebugInfo_H
 
@@ -22,7 +16,7 @@ namespace traktor
 {
 	namespace flash
 	{
-	
+
 class EditInstance;
 
 /*! \brief
@@ -53,7 +47,7 @@ private:
 	SwfTextAlignType m_textAlign;
 	Vector2 m_textSize;
 };
-	
+
 	}
 }
 

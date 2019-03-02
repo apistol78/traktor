@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_JobManager_H
-#define traktor_JobManager_H
+#pragma once
 
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/JobQueue.h"
@@ -73,4 +66,3 @@ private:
 
 }
 
-#endif	// traktor_JobManager_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/IStateManager.h"
 #include "Amalgam/Game/UpdateControl.h"
@@ -84,7 +78,7 @@ void Stage::destroy()
 	safeDestroy(m_screenRenderer);
 
 	m_shaderFade.clear();
-	
+
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		(*i)->destroy();
 

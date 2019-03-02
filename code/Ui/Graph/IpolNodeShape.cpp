@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <cmath>
 #include "Drawing/Image.h"
@@ -41,7 +35,7 @@ IpolNodeShape::IpolNodeShape()
 Point IpolNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
-	
+
 	int32_t f = dpi96(0);
 	int32_t x = pin->getDirection() == Pin::DrInput ? -f : rc.getWidth() + f;
 	int32_t y = rc.getHeight() / 2;

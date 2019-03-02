@@ -16,7 +16,7 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 /*! \brief
  * \ingroup UI
  */

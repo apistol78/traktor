@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_MemberAny_H
-#define traktor_MemberAny_H
+#pragma once
 
 #include "Core/Class/Any.h"
 #include "Core/Serialization/ISerializer.h"
@@ -122,7 +115,7 @@ public:
 					s >> Member< ISerializable* >(L"value", value);
 				}
 				break;
-			}			
+			}
 		}
 	}
 
@@ -132,4 +125,3 @@ private:
 
 }
 
-#endif	// traktor_MemberAny_H

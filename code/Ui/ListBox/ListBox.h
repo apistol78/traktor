@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ListBox_H
-#define traktor_ui_ListBox_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Ui/Auto/AutoWidget.h"
@@ -45,7 +38,7 @@ public:
 	ListBox();
 
 	bool create(Widget* parent, int32_t style = WsDefault);
-	
+
 	virtual Size getPreferedSize() const override;
 
 	int32_t add(const std::wstring& item, Object* data = 0);
@@ -107,4 +100,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_ListBox_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_PropertyColor_H
-#define traktor_PropertyColor_H
+#pragma once
 
 #include "Core/Math/Color4ub.h"
 #include "Core/Settings/IPropertyValue.h"
@@ -59,4 +52,3 @@ struct PropertyTrait< Color4ub >
 
 }
 
-#endif	// traktor_PropertyColor_H

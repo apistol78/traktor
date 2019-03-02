@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
@@ -64,13 +58,13 @@ float InDelay::evaluate(
 	float dV = V - ipi->previousValue;
 
 	ipi->previousValue = V;
-	
+
 	if (!asBoolean(V))
 		return asFloat(false);
 
 	if (dV > FUZZY_EPSILON)
 		ipi->issueTime = T;
-	
+
 	float T0 = T - ipi->issueTime - m_delay;
 	return asFloat(T0 > 0.0f);
 }
@@ -80,6 +74,6 @@ void InDelay::serialize(ISerializer& s)
 	s >> MemberRef< IInputNode >(L"source", m_source);
 	s >> Member< float >(L"delay", m_delay);
 }
-	
+
 	}
 }

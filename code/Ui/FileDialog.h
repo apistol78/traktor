@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #pragma once
 
 #include <vector>
@@ -60,7 +54,7 @@ private:
 
 	void updatePath();
 
-	void updateFiles();	
+	void updateFiles();
 };
 
 	}

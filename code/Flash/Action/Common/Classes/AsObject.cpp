@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Platform.h"
 #include "Core/Log/Log.h"
 #include "Flash/Action/ActionContext.h"
@@ -90,7 +84,7 @@ void AsObject::Object_registerClass(CallArgs& ca)
 
 	std::string movieClipName = ca.args[0].getString();
 	uint32_t movieClipNameId = ca.context->getString(movieClipName);
-	
+
 	if (ca.args.size() >= 2)
 	{
 		ActionValue theClass = ca.args[1];

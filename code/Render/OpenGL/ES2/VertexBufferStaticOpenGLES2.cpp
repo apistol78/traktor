@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/ES2/Platform.h"
@@ -90,7 +84,7 @@ VertexBufferStaticOpenGLES2::VertexBufferStaticOpenGLES2(ContextOpenGLES2* conte
 {
 	m_vertexStride = getVertexSize(vertexElements);
 	T_ASSERT (m_vertexStride > 0);
-	
+
 	for (size_t i = 0; i < vertexElements.size(); ++i)
 	{
 		if (vertexElements[i].getIndex() >= 4)
@@ -101,7 +95,7 @@ VertexBufferStaticOpenGLES2::VertexBufferStaticOpenGLES2(ContextOpenGLES2* conte
 
 		AttributeDesc desc;
 		desc.location = VertexAttribute::getLocation(vertexElements[i].getDataUsage(), vertexElements[i].getIndex());
-		
+
 		switch (vertexElements[i].getDataType())
 		{
 		case DtFloat1:
@@ -181,9 +175,9 @@ VertexBufferStaticOpenGLES2::VertexBufferStaticOpenGLES2(ContextOpenGLES2* conte
 		default:
 			log::warning << L"Unsupport vertex format" << Endl;
 		}
-		
+
 		desc.offset = vertexElements[i].getOffset();
-		
+
 		m_attributes.push_back(desc);
 	}
 }
@@ -215,7 +209,7 @@ void* VertexBufferStaticOpenGLES2::lock()
 {
 	m_lockOffset = 0;
 	m_lockSize = getBufferSize();
-	
+
 	if (!m_buffer.ptr())
 		m_buffer.reset((uint8_t*)Alloc::acquireAlign(m_lockSize, 16, "VB"));
 
@@ -251,7 +245,7 @@ void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 	stateCache->setArrayBuffer(m_bufferObject);
 
 	if (m_dirty)
-	{	
+	{
 		int32_t bufferSize = getBufferSize();
 		if (m_lockOffset <= 0 && m_lockSize >= bufferSize)
 		{
@@ -269,10 +263,10 @@ void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 				m_lockOffset,
 				m_lockSize,
 				m_buffer.ptr()
-			));		
+			));
 		}
 		m_buffer.release();
-	
+
 #if defined(GL_OES_vertex_array_object) && !defined(_WIN32) && !defined(__EMSCRIPTEN__) && !defined(__LINUX__)
 		if (m_arrayObject)
 		{
@@ -310,7 +304,7 @@ void VertexBufferStaticOpenGLES2::activate(StateCache* stateCache)
 #else
 	{
 		stateCache->setVertexArrayObject(0);
-		
+
 		GLint maxAttributeIndex = 0;
 		glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxAttributeIndex);
 		for (GLint i = 0; i < maxAttributeIndex; ++i)

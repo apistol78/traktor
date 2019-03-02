@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cassert>
 #include "Core/Log/Log.h"
 #include "Render/Dx11/Platform.h"
@@ -192,7 +186,7 @@ void HlslContext::findCommonOutputs(Node* node, const std::wstring& inputPin1, c
 	std::vector< const InputPin* > inputPins(2);
 	inputPins[0] = node->findInputPin(inputPin1);
 	inputPins[1] = node->findInputPin(inputPin2);
-	getMergingOutputs(m_shaderGraph, inputPins, outOutputPins); 
+	getMergingOutputs(m_shaderGraph, inputPins, outOutputPins);
 }
 
 void HlslContext::enterVertex()

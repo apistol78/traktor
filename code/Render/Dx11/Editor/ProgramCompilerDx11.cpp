@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/Adler32.h"
@@ -211,29 +205,29 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 		}
 
 		d3dShaderReflection->GetDesc(&dsd);
-		
+
 		// Scalar parameters.
 		for (UINT i = 0; i < dsd.ConstantBuffers; ++i)
 		{
 			d3dConstantBufferReflection = d3dShaderReflection->GetConstantBufferByIndex(i);
 			T_ASSERT (d3dConstantBufferReflection);
-		
+
 			d3dConstantBufferReflection->GetDesc(&dsbd);
 			T_ASSERT ((dsbd.Size & 3) == 0);
 
 			resource->m_vertexCBuffers[i].size = dsbd.Size;
-	
+
 			for (UINT j = 0; j < dsbd.Variables; ++j)
 			{
 				d3dVariableReflection = d3dConstantBufferReflection->GetVariableByIndex(j);
 				T_ASSERT (d3dVariableReflection);
-		
+
 				d3dTypeReflection = d3dVariableReflection->GetType();
 				T_ASSERT (d3dTypeReflection);
-		
+
 				d3dVariableReflection->GetDesc(&dsvd);
 				T_ASSERT ((dsvd.StartOffset & 3) == 0);
-		
+
 				d3dTypeReflection->GetDesc(&dstd);
 				T_ASSERT (dstd.Type == D3D10_SVT_FLOAT);
 
@@ -274,7 +268,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 				}
 			}
 		}
-		
+
 		// Texture/sampler parameters.
 		for (UINT i = 0; i < dsd.BoundResources; ++i)
 		{
@@ -284,12 +278,12 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 				T_ASSERT (dsibd.BindCount == 1);
 
 				std::wstring name = mbstows(dsibd.Name);
-		
+
 				std::map< std::wstring, ProgramResourceDx11::ParameterDesc >::iterator it = parameterMap.find(name);
 				if (it == parameterMap.end())
 				{
 					uint32_t resourceIndex = parameterTextureOffset;
-		
+
 					ProgramResourceDx11::ParameterDesc& pd = parameterMap[name];
 					pd.name = name;
 					pd.offset = resourceIndex;
@@ -354,29 +348,29 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 		}
 
 		d3dShaderReflection->GetDesc(&dsd);
-		
+
 		// Scalar parameters.
 		for (UINT i = 0; i < dsd.ConstantBuffers; ++i)
 		{
 			d3dConstantBufferReflection = d3dShaderReflection->GetConstantBufferByIndex(i);
 			T_ASSERT (d3dConstantBufferReflection);
-		
+
 			d3dConstantBufferReflection->GetDesc(&dsbd);
 			T_ASSERT ((dsbd.Size & 3) == 0);
 
 			resource->m_pixelCBuffers[i].size = dsbd.Size;
-	
+
 			for (UINT j = 0; j < dsbd.Variables; ++j)
 			{
 				d3dVariableReflection = d3dConstantBufferReflection->GetVariableByIndex(j);
 				T_ASSERT (d3dVariableReflection);
-		
+
 				d3dTypeReflection = d3dVariableReflection->GetType();
 				T_ASSERT (d3dTypeReflection);
-		
+
 				d3dVariableReflection->GetDesc(&dsvd);
 				T_ASSERT ((dsvd.StartOffset & 3) == 0);
-		
+
 				d3dTypeReflection->GetDesc(&dstd);
 				T_ASSERT (dstd.Type == D3D10_SVT_FLOAT);
 
@@ -417,7 +411,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 				}
 			}
 		}
-		
+
 		// Texture/sampler parameters.
 		for (UINT i = 0; i < dsd.BoundResources; ++i)
 		{
@@ -427,12 +421,12 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 				T_ASSERT (dsibd.BindCount == 1);
 
 				std::wstring name = mbstows(dsibd.Name);
-		
+
 				std::map< std::wstring, ProgramResourceDx11::ParameterDesc >::iterator it = parameterMap.find(name);
 				if (it == parameterMap.end())
 				{
 					uint32_t resourceIndex = parameterTextureOffset;
-		
+
 					ProgramResourceDx11::ParameterDesc& pd = parameterMap[name];
 					pd.name = name;
 					pd.offset = resourceIndex;

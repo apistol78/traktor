@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #pragma once
 
 #include "Core/Object.h"
@@ -26,7 +20,7 @@ class Matrix33;
 	{
 
 class CharacterInstance;
-	
+
 /*! \brief
  * \ingroup Flash
  */
@@ -54,6 +48,6 @@ private:
 
 	void calculate(CharacterInstance* characterInstance, const Matrix33& transform, bool visible, Aabb2& outDirtyRegion);
 };
-	
+
 	}
 }

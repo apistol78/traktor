@@ -1,5 +1,4 @@
-#ifndef traktor_physics_Wheel_H
-#define traktor_physics_Wheel_H
+#pragma once
 
 #include <Core/Ref.h>
 #include <Core/Object.h>
@@ -44,4 +43,3 @@ public:
 	}
 }
 
-#endif	// traktor_physics_Wheel_H

@@ -219,7 +219,7 @@ private:
 	AlignedVector< Vertex > m_vertices;
 	AlignedVector< Polygon > m_polygons;
 	Grid3< Vector4 > m_positions;
-	Grid3< Vector4 > m_colors; 
+	Grid3< Vector4 > m_colors;
 	Grid3< Vector4 > m_normals;
 	Grid2< Vector2 > m_texCoords;
 	AlignedVector< std::wstring > m_texCoordChannels;

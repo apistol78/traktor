@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_LodMeshEntity_H
-#define traktor_mesh_LodMeshEntity_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Mesh/MeshEntity.h"
@@ -34,7 +27,7 @@ public:
 		float lodDistance,
 		float lodCullDistance
 	);
-	
+
 	virtual void setTransform(const Transform& transform) override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
@@ -60,4 +53,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_LodMeshEntity_H

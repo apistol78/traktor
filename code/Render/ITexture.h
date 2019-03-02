@@ -21,7 +21,7 @@ namespace traktor
 class T_DLLCLASS ITexture : public Object
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	struct Lock
 	{
@@ -45,6 +45,6 @@ public:
 	 */
 	virtual int32_t getMips() const = 0;
 };
-	
+
 	}
 }

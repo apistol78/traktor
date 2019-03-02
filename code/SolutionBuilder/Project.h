@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef Project_H
-#define Project_H
+#pragma once
 
 #include <string>
 #include "Core/RefArray.h"
@@ -86,7 +79,7 @@ public:
 	void addDependency(Dependency* dependency);
 
 	void removeDependency(Dependency* dependency);
-	
+
 	void setDependencies(const RefArray< Dependency >& dependencies);
 
 	const RefArray< Dependency >& getDependencies() const;
@@ -107,4 +100,3 @@ private:
 	}
 }
 
-#endif	// Project_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Io/IEncoding.h"
 #include "Core/Misc/TString.h"
@@ -37,16 +31,16 @@ std::string wstombs(const IEncoding& encoding, const std::wstring& s)
 {
 	uint8_t buf[IEncoding::MaxEncodingSize];
 	std::string out;
-	
+
 	for (uint32_t i = 0; i < s.length(); ++i)
 	{
 		int nbuf = encoding.translate(&s[i], 1, buf);
 		if (nbuf <= 0)
 			continue;
-			
+
 		out += std::string(buf, buf + nbuf);
 	}
-	
+
 	return out;
 }
 

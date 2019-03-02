@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_StaticVector_H
-#define traktor_StaticVector_H
+#pragma once
 
 #include <iterator>
 #include "Core/Config.h"
@@ -525,4 +518,3 @@ private:
 
 }
 
-#endif	// traktor_StaticVector_H

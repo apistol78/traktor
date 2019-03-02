@@ -8,7 +8,7 @@ namespace traktor
 {
 	namespace render
 	{
-	
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceCapture", 0, ProgramResourceCapture, ProgramResource)
 
 void ProgramResourceCapture::serialize(ISerializer& s)

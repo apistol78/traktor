@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #if defined(__ANDROID__)
 #	include <android/log.h>
 #endif
@@ -145,7 +139,7 @@ public:
 
 				if (m_globalTarget)
 					m_globalTarget->log(threadId, m_level, m_buffer.c_str());
-				
+
 				if (m_localTarget)
 					m_localTarget->log(threadId, m_level, m_buffer.c_str());
 
@@ -172,7 +166,7 @@ public:
 	,	m_globalTarget(globalTarget)
 	{
 	}
-	
+
 	ILogTarget* getTarget() const
 	{
 		return m_globalTarget;

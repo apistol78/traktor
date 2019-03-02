@@ -27,7 +27,7 @@ public:
 	InputPin(Node* node, const std::wstring& name, NodePinType type, bool optional);
 
 	Node* getNode() const;
-	
+
 	const std::wstring& getName() const;
 
 	NodePinType getPinType() const;

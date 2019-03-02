@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_IDiscoveryMessage_H
-#define traktor_net_IDiscoveryMessage_H
+#pragma once
 
 #include "Core/Serialization/ISerializable.h"
 
@@ -22,4 +15,3 @@ class IDiscoveryMessage : public ISerializable
 	}
 }
 
-#endif	// traktor_net_IDiscoveryMessage_H

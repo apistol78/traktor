@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ImmutableNode_H
-#define traktor_render_ImmutableNode_H
+#pragma once
 
 #include <vector>
 #include "Render/Editor/Shader/InputPin.h"
@@ -70,4 +63,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_ImmutableNode_H

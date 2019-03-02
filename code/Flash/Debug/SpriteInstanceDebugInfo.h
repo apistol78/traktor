@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_SpriteInstanceDebugInfo_H
-#define traktor_flash_SpriteInstanceDebugInfo_H
+#pragma once
 
 #include <map>
 #include <utility>
@@ -27,7 +20,7 @@ namespace traktor
 	{
 
 class SpriteInstance;
-	
+
 /*! \brief
  * \ingroup Flash
  */
@@ -71,8 +64,7 @@ private:
 	AlignedVector< std::pair< uint32_t, std::string > > m_labels;
 	RefArray< InstanceDebugInfo > m_childrenDebugInfo;
 };
-	
+
 	}
 }
 
-#endif	// traktor_flash_SpriteInstanceDebugInfo_H

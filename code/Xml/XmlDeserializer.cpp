@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <map>
 #include "Core/Io/IStream.h"
@@ -278,7 +272,7 @@ void XmlDeserializer::operator >> (const Member< Quaternion >& m)
 void XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 {
 	T_CHECK_STATUS;
-	
+
 	if (!ensure(enterElement(m.getName())))
 		return;
 

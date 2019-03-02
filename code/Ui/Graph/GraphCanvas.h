@@ -1,5 +1,4 @@
-#ifndef traktor_ui_GraphCanvas_H
-#define traktor_ui_GraphCanvas_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Ui/Enums.h"
@@ -62,4 +61,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_GraphCanvas_H

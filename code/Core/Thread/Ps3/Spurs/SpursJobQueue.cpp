@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Thread/Acquire.h"
@@ -25,7 +19,7 @@ void SpursJobQueue::destroy()
 	{
 		ret = cellSpursJobQueuePortSync(m_jobQueuePort);
 		T_FATAL_ASSERT_M (ret == CELL_OK, L"cellSpursJobQueuePortSync failed");
-		
+
 		ret = cellSpursJobQueuePortFinalize(m_jobQueuePort);
 		T_FATAL_ASSERT_M (ret == CELL_OK, L"cellSpursJobQueuePortFinalize failed");
 
@@ -36,10 +30,10 @@ void SpursJobQueue::destroy()
 	if (m_jobQueue)
 	{
 		int exitCode;
-		
+
 		ret = cellSpursShutdownJobQueue(m_jobQueue);
 		T_FATAL_ASSERT_M (ret == CELL_OK, L"cellSpursShutdownJobQueue failed");
-		
+
 		ret = cellSpursJoinJobQueue(m_jobQueue, &exitCode);
 		T_FATAL_ASSERT_M (ret == CELL_OK, L"cellSpursJoinJobQueue failed");
 

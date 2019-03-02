@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <cfloat>
 #include "Core/Log/Log.h"
@@ -150,7 +144,7 @@ void Triangulator::stroke(const Path* path, float width, AlignedVector< Triangle
 		{
 			Vector2 d = (sp.points[1] - sp.points[0]).normalized();
 			Vector2 p = d.perpendicular();
-			
+
 			s.curve = false;
 			s.v[0] = sp.points[0] - p * halfWidth;
 			s.v[1] = sp.points[0] + p * halfWidth;
@@ -210,7 +204,7 @@ void Triangulator::stroke(const Path* path, float width, AlignedVector< Triangle
 
 			Vector2 d = (sp.points[np] - sp.points[np - 1]).normalized();
 			Vector2 p = d.perpendicular();
-			
+
 			s.curve = false;
 			s.v[0] = sp.points[np] - p * halfWidth;
 			s.v[1] = sp.points[np] + p * halfWidth;
@@ -415,7 +409,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 
 				float y0 = sl.v[0].y;
 				float y1 = sl.v[1].y;
-				
+
 				if (y0 >= y1)
 					continue;
 

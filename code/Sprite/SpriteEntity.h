@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sprite_SpriteEntity_H
-#define traktor_sprite_SpriteEntity_H
+#pragma once
 
 #include "World/Entity.h"
 
@@ -42,4 +35,3 @@ public:
 	}
 }
 
-#endif	// traktor_sprite_SpriteEntity_H

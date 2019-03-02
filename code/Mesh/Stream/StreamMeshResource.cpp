@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -30,20 +24,19 @@ Ref< IMesh > StreamMeshResource::createMesh(
 ) const
 {
 	Ref< StreamMesh > streamMesh = new StreamMesh();
-	
+
 	if (!resourceManager->bind(m_shader, streamMesh->m_shader))
-		return 0;
+		return nullptr;
 
 	streamMesh->m_stream = dataStream;
 	streamMesh->m_meshReader = new render::MeshReader(meshFactory);
 	streamMesh->m_frameOffsets = m_frameOffsets;
 	streamMesh->m_boundingBox = m_boundingBox;
 
-	for (std::map< std::wstring, parts_t >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
+	for (const auto part : m_parts)
 	{
-		render::handle_t worldTechnique = render::getParameterHandle(i->first);
-
-		for (parts_t::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		render::handle_t worldTechnique = render::getParameterHandle(part.first);
+		for (parts_t::const_iterator j = part.second.begin(); j != part.second.end(); ++j)
 		{
 			StreamMesh::Part part;
 			part.shaderTechnique = render::getParameterHandle(j->shaderTechnique);

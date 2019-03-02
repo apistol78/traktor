@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputMapping_H
-#define traktor_input_InputMapping_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -53,10 +46,10 @@ class InputSystem;
 class T_DLLCLASS InputMapping : public Object
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	InputMapping();
-	
+
 	bool create(
 		InputSystem* inputSystem,
 		const InputMappingSourceData* sourceData,
@@ -76,9 +69,9 @@ public:
 	IInputSource* getSource(handle_t id) const;
 
 	const SmallMap< handle_t, Ref< IInputSource > >& getSources() const;
-	
+
 	InputState* getState(handle_t id) const;
-	
+
 	const SmallMap< handle_t, Ref< InputState > >& getStates() const;
 
 	/*! \name Helpers */
@@ -134,7 +127,7 @@ public:
 	bool hasStateChanged(const std::wstring& id) const { return hasStateChanged(getParameterHandle(id)); }
 
 	// \}
-	
+
 private:
 	Ref< DeviceControlManager > m_deviceControlManager;
 	SmallMap< handle_t, Ref< IInputSource > > m_sources;
@@ -143,8 +136,7 @@ private:
 	float m_idleTimer;
 	float m_T;
 };
-	
+
 	}
 }
 
-#endif	// traktor_input_InputMapping_H

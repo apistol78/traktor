@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/StreamCopy.h"
@@ -44,11 +38,11 @@ Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resour
 		log::error << L"Unable to create sound, no decoder type" << Endl;
 		return 0;
 	}
-	
+
 	if (m_preload)
 	{
 		int64_t size = stream->available();
-		
+
 		uint8_t* buffer = new uint8_t [size];
 		for (int64_t i = 0; i < size; )
 		{
@@ -60,7 +54,7 @@ Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resour
 
 		stream = new MemoryStream(buffer, size, true, false, true);
 	}
-	
+
 	Ref< IStreamDecoder > streamDecoder = checked_type_cast< IStreamDecoder* >(m_decoderType->createInstance());
 	if (!streamDecoder->create(stream))
 	{

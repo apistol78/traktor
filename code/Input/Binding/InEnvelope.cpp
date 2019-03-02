@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Const.h"
 #include "Core/Math/Envelope.h"
 #include "Core/Serialization/ISerializer.h"
@@ -70,6 +64,6 @@ void InEnvelope::serialize(ISerializer& s)
 	s >> Member< float >(L"center", m_center);
 	s >> Member< float >(L"width", m_width);
 }
-	
+
 	}
 }

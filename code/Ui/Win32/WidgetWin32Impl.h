@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_WidgetWin32Impl_H
-#define traktor_ui_WidgetWin32Impl_H
+#pragma once
 
 #include <map>
 #include "Core/Misc/TString.h"
@@ -335,7 +328,7 @@ public:
 		SetCursor(hCursor);
 		m_hCursor = hCursor;
 	}
-	
+
 	virtual Point getMousePosition(bool relative) const override
 	{
 		POINT pnt;
@@ -431,11 +424,11 @@ public:
 			wrc.top = rc->top;
 			wrc.right = rc->right;
 			wrc.bottom = rc->bottom;
-			RedrawWindow(m_hWnd, &wrc, NULL, RDW_INVALIDATE | (immediate ? RDW_UPDATENOW : 0)); 
+			RedrawWindow(m_hWnd, &wrc, NULL, RDW_INVALIDATE | (immediate ? RDW_UPDATENOW : 0));
 		}
 		else
 		{
-			RedrawWindow(m_hWnd, NULL, NULL, RDW_INVALIDATE | (immediate ? RDW_UPDATENOW : 0)); 
+			RedrawWindow(m_hWnd, NULL, NULL, RDW_INVALIDATE | (immediate ? RDW_UPDATENOW : 0));
 		}
 	}
 
@@ -864,4 +857,3 @@ protected:
 	}
 }
 
-#endif	// traktor_ui_WidgetWin32Impl_H

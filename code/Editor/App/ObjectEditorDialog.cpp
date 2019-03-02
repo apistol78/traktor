@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -37,7 +31,7 @@ bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instanc
 {
 	// Create IEditor wrapper; need to disable dialogs when accessing editor's browsers.
 	m_editor = new ObjectEditor(editor, this);
-	
+
 	// Create concrete object editor.
 	m_objectEditor = m_objectEditorFactory->createObjectEditor(m_editor);
 	if (!m_objectEditor)

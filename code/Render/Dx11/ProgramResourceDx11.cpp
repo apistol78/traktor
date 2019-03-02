@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
@@ -159,7 +153,7 @@ void ProgramResourceDx11::serialize(ISerializer& s)
 {
 	s >> MemberBlob(L"vertexShader", m_vertexShader);
 	s >> MemberBlob(L"pixelShader", m_pixelShader);
-	
+
 	s >> Member< uint32_t >(L"vertexShaderHash", m_vertexShaderHash);
 	s >> Member< uint32_t >(L"pixelShaderHash", m_pixelShaderHash);
 

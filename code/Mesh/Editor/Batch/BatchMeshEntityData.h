@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_BatchMeshEntityData_H
-#define traktor_mesh_BatchMeshEntityData_H
+#pragma once
 
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
@@ -32,7 +25,7 @@ public:
 	BatchMeshEntityData();
 
 	virtual void serialize(ISerializer& s) override final;
-	
+
 	virtual void setTransform(const Transform& transform) override final;
 
 	const Guid& getOutputGuid() const { return m_outputGuid; }
@@ -47,4 +40,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_BatchMeshEntityData_H

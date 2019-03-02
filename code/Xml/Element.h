@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_xml_Element_H
-#define traktor_xml_Element_H
+#pragma once
 
 #include <vector>
 #include "Core/RefArray.h"
@@ -17,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
-#endif 
+#endif
 
 namespace traktor
 {
@@ -26,7 +19,7 @@ class OutputStream;
 
 	namespace xml
 	{
-	
+
 class Attribute;
 
 /*! \brief XML Element.
@@ -38,7 +31,7 @@ class T_DLLCLASS Element : public Node
 
 public:
 	Element(const std::wstring& name);
-	
+
 	virtual std::wstring getName() const override final;
 
 	virtual void setName(const std::wstring& name) override final;
@@ -50,21 +43,21 @@ public:
 	virtual void write(OutputStream& os) const override final;
 
 	int32_t get(const std::wstring& path, RefArray< Element >& outElements) const;
-	
+
 	Element* getSingle(const std::wstring& path) const;
 
 	std::wstring getPath() const;
 
 	bool match(const std::wstring& condition);
-	
+
 	bool hasAttribute(const std::wstring& name) const;
-	
+
 	void setAttribute(const std::wstring& name, const std::wstring& value);
-	
+
 	Attribute* getFirstAttribute() const;
-	
+
 	Attribute* getLastAttribute() const;
-	
+
 	Attribute* getAttribute(const std::wstring& name) const;
 
 	/*! \brief Get attribute by name, will always return an attribute.
@@ -75,12 +68,12 @@ public:
 	 * In case of an temporary attribute it will not get linked
 	 * with other attributes in the element thus getPrevious and getNext
 	 * will always return null.
-	 * 
+	 *
 	 * \param name Name of attribute.
 	 * \return Attribute object.
 	 */
 	Ref< Attribute > getAttribute(const std::wstring& name, const std::wstring& defaultValue) const;
-	
+
 	Element* getChildElementByName(const std::wstring& name);
 
 	Ref< Element > clone() const;
@@ -93,8 +86,7 @@ private:
 	Ref< Attribute > m_firstAttribute;
 	Ref< Attribute > m_lastAttribute;
 };
-	
+
 	}
 }
 
-#endif	// traktor_xml_Element_H

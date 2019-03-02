@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Illuminate/Editor/IlluminateEntityData.h"
 #include "Illuminate/Editor/IlluminateEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
@@ -33,7 +27,7 @@ bool IlluminateEntityEditor::isGroup() const
 bool IlluminateEntityEditor::addChildEntity(traktor::scene::EntityAdapter* childEntityAdapter) const
 {
 	IlluminateEntityData* illumEntityData = checked_type_cast< IlluminateEntityData*, false >(getEntityAdapter()->getEntityData());
-	
+
 	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
 	illumEntityData->addEntityData(childEntityData);
 

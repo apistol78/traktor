@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Io/IStream.h"
 #include "Mesh/IMeshParameterCallback.h"
@@ -55,7 +49,7 @@ bool StreamMesh::supportTechnique(render::handle_t technique) const
 
 uint32_t StreamMesh::getFrameCount() const
 {
-	return uint32_t(m_frameOffsets.size());
+	return (uint32_t)m_frameOffsets.size();
 }
 
 Ref< StreamMesh::Instance > StreamMesh::createInstance() const
@@ -87,13 +81,13 @@ void StreamMesh::render(
 	if (!instance->mesh[0])
 		return;
 
-	SmallMap< render::handle_t, AlignedVector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
+	auto it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT (it != m_parts.end());
 
 	const AlignedVector< render::Mesh::Part >& meshParts = instance->mesh[0]->getParts();
-	for (AlignedVector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
+	for (const auto part : it->second)
 	{
-		m_shader->setTechnique(i->shaderTechnique);
+		m_shader->setTechnique(part.shaderTechnique);
 
 		worldRenderPass.setShaderCombination(
 			m_shader,
@@ -106,7 +100,7 @@ void StreamMesh::render(
 			continue;
 
 		// \fixme Linear search by string
-		AlignedVector< render::Mesh::Part >::const_iterator j = std::find_if(meshParts.begin(), meshParts.end(), NamedMeshPart(i->meshPart));
+		auto j = std::find_if(meshParts.begin(), meshParts.end(), NamedMeshPart(part.meshPart));
 		if (j == meshParts.end())
 			continue;
 

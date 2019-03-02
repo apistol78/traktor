@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Const.h"
 #include "Drawing/Image.h"
 #include "Render/Editor/SH/IBLProbe.h"
@@ -46,6 +40,6 @@ float IBLProbe::evaluate(float phi, float theta, const Vector4& unit) const
 
 	return result;
 }
-		
+
 	}
 }

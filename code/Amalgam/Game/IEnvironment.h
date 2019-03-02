@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_IEnvironment_H
-#define traktor_amalgam_IEnvironment_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Amalgam/Game/IAudioServer.h"
@@ -92,4 +85,3 @@ public:
 	}
 }
 
-#endif	// traktor_amalgam_IEnvironment_H

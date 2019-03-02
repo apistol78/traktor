@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -154,7 +148,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 			return;
 
 		auto deploy = m_selectedPlatform->deploy;
-		
+
 		// Create property group if no values exist.
 		if (deploy == nullptr)
 			deploy = m_selectedPlatform->deploy = new PropertyGroup();

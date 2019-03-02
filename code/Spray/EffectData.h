@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_EffectData_H
-#define traktor_spray_EffectData_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
@@ -73,7 +66,7 @@ public:
 	void setLayers(const RefArray< EffectLayerData >& layers) { m_layers = layers; }
 
 	const RefArray< EffectLayerData >& getLayers() const { return m_layers; }
-	
+
 private:
 	float m_duration;
 	float m_loopStart;
@@ -84,4 +77,3 @@ private:
 	}
 }
 
-#endif	// traktor_spray_EffectData_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_RenderTargetSetPs4_H
-#define traktor_render_RenderTargetSetPs4_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Render/RenderTargetSet.h"
@@ -37,7 +30,7 @@ public:
 	virtual void destroy() T_OVERRIDE T_FINAL;
 
 	virtual int getWidth() const T_OVERRIDE T_FINAL;
-	
+
 	virtual int getHeight() const T_OVERRIDE T_FINAL;
 
 	virtual ISimpleTexture* getColorTexture(int index) const T_OVERRIDE T_FINAL;
@@ -65,4 +58,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_RenderTargetSetPs4_H

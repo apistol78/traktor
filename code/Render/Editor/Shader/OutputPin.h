@@ -27,11 +27,11 @@ public:
 	OutputPin();
 
 	OutputPin(Node* node, const Guid& id, const std::wstring& name);
-	
+
 	Node* getNode() const;
 
 	const Guid& getId() const;
-	
+
 	const std::wstring& getName() const;
 
 private:

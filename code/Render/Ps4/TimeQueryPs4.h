@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_TimeQueryPs4_H
-#define traktor_render_TimeQueryPs4_H
+#pragma once
 
 #include "Render/ITimeQuery.h"
 
@@ -32,7 +25,7 @@ public:
 
 	virtual int32_t stamp() T_OVERRIDE T_FINAL;
 
-	virtual void end() T_OVERRIDE T_FINAL;	
+	virtual void end() T_OVERRIDE T_FINAL;
 
 	virtual bool ready() const T_OVERRIDE T_FINAL;
 
@@ -42,4 +35,3 @@ public:
 	}
 }
 
-#endif	// traktor_render_TimeQueryPs4_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_VertexBufferDynamicDx11_H
-#define traktor_render_VertexBufferDynamicDx11_H
+#pragma once
 
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/ComRef.h"
@@ -40,7 +33,7 @@ public:
 	virtual void* lock() override final;
 
 	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount) override final;
-	
+
 	virtual void unlock() override final;
 
 	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache& stateCache) override final;
@@ -52,8 +45,7 @@ private:
 
 	VertexBufferDynamicDx11(uint32_t bufferSize);
 };
-	
+
 	}
 }
 
-#endif	// traktor_render_VertexBufferDynamicDx11_H

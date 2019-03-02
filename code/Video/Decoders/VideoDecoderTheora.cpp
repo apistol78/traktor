@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <theora/theoradec.h>
 #include "Core/Io/IStream.h"
@@ -18,7 +12,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 uint32_t YCbCr2RGB8(uint8_t Y, uint8_t Cb, uint8_t Cr)
 {
 	float r = Y * 298.082f / 256.0f + Cr * 408.583f / 256.0f - 222.921f;

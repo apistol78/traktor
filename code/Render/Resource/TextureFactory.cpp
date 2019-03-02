@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Compress/Lzf/InflateStreamLzf.h"
 #include "Core/Io/Reader.h"
@@ -139,7 +133,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		{
 			int32_t mipWidth = std::max(imageWidth >> i, 1);
 			int32_t mipHeight = std::max(imageHeight >> i, 1);
-						
+
 			uint32_t mipPitch = getTextureMipPitch((TextureFormat)texelFormat, mipWidth, mipHeight);
 
 			if (i >= skipMips)
@@ -193,14 +187,14 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 			readerStream = new compress::InflateStreamLzf(stream);
 
 		Reader readerData(readerStream);
-		
+
 		// Setup immutable data pointers.
 		uint8_t* data = buffer.ptr();
 		for (int32_t i = 0; i < mipCount; ++i)
 		{
 			int32_t mipWidth = std::max(imageWidth >> i, 1);
 			int32_t mipHeight = std::max(imageHeight >> i, 1);
-						
+
 			uint32_t mipPitch = getTextureMipPitch((TextureFormat)texelFormat, mipWidth, mipHeight);
 
 			if (i >= skipMips)
@@ -221,7 +215,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 			{
 				int32_t mipWidth = std::max(imageWidth >> i, 1);
 				int32_t mipHeight = std::max(imageHeight >> i, 1);
-						
+
 				uint32_t mipPitch = getTextureMipPitch((TextureFormat)texelFormat, mipWidth, mipHeight);
 
 				if (i >= skipMips)
@@ -271,7 +265,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 			readerStream = new compress::InflateStreamLzf(stream);
 
 		Reader readerData(readerStream);
-		
+
 		for (int32_t side = 0; side < 6; ++side)
 		{
 			buffer[side].reset(new uint8_t [textureDataSize]);

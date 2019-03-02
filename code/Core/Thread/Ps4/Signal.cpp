@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <kernel.h>
 #include "Core/Thread/Signal.h"
 
@@ -11,14 +5,14 @@ namespace traktor
 {
 	namespace
 	{
-	
+
 struct Internal
 {
 	ScePthreadMutex mutex;
 	ScePthreadCond cond;
 	uint32_t signal;
 };
-	
+
 	}
 
 Signal::Signal()
@@ -56,7 +50,7 @@ void Signal::set()
 	T_ASSERT (in);
 
 	scePthreadMutexLock(&in->mutex);
-	
+
 	in->signal = 1;
 	scePthreadCondBroadcast(&in->cond);
 
@@ -69,7 +63,7 @@ void Signal::reset()
 	T_ASSERT (in);
 
 	scePthreadMutexLock(&in->mutex);
-	
+
 	in->signal = 0;
 
 	scePthreadMutexUnlock(&in->mutex);
@@ -92,7 +86,7 @@ bool Signal::wait(int32_t timeout)
 	}
 
 	scePthreadMutexUnlock(&in->mutex);
-	
+
 	return bool(rc == 0);
 }
 

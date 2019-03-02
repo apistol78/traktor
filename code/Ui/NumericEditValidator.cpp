@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/NumericEditValidator.h"
 #include "Core/Misc/String.h"
 
@@ -79,7 +73,7 @@ EditValidator::Result NumericEditValidator::validate(const std::wstring& text) c
 			else
 				state = 3;
 			break;
-		
+
 		// Consume single dot.
 		case 3:
 			if (ch == L'.')

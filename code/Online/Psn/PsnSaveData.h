@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_online_PsnSaveData_H
-#define traktor_online_PsnSaveData_H
+#pragma once
 
 #include <sysutil/sysutil_savedata.h>
 #include "Online/Provider/ISaveDataProvider.h"
@@ -47,7 +40,7 @@ private:
 	Thread* m_threadDialog;
 
 	void dialogThread();
-	
+
 	static void callbackEnumFixed(CellSaveDataCBResult* cbResult, CellSaveDataListGet* get, CellSaveDataFixedSet* set);
 
 	static void callbackEnumStat(CellSaveDataCBResult* cbResult, CellSaveDataStatGet* get, CellSaveDataStatSet* set);
@@ -66,4 +59,3 @@ private:
 	}
 }
 
-#endif	// traktor_online_PsnSaveData_H

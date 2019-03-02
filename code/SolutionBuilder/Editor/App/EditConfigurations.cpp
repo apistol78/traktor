@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <Core/Config.h>
 #include <Core/Misc/Split.h>
 #include <Core/Misc/String.h>
@@ -87,7 +81,7 @@ bool EditConfigurations::execute(ui::Widget* parent, Solution* solution)
 						configuration->addDefinition(buildExportDefinition((*j)->getName()));
 						configuration->addDefinition(L"NDEBUG");
 					}
-					(*j)->addConfiguration(configuration);						
+					(*j)->addConfiguration(configuration);
 				}
 				else if (i->type == ConfigurationsDialog::AtRename)
 				{

@@ -71,7 +71,7 @@ void ColorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 
 		// Draw color preview with a black border.
 		canvas.fillRect(m_rcColor);
-		canvas.drawRect(m_rcColor);		
+		canvas.drawRect(m_rcColor);
 	}
 	else
 	{

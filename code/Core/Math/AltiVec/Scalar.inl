@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Scalar.h"
 #include "Core/Math/MathUtils.h"
 
@@ -168,10 +162,10 @@ T_MATH_INLINE Scalar reciprocalSquareRoot(const Scalar& s)
 	const vec_float4 zero = (vec_float4)(0.0f);
 	const vec_float4 half = (vec_float4)(0.5f);
 	const vec_float4 one = (vec_float4)(1.0f);
-	
+
 	vec_float4 estimate, estimateSquared, halfEstimate;
 
-	estimate = vec_rsqrte(s.m_data); 
+	estimate = vec_rsqrte(s.m_data);
 
 	estimateSquared = vec_madd(estimate, estimate, zero);
 	halfEstimate = vec_madd(estimate, half, zero);

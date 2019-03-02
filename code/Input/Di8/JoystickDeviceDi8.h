@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_JoystickDeviceDi8_H
-#define traktor_input_JoystickDeviceDi8_H
+#pragma once
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
@@ -65,7 +58,7 @@ public:
 	virtual void setExclusive(bool exclusive);
 
 private:
-	struct ControlInfo 
+	struct ControlInfo
 	{
 		std::wstring name;
 		InputDefaultControlType controlType;
@@ -87,4 +80,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_JoystickDeviceDi8_H

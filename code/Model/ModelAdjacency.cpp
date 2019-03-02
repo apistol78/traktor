@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
 
@@ -79,7 +73,7 @@ void ModelAdjacency::remove(uint32_t polygon)
 			{
 				if (edgeShare[k] == i)
 					edgeShare.erase(edgeShare.begin() + k);
-				else 
+				else
 				{
 					if (edgeShare[k] > i)
 						edgeShare[k]--;

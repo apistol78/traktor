@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sound_SoundEditorPluginFactory_H
-#define traktor_sound_SoundEditorPluginFactory_H
+#pragma once
 
 #include "Editor/IEditorPluginFactory.h"
 
@@ -38,4 +31,3 @@ public:
 	}
 }
 
-#endif	// traktor_sound_SoundEditorPluginFactory_H

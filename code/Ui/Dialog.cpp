@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Ui/Application.h"
 #include "Ui/Dialog.h"
@@ -37,9 +31,9 @@ bool Dialog::create(Widget* parent, const std::wstring& text, int width, int hei
 		dialog->destroy();
 		return false;
 	}
-	
+
 	m_widget = dialog;
-	
+
 	if (!Container::create(parent, WsNone, layout))
 		return false;
 

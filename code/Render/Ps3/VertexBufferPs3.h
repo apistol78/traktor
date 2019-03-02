@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_VertexBufferPs3_H
-#define traktor_render_VertexBufferPs3_H
+#pragma once
 
 #include "Core/Containers/AlignedVector.h"
 #include "Render/VertexBuffer.h"
@@ -41,7 +34,7 @@ public:
 	virtual void* lock();
 
 	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount);
-	
+
 	virtual void unlock();
 
 	void bind(StateCachePs3& stateCache, const AlignedVector< uint8_t >& signature);
@@ -64,4 +57,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_VertexBufferPs3_H

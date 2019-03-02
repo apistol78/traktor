@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Matrix44.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Flash/ColorTransform.h"
@@ -169,7 +163,7 @@ void AccQuad::render(
 	renderBlock->programParams->setVectorParameter(s_handleCxFormMul, cxform.mul);
 	renderBlock->programParams->setVectorParameter(s_handleCxFormAdd, cxform.add);
 	renderBlock->programParams->setStencilReference(maskReference);
-	
+
 	if (texture)
 	{
 		renderBlock->programParams->setTextureParameter(s_handleTexture, texture);

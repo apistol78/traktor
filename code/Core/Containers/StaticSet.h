@@ -27,12 +27,12 @@ public:
 	{
 		return m_data.begin();
 	}
-	
+
 	iterator end()
 	{
 		return m_data.end();
 	}
-	
+
 	const_iterator end() const
 	{
 		return m_data.end();

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Ps3/ClearFpPs3.h"
 #include "Render/Ps3/MemoryHeap.h"
 #include "Render/Ps3/MemoryHeapObject.h"
@@ -71,7 +65,7 @@ bool ClearFpPs3::create(MemoryHeap* memoryHeap)
 
 	cellGcmCgGetUCode(m_clearFragmentProgram, &ucode, &ucodeSize);
 	m_clearFragmentProgramUcode = memoryHeap->alloc(ucodeSize, 64, false);
-	std::memcpy(m_clearFragmentProgramUcode->getPointer(), ucode, ucodeSize); 
+	std::memcpy(m_clearFragmentProgramUcode->getPointer(), ucode, ucodeSize);
 
 	cellGcmCgGetUCode(m_clearVertexProgram, &ucode, &ucodeSize);
 	m_clearVertexProgramUcode = ucode;
@@ -102,11 +96,11 @@ void ClearFpPs3::clear(StateCachePs3& stateCache, const float color[4])
 	T_GCM_CALL(cellGcmSetVertexDataArray)(
 		gCellGcmCurrentContext,
 		m_clearPositionIndex,
-		0, 
-		sizeof(float) * 2, 
-		2, 
-		CELL_GCM_VERTEX_F, 
-		CELL_GCM_LOCATION_LOCAL, 
+		0,
+		sizeof(float) * 2,
+		2,
+		CELL_GCM_VERTEX_F,
+		CELL_GCM_LOCATION_LOCAL,
 		m_quadBuffer->getOffset()
 	);
 

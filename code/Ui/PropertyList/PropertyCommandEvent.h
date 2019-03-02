@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_PropertyCommandEvent_H
-#define traktor_ui_PropertyCommandEvent_H
+#pragma once
 
 #include "Ui/Events/CommandEvent.h"
 
@@ -30,10 +23,10 @@ class PropertyItem;
 class T_DLLCLASS PropertyCommandEvent : public CommandEvent
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	PropertyCommandEvent(EventSubject* sender, PropertyItem* item, const Command& command);
-	
+
 	PropertyItem* getItem() const;
 
 private:
@@ -43,4 +36,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_PropertyCommandEvent_H

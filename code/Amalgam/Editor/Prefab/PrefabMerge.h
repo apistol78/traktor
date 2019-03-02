@@ -1,5 +1,4 @@
-#ifndef traktor_amalgam_PrefabMerge_H
-#define traktor_amalgam_PrefabMerge_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
@@ -71,4 +70,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_PrefabMerge_H

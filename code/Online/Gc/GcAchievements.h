@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_online_GcAchievements_H
-#define traktor_online_GcAchievements_H
+#pragma once
 
 #include <list>
 #include "Online/Provider/IAchievementsProvider.h"
@@ -35,4 +28,3 @@ private:
 	}
 }
 
-#endif	// traktor_online_GcAchievements_H

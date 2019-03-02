@@ -1,5 +1,4 @@
-#ifndef traktor_ui_DialogX11_H
-#define traktor_ui_DialogX11_H
+#pragma once
 
 #include "Ui/Itf/IDialog.h"
 #include "Ui/X11/WidgetX11Impl.h"
@@ -35,4 +34,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_DialogX11_H

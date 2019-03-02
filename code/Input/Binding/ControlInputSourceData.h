@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_ControlInputSourceData_H
-#define traktor_input_ControlInputSourceData_H
+#pragma once
 
 #include "Input/InputTypes.h"
 #include "Input/Binding/IInputSourceData.h"
@@ -22,7 +15,7 @@ namespace traktor
 {
 	namespace input
 	{
-	
+
 /*! \brief Control input source.
  *
  * A control input source allows the graph
@@ -54,19 +47,19 @@ public:
 		ControlQuery controlQuery,
 		int32_t index
 	);
-	
+
 	void setCategory(InputCategory category);
-	
+
 	InputCategory getCategory() const;
-	
+
 	void setControlQuery(ControlQuery controlQuery);
 
 	ControlQuery getControlQuery() const;
 
 	void setIndex(int32_t index);
-	
+
 	int32_t getIndex() const;
-	
+
 	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -80,4 +73,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_ControlInputSourceData_H

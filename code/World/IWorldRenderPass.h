@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_IWorldRenderPass_H
-#define traktor_world_IWorldRenderPass_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Math/Aabb3.h"
@@ -39,7 +32,7 @@ class Shader;
 class T_DLLCLASS IWorldRenderPass : public Object
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	enum PassFlag
 	{
@@ -77,8 +70,7 @@ public:
 	 */
 	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world, const Aabb3& bounds) const = 0;
 };
-	
+
 	}
 }
 
-#endif	// traktor_world_IWorldRenderPass_H

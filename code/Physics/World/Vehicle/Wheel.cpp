@@ -5,9 +5,9 @@ namespace traktor
 {
 	namespace physics
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.Wheel", Wheel, Object)
-	
+
 Wheel::Wheel(const WheelData* data)
 :	data(data)
 ,	angle(0.0f)

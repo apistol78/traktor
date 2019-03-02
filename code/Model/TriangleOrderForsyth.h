@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_model_TriangleOrderForsyth_H
-#define traktor_model_TriangleOrderForsyth_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Containers/AlignedVector.h"
@@ -20,4 +13,3 @@ void optimizeFaces(const AlignedVector< uint32_t >& indexList, uint32_t vertexCo
 	}
 }
 
-#endif	// traktor_model_TriangleOrderForsyth_H

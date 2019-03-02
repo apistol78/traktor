@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
@@ -359,7 +353,7 @@ bool RenderViewDx11::reset(int32_t width, int32_t height)
 		log::error << L"Unable to reset render view; CreateTexture2D failed, HRESULT " << int32_t(hr) << Endl;
 		return false;
 	}
-	
+
 	std::memset(&ddsvd, 0, sizeof(ddsvd));
 	ddsvd.Format = dtd.Format;
 	ddsvd.Flags = 0;
@@ -929,7 +923,7 @@ void RenderViewDx11::present()
 void RenderViewDx11::pushMarker(const char* const marker)
 {
 #if defined(T_USE_D3DPERF)
-	std::wstring wm = marker ? mbstows(marker) : L"Unnamed"; 
+	std::wstring wm = marker ? mbstows(marker) : L"Unnamed";
 	D3DPERF_BeginEvent(D3DCOLOR_RGBA(255, 255, 255, 255), wm.c_str());
 #endif
 }

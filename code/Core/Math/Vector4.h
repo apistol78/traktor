@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Vector4_H
-#define traktor_Vector4_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Math/MathConfig.h"
@@ -190,7 +183,9 @@ T_MATH_INLINE T_DLLCLASS Vector4 lerp(const Vector4& a, const Vector4& b, const 
 
 T_MATH_INLINE T_DLLCLASS Vector4 reflect(const Vector4& v, const Vector4& at);
 
-T_MATH_INLINE T_DLLCLASS int majorAxis3(const Vector4& v);
+T_MATH_INLINE T_DLLCLASS int32_t minorAxis3(const Vector4& v);
+
+T_MATH_INLINE T_DLLCLASS int32_t majorAxis3(const Vector4& v);
 
 T_MATH_INLINE T_DLLCLASS void orthogonalFrame(const Vector4& d, Vector4& outU, Vector4& outV);
 
@@ -224,4 +219,3 @@ T_MATH_INLINE T_DLLCLASS bool compareFuzzyEqual(const Vector4& l, const Vector4&
 #	endif
 #endif
 
-#endif	// traktor_Vector4_H

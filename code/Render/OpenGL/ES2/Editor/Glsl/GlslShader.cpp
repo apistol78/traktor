@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Render/OpenGL/ES2/Editor/Glsl/GlslShader.h"
@@ -201,7 +195,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		// Add post-orientation transform function.
 		ss << L"uniform vec4 _gl_postTransform;" << Endl;
 		ss << Endl;
-		
+
 		ss << L"vec4 PV(in vec4 cp0)" << Endl;
 		ss << L"{" << Endl;
 		ss << L"\treturn vec4(" << Endl;

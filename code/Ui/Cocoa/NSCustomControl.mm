@@ -26,7 +26,7 @@
 		[m_string autorelease];
 
 	m_string = aString;
-	
+
 	if (m_string)
 		[m_string retain];
 }
@@ -40,9 +40,9 @@
 {
 	if (m_font)
 		[m_font autorelease];
-	
+
 	m_font = font;
-	
+
 	if (m_font)
 		[m_font retain];
 }
@@ -74,7 +74,7 @@
 
 	if (m_eventsCallback)
 		consumed = m_eventsCallback->event_viewDidEndLiveResize();
-		
+
 	if (!consumed)
 		[super viewDidEndLiveResize];
 }
@@ -159,10 +159,10 @@
 - (void) keyDown: (NSEvent*)theEvent
 {
 	bool consumed = false;
-	
+
 	if (m_eventsCallback)
 		consumed = m_eventsCallback->event_keyDown(theEvent);
-	
+
 	if (!consumed)
 		[super keyDown: theEvent];
 }
@@ -170,10 +170,10 @@
 - (void) keyUp: (NSEvent*)theEvent;
 {
 	bool consumed = false;
-	
+
 	if (m_eventsCallback)
 		consumed = m_eventsCallback->event_keyUp(theEvent);
-	
+
 	if (!consumed)
 		[super keyUp: theEvent];
 }
@@ -181,10 +181,10 @@
 - (BOOL) performKeyEquivalent: (NSEvent *)theEvent
 {
 	bool consumed = false;
-	
+
 	if (m_eventsCallback)
 		consumed = m_eventsCallback->event_performKeyEquivalent(theEvent);
-		
+
 	if (!consumed)
 		return [super performKeyEquivalent: theEvent];
 	else

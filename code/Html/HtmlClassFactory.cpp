@@ -1,14 +1,6 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
-#include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
-//#include "Core/Class/IRuntimeDelegate.h"
-//#include "Core/Class/IRuntimeObject.h"
+#include "Core/Io/IEncoding.h"
 #include "Html/HtmlClassFactory.h"
 #include "Html/Attribute.h"
 #include "Html/Comment.h"
@@ -25,19 +17,51 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.html.HtmlClassFactory", 0, HtmlClassFac
 
 void HtmlClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< Attribute > > classAttribute = new AutoRuntimeClass< Attribute >();
+	auto classNode = new AutoRuntimeClass< Node >();
+	classNode->addProperty("name", &Node::getName);
+	classNode->addProperty("value", &Node::getValue);
+	classNode->addProperty("parent", &Node::getParent);
+	classNode->addProperty("previousSibling", &Node::getPreviousSibling);
+	classNode->addProperty("nextSibling", &Node::getNextSibling);
+	classNode->addProperty("firstChild", &Node::getFirstChild);
+	classNode->addProperty("lastChild", &Node::getLastChild);
+	classNode->addMethod("addChild", &Node::addChild);
+	classNode->addMethod("insertBefore", &Node::insertBefore);
+	classNode->addMethod("insertAfter", &Node::insertAfter);
+	registrar->registerClass(classNode);
+
+	auto classAttribute = new AutoRuntimeClass< Attribute >();
+	classAttribute->addProperty("name", &Attribute::getName);
+	classAttribute->addProperty("value", &Attribute::setValue, &Attribute::getValue);
+	classAttribute->addProperty("previous", &Attribute::getPrevious);
+	classAttribute->addProperty("next", &Attribute::getNext);
 	registrar->registerClass(classAttribute);
 
-	Ref< AutoRuntimeClass< Comment > > classComment = new AutoRuntimeClass< Comment >();
+	auto classComment = new AutoRuntimeClass< Comment >();
 	registrar->registerClass(classComment);
 
-	Ref< AutoRuntimeClass< Document > > classDocument = new AutoRuntimeClass< Document >();
+	auto classDocument = new AutoRuntimeClass< Document >();
+	classDocument->addProperty("documentElement", &Document::setDocumentElement, &Document::getDocumentElement);
+	classDocument->addMethod("loadFromFile", &Document::loadFromFile);
+	classDocument->addMethod("loadFromStream", &Document::loadFromStream);
+	classDocument->addMethod("loadFromText", &Document::loadFromText);
+	classDocument->addMethod("saveAsFile", &Document::saveAsFile);
+	classDocument->addMethod("saveIntoStream", &Document::saveIntoStream);
 	registrar->registerClass(classDocument);
 
-	Ref< AutoRuntimeClass< Element > > classElement = new AutoRuntimeClass< Element >();
+	auto classElement = new AutoRuntimeClass< Element >();
+	classElement->addProperty("firstAttribute", &Element::getFirstAttribute);
+	classElement->addProperty("lastAttribute", &Element::getLastAttribute);
+	classElement->addProperty("previousElementSibling", &Element::getPreviousElementSibling);
+	classElement->addProperty("nextElementSibling", &Element::getNextElementSibling);
+	classElement->addProperty("firstElementChild", &Element::getFirstElementChild);
+	classElement->addProperty("lastElementChild", &Element::getLastElementChild);
+	classElement->addMethod("hasAttribute", &Element::hasAttribute);
+	classElement->addMethod("setAttribute", &Element::setAttribute);
+	classElement->addMethod("getAttribute", &Element::getAttribute);
 	registrar->registerClass(classElement);
 
-	Ref< AutoRuntimeClass< Text > > classText = new AutoRuntimeClass< Text >();
+	auto classText = new AutoRuntimeClass< Text >();
 	registrar->registerClass(classText);
 }
 

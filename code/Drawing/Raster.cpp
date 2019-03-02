@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <agg_alpha_mask_u8.h>
 #include <agg_conv_curve.h>
 #include <agg_conv_stroke.h>
@@ -160,7 +154,7 @@ public:
 		for (unsigned i = 0; i < len; ++i)
 		{
 			float f = clamp((pt.x - s) * n, 0.0f, 1.0f);
-			
+
 			Color4f c(lerp(m_colors.front().first, m_colors.back().first, Scalar(f)));
 
 			span[i] = agg::rgba8(
@@ -517,7 +511,7 @@ public:
 	virtual void fill(int32_t style0, int32_t style1, Raster::FillRuleType fillRule) override final
 	{
 		agg::conv_curve< agg::path_storage > curve(m_path);
-		
+
 		if (fillRule == Raster::FrNonZero)
 			m_rasterizer.filling_rule(agg::fill_non_zero);
 		else // Raster::FrOddEven

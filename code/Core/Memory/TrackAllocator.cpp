@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <iostream>
 #include "Core/Platform.h"
 #include "Core/Debug/CallStack.h"
@@ -102,7 +96,7 @@ void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 		block.at[i] = 0;
 
 	getCallStack(sizeof_array(block.at), block.at, 1);
-	
+
 	Stats& stats = m_allocStats[block.at[0]];
 	stats.tag = tag;
 	stats.count++;

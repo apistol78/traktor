@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
@@ -194,7 +188,7 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 	}
 
 	mesh->setParts(parts);
-	
+
 	float ext[6];
 	reader >> ext[0];
 	reader >> ext[1];

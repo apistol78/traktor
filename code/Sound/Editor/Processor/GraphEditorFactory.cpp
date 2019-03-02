@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Sound/Editor/Processor/GraphAsset.h"
 #include "Sound/Editor/Processor/GraphEditor.h"
 #include "Sound/Editor/Processor/GraphEditorFactory.h"

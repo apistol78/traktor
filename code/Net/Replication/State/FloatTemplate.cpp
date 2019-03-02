@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
@@ -43,7 +37,7 @@ float cyclicLerp(float a, float b, float t, float mn, float mx)
 			o -= (mx - mn);
 		return o;
 	}
-	
+
 	if (abs(bl - a) < abs(b - a))
 	{
 		float o = lerp(a, bl, t);

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputDriverTobii_H
-#define traktor_input_InputDriverTobii_H
+#pragma once
 
 #include <eyex/EyeX.h>
 #include "Input/IInputDriver.h"
@@ -68,4 +61,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_InputDriverTobii_H

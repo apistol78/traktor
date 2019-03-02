@@ -29,7 +29,7 @@ using namespace traktor::ui;
 {
 	std::wstring value;
 	bool bold;
-	
+
 	m_callback->treeValue(item, value, bold);
 	NSString* s = makeNSString(value);
 
@@ -37,10 +37,10 @@ using namespace traktor::ui;
 	{
 		CGFloat fontSize = [NSFont systemFontSize];
 		NSFont* font = [NSFont boldSystemFontOfSize: fontSize];
-	
+
 		NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
 		[attributes setObject: font forKey:NSFontAttributeName];
-	
+
 		NSAttributedString* as = [[[NSAttributedString alloc] initWithString: s attributes: attributes] autorelease];
 		return as;
 	}

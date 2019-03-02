@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_KeyEvent_H
-#define traktor_ui_KeyEvent_H
+#pragma once
 
 #include "Ui/Event.h"
 #include "Ui/Point.h"
@@ -23,14 +16,14 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 /*! \brief Key event.
  * \ingroup UI
  */
 class T_DLLCLASS KeyEvent : public Event
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	KeyEvent(
 		EventSubject* sender,
@@ -38,20 +31,19 @@ public:
 		uint32_t systemKey,
 		wchar_t character
 	);
-	
+
 	VirtualKey getVirtualKey() const;
-	
+
 	uint32_t getSystemKey() const;
-	
+
 	wchar_t getCharacter() const;
-	
+
 private:
 	VirtualKey m_virtualKey;
 	uint32_t m_systemKey;
 	wchar_t m_character;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_KeyEvent_H

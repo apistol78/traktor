@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_CollisionListener_H
-#define traktor_physics_CollisionListener_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -85,4 +78,3 @@ inline Ref< CollisionListener > createCollisionListener(TargetType* object, type
 	}
 }
 
-#endif	// traktor_physics_CollisionListener_H

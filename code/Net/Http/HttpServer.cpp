@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/RefArray.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/StreamCopy.h"
@@ -122,12 +116,12 @@ public:
 				if (request->hasValue(L"Cookie"))
 				{
 					std::wstring cookie = request->getValue(L"Cookie");
-					
+
 					StringSplit< std::wstring > ss(cookie, L";");
 					for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
 					{
 						const std::wstring& kv = *i;
-						
+
 						size_t p = kv.find(L'=');
 						if (p != kv.npos)
 						{

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_dx11_Platform_H
-#define traktor_render_dx11_Platform_H
+#pragma once
 
 #define _WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -16,4 +9,3 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <d3dcompiler.h>
 #include <tchar.h>
 
-#endif	// traktor_render_dx11_Platform_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_xml_Node_H
-#define traktor_xml_Node_H
+#pragma once
 
 #include <string>
 #include "Core/Object.h"
@@ -17,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
-#endif 
+#endif
 
 namespace traktor
 {
@@ -56,19 +49,19 @@ public:
 	void removeChild(Node* child);
 
 	void removeAllChildren();
-	
+
 	void insertBefore(Node* child, Node* beforeNode);
-	
+
 	void insertAfter(Node* child, Node* afterNode);
 
 	Node* getParent() const;
-	
+
 	Node* getPreviousSibling() const;
-	
+
 	Node* getNextSibling() const;
-	
+
 	Node* getFirstChild() const;
-	
+
 	Node* getLastChild() const;
 
 protected:
@@ -87,4 +80,3 @@ private:
 	}
 }
 
-#endif	// traktor_xml_Node_H

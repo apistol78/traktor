@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Render/Editor/Shader/NodeCategories.h"
@@ -72,7 +66,7 @@ void QuickMenuTool::updateSuggestions(const std::wstring& filter)
 	for (size_t i = 0; i < sizeof_array(c_nodeCategories); ++i)
 	{
 		std::wstring typeName = c_nodeCategories[i].type.getName();
-		
+
 		size_t p = typeName.find_last_of(L'.');
 		if (p != typeName.npos)
 			typeName = typeName.substr(p + 1);

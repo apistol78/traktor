@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_VehicleComponent_H
-#define traktor_physics_VehicleComponent_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "World/IEntityComponent.h"
@@ -93,4 +86,3 @@ private:
 	}
 }
 
-#endif	// traktor_physics_VehicleComponent_H

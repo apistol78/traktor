@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_MathCompare_H
-#define traktor_MathCompare_H
+#pragma once
 
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Quaternion.h"
@@ -64,4 +57,3 @@ inline bool compareTransformEqual(const Transform& lh, const Transform& rh)
 
 }
 
-#endif	// traktor_MathCompare_H

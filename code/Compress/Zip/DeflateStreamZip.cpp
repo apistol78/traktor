@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <zlib.h>
 #include "Compress/Zip/DeflateStreamZip.h"
@@ -16,7 +10,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 voidpf deflateZAlloc(voidpf opaque, uInt items, uInt size)
 {
 	return Alloc::acquire(items * size, "zlib");
@@ -26,7 +20,7 @@ void deflateZFree(voidpf opaque, voidpf address)
 {
 	Alloc::free(address);
 }
-		
+
 		}
 
 class DeflateZipImpl : public RefCountImpl< IRefCount >

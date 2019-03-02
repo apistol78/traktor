@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_ClientPage_H
-#define traktor_flash_ClientPage_H
+#pragma once
 
 #include "Net/BidirectionalObjectTransport.h"
 #include "Ui/Container.h"
@@ -22,7 +15,7 @@ class ToolBar;
 class ToolBarButtonClickEvent;
 class TreeView;
 class TreeViewItem;
-		
+
 	}
 
 	namespace flash
@@ -71,4 +64,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_ClientPage_H

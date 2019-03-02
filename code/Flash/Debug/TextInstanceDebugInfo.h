@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #ifndef traktor_flash_TextInstanceDebugInfo_H
 #define traktor_flash_TextInstanceDebugInfo_H
 
@@ -23,7 +17,7 @@ namespace traktor
 	{
 
 class TextInstance;
-	
+
 /*! \brief
  * \ingroup Flash
  */
@@ -38,7 +32,7 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 };
-	
+
 	}
 }
 

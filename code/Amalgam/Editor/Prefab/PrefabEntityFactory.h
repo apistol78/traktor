@@ -1,5 +1,4 @@
-#ifndef traktor_amalgam_PrefabEntityFactory_H
-#define traktor_amalgam_PrefabEntityFactory_H
+#pragma once
 
 #include "World/IEntityFactory.h"
 
@@ -37,4 +36,3 @@ public:
 	}
 }
 
-#endif	// traktor_amalgam_PrefabEntityFactory_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "I18N/Format.h"
 #include "Sound/Resound/EnvelopeGrainData.h"
 #include "Sound/Editor/Resound/EnvelopeGrainFacade.h"
@@ -40,7 +34,7 @@ ui::Widget* EnvelopeGrainFacade::createView(IGrainData* grain, ui::Widget* paren
 
 	Ref< ui::EnvelopeControl > envelopeControl = new ui::EnvelopeControl();
 	envelopeControl->create(parent, new ui::DefaultEnvelopeEvaluator< HermiteEvaluator >(), 0.0f, 1.0f, ui::WsDoubleBuffer);
-	
+
 	envelopeControl->insertKey(new ui::EnvelopeKey(0.0f, levels[0], true));
 	envelopeControl->insertKey(new ui::EnvelopeKey(envelopeGrain->getMid(), levels[1], false));
 	envelopeControl->insertKey(new ui::EnvelopeKey(1.0f, levels[2], true));

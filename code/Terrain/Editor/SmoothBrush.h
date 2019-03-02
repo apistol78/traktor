@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_terrain_SmoothBrush_H
-#define traktor_terrain_SmoothBrush_H
+#pragma once
 
 #include "Resource/Proxy.h"
 #include "Terrain/Editor/IBrush.h"
@@ -49,4 +42,3 @@ private:
 	}
 }
 
-#endif	// traktor_terrain_SmoothBrush_H

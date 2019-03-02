@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_model_Material_H
-#define traktor_model_Material_H
+#pragma once
 
 #include <string>
 #include "Core/Config.h"
@@ -69,7 +62,7 @@ public:
 	Material(const std::wstring& name);
 
 	void setName(const std::wstring& name);
-	
+
 	const std::wstring& getName() const;
 
 	void setDiffuseMap(const Map& diffuseMap);
@@ -155,7 +148,7 @@ public:
 	bool isDoubleSided() const;
 
 	virtual void serialize(ISerializer& s) override final;
-	
+
 private:
 	std::wstring m_name;
 	Map m_diffuseMap;
@@ -184,4 +177,3 @@ private:
 	}
 }
 
-#endif	// traktor_model_Material_H

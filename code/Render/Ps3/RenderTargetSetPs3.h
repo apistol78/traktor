@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_RenderTargetSetPs3_H
-#define traktor_render_RenderTargetSetPs3_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Render/RenderTargetSet.h"
@@ -51,9 +44,9 @@ public:
 	virtual void destroy();
 
 	virtual int getWidth() const;
-	
+
 	virtual int getHeight() const;
-	
+
 	virtual ISimpleTexture* getColorTexture(int index) const;
 
 	virtual ISimpleTexture* getDepthTexture() const;
@@ -107,4 +100,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_RenderTargetSetPs3_H

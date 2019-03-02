@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/CoreClassFactory.h"
@@ -276,7 +270,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.CoreClassFactory", 0, CoreClassFactory,
 
 void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< DateTime > > classDateTime = new AutoRuntimeClass< DateTime >();
+	auto classDateTime = new AutoRuntimeClass< DateTime >();
 	classDateTime->addConstructor();
 	classDateTime->addConstructor< uint64_t >();
 	classDateTime->addConstructor< uint16_t, uint8_t, uint16_t, uint8_t, uint8_t, uint8_t >();
@@ -295,7 +289,7 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classDateTime->addMethod("format", &DateTime::format);
 	registrar->registerClass(classDateTime);
 
-	Ref< AutoRuntimeClass< Path > > classPath = new AutoRuntimeClass< Path >();
+	auto classPath = new AutoRuntimeClass< Path >();
 	classPath->addConstructor();
 	classPath->addConstructor< const std::wstring& >();
 	classPath->addProperty("original", &Path::getOriginal);
@@ -314,7 +308,7 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classPath->addMethod("concat", &Path_concat);
 	registrar->registerClass(classPath);
 
-	Ref< AutoRuntimeClass< File > > classFile = new AutoRuntimeClass< File >();
+	auto classFile = new AutoRuntimeClass< File >();
 	classFile->addConstant("FmRead", Any::fromInt32(File::FmRead));
 	classFile->addConstant("FmWrite", Any::fromInt32(File::FmWrite));
 	classFile->addConstant("FmAppend", Any::fromInt32(File::FmAppend));
@@ -334,7 +328,7 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFile->addProperty("lastWriteTime", &File::getLastWriteTime);
 	registrar->registerClass(classFile);
 
-	Ref< AutoRuntimeClass< IVolume > > classIVolume = new AutoRuntimeClass< IVolume >();
+	auto classIVolume = new AutoRuntimeClass< IVolume >();
 	classIVolume->addProperty("description", &IVolume::getDescription);
 	classIVolume->addMethod("get", &IVolume::get);
 	classIVolume->addMethod("find", &IVolume_find);
@@ -350,7 +344,7 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIVolume->addMethod("getCurrentDirectory", &IVolume::getCurrentDirectory);
 	registrar->registerClass(classIVolume);
 
-	Ref< AutoRuntimeClass< IStream > > classIStream = new AutoRuntimeClass< IStream >();
+	auto classIStream = new AutoRuntimeClass< IStream >();
 	classIStream->addConstant("SeekCurrent", Any::fromInt32(IStream::SeekCurrent));
 	classIStream->addConstant("SeekEnd", Any::fromInt32(IStream::SeekEnd));
 	classIStream->addConstant("SeekSet", Any::fromInt32(IStream::SeekSet));
@@ -364,16 +358,16 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIStream->addMethod("flush", &IStream::flush);
 	registrar->registerClass(classIStream);
 
-	Ref< AutoRuntimeClass< BufferedStream > > classBufferedStream = new AutoRuntimeClass< BufferedStream >();
+	auto classBufferedStream = new AutoRuntimeClass< BufferedStream >();
 	classBufferedStream->addConstructor< IStream* >();
 	classBufferedStream->addConstructor< IStream*, uint32_t >();
 	registrar->registerClass(classBufferedStream);
 
-	Ref< AutoRuntimeClass< DynamicMemoryStream > > classDynamicMemoryStream = new AutoRuntimeClass< DynamicMemoryStream >();
+	auto classDynamicMemoryStream = new AutoRuntimeClass< DynamicMemoryStream >();
 	classDynamicMemoryStream->addConstructor< bool, bool >();
 	registrar->registerClass(classDynamicMemoryStream);
 
-	Ref< AutoRuntimeClass< BitReader > > classBitReader = new AutoRuntimeClass< BitReader >();
+	auto classBitReader = new AutoRuntimeClass< BitReader >();
 	classBitReader->addConstructor< IStream* >();
 	classBitReader->addMethod("readBit", &BitReader::readBit);
 	classBitReader->addMethod("readUnsigned", &BitReader::readUnsigned);
@@ -390,7 +384,7 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBitReader->addMethod("getStream", &BitReader::getStream);
 	registrar->registerClass(classBitReader);
 
-	Ref< AutoRuntimeClass< BitWriter > > classBitWriter = new AutoRuntimeClass< BitWriter >();
+	auto classBitWriter = new AutoRuntimeClass< BitWriter >();
 	classBitWriter->addConstructor< IStream* >();
 	classBitWriter->addMethod("writeBit", &BitWriter::writeBit);
 	classBitWriter->addMethod("writeUnsigned", &BitWriter::writeUnsigned);
@@ -406,7 +400,7 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBitWriter->addMethod("getStream", &BitWriter::getStream);
 	registrar->registerClass(classBitWriter);
 
-	Ref< AutoRuntimeClass< FileSystem > > classFileSystem = new AutoRuntimeClass< FileSystem >();
+	auto classFileSystem = new AutoRuntimeClass< FileSystem >();
 	classFileSystem->addStaticMethod("getInstance", &FileSystem_getInstance);
 	classFileSystem->addMethod("mount", &FileSystem::mount);
 	classFileSystem->addMethod("umount", &FileSystem::umount);
@@ -433,44 +427,44 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFileSystem->addMethod("getRelativePath", &FileSystem_getRelativePath);
 	registrar->registerClass(classFileSystem);
 
-	Ref< AutoRuntimeClass< IEncoding > > classIEncoding = new AutoRuntimeClass< IEncoding >();
+	auto classIEncoding = new AutoRuntimeClass< IEncoding >();
 	registrar->registerClass(classIEncoding);
 
-	Ref< AutoRuntimeClass< AnsiEncoding > > classAnsiEncoding = new AutoRuntimeClass< AnsiEncoding >();
+	auto classAnsiEncoding = new AutoRuntimeClass< AnsiEncoding >();
 	classAnsiEncoding->addConstructor();
 	registrar->registerClass(classAnsiEncoding);
 
-	Ref< AutoRuntimeClass< Utf8Encoding > > classUtf8Encoding = new AutoRuntimeClass< Utf8Encoding >();
+	auto classUtf8Encoding = new AutoRuntimeClass< Utf8Encoding >();
 	classUtf8Encoding->addConstructor();
 	registrar->registerClass(classUtf8Encoding);
 
-	Ref< AutoRuntimeClass< Utf16Encoding > > classUtf16Encoding = new AutoRuntimeClass< Utf16Encoding >();
+	auto classUtf16Encoding = new AutoRuntimeClass< Utf16Encoding >();
 	classUtf16Encoding->addConstructor();
 	registrar->registerClass(classUtf16Encoding);
 
-	Ref< AutoRuntimeClass< Utf32Encoding > > classUtf32Encoding = new AutoRuntimeClass< Utf32Encoding >();
+	auto classUtf32Encoding = new AutoRuntimeClass< Utf32Encoding >();
 	classUtf32Encoding->addConstructor();
 	registrar->registerClass(classUtf32Encoding);
 
-	Ref< AutoRuntimeClass< StringReader > > classStringReader = new AutoRuntimeClass< StringReader >();
+	auto classStringReader = new AutoRuntimeClass< StringReader >();
 	classStringReader->addConstructor< traktor::IStream*, IEncoding* >();
 	classStringReader->addMethod("readChar", &StringReader_readChar);
 	classStringReader->addMethod("readLine", &StringReader_readLine);
 	registrar->registerClass(classStringReader);
 
-	Ref< AutoRuntimeClass< StreamCopy > > classStreamCopy = new AutoRuntimeClass< StreamCopy >();
+	auto classStreamCopy = new AutoRuntimeClass< StreamCopy >();
 	classStreamCopy->addConstructor< traktor::IStream*, traktor::IStream* >();
 	classStreamCopy->addMethod("execute", &StreamCopy_execute);
 	registrar->registerClass(classStreamCopy);
 
-	Ref< AutoRuntimeClass< Environment > > classEnvironment = new AutoRuntimeClass< Environment >();
+	auto classEnvironment = new AutoRuntimeClass< Environment >();
 	classEnvironment->addConstructor();
 	classEnvironment->addMethod("set", &Environment::set);
 	classEnvironment->addMethod("has", &Environment::has);
 	classEnvironment->addMethod("get", &Environment_get);
 	registrar->registerClass(classEnvironment);
 
-	Ref< AutoRuntimeClass< IProcess > > classIProcess = new AutoRuntimeClass< IProcess >();
+	auto classIProcess = new AutoRuntimeClass< IProcess >();
 	classIProcess->addProperty("stdOut", &IProcess_getStdOut);
 	classIProcess->addProperty("stdErr", &IProcess_getStdErr);
 	classIProcess->addProperty("exitCode", &IProcess::exitCode);
@@ -480,13 +474,13 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIProcess->addMethod("wait", &IProcess_wait_1);
 	registrar->registerClass(classIProcess);
 
-	Ref< AutoRuntimeClass< ISharedMemory > > classISharedMemory = new AutoRuntimeClass< ISharedMemory >();
+	auto classISharedMemory = new AutoRuntimeClass< ISharedMemory >();
 	//classISharedMemory->addMethod("read", &ISharedMemory::read);
 	//classISharedMemory->addMethod("write", &ISharedMemory::write);
 	classISharedMemory->addMethod("clear", &ISharedMemory::clear);
 	registrar->registerClass(classISharedMemory);
 
-	Ref< AutoRuntimeClass< OS > > classOS = new AutoRuntimeClass< OS >();
+	auto classOS = new AutoRuntimeClass< OS >();
 	classOS->addStaticMethod("getInstance", &OS_getInstance);
 	classOS->addProperty("cpuCoreCount", &OS::getCPUCoreCount);
 	classOS->addProperty("executable", &OS::getExecutable);
@@ -509,20 +503,20 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 #endif
 	registrar->registerClass(classOS);
 
-	Ref< AutoRuntimeClass< DeepClone > > classDeepClone = new AutoRuntimeClass< DeepClone >();
+	auto classDeepClone = new AutoRuntimeClass< DeepClone >();
 	classDeepClone->addConstructor< const ISerializable* >();
 	classDeepClone->addMethod< Ref< ISerializable > >("create", &DeepClone::create);
 	registrar->registerClass(classDeepClone);
 
-	Ref< AutoRuntimeClass< DeepHash > > classDeepHash = new AutoRuntimeClass< DeepHash >();
+	auto classDeepHash = new AutoRuntimeClass< DeepHash >();
 	classDeepHash->addConstructor< const ISerializable* >();
 	classDeepHash->addMethod("get", &DeepHash::get);
 	registrar->registerClass(classDeepHash);
 
-	Ref< AutoRuntimeClass< IPropertyValue > > classIPropertyValue = new AutoRuntimeClass< IPropertyValue >();
+	auto classIPropertyValue = new AutoRuntimeClass< IPropertyValue >();
 	registrar->registerClass(classIPropertyValue);
 
-	Ref< AutoRuntimeClass< PropertyArray > > classPropertyArray = new AutoRuntimeClass< PropertyArray >();
+	auto classPropertyArray = new AutoRuntimeClass< PropertyArray >();
 	classPropertyArray->addConstructor();
 	classPropertyArray->addConstructor< const RefArray< IPropertyValue >& >();
 	classPropertyArray->addMethod("addProperty", &PropertyArray::addProperty);
@@ -531,53 +525,53 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classPropertyArray->addMethod("getProperty", &PropertyArray_getProperty);
 	registrar->registerClass(classPropertyArray);
 
-	Ref< AutoRuntimeClass< PropertyBoolean > > classPropertyBoolean = new AutoRuntimeClass< PropertyBoolean >();
+	auto classPropertyBoolean = new AutoRuntimeClass< PropertyBoolean >();
 	classPropertyBoolean->addConstructor();
 	classPropertyBoolean->addConstructor< bool >();
 	classPropertyBoolean->addMethod("get", &PropertyBoolean_get);
 	registrar->registerClass(classPropertyBoolean);
 
-	Ref< AutoRuntimeClass< PropertyColor > > classPropertyColor = new AutoRuntimeClass< PropertyColor >();
+	auto classPropertyColor = new AutoRuntimeClass< PropertyColor >();
 	classPropertyColor->addConstructor();
 	classPropertyColor->addConstructor< Color4ub >();
 	classPropertyColor->addMethod("get", &PropertyColor_get);
 	registrar->registerClass(classPropertyColor);
 
-	Ref< AutoRuntimeClass< PropertyFloat > > classPropertyFloat = new AutoRuntimeClass< PropertyFloat >();
+	auto classPropertyFloat = new AutoRuntimeClass< PropertyFloat >();
 	classPropertyFloat->addConstructor();
 	classPropertyFloat->addConstructor< float >();
 	classPropertyFloat->addMethod("get", &PropertyFloat_get);
 	registrar->registerClass(classPropertyFloat);
 
-	Ref< AutoRuntimeClass< PropertyGroup > > classPropertyGroup = new AutoRuntimeClass< PropertyGroup >();
+	auto classPropertyGroup = new AutoRuntimeClass< PropertyGroup >();
 	classPropertyGroup->addConstructor();
 	classPropertyGroup->addMethod("setProperty", &PropertyGroup_setProperty);
 	classPropertyGroup->addMethod("getProperty", &PropertyGroup_getProperty);
 	classPropertyGroup->addMethod("getPropertyRaw", &PropertyGroup_getPropertyRaw);
 	registrar->registerClass(classPropertyGroup);
 
-	Ref< AutoRuntimeClass< PropertyInteger > > classPropertyInteger = new AutoRuntimeClass< PropertyInteger >();
+	auto classPropertyInteger = new AutoRuntimeClass< PropertyInteger >();
 	classPropertyInteger->addConstructor();
 	classPropertyInteger->addConstructor< int32_t >();
 	classPropertyInteger->addMethod("get", &PropertyInteger_get);
 	registrar->registerClass(classPropertyInteger);
 
-	Ref< AutoRuntimeClass< PropertyObject > > classPropertyObject = new AutoRuntimeClass< PropertyObject >();
+	auto classPropertyObject = new AutoRuntimeClass< PropertyObject >();
 	classPropertyObject->addConstructor();
 	classPropertyObject->addMethod("get", &PropertyObject_get);
 	registrar->registerClass(classPropertyObject);
 
-	Ref< AutoRuntimeClass< PropertyString > > classPropertyString = new AutoRuntimeClass< PropertyString >();
+	auto classPropertyString = new AutoRuntimeClass< PropertyString >();
 	classPropertyString->addConstructor();
 	classPropertyString->addConstructor< const std::wstring& >();
 	classPropertyString->addMethod("get", &PropertyString_get);
 	registrar->registerClass(classPropertyString);
 
-	Ref< AutoRuntimeClass< PropertyStringArray > > classPropertyStringArray = new AutoRuntimeClass< PropertyStringArray >();
+	auto classPropertyStringArray = new AutoRuntimeClass< PropertyStringArray >();
 	classPropertyStringArray->addConstructor();
 	registrar->registerClass(classPropertyStringArray);
 
-	Ref< AutoRuntimeClass< PropertyStringSet > > classPropertyStringSet = new AutoRuntimeClass< PropertyStringSet >();
+	auto classPropertyStringSet = new AutoRuntimeClass< PropertyStringSet >();
 	classPropertyStringSet->addConstructor();
 	registrar->registerClass(classPropertyStringSet);
 }

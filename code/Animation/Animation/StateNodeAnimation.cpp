@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Animation/Animation/Animation.h"
 #include "Animation/Animation/StateNodeAnimation.h"
 #include "Animation/Animation/StateContext.h"
@@ -69,7 +63,7 @@ void StateNodeAnimation::evaluate(
 void StateNodeAnimation::serialize(ISerializer& s)
 {
 	StateNode::serialize(s);
-	
+
 	s >> resource::MemberIdProxy< Animation >(L"animation", m_animation);
 
 	if (s.getVersion() >= 1)

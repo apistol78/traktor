@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
 #include "Core/Serialization/ISerializer.h"
@@ -77,7 +71,7 @@ Ref< ImageProcessStepBokeh::Instance > ImageProcessStepBokeh::create(
 	uint32_t quadCount = quadWidth * quadHeight;
 
 	Ref< VertexBuffer > vertexBuffer = renderSystem->createVertexBuffer(vertexElements, quadCount * 4 * sizeof(Vertex), false);
-	
+
 	float ox = float(c_density) / width;
 	float oy = float(c_density) / height;
 	Random r;

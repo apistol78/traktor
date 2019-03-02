@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_ButtonCell_H
-#define traktor_amalgam_ButtonCell_H
+#pragma once
 
 #include "Ui/Command.h"
 #include "Ui/IBitmap.h"
@@ -47,4 +40,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_ButtonCell_H

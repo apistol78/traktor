@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -162,7 +156,7 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 
 	if (settings->getProperty< bool >(L"Pipeline.TargetEditor", false))
 		m_preprocessor->setDefinition(L"_EDITOR");
-	
+
 	std::set< std::wstring > definitions = settings->getProperty< std::set< std::wstring > >(L"ScriptPipeline.PreprocessorDefinitions");
 	for (std::set< std::wstring >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
 		m_preprocessor->setDefinition(*i);

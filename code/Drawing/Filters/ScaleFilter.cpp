@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include <limits>
 #include "Core/Containers/AlignedVector.h"
@@ -15,7 +9,7 @@ namespace traktor
 {
 	namespace drawing
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ScaleFilter", ScaleFilter, IImageFilter)
 
 ScaleFilter::ScaleFilter(
@@ -194,6 +188,6 @@ void ScaleFilter::apply(Image* image) const
 
 	image->swap(final);
 }
-	
+
 	}
 }

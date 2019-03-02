@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Reader_H
-#define traktor_Reader_H
+#pragma once
 
 #include <string>
 #include "Core/Ref.h"
@@ -37,33 +30,33 @@ class T_DLLCLASS Reader : public Object
 
 public:
 	Reader(IStream* stream);
-	
+
 	Reader& operator >> (bool& b);
-	
+
 	Reader& operator >> (int8_t& c);
-	
+
 	Reader& operator >> (uint8_t& uc);
-	
+
 	Reader& operator >> (int16_t& i);
-	
+
 	Reader& operator >> (uint16_t& ui);
-	
+
 	Reader& operator >> (int32_t& i);
-	
+
 	Reader& operator >> (uint32_t& ui);
-	
+
 	Reader& operator >> (int64_t& i);
 
 	Reader& operator >> (uint64_t& ui);
-	
+
 	Reader& operator >> (float& f);
-	
+
 	Reader& operator >> (double& f);
-	
+
 	Reader& operator >> (std::wstring& s);
-	
+
 	int64_t read(void* block, int64_t nbytes);
-	
+
 	int64_t read(void* block, int64_t count, int64_t size);
 
 	int64_t skip(int64_t nbytes);
@@ -74,4 +67,3 @@ private:
 
 }
 
-#endif	// traktor_Reader_H

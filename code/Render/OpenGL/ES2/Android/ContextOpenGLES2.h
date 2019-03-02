@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ContextOpenGLES2_H
-#define traktor_render_ContextOpenGLES2_H
+#pragma once
 
 #include <map>
 #include <vector>
@@ -48,7 +41,7 @@ public:
 		}
 	};
 
-	/*! \brief Delete callback. 
+	/*! \brief Delete callback.
 	 * \ingroup OGL
 	 *
 	 * These are enqueued in the context
@@ -83,7 +76,7 @@ public:
 	void swapBuffers();
 
 	Semaphore& lock();
-	
+
 	void bindPrimary();
 
 	GLuint getPrimaryDepth() const;
@@ -107,4 +100,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_ContextOpenGLES2_H

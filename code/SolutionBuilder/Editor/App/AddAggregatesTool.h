@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef AddAggregatesTool_H
-#define AddAggregatesTool_H
+#pragma once
 
 #include "CustomTool.h"
 
@@ -13,7 +6,7 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 class Widget;
 
 	}
@@ -32,4 +25,3 @@ public:
 	}
 }
 
-#endif	// AddAggregatesTool_H

@@ -13,7 +13,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 struct WindowData
 {
 	CGLCustomWindow* window;
@@ -35,11 +35,11 @@ void setWindowSize(NSWindow* window, int32_t width, int32_t height)
 	NSRect frame = [window frame];
 	frame.size.width = width;
 	frame.size.height = height;
-	
+
 	NSRect content = [window contentRectForFrameRect: frame];
 	frame.size.width += frame.size.width - content.size.width;
 	frame.size.height += frame.size.height - content.size.height;
-	
+
 	[window setFrame: frame display: YES];
 }
 
@@ -57,13 +57,13 @@ void setWindowRect(NSWindow* window, int32_t x, int32_t y, int32_t width, int32_
 	NSRect frame = [window frame];
 	frame.size.width = width;
 	frame.size.height = height;
-	
+
 	NSRect content = [window contentRectForFrameRect: frame];
 	frame.origin.x = x;
 	frame.origin.y = y;
 	frame.size.width += frame.size.width - content.size.width;
 	frame.size.height += frame.size.height - content.size.height;
-	
+
 	[window setFrame: frame display: YES];
 }
 
@@ -74,7 +74,7 @@ CFArrayRef getValidDisplayModes()
 		return 0;
 
 	int32_t availModesCount = CFArrayGetCount(availModes);
-		
+
 	CFMutableArrayRef validModes = CFArrayCreateMutable(kCFAllocatorDefault, availModesCount, NULL);
 	if (!validModes)
 		return 0;
@@ -84,24 +84,24 @@ CFArrayRef getValidDisplayModes()
 		CGDisplayModeRef mode = (CGDisplayModeRef)CFArrayGetValueAtIndex(availModes, i);
 		if (!mode)
 			continue;
-			
+
 		CFArrayAppendValue(validModes, mode);
 	}
-	
+
 	return validModes;
 }
 
 		}
-	
+
 uint32_t cglwGetDisplayModeCount()
 {
 	CFArrayRef displayModes = getValidDisplayModes();
 	if (!displayModes)
 		return 0;
-		
+
 	uint32_t displayModesCount = CFArrayGetCount(displayModes);
 	CFRelease(displayModes);
-	
+
 	return displayModesCount;
 }
 
@@ -110,19 +110,19 @@ bool cglwGetDisplayMode(uint32_t index, DisplayMode& outDisplayMode)
 	CFArrayRef displayModes = getValidDisplayModes();
 	if (!displayModes)
 		return false;
-	
+
 	CGDisplayModeRef mode = (CGDisplayModeRef)CFArrayGetValueAtIndex(displayModes, index);
 	if (!mode)
 	{
 		CFRelease(displayModes);
 		return false;
 	}
-		
+
 	outDisplayMode.width = CGDisplayModeGetWidth(mode);
 	outDisplayMode.height = CGDisplayModeGetHeight(mode);
 	outDisplayMode.refreshRate = CGDisplayModeGetRefreshRate(mode);
 	outDisplayMode.colorBits = 32;
-	
+
 	CFRelease(displayModes);
 	return true;
 }
@@ -132,7 +132,7 @@ bool cglwGetCurrentDisplayMode(DisplayMode& outDisplayMode)
 	CGDisplayModeRef mode = CGDisplayCopyDisplayMode(kCGDirectMainDisplay);
 	if (!mode)
 		return false;
-	
+
 	outDisplayMode.width = CGDisplayModeGetWidth(mode);
 	outDisplayMode.height = CGDisplayModeGetHeight(mode);
 	outDisplayMode.refreshRate = CGDisplayModeGetRefreshRate(mode);
@@ -144,7 +144,7 @@ bool cglwGetCurrentDisplayMode(DisplayMode& outDisplayMode)
 void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode, bool fullscreen)
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	
+
 	// Change policy so menus are properly displayed.
 	[NSApp setActivationPolicy: NSApplicationActivationPolicyRegular];
 
@@ -158,7 +158,7 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 	windowData->displayMode = displayMode;
 	windowData->fullscreen = fullscreen;
 	windowData->title = makeNSString(title);
-	
+
 	// Create window.
 	if (fullscreen)
 	{
@@ -175,7 +175,7 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 			screen: [NSScreen mainScreen]
 		];
 
-		[windowData->window setLevel: windowLevel];		
+		[windowData->window setLevel: windowLevel];
 		[windowData->window setHidesOnDeactivate: YES];
 		[windowData->window setOpaque: YES];
 	}
@@ -189,15 +189,15 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 			defer: YES
 		];
 	}
-	
+
 	[windowData->window init];
 
 	[windowData->window setBackgroundColor: [NSColor blackColor]];
 	[windowData->window setTitle: windowData->title];
-	
+
 	NSSize minSize = { 320, 200 };
 	[windowData->window setContentMinSize: minSize];
-	
+
 	if (!fullscreen)
 		[windowData->window center];
 
@@ -235,22 +235,22 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 void cglwDestroyWindow(void* windowHandle)
 {
 	WindowData* windowData = static_cast< WindowData* >(windowHandle);
-	
+
 	CGDisplayShowCursor(kCGDirectMainDisplay);
 
 	if (windowData->fullscreen)
 		CGDisplayRelease(kCGDirectMainDisplay);
-	
+
 	[windowData->window release];
 	[windowData->title release];
-	
+
 	delete windowData;
 }
 
 bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode, bool fullscreen)
 {
 	WindowData* windowData = static_cast< WindowData* >(windowHandle);
-	
+
 	if (windowData->fullscreen != fullscreen)
 	{
 		if (fullscreen)
@@ -263,7 +263,7 @@ bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode, bool f
 			[windowData->window setStyleMask: NSBorderlessWindowMask];
 			[windowData->window setLevel: windowLevel];
 			[windowData->window setOpaque: YES];
-			
+
 			setWindowRect(
 				windowData->window,
 				0,
@@ -276,7 +276,7 @@ bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode, bool f
 		else
 		{
 			CGDisplayRelease(kCGDirectMainDisplay);
-		
+
 			[windowData->window setStyleMask: NSTitledWindowMask | NSResizableWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask];
 			[windowData->window setLevel: NSNormalWindowLevel];
 			[windowData->window setTitle: windowData->title];
@@ -291,7 +291,7 @@ bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode, bool f
 
 			[windowData->window center];
 		}
-		
+
 		windowData->fullscreen = fullscreen;
 	}
 	else
@@ -337,7 +337,7 @@ bool cglwIsActive(void* windowHandle)
 		return false;
 	if ([windowData->window isVisible] != YES)
 		return false;
-		
+
 	if ([windowData->delegate isInLiveResize] == YES)
 		return false;
 
@@ -367,7 +367,7 @@ bool cglwUpdateWindow(void* windowHandle, RenderEvent& outEvent)
 		outEvent.type = ReClose;
 		return true;
 	}
-		
+
 	if ([windowData->delegate resizedSinceLast] == YES)
 	{
 		outEvent.type = ReResize;
@@ -383,6 +383,6 @@ void* cglwGetWindowView(void* windowHandle)
 	WindowData* windowData = static_cast< WindowData* >(windowHandle);
 	return [windowData->window contentView];
 }
-	
+
 	}
 }

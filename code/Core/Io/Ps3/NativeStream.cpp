@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cell/cell_fs.h>
 #include "Core/Io/File.h"
 #include "Core/Io/Ps3/NativeStream.h"
@@ -120,7 +114,7 @@ int64_t NativeStream::read(void* block, int64_t nbytes)
 		return 0;
 }
 
-int64_t NativeStream::write(const void* block, int64_t nbytes)	
+int64_t NativeStream::write(const void* block, int64_t nbytes)
 {
 	if (m_fd == 0)
 		return 0;

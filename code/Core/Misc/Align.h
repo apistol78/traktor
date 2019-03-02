@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Align_H
-#define traktor_Align_H
+#pragma once
 
 #include <cstddef>
 
@@ -32,4 +25,3 @@ T alignUp(T v, size_t a)
 
 }
 
-#endif	// traktor_Align_H

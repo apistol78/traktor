@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/Split.h"
@@ -178,7 +172,7 @@ bool EditInstance::parseText(const std::wstring& text)
 {
 	if (!internalParseText(text))
 		return false;
-	
+
 	m_caret = 0;
 
 	if (m_layout)
@@ -398,7 +392,7 @@ void EditInstance::eventKey(wchar_t unicode)
 		m_text += unicode;
 		m_caret++;
 	}
-	
+
 	internalParseText(m_text);
 
 	executeScriptEvent(ActionContext::IdOnChanged, ActionValue(getAsObject()));
@@ -629,7 +623,7 @@ bool EditInstance::internalParseText(const std::wstring& text)
 	}
 	else
 		m_layout->insertText(text);
-	
+
 	m_layout->end();
 
 	m_text = text;
@@ -670,7 +664,7 @@ bool EditInstance::internalParseHtml(const std::wstring& html)
 		element,
 		font,
 		m_textColor,
-		m_layout, 
+		m_layout,
 		text
 	);
 

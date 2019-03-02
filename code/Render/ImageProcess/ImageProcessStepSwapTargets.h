@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ImageProcessStepSwapTargets_H
-#define traktor_render_ImageProcessStepSwapTargets_H
+#pragma once
 
 #include "Render/Types.h"
 #include "Render/ImageProcess/ImageProcessStep.h"
@@ -71,4 +64,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_ImageProcessStepSwapTargets_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/IRuntimeClassFactory.h"
 #include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -18,9 +12,9 @@ namespace traktor
 {
 	namespace script
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptEditorPlugin", ScriptEditorPlugin, editor::IEditorPlugin)
-	
+
 ScriptEditorPlugin::ScriptEditorPlugin(editor::IEditor* editor)
 :	m_editor(editor)
 {

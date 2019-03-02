@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_EffectEditorPage_H
-#define traktor_spray_EffectEditorPage_H
+#pragma once
 
 #include "Editor/IEditorPage.h"
 #include "Ui/Events/AllEvents.h"
@@ -124,4 +117,3 @@ private:
 	}
 }
 
-#endif	// traktor_spray_EffectEditorPage_H

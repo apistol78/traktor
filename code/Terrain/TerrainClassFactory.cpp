@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -26,7 +20,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainClassFactory", 0, Terrai
 
 void TerrainClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< OceanComponent > > classOceanComponent = new AutoRuntimeClass< OceanComponent >();
+	auto classOceanComponent = new AutoRuntimeClass< OceanComponent >();
 	classOceanComponent->addProperty("shallowTint", &OceanComponent::setShallowTint, &OceanComponent::getShallowTint);
 	classOceanComponent->addProperty("reflectionTint", &OceanComponent::setReflectionTint, &OceanComponent::getReflectionTint);
 	classOceanComponent->addProperty("shadowTint", &OceanComponent::setShadowTint, &OceanComponent::getShadowTint);
@@ -35,10 +29,10 @@ void TerrainClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classOceanComponent->addProperty("maxAmplitude", &OceanComponent::getMaxAmplitude);
 	registrar->registerClass(classOceanComponent);
 
-	Ref< AutoRuntimeClass< RiverComponent > > classRiverComponent = new AutoRuntimeClass< RiverComponent >();
+	auto classRiverComponent = new AutoRuntimeClass< RiverComponent >();
 	registrar->registerClass(classRiverComponent);
 
-	Ref< AutoRuntimeClass< Terrain > > classTerrain = new AutoRuntimeClass< Terrain >();
+	auto classTerrain = new AutoRuntimeClass< Terrain >();
 	classTerrain->addProperty("detailSkip", &Terrain::getDetailSkip);
 	classTerrain->addProperty("patchDim", &Terrain::getPatchDim);
 	classTerrain->addProperty("heightfield", &Terrain::getHeightfield);
@@ -50,7 +44,7 @@ void TerrainClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classTerrain->addProperty("materialMap", &Terrain::getMaterialMap);
 	registrar->registerClass(classTerrain);
 
-	Ref< AutoRuntimeClass< TerrainComponent > > classTerrainComponent = new AutoRuntimeClass< TerrainComponent >();
+	auto classTerrainComponent = new AutoRuntimeClass< TerrainComponent >();
 	classTerrainComponent->addProperty("terrain", &TerrainComponent::getTerrain);
 	classTerrainComponent->addProperty("surfaceCache", &TerrainComponent::getSurfaceCache);
 	classTerrainComponent->addProperty("patchCount", &TerrainComponent::getPatchCount);

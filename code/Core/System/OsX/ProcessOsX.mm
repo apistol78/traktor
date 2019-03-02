@@ -152,7 +152,7 @@ bool ProcessOsX::wait(int32_t timeout)
 		{
 			if (waitpid(m_pid, &m_exitCode, WNOHANG) > 0)
 				return true;
-			
+
 			if ((timeout -= 10) < 0)
 				return false;
 

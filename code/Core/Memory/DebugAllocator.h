@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_DebugAllocator_H
-#define traktor_DebugAllocator_H
+#pragma once
 
 #include <list>
 #include "Core/Ref.h"
@@ -32,7 +25,7 @@ public:
 	virtual ~DebugAllocator();
 
 	virtual void* alloc(size_t size, size_t align, const char* const tag) override final;
-	
+
 	virtual void free(void* ptr) override final;
 
 private:
@@ -54,4 +47,3 @@ private:
 
 }
 
-#endif	// traktor_DebugAllocator_H

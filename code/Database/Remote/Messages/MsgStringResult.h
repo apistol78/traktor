@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_MsgStringResult_H
-#define traktor_db_MsgStringResult_H
+#pragma once
 
 #include <string>
 #include "Database/Remote/IMessage.h"
@@ -44,4 +37,3 @@ private:
 	}
 }
 
-#endif	// traktor_db_MsgStringResult_H

@@ -8,7 +8,7 @@
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
-#endif 
+#endif
 
 namespace traktor
 {
@@ -40,7 +40,7 @@ public:
 
 	void setLocalTarget(ILogTarget* target);
 };
-	
+
 	namespace log
 	{
 

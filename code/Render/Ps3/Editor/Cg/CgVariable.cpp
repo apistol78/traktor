@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/String.h"
 #include "Render/Ps3/Editor/Cg/CgVariable.h"
 
@@ -37,7 +31,7 @@ std::wstring CgVariable::cast(CgType to) const
 		{ 0, 0, L"%.x", L"%.xy", L"%.xyz", L"%", 0 },
 		{ 0, 0, 0, 0, 0, 0, L"%" }
 	};
-	
+
 	const wchar_t* f = c[m_type][to];
 	return f ? replaceAll< std::wstring >(f, L"%", m_name) : m_name;
 }

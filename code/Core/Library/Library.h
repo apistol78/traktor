@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Library_H
-#define traktor_Library_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -32,16 +25,16 @@ class T_DLLCLASS Library : public Object
 
 public:
 	Library();
-	
+
 	virtual ~Library();
-	
+
 	/*! \brief Open library.
 	 *
 	 * \param libraryName Name of library.
 	 * \return True if library opened successfully.
 	 */
 	bool open(const Path& libraryName);
-	
+
 	/*! \brief Open library.
 	 *
 	 * This method take user defined search paths
@@ -66,7 +59,7 @@ public:
 	 * process until the process terminates.
 	 */
 	void detach();
-	
+
 	/*! \brief Find exported symbol from library.
 	 *
 	 * \param symbol Name of exported symbol.
@@ -86,4 +79,3 @@ private:
 
 }
 
-#endif	// traktor_Library_H

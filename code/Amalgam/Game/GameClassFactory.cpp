@@ -166,7 +166,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.GameClassFactory", 0, GameClass
 
 void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< IEnvironment > > classEnvironment = new AutoRuntimeClass< IEnvironment >();
+	auto classEnvironment = new AutoRuntimeClass< IEnvironment >();
 	classEnvironment->addProperty< db::Database* >("database", &IEnvironment::getDatabase);
 	classEnvironment->addProperty< UpdateControl* >("control", &IEnvironment::getControl);
 	classEnvironment->addProperty< IAudioServer* >("audio", &IEnvironment::getAudio);
@@ -181,13 +181,13 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEnvironment->addMethod("reconfigure", &IEnvironment::reconfigure);
 	registrar->registerClass(classEnvironment);
 
-	Ref< AutoRuntimeClass< IAudioServer > > classAudioServer = new AutoRuntimeClass< IAudioServer >();
+	auto classAudioServer = new AutoRuntimeClass< IAudioServer >();
 	classAudioServer->addProperty< sound::SoundSystem* >("soundSystem", 0, &IAudioServer::getSoundSystem);
 	classAudioServer->addProperty< sound::ISoundPlayer* >("soundPlayer", 0, &IAudioServer::getSoundPlayer);
 	classAudioServer->addProperty< sound::SurroundEnvironment* >("surroundEnvironment", 0, &IAudioServer::getSurroundEnvironment);
 	registrar->registerClass(classAudioServer);
 
-	Ref< AutoRuntimeClass< IInputServer > > classInputServer = new AutoRuntimeClass< IInputServer >();
+	auto classInputServer = new AutoRuntimeClass< IInputServer >();
 	classInputServer->addProperty< input::InputSystem* >("inputSystem", 0, &IInputServer::getInputSystem);
 	classInputServer->addProperty< input::InputMapping* >("inputMapping", 0, &IInputServer::getInputMapping);
 	classInputServer->addProperty< input::RumbleEffectPlayer* >("rumbleEffectPlayer", 0, &IInputServer::getRumbleEffectPlayer);
@@ -200,15 +200,15 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classInputServer->addMethod("revert", &IInputServer::revert);
 	registrar->registerClass(classInputServer);
 
-	Ref< AutoRuntimeClass< IOnlineServer > > classOnlineServer = new AutoRuntimeClass< IOnlineServer >();
+	auto classOnlineServer = new AutoRuntimeClass< IOnlineServer >();
 	classOnlineServer->addProperty< online::ISessionManager* >("sessionManager", 0, &IOnlineServer::getSessionManager);
 	registrar->registerClass(classOnlineServer);
 
-	Ref< AutoRuntimeClass< IPhysicsServer > > classPhysicsServer = new AutoRuntimeClass< IPhysicsServer >();
+	auto classPhysicsServer = new AutoRuntimeClass< IPhysicsServer >();
 	classPhysicsServer->addProperty< physics::PhysicsManager* >("physicsManager", 0, &IPhysicsServer::getPhysicsManager);
 	registrar->registerClass(classPhysicsServer);
 
-	Ref< AutoRuntimeClass< IRenderServer > > classRenderServer = new AutoRuntimeClass< IRenderServer >();
+	auto classRenderServer = new AutoRuntimeClass< IRenderServer >();
 	classRenderServer->addProperty< render::IRenderSystem* >("renderSystem", 0, &IRenderServer::getRenderSystem);
 	classRenderServer->addProperty< render::IRenderView* >("renderView", 0, &IRenderServer::getRenderView);
 	classRenderServer->addProperty< float >("screenAspectRatio", 0, &IRenderServer::getScreenAspectRatio);
@@ -219,11 +219,11 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classRenderServer->addProperty< int32_t >("frameRate", 0, &IRenderServer::getFrameRate);
 	registrar->registerClass(classRenderServer);
 
-	Ref< AutoRuntimeClass< IResourceServer > > classResourceServer = new AutoRuntimeClass< IResourceServer >();
+	auto classResourceServer = new AutoRuntimeClass< IResourceServer >();
 	classResourceServer->addProperty< resource::IResourceManager* >("resourceManager", 0, &IResourceServer::getResourceManager);
 	registrar->registerClass(classResourceServer);
 
-	Ref< AutoRuntimeClass< IWorldServer > > classWorldServer = new AutoRuntimeClass< IWorldServer >();
+	auto classWorldServer = new AutoRuntimeClass< IWorldServer >();
 	classWorldServer->addProperty< const world::IEntityBuilder* >("entityBuilder", 0, &IWorldServer::getEntityBuilder);
 	classWorldServer->addProperty< world::WorldEntityRenderers* >("entityRenderers", 0, &IWorldServer::getEntityRenderers);
 	classWorldServer->addProperty< world::IEntityEventManager* >("entityEventManager", 0, &IWorldServer::getEntityEventManager);
@@ -233,13 +233,13 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorldServer->addMethod("removeEntityRenderer", &IWorldServer::removeEntityRenderer);
 	registrar->registerClass(classWorldServer);
 
-	Ref< AutoRuntimeClass< UpdateControl > > classUpdateControl = new AutoRuntimeClass< UpdateControl >();
+	auto classUpdateControl = new AutoRuntimeClass< UpdateControl >();
 	classUpdateControl->addProperty< bool >("pause", &UpdateControl::setPause, &UpdateControl::getPause);
 	classUpdateControl->addProperty< float >("timeScale", &UpdateControl::setTimeScale, &UpdateControl::getTimeScale);
 	classUpdateControl->addProperty< float >("simulationFrequency", &UpdateControl::setSimulationFrequency, &UpdateControl::getSimulationFrequency);
 	registrar->registerClass(classUpdateControl);
 
-	Ref< AutoRuntimeClass< UpdateInfo > > classUpdateInfo = new AutoRuntimeClass< UpdateInfo >();
+	auto classUpdateInfo = new AutoRuntimeClass< UpdateInfo >();
 	classUpdateInfo->addProperty< float >("totalTime", 0, &UpdateInfo::getTotalTime);
 	classUpdateInfo->addProperty< float >("stateTime", 0, &UpdateInfo::getStateTime);
 	classUpdateInfo->addProperty< float >("simulationTime", 0, &UpdateInfo::getSimulationTime);
@@ -250,12 +250,12 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classUpdateInfo->addProperty< bool >("isRunningSlow", 0, &UpdateInfo::isRunningSlow);
 	registrar->registerClass(classUpdateInfo);
 
-	Ref< AutoRuntimeClass< BoxedTransition > > classBoxedTransition = new AutoRuntimeClass< BoxedTransition >();
+	auto classBoxedTransition = new AutoRuntimeClass< BoxedTransition >();
 	classBoxedTransition->addProperty< const std::wstring& >("id", 0, &BoxedTransition::getId);
 	classBoxedTransition->addProperty< const Guid& >("reference", 0, &BoxedTransition::getReference);
 	registrar->registerClass(classBoxedTransition);
 
-	Ref< AutoRuntimeClass< StageData > > classStageData = new AutoRuntimeClass< StageData >();
+	auto classStageData = new AutoRuntimeClass< StageData >();
 	classStageData->addProperty< const std::wstring& >("name", 0, &StageData::getName);
 	classStageData->addProperty< const Guid& >("inherit", 0, &StageData::getInherit);
 	classStageData->addProperty< float >("fadeRate", &StageData::setFadeRate, &StageData::getFadeRate);
@@ -264,7 +264,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classStageData->addMethod("getTransitions", &StageData_getTransitions);
 	registrar->registerClass(classStageData);
 
-	Ref< AutoRuntimeClass< Stage > > classStage = new AutoRuntimeClass< Stage >();
+	auto classStage = new AutoRuntimeClass< Stage >();
 	classStage->addMethod("addLayer", &Stage::addLayer);
 	classStage->addMethod("removeLayer", &Stage::removeLayer);
 	classStage->addMethod("removeAllLayers", &Stage::removeAllLayers);
@@ -277,11 +277,11 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classStage->addMethod("getLayers", &Stage::getLayers);
 	registrar->registerClass(classStage);
 
-	Ref< AutoRuntimeClass< Layer > > classLayer = new AutoRuntimeClass< Layer >();
+	auto classLayer = new AutoRuntimeClass< Layer >();
 	classLayer->addProperty< const std::wstring& >("name", 0, &Layer::getName);
 	registrar->registerClass(classLayer);
 
-	Ref< AutoRuntimeClass< AudioLayer > > classAudioLayer = new AutoRuntimeClass< AudioLayer >();
+	auto classAudioLayer = new AutoRuntimeClass< AudioLayer >();
 	classAudioLayer->addMethod("play", &AudioLayer::play);
 	classAudioLayer->addMethod("stop", &AudioLayer::stop);
 	classAudioLayer->addMethod("fadeOff", &AudioLayer::fadeOff);
@@ -289,7 +289,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classAudioLayer->addMethod("tweenParameter", &AudioLayer::tweenParameter);
 	registrar->registerClass(classAudioLayer);
 
-	Ref< AutoRuntimeClass< FlashLayer > > classFlashLayer = new AutoRuntimeClass< FlashLayer >();
+	auto classFlashLayer = new AutoRuntimeClass< FlashLayer >();
 	classFlashLayer->addProperty< flash::MoviePlayer* >("moviePlayer", 0, &FlashLayer::getMoviePlayer);
 	classFlashLayer->addProperty< flash::ActionContext* >("context", 0, &FlashLayer::getContext);
 	classFlashLayer->addProperty< flash::SpriteInstance* >("root", 0, &FlashLayer::getRoot);
@@ -299,7 +299,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFlashLayer->setUnknownHandler(&FlashLayer_externalCall);
 	registrar->registerClass(classFlashLayer);
 
-	Ref< AutoRuntimeClass< VideoLayer > > classVideoLayer = new AutoRuntimeClass< VideoLayer >();
+	auto classVideoLayer = new AutoRuntimeClass< VideoLayer >();
 	classVideoLayer->addProperty< bool >("playing", 0, &VideoLayer::isPlaying);
 	classVideoLayer->addProperty< bool >("visible", 0, &VideoLayer::isVisible);
 	classVideoLayer->addProperty< bool >("repeat", &VideoLayer::setRepeat, &VideoLayer::getRepeat);
@@ -312,7 +312,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classVideoLayer->addMethod("getScreenBounds", &VideoLayer::getScreenBounds);
 	registrar->registerClass(classVideoLayer);
 
-	Ref< AutoRuntimeClass< WorldLayer > > classWorldLayer = new AutoRuntimeClass< WorldLayer >();
+	auto classWorldLayer = new AutoRuntimeClass< WorldLayer >();
 	classWorldLayer->addProperty< world::IEntitySchema* >("entitySchema", &WorldLayer::getEntitySchema);
 	classWorldLayer->addProperty< render::ImageProcess* >("imageProcess", &WorldLayer::getImageProcess);
 	classWorldLayer->addProperty< const Frustum& >("viewFrustum", &WorldLayer::getViewFrustum);
@@ -342,7 +342,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorldLayer->addMethod("screenToWorld", &WorldLayer_screenToWorld);
 	registrar->registerClass(classWorldLayer);
 
-	Ref< AutoRuntimeClass< StageLoader > > classStageLoader = new AutoRuntimeClass< StageLoader >();
+	auto classStageLoader = new AutoRuntimeClass< StageLoader >();
 	classStageLoader->addProperty< bool >("ready", 0, &StageLoader::ready);
 	classStageLoader->addProperty< bool >("succeeded", 0, &StageLoader::succeeded);
 	classStageLoader->addProperty< bool >("failed", 0, &StageLoader::failed);

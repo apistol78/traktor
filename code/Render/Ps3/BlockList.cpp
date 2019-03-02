@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/Align.h"
 #include "Render/Ps3/BlockList.h"
 
@@ -27,9 +21,9 @@ uint32_t BlockList::alloc(uint32_t size, uint32_t alignment)
 		m_blocks.push_back(blk);
 		return 0;
 	}
-	
+
 	uint32_t offset = 0;
-	
+
 	for (std::list< Block >::iterator i = m_blocks.begin(); i != m_blocks.end(); ++i)
 	{
 		if ((i->offset - offset) >= size)
@@ -51,7 +45,7 @@ uint32_t BlockList::alloc(uint32_t size, uint32_t alignment)
 		m_blocks.push_back(blk);
 		return offset;
 	}
-	
+
 	return NotEnoughSpace;
 }
 

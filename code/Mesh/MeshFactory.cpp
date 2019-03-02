@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Database/Instance.h"
@@ -70,7 +64,7 @@ Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, c
 		log::error << L"Mesh factory failed; unable to create mesh" << Endl;
 		return 0;
 	}
-	
+
 	return mesh;
 }
 

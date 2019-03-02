@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
@@ -102,7 +96,7 @@ void ImageProcessStepGodRay::InstanceGodRay::render(
 {
 	Vector4 lightPositionView = params.view * (params.godRayDirection * Scalar(m_step->m_lightDistance)).xyz1();
 	Vector4 lightPosition = params.projection * lightPositionView;
-	
+
 	// If light is behind camera near plane then skip god rays; but
 	// ensure target is cleared so no lingering rays are kept.
 	if (params.godRayDirection.length2() <= FUZZY_EPSILON || lightPosition.w() <= 0.0f)

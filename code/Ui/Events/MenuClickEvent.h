@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_MenuClickEvent_H
-#define traktor_ui_MenuClickEvent_H
+#pragma once
 
 #include "Ui/Command.h"
 #include "Ui/Event.h"
@@ -24,27 +17,26 @@ namespace traktor
 	{
 
 class MenuItem;
-	
+
 /*! \brief Menu click event.
  * \ingroup UI
  */
 class T_DLLCLASS MenuClickEvent : public Event
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	MenuClickEvent(EventSubject* sender, MenuItem* item, const Command& command);
 
 	MenuItem* getItem() const;
 
 	const Command& getCommand() const;
-	
+
 private:
 	Ref< MenuItem > m_item;
 	Command m_command;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_MenuClickEvent_H

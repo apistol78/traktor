@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Capture/CubeTextureCapture.h"
 #include "Render/Capture/Error.h"
@@ -36,7 +30,7 @@ void ProgramCapture::setFloatParameter(handle_t handle, float param)
 
 	if (!m_program)
 		return;
-	
+
 	m_program->setFloatParameter(handle, param);
 
 	// std::map< handle_t, Parameter >::iterator it = m_shadow.find(handle);

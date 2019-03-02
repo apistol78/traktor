@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_NSCustomCell_H
-#define traktor_ui_NSCustomCell_H
+#pragma once
 
 #import <Cocoa/Cocoa.h>
 
@@ -19,4 +12,3 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 @end
 
-#endif	// traktor_ui_NSCustomCell_H

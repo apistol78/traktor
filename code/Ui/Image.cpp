@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Image.h"
 #include "Ui/Bitmap.h"
 
@@ -84,11 +78,11 @@ bool Image::setImage(Bitmap* image, bool transparent)
 {
 	m_image = image;
 	m_transparent = transparent;
-	
+
 	setRect(Rect(getRect().getTopLeft(), getPreferedSize()));
 	update();
 
-	return true; 
+	return true;
 }
 
 Ref< Bitmap > Image::getImage() const

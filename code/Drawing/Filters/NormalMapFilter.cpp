@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Drawing/Image.h"
 #include "Drawing/Filters/NormalMapFilter.h"
 
@@ -51,6 +45,6 @@ void NormalMapFilter::apply(Image* image) const
 
 	image->swap(final);
 }
-	
+
 	}
 }

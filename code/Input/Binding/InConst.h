@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InConst_H
-#define traktor_input_InConst_H
+#pragma once
 
 #include "Input/Binding/IInputNode.h"
 
@@ -28,12 +21,12 @@ namespace traktor
 class T_DLLCLASS InConst : public IInputNode
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	InConst();
-	
+
 	InConst(float value);
-	
+
 	virtual Ref< Instance > createInstance() const override final;
 
 	virtual float evaluate(
@@ -41,10 +34,10 @@ public:
 		const InputValueSet& valueSet,
 		float T,
 		float dT
-	) const override final;	
+	) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
-	
+
 private:
 	friend class InConstTraits;
 
@@ -54,4 +47,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_InConst_H

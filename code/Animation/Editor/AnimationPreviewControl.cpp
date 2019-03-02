@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Animation/AnimatedMeshEntity.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
@@ -40,11 +34,11 @@ namespace traktor
 	{
 		namespace
 		{
-	
+
 const float c_deltaMoveScale = 0.025f;
 const float c_deltaScaleHead = 0.015f;
 const float c_deltaScalePitch = 0.005f;
-		
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationPreviewControl", AnimationPreviewControl, ui::Widget)

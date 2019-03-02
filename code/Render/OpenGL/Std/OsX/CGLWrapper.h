@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_CGLWrapper_H
-#define traktor_render_CGLWrapper_H
+#pragma once
 
 namespace traktor
 {
@@ -27,4 +20,3 @@ bool cglwCheckHardwarePath();
 	}
 }
 
-#endif	// traktor_render_CGLWrapper_H

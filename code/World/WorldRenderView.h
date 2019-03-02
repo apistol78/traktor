@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_WorldRenderView_H
-#define traktor_world_WorldRenderView_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
@@ -37,7 +30,7 @@ namespace traktor
 class T_DLLCLASS WorldRenderView : public Object
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	WorldRenderView();
 
@@ -173,8 +166,7 @@ private:
 	float m_screenPlaneDistance;
 	Vector4 m_godRayDirection;
 };
-	
+
 	}
 }
 
-#endif	// traktor_world_WorldRenderView_H

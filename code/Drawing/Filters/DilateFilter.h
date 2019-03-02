@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_DilateFilter_H
-#define traktor_drawing_DilateFilter_H
+#pragma once
 
 #include "Drawing/IImageFilter.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace drawing
 	{
-	
+
 /*! \brief Dilate filter.
  * \ingroup Drawing
  */
@@ -38,8 +31,7 @@ protected:
 private:
 	int32_t m_iterations;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_DilateFilter_H

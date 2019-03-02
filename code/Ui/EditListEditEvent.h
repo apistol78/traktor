@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_EditListEditEvent_H
-#define traktor_ui_EditListEditEvent_H
+#pragma once
 
 #include <string>
 #include "Ui/Events/ContentChangeEvent.h"
@@ -24,17 +17,17 @@ namespace traktor
 	{
 
 class Edit;
-	
+
 /*! \brief Edit event.
  * \ingroup UI
  */
 class T_DLLCLASS EditListEditEvent : public ContentChangeEvent
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	EditListEditEvent(EventSubject* sender, Edit* edit, int32_t index, const std::wstring& text);
-	
+
 	Edit* getEdit() const;
 
 	int32_t getIndex() const;
@@ -50,4 +43,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_EditListEditEvent_H

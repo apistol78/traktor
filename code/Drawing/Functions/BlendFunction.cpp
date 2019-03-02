@@ -1,18 +1,12 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Drawing/Functions/BlendFunction.h"
 
 namespace traktor
 {
 	namespace drawing
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.BlendFunction", BlendFunction, ITransferFunction)
-	
+
 BlendFunction::BlendFunction(Factor sourceFactor, Factor destinationFactor, Operation operation)
 :	m_sourceFactor(sourceFactor)
 ,	m_destinationFactor(destinationFactor)

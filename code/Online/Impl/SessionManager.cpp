@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Thread.h"
@@ -39,7 +33,7 @@ ServiceType waitUntilReady(const ServiceType& service)
 	{
 		T_DEBUG(L"Service \"" << type_name(service) << L"\t not ready; waiting...");
 		Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-		do 
+		do
 		{
 			currentThread->sleep(100);
 		}
@@ -181,7 +175,7 @@ bool SessionManager::update()
 			m_leaderboards->enqueueEnumeration();
 		if (m_statistics)
 			m_statistics->enqueueEnumeration();
-		m_connected = true;		
+		m_connected = true;
 	}
 
 	return true;

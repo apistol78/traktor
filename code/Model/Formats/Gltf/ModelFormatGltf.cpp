@@ -18,7 +18,7 @@ bool decodeAsIndices(
 	json::JsonArray* accessors,
 	json::JsonArray* bufferViews,
 	const RefArray< IStream >& bufferStreams,
-	AlignedVector< int32_t >& outData	
+	AlignedVector< int32_t >& outData
 )
 {
 	auto accessor = accessors->get(index).getObject< json::JsonObject >();
@@ -130,7 +130,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::function< Re
 	Ref< IStream > stream = openStream(filePath);
 	if (!stream)
 		return nullptr;
-	
+
 	json::JsonDocument doc;
 	if (!doc.loadFromStream(stream))
 		return nullptr;

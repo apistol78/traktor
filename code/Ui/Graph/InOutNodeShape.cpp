@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <cmath>
 #include "Drawing/Image.h"
@@ -158,7 +152,7 @@ void InOutNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& of
 Size InOutNodeShape::calculateSize(const Node* node) const
 {
 	Font currentFont = m_graphControl->getFont();
-	
+
 	int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
 	Size sz = m_imageNode[imageIndex]->getSize();
 

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/IStream.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Database/Types.h"
@@ -93,7 +87,7 @@ uint32_t CompactInstance::getFlags() const
 bool CompactInstance::remove()
 {
 	T_ASSERT (m_instanceEntry);
-	
+
 	Ref< BlockFile > blockFile = m_context->getBlockFile();
 	T_ASSERT (blockFile);
 
@@ -174,7 +168,7 @@ uint32_t CompactInstance::getDataNames(std::vector< std::wstring >& outDataNames
 	const std::map< std::wstring, Ref< CompactBlockEntry > >& dataBlocks = m_instanceEntry->getDataBlocks();
 	for (std::map< std::wstring, Ref< CompactBlockEntry > >::const_iterator i = dataBlocks.begin(); i != dataBlocks.end(); ++i)
 		outDataNames.push_back(i->first);
-	
+
 	return uint32_t(outDataNames.size());
 }
 

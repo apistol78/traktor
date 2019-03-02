@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sstream>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
@@ -26,7 +20,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 const struct { const wchar_t* name; Color4ub color; } c_colorTable[] =
 {
 	L"black",	Color4ub(0, 0, 0, 255),
@@ -101,7 +95,7 @@ float parseDecimalNumber(std::wstring::iterator& i, std::wstring::iterator end)
 	skipUntilNot(i, end, isWhiteSpace);
 
 	std::wstring::iterator j = i;
-	
+
 	if (*i == L'-' || *i == L'+')
 		++i;
 
@@ -167,11 +161,11 @@ Ref< SvgShape > SvgParser::traverse(xml::Element* elm)
 				parseStyle(elm)
 			);
 		}
-		
+
 		shape->setTransform(
 			parseTransform(elm)
 		);
-	
+
 		for (xml::Node* child = elm->getFirstChild(); child; child = child->getNextSibling())
 		{
 			if (!is_a< xml::Element >(child))
@@ -485,22 +479,22 @@ void SvgParser::parseDefs(xml::Element* elm)
 	{
 		if (!is_a< xml::Element >(child))
 			continue;
-			
+
 		xml::Element* ch = static_cast< xml::Element* >(child);
 		if (!ch->hasAttribute(L"id"))
 		{
 			log::warning << L"Invalid definition, no \"id\" attribute" << Endl;
 			continue;
 		}
-		
+
 		std::wstring name = ch->getName();
 		std::wstring id = ch->getAttribute(L"id")->getValue();
-		
+
 		if (name == L"linearGradient")
 		{
 			RefArray< xml::Element > stops;
 			elm->get(L"stop", stops);
-			
+
 			if (!stops.empty())
 			{
 				Ref< SvgGradient > gradient = new SvgGradient(SvgGradient::GtLinear);
@@ -509,13 +503,13 @@ void SvgParser::parseDefs(xml::Element* elm)
 					xml::Element* stop = *i;
 					if (!stop->hasAttribute(L"offset") || !stop->hasAttribute(L"stop-color"))
 						continue;
-				
+
 					float offset;
 					std::wstringstream(stop->getAttribute(L"offset")->getValue()) >> offset;
-					
+
 					Color4ub color;
 					parseColor(stop->getAttribute(L"stop-color")->getValue(), color);
-					
+
 					gradient->addStop(offset, color);
 				}
 				m_gradients[id] = gradient;
@@ -525,7 +519,7 @@ void SvgParser::parseDefs(xml::Element* elm)
 		{
 			RefArray< xml::Element > stops;
 			elm->get(L"stop", stops);
-			
+
 			if (!stops.empty())
 			{
 				Ref< SvgGradient > gradient = new SvgGradient(SvgGradient::GtRadial);
@@ -534,13 +528,13 @@ void SvgParser::parseDefs(xml::Element* elm)
 					xml::Element* stop = *i;
 					if (!stop->hasAttribute(L"offset") || !stop->hasAttribute(L"stop-color"))
 						continue;
-				
+
 					float offset;
 					std::wstringstream(stop->getAttribute(L"offset")->getValue()) >> offset;
-					
+
 					Color4ub color;
 					parseColor(stop->getAttribute(L"stop-color")->getValue(), color);
-					
+
 					gradient->addStop(offset, color);
 				}
 				m_gradients[id] = gradient;
@@ -578,7 +572,7 @@ Ref< SvgStyle > SvgParser::parseStyle(xml::Element* elm)
 
 		std::vector< std::wstring > styles;
 		Split< std::wstring >::any(elm->getAttribute(L"style")->getValue(), L";", styles);
-		
+
 		for (std::vector< std::wstring >::iterator i = styles.begin(); i != styles.end(); ++i)
 		{
 			std::wstring::size_type j = i->find(L':');
@@ -696,7 +690,7 @@ Matrix33 SvgParser::parseTransform(xml::Element* elm)
 		{
 			std::vector< float > argv;
 			Split< std::wstring, float >::any(args, L",", argv);
-			
+
 			if (argv.size() >= 2)
 				transform *= translate(argv[0], argv[1]);
 		}
@@ -713,7 +707,7 @@ Matrix33 SvgParser::parseTransform(xml::Element* elm)
 
 		++i;
 	}
-	
+
 	return transform;
 }
 

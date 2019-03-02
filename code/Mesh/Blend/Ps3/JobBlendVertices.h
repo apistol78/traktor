@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_JobBlendVertices_H
-#define traktor_mesh_JobBlendVertices_H
+#pragma once
 
 #include <cell/spurs/job_descriptor.h>
 #include "Render/Types.h"
@@ -14,7 +7,7 @@ namespace traktor
 {
 	namespace mesh
 	{
-		
+
 struct JobBlendVertices
 {
 	CellSpursJobHeader header;
@@ -37,4 +30,3 @@ struct JobBlendVertices
 	}
 }
 
-#endif	// traktor_mesh_JobBlendVertices_H

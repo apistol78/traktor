@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ai/AiClassFactory.h"
 #include "Ai/MoveQuery.h"
 #include "Ai/NavMesh.h"
@@ -66,18 +60,18 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.AiClassFactory", 0, AiClassFactory, 
 
 void AiClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< MoveQuery > > classMoveQuery = new AutoRuntimeClass< MoveQuery >();
+	auto classMoveQuery = new AutoRuntimeClass< MoveQuery >();
 	classMoveQuery->addMethod("update", &MoveQuery_update);
 	registrar->registerClass(classMoveQuery);
 
-	Ref< AutoRuntimeClass< NavMesh > > classNavMesh = new AutoRuntimeClass< NavMesh >();
+	auto classNavMesh = new AutoRuntimeClass< NavMesh >();
 	classNavMesh->addMethod("createMoveQuery", &NavMesh::createMoveQuery);
 	classNavMesh->addMethod("findClosestPoint", &NavMesh_findClosestPoint);
 	classNavMesh->addMethod("findRandomPoint", &NavMesh_findRandomPoint_1);
 	classNavMesh->addMethod("findRandomPoint", &NavMesh_findRandomPoint_2);
 	registrar->registerClass(classNavMesh);
 
-	Ref< AutoRuntimeClass< NavMeshEntity > > classNavMeshEntity = new AutoRuntimeClass< NavMeshEntity >();
+	auto classNavMeshEntity = new AutoRuntimeClass< NavMeshEntity >();
 	classNavMeshEntity->addMethod("get", &NavMeshEntity_get);
 	registrar->registerClass(classNavMeshEntity);
 }

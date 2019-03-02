@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_GroupEntity_H
-#define traktor_world_GroupEntity_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "World/Entity.h"
@@ -38,17 +31,17 @@ public:
 	virtual void destroy() override;
 
 	void addEntity(Entity* entity);
-	
+
 	void removeEntity(Entity* entity);
 
 	void removeAllEntities();
-	
+
 	const RefArray< Entity >& getEntities() const;
-	
+
 	int getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& outEntities) const;
-	
+
 	Entity* getFirstEntityOf(const TypeInfo& entityType) const;
-	
+
 	virtual void update(const UpdateParams& update) override;
 
 	virtual void setTransform(const Transform& transform) override;
@@ -69,15 +62,14 @@ public:
 		Entity* entity = getFirstEntityOf(type_of< EntityType >());
 		return reinterpret_cast< EntityType* >(entity);
 	}
-	
+
 private:
 	Transform m_transform;
 	RefArray< Entity > m_entities;
 	bool m_update;
 	RefArray< Entity > m_deferred[2];
 };
-	
+
 	}
 }
 
-#endif	// traktor_world_GroupEntity_H

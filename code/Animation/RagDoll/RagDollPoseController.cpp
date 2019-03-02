@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
@@ -134,7 +128,7 @@ bool RagDollPoseController::create(
 
 		Joint* joint = skeleton->getJoint(i);
 		T_ASSERT (joint);
-		
+
 		const Vector4 anchor = limbTransforms[i].translation().xyz1();
 		const Vector4 twistAxis = limbTransforms[i].axisZ();
 		const Vector4 coneAxis = limbTransforms[i].axisX();
@@ -257,11 +251,11 @@ void RagDollPoseController::setTransform(const Transform& transform)
 			(*i)->setTransform(deltaTransform * limbTransform);
 		}
 	}
-	
+
 	// Update tracking pose controller.
 	if (m_trackPoseController)
 		m_trackPoseController->setTransform(transform);
-		
+
 	m_worldTransform = transform;
 }
 
@@ -310,7 +304,7 @@ bool RagDollPoseController::evaluate(
 
 	//	Transform boneP(Vector4(0.0f, 0.0f, bone->getLength(), 1.0f));
 	//	Transform halfBoneN(Vector4(0.0f, 0.0f, -bone->getLength() * 0.5f, 1.0f));
-	//	
+	//
 	//	if (m_trackPoseController)
 	//	{
 	//		const Scalar c_maxTension(10.0f);

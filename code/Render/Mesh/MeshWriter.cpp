@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/VertexBuffer.h"
@@ -38,7 +32,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 	uint32_t vertexBufferSize = 0;
 	if (mesh->getVertexBuffer())
 		vertexBufferSize = mesh->getVertexBuffer()->getBufferSize();
-	
+
 	writer << vertexBufferSize;
 
 	IndexType indexType = ItUInt16;
@@ -139,7 +133,7 @@ bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 		writer << parts[i].primitives.minIndex;
 		writer << parts[i].primitives.maxIndex;
 	}
-	
+
 	const Aabb3& boundingBox = mesh->getBoundingBox();
 	writer << boundingBox.mn.x();
 	writer << boundingBox.mn.y();

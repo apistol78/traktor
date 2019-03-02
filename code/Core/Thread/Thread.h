@@ -9,7 +9,7 @@
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
-#endif 
+#endif
 
 namespace traktor
 {
@@ -70,7 +70,7 @@ private:
 	int32_t m_hardwareCore;
 
 	Thread(Functor* functor, const wchar_t* const name, int32_t hardwareCore);
-	
+
 	~Thread();
 };
 

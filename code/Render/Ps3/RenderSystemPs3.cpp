@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstdlib>
 #include <cell/sysmodule.h>
 #include "Core/Log/Log.h"
@@ -91,7 +85,7 @@ bool RenderSystemPs3::create(const RenderSystemDesc& desc)
 		CELL_GCM_LOCATION_MAIN
 	);
 
-	log::info << 
+	log::info <<
 		L"PS3 render system created" << Endl <<
 		L"\tLocal address " << (uint64_t)config.localAddress << Endl <<
 		L"\t      size " << config.localSize / (1024 * 1024) << L" MiB" << Endl <<
@@ -181,7 +175,7 @@ DisplayMode RenderSystemPs3::getCurrentDisplayMode() const
 			break;
 		sys_timer_sleep(1);
 	}
-	
+
 	if (err != CELL_OK)
 	{
 		log::error << L"Unable to get video output state (" << lookupGcmError(err) << L")" << Endl;

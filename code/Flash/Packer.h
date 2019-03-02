@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #ifndef traktor_flash_Packer_H
 #define traktor_flash_Packer_H
 
@@ -21,7 +15,7 @@ namespace traktor
 {
 	namespace flash
 	{
-	
+
 class T_DLLCLASS Packer : public Object
 {
 	T_RTTI_CLASS;
@@ -44,7 +38,7 @@ public:
 private:
 	class PackerImpl* m_impl;
 };
-	
+
 	}
 }
 

@@ -26,7 +26,7 @@ class IRenderSystem;
 
 	namespace video
 	{
-	
+
 class IVideoDecoder;
 
 class T_DLLCLASS VideoTexture : public render::ISimpleTexture

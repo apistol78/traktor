@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/Split.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -154,7 +148,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 
 		Ref< ui::PreviewItem > item = new ui::PreviewItem(className);
 		item->setData(L"TYPE", new TypeInfoWrapper(*type));
-		
+
 		items->add(item);
 	}
 
@@ -218,7 +212,7 @@ void BrowseTypeDialog::eventDialogClick(ui::ButtonClickEvent* event)
 	Ref< ui::PreviewItem > item = m_typeList->getSelectedItem();
 	if (!item)
 		return;
-		
+
 	TypeInfoWrapper* typeInfoWrapper = item->getData< TypeInfoWrapper >(L"TYPE");
 	if (typeInfoWrapper)
 		m_type = &typeInfoWrapper->m_typeInfo;
@@ -236,7 +230,7 @@ void BrowseTypeDialog::eventListDoubleClick(ui::MouseDoubleClickEvent* event)
 	Ref< ui::PreviewItem > item = m_typeList->getSelectedItem();
 	if (!item)
 		return;
-		
+
 	TypeInfoWrapper* typeInfoWrapper = item->getData< TypeInfoWrapper >(L"TYPE");
 	if (typeInfoWrapper)
 		m_type = &typeInfoWrapper->m_typeInfo;

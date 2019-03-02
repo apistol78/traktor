@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/Utf8Encoding.h"
 
 namespace traktor
@@ -101,7 +95,7 @@ int Utf8Encoding::translate(const uint8_t in[MaxEncodingSize], int count, wchar_
 #if !defined(_WIN32) && !defined(_PS3)	// Windows use UCS-2 as wide characters.
 	else if ((in[0] & 0xf8) == 0xf0)
 	{
-		// 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx	
+		// 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
 		out = (wchar_t(in[0] & 0x0f) << 18) | (wchar_t(in[1] & 0x3f) << 12) | (wchar_t(in[2] & 0x3f) << 6) | wchar_t(in[3] & 0x3f);
 		return 4;
 	}

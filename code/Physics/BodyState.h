@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_BodyState_H
-#define traktor_physics_BodyState_H
+#pragma once
 
 #include "Core/Math/Const.h"
 #include "Core/Math/Transform.h"
@@ -88,4 +81,3 @@ private:
 	}
 }
 
-#endif	// traktor_physics_BodyState_H

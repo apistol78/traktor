@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_json_JsonObject_H
-#define traktor_json_JsonObject_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Core/Class/Any.h"
@@ -118,4 +111,3 @@ private:
 	}
 }
 
-#endif	// traktor_json_JsonObject_H

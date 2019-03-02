@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_Image_H
-#define traktor_drawing_Image_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Io/Path.h"
@@ -28,7 +21,7 @@ class IStream;
 
 	namespace drawing
 	{
-	
+
 class Palette;
 class IImageFilter;
 class ITransferFunction;
@@ -53,9 +46,9 @@ public:
 	Image(const Image& src);
 
 	Image(const PixelFormat& pixelFormat, uint32_t width, uint32_t height, Palette* palette = 0);
-	
+
 	virtual ~Image();
-	
+
 	/*! \brief Create a clone of the image.
 	 *
 	 * \param includeData Clone image pixels.
@@ -83,7 +76,7 @@ public:
 	 * \param height Sub rectangle height.
 	 */
 	void copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y, int32_t width, int32_t height);
-	
+
 	/*! \brief Copy sub-rectangle of a source image into this image.
 	 *
 	 * \param src Source image.
@@ -117,13 +110,13 @@ public:
 
 	/*! \brief Set single pixel. */
 	bool setPixel(int32_t x, int32_t y, const Color4f& color);
-	
+
 	/*! \brief Alpha blend single pixel. */
 	bool setPixelAlphaBlend(int32_t x, int32_t y, const Color4f& color);
 
 	/*! \brief Get single pixel, no boundary check. */
 	void getPixelUnsafe(int32_t x, int32_t y, Color4f& outColor) const;
-	
+
 	/*! \brief Set single pixel, no boundary check. */
 	void setPixelUnsafe(int32_t x, int32_t y, const Color4f& color);
 
@@ -141,7 +134,7 @@ public:
 
 	/*! \brief Set vertical span of pixels, no boundary checks. */
 	void setVerticalSpanUnsafe(int32_t x, const Color4f* span);
-	
+
 	/*! \brief Apply filter on entire image. */
 	void apply(const IImageFilter* imageFilter);
 
@@ -168,7 +161,7 @@ public:
 
 	/*! \brief Get current image format. */
 	const PixelFormat& getPixelFormat() const;
-	
+
 	/*! \brief Get width of image. */
 	int32_t getWidth() const;
 
@@ -195,7 +188,7 @@ public:
 
 	/*! \brief Copy image. */
 	Image& operator = (const Image& src);
-	
+
 private:
 	PixelFormat m_pixelFormat;
 	int32_t m_width;
@@ -206,8 +199,7 @@ private:
 	uint8_t* m_data;
 	Ref< ImageInfo > m_imageInfo;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_Image_H

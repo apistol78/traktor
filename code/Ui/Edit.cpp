@@ -169,7 +169,7 @@ void Edit::cut()
 
 		std::wstring current = getText();
 		current = current.substr(0, m_selectionStart) + current.substr(m_selectionEnd);
-		setText(current);	
+		setText(current);
 	}
 }
 
@@ -281,7 +281,7 @@ void Edit::eventButtonDown(MouseButtonDownEvent* event)
 		}
 
 		m_caret = caret;
-		update();		
+		update();
 	}
 }
 
@@ -293,12 +293,14 @@ void Edit::eventDoubleClick(MouseDoubleClickEvent* event)
 void Edit::eventKeyDown(KeyDownEvent* event)
 {
 	int32_t caret = m_caret;
+	bool modified = false;
 
 	switch (event->getVirtualKey())
 	{
 	case VkLeft:
 		{
 			caret = std::max< int32_t >(caret - 1 , 0);
+			modified = true;
 		}
 		break;
 
@@ -306,27 +308,30 @@ void Edit::eventKeyDown(KeyDownEvent* event)
 		{
 			std::wstring text = getText();
 			caret = std::min< int32_t >(caret + 1, text.length());
-		}
+			modified = true;
+	}
 		break;
 
 	case VkHome:
 		{
 			caret = 0;
-		}
+			modified = true;
+	}
 		break;
-		
+
 	case VkEnd:
 		{
 			std::wstring text = getText();
 			caret = text.length();
-		}
+			modified = true;
+	}
 		break;
 
 	default:
 		break;
 	}
 
-	if (caret != m_caret)
+	if (modified)
 	{
 		if ((event->getKeyState() & KsShift) != 0)
 		{
@@ -429,7 +434,7 @@ void Edit::eventPaint(PaintEvent* event)
 	Rect rcInner = getInnerRect();
 
 	bool hover = isEnable() && m_hover;
-	
+
 	canvas.setBackground(ss->getColor(this, hover ? L"background-color-hover" : L"background-color"));
 	canvas.fillRect(rcInner);
 
@@ -458,7 +463,7 @@ void Edit::eventPaint(PaintEvent* event)
 			canvas.fillRect(Rect(
 				x, rcInner.top + 1,
 				x + w, rcInner.bottom - 1
-			));			
+			));
 		}
 
 		wchar_t chs[2] = { text[i], 0 };

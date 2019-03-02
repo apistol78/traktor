@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ChildEvent_H
-#define traktor_ui_ChildEvent_H
+#pragma once
 
 #include "Ui/Event.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 class Widget;
 
 /*! \brief ChildEvent
@@ -30,20 +23,19 @@ class Widget;
 class T_DLLCLASS ChildEvent : public Event
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	ChildEvent(EventSubject* sender, Widget* child, bool link);
 
 	Widget* getChild() const;
 
-	bool link() const;	
+	bool link() const;
 
 private:
 	Ref< Widget > m_child;
 	bool m_link;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_ChildEvent_H

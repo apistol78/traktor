@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Render/OpenGL/ES2/ProgramResourceOpenGLES2.h"

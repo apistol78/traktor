@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <locale>
 #include "Core/Log/Log.h"
@@ -404,7 +398,7 @@ DisplayMode RenderSystemOpenGL::getCurrentDisplayMode() const
 			dm.height = xrrss[sizeId].height;
 			dm.refreshRate = 60;
 			dm.colorBits = 32;
-			return dm;			
+			return dm;
 		}
 	}
 

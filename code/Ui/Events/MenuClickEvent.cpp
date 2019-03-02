@@ -1,16 +1,10 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Events/MenuClickEvent.h"
 
 namespace traktor
 {
 	namespace ui
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MenuClickEvent", MenuClickEvent, Event)
 
 MenuClickEvent::MenuClickEvent(EventSubject* sender, MenuItem* item, const Command& command)

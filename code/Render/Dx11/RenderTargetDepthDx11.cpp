@@ -80,7 +80,7 @@ bool RenderTargetDepthDx11::create(const RenderTargetSetCreateDesc& setDesc)
 		log::error << L"Unable to create render target; failed to create depth texture" << Endl;
 		return false;
 	}
-	
+
 	// Create DX11 depth/stencil view.
 	std::memset(&ddsvd, 0, sizeof(ddsvd));
 	ddsvd.Format = DXGI_FORMAT_UNKNOWN;

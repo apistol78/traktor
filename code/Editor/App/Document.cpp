@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
@@ -134,7 +128,7 @@ bool Document::undo(const ISerializable* redoMeta, Ref< const ISerializable >* o
 	HistoryState& undoState = m_undoHistory.back();
 	for (uint32_t i = 0; i < undoState.objects.size(); ++i)
 		m_objects[i] = undoState.objects[i];
-	
+
 	if (outMeta)
 		*outMeta = undoState.meta;
 

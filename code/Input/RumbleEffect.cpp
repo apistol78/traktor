@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Input/RumbleEffect.h"
 #include "Core/Math/Hermite.h"
 #include "Core/Serialization/ISerializer.h"
@@ -89,7 +83,7 @@ void RumbleEffect::getRumble(float time, InputRumble& outRumble) const
 void RumbleEffect::serialize(ISerializer& s)
 {
 	s >> MemberStlVector
-		< 
+		<
 			std::pair< float, InputRumble >,
 			MemberStlPair< float, InputRumble, Member< float >, MemberInputRumble >
 		>

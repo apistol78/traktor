@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_VertexBufferDx11_H
-#define traktor_render_VertexBufferDx11_H
+#pragma once
 
 #include "Core/Misc/ComRef.h"
 #include "Render/VertexBuffer.h"
@@ -47,8 +40,7 @@ protected:
 
 	VertexBufferDx11(uint32_t bufferSize);
 };
-	
+
 	}
 }
 
-#endif	// traktor_render_VertexBufferDx11_H

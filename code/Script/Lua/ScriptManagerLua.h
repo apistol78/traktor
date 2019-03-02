@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_script_ScriptManagerLua_H
-#define traktor_script_ScriptManagerLua_H
+#pragma once
 
 #define T_SCRIPT_LUA_USE_MT_LOCK
 
@@ -53,7 +46,7 @@ public:
 	virtual ~ScriptManagerLua();
 
 	virtual void destroy() override final;
-	
+
 	virtual void registerClass(IRuntimeClass* runtimeClass) override final;
 
 	virtual Ref< IScriptBlob > compile(const std::wstring& fileName, const std::wstring& script, IErrorCallback* errorCallback) const override final;
@@ -153,9 +146,9 @@ public:
 	static int classEqual(lua_State* luaState);
 
 	static int classAdd(lua_State* luaState);
-	
+
 	static int classSubtract(lua_State* luaState);
-	
+
 	static int classMultiply(lua_State* luaState);
 
 	static int classDivide(lua_State* luaState);
@@ -174,4 +167,3 @@ public:
 	}
 }
 
-#endif	// traktor_script_ScriptManagerLua_H

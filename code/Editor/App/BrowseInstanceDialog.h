@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_BrowseInstanceDialog_H
-#define traktor_editor_BrowseInstanceDialog_H
+#pragma once
 
 #include "Core/Containers/ThreadsafeFifo.h"
 #include "Core/Thread/Event.h"
@@ -88,4 +81,3 @@ private:
 	}
 }
 
-#endif	// traktor_editor_BrowseInstanceDialog_H

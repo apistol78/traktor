@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_EffectComponentData_H
-#define traktor_spray_EffectComponentData_H
+#pragma once
 
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
@@ -29,21 +22,21 @@ class IResourceManager;
 
 	namespace sound
 	{
-	
+
 class ISoundPlayer;
 
 	}
 
 	namespace world
 	{
-	
+
 class IEntityEventManager;
 
 	}
 
 	namespace spray
 	{
-	
+
 class Effect;
 class EffectComponent;
 
@@ -68,4 +61,3 @@ private:
 	}
 }
 
-#endif	// traktor_spray_EffectComponentData_H

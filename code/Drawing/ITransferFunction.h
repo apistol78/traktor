@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_ITransferFunction_H
-#define traktor_drawing_ITransferFunction_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Math/Color4f.h"
@@ -22,7 +15,7 @@ namespace traktor
 {
 	namespace drawing
 	{
-	
+
 class Image;
 
 /*! \brief Image copy transfer function base class.
@@ -37,8 +30,7 @@ protected:
 
 	virtual void evaluate(const Color4f& in, Color4f& out) const = 0;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_ITransferFunction_H

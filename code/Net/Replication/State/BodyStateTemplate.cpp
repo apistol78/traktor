@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
@@ -94,7 +88,7 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 
 	// 16 + (4+11)
 	Vector4 R = T.rotation().toAxisAngle();
-	
+
 	float a = R.length();
 	if (abs(a) > FUZZY_EPSILON)
 		R /= Scalar(a);
@@ -147,7 +141,7 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 
 	T = Transform(
 		Vector4::loadAligned(f),
-		(abs(Ra) > FUZZY_EPSILON && R.length() > FUZZY_EPSILON) ? 
+		(abs(Ra) > FUZZY_EPSILON && R.length() > FUZZY_EPSILON) ?
 			Quaternion::fromAxisAngle(R, Ra).normalized() :
 			Quaternion::identity()
 	);

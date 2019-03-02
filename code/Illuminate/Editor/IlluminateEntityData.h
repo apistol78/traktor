@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #ifndef traktor_illuminate_IlluminateEntityData_H
 #define traktor_illuminate_IlluminateEntityData_H
 
@@ -39,7 +33,7 @@ public:
 	void removeAllEntityData();
 
 	virtual void serialize(ISerializer& s) override final;
-	
+
 	virtual void setTransform(const Transform& transform) override final;
 
 	const Guid& getSeedGuid() const { return m_seedGuid; }

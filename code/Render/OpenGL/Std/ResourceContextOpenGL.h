@@ -16,7 +16,7 @@ class ResourceContextOpenGL : public ContextOpenGL
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Delete callback. 
+	/*! \brief Delete callback.
 	 * \ingroup OGL
 	 *
 	 * These are enqueued in the context

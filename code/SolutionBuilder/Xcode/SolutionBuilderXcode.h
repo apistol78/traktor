@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef SolutionBuilderXcode_H
-#define SolutionBuilderXcode_H
+#pragma once
 
 #include "SolutionBuilder/SolutionBuilder.h"
 #include "SolutionBuilder/Configuration.h"
@@ -108,17 +101,17 @@ private:
 	void generateXCBuildConfigurationSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const;
 
 	void generateXCConfigurationListSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const;
-	
+
 	void getConfigurations(const Project* project, Ref< Configuration > outConfigurations[2]) const;
-	
+
 	Configuration::TargetFormat getTargetFormat(const Project* project) const;
 
 	std::wstring getProductType(Configuration::TargetFormat targetFormat) const;
-	
+
 	std::wstring getProductName(const Project* project, Configuration::TargetFormat targetFormat) const;
 
 	std::wstring getProductNameNoSuffix(const Project* project, Configuration::TargetFormat targetFormat) const;
-	
+
 	void collectCopyDependencies(const Solution* solution, const Project* project, std::set< ResolvedDependency >& outDependencies, bool parentExternal) const;
 
 	void collectLinkDependencies(const Solution* solution, const Project* project, std::set< ResolvedDependency >& outDependencies, bool parentExternal) const;
@@ -131,4 +124,3 @@ private:
 	}
 }
 
-#endif	// SolutionBuilderXcode_H

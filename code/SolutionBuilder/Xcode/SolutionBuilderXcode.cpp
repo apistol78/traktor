@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Guid.h"
 #include "Core/RefSet.h"
 #include "Core/Io/FileSystem.h"
@@ -191,7 +185,7 @@ public:
 	std::wstring getBuildConfigurationListUid() const { return calculateUid(m_solution, -3); }
 
 	std::wstring getBuildConfigurationDebugUid() const { return calculateUid(m_solution, -4); }
-		
+
 	std::wstring getBuildConfigurationReleaseUid() const { return calculateUid(m_solution, -5); }
 
 	std::wstring getGroupUid() const { return calculateUid(m_solution, -6); }
@@ -225,7 +219,7 @@ public:
 	std::wstring getBuildPhaseSourcesUid() const { return calculateUid(m_project, -7); }
 
 	std::wstring getBuildPhaseFrameworksUid() const { return calculateUid(m_project, -8); }
-		
+
 	std::wstring getBuildPhaseCopyFilesUid() const { return calculateUid(m_project, -9); }
 
 	std::wstring getBuildPhaseShellScriptUid() const { return calculateUid(m_project, -10); }
@@ -237,11 +231,11 @@ public:
 	std::wstring getBuildFileUid(const Path& file) const { return calculateUid(m_project, file, -1); }
 
 	std::wstring getBuildFileCopyFileUid(const Path& file) const { return calculateUid(m_project, file, -2); }
-		
+
 	std::wstring getBuildFileUid(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -1); }
 
 	std::wstring getBuildFileCopyFileUid(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -2); }
-		
+
 	std::wstring getContainerItemProxy(const Project* ownerProject) const { return calculateUid(m_project, ownerProject, -3); }
 
 	std::wstring getContainerItemProxy(const Aggregation* ownerAggregation) const { return calculateUid(m_project, ownerAggregation, -4); }
@@ -444,7 +438,7 @@ bool SolutionBuilderXcode::create(const CommandLine& cmdLine)
 
 	if (cmdLine.hasOption(L"xcode-root-suffix"))
 		m_rootSuffix = cmdLine.getOption(L"xcode-root-suffix").getString();
-		
+
 	return true;
 }
 
@@ -459,7 +453,7 @@ struct DisabledProjectPred
 bool SolutionBuilderXcode::generate(Solution* solution)
 {
 	// Get projects; remove disabled projects.
-	RefArray< Project > unsorted = solution->getProjects();	
+	RefArray< Project > unsorted = solution->getProjects();
 	for (RefArray< Project >::iterator i = unsorted.begin(); i != unsorted.end(); )
 	{
 		if (!(*i)->getEnable())
@@ -498,7 +492,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 		projects.push_back(*i);
 		unsorted.erase(i);
 	}
-	
+
 	// Collect all files references from solution.
 	std::set< Path > files;
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
@@ -621,7 +615,7 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 				s << L"\t\t" << buildFileUid << L" /* " << *j << L" in Frameworks */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << *j << L" */; };" << Endl;
 			}
 		}
-		
+
 		if (targetFormat == Configuration::TfExecutable)
 		{
 			std::set< ResolvedDependency > dependencies;
@@ -632,7 +626,7 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 				Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 				if (targetFormat != Configuration::TfSharedLibrary)
 					continue;
-				
+
 				std::wstring productUid = ProjectUids(j->project).getProductUid();
 				std::wstring productName = getProductName(j->project, targetFormat);
 
@@ -686,7 +680,7 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 void SolutionBuilderXcode::generatePBXBuildRuleSection(OutputStream& s, const Solution* solution) const
 {
 	s << L"/* Begin PBXBuildRule section */" << Endl;
-	
+
 	s << L"\t\t" << SolutionUids(solution).getCustomBuildRuleUid(0) << L" /* PBXBuildRule */ = {" << Endl;
 	s << L"\t\t\tisa = PBXBuildRule;" << Endl;
 	s << L"\t\t\tcompilerSpec = com.apple.compilers.proxy.script;" << Endl;
@@ -697,7 +691,7 @@ void SolutionBuilderXcode::generatePBXBuildRuleSection(OutputStream& s, const So
 	s << L"\t\t\t);" << Endl;
 	s << L"\t\t\tscript = \"\";" << Endl;
 	s << L"\t\t};" << Endl;
-	
+
 	s << L"\t\t" << SolutionUids(solution).getCustomBuildRuleUid(1) << L" /* PBXBuildRule */ = {" << Endl;
 	s << L"\t\t\tisa = PBXBuildRule;" << Endl;
 	s << L"\t\t\tcompilerSpec = com.apple.compilers.proxy.script;" << Endl;
@@ -708,7 +702,7 @@ void SolutionBuilderXcode::generatePBXBuildRuleSection(OutputStream& s, const So
 	s << L"\t\t\t);" << Endl;
 	s << L"\t\t\tscript = \"\";" << Endl;
 	s << L"\t\t};" << Endl;
-	
+
 	s << L"/* End PBXBuildRule section */" << Endl;
 	s << Endl;
 }
@@ -720,7 +714,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 	RefSet< const Project > externalProjects;
 
 	s << L"/* Begin PBXContainerItemProxy section */" << Endl;
-	
+
 	// Project's local proxies.
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
@@ -739,7 +733,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 			s << L"\t\t\tremoteGlobalIDString = " << ProjectUids(j->project).getTargetUid() << L" /* " << j->project->getName() << L" */;" << Endl;
 			s << L"\t\t\tremoteInfo = \"" << j->project->getName() << L"\";" << Endl;
 			s << L"\t\t};" << Endl;
-			
+
 			localProjects.insert(j->project);
 		}
 	}
@@ -769,7 +763,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 			localProjects.insert(j->project);
 		}
 	}
-	
+
 	// Project's external proxies.
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
@@ -780,7 +774,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 		{
 			if (!j->external || externalProjects.find(j->project) != externalProjects.end())
 				continue;
-			
+
 			std::wstring externalSolutionRoot = FileSystem::getInstance().getAbsolutePath(j->solution->getRootPath()).getPathName();
 			Path externalXcodeProjectPath = externalSolutionRoot + m_rootSuffix + L"/" + j->solution->getName() + L".xcodeproj";
 
@@ -794,7 +788,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 			s << L"\t\t\tremoteGlobalIDString = " << createNewUid() << L";" << Endl;
 			s << L"\t\t\tremoteInfo = \"" << j->project->getName() << L"\";" << Endl;
 			s << L"\t\t};" << Endl;
-			
+
 			externalProjects.insert(j->project);
 		}
 	}
@@ -827,7 +821,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 			externalProjects.insert(j->project);
 		}
 	}
-	
+
 	s << L"/* End PBXContainerItemProxy section */" << Endl;
 	s << Endl;
 }
@@ -1013,7 +1007,7 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 	std::set< std::wstring > frameworks;
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		collectFrameworks(*i, frameworks);
-		
+
 	for (std::set< std::wstring >::const_iterator i = frameworks.begin(); i != frameworks.end(); ++i)
 	{
 		std::wstring fileUid = FileUids(*i).getFileUid();
@@ -1022,7 +1016,7 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 		else
 			s << L"\t\t" << fileUid << L" /* " << *i << L" in Frameworks */ = { isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = " << *i << L"; path = System/Library/Frameworks/" << *i << L"; sourceTree = SDKROOT; };" << Endl;
 	}
-	
+
 	s << L"/* End PBXFileReference section */" << Endl;
 	s << Endl;
 }
@@ -1047,7 +1041,7 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 			// Add system frameworks.
 			std::set< std::wstring > frameworks;
 			collectFrameworks(*i, frameworks);
-			
+
 			for (std::set< std::wstring >::const_iterator j = frameworks.begin(); j != frameworks.end(); ++j)
 			{
 				std::wstring buildFileUid = ProjectUids(*i).getBuildFileUid(*j);
@@ -1057,18 +1051,18 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 			// Add dependent libraries.
 			std::set< ResolvedDependency > dependencies;
 			collectLinkDependencies(solution, *i, dependencies, false);
-			
+
 			log::info << (*i)->getName() << L"..." << Endl;
-		
+
 			// Add local dependencies first.
 			for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
 				if (j->external)
 					continue;
-				
+
 				Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 				std::wstring productName = getProductName(j->project, targetFormat);
-				
+
 				log::info << L"\t+ " << productName << Endl;
 
 				s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(j->project) << L" /* " << productName << L" in Frameworks */," << Endl;
@@ -1273,7 +1267,7 @@ void SolutionBuilderXcode::generatePBXAggregateTargetSection(OutputStream& s, co
 
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tname = \"" << (*i)->getName() << L"\";" << Endl;
-		s << L"\t\t\tproductName = \"" << (*i)->getName() << L"\";" << Endl;		
+		s << L"\t\t\tproductName = \"" << (*i)->getName() << L"\";" << Endl;
 		s << L"\t\t};" << Endl;
 	}
 	s << L"/* End PBXAggregateTarget section */" << Endl;
@@ -1408,7 +1402,7 @@ void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, con
 	RefSet< const Project > externalProjects;
 
 	s << L"/* Begin PBXReferenceProxy section */" << Endl;
-	
+
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::set< ResolvedDependency > dependencies;
@@ -1418,7 +1412,7 @@ void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, con
 		{
 			if (!j->external || externalProjects.find(j->project) != externalProjects.end())
 				continue;
-				
+
 			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 			std::wstring productName = getProductName(j->project, targetFormat);
 			std::wstring productType = getProductType(targetFormat);
@@ -1430,7 +1424,7 @@ void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, con
 			s << L"\t\t\tremoteRef = " << ProjectUids(j->project).getContainerItemProxy(*i) << L" /* PBXContainerItemProxy */;" << Endl;
 			s << L"\t\t\tsourceTree = BUILT_PRODUCTS_DIR;" << Endl;
 			s << L"\t\t};" << Endl;
-			
+
 			externalProjects.insert(j->project);
 		}
 	}
@@ -1463,7 +1457,7 @@ void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, con
 			externalProjects.insert(j->project);
 		}
 	}
-	
+
 	s << L"/* End PBXReferenceProxy section */" << Endl;
 	s << Endl;
 }
@@ -1568,7 +1562,7 @@ void SolutionBuilderXcode::generatePBXShellScriptBuildPhaseSection(OutputStream&
 
 		for (std::set< Path >::const_iterator j = resourceFiles.begin(); j != resourceFiles.end(); ++j)
 			s << L"\t\t\t\"$(DERIVED_FILE_DIR)/Resources/" << j->getFileNameNoExtension() << L".h\"," << Endl;
-		
+
 		s << L"\t\t);" << Endl;
 		s << L"\t\trunOnlyForDeploymentPostprocessing = 0;" << Endl;
 		s << L"\t\tshellPath = /bin/sh;" << Endl;
@@ -1719,10 +1713,10 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 	{
 		Ref< Configuration > configurations[2];
 		getConfigurations(*i, configurations);
-		
+
 		// Get project plist file.
 		std::wstring plistFile;
-		
+
 		std::set< Path > projectFiles;
 		collectProjectFiles(*i, projectFiles);
 
@@ -1783,7 +1777,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			s << L"\t\t\t\tPRODUCT_NAME = \"" << getProductNameNoSuffix(*i, configurations[0]->getTargetFormat()) << L"\";" << Endl;
 			if (!plistFile.empty())
 				s << L"\t\t\t\tINFOPLIST_FILE = \"" << plistFile << L"\";" << Endl;
-			
+
 			if (configurations[0]->getTargetFormat() == Configuration::TfSharedLibrary)
 				s << L"\t\t\t\tINSTALL_PATH = \"@executable_path\";" << Endl;
 
@@ -1832,7 +1826,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 							continue;
 
 						std::wstring productName;
-						
+
 						if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
 						{
 							Configuration::TargetFormat targetFormat = getTargetFormat(projectDependency->getProject());
@@ -1892,7 +1886,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 				s << relativeIncludePath.getPathName() << L" ";
 			}
 			s << L"'${DERIVED_FILES_DIR}'\";" << Endl;
-			
+
 			s << L"\t\t\t\tPRODUCT_NAME = \"" << getProductNameNoSuffix(*i, configurations[1]->getTargetFormat()) << L"\";" << Endl;
 			if (!plistFile.empty())
 				s << L"\t\t\t\tINFOPLIST_FILE = \"" << plistFile << L"\";" << Endl;
@@ -2026,7 +2020,7 @@ void SolutionBuilderXcode::getConfigurations(const Project* project, Ref< Config
 
 	if (!outConfigurations[0])
 		log::warning << L"Project \"" << project->getName() << L"\" doesn't have debug configuration" << Endl;
-		
+
 	if (!outConfigurations[1])
 		log::warning << L"Project \"" << project->getName() << L"\" doesn't have release configuration" << Endl;
 }
@@ -2035,16 +2029,16 @@ Configuration::TargetFormat SolutionBuilderXcode::getTargetFormat(const Project*
 {
 	Ref< Configuration > configurations[2];
 	getConfigurations(project, configurations);
-	
+
 	Configuration::TargetFormat targetFormat;
-	
+
 	if (configurations[0])
 		targetFormat = configurations[0]->getTargetFormat();
 	else if (configurations[1])
 		targetFormat = configurations[1]->getTargetFormat();
 	else
 		T_FATAL_ERROR;
-	
+
 	return targetFormat;
 }
 

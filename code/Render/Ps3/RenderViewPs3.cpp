@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
@@ -979,7 +973,7 @@ void RenderViewPs3::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, I
 			type = CELL_GCM_DRAW_INDEX_ARRAY_TYPE_32;
 			offset += primitives.offset * 2;
 		}
-		
+
 		T_GCM_CALL(cellGcmSetDrawIndexArray)(
 			gCellGcmCurrentContext,
 			c_mode[primitives.type],

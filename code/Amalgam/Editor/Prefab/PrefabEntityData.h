@@ -1,5 +1,4 @@
-#ifndef traktor_amalgam_PrefabEntityData_H
-#define traktor_amalgam_PrefabEntityData_H
+#pragma once
 
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
@@ -32,7 +31,7 @@ public:
 	void removeAllEntityData();
 
 	virtual void serialize(ISerializer& s) override final;
-	
+
 	virtual void setTransform(const Transform& transform) override final;
 
 	const Guid& getOutputGuid(int32_t index) const { return m_outputGuid[index]; }
@@ -50,4 +49,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_PrefabEntityData_H

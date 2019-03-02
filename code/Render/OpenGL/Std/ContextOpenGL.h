@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ContextOpenGL_H
-#define traktor_render_ContextOpenGL_H
+#pragma once
 
 #if defined(__LINUX__)
 #	include <X11/Xlib.h>
@@ -93,4 +86,3 @@ protected:
 	}
 }
 
-#endif	// traktor_render_ContextOpenGL_H

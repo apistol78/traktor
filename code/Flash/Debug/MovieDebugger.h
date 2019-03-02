@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_MovieDebugger_H
-#define traktor_flash_MovieDebugger_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Timer/Timer.h"
@@ -22,14 +15,14 @@ namespace traktor
 {
 	namespace net
 	{
-	
+
 class BidirectionalObjectTransport;
 
 	}
 
 	namespace flash
 	{
-	
+
 class Movie;
 class SpriteInstance;
 
@@ -55,8 +48,7 @@ private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	mutable int32_t m_captureFrames;
 };
-	
+
 	}
 }
 
-#endif	// traktor_flash_MovieDebugger_H

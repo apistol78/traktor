@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ScrollEvent_H
-#define traktor_ui_ScrollEvent_H
+#pragma once
 
 #include "Ui/Event.h"
 
@@ -28,12 +21,12 @@ namespace traktor
 class T_DLLCLASS ScrollEvent : public Event
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	ScrollEvent(EventSubject* sender, int32_t position);
-	
+
 	int32_t getPosition() const;
-	
+
 private:
 	int32_t m_position;
 };
@@ -41,4 +34,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_ScrollEvent_H

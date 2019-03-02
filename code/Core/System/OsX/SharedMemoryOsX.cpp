@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -52,12 +46,12 @@ SharedMemoryOsX::~SharedMemoryOsX()
 		m_buffer = 0;
 	}
 }
-	
+
 Ref< IStream > SharedMemoryOsX::read(bool exclusive)
 {
 	return new MemoryStream(m_buffer, m_size, true, false);
 }
-	
+
 Ref< IStream > SharedMemoryOsX::write()
 {
 	return new MemoryStream(m_buffer, m_size, false, true);

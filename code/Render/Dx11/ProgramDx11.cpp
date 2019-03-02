@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Matrix44.h"
@@ -56,7 +50,7 @@ bool storeIfNotEqual(const Vector4* source, int length, float* dest)
 			return true;
 		}
 	}
-	return false;	
+	return false;
 }
 
 		}
@@ -119,7 +113,7 @@ bool ProgramDx11::create(
 			dbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 			dbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 			dbd.MiscFlags = 0;
-		
+
 			hr = d3dDevice->CreateBuffer(&dbd, NULL, &m_vertexState.cbuffer[i].d3dBuffer.getAssign());
 			if (FAILED(hr))
 				return false;
@@ -165,7 +159,7 @@ bool ProgramDx11::create(
 			dbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 			dbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 			dbd.MiscFlags = 0;
-		
+
 			hr = d3dDevice->CreateBuffer(&dbd, NULL, &m_pixelState.cbuffer[i].d3dBuffer.getAssign());
 			if (FAILED(hr))
 				return false;

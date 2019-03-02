@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_OutputStreamBuffer_H
-#define traktor_OutputStreamBuffer_H
+#pragma once
 
 #include "Core/Io/IOutputStreamBuffer.h"
 
@@ -50,4 +43,3 @@ private:
 
 }
 
-#endif	// traktor_OutputStreamBuffer_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Win32/WidgetFactoryWin32.h"
 #include "Ui/Win32/ContainerWin32.h"
 #include "Ui/Win32/DialogWin32.h"
@@ -28,7 +22,7 @@ int CALLBACK enumFontCallBack(const LOGFONT* lf, const TEXTMETRIC*, DWORD, LPVOI
 {
 	std::set< std::wstring >& outFonts = *reinterpret_cast< std::set< std::wstring >* >(lParam);
 	outFonts.insert(lf->lfFaceName);
-	return TRUE; 
+	return TRUE;
 }
 
 		}

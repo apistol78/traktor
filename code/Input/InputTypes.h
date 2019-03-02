@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputTypes_H
-#define traktor_input_InputTypes_H
+#pragma once
 
 #include <string>
 #include "Core/Config.h"
@@ -268,4 +261,3 @@ handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
 	}
 }
 
-#endif	// traktor_input_InputTypes_H

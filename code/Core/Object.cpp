@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/IObjectRefDebugger.h"
 #include "Core/Object.h"
 #include "Core/Memory/IAllocator.h"
@@ -70,7 +64,7 @@ int32_t Object::getReferenceCount() const
 void* Object::operator new (size_t size)
 {
 	const size_t objectHeaderSize = sizeof(ObjectHeader);
-	
+
 	IAllocator* allocator = getAllocator();
 
 	ObjectHeader* header = static_cast< ObjectHeader* >(allocator->alloc(size + objectHeaderSize, 16, "Object"));

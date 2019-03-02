@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Illuminate/Editor/IlluminateEntityData.h"
 #include "Illuminate/Editor/IlluminateEntityFactory.h"
 #include "World/IEntityBuilder.h"
@@ -36,7 +30,7 @@ const TypeInfoSet IlluminateEntityFactory::getEntityComponentTypes() const
 Ref< world::Entity > IlluminateEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	const IlluminateEntityData* illumEntityData = checked_type_cast< const IlluminateEntityData* >(&entityData);
-	
+
 	Ref< world::GroupEntity > batchEntity = new world::GroupEntity(illumEntityData->getTransform());
 
 	const RefArray< world::EntityData >& childEntityData = illumEntityData->getEntityData();

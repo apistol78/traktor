@@ -324,7 +324,7 @@ void ImageProcessEditor::updateStepView(ui::GridRow* parentStepRow, const RefArr
 				log::warning << L"Step \"" << stepFacade->getText(m_editor, step) << L"\" use undefined source \"" << source << L"\"." << Endl;
 				complete = false;
 			}
-		}		
+		}
 
 		// Also check "set target" step.
 		const ImageProcessStepSetTarget* setTarget = dynamic_type_cast< const ImageProcessStepSetTarget* >(step);

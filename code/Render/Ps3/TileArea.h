@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_TileArea_H
-#define traktor_render_TileArea_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Thread/Semaphore.h"
@@ -34,13 +27,13 @@ public:
 		{
 		}
 	};
-	
+
 	TileArea(uint32_t areaCount, uint32_t tagSize);
-	
+
 	bool alloc(uint32_t size, uint32_t alignment, TileInfo& outTileInfo);
-	
+
 	void free(uint32_t index);
-	
+
 private:
 	Semaphore m_lock;
 	uint32_t m_areaCount;
@@ -53,4 +46,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_TileArea_H

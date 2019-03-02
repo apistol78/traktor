@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_JobModifierUpdate_H
-#define traktor_spray_JobModifierUpdate_H
+#pragma once
 
 #include <cell/spurs/job_descriptor.h>
 #include "Core/Math/Transform.h"
@@ -14,7 +7,7 @@ namespace traktor
 {
 	namespace spray
 	{
-		
+
 struct JobModifierUpdate
 {
 	CellSpursJobHeader header;
@@ -37,33 +30,33 @@ struct JobModifierUpdate
 		}
 		drag;
 
-		struct 
+		struct
 		{
 			float gravity[4];
 			uint8_t world;
 		}
 		gravity;
 
-		struct 
+		struct
 		{
 			float timeScale;
 		}
 		integrate;
 
-		struct 
+		struct
 		{
 			float plane[4];
 			float restitution;
 		}
 		planeCollision;
 
-		struct 
+		struct
 		{
 			float adjustRate;
 		}
 		size;
 
-		struct 
+		struct
 		{
 			float axis[4];
 			float tangentForce;
@@ -81,4 +74,3 @@ struct JobModifierUpdate
 	}
 }
 
-#endif	// traktor_spray_JobModifierUpdate_H

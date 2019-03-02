@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/String.h"
@@ -57,7 +51,7 @@ MouseDeviceDi8::MouseDeviceDi8(HWND hWnd, IDirectInputDevice8* device, const DID
 {
 	m_device->SetDataFormat(&c_dfDIMouse2);
 	m_name = tstows(deviceInstance->tszInstanceName);
-	
+
 	resetState();
 
 	HRESULT hr = device->Acquire();
@@ -211,7 +205,7 @@ void MouseDeviceDi8::readState()
 	}
 
 	hr = m_device->Poll();
-	if (FAILED(hr))  
+	if (FAILED(hr))
 	{
 		m_device->Unacquire();
 		m_connected = false;
@@ -236,7 +230,7 @@ void MouseDeviceDi8::readState()
 	else if (m_position.y > m_rect.bottom - 1)
 		m_position.y = m_rect.bottom - 1;
 
-	m_connected = SUCCEEDED(hr);	
+	m_connected = SUCCEEDED(hr);
 
 	// As long as mouse is exclusively acquired we clamp mouse position to client area of window.
 	if (m_exclusive && m_connected)

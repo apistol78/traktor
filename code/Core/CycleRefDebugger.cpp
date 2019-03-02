@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/CycleRefDebugger.h"
 #include "Core/Thread/Acquire.h"
@@ -156,7 +150,7 @@ void CycleRefDebugger::removeObjectRef(void* ref, void* object)
 			}
 			T_FATAL_ASSERT_M (reachable, L"Orphan cycle detected");
 		}
-	}	
+	}
 }
 
 void CycleRefDebugger::trace(ObjInfo* object)

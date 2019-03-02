@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
@@ -75,7 +69,7 @@ Ref< Widget > Menu::show(Widget* parent, const Point& at) const
 			rcForm = rcForm.offset(0, -(rcForm.top - r.top));
 		if (rcForm.bottom > r.bottom)
 			rcForm = rcForm.offset(0, -(rcForm.bottom - r.bottom));
-	}	
+	}
 
 	// Show form.
 	form->setRect(rcForm);
@@ -113,7 +107,7 @@ const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width, 
 	// Place form at given position.
 	auto rc = form->getRect();
 	auto sz = rc.getSize();
-	
+
 	if (width >= 0)
 		sz.cx = width;
 

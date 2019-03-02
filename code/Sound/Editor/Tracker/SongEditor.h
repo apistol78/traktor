@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #pragma once
 
 #include "Core/Ref.h"
@@ -30,7 +24,7 @@ class IEditorPageSite;
 
 	namespace resource
 	{
-	
+
 class IResourceManager;
 
 	}
@@ -81,7 +75,7 @@ private:
 
 	Ref< SongBuffer > m_songBuffer;
 	int32_t m_currentPattern;
-	
+
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< SoundSystem > m_soundSystem;
 	Ref< SoundChannel > m_soundChannel;

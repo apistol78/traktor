@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Const_H
-#define traktor_Const_H
+#pragma once
 
 namespace traktor
 {
@@ -25,4 +18,3 @@ inline float rad2deg(float rad) { return rad * 180.0f / PI; }
 
 }
 
-#endif	// traktor_Const_H

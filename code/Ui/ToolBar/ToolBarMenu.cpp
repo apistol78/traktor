@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
@@ -119,7 +113,7 @@ void ToolBarMenu::buttonDown(ToolBar* toolBar, MouseButtonDownEvent* mouseEvent)
 
 		for (size_t i = 0; i < m_items.size(); ++i)
 			m_menu->add(m_items[i]);
-		
+
 		const MenuItem* item = m_menu->showModal(toolBar, m_menuPosition);
 		if (item)
 		{

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_CaseBitReader_H
-#define traktor_CaseBitReader_H
+#pragma once
 
 #include "UnitTest/Case.h"
 
@@ -20,4 +13,3 @@ public:
 
 }
 
-#endif	// traktor_CaseBitReader_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Spray/Editor/BoxSourceRenderer.h"
 #include "Spray/Sources/BoxSourceData.h"
 #include "Render/PrimitiveRenderer.h"

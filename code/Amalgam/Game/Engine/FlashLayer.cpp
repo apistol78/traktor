@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/TcpSocket.h"
@@ -681,7 +675,7 @@ void FlashLayer::createMoviePlayer()
 			log::error << L"Unable to create display renderer." << Endl;
 			return;
 		}
-		
+
 		m_displayRenderer = displayRenderer;
 		m_movieRenderer = new flash::MovieRenderer(m_displayRenderer, 0);
 	}

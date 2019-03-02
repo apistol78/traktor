@@ -24,7 +24,7 @@ public:
 	virtual int32_t getMips() const override final;
 
 	virtual int32_t getWidth() const override final;
-	
+
 	virtual int32_t getHeight() const override final;
 
 	virtual bool lock(int32_t level, Lock& lock) override final;
@@ -39,6 +39,6 @@ private:
 	Ref< ISimpleTexture > m_texture;
 	int32_t m_locked;
 };
-		
+
 	}
 }

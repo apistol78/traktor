@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #if defined(_WIN32)
 #	include <windows.h>
 #endif
@@ -36,9 +30,9 @@ namespace traktor
 
 /*!
  * \brief Language code translation table.
- * 
+ *
  * GetCurrentGameLanguage() can return the following:
- * 
+ *
  * english
  * german
  * french
@@ -63,7 +57,7 @@ namespace traktor
  * turkish
  * brazilian
  * bulgarian
- * 
+ *
  * \todo
  * Maybe we should map to IETF to avoid conflicts? http://en.wikipedia.org/wiki/IETF_language_tag
  */
@@ -126,7 +120,7 @@ bool SteamSessionManager::create(const IGameConfiguration* configuration)
 #endif
 
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-	
+
 	bool result = false;
 	for (int32_t i = 0; i < 10; ++i)
 	{
@@ -161,7 +155,7 @@ bool SteamSessionManager::create(const IGameConfiguration* configuration)
 	m_achievements = new SteamAchievements(this, gc->m_achievementIds);
 	m_leaderboards = new SteamLeaderboards(this, gc->m_leaderboardIds);
 	m_matchMaking = new SteamMatchMaking(this);
-	
+
 	if (gc->m_cloudEnabled)
 		m_saveData = new SteamCloudSaveData();
 	else

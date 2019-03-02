@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_InstanceMesh_H
-#define traktor_mesh_InstanceMesh_H
+#pragma once
 
 #include <vector>
 #include "Core/Containers/SmallMap.h"
@@ -103,7 +96,7 @@ public:
 	bool supportTechnique(render::handle_t technique) const;
 
 	void getTechniques(std::set< render::handle_t >& outHandles) const;
-	
+
 	void render(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
@@ -124,4 +117,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_InstanceMesh_H

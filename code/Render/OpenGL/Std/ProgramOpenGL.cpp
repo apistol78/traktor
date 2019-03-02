@@ -434,7 +434,7 @@ bool ProgramOpenGL::activateRender(RenderContextOpenGL* renderContext, float tar
 	if (!m_validated)
 	{
 		GLint status;
-		
+
 		T_OGL_SAFE(glValidateProgram(m_program));
 		T_OGL_SAFE(glGetProgramiv(m_program, GL_VALIDATE_STATUS, &status));
 
@@ -548,7 +548,7 @@ bool ProgramOpenGL::activateCompute(RenderContextOpenGL* renderContext)
 	if (!m_validated)
 	{
 		GLint status;
-		
+
 		T_OGL_SAFE(glValidateProgram(m_program));
 		T_OGL_SAFE(glGetProgramiv(m_program, GL_VALIDATE_STATUS, &status));
 

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sound_SoundDriverOpenSL_H
-#define traktor_sound_SoundDriverOpenSL_H
+#pragma once
 
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
@@ -64,4 +57,3 @@ private:
 	}
 }
 
-#endif	// traktor_sound_SoundDriverOpenSL_H

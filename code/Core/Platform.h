@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Platform_H
-#define traktor_Platform_H
+#pragma once
 
 #if defined (_WIN32)
 #	if defined (_XBOX)
@@ -100,7 +93,7 @@ namespace traktor
 
 #elif defined(__APPLE__)
 		void* view;
-		
+
 		SystemWindow()
 		:	view(0)
 		{
@@ -136,4 +129,3 @@ namespace traktor
 
 }
 
-#endif	// traktor_Platform_H

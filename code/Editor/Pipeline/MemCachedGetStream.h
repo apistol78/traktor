@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_MemCachedGetStream_H
-#define traktor_editor_MemCachedGetStream_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Io/IStream.h"
@@ -25,7 +18,7 @@ public:
 	enum { MaxBlockSize = 65536 };
 
 	MemCachedGetStream(MemCachedProto* proto, const std::string& key);
-	
+
 	bool requestEndBlock();
 
 	bool requestNextBlock();
@@ -61,4 +54,3 @@ private:
 	}
 }
 
-#endif	// traktor_editor_MemCachedGetStream_H

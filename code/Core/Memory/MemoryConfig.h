@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_MemoryConfig_H
-#define traktor_MemoryConfig_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -26,4 +19,3 @@ T_DLLCLASS IAllocator* getAllocator();
 
 }
 
-#endif	// traktor_MemoryConfig_H

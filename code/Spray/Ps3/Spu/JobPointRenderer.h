@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_JobPointRenderer_H
-#define traktor_spray_JobPointRenderer_H
+#pragma once
 
 #include <cell/spurs/job_descriptor.h>
 
@@ -18,7 +11,7 @@ struct JobPointRendererResult
 {
 	uint32_t vertexOffset;
 };
-		
+
 struct JobPointRenderer
 {
 	CellSpursJobHeader header;
@@ -42,4 +35,3 @@ struct JobPointRenderer
 	}
 }
 
-#endif	// traktor_spray_JobPointRenderer_H

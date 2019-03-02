@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
@@ -36,7 +30,7 @@ void SkeletonAsset::serialize(ISerializer& s)
 
 		if (s.getVersion() >= 3)
 			s >> Member< float >(L"scale", m_scale, AttributeRange(0.0f));
-		
+
 		if (s.getVersion() >= 2)
 			s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
 		else

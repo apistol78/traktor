@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_Window_H
-#define traktor_render_Window_H
+#pragma once
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -86,4 +79,3 @@ private:
 	}
 }
 
-#endif  // traktor_render_Window_H

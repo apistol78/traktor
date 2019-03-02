@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Triangulator_H
-#define traktor_Triangulator_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Math/Vector2.h"
@@ -56,4 +49,3 @@ public:
 
 }
 
-#endif	// traktor_Triangulator_H

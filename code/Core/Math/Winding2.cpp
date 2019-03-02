@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Math/Winding2.h"
 
@@ -18,7 +12,7 @@ struct ChainSortPred
 	{
 		return lh.x < rh.x || (lh.x == rh.x && lh.y < rh.y);
 	}
-};	
+};
 
 T_MATH_INLINE float isLeft(const Vector2& P0, const Vector2& P1, const Vector2& P2)
 {
@@ -30,13 +24,13 @@ T_MATH_INLINE float isLeft(const Vector2& P0, const Vector2& P1, const Vector2& 
 Winding2 Winding2::convexHull(const Vector2* pnts, int npnts)
 {
 	Winding2 hull;
-	
+
 	// Sort points in increasing x- and y-coordinates.
 	AlignedVector< Vector2 > P(npnts);
 	for (int i = 0; i < npnts; ++i)
 		P[i] = pnts[i];
 	std::sort(P.begin(), P.end(), ChainSortPred());
-	
+
 	hull.points.resize(2 * npnts);
 
 	int k = 0;
@@ -52,7 +46,7 @@ Winding2 Winding2::convexHull(const Vector2* pnts, int npnts)
 			--k;
 		hull.points[k++] = P[i];
 	}
-	
+
 	if (k > 0)
 		--k;
 

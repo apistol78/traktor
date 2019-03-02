@@ -55,7 +55,7 @@ public:
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
 	) override final;
-	
+
 private:
 	SplineEntity* m_owner;
 	Ref< render::IRenderSystem > m_renderSystem;

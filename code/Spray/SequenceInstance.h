@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_SequenceInstance_H
-#define traktor_spray_SequenceInstance_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -44,7 +37,7 @@ private:
 	struct Key
 	{
 		float T;
-		Ref< ITriggerInstance > trigger;	
+		Ref< ITriggerInstance > trigger;
 	};
 
 	Ref< const Sequence > m_sequence;
@@ -56,4 +49,3 @@ private:
 	}
 }
 
-#endif	// traktor_spray_SequenceInstance_H

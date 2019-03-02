@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ContentChangeEvent_H
-#define traktor_ui_ContentChangeEvent_H
+#pragma once
 
 #include "Ui/Event.h"
 
@@ -21,19 +14,18 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 /*! \brief Command event.
  * \ingroup UI
  */
 class T_DLLCLASS ContentChangeEvent : public Event
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	ContentChangeEvent(EventSubject* sender);
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_ContentChangeEvent_H

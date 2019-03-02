@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Flash/Action/ActionContext.h"
@@ -130,7 +124,7 @@ void AsArray::Array_slice(CallArgs& ca)
 	{
 		int32_t startIndex = 0;
 		int32_t endIndex = 16777215;
-		
+
 		if (ca.args.size() >= 1)
 			startIndex = ca.args[0].getInteger();
 		if (ca.args.size() >= 2)

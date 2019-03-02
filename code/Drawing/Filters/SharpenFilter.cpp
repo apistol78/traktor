@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Containers/AlignedVector.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
@@ -43,7 +37,7 @@ void SharpenFilter::apply(Image* image) const
 
 	AlignedVector< Color4f > span(image->getWidth());
 	AlignedVector< Color4f > spanMask(image->getWidth());
-	
+
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
 		image->getSpanUnsafe(y, span.ptr());

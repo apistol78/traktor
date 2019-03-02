@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_LocalBus_H
-#define traktor_db_LocalBus_H
+#pragma once
 
 #include <list>
 #include "Database/Provider/IProviderBus.h"
@@ -57,4 +50,3 @@ private:
 	}
 }
 
-#endif	// traktor_db_LocalBus_H

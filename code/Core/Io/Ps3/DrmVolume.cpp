@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cell/cell_fs.h>
 #include "Core/Io/Ps3/DrmVolume.h"
 #include "Core/Io/Ps3/NativeStream.h"
@@ -41,16 +35,16 @@ int DrmVolume::find(const Path& mask, RefArray< File >& out)
 
 	if (fileMask == L"*.*")
 		fileMask = L"*";
-		
+
 	WildCompare maskCompare(fileMask);
 
 	int32_t dd;
 	if (cellFsOpendir(systemPath.empty() ? "." : wstombs(systemPath).c_str(), &dd) != CELL_FS_SUCCEEDED)
 		return 0;
-	
+
 	if (!maskPath.empty())
 		maskPath += L"/";
-		
+
 	for (;;)
 	{
 		CellFsDirent dirent;
@@ -64,12 +58,12 @@ int DrmVolume::find(const Path& mask, RefArray< File >& out)
 		{
 			int flags = 0;
 			int size = 0;
-			
+
 			if (dirent.d_type == CELL_FS_TYPE_DIRECTORY)
 				flags = File::FfDirectory;
 			else	// Assumes it's a normal file.
 				flags = File::FfNormal;
-			
+
 			out.push_back(new File(
 				maskPath + fileName,
 				size,
@@ -79,7 +73,7 @@ int DrmVolume::find(const Path& mask, RefArray< File >& out)
 	}
 
 	cellFsClosedir(dd);
-	
+
 	return int(out.size());
 }
 
@@ -181,7 +175,7 @@ std::wstring DrmVolume::getSystemPath(const Path& path) const
 	{
 		ss << path.getPathNameNoVolume();
 	}
-	
+
 	return ss.str();
 }
 

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Matrix33_H
-#define traktor_Matrix33_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Math/MathConfig.h"
@@ -106,4 +99,3 @@ T_MATH_INLINE T_DLLCLASS Matrix33 scale(float x, float y);
 #	include "Core/Math/Std/Matrix33.inl"
 #endif
 
-#endif	// traktor_Matrix33_H

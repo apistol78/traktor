@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/AttributeMultiLine.h"
@@ -79,7 +73,7 @@ void Script::serialize(ISerializer& s)
 
 		if (s.getVersion() == 1)
 			s >> MemberStlVector< Guid >(L"dependencies", dependencies);
-	
+
 		s >> Member< std::wstring >(L"text", m_text, AttributeMultiLine());
 		m_text = replaceAll< std::wstring >(m_text, L"\\", L"\\\\");
 

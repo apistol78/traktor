@@ -37,13 +37,13 @@ int32_t VolumeTextureCapture::getWidth() const
 	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
 	return m_texture ? m_texture->getWidth() : 0;
 }
-	
+
 int32_t VolumeTextureCapture::getHeight() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");
 	return m_texture ? m_texture->getHeight() : 0;
 }
-	
+
 int32_t VolumeTextureCapture::getDepth() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Volume texture destroyed.");

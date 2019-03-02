@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_IdleEvent_H
-#define traktor_ui_IdleEvent_H
+#pragma once
 
 #include "Ui/Event.h"
 
@@ -28,14 +21,14 @@ namespace traktor
 class T_DLLCLASS IdleEvent : public Event
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	IdleEvent(EventSubject* sender);
-	
+
 	void requestMore();
 
 	bool requestedMore() const;
-	
+
 private:
 	bool m_requestMore;
 };
@@ -43,4 +36,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_IdleEvent_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_RenderSystemVk_H
-#define traktor_render_RenderSystemVk_H
+#pragma once
 
 #if defined(_WIN32)
 #	define VK_USE_PLATFORM_WIN32_KHR
@@ -64,9 +57,9 @@ public:
 	virtual void getInformation(RenderSystemInformation& outInfo) const override final;
 
 	virtual uint32_t getDisplayModeCount() const override final;
-	
+
 	virtual DisplayMode getDisplayMode(uint32_t index) const override final;
-	
+
 	virtual DisplayMode getCurrentDisplayMode() const override final;
 
 	virtual float getDisplayAspectRatio() const override final;
@@ -82,7 +75,7 @@ public:
 	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc) override final;
 
 	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc) override final;
-	
+
 	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc) override final;
 
 	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc) override final;
@@ -110,4 +103,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_RenderSystemVk_H

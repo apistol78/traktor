@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cell/audio.h>
 #include <sys/timer.h>
 #include <sysutil/sysutil_sysparam.h>
@@ -185,7 +179,7 @@ bool SoundDriverPs3::create(const SystemApplication& sysapp, const SoundDriverCr
 		return false;
 	}
 
-	m_blockPtr = (uint8_t*)portConfig.portAddr; 
+	m_blockPtr = (uint8_t*)portConfig.portAddr;
 	m_readIndexPtr = (uint64_t*)portConfig.readIndexAddr;
 	m_writeCount = 0;
 

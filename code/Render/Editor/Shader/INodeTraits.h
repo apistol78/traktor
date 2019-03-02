@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_INodeTraits_H
-#define traktor_render_INodeTraits_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Render/Editor/Shader/Constant.h"
@@ -49,7 +42,7 @@ public:
 		const OutputPin* outputPin,
 		const PinType* inputPinTypes
 	) const = 0;
-	
+
 	/*! \brief Get type of input pin.
 	 */
 	virtual PinType getInputPinType(
@@ -113,4 +106,3 @@ public:
 	}
 }
 
-#endif	// traktor_render_INodeTraits_H

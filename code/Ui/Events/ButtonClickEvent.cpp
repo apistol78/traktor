@@ -1,16 +1,10 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Events/ButtonClickEvent.h"
 
 namespace traktor
 {
 	namespace ui
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ButtonClickEvent", ButtonClickEvent, Event)
 
 ButtonClickEvent::ButtonClickEvent(EventSubject* sender, const Command& command)

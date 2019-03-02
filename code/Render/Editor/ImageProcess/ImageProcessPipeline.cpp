@@ -100,7 +100,7 @@ bool ImageProcessPipeline::buildDependencies(
 		if (const ImageProcessDefineTexture* defineTexture = dynamic_type_cast< const ImageProcessDefineTexture* >(definition))
 			pipelineDepends->addDependency(defineTexture->getTexture(), editor::PdfBuild | editor::PdfResource);
 	}
-	
+
 	RefArray< ImageProcessStep > ss;
 	for (const auto step : postProcessSettings->getSteps())
 		ss.push_back(step);

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ProgramPs4_H
-#define traktor_render_ProgramPs4_H
+#pragma once
 
 #include "Render/IProgram.h"
 
@@ -36,7 +29,7 @@ public:
 	virtual void setFloatParameter(handle_t handle, float param) T_OVERRIDE T_FINAL;
 
 	virtual void setFloatArrayParameter(handle_t handle, const float* param, int length) T_OVERRIDE T_FINAL;
-	
+
 	virtual void setVectorParameter(handle_t handle, const Vector4& param) T_OVERRIDE T_FINAL;
 
 	virtual void setVectorArrayParameter(handle_t handle, const Vector4* param, int length) T_OVERRIDE T_FINAL;
@@ -53,4 +46,3 @@ public:
 	}
 }
 
-#endif	// traktor_render_ProgramPs4_H

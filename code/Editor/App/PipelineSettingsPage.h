@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_PipelineSettingsPage_H
-#define traktor_editor_PipelineSettingsPage_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Editor/ISettingsPage.h"
@@ -51,11 +44,10 @@ private:
 	Ref< ui::Edit > m_editFileCachePath;
 	Ref< ui::CheckBox > m_checkFileCacheRead;
 	Ref< ui::CheckBox > m_checkFileCacheWrite;
-	
+
 	void eventUseCacheClick(ui::ButtonClickEvent* event);
 };
 
 	}
 }
 
-#endif	// traktor_editor_PipelineSettingsPage_H

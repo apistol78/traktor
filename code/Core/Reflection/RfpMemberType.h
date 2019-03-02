@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_RfpMemberType_H
-#define traktor_RfpMemberType_H
+#pragma once
 
 #include "Core/Reflection/ReflectionMemberPredicate.h"
 
@@ -38,4 +31,3 @@ private:
 
 }
 
-#endif	// traktor_RfpMemberType_H

@@ -1,5 +1,4 @@
-#ifndef traktor_wbr_TreeViewItem_H
-#define traktor_wbr_TreeViewItem_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Webber/Event.h"
@@ -55,4 +54,3 @@ private:
 	}
 }
 
-#endif	// traktor_wbr_TreeViewItem_H

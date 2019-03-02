@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_ReplicatorProxy_H
-#define traktor_net_ReplicatorProxy_H
+#pragma once
 
 #include <list>
 #include "Core/Object.h"
@@ -182,7 +175,7 @@ private:
 
 	/*! \group Shadow states. */
 	//@{
-	 
+
 	Ref< const StateTemplate > m_stateTemplate;
 	Ref< const State > m_stateN2;
 	double m_stateTimeN2;
@@ -244,4 +237,3 @@ private:
 	}
 }
 
-#endif	// traktor_net_ReplicatorProxy_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <limits>
 #include "Core/Math/Aabb3.h"
@@ -248,9 +242,9 @@ const int* Aabb3::getEdges()
 {
 	static const int s_edges[] =
 	{
-		0, 1, 
+		0, 1,
 		1, 2,
-		2, 3, 
+		2, 3,
 		3, 0,
 		7, 6,
 		6, 5,

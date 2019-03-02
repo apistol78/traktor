@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 //#define T_ENABLE_MEASURE
 
 #include <cstring>
@@ -194,7 +188,7 @@ bool Replicator::update()
 	{
 		msg.id = RmiState;
 		msg.time = time2net(m_time);
-	
+
 		uint32_t stateDataSize = 0;
 		T_MEASURE_STATEMENT(stateDataSize = m_stateTemplate->pack(
 			m_state,
@@ -851,7 +845,7 @@ bool Replicator::nodeDisconnected(INetworkTopology* topology, net_handle_t node)
 		if ((*i)->m_handle == node)
 		{
 			log::info << getLogPrefix() << L"Proxy for node " << node << L" (" << (*i)->getName() << L") destroyed." << Endl;
-			
+
 			for (RefArray< IReplicatorStateListener >::const_iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
 			{
 				(*j)->notify(

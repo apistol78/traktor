@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_HvkRef_H
-#define traktor_physics_HvkRef_H
+#pragma once
 
 namespace traktor
 {
@@ -27,14 +20,14 @@ public:
 	:	m_ptr(ptr)
 	{
 	}
-	
+
 	explicit HvkRef(const HvkRef<T>& src)
 	:	m_ptr(src.m_ptr)
 	{
 		if (m_ptr != 0)
 			m_ptr->addReference();
 	}
-	
+
 	virtual ~HvkRef()
 	{
 		if (m_ptr != 0)
@@ -87,7 +80,7 @@ public:
 	{
 		return m_ptr;
 	}
-	
+
 private:
 	T* m_ptr;
 };
@@ -95,4 +88,3 @@ private:
 	}
 }
 
-#endif	// traktor_physics_HvkRef_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_hf_OcclusionTextureAsset_H
-#define traktor_hf_OcclusionTextureAsset_H
+#pragma once
 
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
@@ -47,4 +40,3 @@ private:
 	}
 }
 
-#endif	// traktor_hf_OcclusionTextureAsset_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_GammaFilter_H
-#define traktor_drawing_GammaFilter_H
+#pragma once
 
 #include "Drawing/IImageFilter.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace drawing
 	{
-	
+
 /*! \brief Gamma filter.
  * \ingroup Drawing
  */
@@ -40,8 +33,7 @@ protected:
 private:
 	float m_gamma[4];
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_GammaFilter_H

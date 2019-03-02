@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Application.h"
 #include "Ui/Button.h"
 #include "Ui/ConfigDialog.h"
@@ -19,12 +13,12 @@ bool ConfigDialog::create(Widget* parent, const std::wstring& text, int width, i
 {
 	if (!Dialog::create(parent, text, width, height, style, layout))
 		return false;
-	
+
 	m_ok = new Button();
 	m_ok->create(this, L"Ok", Button::WsDefaultButton);
 	m_ok->addEventHandler< ButtonClickEvent >(this, &ConfigDialog::eventButtonClick);
 	m_ok->unlink();
-	
+
 	m_cancel = new Button();
 	m_cancel->create(this, L"Cancel");
 	m_cancel->addEventHandler< ButtonClickEvent >(this, &ConfigDialog::eventButtonClick);
@@ -39,7 +33,7 @@ bool ConfigDialog::create(Widget* parent, const std::wstring& text, int width, i
 	}
 
 	update();
-	
+
 	return true;
 }
 
@@ -69,7 +63,7 @@ void ConfigDialog::destroy()
 void ConfigDialog::update(const Rect* rc, bool immediate)
 {
 	Rect rcInner = getInnerRect();
-	
+
 	Size ok = m_ok->getPreferedSize();
 	Size cancel = m_cancel->getPreferedSize();
 

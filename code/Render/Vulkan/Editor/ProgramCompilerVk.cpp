@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <sstream>
 
@@ -276,7 +270,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			ubd.size += scalarTypeSize[parameter->type] * parameter->length;
 		}
 	}
-	
+
 	for (auto u : cx.getFragmentShader().getUniforms())
 	{
 		const GlslContext::Parameter* parameter = cx.getParameter(u);

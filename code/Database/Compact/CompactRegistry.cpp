@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -43,7 +37,7 @@ void CompactInstanceEntry::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"primaryTypeName", m_primaryTypeName);
 	s >> MemberRef< CompactBlockEntry >(L"objectBlock", m_objectBlock);
 	s >> MemberStlMap
-		< 
+		<
 			std::wstring,
 			Ref< CompactBlockEntry >,
 			MemberStlPair

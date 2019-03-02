@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_SocketAddressIPv6_H
-#define traktor_net_SocketAddressIPv6_H
+#pragma once
 
 #include <string>
 #include "Net/Platform.h"
@@ -41,20 +34,19 @@ public:
 	SocketAddressIPv6(const std::wstring& host, uint16_t port);
 
 	virtual ~SocketAddressIPv6();
-	
+
 	virtual bool valid() const override final;
 
 	virtual std::wstring getHostName() const override final;
 
 	const addrinfo* getAddrInfo(int socktype) const;
-	
+
 private:
 #if !defined(__PS3__) && !defined(__PS4__) && !defined(__EMSCRIPTEN__) && !defined(_XBOX)
 	addrinfo* m_info;
 #endif
 };
-	
+
 	}
 }
 
-#endif	// traktor_net_SocketAddressIPv6_H

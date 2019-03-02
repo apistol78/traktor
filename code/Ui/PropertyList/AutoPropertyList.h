@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_AutoPropertyList_H
-#define traktor_ui_AutoPropertyList_H
+#pragma once
 
 #include "Ui/PropertyList/PropertyList.h"
 #include "Core/Serialization/ISerializable.h"
@@ -29,7 +22,7 @@ namespace traktor
 class T_DLLCLASS AutoPropertyList : public PropertyList
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	bool bind(ISerializable* object);
 
@@ -46,12 +39,11 @@ public:
 	bool addObject(PropertyItem* parent, ISerializable* object);
 
 	virtual bool paste() override;
-	
+
 private:
 	Ref< ISerializable > m_object;
 };
-		
+
 	}
 }
 
-#endif	// traktor_ui_AutoPropertyList_H

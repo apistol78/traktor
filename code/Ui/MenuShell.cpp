@@ -12,7 +12,7 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MenuShell", MenuShell, Widget)
 
 MenuShell::MenuShell()

@@ -27,7 +27,7 @@ public:
 	virtual Ref< ISoundBufferCursor > createCursor() const override final;
 
 	virtual bool getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const override final;
-	
+
 	virtual bool getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const ISoundMixer* mixer, SoundBlock& outBlock) const override final;
 };
 

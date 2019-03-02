@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_EAGLContextWrapper_H
-#define traktor_render_EAGLContextWrapper_H
+#pragma once
 
 #include "Render/OpenGL/ES2/Platform.h"
 
@@ -26,17 +19,17 @@ class EAGLContextWrapper
 {
 public:
 	EAGLContextWrapper();
-	
+
 	bool create();
-	
+
 	bool create(void* nativeHandle);
-	
+
 	void destroy();
-	
+
 	static bool setCurrent(EAGLContextWrapper* context);
-	
+
 	void swapBuffers();
-	
+
 	void resize(GLint width, GLint height);
 
 	static bool getLandscape();
@@ -44,15 +37,15 @@ public:
 	GLuint getFrameBuffer() const { return m_frameBuffer; }
 
 	GLuint getDepthBuffer() const { return m_depthBuffer; }
-	
+
 	GLint getWidth() const { return m_width; }
-	
+
 	GLint getHeight() const { return m_height; }
 
 	static int32_t getCurrentWidth();
 
 	static int32_t getCurrentHeight();
-	
+
 private:
 	CAEAGLLayer_t* m_layer;
 	EAGLContext_t* m_context;
@@ -61,13 +54,12 @@ private:
 	GLuint m_depthBuffer;
 	GLint m_width;
 	GLint m_height;
-	
+
 	void createFrameBuffer();
-	
+
 	void destroyFrameBuffer();
 };
 
 	}
 }
 
-#endif	// traktor_render_EAGLContextWrapper_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_html_Element_H
-#define traktor_html_Element_H
+#pragma once
 
 #include "Html/Node.h"
 
@@ -35,25 +28,25 @@ public:
 	Element(const std::wstring& name);
 
 	virtual std::wstring getName() const override final;
-	
+
 	virtual std::wstring getValue() const override final;
 
 	bool hasAttribute(const std::wstring& name) const;
-	
+
 	void setAttribute(const std::wstring& name, const std::wstring& value);
-	
+
 	Attribute* getFirstAttribute() const;
-	
+
 	Attribute* getLastAttribute() const;
-	
+
 	Attribute* getAttribute(const std::wstring& name) const;
 
 	Element* getPreviousElementSibling() const;
-	
+
 	Element* getNextElementSibling() const;
-	
+
 	Element* getFirstElementChild() const;
-	
+
 	Element* getLastElementChild() const;
 
 	void innerHTML(OutputStream& os) const;
@@ -69,4 +62,3 @@ private:
 	}
 }
 
-#endif	// traktor_html_Element_H

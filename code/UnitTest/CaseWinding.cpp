@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "UnitTest/CaseWinding.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Winding2.h"
@@ -64,7 +58,7 @@ void CaseWinding::run()
 		};
 
 		Winding3 winding_1(points_1, sizeof_array(points_1));
-		
+
 		uint32_t i1, i2, i3;
 		CASE_ASSERT (winding_1.angleIndices(i1, i2, i3));
 		CASE_ASSERT_EQUAL (i1, 0);

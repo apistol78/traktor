@@ -26,7 +26,7 @@ public:
 	SimpleTextureOpenGLES2(ContextOpenGLES2* context);
 
 	virtual ~SimpleTextureOpenGLES2();
-	
+
 	bool create(const SimpleTextureCreateDesc& desc);
 
 	virtual void destroy() override final;
@@ -36,7 +36,7 @@ public:
 	virtual int32_t getMips() const override final;
 
 	virtual int32_t getWidth() const override final;
-	
+
 	virtual int32_t getHeight() const override final;
 
 	virtual bool lock(int32_t level, Lock& lock) override final;
@@ -64,6 +64,6 @@ private:
 	AlignedVector< uint8_t > m_data;
 	SamplerStateOpenGL m_shadowState;
 };
-		
+
 	}
 }

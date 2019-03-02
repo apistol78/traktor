@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/StringReader.h"
@@ -65,7 +59,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacter >
 {
 	editor::IEditor* editor;
@@ -107,7 +101,7 @@ struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacte
 			editor->openEditor(instance);
 	}
 };
-		
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptEditorPage", ScriptEditorPage, editor::IEditorPage)
@@ -404,7 +398,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 			}
 			else
 				return L"\"\"";
-		}));	
+		}));
 	}
 	else if (command == L"Editor.Undo")
 	{

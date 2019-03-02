@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <map>
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"
@@ -155,7 +149,7 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 	{
 		T_ASSERT ((status & (0x01 | 0x02)) == 0x01);
 		Ref< DynamicMemoryStream > dm = new DynamicMemoryStream(true, false, T_FILE_LINE);
-	
+
 		AlignedVector< uint8_t >& buffer = dm->getBuffer();
 		buffer.resize(avail);
 

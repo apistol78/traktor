@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Canvas.h"
@@ -83,10 +77,10 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 			BmAlpha
 		);
 	}
-	
+
 	// Ensure text fit within boundaries.
 	std::wstring text = m_text;
-	
+
 	Rect textRect = rect;
 	textRect.top += frameSize.cy;
 

@@ -1,16 +1,10 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Xml/Attribute.h"
 
 namespace traktor
 {
 	namespace xml
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.Attribute", Attribute, Object)
 
 Attribute::Attribute(const std::wstring& name, const std::wstring& value)
@@ -49,6 +43,6 @@ Attribute* Attribute::getNext() const
 {
 	return m_next;
 }
-	
+
 	}
 }

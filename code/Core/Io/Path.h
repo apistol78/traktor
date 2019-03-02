@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Path_H
-#define traktor_Path_H
+#pragma once
 
 #include <string>
 #include "Core/Object.h"
@@ -58,7 +51,7 @@ public:
 	 * \return True if path include volume.
 	 */
 	bool hasVolume() const;
-	
+
 	/*! \brief Return name of volume.
 	 *
 	 * C:/foo/bar.txt => C
@@ -78,7 +71,7 @@ public:
 	 * \return True if path is relative.
 	 */
 	bool isRelative() const;
-	
+
 	/*! \brief Return file name.
 	 *
 	 * C:/foo/bar.txt => bar.txt
@@ -138,7 +131,7 @@ public:
 	 * \return Encapsulated path without file extension.
 	 */
 	std::wstring getPathNameNoExtension() const;
-	
+
 	/*! \brief Return path but without volume.
 	 *
 	 * C:/foo/bar.txt => /foo/bar.txt
@@ -148,7 +141,7 @@ public:
 	 * \return Encapsulated path without volume.
 	 */
 	std::wstring getPathNameNoVolume() const;
-	
+
 	/*! \brief Return file extension.
 	 *
 	 * C:/foo/bar.txt => txt
@@ -204,7 +197,6 @@ private:
 	 */
 	void resolve();
 };
-	
+
 }
 
-#endif	// traktor_Path_H

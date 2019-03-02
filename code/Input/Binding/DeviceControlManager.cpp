@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
 #include "Input/Binding/DeviceControl.h"
@@ -95,7 +89,7 @@ void DeviceControlManager::update()
 				else
 				{
 					deviceControl->m_rangeMin = 0.0f;
-					deviceControl->m_rangeMax = 0.0f;						
+					deviceControl->m_rangeMax = 0.0f;
 				}
 
 				// Read value of control from device.

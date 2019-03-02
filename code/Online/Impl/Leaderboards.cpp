@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Online/ScoreArrayResult.h"
@@ -202,7 +196,7 @@ void Leaderboards::enqueueEnumeration()
 		m_provider,
 		this,
 		(TaskEnumLeaderboards::sink_method_t)&Leaderboards::callbackEnumLeaderboards
-	));	
+	));
 }
 
 void Leaderboards::callbackEnumLeaderboards(const std::map< std::wstring, ILeaderboardsProvider::LeaderboardData >& leaderboards)

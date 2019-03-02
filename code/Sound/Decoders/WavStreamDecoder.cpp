@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -117,7 +111,7 @@ void WavStreamDecoder::rewind()
 bool WavStreamDecoder::readHeader()
 {
 	RiffChunk hdr, fmt, data;
-	
+
 	// Read RIFF header.
 	m_stream->read(&hdr, sizeof(hdr));
 	m_stream->seek(IStream::SeekCurrent, 4);

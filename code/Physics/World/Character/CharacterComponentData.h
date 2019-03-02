@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_CharacterComponentData_H
-#define traktor_physics_CharacterComponentData_H
+#pragma once
 
 #include <set>
 #include "Resource/Id.h"
@@ -81,4 +74,3 @@ private:
 	}
 }
 
-#endif	// traktor_physics_CharacterComponentData_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
@@ -95,7 +89,7 @@ Vector2 AsStage::toStage(const Vector2& pos) const
 	// Inverse transform into stage coordinates.
 	float tx = (((sx + 1.0f) / 2.0f - m_frameTransform.x()) / m_frameTransform.z()) * (bounds.mx.x - bounds.mn.x) + bounds.mn.x;
 	float ty = (((sy + 1.0f) / 2.0f - m_frameTransform.y()) / m_frameTransform.w()) * (bounds.mx.y - bounds.mn.y) + bounds.mn.y;
-	
+
 	return Vector2(tx, ty);
 }
 

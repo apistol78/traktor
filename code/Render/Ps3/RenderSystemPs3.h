@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_RenderSystemPs3_H
-#define traktor_render_RenderSystemPs3_H
+#pragma once
 
 #include <vector>
 #include "Core/Thread/Semaphore.h"
@@ -46,9 +39,9 @@ public:
 	virtual void getInformation(RenderSystemInformation& outInfo) const;
 
 	virtual uint32_t getDisplayModeCount() const;
-	
+
 	virtual DisplayMode getDisplayMode(uint32_t index) const;
-	
+
 	virtual DisplayMode getCurrentDisplayMode() const;
 
 	virtual float getDisplayAspectRatio() const;
@@ -64,7 +57,7 @@ public:
 	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc);
 
 	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc);
-	
+
 	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc);
 
 	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc);
@@ -72,7 +65,7 @@ public:
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag);
 
 	virtual Ref< ITimeQuery > createTimeQuery() const;
-	
+
 	virtual void purge();
 
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
@@ -98,4 +91,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_RenderSystemPs3_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_SwDisplayRenderer_H
-#define traktor_flash_SwDisplayRenderer_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Flash/IDisplayRenderer.h"
@@ -46,7 +39,7 @@ public:
 	void setImage(drawing::Image* image);
 
 	virtual bool wantDirtyRegion() const override final;
-	
+
 	virtual void begin(
 		const Dictionary& dictionary,
 		const Color4f& backgroundColor,
@@ -108,4 +101,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_SwDisplayRenderer_H

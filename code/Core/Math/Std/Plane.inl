@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Plane.h"
 #include "Core/Math/Matrix44.h"
 
@@ -114,7 +108,7 @@ T_MATH_INLINE bool Plane::segmentIntersection(
 ) const
 {
 	Vector4 d = b - a;
-	
+
 	Scalar denom = dot3(m_normal, d);
 	if (denom == 0.0f)
 		return false;

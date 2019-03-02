@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Boxes_H
-#define traktor_Boxes_H
+#pragma once
 
 #include "Core/Guid.h"
 #include "Core/Object.h"
@@ -181,28 +174,28 @@ private:
 class T_DLLCLASS BoxedVector4 : public Boxed
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	BoxedVector4();
-	
+
 	explicit BoxedVector4(const Vector4& value);
 
 	explicit BoxedVector4(float x, float y, float z);
-	
+
 	explicit BoxedVector4(float x, float y, float z, float w);
 
 	void set_x(float v) { m_value.set(0, Scalar(v)); }
 
 	float get_x() const { return m_value.x(); }
-	
+
 	void set_y(float v) { m_value.set(1, Scalar(v)); }
 
 	float get_y() const { return m_value.y(); }
-	
+
 	void set_z(float v) { m_value.set(2, Scalar(v)); }
 
 	float get_z() const { return m_value.z(); }
-	
+
 	void set_w(float v) { m_value.set(3, Scalar(v)); }
 
 	float get_w() const { return m_value.w(); }
@@ -214,7 +207,7 @@ public:
 	float get_length() const { return m_value.length(); }
 
 	void set(float x, float y, float z, float w) { m_value.set(x, y, z, w); }
-	
+
 	Vector4 add(const BoxedVector4* v) const { return m_value + v->m_value; }
 
 	Vector4 sub(const BoxedVector4* v) const { return m_value - v->m_value; }
@@ -240,7 +233,7 @@ public:
 	Vector4 neg() const { return -m_value; }
 
 	static Vector4 lerp(const BoxedVector4* a, const BoxedVector4* b, float c) { return traktor::lerp(a->m_value, b->m_value, Scalar(c)); }
-	
+
 	static float distance3(const BoxedVector4* a, const BoxedVector4* b) { return (b->m_value - a->m_value).xyz0().length(); }
 
 	static float distance4(const BoxedVector4* a, const BoxedVector4* b) { return (b->m_value - a->m_value).length(); }
@@ -248,7 +241,7 @@ public:
 	const Vector4& unbox() const { return m_value; }
 
 	virtual std::wstring toString() const override final;
-	
+
 	void* operator new (size_t size);
 
 	void operator delete (void* ptr);
@@ -316,12 +309,12 @@ private:
 class T_DLLCLASS BoxedQuaternion : public Boxed
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	BoxedQuaternion();
-	
+
 	explicit BoxedQuaternion(const Quaternion& value);
-	
+
 	explicit BoxedQuaternion(float x, float y, float z, float w);
 
 	explicit BoxedQuaternion(const BoxedVector4* axis, float angle);
@@ -331,19 +324,19 @@ public:
 	explicit BoxedQuaternion(const BoxedVector4* from, const BoxedVector4* to);
 
 	explicit BoxedQuaternion(const class BoxedMatrix44* m);
-	
+
 	void set_x(float v) { m_value.e.set(0, Scalar(v)); }
 
 	float get_x() const { return m_value.e.x(); }
-	
+
 	void set_y(float v) { m_value.e.set(1, Scalar(v)); }
 
 	float get_y() const { return m_value.e.y(); }
-	
+
 	void set_z(float v) { m_value.e.set(2, Scalar(v)); }
 
 	float get_z() const { return m_value.e.z(); }
-	
+
 	void set_w(float v) { m_value.e.set(3, Scalar(v)); }
 
 	float get_w() const { return m_value.e.w(); }
@@ -440,18 +433,18 @@ private:
 class T_DLLCLASS BoxedTransform : public Boxed
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	BoxedTransform();
-	
+
 	explicit BoxedTransform(const Transform& value);
-	
+
 	explicit BoxedTransform(const BoxedVector4* translation, const BoxedQuaternion* rotation);
 
 	explicit BoxedTransform(const BoxedMatrix44* m);
-	
+
 	const Vector4& get_translation() const { return m_value.translation(); }
-	
+
 	const Quaternion& get_rotation() const { return m_value.rotation(); }
 
 	Vector4 get_axisX() const { return m_value.axisX(); }
@@ -473,7 +466,7 @@ public:
 	Transform concat(const BoxedTransform* t) const;
 
 	Vector4 transform(const BoxedVector4* v) const;
-	
+
 	static Transform lerp(const BoxedTransform* a, const BoxedTransform* b, float c) { return traktor::lerp(a->m_value, b->m_value, Scalar(c)); }
 
 	const Transform& unbox() const { return m_value; }
@@ -1151,7 +1144,7 @@ struct CastAny < Guid, false >
 	}
 	static Any set(const Guid& value) {
 		return Any::fromObject(new BoxedGuid(value));
-	}	
+	}
 	static const Guid& get(const Any& value) {
 		return static_cast< BoxedGuid* >(value.getObject())->unbox();
 	}
@@ -1168,7 +1161,7 @@ struct CastAny < const Guid&, false >
 	}
 	static Any set(const Guid& value) {
 		return Any::fromObject(new BoxedGuid(value));
-	}	
+	}
 	static const Guid& get(const Any& value) {
 		return static_cast< BoxedGuid* >(value.getObject())->unbox();
 	}
@@ -1221,7 +1214,7 @@ struct CastAny < Vector2, false >
 	}
 	static Any set(const Vector2& value) {
 		return Any::fromObject(new BoxedVector2(value));
-	}	
+	}
 	static const Vector2& get(const Any& value) {
 		return static_cast< BoxedVector2* >(value.getObject())->unbox();
 	}
@@ -1238,7 +1231,7 @@ struct CastAny < const Vector2&, false >
 	}
 	static Any set(const Vector2& value) {
 		return Any::fromObject(new BoxedVector2(value));
-	}	
+	}
 	static const Vector2& get(const Any& value) {
 		return static_cast< BoxedVector2* >(value.getObject())->unbox();
 	}
@@ -1255,7 +1248,7 @@ struct CastAny < Vector4, false >
 	}
     static Any set(const Vector4& value) {
         return Any::fromObject(new BoxedVector4(value));
-    }	
+    }
     static const Vector4& get(const Any& value) {
 		return static_cast< BoxedVector4* >(value.getObject())->unbox();
     }
@@ -1272,7 +1265,7 @@ struct CastAny < const Vector4&, false >
 	}
     static Any set(const Vector4& value) {
         return Any::fromObject(new BoxedVector4(value));
-    }	
+    }
     static const Vector4& get(const Any& value) {
 		return static_cast< BoxedVector4* >(value.getObject())->unbox();
 	}
@@ -1425,7 +1418,7 @@ struct CastAny < Aabb2, false >
 	}
 	static Any set(const Aabb2& value) {
 		return Any::fromObject(new BoxedAabb2(value));
-	}	
+	}
 	static const Aabb2& get(const Any& value) {
 		return static_cast< BoxedAabb2* >(value.getObject())->unbox();
 	}
@@ -1442,7 +1435,7 @@ struct CastAny < const Aabb2&, false >
 	}
 	static Any set(const Aabb2& value) {
 		return Any::fromObject(new BoxedAabb2(value));
-	}	
+	}
 	static const Aabb2& get(const Any& value) {
 		return static_cast< BoxedAabb2* >(value.getObject())->unbox();
 	}
@@ -1459,7 +1452,7 @@ struct CastAny < Aabb3, false >
 	}
 	static Any set(const Aabb3& value) {
 		return Any::fromObject(new BoxedAabb3(value));
-	}	
+	}
 	static const Aabb3& get(const Any& value) {
 		return static_cast< BoxedAabb3* >(value.getObject())->unbox();
 	}
@@ -1476,7 +1469,7 @@ struct CastAny < const Aabb3&, false >
 	}
 	static Any set(const Aabb3& value) {
 		return Any::fromObject(new BoxedAabb3(value));
-	}	
+	}
 	static const Aabb3& get(const Any& value) {
 		return static_cast< BoxedAabb3* >(value.getObject())->unbox();
 	}
@@ -1493,7 +1486,7 @@ struct CastAny < Frustum, false >
 	}
 	static Any set(const Frustum& value) {
 		return Any::fromObject(new BoxedFrustum(value));
-	}	
+	}
 	static const Frustum& get(const Any& value) {
 		return static_cast< BoxedFrustum* >(value.getObject())->unbox();
 	}
@@ -1510,7 +1503,7 @@ struct CastAny < const Frustum&, false >
 	}
 	static Any set(const Frustum& value) {
 		return Any::fromObject(new BoxedFrustum(value));
-	}	
+	}
 	static const Frustum& get(const Any& value) {
 		return static_cast< BoxedFrustum* >(value.getObject())->unbox();
 	}
@@ -1527,7 +1520,7 @@ struct CastAny < Matrix33, false >
 	}
 	static Any set(const Matrix33& value) {
 		return Any::fromObject(new BoxedMatrix33(value));
-	}	
+	}
 	static const Matrix33& get(const Any& value) {
 		return static_cast< BoxedMatrix33* >(value.getObject())->unbox();
 	}
@@ -1544,7 +1537,7 @@ struct CastAny < const Matrix33&, false >
 	}
 	static Any set(const Matrix33& value) {
 		return Any::fromObject(new BoxedMatrix33(value));
-	}	
+	}
 	static const Matrix33& get(const Any& value) {
 		return static_cast< BoxedMatrix33* >(value.getObject())->unbox();
 	}
@@ -1561,7 +1554,7 @@ struct CastAny < Matrix44, false >
 	}
 	static Any set(const Matrix44& value) {
 		return Any::fromObject(new BoxedMatrix44(value));
-	}	
+	}
 	static const Matrix44& get(const Any& value) {
 		return static_cast< BoxedMatrix44* >(value.getObject())->unbox();
 	}
@@ -1578,7 +1571,7 @@ struct CastAny < const Matrix44&, false >
 	}
 	static Any set(const Matrix44& value) {
 		return Any::fromObject(new BoxedMatrix44(value));
-	}	
+	}
 	static const Matrix44& get(const Any& value) {
 		return static_cast< BoxedMatrix44* >(value.getObject())->unbox();
 	}
@@ -1897,7 +1890,6 @@ class T_DLLCLASS BoxesClassFactory : public IRuntimeClassFactory
 public:
 	virtual void createClasses(IRuntimeClassRegistrar* registrar) const override final;
 };
-	
+
 }
 
-#endif	// traktor_Boxes_H

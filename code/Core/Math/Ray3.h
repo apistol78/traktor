@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Ray3_H
-#define traktor_Ray3_H
+#pragma once
 
 #include "Core/Math/Vector4.h"
 
@@ -44,4 +37,3 @@ public:
 #	include "Core/Math/Std/Ray3.inl"
 #endif
 
-#endif	// traktor_Ray3_H

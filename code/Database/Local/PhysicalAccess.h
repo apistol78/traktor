@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_PhysicalAccess_H
-#define traktor_db_PhysicalAccess_H
+#pragma once
 
 #include <string>
 #include "Core/Ref.h"
@@ -39,4 +32,3 @@ Ref< ObjectType > readPhysicalObject(const Path& objectPath)
 	}
 }
 
-#endif	// traktor_db_PhysicalAccess_H

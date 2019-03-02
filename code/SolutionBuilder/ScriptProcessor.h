@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef ScriptProcessor_H
-#define ScriptProcessor_H
+#pragma once
 
 #include "Core/Ref.h"
 
@@ -52,4 +45,3 @@ private:
 	}
 }
 
-#endif	// ScriptProcessor_H

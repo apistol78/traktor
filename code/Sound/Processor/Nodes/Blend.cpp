@@ -22,7 +22,7 @@ const ImmutableNode::InputPinDesc c_Blend_i[] =
 const ImmutableNode::OutputPinDesc c_Blend_o[] =
 {
 	{ L"Output", NptSignal },
-	{ 0 } 
+	{ 0 }
 };
 
 class BlendCursor : public RefCountImpl< ISoundBufferCursor >
@@ -62,7 +62,7 @@ bool Blend::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Blend::createCursor() const 
+Ref< ISoundBufferCursor > Blend::createCursor() const
 {
 	Ref< BlendCursor > blendCursor = new BlendCursor();
 

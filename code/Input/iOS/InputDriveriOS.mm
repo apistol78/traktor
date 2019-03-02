@@ -8,20 +8,20 @@ namespace traktor
 {
 	namespace input
 	{
-	
+
 class InputDriveriOSImpl
 :	public Object
 ,	public ITouchViewCallback
 {
 public:
 	bool create(void* nativeWindowHandle);
-	
+
 	int getDeviceCount();
-	
+
 	Ref< IInputDevice > getDevice(int index);
 
 	// ITouchViewCallback
-	
+
 	virtual void touchesBegan(NSSet* touches, UIEvent* event);
 
 	virtual void touchesMoved(NSSet* touches, UIEvent* event);
@@ -48,7 +48,7 @@ bool InputDriveriOSImpl::create(void* nativeWindowHandle)
 	m_deviceGamepad = new InputDeviceTouchGamepad();
 	if (!m_deviceGamepad->create(nativeWindowHandle))
 		return false;
-		
+
 	m_deviceMouse = new InputDeviceTouchMouse();
 	if (!m_deviceMouse->create(nativeWindowHandle))
 		return false;

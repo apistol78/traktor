@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <dlfcn.h>
 #include "Core/Library/Library.h"
 #include "Core/Misc/TString.h"
@@ -78,7 +72,7 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
 				return true;
 			}
 		}
-	
+
 		// Try default paths second.
 		{
 			std::wstring library = resolved;

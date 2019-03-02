@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Guid.h"
 #include "Script/IScriptDebugger.h"
 #include "Script/IScriptProfiler.h"
@@ -119,7 +113,7 @@ bool ScriptDebuggerSessions::haveBreakpoint(const Guid& scriptId, int32_t lineNu
 void ScriptDebuggerSessions::addListener(IListener* listener)
 {
 	T_ASSERT (listener);
-	
+
 	for (std::list< Session >::iterator i = m_sessions.begin(); i != m_sessions.end(); ++i)
 		listener->notifyBeginSession(i->debugger, i->profiler);
 
@@ -138,7 +132,7 @@ void ScriptDebuggerSessions::removeListener(IListener* listener)
 	for (std::list< Session >::iterator i = m_sessions.begin(); i != m_sessions.end(); ++i)
 		listener->notifyEndSession(i->debugger, i->profiler);
 	m_listeners.remove(listener);
-	
+
 }
 
 	}

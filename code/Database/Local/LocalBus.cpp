@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -93,7 +87,7 @@ public:
 					MemberComposite< Entry >
 				>
 			>
-		> (L"pending", m_pending); 
+		> (L"pending", m_pending);
 	}
 
 private:
@@ -228,7 +222,7 @@ bool LocalBus::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 	Ref< IStream > eventFile = m_shm->read();
 	if (!eventFile)
 		return false;
-	
+
 	Ref< EventLog > eventLog = BinarySerializer(eventFile).readObject< EventLog >();
 	eventFile->close();
 

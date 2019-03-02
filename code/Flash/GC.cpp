@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <limits>
 #include "Core/Log/Log.h"
@@ -55,7 +49,7 @@ void GC::collectCycles(bool full)
 
 	if (m_candidates.empty())
 		return;
-	
+
 	do
 	{
 #if defined(_DEBUG)
@@ -108,7 +102,7 @@ void GC::collectCycles(bool full)
 			// collection of roots thus we need to make another trace round.
 			if (candidate->m_traceColor == Collectable::TcPurple)
 				break;
-			
+
 			m_candidates.pop_front();
 
 			candidate->m_traceBuffered = false;

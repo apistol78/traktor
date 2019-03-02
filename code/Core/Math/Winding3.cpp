@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <numeric>
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
@@ -268,16 +262,16 @@ bool Winding3::rayIntersection(
 {
 	Plane plane;
 	Vector4 p;
-	
+
 	if (!getPlane(plane))
 		return false;
-	
+
 	if (!plane.rayIntersection(origin, direction, outK, &p) || outK <= 0.0f)
 		return false;
-		
+
 	Vector4 normal = plane.normal();
 	int32_t major = majorAxis3(normal);
-		
+
 	// Use maximum axis to determine projection plane.
 	Vector4 u(0.0f, 0.0f, 0.0f), v(0.0f, 0.0f, 0.0f);
 	if (major == 0)	// X
@@ -304,25 +298,25 @@ bool Winding3::rayIntersection(
 		projected[i].x = dot3(u, m_points[i]);
 		projected[i].y = dot3(v, m_points[i]);
 	}
-	
+
 	// Use odd-even rule to determine if point is in polygon.
 	Vector2 pnt(
 		dot3(u, p),
 		dot3(v, p)
 	);
-	
+
 	bool pass = false;
 	for (size_t i = 0, j = m_points.size() - 1; i < m_points.size(); j = i++)
 	{
 		float dx = projected[j].x - projected[i].x;
 		float dy = projected[j].y - projected[i].y;
-		
+
 		if (abs(dy) <= FUZZY_EPSILON)
 			continue;
 
 		float mny = min(projected[i].y, projected[j].y);
 		float mxy = max(projected[i].y, projected[j].y);
-		
+
 		float x = projected[i].x + dx * (pnt.y - projected[i].y) / dy;
 		if (
 			(pnt.y >= mny && pnt.y <= mxy) &&
@@ -330,10 +324,10 @@ bool Winding3::rayIntersection(
 		)
 			pass = !pass;
 	}
-	
+
 	if (!pass)
 		return false;
-	
+
 	if (outPoint)
 		*outPoint = p;
 

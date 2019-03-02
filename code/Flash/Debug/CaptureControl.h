@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_CaptureControl_H
-#define traktor_flash_CaptureControl_H
+#pragma once
 
 #include "Core/Serialization/ISerializable.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace flash
 	{
-	
+
 class T_DLLCLASS CaptureControl : public ISerializable
 {
 	T_RTTI_CLASS;
@@ -42,4 +35,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_CaptureControl_H

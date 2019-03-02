@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #define _WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <lmcons.h>
@@ -84,7 +78,7 @@ std::wstring OS::getComputerName() const
 std::wstring OS::getCurrentUser() const
 {
 	wchar_t buf[UNLEN + 1];
-	
+
 	DWORD size = sizeof_array(buf);
 	if (!GetUserName(buf, &size))
 		return L"";
@@ -336,7 +330,7 @@ Ref< IProcess > OS::execute(
 		SECURITY_DESCRIPTOR sd;
 		InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION);
 		SetSecurityDescriptorDacl(&sd, true, NULL, false);
-		
+
 		SECURITY_ATTRIBUTES sa;
 		std::memset(&sa, 0, sizeof(sa));
 		sa.nLength = sizeof(SECURITY_ATTRIBUTES);
@@ -350,7 +344,7 @@ Ref< IProcess > OS::execute(
 			0
 		);
 		SetHandleInformation(hStdInWrite, HANDLE_FLAG_INHERIT, 0);
-		
+
 		CreatePipe(
 			&hStdOutRead,
 			&hStdOutWrite,
@@ -358,7 +352,7 @@ Ref< IProcess > OS::execute(
 			0
 		);
 		SetHandleInformation(hStdOutRead, HANDLE_FLAG_INHERIT, 0);
-		
+
 		CreatePipe(
 			&hStdErrRead,
 			&hStdErrWrite,

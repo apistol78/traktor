@@ -7,7 +7,7 @@ namespace traktor
 {
 	namespace render
 	{
-		
+
 class ContextDx11;
 struct VolumeTextureCreateDesc;
 
@@ -17,7 +17,7 @@ struct VolumeTextureCreateDesc;
 class VolumeTextureDx11 : public IVolumeTexture
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	VolumeTextureDx11(ContextDx11* context);
 
@@ -32,9 +32,9 @@ public:
 	virtual int32_t getMips() const override final;
 
 	virtual int32_t getWidth() const override final;
-	
+
 	virtual int32_t getHeight() const override final;
-	
+
 	virtual int32_t getDepth() const override final;
 
 	ID3D11ShaderResourceView* getD3D11TextureResourceView() const;
@@ -47,6 +47,6 @@ private:
 	int32_t m_height;
 	int32_t m_depth;
 };
-		
+
 	}
 }

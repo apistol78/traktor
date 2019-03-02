@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include <stack>
 #include "Core/Log/Log.h"
@@ -60,7 +54,7 @@ void SahTree::build(const AlignedVector< Winding3 >& polygons)
 			m_root->aabb.contain(*j);
 
 		m_root->indices.push_back(int32_t(i));
-		
+
 		m_polygons[i] = polygons[i];
 		m_polygons[i].getProjection(m_projected[i], m_projectedU[i], m_projectedV[i]);
 		m_polygons[i].getPlane(m_planes[i]);
@@ -283,7 +277,7 @@ void SahTree::buildNode(Node* node, int32_t depth)
 	{
 		const Winding3& polygon = m_polygons[*i];
 		const Winding3::points_t& points = polygon.getPoints();
-		
+
 		std::pair< float, float > range(
 			std::numeric_limits< float >::max(),
 			-std::numeric_limits< float >::max()
@@ -291,7 +285,7 @@ void SahTree::buildNode(Node* node, int32_t depth)
 		for (size_t j = 0; j < points.size(); ++j)
 		{
 			float e = points[j][node->axis];
-			
+
 			if (
 				e >= node->aabb.mn[node->axis] + FUZZY_EPSILON &&
 				e <= node->aabb.mx[node->axis] - FUZZY_EPSILON
@@ -322,7 +316,7 @@ void SahTree::buildNode(Node* node, int32_t depth)
 	}
 
 	// Determine optimal split position.
-	Vector4 extent = node->aabb.getExtent(); 
+	Vector4 extent = node->aabb.getExtent();
 	float surfaceArea = dot3(extent.shuffle< 0, 0, 1, 3 >(), extent.shuffle< 1, 2, 2, 3 >()) * Scalar(2.0f);
 
 	float leafCost(float(node->indices.size()));

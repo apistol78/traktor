@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Spray/EmitterInstance.h"
 #include "Spray/Types.h"
 #include "Spray/Sources/ConeSource.h"
@@ -55,7 +49,7 @@ void ConeSource::emit(
 {
 	Vector4 position = transform * m_position;
 	Vector4 normal = transform * m_normal;
-	
+
 	Scalar dT(context.deltaTime);
 
 	Vector4 deltaVelocity = -deltaMotion / dT;
@@ -90,7 +84,7 @@ void ConeSource::emit(
 		point->inverseMass = 1.0f / m_mass.random(context.random);
 		point->size = m_size.random(context.random);
 		point->random = context.random.nextFloat();
-		
+
 		++point;
 	}
 }

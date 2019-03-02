@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_online_GcVideoSharing_H
-#define traktor_online_GcVideoSharing_H
+#pragma once
 
 #include "Online/Provider/IVideoSharingProvider.h"
 
@@ -22,4 +15,3 @@ class GcVideoSharing : public IVideoSharingProvider
 	}
 }
 
-#endif	// traktor_online_GcVideoSharing_H

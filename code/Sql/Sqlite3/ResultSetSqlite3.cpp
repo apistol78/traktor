@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sqlite3.h>
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
@@ -25,7 +19,7 @@ bool ResultSetSqlite3::next()
 		return false;
 
 	int err = sqlite3_step((sqlite3_stmt*)m_stmt);
-	
+
 	if (err == SQLITE_ROW)
 		return true;
 	else if (err == SQLITE_DONE || err == SQLITE_ERROR)

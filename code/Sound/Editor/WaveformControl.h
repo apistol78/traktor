@@ -14,7 +14,7 @@ class Bitmap;
 
 	namespace sound
 	{
-	
+
 class ISoundBuffer;
 
 class WaveformControl : public ui::Widget

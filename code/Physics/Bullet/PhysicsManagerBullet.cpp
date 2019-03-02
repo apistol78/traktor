@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <btBulletDynamicsCommon.h>
 #include <BulletCollision/CollisionDispatch/btConvexConvexAlgorithm.h>
@@ -326,7 +320,7 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 		m_collisionObject = rayResult.m_collisionObject;
 		m_hitNormalWorld = hitNormalWorld;
 		m_hitPointWorld.setInterpolate3(m_rayFromWorld, m_rayToWorld, rayResult.m_hitFraction);
-		
+
 		if (rayResult.m_localShapeInfo)
 			m_triangleIndex = rayResult.m_localShapeInfo->m_triangleIndex;
 		else

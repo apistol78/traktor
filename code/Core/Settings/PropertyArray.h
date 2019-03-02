@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_PropertyArray_H
-#define traktor_PropertyArray_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Core/Settings/IPropertyValue.h"
@@ -20,7 +13,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
-	
+
 /*! \brief Property value array.
  * \ingroup Core
  */
@@ -87,4 +80,3 @@ struct PropertyTrait< RefArray< IPropertyValue > >
 
 }
 
-#endif	// traktor_PropertyArray_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Mesh/Lod/LodMeshEntity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
@@ -47,7 +41,7 @@ void LodMeshEntity::setTransform(const Transform& transform)
 			m_boundingBox.contain(childBoundingBox.transform(Tlocal));
 		}
 	}
-	
+
 	MeshEntity::setTransform(transform);
 }
 

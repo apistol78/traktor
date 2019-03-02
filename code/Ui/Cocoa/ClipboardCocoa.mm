@@ -8,7 +8,7 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace 
+		namespace
 		{
 
 NSString* s_objectDataPboardType = @"Traktor Pasteboard Object";
@@ -34,23 +34,23 @@ bool ClipboardCocoa::setObject(ISerializable* object)
 	const AlignedVector< uint8_t >& buffer = dms.getBuffer();
 	if (buffer.empty())
 		return false;
-	
+
 	NSData* data = [NSData dataWithBytes: &buffer[0] length: buffer.size()];
-	
+
 	NSArray* pbTypes = [NSArray arrayWithObjects:s_objectDataPboardType, nil];
 	[pb declareTypes:pbTypes owner:nil];
 	[pb setData: data forType:s_objectDataPboardType];
-	
+
 	return true;
 }
 
 bool ClipboardCocoa::setText(const std::wstring& text)
 {
 	NSPasteboard* pb = [NSPasteboard generalPasteboard];
-	
+
 	[pb declareTypes: [NSArray arrayWithObjects: NSStringPboardType, nil] owner: nil];
 	[pb setString: makeNSString(text) forType: NSStringPboardType];
-	
+
 	return true;
 }
 
@@ -76,13 +76,13 @@ Ref< ISerializable > ClipboardCocoa::getObject() const
 	NSData* data = [pb dataForType: s_objectDataPboardType];
 	if (!data)
 		return 0;
-		
+
 	uint32_t length = [data length];
 	const void* ptr = [data bytes];
-	
+
 	if (!ptr || !length)
 		return 0;
-		
+
 	MemoryStream ms(ptr, length);
 	Ref< ISerializable > object = BinarySerializer(&ms).readObject();
 

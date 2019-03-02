@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Functor/Functor.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/File.h"
@@ -354,7 +348,7 @@ void SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			for (std::set< std::wstring >::const_iterator k = libraryPaths.begin(); k != libraryPaths.end(); ++k)
 				s << L"-F" << *k << L" ";
 		}
-		
+
 		s << Endl;
 	}
 	s << Endl;

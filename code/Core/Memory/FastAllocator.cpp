@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Core/Memory/Alloc.h"
@@ -107,10 +101,10 @@ void* FastAllocator::alloc(size_t size, size_t align, const char* const tag)
 
 		T_ASSERT (alignUp((uint8_t*)p, 16) == p);
 	}
-	
+
 	if (!p)
 		p = m_systemAllocator->alloc(size, align, tag);
-	
+
 	T_ASSERT (alignUp((uint8_t*)p, align) == p);
 	return p;
 }

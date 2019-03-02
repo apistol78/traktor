@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -120,7 +114,7 @@ void Profiler::destroy()
 
 		for (AlignedVector< ThreadEvents* >::iterator i = m_threadEvents.begin(); i != m_threadEvents.end(); ++i)
 			delete *i;
-		
+
 		m_threadEvents.clear();
 	}
 	T_SAFE_RELEASE(this);

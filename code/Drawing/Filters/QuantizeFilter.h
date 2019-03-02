@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_QuantizeFilter_H
-#define traktor_drawing_QuantizeFilter_H
+#pragma once
 
 #include "Drawing/IImageFilter.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace drawing
 	{
-	
+
 /*! \brief Quantize filter.
  * \ingroup Drawing
  */
@@ -38,8 +31,7 @@ protected:
 private:
 	int m_steps;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_QuantizeFilter_H

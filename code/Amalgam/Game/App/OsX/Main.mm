@@ -105,7 +105,7 @@ bool saveSettings(const PropertyGroup* settings, const Path& settingsFile)
 
 	bool result = xml::XmlSerializer(file).writeObject(settings);
 	file->close();
-	
+
 	return result;
 }
 
@@ -116,7 +116,7 @@ void showErrorDialog(const std::list< std::wstring >& tail)
 	{
 		for (std::list< std::wstring >::const_iterator i = tail.begin(); i != tail.end(); ++i)
 			errorDialog.addErrorString(*i);
-			
+
 		errorDialog.addErrorString(L"Please copy this information and contact");
 		errorDialog.addErrorString(L"support@doctorentertainment.com");
 
@@ -234,7 +234,7 @@ int main(int argc, const char** argv)
 	{
 		Path userSettingsPath;
 		Ref< PropertyGroup > userSettings;
-	
+
 		// Try to load user settings from user's application data path; sometimes it's not possible
 		// to store user settings alongside executable due to restrictive privileges.
 		if (!userSettings)
@@ -300,7 +300,7 @@ int main(int argc, const char** argv)
 		safeDestroy(application);
 		showErrorDialog(logTail->m_tail);
 	}
-	
+
 	settings = 0;
 	defaultSettings = 0;
 
@@ -316,7 +316,7 @@ int main(int argc, const char** argv)
 
 	log::info   .setGlobalTarget(0);
 	log::warning.setGlobalTarget(0);
-	log::error  .setGlobalTarget(0);	
+	log::error  .setGlobalTarget(0);
 
 #if defined(_DEBUG)
 	SingletonManager::getInstance().destroy();

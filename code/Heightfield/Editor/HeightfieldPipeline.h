@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_hf_HeightfieldPipeline_H
-#define traktor_hf_HeightfieldPipeline_H
+#pragma once
 
 #include "Editor/IPipeline.h"
 
@@ -66,4 +59,3 @@ private:
 	}
 }
 
-#endif	// traktor_hf_HeightfieldPipeline_H

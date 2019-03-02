@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef SolutionBuilderMsvcTool_H
-#define SolutionBuilderMsvcTool_H
+#pragma once
 
 #include "Core/Serialization/ISerializable.h"
 
@@ -40,4 +33,3 @@ public:
 	}
 }
 
-#endif	// SolutionBuilderMsvcTool_H

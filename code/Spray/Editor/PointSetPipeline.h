@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_PointSetPipeline_H
-#define traktor_spray_PointSetPipeline_H
+#pragma once
 
 #include "Editor/IPipeline.h"
 
@@ -66,4 +59,3 @@ private:
 	}
 }
 
-#endif	// traktor_spray_PointSetPipeline_H

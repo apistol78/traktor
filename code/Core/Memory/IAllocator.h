@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_IAllocator_H
-#define traktor_IAllocator_H
+#pragma once
 
 #include <cstddef>
 #include "Core/IRefCount.h"
@@ -22,10 +15,9 @@ class IAllocator : public IRefCount
 {
 public:
 	virtual void* alloc(size_t size, size_t align, const char* const tag) = 0;
-	
+
 	virtual void free(void* ptr) = 0;
 };
 
 }
 
-#endif	// traktor_IAllocator_H

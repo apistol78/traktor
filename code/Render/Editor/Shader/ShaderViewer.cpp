@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Functor/Functor.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
@@ -379,7 +373,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 
 			if (programGraph)
 				programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
-			
+
 			if (programGraph)
 				programGraph = ShaderGraphStatic(programGraph).getConstantFolded();
 
@@ -388,7 +382,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 
 			if (programGraph)
 				programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
-			
+
 			if (programGraph)
 				programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators(false);
 
@@ -446,7 +440,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 				{
 					ci.vertexShader = L"Failed to generate vertex shader!";
 					ci.pixelShader = L"Failed to generate pixel shader!";;
-					ci.computeShader = L"Failed to generate compute shader!";					
+					ci.computeShader = L"Failed to generate compute shader!";
 				}
 			}
 		}

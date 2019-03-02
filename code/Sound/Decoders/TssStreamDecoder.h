@@ -26,7 +26,7 @@ class T_DLLCLASS TssStreamDecoder : public IStreamDecoder
 
 public:
 	TssStreamDecoder();
-	
+
 	virtual bool create(IStream* stream) override final;
 
 	virtual void destroy() override final;

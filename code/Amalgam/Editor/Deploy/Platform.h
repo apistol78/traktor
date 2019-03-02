@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_Platform_H
-#define traktor_amalgam_Platform_H
+#pragma once
 
 #include "Amalgam/Editor/Deploy/DeployTool.h"
 #include "Core/Guid.h"
@@ -50,4 +43,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_Platform_H

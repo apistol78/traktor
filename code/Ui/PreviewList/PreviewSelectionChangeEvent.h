@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_PreviewSelectionChangeEvent_H
-#define traktor_ui_PreviewSelectionChangeEvent_H
+#pragma once
 
 #include "Ui/Events/SelectionChangeEvent.h"
 
@@ -30,10 +23,10 @@ class PreviewItem;
 class T_DLLCLASS PreviewSelectionChangeEvent : public SelectionChangeEvent
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	PreviewSelectionChangeEvent(EventSubject* sender, PreviewItem* item);
-	
+
 	PreviewItem* getItem() const;
 
 private:
@@ -43,4 +36,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_PreviewSelectionChangeEvent_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_ConstantInputSource_H
-#define traktor_input_ConstantInputSource_H
+#pragma once
 
 #include <list>
 #include "Input/Binding/IInputSource.h"
@@ -32,13 +25,13 @@ class T_DLLCLASS ConstantInputSource : public IInputSource
 
 public:
 	ConstantInputSource(float value);
-	
+
 	virtual std::wstring getDescription() const override final;
 
 	virtual void prepare(float T, float dT) override final;
 
 	virtual float read(float T, float dT) override final;
-	
+
 private:
 	float m_value;
 };
@@ -46,4 +39,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_ConstantInputSource_H

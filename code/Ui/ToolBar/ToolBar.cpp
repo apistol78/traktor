@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Drawing/Image.h"
 #include "Drawing/Filters/BrightnessContrastFilter.h"
 #include "Drawing/Filters/GrayscaleFilter.h"
@@ -177,7 +171,7 @@ void ToolBar::eventMouseTrack(MouseTrackEvent* event)
 		{
 			m_trackItem->mouseLeave(this);
 			m_trackItem = nullptr;
-		}		
+		}
 	}
 }
 

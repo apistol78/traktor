@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_RenderSystemPs4_H
-#define traktor_render_RenderSystemPs4_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Render/IRenderSystem.h"
@@ -46,9 +39,9 @@ public:
 	virtual void getInformation(RenderSystemInformation& outInfo) const T_OVERRIDE T_FINAL;
 
 	virtual uint32_t getDisplayModeCount() const T_OVERRIDE T_FINAL;
-	
+
 	virtual DisplayMode getDisplayMode(uint32_t index) const T_OVERRIDE T_FINAL;
-	
+
 	virtual DisplayMode getCurrentDisplayMode() const T_OVERRIDE T_FINAL;
 
 	virtual float getDisplayAspectRatio() const T_OVERRIDE T_FINAL;
@@ -64,7 +57,7 @@ public:
 	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc) T_OVERRIDE T_FINAL;
 
 	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc) T_OVERRIDE T_FINAL;
-	
+
 	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc) T_OVERRIDE T_FINAL;
 
 	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc) T_OVERRIDE T_FINAL;
@@ -84,4 +77,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_RenderSystemPs4_H

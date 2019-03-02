@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Thread/Event.h"
 
 namespace traktor
@@ -37,7 +31,7 @@ Event::~Event()
 void Event::pulse(int count)
 {
 	scePthreadMutexLock(&m_mutex);
-	
+
 	m_signal += count;
 	scePthreadCondBroadcast(&m_cond);
 
@@ -95,7 +89,7 @@ bool Event::wait(int32_t timeout)
 	}
 
 	scePthreadMutexUnlock(&m_mutex);
-	
+
 	return bool(rc == 0);
 }
 

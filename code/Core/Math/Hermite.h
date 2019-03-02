@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Hermite_H
-#define traktor_Hermite_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Math/Const.h"
@@ -101,7 +94,7 @@ public:
 		int32_t index_n1 = TimeControl::index(index - 1, int32_t(m_nkeys - 1));
 		int32_t index_1 = TimeControl::index(index + 1, int32_t(m_nkeys - 1));
 		int32_t index_2 = TimeControl::index(index + 2, int32_t(m_nkeys - 1));
-		
+
 		const Key& cp0 = m_keys[index];
 		const Key& cp1 = m_keys[index_1];
 
@@ -150,4 +143,3 @@ private:
 
 }
 
-#endif	// traktor_Hermite_H

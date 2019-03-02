@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Online/LobbyArrayResult.h"
 #include "Online/Impl/Lobby.h"
 #include "Online/Impl/Tasks/TaskFindMatchingLobbies.h"

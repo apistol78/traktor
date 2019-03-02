@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_ArticulatedEntityData_H
-#define traktor_physics_ArticulatedEntityData_H
+#pragma once
 
 #include <vector>
 #include "Core/Ref.h"
@@ -60,7 +53,7 @@ public:
 	) const;
 
 	virtual void setTransform(const Transform& transform) override final;
-	
+
 	virtual void serialize(ISerializer& s) override final;
 
 	const RefArray< world::EntityData >& getEntityData() const { return m_entityData; }
@@ -75,4 +68,3 @@ private:
 	}
 }
 
-#endif	// traktor_physics_ArticulatedEntityData_H

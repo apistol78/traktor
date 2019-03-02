@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_DefaultEntityEditor_H
-#define traktor_scene_DefaultEntityEditor_H
+#pragma once
 
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Transform.h"
@@ -82,4 +75,3 @@ private:
 	}
 }
 
-#endif	// traktor_scene_DefaultEntityEditor_H

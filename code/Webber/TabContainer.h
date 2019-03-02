@@ -1,5 +1,4 @@
-#ifndef traktor_wbr_TabContainer_H
-#define traktor_wbr_TabContainer_H
+#pragma once
 
 #include "Webber/Container.h"
 
@@ -15,7 +14,7 @@ namespace traktor
 {
 	namespace wbr
 	{
-	
+
 class T_DLLCLASS TabContainer : public Container
 {
 	T_RTTI_CLASS;
@@ -25,8 +24,7 @@ public:
 
 	virtual void consume(int32_t senderId, int32_t action) override;
 };
-	
+
 	}
 }
 
-#endif	// traktor_wbr_TabContainer_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include <cstring>
 #include "Core/Math/Const.h"
@@ -45,7 +39,7 @@ Ref< ConvolutionFilter > ConvolutionFilter::createGaussianBlur5()
 {
 	const float c_kernel[] =
 	{
-		2,  4,  5,  4, 2, 
+		2,  4,  5,  4, 2,
 		4,  9, 12,  9, 4,
 		5, 12, 15, 12, 5,
 		4,  9, 12,  9, 4,
@@ -117,6 +111,6 @@ void ConvolutionFilter::apply(Image* image) const
 
 	image->swap(final);
 }
-	
+
 	}
 }

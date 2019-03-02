@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
@@ -45,7 +39,7 @@ bool SequenceTexturePipeline::buildDependencies(
 ) const
 {
 	const SequenceTextureAsset* asset = checked_type_cast< const SequenceTextureAsset* >(sourceAsset);
-	
+
 	for (const auto& p : asset->m_fileNames)
 		pipelineDepends->addDependency(Path(m_assetPath), p.getOriginal());
 

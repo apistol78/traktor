@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_hf_HeightfieldAsset_H
-#define traktor_hf_HeightfieldAsset_H
+#pragma once
 
 #include "Core/Math/Vector4.h"
 #include "Core/Serialization/ISerializable.h"
@@ -46,4 +39,3 @@ private:
 	}
 }
 
-#endif	// traktor_hf_HeightfieldAsset_H

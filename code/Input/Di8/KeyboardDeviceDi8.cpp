@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
@@ -89,11 +83,11 @@ std::wstring KeyboardDeviceDi8::getControlName(int32_t control)
 	{
 		DIPROPSTRING dips;
 		std::memset(&dips, 0, sizeof(dips));
-		dips.diph.dwSize = sizeof(DIPROPSTRING); 
-		dips.diph.dwHeaderSize = sizeof(DIPROPHEADER); 
-		dips.diph.dwObj = c_di8ControlKeys[control]; 
-		dips.diph.dwHow = DIPH_BYOFFSET; 
-		
+		dips.diph.dwSize = sizeof(DIPROPSTRING);
+		dips.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+		dips.diph.dwObj = c_di8ControlKeys[control];
+		dips.diph.dwHow = DIPH_BYOFFSET;
+
 		hr = m_device->GetProperty(DIPROP_KEYNAME, (LPDIPROPHEADER)&dips);
 		if (SUCCEEDED(hr))
 			return dips.wsz;
@@ -103,10 +97,10 @@ std::wstring KeyboardDeviceDi8::getControlName(int32_t control)
 	{
 		DIPROPDWORD dipdw;
 		std::memset(&dipdw, 0, sizeof(dipdw));
-		dipdw.diph.dwSize = sizeof(DIPROPDWORD); 
-		dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER); 
-		dipdw.diph.dwObj = c_di8ControlKeys[control]; 
-		dipdw.diph.dwHow = DIPH_BYOFFSET; 
+		dipdw.diph.dwSize = sizeof(DIPROPDWORD);
+		dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+		dipdw.diph.dwObj = c_di8ControlKeys[control];
+		dipdw.diph.dwHow = DIPH_BYOFFSET;
 
 		hr = m_device->GetProperty(DIPROP_SCANCODE, (LPDIPROPHEADER)&dipdw);
 		if (SUCCEEDED(hr))
@@ -202,7 +196,7 @@ void KeyboardDeviceDi8::readState()
 	}
 
 	hr = m_device->Poll();
-	while (FAILED(hr))  
+	while (FAILED(hr))
 	{
 		hr = m_device->Acquire();
 		m_connected = SUCCEEDED(hr);
@@ -214,7 +208,7 @@ void KeyboardDeviceDi8::readState()
 
 	hr = m_device->GetDeviceState(256, m_state);
 
-	m_connected = SUCCEEDED(hr);	
+	m_connected = SUCCEEDED(hr);
 }
 
 bool KeyboardDeviceDi8::supportRumble() const

@@ -68,7 +68,7 @@ bool RenderTargetPs3::create(MemoryHeap* memoryHeap, const RenderTargetSetCreate
 		m_colorTexture.pitch = alignUp(m_width * byteSize, 64);
 
 	uint32_t colorSize = alignUp(m_colorTexture.pitch * alignUp(m_colorTexture.height, 64), 65536);
-	
+
 	m_colorData = memoryHeap->alloc(colorSize, 65536, setDesc.preferTiled);
 	if (!m_colorData)
 	{

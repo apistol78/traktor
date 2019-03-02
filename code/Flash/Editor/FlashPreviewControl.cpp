@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -206,7 +200,7 @@ void FlashPreviewControl::destroy()
 void FlashPreviewControl::setMovie(Movie* movie)
 {
 	m_movie = movie;
-	
+
 	if (m_moviePlayer)
 		m_moviePlayer->destroy();
 
@@ -337,7 +331,7 @@ void FlashPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->end();
 		m_renderView->present();
 	}
-	
+
 #else
 	if (!m_graphicsSystem)
 		return;

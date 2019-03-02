@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Editor/SH/DirectionalLight.h"
 
 namespace traktor
@@ -24,6 +18,6 @@ float DirectionalLight::evaluate(float phi, float theta, const Vector4& unit) co
 	Scalar cosPhi = dot3(unit, m_direction);
 	return acos(cosPhi) <= m_cutOffAngle ? 1.0f : 0.0f;
 }
-		
+
 	}
 }

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_BlockAllocator_H
-#define traktor_BlockAllocator_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -30,15 +23,15 @@ class T_DLLCLASS BlockAllocator
 {
 public:
 	BlockAllocator(void* top, int count, size_t size);
-	
+
 	void* top();
-	
+
 	void* alloc();
-	
+
 	bool free(void* p);
 
 	bool belong(const void* p) const;
-	
+
 private:
 	size_t* m_top;
 	size_t* m_end;
@@ -52,4 +45,3 @@ private:
 
 }
 
-#endif	// traktor_BlockAllocator_H

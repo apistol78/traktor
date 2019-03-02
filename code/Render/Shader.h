@@ -28,7 +28,7 @@ class VertexBuffer;
 /*! \brief Shader
  * \ingroup Render
  *
- * An shader is actually only a facadï¿½ for several
+ * An shader is actually only a facadïÿ½ for several
  * programs which is different combinations of a
  * source shader graph.
  */

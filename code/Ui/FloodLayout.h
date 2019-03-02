@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_FloodLayout_H
-#define traktor_ui_FloodLayout_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Ui/Layout.h"
@@ -35,18 +28,17 @@ public:
 	FloodLayout();
 
 	FloodLayout(const Size& margin);
-	
+
 	virtual bool fit(Widget* widget, const Size& bounds, Size& result) override;
-	
+
 	virtual void update(Widget* widget) override;
-	
+
 private:
 	Size m_margin;
 
 	Ref< Widget > getFirstVisibleChild(Widget* widget);
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_FloodLayout_H

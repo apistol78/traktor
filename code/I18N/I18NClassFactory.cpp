@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "I18N/Dictionary.h"
@@ -88,14 +82,14 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.i18n.I18NClassFactory", 0, I18NClassFac
 
 void I18NClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< Dictionary > > classDictionary = new AutoRuntimeClass< Dictionary >();
+	auto classDictionary = new AutoRuntimeClass< Dictionary >();
 	classDictionary->addConstructor();
 	classDictionary->addMethod("has", &Dictionary::has);
 	classDictionary->addMethod("set", &Dictionary::set);
 	classDictionary->addMethod("get", &i18n_Dictionary_get);
 	registrar->registerClass(classDictionary);
 
-	Ref< AutoRuntimeClass< I18NWrapper > > classI18N = new AutoRuntimeClass< I18NWrapper >();
+	auto classI18N = new AutoRuntimeClass< I18NWrapper >();
 	classI18N->addStaticMethod("appendDictionary", &I18NWrapper::appendDictionary);
 	classI18N->addStaticMethod("text", &I18NWrapper::text);
 	classI18N->addStaticMethod("format", &I18NWrapper::format_1);

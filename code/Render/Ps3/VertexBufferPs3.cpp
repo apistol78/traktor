@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Render/VertexElement.h"
 #include "Render/Ps3/MemoryHeapObject.h"
@@ -34,7 +28,7 @@ int32_t cg_attr_index(DataUsage usage, int index)
 	T_ASSERT (attr < base[int(usage) + 1]);
 	return attr;
 }
-			
+
 		}
 
 VertexBufferPs3* VertexBufferPs3::ms_activeVertexBuffer = 0;

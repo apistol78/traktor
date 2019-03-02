@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_Modifier_H
-#define traktor_spray_Modifier_H
+#pragma once
 
 #if defined(_PS3)
 //#	define T_MODIFIER_USE_PS3_SPURS
@@ -43,4 +36,3 @@ public:
 	}
 }
 
-#endif	// traktor_spray_Modifier_H

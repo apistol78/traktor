@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputMappingStateData_H
-#define traktor_input_InputMappingStateData_H
+#pragma once
 
 #include <map>
 #include "Core/RefArray.h"
@@ -23,7 +16,7 @@ namespace traktor
 {
 	namespace input
 	{
-	
+
 class InputStateData;
 
 /*! \brief Input mapping state data
@@ -37,7 +30,7 @@ class T_DLLCLASS InputMappingStateData : public ISerializable
 
 public:
 	void setStateData(const std::wstring& id, InputStateData* data);
-	
+
 	const std::map< std::wstring, Ref< InputStateData > >& getStateData() const;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -49,4 +42,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_InputMappingStateData_H

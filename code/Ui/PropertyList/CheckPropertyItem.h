@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_CheckPropertyItem_H
-#define traktor_ui_CheckPropertyItem_H
+#pragma once
 
 #include "Ui/PropertyList/PropertyItem.h"
 
@@ -33,7 +26,7 @@ public:
 	CheckPropertyItem(const std::wstring& text, bool checked);
 
 	void setChecked(bool checked);
-	
+
 	bool isChecked() const;
 
 protected:
@@ -48,4 +41,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_CheckPropertyItem_H

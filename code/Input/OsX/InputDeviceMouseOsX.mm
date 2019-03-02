@@ -9,7 +9,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 struct MouseControlMap
 {
 	InputDefaultControlType control;
@@ -106,7 +106,7 @@ bool InputDeviceMouseOsX::getControlRange(int32_t control, float& outMin, float&
 
 	if (!getMouseRange(range))
 		return false;
-	
+
 	if (index == -4)
 	{
 		outMin = 0.0f;
@@ -119,7 +119,7 @@ bool InputDeviceMouseOsX::getControlRange(int32_t control, float& outMin, float&
 	}
 	else
 		return false;
-		
+
 	return true;
 }
 
@@ -190,12 +190,12 @@ void InputDeviceMouseOsX::readState()
 		if (m_button[0] || m_button[1] || m_button[2])
 			mouseValid = false;
 	}
-	
+
 	// Discard all inputs if mouse not in a valid
 	// region.
 	if (!mouseValid)
 		resetState();
-	
+
 	//m_lastMousePosition = mousePositionGlobal;
 	m_lastMouseValid = mouseValid;
 }

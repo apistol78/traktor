@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/Win32/NativeStream.h"
 
 namespace traktor
@@ -21,7 +15,7 @@ NativeStream::NativeStream(HANDLE hFile, uint32_t mode)
 NativeStream::~NativeStream()
 {
 	T_EXCEPTION_GUARD_BEGIN
-	
+
 	close();
 
 	T_EXCEPTION_GUARD_END
@@ -99,7 +93,7 @@ int64_t NativeStream::read(void* block, int64_t nbytes)
 	return int64_t(nread);
 }
 
-int64_t NativeStream::write(const void* block, int64_t nbytes)	
+int64_t NativeStream::write(const void* block, int64_t nbytes)
 {
 	if (m_hFile == 0)
 		return 0;

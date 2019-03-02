@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Drawing/Image.h"
@@ -113,7 +107,7 @@ bool BfnTexturePipeline::buildOutput(
 					Vector4 n = Vector4(nu, 1.0f, nv).normalized();
 					Vector4 qn = findMinimumQuantizationError(n);
 					float qnln = qn.length();
-				
+
 					for (int32_t side = 0; side < 6; ++side)
 						image->setPixel(u + side * size, v, Color4f(qnln, qnln, qnln, qnln));
 				}
@@ -141,7 +135,7 @@ bool BfnTexturePipeline::buildOutput(
 					Vector4 n = Vector4(nu, 1.0f, nv).normalized();
 					Vector4 qn = findMinimumQuantizationError(n);
 					float qnln = qn.length();
-				
+
 					image->setPixel(u, v, Color4f(qnln, qnln, qnln, qnln));
 				}
 			}

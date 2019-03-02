@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_AsStage_H
-#define traktor_flash_AsStage_H
+#pragma once
 
 #include "Core/Math/Vector4.h"
 #include "Flash/SwfTypes.h"
@@ -86,4 +79,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_AsStage_H

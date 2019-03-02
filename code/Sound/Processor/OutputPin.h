@@ -25,9 +25,9 @@ class T_DLLCLASS OutputPin : public Object
 
 public:
 	OutputPin(Node* node, const std::wstring& name, NodePinType type);
-	
+
 	Node* getNode() const;
-	
+
 	const std::wstring& getName() const;
 
 	NodePinType getPinType() const;

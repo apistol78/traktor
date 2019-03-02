@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_IEntityEditor_H
-#define traktor_scene_IEntityEditor_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Math/Frustum.h"
@@ -141,4 +134,3 @@ public:
 	}
 }
 
-#endif	// traktor_scene_IEntityEditor_H

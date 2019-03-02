@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_animation_SkeletonUtils_H
-#define traktor_animation_SkeletonUtils_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Containers/AlignedVector.h"
@@ -69,4 +62,3 @@ void T_DLLCLASS blendPoses(
 	}
 }
 
-#endif	// traktor_animation_SkeletonUtils_H

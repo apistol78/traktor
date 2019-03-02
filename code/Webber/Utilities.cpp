@@ -5,7 +5,7 @@ namespace traktor
 {
 	namespace wbr
 	{
-	
+
 std::wstring escapeJson(const std::wstring& text)
 {
 	StringOutputStream ss;

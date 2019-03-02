@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #if defined(__ANDROID__) || defined(__LINUX__)
 #	include <dlfcn.h>
@@ -48,7 +42,7 @@ void initializeExtensions()
 		tmp[length] = 0;
 
 		log::info << mbstows(tmp) << Endl;
-			
+
 		supported = end;
 		while (*supported == ' ')
 		{
@@ -61,7 +55,7 @@ void initializeExtensions()
 	void* libhandle = dlopen("libGLESv2.so", RTLD_LAZY);
 	if (libhandle)
 	{
-#	if defined(GL_OES_vertex_array_object)	
+#	if defined(GL_OES_vertex_array_object)
 		g_glBindVertexArrayOES = (PFNGLBINDVERTEXARRAYOESPROC)dlsym(libhandle, "glBindVertexArrayOES");
 #		if defined(_DEBUG)
 		if (g_glBindVertexArrayOES)

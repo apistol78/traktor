@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sound_JobMC_H
-#define traktor_sound_JobMC_H
+#pragma once
 
 #include <cell/spurs/job_descriptor.h>
 
@@ -13,7 +6,7 @@ namespace traktor
 {
 	namespace sound
 	{
-		
+
 struct JobMC
 {
 	CellSpursJobHeader header;
@@ -35,4 +28,3 @@ struct JobMC
 	}
 }
 
-#endif	// traktor_sound_JobMC_H

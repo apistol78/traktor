@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_PsslEmitter_H
-#define traktor_render_PsslEmitter_H
+#pragma once
 
 #include <map>
 
@@ -45,4 +38,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_PsslEmitter_H

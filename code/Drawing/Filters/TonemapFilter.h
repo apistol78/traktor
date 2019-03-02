@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_TonemapFilter_H
-#define traktor_drawing_TonemapFilter_H
+#pragma once
 
 #include "Drawing/IImageFilter.h"
 
@@ -35,8 +28,7 @@ class T_DLLCLASS TonemapFilter : public IImageFilter
 protected:
 	virtual void apply(Image* image) const override final;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_TonemapFilter_H

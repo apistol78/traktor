@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Indoor/IndoorMesh.h"
@@ -43,7 +37,7 @@ void IndoorMesh::render(
 )
 {
 	Vector4 cameraPosition = worldRenderView.getView().inverse().translation();
-	
+
 	// Create initial clipper frustum, clipper frustums can have more than
 	// 6 planes as it's later reconstructed from clipped portals.
 	AlignedVector< Plane > frustum(6);
@@ -92,7 +86,7 @@ void IndoorMesh::render(
 	for (std::set< int >::iterator i = activeSectors.begin(); i != activeSectors.end(); ++i)
 	{
 		Sector& sector = m_sectors[*i];
-		
+
 		SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = sector.parts.find(worldRenderPass.getTechnique());
 		if (it == sector.parts.end())
 			continue;

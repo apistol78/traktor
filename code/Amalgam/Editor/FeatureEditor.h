@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_FeatureEditor_H
-#define traktor_amalgam_FeatureEditor_H
+#pragma once
 
 #include "Amalgam/Editor/Deploy/Feature.h"
 #include "Editor/IObjectEditor.h"
@@ -17,18 +10,18 @@ class PropertyStringSet;
 
 	namespace editor
 	{
-	
+
 class IEditor;
 
 	}
 
 	namespace ui
 	{
-	
+
 class Edit;
 class EditList;
 class ListBox;
-		
+
 	}
 
 	namespace amalgam
@@ -75,4 +68,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_FeatureEditor_H

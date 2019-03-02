@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -44,7 +38,7 @@ void AccShapeVertexPool::destroy()
 
 	m_freeRanges.clear();
 	m_usedRanges.clear();
-	
+
 	m_renderSystem = 0;
 }
 

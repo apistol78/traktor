@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Editor/Deploy/Feature.h"
 #include "Amalgam/Editor/Deploy/LaunchTargetAction.h"
 #include "Amalgam/Editor/Deploy/Platform.h"
@@ -137,7 +131,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 
 	// Launch application through deploy tool.
 	Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
-	
+
 	Path outputRelativePath;
 	FileSystem::getInstance().getRelativePath(m_outputPath, projectRoot, outputRelativePath);
 

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InBoolean_H
-#define traktor_input_InBoolean_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Input/Binding/IInputNode.h"
@@ -29,7 +22,7 @@ namespace traktor
 class T_DLLCLASS InBoolean : public IInputNode
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	enum Operator
 	{
@@ -38,7 +31,7 @@ public:
 		OpOr,
 		OpXor
 	};
-	
+
 	InBoolean();
 
 	InBoolean(
@@ -55,9 +48,9 @@ public:
 		float T,
 		float dT
 	) const override final;
-	
+
 	virtual void serialize(ISerializer& s) override final;
-	
+
 private:
 	friend class InBooleanTraits;
 
@@ -68,4 +61,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_InBoolean_H

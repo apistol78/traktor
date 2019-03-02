@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <limits>
 #include "Core/Log/Log.h"
@@ -285,7 +279,7 @@ void CubicRenderControl::updateWorldRenderer()
 
 	// \note Not able to use deferred renderer atm, cannot render properly as we cannot share depth targets between render target sets.
 	std::wstring worldRendererTypeName = L"traktor.world.WorldRendererForward"; //settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
-	
+
 	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
 	if (!worldRendererType)
 		return;
@@ -541,7 +535,7 @@ void CubicRenderControl::eventButtonUp(ui::MouseButtonUpEvent* event)
 	if (m_renderWidget->hasCapture())
 		m_renderWidget->releaseCapture();
 
-	m_renderWidget->update();	
+	m_renderWidget->update();
 }
 
 void CubicRenderControl::eventMouseMove(ui::MouseMoveEvent* event)

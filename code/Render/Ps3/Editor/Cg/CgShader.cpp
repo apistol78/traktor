@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Ps3/Editor/Cg/CgShader.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Log/Log.h"
@@ -301,13 +295,13 @@ std::wstring CgShader::getGeneratedShader(bool needVPos)
 	if (m_shaderType == StPixel)
 	{
 		ss << L"void main(";
-		
+
 		if (!inputDataText.empty())
 			ss << L"InputData i, ";
 
 		if (needVPos)
 			ss << L"float2 vPos : WPOS, ";
-		
+
 		ss << L"out OutputData o)" << Endl;
 
 		ss << L"{" << Endl;

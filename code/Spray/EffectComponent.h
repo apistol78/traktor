@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_EffectComponent_H
-#define traktor_spray_EffectComponent_H
+#pragma once
 
 #include "Core/Math/Plane.h"
 #include "Render/Types.h"
@@ -106,4 +99,3 @@ private:
 	}
 }
 
-#endif	// traktor_spray_EffectComponent_H

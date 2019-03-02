@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Animation/Joint.h"
 #include "Core/Math/Const.h"
 #include "Core/Serialization/AttributePoint.h"
@@ -35,10 +29,10 @@ void Joint::serialize(ISerializer& s)
 
 	if (s.getVersion< Joint >() < 1)
 	{
-	
+
 		bool enableLimits;
 		s >> Member< bool >(L"enableLimits", enableLimits);
-		
+
 		float twistLimit;
 		s >> Member< float >(L"twistLimit", twistLimit, AttributeRange(-PI, PI));
 

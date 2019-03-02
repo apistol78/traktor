@@ -122,7 +122,7 @@ void ExtrudeShapeLayer::pathChanged()
 		nvertices * sizeof(ExtrudeVertex),
 		false
 	);
-	
+
 	ExtrudeVertex* vertex = (ExtrudeVertex*)m_vertexBuffer->lock();
 
 	uint32_t baseStep = 0;
@@ -131,7 +131,7 @@ void ExtrudeShapeLayer::pathChanged()
 		for (uint32_t step = 0; step < stepsPerSegment[segment]; ++step)
 		{
 			const float at = (float)(baseStep + step) / (nsteps - 1);
-			
+
 			Matrix44 T = path.evaluate(at).transform().toMatrix44();
 
 			if (m_automaticOrientation)

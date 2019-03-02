@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_IEntityEventInstance_H
-#define traktor_world_IEntityEventInstance_H
+#pragma once
 
 #include "Core/Object.h"
 #include "World/WorldTypes.h"
@@ -43,4 +36,3 @@ public:
 	}
 }
 
-#endif	// traktor_world_IEntityEventInstance_H

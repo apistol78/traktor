@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "UnitTest/CaseXmlDocument.h"
 #include "Core/Io/MemoryStream.h"
 #include "Xml/Document.h"
@@ -34,7 +28,7 @@ const wchar_t c_validXml[] =
 void CaseXmlDocument::run()
 {
 	xml::Document doc;
-	
+
 	if (!doc.loadFromFile(L"d:\\private\\dre\\traktor\\data\\Assets\\User\\branches.DAE"))
 	{
 		failed(L"XML load from stream failed");

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_PhysicsManagerBullet_H
-#define traktor_physics_PhysicsManagerBullet_H
+#pragma once
 
 #include "Core/Thread/Semaphore.h"
 #include "Physics/PhysicsManager.h"
@@ -175,4 +168,3 @@ private:
 	}
 }
 
-#endif	// traktor_physics_PhysicsManagerBullet_H
