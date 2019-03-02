@@ -18,7 +18,7 @@ class FunctorHeap : public ISingleton
 public:
 	static FunctorHeap& getInstance()
 	{
-		static FunctorHeap* s_instance = 0;
+		static FunctorHeap* s_instance = nullptr;
 		if (!s_instance)
 		{
 			s_instance = new FunctorHeap();
@@ -29,7 +29,7 @@ public:
 
 	void* alloc(uint32_t size)
 	{
-		void* ptr = 0;
+		void* ptr = nullptr;
 
 		if (size <= MaxFunctorSize)
 		{

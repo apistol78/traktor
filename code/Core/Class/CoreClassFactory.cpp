@@ -96,7 +96,7 @@ Ref< Path > FileSystem_getRelativePath(FileSystem* self, const Path& absolutePat
 	if (self->getRelativePath(absolutePath, relativeToPath, relativePath))
 		return new Path(relativePath);
 	else
-		return 0;
+		return nullptr;
 }
 
 std::wstring StringReader_readChar(StringReader* self)

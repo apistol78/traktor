@@ -496,14 +496,14 @@ public:
 	};
 
 	AlignedVector()
-	:	m_data(0)
+	:	m_data(nullptr)
 	,	m_size(0)
 	,	m_capacity(0)
 	{
 	}
 
 	AlignedVector(size_t size, const ItemType& value = ItemType())
-	:	m_data(0)
+	:	m_data(nullptr)
 	,	m_size(0)
 	,	m_capacity(0)
 	{
@@ -511,7 +511,7 @@ public:
 	}
 
 	AlignedVector(const AlignedVector< ItemType >& src)
-	:	m_data(0)
+	:	m_data(nullptr)
 	,	m_size(0)
 	,	m_capacity(0)
 	{
@@ -520,7 +520,7 @@ public:
 
 	template < typename IteratorType >
 	AlignedVector(const IteratorType& from, const IteratorType& to)
-	:	m_data(0)
+	:	m_data(nullptr)
 	,	m_size(0)
 	,	m_capacity(0)
 	{
@@ -534,7 +534,7 @@ public:
 	,	m_size(src.m_size)
 	,	m_capacity(src.m_capacity)
 	{
-		src.m_data = 0;
+		src.m_data = nullptr;
 		src.m_size = 0;
 		src.m_capacity = 0;
 	}
@@ -584,7 +584,7 @@ public:
 
 		getAllocator()->free(m_data);
 
-		m_data = 0;
+		m_data = nullptr;
 		m_size = 0;
 		m_capacity = 0;
 	}
@@ -1003,7 +1003,7 @@ public:
 		m_size = src.m_size;
 		m_capacity = src.m_capacity;
 
-		src.m_data = 0;
+		src.m_data = nullptr;
 		src.m_size = 0;
 		src.m_capacity = 0;
 
@@ -1063,4 +1063,3 @@ private:
 };
 
 }
-

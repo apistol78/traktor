@@ -588,8 +588,8 @@ public:
 		RuntimeClass::addProperty(
 			propertyName,
 			ss.str(),
-			0,
-			getter != 0 ? new PropertyGet< ClassType, ValueType, true >(getter) : 0
+			nullptr,
+			getter != nullptr ? new PropertyGet< ClassType, ValueType, true >(getter) : nullptr
 		);
 	}
 
@@ -602,8 +602,8 @@ public:
 		RuntimeClass::addProperty(
 			propertyName,
 			ss.str(),
-			setter != 0 ? new PropertySet< ClassType, SetterValueType >(setter) : 0,
-			getter != 0 ? new PropertyGet< ClassType, GetterValueType, true >(getter) : 0
+			setter != nullptr ? new PropertySet< ClassType, SetterValueType >(setter) : nullptr,
+			getter != nullptr ? new PropertyGet< ClassType, GetterValueType, true >(getter) : nullptr
 		);
 	}
 
@@ -616,8 +616,8 @@ public:
 		RuntimeClass::addProperty(
 			propertyName,
 			ss.str(),
-			0,
-			getter != 0 ? new PropertyGet< ClassType, ValueType, false >(getter) : 0
+			nullptr,
+			getter != nullptr ? new PropertyGet< ClassType, ValueType, false >(getter) : nullptr
 		);
 	}
 
@@ -630,8 +630,8 @@ public:
 		RuntimeClass::addProperty(
 			propertyName,
 			ss.str(),
-			setter != 0 ? new PropertySet< ClassType, SetterValueType >(setter) : 0,
-			getter != 0 ? new PropertyGet< ClassType, GetterValueType, false >(getter) : 0
+			setter != nullptr ? new PropertySet< ClassType, SetterValueType >(setter) : nullptr,
+			getter != nullptr ? new PropertyGet< ClassType, GetterValueType, false >(getter) : nullptr
 		);
 	}
 
@@ -644,8 +644,8 @@ public:
 		RuntimeClass::addProperty(
 			propertyName,
 			ss.str(),
-			0,
-			getter != 0 ? new FnPropertyGet< ClassType, ValueType >(getter) : 0
+			nullptr,
+			getter != nullptr ? new FnPropertyGet< ClassType, ValueType >(getter) : nullptr
 		);
 	}
 
@@ -658,8 +658,8 @@ public:
 		RuntimeClass::addProperty(
 			propertyName,
 			ss.str(),
-			setter != 0 ? new FnPropertySet< ClassType, SetterValueType >(setter) : 0,
-			getter != 0 ? new FnPropertyGet< ClassType, GetterValueType >(getter) : 0
+			setter != nullptr ? new FnPropertySet< ClassType, SetterValueType >(setter) : nullptr,
+			getter != nullptr ? new FnPropertyGet< ClassType, GetterValueType >(getter) : nullptr
 		);
 	}
 
