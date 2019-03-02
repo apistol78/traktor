@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_IInputDriver_H
-#define traktor_input_IInputDriver_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Platform.h"
@@ -48,7 +41,7 @@ public:
 	 * \param inputCategories Input device categories.
 	 */
 	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) = 0;
-	
+
 	/*! \brief Get number of devices implemented by the driver.
 	 *
 	 * \note Users should not call this method.
@@ -65,7 +58,7 @@ public:
 	 * \return Device implementation.
 	 */
 	virtual Ref< IInputDevice > getDevice(int index) = 0;
-	
+
 	/*! \brief Update driver.
 	 *
 	 * During driver update devices might be connected or disconnected
@@ -82,4 +75,3 @@ public:
 	}
 }
 
-#endif	// traktor_input_IInputDriver_H

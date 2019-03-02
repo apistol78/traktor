@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_CubicRenderControl_H
-#define traktor_scene_CubicRenderControl_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Core/Math/Color4ub.h"
@@ -118,7 +111,7 @@ private:
 	world::Quality m_antiAliasQuality;
 	ui::Point m_mousePosition0;
 	ui::Point m_mousePosition;
-	int32_t m_mouseButton;	
+	int32_t m_mouseButton;
 	Quaternion m_previewOrientation;
 	Timer m_timer;
 	ui::Size m_dirtySize;
@@ -141,4 +134,3 @@ private:
 	}
 }
 
-#endif	// traktor_scene_CubicRenderControl_H

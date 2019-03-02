@@ -46,7 +46,7 @@ bool Multiply::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Multiply::createCursor() const 
+Ref< ISoundBufferCursor > Multiply::createCursor() const
 {
 	return new MultiplyCursor();
 }

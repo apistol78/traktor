@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <pthread.h>
 #include "Core/Thread/Semaphore.h"
@@ -19,7 +13,7 @@ struct InternalData
 };
 
 	}
-	
+
 Semaphore::Semaphore()
 :	m_handle(0)
 {

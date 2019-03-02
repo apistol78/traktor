@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Events/NcMouseButtonDownEvent.h"
 #include "Ui/Events/NcMouseButtonUpEvent.h"
 #include "Ui/Events/NcMouseMoveEvent.h"
@@ -69,7 +63,7 @@ int ToolFormWin32::showModal()
 
 	// Ensure tool form is visible.
 	setVisible(true);
-	
+
 	// Disable parent window, should be application main window.
 	HWND hParentWnd = GetParent(m_hWnd);
 	if (hParentWnd)

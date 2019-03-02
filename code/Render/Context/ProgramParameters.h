@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ProgramParameters_H
-#define traktor_render_ProgramParameters_H
+#pragma once
 
 #include <string>
 #include "Core/Math/Vector4.h"
@@ -52,7 +45,7 @@ public:
 	void setFloatParameter(handle_t handle, float param);
 
 	void setFloatArrayParameter(handle_t handle, const float* param, int length);
-	
+
 	void setVectorParameter(handle_t handle, const Vector4& param);
 
 	void setVectorArrayParameter(handle_t handle, const Vector4* param, int length);
@@ -101,4 +94,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_ProgramParameters_H

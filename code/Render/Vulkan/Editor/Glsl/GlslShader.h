@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_GlslShader_H
-#define traktor_render_GlslShader_H
+#pragma once
 
 #include <list>
 #include <map>
@@ -81,7 +74,7 @@ public:
 	const std::list< std::wstring >& getUniforms() const;
 
 	bool defineScript(const std::wstring& signature);
-    
+
 	void pushOutputStream(BlockType blockType, StringOutputStream* outputStream);
 
 	void popOutputStream(BlockType blockType);
@@ -108,4 +101,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_GlslShader_H

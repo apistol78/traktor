@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Containers/CircularVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Vector2.h"
@@ -220,6 +214,6 @@ void InGesturePinch::serialize(ISerializer& s)
 	if (s.getVersion() >= 1)
 		s >> MemberEnum< PinchDirection >(L"direction", m_direction, c_PinchDirection_Keys);
 }
-	
+
 	}
 }

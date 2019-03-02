@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ResolveEnv_H
-#define traktor_ResolveEnv_H
+#pragma once
 
 #include "Core/System/OS.h"
 
@@ -28,4 +21,3 @@ std::wstring T_DLLCLASS resolveEnv(const std::wstring& s, const Environment* env
 
 }
 
-#endif	// traktor_ResolveEnv_H

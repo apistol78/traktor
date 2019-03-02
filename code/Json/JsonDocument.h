@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_json_JsonDocument_H
-#define traktor_json_JsonDocument_H
+#pragma once
 
 #include "Core/Io/IStream.h"
 #include "Core/Io/Path.h"
@@ -38,14 +31,14 @@ public:
 	 * \return True if successfully loaded.
 	 */
 	bool loadFromFile(const Path& fileName);
-	
+
 	/*! \brief Load JSON document from stream.
 	 *
 	 * \param stream Stream to load from.
 	 * \return True if successfully loaded.
 	 */
 	bool loadFromStream(IStream* stream);
-	
+
 	/*! \brief Load JSON document from text string.
 	 *
 	 * \param text Text string.
@@ -71,4 +64,3 @@ public:
 	}
 }
 
-#endif	// traktor_json_JsonDocument_H

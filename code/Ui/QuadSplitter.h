@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_QuadSplitter_H
-#define traktor_ui_QuadSplitter_H
+#pragma once
 
 #include "Ui/Widget.h"
 
@@ -42,19 +35,19 @@ public:
 	bool create(Widget* parent, const Point& position, bool relative, int border = 16);
 
 	virtual void update(const Rect* rc = 0, bool immediate = false) override;
-	
+
 	virtual Size getMinimumSize() const override;
-	
+
 	virtual Size getPreferedSize() const override;
-	
+
 	virtual Size getMaximumSize() const override;
-	
+
 	void setPosition(const Point& position);
-	
+
 	Point getPosition() const;
-	
+
 	void getWidgets(Ref< Widget > outWidgets[4]) const;
-	
+
 private:
 	Point m_position;
 	bool m_negativeX;
@@ -68,11 +61,11 @@ private:
 	Point getAbsolutePosition() const;
 
 	void eventMouseMove(MouseMoveEvent* event);
-	
+
 	void eventButtonDown(MouseButtonDownEvent* event);
-	
+
 	void eventButtonUp(MouseButtonUpEvent* event);
-	
+
 	void eventSize(SizeEvent* event);
 
 	void eventPaint(PaintEvent* event);
@@ -81,4 +74,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_QuadSplitter_H

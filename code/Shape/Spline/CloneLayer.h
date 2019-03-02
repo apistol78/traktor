@@ -52,13 +52,13 @@ public:
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
 	) override final;
-	
+
 private:
 	SplineEntity* m_owner;
 	Ref< const world::IEntityBuilder > m_builder;
 	Ref< world::EntityData > m_entity;
 	float m_distance;
-	
+
 	RefArray< world::Entity > m_entities;
 };
 

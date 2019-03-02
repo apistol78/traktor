@@ -14,7 +14,7 @@ namespace traktor
 {
 	namespace render
 	{
-	
+
 class T_DLLCLASS VertexAttributesVk
 {;
 public:

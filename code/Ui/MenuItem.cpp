@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
@@ -29,7 +23,7 @@ Ref< IBitmap > s_imageChecked;
 
 const int32_t c_itemMarginX = 12;
 const int32_t c_itemMarginY = 8;
-		
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MenuItem", MenuItem, Object)

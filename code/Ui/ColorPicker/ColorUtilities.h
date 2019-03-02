@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ColorUtilities_H
-#define traktor_ui_ColorUtilities_H
+#pragma once
 
 namespace traktor
 {
@@ -22,4 +15,3 @@ void HSVtoRGB(float hsv[3], Color4f& outRgb);
 	}
 }
 
-#endif	// traktor_ui_ColorUtilities_H

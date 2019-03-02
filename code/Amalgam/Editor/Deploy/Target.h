@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_Target_H
-#define traktor_amalgam_Target_H
+#pragma once
 
 #include <string>
 #include "Core/RefArray.h"
@@ -50,10 +43,9 @@ public:
 
 private:
 	std::wstring m_identifier;
-	RefArray< TargetConfiguration > m_configurations; 
+	RefArray< TargetConfiguration > m_configurations;
 };
 
 	}
 }
 
-#endif	// traktor_amalgam_Target_H

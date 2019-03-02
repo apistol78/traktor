@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Half_H
-#define traktor_Half_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -33,4 +26,3 @@ float T_DLLCLASS halfToFloat(half_t value);
 
 }
 
-#endif	// traktor_Half_H

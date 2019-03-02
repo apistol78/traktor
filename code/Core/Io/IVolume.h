@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_IVolume_H
-#define traktor_IVolume_H
+#pragma once
 
 #include <vector>
 #include "Core/Ref.h"
@@ -61,7 +54,7 @@ public:
 	 * \return Array of files matched.
 	 */
 	virtual int find(const Path& mask, RefArray< File >& out) = 0;
-	
+
 	/*! \brief Modify file flags.
 	 *
 	 * \param fileName Path to file.
@@ -77,14 +70,14 @@ public:
 	 * \return Stream object at beginning of resource.
 	 */
 	virtual Ref< IStream > open(const Path& fileName, uint32_t mode) = 0;
-	
+
 	/*! \brief Check if file or directory exists.
 	 *
 	 * \param fileName Name of file or directory.
 	 * \return True if file or directory exists.
 	 */
 	virtual bool exist(const Path& fileName) = 0;
-	
+
 	/*! \brief Remove file.
 	 *
 	 * \param fileName Name of file to remove.
@@ -123,7 +116,7 @@ public:
 	 * \return True if directory was removed.
 	 */
 	virtual bool removeDirectory(const Path& directory) = 0;
-	
+
 	/*! \brief Rename directory.
 	 *
 	 * \param directory Path to directory.
@@ -138,7 +131,7 @@ public:
 	 * \return True if directory was successfully set to current directory.
 	 */
 	virtual bool setCurrentDirectory(const Path& directory) = 0;
-	
+
 	/*! \brief Get current directory.
 	 *
 	 * \return Current directory.
@@ -148,4 +141,3 @@ public:
 
 }
 
-#endif	// traktor_IVolume_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <pthread.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -21,7 +15,7 @@ struct Internal
 	pthread_cond_t cond;
 	uint32_t signal;
 };
-	
+
 	}
 
 Signal::Signal()
@@ -66,7 +60,7 @@ bool Signal::wait(int timeout)
 {
 	Internal* in = static_cast< Internal* >(m_handle);
 	int rc = 0;
-	
+
 	pthread_mutex_lock(&in->mutex);
 
 	if (in->signal == 0)
@@ -75,13 +69,13 @@ bool Signal::wait(int timeout)
 		{
 			timeval now;
 			timespec ts;
-		
+
 			gettimeofday(&now, 0);
 			ts.tv_sec = now.tv_sec + timeout / 1000;
-			ts.tv_nsec = (now.tv_usec + (timeout % 1000) * 1000) * 1000;			
+			ts.tv_nsec = (now.tv_usec + (timeout % 1000) * 1000) * 1000;
 			ts.tv_sec += ts.tv_nsec / 1000000000;
 			ts.tv_nsec = ts.tv_nsec % 1000000000;
-			
+
 			while (in->signal == 0 && rc == 0)
 				rc = pthread_cond_timedwait(&in->cond, &in->mutex, &ts);
 		}
@@ -93,7 +87,7 @@ bool Signal::wait(int timeout)
 	}
 
 	pthread_mutex_unlock(&in->mutex);
-	
+
 	return bool(rc == 0);
 }
 

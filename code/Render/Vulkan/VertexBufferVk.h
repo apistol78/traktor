@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_VertexBufferVk_H
-#define traktor_render_VertexBufferVk_H
+#pragma once
 
 #if defined(_WIN32)
 #	define VK_USE_PLATFORM_WIN32_KHR
@@ -67,8 +60,7 @@ private:
 	VkVertexInputBindingDescription m_vertexBindingDescription;
 	AlignedVector< VkVertexInputAttributeDescription > m_vertexAttributeDescriptions;
 };
-	
+
 	}
 }
 
-#endif	// traktor_render_VertexBufferVk_H

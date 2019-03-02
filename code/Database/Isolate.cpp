@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Database/Isolate.h"
 #include "Database/Instance.h"
 #include "Database/Group.h"
@@ -33,14 +27,14 @@ bool Isolate::createIsolatedInstance(Instance* instance, IStream* stream)
 	if (!BinarySerializer(stream).writeObject(object))
 		return false;
 
-	for (std::vector< std::wstring >::iterator i = dataNames.begin(); i != dataNames.end(); ++i)
+	for (const auto& dataName : dataNames)
 	{
-		writer << *i;
+		writer << dataName;
 
-		Ref< IStream > dataStream = instance->readData(*i);
+		Ref< IStream > dataStream = instance->readData(dataName);
 		T_ASSERT (dataStream);
 
-		int32_t dataSize = dataStream->available(); 
+		int32_t dataSize = dataStream->available();
 		writer << dataSize;
 
 		if (!StreamCopy(stream, dataStream).execute(dataSize))
@@ -65,15 +59,15 @@ Ref< Instance > Isolate::createInstanceFromIsolation(Group* group, IStream* stre
 
 	Guid guid(instanceGuid);
 	if (!guid.isValid())
-		return 0;
+		return nullptr;
 
 	Ref< Instance > instance = group->createInstance(instanceName, CifReplaceExisting, &guid);
 	if (!instance)
-		return 0;
+		return nullptr;
 
 	Ref< ISerializable > object = BinarySerializer(stream).readObject();
 	if (!instance->setObject(object))
-		return 0;
+		return nullptr;
 
 	for (uint32_t i = 0; i < dataNames; ++i)
 	{
@@ -85,16 +79,16 @@ Ref< Instance > Isolate::createInstanceFromIsolation(Group* group, IStream* stre
 
 		Ref< IStream > dataStream = instance->writeData(dataName);
 		if (!dataStream)
-			return 0;
+			return nullptr;
 
 		if (!StreamCopy(dataStream, stream).execute(dataSize))
-			return 0;
+			return nullptr;
 
 		dataStream->close();
 	}
 
 	if (!instance->commit())
-		return 0;
+		return nullptr;
 
 	return instance;
 }

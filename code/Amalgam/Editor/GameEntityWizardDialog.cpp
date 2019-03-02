@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Editor/GameEntityWizardDialog.h"
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Io/FileSystem.h"
@@ -286,7 +280,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 
 			Ref< physics::MeshShapeDesc > meshShapeDesc = new physics::MeshShapeDesc();
 			meshShapeDesc->setMesh(resource::Id< physics::Mesh >(meshAssetInstance->getGuid()));
-			
+
 			//m_collisionGroup.insert(resource::Id< CollisionSpecification >(Guid(L"{F9805131-50C2-504C-9421-13C99E44616C}")));
 			//m_collisionMask.insert(resource::Id< CollisionSpecification >(Guid(L"{F9805131-50C2-504C-9421-13C99E44616C}")));
 			//meshShapeDesc->setCollisionGroup(parseString< uint32_t >(m_editCollisionGroup->getText()));

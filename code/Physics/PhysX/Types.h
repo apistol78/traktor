@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_physx_Types_H
-#define traktor_physics_physx_Types_H
+#pragma once
 
 namespace physx
 {
@@ -40,4 +33,3 @@ struct IWorldCallback
 	}
 }
 
-#endif	// traktor_physics_physx_Types_H

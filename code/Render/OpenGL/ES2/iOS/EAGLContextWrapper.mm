@@ -8,7 +8,7 @@ namespace traktor
 {
 	namespace render
 	{
-	
+
 EAGLContextWrapper::EAGLContextWrapper()
 :	m_layer(0)
 ,	m_context(0)
@@ -30,7 +30,7 @@ bool EAGLContextWrapper::create(void* nativeHandle)
 {
 	// Native handle are pointer to UIView object;
 	// these UIViews must have CAEAGLLayer as layerClass.
-	
+
 	UIView* view = (UIView*)nativeHandle;
 	CAEAGLLayer* layer = (CAEAGLLayer*)[view layer];
 
@@ -41,12 +41,12 @@ bool EAGLContextWrapper::create(void* nativeHandle)
 		kEAGLColorFormatRGB565,
 		kEAGLDrawablePropertyColorFormat,
 		nil];
-	
+
 	EAGLContext* context = [[EAGLContext alloc] initWithAPI: kEAGLRenderingAPIOpenGLES2 sharegroup: nil];
-	
+
 	m_layer = layer;
 	m_context = context;
-	
+
 	CGRect bounds = [layer bounds];
 	m_width = bounds.size.width;
 	m_height = bounds.size.height;
@@ -102,22 +102,22 @@ void EAGLContextWrapper::createFrameBuffer()
 	// Create primary buffer.
 	glGenFramebuffers(1, &m_frameBuffer);
 	glGenRenderbuffers(1, &m_renderBuffer);
-	
+
 	glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_renderBuffer);
-	
+
 	[m_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:m_layer];
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_renderBuffer);
-	
+
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &m_width);
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &m_height);
-	
+
 	// Create depth buffer.
 	glGenRenderbuffers(1, &m_depthBuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, m_width, m_height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer);
-	
+
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		NSLog(@"failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
 }
@@ -126,10 +126,10 @@ void EAGLContextWrapper::destroyFrameBuffer()
 {
 	glDeleteFramebuffers(1, &m_frameBuffer);
 	m_frameBuffer = 0;
-	
+
 	glDeleteRenderbuffers(1, &m_renderBuffer);
 	m_renderBuffer = 0;
-	
+
 	glDeleteRenderbuffers(1, &m_depthBuffer);
 	m_depthBuffer = 0;
 }

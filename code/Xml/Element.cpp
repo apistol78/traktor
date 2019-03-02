@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sstream>
 #include <stack>
 #include "Core/Io/StringOutputStream.h"
@@ -103,7 +97,7 @@ int32_t Element::get(const std::wstring& path, RefArray< Element >& outElements)
 	{
 		std::wstring name = path.substr(0, i);
 		std::wstring sub = path.substr(i + 1);
-		
+
 		for (Node* child = getFirstChild(); child != 0; child = child->getNextSibling())
 		{
 			Element* elm = dynamic_type_cast< Element* >(child);
@@ -130,7 +124,7 @@ Element* Element::getSingle(const std::wstring& path) const
 	{
 		std::wstring name = path.substr(0, i);
 		std::wstring sub = path.substr(i + 1);
-		
+
 		for (Node* child = getFirstChild(); child != 0; child = child->getNextSibling())
 		{
 			Element* elm = dynamic_type_cast< Element* >(child);
@@ -203,12 +197,12 @@ bool Element::match(const std::wstring& condition)
 			i = indexer.find_first_of(L'=');
 			if (i == indexer.npos)
 				return false;
-				
+
 			std::wstring attribName = indexer.substr(1, i - 1);
 			Attribute* attrib = getAttribute(attribName);
 			if (attrib == 0)
 				return false;
-				
+
 			std::wstring attribValue = indexer.substr(i + 1);
 			if (attrib->getValue() != attribValue)
 				return false;
@@ -234,7 +228,7 @@ bool Element::match(const std::wstring& condition)
 				else
 				{
 					int32_t n = parseString< int32_t >(indexer);
-					
+
 					// Calculate our own index.
 					int32_t nn = 0;
 					for (Node* node = getPreviousSibling(); node != 0; node = node->getPreviousSibling())
@@ -245,7 +239,7 @@ bool Element::match(const std::wstring& condition)
 								nn++;
 						}
 					}
-					
+
 					// Does indices match?
 					if (n != nn)
 						return false;
@@ -257,7 +251,7 @@ bool Element::match(const std::wstring& condition)
 				Element* elm = getChildElementByName(childName);
 				if (elm == 0)
 					return false;
-				
+
 				std::wstring childValue = indexer.substr(i + 1);
 				if (elm->getValue() != childValue)
 					return false;
@@ -285,7 +279,7 @@ void Element::setAttribute(const std::wstring& name, const std::wstring& value)
 		attr = new Attribute(name);
 		attr->m_previous = m_lastAttribute;
 		attr->m_next = 0;
-		
+
 		if (!m_firstAttribute)
 			m_firstAttribute = attr;
 
@@ -343,10 +337,10 @@ Element* Element::getChildElementByName(const std::wstring& name)
 Ref< Element > Element::clone() const
 {
 	Ref< Element > elm = new Element(m_name);
-	
+
 	for (const Attribute* attr = m_firstAttribute; attr; attr = attr->getNext())
 		elm->setAttribute(attr->getName(), attr->getValue());
-	
+
 	cloneChildren(elm);
 
 	return elm;

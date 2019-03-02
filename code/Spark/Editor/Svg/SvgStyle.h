@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_SvgStyle_H
-#define traktor_spark_SvgStyle_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -31,9 +24,9 @@ public:
 	void setFillEnable(bool fillEnable);
 
 	bool getFillEnable() const;
-	
+
 	void setFillGradient(const SvgGradient* fillGradient);
-	
+
 	const SvgGradient* getFillGradient() const;
 
 	void setFill(const Color4ub& fill);
@@ -43,9 +36,9 @@ public:
 	void setStrokeEnable(bool strokeEnable);
 
 	bool getStrokeEnable() const;
-	
+
 	void setStrokeGradient(const SvgGradient* strokeGradient);
-	
+
 	const SvgGradient* getStrokeGradient() const;
 
 	void setStrokeWidth(float strokeWidth);
@@ -72,8 +65,7 @@ private:
 	Color4ub m_stroke;
 	float m_opacity;
 };
-	
+
 	}
 }
 
-#endif	// traktor_spark_SvgStyle_H

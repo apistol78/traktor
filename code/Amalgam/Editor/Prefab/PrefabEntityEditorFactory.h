@@ -1,5 +1,4 @@
-#ifndef traktor_amalgam_PrefabEntityEditorFactory_H
-#define traktor_amalgam_PrefabEntityEditorFactory_H
+#pragma once
 
 #include "Scene/Editor/IEntityEditorFactory.h"
 
@@ -21,4 +20,3 @@ public:
 	}
 }
 
-#endif	// traktor_amalgam_PrefabEntityEditorFactory_H

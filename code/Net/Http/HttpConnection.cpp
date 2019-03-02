@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Net/Http/HttpConnection.h"
 #include "Net/Http/HttpResponse.h"
 #include "Net/Http/HttpChunkStream.h"
@@ -32,7 +26,7 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 {
 	if (url.getProtocol() != L"http")
 		return ErInvalidUrl;
-	
+
 	// Lookup host address.
 #if !defined(__PS3__)
 	SocketAddressIPv6 addr(url.getHost(), url.getPort());
@@ -49,11 +43,11 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 
 	// Build GET string.
 	std::wstring resource = url.getPath();
-	
+
 	std::wstring query = url.getQuery();
 	if (!query.empty())
 		resource += L"?" + query;
-	
+
 	std::wstring ref = url.getRef();
 	if (!ref.empty())
 		resource += L"#" + ref;
@@ -89,7 +83,7 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 		log::error << L"Invalid HTTP response header" << Endl;
 		return ErFailed;
 	}
-		
+
 	// Ensure it's a positive response.
 	if (response.getStatusCode() < 200 || response.getStatusCode() >= 300)
 	{
@@ -108,7 +102,7 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 		log::error << L"HTTP error, " << response.getStatusCode() << L", " << response.getStatusMessage() << Endl;
 		return ErFailed;
 	}
-	
+
 	// Reset offset in stream to origin.
 	stream->seek(IStream::SeekSet, 0);
 

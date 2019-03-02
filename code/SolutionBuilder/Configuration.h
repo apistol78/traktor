@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef Configuration_H
-#define Configuration_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -182,4 +175,3 @@ private:
 	}
 }
 
-#endif	// Configuration_H

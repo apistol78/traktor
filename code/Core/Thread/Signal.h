@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Signal_H
-#define traktor_Signal_H
+#pragma once
 
 #include "Core/Thread/IWaitable.h"
 
@@ -29,17 +22,16 @@ public:
 	Signal();
 
 	virtual ~Signal();
-	
+
 	void set();
 
 	void reset();
 
 	virtual bool wait(int32_t timeout = -1);
-	
+
 private:
 	void* m_handle;
 };
 
 }
 
-#endif	// traktor_Signal_H

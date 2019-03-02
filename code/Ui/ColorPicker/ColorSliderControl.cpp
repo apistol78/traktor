@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/MathUtils.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -60,7 +54,7 @@ void ColorSliderControl::updateGradient()
 {
 	const int32_t sliderWidth = dpi96(24);
 	const int32_t sliderHeight = dpi96(256);
-	
+
 	for (int y = 0; y < sliderHeight; ++y)
 	{
 		Color4ub color = m_gradient->get((y * 256) / sliderHeight);

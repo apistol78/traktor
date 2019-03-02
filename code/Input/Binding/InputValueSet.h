@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputValueSet_H
-#define traktor_input_InputValueSet_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
@@ -23,7 +16,7 @@ namespace traktor
 {
 	namespace input
 	{
-	
+
 /*! \brief
  * \ingroup Input
  */
@@ -33,14 +26,13 @@ class T_DLLCLASS InputValueSet : public Object
 
 public:
 	void set(handle_t valueId, float value);
-	
+
 	float get(handle_t valueId) const;
-	
+
 private:
 	SmallMap< handle_t, float > m_valueMap;
 };
-	
+
 	}
 }
 
-#endif	// traktor_input_InputValueSet_H

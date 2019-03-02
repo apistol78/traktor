@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializer.h"
@@ -49,7 +43,7 @@ Ref< IMesh > StaticMeshResource::createMesh(
 	}
 
 	Ref< StaticMesh > staticMesh = new StaticMesh();
-	
+
 	if (!resourceManager->bind(m_shader, staticMesh->m_shader))
 		return 0;
 
@@ -68,7 +62,7 @@ Ref< IMesh > StaticMeshResource::createMesh(
 			staticMesh->m_parts[worldTechnique].push_back(part);
 		}
 	}
-	
+
 #if defined(_DEBUG)
 	staticMesh->m_name = wstombs(name);
 #endif

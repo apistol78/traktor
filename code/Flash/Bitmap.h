@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_Bitmap_H
-#define traktor_flash_Bitmap_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
@@ -64,4 +57,3 @@ protected:
 	}
 }
 
-#endif	// traktor_flash_Bitmap_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_ConeTwistJoint_H
-#define traktor_physics_ConeTwistJoint_H
+#pragma once
 
 #include "Physics/Joint.h"
 #include "Core/Math/Vector4.h"
@@ -34,4 +27,3 @@ class T_DLLCLASS ConeTwistJoint : public Joint
 	}
 }
 
-#endif	// traktor_physics_ConeTwistJoint_H

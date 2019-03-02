@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <vector>
 #include "Core/Math/BspTree.h"
 #include "Core/Math/Const.h"
@@ -43,7 +37,7 @@ void buildWindings(const Model& model, const Transform& transform, AlignedVector
 	for (uint32_t i = 0; i < polygons.size(); ++i)
 	{
 		const Polygon& polygon = polygons[i];
-		
+
 		outWindings[i] = Winding3();
 		for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
 			outWindings[i].push(transform * model.getVertexPosition(polygon.getVertex(j)).xyz1());

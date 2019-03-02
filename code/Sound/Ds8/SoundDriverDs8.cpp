@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
@@ -236,7 +230,7 @@ void SoundDriverDs8::submit(const SoundBlock& soundBlock)
 	default:
 		T_FATAL_ERROR;
 		break;
-	}	
+	}
 
 	// Unlock frame.
 	hr = m_dsBuffer->Unlock(ptr[0], size[0], ptr[1], size[1]);

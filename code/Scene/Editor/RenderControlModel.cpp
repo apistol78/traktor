@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
@@ -279,7 +273,7 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 
 				modifier->cursorMoved(transformChain, screenPosition0, worldRayOrigin, worldRayDirection);
 				modifier->cursorMoved(transformChain, screenPosition, worldRayOrigin, worldRayDirection);
-				
+
 				if (!modifier->begin(transformChain, m_mouseButton))
 				{
 					m_modify = MtNothing;

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <time.h>
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
@@ -125,7 +119,7 @@ bool PerforceFileStore::remove(const Path& filePath)
 			// File has been opened for edit; revert in change list then open for delete.
 			if (!m_p4client->revertFile(m_p4changeList, localFile))
 				return false;
-			
+
 			return m_p4client->openForDelete(m_p4changeList, localFile);
 		}
 		else if (pa == AtDelete)

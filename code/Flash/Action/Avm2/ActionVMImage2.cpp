@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/RefArray.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/StringSplit.h"
@@ -424,7 +418,7 @@ void ActionVMImage2::execute(ActionFrame* frame) const
 			uint32_t index = decodeU30(pc);
 
 			const MultinameInfo& mn = m_abcFile.cpool.multinames[index];
-			
+
 
 		VM_END()
 

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <jni.h>
 #include <android_native_app_glue.h>
 #include <sys/types.h>
@@ -302,8 +296,8 @@ extern "C" void traktor_main(struct android_app* state)
 	AndroidApplication aa(state);
 
 	// Expose application's data paths in our environment.
-	setenv("INTERNAL_DATA_PATH", state->activity->internalDataPath, 1); 
-	setenv("EXTERNAL_DATA_PATH", state->activity->externalDataPath, 1); 
+	setenv("INTERNAL_DATA_PATH", state->activity->internalDataPath, 1);
+	setenv("EXTERNAL_DATA_PATH", state->activity->externalDataPath, 1);
 
 #if defined(_DEBUG)
 	log::info << L"Using following data paths," << Endl;

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_model_Grid3_H
-#define traktor_model_Grid3_H
+#pragma once
 
 #include <map>
 #include "Core/Containers/AlignedVector.h"
@@ -208,4 +201,3 @@ private:
 	}
 }
 
-#endif	// traktor_model_Grid3_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_IEntityEventData_H
-#define traktor_world_IEntityEventData_H
+#pragma once
 
 #include "Core/Serialization/ISerializable.h"
 
@@ -33,4 +26,3 @@ class T_DLLCLASS IEntityEventData : public ISerializable
 	}
 }
 
-#endif	// traktor_world_IEntityEventData_H

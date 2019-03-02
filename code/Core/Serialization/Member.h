@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Member_H
-#define traktor_Member_H
+#pragma once
 
 #include <limits>
 #include <string>
@@ -49,7 +42,7 @@ public:
 	}
 
 	virtual ~Member() {}
-	
+
 	/*! \brief Get member name.
 	 *
 	 * \return Member name.
@@ -63,31 +56,31 @@ public:
 	 * \return Member attributes.
 	 */
 	const Attribute* getAttributes() const { return m_attributes; }
-	
+
 	/*! \brief Get member reference.
 	 *
 	 * \return Member reference.
 	 */
 	operator value_type& () const { return m_ref; }
-	
+
 	/*! \brief Dereference member.
 	 *
 	 * \return Member reference.
 	 */
 	value_type& operator * () const { return m_ref; }
-	
+
 	/*! \brief Dereference member.
 	 *
 	 * \return Member pointer.
 	 */
 	value_type* operator -> () const { return &m_ref; }
-	
+
 	/*! \brief Assign value to member.
 	 *
 	 * \param value New member value.
 	 */
 	void operator = (const value_type& value) const { m_ref = value; }
-	
+
 private:
 	const wchar_t* const m_name;
 	value_type& m_ref;
@@ -122,7 +115,7 @@ public:
 	}
 
 	virtual ~Member() {}
-	
+
 	/*! \brief Get member name.
 	 *
 	 * \return Member name.
@@ -136,31 +129,31 @@ public:
 	 * \return Member attributes.
 	 */
 	virtual const Attribute* getAttributes() const { return m_attributes; }
-	
+
 	/*! \brief Get member reference.
 	 *
 	 * \return Member reference.
 	 */
 	operator value_type& () const { return m_ref; }
-	
+
 	/*! \brief Dereference member.
 	 *
 	 * \return Member reference.
 	 */
 	value_type& operator * () const { return m_ref; }
-	
+
 	///*! \brief Dereference member.
 	// *
 	// * \return Member pointer.
 	// */
 	//value_type* operator -> () const { return &m_ref; }
-	
+
 	/*! \brief Assign value to member.
 	 *
 	 * \param value New member value.
 	 */
 	void operator = (const value_type& value) const { m_ref = value; }
-	
+
 private:
 	const wchar_t* const m_name;
 	value_type& m_ref;
@@ -183,7 +176,7 @@ public:
 	,	m_blobSize(blobSize)
 	{
 	}
-	
+
 	/*! \brief Get member name.
 	 *
 	 * \return Member name.
@@ -218,4 +211,3 @@ private:
 
 }
 
-#endif	// traktor_Member_H

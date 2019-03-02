@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_Utilities_H
-#define traktor_render_Utilities_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Render/Types.h"
@@ -56,4 +49,3 @@ bool findDxgiDisplayMode(IDXGIOutput* dxgiOutput, const DisplayMode& dm, DXGI_MO
 	}
 }
 
-#endif	// traktor_render_Utilities_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_GroupEntityData_H
-#define traktor_world_GroupEntityData_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "World/EntityData.h"
@@ -44,14 +37,13 @@ public:
 	const RefArray< EntityData >& getEntityData() const;
 
 	virtual void setTransform(const Transform& transform) override;
-	
+
 	virtual void serialize(ISerializer& s) override;
-	
+
 private:
 	RefArray< EntityData > m_entityData;
 };
-	
+
 	}
 }
 
-#endif	// traktor_world_GroupEntityData_H

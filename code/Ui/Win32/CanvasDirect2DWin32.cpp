@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #if defined(T_USE_DIRECT2D)
 
 #include <limits>
@@ -207,7 +201,7 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, 
 
 	UINT32 findex;
 	BOOL exists;
-	collection->FindFamilyName(lf.lfFaceName, &findex, &exists); 
+	collection->FindFamilyName(lf.lfFaceName, &findex, &exists);
 	T_FATAL_ASSERT(exists);
 
 	ComRef< IDWriteFontFamily > ffamily;
@@ -384,7 +378,7 @@ void CanvasDirect2DWin32::setFont(const Font& font)
 
 		UINT32 findex;
 		BOOL exists;
-		collection->FindFamilyName(font.getFace().c_str(), &findex, &exists); 
+		collection->FindFamilyName(font.getFace().c_str(), &findex, &exists);
 
 		if (exists)
 		{

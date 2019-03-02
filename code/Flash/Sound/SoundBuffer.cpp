@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Misc/Align.h"
 #include "Core/Misc/AutoPtr.h"
@@ -72,7 +66,7 @@ bool SoundBuffer::getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoun
 	samplesCount = std::min< uint32_t >(samplesCount, outBlock.samplesCount);
 	samplesCount = alignDown(samplesCount, 4);
 	samplesCount = std::min< uint32_t >(samplesCount, 4096);
-	
+
 	if (samplesCount == 0)
 		return false;
 

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_SafeDestroy_H
-#define traktor_SafeDestroy_H
+#pragma once
 
 namespace traktor
 {
@@ -42,4 +35,3 @@ void safeClose(T& tv)
 
 }
 
-#endif	// traktor_SafeDestroy_H

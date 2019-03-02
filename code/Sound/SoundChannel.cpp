@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include <cstring>
 #include "Core/Log/Log.h"
@@ -252,10 +246,10 @@ bool SoundChannel::getBlock(
 						ss.buffer = 0;
 						ss.cursor = 0;
 						m_playing = false;
-						return false;						
+						return false;
 					}
 				}
-	
+
 				if (!soundBuffer->getBlock(ss.cursor, mixer, soundBlock))
 				{
 					ss.buffer = 0;
@@ -301,7 +295,7 @@ bool SoundChannel::getBlock(
 			for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
 			{
 				const float* inputSamples = soundBlock.samples[i];
-				
+
 				float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
 				T_ASSERT (alignUp(outputSamples, 16) == outputSamples);
 				T_ASSERT (m_outputSamplesIn + outputSamplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);

@@ -57,7 +57,7 @@ public:
 	float area() const;
 
 	Vector4 center() const;
-	
+
 	bool rayIntersection(
 		const Vector4& origin,
 		const Vector4& direction,

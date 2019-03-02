@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <limits>
 #include "Core/Log/Log.h"
@@ -56,7 +50,7 @@ struct VoiceCallback : public IXAudio2VoiceCallback
 	virtual void STDMETHODCALLTYPE OnStreamEnd() {}
 	virtual void STDMETHODCALLTYPE OnBufferStart(void*) {}
 	virtual void STDMETHODCALLTYPE OnBufferEnd( void*) { m_hResult = S_OK; SetEvent(m_hEvent); }
-	virtual void STDMETHODCALLTYPE OnLoopEnd(void*) {}   
+	virtual void STDMETHODCALLTYPE OnLoopEnd(void*) {}
 	virtual void STDMETHODCALLTYPE OnVoiceError(void*, HRESULT hResult) { m_hResult = hResult; SetEvent(m_hEvent); }
 };
 

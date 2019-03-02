@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <cstring>
 #include <sstream>
@@ -155,7 +149,7 @@ void MemCachedPutStream::uploadEndBlock()
 	std::stringstream ss;
 	std::string command;
 	std::string reply;
-	
+
 	ss << "set " << m_key << ":END 0 0 1";
 
 	command = ss.str();
@@ -166,7 +160,7 @@ void MemCachedPutStream::uploadEndBlock()
 		log::error << L"Unable to store cache block; unable to send command" << Endl;
 		return;
 	}
-	
+
 	uint8_t endData = 0xfe;
 	if (!m_proto->writeData(&endData, 1))
 	{

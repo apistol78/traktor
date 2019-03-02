@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/String.h"
 #include "Input/Binding/InPulse.h"
 #include "Input/Editor/InPulseTraits.h"
@@ -21,7 +15,7 @@ std::wstring InPulseTraits::getHeader(const IInputNode* node) const
 std::wstring InPulseTraits::getDescription(const IInputNode* node) const
 {
 	const InPulse* inPulse = checked_type_cast< const InPulse*, false >(node);
-	return 
+	return
 		L"Delay " + toString(inPulse->m_delay) + L"\n" +
 		L"Interval " + toString(inPulse->m_interval);
 }

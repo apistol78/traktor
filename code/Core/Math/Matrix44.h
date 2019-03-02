@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Matrix44_H
-#define traktor_Matrix44_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Math/MathConfig.h"
@@ -169,4 +162,3 @@ T_MATH_INLINE T_DLLCLASS Matrix44 lookAt(const Vector4& position, const Vector4&
 #include "Core/Math/Std/Matrix44.inl"
 #endif
 
-#endif	// traktor_Matrix44_H

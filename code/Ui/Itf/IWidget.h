@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_IWidget_H
-#define traktor_ui_IWidget_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -88,7 +81,7 @@ public:
 	virtual const IFontMetric* getFontMetric() const = 0;
 
 	virtual void setCursor(Cursor cursor) = 0;
-	
+
 	virtual Point getMousePosition(bool relative) const = 0;
 
 	virtual Point screenToClient(const Point& pt) const = 0;
@@ -115,4 +108,3 @@ public:
 	}
 }
 
-#endif	// traktor_ui_IWidget_H

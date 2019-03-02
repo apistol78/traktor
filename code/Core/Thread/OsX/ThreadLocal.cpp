@@ -1,16 +1,10 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <pthread.h>
 #include "Core/Platform.h"
 #include "Core/Thread/ThreadLocal.h"
 
 namespace traktor
 {
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ThreadLocal", ThreadLocal, Object)
 
 ThreadLocal::ThreadLocal()

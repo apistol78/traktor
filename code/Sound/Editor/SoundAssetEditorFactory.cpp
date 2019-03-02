@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundAssetEditor.h"
 #include "Sound/Editor/SoundAssetEditorFactory.h"

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <stack>
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
@@ -64,7 +58,7 @@ struct SortRowPredicateNumerical
 	{
 		const GridItem* item1 = row1->get(columnIndex);
 		const GridItem* item2 = row2->get(columnIndex);
-		
+
 		float num1 = parseString< float >(item1->getText());
 		float num2 = parseString< float >(item2->getText());
 

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sound_StaticSoundResource_H
-#define traktor_sound_StaticSoundResource_H
+#pragma once
 
 #include <string>
 #include "Sound/ISoundResource.h"
@@ -36,7 +29,7 @@ public:
 	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
-	
+
 private:
 	friend class SoundPipeline;
 
@@ -54,4 +47,3 @@ private:
 	}
 }
 
-#endif	// traktor_sound_StaticSoundResource_H

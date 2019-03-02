@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Drawing/Image.h"
@@ -68,7 +62,7 @@ MovieFactory::MovieFactory(bool includeAS)
 	m_tagReaders[TiImportAssets2] = new TagImportAssets(2);
 	m_tagReaders[TiSymbolClass] = new TagSymbolClass();
 	m_tagReaders[TiMetadata] = new TagMetaData();
-	
+
 	if (m_includeAS)
 		m_tagReaders[TiInitAction] = new TagInitAction();
 
@@ -77,7 +71,7 @@ MovieFactory::MovieFactory(bool includeAS)
 	m_tagReaders[TiEnableDebugger] = new TagProtect(2);
 	m_tagReaders[TiEnableDebugger2] = new TagProtect(3);
 	m_tagReaders[TiFrameLabel] = new TagFrameLabel();
-	
+
 	if (m_includeAS)
 		m_tagReaders[TiDoABC] = new TagDoABC();
 
@@ -188,7 +182,7 @@ Ref< Movie > MovieFactory::createMovieFromImage(const drawing::Image* image) con
 {
 	// Create a single frame and place shape.
 	Ref< Frame > frame = new Frame();
-			
+
 	Frame::PlaceObject p;
 	p.hasFlags = Frame::PfHasCharacterId;
 	p.depth = 0;

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sstream>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -25,7 +19,7 @@ namespace traktor
 {
 	namespace
 	{
-	
+
 DateTime fromUnixTime(const time_t& t)
 {
 	struct tm* tmp = ::localtime(&t);
@@ -40,7 +34,7 @@ DateTime fromUnixTime(const time_t& t)
 		tmp->tm_sec
 	);
 }
-	
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeVolume", NativeVolume, IVolume)
@@ -60,7 +54,7 @@ Ref< File > NativeVolume::get(const Path& path)
 	struct stat sb;
 	if (stat(wstombs(getSystemPath(path)).c_str(), &sb) != 0)
 		return 0;
-		
+
 	uint32_t flags = 0;
 	if (sb.st_mode & S_IFREG)
 		flags |= File::FfNormal;
@@ -89,7 +83,7 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 
 	if (fileMask == L"*.*")
 		fileMask = L"*";
-		
+
 	WildCompare maskCompare(fileMask);
 
 	DIR* dirp = opendir(systemPath.empty() ? "." : wstombs(systemPath).c_str());
@@ -98,17 +92,17 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 		log::warning << L"Unable to open directory \"" << systemPath << L"\"" << Endl;
 		return 0;
 	}
-	
+
 	if (!maskPath.empty())
 		maskPath += L"/";
-		
+
 	while ((dp = readdir(dirp)) != 0)
 	{
 		if (maskCompare.match(mbstows(dp->d_name)))
 		{
 			int flags = 0;
 			int size = 0;
-			
+
 			if (dp->d_type == DT_DIR)
 			{
 				flags = File::FfDirectory;
@@ -117,7 +111,7 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 			{
 				flags = File::FfNormal;
 			}
-			
+
 			out.push_back(new File(
 				maskPath + mbstows(dp->d_name),
 				size,
@@ -126,7 +120,7 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 		}
 	}
 	closedir(dirp);
-	
+
 	return int(out.size());
 }
 
@@ -211,13 +205,13 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 	{
 		char buffer[4096];
 		[directoryPath getCString: buffer maxLength: sizeof_array(buffer) encoding: NSUTF8StringEncoding];
-	
+
 		std::wstring workingDirectory = std::wstring(L"C:") + mbstows(buffer);
 
 		Ref< IVolume > volume = new NativeVolume(workingDirectory);
 		fileSystem.mount(L"C", volume);
 		fileSystem.setCurrentVolume(volume);
-	
+
 		[directoryPath release];
 	}
 	else
@@ -237,7 +231,7 @@ std::wstring NativeVolume::getSystemPath(const Path& path) const
 	{
 		ss << path.getPathNameNoVolume();
 	}
-	
+
 	return ss.str();
 }
 

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef CustomTool_H
-#define CustomTool_H
+#pragma once
 
 #include <Core/Object.h>
 
@@ -22,4 +15,3 @@ class CustomTool : public Object
 	}
 }
 
-#endif	// CustomTool_H

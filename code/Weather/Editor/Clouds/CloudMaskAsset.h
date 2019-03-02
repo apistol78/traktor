@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_weather_CloudMaskAsset_H
-#define traktor_weather_CloudMaskAsset_H
+#pragma once
 
 #include "Editor/Asset.h"
 
@@ -30,4 +23,3 @@ class T_DLLCLASS CloudMaskAsset : public editor::Asset
 	}
 }
 
-#endif	// traktor_weather_CloudMaskAsset_H

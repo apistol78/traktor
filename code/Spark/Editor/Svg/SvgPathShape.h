@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_SvgPathShape_H
-#define traktor_spark_SvgPathShape_H
+#pragma once
 
 #include "Spark/Path.h"
 #include "Spark/Editor/Svg/SvgShape.h"
@@ -34,4 +27,3 @@ private:
 	}
 }
 
-#endif	// traktor_spark_SvgPathShape_H

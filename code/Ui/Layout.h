@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Layout_H
-#define traktor_ui_Layout_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Ui/Size.h"
@@ -22,9 +15,9 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 class Widget;
-	
+
 /*! \brief Layout base class.
  * \ingroup UI
  */
@@ -43,8 +36,7 @@ public:
 	 */
 	virtual void update(Widget* widget) = 0;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_Layout_H

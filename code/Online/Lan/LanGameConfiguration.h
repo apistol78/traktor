@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_online_LanGameConfiguration_H
-#define traktor_online_LanGameConfiguration_H
+#pragma once
 
 #include <list>
 #include "Online/IGameConfiguration.h"
@@ -28,4 +21,3 @@ public:
 	}
 }
 
-#endif	// traktor_online_LanGameConfiguration_H

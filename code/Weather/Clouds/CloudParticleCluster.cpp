@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Weather/Clouds/CloudParticleCluster.h"
 #include "Weather/Clouds/CloudParticleData.h"
 #include "Core/Math/Const.h"
@@ -42,7 +36,7 @@ float interpolateNoise(float x, float y)
 {
 	int ix = int(x);
 	float fx = x - ix;
-	
+
 	int iy = int(y);
 	float fy = y - iy;
 

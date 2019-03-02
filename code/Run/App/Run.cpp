@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/StringOutputStream.h"
@@ -107,7 +101,7 @@ int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutput
 		else
 			nullOutput = true;
 	}
-	
+
 	StringOutputStream stdOut;
 	StringOutputStream stdErr;
 	std::wstring str;

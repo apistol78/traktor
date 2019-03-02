@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Io/StreamStream.h"
 
@@ -61,7 +55,7 @@ int64_t StreamStream::available() const
 int64_t StreamStream::seek(SeekOriginType origin, int64_t offset)
 {
 	T_ASSERT (m_stream);
-	
+
 	int64_t result = 0;
 	switch (origin)
 	{

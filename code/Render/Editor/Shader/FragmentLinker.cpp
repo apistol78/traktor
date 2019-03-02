@@ -168,7 +168,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 			if (const OutputPort* outputPort = dynamic_type_cast< const OutputPort* >(edge->getDestination()->getNode()))
 			{
 				const OutputPin* externalOutputPin = findExternalOutputPin(externalNode, outputPort);
-				
+
 				std::vector< const InputPin* > externalDestinationPins;
 				mutableShaderGraph->findDestinationPins(externalOutputPin, externalDestinationPins);
 
@@ -210,7 +210,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 	{
 		const OutputPin* sourcePin = mutableShaderGraph->findSourcePin(connector->getInputPin(0));
 
-		std::vector< const InputPin* > destinationPins;		
+		std::vector< const InputPin* > destinationPins;
 		mutableShaderGraph->findDestinationPins(connector->getOutputPin(0), destinationPins);
 
 		mutableShaderGraph->detach(connector);

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputNodeTraits_H
-#define traktor_input_InputNodeTraits_H
+#pragma once
 
 #include <map>
 #include <string>
@@ -37,4 +30,3 @@ public:
 	}
 }
 
-#endif	// traktor_input_InputNodeTraits_H

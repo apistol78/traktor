@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Aabb3_H
-#define traktor_Aabb3_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Math/MathConfig.h"
@@ -34,9 +27,9 @@ public:
 	Vector4 mx;
 
 	Aabb3();
-	
+
 	Aabb3(const Aabb3& aabb);
-	
+
 	explicit Aabb3(const Vector4& mn_, const Vector4& mx_);
 
 	/*! \brief Get bounding box corners.
@@ -153,7 +146,7 @@ public:
 	{
 		return inside(aabb.mn) || inside(aabb.mx) || aabb.inside(mn) || aabb.inside(mx);
 	}
-	
+
 	/*! \brief Scale bounding box along extent vector. */
 	T_MATH_INLINE Aabb3 scale(const Scalar& factor) const
 	{
@@ -163,7 +156,7 @@ public:
 		Vector4 bbmx = center + extent;
 		return Aabb3(bbmn, bbmx);
 	}
-	
+
 	/*! \brief Expand bounding box. */
 	T_MATH_INLINE Aabb3 expand(const Scalar& margin) const
 	{
@@ -173,7 +166,7 @@ public:
 		Vector4 bbmx = center + extent;
 		return Aabb3(bbmn, bbmx);
 	}
-	
+
 	/*! \brief Query intersection with sphere. */
 	T_MATH_INLINE bool queryIntersectionSphere(const Vector4& center, const Scalar& radius) const
 	{
@@ -204,4 +197,3 @@ public:
 
 }
 
-#endif	// traktor_Aabb3_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_UtilitiesX11_H
-#define traktor_ui_UtilitiesX11_H
+#pragma once
 
 #include <X11/Xlib.h>
 #include "Core/Config.h"
@@ -28,4 +21,3 @@ VirtualKey translateToVirtualKey(const KeySym* keySym, int nkeySyms);
 	}
 }
 
-#endif	// traktor_ui_UtilitiesX11_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <numeric>
 #include <functional>
@@ -23,10 +17,10 @@ namespace
 void parseDefinition(const std::wstring& def, std::vector< int >& out)
 {
 	std::vector< std::wstring > tmp;
-	
+
 	if (!Split< std::wstring >::any(def, L",;", tmp))
 		return;
-	
+
 	for (std::vector< std::wstring >::iterator i = tmp.begin(); i != tmp.end(); ++i)
 	{
 		std::wstring str = *i;
@@ -75,7 +69,7 @@ void calculate(
 			w[c] = cdef[c];
 		}
 	}
-	
+
 	// Calculate occupied width by either child prefered size or absolute size.
 	int wt = 0;
 	int wrt = 0;
@@ -86,7 +80,7 @@ void calculate(
 		else
 			wrt += -w[c];
 	}
-	
+
 	// Fix relative widths.
 	wt = std::max(avail.cx - wt, 0);
 	for (int c = 0; c < nc; ++c)
@@ -94,7 +88,7 @@ void calculate(
 		if (w[c] < 0)
 			w[c] = (wt * -w[c]) / wrt;
 	}
-	
+
 	h.resize(nr);
 	for (int r = 0; r < nr; ++r)
 	{
@@ -115,7 +109,7 @@ void calculate(
 			h[r] = rdef[r % rdef.size()];
 		}
 	}
-	
+
 	// Calculate occupied height by either child prefered size or absolute size.
 	int ht = 0;
 	int hrt = 0;
@@ -126,7 +120,7 @@ void calculate(
 		else
 			hrt += -h[r];
 	}
-	
+
 	// Fix relative heights.
 	ht = std::max(avail.cy - ht, 0);
 	for (int r = 0; r < nr; ++r)
@@ -151,7 +145,7 @@ TableLayout::TableLayout(const std::wstring& cdef, const std::wstring& rdef, int
 bool TableLayout::fit(Widget* widget, const Size& bounds, Size& result)
 {
 	Rect inner = widget->getInnerRect();
-	
+
 	result = Size(0, 0);
 
 	std::vector< Widget* > children;
@@ -165,7 +159,7 @@ bool TableLayout::fit(Widget* widget, const Size& bounds, Size& result)
 
 	int nc = int(m_cdef.size());
 	int nr = int((children.size() + nc - 1) / std::max(nc, 1));
-	
+
 	std::vector< int > w;
 	std::vector< int > h;
 	calculate(bounds, m_cdef, m_rdef, children, w, h);
@@ -175,7 +169,7 @@ bool TableLayout::fit(Widget* widget, const Size& bounds, Size& result)
 	{
 		int32_t c = i % std::max(nc, 1);
 		int32_t r = i / std::max(nc, 1);
-		
+
 		Size pf = children[i]->getPreferedSize();
 		Size sz(
 			std::min< int32_t >(w[c], pf.cx),
@@ -230,15 +224,15 @@ void TableLayout::update(Widget* widget)
 	{
 		int32_t c = i % std::max(nc, 1);
 		int32_t r = i / std::max(nc, 1);
-		
+
 		Size pf = children[i]->getPreferedSize();
 		Size mx = children[i]->getMaximumSize();
-		
+
 		Size sz(
 			std::min< int32_t >(w[c], mx.cx),
 			std::min< int32_t >(h[r], mx.cy)
 		);
-		
+
 		Point ctl = tl;
 
 		switch (children[i]->getHorizontalAlign())
@@ -271,7 +265,7 @@ void TableLayout::update(Widget* widget)
 
 		rects[i].widget = children[i];
 		rects[i].rect = Rect(ctl, sz);
-		
+
 		if (c < nc - 1)
 		{
 			tl.x += w[c] + m_pad.cx;

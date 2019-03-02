@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -22,7 +16,7 @@ struct InBooleanInstance : public RefCountImpl< IInputNode::Instance >
 {
 	RefArray< IInputNode::Instance > sourceInstance;
 };
-		
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InBoolean", 0, InBoolean, IInputNode)
@@ -60,12 +54,12 @@ float InBoolean::evaluate(
 ) const
 {
 	InBooleanInstance* ibi = static_cast< InBooleanInstance* >(instance);
-	
+
 	bool result = false;
 	for (uint32_t i = 0; i < uint32_t(m_source.size()); ++i)
 	{
 		bool value = asBoolean(m_source[i]->evaluate(ibi->sourceInstance[i], valueSet, T, dT));
-	
+
 		switch (m_op)
 		{
 		case OpNot:
@@ -75,17 +69,17 @@ float InBoolean::evaluate(
 		case OpAnd:
 			result &= value;
 			break;
-			
+
 		case OpOr:
 			result |= value;
 			break;
-			
+
 		case OpXor:
 			result ^= value;
 			break;
 		}
 	}
-	
+
 	return asFloat(result);
 }
 
@@ -99,10 +93,10 @@ void InBoolean::serialize(ISerializer& s)
 		{ L"OpXor", OpXor },
 		{ 0 }
 	};
-	
+
 	s >> MemberRefArray< IInputNode >(L"source", m_source);
 	s >> MemberEnum< Operator >(L"op", m_op, c_Operator_Keys);
 }
-	
+
 	}
 }

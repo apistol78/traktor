@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include "Core/Math/Vector4.h"
 
@@ -23,11 +17,11 @@ float32x4_t v_vec_div(float32x4_t divend, float32x4_t denom)
 
 	float32x4_t idenom = vrecpeq_f32(denom);
 	float32x4_t res0 = vmulq_f32(divend, idenom);
-	
+
 	float32x4_t t0 = vmulq_f32(denom, idenom);
 	float32x4_t t1 = vsubq_f32(t0, one);
 	float32x4_t t2 = vnegq_f32(t1);
-	
+
 	// r0 + r0 * t2
 	return vmlaq_f32(
 		res0,
@@ -146,7 +140,7 @@ T_MATH_INLINE Scalar Vector4::w() const
 T_MATH_INLINE Vector4 Vector4::xyz0() const
 {
 	static const Vector4 c_mask(1.0f, 1.0f, 1.0f, 0.0f);
-	return *this * c_mask; 
+	return *this * c_mask;
 }
 
 T_MATH_INLINE Vector4 Vector4::xyz1() const
@@ -299,7 +293,7 @@ T_MATH_INLINE bool Vector4::operator == (const Vector4& v) const
 		compare(le[1], re[1]) &&
 		compare(le[2], re[2]) &&
 		compare(le[3], re[3])
-	);	
+	);
 }
 
 T_MATH_INLINE bool Vector4::operator != (const Vector4& v) const
@@ -315,7 +309,7 @@ T_MATH_INLINE bool Vector4::operator != (const Vector4& v) const
 		!compare(le[1], re[1]) ||
 		!compare(le[2], re[2]) ||
 		!compare(le[3], re[3])
-	);	
+	);
 }
 
 T_MATH_INLINE Scalar Vector4::operator [] (int index) const

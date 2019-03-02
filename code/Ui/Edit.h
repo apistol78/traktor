@@ -33,7 +33,7 @@ public:
 	Edit();
 
 	bool create(Widget* parent, const std::wstring& text = L"", int style = WsNone, const EditValidator* validator = 0);
-	
+
 	bool setValidator(const EditValidator* validator);
 
 	const EditValidator* getValidator() const;

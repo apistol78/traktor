@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Render/Vulkan/Win32/ApiLoader.h"
 
@@ -13,7 +7,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 HMODULE s_hVulkanModule = 0;
 
 		}

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_resource_IResourceFactory_H
-#define traktor_resource_IResourceFactory_H
+#pragma once
 
 #include "Core/Guid.h"
 #include "Core/Object.h"
@@ -47,7 +40,7 @@ class IResourceManager;
 class T_DLLCLASS IResourceFactory : public Object
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	/*! \brief Get resource types.
 	 *
@@ -94,8 +87,7 @@ public:
 	 */
 	virtual Ref< Object > create(IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const = 0;
 };
-	
+
 	}
 }
 
-#endif	// traktor_resource_IResourceFactory_H

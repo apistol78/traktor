@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_MovieDebugInfo_H
-#define traktor_flash_MovieDebugInfo_H
+#pragma once
 
 #include "Core/Serialization/ISerializable.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace flash
 	{
-	
+
 class T_DLLCLASS MovieDebugInfo : public ISerializable
 {
 	T_RTTI_CLASS;
@@ -38,8 +31,7 @@ public:
 private:
 	std::wstring m_name;
 };
-	
+
 	}
 }
 
-#endif	// traktor_flash_MovieDebugInfo_H

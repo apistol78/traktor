@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_FlashCast_H
-#define traktor_flash_FlashCast_H
+#pragma once
 
 #include "Core/Class/CastAny.h"
 #include "Core/Class/IRuntimeDelegate.h"
@@ -42,7 +35,7 @@ ActionValue T_DLLCLASS castAnyToAction(const Any& value);
 template < >
 struct CastAny < flash::ActionValue, false >
 {
-	static OutputStream& typeName(OutputStream& ss) 
+	static OutputStream& typeName(OutputStream& ss)
 	{
 		return ss << L"flash::ActionValue";
 	}
@@ -92,4 +85,3 @@ struct CastAny < const flash::ActionValue&, false >
 
 }
 
-#endif	// traktor_flash_FlashCast_H

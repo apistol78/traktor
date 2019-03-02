@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_TypesOpenGLES2_H
-#define traktor_render_TypesOpenGLES2_H
+#pragma once
 
 #include "Render/Types.h"
 #include "Render/OpenGL/ES2/Platform.h"
@@ -149,4 +142,3 @@ public:
 	}
 }
 
-#endif	// traktor_render_TypesOpenGLES2_H

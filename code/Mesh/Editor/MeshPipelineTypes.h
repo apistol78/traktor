@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_MeshPipelineTypes_H
-#define traktor_mesh_MeshPipelineTypes_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -24,4 +17,3 @@ struct MeshMaterialTechnique
 	}
 }
 
-#endif	// traktor_mesh_MeshPipelineTypes_H

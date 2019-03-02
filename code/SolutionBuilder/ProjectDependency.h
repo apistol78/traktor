@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef ProjectDependency_H
-#define ProjectDependency_H
+#pragma once
 
 #include "SolutionBuilder/Dependency.h"
 
@@ -50,4 +43,3 @@ private:
 	}
 }
 
-#endif	// ProjectDependency_H

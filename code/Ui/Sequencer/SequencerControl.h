@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_SequencerControl_H
-#define traktor_ui_SequencerControl_H
+#pragma once
 
 #include <list>
 #include "Ui/Widget.h"
@@ -100,7 +93,7 @@ private:
 	Point m_startPosition;
 	int32_t m_moveTrack;
 	int32_t m_dropIndex;
-	
+
 	void updateScrollBars();
 
 	void eventSize(SizeEvent* event);
@@ -121,4 +114,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_SequencerControl_H

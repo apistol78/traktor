@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_animation_ClothEntity_H
-#define traktor_animation_ClothEntity_H
+#pragma once
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector2.h"
@@ -119,4 +112,3 @@ private:
 	}
 }
 
-#endif	// traktor_animation_ClothEntity_H

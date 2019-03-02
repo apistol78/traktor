@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_IVRCompositor_H
-#define traktor_render_IVRCompositor_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Math/Frustum.h"
@@ -43,7 +36,7 @@ class IRenderView;
 class T_DLLCLASS IVRCompositor : public Object
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	/*! \brief Create VR compositor.
 	 *
@@ -118,10 +111,9 @@ public:
 	 * \param renderView Render view implementation.
 	 * \return True if rendering should be performed.
 	 */
-	virtual bool presentCompositeOutput(IRenderView* renderView) = 0;	
+	virtual bool presentCompositeOutput(IRenderView* renderView) = 0;
 };
 
 	}
 }
 
-#endif	// traktor_render_IVRCompositor_H

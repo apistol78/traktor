@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -24,7 +18,7 @@ struct InCombineInstance : public RefCountImpl< IInputNode::Instance >
 {
 	RefArray< IInputNode::Instance > sourceInstances;
 };
-		
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InCombine", 1, InCombine, IInputNode)
@@ -51,7 +45,7 @@ float InCombine::evaluate(
 {
 	InCombineInstance* ici = static_cast< InCombineInstance* >(instance);
 	float result = 0.0f;
-	
+
 	for (uint32_t i = 0; i < m_entries.size(); ++i)
 	{
 		float value = m_entries[i].source->evaluate(ici->sourceInstances[i], valueSet, T, dT);
@@ -81,14 +75,14 @@ float InCombine::evaluate(
 		else
 			result = scaled;
 	}
-	
+
 	return result;
 }
 
 void InCombine::serialize(ISerializer& s)
 {
 	s >> MemberStlVector< Entry, MemberComposite< Entry > >(L"entries", m_entries);
-	
+
 	if (s.getVersion() >= 1)
 	{
 		const MemberEnum< CombineOperator >::Key c_CombineOperator_Keys[] =
@@ -109,6 +103,6 @@ void InCombine::Entry::serialize(ISerializer& s)
 	s >> Member< float >(L"mul", mul);
 	s >> Member< float >(L"add", add);
 }
-	
+
 	}
 }

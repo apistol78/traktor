@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_TcbSpline_H
-#define traktor_TcbSpline_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Math/Const.h"
@@ -39,7 +32,7 @@ public:
 
 		m_accessor.get(
 			T,
-			t, 
+			t,
 			c,
 			b,
 			v0,
@@ -95,4 +88,3 @@ private:
 
 }
 
-#endif	// traktor_TcbSpline_H

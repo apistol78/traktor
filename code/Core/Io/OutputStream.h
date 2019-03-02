@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_OutputStream_H
-#define traktor_OutputStream_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -100,7 +93,7 @@ public:
 	int32_t getDecimals() const;
 
 	void setDecimals(int32_t decimals);
-	
+
 	bool isEol(wchar_t ch) const;
 
 private:
@@ -162,4 +155,3 @@ T_DLLCLASS OutputStream& FormatHex(OutputStream& s, uint64_t number, uint8_t nib
 
 }
 
-#endif	// traktor_OutputStream_H

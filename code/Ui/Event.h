@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Event_H
-#define traktor_ui_Event_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -38,7 +31,7 @@ class EventSubject;
 class T_DLLCLASS Event : public Object
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	Event(EventSubject* sender);
 
@@ -47,9 +40,9 @@ public:
 	int getKeyState() const;
 
 	void consume();
-	
+
 	bool consumed() const;
-	
+
 private:
 	Ref< EventSubject > m_sender;
 	int m_keyState;
@@ -59,4 +52,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_Event_H

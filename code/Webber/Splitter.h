@@ -1,5 +1,4 @@
-#ifndef traktor_wbr_Splitter_H
-#define traktor_wbr_Splitter_H
+#pragma once
 
 #include "Webber/ILayout.h"
 
@@ -38,4 +37,3 @@ private:
 	}
 }
 
-#endif	// traktor_wbr_Splitter_H

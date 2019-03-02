@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_DecalComponentData_H
-#define traktor_world_DecalComponentData_H
+#pragma once
 
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
@@ -63,4 +56,3 @@ private:
 	}
 }
 
-#endif	// traktor_world_DecalComponentData_H

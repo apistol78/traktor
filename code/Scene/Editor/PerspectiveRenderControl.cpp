@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Vector2.h"
@@ -205,7 +199,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	T_ASSERT (settings);
 
 	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
-	
+
 	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
 	if (!worldRendererType)
 		return;

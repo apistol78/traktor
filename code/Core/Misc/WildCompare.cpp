@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/WildCompare.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
@@ -32,7 +26,7 @@ bool WildCompare::match(const std::wstring& str, CompareMode mode, std::vector< 
 		return m_beginWild;
 
 	std::wstring chk = (mode == CmIgnoreCase) ? toLower(str) : str;
-	
+
 	if (!m_beginWild)
 	{
 		size_t ln = m_nowild[0].length();
@@ -50,7 +44,7 @@ bool WildCompare::match(const std::wstring& str, CompareMode mode, std::vector< 
 		size_t f = (mode == CmIgnoreCase) ? chk.find(toLower(m_nowild[i]), p) : chk.find(m_nowild[i], p);
 		if (f == std::wstring::npos)
 			return false;
-			
+
 		if (outPieces)
 			outPieces->push_back(str.substr(p, f - p));
 
@@ -72,13 +66,13 @@ std::wstring WildCompare::merge(const std::vector< std::wstring >& pieces) const
 {
 	std::vector< std::wstring >::const_iterator i = pieces.begin();
 	std::wstring merged;
-	
+
 	if (m_beginWild && i != pieces.end())
 	{
 		merged += *i;
 		++i;
 	}
-	
+
 	for (std::vector< std::wstring >::const_iterator j = m_nowild.begin(); j != m_nowild.end(); ++j)
 	{
 		merged += *j;
@@ -88,10 +82,10 @@ std::wstring WildCompare::merge(const std::vector< std::wstring >& pieces) const
 			++i;
 		}
 	}
-		
+
 	if (m_endWild && i != pieces.end())
 		merged += *i;
-	
+
 	return merged;
 }
 

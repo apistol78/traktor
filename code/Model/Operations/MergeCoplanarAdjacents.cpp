@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <functional>
 #include "Core/Math/Const.h"
 #include "Core/Math/Winding3.h"
@@ -81,7 +75,7 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 
 				uint32_t sharedEdge = sharedEdges.front();
 				uint32_t sharedPolygon = adjacency.getPolygon(sharedEdge);
-				
+
 				// In case the source model contain internal edges or something
 				// gets broken during merging.
 				if (sharedPolygon == i)
@@ -179,7 +173,7 @@ bool MergeCoplanarAdjacents::apply(Model& model) const
 						if (sign == 3)
 							continue;
 					}
-					
+
 					// Set all vertices in left polygon and null out right polygon.
 					leftPolygon.setVertices(mergedVertices);
 					rightPolygon.setVertices(AlignedVector< uint32_t >());

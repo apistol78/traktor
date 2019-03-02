@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_run_StreamInput_H
-#define traktor_run_StreamInput_H
+#pragma once
 
 #include "Core/Io/StringReader.h"
 #include "Run/App/IInput.h"
@@ -39,4 +32,3 @@ private:
 	}
 }
 
-#endif	// traktor_run_StreamInput_H

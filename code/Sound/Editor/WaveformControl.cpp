@@ -68,7 +68,7 @@ void WaveformControl::render(int32_t width, int32_t height, float start)
 
 		AlignedVector< Span > spans;
 		spans.resize(width);
-	
+
 		float time = 0.0f;
 		bool going = true;
 		while (going)

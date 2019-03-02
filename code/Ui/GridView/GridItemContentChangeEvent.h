@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_GridItemContentChangeEvent_H
-#define traktor_ui_GridItemContentChangeEvent_H
+#pragma once
 
 #include "Ui/Events/ContentChangeEvent.h"
 
@@ -23,14 +16,14 @@ namespace traktor
 	{
 
 class GridItem;
-	
+
 /*! \brief
  * \ingroup UI
  */
 class T_DLLCLASS GridItemContentChangeEvent : public ContentChangeEvent
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	GridItemContentChangeEvent(EventSubject* sender, GridItem* item);
 
@@ -39,8 +32,7 @@ public:
 private:
 	Ref< GridItem > m_item;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_GridItemContentChangeEvent_H

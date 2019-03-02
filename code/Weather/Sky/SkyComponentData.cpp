@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
@@ -59,7 +53,7 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 
 	float* vertex = static_cast< float* >(vertexBuffer->lock());
 	T_ASSERT_M (vertex, L"Unable to lock vertex buffer");
-	
+
 	for (int i = 0; i < c_latitudes; ++i)
 	{
 		float phi = float(i) / (c_latitudes - 1);

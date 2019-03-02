@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_online_ILobby_H
-#define traktor_online_ILobby_H
+#pragma once
 
 #include <string>
 #include "Online/UserArrayResult.h"
@@ -60,4 +53,3 @@ public:
 	}
 }
 
-#endif	// traktor_online_ILobby_H

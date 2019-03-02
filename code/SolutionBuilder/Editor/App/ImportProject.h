@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef ImportProject_H
-#define ImportProject_H
+#pragma once
 
 #include "CustomTool.h"
 
@@ -27,4 +20,3 @@ public:
 	}
 }
 
-#endif	// ImportProject_H

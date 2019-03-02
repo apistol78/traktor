@@ -90,7 +90,7 @@ Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 		ss << inputPin->getName();
 
 		if (inputPin->isOptional())
-		{		
+		{
 			const auto& values = externalNode->getValues();
 			const auto it = values.find(inputPin->getName());
 			if (it != values.end())
@@ -106,7 +106,7 @@ Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 						ss << L" (" << it->getDefaultValue() << L")";
 				}
 				else
-					ss << L" (N/A)";	
+					ss << L" (N/A)";
 			}
 			else
 				ss << L" (N/A)";

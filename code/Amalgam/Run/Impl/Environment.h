@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_Environment_H
-#define traktor_amalgam_Environment_H
+#pragma once
 
 #include "Amalgam/Run/IEnvironment.h"
 #include "Core/Ref.h"
@@ -56,4 +49,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_Environment_H

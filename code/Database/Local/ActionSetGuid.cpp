@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Database/Local/ActionSetGuid.h"
@@ -32,7 +26,7 @@ bool ActionSetGuid::execute(Context* context)
 	Ref< IFileStore > fileStore = context->getFileStore();
 	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 	Ref< LocalInstanceMeta > instanceMeta;
-	
+
 	if (!m_create)
 	{
 		instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);

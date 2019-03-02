@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <Windows.h>
 #include <detours.h>
 #include "Core/Guid.h"
@@ -31,11 +25,11 @@ struct ShadowPayload
 #pragma pack()
 
 static BOOL CALLBACK ListFileCallback(PVOID pContext, LPCSTR pszOrigFile, LPCSTR pszFile, LPCSTR *ppszOutFile)
-{  
+{
 	std::set< std::wstring >& dlls = *(std::set< std::wstring >*)pContext;
 	dlls.insert(mbstows(pszFile));
-	return TRUE;   
-}   
+	return TRUE;
+}
 
 bool shadowCopy(const Path& sandboxPath, const Path& sourceFile)
 {

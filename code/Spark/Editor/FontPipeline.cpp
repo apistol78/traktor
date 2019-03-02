@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #define STB_RECT_PACK_IMPLEMENTATION
@@ -94,7 +88,7 @@ bool FontPipeline::buildOutput(
 	FT_Library library;
 	FT_Face face;
 	FT_Error error;
-	
+
 	error = FT_Init_FreeType(&library);
 	if (error)
 	{
@@ -249,7 +243,7 @@ bool FontPipeline::buildOutput(
 		if (*i)
 			totalArea += (*i)->getWidth() * (*i)->getHeight();
 	}
-	
+
 	int32_t size = nearestLog2(std::max(int32_t(std::sqrt(totalArea) / 2.0f), 16));
 
 	// Pack atlas of all glyphs.

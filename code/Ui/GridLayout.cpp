@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/GridLayout.h"
 #include "Ui/Container.h"
 #include "Ui/Rect.h"
@@ -31,7 +25,7 @@ void GridLayout::update(Widget* widget)
 {
 	std::vector< WidgetRect > widgetRects;
 	Rect inner = widget->getInnerRect();
-	
+
 	int i = 0;
 	for (Ref< Widget > child = widget->getFirstChild(); child != 0; child = child->getNextSibling())
 	{

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
@@ -71,7 +65,7 @@ private:
 
 	void eventSize(ui::SizeEvent* event);
 };
-		
+
 	}
 }
 

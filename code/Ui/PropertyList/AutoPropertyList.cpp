@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/PropertyList/ApplyReflector.h"
 #include "Ui/PropertyList/AutoPropertyList.h"
 #include "Ui/PropertyList/InspectReflector.h"
@@ -29,7 +23,7 @@ void removeAllChildren(PropertyList* list, PropertyItem* item)
 }
 
 		}
-		
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.AutoPropertyList", AutoPropertyList, PropertyList)
 
 bool AutoPropertyList::bind(ISerializable* object)

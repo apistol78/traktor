@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ToolFormCocoa_H
-#define traktor_ui_ToolFormCocoa_H
+#pragma once
 
 #import <Cocoa/Cocoa.h>
 #import "Ui/Cocoa/NSWindowDelegateProxy.h"
@@ -28,7 +21,7 @@ class ToolFormCocoa
 {
 public:
 	ToolFormCocoa(EventSubject* owner);
-	
+
 	// IToolForm implementation
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) T_OVERRIDE;
@@ -38,7 +31,7 @@ public:
 	virtual void endModal(int result) T_OVERRIDE;
 
 	// IWidget implementation
-	
+
 	virtual void destroy() T_OVERRIDE;
 
 	virtual void setParent(IWidget* parent) T_OVERRIDE;
@@ -70,7 +63,7 @@ public:
 	virtual void releaseCapture() T_OVERRIDE;
 
 	virtual void startTimer(int interval, int id) T_OVERRIDE;
-	
+
 	virtual void stopTimer(int id) T_OVERRIDE;
 
 	virtual void setRect(const Rect& rect) T_OVERRIDE;
@@ -110,7 +103,7 @@ public:
 	virtual void* getInternalHandle() T_OVERRIDE;
 
 	virtual SystemWindow getSystemWindow() T_OVERRIDE;
-	
+
 	// IFontMetric
 
 	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const T_OVERRIDE T_FINAL;
@@ -120,32 +113,31 @@ public:
 	virtual int32_t getLineSpacing() const T_OVERRIDE T_FINAL;
 
 	virtual Size getExtent(const std::wstring& text) const T_OVERRIDE T_FINAL;
-	
+
 	// INSWindowEventsCallback
-	
+
 	virtual void event_windowDidMove() T_OVERRIDE;
-	
+
 	virtual void event_windowDidResize() T_OVERRIDE;
-	
+
 	virtual bool event_windowShouldClose() T_OVERRIDE;
 
 	virtual void event_windowDidBecomeKey() T_OVERRIDE;
-	
+
 	virtual void event_windowDidResignKey() T_OVERRIDE;
-	
+
 	virtual void event_windowDidBecomeMain() T_OVERRIDE;
-	
+
 	virtual void event_windowDidResignMain() T_OVERRIDE;
 
 private:
 	EventSubject* m_owner;
 	NSWindow* m_window;
 	std::map< int, NSTimer* > m_timers;
-	
+
 	void callbackTimer(void* controlId);
 };
 
 	}
 }
 
-#endif	// traktor_ui_ToolFormCocoa_H

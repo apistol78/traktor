@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/IEncoding.h"
 #include "Core/Io/IStream.h"
@@ -39,7 +33,7 @@ int32_t FileOutputStreamBuffer::overflow(const wchar_t* buffer, int32_t count)
 		m_encodedSize = maxEncodedSize;
 		m_encoded.reset(new uint8_t [m_encodedSize]);
 	}
-	
+
 	int32_t encodedCount = m_encoding->translate(buffer, count, m_encoded.ptr());
 	if (encodedCount < 0)
 		return -1;

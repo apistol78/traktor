@@ -60,7 +60,7 @@ public:
 	,	m_ref(ref)
 	{
 	}
-	
+
 	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< GLenum >(L"minFilter", m_ref.minFilter);
@@ -70,7 +70,7 @@ public:
 		s >> Member< GLenum >(L"wrapR", m_ref.wrapR);
 		s >> Member< GLenum >(L"compare", m_ref.compare);
 	}
-	
+
 private:
 	SamplerStateOpenGL& m_ref;
 };
@@ -83,7 +83,7 @@ public:
 	,	m_ref(ref)
 	{
 	}
-	
+
 	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< GLboolean >(L"cullFaceEnable", m_ref.cullFaceEnable);
@@ -110,7 +110,7 @@ public:
 		s >> Member< GLenum >(L"stencilOpZPass", m_ref.stencilOpZPass);
 		s >> MemberStaticArray< SamplerStateOpenGL, 16, MemberSamplerStateOpenGL >(L"samplerStates", m_ref.samplerStates);
 	}
-	
+
 private:
 	RenderStateOpenGL& m_ref;
 };

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -432,7 +426,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.ClassFactory", 0, ClassFactory, I
 
 void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< ActionObject > > classActionObject = new AutoRuntimeClass< ActionObject >();
+	auto classActionObject = new AutoRuntimeClass< ActionObject >();
 	classActionObject->addMethod("getMember", &ActionObject_getMember);
 	classActionObject->addMethod("getMemberByQName", &ActionObject_getMemberByQName);
 	classActionObject->addMethod("setMember", &ActionObject_setMember);
@@ -441,18 +435,18 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classActionObject->setUnknownHandler(&ActionObject_invoke);
 	registrar->registerClass(classActionObject);
 
-	Ref< AutoRuntimeClass< ActionObjectRelay > > classActionObjectRelay = new AutoRuntimeClass< ActionObjectRelay >();
+	auto classActionObjectRelay = new AutoRuntimeClass< ActionObjectRelay >();
 	classActionObjectRelay->setUnknownHandler(&ActionObjectRelay_invoke);
 	registrar->registerClass(classActionObjectRelay);
 
-	Ref< AutoRuntimeClass< ICharacterFactory > > classICharacterFactory = new AutoRuntimeClass< ICharacterFactory >();
+	auto classICharacterFactory = new AutoRuntimeClass< ICharacterFactory >();
 	registrar->registerClass(classICharacterFactory);
 
-	Ref< AutoRuntimeClass< DefaultCharacterFactory > > classDefaultCharacterFactory = new AutoRuntimeClass< DefaultCharacterFactory >();
+	auto classDefaultCharacterFactory = new AutoRuntimeClass< DefaultCharacterFactory >();
 	classDefaultCharacterFactory->addConstructor();
 	registrar->registerClass(classDefaultCharacterFactory);
 
-	Ref< AutoRuntimeClass< IMovieLoader > > classIMovieLoader = new AutoRuntimeClass< IMovieLoader >();
+	auto classIMovieLoader = new AutoRuntimeClass< IMovieLoader >();
 	classIMovieLoader->addMethod("loadAsync", &IMovieLoader::loadAsync);
 	classIMovieLoader->addMethod("load", &IMovieLoader::load);
 	registrar->registerClass(classIMovieLoader);
@@ -465,7 +459,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIMovieLoader_IHandle->addMethod("get", &IMovieLoader::IHandle::get);
 	registrar->registerClass(classIMovieLoader_IHandle);
 
-	Ref< AutoRuntimeClass< MovieLoader > > classMovieLoader = new AutoRuntimeClass< MovieLoader >();
+	auto classMovieLoader = new AutoRuntimeClass< MovieLoader >();
 	classMovieLoader->addConstructor();
 	classMovieLoader->addMethod("setCacheDirectory", &MovieLoader::setCacheDirectory);
 	classMovieLoader->addMethod("setMerge", &MovieLoader::setMerge);
@@ -473,13 +467,13 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classMovieLoader->addMethod("setIncludeAS", &MovieLoader::setIncludeAS);
 	registrar->registerClass(classMovieLoader);
 
-	Ref< AutoRuntimeClass< MovieFactory > > classMovieFactory = new AutoRuntimeClass< MovieFactory >();
+	auto classMovieFactory = new AutoRuntimeClass< MovieFactory >();
 	classMovieFactory->addConstructor< bool >();
 	classMovieFactory->addMethod("createMovie", &MovieFactory::createMovie);
 	classMovieFactory->addMethod("createMovieFromImage", &MovieFactory::createMovieFromImage);
 	registrar->registerClass(classMovieFactory);
 
-	Ref< AutoRuntimeClass< MoviePlayer > > classMoviePlayer = new AutoRuntimeClass< MoviePlayer >();
+	auto classMoviePlayer = new AutoRuntimeClass< MoviePlayer >();
 	classMoviePlayer->addProperty("frameCount", &MoviePlayer::getFrameCount);
 	classMoviePlayer->addProperty("movieInstance", &MoviePlayer::getMovieInstance);
 	classMoviePlayer->addMethod< void, uint32_t >("gotoAndPlay", &MoviePlayer::gotoAndPlay);
@@ -495,41 +489,41 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classMoviePlayer->addMethod("getGlobal", &MoviePlayer::getGlobal);
 	registrar->registerClass(classMoviePlayer);
 
-	Ref< AutoRuntimeClass< SwfReader > > classSwfReader = new AutoRuntimeClass< SwfReader >();
+	auto classSwfReader = new AutoRuntimeClass< SwfReader >();
 	classSwfReader->addConstructor< IStream* >();
 	registrar->registerClass(classSwfReader);
 
-	Ref< AutoRuntimeClass< ColorTransform > > classColorTransform = new AutoRuntimeClass< ColorTransform >();
+	auto classColorTransform = new AutoRuntimeClass< ColorTransform >();
 	classColorTransform->addConstructor();
 	classColorTransform->addConstructor< const Color4f&, const Color4f& >();
 	classColorTransform->addProperty("mul", &ColorTransform_setMul, &ColorTransform_getMul);
 	classColorTransform->addProperty("add", &ColorTransform_setAdd, &ColorTransform_getAdd);
 	registrar->registerClass(classColorTransform);
 
-	Ref< AutoRuntimeClass< Bitmap > > classBitmap = new AutoRuntimeClass< Bitmap >();
+	auto classBitmap = new AutoRuntimeClass< Bitmap >();
 	classBitmap->addProperty("X", &Bitmap::getX);
 	classBitmap->addProperty("Y", &Bitmap::getY);
 	classBitmap->addProperty("width", &Bitmap::getWidth);
 	classBitmap->addProperty("height", &Bitmap::getHeight);
 	registrar->registerClass(classBitmap);
 
-	Ref< AutoRuntimeClass< BitmapImage > > classBitmapImage = new AutoRuntimeClass< BitmapImage >();
+	auto classBitmapImage = new AutoRuntimeClass< BitmapImage >();
 	classBitmapImage->addConstructor< const drawing::Image* >();
 	classBitmapImage->addProperty("image", &BitmapImage::getImage);
 	registrar->registerClass(classBitmapImage);
 
-	Ref< AutoRuntimeClass< BitmapResource > > classBitmapResource = new AutoRuntimeClass< BitmapResource >();
+	auto classBitmapResource = new AutoRuntimeClass< BitmapResource >();
 	classBitmapResource->addProperty("atlasWidth", &BitmapResource::getAtlasWidth);
 	classBitmapResource->addProperty("atlasHeight", &BitmapResource::getAtlasHeight);
 	classBitmapResource->addProperty("resourceId", &BitmapResource::getResourceId);
 	registrar->registerClass(classBitmapResource);
 
-	Ref< AutoRuntimeClass< BitmapTexture > > classBitmapTexture = new AutoRuntimeClass< BitmapTexture >();
+	auto classBitmapTexture = new AutoRuntimeClass< BitmapTexture >();
 	classBitmapTexture->addConstructor< render::ISimpleTexture* >();
 	classBitmapTexture->addProperty("texture", &BitmapTexture::getTexture);
 	registrar->registerClass(classBitmapTexture);
 
-	Ref< AutoRuntimeClass< Font > > classFont = new AutoRuntimeClass< Font >();
+	auto classFont = new AutoRuntimeClass< Font >();
 	classFont->addProperty("fontName", &Font::getFontName);
 	classFont->addProperty("italic", &Font::isItalic);
 	classFont->addProperty("bold", &Font::isBold);
@@ -543,7 +537,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFont->addMethod("lookupIndex", &Font::lookupIndex);
 	registrar->registerClass(classFont);
 
-	Ref< AutoRuntimeClass< Dictionary > > classDictionary = new AutoRuntimeClass< Dictionary >();
+	auto classDictionary = new AutoRuntimeClass< Dictionary >();
 	classDictionary->addMethod("addFont", &Dictionary::addFont);
 	classDictionary->addMethod("addBitmap", &Dictionary::addBitmap);
 	classDictionary->addMethod("addSound", &Dictionary::addSound);
@@ -556,11 +550,11 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classDictionary->addMethod("getExportName", &Dictionary_getExportName);
 	registrar->registerClass(classDictionary);
 
-	Ref< AutoRuntimeClass< Character > > classCharacter = new AutoRuntimeClass< Character >();
+	auto classCharacter = new AutoRuntimeClass< Character >();
 	classCharacter->addProperty("id", &Character::getId);
 	registrar->registerClass(classCharacter);
 
-	Ref< AutoRuntimeClass< CharacterInstance > > classCharacterInstance = new AutoRuntimeClass< CharacterInstance >();
+	auto classCharacterInstance = new AutoRuntimeClass< CharacterInstance >();
 	classCharacterInstance->addConstant("SbmDefault", Any::fromInt32(SbmDefault));
 	classCharacterInstance->addConstant("SbmNormal", Any::fromInt32(SbmNormal));
 	classCharacterInstance->addConstant("SbmLayer", Any::fromInt32(SbmLayer));
@@ -602,16 +596,16 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCharacterInstance->setUnknownHandler(&CharacterInstance_invoke);
 	registrar->registerClass(classCharacterInstance);
 
-	Ref< AutoRuntimeClass< Shape > > classShape = new AutoRuntimeClass< Shape >();
+	auto classShape = new AutoRuntimeClass< Shape >();
 	classShape->addProperty("pathCount", &Shape_getPathCount);
 	registrar->registerClass(classShape);
 
-	Ref< AutoRuntimeClass< ShapeInstance > > classShapeInstance = new AutoRuntimeClass< ShapeInstance >();
+	auto classShapeInstance = new AutoRuntimeClass< ShapeInstance >();
 	classShapeInstance->addProperty("shape", &ShapeInstance::getShape);
 	classShapeInstance->setUnknownHandler(&ShapeInstance_invoke);
 	registrar->registerClass(classShapeInstance);
 
-	Ref< AutoRuntimeClass< DisplayList > > classDisplayList = new AutoRuntimeClass< DisplayList >();
+	auto classDisplayList = new AutoRuntimeClass< DisplayList >();
 	classDisplayList->addProperty("nextHighestDepth", &DisplayList::getNextHighestDepth);
 	classDisplayList->addProperty("objects", &DisplayList_getObjects);
 	classDisplayList->addMethod("reset", &DisplayList::reset);
@@ -622,7 +616,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classDisplayList->addMethod("swap", &DisplayList::swap);
 	registrar->registerClass(classDisplayList);
 
-	Ref< AutoRuntimeClass< Sprite > > classSprite = new AutoRuntimeClass< Sprite >();
+	auto classSprite = new AutoRuntimeClass< Sprite >();
 	classSprite->addProperty("frameRate", &Sprite::getFrameRate);
 	classSprite->addProperty("frameCount", &Sprite::getFrameCount);
 	classSprite->addMethod("addFrame", &Sprite::addFrame);
@@ -630,7 +624,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSprite->addMethod("findFrame", &Sprite::findFrame);
 	registrar->registerClass(classSprite);
 
-	Ref< AutoRuntimeClass< SpriteInstance > > classSpriteInstance = new AutoRuntimeClass< SpriteInstance >();
+	auto classSpriteInstance = new AutoRuntimeClass< SpriteInstance >();
 	classSpriteInstance->addProperty("sprite", &SpriteInstance::getSprite);
 	classSpriteInstance->addProperty("cacheAsBitmap", &SpriteInstance::setCacheAsBitmap, &SpriteInstance::getCacheAsBitmap);
 	classSpriteInstance->addProperty("currentFrame", &SpriteInstance::getCurrentFrame);
@@ -667,14 +661,14 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSpriteInstance->setUnknownHandler(&SpriteInstance_invoke);
 	registrar->registerClass(classSpriteInstance);
 
-	Ref< AutoRuntimeClass< TextFormat > > classTextFormat = new AutoRuntimeClass< TextFormat >();
+	auto classTextFormat = new AutoRuntimeClass< TextFormat >();
 	//classTextFormat->addConstructor< float, int32_t, float >();
 	classTextFormat->addProperty("letterSpacing", &TextFormat::setLetterSpacing, &TextFormat::getLetterSpacing);
 	//classTextFormat->addProperty("align", &TextFormat::setAlign, &TextFormat::getAlign);
 	classTextFormat->addProperty("size", &TextFormat::setSize, &TextFormat::getSize);
 	registrar->registerClass(classTextFormat);
 
-	Ref< AutoRuntimeClass< Edit > > classEdit = new AutoRuntimeClass< Edit >();
+	auto classEdit = new AutoRuntimeClass< Edit >();
 	classEdit->addProperty("fontId", &Edit::getFontId);
 	classEdit->addProperty("fontHeight", &Edit::getFontHeight);
 	classEdit->addProperty("textBounds", &Edit::getTextBounds);
@@ -692,7 +686,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEdit->addProperty("renderHtml", &Edit::renderHtml);
 	registrar->registerClass(classEdit);
 
-	Ref< AutoRuntimeClass< EditInstance > > classEditInstance = new AutoRuntimeClass< EditInstance >();
+	auto classEditInstance = new AutoRuntimeClass< EditInstance >();
 	classEditInstance->addProperty("edit", &EditInstance::getEdit);
 	classEditInstance->addProperty("textBounds", &EditInstance::setTextBounds, &EditInstance::getTextBounds);
 	classEditInstance->addProperty("textColor", &EditInstance::setTextColor, &EditInstance::getTextColor);
@@ -730,7 +724,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEditInstance->setUnknownHandler(&EditInstance_invoke);
 	registrar->registerClass(classEditInstance);
 
-	Ref< AutoRuntimeClass< Movie > > classMovie = new AutoRuntimeClass< Movie >();
+	auto classMovie = new AutoRuntimeClass< Movie >();
 	classMovie->addProperty("frameBounds", &Movie::getFrameBounds);
 	classMovie->addProperty("movieClip", &Movie::getMovieClip);
 	classMovie->addMethod("defineFont", &Movie::defineFont);
@@ -743,7 +737,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classMovie->addMethod("createExternalSpriteInstance", &Movie::createExternalSpriteInstance);
 	registrar->registerClass(classMovie);
 
-	Ref< AutoRuntimeClass< ActionContext > > classActionContext = new AutoRuntimeClass< ActionContext >();
+	auto classActionContext = new AutoRuntimeClass< ActionContext >();
 	classActionContext->addProperty("movie", &ActionContext::getMovie);
 	classActionContext->addProperty("global", &ActionContext::getGlobal);
 	classActionContext->addProperty("movieClip", &ActionContext::getMovieClip);
@@ -762,7 +756,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classActionContext->addMethod("createBitmap", &ActionContext_createBitmap);
 	registrar->registerClass(classActionContext);
 
-	Ref< AutoRuntimeClass< Optimizer > > classOptimizer = new AutoRuntimeClass< Optimizer >();
+	auto classOptimizer = new AutoRuntimeClass< Optimizer >();
 	classOptimizer->addConstructor();
 	classOptimizer->addMethod("merge", &Optimizer::merge);
 	classOptimizer->addMethod("triangulate", &Optimizer::triangulate);

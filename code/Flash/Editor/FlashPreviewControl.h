@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_FlashPreviewControl_H
-#define traktor_flash_FlashPreviewControl_H
+#pragma once
 
 #define T_USE_ACCELERATED_RENDERER 1
 
@@ -31,7 +24,7 @@ class Database;
 
 	namespace drawing
 	{
-	
+
 class Image;
 
 	}
@@ -163,4 +156,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_FlashPreviewControl_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include "UnitTest/CaseMath.h"
 #include "Core/Math/Const.h"
@@ -82,7 +76,7 @@ void CaseMath::run()
 
 	CASE_ASSERT_EQUAL(v1.length(), std::sqrt(3.5f * 3.5f + 4.5f * 4.5f));
 	CASE_ASSERT_EQUAL(v1.length2(), (3.5f * 3.5f + 4.5f * 4.5f));
-	
+
 	CASE_ASSERT_EQUAL(Vector2(1.0f, 2.0f) + 3.0f, Vector2(4.0f, 5.0f));
 	CASE_ASSERT_EQUAL(Vector2(1.0f, 2.0f) + Vector2(2.0f, 3.0f), Vector2(3.0f, 5.0f));
 
@@ -171,21 +165,21 @@ void CaseMath::run()
 	CASE_ASSERT_COMPARE(pp1, pp2, compareEqual);
 	CASE_ASSERT_COMPARE(pp1, pp3, compareEqual);
 	CASE_ASSERT_COMPARE(pp1, pp4, compareNotEqual);
-	
+
 	// Plane test.
 	Vector4 pt(1.0f, 0.0f, 3.0f, 1.0f);
-	
+
 	Plane pl1(Vector4(0.0f, 0.0f, 1.0f), Scalar(-2.0f));
 	CASE_ASSERT_COMPARE(pl1.distance(pt), 5.0f, compareFuzzyEqual);
-	
+
 	Plane pl2 = translate(0.0f, 0.0f, 1.0f) * pl1;
 	CASE_ASSERT_COMPARE(pl2.distance(pt), 4.0f, compareFuzzyEqual);
-	
+
 	Plane pl3 = rotateY(deg2rad(90.0f)) * pl1;
-	
+
 	Vector4 pt3 = rotateY(deg2rad(90.0f)) * pt;
 	Scalar pl3d = pl3.distance(pt);	// 1.0f
-	
+
 	CASE_ASSERT_COMPARE(pl3.distance(pt), 3.0f, compareFuzzyEqual);
 }
 

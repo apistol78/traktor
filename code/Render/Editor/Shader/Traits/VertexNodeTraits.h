@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_VertexNodeTraits_H
-#define traktor_render_VertexNodeTraits_H
+#pragma once
 
 #include "Render/Editor/Shader/INodeTraits.h"
 
@@ -28,7 +21,7 @@ public:
 		const OutputPin* outputPin,
 		const PinType* inputPinTypes
 	) const override final;
-	
+
 	virtual PinType getInputPinType(
 		const ShaderGraph* shaderGraph,
 		const Node* node,
@@ -72,4 +65,3 @@ public:
 	}
 }
 
-#endif	// traktor_render_VertexNodeTraits_H

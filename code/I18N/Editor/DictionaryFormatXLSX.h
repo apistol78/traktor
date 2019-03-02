@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_i18n_DictionaryFormatXLSX_H
-#define traktor_i18n_DictionaryFormatXLSX_H
+#pragma once
 
 #include "I18N/Editor/IDictionaryFormat.h"
 
@@ -29,4 +22,3 @@ public:
 	}
 }
 
-#endif	// traktor_i18n_DictionaryFormatXLSX_H

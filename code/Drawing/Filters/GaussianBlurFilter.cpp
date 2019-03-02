@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Const.h"
 #include "Drawing/Image.h"
@@ -36,7 +30,7 @@ GaussianBlurFilter::GaussianBlurFilter(int32_t radius)
 	}
 
 	const Scalar a(1.0f / sqrtf(TWO_PI * sigma * sigma));
-	
+
 	Scalar totalWeight(0.0f);
 	for (int32_t i = 0; i < m_size; ++i)
 	{
@@ -123,6 +117,6 @@ void GaussianBlurFilter::apply(Image* image) const
 		}
 	}
 }
-	
+
 	}
 }

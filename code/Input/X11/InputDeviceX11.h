@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputDeviceX11_H
-#define traktor_input_InputDeviceX11_H
+#pragma once
 
 #include <X11/Xlib.h>
 #include "Input/IInputDevice.h"
@@ -28,4 +21,3 @@ public:
 	}
 }
 
-#endif	// traktor_input_InputDeviceX11_H

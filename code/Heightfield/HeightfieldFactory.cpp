@@ -1,12 +1,6 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#include <limits>
+//#include <limits>
 #include "Core/Io/IStream.h"
-#include "Core/Io/Reader.h"
+//#include "Core/Io/Reader.h"
 #include "Database/Instance.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFactory.h"
@@ -39,16 +33,15 @@ Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceMan
 {
 	Ref< HeightfieldResource > resource = instance->getObject< HeightfieldResource >();
 	if (!resource)
-		return 0;
+		return nullptr;
 
 	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
-		return 0;
+		return nullptr;
 
 	Ref< Heightfield > heightfield = HeightfieldFormat().read(stream, resource->getWorldExtent());
 
 	stream->close();
-
 	return heightfield;
 }
 

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -20,7 +14,7 @@ namespace traktor
 {
 	namespace input
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputMapping", InputMapping, Object)
 
 InputMapping::InputMapping()
@@ -39,20 +33,20 @@ bool InputMapping::create(
 
 	m_sources.clear();
 	m_states.clear();
-	
+
 	const std::map< std::wstring, Ref< IInputSourceData > >& sourceDataMap = sourceData->getSourceData();
 	for (std::map< std::wstring, Ref< IInputSourceData > >::const_iterator i = sourceDataMap.begin(); i != sourceDataMap.end(); ++i)
 	{
 		if (!i->second)
 			continue;
-	
+
 		Ref< IInputSource > source = i->second->createInstance(m_deviceControlManager);
 		if (!source)
 		{
 			log::error << L"Unable to create source instance \"" << i->first << L"\"" << Endl;
 			return false;
 		}
-		
+
 		m_sources[getParameterHandle(i->first)] = source;
 	}
 
@@ -61,14 +55,14 @@ bool InputMapping::create(
 	{
 		if (!i->second)
 			continue;
-	
+
 		Ref< InputState > state = new InputState();
 		if (!state->create(i->second))
 		{
 			log::error << L"Unable to create state \"" << i->first << L"\"" << Endl;
 			return false;
 		}
-			
+
 		m_states[getParameterHandle(i->first)] = state;
 	}
 
@@ -90,11 +84,11 @@ void InputMapping::update(float dT, bool inputEnable)
 			float value = i->second->getValue();
 			m_valueSet.set(i->first, value);
 		}
-	
+
 		// Prepare all sources for a new state.
 		for (SmallMap< handle_t, Ref< IInputSource > >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 			i->second->prepare(m_T, dT);
-	
+
 		// Input value set by updating all sources.
 		for (SmallMap< handle_t, Ref< IInputSource > >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 		{
@@ -107,11 +101,11 @@ void InputMapping::update(float dT, bool inputEnable)
 
 			m_valueSet.set(i->first, value);
 		}
-		
+
 		// Update states.
 		for (SmallMap< handle_t, Ref< InputState > >::iterator i = m_states.begin(); i != m_states.end(); ++i)
 			i->second->update(m_valueSet, m_T, dT);
-		
+
 		m_T += dT;
 	}
 }

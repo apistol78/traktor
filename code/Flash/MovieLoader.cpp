@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Compress/Lzf/DeflateStreamLzf.h"
 #include "Compress/Lzf/InflateStreamLzf.h"
 #include "Core/Functor/Functor.h"
@@ -113,7 +107,7 @@ private:
 
 		std::wstring tempFile;
 		Ref< IStream > d;
-		
+
 		for (int32_t i = 0; i < 10; ++i)
 		{
 			tempFile = OS::getInstance().getWritableFolderPath() + L"/" + cacheFileName + L"_" + toString(i);

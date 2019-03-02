@@ -80,7 +80,7 @@ bool CubeTextureDx11::create(const CubeTextureCreateDesc& desc)
 		{
 			log::error << L"Unable to create cube staging texture. HRESULT = " << int32_t(hr) << Endl;
 			return false;
-		}	
+		}
 	}
 
 	hr = m_context->getD3DDevice()->CreateShaderResourceView(m_d3dTexture, NULL, &m_d3dTextureResourceView.getAssign());

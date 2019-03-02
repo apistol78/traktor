@@ -39,6 +39,6 @@ private:
 	float m_rate;
 	AlignedVector< resource::Proxy< ITexture > > m_textures;
 };
-	
+
 	}
 }

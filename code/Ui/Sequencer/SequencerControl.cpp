@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include <sstream>
 #include <stack>
@@ -520,7 +514,7 @@ void SequencerControl::eventPaint(PaintEvent* event)
 	// Clear background.
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(Rect(rc.left, rc.top, rc.left + m_separator, rc.bottom));
-	
+
 	canvas.setBackground(Color4ub(138, 137, 140));
 	canvas.fillRect(Rect(rc.left + m_separator, rc.top, rc.right, rc.bottom));
 

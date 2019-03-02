@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "I18N/Format.h"
 #include "Sound/Editor/Resound/BankControlGrain.h"
 #include "Ui/Application.h"
@@ -66,7 +60,7 @@ void BankControlGrain::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	bool focus = bool(getWidget< ui::AutoWidget >()->getFocusCell() == this);
 
 	ui::Size sz = m_bitmapGrain->getSize();
-	
+
 	int32_t dx = sz.cx / 4;
 	int32_t dy = sz.cy / 6;
 

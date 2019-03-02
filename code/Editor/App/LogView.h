@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_LogView_H
-#define traktor_editor_LogView_H
+#pragma once
 
 #include "Ui/Container.h"
 #include "Ui/LogList/LogList.h"
@@ -65,4 +58,3 @@ private:
 	}
 }
 
-#endif	// traktor_editor_LogView_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_CallStack_H
-#define traktor_CallStack_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -22,4 +15,3 @@ uint32_t T_DLLCLASS getCallStack(uint32_t ncs, void** outCs, uint32_t skip);
 
 }
 
-#endif	// traktor_CallStack_H

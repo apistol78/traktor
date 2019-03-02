@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <limits>
 #include "Compress/Zip/InflateStreamZip.h"
@@ -181,19 +175,19 @@ bool TagDefineFont::read(SwfReader* swf, ReadContext& context)
 	else if (m_fontType == 2 || m_fontType == 3)
 	{
 		bool hasLayout = bs.readBit();
-		
+
 		/*
 		bool shiftJIS = bs.readBit();
 		bool smallText = bs.readBit();		// SWF 7.0+
 		bool ansi = bs.readBit();
 		*/
 		bs.skip(3);
-		
+
 		bool wideOffsets = bs.readBit();
 		bool wideCodes = bs.readBit();
 		bool italic = bs.readBit();
 		bool bold = bs.readBit();
-		
+
 		/*uint8_t languageCode = */bs.readUInt8();	// SWF 6.0+
 		std::string fontName = swf->readStringU8();
 		uint16_t glyphCount = bs.readUInt16();
@@ -280,7 +274,7 @@ bool TagDefineScalingGrid::read(SwfReader* swf, ReadContext& context)
 	Aabb2 splitter = swf->readRect();
 
 	const SmallMap< uint16_t, Ref< Character > >& characters = context.movie->getCharacters();
-	
+
 	SmallMap< uint16_t, Ref< Character > >::const_iterator i = characters.find(characterId);
 	if (i == characters.end())
 		return false;
@@ -324,7 +318,7 @@ bool TagDefineText::read(SwfReader* swf, ReadContext& context)
 
 		textRecords.push_back(textRecord);
 	}
-	
+
 	Ref< Text > text = new Text(textId, textBounds, Matrix33(textMatrix.m));
 	if (!text->create(textRecords))
 		return false;
@@ -363,16 +357,16 @@ bool TagDefineEditText::read(SwfReader* swf, ReadContext& context)
 	else
 		bs.skip(2);
 	bool hasLayout = bs.readBit();
-	
+
 	/*
 	bool noSelect = bs.readBit();
 	bool border = bs.readBit();
 	*/
 	bs.skip(2);
-	
+
 	bs.skip(1);
 	bool html = bs.readBit();
-	
+
 	/*
 	bool useOutlines = bs.readBit();
 	*/
@@ -906,7 +900,7 @@ bool TagPlaceObject::read(SwfReader* swf, ReadContext& context)
 	if (m_placeType == 1)
 	{
 		Frame::PlaceObject placeObject;
-		
+
 		placeObject.hasFlags |= Frame::PfHasCharacterId | Frame::PfHasMatrix;
 		placeObject.characterId = bs.readUInt16();
 		placeObject.depth = bs.readUInt16();
@@ -963,7 +957,7 @@ bool TagPlaceObject::read(SwfReader* swf, ReadContext& context)
 				log::warning << L"Unused class name " << mbstows(className) << L" in PlaceObject" << Endl;
 			}
 		}
-	
+
 		if (placeObject.has(Frame::PfHasCharacterId))
 			placeObject.characterId = bs.readUInt16();
 
@@ -1253,7 +1247,7 @@ bool TagDefineSound::read(SwfReader* swf, ReadContext& context)
 	{
 		// 16-bit samples
 		const int16_t* ss = reinterpret_cast< const int16_t* >(soundData.c_ptr());
-		
+
 		int16_t* dsl = reinterpret_cast< int16_t* >(sound->getSamples(0));
 		int16_t* dsr = reinterpret_cast< int16_t* >(sound->getSamples(1));
 

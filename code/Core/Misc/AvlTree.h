@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_AvlTree_H
-#define traktor_AvlTree_H
+#pragma once
 
 namespace traktor
 {
@@ -35,7 +28,7 @@ class AvlTree
 		Node* right;
 		KeyType key;
 		ItemType item;
-		
+
 		Node(const KeyType& key, const ItemType& item)
 		:	left(0)
 		,	right(0)
@@ -51,7 +44,7 @@ class AvlTree
 			return std::max< int >(ld, rd);
 		}
 	};
-	
+
 public:
 	struct Iterator
 	{
@@ -106,7 +99,7 @@ public:
 	{
 		return Iterator(0);
 	}
-	
+
 private:
 	Node* m_root;
 
@@ -139,12 +132,12 @@ private:
 		}
 		return node;
 	}
-	
+
 	Node* _balance(Node* node)
 	{
 		int ld = node->left ? node->left->depth() : 0;
 		int rd = node->right ? node->right->depth() : 0;
-		
+
 		if (abs(ld - rd) < 2)
 			return node;
 
@@ -220,4 +213,3 @@ private:
 
 }
 
-#endif	// traktor_AvlTree_H

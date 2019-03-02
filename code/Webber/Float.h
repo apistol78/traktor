@@ -1,5 +1,4 @@
-#ifndef traktor_wbr_Float_H
-#define traktor_wbr_Float_H
+#pragma once
 
 #include "Webber/ILayout.h"
 
@@ -15,7 +14,7 @@ namespace traktor
 {
 	namespace wbr
 	{
-	
+
 class T_DLLCLASS Float : public ILayout
 {
 	T_RTTI_CLASS;
@@ -27,4 +26,3 @@ public:
 	}
 }
 
-#endif	// traktor_wbr_Float_H

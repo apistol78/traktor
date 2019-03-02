@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Profiler_H
-#define traktor_Profiler_H
+#pragma once
 
 #include <string>
 #include "Core/Ref.h"
@@ -66,7 +59,7 @@ public:
 		virtual void reportProfilerEvents(double currentTime, const AlignedVector< Event >& events) = 0;
 	};
 
-	/*! \brief JSON report listener. 
+	/*! \brief JSON report listener.
 	 *
 	 * Format of JSON is Chromium tracer compatible.
 	 */
@@ -151,4 +144,3 @@ public:
 
 }
 
-#endif	// traktor_Profiler_H

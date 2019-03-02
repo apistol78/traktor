@@ -1,14 +1,8 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Random.h"
 
 namespace traktor
 {
-	
+
 Random::Random(uint32_t seed)
 {
 	m_mt[0] = seed & 0xffffffffUL;
@@ -51,7 +45,7 @@ uint32_t Random::next()
 	y ^= (y << 15) & 0xefc60000UL;
 	y ^= (y >> 18);
 
-	return y;	
+	return y;
 }
 
 double Random::nextDouble()

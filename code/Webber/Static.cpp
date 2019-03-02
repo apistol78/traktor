@@ -7,7 +7,7 @@ namespace traktor
 {
 	namespace wbr
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.wbr.Static", Static, Widget)
 
 Static::Static(const std::wstring& text)

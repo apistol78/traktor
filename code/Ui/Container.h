@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Container_H
-#define traktor_ui_Container_H
+#pragma once
 
 #include "Ui/Widget.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 class Layout;
 class SizeEvent;
 
@@ -38,26 +31,25 @@ public:
 	virtual void fit();
 
 	virtual void update(const Rect* rc = 0, bool immediate = false) override;
-	
+
 	virtual Size getMinimumSize() const override;
-	
+
 	virtual Size getPreferedSize() const override;
-	
+
 	virtual Size getMaximumSize() const override;
 
 	Ref< Layout > getLayout() const;
-	
+
 	void setLayout(Layout* layout);
-	
+
 private:
 	Ref< Layout > m_layout;
-	
+
 	void eventSize(SizeEvent* event);
 
 	void eventPaint(PaintEvent* event);
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_Container_H

@@ -20,29 +20,29 @@ CFMutableDictionaryRef createMatchingDictionary(UInt32 inUsagePage, UInt32 inUsa
 	CFMutableDictionaryRef result = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 	if (!result)
 		return 0;
-	
+
 	if (inUsagePage && inUsage)
 	{
 		CFNumberRef pageCFNumberRef = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &inUsagePage);
 		if (!pageCFNumberRef)
 			return 0;
-			
+
 		CFDictionarySetValue(result, CFSTR(kIOHIDDeviceUsagePageKey), pageCFNumberRef);
 		CFRelease(pageCFNumberRef);
-		
+
 		CFNumberRef usageCFNumberRef = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &inUsage);
 		if (!usageCFNumberRef)
 			return 0;
-			
+
 		CFDictionarySetValue(result, CFSTR(kIOHIDDeviceUsageKey), usageCFNumberRef);
 		CFRelease(usageCFNumberRef);
 	}
-	
+
 	return result;
 }
 
 		}
-	
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverOsX", 0, InputDriverOsX, IInputDriver)
 
 InputDriverOsX::InputDriverOsX()
@@ -77,7 +77,7 @@ bool InputDriverOsX::create(const SystemApplication& sysapp, const SystemWindow&
 			log::error << L"Unable to create input driver; IOHIDManagerCreate failed" << Endl;
 			return false;
 		}
-	
+
 		CFArrayRef matchingDictionariesRef = CFArrayCreateMutable(
 			kCFAllocatorDefault,
 			0,
@@ -115,7 +115,7 @@ bool InputDriverOsX::create(const SystemApplication& sysapp, const SystemWindow&
 			CFArrayAppendValue((__CFArray*)matchingDictionariesRef, matchingCFDictRef);
 			CFRelease(matchingCFDictRef);
 		}
-		
+
 		IOHIDManagerSetDeviceMatchingMultiple(managerRef, matchingDictionariesRef);
 		IOHIDManagerRegisterDeviceMatchingCallback(managerRef, callbackDeviceMatch, this);
 		IOHIDManagerScheduleWithRunLoop(managerRef, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
@@ -151,11 +151,11 @@ void InputDriverOsX::callbackDeviceMatch(void* inContext, IOReturn inResult, voi
 
 	IOHIDManagerRef managerRef = (IOHIDManagerRef)inSender;
 	T_ASSERT (managerRef);
-	
+
 	IOReturn result = IOHIDManagerOpen(managerRef, kIOHIDOptionsTypeNone);
 	if (result != kIOReturnSuccess)
 		return;
-		
+
 	if (IOHIDDeviceConformsTo(inIOHIDDeviceRef, kHIDPage_GenericDesktop, kHIDUsage_GD_GamePad))
 	{
 		log::info << L"HID device; matching gamepad device connected" << Endl;

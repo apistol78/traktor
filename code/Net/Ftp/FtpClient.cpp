@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Net/Ftp/FtpClient.h"
 #include "Net/TcpSocket.h"
 #include "Net/SocketStream.h"
@@ -36,7 +30,7 @@ bool isIntermediate(uint32_t code)
 }
 
 		}
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.FtpClient", FtpClient, Object)
 
 bool FtpClient::connect(const SocketAddressIPv4& socketAddress)

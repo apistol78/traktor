@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/IStream.h"
 #include "Xml/Node.h"
 
@@ -11,7 +5,7 @@ namespace traktor
 {
 	namespace xml
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.Node", Node, Object)
 
 Node::Node()
@@ -75,12 +69,12 @@ void Node::addChild(Node* child)
 
 	child->m_parent = this;
 	child->m_previousSibling = m_lastChild;
-	
+
 	if (m_lastChild)
 		m_lastChild->m_nextSibling = child;
 	else
 		m_firstChild = child;
-		
+
 	m_lastChild = child;
 }
 
@@ -126,7 +120,7 @@ void Node::insertBefore(Node* child, Node* beforeNode)
 		beforeNode = m_firstChild;
 
 	child->m_parent = this;
-	
+
 	child->m_previousSibling = beforeNode ? beforeNode->m_previousSibling : 0;
 	child->m_nextSibling = beforeNode;
 
@@ -148,7 +142,7 @@ void Node::insertAfter(Node* child, Node* afterNode)
 	if (afterNode)
 	{
 		child->m_parent = this;
-		
+
 		child->m_previousSibling = afterNode;
 		child->m_nextSibling = afterNode->m_nextSibling;
 

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_MeshAsset_H
-#define traktor_mesh_MeshAsset_H
+#pragma once
 
 #include <map>
 #include "Core/Guid.h"
@@ -64,9 +57,9 @@ public:
 	void setScaleFactor(float scaleFactor) { m_scaleFactor = scaleFactor; }
 
 	float getScaleFactor() const { return m_scaleFactor; }
-	
+
 	void setBakeOcclusion(bool bakeOcclusion) { m_bakeOcclusion = bakeOcclusion; }
-	
+
 	bool getBakeOcclusion() const { return m_bakeOcclusion; }
 
 	void setCullDistantFaces(bool cullDistantFaces) { m_cullDistantFaces = cullDistantFaces; }
@@ -101,4 +94,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_MeshAsset_H

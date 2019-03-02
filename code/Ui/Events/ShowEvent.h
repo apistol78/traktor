@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ShowEvent_H
-#define traktor_ui_ShowEvent_H
+#pragma once
 
 #include "Ui/Event.h"
 
@@ -28,12 +21,12 @@ namespace traktor
 class T_DLLCLASS ShowEvent : public Event
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	ShowEvent(EventSubject* sender, bool visible);
-	
+
 	bool isVisible() const;
-	
+
 private:
 	bool m_visible;
 };
@@ -41,4 +34,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_ShowEvent_H

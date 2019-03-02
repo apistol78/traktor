@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_IndexBufferCapture_H
-#define traktor_render_IndexBufferCapture_H
+#pragma once
 
 #include "Render/IndexBuffer.h"
 
@@ -27,7 +20,7 @@ public:
 	virtual void destroy() override final;
 
 	virtual void* lock() override final;
-	
+
 	virtual void unlock() override final;
 
 	IndexBuffer* getIndexBuffer() const { return m_indexBuffer; }
@@ -36,8 +29,7 @@ private:
 	Ref< IndexBuffer > m_indexBuffer;
 	bool m_locked;
 };
-	
+
 	}
 }
 
-#endif	// traktor_render_IndexBufferCapture_H

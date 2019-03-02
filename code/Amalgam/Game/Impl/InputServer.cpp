@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/Impl/InputServer.h"
@@ -323,7 +317,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 			if (m_inputMappingSourceData)
 			{
 				uint32_t sourceHash = DeepHash(sourceData).get();
-				
+
 				// Discard duplicated input sources.
 				const std::map< std::wstring, Ref< input::IInputSourceData > >& currentSourceData = m_inputMappingSourceData->getSourceData();
 				for (std::map< std::wstring, Ref< input::IInputSourceData > >::const_iterator i = currentSourceData.begin(); i != currentSourceData.end(); ++i)

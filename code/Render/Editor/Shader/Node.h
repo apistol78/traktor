@@ -125,7 +125,7 @@ public:
 	 * \return Pointer to output pin, null if no such output pin.
 	 */
 	const OutputPin* findOutputPin(const std::wstring& name) const;
-	
+
 	virtual void serialize(ISerializer& s) override;
 
 private:

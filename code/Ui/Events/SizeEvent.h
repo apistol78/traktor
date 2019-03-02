@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_SizeEvent_H
-#define traktor_ui_SizeEvent_H
+#pragma once
 
 #include "Ui/Event.h"
 #include "Ui/Size.h"
@@ -22,28 +15,27 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 /*! \brief Size event.
  * \ingroup UI
  */
 class T_DLLCLASS SizeEvent : public Event
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	SizeEvent(EventSubject* sender, const Size& size);
-	
+
 	const Size& getSize() const;
-	
+
 	int32_t getWidth() const;
-	
+
 	int32_t getHeight() const;
-	
+
 private:
 	Size m_size;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_SizeEvent_H

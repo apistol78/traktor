@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_RenderTargetSetVk_H
-#define traktor_render_RenderTargetSetVk_H
+#pragma once
 
 #if defined(_WIN32)
 #	define VK_USE_PLATFORM_WIN32_KHR
@@ -52,7 +45,7 @@ public:
 	virtual void destroy() override final;
 
 	virtual int getWidth() const override final;
-	
+
 	virtual int getHeight() const override final;
 
 	virtual ISimpleTexture* getColorTexture(int index) const override final;
@@ -87,4 +80,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_RenderTargetSetVk_H

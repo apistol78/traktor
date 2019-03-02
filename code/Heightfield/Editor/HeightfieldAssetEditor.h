@@ -15,7 +15,7 @@ class IEditor;
 
 	namespace ui
 	{
-	
+
 class Edit;
 class Image;
 class ToolBarButtonClickEvent;
@@ -24,7 +24,7 @@ class ToolBarButtonClickEvent;
 
 	namespace hf
 	{
-	
+
 class Heightfield;
 class HeightfieldAsset;
 

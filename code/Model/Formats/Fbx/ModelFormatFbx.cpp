@@ -82,7 +82,7 @@ void dump(FbxNode* node)
 		{
 			log::info << L"Mesh" << Endl;
 
-			FbxMesh* mesh = static_cast< FbxMesh* >(node->GetNodeAttribute());	
+			FbxMesh* mesh = static_cast< FbxMesh* >(node->GetNodeAttribute());
 
 			int32_t deformerCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
 			log::info << L"Deformer count " << deformerCount << Endl;
@@ -107,7 +107,7 @@ void dump(FbxNode* node)
 
 					log::info << L"deformer[" << i << L"].cluser[" << j << L"].joint = " << uint64_t(jointNode) << Endl;
 				}
-			}		
+			}
 		}
 	}
 
@@ -227,7 +227,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref
 		if (!convertSkeleton(*model, s_scene, skeletonNode, axisTransform))
 			return nullptr;
 
-		for(int32_t i = 0; i < importer->GetAnimStackCount(); i++) 
+		for(int32_t i = 0; i < importer->GetAnimStackCount(); i++)
 		{
 			FbxTakeInfo* takeInfo = importer->GetTakeInfo(i);
 			if (!takeInfo)

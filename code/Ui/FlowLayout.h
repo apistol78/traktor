@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_FlowLayout_H
-#define traktor_ui_FlowLayout_H
+#pragma once
 
 #include <utility>
 #include <vector>
@@ -36,19 +29,18 @@ public:
 	FlowLayout();
 
 	FlowLayout(int marginX, int marginY, int padX, int padY);
-	
+
 	virtual bool fit(Widget* widget, const Size& bounds, Size& result) override;
-	
+
 	virtual void update(Widget* widget) override;
-	
+
 private:
 	Size m_margin;
 	Size m_pad;
-	
+
 	void calculateRects(Widget* widget, std::vector< WidgetRect >& outRects);
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_FlowLayout_H

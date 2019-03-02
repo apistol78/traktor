@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -46,7 +40,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.json.JsonClassFactory", 0, JsonClassFac
 
 void JsonClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< JsonArray > > classJsonArray = new AutoRuntimeClass< JsonArray >();
+	auto classJsonArray = new AutoRuntimeClass< JsonArray >();
 	classJsonArray->addConstructor();
 	classJsonArray->addMethod("push", &JsonArray::push);
 	classJsonArray->addMethod("empty", &JsonArray::empty);
@@ -57,7 +51,7 @@ void JsonClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	//classJsonArray->addMethod("get", &JsonArray_get_0);
 	registrar->registerClass(classJsonArray);
 
-	Ref< AutoRuntimeClass< JsonDocument > > classJsonDocument = new AutoRuntimeClass< JsonDocument >();
+	auto classJsonDocument = new AutoRuntimeClass< JsonDocument >();
 	classJsonDocument->addConstructor();
 	classJsonDocument->addMethod("loadFromFile", &JsonDocument::loadFromFile);
 	classJsonDocument->addMethod("loadFromStream", &JsonDocument::loadFromStream);
@@ -66,7 +60,7 @@ void JsonClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classJsonDocument->addMethod("saveToStream", &JsonDocument::saveToStream);
 	registrar->registerClass(classJsonDocument);
 
-	Ref< AutoRuntimeClass< JsonMember > > classJsonMember = new AutoRuntimeClass< JsonMember >();
+	auto classJsonMember = new AutoRuntimeClass< JsonMember >();
 	classJsonMember->addConstructor();
 	classJsonMember->addConstructor< const std::wstring&, const Any& >();
 	classJsonMember->addMethod("getName", &JsonMember::getName);
@@ -74,7 +68,7 @@ void JsonClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classJsonMember->addMethod("getValue", &JsonMember::getValue);
 	registrar->registerClass(classJsonMember);
 
-	Ref< AutoRuntimeClass< JsonObject > > classJsonObject = new AutoRuntimeClass< JsonObject >();
+	auto classJsonObject = new AutoRuntimeClass< JsonObject >();
 	classJsonObject->addConstructor();
 	classJsonObject->addMethod("push", &JsonObject::push);
 	classJsonObject->addMethod("empty", &JsonObject::empty);

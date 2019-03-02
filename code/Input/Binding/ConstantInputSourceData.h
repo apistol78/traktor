@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_ConstantInputSourceData_H
-#define traktor_input_ConstantInputSourceData_H
+#pragma once
 
 #include "Input/Binding/IInputSourceData.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace input
 	{
-	
+
 /*! \brief Constant value input.
  * \ingroup Input
  */
@@ -33,7 +26,7 @@ public:
 	ConstantInputSourceData();
 
 	ConstantInputSourceData(float value);
-	
+
 	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -45,4 +38,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_ConstantInputSourceData_H

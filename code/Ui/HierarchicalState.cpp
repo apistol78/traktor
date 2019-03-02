@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Ui/HierarchicalState.h"
@@ -69,11 +63,11 @@ Ref< HierarchicalState > HierarchicalState::merge(const HierarchicalState* state
 void HierarchicalState::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"scrollPosition", m_scrollPosition);
-	s >> MemberStlMap< 
+	s >> MemberStlMap<
 		std::wstring,
 		std::pair< bool, bool >,
-		MemberStlPair< 
-			std::wstring, 
+		MemberStlPair<
+			std::wstring,
 			std::pair< bool, bool >,
 			Member< std::wstring >,
 			MemberStlPair< bool, bool >

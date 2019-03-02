@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Io/DebugStream.h"
 #include "Core/Log/Log.h"
@@ -172,7 +166,7 @@ void DebugStream::dump(OutputStream& os) const
 
 	os << Endl;
 	os << L"Read block sizes" << Endl;
-	
+
 	int32_t last = 0;
 	for (int i = 0; i < sizeof_array(m_readTotals); ++i)
 	{
@@ -182,7 +176,7 @@ void DebugStream::dump(OutputStream& os) const
 
 	os << Endl;
 	os << L"Write block sizes" << Endl;
-	
+
 	last = 0;
 	for (int i = 0; i < sizeof_array(m_writeTotals); ++i)
 	{

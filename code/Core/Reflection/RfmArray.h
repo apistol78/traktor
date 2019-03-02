@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_RfmArray_H
-#define traktor_RfmArray_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Core/Reflection/RfmCompound.h"
@@ -34,4 +27,3 @@ public:
 
 }
 
-#endif	// traktor_RfmArray_H

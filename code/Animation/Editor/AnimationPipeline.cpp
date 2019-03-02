@@ -49,7 +49,7 @@ bool AnimationPipeline::buildDependencies(
 ) const
 {
 	Ref< const AnimationAsset > animationAsset = checked_type_cast< const AnimationAsset* >(sourceAsset);
-	
+
 	// Animation source data.
 	pipelineDepends->addDependency(m_assetPath, animationAsset->getFileName().getPathName());
 
@@ -103,7 +103,7 @@ bool AnimationPipeline::buildOutput(
 		{
 			log::error << L"Unable to build animation; no such file \"" << skeletonAsset->getFileName().getPathName() << L"\"." << Endl;
 			return false;
-		}		
+		}
 	}
 
 	// Scale models according to scale factor in asset.
@@ -121,7 +121,7 @@ bool AnimationPipeline::buildOutput(
 		log::error << L"Available animations are:" << Endl;
 		for (const auto anim : modelAnimation->getAnimations())
 			log::error << L"\t\"" << anim->getName() << L"\"" << Endl;
-		return false;		
+		return false;
 	}
 
 	// Generate key poses.

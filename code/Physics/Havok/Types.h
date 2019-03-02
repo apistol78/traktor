@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_havok_Types_H
-#define traktor_physics_havok_Types_H
+#pragma once
 
 #include "Physics/Havok/HvkRef.h"
 
@@ -33,4 +26,3 @@ struct DestroyCallbackHavok
 	}
 }
 
-#endif	// traktor_physics_havok_Types_H

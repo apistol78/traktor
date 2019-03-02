@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_DoubleBuffer_H
-#define traktor_DoubleBuffer_H
+#pragma once
 
 #include "Core/Thread/Atomic.h"
 #include "Core/Thread/ThreadManager.h"
@@ -14,7 +7,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 namespace traktor
 {
 
-/*! \brief Double buffer helper. 
+/*! \brief Double buffer helper.
  * \ingroup Core
  */
 template < typename Type >
@@ -71,4 +64,3 @@ private:
 
 }
 
-#endif	// traktor_DoubleBuffer_H

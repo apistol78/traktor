@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_IRuntimeClass_H
-#define traktor_IRuntimeClass_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Class/Any.h"
@@ -115,4 +108,3 @@ std::string T_DLLCLASS findRuntimeClassPropertyName(const IRuntimeClass* runtime
 
 }
 
-#endif	// traktor_IRuntimeClass_H

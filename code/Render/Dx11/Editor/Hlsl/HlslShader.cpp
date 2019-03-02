@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cassert>
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/Editor/Hlsl/HlslShader.h"
@@ -300,7 +294,7 @@ std::wstring HlslShader::getGeneratedShader()
 	else if (m_shaderType == StPixel)
 	{
 		ss << L"void main(";
-		
+
 		if (!inputDataText.empty())
 			ss << L"InputData i, ";
 
@@ -312,7 +306,7 @@ std::wstring HlslShader::getGeneratedShader()
 
 		if (m_needVFace)
 			ss << L"bool vFace : SV_IsFrontFace, ";
-		
+
 		ss << L"out OutputData o)" << Endl;
 
 		ss << L"{" << Endl;

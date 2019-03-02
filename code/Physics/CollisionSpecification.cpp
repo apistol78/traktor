@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/AttributeHex.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -20,7 +14,7 @@ CollisionSpecification::CollisionSpecification()
 :	m_bitMask(0)
 {
 }
-	
+
 CollisionSpecification::CollisionSpecification(uint32_t bitMask)
 :	m_bitMask(bitMask)
 {

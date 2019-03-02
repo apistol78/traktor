@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Format_H
-#define traktor_Format_H
+#pragma once
 
 #include "Core/Io/OutputStream.h"
 #include "Core/Math/Vector2.h"
@@ -43,4 +36,3 @@ namespace traktor
 
 }
 
-#endif	// traktor_Format_H

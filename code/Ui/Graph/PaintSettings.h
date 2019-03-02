@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_PaintSettings_H
-#define traktor_ui_PaintSettings_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Math/Color4ub.h"
@@ -129,8 +122,7 @@ private:
 	Color4ub m_selectionCursor;
 	Color4ub m_guideCursor;
 };
-		
+
 	}
 }
 
-#endif	// traktor_ui_PaintSettings_H

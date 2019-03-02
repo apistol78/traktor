@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ShaderDependencyPane_H
-#define traktor_render_ShaderDependencyPane_H
+#pragma once
 
 #include "Render/Editor/Shader/ShaderDependencyTracker.h"
 #include "Ui/Container.h"
@@ -60,4 +53,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_ShaderDependencyPane_H

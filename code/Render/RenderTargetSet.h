@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_RenderTargetSet_H
-#define traktor_render_RenderTargetSet_H
+#pragma once
 
 #include "Render/ISimpleTexture.h"
 
@@ -21,12 +14,12 @@ namespace traktor
 {
 	namespace render
 	{
-	
+
 /*! \brief Render target set.
  * \ingroup Render
  *
  * The content valid flag is automatically reset when
- * the content of the render target has been reset 
+ * the content of the render target has been reset
  * on the device.
  */
 class T_DLLCLASS RenderTargetSet : public Object
@@ -39,7 +32,7 @@ public:
 
 	/*! \brief Get width of render targets. */
 	virtual int getWidth() const = 0;
-	
+
 	/*! \brief Get height of render targets. */
 	virtual int getHeight() const = 0;
 
@@ -72,8 +65,7 @@ public:
 	 */
 	virtual bool read(int index, void* buffer) const = 0;
 };
-	
+
 	}
 }
 
-#endif	// traktor_render_RenderTargetSet_H

@@ -182,7 +182,7 @@ bool MeshPipeline::buildDependencies(
 
 	// Add dependencies to generator fragments.
 	MaterialShaderGenerator().addDependencies(pipelineDepends);
-	
+
 	// Add dependencies to material templates.
 	if (m_enableCustomTemplates)
 	{

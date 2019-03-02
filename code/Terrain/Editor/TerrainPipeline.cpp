@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -144,7 +138,7 @@ bool TerrainPipeline::buildDependencies(
 
 	pipelineDepends->addDependency(c_guidTerrainCoarseShaderTemplate, editor::PdfUse);
 	pipelineDepends->addDependency(c_guidTerrainCoarseShaderTemplate_VFetch, editor::PdfUse);
-	
+
 	if (!m_suppressDetailShader)
 	{
 		pipelineDepends->addDependency(c_guidTerrainDetailShaderTemplate, editor::PdfUse);

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_ShapeResource_H
-#define traktor_spark_ShapeResource_H
+#pragma once
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb2.h"
@@ -77,4 +70,3 @@ private:
 	}
 }
 
-#endif	// traktor_spark_ShapeResource_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef _traktor_FourCC_H
-#define _traktor_FourCC_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -34,13 +27,13 @@ public:
 	 * \param fcc Source FourCC identifier.
 	 */
 	inline FourCC(const FourCC& fcc);
-	
+
 	/*! \brief Initialize the FourCC from a dword number.
 	 *
 	 * \param fcc Source dword identifier.
 	 */
 	inline explicit FourCC(uint32_t fcc);
-	
+
 	/*! \brief Initialize the FourCC from a 4-letter string.
 	 *
 	 * \param str 4-letter string.
@@ -49,7 +42,7 @@ public:
 
 	/*! \brief Format into string. */
 	inline std::string format() const;
-	
+
 	/*! \brief Equal operator.
 	 *
 	 * Compare if two FourCC identifiers are equal.
@@ -141,4 +134,3 @@ inline FourCC::operator uint32_t () const
 
 }
 
-#endif	// _traktor_FourCC_H

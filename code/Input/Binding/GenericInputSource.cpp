@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
@@ -53,7 +47,7 @@ float GenericInputSource::read(float T, float dT)
 	InputDefaultControlType controlType = m_data->getControlType();
 	bool analogue = m_data->isAnalogue();
 	int32_t index = m_data->getIndex();
-	
+
 	// Abort early as no device should have this control.
 	if (controlType == DtInvalid)
 		return 0.0f;

@@ -204,7 +204,7 @@ void InputDeviceTouch::touchesBegan(NSSet* touches, UIEvent* event)
 			m_positionX[m_fingers] = m_height - location.y;
 			m_positionY[m_fingers] = location.x;
 		}
-		
+
 		if (++m_fingers >= 3)
 			break;
 	}
@@ -268,7 +268,7 @@ void InputDeviceTouch::touchesEnded(NSSet* touches, UIEvent* event)
 			m_positionY[index] = location.x;
 		}
 	}
-	
+
 	m_touch.clear();
 	m_fingers = 0;
 }

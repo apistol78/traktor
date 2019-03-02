@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_animation_Cloth_H
-#define traktor_animation_Cloth_H
+#pragma once
 
 namespace traktor
 {
@@ -23,4 +16,3 @@ class Cloth : public Object
 	}
 }
 
-#endif	// traktor_animation_Cloth_H

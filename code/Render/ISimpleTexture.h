@@ -21,7 +21,7 @@ namespace traktor
 class T_DLLCLASS ISimpleTexture : public ITexture
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	/*! \brief Get width in pixels of texture.
 	 *

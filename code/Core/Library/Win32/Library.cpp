@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Platform.h"
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
@@ -55,7 +49,7 @@ bool Library::open(const Path& libraryName)
 		}
 		else
 			log::warning << L"Unable to load module \"" << tstows(path) << L"\"; error code " << int32_t(errorCode) << Endl;
-	}	
+	}
 
 	return bool(m_handle != NULL);
 #else

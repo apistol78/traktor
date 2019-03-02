@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_OctreeNodeData_H
-#define traktor_mesh_OctreeNodeData_H
+#pragma once
 
 #include "Core/Math/Aabb3.h"
 #include "Core/Serialization/ISerializable.h"
@@ -39,4 +32,3 @@ public:
 	}
 }
 
-#endif	// traktor_mesh_OctreeNodeData_H

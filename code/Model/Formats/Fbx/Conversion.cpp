@@ -47,7 +47,7 @@ Matrix44 convertMatrix(const FbxAMatrix& m)
 		convertVector4(m.GetRow(1)),
 		convertVector4(m.GetRow(2)),
 		convertVector4(m.GetRow(3))
-	);	
+	);
 }
 
 traktor::Transform convertTransform(const FbxAMatrix& m)
@@ -55,7 +55,7 @@ traktor::Transform convertTransform(const FbxAMatrix& m)
 	return traktor::Transform(
 		convertVector4(m.GetT()),
 		convertQuaternion(m.GetQ())
-	);	
+	);
 }
 
 Color4f convertColor(const FbxColor& c)

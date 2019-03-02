@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
@@ -79,6 +73,6 @@ void InHysteresis::serialize(ISerializer& s)
 	s >> MemberStaticArray< float, 2 >(L"limit", m_limit);
 	s >> MemberStaticArray< float, 2 >(L"output", m_output);
 }
-	
+
 	}
 }

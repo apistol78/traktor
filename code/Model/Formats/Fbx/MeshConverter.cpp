@@ -96,9 +96,9 @@ bool convertMesh(
 
 			const FbxNode* jointNode = cluster->GetLink();
 			T_ASSERT (jointNode);
-			
+
 			std::wstring jointName = mbstows(jointNode->GetName());
-			
+
 			size_t p = jointName.find(L':');
 			if (p != std::wstring::npos)
 				jointName = jointName.substr(p + 1);
@@ -262,7 +262,7 @@ bool convertMesh(
 							}
 						}
 						break;
-						
+
 					default:
 						break;
 					}

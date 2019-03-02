@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef ImportProjectDialog_H
-#define ImportProjectDialog_H
+#pragma once
 
 #include <Ui/CheckBox.h>
 #include <Ui/ConfigDialog.h>
@@ -36,4 +29,3 @@ private:
 	}
 }
 
-#endif	// ImportProjectDialog_H

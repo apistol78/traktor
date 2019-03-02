@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Bezier2nd_H
-#define traktor_Bezier2nd_H
+#pragma once
 
 #include "Core/Math/Vector2.h"
 
@@ -60,4 +53,3 @@ public:
 
 }
 
-#endif	// traktor_Bezier2nd_H

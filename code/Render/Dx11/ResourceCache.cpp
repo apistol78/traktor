@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/Adler32.h"
 #include "Render/Dx11/Blob.h"
 #include "Render/Dx11/ResourceCache.h"
@@ -65,7 +59,7 @@ ID3D11RasterizerState* ResourceCache::getRasterizerState(const D3D11_RASTERIZER_
 	SmallMap< uint32_t, ComRef< ID3D11RasterizerState > >::iterator i = m_d3dRasterizerStates.find(h);
 	if (i != m_d3dRasterizerStates.end())
 		return i->second;
-	
+
 	ComRef< ID3D11RasterizerState > rs;
 
 	HRESULT hr = m_d3dDevice->CreateRasterizerState(
@@ -86,7 +80,7 @@ ID3D11DepthStencilState* ResourceCache::getDepthStencilState(const D3D11_DEPTH_S
 	SmallMap< uint32_t, ComRef< ID3D11DepthStencilState > >::iterator i = m_d3dDepthStencilStates.find(h);
 	if (i != m_d3dDepthStencilStates.end())
 		return i->second;
-	
+
 	ComRef< ID3D11DepthStencilState > dss;
 
 	HRESULT hr = m_d3dDevice->CreateDepthStencilState(
@@ -107,7 +101,7 @@ ID3D11BlendState* ResourceCache::getBlendState(const D3D11_BLEND_DESC& bd)
 	SmallMap< uint32_t, ComRef< ID3D11BlendState > >::iterator i = m_d3dBlendStates.find(h);
 	if (i != m_d3dBlendStates.end())
 		return i->second;
-	
+
 	ComRef< ID3D11BlendState > bs;
 
 	HRESULT hr = m_d3dDevice->CreateBlendState(
@@ -128,7 +122,7 @@ ID3D11SamplerState* ResourceCache::getSamplerState(const D3D11_SAMPLER_DESC& dsd
 	SmallMap< uint32_t, ComRef< ID3D11SamplerState > >::iterator i = m_d3dSamplerStates.find(h);
 	if (i != m_d3dSamplerStates.end())
 		return i->second;
-	
+
 	ComRef< ID3D11SamplerState > ss;
 	D3D11_SAMPLER_DESC dsd2 = dsd;
 
@@ -166,7 +160,7 @@ ID3D11VertexShader* ResourceCache::getVertexShader(const Blob* vertexShaderBlob,
 	);
 	if (FAILED(hr))
 		return 0;
-	
+
 	m_d3dVertexShaders.insert(std::make_pair(vertexShaderHash, d3dVertexShader));
 	return d3dVertexShader;
 }
@@ -188,7 +182,7 @@ ID3D11PixelShader* ResourceCache::getPixelShader(const Blob* pixelShaderBlob, ui
 	);
 	if (FAILED(hr))
 		return 0;
-	
+
 	m_d3dPixelShaders.insert(std::make_pair(pixelShaderHash, d3dPixelShader));
 	return d3dPixelShader;
 }

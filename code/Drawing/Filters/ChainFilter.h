@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_ChainFilter_H
-#define traktor_drawing_ChainFilter_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Drawing/IImageFilter.h"
@@ -39,8 +32,7 @@ protected:
 private:
 	RefArray< IImageFilter > m_filters;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_ChainFilter_H

@@ -65,7 +65,7 @@ extern void applicationResume();
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
 	applicationSuspend();
-	
+
 	if (viewController != nil)
 		[viewController suspend];
 }
@@ -81,7 +81,7 @@ extern void applicationResume();
 - (void) dealloc
 {
 	[viewController release];
-	[window release];	
+	[window release];
 	[super dealloc];
 }
 

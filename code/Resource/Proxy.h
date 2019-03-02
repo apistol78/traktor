@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_resource_Proxy_H
-#define traktor_resource_Proxy_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Resource/ExplicitResourceHandle.h"
@@ -149,4 +142,3 @@ typename IsPointer< T >::base_t* dynamic_type_cast(const Proxy< T0 >& obj)
 	}
 }
 
-#endif	// traktor_resource_Proxy_H

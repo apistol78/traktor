@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <unistd.h>
 #include "Core/Log/Log.h"
@@ -97,7 +91,7 @@ bool Window::create(int32_t width, int32_t height)
 	if (icon != nullptr)
 	{
 		icon->convert(drawing::PixelFormat::getA8R8G8B8());
-		
+
 		const int32_t szs[] = { 16, 32, 64, 128, 256, 0 };
 		AlignedVector< unsigned long > data;
 

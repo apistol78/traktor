@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_MemberUrl_H
-#define traktor_net_MemberUrl_H
+#pragma once
 
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"
@@ -29,7 +22,7 @@ public:
 	,	m_ref(ref)
 	{
 	}
-	
+
 	virtual void serialize(ISerializer& s) const
 	{
 		std::wstring url;
@@ -44,7 +37,7 @@ public:
 			s >> Member< std::wstring >(getName(), url);
 		}
 	}
-	
+
 private:
 	value_type& m_ref;
 };
@@ -52,4 +45,3 @@ private:
 	}
 }
 
-#endif	// traktor_net_MemberUrl_H

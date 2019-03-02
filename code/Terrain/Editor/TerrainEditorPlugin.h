@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_terrain_TerrainEditorPlugin_H
-#define traktor_terrain_TerrainEditorPlugin_H
+#pragma once
 
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Ui/Events/AllEvents.h"
@@ -90,4 +83,3 @@ private:
 	}
 }
 
-#endif	// traktor_terrain_TerrainEditorPlugin_H

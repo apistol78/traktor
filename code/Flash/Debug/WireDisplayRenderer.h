@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_WireDisplayRenderer_H
-#define traktor_flash_WireDisplayRenderer_H
+#pragma once
 
 #include <stack>
 #include "Flash/IDisplayRenderer.h"
@@ -31,7 +24,7 @@ class PrimitiveRenderer;
 
 	namespace resource
 	{
-	
+
 class IResourceManager;
 
 	}
@@ -62,7 +55,7 @@ public:
 	void render(render::IRenderView* renderView, uint32_t frame);
 
 	virtual bool wantDirtyRegion() const override final;
-	
+
 	virtual void begin(
 		const Dictionary& dictionary,
 		const Color4f& backgroundColor,
@@ -119,4 +112,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_WireDisplayRenderer_H

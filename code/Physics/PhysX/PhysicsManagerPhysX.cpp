@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 
 // PhysX
@@ -60,8 +54,8 @@ namespace traktor
 physx::PxDefaultErrorCallback g_defaultErrorCallback;
 physx::PxDefaultAllocator g_defaultAllocatorCallback;
 
-physx::PxFilterFlags collisionFilterShader(	
-	physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0, 
+physx::PxFilterFlags collisionFilterShader(
+	physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
 	physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
 	physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
 {
@@ -215,7 +209,7 @@ bool PhysicsManagerPhysX::create(const PhysicsCreateDesc& desc)
 	log::info << L"Initializing PhysX " << PX_PHYSICS_VERSION_MAJOR << L"." << PX_PHYSICS_VERSION_MINOR << L"." << PX_PHYSICS_VERSION_BUGFIX << L"..." << Endl;
 
 	physx::PxFoundation* foundation = PxCreateFoundation(PX_PHYSICS_VERSION, g_defaultAllocatorCallback, g_defaultErrorCallback);
-	if (!foundation) 
+	if (!foundation)
 	{
 		log::error << L"Unable to create PhysX foundation" << Endl;
 		return false;
@@ -224,7 +218,7 @@ bool PhysicsManagerPhysX::create(const PhysicsCreateDesc& desc)
 	physx::PxTolerancesScale toleranceScale;
 
 	m_sdk = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, toleranceScale);
-	if (!m_sdk) 
+	if (!m_sdk)
 	{
 		log::error << L"Unable to initialize the PhysX SDK" << Endl;
 		return false;
@@ -269,7 +263,7 @@ bool PhysicsManagerPhysX::create(const PhysicsCreateDesc& desc)
 	sceneDesc.simulationEventCallback = new EventCallback(m_collisionInfo);
 
 	m_scene = m_sdk->createScene(sceneDesc);
-	if (!m_scene) 
+	if (!m_scene)
 	{
 		log::error << L"Unable to create a PhysX scene" << Endl;
 		return false;
@@ -522,7 +516,7 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 
 		geometry = heightfieldGeometry;
 	}
-	
+
 	if (!geometry)
 	{
 		log::error << L"Unsupported shape type \"" << type_name(shapeDesc) << L"\"" << Endl;

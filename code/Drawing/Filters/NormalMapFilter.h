@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_NormalMapFilter_H
-#define traktor_drawing_NormalMapFilter_H
+#pragma once
 
 #include "Drawing/IImageFilter.h"
 
@@ -41,8 +34,7 @@ protected:
 private:
 	float m_scale;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_NormalMapFilter_H

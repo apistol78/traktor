@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Render/VertexElement.h"
@@ -79,7 +73,7 @@ VertexBufferDynamicOpenGLES2::VertexBufferDynamicOpenGLES2(ContextOpenGLES2* con
 
 		AttributeDesc desc;
 		desc.location = VertexAttribute::getLocation(vertexElements[i].getDataUsage(), vertexElements[i].getIndex());
-		
+
 		switch (vertexElements[i].getDataType())
 		{
 		case DtFloat1:
@@ -159,9 +153,9 @@ VertexBufferDynamicOpenGLES2::VertexBufferDynamicOpenGLES2(ContextOpenGLES2* con
 		default:
 			log::warning << L"Unsupport vertex format" << Endl;
 		}
-		
+
 		desc.offset = vertexElements[i].getOffset();
-		
+
 		m_attributes.push_back(desc);
 	}
 }
@@ -185,7 +179,7 @@ void* VertexBufferDynamicOpenGLES2::lock()
 {
 	m_lockOffset = 0;
 	m_lockSize = getBufferSize();
-	
+
 	if (!m_buffer.ptr())
 	{
 		m_buffer.reset((uint8_t*)Alloc::acquireAlign(getBufferSize(), 16, "VB"));

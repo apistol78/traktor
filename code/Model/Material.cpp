@@ -10,7 +10,7 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Material", 0, Material, PropertyGroup)
-		
+
 Material::Material()
 :	m_name(L"")
 ,	m_lightMapRange(0.0f)

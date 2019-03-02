@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Debug/CallStack.h"
 #include "Core/Memory/DebugAllocator.h"
 #include "Core/Thread/Acquire.h"
@@ -31,7 +25,7 @@ DebugAllocator::DebugAllocator(IAllocator* systemAllocator)
 DebugAllocator::~DebugAllocator()
 {
 	T_FATAL_ASSERT (m_aliveBlocks.empty());
-	
+
 	for (std::list< Block >::iterator i = m_freedBlocks.begin(); i != m_freedBlocks.end(); ++i)
 		m_systemAllocator->free(i->top);
 }
@@ -66,7 +60,7 @@ void* DebugAllocator::alloc(size_t size, size_t align, const char* const tag)
 
 	getCallStack(sizeof_array(block.at), block.at, 1);
 
-	return ptr + c_wallSize;	
+	return ptr + c_wallSize;
 }
 
 void DebugAllocator::free(void* ptr)

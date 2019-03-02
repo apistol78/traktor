@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_TabCloseEvent_H
-#define traktor_ui_TabCloseEvent_H
+#pragma once
 
 #include "Ui/Events/CloseEvent.h"
 
@@ -23,14 +16,14 @@ namespace traktor
 	{
 
 class TabPage;
-	
+
 /*! \brief Close event.
  * \ingroup UI
  */
 class T_DLLCLASS TabCloseEvent : public CloseEvent
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	TabCloseEvent(EventSubject* sender, TabPage* tabPage);
 
@@ -39,8 +32,7 @@ public:
 private:
 	Ref< TabPage > m_tabPage;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_TabCloseEvent_H

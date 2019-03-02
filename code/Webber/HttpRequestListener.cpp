@@ -25,7 +25,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 int32_t getNodeChildCount(const html::Node* e)
 {
 	int32_t count = 0;
@@ -107,7 +107,7 @@ void compareHtmlNode(const html::Node* left, const html::Node* right, const std:
 }
 
 		}
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.wbr.HttpRequestListener", HttpRequestListener, net::HttpServer::IRequestListener);
 
 HttpRequestListener::HttpRequestListener(

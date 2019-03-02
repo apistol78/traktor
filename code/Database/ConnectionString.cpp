@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
@@ -52,14 +46,14 @@ void ConnectionString::set(const std::wstring& key, const std::wstring& value)
 
 std::wstring ConnectionString::get(const std::wstring& key) const
 {
-	std::map< std::wstring, std::wstring >::const_iterator i = m_values.find(key);
+	const auto i = m_values.find(key);
 	return i != m_values.end() ? i->second : L"";
 }
 
 std::wstring ConnectionString::format() const
 {
 	StringOutputStream ss;
-	for (std::map< std::wstring, std::wstring >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
+	for (auto i = m_values.begin(); i != m_values.end(); ++i)
 	{
 		if (i != m_values.begin())
 			ss << L";";

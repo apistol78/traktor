@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputSourceFabricator_H
-#define traktor_input_InputSourceFabricator_H
+#pragma once
 
 #include <list>
 #include <map>
@@ -40,7 +33,7 @@ class T_DLLCLASS InputSourceFabricator : public Object
 
 public:
 	InputSourceFabricator(InputSystem* inputSystem, InputCategory category, bool analogue);
-	
+
 	Ref< IInputSourceData > update();
 
 private:
@@ -57,8 +50,7 @@ private:
 	Ref< IInputSourceData > m_outputData;
 	std::list< DeviceState > m_deviceStates;
 };
-	
+
 	}
 }
 
-#endif	// traktor_input_InputSourceFabricator_H

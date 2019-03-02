@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_TypeList_H
-#define traktor_TypeList_H
+#pragma once
 
 #include "Core/Meta/Traits.h"
 
@@ -88,4 +81,3 @@ struct Get < TL, Index, Depth, Match, true >
 
 }
 
-#endif	// traktor_TypeList_H

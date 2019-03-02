@@ -157,7 +157,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	std::wstring m_technique;	
+	std::wstring m_technique;
 };
 
 /*! \brief Conditional selection. */
@@ -368,7 +368,7 @@ public:
 	ParameterType getParameterType() const;
 
 	void setFrequency(UpdateFrequency frequency);
-	
+
 	UpdateFrequency getFrequency() const;
 
 	void setLength(int32_t length);
@@ -706,7 +706,7 @@ public:
 	PrecisionHint getPrecisionHint() const;
 
 	virtual std::wstring getInformation() const override final;
-	
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -944,7 +944,7 @@ public:
 	Swizzle(const std::wstring& swizzle = L"xyzw");
 
 	void set(const std::wstring& swizzle);
-	
+
 	const std::wstring& get() const;
 
 	virtual std::wstring getInformation() const override final;
@@ -1061,9 +1061,9 @@ public:
 	void setParameterType(ParameterType type);
 
 	ParameterType getParameterType() const;
-	
+
 	void setFrequency(UpdateFrequency frequency);
-	
+
 	UpdateFrequency getFrequency() const;
 
 	virtual std::wstring getInformation() const override final;

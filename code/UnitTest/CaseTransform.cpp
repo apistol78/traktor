@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "UnitTest/CaseTransform.h"
 #include "UnitTest/MathCompare.h"
 
@@ -43,7 +37,7 @@ void CaseTransform::run()
 
 		Transform t1(Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), c_angle));
 		Transform t2(Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f, 0.0f), c_angle));
-		
+
 		Matrix44 m1 = rotateY(c_angle);
 		Matrix44 m2 = rotateZ(c_angle);
 

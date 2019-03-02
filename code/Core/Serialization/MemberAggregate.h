@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_MemberAggregate_H
-#define traktor_MemberAggregate_H
+#pragma once
 
 #include "Core/Meta/Traits.h"
 #include "Core/Serialization/MemberComplex.h"
@@ -17,13 +10,13 @@ namespace traktor
 /*! \brief Aggregate member.
  * \ingroup Core
  */
-template < typename Class >	
+template < typename Class >
 class MemberAggregate : public MemberComplex
 {
 public:
 	typedef typename IsPointer< Class >::base_t class_type;
 	typedef class_type* value_type;
-	
+
 	MemberAggregate(const wchar_t* const name, value_type& ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
@@ -35,16 +28,15 @@ public:
 		Ref< ISerializable > rf = m_ref;
 		s >> Member< ISerializable* >(
 			getName(),
-			rf, 
+			rf,
 			&type_of< class_type >()
 		);
 		m_ref = checked_type_cast< class_type* >(rf);
 	}
-	
+
 private:
 	value_type& m_ref;
 };
 
 }
 
-#endif	// traktor_MemberAggregate_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Spark/ICharacterBuilder.h"
 #include "Spark/IComponent.h"
 #include "Spark/Shape.h"
@@ -261,7 +255,7 @@ Aabb2 Sprite::getBounds() const
 	{
 		Vector2 childExtents[4];
 		(*i)->getBounds().getExtents(childExtents);
-		
+
 		Matrix33 childTransform = (*i)->getTransform();
 		bounds.contain(childTransform * childExtents[0]);
 		bounds.contain(childTransform * childExtents[1]);

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_MemberBitMask_H
-#define traktor_MemberBitMask_H
+#pragma once
 
 #include "Core/Serialization/MemberComplex.h"
 
@@ -43,4 +36,3 @@ private:
 
 }
 
-#endif	// traktor_MemberBitMask_H

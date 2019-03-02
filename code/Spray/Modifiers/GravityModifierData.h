@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_GravityModifierData_H
-#define traktor_spray_GravityModifierData_H
+#pragma once
 
 #include "Core/Math/Vector4.h"
 #include "Spray/ModifierData.h"
@@ -45,4 +38,3 @@ private:
 	}
 }
 
-#endif	// traktor_spray_GravityModifierData_H

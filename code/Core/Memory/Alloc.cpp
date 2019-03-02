@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
@@ -51,7 +45,7 @@ void* Alloc::acquire(size_t size, const char* tag)
 	block->size = size;
 
 	Atomic::increment(s_count);
-	
+
 	// If allocated exceed peek than replace peek value.
 	int32_t a = Atomic::add(s_allocated, int32_t(size + sizeof(Block)));
 	int32_t p;

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_XMLNode_H
-#define traktor_flash_XMLNode_H
+#pragma once
 
 #include "Flash/Action/ActionObjectRelay.h"
 
@@ -96,7 +89,7 @@ private:
 	std::wstring m_nodeValue;
 	std::wstring m_namespaceURI;
 	std::wstring m_prefix;
-	
+
 	XMLNode* m_parent;
 	Ref< XMLNode > m_firstChild;
 	Ref< XMLNode > m_lastChild;
@@ -107,4 +100,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_XMLNode_H

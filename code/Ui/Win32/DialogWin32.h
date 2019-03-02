@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_DialogWin32_H
-#define traktor_ui_DialogWin32_H
+#pragma once
 
 #include "Ui/Itf/IDialog.h"
 #include "Ui/Win32/WidgetWin32Impl.h"
@@ -26,7 +19,7 @@ public:
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style);
 
 	virtual void setIcon(ISystemBitmap* icon);
-	
+
 	virtual int showModal();
 
 	virtual void endModal(int result);
@@ -53,4 +46,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_DialogWin32_H

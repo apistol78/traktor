@@ -62,7 +62,7 @@ void GraphResource::serialize(ISerializer& s)
 	s >> Member< float >(L"gain", m_gain);
 	s >> Member< float >(L"presence", m_presence);
 	s >> Member< float >(L"presenceRate", m_presenceRate);
-	s >> Member< float >(L"range", m_range);	
+	s >> Member< float >(L"range", m_range);
 	s >> MemberRef< const Graph >(L"graph", m_graph);
 }
 

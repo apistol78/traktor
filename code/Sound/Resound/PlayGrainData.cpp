@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -49,7 +43,7 @@ void PlayGrainData::serialize(ISerializer& s)
 {
 	s >> resource::Member< Sound >(L"sound", m_sound);
 	s >> MemberRefArray< IFilter >(L"filters", m_filters);
-	
+
 	if (s.getVersion() >= 2)
 		s >> MemberComposite< Range< float > >(L"gain", m_gain);
 	else

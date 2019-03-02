@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_StreamMesh_H
-#define traktor_mesh_StreamMesh_H
+#pragma once
 
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Aabb3.h"
@@ -71,7 +64,7 @@ public:
 	uint32_t getFrameCount() const;
 
 	Ref< Instance > createInstance() const;
-	
+
 	void render(
 		render::RenderContext* renderContext,
 		world::IWorldRenderPass& worldRenderPass,
@@ -102,4 +95,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_StreamMesh_H

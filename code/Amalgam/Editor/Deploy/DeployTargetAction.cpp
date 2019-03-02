@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Editor/Deploy/DeployTargetAction.h"
 #include "Amalgam/Editor/Deploy/Feature.h"
 #include "Amalgam/Editor/Deploy/Platform.h"
@@ -163,7 +157,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	remoteCs.set(L"database", m_databaseName);
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.Database", remoteCs.format());
 	applicationConfiguration->setProperty< PropertyBoolean >(L"Amalgam.DatabaseThread", true);
-	
+
 	// Modify configuration to connect to embedded target manager.
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.TargetManager/Host", m_editorHost);
 	applicationConfiguration->setProperty< PropertyInteger >(L"Amalgam.TargetManager/Port", m_targetManagerPort);

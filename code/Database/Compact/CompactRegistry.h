@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_CompactRegistry_H
-#define traktor_db_CompactRegistry_H
+#pragma once
 
 #include <list>
 #include <map>
@@ -152,4 +145,3 @@ private:
 	}
 }
 
-#endif	// traktor_db_CompactRegistry_H

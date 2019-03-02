@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Functor/Functor.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
@@ -36,7 +30,7 @@ public:
 	void* alloc(uint32_t size)
 	{
 		void* ptr = 0;
-		
+
 		if (size <= MaxFunctorSize)
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_allocatorLock);

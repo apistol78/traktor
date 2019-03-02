@@ -19,7 +19,7 @@ class IStream;
 
 	namespace html
 	{
-	
+
 class Element;
 
 	}

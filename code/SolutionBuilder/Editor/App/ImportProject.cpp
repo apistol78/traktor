@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <Ui/MessageBox.h>
 #include <Ui/FileDialog.h>
 #include <Xml/XmlDeserializer.h>
@@ -29,7 +23,7 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 
 	ui::FileDialog fileDialog;
 	fileDialog.create(parent, type_name(this), L"Open other solution", L"SolutionBuilder solutions;*.xms");
-	
+
 	Path filePath;
 	if (fileDialog.showModal(filePath))
 	{

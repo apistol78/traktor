@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sound_SoundDriverDs8_H
-#define traktor_sound_SoundDriverDs8_H
+#pragma once
 
 #include "Sound/Ds8/Platform.h"
 #include "Sound/ISoundDriver.h"
@@ -55,4 +48,3 @@ private:
 	}
 }
 
-#endif	// traktor_sound_SoundDriverDs8_H

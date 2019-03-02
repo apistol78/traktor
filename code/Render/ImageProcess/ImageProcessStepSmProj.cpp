@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Random.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Render/IRenderSystem.h"
@@ -165,7 +159,7 @@ void ImageProcessStepSmProj::InstanceSmProj::render(
 		shadowFadeZ,
 		shadowFadeRate
 	);
-	
+
 	Scalar viewEdgeNorm = params.viewFrustum.getFarZ() / Scalar(params.shadowFarZ);
 	Vector4 viewEdgeTopLeft = params.viewFrustum.corners[4] / viewEdgeNorm;
 	Vector4 viewEdgeTopRight = params.viewFrustum.corners[5] / viewEdgeNorm;

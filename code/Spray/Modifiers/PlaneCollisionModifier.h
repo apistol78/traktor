@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_PlaneCollisionModifier_H
-#define traktor_spray_PlaneCollisionModifier_H
+#pragma once
 
 #include "Core/Math/Plane.h"
 #include "Spray/Modifier.h"
@@ -40,4 +33,3 @@ private:
 	}
 }
 
-#endif	// traktor_spray_PlaneCollisionModifier_H

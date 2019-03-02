@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Menu_H
-#define traktor_ui_Menu_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
@@ -33,7 +26,7 @@ class Widget;
 class T_DLLCLASS Menu : public Object
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	void add(MenuItem* item);
 
@@ -66,4 +59,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_Menu_H

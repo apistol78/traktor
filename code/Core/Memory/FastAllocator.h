@@ -1,18 +1,11 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_FastAllocator_H
-#define traktor_FastAllocator_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Memory/IAllocator.h"
 
 namespace traktor
 {
-	
+
 class BlockAllocator;
 
 /*! \brief Fast allocator.
@@ -26,13 +19,13 @@ class FastAllocator : public RefCountImpl< IAllocator >
 {
 public:
 	FastAllocator(IAllocator* systemAllocator);
-	
+
 	virtual ~FastAllocator();
-	
+
 	virtual void* alloc(size_t size, size_t align, const char* const tag) override final;
-	
+
 	virtual void free(void* ptr) override final;
-	
+
 private:
 	Ref< IAllocator > m_systemAllocator;
 	BlockAllocator* m_blockAlloc[5];
@@ -42,4 +35,3 @@ private:
 
 }
 
-#endif	// traktor_FastAllocator_H

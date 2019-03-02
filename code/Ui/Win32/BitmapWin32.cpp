@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Color4ub.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -89,7 +83,7 @@ void BitmapWin32::copySubImage(drawing::Image* image, const Rect& srcRect, const
 		return;
 
 	Rect rc = srcRect;
-	
+
 	rc.left = std::max< int >(0, rc.left);
 	rc.top = std::max< int >(0, rc.top);
 	rc.right = std::min< int >(image->getWidth(), rc.right);

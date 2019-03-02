@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_SHA1_H
-#define traktor_SHA1_H
+#pragma once
 
 #include "Core/Misc/IHash.h"
 
@@ -56,4 +49,3 @@ private:
 
 }
 
-#endif	// traktor_SHA1_H

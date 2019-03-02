@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
@@ -190,7 +184,7 @@ int main(int argc, const char** argv)
 	}
 
 	timer.stop();
-	
+
 	if (cmdLine.hasOption('v', L"verbose"))
 		traktor::log::info << L"Finished successfully in " << timer.getElapsedTime() << L" second(s)" << Endl;
 

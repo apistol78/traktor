@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_EntityAdapter_H
-#define traktor_scene_EntityAdapter_H
+#pragma once
 
 #include "Core/Guid.h"
 #include "Core/Object.h"
@@ -203,7 +196,7 @@ public:
 	bool isExpanded() const;
 
 	void setVisible(bool visible);
-	
+
 	bool isVisible(bool includingParents = true) const;
 
 	void setLocked(bool locked);
@@ -248,4 +241,3 @@ private:
 	}
 }
 
-#endif	// traktor_scene_EntityAdapter_H

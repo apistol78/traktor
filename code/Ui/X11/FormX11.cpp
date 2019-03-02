@@ -76,7 +76,7 @@ bool FormX11::create(IWidget* parent, const std::wstring& text, int width, int h
 			m_owner->raiseEvent(&closeEvent);
 			if (!(closeEvent.consumed() && closeEvent.cancelled()))
 				destroy();
-		}		
+		}
 	});
 
 	setText(text);
@@ -100,7 +100,7 @@ void FormX11::setIcon(ISystemBitmap* icon)
 {
 	Ref< drawing::Image > ii = icon->getImage();
 	ii->convert(drawing::PixelFormat::getA8R8G8B8());
-	
+
 	const int32_t szs[] = { 16, 32, 64, 128, 256, 0 };
 	AlignedVector< unsigned long > data;
 
@@ -153,7 +153,7 @@ void FormX11::maximize()
 	event.xclient.data.l[0] = 0;
 	event.xclient.data.l[1] = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE_HIDDEN", False);
 	event.xclient.data.l[2] = 0;
-	XSendEvent(m_context->getDisplay(), m_context->getRootWindow(), False, SubstructureRedirectMask, &event);	
+	XSendEvent(m_context->getDisplay(), m_context->getRootWindow(), False, SubstructureRedirectMask, &event);
 
 	event.xclient.type = ClientMessage;
 	event.xclient.window = m_data.window;
@@ -163,7 +163,7 @@ void FormX11::maximize()
 	event.xclient.data.l[1] = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE_MAXIMIZED_VERT", False);
 	event.xclient.data.l[2] = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE_MAXIMIZED_HORZ", False);
 	event.xclient.data.l[3] = 0;
-	XSendEvent(m_context->getDisplay(), m_context->getRootWindow(), False, SubstructureRedirectMask, &event);	
+	XSendEvent(m_context->getDisplay(), m_context->getRootWindow(), False, SubstructureRedirectMask, &event);
 }
 
 void FormX11::minimize()
@@ -176,7 +176,7 @@ void FormX11::minimize()
 	event.xclient.data.l[0] = 1;
 	event.xclient.data.l[1] = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE_HIDDEN", False);
 	event.xclient.data.l[2] = 0;
-	XSendEvent(m_context->getDisplay(), m_context->getRootWindow(), False, SubstructureRedirectMask, &event);	
+	XSendEvent(m_context->getDisplay(), m_context->getRootWindow(), False, SubstructureRedirectMask, &event);
 }
 
 void FormX11::restore()
@@ -191,7 +191,7 @@ void FormX11::restore()
 	event.xclient.data.l[2] = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE_MAXIMIZED_VERT", False);
 	event.xclient.data.l[3] = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE_MAXIMIZED_HORZ", False);
 	event.xclient.data.l[4] = 0;
-	XSendEvent(m_context->getDisplay(), m_context->getRootWindow(), False, SubstructureRedirectMask, &event);	
+	XSendEvent(m_context->getDisplay(), m_context->getRootWindow(), False, SubstructureRedirectMask, &event);
 }
 
 bool FormX11::isMaximized() const

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Application.h"
 #include "Ui/Slider.h"
 #include "Ui/StyleSheet.h"
@@ -122,9 +116,9 @@ void Slider::eventPaint(PaintEvent* event)
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	Canvas& canvas = event->getCanvas();
-	
+
 	Rect rcInner = getInnerRect();
-	
+
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rcInner);
 

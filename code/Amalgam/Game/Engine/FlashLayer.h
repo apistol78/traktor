@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_FlashLayer_H
-#define traktor_amalgam_FlashLayer_H
+#pragma once
 
 #include "Amalgam/Game/Engine/Layer.h"
 #include "Core/Class/Any.h"
@@ -50,7 +43,7 @@ class ISoundRenderer;
 
 class ImageProcess;
 class ImageProcessSettings;
-class RenderTargetSet;		
+class RenderTargetSet;
 
 	}
 
@@ -106,7 +99,7 @@ public:
 	virtual void resume() override final;
 
 	/*! \brief Get reference to current Flash movie player.
-	 * 
+	 *
 	 * \return Flash movie player object.
 	 */
 	flash::MoviePlayer* getMoviePlayer();
@@ -208,4 +201,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_FlashLayer_H

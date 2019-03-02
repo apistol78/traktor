@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
@@ -276,7 +270,7 @@ Ref< SpriteInstance > AsMovieClip::MovieClip_attachMovie_4(SpriteInstance* self,
 		initObject,
 		0
 	));
-	
+
 	// Add new instance to display list.
 	DisplayList& displayList = self->getDisplayList();
 	displayList.showObject(depth, attachClipId, attachClipInstance, true);

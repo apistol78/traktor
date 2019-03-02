@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Ui/Application.h"
 #include "Ui/ToolTip.h"
@@ -113,7 +107,7 @@ void ToolTip::eventPaint(PaintEvent* event)
 	Canvas& canvas = event->getCanvas();
 
 	Rect innerRect = getInnerRect();
-	
+
 	canvas.setForeground(Color4ub(80, 80, 40));
 	canvas.setBackground(Color4ub(255, 255, 180));
 

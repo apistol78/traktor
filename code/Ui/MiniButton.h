@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_MiniButton_H
-#define traktor_ui_MiniButton_H
+#pragma once
 
 #include "Ui/Widget.h"
 
@@ -28,7 +21,7 @@ namespace traktor
 class T_DLLCLASS MiniButton : public Widget
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	bool create(Widget* parent, const std::wstring& text);
 
@@ -41,15 +34,14 @@ public:
 private:
 	bool m_pushed;
 	Ref< IBitmap > m_image;
-	
+
 	void eventButtonDown(MouseButtonDownEvent* event);
-	
+
 	void eventButtonUp(MouseButtonUpEvent* event);
-	
+
 	void eventPaint(PaintEvent* event);
 };
 
 	}
 }
 
-#endif	// traktor_ui_MiniButton_H

@@ -1,5 +1,4 @@
-#ifndef traktor_wbr_Container_H
-#define traktor_wbr_Container_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Webber/Widget.h"
@@ -18,7 +17,7 @@ namespace traktor
 	{
 
 class ILayout;
-	
+
 class T_DLLCLASS Container : public Widget
 {
 	T_RTTI_CLASS;
@@ -45,4 +44,3 @@ private:
 	}
 }
 
-#endif	// traktor_wbr_Container_H

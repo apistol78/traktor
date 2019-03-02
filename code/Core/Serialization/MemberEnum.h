@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_MemberEnum_H
-#define traktor_MemberEnum_H
+#pragma once
 
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComplex.h"
@@ -115,4 +108,3 @@ private:
 
 }
 
-#endif	// traktor_MemberEnum_H

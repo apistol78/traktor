@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_ValueDigital_H
-#define traktor_input_ValueDigital_H
+#pragma once
 
 #include "Core/Math/MathUtils.h"
 
@@ -33,4 +26,3 @@ float T_FORCE_INLINE asFloat(bool inputValue)
 	}
 }
 
-#endif	// traktor_input_ValueDigital_H

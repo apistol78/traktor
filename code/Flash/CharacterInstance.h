@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_CharacterInstance_H
-#define traktor_flash_CharacterInstance_H
+#pragma once
 
 #include <string>
 #include "Core/Ref.h"
@@ -54,7 +47,7 @@ public:
 
 	/*! \brief Get character instance count. */
 	static int32_t getInstanceCount();
-	
+
 	/*! \brief Destroy instance. */
 	virtual void destroy();
 
@@ -306,4 +299,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_CharacterInstance_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_DefaultComponentEditor_H
-#define traktor_scene_DefaultComponentEditor_H
+#pragma once
 
 #include "Scene/Editor/IComponentEditor.h"
 
@@ -28,13 +21,13 @@ class IEntityComponentData;
 
 	namespace scene
 	{
-	
+
 class EntityAdapter;
 class SceneEditorContext;
 
 /*! \brief
  * \ingroup Scene
- */	
+ */
 class T_DLLCLASS DefaultComponentEditor : public IComponentEditor
 {
 	T_RTTI_CLASS;
@@ -53,4 +46,3 @@ private:
 	}
 }
 
-#endif	// traktor_scene_DefaultComponentEditor_H

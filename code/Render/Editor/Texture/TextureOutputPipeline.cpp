@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Compress/Lzf/DeflateStreamLzf.h"
 #include "Core/Functor/Functor.h"
@@ -284,7 +278,7 @@ bool TextureOutputPipeline::buildOutput(
 			return false;
 		}
 
-		needAlpha = 
+		needAlpha =
 			(pixelFormat.getAlphaBits() > 0 && !textureOutput->m_ignoreAlpha) ||
 			textureOutput->m_enableNormalMapCompression;
 	}
@@ -293,7 +287,7 @@ bool TextureOutputPipeline::buildOutput(
 		log::info << L"Using automatic texture format" << Endl;
 
 		// Determine pixel and texture format from source image (and hints).
-		needAlpha = 
+		needAlpha =
 			(image->getPixelFormat().getAlphaBits() > 0 && !textureOutput->m_ignoreAlpha) ||
 			textureOutput->m_generateAlpha ||
 			textureOutput->m_enableNormalMapCompression;
@@ -540,7 +534,7 @@ bool TextureOutputPipeline::buildOutput(
 		if (!isLog2(width) || !isLog2(height))
 		{
 			log::warning << L"Texture dimension not power-of-2; resized to nearest valid dimension" << Endl;
-			
+
 			if (nearestLog2(width) - width < width - previousLog2(width))
 				width = nearestLog2(width);
 			else

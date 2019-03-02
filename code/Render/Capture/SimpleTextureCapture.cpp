@@ -38,7 +38,7 @@ int32_t SimpleTextureCapture::getWidth() const
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");
 	return m_texture ? m_texture->getWidth() : 0;
 }
-	
+
 int32_t SimpleTextureCapture::getHeight() const
 {
 	T_CAPTURE_ASSERT (m_texture, L"Simple texture destroyed.");

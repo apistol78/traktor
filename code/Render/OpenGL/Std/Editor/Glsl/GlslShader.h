@@ -69,7 +69,7 @@ public:
 	const std::set< std::wstring >& getUniforms() const;
 
 	bool defineScript(const std::wstring& signature);
-    
+
 	void pushOutputStream(BlockType blockType, StringOutputStream* outputStream);
 
 	void popOutputStream(BlockType blockType);

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_IValue_H
-#define traktor_net_IValue_H
+#pragma once
 
 #include "Core/Rtti/ITypedObject.h"
 
@@ -30,4 +23,3 @@ class T_DLLCLASS IValue : public ITypedObject
 	}
 }
 
-#endif	// traktor_net_IValue_H

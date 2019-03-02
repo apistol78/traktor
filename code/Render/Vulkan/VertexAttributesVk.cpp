@@ -5,7 +5,7 @@ namespace traktor
 {
 	namespace render
 	{
-	
+
 std::wstring VertexAttributesVk::getName(DataUsage usage, int32_t index)
 {
 	const wchar_t* s[] =
@@ -38,6 +38,6 @@ int32_t VertexAttributesVk::getLocation(DataUsage usage, int32_t index)
 	int32_t location = base[int(usage)] + index;
 	return (location < base[int(usage) + 1]) ? location : -1;
 }
-	
+
 	}
 }

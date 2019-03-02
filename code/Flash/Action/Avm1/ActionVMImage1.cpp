@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
@@ -106,7 +100,7 @@ void ActionVMImage1::prepare()
 		state.length = 1;
 		if (op & 0x80)
 		{
-#if defined(__EMSCRIPTEN__)			
+#if defined(__EMSCRIPTEN__)
 			uint16_t length = unalignedRead< uint16_t >(state.pc + 1);
 #else
 			uint16_t& length = *reinterpret_cast< uint16_t* >(state.pc + 1);

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_Vertex_H
-#define traktor_spray_Vertex_H
+#pragma once
 
 namespace traktor
 {
@@ -34,4 +27,3 @@ struct TrailVertex
 	}
 }
 
-#endif	// traktor_spray_Vertex_H

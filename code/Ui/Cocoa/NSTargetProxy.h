@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_NSTargetProxy_H
-#define traktor_ui_NSTargetProxy_H
+#pragma once
 
 #import <Cocoa/Cocoa.h>
 
@@ -13,11 +6,11 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 struct ITargetProxyCallback
 {
 	virtual void targetProxy_Action(void* controlId) = 0;
-	
+
 	virtual void targetProxy_doubleAction(void* controlId) = 0;
 };
 
@@ -33,19 +26,19 @@ public:
 	,	m_doubleAction(doubleAction)
 	{
 	}
-	
+
 	virtual void targetProxy_Action(void* controlId)
 	{
 		if (m_action)
 			(m_this->*m_action)(controlId);
 	}
-	
+
 	virtual void targetProxy_doubleAction(void* controlId)
 	{
 		if (m_doubleAction)
 			(m_this->*m_doubleAction)(controlId);
 	}
-	
+
 private:
 	TargetType* m_this;
 	method_t m_action;
@@ -70,4 +63,3 @@ private:
 
 @end
 
-#endif	// traktor_ui_NSTargetProxy_H

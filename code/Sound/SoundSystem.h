@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sound_SoundSystem_H
-#define traktor_sound_SoundSystem_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
@@ -144,7 +137,7 @@ private:
 	Semaphore m_channelsLock;
 
 	// \}
-	
+
 	// \name Mixer data blocks
 	// \{
 
@@ -163,4 +156,3 @@ private:
 	}
 }
 
-#endif	// traktor_sound_SoundSystem_H

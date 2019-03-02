@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_PhysicsManagerHavok_H
-#define traktor_physics_PhysicsManagerHavok_H
+#pragma once
 
 #include "Physics/PhysicsManager.h"
 #include "Physics/Havok/Types.h"
@@ -158,4 +151,3 @@ private:
 	}
 }
 
-#endif	// traktor_physics_PhysicsManagerHavok_H

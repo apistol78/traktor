@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Const.h"
 #include "Drawing/Image.h"
@@ -42,6 +36,6 @@ void SeparateAlphaFilter::apply(Image* image) const
 		image->setSpanUnsafe(y, span.c_ptr());
 	}
 }
-	
+
 	}
 }

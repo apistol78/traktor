@@ -97,10 +97,10 @@ void ImageProcessDefineTarget::serialize(ISerializer& s)
 
 	s >> MemberEnum< TextureFormat >(L"format", m_format, kFormats);
 	s >> Member< bool >(L"depthStencil", m_depthStencil);
-	
+
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"preferTiled", m_preferTiled);
-	
+
 	if (s.getVersion() >= 5)
 		s >> Member< bool >(L"generateMips", m_generateMips);
 

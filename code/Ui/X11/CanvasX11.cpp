@@ -208,7 +208,7 @@ void CanvasX11::drawBitmap(const Point& dstAt, const Size& dstSize, const Point&
 	case BmNone:
 		cairo_set_operator(m_cr, CAIRO_OPERATOR_SOURCE);
 		break;
-		
+
 	case BmAlpha:
 	case BmModulate:
 		break;

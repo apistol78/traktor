@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_weather_PrecipitationComponentData_H
-#define traktor_weather_PrecipitationComponentData_H
+#pragma once
 
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
@@ -66,4 +59,3 @@ private:
 	}
 }
 
-#endif	// traktor_weather_PrecipitationComponentData_H

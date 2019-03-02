@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef SolutionLoader_H
-#define SolutionLoader_H
+#pragma once
 
 #include <map>
 #include "Core/Object.h"
@@ -39,4 +32,3 @@ private:
 	}
 }
 
-#endif	// SolutionLoader_H

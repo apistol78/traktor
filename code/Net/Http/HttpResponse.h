@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_HttpResponse_H
-#define traktor_net_HttpResponse_H
+#pragma once
 
 #include <map>
 #include "Core/Object.h"
@@ -20,9 +13,9 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace traktor
 {
-	
+
 class IStream;
-	
+
 	namespace net
 	{
 
@@ -35,24 +28,23 @@ class T_DLLCLASS HttpResponse : public Object
 
 public:
 	HttpResponse();
-	
+
 	bool parse(IStream* stream);
 
 	int32_t getStatusCode() const;
-	
+
 	const std::wstring& getStatusMessage() const;
 
 	void set(const std::wstring& name, const std::wstring& value);
-	
+
 	std::wstring get(const std::wstring& name) const;
-	
+
 private:
 	int32_t m_statusCode;
 	std::wstring m_statusMessage;
 	std::map< std::wstring, std::wstring > m_values;
 };
-	
+
 	}
 }
 
-#endif	// traktor_net_HttpResponse_H

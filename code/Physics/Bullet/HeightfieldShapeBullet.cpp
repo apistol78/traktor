@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -76,7 +70,7 @@ void HeightfieldShapeBullet::getAabb(const btTransform& t, btVector3& aabbMin, b
 
 	btVector3 halfExtents = (localAabbMax - localAabbMin) * btScalar(0.5);
 
-	btMatrix3x3 basisAbs = t.getBasis().absolute();  
+	btMatrix3x3 basisAbs = t.getBasis().absolute();
 	btVector3 center = t.getOrigin();
 
 	btVector3 extent = btVector3(
@@ -117,7 +111,7 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 	mxx = mnx + cxf;
 
 	btVector3 triangles[2][3];
-	
+
 	for (int32_t u = imnx; u < imxx; u += cx)
 	{
 		mnz = float(imnz);

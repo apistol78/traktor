@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_AttributeMultiLine_H
-#define traktor_AttributeMultiLine_H
+#pragma once
 
 #include "Core/Serialization/Attribute.h"
 
@@ -30,4 +23,3 @@ class T_DLLCLASS AttributeMultiLine : public Attribute
 
 }
 
-#endif	// traktor_AttributeMultiLine_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Envelope.h"
 #include "Core/Math/Vector2.h"
@@ -455,7 +449,7 @@ void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Si
 		return;
 
 	HDC hImageDC = CreateCompatibleDC(m_hDC);
-	
+
 	if ((blendMode & BmAlpha) == 0)
 	{
 		HBITMAP hBitmap = reinterpret_cast< BitmapWin32* >(bitmap)->getHBitmap();

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #pragma once
 
 #define T_VERIFY_ENABLE 1
@@ -38,7 +32,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #		define T_VERIFY_USING_EXCEPTIONS 0
 #	endif
 #else
-#	define T_VERIFY_ARGUMENT_COUNT(required) 
+#	define T_VERIFY_ARGUMENT_COUNT(required)
 #	define T_VERIFY_ARGUMENT_TYPE(arg, type)
 #	define T_VERIFY_USING_EXCEPTIONS 0
 #endif

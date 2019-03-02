@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_MulticastUdpSocket_H
-#define traktor_net_MulticastUdpSocket_H
+#pragma once
 
 #include "Net/UdpSocket.h"
 
@@ -46,4 +39,3 @@ public:
 	}
 }
 
-#endif	// traktor_net_MulticastUdpSocket_H

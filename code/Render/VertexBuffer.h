@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_VertexBuffer_H
-#define traktor_render_VertexBuffer_H
+#pragma once
 
 #include "Core/Object.h"
 
@@ -54,7 +47,7 @@ public:
 	 * \return Pointer to segment beginning.
 	 */
 	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount) = 0;
-	
+
 	/*! \brief Unlock access. */
 	virtual void unlock() = 0;
 
@@ -68,8 +61,7 @@ private:
 	uint32_t m_bufferSize;
 	bool m_contentValid;
 };
-	
+
 	}
 }
 
-#endif	// traktor_render_VertexBuffer_H

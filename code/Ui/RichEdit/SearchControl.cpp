@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
@@ -44,7 +38,7 @@ bool SearchControl::create(ui::Widget* parent)
 	m_toolBarMode->addImage(new ui::StyleBitmap(L"UI.SearchWholeWord"), 1);
 	m_toolBarMode->addImage(new ui::StyleBitmap(L"UI.SearchWildCard"), 1);
 	m_toolBarMode->addEventHandler< ui::ToolBarButtonClickEvent >(this, &SearchControl::eventToolClick);
-	
+
 	m_toolCaseSensitive = new ui::ToolBarButton(L"Toggle case sensitive search", 0, ui::Command(L"Script.Editor.ToggleCaseSensitive"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolBarMode->addItem(m_toolCaseSensitive);
 

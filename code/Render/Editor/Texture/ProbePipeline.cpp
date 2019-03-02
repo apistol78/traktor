@@ -176,7 +176,7 @@ bool ProbePipeline::buildOutput(
 	{
 		for (int32_t side = 0; side < 6; ++side)
 			cubeMip->getSide(side)->apply(&tf);
-	}		
+	}
 
 	const uint32_t sideSize = cubeMips.front()->getSize();
 	const uint32_t mipCount = uint32_t(cubeMips.size());

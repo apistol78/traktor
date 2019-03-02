@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <zlib.h>
 #include "Compress/Zip/InflateStreamZip.h"
@@ -16,7 +10,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 voidpf inflateZAlloc(voidpf opaque, uInt items, uInt size)
 {
 	return Alloc::acquire(items * size, "zlib");
@@ -26,7 +20,7 @@ void inflateZFree(voidpf opaque, voidpf address)
 {
 	Alloc::free(address);
 }
-		
+
 		}
 
 class InflateZipImpl : public RefCountImpl< IRefCount >
@@ -39,7 +33,7 @@ public:
 	,	m_position(m_startPosition)
 	{
 		std::memset(&m_zstream, 0, sizeof(m_zstream));
-		
+
 		m_zstream.zalloc = &inflateZAlloc;
 		m_zstream.zfree = &inflateZFree;
 

@@ -35,7 +35,7 @@ bool Output::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Output::createCursor() const 
+Ref< ISoundBufferCursor > Output::createCursor() const
 {
 	Ref< OutputCursor > outputCursor = new OutputCursor();
 	return outputCursor;

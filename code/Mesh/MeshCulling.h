@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_MeshCulling_H
-#define traktor_mesh_MeshCulling_H
+#pragma once
 
 #include <limits>
 #include "Core/Math/Vector2.h"
@@ -117,4 +110,3 @@ inline bool isMeshVisible(
 	}
 }
 
-#endif	// traktor_mesh_MeshCulling_H

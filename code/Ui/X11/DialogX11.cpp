@@ -39,7 +39,7 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 		0,
 		nullptr
 	);
-	
+
 	// Notify WM about form title.
 	if ((style & WsCaption) != 0)
 	{
@@ -51,7 +51,7 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 
 		XSetWMName(m_context->getDisplay(), window, &tp);
 	}
-	
+
 	// Make dialog on top of parent.
 	if (parent != nullptr)
 	{
@@ -82,7 +82,7 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 		parentWindow,
 		&root,
 		&px, &py,
-		&pwidth, 
+		&pwidth,
 		&pheight,
 		&pborder,
 		&pdepth
@@ -100,7 +100,7 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 			m_owner->raiseEvent(&closeEvent);
 			if (!(closeEvent.consumed() && closeEvent.cancelled()))
 				endModal(DrCancel);
-		}		
+		}
 	});
 
 	return true;

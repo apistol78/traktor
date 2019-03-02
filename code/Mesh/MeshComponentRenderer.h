@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_MeshComponentRenderer_H
-#define traktor_mesh_MeshComponentRenderer_H
+#pragma once
 
 #include "World/IEntityRenderer.h"
 
@@ -48,4 +41,3 @@ public:
 	}
 }
 
-#endif	// traktor_mesh_MeshComponentRenderer_H

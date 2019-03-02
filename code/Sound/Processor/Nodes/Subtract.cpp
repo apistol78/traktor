@@ -46,7 +46,7 @@ bool Subtract::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Subtract::createCursor() const 
+Ref< ISoundBufferCursor > Subtract::createCursor() const
 {
 	return new SubtractCursor();
 }

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 /*lint -e49*/
 #include <Common/Base/hkBase.h>
@@ -73,7 +67,7 @@ public:
 	}
 
 protected:
-	virtual void addRayHit(const hkpCdBody& cdBody, const hkpShapeRayCastCollectorOutput& hitInfo) 
+	virtual void addRayHit(const hkpCdBody& cdBody, const hkpShapeRayCastCollectorOutput& hitInfo)
 	{
 		if (cdBody.getRootCollidable() != m_ignoreCollidable)
 			hkpClosestRayHitCollector::addRayHit(cdBody, hitInfo);
@@ -176,7 +170,7 @@ bool PhysicsManagerHavok::create(const PhysicsCreateDesc& desc)
 	hkpWorldCinfo info;
 	info.m_simulationType = hkpWorldCinfo::SIMULATION_TYPE_DISCRETE;
 	info.m_gravity.set(0.0f, -9.8f, 0.0f);
-	info.m_collisionTolerance = 0.01f; 
+	info.m_collisionTolerance = 0.01f;
 	info.m_broadPhaseBorderBehaviour = hkpWorldCinfo::BROADPHASE_BORDER_FIX_ENTITY;
 	info.setBroadPhaseWorldSize(1000.0f);
 	info.setupSolverInfo(hkpWorldCinfo::SOLVER_TYPE_4ITERS_MEDIUM);
@@ -273,7 +267,7 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 	{
 		float radius = cylinderShape->getRadius();
 		float length = cylinderShape->getLength();
-	
+
 		Vector4 vertex1(0.0f, 0.0f, -length / 2.0f);
 		Vector4 vertex2(0.0f, 0.0f, length / 2.0f);
 
@@ -396,7 +390,7 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 	{
 		// Build Havok local transformation; need to renormalize rotation.
 		hkTransform localTransform = toHkTransform(shapeDesc->getLocalTransform());
-		
+
 		localTransform.getRotation().renormalize();
 		T_ASSERT (localTransform.isOk());
 
@@ -482,7 +476,7 @@ Ref< Joint > PhysicsManagerHavok::createJoint(const JointDesc* desc, const Trans
 	T_ASSERT (body1);
 
 	HvkRef< hkpRigidBody > b1, b2;
-	
+
 	if (body1)
 		b1 = checked_type_cast< BodyHavok* >(body1)->getRigidBody();
 	if (body2)

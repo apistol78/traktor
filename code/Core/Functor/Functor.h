@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Functor_H
-#define traktor_Functor_H
+#pragma once
 
 #include "Core/Ref.h"
 
@@ -713,4 +706,3 @@ inline Ref< StaticFunctor8< P1, P2, P3, P4, P5, P6, P7, P8 > > makeStaticFunctor
 
 }
 
-#endif	// traktor_Functor_H

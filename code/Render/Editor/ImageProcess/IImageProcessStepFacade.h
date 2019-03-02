@@ -9,7 +9,7 @@ namespace traktor
 {
 	namespace editor
 	{
-	
+
 class IEditor;
 
 	}

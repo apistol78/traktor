@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_xml_Attribute_H
-#define traktor_xml_Attribute_H
+#pragma once
 
 #include <string>
 #include "Core/Object.h"
@@ -17,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
-#endif 
+#endif
 
 namespace traktor
 {
@@ -43,7 +36,7 @@ public:
 	virtual void setValue(const std::wstring& value);
 
 	Attribute* getPrevious() const;
-	
+
 	Attribute* getNext() const;
 
 private:
@@ -58,4 +51,3 @@ private:
 	}
 }
 
-#endif	// traktor_xml_Attribute_H

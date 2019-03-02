@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
@@ -84,7 +78,7 @@ Ref< ImageProcessStepBlur::Instance > ImageProcessStepBlur::create(
 		for (int32_t i = 0; i < m_taps; ++i)
 		{
 			float x = i - m_taps / 2.0f;
-			
+
 			float weight = a * std::exp(-((x * x) / (2.0f * sigma * sigma)));
 			totalWeight += weight;
 

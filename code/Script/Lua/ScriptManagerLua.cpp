@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Class/AutoVerify.h"
 #include "Core/Class/Boxes.h"
@@ -261,7 +255,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 
 	const TypeInfo& exportType = runtimeClass->getExportType();
 	int32_t classRegistryIndex = int32_t(m_classRegistry.size());
-	
+
 	RegisteredClass& rc = m_classRegistry.push_back();
 	rc.runtimeClass = runtimeClass;
 
@@ -365,7 +359,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 
 		lua_getfield(m_luaState, -1, "__getters");
 		T_FATAL_ASSERT (lua_istable(m_luaState, - 1));
-		
+
 		//lua_pushinteger(m_luaState, i);
 		lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getPropertyGetDispatch(i));
 		lua_pushlightuserdata(m_luaState, (void*)this);
@@ -861,7 +855,7 @@ void ScriptManagerLua::collectGarbageFullNoLock()
 	{
 		size_t memoryUseBefore = m_totalMemoryUse;
 		lua_gc(m_luaState, LUA_GCCOLLECT, 0);
-		
+
 		if (m_totalMemoryUse < memoryUseBefore)
 			count = 10;
 		else
@@ -1006,7 +1000,7 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 		Ref< ITypedObject > object = runtimeDispatch->invoke(0, top - 1, argv).getObject();
 		if (!object)
 			return 0;
-		
+
 		lua_rawgeti(luaState, LUA_REGISTRYINDEX, rc.classTableRef);
 		lua_setmetatable(luaState, -2);
 

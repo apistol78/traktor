@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sstream>
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/MD5.h"
@@ -105,7 +99,7 @@ std::wstring GeneratorContext::generateGUID(const std::wstring& key) const
 	}
 	ss << L"}";
 
-	return ss.str();	
+	return ss.str();
 }
 
 	}

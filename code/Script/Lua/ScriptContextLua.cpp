@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -144,7 +138,7 @@ bool ScriptContextLua::load(const IScriptBlob* scriptBlob)
 			CHECK_LUA_STACK(m_luaState, 0);
 			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 			lua_getmetatable(m_luaState, -1);
-			
+
 			lua_pushlightuserdata(m_luaState, (void*)this);
 			lua_pushcclosure(m_luaState, restrictedAccessWrite, 1);
 			lua_setfield(m_luaState, -2, "__newindex");
@@ -219,9 +213,9 @@ bool ScriptContextLua::haveFunction(const std::string& functionName) const
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 		lua_pushstring(m_luaState, functionName.c_str());
 		lua_rawget(m_luaState, -2);
-		
+
 		result = (lua_isfunction(m_luaState, -1) != 0);
-		
+
 		lua_pop(m_luaState, 2);
 	}
 	m_scriptManager->unlock();
@@ -407,7 +401,7 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 
 		if (m_scriptManager->m_profiler)
 			m_scriptManager->m_profiler->notifyCallEnter();
-		
+
 		// Call script function.
 		int32_t err = lua_pcall(m_luaState, argc + (self ? 1 : 0), 1, errfunc);
 		if (err == 0)

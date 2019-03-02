@@ -56,11 +56,11 @@ public:
 					std::wstring id = fromNSString(achievement.identifier);
 					(*boutAchievements)[id] = bool(achievement.percentComplete >= 99.0f);
 					log::info << L"Enum achievement \"" << id << L"\", percent " << float(achievement.percentComplete) << Endl;
-				}				
+				}
 			}
 			else
 			{
-				log::error << L"Failed to enumerate achievements;" << Endl;				
+				log::error << L"Failed to enumerate achievements;" << Endl;
 				log::error << fromNSString([error localizedDescription]) << Endl;
 			}
 			bevent->broadcast();
@@ -71,10 +71,10 @@ public:
 			log::error << L"Failed to enumerate achievements; No response when download achievements" << Endl;
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	bool set(const std::wstring& achievementId, bool reward)
 	{
 		__block Event* bevent;
@@ -90,7 +90,7 @@ public:
 			result = bool(error == nil);
 			bevent->broadcast();
 		}];
-        
+
         if (!event.wait(100000))
         {
             log::error << L"Failed to reward achievement; No response when rewarding achievement \"" << achievementId << L"\"" << Endl;

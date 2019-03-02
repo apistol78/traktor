@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Spray/EmitterInstance.h"
 #include "Spray/Types.h"
 #include "Spray/Sources/DiscSource.h"
@@ -75,7 +69,7 @@ void DiscSource::emit(
 		point->inverseMass = 1.0f / (m_mass.random(context.random));
 		point->size = m_size.random(context.random);
 		point->random = context.random.nextFloat();
-		
+
 		++point;
 	}
 }

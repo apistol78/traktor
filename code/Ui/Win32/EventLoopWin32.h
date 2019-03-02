@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_EventLoopWin32_H
-#define traktor_ui_EventLoopWin32_H
+#pragma once
 
 #include "Ui/Itf/IEventLoop.h"
 #include "Ui/Win32/Window.h"
@@ -36,7 +29,7 @@ public:
 	virtual void destroy() override final;
 
 	virtual bool process(EventSubject* owner) override final;
-	
+
 	virtual int32_t execute(EventSubject* owner) override final;
 
 	virtual void exit(int32_t exitCode) override final;
@@ -57,4 +50,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_EventLoopWin32_H

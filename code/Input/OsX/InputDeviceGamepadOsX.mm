@@ -8,7 +8,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 struct GamepadControlMap
 {
 	InputDefaultControlType control;
@@ -43,7 +43,7 @@ c_gamepadControlMap[] =
 	{ DtTriggerLeft, -5, false, L"Left trigger" },
 	{ DtTriggerRight, -6, false, L"Right trigger" }
 };
-		
+
 float adjustDeadZone(float value)
 {
 	if (value >= -0.2f && value <= 0.2f)
@@ -106,7 +106,7 @@ float InputDeviceGamepadOsX::getControlValue(int32_t control)
 {
 	int32_t index = c_gamepadControlMap[control].index;
 	bool analogue = c_gamepadControlMap[control].analogue;
-	
+
 	if (analogue)
 	{
 		if (index == -1)
@@ -131,14 +131,14 @@ float InputDeviceGamepadOsX::getControlValue(int32_t control)
 	else
 	{
 		float v = 0.0f;
-		
+
 		if (index == -5)
 			v = m_axis[2][0];
 		else if (index == -6)
 			v = m_axis[2][1];
 		else if (index >= 0 && index < sizeof_array(m_button))
 			v = m_button[index] ? 1.0f : 0.0f;
-	
+
 		return v > 0.5f ? 1.0f : 0.0f;
 	}
 }
@@ -199,17 +199,17 @@ void InputDeviceGamepadOsX::callbackRemoval(void* context, IOReturn result, void
 void InputDeviceGamepadOsX::callbackValue(void* context, IOReturn result, void* sender, IOHIDValueRef value)
 {
 	InputDeviceGamepadOsX* this_ = static_cast< InputDeviceGamepadOsX* >(context);
-	
+
 	IOHIDElementRef element = IOHIDValueGetElement(value);
 	if (!element)
 		return;
-		
+
 	uint32_t usage = (uint32_t)IOHIDElementGetUsage(element);
 	if (usage == uint32_t(~0UL))
 		return;
-		
+
 	int32_t v = (int32_t)IOHIDValueGetIntegerValue(value);
-		
+
 	if (usage == 1)
 		this_->m_button[0] = bool(v != 0);		// A
 	else if (usage == 2)
@@ -242,7 +242,7 @@ void InputDeviceGamepadOsX::callbackValue(void* context, IOReturn result, void* 
 	{
 		int32_t min = IOHIDElementGetLogicalMin(element);
 		int32_t max = IOHIDElementGetLogicalMax(element);
-		
+
 		if (max > min)
 		{
 			if (usage == 50 || usage == 53)

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/PreviewList/PreviewItem.h"
 #include "Ui/PreviewList/PreviewItems.h"
 
@@ -13,7 +7,7 @@ namespace traktor
 	{
 		namespace
 		{
-                
+
 struct ItemSortPred
 {
 	bool operator () (const PreviewItem* item1, const PreviewItem* item2) const

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_online_SteamVoiceChat_H
-#define traktor_online_SteamVoiceChat_H
+#pragma once
 
 #include <steam/steam_api.h>
 #include "Core/Misc/AutoPtr.h"
@@ -47,4 +40,3 @@ private:
 	}
 }
 
-#endif	// traktor_online_SteamVoiceChat_H

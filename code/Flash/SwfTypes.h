@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_SwfTypes_H
-#define traktor_flash_SwfTypes_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Math/Aabb2.h"
@@ -483,4 +476,3 @@ enum SwfBlendMode
 	}
 }
 
-#endif	// traktor_flash_SwfTypes_H

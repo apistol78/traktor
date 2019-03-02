@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Render/OpenGL/Std/ProgramResourceOpenGL.h"
@@ -59,7 +53,7 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 			glslProgram.getTextures(),
 			glslProgram.getUniforms(),
 			glslProgram.getSamplers()
-		);		
+		);
 	}
 	if (!resource)
 		return nullptr;

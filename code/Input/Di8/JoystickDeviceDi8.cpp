@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
@@ -208,7 +202,7 @@ void JoystickDeviceDi8::readState()
 	}
 
 	hr = m_device->Poll();
-	if (FAILED(hr))  
+	if (FAILED(hr))
 	{
 		hr = m_device->Acquire();
 		m_connected = SUCCEEDED(hr);
@@ -218,7 +212,7 @@ void JoystickDeviceDi8::readState()
 
 	hr = m_device->GetDeviceState(sizeof(DIJOYSTATE2), &m_state);
 
-	m_connected = SUCCEEDED(hr);	
+	m_connected = SUCCEEDED(hr);
 }
 
 bool JoystickDeviceDi8::supportRumble() const

@@ -51,7 +51,7 @@ using namespace traktor;
 {
 	uint32_t modifierFlags = [theEvent modifierFlags];
 	int32_t keyCode = [theEvent keyCode];
-	
+
 	// Toggle fullscreen with Cmd+M or Cmd+Return key combinations.
 	if (
 		(modifierFlags & kCGEventFlagMaskCommand) != 0 &&
@@ -60,7 +60,7 @@ using namespace traktor;
 	{
 		[self toggle];
 	}
-	
+
 	// Close application with Cmd+Q combination.
 	if (
 		(modifierFlags & kCGEventFlagMaskCommand) != 0 &&

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -96,7 +90,7 @@ bool MoviePlayer::create(Movie* movie, int32_t width, int32_t height, ISoundRend
 		m_stage = memberValue.getObject< AsStage >();
 	if (global->getMemberByQName("flash.external.ExternalInterface", memberValue))
 		m_externalInterface = memberValue.getObject< As_flash_external_ExternalInterface >();
-	
+
 	// Ensure stage are properly initialized.
 	if (m_stage)
 		m_stage->eventResize(width, height);
@@ -154,7 +148,7 @@ bool MoviePlayer::gotoAndPlay(const std::string& frameLabel)
 
 	m_movieInstance->setPlaying(true, false);
 	m_movieInstance->gotoFrame(frame);
-	
+
 	return true;
 }
 

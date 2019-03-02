@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_PathDialogWin32_H
-#define traktor_ui_PathDialogWin32_H
+#pragma once
 
 #include "Core/Misc/TString.h"
 #include "Ui/Itf/IPathDialog.h"
@@ -43,4 +36,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_PathDialogWin32_H

@@ -31,7 +31,7 @@ public:
 	virtual void setFloatParameter(handle_t handle, float param) override final;
 
 	virtual void setFloatArrayParameter(handle_t handle, const float* param, int length) override final;
-	
+
 	virtual void setVectorParameter(handle_t handle, const Vector4& param) override final;
 
 	virtual void setVectorArrayParameter(handle_t handle, const Vector4* param, int length) override final;
@@ -116,7 +116,7 @@ private:
 	bool m_textureDirty;
 	bool m_validated;
 	bool m_valid;
-	
+
 	ProgramOpenGL(ResourceContextOpenGL* resourceContext, GLuint program, const ProgramResource* resource);
 };
 

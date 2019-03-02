@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_MovieRenderer_H
-#define traktor_flash_MovieRenderer_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Math/Aabb2.h"
@@ -99,4 +92,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_MovieRenderer_H

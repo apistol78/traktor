@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_StdAllocator_H
-#define traktor_StdAllocator_H
+#pragma once
 
 #include "Core/Memory/IAllocator.h"
 
@@ -22,10 +15,9 @@ class StdAllocator : public RefCountImpl< IAllocator >
 {
 public:
 	virtual void* alloc(size_t size, size_t align, const char* const tag) override final;
-	
+
 	virtual void free(void* ptr) override final;
 };
 
 }
 
-#endif	// traktor_StdAllocator_H

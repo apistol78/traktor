@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ListPropertyItem_H
-#define traktor_ui_ListPropertyItem_H
+#pragma once
 
 #include <vector>
 #include "Ui/PropertyList/PropertyItem.h"
@@ -82,4 +75,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_ListPropertyItem_H

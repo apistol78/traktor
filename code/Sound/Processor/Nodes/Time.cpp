@@ -39,7 +39,7 @@ bool Time::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Time::createCursor() const 
+Ref< ISoundBufferCursor > Time::createCursor() const
 {
 	return new TimeCursor();
 }

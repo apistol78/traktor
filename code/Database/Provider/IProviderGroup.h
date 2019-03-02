@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_IProviderGroup_H
-#define traktor_db_IProviderGroup_H
+#pragma once
 
 #include "Core/Guid.h"
 #include "Core/Object.h"
@@ -81,4 +74,3 @@ public:
 	}
 }
 
-#endif	// traktor_db_IProviderGroup_H

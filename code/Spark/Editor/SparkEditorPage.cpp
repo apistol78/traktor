@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/IRuntimeClassFactory.h"
 #include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -107,7 +101,7 @@ bool SparkEditorPage::create(ui::Container* parent)
 
 	m_toolBarPlace = new ui::custom::ToolBar();
 	m_toolBarPlace->create(m_panelPlace, ui::WsNone);
-	m_toolBarPlace->addItem(new ui::custom::ToolBarButton(L"Move Up", ui::Command(L"Spark.Editor.MoveUp"))); 
+	m_toolBarPlace->addItem(new ui::custom::ToolBarButton(L"Move Up", ui::Command(L"Spark.Editor.MoveUp")));
 	m_toolBarPlace->addItem(new ui::custom::ToolBarButton(L"Move Down", ui::Command(L"Spark.Editor.MoveDown")));
 	m_toolBarPlace->addItem(new ui::custom::ToolBarButton(L"Remove", ui::Command(L"Spark.Editor.Remove")));
 	m_toolBarPlace->addEventHandler< ui::custom::ToolBarButtonClickEvent >(this, &SparkEditorPage::eventToolPlaceClick);

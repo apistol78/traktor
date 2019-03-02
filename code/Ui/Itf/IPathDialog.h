@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_IPathDialog_H
-#define traktor_ui_IPathDialog_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Io/Path.h"
@@ -35,4 +28,3 @@ public:
 	}
 }
 
-#endif	// traktor_ui_IPathDialog_H

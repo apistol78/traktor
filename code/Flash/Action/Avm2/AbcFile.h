@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_AbcFile_H
-#define traktor_flash_AbcFile_H
+#pragma once
 
 #include <string>
 #include "Core/Containers/AlignedVector.h"
@@ -450,4 +443,3 @@ struct AbcFile
 	}
 }
 
-#endif	// traktor_flash_AbcFile_H

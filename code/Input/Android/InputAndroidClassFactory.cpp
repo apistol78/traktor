@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Input/Android/InputAndroidClassFactory.h"
@@ -21,18 +15,18 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputAndroidClassFactory", 0, Inp
 
 void InputAndroidClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< KeyboardDeviceAndroid > > classKeyboardDeviceAndroid = new AutoRuntimeClass< KeyboardDeviceAndroid >();
+	auto classKeyboardDeviceAndroid = new AutoRuntimeClass< KeyboardDeviceAndroid >();
 	classKeyboardDeviceAndroid->addStaticMethod("showSoftKeyboard", &KeyboardDeviceAndroid::showSoftKeyboard);
 	classKeyboardDeviceAndroid->addStaticMethod("hideSoftKeyboard", &KeyboardDeviceAndroid::hideSoftKeyboard);
 	registrar->registerClass(classKeyboardDeviceAndroid);
 
-	Ref< AutoRuntimeClass< MouseDeviceAndroid > > classMouseDeviceAndroid = new AutoRuntimeClass< MouseDeviceAndroid >();
+	auto classMouseDeviceAndroid = new AutoRuntimeClass< MouseDeviceAndroid >();
 	registrar->registerClass(classMouseDeviceAndroid);
 
-	Ref< AutoRuntimeClass< SensorDeviceAndroid > > classSensorDeviceAndroid = new AutoRuntimeClass< SensorDeviceAndroid >();
+	auto classSensorDeviceAndroid = new AutoRuntimeClass< SensorDeviceAndroid >();
 	registrar->registerClass(classSensorDeviceAndroid);
 
-	Ref< AutoRuntimeClass< TouchDeviceAndroid > > classTouchDeviceAndroid = new AutoRuntimeClass< TouchDeviceAndroid >();
+	auto classTouchDeviceAndroid = new AutoRuntimeClass< TouchDeviceAndroid >();
 	registrar->registerClass(classTouchDeviceAndroid);
 }
 

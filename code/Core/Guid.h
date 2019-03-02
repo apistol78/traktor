@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Guid_H
-#define traktor_Guid_H
+#pragma once
 
 #include <string>
 #include "Core/Config.h"
@@ -90,10 +83,9 @@ public:
 	bool operator > (const Guid& r) const;
 
 private:
-	uint8_t m_data[16];	
+	uint8_t m_data[16];
 	bool m_valid;
 };
 
 }
 
-#endif	// traktor_Guid_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Alloc_H
-#define traktor_Alloc_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -40,11 +33,10 @@ public:
 
 	/*! \brief Return number of allocations. */
 	static size_t count();
-	
+
 	/*! \brief Return amount of memory currently allocated. */
 	static size_t allocated();
 };
 
 }
 
-#endif	// traktor_Alloc_H

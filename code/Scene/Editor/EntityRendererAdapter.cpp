@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityRendererAdapter.h"
 #include "Scene/Editor/EntityRendererCache.h"
@@ -12,7 +6,7 @@ namespace traktor
 {
 	namespace scene
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityRendererAdapter", EntityRendererAdapter, world::IEntityRenderer)
 
 EntityRendererAdapter::EntityRendererAdapter(EntityRendererCache* cache, world::IEntityRenderer* entityRenderer, const std::function< bool(const EntityAdapter*) >& filter)
@@ -59,6 +53,6 @@ void EntityRendererAdapter::flush(
 		worldRenderPass
 	);
 }
-	
+
 	}
 }

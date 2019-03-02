@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_SmallSet_H
-#define traktor_SmallSet_H
+#pragma once
 
 #include "Core/Containers/AlignedVector.h"
 
@@ -34,12 +27,12 @@ public:
 	{
 		return m_data.begin();
 	}
-	
+
 	iterator end()
 	{
 		return m_data.end();
 	}
-	
+
 	const_iterator end() const
 	{
 		return m_data.end();
@@ -162,4 +155,3 @@ private:
 
 }
 
-#endif	// traktor_SmallSet_H

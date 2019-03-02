@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_CanvasWin32_H
-#define traktor_ui_CanvasWin32_H
+#pragma once
 
 #include "Ui/Itf/ICanvas.h"
 #include "Ui/Itf/IFontMetric.h"
@@ -41,8 +34,7 @@ public:
 
 	virtual Size getExtent(Window& hWnd, const std::wstring& text) const = 0;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_CanvasWin32_H

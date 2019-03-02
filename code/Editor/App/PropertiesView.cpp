@@ -36,7 +36,7 @@ namespace traktor
 std::wstring lookupDocumentation(const std::wstring& id)
 {
 	std::wstring id_;
-		
+
 	id_ = toUpper< std::wstring >(id);
 	id_ = replaceAll< std::wstring >(id_, L'.', L'_');
 	id_ = replaceAll< std::wstring >(id_, L' ', L'_');

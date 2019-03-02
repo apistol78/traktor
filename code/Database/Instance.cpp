@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/BufferedStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/BinarySerializer.h"
@@ -123,11 +117,11 @@ Ref< ISerializable > Instance::getObject() const
 	T_ASSERT (m_providerInstance);
 
 	Ref< ISerializable > object;
-	const TypeInfo* serializerType = 0;
+	const TypeInfo* serializerType = nullptr;
 
 	Ref< IStream > stream = m_providerInstance->readObject(serializerType);
 	if (!stream || !serializerType)
-		return 0;
+		return nullptr;
 
 	BufferedStream bs(stream);
 	Ref< Serializer > serializer;
@@ -138,7 +132,7 @@ Ref< ISerializable > Instance::getObject() const
 	else
 	{
 		stream->close();
-		return 0;
+		return nullptr;
 	}
 
 	object = serializer->readObject();
@@ -167,7 +161,7 @@ Ref< IStream > Instance::readData(const std::wstring& dataName) const
 	T_ASSERT (m_providerInstance);
 
 	Ref< IStream > stream = m_providerInstance->readData(dataName);
-	return stream ? new BufferedStream(stream) : 0;
+	return stream ? new BufferedStream(stream) : nullptr;
 }
 
 bool Instance::checkout()
@@ -304,7 +298,7 @@ bool Instance::setObject(const ISerializable* object)
 	if (!object)
 		return false;
 
-	const TypeInfo* serializerType = 0;
+	const TypeInfo* serializerType = nullptr;
 
 	Ref< IStream > stream = m_providerInstance->writeObject(type_name(object), serializerType);
 	if (!stream || !serializerType)
@@ -336,7 +330,7 @@ bool Instance::removeAllData()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (m_providerInstance);
-	
+
 	if (!m_providerInstance->removeAllData())
 		return false;
 
@@ -358,7 +352,8 @@ Ref< IStream > Instance::writeData(const std::wstring& dataName)
 
 Instance::Instance(IInstanceEventListener* eventListener)
 :	m_eventListener(eventListener)
-,	m_parent(0)
+,	m_providerInstance(nullptr)
+,	m_parent(nullptr)
 ,	m_cachedFlags(0)
 ,	m_transactionFlags(0)
 {
@@ -384,8 +379,8 @@ bool Instance::internalCreateNew(IProviderInstance* providerInstance, Group* par
 
 void Instance::internalDestroy()
 {
-	m_providerInstance = 0;
-	m_parent = 0;
+	m_providerInstance = nullptr;
+	m_parent = nullptr;
 	m_cachedFlags = 0;
 	m_transactionFlags = 0;
 }

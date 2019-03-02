@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef SolutionBuilderMsvcGenericTool_H
-#define SolutionBuilderMsvcGenericTool_H
+#pragma once
 
 #include <map>
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcTool.h"
@@ -39,4 +32,3 @@ private:
 	}
 }
 
-#endif	// SolutionBuilderMsvcGenericTool_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Enums_H
-#define traktor_ui_Enums_H
+#pragma once
 
 namespace traktor
 {
@@ -132,7 +125,7 @@ enum MouseButtons
 enum VirtualKey
 {
 	VkNull = 0,
-	
+
 	VkTab		= 1000,
 	VkClear		= 1001,
 	VkReturn	= 1002,
@@ -189,7 +182,7 @@ enum VirtualKey
 	VkF12		= 1053,
 	VkNumLock	= 1054,
 	VkScroll	= 1055,
-	
+
 	Vk0 = '0',
 	Vk1 = '1',
 	Vk2 = '2',
@@ -233,4 +226,3 @@ enum VirtualKey
 	}
 }
 
-#endif	// traktor_ui_Enums_H

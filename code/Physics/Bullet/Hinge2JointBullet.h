@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_Hinge2JointBullet_H
-#define traktor_physics_Hinge2JointBullet_H
+#pragma once
 
 #include "Physics/Hinge2Joint.h"
 #include "Physics/Bullet/JointBullet.h"
@@ -47,4 +40,3 @@ public:
 	}
 }
 
-#endif	// traktor_physics_Hinge2JointBullet_H

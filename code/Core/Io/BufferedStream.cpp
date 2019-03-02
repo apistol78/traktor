@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <algorithm>
 #include "Core/Io/BufferedStream.h"
@@ -239,9 +233,9 @@ int64_t BufferedStream::write(const void* block, int64_t nbytes)
 		{
 			int64_t space = m_internalBufferSize - m_writeBufCnt;
 			int64_t nwrite = std::min< int64_t >(space, nbytes);
-			
+
 			std::memcpy(&m_writeBuf[m_writeBufCnt], ptr, nwrite);
-			
+
 			m_writeBufCnt += nwrite;
 			nwritten += nwrite;
 			nbytes -= nwrite;

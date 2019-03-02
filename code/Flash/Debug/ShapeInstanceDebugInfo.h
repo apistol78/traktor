@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #ifndef traktor_flash_ShapeInstanceDebugInfo_H
 #define traktor_flash_ShapeInstanceDebugInfo_H
 
@@ -24,7 +18,7 @@ namespace traktor
 
 class Shape;
 class ShapeInstance;
-	
+
 /*! \brief
  * \ingroup Flash
  */
@@ -50,7 +44,7 @@ private:
 	bool m_mask;
 	bool m_clipped;
 };
-	
+
 	}
 }
 

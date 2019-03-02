@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Partition/IPartition.h"
@@ -79,7 +73,7 @@ void PartitionMesh::render(
 #else
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(m_name.c_str());
 #endif
-		
+
 		renderBlock->distance = distancePart;
 		renderBlock->program = program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();

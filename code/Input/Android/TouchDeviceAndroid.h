@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_TouchDeviceAndroid_H
-#define traktor_input_TouchDeviceAndroid_H
+#pragma once
 
 #include "Core/Platform.h"
 #include "Core/Containers/StaticVector.h"
@@ -17,11 +10,11 @@ namespace traktor
 {
 	namespace input
 	{
-	
+
 class TouchDeviceAndroid : public IInputDevice
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	TouchDeviceAndroid(const SystemWindow& syswin);
 
@@ -40,7 +33,7 @@ public:
 	virtual bool isControlStable(int32_t control) const T_OVERRIDE T_FINAL;
 
 	virtual float getControlValue(int32_t control) T_OVERRIDE T_FINAL;
-	
+
 	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const T_OVERRIDE T_FINAL;
 
 	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const T_OVERRIDE T_FINAL;
@@ -54,7 +47,7 @@ public:
 	virtual bool supportRumble() const T_OVERRIDE T_FINAL;
 
 	virtual void setRumble(const InputRumble& rumble) T_OVERRIDE T_FINAL;
-	
+
 	virtual void setExclusive(bool exclusive) T_OVERRIDE T_FINAL;
 
 private:
@@ -74,8 +67,7 @@ private:
 
 	void handleInput(AInputEvent* event);
 };
-	
+
 	}
 }
 
-#endif	// traktor_input_TouchDeviceAndroid_H

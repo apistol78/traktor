@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_IPhysicsServer_H
-#define traktor_amalgam_IPhysicsServer_H
+#pragma once
 
 #include "Amalgam/Game/IServer.h"
 
@@ -45,4 +38,3 @@ public:
 	}
 }
 
-#endif	// traktor_amalgam_IPhysicsServer_H

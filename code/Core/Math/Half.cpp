@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Half.h"
 
 namespace traktor
@@ -31,7 +25,7 @@ half_t floatToHalf(float value)
 		if (m == 0)
 		{
 			return s | 0x7c00;
-		} 
+		}
 		else
 		{
 			m >>= 13;

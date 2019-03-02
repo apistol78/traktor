@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Splitter_H
-#define traktor_ui_Splitter_H
+#pragma once
 
 #include "Ui/Widget.h"
 
@@ -41,21 +34,21 @@ public:
 	bool create(Widget* parent, bool vertical = true, int position = 100, bool relative = false, int border = 16);
 
 	virtual void update(const Rect* rc = 0, bool immediate = false) override;
-	
+
 	virtual Size getMinimumSize() const override;
-	
+
 	virtual Size getPreferedSize() const override;
-	
+
 	virtual Size getMaximumSize() const override;
-	
+
 	void setPosition(int position);
-	
+
 	int getPosition() const;
-	
+
 	Ref< Widget > getLeftWidget() const;
-	
+
 	Ref< Widget > getRightWidget() const;
-	
+
 private:
 	bool m_vertical;
 	int m_position;
@@ -69,11 +62,11 @@ private:
 	void setAbsolutePosition(int position);
 
 	void eventMouseMove(MouseMoveEvent* event);
-	
+
 	void eventButtonDown(MouseButtonDownEvent* event);
-	
+
 	void eventButtonUp(MouseButtonUpEvent* event);
-	
+
 	void eventSize(SizeEvent* event);
 
 	void eventPaint(PaintEvent* event);
@@ -82,4 +75,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_Splitter_H

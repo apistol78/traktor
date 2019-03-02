@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Thread/Acquire.h"
@@ -31,21 +25,18 @@ void buildInstanceMap(Group* group, std::map< Guid, Ref< Instance > >& outInstan
 {
 	RefArray< Instance > childInstances;
 	group->getChildInstances(childInstances);
-
-	for (RefArray< Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	for (const auto childInstance : childInstances)
 	{
-		Instance* instance = *i;
 		outInstanceMap.insert(std::make_pair(
-			instance->getGuid(),
-			instance
+			childInstance->getGuid(),
+			childInstance
 		));
 	}
 
 	RefArray< Group > childGroups;
 	group->getChildGroups(childGroups);
-
-	for (RefArray< Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
-		buildInstanceMap(*i, outInstanceMap);
+	for (const auto childGroup : childGroups)
+		buildInstanceMap(childGroup, outInstanceMap);
 }
 
 		}
@@ -61,7 +52,7 @@ bool Database::open(IProviderDatabase* providerDatabase)
 	m_providerBus = m_providerDatabase->getBus();
 
 	m_rootGroup = new Group(this, this);
-	if (!m_rootGroup->internalCreate(m_providerDatabase->getRootGroup(), 0))
+	if (!m_rootGroup->internalCreate(m_providerDatabase->getRootGroup(), nullptr))
 		return false;
 
 	buildInstanceMap(m_rootGroup, m_instanceMap);
@@ -131,16 +122,16 @@ void Database::close()
 	if (m_rootGroup)
 	{
 		m_rootGroup->internalDestroy();
-		m_rootGroup = 0;
+		m_rootGroup = nullptr;
 	}
 
 	if (m_providerBus)
-		m_providerBus = 0;
+		m_providerBus = nullptr;
 
 	if (m_providerDatabase)
 	{
 		m_providerDatabase->close();
-		m_providerDatabase = 0;
+		m_providerDatabase = nullptr;
 	}
 }
 
@@ -157,7 +148,7 @@ Ref< Group > Database::getGroup(const std::wstring& groupPath)
 
 	Ref< Group > group = m_rootGroup;
 	StringSplit< std::wstring > pathElements(groupPath, L"/");
-	for (StringSplit< std::wstring >::const_iterator i = pathElements.begin(); i != pathElements.end(); ++i)
+	for (auto i = pathElements.begin(); i != pathElements.end(); ++i)
 	{
 		if (!(group = findChildGroup(group, FindGroupByName(*i))))
 			break;
@@ -174,14 +165,14 @@ Ref< Group > Database::createGroup(const std::wstring& groupPath)
 	Ref< Group > group = m_rootGroup;
 
 	StringSplit< std::wstring > groupNames(groupPath, L"/");
-	for (StringSplit< std::wstring >::const_iterator i = groupNames.begin(); i != groupNames.end(); ++i)
+	for (auto i = groupNames.begin(); i != groupNames.end(); ++i)
 	{
 		Ref< Group > childGroup = group->getGroup(*i);
 		if (!childGroup)
 		{
 			childGroup = group->createGroup(*i);
 			if (!childGroup)
-				return 0;
+				return nullptr;
 		}
 		group = childGroup;
 	}
@@ -192,13 +183,13 @@ Ref< Group > Database::createGroup(const std::wstring& groupPath)
 Ref< Instance > Database::getInstance(const Guid& instanceGuid)
 {
 	if (instanceGuid.isNull() || !instanceGuid.isValid())
-		return 0;
+		return nullptr;
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (m_providerDatabase);
 
-	std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(instanceGuid);
-	return i != m_instanceMap.end() ? i->second : 0;
+	auto i = m_instanceMap.find(instanceGuid);
+	return i != m_instanceMap.end() ? i->second : nullptr;
 }
 
 Ref< Instance > Database::getInstance(const std::wstring& instancePath, const TypeInfo* primaryType)
@@ -209,7 +200,7 @@ Ref< Instance > Database::getInstance(const std::wstring& instancePath, const Ty
 	std::wstring instanceName = instancePath;
 	Ref< Group > group = m_rootGroup;
 
-	std::wstring::size_type i = instanceName.find_last_of(L'/');
+	auto i = instanceName.find_last_of(L'/');
 	if (i != std::wstring::npos)
 	{
 		group = getGroup(instanceName.substr(0, i));
@@ -217,7 +208,7 @@ Ref< Instance > Database::getInstance(const std::wstring& instancePath, const Ty
 	}
 
 	if (!group)
-		return 0;
+		return nullptr;
 
 	return group->getInstance(instanceName, primaryType);
 }
@@ -230,7 +221,7 @@ Ref< Instance > Database::createInstance(const std::wstring& instancePath, uint3
 	std::wstring instanceName;
 	Ref< Group > group;
 
-	std::wstring::size_type i = instancePath.find_last_of(L'/');
+	auto i = instancePath.find_last_of(L'/');
 	if (i != std::wstring::npos)
 	{
 		instanceName = instancePath.substr(i + 1);
@@ -248,7 +239,7 @@ Ref< Instance > Database::createInstance(const std::wstring& instancePath, uint3
 	}
 
 	if (instanceName.empty() || !group)
-		return 0;
+		return nullptr;
 
 	return group->createInstance(instanceName, flags, guid);
 }
@@ -256,14 +247,14 @@ Ref< Instance > Database::createInstance(const std::wstring& instancePath, uint3
 Ref< ISerializable > Database::getObjectReadOnly(const Guid& guid) const
 {
 	if (guid.isNull() || !guid.isValid())
-		return 0;
+		return nullptr;
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (m_providerDatabase);
 
-	std::map< Guid, Ref< Instance > >::const_iterator i = m_instanceMap.find(guid);
+	auto i = m_instanceMap.find(guid);
 	if (i == m_instanceMap.end() || !i->second)
-		return 0;
+		return nullptr;
 
 	return i->second->getObject();
 }
@@ -290,7 +281,7 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 			Ref< Group > group = m_rootGroup;
 
 			StringSplit< std::wstring > pathElements(created->getGroupPath(), L"/");
-			for (StringSplit< std::wstring >::const_iterator i = pathElements.begin(); group && i != pathElements.end(); ++i)
+			for (auto i = pathElements.begin(); group && i != pathElements.end(); ++i)
 			{
 				Ref< Group > childGroup = findChildGroup(group, FindGroupByName(*i));
 				if (childGroup)
@@ -317,14 +308,14 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 
 		else if (const EvtInstanceRemoved* removed = dynamic_type_cast< const EvtInstanceRemoved* >(outEvent))
 		{
-			std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(removed->getInstanceGuid());
+			auto i = m_instanceMap.find(removed->getInstanceGuid());
 			if (i != m_instanceMap.end())
 				m_instanceMap.erase(i);
 		}
 
 		else if (const EvtInstanceGuidChanged* guidChanged = dynamic_type_cast< const EvtInstanceGuidChanged* >(outEvent))
 		{
-			std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(guidChanged->getInstancePreviousGuid());
+			auto i = m_instanceMap.find(guidChanged->getInstancePreviousGuid());
 			if (i != m_instanceMap.end())
 				i->second->internalFlush();
 
@@ -334,7 +325,7 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 
 		else if (const EvtInstanceRenamed* renamed = dynamic_type_cast< const EvtInstanceRenamed* >(outEvent))
 		{
-			std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(renamed->getInstanceGuid());
+			auto i = m_instanceMap.find(renamed->getInstanceGuid());
 			if (i != m_instanceMap.end())
 			{
 				Ref< Group > parent = i->second->getParent();
@@ -370,7 +361,7 @@ void Database::instanceEventRemoved(Instance* instance)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	// Remove previous cached entry.
-	std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(instance->getGuid());
+	auto i = m_instanceMap.find(instance->getGuid());
 	if (i != m_instanceMap.end())
 		m_instanceMap.erase(i);
 
@@ -384,7 +375,7 @@ void Database::instanceEventGuidChanged(Instance* instance, const Guid& previous
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	// Remove previous cached entry.
-	std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(previousGuid);
+	auto i = m_instanceMap.find(previousGuid);
 	if (i != m_instanceMap.end())
 		m_instanceMap.erase(i);
 

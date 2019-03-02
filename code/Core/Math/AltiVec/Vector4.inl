@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include "Core/Math/Vector4.h"
 
@@ -103,7 +97,7 @@ T_MATH_INLINE Scalar Vector4::w() const
 
 T_MATH_INLINE Vector4 Vector4::xyz0() const
 {
-	return *this * c_mask; 
+	return *this * c_mask;
 }
 
 T_MATH_INLINE Vector4 Vector4::xyz1() const

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_EnumKeys_H
-#define traktor_input_EnumKeys_H
+#pragma once
 
 #include "Core/Serialization/MemberEnum.h"
 #include "Input/InputTypes.h"
@@ -21,4 +14,3 @@ extern const MemberEnum< InputDefaultControlType >::Key g_InputDefaultControlTyp
 	}
 }
 
-#endif	// traktor_input_EnumKeys_H

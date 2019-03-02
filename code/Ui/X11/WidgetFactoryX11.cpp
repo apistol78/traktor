@@ -89,7 +89,7 @@ WidgetFactoryX11::~WidgetFactoryX11()
 	// 	XCloseIM(m_xim);
 	// 	m_xim = 0;
 	// }
-	
+
 	// if (m_context->getDisplay() != nullptr)
 	// {
 	// 	XCloseDisplay(m_context->getDisplay());

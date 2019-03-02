@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Thread/Acquire.h"
@@ -115,7 +109,7 @@ void VertexBufferStaticDx11::prepare(ID3D11DeviceContext* d3dDeviceContext, Stat
 	if (m_data.ptr())
 	{
 		D3D11_BOX d3db;
-		
+
 		d3db.left = m_bufferChunk.vertexOffset;
 		d3db.right = m_bufferChunk.vertexOffset + getBufferSize();
 		d3db.top = 0;
@@ -131,7 +125,7 @@ void VertexBufferStaticDx11::prepare(ID3D11DeviceContext* d3dDeviceContext, Stat
 			0,
 			0
 		);
-		
+
 		m_data.release();
 	}
 	VertexBufferDx11::prepare(d3dDeviceContext, stateCache);

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #if defined(__EMSCRIPTEN_PTHREADS__)
 #	include <pthread.h>
@@ -79,7 +73,7 @@ bool Mutex::wait(int32_t timeout)
 	InternalData* data = reinterpret_cast< InternalData* >(m_handle);
 	while (pthread_mutex_lock(&data->outer) != 0)
 		;
-#endif	
+#endif
 	return true;
 }
 

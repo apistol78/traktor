@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Flash/Action/ActionContext.h"
@@ -59,7 +53,7 @@ void Tween::init(
 		if (target->getPropertySet(propertyName, propertySet))
 			self->setMember(ActionContext::IdTargetProperty, ActionValue(propertySet));
 	}
-	
+
 	if (function)
 		self->setMember(ActionContext::IdFunction, ActionValue(function));
 

@@ -424,7 +424,7 @@ bool RenderViewOpenGL::begin(EyeType eye)
 	if (!m_renderContext->enter())
 		return false;
 
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);	
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 	m_drawCalls = 0;
 	m_primitiveCount = 0;

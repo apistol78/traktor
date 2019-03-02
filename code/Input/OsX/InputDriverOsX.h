@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputDriverOsX_H
-#define traktor_input_InputDriverOsX_H
+#pragma once
 
 #include <IOKit/hid/IOHIDLib.h>
 #include "Core/RefArray.h"
@@ -23,7 +16,7 @@ namespace traktor
 {
 	namespace input
 	{
-	
+
 class IInputDevice;
 class InputDeviceKeyboardOsX;
 class InputDeviceMouseOsX;
@@ -36,11 +29,11 @@ public:
 	InputDriverOsX();
 
 	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories);
-	
+
 	virtual int getDeviceCount();
 
 	virtual Ref< IInputDevice > getDevice(int index);
-	
+
 	virtual UpdateResult update();
 
 private:
@@ -55,4 +48,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_InputDriverOsX_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ConfigDialog_H
-#define traktor_ui_ConfigDialog_H
+#pragma once
 
 #include "Ui/Dialog.h"
 
@@ -43,18 +36,17 @@ public:
 	virtual void destroy() override;
 
 	virtual void update(const Rect* rc = 0, bool immediate = false) override;
-	
+
 	virtual Rect getInnerRect() const override;
-	
+
 private:
 	Ref< Button > m_ok;
 	Ref< Button > m_cancel;
 	Ref< Button > m_apply;
-	
+
 	void eventButtonClick(ButtonClickEvent* event);
 };
 
 	}
 }
 
-#endif	// traktor_ui_ConfigDialog_H

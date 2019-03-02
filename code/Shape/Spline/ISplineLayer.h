@@ -21,7 +21,7 @@ class WorldContext;
 class WorldRenderView;
 
 	}
-	
+
 	namespace shape
 	{
 

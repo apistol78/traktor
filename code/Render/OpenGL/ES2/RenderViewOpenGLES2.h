@@ -41,7 +41,7 @@ public:
 	);
 
 	virtual ~RenderViewOpenGLES2();
-	
+
 	virtual bool nextEvent(RenderEvent& outEvent) override final;
 
 	virtual void close() override final;
@@ -107,7 +107,7 @@ private:
 		int32_t renderTarget;
 		Viewport viewport;
 	};
-	
+
 	Ref< ContextOpenGLES2 > m_context;
 	Ref< StateCache > m_stateCache;
 	std::stack< RenderTargetStack > m_renderTargetStack;

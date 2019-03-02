@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -35,7 +29,7 @@ Ref< const Modifier > IntegrateModifierData::createModifier(resource::IResourceM
 void IntegrateModifierData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"timeScale", m_timeScale);
-	
+
 	if (s.getVersion() >= 1)
 	{
 		s >> Member< bool >(L"linear", m_linear);

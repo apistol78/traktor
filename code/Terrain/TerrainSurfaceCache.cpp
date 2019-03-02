@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
@@ -58,7 +52,7 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 				renderView->clear(render::CfColor, &cc, 1.0f, 0);
 			}
 		}
-		
+
 		screenRenderer->draw(renderView, program);
 
 		if (next)
@@ -260,7 +254,7 @@ void TerrainSurfaceCache::get(
 			outTextureOffset = offsetFromTile(m_entries[patchId].tile, m_size);
 			return;
 		}
-	
+
 		// Release cache as it's no longer valid.
 		flush(patchId);
 	}
@@ -350,7 +344,7 @@ void TerrainSurfaceCache::get(
 
 		renderBlock->next = renderBlockChain;
 	}
-	
+
 	m_clearCache = false;
 
 	// Update cache entry.

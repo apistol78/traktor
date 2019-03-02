@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_NativeVolume_H
-#define traktor_NativeVolume_H
+#pragma once
 
 #include <string>
 #include "Core/Io/IVolume.h"
@@ -60,4 +53,3 @@ private:
 
 }
 
-#endif	// traktor_NativeVolume_H

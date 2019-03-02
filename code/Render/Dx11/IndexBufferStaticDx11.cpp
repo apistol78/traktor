@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Thread/Acquire.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/IndexBufferStaticDx11.h"
@@ -71,7 +65,7 @@ void IndexBufferStaticDx11::prepare(ID3D11DeviceContext* d3dDeviceContext, State
 	if (m_data.ptr())
 	{
 		D3D11_BOX d3db;
-		
+
 		d3db.left = m_bufferChunk.vertexOffset;
 		d3db.right = m_bufferChunk.vertexOffset + getBufferSize();
 		d3db.top = 0;

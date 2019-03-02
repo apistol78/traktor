@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Mesh/MeshCulling.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshEntity.h"
@@ -35,7 +29,7 @@ void InstanceMeshEntityRenderer::render(
 {
 	InstanceMeshEntity* meshEntity = checked_type_cast< InstanceMeshEntity* >(renderable);
 	T_ASSERT_M (!meshEntity->getParameterCallback(), L"Instance mesh entities doesn't support parameter callback");
-	
+
 	InstanceMesh* mesh = meshEntity->m_mesh;
 
 	if (!mesh->supportTechnique(worldRenderPass.getTechnique()))

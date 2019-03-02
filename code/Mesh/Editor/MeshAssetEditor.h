@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_MeshAssetEditor_H
-#define traktor_mesh_MeshAssetEditor_H
+#pragma once
 
 #include "Editor/IObjectEditor.h"
 #include "Ui/Events/AllEvents.h"
@@ -98,13 +91,13 @@ private:
 	void updateMaterialList();
 
 	void browseMaterialTemplate();
-	
+
 	void removeMaterialTemplate();
 
 	void createMaterialShader();
 
 	void browseMaterialShader();
-	
+
 	void removeMaterialShader();
 
 	void createMaterialTexture();
@@ -135,4 +128,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_MeshAssetEditor_H

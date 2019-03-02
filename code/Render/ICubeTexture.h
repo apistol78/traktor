@@ -21,7 +21,7 @@ namespace traktor
 class T_DLLCLASS ICubeTexture : public ITexture
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	enum Side
 	{
@@ -53,6 +53,6 @@ public:
 	 */
 	virtual void unlock(int32_t side, int32_t level) = 0;
 };
-	
+
 	}
 }

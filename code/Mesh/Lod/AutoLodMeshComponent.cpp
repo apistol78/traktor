@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Mesh/MeshCulling.h"
 #include "Mesh/Lod/AutoLodMesh.h"
 #include "Mesh/Lod/AutoLodMeshComponent.h"
@@ -39,7 +33,7 @@ Aabb3 AutoLodMeshComponent::getBoundingBox() const
 void AutoLodMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass)
 {
 	Transform transform = m_transform.get(worldRenderView.getInterval());
-	
+
 	const Vector4& eyePosition = worldRenderView.getEyePosition();
 	m_lodDistance = (transform.translation() - eyePosition).length();
 

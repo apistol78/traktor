@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/Impl/RenderServerEmbedded.h"
@@ -150,7 +144,7 @@ bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, Property
 	// We've successfully created the render view; update settings to reflect found display mode.
 	settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Width", renderView->getWidth());
 	settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Height", renderView->getHeight());
-	
+
 	m_renderSystem = renderSystem;
 	m_renderView = renderView;
 

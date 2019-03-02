@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_PropertyList_H
-#define traktor_ui_PropertyList_H
+#pragma once
 
 #include "Ui/Widget.h"
 
@@ -99,7 +92,7 @@ public:
 	virtual void update(const Rect* rc = 0, bool immediate = false) override;
 
 	virtual Size getMinimumSize() const override;
-	
+
 	virtual Size getPreferedSize() const override;
 
 private:
@@ -138,4 +131,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_PropertyList_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_RefSet_H
-#define traktor_RefSet_H
+#pragma once
 
 #include <algorithm>
 #include <set>
@@ -117,4 +110,3 @@ private:
 
 }
 
-#endif	// traktor_RefSet_H

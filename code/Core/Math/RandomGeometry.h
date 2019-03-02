@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Utilities_H
-#define traktor_Utilities_H
+#pragma once
 
 #include <cmath>
 #include "Core/Math/Random.h"
@@ -54,4 +47,3 @@ public:
 
 }
 
-#endif	// traktor_Utilities_H

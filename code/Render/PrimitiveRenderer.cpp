@@ -40,7 +40,7 @@ struct Vertex
 	float pos[4];
 	half_t texCoord[2];
 	uint32_t rgb;
-	
+
 	T_FORCE_INLINE void set(const Vector4& pos_, const Color4ub& rgb_)
 	{
 		pos_.storeUnaligned(pos);
@@ -180,7 +180,7 @@ void PrimitiveRenderer::render(IRenderView* renderView, uint32_t frame)
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		m_freeVertexBuffers.insert(m_freeVertexBuffers.end(), f.vertexBuffers.begin(), f.vertexBuffers.end());
 	}
-	
+
 	// Reset frame.
 	f.vertexBuffers.resize(0);
 	f.projections.resize(0);

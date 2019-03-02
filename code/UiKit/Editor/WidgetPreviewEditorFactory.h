@@ -1,5 +1,4 @@
-#ifndef traktor_uikit_WidgetPreviewEditorFactory_H
-#define traktor_uikit_WidgetPreviewEditorFactory_H
+#pragma once
 
 #include "Editor/IObjectEditorFactory.h"
 
@@ -27,10 +26,9 @@ public:
 
 	virtual Ref< editor::IObjectEditor > createObjectEditor(editor::IEditor* editor) const;
 
-	virtual void getCommands(std::list< ui::Command >& outCommands) const;	
+	virtual void getCommands(std::list< ui::Command >& outCommands) const;
 };
 
 	}
 }
 
-#endif	// traktor_uikit_WidgetPreviewEditorFactory_H

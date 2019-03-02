@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -122,7 +116,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DatabaseClassFactory", 0, DatabaseCl
 
 void DatabaseClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< Database > > classDatabase = new AutoRuntimeClass< Database >();
+	auto classDatabase = new AutoRuntimeClass< Database >();
 	classDatabase->addProperty("rootGroup", &Database::getRootGroup);
 	classDatabase->addMethod("close", &Database::close);
 	classDatabase->addMethod("getGroup", &Database::getGroup);
@@ -134,7 +128,7 @@ void DatabaseClassFactory::createClasses(IRuntimeClassRegistrar* registrar) cons
 	classDatabase->addMethod("findInstancesByType", &Database_findInstancesByType);
 	registrar->registerClass(classDatabase);
 
-	Ref< AutoRuntimeClass< Group > > classGroup = new AutoRuntimeClass< Group >();
+	auto classGroup = new AutoRuntimeClass< Group >();
 	classGroup->addProperty("name", &Group::getName);
 	classGroup->addProperty("path", &Group::getPath);
 	classGroup->addProperty("parent", &Group::getParent);
@@ -148,7 +142,7 @@ void DatabaseClassFactory::createClasses(IRuntimeClassRegistrar* registrar) cons
 	classGroup->addMethod("createInstance", &Group_createInstance);
 	registrar->registerClass(classGroup);
 
-	Ref< AutoRuntimeClass< Instance > > classInstance = new AutoRuntimeClass< Instance >();
+	auto classInstance = new AutoRuntimeClass< Instance >();
 	classInstance->addProperty("parent", &Instance::getParent);
 	classInstance->addProperty("name", &Instance_setName, &Instance_getName);
 	classInstance->addProperty("path", &Instance::getPath);

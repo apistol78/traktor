@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Drawing/Config.h"
 #if defined(DRAWING_INCLUDE_JPEG)
 
@@ -54,7 +48,7 @@ void initializeSource(j_decompress_ptr cinfo)
 boolean fillInputBuffer(j_decompress_ptr cinfo)
 {
 	my_source_mgr& src = *static_cast< my_source_mgr* >(cinfo->src);
-	
+
 	int64_t nread = src.stream->read(src.buffer, c_bufferSize);
 	if (nread <= 0)
 	{
@@ -176,7 +170,7 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(IStream* stream)
 	if (m_cinfo.global_state != /*DSTATE_READY*/202)
 		return 0;
 
-	jpeg_start_decompress(&m_cinfo); 
+	jpeg_start_decompress(&m_cinfo);
 	if (s_errorOccured)
 		return 0;
 

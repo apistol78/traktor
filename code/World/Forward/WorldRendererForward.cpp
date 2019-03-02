@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Core/Math/Random.h"
@@ -414,7 +408,7 @@ bool WorldRendererForward::create(
 	if (m_antiAlias || m_visualImageProcess || m_gammaCorrectionImageProcess)
 	{
 		render::RenderTargetSetCreateDesc rtscd;
-		
+
 		rtscd.count = 1;
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
@@ -716,7 +710,7 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 	if (m_visualTargetSet)
 	{
 		m_renderView->end();
-	
+
 		render::RenderTargetSet* sourceTargetSet = m_visualTargetSet;
 		render::RenderTargetSet* outputTargetSet = m_intermediateTargetSet;
 
@@ -731,10 +725,10 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 		if (m_visualImageProcess)
 		{
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Custom PP");
-	
+
 			if (m_gammaCorrectionImageProcess || m_antiAlias)
 				m_renderView->begin(outputTargetSet);
-	
+
 			m_visualImageProcess->render(
 				m_renderView,
 				sourceTargetSet->getColorTexture(0),	// color
@@ -744,24 +738,24 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 				m_shadowTargetSet ? m_shadowTargetSet->getColorTexture(0) : 0,	// shadow mask
 				params
 			);
-	
+
 			if (m_gammaCorrectionImageProcess || m_antiAlias)
 			{
 				m_renderView->end();
 				std::swap(sourceTargetSet, outputTargetSet);
 			}
-	
+
 			T_RENDER_POP_MARKER(m_renderView);
 		}
-	
+
 		// Apply gamma correction filter.
 		if (m_gammaCorrectionImageProcess)
 		{
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Gamma Correction");
-	
+
 			if (m_antiAlias)
 				m_renderView->begin(outputTargetSet);
-	
+
 			m_gammaCorrectionImageProcess->render(
 				m_renderView,
 				sourceTargetSet->getColorTexture(0),	// color
@@ -771,21 +765,21 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 				m_shadowTargetSet ? m_shadowTargetSet->getColorTexture(0) : 0,	// shadow mask
 				params
 			);
-	
+
 			if (m_antiAlias)
 			{
 				m_renderView->end();
 				std::swap(sourceTargetSet, outputTargetSet);
 			}
-	
+
 			T_RENDER_POP_MARKER(m_renderView);
 		}
-	
+
 		// Apply software antialias filter.
 		if (m_antiAlias)
 		{
 			T_RENDER_PUSH_MARKER(m_renderView, "World: AntiAlias");
-	
+
 			m_antiAlias->render(
 				m_renderView,
 				sourceTargetSet->getColorTexture(0),	// color
@@ -795,7 +789,7 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 				m_shadowTargetSet ? m_shadowTargetSet->getColorTexture(0) : 0,	// shadow mask
 				params
 			);
-	
+
 			T_RENDER_POP_MARKER(m_renderView);
 		}
 	}
@@ -813,7 +807,7 @@ void WorldRendererForward::getDebugTargets(std::vector< render::DebugTarget >& o
 
 	if (m_shadowTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Shadow map (last cascade)", render::DtvShadowMap, m_shadowTargetSet->getColorTexture(0)));
-	
+
 	if (m_shadowMaskProjectTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Shadow mask (projection)",render:: DtvShadowMask, m_shadowMaskProjectTargetSet->getColorTexture(0)));
 }
@@ -915,7 +909,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int fr
 		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
 			f.slice[slice].shadow->build(shadowRenderView, shadowPass, *i);
 		f.slice[slice].shadow->flush(shadowRenderView, shadowPass);
-		
+
 		f.slice[slice].shadowLightView = shadowLightView;
 		f.slice[slice].shadowLightProjection = shadowLightProjection;
 		f.slice[slice].viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;

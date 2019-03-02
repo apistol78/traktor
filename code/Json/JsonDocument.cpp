@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #define T_HAVE_TYPES
 #include <rapidjson/reader.h>
 #include "Core/Io/FileOutputStream.h"
@@ -206,7 +200,7 @@ public:
 	{
 		return m_peek;
 	}
-    
+
 	Ch Take()
 	{
 		Ch ch = m_peek;
@@ -253,7 +247,7 @@ bool JsonDocument::loadFromFile(const Path& fileName)
 	Ref< IStream > f = FileSystem::getInstance().open(fileName, File::FmRead);
 	return f ? loadFromStream(f) : false;
 }
-	
+
 bool JsonDocument::loadFromStream(IStream* stream)
 {
 	JsonStreamStream< rapidjson::UTF8< > > ss(stream);
@@ -271,7 +265,7 @@ bool JsonDocument::loadFromStream(IStream* stream)
 	}
 	return true;
 }
-	
+
 bool JsonDocument::loadFromText(const std::wstring& text)
 {
 	MemoryStream ms(

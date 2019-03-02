@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_AgentOpenFile_H
-#define traktor_editor_AgentOpenFile_H
+#pragma once
 
 #include "Core/Io/Path.h"
 #include "Core/Serialization/ISerializable.h"
@@ -52,4 +45,3 @@ private:
 	}
 }
 
-#endif	// traktor_editor_AgentOpenFile_H

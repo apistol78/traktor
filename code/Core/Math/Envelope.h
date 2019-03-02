@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Envelope_H
-#define traktor_Envelope_H
+#pragma once
 
 #include <vector>
 #include <utility>
@@ -134,4 +127,3 @@ private:
 
 }
 
-#endif	// traktor_Envelope_H

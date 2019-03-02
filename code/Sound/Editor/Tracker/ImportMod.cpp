@@ -102,7 +102,7 @@ bool ImportMod::import(const Path& fileName, const Path& assetPath, const Path& 
 	for (int32_t i = 0; i < 31; ++i)
 	{
 		fs->read(str, 22);
-		sampleHeaders[i].length = br.readUInt16(); 
+		sampleHeaders[i].length = br.readUInt16();
 		sampleHeaders[i].fineTune = br.readUInt8();
 		sampleHeaders[i].volume = br.readUInt8();
 		sampleHeaders[i].repeatOffset = br.readUInt16();

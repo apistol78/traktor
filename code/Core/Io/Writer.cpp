@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <vector>
 #include "Core/Io/Writer.h"
@@ -144,7 +138,7 @@ int64_t Writer::write(const void* block, int64_t count, int64_t size)
 	{
 		const uint8_t* p = static_cast< const uint8_t* >(block);
 		std::vector< uint8_t > tmp(size);
-		
+
 		for (int64_t i = 0; i < count; ++i, p += size)
 		{
 			std::memcpy(&tmp.front(), p, size);
@@ -152,7 +146,7 @@ int64_t Writer::write(const void* block, int64_t count, int64_t size)
 			if (m_stream->write(&tmp.front(), size) != size)
 				return -1;
 		}
-		
+
 		return count * size;
 	}
 

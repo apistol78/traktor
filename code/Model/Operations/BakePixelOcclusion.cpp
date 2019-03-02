@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/SahTree.h"
 #include "Core/Math/Triangle.h"
@@ -153,7 +147,7 @@ bool BakePixelOcclusion::apply(Model& model) const
 	drawing::DilateFilter dilateFilter(4);
 	m_occlusionImage->apply(&dilateFilter);
 	m_occlusionImage->apply(drawing::ConvolutionFilter::createGaussianBlur5());
-	
+
 	return true;
 }
 

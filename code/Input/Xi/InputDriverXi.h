@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputDriverXi_H
-#define traktor_input_InputDriverXi_H
+#pragma once
 
 #if defined(_XBOX)
 #	include <xtl.h>
@@ -53,4 +46,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_InputDriverXi_H

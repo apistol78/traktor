@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_AttributeDirection_H
-#define traktor_AttributeDirection_H
+#pragma once
 
 #include "Core/Serialization/Attribute.h"
 
@@ -40,4 +33,3 @@ private:
 
 }
 
-#endif	// traktor_AttributeDirection_H

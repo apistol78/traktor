@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef SolutionBuilderDependencies_H
-#define SolutionBuilderDependencies_H
+#pragma once
 
 #include "SolutionBuilder/SolutionBuilder.h"
 
@@ -41,4 +34,3 @@ private:
 	}
 }
 
-#endif	// SolutionBuilderDependencies_H

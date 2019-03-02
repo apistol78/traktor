@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <limits>
 #include "Core/Math/Float.h"
@@ -205,7 +199,7 @@ void TerrainComponent::render(
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
 			uint32_t patchId = px + pz * m_patchCount;
-			
+
 			const Patch& patch = m_patches[patchId];
 			Vector4 patchCenterWorld = (patchOrigin + patchDeltaHalf) * Vector4(1.0f, 0.0f, 1.0f, 0.0f) + Vector4(0.0f, (patch.minHeight + patch.maxHeight) * 0.5f, 0.0f, 1.0f);
 

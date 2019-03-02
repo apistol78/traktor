@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_IPipelineInstanceCache_H
-#define traktor_editor_IPipelineInstanceCache_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -28,7 +21,7 @@ class IPipelineInstanceCache : public Object
 
 public:
 	virtual ~IPipelineInstanceCache();
-	
+
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
 
 	virtual void flush(const Guid& instanceGuid) = 0;
@@ -37,4 +30,3 @@ public:
 	}
 }
 
-#endif	// traktor_editor_IPipelineInstanceCache_H

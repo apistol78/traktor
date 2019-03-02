@@ -30,7 +30,7 @@ const TypeInfoSet PrefabEntityFactory::getEntityComponentTypes() const
 Ref< world::Entity > PrefabEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	const PrefabEntityData* prefabEntityData = checked_type_cast< const PrefabEntityData* >(&entityData);
-	
+
 	Ref< world::GroupEntity > batchEntity = new world::GroupEntity(prefabEntityData->getTransform());
 
 	const RefArray< world::EntityData >& childEntityData = prefabEntityData->getEntityData();

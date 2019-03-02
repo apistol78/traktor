@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_script_IScriptOutline_H
-#define traktor_script_IScriptOutline_H
+#pragma once
 
 #include <string>
 #include "Core/Object.h"
@@ -83,4 +76,3 @@ public:
 	}
 }
 
-#endif	// traktor_script_IScriptOutline_H

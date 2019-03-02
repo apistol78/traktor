@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_MeshEntityData_H
-#define traktor_mesh_MeshEntityData_H
+#pragma once
 
 #include "Core/Math/Matrix44.h"
 #include "Mesh/AbstractMeshEntityData.h"
@@ -49,4 +42,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_MeshEntityData_H

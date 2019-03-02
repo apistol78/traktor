@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_SoundRenderer_H
-#define traktor_flash_SoundRenderer_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Flash/ISoundRenderer.h"
@@ -51,4 +44,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_SoundRenderer_H

@@ -16,7 +16,7 @@ int32_t Timers::bind(int32_t interval, const std::function< void(int32_t) >& fn)
 {
     int32_t id = m_nid++;
     T_FATAL_ASSERT(m_timers.find(id) == m_timers.end());
-    
+
     Timer& t = m_timers[id];
     t.interval = interval;
     t.until = interval / 1000.0;

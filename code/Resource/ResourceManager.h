@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_resource_ResourceManager_H
-#define traktor_resource_ResourceManager_H
+#pragma once
 
 #include <map>
 #include <vector>
@@ -59,7 +52,7 @@ public:
 	virtual void removeAllFactories() override final;
 
 	virtual bool load(const ResourceBundle* bundle) override final;
-	
+
 	virtual Ref< ResourceHandle > bind(const TypeInfo& productType, const Guid& guid) override final;
 
 	virtual void reload(const Guid& guid, bool flushedOnly) override final;
@@ -69,7 +62,7 @@ public:
 	virtual void unload(const TypeInfo& productType) override final;
 
 	virtual void unloadUnusedResident() override final;
-	
+
 	virtual void getStatistics(ResourceManagerStatistics& outStatistics) const override final;
 
 private:
@@ -84,8 +77,7 @@ private:
 
 	void load(const db::Instance* instance, const IResourceFactory* factory, const TypeInfo& productType, ResourceHandle* handle);
 };
-	
+
 	}
 }
 
-#endif	// traktor_resource_ResourceManager_H

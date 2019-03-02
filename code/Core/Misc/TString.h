@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_TString_H
-#define traktor_TString_H
+#pragma once
 
 #if defined(_PS3)
 #	include <alloca.h>
@@ -134,4 +127,3 @@ inline const std::string& tstombs(const tstring& ts) { return ts; }
 
 }
 
-#endif	// traktor_TString_H

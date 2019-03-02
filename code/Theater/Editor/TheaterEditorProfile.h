@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_theater_TheaterEditorProfile_H
-#define traktor_theater_TheaterEditorProfile_H
+#pragma once
 
 #include "Scene/Editor/ISceneEditorProfile.h"
 
@@ -88,4 +81,3 @@ public:
 	}
 }
 
-#endif	// traktor_theater_TheaterEditorProfile_H

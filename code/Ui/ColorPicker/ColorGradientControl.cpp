@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Ui/Application.h"
@@ -95,7 +89,7 @@ void ColorGradientControl::updateGradientImage()
 void ColorGradientControl::eventButtonDown(MouseButtonDownEvent* event)
 {
 	m_cursor = event->getPosition();
-	
+
 	ColorEvent colorEvent(this, getColor());
 	raiseEvent(&colorEvent);
 
@@ -119,7 +113,7 @@ void ColorGradientControl::eventMouseMove(MouseMoveEvent* event)
 	const int32_t size = dpi96(256);
 	m_cursor.x = (m_cursor.x * 256) / size;
 	m_cursor.y = (m_cursor.y * 256) / size;
-	
+
 	if (m_cursor.x < 0)
 		m_cursor.x = 0;
 	if (m_cursor.x > 255)

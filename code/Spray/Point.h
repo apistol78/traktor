@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_Point_H
-#define traktor_spray_Point_H
+#pragma once
 
 #include "Core/Math/Vector4.h"
 #include "Core/Containers/AlignedVector.h"
@@ -40,4 +33,3 @@ typedef AlignedVector< Point > PointVector;
 	}
 }
 
-#endif	// traktor_spray_Point_H

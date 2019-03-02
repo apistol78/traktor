@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Net/Ftp/FtpConnection.h"
 #include "Net/Ftp/FtpClient.h"
 #include "Net/Url.h"
@@ -30,7 +24,7 @@ UrlConnection::EstablishResult FtpConnection::establish(const Url& url, Url* out
 {
 	if (url.getProtocol() != L"ftp")
 		return ErInvalidUrl;
-	
+
 	SocketAddressIPv6 address(url.getHost(), url.getPort());
 
 	// Connect to server.

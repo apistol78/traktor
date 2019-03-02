@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -107,7 +101,7 @@ bool SolutionBuilderMsvcLinkerTool::generate(GeneratorContext& context, Solution
 		os << context.format(i2->second) << L";";
 
 	os << L"\"" << Endl;
-	
+
 	if (m_staticOptions.find(L"GenerateDebugInformation") == m_staticOptions.end())
 	{
 		if (configuration->getTargetProfile() == Configuration::TpDebug)

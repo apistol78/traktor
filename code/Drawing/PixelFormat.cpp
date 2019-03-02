@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #if defined(_MSC_VER) && !defined(_XBOX)
 #	define USE_XMM_INTRINSICS
 #	include <emmintrin.h>
@@ -297,7 +291,7 @@ PixelFormat::PixelFormat(
 		break;
 	}
 }
-		
+
 PixelFormat::PixelFormat(
 	int colorBits,
 	uint32_t redMask,
@@ -631,7 +625,7 @@ void PixelFormat::convert(
 					else
 						dst[o >> 3] &= ~(1 << (o & 7));
 				}
-			
+
 				tmp = static_cast< uint8_t >(clamp(clr[1]) * 255);
 				tmp >>= (8 - dstFormat.getGreenBits());
 				for (i = 0; i < uint32_t(dstFormat.getGreenBits()); ++i)
@@ -642,7 +636,7 @@ void PixelFormat::convert(
 					else
 						dst[o >> 3] &= ~(1 << (o & 7));
 				}
-				
+
 				tmp = static_cast< uint8_t >(clamp(clr[2]) * 255);
 				tmp >>= (8 - dstFormat.getBlueBits());
 				for (i = 0; i < uint32_t(dstFormat.getBlueBits()); ++i)
@@ -653,7 +647,7 @@ void PixelFormat::convert(
 					else
 						dst[o >> 3] &= ~(1 << (o & 7));
 				}
-				
+
 				tmp = static_cast< uint8_t >(clamp(clr[3]) * 255);
 				tmp >>= (8 - dstFormat.getAlphaBits());
 				for (i = 0; i < uint32_t(dstFormat.getAlphaBits()); ++i)

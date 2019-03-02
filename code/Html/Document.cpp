@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <list>
 #include "Core/RefArray.h"
@@ -118,7 +112,7 @@ bool Document::loadFromStream(IStream* stream, const IEncoding* encoding)
 
 	m_docElement = new Element(L"$document");
 	elm.push_front(m_docElement);
-	
+
 	while (reader.available())
 	{
 		pr[1] = pr[0];
@@ -126,7 +120,7 @@ bool Document::loadFromStream(IStream* stream, const IEncoding* encoding)
 
 		if (!reader.read(ch))
 			break;
-		
+
 		switch (mode)
 		{
 		case 0:	// Collect text.
@@ -177,7 +171,7 @@ bool Document::loadFromStream(IStream* stream, const IEncoding* encoding)
 							if (!compareIgnoreCase((*i)->getName(), buf))
 								break;
 						}
-						
+
 						if (i != elm.end())
 						{
 							Ref< Element > element = *i;

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Traits/MixNodeTraits.h"
@@ -81,7 +75,7 @@ PinType MixNodeTraits::getInputPinType(
 	{
 		if (shaderGraph->getDestinationCount(node->getOutputPin(3)) > 0)
 			return PntScalar4;
-		
+
 		if (shaderGraph->getDestinationCount(node->getOutputPin(2)) > 0)
 			return PntScalar3;
 

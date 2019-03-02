@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_Effect_H
-#define traktor_spray_Effect_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -51,7 +44,7 @@ public:
 	float getLoopEnd() const { return m_loopEnd; }
 
 	const RefArray< EffectLayer >& getLayers() const { return m_layers; }
-	
+
 private:
 	float m_duration;
 	float m_loopStart;
@@ -62,4 +55,3 @@ private:
 	}
 }
 
-#endif	// traktor_spray_Effect_H

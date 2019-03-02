@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Render/Dx11/Platform.h"
@@ -134,7 +128,7 @@ bool getDisplayMode(IDXGIOutput* dxgiOutput, uint32_t index, DisplayMode& outDis
 	);
 	if (FAILED(hr) || !count)
 		return false;
-	
+
 	if (index >= count)
 		return false;
 
@@ -174,7 +168,7 @@ bool findDxgiDisplayMode(IDXGIOutput* dxgiOutput, const DisplayMode& dm, DXGI_MO
 	);
 	if (FAILED(hr) || !count)
 		return false;
-	
+
 	AutoArrayPtr< DXGI_MODE_DESC > dxgiDisplayModes(new DXGI_MODE_DESC [count]);
 
 	hr = dxgiOutput->GetDisplayModeList(
@@ -190,20 +184,20 @@ bool findDxgiDisplayMode(IDXGIOutput* dxgiOutput, const DisplayMode& dm, DXGI_MO
 	{
 		if (dm.width != dxgiDisplayModes[i].Width)
 			continue;
-		
+
 		if (dm.height != dxgiDisplayModes[i].Height)
 			continue;
-		
+
 		if (dm.refreshRate)
 		{
 			if (dm.refreshRate != dxgiDisplayModes[i].RefreshRate.Numerator / dxgiDisplayModes[i].RefreshRate.Denominator)
 				continue;
 		}
-		
+
 		outDxgiDisplayMode = dxgiDisplayModes[i];
 		return true;
 	}
-	
+
 	return false;
 }
 

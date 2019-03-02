@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_RenderTargetSetOpenGLES2_H
-#define traktor_render_RenderTargetSetOpenGLES2_H
+#pragma once
 
 #include "Render/RenderTargetSet.h"
 #include "Render/Types.h"
@@ -14,7 +7,7 @@ namespace traktor
 {
 	namespace render
 	{
-	
+
 class ContextOpenGLES2;
 class RenderTargetDepthOpenGLES2;
 class RenderTargetOpenGLES2;
@@ -36,7 +29,7 @@ public:
 	virtual void destroy() override final;
 
 	virtual int getWidth() const override final;
-	
+
 	virtual int getHeight() const override final;
 
 	virtual ISimpleTexture* getColorTexture(int index) const override final;
@@ -71,4 +64,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_RenderTargetSetOpenGLES2_H

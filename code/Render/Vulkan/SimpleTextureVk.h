@@ -22,7 +22,7 @@ namespace traktor
 	{
 
 struct SimpleTextureCreateDesc;
-		
+
 /*!
  * \ingroup Vulkan
  */
@@ -44,7 +44,7 @@ public:
 	virtual int32_t getMips() const override final;
 
 	virtual int32_t getWidth() const override final;
-	
+
 	virtual int32_t getHeight() const override final;
 
 	virtual bool lock(int32_t level, Lock& lock) override final;
@@ -58,6 +58,6 @@ private:
 	int32_t m_width;
 	int32_t m_height;
 };
-		
+
 	}
 }

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <limits>
 #include "Core/Log/Log.h"
@@ -534,7 +528,7 @@ bool GraphControl::endSelectModification()
 
 	SelectEvent selectEvent(this, nodeSelectChanged, edgeSelectChanged);
 	raiseEvent(&selectEvent);
-	
+
 	return true;
 }
 
@@ -880,7 +874,7 @@ void GraphControl::eventDoubleClick(MouseDoubleClickEvent* event)
 		return;
 
 	m_moveAll = false;
-	m_moveSelected = false;		
+	m_moveSelected = false;
 
 	NodeActivateEvent activateEvent(this, m_selectedNode);
 	raiseEvent(&activateEvent);

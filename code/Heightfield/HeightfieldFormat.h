@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_hf_HeightfieldFormat_H
-#define traktor_hf_HeightfieldFormat_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -39,4 +32,3 @@ public:
 	}
 }
 
-#endif	// traktor_hf_HeightfieldFormat_H

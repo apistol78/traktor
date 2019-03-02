@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #ifndef traktor_render_ThreadReentrantCheck_H
 #define traktor_render_ThreadReentrantCheck_H
 
@@ -13,7 +7,7 @@ namespace traktor
 {
 	namespace render
 	{
-	
+
 /*! \brief
  * \ingroup Capture
  */
@@ -38,7 +32,7 @@ public:
 private:
 	int32_t m_lock;
 };
-	
+
 	}
 }
 

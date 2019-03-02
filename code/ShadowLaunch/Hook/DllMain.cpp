@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <Windows.h>
 #include <detours.h>
 #include "Core/Io/FileSystem.h"
@@ -59,11 +53,11 @@ static BOOL (WINAPI *s_CreateProcessW)(
 ) = CreateProcessW;
 
 static BOOL CALLBACK ListFileCallback(PVOID pContext, LPCSTR pszOrigFile, LPCSTR pszFile, LPCSTR *ppszOutFile)
-{  
+{
 	std::set< std::wstring >& dlls = *(std::set< std::wstring >*)pContext;
 	dlls.insert(mbstows(pszFile));
-	return TRUE;   
-}   
+	return TRUE;
+}
 
 bool shadowCopy(const Path& sourceFile)
 {
@@ -252,7 +246,7 @@ BOOL WINAPI HookCreateProcessW(
 			return FALSE;
 
 		executable = commandLine.substr(0, p);
-		commandLine = commandLine.substr(p + 1);		
+		commandLine = commandLine.substr(p + 1);
 	}
 
 	Path sourceFile = Path(g_shadowPayload->sourcePath) + Path(executable.getFileName());

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #define OGG_VORBIS_DECODER_REF 1
 #define OGG_VORBIS_DECODER_STB 2
 #define OGG_VORBIS_DECODER OGG_VORBIS_DECODER_STB
@@ -77,18 +71,18 @@ public:
 		}
 
 		if (ogg_stream_packetout(&m_os, &m_op) != 1)
-		{ 
+		{
 			// no page? must not be vorbis.
 			log::error << L"Failed to create Ogg stream, error reading initial header packet" << Endl;
 			return false;
 		}
 
 		if (vorbis_synthesis_headerin(&m_vi, &m_vc, &m_op) < 0)
-		{ 
+		{
 			// error case; not a vorbis header.
 			log::error << L"Failed to create Ogg stream, this Ogg bitstream does not contain Vorbis audio data" << Endl;
 			return false;
-		}		
+		}
 
 		// At this point, we're sure we're Vorbis.  We've set up the logical
 		// (Ogg) bitstream decoder.  Get the comment and codebook headers and

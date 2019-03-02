@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Point_H
-#define traktor_ui_Point_H
+#pragma once
 
 #include "Ui/Size.h"
 
@@ -53,4 +46,3 @@ public:
 
 #include "Ui/Point.inl"
 
-#endif	// traktor_ui_Point_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Traits/LerpNodeTraits.h"
@@ -120,14 +114,14 @@ bool LerpNodeTraits::evaluatePartial(
 			return true;
 		}
 	}
-	
+
 	// If blend is constant zero.
 	if (inputConstants[2].isAllZero())
 	{
 		foldOutputPin = inputOutputPins[0];
 		return true;
 	}
-	
+
 	// If blend is constant one.
 	if (inputConstants[2].isAllOne())
 	{

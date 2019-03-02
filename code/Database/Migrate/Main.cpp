@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Functor/Functor.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
@@ -126,7 +120,7 @@ bool migrateInstance(Ref< db::Instance > sourceInstance, Ref< db::Group > target
  * \param sourceGroup Source group
  * \param groupIndex Index of current group.
  * \param groupCount Number of groups to migrate.
- * \return True if successful. 
+ * \return True if successful.
  */
 bool migrateGroup(db::Group* targetGroup, db::Group* sourceGroup, int32_t& groupIndex, int32_t groupCount)
 {
@@ -191,7 +185,7 @@ bool createMigrationJobs(db::Group* targetGroup, db::Group* sourceGroup, RefArra
 
 		Ref< Job > job = JobManager::getInstance().add(makeFunctor(
 			[=] () {
-				migrateInstance(sourceInstance, targetGroup); 
+				migrateInstance(sourceInstance, targetGroup);
 			}
 		));
 
@@ -351,7 +345,7 @@ int main(int argc, const char** argv)
 	}
 
 	// Open databases.
-	traktor::log::info << L"Opening source database \"" << sourceCs << L"\"..." << Endl;	
+	traktor::log::info << L"Opening source database \"" << sourceCs << L"\"..." << Endl;
 	Ref< db::Database > sourceDb = new db::Database();
 	if (!sourceDb->open(sourceCs))
 	{
@@ -359,7 +353,7 @@ int main(int argc, const char** argv)
 		return 3;
 	}
 
-	traktor::log::info << L"Opening destination database \"" << destinationCs << L"\"..." << Endl;	
+	traktor::log::info << L"Opening destination database \"" << destinationCs << L"\"..." << Endl;
 	Ref< db::Database > destinationDb = new db::Database();
 	if (!destinationDb->create(destinationCs))
 	{

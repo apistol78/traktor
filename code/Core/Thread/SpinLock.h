@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_SpinLock_H
-#define traktor_SpinLock_H
+#pragma once
 
 #include "Core/Thread/IWaitable.h"
 
@@ -27,11 +20,11 @@ class T_DLLCLASS SpinLock : public IWaitable
 {
 public:
 	SpinLock();
-	
+
 	virtual ~SpinLock();
 
 	virtual bool wait(int32_t timeout = -1);
-	
+
 	void release();
 
 private:
@@ -40,4 +33,3 @@ private:
 
 }
 
-#endif	// traktor_SpinLock_H

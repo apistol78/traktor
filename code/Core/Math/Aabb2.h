@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Aabb2_H
-#define traktor_Aabb2_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Math/MathConfig.h"
@@ -34,9 +27,9 @@ public:
 	Vector2 mx;
 
 	Aabb2();
-	
+
 	Aabb2(const Aabb2& aabb);
-	
+
 	explicit Aabb2(const Vector2& mn_, const Vector2& mx_);
 
 	/*! \brief Get bounding box corners.
@@ -127,13 +120,13 @@ public:
 	}
 
 	/*! \brief Check if bounding box are equal. */
-	T_MATH_INLINE bool operator == (const Aabb2& rh) const 
+	T_MATH_INLINE bool operator == (const Aabb2& rh) const
 	{
 		return mn == rh.mn && mx == rh.mx;
 	}
 
 	/*! \brief Check if bounding box are not equal. */
-	T_MATH_INLINE bool operator != (const Aabb2& rh) const 
+	T_MATH_INLINE bool operator != (const Aabb2& rh) const
 	{
 		return mn != rh.mn || mx != rh.mx;
 	}
@@ -163,4 +156,3 @@ public:
 
 }
 
-#endif	// traktor_Aabb2_H

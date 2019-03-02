@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <windows.h>
 #include "Amalgam/Run/Impl/Application.h"
 #include "Core/Date/DateTime.h"
@@ -88,7 +82,7 @@ bool saveSettings(const PropertyGroup* settings, const Path& settingsFile)
 
 	bool result = xml::XmlSerializer(file).writeObject(settings);
 	file->close();
-	
+
 	return result;
 }
 
@@ -202,7 +196,7 @@ int main(int argc, const char** argv)
 			// the main executable.
 			userSettingsPath = settingsPath.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
 			userSettings = loadSettings(userSettingsPath);
-	
+
 			// Try to load user settings from user's application data path; sometimes it's not possible
 			// to store user settings alongside executable due to restrictive privileges.
 			if (!userSettings)

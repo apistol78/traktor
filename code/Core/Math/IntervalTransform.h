@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_IntervalTransform_H
-#define traktor_IntervalTransform_H
+#pragma once
 
 #include "Core/Math/Transform.h"
 
@@ -50,4 +43,3 @@ private:
 #	include "Core/Math/Std/IntervalTransform.inl"
 #endif
 
-#endif	// traktor_IntervalTransform_H

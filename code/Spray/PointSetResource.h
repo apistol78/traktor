@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_PointSetResource_H
-#define traktor_spray_PointSetResource_H
+#pragma once
 
 #include "Core/Serialization/ISerializable.h"
 
@@ -21,16 +14,15 @@ namespace traktor
 {
 	namespace spray
 	{
-	
+
 class T_DLLCLASS PointSetResource : public ISerializable
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	virtual void serialize(ISerializer& s) override final;
 };
-	
+
 	}
 }
 
-#endif	// traktor_spray_PointSetResource_H

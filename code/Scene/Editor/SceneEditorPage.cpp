@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/EnterLeave.h"
@@ -16,6 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
+#include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
@@ -222,20 +217,25 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 	m_entityPanel->setText(i18n::Text(L"SCENE_EDITOR_ENTITIES"));
 
-	m_entityMenu = new ui::Menu();
-	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
-	m_entityMenu->add(new ui::MenuItem(L"-"));
-	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
-	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddGroupEntity"), i18n::Text(L"SCENE_EDITOR_ADD_GROUP_ENTITY")));
-	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
+	m_entityMenuDefault = new ui::Menu();
+	m_entityMenuDefault->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
+	m_entityMenuDefault->add(new ui::MenuItem(L"-"));
+	m_entityMenuDefault->add(new ui::MenuItem(ui::Command(L"Scene.Editor.CreateExternal"), i18n::Text(L"SCENE_EDITOR_CREATE_EXTERNAL")));
+	m_entityMenuDefault->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
+
+	m_entityMenuGroup = new ui::Menu();
+	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
+	m_entityMenuGroup->add(new ui::MenuItem(L"-"));
+	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.CreateExternal"), i18n::Text(L"SCENE_EDITOR_CREATE_EXTERNAL")));
+	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
+	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddGroupEntity"), i18n::Text(L"SCENE_EDITOR_ADD_GROUP_ENTITY")));
+	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 
 	m_entityMenuExternal = new ui::Menu();
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
 	m_entityMenuExternal->add(new ui::MenuItem(L"-"));
-	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
-	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddGroupEntity"), i18n::Text(L"SCENE_EDITOR_ADD_GROUP_ENTITY")));
-	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.FindInDatabase"), i18n::Text(L"SCENE_EDITOR_FIND_IN_DATABASE")));
+	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 
 	m_entityToolBar = new ui::ToolBar();
 	m_entityToolBar->create(m_entityPanel);
@@ -244,7 +244,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.FilterEntity"), 1);
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), 0, ui::Command(L"Editor.Delete")));
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), 1, ui::Command(L"Scene.Editor.MoveToEntity")));
-	
+
 	m_buttonFilterEntity = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_FILTER_ENTITY"), 2, ui::Command(L"Scene.Editor.FilterEntity"), ui::ToolBarButton::BsDefaultToggle);
 	m_entityToolBar->addItem(m_buttonFilterEntity);
 
@@ -612,6 +612,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		m_context->selectAllEntities();
 		m_context->raiseSelect();
 	}
+	else if (command == L"Scene.Editor.CreateExternal")
+		result = createExternal();
 	else if (command == L"Scene.Editor.AddEntity")
 		result = addEntity(0);
 	else if (command == L"Scene.Editor.AddGroupEntity")
@@ -1044,6 +1046,42 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 	return true;
 }
 
+bool SceneEditorPage::createExternal()
+{
+	RefArray< EntityAdapter > selectedEntities;
+	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1)
+		return false;
+
+	Ref< db::Instance > dummy = m_editor->browseInstance();
+	if (!dummy)
+		return false;
+
+	Ref< db::Group > group = dummy->getParent();
+	T_ASSERT(group);
+
+	auto entityData = selectedEntities[0]->getEntityData();
+	
+	std::wstring instanceName = entityData->getName();
+	if (instanceName.empty())
+		instanceName = L"Unnamed";
+
+	Ref< db::Instance > instance = group->createInstance(instanceName);
+	if (!instance)
+		return false;
+
+	instance->setObject(entityData);
+	if (!instance->commit())
+	{
+		instance->revert();
+		return false;
+	}
+
+	// \tbd Replace seleced entity with external reference to entity.
+
+	m_editor->updateDatabaseView();
+	return true;
+}
+
 bool SceneEditorPage::moveToEntity()
 {
 	RefArray< EntityAdapter > selectedEntities;
@@ -1109,14 +1147,19 @@ void SceneEditorPage::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 {
 	if (event->getButton() == ui::MbtRight)
 	{
+		const ui::MenuItem* selectedItem;
+
 		RefArray< EntityAdapter > selectedEntities;
 		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
-
-		const ui::MenuItem* selectedItem;
-		if (selectedEntities.size() == 1 && selectedEntities[0]->isExternal())
-			selectedItem = m_entityMenuExternal->showModal(m_instanceGrid, event->getPosition());
-		else
-			selectedItem = m_entityMenu->showModal(m_instanceGrid, event->getPosition());
+		if (selectedEntities.size() == 1)
+		{
+			if (selectedEntities[0]->isExternal())
+				selectedItem = m_entityMenuExternal->showModal(m_instanceGrid, event->getPosition());
+			else if (selectedEntities[0]->isGroup())
+				selectedItem = m_entityMenuGroup->showModal(m_instanceGrid, event->getPosition());
+			else
+				selectedItem = m_entityMenuDefault->showModal(m_instanceGrid, event->getPosition());
+		}
 
 		if (selectedItem)
 		{

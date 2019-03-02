@@ -1,5 +1,4 @@
-#ifndef traktor_uikit_WidgetPreviewEditor_H
-#define traktor_uikit_WidgetPreviewEditor_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Editor/IObjectEditor.h"
@@ -22,7 +21,7 @@ class IResourceManager;
 
 	namespace script
 	{
-	
+
 class IScriptContext;
 
 	}
@@ -61,4 +60,3 @@ private:
 	}
 }
 
-#endif	// traktor_uikit_WidgetPreviewEditor_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstdlib>
 #include <numeric>
 #include "Core/Io/Path.h"
@@ -79,7 +73,7 @@ std::wstring Path::getFileName() const
 std::wstring Path::getFileNameNoExtension() const
 {
 	std::wstring::size_type ext = m_file.find_last_of(L'.');
-	return (ext != std::wstring::npos) ? m_file.substr(0, ext) : m_file; 
+	return (ext != std::wstring::npos) ? m_file.substr(0, ext) : m_file;
 }
 
 std::wstring Path::getPathOnly() const
@@ -135,7 +129,7 @@ std::wstring Path::getPathNameNoExtension() const
 {
 	std::wstring pathName = getPathName();
 	std::wstring::size_type ext = pathName.find_last_of(L'.');
-	return (ext != std::wstring::npos) ? pathName.substr(0, ext) : pathName; 
+	return (ext != std::wstring::npos) ? pathName.substr(0, ext) : pathName;
 }
 
 std::wstring Path::getExtension() const
@@ -239,13 +233,13 @@ void Path::resolve()
 			break;
 
 		std::wstring name = tmp.substr(s + 2, e - s - 2);
-		
+
 		if (OS::getInstance().getEnvironment(name, env))
 			tmp = tmp.substr(0, s) + replaceAll< std::wstring >(env, L'\\', L'/') + tmp.substr(e + 1);
 		else
 			tmp = tmp.substr(0, s) + tmp.substr(e + 1);
 	}
-	
+
 	std::wstring::size_type vol = tmp.find(L':');
 	if (vol != std::wstring::npos)
 	{
@@ -264,16 +258,16 @@ void Path::resolve()
 		else if (tmp[0] == L'~')
 			m_relative = false;
 	}
-	
+
 	std::wstring::size_type sls = tmp.find_last_of(L'/');
 	if (sls != std::wstring::npos)
 	{
 		m_path = replaceAll< std::wstring >(tmp.substr(0, sls), L"//", L"/");
 		tmp = tmp.substr(sls + 1);
 	}
-	
+
 	m_file = tmp;
-	
+
 	std::wstring::size_type ext = tmp.find_last_of(L'.');
 	if (ext != std::wstring::npos)
 		m_ext = toLower(tmp.substr(ext + 1));

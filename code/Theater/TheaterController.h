@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_theater_TheaterController_H
-#define traktor_theater_TheaterController_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Scene/ISceneController.h"
@@ -47,4 +40,3 @@ private:
 	}
 }
 
-#endif	// traktor_theater_TheaterController_H

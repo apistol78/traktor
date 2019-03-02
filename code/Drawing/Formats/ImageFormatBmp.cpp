@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Drawing/Formats/ImageFormatBmp.h"
 #include "Drawing/Image.h"
 #include "Drawing/ImageInfo.h"
@@ -25,11 +19,11 @@ namespace
 
 struct BITMAPFILEHEADER
 {
-	uint8_t bfType[2]; 
-	uint32_t bfSize; 
-	uint16_t bfReserved1; 
-	uint16_t bfReserved2; 
-	uint32_t bfOffBits; 
+	uint8_t bfType[2];
+	uint32_t bfSize;
+	uint16_t bfReserved1;
+	uint16_t bfReserved2;
+	uint32_t bfOffBits;
 };
 
 struct BITMAPINFOHEADER
@@ -64,13 +58,13 @@ Ref< Image > ImageFormatBmp::read(IStream* stream)
 	reader >> bmfh.bfReserved1;
 	reader >> bmfh.bfReserved2;
 	reader >> bmfh.bfOffBits;
-	
+
 	if (bmfh.bfType[0] != 'B' || bmfh.bfType[1] != 'M')
 	{
 		log::error << L"Invalid BMP file header" << Endl;
 		return 0;
 	}
-	
+
 	reader >> bmih.biSize;
 	reader >> bmih.biWidth;
 	reader >> bmih.biHeight;
@@ -96,15 +90,15 @@ Ref< Image > ImageFormatBmp::read(IStream* stream)
 	case 16:
 		pf = PixelFormat::getR5G5B5();
 		break;
-		
+
 	case 24:
 		pf = PixelFormat::getR8G8B8();
 		break;
-		
+
 	case 32:
 		pf = PixelFormat::getX8R8G8B8();
 		break;
-		
+
 	default:
 		log::error << L"Unsupported BMP, must be at least 16 bit color depth (not " << bmih.biBitCount << L")" << Endl;
 		return 0;

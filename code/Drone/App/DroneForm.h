@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drone_DroneForm_H
-#define traktor_drone_DroneForm_H
+#pragma once
 
 #include "Ui/Form.h"
 
@@ -48,4 +41,3 @@ private:
 	}
 }
 
-#endif	// traktor_drone_DroneForm_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_AutoPtr_H
-#define traktor_AutoPtr_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Memory/Alloc.h"
@@ -193,7 +186,7 @@ namespace traktor
 		{
 			return m_ptr;
 		}
-		
+
 		void reset(Type* ptr)
 		{
 			release();
@@ -218,10 +211,9 @@ namespace traktor
 
 	private:
 		Type* m_ptr;
-		
+
 		AutoArrayPtr< Type, ReleasePolicy >& operator = (const AutoArrayPtr< Type, ReleasePolicy >& lh) { T_FATAL_ERROR; return *this; }
 	};
 
 }
 
-#endif	// traktor_AutoPtr_H

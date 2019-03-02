@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ReflectionInspectSerializer_H
-#define traktor_ReflectionInspectSerializer_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Core/Serialization/Serializer.h"
@@ -94,4 +87,3 @@ private:
 
 }
 
-#endif	// traktor_ReflectionInspectSerializer_H

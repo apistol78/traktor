@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_online_TaskAchievement_H
-#define traktor_online_TaskAchievement_H
+#pragma once
 
 #include <string>
 #include "Online/Impl/ITask.h"
@@ -44,4 +37,3 @@ private:
 	}
 }
 
-#endif	// traktor_online_TaskAchievement_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ApiLoader_H
-#define traktor_render_ApiLoader_H
+#pragma once
 
 #define VK_USE_PLATFORM_XLIB_KHR
 #define VK_NO_PROTOTYPES
@@ -95,4 +88,3 @@ void finalizeVulkanApi();
 	}
 }
 
-#endif	// traktor_render_ApiLoader_H

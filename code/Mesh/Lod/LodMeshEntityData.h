@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_LodMeshEntityData_H
-#define traktor_mesh_LodMeshEntityData_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Mesh/AbstractMeshEntityData.h"
@@ -33,7 +26,7 @@ public:
 	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, const world::IEntityBuilder* builder) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
-	
+
 	virtual void setTransform(const Transform& transform) override final;
 
 	const RefArray< AbstractMeshEntityData >& getLods() const { return m_lods; }
@@ -47,4 +40,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_LodMeshEntityData_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Capture/IndexBufferCapture.h"
 #include "Render/Capture/Error.h"
@@ -33,7 +27,7 @@ void* IndexBufferCapture::lock()
 {
 	T_CAPTURE_ASSERT (m_indexBuffer, L"Index buffer destroyed.");
 	T_CAPTURE_ASSERT (!m_locked, L"Index buffer already locked.");
-	
+
 	if (!m_indexBuffer)
 		return 0;
 
@@ -43,7 +37,7 @@ void* IndexBufferCapture::lock()
 
 	return p;
 }
-	
+
 void IndexBufferCapture::unlock()
 {
 	T_CAPTURE_ASSERT (m_indexBuffer, L"Index buffer destroyed.");

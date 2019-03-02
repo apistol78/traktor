@@ -1,5 +1,4 @@
-#ifndef traktor_amalgam_PrefabEntityPipeline_H
-#define traktor_amalgam_PrefabEntityPipeline_H
+#pragma once
 
 #include "World/Editor/EntityPipeline.h"
 
@@ -49,4 +48,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_PrefabEntityPipeline_H

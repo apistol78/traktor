@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_AlignedVector_H
-#define traktor_AlignedVector_H
+#pragma once
 
 #include <algorithm>
 #include <iterator>
@@ -1005,7 +998,7 @@ public:
 	AlignedVector< ItemType >& operator = (AlignedVector< ItemType >&& src)
 	{
 		clear();
-		
+
 		m_data = src.m_data;
 		m_size = src.m_size;
 		m_capacity = src.m_capacity;
@@ -1071,4 +1064,3 @@ private:
 
 }
 
-#endif	// traktor_AlignedVector_H

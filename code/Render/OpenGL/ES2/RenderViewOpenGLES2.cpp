@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/OpenGL/ES2/ExtensionsGLES2.h"
@@ -281,9 +275,9 @@ bool RenderViewOpenGLES2::begin(EyeType eye)
 		return false;
 
 	m_stateCache->reset();
-		
+
 	m_context->bindPrimary();
-	
+
 	T_OGL_SAFE(glViewport(
 		m_viewport.left,
 		m_viewport.top,
@@ -313,12 +307,12 @@ bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarg
 
 	if (!rts->bind(m_context->getPrimaryDepth(), renderTarget))
 		return false;
-	
+
 	RenderTargetStack s;
 	s.renderTargetSet = rts;
 	s.renderTarget = renderTarget;
 	s.viewport = Viewport(0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f);
-	
+
 	T_OGL_SAFE(glViewport(
 		s.viewport.left,
 		s.viewport.top,
@@ -348,7 +342,7 @@ void RenderViewOpenGLES2::clear(uint32_t clearMask, const Color4f* colors, float
 		GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT
 	};
-	
+
 	GLuint cm = c_clearMask[clearMask];
 	if (!cm)
 		return;
@@ -391,12 +385,12 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 	{
 		targetSize[0] = float(getWidth());
 		targetSize[1] = float(getHeight());
-		
+
 		postTransform[0] = 1.0f;
 		postTransform[1] = 0.0f;
 		postTransform[2] = 0.0f;
 		postTransform[3] = 1.0f;
-		
+
 		invertCull = false;
 	}
 	else
@@ -409,7 +403,7 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 		postTransform[1] = 0.0f;
 		postTransform[2] = 0.0f;
 		postTransform[3] = -1.0f;
-		
+
 		invertCull = true;
 	}
 
@@ -444,7 +438,7 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 		primitiveType = GL_TRIANGLES;
 		vertexCount = primitives.count * 3;
 		break;
-		
+
 	default:
 		T_ASSERT (0);
 	}
@@ -467,7 +461,7 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 			indexType = GL_UNSIGNED_INT;
 			offsetMultiplier = 4;
 			break;
-			
+
 		default:
 			return;
 		}
@@ -510,12 +504,12 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 	{
 		targetSize[0] = float(getWidth());
 		targetSize[1] = float(getHeight());
-		
+
 		postTransform[0] = 1.0f;
 		postTransform[1] = 0.0f;
 		postTransform[2] = 0.0f;
 		postTransform[3] = 1.0f;
-		
+
 		invertCull = false;
 	}
 	else
@@ -528,7 +522,7 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 		postTransform[1] = 0.0f;
 		postTransform[2] = 0.0f;
 		postTransform[3] = -1.0f;
-		
+
 		invertCull = true;
 	}
 
@@ -692,7 +686,7 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 				indexType = GL_UNSIGNED_INT;
 				offsetMultiplier = 4;
 				break;
-				
+
 			default:
 				return;
 			}
@@ -736,13 +730,13 @@ void RenderViewOpenGLES2::end()
 
 	m_renderTargetStack.top().renderTargetSet->setContentValid(true);
 	m_renderTargetStack.pop();
-	
+
 	if (!m_renderTargetStack.empty())
 	{
 		RenderTargetStack& s = m_renderTargetStack.top();
-		
+
 		s.renderTargetSet->bind(m_context->getPrimaryDepth(), s.renderTarget);
-		
+
 		T_OGL_SAFE(glViewport(
 			s.viewport.left,
 			s.viewport.top,
@@ -758,7 +752,7 @@ void RenderViewOpenGLES2::end()
 	else
 	{
 		m_context->bindPrimary();
-		
+
 		T_OGL_SAFE(glViewport(
 			m_viewport.left,
 			m_viewport.top,
@@ -774,7 +768,7 @@ void RenderViewOpenGLES2::end()
 }
 
 void RenderViewOpenGLES2::present()
-{	
+{
 	m_context->swapBuffers();
 	m_context->leave();
 	m_context->deleteResources();

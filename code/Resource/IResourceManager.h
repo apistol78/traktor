@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_resource_IResourceManager_H
-#define traktor_resource_IResourceManager_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
@@ -120,7 +113,7 @@ public:
 	 * \param id Resource identifier.
 	 * \return Resource proxy.
 	 */
-	template < 
+	template <
 		typename ResourceType,
 		typename ProductType
 	>
@@ -155,4 +148,3 @@ public:
 	}
 }
 
-#endif	// traktor_resource_IResourceManager_H

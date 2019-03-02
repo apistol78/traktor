@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/AttributeDecibel.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
@@ -38,7 +32,7 @@ void SoundAsset::serialize(ISerializer& s)
 		s >> Member< Guid >(L"category", m_category, AttributeType(type_of< SoundCategory >()));
 
 	s >> Member< bool >(L"stream", m_stream);
-	
+
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"preload", m_preload);
 

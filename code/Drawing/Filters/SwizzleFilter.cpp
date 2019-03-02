@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cctype>
 #include "Drawing/Filters/SwizzleFilter.h"
 #include "Drawing/Image.h"
@@ -37,16 +31,16 @@ void SwizzleFilter::apply(Image* image) const
 			{
 				switch (std::toupper(m_swizzle[i]))
 				{
-				case L'A': 
+				case L'A':
 					out.set(i, in.getAlpha());
 					break;
-				case L'R': 
+				case L'R':
 					out.set(i, in.getRed());
 					break;
-				case L'G': 
+				case L'G':
 					out.set(i, in.getGreen());
 					break;
-				case L'B': 
+				case L'B':
 					out.set(i, in.getBlue());
 					break;
 				case L'0':

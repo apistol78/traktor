@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sound_GrainProperties_H
-#define traktor_sound_GrainProperties_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Ui/PropertyList/AutoPropertyList.h"
@@ -69,4 +62,3 @@ private:
 	}
 }
 
-#endif	// traktor_sound_GrainProperties_H

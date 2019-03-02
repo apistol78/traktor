@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_ActionRemove_H
-#define traktor_db_ActionRemove_H
+#pragma once
 
 #include <vector>
 #include "Database/Local/Action.h"
@@ -42,4 +35,3 @@ private:
 	}
 }
 
-#endif	// traktor_db_ActionRemove_H

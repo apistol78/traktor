@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_TypesDx11_H
-#define traktor_render_TypesDx11_H
+#pragma once
 
 namespace traktor
 {
@@ -163,4 +156,3 @@ const DXGI_FORMAT c_dxgiInputType[] =
 	}
 }
 
-#endif	// traktor_render_TypesDx11_H

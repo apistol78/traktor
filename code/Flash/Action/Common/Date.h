@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_Date_H
-#define traktor_flash_Date_H
+#pragma once
 
 #include "Flash/Action/ActionObjectRelay.h"
 
@@ -36,4 +29,3 @@ public:
 	}
 }
 
-#endif	// traktor_flash_Date_H

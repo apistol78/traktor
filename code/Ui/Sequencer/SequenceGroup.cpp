@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Drawing/Image.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/Sequencer/GroupVisibleEvent.h"
@@ -206,7 +200,7 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 	int start = separator + m_start / TIME_SCALE_DIVISOR - scrollOffset;
 	int end = separator + m_end / TIME_SCALE_DIVISOR - scrollOffset;
 	int y = rc.getCenter().y;
-	
+
 	canvas.setBackground(Color4ub(80, 80, 80));
 	canvas.drawLine(start, y - 2, start, y + 3);
 	canvas.drawLine(start, y, end, y);

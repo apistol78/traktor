@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/String.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslVariable.h"
 
@@ -35,7 +29,7 @@ std::wstring GlslVariable::cast(GlslType to) const
 		{ 0, 0, 0, 0, 0, L"%", 0 },
 		{ 0, 0, 0, 0, 0, 0, L"%" }
 	};
-	
+
 	const wchar_t* f = c[m_type][to];
 	return f ? replaceAll< std::wstring >(f, L"%", m_name) : m_name;
 }
@@ -52,7 +46,7 @@ std::wstring GlslVariable::castToInteger(GlslType to) const
 		{ 0, 0, 0, 0, 0, L"%", 0 },
 		{ 0, 0, 0, 0, 0, 0, L"%" }
 	};
-	
+
 	const wchar_t* f = c[m_type][to];
 	return f ? replaceAll< std::wstring >(f, L"%", m_name) : m_name;
 }

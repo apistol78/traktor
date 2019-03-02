@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_ConeTwistJointPhysX_H
-#define traktor_physics_ConeTwistJointPhysX_H
+#pragma once
 
 #include "Physics/ConeTwistJoint.h"
 #include "Physics/PhysX/JointPhysX.h"
@@ -37,4 +30,3 @@ public:
 	}
 }
 
-#endif	// traktor_physics_ConeTwistJointPhysX_H

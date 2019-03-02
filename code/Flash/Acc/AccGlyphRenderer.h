@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_AccGlyphRenderer_H
-#define traktor_flash_AccGlyphRenderer_H
+#pragma once
 
 #include "Core/Object.h"
 
@@ -29,7 +22,7 @@ class IResourceManager;
 
 	namespace flash
 	{
-	
+
 class AccGlyphRenderer : public Object
 {
 	T_RTTI_CLASS;
@@ -42,8 +35,7 @@ public:
 private:
 	Ref< render::RenderTargetSet > m_renderTargetGlyphs;
 };
-	
+
 	}
 }
 
-#endif	// traktor_flash_AccGlyphRenderer_H

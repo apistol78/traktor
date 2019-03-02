@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_script_ScriptDelegateLua_H
-#define traktor_script_ScriptDelegateLua_H
+#pragma once
 
 #include "Core/Class/IRuntimeDelegate.h"
 
@@ -40,4 +33,3 @@ private:
 	}
 }
 
-#endif	// traktor_script_ScriptDelegateLua_H

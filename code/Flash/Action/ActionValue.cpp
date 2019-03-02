@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <cstring>
 #include "Core/Memory/IAllocator.h"
@@ -53,7 +47,7 @@ char* refStringCreate(const char* s, int32_t id)
 {
 	uint32_t len = uint32_t(strlen(s));
 	T_ASSERT (len < 4096);
-	
+
 	void* ptr = getAllocator()->alloc(sizeof(StringType) + (len + 1) * sizeof(char), 4, T_FILE_LINE);
 	if (!ptr)
 		return 0;
@@ -411,7 +405,7 @@ void ActionValue::serialize(ISerializer& s)
 			}
 		}
 		break;
-            
+
     default:
         break;
 	}

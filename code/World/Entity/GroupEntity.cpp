@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Misc/Save.h"
 #include "World/Entity/GroupEntity.h"
@@ -71,12 +65,12 @@ void GroupEntity::removeAllEntities()
 	T_ASSERT_M (!m_update, L"Cannot remove all entities while in update; not implemented");
 	m_entities.resize(0);
 }
-	
+
 const RefArray< Entity >& GroupEntity::getEntities() const
 {
 	return m_entities;
 }
-	
+
 int GroupEntity::getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& entities) const
 {
 	for (RefArray< Entity >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
@@ -96,7 +90,7 @@ Entity* GroupEntity::getFirstEntityOf(const TypeInfo& entityType) const
 	}
 	return 0;
 }
-	
+
 void GroupEntity::update(const UpdateParams& update)
 {
 	// Update child entities; set flag to indicate we're

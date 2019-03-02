@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
@@ -123,7 +117,7 @@ void MovieRenderer::renderSpriteDefault(
 {
 	const DisplayList& displayList = spriteInstance->getDisplayList();
 	const DisplayList::layer_map_t& layers = displayList.getLayers();
-	
+
 	uint8_t blendMode = spriteInstance->getBlendMode();
 
 	m_displayRenderer->beginSprite(
@@ -679,10 +673,10 @@ void MovieRenderer::renderCharacter(
 
 		ActionContext* context = editInstance->getContext();
 		T_ASSERT (context);
-		
+
 		bool haveFocus = bool(context->getFocus() == editInstance);
 		bool showCaret = bool((int32_t(s_timer.getElapsedTime() * 2.0f) & 1) == 0);
-		
+
 		int32_t caret = editInstance->getCaret();
 		Aabb2 caretBounds(Vector2::zero(), Vector2(100.0f, layout->getFontHeight()));
 		float caretEndPosition = 0.0f;

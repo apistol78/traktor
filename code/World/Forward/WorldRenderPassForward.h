@@ -30,7 +30,7 @@ class WorldRenderView;
 class T_DLLCLASS WorldRenderPassForward : public IWorldRenderPass
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	WorldRenderPassForward(
 		render::handle_t technique,
@@ -100,6 +100,6 @@ private:
 
 	void setDepthMapProgramParameters(render::ProgramParameters* programParams) const;
 };
-	
+
 	}
 }

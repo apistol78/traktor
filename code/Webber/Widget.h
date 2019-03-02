@@ -1,5 +1,4 @@
-#ifndef traktor_wbr_Widget_H
-#define traktor_wbr_Widget_H
+#pragma once
 
 #include "Core/Object.h"
 
@@ -18,14 +17,14 @@ class OutputStream;
 
 	namespace html
 	{
-	
+
 class Element;
 
 	}
 
 	namespace wbr
 	{
-	
+
 class T_DLLCLASS Widget : public Object
 {
 	T_RTTI_CLASS;
@@ -42,8 +41,7 @@ public:
 private:
 	int32_t m_id;
 };
-	
+
 	}
 }
 
-#endif	// traktor_wbr_Widget_H

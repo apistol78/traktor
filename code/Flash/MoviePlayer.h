@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_MoviePlayer_H
-#define traktor_flash_MoviePlayer_H
+#pragma once
 
 #include <list>
 #include <map>
@@ -243,7 +236,7 @@ private:
 				};
 			}
 			mouse;
-			struct 
+			struct
 			{
 				int32_t width;
 				int32_t height;
@@ -290,4 +283,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_MoviePlayer_H

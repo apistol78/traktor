@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/OutputStream.h"
 #include "Xml/Text.h"
 
@@ -18,7 +12,7 @@ Text::Text(const std::wstring& text)
 :	m_text(text)
 {
 }
-	
+
 std::wstring Text::getValue() const
 {
 	return m_text;

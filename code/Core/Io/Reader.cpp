@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <vector>
 #include "Core/Io/Reader.h"
@@ -156,9 +150,9 @@ int64_t Reader::read(void* block, int64_t nbytes)
 int64_t Reader::read(void* block, int64_t count, int64_t size)
 {
 	int64_t result;
-	
+
 	result = m_stream->read(block, count * size);
-	
+
 #if defined(T_BIG_ENDIAN)
 
 	if (result > 0 && size > 1)
@@ -173,7 +167,7 @@ int64_t Reader::read(void* block, int64_t count, int64_t size)
 	}
 
 #endif
-		
+
 	return result;
 }
 

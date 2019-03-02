@@ -230,7 +230,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, AlignedVector< std::s
 
 		material.setDiffuseTerm(surface->diffuse.val);
 		material.setSpecularTerm(surface->specularity.val);
-		
+
 		if (surface->specularity.val > FUZZY_EPSILON)
 			material.setRoughness(surface->glossiness.val);
 		else
@@ -457,7 +457,7 @@ void ModelFormatLwo::getExtensions(std::wstring& outDescription, std::vector< st
 
 bool ModelFormatLwo::supportFormat(const std::wstring& extension) const
 {
-	return 
+	return
 		compareIgnoreCase< std::wstring >(extension, L"lwo") == 0 ||
 		compareIgnoreCase< std::wstring >(extension, L"lw") == 0;
 }

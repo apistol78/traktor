@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Render/Shader.h"
 #include "Spray/TrailInstance.h"
@@ -87,7 +81,7 @@ void TrailInstance::update(Context& context, const Transform& transform, bool en
 				Vector4 step = direction * Scalar(m_lengthThreshold) / ln;
 				for (int32_t i = 0; i < nsteps; ++i)
 				{
-					m_last += step; 
+					m_last += step;
 
 					m_points.push_back(m_last.xyz0() + m_time - Vector4(0.0f, 0.0f, 0.0f, context.deltaTime * float(nsteps - i - 1) / nsteps));
 					m_boundingBox.contain(m_last);

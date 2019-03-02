@@ -6,7 +6,7 @@ namespace traktor
 {
 	namespace uikit
 	{
-	
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.uikit.WidgetScaffoldingPipeline", 0, WidgetScaffoldingPipeline, editor::IPipeline)
 
 bool WidgetScaffoldingPipeline::create(const editor::IPipelineSettings* settings)

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #ifndef traktor_flash_InstanceDebugInfo_H
 #define traktor_flash_InstanceDebugInfo_H
 
@@ -23,7 +17,7 @@ namespace traktor
 {
 	namespace flash
 	{
-	
+
 class CharacterInstance;
 
 /*! \brief
@@ -58,7 +52,7 @@ protected:
 	ColorTransform m_cxform;
 	bool m_visible;
 };
-	
+
 	}
 }
 

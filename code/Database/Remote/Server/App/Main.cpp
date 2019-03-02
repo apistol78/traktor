@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <signal.h>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -53,7 +47,7 @@ int main(int argc, const char** argv)
 		traktor::log::info << L"Usage: Traktor.Database.Remote.Server.App -c|-config=[configuration] -h|-help" << Endl;
 		return 1;
 	}
-	
+
 	std::wstring configurationFile = L"Traktor.Database.Remote.Server.config";
 	if (cmdLine.hasOption('c', L"config"))
 		configurationFile = cmdLine.getOption('c', L"config").getString();
@@ -91,7 +85,7 @@ int main(int argc, const char** argv)
 		traktor::log::error << L"Unable to create connection manager" << Endl;
 		return 1;
 	}
-	
+
 	// Initialize network discovery.
 	Ref< net::DiscoveryManager > discoveryManager = new net::DiscoveryManager();
 	if (discoveryManager->create(net::MdPublishServices))
@@ -130,7 +124,7 @@ int main(int argc, const char** argv)
 
 	while (g_running)
 		ThreadManager::getInstance().getCurrentThread()->sleep(1000);
-	
+
 	if (discoveryManager)
 	{
 		discoveryManager->destroy();

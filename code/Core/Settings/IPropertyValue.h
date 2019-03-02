@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_IPropertyValue_H
-#define traktor_IPropertyValue_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
@@ -42,4 +35,3 @@ struct PropertyTrait {};
 
 }
 
-#endif	// traktor_IPropertyValue_H

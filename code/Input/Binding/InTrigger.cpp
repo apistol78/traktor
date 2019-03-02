@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
@@ -65,19 +59,19 @@ float InTrigger::evaluate(
 
 	float V = m_source->evaluate(iti->sourceInstance, valueSet, T, dT);
 	float dV = V - iti->previousValue;
-	
+
 	iti->previousValue = V;
-	
+
 	bool pulse = false;
 
 	if (m_flank == FlPositive && dV > FUZZY_EPSILON)
 		pulse = true;
 	else if (m_flank == FlNegative && dV < -FUZZY_EPSILON)
 		pulse = true;
-		
+
 	if (pulse)
 		iti->pulseEnd = T + m_duration;
-		
+
 	if (T < iti->pulseEnd)
 		return asFloat(true);
 	else
@@ -97,6 +91,6 @@ void InTrigger::serialize(ISerializer& s)
 	s >> MemberEnum< Flank >(L"flank", m_flank, c_Flank_Keys);
 	s >> Member< float >(L"duration", m_duration);
 }
-	
+
 	}
 }

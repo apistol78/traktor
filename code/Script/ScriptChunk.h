@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_script_ScriptChunk_H
-#define traktor_script_ScriptChunk_H
+#pragma once
 
 #include "Core/Object.h"
 
@@ -25,4 +18,3 @@ class ScriptChunk : public Object
 	}
 }
 
-#endif	// traktor_script_ScriptChunk_H

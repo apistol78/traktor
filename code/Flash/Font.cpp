@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAabb.h"
@@ -76,7 +70,7 @@ bool Font::create(
 	m_advanceTable = advanceTable;
 	m_boundsTable = boundsTable;
 	m_coordinateType = coordinateType;
-	
+
 	for (AlignedVector< SwfKerningRecord >::const_iterator i = kerningRecords.begin(); i != kerningRecords.end(); ++i)
 	{
 		uint32_t codePair = (uint32_t(i->code1) << 16) | i->code2;

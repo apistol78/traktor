@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_online_ISessionManagerProvider_H
-#define traktor_online_ISessionManagerProvider_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -17,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
-#endif 
+#endif
 
 namespace traktor
 {
@@ -98,4 +91,3 @@ public:
 	}
 }
 
-#endif	// traktor_online_ISessionManagerProvider_H

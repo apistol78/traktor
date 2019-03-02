@@ -75,9 +75,9 @@ Rotator Rotator::fromEulerXYZ(float x, float y, float z)
 	{
 		Vector4(x, 0.0f, 0.0f),
 		Vector4(0.0f, y, 0.0f),
-		Vector4(0.0f, 0.0f, z)		
+		Vector4(0.0f, 0.0f, z)
 	};
-	return Rotator(rotations[0], rotations[1], rotations[2]);	
+	return Rotator(rotations[0], rotations[1], rotations[2]);
 }
 
 Rotator Rotator::fromEulerYXZ(float x, float y, float z)
@@ -86,7 +86,7 @@ Rotator Rotator::fromEulerYXZ(float x, float y, float z)
 	{
 		Vector4(0.0f, y, 0.0f),
 		Vector4(x, 0.0f, 0.0f),
-		Vector4(0.0f, 0.0f, z)		
+		Vector4(0.0f, 0.0f, z)
 	};
 	return Rotator(rotations[0], rotations[1], rotations[2]);
 }

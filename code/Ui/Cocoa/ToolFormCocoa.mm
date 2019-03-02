@@ -19,7 +19,7 @@ ToolFormCocoa::ToolFormCocoa(EventSubject* owner)
 bool ToolFormCocoa::create(IWidget* parent, const std::wstring& text, int width, int height, int style)
 {
 	uint32_t styleMask = 0;
-	
+
 	if (style & WsCaption)
 		styleMask |= NSTitledWindowMask;
 	if (style & WsCloseBox)
@@ -37,12 +37,12 @@ bool ToolFormCocoa::create(IWidget* parent, const std::wstring& text, int width,
 	];
 
 	[m_window setTitle:makeNSString(text)];
-	
+
 	NSWindowDelegateProxy* proxy = [[NSWindowDelegateProxy alloc] init];
 	[proxy setCallback: this];
-	
+
 	[m_window setDelegate: proxy];
-	
+
 	return true;
 }
 
@@ -62,7 +62,7 @@ void ToolFormCocoa::destroy()
 	// Release all timers.
 	for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
 		[i->second invalidate];
-		
+
 	m_timers.clear();
 
 	// Release objects.
@@ -159,10 +159,10 @@ void ToolFormCocoa::startTimer(int interval, int id)
 		userInfo: nil
 		repeats: YES
 	];
-		
+
 	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSDefaultRunLoopMode];
 	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSModalPanelRunLoopMode];
-	
+
 	m_timers[id] = timer;
 }
 
@@ -192,7 +192,7 @@ Rect ToolFormCocoa::getInnerRect() const
 	NSView* contentView = [m_window contentView];
 	NSRect contentFrame = [contentView frame];
 	return fromNSRect(contentFrame);
-}	
+}
 
 Rect ToolFormCocoa::getNormalRect() const
 {
@@ -326,15 +326,15 @@ bool ToolFormCocoa::event_windowShouldClose()
 void ToolFormCocoa::event_windowDidBecomeKey()
 {
 }
-	
+
 void ToolFormCocoa::event_windowDidResignKey()
 {
 }
-	
+
 void ToolFormCocoa::event_windowDidBecomeMain()
 {
 }
-	
+
 void ToolFormCocoa::event_windowDidResignMain()
 {
 }

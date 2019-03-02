@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InReadValue_H
-#define traktor_input_InReadValue_H
+#pragma once
 
 #include <string>
 #include "Input/Binding/IInputNode.h"
@@ -29,12 +22,12 @@ namespace traktor
 class T_DLLCLASS InReadValue : public IInputNode
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	InReadValue();
-	
+
 	InReadValue(const std::wstring& valueId);
-	
+
 	virtual Ref< Instance > createInstance() const override final;
 
 	virtual float evaluate(
@@ -42,12 +35,12 @@ public:
 		const InputValueSet& valueSet,
 		float T,
 		float dT
-	) const override final;	
+	) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 	const std::wstring& getValueId() const { return m_valueId; }
-	
+
 private:
 	std::wstring m_valueId;
 };
@@ -55,4 +48,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_InReadValue_H

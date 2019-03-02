@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
@@ -67,7 +61,7 @@ void IlluminateEntityData::setTransform(const Transform& transform)
 void IlluminateEntityData::serialize(ISerializer& s)
 {
 	world::EntityData::serialize(s);
-	
+
 	s >> Member< Guid >(L"seedGuid", m_seedGuid, AttributePrivate());
 
 	if (s.getVersion() >= 3)

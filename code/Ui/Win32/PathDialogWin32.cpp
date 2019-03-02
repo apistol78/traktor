@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Win32/PathDialogWin32.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Enums.h"
@@ -27,7 +21,7 @@ bool PathDialogWin32::create(IWidget* parent, const std::wstring& title)
 	m_bi.pidlRoot = NULL;
 	m_bi.pszDisplayName = m_title;
 	m_bi.lpszTitle = m_title;
-	m_bi.ulFlags = BIF_USENEWUI; 
+	m_bi.ulFlags = BIF_USENEWUI;
 	m_bi.lpfn = NULL;
 	m_bi.lParam = NULL;
 	m_bi.iImage = 0;

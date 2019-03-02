@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/AttributeRange.h"
@@ -69,7 +63,7 @@ void LodMeshEntityData::setTransform(const Transform& transform)
 void LodMeshEntityData::serialize(ISerializer& s)
 {
 	AbstractMeshEntityData::serialize(s);
-	
+
 	s >> MemberRefArray< AbstractMeshEntityData >(L"lods", m_lods);
 	s >> Member< float >(L"lodDistance", m_lodDistance, AttributeRange(0.0f));
 	s >> Member< float >(L"lodCullDistance", m_lodCullDistance, AttributeRange(0.0f));

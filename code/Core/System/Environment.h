@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Environment_H
-#define traktor_Environment_H
+#pragma once
 
 #include <map>
 #include <string>
@@ -46,4 +39,3 @@ private:
 
 }
 
-#endif	// traktor_Environment_H

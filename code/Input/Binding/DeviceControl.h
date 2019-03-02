@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_DeviceControl_H
-#define traktor_input_DeviceControl_H
+#pragma once
 
 #include "Core/IRefCount.h"
 #include "Core/Ref.h"
@@ -29,9 +22,9 @@ public:
 	InputCategory getCategory() const;
 
 	InputDefaultControlType getControlType() const;
-	
+
 	bool isAnalogue() const;
-	
+
 	int32_t getIndex() const;
 
 	IInputDevice* getDevice() const;
@@ -39,11 +32,11 @@ public:
 	float getRangeMin() const;
 
 	float getRangeMax() const;
-	
+
 	float getPreviousValue() const;
 
 	float getCurrentValue() const;
-	
+
 private:
 	friend class DeviceControlManager;
 
@@ -64,4 +57,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_DeviceControl_H

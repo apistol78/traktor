@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Line2_H
-#define traktor_Line2_H
+#pragma once
 
 #include "Core/Math/Ray2.h"
 
@@ -67,4 +60,3 @@ public:
 #	include "Core/Math/Std/Line2.inl"
 #endif
 
-#endif	// traktor_Line2_H

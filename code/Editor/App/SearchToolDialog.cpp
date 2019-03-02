@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <regex>
 #include "Core/RefSet.h"
 #include "Core/Functor/Functor.h"
@@ -227,7 +221,7 @@ void searchInstance(db::Instance* instance, const std::wstring& needle, bool reg
 			row->add(new ui::GridItem(instance->getPath()));
 			row->add(new ui::GridItem(instance->getPrimaryType()->getName()));
 			row->add(new ui::GridItem(stylizeMemberName(foundMember->getName())));
-			
+
 			if (value.find_first_of(L"\n\r") == value.npos)
 				row->add(new ui::GridItem(getMemberValue(foundMember)));
 			else
@@ -420,7 +414,7 @@ void SearchToolDialog::eventGridResultButtonUp(ui::MouseButtonUpEvent* event)
 		Ref< ui::Menu > popupMenu = new ui::Menu();
 		popupMenu->add(new ui::MenuItem(ui::Command(L"SearchTool.OpenInstance"), i18n::Text(L"EDITOR_SEARCH_TOOL_OPEN_INSTANCE")));
 		popupMenu->add(new ui::MenuItem(ui::Command(L"SearchTool.HighlightInstance"), i18n::Text(L"EDITOR_SEARCH_TOOL_HIGHLIGHT_INSTANCE")));
-		
+
 		const ui::MenuItem* selectedItem = popupMenu->showModal(m_gridResults, event->getPosition());
 		if (selectedItem)
 		{

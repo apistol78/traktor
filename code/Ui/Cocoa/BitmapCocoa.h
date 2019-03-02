@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_BitmapCocoa_H
-#define traktor_ui_BitmapCocoa_H
+#pragma once
 
 #import <Cocoa/Cocoa.h>
 
@@ -30,11 +23,11 @@ public:
 	virtual Ref< drawing::Image > getImage() const T_OVERRIDE T_FINAL;
 
 	virtual Size getSize() const T_OVERRIDE T_FINAL;
-	
+
 	inline NSImage* getNSImage() const { return m_image; }
-	
+
 	inline NSImage* getNSImagePreAlpha() const { return m_imagePreAlpha; }
-	
+
 private:
 	NSImage* m_image;
 	NSBitmapImageRep* m_imageRep;
@@ -45,4 +38,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_BitmapCocoa_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -42,7 +36,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 struct VariablePred
 {
 	bool operator () (const Variable* vl, const Variable* vr) const
@@ -50,7 +44,7 @@ struct VariablePred
 		return compareIgnoreCase< std::wstring >(vl->getName(), vr->getName()) <= 0;
 	}
 };
-		
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerView", ScriptDebuggerView, ui::Container)

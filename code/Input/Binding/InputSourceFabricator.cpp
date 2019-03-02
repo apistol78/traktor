@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
 #include "Input/Binding/CombinedInputSourceData.h"
@@ -49,18 +43,18 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 	// Have we already finished fabricating?
 	if (m_outputData)
 		return m_outputData;
-		
+
 	// Enumerate all devices and controls to see if anything has changed.
 	for (std::list< DeviceState >::iterator i = m_deviceStates.begin(); i != m_deviceStates.end(); ++i)
 	{
 		for (int32_t j = DtUp; j <= DtKeyLastIndex; ++j)
 		{
 			InputDefaultControlType controlType = (InputDefaultControlType)j;
-		
+
 			int32_t control;
 			if (!i->device->getDefaultControl(controlType, m_analogue, control))
 				continue;
-			
+
 			float value = i->device->getControlValue(control);
 			bool first = i->values.find(controlType) == i->values.end();
 
@@ -120,7 +114,7 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 						{
 							if (!m_combinedData)
 								m_combinedData = new CombinedInputSourceData(CombinedInputSource::CmAll);
-	
+
 							m_combinedData->addSource(new GenericInputSourceData(
 								m_category,
 								std::distance(m_deviceStates.begin(), i),
@@ -137,7 +131,7 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 								m_outputData = m_combinedData;
 							else if (sources.size() == 1)
 								m_outputData = sources[0];
-	
+
 							if (m_outputData)
 								break;
 						}
@@ -149,7 +143,7 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 		if (m_outputData)
 			break;
 	}
-	
+
 	return m_outputData;
 }
 

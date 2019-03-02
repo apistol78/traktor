@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
@@ -49,7 +43,7 @@ Point DefaultNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
 
-	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);	
+	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);
 	int32_t top = ui::dpi96(c_marginHeight) + ui::dpi96(c_topMargin) + ui::dpi96(c_titlePad);
 	if (!node->getTitle().empty())
 		top += textHeight;
@@ -78,7 +72,7 @@ Pin* DefaultNodeShape::getPinAt(const Node* node, const Point& pt) const
 
 	Point ptn(pt.x - rc.left, pt.y - rc.top);
 
-	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);	
+	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);
 	int32_t top = ui::dpi96(c_marginHeight) + ui::dpi96(c_topMargin) + ui::dpi96(c_titlePad);
 	if (!node->getTitle().empty())
 		top += textHeight;
@@ -110,7 +104,7 @@ void DefaultNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& 
 	const PaintSettings* settings = canvas->getPaintSettings();
 
 	Rect rc = node->calculateRect().offset(offset);
-	int32_t textHeight = settings->getFont().getPixelSize() + ui::dpi96(4);	
+	int32_t textHeight = settings->getFont().getPixelSize() + ui::dpi96(4);
 
 	// Draw node shape.
 	{
@@ -281,9 +275,9 @@ void DefaultNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& 
 
 Size DefaultNodeShape::calculateSize(const Node* node) const
 {
-	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);	
+	int32_t textHeight = m_graphControl->getPaintSettings()->getFont().getPixelSize() + ui::dpi96(4);
 	int32_t height = ui::dpi96(c_marginHeight) * 2 + ui::dpi96(c_topMargin) + ui::dpi96(c_titlePad);
-	
+
 	if (!node->getTitle().empty())
 		height += textHeight;
 	if (!node->getInfo().empty())

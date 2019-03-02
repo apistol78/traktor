@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_RichEdit_H
-#define traktor_ui_RichEdit_H
+#pragma once
 
 #include <functional>
 #include <list>
@@ -70,7 +63,7 @@ public:
 
 	/*! \brief Set font. */
 	virtual void setFont(const Font& font) override;
-	
+
 	/*! \brief Define a new text attribute. */
 	int32_t addTextAttribute(const Color4ub& textColor, bool bold, bool italic, bool underline);
 
@@ -334,4 +327,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_RichEdit_H

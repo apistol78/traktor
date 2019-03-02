@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
@@ -310,10 +304,10 @@ Ref< EditInstance > SpriteInstance::createTextField(const std::string& textName,
 		0,
 		0
 	));
-	
+
 	// Place character at given location.
 	editInstance->setTransform(translate(x, y));
-	
+
 	// Show edit character instance.
 	getDisplayList().showObject(
 		depth,
@@ -789,7 +783,7 @@ void SpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	CharacterInstance::eventMouseUp(x, y, button);
 
 	context->setMovieClip(current);
-	
+
 	// Finally if mouse up has been issued and we're at the bottom
 	// of event chain, we drop reference to pressed character.
 	if (!getParent())

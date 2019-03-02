@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef ExtractSolutionDialog_H
-#define ExtractSolutionDialog_H
+#pragma once
 
 #include "Ui/ConfigDialog.h"
 
@@ -13,7 +6,7 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 class Edit;
 class ListBox;
 
@@ -47,4 +40,3 @@ private:
 	}
 }
 
-#endif	// ExtractSolutionDialog_H

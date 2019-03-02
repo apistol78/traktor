@@ -26,7 +26,7 @@ public:
 	SimpleTextureOpenGL(ResourceContextOpenGL* resourceContext);
 
 	virtual ~SimpleTextureOpenGL();
-	
+
 	bool create(const SimpleTextureCreateDesc& desc);
 
 	virtual void destroy() override final;
@@ -36,7 +36,7 @@ public:
 	virtual int32_t getMips() const override final;
 
 	virtual int32_t getWidth() const override final;
-	
+
 	virtual int32_t getHeight() const override final;
 
 	virtual bool lock(int32_t level, Lock& lock) override final;
@@ -68,6 +68,6 @@ private:
 	uint32_t m_dataSize;
 	AutoArrayPtr< uint8_t > m_data;
 };
-		
+
 	}
 }

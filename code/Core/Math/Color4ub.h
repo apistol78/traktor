@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Color_H
-#define traktor_Color_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Math/MathConfig.h"
@@ -38,7 +31,7 @@ public:
 #if defined (_MSC_VER)
 #	pragma warning( default:4201 )
 #endif
-	
+
 	T_MATH_INLINE Color4ub();
 
 	T_MATH_INLINE Color4ub(const Color4ub& v);
@@ -86,4 +79,3 @@ T_MATH_INLINE T_DLLCLASS Color4ub lerp(const Color4ub& a, const Color4ub& b, flo
 #include "Core/Math/Std/Color4ub.inl"
 #endif
 
-#endif	// traktor_Color_H

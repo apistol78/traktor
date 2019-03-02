@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_IFeedbackManager_H
-#define traktor_spray_IFeedbackManager_H
+#pragma once
 
 #include "Spray/Feedback/IFeedbackListener.h"
 
@@ -37,4 +30,3 @@ public:
 	}
 }
 
-#endif	// traktor_spray_IFeedbackManager_H

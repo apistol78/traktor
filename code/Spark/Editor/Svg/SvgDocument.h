@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_SvgDocument_H
-#define traktor_spark_SvgDocument_H
+#pragma once
 
 #include "Core/Math/Aabb2.h"
 #include "Spark/Editor/Svg/SvgShape.h"
@@ -41,4 +34,3 @@ private:
 	}
 }
 
-#endif	// traktor_spark_SvgDocument_H

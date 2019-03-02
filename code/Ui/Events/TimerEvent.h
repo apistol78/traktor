@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_TimerEvent_H
-#define traktor_ui_TimerEvent_H
+#pragma once
 
 #include "Ui/Event.h"
 #include "Ui/Command.h"
@@ -22,24 +15,23 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 /*! \brief Command event.
  * \ingroup UI
  */
 class T_DLLCLASS TimerEvent : public Event
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	TimerEvent(EventSubject* sender, uint32_t id);
-	
+
 	uint32_t getId() const;
-	
+
 private:
 	uint32_t m_id;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_TimerEvent_H

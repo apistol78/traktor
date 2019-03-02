@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Acquire.h"
@@ -46,7 +40,7 @@ public:
 		if (m_cond)
 			m_lock.wait();
 	}
-	
+
 	T_FORCE_INLINE ~ConditionalAcquire< T >()
 	{
 		if (m_cond)
@@ -153,7 +147,7 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 				}
 			}
 
-			dxgiOutput.release();			
+			dxgiOutput.release();
 		}
 		else
 		{

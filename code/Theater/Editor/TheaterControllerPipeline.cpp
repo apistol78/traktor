@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Theater/ActData.h"
@@ -73,7 +67,7 @@ Ref< ISerializable > TheaterControllerPipeline::buildOutput(
 	Ref< TheaterControllerData > controllerData = new TheaterControllerData();
 	controllerData->m_repeatActs = sourceControllerData->m_repeatActs;
 	controllerData->m_randomizeActs = sourceControllerData->m_randomizeActs;
-	
+
 	RefArray< ActData >& acts = controllerData->getActs();
 	acts.resize(sourceActs.size());
 

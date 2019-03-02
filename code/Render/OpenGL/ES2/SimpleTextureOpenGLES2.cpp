@@ -87,7 +87,7 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outFormat = GL_RGBA;
 		outType = GL_FLOAT;
 		break;
-		
+
 #if defined(GL_RED_EXT)
 	case TfR16F:
 		outPixelSize = 2;
@@ -96,7 +96,7 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outType = GL_HALF_FLOAT_OES;
 		break;
 #endif
-	
+
 #if defined(GL_RED_EXT)
 	case TfR32F:
 		outPixelSize = 4;
@@ -201,7 +201,7 @@ bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 	else
 	{
 		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));		
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 	}
 
 	// Allocate data buffer.

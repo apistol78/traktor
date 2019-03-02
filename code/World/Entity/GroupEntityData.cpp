@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -13,7 +7,7 @@ namespace traktor
 {
 	namespace world
 	{
-	
+
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.GroupEntityData", 0, GroupEntityData, EntityData)
 
 void GroupEntityData::addEntityData(EntityData* entityData)
@@ -68,6 +62,6 @@ void GroupEntityData::serialize(ISerializer& s)
 	EntityData::serialize(s);
 	s >> MemberRefArray< EntityData >(L"entityData", m_entityData);
 }
-	
+
 	}
 }

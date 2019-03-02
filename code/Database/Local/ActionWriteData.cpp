@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
@@ -152,7 +146,7 @@ bool ActionWriteData::redundant(const Action* action) const
 	const ActionWriteData* actionWriteData = dynamic_type_cast< const ActionWriteData* >(action);
 	if (actionWriteData)
 	{
-		return 
+		return
 			m_instancePath == actionWriteData->m_instancePath &&
 			m_dataName == actionWriteData->m_dataName;
 	}

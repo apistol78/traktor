@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_RefArray_H
-#define traktor_RefArray_H
+#pragma once
 
 #include <algorithm>
 #include "Core/InplaceRef.h"
@@ -72,7 +65,7 @@ public:
 		{
 			return *m_item;
 		}
-		
+
 		pointer operator -> ()
 		{
 			return *m_item;
@@ -656,7 +649,7 @@ public:
 		}
 
 		resize(src.m_size);
-		
+
 		for (size_type i = 0; i < m_size; ++i)
 		{
 			m_items[i] = src.m_items[i];
@@ -710,4 +703,3 @@ private:
 
 }
 
-#endif	// traktor_RefArray_H

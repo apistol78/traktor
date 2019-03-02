@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_EffectFactory_H
-#define traktor_spray_EffectFactory_H
+#pragma once
 
 #include "Resource/IResourceFactory.h"
 
@@ -54,4 +47,3 @@ private:
 	}
 }
 
-#endif	// traktor_spray_EffectFactory_H

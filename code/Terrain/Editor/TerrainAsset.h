@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_terrain_TerrainAsset_H
-#define traktor_terrain_TerrainAsset_H
+#pragma once
 
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
@@ -39,7 +32,7 @@ class Shader;
 
 /*! \brief Terrain source asset.
  * \ingroup Terrain
- * 
+ *
  * This contain source information about a terrain.
  * This class is designed to be stored in the source database
  * along with multiple associated data blobs (see database blobs).
@@ -71,4 +64,3 @@ private:
 	}
 }
 
-#endif	// traktor_terrain_TerrainAsset_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Functor/Functor.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/StreamStream.h"
@@ -32,12 +26,12 @@ void executeRequestJob(std::wstring method, net::Url url, Ref< const IHttpReques
 {
 	if (url.getProtocol() != L"http")
 		return;
-	
+
 	// Lookup host address.
 	SocketAddressIPv6 addr(url.getHost(), url.getPort());
 	if (!addr.valid())
 		return;
-	
+
 	// Create and connect socket to host.
 	Ref< TcpSocket > socket = new TcpSocket();
 	if (!socket->connect(addr))
@@ -45,11 +39,11 @@ void executeRequestJob(std::wstring method, net::Url url, Ref< const IHttpReques
 
 	// Build GET string.
 	std::wstring resource = url.getPath();
-	
+
 	std::wstring query = url.getQuery();
 	if (!query.empty())
 		resource += L"?" + query;
-	
+
 	std::wstring ref = url.getRef();
 	if (!ref.empty())
 		resource += L"#" + ref;

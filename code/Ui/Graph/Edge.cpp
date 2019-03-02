@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Const.h"
 #include "Core/Math/Envelope.h"
 #include "Core/Math/MathUtils.h"
@@ -158,7 +152,7 @@ bool Edge::hit(const PaintSettings* paintSettings, const Point& p) const
 		Vector2 v(float(d.x - s.x), float(d.y - s.y));
 		if (v.length() <= FUZZY_EPSILON)
 			continue;
-		
+
 		Vector2 V = v.perpendicular();
 		Vector2 R = Vector2(float(s.x), float(s.y)) - P;
 
@@ -170,7 +164,7 @@ bool Edge::hit(const PaintSettings* paintSettings, const Point& p) const
 		float Dr = dot(Pr - Vector2(float(s.x), float(s.y)), v) / (v.length() * v.length());
 		if (Dr < 0.0f || Dr > 1.0f)
 			continue;
-		
+
 		return true;
 	}
 

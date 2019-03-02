@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_Character_H
-#define traktor_spark_Character_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Math/Aabb2.h"
@@ -140,4 +133,3 @@ protected:
 	}
 }
 
-#endif	// traktor_spark_Character_H

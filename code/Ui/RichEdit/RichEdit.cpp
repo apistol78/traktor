@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cwctype>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
@@ -604,7 +598,7 @@ bool RichEdit::showLine(int32_t line)
 void RichEdit::placeCaret(int32_t offset)
 {
 	m_caret = offset;
-	
+
 	CaretEvent caretEvent(this);
 	raiseEvent(&caretEvent);
 
@@ -1351,7 +1345,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 	}
 
 	updateScrollBars();
-	
+
 	if (!manualScrolled)
 		scrollToCaret();
 

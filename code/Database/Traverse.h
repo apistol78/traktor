@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_Traverse_H
-#define traktor_db_Traverse_H
+#pragma once
 
 #include "Core/RefArray.h"
 
@@ -24,13 +17,13 @@ Ref< Group > findChildGroup(Group* group, const GroupPredicate& pred)
 	RefArray< Group > childGroups;
 	group->getChildGroups(childGroups);
 
-	for (RefArray< Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
+	for (const auto childGroup : childGroups)
 	{
-		if (pred(*i))
-			return *i;
+		if (pred(childGroup))
+			return childGroup;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 /*! \brief Find child instance. */
@@ -40,13 +33,13 @@ Ref< Instance > findChildInstance(Group* group, const InstancePredicate& pred)
 	RefArray< Instance > childInstances;
 	group->getChildInstances(childInstances);
 
-	for (RefArray< Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	for (const auto childInstance : childInstances)
 	{
-		if (pred(*i))
-			return *i;
+		if (pred(childInstance))
+			return childInstance;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 /*! \brief Find multiple child instances. */
@@ -56,10 +49,10 @@ void findChildInstances(Group* group, const InstancePredicate& pred, RefArray< I
 	RefArray< Instance > childInstances;
 	group->getChildInstances(childInstances);
 
-	for (RefArray< Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	for (const auto childInstance : childInstances)
 	{
-		if (pred(*i))
-			outInstances.push_back(*i);
+		if (pred(childInstance))
+			outInstances.push_back(childInstance);
 	}
 }
 
@@ -70,20 +63,20 @@ Ref< Group > recursiveFindChildGroup(Group* group, const GroupPredicate& pred)
 	RefArray< Group > childGroups;
 	group->getChildGroups(childGroups);
 
-	for (RefArray< Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
+	for (const auto childGroup : childGroups)
 	{
-		if (pred(*i))
-			return *i;
-	}
-
-	for (RefArray< Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
-	{
-		Ref< Group > childGroup = recursiveFindChildGroup(*i, pred);
-		if (childGroup)
+		if (pred(childGroup))
 			return childGroup;
 	}
 
-	return 0;
+	for (const auto childGroup : childGroups)
+	{
+		Ref< Group > foundChildGroup = recursiveFindChildGroup(childGroup, pred);
+		if (foundChildGroup)
+			return foundChildGroup;
+	}
+
+	return nullptr;
 }
 
 /*! \brief Recursively find child instance. */
@@ -93,23 +86,23 @@ Ref< Instance > recursiveFindChildInstance(Group* group, const InstancePredicate
 	RefArray< Instance > childInstances;
 	group->getChildInstances(childInstances);
 
-	for (RefArray< Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	for (const auto childInstance : childInstances)
 	{
-		if (pred(*i))
-			return *i;
+		if (pred(childInstance))
+			return childInstance;
 	}
 
 	RefArray< Group > childGroups;
 	group->getChildGroups(childGroups);
 
-	for (RefArray< Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
+	for (const auto childGroup : childGroups)
 	{
-		Ref< Instance > instance = recursiveFindChildInstance(*i, pred);
+		Ref< Instance > instance = recursiveFindChildInstance(childGroup, pred);
 		if (instance)
 			return instance;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 /*! \brief Recursively find multiple child instances. */
@@ -119,17 +112,17 @@ void recursiveFindChildInstances(Group* group, const InstancePredicate& pred, Re
 	RefArray< Instance > childInstances;
 	group->getChildInstances(childInstances);
 
-	for (RefArray< Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	for (const auto childInstance : childInstances)
 	{
-		if (pred(*i))
-			outInstances.push_back(*i);
+		if (pred(childInstance))
+			outInstances.push_back(childInstance);
 	}
 
 	RefArray< Group > childGroups;
 	group->getChildGroups(childGroups);
 
-	for (RefArray< Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
-		recursiveFindChildInstances(*i, pred, outInstances);
+	for (const auto childGroup : childGroups)
+		recursiveFindChildInstances(childGroup, pred, outInstances);
 }
 
 /*! \brief Find group by name predicate. */
@@ -213,4 +206,3 @@ struct FindInstanceByName
 	}
 }
 
-#endif	// traktor_db_Traverse_H

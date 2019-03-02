@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Misc/String.h"
@@ -63,7 +57,7 @@ Solution* SolutionLoader::load(const std::wstring& fileName)
 				if (!(*j)->resolve(Path(fileName), this))
 					return 0;
 			}
-		}	
+		}
 	}
 
 	// Add solution to map.

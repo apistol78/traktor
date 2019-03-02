@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_IndexBuffer_H
-#define traktor_render_IndexBuffer_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Render/Types.h"
@@ -43,15 +36,14 @@ public:
 	virtual void destroy() = 0;
 
 	virtual void* lock() = 0;
-	
+
 	virtual void unlock() = 0;
 
 private:
 	IndexType m_indexType;
 	uint32_t m_bufferSize;
 };
-	
+
 	}
 }
 
-#endif	// traktor_render_IndexBuffer_H

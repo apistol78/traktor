@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_EntityEventSet_H
-#define traktor_world_EntityEventSet_H
+#pragma once
 
 #include <map>
 #include <string>
@@ -43,4 +36,3 @@ private:
 	}
 }
 
-#endif	// traktor_world_EntityEventSet_H

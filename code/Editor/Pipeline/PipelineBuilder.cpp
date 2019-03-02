@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #if defined(_WIN32)
 #	include <cfloat>
 #endif
@@ -263,7 +257,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 
 			if ((m_reasons[children.back()] & PbrSourceModified) != 0)
 				m_reasons[i] |= PbrDependencyModified;
-			
+
 			visited.insert(children.back());
 
 			children.pop_back();

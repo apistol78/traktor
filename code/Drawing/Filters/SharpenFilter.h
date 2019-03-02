@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_SharpenFilter_H
-#define traktor_drawing_SharpenFilter_H
+#pragma once
 
 #include "Drawing/IImageFilter.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace drawing
 	{
-	
+
 /*! \brief Sharpen filter.
  * \ingroup Drawing
  */
@@ -39,8 +32,7 @@ private:
 	int m_radius;
 	float m_strength;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_SharpenFilter_H

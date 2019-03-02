@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <wbemidl.h>
 #include <oleauto.h>
 #include "Core/Platform.h"
@@ -30,7 +24,7 @@ namespace traktor
 
 /*! \brief Check if device is a XInput device.
  *
- * Enum each PNP device using WMI and check each device ID to see if it contains 
+ * Enum each PNP device using WMI and check each device ID to see if it contains
  * "IG_" (ex. "VID_045E&PID_028E&IG_00").  If it does, then it's an XInput device
  * Unfortunately this information can not be found by just using DirectInput.
  *
@@ -69,20 +63,20 @@ BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 
 	bstrNamespace = SysAllocString(L"\\\\.\\root\\cimv2");
 	if (bstrNamespace == NULL)
-		goto LCleanup;        
+		goto LCleanup;
 	bstrClassName = SysAllocString(L"Win32_PNPEntity");
 	if (bstrClassName == NULL)
-		goto LCleanup;        
+		goto LCleanup;
 	bstrDeviceID = SysAllocString(L"DeviceID");
 	if (bstrDeviceID == NULL)
-		goto LCleanup;        
+		goto LCleanup;
 
-	// Connect to WMI 
+	// Connect to WMI
 	hr = pIWbemLocator->ConnectServer(
 		bstrNamespace,
 		NULL,
 		NULL,
-		0L, 
+		0L,
 		0L,
 		NULL,
 		NULL,
@@ -91,17 +85,17 @@ BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 	if (FAILED(hr) || pIWbemServices == NULL)
 		goto LCleanup;
 
-	// Switch security level to IMPERSONATE. 
+	// Switch security level to IMPERSONATE.
 	CoSetProxyBlanket(
 		pIWbemServices,
 		RPC_C_AUTHN_WINNT,
 		RPC_C_AUTHZ_NONE,
-		NULL, 
+		NULL,
 		RPC_C_AUTHN_LEVEL_CALL,
 		RPC_C_IMP_LEVEL_IMPERSONATE,
 		NULL,
 		EOAC_NONE
-	);                    
+	);
 
 	hr = pIWbemServices->CreateInstanceEnum(bstrClassName, 0, NULL, &pEnumDevices);
 	if (FAILED(hr) || pEnumDevices == NULL)
@@ -124,7 +118,7 @@ BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 			if (SUCCEEDED( hr ) && var.vt == VT_BSTR && var.bstrVal != NULL)
 			{
 				// Check if the device ID contains "IG_".  If it does, then it's an XInput device
-				// This information can not be found from DirectInput 
+				// This information can not be found from DirectInput
 				if (wcsstr(var.bstrVal, L"IG_"))
 				{
 					// If it does, then get the VID/PID from var.bstrVal
@@ -144,7 +138,7 @@ BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 						goto LCleanup;
 					}
 				}
-			}   
+			}
 			SAFE_RELEASE(pDevices[iDevice]);
 		}
 	}
@@ -236,7 +230,7 @@ bool InputDriverDi8::create(const SystemApplication& sysapp, const SystemWindow&
 		}
 	}
 
-	hr = DirectInput8Create((HINSTANCE)GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput.getAssign(), NULL); 
+	hr = DirectInput8Create((HINSTANCE)GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput.getAssign(), NULL);
 	if (FAILED(hr))
 	{
 		log::error << L"Unable to create input driver; DirectInput8Create failed, hr = " << int32_t(hr) << Endl;
@@ -315,11 +309,11 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 		L"\tProduct name \"" << deviceInstance->tszProductName << L"\"" << Endl;
 
 	hr = m_directInput->CreateDevice(deviceInstance->guidInstance, &device.getAssign(), NULL);
-	if (FAILED(hr)) 
+	if (FAILED(hr))
 		return false;
 
 	hr = device->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
-	if (FAILED(hr)) 
+	if (FAILED(hr))
 		return false;
 
 	Ref< input::IInputDevice > inputDevice;

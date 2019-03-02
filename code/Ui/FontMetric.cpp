@@ -5,7 +5,7 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.FontMetric", FontMetric, Object)
 
 FontMetric::FontMetric(const IFontMetric* metric)
@@ -16,7 +16,7 @@ FontMetric::FontMetric(const IFontMetric* metric)
 int32_t FontMetric::getAscent() const
 {
 	T_FATAL_ASSERT(m_metric != nullptr);
-	
+
 	int32_t ascent, descent;
 	m_metric->getAscentAndDescent(ascent, descent);
 
@@ -26,7 +26,7 @@ int32_t FontMetric::getAscent() const
 int32_t FontMetric::getDescent() const
 {
 	T_FATAL_ASSERT(m_metric != nullptr);
-	
+
 	int32_t ascent, descent;
 	m_metric->getAscentAndDescent(ascent, descent);
 
@@ -36,7 +36,7 @@ int32_t FontMetric::getDescent() const
 int32_t FontMetric::getHeight() const
 {
 	T_FATAL_ASSERT(m_metric != nullptr);
-	
+
 	int32_t ascent, descent;
 	m_metric->getAscentAndDescent(ascent, descent);
 

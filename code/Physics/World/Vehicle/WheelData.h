@@ -1,5 +1,4 @@
-#ifndef traktor_physics_WheelData_H
-#define traktor_physics_WheelData_H
+#pragma once
 
 #include "Core/Math/Range.h"
 #include "Core/Math/Vector4.h"
@@ -68,4 +67,3 @@ private:
 	}
 }
 
-#endif	// traktor_physics_WheelData_H

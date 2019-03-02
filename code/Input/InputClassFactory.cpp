@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -154,12 +148,12 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputClassFactory", 0, InputClass
 
 void InputClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< IInputDriver > > classInputDriver = new AutoRuntimeClass< IInputDriver >();
+	auto classInputDriver = new AutoRuntimeClass< IInputDriver >();
 	classInputDriver->addMethod("getDeviceCount", &IInputDriver::getDeviceCount);
 	classInputDriver->addMethod("getDevice", &IInputDriver::getDevice);
 	registrar->registerClass(classInputDriver);
 
-	Ref< AutoRuntimeClass< IInputDevice > > classInputDevice = new AutoRuntimeClass< IInputDevice >();
+	auto classInputDevice = new AutoRuntimeClass< IInputDevice >();
 
 	for (int32_t i = 0; g_InputCategory_Keys[i].id != 0; ++i)
 		classInputDevice->addConstant(wstombs(g_InputCategory_Keys[i].id), Any::fromInt32(g_InputCategory_Keys[i].val));
@@ -182,7 +176,7 @@ void InputClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classInputDevice->addMethod("setExclusive", &IInputDevice::setExclusive);
 	registrar->registerClass(classInputDevice);
 
-	Ref< AutoRuntimeClass< InputSystem > > classInputSystem = new AutoRuntimeClass< InputSystem >();
+	auto classInputSystem = new AutoRuntimeClass< InputSystem >();
 	classInputSystem->addMethod("addDriver", &InputSystem::addDriver);
 	classInputSystem->addMethod("removeDriver", &InputSystem::removeDriver);
 	classInputSystem->addMethod("addDevice", &InputSystem::addDevice);
@@ -195,7 +189,7 @@ void InputClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classInputSystem->addMethod("update", &InputSystem::update);
 	registrar->registerClass(classInputSystem);
 
-	Ref< AutoRuntimeClass< InputMapping > > classInputMapping = new AutoRuntimeClass< InputMapping >();
+	auto classInputMapping = new AutoRuntimeClass< InputMapping >();
 	classInputMapping->addStaticMethod("getHandle", &input_InputMapping_getHandle);
 	classInputMapping->addMethod("reset", &input_InputMapping_reset_0);
 	classInputMapping->addMethod("reset", &input_InputMapping_reset_1);
@@ -213,11 +207,11 @@ void InputClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classInputMapping->addMethod("getIdleDuration", &InputMapping::getIdleDuration);
 	registrar->registerClass(classInputMapping);
 
-	Ref< AutoRuntimeClass< IInputSource > > classInputSource = new AutoRuntimeClass< IInputSource >();
+	auto classInputSource = new AutoRuntimeClass< IInputSource >();
 	classInputSource->addMethod("getDescription", &IInputSource::getDescription);
 	registrar->registerClass(classInputSource);
 
-	Ref< AutoRuntimeClass< InputState > > classInputState = new AutoRuntimeClass< InputState >();
+	auto classInputState = new AutoRuntimeClass< InputState >();
 	classInputState->addMethod("reset", &InputState::reset);
 	classInputState->addMethod("getValue", &InputState::getValue);
 	classInputState->addMethod("getPreviousValue", &InputState::getPreviousValue);

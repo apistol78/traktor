@@ -40,7 +40,7 @@ public:
 	{
 		return m_ref.size();
 	}
-	
+
 	virtual void read(ISerializer& s) const override final
 	{
 		if (m_index < m_ref.size())
@@ -64,7 +64,7 @@ public:
 		m_ref.push_back(ValueType());
 		return true;
 	}
-	
+
 private:
 	value_type& m_ref;
 	mutable size_t m_index;

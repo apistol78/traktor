@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef ConfigurationPropertyPage_H
-#define ConfigurationPropertyPage_H
+#pragma once
 
 #include <Ui/Container.h>
 #include <Ui/Edit.h>
@@ -66,4 +59,3 @@ private:
 	}
 }
 
-#endif	// ConfigurationPropertyPage_H

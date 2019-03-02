@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Static/StaticMesh.h"
 #include "Render/Context/RenderContext.h"
@@ -64,7 +58,7 @@ void StaticMesh::render(
 #else
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(m_name.c_str());
 #endif
-		
+
 		renderBlock->distance = distance;
 		renderBlock->program = program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -73,14 +67,14 @@ void StaticMesh::render(
 		renderBlock->primitives = meshParts[i->meshPart].primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);
-		
+
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			lastWorldTransform,
 			worldTransform,
 			boundingBox
 		);
-		
+
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->programParams);
 

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_SceneFactory_H
-#define traktor_scene_SceneFactory_H
+#pragma once
 
 #include "Resource/IResourceFactory.h"
 #include "World/WorldRenderSettings.h"
@@ -71,4 +64,3 @@ private:
 	}
 }
 
-#endif	// traktor_scene_SceneFactory_H

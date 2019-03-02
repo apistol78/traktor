@@ -6,7 +6,7 @@ namespace traktor
 {
 	namespace ui
 	{
-		
+
 CanvasCocoa::CanvasCocoa(NSView* view, NSFont* font)
 :	m_view(view)
 ,	m_foregroundColor(0)
@@ -63,8 +63,8 @@ void CanvasCocoa::setClipRect(const Rect& rc)
 	NSGraphicsContext* context = [NSGraphicsContext currentContext];
 	[context saveGraphicsState];
 	m_haveClipper = true;
-	
-	NSRectClip(makeNSRect(rc));	
+
+	NSRectClip(makeNSRect(rc));
 }
 
 void CanvasCocoa::resetClipRect()
@@ -85,7 +85,7 @@ void CanvasCocoa::drawLine(int x1, int y1, int x2, int y2)
 {
 	NSPoint p1 = makeNSPoint(Point(x1, y1));
 	NSPoint p2 = makeNSPoint(Point(x2, y2));
-	
+
 	p1.x += 0.5; p1.y += 0.5;
 	p2.x += 0.5; p2.y += 0.5;
 
@@ -187,7 +187,7 @@ void CanvasCocoa::drawPolygon(const Point* pnts, int count)
 
 	for (int i = 0; i < count - 1; ++i)
 		drawLine(pnts[i].x, pnts[i].y, pnts[i + 1].x, pnts[i + 1].y);
-		
+
 	drawLine(pnts[count - 1].x, pnts[count - 1].y, pnts[0].x, pnts[0].y);
 }
 
@@ -209,10 +209,10 @@ void CanvasCocoa::drawBitmap(const Point& dstAt, const Point& srcAt, const Size&
 {
 	BitmapCocoa* bmc = static_cast< BitmapCocoa* >(bitmap);
 	T_ASSERT (bmc);
-	
+
 	NSRect dstRect = makeNSRect(Rect(dstAt, size));
 	NSRect srcRect = makeNSRect(Rect(srcAt, size));
-	
+
 	if (blendMode == 0)
 		[bmc->getNSImage() drawInRect: dstRect fromRect: srcRect operation: NSCompositeCopy fraction: 1.0f];
 	else if ((blendMode & BmAlpha) != 0)
@@ -223,10 +223,10 @@ void CanvasCocoa::drawBitmap(const Point& dstAt, const Size& dstSize, const Poin
 {
 	BitmapCocoa* bmc = static_cast< BitmapCocoa* >(bitmap);
 	T_ASSERT (bmc);
-	
+
 	NSRect dstRect = makeNSRect(Rect(dstAt, dstSize));
 	NSRect srcRect = makeNSRect(Rect(srcAt, srcSize));
-	
+
 	if (blendMode == 0)
 		[bmc->getNSImage() drawInRect: dstRect fromRect: srcRect operation: NSCompositeCopy fraction: 1.0f];
 	else if ((blendMode & BmAlpha) != 0)
@@ -272,9 +272,9 @@ Size CanvasCocoa::getExtent(const std::wstring& text) const
 
 	NSString* str = makeNSString(text);
 	NSSize size = [str sizeWithAttributes: attributes];
-	
+
 	return fromNSSize(size);
 }
-	
+
 	}
 }

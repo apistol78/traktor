@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
 #include "Html/Attribute.h"
@@ -47,7 +41,7 @@ void Element::setAttribute(const std::wstring& name, const std::wstring& value)
 		attr = new Attribute(name);
 		attr->m_previous = 0;
 		attr->m_next = m_firstAttribute;
-		
+
 		if (m_firstAttribute != 0)
 			m_firstAttribute->m_previous = attr;
 
@@ -149,7 +143,7 @@ void Element::toString(OutputStream& os) const
 
 		for (Ref< Node > child = getFirstChild(); child; child = child->getNextSibling())
 			child->toString(os);
-			
+
 		if (is_a< Element >(getFirstChild()))
 			os << DecreaseIndent;
 

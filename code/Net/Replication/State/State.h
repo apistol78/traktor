@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_State_H
-#define traktor_net_State_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
@@ -73,4 +66,3 @@ private:
 	}
 }
 
-#endif	// traktor_net_State_H

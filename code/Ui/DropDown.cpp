@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/Command.h"
@@ -146,7 +140,7 @@ void DropDown::eventButtonDown(MouseButtonDownEvent* event)
 	Menu menu;
 	for (uint32_t i = 0; i < uint32_t(m_items.size()); ++i)
 		menu.add(new MenuItem(Command(i), m_items[i].text));
-	
+
 	Rect rcInner = getInnerRect();
 	const MenuItem* selectedItem = menu.showModal(this, rcInner.getBottomLeft(), rcInner.getWidth(), 8);
 	if (selectedItem != nullptr && selectedItem->getCommand().getId() != m_selected)

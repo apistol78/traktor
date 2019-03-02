@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_IInputSource_H
-#define traktor_input_IInputSource_H
+#pragma once
 
 #include <string>
 #include "Core/Object.h"
@@ -35,7 +28,7 @@ class T_DLLCLASS IInputSource : public Object
 
 public:
 	virtual std::wstring getDescription() const = 0;
-	
+
 	virtual void prepare(float T, float dT) = 0;
 
 	/*! \brief Read value from input source.
@@ -55,4 +48,3 @@ public:
 	}
 }
 
-#endif	// traktor_input_IInputSource_H

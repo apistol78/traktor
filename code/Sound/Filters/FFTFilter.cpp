@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <cstring>
 #include "Core/Math/Const.h"
@@ -241,7 +235,7 @@ void FFTFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 	{
 		float* history = ffti->m_history[i];
 		float* samples = outBlock.samples[i];
-		
+
 		for (uint32_t j = 0; j < outBlock.samplesCount; j += n1)
 		{
 			float buf[N];	// HHHS

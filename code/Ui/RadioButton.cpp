@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Ui/Application.h"
 #include "Ui/RadioButton.h"
@@ -12,7 +6,7 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.RadioButton", RadioButton, Widget)
 
 bool RadioButton::create(Widget* parent, const std::wstring& text, bool checked)

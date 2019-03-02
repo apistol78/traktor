@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vulkan/ApiLoader.h"
@@ -351,7 +345,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	VkBuffer vbb = vb->getVkBuffer();
 	VkDeviceSize offsets = {};
 	vkCmdBindVertexBuffers(cmdBuffer, 0, 1, &vbb, &offsets);
- 
+
 	if (indexBuffer && primitives.indexed)
 	{
 		IndexBufferVk* ib = mandatory_non_null_type_cast<IndexBufferVk*>(indexBuffer);
@@ -414,7 +408,7 @@ void RenderViewVk::present()
 
 	// Prepare primary color for presentation.
 	m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->prepareForPresentation(m_drawCmdBuffer);
- 
+
 	// End recording command buffer.
 	vkEndCommandBuffer(m_drawCmdBuffer);
 
@@ -422,7 +416,7 @@ void RenderViewVk::present()
     VkFenceCreateInfo fenceCreateInfo = {};
     fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     vkCreateFence(m_device, &fenceCreateInfo, nullptr, &renderFence);
- 
+
     VkPipelineStageFlags waitStageMash = { VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT };
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -434,10 +428,10 @@ void RenderViewVk::present()
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = &m_renderingCompleteSemaphore;
     vkQueueSubmit(m_presentQueue, 1, &submitInfo, renderFence);
- 
+
     vkWaitForFences(m_device, 1, &renderFence, VK_TRUE, UINT64_MAX);
     vkDestroyFence(m_device, renderFence, nullptr);
- 
+
 #if defined(_WIN32) || defined(__LINUX__)
     VkPresentInfoKHR presentInfo = {};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -458,7 +452,7 @@ void RenderViewVk::present()
 		vkDestroyPipeline(m_device, p, nullptr);
 	m_cleanupPipelines.resize(0);
 
- 
+
     vkDestroySemaphore(m_device, m_presentCompleteSemaphore, nullptr);
     vkDestroySemaphore(m_device, m_renderingCompleteSemaphore, nullptr);
 }
@@ -583,13 +577,13 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 	viewport.height = ts.rts->getHeight();
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
- 
+
 	VkRect2D scissors = {};
 	scissors.offset.x = 0;
 	scissors.offset.y = 0;
 	scissors.extent.width = ts.rts->getWidth();
 	scissors.extent.height = ts.rts->getHeight();
- 
+
 	VkPipelineViewportStateCreateInfo viewportState = {};
 	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 	viewportState.viewportCount = 1;
@@ -636,7 +630,7 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 	multisampleState.minSampleShading = 0;
 	multisampleState.pSampleMask = NULL;
 	multisampleState.alphaToCoverageEnable = rs.alphaToCoverageEnable ? VK_TRUE : VK_FALSE;
-	multisampleState.alphaToOneEnable = VK_FALSE;	
+	multisampleState.alphaToOneEnable = VK_FALSE;
 
 	VkStencilOpState noOPStencilState = {};
 	noOPStencilState.failOp = c_stencilOperations[rs.stencilFail];
@@ -668,7 +662,7 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 	colorBlendAttachmentState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
 	colorBlendAttachmentState.alphaBlendOp = VK_BLEND_OP_ADD;
 	colorBlendAttachmentState.colorWriteMask = rs.colorWriteMask;
-	 
+
 	VkPipelineColorBlendStateCreateInfo colorBlendState = {};
 	colorBlendState.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 	colorBlendState.logicOpEnable = VK_FALSE;
@@ -684,7 +678,7 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 	VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo = {};
 	dynamicStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 	dynamicStateCreateInfo.dynamicStateCount = 2;
-	dynamicStateCreateInfo.pDynamicStates = dynamicState;*/	
+	dynamicStateCreateInfo.pDynamicStates = dynamicState;*/
 
 	VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = {};
 	inputAssemblyStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -715,7 +709,7 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 		m_cleanupPipelines.push_back(m_pipeline);
 		m_pipeline = 0;
 	}
-	 
+
 	if (vkCreateGraphicsPipelines(m_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &m_pipeline) != VK_SUCCESS)
 		return false;
 

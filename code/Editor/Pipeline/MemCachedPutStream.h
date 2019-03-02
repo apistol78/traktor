@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_MemCachedPutStream_H
-#define traktor_editor_MemCachedPutStream_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Io/IStream.h"
@@ -54,11 +47,10 @@ private:
 	uint32_t m_index;
 
 	bool uploadBlock();
-	
+
 	void uploadEndBlock();
 };
 
 	}
 }
 
-#endif	// traktor_editor_MemCachedPutStream_H

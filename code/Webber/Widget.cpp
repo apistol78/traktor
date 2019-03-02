@@ -6,7 +6,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 int32_t allocateWidgetId()
 {
 	static int32_t s_widgetNextId = 1;
@@ -14,7 +14,7 @@ int32_t allocateWidgetId()
 }
 
 		}
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.wbr.Widget", Widget, Object)
 
 Widget::Widget()

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_SmallMap_H
-#define traktor_SmallMap_H
+#pragma once
 
 #include "Core/Containers/AlignedVector.h"
 
@@ -64,7 +57,7 @@ public:
 	{
 		return m_data.begin();
 	}
-	
+
 	reverse_iterator rbegin()
 	{
 		return m_data.rbegin();
@@ -79,17 +72,17 @@ public:
 	{
 		return m_data.end();
 	}
-	
+
 	const_iterator end() const
 	{
 		return m_data.end();
 	}
-	
+
 	reverse_iterator rend()
 	{
 		return m_data.rend();
 	}
-	
+
 	const_reverse_iterator rend() const
 	{
 		return m_data.rend();
@@ -113,7 +106,7 @@ public:
 
 		return end();
 	}
-	
+
 	const_iterator find(const Key& key) const
 	{
 		size_t is = 0;
@@ -132,7 +125,7 @@ public:
 
 		return end();
 	}
-	
+
 	void insert(const pair_t& pair)
 	{
 		size_t is = 0;
@@ -163,7 +156,7 @@ public:
 		for (const_iterator i = first; i != last; ++i)
 			insert(*i);
 	}
-	
+
 	iterator erase(const iterator& it)
 	{
 		return m_data.erase(it);
@@ -251,7 +244,7 @@ public:
 		m_data = src.m_data;
 		return *this;
 	}
-	
+
 #if defined(T_CXX11) && !defined(__PS3__)
 	SmallMap& operator = (SmallMap&& src)
 	{
@@ -266,4 +259,3 @@ private:
 
 }
 
-#endif	// traktor_SmallMap_H

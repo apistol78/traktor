@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_json_JsonClassFactory_H
-#define traktor_json_JsonClassFactory_H
+#pragma once
 
 #include "Core/Class/IRuntimeClassFactory.h"
 
@@ -36,4 +29,3 @@ public:
 	}
 }
 
-#endif	// traktor_json_JsonClassFactory_H

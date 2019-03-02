@@ -135,16 +135,16 @@ bool RenderTargetVk::create(VkPhysicalDevice physicalDevice, VkDevice device, co
 
 	VkMemoryRequirements memoryRequirements = {};
 	vkGetImageMemoryRequirements(device, m_image, &memoryRequirements);
- 
+
 	VkMemoryAllocateInfo imageAllocateInfo = {};
 	imageAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	imageAllocateInfo.allocationSize = memoryRequirements.size;
 	imageAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
- 
+
 	VkDeviceMemory imageMemory = {};
 	if (vkAllocateMemory(device, &imageAllocateInfo, nullptr, &imageMemory) != VK_SUCCESS)
 		return 0;
- 
+
 	if (vkBindImageMemory(device, m_image, imageMemory, 0) != VK_SUCCESS)
 		return 0;
 
@@ -232,14 +232,14 @@ void RenderTargetVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	layoutTransitionBarrier.image = m_image;
 	layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
-	
+
 	vkCmdPipelineBarrier(
-		cmdBuffer, 
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
-		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 
+		cmdBuffer,
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		0,
 		0, nullptr,
-		0, nullptr, 
+		0, nullptr,
 		1, &layoutTransitionBarrier
 	);
 
@@ -261,14 +261,14 @@ void RenderTargetVk::prepareForPresentation(VkCommandBuffer cmdBuffer)
 	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 	layoutTransitionBarrier.image = m_image;
-    
+
 	vkCmdPipelineBarrier(
-		cmdBuffer, 
-		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, 
-		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 
-		0, 
-		0, nullptr, 
-		0, nullptr, 
+		cmdBuffer,
+		VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+		VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+		0,
+		0, nullptr,
+		0, nullptr,
 		1, &layoutTransitionBarrier
 	);
 

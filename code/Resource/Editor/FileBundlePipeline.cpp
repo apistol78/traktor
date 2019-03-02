@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
@@ -27,7 +21,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 void collectFiles(const Path& mask, bool recursive, RefArray< File >& outFiles)
 {
 	RefArray< File > files;
@@ -84,7 +78,7 @@ bool FileBundlePipeline::buildDependencies(
 ) const
 {
 	const FileBundleAsset* bundleAsset = mandatory_non_null_type_cast< const FileBundleAsset* >(sourceAsset);
-	
+
 	const auto& patterns = bundleAsset->getPatterns();
 	for (auto pattern : patterns)
 	{
@@ -114,7 +108,7 @@ bool FileBundlePipeline::buildOutput(
 ) const
 {
 	const FileBundleAsset* bundleAsset = mandatory_non_null_type_cast< const FileBundleAsset* >(sourceAsset);
-	
+
 	Ref< FileBundle > bundle = new FileBundle();
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);

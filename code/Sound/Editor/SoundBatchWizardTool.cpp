@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -55,7 +49,7 @@ bool SoundBatchWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, d
 				log::error << L"Unable to create instance \"" << instanceName << L"\"; asset not imported" << Endl;
 		}
 	}
-	
+
 	soundDialog.destroy();
 	return true;
 }

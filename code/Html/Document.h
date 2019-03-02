@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_html_Document_H
-#define traktor_html_Document_H
+#pragma once
 
 #include <string>
 #include "Core/Object.h"
@@ -41,21 +34,21 @@ public:
 	Document(bool parseComments = true);
 
 	bool loadFromFile(const std::wstring& filename, const IEncoding* encoding);
-	
+
 	bool loadFromStream(IStream* stream, const IEncoding* encoding);
-	
+
 	bool loadFromText(const std::wstring& text);
-	
+
 	bool saveAsFile(const std::wstring& filename);
-	
+
 	bool saveIntoStream(IStream* stream);
-	
+
 	void setDocumentElement(Element* docElement);
 
 	Element* getDocumentElement() const;
 
 	void toString(OutputStream& os) const;
-	
+
 private:
 	bool m_parseComments;
 	Ref< Element > m_docElement;
@@ -64,4 +57,3 @@ private:
 	}
 }
 
-#endif	// traktor_html_Document_H

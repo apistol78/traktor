@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputDriverEm_H
-#define traktor_input_InputDriverEm_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Input/IInputDriver.h"
@@ -50,4 +43,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_InputDriverEm_H

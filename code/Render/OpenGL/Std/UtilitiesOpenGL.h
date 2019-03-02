@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_UtilitiesOpenGL_H
-#define traktor_render_UtilitiesOpenGL_H
+#pragma once
 
 #include "Render/Types.h"
 
@@ -32,4 +25,3 @@ bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, 
 	}
 }
 
-#endif	// traktor_render_UtilitiesOpenGL_H

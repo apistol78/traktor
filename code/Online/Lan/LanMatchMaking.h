@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_online_LanMatchMaking_H
-#define traktor_online_LanMatchMaking_H
+#pragma once
 
 #include "Core/Thread/Semaphore.h"
 #include "Online/Provider/IMatchMakingProvider.h"
@@ -106,4 +99,3 @@ private:
 	}
 }
 
-#endif	// traktor_online_LanMatchMaking_H

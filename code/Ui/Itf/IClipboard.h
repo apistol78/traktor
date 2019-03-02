@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_IClipboard_H
-#define traktor_ui_IClipboard_H
+#pragma once
 
 #include <string>
 #include "Core/Config.h"
@@ -34,7 +27,7 @@ class IClipboard
 {
 public:
 	virtual void destroy() = 0;
-	
+
 	virtual bool setObject(ISerializable* object) = 0;
 
 	virtual bool setText(const std::wstring& text) = 0;
@@ -53,4 +46,3 @@ public:
 	}
 }
 
-#endif	// traktor_ui_IClipboard_H

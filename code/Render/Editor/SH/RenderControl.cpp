@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -146,6 +140,6 @@ void RenderControl::eventSize(ui::SizeEvent* event)
 	ui::Size sz = event->getSize();
 	m_renderView->reset(sz.cx, sz.cy);
 }
-		
+
 	}
 }

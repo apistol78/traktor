@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Misc/String.h"
@@ -298,7 +292,7 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 
 		const TransformPath& path = (*i)->getPath();
 		int32_t steps = int32_t(duration) * 10;
-		
+
 		TransformPath::Key F0 = path.evaluate(0.0f, duration);
 		for (int32_t i = 1; i <= steps; ++i)
 		{
@@ -748,7 +742,7 @@ void TheaterControllerEditor::timeScaleAct()
 
 	float fromDuration = act->getDuration();
 
-	ui::InputDialog::Field fields[] = 
+	ui::InputDialog::Field fields[] =
 	{
 		ui::InputDialog::Field(i18n::Text(L"THEATER_EDITOR_TIME_SCALE_NEW_TIME"), toString(fromDuration), new ui::NumericEditValidator(true, 0.0f))
 	};
@@ -769,7 +763,7 @@ void TheaterControllerEditor::timeScaleAct()
 			(*i)->setTimeOffset((*i)->getTimeOffset() * f);
 
 			TransformPath& tp = (*i)->getPath();
-			
+
 			AlignedVector< TransformPath::Key >& k = tp.getKeys();
 			for (AlignedVector< TransformPath::Key >::iterator j = k.begin(); j != k.end(); ++j)
 				j->T *= f;

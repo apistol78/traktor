@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <sstream>
 #include "Core/Math/Const.h"
@@ -185,7 +179,7 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 
 	if (m_representation == RpDecibel)
 		ss << L" dB";
-	
+
 	canvas.drawText(rc.inflate(-2, 0), ss.str(), AnLeft, AnCenter);
 
 	int h = rc.getHeight() / 2;
@@ -255,7 +249,7 @@ void NumericPropertyItem::eventEditFocus(FocusEvent* event)
 			if (m_representation == RpDecibel)
 				m_value = deg2rad(m_value);
 		}
-		
+
 		m_editor->setVisible(false);
 
 		notifyChange();

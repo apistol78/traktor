@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_MemberStl_H
-#define traktor_MemberStl_H
+#pragma once
 
 #include <cstring>
 #include <list>
@@ -54,7 +47,7 @@ public:
 	{
 		return m_ref.size();
 	}
-	
+
 	virtual void read(ISerializer& s) const override final
 	{
 		if (m_index < m_ref.size())
@@ -114,7 +107,7 @@ public:
 	,	m_iter(m_ref.begin())
 	{
 	}
-	
+
 	MemberStlList(const wchar_t* const name, value_type& ref, const Attribute& attributes)
 	:	MemberArray(name, &attributes)
 	,	m_ref(ref)
@@ -180,7 +173,7 @@ public:
 	,	m_iter(m_ref.begin())
 	{
 	}
-	
+
 	virtual void reserve(size_t size, size_t capacity) const override final
 	{
 		m_ref.clear();
@@ -209,7 +202,7 @@ public:
 		m_ref.insert(ValueType());
 		return true;
 	}
-	
+
 private:
 	value_type& m_ref;
 	mutable typename value_type::iterator m_iter;
@@ -307,4 +300,3 @@ private:
 
 }
 
-#endif	// traktor_MemberStl_H

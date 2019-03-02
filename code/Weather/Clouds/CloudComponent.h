@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_weather_CloudComponent_H
-#define traktor_weather_CloudComponent_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Render/Shader.h"
@@ -125,4 +118,3 @@ private:
 	}
 }
 
-#endif	// traktor_weather_CloudComponent_H

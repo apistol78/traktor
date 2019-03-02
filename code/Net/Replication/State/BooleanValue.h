@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_BooleanValue_H
-#define traktor_net_BooleanValue_H
+#pragma once
 
 #include "Net/Replication/State/IValue.h"
 
@@ -54,4 +47,3 @@ private:
 	}
 }
 
-#endif	// traktor_net_BooleanValue_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_LayerEntityFactory_H
-#define traktor_scene_LayerEntityFactory_H
+#pragma once
 
 #include "World/IEntityFactory.h"
 
@@ -20,7 +13,7 @@ namespace traktor
 class LayerEntityFactory : public world::IEntityFactory
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
@@ -34,8 +27,7 @@ public:
 
 	virtual Ref< world::IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const override final;
 };
-	
+
 	}
 }
 
-#endif	// traktor_scene_LayerEntityFactory_H

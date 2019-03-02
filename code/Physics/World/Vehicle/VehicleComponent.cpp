@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Physics/Body.h"
@@ -20,7 +14,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 const float c_maxSuspensionForce = 250.0f;
 const float c_maxDampingForce = 250.0f;
 const float c_slowGripCoeff = 0.9f;
@@ -189,10 +183,10 @@ void VehicleComponent::updateSuspension(float dT)
 				suspensionLength = data->getSuspensionLength().min;
 			else if (suspensionLength > data->getSuspensionLength().max)
 				suspensionLength = data->getSuspensionLength().max;
-	
+
 			// Suspension velocity.
 			float suspensionVelocity = ((*i)->suspensionPreviousLength - suspensionLength) / dT;
-	
+
 			// Suspension forces.
 			float t = 1.0f - (suspensionLength - data->getSuspensionLength().min) / (data->getSuspensionLength().max - data->getSuspensionLength().min);
 
@@ -255,7 +249,7 @@ void VehicleComponent::updateFriction(float /*dT*/)
 	Transform bodyTinv = bodyT.inverse();
 
 	Scalar rollingFriction(0.0f);
-	
+
 	//float totalGrip = 0.0f;
 	//for (RefArray< Wheel >::iterator i = m_wheels.begin(); i != m_wheels.end(); ++i)
 	//{
@@ -280,7 +274,7 @@ void VehicleComponent::updateFriction(float /*dT*/)
 		T_ASSERT (data != 0);
 
 		Vector4 axis = bodyT * data->getAxis();
-		
+
 		Vector4 directionW = bodyT * (*i)->direction;
 		Vector4 directionPerpW = bodyT * (*i)->directionPerp;
 
@@ -292,7 +286,7 @@ void VehicleComponent::updateFriction(float /*dT*/)
 
 		Scalar forwardVelocity = dot3(directionW, (*i)->contactVelocity);
 		Scalar sideVelocity = dot3(directionPerpW, (*i)->contactVelocity);
-		
+
 		//sideVelocity = clamp(
 		//	sideVelocity,
 		//	Scalar(-2.0f),

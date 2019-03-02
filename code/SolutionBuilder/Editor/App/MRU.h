@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef MRU_H
-#define MRU_H
+#pragma once
 
 #include <vector>
 #include <Core/Serialization/ISerializable.h>
@@ -37,4 +30,3 @@ private:
 	}
 }
 
-#endif	// MRU_H

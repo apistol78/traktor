@@ -57,7 +57,7 @@ public:
 	bool inFragment() const;
 
 	bool inCompute() const;
-	
+
 	bool allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset);
 
 	GlslRequirements& requirements();

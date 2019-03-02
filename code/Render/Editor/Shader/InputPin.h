@@ -25,11 +25,11 @@ class T_DLLCLASS InputPin
 {
 public:
 	InputPin(Node* node, const Guid& id, const std::wstring& name, bool optional);
-	
+
 	Node* getNode() const;
 
 	const Guid& getId() const;
-	
+
 	const std::wstring& getName() const;
 
 	bool isOptional() const;

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_InvokeOnce_H
-#define traktor_InvokeOnce_H
+#pragma once
 
 #include "Core/Thread/Atomic.h"
 
@@ -45,4 +38,3 @@ void invokeOnce(Type*& ref, void (Type::*M)(P0 p0, P1 p1, P2 p2), P0 p0, P1 p1, 
 
 }
 
-#endif	// traktor_InvokeOnce_H

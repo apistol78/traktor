@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/MathUtils.h"
 #include "Core/Thread/Acquire.h"
 #include "Ui/Application.h"
@@ -200,10 +194,10 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 
 	// Draw time axis.
 	Rect rcTime(rc.left, rc.bottom - dpi96(16), rc.right, rc.bottom);
-	
+
 	canvas.setBackground(Color4ub(255, 255, 255, 255));
 	canvas.fillRect(rcTime);
-	
+
 	canvas.setForeground(Color4ub(0, 0, 0, 100));
 	canvas.drawLine(rcTime.left, rcTime.top, rcTime.right, rcTime.top);
 
@@ -226,7 +220,7 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 			std::min(m_lastMouse, m_selectionTo), rc.top,
 			std::max(m_lastMouse, m_selectionTo), rc.bottom
 		);
-	
+
 		canvas.setBackground(Color4ub(150, 150, 255, 50));
 		canvas.fillRect(rcSelection);
 

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_html_Attribute_H
-#define traktor_html_Attribute_H
+#pragma once
 
 #include <string>
 #include "Core/Object.h"
@@ -17,7 +10,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
-#endif 
+#endif
 
 namespace traktor
 {
@@ -33,15 +26,15 @@ class T_DLLCLASS Attribute : public Object
 
 public:
 	Attribute(const std::wstring& name, const std::wstring& value = L"");
-	
+
 	const std::wstring& getName() const;
 
 	void setValue(const std::wstring& value);
 
 	const std::wstring& getValue() const;
-	
+
 	Attribute* getPrevious() const;
-	
+
 	Attribute* getNext() const;
 
 private:
@@ -56,4 +49,3 @@ private:
 	}
 }
 
-#endif	// traktor_html_Attribute_H

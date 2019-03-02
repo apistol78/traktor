@@ -28,7 +28,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 Ref< drawing::Image > generatePreviewImage(const Heightfield* hf)
 {
 	Ref< drawing::Image > img = new drawing::Image(drawing::PixelFormat::getR8G8B8(), hf->getSize(), hf->getSize());

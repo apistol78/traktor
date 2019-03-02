@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_SharedMemoryEmscripten_H
-#define traktor_SharedMemoryEmscripten_H
+#pragma once
 
 #include "Core/Misc/AutoPtr.h"
 #include "Core/System/ISharedMemory.h"
@@ -33,4 +26,3 @@ private:
 
 }
 
-#endif	// traktor_SharedMemoryEmscripten_H

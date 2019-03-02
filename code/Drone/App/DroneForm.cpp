@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Misc/CommandLine.h"
@@ -71,7 +65,7 @@ bool DroneForm::create(const CommandLine& cmdLine)
 	}
 
 	m_settings = xml::XmlDeserializer(file, configurationFile).readObject< DroneSettings >();
-	
+
 	file->close();
 
 	if (!m_settings)

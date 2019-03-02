@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_BodyPhysX_H
-#define traktor_physics_BodyPhysX_H
+#pragma once
 
 #include "Physics/Body.h"
 #include "Physics/PhysX/Types.h"
@@ -51,7 +44,7 @@ public:
 	virtual Transform getTransform() const;
 
 	virtual Transform getCenterTransform() const;
-	
+
 	virtual void setKinematic(bool kinematic);
 
 	virtual bool isStatic() const;
@@ -124,4 +117,3 @@ private:
 	}
 }
 
-#endif	// traktor_physics_BodyPhysX_H

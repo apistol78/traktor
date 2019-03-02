@@ -32,15 +32,15 @@ bool FormCocoa::create(IWidget* parent, const std::wstring& text, int width, int
 
 	[m_window setAcceptsMouseMovedEvents: YES];
 	[m_window setTitle:makeNSString(text)];
-	
+
 	NSWindowDelegateProxy* proxy = [[NSWindowDelegateProxy alloc] init];
 	[proxy setCallback: this];
-	
+
 	[m_window setDelegate: proxy];
 
 	NSView* contentView = [[NSCustomControl alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_window setContentView: contentView];
-		
+
 	return true;
 }
 
@@ -85,7 +85,7 @@ void FormCocoa::destroy()
 	// Release all timers.
 	for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
 		[i->second invalidate];
-		
+
 	m_timers.clear();
 
 	// Release objects.
@@ -174,7 +174,7 @@ void FormCocoa::startTimer(int interval, int id)
 
 	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
 	[targetProxy setCallback: targetCallback];
-		
+
 	NSTimer* timer = [[NSTimer alloc]
 		initWithFireDate: nil
 		interval: (double)interval / 1000.0
@@ -183,10 +183,10 @@ void FormCocoa::startTimer(int interval, int id)
 		userInfo: nil
 		repeats: YES
 	];
-		
+
 	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSDefaultRunLoopMode];
 	[[NSRunLoop currentRunLoop] addTimer: timer forMode: NSModalPanelRunLoopMode];
-	
+
 	m_timers[id] = timer;
 }
 
@@ -216,7 +216,7 @@ Rect FormCocoa::getInnerRect() const
 	NSView* contentView = [m_window contentView];
 	NSRect contentFrame = [contentView frame];
 	return fromNSRect(contentFrame);
-}	
+}
 
 Rect FormCocoa::getNormalRect() const
 {
@@ -351,15 +351,15 @@ bool FormCocoa::event_windowShouldClose()
 void FormCocoa::event_windowDidBecomeKey()
 {
 }
-	
+
 void FormCocoa::event_windowDidResignKey()
 {
 }
-	
+
 void FormCocoa::event_windowDidBecomeMain()
 {
 }
-	
+
 void FormCocoa::event_windowDidResignMain()
 {
 }

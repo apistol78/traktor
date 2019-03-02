@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_Conversion_H
-#define traktor_physics_Conversion_H
+#pragma once
 
 #include <LinearMath/btMatrix3x3.h>
 #include <LinearMath/btTransform.h>
@@ -90,4 +83,3 @@ inline btTransform toBtTransform(const Transform& transform)
 	}
 }
 
-#endif	// traktor_physics_Conversion_H

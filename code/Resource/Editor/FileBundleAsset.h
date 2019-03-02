@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_resource_FileBundleAsset_H
-#define traktor_resource_FileBundleAsset_H
+#pragma once
 
 #include <list>
 #include "Core/Serialization/ISerializable.h"
@@ -51,4 +44,3 @@ private:
 	}
 }
 
-#endif	// traktor_resource_FileBundleAsset_H

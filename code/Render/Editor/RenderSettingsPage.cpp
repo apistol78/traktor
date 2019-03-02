@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -38,10 +32,10 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 
 	m_dropRenderSystem = new ui::DropDown();
 	m_dropRenderSystem->create(container);
-	
+
 	Ref< ui::Static > staticCompiler = new ui::Static();
 	staticCompiler->create(container, i18n::Text(L"EDITOR_SETTINGS_COMPILER_TYPE"));
-	
+
 	m_dropCompiler = new ui::DropDown();
 	m_dropCompiler->create(container);
 
@@ -75,9 +69,9 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 		if (name == renderSystemType)
 			m_dropRenderSystem->select(index);
 	}
-	
+
 	std::wstring compilerType = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
-	
+
 	TypeInfoSet compilerTypes;
 	type_of< render::IProgramCompiler >().findAllOf(compilerTypes, false);
 

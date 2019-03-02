@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
@@ -15,7 +9,7 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Container", Container, Widget)
 
 bool Container::create(Widget* parent, int style, Layout* layout)
@@ -42,7 +36,7 @@ bool Container::create(Widget* parent, int style, Layout* layout)
 
 	addEventHandler< SizeEvent >(this, &Container::eventSize);
 	addEventHandler< PaintEvent >(this, &Container::eventPaint);
-	
+
 	return Widget::create(parent);
 }
 
@@ -56,7 +50,7 @@ void Container::fit()
 			if (is_a< Container >(child))
 				static_cast< Container* >(child.ptr())->fit();
 		}
-	
+
 		// Use layout to calculate size of container.
 		Size inner = getInnerRect().getSize();
 		Size bounds;

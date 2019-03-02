@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_IcmpSocket_H
-#define traktor_net_IcmpSocket_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Net/Socket.h"
@@ -22,7 +15,7 @@ namespace traktor
 {
 	namespace net
 	{
-	
+
 class SocketAddress;
 class SocketAddressIPv4;
 class SocketAddressIPv6;
@@ -64,4 +57,3 @@ public:
 	}
 }
 
-#endif	// traktor_net_IcmpSocket_H

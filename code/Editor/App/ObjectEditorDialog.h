@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_editor_ObjectEditorDialog_H
-#define traktor_editor_ObjectEditorDialog_H
+#pragma once
 
 #include "Ui/ConfigDialog.h"
 
@@ -69,4 +62,3 @@ private:
 	}
 }
 
-#endif	// traktor_editor_ObjectEditorDialog_H

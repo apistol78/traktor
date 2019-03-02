@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_UITouchView_H
-#define traktor_input_UITouchView_H
+#pragma once
 
 #import <UIKit/UIKit.h>
 
@@ -24,7 +17,7 @@ struct ITouchViewCallback
 
 	virtual void touchesCancelled(NSSet* touches, UIEvent* event) = 0;
 };
-	
+
 	}
 }
 
@@ -45,4 +38,3 @@ struct ITouchViewCallback
 
 @end
 
-#endif	// traktor_input_UITouchView_H

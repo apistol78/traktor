@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_EventLoopCocoa_H
-#define traktor_ui_EventLoopCocoa_H
+#pragma once
 
 #include "Ui/Itf/IEventLoop.h"
 
@@ -26,7 +19,7 @@ class T_DLLCLASS EventLoopCocoa : public IEventLoop
 {
 public:
 	EventLoopCocoa();
-	
+
 	virtual ~EventLoopCocoa();
 
 	virtual void destroy() T_OVERRIDE T_FINAL;
@@ -34,7 +27,7 @@ public:
 	virtual bool process(EventSubject* owner) T_OVERRIDE T_FINAL;
 
 	virtual int32_t execute(EventSubject* owner) T_OVERRIDE T_FINAL;
-	
+
 	virtual void exit(int32_t exitCode) T_OVERRIDE T_FINAL;
 
 	virtual int32_t getExitCode() const T_OVERRIDE T_FINAL;
@@ -42,7 +35,7 @@ public:
 	virtual int32_t getAsyncKeyState() const T_OVERRIDE T_FINAL;
 
 	virtual bool isKeyDown(VirtualKey vk) const T_OVERRIDE T_FINAL;
-	
+
 private:
 	void* m_pool;
 	bool m_launching;
@@ -50,11 +43,10 @@ private:
 	bool m_terminated;
 	uint32_t m_modifierFlags;
 	bool m_idleMode;
-	
+
 	bool handleGlobalEvents(EventSubject* owner, void* event);
 };
 
 	}
 }
 
-#endif	// traktor_ui_EventLoopCocoa_H

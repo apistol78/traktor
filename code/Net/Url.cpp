@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Net/Url.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/Path.h"
@@ -22,7 +16,7 @@ Url::Url()
 :	m_valid(false)
 {
 }
-		
+
 Url::Url(const std::wstring& spec)
 {
 	set(spec);
@@ -31,7 +25,7 @@ Url::Url(const std::wstring& spec)
 bool Url::set(const std::wstring& spec)
 {
 	size_t i, j;
-	
+
 	m_valid = false;
 	m_host = L"";
 	m_path = L"";
@@ -39,10 +33,10 @@ bool Url::set(const std::wstring& spec)
 	m_query = L"";
 	m_ref = L"";
 	m_userInfo = L"";
-	
+
 	if ((i = spec.find(L':')) == std::wstring::npos)
 		return false;
-	
+
 	m_protocol = spec.substr(0, i);
 	m_port = getDefaultPort();
 
@@ -70,7 +64,7 @@ bool Url::set(const std::wstring& spec)
 		{
 			std::wstring authority = specific.substr(0, i);
 			m_path = specific.substr(i);
-			
+
 			// Get filename from path.
 			size_t p = m_path.find_last_of('/');
 			m_file = (p != std::wstring::npos) ? m_path.substr(p + 1) : m_path;
@@ -179,7 +173,7 @@ std::wstring Url::getString() const
 {
 	StringOutputStream ss;
 	ss << getProtocol() << L"://" << getHost();
-	
+
 	if (getPort() != getDefaultPort())
 		ss << L":" << m_port;
 

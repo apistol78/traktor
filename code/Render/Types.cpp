@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Containers/SmallMap.h"
 #include "Core/Misc/String.h"
@@ -213,12 +207,12 @@ uint32_t getTextureMipPitch(TextureFormat format, uint32_t textureWidth, uint32_
 		textureWidth = std::max< uint32_t >(textureWidth, 16);
 		textureHeight = std::max< uint32_t >(textureHeight, 8);
 	}
-	
+
 	uint32_t blockDenom = getTextureBlockDenom(format);
 	uint32_t blockWidth = (textureWidth + blockDenom - 1) / blockDenom;
 	uint32_t blockHeight = (textureHeight + blockDenom - 1) / blockDenom;
 	uint32_t blockCount = blockWidth * blockHeight;
-	
+
 	return getTextureBlockSize(format) * blockCount;
 }
 

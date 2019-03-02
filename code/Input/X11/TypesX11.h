@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_TypesX11_H
-#define traktor_input_TypesX11_H
+#pragma once
 
 #include <X11/X.h>
 #include <X11/keysymdef.h>
@@ -207,4 +200,3 @@ const KeySym c_x11ControlKeys[] =
 	}
 }
 
-#endif	// traktor_input_TypesX11_H

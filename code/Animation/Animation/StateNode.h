@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_animation_StateNode_H
-#define traktor_animation_StateNode_H
+#pragma once
 
 #include <string>
 #include "Animation/Pose.h"
@@ -48,7 +41,7 @@ public:
 	const std::wstring& getName() const;
 
 	void setPosition(const std::pair< int, int >& position);
-	
+
 	const std::pair< int, int >& getPosition() const;
 
 	virtual bool bind(resource::IResourceManager* resourceManager) = 0;
@@ -67,4 +60,3 @@ private:
 	}
 }
 
-#endif	// traktor_animation_StateNode_H

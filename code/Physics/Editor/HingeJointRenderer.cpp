@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Physics/HingeJointDesc.h"
 #include "Physics/Editor/HingeJointRenderer.h"
 #include "Render/PrimitiveRenderer.h"
@@ -55,7 +49,7 @@ void HingeJointRenderer::draw(
 	const Scalar c_axisLength(5.0f);
 
 	primitiveRenderer->pushWorld((body1Transform * body1Transform0.inverse()).toMatrix44());
-	
+
 	Vector4 jointAnchor = hingeJointDesc->getAnchor().xyz1();
 	Vector4 jointAxis = hingeJointDesc->getAxis().xyz0();
 

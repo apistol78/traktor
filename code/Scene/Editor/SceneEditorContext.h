@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_SceneEditorContext_H
-#define traktor_scene_SceneEditorContext_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
@@ -226,7 +219,7 @@ public:
 	uint32_t getEntities(RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags = GfDefault) const;
 
 	uint32_t findAdaptersOfType(const TypeInfo& entityType, RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags = GfDefault) const;
-	
+
 	EntityAdapter* findAdapterFromEntity(const world::Entity* entity) const;
 
 	EntityAdapter* queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable) const;
@@ -352,4 +345,3 @@ private:
 	}
 }
 
-#endif	// traktor_scene_SceneEditorContext_H

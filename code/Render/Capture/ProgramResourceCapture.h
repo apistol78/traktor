@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #ifndef traktor_render_ProgramResourceCapture_H
 #define traktor_render_ProgramResourceCapture_H
 
@@ -23,7 +17,7 @@ namespace traktor
 {
 	namespace render
 	{
-	
+
 /*! \brief
  * \ingroup Render
  */
@@ -43,7 +37,7 @@ private:
 	std::wstring m_pixelShader;
 	std::wstring m_computeShader;
 };
-	
+
 	}
 }
 

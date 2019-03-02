@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_ActiveEvent_H
-#define traktor_amalgam_ActiveEvent_H
+#pragma once
 
 #include "Core/Object.h"
 
@@ -44,4 +37,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_ActiveEvent_H

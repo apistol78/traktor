@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_NotificationIconWin32_H
-#define traktor_ui_NotificationIconWin32_H
+#pragma once
 
 #include "Ui/Itf/INotificationIcon.h"
 #include "Ui/Win32/Window.h"
@@ -44,4 +37,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_NotificationIconWin32_H

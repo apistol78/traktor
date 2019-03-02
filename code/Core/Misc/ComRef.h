@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ComRef_H
-#define traktor_ComRef_H
+#pragma once
 
 #include <vector>
 
@@ -34,14 +27,14 @@ public:
 		if (m_ptr != 0)
 			m_ptr->AddRef();
 	}
-	
+
 	ComRef(const ComRef< T >& src)
 	:	m_ptr(src.m_ptr)
 	{
 		if (m_ptr != 0)
 			m_ptr->AddRef();
 	}
-	
+
 	virtual ~ComRef()
 	{
 		if (m_ptr != 0)
@@ -57,7 +50,7 @@ public:
 		m_ptr = ptr;
 		return *this;
 	}
-	
+
 	inline ComRef< T >& operator = (const ComRef< T >& src)
 	{
 		if (src.m_ptr != 0)
@@ -97,7 +90,7 @@ public:
 	{
 		return m_ptr;
 	}
-	
+
 private:
 	T* m_ptr;
 };
@@ -156,7 +149,7 @@ public:
 	:	m_array(size)
 	{
 	}
-	
+
 	ComRefArray(T** array, size_type size)
 	:	m_array(size)
 	{
@@ -176,7 +169,7 @@ public:
 				(*i)->AddRef();
 		}
 	}
-	
+
 	virtual ~ComRefArray()
 	{
 		for (typename container_type::iterator i = m_array.begin(); i != m_array.end(); ++i)
@@ -246,7 +239,7 @@ public:
 		if (ptr)
 			ptr->Release();
 	}
-	
+
 	bool empty() const
 	{
 		return m_array.empty();
@@ -312,4 +305,3 @@ private:
 
 }
 
-#endif	// traktor_ComRef_H

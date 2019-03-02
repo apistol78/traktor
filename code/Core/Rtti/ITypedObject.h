@@ -25,7 +25,7 @@ namespace traktor
 		virtual const traktor::TypeInfo& getTypeInfo() const override;	\
 	private:																\
 		static traktor::TypeInfo ms_typeInfo;
-	
+
 #define T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)									\
 	const traktor::TypeInfo& CLASS::getClassTypeInfo() { return ms_typeInfo; }	\
 	const traktor::TypeInfo& CLASS::getTypeInfo() const { return ms_typeInfo; }

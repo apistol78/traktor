@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Semaphore_H
-#define traktor_Semaphore_H
+#pragma once
 
 #if defined(__PS3__)
 #	include <sys/synchronization.h>
@@ -32,11 +25,11 @@ class T_DLLCLASS Semaphore : public IWaitable
 {
 public:
 	Semaphore();
-	
+
 	virtual ~Semaphore();
 
 	virtual bool wait(int32_t timeout = -1);
-	
+
 	void release();
 
 private:
@@ -51,4 +44,3 @@ private:
 
 }
 
-#endif	// traktor_Semaphore_H

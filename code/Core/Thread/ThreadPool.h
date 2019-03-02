@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ThreadPool_H
-#define traktor_ThreadPool_H
+#pragma once
 
 #include "Core/Containers/StaticVector.h"
 #include "Core/Singleton/ISingleton.h"
@@ -19,7 +12,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
-#endif 
+#endif
 
 namespace traktor
 {
@@ -69,4 +62,3 @@ private:
 
 }
 
-#endif	// traktor_ThreadPool_H

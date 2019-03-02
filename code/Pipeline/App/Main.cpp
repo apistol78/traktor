@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <iostream>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/FileOutputStream.h"
@@ -121,7 +115,7 @@ std::wstring getExceptionString(DWORD exceptionCode)
 	case EXCEPTION_STACK_OVERFLOW:			return L"EXCEPTION_STACK_OVERFLOW";
 	case EXCEPTION_INVALID_DISPOSITION:		return L"EXCEPTION_INVALID_DISPOSITION";
 	case EXCEPTION_GUARD_PAGE:				return L"EXCEPTION_GUARD_PAGE";
-	default:								return L"UNKNOWN EXCEPTION";					
+	default:								return L"UNKNOWN EXCEPTION";
 	}
 }
 
@@ -133,31 +127,31 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 
 	switch (ep->ExceptionRecord->ExceptionCode)
 	{
-	case EXCEPTION_ACCESS_VIOLATION:		
-	case EXCEPTION_DATATYPE_MISALIGNMENT:	
-	case EXCEPTION_STACK_OVERFLOW:			
-	case EXCEPTION_ILLEGAL_INSTRUCTION:		
-	case EXCEPTION_PRIV_INSTRUCTION:		
-	case EXCEPTION_IN_PAGE_ERROR:			
+	case EXCEPTION_ACCESS_VIOLATION:
+	case EXCEPTION_DATATYPE_MISALIGNMENT:
+	case EXCEPTION_STACK_OVERFLOW:
+	case EXCEPTION_ILLEGAL_INSTRUCTION:
+	case EXCEPTION_PRIV_INSTRUCTION:
+	case EXCEPTION_IN_PAGE_ERROR:
 	case EXCEPTION_NONCONTINUABLE_EXCEPTION:
-	case EXCEPTION_INVALID_DISPOSITION:		
-	case EXCEPTION_GUARD_PAGE:				
+	case EXCEPTION_INVALID_DISPOSITION:
+	case EXCEPTION_GUARD_PAGE:
 		ouputCallStack = true;
 		break;
 
-	case EXCEPTION_BREAKPOINT:				
-	case EXCEPTION_SINGLE_STEP:				
-	case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:	
-	case EXCEPTION_FLT_DENORMAL_OPERAND:	
-	case EXCEPTION_FLT_DIVIDE_BY_ZERO:		
-	case EXCEPTION_FLT_INEXACT_RESULT:		
-	case EXCEPTION_FLT_INVALID_OPERATION:	
-	case EXCEPTION_FLT_OVERFLOW:			
-	case EXCEPTION_FLT_STACK_CHECK:			
-	case EXCEPTION_FLT_UNDERFLOW:			
-	case EXCEPTION_INT_DIVIDE_BY_ZERO:		
-	case EXCEPTION_INT_OVERFLOW:			
-	default:								
+	case EXCEPTION_BREAKPOINT:
+	case EXCEPTION_SINGLE_STEP:
+	case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
+	case EXCEPTION_FLT_DENORMAL_OPERAND:
+	case EXCEPTION_FLT_DIVIDE_BY_ZERO:
+	case EXCEPTION_FLT_INEXACT_RESULT:
+	case EXCEPTION_FLT_INVALID_OPERATION:
+	case EXCEPTION_FLT_OVERFLOW:
+	case EXCEPTION_FLT_STACK_CHECK:
+	case EXCEPTION_FLT_UNDERFLOW:
+	case EXCEPTION_INT_DIVIDE_BY_ZERO:
+	case EXCEPTION_INT_OVERFLOW:
+	default:
 		ouputCallStack = false;
 		break;
 	}
@@ -283,7 +277,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 	return settings;
 }
 
-struct ConnectionAndCache 
+struct ConnectionAndCache
 {
 	Ref< db::Database > database;
 	Ref< editor::PipelineInstanceCache > cache;
@@ -431,7 +425,7 @@ bool perform(const PipelineParameters* params)
 
 	std::wstring sourceDatabaseCS = settings->getProperty< std::wstring >(L"Editor.SourceDatabase");
 	std::wstring outputDatabaseCS = settings->getProperty< std::wstring >(L"Editor.OutputDatabase");
-	
+
 	ConnectionAndCache sourceDatabaseAndCache = openDatabase(settings, sourceDatabaseCS, false);
 	if (!sourceDatabaseAndCache.database)
 	{
@@ -614,14 +608,14 @@ int slave(const CommandLine& cmdLine)
 
 	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
 	DWORD dwParentPID = 0;
-	
+
 	PROCESSENTRY32 pe = { 0 };
 	pe.dwSize = sizeof(PROCESSENTRY32);
 
 	if (Process32First(hSnapshot, &pe))
 	{
 		DWORD dwPID = GetCurrentProcessId();
-		do 
+		do
 		{
 			if (pe.th32ProcessID == dwPID)
 			{
@@ -930,7 +924,7 @@ void threadProcessAgentClient(
 			log::error << L"Agent build error; no such pipeline \"" << agentBuild->getPipelineTypeName() << L"\"" << Endl;
 			continue;
 		}
-	
+
 		Ref< editor::IPipeline > pipeline = pipelineFactory->findPipeline(*pipelineType);
 		if (!pipeline)
 		{

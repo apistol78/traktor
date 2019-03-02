@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ProgramVk_H
-#define traktor_render_ProgramVk_H
+#pragma once
 
 #if defined(_WIN32)
 #	define VK_USE_PLATFORM_WIN32_KHR
@@ -52,7 +45,7 @@ public:
 	virtual void setFloatParameter(handle_t handle, float param) override final;
 
 	virtual void setFloatArrayParameter(handle_t handle, const float* param, int length) override final;
-	
+
 	virtual void setVectorParameter(handle_t handle, const Vector4& param) override final;
 
 	virtual void setVectorArrayParameter(handle_t handle, const Vector4* param, int length) override final;
@@ -116,7 +109,7 @@ private:
 
 	VkShaderModule m_vertexShaderModule;
 	VkShaderModule m_fragmentShaderModule;
-	
+
 	UniformBuffer m_vertexUniformBuffers[3];
 	UniformBuffer m_fragmentUniformBuffers[3];
 
@@ -127,4 +120,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_ProgramVk_H

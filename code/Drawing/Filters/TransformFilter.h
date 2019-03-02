@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_TransformFilter_H
-#define traktor_drawing_TransformFilter_H
+#pragma once
 
 #include "Drawing/IImageFilter.h"
 
@@ -41,8 +34,7 @@ private:
 	Color4f m_Km;
 	Color4f m_Kc;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_TransformFilter_H

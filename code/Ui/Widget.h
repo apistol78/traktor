@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Widget_H
-#define traktor_ui_Widget_H
+#pragma once
 
 #include <vector>
 #include "Ui/Associative.h"
@@ -58,15 +51,15 @@ class T_DLLCLASS Widget
 
 public:
 	Widget();
-	
+
 	virtual ~Widget();
-	
+
 	bool create(Widget* parent, int style = WsNone);
-	
+
 	virtual void destroy();
-	
+
 	virtual void setText(const std::wstring& text);
-	
+
 	virtual std::wstring getText() const;
 
 	virtual void setForeground();
@@ -76,9 +69,9 @@ public:
 	virtual void setVisible(bool visible);
 
 	virtual bool isVisible(bool includingParents) const;
-	
+
 	virtual void setEnable(bool enable);
-	
+
 	virtual bool isEnable() const;
 
 	virtual bool hasFocus() const;
@@ -88,21 +81,21 @@ public:
 	virtual void setFocus();
 
 	virtual void setRect(const Rect& rect);
-	
+
 	virtual Rect getRect() const;
-	
+
 	virtual Rect getInnerRect() const;
 
 	virtual Rect getNormalRect() const;
 
 	virtual void setFont(const Font& font);
-	
+
 	virtual Font getFont() const;
 
 	virtual FontMetric getFontMetric() const;
-	
+
 	virtual void setCursor(Cursor cursor);
-	
+
 	virtual void resetCursor();
 
 	virtual void update(const Rect* rc = 0, bool immediate = false);
@@ -114,9 +107,9 @@ public:
 	bool hasCapture() const;
 
 	void setCapture();
-	
+
 	void releaseCapture();
-	
+
 	void startTimer(int interval, int id = -1);
 
 	void stopTimer(int id = -1);
@@ -136,11 +129,11 @@ public:
 	 * at a time.
 	 */
 	void setChildRects(const std::vector< WidgetRect >& childRects);
-	
+
 	virtual Size getMinimumSize() const;
-	
+
 	virtual Size getPreferedSize() const;
-	
+
 	virtual Size getMaximumSize() const;
 
 	void setHorizontalAlign(Align halign);
@@ -156,21 +149,21 @@ public:
 	 * as it's not logical, thus should return false.
 	 */
 	virtual bool acceptLayout() const;
-	
+
 	void link(Widget* parent);
-	
+
 	void unlink();
 
 	void setParent(Widget* parent);
-	
+
 	Widget* getParent() const;
-	
+
 	Widget* getPreviousSibling() const;
-	
+
 	Widget* getNextSibling() const;
-	
+
 	Widget* getFirstChild() const;
-	
+
 	Widget* getLastChild() const;
 
 	/*! \brief Get internal widget.
@@ -179,7 +172,7 @@ public:
 	 * getting information about the native peer widget.
 	 */
 	IWidget* getIWidget() const;
-	
+
 protected:
 	IWidget* m_widget;
 	Widget* m_parent;
@@ -190,8 +183,7 @@ protected:
 	Align m_halign;
 	Align m_valign;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_Widget_H

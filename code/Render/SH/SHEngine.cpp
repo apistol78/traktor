@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Functor/Functor.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
@@ -62,7 +56,7 @@ int factorial(int n)
 	T_ASSERT (n >= 0);
 	int r = 1;
 	for (int i = 1; i <= n; ++i)
-		r *= i; 
+		r *= i;
 	return r;
 }
 

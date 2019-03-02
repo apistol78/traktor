@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <pthread.h>
 #include <sched.h>
@@ -53,12 +47,12 @@ bool Thread::start(Priority priority)
 	pthread_attr_t attr;
 	sched_param param;
 	int rc;
-	
+
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 	T_ASSERT (in);
 
 	in->finished = false;
-	
+
 	pthread_mutex_init(&in->mutex, NULL);
 	pthread_cond_init(&in->signal, NULL);
 
@@ -75,25 +69,25 @@ bool Thread::start(Priority priority)
 	case Lowest:
 		param.sched_priority = 15;
 		break;
-		
+
 	case Below:
 		param.sched_priority = 5;
 		break;
-		
+
 	case Normal:
 		param.sched_priority = 0;
 		break;
-		
+
 	case Above:
 		param.sched_priority = -6;
 		break;
-		
+
 	case Highest:
 		param.sched_priority = -16;
 		break;
-	}	
+	}
 	pthread_attr_setschedparam(&attr, &param);
-	
+
 	rc = pthread_create(
 		&in->thread,
 		&attr,
@@ -111,17 +105,17 @@ bool Thread::wait(int timeout)
 
 	int status = 0;
 	int rc = 0;
-	
+
 	if (timeout >= 0)
 	{
 		pthread_mutex_lock(&in->mutex);
-		
+
 		timeval now;
 		timespec ts;
-	
+
 		gettimeofday(&now, 0);
 		ts.tv_sec = now.tv_sec + timeout / 1000;
-		ts.tv_nsec = (now.tv_usec + (timeout % 1000) * 1000) * 1000;					
+		ts.tv_nsec = (now.tv_usec + (timeout % 1000) * 1000) * 1000;
 		ts.tv_sec += ts.tv_nsec / 1000000000;
 		ts.tv_nsec = ts.tv_nsec % 1000000000;
 
@@ -133,18 +127,18 @@ bool Thread::wait(int timeout)
 				&ts
 			);
 		}
-		
+
 		pthread_mutex_unlock(&in->mutex);
 		if (!in->finished)
 			return false;
 	}
-	
+
 	rc = pthread_join(
 		in->thread,
 		0
 	);
-	
-	return bool(rc == 0); 
+
+	return bool(rc == 0);
 }
 
 bool Thread::stop(int timeout)

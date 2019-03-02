@@ -46,7 +46,7 @@ bool Add::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Add::createCursor() const 
+Ref< ISoundBufferCursor > Add::createCursor() const
 {
 	return new AddCursor();
 }

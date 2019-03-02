@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InGesturePinch_H
-#define traktor_input_InGesturePinch_H
+#pragma once
 
 #include "Input/Binding/IInputNode.h"
 
@@ -28,7 +21,7 @@ namespace traktor
 class T_DLLCLASS InGesturePinch : public IInputNode
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	enum PinchDirection
 	{
@@ -46,7 +39,7 @@ public:
 		IInputNode* sourceX2,
 		IInputNode* sourceY2
 	);
-	
+
 	virtual Ref< Instance > createInstance() const override final;
 
 	virtual float evaluate(
@@ -57,7 +50,7 @@ public:
 	) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
-	
+
 private:
 	friend class InGesturePinchTraits;
 
@@ -72,4 +65,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_InGesturePinch_H

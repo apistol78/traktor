@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IndexBuffer.h"
@@ -105,7 +99,7 @@ void SkyComponent::render(
 	renderBlock->programParams->beginParameters(renderContext);
 
 	worldRenderPass.setProgramParameters(renderBlock->programParams);
-	
+
 	renderBlock->programParams->setFloatParameter(s_handleSkyDomeRadius, worldRenderView.getViewFrustum().getFarZ() - abs(m_offset) - 10.0f);
 	renderBlock->programParams->setFloatParameter(s_handleSkyDomeOffset, m_offset);
 	renderBlock->programParams->setVectorParameter(s_handleSunDirection, sunDirection);

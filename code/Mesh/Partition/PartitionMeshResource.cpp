@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializer.h"
@@ -63,7 +57,7 @@ Ref< IMesh > PartitionMeshResource::createMesh(
 	partitionMesh->m_partition = m_partitionData->createPartition();
 	if (!partitionMesh->m_partition)
 		return 0;
-	
+
 #if defined(_DEBUG)
 	partitionMesh->m_name = wstombs(name);
 #endif

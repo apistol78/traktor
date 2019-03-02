@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sysutil/sysutil_gamecontent.h>
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"
@@ -27,17 +21,17 @@ const uint32_t c_maxDirCount = 32;
 const uint32_t c_maxFileCount = 32;
 const char c_secureFileId[CELL_SAVEDATA_SECUREFILEID_SIZE] =
 {
-	'C', 'L', 'E', 'A', 
-	'R', 'H', 'E', 'A', 
-	'D', 'G', 'A', 'M', 
-	'E', 'S', ' ', ' ', 
+	'C', 'L', 'E', 'A',
+	'R', 'H', 'E', 'A',
+	'D', 'G', 'A', 'M',
+	'E', 'S', ' ', ' ',
 };
 
 char s_dirNamePrefix[] = "NPEB00401-";
 char s_loadIndicatorDispMsg[CELL_SAVEDATA_INDICATORMSG_MAX] = "Loading...";
 char s_saveIndicatorDispMsg[CELL_SAVEDATA_INDICATORMSG_MAX] = "Saving...";
 
-CellSaveDataAutoIndicator s_loadIndicator = 
+CellSaveDataAutoIndicator s_loadIndicator =
 {
 	dispPosition : CELL_SAVEDATA_INDICATORPOS_LOWER_RIGHT | CELL_SAVEDATA_INDICATORPOS_MSGALIGN_RIGHT,
 	dispMode : CELL_SAVEDATA_INDICATORMODE_BLINK,
@@ -47,7 +41,7 @@ CellSaveDataAutoIndicator s_loadIndicator =
 	reserved : NULL
 };
 
-CellSaveDataAutoIndicator s_saveIndicator = 
+CellSaveDataAutoIndicator s_saveIndicator =
 {
 	dispPosition : CELL_SAVEDATA_INDICATORPOS_LOWER_RIGHT | CELL_SAVEDATA_INDICATORPOS_MSGALIGN_RIGHT,
 	dispMode : CELL_SAVEDATA_INDICATORMODE_BLINK,
@@ -187,14 +181,14 @@ bool PsnSaveData::enumerate(std::set< std::wstring >& outSaveDataIds)
 
 void PsnSaveData::dialogThread()
 {
-	cellGameContentErrorDialog(CELL_GAME_ERRDIALOG_NOSPACE_EXIT, m_spaceNeededKB, NULL); 
+	cellGameContentErrorDialog(CELL_GAME_ERRDIALOG_NOSPACE_EXIT, m_spaceNeededKB, NULL);
 }
 
 bool PsnSaveData::get(const std::wstring& saveDataId, Ref< ISerializable >& outAttachment)
 {
 	if (m_spaceNeededKB)
 		return false;
-	LoadData loadData(this); 
+	LoadData loadData(this);
 
 	uint32_t tmpSize = std::max< uint32_t >(
 		c_maxDirCount * sizeof(CellSaveDataDirList),
@@ -261,7 +255,7 @@ bool PsnSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDa
 	std::strcpy(dirName, s_dirNamePrefix);
 	std::strcat(dirName, wstombs(toUpper(saveDataId)).c_str());
 
-	SaveDataHelper saveDataHelper(this, saveDataDesc, dms.getBuffer(), m_saveIconBuffer, m_saveIconSize); 
+	SaveDataHelper saveDataHelper(this, saveDataDesc, dms.getBuffer(), m_saveIconBuffer, m_saveIconSize);
 	int32_t err = cellSaveDataAutoSave2(
 		CELL_SAVEDATA_VERSION_420,
 		dirName,
@@ -275,7 +269,7 @@ bool PsnSaveData::set(const std::wstring& saveDataId, const SaveDataDesc& saveDa
 /*
 	if (err == CELL_SAVEDATA_ERROR_CBRESULT && m_spaceNeededKB)
 	{
-		cellGameContentErrorDialog(CELL_GAME_ERRDIALOG_NOSPACE_EXIT, m_spaceNeededKB, NULL); 
+		cellGameContentErrorDialog(CELL_GAME_ERRDIALOG_NOSPACE_EXIT, m_spaceNeededKB, NULL);
 		log::error << L"Not enough space to save" << Endl;
 	}
 */
@@ -426,9 +420,9 @@ void PsnSaveData::callbackSaveStat(CellSaveDataCBResult* cbResult, CellSaveDataS
 		set->setParam->attribute = CELL_SAVEDATA_ATTR_NORMAL;
 
 		std::memset(set->setParam->reserved, 0, sizeof(set->setParam->reserved));
-		std::memset(set->setParam->reserved2, 0, sizeof(set->setParam->reserved2));	
+		std::memset(set->setParam->reserved2, 0, sizeof(set->setParam->reserved2));
 
-		const int32_t CONTENT_SIZEKB = (saveDataHelper->m_dataBuffer.size() + 1023) / 1024 + (saveDataHelper->m_iconSize + 1023) / 1024; 
+		const int32_t CONTENT_SIZEKB = (saveDataHelper->m_dataBuffer.size() + 1023) / 1024 + (saveDataHelper->m_iconSize + 1023) / 1024;
 		const int32_t NEW_SIZEKB = CONTENT_SIZEKB + get->sysSizeKB;
 		const int32_t NEED_SIZEKB = get->hddFreeSizeKB - NEW_SIZEKB;
 		if (NEED_SIZEKB < 0)

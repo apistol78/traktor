@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Math/MathUtils.h"
 #include "Database/Instance.h"
@@ -53,7 +47,7 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 
 	const RefArray< Node >& nodes = shaderGraph->getNodes();
 	const RefArray< Edge >& edges = shaderGraph->getEdges();
-	
+
 	ui::Rect bounds;
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
@@ -76,12 +70,12 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 	bounds.top -= 4;
 	bounds.right += 4;
 	bounds.bottom += 4;
-	
+
 	for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
 	{
 		std::pair< int, int > position1 = (*i)->getSource()->getNode()->getPosition();
 		std::pair< int, int > position2 = (*i)->getDestination()->getNode()->getPosition();
-		
+
 		float x1 = float((position1.first - bounds.left) * 64) / bounds.getSize().cx;
 		float y1 = float((position1.second - bounds.top) * 64) / bounds.getSize().cy;
 		float x2 = float((position2.first - bounds.left) * 64) / bounds.getSize().cx;
@@ -96,10 +90,10 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
 		std::pair< int, int > position = (*i)->getPosition();
-		
+
 		float x = float((position.first - bounds.left) * 64) / bounds.getSize().cx;
 		float y = float((position.second - bounds.top) * 64) / bounds.getSize().cy;
-		
+
 		raster.clear();
 		raster.moveTo(x - 1.0f, y - 1.0f);
 		raster.lineTo(x + 1.0f, y - 1.0f);

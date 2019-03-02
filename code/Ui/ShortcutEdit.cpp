@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Application.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/ShortcutEdit.h"
@@ -96,7 +90,7 @@ VirtualKey ShortcutEdit::getVirtualKey() const
 void ShortcutEdit::eventKeyDown(KeyDownEvent* event)
 {
 	VirtualKey virtualKey = event->getVirtualKey();
-	
+
 	m_keyState = event->getKeyState();
 	if (m_keyState & ui::KsControl)
 	{
@@ -134,7 +128,7 @@ void ShortcutEdit::eventPaint(PaintEvent* event)
 		canvas.setForeground(ss->getColor(this, L"color-focus"));
 
 	canvas.drawText(rc.inflate(dpi96(-8), 0), getText(), AnLeft, AnCenter);
-	
+
 	event->consume();
 }
 

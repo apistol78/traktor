@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef AddMultipleConfigurations_H
-#define AddMultipleConfigurations_H
+#pragma once
 
 #include "CustomTool.h"
 
@@ -13,7 +6,7 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 class Widget;
 
 	}
@@ -34,4 +27,3 @@ public:
 	}
 }
 
-#endif	// AddMultipleConfigurations_H

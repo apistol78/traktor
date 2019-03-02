@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Float.h"
 #include "Core/Memory/IAllocator.h"
@@ -125,7 +119,7 @@ Ref< IFilterInstance > ReverbFilter::createInstance() const
 void ReverbFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	ReverbFilterInstance* rfi = static_cast< ReverbFilterInstance* >(instance);
-	
+
 	float dT = 1.0f / outBlock.sampleRate;
 	float gain = 0.5f;
 	float Krt = 1.0f - (dT * 1000.0f) / m_duration;

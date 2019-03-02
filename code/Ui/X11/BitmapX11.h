@@ -1,5 +1,4 @@
-#ifndef traktor_ui_BitmapX11_H
-#define traktor_ui_BitmapX11_H
+#pragma once
 
 #include <cairo.h>
 #include "Ui/Itf/ISystemBitmap.h"
@@ -33,4 +32,3 @@ private:
 	}
 }
 
-#endif  // traktor_ui_BitmapX11_H

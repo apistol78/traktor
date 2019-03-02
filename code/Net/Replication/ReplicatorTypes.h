@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_ReplicatorTypes_H
-#define traktor_net_ReplicatorTypes_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -38,7 +31,7 @@ struct RMessage
 			uint8_t status;
 		} ping;
 
-		struct 
+		struct
 		{
 			uint32_t time0;
 			uint32_t rtime0;
@@ -46,18 +39,18 @@ struct RMessage
 			uint32_t latencySpread;
 		} pong;
 
-		struct  
+		struct
 		{
 			uint8_t data[1];
 		} state;
 
-		struct  
+		struct
 		{
 			uint8_t sequence;
 			uint8_t data[1];
 		} event;
 
-		struct 
+		struct
 		{
 			uint8_t sequence;
 		} eventAck;
@@ -88,4 +81,3 @@ T_FORCE_INLINE double net2time(uint32_t time)	{ return time / 1000.0; }
 	}
 }
 
-#endif	// traktor_net_ReplicatorTypes_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_sound_LowPassFilter_H
-#define traktor_sound_LowPassFilter_H
+#pragma once
 
 #include "Sound/IFilter.h"
 
@@ -49,4 +42,3 @@ private:
 	}
 }
 
-#endif	// traktor_sound_LowPassFilter_H

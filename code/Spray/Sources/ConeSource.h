@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_ConeSource_H
-#define traktor_spray_ConeSource_H
+#pragma once
 
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/Range.h"
@@ -81,4 +74,3 @@ private:
 	}
 }
 
-#endif	// traktor_spray_ConeSource_H

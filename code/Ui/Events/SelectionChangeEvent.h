@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_SelectionChangeEvent_H
-#define traktor_ui_SelectionChangeEvent_H
+#pragma once
 
 #include "Ui/Event.h"
 #include "Ui/Command.h"
@@ -22,14 +15,14 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 /*! \brief Command event.
  * \ingroup UI
  */
 class T_DLLCLASS SelectionChangeEvent : public Event
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	SelectionChangeEvent(EventSubject* sender);
 
@@ -40,8 +33,7 @@ public:
 private:
 	Ref< Object > m_item;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_SelectionChangeEvent_H

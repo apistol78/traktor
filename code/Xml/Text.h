@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_xml_Text_H
-#define traktor_xml_Text_H
+#pragma once
 
 #include "Xml/Node.h"
 
@@ -15,7 +8,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
-#endif 
+#endif
 
 namespace traktor
 {
@@ -31,7 +24,7 @@ class T_DLLCLASS Text : public Node
 
 public:
 	Text(const std::wstring& text);
-	
+
 	virtual std::wstring getValue() const override final;
 
 	virtual void setValue(const std::wstring& value) override final;
@@ -46,8 +39,7 @@ protected:
 private:
 	std::wstring m_text;
 };
-	
+
 	}
 }
 
-#endif	// traktor_xml_Text_H

@@ -12,7 +12,7 @@ namespace traktor
 {
 	namespace video
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.video.VideoTexture", VideoTexture, render::ISimpleTexture)
 
 VideoTexture::VideoTexture()

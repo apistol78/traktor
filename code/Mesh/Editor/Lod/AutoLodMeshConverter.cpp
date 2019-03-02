@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/Lod/AutoLodMeshConverter.h"
@@ -56,7 +50,7 @@ bool AutoLodMeshConverter::convert(
 			model::ReduceSimplygon(detailLevel).apply(lodModel);
 #endif
 		}
-		
+
 		StaticMeshConverter staticMeshConverter;
 
 		Ref< IMeshResource > staticMeshResource = staticMeshConverter.createResource();

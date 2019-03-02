@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Net/IcmpSocket.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketAddressIPv6.h"
@@ -33,7 +27,7 @@ bool IcmpSocket::bind(const SocketAddressIPv4& socketAddress)
 {
 #if !defined(__PS3__) && !defined(__PS4__) && !defined(EMSCRIPTEN) && !defined(_XBOX)
 	struct sockaddr_in local = socketAddress.getSockAddr();
-	
+
 	if (m_socket == INVALID_SOCKET)
 	{
 		m_socket = ::socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);

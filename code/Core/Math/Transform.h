@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Transform_H
-#define traktor_Transform_H
+#pragma once
 
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Quaternion.h"
@@ -51,7 +44,7 @@ public:
 	T_MATH_INLINE Vector4 axisX() const;
 
 	T_MATH_INLINE Vector4 axisY() const;
-	
+
 	T_MATH_INLINE Vector4 axisZ() const;
 
 	T_MATH_INLINE Transform inverse() const;
@@ -85,4 +78,3 @@ T_MATH_INLINE T_DLLCLASS Transform lerp(const Transform& a, const Transform& b, 
 #include "Core/Math/Std/Transform.inl"
 #endif
 
-#endif	// traktor_Transform_H

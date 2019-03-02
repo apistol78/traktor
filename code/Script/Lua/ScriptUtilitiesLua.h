@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_script_ScriptUtilitiesLua_H
-#define traktor_script_ScriptUtilitiesLua_H
+#pragma once
 
 #if defined(_DEBUG)
 #	define T_SCRIPT_LUA_FORCE_STACK_CHECK 1
@@ -101,4 +94,3 @@ int luaSleep(lua_State* L);
 	}
 }
 
-#endif	// traktor_script_ScriptUtilitiesLua_H

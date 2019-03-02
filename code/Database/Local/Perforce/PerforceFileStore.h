@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_PerforceFileStore_H
-#define traktor_db_PerforceFileStore_H
+#pragma once
 
 #include "Database/Local/IFileStore.h"
 
@@ -57,4 +50,3 @@ private:
 	}
 }
 
-#endif	// traktor_db_PerforceFileStore_H

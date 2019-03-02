@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ComboBox_H
-#define traktor_ui_ComboBox_H
+#pragma once
 
 #include <string>
 #include "Ui/Widget.h"
@@ -46,7 +39,7 @@ public:
 	int count() const;
 
 	std::wstring get(int index) const;
-	
+
 	void select(int index);
 
 	int getSelected() const;
@@ -64,4 +57,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_ComboBox_H

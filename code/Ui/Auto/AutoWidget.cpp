@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Ui/Application.h"
 #include "Ui/StyleSheet.h"
@@ -72,7 +66,7 @@ AutoWidgetCell* AutoWidget::hitTest(const Point& position)
 		if (m_headerCell.rc.inside(position))
 			return m_headerCell.cell;
 	}
-	
+
 	if (m_footerCell.cell)
 	{
 		if (m_footerCell.rc.inside(position))
@@ -119,7 +113,7 @@ void AutoWidget::requestInterval(AutoWidgetCell* cell, int32_t duration)
 void AutoWidget::placeCell(AutoWidgetCell* cell, const Rect& rect)
 {
 	T_ASSERT (cell);
-	
+
 	// Add this cell instance.
 	CellInstance instance = { cell, rect };
 	m_cells.push_back(instance);
@@ -138,7 +132,7 @@ void AutoWidget::placeHeaderCell(AutoWidgetCell* cell, int32_t height)
 	m_headerCell.cell = cell;
 	m_headerCell.rc = inner;
 
-	cell->placeCells(this, inner);	
+	cell->placeCells(this, inner);
 }
 
 void AutoWidget::placeFooterCell(AutoWidgetCell* cell, int32_t height)
@@ -151,7 +145,7 @@ void AutoWidget::placeFooterCell(AutoWidgetCell* cell, int32_t height)
 	m_footerCell.cell = cell;
 	m_footerCell.rc = inner;
 
-	cell->placeCells(this, inner);	
+	cell->placeCells(this, inner);
 }
 
 Rect AutoWidget::getCellRect(const AutoWidgetCell* cell) const
@@ -399,10 +393,19 @@ void AutoWidget::eventMouseMove(MouseMoveEvent* event)
 
 void AutoWidget::eventMouseWheel(MouseWheelEvent* event)
 {
+	// Calculate new position.
 	int32_t position = m_scrollBarV->getPosition();
 	position -= event->getRotation() * 4;
+
+	// Set scrollbar position.
 	m_scrollBarV->setPosition(position);
 	m_scrollOffset.cy = -m_scrollBarV->getPosition() * 16;
+
+	// Ensure scroll events are issued.
+	ScrollEvent scrollEvent(this, 0);
+	raiseEvent(&scrollEvent);
+
+	// Redraw widget.
 	update();
 }
 

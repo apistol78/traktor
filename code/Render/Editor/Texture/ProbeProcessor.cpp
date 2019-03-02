@@ -113,7 +113,7 @@ bool ProbeProcessor::radiance(const drawing::Image* cubeImage, int32_t glossScal
 	for (int32_t i = 0; i < mipCount; ++i)
 	{
 		uint32_t mipSize = sideSize >> i;
-		
+
 		Ref< CubeMap > cubeMip = new CubeMap(mipSize, drawing::PixelFormat::getRGBAF32());
 		for (int32_t side = 0; side < 6; ++side)
 		{
@@ -125,7 +125,7 @@ bool ProbeProcessor::radiance(const drawing::Image* cubeImage, int32_t glossScal
 		}
 		outCubeMips[i] = cubeMip;
 	}
-	
+
 	// Cleanup.
 	cmft::imageUnload(image);
 	return true;
@@ -190,7 +190,7 @@ bool ProbeProcessor::irradiance(const drawing::Image* cubeImage, float factor, i
 	for (int32_t i = 0; i < mipCount; ++i)
 	{
 		uint32_t mipSize = sideSize >> i;
-		
+
 		Ref< CubeMap > cubeMip = new CubeMap(mipSize, drawing::PixelFormat::getRGBAF32());
 		for (int32_t side = 0; side < 6; ++side)
 		{

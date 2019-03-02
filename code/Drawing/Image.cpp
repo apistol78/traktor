@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
@@ -274,7 +268,7 @@ void Image::clear(const Color4f& color)
 {
 	float T_MATH_ALIGN16 tmp[4];
 	color.storeAligned(tmp);
-	
+
 	uint32_t byteSize = m_pixelFormat.getByteSize();
 	AlignedVector< uint8_t > c(byteSize);
 

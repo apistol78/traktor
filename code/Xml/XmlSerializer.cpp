@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <sstream>
 #include "Xml/XmlSerializer.h"
 #include "Core/Io/IStream.h"
@@ -42,7 +36,7 @@ std::wstring characterEntity(const std::wstring& str)
 }
 
 		}
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.XmlSerializer", XmlSerializer, Serializer)
 
 #define T_CHECK_STATUS \
@@ -261,7 +255,7 @@ void XmlSerializer::operator >> (const Member< ISerializable* >& m)
 	else if (o)
 	{
 		m_xml << m_indent << L"<" << m.getName() << L" type=\"" << type_name(o) << L"\"";
-		
+
 		StringOutputStream v2;
 
 		const TypeInfo* ti = &type_of(o);
@@ -313,7 +307,7 @@ void XmlSerializer::operator >> (const Member< void* >& m)
 	if (size > 0)
 	{
 		m_xml << m_indent << L"<" << m.getName() << L">" << Endl;
-		
+
 		enterElement(m.getName());
 		m_xml << Base64().encode(blob, size, true) << Endl;
 		leaveElement();
@@ -336,7 +330,7 @@ void XmlSerializer::operator >> (const MemberArray& m)
 	if (m.size() > 0)
 	{
 		m_xml << m_indent << L"<" << m.getName() << L">" << Endl;
-		
+
 		enterElement(m.getName());
 
 		for (size_t i = 0, size = m.size(); i < size; ++i)

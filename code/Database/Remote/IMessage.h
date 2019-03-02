@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_IMessage_H
-#define traktor_db_IMessage_H
+#pragma once
 
 #include "Core/Serialization/ISerializable.h"
 
@@ -33,4 +26,3 @@ class T_DLLCLASS IMessage : public ISerializable
 	}
 }
 
-#endif	// traktor_db_IMessage_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Dialog.h"
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/DialogWin32.h"
@@ -109,7 +103,7 @@ void DialogWin32::setIcon(ISystemBitmap* icon)
 int DialogWin32::showModal()
 {
 	MSG msg;
-	
+
 	// Disable parent window, should be application main window.
 	HWND hParentWnd = GetParent(m_hWnd);
 	if (hParentWnd)
@@ -132,7 +126,7 @@ int DialogWin32::showModal()
 		rcParent.top + ((rcParent.bottom - rcParent.top) - getRect().getHeight()) / 2
 	};
 	SetWindowPos(m_hWnd, HWND_TOP, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
-	
+
 	// Handle events from the dialog.
 	m_result = DrCancel;
 	m_modal = true;
@@ -211,7 +205,7 @@ LRESULT DialogWin32::eventInitDialog(HWND hWnd, UINT message, WPARAM wParam, LPA
 LRESULT DialogWin32::eventSizing(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
 {
 	LPRECT rc = reinterpret_cast< LPRECT >(lParam);
-	
+
 	int width = rc->right - rc->left;
 	int height = rc->bottom - rc->top;
 
@@ -256,7 +250,7 @@ LRESULT DialogWin32::eventSizing(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 LRESULT DialogWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
 {
 	volatile bool modal = m_modal;
-	
+
 	skip = false;
 
 	CloseEvent closeEvent(m_owner);

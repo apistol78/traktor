@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_DeploySettingsPage_H
-#define traktor_amalgam_DeploySettingsPage_H
+#pragma once
 
 #include "Editor/ISettingsPage.h"
 #include "Ui/CheckBox.h"
@@ -54,4 +47,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_DeploySettingsPage_H

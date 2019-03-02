@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ai_NavMeshPipeline_H
-#define traktor_ai_NavMeshPipeline_H
+#pragma once
 
 #include "Editor/DefaultPipeline.h"
 
@@ -67,4 +60,3 @@ private:
 	}
 }
 
-#endif	// traktor_ai_NavMeshPipeline_H

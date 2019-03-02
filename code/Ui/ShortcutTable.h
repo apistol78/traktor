@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ShortcutTable_H
-#define traktor_ui_ShortcutTable_H
+#pragma once
 
 #include <list>
 #include "Ui/Command.h"
@@ -54,4 +47,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_ShortcutTable_H

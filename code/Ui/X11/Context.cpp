@@ -32,7 +32,7 @@ void Context::unbind(WidgetData* widget)
 		m_modal.erase(it);
 
 	m_bindings.erase(widget->window);
-	
+
 	if (m_grabbed == widget)
 		m_grabbed = nullptr;
 
@@ -137,7 +137,7 @@ void Context::dispatch(XEvent& xe)
 		{
 			Window focusWindow; int revertTo;
 			XGetInputFocus(m_display, &focusWindow, &revertTo);
-			
+
 			if (m_focused != nullptr)
 			{
 				if (m_focused->window == focusWindow)
@@ -160,7 +160,7 @@ void Context::dispatch(XEvent& xe)
 
 				XEvent xevent;
 				xevent.type = FocusIn;
-				dispatch(m_focused->window, FocusIn, true, xevent);				
+				dispatch(m_focused->window, FocusIn, true, xevent);
 			}
 		}
         break;
@@ -200,7 +200,7 @@ void Context::dispatch(XEvent& xe)
     case ConfigureNotify:
         dispatch(xe.xconfigure.window, ConfigureNotify, true, xe);
         break;
-        
+
     case Expose:
         dispatch(xe.xexpose.window, Expose, true, xe);
         break;
@@ -233,7 +233,7 @@ void Context::dispatch(Window window, int32_t eventType, bool always, XEvent& xe
 		for (const WidgetData* w = b->second.widget; w != nullptr; w = w->parent)
 		{
 			if (!w->enable)
-				return;			
+				return;
 		}
 
 		// If exclusive filtering is enabled then ensure widget is part of exclusive.

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <cctype>
 #include "Render/Editor/Shader/Nodes.h"
@@ -59,7 +53,7 @@ PinType SwizzleNodeTraits::getInputPinType(
 ) const
 {
 	const std::wstring& pattern = checked_type_cast< const Swizzle* >(node)->get();
-	
+
 	PinType inputPinType = PntVoid;
 	for (size_t i = 0; i < pattern.length(); ++i)
 	{

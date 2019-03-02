@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_RenderEditorPlugin_H
-#define traktor_render_RenderEditorPlugin_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Editor/IEditorPlugin.h"
@@ -54,4 +47,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_RenderEditorPlugin_H

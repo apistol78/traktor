@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include "Core/Math/Const.h"
 #include "Core/Math/Vector4.h"
@@ -392,11 +386,26 @@ T_MATH_INLINE Vector4 reflect(const Vector4& v, const Vector4& at)
 	return V - v;
 }
 
-T_MATH_INLINE int majorAxis3(const Vector4& v)
+T_MATH_INLINE int32_t minorAxis3(const Vector4& v)
 {
-	if (abs(v.x()) > abs(v.y()))
-		return (abs(v.x()) > abs(v.z())) ? 0 : 2;
-	return (abs(v.y()) > abs(v.z())) ? 1 : 2;
+	float T_ALIGN16 s[4];
+	v.absolute().storeAligned(s);
+	if (s[0] < s[1] && s[0] < s[2])
+		return 0;
+	else if (s[1] < s[0] && s[1] < s[2])
+		return 1;
+	else
+		return 2;
+}
+
+T_MATH_INLINE int32_t majorAxis3(const Vector4& v)
+{
+	float T_ALIGN16 s[4];
+	v.absolute().storeAligned(s);
+	if (s[0] > s[1])
+		return (s[0] > s[2]) ? 0 : 2;
+	else
+		return (s[1] > s[2]) ? 1 : 2;
 }
 
 T_MATH_INLINE void orthogonalFrame(const Vector4& d, Vector4& outU, Vector4& outV)

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -67,6 +61,6 @@ void InLowPass::serialize(ISerializer& s)
 	s >> MemberRef< IInputNode >(L"source", m_source);
 	s >> MemberRef< IInputNode >(L"coeff", m_coeff);
 }
-	
+
 	}
 }

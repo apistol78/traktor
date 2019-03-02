@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef SolutionBuilderMsvcVCXPropertyGroup_H
-#define SolutionBuilderMsvcVCXPropertyGroup_H
+#pragma once
 
 #include <map>
 #include "Core/Io/OutputStream.h"
@@ -44,4 +37,3 @@ private:
 	}
 }
 
-#endif	// SolutionBuilderMsvcVCXPropertyGroup_H

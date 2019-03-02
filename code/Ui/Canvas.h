@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Canvas_H
-#define traktor_ui_Canvas_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Ui/FontMetric.h"
@@ -25,7 +18,7 @@ namespace traktor
 	{
 
 class IBitmap;
-	
+
 /*! \brief Canvas
  * \ingroup UI
  */
@@ -55,7 +48,7 @@ public:
 	void setClipRect(const Rect& rc);
 
 	void resetClipRect();
-	
+
 	void drawPixel(int x, int y);
 
 	void drawPixel(const Point& p);
@@ -67,9 +60,9 @@ public:
 	void drawLine(int x1, int y1, int x2, int y2);
 
 	void drawLine(const Point& start, const Point& end);
-	
+
 	void drawLines(const std::vector< Point >& pnts);
-	
+
 	void drawLines(const Point* pnts, int npnts);
 
 	void fillCircle(const Point& p, float radius);
@@ -101,7 +94,7 @@ public:
 	void drawText(const Point& at, const std::wstring& text);
 
 	void drawText(const Rect& rc, const std::wstring& text, Align halign = AnLeft, Align valign = AnTop);
-	
+
 	ICanvas* getICanvas() const { return m_canvas; }
 
 private:
@@ -109,8 +102,7 @@ private:
 	Color4ub m_foreground;
 	Color4ub m_background;
 };
-	
+
 	}
 }
 
-#endif	// traktor_ui_Canvas_H

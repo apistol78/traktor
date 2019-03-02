@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_AttributePrivate_H
-#define traktor_AttributePrivate_H
+#pragma once
 
 #include "Core/Serialization/Attribute.h"
 
@@ -30,4 +23,3 @@ class T_DLLCLASS AttributePrivate : public Attribute
 
 }
 
-#endif	// traktor_AttributePrivate_H

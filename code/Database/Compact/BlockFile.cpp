@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/StreamStream.h"
@@ -95,7 +89,7 @@ public:
 			m_stream = 0;
 		}
 	}
-	
+
 	virtual bool canRead() const override final
 	{
 		return false;
@@ -204,7 +198,7 @@ bool BlockFile::open(const Path& fileName, bool readOnly, bool flushAlways)
 
 	if (magic != 'TBLK' || version != c_version)
 		return false;
-	
+
 	uint32_t blockCount;
 	reader >> blockCount;
 
@@ -247,7 +241,7 @@ uint32_t BlockFile::allocBlockId()
 	uint32_t maxBlockId = 0;
 	for (std::vector< Block >::const_iterator i = m_blocks.begin(); i != m_blocks.end(); ++i)
 		maxBlockId = std::max(maxBlockId, i->id);
-	
+
 	Block block;
 	block.id = maxBlockId + 1;
 	block.offset = 0;

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
@@ -66,17 +60,17 @@ float InPulse::evaluate(
 	float dV = V - ipi->previousValue;
 
 	ipi->previousValue = V;
-	
+
 	if (!asBoolean(V))
 		return asFloat(false);
 
 	if (dV > FUZZY_EPSILON)
 		ipi->issueTime = T;
-	
+
 	float T0 = T - ipi->issueTime - m_delay;
 	if (T0 < 0.0f)
 		return asFloat(true);
-	
+
 	int32_t i = int32_t(T0 / m_interval);
 	if ((i & 1) == 0)
 		return asFloat(false);
@@ -90,6 +84,6 @@ void InPulse::serialize(ISerializer& s)
 	s >> Member< float >(L"delay", m_delay);
 	s >> Member< float >(L"interval", m_interval);
 }
-	
+
 	}
 }

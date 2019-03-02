@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spray_Emitter_H
-#define traktor_spray_Emitter_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
@@ -118,4 +111,3 @@ private:
 	}
 }
 
-#endif	// traktor_spray_Emitter_H

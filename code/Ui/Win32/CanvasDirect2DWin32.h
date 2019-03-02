@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_CanvasDirect2DWin32_H
-#define traktor_ui_CanvasDirect2DWin32_H
+#pragma once
 
 #if defined(T_USE_DIRECT2D)
 
@@ -53,7 +46,7 @@ public:
 	virtual Size getExtent(const std::wstring& text) const override final;
 
 	// ICanvas
-	
+
 	virtual void setForeground(const Color4ub& foreground) override final;
 
 	virtual void setBackground(const Color4ub& background) override final;
@@ -69,7 +62,7 @@ public:
 	virtual void setClipRect(const Rect& rc) override final;
 
 	virtual void resetClipRect() override final;
-	
+
 	virtual void drawPixel(int x, int y, const Color4ub& c) override final;
 
 	virtual void drawLine(int x1, int y1, int x2, int y2) override final;
@@ -95,7 +88,7 @@ public:
 	virtual void drawPolygon(const Point* pnts, int count) override final;
 
 	virtual void fillPolygon(const Point* pnts, int count) override final;
-	
+
 	virtual void drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode) override final;
 
 	virtual void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode) override final;
@@ -129,10 +122,9 @@ private:
 
 	void flushCachedBitmaps();
 };
-	
+
 	}
 }
 
 #endif	// T_USE_DIRECT2D
 
-#endif	// traktor_ui_CanvasDirect2DWin32_H

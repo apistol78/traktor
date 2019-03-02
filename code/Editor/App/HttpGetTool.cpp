@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
@@ -68,7 +62,7 @@ bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGrou
 	ui::FileDialog saveAsDialog;
 	saveAsDialog.create(
 		parent,
-		type_name(this), 
+		type_name(this),
 		i18n::Text(L"EDITOR_HTTP_GET_SAVE_AS"),
 		L"All files (*.*);*.*",
 		true

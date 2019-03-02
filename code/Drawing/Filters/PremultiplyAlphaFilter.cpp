@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Containers/AlignedVector.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -47,6 +41,6 @@ void PremultiplyAlphaFilter::apply(Image* image) const
 		image->setSpanUnsafe(y, &span[0]);
 	}
 }
-	
+
 	}
 }

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_script_ScriptEditorPluginFactory_H
-#define traktor_script_ScriptEditorPluginFactory_H
+#pragma once
 
 #include "Editor/IEditorPluginFactory.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace script
 	{
-	
+
 /*! \brief
  * \ingroup Script
  */
@@ -38,4 +31,3 @@ public:
 	}
 }
 
-#endif	// traktor_script_ScriptEditorPluginFactory_H

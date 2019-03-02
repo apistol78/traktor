@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ProcessEmscripten_H
-#define traktor_ProcessEmscripten_H
+#pragma once
 
 #include <spawn.h>
 #include "Core/System/IProcess.h"
@@ -19,7 +12,7 @@ class ProcessEmscripten : public IProcess
 
 public:
 	virtual bool setPriority(Priority priority) T_OVERRIDE T_FINAL;
-	
+
 	virtual Ref< IStream > getPipeStream(StdPipe pipe) T_OVERRIDE T_FINAL;
 
 	virtual bool signal(SignalType signalType) T_OVERRIDE T_FINAL;
@@ -39,4 +32,3 @@ private:
 
 }
 
-#endif	// traktor_ProcessEmscripten_H

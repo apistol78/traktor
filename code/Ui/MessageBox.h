@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_MessageBox_H
-#define traktor_ui_MessageBox_H
+#pragma once
 
 #include "Ui/ConfigDialog.h"
 
@@ -45,4 +38,3 @@ public:
 	}
 }
 
-#endif	// traktor_ui_MessageBox_H

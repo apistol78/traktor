@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -108,7 +102,7 @@ public:
 		*phwnd = m_hWnd;
 		return S_OK;
 	}
-    
+
 	virtual HRESULT STDMETHODCALLTYPE ContextSensitiveHelp(BOOL fEnterMode)
 	{
 		return E_NOTIMPL;
@@ -118,18 +112,18 @@ public:
 	{
 		return S_OK;
 	}
-    
+
 	virtual HRESULT STDMETHODCALLTYPE OnInPlaceActivate(void)
 	{
 		return S_OK;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE OnUIActivate(void)
 	{
 		return S_OK;
 	}
-        
-	virtual HRESULT STDMETHODCALLTYPE GetWindowContext( 
+
+	virtual HRESULT STDMETHODCALLTYPE GetWindowContext(
 		IOleInPlaceFrame **ppFrame,
 		IOleInPlaceUIWindow **ppDoc,
 		LPRECT lprcPosRect,
@@ -154,32 +148,32 @@ public:
 
 		return S_OK;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE Scroll(SIZE scrollExtant)
 	{
 		return E_NOTIMPL;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE OnUIDeactivate(BOOL fUndoable)
 	{
 		return S_OK;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE OnInPlaceDeactivate(void)
 	{
 		return S_OK;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE DiscardUndoState( void)
 	{
 		return E_NOTIMPL;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE DeactivateAndUndo(void)
 	{
 		return E_NOTIMPL;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE OnPosRectChange(LPCRECT lprcPosRect)
 	{
 		if (m_oleInPlaceObject)
@@ -191,18 +185,18 @@ public:
 	{
 		return E_NOTIMPL;
 	}
-        
+
     virtual HRESULT STDMETHODCALLTYPE RequestBorderSpace(LPCBORDERWIDTHS pborderwidths)
 	{
 		return E_NOTIMPL;
 	}
-        
+
     virtual HRESULT STDMETHODCALLTYPE SetBorderSpace(LPCBORDERWIDTHS pborderwidths)
 	{
 		return E_NOTIMPL;
 	}
 
-    virtual HRESULT STDMETHODCALLTYPE SetActiveObject( 
+    virtual HRESULT STDMETHODCALLTYPE SetActiveObject(
 		IOleInPlaceActiveObject *pActiveObject,
 		LPCOLESTR pszObjName
 	)
@@ -210,7 +204,7 @@ public:
 		return S_OK;
 	}
 
-	virtual HRESULT STDMETHODCALLTYPE InsertMenus( 
+	virtual HRESULT STDMETHODCALLTYPE InsertMenus(
 		HMENU hmenuShared,
 		LPOLEMENUGROUPWIDTHS lpMenuWidths
 	)
@@ -218,7 +212,7 @@ public:
 		return E_NOTIMPL;
 	}
 
-	virtual HRESULT STDMETHODCALLTYPE SetMenu( 
+	virtual HRESULT STDMETHODCALLTYPE SetMenu(
 		HMENU hmenuShared,
 		HOLEMENU holemenu,
 		HWND hwndActiveObject
@@ -226,22 +220,22 @@ public:
 	{
 		return S_OK;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE RemoveMenus(HMENU hmenuShared)
 	{
 		return E_NOTIMPL;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE SetStatusText(LPCOLESTR pszStatusText)
 	{
 		return S_OK;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE EnableModeless(BOOL fEnable)
 	{
 		return S_OK;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE TranslateAccelerator(LPMSG lpmsg, WORD wID)
 	{
 		return E_NOTIMPL;
@@ -279,17 +273,17 @@ public:
 	{
 		return E_NOTIMPL;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE GetMoniker(DWORD dwAssign, DWORD dwWhichMoniker, IMoniker **ppmk)
 	{
 		return E_NOTIMPL;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE GetContainer(IOleContainer **ppContainer)
 	{
 		return E_NOINTERFACE;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE ShowObject(void)
 	{
 		return NOERROR;
@@ -299,7 +293,7 @@ public:
 	{
 		return E_NOTIMPL;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE RequestNewObjectLayout(void)
 	{
 		return E_NOTIMPL;
@@ -312,7 +306,7 @@ private:
 class OleStorage : public UnknownImpl< IStorage >
 {
 public:
-	virtual HRESULT STDMETHODCALLTYPE CreateStream( 
+	virtual HRESULT STDMETHODCALLTYPE CreateStream(
 		const OLECHAR *pwcsName,
 		DWORD grfMode,
 		DWORD reserved1,
@@ -321,9 +315,9 @@ public:
 	)
 	{
 		return E_NOTIMPL;
-	}	
-        
-	virtual HRESULT STDMETHODCALLTYPE OpenStream( 
+	}
+
+	virtual HRESULT STDMETHODCALLTYPE OpenStream(
 		const OLECHAR *pwcsName,
 		void *reserved1,
 		DWORD grfMode,
@@ -333,8 +327,8 @@ public:
    	{
 		return E_NOTIMPL;
 	}
-     
-	virtual HRESULT STDMETHODCALLTYPE CreateStorage( 
+
+	virtual HRESULT STDMETHODCALLTYPE CreateStorage(
 		const OLECHAR *pwcsName,
 		DWORD grfMode,
 		DWORD reserved1,
@@ -344,8 +338,8 @@ public:
 	{
 		return E_NOTIMPL;
 	}
-        
-	virtual HRESULT STDMETHODCALLTYPE OpenStorage( 
+
+	virtual HRESULT STDMETHODCALLTYPE OpenStorage(
 		const OLECHAR *pwcsName,
 		IStorage *pstgPriority,
 		DWORD grfMode,
@@ -356,8 +350,8 @@ public:
 	{
 		return E_NOTIMPL;
 	}
-        
-	virtual HRESULT STDMETHODCALLTYPE CopyTo( 
+
+	virtual HRESULT STDMETHODCALLTYPE CopyTo(
 		DWORD ciidExclude,
 		const IID *rgiidExclude,
 		SNB snbExclude,
@@ -366,8 +360,8 @@ public:
 	{
 		return E_NOTIMPL;
 	}
-        
-	virtual HRESULT STDMETHODCALLTYPE MoveElementTo( 
+
+	virtual HRESULT STDMETHODCALLTYPE MoveElementTo(
 		const OLECHAR *pwcsName,
 		IStorage *pstgDest,
 		const OLECHAR *pwcsNewName,
@@ -381,13 +375,13 @@ public:
 	{
 		return E_NOTIMPL;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE Revert(void)
 	{
 		return E_NOTIMPL;
 	}
-        
-	virtual HRESULT STDMETHODCALLTYPE EnumElements( 
+
+	virtual HRESULT STDMETHODCALLTYPE EnumElements(
 		DWORD reserved1,
 		void *reserved2,
 		DWORD reserved3,
@@ -396,32 +390,32 @@ public:
 	{
 		return E_NOTIMPL;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE DestroyElement(const OLECHAR *pwcsName)
 	{
 		return E_NOTIMPL;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE RenameElement(const OLECHAR *pwcsOldName, const OLECHAR *pwcsNewName)
 	{
 		return E_NOTIMPL;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE SetElementTimes(const OLECHAR *pwcsName, const FILETIME *pctime, const FILETIME *patime, const FILETIME *pmtime)
 	{
 		return E_NOTIMPL;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE SetClass(REFCLSID clsid)
 	{
 		return S_OK;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE SetStateBits(DWORD grfStateBits, DWORD grfMask)
 	{
 		return E_NOTIMPL;
 	}
-        
+
 	virtual HRESULT STDMETHODCALLTYPE Stat(STATSTG *pstatstg, DWORD grfStatFlag)
 	{
 		return E_NOTIMPL;

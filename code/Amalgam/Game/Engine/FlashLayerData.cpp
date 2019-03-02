@@ -41,7 +41,7 @@ Ref< Layer > FlashLayerData::createInstance(Stage* stage, IEnvironment* environm
 		if (!resourceManager->bind(i->second, externalMovies[i->first]))
 			return 0;
 	}
-	
+
 	// Bind optional post processing.
 	if (m_imageProcess)
 	{

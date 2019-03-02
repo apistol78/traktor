@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef Filter_H
-#define Filter_H
+#pragma once
 
 #include "SolutionBuilder/ProjectItem.h"
 
@@ -40,4 +33,3 @@ private:
 	}
 }
 
-#endif	// Filter_H

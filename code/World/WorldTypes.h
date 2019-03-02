@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_WorldTypes_H
-#define traktor_world_WorldTypes_H
+#pragma once
 
 #include "Core/Math/Vector4.h"
 
@@ -87,4 +80,3 @@ struct UpdateParams
 	}
 }
 
-#endif	// traktor_world_WorldTypes_H

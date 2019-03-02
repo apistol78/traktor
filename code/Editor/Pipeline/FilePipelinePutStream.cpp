@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Editor/Pipeline/FilePipelinePutStream.h"
@@ -27,7 +21,7 @@ void FilePipelinePutStream::close()
 	{
 		m_file->close();
 		m_file = 0;
-		
+
 		if (!FileSystem::getInstance().move(
 			m_path,
 			m_path + L"~"
@@ -80,6 +74,6 @@ void FilePipelinePutStream::flush()
 {
 	return m_file->flush();
 }
-	
+
 	}
 }

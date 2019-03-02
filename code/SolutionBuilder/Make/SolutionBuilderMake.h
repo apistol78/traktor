@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef SolutionBuilderMake_H
-#define SolutionBuilderMake_H
+#pragma once
 
 #include <map>
 #include <set>
@@ -98,4 +91,3 @@ private:
 	}
 }
 
-#endif	// SolutionBuilderMake_H

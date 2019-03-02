@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <limits>
 #include "Core/Log/Log.h"
@@ -73,7 +67,7 @@ void splitPolygon(
 
 			model::Vertex splitVertex;
 			splitVertex.setPosition(model.addUniquePosition(lerp(pp, pc, k)));
-			
+
 			if (vp.getColor() != model::c_InvalidIndex)
 			{
 				const Vector4& cp = model.getColor(vp.getColor());
@@ -138,7 +132,7 @@ void splitPolygons(
 	for (AlignedVector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 	{
 		float range[2] = { std::numeric_limits< float >::max(), -std::numeric_limits< float >::max() };
-		
+
 		for (uint32_t j = 0; j < i->getVertexCount(); ++j)
 		{
 			const model::Vertex& vertex = model.getVertex(i->getVertex(j));
@@ -146,7 +140,7 @@ void splitPolygons(
 			range[0] = std::min< float >(range[0], position[axis]);
 			range[1] = std::max< float >(range[1], position[axis]);
 		}
-		
+
 		if (range[0] >= splitDistance)
 			outFrontPolygons.push_back(*i);
 		else if (range[1] <= splitDistance)
@@ -198,7 +192,7 @@ Ref< OctreeNodeTemplate > buildOctreeTemplate(
 			for (uint32_t j = 0; j < polygon.getVertexCount() - 2; ++j)
 			{
 				model::Polygon triangle = polygon;
-				
+
 				triangle.clearVertices();
 				triangle.addVertex(polygon.getVertex(0));
 				triangle.addVertex(polygon.getVertex(1 + j));

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -297,13 +291,13 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsClassFactory", 0, Physic
 
 void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< QueryFilterWrapper > > classQueryFilter = new AutoRuntimeClass< QueryFilterWrapper >();
+	auto classQueryFilter = new AutoRuntimeClass< QueryFilterWrapper >();
 	classQueryFilter->addConstructor< uint32_t >();
 	classQueryFilter->addConstructor< uint32_t, uint32_t >();
 	classQueryFilter->addConstructor< uint32_t, uint32_t, uint32_t >();
 	registrar->registerClass(classQueryFilter);
 
-	Ref< AutoRuntimeClass< QueryResultWrapper > > classQueryResult = new AutoRuntimeClass< QueryResultWrapper >();
+	auto classQueryResult = new AutoRuntimeClass< QueryResultWrapper >();
 	classQueryResult->addProperty("body", &QueryResultWrapper::body);
 	classQueryResult->addProperty("position", &QueryResultWrapper::position);
 	classQueryResult->addProperty("normal", &QueryResultWrapper::normal);
@@ -312,10 +306,10 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classQueryResult->addProperty("material", &QueryResultWrapper::material);
 	registrar->registerClass(classQueryResult);
 
-	Ref< AutoRuntimeClass< BodyStateWrapper > > classBodyState = new AutoRuntimeClass< BodyStateWrapper >();
+	auto classBodyState = new AutoRuntimeClass< BodyStateWrapper >();
 	registrar->registerClass(classBodyState);
 
-	Ref< AutoRuntimeClass< PhysicsManager > > classPhysicsManager = new AutoRuntimeClass< PhysicsManager >();
+	auto classPhysicsManager = new AutoRuntimeClass< PhysicsManager >();
 	classPhysicsManager->addProperty("gravity", &PhysicsManager::setGravity, &PhysicsManager::getGravity);
 	classPhysicsManager->addProperty("bodies", &PhysicsManager::getBodies);
 	classPhysicsManager->addMethod("addCollisionListener", &PhysicsManager::addCollisionListener);
@@ -329,7 +323,7 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classPhysicsManager->addMethod("querySweep", &PhysicsManager_querySweep_2);
 	registrar->registerClass(classPhysicsManager);
 
-	Ref< AutoRuntimeClass< Body > > classBody = new AutoRuntimeClass< Body >();
+	auto classBody = new AutoRuntimeClass< Body >();
 	classBody->addProperty("transform", &Body::setTransform, &Body::getTransform);
 	classBody->addProperty("centerTransform", &Body::getCenterTransform);
 	classBody->addProperty("static", &Body::isStatic);
@@ -355,68 +349,68 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBody->addMethod("removeAllCollisionListeners", &Body::removeAllCollisionListeners);
 	registrar->registerClass(classBody);
 
-	Ref< AutoRuntimeClass< Joint > > classJoint = new AutoRuntimeClass< Joint >();
+	auto classJoint = new AutoRuntimeClass< Joint >();
 	classJoint->addProperty("body1", &Joint::getBody1);
 	classJoint->addProperty("body2", &Joint::getBody2);
 	registrar->registerClass(classJoint);
 
-	Ref< AutoRuntimeClass< BallJoint > > classBallJoint = new AutoRuntimeClass< BallJoint >();
+	auto classBallJoint = new AutoRuntimeClass< BallJoint >();
 	classBallJoint->addProperty("anchor", &BallJoint::setAnchor, &BallJoint::getAnchor);
 	registrar->registerClass(classBallJoint);
 
-	Ref< AutoRuntimeClass< ConeTwistJoint > > classConeTwistJoint = new AutoRuntimeClass< ConeTwistJoint >();
+	auto classConeTwistJoint = new AutoRuntimeClass< ConeTwistJoint >();
 	registrar->registerClass(classConeTwistJoint);
 
-	Ref< AutoRuntimeClass< Hinge2Joint > > classHinge2Joint = new AutoRuntimeClass< Hinge2Joint >();
+	auto classHinge2Joint = new AutoRuntimeClass< Hinge2Joint >();
 	classHinge2Joint->addMethod("addTorques", &Hinge2Joint::addTorques);
 	classHinge2Joint->addMethod("getAngleAxis1", &Hinge2Joint::getAngleAxis1);
 	classHinge2Joint->addMethod("setVelocityAxis1", &Hinge2Joint::setVelocityAxis1);
 	classHinge2Joint->addMethod("setVelocityAxis2", &Hinge2Joint::setVelocityAxis2);
 	registrar->registerClass(classHinge2Joint);
 
-	Ref< AutoRuntimeClass< HingeJoint > > classHingeJoint = new AutoRuntimeClass< HingeJoint >();
+	auto classHingeJoint = new AutoRuntimeClass< HingeJoint >();
 	classHingeJoint->addProperty("anchor", &HingeJoint::getAnchor);
 	classHingeJoint->addProperty("axis", &HingeJoint::getAxis);
 	classHingeJoint->addProperty("angle", &HingeJoint::getAngle);
 	classHingeJoint->addProperty("angleVelocity", &HingeJoint::getAngleVelocity);
 	registrar->registerClass(classHingeJoint);
 
-	Ref< AutoRuntimeClass< ArticulatedEntity > > classArticulatedEntity = new AutoRuntimeClass< ArticulatedEntity >();
+	auto classArticulatedEntity = new AutoRuntimeClass< ArticulatedEntity >();
 	classArticulatedEntity->addProperty("entities", &ArticulatedEntity::getEntities);
 	classArticulatedEntity->addProperty("joints", &ArticulatedEntity::getJoints);
 	registrar->registerClass(classArticulatedEntity);
 
-	Ref< AutoRuntimeClass< RigidEntity > > classRigidEntity = new AutoRuntimeClass< RigidEntity >();
+	auto classRigidEntity = new AutoRuntimeClass< RigidEntity >();
 	classRigidEntity->addProperty("body", &RigidEntity::getBody);
 	classRigidEntity->addProperty("entity", &RigidEntity::getEntity);
 	registrar->registerClass(classRigidEntity);
 
-	Ref< AutoRuntimeClass< CharacterComponent > > classCharacterComponent = new AutoRuntimeClass< CharacterComponent >();
+	auto classCharacterComponent = new AutoRuntimeClass< CharacterComponent >();
 	classCharacterComponent->addProperty("velocity", &CharacterComponent::setVelocity, &CharacterComponent::getVelocity);
 	classCharacterComponent->addProperty("headAngle", &CharacterComponent::setHeadAngle, &CharacterComponent::getHeadAngle);
 	classCharacterComponent->addProperty("grounded", &CharacterComponent::isGrounded);
 	registrar->registerClass(classCharacterComponent);
 
-	Ref< AutoRuntimeClass< RigidBodyComponent > > classRigidBodyComponent = new AutoRuntimeClass< RigidBodyComponent >();
+	auto classRigidBodyComponent = new AutoRuntimeClass< RigidBodyComponent >();
 	classRigidBodyComponent->addProperty("body", &RigidBodyComponent::getBody);
 	registrar->registerClass(classRigidBodyComponent);
 
-	Ref< AutoRuntimeClass< VehicleComponent > > classVehicleComponent = new AutoRuntimeClass< VehicleComponent >();
+	auto classVehicleComponent = new AutoRuntimeClass< VehicleComponent >();
 	classVehicleComponent->addProperty("steerAngle", &VehicleComponent::setSteerAngle, &VehicleComponent::getSteerAngle);
 	classVehicleComponent->addProperty("engineThrottle", &VehicleComponent::setEngineThrottle, &VehicleComponent::getEngineThrottle);
 	registrar->registerClass(classVehicleComponent);
 
-	Ref< AutoRuntimeClass< CollisionContactWrapper > > classCollisionContact = new AutoRuntimeClass< CollisionContactWrapper >();
+	auto classCollisionContact = new AutoRuntimeClass< CollisionContactWrapper >();
 	classCollisionContact->addProperty("length", &CollisionContactWrapper::length);
 	classCollisionContact->addMethod("position", &CollisionContactWrapper::position);
 	classCollisionContact->addMethod("normal", &CollisionContactWrapper::normal);
 	classCollisionContact->addMethod("depth", &CollisionContactWrapper::depth);
 	registrar->registerClass(classCollisionContact);
 
-	Ref< AutoRuntimeClass< CollisionListenerWrapper > > classCollisionListener = new AutoRuntimeClass< CollisionListenerWrapper >();
+	auto classCollisionListener = new AutoRuntimeClass< CollisionListenerWrapper >();
 	registrar->registerClass(classCollisionListener);
 
-	Ref< AutoRuntimeClass< CollisionListenerWrapper > > classCollisionListenerDelegate = new AutoRuntimeClass< CollisionListenerWrapper >();
+	auto classCollisionListenerDelegate = new AutoRuntimeClass< CollisionListenerWrapper >();
 	classCollisionListenerDelegate->addConstructor< IRuntimeDelegate* >();
 	registrar->registerClass(classCollisionListenerDelegate);
 }

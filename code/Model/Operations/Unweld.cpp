@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Unweld", Unweld, IModelOperation)
 bool Unweld::apply(Model& model) const
 {
 	AlignedVector< Vertex > inputVertices = model.getVertices();
-	
+
 	model.setVertices(AlignedVector< Vertex >());
 	for (auto& polygon : model.getPolygons())
 	{

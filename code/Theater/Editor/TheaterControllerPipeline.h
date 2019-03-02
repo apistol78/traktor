@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_theater_TheaterControllerPipeline_H
-#define traktor_theater_TheaterControllerPipeline_H
+#pragma once
 
 #include "Editor/IPipeline.h"
 
@@ -63,4 +56,3 @@ public:
 	}
 }
 
-#endif	// traktor_theater_TheaterControllerPipeline_H

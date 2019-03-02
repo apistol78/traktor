@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_NSOutlineViewDelegateProxy_H
-#define traktor_ui_NSOutlineViewDelegateProxy_H
+#pragma once
 
 #import <Cocoa/Cocoa.h>
 
@@ -13,16 +6,16 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 struct INSOutlineViewEventsCallback
 {
 	virtual void event_selectionDidChange() = 0;
-	
+
 	virtual void event_rightMouseDown(NSEvent* event) = 0;
-	
+
 	virtual void event_willDisplayCell(NSCell* cell, NSTableColumn* tableColumn, void* item) = 0;
 };
-	
+
 	}
 }
 
@@ -43,4 +36,3 @@ struct INSOutlineViewEventsCallback
 
 @end
 
-#endif	// traktor_ui_NSOutlineViewDelegateProxy_H

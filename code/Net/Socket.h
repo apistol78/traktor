@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_Socket_H
-#define traktor_net_Socket_H
+#pragma once
 
 #include "Core/Object.h"
 
@@ -46,11 +39,11 @@ public:
 
 	/*! \brief Gracefully close socket. */
 	virtual void close();
-	
+
 	/*! \brief Query state of socket.
 	 *
 	 * \param read Check for pending reads.
-	 * \param write Check pending writes. 
+	 * \param write Check pending writes.
 	 * \param except Check for exceptions.
 	 * \param timeout Timeout in milliseconds.
 	 * \return Non zero if read, write or exception are pending.
@@ -64,7 +57,7 @@ public:
 	 * \return Number of bytes sent, 0 if connection gracefully terminated or -1 connection aborted.
 	 */
 	int send(const void* data, int length);
-	
+
 	/*! \brief Receive block of data.
 	 *
 	 * \param data Pointer to block of data.
@@ -85,7 +78,7 @@ public:
 	 * \return Byte value or -1 if connection aborted.
 	 */
 	int recv();
-	
+
 	/*! \brief Control IO of socket.
 	 *
 	 * \param cmd IO command.
@@ -107,4 +100,3 @@ protected:
 	}
 }
 
-#endif	// traktor_net_Socket_H

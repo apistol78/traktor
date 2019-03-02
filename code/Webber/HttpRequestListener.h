@@ -1,5 +1,4 @@
-#ifndef traktor_wbr_HttpRequestListener_H
-#define traktor_wbr_HttpRequestListener_H
+#pragma once
 
 #include <functional>
 #include <map>
@@ -20,7 +19,7 @@ class OutputStream;
 
 	namespace html
 	{
-	
+
 class Document;
 
 	}
@@ -29,7 +28,7 @@ class Document;
 	{
 
 class IApplication;
-	
+
 class T_DLLCLASS HttpRequestListener : public net::HttpServer::IRequestListener
 {
 	T_RTTI_CLASS;
@@ -59,4 +58,3 @@ private:
 	}
 }
 
-#endif	// traktor_wbr_HttpRequestListener_H

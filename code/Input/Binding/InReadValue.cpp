@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Input/Binding/InReadValue.h"
@@ -56,6 +50,6 @@ void InReadValue::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"valueId", m_valueId);
 }
-	
+
 	}
 }

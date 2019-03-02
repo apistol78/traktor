@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Drawing/Formats/ImageFormatTga.h"
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Image.h"
@@ -165,7 +159,7 @@ bool ImageFormatTga::write(IStream* stream, Image* image)
 		clone->getData(),
 		clone->getWidth() * clone->getHeight() * clone->getPixelFormat().getByteSize()
 	);
-	
+
 	return true;
 }
 

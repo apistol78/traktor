@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include <list>
 #include "Core/Io/IStream.h"
@@ -141,7 +135,7 @@ bool FlashPipeline::buildOutput(
 		{
 			// Create a single frame and place shape.
 			Ref< Frame > frame = new Frame();
-			
+
 			Frame::PlaceObject p;
 			p.hasFlags = Frame::PfHasCharacterId;
 			p.depth = 1;
@@ -179,7 +173,7 @@ bool FlashPipeline::buildOutput(
 	else if (const FlashEmptyMovieAsset* emptyMovieAsset = dynamic_type_cast< const FlashEmptyMovieAsset* >(sourceAsset))
 	{
 		const Color4ub& bc = emptyMovieAsset->getBackgroundColor();
-		
+
 		Ref< Sprite > sprite = new Sprite(0, emptyMovieAsset->getFrameRate());
 
 		Ref< Frame > frame = new Frame();

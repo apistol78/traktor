@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_SpriteFactory_H
-#define traktor_spark_SpriteFactory_H
+#pragma once
 
 #include "Spark/ICharacterFactory.h"
 
@@ -43,4 +36,3 @@ private:
 	}
 }
 
-#endif	// traktor_spark_SpriteFactory_H

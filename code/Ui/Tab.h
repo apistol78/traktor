@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Tab_H
-#define traktor_ui_Tab_H
+#pragma once
 
 #include "Ui/Widget.h"
 
@@ -48,7 +41,7 @@ public:
 	virtual Rect getInnerRect() const override;
 
 	int32_t addImage(IBitmap* image, int32_t imageCount);
-	
+
 	int32_t addPage(TabPage* page);
 
 	int32_t getPageCount() const;
@@ -66,13 +59,13 @@ public:
 	Ref< TabPage > getActivePage();
 
 	Ref< TabPage > cycleActivePage(bool forward);
-	
+
 	void addSelChangeEventHandler(EventHandler* eventHandler);
 
 	void addCloseEventHandler(EventHandler* eventHandler);
 
 	virtual Size getMinimumSize() const override;
-	
+
 	virtual Size getPreferedSize() const override;
 
 private:
@@ -81,9 +74,9 @@ private:
 		Ref< TabPage > page;
 		int32_t right;
 		int32_t depth;
-	
+
 		PageState(TabPage* page, int32_t right = 0);
-	
+
 		bool operator == (const PageState& rh) const;
 	};
 
@@ -125,4 +118,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_Tab_H

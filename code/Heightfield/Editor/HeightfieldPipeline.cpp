@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -114,7 +108,7 @@ bool HeightfieldPipeline::buildOutput(
 
 	outputData->close();
 	outputData = 0;
-	
+
 	resource->m_worldExtent = heightfieldAsset->getWorldExtent();
 
 	instance->setObject(resource);

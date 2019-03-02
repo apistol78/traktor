@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_NodeCategories_H
-#define traktor_render_NodeCategories_H
+#pragma once
 
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/Nodes.h"
@@ -106,4 +99,3 @@ const NodeCategory c_nodeCategories[] =
 	}
 }
 
-#endif	// traktor_render_NodeCategories_H

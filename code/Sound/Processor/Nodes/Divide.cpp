@@ -46,7 +46,7 @@ bool Divide::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Divide::createCursor() const 
+Ref< ISoundBufferCursor > Divide::createCursor() const
 {
 	return new DivideCursor();
 }

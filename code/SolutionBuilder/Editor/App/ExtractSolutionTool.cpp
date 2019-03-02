@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/IStream.h>
 #include <Core/Misc/String.h>
@@ -28,7 +22,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ExtractSolutionTool", ExtractSolutionTool, C
 bool ExtractSolutionTool::execute(ui::Widget* parent, Solution* solution)
 {
 	Ref< ExtractSolutionDialog > dialog = new ExtractSolutionDialog();
-	
+
 	if (!dialog->create(parent, solution))
 		return false;
 

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_IMovieLoader
-#define traktor_flash_IMovieLoader
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -55,4 +48,3 @@ public:
 	}
 }
 
-#endif	// traktor_flash_IMovieLoader

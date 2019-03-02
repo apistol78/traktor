@@ -8,14 +8,14 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 struct WrContext
 {
 	NSView* view;
 	NSOpenGLContext* context;
 	int32_t waitVBlanks;
 };
-		
+
 		}
 
 void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depthBits, int stencilBits, int multisample)
@@ -30,19 +30,19 @@ void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depth
 		NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
 		nil
 	};
-	
+
 	NSOpenGLPixelFormat* nspf = [[NSOpenGLPixelFormat alloc] initWithAttributes: attribs];
-	
+
 	WrContext* shwrc = (WrContext*)sharedContext;
 	NSOpenGLContext* nsshctx = shwrc ? shwrc->context : 0;
 	NSOpenGLContext* nsctx = [[NSOpenGLContext alloc] initWithFormat: nspf shareContext: nsshctx];
-	
+
 	WrContext* wrc = new WrContext();
 	wrc->view = (NSView*)nativeWindowHandle;
 	wrc->context = nsctx;
 	wrc->waitVBlanks = 0;
 
-	[pool release];	
+	[pool release];
 
 	return (void*)wrc;
 }
@@ -113,6 +113,6 @@ bool cglwCheckHardwarePath()
 	CGLGetParameter(CGLGetCurrentContext(), kCGLCPGPUVertexProcessing, &vertexGPUProcessing);
 	return bool(fragmentGPUProcessing && vertexGPUProcessing);
 }
-	
+
 	}
 }

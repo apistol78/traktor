@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Physics/Hinge2JointDesc.h"
 #include "Physics/Editor/Hinge2JointRenderer.h"
 #include "Render/PrimitiveRenderer.h"
@@ -31,7 +25,7 @@ void Hinge2JointRenderer::draw(
 
 	const Scalar c_axis1Length(5.0f);
 	const Scalar c_axis2Length(1.0f);
-	
+
 	Vector4 jointAnchor = hinge2JointDesc->getAnchor().xyz1();
 	Vector4 jointAxis1 = hinge2JointDesc->getAxis1().xyz0();
 	Vector4 jointAxis2 = hinge2JointDesc->getAxis2().xyz0();
@@ -62,7 +56,7 @@ void Hinge2JointRenderer::draw(
 	const Scalar c_axisLength(5.0f);
 
 	primitiveRenderer->pushWorld((body1Transform * body1Transform0.inverse()).toMatrix44());
-	
+
 	Vector4 jointAnchor = hinge2JointDesc->getAnchor().xyz1();
 	Vector4 jointAxis1 = hinge2JointDesc->getAxis1().xyz0();
 	Vector4 jointAxis2 = hinge2JointDesc->getAxis2().xyz0();

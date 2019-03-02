@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Capture/Error.h"
 #include "Render/Capture/RenderTargetSetCapture.h"
@@ -24,13 +18,13 @@ RenderTargetSetCapture::RenderTargetSetCapture(RenderTargetSet* renderTargetSet)
 void RenderTargetSetCapture::destroy()
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set already destroyed.");
-	
+
 	m_colorTextures[0].reset();
 	m_colorTextures[1].reset();
 	m_colorTextures[2].reset();
 	m_colorTextures[3].reset();
 	m_depthTexture.reset();
-	
+
 	safeDestroy(m_renderTargetSet);
 }
 
@@ -39,7 +33,7 @@ int RenderTargetSetCapture::getWidth() const
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 	return m_renderTargetSet ? m_renderTargetSet->getWidth() : 0;
 }
-	
+
 int RenderTargetSetCapture::getHeight() const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
@@ -126,7 +120,7 @@ bool RenderTargetSetCapture::read(int index, void* buffer) const
 bool RenderTargetSetCapture::haveColorTexture(int index) const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
-	return m_renderTargetSet ? m_renderTargetSet->getColorTexture(index) != 0 : false;	
+	return m_renderTargetSet ? m_renderTargetSet->getColorTexture(index) != 0 : false;
 }
 
 bool RenderTargetSetCapture::haveDepthTexture() const

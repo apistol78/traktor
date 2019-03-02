@@ -25,7 +25,7 @@ uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFla
 		}
 		memoryTypeBits = memoryTypeBits >> 1;
 	}
-	return 0; 
+	return 0;
 }
 
 		}
@@ -93,16 +93,16 @@ bool RenderTargetDepthVk::create(VkPhysicalDevice physicalDevice, VkDevice devic
 
 	VkMemoryRequirements memoryRequirements = {};
 	vkGetImageMemoryRequirements(device, m_image, &memoryRequirements);
- 
+
 	VkMemoryAllocateInfo imageAllocateInfo = {};
 	imageAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	imageAllocateInfo.allocationSize = memoryRequirements.size;
 	imageAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
- 
+
 	VkDeviceMemory imageMemory = {};
 	if (vkAllocateMemory(device, &imageAllocateInfo, nullptr, &imageMemory) != VK_SUCCESS)
 		return 0;
- 
+
 	if (vkBindImageMemory(device, m_image, imageMemory, 0) != VK_SUCCESS)
 		return 0;
 

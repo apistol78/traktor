@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #ifndef traktor_flash_ICharacterFactory_H
 #define traktor_flash_ICharacterFactory_H
 
@@ -26,7 +20,7 @@ class Matrix33;
 
 	namespace flash
 	{
-	
+
 class ActionContext;
 class ActionObject;
 class Character;
@@ -36,7 +30,7 @@ class IActionVMImage;
 
 /*! \brief
  * \ingroup Flash
- */	
+ */
 class T_DLLCLASS ICharacterFactory : public Object
 {
 	T_RTTI_CLASS;
@@ -56,7 +50,7 @@ public:
 
 	virtual void removeInstance(CharacterInstance* instance, int32_t depth) const = 0;
 };
-	
+
 	}
 }
 

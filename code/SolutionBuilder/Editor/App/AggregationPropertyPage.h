@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef AggregationPropertyPage_H
-#define AggregationPropertyPage_H
+#pragma once
 
 #include <Ui/Container.h>
 #include <Ui/CheckBox.h>
@@ -54,4 +47,3 @@ private:
 	}
 }
 
-#endif	// AggregationPropertyPage_H

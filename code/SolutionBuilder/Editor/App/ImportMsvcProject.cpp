@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <Ui/MessageBox.h>
 #include <Ui/FileDialog.h>
 #include <Xml/Document.h>
@@ -30,7 +24,7 @@ namespace traktor
 void traverseMsvcProject(Project* project, Filter* filter, xml::Element* group, const Path& vcprojPath, const Path& solutionPath)
 {
 	RefArray< xml::Element > files, filters;
-		
+
 	group->get(L"File", files);
 	for (RefArray< xml::Element >::iterator i = files.begin(); i != files.end(); ++i)
 	{
@@ -87,7 +81,7 @@ bool ImportMsvcProject::execute(ui::Widget* parent, Solution* solution, const st
 
 	ui::FileDialog fileDialog;
 	fileDialog.create(parent, type_name(this), L"Import MSVC project", L"MS Visual Studio projects;*.vcproj");
-	
+
 	Path filePath;
 	if (fileDialog.showModal(filePath))
 	{

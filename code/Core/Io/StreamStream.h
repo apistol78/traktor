@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_StreamStream_H
-#define traktor_StreamStream_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Io/IStream.h"
@@ -59,4 +52,3 @@ protected:
 
 }
 
-#endif	// traktor_StreamStream_H

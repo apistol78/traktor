@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #if defined(_WIN32)
 #	include <cfloat>
 #endif
@@ -261,7 +255,7 @@ Ref< PipelineDependency > PipelineDependsParallel::findOrCreateDependency(
 
 	Ref< PipelineDependency > dependency = new PipelineDependency();
 	dependency->flags = flags;
-	
+
 	dependencyIndex = m_dependencySet->add(guid, dependency);
 	if (parentDependency)
 		parentDependency->children.insert(dependencyIndex);

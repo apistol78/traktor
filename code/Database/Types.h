@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_Types_H
-#define traktor_db_Types_H
+#pragma once
 
 namespace traktor
 {
@@ -19,7 +12,7 @@ enum CreateInstanceFlags
 {
 	CifDefault = 0,			//!< Default flag.
 	CifReplaceExisting = 1,	//!< Replace existing instance.
-	CifKeepExistingGuid = 2	//!< Keep existing instance's guid.	
+	CifKeepExistingGuid = 2	//!< Keep existing instance's guid.
 };
 
 enum CommitInstanceFlags
@@ -40,4 +33,3 @@ enum InstanceFlags
 	}
 }
 
-#endif	// traktor_db_Types_H

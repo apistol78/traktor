@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_SwizzleFilter_H
-#define traktor_drawing_SwizzleFilter_H
+#pragma once
 
 #include <string>
 #include "Drawing/IImageFilter.h"
@@ -39,8 +32,7 @@ protected:
 private:
 	wchar_t m_swizzle[4];
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_SwizzleFilter_H

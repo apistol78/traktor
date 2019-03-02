@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_run_IInput_H
-#define traktor_run_IInput_H
+#pragma once
 
 #include <string>
 #include "Core/Object.h"
@@ -33,4 +26,3 @@ public:
 	}
 }
 
-#endif	// traktor_run_IInput_H

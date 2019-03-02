@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_PerforceTypes_H
-#define traktor_db_PerforceTypes_H
+#pragma once
 
 namespace traktor
 {
@@ -26,4 +19,3 @@ enum PerforceAction
 	}
 }
 
-#endif	// traktor_db_PerforceTypes_H

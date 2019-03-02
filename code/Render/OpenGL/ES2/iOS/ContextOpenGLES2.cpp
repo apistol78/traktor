@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Platform.h"
 #include "Core/RefArray.h"
@@ -49,7 +43,7 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(const SystemApplication&
 		return 0;
 	initializeExtensions();
 	context->leave();
-    
+
 	log::info << L"OpenGL ES 2.0 render context created successfully (embedded)" << Endl;
 	return context;
 }

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_amalgam_ProfilerDialog_H
-#define traktor_amalgam_ProfilerDialog_H
+#pragma once
 
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Ui/Dialog.h"
@@ -14,7 +7,7 @@ namespace traktor
 {
 	namespace ui
 	{
-		
+
 class BuildChartControl;
 class ToolBar;
 class ToolBarButtonClickEvent;
@@ -58,4 +51,3 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_ProfilerDialog_H

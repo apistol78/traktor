@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
@@ -81,6 +75,6 @@ void InThreshold::serialize(ISerializer& s)
 	s >> MemberRef< IInputNode >(L"source", m_source);
 	s >> Member< float >(L"duration", m_duration);
 }
-	
+
 	}
 }

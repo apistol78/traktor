@@ -81,6 +81,6 @@ private:
 	mutable AtomicRefCount m_refCount;
 
 	void finalRelease() const;
-};	
+};
 
 }

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_InplaceRef_H
-#define traktor_InplaceRef_H
+#pragma once
 
 #include "Core/IRefCount.h"
 #include "Core/Meta/Traits.h"
@@ -49,7 +42,7 @@ public:
 	{
 		return m_ref;
 	}
-	
+
 	reference operator * () const
 	{
 		return *m_ref;
@@ -59,17 +52,17 @@ public:
 	{
 		return m_ref;
 	}
-	
+
 	const pointer operator -> () const
 	{
 		return m_ref;
 	}
-	
+
 	operator pointer() const
 	{
 		return m_ref;
 	}
-	
+
 	const InplaceRef& operator = (const InplaceRef& ref) const
 	{
 		T_SAFE_ADDREF(ref.m_ref);
@@ -77,7 +70,7 @@ public:
 		m_ref = ref.m_ref;
 		return *this;
 	}
-	
+
 	const InplaceRef& operator = (pointer ptr) const
 	{
 		T_SAFE_ADDREF(ptr);
@@ -85,7 +78,7 @@ public:
 		m_ref = ptr;
 		return *this;
 	}
-	
+
 private:
 	pointer_reference m_ref;
 };
@@ -145,4 +138,3 @@ typename IsPointer< T >::base_t* checked_type_cast(const InplaceRef< T0 >& obj)
 
 }
 
-#endif	// traktor_InplaceRef_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_TimeQueryDx11_H
-#define traktor_render_TimeQueryDx11_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Core/Misc/ComRef.h"
@@ -34,7 +27,7 @@ public:
 
 	virtual int32_t stamp() override final;
 
-	virtual void end() override final;	
+	virtual void end() override final;
 
 	virtual bool ready() const override final;
 
@@ -55,4 +48,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_TimeQueryDx11_H

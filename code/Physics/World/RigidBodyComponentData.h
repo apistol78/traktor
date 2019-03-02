@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_RigidBodyComponentData_H
-#define traktor_physics_RigidBodyComponentData_H
+#pragma once
 
 #include "World/IEntityComponentData.h"
 
@@ -77,4 +70,3 @@ private:
 	}
 }
 
-#endif	// traktor_physics_RigidBodyComponentData_H

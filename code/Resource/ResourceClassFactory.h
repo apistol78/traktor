@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_resource_ResourceClassFactory_H
-#define traktor_resource_ResourceClassFactory_H
+#pragma once
 
 #include "Core/Class/IRuntimeClassFactory.h"
 
@@ -33,4 +26,3 @@ public:
 	}
 }
 
-#endif	// traktor_resource_ResourceClassFactory_H

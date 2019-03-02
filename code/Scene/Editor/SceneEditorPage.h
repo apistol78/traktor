@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_SceneEditorPage_H
-#define traktor_scene_SceneEditorPage_H
+#pragma once
 
 #include "Editor/IEditorPage.h"
 #include "Ui/Events/AllEvents.h"
@@ -99,7 +92,8 @@ private:
 	Ref< ui::Tab > m_tabMisc;
 	Ref< EntityDependencyInvestigator > m_entityDependencyPanel;
 	Ref< ui::GridView > m_gridGuides;
-	Ref< ui::Menu > m_entityMenu;
+	Ref< ui::Menu > m_entityMenuDefault;
+	Ref< ui::Menu > m_entityMenuGroup;
 	Ref< ui::Menu > m_entityMenuExternal;
 	Ref< ui::Container > m_controllerPanel;
 	Ref< ui::ToolBar > m_entityToolBar;
@@ -134,6 +128,8 @@ private:
 
 	bool addEntity(const TypeInfo* entityType);
 
+	bool createExternal();
+
 	bool moveToEntity();
 
 	void eventEntityToolClick(ui::ToolBarButtonClickEvent* event);
@@ -162,4 +158,3 @@ private:
 	}
 }
 
-#endif	// traktor_scene_SceneEditorPage_H

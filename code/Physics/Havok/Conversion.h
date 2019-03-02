@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_physics_Conversion_H
-#define traktor_physics_Conversion_H
+#pragma once
 
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix33.h"
@@ -93,4 +86,3 @@ T_FORCE_INLINE hkTransform toHkTransform(const Transform& m)
 	}
 }
 
-#endif	// traktor_physics_Conversion_H

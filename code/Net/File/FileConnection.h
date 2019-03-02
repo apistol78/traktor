@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_FileConnection_H
-#define traktor_net_FileConnection_H
+#pragma once
 
 #include "Net/UrlConnection.h"
 
@@ -32,7 +25,7 @@ public:
 	virtual Url getUrl() const override final;
 
 	virtual Ref< IStream > getStream() override final;
-	
+
 private:
 	Url m_url;
 	Ref< IStream > m_stream;
@@ -41,4 +34,3 @@ private:
 	}
 }
 
-#endif	// traktor_net_FileConnection_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Ref_H
-#define traktor_Ref_H
+#pragma once
 
 #include "Core/InplaceRef.h"
 
@@ -35,7 +28,7 @@ public:
 	:	m_ptr(0)
 	{
 	}
-	
+
 	Ref(const Ref& ref)
 	:	m_ptr(ref.m_ptr)
 	{
@@ -74,7 +67,7 @@ public:
 	{
 		T_SAFE_RELEASE(m_ptr);
 	}
-	
+
 	void reset()
 	{
 		T_SAFE_RELEASE(m_ptr);
@@ -102,7 +95,7 @@ public:
 	{
 		return m_ptr;
 	}
-	
+
 	const pointer c_ptr() const
 	{
 		return m_ptr;
@@ -115,12 +108,12 @@ public:
 	{
 		return *m_ptr;
 	}
-	
+
 	pointer operator -> ()
 	{
 		return m_ptr;
 	}
-	
+
 	const pointer operator -> () const
 	{
 		return m_ptr;
@@ -159,7 +152,7 @@ public:
 		replace(static_cast< pointer >(ref));
 		return *this;
 	}
-	
+
 	template < typename InplaceClassType >
 	Ref& operator = (const InplaceRef< InplaceClassType >& ref)
 	{
@@ -176,7 +169,7 @@ public:
 	{
 		return m_ptr;
 	}
-	
+
 	operator const pointer () const
 	{
 		return m_ptr;
@@ -269,4 +262,3 @@ typename IsPointer< T >::base_t* mandatory_non_null_type_cast(const Ref< T0 >& o
 
 }
 
-#endif	// traktor_Ref_H

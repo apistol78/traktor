@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_KeyboardInputSourceData_H
-#define traktor_input_KeyboardInputSourceData_H
+#pragma once
 
 #include <vector>
 #include "Input/InputTypes.h"
@@ -23,7 +16,7 @@ namespace traktor
 {
 	namespace input
 	{
-	
+
 /*! \brief
  * \ingroup Input
  */
@@ -35,7 +28,7 @@ public:
 	void addControlType(InputDefaultControlType controlType);
 
 	const std::vector< InputDefaultControlType >& getControlTypes() const;
-	
+
 	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -47,4 +40,3 @@ private:
 	}
 }
 
-#endif	// traktor_input_KeyboardInputSourceData_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Render/Capture/ProgramResourceCapture.h"
 #include "Render/Capture/Editor/ProgramCompilerCapture.h"
 #include "Render/Editor/Shader/Nodes.h"
@@ -13,7 +7,7 @@ namespace traktor
 {
 	namespace render
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramCompilerCapture", ProgramCompilerCapture, IProgramCompiler)
 
 ProgramCompilerCapture::ProgramCompilerCapture(IProgramCompiler* compiler)

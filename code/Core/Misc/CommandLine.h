@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef _traktor_CommandLine_H
-#define _traktor_CommandLine_H
+#pragma once
 
 #include <cstring>
 #include <string>
@@ -307,10 +300,9 @@ private:
 			}
 			else
 				m_args.push_back(trim(argv[i]));
-		}		
-	}	
+		}
+	}
 };
 
 }
 
-#endif	// _traktor_CommandLine_H

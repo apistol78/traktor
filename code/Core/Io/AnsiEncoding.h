@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_AnsiEncoding_H
-#define traktor_AnsiEncoding_H
+#pragma once
 
 #include "Core/Io/IEncoding.h"
 
@@ -35,4 +28,3 @@ public:
 
 }
 
-#endif	// traktor_AnsiEncoding_H

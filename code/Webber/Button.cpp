@@ -7,7 +7,7 @@ namespace traktor
 {
 	namespace wbr
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.wbr.Button", Button, Widget)
 
 Button::Button(const std::wstring& text)

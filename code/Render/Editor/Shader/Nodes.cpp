@@ -480,7 +480,7 @@ void Conditional::serialize(ISerializer& s)
 		{ L"CoEqual", CoEqual },
 		{ L"CoNotEqual", CoNotEqual },
 		{ L"CoGreater", CoGreater },
-		{ L"CoGreaterEqual", CoGreaterEqual }, 
+		{ L"CoGreaterEqual", CoGreaterEqual },
 		{ 0, 0 }
 	};
 
@@ -610,7 +610,7 @@ void Discard::serialize(ISerializer& s)
 		{ L"CoEqual", CoEqual },
 		{ L"CoNotEqual", CoNotEqual },
 		{ L"CoGreater", CoGreater },
-		{ L"CoGreaterEqual", CoGreaterEqual }, 
+		{ L"CoGreaterEqual", CoGreaterEqual },
 		{ 0, 0 }
 	};
 
@@ -744,7 +744,7 @@ void IndexedUniform::setFrequency(UpdateFrequency frequency)
 {
 	m_frequency = frequency;
 }
-	
+
 UpdateFrequency IndexedUniform::getFrequency() const
 {
 	return m_frequency;
@@ -789,10 +789,10 @@ void IndexedUniform::serialize(ISerializer& s)
 
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
 	s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
-	
+
 	if (s.getVersion() >= 1)
 		s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
-	
+
 	s >> Member< int32_t >(L"length", m_length);
 }
 
@@ -1366,7 +1366,7 @@ void PixelOutput::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 6)
 	{
-		const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] = 
+		const MemberEnum< PrecisionHint >::Key c_PrecisionHintKeys[] =
 		{
 			{ L"PhUndefined", PhUndefined },
 			{ L"PhLow", PhLow },
@@ -2056,7 +2056,7 @@ void Uniform::setFrequency(UpdateFrequency frequency)
 {
 	m_frequency = frequency;
 }
-	
+
 UpdateFrequency Uniform::getFrequency() const
 {
 	return m_frequency;
@@ -2081,7 +2081,7 @@ void Uniform::serialize(ISerializer& s)
 		{ L"PtTextureCube", PtTextureCube },
 		{ 0, 0 }
 	};
-	
+
 	const MemberEnum< UpdateFrequency >::Key kUpdateFrequency_Keys[] =
 	{
 		{ L"UfOnce", UfOnce },
@@ -2092,7 +2092,7 @@ void Uniform::serialize(ISerializer& s)
 
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
 	s >> MemberEnum< ParameterType >(L"type", m_type, kParameterType_Keys);
-	
+
 	if (s.getVersion() >= 1)
 		s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
 }

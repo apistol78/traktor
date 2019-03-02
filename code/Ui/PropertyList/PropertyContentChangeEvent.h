@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_PropertyContentChangeEvent_H
-#define traktor_ui_PropertyContentChangeEvent_H
+#pragma once
 
 #include "Ui/Events/ContentChangeEvent.h"
 
@@ -30,10 +23,10 @@ class PropertyItem;
 class T_DLLCLASS PropertyContentChangeEvent : public ContentChangeEvent
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	PropertyContentChangeEvent(EventSubject* sender, PropertyItem* item);
-	
+
 	PropertyItem* getItem() const;
 
 private:
@@ -43,4 +36,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_PropertyContentChangeEvent_H

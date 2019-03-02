@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 #include "Drawing/Image.h"
@@ -109,7 +103,7 @@ bool ImageFormatTri::write(IStream* stream, Image* image)
 	writer << pf.getBlueShift();
 	writer << pf.getAlphaBits();
 	writer << pf.getAlphaShift();
-	
+
 	writer.write(
 		image->getData(),
 		image->getWidth() * image->getHeight() * pf.getByteSize()

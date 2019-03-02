@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef SolutionBuilderMsvcVCXProj_H
-#define SolutionBuilderMsvcVCXProj_H
+#pragma once
 
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcProject.h"
 
@@ -102,4 +95,3 @@ protected:
 	}
 }
 
-#endif	// SolutionBuilderMsvcVCXProj_H

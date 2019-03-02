@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
@@ -170,7 +164,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	// 	return false;
 	// }
 	log::info << layerCount << L" vulkan layer(s)" << Endl;
- 
+
 	AutoArrayPtr< VkLayerProperties > layersAvailable(new VkLayerProperties[layerCount]);
 	vkEnumerateInstanceLayerProperties(&layerCount, layersAvailable.ptr());
 
@@ -225,7 +219,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		instanceInfo.enabledLayerCount = sizeof_array(c_validationLayerNames);
 		instanceInfo.ppEnabledLayerNames = c_validationLayerNames;
 	}
-	
+
 	// Create Vulkan instance.
 	if ((result = vkCreateInstance(&instanceInfo, 0, &m_instance)) != VK_SUCCESS)
 	{
@@ -261,7 +255,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	{
 		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface." << Endl;
 		return false;
-	}	
+	}
 #endif
 
 #if defined(_WIN32) || defined(__LINUX__)
@@ -283,14 +277,14 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	{
 		VkPhysicalDeviceProperties deviceProperties = {};
 		vkGetPhysicalDeviceProperties(physicalDevices[i], &deviceProperties);
- 
+
 		uint32_t queueFamilyCount = 0;
 		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevices[i], &queueFamilyCount, 0);
 		log::info << i << L": " << mbstows(deviceProperties.deviceName) << L", " << queueFamilyCount << L" physical device family properties."<< Endl;
 
 		AutoArrayPtr< VkQueueFamilyProperties > queueFamilyProperties(new VkQueueFamilyProperties[queueFamilyCount]);
 		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevices[i], &queueFamilyCount, queueFamilyProperties.ptr());
- 
+
 		log::info << IncreaseIndent;
 		for (uint32_t j = 0; j < queueFamilyCount; ++j)
 		{
@@ -298,7 +292,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 			vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevices[i], j, m_surface, &supportsPresent);
 
 			log::info << j << L": supportsPresent = " << (supportsPresent ? L"yes" : L"no") << Endl;
- 
+
 			if(supportsPresent && (queueFamilyProperties[j].queueFlags & VK_QUEUE_GRAPHICS_BIT))
 			{
 				m_physicalDevice = physicalDevices[i];
@@ -330,7 +324,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		deviceInfo.enabledLayerCount = sizeof_array(c_validationLayerNames);
 		deviceInfo.ppEnabledLayerNames = c_validationLayerNames;
 	}
-    
+
     deviceInfo.enabledExtensionCount = sizeof_array(c_deviceExtensions);
     deviceInfo.ppEnabledExtensionNames = c_deviceExtensions;
 
@@ -455,7 +449,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 
 	AutoArrayPtr< VkSurfaceFormatKHR > surfaceFormats(new VkSurfaceFormatKHR[formatCount]);
 	vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &formatCount, surfaceFormats.ptr());
- 
+
 	// If the format list includes just one entry of VK_FORMAT_UNDEFINED, the surface has
 	// no preferred format. Otherwise, at least one supported format will be returned.
 	VkFormat colorFormat;
@@ -470,16 +464,16 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 
 	VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &surfaceCapabilities);
- 
+
 	// we are effectively looking for double-buffering:
-	// if surfaceCapabilities.maxImageCount == 0 there is actually no limit on the number of images! 
+	// if surfaceCapabilities.maxImageCount == 0 there is actually no limit on the number of images!
 	uint32_t desiredImageCount = 2;
 	if (desiredImageCount < surfaceCapabilities.minImageCount)
 		desiredImageCount = surfaceCapabilities.minImageCount;
 	else if( surfaceCapabilities.maxImageCount != 0 && desiredImageCount > surfaceCapabilities.maxImageCount)
 		desiredImageCount = surfaceCapabilities.maxImageCount;
 
- 
+
 	VkExtent2D surfaceResolution =  surfaceCapabilities.currentExtent;
 	if (surfaceResolution.width == -1)
 	{
@@ -491,7 +485,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	//	context.width = surfaceResolution.width;
 	//	context.height = surfaceResolution.height;
 	//}
- 
+
 	VkSurfaceTransformFlagBitsKHR preTransform = surfaceCapabilities.currentTransform;
 	if (surfaceCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR)
 		preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
@@ -502,7 +496,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 
 	AutoArrayPtr< VkPresentModeKHR > presentModes(new VkPresentModeKHR[presentModeCount]);
 	vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, presentModes.ptr());
- 
+
 	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;   // always supported.
 	for (uint32_t i = 0; i < presentModeCount; ++i)
 	{
@@ -510,7 +504,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 		{
 			presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
 			break;
-		}   
+		}
 	}
 
 	VkSwapchainCreateInfoKHR swapChainCreateInfo = {};
@@ -532,7 +526,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 		log::error << L"Failed to create Vulkan; unable to create swap chain." << Endl;
 		return nullptr;
 	}
-	
+
 	// Get device submit queue.
 	vkGetDeviceQueue(m_device, m_physicalDeviceQueueIndex, 0, &presentQueue);
 
@@ -585,16 +579,16 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 
 	VkMemoryRequirements memoryRequirements = {};
 	vkGetImageMemoryRequirements(m_device, depthImage, &memoryRequirements);
- 
+
 	VkMemoryAllocateInfo imageAllocateInfo = {};
 	imageAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	imageAllocateInfo.allocationSize = memoryRequirements.size;
 	imageAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
- 
+
 	VkDeviceMemory imageMemory = {};
 	if (vkAllocateMemory(m_device, &imageAllocateInfo, nullptr, &imageMemory) != VK_SUCCESS)
 		return 0;
- 
+
 	if (vkBindImageMemory(m_device, depthImage, imageMemory, 0) != VK_SUCCESS)
 		return 0;
 
@@ -624,7 +618,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 		))
 			return 0;
 	}
-	
+
 	VkDescriptorSetLayoutBinding layoutBindings[6];
 	for (int32_t i = 0; i < 3; ++i)
 	{
@@ -713,12 +707,12 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 
 	VkMemoryRequirements vertexBufferMemoryRequirements = {};
 	vkGetBufferMemoryRequirements(m_device, vertexBuffer, &vertexBufferMemoryRequirements);
- 
+
 	VkMemoryAllocateInfo bufferAllocateInfo = {};
 	bufferAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	bufferAllocateInfo.allocationSize = vertexBufferMemoryRequirements.size;
 	bufferAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, vertexBufferMemoryRequirements);
- 
+
 	VkDeviceMemory vertexBufferMemory;
 	if (vkAllocateMemory(m_device, &bufferAllocateInfo, nullptr, &vertexBufferMemory) != VK_SUCCESS)
 		return 0;
@@ -727,7 +721,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 	vertexBindingDescription.binding = 0;
 	vertexBindingDescription.stride = getVertexSize(vertexElements);
 	vertexBindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
- 
+
 	AlignedVector< VkVertexInputAttributeDescription > vertexAttributeDescriptions;
 	for (auto ve : vertexElements)
 	{
@@ -782,12 +776,12 @@ Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32
 
 	VkMemoryRequirements indexBufferMemoryRequirements = {};
 	vkGetBufferMemoryRequirements(m_device, indexBuffer, &indexBufferMemoryRequirements);
- 
+
 	VkMemoryAllocateInfo bufferAllocateInfo = {};
 	bufferAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	bufferAllocateInfo.allocationSize = indexBufferMemoryRequirements.size;
  	bufferAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, indexBufferMemoryRequirements);
- 
+
 	VkDeviceMemory indexBufferMemory;
 	if (vkAllocateMemory(m_device, &bufferAllocateInfo, nullptr, &indexBufferMemory) != VK_SUCCESS)
 		return 0;

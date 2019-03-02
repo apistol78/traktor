@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_BidirectionalObjectTransport_H
-#define traktor_net_BidirectionalObjectTransport_H
+#pragma once
 
 #include <vector>
 #include "Core/Object.h"
@@ -68,7 +61,7 @@ public:
 	{
 		Ref< ISerializable > obj;
 		Result result;
-		
+
 		result = recv(makeTypeInfoSet< ObjectType >(), timeout, obj);
 		if (result != RtSuccess)
 			return result;
@@ -94,4 +87,3 @@ private:
 	}
 }
 
-#endif	// traktor_net_BidirectionalObjectTransport_H

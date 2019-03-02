@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_mesh_LodMeshAsset_H
-#define traktor_mesh_LodMeshAsset_H
+#pragma once
 
 #include <list>
 #include "Core/Guid.h"
@@ -23,7 +16,7 @@ namespace traktor
 {
 	namespace mesh
 	{
-	
+
 /*! \brief
  */
 class LodMeshAsset : public ISerializable
@@ -46,4 +39,3 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_LodMeshAsset_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -46,24 +40,24 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.resource.ResourceClassFactory", 0, Reso
 
 void ResourceClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< FileBundle > > classFileBundle = new AutoRuntimeClass< FileBundle >();
+	auto classFileBundle = new AutoRuntimeClass< FileBundle >();
 	classFileBundle->addMethod("lookup", &FileBundle::lookup);
 	registrar->registerClass(classFileBundle);
 
-	Ref< AutoRuntimeClass< ResourceBundle > > classResourceBundle = new AutoRuntimeClass< ResourceBundle >();
+	auto classResourceBundle = new AutoRuntimeClass< ResourceBundle >();
 	registrar->registerClass(classResourceBundle);
 
-	Ref< AutoRuntimeClass< IResourceFactory > > classIResourceFactory = new AutoRuntimeClass< IResourceFactory >();
+	auto classIResourceFactory = new AutoRuntimeClass< IResourceFactory >();
 	classIResourceFactory->addMethod("isCacheable", &IResourceFactory::isCacheable);
 	registrar->registerClass(classIResourceFactory);
 
-	Ref< AutoRuntimeClass< ResourceHandle > > classIResourceHandle = new AutoRuntimeClass< ResourceHandle >();
+	auto classIResourceHandle = new AutoRuntimeClass< ResourceHandle >();
 	classIResourceHandle->addMethod("replace", &ResourceHandle::replace);
 	classIResourceHandle->addMethod("get", &ResourceHandle::get);
 	classIResourceHandle->addMethod("flush", &ResourceHandle::flush);
 	registrar->registerClass(classIResourceHandle);
 
-	Ref< AutoRuntimeClass< IResourceManager > > classIResourceManager = new AutoRuntimeClass< IResourceManager >();
+	auto classIResourceManager = new AutoRuntimeClass< IResourceManager >();
 	classIResourceManager->addMethod("addFactory", &IResourceManager::addFactory);
 	classIResourceManager->addMethod("removeFactory", &IResourceManager::removeFactory);
 	classIResourceManager->addMethod("removeAllFactories", &IResourceManager::removeAllFactories);

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cmath>
 #include "Core/Math/Color4ub.h"
 
@@ -68,7 +62,7 @@ T_MATH_INLINE void Color4ub::set(uint8_t r_, uint8_t g_, uint8_t b_, uint8_t a_)
 
 T_MATH_INLINE uint32_t Color4ub::getARGB() const
 {
-	return 
+	return
 		(uint32_t(a) << 24) |
 		(uint32_t(r) << 16) |
 		(uint32_t(g) << 8) |
@@ -77,7 +71,7 @@ T_MATH_INLINE uint32_t Color4ub::getARGB() const
 
 T_MATH_INLINE uint32_t Color4ub::getABGR() const
 {
-	return 
+	return
 		(uint32_t(a) << 24) |
 		(uint32_t(b) << 16) |
 		(uint32_t(g) << 8) |

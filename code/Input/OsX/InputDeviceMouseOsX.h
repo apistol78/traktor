@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputDeviceMouseOsX_H
-#define traktor_input_InputDeviceMouseOsX_H
+#pragma once
 
 #import <Cocoa/Cocoa.h>
 #include "Input/IInputDevice.h"
@@ -14,11 +7,11 @@ namespace traktor
 {
 	namespace input
 	{
-	
+
 class InputDeviceMouseOsX : public IInputDevice
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	InputDeviceMouseOsX();
 
@@ -51,9 +44,9 @@ public:
 	virtual bool supportRumble() const;
 
 	virtual void setRumble(const InputRumble& rumble);
-	
+
 	virtual void setExclusive(bool exclusive);
-	
+
 	void consumeEvent(NSEvent* event);
 
 private:
@@ -65,8 +58,7 @@ private:
 	bool m_lastMouseValid;
 	float m_scrollAccum;
 };
-	
+
 	}
 }
 
-#endif	// traktor_input_InputDeviceMouseOsX_H

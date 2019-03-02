@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAabb.h"
@@ -21,7 +15,7 @@ namespace traktor
 {
 	namespace flash
 	{
-	
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.SpriteInstanceDebugInfo", 0, SpriteInstanceDebugInfo, InstanceDebugInfo)
 
 SpriteInstanceDebugInfo::SpriteInstanceDebugInfo()

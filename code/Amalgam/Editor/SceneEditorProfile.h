@@ -1,5 +1,4 @@
-#ifndef traktor_amalgam_SceneEditorProfile_H
-#define traktor_amalgam_SceneEditorProfile_H
+#pragma once
 
 #include "Scene/Editor/ISceneEditorProfile.h"
 
@@ -72,4 +71,3 @@ public:
 	}
 }
 
-#endif	// traktor_amalgam_SceneEditorProfile_H

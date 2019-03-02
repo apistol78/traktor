@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ai_NavMeshEntityData_H
-#define traktor_ai_NavMeshEntityData_H
+#pragma once
 
 #include "Resource/Id.h"
 #include "World/EntityData.h"
@@ -44,4 +37,3 @@ private:
 	}
 }
 
-#endif	// traktor_ai_NavMeshEntityData_H

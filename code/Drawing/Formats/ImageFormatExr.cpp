@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <vector>
 #include "Drawing/Config.h"
 #if defined(DRAWING_INCLUDE_EXR)
@@ -11,7 +5,7 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 #include <ImfIO.h>
 #include <ImfInputFile.h>
 #include <ImfOutputFile.h>
-#include <ImfChannelList.h> 
+#include <ImfChannelList.h>
 #include <ImfFrameBuffer.h>
 #include <half.h>
 #include "Drawing/Formats/ImageFormatExr.h"
@@ -165,7 +159,7 @@ bool ImageFormatExr::write(IStream* stream, Image* image)
 	frameBuffer.insert("G", Imf::Slice(Imf::HALF, (char *)&rgb[1], 4 * sizeof(half), clone->getWidth() * 4 * sizeof(half)));
 	frameBuffer.insert("B", Imf::Slice(Imf::HALF, (char *)&rgb[2], 4 * sizeof(half), clone->getWidth() * 4 * sizeof(half)));
 	frameBuffer.insert("A", Imf::Slice(Imf::HALF, (char *)&rgb[3], 4 * sizeof(half), clone->getWidth() * 4 * sizeof(half)));
-	
+
 	Imf::OutputFile file(os, header);
 	file.setFrameBuffer(frameBuffer);
 	file.writePixels(clone->getHeight());

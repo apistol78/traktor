@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_FileOutputStream_H
-#define traktor_FileOutputStream_H
+#pragma once
 
 #include "Core/Io/OutputStream.h"
 
@@ -34,8 +27,7 @@ public:
 	FileOutputStream(IStream* stream, IEncoding* encoding, LineEnd lineEnd = LeAuto);
 
 	void close();
-}; 
+};
 
 }
 
-#endif	// traktor_FileOutputStream_H

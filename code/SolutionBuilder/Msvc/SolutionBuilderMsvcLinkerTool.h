@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef SolutionBuilderMsvcLinkerTool_H
-#define SolutionBuilderMsvcLinkerTool_H
+#pragma once
 
 #include <map>
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcTool.h"
@@ -53,4 +46,3 @@ private:
 	}
 }
 
-#endif	// SolutionBuilderMsvcLinkerTool_H

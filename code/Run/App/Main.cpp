@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/CoreClassFactory.h"
@@ -34,8 +28,8 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 
 namespace
 {
-		
-traktor::Ref< traktor::script::IScriptManager > g_scriptManager;		
+
+traktor::Ref< traktor::script::IScriptManager > g_scriptManager;
 
 }
 
@@ -124,41 +118,41 @@ void registerRuntimeClasses()
 	}
 
 	// IOutput
-	Ref< AutoRuntimeClass< IOutput > > classIOutput = new AutoRuntimeClass< IOutput >();
+	auto classIOutput = new AutoRuntimeClass< IOutput >();
 	classIOutput->addMethod("print", &IOutput::print);
 	classIOutput->addMethod("printLn", &IOutput::printLn);
 	registrar.registerClass(classIOutput);
 
 	// ProduceOutput
-	Ref< AutoRuntimeClass< ProduceOutput > > classProduceOutput = new AutoRuntimeClass< ProduceOutput >();
+	auto classProduceOutput = new AutoRuntimeClass< ProduceOutput >();
 	classProduceOutput->addMethod("printSection", &ProduceOutput::printSection);
 	classProduceOutput->addMethod("addSection", &ProduceOutput::addSection);
 	registrar.registerClass(classProduceOutput);
 
 	// StdOutput
-	Ref< AutoRuntimeClass< StdOutput > > classStdOutput = new AutoRuntimeClass< StdOutput >();
+	auto classStdOutput = new AutoRuntimeClass< StdOutput >();
 	registrar.registerClass(classStdOutput);
 
 	// StreamOutput
-	Ref< AutoRuntimeClass< StreamOutput > > classStreamOutput = new AutoRuntimeClass< StreamOutput >();
+	auto classStreamOutput = new AutoRuntimeClass< StreamOutput >();
 	classStreamOutput->addConstructor< traktor::IStream*, IEncoding* >();
 	classStreamOutput->addConstructor< traktor::IStream*, IEncoding*, const std::wstring& >();
 	registrar.registerClass(classStreamOutput);
 
 	// IInput
-	Ref< AutoRuntimeClass< IInput > > classIInput = new AutoRuntimeClass< IInput >();
+	auto classIInput = new AutoRuntimeClass< IInput >();
 	classIInput->addMethod("endOfFile", &IInput::endOfFile);
 	classIInput->addMethod("readChar", &IInput::readChar);
 	classIInput->addMethod("readLn", &IInput::readLn);
 	registrar.registerClass(classIInput);
 
 	// StreamInput
-	Ref< AutoRuntimeClass< StreamInput > > classStreamInput = new AutoRuntimeClass< StreamInput >();
+	auto classStreamInput = new AutoRuntimeClass< StreamInput >();
 	classStreamInput->addConstructor< traktor::IStream*, IEncoding* >();
 	registrar.registerClass(classStreamInput);
 
 	// Run
-	Ref< AutoRuntimeClass< Run > > classRun = new AutoRuntimeClass< Run >();
+	auto classRun = new AutoRuntimeClass< Run >();
 	classRun->addConstructor();
 	classRun->addMethod("cd", &Run::cd);
 	classRun->addMethod("pushd", &Run::pushd);

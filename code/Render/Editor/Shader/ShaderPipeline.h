@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ShaderPipeline_H
-#define traktor_render_ShaderPipeline_H
+#pragma once
 
 #include "Core/Thread/Semaphore.h"
 #include "Editor/IPipeline.h"
@@ -85,4 +78,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_ShaderPipeline_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_ImageFormatIco_H
-#define traktor_drawing_ImageFormatIco_H
+#pragma once
 
 #include "Drawing/Config.h"
 #include "Drawing/IImageFormat.h"
@@ -43,4 +36,3 @@ public:
 
 #endif	// DRAWING_INCLUDE_ICO
 
-#endif	// traktor_drawing_ImageFormatIco_H

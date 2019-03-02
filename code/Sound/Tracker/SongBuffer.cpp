@@ -105,7 +105,7 @@ bool SongBuffer::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, 
 
 		int32_t position = int32_t(4 * soundBufferCursor->m_bpm * soundBufferCursor->m_timer.getElapsedTime() / 60.0);
 		int32_t tick = int32_t(4 * soundBufferCursor->m_bpm * soundBufferCursor->m_timer.getElapsedTime() * 2.0 / 5.0);
-		
+
 		if (position < currentPattern->getDuration())
 		{
 			const auto& tracks = currentPattern->getTracks();
@@ -184,7 +184,7 @@ bool SongBuffer::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, 
 								);
 							}
 						}
-					}					
+					}
 				}
 			}
 

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -50,7 +44,7 @@ Ref< IInputSource > CombinedInputSourceData::createInstance(DeviceControlManager
 		Ref< IInputSource > source = m_sources[i]->createInstance(deviceControlManager);
 		if (!source)
 			return 0;
-			
+
 		sources[i] = source;
 	}
 	return new CombinedInputSource(sources, m_mode);
@@ -69,6 +63,6 @@ void CombinedInputSourceData::serialize(ISerializer& s)
 	s >> MemberRefArray< IInputSourceData >(L"sources", m_sources);
 	s >> MemberEnum< CombinedInputSource::CombineMode >(L"mode", m_mode, c_CombineMode_Keys);
 }
-	
+
 	}
 }

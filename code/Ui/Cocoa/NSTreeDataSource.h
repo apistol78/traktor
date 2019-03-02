@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_NSTreeDataSource_H
-#define traktor_ui_NSTreeDataSource_H
+#pragma once
 
 #include <string>
 #import <Cocoa/Cocoa.h>
@@ -13,13 +6,13 @@ Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
 struct ITreeDataCallback
 {
 	virtual void* treeChildOfItem(int childIndex, void* item) const = 0;
-	
+
 	virtual bool treeIsExpandable(void* item) const = 0;
-	
+
 	virtual int treeNumberOfChildren(void* item) const = 0;
-	
+
 	virtual void treeValue(void* item, std::wstring& outValue, bool& outBold) const = 0;
-	
+
 	virtual void treeSetValue(void* item, const std::wstring& value) = 0;
 };
 
@@ -42,4 +35,3 @@ struct ITreeDataCallback
 
 @end
 
-#endif	// traktor_ui_NSTreeDataSource_H

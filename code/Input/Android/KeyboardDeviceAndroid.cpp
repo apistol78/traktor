@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <android/input.h>
 #include <android/native_activity.h>
 #include <android/native_window.h>
@@ -186,7 +180,7 @@ bool KeyboardDeviceAndroid::getKeyEvent(KeyEvent& outEvent)
 
 	outEvent = m_keyEvents.front();
 	m_keyEvents.pop_front();
-	
+
 	return true;
 }
 
@@ -234,7 +228,7 @@ void KeyboardDeviceAndroid::handleInput(AInputEvent* event)
 		int32_t key = AKeyEvent_getKeyCode(event);
 		int32_t meta = AKeyEvent_getMetaState(event);
 		wchar_t ch = getUnicodeChar(ms_activity, AKEY_EVENT_ACTION_DOWN, key, meta);
-		
+
 		ke.type = KtDown;
 		ke.keyCode = key;
 		ke.character = ch;

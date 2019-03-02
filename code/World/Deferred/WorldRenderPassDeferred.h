@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_world_WorldRenderPassDeferred_H
-#define traktor_world_WorldRenderPassDeferred_H
+#pragma once
 
 #include "World/IWorldRenderPass.h"
 
@@ -30,7 +23,7 @@ class WorldRenderView;
 class T_DLLCLASS WorldRenderPassDeferred : public IWorldRenderPass
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	WorldRenderPassDeferred(
 		render::handle_t technique,
@@ -71,8 +64,7 @@ private:
 
 	void setLightProgramParameters(render::ProgramParameters* programParams) const;
 };
-	
+
 	}
 }
 
-#endif	// traktor_world_WorldRenderPassDeferred_H

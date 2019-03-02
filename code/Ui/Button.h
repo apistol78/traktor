@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_Button_H
-#define traktor_ui_Button_H
+#pragma once
 
 #include "Ui/Widget.h"
 
@@ -49,7 +42,7 @@ private:
 	bool m_hover;
 
 	void eventMouseTrack(MouseTrackEvent* event);
-	
+
 	void eventButtonDown(MouseButtonDownEvent* event);
 
 	void eventButtonUp(MouseButtonUpEvent* event);
@@ -60,4 +53,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_Button_H

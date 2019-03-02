@@ -36,6 +36,6 @@ private:
 	Ref< ICubeTexture > m_texture;
 	int32_t m_locked[2];
 };
-		
+
 	}
 }

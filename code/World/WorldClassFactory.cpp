@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -149,25 +143,25 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldClassFactory", 0, WorldClass
 
 void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	Ref< AutoRuntimeClass< IEntityEventInstance > > classIEntityEventInstance = new AutoRuntimeClass< IEntityEventInstance >();
+	auto classIEntityEventInstance = new AutoRuntimeClass< IEntityEventInstance >();
 	classIEntityEventInstance->addMethod("cancelImmediate", &IEntityEventInstance_cancelImmediate);
 	classIEntityEventInstance->addMethod("cancelEnd", &IEntityEventInstance_cancelEnd);
 	registrar->registerClass(classIEntityEventInstance);
 
-	Ref< AutoRuntimeClass< IEntityEventData > > classIEntityEventData = new AutoRuntimeClass< IEntityEventData >();
+	auto classIEntityEventData = new AutoRuntimeClass< IEntityEventData >();
 	registrar->registerClass(classIEntityEventData);
 
-	Ref< AutoRuntimeClass< IEntityEvent > > classIEntityEvent = new AutoRuntimeClass< IEntityEvent >();
+	auto classIEntityEvent = new AutoRuntimeClass< IEntityEvent >();
 	registrar->registerClass(classIEntityEvent);
 
-	Ref< AutoRuntimeClass< IEntityEventManager > > classIEntityEventManager = new AutoRuntimeClass< IEntityEventManager >();
+	auto classIEntityEventManager = new AutoRuntimeClass< IEntityEventManager >();
 	classIEntityEventManager->addMethod("raise", &IEntityEventManager_raise_1);
 	classIEntityEventManager->addMethod("raise", &IEntityEventManager_raise_2);
 	classIEntityEventManager->addMethod("cancelAllImmediate", &IEntityEventManager_cancelAllImmediate);
 	classIEntityEventManager->addMethod("cancelAllEnd", &IEntityEventManager_cancelAllEnd);
 	registrar->registerClass(classIEntityEventManager);
 
-	Ref< AutoRuntimeClass< IEntitySchema > > classIEntitySchema = new AutoRuntimeClass< IEntitySchema >();
+	auto classIEntitySchema = new AutoRuntimeClass< IEntitySchema >();
 	classIEntitySchema->addMethod< Entity*, uint32_t >("getEntity", &IEntitySchema::getEntity);
 	classIEntitySchema->addMethod< Entity*, const std::wstring&, uint32_t >("getEntity", &IEntitySchema::getEntity);
 	classIEntitySchema->addMethod< Entity*, const TypeInfo&, uint32_t >("getEntityOf", &IEntitySchema::getEntity);
@@ -178,36 +172,36 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIEntitySchema->addMethod< Entity*, const Entity*, const std::wstring&, const TypeInfo&, uint32_t >("getChildEntityOf", &IEntitySchema::getChildEntity);
 	registrar->registerClass(classIEntitySchema);
 
-	Ref< AutoRuntimeClass< EntitySchema > > classEntitySchema = new AutoRuntimeClass< EntitySchema >();
+	auto classEntitySchema = new AutoRuntimeClass< EntitySchema >();
 	classEntitySchema->addConstructor();
 	registrar->registerClass(classEntitySchema);
 
-	Ref< AutoRuntimeClass< IEntityFactory > > classIEntityFactory = new AutoRuntimeClass< IEntityFactory >();
+	auto classIEntityFactory = new AutoRuntimeClass< IEntityFactory >();
 	registrar->registerClass(classIEntityFactory);
 
-	Ref< AutoRuntimeClass< IEntityBuilder > > classIEntityBuilder = new AutoRuntimeClass< IEntityBuilder >();
+	auto classIEntityBuilder = new AutoRuntimeClass< IEntityBuilder >();
 	classIEntityBuilder->addMethod("addFactory", &IEntityBuilder::addFactory);
 	classIEntityBuilder->addMethod("removeFactory", &IEntityBuilder::removeFactory);
 	classIEntityBuilder->addMethod("create", &IEntityBuilder_create);
 	registrar->registerClass(classIEntityBuilder);
 
-	Ref< AutoRuntimeClass< EntityBuilder > > classEntityBuilder = new AutoRuntimeClass< EntityBuilder >();
+	auto classEntityBuilder = new AutoRuntimeClass< EntityBuilder >();
 	classEntityBuilder->addConstructor();
 	registrar->registerClass(classEntityBuilder);
 
-	Ref< AutoRuntimeClass< EntityBuilderWithSchema > > classEntityBuilderWithSchema = new AutoRuntimeClass< EntityBuilderWithSchema >();
+	auto classEntityBuilderWithSchema = new AutoRuntimeClass< EntityBuilderWithSchema >();
 	classEntityBuilderWithSchema->addConstructor< IEntityBuilder*, IEntitySchema* >();
 	registrar->registerClass(classEntityBuilderWithSchema);
 
-	Ref< AutoRuntimeClass< IEntityRenderer > > classIEntityRenderer = new AutoRuntimeClass< IEntityRenderer >();
+	auto classIEntityRenderer = new AutoRuntimeClass< IEntityRenderer >();
 	registrar->registerClass(classIEntityRenderer);
 
-	Ref< AutoRuntimeClass< EntityData > > classEntityData = new AutoRuntimeClass< EntityData >();
+	auto classEntityData = new AutoRuntimeClass< EntityData >();
 	classEntityData->addProperty("name", &EntityData::setName, &EntityData::getName);
 	classEntityData->addProperty("transform", &EntityData::setTransform, &EntityData::getTransform);
 	registrar->registerClass(classEntityData);
 
-	Ref< AutoRuntimeClass< Entity > > classEntity = new AutoRuntimeClass< Entity >();
+	auto classEntity = new AutoRuntimeClass< Entity >();
 	classEntity->addProperty("transform", &Entity_setTransform, &Entity_getTransform);
 	classEntity->addProperty("boundingBox", &Entity::getBoundingBox);
 	classEntity->addProperty("worldBoundingBox", &Entity::getWorldBoundingBox);
@@ -215,7 +209,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEntity->addMethod("update", &Entity_update);
 	registrar->registerClass(classEntity);
 
-	Ref< AutoRuntimeClass< GroupEntity > > classGroupEntity = new AutoRuntimeClass< GroupEntity >();
+	auto classGroupEntity = new AutoRuntimeClass< GroupEntity >();
 	classGroupEntity->addConstructor< const Transform& >();
 	classGroupEntity->addMethod("addEntity", &GroupEntity::addEntity);
 	classGroupEntity->addMethod("removeEntity", &GroupEntity::removeEntity);
@@ -225,27 +219,27 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classGroupEntity->addMethod("getFirstEntityOf", &GroupEntity_getFirstEntityOf);
 	registrar->registerClass(classGroupEntity);
 
-	Ref< AutoRuntimeClass< PointLightEntity > > classPointLightEntity = new AutoRuntimeClass< PointLightEntity >();
+	auto classPointLightEntity = new AutoRuntimeClass< PointLightEntity >();
 	classPointLightEntity->addProperty("color", &PointLightEntity::getColor);
 	classPointLightEntity->addProperty("range", &PointLightEntity::getRange);
 	classPointLightEntity->addProperty("randomFlicker", &PointLightEntity::getRandomFlicker);
 	registrar->registerClass(classPointLightEntity);
 
-	Ref< AutoRuntimeClass< DirectionalLightEntity > > classDirectionalLightEntity = new AutoRuntimeClass< DirectionalLightEntity >();
+	auto classDirectionalLightEntity = new AutoRuntimeClass< DirectionalLightEntity >();
 	//classDirectionalLightEntity->addConstructor< const Transform&, const Vector4&, const Vector4&, const Vector4&, bool >();
 	classDirectionalLightEntity->addProperty("color", &DirectionalLightEntity::setColor, &DirectionalLightEntity::getColor);
 	classDirectionalLightEntity->addProperty("castShadow", &DirectionalLightEntity::setCastShadow, &DirectionalLightEntity::getCastShadow);
 	registrar->registerClass(classDirectionalLightEntity);
 
-	Ref< AutoRuntimeClass< IEntityComponentData > > classIEntityComponentData = new AutoRuntimeClass< IEntityComponentData >();
+	auto classIEntityComponentData = new AutoRuntimeClass< IEntityComponentData >();
 	registrar->registerClass(classIEntityComponentData);
 
-	Ref< AutoRuntimeClass< IEntityComponent > > classIEntityComponent = new AutoRuntimeClass< IEntityComponent >();
+	auto classIEntityComponent = new AutoRuntimeClass< IEntityComponent >();
 	classIEntityComponent->addProperty("boundingBox", &IEntityComponent::getBoundingBox);
 	classIEntityComponent->addMethod("setTransform", &IEntityComponent::setTransform);
 	registrar->registerClass(classIEntityComponent);
 
-	Ref< AutoRuntimeClass< CameraComponentData > > classCameraComponentData = new AutoRuntimeClass< CameraComponentData >();
+	auto classCameraComponentData = new AutoRuntimeClass< CameraComponentData >();
 	classCameraComponentData->addConstant("CtOrthographic", Any::fromInt32(CtOrthographic));
 	classCameraComponentData->addConstant("CtPerspective", Any::fromInt32(CtPerspective));
 	classCameraComponentData->addConstructor();
@@ -255,7 +249,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCameraComponentData->addProperty("height", &CameraComponentData::setHeight, &CameraComponentData::getHeight);
 	registrar->registerClass(classCameraComponentData);
 
-	Ref< AutoRuntimeClass< CameraComponent > > classCameraComponent = new AutoRuntimeClass< CameraComponent >();
+	auto classCameraComponent = new AutoRuntimeClass< CameraComponent >();
 	classCameraComponent->addConstant("CtOrthographic", Any::fromInt32(CtOrthographic));
 	classCameraComponent->addConstant("CtPerspective", Any::fromInt32(CtPerspective));
 	classCameraComponent->addProperty("cameraType", &CameraComponent_setCameraType, &CameraComponent_getCameraType);
@@ -264,7 +258,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classCameraComponent->addProperty("height", &CameraComponent::setHeight, &CameraComponent::getHeight);
 	registrar->registerClass(classCameraComponent);
 
-	Ref< AutoRuntimeClass< LightComponentData > > classLightComponentData = new AutoRuntimeClass< LightComponentData >();
+	auto classLightComponentData = new AutoRuntimeClass< LightComponentData >();
 	classLightComponentData->addProperty("color", &LightComponentData::setColor, &LightComponentData::getColor);
 	classLightComponentData->addProperty("castShadow", &LightComponentData::setCastShadow, &LightComponentData::getCastShadow);
 	classLightComponentData->addProperty("range", &LightComponentData::setRange, &LightComponentData::getRange);
@@ -273,7 +267,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classLightComponentData->addProperty("flickerFilter", &LightComponentData::setFlickerFilter, &LightComponentData::getFlickerFilter);
 	registrar->registerClass(classLightComponentData);
 
-	Ref< AutoRuntimeClass< LightComponent > > classLightComponent = new AutoRuntimeClass< LightComponent >();
+	auto classLightComponent = new AutoRuntimeClass< LightComponent >();
 	classLightComponent->addProperty("color", &LightComponent::setColor, &LightComponent::getColor);
 	classLightComponent->addProperty("castShadow", &LightComponent::setCastShadow, &LightComponent::getCastShadow);
 	classLightComponent->addProperty("range", &LightComponent::setRange, &LightComponent::getRange);
@@ -282,33 +276,33 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classLightComponent->addProperty("flickerFilter", &LightComponent::setFlickerFilter, &LightComponent::getFlickerFilter);
 	registrar->registerClass(classLightComponent);
 
-	Ref< AutoRuntimeClass< ScriptComponentData > > classScriptComponentData = new AutoRuntimeClass< ScriptComponentData >();
+	auto classScriptComponentData = new AutoRuntimeClass< ScriptComponentData >();
 	registrar->registerClass(classScriptComponentData);
 
-	Ref< AutoRuntimeClass< ScriptComponent > > classScriptComponent = new AutoRuntimeClass< ScriptComponent >();
+	auto classScriptComponent = new AutoRuntimeClass< ScriptComponent >();
 	registrar->registerClass(classScriptComponent);
 
-	Ref< AutoRuntimeClass< VolumeComponentData > > classVolumeComponentData = new AutoRuntimeClass< VolumeComponentData >();
+	auto classVolumeComponentData = new AutoRuntimeClass< VolumeComponentData >();
 	registrar->registerClass(classVolumeComponentData);
 
-	Ref< AutoRuntimeClass< VolumeComponent > > classVolumeComponent = new AutoRuntimeClass< VolumeComponent >();
+	auto classVolumeComponent = new AutoRuntimeClass< VolumeComponent >();
 	classVolumeComponent->addMethod("inside", &VolumeComponent::inside);
 	registrar->registerClass(classVolumeComponent);
 
-	Ref< AutoRuntimeClass< ComponentEntityData > > classComponentEntityData = new AutoRuntimeClass< ComponentEntityData >();
+	auto classComponentEntityData = new AutoRuntimeClass< ComponentEntityData >();
 	classComponentEntityData->addConstructor();
 	classComponentEntityData->addMethod("setComponent", &ComponentEntityData::setComponent);
 	classComponentEntityData->addMethod("getComponent", &ComponentEntityData_getComponent);
 	registrar->registerClass(classComponentEntityData);
 
-	Ref< AutoRuntimeClass< ComponentEntity > > classComponentEntity = new AutoRuntimeClass< ComponentEntity >();
+	auto classComponentEntity = new AutoRuntimeClass< ComponentEntity >();
 	classComponentEntity->addConstructor();
 	classComponentEntity->addConstructor< const Transform& >();
 	classComponentEntity->addMethod("setComponent", &ComponentEntity::setComponent);
 	classComponentEntity->addMethod("getComponent", &ComponentEntity_getComponent);
 	registrar->registerClass(classComponentEntity);
 
-	Ref< AutoRuntimeClass< IWorldRenderer > > classIWorldRenderer = new AutoRuntimeClass< IWorldRenderer >();
+	auto classIWorldRenderer = new AutoRuntimeClass< IWorldRenderer >();
 	classIWorldRenderer->addConstant("QuDisabled", Any::fromInt32(QuDisabled));
 	classIWorldRenderer->addConstant("QuLow", Any::fromInt32(QuLow));
 	classIWorldRenderer->addConstant("QuMedium", Any::fromInt32(QuMedium));

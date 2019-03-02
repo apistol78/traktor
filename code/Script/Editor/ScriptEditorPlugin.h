@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #ifndef traktor_script_ScriptEditorPlugin_H
 #define traktor_script_ScriptEditorPlugin_H
 
@@ -22,7 +16,7 @@ class IEditor;
 
 	namespace script
 	{
-	
+
 class IScriptManager;
 class ScriptDebuggerSessions;
 
@@ -68,7 +62,7 @@ private:
 	Ref< script::IScriptManager > m_scriptManager;
 	Ref< script::ScriptDebuggerSessions > m_debuggerSessions;
 };
-	
+
 	}
 }
 

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_CameraMesh_H
-#define traktor_scene_CameraMesh_H
+#pragma once
 
 namespace traktor
 {
@@ -153,4 +146,3 @@ const int32_t c_cameraMeshIndices[] =
 	}
 }
 
-#endif	// traktor_scene_CameraMesh_H

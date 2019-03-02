@@ -41,7 +41,7 @@ bool Scalar::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Scalar::createCursor() const 
+Ref< ISoundBufferCursor > Scalar::createCursor() const
 {
 	return new ScalarCursor();
 }

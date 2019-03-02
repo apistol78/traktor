@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Io/BitReader.h"
 #include "Core/Io/IStream.h"
@@ -188,7 +182,7 @@ uint32_t BitReader::tell() const
 void BitReader::skip(uint32_t nbits)
 {
 	uint32_t t = std::min< uint32_t >(nbits, m_cnt);
-	
+
 	nbits -= t;
 	m_cnt -= t;
 
@@ -196,7 +190,7 @@ void BitReader::skip(uint32_t nbits)
 	{
 		int nbytes = nbits >> 3;
 		m_stream->seek(IStream::SeekCurrent, nbytes);
-		
+
 		nbits &= 7;
 		while (nbits-- > 0)
 			readBit();

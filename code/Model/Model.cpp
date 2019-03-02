@@ -371,7 +371,7 @@ void Model::serialize(ISerializer& s)
 	m_texCoords.replace(texCoords);
 
 	s >> MemberAlignedVector< std::wstring >(L"texCoordChannels", m_texCoordChannels);
-	
+
 	s >> MemberAlignedVector< Joint, MemberComposite< Joint > >(L"joints", m_joints);
 
 	s >> MemberRefArray< Animation >(L"animations", m_animations);
@@ -381,7 +381,7 @@ void Model::serialize(ISerializer& s)
 	s >> MemberStlMap<
 		uint32_t,
 		AlignedVector< Vector4 >,
-		MemberStlPair< 
+		MemberStlPair<
 			uint32_t,
 			AlignedVector< Vector4 >,
 			Member< uint32_t >,

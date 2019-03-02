@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_Polygon_H
-#define traktor_flash_Polygon_H
+#pragma once
 
 #include "Core/Math/Vector2.h"
 
@@ -52,4 +45,3 @@ struct Line
 	}
 }
 
-#endif	// traktor_flash_Polygon_H

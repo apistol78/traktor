@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Equal_H
-#define traktor_Equal_H
+#pragma once
 
 namespace traktor
 {
@@ -36,4 +29,3 @@ struct Equal < Type, Type >
 
 }
 
-#endif	// traktor_Equal_H

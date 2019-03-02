@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -104,7 +98,7 @@ void ImageProcessStepTemporal::InstanceTemporal::render(
 	Vector4 viewEdgeTopRight = params.viewFrustum.corners[5];
 	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7];
 	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6];
-	 
+
 	Matrix44 deltaView = params.lastView * params.view.inverse();
 
 	m_shader->setFloatParameter(m_handleTime, m_time);

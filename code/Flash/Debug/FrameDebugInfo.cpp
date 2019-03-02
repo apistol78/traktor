@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -14,7 +8,7 @@ namespace traktor
 {
 	namespace flash
 	{
-	
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FrameDebugInfo", 0, FrameDebugInfo, ISerializable)
 
 FrameDebugInfo::FrameDebugInfo()

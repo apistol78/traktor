@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Io/BitReader.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
@@ -147,7 +141,7 @@ bool ConstantPool::load(SwfReader& swf)
 		AutoArrayPtr< uint8_t > data(new uint8_t [length]);
 		for (uint32_t j = 0; j < length; ++j)
 			data[j] = br.readUnsigned(8);
-		
+
 		strings[i] = std::string(&data[0], &data[length]);
 	}
 
@@ -260,7 +254,7 @@ bool MethodInfo::load(SwfReader& swf)
 
 	name = swf.readEncodedU30();
 	flags = br.readUnsigned(8);
-		
+
 	if (flags & Mif_HAS_OPTIONAL)
 	{
 		if (!options.load(swf))
@@ -279,7 +273,7 @@ bool MethodInfo::load(SwfReader& swf)
 void MethodInfo::dump(const ConstantPool& cpool) const
 {
 	log::info << L"returnType = " << returnType << Endl;
-		
+
 	for (uint32_t j = 0; j < paramTypes.size(); ++j)
 		log::info << L"paramTypes[" << j << L"] = " << paramTypes[j] << Endl;
 

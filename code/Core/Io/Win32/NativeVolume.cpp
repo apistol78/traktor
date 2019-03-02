@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <iostream>
 #include <sstream>
 #if !defined(_XBOX)
@@ -118,7 +112,7 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 				(((ffd.dwFileAttributes  & FILE_ATTRIBUTE_HIDDEN   ) == FILE_ATTRIBUTE_HIDDEN   ) ? File::FfHidden    : 0) |
 				(((ffd.dwFileAttributes  & FILE_ATTRIBUTE_ARCHIVE  ) == FILE_ATTRIBUTE_ARCHIVE  ) ? File::FfArchive   : 0) |
 				(((ffd.dwFileAttributes  & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY) ? File::FfDirectory : 0);
-			
+
 			out.push_back(new File(
 				Path(path + tstows(ffd.cFileName)),
 				ffd.nFileSizeLow,
@@ -200,7 +194,7 @@ bool NativeVolume::exist(const Path& fileName)
 {
 	WIN32_FIND_DATA ffd;
 	HANDLE ffh;
-	
+
 	std::wstring systemPath = getSystemPath(fileName);
 
 	if ((ffh = FindFirstFile(wstots(systemPath).c_str(), &ffd)) == INVALID_HANDLE_VALUE)
@@ -299,7 +293,7 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 
 		Ref< IVolume > volume = new NativeVolume(driveFormat);
 		fileSystem.mount(mountPoint, volume);
-		
+
 		if ((L'A' + drive) == toupper(currentDirectory[0]))
 		{
 			volume->setCurrentDirectory(currentDirectory);

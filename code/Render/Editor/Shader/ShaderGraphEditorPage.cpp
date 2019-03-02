@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -137,7 +131,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
-	
+
 	// Create our custom toolbar.
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(container);
@@ -161,7 +155,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_VARIABLES"), 13, ui::Command(L"ShaderGraph.Editor.ResolveVariables")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_EXTERNALS"), 13, ui::Command(L"ShaderGraph.Editor.ResolveExternals")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
-	
+
 	m_toolPlatform = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(80), i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
 	m_toolPlatform->add(L"DX9");
 	m_toolPlatform->add(L"DX9 Xbox360");
@@ -172,7 +166,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolPlatform->add(L"Software");
 	m_toolBar->addItem(m_toolPlatform);
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"), 10, ui::Command(L"ShaderGraph.Editor.PlatformPermutation")));
-	
+
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ShaderGraphEditorPage::eventToolClick);
 
 	// Create shader graph editor control.
@@ -201,7 +195,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"SHADERGRAPH_CREATE_NODE"));
-	
+
 	std::map< std::wstring, Ref< ui::MenuItem > > categories;
 	for (size_t i = 0; i < sizeof_array(c_nodeCategories); ++i)
 	{
@@ -357,7 +351,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 			m_editorGraph->getConnectedEdges(selectedNodes, true, selectedEdges);
 
 			Ref< ShaderGraphEditorClipboardData > data = new ShaderGraphEditorClipboardData();
-			
+
 			ui::Rect bounds(0, 0, 0, 0);
 			for (RefArray< ui::Node >::iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
 			{
@@ -848,7 +842,7 @@ void ShaderGraphEditorPage::refreshGraph()
 			continue;
 
 		nodeFacade->refreshEditorNode(m_editor, m_editorGraph, editorNode, m_shaderGraph, shaderNode);
-		
+
 		const std::pair< int, int >& position = shaderNode->getPosition();
 		editorNode->setPosition(ui::Point(
 			ui::dpi96(position.first),

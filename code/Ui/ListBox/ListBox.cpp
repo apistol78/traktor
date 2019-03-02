@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/ListBox/ListBox.h"
@@ -15,7 +9,7 @@ namespace traktor
 	{
 		namespace
 		{
-			
+
 struct ListBoxItemPred
 {
 	bool operator () (const ListBoxItem* lh, const ListBoxItem* rh) const
@@ -25,7 +19,7 @@ struct ListBoxItemPred
 };
 
 		}
-		
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ListBox", ListBox, AutoWidget)
 
 ListBox::ListBox()

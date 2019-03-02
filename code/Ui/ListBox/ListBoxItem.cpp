@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/StyleSheet.h"
@@ -14,7 +8,7 @@ namespace traktor
 {
 	namespace ui
 	{
-		
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ListBoxItem", ListBoxItem, AutoWidgetCell)
 
 ListBoxItem::ListBoxItem()

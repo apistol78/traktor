@@ -314,7 +314,7 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 				for (RefArray< ui::SequenceItem >::iterator i = selectedItems.begin(); i != selectedItems.end(); ++i)
 				{
 					Ref< EffectLayerData > layer = (*i)->getData< EffectLayerData >(L"LAYERDATA");
-					
+
 					EmitterData* emitter = layer->getEmitter();
 					if (!emitter)
 						continue;
@@ -513,7 +513,7 @@ void EffectEditorPage::updateSequencer()
 		layerItem->addButton(layerVisible, layerHidden, ui::Command(L"Effect.Editor.ToggleLayerVisible"), true);
 		layerItem->setButtonState(0, visibleStates[*i]);
 		layerItem->setData(L"LAYERDATA", *i);
-		
+
 		float start = (*i)->getTime();
 		if ((*i)->getDuration() > 0.0f)
 		{
@@ -623,7 +623,7 @@ void EffectEditorPage::eventSequencerLayerRearranged(ui::SequenceMovedEvent* eve
 	T_ASSERT (movedLayer);
 
 	RefArray< EffectLayerData > layers = m_effectData->getLayers();
-	
+
 	layers.remove(movedLayer);
 	layers.insert(layers.begin() + event->getMovedTo(), movedLayer);
 

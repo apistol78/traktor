@@ -31,5 +31,5 @@ void WidgetPreviewEditorFactory::getCommands(std::list< ui::Command >& outComman
 {
 }
 
-	}	
+	}
 }

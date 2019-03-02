@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_TransformPath_H
-#define traktor_TransformPath_H
+#pragma once
 
 #include <vector>
 #include "Core/Containers/AlignedVector.h"
@@ -47,7 +40,7 @@ public:
 		,	orientation(Vector4::zero())
 		{
 		}
-		
+
 		virtual ~Key() {}
 
 		Transform transform() const;
@@ -145,7 +138,7 @@ public:
 	 */
 	AlignedVector< Key >& getKeys() { return m_keys; }
 
-	/*! \brief Get number of key frames. 
+	/*! \brief Get number of key frames.
 	 *
 	 * \return Number of key frames.
 	 */
@@ -174,4 +167,3 @@ private:
 
 }
 
-#endif	// traktor_TransformPath_H

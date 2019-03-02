@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_Quaternion_H
-#define traktor_Quaternion_H
+#pragma once
 
 #include "Core/Config.h"
 #include "Core/Math/MathConfig.h"
@@ -98,4 +91,3 @@ T_MATH_INLINE T_DLLCLASS Quaternion slerp(const Quaternion& a, const Quaternion&
 #	include "Core/Math/Std/Quaternion.inl"
 #endif
 
-#endif	// traktor_Quaternion_H

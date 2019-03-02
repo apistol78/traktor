@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <stack>
 #include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Shader/Edge.h"
@@ -52,7 +46,7 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 		shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt).getConstantFolded();
 	if (shaderGraphOpt)
 		shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt).removeDisabledOutputs();
-	
+
 	// Get all technique names.
 	if (shaderGraphOpt)
 	{

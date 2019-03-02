@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_ArrayPropertyItem_H
-#define traktor_ui_ArrayPropertyItem_H
+#pragma once
 
 #include "Ui/PropertyList/PropertyItem.h"
 
@@ -30,7 +23,7 @@ class MiniButton;
 class T_DLLCLASS ArrayPropertyItem : public PropertyItem
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	ArrayPropertyItem(const std::wstring& text, const TypeInfo* elementType, bool readOnly);
 
@@ -60,4 +53,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_ArrayPropertyItem_H

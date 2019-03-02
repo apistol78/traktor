@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_File_H
-#define traktor_File_H
+#pragma once
 
 #include <string>
 #include "Core/Ref.h"
@@ -42,7 +35,7 @@ public:
 		FfArchive = 8,
 		FfDirectory	= 16
 	};
-	
+
 	/*! \brief File open modes. */
 	enum Mode
 	{
@@ -71,9 +64,9 @@ public:
 	const Path& getPath() const;
 
 	uint64_t getSize() const;
-	
+
 	uint32_t getFlags() const;
-	
+
 	bool isNormal() const;
 
 	bool isReadOnly() const;
@@ -100,7 +93,6 @@ protected:
 	DateTime m_lastAccessTime;
 	DateTime m_lastWriteTime;
 };
-		
+
 }
 
-#endif	// traktor_File_H

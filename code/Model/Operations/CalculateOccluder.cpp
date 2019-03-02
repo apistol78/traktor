@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -95,7 +89,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.CalculateOccluder", CalculateOccluder, IM
 bool CalculateOccluder::apply(Model& model) const
 {
 	AlignedVector< Winding3 > windings;
-	
+
 	Aabb3 boundingBox = model.getBoundingBox();
 	if (boundingBox.empty())
 		return false;
@@ -198,7 +192,7 @@ bool CalculateOccluder::apply(Model& model) const
 				{
 					Winding3 wf, wb;
 					w.split(tunnelPlanes[j], wf, wb);
-					
+
 					w = wb;
 
 					if (w.empty())
@@ -250,7 +244,7 @@ bool CalculateOccluder::apply(Model& model) const
 						voxelWindings.push_back(w);
 				}
 
-	
+
 				if (!voxelWindings.empty())
 					gridShell.set(ix, iy, iz, 1);
 				else
@@ -692,7 +686,7 @@ bool CalculateOccluder::apply(Model& model) const
 			//	//					1.0f
 			//	//				)
 			//	//			);
-			//	//			
+			//	//
 			//	//		}
 			//	//	}
 			//	//	coverageP.save(L"data/temp/coverage_" + toString(ix) + L"_" + toString(iy) + L"_" + toString(dummy) + L".png");
@@ -761,7 +755,7 @@ bool CalculateOccluder::apply(Model& model) const
 			//		Vector4(
 			//			voxelBounds.mx.x(),
 			//			voxelBounds.mx.y(),
-			//			i->max 
+			//			i->max
 			//		)
 			//	);
 
@@ -779,7 +773,7 @@ bool CalculateOccluder::apply(Model& model) const
 			////		Vector4(
 			////			voxelBounds.mx.x(),
 			////			voxelBounds.mx.y(),
-			////			i->max 
+			////			i->max
 			////		)
 			////	);
 
@@ -832,7 +826,7 @@ bool CalculateOccluder::apply(Model& model) const
 			////			Vector4(
 			////				voxelBounds.mx.x(),
 			////				voxelBounds.mx.y(),
-			////				solid.max 
+			////				solid.max
 			////			)
 			////		);
 
@@ -989,7 +983,7 @@ bool CalculateOccluder::apply(Model& model) const
 					{
 						Winding3 wf, wb;
 						w.split(voxelPlanes[j], wf, wb);
-						
+
 						w = wb;
 
 						if (w.points.empty())

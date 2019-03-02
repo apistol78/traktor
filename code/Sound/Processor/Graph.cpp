@@ -49,7 +49,7 @@ void Graph::removeNode(Node* node)
 void Graph::addEdge(Edge* edge)
 {
 	T_ASSERT (std::find(m_edges.begin(), m_edges.end(), edge) == m_edges.end());
-	
+
 	m_edges.push_back(edge);
 
 	T_ASSERT (m_inputPinEdge[edge->getDestination()] == 0);

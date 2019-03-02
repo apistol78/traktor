@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
@@ -401,6 +395,8 @@ void TreeViewItem::mouseDown(MouseButtonDownEvent* event, const Point& position)
 			collapse();
 		else
 			expand();
+
+		m_view->requestUpdate();
 	}
 	else
 	{
@@ -409,6 +405,10 @@ void TreeViewItem::mouseDown(MouseButtonDownEvent* event, const Point& position)
 			// Select this item only.
 			m_view->deselectAll();
 			m_selected = true;
+
+			// Update immediately because we possibly want user to notice selection
+			// change before popups etc.
+			m_view->update(nullptr, true);
 
 			SelectionChangeEvent selectionChangeEvent(m_view);
 			m_view->raiseEvent(&selectionChangeEvent);
@@ -434,8 +434,6 @@ void TreeViewItem::mouseDown(MouseButtonDownEvent* event, const Point& position)
 			m_dragMode = 1;
 		}
 	}
-
-	m_view->requestUpdate();
 }
 
 void TreeViewItem::mouseUp(MouseButtonUpEvent* event, const Point& position)

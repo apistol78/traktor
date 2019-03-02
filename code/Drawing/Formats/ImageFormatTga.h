@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_ImageFormatTga_H
-#define traktor_drawing_ImageFormatTga_H
+#pragma once
 
 #include "Drawing/IImageFormat.h"
 
@@ -38,4 +31,3 @@ public:
 	}
 }
 
-#endif	// traktor_drawing_ImageFormatTga_H

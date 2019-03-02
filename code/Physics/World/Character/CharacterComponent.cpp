@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Misc/SafeDestroy.h"
 #include "Physics/Body.h"
 #include "Physics/PhysicsManager.h"
@@ -80,7 +74,7 @@ void CharacterComponent::update(const world::UpdateParams& update)
 
 	// Step up.
 	const Vector4 stepUpDir(0.0f, 1.0f, 0.0f);
-	
+
 	float stepUpLength = m_data->getStepHeight();
 	if (movement.y() > 0.0f)
 		stepUpLength += movement.y();
@@ -96,7 +90,7 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	))
 	{
 		position = position + stepUpDir * Scalar(stepUpLength * result.fraction);
-		
+
 		// Head hit; cancel out up motion.
 		m_velocity *= Vector4(1.0f, 0.0f, 1.0f, 0.0f);
 	}
@@ -129,7 +123,7 @@ void CharacterComponent::update(const world::UpdateParams& update)
 					move -= c_fudge;
 
 				position = position + movement * move;
-				
+
 				// Adjust movement vector.
 				Scalar k = dot3(-movementXZ, result.normal);
 				movementXZ += result.normal * k;

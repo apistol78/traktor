@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_MemberInplaceRef_H
-#define traktor_MemberInplaceRef_H
+#pragma once
 
 #include "Core/InplaceRef.h"
 #include "Core/Serialization/AttributeType.h"
@@ -19,12 +12,12 @@ namespace traktor
 /*! \brief Object reference member.
  * \ingroup Core
  */
-template < typename Class >	
+template < typename Class >
 class MemberInplaceRef : public MemberComplex
 {
 public:
 	typedef InplaceRef< Class > value_type;
-	
+
 	MemberInplaceRef(const wchar_t* const name, value_type ref)
 	:	MemberComplex(name, false)
 	,	m_ref(ref)
@@ -41,11 +34,10 @@ public:
 		);
 		m_ref = checked_type_cast< Class* >(object.ptr());
 	}
-	
+
 private:
 	value_type m_ref;
 };
 
 }
 
-#endif	// traktor_MemberInplaceRef_H

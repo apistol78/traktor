@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_db_DbmGetBus_H
-#define traktor_db_DbmGetBus_H
+#pragma once
 
 #include "Database/Remote/IMessage.h"
 
@@ -36,4 +29,3 @@ public:
 	}
 }
 
-#endif	// traktor_db_DbmGetBus_H

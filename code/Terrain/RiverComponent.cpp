@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Math/Hermite.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IndexBuffer.h"
@@ -210,7 +204,7 @@ void RiverComponent::render(
 	renderBlock->primitives = m_primitives;
 
 	renderBlock->programParams->beginParameters(renderContext);
-	
+
 	worldRenderPass.setProgramParameters(renderBlock->programParams);
 
 	renderBlock->programParams->endParameters(renderContext);

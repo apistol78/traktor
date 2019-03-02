@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ProgramDx11_H
-#define traktor_render_ProgramDx11_H
+#pragma once
 
 #include <map>
 #include "Core/RefArray.h"
@@ -45,7 +38,7 @@ public:
 	virtual void setFloatParameter(handle_t handle, float param) override final;
 
 	virtual void setFloatArrayParameter(handle_t handle, const float* param, int length) override final;
-	
+
 	virtual void setVectorParameter(handle_t handle, const Vector4& param) override final;
 
 	virtual void setVectorArrayParameter(handle_t handle, const Vector4* param, int length) override final;
@@ -156,4 +149,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_ProgramDx11_H

@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <Ui/Application.h>
 #include <Ui/Button.h>
 #include <Ui/Container.h>
@@ -129,7 +123,7 @@ void ConfigurationsDialog::eventButtonRename(ui::ButtonClickEvent* event)
 	inputDialog.create(
 		this,
 		L"Rename",
-		L"Enter new name of configuration \"" + current + L"\"", 
+		L"Enter new name of configuration \"" + current + L"\"",
 		inputFields,
 		sizeof_array(inputFields)
 	);

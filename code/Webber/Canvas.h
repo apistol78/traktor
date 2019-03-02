@@ -1,5 +1,4 @@
-#ifndef traktor_wbr_Canvas_H
-#define traktor_wbr_Canvas_H
+#pragma once
 
 #include "Webber/Widget.h"
 
@@ -15,7 +14,7 @@ namespace traktor
 {
 	namespace wbr
 	{
-	
+
 class T_DLLCLASS Canvas : public Widget
 {
 	T_RTTI_CLASS;
@@ -31,4 +30,3 @@ public:
 	}
 }
 
-#endif	// traktor_wbr_Canvas_H

@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_CharacterPipeline_H
-#define traktor_spark_CharacterPipeline_H
+#pragma once
 
 #include "Editor/IPipeline.h"
 
@@ -68,4 +61,3 @@ public:
 	}
 }
 
-#endif	// traktor_spark_CharacterPipeline_H

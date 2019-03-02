@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_ActionValueArray_H
-#define traktor_flash_ActionValueArray_H
+#pragma once
 
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/ActionValuePool.h"
@@ -40,7 +33,7 @@ public:
 	,	m_size(count)
 	{
 	}
-	
+
 	bool empty() const
 	{
 		return m_size == 0;
@@ -50,13 +43,13 @@ public:
 	{
 		return m_size;
 	}
-	
+
 	ActionValue& operator [] (uint32_t index)
 	{
 		T_ASSERT (index < m_size);
 		return m_values[index];
 	}
-	
+
 	const ActionValue& operator [] (uint32_t index) const
 	{
 		T_ASSERT (index < m_size);
@@ -69,7 +62,7 @@ public:
 		m_size = arr.m_size;
 		return *this;
 	}
-	
+
 private:
 	ActionValue* m_values;
 	uint32_t m_size;
@@ -78,4 +71,3 @@ private:
 	}
 }
 
-#endif	// traktor_flash_ActionValueArray_H

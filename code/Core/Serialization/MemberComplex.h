@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_MemberComplex_H
-#define traktor_MemberComplex_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -40,7 +33,7 @@ public:
 	 * \return Member name.
 	 */
 	const wchar_t* const getName() const { return m_name; }
-	
+
 	/*! \brief Get member attributes.
 	 *
 	 * Get member attributes if applicable.
@@ -49,20 +42,19 @@ public:
 	 */
 	const Attribute* getAttributes() const { return m_attributes; }
 
-	/*! \brief Check if member is compound. 
+	/*! \brief Check if member is compound.
 	 *
 	 * \return True if member is compound.
 	 */
 	bool getCompound() const { return m_compound; }
 
 	virtual void serialize(ISerializer& s) const = 0;
-	
+
 private:
 	const wchar_t* const m_name;
 	bool m_compound;
 	const Attribute* m_attributes;
 };
-	
+
 }
 
-#endif	// traktor_MemberComplex_H

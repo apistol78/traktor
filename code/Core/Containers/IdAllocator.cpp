@@ -17,7 +17,7 @@ IdAllocator::IdAllocator(uint32_t minId, uint32_t maxId)
 uint32_t IdAllocator::alloc()
 {
     Interval first = *m_free.begin();
-    
+
 	uint32_t freeId = first.left;
 
     m_free.erase(m_free.begin());
@@ -25,7 +25,7 @@ uint32_t IdAllocator::alloc()
     if (first.left + 1 <= first.right)
         m_free.insert(Interval(first.left + 1 , first.right));
 
-    return freeId;	
+    return freeId;
 }
 
 bool IdAllocator::alloc(uint32_t id)
@@ -33,7 +33,7 @@ bool IdAllocator::alloc(uint32_t id)
 	auto it = m_free.find(Interval(id, id));
 	if (it == m_free.end())
 		return false;
-	
+
 	Interval freeInterval = *it;
 	m_free.erase(it);
 

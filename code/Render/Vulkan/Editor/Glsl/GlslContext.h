@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_GlslContext_H
-#define traktor_render_GlslContext_H
+#pragma once
 
 #include <map>
 #include <vector>
@@ -63,7 +56,7 @@ public:
 	bool inVertex() const;
 
 	bool inFragment() const;
-	
+
 	bool allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset);
 
 	void defineParameter(const std::wstring& name, ParameterType type, int32_t length, UpdateFrequency frequency);
@@ -98,4 +91,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_GlslContext_H

@@ -23,11 +23,11 @@ bool InputDeviceTouchGamepad::create(void* nativeWindowHandle)
 
 	float cx = frame.origin.x + frame.size.width / 2.0f;
 	float cy = frame.origin.y + frame.size.height / 2.0f;
-	
+
 	m_pivots[0] = CGPointMake(cx, cy - 30.0f);
 	m_pivots[1] = CGPointMake(cx, cy);
 	m_pivots[2] = CGPointMake(cx, cy + 30.0f);
-	
+
 	UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
 	m_landscape = UIInterfaceOrientationIsLandscape(orientation);
 
@@ -45,7 +45,7 @@ bool InputDeviceTouchGamepad::create(void* nativeWindowHandle)
 		m_controls[2] = &m_leftPad;
 		m_controls[3] = &m_leftButton;
 	}
-	
+
 	return true;
 }
 
@@ -121,46 +121,46 @@ bool InputDeviceTouchGamepad::getDefaultControl(InputDefaultControlType controlT
 		if (analogue)
 			control = -1;
 		break;
-		
+
 	case DtThumbLeftY:
 		if (analogue)
 			control = -2;
 		break;
-		
+
 	case DtThumbRightX:
 		if (analogue)
 			control = -3;
 		break;
-		
+
 	case DtThumbRightY:
 		if (analogue)
 			control = -4;
 		break;
-		
+
 	case DtButton1:
 		if (!analogue)
 			control = -5;
 		break;
-		
+
 	case DtButton2:
 		if (!analogue)
 			control = -6;
 		break;
-	
+
 	case DtUp:
 		if (!analogue)
 			control = -7;
 		break;
-		
+
 	case DtDown:
 		if (!analogue)
 			control = -8;
 		break;
-	
+
 	default:
 		return false;
 	}
-	
+
 	return control != 0;
 }
 
@@ -211,7 +211,7 @@ void InputDeviceTouchGamepad::touchesBegan(NSSet* touches, UIEvent* event)
 			else
 				control = m_controls[2];
 		}
-		
+
 		if (control)
 		{
 			control->begin(touch);
@@ -254,25 +254,25 @@ void InputDeviceTouchGamepad::Pad::begin(UITouch* touch)
 {
 	origin = [touch locationInView: nil];
 }
-		
+
 void InputDeviceTouchGamepad::Pad::end(UITouch* touch)
 {
 	axisX =
 	axisY = 0.0f;
 }
-		
+
 void InputDeviceTouchGamepad::Pad::move(InputDeviceTouchGamepad* device, UITouch* touch)
 {
 	CGPoint location = [touch locationInView: nil];
-	
+
 	float offsetX = location.x - origin.x;
 	float offsetY = location.y - origin.y;
-	
+
 	if (device->m_landscape)
 		std::swap(offsetX, offsetY);
-		
+
 	const float c_deadZone = 8.0f;
-	
+
 	if (abs(offsetX) > c_deadZone)
 		offsetX = sign(offsetX) * (abs(offsetX) - c_deadZone);
 	else
@@ -282,7 +282,7 @@ void InputDeviceTouchGamepad::Pad::move(InputDeviceTouchGamepad* device, UITouch
 		offsetY = sign(offsetY) * (abs(offsetY) - c_deadZone);
 	else
 		offsetY = 0.0f;
-		
+
 	axisX = -clamp(offsetX / 30.0f, -1.0f, 1.0f);
 	axisY = -clamp(offsetY / 30.0f, -1.0f, 1.0f);
 }
@@ -291,12 +291,12 @@ void InputDeviceTouchGamepad::Button::begin(UITouch* touch)
 {
 	value = 1.0f;
 }
-		
+
 void InputDeviceTouchGamepad::Button::end(UITouch* touch)
 {
 	value = 0.0f;
 }
-		
+
 void InputDeviceTouchGamepad::Button::move(InputDeviceTouchGamepad* device, UITouch* touch)
 {
 }

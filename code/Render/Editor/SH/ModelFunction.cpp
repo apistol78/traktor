@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <limits>
 #include "Core/Math/SahTree.h"
 #include "Render/Editor/SH/ModelFunction.h"
@@ -55,6 +49,6 @@ float ModelFunction::evaluate(float phi, float theta, const Vector4& unit) const
 
 	return diffuse;
 }
-		
+
 	}
 }

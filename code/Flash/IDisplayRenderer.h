@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_flash_IDisplayRenderer_H
-#define traktor_flash_IDisplayRenderer_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/Math/Matrix33.h"
@@ -123,7 +116,7 @@ public:
 	virtual void renderGlyph(
 		const Dictionary& dictionary,
 		const Matrix33& transform,
-		const Aabb2& clipBounds, 
+		const Aabb2& clipBounds,
 		const Font* font,
 		const Shape* glyph,
 		float fontHeight,
@@ -159,4 +152,3 @@ public:
 	}
 }
 
-#endif	// traktor_flash_IDisplayRenderer_H

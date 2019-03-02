@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/Application.h"
 #include "Ui/Button.h"
 #include "Ui/MessageBox.h"
@@ -34,7 +28,7 @@ bool MessageBox::create(Widget* parent, const std::wstring& message, const std::
 int MessageBox::show(Widget* parent, const std::wstring& message, const std::wstring& caption, int style)
 {
 	MessageBox mb;
-	
+
 	if (!mb.create(parent, message, caption, style))
 		return DrCancel;
 

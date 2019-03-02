@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_script_ScriptDebuggerTool_H
-#define traktor_script_ScriptDebuggerTool_H
+#pragma once
 
 #include "Editor/IEditorTool.h"
 
@@ -13,7 +6,7 @@ namespace traktor
 {
 	namespace ui
 	{
-	
+
 class CloseEvent;
 
 	}
@@ -45,4 +38,3 @@ private:
 	}
 }
 
-#endif	// traktor_script_ScriptDebuggerTool_H

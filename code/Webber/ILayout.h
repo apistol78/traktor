@@ -1,5 +1,4 @@
-#ifndef traktor_wbr_ILayout_H
-#define traktor_wbr_ILayout_H
+#pragma once
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
@@ -37,4 +36,3 @@ public:
 	}
 }
 
-#endif	// traktor_wbr_ILayout_H

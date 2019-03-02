@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <algorithm>
 #include <list>
 #include "Core/Io/StringOutputStream.h"
@@ -20,7 +14,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 class KeyboardRegistry
 {
 public:
@@ -29,23 +23,23 @@ public:
 		static KeyboardRegistry s_instance;
 		return s_instance;
 	}
-	
+
 	void add(KeyboardInputSource* source)
 	{
 		m_sources.push_back(source);
 	}
-	
+
 	void remove(KeyboardInputSource* source)
 	{
 		std::list< KeyboardInputSource* >::iterator i = std::find(m_sources.begin(), m_sources.end(), source);
 		m_sources.erase(i);
 	}
-	
+
 	const std::list< KeyboardInputSource* >& get() const
 	{
 		return m_sources;
 	}
-	
+
 private:
 	std::list< KeyboardInputSource* > m_sources;
 };
@@ -84,7 +78,7 @@ std::wstring KeyboardInputSource::getDescription() const
 	{
 		if (i != m_keys.begin())
 			ss << L" + ";
-			
+
 		for (RefArray< DeviceControl >::const_iterator j = i->deviceControls.begin(); j != i->deviceControls.end(); ++j)
 		{
 			std::wstring controlName = (*j)->getControlName();
@@ -108,7 +102,7 @@ void KeyboardInputSource::prepare(float T, float dT)
 		{
 			i->deviceControls.resize(deviceCount);
 			for (int32_t j = 0; j < deviceCount; ++j)
-			{			
+			{
 				i->deviceControls[j] = m_deviceControlManager->getDeviceControl(
 					CtKeyboard,
 					i->controlType,
@@ -119,7 +113,7 @@ void KeyboardInputSource::prepare(float T, float dT)
 		}
 		m_deviceCount = deviceCount;
 	}
-	
+
 	// Update our local state; ie state without looking at other keyboard sources.
 	m_state = true;
 	for (std::vector< Key >::iterator i = m_keys.begin(); i != m_keys.end(); ++i)
@@ -135,22 +129,22 @@ float KeyboardInputSource::read(float T, float dT)
 {
 	if (!m_state)
 		return 0.0f;
-	
+
 	// Our chain of controls are all active, ie all pressed.
 
 	// If our controls are part of any other keyboard input source's chain
 	// then we need to ensure our chain of controls are longest.
-	
+
 	const std::list< KeyboardInputSource* >& otherSources = KeyboardRegistry::getInstance().get();
 	for (std::list< KeyboardInputSource* >::const_iterator i = otherSources.begin(); i != otherSources.end(); ++i)
 	{
 		if ((*i)->m_keys.size() <= m_keys.size())
 			continue;
-			
+
 		bool otherActive = asBoolean((*i)->read(T, dT));
 		if (!otherActive)
 			continue;
-		
+
 		bool match = true;
 		for (std::vector< Key >::iterator j = m_keys.begin(); j != m_keys.end(); ++j)
 		{
@@ -160,7 +154,7 @@ float KeyboardInputSource::read(float T, float dT)
 				break;
 			}
 		}
-		
+
 		// Found other source which are active with all our our keys mapped; we
 		// cannot be as it contain more keys thus have higher priority.
 		if (match)
@@ -169,7 +163,7 @@ float KeyboardInputSource::read(float T, float dT)
 			break;
 		}
 	}
-	
+
 	return asFloat(m_state);
 }
 

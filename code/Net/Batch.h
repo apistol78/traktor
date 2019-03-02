@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_net_Batch_H
-#define traktor_net_Batch_H
+#pragma once
 
 #include "Core/Misc/Endian.h"
 #include "Net/TcpSocket.h"
@@ -86,4 +79,3 @@ int32_t recvBatch(net::TcpSocket* socket, P1& p1, P2& p2, P3& p3)
 	}
 }
 
-#endif	// traktor_net_Batch_H

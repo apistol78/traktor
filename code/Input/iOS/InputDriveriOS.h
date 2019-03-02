@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_input_InputDriveriOS_H
-#define traktor_input_InputDriveriOS_H
+#pragma once
 
 #include "Core/Platform.h"
 #include "Input/IInputDriver.h"
@@ -24,18 +17,18 @@ namespace traktor
 	{
 
 class InputDriveriOSImpl;
-	
+
 class T_DLLCLASS InputDriveriOS : public IInputDriver
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	InputDriveriOS();
-	
+
 	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) T_OVERRIDE T_FINAL;
-	
+
 	virtual int getDeviceCount() T_OVERRIDE T_FINAL;
-	
+
 	virtual Ref< IInputDevice > getDevice(int index) T_OVERRIDE T_FINAL;
 
 	virtual UpdateResult update() T_OVERRIDE T_FINAL;
@@ -43,8 +36,7 @@ public:
 private:
 	Ref< InputDriveriOSImpl > m_impl;
 };
-	
+
 	}
 }
 
-#endif	// traktor_input_InputDriveriOS_H

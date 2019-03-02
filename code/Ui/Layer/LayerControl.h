@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_LayerControl_H
-#define traktor_ui_LayerControl_H
+#pragma once
 
 #include "Core/RefArray.h"
 #include "Ui/Widget.h"
@@ -80,4 +73,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_LayerControl_H

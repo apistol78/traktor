@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_ui_FormWin32_H
-#define traktor_ui_FormWin32_H
+#pragma once
 
 #include "Ui/Itf/IForm.h"
 #include "Ui/Win32/WidgetWin32Impl.h"
@@ -61,4 +54,3 @@ private:
 	}
 }
 
-#endif	// traktor_ui_FormWin32_H

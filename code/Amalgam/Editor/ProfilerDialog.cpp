@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/Editor/ProfilerDialog.h"
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Core/Io/StringOutputStream.h"
@@ -20,7 +14,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 const Color4ub c_threadColors[] =
 {
 	Color4ub(255, 255, 0, 255),
@@ -30,7 +24,7 @@ const Color4ub c_threadColors[] =
 	Color4ub(0, 255, 0, 255),
 	Color4ub(0, 0, 255, 255)
 };
-		
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ProfilerDialog", ProfilerDialog, ui::Dialog)

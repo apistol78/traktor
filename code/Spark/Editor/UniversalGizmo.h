@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_UniversalGizmo_H
-#define traktor_spark_UniversalGizmo_H
+#pragma once
 
 #include "Spark/Editor/IGizmo.h"
 
@@ -56,4 +49,3 @@ private:
 	}
 }
 
-#endif	// traktor_spark_UniversalGizmo_H

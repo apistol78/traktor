@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_render_ProgramCapture_H
-#define traktor_render_ProgramCapture_H
+#pragma once
 
 #include <map>
 #include "Render/IProgram.h"
@@ -64,4 +57,3 @@ private:
 	}
 }
 
-#endif	// traktor_render_ProgramCapture_H

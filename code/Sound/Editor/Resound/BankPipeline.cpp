@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Database/Instance.h"
@@ -107,7 +101,7 @@ bool BankPipeline::buildDependencies(
 ) const
 {
 	const BankAsset* bankAsset = checked_type_cast< const BankAsset*, false >(sourceAsset);
-	
+
 	const RefArray< IGrainData >& grains = bankAsset->getGrains();
 	for (RefArray< IGrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
 		buildGrainDependencies(pipelineDepends, *i);
@@ -151,7 +145,7 @@ bool BankPipeline::buildOutput(
 	float range = 0.0f;
 
 	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(bankAsset->m_category);
-	
+
 	if (category)
 		configurationId = category->getConfigurationId();
 

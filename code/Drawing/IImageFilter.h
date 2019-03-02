@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_drawing_IImageFilter_H
-#define traktor_drawing_IImageFilter_H
+#pragma once
 
 #include "Core/Object.h"
 
@@ -21,7 +14,7 @@ namespace traktor
 {
 	namespace drawing
 	{
-	
+
 class Image;
 
 /*! \brief Image filter base class.
@@ -36,8 +29,7 @@ protected:
 
 	virtual void apply(Image* image) const = 0;
 };
-	
+
 	}
 }
 
-#endif	// traktor_drawing_IImageFilter_H

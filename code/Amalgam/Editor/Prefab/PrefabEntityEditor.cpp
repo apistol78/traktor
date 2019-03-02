@@ -27,7 +27,7 @@ bool PrefabEntityEditor::isGroup() const
 bool PrefabEntityEditor::addChildEntity(traktor::scene::EntityAdapter* childEntityAdapter) const
 {
 	PrefabEntityData* prefabEntityData = checked_type_cast< PrefabEntityData* >(getEntityAdapter()->getEntityData());
-	
+
 	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
 	prefabEntityData->addEntityData(childEntityData);
 

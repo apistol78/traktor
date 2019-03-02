@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_spark_SvgParser_H
-#define traktor_spark_SvgParser_H
+#pragma once
 
 #include <map>
 #include "Core/Ref.h"
@@ -57,9 +50,9 @@ private:
 	Ref< SvgShape > parsePolyLine(xml::Element* elm);
 
 	Ref< SvgShape > parsePath(xml::Element* elm);
-	
+
 	void parseDefs(xml::Element* elm);
-	
+
 	Ref< SvgStyle > parseStyle(xml::Element* elm);
 
 	Matrix33 parseTransform(xml::Element* elm);
@@ -70,4 +63,3 @@ private:
 	}
 }
 
-#endif	// traktor_spark_SvgParser_H

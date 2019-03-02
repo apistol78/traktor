@@ -34,7 +34,7 @@ std::wstring buildPath(const PropertyItem* item)
 	if (parent)
 	{
 		const RefArray< PropertyItem >& children = parent->getChildItems();
-		
+
 		RefArray< PropertyItem >::const_iterator it = std::find(children.begin(), children.end(), item);
 		T_FATAL_ASSERT (it != children.end());
 
@@ -304,7 +304,7 @@ bool PropertyList::resolvePropertyGuid(const Guid& guid, std::wstring& resolved)
 Ref< HierarchicalState > PropertyList::captureState() const
 {
 	Ref< HierarchicalState > state = new HierarchicalState();
-	
+
 	state->setScrollPosition(m_scrollBar->getPosition());
 	for (const auto item : m_propertyItems)
 		recursiveCaptureState(item, state);
@@ -498,7 +498,7 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 			else if ((*i)->isSelected())
 			{
 				(*i)->setSelected(false);
-				
+
 				PropertySelectionChangeEvent selectionChangeEvent(this, *i, id);
 				raiseEvent(&selectionChangeEvent);
 			}
@@ -674,7 +674,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 	{
 		Rect rcText(rcItem.left, rcItem.top, rcItem.left + m_separator, rcItem.bottom);
 		Rect rcValue(rcItem.left + m_separator + 1, rcItem.top, rcItem.right, rcItem.bottom);
-		
+
 		// Draw item background.
 		canvas.setForeground(ss->getColor(this, (*i)->isSelected() ? L"item-color-selected" : L"color"));
 		(*i)->paintBackground(canvas, rcItem);

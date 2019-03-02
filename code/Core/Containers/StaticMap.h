@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_StaticMap_H
-#define traktor_StaticMap_H
+#pragma once
 
 #include "Core/Containers/StaticVector.h"
 
@@ -56,7 +49,7 @@ public:
 	{
 		return m_data.end();
 	}
-	
+
 	const_iterator end() const
 	{
 		return m_data.end();
@@ -80,7 +73,7 @@ public:
 
 		return end();
 	}
-	
+
 	const_iterator find(const Key& key) const
 	{
 		size_t is = 0;
@@ -99,7 +92,7 @@ public:
 
 		return end();
 	}
-	
+
 	void insert(const pair_t& pair)
 	{
 		size_t is = 0;
@@ -130,7 +123,7 @@ public:
 		for (const_iterator i = first; i != last; ++i)
 			insert(*i);
 	}
-	
+
 	iterator erase(const iterator& it)
 	{
 		return m_data.erase(it);
@@ -214,4 +207,3 @@ private:
 
 }
 
-#endif	// traktor_StaticMap_H

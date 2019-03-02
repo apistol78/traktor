@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "UnitTest/CaseRenderSw.h"
 /*
 #include "Render/Sw/Core/x86/JitX86.h"
@@ -644,7 +638,7 @@ void CaseRenderSw::run()
 	memset(outputVarying1, 0, sizeof(outputVarying1));
 	memset(outputVarying2, 0, sizeof(outputVarying2));
 	memset(outputVarying3, 0, sizeof(outputVarying3));
-	{	
+	{
 		render::IntrProgram program;
 		program.addConstant(Vector4(1.0f, 2.0f, 3.0f, 4.0f));
 		program.addConstant(Vector4(5.0f, 6.0f, 7.0f, 8.0f));
@@ -1085,7 +1079,7 @@ void CaseRenderSw::run()
 	{
 		render::IntrProgram program;
 		program.addConstant(Vector4(10.0f, 10.0f, 10.0f, 10.0f));
-		
+
 		program.addInstruction(render::Instruction(render::OpFetchConstant, 0, 0, 0, 0, 0));
 		program.addInstruction(render::Instruction(render::OpJumpIfZero, 0, 3));
 		program.addInstruction(render::Instruction(render::OpDecrement, 0, 0, 0, 0, 0));
@@ -1112,7 +1106,7 @@ void CaseRenderSw::run()
 	{
 		render::IntrProgram program;
 		program.addConstant(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-		
+
 		program.addInstruction(render::Instruction(render::OpFetchConstant, 0, 0, 0, 0, 0));
 		program.addInstruction(render::Instruction(render::OpDecrement, 0, 0, 0, 0, 0));
 		program.addInstruction(render::Instruction(render::OpJumpIfZero, 0, -1));

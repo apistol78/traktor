@@ -1,11 +1,4 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
-#ifndef traktor_scene_EntityRendererAdapter_H
-#define traktor_scene_EntityRendererAdapter_H
+#pragma once
 
 #include <functional>
 #include <Core/Ref.h>
@@ -15,16 +8,16 @@ namespace traktor
 {
 	namespace scene
 	{
-	
+
 class EntityRendererCache;
-	
+
 class EntityRendererAdapter : public world::IEntityRenderer
 {
 	T_RTTI_CLASS;
 
 public:
 	EntityRendererAdapter(EntityRendererCache* cache, world::IEntityRenderer* entityRenderer, const std::function< bool(const EntityAdapter*) >& filter);
-	
+
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void render(
@@ -45,8 +38,7 @@ private:
 	Ref< world::IEntityRenderer > m_entityRenderer;
 	std::function< bool(const EntityAdapter*) > m_filter;
 };
-	
+
 	}
 }
 
-#endif	// traktor_scene_EntityRendererAdapter_H

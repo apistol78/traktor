@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Amalgam/TargetProfilerEvents.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
@@ -14,7 +8,7 @@ namespace traktor
 	{
 		namespace
 		{
-		
+
 class MemberProfilerEvent : public MemberComplex
 {
 public:
@@ -39,9 +33,9 @@ private:
 };
 
 		}
-	
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.TargetProfilerEvents", 0, TargetProfilerEvents, ISerializable)
-	
+
 TargetProfilerEvents::TargetProfilerEvents()
 {
 }

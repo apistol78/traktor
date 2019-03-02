@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include "Ui/StyleBitmap.h"
 #include "Ui/PropertyList/CheckPropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
