@@ -39,7 +39,6 @@ struct Unknown : public IRuntimeDispatch
 		T_VERIFY_ARGUMENT_COUNT(1)
 
 		std::string methodName = argv[0].getString();
-
 		return (*m_unknown)(
 			mandatory_non_null_type_cast< ClassType* >(self),
 			methodName,

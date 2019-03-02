@@ -20,7 +20,7 @@ char* refStringCreate(const char* s)
 
 	void* ptr = getAllocator()->alloc(sizeof(uint16_t) + (len + 1) * sizeof(char), 4, T_FILE_LINE);
 	if (!ptr)
-		return 0;
+		return nullptr;
 
 	uint16_t* base = static_cast< uint16_t* >(ptr);
 	*base = 1;
@@ -46,7 +46,7 @@ char* refStringDec(char* s)
 	if (--*base == 0)
 	{
 		getAllocator()->free(base);
-		return 0;
+		return nullptr;
 	}
 	return s;
 }
@@ -181,7 +181,7 @@ bool Any::getBoolean() const
 	case AtString:
 		return parseString< int32_t >(m_data.m_string) != 0;
 	case AtObject:
-		return m_data.m_object != 0;
+		return m_data.m_object != nullptr;
 	default:
 		break;
 	}

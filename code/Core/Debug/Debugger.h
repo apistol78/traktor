@@ -1,6 +1,4 @@
 #pragma once
-#ifndef traktor_Debugger_H
-#define traktor_Debugger_H
 
 #include "Core/Config.h"
 
@@ -46,5 +44,3 @@ public:
 };
 
 }
-
-#endif	// traktor_Debugger_H

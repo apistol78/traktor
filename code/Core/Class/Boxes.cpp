@@ -26,11 +26,11 @@ public:
 		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);
 #endif
 
-		void* ptr = 0;
+		void* ptr = nullptr;
 		for (std::vector< BlockAllocator* >::iterator i = m_allocators.begin(); i != m_allocators.end(); ++i)
 		{
 			BlockAllocator* allocator = *i;
-			if ((ptr = allocator->alloc()) != 0)
+			if ((ptr = allocator->alloc()) != nullptr)
 				return ptr;
 		}
 
@@ -142,7 +142,7 @@ Ref< ITypedObject > BoxedTypeInfo::createInstance() const
 Ref< BoxedTypeInfo > BoxedTypeInfo::find(const std::wstring& name)
 {
 	const TypeInfo* type = TypeInfo::find(name.c_str());
-	return type != 0 ? new BoxedTypeInfo(*type) : 0;
+	return type != nullptr ? new BoxedTypeInfo(*type) : nullptr;
 }
 
 Ref< BoxedRefArray > BoxedTypeInfo::findAllOf(const BoxedTypeInfo* typeInfo, bool inclusive)
@@ -490,7 +490,7 @@ Ref< BoxedVector4 > BoxedPlane::rayIntersection(
 	if (m_value.rayIntersection(origin, direction, k, &result))
 		return new BoxedVector4(result);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< BoxedVector4 > BoxedPlane::segmentIntersection(
@@ -504,7 +504,7 @@ Ref< BoxedVector4 > BoxedPlane::segmentIntersection(
 	if (m_value.segmentIntersection(a, b, k, &result))
 		return new BoxedVector4(result);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< BoxedVector4 > BoxedPlane::uniqueIntersectionPoint(
@@ -517,7 +517,7 @@ Ref< BoxedVector4 > BoxedPlane::uniqueIntersectionPoint(
 	if (Plane::uniqueIntersectionPoint(a, b, c, result))
 		return new BoxedVector4(result);
 	else
-		return 0;
+		return nullptr;
 }
 
 std::wstring BoxedPlane::toString() const
@@ -1216,7 +1216,7 @@ ITypedObject* BoxedRefArray::get(int32_t index)
 	if (index >= 0 && index < int32_t(m_arr.size()))
 		return m_arr[index];
 	else
-		return 0;
+		return nullptr;
 }
 
 void BoxedRefArray::push_back(ITypedObject* object)

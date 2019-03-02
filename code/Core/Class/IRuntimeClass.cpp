@@ -10,11 +10,11 @@ Ref< ITypedObject > createRuntimeClassInstance(const IRuntimeClass* runtimeClass
 {
 	const IRuntimeDispatch* constructorDisptach = runtimeClass->getConstructorDispatch();
 	if (!constructorDisptach)
-		return 0;
+		return nullptr;
 
 	Any retval = constructorDisptach->invoke(self, argc, argv);
 	if (!retval.isObject())
-		return 0;
+		return nullptr;
 
 	return retval.getObjectUnsafe();
 }
@@ -27,7 +27,7 @@ const IRuntimeDispatch* findRuntimeClassMethod(const IRuntimeClass* runtimeClass
 		if (runtimeClass->getMethodName(i) == methodName)
 			return runtimeClass->getMethodDispatch(i);
 	}
-	return 0;
+	return nullptr;
 }
 
 std::string findRuntimeClassMethodName(const IRuntimeClass* runtimeClass, const IRuntimeDispatch* methodDispatch)
