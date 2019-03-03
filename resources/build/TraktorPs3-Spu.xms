@@ -248,7 +248,51 @@
 								<name>Containers</name>
 								<items>
 									<item type="File">
-										<fileName>Containers/*.*</fileName>
+										<fileName>Containers/AlignedVector.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Containers/BitVector.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Containers/CircularVector.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Containers/IntrusiveList.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Containers/SmallMap.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Containers/SmallSet.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Containers/StaticBitVector.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Containers/StaticMap.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Containers/StaticSet.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Containers/StaticVector.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Containers/StringMap.h</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>Containers/ThreadsafeFifo.h</fileName>
 										<items/>
 									</item>
 								</items>
