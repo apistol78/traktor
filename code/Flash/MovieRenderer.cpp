@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"

@@ -172,12 +172,12 @@ bool Thread::finished() const
 	return in->finished;
 }
 
-Thread::Thread(Functor* functor, const std::wstring& name, int hardwareCore)
-:	m_handle(0)
+Thread::Thread(Functor* functor, const wchar_t* const name, int hardwareCore)
+:	m_handle(nullptr)
 ,	m_id(0)
 ,	m_stopped(false)
 ,	m_functor(functor)
-,	m_name(wstombs(name))
+,	m_name(name)
 ,	m_hardwareCore(hardwareCore)
 {
 }

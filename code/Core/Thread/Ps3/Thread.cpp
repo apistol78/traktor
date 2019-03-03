@@ -75,7 +75,7 @@ bool Thread::start(Priority priority)
 		1535 - int(priority) * 767,
 		c_stackSize,
 		SYS_PPU_THREAD_CREATE_JOINABLE,
-		m_name.c_str()
+		m_name != nullptr ? wstombs(m_name).c_str() : ""
 	);
 	if (res != CELL_OK)
 	{
@@ -208,12 +208,12 @@ bool Thread::finished() const
 	return in->finished;
 }
 
-Thread::Thread(Functor* functor, const std::wstring& name, int hardwareCore)
-:	m_handle(0)
+Thread::Thread(Functor* functor, const wchar_t* const name, int hardwareCore)
+:	m_handle(nullptr)
 ,	m_id(0)
 ,	m_stopped(false)
 ,	m_functor(functor)
-,	m_name(wstombs(name))
+,	m_name(name)
 ,	m_hardwareCore(hardwareCore)
 {
 }

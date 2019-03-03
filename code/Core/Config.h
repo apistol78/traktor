@@ -28,6 +28,9 @@
 #	if __cplusplus >= 201103L || (defined(__PS3__) && !defined(SPU)) || defined(__APPLE__)
 #		define T_CXX11
 #	endif
+#	if defined(__PS3__) && defined(SPU)
+#		define nullptr 0
+#	endif
 #endif
 
 #if !defined(T_DLLIMPORT)
