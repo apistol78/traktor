@@ -38,21 +38,6 @@ void* trampoline(void* data)
 
 	}
 
-Thread::Thread(Functor* functor, const std::wstring& name, int hardwareCore)
-:	m_handle(0)
-,	m_id(0)
-,	m_stopped(false)
-,	m_functor(functor)
-{
-}
-
-Thread::~Thread()
-{
-#if defined(__EMSCRIPTEN_PTHREADS__)
-	delete reinterpret_cast< Internal* >(m_handle);
-#endif
-}
-
 bool Thread::start(Priority priority)
 {
 #if defined(__EMSCRIPTEN_PTHREADS__)
@@ -229,6 +214,23 @@ bool Thread::finished() const
 	return in ? in->finished : true;
 #else
 	return true;
+#endif
+}
+
+Thread::Thread(Functor* functor, const wchar_t* const name, int hardwareCore)
+:	m_handle(nullptr)
+,	m_id(0)
+,	m_stopped(false)
+,	m_functor(functor)
+,	m_name(name)
+,	m_hardwareCore(hardwareCore)
+{
+}
+
+Thread::~Thread()
+{
+#if defined(__EMSCRIPTEN_PTHREADS__)
+	delete reinterpret_cast< Internal* >(m_handle);
 #endif
 }
 
