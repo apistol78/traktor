@@ -54,6 +54,20 @@ void SplineEntityData::addEntityData(ControlPointEntityData* controlPointEntity)
 	m_controlPointEntities.push_back(controlPointEntity);
 }
 
+void SplineEntityData::setTransform(const Transform& transform)
+{
+	Transform deltaTransform = transform * getTransform().inverse();
+	for (auto controlPointEntity : m_controlPointEntities)
+	{
+		if (controlPointEntity != nullptr)
+		{
+			Transform currentTransform = controlPointEntity->getTransform();
+			controlPointEntity->setTransform(deltaTransform * currentTransform);
+		}
+	}
+	world::ComponentEntityData::setTransform(transform);
+}
+
 void SplineEntityData::serialize(ISerializer& s)
 {
 	world::ComponentEntityData::serialize(s);

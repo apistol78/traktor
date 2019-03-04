@@ -54,6 +54,8 @@ public:
 
 	void addEntityData(ControlPointEntityData* controlPointEntity);
 
+	virtual void setTransform(const Transform& transform) override final;
+
 	virtual void serialize(ISerializer& s) override final;
 
 	const RefArray< ControlPointEntityData >& getControlPointEntities() const { return m_controlPointEntities; }

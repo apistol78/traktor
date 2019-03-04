@@ -27,6 +27,23 @@ void SplineEntity::addLayer(ISplineLayer* layer)
 	m_dirty = true;
 }
 
+void SplineEntity::setTransform(const Transform& transform)
+{
+	Transform invTransform = getTransform().inverse();
+	for (auto controlPointEntity : m_controlPointEntities)
+	{
+		Transform currentTransform;
+		if (controlPointEntity->getTransform(currentTransform))
+		{
+			Transform Tlocal = invTransform * currentTransform;
+			Transform Tworld = transform * Tlocal;
+			controlPointEntity->setTransform(Tworld);
+		}
+	}
+
+	world::ComponentEntity::setTransform(transform);
+}
+
 void SplineEntity::update(const world::UpdateParams& update)
 {
 	// Update control point entities, check if any is dirty.
