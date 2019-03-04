@@ -90,7 +90,7 @@ void SoundDriverWriteOut::submit(const SoundBlock& soundBlock)
 
 	// Shuffle samples into an interleaved format.
 	float* sp = m_interleaved.ptr();
-	T_ASSERT (sp);
+	T_ASSERT(sp);
 
 	for (uint32_t i = 0; i < soundBlock.samplesCount; ++i)
 	{

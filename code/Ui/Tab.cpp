@@ -191,7 +191,7 @@ void Tab::setActivePage(TabPage* page)
 	if ((m_selectedPage = page) != 0)
 	{
 		PageState* state = findPageState(page);
-		T_ASSERT (state);
+		T_ASSERT(state);
 
 #if defined(_DEBUG)
 		checkPageStates();
@@ -255,7 +255,7 @@ Ref< TabPage > Tab::cycleActivePage(bool forward)
 		m_selectedPage->setVisible(false);
 
 	PageState* pageState = findPageState(0);
-	T_ASSERT (pageState);
+	T_ASSERT(pageState);
 
 #if defined(_DEBUG)
 	checkPageStates();
@@ -370,8 +370,8 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 			{
 #if defined(_DEBUG)
 				PageState* state = findPageState(m_selectedPage);
-				T_ASSERT (state);
-				T_ASSERT (state->depth == 0);
+				T_ASSERT(state);
+				T_ASSERT(state->depth == 0);
 #endif
 				m_selectedPage->setVisible(false);
 			}
@@ -611,12 +611,12 @@ void Tab::checkPageStates()
 	for (page_state_vector_t::const_iterator i = m_pages.begin(); i != m_pages.end(); ++i)
 	{
 		int32_t depth = i->depth;
-		T_ASSERT (depth < counts.size());
+		T_ASSERT(depth < counts.size());
 
 		counts[depth]++;
 	}
 	for (std::vector< int32_t >::const_iterator i = counts.begin(); i != counts.end(); ++i)
-		T_ASSERT (*i == 1);
+		T_ASSERT(*i == 1);
 }
 #endif
 

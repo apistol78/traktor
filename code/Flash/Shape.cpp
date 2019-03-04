@@ -138,7 +138,7 @@ bool Shape::create(const Aabb2& shapeBounds, const SwfShape* shape, const SwfSty
 
 			if (s.stateNewStyles)
 			{
-				T_ASSERT (s.newStyles);
+				T_ASSERT(s.newStyles);
 
 				fillStyleBase = uint32_t(m_fillStyles.size());
 				lineStyleBase = uint32_t(m_lineStyles.size());

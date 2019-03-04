@@ -20,7 +20,7 @@ ActionFunctionNative::ActionFunctionNative(ActionContext* context, INativeFuncti
 
 ActionValue ActionFunctionNative::call(ActionObject* self, ActionObject* super, const ActionValueArray& args)
 {
-	T_ASSERT (!is_a< ActionSuper >(self));
+	T_ASSERT(!is_a< ActionSuper >(self));
 
 	CallArgs fnc;
 	fnc.context = getContext();

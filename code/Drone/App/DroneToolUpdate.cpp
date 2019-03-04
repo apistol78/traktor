@@ -41,7 +41,7 @@ void DroneToolUpdate::getMenuItems(RefArray< ui::MenuItem >& outItems)
 
 bool DroneToolUpdate::execute(ui::Widget* parent, const ui::MenuItem* menuItem)
 {
-	T_ASSERT (menuItem);
+	T_ASSERT(menuItem);
 
 	if (menuItem->getCommand() == L"Drone.Update.Check")
 	{
@@ -55,7 +55,7 @@ bool DroneToolUpdate::execute(ui::Widget* parent, const ui::MenuItem* menuItem)
 		}
 
 		Ref< IStream > stream = new BufferedStream(connection->getStream());
-		T_ASSERT (stream);
+		T_ASSERT(stream);
 
 		Ref< UpdateBundle > bundle = xml::XmlDeserializer(stream).readObject< UpdateBundle >();
 
@@ -122,7 +122,7 @@ void DroneToolUpdate::updateThread(ui::Widget* parent, UpdateBundle* bundle, ui:
 			if (destinationPath.isRelative())
 			{
 				destinationPath = FileSystem::getInstance().getAbsolutePath(destinationPath);
-				T_ASSERT (!destinationPath.isRelative());
+				T_ASSERT(!destinationPath.isRelative());
 			}
 		}
 
@@ -157,7 +157,7 @@ void DroneToolUpdate::updateThread(ui::Widget* parent, UpdateBundle* bundle, ui:
 		}
 
 		Ref< IStream > sourceStream = new BufferedStream(connection->getStream());
-		T_ASSERT (sourceStream);
+		T_ASSERT(sourceStream);
 
 		uint8_t buf[4096];
 		for (;;)

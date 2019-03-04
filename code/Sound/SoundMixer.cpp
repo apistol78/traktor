@@ -11,8 +11,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundMixer", SoundMixer, ISoundMixer)
 
 void SoundMixer::mulConst(float* sb, uint32_t count, float factor) const
 {
-	T_ASSERT (alignUp(sb, 16) == sb);
-	T_ASSERT (alignUp(count, 4) == count);
+	T_ASSERT(alignUp(sb, 16) == sb);
+	T_ASSERT(alignUp(count, 4) == count);
 
 	Scalar sf(factor);
 	int32_t s = 0;
@@ -45,8 +45,8 @@ void SoundMixer::mulConst(float* sb, uint32_t count, float factor) const
 
 void SoundMixer::mulConst(float* lsb, const float* rsb, uint32_t count, float factor) const
 {
-	T_ASSERT (alignUp(lsb, 16) == lsb);
-	T_ASSERT (alignUp(count, 4) == count);
+	T_ASSERT(alignUp(lsb, 16) == lsb);
+	T_ASSERT(alignUp(count, 4) == count);
 
 	Scalar sf(factor);
 	int32_t s = 0;
@@ -109,9 +109,9 @@ void SoundMixer::mulConst(float* lsb, const float* rsb, uint32_t count, float fa
 
 void SoundMixer::addMulConst(float* lsb, const float* rsb, uint32_t count, float factor) const
 {
-	T_ASSERT (alignUp(lsb, 16) == lsb);
-	T_ASSERT (alignUp(rsb, 16) == rsb);
-	T_ASSERT (alignUp(count, 4) == count);
+	T_ASSERT(alignUp(lsb, 16) == lsb);
+	T_ASSERT(alignUp(rsb, 16) == rsb);
+	T_ASSERT(alignUp(count, 4) == count);
 
 	Scalar sf(factor);
 	int32_t s = 0;
@@ -141,14 +141,14 @@ void SoundMixer::addMulConst(float* lsb, const float* rsb, uint32_t count, float
 
 void SoundMixer::stretch(float* lsb, uint32_t lcount, const float* rsb, uint32_t rcount, float factor) const
 {
-	T_ASSERT (alignUp(lsb, 16) == lsb);
-	T_ASSERT (alignUp(rsb, 16) == rsb);
-	T_ASSERT (alignUp(lcount, 4) == lcount);
-	T_ASSERT (alignUp(rcount, 4) == rcount);
+	T_ASSERT(alignUp(lsb, 16) == lsb);
+	T_ASSERT(alignUp(rsb, 16) == rsb);
+	T_ASSERT(alignUp(lcount, 4) == lcount);
+	T_ASSERT(alignUp(rcount, 4) == rcount);
 
 	if (lcount != rcount)
 	{
-		T_ASSERT (rcount < 65536);
+		T_ASSERT(rcount < 65536);
 		uint32_t f = (rcount << 16) / lcount;
 
 		for (uint32_t s = 0; s < lcount; s += 4)
@@ -172,8 +172,8 @@ void SoundMixer::stretch(float* lsb, uint32_t lcount, const float* rsb, uint32_t
 
 void SoundMixer::mute(float* sb, uint32_t count) const
 {
-	T_ASSERT (alignUp(sb, 16) == sb);
-	T_ASSERT (alignUp(count, 4) == count);
+	T_ASSERT(alignUp(sb, 16) == sb);
+	T_ASSERT(alignUp(count, 4) == count);
 
 	const Vector4 zero = Vector4::zero();
 	for (uint32_t s = 0; s < count; s += 4)

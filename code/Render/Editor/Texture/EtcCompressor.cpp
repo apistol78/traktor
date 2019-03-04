@@ -31,7 +31,7 @@ bool EtcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& m
 	for (int32_t i = 0; i < mipCount; ++i)
 	{
 		int32_t byteSize = getTextureMipPitch(TfETC1, w, h, i);
-		T_ASSERT (byteSize <= maxByteSize);
+		T_ASSERT(byteSize <= maxByteSize);
 
 		Ref< drawing::Image > mipImage = mipImages[i];
 		uint8_t* wp = compressedData.ptr();

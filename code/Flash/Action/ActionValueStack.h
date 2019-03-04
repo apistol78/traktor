@@ -28,7 +28,7 @@ public:
 	 */
 	void push(const ActionValue& value)
 	{
-		T_ASSERT (m_index < MaxStackDepth);
+		T_ASSERT(m_index < MaxStackDepth);
 		m_stack[m_index++] = value;
 	}
 
@@ -78,7 +78,7 @@ public:
 	 */
 	void ensure(int32_t ensureCount)
 	{
-		T_ASSERT (ensureCount < MaxStackDepth);
+		T_ASSERT(ensureCount < MaxStackDepth);
 		while (m_index < ensureCount)
 			m_stack[m_index++] = ms_undefined;
 	}

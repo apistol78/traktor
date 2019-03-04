@@ -41,7 +41,7 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 	if (i != m_readCache.end())
 	{
 		T_FATAL_ASSERT (i->second.object);
-		T_ASSERT (DeepHash(i->second.object).get() == i->second.hash);
+		T_ASSERT(DeepHash(i->second.object).get() == i->second.hash);
 		return i->second.object;
 	}
 
@@ -79,7 +79,7 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 			Ref< ISerializable > object = BinarySerializer(&bufferedStream).readObject();
 			if (object)
 			{
-				T_ASSERT (DeepHash(object).get() == cachedHash);
+				T_ASSERT(DeepHash(object).get() == cachedHash);
 				m_readCache[instanceGuid].object = object;
 				m_readCache[instanceGuid].hash = cachedHash;
 				return object;

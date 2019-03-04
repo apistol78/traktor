@@ -86,10 +86,10 @@ void updateInputMappingAsset(InputMappingAsset* mappingAsset, const IInputNode* 
 
 	// Use traits to find child input nodes.
 	std::map< const TypeInfo*, Ref< const InputNodeTraits > >::const_iterator it = traits.find(&type_of(node));
-	T_ASSERT (it != traits.end());
+	T_ASSERT(it != traits.end());
 
 	const InputNodeTraits* t = it->second;
-	T_ASSERT (t);
+	T_ASSERT(t);
 
 	std::map< const std::wstring, Ref< const IInputNode > > childNodes;
 	t->getInputNodes(node, childNodes);
@@ -107,10 +107,10 @@ void createInputNodes(InputMappingAsset* mappingAsset, ui::GraphControl* graph, 
 		return;
 
 	std::map< const TypeInfo*, Ref< const InputNodeTraits > >::const_iterator it = traits.find(&type_of(node));
-	T_ASSERT (it != traits.end());
+	T_ASSERT(it != traits.end());
 
 	const InputNodeTraits* t = it->second;
-	T_ASSERT (t);
+	T_ASSERT(t);
 
 	Ref< ui::Node > graphNode;
 	Ref< ui::Pin > valuePin;
@@ -123,7 +123,7 @@ void createInputNodes(InputMappingAsset* mappingAsset, ui::GraphControl* graph, 
 		{
 			graphNode = *i;
 			valuePin = (*i)->findOutputPin(L"Value");
-			T_ASSERT (valuePin);
+			T_ASSERT(valuePin);
 			break;
 		}
 	}
@@ -157,7 +157,7 @@ void createInputNodes(InputMappingAsset* mappingAsset, ui::GraphControl* graph, 
 	// Add edge to parent's input pin.
 	if (parentInputPin)
 	{
-		T_ASSERT (valuePin);
+		T_ASSERT(valuePin);
 		graph->addEdge(new ui::Edge(
 			valuePin,
 			parentInputPin
@@ -204,7 +204,7 @@ bool InputMappingEditor::create(ui::Container* parent)
 		m_mappingAsset->setStateData(new InputMappingStateData());
 
 	InputMappingStateData* stateData = m_mappingAsset->getStateData();
-	T_ASSERT (stateData);
+	T_ASSERT(stateData);
 
 	const std::map< std::wstring, Ref< InputStateData > >& sd = stateData->getStateData();
 	for (std::map< std::wstring, Ref< InputStateData > >::const_iterator i = sd.begin(); i != sd.end(); ++i)
@@ -377,7 +377,7 @@ void InputMappingEditor::updateGraphView()
 
 	// Add all output states.
 	InputMappingStateData* stateData = m_mappingAsset->getStateData();
-	T_ASSERT (stateData);
+	T_ASSERT(stateData);
 
 	const std::map< std::wstring, Ref< InputStateData > >& sd = stateData->getStateData();
 	for (std::map< std::wstring, Ref< InputStateData > >::const_iterator i = sd.begin(); i != sd.end(); ++i)
@@ -454,7 +454,7 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 		else
 		{
 			InputMappingStateData* stateData = m_mappingAsset->getStateData();
-			T_ASSERT (stateData);
+			T_ASSERT(stateData);
 
 			Ref< InputStateData > sd = new InputStateData();
 
@@ -495,10 +495,10 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 					if (destinationInputNode)
 					{
 						std::map< const TypeInfo*, Ref< const InputNodeTraits > >::const_iterator it = m_traits.find(&type_of(destinationInputNode));
-						T_ASSERT (it != m_traits.end());
+						T_ASSERT(it != m_traits.end());
 
 						const InputNodeTraits* destinationTraits = it->second;
-						T_ASSERT (destinationTraits);
+						T_ASSERT(destinationTraits);
 
 						destinationTraits->disconnectInputNode(destinationInputNode, destinationPin->getName());
 					}
@@ -545,7 +545,7 @@ void InputMappingEditor::eventNodeSelect(ui::SelectEvent* event)
 void InputMappingEditor::eventListValueEdit(ui::EditListEditEvent* event)
 {
 	InputMappingSourceData* sourceData = m_mappingAsset->getSourceData();
-	T_ASSERT (sourceData);
+	T_ASSERT(sourceData);
 
 	if (event->getIndex() < 0)	// Add item.
 	{
@@ -590,7 +590,7 @@ void InputMappingEditor::eventListValueEdit(ui::EditListEditEvent* event)
 void InputMappingEditor::eventNodeMoved(ui::NodeMovedEvent* event)
 {
 	ui::Node* node = event->getNode();
-	T_ASSERT (node);
+	T_ASSERT(node);
 
 	InputMappingAsset::Position p =
 	{
@@ -604,7 +604,7 @@ void InputMappingEditor::eventNodeMoved(ui::NodeMovedEvent* event)
 void InputMappingEditor::eventNodeActivated(ui::NodeActivateEvent* event)
 {
 	ui::Node* node = event->getNode();
-	T_ASSERT (node);
+	T_ASSERT(node);
 
 	Ref< PropertyString > stateName = node->getData< PropertyString >(L"NAME");
 	Ref< InputStateData > stateData = node->getData< InputStateData >(L"DATA");
@@ -628,7 +628,7 @@ void InputMappingEditor::eventNodeActivated(ui::NodeActivateEvent* event)
 		if (inputDialog.showModal() == ui::DrOk && !fields[0].value.empty())
 		{
 			InputMappingStateData* mappingStateData = m_mappingAsset->getStateData();
-			T_ASSERT (mappingStateData);
+			T_ASSERT(mappingStateData);
 
 			mappingStateData->setStateData(currentName, 0);
 			mappingStateData->setStateData(fields[0].value, stateData);
@@ -648,16 +648,16 @@ void InputMappingEditor::eventEdgeConnected(ui::EdgeConnectEvent* event)
 	ui::Node* destinationNode = destinationPin->getNode();
 
 	IInputNode* sourceInputNode = sourceNode->getData< IInputNode >(L"DATA");
-	T_ASSERT (sourceInputNode);
+	T_ASSERT(sourceInputNode);
 
 	IInputNode* destinationInputNode = destinationNode->getData< IInputNode >(L"DATA");
 	if (destinationInputNode)
 	{
 		std::map< const TypeInfo*, Ref< const InputNodeTraits > >::const_iterator it = m_traits.find(&type_of(destinationInputNode));
-		T_ASSERT (it != m_traits.end());
+		T_ASSERT(it != m_traits.end());
 
 		const InputNodeTraits* destinationTraits = it->second;
-		T_ASSERT (destinationTraits);
+		T_ASSERT(destinationTraits);
 
 		destinationTraits->connectInputNode(destinationInputNode, destinationPin->getName(), sourceInputNode);
 	}
@@ -681,10 +681,10 @@ void InputMappingEditor::eventEdgeDisconnected(ui::EdgeDisconnectEvent* event)
 	if (destinationInputNode)
 	{
 		std::map< const TypeInfo*, Ref< const InputNodeTraits > >::const_iterator it = m_traits.find(&type_of(destinationInputNode));
-		T_ASSERT (it != m_traits.end());
+		T_ASSERT(it != m_traits.end());
 
 		const InputNodeTraits* destinationTraits = it->second;
-		T_ASSERT (destinationTraits);
+		T_ASSERT(destinationTraits);
 
 		destinationTraits->disconnectInputNode(destinationInputNode, destinationPin->getName());
 	}

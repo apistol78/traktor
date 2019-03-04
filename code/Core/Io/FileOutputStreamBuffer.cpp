@@ -25,7 +25,7 @@ void FileOutputStreamBuffer::close()
 int32_t FileOutputStreamBuffer::overflow(const wchar_t* buffer, int32_t count)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (count > 0);
+	T_ASSERT(count > 0);
 
 	uint32_t maxEncodedSize = count * IEncoding::MaxEncodingSize;
 	if (maxEncodedSize > m_encodedSize)

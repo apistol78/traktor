@@ -21,7 +21,7 @@ LayerEntityData::LayerEntityData()
 
 void LayerEntityData::setAttribute(const ILayerAttribute* attribute)
 {
-	T_ASSERT (attribute);
+	T_ASSERT(attribute);
 	for (RefArray< const ILayerAttribute >::iterator i = m_attributes.begin(); i != m_attributes.end(); ++i)
 	{
 		if (is_type_a(type_of(*i), type_of(attribute)))

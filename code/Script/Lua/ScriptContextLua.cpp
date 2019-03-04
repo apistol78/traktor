@@ -419,8 +419,8 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 int32_t ScriptContextLua::runtimeError(lua_State* luaState)
 {
 	ScriptContextLua* this_ = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (this_);
-	T_ASSERT (this_->m_scriptManager);
+	T_ASSERT(this_);
+	T_ASSERT(this_->m_scriptManager);
 
 	log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
 
@@ -436,8 +436,8 @@ int32_t ScriptContextLua::runtimeError(lua_State* luaState)
 int32_t ScriptContextLua::permitGlobalWrite(lua_State* luaState)
 {
 	ScriptContextLua* this_ = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (this_);
-	T_ASSERT (this_->m_scriptManager);
+	T_ASSERT(this_);
+	T_ASSERT(this_->m_scriptManager);
 
 	const char* key = lua_tostring(luaState, -2);
 	if (!key)
@@ -461,8 +461,8 @@ int32_t ScriptContextLua::permitGlobalWrite(lua_State* luaState)
 int32_t ScriptContextLua::restrictedAccessWrite(lua_State* luaState)
 {
 	ScriptContextLua* this_ = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (this_);
-	T_ASSERT (this_->m_scriptManager);
+	T_ASSERT(this_);
+	T_ASSERT(this_->m_scriptManager);
 
 	// Check if global has been defined, thus allow write.
 	const char* key = lua_tostring(luaState, -2);
@@ -488,8 +488,8 @@ int32_t ScriptContextLua::restrictedAccessWrite(lua_State* luaState)
 int32_t ScriptContextLua::restrictedAccessRead(lua_State* luaState)
 {
 	ScriptContextLua* this_ = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (this_);
-	T_ASSERT (this_->m_scriptManager);
+	T_ASSERT(this_);
+	T_ASSERT(this_->m_scriptManager);
 
 	// Read from this context's environment table first.
 	lua_pushvalue(luaState, -1);

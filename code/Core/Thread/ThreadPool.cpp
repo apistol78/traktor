@@ -22,7 +22,7 @@ void threadPoolDispatcher(
 {
 	while (alive)
 	{
-		T_ASSERT (functorWork);
+		T_ASSERT(functorWork);
 		(*functorWork)(); functorWork = 0;
 
 		Atomic::exchange(busy, 0);
@@ -55,10 +55,10 @@ bool ThreadPool::spawn(Functor* functor, Thread*& outThread, Thread::Priority pr
 		Worker& worker = m_workerThreads[i];
 		if (Atomic::compareAndSwap(worker.busy, 0, 1) == 0)
 		{
-			T_ASSERT (worker.busy == 1);
-			T_ASSERT (worker.threadWorker);
-			T_ASSERT (!worker.threadWorker->finished());
-			T_ASSERT (!worker.functorWork);
+			T_ASSERT(worker.busy == 1);
+			T_ASSERT(worker.threadWorker);
+			T_ASSERT(!worker.threadWorker->finished());
+			T_ASSERT(!worker.functorWork);
 
 			outThread = worker.threadWorker;
 			outThread->resume(priority);

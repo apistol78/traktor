@@ -159,7 +159,7 @@ void KeyboardDeviceWin32::setExclusive(bool exclusive)
 LRESULT WINAPI KeyboardDeviceWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	KeyboardDeviceWin32* this_ = reinterpret_cast< KeyboardDeviceWin32* >(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-	T_ASSERT (this_);
+	T_ASSERT(this_);
 
 	if (uMsg == WM_CHAR)
 	{

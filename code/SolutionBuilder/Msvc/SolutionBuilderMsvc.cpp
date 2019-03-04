@@ -69,7 +69,7 @@ bool collectExternalSolutions(
 			continue;
 
 		Solution* externalSolution = externalDependency->getSolution();
-		T_ASSERT (externalSolution);
+		T_ASSERT(externalSolution);
 
 		const RefArray< Project >& externalProjects = externalSolution->getProjects();
 		for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)

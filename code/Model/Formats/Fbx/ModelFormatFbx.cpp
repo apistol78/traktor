@@ -103,7 +103,7 @@ void dump(FbxNode* node)
 						continue;
 
 					const FbxNode* jointNode = cluster->GetLink();
-					T_ASSERT (jointNode);
+					T_ASSERT(jointNode);
 
 					log::info << L"deformer[" << i << L"].cluser[" << j << L"].joint = " << uint64_t(jointNode) << Endl;
 				}

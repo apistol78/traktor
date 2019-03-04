@@ -62,7 +62,7 @@ bool BlendMeshConverter::convert(
 	log::info << L"Creating mesh..." << Endl;
 
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
-	T_ASSERT (vertexSize > 0);
+	T_ASSERT(vertexSize > 0);
 
 	// Write number of blend shapes in data stream.
 	uint32_t meshCount = 1 + model.getBlendTargetCount();
@@ -131,7 +131,7 @@ bool BlendMeshConverter::convert(
 		for (AlignedVector< model::Polygon >::const_iterator k = model.getPolygons().begin(); k != model.getPolygons().end(); ++k)
 		{
 			const model::Polygon& polygon = *k;
-			T_ASSERT (polygon.getVertices().size() == 3);
+			T_ASSERT(polygon.getVertices().size() == 3);
 
 			if (polygon.getMaterial() != std::distance(model.getMaterials().begin(), j))
 				continue;

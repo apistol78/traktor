@@ -106,7 +106,7 @@ void MoviePlayer::destroy()
 		// as the focus character will trigger "exit focus" event
 		// thus need to have access to context etc.
 		ActionContext* context = m_movieInstance->getContext();
-		T_ASSERT (context);
+		T_ASSERT(context);
 		context->setFocus(0);
 		context->setPressed(0);
 
@@ -186,7 +186,7 @@ void MoviePlayer::execute(ISoundRenderer* soundRenderer)
 	T_PROFILER_SCOPE(L"MoviePlayer execute");
 
 	ActionContext* context = m_movieInstance->getContext();
-	T_ASSERT (context);
+	T_ASSERT(context);
 
 	Ref< SpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(m_movieInstance);
@@ -476,10 +476,10 @@ const IActionVM* MoviePlayer::getVM() const
 void MoviePlayer::setGlobal(const std::string& name, const ActionValue& value)
 {
 	ActionContext* actionContext = m_movieInstance->getContext();
-	T_ASSERT (actionContext);
+	T_ASSERT(actionContext);
 
 	ActionObject* global = actionContext->getGlobal();
-	T_ASSERT (global);
+	T_ASSERT(global);
 
 	global->setMember(name, value);
 }
@@ -487,10 +487,10 @@ void MoviePlayer::setGlobal(const std::string& name, const ActionValue& value)
 ActionValue MoviePlayer::getGlobal(const std::string& name) const
 {
 	ActionContext* actionContext = m_movieInstance->getContext();
-	T_ASSERT (actionContext);
+	T_ASSERT(actionContext);
 
 	ActionObject* global = actionContext->getGlobal();
-	T_ASSERT (global);
+	T_ASSERT(global);
 
 	ActionValue value;
 	global->getMember(name, value);

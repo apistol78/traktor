@@ -35,25 +35,25 @@ bool WebBrowser::create(Widget* parent, const std::wstring& url)
 
 void WebBrowser::navigate(const std::wstring& url)
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	static_cast< IWebBrowser* >(m_widget)->navigate(url);
 }
 
 void WebBrowser::forward()
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	static_cast< IWebBrowser* >(m_widget)->forward();
 }
 
 void WebBrowser::back()
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	static_cast< IWebBrowser* >(m_widget)->back();
 }
 
 void WebBrowser::reload(bool forced)
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	static_cast< IWebBrowser* >(m_widget)->reload(forced);
 }
 

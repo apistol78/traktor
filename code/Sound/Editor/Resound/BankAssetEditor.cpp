@@ -229,7 +229,7 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 		if (selectedItem)
 		{
 			parentGrain = selectedItem->getGrain();
-			T_ASSERT (parentGrain);
+			T_ASSERT(parentGrain);
 
 			parentGrainFacade = m_grainFacades[&type_of(parentGrain)];
 			if (!parentGrainFacade || !parentGrainFacade->canHaveChildren())
@@ -256,12 +256,12 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 		if (selectedItem)
 		{
 			IGrainData* grain = selectedItem->getGrain();
-			T_ASSERT (grain);
+			T_ASSERT(grain);
 
 			if (selectedItem->getParent())
 			{
 				IGrainData* parentGrain = selectedItem->getParent()->getGrain();
-				T_ASSERT (parentGrain);
+				T_ASSERT(parentGrain);
 
 				IGrainFacade* parentGrainFacade = m_grainFacades[&type_of(parentGrain)];
 				if (!parentGrainFacade || !parentGrainFacade->canHaveChildren())
@@ -288,7 +288,7 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 			if (selectedItem)
 			{
 				IGrainData* grain = selectedItem->getGrain();
-				T_ASSERT (grain);
+				T_ASSERT(grain);
 
 				grainData.push_back(grain);
 			}
@@ -322,7 +322,7 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 				for (RefArray< ui::Slider >::const_iterator i = m_sliderParameters.begin(); i != m_sliderParameters.end(); ++i)
 				{
 					const HandleWrapper* id = (*i)->getData< HandleWrapper >(L"ID");
-					T_ASSERT (id);
+					T_ASSERT(id);
 
 					m_soundChannel->setParameter(
 						id->get(),
@@ -455,7 +455,7 @@ void BankAssetEditor::eventParameterChange(ui::ContentChangeEvent* event)
 {
 	const ui::Slider* slider = checked_type_cast< const ui::Slider*, false >(event->getSender());
 	const HandleWrapper* id = slider->getData< HandleWrapper >(L"ID");
-	T_ASSERT (id);
+	T_ASSERT(id);
 
 	if (m_soundChannel)
 		m_soundChannel->setParameter(id->get(), slider->getValue() / 100.0f);
@@ -550,13 +550,13 @@ void BankAssetEditor::eventTimer(ui::TimerEvent* event)
 		}
 		else
 		{
-			T_ASSERT (m_bankBuffer);
+			T_ASSERT(m_bankBuffer);
 			m_soundChannel->play(m_bankBuffer, 0, 1.0f, 0.0f, 1.0f, false, 0);
 
 			for (RefArray< ui::Slider >::const_iterator i = m_sliderParameters.begin(); i != m_sliderParameters.end(); ++i)
 			{
 				const HandleWrapper* id = (*i)->getData< HandleWrapper >(L"ID");
-				T_ASSERT (id);
+				T_ASSERT(id);
 
 				m_soundChannel->setParameter(
 					id->get(),

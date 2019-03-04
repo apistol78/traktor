@@ -103,7 +103,7 @@ private:
 			return;
 
 		Ref< IStream > s = connection->getStream();
-		T_ASSERT (s);
+		T_ASSERT(s);
 
 		std::wstring tempFile;
 		Ref< IStream > d;

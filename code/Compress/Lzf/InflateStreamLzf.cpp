@@ -57,7 +57,7 @@ public:
 			return int64_t(ptr - top);
 		}
 
-		T_ASSERT (m_decompressedBufferSize == 0);
+		T_ASSERT(m_decompressedBufferSize == 0);
 
 		// Decompress directly into destination if requested block size is larger than buffer;
 		// and output is large enough to contain a bit of overhead.
@@ -92,7 +92,7 @@ public:
 				if (!decompressLength)
 					break;
 
-				T_ASSERT (decompressLength <= m_decompressedBuffer.size());
+				T_ASSERT(decompressLength <= m_decompressedBuffer.size());
 
 				ptr += decompressLength;
 				nbytes -= decompressLength;
@@ -102,7 +102,7 @@ public:
 				if (m_stream->read(ptr, compressedBlockSize) != compressedBlockSize)
 					break;
 
-				T_ASSERT (compressedBlockSize <= m_decompressedBuffer.size());
+				T_ASSERT(compressedBlockSize <= m_decompressedBuffer.size());
 
 				ptr += compressedBlockSize;
 				nbytes -= compressedBlockSize;
@@ -121,7 +121,7 @@ public:
 			if (!compressedBlockSize)
 				break;
 
-			T_ASSERT (m_decompressedBufferSize == 0);
+			T_ASSERT(m_decompressedBufferSize == 0);
 
 			if (!uncompressedBlock)
 			{

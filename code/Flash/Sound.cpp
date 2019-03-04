@@ -18,7 +18,7 @@ Sound::Sound()
 
 bool Sound::create(uint8_t channels, uint32_t sampleRate, uint32_t samplesCount)
 {
-	T_ASSERT (channels <= sizeof_array(m_samples));
+	T_ASSERT(channels <= sizeof_array(m_samples));
 
 	for (uint8_t i = 0; i < channels; ++i)
 		m_samples[i].reset(new int16_t [samplesCount]);

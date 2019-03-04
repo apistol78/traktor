@@ -97,8 +97,8 @@ void RenderContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 
 	const AlignedVector< RenderStateOpenGL >& renderStateList = m_resourceContext->getRenderStateList();
 
-	T_ASSERT (renderStateObject > 0);
-	T_ASSERT (renderStateObject <= renderStateList.size());
+	T_ASSERT(renderStateObject > 0);
+	T_ASSERT(renderStateObject <= renderStateList.size());
 	const RenderStateOpenGL& rs = renderStateList[renderStateObject - 1];
 
 	if (rs.cullFaceEnable)

@@ -245,7 +245,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 		for (RefArray< TargetInstance >::const_iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
 		{
 			TargetInstance* targetInstance = *i;
-			T_ASSERT (targetInstance);
+			T_ASSERT(targetInstance);
 
 			// Only build for those who have any running applications.
 			if (targetInstance->getConnections().empty())
@@ -406,7 +406,7 @@ void EditorPlugin::updateTargetLists()
 			et.guid = (*i)->getGuid();
 			et.name = (*i)->getName();
 			et.target = (*i)->getObject< Target >();
-			T_ASSERT (et.target);
+			T_ASSERT(et.target);
 
 			m_targets.push_back(et);
 
@@ -414,7 +414,7 @@ void EditorPlugin::updateTargetLists()
 			for (RefArray< TargetConfiguration >::const_iterator j = targetConfigurations.begin(); j != targetConfigurations.end(); ++j)
 			{
 				TargetConfiguration* targetConfiguration = *j;
-				T_ASSERT (targetConfiguration);
+				T_ASSERT(targetConfiguration);
 
 				Ref< db::Instance > platformInstance = sourceDatabase->getInstance(targetConfiguration->getPlatform());
 				if (!platformInstance)
@@ -431,7 +431,7 @@ void EditorPlugin::updateTargetLists()
 				}
 
 				Ref< TargetInstance > targetInstance = new TargetInstance(et.name, et.target, targetConfiguration, platformInstance->getName(), platform);
-				T_ASSERT (targetInstance);
+				T_ASSERT(targetInstance);
 
 				m_targetInstances.push_back(targetInstance);
 			}
@@ -559,7 +559,7 @@ void EditorPlugin::eventTargetListShowProfiler(TargetCaptureEvent* event)
 	if (connectionId >= 0 && connectionId < int32_t(connections.size()))
 	{
 		TargetConnection* connection = connections[connectionId];
-		T_ASSERT (connection);
+		T_ASSERT(connection);
 
 		Ref< ProfilerDialog > profilerDialog = new ProfilerDialog(connection);
 		profilerDialog->create(m_parent);
@@ -788,7 +788,7 @@ void EditorPlugin::eventTargetListStop(TargetStopEvent* event)
 	if (connectionId >= 0 && connectionId < int32_t(connections.size()))
 	{
 		TargetConnection* connection = connections[connectionId];
-		T_ASSERT (connection);
+		T_ASSERT(connection);
 
 		connection->shutdown();
 		targetInstance->removeConnection(connection);
@@ -806,7 +806,7 @@ void EditorPlugin::eventTargetListCommand(TargetCommandEvent* event)
 	if (connectionId >= 0 && connectionId < int32_t(connections.size()))
 	{
 		TargetConnection* connection = connections[connectionId];
-		T_ASSERT (connection);
+		T_ASSERT(connection);
 
 		CommandEvent commandEvent(event->getCommand());
 		if (!connection->getTransport()->send(&commandEvent))
@@ -821,7 +821,7 @@ void EditorPlugin::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 		return;
 
 	const EditTarget& et = m_targets[selectedTargetIndex];
-	T_ASSERT (et.target);
+	T_ASSERT(et.target);
 
 	m_targetList->removeAll();
 

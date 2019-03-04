@@ -416,7 +416,7 @@ public:
 					}
 				}
 
-				T_ASSERT (used > 0)
+				T_ASSERT(used > 0)
 				consume(used);
 			}
 
@@ -459,7 +459,7 @@ private:
 	bool read()
 	{
 		int32_t nread = std::min< int32_t >(PageSize, BufferSize - m_buffered);
-		T_ASSERT (nread > 0);
+		T_ASSERT(nread > 0);
 
 		int64_t read = m_stream->read(m_data.ptr() + m_buffered, nread);
 		if (read > 0)
@@ -473,7 +473,7 @@ private:
 
 	void consume(int32_t nbytes)
 	{
-		T_ASSERT (nbytes > 0);
+		T_ASSERT(nbytes > 0);
 		if (nbytes < m_buffered)
 		{
 			std::memmove(m_data.ptr(), m_data.ptr() + nbytes, m_buffered - nbytes);
@@ -506,13 +506,13 @@ void OggStreamDecoder::destroy()
 
 double OggStreamDecoder::getDuration() const
 {
-	T_ASSERT (m_decoderImpl);
+	T_ASSERT(m_decoderImpl);
 	return m_decoderImpl->getDuration();
 }
 
 bool OggStreamDecoder::getBlock(SoundBlock& outSoundBlock)
 {
-	T_ASSERT (m_decoderImpl);
+	T_ASSERT(m_decoderImpl);
 	return m_decoderImpl->getBlock(outSoundBlock);
 }
 

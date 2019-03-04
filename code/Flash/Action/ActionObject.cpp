@@ -43,12 +43,12 @@ ActionObject::ActionObject(ActionContext* context, ActionObject* prototype, Acti
 
 void ActionObject::addInterface(ActionObject* intrface)
 {
-	T_ASSERT (!m_readOnly);
+	T_ASSERT(!m_readOnly);
 }
 
 void ActionObject::set__proto__(ActionObject* prototype)
 {
-	T_ASSERT (prototype != this);
+	T_ASSERT(prototype != this);
 	m__proto__ = prototype;
 	m_members[ActionContext::Id__proto__] = ActionValue(prototype);
 }

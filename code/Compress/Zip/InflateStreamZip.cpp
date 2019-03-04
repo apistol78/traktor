@@ -157,7 +157,7 @@ int64_t InflateStreamZip::tell() const
 
 int64_t InflateStreamZip::available() const
 {
-	T_ASSERT (0);
+	T_ASSERT(0);
 	return 0;
 }
 
@@ -176,7 +176,7 @@ int64_t InflateStreamZip::read(void* block, int64_t nbytes)
 
 int64_t InflateStreamZip::write(const void* block, int64_t nbytes)
 {
-	T_ASSERT (0);
+	T_ASSERT(0);
 	return 0;
 }
 

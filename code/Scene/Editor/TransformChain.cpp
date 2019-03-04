@@ -31,19 +31,19 @@ void TransformChain::pushWorld(const Matrix44& world)
 
 void TransformChain::popWorld()
 {
-	T_ASSERT (m_world.size() > 1);
+	T_ASSERT(m_world.size() > 1);
 	m_world.pop_back();
 }
 
 void TransformChain::popView()
 {
-	T_ASSERT (m_view.size() > 1);
+	T_ASSERT(m_view.size() > 1);
 	m_view.pop_back();
 }
 
 void TransformChain::popProjection()
 {
-	T_ASSERT (m_projection.size() > 1);
+	T_ASSERT(m_projection.size() > 1);
 	m_projection.pop_back();
 }
 

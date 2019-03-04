@@ -194,7 +194,7 @@ struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConv
 
 	virtual	btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
 	{
-		T_ASSERT (convexResult.m_hitFraction <= m_closestHitFraction);
+		T_ASSERT(convexResult.m_hitFraction <= m_closestHitFraction);
 
 		if (m_ignoreBody == static_cast< BodyBullet* >(convexResult.m_hitCollisionObject->getUserPointer()))
 			return 1.0f;
@@ -237,7 +237,7 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 
 	virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace)
 	{
-		T_ASSERT (rayResult.m_hitFraction <= m_closestHitFraction);
+		T_ASSERT(rayResult.m_hitFraction <= m_closestHitFraction);
 
 		if (m_queryFilter.ignoreClusterId != 0 && getClusterId(rayResult.m_collisionObject) == m_queryFilter.ignoreClusterId)
 			return m_closestHitFraction;
@@ -297,7 +297,7 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 
 	virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace)
 	{
-		T_ASSERT (rayResult.m_hitFraction <= m_closestHitFraction);
+		T_ASSERT(rayResult.m_hitFraction <= m_closestHitFraction);
 
 		if (m_queryFilter.ignoreClusterId != 0 && getClusterId(rayResult.m_collisionObject) == m_queryFilter.ignoreClusterId)
 			return m_closestHitFraction;
@@ -349,7 +349,7 @@ struct ConvexExcludeResultCallback : public btCollisionWorld::ConvexResultCallba
 	virtual	btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
 	{
 		BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(convexResult.m_hitCollisionObject->getUserPointer());
-		T_ASSERT (bodyBullet);
+		T_ASSERT(bodyBullet);
 
 		if (m_queryFilter.ignoreClusterId != 0 && bodyBullet->getClusterId() == m_queryFilter.ignoreClusterId)
 			return 1.0f;
@@ -397,19 +397,19 @@ struct ContactResultCallback : public btCollisionWorld::ContactResultCallback
 	{
 		if (m_colObj == colObj0->getCollisionObject())
 		{
-			T_ASSERT (colObj1);
+			T_ASSERT(colObj1);
 
 			BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(colObj1->getCollisionObject()->getUserPointer());
-			T_ASSERT (bodyBullet);
+			T_ASSERT(bodyBullet);
 
 			m_outResult.push_back(bodyBullet);
 		}
 		else if (m_colObj == colObj1->getCollisionObject())
 		{
-			T_ASSERT (colObj0);
+			T_ASSERT(colObj0);
 
 			BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(colObj0->getCollisionObject()->getUserPointer());
-			T_ASSERT (bodyBullet);
+			T_ASSERT(bodyBullet);
 
 			m_outResult.push_back(bodyBullet);
 		}
@@ -423,19 +423,19 @@ struct ContactResultCallback : public btCollisionWorld::ContactResultCallback
 
 		if (m_colObj == colObj0)
 		{
-			T_ASSERT (colObj1);
+			T_ASSERT(colObj1);
 
 			BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(colObj1->getUserPointer());
-			T_ASSERT (bodyBullet);
+			T_ASSERT(bodyBullet);
 
 			m_outResult.push_back(bodyBullet);
 		}
 		else if (m_colObj == colObj1)
 		{
-			T_ASSERT (colObj0);
+			T_ASSERT(colObj0);
 
 			BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(colObj0->getUserPointer());
-			T_ASSERT (bodyBullet);
+			T_ASSERT(bodyBullet);
 
 			m_outResult.push_back(bodyBullet);
 		}
@@ -455,7 +455,7 @@ struct QuerySphereCallback : public btBroadphaseAabbCallback
 		if (rigidBody)
 		{
 			BodyBullet* body = reinterpret_cast< BodyBullet* >(rigidBody->getUserPointer());
-			T_ASSERT (body);
+			T_ASSERT(body);
 
 			bodies.push_back(body);
 		}
@@ -523,11 +523,11 @@ PhysicsManagerBullet::PhysicsManagerBullet()
 
 PhysicsManagerBullet::~PhysicsManagerBullet()
 {
-	T_ASSERT (!m_configuration);
-	T_ASSERT (!m_dispatcher);
-	T_ASSERT (!m_broadphase);
-	T_ASSERT (!m_solver);
-	T_ASSERT (!m_dynamicsWorld);
+	T_ASSERT(!m_configuration);
+	T_ASSERT(!m_dispatcher);
+	T_ASSERT(!m_broadphase);
+	T_ASSERT(!m_solver);
+	T_ASSERT(!m_dynamicsWorld);
 }
 
 bool PhysicsManagerBullet::create(const PhysicsCreateDesc& desc)
@@ -626,13 +626,13 @@ void PhysicsManagerBullet::destroy()
 
 void PhysicsManagerBullet::setGravity(const Vector4& gravity)
 {
-	T_ASSERT (m_dynamicsWorld);
+	T_ASSERT(m_dynamicsWorld);
 	m_dynamicsWorld->setGravity(toBtVector3(gravity));
 }
 
 Vector4 PhysicsManagerBullet::getGravity() const
 {
-	T_ASSERT (m_dynamicsWorld);
+	T_ASSERT(m_dynamicsWorld);
 	return fromBtVector3(m_dynamicsWorld->getGravity(), 0.0f);
 }
 
@@ -662,7 +662,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	{
 		float radius = capsuleShape->getRadius();
 		float length = capsuleShape->getLength() - radius * 2.0f;
-		T_ASSERT (length >= 0.0f);
+		T_ASSERT(length >= 0.0f);
 		shape = new btCapsuleShapeZ(radius, length);
 	}
 	else if (const CylinderShapeDesc* cylinderShape = dynamic_type_cast< const CylinderShapeDesc* >(shapeDesc))
@@ -738,7 +738,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		return 0;
 	}
 
-	T_ASSERT (shape);
+	T_ASSERT(shape);
 
 	// Create compound shape which has the shape's local transformation.
 	if (shapeDesc->getLocalTransform() != Transform::identity())
@@ -1173,7 +1173,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollisionEvents)
 {
-	T_ASSERT (m_dynamicsWorld);
+	T_ASSERT(m_dynamicsWorld);
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ANONYMOUS_VAR(Save< PhysicsManagerBullet* >)(ms_this, this);
@@ -1190,7 +1190,7 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 		for (int32_t i = 0; i < manifoldCount; ++i)
 		{
 			btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
-			T_ASSERT (manifold);
+			T_ASSERT(manifold);
 
 			// Only call to listeners when a new manifold has been created.
 			if (!manifold->m_fresh)
@@ -1246,7 +1246,7 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 		for (int32_t i = 0; i < manifoldCount; ++i)
 		{
 			btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
-			T_ASSERT (manifold);
+			T_ASSERT(manifold);
 
 			manifold->m_fresh = false;
 		}
@@ -1270,7 +1270,7 @@ void PhysicsManagerBullet::solveConstraints(const RefArray< Body >& bodies, cons
 		btConstraints[i] = static_cast< btTypedConstraint* >(joints[i]->getInternal());
 
 	btConstraintSolver* constraintSolver = m_dynamicsWorld->getConstraintSolver();
-	T_ASSERT (constraintSolver);
+	T_ASSERT(constraintSolver);
 
 	constraintSolver->solveGroup(
 		btBodies,
@@ -1301,7 +1301,7 @@ uint32_t PhysicsManagerBullet::getCollidingPairs(std::vector< CollisionPair >& o
 	for (int i = 0; i < manifoldCount; ++i)
 	{
 		const btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
-		T_ASSERT (manifold);
+		T_ASSERT(manifold);
 
 		bool validContact = false;
 		int contacts = manifold->getNumContacts();
@@ -1359,7 +1359,7 @@ bool PhysicsManagerBullet::queryRay(
 			return false;
 
 		BodyBullet* body = reinterpret_cast< BodyBullet* >(callback.m_collisionObject->getUserPointer());
-		T_ASSERT (body);
+		T_ASSERT(body);
 
 		outResult.body = body;
 		outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
@@ -1388,7 +1388,7 @@ bool PhysicsManagerBullet::queryRay(
 			return false;
 
 		BodyBullet* body = reinterpret_cast< BodyBullet* >(callback.m_collisionObject->getUserPointer());
-		T_ASSERT (body);
+		T_ASSERT(body);
 
 		outResult.body = body;
 		outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
@@ -1471,7 +1471,7 @@ uint32_t PhysicsManagerBullet::querySphere(
 			continue;
 
 		btRigidBody* rigidBody = (*i)->getBtRigidBody();
-		T_ASSERT (rigidBody);
+		T_ASSERT(rigidBody);
 
 		btVector3 aabbMin, aabbMax;
 		rigidBody->getAabb(aabbMin, aabbMax);
@@ -1518,7 +1518,7 @@ bool PhysicsManagerBullet::querySweep(
 		return false;
 
 	BodyBullet* body = reinterpret_cast< BodyBullet* >(callback.m_hitCollisionObject->getUserPointer());
-	T_ASSERT (body);
+	T_ASSERT(body);
 
 	outResult.body = body;
 	outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
@@ -1583,7 +1583,7 @@ bool PhysicsManagerBullet::querySweep(
 		return false;
 
 	BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(callback.m_hitCollisionObject->getUserPointer());
-	T_ASSERT (bodyBullet);
+	T_ASSERT(bodyBullet);
 
 	outResult.body = bodyBullet;
 	outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
@@ -1637,7 +1637,7 @@ void PhysicsManagerBullet::queryOverlap(
 	//++m_queryCount;
 
 	//btRigidBody* rigidBody = checked_type_cast< const BodyBullet* >(body)->getBtRigidBody();
-	//T_ASSERT (rigidBody);
+	//T_ASSERT(rigidBody);
 
 	//ContactResultCallback callback(rigidBody, outResult);
 	//m_dynamicsWorld->contactTest(rigidBody, callback);
@@ -1649,7 +1649,7 @@ void PhysicsManagerBullet::queryTriangles(const Vector4& center, float radius, A
 	for (int i = 0; i < collisionObjects.size(); ++i)
 	{
 		btCollisionObject* col = collisionObjects[i];
-		T_ASSERT (col);
+		T_ASSERT(col);
 
 		btCollisionShape* shape = col->getCollisionShape();
 		if (!shape)
@@ -1668,7 +1668,7 @@ void PhysicsManagerBullet::queryTriangles(const Vector4& center, float radius, A
 			for (int j = 0; j < numChilds; ++j)
 			{
 				btCollisionShape* childShape = compound->getChildShape(j);
-				T_ASSERT (childShape);
+				T_ASSERT(childShape);
 
 				if (childShape->isConcave())
 				{
@@ -1744,7 +1744,7 @@ void PhysicsManagerBullet::destroyBody(BodyBullet* body, btRigidBody* rigidBody,
 	m_dynamicsWorld->removeRigidBody(rigidBody);
 
 	RefArray< BodyBullet >::iterator i = std::find(m_bodies.begin(), m_bodies.end(), body);
-	T_ASSERT (i != m_bodies.end());
+	T_ASSERT(i != m_bodies.end());
 	m_bodies.erase(i);
 
 	delete rigidBody->getMotionState();
@@ -1767,7 +1767,7 @@ void PhysicsManagerBullet::destroyConstraint(Joint* joint, btTypedConstraint* co
 
 void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btCollisionDispatcher& dispatcher, const btDispatcherInfo& dispatchInfo)
 {
-	T_ASSERT (ms_this);
+	T_ASSERT(ms_this);
 
 	btCollisionObject* colObj0 = static_cast< btCollisionObject* >(collisionPair.m_pProxy0->m_clientObject);
 	btCollisionObject* colObj1 = static_cast< btCollisionObject* >(collisionPair.m_pProxy1->m_clientObject);

@@ -47,7 +47,7 @@ float* allocHistory()
 void freeHistory(float* ptr)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_historyAllocLock);
-	T_ASSERT (s_historyAlloc);
+	T_ASSERT(s_historyAlloc);
 	s_historyAlloc->free(ptr);
 }
 
@@ -143,7 +143,7 @@ void EchoFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 			continue;
 
 		float* history = efi->m_history[i];
-		T_ASSERT (history);
+		T_ASSERT(history);
 
 		int32_t& front = efi->m_front[i];
 		int32_t& count = efi->m_count[i];

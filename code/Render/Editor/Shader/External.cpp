@@ -319,14 +319,14 @@ const OutputPin* External::createOutputPin(const Guid& id, const std::wstring& n
 void External::removeInputPin(const InputPin* inputPin)
 {
 	std::vector< InputPin* >::iterator i = std::find(m_inputPins.begin(), m_inputPins.end(), inputPin);
-	T_ASSERT (i != m_inputPins.end());
+	T_ASSERT(i != m_inputPins.end());
 	delete *i; m_inputPins.erase(i);
 }
 
 void External::removeOutputPin(const OutputPin* outputPin)
 {
 	std::vector< OutputPin* >::iterator i = std::find(m_outputPins.begin(), m_outputPins.end(), outputPin);
-	T_ASSERT (i != m_outputPins.end());
+	T_ASSERT(i != m_outputPins.end());
 	delete *i; m_outputPins.erase(i);
 }
 
@@ -342,7 +342,7 @@ int External::getInputPinCount() const
 
 const InputPin* External::getInputPin(int index) const
 {
-	T_ASSERT (index >= 0 && index < int(m_inputPins.size()));
+	T_ASSERT(index >= 0 && index < int(m_inputPins.size()));
 	return m_inputPins[index];
 }
 
@@ -353,7 +353,7 @@ int External::getOutputPinCount() const
 
 const OutputPin* External::getOutputPin(int index) const
 {
-	T_ASSERT (index >= 0 && index < int(m_outputPins.size()));
+	T_ASSERT(index >= 0 && index < int(m_outputPins.size()));
 	return m_outputPins[index];
 }
 

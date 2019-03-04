@@ -51,13 +51,13 @@ const Color4f& Frame::getBackgroundColor() const
 
 void Frame::placeObject(const PlaceObject& placeObject)
 {
-	T_ASSERT (placeObject.depth > 0);
+	T_ASSERT(placeObject.depth > 0);
 	m_placeObjects[placeObject.depth] = placeObject;
 }
 
 void Frame::removeObject(const RemoveObject& removeObject)
 {
-	T_ASSERT (removeObject.depth > 0);
+	T_ASSERT(removeObject.depth > 0);
 	m_removeObjects[removeObject.depth] = removeObject;
 }
 

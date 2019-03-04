@@ -32,7 +32,7 @@ bool LayerEntityEditor::isChildrenPrivate() const
 bool LayerEntityEditor::addChildEntity(EntityAdapter* childEntityAdapter) const
 {
 	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
-	T_ASSERT (childEntityData);
+	T_ASSERT(childEntityData);
 
 	m_entityData->addEntityData(childEntityData);
 	return true;
@@ -41,7 +41,7 @@ bool LayerEntityEditor::addChildEntity(EntityAdapter* childEntityAdapter) const
 bool LayerEntityEditor::removeChildEntity(EntityAdapter* childEntityAdapter) const
 {
 	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
-	T_ASSERT (childEntityData);
+	T_ASSERT(childEntityData);
 
 	m_entityData->removeEntityData(childEntityData);
 	return true;

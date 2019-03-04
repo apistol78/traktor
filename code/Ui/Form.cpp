@@ -33,7 +33,7 @@ bool Form::create(const std::wstring& text, int width, int height, int style, La
 
 void Form::setIcon(IBitmap* icon)
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 
 	if (!icon || !icon->getSystemBitmap())
 		return;

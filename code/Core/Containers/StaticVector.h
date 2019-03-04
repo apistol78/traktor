@@ -327,7 +327,7 @@ public:
 	 */
 	void assign(size_t size, const ItemType& value)
 	{
-		T_ASSERT (size < Capacity);
+		T_ASSERT(size < Capacity);
 		m_size = size;
 		for (size_t i = 0; i < m_size; ++i)
 			m_items[i] = value;
@@ -339,7 +339,7 @@ public:
 	 */
 	ItemType& push_back()
 	{
-		T_ASSERT (m_size < Capacity);
+		T_ASSERT(m_size < Capacity);
 		return m_items[m_size++];
 	}
 
@@ -349,14 +349,14 @@ public:
 	 */
 	void push_back(const ItemType& item)
 	{
-		T_ASSERT (m_size < Capacity);
+		T_ASSERT(m_size < Capacity);
 		m_items[m_size++] = item;
 	}
 
 	/*! \brief Pop value from vector. */
 	void pop_back()
 	{
-		T_ASSERT (m_size > 0);
+		T_ASSERT(m_size > 0);
 		--m_size;
 	}
 
@@ -366,7 +366,7 @@ public:
 	 */
 	ItemType& front()
 	{
-		T_ASSERT (m_size > 0);
+		T_ASSERT(m_size > 0);
 		return m_items[0];
 	}
 
@@ -376,7 +376,7 @@ public:
 	 */
 	const ItemType& front() const
 	{
-		T_ASSERT (m_size > 0);
+		T_ASSERT(m_size > 0);
 		return m_items[0];
 	}
 
@@ -386,7 +386,7 @@ public:
 	 */
 	ItemType& back()
 	{
-		T_ASSERT (m_size > 0);
+		T_ASSERT(m_size > 0);
 		return m_items[m_size - 1];
 	}
 
@@ -396,7 +396,7 @@ public:
 	 */
 	const ItemType& back() const
 	{
-		T_ASSERT (m_size > 0);
+		T_ASSERT(m_size > 0);
 		return m_items[m_size - 1];
 	}
 

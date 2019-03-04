@@ -132,7 +132,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	for (RefArray< render::External >::iterator i = externalNodes.begin(); i != externalNodes.end(); ++i)
 	{
 		const Guid& fragmentGuid = (*i)->getFragmentGuid();
-		T_ASSERT (fragmentGuid.isValid());
+		T_ASSERT(fragmentGuid.isValid());
 
 		if (fragmentGuid == c_tplDiffuseParams)
 		{

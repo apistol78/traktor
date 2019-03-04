@@ -58,7 +58,7 @@ void WorldContext::build(WorldRenderView& worldRenderView, IWorldRenderPass& wor
 
 void WorldContext::flush(WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass)
 {
-	T_ASSERT (m_entityRenderers);
+	T_ASSERT(m_entityRenderers);
 	const RefArray< IEntityRenderer >& entityRenderers = m_entityRenderers->get();
 	for (RefArray< IEntityRenderer >::const_iterator i = entityRenderers.begin(); i != entityRenderers.end(); ++i)
 		(*i)->flush(*this, worldRenderView, worldRenderPass);

@@ -93,7 +93,7 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
 		Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 
 		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
-		T_ASSERT (pipeline);
+		T_ASSERT(pipeline);
 
 		pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid());
 
@@ -243,7 +243,7 @@ Ref< PipelineDependency > PipelineDependsParallel::findOrCreateDependency(
 	if (dependencyIndex != IPipelineDependencySet::DiInvalid)
 	{
 		PipelineDependency* dependency = m_dependencySet->get(dependencyIndex);
-		T_ASSERT (dependency);
+		T_ASSERT(dependency);
 
 		dependency->flags |= flags;
 		if (parentDependency)
@@ -300,7 +300,7 @@ void PipelineDependsParallel::addUniqueDependency(
 		m_currentDependency.set(currentDependency);
 
 		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*currentDependency->pipelineType);
-		T_ASSERT (pipeline);
+		T_ASSERT(pipeline);
 
 		result = pipeline->buildDependencies(
 			this,

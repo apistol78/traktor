@@ -422,7 +422,7 @@ void TheaterControllerEditor::captureEntities()
 		Transform transform = (*i)->getTransform();
 
 		Ref< world::EntityData > entityData = (*i)->getEntityData();
-		T_ASSERT (entityData);
+		T_ASSERT(entityData);
 
 		Ref< TrackData > instanceTrackData;
 
@@ -436,7 +436,7 @@ void TheaterControllerEditor::captureEntities()
 			tracks.push_back(instanceTrackData);
 		}
 
-		T_ASSERT (instanceTrackData);
+		T_ASSERT(instanceTrackData);
 		TransformPath& pathData = instanceTrackData->getPath();
 
 		int32_t cki = pathData.getClosestKey(time);
@@ -491,10 +491,10 @@ void TheaterControllerEditor::deleteSelectedKey()
 			continue;
 
 		Ref< TrackData > trackData = selectedSequence->getData< TrackData >(L"TRACK");
-		T_ASSERT (trackData);
+		T_ASSERT(trackData);
 
 		TransformPathKeyWrapper* keyWrapper = selectedTick->getData< TransformPathKeyWrapper >(L"KEY");
-		T_ASSERT (keyWrapper);
+		T_ASSERT(keyWrapper);
 
 		TransformPath& path = trackData->getPath();
 		AlignedVector< TransformPath::Key >& keys = path.getKeys();
@@ -529,7 +529,7 @@ void TheaterControllerEditor::setLookAtEntity()
 	{
 		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(*i);
 		Ref< TrackData > trackData = selectedSequence->getData< TrackData >(L"TRACK");
-		T_ASSERT (trackData);
+		T_ASSERT(trackData);
 
 		if (!selectedEntities.empty())
 			trackData->setLookAtEntityData(selectedEntities[0]->getEntityData());
@@ -552,7 +552,7 @@ void TheaterControllerEditor::easeVelocity()
 	{
 		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(*i);
 		Ref< TrackData > trackData = selectedSequence->getData< TrackData >(L"TRACK");
-		T_ASSERT (trackData);
+		T_ASSERT(trackData);
 
 		TransformPath& path = trackData->getPath();
 		AlignedVector< TransformPath::Key >& keys = path.getKeys();
@@ -832,7 +832,7 @@ void TheaterControllerEditor::eventSequencerKeyMove(ui::KeyMoveEvent* event)
 	if (tick)
 	{
 		TransformPathKeyWrapper* keyWrapper = static_cast< TransformPathKeyWrapper* >(tick->getData(L"KEY").ptr());
-		T_ASSERT (keyWrapper);
+		T_ASSERT(keyWrapper);
 
 		keyWrapper->m_key.T = tick->getTime() / 1000.0f;
 

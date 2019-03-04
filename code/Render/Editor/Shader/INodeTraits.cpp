@@ -37,7 +37,7 @@ const INodeTraits* INodeTraits::find(const Node* node)
 		for (TypeInfoSet::const_iterator i = traitsTypes.begin(); i != traitsTypes.end(); ++i)
 		{
 			Ref< INodeTraits > tr = checked_type_cast< INodeTraits*, false >((*i)->createInstance());
-			T_ASSERT (tr);
+			T_ASSERT(tr);
 
 			TypeInfoSet nodeTypes = tr->getNodeTypes();
 			for (TypeInfoSet::const_iterator j = nodeTypes.begin(); j != nodeTypes.end(); ++j)

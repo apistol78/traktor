@@ -62,8 +62,8 @@ void CycleRefDebugger::removeObject(void* object)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	std::map< void*, ObjInfo >::iterator i = m_objects.find(object);
-	T_ASSERT (i != m_objects.end());
-	T_ASSERT (i->second.nrefs == 0);
+	T_ASSERT(i != m_objects.end());
+	T_ASSERT(i->second.nrefs == 0);
 	m_objects.erase(i);
 }
 

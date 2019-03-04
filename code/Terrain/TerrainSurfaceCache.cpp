@@ -29,9 +29,9 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 	bool clear;
 
 	TerrainSurfaceRenderBlock()
-	:	screenRenderer(0)
-	,	renderTargetSet(0)
-	,	next(0)
+	:	screenRenderer(nullptr)
+	,	renderTargetSet(nullptr)
+	,	next(nullptr)
 	,	clear(false)
 	{
 	}
@@ -108,7 +108,6 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 		return false;
 
 	render::RenderTargetSetCreateDesc desc;
-
 	desc.count = 1;
 	desc.width = size;
 	desc.height = size;
@@ -136,7 +135,6 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 	m_clearCache = true;
 	m_updateCount = 0;
 	m_size = size;
-
 	return true;
 }
 

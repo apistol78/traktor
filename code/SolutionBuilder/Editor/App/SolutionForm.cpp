@@ -606,7 +606,7 @@ void SolutionForm::eventMenuClick(ui::ToolBarButtonClickEvent* event)
 	else if (command == L"File.MRU")
 	{
 		Ref< Path > path = event->getMenuItem()->getData< Path >(L"PATH");
-		T_ASSERT (path);
+		T_ASSERT(path);
 
 		Ref< IStream > file = FileSystem::getInstance().open(*path, traktor::File::FmRead);
 		if (file)
@@ -861,7 +861,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			else if (command == L"Configuration.Remove")
 			{
 				Ref< Project > project = selectedItem->getData< Project >(L"PROJECT");
-				T_ASSERT (project);
+				T_ASSERT(project);
 
 				project->removeConfiguration(configuration);
 
@@ -874,7 +874,7 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 	if (filter)
 	{
 		Ref< Project > project = selectedItem->getData< Project >(L"PROJECT");
-		T_ASSERT (project);
+		T_ASSERT(project);
 
 		const ui::MenuItem* menuItem = m_menuFilter->showModal(m_treeSolution, event->getPosition());
 		if (menuItem)

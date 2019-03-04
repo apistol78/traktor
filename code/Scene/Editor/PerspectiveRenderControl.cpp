@@ -96,10 +96,10 @@ PerspectiveRenderControl::PerspectiveRenderControl()
 bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId)
 {
 	m_context = context;
-	T_ASSERT (m_context);
+	T_ASSERT(m_context);
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	m_fieldOfView = std::max< float >(settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView), c_minFieldOfView);
 	m_mouseWheelRate = settings->getProperty< float >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
@@ -196,7 +196,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	}
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
 
@@ -380,7 +380,7 @@ void PerspectiveRenderControl::showSelectionRectangle(const ui::Rect& rect)
 void PerspectiveRenderControl::updateSettings()
 {
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	m_colorClear = settings->getProperty< Color4ub >(L"Editor.Colors/Background");
 	m_colorGrid = settings->getProperty< Color4ub >(L"Editor.Colors/Grid");

@@ -30,7 +30,7 @@ bool NewHeightfieldDialog::create(ui::Widget* parent)
 	staticGridSize->create(containerInner, i18n::Text(L"NEW_HEIGHTFIELD_GRID_SIZE"));
 
 	m_editGridSize = new ui::Edit();
-	m_editGridSize->create(containerInner, L"2048", ui::WsClientBorder, new ui::NumericEditValidator(false, 1, 16*1024, 0));
+	m_editGridSize->create(containerInner, L"2048", ui::WsNone, new ui::NumericEditValidator(false, 1, 16*1024, 0));
 
 	Ref< ui::Static > staticExtent = new ui::Static();
 	staticExtent->create(containerInner, i18n::Text(L"NEW_HEIGHTFIELD_EXTENT"));
@@ -39,13 +39,13 @@ bool NewHeightfieldDialog::create(ui::Widget* parent)
 	containerExtent->create(containerInner, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0, 4));
 
 	m_editExtent[0] = new ui::Edit();
-	m_editExtent[0]->create(containerExtent, L"1024", ui::WsClientBorder, new ui::NumericEditValidator(true, 1.0f));
+	m_editExtent[0]->create(containerExtent, L"1024", ui::WsNone, new ui::NumericEditValidator(true, 1.0f));
 
 	m_editExtent[1] = new ui::Edit();
-	m_editExtent[1]->create(containerExtent, L"512", ui::WsClientBorder, new ui::NumericEditValidator(true, 1.0f));
+	m_editExtent[1]->create(containerExtent, L"512", ui::WsNone, new ui::NumericEditValidator(true, 1.0f));
 
 	m_editExtent[2] = new ui::Edit();
-	m_editExtent[2]->create(containerExtent, L"1024", ui::WsClientBorder, new ui::NumericEditValidator(true, 1.0f));
+	m_editExtent[2]->create(containerExtent, L"1024", ui::WsNone, new ui::NumericEditValidator(true, 1.0f));
 
 	Ref< ui::Static > staticPlane = new ui::Static();
 	staticPlane->create(containerInner, i18n::Text(L"NEW_HEIGHTFIELD_PLANE"));
@@ -54,13 +54,13 @@ bool NewHeightfieldDialog::create(ui::Widget* parent)
 	containerPlane->create(containerInner, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0, 4));
 
 	m_editPlane[0] = new ui::Edit();
-	m_editPlane[0]->create(containerPlane, L"0", ui::WsClientBorder, new ui::NumericEditValidator(true, -45.0f, 45.0f));
+	m_editPlane[0]->create(containerPlane, L"0", ui::WsNone, new ui::NumericEditValidator(true, -45.0f, 45.0f));
 
 	m_editPlane[1] = new ui::Edit();
-	m_editPlane[1]->create(containerPlane, L"0", ui::WsClientBorder, new ui::NumericEditValidator(true, -45.0f, 45.0f));
+	m_editPlane[1]->create(containerPlane, L"0", ui::WsNone, new ui::NumericEditValidator(true, -45.0f, 45.0f));
 
 	m_editPlane[2] = new ui::Edit();
-	m_editPlane[2]->create(containerPlane, L"0", ui::WsClientBorder, new ui::NumericEditValidator(true));
+	m_editPlane[2]->create(containerPlane, L"0", ui::WsNone, new ui::NumericEditValidator(true));
 
 	return true;
 }

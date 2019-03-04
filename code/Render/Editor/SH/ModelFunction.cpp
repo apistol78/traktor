@@ -42,7 +42,7 @@ float ModelFunction::evaluate(float phi, float theta, const Vector4& unit) const
 	if (diffuse <= 0.0f)
 		return 0.0f;
 
-	T_ASSERT (diffuse >= 0.0 && diffuse <= 1.0);
+	T_ASSERT(diffuse >= 0.0 && diffuse <= 1.0);
 
 	// if (m_sahTree->queryAnyIntersection(m_position + unit * 0.01f, unit, std::numeric_limits< float >::max()))
 	// 	return 0.0f;

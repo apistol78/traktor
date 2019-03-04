@@ -36,7 +36,7 @@ bool Translator::translate(const std::wstring& text, std::wstring& outText) cons
 		return false;
 
 	Ref< IStream > stream = connection->getStream();
-	T_ASSERT (stream);
+	T_ASSERT(stream);
 
 	StringReader reader(stream, new Utf8Encoding());
 	std::wstring tmp;

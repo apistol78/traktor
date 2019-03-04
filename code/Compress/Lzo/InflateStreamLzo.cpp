@@ -53,7 +53,7 @@ public:
 			return int64_t(ptr - top);
 		}
 
-		T_ASSERT (m_decompressedBufferSize == 0);
+		T_ASSERT(m_decompressedBufferSize == 0);
 
 		// Decompress directly into destination if requested block size is larger than buffer;
 		// and output is large enough to contain a bit of overhead.
@@ -96,7 +96,7 @@ public:
 			if (m_stream->read(&m_compressedBlock[0], compressedBlockSize) != compressedBlockSize)
 				break;
 
-			T_ASSERT (m_decompressedBufferSize == 0);
+			T_ASSERT(m_decompressedBufferSize == 0);
 			m_decompressedBufferSize = int32_t(m_decompressedBuffer.size());
 
 			int r = lzo1x_decompress_safe(

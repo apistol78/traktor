@@ -43,8 +43,8 @@ PinType ScriptNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	T_ASSERT (is_a< Script >(node));
-	T_ASSERT (outputPin->getNode() == node);
+	T_ASSERT(is_a< Script >(node));
+	T_ASSERT(outputPin->getNode() == node);
 
 	const TypedOutputPin* typedOutputPin = static_cast< const TypedOutputPin* >(outputPin);
 	switch (typedOutputPin->getType())
@@ -74,8 +74,8 @@ PinType ScriptNodeTraits::getInputPinType(
 	const PinType* outputPinTypes
 ) const
 {
-	T_ASSERT (is_a< Script >(node));
-	T_ASSERT (inputPin->getNode() == node);
+	T_ASSERT(is_a< Script >(node));
+	T_ASSERT(inputPin->getNode() == node);
 
 	const TypedInputPin* typedInputPin = static_cast< const TypedInputPin* >(inputPin);
 	switch (typedInputPin->getType())

@@ -262,7 +262,7 @@ void MeshAssetEditor::apply()
 	for (RefArray< ui::GridRow >::const_iterator i = shaderItems.begin(); i != shaderItems.end(); ++i)
 	{
 		Ref< ui::GridRow > shaderItem = *i;
-		T_ASSERT (shaderItem);
+		T_ASSERT(shaderItem);
 
 		std::wstring materialName = shaderItem->get(0)->getText();
 		Ref< db::Instance > materialTemplateInstance = shaderItem->getData< db::Instance >(L"TEMPLATE");
@@ -283,7 +283,7 @@ void MeshAssetEditor::apply()
 	for (RefArray< ui::GridRow >::const_iterator i = textureItems.begin(); i != textureItems.end(); ++i)
 	{
 		Ref< ui::GridRow > textureItem = *i;
-		T_ASSERT (textureItem);
+		T_ASSERT(textureItem);
 
 		std::wstring textureName = textureItem->get(0)->getText();
 		Ref< db::Instance > materialTextureInstance = textureItem->getData< db::Instance >(L"INSTANCE");

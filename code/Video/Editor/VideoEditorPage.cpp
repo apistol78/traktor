@@ -43,7 +43,7 @@ VideoEditorPage::VideoEditorPage(editor::IEditor* editor, editor::IEditorPageSit
 bool VideoEditorPage::create(ui::Container* parent)
 {
 	Ref< VideoAsset > asset = m_document->getObject< VideoAsset >(0);
-	T_ASSERT (asset);
+	T_ASSERT(asset);
 
 	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
 	if (!renderSystem)

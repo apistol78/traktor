@@ -447,7 +447,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 				lua_newtable(m_luaState);
 				lua_setfield(m_luaState, -2, wstombs(exportPath[i]).c_str());
 				lua_getfield(m_luaState, -1, wstombs(exportPath[i]).c_str());
-				T_ASSERT (lua_istable(m_luaState, -1));
+				T_ASSERT(lua_istable(m_luaState, -1));
 			}
 			else
 				lua_replace(m_luaState, -2);
@@ -515,12 +515,12 @@ Ref< IScriptBlob > ScriptManagerLua::compile(const std::wstring& fileName, const
 		std::wstring error = mbstows(lua_tostring(m_luaState, -1));
 
 		size_t p0 = error.find(L':');
-		T_ASSERT (p0 != error.npos);
+		T_ASSERT(p0 != error.npos);
 
 		error = error.substr(p0 + 1);
 
 		size_t p1 = error.find(L':');
-		T_ASSERT (p1 != error.npos);
+		T_ASSERT(p1 != error.npos);
 
 		int32_t line = parseString< int32_t >(error.substr(0, p1));
 		error = trim(error.substr(p1 + 1));
@@ -878,7 +878,7 @@ void ScriptManagerLua::collectGarbagePartial()
 		m_collectSteps = 0;
 	}
 
-	T_ASSERT (lua_gc(m_luaState, LUA_GCISRUNNING, 0) == 0);
+	T_ASSERT(lua_gc(m_luaState, LUA_GCISRUNNING, 0) == 0);
 
 	m_collectTargetSteps += float(s_timer.getDeltaTime() * m_collectStepFrequency);
 
@@ -907,7 +907,7 @@ void ScriptManagerLua::collectGarbagePartial()
 		}
 
 #if defined(T_LUA_5_2)
-		T_ASSERT (lua_gc(m_luaState, LUA_GCISRUNNING, 0) == 0);
+		T_ASSERT(lua_gc(m_luaState, LUA_GCISRUNNING, 0) == 0);
 #endif
 
 		// Progress with garbage collector.
@@ -977,13 +977,13 @@ int ScriptManagerLua::classGc(lua_State* luaState)
 int ScriptManagerLua::classNew(lua_State* luaState)
 {
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (manager);
+	T_ASSERT(manager);
 
 	int32_t classId = (int32_t)lua_tointeger(luaState, lua_upvalueindex(3));
 	const RegisteredClass& rc =	manager->m_classRegistry[classId];
 
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (runtimeDispatch);
+	T_ASSERT(runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 
@@ -1027,20 +1027,20 @@ int ScriptManagerLua::classNew(lua_State* luaState)
 int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 {
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (manager);
+	T_ASSERT(manager);
 
 	const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-	T_ASSERT (runtimeClass);
+	T_ASSERT(runtimeClass);
 
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (runtimeDispatch);
+	T_ASSERT(runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 2)
 		return 0;
 
 	const char* methodName = lua_tostring(luaState, 1);
-	T_ASSERT (methodName);
+	T_ASSERT(methodName);
 
 	ITypedObject* object = toTypedObject(luaState, 2);
 	if (!object)
@@ -1076,10 +1076,10 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 int ScriptManagerLua::classCallMethod(lua_State* luaState)
 {
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (manager);
+	T_ASSERT(manager);
 
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (runtimeDispatch);
+	T_ASSERT(runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -1119,10 +1119,10 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 {
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (manager);
+	T_ASSERT(manager);
 
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (runtimeDispatch);
+	T_ASSERT(runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 0)
@@ -1154,10 +1154,10 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 int ScriptManagerLua::classSetProperty(lua_State* luaState)
 {
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (manager);
+	T_ASSERT(manager);
 
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (runtimeDispatch);
+	T_ASSERT(runtimeDispatch);
 
 	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object)
@@ -1189,10 +1189,10 @@ int ScriptManagerLua::classSetProperty(lua_State* luaState)
 int ScriptManagerLua::classGetProperty(lua_State* luaState)
 {
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (manager);
+	T_ASSERT(manager);
 
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (runtimeDispatch);
+	T_ASSERT(runtimeDispatch);
 
 	ITypedObject* object = toTypedObject(luaState, 1);
 	if (!object)
@@ -1211,7 +1211,7 @@ int ScriptManagerLua::classGetProperty(lua_State* luaState)
 int ScriptManagerLua::classEqual(lua_State* luaState)
 {
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (manager);
+	T_ASSERT(manager);
 
 	Any object0 = manager->toAny(1);
 	Any object1 = manager->toAny(2);
@@ -1228,13 +1228,13 @@ int ScriptManagerLua::classEqual(lua_State* luaState)
 int ScriptManagerLua::classAdd(lua_State* luaState)
 {
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (manager);
+	T_ASSERT(manager);
 
 	const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (runtimeClass);
+	T_ASSERT(runtimeClass);
 
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-	T_ASSERT (runtimeDispatch);
+	T_ASSERT(runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -1282,13 +1282,13 @@ int ScriptManagerLua::classAdd(lua_State* luaState)
 int ScriptManagerLua::classSubtract(lua_State* luaState)
 {
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (manager);
+	T_ASSERT(manager);
 
 	const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (runtimeClass);
+	T_ASSERT(runtimeClass);
 
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-	T_ASSERT (runtimeDispatch);
+	T_ASSERT(runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -1325,13 +1325,13 @@ int ScriptManagerLua::classSubtract(lua_State* luaState)
 int ScriptManagerLua::classMultiply(lua_State* luaState)
 {
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (manager);
+	T_ASSERT(manager);
 
 	const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (runtimeClass);
+	T_ASSERT(runtimeClass);
 
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-	T_ASSERT (runtimeDispatch);
+	T_ASSERT(runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -1379,13 +1379,13 @@ int ScriptManagerLua::classMultiply(lua_State* luaState)
 int ScriptManagerLua::classDivide(lua_State* luaState)
 {
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
-	T_ASSERT (manager);
+	T_ASSERT(manager);
 
 	const IRuntimeClass* runtimeClass = reinterpret_cast< const IRuntimeClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
-	T_ASSERT (runtimeClass);
+	T_ASSERT(runtimeClass);
 
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(3)));
-	T_ASSERT (runtimeDispatch);
+	T_ASSERT(runtimeDispatch);
 
 	int32_t top = lua_gettop(luaState);
 	if (top < 1)
@@ -1422,7 +1422,7 @@ int ScriptManagerLua::classDivide(lua_State* luaState)
 void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
 {
 	ScriptManagerLua* this_ = reinterpret_cast< ScriptManagerLua* >(ud);
-	T_ASSERT (this_);
+	T_ASSERT(this_);
 
 	IAllocator* allocator = getAllocator();
 	size_t& totalMemoryUse = this_->m_totalMemoryUse;
@@ -1433,7 +1433,7 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 #if defined(T_USE_ALLOCATOR)
 		if (osize >= nsize && osize - nsize < 512)
 		{
-			T_ASSERT (ptr);
+			T_ASSERT(ptr);
 			totalMemoryUse -= osize;
 			return ptr;
 		}
@@ -1449,7 +1449,7 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 			std::memcpy(nptr, ptr, std::min(osize, nsize));
 			allocator->free(ptr);
 #endif
-			T_ASSERT (osize <= totalMemoryUse);
+			T_ASSERT(osize <= totalMemoryUse);
 			totalMemoryUse -= osize;
 		}
 
@@ -1462,7 +1462,7 @@ void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize
 #if defined(T_USE_ALLOCATOR)
 		allocator->free(ptr);
 #endif
-		T_ASSERT (osize <= totalMemoryUse);
+		T_ASSERT(osize <= totalMemoryUse);
 		totalMemoryUse -= osize;
 	}
 

@@ -32,7 +32,7 @@ float ControlInputSource::read(float T, float dT)
 	int32_t index = m_data->getIndex();
 
 	InputSystem* inputSystem = m_deviceControlManager->getInputSystem();
-	T_ASSERT (inputSystem);
+	T_ASSERT(inputSystem);
 
 	if (index < 0)
 	{
@@ -44,7 +44,7 @@ float ControlInputSource::read(float T, float dT)
 			for (int32_t i = 0; i < deviceCount; ++i)
 			{
 				IInputDevice* inputDevice = inputSystem->getDevice(category, i, false);
-				T_ASSERT (inputDevice);
+				T_ASSERT(inputDevice);
 
 				if (inputDevice->isConnected())
 					return 1.0f;

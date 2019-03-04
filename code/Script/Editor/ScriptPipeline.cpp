@@ -149,7 +149,7 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 	}
 
 	m_scriptManager = dynamic_type_cast< IScriptManager* >(scriptManagerType->createInstance());
-	T_ASSERT (m_scriptManager);
+	T_ASSERT(m_scriptManager);
 
 	// Create preprocessor.
 	m_preprocessor = new Preprocessor();

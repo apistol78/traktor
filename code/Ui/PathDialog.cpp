@@ -47,7 +47,7 @@ void PathDialog::destroy()
 
 int PathDialog::showModal(Path& outPath)
 {
-	T_ASSERT (m_pathDialog);
+	T_ASSERT(m_pathDialog);
 	return m_pathDialog->showModal(outPath);
 }
 

@@ -115,7 +115,7 @@ const IGrain* EnvelopeGrain::getCurrentGrain(const ISoundBufferCursor* cursor) c
 void EnvelopeGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
 {
 	const EnvelopeGrainCursor* envelopeCursor = static_cast< const EnvelopeGrainCursor* >(cursor);
-	T_ASSERT (envelopeCursor);
+	T_ASSERT(envelopeCursor);
 
 	outActiveGrains.push_back(this);
 
@@ -158,7 +158,7 @@ void EnvelopeGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< 
 bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	EnvelopeGrainCursor* envelopeCursor = static_cast< EnvelopeGrainCursor* >(cursor);
-	T_ASSERT (envelopeCursor);
+	T_ASSERT(envelopeCursor);
 
 	float p0 = clamp(m_envelope(envelopeCursor->m_parameter), 0.0f, 1.0f);
 

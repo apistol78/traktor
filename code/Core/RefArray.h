@@ -351,28 +351,28 @@ public:
 	/*! \brief Get front element. */
 	ClassType* front()
 	{
-		T_ASSERT (m_items);
+		T_ASSERT(m_items);
 		return m_items[0];
 	}
 
 	/*! \brief Get back element. */
 	ClassType* back()
 	{
-		T_ASSERT (m_items);
+		T_ASSERT(m_items);
 		return m_items[m_size - 1];
 	}
 
 	/*! \brief Get front element. */
 	const ClassType* front() const
 	{
-		T_ASSERT (m_items);
+		T_ASSERT(m_items);
 		return m_items[0];
 	}
 
 	/*! \brief Get back element. */
 	const ClassType* back() const
 	{
-		T_ASSERT (m_items);
+		T_ASSERT(m_items);
 		return m_items[m_size - 1];
 	}
 
@@ -438,8 +438,8 @@ public:
 		int32_t move = int32_t(size - offset);
 		for (int32_t i = move - 1; i >= 0; --i)
 		{
-			T_ASSERT (i + offset < size);
-			T_ASSERT (i + offset + count < m_size);
+			T_ASSERT(i + offset < size);
+			T_ASSERT(i + offset + count < m_size);
 			m_items[i + offset + count] = m_items[i + offset];
 		}
 
@@ -464,8 +464,8 @@ public:
 		int32_t move = int32_t(size - offset);
 		for (int32_t i = move - 1; i >= 0; --i)
 		{
-			T_ASSERT (i + offset < size);
-			T_ASSERT (i + offset + count < m_size);
+			T_ASSERT(i + offset < size);
+			T_ASSERT(i + offset + count < m_size);
 			m_items[i + offset + count] = m_items[i + offset];
 		}
 
@@ -481,13 +481,13 @@ public:
 	/*! \brief Erase element from array. */
 	iterator erase(iterator iter)
 	{
-		T_ASSERT (m_size > 0);
-		T_ASSERT (iter.m_item >= m_items && iter.m_item < &m_items[m_size]);
+		T_ASSERT(m_size > 0);
+		T_ASSERT(iter.m_item >= m_items && iter.m_item < &m_items[m_size]);
 
 		T_SAFE_RELEASE(*iter.m_item);
 
 		size_type offset = size_type(iter.m_item - m_items);
-		T_ASSERT (offset < m_size);
+		T_ASSERT(offset < m_size);
 
 		for (size_type i = offset; i < m_size - 1; ++i)
 			m_items[i] = m_items[i + 1];

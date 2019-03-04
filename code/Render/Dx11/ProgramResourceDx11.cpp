@@ -44,7 +44,7 @@ public:
 		else	// SdWrite
 		{
 			blobSize = m_ref ? m_ref->getSize() : 0;
-			T_ASSERT (blobSize < sizeof(blob));
+			T_ASSERT(blobSize < sizeof(blob));
 
 			if (m_ref)
 				std::memcpy(blob, m_ref->getData(), blobSize);

@@ -142,10 +142,10 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 				desc.initialData[i - skipMips].pitch = getTextureRowPitch(desc.format, mipWidth);
 
 				int32_t nread = readerData.read(data, mipPitch);
-				T_ASSERT (nread == mipPitch);
+				T_ASSERT(nread == mipPitch);
 
 				data += mipPitch;
-				T_ASSERT (size_t(data - buffer.ptr()) <= textureDataSize);
+				T_ASSERT(size_t(data - buffer.ptr()) <= textureDataSize);
 			}
 			else
 			{
@@ -221,10 +221,10 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 				if (i >= skipMips)
 				{
 					int32_t nread = readerData.read(data, mipPitch);
-					T_ASSERT (nread == mipPitch);
+					T_ASSERT(nread == mipPitch);
 
 					data += mipPitch;
-					T_ASSERT (size_t(data - buffer.ptr()) <= textureDataSize);
+					T_ASSERT(size_t(data - buffer.ptr()) <= textureDataSize);
 				}
 				else
 				{
@@ -279,10 +279,10 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 				desc.initialData[side * mipCount + i].pitch = getTextureRowPitch(desc.format, desc.side, i);
 
 				int32_t nread = readerData.read(data, mipPitch);
-				T_ASSERT (nread == mipPitch);
+				T_ASSERT(nread == mipPitch);
 
 				data += mipPitch;
-				T_ASSERT (size_t(data - buffer[side].ptr()) <= textureDataSize);
+				T_ASSERT(size_t(data - buffer[side].ptr()) <= textureDataSize);
 			}
 		}
 

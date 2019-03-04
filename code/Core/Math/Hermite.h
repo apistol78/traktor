@@ -61,7 +61,7 @@ public:
 
 	virtual Value evaluate(float T) const
 	{
-		T_ASSERT (m_nkeys >= 2);
+		T_ASSERT(m_nkeys >= 2);
 
 		float Tfirst = Accessor::time(m_keys, m_nkeys, m_keys[0]);
 		float Tlast = Accessor::time(m_keys, m_nkeys, m_keys[m_nkeys - 1]);

@@ -34,7 +34,7 @@ const Path& FilePropertyItem::getPath() const
 
 void FilePropertyItem::createInPlaceControls(Widget* parent)
 {
-	T_ASSERT (!m_editor);
+	T_ASSERT(!m_editor);
 	m_editor = new Edit();
 	m_editor->create(
 		parent,
@@ -44,7 +44,7 @@ void FilePropertyItem::createInPlaceControls(Widget* parent)
 	m_editor->setVisible(false);
 	m_editor->addEventHandler< FocusEvent >(this, &FilePropertyItem::eventEditFocus);
 
-	T_ASSERT (!m_buttonEdit);
+	T_ASSERT(!m_buttonEdit);
 	m_buttonEdit = new MiniButton();
 	m_buttonEdit->create(parent, new ui::StyleBitmap(L"UI.SmallDots", c_ResourceSmallDots, sizeof(c_ResourceSmallDots)));
 	m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &FilePropertyItem::eventClick);

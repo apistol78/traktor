@@ -278,7 +278,7 @@ void EntityAdapter::unlinkChild(EntityAdapter* child)
 	T_FATAL_ASSERT_M (child->m_parent == this, L"Entity adapter not child if this");
 
 	RefArray< EntityAdapter >::iterator i = std::find(m_children.begin(), m_children.end(), child);
-	T_ASSERT (i != m_children.end());
+	T_ASSERT(i != m_children.end());
 
 	m_children.erase(i);
 	m_childMap.remove(child->getEntity());

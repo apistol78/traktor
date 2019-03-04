@@ -33,7 +33,7 @@ public:
 
 	const ActionValue& get(uint16_t index) const
 	{
-		T_ASSERT (index < m_table.size());
+		T_ASSERT(index < m_table.size());
 		return m_table[index];
 	}
 

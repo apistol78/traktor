@@ -38,7 +38,7 @@ int32_t countGroups(db::Group* group)
 	int32_t localCount = 1;
 	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 	{
-		T_ASSERT (*i);
+		T_ASSERT(*i);
 		localCount += countGroups(*i);
 	}
 
@@ -135,7 +135,7 @@ bool migrateGroup(db::Group* targetGroup, db::Group* sourceGroup, int32_t& group
 	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
 	{
 		Ref< db::Instance > sourceInstance = *i;
-		T_ASSERT (sourceInstance);
+		T_ASSERT(sourceInstance);
 
 		if (!migrateInstance(sourceInstance, targetGroup))
 			return false;
@@ -149,7 +149,7 @@ bool migrateGroup(db::Group* targetGroup, db::Group* sourceGroup, int32_t& group
 	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 	{
 		Ref< db::Group > sourceChildGroup = *i;
-		T_ASSERT (sourceChildGroup);
+		T_ASSERT(sourceChildGroup);
 
 		Ref< db::Group > targetChildGroup = targetGroup->getGroup(sourceChildGroup->getName());
 		if (!targetChildGroup)
@@ -181,7 +181,7 @@ bool createMigrationJobs(db::Group* targetGroup, db::Group* sourceGroup, RefArra
 	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
 	{
 		Ref< db::Instance > sourceInstance = *i;
-		T_ASSERT (sourceInstance);
+		T_ASSERT(sourceInstance);
 
 		Ref< Job > job = JobManager::getInstance().add(makeFunctor(
 			[=] () {
@@ -199,7 +199,7 @@ bool createMigrationJobs(db::Group* targetGroup, db::Group* sourceGroup, RefArra
 	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
 	{
 		Ref< db::Group > sourceChildGroup = *i;
-		T_ASSERT (sourceChildGroup);
+		T_ASSERT(sourceChildGroup);
 
 		Ref< db::Group > targetChildGroup = targetGroup->getGroup(sourceChildGroup->getName());
 		if (!targetChildGroup)

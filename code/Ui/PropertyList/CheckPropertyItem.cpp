@@ -49,7 +49,7 @@ void CheckPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 void CheckPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
 	IBitmap* image = m_checked ? s_imageChecked : s_imageUnchecked;
-	T_ASSERT (image);
+	T_ASSERT(image);
 
 	int c = (rc.getHeight() - image->getSize().cy) / 2;
 	canvas.drawBitmap(

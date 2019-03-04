@@ -576,7 +576,7 @@ LRESULT WebBrowserWin32::eventSize(HWND hWnd, UINT message, WPARAM wParam, LPARA
 {
 	if (m_webBrowser)
 	{
-		T_ASSERT (m_webBrowserObject);
+		T_ASSERT(m_webBrowserObject);
 
 		RECT rect;
 		GetClientRect(m_hWnd, &rect);

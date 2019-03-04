@@ -118,7 +118,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ResourceContextOpenGL* resourceContex
 	bool needToCompile = true;
 
 	GLuint programObject = glCreateProgram();
-	T_ASSERT (programObject != 0);
+	T_ASSERT(programObject != 0);
 
 #if defined(GL_ARB_get_program_binary)
 	if (cacheEnable)
@@ -370,7 +370,7 @@ bool ProgramOpenGL::activateRender(RenderContextOpenGL* renderContext, float tar
 			break;
 
 		default:
-			T_ASSERT (0);
+			T_ASSERT(0);
 		}
 
 		uniform.dirty = false;
@@ -390,7 +390,7 @@ bool ProgramOpenGL::activateRender(RenderContextOpenGL* renderContext, float tar
 	// Bind textures.
 	if (!alreadyActive || m_textureDirty)
 	{
-		T_ASSERT (m_samplers.size() <= 16);
+		T_ASSERT(m_samplers.size() <= 16);
 
 		for (const auto& sampler : m_samplers)
 		{
@@ -403,7 +403,7 @@ bool ProgramOpenGL::activateRender(RenderContextOpenGL* renderContext, float tar
 				continue;
 
 			const ITextureBinding* tb = getTextureBinding(resolved);
-			T_ASSERT (tb);
+			T_ASSERT(tb);
 
 			tb->bindTexture(sampler.unit);
 			renderContext->bindSamplerStateObject(sampler.object, sampler.unit, tb->haveMips());
@@ -422,7 +422,7 @@ bool ProgramOpenGL::activateRender(RenderContextOpenGL* renderContext, float tar
 				continue;
 
 			const ITextureBinding* tb = getTextureBinding(resolved);
-			T_ASSERT (tb);
+			T_ASSERT(tb);
 
 			tb->bindSize(textureSize.location);
 		}
@@ -499,7 +499,7 @@ bool ProgramOpenGL::activateCompute(RenderContextOpenGL* renderContext)
 			break;
 
 		default:
-			T_ASSERT (0);
+			T_ASSERT(0);
 		}
 
 		uniform.dirty = false;
@@ -519,7 +519,7 @@ bool ProgramOpenGL::activateCompute(RenderContextOpenGL* renderContext)
 				continue;
 
 			const ITextureBinding* tb = getTextureBinding(resolved);
-			T_ASSERT (tb);
+			T_ASSERT(tb);
 
 			// T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 			tb->bindImage(unit);
@@ -536,7 +536,7 @@ bool ProgramOpenGL::activateCompute(RenderContextOpenGL* renderContext)
 				continue;
 
 			const ITextureBinding* tb = getTextureBinding(resolved);
-			T_ASSERT (tb);
+			T_ASSERT(tb);
 
 			tb->bindSize(textureSize.location);
 		}

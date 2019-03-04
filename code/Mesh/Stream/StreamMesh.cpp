@@ -82,7 +82,7 @@ void StreamMesh::render(
 		return;
 
 	auto it = m_parts.find(worldRenderPass.getTechnique());
-	T_ASSERT (it != m_parts.end());
+	T_ASSERT(it != m_parts.end());
 
 	const AlignedVector< render::Mesh::Part >& meshParts = instance->mesh[0]->getParts();
 	for (const auto part : it->second)

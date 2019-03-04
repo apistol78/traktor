@@ -20,7 +20,6 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Flash</item>
 								<item>Traktor.Heightfield</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.I18N</item>
@@ -91,7 +90,6 @@
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Database.a</item>
 								<item>libTraktor.Drawing.a</item>
-								<item>libTraktor.Flash.a</item>
 								<item>libTraktor.Heightfield.a</item>
 								<item>libTraktor.Html.a</item>
 								<item>libTraktor.I18N.a</item>
@@ -150,7 +148,6 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Flash</item>
 								<item>Traktor.Heightfield</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.I18N</item>
@@ -186,7 +183,6 @@
 								<item>libTraktor.Core.so</item>
 								<item>libTraktor.Database.so</item>
 								<item>libTraktor.Drawing.so</item>
-								<item>libTraktor.Flash.so</item>
 								<item>libTraktor.Heightfield.so</item>
 								<item>libTraktor.Html.so</item>
 								<item>libTraktor.I18N.so</item>
@@ -274,7 +270,6 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Flash</item>
 								<item>Traktor.Heightfield</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.I18N</item>
@@ -312,7 +307,6 @@
 								<item>libTraktor.Core.dylib</item>
 								<item>libTraktor.Database.dylib</item>
 								<item>libTraktor.Drawing.dylib</item>
-								<item>libTraktor.Flash.dylib</item>
 								<item>libTraktor.Heightfield.dylib</item>
 								<item>libTraktor.Html.dylib</item>
 								<item>libTraktor.I18N.dylib</item>
@@ -396,7 +390,6 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Flash</item>
 								<item>Traktor.Heightfield</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.I18N</item>
@@ -471,7 +464,6 @@
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
 								<item>Traktor.Drawing.lib</item>
-								<item>Traktor.Flash.lib</item>
 								<item>Traktor.Heightfield.lib</item>
 								<item>Traktor.Html.lib</item>
 								<item>Traktor.I18N.lib</item>
@@ -533,7 +525,6 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Flash</item>
 								<item>Traktor.Heightfield</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.I18N</item>
@@ -571,7 +562,6 @@
 								<item>Traktor.Core.dll</item>
 								<item>Traktor.Database.dll</item>
 								<item>Traktor.Drawing.dll</item>
-								<item>Traktor.Flash.dll</item>
 								<item>Traktor.Heightfield.dll</item>
 								<item>Traktor.Html.dll</item>
 								<item>Traktor.I18N.dll</item>
@@ -641,7 +631,6 @@
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
 								<item>Traktor.Drawing.lib</item>
-								<item>Traktor.Flash.lib</item>
 								<item>Traktor.Heightfield.lib</item>
 								<item>Traktor.Html.lib</item>
 								<item>Traktor.I18N.lib</item>
@@ -703,7 +692,6 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Flash</item>
 								<item>Traktor.Heightfield</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.I18N</item>
@@ -741,7 +729,6 @@
 								<item>Traktor.Core.dll</item>
 								<item>Traktor.Database.dll</item>
 								<item>Traktor.Drawing.dll</item>
-								<item>Traktor.Flash.dll</item>
 								<item>Traktor.Heightfield.dll</item>
 								<item>Traktor.Html.dll</item>
 								<item>Traktor.I18N.dll</item>
@@ -815,7 +802,6 @@
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
 								<item>Traktor.Drawing.lib</item>
-								<item>Traktor.Flash.lib</item>
 								<item>Traktor.Heightfield.lib</item>
 								<item>Traktor.Html.lib</item>
 								<item>Traktor.I18N.lib</item>
@@ -877,7 +863,6 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Flash</item>
 								<item>Traktor.Heightfield</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.I18N</item>
@@ -945,7 +930,6 @@
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
 								<item>Traktor.Drawing.lib</item>
-								<item>Traktor.Flash.lib</item>
 								<item>Traktor.Heightfield.lib</item>
 								<item>Traktor.Html.lib</item>
 								<item>Traktor.I18N.lib</item>
@@ -1005,7 +989,6 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Flash</item>
 								<item>Traktor.Heightfield</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.I18N</item>
@@ -1074,7 +1057,6 @@
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Database.a</item>
 								<item>libTraktor.Drawing.a</item>
-								<item>libTraktor.Flash.a</item>
 								<item>libTraktor.Heightfield.a</item>
 								<item>libTraktor.Html.a</item>
 								<item>libTraktor.I18N.a</item>
@@ -1134,7 +1116,6 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
-								<item>Traktor.Flash</item>
 								<item>Traktor.Heightfield</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.I18N</item>
@@ -1207,7 +1188,6 @@
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Database.a</item>
 								<item>libTraktor.Drawing.a</item>
-								<item>libTraktor.Flash.a</item>
 								<item>libTraktor.Heightfield.a</item>
 								<item>libTraktor.Html.a</item>
 								<item>libTraktor.I18N.a</item>

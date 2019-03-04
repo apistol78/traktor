@@ -55,7 +55,7 @@ float ComputeVertexCacheScore(int32_t cachePosition, uint32_t vertexCacheSize)
 		}
 		else
 		{
-			T_ASSERT (cachePosition < vertexCacheSize);
+			T_ASSERT(cachePosition < vertexCacheSize);
 			// Points for being high in the cache.
 			const float scaler = 1.0f / (vertexCacheSize - 3);
 			score = 1.0f - (cachePosition - 3) * scaler;
@@ -166,7 +166,7 @@ struct OptimizeVertexData
 
 void optimizeFaces(const AlignedVector< uint32_t >& indexList, uint32_t vertexCount, AlignedVector< uint32_t >& outNewIndexList, uint32_t lruCacheSize)
 {
-	T_ASSERT (indexList.size() == outNewIndexList.size());
+	T_ASSERT(indexList.size() == outNewIndexList.size());
 
 	std::vector< OptimizeVertexData > vertexDataList;
 	vertexDataList.resize(vertexCount);

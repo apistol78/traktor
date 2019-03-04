@@ -35,7 +35,7 @@ void Tween::init(
 )
 {
 	ActionObject* self = getAsObject(m_context);
-	T_ASSERT (self);
+	T_ASSERT(self);
 
 	m_begin = begin;
 	m_finish = finish;
@@ -85,7 +85,7 @@ void Tween::prevFrame()
 void Tween::resume()
 {
 	ActionObject* self = getAsObject(m_context);
-	T_ASSERT (self);
+	T_ASSERT(self);
 
 	if (!m_playing)
 		m_context->addFrameListener(self);
@@ -101,7 +101,7 @@ void Tween::rewind(float t)
 void Tween::start()
 {
 	ActionObject* self = getAsObject(m_context);
-	T_ASSERT (self);
+	T_ASSERT(self);
 
 	m_timeStart = float(-1);
 
@@ -156,7 +156,7 @@ void Tween::start()
 void Tween::stop()
 {
 	ActionObject* self = getAsObject(m_context);
-	T_ASSERT (self);
+	T_ASSERT(self);
 
 	if (m_playing)
 		m_context->removeFrameListener(self);
@@ -173,7 +173,7 @@ void Tween::yoyo()
 void Tween::onFrame(CallArgs& ca)
 {
 	ActionObject* self = getAsObject(m_context);
-	T_ASSERT (self);
+	T_ASSERT(self);
 
 	ActionValue target;
 	ActionValue propertySet;

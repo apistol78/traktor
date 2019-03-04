@@ -127,7 +127,7 @@ bool ClothEntity::create(
 		return false;
 
 	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());
-	T_ASSERT (index);
+	T_ASSERT(index);
 
 	for (uint32_t y = 0; y < quadsY; ++y)
 	{
@@ -163,7 +163,7 @@ void ClothEntity::render(
 	if (m_updateRequired || !m_vertexBuffer->isContentValid())
 	{
 		ClothVertex* vertexFront = static_cast< ClothVertex* >(m_vertexBuffer->lock());
-		T_ASSERT (vertexFront);
+		T_ASSERT(vertexFront);
 
 		for (uint32_t y = 0; y < m_resolutionY; ++y)
 		{
@@ -201,7 +201,7 @@ void ClothEntity::render(
 	);
 
 	render::RenderContext* renderContext = worldContext.getRenderContext();
-	T_ASSERT (renderContext);
+	T_ASSERT(renderContext);
 
 	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >();
 

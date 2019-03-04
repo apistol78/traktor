@@ -449,7 +449,7 @@ bool OcclusionTexturePipeline::buildOutput(
 			task->rayCount = m_editor ? 16 : 128;
 
 			Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &TraceTask::execute));
-			T_ASSERT (job);
+			T_ASSERT(job);
 
 			tasks.push_back(task);
 			jobs.push_back(job);

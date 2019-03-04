@@ -35,7 +35,7 @@ SHCoeffs SHCoeffs::transform(const SHMatrix& matrix) const
 
 float SHCoeffs::operator * (const SHCoeffs& coeffs) const
 {
-	T_ASSERT (m_coefficients.size() == coeffs.m_coefficients.size());
+	T_ASSERT(m_coefficients.size() == coeffs.m_coefficients.size());
 
 	float result = 0.0f;
 	for (uint32_t i = 0; i < m_coefficients.size(); ++i)

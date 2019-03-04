@@ -37,7 +37,7 @@ ActionFunction1::ActionFunction1(
 
 ActionValue ActionFunction1::call(ActionObject* self, ActionObject* super, const ActionValueArray& args)
 {
-	T_ASSERT (!is_a< ActionSuper >(self));
+	T_ASSERT(!is_a< ActionSuper >(self));
 
 	ActionValuePool& pool = getContext()->getPool();
 	T_ANONYMOUS_VAR(ActionValuePool::Scope)(pool);

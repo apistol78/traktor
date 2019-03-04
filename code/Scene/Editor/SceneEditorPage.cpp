@@ -393,7 +393,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		if (m_instanceGrid->getRows(selectedRows, ui::GridView::GfDescendants | ui::GridView::GfSelectedOnly) == 1)
 		{
 			Ref< EntityAdapter > selectedEntity = selectedRows[0]->getData< EntityAdapter >(L"ENTITY");
-			T_ASSERT (selectedEntity);
+			T_ASSERT(selectedEntity);
 
 			parentGroupAdapter = selectedEntity->getParentGroup();
 		}
@@ -412,7 +412,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 
 		// Ensure group is selected when editing a prefab.
 		Object* documentObject = m_context->getDocument()->getObject(0);
-		T_ASSERT (documentObject);
+		T_ASSERT(documentObject);
 
 		if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(documentObject))
 		{
@@ -436,7 +436,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 
 		// Place instance in front of perspective camera.
 		const Camera* camera = m_context->getCamera(viewIndex);
-		T_ASSERT (camera);
+		T_ASSERT(camera);
 
 		Matrix44 Mworld = camera->getWorld().toMatrix44() * translate(0.0f, 0.0f, 4.0f);
 		entityAdapter->setTransform(Transform(Mworld.translation()));
@@ -542,7 +542,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			return false;
 
 		Ref< EntityAdapter > parentEntity = selectedEntities[0]->getParentGroup();
-		T_ASSERT (parentEntity);
+		T_ASSERT(parentEntity);
 
 		// Get clipboard data; ensure correct type.
 		Ref< EntityClipboardData > entityClipboardData = dynamic_type_cast< EntityClipboardData* >(
@@ -784,7 +784,7 @@ bool SceneEditorPage::createSceneAsset()
 			return false;
 
 		const RefArray< world::LayerEntityData >& layers = sceneAsset->getLayers();
-		T_ASSERT (layers.size() >= 2);
+		T_ASSERT(layers.size() >= 2);
 
 		layers[1]->addEntityData(entityData);
 
@@ -977,7 +977,7 @@ void SceneEditorPage::updatePropertyObject()
 	if (entityAdapters.size() == 1)
 	{
 		Ref< EntityAdapter > entityAdapter = entityAdapters.front();
-		T_ASSERT (entityAdapter);
+		T_ASSERT(entityAdapter);
 
 		m_site->setPropertyObject(entityAdapter->getEntityData());
 	}
@@ -988,7 +988,7 @@ void SceneEditorPage::updatePropertyObject()
 void SceneEditorPage::updateStatusBar()
 {
 	const Camera* camera = m_context->getCamera(0);
-	T_ASSERT (camera);
+	T_ASSERT(camera);
 
 	Vector4 position = camera->getPosition();
 	Vector4 angles = camera->getOrientation().toEulerAngles();
@@ -1032,7 +1032,7 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 	}
 
 	Ref< world::EntityData > entityData = checked_type_cast< world::EntityData* >(entityType->createInstance());
-	T_ASSERT (entityData);
+	T_ASSERT(entityData);
 
 	m_context->getDocument()->push();
 
@@ -1127,7 +1127,7 @@ void SceneEditorPage::eventInstanceSelect(ui::SelectionChangeEvent* event)
 	for (RefArray< ui::GridRow >::iterator i = selectedRows.begin(); i != selectedRows.end(); ++i)
 	{
 		EntityAdapter* entityAdapter = (*i)->getData< EntityAdapter >(L"ENTITY");
-		T_ASSERT (entityAdapter);
+		T_ASSERT(entityAdapter);
 
 		m_context->selectEntity(entityAdapter);
 	}
@@ -1177,7 +1177,7 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 		ui::GridItem* item = row->get(1);
 
 		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
-		T_ASSERT (entityAdapter);
+		T_ASSERT(entityAdapter);
 
 		if (entityAdapter->isVisible(false))
 		{
@@ -1198,7 +1198,7 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 		ui::GridItem* item = row->get(2);
 
 		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
-		T_ASSERT (entityAdapter);
+		T_ASSERT(entityAdapter);
 
 		if (entityAdapter->isLocked())
 		{

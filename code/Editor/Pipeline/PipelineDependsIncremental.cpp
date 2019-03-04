@@ -62,7 +62,7 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset)
 	}
 
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
-	T_ASSERT (pipeline);
+	T_ASSERT(pipeline);
 
 	pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid());
 
@@ -84,7 +84,7 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset,
 	if (dependencyIndex != IPipelineDependencySet::DiInvalid)
 	{
 		PipelineDependency* dependency = m_dependencySet->get(dependencyIndex);
-		T_ASSERT (dependency);
+		T_ASSERT(dependency);
 
 		dependency->flags |= flags;
 		if (m_currentDependency)
@@ -116,7 +116,7 @@ void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance
 	if (dependencyIndex != IPipelineDependencySet::DiInvalid)
 	{
 		PipelineDependency* dependency = m_dependencySet->get(dependencyIndex);
-		T_ASSERT (dependency);
+		T_ASSERT(dependency);
 
 		dependency->flags |= flags;
 		if (m_currentDependency)
@@ -156,7 +156,7 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 	if (dependencyIndex != IPipelineDependencySet::DiInvalid)
 	{
 		PipelineDependency* dependency = m_dependencySet->get(dependencyIndex);
-		T_ASSERT (dependency);
+		T_ASSERT(dependency);
 
 		dependency->flags |= flags;
 		if (m_currentDependency)
@@ -329,7 +329,7 @@ void PipelineDependsIncremental::addUniqueDependency(
 		T_ANONYMOUS_VAR(Save< Ref< PipelineDependency > >)(m_currentDependency, dependency);
 
 		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
-		T_ASSERT (pipeline);
+		T_ASSERT(pipeline);
 
 #if defined(_DEBUG)
 		if (m_buildDepTimeStack.empty())

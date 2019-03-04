@@ -54,7 +54,7 @@ Ref< sound::ISoundBufferCursor > SoundBuffer::createCursor() const
 bool SoundBuffer::getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const
 {
 	SoundBufferCursor* fsbc = static_cast< SoundBufferCursor* >(cursor);
-	T_ASSERT (fsbc);
+	T_ASSERT(fsbc);
 
 	// Have we reached the end?
 	int32_t position = fsbc->m_position;

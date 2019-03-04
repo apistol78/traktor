@@ -44,7 +44,7 @@ int32_t InputSystem::getDeviceCount() const
 
 Ref< IInputDevice > InputSystem::getDevice(int32_t index)
 {
-	T_ASSERT (index >= 0 && index < getDeviceCount());
+	T_ASSERT(index >= 0 && index < getDeviceCount());
 	return m_devices[index];
 }
 
@@ -104,12 +104,12 @@ void InputSystem::updateDevices()
 	for (RefArray< IInputDriver >::iterator i = m_drivers.begin(); i != m_drivers.end(); ++i)
 	{
 		IInputDriver* inputDriver = *i;
-		T_ASSERT (inputDriver);
+		T_ASSERT(inputDriver);
 
 		for (int32_t j = 0; j < inputDriver->getDeviceCount(); ++j)
 		{
 			Ref< IInputDevice > inputDevice = inputDriver->getDevice(j);
-			T_ASSERT (inputDevice);
+			T_ASSERT(inputDevice);
 
 			m_devices.push_back(inputDevice);
 		}

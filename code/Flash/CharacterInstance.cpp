@@ -345,7 +345,7 @@ bool CharacterInstance::haveScriptEvent(uint32_t eventName)
 		return false;
 
 	ActionObject* self = getAsObject(m_context);
-	T_ASSERT (self);
+	T_ASSERT(self);
 
 	ActionValue memberValue;
 	if (!self->getMember(eventName, memberValue))
@@ -360,7 +360,7 @@ bool CharacterInstance::executeScriptEvent(uint32_t eventName, const ActionValue
 		return false;
 
 	ActionObject* self = getAsObject(m_context);
-	T_ASSERT (self);
+	T_ASSERT(self);
 
 	ActionValue memberValue;
 	if (!self->getMember(eventName, memberValue))

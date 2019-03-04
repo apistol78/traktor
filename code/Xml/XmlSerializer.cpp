@@ -415,7 +415,7 @@ void XmlSerializer::incrementIndent()
 
 void XmlSerializer::decrementIndent()
 {
-	T_ASSERT (!m_indent.empty());
+	T_ASSERT(!m_indent.empty());
 	m_indent.erase(m_indent.end() - 1);
 }
 

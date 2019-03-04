@@ -31,7 +31,7 @@ bool SimpleTextureDx11::create(const SimpleTextureCreateDesc& desc)
 	D3D11_TEXTURE2D_DESC dtd;
 	HRESULT hr;
 
-	T_ASSERT (sizeof(TextureInitialData) == sizeof(D3D11_SUBRESOURCE_DATA));
+	T_ASSERT(sizeof(TextureInitialData) == sizeof(D3D11_SUBRESOURCE_DATA));
 
 	const DXGI_FORMAT* dxgiTextureFormats = desc.sRGB ? c_dxgiTextureFormats_sRGB : c_dxgiTextureFormats;
 	if (dxgiTextureFormats[desc.format] == DXGI_FORMAT_UNKNOWN)
@@ -57,8 +57,8 @@ bool SimpleTextureDx11::create(const SimpleTextureCreateDesc& desc)
 
 		for (int32_t i = 0; i < desc.mipCount; ++i)
 		{
-			T_ASSERT (desc.initialData[i].data);
-			T_ASSERT (desc.initialData[i].pitch > 0);
+			T_ASSERT(desc.initialData[i].data);
+			T_ASSERT(desc.initialData[i].pitch > 0);
 			dsrd[i].pSysMem = desc.initialData[i].data;
 			dsrd[i].SysMemPitch = desc.initialData[i].pitch;
 			dsrd[i].SysMemSlicePitch = desc.initialData[i].slicePitch;

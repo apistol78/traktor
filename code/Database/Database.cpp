@@ -45,8 +45,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Database", Database, Object)
 
 bool Database::open(IProviderDatabase* providerDatabase)
 {
-	T_ASSERT (providerDatabase);
-	T_ASSERT (!m_providerDatabase);
+	T_ASSERT(providerDatabase);
+	T_ASSERT(!m_providerDatabase);
 
 	m_providerDatabase = providerDatabase;
 	m_providerBus = m_providerDatabase->getBus();
@@ -137,14 +137,14 @@ void Database::close()
 
 Ref< Group > Database::getRootGroup()
 {
-	T_ASSERT (m_providerDatabase);
+	T_ASSERT(m_providerDatabase);
 	return m_rootGroup;
 }
 
 Ref< Group > Database::getGroup(const std::wstring& groupPath)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerDatabase);
+	T_ASSERT(m_providerDatabase);
 
 	Ref< Group > group = m_rootGroup;
 	StringSplit< std::wstring > pathElements(groupPath, L"/");
@@ -160,7 +160,7 @@ Ref< Group > Database::getGroup(const std::wstring& groupPath)
 Ref< Group > Database::createGroup(const std::wstring& groupPath)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerDatabase);
+	T_ASSERT(m_providerDatabase);
 
 	Ref< Group > group = m_rootGroup;
 
@@ -186,7 +186,7 @@ Ref< Instance > Database::getInstance(const Guid& instanceGuid)
 		return nullptr;
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerDatabase);
+	T_ASSERT(m_providerDatabase);
 
 	auto i = m_instanceMap.find(instanceGuid);
 	return i != m_instanceMap.end() ? i->second : nullptr;
@@ -195,7 +195,7 @@ Ref< Instance > Database::getInstance(const Guid& instanceGuid)
 Ref< Instance > Database::getInstance(const std::wstring& instancePath, const TypeInfo* primaryType)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerDatabase);
+	T_ASSERT(m_providerDatabase);
 
 	std::wstring instanceName = instancePath;
 	Ref< Group > group = m_rootGroup;
@@ -216,7 +216,7 @@ Ref< Instance > Database::getInstance(const std::wstring& instancePath, const Ty
 Ref< Instance > Database::createInstance(const std::wstring& instancePath, uint32_t flags, const Guid* guid)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerDatabase);
+	T_ASSERT(m_providerDatabase);
 
 	std::wstring instanceName;
 	Ref< Group > group;
@@ -250,7 +250,7 @@ Ref< ISerializable > Database::getObjectReadOnly(const Guid& guid) const
 		return nullptr;
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerDatabase);
+	T_ASSERT(m_providerDatabase);
 
 	auto i = m_instanceMap.find(guid);
 	if (i == m_instanceMap.end() || !i->second)
@@ -261,7 +261,7 @@ Ref< ISerializable > Database::getObjectReadOnly(const Guid& guid) const
 
 bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 {
-	T_ASSERT (m_providerDatabase);
+	T_ASSERT(m_providerDatabase);
 
 	if (!m_providerBus || !m_providerBus->getEvent(outEvent, outRemote))
 		return false;

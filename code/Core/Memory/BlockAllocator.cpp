@@ -13,7 +13,7 @@ BlockAllocator::BlockAllocator(void* top, int count, size_t size)
 ,	m_full(false)
 #endif
 {
-	T_ASSERT ((size % sizeof(size_t)) == 0);
+	T_ASSERT((size % sizeof(size_t)) == 0);
 	size_t blockSize = size / sizeof(size_t);
 
 	m_top = static_cast< size_t* >(top);
@@ -54,7 +54,7 @@ void* BlockAllocator::alloc()
 	}
 #endif
 
-	T_ASSERT (((size_t*)p >= m_top && (size_t*)p < m_end) || p == 0);
+	T_ASSERT(((size_t*)p >= m_top && (size_t*)p < m_end) || p == 0);
 	return p;
 }
 

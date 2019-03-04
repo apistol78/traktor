@@ -15,7 +15,7 @@ std::wstring SyntaxLanguageJs::lineComment() const
 bool SyntaxLanguageJs::consume(const std::wstring& text, State& outState, int& outConsumedChars) const
 {
 	int ln = int(text.length());
-	T_ASSERT (ln > 0);
+	T_ASSERT(ln > 0);
 
 	// Line comment.
 	if (ln >= 2)

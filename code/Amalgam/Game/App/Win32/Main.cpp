@@ -118,7 +118,7 @@ Ref< PropertyGroup > loadSettings(const Path& settingsFile)
  */
 bool saveSettings(const PropertyGroup* settings, const Path& settingsFile)
 {
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(settingsFile, File::FmWrite);
 	if (!file)

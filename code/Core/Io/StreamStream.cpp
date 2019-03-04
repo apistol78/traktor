@@ -15,37 +15,37 @@ StreamStream::StreamStream(IStream* stream, int64_t endOffset)
 
 void StreamStream::close()
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 	m_stream->close();
 }
 
 bool StreamStream::canRead() const
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 	return m_stream->canRead();
 }
 
 bool StreamStream::canWrite() const
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 	return m_stream->canWrite();
 }
 
 bool StreamStream::canSeek() const
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 	return m_stream->canSeek();
 }
 
 int64_t StreamStream::tell() const
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 	return m_stream->tell() - m_startOffset;
 }
 
 int64_t StreamStream::available() const
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 	if (m_endOffset >= 0)
 		return m_endOffset - m_stream->tell();
 	else
@@ -54,7 +54,7 @@ int64_t StreamStream::available() const
 
 int64_t StreamStream::seek(SeekOriginType origin, int64_t offset)
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 
 	int64_t result = 0;
 	switch (origin)
@@ -80,7 +80,7 @@ int64_t StreamStream::seek(SeekOriginType origin, int64_t offset)
 
 int64_t StreamStream::read(void* block, int64_t nbytes)
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 
 	int64_t offset = m_stream->tell();
 	nbytes = std::min(m_endOffset - offset, nbytes);
@@ -90,13 +90,13 @@ int64_t StreamStream::read(void* block, int64_t nbytes)
 
 int64_t StreamStream::write(const void* block, int64_t nbytes)
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 	return m_stream->write(block, nbytes);
 }
 
 void StreamStream::flush()
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 	m_stream->flush();
 }
 

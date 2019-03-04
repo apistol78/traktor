@@ -31,7 +31,7 @@ Window::~Window()
 
 bool Window::create()
 {
-	T_ASSERT (!m_hWnd);
+	T_ASSERT(!m_hWnd);
 
 	WNDCLASS wc;
 	std::memset(&wc, 0, sizeof(wc));

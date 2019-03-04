@@ -184,7 +184,7 @@ bool Document::loadFromStream(IStream* stream, const IEncoding* encoding)
 
 							elm.erase(elm.begin(), i + 1);
 
-							T_ASSERT (!elm.empty());
+							T_ASSERT(!elm.empty());
 
 							elm.front()->addChild(element);
 						}

@@ -149,7 +149,7 @@ void Winding3::split(const Plane& plane, Winding3& outFront, Winding3& outBack) 
 		{
 			Scalar k;
 			plane.segmentIntersection(a, b, k);
-			T_ASSERT (k >= 0.0f && k <= 1.0f);
+			T_ASSERT(k >= 0.0f && k <= 1.0f);
 
 			Vector4 p = lerp(a, b, k);
 			outFront.m_points.push_back(p);
@@ -182,7 +182,7 @@ int Winding3::classify(const Plane& plane) const
 	else if (!side[CfFront] && !side[CfBack])
 		return CfCoplanar;
 
-	T_ASSERT (side[CfFront] && side[CfBack]);
+	T_ASSERT(side[CfFront] && side[CfBack]);
 	return CfSpan;
 }
 
@@ -292,7 +292,7 @@ bool Winding3::rayIntersection(
 
 	// Project all points onto 2d plane.
 	Vector2 projected[32];
-	T_ASSERT (m_points.size() <= sizeof_array(projected));
+	T_ASSERT(m_points.size() <= sizeof_array(projected));
 	for (size_t i = 0; i < m_points.size(); ++i)
 	{
 		projected[i].x = dot3(u, m_points[i]);

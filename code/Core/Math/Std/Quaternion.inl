@@ -85,8 +85,8 @@ T_MATH_INLINE Quaternion::Quaternion(const Matrix44& m)
 
 T_MATH_INLINE Quaternion::Quaternion(const Vector4& from, const Vector4& to)
 {
-	T_ASSERT (abs(from.w()) == 0.0f);
-	T_ASSERT (abs(to.w()) == 0.0f);
+	T_ASSERT(abs(from.w()) == 0.0f);
+	T_ASSERT(abs(to.w()) == 0.0f);
 
 	Vector4 c = cross(from, to);
 	Scalar d = dot3(from, to);
@@ -221,7 +221,7 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 		axisZ_2.x(),
 		axisZ_2.z()
 	);
-	T_ASSERT (!isNan(outHead));
+	T_ASSERT(!isNan(outHead));
 
 	Quaternion Qt0 = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), -outHead);
 	Vector4 axisX_3 = Qt0 * axisX_2;
@@ -231,7 +231,7 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 		axisZ_3.y(),
 		axisZ_3.z()
 	);
-	T_ASSERT (!isNan(outPitch));
+	T_ASSERT(!isNan(outPitch));
 
 	Quaternion Qt1 = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), -outPitch);
 	Vector4 axisX_4 = Qt1 * axisX_3;
@@ -240,7 +240,7 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 		axisX_4.y(),
 		axisX_4.x()
 	);
-	T_ASSERT (!isNan(outBank));
+	T_ASSERT(!isNan(outBank));
 }
 
 T_MATH_INLINE Quaternion Quaternion::fromEulerAngles(float head, float pitch, float bank)

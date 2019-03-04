@@ -42,20 +42,20 @@ bool CompactGroup::internalCreate(CompactGroupEntry* groupEntry)
 
 std::wstring CompactGroup::getName() const
 {
-	T_ASSERT (m_groupEntry);
+	T_ASSERT(m_groupEntry);
 	return m_groupEntry->getName();
 }
 
 bool CompactGroup::rename(const std::wstring& name)
 {
-	T_ASSERT (m_groupEntry);
+	T_ASSERT(m_groupEntry);
 	m_groupEntry->setName(name);
 	return true;
 }
 
 bool CompactGroup::remove()
 {
-	T_ASSERT (m_groupEntry);
+	T_ASSERT(m_groupEntry);
 	if (!m_context->getRegistry()->removeGroup(m_groupEntry))
 		return false;
 	m_groupEntry = 0;
@@ -64,7 +64,7 @@ bool CompactGroup::remove()
 
 Ref< IProviderGroup > CompactGroup::createGroup(const std::wstring& groupName)
 {
-	T_ASSERT (m_groupEntry);
+	T_ASSERT(m_groupEntry);
 
 	Ref< CompactGroupEntry > childGroupEntry = m_context->getRegistry()->createGroupEntry();
 	if (!childGroupEntry)
@@ -84,7 +84,7 @@ Ref< IProviderGroup > CompactGroup::createGroup(const std::wstring& groupName)
 
 Ref< IProviderInstance > CompactGroup::createInstance(const std::wstring& instanceName, const Guid& instanceGuid)
 {
-	T_ASSERT (m_groupEntry);
+	T_ASSERT(m_groupEntry);
 
 	Ref< CompactInstanceEntry > childInstanceEntry = m_context->getRegistry()->createInstanceEntry();
 	if (!childInstanceEntry)

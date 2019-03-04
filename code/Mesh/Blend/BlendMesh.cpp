@@ -125,7 +125,7 @@ BlendMesh::BlendMesh()
 
 const Aabb3& BlendMesh::getBoundingBox() const
 {
-	T_ASSERT (!m_meshes.empty());
+	T_ASSERT(!m_meshes.empty());
 	return m_meshes[0]->getBoundingBox();
 }
 
@@ -141,7 +141,7 @@ uint32_t BlendMesh::getBlendTargetCount() const
 
 Ref< BlendMesh::Instance > BlendMesh::createInstance() const
 {
-	T_ASSERT (m_meshes[0]->getIndexBuffer());
+	T_ASSERT(m_meshes[0]->getIndexBuffer());
 
 	Ref< BlendMesh::Instance > instance = new BlendMesh::Instance();
 
@@ -196,7 +196,7 @@ void BlendMesh::render(
 )
 {
 	// Build render-able mesh by weighting in each blend shape's vertices.
-	T_ASSERT (blendWeights.size() == getBlendTargetCount());
+	T_ASSERT(blendWeights.size() == getBlendTargetCount());
 
 	// Update target mesh if weights has changed.
 	{
@@ -206,7 +206,7 @@ void BlendMesh::render(
 			(blendWeights.size() == instance->weights.size())
 		)
 		{
-			T_ASSERT (instance->count > 0);
+			T_ASSERT(instance->count > 0);
 
 			update = false;
 			for (uint32_t i = 0; i < blendWeights.size(); ++i)
@@ -278,7 +278,7 @@ void BlendMesh::render(
 
 	// Render mesh.
 	SmallMap< render::handle_t, AlignedVector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
-	T_ASSERT (it != m_parts.end());
+	T_ASSERT(it != m_parts.end());
 
 	const AlignedVector< render::Mesh::Part >& meshParts = instance->mesh->getParts();
 	for (AlignedVector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)

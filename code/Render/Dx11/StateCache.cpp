@@ -126,7 +126,7 @@ void StateCache::setInputLayout(uint32_t d3dVertexShaderHash, const Blob* d3dVer
 			// Get device from context.
 			ComRef< ID3D11Device > d3dDevice;
 			m_d3dDeviceContext->GetDevice(&d3dDevice.getAssign());
-			T_ASSERT (d3dDevice);
+			T_ASSERT(d3dDevice);
 
 			// Layout hasn't been mapped yet; create new input layout.
 			hr = d3dDevice->CreateInputLayout(
@@ -136,8 +136,8 @@ void StateCache::setInputLayout(uint32_t d3dVertexShaderHash, const Blob* d3dVer
 				d3dVertexShaderBlob->getSize(),
 				&d3dInputLayout
 			);
-			T_ASSERT (SUCCEEDED(hr));
-			T_ASSERT (d3dInputLayout);
+			T_ASSERT(SUCCEEDED(hr));
+			T_ASSERT(d3dInputLayout);
 
 			// Save layout for later binding.
 			m_d3dInputLayouts[d3dSignatureHash] = d3dInputLayout;

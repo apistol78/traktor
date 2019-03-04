@@ -19,7 +19,7 @@ int32_t cg_attr_index(DataUsage usage, int index)
 		16	// Last attribute index
 	};
 	int32_t attr = base[int(usage)] + index;
-	T_ASSERT (attr < base[int(usage) + 1]);
+	T_ASSERT(attr < base[int(usage) + 1]);
 	return attr;
 }
 
@@ -45,7 +45,7 @@ std::wstring cg_type_name(CgType type)
 		L"texture",
 		L"texture"
 	};
-	T_ASSERT (type < sizeof_array(c));
+	T_ASSERT(type < sizeof_array(c));
 	return c[type];
 }
 
@@ -64,7 +64,7 @@ int32_t cg_type_width(CgType type)
 		0,
 		0
 	};
-	T_ASSERT (type < sizeof_array(c_widths));
+	T_ASSERT(type < sizeof_array(c_widths));
 	return c_widths[type];
 }
 
@@ -85,7 +85,7 @@ CgType cg_from_data_type(DataType type)
 		CtFloat2,
 		CtFloat4
 	};
-	T_ASSERT (type < sizeof_array(c));
+	T_ASSERT(type < sizeof_array(c));
 	return c[type];
 }
 
@@ -100,7 +100,7 @@ CgType cg_from_parameter_type(ParameterType type)
 		CtTexture3D,
 		CtTextureCube
 	};
-	T_ASSERT (type < sizeof_array(c));
+	T_ASSERT(type < sizeof_array(c));
 	return c[type];
 
 }

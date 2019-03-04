@@ -36,7 +36,7 @@ void State::unpackBegin()
 
 const IValue* State::unpack()
 {
-	T_ASSERT (m_index < m_values.size());
+	T_ASSERT(m_index < m_values.size());
 	return m_values[m_index++];
 }
 

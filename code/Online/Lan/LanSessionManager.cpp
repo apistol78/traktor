@@ -179,7 +179,7 @@ uint32_t LanSessionManager::receiveP2PData(void* data, uint32_t size, uint64_t& 
 			continue;
 
 		const PropertyGroup* propertyGroup = (*i)->getProperties();
-		T_ASSERT (propertyGroup);
+		T_ASSERT(propertyGroup);
 
 		uint32_t addr = propertyGroup->getProperty< int32_t >(c_keyUserAddr);
 		uint16_t port = propertyGroup->getProperty< int32_t >(c_keyUserPort);

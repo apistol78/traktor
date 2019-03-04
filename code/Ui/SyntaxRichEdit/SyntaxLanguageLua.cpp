@@ -16,7 +16,7 @@ std::wstring SyntaxLanguageLua::lineComment() const
 bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& outConsumedChars) const
 {
 	int ln = int(text.length());
-	T_ASSERT (ln > 0);
+	T_ASSERT(ln > 0);
 
 	// Line comment.
 	if (ln >= 2)
@@ -159,7 +159,7 @@ bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& 
 
 void SyntaxLanguageLua::outline(int32_t line, const std::wstring& text, std::list< SyntaxOutline >& outOutline) const
 {
-	T_ASSERT (text.length() > 0);
+	T_ASSERT(text.length() > 0);
 
 	size_t i = text.find_first_of(L" \t\n\r");
 	if (i != text.npos)

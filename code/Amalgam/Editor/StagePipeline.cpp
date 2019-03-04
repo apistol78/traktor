@@ -1,6 +1,5 @@
 #include "Amalgam/Editor/StagePipeline.h"
 #include "Amalgam/Game/Engine/AudioLayerData.h"
-#include "Amalgam/Game/Engine/FlashLayerData.h"
 #include "Amalgam/Game/Engine/StageData.h"
 #include "Amalgam/Game/Engine/VideoLayerData.h"
 #include "Amalgam/Game/Engine/WorldLayerData.h"
@@ -21,7 +20,7 @@ namespace traktor
 Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, const StageData* stageData)
 {
 	Ref< StageData > stageDataOut = DeepClone(checked_type_cast< const StageData*, false >(stageData)).create< StageData >();
-	T_ASSERT (stageDataOut);
+	T_ASSERT(stageDataOut);
 
 	if (stageData->getInherit().isNotNull())
 	{
@@ -80,9 +79,10 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.StagePipeline", 7, StagePipelin
 
 TypeInfoSet StagePipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< StageData >());
-	return typeSet;
+	return makeTypeInfoSet<
+		StageData,
+		LayerData
+	>();
 }
 
 bool StagePipeline::buildDependencies(
@@ -93,37 +93,40 @@ bool StagePipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const StageData* stageData = checked_type_cast< const StageData*, false >(sourceAsset);
-
-	pipelineDepends->addDependency(stageData->m_inherit, editor::PdfUse);
-	pipelineDepends->addDependency(stageData->m_class, editor::PdfBuild);
-	pipelineDepends->addDependency(stageData->m_shaderFade, editor::PdfBuild | editor::PdfResource);
-
-	for (std::map< std::wstring, Guid >::const_iterator i = stageData->m_transitions.begin(); i != stageData->m_transitions.end(); ++i)
-		pipelineDepends->addDependency(i->second, editor::PdfBuild);
-
-	for (RefArray< LayerData >::const_iterator i = stageData->m_layers.begin(); i != stageData->m_layers.end(); ++i)
+	if (const StageData* stageData = dynamic_type_cast< const StageData* >(sourceAsset))
 	{
-		if (const AudioLayerData* audioLayer = dynamic_type_cast< const AudioLayerData* >(*i))
+		pipelineDepends->addDependency(stageData->m_inherit, editor::PdfUse);
+		pipelineDepends->addDependency(stageData->m_class, editor::PdfBuild);
+		pipelineDepends->addDependency(stageData->m_shaderFade, editor::PdfBuild | editor::PdfResource);
+
+		for (std::map< std::wstring, Guid >::const_iterator i = stageData->m_transitions.begin(); i != stageData->m_transitions.end(); ++i)
+			pipelineDepends->addDependency(i->second, editor::PdfBuild);
+
+		for (const auto layerData : stageData->m_layers)
+			pipelineDepends->addDependency(layerData);
+
+		pipelineDepends->addDependency(stageData->m_resourceBundle, editor::PdfBuild);
+		return true;
+	}
+	else if (const LayerData* layerData = dynamic_type_cast< const LayerData* >(sourceAsset))
+	{
+		if (const AudioLayerData* audioLayer = dynamic_type_cast< const AudioLayerData* >(layerData))
 			pipelineDepends->addDependency(audioLayer->m_sound, editor::PdfBuild);
-		else if (const FlashLayerData* flashLayer = dynamic_type_cast< const FlashLayerData* >(*i))
-		{
-			pipelineDepends->addDependency(flashLayer->m_movie, editor::PdfBuild);
-			for (std::map< std::wstring, resource::Id< flash::Movie > >::const_iterator i = flashLayer->m_externalMovies.begin(); i != flashLayer->m_externalMovies.end(); ++i)
-				pipelineDepends->addDependency(i->second, editor::PdfBuild);
-			pipelineDepends->addDependency(flashLayer->m_imageProcess, editor::PdfBuild);
-		}
-		else if (const VideoLayerData* videoLayer = dynamic_type_cast< const VideoLayerData* >(*i))
+		else if (const VideoLayerData* videoLayer = dynamic_type_cast< const VideoLayerData* >(layerData))
 		{
 			pipelineDepends->addDependency(videoLayer->m_video, editor::PdfBuild);
 			pipelineDepends->addDependency(videoLayer->m_shader, editor::PdfBuild | editor::PdfResource);
 		}
-		else if (const WorldLayerData* worldLayer = dynamic_type_cast< const WorldLayerData* >(*i))
+		else if (const WorldLayerData* worldLayer = dynamic_type_cast< const WorldLayerData* >(layerData))
 			pipelineDepends->addDependency(worldLayer->m_scene, editor::PdfBuild);
+		else
+		{
+			log::error << L"Unknown layer data type \"" << type_name(layerData) << L"\"; missing pipeline?" << Endl;
+			return false;
+		}
+		return true;
 	}
-
-	pipelineDepends->addDependency(stageData->m_resourceBundle, editor::PdfBuild);
-	return true;
+	return false;
 }
 
 bool StagePipeline::buildOutput(
@@ -139,28 +142,30 @@ bool StagePipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< StageData > stageData = flattenInheritance(pipelineBuilder, checked_type_cast< const StageData*, false >(sourceAsset));
-	if (!stageData)
-		return false;
-
-	if (stageData->m_name.empty())
-		stageData->m_name = sourceInstance->getName();
-
-	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
-	if (!outputInstance)
+	if (const StageData* immutableStageData = dynamic_type_cast< const StageData* >(sourceAsset))
 	{
-		log::error << L"Unable to create output instance" << Endl;
-		return false;
+		Ref< StageData > stageData = flattenInheritance(pipelineBuilder, immutableStageData);
+		if (!stageData)
+			return false;
+
+		if (stageData->m_name.empty())
+			stageData->m_name = sourceInstance->getName();
+
+		Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
+		if (!outputInstance)
+		{
+			log::error << L"Stage pipeline failed; unable to create output instance." << Endl;
+			return false;
+		}
+
+		outputInstance->setObject(stageData);
+
+		if (!outputInstance->commit())
+		{
+			log::error << L"Stage pipeline failed; unable to commit output instance." << Endl;
+			return false;
+		}
 	}
-
-	outputInstance->setObject(stageData);
-
-	if (!outputInstance->commit())
-	{
-		log::error << L"Unable to commit output instance" << Endl;
-		return false;
-	}
-
 	return true;
 }
 

@@ -217,7 +217,7 @@ TerrainEditModifier::TerrainEditModifier(scene::SceneEditorContext* context)
 void TerrainEditModifier::selectionChanged()
 {
 	db::Database* sourceDatabase = m_context->getEditor()->getSourceDatabase();
-	T_ASSERT (sourceDatabase);
+	T_ASSERT(sourceDatabase);
 
 	render::SimpleTextureCreateDesc desc;
 
@@ -768,7 +768,7 @@ void TerrainEditModifier::apply(
 void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 {
 	db::Database* sourceDatabase = m_context->getEditor()->getSourceDatabase();
-	T_ASSERT (sourceDatabase);
+	T_ASSERT(sourceDatabase);
 
 	int32_t gx, gz;
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);

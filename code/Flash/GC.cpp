@@ -30,16 +30,16 @@ GC& GC::getInstance()
 void GC::addCandidate(Collectable* object)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (object->m_traceColor != Collectable::TcGray);
-	T_ASSERT (object->m_traceColor != Collectable::TcWhite);
+	T_ASSERT(object->m_traceColor != Collectable::TcGray);
+	T_ASSERT(object->m_traceColor != Collectable::TcWhite);
 	m_candidates.push_back(object);
 }
 
 void GC::removeCandidate(Collectable* object)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (object->m_traceColor != Collectable::TcGray);
-	T_ASSERT (object->m_traceColor != Collectable::TcWhite);
+	T_ASSERT(object->m_traceColor != Collectable::TcGray);
+	T_ASSERT(object->m_traceColor != Collectable::TcWhite);
 	m_candidates.remove(object);
 }
 
@@ -57,7 +57,7 @@ void GC::collectCycles(bool full)
 		for (IntrusiveList< Collectable >::iterator i = m_candidates.begin(); i != m_candidates.end(); ++i)
 		{
 			Collectable* candidate = *i;
-			T_ASSERT (
+			T_ASSERT(
 				candidate->m_traceColor == Collectable::TcBlack ||
 				candidate->m_traceColor == Collectable::TcPurple
 			);
@@ -68,7 +68,7 @@ void GC::collectCycles(bool full)
 		for (IntrusiveList< Collectable >::iterator i = m_candidates.begin(); i != m_candidates.end(); )
 		{
 			Collectable* candidate = *i;
-			T_ASSERT (candidate->m_traceColor != Collectable::TcWhite);
+			T_ASSERT(candidate->m_traceColor != Collectable::TcWhite);
 
 			if (candidate->m_traceColor == Collectable::TcPurple)
 			{
@@ -77,7 +77,7 @@ void GC::collectCycles(bool full)
 			}
 			else
 			{
-				T_ASSERT (
+				T_ASSERT(
 					candidate->m_traceColor == Collectable::TcBlack ||
 					candidate->m_traceColor == Collectable::TcGray
 				);
@@ -114,7 +114,7 @@ void GC::collectCycles(bool full)
 
 void GC::destroy()
 {
-	T_ASSERT (s_instance == this);
+	T_ASSERT(s_instance == this);
 	delete s_instance, s_instance = 0;
 }
 

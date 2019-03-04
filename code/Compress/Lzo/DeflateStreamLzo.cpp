@@ -160,13 +160,13 @@ int64_t DeflateStreamLzo::read(void* block, int64_t nbytes)
 
 int64_t DeflateStreamLzo::write(const void* block, int64_t nbytes)
 {
-	T_ASSERT (m_impl);
+	T_ASSERT(m_impl);
 	return m_impl->write(block, nbytes);
 }
 
 void DeflateStreamLzo::flush()
 {
-	T_ASSERT (m_impl);
+	T_ASSERT(m_impl);
 	m_impl->flush();
 }
 

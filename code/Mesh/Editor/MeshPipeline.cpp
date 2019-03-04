@@ -167,7 +167,7 @@ bool MeshPipeline::buildDependencies(
 ) const
 {
 	Ref< const MeshAsset > asset = checked_type_cast< const MeshAsset* >(sourceAsset);
-	T_ASSERT (asset);
+	T_ASSERT(asset);
 
 	pipelineDepends->addDependency(Path(m_assetPath), asset->getFileName().getOriginal());
 
@@ -320,10 +320,10 @@ bool MeshPipeline::buildOutput(
 	std::map< std::wstring, std::list< MeshMaterialTechnique > > materialTechniqueMap;	//< Map from model material to technique fragments. ["Model material":["Default":hash0, "Depth":hash1, ...]]
 
 	Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
-	T_ASSERT (vertexShaderGuid.isValid());
+	T_ASSERT(vertexShaderGuid.isValid());
 
 	Guid materialGuid = vertexShaderGuid.permutate(outputGuid);
-	T_ASSERT (materialGuid.isValid());
+	T_ASSERT(materialGuid.isValid());
 
 	MaterialShaderGenerator generator;
 
@@ -407,7 +407,7 @@ bool MeshPipeline::buildOutput(
 
 		// Extract platform permutation.
 		const wchar_t* platformSignature = programCompiler->getPlatformSignature();
-		T_ASSERT (platformSignature);
+		T_ASSERT(platformSignature);
 
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getPlatformPermutation(platformSignature);
 		if (!materialShaderGraph)

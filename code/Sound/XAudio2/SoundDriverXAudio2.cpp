@@ -272,7 +272,7 @@ void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
 	case 8:
 		for (uint32_t i = 0; i < channels; ++i)
 		{
-			T_ASSERT (soundBlock.samples[i]);
+			T_ASSERT(soundBlock.samples[i]);
 			writeSamples< int8_t >(&data[i], soundBlock.samples[i], soundBlock.samplesCount, m_desc.hwChannels);
 		}
 		break;
@@ -280,7 +280,7 @@ void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
 	case 16:
 		for (uint32_t i = 0; i < channels; ++i)
 		{
-			T_ASSERT (soundBlock.samples[i]);
+			T_ASSERT(soundBlock.samples[i]);
 			writeSamples< int16_t >(&data[i * 2], soundBlock.samples[i], soundBlock.samplesCount, m_desc.hwChannels);
 		}
 		break;

@@ -61,7 +61,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.FloatValue", FloatValue, IValue)
 
 void* FloatValue::operator new (size_t size)
 {
-	T_ASSERT (size == sizeof(FloatValue));
+	T_ASSERT(size == sizeof(FloatValue));
 	return s_valueAllocator.alloc();
 }
 

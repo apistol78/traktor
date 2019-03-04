@@ -33,7 +33,7 @@ Ref< const IRuntimeClass > ScriptObjectLua::getRuntimeClass() const
 void ScriptObjectLua::push() const
 {
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_tableRef);
-	T_ASSERT (lua_istable(m_luaState, -1));
+	T_ASSERT(lua_istable(m_luaState, -1));
 }
 
 	}

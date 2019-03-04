@@ -75,7 +75,7 @@ bool DefaultEntityEditor::removeChildEntity(EntityAdapter* childEntityAdapter) c
 	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
 
 	Ref< Reflection > r = Reflection::create(entityData);
-	T_ASSERT (r);
+	T_ASSERT(r);
 
 	uint32_t removedCount = 0;
 	for (uint32_t j = 0; j < r->getMemberCount(); ++j)

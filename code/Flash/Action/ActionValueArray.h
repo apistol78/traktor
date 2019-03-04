@@ -46,13 +46,13 @@ public:
 
 	ActionValue& operator [] (uint32_t index)
 	{
-		T_ASSERT (index < m_size);
+		T_ASSERT(index < m_size);
 		return m_values[index];
 	}
 
 	const ActionValue& operator [] (uint32_t index) const
 	{
-		T_ASSERT (index < m_size);
+		T_ASSERT(index < m_size);
 		return m_values[index];
 	}
 

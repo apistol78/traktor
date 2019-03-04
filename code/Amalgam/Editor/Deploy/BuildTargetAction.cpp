@@ -123,7 +123,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
 	{
 		const Feature* feature = *i;
-		T_ASSERT (feature);
+		T_ASSERT(feature);
 
 		const Feature::Platform* fp = feature->getPlatform(m_targetConfiguration->getPlatform());
 		if (fp)
@@ -268,7 +268,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
 	{
 		const Feature* feature = *i;
-		T_ASSERT (feature);
+		T_ASSERT(feature);
 
 		env->insert(feature->getEnvironment());
 	}
@@ -295,7 +295,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
 	{
 		const Feature* feature = *i;
-		T_ASSERT (feature);
+		T_ASSERT(feature);
 
 		const std::list< Guid >& dependencies = feature->getDependencies();
 		for (std::list< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)

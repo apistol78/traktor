@@ -143,7 +143,7 @@ public:
 		size_t f = m_gather.size();
 		for (DisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		{
-			T_ASSERT (i->second.instance);
+			T_ASSERT(i->second.instance);
 			m_gather.push_back(i->second.instance);
 		}
 		for (size_t i = f; i < m_gather.size(); ++i)
@@ -160,7 +160,7 @@ public:
 	{
 		for (DisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		{
-			T_ASSERT (i->second.instance);
+			T_ASSERT(i->second.instance);
 			fn(i->second.instance);
 		}
 	}
@@ -175,7 +175,7 @@ public:
 		size_t f = m_gather.size();
 		for (DisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		{
-			T_ASSERT (i->second.instance);
+			T_ASSERT(i->second.instance);
 			if (i->second.instance->isVisible())
 				m_gather.push_back(i->second.instance);
 		}
@@ -193,7 +193,7 @@ public:
 	{
 		for (DisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		{
-			T_ASSERT (i->second.instance);
+			T_ASSERT(i->second.instance);
 			if (i->second.instance->isVisible())
 				fn(i->second.instance);
 		}
@@ -209,7 +209,7 @@ public:
 		size_t f = m_gather.size();
 		for (DisplayList::layer_map_t::const_reverse_iterator i = m_layers.rbegin(); i != m_layers.rend(); ++i)
 		{
-			T_ASSERT (i->second.instance);
+			T_ASSERT(i->second.instance);
 			if (i->second.instance->isVisible())
 				m_gather.push_back(i->second.instance);
 		}

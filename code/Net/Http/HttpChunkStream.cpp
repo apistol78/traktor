@@ -13,7 +13,7 @@ HttpChunkStream::HttpChunkStream(IStream* stream)
 :	m_stream(stream)
 ,	m_available(-1)
 {
-	T_ASSERT (m_stream->canRead());
+	T_ASSERT(m_stream->canRead());
 }
 
 void HttpChunkStream::close()

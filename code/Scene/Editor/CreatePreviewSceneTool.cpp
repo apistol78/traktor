@@ -53,7 +53,7 @@ bool CreatePreviewSceneTool::launch(ui::Widget* parent, editor::IEditor* editor,
 	}
 
 	const RefArray< world::LayerEntityData >& layers = sceneAsset->getLayers();
-	T_ASSERT (layers.size() >= 2);
+	T_ASSERT(layers.size() >= 2);
 
 	int32_t n = int32_t(std::sqrt(entityInstances.size()));
 	if (n < 1)

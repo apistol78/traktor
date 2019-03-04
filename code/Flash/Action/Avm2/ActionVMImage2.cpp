@@ -108,7 +108,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.ActionVMImage2", 0, ActionVMImage
 void ActionVMImage2::execute(ActionFrame* frame) const
 {
 	ActionContext* context = frame->getContext();
-	T_ASSERT (context);
+	T_ASSERT(context);
 
 	// Last script is the first to be executed of ABC.
 	const ScriptInfo& script = m_abcFile.scripts.back();

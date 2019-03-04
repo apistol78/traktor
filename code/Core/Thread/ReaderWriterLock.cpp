@@ -35,7 +35,7 @@ bool ReaderWriterLock::acquireReader(int32_t timeout)
 void ReaderWriterLock::releaseReader()
 {
 	Acquire< Semaphore > lock(m_lock);
-	T_ASSERT (m_writer == 0);
+	T_ASSERT(m_writer == 0);
 	--m_reader;
 }
 
@@ -65,7 +65,7 @@ void ReaderWriterLock::releaseWriter()
 {
 	Acquire< Semaphore > lock(m_lock);
 	--m_writer;
-	T_ASSERT (m_writer == 0);
+	T_ASSERT(m_writer == 0);
 }
 
 }

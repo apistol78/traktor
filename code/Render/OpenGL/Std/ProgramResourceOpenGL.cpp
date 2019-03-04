@@ -158,7 +158,7 @@ ProgramResourceOpenGL::ProgramResourceOpenGL(
 
 void ProgramResourceOpenGL::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 11);
+	T_ASSERT(s.getVersion() >= 11);
 
 	s >> Member< std::string >(L"vertexShader", m_vertexShader);
 	s >> Member< std::string >(L"fragmentShader", m_fragmentShader);

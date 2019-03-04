@@ -316,7 +316,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 
 	// Extract platform permutation.
 	const wchar_t* platformSignature = compiler->getPlatformSignature();
-	T_ASSERT (platformSignature);
+	T_ASSERT(platformSignature);
 
 	// Link shader fragments.
 	FragmentReaderAdapter fragmentReader(m_editor->getSourceDatabase());
@@ -325,7 +325,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 
 	// Resolve all variables.
 	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved();
-	T_ASSERT (shaderGraph);
+	T_ASSERT(shaderGraph);
 
 	// Get connected permutation.
 	shaderGraph = render::ShaderGraphStatic(shaderGraph).getConnectedPermutation();
@@ -337,11 +337,11 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 
 	// Get platform shader permutation.
 	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(platformSignature);
-	T_ASSERT (shaderGraph);
+	T_ASSERT(shaderGraph);
 
 	// Remove unused branches from shader graph.
 	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
-	T_ASSERT (shaderGraph);
+	T_ASSERT(shaderGraph);
 
 	// Get all techniques.
 	ShaderGraphTechniques techniques(shaderGraph);
@@ -351,7 +351,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 		TechniqueInfo& ti = m_reflectedTechniques[*i];
 
 		Ref< const ShaderGraph > shaderGraphTechnique = techniques.generate(*i);
-		T_ASSERT (shaderGraphTechnique);
+		T_ASSERT(shaderGraphTechnique);
 
 		ShaderGraphCombinations combinations(shaderGraphTechnique);
 		ti.parameters = combinations.getParameterNames();
@@ -419,10 +419,10 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 					);
 
 					const OutputPin* textureUniformOutput = textureUniform->getOutputPin(0);
-					T_ASSERT (textureUniformOutput);
+					T_ASSERT(textureUniformOutput);
 
 					const OutputPin* textureNodeOutput = (*j)->getOutputPin(0);
-					T_ASSERT (textureNodeOutput);
+					T_ASSERT(textureNodeOutput);
 
 					programGraph->rewire(textureNodeOutput, textureUniformOutput);
 					programGraph->addNode(textureUniform);

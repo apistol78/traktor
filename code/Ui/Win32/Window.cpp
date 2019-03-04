@@ -120,7 +120,7 @@ bool Window::create(
 
 bool Window::subClass(HWND hWnd)
 {
-	T_ASSERT (!m_hWnd);
+	T_ASSERT(!m_hWnd);
 
 	m_hWnd = hWnd;
 	SET_WINDOW_LONG_PTR(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);

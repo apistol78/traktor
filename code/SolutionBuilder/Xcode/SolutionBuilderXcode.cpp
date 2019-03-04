@@ -879,7 +879,7 @@ void SolutionBuilderXcode::generatePBXCopyFilesBuildPhaseSection(OutputStream& s
 		{
 			std::set< Path > paths;
 			collectCopyPhases(items, paths);
-			T_ASSERT (!paths.empty());
+			T_ASSERT(!paths.empty());
 
 			for (std::set< Path >::const_iterator j = paths.begin(); j != paths.end(); ++j)
 			{
@@ -988,7 +988,7 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 					continue;
 
 				Ref< const Solution > externalSolution = externalDependency->getSolution();
-				T_ASSERT (externalSolution);
+				T_ASSERT(externalSolution);
 
 				Path externalXcodeProjectPath = FileSystem::getInstance().getAbsolutePath(externalSolution->getRootPath() + m_rootSuffix + L"/" + externalSolution->getName() + L".xcodeproj");
 				Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath() + m_rootSuffix);
@@ -1249,7 +1249,7 @@ void SolutionBuilderXcode::generatePBXAggregateTargetSection(OutputStream& s, co
 		{
 			std::set< Path > paths;
 			collectCopyPhases(items, paths);
-			T_ASSERT (!paths.empty());
+			T_ASSERT(!paths.empty());
 
 			for (std::set< Path >::const_iterator j = paths.begin(); j != paths.end(); ++j)
 				s << L"\t\t\t\t" << AggregationUids(*i).getBuildPhaseCopyFilesUid(*j) << L" /* CopyFiles */," << Endl;
@@ -1364,7 +1364,7 @@ void SolutionBuilderXcode::generatePBXProjectSection(OutputStream& s, const Solu
 					continue;
 
 				Ref< const Solution > externalSolution = externalDependency->getSolution();
-				T_ASSERT (externalSolution);
+				T_ASSERT(externalSolution);
 
 				Path externalXcodeProjectPath = externalSolution->getRootPath() + m_rootSuffix + L"/" + externalSolution->getName() + L".xcodeproj";
 

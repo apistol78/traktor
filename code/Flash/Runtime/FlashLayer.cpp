@@ -4,7 +4,6 @@
 
 #include "Amalgam/Game/IEnvironment.h"
 #include "Amalgam/Game/UpdateInfo.h"
-#include "Amalgam/Game/Engine/FlashLayer.h"
 #include "Amalgam/Game/Engine/Stage.h"
 #include "Core/Class/Any.h"
 #include "Core/Io/StringOutputStream.h"
@@ -25,6 +24,7 @@
 #include "Flash/Acc/AccDisplayRenderer.h"
 #include "Flash/Action/Common/Classes/AsKey.h"
 #include "Flash/Debug/MovieDebugger.h"
+#include "Flash/Runtime/FlashLayer.h"
 #include "Flash/Sound/SoundRenderer.h"
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
@@ -37,7 +37,7 @@
 
 namespace traktor
 {
-	namespace amalgam
+	namespace flash
 	{
 		namespace
 		{
@@ -49,22 +49,22 @@ const struct InputKeyCode
 }
 c_inputKeyCodes[] =
 {
-	{ input::DtKeyLeftControl, flash::AsKey::AkControl },
-	{ input::DtKeyRightControl, flash::AsKey::AkControl },
-	{ input::DtKeyDelete, flash::AsKey::AkDeleteKey },
-	{ input::DtKeyDown, flash::AsKey::AkDown },
-	{ input::DtKeyEnd, flash::AsKey::AkEnd },
-	{ input::DtKeyReturn, flash::AsKey::AkEnter },
-	{ input::DtKeyEscape, flash::AsKey::AkEscape },
-	{ input::DtKeyHome, flash::AsKey::AkHome },
-	{ input::DtKeyInsert, flash::AsKey::AkInsert },
-	{ input::DtKeyLeft, flash::AsKey::AkLeft },
-	{ input::DtKeyRight, flash::AsKey::AkRight },
-	{ input::DtKeyLeftShift, flash::AsKey::AkShift },
-	{ input::DtKeyRightShift, flash::AsKey::AkShift },
-	{ input::DtKeySpace, flash::AsKey::AkSpace },
-	{ input::DtKeyTab, flash::AsKey::AkTab },
-	{ input::DtKeyUp, flash::AsKey::AkUp }
+	{ input::DtKeyLeftControl, AsKey::AkControl },
+	{ input::DtKeyRightControl, AsKey::AkControl },
+	{ input::DtKeyDelete, AsKey::AkDeleteKey },
+	{ input::DtKeyDown, AsKey::AkDown },
+	{ input::DtKeyEnd, AsKey::AkEnd },
+	{ input::DtKeyReturn, AsKey::AkEnter },
+	{ input::DtKeyEscape, AsKey::AkEscape },
+	{ input::DtKeyHome, AsKey::AkHome },
+	{ input::DtKeyInsert, AsKey::AkInsert },
+	{ input::DtKeyLeft, AsKey::AkLeft },
+	{ input::DtKeyRight, AsKey::AkRight },
+	{ input::DtKeyLeftShift, AsKey::AkShift },
+	{ input::DtKeyRightShift, AsKey::AkShift },
+	{ input::DtKeySpace, AsKey::AkSpace },
+	{ input::DtKeyTab, AsKey::AkTab },
+	{ input::DtKeyUp, AsKey::AkUp }
 };
 
 bool isWhiteSpace(wchar_t ch)
@@ -82,10 +82,10 @@ uint32_t translateInputKeyCode(uint32_t inputKeyCode)
 	return 0;
 }
 
-class CustomMovieLoader : public flash::IMovieLoader
+class CustomMovieLoader : public IMovieLoader
 {
 public:
-	CustomMovieLoader(const std::map< std::wstring, resource::Proxy< flash::Movie > >& externalMovies)
+	CustomMovieLoader(const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies)
 	:	m_externalMovies(externalMovies)
 	{
 	}
@@ -95,9 +95,9 @@ public:
 		return 0;
 	}
 
-	virtual Ref< flash::Movie > load(const std::wstring& url) const override final
+	virtual Ref< Movie > load(const std::wstring& url) const override final
 	{
-		std::map< std::wstring, resource::Proxy< flash::Movie > >::const_iterator i = m_externalMovies.find(url);
+		std::map< std::wstring, resource::Proxy< Movie > >::const_iterator i = m_externalMovies.find(url);
 		if (i != m_externalMovies.end())
 			return i->second.getResource();
 		else
@@ -108,20 +108,20 @@ public:
 	}
 
 private:
-	const std::map< std::wstring, resource::Proxy< flash::Movie > >& m_externalMovies;
+	const std::map< std::wstring, resource::Proxy< Movie > >& m_externalMovies;
 };
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.FlashLayer", FlashLayer, Layer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashLayer", FlashLayer, amalgam::Layer)
 
 FlashLayer::FlashLayer(
-	Stage* stage,
+	amalgam::Stage* stage,
 	const std::wstring& name,
 	bool permitTransition,
-	IEnvironment* environment,
-	const resource::Proxy< flash::Movie >& movie,
-	const std::map< std::wstring, resource::Proxy< flash::Movie > >& externalMovies,
+	amalgam::IEnvironment* environment,
+	const resource::Proxy< Movie >& movie,
+	const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies,
 	const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
 	bool clearBackground,
 	bool enableShapeCache,
@@ -224,7 +224,7 @@ void FlashLayer::transition(Layer* fromLayer)
 		m_displayRenderer->flushCaches();
 }
 
-void FlashLayer::prepare(const UpdateInfo& info)
+void FlashLayer::prepare(const amalgam::UpdateInfo& info)
 {
 	T_PROFILER_SCOPE(L"FlashLayer prepare");
 
@@ -275,7 +275,7 @@ void FlashLayer::prepare(const UpdateInfo& info)
 	}
 }
 
-void FlashLayer::update(const UpdateInfo& info)
+void FlashLayer::update(const amalgam::UpdateInfo& info)
 {
 	T_PROFILER_SCOPE(L"FlashLayer update");
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
@@ -313,7 +313,7 @@ void FlashLayer::update(const UpdateInfo& info)
 		for (int32_t i = 0; i < joystickDeviceCount; ++i)
 		{
 			input::IInputDevice* joystickDevice = inputSystem->getDevice(input::CtJoystick, i, true);
-			T_ASSERT (joystickDevice);
+			T_ASSERT(joystickDevice);
 
 			int32_t up = -1, down = -1;
 			joystickDevice->getDefaultControl(input::DtUp, false, up);
@@ -325,9 +325,9 @@ void FlashLayer::update(const UpdateInfo& info)
 				if (upValue != m_lastUpValue)
 				{
 					if (upValue)
-						m_moviePlayer->postKeyDown(flash::AsKey::AkUp);
+						m_moviePlayer->postKeyDown(AsKey::AkUp);
 					else
-						m_moviePlayer->postKeyUp(flash::AsKey::AkUp);
+						m_moviePlayer->postKeyUp(AsKey::AkUp);
 				}
 				m_lastUpValue = upValue;
 			}
@@ -338,9 +338,9 @@ void FlashLayer::update(const UpdateInfo& info)
 				if (downValue != m_lastDownValue)
 				{
 					if (downValue)
-						m_moviePlayer->postKeyDown(flash::AsKey::AkDown);
+						m_moviePlayer->postKeyDown(AsKey::AkDown);
 					else
-						m_moviePlayer->postKeyUp(flash::AsKey::AkDown);
+						m_moviePlayer->postKeyUp(AsKey::AkDown);
 				}
 				m_lastDownValue = downValue;
 			}
@@ -355,9 +355,9 @@ void FlashLayer::update(const UpdateInfo& info)
 				if (confirmValue != m_lastConfirmValue)
 				{
 					if (confirmValue)
-						m_moviePlayer->postKeyDown(flash::AsKey::AkEnter);
+						m_moviePlayer->postKeyDown(AsKey::AkEnter);
 					else
-						m_moviePlayer->postKeyUp(flash::AsKey::AkEnter);
+						m_moviePlayer->postKeyUp(AsKey::AkEnter);
 				}
 				m_lastConfirmValue = confirmValue;
 			}
@@ -368,9 +368,9 @@ void FlashLayer::update(const UpdateInfo& info)
 				if (escapeValue != m_lastEscapeValue)
 				{
 					if (escapeValue)
-						m_moviePlayer->postKeyDown(flash::AsKey::AkEscape);
+						m_moviePlayer->postKeyDown(AsKey::AkEscape);
 					else
-						m_moviePlayer->postKeyUp(flash::AsKey::AkEscape);
+						m_moviePlayer->postKeyUp(AsKey::AkEscape);
 				}
 				m_lastEscapeValue = escapeValue;
 			}
@@ -394,7 +394,7 @@ void FlashLayer::update(const UpdateInfo& info)
 			for (int32_t i = 0; i < mouseDeviceCount; ++i)
 			{
 				input::IInputDevice* mouseDevice = inputSystem->getDevice(input::CtMouse, i, true);
-				T_ASSERT (mouseDevice);
+				T_ASSERT(mouseDevice);
 
 				LastMouseState& last = m_lastMouse[i];
 
@@ -474,7 +474,7 @@ void FlashLayer::update(const UpdateInfo& info)
 	}
 }
 
-void FlashLayer::build(const UpdateInfo& info, uint32_t frame)
+void FlashLayer::build(const amalgam::UpdateInfo& info, uint32_t frame)
 {
 	T_PROFILER_SCOPE(L"FlashLayer build");
 	if (!m_displayRenderer || !m_movieRenderer || !m_moviePlayer || !m_visible)
@@ -491,7 +491,7 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 		return;
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-	T_ASSERT (renderView);
+	T_ASSERT(renderView);
 
 	if (m_imageProcess)
 	{
@@ -570,12 +570,12 @@ void FlashLayer::resume()
 {
 }
 
-flash::MoviePlayer* FlashLayer::getMoviePlayer()
+MoviePlayer* FlashLayer::getMoviePlayer()
 {
 	return m_moviePlayer;
 }
 
-flash::ActionContext* FlashLayer::getContext()
+ActionContext* FlashLayer::getContext()
 {
 	if (!m_moviePlayer)
 	{
@@ -585,7 +585,7 @@ flash::ActionContext* FlashLayer::getContext()
 	return m_moviePlayer->getMovieInstance()->getContext();
 }
 
-flash::SpriteInstance* FlashLayer::getRoot()
+SpriteInstance* FlashLayer::getRoot()
 {
 	if (!m_moviePlayer)
 	{
@@ -595,9 +595,9 @@ flash::SpriteInstance* FlashLayer::getRoot()
 	return m_moviePlayer->getMovieInstance();
 }
 
-flash::Movie* FlashLayer::getExternal(const std::wstring& id) const
+Movie* FlashLayer::getExternal(const std::wstring& id) const
 {
-	std::map< std::wstring, resource::Proxy< flash::Movie > >::const_iterator i = m_externalMovies.find(id);
+	std::map< std::wstring, resource::Proxy< Movie > >::const_iterator i = m_externalMovies.find(id);
 	return i != m_externalMovies.end() ? i->second.getResource() : 0;
 }
 
@@ -608,15 +608,15 @@ Any FlashLayer::externalCall(const std::string& methodName, uint32_t argc, const
 
 	T_PROFILER_SCOPE(L"FlashLayer externCall");
 
-	flash::ActionValue av[16];
-	T_ASSERT (argc < sizeof_array(av));
+	ActionValue av[16];
+	T_ASSERT(argc < sizeof_array(av));
 
 	for (uint32_t i = 0; i < argc; ++i)
-		av[i] = CastAny< flash::ActionValue >::get(argv[i]);
+		av[i] = CastAny< ActionValue >::get(argv[i]);
 
-	flash::ActionValue ret = m_moviePlayer->dispatchCallback(methodName, argc, av);
+	ActionValue ret = m_moviePlayer->dispatchCallback(methodName, argc, av);
 
-	return CastAny< flash::ActionValue >::set(ret);
+	return CastAny< ActionValue >::set(ret);
 }
 
 std::wstring FlashLayer::getPrintableString(const std::wstring& text, const std::wstring& empty) const
@@ -626,7 +626,7 @@ std::wstring FlashLayer::getPrintableString(const std::wstring& text, const std:
 
 	StringOutputStream ss;
 
-	const SmallMap< uint16_t, Ref< flash::Font > >& fonts = m_movie->getFonts();
+	const SmallMap< uint16_t, Ref< Font > >& fonts = m_movie->getFonts();
 	for (size_t i = 0; i < text.length(); ++i)
 	{
 		wchar_t ch = text[i];
@@ -635,7 +635,7 @@ std::wstring FlashLayer::getPrintableString(const std::wstring& text, const std:
 		if (!isWhiteSpace(ch))
 		{
 			valid = false;
-			for (SmallMap< uint16_t, Ref< flash::Font > >::const_iterator j = fonts.begin(); j != fonts.end(); ++j)
+			for (SmallMap< uint16_t, Ref< Font > >::const_iterator j = fonts.begin(); j != fonts.end(); ++j)
 			{
 				if (j->second->lookupIndex(ch) != 0)
 				{
@@ -660,7 +660,7 @@ void FlashLayer::createMoviePlayer()
 	// Create accelerated Flash renderer.
 	if (!m_displayRenderer)
 	{
-		Ref< flash::AccDisplayRenderer > displayRenderer = new flash::AccDisplayRenderer();
+		Ref< AccDisplayRenderer > displayRenderer = new AccDisplayRenderer();
 		if (!displayRenderer->create(
 			m_environment->getResource()->getResourceManager(),
 			m_environment->getRender()->getRenderSystem(),
@@ -677,7 +677,7 @@ void FlashLayer::createMoviePlayer()
 		}
 
 		m_displayRenderer = displayRenderer;
-		m_movieRenderer = new flash::MovieRenderer(m_displayRenderer, 0);
+		m_movieRenderer = new MovieRenderer(m_displayRenderer, 0);
 	}
 
 	// Create sound Flash renderer.
@@ -685,7 +685,7 @@ void FlashLayer::createMoviePlayer()
 	{
 		if (m_enableSound && m_environment->getAudio())
 		{
-			Ref< flash::SoundRenderer > soundRenderer = new flash::SoundRenderer();
+			Ref< SoundRenderer > soundRenderer = new SoundRenderer();
 			if (!soundRenderer->create(m_environment->getAudio()->getSoundPlayer()))
 			{
 				log::error << L"Unable to create sound renderer" << Endl;
@@ -699,7 +699,7 @@ void FlashLayer::createMoviePlayer()
 	if (!m_moviePlayer)
 	{
 		render::IRenderView* renderView = m_environment->getRender()->getRenderView();
-		T_ASSERT (renderView);
+		T_ASSERT(renderView);
 
 		int32_t width = renderView->getWidth();
 		int32_t height = renderView->getHeight();
@@ -710,16 +710,16 @@ void FlashLayer::createMoviePlayer()
 		width = int32_t(width * aspectRatio / viewRatio);
 
 		// Connect to remote debugger.
-		Ref< flash::MovieDebugger > movieDebugger;
+		Ref< MovieDebugger > movieDebugger;
 		Ref< net::TcpSocket > remoteDebuggerSocket = new net::TcpSocket();
 		if (remoteDebuggerSocket->connect(net::SocketAddressIPv4(L"localhost", 12345)))
-			movieDebugger = new flash::MovieDebugger(
+			movieDebugger = new MovieDebugger(
 				new net::BidirectionalObjectTransport(remoteDebuggerSocket),
 				getName()
 			);
 
-		Ref< flash::MoviePlayer > moviePlayer = new flash::MoviePlayer(
-			new flash::DefaultCharacterFactory(),
+		Ref< MoviePlayer > moviePlayer = new MoviePlayer(
+			new DefaultCharacterFactory(),
 			new CustomMovieLoader(m_externalMovies),
 			movieDebugger
 		);
@@ -740,13 +740,13 @@ void FlashLayer::createMoviePlayer()
 	}
 }
 
-flash::ActionValue FlashLayer::dispatchExternalCall(const std::string& methodName, int32_t argc, const flash::ActionValue* argv)
+ActionValue FlashLayer::dispatchExternalCall(const std::string& methodName, int32_t argc, const ActionValue* argv)
 {
 	Any av[16];
-	T_ASSERT (argc < sizeof_array(av));
+	T_ASSERT(argc < sizeof_array(av));
 
 	for (int32_t i = 0; i < argc; ++i)
-		av[i] = CastAny< flash::ActionValue >::set(argv[i]);
+		av[i] = CastAny< ActionValue >::set(argv[i]);
 
 	Any ret = getStage()->invokeScript(
 		methodName,
@@ -754,12 +754,12 @@ flash::ActionValue FlashLayer::dispatchExternalCall(const std::string& methodNam
 		av
 	);
 
-	return CastAny< flash::ActionValue >::get(ret);
+	return CastAny< ActionValue >::get(ret);
 }
 
 void FlashLayer::feedbackValues(spray::FeedbackType type, const float* values, int32_t count)
 {
-	T_ASSERT (count >= 3);
+	T_ASSERT(count >= 3);
 	m_offset = Vector2(values[0] * 0.01f, values[1] * 0.01f);
 	m_scale = values[2] * 0.01f + 1.0f;
 }

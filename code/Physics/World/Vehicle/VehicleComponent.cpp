@@ -148,7 +148,7 @@ void VehicleComponent::updateSuspension(float dT)
 	for (RefArray< Wheel >::iterator i = m_wheels.begin(); i != m_wheels.end(); ++i)
 	{
 		const WheelData* data = (*i)->data;
-		T_ASSERT (data != 0);
+		T_ASSERT(data != 0);
 
 		Vector4 anchorW = bodyT * data->getAnchor().xyz1();
 		Vector4 axisW = bodyT * -data->getAxis().xyz0().normalized();
@@ -271,7 +271,7 @@ void VehicleComponent::updateFriction(float /*dT*/)
 			continue;
 
 		const WheelData* data = (*i)->data;
-		T_ASSERT (data != 0);
+		T_ASSERT(data != 0);
 
 		Vector4 axis = bodyT * data->getAxis();
 
@@ -360,7 +360,7 @@ void VehicleComponent::updateEngine(float /*dT*/)
 			continue;
 
 		const WheelData* data = (*i)->data;
-		T_ASSERT (data != 0);
+		T_ASSERT(data != 0);
 
 		if (!data->getDrive())
 			continue;
@@ -387,7 +387,7 @@ void VehicleComponent::updateWheels(float dT)
 		float targetVelocity = 0.0f;
 
 		const WheelData* data = (*i)->data;
-		T_ASSERT (data != 0);
+		T_ASSERT(data != 0);
 
 		if (!data->getDrive() || abs(m_engineThrottle) <= FUZZY_EPSILON)
 			targetVelocity = (*i)->velocity * 0.95f;

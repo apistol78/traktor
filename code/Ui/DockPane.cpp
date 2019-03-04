@@ -87,7 +87,7 @@ void DockPane::split(bool vertical, int split, Ref< DockPane >& outLeftPane, Ref
 
 void DockPane::dock(Widget* widget, bool detachable)
 {
-	T_ASSERT (widget);
+	T_ASSERT(widget);
 
 	if (m_widget)
 		removeEventHandlers< FocusEvent >(m_widget, m_focusEventHandler);
@@ -181,7 +181,7 @@ void DockPane::dock(Widget* widget, bool detachable, Direction direction, int sp
 		}
 		else
 		{
-			T_ASSERT (!m_child[0] && !m_child[1]);
+			T_ASSERT(!m_child[0] && !m_child[1]);
 			dock(widget, detachable);
 
 			if (m_parent)
@@ -209,8 +209,8 @@ void DockPane::undock(Widget* widget)
 	}
 	else if (m_child[0])
 	{
-		T_ASSERT (m_child[1]);
-		T_ASSERT (!m_widget);
+		T_ASSERT(m_child[1]);
+		T_ASSERT(!m_widget);
 
 		m_child[0]->undock(widget);
 		m_child[1]->undock(widget);
@@ -222,8 +222,8 @@ void DockPane::undock(Widget* widget)
 			m_child[1]->m_child[0] == 0
 		)
 		{
-			T_ASSERT (m_child[0]->m_child[1] == 0);
-			T_ASSERT (m_child[1]->m_child[1] == 0);
+			T_ASSERT(m_child[0]->m_child[1] == 0);
+			T_ASSERT(m_child[1]->m_child[1] == 0);
 
 			m_detachable = false;
 
@@ -236,7 +236,7 @@ void DockPane::undock(Widget* widget)
 			m_child[0]->m_child[0] == 0
 		)
 		{
-			T_ASSERT (m_child[0]->m_child[1] == 0);
+			T_ASSERT(m_child[0]->m_child[1] == 0);
 
 			m_widget = m_child[1]->m_widget;
 			m_detachable = m_child[1]->m_detachable;
@@ -250,7 +250,7 @@ void DockPane::undock(Widget* widget)
 			m_child[1]->m_child[0] == 0
 		)
 		{
-			T_ASSERT (m_child[1]->m_child[1] == 0);
+			T_ASSERT(m_child[1]->m_child[1] == 0);
 
 			m_widget = m_child[0]->m_widget;
 			m_detachable = m_child[0]->m_detachable;
@@ -263,7 +263,7 @@ void DockPane::undock(Widget* widget)
 
 void DockPane::detach()
 {
-	T_ASSERT (m_detachable);
+	T_ASSERT(m_detachable);
 
 	if (m_widget)
 		removeEventHandlers< FocusEvent >(m_widget, m_focusEventHandler);
@@ -277,7 +277,7 @@ void DockPane::detach()
 		else if (m_parent->m_child[1] == this)
 			childPane = m_parent->m_child[0];
 
-		T_ASSERT (childPane);
+		T_ASSERT(childPane);
 
 		m_parent->m_widget = childPane->m_widget;
 		m_parent->m_child[0] = childPane->m_child[0];
@@ -512,7 +512,7 @@ Ref< DockPane > DockPane::getSplitterFromPosition(const Point& position)
 
 bool DockPane::hitGripper(const Point& position) const
 {
-	T_ASSERT (m_rect.inside(position));
+	T_ASSERT(m_rect.inside(position));
 
 	if (isSplitter() || (m_widget && !m_widget->isVisible(false)))
 		return false;
@@ -522,7 +522,7 @@ bool DockPane::hitGripper(const Point& position) const
 
 bool DockPane::hitGripperClose(const Point& position) const
 {
-	T_ASSERT (m_rect.inside(position));
+	T_ASSERT(m_rect.inside(position));
 
 	if (isSplitter() || !hitGripper(position))
 		return false;
@@ -533,7 +533,7 @@ bool DockPane::hitGripperClose(const Point& position) const
 
 bool DockPane::hitSplitter(const Point& position) const
 {
-	T_ASSERT (m_rect.inside(position));
+	T_ASSERT(m_rect.inside(position));
 
 	if (!isSplitter())
 		return false;

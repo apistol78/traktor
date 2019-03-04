@@ -98,7 +98,7 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 		return false;
 
 	OceanVertex* vertex = reinterpret_cast< OceanVertex* >(m_vertexBuffer->lock());
-	T_ASSERT (vertex);
+	T_ASSERT(vertex);
 
 	for (int32_t iz = 0; iz < c_gridSize; ++iz)
 	{
@@ -130,7 +130,7 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 		return false;
 
 	uint16_t* index = reinterpret_cast< uint16_t* >(m_indexBuffer->lock());
-	T_ASSERT (index);
+	T_ASSERT(index);
 
 	for (int32_t iz = 0; iz < c_gridSize - 1; ++iz)
 	{

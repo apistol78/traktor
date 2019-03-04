@@ -417,13 +417,13 @@ bool PartitionMeshConverter::convert(
 	AlignedVector< model::Polygon > polygons = model.getPolygons();
 	model.clear(model::Model::CfPolygons | model::Model::CfJoints);
 	Ref< OctreeNodeTemplate > nodeTemplate = buildOctreeTemplate(model, polygons, 0);
-	T_ASSERT (nodeTemplate);
+	T_ASSERT(nodeTemplate);
 
 	// Create vertex declaration.
 	log::info << L"Creating mesh..." << Endl;
 
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
-	T_ASSERT (vertexSize > 0);
+	T_ASSERT(vertexSize > 0);
 
 	bool useLargeIndices = bool(model.getVertexCount() >= 65536);
 	uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);

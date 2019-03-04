@@ -22,8 +22,8 @@ TaskGetSaveData::TaskGetSaveData(
 
 void TaskGetSaveData::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_provider);
-	T_ASSERT (m_result);
+	T_ASSERT(m_provider);
+	T_ASSERT(m_result);
 	Ref< ISerializable > attachment;
 	if (m_provider->get(
 		m_saveDataId,

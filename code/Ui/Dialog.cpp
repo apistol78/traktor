@@ -43,7 +43,7 @@ bool Dialog::create(Widget* parent, const std::wstring& text, int width, int hei
 
 void Dialog::setIcon(IBitmap* icon)
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 
 	if (!icon || !icon->getSystemBitmap())
 		return;
@@ -53,7 +53,7 @@ void Dialog::setIcon(IBitmap* icon)
 
 int Dialog::showModal()
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 
 	m_modal = true;
 
@@ -63,8 +63,8 @@ int Dialog::showModal()
 
 void Dialog::endModal(int result)
 {
-	T_ASSERT (m_widget);
-	T_ASSERT (m_modal);
+	T_ASSERT(m_widget);
+	T_ASSERT(m_modal);
 
 	static_cast< IDialog* >(m_widget)->endModal(result);
 

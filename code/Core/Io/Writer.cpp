@@ -37,8 +37,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.Writer", Writer, Object)
 Writer::Writer(IStream* stream)
 :	m_stream(stream)
 {
-	T_ASSERT (m_stream);
-	T_ASSERT (m_stream->canWrite());
+	T_ASSERT(m_stream);
+	T_ASSERT(m_stream->canWrite());
 }
 
 Writer& Writer::operator << (bool v)

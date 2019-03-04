@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.SwizzleFilter", SwizzleFilter, IImageFi
 
 SwizzleFilter::SwizzleFilter(const std::wstring& swizzle)
 {
-	T_ASSERT (swizzle.length() >= 4);
+	T_ASSERT(swizzle.length() >= 4);
 	m_swizzle[0] = swizzle[0];
 	m_swizzle[1] = swizzle[1];
 	m_swizzle[2] = swizzle[2];

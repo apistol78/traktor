@@ -13,7 +13,7 @@ RfpMemberName::RfpMemberName(const std::wstring& memberName)
 
 bool RfpMemberName::operator () (const ReflectionMember* member) const
 {
-	T_ASSERT (member);
+	T_ASSERT(member);
 	return member->getName() == m_memberName;
 }
 

@@ -31,7 +31,7 @@ ButtonInstance::ButtonInstance(ActionContext* context, Dictionary* dictionary, C
 			continue;
 
 		Ref< CharacterInstance > characterInstance = character->createInstance(context, dictionary, this, "", Matrix33::identity(), 0, 0);
-		T_ASSERT (characterInstance);
+		T_ASSERT(characterInstance);
 
 		m_characterInstances[i->characterId] = characterInstance;
 	}
@@ -180,10 +180,10 @@ void ButtonInstance::dereference()
 void ButtonInstance::executeCondition(uint32_t conditionMask)
 {
 	ActionContext* context = getContext();
-	T_ASSERT (context);
+	T_ASSERT(context);
 
 	ActionObject* self = getAsObject(context);
-	T_ASSERT (self);
+	T_ASSERT(self);
 
 	Ref< ActionObject > super = self->getSuper();
 
@@ -212,10 +212,10 @@ void ButtonInstance::executeCondition(uint32_t conditionMask)
 void ButtonInstance::executeScriptEvent(const std::string& eventName)
 {
 	ActionContext* context = getContext();
-	T_ASSERT (context);
+	T_ASSERT(context);
 
 	ActionObject* self = getAsObject(context);
-	T_ASSERT (self);
+	T_ASSERT(self);
 
 	ActionValue memberValue;
 	if (!self->getMember(eventName, memberValue))

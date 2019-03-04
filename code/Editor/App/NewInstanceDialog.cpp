@@ -111,7 +111,7 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	for (TypeInfoSet::iterator i = types.begin(); i != types.end(); ++i)
 	{
 		const TypeInfo* type = *i;
-		T_ASSERT (type);
+		T_ASSERT(type);
 
 		if (!type->isEditable())
 			continue;

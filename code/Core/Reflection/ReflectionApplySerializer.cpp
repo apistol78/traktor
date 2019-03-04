@@ -215,7 +215,7 @@ void ReflectionApplySerializer::operator >> (const MemberArray& m)
 	for (uint32_t i = 0; i < m_compoundMember->getMemberCount(); ++i)
 		m.read(*this);
 
-	T_ASSERT (m_memberIndex == m_compoundMember->getMemberCount());
+	T_ASSERT(m_memberIndex == m_compoundMember->getMemberCount());
 
 	m_memberIndex = currentMemberIndex;
 	m_compoundMember = currentCompoundMember;
@@ -259,7 +259,7 @@ Ref< const ReflectionMember > ReflectionApplySerializer::getNextMember()
 {
 	if (m_compoundMember)
 	{
-		T_ASSERT (m_memberIndex < m_compoundMember->getMemberCount());
+		T_ASSERT(m_memberIndex < m_compoundMember->getMemberCount());
 		return m_compoundMember->getMember(m_memberIndex++);
 	}
 	else

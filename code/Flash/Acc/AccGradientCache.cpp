@@ -89,7 +89,7 @@ void AccGradientCache::clear()
 Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style)
 {
 	const AlignedVector< FillStyle::ColorRecord >& colorRecords = style.getColorRecords();
-	T_ASSERT (colorRecords.size() > 1);
+	T_ASSERT(colorRecords.size() > 1);
 
 	Adler32 cs;
 	cs.begin();

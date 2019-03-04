@@ -90,7 +90,7 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 
 	// Create a dummy, old, context to load all extensions.
 	HGLRC hDummyRC = wglCreateContext(hSharedDC);
-	T_ASSERT (hDummyRC);
+	T_ASSERT(hDummyRC);
 
 	wglMakeCurrent(hSharedDC, hDummyRC);
 
@@ -112,7 +112,7 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 	};
 
 	HGLRC hSharedRC = wglCreateContextAttribsARB(hSharedDC, NULL, attribs);
-	T_ASSERT (hSharedRC);
+	T_ASSERT(hSharedRC);
 
 	m_resourceContext = new ResourceContextOpenGL(*m_windowShared, hSharedDC, hSharedRC);
 	m_resourceContext->enter();
@@ -526,7 +526,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	}
 
 	void* viewHandle = cglwGetWindowView(m_windowHandle);
-	T_ASSERT (viewHandle);
+	T_ASSERT(viewHandle);
 
 	void* glcontext = cglwCreateContext(
 		viewHandle,

@@ -139,7 +139,7 @@ void createHulls(const model::Model& model, std::map< std::wstring, Hull >& outH
 					++j;
 			}
 
-			T_ASSERT (portal.front().first == portal.back().second);
+			T_ASSERT(portal.front().first == portal.back().second);
 			i->second.portals.push_back(portal);
 		}
 
@@ -235,7 +235,7 @@ struct BspPolygon
 			{
 				Scalar k(-1.0f);
 				pl.segmentIntersection(va.position, vb.position, k);
-				T_ASSERT (k >= 0.0f && k <= 1.0f);
+				T_ASSERT(k >= 0.0f && k <= 1.0f);
 
 				Vertex v;
 				v.position = lerp(va.position, vb.position, k);
@@ -561,7 +561,7 @@ bool IndoorMeshConverter::convert(
 	log::info << DecreaseIndent;
 
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
-	T_ASSERT (vertexSize > 0);
+	T_ASSERT(vertexSize > 0);
 
 	uint32_t vertexBufferSize = vertexCount * vertexSize;
 	uint32_t indexBufferSize = triangleCount * 3 * sizeof(uint16_t);
@@ -623,7 +623,7 @@ bool IndoorMeshConverter::convert(
 				if (j->material != material)
 					continue;
 
-				T_ASSERT (j->indices.size() == 3);
+				T_ASSERT(j->indices.size() == 3);
 				for (int k = 0; k < 3; ++k)
 				{
 					*index++ = (uint16_t)(vertexBase + j->indices[k]);

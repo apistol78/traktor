@@ -112,7 +112,7 @@ bool ScriptDebuggerSessions::haveBreakpoint(const Guid& scriptId, int32_t lineNu
 
 void ScriptDebuggerSessions::addListener(IListener* listener)
 {
-	T_ASSERT (listener);
+	T_ASSERT(listener);
 
 	for (std::list< Session >::iterator i = m_sessions.begin(); i != m_sessions.end(); ++i)
 		listener->notifyBeginSession(i->debugger, i->profiler);
@@ -128,7 +128,7 @@ void ScriptDebuggerSessions::addListener(IListener* listener)
 
 void ScriptDebuggerSessions::removeListener(IListener* listener)
 {
-	T_ASSERT (listener);
+	T_ASSERT(listener);
 	for (std::list< Session >::iterator i = m_sessions.begin(); i != m_sessions.end(); ++i)
 		listener->notifyEndSession(i->debugger, i->profiler);
 	m_listeners.remove(listener);

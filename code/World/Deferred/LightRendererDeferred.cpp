@@ -129,7 +129,7 @@ bool LightRendererDeferred::create(
 		return false;
 
 	LightVertex* vertex = reinterpret_cast< LightVertex* >(m_vertexBufferQuad->lock());
-	T_ASSERT (vertex);
+	T_ASSERT(vertex);
 
 	vertex[0].pos[0] = -1.0f; vertex[0].pos[1] =  1.0f; vertex[0].texCoord[0] = 0.0f; vertex[0].texCoord[1] = 0.0f;
 	vertex[1].pos[0] =  1.0f; vertex[1].pos[1] =  1.0f; vertex[1].texCoord[0] = 1.0f; vertex[1].texCoord[1] = 0.0f;

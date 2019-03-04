@@ -95,12 +95,12 @@ Ref< ISerializable > ScenePermutationPipeline::buildOutput(
 	const ScenePermutationAsset* scenePermutationAsset = checked_type_cast< const ScenePermutationAsset*, false >(sourceAsset);
 
 	Ref< const SceneAsset > templateScene = pipelineBuilder->getObjectReadOnly< SceneAsset >(scenePermutationAsset->m_scene);
-	T_ASSERT (templateScene);
+	T_ASSERT(templateScene);
 
 	const std::list< std::wstring >& includeLayers = scenePermutationAsset->m_includeLayers;
 
 	Ref< SceneAsset > scenePermutation = DeepClone(templateScene).create< SceneAsset >();
-	T_ASSERT (scenePermutation);
+	T_ASSERT(scenePermutation);
 
 	if (scenePermutationAsset->m_overrideWorldRenderSettings)
 		scenePermutation->setWorldRenderSettings(scenePermutationAsset->m_overrideWorldRenderSettings);

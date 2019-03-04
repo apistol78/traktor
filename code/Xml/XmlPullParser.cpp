@@ -196,7 +196,7 @@ void XmlPullParserImpl::pushCharacterData()
 void XMLCALL XmlPullParserImpl::startElement(void* userData, const XML_Char* name, const XML_Char** atts)
 {
 	XmlPullParserImpl* pp = reinterpret_cast< XmlPullParserImpl* >(userData);
-	T_ASSERT (pp);
+	T_ASSERT(pp);
 
 	pp->pushCharacterData();
 
@@ -216,7 +216,7 @@ void XMLCALL XmlPullParserImpl::startElement(void* userData, const XML_Char* nam
 void XMLCALL XmlPullParserImpl::endElement(void* userData, const XML_Char* name)
 {
 	XmlPullParserImpl* pp = reinterpret_cast< XmlPullParserImpl* >(userData);
-	T_ASSERT (pp);
+	T_ASSERT(pp);
 
 	pp->pushCharacterData();
 
@@ -232,8 +232,8 @@ void XMLCALL XmlPullParserImpl::endElement(void* userData, const XML_Char* name)
 void XMLCALL XmlPullParserImpl::characterData(void* userData, const XML_Char* s, int len)
 {
 	XmlPullParserImpl* pp = reinterpret_cast< XmlPullParserImpl* >(userData);
-	T_ASSERT (pp);
-	T_ASSERT (len > 0);
+	T_ASSERT(pp);
+	T_ASSERT(len > 0);
 
 	std::wstring ws = xmltows(s, &s[len]);
 	pp->m_cdata.insert(pp->m_cdata.end(), ws.begin(), ws.end());

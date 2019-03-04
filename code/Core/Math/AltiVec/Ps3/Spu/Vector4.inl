@@ -45,7 +45,7 @@ T_MATH_INLINE Vector4::Vector4(float x, float y, float z, float w)
 
 T_MATH_INLINE Vector4::Vector4(const float* p)
 {
-	T_ASSERT (p);
+	T_ASSERT((p);
 	m_data = (vec_float4){ p[0], p[1], p[2], p[3] };
 }
 
@@ -129,25 +129,25 @@ T_MATH_INLINE Vector4 Vector4::absolute() const
 
 T_MATH_INLINE Vector4 Vector4::loadAligned(const float* in)
 {
-	T_ASSERT (in);
+	T_ASSERT((in);
 	return Vector4(in);
 }
 
 T_MATH_INLINE Vector4 Vector4::loadUnaligned(const float* in)
 {
-	T_ASSERT (in);
+	T_ASSERT((in);
 	return Vector4(in);
 }
 
 T_MATH_INLINE void Vector4::storeAligned(float* out) const
 {
-	T_ASSERT (out);
+	T_ASSERT((out);
 	*(vec_float4*)out = m_data;
 }
 
 T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 {
-	T_ASSERT (out);
+	T_ASSERT((out);
 	out[0] = spu_extract(m_data, 0);
 	out[1] = spu_extract(m_data, 1);
 	out[2] = spu_extract(m_data, 2);

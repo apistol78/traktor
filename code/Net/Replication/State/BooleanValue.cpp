@@ -61,7 +61,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BooleanValue", BooleanValue, IValue)
 
 void* BooleanValue::operator new (size_t size)
 {
-	T_ASSERT (size == sizeof(BooleanValue));
+	T_ASSERT(size == sizeof(BooleanValue));
 	return s_valueAllocator.alloc();
 }
 

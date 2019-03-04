@@ -16,7 +16,7 @@ HeightfieldResource::HeightfieldResource()
 
 void HeightfieldResource::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 1);
+	T_ASSERT(s.getVersion() >= 1);
 	s >> Member< Vector4 >(L"worldExtent", m_worldExtent);
 }
 

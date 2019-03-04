@@ -104,7 +104,7 @@ float DynamicBodyDesc::getAngularThreshold() const
 
 void DynamicBodyDesc::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 4);
+	T_ASSERT(s.getVersion() >= 4);
 
 	BodyDesc::serialize(s);
 

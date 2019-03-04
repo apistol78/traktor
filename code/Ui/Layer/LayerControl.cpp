@@ -48,7 +48,7 @@ bool LayerControl::create(Widget* parent, int style)
 
 void LayerControl::addLayerItem(LayerItem* layerItem)
 {
-	T_ASSERT (!layerItem->getParentLayer());
+	T_ASSERT(!layerItem->getParentLayer());
 	m_layers.push_back(layerItem);
 
 	updateScrollBar();
@@ -59,7 +59,7 @@ void LayerControl::removeLayerItem(LayerItem* layerItem)
 	if (!layerItem->getParentLayer())
 	{
 		RefArray< LayerItem >::iterator i = std::find(m_layers.begin(), m_layers.end(), layerItem);
-		T_ASSERT (i != m_layers.end());
+		T_ASSERT(i != m_layers.end());
 		m_layers.erase(i);
 	}
 	else

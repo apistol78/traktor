@@ -218,7 +218,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 	if (!m_points.empty())
 	{
 		SpursJobQueue* jobQueue = SprayJobQueue::getInstance().getJobQueue();
-		T_ASSERT (jobQueue);
+		T_ASSERT(jobQueue);
 
 		Transform updateTransform = m_emitter->worldSpace() ? m_transform : Transform::identity();
 
@@ -268,7 +268,7 @@ void EmitterInstance::render(
 	const Plane& cameraPlane
 )
 {
-	T_ASSERT (m_count > 0);
+	T_ASSERT(m_count > 0);
 
 	synchronize();
 
@@ -317,7 +317,7 @@ void EmitterInstance::render(
 		m_emitter->getEffect()
 	)
 	{
-		T_ASSERT (m_renderPoints.size() == m_effectInstances.size());
+		T_ASSERT(m_renderPoints.size() == m_effectInstances.size());
 		for (uint32_t i = 0; i < m_renderPoints.size(); ++i)
 		{
 			if (!m_effectInstances[i])
@@ -346,7 +346,7 @@ void EmitterInstance::synchronize() const
 #if defined(T_MODIFIER_USE_PS3_SPURS)
 
 	SpursJobQueue* jobQueue = SprayJobQueue::getInstance().getJobQueue();
-	T_ASSERT (jobQueue);
+	T_ASSERT(jobQueue);
 
 	jobQueue->wait();
 

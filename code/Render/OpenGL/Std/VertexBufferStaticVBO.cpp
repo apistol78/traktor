@@ -40,7 +40,7 @@ VertexBufferStaticVBO::VertexBufferStaticVBO(ResourceContextOpenGL* resourceCont
 ,	m_lock(0)
 {
 	m_vertexStride = getVertexSize(vertexElements);
-	T_ASSERT (m_vertexStride > 0);
+	T_ASSERT(m_vertexStride > 0);
 
 	T_OGL_SAFE(glGenBuffers(1, &m_buffer));
 	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));

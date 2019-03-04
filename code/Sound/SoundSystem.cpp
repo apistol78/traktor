@@ -28,7 +28,7 @@ namespace traktor
 
 inline void clearSamples(float* samples, int32_t samplesCount)
 {
-	T_ASSERT ((samplesCount & 3) == 0);
+	T_ASSERT((samplesCount & 3) == 0);
 
 	const static Vector4 c_zero4 = Vector4::zero();
 	int32_t i = 0;
@@ -62,7 +62,7 @@ SoundSystem::SoundSystem(ISoundDriver* driver)
 
 bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 {
-	T_ASSERT (m_driver);
+	T_ASSERT(m_driver);
 
 	m_desc = desc;
 	m_desc.driverDesc.frameSamples &= ~3U;
@@ -206,7 +206,7 @@ void SoundSystem::resume()
 	if (!m_suspended)
 		return;
 
-	T_ASSERT (m_threadMixer == 0);
+	T_ASSERT(m_threadMixer == 0);
 
 	if (!m_driver)
 		return;
@@ -359,8 +359,8 @@ void SoundSystem::threadMixer()
 			if (!m_requestBlocks[i].maxChannel)
 				continue;
 
-			T_ASSERT (m_requestBlocks[i].sampleRate == m_desc.driverDesc.sampleRate);
-			T_ASSERT (m_requestBlocks[i].samplesCount == m_desc.driverDesc.frameSamples);
+			T_ASSERT(m_requestBlocks[i].sampleRate == m_desc.driverDesc.sampleRate);
+			T_ASSERT(m_requestBlocks[i].samplesCount == m_desc.driverDesc.frameSamples);
 
 			float categoryVolume = getVolume(m_requestBlockMeta[i].category);
 			float duck = m_volume * categoryVolume * (m_duck[1][i] * 0.5f + 0.5f);

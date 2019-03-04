@@ -36,7 +36,7 @@ PoolAllocator::PoolAllocator(void* heap, uint32_t totalSize)
 ,	m_head(static_cast< uint8_t* >(heap))
 ,	m_tail(static_cast< uint8_t* >(heap))
 {
-	T_ASSERT (m_head);
+	T_ASSERT(m_head);
 }
 
 PoolAllocator::~PoolAllocator()
@@ -59,7 +59,7 @@ void PoolAllocator::enter()
 
 void PoolAllocator::leave()
 {
-	T_ASSERT (!m_scope.empty());
+	T_ASSERT(!m_scope.empty());
 
 	uint8_t* tail = m_scope.top();
 	m_scope.pop();
@@ -76,7 +76,7 @@ void PoolAllocator::leave()
 			if (tail >= (*i) && tail <= (*i) + m_totalSize)
 				break;
 		}
-		T_ASSERT (i != m_heaps.end());
+		T_ASSERT(i != m_heaps.end());
 
 		m_head = *i;
 
@@ -92,7 +92,7 @@ void PoolAllocator::leave()
 
 void* PoolAllocator::alloc(uint32_t size, uint32_t align)
 {
-	T_ASSERT (size <= m_totalSize);
+	T_ASSERT(size <= m_totalSize);
 
 	if (!m_head || uint32_t(m_tail - m_head) + (size + align - 1) >= m_totalSize)
 	{

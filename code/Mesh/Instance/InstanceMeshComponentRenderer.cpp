@@ -67,7 +67,7 @@ void InstanceMeshComponentRenderer::flush(
 		if (i->second.empty())
 			continue;
 
-		T_ASSERT (i->first);
+		T_ASSERT(i->first);
 		i->first->render(
 			worldContext.getRenderContext(),
 			worldRenderPass,

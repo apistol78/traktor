@@ -61,7 +61,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BodyStateValue", BodyStateValue, IValue)
 
 void* BodyStateValue::operator new (size_t size)
 {
-	T_ASSERT (size == sizeof(BodyStateValue));
+	T_ASSERT(size == sizeof(BodyStateValue));
 	return s_valueAllocator.alloc();
 }
 

@@ -24,8 +24,8 @@ TaskAchievement::TaskAchievement(
 
 void TaskAchievement::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_provider);
-	T_ASSERT (m_result);
+	T_ASSERT(m_provider);
+	T_ASSERT(m_result);
 	if (m_provider->set(
 		m_achievementId,
 		m_reward

@@ -59,7 +59,7 @@ public:
 
 		for (;;)
 		{
-			T_ASSERT (m_zstream.avail_out > 0);
+			T_ASSERT(m_zstream.avail_out > 0);
 			rc = deflate(&m_zstream, Z_NO_FLUSH);
 			if (rc != Z_OK)
 				return -1;
@@ -86,20 +86,20 @@ public:
 	{
 		for (;;)
 		{
-			T_ASSERT (m_zstream.avail_in == 0);
-			T_ASSERT (m_zstream.avail_out > 0);
+			T_ASSERT(m_zstream.avail_in == 0);
+			T_ASSERT(m_zstream.avail_out > 0);
 #if defined(_DEBUG)
 			int rc =
 #endif
 			deflate(&m_zstream, Z_FULL_FLUSH);
-			T_ASSERT (rc == Z_OK || rc == Z_BUF_ERROR);
+			T_ASSERT(rc == Z_OK || rc == Z_BUF_ERROR);
 
 			int nwrite = int(m_buf.size()) - m_zstream.avail_out;
 			if (nwrite > 0)
 			{
-				T_ASSERT (nwrite <= int(m_buf.size()));
+				T_ASSERT(nwrite <= int(m_buf.size()));
 				int nwritten = m_stream->write(&m_buf[0], nwrite);
-				T_ASSERT (nwritten == nwrite);
+				T_ASSERT(nwritten == nwrite);
 				nwritten = nwrite;
 			}
 
@@ -161,37 +161,37 @@ bool DeflateStreamZip::canSeek() const
 
 int64_t DeflateStreamZip::tell() const
 {
-	T_ASSERT (m_impl);
+	T_ASSERT(m_impl);
 	return m_impl->getLogicalPosition();
 }
 
 int64_t DeflateStreamZip::available() const
 {
-	T_ASSERT (0);
+	T_ASSERT(0);
 	return 0;
 }
 
 int64_t DeflateStreamZip::seek(SeekOriginType origin, int64_t offset)
 {
-	T_ASSERT (0);
+	T_ASSERT(0);
 	return 0;
 }
 
 int64_t DeflateStreamZip::read(void* block, int64_t nbytes)
 {
-	T_ASSERT (0);
+	T_ASSERT(0);
 	return 0;
 }
 
 int64_t DeflateStreamZip::write(const void* block, int64_t nbytes)
 {
-	T_ASSERT (m_impl);
+	T_ASSERT(m_impl);
 	return m_impl->write(block, nbytes);
 }
 
 void DeflateStreamZip::flush()
 {
-	T_ASSERT (m_impl);
+	T_ASSERT(m_impl);
 	m_impl->flush();
 }
 

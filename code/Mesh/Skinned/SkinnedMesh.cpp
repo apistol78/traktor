@@ -45,7 +45,7 @@ void SkinnedMesh::render(
 )
 {
 	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
-	T_ASSERT (it != m_parts.end());
+	T_ASSERT(it != m_parts.end());
 
 	const Aabb3& boundingBox = getBoundingBox();
 

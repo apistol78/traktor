@@ -297,7 +297,7 @@ bool SoundPipeline::buildOutput(
 				uint32_t muteOffset;
 				if (!isMute(soundBlock, muteOffset))
 				{
-					T_ASSERT (muteOffset > 0);
+					T_ASSERT(muteOffset > 0);
 
 					if (mutedSamples > 0)
 					{

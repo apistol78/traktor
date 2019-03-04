@@ -121,8 +121,8 @@ void ConeTwistJointBullet::prepare()
 
 	//float coneGradient = abs(sinf(twistAngle));
 	m_coneAngleLimit = Scalar(coneAngleLimit1); //coneAngleLimit1 * (1.0f - coneGradient) + coneAngleLimit2 * coneGradient;
-	//T_ASSERT (m_coneAngleLimit >= min(coneAngleLimit1, coneAngleLimit2) - FUZZY_EPSILON);
-	//T_ASSERT (m_coneAngleLimit <= max(coneAngleLimit1, coneAngleLimit2) + FUZZY_EPSILON);
+	//T_ASSERT(m_coneAngleLimit >= min(coneAngleLimit1, coneAngleLimit2) - FUZZY_EPSILON);
+	//T_ASSERT(m_coneAngleLimit <= max(coneAngleLimit1, coneAngleLimit2) + FUZZY_EPSILON);
 
 	m_coneImpulseAxis = cross(twistAxis1, twistAxis2);
 	if (m_coneImpulseAxis.length() > FUZZY_EPSILON)

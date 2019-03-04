@@ -54,7 +54,7 @@ bool ColorSettingsPage::create(ui::Container* parent, const PropertyGroup* origi
 	m_colorList->setSeparator(ui::dpi96(200));
 
 	Ref< PropertyGroup > colorGroup = settings->getProperty< PropertyGroup >(L"Editor.Colors");
-	T_ASSERT (colorGroup);
+	T_ASSERT(colorGroup);
 
 	for (uint32_t i = 0; i < sizeof_array(c_propertyColors); ++i)
 	{
@@ -77,7 +77,7 @@ void ColorSettingsPage::destroy()
 bool ColorSettingsPage::apply(PropertyGroup* settings)
 {
 	Ref< PropertyGroup > colorGroup = settings->getProperty< PropertyGroup >(L"Editor.Colors");
-	T_ASSERT (colorGroup);
+	T_ASSERT(colorGroup);
 
 	RefArray< ui::PropertyItem > propertyItems;
 	m_colorList->getPropertyItems(propertyItems, 0);

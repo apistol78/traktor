@@ -20,7 +20,7 @@ std::wstring glsl_type_name(GlslType type)
 		L"tex",
 		L"tex"
 	};
-	T_ASSERT (type < sizeof_array(c));
+	T_ASSERT(type < sizeof_array(c));
 	return c[type];
 }
 
@@ -38,7 +38,7 @@ int32_t glsl_type_width(GlslType type)
 		0,
 		0
 	};
-	T_ASSERT (type < sizeof_array(w));
+	T_ASSERT(type < sizeof_array(w));
 	return w[type];
 }
 
@@ -59,7 +59,7 @@ GlslType glsl_from_data_type(DataType type)
 		GtFloat2,
 		GtFloat4
 	};
-	T_ASSERT (type < sizeof_array(c));
+	T_ASSERT(type < sizeof_array(c));
 	return c[type];
 }
 
@@ -74,7 +74,7 @@ GlslType glsl_from_parameter_type(ParameterType type)
 		GtTexture3D,
 		GtTextureCube
 	};
-	T_ASSERT (type < sizeof_array(c));
+	T_ASSERT(type < sizeof_array(c));
 	return c[type];
 }
 

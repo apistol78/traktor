@@ -55,7 +55,7 @@ void SequenceItem::addChildItemBefore(SequenceItem* beforeChildItem, SequenceIte
 	childItem->m_parent = this;
 
 	RefArray< SequenceItem >::iterator i = std::find(m_childItems.begin(), m_childItems.end(), childItem);
-	T_ASSERT (i != m_childItems.end());
+	T_ASSERT(i != m_childItems.end());
 
 	m_childItems.insert(i, childItem);
 }

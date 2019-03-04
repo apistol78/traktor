@@ -26,8 +26,8 @@ TaskSetLobbyParticipantMetaValue::TaskSetLobbyParticipantMetaValue(
 
 void TaskSetLobbyParticipantMetaValue::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_provider);
-	T_ASSERT (m_result);
+	T_ASSERT(m_provider);
+	T_ASSERT(m_result);
 
 	if (m_provider->setLobbyParticipantMetaValue(m_lobbyHandle, m_key, m_value))
 		m_result->succeed();

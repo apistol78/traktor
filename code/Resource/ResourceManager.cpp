@@ -208,7 +208,7 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 			handle = exclusiveHandle;
 		}
 	}
-	T_ASSERT (handle);
+	T_ASSERT(handle);
 
 	// If no resource loaded into handle then load resource through factory.
 	if (!handle->get())
@@ -352,7 +352,7 @@ void ResourceManager::unloadUnusedResident()
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
 	{
-		T_ASSERT (i->second);
+		T_ASSERT(i->second);
 		if (
 			!i->second->isPersistent() &&
 			i->second->getReferenceCount() <= 1 &&

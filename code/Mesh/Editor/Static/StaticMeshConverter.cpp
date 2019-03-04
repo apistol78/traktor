@@ -64,7 +64,7 @@ bool StaticMeshConverter::convert(
 	log::info << L"Creating render mesh..." << Endl;
 
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
-	T_ASSERT (vertexSize > 0);
+	T_ASSERT(vertexSize > 0);
 
 	bool useLargeIndices = bool(model.getVertexCount() >= 65536);
 	uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
@@ -127,7 +127,7 @@ bool StaticMeshConverter::convert(
 		for (AlignedVector< model::Polygon >::const_iterator j = model.getPolygons().begin(); j != model.getPolygons().end(); ++j)
 		{
 			const model::Polygon& polygon = *j;
-			T_ASSERT (polygon.getVertices().size() == 3);
+			T_ASSERT(polygon.getVertices().size() == 3);
 
 			if (model.getMaterial(polygon.getMaterial()).getName() != i->first)
 				continue;

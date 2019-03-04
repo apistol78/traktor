@@ -264,7 +264,7 @@ int PropertyList::getSeparator() const
 
 void PropertyList::setColumnName(int column, const std::wstring& name)
 {
-	T_ASSERT (column == 0 || column == 1);
+	T_ASSERT(column == 0 || column == 1);
 	m_columnNames[column] = name;
 }
 

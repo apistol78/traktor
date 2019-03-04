@@ -84,7 +84,7 @@ bool IKPoseController::evaluate(
 	//	int base = int(nodes.size());
 	//	if (joint->getParent() >= 0)
 	//	{
-	//		T_ASSERT (joint->getParent() < int(edges.size()));
+	//		T_ASSERT(joint->getParent() < int(edges.size()));
 	//
 	//		Vector4 s = outPoseTransforms[joint->getParent()].translation();
 	//		Vector4 e = outPoseTransforms[i].translation();

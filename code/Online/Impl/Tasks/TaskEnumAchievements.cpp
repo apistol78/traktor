@@ -22,7 +22,7 @@ TaskEnumAchievements::TaskEnumAchievements(
 
 void TaskEnumAchievements::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_provider);
+	T_ASSERT(m_provider);
 	T_DEBUG(L"Online; Begin enumerating achievements");
 	std::map< std::wstring, bool > achievements;
 	m_provider->enumerate(achievements);

@@ -110,7 +110,7 @@ bool SHEditorPage::create(ui::Container* parent)
 	//	SHCoeffs coeffs[3];
 
 	//	Ref< drawing::Image > ibl = drawing::Image::load("C:/temp/bilder/sky probes/Palenque_Angular_Map.jpg");
-	//	T_ASSERT (ibl);
+	//	T_ASSERT(ibl);
 
 	//	IBLProbe functionR(ibl, Vector4(1.0f, 0.0f, 0.0f, 0.0f));
 	//	m_engine->generateCoefficients(&functionR, coeffs[0]);

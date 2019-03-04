@@ -65,8 +65,8 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 	uint32_t vertexCount = singleInstanceMesh->getVertexBuffer()->getBufferSize() / vertexSize;
 	uint32_t vertexInstanceOffset = findVertexElement(singleInstanceMesh->getVertexElements(), render::DuCustom, 1)->getOffset();
 
-	T_ASSERT (vertexSize * vertexCount == singleInstanceMesh->getVertexBuffer()->getBufferSize());
-	T_ASSERT (singleInstanceMesh->getIndexBuffer()->getIndexType() == render::ItUInt16);
+	T_ASSERT(vertexSize * vertexCount == singleInstanceMesh->getVertexBuffer()->getBufferSize());
+	T_ASSERT(singleInstanceMesh->getIndexBuffer()->getIndexType() == render::ItUInt16);
 
 	render::IndexType indexType = vertexCount * InstanceMesh::MaxInstanceCount > 65535 ? render::ItUInt32 : render::ItUInt16;
 
@@ -99,7 +99,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 		const uint8_t* sourceVertex = sourceVertexTop;
 		for (uint32_t j = 0; j < singleInstanceMesh->getVertexBuffer()->getBufferSize(); j += vertexSize)
 		{
-			T_ASSERT (j / vertexSize < vertexCount);
+			T_ASSERT(j / vertexSize < vertexCount);
 
 			// Copy vertex, patch instance index.
 			std::memcpy(destinationVertex, sourceVertex, vertexSize);
@@ -137,7 +137,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 			{
 				for (uint32_t k = 0; k < singleInstancePart.primitives.count; ++k)
 				{
-					T_ASSERT (destinationIndex + 3 * sizeof(uint16_t) <= destinationIndexEnd);
+					T_ASSERT(destinationIndex + 3 * sizeof(uint16_t) <= destinationIndexEnd);
 					reinterpret_cast< uint16_t* >(destinationIndex)[0] = sourceIndex[singleInstancePart.primitives.offset + k * 3 + 0] + vertexOffset;
 					reinterpret_cast< uint16_t* >(destinationIndex)[1] = sourceIndex[singleInstancePart.primitives.offset + k * 3 + 1] + vertexOffset;
 					reinterpret_cast< uint16_t* >(destinationIndex)[2] = sourceIndex[singleInstancePart.primitives.offset + k * 3 + 2] + vertexOffset;
@@ -148,7 +148,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 			{
 				for (uint32_t k = 0; k < singleInstancePart.primitives.count; ++k)
 				{
-					T_ASSERT (destinationIndex + 3 * sizeof(uint32_t) <= destinationIndexEnd);
+					T_ASSERT(destinationIndex + 3 * sizeof(uint32_t) <= destinationIndexEnd);
 					reinterpret_cast< uint32_t* >(destinationIndex)[0] = sourceIndex[singleInstancePart.primitives.offset + k * 3 + 0] + vertexOffset;
 					reinterpret_cast< uint32_t* >(destinationIndex)[1] = sourceIndex[singleInstancePart.primitives.offset + k * 3 + 1] + vertexOffset;
 					reinterpret_cast< uint32_t* >(destinationIndex)[2] = sourceIndex[singleInstancePart.primitives.offset + k * 3 + 2] + vertexOffset;

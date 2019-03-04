@@ -136,7 +136,7 @@ bool MeshPipeline::buildOutput(
 	const AlignedVector< model::Polygon >& shapeTriangles = model->getPolygons();
 	for (AlignedVector< model::Polygon >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
 	{
-		T_ASSERT (i->getVertices().size() == 3);
+		T_ASSERT(i->getVertices().size() == 3);
 
 		Mesh::Triangle shapeTriangle;
 		for (int j = 0; j < 3; ++j)
@@ -161,7 +161,7 @@ bool MeshPipeline::buildOutput(
 		const AlignedVector< model::Polygon >& hullTriangles = hull.getPolygons();
 		for (AlignedVector< model::Polygon >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
 		{
-			T_ASSERT (i->getVertices().size() == 3);
+			T_ASSERT(i->getVertices().size() == 3);
 
 			Mesh::Triangle hullTriangle;
 			for (int j = 0; j < 3; ++j)

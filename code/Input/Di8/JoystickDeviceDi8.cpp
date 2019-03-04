@@ -29,7 +29,7 @@ bool povInRange(DWORD pov, DWORD mn, DWORD mx)
 template < typename T >
 T readStateValueByOffset(const DIJOYSTATE2& state, uint32_t offset)
 {
-	T_ASSERT (offset + sizeof(T) <= sizeof(DIJOYSTATE2));
+	T_ASSERT(offset + sizeof(T) <= sizeof(DIJOYSTATE2));
 	return *(T*)(((uint8_t*)&state) + offset);
 }
 

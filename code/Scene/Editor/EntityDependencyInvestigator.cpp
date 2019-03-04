@@ -77,7 +77,7 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 	if (entityAdapter)
 	{
 		Ref< editor::IPipelineDependencySet > dependencySet = m_context->getEditor()->buildAssetDependencies(entityAdapter->getEntityData(), 1);
-		T_ASSERT (dependencySet);
+		T_ASSERT(dependencySet);
 
 		std::map< const TypeInfo*, Ref< ui::TreeViewItem > > typeGroups;
 		std::set< Path > externalFiles;
@@ -85,10 +85,10 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 		for (uint32_t i = 0; i < dependencySet->size(); ++i)
 		{
 			editor::PipelineDependency* dependency = dependencySet->get(i);
-			T_ASSERT (dependency);
+			T_ASSERT(dependency);
 
 			const TypeInfo* assetType = &type_of(dependency->sourceAsset);
-			T_ASSERT (assetType);
+			T_ASSERT(assetType);
 
 			Ref< ui::TreeViewItem > typeGroup = typeGroups[assetType];
 			if (!typeGroup)

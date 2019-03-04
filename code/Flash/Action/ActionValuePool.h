@@ -76,7 +76,7 @@ public:
 	 */
 	void rewind(uint32_t offset)
 	{
-		T_ASSERT (offset <= m_next);
+		T_ASSERT(offset <= m_next);
 		for (uint32_t i = offset; i < m_next; ++i)
 			m_top[i].clear();
 		m_next = offset;

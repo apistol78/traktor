@@ -13,7 +13,7 @@ namespace traktor
 
 bool Isolate::createIsolatedInstance(Instance* instance, IStream* stream)
 {
-	T_ASSERT (stream && stream->canWrite());
+	T_ASSERT(stream && stream->canWrite());
 
 	Writer writer(stream);
 
@@ -32,7 +32,7 @@ bool Isolate::createIsolatedInstance(Instance* instance, IStream* stream)
 		writer << dataName;
 
 		Ref< IStream > dataStream = instance->readData(dataName);
-		T_ASSERT (dataStream);
+		T_ASSERT(dataStream);
 
 		int32_t dataSize = dataStream->available();
 		writer << dataSize;
@@ -46,7 +46,7 @@ bool Isolate::createIsolatedInstance(Instance* instance, IStream* stream)
 
 Ref< Instance > Isolate::createInstanceFromIsolation(Group* group, IStream* stream)
 {
-	T_ASSERT (stream && stream->canRead());
+	T_ASSERT(stream && stream->canRead());
 
 	Reader reader(stream);
 

@@ -88,7 +88,7 @@ void VertexBufferStaticDx11::destroy()
 
 void* VertexBufferStaticDx11::lock()
 {
-	T_ASSERT (!m_data.ptr());
+	T_ASSERT(!m_data.ptr());
 	m_data.reset(new uint8_t [getBufferSize()]);
 	return m_data.ptr();
 }

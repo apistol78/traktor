@@ -108,7 +108,7 @@ void ImageProcessProperties::eventPropertyCommand(ui::PropertyCommandEvent* even
 				if (browseItem->getFilterType())
 				{
 					const TypeInfo* filterType = browseItem->getFilterType();
-					T_ASSERT (filterType);
+					T_ASSERT(filterType);
 
 					instance = m_editor->browseInstance(*filterType);
 				}

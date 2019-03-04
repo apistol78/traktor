@@ -581,7 +581,7 @@ bool Peer2PeerTopology::update(double dT)
 			}
 			else if (msg.id == MsgCMask)
 			{
-				T_ASSERT (msg.cmask.of != myPeer.handle);
+				T_ASSERT(msg.cmask.of != myPeer.handle);
 
 				int32_t ofPeerIndex = indexOf(msg.cmask.of);
 				if (ofPeerIndex >= 0 && ofPeerIndex < int32_t(m_peers.size()))
@@ -640,7 +640,7 @@ bool Peer2PeerTopology::update(double dT)
 					int32_t targetIndex = indexOf(msg.relay.target);
 					if (targetIndex >= 0 && m_peers[targetIndex].send != 0)
 					{
-						T_ASSERT (targetIndex != myIndex);
+						T_ASSERT(targetIndex != myIndex);
 						bool result;
 						T_MEASURE_STATEMENT(result = m_provider->send(m_peers[targetIndex].send, &msg, nrecv), 0.001);
 						if (!result)

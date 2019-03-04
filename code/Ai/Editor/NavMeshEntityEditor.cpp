@@ -35,7 +35,7 @@ void NavMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 		primitiveRenderer->pushDepthState(true, false, false);
 
 		const uint16_t* nmp = navMesh->m_navMeshPolygons.c_ptr();
-		T_ASSERT (nmp);
+		T_ASSERT(nmp);
 
 		for (uint32_t i = 0; i < navMesh->m_navMeshPolygons.size(); )
 		{

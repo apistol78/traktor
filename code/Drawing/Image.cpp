@@ -175,8 +175,8 @@ void Image::copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y,
 	if (width <= 0 || height <= 0)
 		return;
 
-	T_ASSERT (x >= 0 && y >= 0);
-	T_ASSERT (width >= 0 && height >= 0);
+	T_ASSERT(x >= 0 && y >= 0);
+	T_ASSERT(width >= 0 && height >= 0);
 
 	const PixelFormat& pf = src->m_pixelFormat;
 	for (int32_t yy = 0; yy < height; ++yy)
@@ -244,8 +244,8 @@ void Image::copy(const Image* src, int32_t dx, int32_t dy, int32_t x, int32_t y,
 	if (width <= 0 || height <= 0)
 		return;
 
-	T_ASSERT (x >= 0 && y >= 0);
-	T_ASSERT (width >= 0 && height >= 0);
+	T_ASSERT(x >= 0 && y >= 0);
+	T_ASSERT(width >= 0 && height >= 0);
 
 	const PixelFormat& pf = src->m_pixelFormat;
 	for (int32_t yy = 0; yy < height; ++yy)

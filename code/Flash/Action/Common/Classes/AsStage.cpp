@@ -32,7 +32,7 @@ AsStage::AsStage(ActionContext* context)
 	addProperty("width", createNativeFunction(context, this, &AsStage::Stage_get_width), 0);
 
 	const Movie* movie = context->getMovie();
-	T_ASSERT (movie);
+	T_ASSERT(movie);
 
 	m_width = int32_t((movie->getFrameBounds().mx.x - movie->getFrameBounds().mn.x) / 20.0f);
 	m_height = int32_t((movie->getFrameBounds().mx.y - movie->getFrameBounds().mn.y) / 20.0f);
@@ -78,7 +78,7 @@ void AsStage::eventResize(int32_t width, int32_t height)
 Vector2 AsStage::toStage(const Vector2& pos) const
 {
 	const Movie* movie = getContext()->getMovie();
-	T_ASSERT (movie);
+	T_ASSERT(movie);
 
 	Aabb2 bounds = movie->getFrameBounds();
 
@@ -96,7 +96,7 @@ Vector2 AsStage::toStage(const Vector2& pos) const
 Vector2 AsStage::toScreen(const Vector2& pos) const
 {
 	const Movie* movie = getContext()->getMovie();
-	T_ASSERT (movie);
+	T_ASSERT(movie);
 
 	Aabb2 bounds = movie->getFrameBounds();
 
@@ -122,7 +122,7 @@ void AsStage::updateViewOffset()
 		return;
 
 	const Movie* movie = getContext()->getMovie();
-	T_ASSERT (movie);
+	T_ASSERT(movie);
 
 	Aabb2 bounds = movie->getFrameBounds();
 

@@ -38,7 +38,7 @@ bool StaticBodyDesc::isKinematic() const
 
 void StaticBodyDesc::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 4);
+	T_ASSERT(s.getVersion() >= 4);
 
 	BodyDesc::serialize(s);
 

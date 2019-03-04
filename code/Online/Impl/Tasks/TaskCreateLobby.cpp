@@ -27,9 +27,9 @@ TaskCreateLobby::TaskCreateLobby(
 
 void TaskCreateLobby::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_matchMakingProvider);
-	T_ASSERT (m_userCache);
-	T_ASSERT (m_result);
+	T_ASSERT(m_matchMakingProvider);
+	T_ASSERT(m_userCache);
+	T_ASSERT(m_result);
 
 	uint64_t lobbyHandle;
 	if (m_matchMakingProvider->createLobby(m_maxUsers, m_access, lobbyHandle))

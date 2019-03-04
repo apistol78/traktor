@@ -46,7 +46,7 @@ Group* Instance::getParent() const
 std::wstring Instance::getName() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 
 	if (!(m_cachedFlags & IchName))
 	{
@@ -60,14 +60,14 @@ std::wstring Instance::getName() const
 std::wstring Instance::getPath() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_parent);
+	T_ASSERT(m_parent);
 	return m_parent->getPath() + L"/" + getName();
 }
 
 Guid Instance::getGuid() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 
 	if (!(m_cachedFlags & IchGuid))
 	{
@@ -81,21 +81,21 @@ Guid Instance::getGuid() const
 bool Instance::getLastModifyDate(DateTime& outModifyDate) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 	return m_providerInstance->getLastModifyDate(outModifyDate);
 }
 
 uint32_t Instance::getFlags() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 	return m_providerInstance->getFlags();
 }
 
 std::wstring Instance::getPrimaryTypeName() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 
 	if (!(m_cachedFlags & IchPrimaryType))
 	{
@@ -114,7 +114,7 @@ const TypeInfo* Instance::getPrimaryType() const
 Ref< ISerializable > Instance::getObject() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 
 	Ref< ISerializable > object;
 	const TypeInfo* serializerType = nullptr;
@@ -144,21 +144,21 @@ Ref< ISerializable > Instance::getObject() const
 uint32_t Instance::getDataNames(std::vector< std::wstring >& dataNames) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 	return m_providerInstance->getDataNames(dataNames);
 }
 
 bool Instance::getDataLastWriteTime(const std::wstring& dataName, DateTime& outLastWriteTime) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 	return m_providerInstance->getDataLastWriteTime(dataName, outLastWriteTime);
 }
 
 Ref< IStream > Instance::readData(const std::wstring& dataName) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 
 	Ref< IStream > stream = m_providerInstance->readData(dataName);
 	return stream ? new BufferedStream(stream) : nullptr;
@@ -167,7 +167,7 @@ Ref< IStream > Instance::readData(const std::wstring& dataName) const
 bool Instance::checkout()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 
 	if (!m_providerInstance->openTransaction())
 		return false;
@@ -183,7 +183,7 @@ bool Instance::commit(uint32_t flags)
 {
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		T_ASSERT (m_providerInstance);
+		T_ASSERT(m_providerInstance);
 
 		if ((flags & CfKeepCheckedOut) != 0 && (m_transactionFlags & TfRemoved) != 0)
 		{
@@ -245,7 +245,7 @@ bool Instance::commit(uint32_t flags)
 bool Instance::revert()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 
 	if (!m_providerInstance->closeTransaction())
 		return false;
@@ -257,7 +257,7 @@ bool Instance::revert()
 bool Instance::remove()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 
 	if (!m_providerInstance->remove())
 		return false;
@@ -269,7 +269,7 @@ bool Instance::remove()
 bool Instance::setName(const std::wstring& name)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 
 	if (!m_providerInstance->setName(name))
 		return false;
@@ -281,7 +281,7 @@ bool Instance::setName(const std::wstring& name)
 bool Instance::setGuid(const Guid& guid)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 
 	if (!m_providerInstance->setGuid(guid))
 		return false;
@@ -293,7 +293,7 @@ bool Instance::setGuid(const Guid& guid)
 bool Instance::setObject(const ISerializable* object)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 
 	if (!object)
 		return false;
@@ -329,7 +329,7 @@ bool Instance::setObject(const ISerializable* object)
 bool Instance::removeAllData()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 
 	if (!m_providerInstance->removeAllData())
 		return false;
@@ -341,7 +341,7 @@ bool Instance::removeAllData()
 Ref< IStream > Instance::writeData(const std::wstring& dataName)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (m_providerInstance);
+	T_ASSERT(m_providerInstance);
 
 	Ref< IStream > stream = m_providerInstance->writeData(dataName);
 	if (stream)

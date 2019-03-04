@@ -108,20 +108,20 @@ public:
 	// \name Unsafe accessors.
 	// \{
 
-	bool getBooleanUnsafe() const { T_ASSERT (m_type == AtBoolean); return m_data.m_boolean; }
+	bool getBooleanUnsafe() const { T_ASSERT(m_type == AtBoolean); return m_data.m_boolean; }
 
-	int32_t getInt32Unsafe( ) const { T_ASSERT (m_type == AtInt32); return m_data.m_int32; }
+	int32_t getInt32Unsafe( ) const { T_ASSERT(m_type == AtInt32); return m_data.m_int32; }
 
-	int64_t getInt64Unsafe( ) const { T_ASSERT (m_type == AtInt64); return m_data.m_int64; }
+	int64_t getInt64Unsafe( ) const { T_ASSERT(m_type == AtInt64); return m_data.m_int64; }
 
-	float getFloatUnsafe() const { T_ASSERT (m_type == AtFloat); return m_data.m_float; }
+	float getFloatUnsafe() const { T_ASSERT(m_type == AtFloat); return m_data.m_float; }
 
-	std::string getStringUnsafe() const { T_ASSERT (m_type == AtString); return m_data.m_string; }
+	std::string getStringUnsafe() const { T_ASSERT(m_type == AtString); return m_data.m_string; }
 
-	ITypedObject* getObjectUnsafe() const { T_ASSERT (m_type == AtObject); return m_data.m_object; }
+	ITypedObject* getObjectUnsafe() const { T_ASSERT(m_type == AtObject); return m_data.m_object; }
 
 	template < typename ObjectType >
-	ObjectType* getObjectUnsafe() const { T_ASSERT (m_type == AtObject); return mandatory_non_null_type_cast< ObjectType* >(m_data.m_object); }
+	ObjectType* getObjectUnsafe() const { T_ASSERT(m_type == AtObject); return mandatory_non_null_type_cast< ObjectType* >(m_data.m_object); }
 
 	// \}
 

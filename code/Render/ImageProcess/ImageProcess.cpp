@@ -222,14 +222,14 @@ void ImageProcess::setTarget(IRenderView* renderView, handle_t id)
 		if (t.rts == 0)
 		{
 			t.rts = m_targetPool->acquireTarget(t.rtscd);
-			T_ASSERT (t.rts);
+			T_ASSERT(t.rts);
 
 			t.rt = t.rts->getColorTexture(0);
-			T_ASSERT (t.rt);
+			T_ASSERT(t.rt);
 		}
 
 		m_currentTarget = t.rts;
-		T_ASSERT (m_currentTarget);
+		T_ASSERT(m_currentTarget);
 
 		renderView->begin(m_currentTarget, 0);
 	}
@@ -263,13 +263,13 @@ ISimpleTexture* ImageProcess::getTarget(handle_t id)
 			return 0;
 		}
 
-		T_ASSERT (t.rts == 0);
+		T_ASSERT(t.rts == 0);
 
 		t.rts = m_targetPool->acquireTarget(t.rtscd);
-		T_ASSERT (t.rts);
+		T_ASSERT(t.rts);
 
 		t.rt = t.rts->getColorTexture(0);
-		T_ASSERT (t.rt);
+		T_ASSERT(t.rt);
 	}
 
 	return t.rt;

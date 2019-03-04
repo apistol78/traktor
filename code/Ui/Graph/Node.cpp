@@ -24,7 +24,7 @@ Node::Node(const std::wstring& title, const std::wstring& info, const Point& pos
 
 void Node::setTitle(const std::wstring& title)
 {
-	T_ASSERT (m_shape);
+	T_ASSERT(m_shape);
 	m_title = title;
 	m_size = m_shape->calculateSize(this);
 }
@@ -36,7 +36,7 @@ const std::wstring& Node::getTitle() const
 
 void Node::setInfo(const std::wstring& info)
 {
-	T_ASSERT (m_shape);
+	T_ASSERT(m_shape);
 	m_info = info;
 	m_size = m_shape->calculateSize(this);
 }
@@ -48,7 +48,7 @@ const std::wstring& Node::getInfo() const
 
 void Node::setComment(const std::wstring& comment)
 {
-	T_ASSERT (m_shape);
+	T_ASSERT(m_shape);
 	m_comment = comment;
 	m_size = m_shape->calculateSize(this);
 }
@@ -60,7 +60,7 @@ const std::wstring& Node::getComment() const
 
 void Node::setImage(IBitmap* image)
 {
-	T_ASSERT (m_shape);
+	T_ASSERT(m_shape);
 	if (m_image != image)
 	{
 		m_image = image;
@@ -75,7 +75,7 @@ IBitmap* Node::getImage() const
 
 void Node::setState(int32_t state)
 {
-	T_ASSERT (m_shape);
+	T_ASSERT(m_shape);
 	if (m_state != state)
 	{
 		m_state = state;
@@ -90,7 +90,7 @@ int32_t Node::getState() const
 
 void Node::setPosition(const Point& position)
 {
-	T_ASSERT (m_shape);
+	T_ASSERT(m_shape);
 	if (m_position != position)
 	{
 		m_position = position;
@@ -105,7 +105,7 @@ Point Node::getPosition() const
 
 void Node::setSelected(bool selected)
 {
-	T_ASSERT (m_shape);
+	T_ASSERT(m_shape);
 	if (m_selected != selected)
 	{
 		m_selected = selected;
@@ -125,7 +125,7 @@ Ref< Pin > Node::createInputPin(const std::wstring& name, bool mandatory)
 
 Ref< Pin > Node::createInputPin(const std::wstring& name, const std::wstring& label, bool mandatory)
 {
-	T_ASSERT (m_shape);
+	T_ASSERT(m_shape);
 
 	Ref< Pin > pin = new Pin(this, name, label, Pin::DrInput, mandatory);
 	m_inputPins.push_back(pin);
@@ -157,7 +157,7 @@ Ref< Pin > Node::createOutputPin(const std::wstring& name)
 
 Ref< Pin > Node::createOutputPin(const std::wstring& name, const std::wstring& label)
 {
-	T_ASSERT (m_shape);
+	T_ASSERT(m_shape);
 
 	Ref< Pin > pin = new Pin(this, name, label, Pin::DrOutput, false);
 	m_outputPins.push_back(pin);
@@ -189,19 +189,19 @@ bool Node::hit(const Point& p) const
 
 Point Node::getPinPosition(const Pin* pin) const
 {
-	T_ASSERT (m_shape);
+	T_ASSERT(m_shape);
 	return m_shape->getPinPosition(this, pin);
 }
 
 Pin* Node::getPinAt(const Point& p) const
 {
-	T_ASSERT (m_shape);
+	T_ASSERT(m_shape);
 	return m_shape->getPinAt(this, p);
 }
 
 void Node::paint(GraphCanvas* canvas, const Size& offset) const
 {
-	T_ASSERT (m_shape);
+	T_ASSERT(m_shape);
 	m_shape->paint(this, canvas, offset);
 }
 

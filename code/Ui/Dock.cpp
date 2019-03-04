@@ -207,7 +207,7 @@ void Dock::eventDoubleClick(MouseDoubleClickEvent* event)
 		!pane->hitGripperClose(position)
 	)
 	{
-		T_ASSERT (pane->m_detachable);
+		T_ASSERT(pane->m_detachable);
 
 		Ref< Widget > widget = pane->m_widget;
 
@@ -346,8 +346,8 @@ void Dock::eventHintButtonUp(MouseButtonUpEvent* event)
 	if (!hintImage)
 		return;
 
-	T_ASSERT (m_hintDockForm);
-	T_ASSERT (m_hintDockPane);
+	T_ASSERT(m_hintDockForm);
+	T_ASSERT(m_hintDockPane);
 
 	Ref< Widget > widget = m_hintDockForm->getData< Widget >(L"WIDGET");
 

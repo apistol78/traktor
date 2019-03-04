@@ -35,13 +35,13 @@ bool Serializer::writeObject(const ISerializable* o)
 
 int32_t Serializer::getVersion() const
 {
-	T_ASSERT (m_versionPointer > 0);
+	T_ASSERT(m_versionPointer > 0);
 	return m_versions[m_versionPointer - 1].v;
 }
 
 int32_t Serializer::getVersion(const TypeInfo& typeInfo) const
 {
-	T_ASSERT (m_versionPointer > 0);
+	T_ASSERT(m_versionPointer > 0);
 	const dataVersionMap_t& dv = m_versions[m_versionPointer - 1].dvm;
 	dataVersionMap_t::const_iterator it = dv.find(&typeInfo);
 	return it != dv.end() ? it->second : 0;

@@ -86,15 +86,15 @@ bool CropTerrainWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 	int32_t originalSize = 0;
 	if (colorImage)
 	{
-		T_ASSERT (colorImage->getWidth() == colorImage->getHeight());
+		T_ASSERT(colorImage->getWidth() == colorImage->getHeight());
 		originalSize = colorImage->getWidth();
 	}
 	else if (splatImage)
 	{
-		T_ASSERT (splatImage->getWidth() == splatImage->getHeight());
+		T_ASSERT(splatImage->getWidth() == splatImage->getHeight());
 		originalSize = splatImage->getWidth();
 	}
-	T_ASSERT (originalSize > 0);
+	T_ASSERT(originalSize > 0);
 
 	ui::InputDialog::Field fields[] =
 	{

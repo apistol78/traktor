@@ -84,7 +84,7 @@ public:
 protected:
 	virtual void destroy()
 	{
-		T_ASSERT (ms_instance == this);
+		T_ASSERT(ms_instance == this);
 		delete ms_instance, ms_instance = 0;
 	}
 
@@ -147,7 +147,7 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 
 	if (avail > 0)
 	{
-		T_ASSERT ((status & (0x01 | 0x02)) == 0x01);
+		T_ASSERT((status & (0x01 | 0x02)) == 0x01);
 		Ref< DynamicMemoryStream > dm = new DynamicMemoryStream(true, false, T_FILE_LINE);
 
 		AlignedVector< uint8_t >& buffer = dm->getBuffer();

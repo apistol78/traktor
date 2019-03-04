@@ -39,8 +39,6 @@
 #include "Core/Timer/Profiler.h"
 #include "Database/Database.h"
 #include "Database/Events/EvtInstanceCommitted.h"
-#include "Flash/CharacterInstance.h"
-#include "Flash/GC.h"
 #include "Online/ISessionManager.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Physics/PhysicsManager.h"
@@ -322,20 +320,32 @@ bool Application::create(
 #endif
 
 	// Initial, startup, state.
-	T_DEBUG(L"Creating initial state...");
+	T_DEBUG(L"Creating plugins...");
+	RefArray< IRuntimePlugin > plugins;
 
 	TypeInfoSet pluginTypes;
 	type_of< IRuntimePlugin >().findAllOf(pluginTypes, false);
+	for (const auto& pluginType : pluginTypes)
+	{
+		Ref< IRuntimePlugin > plugin = dynamic_type_cast<IRuntimePlugin*>(pluginType->createInstance());
+		if (!plugin)
+			continue;
+
+		if (!plugin->create(m_environment))
+		{
+			log::error << L"Application failed; plugin \"" << type_name(plugin) << L"\" failed to initialize." << Endl;
+			return false;
+		}
+
+		log::info << L"Plugin \"" << type_name(plugin) << L"\" initialized successfully." << Endl;
+		plugins.push_back(plugin);
+	}
 
 	Ref< IState > state;
-	for (TypeInfoSet::const_iterator i = pluginTypes.begin(); i != pluginTypes.end(); ++i)
+	for (const auto plugin : plugins)
 	{
-		Ref< IRuntimePlugin > plugin = dynamic_type_cast< IRuntimePlugin* >((*i)->createInstance());
-		if (plugin)
-		{
-			if ((state = plugin->createInitialState(m_environment)) != 0)
-				break;
-		}
+		if ((state = plugin->createInitialState(m_environment)) != nullptr)
+			break;
 	}
 	if (!state)
 	{
@@ -806,7 +816,7 @@ bool Application::update()
 
 					{
 						T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
-						T_ASSERT (m_stateRender == 0);
+						T_ASSERT(m_stateRender == 0);
 
 						m_frameRender = m_frameBuild;
 						m_stateRender = currentState;
@@ -977,8 +987,6 @@ bool Application::update()
 
 			if (m_audioServer)
 				m_targetPerformance.activeSoundChannels = m_audioServer->getActiveSoundChannels();
-
-			m_targetPerformance.flashCharacterCount = flash::CharacterInstance::getInstanceCount();
 
 			m_targetManagerConnection->getTransport()->send(&m_targetPerformance);
 		}

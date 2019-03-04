@@ -278,7 +278,7 @@ void BrowseInstanceDialog::eventListDoubleClick(ui::MouseDoubleClickEvent* event
 void BrowseInstanceDialog::taskGeneratePreview(ui::PreviewItem* item)
 {
 	Ref< db::Instance > instance = item->getData< db::Instance >(L"INSTANCE");
-	T_ASSERT (instance);
+	T_ASSERT(instance);
 
 	const TypeInfo* instanceType = instance->getPrimaryType();
 	for (RefArray< const IBrowsePreview >::const_iterator i = m_browsePreview.begin(); i != m_browsePreview.end(); ++i)

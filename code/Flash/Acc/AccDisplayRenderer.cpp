@@ -449,12 +449,12 @@ void AccDisplayRenderer::endMask()
 	m_maskWrite = false;
 	if (m_maskIncrement)
 	{
-		T_ASSERT (m_maskReference < 255);
+		T_ASSERT(m_maskReference < 255);
 		m_maskReference++;
 	}
 	else
 	{
-		T_ASSERT (m_maskReference > 0);
+		T_ASSERT(m_maskReference > 0);
 		m_maskReference--;
 	}
 }
@@ -594,11 +594,11 @@ void AccDisplayRenderer::renderGlyph(
 		m_glyphCache[tag].index = -1;
 
 		it1 = m_glyphCache.find(tag);
-		T_ASSERT (it1 != m_glyphCache.end());
+		T_ASSERT(it1 != m_glyphCache.end());
 	}
 
 	Ref< AccShape > accShape = it1->second.shape;
-	T_ASSERT (accShape);
+	T_ASSERT(accShape);
 
 	float cachePixelDx = 1.0f / c_cacheGlyphDimX;
 	float cachePixelDy = 1.0f / c_cacheGlyphDimY;

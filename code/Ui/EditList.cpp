@@ -110,7 +110,7 @@ void EditList::eventEditFocus(FocusEvent* event)
 		}
 		else
 		{
-			T_ASSERT (m_autoAdd);
+			T_ASSERT(m_autoAdd);
 			if (m_editItem->getText().length() > 0)
 			{
 				EditListEditEvent editEvent(this, m_editItem, -1, m_editItem->getText());

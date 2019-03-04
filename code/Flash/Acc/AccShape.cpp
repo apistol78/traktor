@@ -302,7 +302,7 @@ bool AccShape::createFromTriangles(
 				}
 			}
 
-			T_ASSERT (lineDataOffset == lineDataSize);
+			T_ASSERT(lineDataOffset == lineDataSize);
 
 			lineTexture->unlock(0);
 			vertexRange.vertexBuffer->unlock();
@@ -329,7 +329,7 @@ bool AccShape::createFromTriangles(
 
 		for (AlignedVector< Triangle >::const_iterator j = triangles.begin(); j != triangles.end(); ++j)
 		{
-			T_ASSERT (j->fillStyle);
+			T_ASSERT(j->fillStyle);
 
 			uint8_t curveSign = c_cpZero;
 			if (j->type == TcIn)

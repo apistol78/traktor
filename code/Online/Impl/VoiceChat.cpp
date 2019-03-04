@@ -274,7 +274,7 @@ void VoiceChat::onVoiceReceived(uint64_t fromUserHandle, const int16_t* samples,
 	{
 		if (i->user == fromUser)
 		{
-			T_ASSERT (i->soundBuffer);
+			T_ASSERT(i->soundBuffer);
 			i->soundBuffer->enqueueVoiceSamples(samples, samplesCount, sampleRate);
 
 			if (!i->soundHandle || !i->soundHandle->isPlaying())

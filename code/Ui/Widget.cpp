@@ -21,7 +21,7 @@ Widget::Widget()
 
 Widget::~Widget()
 {
-	T_ASSERT (!m_widget);
+	T_ASSERT(!m_widget);
 }
 
 bool Widget::create(Widget* parent, int style)
@@ -61,8 +61,8 @@ void Widget::destroy()
 	while (m_firstChild)
 		m_firstChild->destroy();
 
-	T_ASSERT (!m_firstChild);
-	T_ASSERT (!m_lastChild);
+	T_ASSERT(!m_firstChild);
+	T_ASSERT(!m_lastChild);
 
 	unlink();
 
@@ -71,37 +71,37 @@ void Widget::destroy()
 
 void Widget::setText(const std::wstring& text)
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->setText(text);
 }
 
 std::wstring Widget::getText() const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->getText();
 }
 
 void Widget::setForeground()
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->setForeground();
 }
 
 bool Widget::isForeground() const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->isForeground();
 }
 
 void Widget::setVisible(bool visible)
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->setVisible(visible);
 }
 
 bool Widget::isVisible(bool includingParents) const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 
 	if (!m_widget->isVisible())
 		return false;
@@ -118,25 +118,25 @@ bool Widget::isVisible(bool includingParents) const
 
 void Widget::setEnable(bool enable)
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->setEnable(enable);
 }
 
 bool Widget::isEnable() const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->isEnable();
 }
 
 bool Widget::hasFocus() const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->hasFocus();
 }
 
 bool Widget::containFocus() const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 
 	if (m_widget->hasFocus())
 		return true;
@@ -152,140 +152,140 @@ bool Widget::containFocus() const
 
 void Widget::setFocus()
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->setFocus();
 }
 
 void Widget::setRect(const Rect& rect)
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->setRect(rect);
 	update();
 }
 
 Rect Widget::getRect() const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->getRect();
 }
 
 Rect Widget::getInnerRect() const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->getInnerRect();
 }
 
 Rect Widget::getNormalRect() const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->getNormalRect();
 }
 
 void Widget::setFont(const Font& font)
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->setFont(font);
 }
 
 Font Widget::getFont() const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->getFont();
 }
 
 FontMetric Widget::getFontMetric() const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return FontMetric(m_widget->getFontMetric());
 }
 
 void Widget::setCursor(Cursor cursor)
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->setCursor(cursor);
 }
 
 void Widget::resetCursor()
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->setCursor(CrArrow);
 }
 
 void Widget::update(const Rect* rc, bool immediate)
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->update(rc, immediate);
 }
 
 void Widget::show()
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->setVisible(true);
 }
 
 void Widget::hide()
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->setVisible(false);
 }
 
 bool Widget::hasCapture() const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->hasCapture();
 }
 
 void Widget::setCapture()
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->setCapture();
 }
 
 void Widget::releaseCapture()
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->releaseCapture();
 }
 
 void Widget::startTimer(int interval, int id)
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->startTimer(interval, id);
 }
 
 void Widget::stopTimer(int id)
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	m_widget->stopTimer(id);
 }
 
 Point Widget::getMousePosition(bool relative) const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->getMousePosition(relative);
 }
 
 Point Widget::screenToClient(const Point& pt) const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->screenToClient(pt);
 }
 
 Point Widget::clientToScreen(const Point& pt) const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->clientToScreen(pt);
 }
 
 bool Widget::hitTest(const Point& pt) const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->hitTest(pt);
 }
 
 void Widget::setChildRects(const std::vector< WidgetRect >& childRects)
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	if (!childRects.empty())
 	{
 		std::vector< IWidgetRect > internalChildRects(childRects.size());
@@ -300,19 +300,19 @@ void Widget::setChildRects(const std::vector< WidgetRect >& childRects)
 
 Size Widget::getMinimumSize() const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->getMinimumSize();
 }
 
 Size Widget::getPreferedSize() const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->getPreferedSize();
 }
 
 Size Widget::getMaximumSize() const
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 	return m_widget->getMaximumSize();
 }
 

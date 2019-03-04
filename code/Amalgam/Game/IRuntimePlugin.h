@@ -27,7 +27,11 @@ class T_DLLCLASS IRuntimePlugin : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IState > createInitialState(IEnvironment* environment) const = 0;
+	virtual bool create(IEnvironment* environment) = 0;
+
+	virtual void destroy(IEnvironment* environment) = 0;
+
+	virtual Ref< IState > createInitialState(IEnvironment* environment) = 0;
 };
 
 	}

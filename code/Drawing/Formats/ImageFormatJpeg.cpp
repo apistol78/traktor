@@ -120,7 +120,7 @@ ImageFormatJpegImpl::ImageFormatJpegImpl()
 	m_cinfo.err->error_exit = errorExit;
 
 	jpeg_create_decompress(&m_cinfo);
-	T_ASSERT (!s_errorOccured);
+	T_ASSERT(!s_errorOccured);
 
 	m_pub.init_source = initializeSource;
 	m_pub.fill_input_buffer = fillInputBuffer;
@@ -139,7 +139,7 @@ ImageFormatJpegImpl::~ImageFormatJpegImpl()
 
 bool ImageFormatJpegImpl::readJpegHeader(IStream* stream)
 {
-	T_ASSERT (m_pub.bytes_in_buffer == 0);
+	T_ASSERT(m_pub.bytes_in_buffer == 0);
 	m_pub.stream = stream;
 
 	jpeg_read_header(&m_cinfo, FALSE);
@@ -157,7 +157,7 @@ bool ImageFormatJpegImpl::readJpegHeader(IStream* stream)
 
 Ref< Image > ImageFormatJpegImpl::readJpegImage(IStream* stream)
 {
-	T_ASSERT (m_pub.bytes_in_buffer == 0);
+	T_ASSERT(m_pub.bytes_in_buffer == 0);
 	m_pub.stream = stream;
 
 	if (m_cinfo.global_state == /*DSTATE_START*/200 || m_cinfo.global_state == /*DSTATE_INHEADER*/201)
@@ -204,7 +204,7 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(IStream* stream)
 		int linesRead =
 #endif
 		jpeg_read_scanlines(&m_cinfo, &data, 1);
-		T_ASSERT (linesRead == 1);
+		T_ASSERT(linesRead == 1);
 		data += m_cinfo.output_width * m_cinfo.output_components;
 	}
 

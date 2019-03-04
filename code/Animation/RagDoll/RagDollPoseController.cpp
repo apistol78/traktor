@@ -74,7 +74,7 @@ bool RagDollPoseController::create(
 	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 	{
 		Joint* joint = skeleton->getJoint(i);
-		T_ASSERT (joint);
+		T_ASSERT(joint);
 
 		if (joint->getParent() < 0)
 			continue;
@@ -127,7 +127,7 @@ bool RagDollPoseController::create(
 		Ref< physics::Joint > limbJoint;
 
 		Joint* joint = skeleton->getJoint(i);
-		T_ASSERT (joint);
+		T_ASSERT(joint);
 
 		const Vector4 anchor = limbTransforms[i].translation().xyz1();
 		const Vector4 twistAxis = limbTransforms[i].axisZ();
@@ -268,7 +268,7 @@ bool RagDollPoseController::evaluate(
 	bool& outUpdateController
 )
 {
-	//T_ASSERT (jointTransforms.size() == m_limbs.size());
+	//T_ASSERT(jointTransforms.size() == m_limbs.size());
 
 	//// Update tracking pose controller.
 	//if (m_trackPoseController)
@@ -300,7 +300,7 @@ bool RagDollPoseController::evaluate(
 	//		continue;
 
 	//	const Bone* bone = skeleton->getBone(i);
-	//	T_ASSERT (bone);
+	//	T_ASSERT(bone);
 
 	//	Transform boneP(Vector4(0.0f, 0.0f, bone->getLength(), 1.0f));
 	//	Transform halfBoneN(Vector4(0.0f, 0.0f, -bone->getLength() * 0.5f, 1.0f));

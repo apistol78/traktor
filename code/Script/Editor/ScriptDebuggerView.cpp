@@ -57,7 +57,7 @@ ScriptDebuggerView::ScriptDebuggerView(editor::IEditor* editor, IScriptDebugger*
 
 ScriptDebuggerView::~ScriptDebuggerView()
 {
-	T_ASSERT (!m_scriptDebugger);
+	T_ASSERT(!m_scriptDebugger);
 }
 
 bool ScriptDebuggerView::create(ui::Widget* parent)

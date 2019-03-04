@@ -78,7 +78,7 @@ public:
 
 	void pop_front()
 	{
-		T_ASSERT (m_front != m_back);
+		T_ASSERT(m_front != m_back);
 		m_front = (m_front + 1) % Capacity;
 	}
 

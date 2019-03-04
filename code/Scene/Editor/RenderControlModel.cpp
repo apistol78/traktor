@@ -51,7 +51,7 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 	m_modifyClone = false;
 	m_modifyBegun = false;
 
-	T_ASSERT (m_modify == MtNothing);
+	T_ASSERT(m_modify == MtNothing);
 
 	ui::Rect innerRect = renderWidget->getInnerRect();
 	Vector2 screenPosition(2.0f * float(m_mousePosition.x) / innerRect.getWidth() - 1.0f, 1.0f - 2.0f * float(m_mousePosition.y) / innerRect.getHeight());
@@ -248,7 +248,7 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 	if (m_modify == MtModifier)
 	{
 		IModifier* modifier = context->getModifier();
-		T_ASSERT (modifier);
+		T_ASSERT(modifier);
 
 		Vector4 worldRayOrigin, worldRayDirection;
 		renderControl->calculateRay(

@@ -154,7 +154,7 @@ ActionValue getVariable(ExecutionState& state, const ActionValue& variable)
 		while (movieClip)
 		{
 			ActionObject* movieClipAS = movieClip->getAsObject(state.context);
-			T_ASSERT (movieClipAS);
+			T_ASSERT(movieClipAS);
 
 			if (getMemberOrProperty(state, movieClipAS, variableId, value))
 				return value;
@@ -407,7 +407,7 @@ void opx_setVariable(ExecutionState& state)
 	if (state.movieClip)
 	{
 		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
-		T_ASSERT (movieClipAS);
+		T_ASSERT(movieClipAS);
 
 		setMemberOrProperty(state, movieClipAS, variableId, value);
 
@@ -768,7 +768,7 @@ void opx_castOp(ExecutionState& state)
 		if (object && classFunction)
 		{
 			ActionObject* __proto__ = object->get__proto__();
-			T_ASSERT (__proto__);
+			T_ASSERT(__proto__);
 
 			ActionValue prototypeValue;
 			classFunction->getLocalMember(ActionContext::IdPrototype, prototypeValue);
@@ -776,7 +776,7 @@ void opx_castOp(ExecutionState& state)
 			if (prototypeValue.isObject())
 			{
 				ActionObject* prototype = prototypeValue.getObject();
-				T_ASSERT (prototype);
+				T_ASSERT(prototype);
 
 				for (;;)
 				{
@@ -931,7 +931,7 @@ void opx_delete2(ExecutionState& state)
 	if (state.movieClip)
 	{
 		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
-		T_ASSERT (movieClipAS);
+		T_ASSERT(movieClipAS);
 
 		if (movieClipAS->deleteMember(variableNameId))
 		{
@@ -966,7 +966,7 @@ void opx_defineLocal(ExecutionState& state)
 	if (state.movieClip)
 	{
 		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
-		T_ASSERT (movieClipAS);
+		T_ASSERT(movieClipAS);
 
 		movieClipAS->setMember(variableNameId, variableValue);
 		return;
@@ -1069,7 +1069,7 @@ void opx_defineLocal2(ExecutionState& state)
 	if (state.movieClip)
 	{
 		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
-		T_ASSERT (movieClipAS);
+		T_ASSERT(movieClipAS);
 
 		movieClipAS->setMember(variableNameId, ActionValue());
 	}
@@ -1086,7 +1086,7 @@ void opx_initArray(ExecutionState& state)
 	)
 	{
 		ActionFunction* arrayClass = arrayClassMember.getObject< ActionFunction >();
-		T_ASSERT (arrayClass);
+		T_ASSERT(arrayClass);
 
 		// Allocate array instance.
 		Ref< ActionObject > self = new ActionObject(state.context, "Array");
@@ -1761,8 +1761,8 @@ void opx_extends(ExecutionState& state)
 	ActionValue superClass = stack.pop();
 	ActionValue subClass = stack.pop();
 
-	T_ASSERT (superClass.isObject());
-	T_ASSERT (subClass.isObject());
+	T_ASSERT(superClass.isObject());
+	T_ASSERT(subClass.isObject());
 
 	ActionValue superPrototype;
 	superClass.getObject()->getMember(ActionContext::IdPrototype, superPrototype);
@@ -1984,10 +1984,10 @@ void opx_defineFunction2(ExecutionState& state)
 	if (*functionName != 0)
 	{
 		// Assign function object into variable with the same name as the function.
-		T_ASSERT (state.movieClip);
+		T_ASSERT(state.movieClip);
 
 		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
-		T_ASSERT (movieClipAS);
+		T_ASSERT(movieClipAS);
 
 		movieClipAS->setMember(functionName, ActionValue(function));
 	}
@@ -2372,10 +2372,10 @@ void opx_defineFunction(ExecutionState& state)
 	if (*functionName != 0)
 	{
 		// Assign function object into variable with the same name as the function.
-		T_ASSERT (state.movieClip);
+		T_ASSERT(state.movieClip);
 
 		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
-		T_ASSERT (movieClipAS);
+		T_ASSERT(movieClipAS);
 
 		movieClipAS->setMember(functionName, ActionValue(function));
 	}

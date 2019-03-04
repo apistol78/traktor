@@ -91,7 +91,7 @@ int32_t PipelineAgentsManager::getAgentCount() const
 	for (std::map< std::wstring, Ref< PipelineAgent > >::const_iterator i = m_agents.begin(); i != m_agents.end(); ++i)
 	{
 		PipelineAgent* agent = i->second;
-		T_ASSERT (agent);
+		T_ASSERT(agent);
 
 		if (agent->isConnected())
 			++count;
@@ -108,7 +108,7 @@ PipelineAgent* PipelineAgentsManager::getIdleAgent()
 			for (std::map< std::wstring, Ref< PipelineAgent > >::const_iterator i = m_agents.begin(); i != m_agents.end(); ++i)
 			{
 				PipelineAgent* agent = i->second;
-				T_ASSERT (agent);
+				T_ASSERT(agent);
 
 				if (agent->isConnected() && agent->isIdle())
 					return agent;
@@ -142,7 +142,7 @@ void PipelineAgentsManager::waitUntilAllIdle()
 			for (std::map< std::wstring, Ref< PipelineAgent > >::const_iterator i = m_agents.begin(); i != m_agents.end(); ++i)
 			{
 				PipelineAgent* agent = i->second;
-				T_ASSERT (agent);
+				T_ASSERT(agent);
 
 				if (agent->isConnected() && !agent->isIdle())
 				{

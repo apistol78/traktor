@@ -41,7 +41,7 @@ ActionFunction2::ActionFunction2(
 
 ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const ActionValueArray& args)
 {
-	T_ASSERT (!is_a< ActionSuper >(self));
+	T_ASSERT(!is_a< ActionSuper >(self));
 
 	ActionContext* cx = getContext();
 	ActionValuePool& pool = cx->getPool();

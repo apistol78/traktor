@@ -70,7 +70,7 @@ void ScriptDebuggerDialog::notifyEndSession(IScriptDebugger* scriptDebugger, ISc
 	for (int32_t i = 0; i < pageCount; ++i)
 	{
 		ui::TabPage* tabPageSession = m_tabSessions->getPage(i);
-		T_ASSERT (tabPageSession);
+		T_ASSERT(tabPageSession);
 
 		if (tabPageSession->getData< IScriptDebugger >(L"DEBUGGER") == scriptDebugger)
 		{

@@ -116,7 +116,7 @@ void ProgramParameters::beginParameters(RenderContext* context)
 
 void ProgramParameters::endParameters(RenderContext* context)
 {
-	T_ASSERT (m_parameterFirst);
+	T_ASSERT(m_parameterFirst);
 	uint32_t parametersSize = uint32_t(m_parameterLast - m_parameterFirst);
 	if (!context->alloc(parametersSize))
 		T_FATAL_ERROR;
@@ -124,7 +124,7 @@ void ProgramParameters::endParameters(RenderContext* context)
 
 void ProgramParameters::setFloatParameter(handle_t handle, float param)
 {
-	T_ASSERT (m_parameterLast);
+	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtFloat);
@@ -133,7 +133,7 @@ void ProgramParameters::setFloatParameter(handle_t handle, float param)
 
 void ProgramParameters::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
-	T_ASSERT (m_parameterLast);
+	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtFloatArray);
@@ -143,7 +143,7 @@ void ProgramParameters::setFloatArrayParameter(handle_t handle, const float* par
 
 void ProgramParameters::setVectorParameter(handle_t handle, const Vector4& param)
 {
-	T_ASSERT (m_parameterLast);
+	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtVector);
@@ -153,7 +153,7 @@ void ProgramParameters::setVectorParameter(handle_t handle, const Vector4& param
 
 void ProgramParameters::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	T_ASSERT (m_parameterLast);
+	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtVectorArray);
@@ -164,7 +164,7 @@ void ProgramParameters::setVectorArrayParameter(handle_t handle, const Vector4* 
 
 void ProgramParameters::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	T_ASSERT (m_parameterLast);
+	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtMatrix);
@@ -174,7 +174,7 @@ void ProgramParameters::setMatrixParameter(handle_t handle, const Matrix44& para
 
 void ProgramParameters::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	T_ASSERT (m_parameterLast);
+	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtMatrixArray);
@@ -185,7 +185,7 @@ void ProgramParameters::setMatrixArrayParameter(handle_t handle, const Matrix44*
 
 void ProgramParameters::setTextureParameter(handle_t handle, ITexture* texture)
 {
-	T_ASSERT (m_parameterLast);
+	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtTexture);
@@ -194,7 +194,7 @@ void ProgramParameters::setTextureParameter(handle_t handle, ITexture* texture)
 
 void ProgramParameters::setStencilReference(uint32_t stencilReference)
 {
-	T_ASSERT (m_parameterLast);
+	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, 0);
 	write< int >(m_parameterLast, PmtStencilReference);
@@ -203,7 +203,7 @@ void ProgramParameters::setStencilReference(uint32_t stencilReference)
 
 void ProgramParameters::fixup(IProgram* program) const
 {
-	T_ASSERT (program);
+	T_ASSERT(program);
 
 	for (uint8_t* parameter = m_parameterFirst; parameter < m_parameterLast; )
 	{

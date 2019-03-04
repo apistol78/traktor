@@ -116,12 +116,12 @@ void CompactDatabase::close()
 	if (m_context)
 	{
 		Ref< BlockFile > blockFile = m_context->getBlockFile();
-		T_ASSERT (blockFile);
+		T_ASSERT(blockFile);
 
 		if (!m_readOnly && DeepHash(m_context->getRegistry()) != m_registryHash)
 		{
 			Ref< IStream > registryStream = blockFile->writeBlock(1);
-			T_ASSERT (registryStream);
+			T_ASSERT(registryStream);
 
 			BinarySerializer(registryStream).writeObject(m_context->getRegistry());
 

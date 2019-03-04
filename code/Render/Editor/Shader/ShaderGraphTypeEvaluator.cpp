@@ -44,7 +44,7 @@ PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 	m_cache[outputPin] = PntVoid;
 
 	const Node* node = outputPin->getNode();
-	T_ASSERT (node);
+	T_ASSERT(node);
 
 	if (is_a< Type >(node))
 	{
@@ -74,7 +74,7 @@ PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 	else
 	{
 		const INodeTraits* nodeTraits = INodeTraits::find(node);
-		T_ASSERT (nodeTraits);
+		T_ASSERT(nodeTraits);
 
 		uint32_t inputPinCount = node->getInputPinCount();
 

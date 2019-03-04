@@ -89,7 +89,7 @@ bool SteamCloudSaveData::set(const std::wstring& saveDataId, const SaveDataDesc&
 	BinarySerializer(&dms).writeObject(attachment);
 
 	AlignedVector< uint8_t >& buffer = dms.getBuffer();
-	T_ASSERT (buffer.size() >= 16);
+	T_ASSERT(buffer.size() >= 16);
 
 	// Calculate new MD5 checksum.
 	MD5 cs;

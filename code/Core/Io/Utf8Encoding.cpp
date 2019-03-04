@@ -113,7 +113,7 @@ int Utf8Encoding::translate(const uint8_t in[MaxEncodingSize], int count, wchar_
 	}
 #endif
 
-	T_ASSERT ((in[0] & 0x80) == 0x00);
+	T_ASSERT((in[0] & 0x80) == 0x00);
 	out = wchar_t(in[0]);
 	return 1;
 }

@@ -101,7 +101,7 @@ private:
 		for (uint32_t i = 0; i < inputPinCount; ++i)
 		{
 			const InputPin* inputPin = node->getInputPin(i);
-			T_ASSERT (inputPin);
+			T_ASSERT(inputPin);
 
 			Edge* edge = m_shaderGraph->findEdge(inputPin);
 			if (edge)
@@ -125,7 +125,7 @@ private:
 		for (uint32_t i = 0; i < inputPinCount; ++i)
 		{
 			const InputPin* inputPin = node->getInputPin(i);
-			T_ASSERT (inputPin);
+			T_ASSERT(inputPin);
 
 			Edge* edge = m_shaderGraph->findEdge(inputPin);
 			if (edge)
@@ -158,7 +158,7 @@ private:
 			for (uint32_t j = 0; j < inputPinCount; ++j)
 			{
 				const InputPin* inputPin = (*i)->getInputPin(j);
-				T_ASSERT (inputPin);
+				T_ASSERT(inputPin);
 
 				Edge* edge = m_shaderGraph->findEdge(inputPin);
 				if (edge)
@@ -302,7 +302,7 @@ inline bool arePinsConnected(const ShaderGraph* shaderGraph, const OutputPin* ou
  */
 inline void getMergingOutputs(const ShaderGraph* shaderGraph, const std::vector< const InputPin* >& inputPins, std::vector< const OutputPin* >& outMergedOutputPins)
 {
-	T_ASSERT (inputPins.size() >= 2);
+	T_ASSERT(inputPins.size() >= 2);
 
 	// Collect all reachable output pins.
 	std::vector< CollectOutputs > visitors(inputPins.size());

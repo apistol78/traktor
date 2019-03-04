@@ -30,13 +30,13 @@ bool BspTree::build(const AlignedVector< Winding3 >& polygons)
 
 bool BspTree::inside(const Vector4& pt) const
 {
-	T_ASSERT (m_root);
+	T_ASSERT(m_root);
 	return inside(m_root, pt);
 }
 
 bool BspTree::inside(const Winding3& w) const
 {
-	T_ASSERT (m_root);
+	T_ASSERT(m_root);
 	return inside(m_root, w);
 }
 
@@ -65,12 +65,12 @@ Ref< BspTree::BspNode > BspTree::recursiveBuild(AlignedVector< Winding3 >& polyg
 		}
 		else
 		{
-			T_ASSERT (cf == Winding3::CfSpan);
+			T_ASSERT(cf == Winding3::CfSpan);
 			Winding3 f, b;
 
 			polygons[i].split(p, f, b);
-			T_ASSERT (f.size() >= 3);
-			T_ASSERT (b.size() >= 3);
+			T_ASSERT(f.size() >= 3);
+			T_ASSERT(b.size() >= 3);
 
 			frontPolygons.push_back(f);
 			frontPlanes.push_back(planes[i]);
@@ -79,8 +79,8 @@ Ref< BspTree::BspNode > BspTree::recursiveBuild(AlignedVector< Winding3 >& polyg
 		}
 	}
 
-	T_ASSERT (frontPolygons.size() == frontPlanes.size());
-	T_ASSERT (backPolygons.size() == backPlanes.size());
+	T_ASSERT(frontPolygons.size() == frontPlanes.size());
+	T_ASSERT(backPolygons.size() == backPlanes.size());
 
 	// Discard input windings here; not used any more and
 	// we don't want an memory explosion.
@@ -123,12 +123,12 @@ bool BspTree::inside(const BspNode* node, const Winding3& w) const
 		result = node->back ? inside(node->back, w) : false;
 	else
 	{
-		T_ASSERT (cf == Winding3::CfSpan);
+		T_ASSERT(cf == Winding3::CfSpan);
 		Winding3 f, b;
 
 		w.split(m_planes[node->plane], f, b);
-		T_ASSERT (!f.empty());
-		T_ASSERT (!b.empty());
+		T_ASSERT(!f.empty());
+		T_ASSERT(!b.empty());
 
 		if (node->front)
 			result |= inside(node->front, f);

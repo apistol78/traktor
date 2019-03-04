@@ -13,7 +13,7 @@ RfpMemberType::RfpMemberType(const TypeInfo& memberType)
 
 bool RfpMemberType::operator () (const ReflectionMember* member) const
 {
-	T_ASSERT (member);
+	T_ASSERT(member);
 	const TypeInfo& memberType = type_of(member);
 	return is_type_of(m_memberType, memberType);
 }

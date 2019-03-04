@@ -96,7 +96,7 @@ handle_t getParameterHandle(const std::wstring& name)
 	SmallMap< std::wstring, handle_t >::const_iterator i = m_handles.find(name);
 	if (i != m_handles.end())
 	{
-		T_ASSERT (i->second > 0);
+		T_ASSERT(i->second > 0);
 		return i->second;
 	}
 
@@ -127,7 +127,7 @@ std::wstring getDataUsageName(DataUsage usage)
 		L"DuColor",
 		L"DuCustom"
 	};
-	T_ASSERT (int(usage) < sizeof_array(c_names));
+	T_ASSERT(int(usage) < sizeof_array(c_names));
 	return c_names[int(usage)];
 }
 
@@ -148,32 +148,32 @@ std::wstring getDataTypeName(DataType dataType)
 		L"DtHalf2",
 		L"DtHalf4"
 	};
-	T_ASSERT (int(dataType) < sizeof_array(c_names));
+	T_ASSERT(int(dataType) < sizeof_array(c_names));
 	return c_names[int(dataType)];
 }
 
 uint32_t getDataElementCount(DataType dataType)
 {
 	const uint32_t c_elementCounts[] = { 1, 2, 3, 4, 4, 4, 2, 4, 2, 4, 2, 4 };
-	T_ASSERT (int(dataType) < sizeof_array(c_elementCounts));
+	T_ASSERT(int(dataType) < sizeof_array(c_elementCounts));
 	return c_elementCounts[int(dataType)];
 }
 
 std::wstring getTextureFormatName(TextureFormat format)
 {
-	T_ASSERT (int(format) < sizeof_array(c_textureFormatInfo));
+	T_ASSERT(int(format) < sizeof_array(c_textureFormatInfo));
 	return c_textureFormatInfo[int(format)].name;
 }
 
 uint32_t getTextureBlockSize(TextureFormat format)
 {
-	T_ASSERT (int(format) < sizeof_array(c_textureFormatInfo));
+	T_ASSERT(int(format) < sizeof_array(c_textureFormatInfo));
 	return c_textureFormatInfo[int(format)].blockSize;
 }
 
 uint32_t getTextureBlockDenom(TextureFormat format)
 {
-	T_ASSERT (int(format) < sizeof_array(c_textureFormatInfo));
+	T_ASSERT(int(format) < sizeof_array(c_textureFormatInfo));
 	return c_textureFormatInfo[int(format)].blockDenom;
 }
 

@@ -70,7 +70,7 @@ public:
 
 	virtual void release(void* owner) const T_OVERRIDE
 	{
-		T_ASSERT (m_refCount > 0);
+		T_ASSERT(m_refCount > 0);
 		if (--m_refCount == 0)
 			delete this;
 	}

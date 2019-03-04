@@ -174,7 +174,7 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 		break;
 
 	case PtLineStrip:
-		T_ASSERT (0);
+		T_ASSERT(0);
 		break;
 
 	case PtLines:
@@ -245,7 +245,7 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 		break;
 
 	case PtLineStrip:
-		T_ASSERT (0);
+		T_ASSERT(0);
 		break;
 
 	case PtLines:

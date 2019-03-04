@@ -56,18 +56,18 @@ CgVariable* CgContext::emitInput(const InputPin* inputPin)
 		if (m_emitter.emit(*this, sourcePin->getNode()))
 		{
 			variable = m_currentShader->getVariable(sourcePin);
-			T_ASSERT (variable);
+			T_ASSERT(variable);
 		}
 	}
 
-	T_ASSERT (!variable || variable->getType() != CtVoid);
+	T_ASSERT(!variable || variable->getType() != CtVoid);
 	return variable;
 }
 
 CgVariable* CgContext::emitInput(Node* node, const std::wstring& inputPinName)
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
-	T_ASSERT (inputPin);
+	T_ASSERT(inputPin);
 
 	return emitInput(inputPin);
 }
@@ -75,10 +75,10 @@ CgVariable* CgContext::emitInput(Node* node, const std::wstring& inputPinName)
 CgVariable* CgContext::emitOutput(Node* node, const std::wstring& outputPinName, CgType type)
 {
 	const OutputPin* outputPin = node->findOutputPin(outputPinName);
-	T_ASSERT (outputPin);
+	T_ASSERT(outputPin);
 
 	CgVariable* out = m_currentShader->createTemporaryVariable(outputPin, type);
-	T_ASSERT (out);
+	T_ASSERT(out);
 
 	return out;
 }
@@ -86,7 +86,7 @@ CgVariable* CgContext::emitOutput(Node* node, const std::wstring& outputPinName,
 void CgContext::emitOutput(Node* node, const std::wstring& outputPinName, CgVariable* variable)
 {
 	const OutputPin* outputPin = node->findOutputPin(outputPinName);
-	T_ASSERT (outputPin);
+	T_ASSERT(outputPin);
 
 	m_currentShader->associateVariable(outputPin, variable);
 }

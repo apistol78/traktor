@@ -71,7 +71,7 @@ RenderTargetSetOpenGL::~RenderTargetSetOpenGL()
 
 bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 {
-	T_ASSERT (desc.multiSample <= 1);
+	T_ASSERT(desc.multiSample <= 1);
 	m_desc = desc;
 
 	// Create depth/stencil buffer.
@@ -128,7 +128,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 	}
 
 	// Create color targets.
-	T_ASSERT (desc.count < sizeof_array(m_targetTextures));
+	T_ASSERT(desc.count < sizeof_array(m_targetTextures));
 	T_OGL_SAFE(glGenTextures(desc.count, m_targetTextures));
 
 	for (int i = 0; i < desc.count; ++i)
@@ -210,8 +210,8 @@ int RenderTargetSetOpenGL::getHeight() const
 
 ISimpleTexture* RenderTargetSetOpenGL::getColorTexture(int index) const
 {
-	T_ASSERT (index >= 0);
-	T_ASSERT (index < sizeof_array(m_colorTargets));
+	T_ASSERT(index >= 0);
+	T_ASSERT(index < sizeof_array(m_colorTargets));
 	return m_colorTargets[index];
 }
 
@@ -222,10 +222,10 @@ ISimpleTexture* RenderTargetSetOpenGL::getDepthTexture() const
 
 void RenderTargetSetOpenGL::swap(int index1, int index2)
 {
-	T_ASSERT (index1 >= 0);
-	T_ASSERT (index1 < sizeof_array(m_colorTargets));
-	T_ASSERT (index2 >= 0);
-	T_ASSERT (index2 < sizeof_array(m_colorTargets));
+	T_ASSERT(index1 >= 0);
+	T_ASSERT(index1 < sizeof_array(m_colorTargets));
+	T_ASSERT(index2 >= 0);
+	T_ASSERT(index2 < sizeof_array(m_colorTargets));
 	std::swap(m_targetTextures[index1], m_targetTextures[index2]);
 	std::swap(m_colorTargets[index1], m_colorTargets[index2]);
 }

@@ -49,18 +49,18 @@ bool insideCycle(const ShaderGraph* shaderGraph, const OutputPin* outputPin)
 	while (!scanOutputPins.empty())
 	{
 		const OutputPin* scanOutputPin = scanOutputPins.front();
-		T_ASSERT (scanOutputPin);
+		T_ASSERT(scanOutputPin);
 
 		scanOutputPins.pop_front();
 
 		const Node* node = scanOutputPin->getNode();
-		T_ASSERT (node);
+		T_ASSERT(node);
 
 		int32_t inputPinCount = node->getInputPinCount();
 		for (int32_t i = 0; i < inputPinCount; ++i)
 		{
 			const InputPin* inputPin = node->getInputPin(i);
-			T_ASSERT (inputPin);
+			T_ASSERT(inputPin);
 
 			const OutputPin* sourceOutputPin = shaderGraph->findSourcePin(inputPin);
 			if (sourceOutputPin)
@@ -168,8 +168,8 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 			}
 
 			// Remove redundant node.
-			T_ASSERT (nodes[j]->getInputPinCount() == 0);
-			T_ASSERT (nodes[j]->getOutputPinCount() == 1);
+			T_ASSERT(nodes[j]->getInputPinCount() == 0);
+			T_ASSERT(nodes[j]->getOutputPinCount() == 1);
 			shaderGraph->removeNode(nodes[j]);
 			mergedNodes++;
 		}
@@ -193,10 +193,10 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 				}
 
 				int inputPinCount = nodes[i]->getInputPinCount();
-				T_ASSERT (inputPinCount == nodes[j]->getInputPinCount());
+				T_ASSERT(inputPinCount == nodes[j]->getInputPinCount());
 
 				int outputPinCount = nodes[i]->getOutputPinCount();
-				T_ASSERT (outputPinCount == nodes[j]->getOutputPinCount());
+				T_ASSERT(outputPinCount == nodes[j]->getOutputPinCount());
 
 				// Are both nodes wired to same input nodes?
 				bool wiredIdentical = true;
@@ -307,14 +307,14 @@ void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* n
 	for (int32_t i = 0; i < node->getInputPinCount(); ++i)
 	{
 		const InputPin* inputPin = node->getInputPin(i);
-		T_ASSERT (inputPin);
+		T_ASSERT(inputPin);
 
 		const OutputPin* sourceOutputPin = shaderGraph->findSourcePin(inputPin);
 		if (!sourceOutputPin)
 			continue;
 
 		Ref< Node > sourceNode = sourceOutputPin->getNode();
-		T_ASSERT (sourceNode);
+		T_ASSERT(sourceNode);
 
 		bool isSwizzle = is_a< Swizzle >(sourceNode);
 		bool vertexMandatory = is_a< VertexInput >(sourceNode);
@@ -331,7 +331,7 @@ void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* n
 			{
 				// Remove edge; replace with interpolator.
 				Ref< Edge > edge = shaderGraph->findEdge(inputPin);
-				T_ASSERT (edge);
+				T_ASSERT(edge);
 
 				shaderGraph->removeEdge(edge);
 				edge = 0;

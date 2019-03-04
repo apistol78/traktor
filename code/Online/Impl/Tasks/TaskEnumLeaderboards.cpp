@@ -21,7 +21,7 @@ TaskEnumLeaderboards::TaskEnumLeaderboards(
 
 void TaskEnumLeaderboards::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_provider);
+	T_ASSERT(m_provider);
 	T_DEBUG(L"Online; Begin enumerating leaderboards");
 	std::map< std::wstring, ILeaderboardsProvider::LeaderboardData > leaderboards;
 	m_provider->enumerate(leaderboards);

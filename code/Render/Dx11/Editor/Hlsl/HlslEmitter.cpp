@@ -193,7 +193,7 @@ bool emitConditional(HlslContext& cx, Conditional* node)
 		f << L"if (" << in->getName() << L" >= " << ref->getName() << L")" << Endl;
 		break;
 	default:
-		T_ASSERT (0);
+		T_ASSERT(0);
 	}
 
 	f << L"{" << Endl;
@@ -308,7 +308,7 @@ bool emitDiscard(HlslContext& cx, Discard* node)
 		f << L"if (" << in->getName() << L" < " << ref->getName() << L")" << Endl;
 		break;
 	default:
-		T_ASSERT (0);
+		T_ASSERT(0);
 	}
 
 	f << L"\tdiscard;" << Endl;
@@ -488,12 +488,12 @@ bool emitIterate(HlslContext& cx, Iterate* node)
 
 	// Create iterator variable.
 	HlslVariable* N = cx.emitOutput(node, L"N", HtFloat);
-	T_ASSERT (N);
+	T_ASSERT(N);
 
 	// Create void output variable; change type later when we know
 	// the type of the input branch.
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtVoid);
-	T_ASSERT (out);
+	T_ASSERT(out);
 
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
@@ -567,15 +567,15 @@ bool emitIterate2d(HlslContext& cx, Iterate2d* node)
 
 	// Create iterator variables.
 	HlslVariable* X = cx.emitOutput(node, L"X", HtFloat);
-	T_ASSERT (X);
+	T_ASSERT(X);
 
 	HlslVariable* Y = cx.emitOutput(node, L"Y", HtFloat);
-	T_ASSERT (Y);
+	T_ASSERT(Y);
 
 	// Create void output variable; change type later when we know
 	// the type of the input branch.
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtVoid);
-	T_ASSERT (out);
+	T_ASSERT(out);
 
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
@@ -1200,12 +1200,12 @@ bool emitRepeat(HlslContext& cx, Repeat* node)
 
 	// Create iterator variable.
 	HlslVariable* N = cx.emitOutput(node, L"N", HtFloat);
-	T_ASSERT (N);
+	T_ASSERT(N);
 
 	// Create void output variable; change type later when we know
 	// the type of the input branch.
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtVoid);
-	T_ASSERT (out);
+	T_ASSERT(out);
 
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
@@ -1504,7 +1504,7 @@ bool emitScript(HlslContext& cx, Script* node)
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
 		const TypedOutputPin* outputPin = static_cast< const TypedOutputPin* >(node->getOutputPin(i));
-		T_ASSERT (outputPin);
+		T_ASSERT(outputPin);
 
 		out[i] = cx.emitOutput(
 			node,
@@ -1646,7 +1646,7 @@ bool emitScript(HlslContext& cx, Script* node)
 		ss << L")";
 
 		std::wstring processedScript = replaceAll< std::wstring >(script, L"ENTRY", ss.str());
-		T_ASSERT (!processedScript.empty());
+		T_ASSERT(!processedScript.empty());
 
 		StringOutputStream& fs = cx.getShader().getOutputStream(HlslShader::BtScript);
 		fs << processedScript << Endl;
@@ -1745,12 +1745,12 @@ bool emitSum(HlslContext& cx, Sum* node)
 
 	// Create iterator variable.
 	HlslVariable* N = cx.emitOutput(node, L"N", HtFloat);
-	T_ASSERT (N);
+	T_ASSERT(N);
 
 	// Create void output variable; change type later when we know
 	// the type of the input branch.
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtVoid);
-	T_ASSERT (out);
+	T_ASSERT(out);
 
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
@@ -1960,10 +1960,10 @@ bool emitSwitch(HlslContext& cx, Switch* node)
 		cx.getShader().pushScope();
 
 		const InputPin* caseInput = node->getInputPin(i + 2);
-		T_ASSERT (caseInput);
+		T_ASSERT(caseInput);
 
 		HlslVariable* caseInputVariable = cx.emitInput(caseInput);
-		T_ASSERT (caseInputVariable);
+		T_ASSERT(caseInputVariable);
 
 		caseBranches.push_back(fs.str());
 		caseInputs.push_back(*caseInputVariable);
@@ -1981,10 +1981,10 @@ bool emitSwitch(HlslContext& cx, Switch* node)
 		cx.getShader().pushScope();
 
 		const InputPin* caseInput = node->getInputPin(1);
-		T_ASSERT (caseInput);
+		T_ASSERT(caseInput);
 
 		HlslVariable* caseInputVariable = cx.emitInput(caseInput);
-		T_ASSERT (caseInputVariable);
+		T_ASSERT(caseInputVariable);
 
 		caseBranches.push_back(fs.str());
 		caseInputs.push_back(*caseInputVariable);
@@ -2306,7 +2306,7 @@ struct EmitterCast : public Emitter
 
 	virtual bool emit(HlslContext& c, Node* node)
 	{
-		T_ASSERT (is_a< NodeType >(node));
+		T_ASSERT(is_a< NodeType >(node));
 		return (*m_function)(c, static_cast< NodeType* >(node));
 	}
 };
@@ -2398,7 +2398,7 @@ bool HlslEmitter::emit(HlslContext& c, Node* node)
 	}
 
 	// Emit HLSL code.
-	T_ASSERT (i->second);
+	T_ASSERT(i->second);
 	return i->second->emit(c, node);
 }
 

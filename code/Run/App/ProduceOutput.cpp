@@ -19,7 +19,7 @@ void ProduceOutput::printLn(const std::wstring& s)
 
 void ProduceOutput::printSection(int32_t id)
 {
-	T_ASSERT (id >= 0 && id < int32_t(m_sections.size()));
+	T_ASSERT(id >= 0 && id < int32_t(m_sections.size()));
 	m_ss << m_sections[id];
 }
 

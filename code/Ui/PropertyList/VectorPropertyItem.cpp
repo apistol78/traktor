@@ -29,8 +29,8 @@ VectorPropertyItem::VectorPropertyItem(const std::wstring& text, const vector_t&
 :	PropertyItem(text)
 ,	m_dimension(dimension)
 {
-	T_ASSERT (m_dimension > 0);
-	T_ASSERT (m_dimension <= MaxDimension);
+	T_ASSERT(m_dimension > 0);
+	T_ASSERT(m_dimension <= MaxDimension);
 	std::memcpy(m_value, value, sizeof(m_value));
 }
 
@@ -48,7 +48,7 @@ void VectorPropertyItem::createInPlaceControls(Widget* parent)
 {
 	for (int32_t i = 0; i < m_dimension; ++i)
 	{
-		T_ASSERT (!m_editors[i]);
+		T_ASSERT(!m_editors[i]);
 		m_editors[i] = new Edit();
 		m_editors[i]->create(
 			parent,

@@ -126,7 +126,7 @@ struct BuildCombinationTask : public Object
 
 		// Generate combination shader graph.
 		Ref< const ShaderGraph > combinationGraph = combinations->getCombinationShaderGraph(combination);
-		T_ASSERT (combinationGraph);
+		T_ASSERT(combinationGraph);
 
 		// Freeze type permutation.
 		Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph).getTypePermutation();
@@ -195,7 +195,7 @@ struct BuildCombinationTask : public Object
 				continue;
 
 			const Node* outputNode = outputPin->getNode();
-			T_ASSERT (outputNode);
+			T_ASSERT(outputNode);
 
 			if (const Scalar* scalarNode = dynamic_type_cast< const Scalar* >(outputNode))
 			{
@@ -243,10 +243,10 @@ struct BuildCombinationTask : public Object
 			);
 
 			const OutputPin* textureUniformOutput = textureUniform->getOutputPin(0);
-			T_ASSERT (textureUniformOutput);
+			T_ASSERT(textureUniformOutput);
 
 			const OutputPin* textureNodeOutput = (*i)->getOutputPin(0);
-			T_ASSERT (textureNodeOutput);
+			T_ASSERT(textureNodeOutput);
 
 			programGraph->rewire(textureNodeOutput, textureUniformOutput);
 			programGraph->addNode(textureUniform);
@@ -332,7 +332,7 @@ bool ShaderPipeline::buildDependencies(
 
 	// Extract platform permutation.
 	const wchar_t* platformSignature = programCompiler->getPlatformSignature();
-	T_ASSERT (platformSignature);
+	T_ASSERT(platformSignature);
 
 	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(platformSignature);
 	if (!shaderGraph)
@@ -343,7 +343,7 @@ bool ShaderPipeline::buildDependencies(
 
 	// Remove unused branches; don't want to add dependencies to lingering textures et al.
 	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
-	T_ASSERT (shaderGraph);
+	T_ASSERT(shaderGraph);
 
 	// Add fragment dependencies.
 	RefArray< External > externalNodes;
@@ -417,7 +417,7 @@ bool ShaderPipeline::buildOutput(
 
 	// Extract platform permutation.
 	const wchar_t* platformSignature = programCompiler->getPlatformSignature();
-	T_ASSERT (platformSignature);
+	T_ASSERT(platformSignature);
 
 	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(platformSignature);
 	if (!shaderGraph)
@@ -467,7 +467,7 @@ bool ShaderPipeline::buildOutput(
 		log::info << IncreaseIndent;
 
 		Ref< ShaderGraph > shaderGraphTechnique = techniques.generate(*i);
-		T_ASSERT (shaderGraphTechnique);
+		T_ASSERT(shaderGraphTechnique);
 
 		Ref< ShaderGraphCombinations > combinations = new ShaderGraphCombinations(shaderGraphTechnique);
 		uint32_t combinationCount = combinations->getCombinationCount();

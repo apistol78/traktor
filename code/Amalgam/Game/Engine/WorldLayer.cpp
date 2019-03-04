@@ -587,7 +587,7 @@ void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, i
 {
 	if (type == spray::FbtCamera)
 	{
-		T_ASSERT (count >= 4);
+		T_ASSERT(count >= 4);
 		m_cameraOffset = Transform(
 			Vector4(values[0], values[1], values[2]) * Scalar(m_feedbackScale),
 			Quaternion::fromEulerAngles(0.0f, 0.0f, values[3] * m_feedbackScale)
@@ -595,7 +595,7 @@ void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, i
 	}
 	else if (type == spray::FbtImageProcess)
 	{
-		T_ASSERT (count >= 4);
+		T_ASSERT(count >= 4);
 		render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
 		if (postProcess)
 			postProcess->setVectorParameter(s_handleFeedback, Vector4::loadUnaligned(values));

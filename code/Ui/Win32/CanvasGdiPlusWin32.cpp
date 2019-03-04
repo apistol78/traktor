@@ -93,7 +93,7 @@ bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 
 	m_hFont = hWnd.getFont();
 
-	T_ASSERT (m_graphics.ptr());
+	T_ASSERT(m_graphics.ptr());
 
 	m_graphics->SetTextRenderingHint(TextRenderingHintSystemDefault);
 	m_graphics->SetPixelOffsetMode(PixelOffsetModeNone);

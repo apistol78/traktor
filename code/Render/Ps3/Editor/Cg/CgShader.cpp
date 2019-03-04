@@ -59,7 +59,7 @@ CgVariable* CgShader::createTemporaryVariable(const OutputPin* outputPin, CgType
 
 CgVariable* CgShader::createVariable(const OutputPin* outputPin, const std::wstring& variableName, CgType type)
 {
-	T_ASSERT (!m_variables.empty());
+	T_ASSERT(!m_variables.empty());
 
 	Ref< CgVariable > variable = new CgVariable(variableName, type);
 	m_variables.back().insert(std::make_pair(outputPin, variable));
@@ -69,7 +69,7 @@ CgVariable* CgShader::createVariable(const OutputPin* outputPin, const std::wstr
 
 CgVariable* CgShader::createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, CgType type)
 {
-	T_ASSERT (!m_variables.empty());
+	T_ASSERT(!m_variables.empty());
 
 	Ref< CgVariable > variable = new CgVariable(variableName, type);
 	m_variables.front().insert(std::make_pair(outputPin, variable));
@@ -84,7 +84,7 @@ void CgShader::associateVariable(const OutputPin* outputPin, CgVariable* variabl
 
 CgVariable* CgShader::getVariable(const OutputPin* outputPin) const
 {
-	T_ASSERT (!m_variables.empty());
+	T_ASSERT(!m_variables.empty());
 
 	for (std::list< scope_t >::const_reverse_iterator i = m_variables.rbegin(); i != m_variables.rend(); ++i)
 	{
@@ -103,7 +103,7 @@ void CgShader::pushScope()
 
 void CgShader::popScope()
 {
-	T_ASSERT (!m_variables.empty());
+	T_ASSERT(!m_variables.empty());
 	m_variables.pop_back();
 }
 
@@ -212,7 +212,7 @@ void CgShader::popOutputStream(BlockType blockType)
 
 StringOutputStream& CgShader::getOutputStream(BlockType blockType)
 {
-	T_ASSERT (!m_outputStreams[int(blockType)].empty());
+	T_ASSERT(!m_outputStreams[int(blockType)].empty());
 	return *(m_outputStreams[int(blockType)].back());
 }
 

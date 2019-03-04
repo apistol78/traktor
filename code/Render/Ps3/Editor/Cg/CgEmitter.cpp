@@ -173,7 +173,7 @@ bool emitConditional(CgContext& cx, Conditional* node)
 		f << L"if (" << in->getName() << L" >= " << ref->getName() << L")" << Endl;
 		break;
 	default:
-		T_ASSERT (0);
+		T_ASSERT(0);
 	}
 
 	f << L"{" << Endl;
@@ -275,7 +275,7 @@ bool emitDiscard(CgContext& cx, Discard* node)
 		f << L"if (" << in->getName() << L" < " << ref->getName() << L")" << Endl;
 		break;
 	default:
-		T_ASSERT (0);
+		T_ASSERT(0);
 	}
 
 	f << L"\tdiscard;" << Endl;
@@ -469,12 +469,12 @@ bool emitIterate(CgContext& cx, Iterate* node)
 
 	// Create iterator variable.
 	CgVariable* N = cx.emitOutput(node, L"N", CtFloat);
-	T_ASSERT (N);
+	T_ASSERT(N);
 
 	// Create void output variable; change type later when we know
 	// the type of the input branch.
 	CgVariable* out = cx.emitOutput(node, L"Output", CtVoid);
-	T_ASSERT (out);
+	T_ASSERT(out);
 
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
@@ -546,15 +546,15 @@ bool emitIterate2d(CgContext& cx, Iterate2d* node)
 
 	// Create iterator variables.
 	CgVariable* X = cx.emitOutput(node, L"X", CtFloat);
-	T_ASSERT (X);
+	T_ASSERT(X);
 
 	CgVariable* Y = cx.emitOutput(node, L"Y", CtFloat);
-	T_ASSERT (Y);
+	T_ASSERT(Y);
 
 	// Create void output variable; change type later when we know
 	// the type of the input branch.
 	CgVariable* out = cx.emitOutput(node, L"Output", CtVoid);
-	T_ASSERT (out);
+	T_ASSERT(out);
 
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
@@ -1057,12 +1057,12 @@ bool emitRepeat(CgContext& cx, Repeat* node)
 
 	// Create iterator variable.
 	CgVariable* N = cx.emitOutput(node, L"N", CtFloat);
-	T_ASSERT (N);
+	T_ASSERT(N);
 
 	// Create void output variable; change type later when we know
 	// the type of the input branch.
 	CgVariable* out = cx.emitOutput(node, L"Output", CtVoid);
-	T_ASSERT (out);
+	T_ASSERT(out);
 
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
@@ -1263,7 +1263,7 @@ bool emitScript(CgContext& cx, Script* node)
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
 		const TypedOutputPin* outputPin = static_cast< const TypedOutputPin* >(node->getOutputPin(i));
-		T_ASSERT (outputPin);
+		T_ASSERT(outputPin);
 
 		out[i] = cx.emitOutput(
 			node,
@@ -1405,12 +1405,12 @@ bool emitSum(CgContext& cx, Sum* node)
 
 	// Create iterator variable.
 	CgVariable* N = cx.emitOutput(node, L"N", CtFloat);
-	T_ASSERT (N);
+	T_ASSERT(N);
 
 	// Create void output variable; change type later when we know
 	// the type of the input branch.
 	CgVariable* out = cx.emitOutput(node, L"Output", CtVoid);
-	T_ASSERT (out);
+	T_ASSERT(out);
 
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;
@@ -1562,10 +1562,10 @@ bool emitSwitch(CgContext& cx, Switch* node)
 		cx.getShader().pushScope();
 
 		const InputPin* caseInput = node->getInputPin(i + 2);
-		T_ASSERT (caseInput);
+		T_ASSERT(caseInput);
 
 		Ref< CgVariable > caseInputVariable = cx.emitInput(caseInput);
-		T_ASSERT (caseInputVariable);
+		T_ASSERT(caseInputVariable);
 
 		caseBranches.push_back(fs.str());
 		caseInputs.push_back(caseInputVariable);
@@ -1583,10 +1583,10 @@ bool emitSwitch(CgContext& cx, Switch* node)
 		cx.getShader().pushScope();
 
 		const InputPin* caseInput = node->getInputPin(1);
-		T_ASSERT (caseInput);
+		T_ASSERT(caseInput);
 
 		Ref< CgVariable > caseInputVariable = cx.emitInput(caseInput);
-		T_ASSERT (caseInputVariable);
+		T_ASSERT(caseInputVariable);
 
 		caseBranches.push_back(fs.str());
 		caseInputs.push_back(caseInputVariable);
@@ -1890,7 +1890,7 @@ struct EmitterCast : public Emitter
 
 	virtual bool emit(CgContext& c, Node* node)
 	{
-		T_ASSERT (is_a< NodeType >(node));
+		T_ASSERT(is_a< NodeType >(node));
 		return (*m_function)(c, static_cast< NodeType* >(node));
 	}
 };
@@ -1980,7 +1980,7 @@ bool CgEmitter::emit(CgContext& c, Node* node)
 	}
 
 	// Emit HLSL code.
-	T_ASSERT (i->second);
+	T_ASSERT(i->second);
 	if (!i->second->emit(c, node))
 	{
 		log::error << L"Failed to emit " << type_name(node) << Endl;

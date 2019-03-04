@@ -25,9 +25,9 @@ TaskFindMatchingLobbies::TaskFindMatchingLobbies(
 
 void TaskFindMatchingLobbies::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_matchMakingProvider);
-	T_ASSERT (m_userCache);
-	T_ASSERT (m_result);
+	T_ASSERT(m_matchMakingProvider);
+	T_ASSERT(m_userCache);
+	T_ASSERT(m_result);
 
 	std::vector< uint64_t > providerLobbies;
 	if (m_matchMakingProvider->findMatchingLobbies(m_filter, providerLobbies))

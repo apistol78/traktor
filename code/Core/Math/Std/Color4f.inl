@@ -152,13 +152,13 @@ T_MATH_INLINE Color4ub Color4f::toColor4ub() const
 
 T_MATH_INLINE Color4f Color4f::loadAligned(const float* in)
 {
-	T_ASSERT (in);
+	T_ASSERT(in);
 	return Color4f(Vector4::loadAligned(in));
 }
 
 T_MATH_INLINE Color4f Color4f::loadUnaligned(const float* in)
 {
-	T_ASSERT (in);
+	T_ASSERT(in);
 	return Color4f(Vector4::loadUnaligned(in));
 }
 
@@ -174,13 +174,13 @@ T_MATH_INLINE Color4f Color4f::fromColor4ub(const Color4ub& in)
 
 T_MATH_INLINE void Color4f::storeAligned(float* out) const
 {
-	T_ASSERT (out);
+	T_ASSERT(out);
 	m_data.storeAligned(out);
 }
 
 T_MATH_INLINE void Color4f::storeUnaligned(float* out) const
 {
-	T_ASSERT (out);
+	T_ASSERT(out);
 	m_data.storeUnaligned(out);
 }
 

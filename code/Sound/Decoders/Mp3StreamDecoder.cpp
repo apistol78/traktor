@@ -110,7 +110,7 @@ public:
 		// Discard consumed samples; those are lingering in the decoded buffer since last call.
 		if (m_consumedCount)
 		{
-			T_ASSERT (m_consumedCount <= m_decodedCount);
+			T_ASSERT(m_consumedCount <= m_decodedCount);
 			std::memmove(m_decoded[SbcLeft], &m_decoded[SbcLeft][m_consumedCount], (m_decodedCount - m_consumedCount) * sizeof(float));
 			std::memmove(m_decoded[SbcRight], &m_decoded[SbcRight][m_consumedCount], (m_decodedCount - m_consumedCount) * sizeof(float));
 			m_decodedCount -= m_consumedCount;
@@ -224,19 +224,19 @@ void Mp3StreamDecoder::destroy()
 
 double Mp3StreamDecoder::getDuration() const
 {
-	T_ASSERT (m_decoderImpl);
+	T_ASSERT(m_decoderImpl);
 	return m_decoderImpl->getDuration();
 }
 
 bool Mp3StreamDecoder::getBlock(SoundBlock& outSoundBlock)
 {
-	T_ASSERT (m_decoderImpl);
+	T_ASSERT(m_decoderImpl);
 	return m_decoderImpl->getBlock(outSoundBlock);
 }
 
 void Mp3StreamDecoder::rewind()
 {
-	T_ASSERT (m_decoderImpl);
+	T_ASSERT(m_decoderImpl);
 	m_decoderImpl->reset();
 }
 

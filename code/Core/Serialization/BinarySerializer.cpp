@@ -236,7 +236,7 @@ bool read_string(const Ref< IStream >& stream, std::wstring& outString)
 
 bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 {
-	T_ASSERT (str.length() <= std::numeric_limits< uint16_t >::max());
+	T_ASSERT(str.length() <= std::numeric_limits< uint16_t >::max());
 
 	uint32_t length = uint32_t(str.length());
 	if (length > 0)
@@ -299,7 +299,7 @@ bool read_string(const Ref< IStream >& stream, std::string& outString)
 
 bool write_string(const Ref< IStream >& stream, const std::string& str)
 {
-	T_ASSERT (str.length() <= std::numeric_limits< uint16_t >::max());
+	T_ASSERT(str.length() <= std::numeric_limits< uint16_t >::max());
 
 	uint32_t length = uint32_t(str.length());
 	if (length > 0)
@@ -690,7 +690,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 					m_typeReadCache.push_back(type);
 				}
 
-				T_ASSERT (type);
+				T_ASSERT(type);
 
 				object = checked_type_cast< ISerializable* >(type->createInstance());
 				if (!ensure(object != 0))
@@ -746,7 +746,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 
 						m_typeReadCache.push_back(baseType);
 					}
-					T_ASSERT (baseType);
+					T_ASSERT(baseType);
 
 					if (!ensure(read_primitive< int16_t >(m_stream, version)))
 					{
@@ -779,7 +779,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 		Ref< ISerializable > object = *m;
 		if (object)
 		{
-			T_ASSERT (type_of(object).isInstantiable());
+			T_ASSERT(type_of(object).isInstantiable());
 
 			std::map< ISerializable*, uint64_t >::iterator i = m_writeCache.find(object);
 			if (i != m_writeCache.end())

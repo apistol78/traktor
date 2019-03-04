@@ -93,7 +93,7 @@ void segmentsToTriangles_2(const Segment& sl, const Segment& sr, AlignedVector< 
 
 	float y0 = sl.v[0].y;
 	float y1 = sl.v[1].y;
-	T_ASSERT (y0 < y1);
+	T_ASSERT(y0 < y1);
 
 	bool il = false, ir = false;
 
@@ -273,7 +273,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 	// Create vertical segments.
 	for (AlignedVector< Segment >::const_iterator i = segments.begin(); i != segments.end(); ++i)
 	{
-		T_ASSERT (i->fillStyle0 || i->fillStyle1);
+		T_ASSERT(i->fillStyle0 || i->fillStyle1);
 
 		if (!i->curve)
 		{
@@ -379,7 +379,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 
 	for (SmallSet< float >::iterator i = pys.begin() + 1; i != pys.end(); ++i)
 	{
-		T_ASSERT (*i == std::floor(*i));
+		T_ASSERT(*i == std::floor(*i));
 		m_slabs.resize(0);
 
 		int32_t count = 0;
@@ -427,7 +427,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 					float t0, t1;
 					b.intersectX(float(*i), t0, t1);
 
-					T_ASSERT (t0 > -FUZZY_EPSILON && t0 < 1.0f + FUZZY_EPSILON);
+					T_ASSERT(t0 > -FUZZY_EPSILON && t0 < 1.0f + FUZZY_EPSILON);
 
 					Bezier2nd b0, b1;
 					b.split(t0, b0, b1);

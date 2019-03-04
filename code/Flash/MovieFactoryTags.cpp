@@ -160,7 +160,7 @@ bool TagDefineFont::read(SwfReader* swf, ReadContext& context)
 		AlignedVector< SwfShape* > shapeTable(glyphCount);
 		for (uint16_t i = 0; i < glyphCount; ++i)
 		{
-			T_ASSERT (offsetBase + offsetTable[i] < context.tagEndPosition);
+			T_ASSERT(offsetBase + offsetTable[i] < context.tagEndPosition);
 			bs.getStream()->seek(IStream::SeekSet, offsetBase + offsetTable[i]);
 			bs.alignByte();
 			shapeTable[i] = swf->readShape(0);
@@ -202,14 +202,14 @@ bool TagDefineFont::read(SwfReader* swf, ReadContext& context)
 		AlignedVector< SwfShape* > shapeTable(glyphCount);
 		for (uint16_t i = 0; i < glyphCount; ++i)
 		{
-			T_ASSERT (offsetBase + offsetTable[i] < context.tagEndPosition);
+			T_ASSERT(offsetBase + offsetTable[i] < context.tagEndPosition);
 			bs.getStream()->seek(IStream::SeekSet, offsetBase + offsetTable[i]);
 			bs.alignByte();
 			shapeTable[i] = swf->readShape(0);
 		}
 
 		int64_t currentPosition = bs.getStream()->tell();
-		T_ASSERT (offsetBase + codeOffset == currentPosition);
+		T_ASSERT(offsetBase + codeOffset == currentPosition);
 
 		AlignedVector< uint16_t > codeTable(glyphCount);
 		for (uint16_t i = 0; i < glyphCount; ++i)
@@ -572,7 +572,7 @@ bool TagJpegTables::read(SwfReader* swf, ReadContext& context)
 	}
 
 	// Ensure data appears to be correct(ed).
-	T_ASSERT (buffer[0] == 0xff && buffer[1] == 0xd8);
+	T_ASSERT(buffer[0] == 0xff && buffer[1] == 0xd8);
 
 	MemoryStream bufferStream(buffer.ptr(), int(context.tagSize), true, false);
 	context.jpegFormat->readJpegHeader(&bufferStream);
@@ -613,17 +613,17 @@ bool TagDefineBitsJpeg::read(SwfReader* swf, ReadContext& context)
 	}
 
 	// Ensure data appears to be correct(ed).
-	T_ASSERT (buffer[0] == 0xff && buffer[1] == 0xd8);
+	T_ASSERT(buffer[0] == 0xff && buffer[1] == 0xd8);
 	MemoryStream bufferStream(buffer.ptr(), tagSize, true, false);
 
 	// Decode JPEG image, either by using previously defined encoding tables
 	// or, new method, with own encoding tables.
 	if (m_bitsType == 1)
 	{
-		T_ASSERT (context.jpegFormat);
+		T_ASSERT(context.jpegFormat);
 
 		Ref< drawing::Image > image = context.jpegFormat->readJpegImage(&bufferStream);
-		T_ASSERT (image);
+		T_ASSERT(image);
 
 		context.movie->defineBitmap(bitmapId, new BitmapImage(image));
 	}
@@ -1080,7 +1080,7 @@ bool TagRemoveObject::read(SwfReader* swf, ReadContext& context)
 
 bool TagShowFrame::read(SwfReader* swf, ReadContext& context)
 {
-	T_ASSERT (context.frame);
+	T_ASSERT(context.frame);
 	context.sprite->addFrame(context.frame);
 	context.frame = new Frame();
 	return true;
@@ -1237,7 +1237,7 @@ bool TagDefineSound::read(SwfReader* swf, ReadContext& context)
 	bs.alignByte();
 
 	const uint32_t c_soundRates[] = { 5500, 11025, 22050, 44100 };
-	T_ASSERT (soundRate < sizeof_array(c_soundRates));
+	T_ASSERT(soundRate < sizeof_array(c_soundRates));
 
 	Ref< Sound > sound = new Sound();
 	if (!sound->create(soundChannels, c_soundRates[soundRate], soundSampleCount))

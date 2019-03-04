@@ -20,7 +20,7 @@ namespace traktor
 
 #if defined(_DEBUG)
 #	define T_VALIDATE(av) \
-	T_ASSERT ((av).getType() >= ActionValue::AvtUndefined && (av).getType() <= ActionValue::AvtObjectWeak);
+	T_ASSERT((av).getType() >= ActionValue::AvtUndefined && (av).getType() <= ActionValue::AvtObjectWeak);
 #else
 #	define T_VALIDATE(av)
 #endif
@@ -46,7 +46,7 @@ struct StringType
 char* refStringCreate(const char* s, int32_t id)
 {
 	uint32_t len = uint32_t(strlen(s));
-	T_ASSERT (len < 4096);
+	T_ASSERT(len < 4096);
 
 	void* ptr = getAllocator()->alloc(sizeof(StringType) + (len + 1) * sizeof(char), 4, T_FILE_LINE);
 	if (!ptr)
@@ -185,7 +185,7 @@ ActionValue::ActionValue(ActionObject* o)
 ActionValue::ActionValue(ActionObject* o, bool weak)
 :	m_type(AvtObjectWeak)
 {
-	T_ASSERT (weak);
+	T_ASSERT(weak);
 	T_SAFE_ADD_WEAK_REF(o);
 	m_value.o = o;
 }
@@ -354,7 +354,7 @@ Ref< ActionObject > ActionValue::getObjectAlways(ActionContext* context) const
 
 int32_t ActionValue::getStringId() const
 {
-	T_ASSERT (m_type == AvtString);
+	T_ASSERT(m_type == AvtString);
 	return refStringId(m_value.s);
 }
 
@@ -594,8 +594,8 @@ bool ActionValue::operator == (const ActionValue& r) const
 
 void ActionValue::disposeReference(Collectable* collectable)
 {
-	T_ASSERT (m_type == AvtObjectWeak);
-	T_ASSERT (m_value.o == collectable);
+	T_ASSERT(m_type == AvtObjectWeak);
+	T_ASSERT(m_value.o == collectable);
 	m_value.o = 0;
 }
 

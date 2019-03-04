@@ -26,50 +26,50 @@ bool CompactInstance::internalCreate(CompactInstanceEntry* instanceEntry)
 
 std::wstring CompactInstance::getPrimaryTypeName() const
 {
-	T_ASSERT (m_instanceEntry);
+	T_ASSERT(m_instanceEntry);
 	return m_instanceEntry->getPrimaryTypeName();
 }
 
 bool CompactInstance::openTransaction()
 {
-	T_ASSERT (m_instanceEntry);
+	T_ASSERT(m_instanceEntry);
 	return true;
 }
 
 bool CompactInstance::commitTransaction()
 {
-	T_ASSERT (m_instanceEntry);
+	T_ASSERT(m_instanceEntry);
 	return true;
 }
 
 bool CompactInstance::closeTransaction()
 {
-	T_ASSERT (m_instanceEntry);
+	T_ASSERT(m_instanceEntry);
 	return true;
 }
 
 std::wstring CompactInstance::getName() const
 {
-	T_ASSERT (m_instanceEntry);
+	T_ASSERT(m_instanceEntry);
 	return m_instanceEntry->getName();
 }
 
 bool CompactInstance::setName(const std::wstring& name)
 {
-	T_ASSERT (m_instanceEntry);
+	T_ASSERT(m_instanceEntry);
 	m_instanceEntry->setName(name);
 	return true;
 }
 
 Guid CompactInstance::getGuid() const
 {
-	T_ASSERT (m_instanceEntry);
+	T_ASSERT(m_instanceEntry);
 	return m_instanceEntry->getGuid();
 }
 
 bool CompactInstance::setGuid(const Guid& guid)
 {
-	T_ASSERT (m_instanceEntry);
+	T_ASSERT(m_instanceEntry);
 	m_instanceEntry->setGuid(guid);
 	return true;
 }
@@ -86,10 +86,10 @@ uint32_t CompactInstance::getFlags() const
 
 bool CompactInstance::remove()
 {
-	T_ASSERT (m_instanceEntry);
+	T_ASSERT(m_instanceEntry);
 
 	Ref< BlockFile > blockFile = m_context->getBlockFile();
-	T_ASSERT (blockFile);
+	T_ASSERT(blockFile);
 
 	const std::map< std::wstring, Ref< CompactBlockEntry > >& dataBlocks = m_instanceEntry->getDataBlocks();
 	for (std::map< std::wstring, Ref< CompactBlockEntry > >::const_iterator i = dataBlocks.begin(); i != dataBlocks.end(); ++i)
@@ -116,14 +116,14 @@ bool CompactInstance::remove()
 
 Ref< IStream > CompactInstance::readObject(const TypeInfo*& outSerializerType) const
 {
-	T_ASSERT (m_instanceEntry);
+	T_ASSERT(m_instanceEntry);
 
 	Ref< CompactBlockEntry > objectBlockEntry = m_instanceEntry->getObjectBlock();
 	if (!objectBlockEntry)
 		return 0;
 
 	Ref< BlockFile > blockFile = m_context->getBlockFile();
-	T_ASSERT (blockFile);
+	T_ASSERT(blockFile);
 
 	Ref< IStream > objectStream = blockFile->readBlock(objectBlockEntry->getBlockId());
 	if (!objectStream)
@@ -135,10 +135,10 @@ Ref< IStream > CompactInstance::readObject(const TypeInfo*& outSerializerType) c
 
 Ref< IStream > CompactInstance::writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType)
 {
-	T_ASSERT (m_instanceEntry);
+	T_ASSERT(m_instanceEntry);
 
 	Ref< BlockFile > blockFile = m_context->getBlockFile();
-	T_ASSERT (blockFile);
+	T_ASSERT(blockFile);
 
 	Ref< CompactBlockEntry > objectBlockEntry = m_instanceEntry->getObjectBlock();
 	if (!objectBlockEntry)
@@ -163,7 +163,7 @@ Ref< IStream > CompactInstance::writeObject(const std::wstring& primaryTypeName,
 
 uint32_t CompactInstance::getDataNames(std::vector< std::wstring >& outDataNames) const
 {
-	T_ASSERT (m_instanceEntry);
+	T_ASSERT(m_instanceEntry);
 
 	const std::map< std::wstring, Ref< CompactBlockEntry > >& dataBlocks = m_instanceEntry->getDataBlocks();
 	for (std::map< std::wstring, Ref< CompactBlockEntry > >::const_iterator i = dataBlocks.begin(); i != dataBlocks.end(); ++i)
@@ -186,7 +186,7 @@ bool CompactInstance::removeAllData()
 
 Ref< IStream > CompactInstance::readData(const std::wstring& dataName) const
 {
-	T_ASSERT (m_instanceEntry);
+	T_ASSERT(m_instanceEntry);
 
 	const std::map< std::wstring, Ref< CompactBlockEntry > >& dataBlocks = m_instanceEntry->getDataBlocks();
 
@@ -195,17 +195,17 @@ Ref< IStream > CompactInstance::readData(const std::wstring& dataName) const
 		return 0;
 
 	Ref< BlockFile > blockFile = m_context->getBlockFile();
-	T_ASSERT (blockFile);
+	T_ASSERT(blockFile);
 
 	return blockFile->readBlock(i->second->getBlockId());
 }
 
 Ref< IStream > CompactInstance::writeData(const std::wstring& dataName)
 {
-	T_ASSERT (m_instanceEntry);
+	T_ASSERT(m_instanceEntry);
 
 	Ref< BlockFile > blockFile = m_context->getBlockFile();
-	T_ASSERT (blockFile);
+	T_ASSERT(blockFile);
 
 	std::map< std::wstring, Ref< CompactBlockEntry > >& dataBlocks = m_instanceEntry->getDataBlocks();
 	if (!dataBlocks[dataName])

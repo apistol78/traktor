@@ -78,7 +78,7 @@ void ConfigurationsDialog::eventButtonNew(ui::ButtonClickEvent* event)
 		return;
 
 	std::wstring current = m_listConfigurations->getItem(selectedId);
-	T_ASSERT (!current.empty());
+	T_ASSERT(!current.empty());
 
 	ui::InputDialog::Field inputFields[] =
 	{
@@ -112,7 +112,7 @@ void ConfigurationsDialog::eventButtonRename(ui::ButtonClickEvent* event)
 		return;
 
 	std::wstring current = m_listConfigurations->getItem(selectedId);
-	T_ASSERT (!current.empty());
+	T_ASSERT(!current.empty());
 
 	ui::InputDialog::Field inputFields[] =
 	{
@@ -146,7 +146,7 @@ void ConfigurationsDialog::eventButtonRemove(ui::ButtonClickEvent* event)
 		return;
 
 	std::wstring name = m_listConfigurations->getItem(selectedId);
-	T_ASSERT (!name.empty());
+	T_ASSERT(!name.empty());
 
 	Action action = { AtRemove, name, L"" };
 	m_actions.push_back(action);

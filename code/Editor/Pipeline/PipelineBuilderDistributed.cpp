@@ -36,7 +36,7 @@ void calculateGlobalHash(
 	for (SmallSet< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
 	{
 		const PipelineDependency* childDependency = dependencySet->get(*i);
-		T_ASSERT (childDependency);
+		T_ASSERT(childDependency);
 
 		if (childDependency == dependency)
 			continue;
@@ -85,7 +85,7 @@ bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencyS
 	for (uint32_t i = 0; i < dependencyCount; ++i)
 	{
 		const PipelineDependency* dependency = dependencySet->get(i);
-		T_ASSERT (dependency);
+		T_ASSERT(dependency);
 
 		if ((dependency->flags & PdfFailed) != 0)
 			continue;
@@ -132,7 +132,7 @@ bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencyS
 	for (uint32_t i = 0; i < dependencyCount; ++i)
 	{
 		const PipelineDependency* dependency = dependencySet->get(i);
-		T_ASSERT (dependency);
+		T_ASSERT(dependency);
 
 		if ((dependency->flags & PdfFailed) != 0)
 			continue;
@@ -152,7 +152,7 @@ bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencyS
 			}
 
 			const PipelineDependency* childDependency = dependencySet->get(children.back());
-			T_ASSERT (childDependency);
+			T_ASSERT(childDependency);
 
 			if ((childDependency->flags & PdfUse) == 0)
 			{
@@ -180,7 +180,7 @@ bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencyS
 		if (reasons[i] != 0)
 		{
 			const PipelineDependency* dependency = dependencySet->get(i);
-			T_ASSERT (dependency);
+			T_ASSERT(dependency);
 
 			if ((dependency->flags & PdfFailed) != 0)
 				continue;
@@ -295,7 +295,7 @@ bool PipelineBuilderDistributed::performBuild(const IPipelineDependencySet* depe
 	log::info << L"Building asset \"" << dependency->outputPath << L"..." << Endl;
 
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
-	T_ASSERT (pipeline);
+	T_ASSERT(pipeline);
 
 	int32_t agentIndex = m_agentsManager->getAgentIndex(agent);
 

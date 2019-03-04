@@ -63,7 +63,7 @@ public:
 		if (m_header)
 		{
 			m_header->dataSize = tell();
-			T_ASSERT (m_header->writerCount == 1);
+			T_ASSERT(m_header->writerCount == 1);
 			InterlockedDecrement(&m_header->writerCount);
 			MemoryStream::close();
 			m_header = 0;

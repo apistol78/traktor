@@ -22,7 +22,7 @@ TaskEnumStatistics::TaskEnumStatistics(
 
 void TaskEnumStatistics::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_provider);
+	T_ASSERT(m_provider);
 	T_DEBUG(L"Online; Begin enumerating statistics");
 	std::map< std::wstring, int32_t > statistics;
 	m_provider->enumerate(statistics);

@@ -60,7 +60,7 @@ Ref< Object > ObjectPropertyItem::getObject() const
 
 void ObjectPropertyItem::createInPlaceControls(Widget* parent)
 {
-	T_ASSERT (!m_buttonEdit);
+	T_ASSERT(!m_buttonEdit);
 	m_buttonEdit = new MiniButton();
 	m_buttonEdit->create(parent, L"");
 	m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &ObjectPropertyItem::eventClick);

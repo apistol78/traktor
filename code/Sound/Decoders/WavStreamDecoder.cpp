@@ -49,7 +49,7 @@ bool WavStreamDecoder::getBlock(SoundBlock& outSoundBlock)
 	uint8_t block[32768 * 2];
 
 	uint32_t requestBlockSize = outSoundBlock.samplesCount * (m_format.channels * m_format.bitsPerSample / 8);
-	T_ASSERT (requestBlockSize <= sizeof(block));
+	T_ASSERT(requestBlockSize <= sizeof(block));
 
 	uint32_t readBlockSize = m_stream->read(block, requestBlockSize);
 	if (!readBlockSize)

@@ -575,7 +575,7 @@ bool TextureOutputPipeline::buildOutput(
 	if (textureOutput->m_textureType == Tt2D || textureOutput->m_generateSphereMap)
 	{
 		mipCount = textureOutput->m_generateMips ? log2(std::max(width, height)) + 1 : 1;
-		T_ASSERT (mipCount >= 1);
+		T_ASSERT(mipCount >= 1);
 
 		Writer writer(stream);
 
@@ -671,7 +671,7 @@ bool TextureOutputPipeline::buildOutput(
 					if (m_generateMipsThread)
 					{
 						Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &ScaleTextureTask::execute));
-						T_ASSERT (job);
+						T_ASSERT(job);
 
 						tasks[i] = task;
 						jobs[i] = job;
@@ -681,7 +681,7 @@ bool TextureOutputPipeline::buildOutput(
 						task->execute();
 
 						mipImages[i] = task->image;
-						T_ASSERT (mipImages[i]);
+						T_ASSERT(mipImages[i]);
 					}
 				}
 				else
@@ -690,7 +690,7 @@ bool TextureOutputPipeline::buildOutput(
 					// \note We're not cloning the image as we want to keep memory usage lower, this
 					// assumes the image isn't modified.
 					mipImages[i] = image;
-					T_ASSERT (mipImages[i]);
+					T_ASSERT(mipImages[i]);
 				}
 			}
 
@@ -705,7 +705,7 @@ bool TextureOutputPipeline::buildOutput(
 						jobs[i] = 0;
 
 						mipImages[i] = tasks[i]->image;
-						T_ASSERT (mipImages[i]);
+						T_ASSERT(mipImages[i]);
 
 						tasks[i] = 0;
 					}
@@ -748,7 +748,7 @@ bool TextureOutputPipeline::buildOutput(
 		}
 
 		mipCount = textureOutput->m_generateMips ? log2(height) + 1 : 1;
-		T_ASSERT (mipCount >= 1);
+		T_ASSERT(mipCount >= 1);
 
 		Writer writer(stream);
 
@@ -847,7 +847,7 @@ bool TextureOutputPipeline::buildOutput(
 		}
 
 		mipCount = textureOutput->m_generateMips ? log2(sideSize) + 1 : 1;
-		T_ASSERT (mipCount >= 1);
+		T_ASSERT(mipCount >= 1);
 
 		Writer writer(stream);
 

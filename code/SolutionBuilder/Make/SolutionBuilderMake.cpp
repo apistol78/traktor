@@ -763,8 +763,8 @@ void SolutionBuilderMake::collectLinkDependencies(
 			dependentProject = static_cast< ExternalDependency* >(*i)->getProject();
 		}
 
-		T_ASSERT (dependentSolution);
-		T_ASSERT (dependentProject);
+		T_ASSERT(dependentSolution);
+		T_ASSERT(dependentProject);
 
 		Ref< Configuration > configuration = dependentProject->getConfiguration(configurationName);
 		if (configuration)
