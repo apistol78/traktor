@@ -121,7 +121,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_soundSystem = m_editor->getStoreObject< sound::SoundSystem >(L"SoundSystem");
 
 	Ref< db::Database > database = m_editor->getOutputDatabase();
-	T_ASSERT (database);
+	T_ASSERT(database);
 
 	m_resourceManager = new resource::ResourceManager(database, true);
 	m_resourceManager->addFactory(new mesh::MeshFactory(renderSystem));
@@ -144,7 +144,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolToggleGroundClip = new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GROUND_CLIP"), 8, ui::Command(L"Effect.Editor.ToggleGroundClip"), ui::ToolBarButton::BsDefaultToggle);
 
 	Ref< const PropertyGroup > settings = m_editor->getSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	m_guideVisible = settings->getProperty< bool >(L"EffectEditor.ToggleGuide", m_guideVisible);
 	m_toolToggleGuide->setToggled(m_guideVisible);
@@ -209,7 +209,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 void EffectEditorPage::destroy()
 {
 	Ref< PropertyGroup > settings = m_editor->checkoutGlobalSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleMove", m_moveEmitter);
@@ -326,10 +326,10 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 					{
 						// Extract parameters from old source and insert into new source.
 						Ref< Reflection > sourceReflection = Reflection::create(source);
-						T_ASSERT (sourceReflection);
+						T_ASSERT(sourceReflection);
 
 						Ref< Reflection > oldSourceReflection = Reflection::create(oldSource);
-						T_ASSERT (oldSourceReflection);
+						T_ASSERT(oldSourceReflection);
 
 						for (uint32_t i = 0; i < sourceReflection->getMemberCount(); ++i)
 						{
@@ -367,7 +367,7 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 			for (RefArray< ui::SequenceItem >::iterator i = selectedItems.begin(); i != selectedItems.end(); ++i)
 			{
 				Ref< EffectLayerData > layer = (*i)->getData< EffectLayerData >(L"LAYERDATA");
-				T_ASSERT (layer);
+				T_ASSERT(layer);
 
 				clipboardData->addLayer(layer);
 			}
@@ -394,7 +394,7 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 		if (m_document->undo())
 		{
 			m_effectData = m_document->getObject< EffectData >(0);
-			T_ASSERT (m_effectData);
+			T_ASSERT(m_effectData);
 
 			m_site->setPropertyObject(m_effectData);
 
@@ -407,7 +407,7 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 		if (m_document->redo())
 		{
 			m_effectData = m_document->getObject< EffectData >(0);
-			T_ASSERT (m_effectData);
+			T_ASSERT(m_effectData);
 
 			m_site->setPropertyObject(m_effectData);
 
@@ -440,7 +440,7 @@ void EffectEditorPage::updateEffectPreview()
 			if (!layerItem->getButtonState(0))
 			{
 				EffectLayerData* effectLayerData = layerItem->getData< EffectLayerData >(L"LAYERDATA");
-				T_ASSERT (effectLayerData);
+				T_ASSERT(effectLayerData);
 
 				Ref< EffectLayer > effectLayer = effectLayerData->createEffectLayer(m_resourceManager, 0);
 				if (effectLayer)
@@ -482,7 +482,7 @@ void EffectEditorPage::updateSequencer()
 		ui::Sequence* layerItem = mandatory_non_null_type_cast< ui::Sequence* >(*i);
 
 		EffectLayerData* effectLayerData = layerItem->getData< EffectLayerData >(L"LAYERDATA");
-		T_ASSERT (effectLayerData);
+		T_ASSERT(effectLayerData);
 
 		visibleStates[effectLayerData] = layerItem->getButtonState(0);
 	}
@@ -591,7 +591,7 @@ void EffectEditorPage::eventSequencerLayerSelect(ui::SelectionChangeEvent* event
 		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(selectedItems.front());
 
 		Ref< EffectLayerData > layer = selectedSequence->getData< EffectLayerData >(L"LAYERDATA");
-		T_ASSERT (layer);
+		T_ASSERT(layer);
 
 		ui::Marker* selectedMarker = dynamic_type_cast< ui::Marker* >(selectedSequence->getSelectedKey());
 		if (selectedMarker)
@@ -620,7 +620,7 @@ void EffectEditorPage::eventSequencerTimeCursorMove(ui::CursorMoveEvent* event)
 void EffectEditorPage::eventSequencerLayerRearranged(ui::SequenceMovedEvent* event)
 {
 	Ref< EffectLayerData > movedLayer = event->getItem()->getData< EffectLayerData >(L"LAYERDATA");
-	T_ASSERT (movedLayer);
+	T_ASSERT(movedLayer);
 
 	RefArray< EffectLayerData > layers = m_effectData->getLayers();
 
@@ -637,7 +637,7 @@ void EffectEditorPage::eventSequencerKeyMove(ui::KeyMoveEvent* event)
 	if (movedRange)
 	{
 		Ref< EffectLayerData > layer = movedRange->getData< EffectLayerData >(L"LAYERDATA");
-		T_ASSERT (layer);
+		T_ASSERT(layer);
 
 		float start = movedRange->getStart() / 1000.0f;
 		float end = movedRange->getEnd() / 1000.0f;
@@ -651,7 +651,7 @@ void EffectEditorPage::eventSequencerKeyMove(ui::KeyMoveEvent* event)
 	if (movedTick)
 	{
 		Ref< EffectLayerData > layer = movedTick->getData< EffectLayerData >(L"LAYERDATA");
-		T_ASSERT (layer);
+		T_ASSERT(layer);
 
 		float start = movedTick->getTime() / 1000.0f;
 		m_document->push();
@@ -663,13 +663,13 @@ void EffectEditorPage::eventSequencerKeyMove(ui::KeyMoveEvent* event)
 	if (movedMarker)
 	{
 		Ref< EffectLayerData > layer = movedMarker->getData< EffectLayerData >(L"LAYERDATA");
-		T_ASSERT (layer);
+		T_ASSERT(layer);
 
 		Ref< SequenceDataKey > sequenceDataKey = movedMarker->getData< SequenceDataKey >(L"SEQUENCE");
-		T_ASSERT (sequenceDataKey);
+		T_ASSERT(sequenceDataKey);
 
 		SequenceData* sequenceData = sequenceDataKey->getSequenceData();
-		T_ASSERT (sequenceData);
+		T_ASSERT(sequenceData);
 
 		m_document->push();
 

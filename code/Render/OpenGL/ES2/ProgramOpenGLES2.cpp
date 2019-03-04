@@ -147,7 +147,7 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 	}
 
 	GLuint programObject = glCreateProgram();
-	T_ASSERT (programObject != 0);
+	T_ASSERT(programObject != 0);
 
 	T_OGL_SAFE(glAttachShader(programObject, vertexObject));
 	T_OGL_SAFE(glAttachShader(programObject, fragmentObject));
@@ -298,7 +298,7 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 			break;
 
 		default:
-			T_ASSERT (0);
+			T_ASSERT(0);
 		}
 
 		i->dirty = false;
@@ -328,7 +328,7 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 	}
 
 	// Bind textures.
-	T_ASSERT (m_samplers.size() <= 8);
+	T_ASSERT(m_samplers.size() <= 8);
 	uint32_t nsamplers = m_samplers.size();
 	for (uint32_t i = 0; i < nsamplers; ++i)
 	{

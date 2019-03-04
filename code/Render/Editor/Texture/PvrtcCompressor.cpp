@@ -30,7 +30,7 @@ bool PvrtcCompressor::compress(Writer& writer, const RefArray< drawing::Image >&
 	for (int32_t i = 0; i < mipCount; ++i)
 	{
 		int32_t byteSize = pvrtc_size(mipImages[i]->getWidth(), mipImages[i]->getHeight(), 0, use2Bit);
-		T_ASSERT (byteSize <= maxByteSize);
+		T_ASSERT(byteSize <= maxByteSize);
 
 		Ref< drawing::Image > mipImage = mipImages[i];
 		mipImage->convert(drawing::PixelFormat::getA8R8G8B8());

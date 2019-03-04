@@ -29,7 +29,7 @@ Ref< IMesh > PartitionMeshResource::createMesh(
 	render::MeshFactory* meshFactory
 ) const
 {
-	T_ASSERT (m_partitionData);
+	T_ASSERT(m_partitionData);
 
 	Ref< render::Mesh > mesh = render::MeshReader(meshFactory).read(dataStream);
 	if (!mesh)

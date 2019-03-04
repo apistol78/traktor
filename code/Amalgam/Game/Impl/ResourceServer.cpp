@@ -39,7 +39,6 @@ void ResourceServer::createResourceFactories(IEnvironment* environment)
 	m_resourceManager->addFactory(new ai::NavMeshFactory());
 	m_resourceManager->addFactory(new animation::AnimationFactory());
 	m_resourceManager->addFactory(new mesh::MeshFactory(renderSystem));
-	m_resourceManager->addFactory(new flash::MovieResourceFactory());
 	m_resourceManager->addFactory(new hf::HeightfieldFactory());
 	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
 	m_resourceManager->addFactory(new weather::CloudMaskFactory());

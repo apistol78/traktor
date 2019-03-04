@@ -91,7 +91,7 @@ OrthogonalRenderControl::OrthogonalRenderControl()
 bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* context, ViewPlane viewPlane, int32_t cameraId)
 {
 	m_context = context;
-	T_ASSERT (m_context);
+	T_ASSERT(m_context);
 
 	m_multiSample = m_context->getEditor()->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", c_defaultMultiSample);
 	m_viewPlane = viewPlane;

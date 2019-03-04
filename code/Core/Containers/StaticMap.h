@@ -109,7 +109,7 @@ public:
 				return;
 		}
 
-		T_ASSERT (is <= m_data.size());
+		T_ASSERT(is <= m_data.size());
 		m_data.insert(m_data.begin() + is, pair);
 	}
 

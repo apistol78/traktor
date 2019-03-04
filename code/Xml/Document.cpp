@@ -73,8 +73,8 @@ bool Document::loadFromStream(IStream* stream, const std::wstring& name)
 
 		case XmlPullParser::EtEndElement:
 			{
-				T_ASSERT (!stack.empty());
-				T_ASSERT (stack.back()->getName() == e.value);
+				T_ASSERT(!stack.empty());
+				T_ASSERT(stack.back()->getName() == e.value);
 				stack.pop_back();
 			}
 			break;

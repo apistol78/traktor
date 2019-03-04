@@ -43,7 +43,7 @@ Node* GlslContext::getInputNode(const InputPin* inputPin)
 Node* GlslContext::getInputNode(Node* node, const std::wstring& inputPinName)
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
-	T_ASSERT (inputPin);
+	T_ASSERT(inputPin);
 
 	return getInputNode(inputPin);
 }
@@ -99,7 +99,7 @@ GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 	if (result)
 	{
 		variable = m_currentShader->getVariable(sourcePin);
-		T_ASSERT (variable);
+		T_ASSERT(variable);
 	}
 	else
 	{
@@ -122,7 +122,7 @@ GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 GlslVariable* GlslContext::emitInput(Node* node, const std::wstring& inputPinName)
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
-	T_ASSERT (inputPin);
+	T_ASSERT(inputPin);
 
 	return emitInput(inputPin);
 }
@@ -130,10 +130,10 @@ GlslVariable* GlslContext::emitInput(Node* node, const std::wstring& inputPinNam
 GlslVariable* GlslContext::emitOutput(Node* node, const std::wstring& outputPinName, GlslType type)
 {
 	const OutputPin* outputPin = node->findOutputPin(outputPinName);
-	T_ASSERT (outputPin);
+	T_ASSERT(outputPin);
 
 	GlslVariable* out = m_currentShader->createTemporaryVariable(outputPin, type);
-	T_ASSERT (out);
+	T_ASSERT(out);
 
 	return out;
 }
@@ -141,7 +141,7 @@ GlslVariable* GlslContext::emitOutput(Node* node, const std::wstring& outputPinN
 void GlslContext::emitOutput(Node* node, const std::wstring& outputPinName, GlslVariable* variable)
 {
 	const OutputPin* outputPin = node->findOutputPin(outputPinName);
-	T_ASSERT (outputPin);
+	T_ASSERT(outputPin);
 
 	m_currentShader->associateVariable(outputPin, variable);
 }
@@ -247,7 +247,7 @@ GlslShader& GlslContext::getComputeShader()
 
 GlslShader& GlslContext::getShader()
 {
-	T_ASSERT (m_currentShader);
+	T_ASSERT(m_currentShader);
 	return *m_currentShader;
 }
 
@@ -292,7 +292,7 @@ bool GlslContext::defineUniform(const std::wstring& name, GLenum type, GLuint le
 bool GlslContext::defineSampler(const std::wstring& name, uint32_t stateHash, GLenum target, const std::wstring& texture, int32_t& outStage)
 {
 	std::vector< std::wstring >::iterator i = std::find(m_textures.begin(), m_textures.end(), texture);
-	T_ASSERT (i != m_textures.end());
+	T_ASSERT(i != m_textures.end());
 
 	uint32_t textureId = uint32_t(std::distance(m_textures.begin(), i));
 

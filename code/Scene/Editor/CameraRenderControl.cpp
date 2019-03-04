@@ -76,10 +76,10 @@ CameraRenderControl::CameraRenderControl()
 bool CameraRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 {
 	m_context = context;
-	T_ASSERT (m_context);
+	T_ASSERT(m_context);
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	m_multiSample = settings->getProperty< int32_t >(L"Editor.MultiSample", c_defaultMultiSample);
 
@@ -158,7 +158,7 @@ void CameraRenderControl::updateWorldRenderer()
 	}
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
 
@@ -267,7 +267,7 @@ void CameraRenderControl::showSelectionRectangle(const ui::Rect& rect)
 void CameraRenderControl::updateSettings()
 {
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	m_colorClear = settings->getProperty< Color4ub >(L"Editor.Colors/Background");
 	m_colorGrid = settings->getProperty< Color4ub >(L"Editor.Colors/Grid");

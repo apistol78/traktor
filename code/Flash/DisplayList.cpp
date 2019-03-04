@@ -158,7 +158,7 @@ void DisplayList::updateFrame(CharacterInstance* ownerInstance, const Frame* fra
 						0,
 						&placeObject.events
 					);
-					T_ASSERT (layer.instance);
+					T_ASSERT(layer.instance);
 				}
 #if defined(_DEBUG)
 				else
@@ -206,9 +206,9 @@ void DisplayList::updateFrame(CharacterInstance* ownerInstance, const Frame* fra
 		}
 		else
 		{
-			T_ASSERT (!placeObject.has(Frame::PfHasName));
-			T_ASSERT (!placeObject.has(Frame::PfHasCxTransform));
-			T_ASSERT (!placeObject.has(Frame::PfHasMatrix));
+			T_ASSERT(!placeObject.has(Frame::PfHasName));
+			T_ASSERT(!placeObject.has(Frame::PfHasCxTransform));
+			T_ASSERT(!placeObject.has(Frame::PfHasMatrix));
 
 			layer_map_t::iterator j = m_layers.find(placeObject.depth + c_depthOffset);
 			if (j != m_layers.end())
@@ -226,7 +226,7 @@ void DisplayList::updateFrame(CharacterInstance* ownerInstance, const Frame* fra
 
 void DisplayList::showObject(int32_t depth, uint16_t characterId, CharacterInstance* characterInstance, bool immutable)
 {
-	T_ASSERT (characterInstance);
+	T_ASSERT(characterInstance);
 
 	Layer& layer = m_layers[depth];
 
@@ -244,7 +244,7 @@ void DisplayList::showObject(int32_t depth, uint16_t characterId, CharacterInsta
 
 bool DisplayList::removeObject(CharacterInstance* characterInstance)
 {
-	T_ASSERT (characterInstance);
+	T_ASSERT(characterInstance);
 
 	layer_map_t::iterator i = std::find_if(m_layers.begin(), m_layers.end(), FindCharacter(characterInstance));
 	if (i == m_layers.end())
@@ -275,7 +275,7 @@ bool DisplayList::removeObject(int32_t depth)
 
 int32_t DisplayList::getObjectDepth(const CharacterInstance* characterInstance) const
 {
-	T_ASSERT (characterInstance);
+	T_ASSERT(characterInstance);
 	for (layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 	{
 		if (i->second.instance == characterInstance)
@@ -328,10 +328,10 @@ void DisplayList::swap(int32_t depth1, int32_t depth2)
 
 void DisplayList::getObjects(RefArray< CharacterInstance >& outCharacterInstances) const
 {
-	T_ASSERT (outCharacterInstances.empty());
+	T_ASSERT(outCharacterInstances.empty());
 	for (DisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 	{
-		T_ASSERT (i->second.instance);
+		T_ASSERT(i->second.instance);
 		outCharacterInstances.push_back(i->second.instance);
 	}
 }

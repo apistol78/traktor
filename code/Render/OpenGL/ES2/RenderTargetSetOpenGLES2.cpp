@@ -163,7 +163,7 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 	}
 
 	// Create color targets.
-	T_ASSERT (desc.count < sizeof_array(m_targetTextures));
+	T_ASSERT(desc.count < sizeof_array(m_targetTextures));
 	T_OGL_SAFE(glGenTextures(desc.count, m_targetTextures));
 
 	for (int32_t i = 0; i < desc.count; ++i)
@@ -335,8 +335,8 @@ int RenderTargetSetOpenGLES2::getHeight() const
 
 ISimpleTexture* RenderTargetSetOpenGLES2::getColorTexture(int index) const
 {
-	T_ASSERT (index >= 0);
-	T_ASSERT (index < sizeof_array(m_renderTargets));
+	T_ASSERT(index >= 0);
+	T_ASSERT(index < sizeof_array(m_renderTargets));
 	return m_renderTargets[index];
 }
 
@@ -347,10 +347,10 @@ ISimpleTexture* RenderTargetSetOpenGLES2::getDepthTexture() const
 
 void RenderTargetSetOpenGLES2::swap(int index1, int index2)
 {
-	T_ASSERT (index1 >= 0);
-	T_ASSERT (index1 < sizeof_array(m_renderTargets));
-	T_ASSERT (index2 >= 0);
-	T_ASSERT (index2 < sizeof_array(m_renderTargets));
+	T_ASSERT(index1 >= 0);
+	T_ASSERT(index1 < sizeof_array(m_renderTargets));
+	T_ASSERT(index2 >= 0);
+	T_ASSERT(index2 < sizeof_array(m_renderTargets));
 	std::swap(m_targetFBO[index1], m_targetFBO[index2]);
 	std::swap(m_targetTextures[index1], m_targetTextures[index2]);
 	std::swap(m_renderTargets[index1], m_renderTargets[index2]);

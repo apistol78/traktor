@@ -112,7 +112,7 @@ void AutoWidget::requestInterval(AutoWidgetCell* cell, int32_t duration)
 
 void AutoWidget::placeCell(AutoWidgetCell* cell, const Rect& rect)
 {
-	T_ASSERT (cell);
+	T_ASSERT(cell);
 
 	// Add this cell instance.
 	CellInstance instance = { cell, rect };
@@ -124,7 +124,7 @@ void AutoWidget::placeCell(AutoWidgetCell* cell, const Rect& rect)
 
 void AutoWidget::placeHeaderCell(AutoWidgetCell* cell, int32_t height)
 {
-	T_ASSERT (cell);
+	T_ASSERT(cell);
 
 	ui::Rect inner = getInnerRect();
 	inner.bottom = inner.top + height;
@@ -137,7 +137,7 @@ void AutoWidget::placeHeaderCell(AutoWidgetCell* cell, int32_t height)
 
 void AutoWidget::placeFooterCell(AutoWidgetCell* cell, int32_t height)
 {
-	T_ASSERT (cell);
+	T_ASSERT(cell);
 
 	ui::Rect inner = getInnerRect();
 	inner.bottom = inner.top + height;

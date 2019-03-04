@@ -30,9 +30,9 @@ TargetConnection::TargetConnection(const std::wstring &name, net::BidirectionalO
 
 TargetConnection::~TargetConnection()
 {
-	T_ASSERT (!m_targetProfiler);
-	T_ASSERT (!m_targetDebugger);
-	T_ASSERT (!m_transport);
+	T_ASSERT(!m_targetProfiler);
+	T_ASSERT(!m_targetDebugger);
+	T_ASSERT(!m_transport);
 }
 
 void TargetConnection::destroy()

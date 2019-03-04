@@ -100,8 +100,8 @@ bool CalculateTangents::apply(Model& model) const
 		};
 
 		Vector4 ep[] = { p[2] - p[0], p[1] - p[0] };
-		T_ASSERT (ep[0].length() > FUZZY_EPSILON);
-		T_ASSERT (ep[1].length() > FUZZY_EPSILON);
+		T_ASSERT(ep[0].length() > FUZZY_EPSILON);
+		T_ASSERT(ep[1].length() > FUZZY_EPSILON);
 
 		ep[0] = ep[0].normalized();
 		ep[1] = ep[1].normalized();
@@ -116,7 +116,7 @@ bool CalculateTangents::apply(Model& model) const
 
 		tb.binormal = cross(tb.tangent, tb.normal).normalized();
 
-		T_ASSERT (tb.normal.length() > FUZZY_EPSILON);
+		T_ASSERT(tb.normal.length() > FUZZY_EPSILON);
 		tb.normal = tb.normal.normalized();
 
 		if (

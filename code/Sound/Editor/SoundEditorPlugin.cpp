@@ -44,7 +44,7 @@ void SoundEditorPlugin::handleDatabaseEvent(db::Database* database, const Guid& 
 void SoundEditorPlugin::handleWorkspaceOpened()
 {
 	Ref< const PropertyGroup > settings = m_editor->getSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	if (m_editor->getStoreObject(L"SoundSystem") != 0)
 		return;
@@ -55,7 +55,7 @@ void SoundEditorPlugin::handleWorkspaceOpened()
 		return;
 
 	Ref< ISoundDriver > soundDriver = dynamic_type_cast< ISoundDriver* >(soundDriverType->createInstance());
-	T_ASSERT (soundDriver);
+	T_ASSERT(soundDriver);
 
 	SoundSystemCreateDesc desc;
 	desc.channels = settings->getProperty< int32_t >(L"Editor.SoundVirtualChannels", 8);

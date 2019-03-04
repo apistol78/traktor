@@ -41,7 +41,7 @@ void AnglesPropertyItem::createInPlaceControls(Widget* parent)
 {
 	for (int i = 0; i < 3; ++i)
 	{
-		T_ASSERT (!m_editors[i]);
+		T_ASSERT(!m_editors[i]);
 		m_editors[i] = new Edit();
 		m_editors[i]->create(
 			parent,

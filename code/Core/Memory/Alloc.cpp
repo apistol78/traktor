@@ -69,7 +69,7 @@ void Alloc::free(void* ptr)
 
 void* Alloc::acquireAlign(size_t size, size_t align, const char* tag)
 {
-	T_ASSERT (align >= 1);
+	T_ASSERT(align >= 1);
 
 	uint8_t* ptr = (uint8_t*)Alloc::acquire(size + sizeof(intptr_t) + align - 1, tag);
 	if (!ptr)

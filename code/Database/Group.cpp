@@ -17,13 +17,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Group", Group, Object)
 
 std::wstring Group::getName() const
 {
-	T_ASSERT (m_providerGroup);
+	T_ASSERT(m_providerGroup);
 	return m_name;
 }
 
 std::wstring Group::getPath() const
 {
-	T_ASSERT (m_providerGroup);
+	T_ASSERT(m_providerGroup);
 
 	if (!m_parent)
 		return L"";
@@ -40,7 +40,7 @@ std::wstring Group::getPath() const
 
 bool Group::rename(const std::wstring& name)
 {
-	T_ASSERT (m_providerGroup);
+	T_ASSERT(m_providerGroup);
 
 	if (!m_providerGroup->rename(name))
 		return false;
@@ -57,7 +57,7 @@ bool Group::rename(const std::wstring& name)
 
 bool Group::remove()
 {
-	T_ASSERT (m_providerGroup);
+	T_ASSERT(m_providerGroup);
 
 	if (!m_childInstances.empty() || !m_childGroups.empty())
 		return false;
@@ -71,13 +71,13 @@ bool Group::remove()
 
 Ref< Group > Group::getGroup(const std::wstring& groupName)
 {
-	T_ASSERT (m_providerGroup);
+	T_ASSERT(m_providerGroup);
 	return findChildGroup(this, FindGroupByName(groupName));
 }
 
 Ref< Group > Group::createGroup(const std::wstring& groupName)
 {
-	T_ASSERT (m_providerGroup);
+	T_ASSERT(m_providerGroup);
 
 	Ref< Group > group = getGroup(groupName);
 	if (group)
@@ -97,7 +97,7 @@ Ref< Group > Group::createGroup(const std::wstring& groupName)
 
 Ref< Instance > Group::getInstance(const std::wstring& instanceName, const TypeInfo* primaryType)
 {
-	T_ASSERT (m_providerGroup);
+	T_ASSERT(m_providerGroup);
 	if (!primaryType)
 		return findChildInstance(this, FindInstanceByName(instanceName));
 	else
@@ -111,7 +111,7 @@ Ref< Instance > Group::getInstance(const std::wstring& instanceName, const TypeI
 
 Ref< Instance > Group::createInstance(const std::wstring& instanceName, uint32_t flags, const Guid* guid)
 {
-	T_ASSERT (m_providerGroup);
+	T_ASSERT(m_providerGroup);
 	Ref< Instance > instance;
 
 	// Create instance guid, use given if available.
@@ -161,7 +161,7 @@ Ref< Instance > Group::createInstance(const std::wstring& instanceName, uint32_t
 
 Ref< Group > Group::getParent()
 {
-	T_ASSERT (m_providerGroup);
+	T_ASSERT(m_providerGroup);
 	return m_parent;
 }
 
@@ -329,7 +329,7 @@ void Group::instanceEventRemoved(Instance* instance)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		auto i = std::find(m_childInstances.begin(), m_childInstances.end(), instance);
-		T_ASSERT (i != m_childInstances.end());
+		T_ASSERT(i != m_childInstances.end());
 		m_childInstances.erase(i);
 	}
 	m_instanceEventListener->instanceEventRemoved(instance);

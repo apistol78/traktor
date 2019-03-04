@@ -383,7 +383,7 @@ bool TerrainPipeline::buildOutput(
 	else
 	{
 		terrainDetailShader = DeepClone(terrainCoarseShader).create< render::ShaderGraph >();
-		T_ASSERT (terrainDetailShader);
+		T_ASSERT(terrainDetailShader);
 	}
 
 	Ref< render::ShaderGraph > surfaceShader = render::FragmentLinker(fragmentReader).resolve(surfaceShaderTemplate, true);

@@ -89,7 +89,7 @@ TerrainComponent::TerrainComponent(resource::IResourceManager* resourceManager, 
 bool TerrainComponent::create(const TerrainComponentData& data)
 {
 	if (!m_resourceManager->bind(data.getTerrain(), m_terrain))
-		return 0;
+		return false;
 
 	m_heightfield = m_terrain->getHeightfield();
 
@@ -103,10 +103,9 @@ bool TerrainComponent::create(const TerrainComponentData& data)
 	if (!createPatches())
 		return false;
 
-	const RefArray< ITerrainLayerData >& layers = data.getLayers();
-	for (RefArray< ITerrainLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	for (const auto layerData : data.getLayers())
 	{
-		Ref< ITerrainLayer > layer = (*i)->createLayerInstance(m_resourceManager, m_renderSystem, *this);
+		Ref< ITerrainLayer > layer = layerData->createLayerInstance(m_resourceManager, m_renderSystem, *this);
 		if (layer)
 			m_layers.push_back(layer);
 	}
@@ -242,8 +241,8 @@ void TerrainComponent::render(
 						worldRenderView.getProjection() * Pview[1].xyz1()
 					};
 
-					T_ASSERT (Pclip[0].w() > 0.0f);
-					T_ASSERT (Pclip[1].w() > 0.0f);
+					T_ASSERT(Pclip[0].w() > 0.0f);
+					T_ASSERT(Pclip[1].w() > 0.0f);
 
 					Pclip[0] /= Pclip[0].w();
 					Pclip[1] /= Pclip[1].w();
@@ -275,7 +274,7 @@ void TerrainComponent::render(
 
 				bool clipped = false;
 
-				for (int i = 0; i < sizeof_array(extents); ++i)
+				for (int32_t i = 0; i < sizeof_array(extents); ++i)
 				{
 					Vector4 p = viewProj * extents[i];
 					if (p.w() <= 0.0f)
@@ -335,13 +334,13 @@ void TerrainComponent::render(
 			worldExtent
 		);
 
-		for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
+		for (const auto& visiblePatch : visiblePatches)
 		{
-			Patch& patch = m_patches[i->patchId];
-			const Vector4& patchOrigin = i->patchOrigin;
+			Patch& patch = m_patches[visiblePatch.patchId];
+			const Vector4& patchOrigin = visiblePatch.patchOrigin;
 
 			// Calculate which surface lod to use based one distance to patch center.
-			float distance = max(i->distance - detailDistance, 0.0f);
+			float distance = max(visiblePatch.distance - detailDistance, 0.0f);
 			float surfaceLodDistance = std::pow(clamp(distance / m_surfaceLodDistance + m_surfaceLodBias, 0.0f, 1.0f), m_surfaceLodExponent);
 			float surfaceLodF = surfaceLodDistance * c_surfaceLodSteps;
 			int32_t surfaceLod = int32_t(surfaceLodF + 0.5f);
@@ -357,7 +356,7 @@ void TerrainComponent::render(
 			int32_t patchLod = 0;
 			for (int32_t j = 3; j > 0; --j)
 			{
-				if (i->error[j] <= 1.0f)
+				if (visiblePatch.error[j] <= 1.0f)
 				{
 					patchLod = j;
 					break;
@@ -376,7 +375,7 @@ void TerrainComponent::render(
 				patchOrigin,
 				patchExtent,
 				patch.lastSurfaceLod,
-				i->patchId,
+				visiblePatch.patchId,
 				// Out
 				renderBlock,
 				patch.surfaceOffset
@@ -384,7 +383,7 @@ void TerrainComponent::render(
 
 			// Queue patch instance.
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-			patchLodInstances[patchLod].push_back(&(*i));
+			patchLodInstances[patchLod].push_back(&visiblePatch);
 #endif
 		}
 
@@ -395,23 +394,23 @@ void TerrainComponent::render(
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	else
 	{
-		for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
+		for (const auto& visiblePatch : visiblePatches)
 		{
-			Patch& patch = m_patches[i->patchId];
-			patchLodInstances[patch.lastPatchLod].push_back(&(*i));
+			Patch& patch = m_patches[visiblePatch.patchId];
+			patchLodInstances[patch.lastPatchLod].push_back(&visiblePatch);
 		}
 	}
 #endif
 
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 
-	for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
+	for (const auto& visiblePatch : visiblePatches)
 	{
-		Patch& patch = m_patches[i->patchId];
+		Patch& patch = m_patches[visiblePatch.patchId];
 
 		render::SimpleRenderBlock* renderBlock = worldContext.getRenderContext()->alloc< render::SimpleRenderBlock >("Terrain patch");
 
-		renderBlock->distance = i->distance;
+		renderBlock->distance = visiblePatch.distance;
 		renderBlock->program = (patch.lastSurfaceLod == 0) ? detailProgram : coarseProgram;
 		renderBlock->programParams = worldContext.getRenderContext()->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_indexBuffer;
@@ -433,7 +432,7 @@ void TerrainComponent::render(
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
 		renderBlock->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
-		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, i->patchOrigin);
+		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, visiblePatch.patchOrigin);
 		renderBlock->programParams->setFloatParameter(m_handleDetailDistance, detailDistance);
 
 		if (m_visualizeMode == VmSurfaceLod)
@@ -451,7 +450,7 @@ void TerrainComponent::render(
 	render::RenderContext* renderContext = worldContext.getRenderContext();
 
 	// Setup shared shader parameters.
-	for (int i = 0; i < 2; ++i)
+	for (int32_t i = 0; i < 2; ++i)
 	{
 		render::NullRenderBlock* renderBlock = renderContext->alloc< render::NullRenderBlock >("Terrain patch setup");
 
@@ -494,14 +493,14 @@ void TerrainComponent::render(
 	}
 
 	// Render each visible patch.
-	for (AlignedVector< CullPatch >::const_iterator i = visiblePatches.begin(); i != visiblePatches.end(); ++i)
+	for (const auto& visiblePatch : visiblePatches)
 	{
-		Patch& patch = m_patches[i->patchId];
-		const Vector4& patchOrigin = i->patchOrigin;
+		Patch& patch = m_patches[visiblePatch.patchId];
+		const Vector4& patchOrigin = visiblePatch.patchOrigin;
 
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Terrain patch");
 
-		renderBlock->distance = i->distance;
+		renderBlock->distance = visiblePatch.distance;
 		renderBlock->program = (patch.lastSurfaceLod == 0) ? detailProgram : coarseProgram;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_indexBuffer;
@@ -528,8 +527,8 @@ void TerrainComponent::render(
 
 	if (layersEnable)
 	{
-		for (RefArray< ITerrainLayer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			(*i)->render(
+		for (const auto layer : m_layers)
+			layer->render(
 				*this,
 				worldContext,
 				worldRenderView,
@@ -592,8 +591,8 @@ Aabb3 TerrainComponent::getBoundingBox() const
 
 void TerrainComponent::update(const world::UpdateParams& update)
 {
-	for (RefArray< ITerrainLayer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->update(update);
+	for (const auto layer : m_layers)
+		layer->update(update);
 }
 
 bool TerrainComponent::updatePatches()
@@ -617,7 +616,7 @@ bool TerrainComponent::updatePatches()
 
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 			float* vertex = static_cast< float* >(patch.vertexBuffer->lock());
-			T_ASSERT (vertex);
+			T_ASSERT(vertex);
 
 			for (uint32_t z = 0; z < patchDim; ++z)
 			{
@@ -656,8 +655,8 @@ bool TerrainComponent::updatePatches()
 	if (m_surfaceCache)
 		m_surfaceCache->flushBase();
 
-	for (RefArray< ITerrainLayer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->updatePatches(*this);
+	for (const auto layer : m_layers)
+		layer->updatePatches(*this);
 
 	return true;
 }
@@ -672,7 +671,7 @@ bool TerrainComponent::createPatches()
 #endif
 
 	uint32_t heightfieldSize = m_heightfield->getSize();
-	T_ASSERT (heightfieldSize > 0);
+	T_ASSERT(heightfieldSize > 0);
 
 	uint32_t patchDim = m_terrain->getPatchDim();
 	uint32_t detailSkip = m_terrain->getDetailSkip();
@@ -842,13 +841,13 @@ bool TerrainComponent::createPatches()
 		}
 
 		uint32_t indexEndOffset = uint32_t(indices.size());
-		T_ASSERT ((indexEndOffset - indexOffset) % 3 == 0);
+		T_ASSERT((indexEndOffset - indexOffset) % 3 == 0);
 
 		uint32_t minIndex = *std::min_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
 		uint32_t maxIndex = *std::max_element(indices.begin() + indexOffset, indices.begin() + indexEndOffset);
 
-		T_ASSERT (minIndex < patchVertexCount);
-		T_ASSERT (maxIndex < patchVertexCount);
+		T_ASSERT(minIndex < patchVertexCount);
+		T_ASSERT(maxIndex < patchVertexCount);
 
 		m_primitives[lod].setIndexed(
 			render::PtTriangles,

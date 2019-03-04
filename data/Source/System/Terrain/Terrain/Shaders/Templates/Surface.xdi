@@ -98,8 +98,8 @@
 			<id>{3E90F329-FCAD-BB43-951D-04B20FD2A776}</id>
 			<comment/>
 			<position>
-				<first>5016</first>
-				<second>520</second>
+				<first>4382</first>
+				<second>441</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -193,8 +193,8 @@
 			<id>{A91649D2-703A-E244-95C1-2BB1120C5950}</id>
 			<comment/>
 			<position>
-				<first>1651</first>
-				<second>1416</second>
+				<first>1628</first>
+				<second>1123</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -202,8 +202,8 @@
 			<id>{F8F2B0C0-E63A-CB46-BAB1-B0386EF68378}</id>
 			<comment/>
 			<position>
-				<first>1187</first>
-				<second>1430</second>
+				<first>1410</first>
+				<second>1084</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -220,8 +220,8 @@
 			<id>{B78E267A-B884-1548-9322-61DD01D2069E}</id>
 			<comment/>
 			<position>
-				<first>741</first>
-				<second>1224</second>
+				<first>1111</first>
+				<second>1022</second>
 			</position>
 			<parameterName>Heightfield</parameterName>
 			<type>PtTexture2D</type>
@@ -231,8 +231,8 @@
 			<id>{7793C1D2-1DC7-634D-8652-9C53F1953C8C}</id>
 			<comment/>
 			<position>
-				<first>1560</first>
-				<second>337</second>
+				<first>1538</first>
+				<second>410</second>
 			</position>
 			<fragmentGuid>{E848C73B-E979-E445-AD18-E843CECF0928}</fragmentGuid>
 			<inputPins>
@@ -271,8 +271,8 @@
 			<id>{16B11429-167E-9A44-9F0C-660D5A16DF90}</id>
 			<comment/>
 			<position>
-				<first>804</first>
-				<second>665</second>
+				<first>956</first>
+				<second>669</second>
 			</position>
 			<parameterName>PatchExtent</parameterName>
 			<type>PtVector</type>
@@ -282,8 +282,8 @@
 			<id>{5EDF7F5F-F675-3F40-ADF3-825E51CBEC82}</id>
 			<comment/>
 			<position>
-				<first>830</first>
-				<second>839</second>
+				<first>956</first>
+				<second>774</second>
 			</position>
 			<parameterName>PatchOrigin</parameterName>
 			<type>PtVector</type>
@@ -293,8 +293,8 @@
 			<id>{A142ECBF-26EE-764E-91CA-2F9E6F3A1D38}</id>
 			<comment/>
 			<position>
-				<first>1804</first>
-				<second>685</second>
+				<first>2122</first>
+				<second>492</second>
 			</position>
 			<fragmentGuid>{53930A33-0CD2-0247-838C-3561FD095306}</fragmentGuid>
 			<inputPins>
@@ -316,8 +316,8 @@
 			<id>{ACD34F61-8960-5845-8AAE-C3FE1D514111}</id>
 			<comment/>
 			<position>
-				<first>1828</first>
-				<second>540</second>
+				<first>2121</first>
+				<second>568</second>
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
@@ -354,16 +354,16 @@
 			<id>{A64423E6-B339-994D-860E-C10151E3951B}</id>
 			<comment/>
 			<position>
-				<first>3147</first>
-				<second>384</second>
+				<first>3177</first>
+				<second>382</second>
 			</position>
 		</item>
 		<item type="traktor.render.Branch" version="traktor.render.Node:1">
 			<id>{83CFA544-0007-7745-8115-DA6BB6F60B62}</id>
 			<comment/>
 			<position>
-				<first>4006</first>
-				<second>427</second>
+				<first>3728</first>
+				<second>384</second>
 			</position>
 			<parameterName>ColorEnable</parameterName>
 		</item>
@@ -371,16 +371,16 @@
 			<id>{89F982B8-3212-6844-B1F6-A37124250437}</id>
 			<comment/>
 			<position>
-				<first>3561</first>
-				<second>378</second>
+				<first>3529</first>
+				<second>357</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{78703D6F-D38D-3A40-80BF-CEF96FA6D5CF}</id>
 			<comment/>
 			<position>
-				<first>3175</first>
-				<second>346</second>
+				<first>3319</first>
+				<second>311</second>
 			</position>
 			<value>2</value>
 		</item>
@@ -388,8 +388,8 @@
 			<id>{AAFA554B-02BD-034C-A65E-ED464BA9334C}</id>
 			<comment/>
 			<position>
-				<first>4392</first>
-				<second>581</second>
+				<first>3936</first>
+				<second>509</second>
 			</position>
 			<swizzle>000w</swizzle>
 		</item>
@@ -397,8 +397,8 @@
 			<id>{9FA6DA30-392F-7D42-9246-5AC8902867F8}</id>
 			<comment/>
 			<position>
-				<first>4392</first>
-				<second>544</second>
+				<first>3936</first>
+				<second>472</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -406,16 +406,16 @@
 			<id>{EBC5187D-0846-C64C-ABA7-7D6E303F57A7}</id>
 			<comment/>
 			<position>
-				<first>4621</first>
-				<second>500</second>
+				<first>4165</first>
+				<second>428</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{1236E7ED-D3E4-8045-9B9C-7609C65A8A4A}</id>
 			<comment/>
 			<position>
-				<first>1844</first>
-				<second>1159</second>
+				<first>1751</first>
+				<second>990</second>
 			</position>
 			<fragmentGuid>{2C7E2EE3-D483-1C4D-9A3A-2ACC67B3AB70}</fragmentGuid>
 			<inputPins>
@@ -456,16 +456,16 @@
 			<id>{648BF033-6ECB-E34A-BF63-5B418539C511}</id>
 			<comment/>
 			<position>
-				<first>2239</first>
-				<second>1035</second>
+				<first>2016</first>
+				<second>989</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{0EB63544-0BD3-744D-8193-B510CF3716F1}</id>
 			<comment/>
 			<position>
-				<first>1196</first>
-				<second>1181</second>
+				<first>1442</first>
+				<second>979</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -482,8 +482,8 @@
 			<id>{011ECD6C-1DC0-0047-8F6E-FB90BA7E446C}</id>
 			<comment/>
 			<position>
-				<first>1640</first>
-				<second>1187</second>
+				<first>1626</first>
+				<second>1018</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>

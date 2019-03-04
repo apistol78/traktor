@@ -40,7 +40,7 @@ bool ScreenRenderer::create(IRenderSystem* renderSystem)
 		return false;
 
 	ScreenVertex* vertex = reinterpret_cast< ScreenVertex* >(m_vertexBuffer->lock());
-	T_ASSERT (vertex);
+	T_ASSERT(vertex);
 
 	vertex[2].pos[0] = -1.0f; vertex[2].pos[1] =  1.0f; vertex[2].texCoord[0] = 0.0f; vertex[2].texCoord[1] = 0.0f;
 	vertex[1].pos[0] =  1.0f; vertex[1].pos[1] =  1.0f; vertex[1].texCoord[0] = 1.0f; vertex[1].texCoord[1] = 0.0f;

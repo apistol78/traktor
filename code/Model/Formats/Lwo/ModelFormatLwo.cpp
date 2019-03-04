@@ -332,7 +332,7 @@ bool createMesh(const lwObject* lwo, Model* outModel, AlignedVector< std::string
 				continue;
 
 			const lwSurface* surf = pol->surf;
-			T_ASSERT (surf);
+			T_ASSERT(surf);
 
 			int materialIndex = 0;
 			for (lwSurface* s = lwo->surf; s && s != surf; s = s->next)

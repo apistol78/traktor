@@ -60,8 +60,8 @@ Ref< ISoundBufferCursor > RandomGrain::createCursor() const
 			index = int32_t(m_random.nextFloat() * (m_grains.size() - 1) + 0.5f);
 		m_last = index;
 	}
-	T_ASSERT (index >= 0);
-	T_ASSERT (index < m_grains.size());
+	T_ASSERT(index >= 0);
+	T_ASSERT(index < m_grains.size());
 
 	Ref< RandomGrainCursor > cursor = new RandomGrainCursor();
 	cursor->m_grain = m_grains[index];
@@ -85,7 +85,7 @@ const IGrain* RandomGrain::getCurrentGrain(const ISoundBufferCursor* cursor) con
 void RandomGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
 {
 	const RandomGrainCursor* randomCursor = static_cast< const RandomGrainCursor* >(cursor);
-	T_ASSERT (randomCursor);
+	T_ASSERT(randomCursor);
 
 	outActiveGrains.push_back(this);
 

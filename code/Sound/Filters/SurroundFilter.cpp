@@ -255,7 +255,7 @@ void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) 
 		for (uint32_t i = 0; i < sizeof_array(c_speakersFull); ++i)
 		{
 			float* samples = outBlock.samples[c_speakersFull[i].channel];
-			T_ASSERT (alignUp(samples, 16) == samples);
+			T_ASSERT(alignUp(samples, 16) == samples);
 
 			Scalar angleOffset = angleDifference(c_speakersFull[i].angle, speakerAngle);
 			Scalar angleAtten = clamp(c_one - angleOffset / c_angleCone, c_zero, c_one);
@@ -274,7 +274,7 @@ void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) 
 		for (uint32_t i = 0; i < sizeof_array(c_speakersFull); ++i)
 		{
 			float* samples = outBlock.samples[c_speakersFull[i].channel];
-			T_ASSERT (alignUp(samples, 16) == samples);
+			T_ASSERT(alignUp(samples, 16) == samples);
 
 			for (uint32_t j = 0; j < outBlock.samplesCount; j += 4)
 				Vector4::zero().storeAligned(&samples[j]);

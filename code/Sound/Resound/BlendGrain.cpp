@@ -150,7 +150,7 @@ bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, 
 	outBlock.samplesCount = max(soundBlock1.samplesCount, soundBlock2.samplesCount);
 	outBlock.maxChannel = max(soundBlock1.maxChannel, soundBlock2.maxChannel);
 
-	T_ASSERT (mixer);
+	T_ASSERT(mixer);
 	for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
 	{
 		if (soundBlock1.samples[i] && soundBlock2.samples[i])

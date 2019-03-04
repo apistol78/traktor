@@ -255,7 +255,7 @@ void ScriptNodeFacade::editShaderNode(
 )
 {
 	ScriptNodeInstanceData* instanceData = editorNode->getData< ScriptNodeInstanceData >(L"INSTANCE");
-	T_ASSERT (instanceData);
+	T_ASSERT(instanceData);
 
 	instanceData->edit();
 }

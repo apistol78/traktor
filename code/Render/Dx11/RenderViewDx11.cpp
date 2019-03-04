@@ -505,7 +505,7 @@ SystemWindow RenderViewDx11::getSystemWindow()
 
 bool RenderViewDx11::begin(EyeType eye)
 {
-	T_ASSERT (m_renderStateStack.empty());
+	T_ASSERT(m_renderStateStack.empty());
 
 	if (!m_context)
 		return false;
@@ -534,7 +534,7 @@ bool RenderViewDx11::begin(EyeType eye)
 
 bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 {
-	T_ASSERT (!m_renderStateStack.empty());
+	T_ASSERT(!m_renderStateStack.empty());
 
 	if (!m_context)
 		return false;
@@ -644,7 +644,7 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 
 bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
-	T_ASSERT (!m_renderStateStack.empty());
+	T_ASSERT(!m_renderStateStack.empty());
 
 	if (!m_context)
 		return false;
@@ -673,7 +673,7 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 
 void RenderViewDx11::clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil)
 {
-	T_ASSERT (!m_renderStateStack.empty());
+	T_ASSERT(!m_renderStateStack.empty());
 
 	const RenderState& rs = m_renderStateStack.back();
 
@@ -718,7 +718,7 @@ void RenderViewDx11::clear(uint32_t clearMask, const Color4f* colors, float dept
 
 void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
-	T_ASSERT (!m_renderStateStack.empty());
+	T_ASSERT(!m_renderStateStack.empty());
 
 	bindTargets();
 
@@ -745,7 +745,7 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 		return;
 
 	// Draw primitives.
-	T_ASSERT (c_d3dTopology[primitives.type] != D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED);
+	T_ASSERT(c_d3dTopology[primitives.type] != D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED);
 	m_stateCache.setTopology(c_d3dTopology[primitives.type]);
 
 	UINT vertexCount = 0;
@@ -756,7 +756,7 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 		break;
 
 	case PtLineStrip:
-		T_ASSERT (0);
+		T_ASSERT(0);
 		break;
 
 	case PtLines:
@@ -790,8 +790,8 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 
 void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
-	T_ASSERT (!m_renderStateStack.empty());
-	T_ASSERT (instanceCount > 0);
+	T_ASSERT(!m_renderStateStack.empty());
+	T_ASSERT(instanceCount > 0);
 
 	bindTargets();
 
@@ -818,7 +818,7 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 		return;
 
 	// Draw primitives.
-	T_ASSERT (c_d3dTopology[primitives.type] != D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED);
+	T_ASSERT(c_d3dTopology[primitives.type] != D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED);
 	m_stateCache.setTopology(c_d3dTopology[primitives.type]);
 
 	UINT vertexCount = 0;
@@ -829,7 +829,7 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 		break;
 
 	case PtLineStrip:
-		T_ASSERT (0);
+		T_ASSERT(0);
 		break;
 
 	case PtLines:
@@ -871,7 +871,7 @@ void RenderViewDx11::compute(IProgram* program, const int32_t* workSize)
 
 void RenderViewDx11::end()
 {
-	T_ASSERT (!m_renderStateStack.empty());
+	T_ASSERT(!m_renderStateStack.empty());
 
 	RenderState& rs = m_renderStateStack.back();
 	if (rs.renderTargetSet)

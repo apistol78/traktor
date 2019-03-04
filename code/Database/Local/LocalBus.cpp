@@ -110,7 +110,7 @@ LocalBus::LocalBus(const std::wstring& eventFileName)
 
 	// Create our shared memory object.
 	m_shm = OS::getInstance().createSharedMemory(toLower(eventFileName), 512 * 1024);
-	T_ASSERT (m_shm);
+	T_ASSERT(m_shm);
 
 	if (m_globalLock.existing())
 	{
@@ -178,7 +178,7 @@ void LocalBus::close()
 bool LocalBus::putEvent(const IEvent* event)
 {
 	T_ANONYMOUS_VAR(Acquire< Mutex >)(m_globalLock);
-	T_ASSERT (event);
+	T_ASSERT(event);
 
 	// Read change log.
 	Ref< EventLog > eventLog;

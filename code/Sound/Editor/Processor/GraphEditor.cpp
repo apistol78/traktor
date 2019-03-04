@@ -320,7 +320,7 @@ void GraphEditor::updateView()
 		for (size_t i = 0; i < ipc; ++i)
 		{
 			const InputPin* ip = node->getInputPin(i);
-			T_ASSERT (ip != nullptr);
+			T_ASSERT(ip != nullptr);
 
 			Ref< ui::Pin > up = un->createInputPin(ip->getName(), !ip->isOptional());
 			up->setData(L"PIN", const_cast< InputPin* >(ip));
@@ -332,7 +332,7 @@ void GraphEditor::updateView()
 		for (size_t i = 0; i < opc; ++i)
 		{
 			const OutputPin* op = node->getOutputPin(i);
-			T_ASSERT (op != nullptr);
+			T_ASSERT(op != nullptr);
 
 			Ref< ui::Pin > up = un->createOutputPin(op->getName());
 			up->setData(L"PIN", const_cast< OutputPin* >(op));
@@ -385,10 +385,10 @@ void GraphEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 		m_document->push();
 
 		const NodeType* nt = selected->getData< NodeType >(L"TYPE");
-		T_ASSERT (nt != nullptr);
+		T_ASSERT(nt != nullptr);
 
 		Ref< Node > node = dynamic_type_cast< Node* >(nt->getNodeType()->createInstance());
-		T_ASSERT (node != nullptr);
+		T_ASSERT(node != nullptr);
 
 		node->setPosition(std::make_pair(
 			event->getPosition().x - m_graph->getOffset().cx,
@@ -439,10 +439,10 @@ void GraphEditor::eventNodeSelect(ui::SelectEvent* event)
 void GraphEditor::eventNodeMoved(ui::NodeMovedEvent* event)
 {
 	ui::Node* un = event->getNode();
-	T_ASSERT (un != nullptr);
+	T_ASSERT(un != nullptr);
 
 	Node* node = un->getData< Node >(L"NODE");
-	T_ASSERT (node != nullptr);
+	T_ASSERT(node != nullptr);
 
 	node->setPosition(std::make_pair(
 		un->getPosition().x,
@@ -461,10 +461,10 @@ void GraphEditor::eventEdgeConnected(ui::EdgeConnectEvent* event)
 	ui::Pin* udp = ue->getDestinationPin();
 
 	OutputPin* sourcePin = usp->getData< OutputPin >(L"PIN");
-	T_ASSERT (sourcePin != nullptr);
+	T_ASSERT(sourcePin != nullptr);
 
 	InputPin* destinationPin = udp->getData< InputPin >(L"PIN");
-	T_ASSERT (destinationPin != nullptr);
+	T_ASSERT(destinationPin != nullptr);
 
 	Edge* currentEdge = m_graphAsset->getGraph()->findEdge(destinationPin);
 	if (currentEdge != nullptr)
@@ -488,7 +488,7 @@ void GraphEditor::eventEdgeDisconnected(ui::EdgeDisconnectEvent* event)
 	ui::Edge* ue = event->getEdge();
 
 	Edge* edge = ue->getData< Edge >(L"EDGE");
-	T_ASSERT (edge != nullptr);
+	T_ASSERT(edge != nullptr);
 
 	m_graphAsset->getGraph()->removeEdge(edge);
 

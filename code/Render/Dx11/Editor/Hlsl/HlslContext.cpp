@@ -73,7 +73,7 @@ Node* HlslContext::getInputNode(const InputPin* inputPin)
 Node* HlslContext::getInputNode(Node* node, const std::wstring& inputPinName)
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
-	T_ASSERT (inputPin);
+	T_ASSERT(inputPin);
 
 	return getInputNode(inputPin);
 }
@@ -129,7 +129,7 @@ HlslVariable* HlslContext::emitInput(const InputPin* inputPin)
 	if (result)
 	{
 		variable = m_currentShader->getVariable(sourcePin);
-		T_ASSERT (variable);
+		T_ASSERT(variable);
 	}
 	else
 	{
@@ -152,7 +152,7 @@ HlslVariable* HlslContext::emitInput(const InputPin* inputPin)
 HlslVariable* HlslContext::emitInput(Node* node, const std::wstring& inputPinName)
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
-	T_ASSERT (inputPin);
+	T_ASSERT(inputPin);
 
 	return emitInput(inputPin);
 }
@@ -160,10 +160,10 @@ HlslVariable* HlslContext::emitInput(Node* node, const std::wstring& inputPinNam
 HlslVariable* HlslContext::emitOutput(Node* node, const std::wstring& outputPinName, HlslType type)
 {
 	const OutputPin* outputPin = node->findOutputPin(outputPinName);
-	T_ASSERT (outputPin);
+	T_ASSERT(outputPin);
 
 	HlslVariable* out = m_currentShader->createTemporaryVariable(outputPin, type);
-	T_ASSERT (out);
+	T_ASSERT(out);
 
 	return out;
 }
@@ -171,7 +171,7 @@ HlslVariable* HlslContext::emitOutput(Node* node, const std::wstring& outputPinN
 void HlslContext::emitOutput(Node* node, const std::wstring& outputPinName, HlslVariable* variable)
 {
 	const OutputPin* outputPin = node->findOutputPin(outputPinName);
-	T_ASSERT (outputPin);
+	T_ASSERT(outputPin);
 
 	m_currentShader->associateVariable(outputPin, variable);
 }
@@ -262,7 +262,7 @@ HlslShader& HlslContext::getComputeShader()
 
 HlslShader& HlslContext::getShader()
 {
-	T_ASSERT (m_currentShader);
+	T_ASSERT(m_currentShader);
 	return *m_currentShader;
 }
 

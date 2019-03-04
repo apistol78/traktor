@@ -37,7 +37,7 @@ bool DirtyRegionTracker::update(CharacterInstance* movieInstance, Aabb2& outDirt
 void DirtyRegionTracker::calculate(CharacterInstance* characterInstance, const Matrix33& transform, bool visible, Aabb2& outDirtyRegion)
 {
 	ActionContext* context = characterInstance->getContext();
-	T_ASSERT (context);
+	T_ASSERT(context);
 
 	bool instanceVisible = characterInstance->isVisible() && visible;
 	if (&type_of(characterInstance) == &type_of< SpriteInstance >())

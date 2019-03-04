@@ -23,7 +23,7 @@ HeightfieldAsset::HeightfieldAsset(const Vector4& worldExtent)
 
 void HeightfieldAsset::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 4);
+	T_ASSERT(s.getVersion() >= 4);
 	s >> Member< Vector4 >(L"worldExtent", m_worldExtent, AttributeDirection());
 
 	if (s.getVersion() >= 5)

@@ -65,7 +65,7 @@ void* RenderContext::alloc(int blockSize)
 
 void* RenderContext::alloc(int blockSize, int align)
 {
-	T_ASSERT (align > 0);
+	T_ASSERT(align > 0);
 	m_heapPtr = reinterpret_cast< uint8_t* >((size_t(m_heapPtr) + (align - 1)) & ~(align - 1));
 	return alloc(blockSize);
 }

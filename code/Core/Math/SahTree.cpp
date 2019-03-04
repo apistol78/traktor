@@ -368,8 +368,8 @@ void SahTree::buildNode(Node* node, int32_t depth)
 		if (range.second >= bestCandidate->position)
 			rightIndices.push_back(*i);
 	}
-	T_ASSERT (bestCandidate->countLeft == leftIndices.size());
-	T_ASSERT (bestCandidate->countRight == rightIndices.size());
+	T_ASSERT(bestCandidate->countLeft == leftIndices.size());
+	T_ASSERT(bestCandidate->countRight == rightIndices.size());
 
 	// Create child nodes.
 	node->split = Scalar(bestCandidate->position);

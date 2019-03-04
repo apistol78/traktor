@@ -15,7 +15,7 @@ void getLocalTime(time_t t, struct tm* T)
 	::localtime_s(T, &t);
 #else
 	struct tm* tmp = ::localtime(&t);
-	T_ASSERT (tmp);
+	T_ASSERT(tmp);
 	std::memcpy(T, tmp, sizeof(struct tm));
 #endif
 }
@@ -36,11 +36,11 @@ DateTime::DateTime(uint64_t seconds)
 
 DateTime::DateTime(uint16_t year, uint8_t month, uint16_t day, uint8_t hour, uint8_t minute, uint8_t second)
 {
-	T_ASSERT (month >= 1 && month <= 12);
-	T_ASSERT (day >= 1 && day <= 31);
-	T_ASSERT (hour <= 23);
-	T_ASSERT (minute <= 59);
-	T_ASSERT (second <= 59);
+	T_ASSERT(month >= 1 && month <= 12);
+	T_ASSERT(day >= 1 && day <= 31);
+	T_ASSERT(hour <= 23);
+	T_ASSERT(minute <= 59);
+	T_ASSERT(second <= 59);
 
 	struct tm t;
 	t.tm_sec = second;

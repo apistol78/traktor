@@ -26,7 +26,7 @@ void ScriptComponent::destroy()
 
 void ScriptComponent::setOwner(Entity* owner)
 {
-	T_ASSERT (m_owner == 0);
+	T_ASSERT(m_owner == 0);
 	m_owner = owner;
 	m_object = createRuntimeClassInstance(m_class, m_owner, 0, 0);
 	m_methodUpdate = findRuntimeClassMethod(m_class, "update");
@@ -44,7 +44,7 @@ Aabb3 ScriptComponent::getBoundingBox() const
 
 void ScriptComponent::update(const UpdateParams& update)
 {
-	T_ASSERT (m_owner != 0);
+	T_ASSERT(m_owner != 0);
 
 	// Check if class has changed, hot-reload new class.
 	if (m_class.changed())

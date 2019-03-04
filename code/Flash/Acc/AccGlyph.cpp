@@ -89,7 +89,7 @@ bool AccGlyph::create(
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, texOffsetAndScale), 1));
-	T_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
+	T_ASSERT(render::getVertexSize(vertexElements) == sizeof(Vertex));
 
 	for (uint32_t i = 0; i < sizeof_array(m_vertexBuffers); ++i)
 	{
@@ -219,7 +219,7 @@ void AccGlyph::render(
 		return;
 
 	const render::handle_t techniques[] = { s_handleTechniqueDefault, s_handleTechniqueDropShadow, 0, s_handleTechniqueGlow };
-	T_ASSERT (glyphFilter < sizeof_array(techniques));
+	T_ASSERT(glyphFilter < sizeof_array(techniques));
 
 	m_shaderGlyph->setTechnique(techniques[glyphFilter]);
 	if (!m_shaderGlyph->getCurrentProgram())

@@ -32,7 +32,7 @@ bool IStreamWrapper::Open(void* pStreamData)
 
 bool IStreamWrapper::Close()
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 	m_stream->seek(IStream::SeekSet, 0);
 	m_state = eClosed;
 	return true;
@@ -40,7 +40,7 @@ bool IStreamWrapper::Close()
 
 bool IStreamWrapper::Flush()
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 	m_stream->flush();
 	return true;
 }
@@ -52,7 +52,7 @@ int IStreamWrapper::Write(const void* /*pData*/, int /*pSize*/)
 
 int IStreamWrapper::Read(void* pData, int pSize) const
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 	return m_stream->read(pData, pSize);
 }
 
@@ -68,7 +68,7 @@ int IStreamWrapper::GetWriterID() const
 
 void IStreamWrapper::Seek(const FbxInt64& pOffset, const FbxFile::ESeekPos& pSeekPos)
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 	if (pSeekPos == FbxFile::eCurrent)
 		m_stream->seek(IStream::SeekCurrent, int(pOffset));
 	else if (pSeekPos == FbxFile::eBegin)
@@ -79,13 +79,13 @@ void IStreamWrapper::Seek(const FbxInt64& pOffset, const FbxFile::ESeekPos& pSee
 
 long IStreamWrapper::GetPosition() const
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 	return m_stream->tell();
 }
 
 void IStreamWrapper::SetPosition(long pPosition)
 {
-	T_ASSERT (m_stream);
+	T_ASSERT(m_stream);
 	m_stream->seek(IStream::SeekSet, int(pPosition));
 }
 

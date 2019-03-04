@@ -205,7 +205,7 @@ void TextureAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
 				if (browseItem->getFilterType())
 				{
 					const TypeInfo* filterType = browseItem->getFilterType();
-					T_ASSERT (filterType);
+					T_ASSERT(filterType);
 
 					instance = m_editor->browseInstance(*filterType);
 				}

@@ -83,19 +83,19 @@ void Application::finalize()
 
 bool Application::process()
 {
-	T_ASSERT (m_eventLoop);
+	T_ASSERT(m_eventLoop);
 	return m_eventLoop->process(this);
 }
 
 int Application::execute()
 {
-	T_ASSERT (m_eventLoop);
+	T_ASSERT(m_eventLoop);
 	return m_eventLoop->execute(this);
 }
 
 void Application::exit(int exitCode)
 {
-	T_ASSERT (m_eventLoop);
+	T_ASSERT(m_eventLoop);
 	m_eventLoop->exit(exitCode);
 }
 

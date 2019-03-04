@@ -22,8 +22,8 @@ TaskRemoveSaveData::TaskRemoveSaveData(
 
 void TaskRemoveSaveData::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_provider);
-	T_ASSERT (m_result);
+	T_ASSERT(m_provider);
+	T_ASSERT(m_result);
 	if (m_provider->remove(m_saveDataId))
 		m_result->succeed();
 	else

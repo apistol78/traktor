@@ -17,10 +17,10 @@ namespace traktor
 
 inline Vector4 convert(const BodyBullet* body, const Vector4& v, bool localSpace)
 {
-	T_CONVERT_ASSERT (!isNanOrInfinite((v).x()));
-	T_CONVERT_ASSERT (!isNanOrInfinite((v).y()));
-	T_CONVERT_ASSERT (!isNanOrInfinite((v).z()));
-	T_CONVERT_ASSERT (!isNanOrInfinite((v).w()));
+	T_CONVERT_ASSERT(!isNanOrInfinite((v).x()));
+	T_CONVERT_ASSERT(!isNanOrInfinite((v).y()));
+	T_CONVERT_ASSERT(!isNanOrInfinite((v).z()));
+	T_CONVERT_ASSERT(!isNanOrInfinite((v).w()));
 	return localSpace ? body->getTransform() * v : v;
 }
 
@@ -162,7 +162,7 @@ void BodyBullet::setMass(float mass, const Vector4& inertiaTensor)
 {
 	if (m_body)
 	{
-		T_ASSERT (!isNanOrInfinite(mass));
+		T_ASSERT(!isNanOrInfinite(mass));
 		m_body->setMassProps(mass, toBtVector3(inertiaTensor));
 	}
 }

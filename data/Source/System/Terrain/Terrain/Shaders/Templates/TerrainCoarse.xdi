@@ -342,18 +342,6 @@ Generated texture from surface cache.
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Comment" version="traktor.render.Node:1">
-			<id>{9A93861B-966F-B641-8867-C63792B9F994}</id>
-			<comment>
-			<![CDATA[
-Disabled emissive for now as it doesn't work on OpenGL
-			]]>
-			</comment>
-			<position>
-				<first>1381</first>
-				<second>544</second>
-			</position>
-		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{749DAD3D-DAA6-914D-AD31-883990798724}</id>
 			<comment/>
@@ -413,120 +401,74 @@ Disabled emissive for now as it doesn't work on OpenGL
 			<values/>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{CFDF1BBA-B20D-004F-9493-28FB4687D733}</id>
+			<id>{FB9AD068-AC1A-6745-AA20-075DD202DB60}</id>
 			<comment/>
 			<position>
-				<first>3613</first>
-				<second>108</second>
+				<first>3271</first>
+				<second>-116</second>
 			</position>
-			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
+			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
 			<inputPins>
 				<item>
-					<id>{0F124D64-F889-B346-A287-1E1E13CCA54F}</id>
-					<name>ViewPosition</name>
-					<optional>false</optional>
-				</item>
-			</inputPins>
-			<outputPins/>
-			<values/>
-		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{0251ABE2-9AC2-6A4E-B3C1-665361561B75}</id>
-			<comment/>
-			<position>
-				<first>3619</first>
-				<second>-274</second>
-			</position>
-			<fragmentGuid>{DB61FE22-1D18-0000-A7CB-095CD836EEAD}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>
+					<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
 					<name>SurfaceColor</name>
 					<optional>false</optional>
 				</item>
 				<item>
-					<id>{C15FFA71-480D-3948-BF4B-5D1FD2F40B3C}</id>
-					<name>ViewNormal</name>
-					<optional>false</optional>
+					<id>{94E22A68-7854-594C-9319-8AAF20D6DCA1}</id>
+					<name>Cast shadow</name>
+					<optional>true</optional>
 				</item>
 				<item>
-					<id>{505DD2CD-E305-084F-8673-848F43B149F0}</id>
-					<name>ViewPosition</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{56C3CC9D-B88C-0042-BB60-AC1A1C9B410E}</id>
+					<id>{A5F0E607-E44E-4D43-8743-2CE73EC070EC}</id>
 					<name>Emissive</name>
 					<optional>true</optional>
 				</item>
 				<item>
-					<id>{28AF9CD6-D160-E641-AF57-D097F6C47895}</id>
-					<name>Roughness</name>
-					<optional>true</optional>
-				</item>
-			</inputPins>
-			<outputPins/>
-			<values>
-				<item>
-					<first>Emissive</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Roughness</first>
-					<second>0.8</second>
-				</item>
-			</values>
-		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{78C22806-566F-E14B-9EC1-A18CDE37F5B1}</id>
-			<comment/>
-			<position>
-				<first>3613</first>
-				<second>289</second>
-			</position>
-			<fragmentGuid>{A18C08DA-399A-B949-AD8D-4E22CFCC2FE4}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{30E85928-7B55-E740-9734-68440CE06674}</id>
-					<name>ViewNormal</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{DF015B38-4B91-6C48-BB5E-81FC8355D961}</id>
-					<name>ViewPosition</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{38143377-57B7-4388-9D3F-3AA62077F273}</id>
-					<name>Alpha</name>
+					<id>{8471E6CB-0CA4-44FA-BA9A-C6FA85A0516A}</id>
+					<name>Irradiance</name>
 					<optional>true</optional>
 				</item>
 				<item>
-					<id>{0533A842-649E-41EB-848E-C14E9F7A6DF9}</id>
-					<name>Enable</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{327CBB43-0B18-0F4A-9C61-ADEAD84B701C}</id>
+					<id>{3C90103C-96CA-CD4F-88BF-928235B168E7}</id>
 					<name>Metalness</name>
 					<optional>true</optional>
 				</item>
 				<item>
-					<id>{8D3DC51D-D9AA-DC4F-B3E3-558D3B60192F}</id>
+					<id>{86A497C0-B521-514D-8F75-464E8EDD28D8}</id>
 					<name>Roughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
-					<id>{57731852-250E-7240-B13E-F2E3F9BFD492}</id>
-					<name>SurfaceColor</name>
+					<id>{A6D7BFAB-0138-4EFD-A71A-1397BCE9E584}</id>
+					<name>Transparency</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{D9D1FD13-4CD0-B949-A524-3276089CD08A}</id>
+					<name>ViewNormal</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{86D35046-A057-024C-ADA3-9585DB3208BB}</id>
+					<name>ViewPosition</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{21B82E2F-6A92-574E-98B6-CBE4A37D9C1E}</id>
+					<name>ViewVelocity</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
 				<item>
-					<first>Alpha</first>
-					<second>1</second>
+					<first>Cast shadow</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>Emissive</first>
+					<second>0</second>
 				</item>
 				<item>
 					<first>Metalness</first>
@@ -534,11 +476,7 @@ Disabled emissive for now as it doesn't work on OpenGL
 				</item>
 				<item>
 					<first>Roughness</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>SurfaceColor</first>
-					<second>0</second>
+					<second>0.6</second>
 				</item>
 			</values>
 		</item>
@@ -850,13 +788,13 @@ Disabled emissive for now as it doesn't work on OpenGL
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[31]"/>
+				<node ref="/object/nodes/item[30]"/>
 				<name>Position</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[31]"/>
+				<node ref="/object/nodes/item[30]"/>
 				<name>ViewPosition</name>
 			</source>
 			<destination>
@@ -866,7 +804,7 @@ Disabled emissive for now as it doesn't work on OpenGL
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[31]"/>
+				<node ref="/object/nodes/item[30]"/>
 				<name>ClipPosition</name>
 			</source>
 			<destination>
@@ -880,7 +818,7 @@ Disabled emissive for now as it doesn't work on OpenGL
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[31]"/>
+				<node ref="/object/nodes/item[30]"/>
 				<name>Normal</name>
 			</destination>
 		</item>
@@ -890,67 +828,27 @@ Disabled emissive for now as it doesn't work on OpenGL
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[33]"/>
+				<node ref="/object/nodes/item[31]"/>
 				<name>SurfaceColor</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[27]"/>
-				<name>Output</name>
+				<node ref="/object/nodes/item[30]"/>
+				<name>ViewNormal</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[34]"/>
-				<name>SurfaceColor</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[31]"/>
 				<name>ViewNormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[33]"/>
-				<name>ViewNormal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[31]"/>
-				<name>ViewNormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[34]"/>
-				<name>ViewNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[34]"/>
-				<name>ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[33]"/>
-				<name>ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[32]"/>
 				<name>ViewPosition</name>
 			</destination>
 		</item>

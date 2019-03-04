@@ -53,7 +53,7 @@ public:
 	template < typename VisitorType >
 	void clip(const Winding3& w, VisitorType& visitor) const
 	{
-		T_ASSERT (m_root);
+		T_ASSERT(m_root);
 		clip_1< VisitorType >(m_root, w, false, visitor);
 	}
 
@@ -65,7 +65,7 @@ public:
 	template < typename PolygonType >
 	void clip(const PolygonType& polygon, uint32_t mode, AlignedVector< PolygonType >& outClipped) const
 	{
-		T_ASSERT (m_root);
+		T_ASSERT(m_root);
 		clip_2< PolygonType >(m_root, polygon, mode, outClipped);
 	}
 

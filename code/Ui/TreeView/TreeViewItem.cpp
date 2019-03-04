@@ -440,7 +440,7 @@ void TreeViewItem::mouseUp(MouseButtonUpEvent* event, const Point& position)
 {
 	if (m_editMode == 2)
 	{
-		T_ASSERT (m_editable);
+		T_ASSERT(m_editable);
 		if (m_view->m_autoEdit)
 			m_view->beginEdit(this);
 		m_editMode = 0;

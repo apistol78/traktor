@@ -22,8 +22,8 @@ TaskJoinLobby::TaskJoinLobby(
 
 void TaskJoinLobby::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_provider);
-	T_ASSERT (m_result);
+	T_ASSERT(m_provider);
+	T_ASSERT(m_result);
 
 	if (m_provider->joinLobby(m_lobbyHandle))
 		m_result->succeed();

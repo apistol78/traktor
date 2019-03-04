@@ -31,7 +31,7 @@ void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::I
 		for (SmallSet< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
 		{
 			const editor::PipelineDependency* childDependency = dependencySet->get(*i);
-			T_ASSERT (childDependency);
+			T_ASSERT(childDependency);
 
 			collectResources(pipelineBuilder, dependencySet, childDependency, outResources, inoutHistory);
 		}

@@ -82,7 +82,7 @@ void ExtractSolutionDialog::getSelectedProjects(RefArray< Project >& outProjects
 	for (auto id : ids)
 	{
 		Project* project = m_listProjects->getData< Project >(id);
-		T_ASSERT (project != nullptr);
+		T_ASSERT(project != nullptr);
 
 		outProjects.push_back(project);
 	}

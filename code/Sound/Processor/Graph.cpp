@@ -35,24 +35,24 @@ Graph::~Graph()
 
 void Graph::addNode(Node* node)
 {
-	T_ASSERT (std::find(m_nodes.begin(), m_nodes.end(), node) == m_nodes.end());
+	T_ASSERT(std::find(m_nodes.begin(), m_nodes.end(), node) == m_nodes.end());
 	m_nodes.push_back(node);
 }
 
 void Graph::removeNode(Node* node)
 {
 	RefArray< Node >::iterator i = std::find(m_nodes.begin(), m_nodes.end(), node);
-	T_ASSERT (i != m_nodes.end());
+	T_ASSERT(i != m_nodes.end());
 	m_nodes.erase(i);
 }
 
 void Graph::addEdge(Edge* edge)
 {
-	T_ASSERT (std::find(m_edges.begin(), m_edges.end(), edge) == m_edges.end());
+	T_ASSERT(std::find(m_edges.begin(), m_edges.end(), edge) == m_edges.end());
 
 	m_edges.push_back(edge);
 
-	T_ASSERT (m_inputPinEdge[edge->getDestination()] == 0);
+	T_ASSERT(m_inputPinEdge[edge->getDestination()] == 0);
 	m_inputPinEdge[edge->getDestination()] = edge;
 
 	RefSet< Edge >*& set = m_outputPinEdges[edge->getSource()];
@@ -65,14 +65,14 @@ void Graph::addEdge(Edge* edge)
 void Graph::removeEdge(Edge* edge)
 {
 	RefArray< Edge >::iterator i = std::find(m_edges.begin(), m_edges.end(), edge);
-	T_ASSERT (i != m_edges.end());
+	T_ASSERT(i != m_edges.end());
 
 	SmallMap< const InputPin*, Edge* >::iterator i1 = m_inputPinEdge.find(edge->getDestination());
-	T_ASSERT (i1 != m_inputPinEdge.end());
+	T_ASSERT(i1 != m_inputPinEdge.end());
 	m_inputPinEdge.erase(i1);
 
 	SmallMap< const OutputPin*, RefSet< Edge >* >::iterator i2 = m_outputPinEdges.find(edge->getSource());
-	T_ASSERT (i2 != m_outputPinEdges.end());
+	T_ASSERT(i2 != m_outputPinEdges.end());
 	i2->second->erase(edge);
 
 	m_edges.erase(i);
@@ -196,7 +196,7 @@ void Graph::updateAdjacency()
 	// Clear all sets; keep associations so we don't have to reallocate for each update.
 	for (SmallMap< const OutputPin*, RefSet< Edge >* >::iterator i = m_outputPinEdges.begin(); i != m_outputPinEdges.end(); ++i)
 	{
-		T_ASSERT (i->second);
+		T_ASSERT(i->second);
 		i->second->clear();
 	}
 

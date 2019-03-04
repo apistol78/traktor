@@ -349,7 +349,7 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 void DictionaryEditorPage::eventGridRowDoubleClick(ui::GridRowDoubleClickEvent* event)
 {
 	ui::GridRow* row = event->getRow();
-	T_ASSERT (row);
+	T_ASSERT(row);
 
 	if (row != m_gridDictionary->getRows().back())
 	{
@@ -357,7 +357,7 @@ void DictionaryEditorPage::eventGridRowDoubleClick(ui::GridRowDoubleClickEvent* 
 			return;
 
 		ui::GridItem* cell = row->get(event->getColumnIndex());
-		T_ASSERT (cell);
+		T_ASSERT(cell);
 
 		cell->edit();
 	}
@@ -378,7 +378,7 @@ void DictionaryEditorPage::eventGridRowDoubleClick(ui::GridRowDoubleClickEvent* 
 void DictionaryEditorPage::eventGridItemChange(ui::GridItemContentChangeEvent* event)
 {
 	ui::GridRow* row = event->getItem()->getRow();
-	T_ASSERT (row);
+	T_ASSERT(row);
 
 	m_document->push();
 	m_dictionary->set(

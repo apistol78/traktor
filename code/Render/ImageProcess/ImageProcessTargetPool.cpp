@@ -91,7 +91,7 @@ RenderTargetSet* ImageProcessTargetPool::acquireTarget(const RenderTargetSetCrea
 void ImageProcessTargetPool::releaseTarget(const RenderTargetSetCreateDesc& rtscd, RenderTargetSet* rts)
 {
 	AlignedVector< Pool >::iterator it = std::find_if(m_pool.begin(), m_pool.end(), FindPoolPred(rtscd));
-	T_ASSERT (it != m_pool.end());
+	T_ASSERT(it != m_pool.end());
 
 	it->acquired.remove(rts);
 	it->free.push_back(rts);

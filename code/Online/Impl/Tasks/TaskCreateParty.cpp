@@ -23,9 +23,9 @@ TaskCreateParty::TaskCreateParty(
 
 void TaskCreateParty::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_matchMakingProvider);
-	T_ASSERT (m_userCache);
-	T_ASSERT (m_result);
+	T_ASSERT(m_matchMakingProvider);
+	T_ASSERT(m_userCache);
+	T_ASSERT(m_result);
 
 	uint64_t partyHandle;
 	if (m_matchMakingProvider->createParty(partyHandle))

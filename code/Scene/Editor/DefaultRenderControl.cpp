@@ -56,13 +56,13 @@ DefaultRenderControl::DefaultRenderControl()
 bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId, int32_t viewId)
 {
 	m_context = context;
-	T_ASSERT (m_context);
+	T_ASSERT(m_context);
 
 	m_cameraId = cameraId;
 	m_viewId = viewId;
 
 	Ref< const PropertyGroup > settings = context->getEditor()->getSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	int32_t viewType = settings->getProperty< int32_t >(L"SceneEditor.View" + toString(m_viewId), 0);
 	bool gridEnable = settings->getProperty< bool >(L"Scene.Editor.GridEnable" + toString(m_viewId), true);
@@ -193,7 +193,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 void DefaultRenderControl::destroy()
 {
 	Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GridEnable" + toString(m_viewId), m_toolToggleGrid->isToggled());
 	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_viewId), m_toolToggleGuide->isToggled());
@@ -377,7 +377,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		break;
 	}
 
-	T_ASSERT (m_renderControl);
+	T_ASSERT(m_renderControl);
 
 	m_container->update();
 	m_renderControl->updateWorldRenderer();
@@ -393,7 +393,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGuide"));
 
 	Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	settings->setProperty< PropertyInteger >(L"SceneEditor.View" + toString(m_viewId), type);
 
@@ -408,7 +408,7 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	if (event->getCommand() == L"Scene.Editor.View")
 	{
 		int32_t selected = m_toolView->getSelected();
-		T_ASSERT (selected >= 0);
+		T_ASSERT(selected >= 0);
 		createRenderControl(selected);
 	}
 	else if (event->getCommand() == L"Scene.Editor.ToggleGrid")

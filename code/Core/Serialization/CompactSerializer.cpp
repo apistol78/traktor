@@ -292,7 +292,7 @@ bool read_string(BitReader& r, std::wstring& outString)
 
 bool write_string(BitWriter& w, const std::wstring& str)
 {
-	T_ASSERT (str.length() <= std::numeric_limits< uint16_t >::max());
+	T_ASSERT(str.length() <= std::numeric_limits< uint16_t >::max());
 
 	uint32_t length = uint32_t(str.length());
 	if (length > 0)

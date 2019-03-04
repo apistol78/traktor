@@ -29,7 +29,7 @@ Node* GlslContext::getInputNode(const InputPin* inputPin)
 Node* GlslContext::getInputNode(Node* node, const std::wstring& inputPinName)
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
-	T_ASSERT (inputPin);
+	T_ASSERT(inputPin);
 
 	return getInputNode(inputPin);
 }
@@ -65,7 +65,7 @@ GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 		if (m_emitter.emit(*this, node))
 		{
 			variable = m_currentShader->getVariable(sourcePin);
-			T_ASSERT (variable);
+			T_ASSERT(variable);
 		}
 		else
 		{
@@ -81,7 +81,7 @@ GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 GlslVariable* GlslContext::emitInput(Node* node, const std::wstring& inputPinName)
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
-	T_ASSERT (inputPin);
+	T_ASSERT(inputPin);
 
 	return emitInput(inputPin);
 }
@@ -89,10 +89,10 @@ GlslVariable* GlslContext::emitInput(Node* node, const std::wstring& inputPinNam
 GlslVariable* GlslContext::emitOutput(Node* node, const std::wstring& outputPinName, GlslType type)
 {
 	const OutputPin* outputPin = node->findOutputPin(outputPinName);
-	T_ASSERT (outputPin);
+	T_ASSERT(outputPin);
 
 	GlslVariable* out = m_currentShader->createTemporaryVariable(outputPin, type);
-	T_ASSERT (out);
+	T_ASSERT(out);
 
 	return out;
 }
@@ -100,7 +100,7 @@ GlslVariable* GlslContext::emitOutput(Node* node, const std::wstring& outputPinN
 void GlslContext::emitOutput(Node* node, const std::wstring& outputPinName, GlslVariable* variable)
 {
 	const OutputPin* outputPin = node->findOutputPin(outputPinName);
-	T_ASSERT (outputPin);
+	T_ASSERT(outputPin);
 
 	m_currentShader->associateVariable(outputPin, variable);
 }

@@ -309,7 +309,7 @@ Ref< IProcess > OS::execute(
 		}
 		*p++ = 0;
 
-		T_ASSERT (size_t(p - environment.ptr()) == size);
+		T_ASSERT(size_t(p - environment.ptr()) == size);
 	}
 
 	StringOutputStream ss;
@@ -521,9 +521,9 @@ OS::OS()
 	if (s_hIeFrameLib)
 	{
 		s_IEIsProtectedModeProcess = (IEISPROTECTEDMODEPROCESSPROC*)GetProcAddress(s_hIeFrameLib, "IEIsProtectedModeProcess");
-		T_ASSERT (s_IEIsProtectedModeProcess);
+		T_ASSERT(s_IEIsProtectedModeProcess);
 		s_IEGetWriteableFolderPath = (IEGETWRITEABLEFOLDERPATHPROC*)GetProcAddress(s_hIeFrameLib, "IEGetWriteableFolderPath");
-		T_ASSERT (s_IEGetWriteableFolderPath);
+		T_ASSERT(s_IEGetWriteableFolderPath);
 	}
 }
 

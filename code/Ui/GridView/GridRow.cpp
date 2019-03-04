@@ -68,7 +68,7 @@ int32_t GridRow::getHeight() const
 
 uint32_t GridRow::add(GridItem* item)
 {
-	T_ASSERT (item->m_row == nullptr);
+	T_ASSERT(item->m_row == nullptr);
 	item->m_row = this;
 	item->placeCells(getWidget< GridView >(), Rect());
 	m_items.push_back(item);
@@ -80,10 +80,10 @@ void GridRow::set(uint32_t index, GridItem* item)
 	m_items.resize(std::max< uint32_t >(m_items.size(), index + 1));
 	if (m_items[index])
 	{
-		T_ASSERT (m_items[index]->m_row == this);
+		T_ASSERT(m_items[index]->m_row == this);
 		m_items[index]->m_row = nullptr;
 	}
-	T_ASSERT (item->m_row == nullptr);
+	T_ASSERT(item->m_row == nullptr);
 	item->m_row = this;
 	m_items[index] = item;
 }
@@ -101,34 +101,34 @@ uint32_t GridRow::getIndex(const GridItem* item) const
 
 void GridRow::addChild(GridRow* row)
 {
-	T_ASSERT (!row->m_parent);
+	T_ASSERT(!row->m_parent);
 	m_children.push_back(row);
 	row->m_parent = this;
 }
 
 void GridRow::insertChildBefore(GridRow* insertBefore, GridRow* row)
 {
-	T_ASSERT (insertBefore->m_parent == this);
-	T_ASSERT (!row->m_parent);
+	T_ASSERT(insertBefore->m_parent == this);
+	T_ASSERT(!row->m_parent);
 	RefArray< GridRow >::iterator i = std::find(m_children.begin(), m_children.end(), insertBefore);
-	T_ASSERT (i != m_children.end());
+	T_ASSERT(i != m_children.end());
 	m_children.insert(i, row);
 	row->m_parent = this;
 }
 
 void GridRow::insertChildAfter(GridRow* insertAfter, GridRow* row)
 {
-	T_ASSERT (insertAfter->m_parent == this);
-	T_ASSERT (!row->m_parent);
+	T_ASSERT(insertAfter->m_parent == this);
+	T_ASSERT(!row->m_parent);
 	RefArray< GridRow >::iterator i = std::find(m_children.begin(), m_children.end(), insertAfter);
-	T_ASSERT (i != m_children.end());
+	T_ASSERT(i != m_children.end());
 	m_children.insert(++i, row);
 	row->m_parent = this;
 }
 
 void GridRow::removeChild(GridRow* row)
 {
-	T_ASSERT (row->m_parent == this);
+	T_ASSERT(row->m_parent == this);
 	RefArray< GridRow >::iterator i = std::find(m_children.begin(), m_children.end(), row);
 	m_children.erase(i);
 	row->m_parent = nullptr;

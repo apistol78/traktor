@@ -172,14 +172,14 @@ bool TargetScriptDebugger::actionStepOver()
 
 void TargetScriptDebugger::addListener(IListener* listener)
 {
-	T_ASSERT (listener);
+	T_ASSERT(listener);
 	m_listeners.push_back(listener);
 	listener->debugeeStateChange(this);
 }
 
 void TargetScriptDebugger::removeListener(IListener* listener)
 {
-	T_ASSERT (listener);
+	T_ASSERT(listener);
 	m_listeners.remove(listener);
 }
 

@@ -121,7 +121,7 @@ Ref< Image > ImageFormatPcx::read(IStream* stream)
 
 	uint8_t dummy;
 	stream->read(&dummy, sizeof(dummy));
-	T_ASSERT (dummy == 12);
+	T_ASSERT(dummy == 12);
 
 	for (uint32_t i = 0; i < 256; ++i)
 	{

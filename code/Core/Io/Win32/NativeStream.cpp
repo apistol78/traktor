@@ -89,7 +89,7 @@ int64_t NativeStream::read(void* block, int64_t nbytes)
 	) == FALSE)
 		return 0;
 
-	T_ASSERT (nread <= nbytes);
+	T_ASSERT(nread <= nbytes);
 	return int64_t(nread);
 }
 

@@ -286,7 +286,7 @@ bool replaceIdentifiers(RfmCompound* reflection, const std::list< InstanceClipbo
 	for (uint32_t i = 0; i < reflection->getMemberCount(); ++i)
 	{
 		ReflectionMember* member = reflection->getMember(i);
-		T_ASSERT (member);
+		T_ASSERT(member);
 
 		if (RfmPrimitiveGuid* idMember = dynamic_type_cast< RfmPrimitiveGuid* >(member))
 		{
@@ -514,7 +514,7 @@ bool DatabaseView::create(ui::Widget* parent)
 		for (RefArray< IWizardTool >::iterator i = m_wizardTools.begin(); i != m_wizardTools.end(); ++i)
 		{
 			std::wstring wizardDescription = (*i)->getDescription();
-			T_ASSERT (!wizardDescription.empty());
+			T_ASSERT(!wizardDescription.empty());
 
 			int32_t wizardId = nextWizardId++;
 
@@ -597,7 +597,7 @@ void DatabaseView::updateView()
 			for (TypeInfoSet::const_iterator i = instanceTypes.begin(); i != instanceTypes.end(); ++i)
 			{
 				const TypeInfo* instanceType = *i;
-				T_ASSERT (instanceType);
+				T_ASSERT(instanceType);
 
 				Ref< ui::TreeViewItem > instanceTypeItem = m_treeDatabase->createItem(0, getCategoryText(instanceType), 1);
 				instanceTypeItem->setImage(0, 0, 1);
@@ -696,7 +696,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		return false;
 
 	Ref< ui::TreeViewItem > treeItem = items.front();
-	T_ASSERT (treeItem);
+	T_ASSERT(treeItem);
 
 	Ref< db::Group > group = treeItem->getData< db::Group >(L"GROUP");
 	Ref< db::Instance > instance = treeItem->getData< db::Instance >(L"INSTANCE");
@@ -724,10 +724,10 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			if (browseTypeDlg.showModal() == ui::DrOk)
 			{
 				const TypeInfo* type = browseTypeDlg.getSelectedType();
-				T_ASSERT (type);
+				T_ASSERT(type);
 
 				Ref< ISerializable > data = dynamic_type_cast< ISerializable* >(type->createInstance());
-				T_ASSERT (data);
+				T_ASSERT(data);
 
 				if (instance->checkout())
 				{
@@ -862,7 +862,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			for (uint32_t i = 0; i < dependencySet->size(); ++i)
 			{
 				const PipelineDependency* dependency = dependencySet->get(i);
-				T_ASSERT (dependency);
+				T_ASSERT(dependency);
 
 				Ref< db::Instance > dependentInstance = m_db->getInstance(dependency->outputGuid);
 				if (dependentInstance && (rootIsPrivate || !isInstanceInPrivate(dependentInstance)))
@@ -977,10 +977,10 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 				const TypeInfo* type = newInstanceDlg.getType();
 
 				std::wstring instanceName = newInstanceDlg.getInstanceName();
-				T_ASSERT (!instanceName.empty());
+				T_ASSERT(!instanceName.empty());
 
 				Ref< ISerializable > data = dynamic_type_cast< ISerializable* >(type->createInstance());
-				T_ASSERT (data);
+				T_ASSERT(data);
 
 				Ref< db::Instance > instance = group->createInstance(instanceName);
 				if (instance)
@@ -1367,7 +1367,7 @@ void DatabaseView::updateGridInstances()
 	for (RefArray< ui::TreeViewItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
 		ui::TreeViewItem* treeItem = *i;
-		T_ASSERT (treeItem);
+		T_ASSERT(treeItem);
 
 		db::Group* group = treeItem->getData< db::Group >(L"GROUP");
 		if (!group)
@@ -1450,7 +1450,7 @@ void DatabaseView::filterDependencies(db::Instance* instance)
 	for (uint32_t i = 0; i < dependencySet->size(); ++i)
 	{
 		const PipelineDependency* dependency = dependencySet->get(i);
-		T_ASSERT (dependency);
+		T_ASSERT(dependency);
 
 		if (dependency->outputGuid.isNotNull())
 			guidSet.insert(dependency->outputGuid);
@@ -1484,14 +1484,14 @@ void DatabaseView::listInstanceDependents(db::Instance* instance)
 		for (uint32_t j = 0; j < dependencySet->size(); ++j)
 		{
 			const PipelineDependency* dependency = dependencySet->get(j);
-			T_ASSERT (dependency != nullptr);
+			T_ASSERT(dependency != nullptr);
 
 			if (dependency->sourceInstanceGuid == findInstanceGuid)
 			{
 				for (uint32_t k = 0; k < dependencySet->size(); ++k)
 				{
 					const PipelineDependency* parentDependency = dependencySet->get(k);
-					T_ASSERT (parentDependency != nullptr);
+					T_ASSERT(parentDependency != nullptr);
 
 					if (parentDependency->children.find(j) != parentDependency->children.end())
 						log::info << parentDependency->sourceInstanceGuid.format() << Endl;
@@ -1546,7 +1546,7 @@ void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 				for (uint32_t j = 0; j < dependencySet->size(); ++j)
 				{
 					const PipelineDependency* dependency = dependencySet->get(j);
-					T_ASSERT (dependency);
+					T_ASSERT(dependency);
 
 					if (dependency->outputGuid.isNotNull())
 						guidSet.insert(dependency->outputGuid);
@@ -1632,7 +1632,7 @@ void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 		return;
 
 	ui::TreeViewItem* treeItem = items.front();
-	T_ASSERT (treeItem);
+	T_ASSERT(treeItem);
 
 	Ref< db::Group > group = treeItem->getData< db::Group >(L"GROUP");
 	Ref< db::Instance > instance = treeItem->getData< db::Instance >(L"INSTANCE");
@@ -1702,7 +1702,7 @@ void DatabaseView::eventInstanceDrag(ui::TreeViewDragEvent* event)
 		// @fixme Ensure drop target are active editor.
 
 		Ref< db::Instance > instance = dragItem->getData< db::Instance >(L"INSTANCE");
-		T_ASSERT (instance);
+		T_ASSERT(instance);
 
 		Ref< IEditorPage > editorPage = m_editor->getActiveEditorPage();
 		if (editorPage)

@@ -42,10 +42,10 @@ Ref< ShaderGraph > replaceBranch(const ShaderGraph* shaderGraph, Branch* branch,
 	);
 
 	const InputPin* inputPin = branch->getInputPin(path ? /* True */ 0 : /* False */ 1);
-	T_ASSERT (inputPin);
+	T_ASSERT(inputPin);
 
 	const OutputPin* outputPin = branch->getOutputPin(/* Output */ 0);
-	T_ASSERT (outputPin);
+	T_ASSERT(outputPin);
 
 	Ref< Edge > sourceEdge = shaderGraphResult->findEdge(inputPin);
 	if (!sourceEdge)
@@ -85,7 +85,7 @@ void buildCombinations(
 	if (!branchNodes.empty())
 	{
 		Branch* branch = branchNodes.front();
-		T_ASSERT (branch);
+		T_ASSERT(branch);
 
 		std::vector< std::wstring >::const_iterator parameterIter = std::find(parameterNames.begin(), parameterNames.end(), branch->getParameterName());
 		uint32_t parameterBit = 1 << uint32_t(std::distance(parameterNames.begin(), parameterIter));
@@ -179,19 +179,19 @@ uint32_t ShaderGraphCombinations::getCombinationCount() const
 
 uint32_t ShaderGraphCombinations::getCombinationMask(uint32_t index) const
 {
-	T_ASSERT (index < m_combinations.size());
+	T_ASSERT(index < m_combinations.size());
 	return m_combinations[index].mask;
 }
 
 uint32_t ShaderGraphCombinations::getCombinationValue(uint32_t index) const
 {
-	T_ASSERT (index < m_combinations.size());
+	T_ASSERT(index < m_combinations.size());
 	return m_combinations[index].value;
 }
 
 Ref< const ShaderGraph > ShaderGraphCombinations::getCombinationShaderGraph(uint32_t index) const
 {
-	T_ASSERT (index < m_combinations.size());
+	T_ASSERT(index < m_combinations.size());
 	return m_combinations[index].shaderGraph;
 }
 

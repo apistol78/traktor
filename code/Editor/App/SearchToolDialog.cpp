@@ -57,7 +57,7 @@ namespace traktor
  */
 std::wstring stylizeMemberName(const std::wstring& memberName)
 {
-	T_ASSERT (!memberName.empty());
+	T_ASSERT(!memberName.empty());
 	StringOutputStream ss;
 	std::wstring::const_iterator i = memberName.begin();
 	ss.put(toupper(*i++));
@@ -397,7 +397,7 @@ void SearchToolDialog::eventGridResultDoubleClick(ui::MouseDoubleClickEvent* eve
 	if (row)
 	{
 		Ref< db::Instance > instance = row->getData< db::Instance >(L"INSTANCE");
-		T_ASSERT (instance);
+		T_ASSERT(instance);
 
 		m_editor->openEditor(instance);
 	}
@@ -409,7 +409,7 @@ void SearchToolDialog::eventGridResultButtonUp(ui::MouseButtonUpEvent* event)
 	if (row && event->getButton() == ui::MbtRight)
 	{
 		Ref< db::Instance > instance = row->getData< db::Instance >(L"INSTANCE");
-		T_ASSERT (instance);
+		T_ASSERT(instance);
 
 		Ref< ui::Menu > popupMenu = new ui::Menu();
 		popupMenu->add(new ui::MenuItem(ui::Command(L"SearchTool.OpenInstance"), i18n::Text(L"EDITOR_SEARCH_TOOL_OPEN_INSTANCE")));

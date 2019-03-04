@@ -116,7 +116,7 @@ bool SoundDriverDs8::create(const SystemApplication& sysapp, const SoundDriverCr
 		return false;
 	}
 
-	T_ASSERT (size[1] == 0);
+	T_ASSERT(size[1] == 0);
 	std::memset(ptr[0], 0, size[0]);
 
 	hr = m_dsBuffer->Unlock(ptr[0], size[0], ptr[1], size[1]);
@@ -180,8 +180,8 @@ void SoundDriverDs8::submit(const SoundBlock& soundBlock)
 	DWORD status;
 	HRESULT hr;
 
-	T_ASSERT (m_frameSamples == soundBlock.samplesCount);
-	T_ASSERT (m_wfx.nChannels == soundBlock.maxChannel);
+	T_ASSERT(m_frameSamples == soundBlock.samplesCount);
+	T_ASSERT(m_wfx.nChannels == soundBlock.maxChannel);
 
 	uint32_t sampleSize = m_wfx.wBitsPerSample >> 3;
 	uint32_t blockSize = soundBlock.samplesCount * m_wfx.nChannels * sampleSize;
@@ -201,7 +201,7 @@ void SoundDriverDs8::submit(const SoundBlock& soundBlock)
 		log::error << L"Submit failed, unable to lock sound buffer" << Endl;
 		return;
 	}
-	T_ASSERT (!size[1]);
+	T_ASSERT(!size[1]);
 
 	// Write sound block into locked frame.
 	switch (sampleSize)

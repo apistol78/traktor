@@ -60,7 +60,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	staticPriority->create(containerName, L"Priority");
 
 	m_editPriority = new ui::Edit();
-	m_editPriority->create(containerName, toString(m_feature->getPriority()), ui::WsClientBorder, new ui::NumericEditValidator(false));
+	m_editPriority->create(containerName, toString(m_feature->getPriority()), ui::WsNone, new ui::NumericEditValidator(false));
 	m_editPriority->addEventHandler< ui::ContentChangeEvent >([&](ui::ContentChangeEvent* event) {
 		m_feature->setPriority(parseString< int32_t >(m_editPriority->getText()));
 	});
@@ -112,7 +112,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 		if (index >= 0)
 		{
 			auto platformInstance = m_listPlatforms->getData< db::Instance >(index);
-			T_ASSERT (platformInstance != nullptr);
+			T_ASSERT(platformInstance != nullptr);
 
 			if (m_feature->removePlatform(platformInstance->getGuid()))
 				m_listPlatforms->remove(index);

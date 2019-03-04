@@ -22,7 +22,7 @@ ShaderGraphOrderEvaluator::ShaderGraphOrderEvaluator(
 PinOrderType ShaderGraphOrderEvaluator::evaluate(const Node* node, const std::wstring& inputPinName) const
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
-	T_ASSERT (inputPin);
+	T_ASSERT(inputPin);
 
 	const OutputPin* sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
 	if (sourceOutputPin)
@@ -42,18 +42,18 @@ PinOrderType ShaderGraphOrderEvaluator::evaluate(const OutputPin* outputPin) con
 	m_evaluated[outputPin] = PotNonLinear;
 
 	const Node* node = outputPin->getNode();
-	T_ASSERT (node);
+	T_ASSERT(node);
 
 	int32_t inputPinCount = node->getInputPinCount();
 
 	// Evaluate order of input pins.
 	PinOrderType inputPinOrders[32];
-	T_ASSERT (inputPinCount < sizeof_array(inputPinOrders));
+	T_ASSERT(inputPinCount < sizeof_array(inputPinOrders));
 
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
 		const InputPin* inputPin = node->getInputPin(i);
-		T_ASSERT (inputPin);
+		T_ASSERT(inputPin);
 
 		const OutputPin* sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
 		if (sourceOutputPin)

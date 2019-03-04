@@ -373,19 +373,19 @@ void Script::removeOutputPin(const std::wstring& name)
 
 ParameterType Script::getInputPinType(int index) const
 {
-	T_ASSERT (index >= 0 && index < int(m_inputPins.size()));
+	T_ASSERT(index >= 0 && index < int(m_inputPins.size()));
 	return m_inputPins[index]->getType();
 }
 
 std::wstring Script::getInputPinSamplerId(int index) const
 {
-	T_ASSERT (index >= 0 && index < int(m_inputPins.size()));
+	T_ASSERT(index >= 0 && index < int(m_inputPins.size()));
 	return m_inputPins[index]->getSamplerId();
 }
 
 ParameterType Script::getOutputPinType(int index) const
 {
-	T_ASSERT (index >= 0 && index < int(m_outputPins.size()));
+	T_ASSERT(index >= 0 && index < int(m_outputPins.size()));
 	return m_outputPins[index]->getType();
 }
 
@@ -396,7 +396,7 @@ int Script::getInputPinCount() const
 
 const InputPin* Script::getInputPin(int index) const
 {
-	T_ASSERT (index >= 0 && index < int(m_inputPins.size()));
+	T_ASSERT(index >= 0 && index < int(m_inputPins.size()));
 	return m_inputPins[index];
 }
 
@@ -407,7 +407,7 @@ int Script::getOutputPinCount() const
 
 const OutputPin* Script::getOutputPin(int index) const
 {
-	T_ASSERT (index >= 0 && index < int(m_outputPins.size()));
+	T_ASSERT(index >= 0 && index < int(m_outputPins.size()));
 	return m_outputPins[index];
 }
 

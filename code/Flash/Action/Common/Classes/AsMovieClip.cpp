@@ -195,7 +195,7 @@ void AsMovieClip::MovieClip_attachBitmap_3(SpriteInstance* self, BitmapData* bmp
 void AsMovieClip::MovieClip_attachBitmap_4(SpriteInstance* self, BitmapData* bmp, int32_t depth, const std::string& pixelSnapping, bool smoothing) const
 {
 	ActionContext* context = self->getContext();
-	T_ASSERT (context);
+	T_ASSERT(context);
 
 	// Get dictionary.
 	Dictionary* dictionary = self->getDictionary();
@@ -218,7 +218,7 @@ void AsMovieClip::MovieClip_attachBitmap_4(SpriteInstance* self, BitmapData* bmp
 
 	// Create new instance of shape.
 	Ref< ShapeInstance > attachShapeInstance = checked_type_cast< ShapeInstance* >(shape->createInstance(context, dictionary, self, "", Matrix33::identity(), 0, 0));
-	T_ASSERT (attachShapeInstance);
+	T_ASSERT(attachShapeInstance);
 
 	// Add new instance to display list.
 	DisplayList& displayList = self->getDisplayList();
@@ -233,7 +233,7 @@ Ref< SpriteInstance > AsMovieClip::MovieClip_attachMovie_3(SpriteInstance* self,
 Ref< SpriteInstance > AsMovieClip::MovieClip_attachMovie_4(SpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth, ActionObject* initObject) const
 {
 	ActionContext* context = self->getContext();
-	T_ASSERT (context);
+	T_ASSERT(context);
 
 	// Get dictionary.
 	Dictionary* dictionary = self->getDictionary();
@@ -616,7 +616,7 @@ void AsMovieClip::MovieClip_lineTo(SpriteInstance* self, float x, float y) const
 Ref< SpriteInstance > AsMovieClip::MovieClip_loadMovie(SpriteInstance* self, const std::wstring& fileName) const
 {
 	ActionContext* cx = getContext();
-	T_ASSERT (cx);
+	T_ASSERT(cx);
 
 	const IMovieLoader* movieLoader = cx->getMovieLoader();
 	if (!movieLoader)

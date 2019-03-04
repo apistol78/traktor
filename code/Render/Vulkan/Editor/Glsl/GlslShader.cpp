@@ -38,7 +38,7 @@ GlslShader::~GlslShader()
 
 void GlslShader::addInputVariable(const std::wstring& variableName, GlslVariable* variable)
 {
-	T_ASSERT (!m_inputVariables[variableName]);
+	T_ASSERT(!m_inputVariables[variableName]);
 	m_inputVariables[variableName] = variable;
 }
 
@@ -56,7 +56,7 @@ GlslVariable* GlslShader::createTemporaryVariable(const OutputPin* outputPin, Gl
 
 GlslVariable* GlslShader::createVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type)
 {
-	T_ASSERT (!m_variables.empty());
+	T_ASSERT(!m_variables.empty());
 
 	Ref< GlslVariable > variable = new GlslVariable(variableName, type);
 	m_variables.back().insert(std::make_pair(outputPin, variable));
@@ -66,7 +66,7 @@ GlslVariable* GlslShader::createVariable(const OutputPin* outputPin, const std::
 
 GlslVariable* GlslShader::createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type)
 {
-	T_ASSERT (!m_variables.empty());
+	T_ASSERT(!m_variables.empty());
 
 	Ref< GlslVariable > variable = new GlslVariable(variableName, type);
 	m_variables.front().insert(std::make_pair(outputPin, variable));
@@ -81,7 +81,7 @@ void GlslShader::associateVariable(const OutputPin* outputPin, GlslVariable* var
 
 GlslVariable* GlslShader::getVariable(const OutputPin* outputPin)
 {
-	T_ASSERT (!m_variables.empty());
+	T_ASSERT(!m_variables.empty());
 
 	for (std::list< scope_t >::reverse_iterator i = m_variables.rbegin(); i != m_variables.rend(); ++i)
 	{
@@ -100,7 +100,7 @@ void GlslShader::pushScope()
 
 void GlslShader::popScope()
 {
-	T_ASSERT (!m_variables.empty());
+	T_ASSERT(!m_variables.empty());
 	m_variables.pop_back();
 }
 
@@ -147,13 +147,13 @@ void GlslShader::popOutputStream(BlockType blockType)
 
 StringOutputStream& GlslShader::getOutputStream(BlockType blockType)
 {
-	T_ASSERT (!m_outputStreams[int(blockType)].empty());
+	T_ASSERT(!m_outputStreams[int(blockType)].empty());
 	return *(m_outputStreams[int(blockType)].back());
 }
 
 const StringOutputStream& GlslShader::getOutputStream(BlockType blockType) const
 {
-	T_ASSERT (!m_outputStreams[int(blockType)].empty());
+	T_ASSERT(!m_outputStreams[int(blockType)].empty());
 	return *(m_outputStreams[int(blockType)].back());
 }
 

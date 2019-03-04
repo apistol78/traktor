@@ -66,7 +66,7 @@ Ref< ISerializable > PipelineBuilderWrapper::buildOutput(const ISerializable* so
 		if (i != m_builtCache.end())
 		{
 			built_cache_list_t& bcl = i->second;
-			T_ASSERT (!bcl.empty());
+			T_ASSERT(!bcl.empty());
 
 			// Return same instance as before if pointer and hash match.
 			for (built_cache_list_t::const_iterator j = bcl.begin(); j != bcl.end(); ++j)
@@ -84,7 +84,7 @@ Ref< ISerializable > PipelineBuilderWrapper::buildOutput(const ISerializable* so
 		return 0;
 
 	Ref< editor::IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
-	T_ASSERT (pipeline);
+	T_ASSERT(pipeline);
 
 	Ref< ISerializable > product = pipeline->buildOutput(this, sourceAsset);
 	if (!product)
@@ -111,7 +111,7 @@ bool PipelineBuilderWrapper::buildOutput(const ISerializable* sourceAsset, const
 		return 0;
 
 	Ref< editor::IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
-	T_ASSERT (pipeline);
+	T_ASSERT(pipeline);
 
 	if (!pipeline->buildOutput(
 		this,
@@ -144,7 +144,7 @@ Ref< ISerializable > PipelineBuilderWrapper::getBuildProduct(const ISerializable
 		if (i != m_builtCache.end())
 		{
 			built_cache_list_t& bcl = i->second;
-			T_ASSERT (!bcl.empty());
+			T_ASSERT(!bcl.empty());
 
 			// Return same instance as before if pointer and hash match.
 			for (built_cache_list_t::const_iterator j = bcl.begin(); j != bcl.end(); ++j)

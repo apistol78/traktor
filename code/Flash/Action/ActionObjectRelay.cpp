@@ -10,7 +10,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObjectRelay", ActionObjectRelay, Co
 
 void ActionObjectRelay::setAsObject(ActionObject* asObject)
 {
-	T_ASSERT (asObject == 0 || m_asObject == 0);
+	T_ASSERT(asObject == 0 || m_asObject == 0);
 	m_asObject = asObject;
 }
 

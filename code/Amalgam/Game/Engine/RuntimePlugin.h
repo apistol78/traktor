@@ -23,7 +23,11 @@ class T_DLLCLASS RuntimePlugin : public IRuntimePlugin
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IState > createInitialState(IEnvironment* environment) const override final;
+	virtual bool create(IEnvironment* environment) override final;
+
+	virtual void destroy(IEnvironment* environment) override final;
+
+	virtual Ref< IState > createInitialState(IEnvironment* environment) override final;
 };
 
 	}

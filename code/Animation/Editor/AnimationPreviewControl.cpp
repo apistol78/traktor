@@ -159,7 +159,7 @@ void AnimationPreviewControl::updatePreview()
 		for (uint32_t i = 0; i < m_skeleton->getJointCount(); ++i)
 		{
 			const Joint* joint = m_skeleton->getJoint(i);
-			T_ASSERT (joint);
+			T_ASSERT(joint);
 
 			std::map< std::wstring, int32_t >::const_iterator j = jointMap.find(joint->getName());
 			if (j == jointMap.end())
@@ -415,7 +415,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 					if (joint->getParent() >= 0)
 					{
 						const Joint* parent = skeleton->getJoint(joint->getParent());
-						T_ASSERT (parent);
+						T_ASSERT(parent);
 
 						Vector4 start = poseTransforms[joint->getParent()].translation().xyz1();
 						Vector4 end = poseTransforms[i].translation().xyz1();

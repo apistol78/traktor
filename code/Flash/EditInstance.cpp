@@ -218,10 +218,10 @@ Vector2 EditInstance::measureText(const std::wstring& text) const
 Vector2 EditInstance::measureText(const std::wstring& text, float width) const
 {
 	const Dictionary* dictionary = getDictionary();
-	T_ASSERT (dictionary);
+	T_ASSERT(dictionary);
 
 	const Font* font = dictionary->getFont(m_edit->getFontId());
-	T_ASSERT (font);
+	T_ASSERT(font);
 
 	TextLayout layout;
 	layout.begin();
@@ -333,10 +333,10 @@ int32_t EditInstance::getMaxScroll() const
 Ref< TextLayout > EditInstance::prepareTextLayout() const
 {
 	const Dictionary* dictionary = getDictionary();
-	T_ASSERT (dictionary);
+	T_ASSERT(dictionary);
 
 	const Font* font = dictionary->getFont(m_edit->getFontId());
-	T_ASSERT (font);
+	T_ASSERT(font);
 
 	Ref< TextLayout > layout = new TextLayout();
 
@@ -591,10 +591,10 @@ void EditInstance::dereference()
 bool EditInstance::internalParseText(const std::wstring& text)
 {
 	const Dictionary* dictionary = getDictionary();
-	T_ASSERT (dictionary);
+	T_ASSERT(dictionary);
 
 	const Font* font = dictionary->getFont(m_edit->getFontId());
-	T_ASSERT (font);
+	T_ASSERT(font);
 
 	m_layout->begin();
 
@@ -640,10 +640,10 @@ bool EditInstance::internalParseHtml(const std::wstring& html)
 		return false;
 
 	const Dictionary* dictionary = getDictionary();
-	T_ASSERT (dictionary);
+	T_ASSERT(dictionary);
 
 	const Font* font = dictionary->getFont(m_edit->getFontId());
-	T_ASSERT (font);
+	T_ASSERT(font);
 
 	m_layout->begin();
 
@@ -656,7 +656,7 @@ bool EditInstance::internalParseHtml(const std::wstring& html)
 	m_layout->setAttribute(font, m_textColor);
 
 	const html::Element* element = document.getDocumentElement();
-	T_ASSERT (element);
+	T_ASSERT(element);
 
 	StringOutputStream text;
 	traverseHtmlDOM(

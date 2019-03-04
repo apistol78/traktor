@@ -23,19 +23,19 @@ namespace traktor
 /*! \brief Convert from Bullet vector. */
 inline Vector4 fromBtVector3(const btVector3& v, float w)
 {
-	T_CONVERT_ASSERT (!isNanOrInfinite((v).x()));
-	T_CONVERT_ASSERT (!isNanOrInfinite((v).y()));
-	T_CONVERT_ASSERT (!isNanOrInfinite((v).z()));
-	T_CONVERT_ASSERT (!isNanOrInfinite(w));
+	T_CONVERT_ASSERT(!isNanOrInfinite((v).x()));
+	T_CONVERT_ASSERT(!isNanOrInfinite((v).y()));
+	T_CONVERT_ASSERT(!isNanOrInfinite((v).z()));
+	T_CONVERT_ASSERT(!isNanOrInfinite(w));
 	return Vector4(v.x(), v.y(), v.z(), w);
 }
 
 /*! \brief Convert to Bullet vector. */
 inline btVector3 toBtVector3(const Vector4& v)
 {
-	T_CONVERT_ASSERT (!isNanOrInfinite((v).x()));
-	T_CONVERT_ASSERT (!isNanOrInfinite((v).y()));
-	T_CONVERT_ASSERT (!isNanOrInfinite((v).z()));
+	T_CONVERT_ASSERT(!isNanOrInfinite((v).x()));
+	T_CONVERT_ASSERT(!isNanOrInfinite((v).y()));
+	T_CONVERT_ASSERT(!isNanOrInfinite((v).z()));
 	return btVector3(v.x(), v.y(), v.z());
 }
 

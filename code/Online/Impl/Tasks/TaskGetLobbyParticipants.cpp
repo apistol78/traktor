@@ -26,9 +26,9 @@ TaskGetLobbyParticipants::TaskGetLobbyParticipants(
 
 void TaskGetLobbyParticipants::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_matchMakingProvider);
-	T_ASSERT (m_userCache);
-	T_ASSERT (m_result);
+	T_ASSERT(m_matchMakingProvider);
+	T_ASSERT(m_userCache);
+	T_ASSERT(m_result);
 
 	std::vector< uint64_t > userHandles;
 	if (m_matchMakingProvider->getLobbyParticipants(m_lobbyHandle, userHandles))

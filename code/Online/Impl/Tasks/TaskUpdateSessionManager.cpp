@@ -16,7 +16,7 @@ TaskUpdateSessionManager::TaskUpdateSessionManager(ISessionManagerProvider* prov
 
 void TaskUpdateSessionManager::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_provider);
+	T_ASSERT(m_provider);
 	m_provider->update();
 	m_completed = true;
 }

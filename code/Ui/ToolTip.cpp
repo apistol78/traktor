@@ -40,7 +40,7 @@ bool ToolTip::create(Widget* parent)
 
 void ToolTip::show(const Point& at, const std::wstring& text)
 {
-	T_ASSERT (!text.empty());
+	T_ASSERT(!text.empty());
 
 	setText(text);
 

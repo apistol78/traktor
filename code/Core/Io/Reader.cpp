@@ -57,8 +57,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.Reader", Reader, Object)
 Reader::Reader(IStream* stream)
 :	m_stream(stream)
 {
-	T_ASSERT (m_stream);
-	T_ASSERT (m_stream->canRead());
+	T_ASSERT(m_stream);
+	T_ASSERT(m_stream->canRead());
 }
 
 Reader& Reader::operator >> (bool& b)

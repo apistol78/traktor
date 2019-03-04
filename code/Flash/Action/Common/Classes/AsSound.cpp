@@ -90,7 +90,7 @@ ActionValue AsSound::xplicit(const ActionValueArray& args)
 void AsSound::Sound_attachSound(ActionObject* self, const std::string& exportName) const
 {
 	ActionContext* context = self->getContext();
-	T_ASSERT (context);
+	T_ASSERT(context);
 
 	Dictionary* dictionary = context->getMovieClip()->getDictionary();
 	if (!dictionary)

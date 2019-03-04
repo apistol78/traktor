@@ -132,7 +132,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
 	{
 		const Feature* feature = *i;
-		T_ASSERT (feature);
+		T_ASSERT(feature);
 
 		Ref< const PropertyGroup > runtimeProperties = feature->getRuntimeProperties();
 		if (runtimeProperties)
@@ -239,7 +239,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
 	{
 		const Feature* feature = *i;
-		T_ASSERT (feature);
+		T_ASSERT(feature);
 
 		env->insert(feature->getEnvironment());
 	}

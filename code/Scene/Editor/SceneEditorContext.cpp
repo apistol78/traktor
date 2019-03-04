@@ -216,8 +216,8 @@ void SceneEditorContext::resetPhysics()
 
 Camera* SceneEditorContext::getCamera(int index) const
 {
-	T_ASSERT (index >= 0)
-	T_ASSERT (index < sizeof_array(m_cameras));
+	T_ASSERT(index >= 0)
+	T_ASSERT(index < sizeof_array(m_cameras));
 	return m_cameras[index];
 }
 
@@ -236,7 +236,7 @@ void SceneEditorContext::moveToEntityAdapter(EntityAdapter* entityAdapter)
 
 	for (uint32_t i = 0; i < sizeof_array(m_cameras); ++i)
 	{
-		T_ASSERT (m_cameras[i]);
+		T_ASSERT(m_cameras[i]);
 
 		Vector4 P = T.translation() - m_cameras[i]->getOrientation() * Vector4(0.0f, 0.0f, distance, 0.0f);
 		m_cameras[i]->place(P);
@@ -376,7 +376,7 @@ void SceneEditorContext::buildEntities()
 		for (uint32_t i = 0; i < layers.size(); ++i)
 		{
 			world::LayerEntityData* layerEntityData = layers[i];
-			T_ASSERT (layerEntityData);
+			T_ASSERT(layerEntityData);
 
 			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityBuilderSchema, m_layerEntityAdapters[i]);
 			for (RefArray< const world::IEntityFactory >::iterator k = entityFactories.begin(); k != entityFactories.end(); ++k)
@@ -472,7 +472,7 @@ void SceneEditorContext::buildEntities()
 
 void SceneEditorContext::buildController()
 {
-	T_ASSERT (m_scene);
+	T_ASSERT(m_scene);
 
 	Ref< ISceneController > controller;
 	if (m_sceneAsset->getControllerData())
@@ -724,7 +724,7 @@ void SceneEditorContext::cloneSelected()
 			continue;
 
 		Ref< world::EntityData > clonedEntityData = DeepClone((*i)->getEntityData()).create< world::EntityData >();
-		T_ASSERT (clonedEntityData);
+		T_ASSERT(clonedEntityData);
 
 		Ref< EntityAdapter > clonedEntityAdapter = new EntityAdapter(this);
 		clonedEntityAdapter->prepare(clonedEntityData, 0, 0);

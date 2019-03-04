@@ -273,7 +273,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
 		const Configuration* configuration = *i;
-		T_ASSERT (configuration);
+		T_ASSERT(configuration);
 
 		os << L"<ProjectConfiguration Include=\"" << configuration->getName() << L"|" << m_platform << L"\">" << Endl;
 		os << IncreaseIndent;
@@ -310,7 +310,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
 		const Configuration* configuration = *i;
-		T_ASSERT (configuration);
+		T_ASSERT(configuration);
 
 		os << L"<PropertyGroup Label=\"Configuration\" Condition=\"'$(Configuration)|$(Platform)'=='" << configuration->getName() << L"|" << m_platform << L"'\">" << Endl;
 		os << IncreaseIndent;
@@ -352,7 +352,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
 		const Configuration* configuration = *i;
-		T_ASSERT (configuration);
+		T_ASSERT(configuration);
 
 		std::wstring name = configuration->getName();
 		std::wstring projectName = m_targetPrefixes[int(configuration->getTargetFormat())] + project->getName();
@@ -489,7 +489,7 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 		if (projectDependency)
 		{
 			Ref< Project > dependentProject = projectDependency->getProject();
-			T_ASSERT (dependentProject);
+			T_ASSERT(dependentProject);
 
 			std::wstring dependentSolutionPath;
 			std::wstring dependentProjectPath;

@@ -68,7 +68,7 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 		}
 	}
 
-	T_ASSERT (!m_rootAdapter);
+	T_ASSERT(!m_rootAdapter);
 }
 
 EntityAdapterBuilder::~EntityAdapterBuilder()

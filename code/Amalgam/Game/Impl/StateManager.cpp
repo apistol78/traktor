@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.StateManager", StateManager, IStateMana
 void StateManager::destroy()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (!m_next);
+	T_ASSERT(!m_next);
 
 	if (m_current)
 	{
@@ -44,7 +44,7 @@ bool StateManager::beginTransition()
 
 void StateManager::leaveCurrent()
 {
-	T_ASSERT (m_next);
+	T_ASSERT(m_next);
 
 	if (m_current)
 	{
@@ -56,8 +56,8 @@ void StateManager::leaveCurrent()
 
 void StateManager::enterNext()
 {
-	T_ASSERT (m_next);
-	T_ASSERT (!m_current);
+	T_ASSERT(m_next);
+	T_ASSERT(!m_current);
 
 	m_current = m_next;
 	m_next = 0;

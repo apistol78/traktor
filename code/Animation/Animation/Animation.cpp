@@ -95,7 +95,7 @@ uint32_t Animation::addKeyPose(const KeyPose& pose)
 
 void Animation::removeKeyPose(uint32_t poseIndex)
 {
-	T_ASSERT (poseIndex < uint32_t(m_poses.size()));
+	T_ASSERT(poseIndex < uint32_t(m_poses.size()));
 	m_poses.erase(m_poses.begin() + size_t(poseIndex));
 }
 
@@ -111,19 +111,19 @@ uint32_t Animation::getKeyPoseCount() const
 
 Animation::KeyPose& Animation::getKeyPose(uint32_t poseIndex)
 {
-	T_ASSERT (poseIndex < uint32_t(m_poses.size()));
+	T_ASSERT(poseIndex < uint32_t(m_poses.size()));
 	return m_poses[poseIndex];
 }
 
 const Animation::KeyPose& Animation::getKeyPose(uint32_t poseIndex) const
 {
-	T_ASSERT (poseIndex < uint32_t(m_poses.size()));
+	T_ASSERT(poseIndex < uint32_t(m_poses.size()));
 	return m_poses[poseIndex];
 }
 
 const Animation::KeyPose& Animation::getLastKeyPose() const
 {
-	T_ASSERT (!empty());
+	T_ASSERT(!empty());
 	return m_poses.back();
 }
 

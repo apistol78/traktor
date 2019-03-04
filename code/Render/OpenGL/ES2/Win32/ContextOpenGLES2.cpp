@@ -343,9 +343,9 @@ void ContextOpenGLES2::leave()
 {
 	context_stack_t* stack = static_cast< context_stack_t* >(ms_contextStack.get());
 
-	T_ASSERT (stack);
-	T_ASSERT (!stack->empty());
-	T_ASSERT (stack->back() == this);
+	T_ASSERT(stack);
+	T_ASSERT(!stack->empty());
+	T_ASSERT(stack->back() == this);
 
 	stack->pop_back();
 

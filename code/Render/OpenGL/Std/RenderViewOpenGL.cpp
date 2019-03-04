@@ -416,7 +416,7 @@ SystemWindow RenderViewOpenGL::getSystemWindow()
 
 bool RenderViewOpenGL::begin(EyeType eye)
 {
-	T_ASSERT (!m_targetsDirty);
+	T_ASSERT(!m_targetsDirty);
 
 	if (!m_primaryTarget)
 		return false;
@@ -582,7 +582,7 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 		break;
 
 	default:
-		T_ASSERT (0);
+		T_ASSERT(0);
 	}
 
 	if (primitives.indexed)
@@ -687,7 +687,7 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 		break;
 
 	default:
-		T_ASSERT (0);
+		T_ASSERT(0);
 	}
 
 	if (primitives.indexed)
@@ -759,7 +759,7 @@ void RenderViewOpenGL::compute(IProgram* program, const int32_t* workSize)
 
 void RenderViewOpenGL::end()
 {
-	T_ASSERT (!m_targetStack.empty());
+	T_ASSERT(!m_targetStack.empty());
 
 	TargetScope ts = m_targetStack.back();
 
@@ -778,7 +778,7 @@ void RenderViewOpenGL::end()
 	}
 	else
 	{
-		T_ASSERT (ts.renderTargetSet == m_primaryTarget);
+		T_ASSERT(ts.renderTargetSet == m_primaryTarget);
 		ts.renderTargetSet->blit(m_renderContext);
 		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	}

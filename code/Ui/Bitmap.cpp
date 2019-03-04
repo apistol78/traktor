@@ -48,21 +48,21 @@ Bitmap::Bitmap(uint32_t width, uint32_t height)
 :	m_bitmap(0)
 {
 	create(width, height);
-	T_ASSERT (m_bitmap);
+	T_ASSERT(m_bitmap);
 }
 
 Bitmap::Bitmap(drawing::Image* image)
 :	m_bitmap(0)
 {
 	create(image);
-	T_ASSERT (m_bitmap);
+	T_ASSERT(m_bitmap);
 }
 
 Bitmap::Bitmap(drawing::Image* image, const ui::Rect& srcRect)
 :	m_bitmap(0)
 {
 	create(image, srcRect);
-	T_ASSERT (m_bitmap);
+	T_ASSERT(m_bitmap);
 }
 
 Bitmap::~Bitmap()
@@ -72,7 +72,7 @@ Bitmap::~Bitmap()
 
 bool Bitmap::create(uint32_t width, uint32_t height)
 {
-	T_ASSERT (!m_bitmap);
+	T_ASSERT(!m_bitmap);
 
 	if (!(m_bitmap = Application::getInstance()->getWidgetFactory()->createBitmap()))
 	{
@@ -92,7 +92,7 @@ bool Bitmap::create(uint32_t width, uint32_t height)
 
 bool Bitmap::create(drawing::Image* image)
 {
-	T_ASSERT (!m_bitmap);
+	T_ASSERT(!m_bitmap);
 
 	if (!create(image->getWidth(), image->getHeight()))
 		return false;
@@ -108,7 +108,7 @@ bool Bitmap::create(drawing::Image* image)
 
 bool Bitmap::create(drawing::Image* image, const Rect& srcRect)
 {
-	T_ASSERT (!m_bitmap);
+	T_ASSERT(!m_bitmap);
 
 	if (!create(image->getWidth(), image->getHeight()))
 		return false;

@@ -55,7 +55,7 @@ DebugRenderControl::DebugRenderControl()
 bool DebugRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 {
 	m_context = context;
-	T_ASSERT (m_context);
+	T_ASSERT(m_context);
 
 	m_renderWidget = new ui::Widget();
 	if (!m_renderWidget->create(parent))

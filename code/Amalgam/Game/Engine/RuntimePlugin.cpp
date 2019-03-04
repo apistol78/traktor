@@ -17,7 +17,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.RuntimePlugin", 0, RuntimePlugin, IRuntimePlugin)
 
-Ref< IState > RuntimePlugin::createInitialState(IEnvironment* environment) const
+bool RuntimePlugin::create(IEnvironment* environment)
+{
+	return true;
+}
+
+void RuntimePlugin::destroy(IEnvironment* environment)
+{
+}
+
+Ref< IState > RuntimePlugin::createInitialState(IEnvironment* environment)
 {
 	Guid startupGuid(environment->getSettings()->getProperty< std::wstring >(L"Amalgam.Startup"));
 
@@ -25,22 +34,21 @@ Ref< IState > RuntimePlugin::createInitialState(IEnvironment* environment) const
 	if (!stageData)
 	{
 		log::error << L"Unable to read startup stage; startup failed" << Endl;
-		return 0;
+		return nullptr;
 	}
 
-	Ref< Stage > stage = stageData->createInstance(environment, 0);
+	Ref< Stage > stage = stageData->createInstance(environment, nullptr);
 	if (!stage)
 	{
 		log::error << L"Unable to create startup stage; startup failed" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	// Prepare all initial layers; this will cause pending resources and systems
 	// to be created before first frame.
 	const UpdateInfo info;
-	const RefArray< Layer >& layers = stage->getLayers();
-	for (RefArray< Layer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
-		(*i)->prepare(info);
+	for (const auto layer : stage->getLayers())
+		layer->prepare(info);
 
 	return new StageState(environment, stage);
 }

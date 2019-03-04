@@ -32,7 +32,7 @@ XML::~XML()
 	if (m_thread)
 	{
 		ActionObject* self = getAsObject(m_context);
-		T_ASSERT (self);
+		T_ASSERT(self);
 
 		m_context->removeFrameListener(self);
 
@@ -44,7 +44,7 @@ XML::~XML()
 bool XML::load(const std::wstring& url_)
 {
 	ActionObject* self = getAsObject(m_context);
-	T_ASSERT (self);
+	T_ASSERT(self);
 
 	if (m_thread)
 		return false;
@@ -62,7 +62,7 @@ bool XML::load(const std::wstring& url_)
 void XML::onFrame(CallArgs& ca)
 {
 	ActionObject* self = getAsObject(m_context);
-	T_ASSERT (self);
+	T_ASSERT(self);
 
 	if (m_thread->wait(0))
 	{

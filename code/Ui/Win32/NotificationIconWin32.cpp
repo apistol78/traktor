@@ -64,7 +64,7 @@ void NotificationIconWin32::destroy()
 
 void NotificationIconWin32::setImage(ISystemBitmap* image)
 {
-	T_ASSERT (image);
+	T_ASSERT(image);
 	m_nid.hIcon = reinterpret_cast< BitmapWin32* >(image)->createIcon();
 	Shell_NotifyIcon(NIM_MODIFY, &m_nid);
 }

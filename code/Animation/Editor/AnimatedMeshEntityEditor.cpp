@@ -61,7 +61,7 @@ void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 					if (joint->getParent() >= 0)
 					{
 						const Joint* parent = skeleton->getJoint(joint->getParent());
-						T_ASSERT (parent != nullptr);
+						T_ASSERT(parent != nullptr);
 
 						primitiveRenderer->drawLine(
 							jointTransforms[joint->getParent()].translation(),
@@ -86,7 +86,7 @@ void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 					if (joint->getParent() >= 0)
 					{
 						const Joint* parent = skeleton->getJoint(joint->getParent());
-						T_ASSERT (parent != nullptr);
+						T_ASSERT(parent != nullptr);
 
 						primitiveRenderer->drawLine(
 							poseTransforms[joint->getParent()].translation(),

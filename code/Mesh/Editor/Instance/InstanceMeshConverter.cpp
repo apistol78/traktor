@@ -71,7 +71,7 @@ bool InstanceMeshConverter::convert(
 	log::info << L"Creating render mesh..." << Endl;
 
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
-	T_ASSERT (vertexSize > 0);
+	T_ASSERT(vertexSize > 0);
 
 	// Create render mesh.
 	uint32_t vertexBufferSize = uint32_t(model.getVertices().size() * vertexSize);
@@ -128,7 +128,7 @@ bool InstanceMeshConverter::convert(
 		for (AlignedVector< model::Polygon >::const_iterator j = model.getPolygons().begin(); j != model.getPolygons().end(); ++j)
 		{
 			const model::Polygon& polygon = *j;
-			T_ASSERT (polygon.getVertices().size() == 3);
+			T_ASSERT(polygon.getVertices().size() == 3);
 
 			if (model.getMaterial(polygon.getMaterial()).getName() != i->first)
 				continue;

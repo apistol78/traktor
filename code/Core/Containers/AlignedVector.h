@@ -617,7 +617,7 @@ public:
 			if (size > m_capacity)
 			{
 				reserve(size);
-				T_ASSERT (size <= m_capacity);
+				T_ASSERT(size <= m_capacity);
 			}
 			for (size_t i = m_size; i < size; ++i)
 				Constructor::construct(m_data[i], pad);
@@ -684,7 +684,7 @@ public:
 	/*! \brief Pop value from vector. */
 	void pop_back()
 	{
-		T_ASSERT (m_size > 0);
+		T_ASSERT(m_size > 0);
 		Constructor::destroy(m_data[m_size - 1]);
 		shrink(1);
 	}
@@ -721,7 +721,7 @@ public:
 	 */
 	ItemType& front()
 	{
-		T_ASSERT (m_size > 0);
+		T_ASSERT(m_size > 0);
 		return *m_data;
 	}
 
@@ -731,7 +731,7 @@ public:
 	 */
 	const ItemType& front() const
 	{
-		T_ASSERT (m_size > 0);
+		T_ASSERT(m_size > 0);
 		return *m_data;
 	}
 
@@ -741,7 +741,7 @@ public:
 	 */
 	ItemType& back()
 	{
-		T_ASSERT (m_size > 0);
+		T_ASSERT(m_size > 0);
 		return m_data[m_size - 1];
 	}
 
@@ -751,7 +751,7 @@ public:
 	 */
 	const ItemType& back() const
 	{
-		T_ASSERT (m_size > 0);
+		T_ASSERT(m_size > 0);
 		return m_data[m_size - 1];
 	}
 
@@ -853,7 +853,7 @@ public:
 	 */
 	iterator erase(const iterator& where, const iterator& last)
 	{
-		T_ASSERT (where.m_ptr <= last.m_ptr);
+		T_ASSERT(where.m_ptr <= last.m_ptr);
 
 		size_t offset = size_t(where.m_ptr - m_data);
 		size_t count = size_t(last.m_ptr - where.m_ptr);
@@ -922,8 +922,8 @@ public:
 		int32_t mv = int32_t(size - offset);
 		for (int32_t i = mv - 1; i >= 0; --i)
 		{
-			T_ASSERT (i + offset < size);
-			T_ASSERT (i + offset + count < m_size);
+			T_ASSERT(i + offset < size);
+			T_ASSERT(i + offset + count < m_size);
 			move(i + offset + count, i + offset);
 		}
 
@@ -960,8 +960,8 @@ public:
 		int32_t mv = int32_t(size - offset);
 		for (int32_t i = mv - 1; i >= 0; --i)
 		{
-			T_ASSERT (i + offset < size);
-			T_ASSERT (i + offset + count < m_size);
+			T_ASSERT(i + offset < size);
+			T_ASSERT(i + offset + count < m_size);
 			move(i + offset + count, i + offset);
 		}
 
@@ -977,13 +977,13 @@ public:
 
 	ItemType& operator [] (size_t index)
 	{
-		T_ASSERT (index < m_size);
+		T_ASSERT(index < m_size);
 		return m_data[index];
 	}
 
 	const ItemType& operator [] (size_t index) const
 	{
-		T_ASSERT (index < m_size);
+		T_ASSERT(index < m_size);
 		return m_data[index];
 	}
 
@@ -1053,7 +1053,7 @@ private:
 		if (newSize > m_capacity)
 			reserve(newSize);
 		m_size = newSize;
-		T_ASSERT (m_size <= m_capacity);
+		T_ASSERT(m_size <= m_capacity);
 	}
 
 	void shrink(size_t count)

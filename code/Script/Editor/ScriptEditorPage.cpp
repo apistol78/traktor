@@ -249,7 +249,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		if (syntaxLanguageType)
 		{
 			Ref< ui::SyntaxLanguage > syntaxLanguage = dynamic_type_cast< ui::SyntaxLanguage* >(syntaxLanguageType->createInstance());
-			T_ASSERT (syntaxLanguage);
+			T_ASSERT(syntaxLanguage);
 			m_edit->setLanguage(syntaxLanguage);
 		}
 
@@ -258,7 +258,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		if (scriptManagerType)
 		{
 			m_scriptManager = dynamic_type_cast< IScriptManager* >(scriptManagerType->createInstance());
-			T_ASSERT (m_scriptManager);
+			T_ASSERT(m_scriptManager);
 		}
 
 		std::wstring scriptOutlineTypeName = L"traktor.script.ScriptOutlineLua";
@@ -641,7 +641,7 @@ void ScriptEditorPage::eventToolBarEditClick(ui::ToolBarButtonClickEvent* event)
 		//if (startOffset >= 0 && stopOffset >= 0)
 		//{
 		//	std::wstring lineComment = m_edit->getLanguage()->lineComment();
-		//	T_ASSERT (!lineComment.empty());
+		//	T_ASSERT(!lineComment.empty());
 
 		//	int32_t startLine = m_edit->getLineFromOffset(startOffset);
 		//	int32_t stopLine = m_edit->getLineFromOffset(stopOffset);

@@ -87,7 +87,7 @@ void calculateGlobalHash(
 	for (SmallSet< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
 	{
 		const PipelineDependency* childDependency = dependencySet->get(*i);
-		T_ASSERT (childDependency);
+		T_ASSERT(childDependency);
 
 		if (childDependency == dependency)
 			continue;
@@ -166,7 +166,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 	for (uint32_t i = 0; i < dependencyCount; ++i)
 	{
 		const PipelineDependency* dependency = dependencySet->get(i);
-		T_ASSERT (dependency);
+		T_ASSERT(dependency);
 
 		if ((dependency->flags & PdfFailed) != 0)
 			continue;
@@ -230,7 +230,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 	for (uint32_t i = 0; i < dependencyCount; ++i)
 	{
 		const PipelineDependency* dependency = dependencySet->get(i);
-		T_ASSERT (dependency);
+		T_ASSERT(dependency);
 
 		SmallSet< uint32_t > visited;
 		visited.insert(i);
@@ -247,7 +247,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 			}
 
 			const PipelineDependency* childDependency = dependencySet->get(children.back());
-			T_ASSERT (childDependency);
+			T_ASSERT(childDependency);
 
 			if ((childDependency->flags & PdfUse) == 0)
 			{
@@ -359,7 +359,7 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 		if (i != m_builtCache.end())
 		{
 			built_cache_list_t& bcl = i->second;
-			T_ASSERT (!bcl.empty());
+			T_ASSERT(!bcl.empty());
 
 			// Return same instance as before if pointer and hash match.
 			for (built_cache_list_t::const_iterator j = bcl.begin(); j != bcl.end(); ++j)
@@ -377,7 +377,7 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 		return 0;
 
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
-	T_ASSERT (pipeline);
+	T_ASSERT(pipeline);
 
 	Ref< ISerializable > product = pipeline->buildOutput(this, sourceAsset);
 	if (!product)
@@ -406,7 +406,7 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 #if 1
 
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
-	T_ASSERT (pipeline);
+	T_ASSERT(pipeline);
 
 	if (!pipeline->buildOutput(
 		this,
@@ -461,7 +461,7 @@ Ref< ISerializable > PipelineBuilder::getBuildProduct(const ISerializable* sourc
 		if (i != m_builtCache.end())
 		{
 			built_cache_list_t& bcl = i->second;
-			T_ASSERT (!bcl.empty());
+			T_ASSERT(!bcl.empty());
 
 			// Return same instance as before if pointer and hash match.
 			for (built_cache_list_t::const_iterator j = bcl.begin(); j != bcl.end(); ++j)
@@ -630,7 +630,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	timer.start();
 
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
-	T_ASSERT (pipeline);
+	T_ASSERT(pipeline);
 
 	bool result = pipeline->buildOutput(
 		this,
@@ -774,7 +774,7 @@ void PipelineBuilder::buildThread(
 		}
 
 		const PipelineDependency* workDependency = dependencySet->get(workDependencyIndex);
-		T_ASSERT (workDependency);
+		T_ASSERT(workDependency);
 
 		if (m_listener)
 			m_listener->beginBuild(

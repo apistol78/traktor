@@ -66,7 +66,7 @@ WorldRenderSettings::WorldRenderSettings()
 
 void WorldRenderSettings::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 17);
+	T_ASSERT(s.getVersion() >= 17);
 
 	s >> Member< float >(L"viewNearZ", viewNearZ, AttributeRange(0.0f));
 	s >> Member< float >(L"viewFarZ", viewFarZ, AttributeRange(0.0f));

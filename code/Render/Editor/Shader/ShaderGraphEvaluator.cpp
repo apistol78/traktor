@@ -22,7 +22,7 @@ struct EvaluateVisitor
 	bool operator () (Node* node)
 	{
 		const INodeTraits* nodeTraits = INodeTraits::find(node);
-		T_ASSERT (nodeTraits);
+		T_ASSERT(nodeTraits);
 
 		// Get node's input types and constants.
 		int32_t inputPinCount = node->getInputPinCount();

@@ -107,7 +107,7 @@ public:
 
 	virtual int64_t tell() const override final
 	{
-		T_ASSERT (m_stream);
+		T_ASSERT(m_stream);
 		return m_stream->tell() - m_outBlock.offset;
 	}
 
@@ -128,13 +128,13 @@ public:
 
 	virtual int64_t write(const void* block, int64_t nbytes) override final
 	{
-		T_ASSERT (m_stream);
+		T_ASSERT(m_stream);
 		return m_stream->write(block, nbytes);
 	}
 
 	virtual void flush() override final
 	{
-		T_ASSERT (m_stream);
+		T_ASSERT(m_stream);
 		m_stream->flush();
 	}
 
@@ -158,7 +158,7 @@ BlockFile::BlockFile()
 
 BlockFile::~BlockFile()
 {
-	T_ASSERT (!m_stream);
+	T_ASSERT(!m_stream);
 }
 
 bool BlockFile::create(const Path& fileName, bool flushAlways)

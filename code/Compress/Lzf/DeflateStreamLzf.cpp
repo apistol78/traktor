@@ -180,13 +180,13 @@ int64_t DeflateStreamLzf::read(void* block, int64_t nbytes)
 
 int64_t DeflateStreamLzf::write(const void* block, int64_t nbytes)
 {
-	T_ASSERT (m_impl);
+	T_ASSERT(m_impl);
 	return m_impl->write(block, nbytes);
 }
 
 void DeflateStreamLzf::flush()
 {
-	T_ASSERT (m_impl);
+	T_ASSERT(m_impl);
 	m_impl->flush();
 }
 

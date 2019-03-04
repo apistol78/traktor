@@ -210,26 +210,26 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 		for (UINT i = 0; i < dsd.ConstantBuffers; ++i)
 		{
 			d3dConstantBufferReflection = d3dShaderReflection->GetConstantBufferByIndex(i);
-			T_ASSERT (d3dConstantBufferReflection);
+			T_ASSERT(d3dConstantBufferReflection);
 
 			d3dConstantBufferReflection->GetDesc(&dsbd);
-			T_ASSERT ((dsbd.Size & 3) == 0);
+			T_ASSERT((dsbd.Size & 3) == 0);
 
 			resource->m_vertexCBuffers[i].size = dsbd.Size;
 
 			for (UINT j = 0; j < dsbd.Variables; ++j)
 			{
 				d3dVariableReflection = d3dConstantBufferReflection->GetVariableByIndex(j);
-				T_ASSERT (d3dVariableReflection);
+				T_ASSERT(d3dVariableReflection);
 
 				d3dTypeReflection = d3dVariableReflection->GetType();
-				T_ASSERT (d3dTypeReflection);
+				T_ASSERT(d3dTypeReflection);
 
 				d3dVariableReflection->GetDesc(&dsvd);
-				T_ASSERT ((dsvd.StartOffset & 3) == 0);
+				T_ASSERT((dsvd.StartOffset & 3) == 0);
 
 				d3dTypeReflection->GetDesc(&dstd);
-				T_ASSERT (dstd.Type == D3D10_SVT_FLOAT);
+				T_ASSERT(dstd.Type == D3D10_SVT_FLOAT);
 
 				std::wstring name = mbstows(dsvd.Name);
 
@@ -275,7 +275,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 			d3dShaderReflection->GetResourceBindingDesc(i, &dsibd);
 			if (dsibd.Type == D3D10_SIT_TEXTURE)
 			{
-				T_ASSERT (dsibd.BindCount == 1);
+				T_ASSERT(dsibd.BindCount == 1);
 
 				std::wstring name = mbstows(dsibd.Name);
 
@@ -353,26 +353,26 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 		for (UINT i = 0; i < dsd.ConstantBuffers; ++i)
 		{
 			d3dConstantBufferReflection = d3dShaderReflection->GetConstantBufferByIndex(i);
-			T_ASSERT (d3dConstantBufferReflection);
+			T_ASSERT(d3dConstantBufferReflection);
 
 			d3dConstantBufferReflection->GetDesc(&dsbd);
-			T_ASSERT ((dsbd.Size & 3) == 0);
+			T_ASSERT((dsbd.Size & 3) == 0);
 
 			resource->m_pixelCBuffers[i].size = dsbd.Size;
 
 			for (UINT j = 0; j < dsbd.Variables; ++j)
 			{
 				d3dVariableReflection = d3dConstantBufferReflection->GetVariableByIndex(j);
-				T_ASSERT (d3dVariableReflection);
+				T_ASSERT(d3dVariableReflection);
 
 				d3dTypeReflection = d3dVariableReflection->GetType();
-				T_ASSERT (d3dTypeReflection);
+				T_ASSERT(d3dTypeReflection);
 
 				d3dVariableReflection->GetDesc(&dsvd);
-				T_ASSERT ((dsvd.StartOffset & 3) == 0);
+				T_ASSERT((dsvd.StartOffset & 3) == 0);
 
 				d3dTypeReflection->GetDesc(&dstd);
-				T_ASSERT (dstd.Type == D3D10_SVT_FLOAT);
+				T_ASSERT(dstd.Type == D3D10_SVT_FLOAT);
 
 				std::wstring name = mbstows(dsvd.Name);
 
@@ -418,7 +418,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 			d3dShaderReflection->GetResourceBindingDesc(i, &dsibd);
 			if (dsibd.Type == D3D10_SIT_TEXTURE)
 			{
-				T_ASSERT (dsibd.BindCount == 1);
+				T_ASSERT(dsibd.BindCount == 1);
 
 				std::wstring name = mbstows(dsibd.Name);
 

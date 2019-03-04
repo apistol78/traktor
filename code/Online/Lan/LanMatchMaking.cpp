@@ -60,7 +60,7 @@ void LanMatchMaking::update()
 
 		// Get my order value first.
 		const PropertyGroup* propertyGroup = m_userInLobbyService->getProperties();
-		T_ASSERT (propertyGroup);
+		T_ASSERT(propertyGroup);
 
 		primaryUserInLobbyService = m_userInLobbyService;
 		primaryOrder = propertyGroup->getProperty< int32_t >(c_keyOrder);
@@ -75,7 +75,7 @@ void LanMatchMaking::update()
 				continue;
 
 			const PropertyGroup* propertyGroup = (*i)->getProperties();
-			T_ASSERT (propertyGroup);
+			T_ASSERT(propertyGroup);
 
 			if (propertyGroup->getProperty< int32_t >(c_keyLobbyHandle) != m_lobbyHandle)
 				continue;
@@ -92,7 +92,7 @@ void LanMatchMaking::update()
 		if (primaryUserInLobbyService)
 		{
 			const PropertyGroup* propertyGroup = primaryUserInLobbyService->getProperties();
-			T_ASSERT (propertyGroup);
+			T_ASSERT(propertyGroup);
 
 			m_primaryLobbyUser = propertyGroup->getProperty< int32_t >(c_keyLobbyOwner);
 
@@ -114,7 +114,7 @@ void LanMatchMaking::update()
 						continue;
 
 					const PropertyGroup* userPropertyGroup = (*i)->getProperties();
-					T_ASSERT (userPropertyGroup);
+					T_ASSERT(userPropertyGroup);
 
 					if (userPropertyGroup->getProperty< int32_t >(c_keyLobbyHandle) != m_lobbyHandle)
 						continue;
@@ -153,7 +153,7 @@ bool LanMatchMaking::findMatchingLobbies(const LobbyFilter* filter, std::vector<
 			continue;
 
 		const PropertyGroup* propertyGroup = (*i)->getProperties();
-		T_ASSERT (propertyGroup);
+		T_ASSERT(propertyGroup);
 
 		uint64_t serviceLobbyHandle = propertyGroup->getProperty< int32_t >(c_keyLobbyHandle);
 		if (std::find(outLobbyHandles.begin(), outLobbyHandles.end(), serviceLobbyHandle) == outLobbyHandles.end())
@@ -210,7 +210,7 @@ bool LanMatchMaking::joinLobby(uint64_t lobbyHandle)
 			continue;
 
 		const PropertyGroup* servicePropertyGroup = (*i)->getProperties();
-		T_ASSERT (servicePropertyGroup);
+		T_ASSERT(servicePropertyGroup);
 
 		int32_t serviceLobbyHandle = servicePropertyGroup->getProperty< int32_t >(c_keyLobbyHandle);
 		if (serviceLobbyHandle == lobbyHandle)
@@ -227,7 +227,7 @@ bool LanMatchMaking::joinLobby(uint64_t lobbyHandle)
 	if (!smallestPropertyGroup)
 		return false;
 
-	T_ASSERT (smallestOrder > 0);
+	T_ASSERT(smallestOrder > 0);
 
 	// Create user-in-lobby service
 	{
@@ -283,7 +283,7 @@ bool LanMatchMaking::getLobbyMetaValue(uint64_t lobbyHandle, const std::wstring&
 	if (m_userInLobbyService && lobbyHandle == m_lobbyHandle)
 	{
 		const PropertyGroup* propertyGroup = m_userInLobbyService->getProperties();
-		T_ASSERT (propertyGroup);
+		T_ASSERT(propertyGroup);
 
 		outValue = propertyGroup->getProperty< std::wstring >(std::wstring(c_keyPrefixLobbyMeta) + L"/" + key);
 		return true;
@@ -299,7 +299,7 @@ bool LanMatchMaking::getLobbyMetaValue(uint64_t lobbyHandle, const std::wstring&
 				continue;
 
 			const PropertyGroup* propertyGroup = (*i)->getProperties();
-			T_ASSERT (propertyGroup);
+			T_ASSERT(propertyGroup);
 
 			uint64_t serviceLobbyHandle = propertyGroup->getProperty< int32_t >(c_keyLobbyHandle);
 			if (serviceLobbyHandle != lobbyHandle)
@@ -360,7 +360,7 @@ bool LanMatchMaking::getLobbyParticipantCount(uint64_t lobbyHandle, uint32_t& ou
 			continue;
 
 		const PropertyGroup* propertyGroup = (*i)->getProperties();
-		T_ASSERT (propertyGroup);
+		T_ASSERT(propertyGroup);
 
 		uint64_t serviceLobbyHandle = propertyGroup->getProperty< int32_t >(c_keyLobbyHandle);
 		if (serviceLobbyHandle == lobbyHandle)
@@ -395,7 +395,7 @@ bool LanMatchMaking::setLobbyOwner(uint64_t lobbyHandle, uint64_t userHandle) co
 		return false;
 
 	const PropertyGroup* currentPropertyGroup = m_userInLobbyService->getProperties();
-	T_ASSERT (currentPropertyGroup);
+	T_ASSERT(currentPropertyGroup);
 
 	if (currentPropertyGroup->getProperty< int32_t >(c_keyLobbyOwner) != int32_t(userHandle))
 	{

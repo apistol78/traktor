@@ -60,7 +60,7 @@ public:
 
 	uint32_t get(const ValueType& v, float distance) const
 	{
-		T_ASSERT (distance <= m_cellSize / 2.0f);
+		T_ASSERT(distance <= m_cellSize / 2.0f);
 
 		Vector2 p = PositionAccessor::get(v);
 		Vector2 pq = p / m_cellSize;

@@ -58,8 +58,8 @@ void ToolBar::destroy()
 
 uint32_t ToolBar::addImage(IBitmap* image, uint32_t imageCount)
 {
-	T_ASSERT (image);
-	T_ASSERT (imageCount > 0);
+	T_ASSERT(image);
+	T_ASSERT(imageCount > 0);
 
 	Size imageSize = image->getSize();
 	if (imageSize.cx <= 0 || imageSize.cy <= 0)
@@ -112,13 +112,13 @@ uint32_t ToolBar::addItem(ToolBarItem* item)
 
 void ToolBar::setItem(uint32_t id, ToolBarItem* item)
 {
-	T_ASSERT (id < m_items.size());
+	T_ASSERT(id < m_items.size());
 	m_items[id] = item;
 }
 
 Ref< ToolBarItem > ToolBar::getItem(uint32_t id)
 {
-	T_ASSERT (id < m_items.size());
+	T_ASSERT(id < m_items.size());
 	return m_items[id];
 }
 

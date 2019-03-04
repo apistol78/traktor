@@ -60,7 +60,7 @@ void AsMovieClipLoader::MovieClipLoader_getProgress(CallArgs& ca)
 bool AsMovieClipLoader::MovieClipLoader_loadClip(ActionObject* self, const std::wstring& url, SpriteInstance* target) const
 {
 	ActionContext* cx = getContext();
-	T_ASSERT (cx);
+	T_ASSERT(cx);
 
 	const IMovieLoader* movieLoader = cx->getMovieLoader();
 	if (!movieLoader)

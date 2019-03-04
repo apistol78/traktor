@@ -18,7 +18,7 @@ int AnsiEncoding::translate(const wchar_t* chars, int count, uint8_t* out) const
 
 int AnsiEncoding::translate(const uint8_t in[MaxEncodingSize], int count, wchar_t& out) const
 {
-	T_ASSERT (count > 0);
+	T_ASSERT(count > 0);
 
 	out = wchar_t(in[0]);
 	return 1;

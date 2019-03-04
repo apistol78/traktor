@@ -78,7 +78,7 @@ bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGrou
 	}
 
 	Ref< traktor::IStream > stream = connection->getStream();
-	T_ASSERT (stream);
+	T_ASSERT(stream);
 
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
 	if (!file)

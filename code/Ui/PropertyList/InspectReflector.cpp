@@ -51,7 +51,7 @@ namespace traktor
  */
 std::wstring stylizeMemberName(const std::wstring& memberName)
 {
-	T_ASSERT (!memberName.empty());
+	T_ASSERT(!memberName.empty());
 	StringOutputStream ss;
 	std::wstring::const_iterator i = memberName.begin();
 	ss.put(toupper(*i++));

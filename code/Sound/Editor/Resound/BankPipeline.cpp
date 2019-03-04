@@ -29,7 +29,7 @@ void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGr
 	if (const BlendGrainData* blendGrain = dynamic_type_cast< const BlendGrainData* >(grain))
 	{
 		const Ref< IGrainData >* grains = blendGrain->getGrains();
-		T_ASSERT (grains);
+		T_ASSERT(grains);
 
 		buildGrainDependencies(pipelineDepends, grains[0]);
 		buildGrainDependencies(pipelineDepends, grains[1]);

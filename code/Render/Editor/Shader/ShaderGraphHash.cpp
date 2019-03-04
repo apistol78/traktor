@@ -75,7 +75,7 @@ uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph)
 		for (int32_t i = 0; i < inputPinCount; ++i)
 		{
 			const InputPin* inputPin = node->getInputPin(i);
-			T_ASSERT (inputPin);
+			T_ASSERT(inputPin);
 
 			const OutputPin* sourcePin = shaderGraph->findSourcePin(inputPin);
 			if (!sourcePin)

@@ -135,7 +135,7 @@ bool PrimitiveRenderer::begin(uint32_t frame, const Matrix44& projection)
 
 void PrimitiveRenderer::end(uint32_t frame)
 {
-	T_ASSERT (m_currentFrame == &m_frames[frame]);
+	T_ASSERT(m_currentFrame == &m_frames[frame]);
 
 	if (m_vertexHead)
 	{
@@ -196,7 +196,7 @@ void PrimitiveRenderer::pushView(const Matrix44& view)
 void PrimitiveRenderer::popView()
 {
 	m_view.pop_back();
-	T_ASSERT (!m_view.empty());
+	T_ASSERT(!m_view.empty());
 	updateTransforms();
 }
 
@@ -209,7 +209,7 @@ void PrimitiveRenderer::pushWorld(const Matrix44& transform)
 void PrimitiveRenderer::popWorld()
 {
 	m_world.pop_back();
-	T_ASSERT (!m_world.empty());
+	T_ASSERT(!m_world.empty());
 	updateTransforms();
 }
 
@@ -221,7 +221,7 @@ void PrimitiveRenderer::pushDepthState(bool depthTest, bool depthWrite, bool dep
 void PrimitiveRenderer::popDepthState()
 {
 	m_depthState.pop_back();
-	T_ASSERT (!m_depthState.empty());
+	T_ASSERT(!m_depthState.empty());
 }
 
 void PrimitiveRenderer::setProjection(const Matrix44& projection)
@@ -1097,7 +1097,7 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 			vertexElements.push_back(VertexElement(DuPosition, DtFloat4, offsetof(Vertex, pos), 0));
 			vertexElements.push_back(VertexElement(DuCustom, DtHalf2, offsetof(Vertex, texCoord), 0));
 			vertexElements.push_back(VertexElement(DuColor, DtByte4N, offsetof(Vertex, rgb), 0));
-			T_ASSERT (getVertexSize(vertexElements) == sizeof(Vertex));
+			T_ASSERT(getVertexSize(vertexElements) == sizeof(Vertex));
 
 			Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(vertexElements, c_bufferCount * sizeof(Vertex), true);
 			if (!vertexBuffer)
@@ -1105,7 +1105,7 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 
 			m_freeVertexBuffers.push_back(vertexBuffer);
 		}
-		T_ASSERT (!m_freeVertexBuffers.empty());
+		T_ASSERT(!m_freeVertexBuffers.empty());
 
 		// Pick buffer from free list.
 		Ref< render::VertexBuffer > vertexBuffer = m_freeVertexBuffers.back();

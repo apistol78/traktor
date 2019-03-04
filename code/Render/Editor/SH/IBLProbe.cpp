@@ -36,7 +36,7 @@ float IBLProbe::evaluate(float phi, float theta, const Vector4& unit) const
 		Vector4(color.getRed(), color.getGreen(), color.getBlue()),
 		m_modulate
 	);
-	T_ASSERT (result >= 0.0f && result <= 1.0f);
+	T_ASSERT(result >= 0.0f && result <= 1.0f);
 
 	return result;
 }

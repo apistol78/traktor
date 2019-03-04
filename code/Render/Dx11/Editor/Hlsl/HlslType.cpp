@@ -69,7 +69,7 @@ int32_t hlsl_type_width(HlslType type)
 		0,
 		0
 	};
-	T_ASSERT (type < sizeof_array(c));
+	T_ASSERT(type < sizeof_array(c));
 	return c[type];
 }
 
@@ -90,7 +90,7 @@ HlslType hlsl_from_data_type(DataType type)
 		HtFloat2,
 		HtFloat4
 	};
-	T_ASSERT (type < sizeof_array(c));
+	T_ASSERT(type < sizeof_array(c));
 	return c[type];
 }
 
@@ -105,7 +105,7 @@ HlslType hlsl_from_parameter_type(ParameterType type)
 		HtTexture3D,
 		HtTextureCube
 	};
-	T_ASSERT (type < sizeof_array(c));
+	T_ASSERT(type < sizeof_array(c));
 	return c[type];
 }
 

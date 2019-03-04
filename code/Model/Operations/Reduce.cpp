@@ -44,8 +44,8 @@ Vector4 triangleNormal(const Model& model, uint32_t triangleId)
 	};
 
 	Vector4 ep[] = { p[2] - p[0], p[1] - p[0] };
-	T_ASSERT (ep[0].length() > FUZZY_EPSILON);
-	T_ASSERT (ep[1].length() > FUZZY_EPSILON);
+	T_ASSERT(ep[0].length() > FUZZY_EPSILON);
+	T_ASSERT(ep[1].length() > FUZZY_EPSILON);
 
 	return cross(ep[0], ep[1]).normalized();
 }

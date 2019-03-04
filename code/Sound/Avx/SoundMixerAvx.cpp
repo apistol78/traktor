@@ -40,8 +40,8 @@ bool SoundMixerAvx::supported()
 
 void SoundMixerAvx::mulConst(float* sb, uint32_t count, float factor) const
 {
-	T_ASSERT (alignUp(sb, 16) == sb);
-	T_ASSERT (alignUp(count, 4) == count);
+	T_ASSERT(alignUp(sb, 16) == sb);
+	T_ASSERT(alignUp(count, 4) == count);
 
 	__m256 sf8 = _mm256_set1_ps(factor);
 	__m128 sf4 = _mm_load1_ps(&factor);
@@ -75,8 +75,8 @@ void SoundMixerAvx::mulConst(float* sb, uint32_t count, float factor) const
 
 void SoundMixerAvx::mulConst(float* lsb, const float* rsb, uint32_t count, float factor) const
 {
-	T_ASSERT (alignUp(lsb, 16) == lsb);
-	T_ASSERT (alignUp(count, 4) == count);
+	T_ASSERT(alignUp(lsb, 16) == lsb);
+	T_ASSERT(alignUp(count, 4) == count);
 
 	Scalar sf(factor);
 	int32_t s = 0;
@@ -143,9 +143,9 @@ void SoundMixerAvx::mulConst(float* lsb, const float* rsb, uint32_t count, float
 
 void SoundMixerAvx::addMulConst(float* lsb, const float* rsb, uint32_t count, float factor) const
 {
-	T_ASSERT (alignUp(lsb, 16) == lsb);
-	T_ASSERT (alignUp(rsb, 16) == rsb);
-	T_ASSERT (alignUp(count, 4) == count);
+	T_ASSERT(alignUp(lsb, 16) == lsb);
+	T_ASSERT(alignUp(rsb, 16) == rsb);
+	T_ASSERT(alignUp(count, 4) == count);
 
 	Scalar sf(factor);
 	int32_t s = 0;
@@ -175,14 +175,14 @@ void SoundMixerAvx::addMulConst(float* lsb, const float* rsb, uint32_t count, fl
 
 void SoundMixerAvx::stretch(float* lsb, uint32_t lcount, const float* rsb, uint32_t rcount, float factor) const
 {
-	T_ASSERT (alignUp(lsb, 16) == lsb);
-	T_ASSERT (alignUp(rsb, 16) == rsb);
-	T_ASSERT (alignUp(lcount, 4) == lcount);
-	T_ASSERT (alignUp(rcount, 4) == rcount);
+	T_ASSERT(alignUp(lsb, 16) == lsb);
+	T_ASSERT(alignUp(rsb, 16) == rsb);
+	T_ASSERT(alignUp(lcount, 4) == lcount);
+	T_ASSERT(alignUp(rcount, 4) == rcount);
 
 	if (lcount != rcount)
 	{
-		T_ASSERT (rcount < 65536);
+		T_ASSERT(rcount < 65536);
 		uint32_t f = (rcount << 16) / lcount;
 
 		for (uint32_t s = 0; s < lcount; s += 4)
@@ -206,8 +206,8 @@ void SoundMixerAvx::stretch(float* lsb, uint32_t lcount, const float* rsb, uint3
 
 void SoundMixerAvx::mute(float* sb, uint32_t count) const
 {
-	T_ASSERT (alignUp(sb, 16) == sb);
-	T_ASSERT (alignUp(count, 4) == count);
+	T_ASSERT(alignUp(sb, 16) == sb);
+	T_ASSERT(alignUp(count, 4) == count);
 
 	const Vector4 zero = Vector4::zero();
 	for (uint32_t s = 0; s < count; s += 4)

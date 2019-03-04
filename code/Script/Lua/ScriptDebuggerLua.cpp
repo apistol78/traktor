@@ -267,7 +267,7 @@ bool ScriptDebuggerLua::captureObject(uint32_t object, RefArray< Variable >& out
 	T_ANONYMOUS_VAR(UnwindStack)(L);
 
 	lua_rawgeti(L, LUA_REGISTRYINDEX, object);
-	T_ASSERT (lua_istable(L, -1));
+	T_ASSERT(lua_istable(L, -1));
 
 	if (lua_getmetatable(L, -1))
 	{

@@ -523,7 +523,7 @@ void SteamMatchMaking::updatePartyParticipants()
 
 void SteamMatchMaking::OnLobbyMatch(LobbyMatchList_t* pCallback, bool bIOFailure)
 {
-	T_ASSERT (m_outLobbies != 0);
+	T_ASSERT(m_outLobbies != 0);
 	for (uint32_t i = 0; i < pCallback->m_nLobbiesMatching; ++i)
 	{
 		CSteamID lobbyId = SteamMatchmaking()->GetLobbyByIndex(i);
@@ -538,7 +538,7 @@ void SteamMatchMaking::OnLobbyMatch(LobbyMatchList_t* pCallback, bool bIOFailure
 
 void SteamMatchMaking::OnLobbyCreated(LobbyCreated_t* pCallback, bool bIOFailure)
 {
-	T_ASSERT (m_outLobbyOrParty != 0);
+	T_ASSERT(m_outLobbyOrParty != 0);
 	if (pCallback->m_eResult == k_EResultOK)
 		*m_outLobbyOrParty = pCallback->m_ulSteamIDLobby;
 	else

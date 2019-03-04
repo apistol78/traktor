@@ -28,7 +28,7 @@ wchar_t StringReader::readChar()
 			return 0;
 	}
 
-	T_ASSERT (m_count > 0);
+	T_ASSERT(m_count > 0);
 
 	int32_t result = m_encoding->translate(m_buffer, m_count, ch);
 	if (result <= 0)

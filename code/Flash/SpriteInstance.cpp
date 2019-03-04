@@ -43,7 +43,7 @@ SpriteInstance::SpriteInstance(ActionContext* context, Dictionary* dictionary, C
 ,	m_inDispatch(false)
 ,	m_gotoIssued(false)
 {
-	T_ASSERT (m_sprite->getFrameCount() > 0);
+	T_ASSERT(m_sprite->getFrameCount() > 0);
 }
 
 SpriteInstance::~SpriteInstance()
@@ -231,7 +231,7 @@ void SpriteInstance::updateDisplayListAndSounds(ISoundRenderer* soundRenderer)
 Ref< SpriteInstance > SpriteInstance::createEmptyMovieClip(const std::string& clipName, int32_t depth)
 {
 	ActionContext* context = getContext();
-	T_ASSERT (context);
+	T_ASSERT(context);
 
 	// Create fake character ID.
 	uint16_t emptyClipId = depth + 40000;
@@ -260,7 +260,7 @@ Ref< SpriteInstance > SpriteInstance::createEmptyMovieClip(const std::string& cl
 Ref< EditInstance > SpriteInstance::createTextField(const std::string& textName, int32_t depth, float x, float y, float width, float height)
 {
 	ActionContext* context = getContext();
-	T_ASSERT (context);
+	T_ASSERT(context);
 
 	// Get dictionary.
 	Dictionary* dictionary = getDictionary();
@@ -417,7 +417,7 @@ Ref< ShapeInstance > SpriteInstance::attachBitmap(Bitmap* bm, int32_t depth)
 
 	// Create new instance of shape.
 	Ref< ShapeInstance > attachShapeInstance = checked_type_cast< ShapeInstance* >(shape->createInstance(context, dictionary, this, "", Matrix33::identity(), 0, 0));
-	T_ASSERT (attachShapeInstance);
+	T_ASSERT(attachShapeInstance);
 
 	// Add new instance to display list.
 	getDisplayList().showObject(depth, shapeId, attachShapeInstance, true);
@@ -434,7 +434,7 @@ Aabb2 SpriteInstance::getLocalBounds() const
 	const DisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
-		T_ASSERT (i->second.instance);
+		T_ASSERT(i->second.instance);
 		bounds.contain(i->second.instance->getBounds());
 	}
 
@@ -451,7 +451,7 @@ Aabb2 SpriteInstance::getVisibleLocalBounds() const
 	const DisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (DisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
-		T_ASSERT (i->second.instance);
+		T_ASSERT(i->second.instance);
 		if (i->second.instance->isVisible())
 			bounds.contain(i->second.instance->getBounds());
 	}
@@ -518,7 +518,7 @@ void SpriteInstance::eventInit()
 	context->setMovieClip(this);
 
 	ActionObject* self = getAsObject(context);
-	T_ASSERT (self);
+	T_ASSERT(self);
 
 	Ref< ActionObject > super = self->getSuper();
 
@@ -594,7 +594,7 @@ void SpriteInstance::eventFrame()
 		m_lastExecutedFrame = m_currentFrame;
 
 		Frame* frame = m_sprite->getFrame(m_currentFrame);
-		T_ASSERT (frame);
+		T_ASSERT(frame);
 
 		const RefArray< const IActionVMImage >& scripts = frame->getActionScripts();
 		if (!scripts.empty())
@@ -602,7 +602,7 @@ void SpriteInstance::eventFrame()
 			T_PROFILER_SCOPE(L"Flash frame scripts");
 
 			ActionObject* self = getAsObject(context);
-			T_ASSERT (self);
+			T_ASSERT(self);
 
 			Ref< ActionObject > super = self->getSuper();
 			for (RefArray< const IActionVMImage >::const_iterator i = scripts.begin(); i != scripts.end(); ++i)

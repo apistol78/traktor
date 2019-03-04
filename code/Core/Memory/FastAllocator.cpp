@@ -79,7 +79,7 @@ void* FastAllocator::alloc(size_t size, size_t align, const char* const tag)
 		qid -= 4;
 
 		BlockAllocator* blockAlloc = m_blockAlloc[qid];
-		T_ASSERT (blockAlloc)
+		T_ASSERT(blockAlloc)
 
 		{
 			while (Atomic::exchange(m_blockAllocLock[qid], 1) != 0)
@@ -99,13 +99,13 @@ void* FastAllocator::alloc(size_t size, size_t align, const char* const tag)
 			m_blockAllocFull[qid] = 1;
 		}
 
-		T_ASSERT (alignUp((uint8_t*)p, 16) == p);
+		T_ASSERT(alignUp((uint8_t*)p, 16) == p);
 	}
 
 	if (!p)
 		p = m_systemAllocator->alloc(size, align, tag);
 
-	T_ASSERT (alignUp((uint8_t*)p, align) == p);
+	T_ASSERT(alignUp((uint8_t*)p, align) == p);
 	return p;
 }
 

@@ -24,10 +24,10 @@ inline bool compare(float e1, float e2)
 
 //#if !defined(NDEBUG)
 //#   define VALIDATE(v) \
-//	T_ASSERT (!isNan((v)._x) && !isInfinite((v)._x)); \
-//	T_ASSERT (!isNan((v)._y) && !isInfinite((v)._y)); \
-//	T_ASSERT (!isNan((v)._z) && !isInfinite((v)._z)); \
-//	T_ASSERT (!isNan((v)._w) && !isInfinite((v)._w));
+//	T_ASSERT(!isNan((v)._x) && !isInfinite((v)._x)); \
+//	T_ASSERT(!isNan((v)._y) && !isInfinite((v)._y)); \
+//	T_ASSERT(!isNan((v)._z) && !isInfinite((v)._z)); \
+//	T_ASSERT(!isNan((v)._w) && !isInfinite((v)._w));
 //#else
 #   define VALIDATE(v)
 //#endif
@@ -70,7 +70,7 @@ T_MATH_INLINE Vector4::Vector4(float x, float y, float z, float w)
 
 T_MATH_INLINE Vector4::Vector4(const float* p)
 {
-	T_ASSERT (p);
+	T_ASSERT(p);
 	_x = p[0];
 	_y = p[1];
 	_z = p[2];
@@ -182,19 +182,19 @@ T_MATH_INLINE Vector4 Vector4::absolute() const
 
 T_MATH_INLINE Vector4 Vector4::loadAligned(const float* in)
 {
-	T_ASSERT (in);
+	T_ASSERT(in);
 	return Vector4(in);
 }
 
 T_MATH_INLINE Vector4 Vector4::loadUnaligned(const float* in)
 {
-	T_ASSERT (in);
+	T_ASSERT(in);
 	return Vector4(in);
 }
 
 T_MATH_INLINE void Vector4::storeAligned(float* out) const
 {
-	T_ASSERT (out);
+	T_ASSERT(out);
 	out[0] = _x;
 	out[1] = _y;
 	out[2] = _z;
@@ -203,7 +203,7 @@ T_MATH_INLINE void Vector4::storeAligned(float* out) const
 
 T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 {
-	T_ASSERT (out);
+	T_ASSERT(out);
 	out[0] = _x;
 	out[1] = _y;
 	out[2] = _z;

@@ -77,7 +77,7 @@ void CheckBox::eventPaint(PaintEvent* event)
 	canvas.fillRect(rcInner);
 
 	IBitmap* image = m_checked ? s_imageChecked : s_imageUnchecked;
-	T_ASSERT (image);
+	T_ASSERT(image);
 
 	int32_t y = (rcInner.getHeight() - image->getSize().cy) / 2;
 

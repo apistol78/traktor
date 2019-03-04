@@ -440,7 +440,7 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 		break;
 
 	default:
-		T_ASSERT (0);
+		T_ASSERT(0);
 	}
 
 	if (primitives.indexed)
@@ -556,7 +556,7 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 		break;
 
 	default:
-		T_ASSERT (0);
+		T_ASSERT(0);
 	}
 
 #if !defined(_WIN32) && !defined(__ANDROID__) && GL_EXT_draw_instanced

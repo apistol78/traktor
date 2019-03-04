@@ -66,11 +66,11 @@ ContextOpenGL::ContextOpenGL(::Display* display, ::Window window, GLXContext con
 ContextOpenGL::~ContextOpenGL()
 {
 #if defined(_WIN32)
-	T_ASSERT (!m_hRC);
+	T_ASSERT(!m_hRC);
 #elif defined(__APPLE__)
-	T_ASSERT (!m_context);
+	T_ASSERT(!m_context);
 #elif defined(__LINUX__)
-	T_ASSERT (!m_context);
+	T_ASSERT(!m_context);
 #endif
 }
 
@@ -153,9 +153,9 @@ void ContextOpenGL::leave()
 	context_stack_t* stack = static_cast< context_stack_t* >(ms_contextStack.get());
 	bool result = true;
 
-	T_ASSERT (stack);
-	T_ASSERT (!stack->empty());
-	T_ASSERT (stack->back() == this);
+	T_ASSERT(stack);
+	T_ASSERT(!stack->empty());
+	T_ASSERT(stack->back() == this);
 
 	stack->pop_back();
 

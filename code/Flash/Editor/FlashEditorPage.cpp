@@ -496,10 +496,10 @@ void FlashEditorPage::updateTreeMovie()
 				updateTreeCharacter(memberItemRoot, movieInstance, pointerHash, nextPointerHash);
 
 				ActionContext* actionContext = movieInstance->getContext();
-				T_ASSERT (actionContext);
+				T_ASSERT(actionContext);
 
 				ActionObject* global = actionContext->getGlobal();
-				T_ASSERT (global);
+				T_ASSERT(global);
 
 				Ref< ui::TreeViewItem > memberItemGlobal = m_treeMovie->createItem(0, L"_global", 1);
 				memberItemGlobal->setImage(0, 0);

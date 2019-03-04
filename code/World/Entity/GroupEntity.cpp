@@ -21,8 +21,8 @@ GroupEntity::~GroupEntity()
 
 void GroupEntity::destroy()
 {
-	T_ASSERT (m_deferred[0].empty());
-	T_ASSERT (m_deferred[1].empty());
+	T_ASSERT(m_deferred[0].empty());
+	T_ASSERT(m_deferred[1].empty());
 	for (RefArray< Entity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
 		if (*i)

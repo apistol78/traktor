@@ -323,7 +323,7 @@ std::wstring MD5::format() const
 	for (int i = 0; i < MD5_SIZE; ++i)
 		ss << hex[(md5[i] >> 4) & 15] << hex[md5[i] & 15];
 
-	T_ASSERT (ss.str().length() == 32);
+	T_ASSERT(ss.str().length() == 32);
 	return ss.str();
 }
 

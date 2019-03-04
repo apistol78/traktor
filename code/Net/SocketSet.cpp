@@ -35,7 +35,7 @@ int32_t SocketSet::count() const
 
 Ref< Socket > SocketSet::get(int32_t index) const
 {
-	T_ASSERT (index >= 0 && index < int(m_sockets.size()));
+	T_ASSERT(index >= 0 && index < int(m_sockets.size()));
 	return m_sockets[index];
 }
 

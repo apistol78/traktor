@@ -14,7 +14,7 @@ void calculateJointLocalTransforms(
 	AlignedVector< Transform >& outJointLocalTransforms
 )
 {
-	T_ASSERT (skeleton);
+	T_ASSERT(skeleton);
 	outJointLocalTransforms.resize(skeleton->getJointCount());
 	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 		outJointLocalTransforms[i] = skeleton->getJoint(i)->getTransform();
@@ -25,7 +25,7 @@ void calculateJointTransforms(
 	AlignedVector< Transform >& outJointTransforms
 )
 {
-	T_ASSERT (skeleton);
+	T_ASSERT(skeleton);
 
 	AlignedVector< Transform > localJointTransforms;
 	calculateJointLocalTransforms(skeleton, localJointTransforms);
@@ -45,8 +45,8 @@ void calculatePoseLocalTransforms(
 	AlignedVector< Transform >& outJointLocalTransforms
 )
 {
-	T_ASSERT (skeleton);
-	T_ASSERT (pose);
+	T_ASSERT(skeleton);
+	T_ASSERT(pose);
 
 	outJointLocalTransforms.resize(skeleton->getJointCount());
 	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
@@ -59,8 +59,8 @@ void calculatePoseTransforms(
 	AlignedVector< Transform >& outJointTransforms
 )
 {
-	T_ASSERT (skeleton);
-	T_ASSERT (pose);
+	T_ASSERT(skeleton);
+	T_ASSERT(pose);
 
 	AlignedVector< Transform > localPoseTransforms;
 	calculatePoseLocalTransforms(skeleton, pose, localPoseTransforms);
@@ -123,9 +123,9 @@ void blendPoses(
 	Pose* outPose
 )
 {
-	T_ASSERT (pose1);
-	T_ASSERT (pose2);
-	T_ASSERT (outPose);
+	T_ASSERT(pose1);
+	T_ASSERT(pose2);
+	T_ASSERT(outPose);
 
 	// Build mask of all used joint indices.
 	BitSet indices;

@@ -7,7 +7,6 @@
 #include "Amalgam/Game/UpdateInfo.h"
 #include "Amalgam/Game/Engine/AudioLayer.h"
 #include "Amalgam/Game/Engine/StageData.h"
-#include "Amalgam/Game/Engine/FlashLayer.h"
 #include "Amalgam/Game/Engine/Stage.h"
 #include "Amalgam/Game/Engine/StageData.h"
 #include "Amalgam/Game/Engine/StageLoader.h"
@@ -19,10 +18,6 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Database/Database.h"
 #include "Drawing/Image.h"
-#include "Flash/Movie.h"
-#include "Flash/MoviePlayer.h"
-#include "Flash/SpriteInstance.h"
-#include "Flash/Action/ActionContext.h"
 #include "Input/InputSystem.h"
 #include "Input/RumbleEffectPlayer.h"
 #include "Input/Binding/InputMapping.h"
@@ -91,11 +86,6 @@ RefArray< BoxedTransition > StageData_getTransitions(StageData* self)
 	return out;
 }
 
-Any FlashLayer_externalCall(FlashLayer* self, const std::string& methodName, uint32_t argc, const Any* argv)
-{
-	return self->externalCall(methodName, argc, argv);
-}
-
 world::Entity* WorldLayer_getEntity_1(WorldLayer* self, const std::wstring& name)
 {
 	return self->getEntity(name);
@@ -112,7 +102,7 @@ Ref< BoxedVector4 > WorldLayer_worldToView(WorldLayer* self, const Vector4& worl
 	if (self->worldToView(worldPosition, viewPosition))
 		return new BoxedVector4(viewPosition);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< BoxedVector4 > WorldLayer_viewToWorld(WorldLayer* self, const Vector4& viewPosition)
@@ -121,7 +111,7 @@ Ref< BoxedVector4 > WorldLayer_viewToWorld(WorldLayer* self, const Vector4& view
 	if (self->viewToWorld(viewPosition, worldPosition))
 		return new BoxedVector4(worldPosition);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< BoxedVector2 > WorldLayer_worldToScreen(WorldLayer* self, const Vector4& worldPosition)
@@ -130,7 +120,7 @@ Ref< BoxedVector2 > WorldLayer_worldToScreen(WorldLayer* self, const Vector4& wo
 	if (self->worldToScreen(worldPosition, screenPosition))
 		return new BoxedVector2(screenPosition);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< BoxedVector2 > WorldLayer_viewToScreen(WorldLayer* self, const Vector4& viewPosition)
@@ -139,7 +129,7 @@ Ref< BoxedVector2 > WorldLayer_viewToScreen(WorldLayer* self, const Vector4& vie
 	if (self->viewToScreen(viewPosition, screenPosition))
 		return new BoxedVector2(screenPosition);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< BoxedRay3 > WorldLayer_screenToView(WorldLayer* self, const Vector2& screenPosition)
@@ -148,7 +138,7 @@ Ref< BoxedRay3 > WorldLayer_screenToView(WorldLayer* self, const Vector2& screen
 	if (self->screenToView(screenPosition, viewRay))
 		return new BoxedRay3(viewRay);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< BoxedRay3 > WorldLayer_screenToWorld(WorldLayer* self, const Vector2& screenPosition)
@@ -157,7 +147,7 @@ Ref< BoxedRay3 > WorldLayer_screenToWorld(WorldLayer* self, const Vector2& scree
 	if (self->screenToWorld(screenPosition, worldRay))
 		return new BoxedRay3(worldRay);
 	else
-		return 0;
+		return nullptr;
 }
 
 	}
@@ -288,16 +278,6 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classAudioLayer->addMethod("setParameter", &AudioLayer::setParameter);
 	classAudioLayer->addMethod("tweenParameter", &AudioLayer::tweenParameter);
 	registrar->registerClass(classAudioLayer);
-
-	auto classFlashLayer = new AutoRuntimeClass< FlashLayer >();
-	classFlashLayer->addProperty< flash::MoviePlayer* >("moviePlayer", 0, &FlashLayer::getMoviePlayer);
-	classFlashLayer->addProperty< flash::ActionContext* >("context", 0, &FlashLayer::getContext);
-	classFlashLayer->addProperty< flash::SpriteInstance* >("root", 0, &FlashLayer::getRoot);
-	classFlashLayer->addProperty< bool >("visible", &FlashLayer::setVisible, &FlashLayer::isVisible);
-	classFlashLayer->addMethod("getExternal", &FlashLayer::getExternal);
-	classFlashLayer->addMethod("getPrintableString", &FlashLayer::getPrintableString);
-	classFlashLayer->setUnknownHandler(&FlashLayer_externalCall);
-	registrar->registerClass(classFlashLayer);
 
 	auto classVideoLayer = new AutoRuntimeClass< VideoLayer >();
 	classVideoLayer->addProperty< bool >("playing", 0, &VideoLayer::isPlaying);

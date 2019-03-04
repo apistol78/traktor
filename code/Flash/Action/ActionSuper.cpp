@@ -96,7 +96,7 @@ Ref< ActionObject > ActionSuper::getSuper()
 
 ActionValue ActionSuper::call(ActionObject* self, ActionObject* super, const ActionValueArray& args)
 {
-	T_ASSERT (self == m_object);
+	T_ASSERT(self == m_object);
 
 	if (!m_superPrototype || !m_superClass)
 		return ActionValue();

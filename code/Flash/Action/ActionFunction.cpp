@@ -20,7 +20,7 @@ ActionFunction::ActionFunction(ActionContext* context, const char* name)
 
 ActionValue ActionFunction::call(ActionFrame* callerFrame, ActionObject* self, ActionObject* super)
 {
-	T_ASSERT (callerFrame);
+	T_ASSERT(callerFrame);
 
 	ActionValueStack& callerStack = callerFrame->getStack();
 
@@ -37,7 +37,7 @@ ActionValue ActionFunction::call(ActionFrame* callerFrame, ActionObject* self, A
 
 ActionValue ActionFunction::call(ActionFrame* callerFrame, ActionObject* self)
 {
-	T_ASSERT (callerFrame);
+	T_ASSERT(callerFrame);
 
 	ActionValueStack& callerStack = callerFrame->getStack();
 
@@ -54,7 +54,7 @@ ActionValue ActionFunction::call(ActionFrame* callerFrame, ActionObject* self)
 
 ActionValue ActionFunction::call(ActionFrame* callerFrame)
 {
-	T_ASSERT (callerFrame);
+	T_ASSERT(callerFrame);
 
 	ActionValueStack& callerStack = callerFrame->getStack();
 

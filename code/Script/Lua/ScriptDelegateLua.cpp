@@ -25,9 +25,9 @@ ScriptDelegateLua::~ScriptDelegateLua()
 
 void ScriptDelegateLua::push()
 {
-	T_ASSERT (m_luaState);
+	T_ASSERT(m_luaState);
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_functionRef);
-	T_ASSERT (lua_isfunction(m_luaState, -1));
+	T_ASSERT(lua_isfunction(m_luaState, -1));
 }
 
 Any ScriptDelegateLua::call(int32_t argc, const Any* argv)

@@ -22,7 +22,7 @@ const uint32_t c_outputSamplesBlockCount = 16;
 
 inline void moveSamples(float* destSamples, const float* sourceSamples, int32_t samplesCount)
 {
-	T_ASSERT ((samplesCount & 3) == 0);
+	T_ASSERT((samplesCount & 3) == 0);
 	Vector4 tmp[4];
 	int32_t i;
 
@@ -206,7 +206,7 @@ bool SoundChannel::getBlock(
 	sp.set.clear();
 
 	const ISoundBuffer* soundBuffer = ss.buffer;
-	T_ASSERT (soundBuffer);
+	T_ASSERT(soundBuffer);
 
 	// Remove old output samples.
 	if (m_outputSamplesIn >= m_hwFrameSamples)
@@ -271,14 +271,14 @@ bool SoundChannel::getBlock(
 		if (!soundBlock.samplesCount || !soundBlock.sampleRate || !soundBlock.maxChannel)
 			return false;
 
-		T_ASSERT (soundBlock.samplesCount <= m_hwFrameSamples);
+		T_ASSERT(soundBlock.samplesCount <= m_hwFrameSamples);
 
 		// Apply filter on sound block.
 		StateFilter& sf = m_stateFilter.read();
 		if (sf.filter)
 		{
 			sf.filter->apply(sf.filterInstance, soundBlock);
-			T_ASSERT (soundBlock.samplesCount <= m_hwFrameSamples);
+			T_ASSERT(soundBlock.samplesCount <= m_hwFrameSamples);
 		}
 
 		uint32_t sampleRate = uint32_t(m_pitch * soundBlock.sampleRate);
@@ -297,8 +297,8 @@ bool SoundChannel::getBlock(
 				const float* inputSamples = soundBlock.samples[i];
 
 				float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
-				T_ASSERT (alignUp(outputSamples, 16) == outputSamples);
-				T_ASSERT (m_outputSamplesIn + outputSamplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
+				T_ASSERT(alignUp(outputSamples, 16) == outputSamples);
+				T_ASSERT(m_outputSamplesIn + outputSamplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
 
 				if (inputSamples)
 					mixer->stretch(
@@ -320,7 +320,7 @@ bool SoundChannel::getBlock(
 			{
 				const float* inputSamples = soundBlock.samples[i];
 				float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
-				T_ASSERT (m_outputSamplesIn + soundBlock.samplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
+				T_ASSERT(m_outputSamplesIn + soundBlock.samplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
 
 				if (inputSamples)
 					mixer->mulConst(

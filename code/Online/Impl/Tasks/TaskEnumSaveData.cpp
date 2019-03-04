@@ -22,7 +22,7 @@ TaskEnumSaveData::TaskEnumSaveData(
 
 void TaskEnumSaveData::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_provider);
+	T_ASSERT(m_provider);
 	T_DEBUG(L"Online; Begin enumerating save data");
 	std::set< std::wstring > saveDataIds;
 	m_provider->enumerate(saveDataIds);

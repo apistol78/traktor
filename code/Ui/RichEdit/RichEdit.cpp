@@ -287,8 +287,8 @@ void RichEdit::setAttributes(int32_t start, int32_t length, int32_t textAttribut
 
 int32_t RichEdit::addImage(IBitmap* image, uint32_t imageCount)
 {
-	T_ASSERT (image);
-	T_ASSERT (imageCount > 0);
+	T_ASSERT(image);
+	T_ASSERT(imageCount > 0);
 
 	if (m_image)
 	{

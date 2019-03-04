@@ -31,7 +31,7 @@ void StaticMesh::render(
 )
 {
 	SmallMap< render::handle_t, AlignedVector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
-	T_ASSERT (it != m_parts.end());
+	T_ASSERT(it != m_parts.end());
 
 	Aabb3 boundingBox = m_renderMesh->getBoundingBox();
 

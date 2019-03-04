@@ -68,13 +68,13 @@ public:
 
 		bool operator == (const const_iterator& it) const
 		{
-			T_ASSERT (m_this == it.m_this);
+			T_ASSERT(m_this == it.m_this);
 			return m_st == it.m_st && m_en == it.m_en;
 		}
 
 		bool operator != (const const_iterator& it) const
 		{
-			T_ASSERT (m_this == it.m_this);
+			T_ASSERT(m_this == it.m_this);
 			return m_st != it.m_st || m_en != it.m_en;
 		}
 

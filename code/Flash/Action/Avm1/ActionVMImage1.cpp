@@ -115,7 +115,7 @@ void ActionVMImage1::prepare()
 
 		// Get instruction preparation handler and dispatch.
 		const OperationInfo& info = c_operationInfos[op];
-		T_ASSERT (info.op == op);
+		T_ASSERT(info.op == op);
 
 		if (info.prepare)
 			info.prepare(state);
@@ -140,7 +140,7 @@ void ActionVMImage1::execute(ActionFrame* frame) const
 
 void ActionVMImage1::serialize(ISerializer& s)
 {
-	T_ASSERT (!m_prepared);
+	T_ASSERT(!m_prepared);
 
 	uint32_t size = uint32_t(m_byteCode.size());
 	s >> Member< uint32_t >(L"byteCodeSize", size);
@@ -162,7 +162,7 @@ void ActionVMImage1::nonConstExecute(ActionFrame* frame)
 	if (!m_prepared)
 	{
 		prepare();
-		T_ASSERT (m_prepared);
+		T_ASSERT(m_prepared);
 	}
 
 	// Setup execution state.
@@ -224,8 +224,8 @@ void ActionVMImage1::nonConstExecute(ActionFrame* frame)
 
 		// Get instruction handler and dispatch.
 		const OperationInfo& info = c_operationInfos[op];
-		T_ASSERT (info.op == op);
-		T_ASSERT (info.execute != 0);
+		T_ASSERT(info.op == op);
+		T_ASSERT(info.execute != 0);
 
 #if defined(_DEBUG) && defined(T_TRACE_ENABLE)
 		trace.preDispatch(state, info);

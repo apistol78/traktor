@@ -104,7 +104,7 @@ Ref< CharacterInstance > Sprite::createInstance(
 	if (initObject)
 	{
 		ActionObject* spriteInstanceAO = spriteInstance->getAsObject(context);
-		T_ASSERT (spriteInstanceAO);
+		T_ASSERT(spriteInstanceAO);
 
 		const ActionObject::member_map_t& members = initObject->getLocalMembers();
 		for (ActionObject::member_map_t::const_iterator i = members.begin(); i != members.end(); ++i)
@@ -122,7 +122,7 @@ Ref< CharacterInstance > Sprite::createInstance(
 		if (context->getGlobal()->getMember(spriteClassName, spriteClassValue))
 		{
 			ActionObject* spriteInstanceAO = spriteInstance->getAsObject(context);
-			T_ASSERT (spriteInstanceAO);
+			T_ASSERT(spriteInstanceAO);
 
 			ActionValue prototype;
 			spriteClassValue.getObjectAlways(context)->getMember(ActionContext::IdPrototype, prototype);
@@ -142,7 +142,7 @@ Ref< CharacterInstance > Sprite::createInstance(
 		if (context->getGlobal()->getMember(spriteClassName, spriteClassValue))
 		{
 			ActionObject* spriteInstanceAO = spriteInstance->getAsObject(context);
-			T_ASSERT (spriteInstanceAO);
+			T_ASSERT(spriteInstanceAO);
 
 			ActionFunction* classConstructor = spriteClassValue.getObject< ActionFunction >();
 			if (classConstructor)

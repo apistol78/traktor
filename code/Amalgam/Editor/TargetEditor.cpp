@@ -424,7 +424,7 @@ void TargetEditor::selectPlatform(const Guid& platformGuid) const
 	for (int i = 0; i < c; ++i)
 	{
 		db::Instance* platformInstance = m_dropDownPlatform->getData< db::Instance >(i);
-		T_ASSERT (platformInstance);
+		T_ASSERT(platformInstance);
 
 		if (platformInstance->getGuid() == platformGuid)
 		{
@@ -495,7 +495,7 @@ void TargetEditor::eventButtonCloneTargetConfigurationClick(ui::ButtonClickEvent
 		return;
 
 	targetConfiguration = DeepClone(targetConfiguration).create< TargetConfiguration >();
-	T_ASSERT (targetConfiguration);
+	T_ASSERT(targetConfiguration);
 
 	ui::InputDialog::Field fields[] =
 	{
@@ -544,7 +544,7 @@ void TargetEditor::eventDropDownPlatformSelect(ui::SelectionChangeEvent* event)
 		return;
 
 	db::Instance* platformInstance = m_dropDownPlatform->getSelectedData< db::Instance >();
-	T_ASSERT (platformInstance);
+	T_ASSERT(platformInstance);
 
 	targetConfiguration->setPlatform(platformInstance->getGuid());
 

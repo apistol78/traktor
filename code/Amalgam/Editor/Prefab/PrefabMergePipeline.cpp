@@ -133,7 +133,7 @@ bool PrefabMergePipeline::buildOutput(
 		for (AlignedVector< PrefabMerge::VisualMesh >::const_iterator i = visualMeshes.begin(); i != visualMeshes.end(); ++i)
 		{
 			Ref< const mesh::MeshAsset > meshAsset = i->meshAsset;
-			T_ASSERT (meshAsset);
+			T_ASSERT(meshAsset);
 
 			// Insert custom material shaders.
 			const std::map< std::wstring, Guid >& materialShaders = meshAsset->getMaterialShaders();
@@ -220,7 +220,7 @@ bool PrefabMergePipeline::buildOutput(
 		for (AlignedVector< PrefabMerge::ShapeMesh >::const_iterator i = shapeMeshes.begin(); i != shapeMeshes.end(); ++i)
 		{
 			Ref< const physics::MeshAsset > meshShapeAsset = i->meshAsset;
-			T_ASSERT (meshShapeAsset);
+			T_ASSERT(meshShapeAsset);
 
 			std::map< std::wstring, Ref< const model::Model > >::const_iterator j = modelCache.find(meshShapeAsset->getFileName().getOriginal());
 			if (j != modelCache.end())

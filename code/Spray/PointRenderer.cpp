@@ -135,7 +135,7 @@ void PointRenderer::render(
 )
 {
 	int32_t size = int32_t(points.size());
-	T_ASSERT (size > 0);
+	T_ASSERT(size > 0);
 
 	int32_t avail = c_pointCount - m_pointOffset;
 	if (avail <= 0)
@@ -249,7 +249,7 @@ void PointRenderer::flush(
 		m_jobQueue->wait();
 #endif
 
-		T_ASSERT (m_vertex);
+		T_ASSERT(m_vertex);
 
 		for (AlignedVector< Batch >::const_iterator i = m_batches.begin(); i != m_batches.end(); ++i)
 		{

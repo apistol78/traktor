@@ -39,7 +39,7 @@ void SwDisplayRenderer::setTransform(const Matrix33& transform)
 
 void SwDisplayRenderer::setImage(drawing::Image* image)
 {
-	T_ASSERT (image->getPixelFormat() == m_image->getPixelFormat());
+	T_ASSERT(image->getPixelFormat() == m_image->getPixelFormat());
 	m_image = image;
 	m_raster = new drawing::Raster(m_image);
 }
@@ -157,7 +157,7 @@ void SwDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33
 			if (bitmap)
 			{
 				const drawing::Image* image = bitmap->getImage();
-				T_ASSERT (image);
+				T_ASSERT(image);
 
 				m_raster->defineImageStyle(
 					style.getFillBitmapMatrix().inverse() * rasterTransform.inverse(),
@@ -241,7 +241,7 @@ void SwDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33
 			int32_t fs1 = j->fillStyle1 - 1;
 			int32_t ls = j->lineStyle - 1;
 
-			T_ASSERT (fs0 >= 0 || fs1 >= 0 || ls >= 0);
+			T_ASSERT(fs0 >= 0 || fs1 >= 0 || ls >= 0);
 
 			m_raster->clear();
 
@@ -328,7 +328,7 @@ void SwDisplayRenderer::renderGlyph(
 			int32_t fs0 = j->fillStyle0 - 1;
 			int32_t fs1 = j->fillStyle1 - 1;
 
-			T_ASSERT (fs0 >= 0 || fs1 >= 0);
+			T_ASSERT(fs0 >= 0 || fs1 >= 0);
 
 			m_raster->clear();
 
@@ -393,7 +393,7 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& ca
 			if (bitmap)
 			{
 				const drawing::Image* image = bitmap->getImage();
-				T_ASSERT (image);
+				T_ASSERT(image);
 
 				m_raster->defineImageStyle(
 					style.getFillBitmapMatrix().inverse() * rasterTransform.inverse(),
@@ -477,7 +477,7 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& ca
 			int32_t fs1 = j->fillStyle1 - 1;
 			int32_t ls = j->lineStyle - 1;
 
-			T_ASSERT (fs0 >= 0 || fs1 >= 0 || ls >= 0);
+			T_ASSERT(fs0 >= 0 || fs1 >= 0 || ls >= 0);
 
 			m_raster->clear();
 

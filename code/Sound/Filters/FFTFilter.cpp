@@ -225,7 +225,7 @@ void FFTFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 
 	float fr[N], fi[N], dummy[N];
 
-	T_ASSERT (outBlock.samplesCount % N == 0);
+	T_ASSERT(outBlock.samplesCount % N == 0);
 
 	const int n1 = N / 4;
 	const int n2 = (N * 2) / 4;

@@ -133,10 +133,10 @@ CubicRenderControl::CubicRenderControl()
 bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 {
 	m_context = context;
-	T_ASSERT (m_context);
+	T_ASSERT(m_context);
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	m_container = new ui::Container();
 	if (!m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
@@ -275,7 +275,7 @@ void CubicRenderControl::updateWorldRenderer()
 	}
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	// \note Not able to use deferred renderer atm, cannot render properly as we cannot share depth targets between render target sets.
 	std::wstring worldRendererTypeName = L"traktor.world.WorldRendererForward"; //settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");

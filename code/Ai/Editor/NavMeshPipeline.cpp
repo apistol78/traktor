@@ -503,7 +503,7 @@ bool NavMeshPipeline::buildOutput(
 	for (uint32_t i = 0; i < navModels.size(); ++i)
 	{
 		const model::Model* navModel = navModels[i].model;
-		T_ASSERT (navModel);
+		T_ASSERT(navModel);
 
 		navModelsAabb.contain(navModel->getBoundingBox().transform(navModels[i].transform));
 		navModelsTriangleCount += navModel->getPolygonCount();
@@ -584,7 +584,7 @@ bool NavMeshPipeline::buildOutput(
 			for (int32_t j = 0; j < triangleCount; ++j)
 			{
 				const model::Polygon& triangle = i->model->getPolygon(j);
-				T_ASSERT (triangle.getVertexCount() == 3);
+				T_ASSERT(triangle.getVertexCount() == 3);
 
 				if (oceanClip)
 				{
@@ -601,7 +601,7 @@ bool NavMeshPipeline::buildOutput(
 				indices.push_back(triangle.getVertex(0));
 			}
 
-			T_ASSERT (indices.size() / 3 <= triangleCount);
+			T_ASSERT(indices.size() / 3 <= triangleCount);
 
 			if (!indices.empty())
 			{

@@ -18,20 +18,20 @@ void SingletonManager::add(ISingleton* singleton)
 
 void SingletonManager::addBefore(ISingleton* singleton, ISingleton* dependency)
 {
-	T_ASSERT (dependency);
+	T_ASSERT(dependency);
 
 	AlignedVector< ISingleton* >::iterator i = std::find(m_singletons.begin(), m_singletons.end(), dependency);
-	T_ASSERT (i != m_singletons.end());
+	T_ASSERT(i != m_singletons.end());
 
 	m_singletons.insert(i, singleton);
 }
 
 void SingletonManager::addAfter(ISingleton* singleton, ISingleton* dependency)
 {
-	T_ASSERT (dependency);
+	T_ASSERT(dependency);
 
 	AlignedVector< ISingleton* >::iterator i = std::find(m_singletons.begin(), m_singletons.end(), dependency);
-	T_ASSERT (i != m_singletons.end());
+	T_ASSERT(i != m_singletons.end());
 
 	m_singletons.insert(++i, singleton);
 }

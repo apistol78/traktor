@@ -432,7 +432,7 @@ SwfShapeRecord* SwfReader::readShapeRecord(uint32_t numFillBits, uint32_t numLin
 
 		if (shapeRecord->style.stateNewStyles)
 		{
-			T_ASSERT (shapeType != 1);
+			T_ASSERT(shapeType != 1);
 			shapeRecord->style.newStyles = readStyles(shapeType);
 		}
 	}

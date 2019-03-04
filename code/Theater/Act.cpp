@@ -68,7 +68,7 @@ bool Act::update(scene::Scene* scene, float time, float deltaTime) const
 	for (uint32_t i = 0; i < ntracks; ++i)
 	{
 		Ref< world::Entity > entity = m_tracks[i]->getEntity();
-		T_ASSERT (entity);
+		T_ASSERT(entity);
 
 		const TransformPath& path = m_tracks[i]->getPath();
 
@@ -94,7 +94,7 @@ bool Act::update(scene::Scene* scene, float time, float deltaTime) const
 	for (uint32_t i = 0; i < ntracks; ++i)
 	{
 		Ref< world::Entity > entity = m_tracks[i]->getEntity();
-		T_ASSERT (entity);
+		T_ASSERT(entity);
 
 		if (!entity->getTransform(transform))
 			continue;

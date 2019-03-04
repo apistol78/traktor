@@ -19,7 +19,7 @@ bool Splash::create()
 		return false;
 
 	Ref< ui::Bitmap > splash = ui::Bitmap::load(c_ResourceSplash, sizeof(c_ResourceSplash), L"png");
-	T_ASSERT (splash);
+	T_ASSERT(splash);
 
 	Ref< ui::Image > image = new ui::Image();
 	image->create(this, splash, false);

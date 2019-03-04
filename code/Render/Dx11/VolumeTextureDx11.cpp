@@ -28,7 +28,7 @@ bool VolumeTextureDx11::create(const VolumeTextureCreateDesc& desc)
 	D3D11_TEXTURE3D_DESC dtd;
 	HRESULT hr;
 
-	T_ASSERT (sizeof(TextureInitialData) == sizeof(D3D11_SUBRESOURCE_DATA));
+	T_ASSERT(sizeof(TextureInitialData) == sizeof(D3D11_SUBRESOURCE_DATA));
 
 	const DXGI_FORMAT* dxgiTextureFormats = desc.sRGB ? c_dxgiTextureFormats_sRGB : c_dxgiTextureFormats;
 	if (dxgiTextureFormats[desc.format] == DXGI_FORMAT_UNKNOWN)

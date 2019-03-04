@@ -127,7 +127,7 @@ Ref< Result > Leaderboards::addScore(const std::wstring& leaderboardId, int32_t 
 Ref< ScoreArrayResult > Leaderboards::getGlobalScores(const std::wstring& leaderboardId, int32_t from, int32_t to)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (from <= to);
+	T_ASSERT(from <= to);
 
 	std::map< std::wstring, ILeaderboardsProvider::LeaderboardData >::iterator i = m_leaderboards.find(leaderboardId);
 	if (i == m_leaderboards.end())
@@ -156,7 +156,7 @@ Ref< ScoreArrayResult > Leaderboards::getGlobalScores(const std::wstring& leader
 Ref< ScoreArrayResult > Leaderboards::getFriendScores(const std::wstring& leaderboardId, int32_t from, int32_t to)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	T_ASSERT (from <= to);
+	T_ASSERT(from <= to);
 
 	std::map< std::wstring, ILeaderboardsProvider::LeaderboardData >::iterator i = m_leaderboards.find(leaderboardId);
 	if (i == m_leaderboards.end())

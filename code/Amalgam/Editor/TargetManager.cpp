@@ -96,7 +96,7 @@ bool TargetManager::update()
 		for (RefArray< TargetConnection >::const_iterator j = connections.begin(); j != connections.end(); ++j)
 		{
 			net::BidirectionalObjectTransport* transport = (*j)->getTransport();
-			T_ASSERT (transport);
+			T_ASSERT(transport);
 
 			if (transport->getSocket())
 				socketSet.add(transport->getSocket());
@@ -121,7 +121,7 @@ bool TargetManager::update()
 			Ref< TargetID > targetId;
 			if (transport->recv< TargetID >(1000, targetId) == net::BidirectionalObjectTransport::RtSuccess)
 			{
-				T_ASSERT (targetId);
+				T_ASSERT(targetId);
 
 				// Find instance with matching identifier.
 				TargetInstance* instance = 0;

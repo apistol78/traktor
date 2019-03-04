@@ -71,7 +71,7 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 		for (uint32_t i = 0; i < m_channelsCount; ++i)
 		{
 			int16_t* samples = soundBuffer->getSamplesData(i);
-			T_ASSERT (samples);
+			T_ASSERT(samples);
 
 			samples += offset;
 

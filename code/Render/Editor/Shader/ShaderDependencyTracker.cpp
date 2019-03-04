@@ -67,7 +67,7 @@ ShaderDependencyTracker::~ShaderDependencyTracker()
 {
 	// Destructor should never be reached as long as a reference to tracker
 	// belongs to the scan functor.
-	T_ASSERT (!m_scanThreadActive);
+	T_ASSERT(!m_scanThreadActive);
 }
 
 void ShaderDependencyTracker::destroy()
@@ -84,7 +84,7 @@ void ShaderDependencyTracker::scan(db::Database* database)
 	if (m_scanThreadActive)
 	{
 		ThreadPool::getInstance().join(m_scanThread);
-		T_ASSERT (!m_scanThreadActive);
+		T_ASSERT(!m_scanThreadActive);
 	}
 
 	m_scanThreadActive = true;
@@ -96,7 +96,7 @@ void ShaderDependencyTracker::scan(db::Database* database, const Guid& shader)
 	if (m_scanThreadActive)
 	{
 		ThreadPool::getInstance().join(m_scanThread);
-		T_ASSERT (!m_scanThreadActive);
+		T_ASSERT(!m_scanThreadActive);
 	}
 
 	m_scanThreadActive = true;

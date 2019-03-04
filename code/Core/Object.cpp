@@ -94,7 +94,7 @@ void Object::operator delete (void* ptr)
 	if (ptr)
 	{
 		ObjectHeader* header = static_cast< ObjectHeader* >(ptr) - 1;
-		T_ASSERT (header->magic == c_magic);
+		T_ASSERT(header->magic == c_magic);
 
 #if defined(_DEBUG)
 		if (ms_refDebugger)

@@ -131,7 +131,7 @@ void JobQueue::threadWorker()
 		{
 			if (m_jobQueue.get(job))
 			{
-				T_ASSERT (!job->m_finished);
+				T_ASSERT(!job->m_finished);
 
 				if (!job->m_stopped)
 					(*job->m_functor)();

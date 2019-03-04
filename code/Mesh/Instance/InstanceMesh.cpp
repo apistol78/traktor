@@ -72,7 +72,7 @@ void InstanceMesh::render(
 		return;
 
 	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
-	T_ASSERT (it != m_parts.end());
+	T_ASSERT(it != m_parts.end());
 
 	// Sort instances by ascending distance; note we're sorting caller's vector.
 	std::sort(instanceWorld.begin(), instanceWorld.end(), SortRenderInstance());

@@ -190,7 +190,7 @@ void WireDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& tr
 		if (m_wireEnable.top())
 		{
 			const TextLayout* layout = edit.getTextLayout();
-			T_ASSERT (layout);
+			T_ASSERT(layout);
 
 			const AlignedVector< TextLayout::Line >& lines = layout->getLines();
 			const AlignedVector< TextLayout::Attribute >& attribs = layout->getAttributes();

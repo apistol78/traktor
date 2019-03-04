@@ -16,6 +16,8 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
+								<item>Traktor.Flash</item>
+								<item>Traktor.Flash.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
@@ -60,6 +62,8 @@
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Database.a</item>
 								<item>libTraktor.Drawing.a</item>
+								<item>libTraktor.Flash.Runtime.a</item>
+								<item>libTraktor.Flash.a</item>
 								<item>libTraktor.Html.a</item>
 								<item>libTraktor.Net.a</item>
 								<item>libTraktor.Render.a</item>
@@ -101,6 +105,8 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
+								<item>Traktor.Flash</item>
+								<item>Traktor.Flash.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
@@ -118,6 +124,8 @@
 								<item>libTraktor.Core.so</item>
 								<item>libTraktor.Database.so</item>
 								<item>libTraktor.Drawing.so</item>
+								<item>libTraktor.Flash.Runtime.so</item>
+								<item>libTraktor.Flash.so</item>
 								<item>libTraktor.Html.so</item>
 								<item>libTraktor.Net.so</item>
 								<item>libTraktor.Render.so</item>
@@ -188,6 +196,8 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
+								<item>Traktor.Flash</item>
+								<item>Traktor.Flash.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
@@ -205,6 +215,8 @@
 								<item>libTraktor.Core.dylib</item>
 								<item>libTraktor.Database.dylib</item>
 								<item>libTraktor.Drawing.dylib</item>
+								<item>libTraktor.Flash.Runtime.dylib</item>
+								<item>libTraktor.Flash.dylib</item>
 								<item>libTraktor.Html.dylib</item>
 								<item>libTraktor.Net.dylib</item>
 								<item>libTraktor.Render.dylib</item>
@@ -268,6 +280,8 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
+								<item>Traktor.Flash</item>
+								<item>Traktor.Flash.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
@@ -314,6 +328,8 @@
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
 								<item>Traktor.Drawing.lib</item>
+								<item>Traktor.Flash.Runtime.lib</item>
+								<item>Traktor.Flash.lib</item>
 								<item>Traktor.Html.lib</item>
 								<item>Traktor.Net.lib</item>
 								<item>Traktor.Render.lib</item>
@@ -357,6 +373,8 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
+								<item>Traktor.Flash</item>
+								<item>Traktor.Flash.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
@@ -374,6 +392,8 @@
 								<item>Traktor.Core.dll</item>
 								<item>Traktor.Database.dll</item>
 								<item>Traktor.Drawing.dll</item>
+								<item>Traktor.Flash.Runtime.dll</item>
+								<item>Traktor.Flash.dll</item>
 								<item>Traktor.Html.dll</item>
 								<item>Traktor.Net.dll</item>
 								<item>Traktor.Render.dll</item>
@@ -412,6 +432,8 @@
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
 								<item>Traktor.Drawing.lib</item>
+								<item>Traktor.Flash.Runtime.lib</item>
+								<item>Traktor.Flash.lib</item>
 								<item>Traktor.Html.lib</item>
 								<item>Traktor.Net.lib</item>
 								<item>Traktor.Render.lib</item>
@@ -453,6 +475,8 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
+								<item>Traktor.Flash</item>
+								<item>Traktor.Flash.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
@@ -470,6 +494,8 @@
 								<item>Traktor.Core.dll</item>
 								<item>Traktor.Database.dll</item>
 								<item>Traktor.Drawing.dll</item>
+								<item>Traktor.Flash.Runtime.dll</item>
+								<item>Traktor.Flash.dll</item>
 								<item>Traktor.Html.dll</item>
 								<item>Traktor.Net.dll</item>
 								<item>Traktor.Render.dll</item>
@@ -508,6 +534,8 @@
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
 								<item>Traktor.Drawing.lib</item>
+								<item>Traktor.Flash.Runtime.lib</item>
+								<item>Traktor.Flash.lib</item>
 								<item>Traktor.Html.lib</item>
 								<item>Traktor.Net.lib</item>
 								<item>Traktor.Render.lib</item>
@@ -549,6 +577,8 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
+								<item>Traktor.Flash</item>
+								<item>Traktor.Flash.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
@@ -593,6 +623,8 @@
 								<item>Traktor.Core.lib</item>
 								<item>Traktor.Database.lib</item>
 								<item>Traktor.Drawing.lib</item>
+								<item>Traktor.Flash.Runtime.lib</item>
+								<item>Traktor.Flash.lib</item>
 								<item>Traktor.Html.lib</item>
 								<item>Traktor.Net.lib</item>
 								<item>Traktor.Render.lib</item>
@@ -634,6 +666,8 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
+								<item>Traktor.Flash</item>
+								<item>Traktor.Flash.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
@@ -678,6 +712,8 @@
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Database.a</item>
 								<item>libTraktor.Drawing.a</item>
+								<item>libTraktor.Flash.Runtime.a</item>
+								<item>libTraktor.Flash.a</item>
 								<item>libTraktor.Html.a</item>
 								<item>libTraktor.Net.a</item>
 								<item>libTraktor.Render.a</item>
@@ -719,6 +755,8 @@
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
 								<item>Traktor.Drawing</item>
+								<item>Traktor.Flash</item>
+								<item>Traktor.Flash.Runtime</item>
 								<item>Traktor.Html</item>
 								<item>Traktor.Net</item>
 								<item>Traktor.Render</item>
@@ -763,6 +801,8 @@
 								<item>libTraktor.Core.a</item>
 								<item>libTraktor.Database.a</item>
 								<item>libTraktor.Drawing.a</item>
+								<item>libTraktor.Flash.Runtime.a</item>
+								<item>libTraktor.Flash.a</item>
 								<item>libTraktor.Html.a</item>
 								<item>libTraktor.Net.a</item>
 								<item>libTraktor.Render.a</item>
@@ -811,6 +851,7 @@
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Traktor.Flash.Editor</item>
+						<item>Traktor.Flash.Runtime.Editor</item>
 					</value>
 				</second>
 			</item>
@@ -871,6 +912,7 @@
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Traktor.Flash</item>
+						<item>Traktor.Flash.Runtime</item>
 					</value>
 				</second>
 			</item>

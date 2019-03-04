@@ -93,7 +93,7 @@ bool UndergrowthLayer::create(
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, position)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtHalf2, offsetof(Vertex, texCoord)));
-	T_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
+	T_ASSERT(render::getVertexSize(vertexElements) == sizeof(Vertex));
 
 	m_vertexBuffer = renderSystem->createVertexBuffer(
 		vertexElements,

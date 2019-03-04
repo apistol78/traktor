@@ -33,7 +33,7 @@ void Feature::setPriority(int32_t priority)
 
 void Feature::addPlatform(const Platform& platform)
 {
-	T_ASSERT (!getPlatform(platform.platform));
+	T_ASSERT(!getPlatform(platform.platform));
 	m_platforms.push_back(platform);
 }
 
@@ -72,7 +72,7 @@ const Feature::Platform* Feature::getPlatform(const Guid& id) const
 
 void Feature::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 4);
+	T_ASSERT(s.getVersion() >= 4);
 
 	s >> Member< std::wstring >(L"description", m_description);
 	s >> Member< int32_t >(L"priority", m_priority);

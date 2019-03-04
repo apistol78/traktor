@@ -166,7 +166,7 @@ void ErodeBrush::apply(int32_t x, int32_t y)
 						WaterCell& w1 = m_water[(ix + c_flow[i].x) + (iy + c_flow[i].y) * size];
 
 						float m = min(w0.level * a, 1.0f);
-						T_ASSERT (m > 0.0f);
+						T_ASSERT(m > 0.0f);
 
 						w0.level = max(w0.level - m, 0.0f);
 						w1.level = min(w1.level + m, 20.0f);

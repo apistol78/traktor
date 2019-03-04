@@ -89,7 +89,7 @@ bool ProbeProcessor::radiance(const drawing::Image* cubeImage, int32_t glossScal
 	T_FATAL_ASSERT (image.m_width == image.m_height);
 
 	uint32_t mipCount = log2(image.m_width) + 1;
-	T_ASSERT (mipCount >= 1);
+	T_ASSERT(mipCount >= 1);
 
 	// Execute conversion filter.
 	cmft::imageRadianceFilter(

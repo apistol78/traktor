@@ -53,7 +53,7 @@ double P(int l, int m, double x)
 
 int factorial(int n)
 {
-	T_ASSERT (n >= 0);
+	T_ASSERT(n >= 0);
 	int r = 1;
 	for (int i = 1; i <= n; ++i)
 		r *= i;

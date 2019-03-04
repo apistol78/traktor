@@ -186,7 +186,7 @@ bool CalculateOccluder::apply(Model& model) const
 			for (uint32_t i = 0; i < windings.size(); ++i)
 			{
 				Winding3 w = windings[i];
-				T_ASSERT (!w.empty());
+				T_ASSERT(!w.empty());
 
 				for (uint32_t j = 0; j < sizeof_array(tunnelPlanes); ++j)
 				{
@@ -227,7 +227,7 @@ bool CalculateOccluder::apply(Model& model) const
 				for (uint32_t i = 0; i < tunnelWindings.size(); ++i)
 				{
 					Winding3 w = tunnelWindings[i];
-					T_ASSERT (!w.empty());
+					T_ASSERT(!w.empty());
 
 					for (uint32_t j = 0; j < sizeof_array(voxelPlanes); ++j)
 					{
@@ -977,7 +977,7 @@ bool CalculateOccluder::apply(Model& model) const
 				for (uint32_t i = 0; i < windings.size(); ++i)
 				{
 					Winding3 w = windings[i];
-					T_ASSERT (!w.points.empty());
+					T_ASSERT(!w.points.empty());
 
 					for (uint32_t j = 0; j < sizeof_array(voxelPlanes); ++j)
 					{

@@ -23,8 +23,8 @@ Collectable::Collectable()
 
 Collectable::~Collectable()
 {
-	T_ASSERT (m_next == 0);
-	T_ASSERT (m_prev == 0);
+	T_ASSERT(m_next == 0);
+	T_ASSERT(m_prev == 0);
 	Atomic::decrement(ms_instanceCount);
 	delete m_weakRefDisposes;
 }
@@ -75,7 +75,7 @@ void Collectable::addWeakRef(IWeakRefDispose* weakRefDispose)
 
 void Collectable::releaseWeakRef(IWeakRefDispose* weakRefDispose)
 {
-	T_ASSERT (m_weakRefDisposes);
+	T_ASSERT(m_weakRefDisposes);
 	m_weakRefDisposes->erase(weakRefDispose);
 }
 
@@ -118,7 +118,7 @@ void Collectable::traceCollectWhite()
 {
 	if (m_traceColor == TcWhite)
 	{
-		T_ASSERT (m_traceRefCount == 0);
+		T_ASSERT(m_traceRefCount == 0);
 		T_EXCEPTION_GUARD_BEGIN;
 
 		Collectable::addRef(0);

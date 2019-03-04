@@ -616,8 +616,8 @@ Opaque
 			]]>
 			</comment>
 			<position>
-				<first>-892</first>
-				<second>1610</second>
+				<first>-883</first>
+				<second>1557</second>
 			</position>
 			<name>E_Opaque</name>
 		</item>
@@ -651,8 +651,8 @@ Opaque
 			<id>{8471E6CB-0CA4-44FA-BA9A-C6FA85A0516A}</id>
 			<comment/>
 			<position>
-				<first>-1417</first>
-				<second>849</second>
+				<first>-1930</first>
+				<second>899</second>
 			</position>
 			<name>Irradiance</name>
 			<connectable>true</connectable>
@@ -691,8 +691,8 @@ World_IrradianceWrite
 			<id>{CFD26C88-C630-4513-BFAD-469CE5F67A92}</id>
 			<comment/>
 			<position>
-				<first>-1064</first>
-				<second>872</second>
+				<first>-1661</first>
+				<second>814</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="traktor.render.Node:1">
@@ -703,8 +703,8 @@ World_IrradianceWrite
 			]]>
 			</comment>
 			<position>
-				<first>-892</first>
-				<second>877</second>
+				<first>-1489</first>
+				<second>819</second>
 			</position>
 			<name>E_Irradiance</name>
 		</item>
@@ -716,8 +716,8 @@ World_IrradianceWrite
 			]]>
 			</comment>
 			<position>
-				<first>-892</first>
-				<second>1694</second>
+				<first>-883</first>
+				<second>1730</second>
 			</position>
 			<name>E_Irradiance</name>
 		</item>
@@ -743,7 +743,6 @@ World_IrradianceWrite
 			<comment>
 			<![CDATA[
 Always set transparency
-
 			]]>
 			</comment>
 			<position>
@@ -757,7 +756,6 @@ Always set transparency
 			<comment>
 			<![CDATA[
 Always set transparency
-
 			]]>
 			</comment>
 			<position>
@@ -771,7 +769,6 @@ Always set transparency
 			<comment>
 			<![CDATA[
 Always set transparency
-
 			]]>
 			</comment>
 			<position>
@@ -779,6 +776,66 @@ Always set transparency
 				<second>1092</second>
 			</position>
 			<name>V_Transparency</name>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{94E22A68-7854-594C-9319-8AAF20D6DCA1}</id>
+			<comment/>
+			<position>
+				<first>-1912</first>
+				<second>1109</second>
+			</position>
+			<name>Cast shadow</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>1</defaultValue>
+		</item>
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{3E6ABE61-4446-DA40-BDA8-C60ABC1A8388}</id>
+			<comment/>
+			<position>
+				<first>-1655</first>
+				<second>1047</second>
+			</position>
+		</item>
+		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+			<id>{B6D1C4CC-C836-EF43-ADFB-A0A91614DA70}</id>
+			<comment>
+			<![CDATA[
+Opaque
+			]]>
+			</comment>
+			<position>
+				<first>-1851</first>
+				<second>1012</second>
+			</position>
+			<name>E_Opaque</name>
+		</item>
+		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+			<id>{0266D240-9754-6841-A1F9-80B888AEE4B2}</id>
+			<comment>
+			<![CDATA[
+	
+			]]>
+			</comment>
+			<position>
+				<first>-1483</first>
+				<second>1049</second>
+			</position>
+			<name>E_CastShadow</name>
+		</item>
+		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+			<id>{DB893E5D-73AA-004A-80D9-42D036A30A6E}</id>
+			<comment>
+			<![CDATA[
+	
+			]]>
+			</comment>
+			<position>
+				<first>-894</first>
+				<second>1643</second>
+			</position>
+			<name>E_CastShadow</name>
 		</item>
 	</nodes>
 	<edges>
@@ -1138,16 +1195,6 @@ Always set transparency
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<name>Enable</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[34]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[24]"/>
 				<name>Enable</name>
 			</destination>
@@ -1300,6 +1347,46 @@ Always set transparency
 			<destination>
 				<node ref="/object/nodes/item[26]"/>
 				<name>Transparency</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[48]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[49]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[50]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[49]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[49]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[51]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[52]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Enable</name>
 			</destination>
 		</item>
 	</edges>

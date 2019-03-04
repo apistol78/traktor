@@ -106,10 +106,10 @@ void EnvelopeGrainFacade::eventEnvelopeChange(ui::EnvelopeContentChangeEvent* ev
 	ui::EnvelopeControl* envelopeControl = checked_type_cast< ui::EnvelopeControl* >(event->getSender());
 
 	EnvelopeGrainData* envelopeGrain = envelopeControl->getData< EnvelopeGrainData >(L"GRAIN");
-	T_ASSERT (envelopeGrain);
+	T_ASSERT(envelopeGrain);
 
 	const RefArray< ui::EnvelopeKey >& keys = envelopeControl->getKeys();
-	T_ASSERT (keys.size() == 3);
+	T_ASSERT(keys.size() == 3);
 
 	float levels[] =
 	{

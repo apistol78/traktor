@@ -60,7 +60,7 @@ public:
 
 	bool insert(Class* item)
 	{
-		T_ASSERT (item);
+		T_ASSERT(item);
 		std::pair< typename set_t::iterator, bool > ins = m_items.insert(item);
 		if (ins.second)
 		{
@@ -73,7 +73,7 @@ public:
 
 	size_t erase(Class* item)
 	{
-		T_ASSERT (item);
+		T_ASSERT(item);
 		size_t x = m_items.erase(item);
 		if (x)
 			T_SAFE_RELEASE(item);

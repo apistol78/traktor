@@ -335,7 +335,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					float t0, t1;
 					b.intersectX(float(*i), t0, t1);
 
-					T_ASSERT (t0 > -FUZZY_EPSILON && t0 < 1.0f + FUZZY_EPSILON);
+					T_ASSERT(t0 > -FUZZY_EPSILON && t0 < 1.0f + FUZZY_EPSILON);
 
 					Bezier2nd b0, b1;
 					b.split(t0, b0, b1);

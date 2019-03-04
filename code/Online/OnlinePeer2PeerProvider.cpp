@@ -213,7 +213,7 @@ bool OnlinePeer2PeerProvider::send(net::net_handle_t node, const void* data, int
 		{
 			if (m_asyncTx)
 			{
-				T_ASSERT (m_thread);
+				T_ASSERT(m_thread);
 				m_txQueueLock.wait();
 
 				RxTxData& tx = m_txQueue.push_back();
@@ -245,7 +245,7 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 
 	if (m_asyncRx)
 	{
-		T_ASSERT (m_thread);
+		T_ASSERT(m_thread);
 
 		if (m_rxQueuePending <= 0)
 			return 0;
@@ -293,7 +293,7 @@ int32_t OnlinePeer2PeerProvider::recv(void* data, int32_t size, net::net_handle_
 
 void OnlinePeer2PeerProvider::transmissionThread()
 {
-	T_ASSERT (m_asyncTx || m_asyncRx);
+	T_ASSERT(m_asyncTx || m_asyncRx);
 	RxTxData rxtx;
 
 	while (!m_thread->stopped())
@@ -330,7 +330,7 @@ void OnlinePeer2PeerProvider::transmissionThread()
 		}
 		else
 		{
-			T_ASSERT (m_asyncRx);
+			T_ASSERT(m_asyncRx);
 			m_thread->sleep(4);
 		}
 	}

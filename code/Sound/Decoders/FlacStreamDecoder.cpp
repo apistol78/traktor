@@ -25,7 +25,7 @@ public:
 
 	virtual ~FlacStreamDecoderImpl()
 	{
-		T_ASSERT (!m_decoder);
+		T_ASSERT(!m_decoder);
 	}
 
 	bool create(IStream* stream)
@@ -181,13 +181,13 @@ void FlacStreamDecoder::destroy()
 
 double FlacStreamDecoder::getDuration() const
 {
-	T_ASSERT (m_decoderImpl);
+	T_ASSERT(m_decoderImpl);
 	return m_decoderImpl->getDuration();
 }
 
 bool FlacStreamDecoder::getBlock(SoundBlock& outSoundBlock)
 {
-	T_ASSERT (m_decoderImpl);
+	T_ASSERT(m_decoderImpl);
 	return m_decoderImpl->getBlock(outSoundBlock);
 }
 

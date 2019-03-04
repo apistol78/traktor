@@ -133,8 +133,8 @@ bool PlayGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, S
 		m_sound.consume();
 	}
 
-	T_ASSERT (playCursor->m_soundBuffer);
-	T_ASSERT (playCursor->m_soundCursor);
+	T_ASSERT(playCursor->m_soundBuffer);
+	T_ASSERT(playCursor->m_soundCursor);
 
 	// Get sound block from buffer; rewind if repeat flag is set.
 	if (!playCursor->m_soundBuffer->getBlock(

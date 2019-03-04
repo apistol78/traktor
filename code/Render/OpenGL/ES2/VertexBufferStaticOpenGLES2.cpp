@@ -83,7 +83,7 @@ VertexBufferStaticOpenGLES2::VertexBufferStaticOpenGLES2(ContextOpenGLES2* conte
 ,	m_dirty(false)
 {
 	m_vertexStride = getVertexSize(vertexElements);
-	T_ASSERT (m_vertexStride > 0);
+	T_ASSERT(m_vertexStride > 0);
 
 	for (size_t i = 0; i < vertexElements.size(); ++i)
 	{

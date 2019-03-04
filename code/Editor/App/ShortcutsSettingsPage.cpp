@@ -84,10 +84,10 @@ bool ShortcutsSettingsPage::apply(PropertyGroup* settings)
 	for (RefArray< ui::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
 	{
 		const RefArray< ui::GridItem >& items = (*i)->get();
-		T_ASSERT (items.size() == 2);
+		T_ASSERT(items.size() == 2);
 
 		Ref< PropertyString > propertyKey = (*i)->getData< PropertyString >(L"PROPERTYKEY");
-		T_ASSERT (propertyKey);
+		T_ASSERT(propertyKey);
 
 		PropertyString::value_type_t value = PropertyString::get(propertyKey);
 		if (!value.empty())
@@ -105,10 +105,10 @@ void ShortcutsSettingsPage::updateShortcutGrid()
 	for (RefArray< ui::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
 	{
 		const RefArray< ui::GridItem >& items = (*i)->get();
-		T_ASSERT (items.size() == 2);
+		T_ASSERT(items.size() == 2);
 
 		Ref< PropertyString > propertyKey = (*i)->getData< PropertyString >(L"PROPERTYKEY");
-		T_ASSERT (propertyKey);
+		T_ASSERT(propertyKey);
 
 		std::pair< int, ui::VirtualKey > key = parseShortcut(PropertyString::get(propertyKey));
 		if (key.first || key.second != ui::VkNull)
@@ -192,7 +192,7 @@ void ShortcutsSettingsPage::eventResetAll(ui::ButtonClickEvent* event)
 		for (RefArray< ui::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
 		{
 			const RefArray< ui::GridItem >& items = (*i)->get();
-			T_ASSERT (items.size() == 2);
+			T_ASSERT(items.size() == 2);
 
 			std::wstring value = m_originalSettings->getProperty< std::wstring >(L"Editor.Shortcuts/" + items[0]->getText());
 			(*i)->setData(L"PROPERTYKEY", new PropertyString(value));

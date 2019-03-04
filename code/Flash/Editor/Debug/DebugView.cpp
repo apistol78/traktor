@@ -245,7 +245,7 @@ void paintInstance(ui::Canvas& canvas, std::map< void*, DebugView::ShapeCache >&
 						int32_t fs1 = j->fillStyle1 - 1;
 						int32_t ls = j->lineStyle - 1;
 
-						T_ASSERT (fs0 >= 0 || fs1 >= 0 || ls >= 0);
+						T_ASSERT(fs0 >= 0 || fs1 >= 0 || ls >= 0);
 
 						raster->clear();
 

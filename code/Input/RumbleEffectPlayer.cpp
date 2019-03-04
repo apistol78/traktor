@@ -17,7 +17,7 @@ RumbleEffectPlayer::RumbleEffectPlayer()
 
 void RumbleEffectPlayer::play(RumbleEffect* effect, IInputDevice* targetDevice)
 {
-	T_ASSERT (targetDevice->supportRumble());
+	T_ASSERT(targetDevice->supportRumble());
 	m_playingEffects.push_back(PlayingEffect(effect, targetDevice, m_totalTime));
 }
 

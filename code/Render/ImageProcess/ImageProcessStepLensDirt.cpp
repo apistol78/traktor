@@ -60,7 +60,7 @@ Ref< ImageProcessStep::Instance > ImageProcessStepLensDirt::create(
 	instance->m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, 4 * sizeof(Vertex), false);
 
 	Vertex* vertex = static_cast< Vertex* >(instance->m_vertexBuffer->lock());
-	T_ASSERT (vertex);
+	T_ASSERT(vertex);
 
 	vertex->position[0] = -1.0f; vertex->position[1] = -1.0f; ++vertex;
 	vertex->position[0] = -1.0f; vertex->position[1] =  1.0f; ++vertex;

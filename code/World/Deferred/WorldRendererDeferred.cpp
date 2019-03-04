@@ -1316,7 +1316,7 @@ void WorldRendererDeferred::endRender(int frame, render::EyeType eye, float delt
 
 	render::RenderTargetSet* sourceTargetSet = m_visualTargetSet;
 	render::RenderTargetSet* outputTargetSet = m_intermediateTargetSet;
-	T_ASSERT (sourceTargetSet);
+	T_ASSERT(sourceTargetSet);
 
 	StaticVector< render::ImageProcess*, 5 > processes;
 	if (m_motionBlurImageProcess)

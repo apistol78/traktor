@@ -49,62 +49,62 @@ DebugStream::DebugStream(IStream* stream)
 
 DebugStream::~DebugStream()
 {
-	T_ASSERT (!m_stream)
+	T_ASSERT(!m_stream)
 	dump(log::info);
 }
 
 void DebugStream::close()
 {
-	T_ASSERT (m_stream)
+	T_ASSERT(m_stream)
 	m_stream->close();
 	m_stream = 0;
 }
 
 bool DebugStream::canRead() const
 {
-	T_ASSERT (m_stream)
+	T_ASSERT(m_stream)
 	m_canReadCalls++;
 	return m_stream->canRead();
 }
 
 bool DebugStream::canWrite() const
 {
-	T_ASSERT (m_stream)
+	T_ASSERT(m_stream)
 	m_canWriteCalls++;
 	return m_stream->canWrite();
 }
 
 bool DebugStream::canSeek() const
 {
-	T_ASSERT (m_stream)
+	T_ASSERT(m_stream)
 	m_canSeekCalls++;
 	return m_stream->canSeek();
 }
 
 int64_t DebugStream::tell() const
 {
-	T_ASSERT (m_stream)
+	T_ASSERT(m_stream)
 	m_tellCalls++;
 	return m_stream->tell();
 }
 
 int64_t DebugStream::available() const
 {
-	T_ASSERT (m_stream)
+	T_ASSERT(m_stream)
 	m_availableCalls++;
 	return m_stream->available();
 }
 
 int64_t DebugStream::seek(SeekOriginType origin, int64_t offset)
 {
-	T_ASSERT (m_stream)
+	T_ASSERT(m_stream)
 	m_seekCalls++;
 	return m_stream->seek(origin, offset);
 }
 
 int64_t DebugStream::read(void* block, int64_t nbytes)
 {
-	T_ASSERT (m_stream)
+	T_ASSERT(m_stream)
 	m_readCalls++;
 	m_timer.start();
 	int64_t nread = m_stream->read(block, nbytes);
@@ -121,7 +121,7 @@ int64_t DebugStream::read(void* block, int64_t nbytes)
 
 int64_t DebugStream::write(const void* block, int64_t nbytes)
 {
-	T_ASSERT (m_stream)
+	T_ASSERT(m_stream)
 	m_writeCalls++;
 	m_timer.start();
 	int64_t nwritten = m_stream->write(block, nbytes);
@@ -138,7 +138,7 @@ int64_t DebugStream::write(const void* block, int64_t nbytes)
 
 void DebugStream::flush()
 {
-	T_ASSERT (m_stream)
+	T_ASSERT(m_stream)
 	m_flushCalls++;
 	m_timer.start();
 	m_stream->flush();

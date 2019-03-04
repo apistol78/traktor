@@ -28,8 +28,8 @@ TaskSetSaveData::TaskSetSaveData(
 
 void TaskSetSaveData::execute(TaskQueue* taskQueue)
 {
-	T_ASSERT (m_provider);
-	T_ASSERT (m_result);
+	T_ASSERT(m_provider);
+	T_ASSERT(m_result);
 	if (m_provider->set(
 		m_saveDataId,
 		m_saveDataDesc,

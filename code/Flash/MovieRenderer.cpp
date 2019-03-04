@@ -255,7 +255,7 @@ void MovieRenderer::renderSpriteLayered(
 				if (!layer.instance)
 					continue;
 
-				T_ASSERT (!layer.clipEnable);
+				T_ASSERT(!layer.clipEnable);
 
 				renderCharacter(
 					layer.instance,
@@ -270,7 +270,7 @@ void MovieRenderer::renderSpriteLayered(
 			// Then render alpha modifying (masking) layer, will replace alpha values.
 			if (ie != layers.end())
 			{
-				T_ASSERT (ie->second.instance);
+				T_ASSERT(ie->second.instance);
 
 				renderCharacter(
 					ie->second.instance,
@@ -289,7 +289,7 @@ void MovieRenderer::renderSpriteLayered(
 				if (!layer.instance)
 					continue;
 
-				T_ASSERT (!layer.clipEnable);
+				T_ASSERT(!layer.clipEnable);
 
 				renderCharacter(
 					layer.instance,
@@ -312,7 +312,7 @@ void MovieRenderer::renderSpriteLayered(
 				if (!layer.instance)
 					continue;
 
-				T_ASSERT (!layer.clipEnable);
+				T_ASSERT(!layer.clipEnable);
 
 				renderCharacter(
 					layer.instance,
@@ -540,7 +540,7 @@ void MovieRenderer::renderCharacter(
 		return;
 
 	Dictionary* dictionary = characterInstance->getDictionary();
-	T_ASSERT (dictionary);
+	T_ASSERT(dictionary);
 
 	const TypeInfo& characterType = type_of(characterInstance);
 
@@ -664,7 +664,7 @@ void MovieRenderer::renderCharacter(
 		Matrix33 editTransform = transform * editInstance->getTransform();
 
 		const TextLayout* layout = editInstance->getTextLayout();
-		T_ASSERT (layout);
+		T_ASSERT(layout);
 
 		m_displayRenderer->beginEdit(*editInstance, editTransform);
 
@@ -673,7 +673,7 @@ void MovieRenderer::renderCharacter(
 		const RefArray< CharacterInstance >& characters = layout->getCharacters();
 
 		ActionContext* context = editInstance->getContext();
-		T_ASSERT (context);
+		T_ASSERT(context);
 
 		bool haveFocus = bool(context->getFocus() == editInstance);
 		bool showCaret = bool((int32_t(s_timer.getElapsedTime() * 2.0f) & 1) == 0);
@@ -699,7 +699,7 @@ void MovieRenderer::renderCharacter(
 			{
 				if (j->c > 0)
 				{
-					T_ASSERT (characters[j->c - 1]);
+					T_ASSERT(characters[j->c - 1]);
 					renderCharacter(
 						characters[j->c - 1],
 						editTransform * translate(textOffsetX + i->offset + i->x, textOffsetY + i->y),

@@ -55,7 +55,7 @@ const std::wstring& XMLNode::getPrefix() const
 
 void XMLNode::appendChild(XMLNode* node)
 {
-	T_ASSERT (node->m_parent == 0);
+	T_ASSERT(node->m_parent == 0);
 
 	node->m_parent = this;
 

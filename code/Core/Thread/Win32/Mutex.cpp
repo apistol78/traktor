@@ -9,7 +9,7 @@ Mutex::Mutex()
 :	m_existing(false)
 {
 	m_handle = CreateMutex(0, FALSE, NULL);
-	T_ASSERT (m_handle != NULL);
+	T_ASSERT(m_handle != NULL);
 }
 
 Mutex::Mutex(const Guid& id)
@@ -20,7 +20,7 @@ Mutex::Mutex(const Guid& id)
 		wstots(L"Global\\" + id.format()).c_str()
 	);
 	m_existing = bool(GetLastError() == ERROR_ALREADY_EXISTS);
-	T_ASSERT (m_handle != NULL);
+	T_ASSERT(m_handle != NULL);
 }
 
 Mutex::~Mutex()

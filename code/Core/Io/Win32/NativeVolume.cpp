@@ -317,7 +317,7 @@ std::wstring NativeVolume::getSystemPath(const Path& path) const
 	Path npath = path.normalized();
 	if (npath.hasVolume())
 	{
-		T_ASSERT (npath.getVolume() == m_currentDirectory.getVolume());
+		T_ASSERT(npath.getVolume() == m_currentDirectory.getVolume());
 		ss << npath.getPathName();
 	}
 	else

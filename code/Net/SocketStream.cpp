@@ -76,7 +76,7 @@ int64_t SocketStream::seek(SeekOriginType origin, int64_t offset)
 
 int64_t SocketStream::read(void* block, int64_t nbytes)
 {
-	T_ASSERT (m_readAllowed);
+	T_ASSERT(m_readAllowed);
 
 	if (!m_socket)
 		return -1;
@@ -109,13 +109,13 @@ int64_t SocketStream::read(void* block, int64_t nbytes)
 	if (nread > 0)
 		m_offset += nread;
 
-	T_ASSERT (nread <= nbytes);
+	T_ASSERT(nread <= nbytes);
 	return nread;
 }
 
 int64_t SocketStream::write(const void* block, int64_t nbytes)
 {
-	T_ASSERT (m_writeAllowed);
+	T_ASSERT(m_writeAllowed);
 
 	if (!m_socket)
 		return -1;
@@ -147,7 +147,7 @@ int64_t SocketStream::write(const void* block, int64_t nbytes)
 
 	m_offset += nwritten;
 
-	T_ASSERT (nwritten <= nbytes);
+	T_ASSERT(nwritten <= nbytes);
 	return nwritten;
 }
 

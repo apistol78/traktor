@@ -240,7 +240,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
             if (outOriginalSettings)
             {
                 outOriginalSettings = outOriginalSettings->merge(systemSettings, PropertyGroup::MmReplace);
-                T_ASSERT (outOriginalSettings);
+                T_ASSERT(outOriginalSettings);
             }
             else
                 outOriginalSettings = systemSettings;
@@ -731,7 +731,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		for (uint32_t i = 0; i < m_editorTools.size(); ++i)
 		{
 			std::wstring desc = m_editorTools[i]->getDescription();
-			T_ASSERT (!desc.empty());
+			T_ASSERT(!desc.empty());
 
 			m_menuTools->add(new ui::MenuItem(ui::Command(i), desc));
 
@@ -961,13 +961,13 @@ Ref< db::Database > EditorForm::getOutputDatabase() const
 
 void EditorForm::updateDatabaseView()
 {
-	T_ASSERT (m_dataBaseView);
+	T_ASSERT(m_dataBaseView);
 	m_dataBaseView->updateView();
 }
 
 bool EditorForm::highlightInstance(const db::Instance* instance)
 {
-	T_ASSERT (m_dataBaseView);
+	T_ASSERT(m_dataBaseView);
 	return m_dataBaseView->highlight(instance);
 }
 
@@ -1053,7 +1053,7 @@ Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)
 
 bool EditorForm::openEditor(db::Instance* instance)
 {
-	T_ASSERT (instance);
+	T_ASSERT(instance);
 
 	T_ANONYMOUS_VAR(EnterLeave)(
 		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
@@ -1064,7 +1064,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 	for (int i = 0; i < m_tab->getPageCount(); ++i)
 	{
 		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-		T_ASSERT (tabPage);
+		T_ASSERT(tabPage);
 
 		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
 		if (document && document->containInstance(instance))
@@ -1152,11 +1152,11 @@ bool EditorForm::openEditor(db::Instance* instance)
 		Ref< EditorPageSite > site = new EditorPageSite(this, false);
 
 		Ref< IEditorPage > editorPage = editorPageFactory->createEditorPage(this, site, document);
-		T_ASSERT (editorPage);
+		T_ASSERT(editorPage);
 
 		// Find icon index.
 		Ref< PropertyGroup > iconsGroup = m_mergedSettings->getProperty< PropertyGroup >(L"Editor.Icons");
-		T_ASSERT (iconsGroup);
+		T_ASSERT(iconsGroup);
 
 		const std::map< std::wstring, Ref< IPropertyValue > >& icons = iconsGroup->getValues();
 
@@ -1263,7 +1263,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 bool EditorForm::openDefaultEditor(db::Instance* instance)
 {
-	T_ASSERT (instance);
+	T_ASSERT(instance);
 
 	T_ANONYMOUS_VAR(EnterLeave)(
 		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
@@ -1286,7 +1286,7 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 	}
 
 	Ref< IObjectEditorFactory > objectEditorFactory = new DefaultObjectEditorFactory();
-	T_ASSERT (objectEditorFactory);
+	T_ASSERT(objectEditorFactory);
 
 	// Open editor dialog.
 	Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_mergedSettings, objectEditorFactory);
@@ -1369,10 +1369,10 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 				m_tab->setActivePage(page);
 
 				m_activeEditorPageSite = page->getData< EditorPageSite >(L"EDITORPAGESITE");
-				T_ASSERT (m_activeEditorPageSite);
+				T_ASSERT(m_activeEditorPageSite);
 
 				m_activeDocument = page->getData< Document >(L"DOCUMENT");
-				T_ASSERT (m_activeDocument);
+				T_ASSERT(m_activeDocument);
 
 				break;
 			}
@@ -1581,7 +1581,7 @@ void EditorForm::setPropertyObject(Object* properties)
 
 void EditorForm::createAdditionalPanel(ui::Widget* widget, int size, int32_t direction)
 {
-	T_ASSERT (widget);
+	T_ASSERT(widget);
 
 	widget->setParent(m_dock);
 
@@ -1616,7 +1616,7 @@ void EditorForm::createAdditionalPanel(ui::Widget* widget, int size, int32_t dir
 
 void EditorForm::destroyAdditionalPanel(ui::Widget* widget)
 {
-	T_ASSERT (widget);
+	T_ASSERT(widget);
 
 	m_paneWest->undock(widget);
 	m_paneEast->undock(widget);
@@ -1625,14 +1625,14 @@ void EditorForm::destroyAdditionalPanel(ui::Widget* widget)
 
 void EditorForm::showAdditionalPanel(ui::Widget* widget)
 {
-	T_ASSERT (widget);
+	T_ASSERT(widget);
 	widget->show();
 	m_dock->update();
 }
 
 void EditorForm::hideAdditionalPanel(ui::Widget* widget)
 {
-	T_ASSERT (widget);
+	T_ASSERT(widget);
 	widget->hide();
 	m_dock->update();
 }
@@ -1666,7 +1666,7 @@ void EditorForm::buildDependent(const RefArray< db::Instance >& modifiedInstance
 	for (int i = 0; i < m_tab->getPageCount(); ++i)
 	{
 		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-		T_ASSERT (tabPage);
+		T_ASSERT(tabPage);
 
 		if (m_tab->getActivePage() == tabPage)
 			continue;
@@ -1705,7 +1705,7 @@ void EditorForm::buildDependent(const RefArray< db::Instance >& modifiedInstance
 		for (uint32_t j = 0; j < dependencySet.size(); ++j)
 		{
 			const PipelineDependency* dependency = dependencySet.get(j);
-			T_ASSERT (dependency);
+			T_ASSERT(dependency);
 
 			if (!dependency->sourceInstanceGuid.isNotNull())
 				continue;
@@ -1960,7 +1960,7 @@ void EditorForm::buildAssets(bool rebuild)
 
 Ref< IPipelineDependencySet > EditorForm::buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth)
 {
-	T_ASSERT (m_sourceDatabase);
+	T_ASSERT(m_sourceDatabase);
 
 	Ref< IPipelineDependencySet > dependencySet = new PipelineDependencySet();
 
@@ -2127,14 +2127,14 @@ void EditorForm::saveAllDocuments()
 	for (int i = 0; i < m_tab->getPageCount(); ++i)
 	{
 		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-		T_ASSERT (tabPage);
+		T_ASSERT(tabPage);
 
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		if (!editorPage)
 			continue;
 
 		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		T_ASSERT (document);
+		T_ASSERT(document);
 
 		ui::Command shouldSave(L"Editor.ShouldSave");
 		editorPage->handleCommand(shouldSave);
@@ -2179,8 +2179,8 @@ void EditorForm::closeCurrentEditor()
 	}
 
 	Ref< ui::TabPage > tabPage = m_tab->getActivePage();
-	T_ASSERT (tabPage);
-	T_ASSERT (tabPage->getData(L"EDITORPAGE") == m_activeEditorPage);
+	T_ASSERT(tabPage);
+	T_ASSERT(tabPage->getData(L"EDITORPAGE") == m_activeEditorPage);
 
 	if (m_activeEditorPageSite)
 		m_activeEditorPageSite->hide();
@@ -2230,13 +2230,13 @@ void EditorForm::closeAllEditors()
 		Ref< ui::TabPage > tabPage = closePages.back();
 		closePages.pop_back();
 
-		T_ASSERT (tabPage);
+		T_ASSERT(tabPage);
 		m_tab->removePage(tabPage);
 
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		if (editorPage)
 		{
-			T_ASSERT (editorPage != m_activeEditorPage);
+			T_ASSERT(editorPage != m_activeEditorPage);
 			editorPage->destroy();
 		}
 
@@ -2278,13 +2278,13 @@ void EditorForm::closeAllOtherEditors()
 		Ref< ui::TabPage > tabPage = closePages.back();
 		closePages.pop_back();
 
-		T_ASSERT (tabPage);
+		T_ASSERT(tabPage);
 		m_tab->removePage(tabPage);
 
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		if (editorPage)
 		{
-			T_ASSERT (editorPage != m_activeEditorPage);
+			T_ASSERT(editorPage != m_activeEditorPage);
 			editorPage->destroy();
 		}
 
@@ -2299,7 +2299,7 @@ void EditorForm::closeAllOtherEditors()
 void EditorForm::findInDatabase()
 {
 	Ref< ui::TabPage > tabPage = m_tab->getActivePage();
-	T_ASSERT (tabPage);
+	T_ASSERT(tabPage);
 
 	Ref< db::Instance > instance = tabPage->getData< db::Instance >(L"PRIMARY");
 	if (instance)
@@ -2395,7 +2395,7 @@ void EditorForm::checkModified()
 	for (int i = 0; i < pageCount; ++i)
 	{
 		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-		T_ASSERT (tabPage);
+		T_ASSERT(tabPage);
 
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		if (!editorPage)
@@ -2509,7 +2509,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 					if (m_workspaceSettings)
 					{
 						m_mergedSettings = m_globalSettings->merge(m_workspaceSettings, PropertyGroup::MmJoin);
-						T_ASSERT (m_mergedSettings);
+						T_ASSERT(m_mergedSettings);
 					}
 					else
 						m_mergedSettings = m_globalSettings;
@@ -2538,7 +2538,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 				if (m_workspaceSettings)
 				{
 					m_mergedSettings = m_globalSettings->merge(m_workspaceSettings, PropertyGroup::MmJoin);
-					T_ASSERT (m_mergedSettings);
+					T_ASSERT(m_mergedSettings);
 				}
 				else
 					m_mergedSettings = m_globalSettings;
@@ -2628,7 +2628,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	else if ((command.getFlags() & ui::Command::CfId) == ui::Command::CfId)
 	{
 		Ref< IEditorTool > tool = m_editorTools[command.getId()];
-		T_ASSERT (tool);
+		T_ASSERT(tool);
 
 		// Issue a build if resources need to be up-to-date.
 		std::set< Guid > dependencies;
@@ -2778,7 +2778,7 @@ void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 	Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 	if (editorPage)
 	{
-		T_ASSERT (m_activeEditorPage == editorPage);
+		T_ASSERT(m_activeEditorPage == editorPage);
 		editorPage->destroy();
 		editorPage = nullptr;
 		m_activeEditorPage = nullptr;
@@ -2787,7 +2787,7 @@ void EditorForm::eventTabClose(ui::TabCloseEvent* event)
 	Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
 	if (document)
 	{
-		T_ASSERT (m_activeDocument == document);
+		T_ASSERT(m_activeDocument == document);
 		document->close();
 		document = nullptr;
 		m_activeDocument = nullptr;

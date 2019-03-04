@@ -34,7 +34,7 @@ void TaskQueue::destroy()
 
 bool TaskQueue::add(ITask* task)
 {
-	T_ASSERT (task);
+	T_ASSERT(task);
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_queueLock);
 	m_queue.push_back(task);

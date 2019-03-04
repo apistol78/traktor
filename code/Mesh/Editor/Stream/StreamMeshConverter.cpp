@@ -47,7 +47,7 @@ bool StreamMeshConverter::convert(
 	Aabb3 boundingBox;
 
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
-	T_ASSERT (vertexSize > 0);
+	T_ASSERT(vertexSize > 0);
 
 	for (uint32_t i = 0; i < models.size(); ++i)
 	{
@@ -129,7 +129,7 @@ bool StreamMeshConverter::convert(
 			for (AlignedVector< model::Polygon >::const_iterator j = model.getPolygons().begin(); j != model.getPolygons().end(); ++j)
 			{
 				const model::Polygon& polygon = *j;
-				T_ASSERT (polygon.getVertices().size() == 3);
+				T_ASSERT(polygon.getVertices().size() == 3);
 
 				if (polygon.getMaterial() != std::distance(model.getMaterials().begin(), i))
 					continue;

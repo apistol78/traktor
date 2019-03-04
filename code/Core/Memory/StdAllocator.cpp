@@ -7,7 +7,7 @@ namespace traktor
 void* StdAllocator::alloc(size_t size, size_t align, const char* const tag)
 {
 	void* ptr = Alloc::acquireAlign(size, align, tag);
-	T_ASSERT (ptr);
+	T_ASSERT(ptr);
 	return ptr;
 }
 

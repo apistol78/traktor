@@ -52,7 +52,7 @@ DecalRenderer::DecalRenderer(render::IRenderSystem* renderSystem)
 	Aabb3(Vector4(-1.0f, -1.0f, -1.0f, 1.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f)).getExtents(extents);
 
 	Vertex* vertex = static_cast< Vertex* >(m_vertexBuffer->lock());
-	T_ASSERT (vertex);
+	T_ASSERT(vertex);
 
 	for (uint32_t i = 0; i < sizeof_array(extents); ++i)
 	{
@@ -123,7 +123,7 @@ void DecalRenderer::flush(
 )
 {
 	render::RenderContext* renderContext = worldContext.getRenderContext();
-	T_ASSERT (renderContext);
+	T_ASSERT(renderContext);
 
 	const Matrix44& projection = worldRenderView.getProjection();
 	const Matrix44& view = worldRenderView.getView();
@@ -137,10 +137,10 @@ void DecalRenderer::flush(
 	for (uint32_t i = 0; i < decalsCount; ++i)
 	{
 		DecalComponent* decalComponent = m_decalComponents[i];
-		T_ASSERT (decalComponent);
+		T_ASSERT(decalComponent);
 
 		render::Shader* shader = decalComponent->getShader();
-		T_ASSERT (shader);
+		T_ASSERT(shader);
 
 		worldRenderPass.setShaderTechnique(shader);
 		worldRenderPass.setShaderCombination(shader);

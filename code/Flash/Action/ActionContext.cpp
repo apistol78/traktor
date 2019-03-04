@@ -161,7 +161,7 @@ std::string ActionContext::getString(uint32_t id)
 
 void ActionContext::trace(visitor_t visitor) const
 {
-	T_ASSERT (m_pool.offset() == 0);
+	T_ASSERT(m_pool.offset() == 0);
 
 	visitor(m_global);
 	visitor(m_movieClip);

@@ -39,7 +39,7 @@ bool ToolForm::create(Widget* parent, const std::wstring& text, int width, int h
 
 int ToolForm::showModal()
 {
-	T_ASSERT (m_widget);
+	T_ASSERT(m_widget);
 
 	m_modal = true;
 
@@ -49,8 +49,8 @@ int ToolForm::showModal()
 
 void ToolForm::endModal(int result)
 {
-	T_ASSERT (m_widget);
-	T_ASSERT (m_modal);
+	T_ASSERT(m_widget);
+	T_ASSERT(m_modal);
 
 	static_cast< IToolForm* >(m_widget)->endModal(result);
 

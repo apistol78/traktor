@@ -35,7 +35,7 @@ bool StateTemplate::match(const State* S) const
 	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 	{
 		const IValueTemplate* valueTemplate = m_valueTemplates[i];
-		T_ASSERT (valueTemplate);
+		T_ASSERT(valueTemplate);
 
 		const TypeInfo& valueType = valueTemplate->getValueType();
 		if (!is_type_a(valueType, type_of(V[i])))
@@ -59,7 +59,7 @@ bool StateTemplate::critical(const State* Sn1, const State* S0) const
 	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 	{
 		const IValueTemplate* valueTemplate = m_valueTemplates[i];
-		T_ASSERT (valueTemplate);
+		T_ASSERT(valueTemplate);
 
 		if (valueTemplate->threshold(Vn1[i], V0[i]))
 			return true;
@@ -109,7 +109,7 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 		for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 		{
 			const IValueTemplate* valueTemplate = m_valueTemplates[i];
-			T_ASSERT (valueTemplate);
+			T_ASSERT(valueTemplate);
 
 			const TypeInfo& valueType = valueTemplate->getValueType();
 			if (
@@ -127,7 +127,7 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 			}
 
 			Vr[i] = valueTemplate->extrapolate(Vn2[i], Tn2, Vn1[i], Tn1, V0[i], T0, T);
-			T_ASSERT (Vr[i]);
+			T_ASSERT(Vr[i]);
 		}
 	}
 	else if (Sn1 && S0)
@@ -153,7 +153,7 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 		for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 		{
 			const IValueTemplate* valueTemplate = m_valueTemplates[i];
-			T_ASSERT (valueTemplate);
+			T_ASSERT(valueTemplate);
 
 			const TypeInfo& valueType = valueTemplate->getValueType();
 			if (
@@ -169,7 +169,7 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 			}
 
 			Vr[i] = valueTemplate->extrapolate(Vn1[i], 0.0f, Vn1[i], Tn1, V0[i], T0, T);
-			T_ASSERT (Vr[i]);
+			T_ASSERT(Vr[i]);
 		}
 	}
 	else if (S0)
@@ -185,7 +185,7 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 		for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 		{
 			const IValueTemplate* valueTemplate = m_valueTemplates[i];
-			T_ASSERT (valueTemplate);
+			T_ASSERT(valueTemplate);
 
 			const TypeInfo& valueType = valueTemplate->getValueType();
 			if (!is_type_a(valueType, type_of(V0[i])))
@@ -197,7 +197,7 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 			}
 
 			Vr[i] = V0[i];
-			T_ASSERT (Vr[i]);
+			T_ASSERT(Vr[i]);
 		}
 	}
 	else
@@ -223,7 +223,7 @@ uint32_t StateTemplate::pack(const State* S, void* buffer, uint32_t bufferSize) 
 	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 	{
 		const IValueTemplate* valueTemplate = m_valueTemplates[i];
-		T_ASSERT (valueTemplate);
+		T_ASSERT(valueTemplate);
 
 		const TypeInfo& valueType = valueTemplate->getValueType();
 		if (!is_type_a(valueType, type_of(V[i])))
@@ -251,7 +251,7 @@ uint32_t StateTemplate::pack(const State* S, void* buffer, uint32_t bufferSize) 
 	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 	{
 		const IValueTemplate* valueTemplate = m_valueTemplates[i];
-		T_ASSERT (valueTemplate);
+		T_ASSERT(valueTemplate);
 
 		valueTemplate->pack(writer, V[i]);
 	}
@@ -269,7 +269,7 @@ Ref< const State > StateTemplate::unpack(const void* buffer, uint32_t bufferSize
 	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 	{
 		const IValueTemplate* valueTemplate = m_valueTemplates[i];
-		T_ASSERT (valueTemplate);
+		T_ASSERT(valueTemplate);
 
 		if ((V[i] = valueTemplate->unpack(reader)) == 0)
 			return 0;

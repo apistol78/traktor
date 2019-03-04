@@ -135,7 +135,7 @@ bool LanUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, bo
 			continue;
 
 		const PropertyGroup* propertyGroup = (*i)->getProperties();
-		T_ASSERT (propertyGroup);
+		T_ASSERT(propertyGroup);
 
 		if (propertyGroup->getProperty< int32_t >(c_keyUserHandle) != userHandle)
 			continue;
@@ -172,7 +172,7 @@ void LanUser::update()
 					continue;
 
 				const PropertyGroup* propertyGroup = (*j)->getProperties();
-				T_ASSERT (propertyGroup);
+				T_ASSERT(propertyGroup);
 
 				if (propertyGroup->getProperty< int32_t >(c_keyUserHandle) != i->userHandle)
 					continue;

@@ -484,8 +484,8 @@ bool XmlDeserializer::enterElement(const std::wstring& name)
 
 bool XmlDeserializer::leaveElement(const std::wstring& name)
 {
-	T_ASSERT (m_stackPointer > 0);
-	T_ASSERT (m_stack[m_stackPointer - 1].name == name);
+	T_ASSERT(m_stackPointer > 0);
+	T_ASSERT(m_stack[m_stackPointer - 1].name == name);
 	m_stack[--m_stackPointer].dups.reset();
 
 	while (m_xpp.next() != XmlPullParser::EtEndDocument)

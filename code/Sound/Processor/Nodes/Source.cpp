@@ -107,8 +107,8 @@ bool Source::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluato
 	// 	m_sound.consume();
 	// }
 
-	T_ASSERT (sourceCursor->m_soundBuffer);
-	T_ASSERT (sourceCursor->m_soundCursor);
+	T_ASSERT(sourceCursor->m_soundBuffer);
+	T_ASSERT(sourceCursor->m_soundCursor);
 
 	return sourceCursor->m_soundBuffer->getBlock(
 		sourceCursor->m_soundCursor,

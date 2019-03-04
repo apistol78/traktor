@@ -159,7 +159,7 @@ int32_t ScriptServer::reconfigure(const PropertyGroup* settings)
 
 void ScriptServer::cleanup(bool full)
 {
-	T_ASSERT (m_scriptManager);
+	T_ASSERT(m_scriptManager);
 	m_scriptManager->collectGarbage(full);
 }
 

@@ -62,6 +62,13 @@ public:
 
 	void render(WorldContext& worldContext, WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass);
 
+	/*! \brief Quick access to entity's transform.
+	 */
+	const Transform& getTransform() const
+	{
+		return m_transform;
+	}
+
 private:
 	friend class WorldEntityFactory;
 

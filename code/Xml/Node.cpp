@@ -64,8 +64,8 @@ void Node::addChild(Node* child)
 {
 	child->unlink();
 
-	T_ASSERT (child->m_previousSibling == 0);
-	T_ASSERT (child->m_nextSibling == 0);
+	T_ASSERT(child->m_previousSibling == 0);
+	T_ASSERT(child->m_nextSibling == 0);
 
 	child->m_parent = this;
 	child->m_previousSibling = m_lastChild;
@@ -80,7 +80,7 @@ void Node::addChild(Node* child)
 
 void Node::removeChild(Node* child)
 {
-	T_ASSERT (child->m_parent == this);
+	T_ASSERT(child->m_parent == this);
 
 	if (child->m_previousSibling)
 		child->m_previousSibling->m_nextSibling = child->m_nextSibling;
@@ -102,7 +102,7 @@ void Node::removeAllChildren()
 {
 	for (Ref< Node > child = m_firstChild; child; child = child->m_nextSibling)
 	{
-		T_ASSERT (child->m_parent == this);
+		T_ASSERT(child->m_parent == this);
 		child->m_parent = 0;
 		child->m_previousSibling = 0;
 	}
@@ -112,9 +112,9 @@ void Node::removeAllChildren()
 
 void Node::insertBefore(Node* child, Node* beforeNode)
 {
-	T_ASSERT (child->m_parent == 0);
-	T_ASSERT (child->m_previousSibling == 0);
-	T_ASSERT (!beforeNode || beforeNode->m_parent == this);
+	T_ASSERT(child->m_parent == 0);
+	T_ASSERT(child->m_previousSibling == 0);
+	T_ASSERT(!beforeNode || beforeNode->m_parent == this);
 
 	if (!beforeNode)
 		beforeNode = m_firstChild;
@@ -136,8 +136,8 @@ void Node::insertBefore(Node* child, Node* beforeNode)
 
 void Node::insertAfter(Node* child, Node* afterNode)
 {
-	T_ASSERT (child->m_parent == 0);
-	T_ASSERT (!afterNode || afterNode->m_parent == this);
+	T_ASSERT(child->m_parent == 0);
+	T_ASSERT(!afterNode || afterNode->m_parent == this);
 
 	if (afterNode)
 	{
@@ -156,7 +156,7 @@ void Node::insertAfter(Node* child, Node* afterNode)
 	}
 	else
 	{
-		T_ASSERT (m_firstChild == 0);
+		T_ASSERT(m_firstChild == 0);
 		addChild(child);
 	}
 }

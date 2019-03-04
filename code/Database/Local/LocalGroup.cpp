@@ -74,8 +74,8 @@ Ref< IProviderInstance > LocalGroup::createInstance(const std::wstring& instance
 
 bool LocalGroup::getChildren(RefArray< IProviderGroup >& outChildGroups, RefArray< IProviderInstance >& outChildInstances)
 {
-	T_ASSERT (outChildGroups.empty());
-	T_ASSERT (outChildInstances.empty());
+	T_ASSERT(outChildGroups.empty());
+	T_ASSERT(outChildInstances.empty());
 
 	RefArray< File > groupFiles;
 	if (!FileSystem::getInstance().find(m_groupPath.getPathName() + L"/*.*", groupFiles))

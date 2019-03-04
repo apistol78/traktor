@@ -40,7 +40,7 @@ T_MATH_INLINE Vector4::Vector4(float x, float y, float z, float w)
 
 T_MATH_INLINE Vector4::Vector4(const float* p)
 {
-	T_ASSERT (p);
+	T_ASSERT(p);
 	m_data = _mm_loadu_ps(p);
 }
 
@@ -148,25 +148,25 @@ T_MATH_INLINE Vector4 Vector4::absolute() const
 
 T_MATH_INLINE Vector4 Vector4::loadAligned(const float* in)
 {
-	T_ASSERT (in);
+	T_ASSERT(in);
 	return Vector4(_mm_load_ps(in));
 }
 
 T_MATH_INLINE Vector4 Vector4::loadUnaligned(const float* in)
 {
-	T_ASSERT (in);
+	T_ASSERT(in);
 	return Vector4(_mm_loadu_ps(in));
 }
 
 T_MATH_INLINE void Vector4::storeAligned(float* out) const
 {
-	T_ASSERT (out);
+	T_ASSERT(out);
 	_mm_store_ps(out, m_data);
 }
 
 T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 {
-	T_ASSERT (out);
+	T_ASSERT(out);
 	_mm_storeu_ps(out, m_data);
 }
 

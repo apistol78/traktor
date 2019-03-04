@@ -80,7 +80,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolSnapSpacing->select(0);
 
 	Ref< const PropertyGroup > settings = context->getEditor()->getSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	m_toolTogglePick->setToggled(settings->getProperty< bool >(L"SceneEditor.TogglePick", true));
 	m_toolToggleTranslate->setToggled(true);
@@ -148,7 +148,7 @@ void ScenePreviewControl::destroy()
 {
 	// Save editor configuration.
 	Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
-	T_ASSERT (settings);
+	T_ASSERT(settings);
 
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.TogglePick", m_toolTogglePick->isToggled());
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.ToggleSnap", m_toolToggleSnap->isToggled());

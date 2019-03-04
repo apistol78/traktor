@@ -412,7 +412,7 @@ void ModelToolDialog::bakeOcclusion(Model* model)
 
 void ModelToolDialog::updateOperations(ui::TreeViewItem* itemModel)
 {
-	T_ASSERT (itemModel->getParent() == 0);
+	T_ASSERT(itemModel->getParent() == 0);
 
 	Ref< Model > model = itemModel->getData< Model >(L"MODEL");
 
@@ -420,7 +420,7 @@ void ModelToolDialog::updateOperations(ui::TreeViewItem* itemModel)
 	for (RefArray< ui::TreeViewItem >::const_iterator i = children.begin(); i != children.end(); ++i)
 	{
 		const IModelOperation* operation = (*i)->getData< IModelOperation >(L"OPERATION");
-		T_ASSERT (operation != 0);
+		T_ASSERT(operation != 0);
 
 		model = new Model(*model);
 		operation->apply(*model);
@@ -460,7 +460,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 	if (m_modelTree->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
 		return;
 
-	T_ASSERT (items.front());
+	T_ASSERT(items.front());
 	if (items.front()->getParent() == 0)
 	{
 		Ref< ui::TreeViewItem > itemModel = items.front();
@@ -762,8 +762,8 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 {
 	ui::Rect rc = m_renderWidget->getInnerRect();
 
-	T_ASSERT (m_renderView);
-	T_ASSERT (m_primitiveRenderer);
+	T_ASSERT(m_renderView);
+	T_ASSERT(m_primitiveRenderer);
 
 	if (!m_renderView->begin(render::EtCyclop))
 		return;
@@ -779,7 +779,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 	render::Viewport viewport = m_renderView->getViewport();
 	float aspect = float(viewport.width) / viewport.height;
 
-	Matrix44 viewTransform = translate(0.0f, 0.0f, m_cameraZ) * rotateY(m_cameraHead) * rotateX(m_cameraPitch);
+	Matrix44 viewTransform = translate(0.0f, 0.0f, m_cameraZ) * rotateX(m_cameraPitch) * rotateY(m_cameraHead);
 	Matrix44 projectionTransform = perspectiveLh(
 		80.0f * PI / 180.0f,
 		aspect,
@@ -809,7 +809,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 
 		if (m_model)
 		{
-			T_ASSERT (m_modelTris);
+			T_ASSERT(m_modelTris);
 
 			int32_t channel = m_toolChannel->getSelected();
 
@@ -836,7 +836,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 				{
 					const AlignedVector< uint32_t >& indices = i->getVertices();
-					T_ASSERT (indices.size() == 3);
+					T_ASSERT(indices.size() == 3);
 
 					Vector4 p[3];
 

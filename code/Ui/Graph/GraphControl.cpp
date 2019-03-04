@@ -509,14 +509,14 @@ bool GraphControl::endSelectModification()
 	RefArray< Node > nodeSelectChanged;
 	RefArray< Edge > edgeSelectChanged;
 
-	T_ASSERT (m_nodeSelectionStates.size() == m_nodes.size());
+	T_ASSERT(m_nodeSelectionStates.size() == m_nodes.size());
 	for (size_t i = 0; i < m_nodes.size(); ++i)
 	{
 		if (m_nodes[i]->isSelected() != m_nodeSelectionStates[i])
 			nodeSelectChanged.push_back(m_nodes[i]);
 	}
 
-	T_ASSERT (m_edgeSelectionStates.size() == m_edges.size());
+	T_ASSERT(m_edgeSelectionStates.size() == m_edges.size());
 	for (size_t i = 0; i < m_edges.size(); ++i)
 	{
 		if (m_edges[i]->isSelected() != m_edgeSelectionStates[i])
@@ -674,7 +674,7 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 	}
 	else if (!m_selectedNode && m_selectedEdge)
 	{
-		T_ASSERT (m_edgeSelectable);
+		T_ASSERT(m_edgeSelectable);
 		beginSelectModification();
 
 		// Update selection.
@@ -733,7 +733,7 @@ void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 
 	if (m_moveAll || m_moveSelected)
 	{
-		T_ASSERT (m_nodes.size() == m_nodePositions.size());
+		T_ASSERT(m_nodes.size() == m_nodePositions.size());
 		for (uint32_t i = 0; i < m_nodes.size(); ++i)
 		{
 			if (m_nodes[i]->getPosition() != m_nodePositions[i])

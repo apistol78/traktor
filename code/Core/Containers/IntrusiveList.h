@@ -63,14 +63,14 @@ public:
 
 		const_iterator& operator ++ ()
 		{
-			T_ASSERT (m_current);
+			T_ASSERT(m_current);
 			m_current = L(m_current).next();
 			return *this;
 		}
 
 		const_iterator operator ++ (int)
 		{
-			T_ASSERT (m_current);
+			T_ASSERT(m_current);
 			iterator it(m_list, m_current);
 			m_current = L(m_current).next();
 			return it;
@@ -78,14 +78,14 @@ public:
 
 		const_iterator& operator -- ()
 		{
-			T_ASSERT (m_current);
+			T_ASSERT(m_current);
 			m_current = L(m_current).prev();
 			return *this;
 		}
 
 		const_iterator operator -- (int)
 		{
-			T_ASSERT (m_current);
+			T_ASSERT(m_current);
 			iterator it(m_list, m_current);
 			m_current = L(m_current).prev();
 			return it;
@@ -135,14 +135,14 @@ public:
 
 		iterator& operator ++ ()
 		{
-			T_ASSERT (_O::m_current);
+			T_ASSERT(_O::m_current);
 			_O::m_current = L(_O::m_current).next();
 			return *this;
 		}
 
 		iterator operator ++ (int)
 		{
-			T_ASSERT (_O::m_current);
+			T_ASSERT(_O::m_current);
 			iterator it(_O::m_list, _O::m_current);
 			_O::m_current = L(_O::m_current).next();
 			return it;
@@ -150,14 +150,14 @@ public:
 
 		iterator& operator -- ()
 		{
-			T_ASSERT (_O::m_current);
+			T_ASSERT(_O::m_current);
 			_O::m_current = L(_O::m_current).prev();
 			return *this;
 		}
 
 		iterator operator -- (int)
 		{
-			T_ASSERT (_O::m_current);
+			T_ASSERT(_O::m_current);
 			iterator it(_O::m_list,_O:: m_current);
 			_O::m_current = L(_O::m_current).prev();
 			return it;
@@ -195,57 +195,57 @@ public:
 
 	void push_front(ItemType* item)
 	{
-		T_ASSERT (L(item).prev() == 0);
-		T_ASSERT (L(item).next() == 0);
+		T_ASSERT(L(item).prev() == 0);
+		T_ASSERT(L(item).next() == 0);
 
 		if (m_front)
 		{
-			T_ASSERT (item != m_front);
+			T_ASSERT(item != m_front);
 
 			L(item).prev() = 0;
 			L(item).next() = m_front;
 
-			T_ASSERT (L(m_front).prev() == 0);
+			T_ASSERT(L(m_front).prev() == 0);
 			L(m_front).prev() = item;
 		}
 		else
 		{
-			T_ASSERT (!m_back);
+			T_ASSERT(!m_back);
 			m_back = item;
 		}
 		m_front = item;
 
-		T_ASSERT (L(m_front).prev() == 0);
+		T_ASSERT(L(m_front).prev() == 0);
 	}
 
 	void push_back(ItemType* item)
 	{
-		T_ASSERT (L(item).prev() == 0);
-		T_ASSERT (L(item).next() == 0);
+		T_ASSERT(L(item).prev() == 0);
+		T_ASSERT(L(item).next() == 0);
 
 		if (m_back)
 		{
-			T_ASSERT (item != m_back);
+			T_ASSERT(item != m_back);
 
 			L(item).prev() = m_back;
 			L(item).next() = 0;
 
-			T_ASSERT (L(m_back).next() == 0);
+			T_ASSERT(L(m_back).next() == 0);
 			L(m_back).next() = item;
 		}
 		else
 		{
-			T_ASSERT (!m_front);
+			T_ASSERT(!m_front);
 			m_front = item;
 		}
 		m_back = item;
 
-		T_ASSERT (L(m_back).next() == 0);
+		T_ASSERT(L(m_back).next() == 0);
 	}
 
 	void pop_front()
 	{
-		T_ASSERT (m_front);
+		T_ASSERT(m_front);
 
 		ItemType* front = L(m_front).next();
 		if (front)
@@ -290,7 +290,7 @@ public:
 
 	iterator erase(const iterator& it)
 	{
-		T_ASSERT (it.m_list == this);
+		T_ASSERT(it.m_list == this);
 		iterator it2(this, L(it.m_current).next());
 		remove(it.m_current);
 		return it2;
@@ -303,12 +303,12 @@ public:
 
 		if (prev)
 		{
-			T_ASSERT (L(prev).next() == item);
+			T_ASSERT(L(prev).next() == item);
 			L(prev).next() = next;
 		}
 		else
 		{
-			T_ASSERT (item == m_front);
+			T_ASSERT(item == m_front);
 			m_front = next;
 			if (m_front)
 				L(m_front).prev() = 0;
@@ -318,7 +318,7 @@ public:
 			L(next).prev() = prev;
 		else
 		{
-			T_ASSERT (item == m_back);
+			T_ASSERT(item == m_back);
 			m_back = prev;
 			if (m_back)
 				L(m_back).next() = 0;

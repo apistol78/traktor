@@ -25,7 +25,7 @@ public:
 		SmallMap< std::wstring, handle_t >::const_iterator i = m_handles.find(name);
 		if (i != m_handles.end())
 		{
-			T_ASSERT (i->second > 0);
+			T_ASSERT(i->second > 0);
 			return i->second;
 		}
 

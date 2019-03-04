@@ -19,7 +19,7 @@ void removeAllChildren(PropertyList* list, PropertyItem* item)
 		removeAllChildren(list, *i);
 		list->removePropertyItem(item, *i);
 	}
-	T_ASSERT (item->getChildItems().empty());
+	T_ASSERT(item->getChildItems().empty());
 }
 
 		}

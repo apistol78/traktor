@@ -131,7 +131,7 @@ void SequencerControl::addSequenceItem(SequenceItem* sequenceItem)
 void SequencerControl::addSequenceItemBefore(SequenceItem* beforeItem, SequenceItem* sequenceItem)
 {
 	RefArray< SequenceItem >::iterator i = std::find(m_sequenceItems.begin(), m_sequenceItems.end(), beforeItem);
-	T_ASSERT (i != m_sequenceItems.end());
+	T_ASSERT(i != m_sequenceItems.end());
 	m_sequenceItems.insert(i, sequenceItem);
 	updateScrollBars();
 }
@@ -356,7 +356,7 @@ void SequencerControl::eventButtonUp(MouseButtonUpEvent* event)
 	// Issue drop event.
 	if (m_moveTrack == 2 && m_dropIndex >= 0)
 	{
-		T_ASSERT (m_mouseTrackItem.item);
+		T_ASSERT(m_mouseTrackItem.item);
 
 		// Get all items, including descendants.
 		RefArray< SequenceItem > sequenceItems;

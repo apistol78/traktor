@@ -53,7 +53,7 @@ void __registerTypeInfo(const TypeInfo* typeInfo)
 	{
 		s_typeInfoRegistrySize = 1024;
 		s_typeInfoRegistry = reinterpret_cast< const TypeInfo** >(std::malloc(s_typeInfoRegistrySize * sizeof(const TypeInfo*)));
-		T_ASSERT (s_typeInfoRegistry);
+		T_ASSERT(s_typeInfoRegistry);
 	}
 #endif
 
@@ -65,7 +65,7 @@ void __registerTypeInfo(const TypeInfo* typeInfo)
 	while (index < s_typeInfoCount)
 	{
 		const TypeInfo* typeInfo2 = s_typeInfoRegistry[index];
-		T_ASSERT (typeInfo2);
+		T_ASSERT(typeInfo2);
 
 		const wchar_t* typeName2 = typeInfo2->getName();
 		int32_t res = safeStringCompare(typeName2, typeName);
@@ -89,7 +89,7 @@ void __registerTypeInfo(const TypeInfo* typeInfo)
 	{
 		s_typeInfoRegistrySize += 1024;
 		s_typeInfoRegistry = reinterpret_cast< const TypeInfo** >(std::realloc(s_typeInfoRegistry, s_typeInfoRegistrySize * sizeof(const TypeInfo*)));
-		T_ASSERT (s_typeInfoRegistry);
+		T_ASSERT(s_typeInfoRegistry);
 	}
 #else
 	++s_typeInfoCount;
@@ -106,7 +106,7 @@ void __unregisterTypeInfo(const TypeInfo* typeInfo)
 	while (index < s_typeInfoCount)
 	{
 		const TypeInfo* typeInfo2 = s_typeInfoRegistry[index];
-		T_ASSERT (typeInfo2);
+		T_ASSERT(typeInfo2);
 
 		const wchar_t* typeName2 = typeInfo2->getName();
 		if (safeStringCompare(typeName2, typeName) == 0)
@@ -164,7 +164,7 @@ const TypeInfo* TypeInfo::find(const wchar_t* name)
 	while (first < last)
 	{
 		uint32_t index = (last + first) >> 1;
-		T_ASSERT (index >= first && index < last);
+		T_ASSERT(index >= first && index < last);
 
 		const wchar_t* typeName = s_typeInfoRegistry[index]->getName();
 		int32_t res = safeStringCompare(typeName, name);
