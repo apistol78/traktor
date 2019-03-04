@@ -43,6 +43,8 @@ public:
 
 	void addLayer(ISplineLayer* layer);
 
+	virtual void setTransform(const Transform& transform) override;
+
 	virtual void update(const world::UpdateParams& update) override;
 
 	void render(
