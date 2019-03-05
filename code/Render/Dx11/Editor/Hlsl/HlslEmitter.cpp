@@ -88,8 +88,8 @@ bool emitColor(HlslContext& cx, Color* node)
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
 	if (!out)
 		return false;
-	traktor::Color4ub color = node->getColor();
-	f << L"const float4 " << out->getName() << L" = float4(" << (color.r / 255.0f) << L", " << (color.g / 255.0f) << L", " << (color.b / 255.0f) << L", " << (color.a / 255.0f) << L");" << Endl;
+	Vector4 color = node->getColor();
+	f << L"const float4 " << out->getName() << L" = float4(" << color.x() << L", " << color.y() << L", " << color.z() << L", " << color.w() << L");" << Endl;
 	return true;
 }
 
@@ -2164,6 +2164,8 @@ bool emitVector(HlslContext& cx, Vector* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
+	if (!out)
+		return false;
 	assign(cx, f, out) << L"float4(" << node->get().x() << L", " << node->get().y() << L", " << node->get().z() << L", " << node->get().w() << L");" << Endl;
 	return true;
 }

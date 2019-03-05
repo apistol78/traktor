@@ -115,8 +115,8 @@ bool emitColor(GlslContext& cx, Color* node)
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
 	if (!out)
 		return false;
-	traktor::Color4ub color = node->getColor();
-	f << L"const vec4 " << out->getName() << L" = vec4(" << (color.r / 255.0f) << L", " << (color.g / 255.0f) << L", " << (color.b / 255.0f) << L", " << (color.a / 255.0f) << L");" << Endl;
+	Vector4 value = node->getColor();
+	assign(f, out) << L"vec4(" << formatFloat(value.x()) << L", " << formatFloat(value.y()) << L", " << formatFloat(value.z()) << L", " << formatFloat(value.w()) << L");" << Endl;
 	return true;
 }
 
@@ -2232,6 +2232,8 @@ bool emitVector(GlslContext& cx, Vector* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
+	if (!out)
+		return false;
 	assign(f, out) << L"vec4(" << formatFloat(node->get().x()) << L", " << formatFloat(node->get().y()) << L", " << formatFloat(node->get().z()) << L", " << formatFloat(node->get().w()) << L");" << Endl;
 	return true;
 }

@@ -95,10 +95,10 @@ bool ConstantNodeTraits::evaluatePartial(
 	if (const Color* color = dynamic_type_cast< const Color* >(node))
 	{
 		outputConstant = Constant(
-			color->getColor().r / 255.0f,
-			color->getColor().g / 255.0f,
-			color->getColor().b / 255.0f,
-			color->getColor().a / 255.0f
+			color->getColor().getRed(),
+			color->getColor().getGreen(),
+			color->getColor().getBlue(),
+			color->getColor().getAlpha()
 		);
 	}
 	else if (const Vector* vectr = dynamic_type_cast< const Vector* >(node))
