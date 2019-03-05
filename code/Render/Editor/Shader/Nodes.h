@@ -2,7 +2,7 @@
 
 #include <string>
 #include "Core/Guid.h"
-#include "Core/Math/Color4ub.h"
+#include "Core/Math/Color4f.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Types.h"
 #include "Render/Editor/Shader/ImmutableNode.h"
@@ -117,18 +117,18 @@ class T_DLLCLASS Color : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Color(const traktor::Color4ub& color = traktor::Color4ub(0, 0, 0, 0));
+	Color(const traktor::Color4f& color = traktor::Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-	void setColor(const traktor::Color4ub& color);
+	void setColor(const traktor::Color4f& color);
 
-	const traktor::Color4ub& getColor() const;
+	const traktor::Color4f& getColor() const;
 
 	virtual std::wstring getInformation() const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	traktor::Color4ub m_color;
+	traktor::Color4f m_color;
 };
 
 /*! \brief Comment node. */

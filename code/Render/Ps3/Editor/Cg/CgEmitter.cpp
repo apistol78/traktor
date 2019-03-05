@@ -86,8 +86,8 @@ bool emitColor(CgContext& cx, Color* node)
 	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat4);
 	if (!out)
 		return false;
-	traktor::Color4ub color = node->getColor();
-	f << L"const float4 " << out->getName() << L" = float4(" << (color.r / 255.0f) << L", " << (color.g / 255.0f) << L", " << (color.b / 255.0f) << L", " << (color.a / 255.0f) << L");" << Endl;
+	Vector4 color = node->getColor();
+	f << L"const float4 " << out->getName() << L" = float4(" << color.x() << L", " << color.y() << L", " << color.z() << L", " << color.w() << L");" << Endl;
 	return true;
 }
 

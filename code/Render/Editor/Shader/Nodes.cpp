@@ -1,5 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Math/Format.h"
+#include "Core/Serialization/AttributeHdr.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
@@ -342,22 +343,22 @@ void Branch::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Color", 0, Color, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Color", 1, Color, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_Color_o[] = { { L"Output" }, { 0 } };
 
-Color::Color(const traktor::Color4ub& color)
+Color::Color(const traktor::Color4f& color)
 :	ImmutableNode(0, c_Color_o)
 ,	m_color(color)
 {
 }
 
-void Color::setColor(const traktor::Color4ub& color)
+void Color::setColor(const traktor::Color4f& color)
 {
 	m_color = color;
 }
 
-const traktor::Color4ub& Color::getColor() const
+const traktor::Color4f& Color::getColor() const
 {
 	return m_color;
 }
@@ -365,14 +366,37 @@ const traktor::Color4ub& Color::getColor() const
 std::wstring Color::getInformation() const
 {
 	StringOutputStream ss;
-	ss << uint32_t(m_color.r) << L", " << uint32_t(m_color.g) << L", " << uint32_t(m_color.b) << L", " << uint32_t(m_color.a);
+
+	float ev = m_color.getEV();
+
+	Color4f c0 = m_color;
+	c0.setEV(traktor::Scalar(0.0f));
+
+	float r = c0.getRed();
+	float g = c0.getGreen();
+	float b = c0.getBlue();
+	float a = c0.getAlpha();
+
+	int32_t ir = int32_t(r * 255.0f);
+	int32_t ig = int32_t(g * 255.0f);
+	int32_t ib = int32_t(b * 255.0f);
+	int32_t ia = int32_t(a * 255.0f);
+
+	ss << ir << L", " << ig << L", " << ib << L", " << ia << L" (EV " << (ev > 0.0f ? L"+" : L"") << ev << L")";
 	return ss.str();
 }
 
 void Color::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
-	s >> Member< traktor::Color4ub >(L"color", m_color);
+	if (s.getVersion< Color >() >= 1)
+		s >> Member< traktor::Color4f >(L"color", m_color, AttributeHdr());
+	else
+	{
+		Color4ub ldr;
+		s >> Member< traktor::Color4ub >(L"color", ldr);
+		m_color = Color4f::fromColor4ub(ldr);
+	}
 }
 
 /*---------------------------------------------------------------------------*/

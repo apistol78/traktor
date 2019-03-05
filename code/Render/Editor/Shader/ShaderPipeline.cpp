@@ -119,10 +119,10 @@ struct BuildCombinationTask : public Object
 		std::vector< std::wstring > maskNames = combinations->getParameterNames(mask);
 		std::vector< std::wstring > valueNames = combinations->getParameterNames(value);
 
-		for (std::vector< std::wstring >::iterator j = maskNames.begin(); j != maskNames.end(); ++j)
-			shaderResourceCombination->mask |= parameterBits.find(*j)->second;
-		for (std::vector< std::wstring >::iterator j = valueNames.begin(); j != valueNames.end(); ++j)
-			shaderResourceCombination->value |= parameterBits.find(*j)->second;
+		for (const auto& maskName : maskNames)
+			shaderResourceCombination->mask |= parameterBits.find(maskName)->second;
+		for (const auto& valueName : valueNames)
+			shaderResourceCombination->value |= parameterBits.find(valueName)->second;
 
 		// Generate combination shader graph.
 		Ref< const ShaderGraph > combinationGraph = combinations->getCombinationShaderGraph(combination);
@@ -187,10 +187,9 @@ struct BuildCombinationTask : public Object
 		// Extract uniform initial values and add to initialization block in shader resource.
 		RefArray< Uniform > uniformNodes;
 		programGraph->findNodesOf< Uniform >(uniformNodes);
-
-		for (RefArray< Uniform >::iterator i = uniformNodes.begin(); i != uniformNodes.end(); ++i)
+		for (const auto uniformNode : uniformNodes)
 		{
-			const OutputPin* outputPin = programGraph->findSourcePin((*i)->getInputPin(0));
+			const OutputPin* outputPin = programGraph->findSourcePin(uniformNode->getInputPin(0));
 			if (!outputPin)
 				continue;
 
@@ -199,17 +198,15 @@ struct BuildCombinationTask : public Object
 
 			if (const Scalar* scalarNode = dynamic_type_cast< const Scalar* >(outputNode))
 			{
-				shaderResourceCombination->initializeUniformScalar.push_back(ShaderResource::InitializeUniformScalar((*i)->getParameterName(), scalarNode->get()));
+				shaderResourceCombination->initializeUniformScalar.push_back(ShaderResource::InitializeUniformScalar(uniformNode->getParameterName(), scalarNode->get()));
 			}
 			else if (const Vector* vectorNode = dynamic_type_cast< const Vector* >(outputNode))
 			{
-				shaderResourceCombination->initializeUniformVector.push_back(ShaderResource::InitializeUniformVector((*i)->getParameterName(), vectorNode->get()));
+				shaderResourceCombination->initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(uniformNode->getParameterName(), vectorNode->get()));
 			}
 			else if (const Color* colorNode = dynamic_type_cast< const Color* >(outputNode))
 			{
-				const Color4ub& colorValue = colorNode->getColor();
-				Vector4 colorAsVector(colorValue.r / 255.0f, colorValue.g / 255.0f, colorValue.b / 255.0f, colorValue.a / 255.0f);
-				shaderResourceCombination->initializeUniformVector.push_back(ShaderResource::InitializeUniformVector((*i)->getParameterName(), colorAsVector));
+				shaderResourceCombination->initializeUniformVector.push_back(ShaderResource::InitializeUniformVector(uniformNode->getParameterName(), colorNode->getColor()));
 			}
 			else
 			{
@@ -221,10 +218,9 @@ struct BuildCombinationTask : public Object
 		// Replace texture nodes with uniforms; keep list of texture references in shader resource.
 		RefArray< Texture > textureNodes;
 		programGraph->findNodesOf< Texture >(textureNodes);
-
-		for (RefArray< Texture >::iterator i = textureNodes.begin(); i != textureNodes.end(); ++i)
+		for (const auto textureNode : textureNodes)
 		{
-			const Guid& textureGuid = (*i)->getExternal();
+			const Guid& textureGuid = textureNode->getExternal();
 			int32_t textureIndex;
 
 			std::vector< Guid >::iterator it = std::find(shaderResourceCombination->textures.begin(), shaderResourceCombination->textures.end(), textureGuid);
@@ -238,14 +234,14 @@ struct BuildCombinationTask : public Object
 
 			Ref< Uniform > textureUniform = new Uniform(
 				getParameterNameFromTextureReferenceIndex(textureIndex),
-				(*i)->getParameterType(),
+				textureNode->getParameterType(),
 				UfOnce
 			);
 
 			const OutputPin* textureUniformOutput = textureUniform->getOutputPin(0);
 			T_ASSERT(textureUniformOutput);
 
-			const OutputPin* textureNodeOutput = (*i)->getOutputPin(0);
+			const OutputPin* textureNodeOutput = textureNode->getOutputPin(0);
 			T_ASSERT(textureNodeOutput);
 
 			programGraph->rewire(textureNodeOutput, textureUniformOutput);
