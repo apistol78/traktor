@@ -2,9 +2,9 @@
 #include "Net/SocketAddressIPv4.h"
 #include "Net/TcpSocket.h"
 
-#include "Amalgam/IEnvironment.h"
-#include "Amalgam/UpdateInfo.h"
-#include "Amalgam/Engine/Stage.h"
+#include "Runtime/IEnvironment.h"
+#include "Runtime/UpdateInfo.h"
+#include "Runtime/Engine/Stage.h"
 #include "Core/Class/Any.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
@@ -113,13 +113,13 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashLayer", FlashLayer, amalgam::Layer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashLayer", FlashLayer, runtime::Layer)
 
 FlashLayer::FlashLayer(
-	amalgam::Stage* stage,
+	runtime::Stage* stage,
 	const std::wstring& name,
 	bool permitTransition,
-	amalgam::IEnvironment* environment,
+	runtime::IEnvironment* environment,
 	const resource::Proxy< Movie >& movie,
 	const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies,
 	const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
@@ -224,7 +224,7 @@ void FlashLayer::transition(Layer* fromLayer)
 		m_displayRenderer->flushCaches();
 }
 
-void FlashLayer::prepare(const amalgam::UpdateInfo& info)
+void FlashLayer::prepare(const runtime::UpdateInfo& info)
 {
 	T_PROFILER_SCOPE(L"FlashLayer prepare");
 
@@ -275,7 +275,7 @@ void FlashLayer::prepare(const amalgam::UpdateInfo& info)
 	}
 }
 
-void FlashLayer::update(const amalgam::UpdateInfo& info)
+void FlashLayer::update(const runtime::UpdateInfo& info)
 {
 	T_PROFILER_SCOPE(L"FlashLayer update");
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
@@ -474,7 +474,7 @@ void FlashLayer::update(const amalgam::UpdateInfo& info)
 	}
 }
 
-void FlashLayer::build(const amalgam::UpdateInfo& info, uint32_t frame)
+void FlashLayer::build(const runtime::UpdateInfo& info, uint32_t frame)
 {
 	T_PROFILER_SCOPE(L"FlashLayer build");
 	if (!m_displayRenderer || !m_movieRenderer || !m_moviePlayer || !m_visible)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Feature" version="8">
+<object type="traktor.runtime.Feature" version="8">
 	<description>Module - Terrain Rendering</description>
 	<priority>0</priority>
 	<platforms>
@@ -716,7 +716,7 @@
 	<runtimeProperties type="traktor.PropertyGroup">
 		<value>
 			<item>
-				<first>Amalgam.Modules</first>
+				<first>Runtime.Modules</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Traktor.Terrain</item>

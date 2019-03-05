@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include "Amalgam/Engine/LayerData.h"
+#include "Runtime/Engine/LayerData.h"
 #include "Resource/Id.h"
 
 // import/export mechanism.
@@ -29,14 +29,14 @@ class Movie;
 /*! \brief Stage Flash layer persistent data.
  * \ingroup Flash
  */
-class T_DLLCLASS FlashLayerData : public amalgam::LayerData
+class T_DLLCLASS FlashLayerData : public runtime::LayerData
 {
 	T_RTTI_CLASS;
 
 public:
 	FlashLayerData();
 
-	virtual Ref< amalgam::Layer > createInstance(amalgam::Stage* stage, amalgam::IEnvironment* environment) const override final;
+	virtual Ref< runtime::Layer > createInstance(runtime::Stage* stage, runtime::IEnvironment* environment) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

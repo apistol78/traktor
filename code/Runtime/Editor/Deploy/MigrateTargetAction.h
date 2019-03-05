@@ -1,0 +1,64 @@
+#pragma once
+
+#include "Runtime/Editor/Deploy/ITargetAction.h"
+#include "Core/Ref.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RUNTIME_DEPLOY_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+
+class PropertyGroup;
+
+	namespace db
+	{
+
+class Database;
+
+	}
+
+	namespace runtime
+	{
+
+class Target;
+class TargetConfiguration;
+
+/*! \brief Migrate target action.
+ * \ingroup Runtime
+ */
+class T_DLLCLASS MigrateTargetAction : public ITargetAction
+{
+	T_RTTI_CLASS;
+
+public:
+	MigrateTargetAction(
+		db::Database* database,
+		const PropertyGroup* globalSettings,
+		const std::wstring& targetName,
+		const Target* target,
+		const TargetConfiguration* targetConfiguration,
+		const std::wstring& deployHost,
+		const std::wstring& outputPath
+	);
+
+	virtual bool execute(IProgressListener* progressListener) override final;
+
+private:
+	Ref< db::Database > m_database;
+	Ref< const PropertyGroup > m_globalSettings;
+	std::wstring m_targetName;
+	Ref< const Target > m_target;
+	Ref< const TargetConfiguration > m_targetConfiguration;
+	std::wstring m_deployHost;
+	std::wstring m_outputPath;
+};
+
+	}
+}
+

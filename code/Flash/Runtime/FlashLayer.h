@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Amalgam/Engine/Layer.h"
+#include "Runtime/Engine/Layer.h"
 #include "Core/Class/Any.h"
 #include "Core/Math/Vector2.h"
 #include "Flash/Action/Common/Classes/As_flash_external_ExternalInterface.h"
@@ -18,7 +18,7 @@
 
 namespace traktor
 {
-	namespace amalgam
+	namespace runtime
 	{
 
 class IEnvironment;
@@ -49,7 +49,7 @@ class ISoundRenderer;
  * \ingroup Flash
  */
 class T_DLLCLASS FlashLayer
-:	public amalgam::Layer
+:	public runtime::Layer
 ,	public IExternalCall
 ,	public spray::IFeedbackListener
 {
@@ -57,10 +57,10 @@ class T_DLLCLASS FlashLayer
 
 public:
 	FlashLayer(
-		amalgam::Stage* stage,
+		runtime::Stage* stage,
 		const std::wstring& name,
 		bool permitTransition,
-		amalgam::IEnvironment* environment,
+		runtime::IEnvironment* environment,
 		const resource::Proxy< Movie >& movie,
 		const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies,
 		const resource::Proxy< render::ImageProcessSettings >& imageProcessSettings,
@@ -75,11 +75,11 @@ public:
 
 	virtual void transition(Layer* fromLayer) override final;
 
-	virtual void prepare(const amalgam::UpdateInfo& info) override final;
+	virtual void prepare(const runtime::UpdateInfo& info) override final;
 
-	virtual void update(const amalgam::UpdateInfo& info) override final;
+	virtual void update(const runtime::UpdateInfo& info) override final;
 
-	virtual void build(const amalgam::UpdateInfo& info, uint32_t frame) override final;
+	virtual void build(const runtime::UpdateInfo& info, uint32_t frame) override final;
 
 	virtual void render(render::EyeType eye, uint32_t frame) override final;
 
@@ -160,7 +160,7 @@ private:
 		}
 	};
 
-	Ref< amalgam::IEnvironment > m_environment;
+	Ref< runtime::IEnvironment > m_environment;
 	resource::Proxy< Movie > m_movie;
 	std::map< std::wstring, resource::Proxy< Movie > > m_externalMovies;
 	Ref< MoviePlayer > m_moviePlayer;

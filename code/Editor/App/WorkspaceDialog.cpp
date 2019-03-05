@@ -33,7 +33,7 @@ bool WorkspaceDialog::create(ui::Widget* parent, PropertyGroup* settings)
 	staticSystemRoot->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_SYSTEM_ROOT"));
 
 	m_editSystemRoot = new ui::Edit();
-	m_editSystemRoot->create(containerInner, settings->getProperty< std::wstring >(L"Amalgam.SystemRoot"));
+	m_editSystemRoot->create(containerInner, settings->getProperty< std::wstring >(L"Runtime.SystemRoot"));
 
 	Ref< ui::Static > staticHomeUrl = new ui::Static();
 	staticHomeUrl->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_HOME_URL"));
@@ -67,7 +67,7 @@ void WorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 {
 	if (event->getCommand() == ui::DrOk)
 	{
-		m_settings->setProperty< PropertyString >(L"Amalgam.SystemRoot", m_editSystemRoot->getText());
+		m_settings->setProperty< PropertyString >(L"Runtime.SystemRoot", m_editSystemRoot->getText());
 		m_settings->setProperty< PropertyString >(L"Editor.HomeUrl", m_editHomeUrl->getText());
 		m_settings->setProperty< PropertyString >(L"Editor.SourceDatabase", m_editSourceDatabase->getText());
 		m_settings->setProperty< PropertyString >(L"Editor.OutputDatabase", m_editOutputDatabase->getText());

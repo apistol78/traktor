@@ -4,7 +4,7 @@
 
 namespace traktor
 {
-	namespace amalgam
+	namespace runtime
 	{
 
 extern "C" void __module__Traktor_Ui_Win32()

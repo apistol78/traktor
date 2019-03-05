@@ -13322,8 +13322,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Amalgam.Editor</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/Editor</sourcePath>
+			<name>Traktor.Runtime.Editor</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Runtime/Editor</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -13332,7 +13332,7 @@
 					<precompiledHeader/>
 					<includePaths/>
 					<definitions>
-						<item>T_AMALGAM_EDITOR_EXPORT</item>
+						<item>T_RUNTIME_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -13346,15 +13346,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Runtime.Editor.pdb</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Runtime.Editor.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Editor.dll</sourceFile>
+							<sourceFile>Traktor.Runtime.Editor.dll</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -13367,7 +13367,7 @@
 					<precompiledHeader/>
 					<includePaths/>
 					<definitions>
-						<item>T_AMALGAM_EDITOR_EXPORT</item>
+						<item>T_RUNTIME_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -13381,15 +13381,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Runtime.Editor.pdb</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Runtime.Editor.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Editor.dll</sourceFile>
+							<sourceFile>Traktor.Runtime.Editor.dll</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -13416,11 +13416,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Runtime.Editor.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Runtime.Editor.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -13447,11 +13447,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Editor.pdb</sourceFile>
+							<sourceFile>Traktor.Runtime.Editor.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Editor.lib</sourceFile>
+							<sourceFile>Traktor.Runtime.Editor.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -13567,8 +13567,8 @@
 					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
-						<name>Traktor.Amalgam</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Amalgam</sourcePath>
+						<name>Traktor.Runtime</name>
+						<sourcePath>$(TRAKTOR_HOME)/code/Runtime</sourcePath>
 						<configurations>
 							<item type="Configuration" version="5">
 								<name>DebugShared</name>
@@ -13577,7 +13577,7 @@
 								<precompiledHeader/>
 								<includePaths/>
 								<definitions>
-									<item>T_AMALGAM_EXPORT</item>
+									<item>T_RUNTIME_EXPORT</item>
 									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
@@ -13591,15 +13591,15 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.pdb</sourceFile>
+										<sourceFile>Traktor.Runtime.pdb</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.lib</sourceFile>
+										<sourceFile>Traktor.Runtime.lib</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.dll</sourceFile>
+										<sourceFile>Traktor.Runtime.dll</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
 								</aggregationItems>
@@ -13612,7 +13612,7 @@
 								<precompiledHeader/>
 								<includePaths/>
 								<definitions>
-									<item>T_AMALGAM_EXPORT</item>
+									<item>T_RUNTIME_EXPORT</item>
 									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
@@ -13626,15 +13626,15 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.pdb</sourceFile>
+										<sourceFile>Traktor.Runtime.pdb</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.lib</sourceFile>
+										<sourceFile>Traktor.Runtime.lib</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.dll</sourceFile>
+										<sourceFile>Traktor.Runtime.dll</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
 								</aggregationItems>
@@ -13661,11 +13661,11 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.pdb</sourceFile>
+										<sourceFile>Traktor.Runtime.pdb</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.lib</sourceFile>
+										<sourceFile>Traktor.Runtime.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -13692,11 +13692,11 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.pdb</sourceFile>
+										<sourceFile>Traktor.Runtime.pdb</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.lib</sourceFile>
+										<sourceFile>Traktor.Runtime.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -14395,8 +14395,8 @@
 					<link>LnkYes</link>
 					<project type="Project" version="1">
 						<enable>true</enable>
-						<name>Traktor.Amalgam.Deploy</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/Editor/Deploy</sourcePath>
+						<name>Traktor.Runtime.Deploy</name>
+						<sourcePath>$(TRAKTOR_HOME)/code/Runtime/Editor/Deploy</sourcePath>
 						<configurations>
 							<item type="Configuration" version="5">
 								<name>DebugShared</name>
@@ -14407,7 +14407,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
-									<item>T_AMALGAM_DEPLOY_EXPORT</item>
+									<item>T_RUNTIME_DEPLOY_EXPORT</item>
 									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
@@ -14421,15 +14421,15 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Deploy.pdb</sourceFile>
+										<sourceFile>Traktor.Runtime.Deploy.pdb</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Deploy.lib</sourceFile>
+										<sourceFile>Traktor.Runtime.Deploy.lib</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Deploy.dll</sourceFile>
+										<sourceFile>Traktor.Runtime.Deploy.dll</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
 								</aggregationItems>
@@ -14444,7 +14444,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 								</includePaths>
 								<definitions>
-									<item>T_AMALGAM_DEPLOY_EXPORT</item>
+									<item>T_RUNTIME_DEPLOY_EXPORT</item>
 									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
@@ -14458,15 +14458,15 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Deploy.pdb</sourceFile>
+										<sourceFile>Traktor.Runtime.Deploy.pdb</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Deploy.lib</sourceFile>
+										<sourceFile>Traktor.Runtime.Deploy.lib</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Deploy.dll</sourceFile>
+										<sourceFile>Traktor.Runtime.Deploy.dll</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
 								</aggregationItems>
@@ -14495,11 +14495,11 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Deploy.pdb</sourceFile>
+										<sourceFile>Traktor.Runtime.Deploy.pdb</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Deploy.lib</sourceFile>
+										<sourceFile>Traktor.Runtime.Deploy.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -14528,11 +14528,11 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Deploy.pdb</sourceFile>
+										<sourceFile>Traktor.Runtime.Deploy.pdb</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Deploy.lib</sourceFile>
+										<sourceFile>Traktor.Runtime.Deploy.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -15298,8 +15298,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Amalgam.App</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/App</sourcePath>
+			<name>Traktor.Runtime.App</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Runtime/App</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -15327,7 +15327,7 @@
 					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.App.exe</sourceFile>
+							<sourceFile>Traktor.Runtime.App.exe</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
@@ -15375,7 +15375,7 @@
 					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.App.exe</sourceFile>
+							<sourceFile>Traktor.Runtime.App.exe</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
@@ -15424,11 +15424,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.App.pdb</sourceFile>
+							<sourceFile>Traktor.Runtime.App.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.App.lib</sourceFile>
+							<sourceFile>Traktor.Runtime.App.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
@@ -15477,11 +15477,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.App.pdb</sourceFile>
+							<sourceFile>Traktor.Runtime.App.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.App.lib</sourceFile>
+							<sourceFile>Traktor.Runtime.App.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
@@ -15522,11 +15522,11 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>$(TRAKTOR_HOME)/res/Traktor.Amalgam.ico</fileName>
+							<fileName>$(TRAKTOR_HOME)/res/Traktor.Runtime.ico</fileName>
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>$(TRAKTOR_HOME)/res/Traktor.Amalgam.rc</fileName>
+							<fileName>$(TRAKTOR_HOME)/res/Traktor.Runtime.rc</fileName>
 							<items/>
 						</item>
 						<item type="File">
@@ -17660,8 +17660,8 @@
 		<item ref="/object/projects/item[63]/dependencies/item[15]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Amalgam.Deploy.App</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/Editor/Deploy/App</sourcePath>
+			<name>Traktor.Runtime.Deploy.App</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Runtime/Editor/Deploy/App</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -17685,7 +17685,7 @@
 					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Deploy.App.exe</sourceFile>
+							<sourceFile>Traktor.Runtime.Deploy.App.exe</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -17713,7 +17713,7 @@
 					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Deploy.App.exe</sourceFile>
+							<sourceFile>Traktor.Runtime.Deploy.App.exe</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 					</aggregationItems>
@@ -17742,7 +17742,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Deploy.App.exe</sourceFile>
+							<sourceFile>Traktor.Runtime.Deploy.App.exe</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -17771,7 +17771,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Deploy.App.exe</sourceFile>
+							<sourceFile>Traktor.Runtime.Deploy.App.exe</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>

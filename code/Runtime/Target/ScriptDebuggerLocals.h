@@ -1,0 +1,48 @@
+#pragma once
+
+#include "Core/RefArray.h"
+#include "Core/Serialization/ISerializable.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RUNTIME_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace script
+	{
+
+class Variable;
+
+	}
+
+	namespace runtime
+	{
+
+/*! \brief Response from running target when locals has been captured.
+ * \ingroup Runtime
+ */
+class T_DLLCLASS ScriptDebuggerLocals : public ISerializable
+{
+	T_RTTI_CLASS;
+
+public:
+	ScriptDebuggerLocals();
+
+	ScriptDebuggerLocals(const RefArray< script::Variable >& locals);
+
+	const RefArray< script::Variable >& getLocals() const { return m_locals; }
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	RefArray< script::Variable > m_locals;
+};
+
+	}
+}
+
