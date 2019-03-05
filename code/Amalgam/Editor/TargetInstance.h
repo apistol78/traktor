@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Amalgam/TargetPerformance.h"
+#include "Amalgam/Target/TargetPerformance.h"
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"

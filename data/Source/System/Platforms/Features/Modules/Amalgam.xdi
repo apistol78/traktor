@@ -14,8 +14,7 @@
 							<value>
 								<item>Traktor.Ai</item>
 								<item>Traktor.Amalgam</item>
-								<item>Traktor.Amalgam.Game</item>
-								<item>Traktor.Amalgam.Game.App</item>
+								<item>Traktor.Amalgam.App</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -83,8 +82,7 @@
 								<item>libExtern.stb_vorbis.a</item>
 								<item>libExtern.zlib.a</item>
 								<item>libTraktor.Ai.a</item>
-								<item>libTraktor.Amalgam.Game.App.a</item>
-								<item>libTraktor.Amalgam.Game.a</item>
+								<item>libTraktor.Amalgam.App.a</item>
 								<item>libTraktor.Amalgam.a</item>
 								<item>libTraktor.Animation.a</item>
 								<item>libTraktor.Core.a</item>
@@ -134,7 +132,7 @@
 		</item>
 		<item>
 			<platform>{C5B672D1-E72D-AC47-97D4-ABAA41F2F6BD}</platform>
-			<executableFile>Traktor.Amalgam.Game.App</executableFile>
+			<executableFile>Traktor.Amalgam.App</executableFile>
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
@@ -143,7 +141,6 @@
 							<value>
 								<item>Traktor.Ai</item>
 								<item>Traktor.Amalgam</item>
-								<item>Traktor.Amalgam.Game</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -175,9 +172,8 @@
 						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Traktor.Amalgam.Game.App</item>
+								<item>Traktor.Amalgam.App</item>
 								<item>libTraktor.Ai.so</item>
-								<item>libTraktor.Amalgam.Game.so</item>
 								<item>libTraktor.Amalgam.so</item>
 								<item>libTraktor.Animation.so</item>
 								<item>libTraktor.Core.so</item>
@@ -249,14 +245,14 @@
 		</item>
 		<item>
 			<platform>{991B63B2-97FC-AA44-9FAE-466B5B153B4A}</platform>
-			<executableFile>Traktor.Amalgam.Game.App</executableFile>
+			<executableFile>Traktor.Amalgam.App</executableFile>
 			<deploy type="traktor.PropertyGroup">
 				<value/>
 			</deploy>
 		</item>
 		<item>
 			<platform>{9105E00C-D6AA-9140-B4D6-0CFD5B2FD76A}</platform>
-			<executableFile>Traktor.Amalgam.Game.App</executableFile>
+			<executableFile>Traktor.Amalgam.App</executableFile>
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
@@ -265,7 +261,6 @@
 							<value>
 								<item>Traktor.Ai</item>
 								<item>Traktor.Amalgam</item>
-								<item>Traktor.Amalgam.Game</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -299,9 +294,8 @@
 						<first>DEPLOY_SHARED</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Traktor.Amalgam.Game.App</item>
+								<item>Traktor.Amalgam.App</item>
 								<item>libTraktor.Ai.dylib</item>
-								<item>libTraktor.Amalgam.Game.dylib</item>
 								<item>libTraktor.Amalgam.dylib</item>
 								<item>libTraktor.Animation.dylib</item>
 								<item>libTraktor.Core.dylib</item>
@@ -375,7 +369,7 @@
 		</item>
 		<item>
 			<platform>{14814B5B-2FF1-2F4B-BE92-08CAB3D0D544}</platform>
-			<executableFile>Traktor.Amalgam.Game.App</executableFile>
+			<executableFile>Traktor.Amalgam.App</executableFile>
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
@@ -384,8 +378,7 @@
 							<value>
 								<item>Traktor.Ai</item>
 								<item>Traktor.Amalgam</item>
-								<item>Traktor.Amalgam.Game</item>
-								<item>Traktor.Amalgam.Game.App</item>
+								<item>Traktor.Amalgam.App</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -457,8 +450,7 @@
 								<item>Extern.stb_vorbis.lib</item>
 								<item>Extern.zlib.lib</item>
 								<item>Traktor.Ai.lib</item>
-								<item>Traktor.Amalgam.Game.App.lib</item>
-								<item>Traktor.Amalgam.Game.lib</item>
+								<item>Traktor.Amalgam.App.lib</item>
 								<item>Traktor.Amalgam.lib</item>
 								<item>Traktor.Animation.lib</item>
 								<item>Traktor.Core.lib</item>
@@ -510,7 +502,7 @@
 		</item>
 		<item>
 			<platform>{7D0F1280-E37A-2541-8892-723B3C81569C}</platform>
-			<executableFile>Traktor.Amalgam.Game.App</executableFile>
+			<executableFile>Traktor.Amalgam.App</executableFile>
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
@@ -519,8 +511,7 @@
 							<value>
 								<item>Traktor.Ai</item>
 								<item>Traktor.Amalgam</item>
-								<item>Traktor.Amalgam.Game</item>
-								<item>Traktor.Amalgam.Game.App</item>
+								<item>Traktor.Amalgam.App</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -555,8 +546,7 @@
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Ai.dll</item>
-								<item>Traktor.Amalgam.Game.App.exe</item>
-								<item>Traktor.Amalgam.Game.dll</item>
+								<item>Traktor.Amalgam.App.exe</item>
 								<item>Traktor.Amalgam.dll</item>
 								<item>Traktor.Animation.dll</item>
 								<item>Traktor.Core.dll</item>
@@ -624,8 +614,7 @@
 								<item>Extern.stb_vorbis.lib</item>
 								<item>Extern.zlib.lib</item>
 								<item>Traktor.Ai.lib</item>
-								<item>Traktor.Amalgam.Game.App.lib</item>
-								<item>Traktor.Amalgam.Game.lib</item>
+								<item>Traktor.Amalgam.App.lib</item>
 								<item>Traktor.Amalgam.lib</item>
 								<item>Traktor.Animation.lib</item>
 								<item>Traktor.Core.lib</item>
@@ -677,7 +666,7 @@
 		</item>
 		<item>
 			<platform>{DC125AEC-2E6B-AF4D-A852-35731A782340}</platform>
-			<executableFile>Traktor.Amalgam.Game.App</executableFile>
+			<executableFile>Traktor.Amalgam.App</executableFile>
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
@@ -686,8 +675,7 @@
 							<value>
 								<item>Traktor.Ai</item>
 								<item>Traktor.Amalgam</item>
-								<item>Traktor.Amalgam.Game</item>
-								<item>Traktor.Amalgam.Game.App</item>
+								<item>Traktor.Amalgam.App</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -722,8 +710,7 @@
 						<second type="traktor.PropertyStringSet">
 							<value>
 								<item>Traktor.Ai.dll</item>
-								<item>Traktor.Amalgam.Game.App.exe</item>
-								<item>Traktor.Amalgam.Game.dll</item>
+								<item>Traktor.Amalgam.App.exe</item>
 								<item>Traktor.Amalgam.dll</item>
 								<item>Traktor.Animation.dll</item>
 								<item>Traktor.Core.dll</item>
@@ -795,8 +782,7 @@
 								<item>Extern.stb_vorbis.lib</item>
 								<item>Extern.zlib.lib</item>
 								<item>Traktor.Ai.lib</item>
-								<item>Traktor.Amalgam.Game.App.lib</item>
-								<item>Traktor.Amalgam.Game.lib</item>
+								<item>Traktor.Amalgam.App.lib</item>
 								<item>Traktor.Amalgam.lib</item>
 								<item>Traktor.Animation.lib</item>
 								<item>Traktor.Core.lib</item>
@@ -848,7 +834,7 @@
 		</item>
 		<item>
 			<platform>{D6FF12FC-9FEF-394D-B898-F563786A8789}</platform>
-			<executableFile>Traktor.Amalgam.Game.App</executableFile>
+			<executableFile>Traktor.Amalgam.App</executableFile>
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
@@ -857,8 +843,7 @@
 							<value>
 								<item>Traktor.Ai</item>
 								<item>Traktor.Amalgam</item>
-								<item>Traktor.Amalgam.Game</item>
-								<item>Traktor.Amalgam.Game.App</item>
+								<item>Traktor.Amalgam.App</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -923,8 +908,7 @@
 								<item>Extern.recast.lib</item>
 								<item>Extern.stb_vorbis.lib</item>
 								<item>Traktor.Ai.lib</item>
-								<item>Traktor.Amalgam.Game.App.lib</item>
-								<item>Traktor.Amalgam.Game.lib</item>
+								<item>Traktor.Amalgam.App.lib</item>
 								<item>Traktor.Amalgam.lib</item>
 								<item>Traktor.Animation.lib</item>
 								<item>Traktor.Core.lib</item>
@@ -974,7 +958,7 @@
 		</item>
 		<item>
 			<platform>{1C5EBC43-2395-9549-8FF7-BA51A6C30B7B}</platform>
-			<executableFile>Traktor.Amalgam.Game.App</executableFile>
+			<executableFile>Traktor.Amalgam.App</executableFile>
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
@@ -983,8 +967,7 @@
 							<value>
 								<item>Traktor.Ai</item>
 								<item>Traktor.Amalgam</item>
-								<item>Traktor.Amalgam.Game</item>
-								<item>Traktor.Amalgam.Game.App</item>
+								<item>Traktor.Amalgam.App</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -1050,8 +1033,7 @@
 								<item>libExtern.recast.a</item>
 								<item>libExtern.stb_vorbis.a</item>
 								<item>libTraktor.Ai.a</item>
-								<item>libTraktor.Amalgam.Game.App.a</item>
-								<item>libTraktor.Amalgam.Game.a</item>
+								<item>libTraktor.Amalgam.App.a</item>
 								<item>libTraktor.Amalgam.a</item>
 								<item>libTraktor.Animation.a</item>
 								<item>libTraktor.Core.a</item>
@@ -1101,7 +1083,7 @@
 		</item>
 		<item>
 			<platform>{947FBCA7-FECE-7248-AEC4-046EB01E9A31}</platform>
-			<executableFile>Traktor.Amalgam.Game.App</executableFile>
+			<executableFile>Traktor.Amalgam.App</executableFile>
 			<deploy type="traktor.PropertyGroup">
 				<value>
 					<item>
@@ -1110,8 +1092,7 @@
 							<value>
 								<item>Traktor.Ai</item>
 								<item>Traktor.Amalgam</item>
-								<item>Traktor.Amalgam.Game</item>
-								<item>Traktor.Amalgam.Game.App</item>
+								<item>Traktor.Amalgam.App</item>
 								<item>Traktor.Animation</item>
 								<item>Traktor.Core</item>
 								<item>Traktor.Database</item>
@@ -1181,8 +1162,7 @@
 								<item>libExtern.stb_vorbis.a</item>
 								<item>libExtern.zlib.a</item>
 								<item>libTraktor.Ai.a</item>
-								<item>libTraktor.Amalgam.Game.App.a</item>
-								<item>libTraktor.Amalgam.Game.a</item>
+								<item>libTraktor.Amalgam.a</item>
 								<item>libTraktor.Amalgam.a</item>
 								<item>libTraktor.Animation.a</item>
 								<item>libTraktor.Core.a</item>
@@ -1232,7 +1212,7 @@
 		</item>
 		<item>
 			<platform>{CAE489CE-1592-234F-ADB9-A7D75646B53D}</platform>
-			<executableFile>Traktor.Amalgam.Game.App</executableFile>
+			<executableFile>Traktor.Amalgam.App</executableFile>
 			<deploy type="traktor.PropertyGroup">
 				<value/>
 			</deploy>
@@ -1251,7 +1231,6 @@
 					<value>
 						<item>Traktor.Amalgam</item>
 						<item>Traktor.Amalgam.Editor</item>
-						<item>Traktor.Amalgam.Game</item>
 					</value>
 				</second>
 			</item>
@@ -1264,7 +1243,6 @@
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Traktor.Amalgam</item>
-						<item>Traktor.Amalgam.Game</item>
 					</value>
 				</second>
 			</item>
@@ -1277,7 +1255,6 @@
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Traktor.Amalgam</item>
-						<item>Traktor.Amalgam.Game</item>
 					</value>
 				</second>
 			</item>

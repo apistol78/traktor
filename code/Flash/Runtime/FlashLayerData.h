@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include "Amalgam/Game/Engine/LayerData.h"
+#include "Amalgam/Engine/LayerData.h"
 #include "Resource/Id.h"
 
 // import/export mechanism.

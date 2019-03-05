@@ -1,4 +1,0 @@
-<?xml version="1.0"?>
-<object type="traktor.db.LocalFileLink">
-    <path>$(TRAKTOR_HOME)/data/Source/System</path>
-</object>

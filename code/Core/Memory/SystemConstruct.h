@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Memory/Alloc.h"
+#include "Core/Misc/Align.h"
 
 namespace traktor
 {

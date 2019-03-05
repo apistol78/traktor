@@ -2,9 +2,9 @@
 #include "Net/SocketAddressIPv4.h"
 #include "Net/TcpSocket.h"
 
-#include "Amalgam/Game/IEnvironment.h"
-#include "Amalgam/Game/UpdateInfo.h"
-#include "Amalgam/Game/Engine/Stage.h"
+#include "Amalgam/IEnvironment.h"
+#include "Amalgam/UpdateInfo.h"
+#include "Amalgam/Engine/Stage.h"
 #include "Core/Class/Any.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"

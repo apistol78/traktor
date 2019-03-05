@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Amalgam/Game/IRuntimePlugin.h"
+#include "Amalgam/IRuntimePlugin.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

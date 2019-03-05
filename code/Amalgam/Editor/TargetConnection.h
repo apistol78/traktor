@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Amalgam/TargetPerformance.h"
+#include "Amalgam/Target/TargetPerformance.h"
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Timer/Profiler.h"

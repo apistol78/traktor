@@ -1,0 +1,64 @@
+#pragma once
+
+#include "Core/Thread/Semaphore.h"
+#include "Amalgam/IStateManager.h"
+
+namespace traktor
+{
+	namespace amalgam
+	{
+
+/*! \brief State manager.
+ * \ingroup Amalgam
+ */
+class StateManager : public IStateManager
+{
+	T_RTTI_CLASS;
+
+public:
+	/*! \brief Destroy state manager. */
+	void destroy();
+
+	/*! \brief Enter state transition.
+	 *
+	 * \param state New state.
+	 */
+	virtual void enter(IState* state) override final;
+
+	/*! \brief Get current state.
+	 *
+	 * \return Current state.
+	 */
+	IState* getCurrent() { return m_current; }
+
+	/*! \brief Get next state.
+	 *
+	 * \return Next state.
+	 */
+	IState* getNext() { return m_next; }
+
+private:
+	friend class Application;
+
+	Semaphore m_lock;
+	Ref< IState > m_current;
+	Ref< IState > m_next;
+
+	/*! \brief Begin update transition.
+	 *
+	 * \return True if transition needs to be performed.
+	 */
+	bool beginTransition();
+
+	/*! \brief Leave current state.
+	 */
+	void leaveCurrent();
+
+	/*! \brief Enter next state.
+	 */
+	void enterNext();
+};
+
+	}
+}
+

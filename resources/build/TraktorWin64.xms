@@ -13575,9 +13575,7 @@
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
+								<includePaths/>
 								<definitions>
 									<item>T_AMALGAM_EXPORT</item>
 									<item>_DEBUG</item>
@@ -13612,9 +13610,7 @@
 								<targetFormat>TfSharedLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
+								<includePaths/>
 								<definitions>
 									<item>T_AMALGAM_EXPORT</item>
 									<item>NDEBUG</item>
@@ -13649,9 +13645,7 @@
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
 								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
+								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
@@ -13682,9 +13676,7 @@
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
 								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
+								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
@@ -13705,172 +13697,6 @@
 									</item>
 									<item type="AggregationItem">
 										<sourceFile>Traktor.Amalgam.lib</sourceFile>
-										<targetPath>releasestatic</targetPath>
-									</item>
-								</aggregationItems>
-								<consumerLibraryPath>releasestatic</consumerLibraryPath>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.*</fileName>
-								<items/>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item/dependencies/item/project"/>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item[32]"/>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[3]/project"/>
-							</item>
-						</dependencies>
-					</project>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Traktor.Amalgam.Game</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/Game</sourcePath>
-						<configurations>
-							<item type="Configuration" version="5">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths/>
-								<definitions>
-									<item>T_AMALGAM_GAME_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Game.pdb</sourceFile>
-										<targetPath>debugshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Game.lib</sourceFile>
-										<targetPath>debugshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Game.dll</sourceFile>
-										<targetPath>debugshared</targetPath>
-									</item>
-								</aggregationItems>
-								<consumerLibraryPath>debugshared</consumerLibraryPath>
-							</item>
-							<item type="Configuration" version="5">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths/>
-								<definitions>
-									<item>T_AMALGAM_GAME_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Game.pdb</sourceFile>
-										<targetPath>releaseshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Game.lib</sourceFile>
-										<targetPath>releaseshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Game.dll</sourceFile>
-										<targetPath>releaseshared</targetPath>
-									</item>
-								</aggregationItems>
-								<consumerLibraryPath>releaseshared</consumerLibraryPath>
-							</item>
-							<item type="Configuration" version="5">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths/>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Game.pdb</sourceFile>
-										<targetPath>debugstatic</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Game.lib</sourceFile>
-										<targetPath>debugstatic</targetPath>
-									</item>
-								</aggregationItems>
-								<consumerLibraryPath>debugstatic</consumerLibraryPath>
-							</item>
-							<item type="Configuration" version="5">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths/>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Game.pdb</sourceFile>
-										<targetPath>releasestatic</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Game.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 								</aggregationItems>
@@ -13905,6 +13731,15 @@
 								<items>
 									<item type="File">
 										<fileName>Engine/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Target</name>
+								<items>
+									<item type="File">
+										<fileName>Target/*.*</fileName>
 										<items/>
 									</item>
 								</items>
@@ -14552,209 +14387,6 @@
 									</dependencies>
 								</project>
 							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item[63]/dependencies/item[14]/project"/>
-							</item>
-						</dependencies>
-					</project>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Traktor.Amalgam.Run</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/Run</sourcePath>
-						<configurations>
-							<item type="Configuration" version="5">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_AMALGAM_RUN_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Run.pdb</sourceFile>
-										<targetPath>debugshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Run.lib</sourceFile>
-										<targetPath>debugshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Run.dll</sourceFile>
-										<targetPath>debugshared</targetPath>
-									</item>
-								</aggregationItems>
-								<consumerLibraryPath>debugshared</consumerLibraryPath>
-							</item>
-							<item type="Configuration" version="5">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_AMALGAM_RUN_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Run.pdb</sourceFile>
-										<targetPath>releaseshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Run.lib</sourceFile>
-										<targetPath>releaseshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Run.dll</sourceFile>
-										<targetPath>releaseshared</targetPath>
-									</item>
-								</aggregationItems>
-								<consumerLibraryPath>releaseshared</consumerLibraryPath>
-							</item>
-							<item type="Configuration" version="5">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Run.pdb</sourceFile>
-										<targetPath>debugstatic</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Run.lib</sourceFile>
-										<targetPath>debugstatic</targetPath>
-									</item>
-								</aggregationItems>
-								<consumerLibraryPath>debugstatic</consumerLibraryPath>
-							</item>
-							<item type="Configuration" version="5">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Run.pdb</sourceFile>
-										<targetPath>releasestatic</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Amalgam.Run.lib</sourceFile>
-										<targetPath>releasestatic</targetPath>
-									</item>
-								</aggregationItems>
-								<consumerLibraryPath>releasestatic</consumerLibraryPath>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.*</fileName>
-								<items/>
-							</item>
-							<item type="Filter">
-								<name>Impl</name>
-								<items>
-									<item type="File">
-										<fileName>Impl/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item/dependencies/item/project"/>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item[63]/dependencies/item[14]/project"/>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item[32]"/>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[3]/project"/>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project"/>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-							</item>
 						</dependencies>
 					</project>
 				</item>
@@ -14917,11 +14549,6 @@
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
-								<project ref="/object/projects/item[63]/dependencies/item[14]/project"/>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
 								<project ref="/object/projects/item/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency" version="3">
@@ -14974,7 +14601,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[63]/dependencies/item[15]/project"/>
+		<item ref="/object/projects/item[63]/dependencies/item[14]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Database.Migrate.App</name>
@@ -15111,7 +14738,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[63]/dependencies/item[15]/project/dependencies/item[19]/project"/>
+		<item ref="/object/projects/item[63]/dependencies/item[14]/project/dependencies/item[19]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Online.Local</name>
@@ -15265,7 +14892,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[63]/dependencies/item[15]/project/dependencies/item[19]/project"/>
+					<project ref="/object/projects/item[63]/dependencies/item[14]/project/dependencies/item[19]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -15281,7 +14908,7 @@
 		</item>
 		<item ref="/object/projects/item[43]/dependencies/item[10]/project"/>
 		<item ref="/object/projects/item/dependencies/item[5]/project/dependencies/item[4]/project"/>
-		<item ref="/object/projects/item[63]/dependencies/item[15]/project/dependencies/item[23]/project"/>
+		<item ref="/object/projects/item[63]/dependencies/item[14]/project/dependencies/item[23]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Theater.Editor</name>
@@ -15449,7 +15076,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[63]/dependencies/item[15]/project/dependencies/item[23]/project"/>
+					<project ref="/object/projects/item[63]/dependencies/item[14]/project/dependencies/item[23]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -15671,8 +15298,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Amalgam.Game.App</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/Game/App</sourcePath>
+			<name>Traktor.Amalgam.App</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/App</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -15700,7 +15327,7 @@
 					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Game.App.exe</sourceFile>
+							<sourceFile>Traktor.Amalgam.App.exe</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
 						<item type="AggregationItem">
@@ -15748,7 +15375,7 @@
 					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Game.App.exe</sourceFile>
+							<sourceFile>Traktor.Amalgam.App.exe</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
 						<item type="AggregationItem">
@@ -15797,11 +15424,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Game.App.pdb</sourceFile>
+							<sourceFile>Traktor.Amalgam.App.pdb</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Game.App.lib</sourceFile>
+							<sourceFile>Traktor.Amalgam.App.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 						<item type="AggregationItem">
@@ -15850,11 +15477,11 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Game.App.pdb</sourceFile>
+							<sourceFile>Traktor.Amalgam.App.pdb</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Game.App.lib</sourceFile>
+							<sourceFile>Traktor.Amalgam.App.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 						<item type="AggregationItem">
@@ -15918,7 +15545,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[63]/dependencies/item[15]/project"/>
+					<project ref="/object/projects/item[63]/dependencies/item[14]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -16153,11 +15780,11 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[63]/dependencies/item[15]/project/dependencies/item[19]/project"/>
+					<project ref="/object/projects/item[63]/dependencies/item[14]/project/dependencies/item[19]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[63]/dependencies/item[15]/project/dependencies/item[21]/project"/>
+		<item ref="/object/projects/item[63]/dependencies/item[14]/project/dependencies/item[21]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Ai.Editor</name>
@@ -16353,7 +15980,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[63]/dependencies/item[15]/project/dependencies/item[21]/project"/>
+					<project ref="/object/projects/item[63]/dependencies/item[14]/project/dependencies/item[21]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -17488,7 +17115,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[63]/dependencies/item[15]/project/dependencies/item[19]/project"/>
+					<project ref="/object/projects/item[63]/dependencies/item[14]/project/dependencies/item[19]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -17650,167 +17277,12 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[63]/dependencies/item[15]/project/dependencies/item[19]/project"/>
+					<project ref="/object/projects/item[63]/dependencies/item[14]/project/dependencies/item[19]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-			</dependencies>
-		</item>
-		<item ref="/object/projects/item[63]/dependencies/item[14]/project"/>
-		<item ref="/object/projects/item[63]/dependencies/item[16]/project"/>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Amalgam.Run.App</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/Run/App</sourcePath>
-			<configurations>
-				<item type="Configuration" version="5">
-					<name>DebugShared</name>
-					<targetFormat>TfExecutableConsole</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable>$(TargetPath)</debugExecutable>
-					<debugArguments/>
-					<debugEnvironment>PATH=$(AGGREGATE_OUTPUT_PATH)\debugshared;$(PATH)</debugEnvironment>
-					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Run.App.exe</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath/>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseShared</name>
-					<targetFormat>TfExecutableConsole</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable>$(TargetPath)</debugExecutable>
-					<debugArguments/>
-					<debugEnvironment>PATH=$(AGGREGATE_OUTPUT_PATH)\releaseshared;$(PATH)</debugEnvironment>
-					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Run.App.exe</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath/>
-				</item>
-				<item type="Configuration" version="5">
-					<name>DebugStatic</name>
-					<targetFormat>TfExecutableConsole</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Run.App.exe</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath/>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfExecutableConsole</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Amalgam.Run.App.exe</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath/>
-				</item>
-			</configurations>
-			<items>
-				<item type="Filter">
-					<name>Win32</name>
-					<items>
-						<item type="File">
-							<fileName>Win32/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[63]/dependencies/item[16]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -18185,7 +17657,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[63]/dependencies/item[17]/project"/>
+		<item ref="/object/projects/item[63]/dependencies/item[15]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Amalgam.Deploy.App</name>
@@ -18316,12 +17788,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[63]/dependencies/item[14]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[63]/dependencies/item[17]/project"/>
+					<project ref="/object/projects/item[63]/dependencies/item[15]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -19799,7 +19266,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[98]"/>
+					<project ref="/object/projects/item[95]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -19945,7 +19412,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[98]"/>
+					<project ref="/object/projects/item[95]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -20122,185 +19589,6 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[3]/project"/>
-				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Webber</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Webber</sourcePath>
-			<configurations>
-				<item type="Configuration" version="5">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_WEBBER_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Webber.pdb</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Webber.lib</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Webber.dll</sourceFile>
-							<targetPath>debugshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugshared</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_WEBBER_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Webber.pdb</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Webber.lib</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Webber.dll</sourceFile>
-							<targetPath>releaseshared</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releaseshared</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Webber.pdb</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Webber.lib</sourceFile>
-							<targetPath>debugstatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>debugstatic</consumerLibraryPath>
-				</item>
-				<item type="Configuration" version="5">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<warningLevel>WlCompilerDefault</warningLevel>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-					<debugExecutable/>
-					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
-					<aggregationItems>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Webber.pdb</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-						<item type="AggregationItem">
-							<sourceFile>Traktor.Webber.lib</sourceFile>
-							<targetPath>releasestatic</targetPath>
-						</item>
-					</aggregationItems>
-					<consumerLibraryPath>releasestatic</consumerLibraryPath>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-				<item type="Filter">
-					<name>Resources</name>
-					<items>
-						<item type="File">
-							<fileName>Resources/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<project ref="/object/projects/item[9]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -22505,7 +21793,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[95]"/>
+					<project ref="/object/projects/item[92]"/>
 				</item>
 				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -22515,8 +21803,8 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[110]/dependencies/item[2]/project"/>
-		<item ref="/object/projects/item[111]/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[106]/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[107]/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Shape</name>
@@ -22903,7 +22191,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[115]"/>
+					<project ref="/object/projects/item[111]"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -23099,7 +22387,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[63]/dependencies/item[15]/project"/>
+					<project ref="/object/projects/item[63]/dependencies/item[14]/project"/>
 				</item>
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -23304,7 +22592,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project ref="/object/projects/item[117]"/>
+					<project ref="/object/projects/item[113]"/>
 				</item>
 			</dependencies>
 		</item>
