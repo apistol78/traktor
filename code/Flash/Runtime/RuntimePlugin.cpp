@@ -1,4 +1,4 @@
-#include "Amalgam/Game/IEnvironment.h"
+#include "Amalgam/IEnvironment.h"
 #include "Flash/MovieResourceFactory.h"
 #include "Flash/Runtime/RuntimePlugin.h"
 #include "Resource/IResourceManager.h"

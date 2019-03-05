@@ -1,6 +1,4 @@
 #pragma once
-#ifndef traktor_Assert_H
-#define traktor_Assert_H
 
 #include "Core/Debug/Debugger.h"
 
@@ -32,5 +30,3 @@
 	traktor::Debugger::getInstance().breakDebugger();
 
 //@}
-
-#endif	// traktor_Assert_H

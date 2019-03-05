@@ -1,6 +1,7 @@
 #include <vector>
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/BlockAllocator.h"
+#include "Core/Misc/Align.h"
 #include "Net/Replication/State/BodyStateValue.h"
 
 namespace traktor

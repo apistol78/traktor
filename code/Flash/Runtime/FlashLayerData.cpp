@@ -1,4 +1,4 @@
-#include "Amalgam/Game/IEnvironment.h"
+#include "Amalgam/IEnvironment.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Flash/Movie.h"

@@ -174,21 +174,6 @@ typedef unsigned __int64 uint64_t;
 #	define T_FILE_LINE __FILE__ "(" T_FILE_LINE_1(__LINE__) ")"
 #endif
 
-template < typename T >
-uint32_t alignOf()
-{
-#if !defined(alignof)
-#	if defined(_MSC_VER)
-	return __alignof(T);
-#	elif defined(__GNUC__)
-	return __alignof__(T);
-#	else
-	struct __align_struct__ { char dummy1; T dummy2; };
-	return offsetof(__align_struct, dummy2);
-#	endif
-#endif
-}
-
 // Include assert helper.
 #include "Core/Assert.h"
 
