@@ -1,0 +1,73 @@
+#pragma once
+
+#include "Render/Types.h"
+#include "Runtime/IServer.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RUNTIME_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace render
+	{
+
+class IRenderSystem;
+class IRenderView;
+class IVRCompositor;
+
+	}
+
+	namespace runtime
+	{
+
+/*! \brief Render server.
+ * \ingroup Runtime
+ *
+ * "Render.Type"				- Render system type.
+ * "Render.DepthBits"			- Depth buffer bits.
+ * "Render.StencilBits"			- Stencil buffer bits.
+ * "Render.MultiSample"			- Multisample taps.
+ * "Render.WaitVBlanks"			- Wait for # vblank.
+ * "Render.FullScreen"			- Fullscreen mode.
+ * "Render.DisplayMode/Width"	- Display width.
+ * "Render.DisplayMode/Height"	- Display height.
+ * "Render.SkipMips"			- Skip number of mips.
+ */
+class T_DLLCLASS IRenderServer : public IServer
+{
+	T_RTTI_CLASS;
+
+public:
+	virtual render::IRenderSystem* getRenderSystem() = 0;
+
+	virtual render::IRenderView* getRenderView() = 0;
+
+	virtual render::IVRCompositor* getVRCompositor() = 0;
+
+	virtual int32_t getWidth() const = 0;
+
+	virtual int32_t getHeight() const = 0;
+
+	virtual float getScreenAspectRatio() const = 0;
+
+	virtual float getViewAspectRatio() const = 0;
+
+	virtual float getAspectRatio() const = 0;
+
+	virtual bool getStereoscopic() const = 0;
+
+	virtual int32_t getMultiSample() const = 0;
+
+	virtual int32_t getFrameRate() const = 0;
+
+	virtual int32_t getThreadFrameQueueCount() const = 0;
+};
+
+	}
+}
+

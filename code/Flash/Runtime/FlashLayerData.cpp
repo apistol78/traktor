@@ -1,4 +1,4 @@
-#include "Amalgam/IEnvironment.h"
+#include "Runtime/IEnvironment.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Flash/Movie.h"
@@ -13,7 +13,7 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashLayerData", 0, FlashLayerData, amalgam::LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashLayerData", 0, FlashLayerData, runtime::LayerData)
 
 FlashLayerData::FlashLayerData()
 :	m_clearBackground(false)
@@ -24,7 +24,7 @@ FlashLayerData::FlashLayerData()
 {
 }
 
-Ref< amalgam::Layer > FlashLayerData::createInstance(amalgam::Stage* stage, amalgam::IEnvironment* environment) const
+Ref< runtime::Layer > FlashLayerData::createInstance(runtime::Stage* stage, runtime::IEnvironment* environment) const
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	resource::Proxy< Movie > movie;

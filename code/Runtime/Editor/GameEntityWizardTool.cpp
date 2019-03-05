@@ -1,0 +1,36 @@
+#include "Core/Misc/SafeDestroy.h"
+#include "I18N/Text.h"
+#include "Runtime/Editor/GameEntityWizardDialog.h"
+#include "Runtime/Editor/GameEntityWizardTool.h"
+
+namespace traktor
+{
+	namespace runtime
+	{
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.GameEntityWizardTool", 0, GameEntityWizardTool, editor::IWizardTool)
+
+std::wstring GameEntityWizardTool::getDescription() const
+{
+	return i18n::Text(L"GAMEENTITY_WIZARD_DESCRIPTION");
+}
+
+uint32_t GameEntityWizardTool::getFlags() const
+{
+	return WfGroup;
+}
+
+bool GameEntityWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
+{
+	Ref< GameEntityWizardDialog > dialog = new GameEntityWizardDialog(editor, group);
+	if (!dialog->create(parent))
+		return false;
+
+	dialog->showModal();
+
+	safeDestroy(dialog);
+	return true;
+}
+
+	}
+}

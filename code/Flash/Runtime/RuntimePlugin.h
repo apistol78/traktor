@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Amalgam/IRuntimePlugin.h"
+#include "Runtime/IRuntimePlugin.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,16 +18,16 @@ namespace traktor
 /*! \brief
  * \ingroup Flash
  */
-class T_DLLCLASS RuntimePlugin : public amalgam::IRuntimePlugin
+class T_DLLCLASS RuntimePlugin : public runtime::IRuntimePlugin
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(amalgam::IEnvironment* environment) override final;
+	virtual bool create(runtime::IEnvironment* environment) override final;
 
-	virtual void destroy(amalgam::IEnvironment* environment) override final;
+	virtual void destroy(runtime::IEnvironment* environment) override final;
 
-	virtual Ref< amalgam::IState > createInitialState(amalgam::IEnvironment* environment) override final;
+	virtual Ref< runtime::IState > createInitialState(runtime::IEnvironment* environment) override final;
 };
 
 	}
