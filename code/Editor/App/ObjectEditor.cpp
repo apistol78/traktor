@@ -90,6 +90,14 @@ const TypeInfo* ObjectEditor::browseType(const TypeInfoSet& base, bool onlyEdita
 	return browsedType;
 }
 
+Ref< db::Group > ObjectEditor::browseGroup()
+{
+	m_parent->setEnable(false);
+	Ref< db::Group > browsedGroup = m_editor->browseGroup();
+	m_parent->setEnable(true);
+	return browsedGroup;
+}
+
 Ref< db::Instance > ObjectEditor::browseInstance(const TypeInfo& filterType)
 {
 	m_parent->setEnable(false);

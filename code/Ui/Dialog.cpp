@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Ui/Application.h"
 #include "Ui/Dialog.h"
+#include "Ui/Form.h"
 #include "Ui/IBitmap.h"
 #include "Ui/Layout.h"
 #include "Ui/Itf/IDialog.h"
@@ -9,6 +10,25 @@ namespace traktor
 {
 	namespace ui
 	{
+		namespace
+		{
+		
+template< typename WidgetType >
+WidgetType* getAncestorOf(Widget* widget)
+{
+	if (!widget)
+		return nullptr;
+
+	if (is_a< WidgetType >(widget))
+		return static_cast< WidgetType* >(widget);
+
+	if (widget->getParent())
+		return getAncestorOf< WidgetType >(widget->getParent());
+	else
+		return nullptr;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Dialog", Dialog, Container)
 
@@ -36,6 +56,11 @@ bool Dialog::create(Widget* parent, const std::wstring& text, int width, int hei
 
 	if (!Container::create(parent, WsNone, layout))
 		return false;
+
+	// Get default icon from ancestor form.
+	Form* ancestor = getAncestorOf< Form >(parent);
+	if (ancestor)
+		setIcon(ancestor->getIcon());
 
 	addEventHandler< ChildEvent >(this, &Dialog::eventChild);
 	return true;

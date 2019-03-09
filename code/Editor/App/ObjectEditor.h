@@ -52,6 +52,8 @@ public:
 
 	virtual const TypeInfo* browseType(const TypeInfoSet& base, bool onlyEditable, bool onlyInstantiable) override final;
 
+	virtual Ref< db::Group > browseGroup() override final;
+
 	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType) override final;
 
 	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter) override final;

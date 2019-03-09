@@ -27,6 +27,7 @@ bool Form::create(const std::wstring& text, int width, int height, int style, La
 	}
 
 	m_widget = form;
+	m_icon = nullptr;
 
 	return Container::create(parent, style, layout);
 }
@@ -38,7 +39,14 @@ void Form::setIcon(IBitmap* icon)
 	if (!icon || !icon->getSystemBitmap())
 		return;
 
+	m_icon = icon;
+
 	static_cast< IForm* >(m_widget)->setIcon(icon->getSystemBitmap());
+}
+
+IBitmap* Form::getIcon()
+{
+	return m_icon;
 }
 
 void Form::maximize()

@@ -158,6 +158,10 @@
       <second>Toggle twist lock</second>
     </item>
     <item>
+    	<first>BROWSE_GROUP_TITLE</first>
+    	<second>Select group</second>
+    </item>
+    <item>
       <first>BROWSE_INSTANCE_GROUPS</first>
       <second>Database</second>
     </item>

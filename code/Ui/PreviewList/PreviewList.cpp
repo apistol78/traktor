@@ -31,7 +31,7 @@ bool PreviewList::create(Widget* parent, uint32_t style)
 
 void PreviewList::setItems(PreviewItems* items)
 {
-	if ((m_items = items) != 0)
+	if ((m_items = items) != nullptr)
 	{
 		for (int32_t i = 0; i < m_items->count(); ++i)
 			m_items->get(i)->setSelected(false);
@@ -55,7 +55,7 @@ PreviewItem* PreviewList::getSelectedItem() const
 			return m_items->get(i);
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void PreviewList::layoutCells(const Rect& rc)

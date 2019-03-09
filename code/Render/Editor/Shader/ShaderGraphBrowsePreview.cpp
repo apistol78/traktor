@@ -10,6 +10,7 @@
 #include "Render/Editor/Shader/Node.h"
 #include "Render/Editor/Shader/OutputPin.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 
 namespace traktor
@@ -21,37 +22,50 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderGraphBrowsePreview", 0, Sh
 
 TypeInfoSet ShaderGraphBrowsePreview::getPreviewTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ShaderGraph >());
-	return typeSet;
+	return makeTypeInfoSet< ShaderGraph >();
 }
 
 Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* editor, db::Instance* instance) const
 {
 	Ref< const ShaderGraph > shaderGraph = instance->getObject< ShaderGraph >();
 	if (!shaderGraph)
-		return 0;
+		return nullptr;
+
+	int32_t w = ui::dpi96(64);
+	int32_t h = ui::dpi96(64);
+	int32_t m = ui::dpi96(4);
+	float sw = (float)ui::dpi96(100) / 100.0f;
+	float ns = (float)ui::dpi96(200) / 100.0f;
 
 	Ref< drawing::Image > shaderGraphThumb = new drawing::Image(
 		drawing::PixelFormat::getR8G8B8A8(),
-		64,
-		64
+		w,
+		h
 	);
 
-	shaderGraphThumb->clear(Color4f(1.0f, 1.0f, 1.0f, 0.0f));
+	shaderGraphThumb->clear(Color4f(0.2f, 0.2f, 0.2f, 0.0f));
 
 	drawing::Raster raster(shaderGraphThumb);
 
-	int32_t edgeStyle = raster.defineSolidStyle(Color4f(0.0f, 0.0f, 0.0f, 0.8f));
+	int32_t clearStyle = raster.defineSolidStyle(Color4f(0.2f, 0.2f, 0.2f, 0.8f));
+	int32_t edgeStyle = raster.defineSolidStyle(Color4f(0.0f, 0.0f, 0.0f, 1.0f));
 	int32_t nodeStyle = raster.defineSolidStyle(Color4f(1.0f, 1.0f, 0.8f, 1.0f));
+
+	raster.clear();
+	raster.moveTo(m, m);
+	raster.lineTo(m, h - m);
+	raster.lineTo(w - m, h - m);
+	raster.lineTo(w - m, m);
+	raster.lineTo(m, m);
+	raster.fill(clearStyle, clearStyle, drawing::Raster::FrNonZero);
 
 	const RefArray< Node >& nodes = shaderGraph->getNodes();
 	const RefArray< Edge >& edges = shaderGraph->getEdges();
 
 	ui::Rect bounds;
-	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (auto i = nodes.begin(); i != nodes.end(); ++i)
 	{
-		std::pair< int, int > position = (*i)->getPosition();
+		const auto position = (*i)->getPosition();
 		if (i != nodes.begin())
 		{
 			bounds.left = min(bounds.left, position.first);
@@ -66,41 +80,41 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 		}
 	}
 
-	bounds.left -= 4;
-	bounds.top -= 4;
-	bounds.right += 4;
-	bounds.bottom += 4;
+	bounds.left -= m;
+	bounds.top -= m;
+	bounds.right += m;
+	bounds.bottom += m;
 
-	for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
+	for (auto edge : edges)
 	{
-		std::pair< int, int > position1 = (*i)->getSource()->getNode()->getPosition();
-		std::pair< int, int > position2 = (*i)->getDestination()->getNode()->getPosition();
+		const auto position1 = edge->getSource()->getNode()->getPosition();
+		const auto position2 = edge->getDestination()->getNode()->getPosition();
 
-		float x1 = float((position1.first - bounds.left) * 64) / bounds.getSize().cx;
-		float y1 = float((position1.second - bounds.top) * 64) / bounds.getSize().cy;
-		float x2 = float((position2.first - bounds.left) * 64) / bounds.getSize().cx;
-		float y2 = float((position2.second - bounds.top) * 64) / bounds.getSize().cy;
+		float x1 = float((position1.first - bounds.left) * w) / bounds.getSize().cx;
+		float y1 = float((position1.second - bounds.top) * h) / bounds.getSize().cy;
+		float x2 = float((position2.first - bounds.left) * w) / bounds.getSize().cx;
+		float y2 = float((position2.second - bounds.top) * h) / bounds.getSize().cy;
 
 		raster.clear();
 		raster.moveTo(x1, y1);
 		raster.lineTo(x2, y2);
-		raster.stroke(edgeStyle, 1.0f, drawing::Raster::ScRound);
+		raster.stroke(edgeStyle, sw, drawing::Raster::ScRound);
 	}
 
-	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (auto node : nodes)
 	{
-		std::pair< int, int > position = (*i)->getPosition();
+		const auto position = node->getPosition();
 
-		float x = float((position.first - bounds.left) * 64) / bounds.getSize().cx;
-		float y = float((position.second - bounds.top) * 64) / bounds.getSize().cy;
+		float x = float((position.first - bounds.left) * w) / bounds.getSize().cx;
+		float y = float((position.second - bounds.top) * h) / bounds.getSize().cy;
 
 		raster.clear();
-		raster.moveTo(x - 1.0f, y - 1.0f);
-		raster.lineTo(x + 1.0f, y - 1.0f);
-		raster.lineTo(x + 1.0f, y + 1.0f);
-		raster.lineTo(x - 1.0f, y + 1.0f);
-		raster.close();
-		raster.fill(nodeStyle, nodeStyle, drawing::Raster::FrOddEven);
+		raster.moveTo(x - ns, y - ns);
+		raster.lineTo(x + ns, y - ns);
+		raster.lineTo(x + ns, y + ns);
+		raster.lineTo(x - ns, y + ns);
+		raster.lineTo(x - ns, y - ns);
+		raster.fill(nodeStyle, nodeStyle, drawing::Raster::FrNonZero);
 	}
 
 	raster.submit();

@@ -39,6 +39,7 @@
 #include "Editor/IPipeline.h"
 #include "Editor/PipelineDependency.h"
 #include "Editor/TypeBrowseFilter.h"
+#include "Editor/App/BrowseGroupDialog.h"
 #include "Editor/App/BrowseInstanceDialog.h"
 #include "Editor/App/BrowseTypeDialog.h"
 #include "Editor/App/BuildView.h"
@@ -999,6 +1000,21 @@ const TypeInfo* EditorForm::browseType(const TypeInfoSet& base, bool onlyEditabl
 	}
 
 	return type;
+}
+
+Ref< db::Group > EditorForm::browseGroup()
+{
+	Ref< db::Group > group;
+
+	BrowseGroupDialog dlgBrowse(this, m_mergedSettings);
+	if (dlgBrowse.create(this, m_sourceDatabase))
+	{
+		if (dlgBrowse.showModal() == ui::DrOk)
+			group = dlgBrowse.getGroup();
+		dlgBrowse.destroy();
+	}
+
+	return group;
 }
 
 Ref< db::Instance > EditorForm::browseInstance(const TypeInfo& filterType)

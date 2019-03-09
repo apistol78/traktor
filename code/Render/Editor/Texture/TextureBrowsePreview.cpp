@@ -6,6 +6,7 @@
 #include "Editor/IThumbnailGenerator.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureBrowsePreview.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 
 namespace traktor
@@ -17,9 +18,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureBrowsePreview", 0, Textur
 
 TypeInfoSet TextureBrowsePreview::getPreviewTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< TextureAsset >());
-	return typeSet;
+	return makeTypeInfoSet< TextureAsset >();
 }
 
 Ref< ui::Bitmap > TextureBrowsePreview::generate(const editor::IEditor* editor, db::Instance* instance) const
@@ -38,8 +37,8 @@ Ref< ui::Bitmap > TextureBrowsePreview::generate(const editor::IEditor* editor, 
 	bool visibleAlpha = (textureAsset->m_output.m_hasAlpha == true && textureAsset->m_output.m_ignoreAlpha == false);
 	Ref< drawing::Image > textureThumb = thumbnailGenerator->get(
 		fileName,
-		64,
-		64,
+		ui::dpi96(64),
+		ui::dpi96(64),
 		visibleAlpha ? editor::IThumbnailGenerator::AmWithAlpha : editor::IThumbnailGenerator::AmNoAlpha
 	);
 
