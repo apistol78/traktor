@@ -22,6 +22,7 @@ class TypeInfo;
 	{
 
 class Database;
+class Group;
 class Instance;
 
 	}
@@ -88,6 +89,9 @@ public:
 
 	/*! \brief Browse for rtti type. */
 	virtual const TypeInfo* browseType(const TypeInfoSet& base, bool onlyEditable, bool onlyInstantiable) = 0;
+
+	/*! \brief Browse database group. */
+	virtual Ref< db::Group > browseGroup() = 0;
 
 	/*! \brief Browse database instance. */
 	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType) = 0;

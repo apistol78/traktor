@@ -43,6 +43,8 @@ public:
 
 	void setIcon(IBitmap* icon);
 
+	IBitmap* getIcon();
+
 	void maximize();
 
 	void minimize();
@@ -58,6 +60,9 @@ public:
 	void showProgress(int32_t current, int32_t total);
 
 	virtual bool acceptLayout() const override;
+
+private:
+	Ref< IBitmap > m_icon;
 };
 
 	}

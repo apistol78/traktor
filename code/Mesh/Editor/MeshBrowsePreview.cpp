@@ -10,6 +10,7 @@
 #include "Mesh/Editor/MeshBrowsePreview.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 
 namespace traktor
@@ -21,9 +22,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MeshBrowsePreview", 0, MeshBrows
 
 TypeInfoSet MeshBrowsePreview::getPreviewTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< MeshAsset >());
-	return typeSet;
+	return makeTypeInfoSet< MeshAsset >();
 }
 
 Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db::Instance* instance) const
@@ -43,9 +42,14 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 
 	Ref< drawing::Image > meshThumb = new drawing::Image(
 		drawing::PixelFormat::getR8G8B8A8(),
-		64,
-		64
+		ui::dpi96(64),
+		ui::dpi96(64)
 	);
+
+	float cx = (float)(ui::dpi96(64) / 2.0f);
+	float cy = (float)(ui::dpi96(64) / 2.0f);
+	float hw = (float)(ui::dpi96(50) / 2.0f);
+	float hh = (float)(ui::dpi96(50) / 2.0f);
 
 	meshThumb->clear(Color4f(0.6f, 0.6f, 0.6f, 1.0f));
 
@@ -78,15 +82,15 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 			if (j == 0)
 			{
 				raster.moveTo(
-					position.x() * iz * 28.0f + 32.0f,
-					32.0f - position.y() * iz * 28.0f
+					position.x() * iz * hw + cx,
+					cy - position.y() * iz * hh
 				);
 			}
 			else
 			{
 				raster.lineTo(
-					position.x() * iz * 28.0f + 32.0f,
-					32.0f - position.y() * iz * 28.0f
+					position.x() * iz * hw + cx,
+					cy - position.y() * iz * hh
 				);
 			}
 		}

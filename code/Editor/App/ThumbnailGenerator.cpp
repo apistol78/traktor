@@ -3,6 +3,7 @@
 #include "Core/Misc/String.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/ScaleFilter.h"
+#include "Drawing/Filters/SwizzleFilter.h"
 #include "Editor/App/ThumbnailGenerator.h"
 
 namespace traktor
@@ -84,30 +85,13 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 	}
 	else if (alphaMode == AmAlphaOnly)
 	{
-		Color4f pixel;
-		for (int32_t y = 0; y < height; ++y)
-		{
-			for (int32_t x = 0; x < width; ++x)
-			{
-				image->getPixelUnsafe(x, y, pixel);
-				image->setPixelUnsafe(x, y, Color4f(pixel.getAlpha(), pixel.getAlpha(), pixel.getAlpha(), 1.0f));
-			}
-		}
+		drawing::SwizzleFilter swizzleFilter(L"aaa1");
+		image->apply(&swizzleFilter);
 	}
 	else	// Create solid alpha channel.
 	{
 		image->convert(drawing::PixelFormat::getR8G8B8A8());
-
-		Color4f pixel;
-		for (int32_t y = 0; y < height; ++y)
-		{
-			for (int32_t x = 0; x < width; ++x)
-			{
-				image->getPixelUnsafe(x, y, pixel);
-				pixel.setAlpha(Scalar(1.0f));
-				image->setPixelUnsafe(x, y, pixel);
-			}
-		}
+		image->clearAlpha(1.0f);
 	}
 
 	// Ensure thumb path exist; then save thumb image.

@@ -1074,12 +1074,9 @@ bool SceneEditorPage::createExternal()
 	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1)
 		return false;
 
-	Ref< db::Instance > dummy = m_editor->browseInstance();
-	if (!dummy)
+	Ref< db::Group > group = m_editor->browseGroup();
+	if (!group)
 		return false;
-
-	Ref< db::Group > group = dummy->getParent();
-	T_ASSERT(group);
 
 	auto entityData = selectedEntities[0]->getEntityData();
 	
