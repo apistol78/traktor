@@ -201,14 +201,10 @@ Aabb3 Aabb3::transform(const Transform& tf) const
 {
 	Vector4 c = tf * getCenter();
 
-	Vector4 ax = tf.rotation() * Vector4(1.0f, 0.0f, 0.0f);
-	Vector4 ay = tf.rotation() * Vector4(0.0f, 1.0f, 0.0f);
-	Vector4 az = tf.rotation() * Vector4(0.0f, 0.0f, 1.0f);
-
 	Vector4 e = getExtent();
-	Vector4 x = ax * e.x();
-	Vector4 y = ay * e.y();
-	Vector4 z = az * e.z();
+	Vector4 x = tf.axisX() * e.x();
+	Vector4 y = tf.axisY() * e.y();
+	Vector4 z = tf.axisZ() * e.z();
 
 	Vector4 first = c + x + y + z;
 	Aabb3 aabb(first, first);

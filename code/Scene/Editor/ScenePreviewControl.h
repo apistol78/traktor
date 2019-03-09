@@ -64,6 +64,7 @@ private:
 	Ref< ui::ToolBarButton > m_toolTogglePick;
 	Ref< ui::ToolBarButton > m_toolToggleTranslate;
 	Ref< ui::ToolBarButton > m_toolToggleRotate;
+	Ref< ui::ToolBarButton > m_toolToggleScale;
 	Ref< ui::ToolBarButton > m_toolToggleSnap;
 	Ref< ui::ToolBarDropDown > m_toolSnapSpacing;
 	int32_t m_splitCount;
@@ -71,6 +72,7 @@ private:
 	RefArray< ISceneRenderControl > m_renderControls;
 	Ref< IModifier > m_modifierTranslate;
 	Ref< IModifier > m_modifierRotate;
+	Ref< IModifier > m_modifierScale;
 	Ref< SceneEditorContext > m_context;
 	Timer m_timer;
 	float m_lastDeltaTime;

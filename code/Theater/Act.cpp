@@ -117,12 +117,7 @@ bool Act::update(scene::Scene* scene, float time, float deltaTime) const
 			float dx = convolve(time * wobbleRate, c_wobbleX, sizeof_array(c_wobbleX)) * wobbleMagnitude;
 			float dy = convolve(time * wobbleRate, c_wobbleY, sizeof_array(c_wobbleY)) * wobbleMagnitude;
 			float dz = convolve(time * wobbleRate, c_wobbleZ, sizeof_array(c_wobbleZ)) * wobbleMagnitude;
-
-			transform = Transform(
-				transform.translation() + Vector4(dx, dy, dz),
-				transform.rotation()
-			);
-			entity->setTransform(transform);
+			entity->setTransform(transform * Transform(Vector4(dx, dy, dz)));
 		}
 	}
 

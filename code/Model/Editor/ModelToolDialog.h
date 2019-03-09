@@ -63,6 +63,7 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	resource::Proxy< render::ITexture > m_textureDebug;
+	Ref< render::ITexture > m_texturePreview;
 	Ref< ui::ToolBarButton > m_toolSolid;
 	Ref< ui::ToolBarButton > m_toolWire;
 	Ref< ui::ToolBarButton > m_toolNormals;
@@ -91,6 +92,8 @@ private:
 	Timer m_timer;
 
 	bool loadModel();
+
+	bool loadTexture();
 
 	bool saveModel(Model* model);
 

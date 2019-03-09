@@ -18,9 +18,6 @@ namespace traktor
 		namespace
 		{
 
-Ref< IBitmap > s_imageUnchecked;
-Ref< IBitmap > s_imageChecked;
-
 const int32_t c_itemMarginX = 12;
 const int32_t c_itemMarginY = 8;
 
@@ -28,7 +25,7 @@ const int32_t c_itemMarginY = 8;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MenuItem", MenuItem, Object)
 
-MenuItem::MenuItem(const Command& command, const std::wstring& text, bool checkBox, Bitmap* image)
+MenuItem::MenuItem(const Command& command, const std::wstring& text, bool checkBox, IBitmap* image)
 :	m_command(command)
 ,	m_text(text)
 ,	m_checkBox(checkBox)
@@ -36,26 +33,20 @@ MenuItem::MenuItem(const Command& command, const std::wstring& text, bool checkB
 ,	m_enable(true)
 ,	m_checked(false)
 {
-	if (!s_imageUnchecked)
-		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
-	if (!s_imageChecked)
-		s_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
+	setCheckBox(checkBox);
 }
 
-MenuItem::MenuItem(const std::wstring& text, bool checkBox, Bitmap* image)
+MenuItem::MenuItem(const std::wstring& text, bool checkBox, IBitmap* image)
 :	m_text(text)
 ,	m_checkBox(checkBox)
 ,	m_image(image)
 ,	m_enable(true)
 ,	m_checked(false)
 {
-	if (!s_imageUnchecked)
-		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
-	if (!s_imageChecked)
-		s_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
+	setCheckBox(checkBox);
 }
 
-MenuItem::MenuItem(const Command& command, const std::wstring& text, Bitmap* image)
+MenuItem::MenuItem(const Command& command, const std::wstring& text, IBitmap* image)
 :	m_command(command)
 ,	m_text(text)
 ,	m_checkBox(false)
@@ -63,23 +54,15 @@ MenuItem::MenuItem(const Command& command, const std::wstring& text, Bitmap* ima
 ,	m_enable(true)
 ,	m_checked(false)
 {
-	if (!s_imageUnchecked)
-		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
-	if (!s_imageChecked)
-		s_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
 }
 
-MenuItem::MenuItem(const std::wstring& text, Bitmap* image)
+MenuItem::MenuItem(const std::wstring& text, IBitmap* image)
 :	m_text(text)
 ,	m_checkBox(false)
 ,	m_image(image)
 ,	m_enable(true)
 ,	m_checked(false)
 {
-	if (!s_imageUnchecked)
-		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
-	if (!s_imageChecked)
-		s_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
 }
 
 MenuItem::MenuItem(const Command& command, const std::wstring& text)
@@ -89,10 +72,6 @@ MenuItem::MenuItem(const Command& command, const std::wstring& text)
 ,	m_enable(true)
 ,	m_checked(false)
 {
-	if (!s_imageUnchecked)
-		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
-	if (!s_imageChecked)
-		s_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
 }
 
 MenuItem::MenuItem(const std::wstring& text)
@@ -101,10 +80,6 @@ MenuItem::MenuItem(const std::wstring& text)
 ,	m_enable(true)
 ,	m_checked(false)
 {
-	if (!s_imageUnchecked)
-		s_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
-	if (!s_imageChecked)
-		s_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
 }
 
 void MenuItem::setCommand(const Command& command)
@@ -124,7 +99,16 @@ void MenuItem::setText(const std::wstring& text)
 
 void MenuItem::setCheckBox(bool checkBox)
 {
-	m_checkBox = checkBox;
+	if ((m_checkBox = checkBox) == true)
+	{
+		m_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
+		m_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
+	}
+	else
+	{
+		m_imageUnchecked = nullptr;
+		m_imageChecked = nullptr;
+	}
 }
 
 bool MenuItem::getCheckBox() const
@@ -137,12 +121,12 @@ const std::wstring& MenuItem::getText() const
 	return m_text;
 }
 
-void MenuItem::setImage(Bitmap* image)
+void MenuItem::setImage(IBitmap* image)
 {
 	m_image = image;
 }
 
-Ref< Bitmap > MenuItem::getImage() const
+IBitmap* MenuItem::getImage() const
 {
 	return m_image;
 }
@@ -205,7 +189,7 @@ Size MenuItem::getSize(const Widget* shell) const
 
 		if (m_checkBox)
 		{
-			Size sz = s_imageUnchecked->getSize();
+			Size sz = m_imageUnchecked->getSize();
 			cw += dpi96(c_itemMarginX) + sz.cx;
 			ch = std::max< int32_t >(ch, sz.cy);
 		}
@@ -237,7 +221,7 @@ void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool t
 
 	if (m_checkBox)
 	{
-		IBitmap* image = m_checked ? s_imageChecked : s_imageUnchecked;
+		IBitmap* image = m_checked ? m_imageChecked : m_imageUnchecked;
 		Size sz = image->getSize();
 
 		canvas.drawBitmap(

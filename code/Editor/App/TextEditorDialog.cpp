@@ -20,7 +20,7 @@ bool TextEditorDialog::create(ui::Widget* parent, const std::wstring& initialTex
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
 	m_edit = new ui::RichEdit();
-	if (!m_edit->create(this, initialText, ui::WsClientBorder))
+	if (!m_edit->create(this, initialText, ui::WsDoubleBuffer))
 		return false;
 
 	m_edit->setFont(ui::Font(L"Courier New", 14));

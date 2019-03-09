@@ -78,6 +78,15 @@ T_MATH_INLINE Vector4 Matrix44::translation() const
 	return m_c[3];
 }
 
+T_MATH_INLINE Vector4 Matrix44::scale() const
+{
+	return Vector4(
+		axisX().length(),
+		axisY().length(),
+		axisZ().length()
+	);
+}
+
 T_MATH_INLINE Vector4 Matrix44::diagonal() const
 {
 	return Vector4(m_c[0].x(), m_c[1].y(), m_c[2].z(), m_c[3].w());

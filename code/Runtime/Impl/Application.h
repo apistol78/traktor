@@ -54,7 +54,7 @@ class IState;
 class StateManager;
 class TargetManagerConnection;
 
-/*! \brief Amalgam application implementation.
+/*! \brief Runtime application implementation.
  * \ingroup Runtime
  */
 class T_DLLCLASS Application : public IApplication

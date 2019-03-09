@@ -146,7 +146,7 @@ bool createLights(
 		{
 			light.type = 0;
 			light.position = Vector4::origo();
-			light.direction = led->getTransform().rotation() * Vector4(0.0f, -1.0f, 0.0f);
+			light.direction = -led->getTransform().axisY();
 			light.color = Color4f(lightComponentData->getColor());
 			light.range = Scalar(0.0f);
 			outLights.push_back(light);

@@ -15,13 +15,6 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace
-		{
-
-Ref< IBitmap > s_imageSmallDots;
-Ref< IBitmap > s_imageSmallPlus;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.", ArrayPropertyItem, PropertyItem)
 
@@ -30,10 +23,8 @@ ArrayPropertyItem::ArrayPropertyItem(const std::wstring& text, const TypeInfo* e
 ,	m_elementType(elementType)
 ,	m_readOnly(readOnly)
 {
-	if (!s_imageSmallDots)
-		s_imageSmallDots = new ui::StyleBitmap(L"UI.SmallDots", c_ResourceSmallDots, sizeof(c_ResourceSmallDots));
-	if (!s_imageSmallPlus)
-		s_imageSmallPlus = new ui::StyleBitmap(L"UI.SmallPlus", c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus));
+	m_imageSmallDots = new ui::StyleBitmap(L"UI.SmallDots", c_ResourceSmallDots, sizeof(c_ResourceSmallDots));
+	m_imageSmallPlus = new ui::StyleBitmap(L"UI.SmallPlus", c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus));
 }
 
 void ArrayPropertyItem::setElementType(const TypeInfo* elementType)
@@ -56,7 +47,7 @@ void ArrayPropertyItem::createInPlaceControls(Widget* parent)
 	if (!m_readOnly)
 	{
 		m_buttonEdit = new MiniButton();
-		m_buttonEdit->create(parent, m_elementType ? s_imageSmallDots : s_imageSmallPlus);
+		m_buttonEdit->create(parent, m_elementType ? m_imageSmallDots : m_imageSmallPlus);
 		m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &ArrayPropertyItem::eventClick);
 	}
 }

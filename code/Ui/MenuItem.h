@@ -20,8 +20,8 @@ namespace traktor
 	namespace ui
 	{
 
-class Bitmap;
 class Canvas;
+class IBitmap;
 class MouseButtonDownEvent;
 class MouseButtonUpEvent;
 class MouseMoveEvent;
@@ -38,13 +38,13 @@ class T_DLLCLASS MenuItem
 	T_RTTI_CLASS;
 
 public:
-	MenuItem(const Command& command, const std::wstring& text, bool checkBox, Bitmap* image);
+	MenuItem(const Command& command, const std::wstring& text, bool checkBox, IBitmap* image);
 
-	MenuItem(const std::wstring& text, bool checkBox, Bitmap* image);
+	MenuItem(const std::wstring& text, bool checkBox, IBitmap* image);
 
-	MenuItem(const Command& command, const std::wstring& text, Bitmap* image);
+	MenuItem(const Command& command, const std::wstring& text, IBitmap* image);
 
-	MenuItem(const std::wstring& text, Bitmap* image);
+	MenuItem(const std::wstring& text, IBitmap* image);
 
 	MenuItem(const Command& command, const std::wstring& text);
 
@@ -62,9 +62,9 @@ public:
 
 	bool getCheckBox() const;
 
-	void setImage(Bitmap* image);
+	void setImage(IBitmap* image);
 
-	Ref< Bitmap > getImage() const;
+	IBitmap* getImage() const;
 
 	void setEnable(bool enable);
 
@@ -92,7 +92,9 @@ private:
 	Command m_command;
 	std::wstring m_text;
 	bool m_checkBox;
-	Ref< Bitmap > m_image;
+	Ref< IBitmap > m_imageUnchecked;
+	Ref< IBitmap > m_imageChecked;
+	Ref< IBitmap > m_image;
 	bool m_enable;
 	bool m_checked;
 	RefArray< MenuItem > m_items;

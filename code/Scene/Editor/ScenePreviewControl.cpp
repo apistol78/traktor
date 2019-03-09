@@ -20,6 +20,7 @@
 #include "Scene/Editor/DefaultRenderControl.h"
 #include "Scene/Editor/Modifiers/TranslateModifier.h"
 #include "Scene/Editor/Modifiers/RotateModifier.h"
+#include "Scene/Editor/Modifiers/ScaleModifier.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/Events/FrameEvent.h"
@@ -64,6 +65,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolTogglePick = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_PICK"), 0, ui::Command(1, L"Scene.Editor.TogglePick"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleTranslate = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TRANSLATE"), 1, ui::Command(L"Scene.Editor.Translate"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleRotate = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_ROTATE"), 2, ui::Command(L"Scene.Editor.Rotate"), ui::ToolBarButton::BsDefaultToggle);
+	m_toolToggleScale = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_SCALE"), 2, ui::Command(L"Scene.Editor.Scale"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSnap = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP"), 3, ui::Command(1, L"Scene.Editor.ToggleSnap"), ui::ToolBarButton::BsDefaultToggle);
 
 	m_toolSnapSpacing = new ui::ToolBarDropDown(ui::Command(L"Scene.Editor.SnapSpacing"), ui::dpi96(60), i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP_SPACING"));
@@ -85,6 +87,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolTogglePick->setToggled(settings->getProperty< bool >(L"SceneEditor.TogglePick", true));
 	m_toolToggleTranslate->setToggled(true);
 	m_toolToggleRotate->setToggled(false);
+	m_toolToggleScale->setToggled(false);
 	m_toolToggleSnap->setToggled(settings->getProperty< bool >(L"SceneEditor.ToggleSnap", true));
 
 	m_toolBarActions = new ui::ToolBar();
@@ -103,6 +106,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(new ui::ToolBarSeparator());
 	m_toolBarActions->addItem(m_toolToggleTranslate);
 	m_toolBarActions->addItem(m_toolToggleRotate);
+	m_toolBarActions->addItem(m_toolToggleScale);
 	m_toolBarActions->addItem(new ui::ToolBarSeparator());
 	m_toolBarActions->addItem(m_toolToggleSnap);
 	m_toolBarActions->addItem(m_toolSnapSpacing);
@@ -128,6 +132,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	// Create modifiers.
 	m_modifierTranslate = new TranslateModifier(m_context);
 	m_modifierRotate = new RotateModifier(m_context);
+	m_modifierScale = new ScaleModifier(m_context);
 	m_context->setModifier(m_modifierTranslate);
 
 	m_splitCount = settings->getProperty< int32_t >(L"SceneEditor.SplitCount", 4);
@@ -206,6 +211,10 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	else if (command == L"Scene.Editor.Rotate")
 	{
 		m_context->setModifier(m_modifierRotate);
+	}
+	else if (command == L"Scene.Editor.Scale")
+	{
+		m_context->setModifier(m_modifierScale);
 	}
 	else if (command == L"Scene.Editor.TogglePick")
 	{
@@ -445,6 +454,7 @@ void ScenePreviewControl::eventModifierChanged(ModifierChangedEvent* event)
 {
 	m_toolToggleTranslate->setToggled(m_context->getModifier() == m_modifierTranslate);
 	m_toolToggleRotate->setToggled(m_context->getModifier() == m_modifierRotate);
+	m_toolToggleScale->setToggled(m_context->getModifier() == m_modifierScale);
 	m_toolBarActions->update();
 }
 

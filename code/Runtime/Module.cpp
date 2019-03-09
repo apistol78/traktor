@@ -7,7 +7,7 @@ namespace traktor
 	namespace runtime
 	{
 
-extern "C" void __module__Traktor_Amalgam()
+extern "C" void __module__Traktor_Runtime()
 {
 }
 

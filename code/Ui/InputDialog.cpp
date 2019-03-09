@@ -46,7 +46,7 @@ bool InputDialog::create(
 			if (!m_outFields[i].browseFile)
 			{
 				Ref< Edit > edit = new Edit();
-				edit->create(container, m_outFields[i].value, WsClientBorder | WsTabStop, m_outFields[i].validator);
+				edit->create(container, m_outFields[i].value, WsTabStop, m_outFields[i].validator);
 				m_editFields.push_back(edit);
 			}
 			else
@@ -55,7 +55,7 @@ bool InputDialog::create(
 				fieldContainer->create(container, WsNone, new TableLayout(L"100%,*", L"*", 0, 4));
 
 				Ref< Edit > edit = new Edit();
-				edit->create(fieldContainer, m_outFields[i].value, WsClientBorder | WsTabStop, m_outFields[i].validator);
+				edit->create(fieldContainer, m_outFields[i].value, WsTabStop, m_outFields[i].validator);
 				m_editFields.push_back(edit);
 
 				Ref< MiniButton > browse = new MiniButton();
@@ -65,7 +65,7 @@ bool InputDialog::create(
 		else
 		{
 			Ref< DropDown > dropDown = new DropDown();
-			dropDown->create(container, WsClientBorder | WsTabStop);
+			dropDown->create(container, WsTabStop);
 
 			std::wstring key, value;
 			for (size_t index = 0; m_outFields[i].valueEnumerator->getValue(index, key, value); ++index)

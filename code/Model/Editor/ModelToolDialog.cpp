@@ -31,6 +31,7 @@
 #include "Model/Operations/WeldHoles.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "Ui/Application.h"
@@ -122,6 +123,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
 	toolBar->create(this);
 	toolBar->addItem(new ui::ToolBarButton(L"Load...", ui::Command(L"ModelTool.Load"), ui::ToolBarButton::BsText));
+	toolBar->addItem(new ui::ToolBarButton(L"Load texture...", ui::Command(L"ModelTool.LoadTexture"), ui::ToolBarButton::BsText));
 	toolBar->addItem(new ui::ToolBarSeparator());
 
 	m_toolSolid = new ui::ToolBarButton(L"Solid", ui::Command(L"ModelTool.ToggleSolid"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
@@ -341,6 +343,42 @@ bool ModelToolDialog::loadModel()
 	return true;
 }
 
+bool ModelToolDialog::loadTexture()
+{
+	ui::FileDialog fileDialog;
+	if (!fileDialog.create(this, type_name(this), L"Load texture...", L"All files;*.*"))
+		return false;
+
+	Path fileName;
+	if (fileDialog.showModal(fileName) != ui::DrOk)
+	{
+		fileDialog.destroy();
+		return true;
+	}
+	fileDialog.destroy();
+
+	Ref< drawing::Image > image = drawing::Image::load(fileName);
+	if (!image)
+		return false;
+
+	image->clearAlpha(1.0f);
+	image->convert(drawing::PixelFormat::getR8G8B8A8());
+
+	render::SimpleTextureCreateDesc stcd;
+	stcd.width = image->getWidth();
+	stcd.height = image->getHeight();
+	stcd.mipCount = 1;
+	stcd.format = render::TfR8G8B8A8;
+	stcd.sRGB = true;
+	stcd.immutable = true;
+	stcd.initialData[0].data = image->getData();
+	stcd.initialData[0].pitch = image->getWidth() * 4;
+
+	m_texturePreview = m_renderSystem->createSimpleTexture(stcd);
+
+	return (bool)(m_texturePreview != nullptr);
+}
+
 bool ModelToolDialog::saveModel(Model* model)
 {
 	ui::FileDialog fileDialog;
@@ -447,6 +485,8 @@ void ModelToolDialog::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 	const ui::Command& command = event->getCommand();
 	if (command == L"ModelTool.Load")
 		loadModel();
+	else if (command == L"ModelTool.LoadTexture")
+		loadTexture();
 
 	m_renderWidget->update();
 }
@@ -787,6 +827,8 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 		2000.0f
 	);
 
+	auto texture = (m_texturePreview != nullptr) ? m_texturePreview : m_textureDebug.getResource();
+
 	if (m_primitiveRenderer->begin(0, projectionTransform))
 	{
 		m_primitiveRenderer->pushView(viewTransform);
@@ -869,7 +911,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 									int32_t(diffuse * 255),
 									255
 								),
-								m_textureDebug
+								texture
 							);
 						}
 						else

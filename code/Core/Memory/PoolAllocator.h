@@ -4,6 +4,7 @@
 #include <stack>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Misc/Align.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -38,11 +39,11 @@ class T_DLLCLASS PoolAllocator : public Object
 public:
 	PoolAllocator();
 
-	PoolAllocator(IAllocator* allocator, uint32_t totalSize);
+	explicit PoolAllocator(IAllocator* allocator, uint32_t totalSize);
 
-	PoolAllocator(uint32_t totalSize);
+	explicit PoolAllocator(uint32_t totalSize);
 
-	PoolAllocator(void* heap, uint32_t totalSize);
+	explicit PoolAllocator(void* heap, uint32_t totalSize);
 
 	virtual ~PoolAllocator();
 
@@ -80,7 +81,7 @@ public:
 	Type* alloc(uint32_t count)
 	{
 		if (!count)
-			return 0;
+			return nullptr;
 
 		void* ptr = alloc(sizeof(Type) * count, alignOf< Type >());
 		return new (ptr) Type [count];
@@ -95,7 +96,7 @@ public:
 	Type** allocArray(uint32_t count)
 	{
 		if (!count)
-			return 0;
+			return nullptr;
 
 		void* ptr = alloc(sizeof(Type*) * count, alignOf< Type* >());
 		return static_cast< Type** >(ptr);

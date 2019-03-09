@@ -34,7 +34,7 @@ public:
 		WsDrag = WsUser << 1,
 		WsTreeButtons = WsUser << 2,
 		WsTreeLines = WsUser << 3,
-		WsDefault = WsClientBorder | WsAutoEdit | WsTreeButtons | WsTreeLines
+		WsDefault = WsAutoEdit | WsTreeButtons | WsTreeLines
 	};
 
 	enum GetFlags

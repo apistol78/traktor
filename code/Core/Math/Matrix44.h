@@ -62,6 +62,8 @@ public:
 
 	T_MATH_INLINE Vector4 translation() const;
 
+	T_MATH_INLINE Vector4 scale() const;
+
 	T_MATH_INLINE Vector4 diagonal() const;
 
 	T_MATH_INLINE bool isOrtho() const;

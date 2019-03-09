@@ -2,107 +2,107 @@
 <object type="traktor.i18n.Dictionary">
   <map>
     <item>
-      <first>AMALGAM_LANGUAGE</first>
+      <first>RUNTIME_LANGUAGE</first>
       <second>Language</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_CHINESE</first>
+      <first>RUNTIME_LANGUAGE_CHINESE</first>
       <second>Chinese</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_CZECH</first>
+      <first>RUNTIME_LANGUAGE_CZECH</first>
       <second>Czech</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_DEFAULT</first>
+      <first>RUNTIME_LANGUAGE_DEFAULT</first>
       <second>(Default)</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_DUTCH</first>
+      <first>RUNTIME_LANGUAGE_DUTCH</first>
       <second>Dutch</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_ENGLISH</first>
+      <first>RUNTIME_LANGUAGE_ENGLISH</first>
       <second>English</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_FRENCH</first>
+      <first>RUNTIME_LANGUAGE_FRENCH</first>
       <second>French</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_GERMAN</first>
+      <first>RUNTIME_LANGUAGE_GERMAN</first>
       <second>German</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_ITALIAN</first>
+      <first>RUNTIME_LANGUAGE_ITALIAN</first>
       <second>Italian</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_JAPANESE</first>
+      <first>RUNTIME_LANGUAGE_JAPANESE</first>
       <second>Japanese</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_KOREANA</first>
+      <first>RUNTIME_LANGUAGE_KOREANA</first>
       <second>Korean</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_POLISH</first>
+      <first>RUNTIME_LANGUAGE_POLISH</first>
       <second>Polish</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_PORTUGUESE</first>
+      <first>RUNTIME_LANGUAGE_PORTUGUESE</first>
       <second>Portuguese</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_ROMANIAN</first>
+      <first>RUNTIME_LANGUAGE_ROMANIAN</first>
       <second>Romanian</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_RUSSIAN</first>
+      <first>RUNTIME_LANGUAGE_RUSSIAN</first>
       <second>Russian</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_SPANISH</first>
+      <first>RUNTIME_LANGUAGE_SPANISH</first>
       <second>Spanish</second>
     </item>
     <item>
-      <first>AMALGAM_LANGUAGE_SWEDISH</first>
+      <first>RUNTIME_LANGUAGE_SWEDISH</first>
       <second>Swedish</second>
     </item>
     <item>
-      <first>AMALGAM_STATE_BUILDING</first>
+      <first>RUNTIME_STATE_BUILDING</first>
       <second>Building...</second>
     </item>
     <item>
-      <first>AMALGAM_STATE_DEPLOYING</first>
+      <first>RUNTIME_STATE_DEPLOYING</first>
       <second>Deploying...</second>
     </item>
     <item>
-      <first>AMALGAM_STATE_IDLE</first>
+      <first>RUNTIME_STATE_IDLE</first>
       <second/>
     </item>
     <item>
-      <first>AMALGAM_STATE_LAUNCHING</first>
+      <first>RUNTIME_STATE_LAUNCHING</first>
       <second>Launching...</second>
     </item>
     <item>
-      <first>AMALGAM_STATE_MIGRATING</first>
+      <first>RUNTIME_STATE_MIGRATING</first>
       <second>Migrating...</second>
     </item>
     <item>
-      <first>AMALGAM_STATE_PENDING</first>
+      <first>RUNTIME_STATE_PENDING</first>
       <second>Pending...</second>
     </item>
     <item>
-      <first>AMALGAM_TARGETS</first>
+      <first>RUNTIME_TARGETS</first>
       <second>Targets</second>
     </item>
     <item>
-      <first>AMALGAM_TWEAKS</first>
+      <first>RUNTIME_TWEAKS</first>
       <second>Tweaks</second>
     </item>
     <item>
-      <first>AMALGAM_TWEAKS_TOOLTIP</first>
+      <first>RUNTIME_TWEAKS_TOOLTIP</first>
       <second>Runtime tweaks</second>
     </item>
     <item>
@@ -258,23 +258,23 @@
       <second>AI navigation meshes</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_AMALGAM_FEATURE</first>
+      <first>DATABASE_CATEGORY_TRAKTOR_RUNTIME_FEATURE</first>
       <second>Target features</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_AMALGAM_GAMEENTITYDATA</first>
+      <first>DATABASE_CATEGORY_TRAKTOR_RUNTIME_GAMEENTITYDATA</first>
       <second>Game entities</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_AMALGAM_PLATFORM</first>
+      <first>DATABASE_CATEGORY_TRAKTOR_RUNTIME_PLATFORM</first>
       <second>Target platforms</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_AMALGAM_STAGEDATA</first>
+      <first>DATABASE_CATEGORY_TRAKTOR_RUNTIME_STAGEDATA</first>
       <second>Stages</second>
     </item>
     <item>
-      <first>DATABASE_CATEGORY_TRAKTOR_AMALGAM_TARGET</first>
+      <first>DATABASE_CATEGORY_TRAKTOR_RUNTIME_TARGET</first>
       <second>Targets</second>
     </item>
     <item>
@@ -2230,6 +2230,10 @@
       <second>Controller</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_CREATE_EXTERNAL</first>
+      <second>Create external...</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_DELTA_SCALE</first>
       <second>Delta {0}</second>
     </item>
@@ -2264,6 +2268,10 @@
     <item>
       <first>SCENE_EDITOR_ENTITY_NAME</first>
       <second>Name</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_FILTER_ENTITY</first>
+      <second>Filter on entity type...</second>
     </item>
     <item>
       <first>SCENE_EDITOR_FIND_IN_DATABASE</first>
@@ -2308,6 +2316,14 @@
     <item>
       <first>SCENE_EDITOR_MOVE_TO_ENTITY</first>
       <second>Move to entity</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_MOVE_UP</first>
+      <second>Move up</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_MOVE_DOWN</first>
+      <second>Move down</second>
     </item>
     <item>
       <first>SCENE_EDITOR_PHYSICS</first>
