@@ -43,7 +43,7 @@ void LightRenderer::render(
 
 		light.type = LtDirectional;
 		light.position = transform.translation();
-		light.direction = transform.rotation() * Vector4(0.0f, 1.0f, 0.0f);
+		light.direction = transform.axisY();
 		light.color = directionalLightEntity->getColor();
 		light.range = Scalar(0.0f);
 		light.radius = Scalar(0.0f);
@@ -91,7 +91,7 @@ void LightRenderer::render(
 
 		light.type = LtSpot;
 		light.position = transform.translation();
-		light.direction = transform.rotation() * Vector4(0.0f, 1.0f, 0.0f);
+		light.direction = transform.axisY();
 		light.color = spotLightEntity->getColor();
 		light.range = Scalar(spotLightEntity->getRange());
 		light.radius = Scalar(spotLightEntity->getRadius());
@@ -108,7 +108,7 @@ void LightRenderer::render(
 
 		light.type = lightComponent->getLightType();
 		light.position = transform.translation();
-		light.direction = transform.rotation() * Vector4(0.0f, 1.0f, 0.0f);
+		light.direction = transform.axisY();
 		light.color = lightComponent->getColor();
 		light.range = Scalar(lightComponent->getRange());
 		light.radius = Scalar(lightComponent->getRadius());

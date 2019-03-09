@@ -58,6 +58,7 @@ class EntityAdapter;
 class EntityDependencyInvestigator;
 class PreModifyEvent;
 class PostBuildEvent;
+class PostFrameEvent;
 class PostModifyEvent;
 class SceneAsset;
 class SceneEditorContext;
@@ -132,6 +133,10 @@ private:
 
 	bool moveToEntity();
 
+	bool moveUp();
+
+	bool moveDown();
+
 	void eventEntityToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventGuideClick(ui::GridColumnClickEvent* event);
@@ -153,6 +158,8 @@ private:
 	void eventContextPostModify(PostModifyEvent* event);
 
 	void eventContextCameraMoved(CameraMovedEvent* event);
+
+	void eventContextPostFrame(PostFrameEvent* event);
 };
 
 	}

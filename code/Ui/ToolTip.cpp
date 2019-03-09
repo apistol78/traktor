@@ -60,7 +60,7 @@ void ToolTip::eventTimer(TimerEvent* event)
 {
 	Ref< Widget > parent = getParent();
 
-	if (!parent->isVisible(true))
+	if (!parent->isVisible(true) || !parent->isForeground())
 	{
 		setVisible(false);
 		return;

@@ -18,7 +18,7 @@ void GroupEntityData::addEntityData(EntityData* entityData)
 
 void GroupEntityData::removeEntityData(EntityData* entityData)
 {
-	RefArray< EntityData >::iterator i = std::find(m_entityData.begin(), m_entityData.end(), entityData);
+	auto i = std::find(m_entityData.begin(), m_entityData.end(), entityData);
 	if (i != m_entityData.end())
 		m_entityData.erase(i);
 }
@@ -45,13 +45,15 @@ const RefArray< EntityData >& GroupEntityData::getEntityData() const
 
 void GroupEntityData::setTransform(const Transform& transform)
 {
-	Transform deltaTransform = transform * getTransform().inverse();
-	for (RefArray< EntityData >::iterator i = m_entityData.begin(); i != m_entityData.end(); ++i)
+	Transform invTransform = getTransform().inverse();
+	for (auto entityData : m_entityData)
 	{
-		if ((*i) != 0)
+		if (entityData != nullptr)
 		{
-			Transform currentTransform = (*i)->getTransform();
-			(*i)->setTransform(deltaTransform * currentTransform);
+			Transform currentTransform = entityData->getTransform();
+			Transform Tlocal = invTransform * currentTransform;
+			Transform Tworld = transform * Tlocal;
+			entityData->setTransform(Tworld);
 		}
 	}
 	EntityData::setTransform(transform);

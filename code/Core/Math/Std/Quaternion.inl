@@ -156,8 +156,7 @@ T_MATH_INLINE Quaternion Quaternion::fromAxisAngle(const Vector4& axisAngle)
 	if (abs(angle) >= FUZZY_EPSILON)
 	{
 		Vector4 axis = axisAngle / angle;
-		float half = angle / Scalar(2.0f);
-		return Quaternion(axis.xyz0() * Scalar(sinf(half)) + Vector4(0.0f, 0.0f, 0.0f, cosf(half)));
+		return Quaternion::fromAxisAngle(axis, angle);
 	}
 	else
 		return Quaternion::identity();

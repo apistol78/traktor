@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
@@ -19,6 +21,7 @@ StyleBitmap::StyleBitmap(const wchar_t* const name)
 StyleBitmap::StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap)
 :	m_name(name)
 ,	m_defaultBitmap(defaultBitmap)
+,	m_ownDefaultBitmap(false)
 {
 	T_FATAL_ASSERT_M(m_defaultBitmap, L"Default bitmap is null.");
 }
@@ -26,12 +29,23 @@ StyleBitmap::StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap)
 StyleBitmap::StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize)
 :	m_name(name)
 ,	m_defaultBitmap(Bitmap::load(defaultBitmapResource, defaultBitmapResourceSize, L"image"))
+,	m_ownDefaultBitmap(true)
 {
 	T_FATAL_ASSERT_M(m_defaultBitmap, L"Unable to load default bitmap resource.");
 }
 
+StyleBitmap::~StyleBitmap()
+{
+	destroy();
+}
+
 void StyleBitmap::destroy()
 {
+	if (m_ownDefaultBitmap)
+	{
+		safeDestroy(m_defaultBitmap);
+		m_ownDefaultBitmap = false;
+	}
 	safeDestroy(m_bitmap);
 }
 
@@ -42,12 +56,12 @@ Size StyleBitmap::getSize() const
 
 Ref< drawing::Image > StyleBitmap::getImage() const
 {
-	return resolve() ? m_bitmap->getImage() : 0;
+	return resolve() ? m_bitmap->getImage() : nullptr;
 }
 
 ISystemBitmap* StyleBitmap::getSystemBitmap() const
 {
-	return resolve() ? m_bitmap->getSystemBitmap() : 0;
+	return resolve() ? m_bitmap->getSystemBitmap() : nullptr;
 }
 
 bool StyleBitmap::resolve() const
@@ -56,20 +70,20 @@ bool StyleBitmap::resolve() const
 	if (!ss)
 	{
 		m_bitmap = m_defaultBitmap;
-		return bool(m_bitmap != 0);
+		return bool(m_bitmap != nullptr);
 	}
 
 	std::wstring bmp = ss->getValue(m_name);
 	if (!bmp.empty() && bmp == m_path)
-		return bool(m_bitmap != 0);
+		return bool(m_bitmap != nullptr);
 
 	safeDestroy(m_bitmap);
 
-	if ((m_bitmap = Bitmap::load(bmp)) == 0)
+	if ((m_bitmap = Bitmap::load(bmp)) == nullptr)
 		m_bitmap = m_defaultBitmap;
 
 	m_path = bmp;
-	return bool(m_bitmap != 0);
+	return bool(m_bitmap != nullptr);
 }
 
 	}

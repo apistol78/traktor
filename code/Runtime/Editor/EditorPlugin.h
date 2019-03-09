@@ -51,7 +51,7 @@ class TargetManager;
 class TargetPlayEvent;
 class TargetStopEvent;
 
-/*! \brief Amalgam editor plugin.
+/*! \brief Runtime editor plugin.
  * \ingroup Runtime
  */
 class EditorPlugin : public editor::IEditorPlugin

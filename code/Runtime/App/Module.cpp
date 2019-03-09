@@ -7,7 +7,7 @@ namespace traktor
 	namespace video
 	{
 
-extern "C" void __module__Traktor_Amalgam_App()
+extern "C" void __module__Traktor_Runtime_App()
 {
 }
 

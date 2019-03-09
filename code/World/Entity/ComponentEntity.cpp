@@ -22,16 +22,16 @@ ComponentEntity::ComponentEntity(const Transform& transform)
 
 void ComponentEntity::destroy()
 {
-	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		(*i)->destroy();
+	for (auto component : m_components)
+		component->destroy();
 	m_components.clear();
 }
 
 void ComponentEntity::setTransform(const Transform& transform)
 {
 	m_transform = transform;
-	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		(*i)->setTransform(transform);
+	for (auto component : m_components)
+		component->setTransform(transform);
 }
 
 bool ComponentEntity::getTransform(Transform& outTransform) const
@@ -43,15 +43,15 @@ bool ComponentEntity::getTransform(Transform& outTransform) const
 Aabb3 ComponentEntity::getBoundingBox() const
 {
 	Aabb3 boundingBox;
-	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		boundingBox.contain((*i)->getBoundingBox());
+	for (auto component : m_components)
+		boundingBox.contain(component->getBoundingBox());
 	return boundingBox;
 }
 
 void ComponentEntity::update(const UpdateParams& update)
 {
-	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		(*i)->update(update);
+	for (auto component : m_components)
+		component->update(update);
 }
 
 void ComponentEntity::setComponent(IEntityComponent* component)
@@ -62,11 +62,11 @@ void ComponentEntity::setComponent(IEntityComponent* component)
 	component->setTransform(m_transform);
 
 	// Replace existing component of same type.
-	for (RefArray< IEntityComponent >::iterator i = m_components.begin(); i != m_components.end(); ++i)
+	for (auto& comp : m_components)
 	{
-		if (is_type_of(type_of(*i), type_of(component)))
+		if (is_type_of(type_of(comp), type_of(component)))
 		{
-			*i = component;
+			comp = component;
 			return;
 		}
 	}
@@ -77,18 +77,18 @@ void ComponentEntity::setComponent(IEntityComponent* component)
 
 IEntityComponent* ComponentEntity::getComponent(const TypeInfo& componentType) const
 {
-	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+	for (auto component : m_components)
 	{
-		if (is_type_of(componentType, type_of(*i)))
-			return *i;
+		if (is_type_of(componentType, type_of(component)))
+			return component;
 	}
-	return 0;
+	return nullptr;
 }
 
 void ComponentEntity::render(WorldContext& worldContext, WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass)
 {
-	for (RefArray< IEntityComponent >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
-		worldContext.build(worldRenderView, worldRenderPass, *i);
+	for (auto component : m_components)
+		worldContext.build(worldRenderView, worldRenderPass, component);
 }
 
 	}

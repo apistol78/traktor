@@ -19,7 +19,7 @@ namespace traktor
 class IEnvironment;
 class IStateManager;
 
-/*! \brief Amalgam application.
+/*! \brief Runtime application.
  * \ingroup Runtime
  *
  * This interface represent the running

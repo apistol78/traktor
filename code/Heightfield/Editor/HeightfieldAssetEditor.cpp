@@ -96,13 +96,13 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	containerExtent->create(containerFields, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0, 4));
 
 	m_editExtent[0] = new ui::Edit();
-	m_editExtent[0]->create(containerExtent, toString(m_asset->getWorldExtent().x()), ui::WsClientBorder, new ui::NumericEditValidator(true, 1.0f));
+	m_editExtent[0]->create(containerExtent, toString(m_asset->getWorldExtent().x()), ui::WsNone, new ui::NumericEditValidator(true, 1.0f));
 
 	m_editExtent[1] = new ui::Edit();
-	m_editExtent[1]->create(containerExtent, toString(m_asset->getWorldExtent().y()), ui::WsClientBorder, new ui::NumericEditValidator(true, 1.0f));
+	m_editExtent[1]->create(containerExtent, toString(m_asset->getWorldExtent().y()), ui::WsNone, new ui::NumericEditValidator(true, 1.0f));
 
 	m_editExtent[2] = new ui::Edit();
-	m_editExtent[2]->create(containerExtent, toString(m_asset->getWorldExtent().z()), ui::WsClientBorder, new ui::NumericEditValidator(true, 1.0f));
+	m_editExtent[2]->create(containerExtent, toString(m_asset->getWorldExtent().z()), ui::WsNone, new ui::NumericEditValidator(true, 1.0f));
 
 	Ref< ui::Static > staticExtentUnit = new ui::Static();
 	staticExtentUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_EXTENT_UNIT"));
@@ -111,7 +111,7 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	staticVista->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_VISTA"));
 
 	m_editVista = new ui::Edit();
-	m_editVista->create(containerFields, toString(m_asset->getVistaDistance()), ui::WsClientBorder, new ui::NumericEditValidator(true, 1.0f));
+	m_editVista->create(containerFields, toString(m_asset->getVistaDistance()), ui::WsNone, new ui::NumericEditValidator(true, 1.0f));
 
 	Ref< ui::Static > staticVistaUnit = new ui::Static();
 	staticVistaUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_VISTA_UNIT"));
@@ -120,7 +120,7 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	staticSize->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_SIZE"));
 
 	m_editSize = new ui::Edit();
-	m_editSize->create(containerFields, toString(m_heightfield->getSize()), ui::WsClientBorder | ui::Edit::WsReadOnly, new ui::NumericEditValidator(false, 1.0f));
+	m_editSize->create(containerFields, toString(m_heightfield->getSize()), ui::Edit::WsReadOnly, new ui::NumericEditValidator(false, 1.0f));
 
 	Ref< ui::Static > staticSizeUnit = new ui::Static();
 	staticSizeUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_SIZE_UNIT"));

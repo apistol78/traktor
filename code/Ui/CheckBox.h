@@ -34,6 +34,8 @@ public:
 	virtual Size getPreferedSize() const override;
 
 private:
+	Ref< IBitmap > m_imageUnchecked;
+	Ref< IBitmap > m_imageChecked;
 	bool m_checked;
 
 	void eventPaint(PaintEvent* event);

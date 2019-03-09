@@ -90,7 +90,15 @@ void Widget::setForeground()
 bool Widget::isForeground() const
 {
 	T_ASSERT(m_widget);
-	return m_widget->isForeground();
+	
+	if (m_widget->isForeground())
+		return true;
+
+	for (Widget* parent = m_parent; parent != nullptr; parent = parent->getParent())
+		if (parent->isForeground())
+			return true;
+
+	return false;
 }
 
 void Widget::setVisible(bool visible)

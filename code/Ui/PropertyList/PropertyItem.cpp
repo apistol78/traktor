@@ -18,13 +18,6 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace
-		{
-
-Ref< IBitmap > s_imageExpand;
-Ref< IBitmap > s_imageCross;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.PropertyItem", PropertyItem, Object)
 
@@ -36,10 +29,8 @@ PropertyItem::PropertyItem(const std::wstring& text)
 ,	m_selected(false)
 ,	m_parent(0)
 {
-	if (!s_imageExpand)
-		s_imageExpand = new StyleBitmap(L"UI.PropertyList", c_ResourcePropertyList, sizeof(c_ResourcePropertyList));
-	if (!s_imageCross)
-		s_imageCross = new StyleBitmap(L"UI.SmallCross", c_ResourceSmallCross, sizeof(c_ResourceSmallCross));
+	m_imageExpand = new StyleBitmap(L"UI.PropertyList", c_ResourcePropertyList, sizeof(c_ResourcePropertyList));
+	m_imageCross = new StyleBitmap(L"UI.SmallCross", c_ResourceSmallCross, sizeof(c_ResourceSmallCross));
 }
 
 void PropertyItem::setText(const std::wstring& text)
@@ -187,7 +178,7 @@ void PropertyItem::createInPlaceControls(Widget* parent)
 		m_buttonRemove = new MiniButton();
 		m_buttonRemove->create(parent, L"");
 		m_buttonRemove->addEventHandler< ButtonClickEvent >(this, &PropertyItem::eventClick);
-		m_buttonRemove->setImage(s_imageCross);
+		m_buttonRemove->setImage(m_imageCross);
 	}
 }
 
@@ -248,14 +239,14 @@ void PropertyItem::paintText(Canvas& canvas, const Rect& rc)
 
 	if (!m_childItems.empty())
 	{
-		int32_t size = s_imageExpand->getSize().cy;
+		int32_t size = m_imageExpand->getSize().cy;
 		int32_t c = (rc.getHeight() - size) / 2;
 
 		canvas.drawBitmap(
 			ui::Point(rc.left + left + dpi96(2), rc.top + c),
 			ui::Point(m_expanded ? size : 0, 0),
 			ui::Size(size, size),
-			s_imageExpand,
+			m_imageExpand,
 			BmAlpha
 		);
 

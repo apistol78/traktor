@@ -80,13 +80,13 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int32_t style
 	Color4ub club = cl.saturated().toColor4ub();
 
 	m_gradientControl = new ColorGradientControl();
-	m_gradientControl->create(this, WsClientBorder | WsDoubleBuffer | WsTabStop, club);
+	m_gradientControl->create(this, WsDoubleBuffer | WsTabStop, club);
 	m_gradientControl->addEventHandler< ColorEvent >(this, &ColorDialog::eventGradientColorSelect);
 
 	m_colorGradient = new ColorGradient();
 
 	m_sliderColorControl = new ColorSliderControl();
-	m_sliderColorControl->create(this, WsClientBorder | WsDoubleBuffer  | WsTabStop, m_colorGradient);
+	m_sliderColorControl->create(this, WsDoubleBuffer | WsTabStop, m_colorGradient);
 	m_sliderColorControl->addEventHandler< ColorEvent >(this, &ColorDialog::eventSliderColorSelect);
 
 	if (style & WsAlpha)
@@ -95,7 +95,7 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int32_t style
 		m_alphaGradient->color = club;
 
 		m_sliderAlphaControl = new ColorSliderControl();
-		m_sliderAlphaControl->create(this, WsClientBorder | WsDoubleBuffer  | WsTabStop, m_alphaGradient);
+		m_sliderAlphaControl->create(this, WsDoubleBuffer | WsTabStop, m_alphaGradient);
 		m_sliderAlphaControl->setMarker(club.a);
 		m_sliderAlphaControl->addEventHandler< ColorEvent >(this, &ColorDialog::eventSliderAlphaSelect);
 	}
@@ -107,21 +107,21 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int32_t style
 	labelR->create(container, L"R:");
 
 	m_editColor[0] = new Edit();
-	m_editColor[0]->create(container, toString< int32_t >(club.r), WsClientBorder | WsTabStop, new NumericEditValidator(false, 0, 255, 0));
+	m_editColor[0]->create(container, toString< int32_t >(club.r), WsTabStop, new NumericEditValidator(false, 0, 255, 0));
 	m_editColor[0]->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
 
 	Ref< Static > labelG = new Static();
 	labelG->create(container, L"G:");
 
 	m_editColor[1] = new Edit();
-	m_editColor[1]->create(container, toString< int32_t >(club.g), WsClientBorder | WsTabStop, new NumericEditValidator(false, 0, 255, 0));
+	m_editColor[1]->create(container, toString< int32_t >(club.g), WsTabStop, new NumericEditValidator(false, 0, 255, 0));
 	m_editColor[1]->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
 
 	Ref< Static > labelB = new Static();
 	labelB->create(container, L"B:");
 
 	m_editColor[2] = new Edit();
-	m_editColor[2]->create(container, toString< int32_t >(club.b), WsClientBorder | WsTabStop, new NumericEditValidator(false, 0, 255, 0));
+	m_editColor[2]->create(container, toString< int32_t >(club.b), WsTabStop, new NumericEditValidator(false, 0, 255, 0));
 	m_editColor[2]->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
 
 	if (style & WsAlpha)
@@ -130,7 +130,7 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int32_t style
 		labelA->create(container, L"A:");
 
 		m_editColor[3] = new Edit();
-		m_editColor[3]->create(container, toString< int32_t >(club.a), WsClientBorder | WsTabStop, new NumericEditValidator(false, 0, 255, 0));
+		m_editColor[3]->create(container, toString< int32_t >(club.a), WsTabStop, new NumericEditValidator(false, 0, 255, 0));
 		m_editColor[3]->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
 	}
 
@@ -140,12 +140,12 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int32_t style
 		labelEV->create(container, L"EV:");
 
 		m_editColor[4] = new Edit();
-		m_editColor[4]->create(container, toString< int32_t >(int32_t(ev + 0.5f)), WsClientBorder | WsTabStop, new NumericEditValidator(false, -10, 10, 0));
+		m_editColor[4]->create(container, toString< int32_t >(int32_t(ev + 0.5f)), WsTabStop, new NumericEditValidator(false, -10, 10, 0));
 		m_editColor[4]->addEventHandler< FocusEvent >(this, &ColorDialog::eventEditFocus);
 	}
 
 	m_colorControl = new ColorControl();
-	m_colorControl->create(container, WsClientBorder | WsTabStop);
+	m_colorControl->create(container, WsTabStop);
 	m_colorControl->setColor(club);
 
 	m_color = initialColor;

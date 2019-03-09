@@ -55,9 +55,9 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() < 4)
 	{
-		log::info << L"Traktor.Amalgam.Deploy.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+		log::info << L"Traktor.Runtime.Deploy.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 		log::info << Endl;
-		log::info << L"Usage: Traktor.Amalgam.Deploy.App (option(s)) [workspace] [command] [target] [configuration]" << Endl;
+		log::info << L"Usage: Traktor.Runtime.Deploy.App (option(s)) [workspace] [command] [target] [configuration]" << Endl;
 		log::info << Endl;
 		log::info << L"  Options:" << Endl;
 		log::info << L"    -s,-settings              Settings file (default \"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config\")" << Endl;

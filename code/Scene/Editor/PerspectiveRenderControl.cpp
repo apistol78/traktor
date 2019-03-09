@@ -576,21 +576,24 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			float w = 2.0f * float(sz.cx) / sz.cy;
 			float h = 2.0f;
 
-			m_primitiveRenderer->setProjection(orthoLh(-w / 2.0f, -h / 2.0f, w / 2.0f, h / 2.0f, 0.0f, 1.0f));
+			m_primitiveRenderer->setProjection(orthoLh(-w / 2.0f, -h / 2.0f, w / 2.0f, h / 2.0f, -1.0f, 1.0f));
 			m_primitiveRenderer->pushWorld(Matrix44::identity());
 			m_primitiveRenderer->pushView(
 				translate(w / 2.0f - c_frameSize, h / 2.0f - c_frameSize, 0.0f) *
 				scale(c_frameSize, c_frameSize, c_frameSize)
 			);
-			m_primitiveRenderer->pushDepthState(false, false, false);
 
+			m_primitiveRenderer->pushDepthState(false, true, false);
 			m_primitiveRenderer->drawSolidQuad(
-				Vector4(-1.0f,  1.0f, 0.5f, 1.0f),
-				Vector4( 1.0f,  1.0f, 0.5f, 1.0f),
-				Vector4( 1.0f, -1.0f, 0.5f, 1.0f),
-				Vector4(-1.0f, -1.0f, 0.5f, 1.0f),
-				Color4ub(0, 0, 0, 64)
+				Vector4(-1.0f, 1.0f, 1.0f, 1.0f),
+				Vector4(1.0f, 1.0f, 1.0f, 1.0f),
+				Vector4(1.0f, -1.0f, 1.0f, 1.0f),
+				Vector4(-1.0f, -1.0f, 1.0f, 1.0f),
+				Color4ub(0, 0, 0, 32)
 			);
+			m_primitiveRenderer->popDepthState();
+
+			m_primitiveRenderer->pushDepthState(true, true, false);
 
 			m_primitiveRenderer->drawLine(
 				Vector4::origo(),
@@ -639,8 +642,8 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		{
 			RefArray< EntityAdapter > entityAdapters;
 			m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault);
-			for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-				(*i)->drawGuides(m_primitiveRenderer);
+			for (auto entityAdapter : entityAdapters)
+				entityAdapter->drawGuides(m_primitiveRenderer);
 
 			// Draw controller guides.
 			ISceneControllerEditor* controllerEditor = m_context->getControllerEditor();
@@ -689,9 +692,8 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->present();
 	}
 
-	std::vector< render::DebugTarget > debugTargets;
-
 	// Debug world renderer targets.
+	std::vector< render::DebugTarget > debugTargets;
 	m_worldRenderer->getDebugTargets(debugTargets);
 
 	// Debug profile render targets.

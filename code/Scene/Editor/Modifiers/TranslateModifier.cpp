@@ -6,6 +6,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Scene/Editor/Modifiers/TranslateModifier.h"
+#include "Ui/Application.h"
 #include "Ui/Command.h"
 
 namespace traktor
@@ -15,7 +16,7 @@ namespace traktor
 		namespace
 		{
 
-const float c_guideThickness(0.015f);
+const float c_guideThickness(0.02f);
 const Scalar c_guideScale(0.15f);
 const Scalar c_guideMinLength(1.0f);
 const float c_infinite = 1e4f;
@@ -145,11 +146,12 @@ hit:;
 	// Check each line.
 	if (m_axisHot == 0)
 	{
-		if (Line2(axis0[0], axis1[0]).classify(cursorPosition, c_guideThickness))
+		float guideThickness = ui::getSystemDPI() * c_guideThickness / 96.0f;
+		if (Line2(axis0[0], axis1[0]).classify(cursorPosition, guideThickness))
 			m_axisHot |= 1;
-		if (Line2(axis0[1], axis1[1]).classify(cursorPosition, c_guideThickness))
+		if (Line2(axis0[1], axis1[1]).classify(cursorPosition, guideThickness))
 			m_axisHot |= 2;
-		if (Line2(axis0[2], axis1[2]).classify(cursorPosition, c_guideThickness))
+		if (Line2(axis0[2], axis1[2]).classify(cursorPosition, guideThickness))
 			m_axisHot |= 4;
 	}
 

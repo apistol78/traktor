@@ -221,16 +221,16 @@ void TerrainEditModifier::selectionChanged()
 
 	render::SimpleTextureCreateDesc desc;
 
-	m_terrainInstance = 0;
-	m_heightfieldInstance = 0;
-	m_heightfieldAsset = 0;
+	m_terrainInstance = nullptr;
+	m_heightfieldInstance = nullptr;
+	m_heightfieldAsset = nullptr;
 	m_heightfield.clear();
-	m_splatImage = 0;
-	m_colorImage = 0;
+	m_splatImage = nullptr;
+	m_colorImage = nullptr;
 
 	// Get terrain component from selection.
 	RefArray< scene::EntityAdapter > entityAdapters;
-	if (m_context->getEntities(entityAdapters, scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild) <= 0)
+	if (m_context->getEntities(entityAdapters, scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild) != 1)
 		return;
 
 	m_terrainComponent = entityAdapters[0]->getComponent< TerrainComponent >();
@@ -239,8 +239,8 @@ void TerrainEditModifier::selectionChanged()
 	// Ensure we've both component and it's data.
 	if (!m_terrainComponent || !m_terrainComponentData)
 	{
-		m_terrainComponent = 0;
-		m_terrainComponentData = 0;
+		m_terrainComponent = nullptr;
+		m_terrainComponentData = nullptr;
 		return;
 	}
 
@@ -248,8 +248,8 @@ void TerrainEditModifier::selectionChanged()
 	m_heightfield = m_terrainComponent->getTerrain()->getHeightfield();
 	if (!m_heightfield)
 	{
-		m_terrainComponent = 0;
-		m_terrainComponentData = 0;
+		m_terrainComponent = nullptr;
+		m_terrainComponentData = nullptr;
 		return;
 	}
 
@@ -271,7 +271,7 @@ void TerrainEditModifier::selectionChanged()
 			}
 			m_splatImage->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
 			file->close();
-			file = 0;
+			file = nullptr;
 		}
 	}
 
@@ -326,7 +326,7 @@ void TerrainEditModifier::selectionChanged()
 			}
 			m_colorImage->convert(drawing::PixelFormat::getABGRF32());
 			file->close();
-			file = 0;
+			file = nullptr;
 		}
 	}
 
@@ -784,7 +784,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		{
 			if (!m_terrainInstance->checkout())
 			{
-				m_terrainInstance = 0;
+				m_terrainInstance = nullptr;
 				return;
 			}
 		}
@@ -794,12 +794,12 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		{
 			m_splatImage->save(file, L"tri");
 			file->close();
-			file = 0;
+			file = nullptr;
 		}
 
 		m_context->getDocument()->editInstance(
 			m_terrainInstance,
-			0
+			nullptr
 		);
 		m_context->getDocument()->setModified();
 	}
@@ -814,7 +814,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		{
 			if (!m_terrainInstance->checkout())
 			{
-				m_terrainInstance = 0;
+				m_terrainInstance = nullptr;
 				return;
 			}
 		}
@@ -824,12 +824,12 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		{
 			m_colorImageLowPrecision->save(file, L"tri");
 			file->close();
-			file = 0;
+			file = nullptr;
 		}
 
 		m_context->getDocument()->editInstance(
 			m_terrainInstance,
-			0
+			nullptr
 		);
 		m_context->getDocument()->setModified();
 	}
@@ -854,7 +854,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		{
 			if (!m_heightfieldInstance->checkout())
 			{
-				m_heightfieldInstance = 0;
+				m_heightfieldInstance = nullptr;
 				return;
 			}
 		}
@@ -863,7 +863,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		if (!m_heightfieldAsset)
 		{
 			m_heightfieldInstance->revert();
-			m_heightfieldInstance = 0;
+			m_heightfieldInstance = nullptr;
 			return;
 		}
 
@@ -885,7 +885,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 			hf::HeightfieldFormat().write(data, m_heightfield);
 
 			data->close();
-			data = 0;
+			data = nullptr;
 
 			m_context->getDocument()->setModified();
 		}

@@ -273,12 +273,12 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	{
 		const wchar_t* c_textIds[] =
 		{
-			L"AMALGAM_STATE_IDLE",
-			L"AMALGAM_STATE_BUILDING",
-			L"AMALGAM_STATE_DEPLOYING",
-			L"AMALGAM_STATE_LAUNCHING",
-			L"AMALGAM_STATE_MIGRATING",
-			L"AMALGAM_STATE_PENDING"
+			L"RUNTIME_STATE_IDLE",
+			L"RUNTIME_STATE_BUILDING",
+			L"RUNTIME_STATE_DEPLOYING",
+			L"RUNTIME_STATE_LAUNCHING",
+			L"RUNTIME_STATE_MIGRATING",
+			L"RUNTIME_STATE_PENDING"
 		};
 		T_FATAL_ASSERT(m_instance->getState() < sizeof_array(c_textIds));
 		m_progressCell->setText(i18n::Text(c_textIds[m_instance->getState()]));

@@ -109,7 +109,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	container1->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, f));
 
 	m_editBuildRootInstance = new ui::Edit();
-	m_editBuildRootInstance->create(container1, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
+	m_editBuildRootInstance->create(container1, L"", ui::Edit::WsReadOnly);
 	m_editBuildRootInstance->setText(L"");
 
 	m_buttonBuildRootInstance = new ui::MiniButton();
@@ -123,7 +123,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	container2->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, f));
 
 	m_editStartupInstance = new ui::Edit();
-	m_editStartupInstance->create(container2, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
+	m_editStartupInstance->create(container2, L"", ui::Edit::WsReadOnly);
 	m_editStartupInstance->setText(L"");
 
 	m_buttonStartupInstance = new ui::MiniButton();
@@ -137,7 +137,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	container3->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, f));
 
 	m_editDefaultInputInstance = new ui::Edit();
-	m_editDefaultInputInstance->create(container3, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
+	m_editDefaultInputInstance->create(container3, L"", ui::Edit::WsReadOnly);
 	m_editDefaultInputInstance->setText(L"");
 
 	m_buttonDefaultInputInstance = new ui::MiniButton();
@@ -151,7 +151,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	container4->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, f));
 
 	m_editOnlineConfigInstance = new ui::Edit();
-	m_editOnlineConfigInstance->create(container4, L"", ui::WsClientBorder | ui::Edit::WsReadOnly);
+	m_editOnlineConfigInstance->create(container4, L"", ui::Edit::WsReadOnly);
 	m_editOnlineConfigInstance->setText(L"");
 
 	m_buttonOnlineConfigInstance = new ui::MiniButton();
@@ -295,14 +295,14 @@ void TargetEditor::updateAvailableFeatures()
 	TargetConfiguration* targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
 	if (targetConfiguration)
 	{
-		for (std::list< EditFeature >::const_iterator i = m_features.begin(); i != m_features.end(); ++i)
+		for (const auto& feature : m_features)
 		{
-			if (i->feature != 0 && i->feature->getPlatform(targetConfiguration->getPlatform()) != 0)
+			if (feature.feature != 0 && feature.feature->getPlatform(targetConfiguration->getPlatform()) != nullptr)
 			{
-				if (targetConfiguration->haveFeature(i->featureInstance->getGuid()))
+				if (targetConfiguration->haveFeature(feature.featureInstance->getGuid()))
 					continue;
 
-				m_listBoxAvailFeatures->add(i->feature->getDescription(), i->featureInstance);
+				m_listBoxAvailFeatures->add(feature.feature->getDescription(), feature.featureInstance);
 			}
 		}
 	}
@@ -317,14 +317,13 @@ void TargetEditor::updateUsedFeatures()
 	{
 		std::list< EditFeature > features;
 
-		const std::list< Guid >& featureGuids = targetConfiguration->getFeatures();
-		for (std::list< Guid >::const_iterator i = featureGuids.begin(); i != featureGuids.end(); ++i)
+		for (const auto& featureGuid : targetConfiguration->getFeatures())
 		{
-			for (std::list< EditFeature >::const_iterator j = m_features.begin(); j != m_features.end(); ++j)
+			for (const auto& feature : m_features)
 			{
-				if (*i == j->featureInstance->getGuid())
+				if (featureGuid == feature.featureInstance->getGuid())
 				{
-					features.push_back(*j);
+					features.push_back(feature);
 					break;
 				}
 			}
@@ -332,8 +331,8 @@ void TargetEditor::updateUsedFeatures()
 
 		features.sort();
 
-		for (std::list< EditFeature >::const_iterator i = features.begin(); i != features.end(); ++i)
-			m_listBoxUsedFeatures->add(i->feature->getDescription(), i->featureInstance);
+		for (const auto& feature : features)
+			m_listBoxUsedFeatures->add(feature.feature->getDescription(), feature.featureInstance);
 	}
 }
 

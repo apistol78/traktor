@@ -19,7 +19,7 @@ namespace traktor
  * \ingroup Runtime
  *
  * Applications are notified with this
- * event when Amalgam is becoming activated or deactivated.
+ * event when Runtime is becoming activated or deactivated.
  */
 class T_DLLCLASS ActiveEvent : public Object
 {

@@ -73,21 +73,21 @@ namespace traktor
 
 const struct { const wchar_t* human; const wchar_t* code; } c_languageCodes[] =
 {
-	{ L"AMALGAM_LANGUAGE_ENGLISH", L"en" },
-	{ L"AMALGAM_LANGUAGE_FRENCH", L"fr" },
-	{ L"AMALGAM_LANGUAGE_GERMAN", L"de" },
-	{ L"AMALGAM_LANGUAGE_DUTCH", L"nl" },
-	{ L"AMALGAM_LANGUAGE_ITALIAN", L"it" },
-	{ L"AMALGAM_LANGUAGE_JAPANESE", L"jp" },
-	{ L"AMALGAM_LANGUAGE_KOREANA", L"kr" },
-	{ L"AMALGAM_LANGUAGE_SPANISH", L"es" },
-	{ L"AMALGAM_LANGUAGE_RUSSIAN", L"ru" },
-	{ L"AMALGAM_LANGUAGE_POLISH", L"pl" },
-	{ L"AMALGAM_LANGUAGE_PORTUGUESE", L"pt" },
-	{ L"AMALGAM_LANGUAGE_CHINESE", L"ch" },
-	{ L"AMALGAM_LANGUAGE_SWEDISH", L"sv" },
-	{ L"AMALGAM_LANGUAGE_ROMANIAN", L"ro" },
-	{ L"AMALGAM_LANGUAGE_CZECH", L"cs" }
+	{ L"RUNTIME_LANGUAGE_ENGLISH", L"en" },
+	{ L"RUNTIME_LANGUAGE_FRENCH", L"fr" },
+	{ L"RUNTIME_LANGUAGE_GERMAN", L"de" },
+	{ L"RUNTIME_LANGUAGE_DUTCH", L"nl" },
+	{ L"RUNTIME_LANGUAGE_ITALIAN", L"it" },
+	{ L"RUNTIME_LANGUAGE_JAPANESE", L"jp" },
+	{ L"RUNTIME_LANGUAGE_KOREANA", L"kr" },
+	{ L"RUNTIME_LANGUAGE_SPANISH", L"es" },
+	{ L"RUNTIME_LANGUAGE_RUSSIAN", L"ru" },
+	{ L"RUNTIME_LANGUAGE_POLISH", L"pl" },
+	{ L"RUNTIME_LANGUAGE_PORTUGUESE", L"pt" },
+	{ L"RUNTIME_LANGUAGE_CHINESE", L"ch" },
+	{ L"RUNTIME_LANGUAGE_SWEDISH", L"sv" },
+	{ L"RUNTIME_LANGUAGE_ROMANIAN", L"ro" },
+	{ L"RUNTIME_LANGUAGE_CZECH", L"cs" }
 };
 
 class TargetInstanceProgressListener : public RefCountImpl< ITargetAction::IProgressListener >
@@ -151,12 +151,12 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolBar->setEnable(false);
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorPlugin::eventToolBarClick);
 
-	m_toolTargets = new ui::ToolBarDropDown(ui::Command(L"Runtime.Targets"), ui::dpi96(120), i18n::Text(L"AMALGAM_TARGETS"));
+	m_toolTargets = new ui::ToolBarDropDown(ui::Command(L"Runtime.Targets"), ui::dpi96(120), i18n::Text(L"RUNTIME_TARGETS"));
 	m_toolBar->addItem(m_toolTargets);
 
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 
-	m_toolTweaks = new ui::ToolBarDropMenu(ui::dpi96(70), i18n::Text(L"AMALGAM_TWEAKS"), true, i18n::Text(L"AMALGAM_TWEAKS_TOOLTIP"));
+	m_toolTweaks = new ui::ToolBarDropMenu(ui::dpi96(70), i18n::Text(L"RUNTIME_TWEAKS"), true, i18n::Text(L"RUNTIME_TWEAKS_TOOLTIP"));
 	m_toolTweaks->add(createTweakMenuItem(L"Mute Audio", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Audio \"Write Out\"", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Force Render Thread Off", false));
@@ -171,8 +171,8 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(createTweakMenuItem(L"Launch With 1/4 Window", false));
 	m_toolBar->addItem(m_toolTweaks);
 
-	m_toolLanguage = new ui::ToolBarDropDown(ui::Command(L"Runtime.Language"), ui::dpi96(85), i18n::Text(L"AMALGAM_LANGUAGE"));
-	m_toolLanguage->add(i18n::Text(L"AMALGAM_LANGUAGE_DEFAULT"));
+	m_toolLanguage = new ui::ToolBarDropDown(ui::Command(L"Runtime.Language"), ui::dpi96(85), i18n::Text(L"RUNTIME_LANGUAGE"));
+	m_toolLanguage->add(i18n::Text(L"RUNTIME_LANGUAGE_DEFAULT"));
 	for (uint32_t i = 0; i < sizeof_array(c_languageCodes); ++i)
 		m_toolLanguage->add(i18n::Text(c_languageCodes[i].human));
 	m_toolLanguage->select(0);

@@ -36,7 +36,7 @@ bool QuickOpenDialog::create(ui::Widget* parent)
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
 	m_editFilter = new ui::Edit();
-	m_editFilter->create(this, L"", ui::WsClientBorder | ui::WsWantAllInput);
+	m_editFilter->create(this, L"", ui::WsWantAllInput);
 	m_editFilter->addEventHandler< ui::ContentChangeEvent >(this, &QuickOpenDialog::eventFilterChange);
 	m_editFilter->addEventHandler< ui::KeyDownEvent >(this, &QuickOpenDialog::eventFilterKey);
 

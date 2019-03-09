@@ -30,6 +30,8 @@ public:
 
 	explicit StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize);
 
+	virtual ~StyleBitmap();
+
 	virtual void destroy() override final;
 
 	virtual Size getSize() const override final;
@@ -41,6 +43,7 @@ public:
 private:
 	const wchar_t* const m_name;
 	Ref< IBitmap > m_defaultBitmap;
+	bool m_ownDefaultBitmap;
 	mutable std::wstring m_path;
 	mutable Ref< IBitmap > m_bitmap;
 

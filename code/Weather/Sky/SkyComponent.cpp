@@ -84,7 +84,7 @@ void SkyComponent::render(
 	if (!program)
 		return;
 
-	Vector4 sunDirection = m_transform.rotation() * Vector4(0.0f, 1.0f, 0.0f);
+	Vector4 sunDirection = m_transform.axisY();
 
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Sky");
 

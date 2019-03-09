@@ -1,5 +1,4 @@
-#ifndef traktor_amalgam_PrefabMergePipeline_H
-#define traktor_amalgam_PrefabMergePipeline_H
+#pragma once
 
 #include "Editor/IPipeline.h"
 
@@ -64,5 +63,3 @@ private:
 
 	}
 }
-
-#endif	// game_PrefabMergePipeline_H

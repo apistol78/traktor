@@ -40,26 +40,26 @@ struct ImageHeader
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Bitmap", Bitmap, IBitmap)
 
 Bitmap::Bitmap()
-:	m_bitmap(0)
+:	m_bitmap(nullptr)
 {
 }
 
 Bitmap::Bitmap(uint32_t width, uint32_t height)
-:	m_bitmap(0)
+:	m_bitmap(nullptr)
 {
 	create(width, height);
 	T_ASSERT(m_bitmap);
 }
 
 Bitmap::Bitmap(drawing::Image* image)
-:	m_bitmap(0)
+:	m_bitmap(nullptr)
 {
 	create(image);
 	T_ASSERT(m_bitmap);
 }
 
 Bitmap::Bitmap(drawing::Image* image, const ui::Rect& srcRect)
-:	m_bitmap(0)
+:	m_bitmap(nullptr)
 {
 	create(image, srcRect);
 	T_ASSERT(m_bitmap);
@@ -82,8 +82,7 @@ bool Bitmap::create(uint32_t width, uint32_t height)
 
 	if (!m_bitmap->create(width, height))
 	{
-		m_bitmap->destroy();
-		m_bitmap = 0;
+		safeDestroy(m_bitmap);
 		return false;
 	}
 
@@ -176,8 +175,7 @@ Ref< Bitmap > Bitmap::load(const std::wstring& fileName)
 		DynamicMemoryStream dms(false, true);
 		StreamCopy(&dms, s).execute();
 
-		s->close();
-		s = 0;
+		safeClose(s);
 
 		const void* resource = &dms.getBuffer()[0];
 		uint32_t size = dms.getBuffer().size();

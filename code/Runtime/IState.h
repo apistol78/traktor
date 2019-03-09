@@ -26,7 +26,7 @@ class UpdateInfo;
  * classes from IState which represent
  * various states which the application can
  * be in such as FrontEnd, Loading, InGame etc.
- * Amalgam is responsible of managing the
+ * Runtime is responsible of managing the
  * transition safely between different states
  * by, for instance, synchronizing the renderer etc.
  */

@@ -1,7 +1,7 @@
 #include <emscripten.h>
-#include "Amalgam/Game/IOnlineServer.h"
-#include "Amalgam/Game/Impl/Application.h"
-#include "Amalgam/Game/Impl/Environment.h"
+#include "Runtime/IOnlineServer.h"
+#include "Runtime/Impl/Application.h"
+#include "Runtime/Impl/Environment.h"
 #include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -22,7 +22,7 @@ extern "C" void __traktor__emscripten__linkage__();
 namespace
 {
 
-Ref< amalgam::Application > g_application;
+Ref< runtime::Application > g_application;
 
 Ref< PropertyGroup > loadSettings(const Path& settingsFile)
 {
@@ -79,7 +79,7 @@ int main(int argc, const char** argv)
 
 	traktor::log::info << L"Creating application..." << Endl;
 
-	g_application = new amalgam::Application();
+	g_application = new runtime::Application();
 	if (!g_application->create(
 		defaultSettings,
 		settings,

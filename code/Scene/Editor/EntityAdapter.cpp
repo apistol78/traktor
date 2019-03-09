@@ -252,6 +252,24 @@ void EntityAdapter::removeChild(EntityAdapter* child)
 		unlinkChild(child);
 }
 
+void EntityAdapter::swapChildren(EntityAdapter* child1, EntityAdapter* child2)
+{
+	auto it1 = std::find(m_children.begin(), m_children.end(), child1);
+	auto it2 = std::find(m_children.begin(), m_children.end(), child2);
+	if (it1 == m_children.end() || it2 == m_children.end())
+		return;
+
+	for (auto child : m_children)
+		m_entityEditor->removeChildEntity(child);
+
+	Ref< EntityAdapter > tmp = *it1;
+	*it1 = *it2;
+	*it2 = tmp;
+
+	for (auto child : m_children)
+		m_entityEditor->addChildEntity(child);
+}
+
 const RefArray< EntityAdapter >& EntityAdapter::getChildren() const
 {
 	return m_children;
@@ -259,13 +277,13 @@ const RefArray< EntityAdapter >& EntityAdapter::getChildren() const
 
 EntityAdapter* EntityAdapter::findChildAdapterFromEntity(const world::Entity* entity) const
 {
-	SmallMap< const world::Entity*, EntityAdapter* >::const_iterator i = m_childMap.find(entity);
-	return i != m_childMap.end() ? i->second : 0;
+	auto i = m_childMap.find(entity);
+	return i != m_childMap.end() ? i->second : nullptr;
 }
 
 void EntityAdapter::link(EntityAdapter* child)
 {
-	T_FATAL_ASSERT_M (child->m_parent == 0, L"Child already linked to another parent");
+	T_FATAL_ASSERT_M (child->m_parent == nullptr, L"Child already linked to another parent");
 	T_FATAL_ASSERT_M (std::find(m_children.begin(), m_children.end(), child) == m_children.end(), L"Child already added");
 	child->m_parent = this;
 	m_children.push_back(child);

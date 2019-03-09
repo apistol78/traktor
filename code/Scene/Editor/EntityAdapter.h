@@ -165,6 +165,8 @@ public:
 
 	void removeChild(EntityAdapter* child);
 
+	void swapChildren(EntityAdapter* child1, EntityAdapter* child2);
+
 	const RefArray< EntityAdapter >& getChildren() const;
 
 	EntityAdapter* findChildAdapterFromEntity(const world::Entity* entity) const;

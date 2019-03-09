@@ -35,6 +35,7 @@
 #include "Scene/Editor/ScenePreviewControl.h"
 #include "Scene/Editor/Events/CameraMovedEvent.h"
 #include "Scene/Editor/Events/PostBuildEvent.h"
+#include "Scene/Editor/Events/PostFrameEvent.h"
 #include "Scene/Editor/Events/PostModifyEvent.h"
 #include "Scene/Editor/Events/PreModifyEvent.h"
 #include "Ui/Application.h"
@@ -243,11 +244,13 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveToEntity"), 1);
 	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.FilterEntity"), 1);
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), 0, ui::Command(L"Editor.Delete")));
+	m_entityToolBar->addItem(new ui::ToolBarSeparator());
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), 1, ui::Command(L"Scene.Editor.MoveToEntity")));
-
 	m_buttonFilterEntity = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_FILTER_ENTITY"), 2, ui::Command(L"Scene.Editor.FilterEntity"), ui::ToolBarButton::BsDefaultToggle);
 	m_entityToolBar->addItem(m_buttonFilterEntity);
-
+	m_entityToolBar->addItem(new ui::ToolBarSeparator());
+	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_UP"), 1, ui::Command(L"Scene.Editor.MoveUp")));
+	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_DOWN"), 1, ui::Command(L"Scene.Editor.MoveDown")));
 	m_entityToolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &SceneEditorPage::eventEntityToolClick);
 
 	m_imageHidden = new ui::StyleBitmap(L"Scene.LayerHidden");
@@ -327,6 +330,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_context->addEventHandler< PreModifyEvent >(this, &SceneEditorPage::eventContextPreModify);
 	m_context->addEventHandler< PostModifyEvent >(this, &SceneEditorPage::eventContextPostModify);
 	m_context->addEventHandler< CameraMovedEvent >(this, &SceneEditorPage::eventContextCameraMoved);
+	m_context->addEventHandler< PostFrameEvent >(this, &SceneEditorPage::eventContextPostFrame);
 
 	// Finally realize the scene.
 	createSceneAsset();
@@ -620,6 +624,22 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		result = addEntity(&type_of< world::GroupEntityData >());
 	else if (command == L"Scene.Editor.MoveToEntity")
 		result = moveToEntity();
+	else if (command == L"Scene.Editor.MoveUp")
+	{
+		if ((result = moveUp()) == true)
+		{
+			updateScene();
+			createInstanceGrid();
+		}
+	}
+	else if (command == L"Scene.Editor.MoveDown")
+	{
+		if ((result = moveDown()) == true)
+		{
+			updateScene();
+			createInstanceGrid();
+		}
+	}
 	else if (command == L"Scene.Editor.FilterEntity")
 	{
 		if (m_buttonFilterEntity->isToggled())
@@ -629,7 +649,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 				false
 			);
 		else
-			m_entityFilterType = 0;
+			m_entityFilterType = nullptr;
 
 		createInstanceGrid();
 	}
@@ -997,7 +1017,9 @@ void SceneEditorPage::updateStatusBar()
 	ss.setDecimals(2);
 	ss << position.x() << L", " << position.y() << L", " << position.z() << L"     ";
 	ss << rad2deg(angles.x()) << L", " << rad2deg(angles.y()) << L", " << rad2deg(angles.z()) << L" deg" << L"     ";
-	ss << m_context->getEntityCount() << L" entities";
+	ss << m_context->getEntityCount() << L" entities" << L"     ";
+	ss.setDecimals(1);
+	ss << m_context->getTime() << L" (" << m_context->getTimeScale() << L")";
 
 	RefArray< EntityAdapter > selectedEntities;
 	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
@@ -1089,6 +1111,56 @@ bool SceneEditorPage::moveToEntity()
 		m_context->moveToEntityAdapter(selectedEntities[0]);
 	else
 		m_context->moveToEntityAdapter(0);
+	return true;
+}
+
+bool SceneEditorPage::moveUp()
+{
+	RefArray< EntityAdapter > selectedEntities;
+	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1)
+		return false;
+
+	EntityAdapter* moving = selectedEntities.back();
+	T_ASSERT(moving != nullptr);
+
+	EntityAdapter* parent = moving->getParent();
+	if (!parent)
+		return false;
+
+	auto& children = parent->getChildren();
+	auto it = std::find(children.begin(), children.end(), moving);
+	if (it == children.begin() || it == children.end())
+		return false;
+
+	EntityAdapter* previousSibling = *(it - 1);
+	T_ASSERT(previousSibling != nullptr);
+
+	parent->swapChildren(moving, previousSibling);
+	return true;
+}
+
+bool SceneEditorPage::moveDown()
+{
+	RefArray< EntityAdapter > selectedEntities;
+	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1)
+		return false;
+
+	EntityAdapter* moving = selectedEntities.back();
+	T_ASSERT(moving != nullptr);
+
+	EntityAdapter* parent = moving->getParent();
+	if (!parent)
+		return false;
+
+	auto& children = parent->getChildren();
+	auto it = std::find(children.begin(), children.end(), moving);
+	if (it == children.end() || it + 1 == children.end())
+		return false;
+
+	EntityAdapter* nextSibling = *(it + 1);
+	T_ASSERT(nextSibling != nullptr);
+
+	parent->swapChildren(moving, nextSibling);
 	return true;
 }
 
@@ -1239,6 +1311,11 @@ void SceneEditorPage::eventContextPostModify(PostModifyEvent* event)
 }
 
 void SceneEditorPage::eventContextCameraMoved(CameraMovedEvent* event)
+{
+	updateStatusBar();
+}
+
+void SceneEditorPage::eventContextPostFrame(PostFrameEvent* event)
 {
 	updateStatusBar();
 }

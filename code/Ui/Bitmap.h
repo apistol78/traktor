@@ -39,11 +39,11 @@ class T_DLLCLASS Bitmap : public IBitmap
 public:
 	Bitmap();
 
-	Bitmap(uint32_t width, uint32_t height);
+	explicit Bitmap(uint32_t width, uint32_t height);
 
-	Bitmap(drawing::Image* image);
+	explicit Bitmap(drawing::Image* image);
 
-	Bitmap(drawing::Image* image, const ui::Rect& srcRect);
+	explicit Bitmap(drawing::Image* image, const ui::Rect& srcRect);
 
 	virtual ~Bitmap();
 

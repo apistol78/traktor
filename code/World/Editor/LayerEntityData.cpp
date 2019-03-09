@@ -22,11 +22,11 @@ LayerEntityData::LayerEntityData()
 void LayerEntityData::setAttribute(const ILayerAttribute* attribute)
 {
 	T_ASSERT(attribute);
-	for (RefArray< const ILayerAttribute >::iterator i = m_attributes.begin(); i != m_attributes.end(); ++i)
+	for (auto& attr : m_attributes)
 	{
-		if (is_type_a(type_of(*i), type_of(attribute)))
+		if (is_type_a(type_of(attr), type_of(attribute)))
 		{
-			*i = attribute;
+			attr = attribute;
 			return;
 		}
 	}
@@ -35,12 +35,12 @@ void LayerEntityData::setAttribute(const ILayerAttribute* attribute)
 
 const ILayerAttribute* LayerEntityData::getAttribute(const TypeInfo& attributeType) const
 {
-	for (RefArray< const ILayerAttribute >::const_iterator i = m_attributes.begin(); i != m_attributes.end(); ++i)
+	for (auto attr : m_attributes)
 	{
-		if (is_type_a(type_of(*i), attributeType))
-			return *i;
+		if (is_type_a(type_of(attr), attributeType))
+			return attr;
 	}
-	return 0;
+	return nullptr;
 }
 
 void LayerEntityData::serialize(ISerializer& s)
