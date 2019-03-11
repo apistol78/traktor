@@ -55,6 +55,60 @@ const resource::Id< render::ImageProcessSettings > c_motionBlurHigh(Guid(L"{E893
 const resource::Id< render::ImageProcessSettings > c_motionBlurUltra(Guid(L"{CD4A0939-233B-2E43-988D-DA6E0DB7A6E6}"));
 const resource::Id< render::ImageProcessSettings > c_toneMap(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
 
+resource::Id< render::ImageProcessSettings > getAmbientOcclusionId(Quality quality)
+{
+	switch (quality)
+	{
+	default:
+	case QuDisabled:
+		return resource::Id< render::ImageProcessSettings >();
+	case QuLow:
+		return c_ambientOcclusionLow;
+	case QuMedium:
+		return c_ambientOcclusionMedium;
+	case QuHigh:
+		return c_ambientOcclusionHigh;
+	case QuUltra:
+		return c_ambientOcclusionUltra;
+	}
+}
+
+resource::Id< render::ImageProcessSettings > getAntiAliasId(Quality quality)
+{
+	switch (quality)
+	{
+	default:
+	case QuDisabled:
+		return c_antiAliasNone;
+	case QuLow:
+		return c_antiAliasLow;
+	case QuMedium:
+		return c_antiAliasMedium;
+	case QuHigh:
+		return c_antiAliasHigh;
+	case QuUltra:
+		return c_antiAliasUltra;
+	}
+}
+
+resource::Id< render::ImageProcessSettings > getMotionBlurId(Quality quality)
+{
+	switch (quality)
+	{
+	default:
+	case QuDisabled:
+		return resource::Id< render::ImageProcessSettings >();
+	case QuLow:
+		return c_motionBlurLow;
+	case QuMedium:
+		return c_motionBlurMedium;
+	case QuHigh:
+		return c_motionBlurHigh;
+	case QuUltra:
+		return c_motionBlurUltra;
+	}
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererDeferred", 0, WorldRendererDeferred, IWorldRenderer)
@@ -72,12 +126,14 @@ render::handle_t WorldRendererDeferred::ms_handleColorMap = 0;
 render::handle_t WorldRendererDeferred::ms_handleDepthMap = 0;
 render::handle_t WorldRendererDeferred::ms_handleLightMap = 0;
 render::handle_t WorldRendererDeferred::ms_handleNormalMap = 0;
+render::handle_t WorldRendererDeferred::ms_handleMiscMap = 0;
 render::handle_t WorldRendererDeferred::ms_handleReflectionMap = 0;
 render::handle_t WorldRendererDeferred::ms_handleFogDistanceAndDensity = 0;
 render::handle_t WorldRendererDeferred::ms_handleFogColor = 0;
 
 WorldRendererDeferred::WorldRendererDeferred()
-:	m_motionBlurQuality(QuDisabled)
+:	m_toneMapQuality(QuDisabled)
+,	m_motionBlurQuality(QuDisabled)
 ,	m_shadowsQuality(QuDisabled)
 ,	m_ambientOcclusionQuality(QuDisabled)
 ,	m_antiAliasQuality(QuDisabled)
@@ -100,6 +156,7 @@ WorldRendererDeferred::WorldRendererDeferred()
 	ms_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
 	ms_handleLightMap = render::getParameterHandle(L"World_LightMap");
 	ms_handleNormalMap = render::getParameterHandle(L"World_NormalMap");
+	ms_handleMiscMap = render::getParameterHandle(L"World_MiscMap");
 	ms_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
 	ms_handleFogDistanceAndDensity = render::getParameterHandle(L"World_FogDistanceAndDensity");
 	ms_handleFogColor = render::getParameterHandle(L"World_FogColor");
@@ -115,6 +172,7 @@ bool WorldRendererDeferred::create(
 	m_renderView = renderView;
 
 	m_settings = *desc.worldRenderSettings;
+	m_toneMapQuality = desc.toneMapQuality;
 	m_motionBlurQuality = desc.motionBlurQuality;
 	m_shadowSettings = m_settings.shadowSettings[desc.shadowsQuality];
 	m_shadowsQuality = desc.shadowsQuality;
@@ -144,9 +202,10 @@ bool WorldRendererDeferred::create(
 		rtscd.count = 4;
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
-		rtscd.multiSample = desc.multiSample;
-		rtscd.createDepthStencil = !desc.usePrimaryDepth;
-		rtscd.usingPrimaryDepthStencil = desc.usePrimaryDepth;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
 		rtscd.preferTiled = true;
 #if !defined(__PS3__)
 		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
@@ -161,19 +220,6 @@ bool WorldRendererDeferred::create(
 #endif
 
 		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
-
-		if (!m_gbufferTargetSet && desc.multiSample > 0)
-		{
-			rtscd.multiSample = 0;
-			rtscd.createDepthStencil = true;
-			rtscd.usingPrimaryDepthStencil = false;
-			rtscd.ignoreStencil = true;
-
-			m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
-			if (m_gbufferTargetSet)
-				log::warning << L"MSAA depth render target unsupported; may cause poor performance." << Endl;
-		}
-
 		if (!m_gbufferTargetSet)
 		{
 			log::error << L"Unable to create depth render target." << Endl;
@@ -190,8 +236,9 @@ bool WorldRendererDeferred::create(
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
 		rtscd.multiSample = 0;
-		rtscd.createDepthStencil = !desc.usePrimaryDepth;
-		rtscd.usingPrimaryDepthStencil = desc.usePrimaryDepth;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
 		rtscd.preferTiled = true;
 		rtscd.targets[0].format = render::TfR16G16F;
 
@@ -216,7 +263,7 @@ bool WorldRendererDeferred::create(
 		rtscd.preferTiled = true;
 		rtscd.ignoreStencil = true;
 		rtscd.generateMips = true;
-		rtscd.targets[0].format = render::TfR11G11B10F;
+		rtscd.targets[0].format = render::TfR32G32B32A32F; //render::TfR11G11B10F;
 
 		m_colorTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_colorTargetSet)
@@ -336,11 +383,12 @@ bool WorldRendererDeferred::create(
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
 		rtscd.multiSample = 0;
-		rtscd.createDepthStencil = !desc.usePrimaryDepth;
-		rtscd.usingPrimaryDepthStencil = desc.usePrimaryDepth;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
 		rtscd.preferTiled = true;
-		rtscd.targets[0].format = render::TfR11G11B10F;	// Diffuse radiance
-		rtscd.targets[1].format = render::TfR11G11B10F;	// Specular radiance
+		rtscd.targets[0].format = render::TfR32G32B32A32F; //render::TfR11G11B10F;	// Diffuse radiance
+		rtscd.targets[1].format = render::TfR32G32B32A32F; //render::TfR11G11B10F;	// Specular radiance
 
 		m_lightAccumulationTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_lightAccumulationTargetSet)
@@ -348,6 +396,29 @@ bool WorldRendererDeferred::create(
 			log::error << L"Unable to create light accumulation render target." << Endl;
 			return false;
 		}
+	}
+
+	// Create "visual" and "intermediate" target.
+	{
+		render::RenderTargetSetCreateDesc rtscd;
+
+		rtscd.count = 1;
+		rtscd.width = desc.width;
+		rtscd.height = desc.height;
+		rtscd.multiSample = desc.multiSample;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
+		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
+		rtscd.preferTiled = true;
+		rtscd.targets[0].format = render::TfR32G32B32A32F; // render::TfR11G11B10F;
+
+		m_visualTargetSet = renderSystem->createRenderTargetSet(rtscd);
+		if (!m_visualTargetSet)
+			return false;
+
+		m_intermediateTargetSet = renderSystem->createRenderTargetSet(rtscd);
+		if (!m_intermediateTargetSet)
+			return false;
 	}
 
 	// Create "color read-back" copy processing.
@@ -378,31 +449,8 @@ bool WorldRendererDeferred::create(
 
 	// Create ambient occlusion processing.
 	{
-		resource::Id< render::ImageProcessSettings > ambientOcclusionId;
+		resource::Id< render::ImageProcessSettings > ambientOcclusionId = getAmbientOcclusionId(m_ambientOcclusionQuality);
 		resource::Proxy< render::ImageProcessSettings > ambientOcclusion;
-
-		switch (m_ambientOcclusionQuality)
-		{
-		default:
-		case QuDisabled:
-			break;
-
-		case QuLow:
-			ambientOcclusionId = c_ambientOcclusionLow;
-			break;
-
-		case QuMedium:
-			ambientOcclusionId = c_ambientOcclusionMedium;
-			break;
-
-		case QuHigh:
-			ambientOcclusionId = c_ambientOcclusionHigh;
-			break;
-
-		case QuUltra:
-			ambientOcclusionId = c_ambientOcclusionUltra;
-			break;
-		}
 
 		if (ambientOcclusionId)
 		{
@@ -431,32 +479,8 @@ bool WorldRendererDeferred::create(
 
 	// Create antialias processing.
 	{
-		resource::Id< render::ImageProcessSettings > antiAliasId;
+		resource::Id< render::ImageProcessSettings > antiAliasId = getAntiAliasId(m_antiAliasQuality);
 		resource::Proxy< render::ImageProcessSettings > antiAlias;
-
-		switch (m_antiAliasQuality)
-		{
-		default:
-		case QuDisabled:
-			antiAliasId = c_antiAliasNone;
-			break;
-
-		case QuLow:
-			antiAliasId = c_antiAliasLow;
-			break;
-
-		case QuMedium:
-			antiAliasId = c_antiAliasMedium;
-			break;
-
-		case QuHigh:
-			antiAliasId = c_antiAliasHigh;
-			break;
-
-		case QuUltra:
-			antiAliasId = c_antiAliasUltra;
-			break;
-		}
 
 		if (antiAliasId)
 		{
@@ -576,31 +600,9 @@ bool WorldRendererDeferred::create(
 	// Create motion blur final processing.
 	if (m_motionBlurQuality > QuDisabled)
 	{
-		resource::Id< render::ImageProcessSettings > motionBlurId;
-		switch (desc.motionBlurQuality)
-		{
-		default:
-		case QuDisabled:
-			break;
-
-		case QuLow:
-			motionBlurId = c_motionBlurLow;
-			break;
-
-		case QuMedium:
-			motionBlurId = c_motionBlurMedium;
-			break;
-
-		case QuHigh:
-			motionBlurId = c_motionBlurHigh;
-			break;
-
-		case QuUltra:
-			motionBlurId = c_motionBlurUltra;
-			break;
-		}
-
+		resource::Id< render::ImageProcessSettings > motionBlurId = getMotionBlurId(desc.motionBlurQuality);
 		resource::Proxy< render::ImageProcessSettings > motionBlur;
+
 		if (!resourceManager->bind(motionBlurId, motionBlur))
 		{
 			log::warning << L"Unable to create motion blur process; motion blur disabled." << Endl;
@@ -628,10 +630,15 @@ bool WorldRendererDeferred::create(
 	}
 
 	// Create tone map processing.
+	if (m_toneMapQuality > QuDisabled)
 	{
 		resource::Proxy< render::ImageProcessSettings > toneMap;
+
 		if (!resourceManager->bind(c_toneMap, toneMap))
+		{
 			log::warning << L"Unable to create tone map process." << Endl;
+			m_toneMapQuality = QuDisabled;
+		}
 
 		if (toneMap)
 		{
@@ -651,8 +658,9 @@ bool WorldRendererDeferred::create(
 				);
 			else
 			{
-				log::warning << L"Unable to create tone map process." << Endl;
+				log::warning << L"Unable to create tone map process; tone mapping disabled." << Endl;
 				m_toneMapImageProcess = nullptr;
+				m_toneMapQuality = QuDisabled;
 			}
 		}
 	}
@@ -662,28 +670,6 @@ bool WorldRendererDeferred::create(
 	{
 		if (!resourceManager->bind(m_settings.reflectionMap, m_reflectionMap))
 			log::warning << L"Unable to create reflection map" << Endl;
-	}
-
-	// Create "visual" and "intermediate" target.
-	{
-		render::RenderTargetSetCreateDesc rtscd;
-
-		rtscd.count = 1;
-		rtscd.width = desc.width;
-		rtscd.height = desc.height;
-		rtscd.multiSample = desc.multiSample;
-		rtscd.createDepthStencil = !desc.usePrimaryDepth;
-		rtscd.usingPrimaryDepthStencil = desc.usePrimaryDepth;
-		rtscd.preferTiled = true;
-		rtscd.targets[0].format = render::TfR11G11B10F;
-
-		m_visualTargetSet = renderSystem->createRenderTargetSet(rtscd);
-		if (!m_visualTargetSet)
-			return false;
-
-		m_intermediateTargetSet = renderSystem->createRenderTargetSet(rtscd);
-		if (!m_intermediateTargetSet)
-			return false;
 	}
 
 	// Allocate contexts.
@@ -896,6 +882,10 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		irradianceProgramParams.setMatrixParameter(ms_handleView, f.view);
 		irradianceProgramParams.setMatrixParameter(ms_handleViewInverse, f.view.inverse());
 		irradianceProgramParams.setMatrixParameter(ms_handleProjection, projection);
+		irradianceProgramParams.setTextureParameter(ms_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
+		irradianceProgramParams.setTextureParameter(ms_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
+		irradianceProgramParams.setTextureParameter(ms_handleMiscMap, m_gbufferTargetSet->getColorTexture(2));
+		irradianceProgramParams.setTextureParameter(ms_handleColorMap, m_gbufferTargetSet->getColorTexture(3));
 		irradianceProgramParams.endParameters(m_globalContext);
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Light accumulation (irradiance)");

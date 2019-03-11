@@ -26,14 +26,11 @@ public:
 
 	int32_t getGlossBias() const { return m_glossBias; }
 
-	int32_t getSizeDivisor() const { return m_sizeDivisor; }
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	int32_t m_glossScale;
 	int32_t m_glossBias;
-	int32_t m_sizeDivisor;
 };
 
 	}

@@ -30,21 +30,21 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual int getWidth() const override final;
+	virtual int32_t getWidth() const override final;
 
-	virtual int getHeight() const override final;
+	virtual int32_t getHeight() const override final;
 
-	virtual ISimpleTexture* getColorTexture(int index) const override final;
+	virtual ISimpleTexture* getColorTexture(int32_t index) const override final;
 
 	virtual ISimpleTexture* getDepthTexture() const override final;
 
-	virtual void swap(int index1, int index2) override final;
+	virtual void swap(int32_t index1, int32_t index2) override final;
 
 	virtual void discard() override final;
 
 	virtual bool isContentValid() const override final;
 
-	virtual bool read(int index, void* buffer) const override final;
+	virtual bool read(int32_t index, void* buffer) const override final;
 
 	void setContentValid(bool contentValid) {
 		m_contentValid = contentValid;
@@ -58,9 +58,10 @@ private:
 	Ref< ContextDx11 > m_context;
 	RefArray< RenderTargetDx11 > m_colorTextures;
 	Ref< RenderTargetDepthDx11 > m_depthTexture;
-	int m_width;
-	int m_height;
+	int32_t m_width;
+	int32_t m_height;
 	bool m_contentValid;
+	bool m_sharedDepthStencil;
 	bool m_usingPrimaryDepthStencil;
 };
 

@@ -112,7 +112,8 @@ private:
 	ui::Point m_mousePosition0;
 	ui::Point m_mousePosition;
 	int32_t m_mouseButton;
-	Quaternion m_previewOrientation;
+	float m_previewHead;
+	float m_previewPitch;
 	Timer m_timer;
 	ui::Size m_dirtySize;
 

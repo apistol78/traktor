@@ -75,16 +75,16 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 	m_desc = desc;
 
 	// Create depth/stencil buffer.
-	if (desc.createDepthStencil && !desc.usingPrimaryDepthStencil)
+	if (m_desc.createDepthStencil)
 	{
+		GLenum format = GL_DEPTH_COMPONENT32; // GL_DEPTH_COMPONENT24;
+		if (!m_desc.ignoreStencil)
+			format = GL_DEPTH24_STENCIL8;
+
 		if (!desc.usingDepthStencilAsTexture)
 		{
 			T_OGL_SAFE(glGenRenderbuffers(1, &m_depthBufferOrTexture));
 			T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBufferOrTexture));
-
-			GLenum format = GL_DEPTH_COMPONENT24;
-			if (!desc.ignoreStencil)
-				format = GL_DEPTH24_STENCIL8;
 
 			T_OGL_SAFE(glRenderbufferStorage(
 				GL_RENDERBUFFER,
@@ -95,9 +95,6 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 		}
 		else
 		{
-			if (!m_desc.ignoreStencil)
-				return false;
-
 			T_OGL_SAFE(glGenTextures(1, &m_depthBufferOrTexture));
 			T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_depthBufferOrTexture));
 
@@ -109,7 +106,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 			T_OGL_SAFE(glTexImage2D(
 				GL_TEXTURE_2D,
 				0,
-				GL_DEPTH_COMPONENT32,
+				format,
 				m_desc.width,
 				m_desc.height,
 				0,
@@ -117,21 +114,25 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 				GL_FLOAT,
 				NULL
 			));
-
-			m_depthTarget = new RenderTargetDepthOpenGL(
-				m_resourceContext,
-				m_depthBufferOrTexture,
-				m_desc.width,
-				m_desc.height
-			);
 		}
+
+		m_depthTarget = new RenderTargetDepthOpenGL(
+			m_resourceContext,
+			m_depthBufferOrTexture,
+			m_desc.width,
+			m_desc.height
+		);
+	}
+	else if (m_desc.sharedDepthStencil)
+	{
+		m_depthTarget = dynamic_type_cast< RenderTargetDepthOpenGL* >(m_desc.sharedDepthStencil->getDepthTexture());
 	}
 
 	// Create color targets.
 	T_ASSERT(desc.count < sizeof_array(m_targetTextures));
 	T_OGL_SAFE(glGenTextures(desc.count, m_targetTextures));
 
-	for (int i = 0; i < desc.count; ++i)
+	for (int32_t i = 0; i < desc.count; ++i)
 	{
 		GLenum internalFormat;
 		GLint format;
@@ -185,8 +186,11 @@ void RenderTargetSetOpenGL::destroy()
 
 	if (m_depthBufferOrTexture)
 	{
-		if (m_resourceContext)
-			m_resourceContext->deleteResource(new DeleteRenderBufferCallback(m_depthBufferOrTexture));
+		if (!m_desc.sharedDepthStencil)
+		{
+			if (m_resourceContext)
+				m_resourceContext->deleteResource(new DeleteRenderBufferCallback(m_depthBufferOrTexture));
+		}
 		m_depthBufferOrTexture = 0;
 	}
 
@@ -198,17 +202,17 @@ void RenderTargetSetOpenGL::destroy()
 	}
 }
 
-int RenderTargetSetOpenGL::getWidth() const
+int32_t RenderTargetSetOpenGL::getWidth() const
 {
 	return m_desc.width;
 }
 
-int RenderTargetSetOpenGL::getHeight() const
+int32_t RenderTargetSetOpenGL::getHeight() const
 {
 	return m_desc.height;
 }
 
-ISimpleTexture* RenderTargetSetOpenGL::getColorTexture(int index) const
+ISimpleTexture* RenderTargetSetOpenGL::getColorTexture(int32_t index) const
 {
 	T_ASSERT(index >= 0);
 	T_ASSERT(index < sizeof_array(m_colorTargets));
@@ -220,7 +224,7 @@ ISimpleTexture* RenderTargetSetOpenGL::getDepthTexture() const
 	return m_depthTarget;
 }
 
-void RenderTargetSetOpenGL::swap(int index1, int index2)
+void RenderTargetSetOpenGL::swap(int32_t index1, int32_t index2)
 {
 	T_ASSERT(index1 >= 0);
 	T_ASSERT(index1 < sizeof_array(m_colorTargets));
@@ -240,7 +244,7 @@ bool RenderTargetSetOpenGL::isContentValid() const
 	return m_contentValid;
 }
 
-bool RenderTargetSetOpenGL::read(int index, void* buffer) const
+bool RenderTargetSetOpenGL::read(int32_t index, void* buffer) const
 {
 #if !defined(__APPLE__)
 	GLenum internalFormat;

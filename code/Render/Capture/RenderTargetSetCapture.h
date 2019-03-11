@@ -21,25 +21,25 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual int getWidth() const override final;
+	virtual int32_t getWidth() const override final;
 
-	virtual int getHeight() const override final;
+	virtual int32_t getHeight() const override final;
 
-	virtual ISimpleTexture* getColorTexture(int index) const override final;
+	virtual ISimpleTexture* getColorTexture(int32_t index) const override final;
 
 	virtual ISimpleTexture* getDepthTexture() const override final;
 
-	virtual void swap(int index1, int index2) override final;
+	virtual void swap(int32_t index1, int32_t index2) override final;
 
 	virtual void discard() override final;
 
 	virtual bool isContentValid() const override final;
 
-	virtual bool read(int index, void* buffer) const override final;
+	virtual bool read(int32_t index, void* buffer) const override final;
 
 	RenderTargetSet* getRenderTargetSet() const { return m_renderTargetSet; }
 
-	bool haveColorTexture(int index) const;
+	bool haveColorTexture(int32_t index) const;
 
 	bool haveDepthTexture() const;
 

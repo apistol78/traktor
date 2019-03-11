@@ -163,29 +163,10 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 
 void OrthogonalRenderControl::destroy()
 {
-	if (m_worldRenderer)
-	{
-		m_worldRenderer->destroy();
-		m_worldRenderer = 0;
-	}
-
-	if (m_primitiveRenderer)
-	{
-		m_primitiveRenderer->destroy();
-		m_primitiveRenderer = 0;
-	}
-
-	if (m_renderView)
-	{
-		m_renderView->close();
-		m_renderView = 0;
-	}
-
-	if (m_renderWidget)
-	{
-		m_renderWidget->destroy();
-		m_renderWidget = 0;
-	}
+	safeDestroy(m_worldRenderer);
+	safeDestroy(m_primitiveRenderer);
+	safeClose(m_renderView);
+	safeDestroy(m_renderWidget);
 }
 
 void OrthogonalRenderControl::updateWorldRenderer()

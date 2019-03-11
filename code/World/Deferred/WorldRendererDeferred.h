@@ -121,6 +121,7 @@ private:
 	static render::handle_t ms_handleDepthMap;
 	static render::handle_t ms_handleLightMap;
 	static render::handle_t ms_handleNormalMap;
+	static render::handle_t ms_handleMiscMap;
 	static render::handle_t ms_handleReflectionMap;
 	static render::handle_t ms_handleFogDistanceAndDensity;
 	static render::handle_t ms_handleFogColor;
@@ -128,6 +129,7 @@ private:
 
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;
+	Quality m_toneMapQuality;
 	Quality m_motionBlurQuality;
 	Quality m_shadowsQuality;
 	Quality m_reflectionsQuality;

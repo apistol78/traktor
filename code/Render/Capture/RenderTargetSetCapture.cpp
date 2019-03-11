@@ -28,30 +28,30 @@ void RenderTargetSetCapture::destroy()
 	safeDestroy(m_renderTargetSet);
 }
 
-int RenderTargetSetCapture::getWidth() const
+int32_t RenderTargetSetCapture::getWidth() const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 	return m_renderTargetSet ? m_renderTargetSet->getWidth() : 0;
 }
 
-int RenderTargetSetCapture::getHeight() const
+int32_t RenderTargetSetCapture::getHeight() const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 	return m_renderTargetSet ? m_renderTargetSet->getHeight() : 0;
 }
 
-ISimpleTexture* RenderTargetSetCapture::getColorTexture(int index) const
+ISimpleTexture* RenderTargetSetCapture::getColorTexture(int32_t index) const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 
 	if (!m_renderTargetSet)
-		return 0;
+		return nullptr;
 
 	if (!m_colorTextures[index])
 	{
 		Ref< ISimpleTexture > colorTexture = m_renderTargetSet->getColorTexture(index);
 		if (!colorTexture)
-			return 0;
+			return nullptr;
 
 		m_colorTextures[index] = new SimpleTextureCapture(colorTexture);
 	}
@@ -64,13 +64,13 @@ ISimpleTexture* RenderTargetSetCapture::getDepthTexture() const
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 
 	if (!m_renderTargetSet)
-		return 0;
+		return nullptr;
 
 	if (!m_depthTexture)
 	{
 		Ref< ISimpleTexture > depthTexture = m_renderTargetSet->getDepthTexture();
 		if (!depthTexture)
-			return 0;
+			return nullptr;
 
 		m_depthTexture = new SimpleTextureCapture(depthTexture);
 	}
@@ -78,7 +78,7 @@ ISimpleTexture* RenderTargetSetCapture::getDepthTexture() const
 	return m_depthTexture;
 }
 
-void RenderTargetSetCapture::swap(int index1, int index2)
+void RenderTargetSetCapture::swap(int32_t index1, int32_t index2)
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 
@@ -110,14 +110,14 @@ bool RenderTargetSetCapture::isContentValid() const
 	return m_renderTargetSet ? m_renderTargetSet->isContentValid() : false;
 }
 
-bool RenderTargetSetCapture::read(int index, void* buffer) const
+bool RenderTargetSetCapture::read(int32_t index, void* buffer) const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 	T_CAPTURE_ASSERT (index >= 0, L"Incorrect read-back index.");
 	return m_renderTargetSet ? m_renderTargetSet->read(index, buffer) : false;
 }
 
-bool RenderTargetSetCapture::haveColorTexture(int index) const
+bool RenderTargetSetCapture::haveColorTexture(int32_t index) const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
 	return m_renderTargetSet ? m_renderTargetSet->getColorTexture(index) != 0 : false;

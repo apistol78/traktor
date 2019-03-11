@@ -23,6 +23,7 @@ RenderTargetSetDx11::RenderTargetSetDx11(ContextDx11* context)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_contentValid(false)
+,	m_sharedDepthStencil(false)
 ,	m_usingPrimaryDepthStencil(false)
 {
 }
@@ -35,7 +36,7 @@ RenderTargetSetDx11::~RenderTargetSetDx11()
 bool RenderTargetSetDx11::create(const RenderTargetSetCreateDesc& setDesc)
 {
 	m_colorTextures.resize(setDesc.count);
-	for (int i = 0; i < setDesc.count; ++i)
+	for (int32_t i = 0; i < setDesc.count; ++i)
 	{
 		m_colorTextures[i] = new RenderTargetDx11(m_context);
 		if (!m_colorTextures[i]->create(setDesc, setDesc.targets[i]))
@@ -48,39 +49,53 @@ bool RenderTargetSetDx11::create(const RenderTargetSetCreateDesc& setDesc)
 		if (!m_depthTexture->create(setDesc))
 			return false;
 	}
+	else if (setDesc.sharedDepthStencil)
+	{
+		m_depthTexture = dynamic_type_cast< RenderTargetDepthDx11* >(setDesc.sharedDepthStencil->getDepthTexture());
+		m_sharedDepthStencil = true;
+	}
+	else
+	{
+		m_usingPrimaryDepthStencil = setDesc.usingPrimaryDepthStencil;
+	}
 
 	m_width = setDesc.width;
 	m_height = setDesc.height;
-	m_usingPrimaryDepthStencil = setDesc.usingPrimaryDepthStencil;
-
 	return true;
 }
 
 void RenderTargetSetDx11::destroy()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
-	for (RefArray< RenderTargetDx11 >::iterator i = m_colorTextures.begin(); i != m_colorTextures.end(); ++i)
+
+	// Destroy color target textures.
+	for (auto colorTexture : m_colorTextures)
 	{
-		if (*i)
-			(*i)->destroy();
+		if (colorTexture)
+			colorTexture->destroy();
 	}
-	m_colorTextures.resize(0);
-	safeDestroy(m_depthTexture);
+	m_colorTextures.clear();
+
+	// Only destroy depth target texture if not being shared, else just release reference.
+	if (!m_sharedDepthStencil)
+		safeDestroy(m_depthTexture);
+	else
+		m_depthTexture = nullptr;
 }
 
-int RenderTargetSetDx11::getWidth() const
+int32_t RenderTargetSetDx11::getWidth() const
 {
 	return m_width;
 }
 
-int RenderTargetSetDx11::getHeight() const
+int32_t RenderTargetSetDx11::getHeight() const
 {
 	return m_height;
 }
 
-ISimpleTexture* RenderTargetSetDx11::getColorTexture(int index) const
+ISimpleTexture* RenderTargetSetDx11::getColorTexture(int32_t index) const
 {
-	return index < int(m_colorTextures.size()) ? m_colorTextures[index] : 0;
+	return index < (int32_t)m_colorTextures.size() ? m_colorTextures[index] : 0;
 }
 
 ISimpleTexture* RenderTargetSetDx11::getDepthTexture() const
@@ -88,7 +103,7 @@ ISimpleTexture* RenderTargetSetDx11::getDepthTexture() const
 	return m_depthTexture;
 }
 
-void RenderTargetSetDx11::swap(int index1, int index2)
+void RenderTargetSetDx11::swap(int32_t index1, int32_t index2)
 {
 	std::swap(m_colorTextures[index1], m_colorTextures[index2]);
 }
@@ -103,7 +118,7 @@ bool RenderTargetSetDx11::isContentValid() const
 	return m_contentValid;
 }
 
-bool RenderTargetSetDx11::read(int index, void* buffer) const
+bool RenderTargetSetDx11::read(int32_t index, void* buffer) const
 {
 	return m_colorTextures[index]->read(buffer);
 }

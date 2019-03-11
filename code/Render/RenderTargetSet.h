@@ -31,19 +31,19 @@ public:
 	virtual void destroy() = 0;
 
 	/*! \brief Get width of render targets. */
-	virtual int getWidth() const = 0;
+	virtual int32_t getWidth() const = 0;
 
 	/*! \brief Get height of render targets. */
-	virtual int getHeight() const = 0;
+	virtual int32_t getHeight() const = 0;
 
 	/*! \brief Get color target texture. */
-	virtual ISimpleTexture* getColorTexture(int index) const = 0;
+	virtual ISimpleTexture* getColorTexture(int32_t index) const = 0;
 
 	/*! \brief Get depth target texture. */
 	virtual ISimpleTexture* getDepthTexture() const = 0;
 
 	/*! \brief Swap color targets. */
-	virtual void swap(int index1, int index2) = 0;
+	virtual void swap(int32_t index1, int32_t index2) = 0;
 
 	/*! \brief Discard target content. */
 	virtual void discard() = 0;
@@ -63,7 +63,7 @@ public:
 	 *               it large enough.
 	 * \return True if successfully copied.
 	 */
-	virtual bool read(int index, void* buffer) const = 0;
+	virtual bool read(int32_t index, void* buffer) const = 0;
 };
 
 	}
