@@ -54,6 +54,7 @@ struct WorldCreateDesc
 {
 	const WorldRenderSettings* worldRenderSettings;
 	WorldEntityRenderers* entityRenderers;
+	Quality toneMapQuality;
 	Quality motionBlurQuality;
 	Quality shadowsQuality;
 	Quality reflectionsQuality;
@@ -67,11 +68,12 @@ struct WorldCreateDesc
 	uint32_t frameCount;
 	float gamma;
 	bool allTargetsPersistent;
-	bool usePrimaryDepth;	//!< Allow intermediate targets use primary depth, only valid for fullscreen applications.
+	render::RenderTargetSet* sharedDepthStencil;	/*!< Share depth with this render target for all intermediate RTs; useful when rendering to other RT than primary. */
 
 	WorldCreateDesc()
 	:	worldRenderSettings(0)
 	,	entityRenderers(0)
+	,	toneMapQuality(QuMedium)
 	,	motionBlurQuality(QuDisabled)
 	,	shadowsQuality(QuDisabled)
 	,	reflectionsQuality(QuDisabled)
@@ -85,7 +87,7 @@ struct WorldCreateDesc
 	,	frameCount(0)
 	,	gamma(2.2f)
 	,	allTargetsPersistent(false)
-	,	usePrimaryDepth(true)
+	,	sharedDepthStencil(nullptr)
 	{
 	}
 };

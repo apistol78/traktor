@@ -15,6 +15,9 @@
 #include "Database/Database.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Drawing/Filters/GammaFilter.h"
+#include "Drawing/Filters/ScaleFilter.h"
+#include "Drawing/Filters/TransformFilter.h"
 #include "Editor/IEditor.h"
 #include "Render/ICubeTexture.h"
 #include "Render/IndexBuffer.h"
@@ -43,6 +46,7 @@
 #include "Scene/Editor/Events/FrameEvent.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
+#include "Ui/FileDialog.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Widget.h"
 #include "Ui/Itf/IWidget.h"
@@ -63,6 +67,9 @@ namespace traktor
 	{
 		namespace
 		{
+
+const int32_t c_previewFaceSize = 256;
+const int32_t c_saveFaceSize = 256;
 
 const resource::Id< render::Shader > c_idProbeTexturePreview(Guid(L"{2F69EAE9-FA20-3244-9B8C-C803E538C19F}"));
 
@@ -125,7 +132,8 @@ CubicRenderControl::CubicRenderControl()
 ,	m_ambientOcclusionQuality(world::QuDisabled)
 ,	m_antiAliasQuality(world::QuDisabled)
 ,	m_mouseButton(0)
-,	m_previewOrientation(Quaternion::identity())
+,	m_previewHead(0.0f)
+,	m_previewPitch(0.0f)
 ,	m_dirtySize(0, 0)
 {
 }
@@ -168,8 +176,8 @@ bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 
 	render::RenderTargetSetCreateDesc rtscd;
 	rtscd.count = 6;
-	rtscd.width = 1024;
-	rtscd.height = 1024;
+	rtscd.width = c_previewFaceSize;
+	rtscd.height = c_previewFaceSize;
 	rtscd.multiSample = 0;
 	rtscd.createDepthStencil = true;
 	rtscd.usingDepthStencilAsTexture = false;
@@ -195,7 +203,7 @@ bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 		return false;
 
 	render::CubeTextureCreateDesc ctcd;
-	ctcd.side = 1024;
+	ctcd.side = c_previewFaceSize;
 	ctcd.mipCount = 1;
 	ctcd.format = render::TfR32G32B32A32F;
 	ctcd.sRGB = false;
@@ -207,7 +215,7 @@ bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 
 	for (int32_t i = 0; i < 6; ++i)
 	{
-		m_cubeImages[i] = new drawing::Image(drawing::PixelFormat::getRGBAF32(), 1024, 1024);
+		m_cubeImages[i] = new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_previewFaceSize, c_previewFaceSize);
 		m_cubeImages[i]->clear(Color4f(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
@@ -241,7 +249,7 @@ void CubicRenderControl::destroy()
 {
 	safeDestroy(m_worldRenderer);
 	safeClose(m_renderView);
-	safeDestroy(m_container);
+	safeDestroy(m_renderWidget);
 }
 
 void CubicRenderControl::updateWorldRenderer()
@@ -261,24 +269,23 @@ void CubicRenderControl::updateWorldRenderer()
 	// Create entity renderers.
 	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
+	for (auto profile : m_context->getEditorProfiles())
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
-		(*i)->createEntityRenderers(m_context, m_renderView, nullptr, entityRenderers);
-		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
+		profile->createEntityRenderers(m_context, m_renderView, nullptr, entityRenderers);
+		for (auto entityRenderer : entityRenderers)
 		{
-			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(entityRendererCache, *j, [&](const EntityAdapter* adapter) {
+			Ref< EntityRendererAdapter > entityRendererAdapter = new EntityRendererAdapter(entityRendererCache, entityRenderer, [&](const EntityAdapter* adapter) {
 				return adapter->isVisible() && adapter->getLayerAttribute< ProbeLayerAttribute >() != nullptr;
 			});
-			worldEntityRenderers->add(entityRenderer);
+			worldEntityRenderers->add(entityRendererAdapter);
 		}
 	}
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT(settings);
 
-	// \note Not able to use deferred renderer atm, cannot render properly as we cannot share depth targets between render target sets.
-	std::wstring worldRendererTypeName = L"traktor.world.WorldRendererForward"; //settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
+	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
 
 	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
 	if (!worldRendererType)
@@ -291,18 +298,19 @@ void CubicRenderControl::updateWorldRenderer()
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = &m_worldRenderSettings;
 	wcd.entityRenderers = worldEntityRenderers;
-	wcd.motionBlurQuality = m_motionBlurQuality;
-	wcd.reflectionsQuality = m_reflectionsQuality;
-	wcd.shadowsQuality = m_shadowQuality;
-	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
-	wcd.antiAliasQuality = m_antiAliasQuality;
-	wcd.imageProcessQuality = m_imageProcessQuality;
+	wcd.toneMapQuality = world::QuDisabled;
+	wcd.motionBlurQuality = world::QuDisabled;
+	wcd.reflectionsQuality = world::QuDisabled;
+	wcd.shadowsQuality = world::QuDisabled;
+	wcd.ambientOcclusionQuality = world::QuDisabled;
+	wcd.antiAliasQuality = world::QuDisabled;;
+	wcd.imageProcessQuality = world::QuDisabled;
 	wcd.width = m_renderTargetSet->getWidth();
 	wcd.height = m_renderTargetSet->getHeight();
 	wcd.multiSample = 0;
 	wcd.frameCount = 1;
-	wcd.allTargetsPersistent = true;
-	wcd.usePrimaryDepth = false;
+	wcd.allTargetsPersistent = false;
+	wcd.sharedDepthStencil = m_renderTargetSet;
 
 	if (worldRenderer->create(
 		m_context->getResourceManager(),
@@ -335,6 +343,7 @@ bool CubicRenderControl::handleCommand(const ui::Command& command)
 	if (command == L"Scene.Editor.CaptureAtOrigo")
 	{
 		capture(Vector4::origo());
+		capture(Vector4::origo());
 		update();
 	}
 	else if (command == L"Scene.Editor.CaptureAtSelected")
@@ -344,6 +353,7 @@ bool CubicRenderControl::handleCommand(const ui::Command& command)
 		{
 			Vector4 pivot = selectedEntities.front()->getTransform().inverse().translation().xyz1();
 			capture(pivot);
+			capture(pivot);
 			update();
 		}
 		else
@@ -351,10 +361,44 @@ bool CubicRenderControl::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Scene.Editor.SaveCubeMap")
 	{
-		Ref< drawing::Image > cm = new drawing::Image(drawing::PixelFormat::getRGBAF32(), 6 * 1024, 1024);
+		Path fileName;
+
+		ui::FileDialog saveAsDialog;
+		saveAsDialog.create(
+			m_container,
+			type_name(this),
+			L"Save cube map as...",
+			L"All files (*.*);*.*",
+			true
+		);
+		if (saveAsDialog.showModal(fileName) != ui::DrOk)
+		{
+			saveAsDialog.destroy();
+			return true;
+		}
+		saveAsDialog.destroy();
+
+		Ref< drawing::Image > cm = new drawing::Image(drawing::PixelFormat::getRGBAF32(), 6 * c_saveFaceSize, c_saveFaceSize);
 		for (int32_t i = 0; i < 6; ++i)
-			cm->copy(m_cubeImages[i], i * 1024, 0, 0, 0, 1024, 1024);
-		cm->save(L"Cube.png");
+		{
+			Ref< drawing::Image > faceImage = m_cubeImages[i]->clone();
+
+			drawing::ScaleFilter scaleFilter(c_saveFaceSize, c_saveFaceSize, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
+			faceImage->apply(&scaleFilter);
+
+			drawing::GammaFilter gammaFilter(1.0f / 2.2f);
+			faceImage->apply(&gammaFilter);
+
+			drawing::TransformFilter transformFilter(Color4f(3.0f, 3.0f, 3.0f, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+			faceImage->apply(&transformFilter);
+
+			cm->copy(faceImage, i * c_saveFaceSize, 0, 0, 0, c_saveFaceSize, c_saveFaceSize);
+		}
+
+		if (cm->save(fileName))
+			log::info << L"Cube map saved successfully as \"" << fileName.getPathName() << L"\"." << Endl;
+		else
+			log::error << L"Unable to save cube map \"" << fileName.getPathName() << L"\"." << Endl;
 	}
 	else
 		return false;
@@ -407,8 +451,8 @@ void CubicRenderControl::capture(const Vector4& pivot)
 	// Create world render view.
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
 	m_worldRenderView.setPerspective(
-		1024,
-		1024,
+		c_previewFaceSize,
+		c_previewFaceSize,
 		1.0f,
 		deg2rad(90.0f),
 		worldRenderSettings->viewNearZ,
@@ -423,6 +467,9 @@ void CubicRenderControl::capture(const Vector4& pivot)
 		{
 			if (m_renderView->begin(m_renderTargetSet, face))
 			{
+				const Color4f clearColor(0.0f, 0.0f, 0.0f, 1.0f);
+				m_renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
+
 				Matrix44 view;
 				switch (face)
 				{
@@ -450,7 +497,7 @@ void CubicRenderControl::capture(const Vector4& pivot)
 				view = view * translate(pivot);
 
 				// Render entities.
-				m_worldRenderView.setTimes(0.0f, 1.0f / 60.0f, 1.0f);
+				m_worldRenderView.setTimes(0.0f, 1.0f / 60.0f, 0.0f);
 				m_worldRenderView.setView(view, view);
 
 				Ref< scene::Scene > sceneInstance = m_context->getScene();
@@ -466,8 +513,8 @@ void CubicRenderControl::capture(const Vector4& pivot)
 					render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
 					if (postProcess)
 					{
-						for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = sceneInstance->getImageProcessParams().begin(); i != sceneInstance->getImageProcessParams().end(); ++i)
-							postProcess->setTextureParameter(i->first, i->second);
+						for (const auto param : sceneInstance->getImageProcessParams())
+							postProcess->setTextureParameter(param.first, param.second);
 					}
 				}
 
@@ -507,6 +554,7 @@ void CubicRenderControl::capture(const Vector4& pivot)
 		}
 
 		m_renderView->end();
+		m_renderView->present();
 	}
 }
 
@@ -554,11 +602,10 @@ void CubicRenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 
 	ui::Rect innerRect = m_renderWidget->getInnerRect();
 	Vector2 screenPosition(2.0f * float(mousePosition.x) / innerRect.getWidth() - 1.0f, 1.0f - 2.0f * float(mousePosition.y) / innerRect.getHeight());
-	Vector4 clipDelta = mouseDelta * Vector4(2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f);
+	Vector4 clipDelta = mouseDelta * Vector4(5.0f / innerRect.getWidth(), 5.0f / innerRect.getHeight(), 0.0f, 0.0f);
 
-	m_previewOrientation *=
-		Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f) * clipDelta.y()) *
-		Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f) * clipDelta.x());
+	m_previewHead += clipDelta.x();
+	m_previewPitch += clipDelta.y();
 
 	m_mousePosition = mousePosition;
 }
@@ -585,6 +632,8 @@ void CubicRenderControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView)
 		return;
 
+	//capture(Vector4::origo());
+
 	// Render world.
 	if (m_renderView->begin(render::EtCyclop))
 	{
@@ -595,7 +644,7 @@ void CubicRenderControl::eventPaint(ui::PaintEvent* event)
 		ui::Size sz = m_renderWidget->getInnerRect().getSize();
 		float aspect = float(sz.cx) / sz.cy;
 
-		m_shader->setMatrixParameter(L"World", translate(0.0f, 0.0f, 5.0f) * m_previewOrientation.toMatrix44());
+		m_shader->setMatrixParameter(L"World", translate(0.0f, 0.0f, 3.5f) * rotateX(m_previewPitch) * rotateY(m_previewHead));
 		m_shader->setMatrixParameter(L"Projection", perspectiveLh(deg2rad(80.0f), aspect, 0.1f, 10.0f));
 		m_shader->setTextureParameter(L"Texture", m_cubeMapTexture);
 		m_shader->draw(m_renderView, m_vertexBuffer, m_indexBuffer, render::Primitives(render::PtTriangles, 0, 12, 0, 7));

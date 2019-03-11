@@ -7,6 +7,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Ui/Application.h"
 #include "Ui/Button.h"
+#include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/TableLayout.h"
 #include "Ui/FileDialog.h"
@@ -34,7 +35,7 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 		dpi96(700),
 		dpi96(500),
 		ConfigDialog::WsDefaultResizable,
-		new TableLayout(L"100%", L"*,100%", 0, 0)
+		new TableLayout(L"100%", save ? L"*,100%,*" : L"*,100%", 0, 0)
 	))
 		return false;
 
@@ -48,8 +49,23 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 	m_gridFiles->addColumn(new GridColumn(L"Size", dpi96(100)));
 	m_gridFiles->addColumn(new GridColumn(L"Modified", dpi96(180)));
 	m_gridFiles->setSortColumn(1, false, GridView::SmLexical);
-	m_gridFiles->addEventHandler< GridRowDoubleClickEvent >([&](GridRowDoubleClickEvent* event) {
 
+	m_gridFiles->addEventHandler< SelectionChangeEvent >([&](SelectionChangeEvent* event) {
+		auto selectedRow = m_gridFiles->getSelectedRow();
+		if (selectedRow)
+		{
+			auto file = selectedRow->getData< File >(L"FILE");
+			T_FATAL_ASSERT(file != nullptr);
+
+			if (!file->isDirectory())
+			{
+				if (m_editFileName)
+					m_editFileName->setText(file->getPath().getFileName());
+			}
+		}
+	});
+
+	m_gridFiles->addEventHandler< GridRowDoubleClickEvent >([&](GridRowDoubleClickEvent* event) {
 		auto file = event->getRow()->getData< File >(L"FILE");
 		T_FATAL_ASSERT(file != nullptr);
 
@@ -61,8 +77,13 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 		}
 		else
 			endModal(DrOk);
-
 	});
+
+	if (save)
+	{
+		m_editFileName = new Edit();
+		m_editFileName->create(this);
+	}
 
 	m_bitmapDirectory = new ui::StyleBitmap(L"UI.FileDialog.Directory");
 	m_bitmapFile = new ui::StyleBitmap(L"UI.FileDialog.File");
@@ -84,6 +105,9 @@ int32_t FileDialog::showModal(Path& outPath)
 	else
 		m_currentPath = FileSystem::getInstance().getCurrentVolumeAndDirectory();
 
+	if (m_editFileName)
+		m_editFileName->setText(outPath.getFileName());
+
 	updatePath();
 	updateFiles();
 
@@ -92,17 +116,27 @@ int32_t FileDialog::showModal(Path& outPath)
 	if (ConfigDialog::showModal() != DrOk)
 		return DrCancel;
 
-	auto selectedRow = m_gridFiles->getSelectedRow();
-	if (selectedRow == nullptr)
-		return DrCancel;
+	if (!m_editFileName)
+	{
+		auto selectedRow = m_gridFiles->getSelectedRow();
+		if (selectedRow == nullptr)
+			return DrCancel;
 
-	auto file = selectedRow->getData< File >(L"FILE");
-	T_FATAL_ASSERT(file != nullptr);
+		auto file = selectedRow->getData< File >(L"FILE");
+		T_FATAL_ASSERT(file != nullptr);
 
-	if (file->isDirectory())
-		return DrCancel;
+		if (file->isDirectory())
+			return DrCancel;
 
-	outPath = file->getPath();
+		outPath = file->getPath();
+	}
+	else
+	{
+		if (m_editFileName->getText().empty())
+			return DrCancel;
+
+		outPath = m_currentPath.getPathName() + L"/" + m_editFileName->getText();
+	}
 
 	Application::getInstance()->getProperties()->setProperty< PropertyString >(m_key, m_currentPath.getPathName());
 	return DrOk;

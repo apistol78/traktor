@@ -67,10 +67,9 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 {
 	Ref< ShaderResource > shaderResource = instance->getObject< ShaderResource >();
 	if (!shaderResource)
-		return 0;
+		return nullptr;
 
 	std::wstring shaderName = instance->getName();
-
 	Ref< Shader > shader = new Shader();
 
 	// Create combination parameter mapping.
@@ -87,33 +86,33 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 		Shader::Technique& technique = shader->m_techniques[getParameterHandle(i->name)];
 		technique.mask = i->mask;
 
-		for (std::vector< ShaderResource::Combination >::const_iterator j = i->combinations.begin(); j != i->combinations.end(); ++j)
+		for (const auto& resourceCombination : i->combinations)
 		{
-			if (!j->program)
+			if (!resourceCombination.program)
 				continue;
 
-			Ref< ProgramResource > programResource = checked_type_cast< ProgramResource* >(j->program);
+			Ref< ProgramResource > programResource = checked_type_cast< ProgramResource* >(resourceCombination.program);
 			if (!programResource)
-				return 0;
+				return nullptr;
 
 			Shader::Combination combination;
-			combination.mask = j->mask;
-			combination.value = j->value;
-			combination.priority = j->priority;
+			combination.mask = resourceCombination.mask;
+			combination.value = resourceCombination.value;
+			combination.priority = resourceCombination.priority;
 			combination.program = m_renderSystem->createProgram(programResource, programName.c_str());
 			if (!combination.program)
-				return 0;
+				return nullptr;
 
 			// Set implicit texture uniforms.
 			TextureReaderAdapter textureReader(resourceManager);
-			if (!TextureLinker(textureReader).link(*j, combination.program))
-				return 0;
+			if (!TextureLinker(textureReader).link(resourceCombination, combination.program))
+				return nullptr;
 
 			// Set uniform default values.
-			for (AlignedVector< ShaderResource::InitializeUniformScalar >::const_iterator k = j->initializeUniformScalar.begin(); k != j->initializeUniformScalar.end(); ++k)
-				combination.program->setFloatParameter(getParameterHandle(k->name), k->value);
-			for (AlignedVector< ShaderResource::InitializeUniformVector >::const_iterator k = j->initializeUniformVector.begin(); k != j->initializeUniformVector.end(); ++k)
-				combination.program->setVectorParameter(getParameterHandle(k->name), k->value);
+			for (const auto& ius : resourceCombination.initializeUniformScalar)
+				combination.program->setFloatParameter(getParameterHandle(ius.name), ius.value);
+			for (const auto& iuv : resourceCombination.initializeUniformVector)
+				combination.program->setVectorParameter(getParameterHandle(iuv.name), iuv.value);
 
 			technique.combinations.push_back(combination);
 		}

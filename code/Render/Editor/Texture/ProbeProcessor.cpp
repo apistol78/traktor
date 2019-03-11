@@ -61,7 +61,7 @@ bool ProbeProcessor::radiance(const drawing::Image* cubeImage, int32_t glossScal
 	cmft::Image tmp;
 	tmp.m_width    = (uint16_t)hdrImage->getWidth();
 	tmp.m_height   = (uint16_t)hdrImage->getHeight();
-	tmp.m_dataSize = hdrImage->getDataSize();
+	tmp.m_dataSize = (uint32_t)hdrImage->getDataSize();
 	tmp.m_format   = cmft::TextureFormat::RGBA32F;
 	tmp.m_numMips  = 1;
 	tmp.m_numFaces = 1;
@@ -86,9 +86,12 @@ bool ProbeProcessor::radiance(const drawing::Image* cubeImage, int32_t glossScal
 		return false;
 	}
 
-	T_FATAL_ASSERT (image.m_width == image.m_height);
+	T_FATAL_ASSERT(image.m_width == image.m_height);
 
-	uint32_t mipCount = log2(image.m_width) + 1;
+	if (image.m_width > 512)
+		cmft::imageResize(image, 512);
+
+	uint32_t mipCount = (uint32_t)log2(image.m_width) + 1;
 	T_ASSERT(mipCount >= 1);
 
 	// Execute conversion filter.
@@ -110,7 +113,7 @@ bool ProbeProcessor::radiance(const drawing::Image* cubeImage, int32_t glossScal
 	cmft::imageGetMipOffsets(offsets, image);
 
 	outCubeMips.resize(mipCount);
-	for (int32_t i = 0; i < mipCount; ++i)
+	for (uint32_t i = 0; i < mipCount; ++i)
 	{
 		uint32_t mipSize = sideSize >> i;
 
@@ -148,7 +151,7 @@ bool ProbeProcessor::irradiance(const drawing::Image* cubeImage, float factor, i
 	cmft::Image tmp;
 	tmp.m_width    = (uint16_t)hdrImage->getWidth();
 	tmp.m_height   = (uint16_t)hdrImage->getHeight();
-	tmp.m_dataSize = hdrImage->getDataSize();
+	tmp.m_dataSize = (uint32_t)hdrImage->getDataSize();
 	tmp.m_format   = cmft::TextureFormat::RGBA32F;
 	tmp.m_numMips  = 1;
 	tmp.m_numFaces = 1;
@@ -175,6 +178,9 @@ bool ProbeProcessor::irradiance(const drawing::Image* cubeImage, float factor, i
 
 	T_FATAL_ASSERT (image.m_width == image.m_height);
 
+	if (image.m_width > 512)
+		cmft::imageResize(image, 512);
+
 	cmft::imageIrradianceFilterSh(
 		image,
 		faceSize
@@ -187,7 +193,7 @@ bool ProbeProcessor::irradiance(const drawing::Image* cubeImage, float factor, i
 	cmft::imageGetMipOffsets(offsets, image);
 
 	outCubeMips.resize(mipCount);
-	for (int32_t i = 0; i < mipCount; ++i)
+	for (uint32_t i = 0; i < mipCount; ++i)
 	{
 		uint32_t mipSize = sideSize >> i;
 

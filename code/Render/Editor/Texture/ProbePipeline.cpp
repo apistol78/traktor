@@ -147,18 +147,6 @@ bool ProbePipeline::buildOutput(
 	}
 	else if (const RadianceProbeAsset* radianceAsset = dynamic_type_cast< const RadianceProbeAsset* >(asset))
 	{
-		// Scale asset image if required.
-		if (radianceAsset->getSizeDivisor() > 1)
-		{
-			drawing::ScaleFilter scaleFilter(
-				assetImage->getWidth() / radianceAsset->getSizeDivisor(),
-				assetImage->getHeight() / radianceAsset->getSizeDivisor(),
-				drawing::ScaleFilter::MnAverage,
-				drawing::ScaleFilter::MgLinear
-			);
-			assetImage->apply(&scaleFilter);
-		}
-
 		if (!m_processor->radiance(assetImage, radianceAsset->getGlossScale(), radianceAsset->getGlossBias(), cubeMips))
 			return false;
 	}

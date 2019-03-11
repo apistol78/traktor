@@ -22,6 +22,8 @@
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/PointLightEntity.h"
 #include "World/Entity/PointLightEntityData.h"
+#include "World/Entity/ProbeComponent.h"
+#include "World/Entity/ProbeComponentData.h"
 #include "World/Entity/ScriptComponent.h"
 #include "World/Entity/ScriptComponentData.h"
 #include "World/Entity/SpotLightEntity.h"
@@ -69,6 +71,7 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 	typeSet.insert(&type_of< DecalComponentData >());
 	typeSet.insert(&type_of< GodRayComponentData >());
 	typeSet.insert(&type_of< LightComponentData >());
+	typeSet.insert(&type_of< ProbeComponentData >());
 	typeSet.insert(&type_of< ScriptComponentData >());
 	typeSet.insert(&type_of< VolumeComponentData >());
 	return typeSet;
@@ -234,6 +237,29 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 			lightComponentData->getRadius(),
 			lightComponentData->getFlickerAmount(),
 			lightComponentData->getFlickerFilter()
+		);
+	}
+
+	if (const ProbeComponentData* probeComponentData = dynamic_type_cast< const ProbeComponentData* >(&entityComponentData))
+	{
+		resource::Proxy< render::ITexture > probeDiffuseTexture;
+		resource::Proxy< render::ITexture > probeSpecularTexture;
+
+		if (probeComponentData->getProbeDiffuseTexture())
+		{
+			if (!m_resourceManager->bind(probeComponentData->getProbeDiffuseTexture(), probeDiffuseTexture))
+				return nullptr;
+		}
+		if (probeComponentData->getProbeSpecularTexture())
+		{
+			if (!m_resourceManager->bind(probeComponentData->getProbeSpecularTexture(), probeSpecularTexture))
+				return nullptr;
+		}
+
+		return new ProbeComponent(
+			probeDiffuseTexture,
+			probeSpecularTexture,
+			probeComponentData->getVolume()
 		);
 	}
 

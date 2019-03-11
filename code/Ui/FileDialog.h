@@ -19,6 +19,7 @@ namespace traktor
 	{
 
 class Container;
+class Edit;
 class GridView;
 class IBitmap;
 
@@ -47,6 +48,7 @@ public:
 private:
 	Ref< Container > m_containerPath;
 	Ref< GridView > m_gridFiles;
+	Ref< Edit > m_editFileName;
 	Ref< IBitmap > m_bitmapDirectory;
 	Ref< IBitmap > m_bitmapFile;
 	std::wstring m_key;

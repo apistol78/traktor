@@ -8,6 +8,7 @@
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/PointLightEntityData.h"
+#include "World/Entity/ProbeComponentData.h"
 #include "World/Entity/SpotLightEntityData.h"
 
 namespace traktor
@@ -27,6 +28,7 @@ TypeInfoSet WorldEntityPipeline::getAssetTypes() const
 	typeSet.insert(&type_of< GroupEntityData >());
 	typeSet.insert(&type_of< LightComponentData >());
 	typeSet.insert(&type_of< PointLightEntityData >());
+	typeSet.insert(&type_of< ProbeComponentData >());
 	typeSet.insert(&type_of< SpotLightEntityData >());
 	return typeSet;
 }
@@ -47,14 +49,18 @@ bool WorldEntityPipeline::buildDependencies(
 		pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfBuild);
 	else if (const GroupEntityData* groupEntityData = dynamic_type_cast< const GroupEntityData* >(sourceAsset))
 	{
-		const RefArray< EntityData >& entityData = groupEntityData->getEntityData();
-		for (RefArray< EntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
-			pipelineDepends->addDependency(*i);
+		for (auto entityData : groupEntityData->getEntityData())
+			pipelineDepends->addDependency(entityData);
 	}
 	else if (const LightComponentData* lightComponentData = dynamic_type_cast<const LightComponentData*>(sourceAsset))
 	{
 		pipelineDepends->addDependency(lightComponentData->getProbeDiffuseTexture(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(lightComponentData->getProbeSpecularTexture(), editor::PdfBuild | editor::PdfResource);
+	}
+	else if (const ProbeComponentData* probeComponentData = dynamic_type_cast<const ProbeComponentData*>(sourceAsset))
+	{
+		pipelineDepends->addDependency(probeComponentData->getProbeDiffuseTexture(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(probeComponentData->getProbeSpecularTexture(), editor::PdfBuild | editor::PdfResource);
 	}
 	return true;
 }

@@ -103,7 +103,7 @@ bool RenderTargetSetVk::createPrimary(VkPhysicalDevice physicalDevice, VkDevice 
 bool RenderTargetSetVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const RenderTargetSetCreateDesc& setDesc)
 {
 	m_colorTargets.resize(setDesc.count);
-	for (int i = 0; i < setDesc.count; ++i)
+	for (int32_t i = 0; i < setDesc.count; ++i)
 	{
 		m_colorTargets[i] = new RenderTargetVk();
 		if (!m_colorTargets[i]->create(physicalDevice, device, setDesc, setDesc.targets[i]))
@@ -204,17 +204,17 @@ void RenderTargetSetVk::destroy()
 	safeDestroy(m_depthTarget);
 }
 
-int RenderTargetSetVk::getWidth() const
+int32_t RenderTargetSetVk::getWidth() const
 {
 	return m_width;
 }
 
-int RenderTargetSetVk::getHeight() const
+int32_t RenderTargetSetVk::getHeight() const
 {
 	return m_height;
 }
 
-ISimpleTexture* RenderTargetSetVk::getColorTexture(int index) const
+ISimpleTexture* RenderTargetSetVk::getColorTexture(int32_t index) const
 {
 	return index < int(m_colorTargets.size()) ? m_colorTargets[index] : 0;
 }
@@ -224,7 +224,7 @@ ISimpleTexture* RenderTargetSetVk::getDepthTexture() const
 	return m_depthTarget;
 }
 
-void RenderTargetSetVk::swap(int index1, int index2)
+void RenderTargetSetVk::swap(int32_t index1, int32_t index2)
 {
 #if defined(_WIN32)
 	std::swap(m_colorTargets[index1], m_colorTargets[index2]);
@@ -240,7 +240,7 @@ bool RenderTargetSetVk::isContentValid() const
 	return true;
 }
 
-bool RenderTargetSetVk::read(int index, void* buffer) const
+bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 {
 	return false;
 }

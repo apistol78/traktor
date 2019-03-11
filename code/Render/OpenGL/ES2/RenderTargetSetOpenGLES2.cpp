@@ -104,7 +104,7 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 	m_desc = desc;
 
 	// Create depth/stencil buffer.
-	if (desc.createDepthStencil && !desc.usingPrimaryDepthStencil)
+	if (desc.createDepthStencil)
 	{
 		if (!desc.usingDepthStencilAsTexture)
 		{
@@ -152,14 +152,18 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 				GL_FLOAT,
 				NULL
 			));
-
-			m_depthTarget = new RenderTargetDepthOpenGLES2(
-				m_context,
-				m_depthBufferOrTexture,
-				m_desc.width,
-				m_desc.height
-			);
 		}
+
+		m_depthTarget = new RenderTargetDepthOpenGLES2(
+			m_context,
+			m_depthBufferOrTexture,
+			m_desc.width,
+			m_desc.height
+		);
+	}
+	else if (m_desc.sharedDepthStencil)
+	{
+		m_depthTarget = dynamic_type_cast< RenderTargetDepthOpenGLES2* >(m_desc.sharedDepthStencil->getDepthTexture());
 	}
 
 	// Create color targets.
@@ -323,17 +327,17 @@ void RenderTargetSetOpenGLES2::destroy()
 	m_context = 0;
 }
 
-int RenderTargetSetOpenGLES2::getWidth() const
+int32_t RenderTargetSetOpenGLES2::getWidth() const
 {
 	return m_desc.width;
 }
 
-int RenderTargetSetOpenGLES2::getHeight() const
+int32_t RenderTargetSetOpenGLES2::getHeight() const
 {
 	return m_desc.height;
 }
 
-ISimpleTexture* RenderTargetSetOpenGLES2::getColorTexture(int index) const
+ISimpleTexture* RenderTargetSetOpenGLES2::getColorTexture(int32_t index) const
 {
 	T_ASSERT(index >= 0);
 	T_ASSERT(index < sizeof_array(m_renderTargets));
@@ -345,7 +349,7 @@ ISimpleTexture* RenderTargetSetOpenGLES2::getDepthTexture() const
 	return m_depthTarget;
 }
 
-void RenderTargetSetOpenGLES2::swap(int index1, int index2)
+void RenderTargetSetOpenGLES2::swap(int32_t index1, int32_t index2)
 {
 	T_ASSERT(index1 >= 0);
 	T_ASSERT(index1 < sizeof_array(m_renderTargets));
@@ -377,7 +381,7 @@ bool RenderTargetSetOpenGLES2::isContentValid() const
 	return m_contentValid;
 }
 
-bool RenderTargetSetOpenGLES2::read(int index, void* buffer) const
+bool RenderTargetSetOpenGLES2::read(int32_t index, void* buffer) const
 {
 	return false;
 }
