@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.FeatureEditorFactory", 0, Featu
 const TypeInfoSet FeatureEditorFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Feature >());
+	typeSet.insert< Feature >();
 	return typeSet;
 }
 

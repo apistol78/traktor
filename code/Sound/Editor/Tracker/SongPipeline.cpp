@@ -21,7 +21,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SongPipeline", 0, SongPipeline, e
 TypeInfoSet SongPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SongAsset >());
+	typeSet.insert< SongAsset >();
 	return typeSet;
 }
 

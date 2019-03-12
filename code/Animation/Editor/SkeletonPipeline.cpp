@@ -33,7 +33,7 @@ void SkeletonPipeline::destroy()
 TypeInfoSet SkeletonPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SkeletonAsset >());
+	typeSet.insert< SkeletonAsset >();
 	return typeSet;
 }
 

@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sprite.SpriteEntityRenderer", SpriteEntityRende
 const TypeInfoSet SpriteEntityRenderer::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SpriteEntity >());
+	typeSet.insert< SpriteEntity >();
 	return typeSet;
 }
 

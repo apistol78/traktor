@@ -25,7 +25,7 @@ void TheaterControllerPipeline::destroy()
 TypeInfoSet TheaterControllerPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< TheaterControllerData >());
+	typeSet.insert< TheaterControllerData >();
 	return typeSet;
 }
 

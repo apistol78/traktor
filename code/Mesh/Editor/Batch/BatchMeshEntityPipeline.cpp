@@ -93,7 +93,7 @@ bool BatchMeshEntityPipeline::create(const editor::IPipelineSettings* settings)
 TypeInfoSet BatchMeshEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< BatchMeshEntityData >());
+	typeSet.insert< BatchMeshEntityData >();
 	return typeSet;
 }
 

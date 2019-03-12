@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include <string>
 #include "Core/Object.h"
 #include "Core/Ref.h"

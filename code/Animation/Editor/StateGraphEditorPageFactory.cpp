@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StateGraphEditorPageFactory",
 const TypeInfoSet StateGraphEditorPageFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< StateGraph >());
+	typeSet.insert< StateGraph >();
 	return typeSet;
 }
 

@@ -16,10 +16,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationFactory", AnimationFactory, 
 const TypeInfoSet AnimationFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< StateGraph >());
-	typeSet.insert(&type_of< Animation >());
-	typeSet.insert(&type_of< Skeleton >());
-	typeSet.insert(&type_of< Pose >());
+	typeSet.insert< StateGraph >();
+	typeSet.insert< Animation >();
+	typeSet.insert< Skeleton >();
+	typeSet.insert< Pose >();
 	return typeSet;
 }
 

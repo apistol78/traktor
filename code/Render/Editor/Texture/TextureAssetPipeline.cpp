@@ -24,7 +24,7 @@ bool TextureAssetPipeline::create(const editor::IPipelineSettings* settings)
 TypeInfoSet TextureAssetPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< TextureAsset >());
+	typeSet.insert< TextureAsset >();
 	return typeSet;
 }
 

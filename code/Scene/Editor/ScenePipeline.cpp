@@ -74,7 +74,7 @@ void ScenePipeline::destroy()
 TypeInfoSet ScenePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SceneAsset >());
+	typeSet.insert< SceneAsset >();
 	return typeSet;
 }
 

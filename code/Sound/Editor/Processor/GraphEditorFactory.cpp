@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.GraphEditorFactory", 0, GraphEdit
 const TypeInfoSet GraphEditorFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< GraphAsset >());
+	typeSet.insert< GraphAsset >();
 	return typeSet;
 }
 

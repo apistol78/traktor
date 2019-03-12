@@ -1,3 +1,4 @@
+#include <set>
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"

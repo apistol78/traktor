@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothEntityRenderer", ClothEntityRend
 const TypeInfoSet ClothEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ClothEntity >());
+	typeSet.insert< ClothEntity >();
 	return typeSet;
 }
 

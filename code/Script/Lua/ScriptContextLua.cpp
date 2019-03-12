@@ -31,7 +31,7 @@ void ScriptContextLua::destroy()
 		// Store reference locally as later the garbage
 		// collect might recurse this call.
 		Ref< ScriptManagerLua > scriptManager = m_scriptManager;
-		m_scriptManager = 0;
+		m_scriptManager = nullptr;
 
 		scriptManager->lock(this);
 		{
@@ -72,7 +72,7 @@ void ScriptContextLua::destroy()
 
 				luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 				m_environmentRef = LUA_NOREF;
-				m_luaState =  0;
+				m_luaState = nullptr;
 			}
 
 			// Perform a full garbage collect; don't want
@@ -185,11 +185,9 @@ Any ScriptContextLua::getGlobal(const std::string& globalName)
 Ref< const IRuntimeClass > ScriptContextLua::findClass(const std::string& className)
 {
 	Ref< ScriptClassLua > scriptClass;
-
 	m_scriptManager->lock(this);
 	{
 		CHECK_LUA_STACK(m_luaState, 0);
-
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 		lua_getfield(m_luaState, -1, className.c_str());
 		if (lua_istable(m_luaState, -1))
@@ -199,7 +197,6 @@ Ref< const IRuntimeClass > ScriptContextLua::findClass(const std::string& classN
 		lua_pop(m_luaState, 2);
 	}
 	m_scriptManager->unlock();
-
 	return scriptClass;
 }
 
@@ -209,13 +206,10 @@ bool ScriptContextLua::haveFunction(const std::string& functionName) const
 	m_scriptManager->lock((ScriptContextLua*)this);
 	{
 		CHECK_LUA_STACK(m_luaState, 0);
-
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 		lua_pushstring(m_luaState, functionName.c_str());
 		lua_rawget(m_luaState, -2);
-
 		result = (lua_isfunction(m_luaState, -1) != 0);
-
 		lua_pop(m_luaState, 2);
 	}
 	m_scriptManager->unlock();
@@ -236,7 +230,6 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 		int32_t errfunc = lua_gettop(m_luaState);
 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-		//lua_getfield(m_luaState, -1, functionName.c_str());
 		lua_pushstring(m_luaState, functionName.c_str());
 		lua_rawget(m_luaState, -2);
 
@@ -284,15 +277,6 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 	}
 	m_scriptManager->unlock();
 	return returnValue;
-}
-
-ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, bool strict)
-:	m_scriptManager(scriptManager)
-,	m_luaState(luaState)
-,	m_environmentRef(environmentRef)
-,	m_strict(strict)
-,	m_lastSelf(0)
-{
 }
 
 Any ScriptContextLua::executeDelegate(ScriptDelegateLua* delegate, uint32_t argc, const Any* argv)
@@ -416,6 +400,15 @@ Any ScriptContextLua::executeMethod(ScriptObjectLua* self, int32_t methodRef, ui
 	return returnValue;
 }
 
+ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, bool strict)
+:	m_scriptManager(scriptManager)
+,	m_luaState(luaState)
+,	m_environmentRef(environmentRef)
+,	m_strict(strict)
+,	m_lastSelf(0)
+{
+}
+
 int32_t ScriptContextLua::runtimeError(lua_State* luaState)
 {
 	ScriptContextLua* this_ = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
@@ -453,7 +446,6 @@ int32_t ScriptContextLua::permitGlobalWrite(lua_State* luaState)
 
 	lua_rawset(luaState, -3);
 	lua_pop(luaState, 1);
-
 	return 0;
 }
 

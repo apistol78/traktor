@@ -2,15 +2,16 @@
 
 #include <list>
 #include <map>
+#include <set>
 #include "Core/Ref.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCRIPT_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor

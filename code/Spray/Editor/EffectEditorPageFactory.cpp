@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEditorPageFactory", 0, Effe
 const TypeInfoSet EffectEditorPageFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< EffectData >());
+	typeSet.insert< EffectData >();
 	return typeSet;
 }
 

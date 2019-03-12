@@ -27,7 +27,7 @@ void ScenePermutationPipeline::destroy()
 TypeInfoSet ScenePermutationPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ScenePermutationAsset >());
+	typeSet.insert< ScenePermutationAsset >();
 	return typeSet;
 }
 

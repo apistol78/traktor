@@ -309,7 +309,7 @@ void ShaderPipeline::destroy()
 TypeInfoSet ShaderPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ShaderGraph >());
+	typeSet.insert< ShaderGraph >();
 	return typeSet;
 }
 

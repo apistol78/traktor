@@ -168,11 +168,11 @@ bool ScriptClassesView::create(ui::Widget* parent)
 
 	CollectClassRegistrar registrar(m_treeClasses);
 
-	std::set< const TypeInfo* > runtimeClassFactoryTypes;
+	TypeInfoSet runtimeClassFactoryTypes;
 	type_of< IRuntimeClassFactory >().findAllOf(runtimeClassFactoryTypes, false);
-	for (std::set< const TypeInfo* >::const_iterator i = runtimeClassFactoryTypes.begin(); i != runtimeClassFactoryTypes.end(); ++i)
+	for (const auto runtimeClassFactoryType : runtimeClassFactoryTypes)
 	{
-		Ref< IRuntimeClassFactory > runtimeClassFactory = dynamic_type_cast< IRuntimeClassFactory* >((*i)->createInstance());
+		Ref< IRuntimeClassFactory > runtimeClassFactory = dynamic_type_cast< IRuntimeClassFactory* >(runtimeClassFactoryType->createInstance());
 		if (runtimeClassFactory)
 			runtimeClassFactory->createClasses(&registrar);
 	}

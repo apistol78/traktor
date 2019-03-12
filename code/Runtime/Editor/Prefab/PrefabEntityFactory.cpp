@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.PrefabEntityFactory", PrefabEntityFacto
 const TypeInfoSet PrefabEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< PrefabEntityData >());
+	typeSet.insert< PrefabEntityData >();
 	return typeSet;
 }
 

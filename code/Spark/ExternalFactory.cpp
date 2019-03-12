@@ -15,7 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.ExternalFactory", ExternalFactory, IChara
 TypeInfoSet ExternalFactory::getCharacterTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ExternalData >());
+	typeSet.insert< ExternalData >();
 	return typeSet;
 }
 

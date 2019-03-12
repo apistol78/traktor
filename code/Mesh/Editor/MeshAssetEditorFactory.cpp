@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshAssetEditorFactory", 0, MeshAs
 const TypeInfoSet MeshAssetEditorFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< MeshAsset >());
+	typeSet.insert< MeshAsset >();
 	return typeSet;
 }
 

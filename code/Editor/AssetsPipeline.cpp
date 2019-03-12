@@ -33,7 +33,7 @@ void AssetsPipeline::destroy()
 TypeInfoSet AssetsPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Assets >());
+	typeSet.insert< Assets >();
 	return typeSet;
 }
 

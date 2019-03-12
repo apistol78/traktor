@@ -116,15 +116,14 @@ bool AccShape::createFromTriangles(
 		const int32_t c_maxLinesPerCluster = 4;
 
 		// Collect unique line styles.
-		std::set< int32_t > uniqueLineStyles;
-		for (AlignedVector< Line >::const_iterator j = lines.begin(); j != lines.end(); ++j)
-			uniqueLineStyles.insert(j->lineStyle);
+		SmallSet< int32_t > uniqueLineStyles;
+		for (const auto& line : lines)
+			uniqueLineStyles.insert(line.lineStyle);
 
 		// Generate cluster and batches for each line style.
-		for (std::set< int32_t >::const_iterator i = uniqueLineStyles.begin(); i != uniqueLineStyles.end(); ++i)
+		for (const auto uniqueLineStyle : uniqueLineStyles)
 		{
-			int32_t lineStyleIndex = *i;
-			const LineStyle& lineStyle = lineStyles[lineStyleIndex - 1];
+			const LineStyle& lineStyle = lineStyles[uniqueLineStyle - 1];
 			float width = lineStyle.getLineWidth() / 2.0f;
 
 			// Create root clusters.
@@ -133,7 +132,7 @@ bool AccShape::createFromTriangles(
 			clusters.back().bounds = lineBounds;
 			for (int32_t i = 0; i < lines.size(); ++i)
 			{
-				if (lines[i].lineStyle == lineStyleIndex)
+				if (lines[i].lineStyle == uniqueLineStyle)
 					clusters.back().lines.push_back(i);
 			}
 

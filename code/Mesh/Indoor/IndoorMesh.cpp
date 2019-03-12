@@ -47,7 +47,7 @@ void IndoorMesh::render(
 	// Find initially active sectors which are the sectors that the camera is within,
 	// as sector bounding boxes are lousily calculated more than one sector
 	// can become initially active.
-	std::set< int > activeSectors;
+	SmallSet< int > activeSectors;
 
 	static bool searchActiveSectors = true;
 	if (searchActiveSectors)
@@ -60,12 +60,12 @@ void IndoorMesh::render(
 		}
 		if (!activeSectors.empty())
 		{
-			std::set< int > visibleSectors;
-			for (std::set< int >::iterator i = activeSectors.begin(); i != activeSectors.end(); ++i)
+			SmallSet< int > visibleSectors;
+			for (const auto activeSector : activeSectors)
 				findVisibleSectors(
 					frustum,
 					worldRenderView.getView(),
-					*i,
+					activeSector,
 					visibleSectors
 				);
 
@@ -83,9 +83,9 @@ void IndoorMesh::render(
 
 	const AlignedVector< render::Mesh::Part >& meshParts = m_mesh->getParts();
 
-	for (std::set< int >::iterator i = activeSectors.begin(); i != activeSectors.end(); ++i)
+	for (const auto activeSector : activeSectors)
 	{
-		Sector& sector = m_sectors[*i];
+		Sector& sector = m_sectors[activeSector];
 
 		SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = sector.parts.find(worldRenderPass.getTechnique());
 		if (it == sector.parts.end())
@@ -137,7 +137,7 @@ void IndoorMesh::findVisibleSectors(
 	const AlignedVector< Plane >& frustum,
 	const Matrix44& view,
 	int currentSector,
-	std::set< int >& outVisibleSectors
+	SmallSet< int >& outVisibleSectors
 )
 {
 	for (AlignedVector< Portal >::const_iterator i = m_portals.begin(); i != m_portals.end(); ++i)

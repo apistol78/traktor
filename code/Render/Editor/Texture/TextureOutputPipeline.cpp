@@ -159,7 +159,7 @@ void TextureOutputPipeline::destroy()
 TypeInfoSet TextureOutputPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< TextureOutput >());
+	typeSet.insert< TextureOutput >();
 	return typeSet;
 }
 

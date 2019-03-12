@@ -1,3 +1,4 @@
+#include <set>
 #include "Ui/Win32/WidgetFactoryWin32.h"
 #include "Ui/Win32/ContainerWin32.h"
 #include "Ui/Win32/DialogWin32.h"

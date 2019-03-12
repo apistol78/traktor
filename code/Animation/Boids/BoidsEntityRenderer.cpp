@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsEntityRenderer", BoidsEntityRend
 const TypeInfoSet BoidsEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< BoidsEntity >());
+	typeSet.insert< BoidsEntity >();
 	return typeSet;
 }
 

@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.DefaultObjectEditorFactory", 0, 
 const TypeInfoSet DefaultObjectEditorFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ISerializable >());
+	typeSet.insert< ISerializable >();
 	return typeSet;
 }
 

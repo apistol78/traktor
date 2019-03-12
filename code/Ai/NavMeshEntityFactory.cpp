@@ -20,7 +20,7 @@ NavMeshEntityFactory::NavMeshEntityFactory(resource::IResourceManager* resourceM
 const TypeInfoSet NavMeshEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< NavMeshEntityData >());
+	typeSet.insert< NavMeshEntityData >();
 	return typeSet;
 }
 

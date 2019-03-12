@@ -27,7 +27,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PolynomialNodeTraits", 0, Polyno
 TypeInfoSet PolynomialNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Polynomial >());
+	typeSet.insert< Polynomial >();
 	return typeSet;
 }
 

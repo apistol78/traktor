@@ -1,6 +1,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Editor/IPipelineDepends.h"
 #include "World/Editor/WorldEntityPipeline.h"
+#include "World/Entity/ScriptComponentData.h"
 #include "World/Entity/DecalComponentData.h"
 #include "World/Entity/DecalEventData.h"
 #include "World/Entity/DirectionalLightEntityData.h"
@@ -21,15 +22,16 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldEntityPipeline", 0, WorldEnt
 TypeInfoSet WorldEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< DecalComponentData >());
-	typeSet.insert(&type_of< DecalEventData >());
-	typeSet.insert(&type_of< DirectionalLightEntityData >());
-	typeSet.insert(&type_of< ExternalEntityData >());
-	typeSet.insert(&type_of< GroupEntityData >());
-	typeSet.insert(&type_of< LightComponentData >());
-	typeSet.insert(&type_of< PointLightEntityData >());
-	typeSet.insert(&type_of< ProbeComponentData >());
-	typeSet.insert(&type_of< SpotLightEntityData >());
+	typeSet.insert< ScriptComponentData >();
+	typeSet.insert< DecalComponentData >();
+	typeSet.insert< DecalEventData >();
+	typeSet.insert< DirectionalLightEntityData >();
+	typeSet.insert< ExternalEntityData >();
+	typeSet.insert< GroupEntityData >();
+	typeSet.insert< LightComponentData >();
+	typeSet.insert< PointLightEntityData >();
+	typeSet.insert< ProbeComponentData >();
+	typeSet.insert< SpotLightEntityData >();
 	return typeSet;
 }
 
@@ -41,7 +43,9 @@ bool WorldEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const DecalComponentData* decalComponentData = dynamic_type_cast< const DecalComponentData* >(sourceAsset))
+	if (const ScriptComponentData* scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(sourceAsset))
+		pipelineDepends->addDependency(scriptComponentData->getRuntimeClass(), editor::PdfBuild);
+	else if (const DecalComponentData* decalComponentData = dynamic_type_cast< const DecalComponentData* >(sourceAsset))
 		pipelineDepends->addDependency(decalComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 	else if (const DecalEventData* decalEventData = dynamic_type_cast< const DecalEventData* >(sourceAsset))
 		pipelineDepends->addDependency(decalEventData->getShader(), editor::PdfBuild | editor::PdfResource);

@@ -362,14 +362,14 @@ bool ModelToolDialog::loadTexture()
 		return false;
 
 	image->clearAlpha(1.0f);
-	image->convert(drawing::PixelFormat::getR8G8B8A8());
+	image->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
 
 	render::SimpleTextureCreateDesc stcd;
 	stcd.width = image->getWidth();
 	stcd.height = image->getHeight();
 	stcd.mipCount = 1;
 	stcd.format = render::TfR8G8B8A8;
-	stcd.sRGB = true;
+	stcd.sRGB = false;
 	stcd.immutable = true;
 	stcd.initialData[0].data = image->getData();
 	stcd.initialData[0].pitch = image->getWidth() * 4;

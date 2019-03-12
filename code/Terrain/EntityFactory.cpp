@@ -32,9 +32,9 @@ const TypeInfoSet EntityFactory::getEntityEventTypes() const
 const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< OceanComponentData >());
-	typeSet.insert(&type_of< RiverComponentData >());
-	typeSet.insert(&type_of< TerrainComponentData >());
+	typeSet.insert< OceanComponentData >();
+	typeSet.insert< RiverComponentData >();
+	typeSet.insert< TerrainComponentData >();
 	return typeSet;
 }
 

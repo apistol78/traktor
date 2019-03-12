@@ -1,3 +1,4 @@
+#include <set>
 #include "Core/Log/Log.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -73,7 +74,7 @@ void ResourceBundlePipeline::destroy()
 TypeInfoSet ResourceBundlePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ResourceBundleAsset >());
+	typeSet.insert< ResourceBundleAsset >();
 	return typeSet;
 }
 

@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineEntityEditorFactory", SplineEntityE
 const TypeInfoSet SplineEntityEditorFactory::getEntityDataTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SplineEntityData >());
+	typeSet.insert< SplineEntityData >();
 	return typeSet;
 }
 

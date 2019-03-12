@@ -15,8 +15,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.PhysicsEntityEditorFactory", PhysicsEnt
 const TypeInfoSet PhysicsEntityEditorFactory::getEntityDataTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ArticulatedEntityData >());
-	typeSet.insert(&type_of< RigidEntityData >());
+	typeSet.insert< ArticulatedEntityData >();
+	typeSet.insert< RigidEntityData >();
 	return typeSet;
 }
 

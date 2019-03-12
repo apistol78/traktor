@@ -31,8 +31,8 @@ void EffectEntityRenderer::setLodDistances(float lod1Distance, float lod2Distanc
 const TypeInfoSet EffectEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< EffectComponent >());
-	typeSet.insert(&type_of< EffectEntity >());
+	typeSet.insert< EffectComponent >();
+	typeSet.insert< EffectEntity >();
 	return typeSet;
 }
 

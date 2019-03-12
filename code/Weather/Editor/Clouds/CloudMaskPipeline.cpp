@@ -31,7 +31,7 @@ void CloudMaskPipeline::destroy()
 TypeInfoSet CloudMaskPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< CloudMaskAsset >());
+	typeSet.insert< CloudMaskAsset >();
 	return typeSet;
 }
 

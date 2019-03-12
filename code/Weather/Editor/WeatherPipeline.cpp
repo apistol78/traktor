@@ -14,9 +14,9 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.WeatherPipeline", 0, WeatherPip
 TypeInfoSet WeatherPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< CloudComponentData >());
-	typeSet.insert(&type_of< PrecipitationComponentData >());
-	typeSet.insert(&type_of< SkyComponentData >());
+	typeSet.insert< CloudComponentData >();
+	typeSet.insert< PrecipitationComponentData >();
+	typeSet.insert< SkyComponentData >();
 	return typeSet;
 }
 

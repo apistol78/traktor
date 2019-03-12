@@ -111,7 +111,7 @@ void EffectPipeline::destroy()
 TypeInfoSet EffectPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< EffectData >());
+	typeSet.insert< EffectData >();
 	return typeSet;
 }
 

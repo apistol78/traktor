@@ -22,7 +22,7 @@ SpriteFactory::SpriteFactory(bool createComponents)
 TypeInfoSet SpriteFactory::getCharacterTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SpriteData >());
+	typeSet.insert< SpriteData >();
 	return typeSet;
 }
 

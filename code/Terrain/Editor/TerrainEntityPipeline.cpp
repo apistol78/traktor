@@ -17,9 +17,9 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainEntityPipeline", 0, Terr
 TypeInfoSet TerrainEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< OceanComponentData >());
-	typeSet.insert(&type_of< RiverComponentData >());
-	typeSet.insert(&type_of< TerrainComponentData >());
+	typeSet.insert< OceanComponentData >();
+	typeSet.insert< RiverComponentData >();
+	typeSet.insert< TerrainComponentData >();
 	return typeSet;
 }
 

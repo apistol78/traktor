@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.ControlPointEntityEditorFactory", Control
 const TypeInfoSet ControlPointEntityEditorFactory::getEntityDataTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ControlPointEntityData >());
+	typeSet.insert< ControlPointEntityData >();
 	return typeSet;
 }
 

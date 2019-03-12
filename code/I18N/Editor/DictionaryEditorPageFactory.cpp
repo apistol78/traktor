@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.i18n.DictionaryEditorPageFactory", 0, D
 const TypeInfoSet DictionaryEditorPageFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Dictionary >());
+	typeSet.insert< Dictionary >();
 	return typeSet;
 }
 

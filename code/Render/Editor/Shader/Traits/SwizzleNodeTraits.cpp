@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SwizzleNodeTraits", 0, SwizzleNo
 TypeInfoSet SwizzleNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Swizzle >());
+	typeSet.insert< Swizzle >();
 	return typeSet;
 }
 

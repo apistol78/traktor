@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <detours.h>
+#include <set>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"

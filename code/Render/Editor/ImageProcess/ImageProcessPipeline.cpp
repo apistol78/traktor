@@ -80,7 +80,7 @@ void ImageProcessPipeline::destroy()
 TypeInfoSet ImageProcessPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ImageProcessSettings >());
+	typeSet.insert< ImageProcessSettings >();
 	return typeSet;
 }
 
@@ -160,7 +160,7 @@ bool ImageProcessPipeline::buildOutput(
 	if (!pp)
 		return false;
 
-	std::set< std::wstring > targets;
+	SmallSet< std::wstring > targets;
 
 	// Get all user defined, non-persistent, targets.
 	for (const auto definition : pp->getDefinitions())
@@ -193,7 +193,7 @@ bool ImageProcessPipeline::buildOutput(
 			gatherSources(*j, toBeUsedSources);
 
 		// Discard targets which will no longer be used.
-		for (std::set< std::wstring >::iterator j = targets.begin(); j != targets.end(); )
+		for (auto j = targets.begin(); j != targets.end(); )
 		{
 			if (std::find(toBeUsedSources.begin(), toBeUsedSources.end(), *j) == toBeUsedSources.end())
 			{

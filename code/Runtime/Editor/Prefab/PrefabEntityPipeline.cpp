@@ -111,7 +111,7 @@ bool PrefabEntityPipeline::create(const editor::IPipelineSettings* settings)
 TypeInfoSet PrefabEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< PrefabEntityData >());
+	typeSet.insert< PrefabEntityData >();
 	return typeSet;
 }
 

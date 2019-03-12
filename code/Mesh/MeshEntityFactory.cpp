@@ -19,7 +19,7 @@ MeshEntityFactory::MeshEntityFactory(resource::IResourceManager* resourceManager
 const TypeInfoSet MeshEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< AbstractMeshEntityData >());
+	typeSet.insert< AbstractMeshEntityData >();
 	return typeSet;
 }
 
@@ -31,7 +31,7 @@ const TypeInfoSet MeshEntityFactory::getEntityEventTypes() const
 const TypeInfoSet MeshEntityFactory::getEntityComponentTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< MeshComponentData >());
+	typeSet.insert< MeshComponentData >();
 	return typeSet;
 }
 

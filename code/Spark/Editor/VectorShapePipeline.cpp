@@ -68,7 +68,7 @@ void VectorShapePipeline::destroy()
 TypeInfoSet VectorShapePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< VectorShapeAsset >());
+	typeSet.insert< VectorShapeAsset >();
 	return typeSet;
 }
 

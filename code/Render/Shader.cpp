@@ -54,7 +54,7 @@ void Shader::setTechnique(handle_t handle)
 	updateCurrentProgram();
 }
 
-void Shader::getTechniques(std::set< handle_t >& outHandles) const
+void Shader::getTechniques(SmallSet< handle_t >& outHandles) const
 {
 	for (const auto& technique : m_techniques)
 		outHandles.insert(technique.first);

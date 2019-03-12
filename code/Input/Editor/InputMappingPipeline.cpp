@@ -27,7 +27,7 @@ void InputMappingPipeline::destroy()
 TypeInfoSet InputMappingPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< InputMappingAsset >());
+	typeSet.insert< InputMappingAsset >();
 	return typeSet;
 }
 

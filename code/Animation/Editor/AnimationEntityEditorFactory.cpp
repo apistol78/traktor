@@ -17,9 +17,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationEntityEditorFactory", Animat
 const TypeInfoSet AnimationEntityEditorFactory::getEntityDataTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< AnimatedMeshEntityData >());
-	typeSet.insert(&type_of< ClothEntityData >());
-	typeSet.insert(&type_of< PathEntityData >());
+	typeSet.insert< AnimatedMeshEntityData >();
+	typeSet.insert< ClothEntityData >();
+	typeSet.insert< PathEntityData >();
 	return typeSet;
 }
 

@@ -1,6 +1,8 @@
 #include "Illuminate/Editor/IlluminateEntityData.h"
 #include "Illuminate/Editor/IlluminateEntityFactory.h"
+#include "Mesh/MeshComponentData.h"
 #include "World/IEntityBuilder.h"
+#include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/GroupEntity.h"
 
 namespace traktor
@@ -12,9 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.illuminate.IlluminateEntityFactory", Illuminate
 
 const TypeInfoSet IlluminateEntityFactory::getEntityTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< IlluminateEntityData >());
-	return typeSet;
+	return makeTypeInfoSet< IlluminateEntityData >();
 }
 
 const TypeInfoSet IlluminateEntityFactory::getEntityEventTypes() const
@@ -31,27 +31,38 @@ Ref< world::Entity > IlluminateEntityFactory::createEntity(const world::IEntityB
 {
 	const IlluminateEntityData* illumEntityData = checked_type_cast< const IlluminateEntityData* >(&entityData);
 
-	Ref< world::GroupEntity > batchEntity = new world::GroupEntity(illumEntityData->getTransform());
+	/*
+	\tbd Create an IlluminateEntity which can toggle between realtime and baked.
+	*/
 
-	const RefArray< world::EntityData >& childEntityData = illumEntityData->getEntityData();
-	for (RefArray< world::EntityData >::const_iterator i = childEntityData.begin(); i != childEntityData.end(); ++i)
+	/*
+	Ref< world::GroupEntity > batchEntity = new world::GroupEntity(illumEntityData->getTransform());
+	for (auto childEntityData : illumEntityData->getEntityData())
 	{
-		Ref< world::Entity > childEntity = builder->create(*i);
+		Ref< world::Entity > childEntity = builder->create(childEntityData);
 		if (childEntity)
 			batchEntity->addEntity(childEntity);
 	}
-
 	return batchEntity;
+	*/
+
+	Ref< world::ComponentEntityData > meshEntityData = new world::ComponentEntityData();
+	meshEntityData->setName(illumEntityData->getName());
+	meshEntityData->setComponent(new mesh::MeshComponentData(
+		resource::Id< mesh::IMesh >(illumEntityData->getSeedGuid().permutate(1))
+	));
+	return builder->getCompositeEntityBuilder()->create(meshEntityData);
+
 }
 
 Ref< world::IEntityEvent > IlluminateEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< world::IEntityComponent > IlluminateEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	return 0;
+	return nullptr;
 }
 
 	}

@@ -198,7 +198,7 @@ bool NavMeshPipeline::create(const editor::IPipelineSettings* settings)
 TypeInfoSet NavMeshPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< NavMeshAsset >());
+	typeSet.insert< NavMeshAsset >();
 	return typeSet;
 }
 

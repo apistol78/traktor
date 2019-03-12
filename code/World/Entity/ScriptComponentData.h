@@ -44,9 +44,9 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-private:
-	friend class EntityComponentPipeline;
+	const resource::Id< IRuntimeClass >& getRuntimeClass() const { return m_class;  }
 
+private:
 	resource::Id< IRuntimeClass > m_class;
 };
 

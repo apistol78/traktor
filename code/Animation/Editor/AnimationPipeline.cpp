@@ -36,7 +36,7 @@ void AnimationPipeline::destroy()
 TypeInfoSet AnimationPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< AnimationAsset >());
+	typeSet.insert< AnimationAsset >();
 	return typeSet;
 }
 

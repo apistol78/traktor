@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "Core/Math/Random.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Types.h"
 #include "Resource/Id.h"
@@ -84,9 +85,11 @@ public:
 		handle_t m_handleProjection;
 		handle_t m_handleOffsets;
 		handle_t m_handleDirections;
+		handle_t m_handleRandom;
 		handle_t m_handleRandomNormals;
 		handle_t m_handleRandomRotations;
 		handle_t m_handleMagicCoeffs;
+		Random m_random;
 	};
 
 	virtual Ref< Instance > create(

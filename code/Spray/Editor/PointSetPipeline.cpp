@@ -31,7 +31,7 @@ void PointSetPipeline::destroy()
 TypeInfoSet PointSetPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< PointSetAsset >());
+	typeSet.insert< PointSetAsset >();
 	return typeSet;
 }
 

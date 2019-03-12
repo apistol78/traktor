@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsEntityFactory", BoidsEntityFacto
 const TypeInfoSet BoidsEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< BoidsEntityData >());
+	typeSet.insert< BoidsEntityData >();
 	return typeSet;
 }
 

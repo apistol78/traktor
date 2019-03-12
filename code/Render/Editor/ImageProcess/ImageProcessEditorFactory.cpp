@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageProcessEditorFactory", 0, I
 const TypeInfoSet ImageProcessEditorFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ImageProcessSettings >());
+	typeSet.insert< ImageProcessSettings >();
 	return typeSet;
 }
 

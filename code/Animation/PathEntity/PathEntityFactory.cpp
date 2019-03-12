@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathEntityFactory", PathEntityFactory
 const TypeInfoSet PathEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< PathEntityData >());
+	typeSet.insert< PathEntityData >();
 	return typeSet;
 }
 
@@ -25,7 +25,7 @@ const TypeInfoSet PathEntityFactory::getEntityEventTypes() const
 const TypeInfoSet PathEntityFactory::getEntityComponentTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< PathComponentData >());
+	typeSet.insert< PathComponentData >();
 	return typeSet;
 }
 

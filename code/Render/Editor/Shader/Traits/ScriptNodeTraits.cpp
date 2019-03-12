@@ -28,7 +28,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ScriptNodeTraits", 0, ScriptNode
 TypeInfoSet ScriptNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Script >());
+	typeSet.insert< Script >();
 	return typeSet;
 }
 

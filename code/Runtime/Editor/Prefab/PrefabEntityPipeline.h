@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include "World/Editor/EntityPipeline.h"
 
 // import/export mechanism.

@@ -18,11 +18,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightRenderer", LightRenderer, IEntityRen
 const TypeInfoSet LightRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< DirectionalLightEntity >());
-	typeSet.insert(&type_of< GodRayComponent >());
-	typeSet.insert(&type_of< LightComponent >());
-	typeSet.insert(&type_of< PointLightEntity >());
-	typeSet.insert(&type_of< SpotLightEntity >());
+	typeSet.insert< DirectionalLightEntity >();
+	typeSet.insert< GodRayComponent >();
+	typeSet.insert< LightComponent >();
+	typeSet.insert< PointLightEntity >();
+	typeSet.insert< SpotLightEntity >();
 	return typeSet;
 }
 

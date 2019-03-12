@@ -113,7 +113,7 @@ bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* setting
 TypeInfoSet HeightfieldTexturePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< HeightfieldTextureAsset >());
+	typeSet.insert< HeightfieldTextureAsset >();
 	return typeSet;
 }
 

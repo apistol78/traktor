@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ComputeNodeTraits", 0, ComputeNo
 TypeInfoSet ComputeNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ComputeOutput >());
+	typeSet.insert< ComputeOutput >();
 	return typeSet;
 }
 

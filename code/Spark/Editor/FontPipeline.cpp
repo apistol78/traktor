@@ -52,7 +52,7 @@ void FontPipeline::destroy()
 TypeInfoSet FontPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< FontAsset >());
+	typeSet.insert< FontAsset >();
 	return typeSet;
 }
 

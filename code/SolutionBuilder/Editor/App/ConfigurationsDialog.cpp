@@ -48,7 +48,7 @@ bool ConfigurationsDialog::create(ui::Widget* parent, Solution* solution)
 	buttonRemove->create(container, L"Remove");
 	buttonRemove->addEventHandler< ui::ButtonClickEvent >(this, &ConfigurationsDialog::eventButtonRemove);
 
-	std::set< std::wstring > configurations;
+	SmallSet< std::wstring > configurations;
 
 	// Get all unique configuration names.
 	const RefArray< Project >& projects = solution->getProjects();
@@ -60,8 +60,8 @@ bool ConfigurationsDialog::create(ui::Widget* parent, Solution* solution)
 	}
 
 	// Populate configuration list.
-	for (std::set< std::wstring >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
-		m_listConfigurations->add(*i);
+	for (const auto& configuration : configurations)
+		m_listConfigurations->add(configuration);
 
 	return true;
 }

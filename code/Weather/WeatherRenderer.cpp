@@ -19,9 +19,9 @@ WeatherRenderer::WeatherRenderer(render::PrimitiveRenderer* primitiveRenderer)
 const TypeInfoSet WeatherRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< CloudComponent >());
-	typeSet.insert(&type_of< PrecipitationComponent >());
-	typeSet.insert(&type_of< SkyComponent >());
+	typeSet.insert< CloudComponent >();
+	typeSet.insert< PrecipitationComponent >();
+	typeSet.insert< SkyComponent >();
 	return typeSet;
 }
 

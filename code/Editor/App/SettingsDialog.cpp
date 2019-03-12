@@ -58,7 +58,9 @@ bool SettingsDialog::create(ui::Widget* parent, const PropertyGroup* originalSet
 	TypeInfoSet settingPageTypes;
 	type_of< ISettingsPage >().findAllOf(settingPageTypes, false);
 
-	std::vector< const TypeInfo* > types(settingPageTypes.begin(), settingPageTypes.end());
+	std::vector< const TypeInfo* > types;
+	for (const auto settingPageType : settingPageTypes)
+		types.push_back(settingPageType);
 	std::sort(types.begin(), types.end(), SettingsPagePredicate());
 
 	int32_t four = ui::dpi96(4);

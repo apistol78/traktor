@@ -13,8 +13,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.EntityRenderer", EntityRenderer, world:
 const TypeInfoSet EntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< RigidEntity >());
-	typeSet.insert(&type_of< ArticulatedEntity >());
+	typeSet.insert< RigidEntity >();
+	typeSet.insert< ArticulatedEntity >();
 	return typeSet;
 }
 

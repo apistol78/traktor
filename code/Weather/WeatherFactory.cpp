@@ -32,9 +32,9 @@ const TypeInfoSet WeatherFactory::getEntityEventTypes() const
 const TypeInfoSet WeatherFactory::getEntityComponentTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< CloudComponentData >());
-	typeSet.insert(&type_of< PrecipitationComponentData >());
-	typeSet.insert(&type_of< SkyComponentData >());
+	typeSet.insert< CloudComponentData >();
+	typeSet.insert< PrecipitationComponentData >();
+	typeSet.insert< SkyComponentData >();
 	return typeSet;
 }
 

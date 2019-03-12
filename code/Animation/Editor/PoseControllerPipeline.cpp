@@ -14,9 +14,9 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.PoseControllerPipeline", 0, P
 TypeInfoSet PoseControllerPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< StatePoseControllerData >());
-	typeSet.insert(&type_of< IKPoseControllerData >());
-	typeSet.insert(&type_of< RagDollPoseControllerData >());
+	typeSet.insert< StatePoseControllerData >();
+	typeSet.insert< IKPoseControllerData >();
+	typeSet.insert< RagDollPoseControllerData >();
 	return typeSet;
 }
 

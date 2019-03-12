@@ -27,8 +27,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.UniformNodeTraits", 0, UniformNo
 TypeInfoSet UniformNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< IndexedUniform >());
-	typeSet.insert(&type_of< Uniform >());
+	typeSet.insert< IndexedUniform >();
+	typeSet.insert< Uniform >();
 	return typeSet;
 }
 

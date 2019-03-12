@@ -16,7 +16,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshEntityRenderer", MeshEntityRenderer, w
 const TypeInfoSet MeshEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< MeshEntity >());
+	typeSet.insert< MeshEntity >();
 	return typeSet;
 }
 

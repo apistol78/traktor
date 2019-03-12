@@ -26,7 +26,7 @@ void EntityEventSetPipeline::destroy()
 TypeInfoSet EntityEventSetPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< EntityEventSetData >());
+	typeSet.insert< EntityEventSetData >();
 	return typeSet;
 }
 

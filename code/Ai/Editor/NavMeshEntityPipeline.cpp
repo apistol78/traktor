@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshEntityPipeline", 1, NavMeshEn
 TypeInfoSet NavMeshEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< NavMeshEntityData >());
+	typeSet.insert< NavMeshEntityData >();
 	return typeSet;
 }
 

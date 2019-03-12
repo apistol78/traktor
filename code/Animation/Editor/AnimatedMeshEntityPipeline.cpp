@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimatedMeshEntityPipeline", 
 TypeInfoSet AnimatedMeshEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< AnimatedMeshEntityData >());
+	typeSet.insert< AnimatedMeshEntityData >();
 	return typeSet;
 }
 

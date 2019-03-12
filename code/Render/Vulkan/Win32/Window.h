@@ -6,6 +6,7 @@
 #endif
 #include <windows.h>
 #include <tchar.h>
+#include <set>
 #include "Core/Object.h"
 
 namespace traktor

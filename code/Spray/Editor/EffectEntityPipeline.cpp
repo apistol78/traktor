@@ -14,9 +14,9 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEntityPipeline", 1, EffectE
 TypeInfoSet EffectEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< EffectEntityData >());
-	typeSet.insert(&type_of< SoundEventData >());
-	typeSet.insert(&type_of< SpawnEffectEventData >());
+	typeSet.insert< EffectEntityData >();
+	typeSet.insert< SoundEventData >();
+	typeSet.insert< SpawnEffectEventData >();
 	return typeSet;
 }
 

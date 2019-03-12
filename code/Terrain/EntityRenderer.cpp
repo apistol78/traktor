@@ -43,9 +43,9 @@ void EntityRenderer::setOceanDynamicReflectionEnable(bool oceanReflectionEnable)
 const TypeInfoSet EntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< OceanComponent >());
-	typeSet.insert(&type_of< RiverComponent >());
-	typeSet.insert(&type_of< TerrainComponent >());
+	typeSet.insert< OceanComponent >();
+	typeSet.insert< RiverComponent >();
+	typeSet.insert< TerrainComponent >();
 	return typeSet;
 }
 

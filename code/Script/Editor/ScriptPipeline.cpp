@@ -169,8 +169,8 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 TypeInfoSet ScriptPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Script >());
-	typeSet.insert(&type_of< ScriptAsset >());
+	typeSet.insert< Script >();
+	typeSet.insert< ScriptAsset >();
 	return typeSet;
 }
 

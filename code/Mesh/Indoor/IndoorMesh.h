@@ -94,7 +94,7 @@ private:
 		const AlignedVector< Plane >& frustum,
 		const Matrix44& view,
 		int currentSector,
-		std::set< int >& outVisibleSectors
+		SmallSet< int >& outVisibleSectors
 	);
 };
 
