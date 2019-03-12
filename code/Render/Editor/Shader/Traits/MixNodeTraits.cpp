@@ -28,8 +28,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MixNodeTraits", 0, MixNodeTraits
 TypeInfoSet MixNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< MixIn >());
-	typeSet.insert(&type_of< MixOut >());
+	typeSet.insert< MixIn >();
+	typeSet.insert< MixOut >();
 	return typeSet;
 }
 

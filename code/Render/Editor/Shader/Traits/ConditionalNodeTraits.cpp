@@ -28,9 +28,9 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ConditionalNodeTraits", 0, Condi
 TypeInfoSet ConditionalNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Conditional >());
-	typeSet.insert(&type_of< Discard >());
-	typeSet.insert(&type_of< Step >());
+	typeSet.insert< Conditional >();
+	typeSet.insert< Discard >();
+	typeSet.insert< Step >();
 	return typeSet;
 }
 

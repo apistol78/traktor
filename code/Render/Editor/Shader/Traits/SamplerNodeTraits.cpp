@@ -28,7 +28,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SamplerNodeTraits", 0, SamplerNo
 TypeInfoSet SamplerNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Sampler >());
+	typeSet.insert< Sampler >();
 	return typeSet;
 }
 

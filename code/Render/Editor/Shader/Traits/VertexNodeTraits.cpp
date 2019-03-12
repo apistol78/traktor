@@ -11,8 +11,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexNodeTraits", 0, VertexNode
 TypeInfoSet VertexNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< VertexInput >());
-	typeSet.insert(&type_of< VertexOutput >());
+	typeSet.insert< VertexInput >();
+	typeSet.insert< VertexOutput >();
 	return typeSet;
 }
 

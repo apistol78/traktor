@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Containers/SmallSet.h"
 #include "Script/IScriptContext.h"
 
 struct lua_State;
@@ -37,7 +38,11 @@ public:
 
 	virtual Any executeFunction(const std::string& functionName, uint32_t argc, const Any* argv) override final;
 
-//private:
+	Any executeDelegate(ScriptDelegateLua* delegate, uint32_t argc, const Any* argv);
+
+	Any executeMethod(ScriptObjectLua* self, int32_t methodRef, uint32_t argc, const Any* argv);
+
+private:
 	friend class ScriptClassLua;
 	friend class ScriptDebuggerLua;
 	friend class ScriptDelegateLua;
@@ -49,13 +54,9 @@ public:
 	int32_t m_environmentRef;
 	bool m_strict;
 	const Object* m_lastSelf;
-	std::set< std::string > m_globals;
+	SmallSet< std::string > m_globals;
 
 	ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, bool strict);
-
-	Any executeDelegate(ScriptDelegateLua* delegate, uint32_t argc, const Any* argv);
-
-	Any executeMethod(ScriptObjectLua* self, int32_t methodRef, uint32_t argc, const Any* argv);
 
 	static int32_t runtimeError(lua_State* luaState);
 

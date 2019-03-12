@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.illuminate.IlluminateEntityEditorFactory", Illu
 const TypeInfoSet IlluminateEntityEditorFactory::getEntityDataTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< IlluminateEntityData >());
+	typeSet.insert< IlluminateEntityData >();
 	return typeSet;
 }
 

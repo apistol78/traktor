@@ -88,7 +88,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankPipeline", 10, BankPipeline, 
 TypeInfoSet BankPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< BankAsset >());
+	typeSet.insert< BankAsset >();
 	return typeSet;
 }
 

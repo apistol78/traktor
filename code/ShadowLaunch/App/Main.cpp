@@ -1,5 +1,6 @@
 #include <Windows.h>
 #include <detours.h>
+#include <set>
 #include "Core/Guid.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"

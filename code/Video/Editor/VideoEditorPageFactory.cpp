@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.VideoEditorPageFactory", 0, Video
 const TypeInfoSet VideoEditorPageFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< VideoAsset >());
+	typeSet.insert< VideoAsset >();
 	return typeSet;
 }
 

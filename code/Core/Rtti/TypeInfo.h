@@ -1,8 +1,8 @@
 #pragma once
 
-#include <set>
 #include "Core/Config.h"
 #include "Core/IRefCount.h"
+#include "Core/Containers/SmallSet.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -50,7 +50,7 @@ class T_DLLCLASS TypeInfo
 public:
 	TypeInfo(
 		const wchar_t* name,
-		size_t size,
+		uint32_t size,
 		int32_t version,
 		bool editable,
 		const TypeInfo* super,
@@ -69,7 +69,7 @@ public:
 	 *
 	 * \return Type size in bytes.
 	 */
-	size_t getSize() const { return m_size; }
+	uint32_t getSize() const { return m_size; }
 
 	/*! \brief Version of type.
 	 *
@@ -113,7 +113,7 @@ public:
 	 * \param outTypes Found types.
 	 * \param inclusive If this type should be included in result.
 	 */
-	void findAllOf(std::set< const TypeInfo* >& outTypes, bool inclusive = true) const;
+	void findAllOf(class TypeInfoSet& outTypes, bool inclusive = true) const;
 
 	/*! \brief Create instance from type name.
 	 *
@@ -134,7 +134,7 @@ public:
 
 private:
 	const wchar_t* m_name;
-	size_t m_size;
+	uint32_t m_size;
 	int32_t m_version;
 	bool m_editable;
 	const TypeInfo* m_super;
@@ -145,7 +145,14 @@ private:
 /*! \brief Set of type information.
  * \ingroup Core
  */
-typedef std::set< const TypeInfo* > TypeInfoSet;
+class T_DLLCLASS TypeInfoSet : public SmallSet< const TypeInfo* >
+{
+public:
+	template < typename Type >
+	bool insert() { return insert(&type_of< Type >()); }
+
+	bool insert(const TypeInfo* typeInfo) { return SmallSet< const TypeInfo* >::insert(typeInfo); }
+};
 
 /*! \brief Create type info set from single type.
  * \ingroup Core

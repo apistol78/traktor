@@ -18,7 +18,7 @@ BatchMeshEntityFactory::BatchMeshEntityFactory(resource::IResourceManager* resou
 const TypeInfoSet BatchMeshEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< BatchMeshEntityData >());
+	typeSet.insert< BatchMeshEntityData >();
 	return typeSet;
 }
 

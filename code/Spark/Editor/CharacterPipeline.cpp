@@ -33,7 +33,7 @@ void CharacterPipeline::destroy()
 TypeInfoSet CharacterPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< CharacterData >());
+	typeSet.insert< CharacterData >();
 	return typeSet;
 }
 

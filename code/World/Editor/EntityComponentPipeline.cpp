@@ -1,8 +1,7 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineDepends.h"
-#include "World/Entity/ScriptComponentData.h"
+#include "World/IEntityComponentData.h"
 #include "World/Editor/EntityComponentPipeline.h"
 
 namespace traktor
@@ -23,9 +22,7 @@ void EntityComponentPipeline::destroy()
 
 TypeInfoSet EntityComponentPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< IEntityComponentData >());
-	return typeSet;
+	return makeTypeInfoSet< IEntityComponentData >();
 }
 
 bool EntityComponentPipeline::buildDependencies(
@@ -36,8 +33,6 @@ bool EntityComponentPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const ScriptComponentData* scriptComponentData = dynamic_type_cast< const ScriptComponentData* >(sourceAsset))
-		pipelineDepends->addDependency(scriptComponentData->m_class, editor::PdfBuild);
 	return true;
 }
 

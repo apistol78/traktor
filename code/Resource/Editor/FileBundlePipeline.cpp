@@ -65,7 +65,7 @@ void FileBundlePipeline::destroy()
 TypeInfoSet FileBundlePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< FileBundleAsset >());
+	typeSet.insert< FileBundleAsset >();
 	return typeSet;
 }
 

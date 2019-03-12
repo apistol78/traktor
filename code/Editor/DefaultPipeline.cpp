@@ -27,7 +27,7 @@ void DefaultPipeline::destroy()
 TypeInfoSet DefaultPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Object >());
+	typeSet.insert< Object >();
 	return typeSet;
 }
 

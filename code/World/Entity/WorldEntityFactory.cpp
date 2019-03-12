@@ -48,32 +48,32 @@ WorldEntityFactory::WorldEntityFactory(resource::IResourceManager* resourceManag
 const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ComponentEntityData >());
-	typeSet.insert(&type_of< DirectionalLightEntityData >());
-	typeSet.insert(&type_of< ExternalEntityData >());
-	typeSet.insert(&type_of< GroupEntityData >());
-	typeSet.insert(&type_of< PointLightEntityData >());
-	typeSet.insert(&type_of< SpotLightEntityData >());
+	typeSet.insert< ComponentEntityData >();
+	typeSet.insert< DirectionalLightEntityData >();
+	typeSet.insert< ExternalEntityData >();
+	typeSet.insert< GroupEntityData >();
+	typeSet.insert< PointLightEntityData >();
+	typeSet.insert< SpotLightEntityData >();
 	return typeSet;
 }
 
 const TypeInfoSet WorldEntityFactory::getEntityEventTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< DecalEventData >());
+	typeSet.insert< DecalEventData >();
 	return typeSet;
 }
 
 const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< CameraComponentData >());
-	typeSet.insert(&type_of< DecalComponentData >());
-	typeSet.insert(&type_of< GodRayComponentData >());
-	typeSet.insert(&type_of< LightComponentData >());
-	typeSet.insert(&type_of< ProbeComponentData >());
-	typeSet.insert(&type_of< ScriptComponentData >());
-	typeSet.insert(&type_of< VolumeComponentData >());
+	typeSet.insert< CameraComponentData >();
+	typeSet.insert< DecalComponentData >();
+	typeSet.insert< GodRayComponentData >();
+	typeSet.insert< LightComponentData >();
+	typeSet.insert< ProbeComponentData >();
+	typeSet.insert< ScriptComponentData >();
+	typeSet.insert< VolumeComponentData >();
 	return typeSet;
 }
 

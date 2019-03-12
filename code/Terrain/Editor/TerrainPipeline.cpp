@@ -119,7 +119,7 @@ bool TerrainPipeline::create(const editor::IPipelineSettings* settings)
 TypeInfoSet TerrainPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< TerrainAsset >());
+	typeSet.insert< TerrainAsset >();
 	return typeSet;
 }
 

@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldAssetEditorFactory", 0, H
 const TypeInfoSet HeightfieldAssetEditorFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< HeightfieldAsset >());
+	typeSet.insert< HeightfieldAsset >();
 	return typeSet;
 }
 

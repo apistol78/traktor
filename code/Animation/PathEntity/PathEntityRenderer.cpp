@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathEntityRenderer", PathEntityRender
 const TypeInfoSet PathEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< PathEntity >());
+	typeSet.insert< PathEntity >();
 	return typeSet;
 }
 

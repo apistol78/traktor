@@ -31,8 +31,8 @@ EntityFactory::EntityFactory(
 const TypeInfoSet EntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ArticulatedEntityData >());
-	typeSet.insert(&type_of< RigidEntityData >());
+	typeSet.insert< ArticulatedEntityData >();
+	typeSet.insert< RigidEntityData >();
 	return typeSet;
 }
 
@@ -44,9 +44,9 @@ const TypeInfoSet EntityFactory::getEntityEventTypes() const
 const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< CharacterComponentData >());
-	typeSet.insert(&type_of< RigidBodyComponentData >());
-	typeSet.insert(&type_of< VehicleComponentData >());
+	typeSet.insert< CharacterComponentData >();
+	typeSet.insert< RigidBodyComponentData >();
+	typeSet.insert< VehicleComponentData >();
 	return typeSet;
 }
 

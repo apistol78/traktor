@@ -75,7 +75,7 @@
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Color" version="traktor.render.Node:1">
+		<item type="traktor.render.Color" version="1,traktor.render.Node:1">
 			<id>{0918D4BD-C6E0-4E37-9082-BD033010A21E}</id>
 			<comment/>
 			<position>
@@ -103,7 +103,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>Input1</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -113,7 +113,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>Input</name>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

@@ -28,7 +28,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SwitchNodeTraits", 0, SwitchNode
 TypeInfoSet SwitchNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Switch >());
+	typeSet.insert< Switch >();
 	return typeSet;
 }
 

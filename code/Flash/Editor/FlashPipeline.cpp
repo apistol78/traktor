@@ -84,8 +84,8 @@ void FlashPipeline::destroy()
 TypeInfoSet FlashPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< FlashEmptyMovieAsset >());
-	typeSet.insert(&type_of< FlashMovieAsset >());
+	typeSet.insert< FlashEmptyMovieAsset >();
+	typeSet.insert< FlashMovieAsset >();
 	return typeSet;
 }
 

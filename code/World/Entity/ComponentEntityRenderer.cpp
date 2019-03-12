@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ComponentEntityRenderer", ComponentEntity
 const TypeInfoSet ComponentEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ComponentEntity >());
+	typeSet.insert< ComponentEntity >();
 	return typeSet;
 }
 

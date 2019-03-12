@@ -32,7 +32,7 @@ void HeightfieldPipeline::destroy()
 TypeInfoSet HeightfieldPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< HeightfieldAsset >());
+	typeSet.insert< HeightfieldAsset >();
 	return typeSet;
 }
 

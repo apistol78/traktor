@@ -18,7 +18,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.SceneEditorPageFactory", 0, Scene
 const TypeInfoSet SceneEditorPageFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SceneAsset >());
+	typeSet.insert< SceneAsset >();
 	typeSet.insert(&type_of< world::EntityData >());
 	return typeSet;
 }

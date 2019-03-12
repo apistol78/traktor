@@ -84,8 +84,8 @@ void ProbePipeline::destroy()
 TypeInfoSet ProbePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< IrradianceProbeAsset >());
-	typeSet.insert(&type_of< RadianceProbeAsset >());
+	typeSet.insert< IrradianceProbeAsset >();
+	typeSet.insert< RadianceProbeAsset >();
 	return typeSet;
 }
 
@@ -97,10 +97,16 @@ bool ProbePipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	 if (const IrradianceProbeAsset* irradianceAsset = dynamic_type_cast< const IrradianceProbeAsset* >(sourceAsset))
-		pipelineDepends->addDependency(Path(m_assetPath), irradianceAsset->getFileName().getOriginal());
-	else if (const RadianceProbeAsset* radianceAsset = dynamic_type_cast< const RadianceProbeAsset* >(sourceAsset))
-		pipelineDepends->addDependency(Path(m_assetPath), radianceAsset->getFileName().getOriginal());
+	if (const IrradianceProbeAsset* irradianceAsset = dynamic_type_cast<const IrradianceProbeAsset*>(sourceAsset))
+	{
+		if (!irradianceAsset->getFileName().empty())
+			pipelineDepends->addDependency(Path(m_assetPath), irradianceAsset->getFileName().getOriginal());
+	}
+	else if (const RadianceProbeAsset* radianceAsset = dynamic_type_cast<const RadianceProbeAsset*>(sourceAsset))
+	{
+		if (!radianceAsset->getFileName().empty())
+			pipelineDepends->addDependency(Path(m_assetPath), radianceAsset->getFileName().getOriginal());
+	}
 	else
 		return false;
 
@@ -121,22 +127,44 @@ bool ProbePipeline::buildOutput(
 ) const
 {
 	const editor::Asset* asset = checked_type_cast< const editor::Asset* >(sourceAsset);
+	Ref< drawing::Image > assetImage;
 
-	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), asset->getFileName().getOriginal());
-	if (!file)
+	if (!asset->getFileName().empty())
 	{
-		log::error << L"Probe texture asset pipeline failed; unable to open source image \"" << asset->getFileName().getOriginal() << L"\"" << Endl;
-		return false;
-	}
+		Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), asset->getFileName().getOriginal());
+		if (!file)
+		{
+			log::error << L"Probe texture asset pipeline failed; unable to open source image \"" << asset->getFileName().getOriginal() << L"\"" << Endl;
+			return false;
+		}
 
-	Ref< drawing::Image > assetImage = drawing::Image::load(file, asset->getFileName().getExtension());
-	if (!assetImage)
+		assetImage = drawing::Image::load(file, asset->getFileName().getExtension());
+		if (!assetImage)
+		{
+			log::error << L"Probe texture asset pipeline failed; unable to load source image \"" << asset->getFileName().getOriginal() << L"\"" << Endl;
+			return false;
+		}
+
+		file->close();
+	}
+	else
 	{
-		log::error << L"Probe texture asset pipeline failed; unable to load source image \"" << asset->getFileName().getOriginal() << L"\"" << Endl;
-		return false;
-	}
+		Ref< IStream > file = sourceInstance->readData(L"Data");
+		if (!file)
+		{
+			log::error << L"Probe texture asset pipeline failed; unable to open data stream \"Data\" of instance " << sourceInstance->getGuid().format() << Endl;
+			return false;
+		}
 
-	file->close();
+		assetImage = drawing::Image::load(file, L"tri");
+		if (!assetImage)
+		{
+			log::error << L"Probe texture asset pipeline failed; unable to load source image from data stream \"Data\" of instance " << sourceInstance->getGuid().format() << Endl;
+			return false;
+		}
+
+		file->close();
+	}
 
 	RefArray< CubeMap > cubeMips;
 
@@ -144,6 +172,17 @@ bool ProbePipeline::buildOutput(
 	{
 		if (!m_processor->irradiance(assetImage, irradianceAsset->getFactor(), 256, cubeMips))
 			return false;
+
+		const Scalar nf(1.0f / PI);
+		const drawing::TransformFilter tf(
+			Color4f(nf, nf, nf, 1.0f),
+			Color4f(0.0f, 0.0f, 0.0f, 0.0f)
+		);
+		for (auto cubeMip : cubeMips)
+		{
+			for (int32_t side = 0; side < 6; ++side)
+				cubeMip->getSide(side)->apply(&tf);
+		}
 	}
 	else if (const RadianceProbeAsset* radianceAsset = dynamic_type_cast< const RadianceProbeAsset* >(asset))
 	{
@@ -154,30 +193,18 @@ bool ProbePipeline::buildOutput(
 	if (cubeMips.empty())
 		return false;
 
-	// Divide (ir-)radiance by PI.
-	const Scalar nf(1.0f / PI);
-	const drawing::TransformFilter tf(
-		Color4f(nf, nf, nf, 1.0f),
-		Color4f(0.0f, 0.0f, 0.0f, 0.0f)
-	);
-	for (auto cubeMip : cubeMips)
-	{
-		for (int32_t side = 0; side < 6; ++side)
-			cubeMip->getSide(side)->apply(&tf);
-	}
-
 	const uint32_t sideSize = cubeMips.front()->getSize();
 	const uint32_t mipCount = uint32_t(cubeMips.size());
 
-	// Measure probe mips.
-	log::info << L"Probe dynamic range (per mip)" << Endl;
-	log::info << IncreaseIndent;
-	for (uint32_t i = 0; i < mipCount; ++i)
-	{
-		auto r = measureDynamicRange(cubeMips[i]);
-		log::info << i << L". " << r.delta() << L" (min " << r.min << L", max " << r.max << L")" << Endl;
-	}
-	log::info << DecreaseIndent;
+	//// Measure probe mips.
+	//log::info << L"Probe dynamic range (per mip)" << Endl;
+	//log::info << IncreaseIndent;
+	//for (uint32_t i = 0; i < mipCount; ++i)
+	//{
+	//	auto r = measureDynamicRange(cubeMips[i]);
+	//	log::info << i << L". " << r.delta() << L" (min " << r.min << L", max " << r.max << L")" << Endl;
+	//}
+	//log::info << DecreaseIndent;
 
 	// Create output instance.
 	Ref< TextureResource > outputResource = new TextureResource();

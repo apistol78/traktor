@@ -75,7 +75,7 @@ void PrefabMergePipeline::destroy()
 TypeInfoSet PrefabMergePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< PrefabMerge >());
+	typeSet.insert< PrefabMerge >();
 	return typeSet;
 }
 

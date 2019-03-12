@@ -11,14 +11,14 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ConstantNodeTraits", 0, Constant
 TypeInfoSet ConstantNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Color >());
-	typeSet.insert(&type_of< Instance >());
-	typeSet.insert(&type_of< Scalar >());
-	typeSet.insert(&type_of< State >());
-	typeSet.insert(&type_of< TargetSize >());
-	typeSet.insert(&type_of< Texture >());
-	typeSet.insert(&type_of< TextureSize >());
-	typeSet.insert(&type_of< Vector >());
+	typeSet.insert< Color >();
+	typeSet.insert< Instance >();
+	typeSet.insert< Scalar >();
+	typeSet.insert< State >();
+	typeSet.insert< TargetSize >();
+	typeSet.insert< Texture >();
+	typeSet.insert< TextureSize >();
+	typeSet.insert< Vector >();
 	return typeSet;
 }
 

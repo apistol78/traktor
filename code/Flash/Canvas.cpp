@@ -127,32 +127,30 @@ void Canvas::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, 
 		const AlignedVector< Vector2 >& points = i->getPoints();
 		const AlignedVector< SubPath >& subPaths = i->getSubPaths();
 
-		std::set< uint16_t > fillStyles;
-		for (uint32_t j = 0; j < subPaths.size(); ++j)
+		SmallSet< uint16_t > fillStyles;
+		for (const auto& sp : subPaths)
 		{
-			const SubPath& sp = subPaths[j];
 			if (sp.fillStyle0)
 				fillStyles.insert(sp.fillStyle0);
 			if (sp.fillStyle1)
 				fillStyles.insert(sp.fillStyle1);
 		}
 
-		for (std::set< uint16_t >::const_iterator ii = fillStyles.begin(); ii != fillStyles.end(); ++ii)
+		for (const auto fillStyle : fillStyles)
 		{
-			for (uint32_t j = 0; j < subPaths.size(); ++j)
+			for (const auto& sp : subPaths)
 			{
-				const SubPath& sp = subPaths[j];
-				if (sp.fillStyle0 != *ii && sp.fillStyle1 != *ii)
+				if (sp.fillStyle0 != fillStyle && sp.fillStyle1 != fillStyle)
 					continue;
 
-				for (AlignedVector< SubPathSegment >::const_iterator k = sp.segments.begin(); k != sp.segments.end(); ++k)
+				for (const auto& segment : sp.segments)
 				{
-					switch (k->type)
+					switch (segment.type)
 					{
 					case SpgtLinear:
 						{
-							s.v[0] = points[k->pointsOffset];
-							s.v[1] = points[k->pointsOffset + 1];
+							s.v[0] = points[segment.pointsOffset];
+							s.v[1] = points[segment.pointsOffset + 1];
 							s.curve = false;
 							s.fillStyle0 = sp.fillStyle0;
 							s.fillStyle1 = sp.fillStyle1;
@@ -163,9 +161,9 @@ void Canvas::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, 
 
 					case SpgtQuadratic:
 						{
-							s.v[0] = points[k->pointsOffset];
-							s.v[1] = points[k->pointsOffset + 2];
-							s.c = points[k->pointsOffset + 1];
+							s.v[0] = points[segment.pointsOffset];
+							s.v[1] = points[segment.pointsOffset + 2];
+							s.c = points[segment.pointsOffset + 1];
 							s.curve = true;
 							s.fillStyle0 = sp.fillStyle0;
 							s.fillStyle1 = sp.fillStyle1;
@@ -184,7 +182,7 @@ void Canvas::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, 
 			{
 				uint32_t from = outTriangles.size();
 
-				triangulator.triangulate(segments, *ii, oddEven, outTriangles);
+				triangulator.triangulate(segments, fillStyle, oddEven, outTriangles);
 				segments.resize(0);
 
 				uint32_t to = outTriangles.size();

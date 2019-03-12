@@ -154,7 +154,7 @@ void MeshPipeline::destroy()
 TypeInfoSet MeshPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< MeshAsset >());
+	typeSet.insert< MeshAsset >();
 	return typeSet;
 }
 

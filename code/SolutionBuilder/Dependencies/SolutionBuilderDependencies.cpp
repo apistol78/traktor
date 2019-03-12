@@ -1,3 +1,4 @@
+#include <set>
 #include "Core/Log/Log.h"
 #include "SolutionBuilder/ExternalDependency.h"
 #include "SolutionBuilder/Project.h"

@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankAssetEditorFactory", 0, BankA
 const TypeInfoSet BankAssetEditorFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< BankAsset >());
+	typeSet.insert< BankAsset >();
 	return typeSet;
 }
 

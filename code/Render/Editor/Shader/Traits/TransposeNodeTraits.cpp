@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TransposeNodeTraits", 0, Transpo
 TypeInfoSet TransposeNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Transpose >());
+	typeSet.insert< Transpose >();
 	return typeSet;
 }
 

@@ -100,18 +100,18 @@ bool ShaderViewer::create(ui::Widget* parent)
 	m_containerCombinations = new ui::Container();
 	m_containerCombinations->create(this, ui::WsNone, new ui::TableLayout(L"*", L"*", ui::dpi96(4), ui::dpi96(4)));
 
-	std::set< const TypeInfo* > programCompilerTypes;
+	TypeInfoSet programCompilerTypes;
 	type_of< IProgramCompiler >().findAllOf(programCompilerTypes, false);
 
 	std::wstring programCompilerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
 	int32_t compilerIndex = 0;
-	for (std::set< const TypeInfo* >::const_iterator i = programCompilerTypes.begin(); i != programCompilerTypes.end(); ++i)
+	for (const auto programCompilerType : programCompilerTypes)
 	{
-		Ref< IProgramCompiler > compiler = dynamic_type_cast< IProgramCompiler* >((*i)->createInstance());
+		Ref< IProgramCompiler > compiler = dynamic_type_cast< IProgramCompiler* >(programCompilerType->createInstance());
 		if (!compiler)
 			continue;
 
-		if (programCompilerTypeName == (*i)->getName())
+		if (programCompilerTypeName == programCompilerType->getName())
 			compilerIndex = m_dropCompiler->add(compiler->getPlatformSignature(), compiler);
 		else
 			m_dropCompiler->add(compiler->getPlatformSignature(), compiler);

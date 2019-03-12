@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DotNodeTraits", 0, DotNodeTraits
 TypeInfoSet DotNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Dot >());
+	typeSet.insert< Dot >();
 	return typeSet;
 }
 

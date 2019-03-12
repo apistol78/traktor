@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputMappingEditorFactory", 0, In
 const TypeInfoSet InputMappingEditorFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< InputMappingAsset >());
+	typeSet.insert< InputMappingAsset >();
 	return typeSet;
 }
 

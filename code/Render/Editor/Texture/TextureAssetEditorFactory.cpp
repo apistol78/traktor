@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureAssetEditorFactory", 0, T
 const TypeInfoSet TextureAssetEditorFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< TextureAsset >());
+	typeSet.insert< TextureAsset >();
 	return typeSet;
 }
 

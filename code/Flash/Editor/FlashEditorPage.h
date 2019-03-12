@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include "Editor/IEditorPage.h"
 #include "Flash/ColorTransform.h"
 

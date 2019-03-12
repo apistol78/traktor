@@ -11,9 +11,9 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ValueNodeTraits", 0, ValueNodeTr
 TypeInfoSet ValueNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< DispatchIndex >());
-	typeSet.insert(&type_of< FragmentPosition >());
-	typeSet.insert(&type_of< FrontFace >());
+	typeSet.insert< DispatchIndex >();
+	typeSet.insert< FragmentPosition >();
+	typeSet.insert< FrontFace >();
 	return typeSet;
 }
 

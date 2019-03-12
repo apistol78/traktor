@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cfloat>
+#include <set>
 #include "Core/Log/Log.h"
 #include "Core/Math/Bezier2nd.h"
 #include "Core/Math/Const.h"
@@ -168,7 +169,7 @@ bool compareSegmentsX(const Segment& ls, const Segment& rs)
 
 void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments, const ui::Point& mousePosition)
 {
-	std::set< float > pys;
+	SmallSet< float > pys;
 	Segment s;
 	Triangle t;
 
@@ -271,8 +272,8 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 	if (pys.empty())
 		return;
 
-	for (std::set< float >::iterator i = pys.begin(); i != pys.end(); ++i)
-		p.drawHLine(*i, Color4ub(0, 0, 0, 20));
+	for (auto py : pys)
+		p.drawHLine(py, Color4ub(0, 0, 0, 20));
 
 	// Ensure all segments are top to bottom.
 	for (AlignedVector< Segment >::iterator i = m_segments.begin(); i != m_segments.end(); ++i)
@@ -290,14 +291,14 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 	uint32_t tcount = 0;
 
 	pys.erase(pys.begin());
-	for (std::set< float >::iterator i = pys.begin(); i != pys.end(); ++i)
+	for (auto py : pys)
 	{
 		m_slabs.resize(0);
 
 		for (AlignedVector< Segment >::iterator j = m_segments.begin(); j != m_segments.end(); )
 		{
 			// As segments are sorted we can safely abort if we find one that's completely below.
-			if (j->v[0].y >= *i)
+			if (j->v[0].y >= py)
 				break;
 
 			if (!j->curve)
@@ -309,11 +310,11 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					continue;
 				}
 
-				float t = (*i - j->v[0].y) / d;
+				float t = (py - j->v[0].y) / d;
 				float x = j->v[0].x + (j->v[1].x - j->v[0].x) * t;
 
 				s.v[0] = j->v[0];
-				s.v[1] = Vector2(x, *i);
+				s.v[1] = Vector2(x, py);
 				s.curve = false;
 				s.fillStyle0 = j->fillStyle0;
 				s.fillStyle1 = j->fillStyle1;
@@ -324,7 +325,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 			}
 			else
 			{
-				if (*i < j->v[1].y)
+				if (py < j->v[1].y)
 				{
 					const Vector2& cp0 = j->v[0];
 					const Vector2& cp1 = j->c;
@@ -333,7 +334,7 @@ void visualizeTriangulation(Painter& p, const AlignedVector< Segment >& segments
 					Bezier2nd b(cp0, cp1, cp2);
 
 					float t0, t1;
-					b.intersectX(float(*i), t0, t1);
+					b.intersectX(py, t0, t1);
 
 					T_ASSERT(t0 > -FUZZY_EPSILON && t0 < 1.0f + FUZZY_EPSILON);
 

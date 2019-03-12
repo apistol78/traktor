@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include "Online/AttachmentResult.h"
 #include "Online/Types.h"
 

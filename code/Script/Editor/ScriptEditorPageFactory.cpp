@@ -14,8 +14,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptEditorPageFactory", 0, Scr
 const TypeInfoSet ScriptEditorPageFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Script >());
-	typeSet.insert(&type_of< ScriptAsset >());
+	typeSet.insert< Script >();
+	typeSet.insert< ScriptAsset >();
 	return typeSet;
 }
 

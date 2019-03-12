@@ -16,7 +16,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.TextFactory", TextFactory, ICharacterFact
 TypeInfoSet TextFactory::getCharacterTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< TextData >());
+	typeSet.insert< TextData >();
 	return typeSet;
 }
 

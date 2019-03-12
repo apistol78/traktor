@@ -39,17 +39,17 @@ EffectEntityFactory::EffectEntityFactory(
 const TypeInfoSet EffectEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< EffectEntityData >());
+	typeSet.insert< EffectEntityData >();
 	return typeSet;
 }
 
 const TypeInfoSet EffectEntityFactory::getEntityEventTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< EnvelopeFeedbackEventData >());
-	typeSet.insert(&type_of< OscillateFeedbackEventData >());
-	typeSet.insert(&type_of< SoundEventData >());
-	typeSet.insert(&type_of< SpawnEffectEventData >());
+	typeSet.insert< EnvelopeFeedbackEventData >();
+	typeSet.insert< OscillateFeedbackEventData >();
+	typeSet.insert< SoundEventData >();
+	typeSet.insert< SpawnEffectEventData >();
 	return typeSet;
 }
 

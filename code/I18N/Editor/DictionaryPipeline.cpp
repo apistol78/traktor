@@ -26,7 +26,7 @@ bool DictionaryPipeline::create(const editor::IPipelineSettings* settings)
 TypeInfoSet DictionaryPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< DictionaryAsset >());
+	typeSet.insert< DictionaryAsset >();
 	return typeSet;
 }
 

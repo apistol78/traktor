@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.TargetEditorFactory", 0, Target
 const TypeInfoSet TargetEditorFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Target >());
+	typeSet.insert< Target >();
 	return typeSet;
 }
 

@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Core/Containers/SmallMap.h"
+#include "Core/Containers/SmallSet.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Vector4.h"
@@ -95,7 +96,7 @@ public:
 
 	bool supportTechnique(render::handle_t technique) const;
 
-	void getTechniques(std::set< render::handle_t >& outHandles) const;
+	void getTechniques(SmallSet< render::handle_t >& outHandles) const;
 
 	void render(
 		render::RenderContext* renderContext,

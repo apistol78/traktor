@@ -117,6 +117,11 @@ public:
 		return true;
 	}
 
+	void erase(const iterator& at)
+	{
+		m_data.erase(at);
+	}
+
 	bool erase(const Key& value)
 	{
 		size_t is = 0;

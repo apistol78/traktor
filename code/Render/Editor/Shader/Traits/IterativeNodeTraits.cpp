@@ -28,10 +28,10 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IterativeNodeTraits", 0, Iterati
 TypeInfoSet IterativeNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Iterate >());
-	typeSet.insert(&type_of< Iterate2d >());
-	typeSet.insert(&type_of< Repeat >());
-	typeSet.insert(&type_of< Sum >());
+	typeSet.insert< Iterate >();
+	typeSet.insert< Iterate2d >();
+	typeSet.insert< Repeat >();
+	typeSet.insert< Sum >();
 	return typeSet;
 }
 

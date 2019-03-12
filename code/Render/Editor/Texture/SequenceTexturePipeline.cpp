@@ -26,7 +26,7 @@ bool SequenceTexturePipeline::create(const editor::IPipelineSettings* settings)
 TypeInfoSet SequenceTexturePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SequenceTextureAsset >());
+	typeSet.insert< SequenceTextureAsset >();
 	return typeSet;
 }
 

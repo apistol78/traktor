@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityPipeline", 0, MeshEntity
 TypeInfoSet MeshEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< MeshEntityData >());
+	typeSet.insert< MeshEntityData >();
 	return typeSet;
 }
 

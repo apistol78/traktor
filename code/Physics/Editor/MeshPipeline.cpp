@@ -40,7 +40,7 @@ void MeshPipeline::destroy()
 TypeInfoSet MeshPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< MeshAsset >());
+	typeSet.insert< MeshAsset >();
 	return typeSet;
 }
 
@@ -171,14 +171,15 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Extract hull indices.
-		std::set< uint32_t > uniqueIndices;
-		for (AlignedVector< model::Polygon >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
+		SmallSet< uint32_t > uniqueIndices;
+		for (const auto& hullTriangle : hullTriangles)
 		{
-			for (int j = 0; j < 3; ++j)
-				uniqueIndices.insert(hull.getVertex(i->getVertex(j)).getPosition());
+			uniqueIndices.insert(hull.getVertex(hullTriangle.getVertex(0)).getPosition());
+			uniqueIndices.insert(hull.getVertex(hullTriangle.getVertex(1)).getPosition());
+			uniqueIndices.insert(hull.getVertex(hullTriangle.getVertex(2)).getPosition());
 		}
-		for (std::set< uint32_t >::const_iterator i = uniqueIndices.begin(); i != uniqueIndices.end(); ++i)
-			meshHullIndices.push_back(*i);
+		for (const auto uniqueIndex : uniqueIndices)
+			meshHullIndices.push_back(uniqueIndex);
 
 		// Improve center of gravity by weighting in volumes of each hull face tetrahedron.
 		Vector4 Voffset = Vector4::zero();

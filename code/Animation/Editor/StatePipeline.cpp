@@ -15,11 +15,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePipeline", 0, StatePipel
 TypeInfoSet StatePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SimpleAnimationControllerData >());
-	typeSet.insert(&type_of< StateNode >());
-	typeSet.insert(&type_of< StateNodeAnimation >());
-	typeSet.insert(&type_of< StateGraph >());
-	typeSet.insert(&type_of< StatePoseControllerData >());
+	typeSet.insert< SimpleAnimationControllerData >();
+	typeSet.insert< StateNode >();
+	typeSet.insert< StateNodeAnimation >();
+	typeSet.insert< StateGraph >();
+	typeSet.insert< StatePoseControllerData >();
 	return typeSet;
 }
 

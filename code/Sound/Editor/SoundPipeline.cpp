@@ -73,7 +73,7 @@ void SoundPipeline::destroy()
 TypeInfoSet SoundPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SoundAsset >());
+	typeSet.insert< SoundAsset >();
 	return typeSet;
 }
 

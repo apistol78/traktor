@@ -90,7 +90,7 @@ private:
 	Transform m_transform;
 	resource::Proxy< Effect > m_effect;
 	Ref< EffectInstance > m_effectInstance;
-	std::set< render::handle_t > m_techniques;
+	SmallSet< render::handle_t > m_techniques;
 	Context m_context;
 	uint32_t m_counter;
 	bool m_enable;

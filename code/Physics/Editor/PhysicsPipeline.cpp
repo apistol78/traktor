@@ -28,9 +28,9 @@ void PhysicsPipeline::destroy()
 TypeInfoSet PhysicsPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< BodyDesc >());
-	typeSet.insert(&type_of< RigidBodyComponentData >());
-	typeSet.insert(&type_of< VehicleComponentData >());
+	typeSet.insert< BodyDesc >();
+	typeSet.insert< RigidBodyComponentData >();
+	typeSet.insert< VehicleComponentData >();
 	return typeSet;
 }
 

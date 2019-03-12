@@ -259,7 +259,7 @@ bool IlluminateEntityPipeline::create(const editor::IPipelineSettings* settings)
 TypeInfoSet IlluminateEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< IlluminateEntityData >());
+	typeSet.insert< IlluminateEntityData >();
 	return typeSet;
 }
 
@@ -339,7 +339,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 			model::Triangulate().apply(*model);
 
 			if (!model::MergeModel(*model, (*i)->getTransform(), 0.001f).apply(*mergedModel))
-				return 0;
+				return nullptr;
 
 			meshMaterialTextures.insert(
 				meshAsset->getMaterialTextures().begin(),
@@ -389,7 +389,7 @@ Ref< ISerializable > IlluminateEntityPipeline::buildOutput(
 		if (!model::UnwrapUV(channel).apply(*mergedModel))
 		{
 			log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV." << Endl;
-			return 0;
+			return nullptr;
 		}
 
 		// Setup tracer.

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <list>
+#include <set>
 #include <steam/steam_api.h>
 #include "Online/Provider/IStatisticsProvider.h"
 #include "Online/Steam/SteamTypes.h"

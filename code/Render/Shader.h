@@ -2,6 +2,7 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Containers/SmallSet.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Types.h"
@@ -59,7 +60,7 @@ public:
 	 *
 	 * \param outHandles Set of technique handles.
 	 */
-	void getTechniques(std::set< handle_t >& outHandles) const;
+	void getTechniques(SmallSet< handle_t >& outHandles) const;
 
 	/*! \brief Set shader combination.
 	 *

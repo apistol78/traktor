@@ -28,7 +28,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelNodeTraits", 0, PixelNodeTr
 TypeInfoSet PixelNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< PixelOutput >());
+	typeSet.insert< PixelOutput >();
 	return typeSet;
 }
 

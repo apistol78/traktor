@@ -289,7 +289,7 @@ bool OcclusionTexturePipeline::create(const editor::IPipelineSettings* settings)
 TypeInfoSet OcclusionTexturePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< OcclusionTextureAsset >());
+	typeSet.insert< OcclusionTextureAsset >();
 	return typeSet;
 }
 

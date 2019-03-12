@@ -18,7 +18,7 @@ ClothEntityFactory::ClothEntityFactory(resource::IResourceManager* resourceManag
 const TypeInfoSet ClothEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ClothEntityData >());
+	typeSet.insert< ClothEntityData >();
 	return typeSet;
 }
 

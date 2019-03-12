@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ArcusTanTraits", 0, ArcusTanTrai
 TypeInfoSet ArcusTanTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ArcusTan >());
+	typeSet.insert< ArcusTan >();
 	return typeSet;
 }
 

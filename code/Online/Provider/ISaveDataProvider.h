@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Online/Types.h"

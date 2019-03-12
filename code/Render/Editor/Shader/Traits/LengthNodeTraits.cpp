@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.LengthNodeTraits", 0, LengthNode
 TypeInfoSet LengthNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Length >());
+	typeSet.insert< Length >();
 	return typeSet;
 }
 

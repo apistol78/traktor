@@ -16,7 +16,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshEntityRenderer", InstanceMeshE
 const TypeInfoSet InstanceMeshEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< InstanceMeshEntity >());
+	typeSet.insert< InstanceMeshEntity >();
 	return typeSet;
 }
 

@@ -444,17 +444,12 @@ void SceneEditorContext::buildEntities()
 	RefArray< EntityAdapter > entityAdapters;
 	getEntities(entityAdapters);
 
-	std::set< const EntityAdapter* > checkAdapters;
-
 	m_entityAdapterMap.clear();
-	for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+	for (auto entityAdapter : entityAdapters)
 	{
-		T_FATAL_ASSERT (checkAdapters.find(*i) == checkAdapters.end());
-		checkAdapters.insert(*i);
-
-		SmallMap< const world::Entity*, EntityAdapter* >::const_iterator j = m_entityAdapterMap.find((*i)->getEntity());
-		T_FATAL_ASSERT (j == m_entityAdapterMap.end());
-		m_entityAdapterMap.insert((*i)->getEntity(), *i);
+		const auto it = m_entityAdapterMap.find(entityAdapter->getEntity());
+		T_FATAL_ASSERT (it == m_entityAdapterMap.end());
+		m_entityAdapterMap.insert(entityAdapter->getEntity(), entityAdapter);
 	}
 
 	m_entityCount = entityAdapters.size();

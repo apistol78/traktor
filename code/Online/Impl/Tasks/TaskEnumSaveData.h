@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <set>
 #include "Online/Impl/ITask.h"
 
 namespace traktor

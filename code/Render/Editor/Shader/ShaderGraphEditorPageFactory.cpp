@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderGraphEditorPageFactory", 0
 const TypeInfoSet ShaderGraphEditorPageFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ShaderGraph >());
+	typeSet.insert< ShaderGraph >();
 	return typeSet;
 }
 

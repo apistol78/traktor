@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SHEditorPageFactory", 0, SHEdito
 const TypeInfoSet SHEditorPageFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SHStage >());
+	typeSet.insert< SHStage >();
 	return typeSet;
 }
 

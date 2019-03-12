@@ -29,15 +29,15 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MetaNodeTraits", 0, MetaNodeTrai
 TypeInfoSet MetaNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Branch >());
-	typeSet.insert(&type_of< Comment >());
-	typeSet.insert(&type_of< Connected >());
-	typeSet.insert(&type_of< External >());
-	typeSet.insert(&type_of< InputPort >());
-	typeSet.insert(&type_of< OutputPort >());
-	typeSet.insert(&type_of< Platform >());
-	typeSet.insert(&type_of< Type >());
-	typeSet.insert(&type_of< Variable >());
+	typeSet.insert< Branch >();
+	typeSet.insert< Comment >();
+	typeSet.insert< Connected >();
+	typeSet.insert< External >();
+	typeSet.insert< InputPort >();
+	typeSet.insert< OutputPort >();
+	typeSet.insert< Platform >();
+	typeSet.insert< Type >();
+	typeSet.insert< Variable >();
 	return typeSet;
 }
 

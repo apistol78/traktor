@@ -51,7 +51,7 @@ void ImageShapePipeline::destroy()
 TypeInfoSet ImageShapePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ImageShapeAsset >());
+	typeSet.insert< ImageShapeAsset >();
 	return typeSet;
 }
 

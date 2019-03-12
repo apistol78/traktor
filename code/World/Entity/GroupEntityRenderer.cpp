@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GroupEntityRenderer", GroupEntityRenderer
 const TypeInfoSet GroupEntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< GroupEntity >());
+	typeSet.insert< GroupEntity >();
 	return typeSet;
 }
 

@@ -51,10 +51,10 @@ bool InstanceMesh::supportTechnique(render::handle_t technique) const
 	return m_parts.find(technique) != m_parts.end();
 }
 
-void InstanceMesh::getTechniques(std::set< render::handle_t >& outHandles) const
+void InstanceMesh::getTechniques(SmallSet< render::handle_t >& outHandles) const
 {
-	for (SmallMap< render::handle_t, std::vector< Part > >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
-		outHandles.insert(i->first);
+	for (const auto part : m_parts)
+		outHandles.insert(part.first);
 }
 
 void InstanceMesh::render(

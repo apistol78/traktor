@@ -30,7 +30,7 @@ void VideoPipeline::destroy()
 TypeInfoSet VideoPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< VideoAsset >());
+	typeSet.insert< VideoAsset >();
 	return typeSet;
 }
 

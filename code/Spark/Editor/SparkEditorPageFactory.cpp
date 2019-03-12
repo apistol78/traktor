@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.SparkEditorPageFactory", 0, Spark
 const TypeInfoSet SparkEditorPageFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SpriteData >());
+	typeSet.insert< SpriteData >();
 	return typeSet;
 }
 

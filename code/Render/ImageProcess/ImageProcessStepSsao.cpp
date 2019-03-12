@@ -167,6 +167,7 @@ ImageProcessStepSsao::InstanceSsao::InstanceSsao(
 ,	m_handleProjection(getParameterHandle(L"Projection"))
 ,	m_handleOffsets(getParameterHandle(L"Offsets"))
 ,	m_handleDirections(getParameterHandle(L"Directions"))
+,	m_handleRandom(getParameterHandle(L"Random"))
 ,	m_handleRandomNormals(getParameterHandle(L"RandomNormals"))
 ,	m_handleRandomRotations(getParameterHandle(L"RandomRotations"))
 ,	m_handleMagicCoeffs(getParameterHandle(L"MagicCoeffs"))
@@ -198,6 +199,7 @@ void ImageProcessStepSsao::InstanceSsao::render(
 	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7];
 	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6];
 
+	m_shader->setVectorParameter(m_handleRandom, Vector4(m_random.nextFloat(), m_random.nextFloat(), m_random.nextFloat(), m_random.nextFloat()));
 	m_shader->setVectorParameter(m_handleViewEdgeTopLeft, viewEdgeTopLeft);
 	m_shader->setVectorParameter(m_handleViewEdgeTopRight, viewEdgeTopRight);
 	m_shader->setVectorParameter(m_handleViewEdgeBottomLeft, viewEdgeBottomLeft);

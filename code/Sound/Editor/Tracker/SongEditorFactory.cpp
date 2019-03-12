@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SongEditorFactory", 0, SongEditor
 const TypeInfoSet SongEditorFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SongAsset >());
+	typeSet.insert< SongAsset >();
 	return typeSet;
 }
 

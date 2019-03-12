@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.RigidEntityPipeline", 0, RigidE
 TypeInfoSet RigidEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< RigidEntityData >());
+	typeSet.insert< RigidEntityData >();
 	return typeSet;
 }
 

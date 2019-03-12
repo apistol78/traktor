@@ -124,7 +124,7 @@ void __unregisterTypeInfo(const TypeInfo* typeInfo)
 
 TypeInfo::TypeInfo(
 	const wchar_t* name,
-	size_t size,
+	uint32_t size,
 	int32_t version,
 	bool editable,
 	const TypeInfo* super,
@@ -179,9 +179,9 @@ const TypeInfo* TypeInfo::find(const wchar_t* name)
 	return 0;
 }
 
-void TypeInfo::findAllOf(std::set< const TypeInfo* >& outTypes, bool inclusive) const
+void TypeInfo::findAllOf(TypeInfoSet& outTypes, bool inclusive) const
 {
-	for (size_t i = 0; i < s_typeInfoCount; ++i)
+	for (uint32_t i = 0; i < s_typeInfoCount; ++i)
 	{
 		if (is_type_of(*this, *s_typeInfoRegistry[i]))
 		{
