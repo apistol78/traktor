@@ -13,13 +13,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class ProbeProcessor;
-
-	}
-
 	namespace illuminate
 	{
 
@@ -50,7 +43,6 @@ public:
 private:
 	std::wstring m_assetPath;
 	bool m_build;
-	Ref< render::ProbeProcessor > m_processor;
 };
 
 	}
