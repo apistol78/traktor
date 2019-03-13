@@ -36,7 +36,14 @@ struct Surface
 
 struct Light
 {
-	int32_t type;		//<! 0 - directional, 1 - point
+	enum LightType
+	{
+		LtDirectional = 0,
+		LtPoint = 1,
+		LtProbe = 2
+	};
+
+	LightType type;
 	Vector4 position;
 	Vector4 direction;
 	Color4f color;
@@ -45,7 +52,7 @@ struct Light
 	int32_t surface;
 
 	Light()
-	:	type(0)
+	:	type(LtDirectional)
 	,	surface(0)
 	{
 	}

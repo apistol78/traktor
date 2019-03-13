@@ -3,6 +3,7 @@
 #include "Mesh/MeshComponentData.h"
 #include "World/IEntityBuilder.h"
 #include "World/Entity/ComponentEntityData.h"
+#include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupEntity.h"
 
 namespace traktor
@@ -35,7 +36,6 @@ Ref< world::Entity > IlluminateEntityFactory::createEntity(const world::IEntityB
 	\tbd Create an IlluminateEntity which can toggle between realtime and baked.
 	*/
 
-	/*
 	Ref< world::GroupEntity > batchEntity = new world::GroupEntity(illumEntityData->getTransform());
 	for (auto childEntityData : illumEntityData->getEntityData())
 	{
@@ -44,14 +44,14 @@ Ref< world::Entity > IlluminateEntityFactory::createEntity(const world::IEntityB
 			batchEntity->addEntity(childEntity);
 	}
 	return batchEntity;
-	*/
+	
 
-	Ref< world::ComponentEntityData > meshEntityData = new world::ComponentEntityData();
-	meshEntityData->setName(illumEntityData->getName());
-	meshEntityData->setComponent(new mesh::MeshComponentData(
-		resource::Id< mesh::IMesh >(illumEntityData->getSeedGuid().permutate(1))
-	));
-	return builder->getCompositeEntityBuilder()->create(meshEntityData);
+	//Ref< world::ExternalEntityData > externalEntityData = new world::ExternalEntityData();
+	//externalEntityData->setName(illumEntityData->getName());
+	//externalEntityData->setEntityData(resource::Id< world::EntityData >(
+	//	resource::Id< mesh::IMesh >(illumEntityData->getSeedGuid().permutate(0))
+	//));
+	//return builder->create(externalEntityData);
 
 }
 
