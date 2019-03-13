@@ -44,14 +44,14 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 			if (!externalEntityData)
 			{
 				log::error << L"PrefabEntityPipeline failed; Unable to read external entity." << Endl;
-				return 0;
+				return nullptr;
 			}
 
 			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(pipeline, externalEntityData));
 			if (!resolvedEntityData)
 			{
 				log::error << L"PrefabEntityPipeline failed; Unable to resolve external entity." << Endl;
-				return 0;
+				return nullptr;
 			}
 
 			resolvedEntityData->setName(externalEntityDataRef->getName());
@@ -110,9 +110,7 @@ bool PrefabEntityPipeline::create(const editor::IPipelineSettings* settings)
 
 TypeInfoSet PrefabEntityPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< PrefabEntityData >();
-	return typeSet;
+	return makeTypeInfoSet< PrefabEntityData >();
 }
 
 bool PrefabEntityPipeline::buildDependencies(
@@ -123,13 +121,13 @@ bool PrefabEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const PrefabEntityData* sourcePrefabEntityData = checked_type_cast< const PrefabEntityData* >(sourceAsset);
+	const PrefabEntityData* sourcePrefabEntityData = mandatory_non_null_type_cast< const PrefabEntityData* >(sourceAsset);
 
 	// Verify integrity of output guids.
 	if (m_usedGuids.find(sourcePrefabEntityData->getOutputGuid(0)) != m_usedGuids.end())
 	{
 		log::error << L"PrefabEntityPipeline failed; Output guid 0 of prefab \"" << sourcePrefabEntityData->getName() << L"\" already used." << Endl;
-		return 0;
+		return false;
 	}
 
 	m_usedGuids.insert(sourcePrefabEntityData->getOutputGuid(0));
@@ -137,7 +135,7 @@ bool PrefabEntityPipeline::buildDependencies(
 	if (m_usedGuids.find(sourcePrefabEntityData->getOutputGuid(1)) != m_usedGuids.end())
 	{
 		log::error << L"PrefabEntityPipeline failed; Output guid 1 of prefab \"" << sourcePrefabEntityData->getName() << L"\" already used." << Endl;
-		return 0;
+		return false;
 	}
 
 	m_usedGuids.insert(sourcePrefabEntityData->getOutputGuid(1));
@@ -247,7 +245,7 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 		if (!prefabEntityData)
 		{
 			log::error << L"Prefab entity pipeline failed; Unable to resolve all external entities" << Endl;
-			return 0;
+			return nullptr;
 		}
 
 		Transform Tprefab = prefabEntityData->getTransform();
