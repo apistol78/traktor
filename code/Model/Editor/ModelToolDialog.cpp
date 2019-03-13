@@ -126,6 +126,9 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	toolBar->addItem(new ui::ToolBarButton(L"Load texture...", ui::Command(L"ModelTool.LoadTexture"), ui::ToolBarButton::BsText));
 	toolBar->addItem(new ui::ToolBarSeparator());
 
+	m_toolShading = new ui::ToolBarButton(L"Shading", ui::Command(L"ModelTool.ToggleShading"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
+	toolBar->addItem(m_toolShading);
+
 	m_toolSolid = new ui::ToolBarButton(L"Solid", ui::Command(L"ModelTool.ToggleSolid"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggled);
 	toolBar->addItem(m_toolSolid);
 
@@ -889,7 +892,10 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 					}
 
 					Vector4 N = cross(p[0] - p[1], p[2] - p[1]).normalized();
-					float diffuse = abs(dot3(lightDir, N)) * 0.5f + 0.5f;
+					float diffuse = 1.0f;
+					
+					if (m_toolShading->isToggled())
+						diffuse = abs(dot3(lightDir, N)) * 0.5f + 0.5f;
 
 					if (cull)
 					{
