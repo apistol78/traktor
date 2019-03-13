@@ -21,8 +21,6 @@
 #include "Model/Operations/Transform.h"
 #include "Physics/Editor/MeshAsset.h"
 
-//#define T_SAVE_PREFABS
-
 namespace traktor
 {
 	namespace runtime
@@ -58,9 +56,6 @@ PrefabMergePipeline::PrefabMergePipeline()
 
 bool PrefabMergePipeline::create(const editor::IPipelineSettings* settings)
 {
-#if defined(T_SAVE_PREFABS)
-	FileSystem::getInstance().makeAllDirectories(L"data/Temp/Prefabs");
-#endif
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_visualMeshSnap = settings->getProperty< float >(L"PrefabPipeline.VisualMeshSnap", 0.01f);
 	m_collisionMeshSnap = settings->getProperty< float >(L"PrefabPipeline.CollisionMeshSnap", 0.01f);
@@ -74,9 +69,7 @@ void PrefabMergePipeline::destroy()
 
 TypeInfoSet PrefabMergePipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< PrefabMerge >();
-	return typeSet;
+	return makeTypeInfoSet< PrefabMerge >();
 }
 
 bool PrefabMergePipeline::buildDependencies(
@@ -87,15 +80,13 @@ bool PrefabMergePipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const PrefabMerge* merge = checked_type_cast< const PrefabMerge*, false >(sourceAsset);
-	const AlignedVector< PrefabMerge::VisualMesh >& visualMeshes = merge->getVisualMeshes();
-	const AlignedVector< PrefabMerge::ShapeMesh >& shapeMeshes = merge->getShapeMeshes();
+	const PrefabMerge* merge = mandatory_non_null_type_cast< const PrefabMerge* >(sourceAsset);
 
-	for (AlignedVector< PrefabMerge::VisualMesh >::const_iterator i = visualMeshes.begin(); i != visualMeshes.end(); ++i)
-		pipelineDepends->addDependency(i->meshAsset);
+	for (const auto& visualMesh : merge->getVisualMeshes())
+		pipelineDepends->addDependency(visualMesh.meshAsset);
 
-	for (AlignedVector< PrefabMerge::ShapeMesh >::const_iterator i = shapeMeshes.begin(); i != shapeMeshes.end(); ++i)
-		pipelineDepends->addDependency(i->meshAsset);
+	for (const auto& shapeMesh : merge->getShapeMeshes())
+		pipelineDepends->addDependency(shapeMesh.meshAsset);
 
 	pipelineDepends->addDependency< mesh::MeshAsset >();
 	pipelineDepends->addDependency< physics::MeshAsset >();
@@ -115,46 +106,42 @@ bool PrefabMergePipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	const PrefabMerge* merge = checked_type_cast< const PrefabMerge*, false >(sourceAsset);
-	const AlignedVector< PrefabMerge::VisualMesh >& visualMeshes = merge->getVisualMeshes();
-	const AlignedVector< PrefabMerge::ShapeMesh >& shapeMeshes = merge->getShapeMeshes();
+	const PrefabMerge* merge = mandatory_non_null_type_cast< const PrefabMerge* >(sourceAsset);
 
 	uint32_t vertexCount = 0;
 	uint32_t polygonCount = 0;
 
 	// Merge visual models.
-	if (!visualMeshes.empty())
+	if (!merge->getVisualMeshes().empty())
 	{
 		Ref< model::Model > mergedModel = new model::Model();
 		std::map< std::wstring, Guid > mergedMaterialShaders;
 		std::map< std::wstring, Guid > mergedMaterialTextures;
 		std::map< std::wstring, Ref< const model::Model > > modelCache;
 
-		for (AlignedVector< PrefabMerge::VisualMesh >::const_iterator i = visualMeshes.begin(); i != visualMeshes.end(); ++i)
+		for (const auto& visualMesh : merge->getVisualMeshes())
 		{
-			Ref< const mesh::MeshAsset > meshAsset = i->meshAsset;
+			Ref< const mesh::MeshAsset > meshAsset = visualMesh.meshAsset;
 			T_ASSERT(meshAsset);
 
 			// Insert custom material shaders.
-			const std::map< std::wstring, Guid >& materialShaders = meshAsset->getMaterialShaders();
-			for (std::map< std::wstring, Guid >::const_iterator j = materialShaders.begin(); j != materialShaders.end(); ++j)
+			for (const auto materialShader : meshAsset->getMaterialShaders())
 			{
-				std::map< std::wstring, Guid >::const_iterator it = mergedMaterialShaders.find(j->first);
-				if (it != mergedMaterialShaders.end() && it->second != j->second)
-					log::warning << L"Different shaders on material with same name \"" << j->first << L"\"; not allowed in prefab" << Endl;
+				const auto it = mergedMaterialShaders.find(materialShader.first);
+				if (it != mergedMaterialShaders.end() && it->second != materialShader.second)
+					log::warning << L"Different shaders on material with same name \"" << materialShader.first << L"\"; not allowed in prefab." << Endl;
 
-				mergedMaterialShaders[j->first] = j->second;
+				mergedMaterialShaders[materialShader.first] = materialShader.second;
 			}
 
 			// Insert material textures.
-			const std::map< std::wstring, Guid >& materialTextures = meshAsset->getMaterialTextures();
-			for (std::map< std::wstring, Guid >::const_iterator j = materialTextures.begin(); j != materialTextures.end(); ++j)
+			for (const auto materialTexture : meshAsset->getMaterialTextures())
 			{
-				std::map< std::wstring, Guid >::const_iterator it = materialTextures.find(j->first);
-				if (it != materialTextures.end() && it->second != j->second)
-					log::warning << L"Different textures on material with same name \"" << j->first << L"\"; not allowed in prefab" << Endl;
+				const auto it = mergedMaterialTextures.find(materialTexture.first);
+				if (it != mergedMaterialTextures.end() && it->second != materialTexture.second)
+					log::warning << L"Different textures on material with same name \"" << materialTexture.first << L"\"; not allowed in prefab." << Endl;
 
-				mergedMaterialTextures[j->first] = j->second;
+				mergedMaterialTextures[materialTexture.first] = materialTexture.second;
 			}
 
 			uint32_t currentVertexCount = mergedModel->getVertexCount();
@@ -163,7 +150,7 @@ bool PrefabMergePipeline::buildOutput(
 			std::map< std::wstring, Ref< const model::Model > >::const_iterator j = modelCache.find(meshAsset->getFileName().getOriginal());
 			if (j != modelCache.end())
 			{
-				model::MergeModel(*(j->second), i->transform, m_visualMeshSnap).apply(*mergedModel);
+				model::MergeModel(*(j->second), visualMesh.transform, m_visualMeshSnap).apply(*mergedModel);
 				vertexCount += j->second->getVertexCount();
 				polygonCount += j->second->getPolygonCount();
 			}
@@ -181,7 +168,7 @@ bool PrefabMergePipeline::buildOutput(
 				partModel->clear( model::Model::CfColors | model::Model::CfJoints );
 
 				model::CleanDuplicates(0.01f).apply(*partModel);
-				model::MergeModel(*partModel, i->transform, m_visualMeshSnap).apply(*mergedModel);
+				model::MergeModel(*partModel, visualMesh.transform, m_visualMeshSnap).apply(*mergedModel);
 
 				vertexCount += partModel->getVertexCount();
 				polygonCount += partModel->getPolygonCount();
@@ -193,10 +180,6 @@ bool PrefabMergePipeline::buildOutput(
 		log::info << L"\t" << vertexCount << L" to " << mergedModel->getVertexCount() << L" vertices" << Endl;
 		log::info << L"\t" << polygonCount << L" to " << mergedModel->getPolygonCount() << L" polygon(s)" << Endl;
 
-#if defined(T_SAVE_PREFABS)
-		// Build output mesh from merged model.
-		model::ModelFormat::writeAny(Path(L"data/Temp/Prefabs/" + merge->getName() + L".obj"), mergedModel);
-#endif
 		// Build output mesh from merged model.
 		Ref< mesh::MeshAsset > mergedMeshAsset = new mesh::MeshAsset();
 		mergedMeshAsset->setMeshType(merge->partitionMesh() ? mesh::MeshAsset::MtPartition : mesh::MeshAsset::MtStatic);
@@ -212,21 +195,20 @@ bool PrefabMergePipeline::buildOutput(
 	}
 
 	// Merge collision models.
-	if (!shapeMeshes.empty())
+	if (!merge->getShapeMeshes().empty())
 	{
 		Ref< model::Model > mergedModel = new model::Model();
 		std::map< std::wstring, Ref< const model::Model > > modelCache;
 
-		for (AlignedVector< PrefabMerge::ShapeMesh >::const_iterator i = shapeMeshes.begin(); i != shapeMeshes.end(); ++i)
+		for (const auto& shapeMesh : merge->getShapeMeshes())
 		{
-			Ref< const physics::MeshAsset > meshShapeAsset = i->meshAsset;
+			Ref< const physics::MeshAsset > meshShapeAsset = shapeMesh.meshAsset;
 			T_ASSERT(meshShapeAsset);
 
-			std::map< std::wstring, Ref< const model::Model > >::const_iterator j = modelCache.find(meshShapeAsset->getFileName().getOriginal());
-			if (j != modelCache.end())
+			const auto it = modelCache.find(meshShapeAsset->getFileName().getOriginal());
+			if (it != modelCache.end())
 			{
-				model::MergeModel(*(j->second), i->transform, m_collisionMeshSnap).apply(*mergedModel);
-				//model::Boolean(*(j->second), i->transform, *mergedModel, Transform::identity()).apply(*mergedModel);
+				model::MergeModel(*(it->second), shapeMesh.transform, m_collisionMeshSnap).apply(*mergedModel);
 			}
 			else
 			{
@@ -250,8 +232,7 @@ bool PrefabMergePipeline::buildOutput(
 				if (!isModelClosed(partModel))
 					log::warning << L"Prefab collision model \"" << meshShapeAsset->getFileName().getOriginal() << L"\" is not closed!" << Endl;
 
-				model::MergeModel(*partModel, i->transform, m_collisionMeshSnap).apply(*mergedModel);
-				//model::Boolean(*partModel, i->transform, *mergedModel, Transform::identity()).apply(*mergedModel);
+				model::MergeModel(*partModel, shapeMesh.transform, m_collisionMeshSnap).apply(*mergedModel);
 
 				modelCache[meshShapeAsset->getFileName().getOriginal()] = partModel;
 			}
@@ -264,11 +245,6 @@ bool PrefabMergePipeline::buildOutput(
 		log::info << L"Output collision model ('original' to 'merged'):" << Endl;
 		log::info << L"\t" << vertexCount << L" to " << mergedModel->getVertexCount() << L" vertices" << Endl;
 		log::info << L"\t" << polygonCount << L" to " << mergedModel->getPolygonCount() << L" polygon(s)" << Endl;
-
-#if defined(T_SAVE_PREFABS)
-		// Build output mesh from merged model.
-		model::ModelFormat::writeAny(Path(L"data/Temp/Prefabs/" + merge->getName() + L".obj"), mergedModel);
-#endif
 
 		Ref< physics::MeshAsset > mergedMeshAsset = new physics::MeshAsset();
 		mergedMeshAsset->setCalculateConvexHull(false);
@@ -290,7 +266,7 @@ Ref< ISerializable > PrefabMergePipeline::buildOutput(
 ) const
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 	}
