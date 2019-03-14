@@ -23,6 +23,8 @@ bool UnwrapUV::apply(Model& model) const
 {
 	Atlas_Options options;
 	atlas_set_default_options(&options);
+	options.packer_options.witness.texel_area = 0.5f;
+	options.packer_options.witness.conservative = true;
 
 	AlignedVector< Atlas_Input_Vertex > inputVertices;
 

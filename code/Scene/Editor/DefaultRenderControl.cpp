@@ -10,6 +10,7 @@
 #include "Scene/Editor/CubicRenderControl.h"
 #include "Scene/Editor/DebugRenderControl.h"
 #include "Scene/Editor/DefaultRenderControl.h"
+#include "Scene/Editor/FinalRenderControl.h"
 #include "Scene/Editor/OrthogonalRenderControl.h"
 #include "Scene/Editor/PerspectiveRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
@@ -90,6 +91,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_DEBUG"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_CAMERA"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_CUBIC"));
+	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_FINAL"));
 	m_toolView->select(viewType);
 
 	m_toolToggleGrid = new ui::ToolBarButton(
@@ -371,6 +373,15 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 		{
 			Ref< CubicRenderControl > renderControl = new CubicRenderControl();
 			if (!renderControl->create(m_container, m_context))
+				return false;
+			m_renderControl = renderControl;
+		}
+		break;
+
+	case 10: // Final
+		{
+			Ref< FinalRenderControl > renderControl = new FinalRenderControl();
+			if (!renderControl->create(m_container, m_context, m_cameraId))
 				return false;
 			m_renderControl = renderControl;
 		}

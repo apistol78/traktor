@@ -49,6 +49,8 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
+	void setMesh(const resource::Id< IMesh >& mesh) { m_mesh = mesh; }
+
 	const resource::Id< IMesh >& getMesh() const { return m_mesh; }
 
 private:

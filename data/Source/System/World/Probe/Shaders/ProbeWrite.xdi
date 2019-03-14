@@ -103,7 +103,7 @@
 				<setup>false</setup>
 				<opaque>false</opaque>
 				<postOpaque>false</postOpaque>
-				<alphaBlend>false</alphaBlend>
+				<alphaBlend>true</alphaBlend>
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
