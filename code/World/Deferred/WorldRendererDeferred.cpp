@@ -874,34 +874,6 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 
-	// Render light accumulation buffer.
-	{
-		render::ProgramParameters irradianceProgramParams;
-		irradianceProgramParams.beginParameters(m_globalContext);
-		irradianceProgramParams.setFloatParameter(ms_handleTime, f.time);
-		irradianceProgramParams.setMatrixParameter(ms_handleView, f.view);
-		irradianceProgramParams.setMatrixParameter(ms_handleViewInverse, f.view.inverse());
-		irradianceProgramParams.setMatrixParameter(ms_handleProjection, projection);
-		irradianceProgramParams.setTextureParameter(ms_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
-		irradianceProgramParams.setTextureParameter(ms_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
-		irradianceProgramParams.setTextureParameter(ms_handleMiscMap, m_gbufferTargetSet->getColorTexture(2));
-		irradianceProgramParams.setTextureParameter(ms_handleColorMap, m_gbufferTargetSet->getColorTexture(3));
-		irradianceProgramParams.endParameters(m_globalContext);
-
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Light accumulation (irradiance)");
-		if (m_renderView->begin(m_lightAccumulationTargetSet))
-		{
-			const Color4f lightClear[] = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
-			m_renderView->clear(render::CfColor, lightClear, 1.0f, 0);
-
-			if (f.haveIrradiance)
-				f.irradiance->getRenderContext()->render(m_renderView, render::RpOpaque, &irradianceProgramParams);
-
-			m_renderView->end();
-		}
-		T_RENDER_POP_MARKER(m_renderView);
-	}
-
 	// Render velocity.
 	if (m_motionBlurQuality > QuDisabled)
 	{
@@ -947,6 +919,15 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			m_renderView->end();
 		}
 		T_RENDER_POP_MARKER(m_renderView);
+	}
+
+	// Clear light accumulation buffer.
+	T_RENDER_PUSH_MARKER(m_renderView, "World: Light accumulation (clear)");
+	if (m_renderView->begin(m_lightAccumulationTargetSet))
+	{
+		const Color4f lightClear[] = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
+		m_renderView->clear(render::CfColor, lightClear, 1.0f, 0);
+		m_renderView->end();
 	}
 
 	// Render shadow and light maps.
@@ -1067,6 +1048,33 @@ void WorldRendererDeferred::render(int frame, render::EyeType eye)
 			}
 			m_renderView->end();
 		}
+	}
+
+	// Render light accumulation buffer;
+	// - Precomputed, aka baked, geometry replace dynamic light, using RpOverlay
+	// - Probes blend onto dynamic lights, using RpAlphaBlend
+	{
+		render::ProgramParameters irradianceProgramParams;
+		irradianceProgramParams.beginParameters(m_globalContext);
+		irradianceProgramParams.setFloatParameter(ms_handleTime, f.time);
+		irradianceProgramParams.setMatrixParameter(ms_handleView, f.view);
+		irradianceProgramParams.setMatrixParameter(ms_handleViewInverse, f.view.inverse());
+		irradianceProgramParams.setMatrixParameter(ms_handleProjection, projection);
+		irradianceProgramParams.setTextureParameter(ms_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
+		irradianceProgramParams.setTextureParameter(ms_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
+		irradianceProgramParams.setTextureParameter(ms_handleMiscMap, m_gbufferTargetSet->getColorTexture(2));
+		irradianceProgramParams.setTextureParameter(ms_handleColorMap, m_gbufferTargetSet->getColorTexture(3));
+		irradianceProgramParams.endParameters(m_globalContext);
+
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Light accumulation (irradiance)");
+		if (m_renderView->begin(m_lightAccumulationTargetSet))
+		{
+			if (f.haveIrradiance)
+				f.irradiance->getRenderContext()->render(m_renderView, render::RpAlphaBlend | render::RpOverlay, &irradianceProgramParams);
+
+			m_renderView->end();
+		}
+		T_RENDER_POP_MARKER(m_renderView);
 	}
 
 	// Render AO to light target.

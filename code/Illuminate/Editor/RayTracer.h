@@ -25,12 +25,14 @@ class Model;
 	namespace illuminate
 	{
 
+class IlluminateConfiguration;
+
 class T_DLLCLASS RayTracer : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	RayTracer();
+	explicit RayTracer(const IlluminateConfiguration* configuration);
 
 	void addLight(const Light& light);
 
@@ -42,16 +44,18 @@ public:
 
 	Color4f traceIndirect(const Vector4& origin, const Vector4& normal, float roughness);
 
+	Scalar traceOcclusion(const Vector4& origin, const Vector4& normal);
+
 private:
+	const IlluminateConfiguration* m_configuration;
 	SahTree m_sah;
 	SahTree::QueryCache m_sahCache;
 	AlignedVector< Light > m_lights;
 	AlignedVector< Winding3 > m_windings;
 	RandomGeometry m_random;
-	uint32_t m_irradianceSampleCount;
 	float m_maxDistance;
 
-	Color4f sampleAnalyticalLights(const Vector4& origin, const Vector4& normal);
+	Color4f sampleAnalyticalLights(const Vector4& origin, const Vector4& normal, uint32_t shadowSampleCount, float pointLightShadowRadius);
 };
 
 	}

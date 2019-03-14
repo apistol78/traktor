@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
+#include "Core/Math/Log2.h"
 #include "Core/Math/Triangulator.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
@@ -8,6 +9,7 @@
 #include "Database/Database.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Drawing/Filters/DilateFilter.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
 #include "Illuminate/Editor/IlluminateConfiguration.h"
@@ -130,17 +132,17 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		if (!layer->isInclude() || layer->isDynamic())
 			continue;
 
-		// Resolve all external entities.
-		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(resolveAllExternal(pipelineBuilder, layer));
-		if (!flattenedLayer)
-			return false;
+		//// Resolve all external entities.
+		//Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(resolveAllExternal(pipelineBuilder, layer));
+		//if (!flattenedLayer)
+		//	return false;
 
 		// Get all trace entities.
-		collectTraceEntities(flattenedLayer, lightEntityDatas, meshEntityDatas);
+		collectTraceEntities(layer, lightEntityDatas, meshEntityDatas);
 	}
 
 	// Prepare tracer; add lights and models.
-	RayTracer tracer;
+	RayTracer tracer(configuration);
 
 	for (const auto lightEntityData : lightEntityDatas)
 	{
@@ -221,6 +223,23 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 
 		model::Triangulate().apply(*model);
 
+		// Calculate output size from lumel density.
+		float totalWorldArea = 0.0f;
+		for (const auto& polygon : model->getPolygons())
+		{
+			Winding3 polygonWinding;
+			for (const auto index : polygon.getVertices())
+				polygonWinding.push(model->getVertexPosition(index));
+			totalWorldArea += abs(polygonWinding.area());
+		}
+
+		float totalLightMapArea = configuration->getLumelDensity() * configuration->getLumelDensity() * totalWorldArea;
+		float size = std::sqrt(totalLightMapArea);
+
+		int32_t outputSize = nearestLog2(int32_t(size + 0.5f));
+		log::info << L"Lumel density " << configuration->getLumelDensity() << L" lumels/unit => lightmap size " << outputSize << Endl;
+
+		// Unwrap lightmap UV.
 		uint32_t channel = model->addUniqueTexCoordChannel(L"Illuminate_LightmapUV");
 		if (!model::UnwrapUV(channel).apply(*model))
 		{
@@ -228,10 +247,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			return false;
 		}
 
-		const int32_t c_lightMapWidth = 256;
-		const int32_t c_lightMapHeight = 256;
-
-		Ref< drawing::Image > lightmap = new drawing::Image(drawing::PixelFormat::getRGBAF32(), c_lightMapWidth, c_lightMapHeight);
+		Ref< drawing::Image > lightmap = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
 		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 		for (const auto& polygon : model->getPolygons())
@@ -252,8 +268,10 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 				normals.push_back(model->getNormal(normalIndex));
 
 				uint32_t texCoordIndex = vertex.getTexCoord(channel);
-				texCoords.points.push_back(model->getTexCoord(texCoordIndex) * Vector2(c_lightMapWidth, c_lightMapHeight));
+				texCoords.points.push_back(model->getTexCoord(texCoordIndex) * Vector2(outputSize, outputSize));
 			}
+
+			float roughness = clamp(model->getMaterial(polygon.getMaterial()).getRoughness(), 0.0f, 1.0f);
 
 			// Triangulate winding so we can easily traverse lightmap fragments.
 			AlignedVector< Triangulator::Triangle > triangles;
@@ -293,7 +311,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 				{
 					for (int32_t x = x0; x <= x1; ++x)
 					{
-						Vector2 pt = Vector2(x, y);
+						Vector2 pt = Vector2(x + 0.5f, y + 0.5f);
 
 						float alpha = ((tc1.y - tc2.y) * (pt.x - tc2.x) + (tc2.x - tc1.x) * (pt.y - tc2.y)) * invDenom;
 						float beta = ((tc2.y - tc0.y) * (pt.x - tc2.x) + (tc0.x - tc2.x) * (pt.y - tc2.y)) * invDenom;
@@ -307,70 +325,85 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 
 						Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
 						Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
+						Scalar occlusion(0.0f);
 
 						if (configuration->traceDirect())
-							direct = tracer.traceDirect(position, normal, 0.8f);
+							direct = tracer.traceDirect(position, normal, roughness);
 
 						if (configuration->traceIndirect())
-							indirect = tracer.traceIndirect(position, normal, 0.8f);
+							indirect = tracer.traceIndirect(position, normal, roughness);
 
-						lightmap->setPixel(x, y, direct + indirect);
+						if (configuration->traceOcclusion())
+							occlusion = tracer.traceOcclusion(position, normal);
+
+						if (configuration->traceDirect() || configuration->traceIndirect())
+							lightmap->setPixel(x, y, ((direct + indirect) * (Scalar(1.0f) - occlusion)).rgb1());
+						else
+							lightmap->setPixel(x, y, (Color4f(1.0f, 1.0f, 1.0f) * (Scalar(1.0f) - occlusion)).rgb1());
 					}
 				}
 			}
 		}
 
+		// Dilate lightmap to prevent leaking.
+		drawing::DilateFilter dilateFilter(8);
+		lightmap->apply(&dilateFilter);
+
 		// Discard alpha.
 		lightmap->clearAlpha(1.0f);
 
-		model::ModelFormat::writeAny(L"Illuminate.tmd", model);
-		lightmap->save(L"Illuminate.png");
+		lightmap->save(L"Lightmap.png");
 
-		// // "Permutate" output ids.
-		// Guid idLightMap; // = illumEntityData->getSeedGuid().permutate(i * 10 + 1);
-		// Guid idMesh; // = illumEntityData->getSeedGuid().permutate(i * 10 + 2);
+		 // "Permutate" output ids.
+		 Guid idLightMap = configuration->getSeedGuid().permutate(i * 10 + 1);
+		 Guid idMesh = configuration->getSeedGuid().permutate(i * 10 + 2);
 
-		// // Create a texture build step.
-		// Ref< render::TextureOutput > textureOutput = new render::TextureOutput();
-		// textureOutput->m_textureFormat = render::TfR16G16B16A16F;
-		// textureOutput->m_keepZeroAlpha = false;
-		// textureOutput->m_hasAlpha = false;
-		// textureOutput->m_ignoreAlpha = true;
-		// textureOutput->m_linearGamma = true;
-		// textureOutput->m_enableCompression = false;
-		// textureOutput->m_sharpenRadius = 0;
-		// textureOutput->m_systemTexture = true;
-		// textureOutput->m_generateMips = false;
+		 // Create a texture build step.
+		 Ref< render::TextureOutput > textureOutput = new render::TextureOutput();
+		 textureOutput->m_textureFormat = render::TfR16G16B16A16F;
+		 textureOutput->m_keepZeroAlpha = false;
+		 textureOutput->m_hasAlpha = false;
+		 textureOutput->m_ignoreAlpha = true;
+		 textureOutput->m_linearGamma = true;
+		 textureOutput->m_enableCompression = false;
+		 textureOutput->m_sharpenRadius = 0;
+		 textureOutput->m_systemTexture = true;
+		 textureOutput->m_generateMips = false;
 
-		// pipelineBuilder->buildOutput(
-		// 	textureOutput,
-		// 	L"Generated/__Illumination__Texture__" + idLightMap.format(),
-		// 	idLightMap,
-		// 	lightmap
-		// );
+		 pipelineBuilder->buildOutput(
+		 	textureOutput,
+		 	L"Generated/__Illumination__Texture__" + idLightMap.format(),
+		 	idLightMap,
+		 	lightmap
+		 );
 
-		// // Modify model materials to use our illumination texture.
-		// AlignedVector< model::Material > materials = model->getMaterials();
-		// for (auto& material : materials)
-		// {
-		// 	material.setBlendOperator(model::Material::BoDecal);
-		// 	material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
-		// }
-		// model->setMaterials(materials);
+		 // Modify model materials to use our illumination texture.
+		 AlignedVector< model::Material > materials = model->getMaterials();
+		 for (auto& material : materials)
+		 {
+		 	material.setBlendOperator(model::Material::BoDecal);
+		 	material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
+		 }
+		 model->setMaterials(materials);
 
-		// // Create a new mesh asset which use the fresh baked illumination texture.
-		// auto materialTextures = meshAsset->getMaterialTextures();
-		// materialTextures[L"__Illumination__"] = idLightMap;
+		 // Create a new mesh asset which use the fresh baked illumination texture.
+		 auto materialTextures = meshAsset->getMaterialTextures();
+		 materialTextures[L"__Illumination__"] = idLightMap;
 
-		// Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-		// outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-		// outputMeshAsset->setMaterialTextures(materialTextures);
-		// pipelineBuilder->buildOutput(
-		// 	outputMeshAsset,
-		// 	L"Generated/__Illumination__Mesh__" + idMesh.format(),
-		// 	idMesh,
-		// 	model
-		// );
+		 Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+		 outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+		 outputMeshAsset->setMaterialTextures(materialTextures);
+		 pipelineBuilder->buildOutput(
+		 	outputMeshAsset,
+		 	L"Generated/__Illumination__Mesh__" + idMesh.format(),
+		 	idMesh,
+		 	model
+		 );
+
+		 // Replace mesh reference to our synthesized mesh instead.
+		 meshEntityData->getComponent< mesh::MeshComponentData >()->setMesh(resource::Id< mesh::IMesh >(
+			 idMesh
+		));
 
 		// // Create new mesh entity.
 		// Ref< world::ComponentEntityData > entityData = new world::ComponentEntityData();

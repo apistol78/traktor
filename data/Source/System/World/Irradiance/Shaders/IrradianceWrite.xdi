@@ -15,7 +15,7 @@
 				<postOpaque>false</postOpaque>
 				<alphaBlend>false</alphaBlend>
 				<postAlphaBlend>false</postAlphaBlend>
-				<overlay>false</overlay>
+				<overlay>true</overlay>
 			</priority>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
@@ -53,8 +53,8 @@
 			<id>{55606599-DA57-584A-9A22-85DB6F4829EF}</id>
 			<comment/>
 			<position>
-				<first>1050</first>
-				<second>645</second>
+				<first>1180</first>
+				<second>652</second>
 			</position>
 			<name>Irradiance</name>
 			<connectable>true</connectable>
@@ -66,7 +66,7 @@
 			<id>{D2F30CBD-E1C1-4AD0-81DA-FA92D9C627C5}</id>
 			<comment/>
 			<position>
-				<first>1070</first>
+				<first>1190</first>
 				<second>606</second>
 			</position>
 			<name>Enable</name>
@@ -80,7 +80,7 @@
 			<comment/>
 			<position>
 				<first>1180</first>
-				<second>699</second>
+				<second>698</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 		</item>

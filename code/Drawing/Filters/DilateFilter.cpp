@@ -21,6 +21,7 @@ void DilateFilter::apply(Image* image) const
 	{
 		Ref< Image > final = image->clone(false);
 
+		int32_t dilated = 0;
 		for (int32_t y = 0; y < image->getHeight(); ++y)
 		{
 			for (int32_t x = 0; x < image->getWidth(); ++x)
@@ -58,13 +59,21 @@ void DilateFilter::apply(Image* image) const
 					acc /= Scalar(float(cnt));
 					acc.setAlpha(Scalar(1.0f));
 					final->setPixelUnsafe(x, y, acc);
+					dilated++;
 				}
 				else
 					final->setPixelUnsafe(x, y, tmp);
 			}
 		}
 
-		image->swap(final);
+		if (dilated > 0)
+			image->swap(final);
+		else
+		{
+			// No pixels was dilated; entire image fully occupied thus no need to
+			// iterate further.
+			break;
+		}
 	}
 }
 

@@ -194,7 +194,7 @@ void ProbeRenderer::flush(
 
 		renderBlock->programParams->endParameters(renderContext);
 
-		renderContext->draw(render::RpOpaque, renderBlock);
+		renderContext->draw(render::RpAlphaBlend, renderBlock);
 	}
 
 	// Flush all queued decals.
