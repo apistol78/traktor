@@ -830,7 +830,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 		2000.0f
 	);
 
-	auto texture = (m_texturePreview != nullptr) ? m_texturePreview : m_textureDebug.getResource();
+	auto texture = (m_texturePreview != nullptr) ? m_texturePreview.ptr() : m_textureDebug.getResource();
 
 	if (m_primitiveRenderer->begin(0, projectionTransform))
 	{

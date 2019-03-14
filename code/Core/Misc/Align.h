@@ -27,7 +27,7 @@ T alignUp(T v, size_t a)
  * \ingroup Core
  */
 template < typename T >
-uint32_t alignOf()
+size_t alignOf()
 {
 #if !defined(alignof)
 #	if defined(_MSC_VER)
