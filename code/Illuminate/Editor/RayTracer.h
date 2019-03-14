@@ -3,6 +3,7 @@
 #include "Core/Object.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/SahTree.h"
+#include "Illuminate/Editor/KdTree.h"
 #include "Illuminate/Editor/Types.h"
 
 // import/export mechanism.
@@ -47,9 +48,19 @@ public:
 	Scalar traceOcclusion(const Vector4& origin, const Vector4& normal);
 
 private:
+	struct Photon
+	{
+		Vector4 position;
+		Vector4 direction;	//!< Incoming direction
+		Color4f intensity;
+
+		operator const Vector4& () const { return position; }
+	};
+
 	const IlluminateConfiguration* m_configuration;
 	SahTree m_sah;
 	SahTree::QueryCache m_sahCache;
+	KdTree< Photon > m_photonMap;
 	AlignedVector< Light > m_lights;
 	AlignedVector< Winding3 > m_windings;
 	RandomGeometry m_random;
