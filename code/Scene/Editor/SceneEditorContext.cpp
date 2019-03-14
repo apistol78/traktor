@@ -341,15 +341,9 @@ const IComponentEditorFactory* SceneEditorContext::findComponentEditorFactory(co
 
 void SceneEditorContext::buildEntities()
 {
-	double T[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
-
 	// Reset physics before creating entities in case
 	// a new body is created with an initial velocity etc.
 	resetPhysics();
-
-	Timer timer;
-	timer.start();
-	T[0] = timer.getElapsedTime();
 
 	if (m_sceneAsset)
 	{
@@ -359,10 +353,8 @@ void SceneEditorContext::buildEntities()
 
 		// Create entity factories.
 		RefArray< const world::IEntityFactory > entityFactories;
-		for (RefArray< ISceneEditorProfile >::iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
-			(*i)->createEntityFactories(this, entityFactories);
-
-		T[1] = timer.getElapsedTime();
+		for (auto editorProfile : m_editorProfiles)
+			editorProfile->createEntityFactories(this, entityFactories);
 
 		// Create root group entity as scene instances doesn't have a concept of layers.
 		Ref< world::GroupEntity > rootGroupEntity = new world::GroupEntity();
@@ -379,24 +371,22 @@ void SceneEditorContext::buildEntities()
 			T_ASSERT(layerEntityData);
 
 			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityBuilderSchema, m_layerEntityAdapters[i]);
-			for (RefArray< const world::IEntityFactory >::iterator k = entityFactories.begin(); k != entityFactories.end(); ++k)
-				entityAdapterBuilder->addFactory(*k);
+			for (auto entityFactory : entityFactories)
+				entityAdapterBuilder->addFactory(entityFactory);
 
 			Ref< world::Entity > entity = entityAdapterBuilder->create(layerEntityData);
-			T_FATAL_ASSERT (entity != 0);
+			T_FATAL_ASSERT(entity != nullptr);
 
 			m_layerEntityAdapters[i] = entityAdapterBuilder->getRootAdapter();
-			T_FATAL_ASSERT (m_layerEntityAdapters[i] != 0);
-			T_FATAL_ASSERT (m_layerEntityAdapters[i]->getEntityData() == layerEntityData);
-			T_FATAL_ASSERT (m_layerEntityAdapters[i]->getEntity() == entity);
-			T_FATAL_ASSERT (m_layerEntityAdapters[i]->getParent() == 0);
+			T_FATAL_ASSERT(m_layerEntityAdapters[i] != nullptr);
+			T_FATAL_ASSERT(m_layerEntityAdapters[i]->getEntityData() == layerEntityData);
+			T_FATAL_ASSERT(m_layerEntityAdapters[i]->getEntity() == entity);
+			T_FATAL_ASSERT(m_layerEntityAdapters[i]->getParent() == nullptr);
 
 			rootGroupEntity->addEntity(entity);
 
 			log::debug << L"Layer " << i << L", cache hit " << entityAdapterBuilder->getCacheHit() << L", miss " << entityAdapterBuilder->getCacheMiss() << Endl;
 		}
-
-		T[2] = timer.getElapsedTime();
 
 		// Update scene controller also.
 		Ref< ISceneController > controller;
@@ -406,24 +396,21 @@ void SceneEditorContext::buildEntities()
 			getEntities(entityAdapters);
 
 			std::map< const world::EntityData*, Ref< world::Entity > > entityProducts;
-			for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+			for (auto entityAdapter : entityAdapters)
 				entityProducts.insert(std::make_pair(
-					(*i)->getEntityData(),
-					(*i)->getEntity()
+					entityAdapter->getEntityData(),
+					entityAdapter->getEntity()
 				));
 
 			controller = m_sceneAsset->getControllerData()->createController(entityProducts, true);
 		}
 
-		T[3] = timer.getElapsedTime();
-
 		// Bind post process parameters.
 		SmallMap< render::handle_t, resource::Proxy< render::ITexture > > postProcessParams;
-		const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParamsAsset = m_sceneAsset->getImageProcessParams();
-		for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = postProcessParamsAsset.begin(); i != postProcessParamsAsset.end(); ++i)
+		for (const auto param : m_sceneAsset->getImageProcessParams())
 		{
-			if (!m_resourceManager->bind(i->second, postProcessParams[render::getParameterHandle(i->first)]))
-				log::error << L"Unable to bind post processing parameter \"" << i->first << L"\"" << Endl;
+			if (!m_resourceManager->bind(param.second, postProcessParams[render::getParameterHandle(param.first)]))
+				log::error << L"Unable to bind post processing parameter \"" << param.first << L"\"" << Endl;
 		}
 
 		// Create our scene.
@@ -436,9 +423,7 @@ void SceneEditorContext::buildEntities()
 		);
 	}
 	else
-		m_scene = 0;
-
-	T[4] = timer.getElapsedTime();
+		m_scene = nullptr;
 
 	// Create map from entity to adapter.
 	RefArray< EntityAdapter > entityAdapters;
@@ -448,20 +433,12 @@ void SceneEditorContext::buildEntities()
 	for (auto entityAdapter : entityAdapters)
 	{
 		const auto it = m_entityAdapterMap.find(entityAdapter->getEntity());
-		T_FATAL_ASSERT (it == m_entityAdapterMap.end());
+		T_FATAL_ASSERT(it == m_entityAdapterMap.end());
 		m_entityAdapterMap.insert(entityAdapter->getEntity(), entityAdapter);
 	}
 
 	m_entityCount = entityAdapters.size();
-
 	raisePostBuild();
-
-	T[5] = timer.getElapsedTime();
-
-	log::debug << L"Scene build profile (" << m_buildCount << L"):" << Endl;
-	for (int32_t i = 0; i < sizeof_array(T) - 1; ++i)
-		log::debug << L"  T " << i << L"_" << (i + 1) << L": " << int32_t((T[i + 1] - T[i]) * 1000.0) << L" ms" << Endl;
-
 	++m_buildCount;
 }
 
