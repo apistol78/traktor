@@ -139,7 +139,7 @@ bool ScenePipeline::buildOutput(
 		const IScenePipelineOperator* spo = findOperator(type_of(op));
 		if (!spo)
 			return false;
-		if (!spo->build(sceneAsset))
+		if (!spo->build(pipelineBuilder, op, sceneAsset))
 			return false;
 	}
 
