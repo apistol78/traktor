@@ -62,7 +62,7 @@ void ComponentEntity::setComponent(IEntityComponent* component)
 	component->setTransform(m_transform);
 
 	// Replace existing component of same type.
-	for (auto& comp : m_components)
+	for (auto comp : m_components)
 	{
 		if (is_type_of(type_of(comp), type_of(component)))
 		{

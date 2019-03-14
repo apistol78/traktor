@@ -22,11 +22,11 @@ LayerEntityData::LayerEntityData()
 void LayerEntityData::setAttribute(const ILayerAttribute* attribute)
 {
 	T_ASSERT(attribute);
-	for (auto& attr : m_attributes)
+	for (auto attr = m_attributes.begin(); attr != m_attributes.end(); ++attr)
 	{
-		if (is_type_a(type_of(attr), type_of(attribute)))
+		if (is_type_a(type_of(*attr), type_of(attribute)))
 		{
-			attr = attribute;
+			*attr = attribute;
 			return;
 		}
 	}

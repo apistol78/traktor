@@ -4,9 +4,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <X11/Xlib.h>
-#include "Amalgam/Game/IOnlineServer.h"
-#include "Amalgam/Game/Impl/Application.h"
-#include "Amalgam/Game/Impl/Environment.h"
+#include "Runtime/IOnlineServer.h"
+#include "Runtime/Impl/Application.h"
+#include "Runtime/Impl/Environment.h"
 #include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -80,7 +80,7 @@ Ref< PropertyGroup > loadSettings(const Path& settingsFile)
 
 bool saveSettings(const PropertyGroup* settings, const Path& settingsFile)
 {
-	T_ASSERT((settings);
+	T_ASSERT(settings);
 
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(settingsFile, File::FmWrite);
 	if (!file)
@@ -193,7 +193,7 @@ int main(int argc, const char** argv)
 		return 1;
 	}
 
-	Ref< amalgam::Application > application = new amalgam::Application();
+	Ref< runtime::Application > application = new runtime::Application();
 	if (application->create(
 		defaultSettings,
 		settings,

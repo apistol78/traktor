@@ -3,6 +3,7 @@
 #include "Core/Config.h"
 #include "Core/IRefCount.h"
 #include "Core/Containers/SmallSet.h"
+#include "Core/Meta/Traits.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -149,7 +150,11 @@ class T_DLLCLASS TypeInfoSet : public SmallSet< const TypeInfo* >
 {
 public:
 	template < typename Type >
-	bool insert() { return insert(&type_of< Type >()); }
+	bool insert()
+	{
+		typedef typename IsPointer< typename IsReference< Type >::base_t >::base_t tt;
+		return insert(&(tt::getClassTypeInfo()));
+	}
 
 	bool insert(const TypeInfo* typeInfo) { return SmallSet< const TypeInfo* >::insert(typeInfo); }
 };
