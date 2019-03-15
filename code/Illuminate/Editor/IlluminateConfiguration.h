@@ -41,6 +41,10 @@ public:
 
 	float getLumelDensity() const { return m_lumelDensity; }
 
+	uint32_t getPhotonCount() const { return m_photonCount; }
+
+	float getPhotonSampleRadius() const { return m_photonSampleRadius; }
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -53,6 +57,8 @@ private:
 	uint32_t m_occlusionSampleCount;
 	float m_pointLightShadowRadius;
 	float m_lumelDensity;
+	uint32_t m_photonCount;
+	float m_photonSampleRadius;
 };
 
 	}

@@ -57,12 +57,19 @@ private:
 		operator const Vector4& () const { return position; }
 	};
 
+	struct Surface
+	{
+		Color4f albedo;
+	};
+
 	const IlluminateConfiguration* m_configuration;
 	SahTree m_sah;
 	SahTree::QueryCache m_sahCache;
 	KdTree< Photon > m_photonMap;
+	AlignedVector< Photon > m_photons;
 	AlignedVector< Light > m_lights;
 	AlignedVector< Winding3 > m_windings;
+	AlignedVector< Surface > m_surfaces;
 	RandomGeometry m_random;
 	float m_maxDistance;
 
