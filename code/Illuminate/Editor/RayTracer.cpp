@@ -40,8 +40,9 @@ void RayTracer::addModel(const model::Model* model, const Transform& transform)
 {
 	const auto& polygons = model->getPolygons();
 
-	// Construct simple windins from each model's polygon.
+	// Construct simple windings and surfaces from each model's polygon.
 	m_windings.reserve(m_windings.size() + polygons.size());
+	m_surfaces.reserve(m_surfaces.size() + polygons.size());
 	for (const auto& polygon : polygons)
 	{
 		auto& w = m_windings.push_back();
@@ -51,6 +52,10 @@ void RayTracer::addModel(const model::Model* model, const Transform& transform)
 			const auto& position = model->getPosition(vertex.getPosition());
 			w.push(transform * position.xyz1());
 		}
+
+		auto& s = m_surfaces.push_back();
+		const auto& material = model->getMaterial(polygon.getMaterial());
+		s.albedo = Color4f::fromColor4ub(material.getColor());
 	}
 }
 
@@ -61,7 +66,7 @@ bool RayTracer::prepare()
 
 	// Build photon map.
 	log::info << L"Building photon map..." << Endl;	
-	for (int32_t i = 0; i < 100000; ++i)
+	for (int32_t i = 0; i < m_configuration->getPhotonCount(); ++i)
 	{
 		uint32_t index = (uint32_t)(m_random.nextFloat() * (m_windings.size() - 1));
 
@@ -95,6 +100,8 @@ bool RayTracer::prepare()
 					{
 						Scalar a1 = attenuation(result.distance);
 
+						// Bounce light and trace again to place photon; photons are only used for
+						// indirect, bounced, light.
 						Vector4 r = reflect(-direction, result.normal);
 						if (m_sah.queryClosestIntersection(result.position + result.normal * c_epsilonOffset, r, result, m_sahCache))
 						{
@@ -102,8 +109,8 @@ bool RayTracer::prepare()
 
 							Photon photon;
 							photon.position = result.position.xyz1();
-							photon.direction = r; //direction;
-							photon.intensity = light.color * a1 * a2;
+							photon.direction = r;
+							photon.intensity = m_surfaces[result.index].albedo * light.color * a1 * a2;
 							m_photonMap.insert(photon);
 						}
 
@@ -135,26 +142,23 @@ Color4f RayTracer::traceDirect(const Vector4& origin, const Vector4& normal, flo
 
 Color4f RayTracer::traceIndirect(const Vector4& origin, const Vector4& normal, float roughness)
 {
-	AlignedVector< Photon > photons;
+	Color4f irradiance(0.0f, 0.0f, 0.0f, 0.0f);
 	SahTree::QueryResult result;
 
-	const float c_samplePhotonRadius = 1.0f;
-
-	Color4f irradiance(0.0f, 0.0f, 0.0f, 0.0f);
-
-
-	m_photonMap.queryWithinDistance(origin, c_samplePhotonRadius, photons);
-	if (!photons.empty())
+	// Sample photon map for indirect lighting from given point.
+	m_photons.resize(0);
+	m_photonMap.queryWithinDistance(origin, m_configuration->getPhotonSampleRadius(), m_photons);
+	if (!m_photons.empty())
 	{
 		Color4f contribution(0.0f, 0.0f, 0.0f, 0.0f);
 		float weight = 0.0f;
 
-		for (const auto& photon : photons)
+		for (const auto& photon : m_photons)
 		{
 			Scalar phi = dot3(normal, -photon.direction);
 			if (phi > 0.0f)
 			{
-				float k = clamp(1.0f - (photon.position - origin).xyz0().length() / c_samplePhotonRadius, 0.0f, 1.0f);
+				float k = clamp(1.0f - (photon.position - origin).xyz0().length() / m_configuration->getPhotonSampleRadius(), 0.0f, 1.0f);
 				contribution += photon.intensity * phi * Scalar(k);
 				weight += k;
 			}
@@ -163,7 +167,7 @@ Color4f RayTracer::traceIndirect(const Vector4& origin, const Vector4& normal, f
 		if (weight > 0.0f)
 		{
 			contribution /= Scalar(weight);
-			irradiance += contribution; // * attenuation((result.position - origin).xyz0().length());
+			irradiance += contribution;
 		}
 	}
 

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <limits>
-#include <vector>
 #include <algorithm>
 #include "Core/Math/Vector4.h"
 #include "Core/Containers/AlignedVector.h"
@@ -21,7 +20,7 @@ template < typename ItemType, typename PositionAccessor = DefaultPositionAccesso
 class KdTree
 {
 public:
-	const static int c_terminateIndex = ~0;
+	const static int32_t c_terminationIndex = ~0;
 
 	KdTree()
 	:	m_root(0)
@@ -37,11 +36,11 @@ public:
 		{
 			m_nodes[i].partition = PositionAccessor::get(items[i]);
 			m_nodes[i].item = int(i);
-			m_nodes[i].left = c_terminateIndex;
-			m_nodes[i].right = c_terminateIndex;
+			m_nodes[i].left = c_terminationIndex;
+			m_nodes[i].right = c_terminationIndex;
 		}
 
-		m_root = buildTraverse(0, int(items.size()), 0);
+		m_root = buildTraverse(0, (int32_t)items.size(), 0);
 	}
 
 	void insert(const ItemType& item)
@@ -49,23 +48,23 @@ public:
 		Node nn =
 		{
 			PositionAccessor::get(item),
-			int(m_items.size()),
-			c_terminateIndex,
-			c_terminateIndex
+			(int32_t)m_items.size(),
+			c_terminationIndex,
+			c_terminationIndex
 		};
 
 		if (!m_nodes.empty())
 		{
-			int nodeIndex = m_root;
-			for (int depth = 0;; ++depth)
+			int32_t nodeIndex = m_root;
+			for (int32_t depth = 0;; ++depth)
 			{
-				int axis = depth % 3;
+				int32_t axis = depth % 3;
 				Node& node = m_nodes[nodeIndex];
 				if (node.partition[axis] < PositionAccessor::get(item)[axis])
 				{
-					if (node.left == c_terminateIndex)
+					if (node.left == c_terminationIndex)
 					{
-						node.left = int(m_nodes.size());
+						node.left = (int32_t)m_nodes.size();
 						break;
 					}
 					else
@@ -73,9 +72,9 @@ public:
 				}
 				else
 				{
-					if (node.right == c_terminateIndex)
+					if (node.right == c_terminationIndex)
 					{
-						node.right = int(m_nodes.size());
+						node.right = (int32_t)m_nodes.size();
 						break;
 					}
 					else
@@ -101,9 +100,10 @@ public:
 	const ItemType* queryClosest(const Vector4& point, float maxDistance = std::numeric_limits< float >::max()) const
 	{
 		QueryResult result = queryClosestTraverse(point, m_root, 0, maxDistance);
-		if (!result.node)
-			return 0;
-		return &m_items[result.node->item];
+		if (result.node)
+			return &m_items[result.node->item];
+		else
+			return nullptr;
 	}
 
 	struct ClosestItem
@@ -117,11 +117,9 @@ public:
 		for (size_t i = 0; i < out.size(); ++i)
 		{
 			out[i].distance2 = std::numeric_limits< float >::max();
-			out[i].item = 0;
+			out[i].item = nullptr;
 		}
-
 		queryNClosestTraverse(point, m_root, 0, out);
-
 		return out.size();
 	}
 
@@ -135,20 +133,16 @@ private:
 	struct Node
 	{
 		Vector4 partition;
-		int item;
-		int left;
-		int right;
+		int32_t item;
+		int32_t left;
+		int32_t right;
 	};
-
-	AlignedVector< Node > m_nodes;
-	AlignedVector< ItemType > m_items;
-	int m_root;
 
 	struct SortAxis
 	{
-		int m_axis;
+		int32_t m_axis;
 
-		SortAxis(int axis)
+		SortAxis(int32_t axis)
 		:	m_axis(axis)
 		{
 		}
@@ -159,11 +153,21 @@ private:
 		}
 	};
 
-	int buildTraverse(int start, int end, int depth)
+	struct QueryResult
+	{
+		float distance;
+		const Node* node;
+	};
+
+	AlignedVector< Node > m_nodes;
+	AlignedVector< ItemType > m_items;
+	int32_t m_root;
+
+	int32_t buildTraverse(int32_t start, int32_t end, int32_t depth)
 	{
 		std::sort(m_nodes.begin() + start, m_nodes.begin() + end, SortAxis(depth % 3));
 
-		int pivot = (start + end) / 2;
+		int32_t pivot = (start + end) / 2;
 		if (pivot > start)
 			m_nodes[pivot].left = buildTraverse(start, pivot, depth + 1);
 		if (pivot + 1 < end)
@@ -172,18 +176,12 @@ private:
 		return pivot;
 	}
 
-	struct QueryResult
-	{
-		float distance;
-		const Node* node;
-	};
-
-	QueryResult queryClosestTraverse(const Vector4& point, int nodeIndex, int depth, float maxDistance2) const
+	QueryResult queryClosestTraverse(const Vector4& point, int32_t nodeIndex, int32_t depth, float maxDistance2) const
 	{
 		QueryResult result = { maxDistance2 + 1.0f, 0 };
-		if (nodeIndex != c_terminateIndex)
+		if (nodeIndex != c_terminationIndex)
 		{
-			int axis = depth % 3;
+			int32_t axis = depth % 3;
 			const Node& node = m_nodes[nodeIndex];
 			
 			float dist2 = dot3(node.partition, point);
@@ -226,15 +224,15 @@ private:
 
 	void queryNClosestTraverse(
 		const Vector4& point,
-		int nodeIndex,
-		int depth,
+		int32_t nodeIndex,
+		int32_t depth,
 		AlignedVector< typename KdTree< ItemType >::ClosestItem >& out
 	) const
 	{
-		if (nodeIndex == c_terminateIndex)
+		if (nodeIndex == c_terminationIndex)
 			return;
 
-		int axis = depth % 3;
+		int32_t axis = depth % 3;
 		const Node& node = m_nodes[nodeIndex];
 
 		float split = node.partition[axis] - point[axis];
@@ -284,16 +282,16 @@ private:
 
 	void queryWithinDistanceTraverse(
 		const Vector4& point,
-		int nodeIndex,
-		int depth,
+		int32_t nodeIndex,
+		int32_t depth,
 		float distance,
 		AlignedVector< ItemType >& out
 	) const
 	{
-		if (nodeIndex == c_terminateIndex)
+		if (nodeIndex == c_terminationIndex)
 			return;
 		
-		int axis = depth % 3;
+		int32_t axis = depth % 3;
 		const Node& node = m_nodes[nodeIndex];
 
 		float split2 = dot3(node.partition - point, node.partition - point);
