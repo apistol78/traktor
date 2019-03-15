@@ -26,6 +26,13 @@ int CALLBACK enumFontCallBack(const LOGFONT* lf, const TEXTMETRIC*, DWORD, LPVOI
 	return TRUE;
 }
 
+BOOL enumMonitors(HMONITOR hMonitor, HDC hDC, LPRECT lpRect, LPARAM lpUser)
+{
+	std::vector< HMONITOR >* monitors = (std::vector< HMONITOR >*)lpUser;
+	monitors->push_back(hMonitor);
+	return TRUE;
+}
+
 		}
 
 WidgetFactoryWin32::WidgetFactoryWin32()
@@ -122,6 +129,20 @@ void WidgetFactoryWin32::getSystemFonts(std::list< std::wstring >& outFonts)
 
 void WidgetFactoryWin32::getDesktopRects(std::list< Rect >& outRects) const
 {
+	std::vector< HMONITOR > monitors;
+	EnumDisplayMonitors(NULL, NULL, &enumMonitors, (LPARAM)&monitors);
+	for (auto monitor : monitors)
+	{
+		MONITORINFO mi;
+		mi.cbSize = sizeof(mi);
+		GetMonitorInfo(monitor, &mi);
+		outRects.push_back(Rect(
+			mi.rcWork.left,
+			mi.rcWork.top,
+			mi.rcWork.right,
+			mi.rcWork.bottom
+		));
+	}
 }
 
 	}
