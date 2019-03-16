@@ -23,12 +23,13 @@ class T_DLLCLASS UnwrapUV : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	UnwrapUV(int32_t channel);
+	UnwrapUV(int32_t channel, uint32_t textureSize);
 
 	virtual bool apply(Model& model) const override final;
 
 private:
 	int32_t m_channel;
+	uint32_t m_textureSize;
 };
 
 	}

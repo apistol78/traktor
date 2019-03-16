@@ -65,67 +65,70 @@ bool RayTracer::prepare()
 	m_sah.build(m_windings);
 
 	// Build photon map.
-	log::info << L"Building photon map..." << Endl;	
-	for (int32_t i = 0; i < m_configuration->getPhotonCount(); ++i)
+	log::info << L"Building photon map..." << Endl;
+	if (m_windings.size() > 0)
 	{
-		uint32_t index = (uint32_t)(m_random.nextFloat() * (m_windings.size() - 1));
-
-		const auto& targetWinding = m_windings[index];
-
-		Aabb3 targetBounds;
-
-		for (const auto& point : targetWinding.getPoints())
-			targetBounds.contain(point);
-
-		Vector4 r(
-			m_random.nextFloat(),
-			m_random.nextFloat(),
-			m_random.nextFloat(),
-			0.0f
-		);
-
-		Vector4 target(targetBounds.mn + (targetBounds.mx - targetBounds.mn) * r);
-
-		for (const auto& light : m_lights)
+		for (int32_t i = 0; i < m_configuration->getPhotonCount(); ++i)
 		{
-			switch (light.type)
+			uint32_t index = (uint32_t)(m_random.nextFloat() * (m_windings.size() - 1));
+
+			const auto& targetWinding = m_windings[index];
+
+			Aabb3 targetBounds;
+
+			for (const auto& point : targetWinding.getPoints())
+				targetBounds.contain(point);
+
+			Vector4 r(
+				m_random.nextFloat(),
+				m_random.nextFloat(),
+				m_random.nextFloat(),
+				0.0f
+			);
+
+			Vector4 target(targetBounds.mn + (targetBounds.mx - targetBounds.mn) * r);
+
+			for (const auto& light : m_lights)
 			{
-			case Light::LtPoint:
+				switch (light.type)
 				{
-					Vector4 direction = (target - light.position).xyz0();
-					Scalar length = direction.normalize();
-
-					SahTree::QueryResult result;
-					if (m_sah.queryClosestIntersection(light.position, direction, result, m_sahCache))
+				case Light::LtPoint:
 					{
-						Scalar a1 = attenuation(result.distance);
+						Vector4 direction = (target - light.position).xyz0();
+						Scalar length = direction.normalize();
 
-						// Bounce light and trace again to place photon; photons are only used for
-						// indirect, bounced, light.
-						Vector4 r = reflect(-direction, result.normal);
-						if (m_sah.queryClosestIntersection(result.position + result.normal * c_epsilonOffset, r, result, m_sahCache))
+						SahTree::QueryResult result;
+						if (m_sah.queryClosestIntersection(light.position, direction, result, m_sahCache))
 						{
-							Scalar a2 = attenuation(result.distance);
+							Scalar a1 = attenuation(result.distance);
 
-							Photon photon;
-							photon.position = result.position.xyz1();
-							photon.direction = r;
-							photon.intensity = m_surfaces[result.index].albedo * light.color * a1 * a2;
-							m_photonMap.insert(photon);
+							// Bounce light and trace again to place photon; photons are only used for
+							// indirect, bounced, light.
+							Vector4 r = reflect(-direction, result.normal);
+							if (m_sah.queryClosestIntersection(result.position + result.normal * c_epsilonOffset, r, result, m_sahCache))
+							{
+								Scalar a2 = attenuation(result.distance);
+
+								Photon photon;
+								photon.position = result.position.xyz1();
+								photon.direction = r;
+								photon.intensity = m_surfaces[result.index].albedo * light.color * a1 * a2;
+								m_photonMap.insert(photon);
+							}
+
+							// Photon photon;
+							// photon.position = result.position.xyz1();
+							// photon.direction = direction;
+							// photon.intensity = light.color * attenuation(result.distance);
+							// m_photonMap.insert(photon);
 						}
-
-						// Photon photon;
-						// photon.position = result.position.xyz1();
-						// photon.direction = direction;
-						// photon.intensity = light.color * attenuation(result.distance);
-						// m_photonMap.insert(photon);
 					}
+					break;
 				}
-				break;
 			}
 		}
 	}
-
+	
 	log::info << L"Done" << Endl;
 	return true;
 }
