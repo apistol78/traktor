@@ -14,8 +14,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.UnwrapUV", UnwrapUV, IModelOperation)
 
-UnwrapUV::UnwrapUV(int32_t channel)
+UnwrapUV::UnwrapUV(int32_t channel, uint32_t textureSize)
 :	m_channel(channel)
+,	m_textureSize(textureSize)
 {
 }
 
@@ -23,7 +24,7 @@ bool UnwrapUV::apply(Model& model) const
 {
 	Atlas_Options options;
 	atlas_set_default_options(&options);
-	//options.packer_options.witness.texel_area = 0.5f;
+	options.packer_options.witness.texel_area = 256.0f / (float)m_textureSize;
 	//options.packer_options.witness.conservative = true;
 
 	AlignedVector< Atlas_Input_Vertex > inputVertices;
@@ -111,8 +112,13 @@ bool UnwrapUV::apply(Model& model) const
 			const auto& aov = output->vertex_array[i];
 
 			Vector2 uv(aov.uv[0], aov.uv[1]);
+
 			uv -= uvbb.mn;
 			uv /= uvbb.mx - uvbb.mn;
+
+			// Snap to texel boundaries.
+			uv.x = (std::floor(uv.x * m_textureSize)) / m_textureSize;
+			uv.y = (std::floor(uv.y * m_textureSize)) / m_textureSize;
 
 			Vertex vx = model.getVertex(aov.xref);
 			vx.setTexCoord(m_channel, model.addTexCoord(uv));
