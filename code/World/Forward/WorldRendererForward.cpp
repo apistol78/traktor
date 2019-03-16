@@ -37,17 +37,16 @@ const resource::Id< render::ImageProcessSettings > c_ambientOcclusionLow(Guid(L"
 const resource::Id< render::ImageProcessSettings > c_ambientOcclusionMedium(Guid(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}"));	// SSAO, full size
 const resource::Id< render::ImageProcessSettings > c_ambientOcclusionHigh(Guid(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}"));		// HBAO, half size
 const resource::Id< render::ImageProcessSettings > c_ambientOcclusionUltra(Guid(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}"));	// HBAO, full size
-
 const resource::Id< render::ImageProcessSettings > c_antiAliasNone(Guid(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}"));
 const resource::Id< render::ImageProcessSettings > c_antiAliasLow(Guid(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}"));
 const resource::Id< render::ImageProcessSettings > c_antiAliasMedium(Guid(L"{3E1D810B-339A-F742-9345-4ECA00220D57}"));
 const resource::Id< render::ImageProcessSettings > c_antiAliasHigh(Guid(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}"));
 const resource::Id< render::ImageProcessSettings > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
-
 const resource::Id< render::ImageProcessSettings > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
+const resource::Id< render::ImageProcessSettings > c_toneMap(Guid(L"{BC4FA128-A976-4023-A422-637581ADFD7E}"));
 
-render::handle_t s_techniqueDefault = 0;
-render::handle_t s_techniqueDepth = 0;
+render::handle_t s_techniqueForwardColor = 0;
+render::handle_t s_techniqueForwardGBufferWrite = 0;
 render::handle_t s_techniqueShadow = 0;
 render::handle_t s_handleTime = 0;
 render::handle_t s_handleView = 0;
@@ -60,14 +59,15 @@ render::handle_t s_handleReflectionMap = 0;
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererForward", 0, WorldRendererForward, IWorldRenderer)
 
 WorldRendererForward::WorldRendererForward()
-:	m_shadowsQuality(QuDisabled)
+:	m_toneMapQuality(QuDisabled)
+,	m_shadowsQuality(QuDisabled)
 ,	m_ambientOcclusionQuality(QuDisabled)
 ,	m_antiAliasQuality(QuDisabled)
 ,	m_count(0)
 {
 	// Techniques
-	s_techniqueDefault = render::getParameterHandle(L"World_ForwardColor");
-	s_techniqueDepth = render::getParameterHandle(L"World_DepthWrite");
+	s_techniqueForwardColor = render::getParameterHandle(L"World_ForwardColor");
+	s_techniqueForwardGBufferWrite = render::getParameterHandle(L"World_ForwardGBufferWrite");
 	s_techniqueShadow = render::getParameterHandle(L"World_ShadowWrite");
 
 	// Global parameters.
@@ -89,7 +89,7 @@ bool WorldRendererForward::create(
 
 	m_settings = *desc.worldRenderSettings;
 	m_shadowSettings = m_settings.shadowSettings[desc.shadowsQuality];
-
+	m_toneMapQuality = desc.toneMapQuality;
 	m_shadowsQuality = desc.shadowsQuality;
 	m_ambientOcclusionQuality = desc.ambientOcclusionQuality;
 	m_antiAliasQuality = desc.antiAliasQuality;
@@ -103,12 +103,11 @@ bool WorldRendererForward::create(
 	// Create post process target pool to enable sharing of targets between multiple processes.
 	Ref< render::ImageProcessTargetPool > postProcessTargetPool = new render::ImageProcessTargetPool(renderSystem);
 
-	// Create "depth map" target.
-	if (m_settings.depthPass || m_shadowsQuality > QuDisabled)
+	// Create "mini gbuffer" targets.
 	{
 		render::RenderTargetSetCreateDesc rtscd;
 
-		rtscd.count = 1;
+		rtscd.count = 2;
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
 		rtscd.multiSample = desc.multiSample;
@@ -116,25 +115,14 @@ bool WorldRendererForward::create(
 		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
 		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
 		rtscd.preferTiled = true;
-		rtscd.targets[0].format = render::TfR16F;
+		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
+		rtscd.targets[1].format = render::TfR16G16F;		// Normals (RG)
 
-		m_depthTargetSet = renderSystem->createRenderTargetSet(rtscd);
-
-		if (!m_depthTargetSet && desc.multiSample > 0)
+		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
+		if (!m_gbufferTargetSet)
 		{
-			rtscd.multiSample = 0;
-			rtscd.createDepthStencil = true;
-			rtscd.usingPrimaryDepthStencil = false;
-
-			m_depthTargetSet = renderSystem->createRenderTargetSet(rtscd);
-			if (m_depthTargetSet)
-				log::warning << L"MSAA depth render target unsupported; may cause poor performance" << Endl;
-		}
-
-		if (!m_depthTargetSet)
-		{
-			log::warning << L"Unable to create depth render target; depth disabled" << Endl;
-			m_settings.depthPass = false;
+			log::error << L"Unable to create depth render target." << Endl;
+			return false;
 		}
 	}
 
@@ -398,6 +386,42 @@ bool WorldRendererForward::create(
 		}
 	}
 
+	// Create tone map processing.
+	if (m_toneMapQuality > QuDisabled)
+	{
+		resource::Proxy< render::ImageProcessSettings > toneMap;
+
+		if (!resourceManager->bind(c_toneMap, toneMap))
+		{
+			log::warning << L"Unable to create tone map process." << Endl;
+			m_toneMapQuality = QuDisabled;
+		}
+
+		if (toneMap)
+		{
+			m_toneMapImageProcess = new render::ImageProcess();
+			if (m_toneMapImageProcess->create(
+				toneMap,
+				postProcessTargetPool,
+				resourceManager,
+				renderSystem,
+				desc.width,
+				desc.height,
+				desc.allTargetsPersistent
+			))
+				m_toneMapImageProcess->setFloatParameter(
+					render::getParameterHandle(L"World_ExposureBias"),
+					m_settings.exposureBias
+				);
+			else
+			{
+				log::warning << L"Unable to create tone map process; tone mapping disabled." << Endl;
+				m_toneMapImageProcess = nullptr;
+				m_toneMapQuality = QuDisabled;
+			}
+		}
+	}
+
 	// Create global reflection map.
 	if (m_settings.reflectionMap)
 	{
@@ -434,11 +458,8 @@ bool WorldRendererForward::create(
 	}
 
 	// Allocate "depth" context.
-	if (m_settings.depthPass || m_shadowsQuality > QuDisabled)
-	{
-		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->depth = new WorldContext(desc.entityRenderers);
-	}
+	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
+		i->depth = new WorldContext(desc.entityRenderers);
 
 	// Allocate "shadow" contexts for each slice.
 	if (m_shadowsQuality > QuDisabled)
@@ -482,13 +503,14 @@ void WorldRendererForward::destroy()
 		i->depth = 0;
 	}
 
+	safeDestroy(m_toneMapImageProcess);
 	safeDestroy(m_gammaCorrectionImageProcess);
 	safeDestroy(m_visualImageProcess);
 	safeDestroy(m_shadowMaskProject);
 	m_reflectionMap.clear();
 	safeDestroy(m_shadowMaskProjectTargetSet);
 	safeDestroy(m_shadowTargetSet);
-	safeDestroy(m_depthTargetSet);
+	safeDestroy(m_gbufferTargetSet);
 	safeDestroy(m_visualTargetSet);
 
 	m_renderView = 0;
@@ -531,8 +553,8 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 	// Store some global values.
 	f.time = worldRenderView.getTime();
 
-	if (m_settings.depthPass || m_shadowsQuality > QuDisabled)
-		buildDepth(worldRenderView, frame);
+	// Build depth context.
+	buildGBuffer(worldRenderView, frame);
 
 	if (m_shadowsQuality > QuDisabled)
 		buildShadows(worldRenderView, frame);
@@ -590,25 +612,21 @@ void WorldRendererForward::render(int frame, render::EyeType eye)
 	defaultProgramParams.setTextureParameter(s_handleReflectionMap, m_reflectionMap);
 	defaultProgramParams.endParameters(m_globalContext);
 
-	// Render depth map; use as z-prepass if able to share depth buffer with primary.
-	if (f.haveDepth)
+	// Render gbuffer.
 	{
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Depth");
-		if (m_renderView->begin(m_depthTargetSet, 0))
+		T_RENDER_PUSH_MARKER(m_renderView, "World: GBuffer");
+		if (m_renderView->begin(m_gbufferTargetSet))
 		{
-			float farZ = m_settings.viewFarZ;
-			const Color4f depthColor(farZ, farZ, farZ, farZ);
-			m_renderView->clear(render::CfColor | render::CfDepth, &depthColor, 1.0f, 0);
+			const float clearZ = f.viewFrustum.getFarZ();
+			const Color4f depthColor(clearZ, clearZ, clearZ, clearZ);
+			const Color4f normalColor(0.0f, 0.0f, 1.0f, 0.0f);
+			const Color4f clearColors[] = { depthColor, normalColor };
+
+			m_renderView->clear(render::CfColor | render::CfDepth, clearColors, 1.0f, 0);
 			f.depth->getRenderContext()->render(m_renderView, render::RpOpaque, &defaultProgramParams);
 			m_renderView->end();
 		}
 		T_RENDER_POP_MARKER(m_renderView);
-	}
-	else if (!f.haveDepth)
-	{
-		// No depth pass; ensure primary depth is cleared.
-		const Color4f nullColor(0.0f, 0.0f, 0.0f, 0.0f);
-		m_renderView->clear(render::CfDepth, &nullColor, 1.0f, 0);
 	}
 
 	// Render shadow map.
@@ -662,10 +680,10 @@ void WorldRendererForward::render(int frame, render::EyeType eye)
 					m_shadowMaskProject->render(
 						m_renderView,
 						m_shadowTargetSet->getDepthTexture(),	// color
-						m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0,	// depth
-						0,	// normal
-						0,	// velocity
-						0,	// shadow mask
+						m_gbufferTargetSet->getColorTexture(0),	// depth
+						m_gbufferTargetSet->getColorTexture(1),	// normal
+						nullptr,	// velocity
+						nullptr,	// shadow mask
 						params
 					);
 
@@ -713,84 +731,51 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 	{
 		m_renderView->end();
 
-		render::RenderTargetSet* sourceTargetSet = m_visualTargetSet;
-		render::RenderTargetSet* outputTargetSet = m_intermediateTargetSet;
-
 		render::ImageProcessStep::Instance::RenderParams params;
 		params.viewFrustum = f.viewFrustum;
 		params.viewToLight = f.viewToLightSpace;
 		params.view = f.view;
 		params.projection = f.projection;
+		// params.godRayDirection = f.godRayDirection;
 		params.deltaTime = deltaTime;
 
-		// Apply custom post processing filter.
+		render::RenderTargetSet* sourceTargetSet = m_visualTargetSet;
+		render::RenderTargetSet* outputTargetSet = m_intermediateTargetSet;
+		T_ASSERT(sourceTargetSet);
+
+		StaticVector< render::ImageProcess*, 5 > processes;
+		if (m_toneMapImageProcess)
+			processes.push_back(m_toneMapImageProcess);
 		if (m_visualImageProcess)
-		{
-			T_RENDER_PUSH_MARKER(m_renderView, "World: Custom PP");
-
-			if (m_gammaCorrectionImageProcess || m_antiAlias)
-				m_renderView->begin(outputTargetSet);
-
-			m_visualImageProcess->render(
-				m_renderView,
-				sourceTargetSet->getColorTexture(0),	// color
-				m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0,	// depth
-				0,	// normal
-				0,	// velocity
-				m_shadowTargetSet ? m_shadowTargetSet->getColorTexture(0) : 0,	// shadow mask
-				params
-			);
-
-			if (m_gammaCorrectionImageProcess || m_antiAlias)
-			{
-				m_renderView->end();
-				std::swap(sourceTargetSet, outputTargetSet);
-			}
-
-			T_RENDER_POP_MARKER(m_renderView);
-		}
-
-		// Apply gamma correction filter.
+			processes.push_back(m_visualImageProcess);
 		if (m_gammaCorrectionImageProcess)
-		{
-			T_RENDER_PUSH_MARKER(m_renderView, "World: Gamma Correction");
+			processes.push_back(m_gammaCorrectionImageProcess);
+		if (m_antiAlias)
+			processes.push_back(m_antiAlias);
 
-			if (m_antiAlias)
+		for (size_t i = 0; i < processes.size(); ++i)
+		{
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Post process");
+
+			bool haveNext = bool((i + 1) < processes.size());
+			if (haveNext)
 				m_renderView->begin(outputTargetSet);
 
-			m_gammaCorrectionImageProcess->render(
+			processes[i]->render(
 				m_renderView,
 				sourceTargetSet->getColorTexture(0),	// color
-				m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0,	// depth
-				0,	// normal
-				0,	// velocity
-				m_shadowTargetSet ? m_shadowTargetSet->getColorTexture(0) : 0,	// shadow mask
+				m_gbufferTargetSet->getColorTexture(0),		// depth
+				m_gbufferTargetSet->getColorTexture(1),		// normal
+				nullptr,	// velocity
+				m_shadowTargetSet ? m_shadowTargetSet->getColorTexture(0) : nullptr,	// shadow mask
 				params
 			);
 
-			if (m_antiAlias)
+			if (haveNext)
 			{
 				m_renderView->end();
 				std::swap(sourceTargetSet, outputTargetSet);
 			}
-
-			T_RENDER_POP_MARKER(m_renderView);
-		}
-
-		// Apply software antialias filter.
-		if (m_antiAlias)
-		{
-			T_RENDER_PUSH_MARKER(m_renderView, "World: AntiAlias");
-
-			m_antiAlias->render(
-				m_renderView,
-				sourceTargetSet->getColorTexture(0),	// color
-				m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0,	// depth
-				0,	// normal
-				0,	// velocity
-				m_shadowTargetSet ? m_shadowTargetSet->getColorTexture(0) : 0,	// shadow mask
-				params
-			);
 
 			T_RENDER_POP_MARKER(m_renderView);
 		}
@@ -804,29 +789,56 @@ render::ImageProcess* WorldRendererForward::getVisualImageProcess()
 
 void WorldRendererForward::getDebugTargets(std::vector< render::DebugTarget >& outTargets) const
 {
-	if (m_depthTargetSet)
-		outTargets.push_back(render::DebugTarget(L"View depth", render::DtvViewDepth, m_depthTargetSet->getColorTexture(0)));
+	if (m_visualTargetSet)
+		outTargets.push_back(render::DebugTarget(L"Visual", render::DtvDefault, m_visualTargetSet->getColorTexture(0)));
+
+	if (m_intermediateTargetSet)
+		outTargets.push_back(render::DebugTarget(L"Intermediate", render::DtvDefault, m_intermediateTargetSet->getColorTexture(0)));
+
+	if (m_gbufferTargetSet)
+	{
+		outTargets.push_back(render::DebugTarget(L"GBuffer depth", render::DtvViewDepth, m_gbufferTargetSet->getColorTexture(0)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer normals", render::DtvNormals, m_gbufferTargetSet->getColorTexture(1)));
+	}
 
 	if (m_shadowTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Shadow map (last cascade)", render::DtvShadowMap, m_shadowTargetSet->getColorTexture(0)));
 
 	if (m_shadowMaskProjectTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Shadow mask (projection)",render:: DtvShadowMask, m_shadowMaskProjectTargetSet->getColorTexture(0)));
+
+	if (m_shadowMaskProject)
+		m_shadowMaskProject->getDebugTargets(outTargets);
+
+	if (m_ambientOcclusion)
+		m_ambientOcclusion->getDebugTargets(outTargets);
+
+	if (m_antiAlias)
+		m_antiAlias->getDebugTargets(outTargets);
+
+	if (m_visualImageProcess)
+		m_visualImageProcess->getDebugTargets(outTargets);
+
+	if (m_gammaCorrectionImageProcess)
+		m_gammaCorrectionImageProcess->getDebugTargets(outTargets);
+
+	if (m_toneMapImageProcess)
+		m_toneMapImageProcess->getDebugTargets(outTargets);
 }
 
-void WorldRendererForward::buildDepth(WorldRenderView& worldRenderView, int frame)
+void WorldRendererForward::buildGBuffer(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
 
 	WorldRenderPassForward pass(
-		s_techniqueDepth,
+		s_techniqueForwardGBufferWrite,
 		worldRenderView,
 		IWorldRenderPass::PfFirst,
 		0,
 		0
 	);
-	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
-		f.depth->build(worldRenderView, pass, *i);
+	for (auto entity : m_buildEntities)
+		f.depth->build(worldRenderView, pass, entity);
 	f.depth->flush(worldRenderView, pass);
 
 	f.haveDepth = true;
@@ -921,7 +933,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int fr
 
 	// Render visuals.
 	WorldRenderPassForward defaultPass(
-		s_techniqueDefault,
+		s_techniqueForwardColor,
 		worldRenderView,
 		IWorldRenderPass::PfLast,
 		m_settings.ambientColor,
@@ -932,7 +944,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int fr
 		m_settings.fogDensityZ,
 		m_settings.fogColor,
 		0,
-		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
+		f.haveDepth ? m_gbufferTargetSet->getColorTexture(0) : 0,
 		m_shadowMaskProjectTargetSet->getColorTexture(0)
 	);
 	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
@@ -952,9 +964,9 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, int 
 	worldRenderView.resetLights();
 
 	WorldRenderPassForward defaultPass(
-		s_techniqueDefault,
+		s_techniqueForwardColor,
 		worldRenderView,
-		(!m_settings.depthPass && m_shadowsQuality == QuDisabled) ? (IWorldRenderPass::PfFirst | IWorldRenderPass::PfLast) : IWorldRenderPass::PfLast,
+		IWorldRenderPass::PfLast,
 		m_settings.ambientColor,
 		m_settings.fog,
 		m_settings.fogDistanceY,
@@ -963,7 +975,7 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, int 
 		m_settings.fogDensityZ,
 		m_settings.fogColor,
 		0,
-		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
+		f.haveDepth ? m_gbufferTargetSet->getColorTexture(0) : 0,
 		0
 	);
 	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)

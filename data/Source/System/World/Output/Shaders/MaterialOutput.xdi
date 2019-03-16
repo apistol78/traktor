@@ -5,8 +5,8 @@
 			<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
 			<comment/>
 			<position>
-				<first>-1465</first>
-				<second>436</second>
+				<first>-1464</first>
+				<second>435</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -19,7 +19,7 @@
 			<comment/>
 			<position>
 				<first>-1248</first>
-				<second>1112</second>
+				<second>1111</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -32,7 +32,7 @@
 			<comment/>
 			<position>
 				<first>-1248</first>
-				<second>1280</second>
+				<second>1279</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -44,8 +44,8 @@
 			<id>{86A497C0-B521-514D-8F75-464E8EDD28D8}</id>
 			<comment/>
 			<position>
-				<first>-1456</first>
-				<second>475</second>
+				<first>-1455</first>
+				<second>474</second>
 			</position>
 			<name>Roughness</name>
 			<connectable>true</connectable>
@@ -57,8 +57,8 @@
 			<id>{A5F0E607-E44E-4D43-8743-2CE73EC070EC}</id>
 			<comment/>
 			<position>
-				<first>-1445</first>
-				<second>511</second>
+				<first>-1444</first>
+				<second>510</second>
 			</position>
 			<name>Emissive</name>
 			<connectable>true</connectable>
@@ -70,8 +70,8 @@
 			<id>{3C90103C-96CA-CD4F-88BF-928235B168E7}</id>
 			<comment/>
 			<position>
-				<first>-1456</first>
-				<second>548</second>
+				<first>-1455</first>
+				<second>547</second>
 			</position>
 			<name>Metalness</name>
 			<connectable>true</connectable>
@@ -84,7 +84,7 @@
 			<comment/>
 			<position>
 				<first>-1248</first>
-				<second>1424</second>
+				<second>1423</second>
 			</position>
 			<name>ViewVelocity</name>
 			<connectable>true</connectable>
@@ -97,14 +97,14 @@
 			<comment/>
 			<position>
 				<first>-996</first>
-				<second>1121</second>
+				<second>1120</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="traktor.render.Node:1">
 			<id>{02B7F80C-5808-3246-94A5-8D9E8C927298}</id>
 			<comment/>
 			<position>
-				<first>-1222</first>
+				<first>-1221</first>
 				<second>1464</second>
 			</position>
 			<name>Vertex_ViewVelocity</name>
@@ -122,8 +122,8 @@
 			<id>{3AE1D112-0667-A04A-A62D-D37D9F85F173}</id>
 			<comment/>
 			<position>
-				<first>-1216</first>
-				<second>1153</second>
+				<first>-1215</first>
+				<second>1152</second>
 			</position>
 			<name>Vertex_ViewNormal</name>
 		</item>
@@ -131,8 +131,8 @@
 			<id>{C142E158-E5E4-4E4B-B653-54B3D53E24DB}</id>
 			<comment/>
 			<position>
-				<first>-998</first>
-				<second>1280</second>
+				<first>-997</first>
+				<second>1279</second>
 			</position>
 		</item>
 		<item type="traktor.render.Connected" version="traktor.render.Node:1">
@@ -140,7 +140,7 @@
 			<comment/>
 			<position>
 				<first>-999</first>
-				<second>1429</second>
+				<second>1428</second>
 			</position>
 		</item>
 		<item type="traktor.render.Comment" version="traktor.render.Node:1">
@@ -153,15 +153,15 @@ values from variables.
 			</comment>
 			<position>
 				<first>-1191</first>
-				<second>1019</second>
+				<second>1018</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{A6D7BFAB-0138-4EFD-A71A-1397BCE9E584}</id>
 			<comment/>
 			<position>
-				<first>-1475</first>
-				<second>584</second>
+				<first>-1474</first>
+				<second>583</second>
 			</position>
 			<name>Transparency</name>
 			<connectable>true</connectable>
@@ -174,7 +174,7 @@ values from variables.
 			<comment/>
 			<position>
 				<first>543</first>
-				<second>481</second>
+				<second>480</second>
 			</position>
 			<fragmentGuid>{AE1F1751-0133-426A-9F69-2DE781788F0C}</fragmentGuid>
 			<inputPins>
@@ -221,8 +221,8 @@ values from variables.
 			<id>{741AA15B-6B35-46B3-B2D3-3CBA279D5118}</id>
 			<comment/>
 			<position>
-				<first>-58</first>
-				<second>545</second>
+				<first>-57</first>
+				<second>544</second>
 			</position>
 			<fragmentGuid>{B02CB855-C540-492F-B6E6-1ECEE2498127}</fragmentGuid>
 			<inputPins>
@@ -269,7 +269,7 @@ values from variables.
 			<id>{EDC6DA87-439C-49D2-80CA-BC3A5884BB03}</id>
 			<comment/>
 			<position>
-				<first>353</first>
+				<first>352</first>
 				<second>612</second>
 			</position>
 			<fragmentGuid>{819D0D66-7FB8-4EA0-9D8D-445F3EBC2E8D}</fragmentGuid>
@@ -292,8 +292,8 @@ values from variables.
 			<id>{9FF34CDA-C952-409A-95B0-ED5D53F8B94F}</id>
 			<comment/>
 			<position>
-				<first>-31</first>
-				<second>878</second>
+				<first>-30</first>
+				<second>877</second>
 			</position>
 			<fragmentGuid>{670C98A2-5359-45F7-9F6F-795D676EFF65}</fragmentGuid>
 			<inputPins>
@@ -340,7 +340,7 @@ Deferred / Opaque
 			</comment>
 			<position>
 				<first>-126</first>
-				<second>439</second>
+				<second>438</second>
 			</position>
 		</item>
 		<item type="traktor.render.Comment" version="traktor.render.Node:1">
@@ -363,36 +363,9 @@ Forward / Opaque
 			]]>
 			</comment>
 			<position>
-				<first>-89</first>
-				<second>812</second>
+				<first>-88</first>
+				<second>811</second>
 			</position>
-		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{83814EB1-1AFA-4098-AE71-8617FA3950A2}</id>
-			<comment>
-			<![CDATA[
-World_DepthWrite
-			]]>
-			</comment>
-			<position>
-				<first>-484</first>
-				<second>1480</second>
-			</position>
-			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{0F124D64-F889-B346-A287-1E1E13CCA54F}</id>
-					<name>ViewPosition</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{6B023479-472A-46EF-B61F-6DB53ADA26DE}</id>
-					<name>Enable</name>
-					<optional>true</optional>
-				</item>
-			</inputPins>
-			<outputPins/>
-			<values/>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{3A28AC50-2A69-4045-B186-CF643D296DF0}</id>
@@ -402,7 +375,7 @@ World_ShadowWrite
 			]]>
 			</comment>
 			<position>
-				<first>-484</first>
+				<first>-483</first>
 				<second>1581</second>
 			</position>
 			<fragmentGuid>{6EF33326-74C7-B640-BB38-5C57D2199FB4}</fragmentGuid>
@@ -429,8 +402,8 @@ World_VelocityWrite
 			]]>
 			</comment>
 			<position>
-				<first>-484</first>
-				<second>1681</second>
+				<first>-483</first>
+				<second>1680</second>
 			</position>
 			<fragmentGuid>{E3C34875-BEFA-3C4E-BB51-8D334C1FD4D6}</fragmentGuid>
 			<inputPins>
@@ -456,8 +429,8 @@ Shared
 			]]>
 			</comment>
 			<position>
-				<first>-465</first>
-				<second>1395</second>
+				<first>-451</first>
+				<second>1486</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
@@ -1065,16 +1038,6 @@ Opaque
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<name>ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[22]"/>
 				<name>ViewPosition</name>
 			</destination>
@@ -1085,7 +1048,7 @@ Opaque
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[25]"/>
 				<name>SurfaceColor</name>
 			</destination>
 		</item>
@@ -1095,7 +1058,7 @@ Opaque
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[25]"/>
 				<name>Roughness</name>
 			</destination>
 		</item>
@@ -1105,7 +1068,7 @@ Opaque
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[25]"/>
 				<name>ViewNormal</name>
 			</destination>
 		</item>
@@ -1115,7 +1078,7 @@ Opaque
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[25]"/>
 				<name>ViewPosition</name>
 			</destination>
 		</item>
@@ -1125,23 +1088,23 @@ Opaque
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<name>ViewVelocity</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[27]"/>
+				<node ref="/object/nodes/item[26]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[25]"/>
 				<name>Enable</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[30]"/>
+				<node ref="/object/nodes/item[29]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1151,7 +1114,7 @@ Opaque
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[31]"/>
+				<node ref="/object/nodes/item[30]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1161,7 +1124,7 @@ Opaque
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[31]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1171,31 +1134,21 @@ Opaque
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[33]"/>
+				<node ref="/object/nodes/item[32]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[27]"/>
+				<node ref="/object/nodes/item[26]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[34]"/>
+				<node ref="/object/nodes/item[33]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[22]"/>
-				<name>Enable</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[34]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<name>Enable</name>
 			</destination>
 		</item>
@@ -1215,8 +1168,18 @@ Opaque
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[35]"/>
+				<node ref="/object/nodes/item[34]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[34]"/>
+				<name>True</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1225,8 +1188,18 @@ Opaque
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[35]"/>
-				<name>True</name>
+				<node ref="/object/nodes/item[34]"/>
+				<name>False</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[34]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1235,57 +1208,37 @@ Opaque
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[35]"/>
-				<name>False</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[35]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[38]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[40]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[40]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[41]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[42]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[39]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[39]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[41]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
 				<name>Enable</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[38]"/>
+				<node ref="/object/nodes/item[37]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[39]"/>
+				<node ref="/object/nodes/item[38]"/>
 				<name>Irradiance</name>
 			</destination>
 		</item>
@@ -1295,7 +1248,7 @@ Opaque
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[43]"/>
+				<node ref="/object/nodes/item[42]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1305,33 +1258,33 @@ Opaque
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[43]"/>
+				<node ref="/object/nodes/item[42]"/>
 				<name>True</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[44]"/>
+				<node ref="/object/nodes/item[43]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[43]"/>
+				<node ref="/object/nodes/item[42]"/>
 				<name>False</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[43]"/>
+				<node ref="/object/nodes/item[42]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[45]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1341,12 +1294,32 @@ Opaque
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[46]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Transparency</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[47]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
-				<name>Transparency</name>
+				<node ref="/object/nodes/item[48]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[49]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[48]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1355,37 +1328,17 @@ Opaque
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[50]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[49]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[49]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[51]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[52]"/>
+				<node ref="/object/nodes/item[51]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[23]"/>
+				<node ref="/object/nodes/item[22]"/>
 				<name>Enable</name>
 			</destination>
 		</item>
