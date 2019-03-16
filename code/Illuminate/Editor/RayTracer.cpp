@@ -10,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-const Scalar c_epsilonOffset(0.0001f);
+const Scalar c_epsilonOffset(0.02f);
 
 Scalar attenuation(const Scalar& distance)
 {
@@ -267,27 +267,30 @@ Color4f RayTracer::sampleAnalyticalLights(const Vector4& origin, const Vector4& 
 					break;
 
 				Scalar shadowAttenuate(1.0f);
-				int32_t shadowCount = 0;
 
-				Vector4 u, v;
-				orthogonalFrame(lightDirection, u, v);
-
-				for (uint32_t j = 0; j < shadowSampleCount; ++j)
+				if (shadowSampleCount > 0)
 				{
-					float a, b;
-					do
+					Vector4 u, v;
+					orthogonalFrame(lightDirection, u, v);
+
+					int32_t shadowCount = 0;
+					for (uint32_t j = 0; j < shadowSampleCount; ++j)
 					{
-						a = m_random.nextFloat() * 2.0f - 1.0f;
-						b = m_random.nextFloat() * 2.0f - 1.0f;
+						float a, b;
+						do
+						{
+							a = m_random.nextFloat() * 2.0f - 1.0f;
+							b = m_random.nextFloat() * 2.0f - 1.0f;
+						}
+						while ((a * a) + (b * b) > 1.0f);
+
+						Vector4 shadowDirection = (light.position + u * Scalar(a * pointLightShadowRadius) + v * Scalar(b * pointLightShadowRadius) - origin).xyz0();
+
+						if (m_sah.queryAnyIntersection(origin + normal * c_epsilonOffset, shadowDirection.normalized(), lightDistance - c_epsilonOffset, -1, m_sahCache))
+							shadowCount++;
 					}
-					while ((a * a) + (b * b) > 1.0f);
-
-					Vector4 shadowDirection = (light.position + u * Scalar(a * pointLightShadowRadius) + v * Scalar(b * pointLightShadowRadius) - origin).xyz0();
-
-					if (m_sah.queryAnyIntersection(origin + normal * c_epsilonOffset, shadowDirection.normalized(), lightDistance - c_epsilonOffset, -1, m_sahCache))
-						shadowCount++;
+					shadowAttenuate = Scalar(1.0f - float(shadowCount) / m_configuration->getShadowSampleCount());
 				}
-				shadowAttenuate = Scalar(1.0f - float(shadowCount) / m_configuration->getShadowSampleCount());
 
 				contribution += light.color * phi * min(f, Scalar(1.0f)) * shadowAttenuate;
 			}

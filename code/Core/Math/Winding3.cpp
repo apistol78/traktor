@@ -88,28 +88,9 @@ bool Winding3::getProjection(Winding2& outProjection, Vector4& outU, Vector4& ou
 	if (!getPlane(plane))
 		return false;
 
-	Vector4 normal = plane.normal();
-	int32_t major = majorAxis3(normal);
+	Vector4 u, v;
+	orthogonalFrame(plane.normal(), u, v);
 
-	// Use maximum axis to determine projection plane.
-	Vector4 u(0.0f, 0.0f, 0.0f), v(0.0f, 0.0f, 0.0f);
-	if (major == 0)	// X
-	{
-		u = normal.x() > 0.0f ? Vector4(0.0f, 0.0f, -1.0f) : Vector4(0.0f, 0.0f, 1.0f);
-		v = Vector4(0.0f, 1.0f, 0.0f);
-	}
-	else if (major == 1)	// Y
-	{
-		u = normal.y() > 0.0f ? Vector4(0.0f, 0.0f, 1.0f) : Vector4(0.0f, 0.0f, -1.0f);
-		v = Vector4(1.0f, 0.0f, 0.0f);
-	}
-	else if (major == 2)	// Z
-	{
-		u = normal.z() > 0.0f ? Vector4(1.0f, 0.0f, 0.0f) : Vector4(-1.0f, 0.0f, 0.0f);
-		v = Vector4(0.0f, 1.0f, 0.0f);
-	}
-
-	// Project all points onto 2d plane.
 	outProjection.points.resize(m_points.size());
 	for (size_t i = 0; i < m_points.size(); ++i)
 	{
@@ -269,26 +250,8 @@ bool Winding3::rayIntersection(
 	if (!plane.rayIntersection(origin, direction, outK, &p) || outK <= 0.0f)
 		return false;
 
-	Vector4 normal = plane.normal();
-	int32_t major = majorAxis3(normal);
-
-	// Use maximum axis to determine projection plane.
-	Vector4 u(0.0f, 0.0f, 0.0f), v(0.0f, 0.0f, 0.0f);
-	if (major == 0)	// X
-	{
-		u = normal.x() > 0.0f ? Vector4(0.0f, 0.0f, -1.0f) : Vector4(0.0f, 0.0f, 1.0f);
-		v = Vector4(0.0f, 1.0f, 0.0f);
-	}
-	else if (major == 1)	// Y
-	{
-		u = normal.y() > 0.0f ? Vector4(0.0f, 0.0f, 1.0f) : Vector4(0.0f, 0.0f, -1.0f);
-		v = Vector4(1.0f, 0.0f, 0.0f);
-	}
-	else if (major == 2)	// Z
-	{
-		u = normal.z() > 0.0f ? Vector4(1.0f, 0.0f, 0.0f) : Vector4(-1.0f, 0.0f, 0.0f);
-		v = Vector4(0.0f, 1.0f, 0.0f);
-	}
+	Vector4 u, v;
+	orthogonalFrame(plane.normal(), u, v);
 
 	// Project all points onto 2d plane.
 	Vector2 projected[32];

@@ -262,10 +262,10 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 				const auto& vertex = model->getVertex(index);
 
 				uint32_t positionIndex = vertex.getPosition();
-				positions.push_back(model->getPosition(positionIndex));
+				positions.push_back(meshEntityData->getTransform() * model->getPosition(positionIndex).xyz1());
 
 				uint32_t normalIndex = vertex.getNormal();
-				normals.push_back(model->getNormal(normalIndex));
+				normals.push_back(meshEntityData->getTransform() * model->getNormal(normalIndex).xyz0());
 
 				uint32_t texCoordIndex = vertex.getTexCoord(channel);
 				texCoords.points.push_back(model->getTexCoord(texCoordIndex) * Vector2(outputSize, outputSize));
@@ -276,6 +276,106 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			// Triangulate winding so we can easily traverse lightmap fragments.
 			AlignedVector< Triangulator::Triangle > triangles;
 			Triangulator().freeze(texCoords.points, triangles);
+
+			// Trace edges first, store count in alpha so we can average.
+			for (const auto& triangle : triangles)
+			{
+				size_t i0 = triangle.indices[0];
+				size_t i1 = triangle.indices[1];
+				size_t i2 = triangle.indices[2];
+
+				const Vector4& p0 = positions[i0];
+				const Vector4& p1 = positions[i1];
+				const Vector4& p2 = positions[i2];
+
+				const Vector4& n0 = normals[i0];
+				const Vector4& n1 = normals[i1];
+				const Vector4& n2 = normals[i2];
+
+				const Vector2& tc0 = texCoords.points[i0];
+				const Vector2& tc1 = texCoords.points[i1];
+				const Vector2& tc2 = texCoords.points[i2];
+
+				Aabb2 aabb;
+				aabb.contain(tc0);
+				aabb.contain(tc1);
+				aabb.contain(tc2);
+
+				int32_t x0 = int32_t(aabb.mn.x);
+				int32_t x1 = int32_t(aabb.mx.x + 1);
+				int32_t y0 = int32_t(aabb.mn.y);
+				int32_t y1 = int32_t(aabb.mx.y + 1);
+
+				float denom = (tc1.y - tc2.y) * (tc0.x - tc2.x) + (tc2.x - tc1.x) * (tc0.y - tc2.y);
+				float invDenom = 1.0f / denom;
+
+				Winding2 wt;
+				wt.points.resize(3);
+				wt.points[0] = tc0;
+				wt.points[1] = tc1;
+				wt.points[2] = tc2;
+
+				for (int32_t y = y0; y <= y1; ++y)
+				{
+					for (int32_t x = x0; x <= x1; ++x)
+					{
+						const Vector2 pt(x + 0.5f, y + 0.5f);
+
+						bool inside1 = 
+							wt.inside(Vector2(x, y)) ||
+							wt.inside(Vector2(x + 1, y)) ||
+							wt.inside(Vector2(x, y + 1)) ||
+							wt.inside(Vector2(x + 1, y + 1));
+
+						float alpha = ((tc1.y - tc2.y) * (pt.x - tc2.x) + (tc2.x - tc1.x) * (pt.y - tc2.y)) * invDenom;
+						float beta = ((tc2.y - tc0.y) * (pt.x - tc2.x) + (tc0.x - tc2.x) * (pt.y - tc2.y)) * invDenom;
+						float gamma = 1.0f - alpha - beta;
+
+						bool inside2 = (alpha >= 0.0f && beta >= 0.0f && gamma >= 0.0f);
+
+						if (inside1 && !inside2)
+						{
+							Vector4 position = (p0 * Scalar(alpha) + p1 * Scalar(beta) + p2 * Scalar(gamma)).xyz1();
+							Vector4 normal = (n0 * Scalar(alpha) + n1 * Scalar(beta) + n2 * Scalar(gamma)).xyz0().normalized();
+
+							Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
+							Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
+							Scalar occlusion(0.0f);
+
+							if (configuration->traceDirect())
+								direct = tracer.traceDirect(position, normal, roughness);
+
+							if (configuration->traceIndirect())
+								indirect = tracer.traceIndirect(position, normal, roughness);
+
+							if (configuration->traceOcclusion())
+								occlusion = tracer.traceOcclusion(position, normal);
+
+							Color4f source = ((direct + indirect) * (Scalar(1.0f) - occlusion)).rgb1();
+							Color4f dest; lightmap->getPixel(x, y, dest);
+
+							lightmap->setPixel(x, y, source + dest);
+						}
+					}
+				}
+			}
+
+			// Calculate averages.
+			for (uint32_t y = 0; y < outputSize; ++y)
+			{
+				for (uint32_t x = 0; x < outputSize; ++x)
+				{
+					Color4f source;
+					lightmap->getPixel(x, y, source);
+					if (source.getAlpha() > 0.0f)
+					{
+						source = (source / source.getAlpha()).rgb1();
+						lightmap->setPixel(x, y, source);
+					}
+				}
+			}
+			
+			// Trace triangle interiors.
 			for (const auto& triangle : triangles)
 			{
 				size_t i0 = triangle.indices[0];
@@ -311,108 +411,100 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 				{
 					for (int32_t x = x0; x <= x1; ++x)
 					{
-						Vector2 pt = Vector2(x + 0.5f, y + 0.5f);
+						const Vector2 pt(x + 0.5f, y + 0.5f);
 
 						float alpha = ((tc1.y - tc2.y) * (pt.x - tc2.x) + (tc2.x - tc1.x) * (pt.y - tc2.y)) * invDenom;
 						float beta = ((tc2.y - tc0.y) * (pt.x - tc2.x) + (tc0.x - tc2.x) * (pt.y - tc2.y)) * invDenom;
 						float gamma = 1.0f - alpha - beta;
 
-						if (alpha < 0.0f || beta < 0.0f || gamma < 0.0f)
-							continue;
+						bool inside = (alpha >= 0.0f && beta >= 0.0f && gamma >= 0.0f);
+						if (inside)
+						{
+							Vector4 position = (p0 * Scalar(alpha) + p1 * Scalar(beta) + p2 * Scalar(gamma)).xyz1();
+							Vector4 normal = (n0 * Scalar(alpha) + n1 * Scalar(beta) + n2 * Scalar(gamma)).xyz0().normalized();
 
-						Vector4 position = (p0 * Scalar(alpha) + p1 * Scalar(beta) + p2 * Scalar(gamma)).xyz1();
-						Vector4 normal = (n0 * Scalar(alpha) + n1 * Scalar(beta) + n2 * Scalar(gamma)).xyz0().normalized();
+							Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
+							Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
+							Scalar occlusion(0.0f);
 
-						Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
-						Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
-						Scalar occlusion(0.0f);
+							if (configuration->traceDirect())
+								direct = tracer.traceDirect(position, normal, roughness);
 
-						if (configuration->traceDirect())
-							direct = tracer.traceDirect(position, normal, roughness);
+							if (configuration->traceIndirect())
+								indirect = tracer.traceIndirect(position, normal, roughness);
 
-						if (configuration->traceIndirect())
-							indirect = tracer.traceIndirect(position, normal, roughness);
+							if (configuration->traceOcclusion())
+								occlusion = tracer.traceOcclusion(position, normal);
 
-						if (configuration->traceOcclusion())
-							occlusion = tracer.traceOcclusion(position, normal);
-
-						if (configuration->traceDirect() || configuration->traceIndirect())
-							lightmap->setPixel(x, y, ((direct + indirect) * (Scalar(1.0f) - occlusion)).rgb1());
-						else
-							lightmap->setPixel(x, y, (Color4f(1.0f, 1.0f, 1.0f) * (Scalar(1.0f) - occlusion)).rgb1());
+							Color4f source = ((direct + indirect) * (Scalar(1.0f) - occlusion)).rgb1();
+							lightmap->setPixel(x, y, source);
+						}
 					}
 				}
 			}
 		}
 
 		// Dilate lightmap to prevent leaking.
-		drawing::DilateFilter dilateFilter(8);
+		drawing::DilateFilter dilateFilter(3);
 		lightmap->apply(&dilateFilter);
 
 		// Discard alpha.
 		lightmap->clearAlpha(1.0f);
 
-		lightmap->save(L"Lightmap.png");
+		lightmap->save(meshEntityData->getName() + L"_Lightmap.png");
+		model::ModelFormat::writeAny(meshEntityData->getName() + L"_Unwrapped.tmd", model);
 
-		 // "Permutate" output ids.
-		 Guid idLightMap = configuration->getSeedGuid().permutate(i * 10 + 1);
-		 Guid idMesh = configuration->getSeedGuid().permutate(i * 10 + 2);
+		// "Permutate" output ids.
+		Guid idGenerated = configuration->getSeedGuid().permutate(0);
+		Guid idLightMap = configuration->getSeedGuid().permutate(i * 10 + 1);
+		Guid idMesh = configuration->getSeedGuid().permutate(i * 10 + 2);
 
-		 // Create a texture build step.
-		 Ref< render::TextureOutput > textureOutput = new render::TextureOutput();
-		 textureOutput->m_textureFormat = render::TfR16G16B16A16F;
-		 textureOutput->m_keepZeroAlpha = false;
-		 textureOutput->m_hasAlpha = false;
-		 textureOutput->m_ignoreAlpha = true;
-		 textureOutput->m_linearGamma = true;
-		 textureOutput->m_enableCompression = false;
-		 textureOutput->m_sharpenRadius = 0;
-		 textureOutput->m_systemTexture = true;
-		 textureOutput->m_generateMips = false;
+		// Create a texture build step.
+		Ref< render::TextureOutput > textureOutput = new render::TextureOutput();
+		textureOutput->m_textureFormat = render::TfR16G16B16A16F;
+		textureOutput->m_keepZeroAlpha = false;
+		textureOutput->m_hasAlpha = false;
+		textureOutput->m_ignoreAlpha = true;
+		textureOutput->m_linearGamma = true;
+		textureOutput->m_enableCompression = false;
+		textureOutput->m_sharpenRadius = 0;
+		textureOutput->m_systemTexture = true;
+		textureOutput->m_generateMips = false;
 
-		 pipelineBuilder->buildOutput(
-		 	textureOutput,
-		 	L"Generated/__Illumination__Texture__" + idLightMap.format(),
-		 	idLightMap,
-		 	lightmap
-		 );
+		pipelineBuilder->buildOutput(
+			textureOutput,
+			L"Generated/" + idGenerated.format() + L"/" + idLightMap.format() + L"/__Texture__",
+			idLightMap,
+			lightmap
+		);
 
-		 // Modify model materials to use our illumination texture.
-		 AlignedVector< model::Material > materials = model->getMaterials();
-		 for (auto& material : materials)
-		 {
-		 	material.setBlendOperator(model::Material::BoDecal);
-		 	material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
-		 }
-		 model->setMaterials(materials);
+		// Modify model materials to use our illumination texture.
+		AlignedVector< model::Material > materials = model->getMaterials();
+		for (auto& material : materials)
+		{
+			material.setBlendOperator(model::Material::BoDecal);
+			material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
+		}
+		model->setMaterials(materials);
 
-		 // Create a new mesh asset which use the fresh baked illumination texture.
-		 auto materialTextures = meshAsset->getMaterialTextures();
-		 materialTextures[L"__Illumination__"] = idLightMap;
+		// Create a new mesh asset which use the fresh baked illumination texture.
+		auto materialTextures = meshAsset->getMaterialTextures();
+		materialTextures[L"__Illumination__"] = idLightMap;
 
-		 Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-		 outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-		 outputMeshAsset->setMaterialTextures(materialTextures);
-		 pipelineBuilder->buildOutput(
-		 	outputMeshAsset,
-		 	L"Generated/__Illumination__Mesh__" + idMesh.format(),
-		 	idMesh,
-		 	model
-		 );
+		Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+		outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+		outputMeshAsset->setMaterialTextures(materialTextures);
+		pipelineBuilder->buildOutput(
+			outputMeshAsset,
+			L"Generated/" + idGenerated.format() + L"/" + idMesh.format() + L"/__Mesh__",
+			idMesh,
+			model
+		);
 
 		 // Replace mesh reference to our synthesized mesh instead.
-		 meshEntityData->getComponent< mesh::MeshComponentData >()->setMesh(resource::Id< mesh::IMesh >(
-			 idMesh
+		meshEntityData->getComponent< mesh::MeshComponentData >()->setMesh(resource::Id< mesh::IMesh >(
+			idMesh
 		));
-
-		// // Create new mesh entity.
-		// Ref< world::ComponentEntityData > entityData = new world::ComponentEntityData();
-		// entityData->setName(meshEntityData->getName());
-		// entityData->setTransform(meshEntityData->getTransform());
-		// entityData->setComponent(new mesh::MeshComponentData(
-		// 	resource::Id< mesh::IMesh >(idMesh)
-		// ));
-		// // outputEntityData->addEntityData(entityData);
 	}
 
 	return true;
