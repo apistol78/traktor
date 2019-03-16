@@ -19,7 +19,7 @@
 			<comment/>
 			<position>
 				<first>-1248</first>
-				<second>1111</second>
+				<second>1110</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -32,7 +32,7 @@
 			<comment/>
 			<position>
 				<first>-1248</first>
-				<second>1279</second>
+				<second>1278</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -57,7 +57,7 @@
 			<id>{A5F0E607-E44E-4D43-8743-2CE73EC070EC}</id>
 			<comment/>
 			<position>
-				<first>-1444</first>
+				<first>-1443</first>
 				<second>510</second>
 			</position>
 			<name>Emissive</name>
@@ -71,7 +71,7 @@
 			<comment/>
 			<position>
 				<first>-1455</first>
-				<second>547</second>
+				<second>546</second>
 			</position>
 			<name>Metalness</name>
 			<connectable>true</connectable>
@@ -84,7 +84,7 @@
 			<comment/>
 			<position>
 				<first>-1248</first>
-				<second>1423</second>
+				<second>1422</second>
 			</position>
 			<name>ViewVelocity</name>
 			<connectable>true</connectable>
@@ -97,7 +97,7 @@
 			<comment/>
 			<position>
 				<first>-996</first>
-				<second>1120</second>
+				<second>1119</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="traktor.render.Node:1">
@@ -131,8 +131,8 @@
 			<id>{C142E158-E5E4-4E4B-B653-54B3D53E24DB}</id>
 			<comment/>
 			<position>
-				<first>-997</first>
-				<second>1279</second>
+				<first>-996</first>
+				<second>1278</second>
 			</position>
 		</item>
 		<item type="traktor.render.Connected" version="traktor.render.Node:1">
@@ -153,15 +153,15 @@ values from variables.
 			</comment>
 			<position>
 				<first>-1191</first>
-				<second>1018</second>
+				<second>1017</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{A6D7BFAB-0138-4EFD-A71A-1397BCE9E584}</id>
 			<comment/>
 			<position>
-				<first>-1474</first>
-				<second>583</second>
+				<first>-1473</first>
+				<second>582</second>
 			</position>
 			<name>Transparency</name>
 			<connectable>true</connectable>
@@ -222,7 +222,7 @@ values from variables.
 			<comment/>
 			<position>
 				<first>-57</first>
-				<second>544</second>
+				<second>543</second>
 			</position>
 			<fragmentGuid>{B02CB855-C540-492F-B6E6-1ECEE2498127}</fragmentGuid>
 			<inputPins>
@@ -269,7 +269,7 @@ values from variables.
 			<id>{EDC6DA87-439C-49D2-80CA-BC3A5884BB03}</id>
 			<comment/>
 			<position>
-				<first>352</first>
+				<first>351</first>
 				<second>612</second>
 			</position>
 			<fragmentGuid>{819D0D66-7FB8-4EA0-9D8D-445F3EBC2E8D}</fragmentGuid>
@@ -293,7 +293,7 @@ values from variables.
 			<comment/>
 			<position>
 				<first>-30</first>
-				<second>877</second>
+				<second>876</second>
 			</position>
 			<fragmentGuid>{670C98A2-5359-45F7-9F6F-795D676EFF65}</fragmentGuid>
 			<inputPins>
@@ -315,6 +315,11 @@ values from variables.
 				<item>
 					<id>{72048415-F7D0-42B2-BF26-7F7F4D97A902}</id>
 					<name>Enable</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{11CC706F-9C87-4161-9063-1CBB049A1A86}</id>
+					<name>Metalness</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -1340,6 +1345,16 @@ Opaque
 			<destination>
 				<node ref="/object/nodes/item[22]"/>
 				<name>Enable</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Metalness</name>
 			</destination>
 		</item>
 	</edges>

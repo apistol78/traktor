@@ -268,7 +268,7 @@ bool WorldRendererForward::create(
 			))
 			{
 				log::warning << L"Unable to create ambient occlusion process; AO disabled" << Endl;
-				m_ambientOcclusion = 0;
+				m_ambientOcclusion = nullptr;
 			}
 		}
 	}
@@ -321,7 +321,7 @@ bool WorldRendererForward::create(
 			))
 			{
 				log::warning << L"Unable to create antialias process; AA disabled" << Endl;
-				m_antiAlias = 0;
+				m_antiAlias = nullptr;
 			}
 		}
 	}
@@ -349,7 +349,7 @@ bool WorldRendererForward::create(
 				))
 				{
 					log::warning << L"Unable to create visual post processing; post processing disabled" << Endl;
-					m_visualImageProcess = 0;
+					m_visualImageProcess = nullptr;
 				}
 			}
 		}
@@ -381,7 +381,7 @@ bool WorldRendererForward::create(
 			else
 			{
 				log::warning << L"Unable to create gamma correction process; gamma correction disabled" << Endl;
-				m_gammaCorrectionImageProcess = 0;
+				m_gammaCorrectionImageProcess = nullptr;
 			}
 		}
 	}
@@ -458,22 +458,22 @@ bool WorldRendererForward::create(
 	}
 
 	// Allocate "depth" context.
-	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-		i->depth = new WorldContext(desc.entityRenderers);
+	for (auto& frame : m_frames)
+		frame.depth = new WorldContext(desc.entityRenderers);
 
 	// Allocate "shadow" contexts for each slice.
 	if (m_shadowsQuality > QuDisabled)
 	{
-		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
+		for (auto& frame : m_frames)
 		{
-			for (int32_t j = 0; j < m_shadowSettings.cascadingSlices; ++j)
-				i->slice[j].shadow = new WorldContext(desc.entityRenderers);
+			for (int32_t i = 0; i < m_shadowSettings.cascadingSlices; ++i)
+				frame.slice[i].shadow = new WorldContext(desc.entityRenderers);
 		}
 	}
 
 	// Allocate "visual" contexts.
-	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-		i->visual = new WorldContext(desc.entityRenderers);
+	for (auto& frame : m_frames)
+		frame.visual = new WorldContext(desc.entityRenderers);
 
 	// Allocate "global" parameter context; as it's reset for each render
 	// call this can be fairly small.
@@ -494,13 +494,13 @@ bool WorldRendererForward::create(
 
 void WorldRendererForward::destroy()
 {
-	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
+	for (auto& frame : m_frames)
 	{
-		for (int32_t j = 0; j < MaxSliceCount; ++j)
-			i->slice[j].shadow = 0;
+		for (int32_t i = 0; i < MaxSliceCount; ++i)
+			frame.slice[i].shadow = nullptr;
 
-		i->visual = 0;
-		i->depth = 0;
+		frame.visual = nullptr;
+		frame.depth = nullptr;
 	}
 
 	safeDestroy(m_toneMapImageProcess);
@@ -513,7 +513,7 @@ void WorldRendererForward::destroy()
 	safeDestroy(m_gbufferTargetSet);
 	safeDestroy(m_visualTargetSet);
 
-	m_renderView = 0;
+	m_renderView = nullptr;
 }
 
 bool WorldRendererForward::beginBuild()
@@ -647,7 +647,7 @@ void WorldRendererForward::render(int frame, render::EyeType eye)
 				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
 				if (m_renderView->begin(m_shadowTargetSet))
 				{
-					m_renderView->clear(render::CfDepth, 0, 1.0f, 0);
+					m_renderView->clear(render::CfDepth, nullptr, 1.0f, 0);
 					f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RpOpaque, &shadowProgramParams);
 					m_renderView->end();
 				}
@@ -834,8 +834,8 @@ void WorldRendererForward::buildGBuffer(WorldRenderView& worldRenderView, int fr
 		s_techniqueForwardGBufferWrite,
 		worldRenderView,
 		IWorldRenderPass::PfFirst,
-		0,
-		0
+		nullptr,
+		nullptr
 	);
 	for (auto entity : m_buildEntities)
 		f.depth->build(worldRenderView, pass, entity);
@@ -917,11 +917,11 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int fr
 			s_techniqueShadow,
 			shadowRenderView,
 			IWorldRenderPass::PfNone,
-			0,
-			0
+			nullptr,
+			nullptr
 		);
-		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
-			f.slice[slice].shadow->build(shadowRenderView, shadowPass, *i);
+		for (auto entity : m_buildEntities)
+			f.slice[slice].shadow->build(shadowRenderView, shadowPass, entity);
 		f.slice[slice].shadow->flush(shadowRenderView, shadowPass);
 
 		f.slice[slice].shadowLightView = shadowLightView;
@@ -943,12 +943,12 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int fr
 		m_settings.fogDensityY,
 		m_settings.fogDensityZ,
 		m_settings.fogColor,
-		0,
-		f.haveDepth ? m_gbufferTargetSet->getColorTexture(0) : 0,
+		nullptr,
+		m_gbufferTargetSet->getColorTexture(0),
 		m_shadowMaskProjectTargetSet->getColorTexture(0)
 	);
-	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
-		f.visual->build(worldRenderView, defaultPass, *i);
+	for (auto entity : m_buildEntities)
+		f.visual->build(worldRenderView, defaultPass, entity);
 	f.visual->flush(worldRenderView, defaultPass);
 
 	f.projection = worldRenderView.getProjection();
@@ -974,12 +974,12 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, int 
 		m_settings.fogDensityY,
 		m_settings.fogDensityZ,
 		m_settings.fogColor,
-		0,
-		f.haveDepth ? m_gbufferTargetSet->getColorTexture(0) : 0,
-		0
+		nullptr,
+		m_gbufferTargetSet->getColorTexture(0),
+		nullptr
 	);
-	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
-		f.visual->build(worldRenderView, defaultPass, *i);
+	for (auto entity : m_buildEntities)
+		f.visual->build(worldRenderView, defaultPass, entity);
 	f.visual->flush(worldRenderView, defaultPass);
 
 	f.projection = worldRenderView.getProjection();
