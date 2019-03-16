@@ -23,8 +23,8 @@ bool UnwrapUV::apply(Model& model) const
 {
 	Atlas_Options options;
 	atlas_set_default_options(&options);
-	options.packer_options.witness.texel_area = 0.5f;
-	options.packer_options.witness.conservative = true;
+	//options.packer_options.witness.texel_area = 0.5f;
+	//options.packer_options.witness.conservative = true;
 
 	AlignedVector< Atlas_Input_Vertex > inputVertices;
 
@@ -100,6 +100,8 @@ bool UnwrapUV::apply(Model& model) const
 		const auto& aov = output->vertex_array[i];
 		uvbb.contain(Vector2(aov.uv[0], aov.uv[1]));
 	}
+	uvbb.mn -= Vector2(1.0f, 1.0f);
+	uvbb.mx += Vector2(1.0f, 1.0f);
 
 	// Insert normalized texcoords into model.
 	{
