@@ -118,6 +118,7 @@ private:
 
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;
+	Quality m_toneMapQuality;
 	Quality m_shadowsQuality;
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
@@ -126,7 +127,7 @@ private:
 	Ref< IWorldShadowProjection > m_shadowProjection;
 	Ref< render::RenderTargetSet > m_visualTargetSet;
 	Ref< render::RenderTargetSet > m_intermediateTargetSet;
-	Ref< render::RenderTargetSet > m_depthTargetSet;
+	Ref< render::RenderTargetSet > m_gbufferTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
 	Ref< render::RenderContext > m_globalContext;
@@ -136,12 +137,13 @@ private:
 	Ref< render::ImageProcess > m_antiAlias;
 	Ref< render::ImageProcess > m_visualImageProcess;
 	Ref< render::ImageProcess > m_gammaCorrectionImageProcess;
+	Ref< render::ImageProcess > m_toneMapImageProcess;
 	RefArray< Entity > m_buildEntities;
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];
 	uint32_t m_count;
 
-	void buildDepth(WorldRenderView& worldRenderView, int frame);
+	void buildGBuffer(WorldRenderView& worldRenderView, int frame);
 
 	void buildShadows(WorldRenderView& worldRenderView, int frame);
 

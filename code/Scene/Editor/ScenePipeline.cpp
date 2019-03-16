@@ -179,11 +179,6 @@ bool ScenePipeline::buildOutput(
 		sceneResource->getWorldRenderSettings()->linearLighting = false;
 		log::info << L"Linear lighting suppressed." << Endl;
 	}
-	if (m_suppressDepthPass && sceneResource->getWorldRenderSettings()->depthPass)
-	{
-		sceneResource->getWorldRenderSettings()->depthPass = false;
-		log::info << L"Depth pass suppressed." << Endl;
-	}
 
 	for (uint32_t i = 0; i < world::QuLast; ++i)
 	{
