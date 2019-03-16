@@ -1120,6 +1120,27 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->pushView(Matrix44::identity());
 				m_primitiveRenderer->pushDepthState(false, false, false);
 
+				m_primitiveRenderer->drawTextureQuad(
+					Vector4(0.0f, 0.0f, 0.5f, 1.0f),
+					Vector2(0.0f, 0.0f),
+					Vector4(1.0f, 0.0f, 0.5f, 1.0f),
+					Vector2(1.0f, 0.0f),
+					Vector4(1.0f, 1.0f, 0.5f, 1.0f),
+					Vector2(1.0f, 1.0f),
+					Vector4(0.0f, 1.0f, 0.5f, 1.0f),
+					Vector2(0.0f, 1.0f),
+					Color4ub(255, 255, 255, 200),
+					texture
+				);
+
+				m_primitiveRenderer->drawWireQuad(
+					Vector4(0.0f, 0.0f, 0.5f, 1.0f),
+					Vector4(1.0f, 0.0f, 0.5f, 1.0f),
+					Vector4(1.0f, 1.0f, 0.5f, 1.0f),
+					Vector4(0.0f, 1.0f, 0.5f, 1.0f),
+					Color4ub(255, 255, 255, 200)
+				);
+
 				for (uint32_t i = 0; i < polygons.size(); ++i)
 				{
 					const Polygon& polygon = polygons[i];
