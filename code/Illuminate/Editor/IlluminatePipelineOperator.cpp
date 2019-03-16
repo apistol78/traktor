@@ -241,7 +241,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 
 		// Unwrap lightmap UV.
 		uint32_t channel = model->addUniqueTexCoordChannel(L"Illuminate_LightmapUV");
-		if (!model::UnwrapUV(channel).apply(*model))
+		if (!model::UnwrapUV(channel, outputSize).apply(*model))
 		{
 			log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV of model \"" << meshAsset->getFileName().getOriginal() << L"\"." << Endl;
 			return false;
