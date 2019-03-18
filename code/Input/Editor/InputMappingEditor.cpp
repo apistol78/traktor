@@ -140,7 +140,7 @@ void createInputNodes(InputMappingAsset* mappingAsset, ui::GraphControl* graph, 
 			t->getHeader(node),
 			t->getDescription(node),
 			ui::Point(p.x, p.y),
-			childNodes.empty() ? ((ui::NodeShape*)new ui::InputNodeShape(graph)) : ((ui::NodeShape*)new ui::DefaultNodeShape(graph))
+			childNodes.empty() ? (ui::INodeShape*)new ui::InputNodeShape(graph) : (ui::INodeShape*)new ui::DefaultNodeShape(graph)
 		);
 		valuePin = graphNode->createOutputPin(L"Value");
 		graphNode->setData(L"DATA", const_cast< IInputNode* >(node));

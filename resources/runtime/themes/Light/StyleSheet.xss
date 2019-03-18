@@ -1201,6 +1201,14 @@
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Pin.image</value>
 		</item>
 		<item>
+			<name>UI.Graph.PinHot</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/PinHot.image</value>
+		</item>
+		<item>
+			<name>UI.Graph.PinError</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/PinError.image</value>
+		</item>
+		<item>
 			<name>UI.Graph.Node</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Node.image</value>
 		</item>

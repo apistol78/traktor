@@ -8,7 +8,7 @@ namespace traktor
 	{
 
 class GraphControl;
-class NodeShape;
+class INodeShape;
 
 	}
 
@@ -58,7 +58,7 @@ public:
 	) override final;
 
 private:
-	Ref< ui::NodeShape > m_nodeShape;
+	Ref<ui::INodeShape > m_nodeShape;
 
 	void updateThumb(editor::IEditor* editor, ui::Node* editorNode, Texture* texture) const;
 };

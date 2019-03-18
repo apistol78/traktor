@@ -198,30 +198,30 @@ public:
 	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
 	{
 		std::set< std::wstring > usedInputNames, usedOutputNames;
-		for (std::set< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
+		for (auto node : activeNodes)
 		{
 			std::set< std::wstring >* usedNames;
 			std::wstring portName;
 
-			if (is_a< InputPort >(*i))
+			if (is_a< InputPort >(node))
 			{
 				usedNames = &usedInputNames;
-				portName = static_cast< const InputPort* >(*i)->getName();
+				portName = static_cast< const InputPort* >(node)->getName();
 			}
-			else if (is_a< OutputPort >(*i))
+			else if (is_a< OutputPort >(node))
 			{
 				usedNames = &usedOutputNames;
-				portName = static_cast< const OutputPort* >(*i)->getName();
+				portName = static_cast< const OutputPort* >(node)->getName();
 			}
 			else
 				continue;
 
 			if (portName.empty())
-				outReport.addError(L"Invalid port name, no name", *i);
+				outReport.addError(L"Invalid port name, no name", node);
 			else
 			{
 				if (usedNames->find(portName) != usedNames->end())
-					outReport.addError(L"Port name already in use", *i);
+					outReport.addError(L"Port name \"" + portName + L"\" already in use", node);
 				else
 					usedNames->insert(portName);
 			}
@@ -285,11 +285,12 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Nod
 {
 	RefArray< Node > roots;
 
-	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
-	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (auto node : m_shaderGraph->getNodes())
 	{
-		if ((*i)->getOutputPinCount() <= 0 && (*i)->getInputPinCount() > 0)
-			roots.push_back(*i);
+		if (node->getOutputPinCount() <= 0 && node->getInputPinCount() > 0)
+			roots.push_back(node);
+		else if (is_a< InputPort >(node) || is_a< OutputPort >(node))
+			roots.push_back(node);
 	}
 
 	CollectVisitor visitor;

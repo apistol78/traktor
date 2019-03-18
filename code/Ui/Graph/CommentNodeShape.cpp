@@ -22,7 +22,7 @@ const int32_t c_margin = 16;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CommentNodeShape", CommentNodeShape, NodeShape)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CommentNodeShape", CommentNodeShape, INodeShape)
 
 CommentNodeShape::CommentNodeShape(GraphControl* graphControl)
 :	m_graphControl(graphControl)
@@ -40,7 +40,7 @@ Pin* CommentNodeShape::getPinAt(const Node* node, const Point& pt) const
 	return 0;
 }
 
-void CommentNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& offset) const
+void CommentNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* canvas, const Size& offset) const
 {
 	Rect rc = node->calculateRect().offset(offset);
 

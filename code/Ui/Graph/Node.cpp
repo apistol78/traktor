@@ -1,7 +1,7 @@
 #include "Ui/Event.h"
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/Node.h"
-#include "Ui/Graph/NodeShape.h"
+#include "Ui/Graph/INodeShape.h"
 #include "Ui/Graph/Pin.h"
 
 namespace traktor
@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Node", Node, Object)
 
-Node::Node(const std::wstring& title, const std::wstring& info, const Point& position, NodeShape* shape)
+Node::Node(const std::wstring& title, const std::wstring& info, const Point& position, INodeShape* shape)
 :	m_title(title)
 ,	m_info(info)
 ,	m_state(0)
@@ -199,10 +199,10 @@ Pin* Node::getPinAt(const Point& p) const
 	return m_shape->getPinAt(this, p);
 }
 
-void Node::paint(GraphCanvas* canvas, const Size& offset) const
+void Node::paint(GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const
 {
 	T_ASSERT(m_shape);
-	m_shape->paint(this, canvas, offset);
+	m_shape->paint(this, hotPin, canvas, offset);
 }
 
 Rect Node::calculateRect() const

@@ -164,6 +164,7 @@ private:
 	std::vector< Point > m_nodePositions;
 	std::vector< bool > m_nodeSelectionStates;
 	std::vector< bool > m_edgeSelectionStates;
+	const Pin* m_hotPin;
 
 	void beginSelectModification();
 

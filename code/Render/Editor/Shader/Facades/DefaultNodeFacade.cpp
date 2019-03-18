@@ -44,7 +44,7 @@ Ref< ui::Node > DefaultNodeFacade::createEditorNode(
 	if (p > 0)
 		title = i18n::Text(L"SHADERGRAPH_NODE_" + toUpper(title.substr(p + 1)));
 
-	Ref< ui::NodeShape > shape;
+	Ref<ui::INodeShape > shape;
 	if (shaderNode->getInputPinCount() == 1 && shaderNode->getOutputPinCount() == 0)
 		shape = m_nodeShapes[2];
 	else if (shaderNode->getInputPinCount() == 0 && shaderNode->getOutputPinCount() == 1)
