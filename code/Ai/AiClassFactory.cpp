@@ -19,7 +19,7 @@ Ref< BoxedVector4 > MoveQuery_update(MoveQuery* self, const Vector4& currentPosi
 	if (self->update(currentPosition, moveToPosition))
 		return new BoxedVector4(moveToPosition);
 	else
-		return 0;
+		return nullptr;
 }
 
 Vector4 NavMesh_findClosestPoint(NavMesh* self, const Vector4& searchFrom)
