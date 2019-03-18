@@ -23,6 +23,12 @@ const int32_t c_textHeight = 16;
 const int32_t c_minExtent = 30;
 const int32_t c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
 
+int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
+{
+	int32_t x = widget->getFontMetric().getExtent(txt).cx;
+	return alignUp(x, dpi96(16));
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.InOutNodeShape", InOutNodeShape, INodeShape)
@@ -162,7 +168,7 @@ Size InOutNodeShape::calculateSize(const Node* node) const
 	if (!node->getInfo().empty())
 	{
 		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFont());
-		int32_t extent = m_graphControl->getFontMetric().getExtent(node->getInfo()).cx;
+		int32_t extent = getQuantizedTextWidth(m_graphControl, node->getInfo());
 		width += std::max(extent, ui::dpi96(c_minExtent));
 	}
 
