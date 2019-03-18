@@ -26,6 +26,12 @@ const int32_t c_textHeight = 16;
 const int32_t c_textWidthAlign = 10;	//<! Align width.
 const int32_t c_pinHitWidth = 14;		//<! Width of pin hit area from visual edge.
 
+int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
+{
+	int32_t x = widget->getFontMetric().getExtent(txt).cx;
+	return alignUp(x, dpi96(16));
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.InputNodeShape", InputNodeShape, INodeShape)
@@ -173,13 +179,14 @@ Size InputNodeShape::calculateSize(const Node* node) const
 	if (!node->getTitle().empty())
 	{
 		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFontBold());
-		width += m_graphControl->getFontMetric().getExtent(node->getTitle()).cx;
+		width += getQuantizedTextWidth(m_graphControl, node->getTitle());
 	}
 
 	if (!node->getInfo().empty())
 	{
 		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFont());
-		width += ui::dpi96(c_textPad) + m_graphControl->getFontMetric().getExtent(node->getInfo()).cx;
+		width += dpi96(c_textPad);
+		width += getQuantizedTextWidth(m_graphControl, node->getInfo());
 	}
 
 	width = alignUp(width, ui::dpi96(c_textWidthAlign)) + ui::dpi96(c_marginWidth) * 2 + ui::dpi96(c_textMarginLeft) + ui::dpi96(c_textMarginRight) + ui::dpi96(c_textPad);

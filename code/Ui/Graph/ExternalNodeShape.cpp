@@ -24,6 +24,12 @@ const int32_t c_pinNamePad = 12;	/*< Distance between pin and pin's name. */
 const int32_t c_pinCenterPad = 16;	/*< Distance between input and output pin names. */
 const int32_t c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
 
+int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
+{
+	int32_t x = widget->getFontMetric().getExtent(txt).cx;
+	return alignUp(x, dpi96(16));
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ExternalNodeShape", ExternalNodeShape, INodeShape)
@@ -293,24 +299,30 @@ Size ExternalNodeShape::calculateSize(const Node* node) const
 	);
 	height += pins * textHeight;
 
-	int maxWidthPins[2] = { 0, 0 };
-	for (RefArray< Pin >::const_iterator i = node->getInputPins().begin(); i != node->getInputPins().end(); ++i)
-		maxWidthPins[0] = std::max< int32_t >(maxWidthPins[0], m_graphControl->getFontMetric().getExtent((*i)->getLabel()).cx);
-	for (RefArray< Pin >::const_iterator i = node->getOutputPins().begin(); i != node->getOutputPins().end(); ++i)
-		maxWidthPins[1] = std::max< int32_t >(maxWidthPins[1], m_graphControl->getFontMetric().getExtent((*i)->getLabel()).cx);
+	int32_t maxWidthPins[2] = { 0, 0 };
+	for (auto inputPin : node->getInputPins())
+	{
+		int32_t labelExtent = getQuantizedTextWidth(m_graphControl, inputPin->getLabel());
+		maxWidthPins[0] = std::max< int32_t >(maxWidthPins[0], labelExtent);
+	}
+	for (auto outputPin : node->getOutputPins())
+	{
+		int32_t labelExtent = getQuantizedTextWidth(m_graphControl, outputPin->getLabel());
+		maxWidthPins[1] = std::max< int32_t >(maxWidthPins[0], labelExtent);
+	}
 
 	int32_t width = maxWidthPins[0] + maxWidthPins[1];
 
 	if (!node->getTitle().empty())
 	{
 		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFontBold());
-		int32_t titleExtent = m_graphControl->getFontMetric().getExtent(node->getTitle()).cx;
+		int32_t titleExtent = getQuantizedTextWidth(m_graphControl, node->getTitle());
 		width = std::max(width, titleExtent);
 		m_graphControl->setFont(m_graphControl->getPaintSettings()->getFont());
 	}
 	if (!node->getInfo().empty())
 	{
-		int32_t infoExtent = m_graphControl->getFontMetric().getExtent(node->getInfo()).cx;
+		int32_t infoExtent = getQuantizedTextWidth(m_graphControl, node->getInfo());
 		width = std::max(width, infoExtent);
 	}
 	if (node->getImage())
