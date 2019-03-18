@@ -7,7 +7,7 @@ namespace traktor
 	namespace ui
 	{
 
-class NodeShape;
+class INodeShape;
 
 	}
 
@@ -55,7 +55,7 @@ public:
 	) override final;
 
 private:
-	Ref< ui::NodeShape > m_nodeShape;
+	Ref<ui::INodeShape > m_nodeShape;
 };
 
 	}

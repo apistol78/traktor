@@ -24,7 +24,7 @@ namespace traktor
 
 class GraphCanvas;
 class IBitmap;
-class NodeShape;
+class INodeShape;
 class Pin;
 class Size;
 
@@ -38,7 +38,7 @@ class T_DLLCLASS Node
 	T_RTTI_CLASS;
 
 public:
-	Node(const std::wstring& title, const std::wstring& info, const Point& position, NodeShape* shape);
+	Node(const std::wstring& title, const std::wstring& info, const Point& position, INodeShape* shape);
 
 	void setTitle(const std::wstring& title);
 
@@ -90,7 +90,7 @@ public:
 
 	Pin* getPinAt(const Point& p) const;
 
-	void paint(GraphCanvas* canvas, const Size& offset) const;
+	void paint(GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const;
 
 	Rect calculateRect() const;
 
@@ -105,7 +105,7 @@ private:
 	bool m_selected;
 	RefArray< Pin > m_inputPins;
 	RefArray< Pin > m_outputPins;
-	Ref< NodeShape > m_shape;
+	Ref< INodeShape > m_shape;
 
 	void updateSize();
 };

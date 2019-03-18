@@ -8,7 +8,7 @@ namespace traktor
 	{
 
 class GraphControl;
-class NodeShape;
+class INodeShape;
 
 	}
 
@@ -59,7 +59,7 @@ public:
 
 private:
 	ShaderGraphEditorPage* m_page;
-	Ref< ui::NodeShape > m_nodeShape;
+	Ref<ui::INodeShape > m_nodeShape;
 };
 
 	}

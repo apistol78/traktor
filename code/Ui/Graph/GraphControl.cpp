@@ -98,6 +98,7 @@ GraphControl::GraphControl()
 ,	m_moveAll(false)
 ,	m_moveSelected(false)
 ,	m_edgeSelectable(false)
+,	m_hotPin(nullptr)
 {
 }
 
@@ -263,7 +264,7 @@ Node* GraphControl::getNodeAt(const Point& p) const
 		if ((*i)->hit(p))
 			return (*i);
 	}
-	return 0;
+	return nullptr;
 }
 
 Edge* GraphControl::getEdgeAt(const Point& p) const
@@ -866,6 +867,15 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 		update(&updateRect);
 		event->consume();
 	}
+
+	// Track "hot" pin.
+	auto position = event->getPosition() / m_scale;
+	auto hotPin = getPinAt(position);
+	if (hotPin != m_hotPin)
+	{
+		m_hotPin = hotPin;
+		update();
+	}
 }
 
 void GraphControl::eventDoubleClick(MouseDoubleClickEvent* event)
@@ -1007,25 +1017,25 @@ void GraphControl::eventPaint(PaintEvent* event)
 	graphCanvas.setFont(m_paintSettings->getFont());
 
 	// Draw edges.
-	for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+	for (auto edge : m_edges)
 	{
-		if (!(*i)->isSelected())
-			(*i)->paint(&graphCanvas, m_offset);
+		if (!edge->isSelected())
+			edge->paint(&graphCanvas, m_offset);
 	}
 
 	// Node shapes.
 	Rect cullRc = rc / m_scale;
-	for (RefArray< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+	for (auto node : m_nodes)
 	{
-		if ((*i)->calculateRect().offset(m_offset).intersect(cullRc))
-			(*i)->paint(&graphCanvas, m_offset);
+		if (node->calculateRect().offset(m_offset).intersect(cullRc))
+			node->paint(&graphCanvas, m_hotPin, m_offset);
 	}
 
 	// Draw selected edges.
-	for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+	for (auto edge : m_edges)
 	{
-		if ((*i)->isSelected())
-			(*i)->paint(&graphCanvas, m_offset);
+		if (edge->isSelected())
+			edge->paint(&graphCanvas, m_offset);
 	}
 
 	// Draw probe.

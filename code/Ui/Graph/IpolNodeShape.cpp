@@ -20,7 +20,7 @@ const int c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.IpolNodeShape", IpolNodeShape, NodeShape)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.IpolNodeShape", IpolNodeShape, INodeShape)
 
 IpolNodeShape::IpolNodeShape()
 {
@@ -30,6 +30,7 @@ IpolNodeShape::IpolNodeShape()
 	m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.IpolErrorSelected");
 
 	m_imagePin = new ui::StyleBitmap(L"UI.Graph.Pin");
+	m_imagePinHot = new ui::StyleBitmap(L"UI.Graph.PinHot");
 }
 
 Point IpolNodeShape::getPinPosition(const Node* node, const Pin* pin) const
@@ -62,7 +63,7 @@ Pin* IpolNodeShape::getPinAt(const Node* node, const Point& pt) const
 	return 0;
 }
 
-void IpolNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& offset) const
+void IpolNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* canvas, const Size& offset) const
 {
 	const PaintSettings* settings = canvas->getPaintSettings();
 	Rect rc = node->calculateRect().offset(offset);
@@ -87,7 +88,7 @@ void IpolNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& off
 		pinSize,
 		Point(0, 0),
 		pinSize,
-		m_imagePin,
+		hotPin == node->getInputPins()[0] ? m_imagePinHot : m_imagePin,
 		ui::BmAlpha
 	);
 
@@ -96,7 +97,7 @@ void IpolNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& off
 		pinSize,
 		Point(0, 0),
 		pinSize,
-		m_imagePin,
+		hotPin == node->getOutputPins()[0] ? m_imagePinHot : m_imagePin,
 		ui::BmAlpha
 	);
 }

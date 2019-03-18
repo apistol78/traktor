@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Ui/Graph/NodeShape.h"
+#include "Ui/Graph/INodeShape.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,7 +21,7 @@ class IBitmap;
 /*! \brief Input/output node shape.
  * \ingroup UI
  */
-class T_DLLCLASS InOutNodeShape : public NodeShape
+class T_DLLCLASS InOutNodeShape : public INodeShape
 {
 	T_RTTI_CLASS;
 
@@ -32,7 +32,7 @@ public:
 
 	virtual Pin* getPinAt(const Node* node, const Point& pt) const override final;
 
-	virtual void paint(const Node* node, GraphCanvas* canvas, const Size& offset) const override final;
+	virtual void paint(const Node* node, const Pin* hotPin, GraphCanvas* canvas, const Size& offset) const override final;
 
 	virtual Size calculateSize(const Node* node) const override final;
 
@@ -40,6 +40,7 @@ private:
 	GraphControl* m_graphControl;
 	Ref< IBitmap > m_imageNode[4];
 	Ref< IBitmap > m_imagePin;
+	Ref< IBitmap > m_imagePinHot;
 };
 
 	}

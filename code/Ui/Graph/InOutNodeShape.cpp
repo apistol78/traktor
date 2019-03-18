@@ -25,7 +25,7 @@ const int32_t c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.InOutNodeShape", InOutNodeShape, NodeShape)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.InOutNodeShape", InOutNodeShape, INodeShape)
 
 InOutNodeShape::InOutNodeShape(GraphControl* graphControl)
 :	m_graphControl(graphControl)
@@ -36,6 +36,7 @@ InOutNodeShape::InOutNodeShape(GraphControl* graphControl)
 	m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.InOutErrorSelected");
 
 	m_imagePin = new ui::StyleBitmap(L"UI.Graph.Pin");
+	m_imagePinHot = new ui::StyleBitmap(L"UI.Graph.PinHot");
 }
 
 Point InOutNodeShape::getPinPosition(const Node* node, const Pin* pin) const
@@ -68,7 +69,7 @@ Pin* InOutNodeShape::getPinAt(const Node* node, const Point& pt) const
 	return 0;
 }
 
-void InOutNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& offset) const
+void InOutNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* canvas, const Size& offset) const
 {
 	const PaintSettings* settings = canvas->getPaintSettings();
 	Rect rc = node->calculateRect().offset(offset);
@@ -111,7 +112,7 @@ void InOutNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& of
 		pinSize,
 		Point(0, 0),
 		pinSize,
-		m_imagePin,
+		hotPin == node->getInputPins()[0] ? m_imagePinHot : m_imagePin,
 		ui::BmAlpha
 	);
 
@@ -125,7 +126,7 @@ void InOutNodeShape::paint(const Node* node, GraphCanvas* canvas, const Size& of
 		pinSize,
 		Point(0, 0),
 		pinSize,
-		m_imagePin,
+		hotPin == node->getOutputPins()[0] ? m_imagePinHot : m_imagePin,
 		ui::BmAlpha
 	);
 

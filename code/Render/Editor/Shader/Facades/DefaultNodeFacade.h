@@ -8,7 +8,7 @@ namespace traktor
 	{
 
 class GraphControl;
-class NodeShape;
+class INodeShape;
 
 	}
 
@@ -56,7 +56,7 @@ public:
 	) override final;
 
 private:
-	Ref< ui::NodeShape > m_nodeShapes[3];
+	Ref<ui::INodeShape > m_nodeShapes[3];
 };
 
 	}

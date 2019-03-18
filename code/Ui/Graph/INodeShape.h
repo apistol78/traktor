@@ -24,7 +24,7 @@ class Pin;
 /*! \brief Graph node visual shape.
  * \ingroup UI
  */
-class T_DLLCLASS NodeShape : public Object
+class T_DLLCLASS INodeShape : public Object
 {
 	T_RTTI_CLASS;
 
@@ -33,7 +33,7 @@ public:
 
 	virtual Pin* getPinAt(const Node* node, const Point& pt) const = 0;
 
-	virtual void paint(const Node* node, GraphCanvas* canvas, const Size& offset) const = 0;
+	virtual void paint(const Node* node, const Pin* hotPin, GraphCanvas* canvas, const Size& offset) const = 0;
 
 	virtual Size calculateSize(const Node* node) const = 0;
 };

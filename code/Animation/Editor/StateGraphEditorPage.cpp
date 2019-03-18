@@ -508,7 +508,7 @@ void StateGraphEditorPage::createEditorNodes(const RefArray< StateNode >& states
 
 Ref< ui::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 {
-	Ref< ui::NodeShape > shape = new ui::DefaultNodeShape(m_editorGraph);
+	Ref< ui::INodeShape > shape = new ui::DefaultNodeShape(m_editorGraph);
 
 	Ref< ui::Node > node = new ui::Node(
 		state->getName(),
