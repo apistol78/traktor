@@ -221,8 +221,8 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 			type = GL_UNSIGNED_BYTE;
 			break;
 
-#if defined(GL_HALF_FLOAT_OES)
 		case TfR16G16B16A16F:
+#if defined(GL_HALF_FLOAT_OES)
 			internalFormat = GL_RGBA;
 			format = GL_RGBA;
 			type = GL_HALF_FLOAT_OES;
@@ -231,6 +231,20 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 
 		case TfR32G32B32A32F:
 			internalFormat = GL_RGBA;
+			format = GL_RGBA;
+			type = GL_FLOAT;
+			break;
+
+		case TfR16G16F:
+#if defined(GL_HALF_FLOAT_OES)
+			internalFormat = GL_RG16_EXT;
+			format = GL_RGBA;
+			type = GL_HALF_FLOAT_OES;
+			break;
+#endif
+
+		case TfR32G32F:
+			internalFormat = GL_RG16_EXT;
 			format = GL_RGBA;
 			type = GL_FLOAT;
 			break;
