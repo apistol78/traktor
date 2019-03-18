@@ -11,9 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshEntityEditorFactory", NavMeshEntityEd
 
 const TypeInfoSet NavMeshEntityEditorFactory::getEntityDataTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< NavMeshEntityData >();
-	return typeSet;
+	return makeTypeInfoSet< NavMeshEntityData >();
 }
 
 Ref< scene::IEntityEditor > NavMeshEntityEditorFactory::createEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter) const

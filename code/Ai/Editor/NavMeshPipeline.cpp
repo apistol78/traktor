@@ -100,14 +100,14 @@ Ref< ISerializable > resolveAllExternal(PipelineType* pipeline, const ISerializa
 		{
 			Ref< const ISerializable > externalEntityData = pipeline->getObjectReadOnly(externalEntityDataRef->getEntityData());
 			if (!externalEntityData)
-				return 0;
+				return nullptr;
 
 			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(
 				pipeline,
 				externalEntityData
 			));
 			if (!resolvedEntityData)
-				return 0;
+				return nullptr;
 
 			resolvedEntityData->setName(externalEntityDataRef->getName());
 			resolvedEntityData->setTransform(externalEntityDataRef->getTransform());
@@ -197,9 +197,7 @@ bool NavMeshPipeline::create(const editor::IPipelineSettings* settings)
 
 TypeInfoSet NavMeshPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< NavMeshAsset >();
-	return typeSet;
+	return makeTypeInfoSet< NavMeshAsset >();
 }
 
 bool NavMeshPipeline::buildDependencies(
@@ -277,7 +275,7 @@ bool NavMeshPipeline::buildOutput(
 				if (!meshAsset)
 					continue;
 
-				std::map< std::wstring, Ref< const model::Model > >::const_iterator j = modelCache.find(meshAsset->getFileName().getOriginal());
+				auto j = modelCache.find(meshAsset->getFileName().getOriginal());
 				if (j != modelCache.end())
 				{
 					navModels.push_back(NavMeshSourceModel(j->second, (*i)->getTransform()));
@@ -307,7 +305,7 @@ bool NavMeshPipeline::buildOutput(
 				if (!meshAsset)
 					continue;
 
-				std::map< std::wstring, Ref< const model::Model > >::const_iterator j = modelCache.find(meshAsset->getFileName().getOriginal());
+				auto j = modelCache.find(meshAsset->getFileName().getOriginal());
 				if (j != modelCache.end())
 				{
 					navModels.push_back(NavMeshSourceModel(j->second, (*i)->getTransform()));
@@ -339,7 +337,7 @@ bool NavMeshPipeline::buildOutput(
 					if (!meshAsset)
 						continue;
 
-					std::map< std::wstring, Ref< const model::Model > >::const_iterator j = modelCache.find(meshAsset->getFileName().getOriginal());
+					auto j = modelCache.find(meshAsset->getFileName().getOriginal());
 					if (j != modelCache.end())
 					{
 						navModels.push_back(NavMeshSourceModel(j->second, (*i)->getTransform()));
@@ -390,7 +388,7 @@ bool NavMeshPipeline::buildOutput(
 						continue;
 
 					sourceData->close();
-					sourceData = 0;
+					sourceData = nullptr;
 
 					int32_t size = heightfield->getSize();
 					int32_t ix0, iz0;
@@ -566,16 +564,16 @@ bool NavMeshPipeline::buildOutput(
 		AlignedVector< int32_t > indices;
 
 		uint8_t* triAreaPtr = triAreas.ptr();
-		for (AlignedVector< NavMeshSourceModel >::iterator i = navModels.begin(); i != navModels.end(); ++i)
+		for (auto& navModel : navModels)
 		{
-			int32_t vertexCount = i->model->getVertexCount();
-			int32_t triangleCount = i->model->getPolygonCount();
+			int32_t vertexCount = navModel.model->getVertexCount();
+			int32_t triangleCount = navModel.model->getPolygonCount();
 
 			AutoArrayPtr< float > vertices(new float [3 * vertexCount]);
 			for (int32_t j = 0; j < vertexCount; ++j)
 			{
-				const Vector4& position = i->model->getVertexPosition(j);
-				copyUnaligned3(&vertices[j * 3], i->transform * position.xyz1());
+				const Vector4& position = navModel.model->getVertexPosition(j);
+				copyUnaligned3(&vertices[j * 3], navModel.transform * position.xyz1());
 			}
 
 			indices.resize(0);
@@ -583,7 +581,7 @@ bool NavMeshPipeline::buildOutput(
 
 			for (int32_t j = 0; j < triangleCount; ++j)
 			{
-				const model::Polygon& triangle = i->model->getPolygon(j);
+				const model::Polygon& triangle = navModel.model->getPolygon(j);
 				T_ASSERT(triangle.getVertexCount() == 3);
 
 				if (oceanClip)
@@ -609,7 +607,7 @@ bool NavMeshPipeline::buildOutput(
 				rcRasterizeTriangles(&ctx, vertices.c_ptr(), vertexCount, &indices[0], triAreaPtr, indices.size() / 3, *solid, cfg.walkableClimb);
 			}
 
-			i->model = 0;
+			navModel.model = nullptr;
 
 			triAreaPtr += triangleCount;
 		}
@@ -782,7 +780,7 @@ bool NavMeshPipeline::buildOutput(
 	params.ch = cfg.ch;
 	params.buildBvTree = false;
 
-	uint8_t* navData = 0;
+	uint8_t* navData = nullptr;
 	int32_t navDataSize = 0;
 	if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
 	{
@@ -857,7 +855,7 @@ bool NavMeshPipeline::buildOutput(
 	}
 
 	stream->close();
-	stream = 0;
+	stream = nullptr;
 
 	if (!outputInstance->commit())
 	{
@@ -866,7 +864,7 @@ bool NavMeshPipeline::buildOutput(
 	}
 
 	dtFree(navData);
-	navData = 0;
+	navData = nullptr;
 
 	// Save pmesh for debugging; only in editor.
 	if (m_editor)
@@ -908,10 +906,10 @@ bool NavMeshPipeline::buildOutput(
 	}
 
 	rcFreePolyMeshDetail(dmesh);
-	dmesh = 0;
+	dmesh = nullptr;
 
 	rcFreePolyMesh(pmesh);
-	pmesh = 0;
+	pmesh = nullptr;
 
 	return true;
 }

@@ -83,7 +83,7 @@ Ref< world::EntityData > AiEditorProfile::createEntityData(
 	db::Instance* instance
 ) const
 {
-	return 0;
+	return nullptr;
 }
 
 void AiEditorProfile::getDebugTargets(

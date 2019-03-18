@@ -19,9 +19,7 @@ NavMeshEntityFactory::NavMeshEntityFactory(resource::IResourceManager* resourceM
 
 const TypeInfoSet NavMeshEntityFactory::getEntityTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< NavMeshEntityData >();
-	return typeSet;
+	return makeTypeInfoSet< NavMeshEntityData >();
 }
 
 const TypeInfoSet NavMeshEntityFactory::getEntityEventTypes() const
@@ -45,7 +43,7 @@ Ref< world::Entity > NavMeshEntityFactory::createEntity(
 
 		resource::Proxy< NavMesh > navMesh;
 		if (!m_resourceManager->bind(navMeshEntityData->get(), navMesh))
-			return 0;
+			return nullptr;
 
 		return new NavMeshEntity(navMesh);
 	}
@@ -55,12 +53,12 @@ Ref< world::Entity > NavMeshEntityFactory::createEntity(
 
 Ref< world::IEntityEvent > NavMeshEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< world::IEntityComponent > NavMeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	return 0;
+	return nullptr;
 }
 
 	}

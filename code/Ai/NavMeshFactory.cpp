@@ -35,27 +35,27 @@ Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager
 
 	Ref< NavMeshResource > resource = instance->getObject< NavMeshResource >();
 	if (!resource)
-		return 0;
+		return nullptr;
 
 	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
-		return 0;
+		return nullptr;
 
 	Reader r(stream);
 
 	uint8_t version;
 	r >> version;
 	if (version != 2)
-		return 0;
+		return nullptr;
 
 	int32_t navDataSize;
 	r >> navDataSize;
 	if (navDataSize <= 0)
-		return 0;
+		return nullptr;
 
 	uint8_t* navData = (uint8_t*)dtAlloc(navDataSize, DT_ALLOC_PERM);
 	if (stream->read(navData, navDataSize) != navDataSize)
-		return 0;
+		return nullptr;
 
 	bool haveGeometry;
 	r >> haveGeometry;
@@ -97,15 +97,15 @@ Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager
 	}
 
 	stream->close();
-	stream = 0;
+	stream = nullptr;
 
 	dtNavMesh* navMesh = dtAllocNavMesh();
 	if (!navMesh)
-		return 0;
+		return nullptr;
 
 	dtStatus status = navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA);
 	if (dtStatusFailed(status))
-		return 0;
+		return nullptr;
 
 	outputNavMesh->m_navMesh = navMesh;
 

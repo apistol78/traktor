@@ -33,11 +33,11 @@ Ref< MoveQuery > NavMesh::createMoveQuery(const Vector4& startPosition, const Ve
 {
 	dtNavMeshQuery* navQuery = dtAllocNavMeshQuery();
 	if (!navQuery)
-		return 0;
+		return nullptr;
 
 	dtStatus status = navQuery->init(m_navMesh, 2048);
 	if (dtStatusFailed(status))
-		return 0;
+		return nullptr;
 
 	float T_MATH_ALIGN16 startPos[4];
 	float T_MATH_ALIGN16 endPos[4];
@@ -61,7 +61,7 @@ Ref< MoveQuery > NavMesh::createMoveQuery(const Vector4& startPosition, const Ve
 	if (dtStatusFailed(status))
 	{
 		log::error << L"NavQuery; Unable to find start reference, status "; FormatHex(log::error, status, 8); log::error << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	status = outputQuery->m_navQuery->findNearestPoly(
@@ -74,7 +74,7 @@ Ref< MoveQuery > NavMesh::createMoveQuery(const Vector4& startPosition, const Ve
 	if (dtStatusFailed(status))
 	{
 		log::error << L"NavQuery; Unable to find end reference, status "; FormatHex(log::error, status, 8); log::error << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	outputQuery->m_startPosition = Vector4::loadAligned(startPosN).xyz1();
@@ -135,7 +135,7 @@ bool NavMesh::findClosestPoint(const Vector4& searchFrom, Vector4& outPoint) con
 
 	dtStatus status = navQuery->init(m_navMesh, 2048);
 	if (dtStatusFailed(status))
-		return 0;
+		return false;
 
 	AutoPtr< dtQueryFilter > filter(new dtQueryFilter());
 
@@ -172,7 +172,7 @@ bool NavMesh::findRandomPoint(Vector4& outPoint) const
 
 	dtStatus status = navQuery->init(m_navMesh, 2048);
 	if (dtStatusFailed(status))
-		return 0;
+		return false;
 
 	AutoPtr< dtQueryFilter > filter(new dtQueryFilter());
 
@@ -205,7 +205,7 @@ bool NavMesh::findRandomPoint(const Vector4& center, float radius, Vector4& outP
 
 	dtStatus status = navQuery->init(m_navMesh, 2048);
 	if (dtStatusFailed(status))
-		return 0;
+		return false;
 
 	AutoPtr< dtQueryFilter > filter(new dtQueryFilter());
 
