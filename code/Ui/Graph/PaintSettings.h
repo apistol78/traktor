@@ -41,9 +41,9 @@ public:
 
 	const ui::Font& getFontUnderline() const;
 
-	void setFontProbe(const ui::Font& fontProbe);
+	void setFontLabel(const ui::Font& fontLabel);
 
-	const ui::Font& getFontProbe() const;
+	const ui::Font& getFontLabel() const;
 
 	void setGridBackground(const Color4ub& gridBackground);
 
@@ -106,7 +106,7 @@ private:
 	ui::Font m_font;
 	ui::Font m_fontBold;
 	ui::Font m_fontUnderline;
-	ui::Font m_fontProbe;
+	ui::Font m_fontLabel;
 	Color4ub m_gridBackground;
 	Color4ub m_nodeShadow;
 	Color4ub m_nodeForeground;

@@ -4,6 +4,7 @@
 #include "Core/Math/Vector2.h"
 #include "Ui/Application.h"
 #include "Ui/Event.h"
+#include "Ui/IBitmap.h"
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/GraphCanvas.h"
 #include "Ui/Graph/Node.h"
@@ -19,6 +20,7 @@ namespace traktor
 
 const int c_sourcePinOffset = 10;
 const int c_destPinOffset = 16;
+const int c_sourceLabelOffset = 10;
 
 void calculateLinearSpline(Point s1, Point d1, std::vector< Point >& outSpline)
 {
@@ -171,7 +173,7 @@ bool Edge::hit(const PaintSettings* paintSettings, const Point& p) const
 	return false;
 }
 
-void Edge::paint(GraphCanvas* canvas, const Size& offset) const
+void Edge::paint(GraphCanvas* canvas, const Size& offset, IBitmap* imageLabel) const
 {
 	if (!m_source || !m_destination)
 		return;
@@ -202,6 +204,57 @@ void Edge::paint(GraphCanvas* canvas, const Size& offset) const
 		Point(at.x - dpi96(12), at.y + dpi96(5))
 	};
 	canvas->fillPolygon(arrow, 3);
+
+	if (imageLabel && !m_text.empty())
+	{
+		canvas->setForeground(settings->getNodeText());
+		canvas->setFont(settings->getFontLabel());
+
+		const auto sz = imageLabel->getSize();
+		Size szLabel = canvas->getTextExtent(m_text);
+
+		Point lpt(
+			s.x + dpi96(c_sourceLabelOffset),
+			s.y - sz.cy / 2
+		);
+
+		canvas->drawBitmap(
+			lpt,
+			Size(sz.cx / 3, sz.cy),
+			Point(0, 0),
+			Size(sz.cx / 3, sz.cy),
+			imageLabel,
+			BmAlpha
+		);
+
+		canvas->drawBitmap(
+			lpt + Size(sz.cx / 3, 0),
+			Size(szLabel.cx, sz.cy),
+			Point(sz.cx / 3, 0),
+			Size(sz.cx / 3, sz.cy),
+			imageLabel,
+			BmAlpha
+		);
+
+		canvas->drawBitmap(
+			lpt + Size(sz.cx / 3 + szLabel.cx, 0),
+			Size(sz.cx / 3, sz.cy),
+			Point((sz.cx * 2) / 3, 0),
+			Size(sz.cx / 3, sz.cy),
+			imageLabel,
+			BmAlpha
+		);
+
+		canvas->drawText(
+			Rect(
+				lpt + Size(sz.cx / 3, 0),
+				Size(szLabel.cx, sz.cy)
+			),
+			m_text,
+			AnCenter,
+			AnCenter
+		);
+	}
 }
 
 	}
