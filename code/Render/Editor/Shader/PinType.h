@@ -23,9 +23,8 @@ enum PinType
 	PntTexture2D = 6,
 	PntTexture3D = 7,
 	PntTextureCube = 8,
-	PntStruct = 9,
-	PntStructBuffer = 10,
-	PntState = 11,
+	PntStructBuffer = 9,
+	PntState = 10,
 	PntAny = (PntState)
 };
 
@@ -43,14 +42,6 @@ inline bool isPinTypeScalar(PinType pinType)
 inline bool isPinTypeTexture(PinType pinType)
 {
 	return pinType >= PntTexture2D && pinType <= PntTextureCube;
-}
-
-/*! \brief Return true if type is a struct declaration.
- * \ingroup Render
- */
-inline bool isPinTypeStruct(PinType pinType)
-{
-	return pinType == PntStruct;
 }
 
 /*! \brief Return true if type is a struct buffer.

@@ -41,6 +41,7 @@ bool IterativeNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* nod
 }
 
 PinType IterativeNodeTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes

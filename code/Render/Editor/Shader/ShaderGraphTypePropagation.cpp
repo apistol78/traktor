@@ -55,7 +55,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 			for (uint32_t i = 0; i < outputPinCount; ++i)
 			{
 				const OutputPin* outputPin = node->getOutputPin(i);
-				m_outputPinTypes[outputPin] = nodeTraits->getOutputPinType(node, outputPin, inputPinTypes);
+				m_outputPinTypes[outputPin] = nodeTraits->getOutputPinType(m_shaderGraph, node, outputPin, inputPinTypes);
 			}
 
 			return true;
@@ -185,7 +185,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 				const OutputPin* outputPin = node->getOutputPin(j);
 				T_ASSERT(outputPin);
 
-				m_outputPinTypes[outputPin] = nodeTraits->getOutputPinType(node, outputPin, 0);
+				m_outputPinTypes[outputPin] = nodeTraits->getOutputPinType(m_shaderGraph, node, outputPin, 0);
 			}
 		}
 	}

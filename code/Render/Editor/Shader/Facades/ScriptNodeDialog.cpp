@@ -26,12 +26,13 @@ namespace traktor
 
 const wchar_t* c_parameterTypes[] =
 {
-	L"Scalar",
+	L"Scalar",	// PtScalar
 	L"Vector",
 	L"Matrix",
 	L"Texture 2D",
 	L"Texture 3D",
-	L"Texture Cube"
+	L"Texture Cube",
+	L"Struct Buffer"
 };
 
 		}

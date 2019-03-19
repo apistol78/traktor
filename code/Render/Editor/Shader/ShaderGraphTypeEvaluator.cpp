@@ -36,7 +36,7 @@ PinType ShaderGraphTypeEvaluator::evaluate(const Node* node, const std::wstring&
 
 PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 {
-	std::map< const OutputPin*, PinType >::const_iterator i = m_cache.find(outputPin);
+	auto i = m_cache.find(outputPin);
 	if (i != m_cache.end())
 		return i->second;
 
@@ -50,7 +50,7 @@ PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 	{
 		PinType inputType = evaluate(node, L"Type");
 
-		const InputPin* inputPin = 0;
+		const InputPin* inputPin = nullptr;
 		if (isPinTypeScalar(inputType))
 		{
 			if (getPinTypeWidth(inputType) <= 1)
@@ -85,9 +85,10 @@ PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 
 		// Determine output pin type from trait.
 		outputPinType = nodeTraits->getOutputPinType(
+			m_shaderGraph,
 			node,
 			outputPin,
-			inputPinCount > 0 ? &inputPinTypes[0] : 0
+			inputPinCount > 0 ? &inputPinTypes[0] : nullptr
 		);
 	}
 

@@ -38,6 +38,7 @@ bool UniformNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node)
 }
 
 PinType UniformNodeTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes
@@ -107,8 +108,6 @@ PinType UniformNodeTraits::getInputPinType(
 				return PntVoid;
 			}
 		}
-		else if (inputPin->getName() == L"Struct")
-			return PntStruct;
 		else
 			return PntVoid;
 	}

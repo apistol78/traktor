@@ -38,6 +38,7 @@ bool PixelNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) c
 }
 
 PinType PixelNodeTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes

@@ -38,6 +38,7 @@ bool ScriptNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) 
 }
 
 PinType ScriptNodeTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes

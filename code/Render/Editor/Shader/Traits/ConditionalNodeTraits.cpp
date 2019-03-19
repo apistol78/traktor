@@ -40,6 +40,7 @@ bool ConditionalNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* n
 }
 
 PinType ConditionalNodeTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes

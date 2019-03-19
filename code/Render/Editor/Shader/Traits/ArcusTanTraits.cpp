@@ -21,6 +21,7 @@ bool ArcusTanTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) co
 }
 
 PinType ArcusTanTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes

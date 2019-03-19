@@ -23,6 +23,7 @@ bool SwizzleNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node)
 }
 
 PinType SwizzleNodeTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes

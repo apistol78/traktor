@@ -39,6 +39,7 @@ bool MixNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) con
 }
 
 PinType MixNodeTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes
