@@ -38,6 +38,7 @@ bool SwitchNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) 
 }
 
 PinType SwitchNodeTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes

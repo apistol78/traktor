@@ -1430,7 +1430,7 @@ Platform::Platform()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ReadStruct", 0, ReadStruct, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_ReadStruct_i[] = { { L"Buffer", false }, { L"Index", false }, { 0 } };
+const ImmutableNode::InputPinDesc c_ReadStruct_i[] = { { L"Struct", false }, { L"Index", false }, { 0 } };
 const ImmutableNode::OutputPinDesc c_ReadStruct_o[] = { { L"Output" }, { 0 } };
 
 ReadStruct::ReadStruct()
@@ -1768,9 +1768,9 @@ Struct::Struct()
 {
 }
 
-const std::wstring& Struct::getName() const
+const std::wstring& Struct::getParameterName() const
 {
-	return m_name;
+	return m_parameterName;
 }
 
 const AlignedVector< Struct::NamedElement >& Struct::getElements() const
@@ -1788,14 +1788,14 @@ DataType Struct::getElementType(const std::wstring& name) const
 
 std::wstring Struct::getInformation() const
 {
-	return m_name;
+	return m_parameterName;
 }
 
 void Struct::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
 
-	s >> Member< std::wstring >(L"name", m_name);
+	s >> Member< std::wstring >(L"parameterName", m_parameterName);
 	s >> MemberAlignedVector< NamedElement, MemberComposite< NamedElement > >(L"elements", m_elements);
 }
 
@@ -2147,7 +2147,7 @@ Type::Type()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", 1, Uniform, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Uniform_i[] = { { L"Initial", true }, { L"Struct", true }, { 0 } };
+const ImmutableNode::InputPinDesc c_Uniform_i[] = { { L"Initial", true }, { 0 } };
 const ImmutableNode::OutputPinDesc c_Uniform_o[] = { { L"Output" }, { 0 } };
 
 Uniform::Uniform(
@@ -2209,7 +2209,6 @@ void Uniform::serialize(ISerializer& s)
 		{ L"PtTexture2D", PtTexture2D },
 		{ L"PtTexture3D", PtTexture3D },
 		{ L"PtTextureCube", PtTextureCube },
-		{ L"PtStructBuffer", PtStructBuffer },
 		{ 0, 0 }
 	};
 

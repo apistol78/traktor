@@ -899,7 +899,7 @@ public:
 
 	Struct();
 
-	const std::wstring& getName() const;
+	const std::wstring& getParameterName() const;
 
 	const AlignedVector< NamedElement >& getElements() const;
 
@@ -910,7 +910,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	std::wstring m_name;
+	std::wstring m_parameterName;
 	AlignedVector< NamedElement > m_elements;
 
 };

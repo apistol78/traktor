@@ -38,6 +38,7 @@ bool SamplerNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node)
 }
 
 PinType SamplerNodeTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes

@@ -922,10 +922,6 @@ void ShaderGraphEditorPage::updateGraph()
 				ss << L"TextureCube";
 				break;
 
-			case PntStruct:
-				ss << L"Struct";
-				break;
-
 			case PntStructBuffer:
 				ss << L"StructBuffer";
 				break;

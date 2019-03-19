@@ -37,6 +37,7 @@ bool PolynomialNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* no
 }
 
 PinType PolynomialNodeTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes

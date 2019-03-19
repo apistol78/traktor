@@ -29,6 +29,7 @@ bool ConstantNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node
 }
 
 PinType ConstantNodeTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes
@@ -45,7 +46,7 @@ PinType ConstantNodeTraits::getOutputPinType(
 	else if (is_a< State >(node))
 		return PntState;
 	else if (is_a< Struct >(node))
-		return PntStruct;
+		return PntStructBuffer;
 	else if (is_a< Texture >(node))
 	{
 		const Texture* textureNode = checked_type_cast< const Texture*, false >(node);

@@ -21,6 +21,7 @@ bool ComputeNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node)
 }
 
 PinType ComputeNodeTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes

@@ -1103,26 +1103,20 @@ bool emitReadStruct(HlslContext& cx, ReadStruct* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 
-	HlslVariable* buffer = cx.emitInput(node, L"Buffer");
-	if (!buffer || buffer->getType() != HtStructBuffer)
+	HlslVariable* strct = cx.emitInput(node, L"Struct");
+	if (!strct || strct->getType() != HtStructBuffer)
 		return false;
 
-	const Uniform* uniform = dynamic_type_cast< const Uniform* >(buffer->getNode());
-	if (!uniform)
-		return false;
+	const Struct* sn = mandatory_non_null_type_cast< const Struct* >(strct->getNode());
 
-	const Struct* strct = dynamic_type_cast< const Struct* >(cx.getInputNode(uniform, L"Struct"));
-	if (!strct)
-		return false;
-
-	DataType type = strct->getElementType(node->getName());
+	DataType type = sn->getElementType(node->getName());
 
 	HlslVariable* index = cx.emitInput(node, L"Index");
 	if (!index)
 		return false;
 
 	HlslVariable* out = cx.emitOutput(node, L"Output", hlsl_from_data_type(type));
-	assign(cx, f, out) << buffer->getName() << L"[" << index->cast(HtFloat) << L"]." << node->getName() << L";" << Endl;
+	assign(cx, f, out) << strct->getName() << L"[" << index->cast(HtFloat) << L"]." << node->getName() << L";" << Endl;
 	return true;
 }
 
@@ -1660,7 +1654,11 @@ bool emitScript(HlslContext& cx, Script* node)
 		{
 			if (i > 0)
 				ss << L", ";
-			ss << hlsl_type_name(in[i]->getType(), false) << L" " << node->getInputPin(i)->getName();
+
+			if (in[i]->getType() != HtStructBuffer)
+				ss << hlsl_type_name(in[i]->getType(), false) << L" " << node->getInputPin(i)->getName();
+			else
+				ss << L"StructuredBuffer< SBufferData0 > " << node->getInputPin(i)->getName();
 		}
 		if (!in.empty())
 			ss << L", ";
@@ -1749,6 +1747,31 @@ bool emitStep(HlslContext& cx, Step* node)
 	HlslType type = std::max< HlslType >(in1->getType(), in2->getType());
 	HlslVariable* out = cx.emitOutput(node, L"Output", type);
 	assign(cx, f, out) << L"step(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
+	return true;
+}
+
+bool emitStruct(HlslContext& cx, Struct* node)
+{
+	HlslVariable* out = cx.getShader().createVariable(
+		node->findOutputPin(L"Output"),
+		node->getParameterName(),
+		HtStructBuffer
+	);
+
+	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+	if (uniforms.find(node->getParameterName()) == uniforms.end())
+	{
+		StringOutputStream& fs = cx.getShader().getOutputStream(HlslShader::BtStructs);
+		fs << L"struct SBufferData0" << Endl;
+		fs << L"{" << Endl;
+		for (const auto& element : node->getElements())
+			fs << L"\t" << hlsl_type_name(hlsl_from_data_type(element.type), false) << L" " << element.name << L";" << Endl;
+		fs << L"};" << Endl;
+		fs << Endl;
+		fs << L"StructuredBuffer< SBufferData0 > " << node->getParameterName() << L";" << Endl;
+
+		cx.getShader().addUniform(node->getParameterName());
+	}
 	return true;
 }
 
@@ -2178,23 +2201,6 @@ bool emitUniform(HlslContext& cx, Uniform* node)
 			case PtTextureCube:
 				fu << L"TextureCube " << node->getParameterName() << L";" << Endl;
 				break;
-
-			case PtStructBuffer:
-				{
-					const Struct* strct = dynamic_type_cast< const Struct* >(cx.getInputNode(node, L"Struct"));
-					if (!strct)
-						return false;
-
-					StringOutputStream& fs = cx.getShader().getOutputStream(HlslShader::BtStructs);
-					fs << L"struct " << strct->getName() << Endl;
-					fs << L"{" << Endl;
-					for (const auto& element : strct->getElements())
-						fs << L"\t" << hlsl_type_name(hlsl_from_data_type(element.type), false) << L" " << element.name << L";" << Endl;
-					fs << L"};" << Endl;
-
-					fu << L"StructuredBuffer< " << strct->getName() << L" > " << node->getParameterName() << L";" << Endl;
-				}
-				break;
 			}
 		}
 
@@ -2412,6 +2418,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
 	m_emitters[&type_of< Sqrt >()] = new EmitterCast< Sqrt >(emitSqrt);
 	m_emitters[&type_of< Step >()] = new EmitterCast< Step >(emitStep);
+	m_emitters[&type_of< Struct >()] = new EmitterCast< Struct >(emitStruct);
 	m_emitters[&type_of< Sub >()] = new EmitterCast< Sub >(emitSub);
 	m_emitters[&type_of< Sum >()] = new EmitterCast< Sum >(emitSum);
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);

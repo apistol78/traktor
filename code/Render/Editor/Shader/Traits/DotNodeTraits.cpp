@@ -21,6 +21,7 @@ bool DotNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) con
 }
 
 PinType DotNodeTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes

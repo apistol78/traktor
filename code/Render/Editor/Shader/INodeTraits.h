@@ -38,6 +38,7 @@ public:
 	/*! \brief Determine type of output pin from given types of all input pins.
 	 */
 	virtual PinType getOutputPinType(
+		const ShaderGraph* shaderGraph,
 		const Node* node,
 		const OutputPin* outputPin,
 		const PinType* inputPinTypes

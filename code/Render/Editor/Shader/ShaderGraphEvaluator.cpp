@@ -59,6 +59,7 @@ struct EvaluateVisitor
 			const OutputPin* outputPin = node->getOutputPin(i);
 
 			PinType outputPinType = nodeTraits->getOutputPinType(
+				shaderGraph,
 				node,
 				outputPin,
 				inputPinTypes.c_ptr()

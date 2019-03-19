@@ -58,6 +58,7 @@ bool MetaNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) co
 }
 
 PinType MetaNodeTraits::getOutputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* outputPin,
 	const PinType* inputPinTypes
