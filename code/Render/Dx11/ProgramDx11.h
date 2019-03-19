@@ -17,6 +17,7 @@ class ContextDx11;
 class ProgramResourceDx11;
 class ResourceCache;
 class StateCache;
+class StructBufferDx11;
 class HlslProgram;
 
 /*!
@@ -48,6 +49,8 @@ public:
 	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length) override final;
 
 	virtual void setTextureParameter(handle_t handle, ITexture* texture) override final;
+
+	virtual void setStructBufferParameter(handle_t handle, StructBuffer* structBuffer) override final;
 
 	virtual void setStencilReference(uint32_t stencilReference) override final;
 
@@ -120,7 +123,8 @@ private:
 	{
 		CBuffer cbuffer[3];
 		ComRefArray< ID3D11SamplerState > d3dSamplerStates;
-		AlignedVector< std::pair< UINT, uint32_t > > resourceIndices;
+		AlignedVector< std::pair< UINT, uint32_t > > textureResourceIndices;
+		AlignedVector< std::pair< UINT, uint32_t > > structBufferResourceIndices;
 	};
 
 	Ref< ContextDx11 > m_context;
@@ -137,7 +141,9 @@ private:
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
 	AlignedVector< float > m_parameterFloatArray;
 	RefArray< ITexture > m_parameterTextureArray;
+	RefArray< StructBufferDx11 > m_parameterStructBufferArray;
 	bool m_parameterTextureArrayDirty;
+	bool m_parameterStructBufferArrayDirty;
 
 #if defined(_DEBUG)
 	int32_t m_bindCount;

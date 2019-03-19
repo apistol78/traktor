@@ -1,6 +1,7 @@
 #include <cassert>
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/Editor/Hlsl/HlslShader.h"
+#include "Render/Editor/Shader/OutputPin.h"
 
 namespace traktor
 {
@@ -50,7 +51,7 @@ HlslVariable* HlslShader::createVariable(const OutputPin* outputPin, const std::
 {
 	T_ASSERT(!m_variables.empty());
 
-	HlslVariable* variable = new HlslVariable(variableName, type);
+	HlslVariable* variable = new HlslVariable(outputPin->getNode(), variableName, type);
 	m_variables.back().insert(std::make_pair(outputPin, variable));
 
 	return variable;
@@ -60,7 +61,7 @@ HlslVariable* HlslShader::createOuterVariable(const OutputPin* outputPin, const 
 {
 	T_ASSERT(!m_variables.empty());
 
-	HlslVariable* variable = new HlslVariable(variableName, type);
+	HlslVariable* variable = new HlslVariable(outputPin->getNode(), variableName, type);
 	m_variables.front().insert(std::make_pair(outputPin, variable));
 
 	return variable;
@@ -218,6 +219,13 @@ std::wstring HlslShader::getGeneratedShader()
 
 		ss << DecreaseIndent;
 		ss << L"};" << Endl;
+		ss << Endl;
+	}
+
+	std::wstring structsText = getOutputStream(BtStructs).str();
+	if (!structsText.empty())
+	{
+		ss << structsText;
 		ss << Endl;
 	}
 

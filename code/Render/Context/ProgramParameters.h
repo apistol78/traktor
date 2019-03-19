@@ -21,6 +21,7 @@ namespace traktor
 class IProgram;
 class ITexture;
 class RenderContext;
+class StructBuffer;
 
 /*! \brief Program parameter values.
  * \ingroup Render
@@ -55,6 +56,8 @@ public:
 	void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
 	void setTextureParameter(handle_t handle, ITexture* texture);
+
+	void setStructBufferParameter(handle_t handle, StructBuffer* structBuffer);
 
 	void setStencilReference(uint32_t stencilReference);
 

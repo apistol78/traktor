@@ -31,6 +31,8 @@ public:
 
 	virtual void setTextureParameter(handle_t handle, ITexture* texture) override final;
 
+	virtual void setStructBufferParameter(handle_t handle, StructBuffer* structBuffer) override final;
+
 	virtual void setStencilReference(uint32_t stencilReference) override final;
 
 	void verify();

@@ -2994,6 +2994,9 @@
       <second>Pow</second>
     </item>
     <item>
+    	<first>SHADERGRAPH_NODE_READSTRUCT</first>
+    	<second>Read struct</second>
+    <item>
       <first>SHADERGRAPH_NODE_RECIPSQRT</first>
       <second>Reciprocal square root</second>
     </item>
@@ -3041,6 +3044,10 @@
       <first>SHADERGRAPH_NODE_STEP</first>
       <second>Step</second>
     </item>
+    <item>
+    	<first>SHADERGRAPH_NODE_STRUCT</first>
+    	<second>Struct</second>
+    <item>
     <item>
       <first>SHADERGRAPH_NODE_SUB</first>
       <second>Sub</second>

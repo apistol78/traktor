@@ -208,16 +208,25 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		ss << L"out vec4 _gl_FragData_1;" << Endl;
 		ss << L"out vec4 _gl_FragData_2;" << Endl;
 		ss << L"out vec4 _gl_FragData_3;" << Endl;
+		ss << Endl;
 	}
 
-	ss << getOutputStream(BtUniform).str();
-	ss << Endl;
-	ss << getOutputStream(BtInput).str();
-	ss << Endl;
-	ss << getOutputStream(BtOutput).str();
-	ss << Endl;
-	ss << getOutputStream(BtScript).str();
-	ss << Endl;
+	std::wstring uniform = getOutputStream(BtUniform).str();
+	if (!uniform.empty())
+		ss << uniform << Endl;
+
+	std::wstring input = getOutputStream(BtInput).str();
+	if (!input.empty())
+		ss << input << Endl;
+
+	std::wstring output = getOutputStream(BtOutput).str();
+	if (!output.empty())
+		ss << output << Endl;
+
+	std::wstring script = getOutputStream(BtScript).str();
+	if (!script.empty())
+		ss << script << Endl;
+
 	ss << L"void main()" << Endl;
 	ss << L"{" << Endl;
 	ss << IncreaseIndent;

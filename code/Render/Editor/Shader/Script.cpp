@@ -53,6 +53,7 @@ public:
 			{ L"PtTexture2D", PtTexture2D },
 			{ L"PtTexture3D", PtTexture3D },
 			{ L"PtTextureCube", PtTextureCube },
+			{ L"PtStructBuffer", PtStructBuffer },
 			{ 0, 0 }
 		};
 
@@ -136,6 +137,7 @@ public:
 			{ L"PtTexture2D", PtTexture2D },
 			{ L"PtTexture3D", PtTexture3D },
 			{ L"PtTextureCube", PtTextureCube },
+			{ L"PtStructBuffer", PtStructBuffer },
 			{ 0, 0 }
 		};
 

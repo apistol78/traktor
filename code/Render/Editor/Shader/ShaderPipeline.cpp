@@ -2,6 +2,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Log/LogStreamTarget.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/WildCompare.h"
@@ -79,12 +80,12 @@ public:
 	{
 		Ref< const ShaderGraph > shaderGraph = m_pipeline->getObjectReadOnly< ShaderGraph >(fragmentGuid);
 		if (!shaderGraph)
-			return 0;
+			return nullptr;
 
 		if (ShaderGraphValidator(shaderGraph).validateIntegrity())
 			return shaderGraph;
 		else
-			return 0;
+			return nullptr;
 	}
 
 private:
@@ -108,8 +109,13 @@ struct BuildCombinationTask : public Object
 	bool validate;
 	bool result;
 
+	StringOutputStream errorLog;
+
 	void execute()
 	{
+		Ref< ILogTarget > localTarget = log::error.getLocalTarget();
+		log::error.setLocalTarget(new LogStreamTarget(&errorLog));
+
 		const std::map< std::wstring, uint32_t >& parameterBits = shaderResource->getParameterBits();
 
 		// Remap parameter mask and value for this combination as shader consist of multiple techniques.
@@ -133,6 +139,7 @@ struct BuildCombinationTask : public Object
 		if (!programGraph)
 		{
 			log::error << L"ShaderPipeline failed; unable to get type permutation of \"" << path << L"\"" << Endl;
+			log::error.setLocalTarget(localTarget);
 			return;
 		}
 
@@ -141,6 +148,7 @@ struct BuildCombinationTask : public Object
 		if (!programGraph)
 		{
 			log::error << L"ShaderPipeline failed; unable to perform constant folding of \"" << path << L"\"" << Endl;
+			log::error.setLocalTarget(localTarget);
 			return;
 		}
 
@@ -149,6 +157,7 @@ struct BuildCombinationTask : public Object
 		if (!programGraph)
 		{
 			log::error << L"ShaderPipeline failed; unable to resolve render state of \"" << path << L"\"" << Endl;
+			log::error.setLocalTarget(localTarget);
 			return;
 		}
 
@@ -157,6 +166,7 @@ struct BuildCombinationTask : public Object
 		if (!programGraph)
 		{
 			log::error << L"ShaderPipeline failed; unable to merge branches of \"" << path << L"\"" << Endl;
+			log::error.setLocalTarget(localTarget);
 			return;
 		}
 
@@ -165,6 +175,7 @@ struct BuildCombinationTask : public Object
 		if (!programGraph)
 		{
 			log::error << L"ShaderPipeline failed; unable to optimize shader graph \"" << path << L"\"" << Endl;
+			log::error.setLocalTarget(localTarget);
 			return;
 		}
 
@@ -173,6 +184,7 @@ struct BuildCombinationTask : public Object
 		if (!programGraph)
 		{
 			log::error << L"ShaderPipeline failed; unable to perform swizzle optimization of \"" << path << L"\"" << Endl;
+			log::error.setLocalTarget(localTarget);
 			return;
 		}
 
@@ -181,6 +193,7 @@ struct BuildCombinationTask : public Object
 		if (!programGraph)
 		{
 			log::error << L"ShaderPipeline failed; unable to cleanup redundant swizzles of \"" << path << L"\"" << Endl;
+			log::error.setLocalTarget(localTarget);
 			return;
 		}
 
@@ -211,6 +224,7 @@ struct BuildCombinationTask : public Object
 			else
 			{
 				log::error << L"ShaderPipeline failed; initial value of uniform must be constant" << Endl;
+				log::error.setLocalTarget(localTarget);
 				return;
 			}
 		}
@@ -260,6 +274,7 @@ struct BuildCombinationTask : public Object
 		if (!programResource)
 		{
 			log::error << L"ShaderPipeline failed; unable to compile shader \"" << path << L"\"" << Endl;
+			log::error.setLocalTarget(localTarget);
 			return;
 		}
 
@@ -268,12 +283,14 @@ struct BuildCombinationTask : public Object
 
 		shaderResourceCombination->program = programResource;
 		result = true;
+
+		log::error.setLocalTarget(localTarget);
 	}
 };
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 83, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 84, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)
@@ -531,8 +548,12 @@ bool ShaderPipeline::buildOutput(
 		if (!jobs.empty())
 		{
 			jobs[i]->wait();
-			jobs[i] = 0;
+			jobs[i] = nullptr;
 		}
+
+		if (!tasks[i]->errorLog.empty())
+			log::error << tasks[i]->errorLog.str() << Endl;
+
 		if (tasks[i]->result)
 		{
 			ShaderResource::Technique* technique = tasks[i]->shaderResourceTechnique;
@@ -548,7 +569,7 @@ bool ShaderPipeline::buildOutput(
 			++failed;
 
 		delete tasks[i]->shaderResourceCombination;
-		tasks[i] = 0;
+		tasks[i] = nullptr;
 	}
 
 	for (std::vector< ShaderResource::Technique* >::iterator i = shaderResourceTechniques.begin(); i != shaderResourceTechniques.end(); ++i)

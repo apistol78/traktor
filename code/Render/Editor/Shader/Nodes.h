@@ -726,6 +726,26 @@ public:
 	Platform();
 };
 
+/*! \brief Read [indexed] element from struct buffer. */
+class T_DLLCLASS ReadStruct : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	ReadStruct();
+
+	void setName(const std::wstring& name);
+
+	const std::wstring& getName() const;
+
+	virtual std::wstring getInformation() const override final;
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	std::wstring m_name;
+};
+
 /*! \brief Reflect vector. */
 class T_DLLCLASS Reflect : public ImmutableNode
 {
@@ -859,6 +879,40 @@ class T_DLLCLASS Step : public ImmutableNode
 
 public:
 	Step();
+};
+
+/*! \brief Define struct. */
+class T_DLLCLASS Struct : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	struct NamedElement
+	{
+		std::wstring name;
+		DataType type;
+
+		NamedElement();
+
+		void serialize(ISerializer& s);
+	};
+
+	Struct();
+
+	const std::wstring& getName() const;
+
+	const AlignedVector< NamedElement >& getElements() const;
+
+	DataType getElementType(const std::wstring& name) const;
+
+	virtual std::wstring getInformation() const override final;
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	std::wstring m_name;
+	AlignedVector< NamedElement > m_elements;
+
 };
 
 /*! \brief Subtract. */

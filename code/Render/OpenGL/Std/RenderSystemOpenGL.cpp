@@ -14,6 +14,7 @@
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
 #include "Render/OpenGL/Std/RenderViewOpenGL.h"
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
+#include "Render/OpenGL/Std/StructBufferOpenGL.h"
 #include "Render/OpenGL/Std/TimeQueryOpenGL.h"
 #include "Render/OpenGL/Std/VertexBufferDynamicVBO.h"
 #include "Render/OpenGL/Std/VertexBufferStaticVBO.h"
@@ -632,14 +633,14 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	HDC hDC = GetDC((HWND)desc.syswin.hWnd);
 	if (!hDC)
-		return 0;
+		return nullptr;
 
 	int pixelFormat = ChoosePixelFormat(hDC, &pfd);
 	if (!pixelFormat)
-		return 0;
+		return nullptr;
 
 	if (!SetPixelFormat(hDC, pixelFormat, &pfd))
-		return 0;
+		return nullptr;
 
 	const GLint attribs[] =
 	{
@@ -653,14 +654,14 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	if (!hRC)
 	{
 		log::error << L"createRenderView failed; unable to create WGL context" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	Ref< RenderContextOpenGL > context = new RenderContextOpenGL(m_resourceContext, (HWND)desc.syswin.hWnd, hDC, hRC);
 	context->enter();
 
 	if (glewInit() != GLEW_OK)
-		return 0;
+		return nullptr;
 
 	context->leave();
 
@@ -669,7 +670,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		return renderView;
 
 	context->destroy();
-	context = 0;
+	context = nullptr;
 
 #elif defined(__APPLE__)
 
@@ -681,7 +682,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		0
 	);
 	if (!glcontext)
-		return 0;
+		return nullptr;
 
 	Ref< RenderContextOpenGL > context = new RenderContextOpenGL(m_resourceContext, glcontext);
 
@@ -690,7 +691,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		return renderView;
 
 	context->destroy();
-	context = 0;
+	context = nullptr;
 
 #elif defined(__LINUX__)
 
@@ -709,14 +710,14 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	if (!fbc || nfbc <= 0)
 	{
 		log::error << L"Unable to create OpenGL renderer; No framebuffer configuration" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	XVisualInfo* vi = glXGetVisualFromFBConfig(m_display, fbc[0]);
 	if (!vi)
 	{
 		log::error << L"Unable to create OpenGL renderer; No visual information" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	static int contextAttribs[] =
@@ -730,14 +731,14 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	if (!glcontext)
 	{
 		log::error << L"Unable to create OpenGL renderer; glXCreateContextAttribsARB failed" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	Ref< RenderContextOpenGL > context = new RenderContextOpenGL(m_resourceContext, m_display, (::Window)desc.syswin.window, glcontext);
 	context->enter();
 
 	if (glewInit() != GLEW_OK)
-		return 0;
+		return nullptr;
 
 	context->leave();
 
@@ -746,11 +747,11 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		return renderView;
 
 	context->destroy();
-	context = 0;
+	context = nullptr;
 
 #endif
 
-	return 0;
+	return nullptr;
 }
 
 Ref< VertexBuffer > RenderSystemOpenGL::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
@@ -769,13 +770,19 @@ Ref< IndexBuffer > RenderSystemOpenGL::createIndexBuffer(IndexType indexType, ui
 	return new IndexBufferIBO(m_resourceContext, indexType, bufferSize, dynamic);
 }
 
+Ref< StructBuffer > RenderSystemOpenGL::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
+{
+	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
+	return new StructBufferOpenGL(m_resourceContext, structElements, bufferSize);
+}
+
 Ref< ISimpleTexture > RenderSystemOpenGL::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 
 	Ref< SimpleTextureOpenGL > texture = new SimpleTextureOpenGL(m_resourceContext);
 	if (!texture->create(desc))
-		return 0;
+		return nullptr;
 
 	return texture;
 }
@@ -786,7 +793,7 @@ Ref< ICubeTexture > RenderSystemOpenGL::createCubeTexture(const CubeTextureCreat
 
 	Ref< CubeTextureOpenGL > texture = new CubeTextureOpenGL(m_resourceContext);
 	if (!texture->create(desc))
-		return 0;
+		return nullptr;
 
 	return texture;
 }
@@ -797,7 +804,7 @@ Ref< IVolumeTexture > RenderSystemOpenGL::createVolumeTexture(const VolumeTextur
 
 	Ref< VolumeTextureOpenGL > texture = new VolumeTextureOpenGL(m_resourceContext);
 	if (!texture->create(desc))
-		return 0;
+		return nullptr;
 
 	return texture;
 }
@@ -808,7 +815,7 @@ Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTar
 
 	Ref< RenderTargetSetOpenGL > renderTargetSet = new RenderTargetSetOpenGL(m_resourceContext);
 	if (!renderTargetSet->create(desc))
-		return 0;
+		return nullptr;
 
 	return renderTargetSet;
 }

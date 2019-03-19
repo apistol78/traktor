@@ -160,7 +160,7 @@ void ClothEntity::render(
 	if (!m_shader->hasTechnique(worldRenderPass.getTechnique()))
 		return;
 
-	if (m_updateRequired || !m_vertexBuffer->isContentValid())
+	if (m_updateRequired)
 	{
 		ClothVertex* vertexFront = static_cast< ClothVertex* >(m_vertexBuffer->lock());
 		T_ASSERT(vertexFront);

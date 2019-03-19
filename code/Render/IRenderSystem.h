@@ -27,6 +27,8 @@ class ITimeQuery;
 class IVolumeTexture;
 class ProgramResource;
 class RenderTargetSet;
+class StructBuffer;
+class StructElement;
 class VertexBuffer;
 class VertexElement;
 
@@ -119,6 +121,13 @@ public:
 	 * \param dynamic If index buffer is frequently updated.
 	 */
 	virtual Ref< IndexBuffer > createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic) = 0;
+
+	/*! \brief Create structure buffer.
+	 *
+	 * \param vertexElements Structure element declaration.
+	 * \param bufferSize Size of vertex buffer in bytes.
+	 */
+	virtual Ref< StructBuffer > createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize) = 0;
 
 	/*! \brief Create simple, 2d, texture. */
 	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc) = 0;

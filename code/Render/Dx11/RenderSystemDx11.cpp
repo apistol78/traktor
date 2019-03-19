@@ -14,6 +14,7 @@
 #include "Render/Dx11/SharedBufferHeapDx11.h"
 #include "Render/Dx11/SimpleBufferHeapDx11.h"
 #include "Render/Dx11/SimpleTextureDx11.h"
+#include "Render/Dx11/StructBufferDx11.h"
 #include "Render/Dx11/TimeQueryDx11.h"
 #include "Render/Dx11/TypesDx11.h"
 #include "Render/Dx11/Utilities.h"
@@ -487,7 +488,7 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 	Ref< RenderViewDx11 > renderView = new RenderViewDx11(m_context, dxgiSwapChain);
 
 	if (!renderView->reset(scd.BufferDesc.Width, scd.BufferDesc.Height))
-		return 0;
+		return nullptr;
 
 	return renderView;
 }
@@ -510,6 +511,12 @@ Ref< IndexBuffer > RenderSystemDx11::createIndexBuffer(IndexType indexType, uint
 		return IndexBufferDynamicDx11::create(m_context, indexType, bufferSize);
 }
 
+Ref< StructBuffer > RenderSystemDx11::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
+{
+	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
+	return StructBufferDx11::create(m_context, structElements, bufferSize);
+}
+
 Ref< ISimpleTexture > RenderSystemDx11::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	T_ANONYMOUS_VAR(ConditionalAcquire< Semaphore >)(m_context->getLock(), m_resourceCreateLock);
@@ -517,7 +524,7 @@ Ref< ISimpleTexture > RenderSystemDx11::createSimpleTexture(const SimpleTextureC
 	if (texture->create(desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< ICubeTexture > RenderSystemDx11::createCubeTexture(const CubeTextureCreateDesc& desc)
@@ -527,7 +534,7 @@ Ref< ICubeTexture > RenderSystemDx11::createCubeTexture(const CubeTextureCreateD
 	if (texture->create(desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< IVolumeTexture > RenderSystemDx11::createVolumeTexture(const VolumeTextureCreateDesc& desc)
@@ -537,7 +544,7 @@ Ref< IVolumeTexture > RenderSystemDx11::createVolumeTexture(const VolumeTextureC
 	if (texture->create(desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< RenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
@@ -547,7 +554,7 @@ Ref< RenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTarge
 	if (renderTargetSet->create(desc))
 		return renderTargetSet;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< IProgram > RenderSystemDx11::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
@@ -556,11 +563,11 @@ Ref< IProgram > RenderSystemDx11::createProgram(const ProgramResource* programRe
 
 	Ref< const ProgramResourceDx11 > resource = dynamic_type_cast< const ProgramResourceDx11* >(programResource);
 	if (!resource)
-		return 0;
+		return nullptr;
 
 	Ref< ProgramDx11 > program = new ProgramDx11(m_context);
 	if (!program->create(m_context->getD3DDevice(), *m_resourceCache, resource))
-		return 0;
+		return nullptr;
 
 	return program;
 }
@@ -572,7 +579,7 @@ Ref< ITimeQuery > RenderSystemDx11::createTimeQuery() const
 	if (timeQuery->create())
 		return timeQuery;
 	else
-		return 0;
+		return nullptr;
 }
 
 void RenderSystemDx11::purge()

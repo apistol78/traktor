@@ -80,18 +80,18 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	struct TextureBindingDesc
+	struct ResourceBindingDesc
 	{
 		uint32_t bindPoint;
 		uint32_t parameterOffset;
 
-		TextureBindingDesc()
+		ResourceBindingDesc()
 		:	bindPoint(0)
 		,	parameterOffset(0)
 		{
 		}
 
-		TextureBindingDesc(uint32_t bindPoint_, uint32_t parameterOffset_)
+		ResourceBindingDesc(uint32_t bindPoint_, uint32_t parameterOffset_)
 		:	bindPoint(bindPoint_)
 		,	parameterOffset(parameterOffset_)
 		{
@@ -117,8 +117,11 @@ private:
 	CBufferDesc m_vertexCBuffers[3];
 	CBufferDesc m_pixelCBuffers[3];
 
-	std::vector< TextureBindingDesc > m_vertexTextureBindings;
-	std::vector< TextureBindingDesc > m_pixelTextureBindings;
+	std::vector< ResourceBindingDesc > m_vertexTextureBindings;
+	std::vector< ResourceBindingDesc > m_pixelTextureBindings;
+
+	std::vector< ResourceBindingDesc > m_vertexStructBufferBindings;
+	std::vector< ResourceBindingDesc > m_pixelStructBufferBindings;
 
 	std::vector< D3D11_SAMPLER_DESC > m_vertexSamplers;
 	std::vector< D3D11_SAMPLER_DESC > m_pixelSamplers;
@@ -126,6 +129,7 @@ private:
 	std::vector< ParameterDesc > m_parameters;
 	uint32_t m_parameterScalarSize;
 	uint32_t m_parameterTextureSize;
+	uint32_t m_parameterStructBufferSize;
 
 	D3D11_RASTERIZER_DESC m_d3dRasterizerDesc;
 	D3D11_DEPTH_STENCIL_DESC m_d3dDepthStencilDesc;

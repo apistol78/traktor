@@ -172,7 +172,6 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	// Create shader graph editor control.
 	m_editorGraph = new ui::GraphControl();
 	m_editorGraph->create(container);
-	m_editorGraph->addEventHandler< ui::MouseMoveEvent >(this, &ShaderGraphEditorPage::eventMouseMove);
 	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &ShaderGraphEditorPage::eventButtonDown);
 	m_editorGraph->addEventHandler< ui::SelectEvent >(this, &ShaderGraphEditorPage::eventSelect);
 	m_editorGraph->addEventHandler< ui::NodeMovedEvent >(this, &ShaderGraphEditorPage::eventNodeMoved);
@@ -858,24 +857,92 @@ void ShaderGraphEditorPage::updateGraph()
 	bool validationResult = ShaderGraphValidator(m_shaderGraph).validate(ShaderGraphValidator::SgtFragment, &errorNodes);
 
 	// Update validation indication of each node.
-	const RefArray< ui::Node >& editorNodes = m_editorGraph->getNodes();
-	for (RefArray< ui::Node >::const_iterator i = editorNodes.begin(); i != editorNodes.end(); ++i)
+	for (auto editorNode : m_editorGraph->getNodes())
 	{
-		Ref< Node > shaderNode = (*i)->getData< Node >(L"SHADERNODE");
+		Ref< Node > shaderNode = editorNode->getData< Node >(L"SHADERNODE");
 		T_ASSERT(shaderNode);
 
-		Ref< INodeFacade > nodeFacade = (*i)->getData< INodeFacade >(L"FACADE");
+		Ref< INodeFacade > nodeFacade = editorNode->getData< INodeFacade >(L"FACADE");
 		T_ASSERT(nodeFacade);
 
 		if (std::find(errorNodes.begin(), errorNodes.end(), shaderNode) != errorNodes.end())
-			nodeFacade->setValidationIndicator(*i, false);
+			nodeFacade->setValidationIndicator(editorNode, false);
 		else
-			nodeFacade->setValidationIndicator(*i, true);
+			nodeFacade->setValidationIndicator(editorNode, true);
 	}
 
 	// If validation succeeded then update generated shader as well.
 	if (validationResult)
 		m_shaderViewer->reflect(m_shaderGraph);
+
+	// Evaluate output types (and partial values) if validation succeeded.
+	if (validationResult)
+	{
+		for (auto editorEdge : m_editorGraph->getEdges())
+		{
+			Ref< Edge > shaderEdge = editorEdge->getData< Edge >(L"SHADEREDGE");
+			T_ASSERT(shaderEdge);
+
+			StringOutputStream ss;
+			Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(shaderEdge->getSource());
+			switch (value.getType())
+			{
+			case PntVoid:
+				break;
+
+			case PntScalar1:
+			case PntScalar2:
+			case PntScalar3:
+			case PntScalar4:
+				for (int32_t i = 0; i < value.getWidth(); ++i)
+				{
+					if (i > 0)
+						ss << L",";
+
+					if (value.isConst(i))
+						ss << value.getValue(i);
+					else
+						ss << L"X";
+				}
+				break;
+
+			case PntMatrix:
+				ss << L"Matrix";
+				break;
+
+			case PntTexture2D:
+				ss << L"Texture2d";
+				break;
+
+			case PntTexture3D:
+				ss << L"Texture3d";
+				break;
+
+			case PntTextureCube:
+				ss << L"TextureCube";
+				break;
+
+			case PntStruct:
+				ss << L"Struct";
+				break;
+
+			case PntStructBuffer:
+				ss << L"StructBuffer";
+				break;
+
+			case PntState:
+				ss << L"State";
+				break;
+			}
+
+			editorEdge->setText(ss.str());
+		}
+	}
+	else
+	{
+		for (auto editorEdge : m_editorGraph->getEdges())
+			editorEdge->setText(L"");
+	}
 
 	// Redraw editor graph.
 	m_editorGraph->update();
@@ -1004,69 +1071,6 @@ void ShaderGraphEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
 	handleCommand(command);
-}
-
-void ShaderGraphEditorPage::eventMouseMove(ui::MouseMoveEvent* event)
-{
-	ui::Pin* pin = m_editorGraph->getPinAt(event->getPosition());
-	if (pin)
-	{
-		ui::Node* node = pin->getNode();
-
-		Ref< Node > shaderNode = node->getData< Node >(L"SHADERNODE");
-		T_ASSERT(shaderNode);
-
-		const OutputPin* shaderOutputPin = shaderNode->findOutputPin(pin->getName());
-		if (!shaderOutputPin)
-			return;
-
-		StringOutputStream ss;
-		ss << L"[" << m_shaderGraph->getDestinationCount(shaderOutputPin) << L"] ";
-
-		Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(shaderOutputPin);
-		switch (value.getType())
-		{
-		case PntVoid:
-			ss << L"Variant";
-			break;
-
-		case PntScalar1:
-		case PntScalar2:
-		case PntScalar3:
-		case PntScalar4:
-			for (int32_t i = 0; i < value.getWidth(); ++i)
-			{
-				if (i > 0)
-					ss << L", ";
-
-				if (value.isConst(i))
-					ss << value.getValue(i);
-				else
-					ss << L"X";
-			}
-			break;
-
-		case PntMatrix:
-			ss << L"Matrix";
-			break;
-		case PntTexture2D:
-			ss << L"Texture2d";
-			break;
-		case PntTexture3D:
-			ss << L"Texture3d";
-			break;
-		case PntTextureCube:
-			ss << L"TextureCube";
-			break;
-		case PntState:
-			ss << L"State";
-			break;
-		}
-
-		m_editorGraph->showProbe(pin->getPosition() + m_editorGraph->getOffset() + ui::Size(8, -20), ss.str());
-	}
-	else
-		m_editorGraph->hideProbe();
 }
 
 void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)

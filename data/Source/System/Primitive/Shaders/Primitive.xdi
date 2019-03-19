@@ -18,7 +18,7 @@
 			<comment/>
 			<position>
 				<first>-646</first>
-				<second>89</second>
+				<second>88</second>
 			</position>
 			<name>Color</name>
 			<usage>DuColor</usage>
@@ -593,16 +593,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[17]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item"/>
 				<name>Output</name>
 			</source>
@@ -709,6 +699,16 @@
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

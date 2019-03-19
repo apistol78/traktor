@@ -102,8 +102,6 @@ private:
 
 	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 
-	void eventMouseMove(ui::MouseMoveEvent* event);
-
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
 
 	void eventSelect(ui::SelectEvent* event);

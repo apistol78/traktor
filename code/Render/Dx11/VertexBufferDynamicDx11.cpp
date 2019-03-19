@@ -140,7 +140,6 @@ void* VertexBufferDynamicDx11::lock(uint32_t vertexOffset, uint32_t vertexCount)
 void VertexBufferDynamicDx11::unlock()
 {
 	m_dirty = true;
-	setContentValid(true);
 }
 
 void VertexBufferDynamicDx11::prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache& stateCache)

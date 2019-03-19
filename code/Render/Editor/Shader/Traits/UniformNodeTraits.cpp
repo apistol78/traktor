@@ -66,6 +66,8 @@ PinType UniformNodeTraits::getOutputPinType(
 		return PntTexture3D;
 	case PtTextureCube:
 		return PntTextureCube;
+	case PtStructBuffer:
+		return PntStructBuffer;
 	default:
 		return PntVoid;
 	}
@@ -83,23 +85,32 @@ PinType UniformNodeTraits::getInputPinType(
 		return PntScalar1;
 	else if (const Uniform* uniformNode = dynamic_type_cast< const Uniform* >(node))
 	{
-		switch (uniformNode->getParameterType())
+		if (inputPin->getName() == L"Initial")
 		{
-		case PtScalar:
-			return PntScalar1;
-		case PtVector:
-			return PntScalar4;
-		case PtMatrix:
-			return PntMatrix;
-		case PtTexture2D:
-			return PntTexture2D;
-		case PtTexture3D:
-			return PntTexture3D;
-		case PtTextureCube:
-			return PntTextureCube;
-		default:
-			return PntVoid;
+			switch (uniformNode->getParameterType())
+			{
+			case PtScalar:
+				return PntScalar1;
+			case PtVector:
+				return PntScalar4;
+			case PtMatrix:
+				return PntMatrix;
+			case PtTexture2D:
+				return PntTexture2D;
+			case PtTexture3D:
+				return PntTexture3D;
+			case PtTextureCube:
+				return PntTextureCube;
+			case PtStructBuffer:
+				return PntStructBuffer;
+			default:
+				return PntVoid;
+			}
 		}
+		else if (inputPin->getName() == L"Struct")
+			return PntStruct;
+		else
+			return PntVoid;
 	}
 	else
 		return PntVoid;

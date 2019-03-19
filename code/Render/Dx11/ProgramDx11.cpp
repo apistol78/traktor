@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Matrix44.h"
@@ -14,6 +16,7 @@
 #include "Render/Dx11/ResourceCache.h"
 #include "Render/Dx11/SimpleTextureDx11.h"
 #include "Render/Dx11/StateCache.h"
+#include "Render/Dx11/StructBufferDx11.h"
 #include "Render/Dx11/VolumeTextureDx11.h"
 
 namespace traktor
@@ -62,6 +65,7 @@ ProgramDx11::ProgramDx11(ContextDx11* context)
 ,	m_stencilReference(0)
 ,	m_d3dVertexShaderHash(0)
 ,	m_parameterTextureArrayDirty(false)
+,	m_parameterStructBufferArrayDirty(false)
 #if defined(_DEBUG)
 ,	m_bindCount(0)
 #endif
@@ -119,30 +123,37 @@ bool ProgramDx11::create(
 				return false;
 
 			m_vertexState.cbuffer[i].parameterOffsets.reserve(resource->m_vertexCBuffers[i].parameters.size());
-			for (uint32_t j = 0; j < uint32_t(resource->m_vertexCBuffers[i].parameters.size()); ++j)
+			for (const auto& parameter : resource->m_vertexCBuffers[i].parameters)
 			{
 				m_vertexState.cbuffer[i].parameterOffsets.push_back(ParameterOffset(
-					resource->m_vertexCBuffers[i].parameters[j].cbufferOffset,
-					resource->m_vertexCBuffers[i].parameters[j].parameterOffset,
-					resource->m_vertexCBuffers[i].parameters[j].parameterCount
+					parameter.cbufferOffset,
+					parameter.parameterOffset,
+					parameter.parameterCount
 				));
 			}
 		}
 
-		for (uint32_t i = 0; i < uint32_t(resource->m_vertexTextureBindings.size()); ++i)
+		for (const auto& vertexTextureBinding : resource->m_vertexTextureBindings)
 		{
-			m_vertexState.resourceIndices.push_back(std::make_pair(
-				resource->m_vertexTextureBindings[i].bindPoint,
-				resource->m_vertexTextureBindings[i].parameterOffset
+			m_vertexState.textureResourceIndices.push_back(std::make_pair(
+				vertexTextureBinding.bindPoint,
+				vertexTextureBinding.parameterOffset
 			));
 		}
 
-		for (uint32_t i = 0; i < uint32_t(resource->m_vertexSamplers.size()); ++i)
+		for (const auto& vertexStructBufferBinding : resource->m_vertexStructBufferBindings)
 		{
-			ID3D11SamplerState* d3dSamplerState = resourceCache.getSamplerState(resource->m_vertexSamplers[i]);
+			m_vertexState.structBufferResourceIndices.push_back(std::make_pair(
+				vertexStructBufferBinding.bindPoint,
+				vertexStructBufferBinding.parameterOffset
+			));
+		}
+
+		for (const auto& vertexSampler : resource->m_vertexSamplers)
+		{
+			ID3D11SamplerState* d3dSamplerState = resourceCache.getSamplerState(vertexSampler);
 			if (!d3dSamplerState)
 				return false;
-
 			m_vertexState.d3dSamplerStates.push_back(d3dSamplerState);
 		}
 	}
@@ -165,30 +176,37 @@ bool ProgramDx11::create(
 				return false;
 
 			m_pixelState.cbuffer[i].parameterOffsets.reserve(resource->m_pixelCBuffers[i].parameters.size());
-			for (uint32_t j = 0; j < uint32_t(resource->m_pixelCBuffers[i].parameters.size()); ++j)
+			for (const auto& parameter : resource->m_pixelCBuffers[i].parameters)
 			{
 				m_pixelState.cbuffer[i].parameterOffsets.push_back(ParameterOffset(
-					resource->m_pixelCBuffers[i].parameters[j].cbufferOffset,
-					resource->m_pixelCBuffers[i].parameters[j].parameterOffset,
-					resource->m_pixelCBuffers[i].parameters[j].parameterCount
+					parameter.cbufferOffset,
+					parameter.parameterOffset,
+					parameter.parameterCount
 				));
 			}
 		}
 
-		for (uint32_t i = 0; i < uint32_t(resource->m_pixelTextureBindings.size()); ++i)
+		for (const auto& pixelTextureBinding : resource->m_pixelTextureBindings)
 		{
-			m_pixelState.resourceIndices.push_back(std::make_pair(
-				resource->m_pixelTextureBindings[i].bindPoint,
-				resource->m_pixelTextureBindings[i].parameterOffset
+			m_pixelState.textureResourceIndices.push_back(std::make_pair(
+				pixelTextureBinding.bindPoint,
+				pixelTextureBinding.parameterOffset
 			));
 		}
 
-		for (uint32_t i = 0; i < uint32_t(resource->m_pixelSamplers.size()); ++i)
+		for (const auto& pixelStructBufferBinding : resource->m_pixelStructBufferBindings)
 		{
-			ID3D11SamplerState* d3dSamplerState = resourceCache.getSamplerState(resource->m_pixelSamplers[i]);
+			m_pixelState.structBufferResourceIndices.push_back(std::make_pair(
+				pixelStructBufferBinding.bindPoint,
+				pixelStructBufferBinding.parameterOffset
+			));
+		}
+
+		for (const auto& pixelSampler : resource->m_pixelSamplers)
+		{
+			ID3D11SamplerState* d3dSamplerState = resourceCache.getSamplerState(pixelSampler);
 			if (!d3dSamplerState)
 				return false;
-
 			m_pixelState.d3dSamplerStates.push_back(d3dSamplerState);
 		}
 	}
@@ -206,6 +224,7 @@ bool ProgramDx11::create(
 
 	m_parameterFloatArray.resize(resource->m_parameterScalarSize, 0.0f);
 	m_parameterTextureArray.resize(resource->m_parameterTextureSize);
+	m_parameterStructBufferArray.resize(resource->m_parameterStructBufferSize);
 
 	// Create state objects.
 	m_d3dRasterizerState = resourceCache.getRasterizerState(resource->m_d3dRasterizerDesc);
@@ -241,7 +260,7 @@ void ProgramDx11::destroy()
 
 void ProgramDx11::setFloatParameter(handle_t handle, float param)
 {
-	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
+	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
 		if (storeIfNotEqual(&param, 1, &m_parameterFloatArray[i->second.offset]))
@@ -256,7 +275,7 @@ void ProgramDx11::setFloatParameter(handle_t handle, float param)
 
 void ProgramDx11::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
-	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
+	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
 		float* out = &m_parameterFloatArray[i->second.offset];
@@ -281,7 +300,7 @@ void ProgramDx11::setVectorParameter(handle_t handle, const Vector4& param)
 
 void ProgramDx11::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
+	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
 		T_FATAL_ASSERT (length * 4 <= i->second.count);
@@ -297,7 +316,7 @@ void ProgramDx11::setVectorArrayParameter(handle_t handle, const Vector4* param,
 
 void ProgramDx11::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
+	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
 		param.storeAligned(&m_parameterFloatArray[i->second.offset]);
@@ -310,7 +329,7 @@ void ProgramDx11::setMatrixParameter(handle_t handle, const Matrix44& param)
 
 void ProgramDx11::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
+	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
 		T_FATAL_ASSERT (length * 16 <= i->second.count);
@@ -325,11 +344,21 @@ void ProgramDx11::setMatrixArrayParameter(handle_t handle, const Matrix44* param
 
 void ProgramDx11::setTextureParameter(handle_t handle, ITexture* texture)
 {
-	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
+	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
 		m_parameterTextureArray[i->second.offset] = texture;
 		m_parameterTextureArrayDirty = true;
+	}
+}
+
+void ProgramDx11::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+{
+	auto i = m_parameterMap.find(handle);
+	if (i != m_parameterMap.end())
+	{
+		m_parameterStructBufferArray[i->second.offset] = checked_type_cast< StructBufferDx11* >(structBuffer);
+		m_parameterStructBufferArrayDirty = true;
 	}
 }
 
@@ -384,27 +413,17 @@ bool ProgramDx11::bind(
 		);
 
 	// Bind resource views.
-	if (m_parameterTextureArrayDirty || stateCache.getActiveProgram() != this)
+	if (m_parameterTextureArrayDirty || m_parameterStructBufferArrayDirty || stateCache.getActiveProgram() != this)
 	{
-		//// Unbind previous program's resources.
-		//if (stateCache.getActiveProgram() && stateCache.getActiveProgram() != this)
-		//{
-		//	ID3D11ShaderResourceView* res = 0;
-
-		//	for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = ms_activeProgram->m_vertexState.resourceIndices.begin(); i != ms_activeProgram->m_vertexState.resourceIndices.end(); ++i)
-		//		d3dDeviceContext->VSSetShaderResources(i->first, 1, &res);
-
-		//	for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = ms_activeProgram->m_pixelState.resourceIndices.begin(); i != ms_activeProgram->m_pixelState.resourceIndices.end(); ++i)
-		//		d3dDeviceContext->PSSetShaderResources(i->first, 1, &res);
-		//}
-
 		// Bind this program's resources.
-		if (!m_vertexState.resourceIndices.empty())
+		if (!m_vertexState.textureResourceIndices.empty() || !m_vertexState.structBufferResourceIndices.empty())
 		{
-			ID3D11ShaderResourceView* d3dVSTextureResourceViews[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-			for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = m_vertexState.resourceIndices.begin(); i != m_vertexState.resourceIndices.end(); ++i)
+			ID3D11ShaderResourceView* d3dVSResourceViews[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+			// Texture resource views.
+			for (const auto& resourceIndex : m_vertexState.textureResourceIndices)
 			{
-				ITexture* texture = m_parameterTextureArray[i->second];
+				ITexture* texture = m_parameterTextureArray[resourceIndex.second];
 				if (!texture)
 					continue;
 
@@ -426,17 +445,28 @@ bool ProgramDx11::bind(
 				else
 					continue;
 
-				d3dVSTextureResourceViews[i->first] = d3dTextureResourceView;
+				d3dVSResourceViews[resourceIndex.first] = d3dTextureResourceView;
 			}
-			d3dDeviceContext->VSSetShaderResources(0, sizeof_array(d3dVSTextureResourceViews), d3dVSTextureResourceViews);
+
+			// Struct buffer resource views.
+			for (const auto& resourceIndex : m_vertexState.structBufferResourceIndices)
+			{
+				StructBufferDx11* structBuffer = m_parameterStructBufferArray[resourceIndex.second];
+				if (structBuffer)
+					d3dVSResourceViews[resourceIndex.first] = structBuffer->getD3D11ShaderResourceView();
+			}
+
+			d3dDeviceContext->VSSetShaderResources(0, sizeof_array(d3dVSResourceViews), d3dVSResourceViews);
 		}
 
-		if (!m_pixelState.resourceIndices.empty())
+		if (!m_pixelState.textureResourceIndices.empty() || !m_pixelState.structBufferResourceIndices.empty())
 		{
-			ID3D11ShaderResourceView* d3dPSTextureResourceViews[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-			for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = m_pixelState.resourceIndices.begin(); i != m_pixelState.resourceIndices.end(); ++i)
+			ID3D11ShaderResourceView* d3dPSResourceViews[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+			// Texture resource views.
+			for (const auto& resourceIndex : m_pixelState.textureResourceIndices)
 			{
-				ITexture* texture = m_parameterTextureArray[i->second];
+				ITexture* texture = m_parameterTextureArray[resourceIndex.second];
 				if (!texture)
 					continue;
 
@@ -458,12 +488,22 @@ bool ProgramDx11::bind(
 				else
 					continue;
 
-				d3dPSTextureResourceViews[i->first] = d3dTextureResourceView;
+				d3dPSResourceViews[resourceIndex.first] = d3dTextureResourceView;
 			}
-			d3dDeviceContext->PSSetShaderResources(0, sizeof_array(d3dPSTextureResourceViews), d3dPSTextureResourceViews);
+			
+			// Struct buffer resource views.
+			for (const auto& resourceIndex : m_pixelState.structBufferResourceIndices)
+			{
+				StructBufferDx11* structBuffer = m_parameterStructBufferArray[resourceIndex.second];
+				if (structBuffer)
+					d3dPSResourceViews[resourceIndex.first] = structBuffer->getD3D11ShaderResourceView();
+			}
+
+			d3dDeviceContext->PSSetShaderResources(0, sizeof_array(d3dPSResourceViews), d3dPSResourceViews);
 		}
 
 		m_parameterTextureArrayDirty = false;
+		m_parameterStructBufferArrayDirty = false;
 	}
 
 	stateCache.setVertexShader(m_d3dVertexShader);
@@ -474,7 +514,6 @@ bool ProgramDx11::bind(
 #if defined(_DEBUG)
 	++m_bindCount;
 #endif
-
 	return true;
 }
 
@@ -498,12 +537,12 @@ bool ProgramDx11::updateStateConstants(ID3D11DeviceContext* d3dDeviceContext, St
 		uint8_t* mapped = (uint8_t*)dm.pData;
 		if (mapped)
 		{
-			for (AlignedVector< ParameterOffset >::const_iterator j = state.cbuffer[i].parameterOffsets.begin(); j != state.cbuffer[i].parameterOffsets.end(); ++j)
+			for (const auto& parameterOffset : state.cbuffer[i].parameterOffsets)
 			{
 				std::memcpy(
-					&mapped[j->constant],
-					&m_parameterFloatArray[j->offset],
-					j->count * sizeof(float)
+					&mapped[parameterOffset.constant],
+					&m_parameterFloatArray[parameterOffset.offset],
+					parameterOffset.count * sizeof(float)
 				);
 			}
 		}

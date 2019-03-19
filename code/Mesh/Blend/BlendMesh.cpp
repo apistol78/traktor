@@ -202,8 +202,8 @@ void BlendMesh::render(
 	{
 		bool update = true;
 		if (
-			(instance->mesh->getVertexBuffer() && instance->mesh->getVertexBuffer()->isContentValid()) &&
-			(blendWeights.size() == instance->weights.size())
+			instance->mesh->getVertexBuffer() != nullptr &&
+			blendWeights.size() == instance->weights.size()
 		)
 		{
 			T_ASSERT(instance->count > 0);
@@ -270,10 +270,7 @@ void BlendMesh::render(
 		}
 	}
 
-	if (
-		!instance->mesh->getVertexBuffer() ||
-		!instance->mesh->getVertexBuffer()->isContentValid()
-	)
+	if (!instance->mesh->getVertexBuffer())
 		return;
 
 	// Render mesh.

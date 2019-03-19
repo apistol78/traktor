@@ -62,8 +62,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PrimitiveRenderer", PrimitiveRenderer, O
 PrimitiveRenderer::PrimitiveRenderer()
 :	m_currentFrame(0)
 ,	m_viewNearZ(1.0f)
-,	m_vertexHead(0)
-,	m_vertexTail(0)
+,	m_vertexHead(nullptr)
+,	m_vertexTail(nullptr)
 {
 	s_handleProjection = getParameterHandle(L"Projection");
 	s_handleDepthTest = getParameterHandle(L"DepthTest");
@@ -89,9 +89,9 @@ bool PrimitiveRenderer::create(
 )
 {
 	if (!resourceManager->bind(shader, m_shader))
-		return 0;
+		return false;
 	if (!resourceManager->bind(c_idFontTexture, m_fontTexture))
-		return 0;
+		return false;
 
 	m_renderSystem = renderSystem;
 	m_frames.resize(frameCount);
@@ -105,14 +105,14 @@ bool PrimitiveRenderer::create(
 
 void PrimitiveRenderer::destroy()
 {
-	for (RefArray< VertexBuffer >::iterator i = m_freeVertexBuffers.begin(); i != m_freeVertexBuffers.end(); ++i)
-		(*i)->destroy();
+	for (auto vertexBuffer : m_freeVertexBuffers)
+		vertexBuffer->destroy();
 	m_freeVertexBuffers.clear();
 
-	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
+	for (auto& frame : m_frames)
 	{
-		for (RefArray< VertexBuffer >::iterator j = i->vertexBuffers.begin(); j != i->vertexBuffers.end(); ++j)
-			(*j)->destroy();
+		for (auto vertexBuffer : frame.vertexBuffers)
+			vertexBuffer->destroy();
 	}
 	m_frames.clear();
 }
@@ -141,7 +141,7 @@ void PrimitiveRenderer::end(uint32_t frame)
 	{
 		m_currentFrame->vertexBuffers.back()->unlock();
 		m_vertexHead =
-		m_vertexTail = 0;
+		m_vertexTail = nullptr;
 	}
 
 	m_currentFrame = 0;
@@ -155,23 +155,23 @@ void PrimitiveRenderer::render(IRenderView* renderView, uint32_t frame)
 {
 	Frame& f = m_frames[frame];
 
-	for (AlignedVector< Batch >::iterator i = f.batches.begin(); i != f.batches.end(); ++i)
+	for (const auto& batch : f.batches)
 	{
-		m_shader->setCombination(s_handleDepthTest, i->depthState.depthTest);
-		m_shader->setCombination(s_handleDepthWrite, i->depthState.depthWrite);
-		m_shader->setCombination(s_handleDepth, i->depthState.depthOutput);
-		m_shader->setCombination(s_handleTexture, i->texture != 0);
+		m_shader->setCombination(s_handleDepthTest, batch.depthState.depthTest);
+		m_shader->setCombination(s_handleDepthWrite, batch.depthState.depthWrite);
+		m_shader->setCombination(s_handleDepth, batch.depthState.depthOutput);
+		m_shader->setCombination(s_handleTexture, batch.texture != nullptr);
 
-		m_shader->setMatrixParameter(s_handleProjection, f.projections[i->projection]);
+		m_shader->setMatrixParameter(s_handleProjection, f.projections[batch.projection]);
 
-		if (i->texture)
-			m_shader->setTextureParameter(s_handleTexture, i->texture);
+		if (batch.texture)
+			m_shader->setTextureParameter(s_handleTexture, batch.texture);
 
 		m_shader->draw(
 			renderView,
-			i->vertexBuffer,
-			0,
-			i->primitives
+			batch.vertexBuffer,
+			nullptr,
+			batch.primitives
 		);
 	}
 
@@ -1073,7 +1073,7 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 
 	uint32_t vertexCount = primitiveCount * c_primitiveMul[primitiveType];
 	if (!vertexCount)
-		return 0;
+		return nullptr;
 
 	// Check if enough room is available in current vertex buffer.
 	if (m_vertexHead)
@@ -1084,7 +1084,7 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 			// Not enough room, finish of current vertex buffer.
 			m_currentFrame->vertexBuffers.back()->unlock();
 			m_vertexHead =
-			m_vertexTail = 0;
+			m_vertexTail = nullptr;
 		}
 	}
 
@@ -1101,7 +1101,7 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 
 			Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(vertexElements, c_bufferCount * sizeof(Vertex), true);
 			if (!vertexBuffer)
-				return 0;
+				return nullptr;
 
 			m_freeVertexBuffers.push_back(vertexBuffer);
 		}
@@ -1115,7 +1115,7 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 		m_vertexHead =
 		m_vertexTail = (Vertex*)vertexBuffer->lock();
 		if (!m_vertexHead)
-			return 0;
+			return nullptr;
 
 		// Place buffer last in frame's used list.
 		m_currentFrame->vertexBuffers.push_back(vertexBuffer);

@@ -7,12 +7,14 @@ namespace traktor
 	{
 
 HlslVariable::HlslVariable()
-:	m_type(HtVoid)
+:	m_node(nullptr)
+,	m_type(HtVoid)
 {
 }
 
-HlslVariable::HlslVariable(const std::wstring& name, HlslType type)
-:	m_name(name)
+HlslVariable::HlslVariable(const Node* node, const std::wstring& name, HlslType type)
+:	m_node(node)
+,	m_name(name)
 ,	m_type(type)
 {
 }

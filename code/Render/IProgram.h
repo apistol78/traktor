@@ -22,6 +22,7 @@ class Matrix44;
 	{
 
 class ITexture;
+class StructBuffer;
 
 /*! \brief Shader program
  * \ingroup Render
@@ -46,6 +47,8 @@ public:
 	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length) = 0;
 
 	virtual void setTextureParameter(handle_t handle, ITexture* texture) = 0;
+
+	virtual void setStructBufferParameter(handle_t handle, StructBuffer* structBuffer) = 0;
 
 	virtual void setStencilReference(uint32_t stencilReference) = 0;
 };

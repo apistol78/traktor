@@ -142,6 +142,7 @@ ProgramResourceDx11::ProgramResourceDx11()
 ,	m_pixelShaderHash(0)
 ,	m_parameterScalarSize(0)
 ,	m_parameterTextureSize(0)
+,	m_parameterStructBufferSize(0)
 ,	m_stencilReference(0)
 {
 	std::memset(&m_d3dRasterizerDesc, 0, sizeof(m_d3dRasterizerDesc));
@@ -160,8 +161,11 @@ void ProgramResourceDx11::serialize(ISerializer& s)
 	s >> MemberStaticArray< CBufferDesc, 3, MemberComposite< CBufferDesc > >(L"vertexCBuffers", m_vertexCBuffers);
 	s >> MemberStaticArray< CBufferDesc, 3, MemberComposite< CBufferDesc > >(L"pixelCBuffers", m_pixelCBuffers);
 
-	s >> MemberStlVector< TextureBindingDesc, MemberComposite< TextureBindingDesc > >(L"vertexTextureBindings", m_vertexTextureBindings);
-	s >> MemberStlVector< TextureBindingDesc, MemberComposite< TextureBindingDesc > >(L"pixelTextureBindings", m_pixelTextureBindings);
+	s >> MemberStlVector< ResourceBindingDesc, MemberComposite< ResourceBindingDesc > >(L"vertexTextureBindings", m_vertexTextureBindings);
+	s >> MemberStlVector< ResourceBindingDesc, MemberComposite< ResourceBindingDesc > >(L"pixelTextureBindings", m_pixelTextureBindings);
+
+	s >> MemberStlVector< ResourceBindingDesc, MemberComposite< ResourceBindingDesc > >(L"vertexStructBufferBindings", m_vertexStructBufferBindings);
+	s >> MemberStlVector< ResourceBindingDesc, MemberComposite< ResourceBindingDesc > >(L"pixelStructBufferBindings", m_pixelStructBufferBindings);
 
 	s >> MemberStlVector< D3D11_SAMPLER_DESC, MemberD3D11_SAMPLER_DESC >(L"vertexSamplers", m_vertexSamplers);
 	s >> MemberStlVector< D3D11_SAMPLER_DESC, MemberD3D11_SAMPLER_DESC >(L"pixelSamplers", m_pixelSamplers);
@@ -169,6 +173,7 @@ void ProgramResourceDx11::serialize(ISerializer& s)
 	s >> MemberStlVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
 	s >> Member< uint32_t >(L"parameterScalarSize", m_parameterScalarSize);
 	s >> Member< uint32_t >(L"parameterTextureSize", m_parameterTextureSize);
+	s >> Member< uint32_t >(L"parameterStructBufferSize", m_parameterStructBufferSize);
 
 	s >> MemberD3D11_RASTERIZER_DESC(L"d3dRasterizerDesc", m_d3dRasterizerDesc);
 	s >> MemberD3D11_DEPTH_STENCIL_DESC(L"d3dDepthStencilDesc", m_d3dDepthStencilDesc);
@@ -196,7 +201,7 @@ void ProgramResourceDx11::CBufferDesc::serialize(ISerializer& s)
 	s >> MemberStlVector< ParameterMappingDesc, MemberComposite< ParameterMappingDesc > >(L"parameters", parameters);
 }
 
-void ProgramResourceDx11::TextureBindingDesc::serialize(ISerializer& s)
+void ProgramResourceDx11::ResourceBindingDesc::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"bindPoint", bindPoint);
 	s >> Member< uint32_t >(L"parameterOffset", parameterOffset);

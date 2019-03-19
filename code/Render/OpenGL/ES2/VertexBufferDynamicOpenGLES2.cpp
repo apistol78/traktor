@@ -206,7 +206,6 @@ void* VertexBufferDynamicOpenGLES2::lock(uint32_t vertexOffset, uint32_t vertexC
 void VertexBufferDynamicOpenGLES2::unlock()
 {
 	m_dirty = true;
-	setContentValid(true);
 }
 
 void VertexBufferDynamicOpenGLES2::activate(StateCache* stateCache)

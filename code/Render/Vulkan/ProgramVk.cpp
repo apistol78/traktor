@@ -356,6 +356,11 @@ void ProgramVk::setTextureParameter(handle_t handle, ITexture* texture)
 {
 }
 
+void ProgramVk::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+{
+	T_FATAL_ERROR;
+}
+
 void ProgramVk::setStencilReference(uint32_t stencilReference)
 {
 }

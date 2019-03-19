@@ -7,12 +7,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBuffer", IndexBuffer, Object)
 
-IndexBuffer::IndexBuffer(IndexType indexType, uint32_t bufferSize)
-:	m_indexType(indexType)
-,	m_bufferSize(bufferSize)
-{
-}
-
 IndexType IndexBuffer::getIndexType() const
 {
 	return m_indexType;
@@ -21,6 +15,12 @@ IndexType IndexBuffer::getIndexType() const
 uint32_t IndexBuffer::getBufferSize() const
 {
 	return m_bufferSize;
+}
+
+IndexBuffer::IndexBuffer(IndexType indexType, uint32_t bufferSize)
+:	m_indexType(indexType)
+,	m_bufferSize(bufferSize)
+{
 }
 
 	}

@@ -253,8 +253,6 @@ void VertexBufferDynamicVBO::unlock()
 	m_lock = 0;
 	m_dirty = true;
 	m_attributeHash = 0;
-
-	setContentValid(true);
 }
 
 void VertexBufferDynamicVBO::activate(RenderContextOpenGL* renderContext, const GLint* attributeLocs, uint32_t attributeHash)
