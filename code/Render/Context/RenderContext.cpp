@@ -52,7 +52,7 @@ RenderContext::~RenderContext()
 	m_heap.release();
 }
 
-void* RenderContext::alloc(int blockSize)
+void* RenderContext::alloc(uint32_t blockSize)
 {
 	if (m_heapPtr + blockSize >= m_heapEnd)
 		T_FATAL_ERROR;
@@ -63,10 +63,10 @@ void* RenderContext::alloc(int blockSize)
 	return ptr;
 }
 
-void* RenderContext::alloc(int blockSize, int align)
+void* RenderContext::alloc(uint32_t blockSize, uint32_t align)
 {
 	T_ASSERT(align > 0);
-	m_heapPtr = reinterpret_cast< uint8_t* >((size_t(m_heapPtr) + (align - 1)) & ~(align - 1));
+	m_heapPtr = alignUp(m_heapPtr, align);
 	return alloc(blockSize);
 }
 
