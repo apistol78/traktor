@@ -116,10 +116,6 @@ public:
 
 	Pin* getPinAt(const Point& p) const;
 
-	void showProbe(const Point& p, const std::wstring& text);
-
-	void hideProbe();
-
 	void setPaintSettings(const PaintSettings* paintSettings);
 
 	const PaintSettings* getPaintSettings() const;
@@ -145,6 +141,7 @@ public:
 private:
 	Ref< const PaintSettings > m_paintSettings;
 	Ref< IBitmap > m_imageBackground;
+	Ref< IBitmap > m_imageLabel;
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;
 	float m_scale;
@@ -152,8 +149,6 @@ private:
 	Point m_cursor;
 	Point m_moveOrigin;
 	Point m_edgeOrigin;
-	Point m_probeAt;
-	std::wstring m_probeText;
 	int m_mode;
 	bool m_moveAll;
 	bool m_moveSelected;

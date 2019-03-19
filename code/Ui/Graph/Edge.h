@@ -19,6 +19,7 @@ namespace traktor
 	{
 
 class GraphCanvas;
+class IBitmap;
 class PaintSettings;
 class Pin;
 class Size;
@@ -53,7 +54,7 @@ public:
 
 	bool hit(const PaintSettings* paintSettings, const Point& p) const;
 
-	void paint(GraphCanvas* canvas, const Size& offset) const;
+	void paint(GraphCanvas* canvas, const Size& offset, IBitmap* imageLabel) const;
 
 private:
 	Ref< Pin > m_source;

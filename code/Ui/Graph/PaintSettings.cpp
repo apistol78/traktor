@@ -11,7 +11,7 @@ PaintSettings::PaintSettings(const ui::Font& font)
 :	m_font(font.getFace(), font.getSize(), false, false, false)
 ,	m_fontBold(font.getFace(), font.getSize(), true, false, false)
 ,	m_fontUnderline(font.getFace(), font.getSize(), false, false, true)
-,	m_fontProbe(font.getFace(), font.getSize(), false, false, false)
+,	m_fontLabel(font.getFace(), font.getSize() / 2, false, false, false)
 {
 	m_gridBackground = Color4ub(220, 220, 220);
 	m_nodeShadow = Color4ub(100, 100, 100);
@@ -59,14 +59,14 @@ const ui::Font& PaintSettings::getFontUnderline() const
 	return m_fontUnderline;
 }
 
-void PaintSettings::setFontProbe(const ui::Font& fontProbe)
+void PaintSettings::setFontLabel(const ui::Font& fontLabel)
 {
-	m_fontProbe = fontProbe;
+	m_fontLabel = fontLabel;
 }
 
-const ui::Font& PaintSettings::getFontProbe() const
+const ui::Font& PaintSettings::getFontLabel() const
 {
-	return m_fontProbe;
+	return m_fontLabel;
 }
 
 void PaintSettings::setGridBackground(const Color4ub& gridBackground)

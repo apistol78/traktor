@@ -109,6 +109,7 @@ bool GraphControl::create(Widget* parent, int style)
 
 	m_paintSettings = new PaintSettings(getFont());
 	m_imageBackground = new ui::StyleBitmap(L"UI.Graph.Background");
+	m_imageLabel = new ui::StyleBitmap(L"UI.Graph.Label");
 
 	addEventHandler< MouseButtonDownEvent >(this, &GraphControl::eventMouseDown);
 	addEventHandler< MouseButtonUpEvent >(this, &GraphControl::eventMouseUp);
@@ -286,22 +287,6 @@ Pin* GraphControl::getPinAt(const Point& p) const
 			return pin;
 	}
 	return 0;
-}
-
-void GraphControl::showProbe(const Point& p, const std::wstring& text)
-{
-	m_probeAt = p;
-	m_probeText = text;
-	update();
-}
-
-void GraphControl::hideProbe()
-{
-	if (!m_probeText.empty())
-	{
-		m_probeText.clear();
-		update();
-	}
 }
 
 void GraphControl::setPaintSettings(const PaintSettings* paintSettings)
@@ -1013,14 +998,11 @@ void GraphControl::eventPaint(PaintEvent* event)
 		m_scale
 	);
 
-	// Also prepare scaled canvas.
-	graphCanvas.setFont(m_paintSettings->getFont());
-
 	// Draw edges.
 	for (auto edge : m_edges)
 	{
 		if (!edge->isSelected())
-			edge->paint(&graphCanvas, m_offset);
+			edge->paint(&graphCanvas, m_offset, m_imageLabel);
 	}
 
 	// Node shapes.
@@ -1035,16 +1017,8 @@ void GraphControl::eventPaint(PaintEvent* event)
 	for (auto edge : m_edges)
 	{
 		if (edge->isSelected())
-			edge->paint(&graphCanvas, m_offset);
+			edge->paint(&graphCanvas, m_offset, m_imageLabel);
 	}
-
-	// Draw probe.
-	//if (!m_probeText.empty())
-	//{
-	//	graphCanvas.setForeground(Color4ub(64, 255, 64, 200));
-	//	graphCanvas.setFont(m_paintSettings->getFontProbe());
-	//	graphCanvas.drawText(m_probeAt, m_probeText);
-	//}
 
 	// Edge cursor.
 	if (m_mode == MdConnectEdge || m_mode == MdDrawEdge)

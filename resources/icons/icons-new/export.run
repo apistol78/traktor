@@ -4,6 +4,16 @@ import(traktor.drawing)
 local outputs =
 {
 	{
+		source = "Label.svg",
+		name = "UI_Graph_Label",
+		path = "../../runtime/themes/%s/Images/UI/Graph",
+		resources =
+		{
+			{ name = "Label", column = 0, row = 0, width = 2, height = 1, base = 12 }, -- , base = 16*96/45 },
+		}
+	},
+
+	{
 		source = "Pin.svg",
 		name = "UI_Graph_Pin",
 		path = "../../runtime/themes/%s/Images/UI/Graph",
