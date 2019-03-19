@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Matrix44.h"
@@ -112,7 +110,7 @@ bool ProgramDx11::create(
 			if (!resource->m_vertexCBuffers[i].size)
 				continue;
 
-			dbd.ByteWidth = resource->m_vertexCBuffers[i].size;
+			dbd.ByteWidth = alignUp(resource->m_vertexCBuffers[i].size, 16);
 			dbd.Usage = D3D11_USAGE_DYNAMIC;
 			dbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 			dbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -165,7 +163,7 @@ bool ProgramDx11::create(
 			if (!resource->m_pixelCBuffers[i].size)
 				continue;
 
-			dbd.ByteWidth = resource->m_pixelCBuffers[i].size;
+			dbd.ByteWidth = alignUp(resource->m_pixelCBuffers[i].size, 16);
 			dbd.Usage = D3D11_USAGE_DYNAMIC;
 			dbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 			dbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
