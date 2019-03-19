@@ -35,6 +35,7 @@ public:
 		BtCBufferOnce,
 		BtCBufferFrame,
 		BtCBufferDraw,
+		BtStructs,
 		BtTextures,
 		BtSamplers,
 		BtInput,

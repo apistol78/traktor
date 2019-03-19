@@ -15,6 +15,7 @@ TypeInfoSet ConstantNodeTraits::getNodeTypes() const
 	typeSet.insert< Instance >();
 	typeSet.insert< Scalar >();
 	typeSet.insert< State >();
+	typeSet.insert< Struct >();
 	typeSet.insert< TargetSize >();
 	typeSet.insert< Texture >();
 	typeSet.insert< TextureSize >();
@@ -43,6 +44,8 @@ PinType ConstantNodeTraits::getOutputPinType(
 		return PntScalar1;
 	else if (is_a< State >(node))
 		return PntState;
+	else if (is_a< Struct >(node))
+		return PntStruct;
 	else if (is_a< Texture >(node))
 	{
 		const Texture* textureNode = checked_type_cast< const Texture*, false >(node);

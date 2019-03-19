@@ -9,6 +9,8 @@ namespace traktor
 	namespace render
 	{
 
+class Node;
+
 /*!
  * \ingroup DX11
  */
@@ -17,17 +19,18 @@ class HlslVariable : public Object
 public:
 	HlslVariable();
 
-	HlslVariable(const std::wstring& name, HlslType type);
+	HlslVariable(const Node* node, const std::wstring& name, HlslType type);
+
+	const Node* getNode() const { return m_node; }
 
 	const std::wstring& getName() const { return m_name; }
-
-	void setType(HlslType type) { m_type = type; }
 
 	HlslType getType() const { return m_type; }
 
 	std::wstring cast(HlslType to) const;
 
 private:
+	const Node* m_node;
 	std::wstring m_name;
 	HlslType m_type;
 };

@@ -4,8 +4,10 @@
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberEnum.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberBitMask.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Render/ITexture.h"
 #include "Render/Editor/Shader/Nodes.h"
@@ -1426,6 +1428,40 @@ Platform::Platform()
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ReadStruct", 0, ReadStruct, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_ReadStruct_i[] = { { L"Buffer", false }, { L"Index", false }, { 0 } };
+const ImmutableNode::OutputPinDesc c_ReadStruct_o[] = { { L"Output" }, { 0 } };
+
+ReadStruct::ReadStruct()
+:	ImmutableNode(c_ReadStruct_i, c_ReadStruct_o)
+{
+}
+
+void ReadStruct::setName(const std::wstring& name)
+{
+	m_name = name;
+}
+
+const std::wstring& ReadStruct::getName() const
+{
+	return m_name;
+}
+
+std::wstring ReadStruct::getInformation() const
+{
+	return m_name;
+}
+
+void ReadStruct::serialize(ISerializer& s)
+{
+	ImmutableNode::serialize(s);
+
+	s >> Member< std::wstring >(L"name", m_name);
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Polynomial", 0, Polynomial, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Polynomial_i[] = { { L"X", false }, { L"Coefficients", false }, { 0 } };
@@ -1719,6 +1755,76 @@ const ImmutableNode::OutputPinDesc c_Step_o[] = { { L"Output" }, { 0 } };
 Step::Step()
 :	ImmutableNode(c_Step_i, c_Step_o)
 {
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Struct", 0, Struct, ImmutableNode)
+
+const ImmutableNode::OutputPinDesc c_Struct_o[] = { { L"Output" }, { 0 } };
+
+Struct::Struct()
+:	ImmutableNode(nullptr, c_Struct_o)
+{
+}
+
+const std::wstring& Struct::getName() const
+{
+	return m_name;
+}
+
+const AlignedVector< Struct::NamedElement >& Struct::getElements() const
+{
+	return m_elements;
+}
+
+DataType Struct::getElementType(const std::wstring& name) const
+{
+	auto it = std::find_if(m_elements.begin(), m_elements.end(), [&](const auto& elm) {
+		return elm.name == name;
+	});
+	return it != m_elements.end() ? it->type : DtFloat1;
+}
+
+std::wstring Struct::getInformation() const
+{
+	return m_name;
+}
+
+void Struct::serialize(ISerializer& s)
+{
+	ImmutableNode::serialize(s);
+
+	s >> Member< std::wstring >(L"name", m_name);
+	s >> MemberAlignedVector< NamedElement, MemberComposite< NamedElement > >(L"elements", m_elements);
+}
+
+Struct::NamedElement::NamedElement()
+:	type(DtFloat1)
+{
+}
+
+void Struct::NamedElement::serialize(ISerializer& s)
+{
+	const MemberEnum< DataType >::Key kDataType[] =
+	{
+		{ L"DtFloat1", DtFloat1 },
+		{ L"DtFloat2", DtFloat2 },
+		{ L"DtFloat3", DtFloat3 },
+		{ L"DtFloat4", DtFloat4 },
+		{ L"DtByte4", DtByte4 },
+		{ L"DtByte4N", DtByte4N },
+		{ L"DtShort2", DtShort2 },
+		{ L"DtShort4", DtShort4 },
+		{ L"DtShort2N", DtShort2N },
+		{ L"DtShort4N", DtShort4N },
+		{ L"DtHalf2", DtHalf2 },
+		{ L"DtHalf4", DtHalf4 },
+		{ 0, 0 }
+	};
+
+	s >> Member< std::wstring >(L"name", name);
+	s >> MemberEnum< DataType >(L"type", type, kDataType);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -2041,7 +2147,7 @@ Type::Type()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", 1, Uniform, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Uniform_i[] = { { L"Initial", true }, { 0 } };
+const ImmutableNode::InputPinDesc c_Uniform_i[] = { { L"Initial", true }, { L"Struct", true }, { 0 } };
 const ImmutableNode::OutputPinDesc c_Uniform_o[] = { { L"Output" }, { 0 } };
 
 Uniform::Uniform(
@@ -2103,6 +2209,7 @@ void Uniform::serialize(ISerializer& s)
 		{ L"PtTexture2D", PtTexture2D },
 		{ L"PtTexture3D", PtTexture3D },
 		{ L"PtTextureCube", PtTextureCube },
+		{ L"PtStructBuffer", PtStructBuffer },
 		{ 0, 0 }
 	};
 

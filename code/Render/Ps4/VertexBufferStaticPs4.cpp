@@ -40,7 +40,6 @@ void* VertexBufferStaticPs4::lock(uint32_t vertexOffset, uint32_t vertexCount)
 
 void VertexBufferStaticPs4::unlock()
 {
-	setContentValid(true);
 }
 
 void VertexBufferStaticPs4::prepare()

@@ -261,7 +261,7 @@ void ProgramOpenGL::setFloatParameter(handle_t handle, float param)
 
 void ProgramOpenGL::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
-	SmallMap< handle_t, uint32_t >::const_iterator i = m_parameterMap.find(handle);
+	auto i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 
@@ -279,7 +279,7 @@ void ProgramOpenGL::setVectorParameter(handle_t handle, const Vector4& param)
 
 void ProgramOpenGL::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	SmallMap< handle_t, uint32_t >::const_iterator i = m_parameterMap.find(handle);
+	auto i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 
@@ -297,7 +297,7 @@ void ProgramOpenGL::setMatrixParameter(handle_t handle, const Matrix44& param)
 
 void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	SmallMap< handle_t, uint32_t >::const_iterator i = m_parameterMap.find(handle);
+	auto i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 
@@ -310,12 +310,17 @@ void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* par
 
 void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 {
-	SmallMap< handle_t, uint32_t >::const_iterator i = m_parameterMap.find(handle);
+	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
 		m_textures[i->second] = texture;
 		m_textureDirty = true;
 	}
+}
+
+void ProgramOpenGL::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+{
+	T_FATAL_ERROR;
 }
 
 void ProgramOpenGL::setStencilReference(uint32_t stencilReference)
@@ -521,7 +526,6 @@ bool ProgramOpenGL::activateCompute(RenderContextOpenGL* renderContext)
 			const ITextureBinding* tb = getTextureBinding(resolved);
 			T_ASSERT(tb);
 
-			// T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 			tb->bindImage(unit);
 		}
 
@@ -599,9 +603,9 @@ ProgramOpenGL::ProgramOpenGL(ResourceContextOpenGL* resourceContext, GLuint prog
 	// Get target size parameter.
 	m_locationTargetSize = glGetUniformLocation(m_program, "_gl_targetSize");
 
-	const std::vector< std::wstring >& textures = resourceOpenGL->getTextures();
-	const std::vector< SamplerBindingOpenGL >& samplers = resourceOpenGL->getSamplers();
-	const std::vector< NamedUniformType >& uniforms = resourceOpenGL->getUniforms();
+	const auto& textures = resourceOpenGL->getTextures();
+	const auto& samplers = resourceOpenGL->getSamplers();
+	const auto& uniforms = resourceOpenGL->getUniforms();
 
 	// Map texture parameters.
 	for (const auto& texture : textures)

@@ -1,3 +1,4 @@
+#include "Render/StructElement.h"
 #include "Render/VertexElement.h"
 #include "Render/Capture/CubeTextureCapture.h"
 #include "Render/Capture/Error.h"
@@ -102,6 +103,20 @@ Ref< IndexBuffer > RenderSystemCapture::createIndexBuffer(IndexType indexType, u
 		return nullptr;
 
 	return new IndexBufferCapture(indexBuffer, indexType, bufferSize);
+}
+
+Ref< StructBuffer > RenderSystemCapture::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
+{
+	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid structure buffer size.");
+
+	uint32_t structSize = getStructSize(structElements);
+	T_CAPTURE_ASSERT(bufferSize % structSize == 0, L"Invalid struct buffer size, is not aligned with size of struct.");
+
+	Ref< StructBuffer > structBuffer = m_renderSystem->createStructBuffer(structElements, bufferSize);
+	if (!structBuffer)
+		return nullptr;
+
+	return nullptr; // new StructBufferCapture(structBuffer, bufferSize, structSize);	
 }
 
 Ref< ISimpleTexture > RenderSystemCapture::createSimpleTexture(const SimpleTextureCreateDesc& desc)

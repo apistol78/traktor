@@ -103,7 +103,8 @@ HlslType hlsl_from_parameter_type(ParameterType type)
 		HtFloat4x4,
 		HtTexture2D,
 		HtTexture3D,
-		HtTextureCube
+		HtTextureCube,
+		HtStructBuffer
 	};
 	T_ASSERT(type < sizeof_array(c));
 	return c[type];

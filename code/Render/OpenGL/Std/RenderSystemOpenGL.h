@@ -59,6 +59,8 @@ public:
 
 	virtual Ref< IndexBuffer > createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic) override final;
 
+	virtual Ref< StructBuffer > createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize) override final;
+
 	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc) override final;
 
 	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc) override final;

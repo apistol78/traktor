@@ -55,6 +55,11 @@ void ProgramPs4::setTextureParameter(handle_t handle, ITexture* texture)
 {
 }
 
+void ProgramPs4::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+{
+	T_FATAL_ERROR;
+}
+
 void ProgramPs4::setStencilReference(uint32_t stencilReference)
 {
 }

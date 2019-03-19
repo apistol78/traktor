@@ -27,8 +27,6 @@ class T_DLLCLASS IndexBuffer : public Object
 	T_RTTI_CLASS;
 
 public:
-	IndexBuffer(IndexType indexType, uint32_t bufferSize);
-
 	IndexType getIndexType() const;
 
 	uint32_t getBufferSize() const;
@@ -38,6 +36,9 @@ public:
 	virtual void* lock() = 0;
 
 	virtual void unlock() = 0;
+
+protected:
+	IndexBuffer(IndexType indexType, uint32_t bufferSize);
 
 private:
 	IndexType m_indexType;

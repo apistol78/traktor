@@ -464,6 +464,11 @@ void ProgramPs3::setTextureParameter(handle_t handle, ITexture* texture)
 	m_dirty |= DfTexture;
 }
 
+void ProgramPs3::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+{
+	T_FATAL_ERROR;
+}
+
 void ProgramPs3::setStencilReference(uint32_t stencilReference)
 {
 	m_renderState.stencilRef = stencilReference;

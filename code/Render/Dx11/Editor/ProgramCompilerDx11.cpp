@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/Adler32.h"
@@ -105,12 +107,12 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 	if (!s_D3DCompile2 || !s_D3DReflect)
 	{
 		log::error << L"Cannot compile due to missing D3D compiler symbols." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	HlslProgram hlslProgram;
 	if (!Hlsl().generate(shaderGraph, hlslProgram))
-		return 0;
+		return nullptr;
 
 	optimize = clamp< int32_t >(optimize, 0, sizeof_array(c_optimizationFlags));
 
@@ -142,7 +144,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 			log::error << mbstows((LPCSTR)d3dErrorMsgs->GetBufferPointer()) << Endl;
 		log::error << Endl;
 		FormatMultipleLines(log::error, hlslProgram.getVertexShader());
-		return 0;
+		return nullptr;
 	}
 
 	hr = (*s_D3DCompile2)(
@@ -168,7 +170,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 			log::error << mbstows((LPCSTR)d3dErrorMsgs->GetBufferPointer()) << Endl;
 		log::error << Endl;
 		FormatMultipleLines(log::error, hlslProgram.getPixelShader());
-		return 0;
+		return nullptr;
 	}
 
 	// Create our program resource container.
@@ -179,6 +181,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 	std::map< std::wstring, ProgramResourceDx11::ParameterDesc > parameterMap;
 	uint32_t parameterScalarOffset = 0;
 	uint32_t parameterTextureOffset = 0;
+	uint32_t parameterStructBufferOffset = 0;
 
 	// Extract parameters and samplers from vertex shader.
 	{
@@ -201,7 +204,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 		if (FAILED(hr))
 		{
 			log::error << L"Failed to reflect vertex shader, hr = " << int32_t(hr) << Endl;
-			return 0;
+			return nullptr;
 		}
 
 		d3dShaderReflection->GetDesc(&dsd);
@@ -257,7 +260,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 					if (it->second.count != (dsvd.Size >> 2))
 					{
 						log::error << L"Mismatching parameter size \"" << name << L"\" in vertex shader." << Endl;
-						return 0;
+						return nullptr;
 					}
 
 					resource->m_vertexCBuffers[i].parameters.push_back(ProgramResourceDx11::ParameterMappingDesc(
@@ -279,7 +282,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 
 				std::wstring name = mbstows(dsibd.Name);
 
-				std::map< std::wstring, ProgramResourceDx11::ParameterDesc >::iterator it = parameterMap.find(name);
+				auto it = parameterMap.find(name);
 				if (it == parameterMap.end())
 				{
 					uint32_t resourceIndex = parameterTextureOffset;
@@ -289,7 +292,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 					pd.offset = resourceIndex;
 					pd.count = 0;
 
-					resource->m_vertexTextureBindings.push_back(ProgramResourceDx11::TextureBindingDesc(
+					resource->m_vertexTextureBindings.push_back(ProgramResourceDx11::ResourceBindingDesc(
 						dsibd.BindPoint,
 						resourceIndex
 					));
@@ -300,7 +303,40 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 				{
 					uint32_t resourceIndex = it->second.offset;
 
-					resource->m_vertexTextureBindings.push_back(ProgramResourceDx11::TextureBindingDesc(
+					resource->m_vertexTextureBindings.push_back(ProgramResourceDx11::ResourceBindingDesc(
+						dsibd.BindPoint,
+						resourceIndex
+					));
+				}
+			}
+			else if (dsibd.Type == D3D11_SIT_STRUCTURED)
+			{
+				T_ASSERT(dsibd.BindCount == 1);
+
+				std::wstring name = mbstows(dsibd.Name);
+
+				auto it = parameterMap.find(name);
+				if (it == parameterMap.end())
+				{
+					uint32_t resourceIndex = parameterStructBufferOffset;
+
+					ProgramResourceDx11::ParameterDesc& pd = parameterMap[name];
+					pd.name = name;
+					pd.offset = resourceIndex;
+					pd.count = 0;
+
+					resource->m_vertexStructBufferBindings.push_back(ProgramResourceDx11::ResourceBindingDesc(
+						dsibd.BindPoint,
+						resourceIndex
+					));
+
+					++parameterStructBufferOffset;
+				}
+				else
+				{
+					uint32_t resourceIndex = it->second.offset;
+
+					resource->m_vertexStructBufferBindings.push_back(ProgramResourceDx11::ResourceBindingDesc(
 						dsibd.BindPoint,
 						resourceIndex
 					));
@@ -310,12 +346,12 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 			{
 				std::wstring name = mbstows(dsibd.Name);
 
-				const std::map< std::wstring, D3D11_SAMPLER_DESC >& samplers = hlslProgram.getD3DVertexSamplers();
-				std::map< std::wstring, D3D11_SAMPLER_DESC >::const_iterator it = samplers.find(name);
+				const auto& samplers = hlslProgram.getD3DVertexSamplers();
+				auto it = samplers.find(name);
 				if (it == samplers.end())
 				{
 					log::error << L"Unknown sampler \"" << name << L"\" referenced in vertex." << Endl;
-					return 0;
+					return nullptr;
 				}
 
 				resource->m_vertexSamplers.push_back(it->second);
@@ -344,7 +380,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 		if (FAILED(hr))
 		{
 			log::error << L"Failed to reflect pixel shader, hr = " << int32_t(hr) << Endl;
-			return 0;
+			return nullptr;
 		}
 
 		d3dShaderReflection->GetDesc(&dsd);
@@ -422,7 +458,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 
 				std::wstring name = mbstows(dsibd.Name);
 
-				std::map< std::wstring, ProgramResourceDx11::ParameterDesc >::iterator it = parameterMap.find(name);
+				auto it = parameterMap.find(name);
 				if (it == parameterMap.end())
 				{
 					uint32_t resourceIndex = parameterTextureOffset;
@@ -432,7 +468,7 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 					pd.offset = resourceIndex;
 					pd.count = 0;
 
-					resource->m_pixelTextureBindings.push_back(ProgramResourceDx11::TextureBindingDesc(
+					resource->m_pixelTextureBindings.push_back(ProgramResourceDx11::ResourceBindingDesc(
 						dsibd.BindPoint,
 						resourceIndex
 					));
@@ -443,7 +479,40 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 				{
 					uint32_t resourceIndex = it->second.offset;
 
-					resource->m_pixelTextureBindings.push_back(ProgramResourceDx11::TextureBindingDesc(
+					resource->m_pixelTextureBindings.push_back(ProgramResourceDx11::ResourceBindingDesc(
+						dsibd.BindPoint,
+						resourceIndex
+					));
+				}
+			}
+			else if (dsibd.Type == D3D11_SIT_STRUCTURED)
+			{
+				T_ASSERT(dsibd.BindCount == 1);
+
+				std::wstring name = mbstows(dsibd.Name);
+
+				auto it = parameterMap.find(name);
+				if (it == parameterMap.end())
+				{
+					uint32_t resourceIndex = parameterStructBufferOffset;
+
+					ProgramResourceDx11::ParameterDesc& pd = parameterMap[name];
+					pd.name = name;
+					pd.offset = resourceIndex;
+					pd.count = 0;
+
+					resource->m_pixelStructBufferBindings.push_back(ProgramResourceDx11::ResourceBindingDesc(
+						dsibd.BindPoint,
+						resourceIndex
+					));
+
+					++parameterStructBufferOffset;
+				}
+				else
+				{
+					uint32_t resourceIndex = it->second.offset;
+
+					resource->m_pixelStructBufferBindings.push_back(ProgramResourceDx11::ResourceBindingDesc(
 						dsibd.BindPoint,
 						resourceIndex
 					));
@@ -453,12 +522,12 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 			{
 				std::wstring name = mbstows(dsibd.Name);
 
-				const std::map< std::wstring, D3D11_SAMPLER_DESC >& samplers = hlslProgram.getD3DPixelSamplers();
-				std::map< std::wstring, D3D11_SAMPLER_DESC >::const_iterator it = samplers.find(name);
+				const auto& samplers = hlslProgram.getD3DPixelSamplers();
+				auto it = samplers.find(name);
 				if (it == samplers.end())
 				{
 					log::error << L"Unknown sampler \"" << name << L"\" referenced in pixel shader." << Endl;
-					return 0;
+					return nullptr;
 				}
 
 				resource->m_pixelSamplers.push_back(it->second);
@@ -467,11 +536,12 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 	}
 
 	// Insert parameters into resource.
-	for (std::map< std::wstring, ProgramResourceDx11::ParameterDesc >::const_iterator i = parameterMap.begin(); i != parameterMap.end(); ++i)
-		resource->m_parameters.push_back(i->second);
+	for (const auto& pm : parameterMap)
+		resource->m_parameters.push_back(pm.second);
 
 	resource->m_parameterScalarSize = parameterScalarOffset;
 	resource->m_parameterTextureSize = parameterTextureOffset;
+	resource->m_parameterStructBufferSize = parameterStructBufferOffset;
 
 	// Calculate vertex shader hash.
 	{

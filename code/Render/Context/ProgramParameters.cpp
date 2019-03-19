@@ -39,9 +39,9 @@ inline void write< Matrix44 >(uint8_t*& writePtr, const Matrix44& value)
 }
 
 template < typename Type >
-inline void write(uint8_t*& writePtr, const Type* valueArray, int length)
+inline void write(uint8_t*& writePtr, const Type* valueArray, int32_t length)
 {
-	for (int i = 0; i < length; ++i)
+	for (int32_t i = 0; i < length; ++i)
 	{
 		*reinterpret_cast< Type* >(writePtr) = valueArray[i];
 		writePtr += sizeof(Type);
@@ -49,9 +49,9 @@ inline void write(uint8_t*& writePtr, const Type* valueArray, int length)
 }
 
 template < >
-inline void write< Vector4 >(uint8_t*& writePtr, const Vector4* valueArray, int length)
+inline void write< Vector4 >(uint8_t*& writePtr, const Vector4* valueArray, int32_t length)
 {
-	for (int i = 0; i < length; ++i)
+	for (int32_t i = 0; i < length; ++i)
 	{
 		valueArray[i].storeAligned(reinterpret_cast< float* >(writePtr));
 		writePtr += sizeof(Vector4);
@@ -59,9 +59,9 @@ inline void write< Vector4 >(uint8_t*& writePtr, const Vector4* valueArray, int 
 }
 
 template < >
-inline void write< Matrix44 >(uint8_t*& writePtr, const Matrix44* valueArray, int length)
+inline void write< Matrix44 >(uint8_t*& writePtr, const Matrix44* valueArray, int32_t length)
 {
-	for (int i = 0; i < length; ++i)
+	for (int32_t i = 0; i < length; ++i)
 	{
 		valueArray[i].storeAligned(reinterpret_cast< float* >(writePtr));
 		writePtr += sizeof(Matrix44);
@@ -76,7 +76,7 @@ inline const Type& read(uint8_t*& readPtr)
 }
 
 template < typename Type >
-inline const Type* read(uint8_t*& readPtr, int length)
+inline const Type* read(uint8_t*& readPtr, int32_t length)
 {
 	uint8_t* valuePtr = readPtr; readPtr += length * sizeof(Type);
 	return reinterpret_cast< Type* >(valuePtr);
@@ -91,6 +91,7 @@ enum ParameterTypes
 	PmtMatrix,
 	PmtMatrixArray,
 	PmtTexture,
+	PmtStructBuffer,
 	PmtStencilReference
 };
 
@@ -127,7 +128,7 @@ void ProgramParameters::setFloatParameter(handle_t handle, float param)
 	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
-	write< int >(m_parameterLast, PmtFloat);
+	write< int8_t >(m_parameterLast, PmtFloat);
 	write< float >(m_parameterLast, param);
 }
 
@@ -136,8 +137,8 @@ void ProgramParameters::setFloatArrayParameter(handle_t handle, const float* par
 	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
-	write< int >(m_parameterLast, PmtFloatArray);
-	write< int >(m_parameterLast, length);
+	write< int8_t >(m_parameterLast, PmtFloatArray);
+	write< int32_t >(m_parameterLast, length);
 	write< float >(m_parameterLast, param, length);
 }
 
@@ -146,7 +147,7 @@ void ProgramParameters::setVectorParameter(handle_t handle, const Vector4& param
 	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
-	write< int >(m_parameterLast, PmtVector);
+	write< int8_t >(m_parameterLast, PmtVector);
 	align< Vector4 >(m_parameterLast);
 	write< Vector4 >(m_parameterLast, param);
 }
@@ -156,8 +157,8 @@ void ProgramParameters::setVectorArrayParameter(handle_t handle, const Vector4* 
 	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
-	write< int >(m_parameterLast, PmtVectorArray);
-	write< int >(m_parameterLast, length);
+	write< int8_t >(m_parameterLast, PmtVectorArray);
+	write< int32_t >(m_parameterLast, length);
 	align< Vector4 >(m_parameterLast);
 	write< Vector4 >(m_parameterLast, param, length);
 }
@@ -167,7 +168,7 @@ void ProgramParameters::setMatrixParameter(handle_t handle, const Matrix44& para
 	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
-	write< int >(m_parameterLast, PmtMatrix);
+	write< int8_t >(m_parameterLast, PmtMatrix);
 	align< Matrix44 >(m_parameterLast);
 	write< Matrix44 >(m_parameterLast, param);
 }
@@ -177,8 +178,8 @@ void ProgramParameters::setMatrixArrayParameter(handle_t handle, const Matrix44*
 	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
-	write< int >(m_parameterLast, PmtMatrixArray);
-	write< int >(m_parameterLast, length);
+	write< int8_t >(m_parameterLast, PmtMatrixArray);
+	write< int32_t >(m_parameterLast, length);
 	align< Matrix44 >(m_parameterLast);
 	write< Matrix44 >(m_parameterLast, param, length);
 }
@@ -188,8 +189,17 @@ void ProgramParameters::setTextureParameter(handle_t handle, ITexture* texture)
 	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
-	write< int >(m_parameterLast, PmtTexture);
+	write< int8_t >(m_parameterLast, PmtTexture);
 	write< ITexture* >(m_parameterLast, texture);
+}
+
+void ProgramParameters::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+{
+	T_ASSERT(m_parameterLast);
+	align< handle_t >(m_parameterLast);
+	write< handle_t >(m_parameterLast, handle);
+	write< int8_t >(m_parameterLast, PmtStructBuffer);
+	write< StructBuffer* >(m_parameterLast, structBuffer);
 }
 
 void ProgramParameters::setStencilReference(uint32_t stencilReference)
@@ -197,20 +207,19 @@ void ProgramParameters::setStencilReference(uint32_t stencilReference)
 	T_ASSERT(m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, 0);
-	write< int >(m_parameterLast, PmtStencilReference);
+	write< int8_t >(m_parameterLast, PmtStencilReference);
 	write< uint32_t >(m_parameterLast, stencilReference);
 }
 
 void ProgramParameters::fixup(IProgram* program) const
 {
 	T_ASSERT(program);
-
 	for (uint8_t* parameter = m_parameterFirst; parameter < m_parameterLast; )
 	{
 		align< handle_t >(parameter);
 
 		handle_t handle = read< handle_t >(parameter);
-		int type = read< int >(parameter);
+		auto type = read< int8_t >(parameter);
 
 		switch (type)
 		{
@@ -220,7 +229,7 @@ void ProgramParameters::fixup(IProgram* program) const
 
 		case PmtFloatArray:
 			{
-				int length = read< int >(parameter);
+				auto length = read< int32_t >(parameter);
 				program->setFloatArrayParameter(handle, read< float >(parameter, length), length);
 			}
 			break;
@@ -232,7 +241,7 @@ void ProgramParameters::fixup(IProgram* program) const
 
 		case PmtVectorArray:
 			{
-				int length = read< int >(parameter);
+				auto length = read< int32_t >(parameter);
 				align< Vector4 >(parameter);
 				program->setVectorArrayParameter(handle, read< Vector4 >(parameter, length), length);
 			}
@@ -245,7 +254,7 @@ void ProgramParameters::fixup(IProgram* program) const
 
 		case PmtMatrixArray:
 			{
-				int length = read< int >(parameter);
+				auto length = read< int32_t >(parameter);
 				align< Matrix44 >(parameter);
 				program->setMatrixArrayParameter(handle, read< Matrix44 >(parameter, length), length);
 			}
@@ -253,8 +262,15 @@ void ProgramParameters::fixup(IProgram* program) const
 
 		case PmtTexture:
 			{
-				ITexture* texture = read< ITexture* >(parameter);
+				auto texture = read< ITexture* >(parameter);
 				program->setTextureParameter(handle, texture);
+			}
+			break;
+
+		case PmtStructBuffer:
+			{
+				auto structBuffer = read< StructBuffer* >(parameter);
+				program->setStructBufferParameter(handle, structBuffer);
 			}
 			break;
 

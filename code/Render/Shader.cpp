@@ -112,6 +112,12 @@ void Shader::setTextureParameter(handle_t handle, ITexture* texture)
 		m_currentProgram->setTextureParameter(handle, texture);
 }
 
+void Shader::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+{
+	if (m_currentProgram)
+		m_currentProgram->setStructBufferParameter(handle, structBuffer);
+}
+
 void Shader::setStencilReference(uint32_t stencilReference)
 {
 	if (m_currentProgram)

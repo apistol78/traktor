@@ -43,6 +43,8 @@ public:
 
 	virtual void setTextureParameter(handle_t handle, ITexture* texture) override final;
 
+	virtual void setStructBufferParameter(handle_t handle, StructBuffer* structBuffer) override final;
+
 	virtual void setStencilReference(uint32_t stencilReference) override final;
 
 	bool activate(StateCache* stateCache, float targetSize[2], float postTransform[4], bool invertCull, uint32_t instanceID);

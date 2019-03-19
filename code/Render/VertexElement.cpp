@@ -44,7 +44,7 @@ uint32_t VertexElement::getSize() const
 
 uint32_t getVertexSize(const AlignedVector< VertexElement >& vertexElements)
 {
-	return !vertexElements.empty() ? getVertexSize(&vertexElements[0], int(vertexElements.size())) : 0;
+	return !vertexElements.empty() ? getVertexSize(&vertexElements[0], uint32_t(vertexElements.size())) : 0;
 }
 
 uint32_t getVertexSize(const VertexElement* vertexElements, uint32_t count)
@@ -64,7 +64,7 @@ AlignedVector< VertexElement >::const_iterator findVertexElement(
 	uint32_t index
 )
 {
-	for (AlignedVector< VertexElement >::const_iterator i = vertexElements.begin(); i != vertexElements.end(); ++i)
+	for (auto i = vertexElements.begin(); i != vertexElements.end(); ++i)
 	{
 		if (i->getDataUsage() == usage && i->getIndex() == index)
 			return i;

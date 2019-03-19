@@ -265,6 +265,11 @@ void ProgramOpenGLES2::setTextureParameter(handle_t handle, ITexture* texture)
 		m_textures[i->second] = texture;
 }
 
+void ProgramOpenGLES2::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
+{
+	T_FATAL_ERROR;
+}
+
 void ProgramOpenGLES2::setStencilReference(uint32_t stencilReference)
 {
 	m_renderState.stencilRef = stencilReference;

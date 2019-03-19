@@ -174,6 +174,11 @@ Ref< IndexBuffer > RenderSystemPs4::createIndexBuffer(IndexType indexType, uint3
 		return IndexBufferDynamicPs4::create(m_context, indexType, bufferSize);
 }
 
+Ref< StructBuffer > RenderSystemPs4::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
+{
+	return nullptr;
+}
+
 Ref< ISimpleTexture > RenderSystemPs4::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	Ref< SimpleTexturePs4 > texture = new SimpleTexturePs4(m_context);

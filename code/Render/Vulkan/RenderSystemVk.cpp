@@ -538,7 +538,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	if (vkCreateCommandPool(m_device, &commandPoolCreateInfo, 0, &commandPool) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create command pool." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	// Create command buffers from pool.
@@ -550,7 +550,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	if (vkAllocateCommandBuffers(m_device, &commandBufferAllocationInfo, &drawCmdBuffer) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; failed to allocate draw command buffer." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	uint32_t imageCount = 0;
@@ -575,7 +575,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	imageCreateInfo.pQueueFamilyIndices = nullptr;
 	imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
  	if (vkCreateImage(m_device, &imageCreateInfo, nullptr, &depthImage) != VK_SUCCESS)
-		return 0;
+		return nullptr;
 
 	VkMemoryRequirements memoryRequirements = {};
 	vkGetImageMemoryRequirements(m_device, depthImage, &memoryRequirements);
@@ -587,10 +587,10 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 
 	VkDeviceMemory imageMemory = {};
 	if (vkAllocateMemory(m_device, &imageAllocateInfo, nullptr, &imageMemory) != VK_SUCCESS)
-		return 0;
+		return nullptr;
 
 	if (vkBindImageMemory(m_device, depthImage, imageMemory, 0) != VK_SUCCESS)
-		return 0;
+		return nullptr;
 
 	if (!changeImageLayout(
 		m_device,
@@ -600,7 +600,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 		VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	))
-		return 0;
+		return nullptr;
 
 	RefArray< RenderTargetSetVk > primaryTargets(imageCount);
 	for (uint32_t i = 0; i < imageCount; ++i)
@@ -616,7 +616,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 			imageCreateInfo.format,
 			depthImage
 		))
-			return 0;
+			return nullptr;
 	}
 
 	VkDescriptorSetLayoutBinding layoutBindings[6];
@@ -679,15 +679,15 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 	);
 	return renderView;
 #elif defined(__ANDROID__)
-	return 0;
+	return nullptr;
 #else
-	return 0;
+	return nullptr;
 #endif
 }
 
 Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc& desc)
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
@@ -700,7 +700,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 	vertexBufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 	vertexBufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	if (vkCreateBuffer(m_device, &vertexBufferInfo, nullptr, &vertexBuffer) != VK_SUCCESS)
-		return 0;
+		return nullptr;
 
 	VkPhysicalDeviceMemoryProperties memoryProperties = {};
 	vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &memoryProperties);
@@ -715,7 +715,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 
 	VkDeviceMemory vertexBufferMemory;
 	if (vkAllocateMemory(m_device, &bufferAllocateInfo, nullptr, &vertexBufferMemory) != VK_SUCCESS)
-		return 0;
+		return nullptr;
 
 	VkVertexInputBindingDescription vertexBindingDescription = {};
 	vertexBindingDescription.binding = 0;
@@ -769,7 +769,7 @@ Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32
 	indexBufferInfo.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
 	indexBufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	if (vkCreateBuffer(m_device, &indexBufferInfo, nullptr, &indexBuffer) != VK_SUCCESS)
-		return 0;
+		return nullptr;
 
 	VkPhysicalDeviceMemoryProperties memoryProperties = {};
 	vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &memoryProperties);
@@ -784,9 +784,14 @@ Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32
 
 	VkDeviceMemory indexBufferMemory;
 	if (vkAllocateMemory(m_device, &bufferAllocateInfo, nullptr, &indexBufferMemory) != VK_SUCCESS)
-		return 0;
+		return nullptr;
 
 	return new IndexBufferVk(indexType, bufferSize, m_device, indexBuffer, indexBufferMemory);
+}
+
+Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
+{
+	return nullptr;
 }
 
 Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc)
@@ -795,7 +800,7 @@ Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCre
 	if (texture->create(m_physicalDevice, m_device, desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDesc& desc)
@@ -804,7 +809,7 @@ Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDes
 	if (texture->create(desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCreateDesc& desc)
@@ -813,7 +818,7 @@ Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCre
 	if (texture->create(desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< RenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
@@ -822,20 +827,20 @@ Ref< RenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetS
 	if (renderTargetSet->create(m_physicalDevice, m_device, desc))
 		return renderTargetSet;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
 {
 	Ref< const ProgramResourceVk > resource = dynamic_type_cast< const ProgramResourceVk* >(programResource);
 	if (!resource)
-		return 0;
+		return nullptr;
 
 	Ref< ProgramVk > program = new ProgramVk();
 	if (program->create(m_physicalDevice, m_device, resource))
 		return program;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< ITimeQuery > RenderSystemVk::createTimeQuery() const
@@ -844,7 +849,7 @@ Ref< ITimeQuery > RenderSystemVk::createTimeQuery() const
 	if (timeQuery->create())
 		return timeQuery;
 	else
-		return 0;
+		return nullptr;
 }
 
 void RenderSystemVk::purge()

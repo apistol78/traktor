@@ -45,8 +45,8 @@ public:
 private:
 	DataUsage m_usage;
 	DataType m_type;
-	unsigned int m_offset;
-	unsigned int m_index;
+	uint32_t m_offset;
+	uint32_t m_index;
 };
 
 uint32_t T_DLLCLASS getVertexSize(const AlignedVector< VertexElement >& vertexElements);

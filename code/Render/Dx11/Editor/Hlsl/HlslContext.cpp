@@ -64,13 +64,13 @@ HlslContext::HlslContext(const ShaderGraph* shaderGraph)
 		m_d3dBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 }
 
-Node* HlslContext::getInputNode(const InputPin* inputPin)
+Node* HlslContext::getInputNode(const InputPin* inputPin) const
 {
 	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
 	return sourcePin ? sourcePin->getNode() : 0;
 }
 
-Node* HlslContext::getInputNode(Node* node, const std::wstring& inputPinName)
+Node* HlslContext::getInputNode(const Node* node, const std::wstring& inputPinName) const
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
 	T_ASSERT(inputPin);
@@ -107,11 +107,11 @@ HlslVariable* HlslContext::emitInput(const InputPin* inputPin)
 {
 	// In case we're in failure state we ignore recursing further.
 	if (!m_error.empty())
-		return 0;
+		return nullptr;
 
 	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
 	if (!sourcePin)
-		return 0;
+		return nullptr;
 
 	// Check if node's output already has been emitted.
 	HlslVariable* variable = m_currentShader->getVariable(sourcePin);

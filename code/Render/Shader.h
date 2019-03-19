@@ -24,12 +24,13 @@ class IndexBuffer;
 class IProgram;
 class IRenderView;
 class ITexture;
+class StructBuffer;
 class VertexBuffer;
 
 /*! \brief Shader
  * \ingroup Render
  *
- * An shader is actually only a facadïÿ½ for several
+ * An shader is actually only a facadï¿½ï¿½ï¿½ for several
  * programs which is different combinations of a
  * source shader graph.
  */
@@ -89,6 +90,8 @@ public:
 	void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
 	void setTextureParameter(handle_t handle, ITexture* texture);
+
+	void setStructBufferParameter(handle_t handle, StructBuffer* structBuffer);
 
 	void setStencilReference(uint32_t stencilReference);
 

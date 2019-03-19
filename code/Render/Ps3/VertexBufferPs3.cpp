@@ -162,7 +162,6 @@ void* VertexBufferPs3::lock(uint32_t vertexOffset, uint32_t vertexCount)
 
 void VertexBufferPs3::unlock()
 {
-	setContentValid(true);
 }
 
 void VertexBufferPs3::bind(StateCachePs3& stateCache, const AlignedVector< uint8_t >& signature)

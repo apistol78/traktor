@@ -22,7 +22,8 @@ enum HlslType
 	HtFloat4x4,
 	HtTexture2D,
 	HtTexture3D,
-	HtTextureCube
+	HtTextureCube,
+	HtStructBuffer
 };
 
 /*!

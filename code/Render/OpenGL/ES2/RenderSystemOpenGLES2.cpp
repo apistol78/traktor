@@ -185,6 +185,11 @@ Ref< IndexBuffer > RenderSystemOpenGLES2::createIndexBuffer(IndexType indexType,
 	return new IndexBufferOpenGLES2(m_context, indexType, bufferSize, dynamic);
 }
 
+Ref< StructBuffer > RenderSystemOpenGLES2::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
+{
+	return nullptr;
+}
+
 Ref< ISimpleTexture > RenderSystemOpenGLES2::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	T_ANONYMOUS_VAR(ContextOpenGLES2::Scope)(m_context);

@@ -528,7 +528,7 @@ bool emitIterate(HlslContext& cx, Iterate* node)
 
 		// Modify output variable; need to have input variable ready as it
 		// will determine output type.
-		out->setType(input->getType());
+		*out = HlslVariable(out->getNode(), out->getName(), input->getType());
 	}
 
 	cx.getShader().popScope();
@@ -610,7 +610,7 @@ bool emitIterate2d(HlslContext& cx, Iterate2d* node)
 
 	// Modify output variable; need to have input variable ready as it
 	// will determine output type.
-	out->setType(input->getType());
+	*out = HlslVariable(out->getNode(), out->getName(), input->getType());
 
 	cx.getShader().popScope();
 	cx.getShader().popOutputStream(HlslShader::BtBody);
@@ -1099,6 +1099,33 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 	return true;
 }
 
+bool emitReadStruct(HlslContext& cx, ReadStruct* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+
+	HlslVariable* buffer = cx.emitInput(node, L"Buffer");
+	if (!buffer || buffer->getType() != HtStructBuffer)
+		return false;
+
+	const Uniform* uniform = dynamic_type_cast< const Uniform* >(buffer->getNode());
+	if (!uniform)
+		return false;
+
+	const Struct* strct = dynamic_type_cast< const Struct* >(cx.getInputNode(uniform, L"Struct"));
+	if (!strct)
+		return false;
+
+	DataType type = strct->getElementType(node->getName());
+
+	HlslVariable* index = cx.emitInput(node, L"Index");
+	if (!index)
+		return false;
+
+	HlslVariable* out = cx.emitOutput(node, L"Output", hlsl_from_data_type(type));
+	assign(cx, f, out) << buffer->getName() << L"[" << index->cast(HtFloat) << L"]." << node->getName() << L";" << Endl;
+	return true;
+}
+
 bool emitPolynomial(HlslContext& cx, Polynomial* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -1240,7 +1267,7 @@ bool emitRepeat(HlslContext& cx, Repeat* node)
 
 		// Modify output variable; need to have input variable ready as it
 		// will determine output type.
-		out->setType(input->getType());
+		*out = HlslVariable(out->getNode(), out->getName(), input->getType());
 	}
 
 	cx.getShader().popScope();
@@ -1777,7 +1804,7 @@ bool emitSum(HlslContext& cx, Sum* node)
 
 		// Modify output variable; need to have input variable ready as it
 		// will determine output type.
-		out->setType(input->getType());
+		*out = HlslVariable(out->getNode(), out->getName(), input->getType());
 	}
 
 	cx.getShader().popScope();
@@ -2151,6 +2178,23 @@ bool emitUniform(HlslContext& cx, Uniform* node)
 			case PtTextureCube:
 				fu << L"TextureCube " << node->getParameterName() << L";" << Endl;
 				break;
+
+			case PtStructBuffer:
+				{
+					const Struct* strct = dynamic_type_cast< const Struct* >(cx.getInputNode(node, L"Struct"));
+					if (!strct)
+						return false;
+
+					StringOutputStream& fs = cx.getShader().getOutputStream(HlslShader::BtStructs);
+					fs << L"struct " << strct->getName() << Endl;
+					fs << L"{" << Endl;
+					for (const auto& element : strct->getElements())
+						fs << L"\t" << hlsl_type_name(hlsl_from_data_type(element.type), false) << L" " << element.name << L";" << Endl;
+					fs << L"};" << Endl;
+
+					fu << L"StructuredBuffer< " << strct->getName() << L" > " << node->getParameterName() << L";" << Endl;
+				}
+				break;
 			}
 		}
 
@@ -2356,6 +2400,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Polynomial >()] = new EmitterCast< Polynomial >(emitPolynomial);
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
+	m_emitters[&type_of< ReadStruct >()] = new EmitterCast< ReadStruct >(emitReadStruct);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
 	m_emitters[&type_of< Repeat >()] = new EmitterCast< Repeat >(emitRepeat);

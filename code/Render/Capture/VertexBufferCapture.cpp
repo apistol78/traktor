@@ -15,7 +15,6 @@ VertexBufferCapture::VertexBufferCapture(VertexBuffer* vertexBuffer, uint32_t bu
 ,	m_vertexSize(vertexSize)
 ,	m_locked(false)
 {
-	setContentValid(true);
 }
 
 void VertexBufferCapture::destroy()
@@ -31,7 +30,7 @@ void* VertexBufferCapture::lock()
 	T_CAPTURE_ASSERT (!m_locked, L"Vertex buffer already locked.");
 
 	if (!m_vertexBuffer)
-		return 0;
+		return nullptr;
 
 	void* p = m_vertexBuffer->lock();
 	if (p)
@@ -47,7 +46,7 @@ void* VertexBufferCapture::lock(uint32_t vertexOffset, uint32_t vertexCount)
 	T_CAPTURE_ASSERT (vertexOffset + vertexCount <= getBufferSize() / m_vertexSize, L"Trying to lock vertex buffer out of range.");
 
 	if (!m_vertexBuffer)
-		return 0;
+		return nullptr;
 
 	void* p = m_vertexBuffer->lock(vertexOffset, vertexCount);
 	if (p)
@@ -66,8 +65,6 @@ void VertexBufferCapture::unlock()
 
 	m_vertexBuffer->unlock();
 	m_locked = false;
-
-	setContentValid(m_vertexBuffer->isContentValid());
 }
 
 	}

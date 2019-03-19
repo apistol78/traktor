@@ -15,10 +15,10 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief Vertex buffer.
+/*! \brief Struct buffer.
  * \ingroup Render
  */
-class T_DLLCLASS VertexBuffer : public Object
+class T_DLLCLASS StructBuffer : public Object
 {
 	T_RTTI_CLASS;
 
@@ -40,17 +40,17 @@ public:
 
 	/*! \brief Lock access to segment of buffer data.
 	 *
-	 * \param vertexOffset Vertex offset.
-	 * \param vertexCount Number of vertices to lock.
+	 * \param structOffset Struct offset.
+	 * \param structCount Number of structs to lock.
 	 * \return Pointer to segment beginning.
 	 */
-	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount) = 0;
+	virtual void* lock(uint32_t structOffset, uint32_t structCount) = 0;
 
 	/*! \brief Unlock access. */
 	virtual void unlock() = 0;
 
 protected:
-	VertexBuffer(uint32_t bufferSize);
+	StructBuffer(uint32_t bufferSize);
 
 private:
 	uint32_t m_bufferSize;

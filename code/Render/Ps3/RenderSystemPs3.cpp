@@ -272,6 +272,11 @@ Ref< IndexBuffer > RenderSystemPs3::createIndexBuffer(IndexType indexType, uint3
 		return 0;
 }
 
+Ref< StructBuffer > RenderSystemPs3::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
+{
+	return nullptr;
+}
+
 Ref< ISimpleTexture > RenderSystemPs3::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	Ref< SimpleTexturePs3 > texture = new SimpleTexturePs3(m_counterSimpleTextures);
