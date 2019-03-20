@@ -105,15 +105,6 @@ void WorldRenderPassDeferred::setShaderCombination(render::Shader* shader) const
 	}
 }
 
-void WorldRenderPassDeferred::setShaderCombination(render::Shader* shader, const Transform& world, const Aabb3& bounds) const
-{
-	if (m_technique == s_techniqueDeferredColor)
-	{
-		shader->setCombination(s_handleFogEnable, m_fogEnabled);
-		shader->setCombination(s_handleDepthEnable, m_depthEnable);
-	}
-}
-
 void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams) const
 {
 	setWorldProgramParameters(programParams, Transform::identity(), Transform::identity());

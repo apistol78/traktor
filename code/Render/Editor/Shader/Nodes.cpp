@@ -997,6 +997,40 @@ void Iterate::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Iterate2", 0, Iterate2, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Iterate2_i[] 
+{
+	{ L"From", false },
+	{ L"To", false },
+	{ L"Input0", false },
+	{ L"Initial0", true },
+	{ L"Input1", true },
+	{ L"Initial1", true },
+	{ L"Input2", true },
+	{ L"Initial2", true },
+	{ L"Input3", true },
+	{ L"Initial3", true },
+	{ L"Condition", true },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Iterate2_o[] =
+{
+	{ L"N" },
+	{ L"Output0" },
+	{ L"Output1" },
+	{ L"Output2" },
+	{ L"Output3" },
+	{ 0 }
+};
+
+Iterate2::Iterate2()
+:	ImmutableNode(c_Iterate2_i, c_Iterate2_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Iterate2d", 0, Iterate2d, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Iterate2d_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", true }, { 0 } };

@@ -53,12 +53,7 @@ void SkinnedMesh::render(
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
 		m_shader->setTechnique(i->shaderTechnique);
-
-		worldRenderPass.setShaderCombination(
-			m_shader,
-			worldTransform,
-			boundingBox
-		);
+		worldRenderPass.setShaderCombination(m_shader);
 
 		if (parameterCallback)
 			parameterCallback->setCombination(m_shader);

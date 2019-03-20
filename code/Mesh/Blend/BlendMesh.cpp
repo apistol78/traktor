@@ -281,12 +281,7 @@ void BlendMesh::render(
 	for (AlignedVector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
 		m_shader->setTechnique(i->shaderTechnique);
-
-		worldRenderPass.setShaderCombination(
-			m_shader,
-			worldTransform,
-			getBoundingBox()
-		);
+		worldRenderPass.setShaderCombination(m_shader);
 
 		render::IProgram* program = m_shader->getCurrentProgram();
 		if (!program)

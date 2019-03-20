@@ -47,8 +47,6 @@ public:
 
 	virtual void setShaderCombination(render::Shader* shader) const override final;
 
-	virtual void setShaderCombination(render::Shader* shader, const Transform& world, const Aabb3& bounds) const override final;
-
 	virtual void setProgramParameters(render::ProgramParameters* programParams) const override final;
 
 	virtual void setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world, const Aabb3& bounds) const override final;

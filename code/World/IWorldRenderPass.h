@@ -52,9 +52,6 @@ public:
 	/*! \brief Set shader combination used by this pass. */
 	virtual void setShaderCombination(render::Shader* shader) const = 0;
 
-	/*! \brief Set shader combination used by this pass and parameters. */
-	virtual void setShaderCombination(render::Shader* shader, const Transform& world, const Aabb3& bounds) const = 0;
-
 	/*! \brief Set shader parameters.
 	 *
 	 * \param programParams Block to set parameters into.

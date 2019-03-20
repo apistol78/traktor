@@ -119,10 +119,10 @@ bool emitConditional(HlslContext& cx, Conditional* node)
 
 	// Find common output pins from both sides of branch;
 	// emit those before condition in order to have them evaluated outside of conditional.
-	std::vector< const OutputPin* > outputPins;
+	AlignedVector< const OutputPin* > outputPins;
 	cx.findCommonOutputs(node, L"CaseTrue", L"CaseFalse", outputPins);
-	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
-		cx.emit((*i)->getNode());
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
 
 	// Emit true branch.
 	{
@@ -498,13 +498,13 @@ bool emitIterate(HlslContext& cx, Iterate* node)
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
-	std::vector< const OutputPin* > outputPins;
-	std::vector< const OutputPin* > dependentOutputPins(2);
+	AlignedVector< const OutputPin* > outputPins;
+	AlignedVector< const OutputPin* > dependentOutputPins(2);
 	dependentOutputPins[0] = node->findOutputPin(L"N");
 	dependentOutputPins[1] = node->findOutputPin(L"Output");
 	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
-	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
-		cx.emit((*i)->getNode());
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;
@@ -560,6 +560,148 @@ bool emitIterate(HlslContext& cx, Iterate* node)
 	return true;
 }
 
+bool emitIterate2(HlslContext& cx, Iterate2* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	std::wstring inputNames[4];
+
+	// Create iterator variable.
+	HlslVariable* N = cx.emitOutput(node, L"N", HtFloat);
+	T_ASSERT(N);
+
+	// Create void output variables; change type later when we know
+	// the type of the input branches.
+	HlslVariable* out[] =
+	{
+		cx.getInputNode(node, L"Input0") != nullptr ? cx.emitOutput(node, L"Output0", HtVoid) : nullptr,
+		cx.getInputNode(node, L"Input1") != nullptr ? cx.emitOutput(node, L"Output1", HtVoid) : nullptr,
+		cx.getInputNode(node, L"Input2") != nullptr ? cx.emitOutput(node, L"Output2", HtVoid) : nullptr,
+		cx.getInputNode(node, L"Input3") != nullptr ? cx.emitOutput(node, L"Output3", HtVoid) : nullptr,
+	};
+	if (!out[0])
+		return false;
+
+	// Find non-dependent, external, output pins from input branch;
+	// we emit those first in order to have them evaluated
+	// outside of iteration.
+	AlignedVector< const OutputPin* > dependentOutputPins(5);
+	AlignedVector< const OutputPin* > outputPins;
+
+	dependentOutputPins[0] = node->findOutputPin(L"N");
+	dependentOutputPins[1] = node->findOutputPin(L"Output0");
+	dependentOutputPins[2] = node->findOutputPin(L"Output1");
+	dependentOutputPins[3] = node->findOutputPin(L"Output2");
+	dependentOutputPins[4] = node->findOutputPin(L"Output3");
+
+	outputPins.resize(0);
+	cx.findNonDependentOutputs(node, L"Input0", dependentOutputPins, outputPins);
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
+
+	outputPins.resize(0);
+	cx.findNonDependentOutputs(node, L"Input1", dependentOutputPins, outputPins);
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
+
+	outputPins.resize(0);
+	cx.findNonDependentOutputs(node, L"Input2", dependentOutputPins, outputPins);
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
+
+	outputPins.resize(0);
+	cx.findNonDependentOutputs(node, L"Input3", dependentOutputPins, outputPins);
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
+
+	// Write input branch in a temporary output stream.
+	StringOutputStream fs;
+	cx.getShader().pushOutputStream(HlslShader::BtBody, &fs);
+	cx.getShader().pushScope();
+
+	{
+		HlslVariable* input[] =
+		{
+			cx.emitInput(node, L"Input0"),
+			cx.emitInput(node, L"Input1"),
+			cx.emitInput(node, L"Input2"),
+			cx.emitInput(node, L"Input3")
+		};
+		if (!input[0])
+			return false;
+
+		// Emit post condition if connected; break iteration if condition is false.
+		HlslVariable* condition = cx.emitInput(node, L"Condition");
+		if (condition)
+		{
+			fs << L"if (!(bool)" << condition->cast(HtFloat) << L")" << Endl;
+			fs << L"\tbreak;" << Endl;
+		}
+
+		inputNames[0] = input[0]->getName();
+		inputNames[1] = input[1] != nullptr ? input[1]->getName() : L"";
+		inputNames[2] = input[2] != nullptr ? input[2]->getName() : L"";
+		inputNames[3] = input[3] != nullptr ? input[3]->getName() : L"";
+
+		// Modify output variable; need to have input variable ready as it
+		// will determine output type.
+		*out[0] = HlslVariable(out[0]->getNode(), out[0]->getName(), input[0]->getType());
+		if (input[1])
+			*out[1] = HlslVariable(out[1]->getNode(), out[1]->getName(), input[1]->getType());
+		if (input[2])
+			*out[2] = HlslVariable(out[2]->getNode(), out[2]->getName(), input[2]->getType());
+		if (input[3])
+			*out[3] = HlslVariable(out[3]->getNode(), out[3]->getName(), input[3]->getType());
+	}
+
+	cx.getShader().popScope();
+	cx.getShader().popOutputStream(HlslShader::BtBody);
+
+	// As we now know the type of output variable we can safely
+	// initialize it.
+	HlslVariable* initial[] =
+	{
+		out[0] != nullptr ? cx.emitInput(node, L"Initial0") : nullptr,
+		out[1] != nullptr ? cx.emitInput(node, L"Initial1") : nullptr,
+		out[2] != nullptr ? cx.emitInput(node, L"Initial2") : nullptr,
+		out[3] != nullptr ? cx.emitInput(node, L"Initial3") : nullptr
+	};
+	for (int32_t i = 0; i < 4; ++i)
+	{
+		if (out[i] && initial[i])
+			assign(cx, f, out[i]) << initial[i]->cast(out[i]->getType()) << L";" << Endl;
+		else if (out[i])
+			assign(cx, f, out[i]) << L"0;" << Endl;
+	}
+
+	// Write outer for-loop statement.
+	HlslVariable* from = cx.emitInput(node, L"From");
+	HlslVariable* to = cx.emitInput(node, L"To");
+	if (!from || !to)
+		return false;
+
+	f << L"for (int " << N->getName() << L" = (int)" << from->cast(HtFloat) << L"; " << N->getName() << L" <= (int)" << to->cast(HtFloat) << L"; ++" << N->getName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	// Insert input branch here; it's already been generated in a temporary
+	// output stream.
+	f << fs.str();
+
+	if (out[0])
+		f << out[0]->getName() << L" = " << inputNames[0] << L";" << Endl;
+	if (out[1])
+		f << out[1]->getName() << L" = " << inputNames[1] << L";" << Endl;
+	if (out[2])
+		f << out[2]->getName() << L" = " << inputNames[2] << L";" << Endl;
+	if (out[3])
+		f << out[3]->getName() << L" = " << inputNames[3] << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;
+
+	return true;
+}
+
 bool emitIterate2d(HlslContext& cx, Iterate2d* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -580,14 +722,14 @@ bool emitIterate2d(HlslContext& cx, Iterate2d* node)
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
-	std::vector< const OutputPin* > outputPins;
-	std::vector< const OutputPin* > dependentOutputPins(3);
+	AlignedVector< const OutputPin* > outputPins;
+	AlignedVector< const OutputPin* > dependentOutputPins(3);
 	dependentOutputPins[0] = node->findOutputPin(L"X");
 	dependentOutputPins[1] = node->findOutputPin(L"Y");
 	dependentOutputPins[2] = node->findOutputPin(L"Output");
 	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
-	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
-		cx.emit((*i)->getNode());
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;
@@ -1231,13 +1373,13 @@ bool emitRepeat(HlslContext& cx, Repeat* node)
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
-	std::vector< const OutputPin* > outputPins;
-	std::vector< const OutputPin* > dependentOutputPins(2);
+	AlignedVector< const OutputPin* > outputPins;
+	AlignedVector< const OutputPin* > dependentOutputPins(2);
 	dependentOutputPins[0] = node->findOutputPin(L"N");
 	dependentOutputPins[1] = node->findOutputPin(L"Output");
 	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
-	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
-		cx.emit((*i)->getNode());
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;
@@ -1805,13 +1947,13 @@ bool emitSum(HlslContext& cx, Sum* node)
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
-	std::vector< const OutputPin* > outputPins;
-	std::vector< const OutputPin* > dependentOutputPins(2);
+	AlignedVector< const OutputPin* > outputPins;
+	AlignedVector< const OutputPin* > dependentOutputPins(2);
 	dependentOutputPins[0] = node->findOutputPin(L"N");
 	dependentOutputPins[1] = node->findOutputPin(L"Output");
 	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
-	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
-		cx.emit((*i)->getNode());
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;
@@ -2351,15 +2493,14 @@ struct EmitterCast : public Emitter
 
 	function_t m_function;
 
-	EmitterCast(function_t function) :
-		m_function(function)
+	EmitterCast(function_t function)
+	:	m_function(function)
 	{
 	}
 
-	virtual bool emit(HlslContext& c, Node* node)
+	virtual bool emit(HlslContext& c, Node* node) override final
 	{
-		T_ASSERT(is_a< NodeType >(node));
-		return (*m_function)(c, static_cast< NodeType* >(node));
+		return (*m_function)(c, mandatory_non_null_type_cast< NodeType* >(node));
 	}
 };
 
@@ -2389,6 +2530,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstance);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);
 	m_emitters[&type_of< Iterate >()] = new EmitterCast< Iterate >(emitIterate);
+	m_emitters[&type_of< Iterate2 >()] = new EmitterCast< Iterate2 >(emitIterate2);
 	m_emitters[&type_of< Iterate2d >()] = new EmitterCast< Iterate2d >(emitIterate2d);
 	m_emitters[&type_of< Length >()] = new EmitterCast< Length >(emitLength);
 	m_emitters[&type_of< Lerp >()] = new EmitterCast< Lerp >(emitLerp);
@@ -2437,22 +2579,18 @@ HlslEmitter::HlslEmitter()
 
 HlslEmitter::~HlslEmitter()
 {
-	for (std::map< const TypeInfo*, Emitter* >::iterator i = m_emitters.begin(); i != m_emitters.end(); ++i)
-		delete i->second;
+	for (auto emitter : m_emitters)
+		delete emitter.second;
 }
 
 bool HlslEmitter::emit(HlslContext& c, Node* node)
 {
-	// Find emitter for node.
-	std::map< const TypeInfo*, Emitter* >::iterator i = m_emitters.find(&type_of(node));
-	if (i == m_emitters.end())
+	auto i = m_emitters.find(&type_of(node));
+	if (i == m_emitters.end() || i->second == nullptr)
 	{
-		log::error << L"No emitter for node " << type_name(node) << Endl;
+		log::error << L"No emitter for node " << type_name(node) << L"." << Endl;
 		return false;
 	}
-
-	// Emit HLSL code.
-	T_ASSERT(i->second);
 	return i->second->emit(c, node);
 }
 

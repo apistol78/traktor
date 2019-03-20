@@ -25,7 +25,7 @@ class T_DLLCLASS TabPage : public Container
 	T_RTTI_CLASS;
 
 public:
-	bool create(Tab* tab, const std::wstring& text, int imageIndex, Layout* layout);
+	bool create(Tab* tab, const std::wstring& text, int32_t imageIndex, Layout* layout);
 
 	bool create(Tab* tab, const std::wstring& text, Layout* layout);
 
@@ -33,13 +33,13 @@ public:
 
 	bool isActive() const;
 
-	Ref< Tab > getTab();
+	Tab* getTab();
 
-	int getImageIndex() const;
+	int32_t getImageIndex() const;
 
 private:
 	Ref< Tab > m_tab;
-	int m_imageIndex;
+	int32_t m_imageIndex;
 };
 
 	}

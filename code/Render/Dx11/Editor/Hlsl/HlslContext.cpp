@@ -67,7 +67,7 @@ HlslContext::HlslContext(const ShaderGraph* shaderGraph)
 Node* HlslContext::getInputNode(const InputPin* inputPin) const
 {
 	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
-	return sourcePin ? sourcePin->getNode() : 0;
+	return sourcePin ? sourcePin->getNode() : nullptr;
 }
 
 Node* HlslContext::getInputNode(const Node* node, const std::wstring& inputPinName) const
@@ -176,14 +176,14 @@ void HlslContext::emitOutput(Node* node, const std::wstring& outputPinName, Hlsl
 	m_currentShader->associateVariable(outputPin, variable);
 }
 
-void HlslContext::findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const std::vector< const OutputPin* >& dependentOutputPins, std::vector< const OutputPin* >& outOutputPins) const
+void HlslContext::findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins) const
 {
 	getNonDependentOutputs(m_shaderGraph, node->findInputPin(inputPinName), dependentOutputPins, outOutputPins);
 }
 
-void HlslContext::findCommonOutputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, std::vector< const OutputPin* >& outOutputPins) const
+void HlslContext::findCommonOutputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, AlignedVector< const OutputPin* >& outOutputPins) const
 {
-	std::vector< const InputPin* > inputPins(2);
+	AlignedVector< const InputPin* > inputPins(2);
 	inputPins[0] = node->findInputPin(inputPin1);
 	inputPins[1] = node->findInputPin(inputPin2);
 	getMergingOutputs(m_shaderGraph, inputPins, outOutputPins);

@@ -95,11 +95,7 @@ void IndoorMesh::render(
 		{
 			m_shader->setTechnique(j->shaderTechnique);
 
-			worldRenderPass.setShaderCombination(
-				m_shader,
-				worldTransform,
-				getBoundingBox()
-			);
+			worldRenderPass.setShaderCombination(m_shader);
 
 			render::IProgram* program = m_shader->getCurrentProgram();
 			if (!program)

@@ -22,6 +22,7 @@ class ImageProcess;
 class ISimpleTexture;
 class RenderContext;
 class RenderTargetSet;
+class StructBuffer;
 
 	}
 
@@ -96,6 +97,7 @@ private:
 		Slice slice[MaxSliceCount];
 		Ref< WorldContext > depth;
 		Ref< WorldContext > visual;
+		Ref< render::StructBuffer > lightSBuffer;
 		Matrix44 projection;
 		Matrix44 view;
 		Matrix44 viewToLightSpace;
@@ -103,6 +105,7 @@ private:
 		float time;
 		float A;
 		float B;
+		int32_t lightCount;
 		bool haveDepth;
 		bool haveShadows;
 
@@ -110,6 +113,7 @@ private:
 		:	time(0.0f)
 		,	A(0.0f)
 		,	B(0.0f)
+		,	lightCount(0)
 		,	haveDepth(false)
 		,	haveShadows(false)
 		{
@@ -145,9 +149,9 @@ private:
 
 	void buildGBuffer(WorldRenderView& worldRenderView, int frame);
 
-	void buildShadows(WorldRenderView& worldRenderView, int frame);
+	void buildVisualWithShadows(WorldRenderView& worldRenderView, int frame);
 
-	void buildNoShadows(WorldRenderView& worldRenderView, int frame);
+	void buildVisualWithNoShadows(WorldRenderView& worldRenderView, int frame);
 };
 
 	}
