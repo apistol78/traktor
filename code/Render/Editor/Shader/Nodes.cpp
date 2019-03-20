@@ -1814,7 +1814,7 @@ const AlignedVector< Struct::NamedElement >& Struct::getElements() const
 
 DataType Struct::getElementType(const std::wstring& name) const
 {
-	auto it = std::find_if(m_elements.begin(), m_elements.end(), [&](const auto& elm) {
+	auto it = std::find_if(m_elements.begin(), m_elements.end(), [&](const NamedElement& elm) {
 		return elm.name == name;
 	});
 	return it != m_elements.end() ? it->type : DtFloat1;

@@ -7,12 +7,14 @@ namespace traktor
 	{
 
 GlslVariable::GlslVariable()
-:	m_type(GtVoid)
+:	m_node(nullptr)
+,	m_type(GtVoid)
 {
 }
 
-GlslVariable::GlslVariable(const std::wstring& name, GlslType type)
-:	m_name(name)
+GlslVariable::GlslVariable(const Node* node, const std::wstring& name, GlslType type)
+:	m_node(node)
+,	m_name(name)
 ,	m_type(type)
 {
 }

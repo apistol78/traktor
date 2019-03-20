@@ -21,7 +21,8 @@ enum GlslType
 	GtFloat4x4,
 	GtTexture2D,
 	GtTexture3D,
-	GtTextureCube
+	GtTextureCube,
+	GtStructBuffer
 };
 
 struct GlslRequirements

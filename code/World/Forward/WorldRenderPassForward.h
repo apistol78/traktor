@@ -80,18 +80,14 @@ private:
 	const WorldRenderView& m_worldRenderView;
 	Matrix44 m_viewInverse;
 	uint32_t m_passFlags;
-	
-	//Vector4 m_ambientColor;
 	render::StructBuffer* m_lightSBuffer;
 	uint32_t m_lightCount;
-
 	bool m_fogEnabled;
 	float m_fogDistanceY;
 	float m_fogDistanceZ;
 	float m_fogDensityY;
 	float m_fogDensityZ;
 	Vector4 m_fogColor;
-
 	render::ISimpleTexture* m_colorMap;
 	render::ISimpleTexture* m_depthMap;
 	render::ISimpleTexture* m_shadowMask;
@@ -99,8 +95,6 @@ private:
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& world) const;
 
 	void setLightProgramParameters(render::ProgramParameters* programParams) const;
-
-	//void setLightProgramParameters(render::ProgramParameters* programParams, const Transform& world, const Aabb3& bounds) const;
 
 	void setFogProgramParameters(render::ProgramParameters* programParams) const;
 

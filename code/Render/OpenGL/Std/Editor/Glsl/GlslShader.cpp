@@ -1,5 +1,6 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Render/Editor/Shader/OutputPin.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslShader.h"
 
 namespace traktor
@@ -51,7 +52,7 @@ GlslVariable* GlslShader::createVariable(const OutputPin* outputPin, const std::
 {
 	T_ASSERT(!m_variables.empty());
 
-	Ref< GlslVariable > variable = new GlslVariable(variableName, type);
+	Ref< GlslVariable > variable = new GlslVariable(outputPin->getNode(), variableName, type);
 	m_variables.back().insert(std::make_pair(outputPin, variable));
 
 	return variable;
@@ -61,7 +62,7 @@ GlslVariable* GlslShader::createOuterVariable(const OutputPin* outputPin, const 
 {
 	T_ASSERT(!m_variables.empty());
 
-	Ref< GlslVariable > variable = new GlslVariable(variableName, type);
+	Ref< GlslVariable > variable = new GlslVariable(outputPin->getNode(), variableName, type);
 	m_variables.front().insert(std::make_pair(outputPin, variable));
 
 	return variable;
@@ -149,7 +150,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 
 	if (m_shaderType == StVertex || m_shaderType == StFragment)
 	{
-		ss << L"#version 150" << Endl;
+		ss << L"#version 430" << Endl;
 		ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
 		if (!name.empty())
 			ss << L"// " << name << Endl;
