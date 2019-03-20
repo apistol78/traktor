@@ -28,9 +28,9 @@ class GlslContext
 public:
 	GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings);
 
-	Node* getInputNode(const InputPin* inputPin);
+	Node* getInputNode(const InputPin* inputPin) const;
 
-	Node* getInputNode(Node* node, const std::wstring& inputPinName);
+	Node* getInputNode(Node* node, const std::wstring& inputPinName) const;
 
 	bool emit(Node* node);
 

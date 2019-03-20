@@ -607,7 +607,7 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 
 		// Modify output variable; need to have input variable ready as it
 		// will determine output type.
-		out->setType(input->getType());
+		*out = GlslVariable(out->getNode(), out->getName(), input->getType());
 	}
 
 	cx.getShader().popScope();
@@ -630,6 +630,148 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 	// output stream.
 	f << fs.str();
 	f << out->getName() << L" = " << inputName << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;
+
+	return true;
+}
+
+bool emitIterate2(GlslContext& cx, Iterate2* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	std::wstring inputNames[4];
+
+	// Create iterator variable.
+	GlslVariable* N = cx.emitOutput(node, L"N", GtFloat);
+	T_ASSERT(N);
+
+	// Create void output variables; change type later when we know
+	// the type of the input branches.
+	GlslVariable* out[] =
+	{
+		cx.getInputNode(node, L"Input0") != nullptr ? cx.emitOutput(node, L"Output0", GtVoid) : nullptr,
+		cx.getInputNode(node, L"Input1") != nullptr ? cx.emitOutput(node, L"Output1", GtVoid) : nullptr,
+		cx.getInputNode(node, L"Input2") != nullptr ? cx.emitOutput(node, L"Output2", GtVoid) : nullptr,
+		cx.getInputNode(node, L"Input3") != nullptr ? cx.emitOutput(node, L"Output3", GtVoid) : nullptr,
+	};
+	if (!out[0])
+		return false;
+
+	// Find non-dependent, external, output pins from input branch;
+	// we emit those first in order to have them evaluated
+	// outside of iteration.
+	AlignedVector< const OutputPin* > dependentOutputPins(5);
+	AlignedVector< const OutputPin* > outputPins;
+
+	dependentOutputPins[0] = node->findOutputPin(L"N");
+	dependentOutputPins[1] = node->findOutputPin(L"Output0");
+	dependentOutputPins[2] = node->findOutputPin(L"Output1");
+	dependentOutputPins[3] = node->findOutputPin(L"Output2");
+	dependentOutputPins[4] = node->findOutputPin(L"Output3");
+
+	outputPins.resize(0);
+	cx.findNonDependentOutputs(node, L"Input0", dependentOutputPins, outputPins);
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
+
+	outputPins.resize(0);
+	cx.findNonDependentOutputs(node, L"Input1", dependentOutputPins, outputPins);
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
+
+	outputPins.resize(0);
+	cx.findNonDependentOutputs(node, L"Input2", dependentOutputPins, outputPins);
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
+
+	outputPins.resize(0);
+	cx.findNonDependentOutputs(node, L"Input3", dependentOutputPins, outputPins);
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
+
+	// Write input branch in a temporary output stream.
+	StringOutputStream fs;
+	cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
+	cx.getShader().pushScope();
+
+	{
+		GlslVariable* input[] =
+		{
+			cx.emitInput(node, L"Input0"),
+			cx.emitInput(node, L"Input1"),
+			cx.emitInput(node, L"Input2"),
+			cx.emitInput(node, L"Input3")
+		};
+		if (!input[0])
+			return false;
+
+		// Emit post condition if connected; break iteration if condition is false.
+		GlslVariable* condition = cx.emitInput(node, L"Condition");
+		if (condition)
+		{
+			fs << L"if (" << condition->castToInteger(GtFloat) << L" == 0)" << Endl;
+			fs << L"\tbreak;" << Endl;
+		}
+
+		inputNames[0] = input[0]->getName();
+		inputNames[1] = input[1] != nullptr ? input[1]->getName() : L"";
+		inputNames[2] = input[2] != nullptr ? input[2]->getName() : L"";
+		inputNames[3] = input[3] != nullptr ? input[3]->getName() : L"";
+
+		// Modify output variable; need to have input variable ready as it
+		// will determine output type.
+		*out[0] = GlslVariable(out[0]->getNode(), out[0]->getName(), input[0]->getType());
+		if (input[1])
+			*out[1] = GlslVariable(out[1]->getNode(), out[1]->getName(), input[1]->getType());
+		if (input[2])
+			*out[2] = GlslVariable(out[2]->getNode(), out[2]->getName(), input[2]->getType());
+		if (input[3])
+			*out[3] = GlslVariable(out[3]->getNode(), out[3]->getName(), input[3]->getType());
+	}
+
+	cx.getShader().popScope();
+	cx.getShader().popOutputStream(GlslShader::BtBody);
+
+	// As we now know the type of output variable we can safely
+	// initialize it.
+	GlslVariable* initial[] =
+	{
+		out[0] != nullptr ? cx.emitInput(node, L"Initial0") : nullptr,
+		out[1] != nullptr ? cx.emitInput(node, L"Initial1") : nullptr,
+		out[2] != nullptr ? cx.emitInput(node, L"Initial2") : nullptr,
+		out[3] != nullptr ? cx.emitInput(node, L"Initial3") : nullptr
+	};
+	for (int32_t i = 0; i < 4; ++i)
+	{
+		if (out[i] && initial[i])
+			assign(f, out[i]) << initial[i]->cast(out[i]->getType()) << L";" << Endl;
+		else if (out[i])
+			assign(f, out[i]) << expandScalar(0.0f, out[i]->getType()) << L";" << Endl;
+	}
+
+	// Write outer for-loop statement.
+	GlslVariable* from = cx.emitInput(node, L"From");
+	GlslVariable* to = cx.emitInput(node, L"To");
+	if (!from || !to)
+		return false;
+
+	f << L"for (int " << N->getName() << L" = int(" << from->castToInteger(GtFloat) << L"); " << N->getName() << L" <= int(" << to->castToInteger(GtFloat) << L"); ++" << N->getName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	// Insert input branch here; it's already been generated in a temporary
+	// output stream.
+	f << fs.str();
+
+	if (out[0])
+		f << out[0]->getName() << L" = " << inputNames[0] << L";" << Endl;
+	if (out[1])
+		f << out[1]->getName() << L" = " << inputNames[1] << L";" << Endl;
+	if (out[2])
+		f << out[2]->getName() << L" = " << inputNames[2] << L";" << Endl;
+	if (out[3])
+		f << out[3]->getName() << L" = " << inputNames[3] << L";" << Endl;
 
 	f << DecreaseIndent;
 	f << L"}" << Endl;
@@ -687,7 +829,7 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 
 	// Modify output variable; need to have input variable ready as it
 	// will determine output type.
-	out->setType(input->getType());
+	*out = GlslVariable(out->getNode(), out->getName(), input->getType());
 
 	cx.getShader().popScope();
 	cx.getShader().popOutputStream(GlslShader::BtBody);
@@ -1133,6 +1275,27 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 	return true;
 }
 
+bool emitReadStruct(GlslContext& cx, ReadStruct* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
+	GlslVariable* strct = cx.emitInput(node, L"Struct");
+	if (!strct || strct->getType() != GtStructBuffer)
+		return false;
+
+	const Struct* sn = mandatory_non_null_type_cast< const Struct* >(strct->getNode());
+
+	DataType type = sn->getElementType(node->getName());
+
+	GlslVariable* index = cx.emitInput(node, L"Index");
+	if (!index)
+		return false;
+
+	GlslVariable* out = cx.emitOutput(node, L"Output", glsl_from_data_type(type));
+	assign(f, out) << strct->getName() << L".sdata[" << index->castToInteger(GtFloat) << L"]." << node->getName() << L";" << Endl;
+	return true;
+}
+
 bool emitPolynomial(GlslContext& cx, Polynomial* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -1253,7 +1416,7 @@ bool emitRepeat(GlslContext& cx, Repeat* node)
 
 		// Modify output variable; need to have input variable ready as it
 		// will determine output type.
-		out->setType(input->getType());
+		*out = GlslVariable(out->getNode(), out->getName(), input->getType());
 	}
 
 	cx.getShader().popScope();
@@ -1822,6 +1985,34 @@ bool emitStep(GlslContext& cx, Step* node)
 	return true;
 }
 
+bool emitStruct(GlslContext& cx, Struct* node)
+{
+	GlslVariable* out = cx.getShader().createVariable(
+		node->findOutputPin(L"Output"),
+		node->getParameterName(),
+		GtStructBuffer
+	);
+
+	const auto& uniforms = cx.getShader().getUniforms();
+	if (uniforms.find(node->getParameterName()) == uniforms.end())
+	{
+		StringOutputStream& fs = cx.getShader().getOutputStream(GlslShader::BtUniform);
+		fs << L"struct SBufferData0" << Endl;
+		fs << L"{" << Endl;
+		for (const auto& element : node->getElements())
+			fs << L"\t" << glsl_type_name(glsl_from_data_type(element.type)) << L" " << element.name << L";" << Endl;
+		fs << L"};" << Endl;
+		fs << Endl;
+		fs << L"layout (std430, binding = 0) buffer SBufferData0_Layout" << Endl;
+		fs << L"{" << Endl;
+		fs << L"\tSBufferData0 sdata[];" << Endl;
+		fs << L"} " << node->getParameterName() << L";" << Endl;
+
+		cx.getShader().addUniform(node->getParameterName());
+	}
+	return true;
+}
+
 bool emitSub(GlslContext& cx, Sub* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -1874,7 +2065,7 @@ bool emitSum(GlslContext& cx, Sum* node)
 
 		// Modify output variable; need to have input variable ready as it
 		// will determine output type.
-		out->setType(input->getType());
+		*out = GlslVariable(out->getNode(), out->getName(), input->getType());
 	}
 
 	cx.getShader().popScope();
@@ -2420,6 +2611,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstance);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);
 	m_emitters[&type_of< Iterate >()] = new EmitterCast< Iterate >(emitIterate);
+	m_emitters[&type_of< Iterate2 >()] = new EmitterCast< Iterate2 >(emitIterate2);
 	m_emitters[&type_of< Iterate2d >()] = new EmitterCast< Iterate2d >(emitIterate2d);
 	m_emitters[&type_of< Length >()] = new EmitterCast< Length >(emitLength);
 	m_emitters[&type_of< Lerp >()] = new EmitterCast< Lerp >(emitLerp);
@@ -2434,6 +2626,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< MulAdd >()] = new EmitterCast< MulAdd >(emitMulAdd);
 	m_emitters[&type_of< Neg >()] = new EmitterCast< Neg >(emitNeg);
 	m_emitters[&type_of< Normalize >()] = new EmitterCast< Normalize >(emitNormalize);
+	m_emitters[&type_of< ReadStruct >()] = new EmitterCast< ReadStruct >(emitReadStruct);
 	m_emitters[&type_of< Polynomial >()] = new EmitterCast< Polynomial >(emitPolynomial);
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
@@ -2448,6 +2641,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
 	m_emitters[&type_of< Sqrt >()] = new EmitterCast< Sqrt >(emitSqrt);
 	m_emitters[&type_of< Step >()] = new EmitterCast< Step >(emitStep);
+	m_emitters[&type_of< Struct >()] = new EmitterCast< Struct >(emitStruct);
 	m_emitters[&type_of< Sub >()] = new EmitterCast< Sub >(emitSub);
 	m_emitters[&type_of< Sum >()] = new EmitterCast< Sum >(emitSum);
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);

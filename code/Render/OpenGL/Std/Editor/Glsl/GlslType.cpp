@@ -72,7 +72,8 @@ GlslType glsl_from_parameter_type(ParameterType type)
 		GtFloat4x4,
 		GtTexture2D,
 		GtTexture3D,
-		GtTextureCube
+		GtTextureCube,
+		GtStructBuffer
 	};
 	T_ASSERT(type < sizeof_array(c));
 	return c[type];

@@ -921,7 +921,7 @@ void WorldRendererForward::buildVisualWithShadows(WorldRenderView& worldRenderVi
 	// If no shadow casting light found, we do simple path.
 	if (!shadowLight)
 	{
-		buildNoShadows(worldRenderView, frame);
+		buildVisualWithNoShadows(worldRenderView, frame);
 		return;
 	}
 
