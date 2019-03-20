@@ -146,14 +146,14 @@ void GlslContext::emitOutput(Node* node, const std::wstring& outputPinName, Glsl
 	m_currentShader->associateVariable(outputPin, variable);
 }
 
-void GlslContext::findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const std::vector< const OutputPin* >& dependentOutputPins, std::vector< const OutputPin* >& outOutputPins) const
+void GlslContext::findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins) const
 {
 	getNonDependentOutputs(m_shaderGraph, node->findInputPin(inputPinName), dependentOutputPins, outOutputPins);
 }
 
-void GlslContext::findCommonOutputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, std::vector< const OutputPin* >& outOutputPins) const
+void GlslContext::findCommonOutputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, AlignedVector< const OutputPin* >& outOutputPins) const
 {
-	std::vector< const InputPin* > inputPins(2);
+	AlignedVector< const InputPin* > inputPins(2);
 	inputPins[0] = node->findInputPin(inputPin1);
 	inputPins[1] = node->findInputPin(inputPin2);
 	getMergingOutputs(m_shaderGraph, inputPins, outOutputPins);

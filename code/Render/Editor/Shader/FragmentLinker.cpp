@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
 #include "Render/Editor/Shader/Node.h"
 #include "Render/Editor/Shader/Nodes.h"
@@ -89,9 +90,19 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 			log::error << errorPrefix << L"unable to read fragment \"" << externalNode->getFragmentGuid().format() << L"\"" << Endl;
 			return nullptr;
 		}
+
+		// Resolve variables of each fragment.
+		fragmentShaderGraph = ShaderGraphStatic(fragmentShaderGraph).getVariableResolved();
+		if (!fragmentShaderGraph)
+		{
+			log::error << errorPrefix << L"unable to resolve variables in fragment \"" << externalNode->getFragmentGuid().format() << L"\"" << Endl;
+			return nullptr;
+		}
+
+		// Recursive resolve fragments if we need a full resolve.
 		if (fullResolve)
 		{
-			fragmentShaderGraph = resolve(fragmentShaderGraph, fullResolve, &externalNode->getFragmentGuid());
+			fragmentShaderGraph = resolve(fragmentShaderGraph, true, &externalNode->getFragmentGuid());
 			if (!fragmentShaderGraph)
 			{
 				log::error << errorPrefix << L"unable to resolve fragment \"" << externalNode->getFragmentGuid().format() << L"\"" << Endl;

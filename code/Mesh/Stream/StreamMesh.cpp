@@ -88,12 +88,7 @@ void StreamMesh::render(
 	for (const auto part : it->second)
 	{
 		m_shader->setTechnique(part.shaderTechnique);
-
-		worldRenderPass.setShaderCombination(
-			m_shader,
-			worldTransform,
-			getBoundingBox()
-		);
+		worldRenderPass.setShaderCombination(m_shader);
 
 		render::IProgram* program = m_shader->getCurrentProgram();
 		if (!program)

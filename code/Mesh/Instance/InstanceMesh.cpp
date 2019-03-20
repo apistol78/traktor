@@ -108,11 +108,7 @@ void InstanceMesh::render(
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
 		m_shader->setTechnique(i->shaderTechnique);
-		worldRenderPass.setShaderCombination(
-			m_shader,
-			Transform::identity(),
-			boundingBoxWorld
-		);
+		worldRenderPass.setShaderCombination(m_shader);
 
 		if ((m_shader->getCurrentPriority() & (render::RpAlphaBlend | render::RpPostAlphaBlend)) != 0)
 		{
@@ -203,11 +199,7 @@ void InstanceMesh::render(
 		for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 		{
 			m_shader->setTechnique(i->shaderTechnique);
-			worldRenderPass.setShaderCombination(
-				m_shader,
-				Transform::identity(),
-				boundingBoxWorld
-			);
+			worldRenderPass.setShaderCombination(m_shader);
 
 			if ((m_shader->getCurrentPriority() & (render::RpAlphaBlend | render::RpPostAlphaBlend)) == 0)
 				continue;

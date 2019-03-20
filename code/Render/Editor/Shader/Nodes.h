@@ -471,6 +471,18 @@ private:
 	int32_t m_to;
 };
 
+/*! \brief Iterate2
+ *
+ * \tbd Replace all others, Sum, Repeat, Iterate and Iterate2d with fragments using this node.
+ */
+class T_DLLCLASS Iterate2 : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Iterate2();
+};
+
 /*! \brief 2-D iterate. */
 class T_DLLCLASS Iterate2d : public ImmutableNode
 {

@@ -116,17 +116,17 @@ int32_t Tab::getPageCount() const
 	return int32_t(m_pages.size());
 }
 
-Ref< TabPage > Tab::getPage(int32_t index) const
+TabPage* Tab::getPage(int32_t index) const
 {
 	if (index < 0 || index >= int32_t(m_pages.size()))
-		return 0;
+		return nullptr;
 	return m_pages[index].page;
 }
 
-Ref< TabPage > Tab::getPageAt(const Point& position) const
+TabPage* Tab::getPageAt(const Point& position) const
 {
 	if (position.y >= dpi96(c_tabHeight))
-		return 0;
+		return nullptr;
 
 	for (page_state_vector_t::const_iterator i = m_pages.begin(); i != m_pages.end(); ++i)
 	{
@@ -134,7 +134,7 @@ Ref< TabPage > Tab::getPageAt(const Point& position) const
 			return i->page;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void Tab::removePage(TabPage* page)
@@ -188,7 +188,7 @@ void Tab::setActivePage(TabPage* page)
 	checkPageStates();
 #endif
 
-	if ((m_selectedPage = page) != 0)
+	if ((m_selectedPage = page) != nullptr)
 	{
 		PageState* state = findPageState(page);
 		T_ASSERT(state);
@@ -214,12 +214,12 @@ void Tab::setActivePage(TabPage* page)
 	}
 }
 
-Ref< TabPage > Tab::getActivePage()
+TabPage* Tab::getActivePage()
 {
 	return m_selectedPage;
 }
 
-Ref< TabPage > Tab::cycleActivePage(bool forward)
+TabPage* Tab::cycleActivePage(bool forward)
 {
 	if (m_pages.size() < 2)
 		return m_selectedPage;
@@ -445,13 +445,6 @@ void Tab::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rcTabs);
 
-	/*
-	// White separator.
-	canvas.setForeground(Color4ub(255, 255, 255));
-	canvas.setBackground(getSystemColor(ScButtonFace));
-	canvas.drawLine(Point(rcTabs.left, rcTabs.bottom), Point(rcTabs.right, rcTabs.bottom));
-	*/
-
 	// Draw tab pages.
 	if (!m_pages.empty())
 	{
@@ -591,7 +584,7 @@ Tab::PageState* Tab::findPageState(const TabPage* page)
 		if (i->page == page)
 			return &(*i);
 	}
-	return 0;
+	return nullptr;
 }
 
 Tab::PageState* Tab::findPageState(int32_t depth)
@@ -601,7 +594,7 @@ Tab::PageState* Tab::findPageState(int32_t depth)
 		if (i->depth == depth)
 			return &(*i);
 	}
-	return 0;
+	return nullptr;
 }
 
 #if defined(_DEBUG)
@@ -613,7 +606,8 @@ void Tab::checkPageStates()
 		int32_t depth = i->depth;
 		T_ASSERT(depth < counts.size());
 
-		counts[depth]++;
+		if (depth < counts.size())
+			counts[depth]++;
 	}
 	for (std::vector< int32_t >::const_iterator i = counts.begin(); i != counts.end(); ++i)
 		T_ASSERT(*i == 1);

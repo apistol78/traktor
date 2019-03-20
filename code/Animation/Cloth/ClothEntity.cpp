@@ -194,11 +194,7 @@ void ClothEntity::render(
 	}
 
 	worldRenderPass.setShaderTechnique(m_shader);
-	worldRenderPass.setShaderCombination(
-		m_shader,
-		m_transform,
-		m_aabb
-	);
+	worldRenderPass.setShaderCombination(m_shader);
 
 	render::RenderContext* renderContext = worldContext.getRenderContext();
 	T_ASSERT(renderContext);

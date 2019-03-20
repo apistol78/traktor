@@ -108,10 +108,10 @@ bool emitConditional(PsslContext& cx, Conditional* node)
 
 	// Find common output pins from both sides of branch;
 	// emit those before condition in order to have them evaluated outside of conditional.
-	std::vector< const OutputPin* > outputPins;
+	AlignedVector< const OutputPin* > outputPins;
 	cx.findCommonOutputs(node, L"CaseTrue", L"CaseFalse", outputPins);
-	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
-		cx.emit((*i)->getNode());
+	for (auto outputPin : outputPins)
+		cx.emit(outputPin->getNode());
 
 	// Emit true branch.
 	{
@@ -487,13 +487,13 @@ bool emitIterate(PsslContext& cx, Iterate* node)
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
-	std::vector< const OutputPin* > outputPins;
-	std::vector< const OutputPin* > dependentOutputPins(2);
+	AlignedVector< const OutputPin* > outputPins;
+	AlignedVector< const OutputPin* > dependentOutputPins(2);
 	dependentOutputPins[0] = node->findOutputPin(L"N");
 	dependentOutputPins[1] = node->findOutputPin(L"Output");
 	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
-	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
-		cx.emit((*i)->getNode());
+	for (outputPin : outputPins)
+		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;
@@ -569,14 +569,14 @@ bool emitIterate2d(PsslContext& cx, Iterate2d* node)
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
-	std::vector< const OutputPin* > outputPins;
-	std::vector< const OutputPin* > dependentOutputPins(3);
+	AlignedVector< const OutputPin* > outputPins;
+	AlignedVector< const OutputPin* > dependentOutputPins(3);
 	dependentOutputPins[0] = node->findOutputPin(L"X");
 	dependentOutputPins[1] = node->findOutputPin(L"Y");
 	dependentOutputPins[2] = node->findOutputPin(L"Output");
 	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
-	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
-		cx.emit((*i)->getNode());
+	for (outputPin : outputPins)
+		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;
@@ -1194,13 +1194,13 @@ bool emitRepeat(PsslContext& cx, Repeat* node)
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
-	std::vector< const OutputPin* > outputPins;
-	std::vector< const OutputPin* > dependentOutputPins(2);
+	AlignedVector< const OutputPin* > outputPins;
+	AlignedVector< const OutputPin* > dependentOutputPins(2);
 	dependentOutputPins[0] = node->findOutputPin(L"N");
 	dependentOutputPins[1] = node->findOutputPin(L"Output");
 	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
-	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
-		cx.emit((*i)->getNode());
+	for (outputPin : outputPins)
+		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;
@@ -1753,13 +1753,13 @@ bool emitSum(PsslContext& cx, Sum* node)
 	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
-	std::vector< const OutputPin* > outputPins;
-	std::vector< const OutputPin* > dependentOutputPins(2);
+	AlignedVector< const OutputPin* > outputPins;
+	AlignedVector< const OutputPin* > dependentOutputPins(2);
 	dependentOutputPins[0] = node->findOutputPin(L"N");
 	dependentOutputPins[1] = node->findOutputPin(L"Output");
 	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
-	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
-		cx.emit((*i)->getNode());
+	for (outputPin : outputPins)
+		cx.emit(outputPin->getNode());
 
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;

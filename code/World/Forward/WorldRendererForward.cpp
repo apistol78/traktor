@@ -6,8 +6,10 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/RenderTargetSet.h"
 #include "Render/ISimpleTexture.h"
+#include "Render/RenderTargetSet.h"
+#include "Render/StructBuffer.h"
+#include "Render/StructElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/ImageProcess/ImageProcess.h"
 #include "Render/ImageProcess/ImageProcessSettings.h"
@@ -33,6 +35,8 @@ namespace traktor
 		namespace
 		{
 
+const int32_t c_maxLightCount = 1024;
+
 const resource::Id< render::ImageProcessSettings > c_ambientOcclusionLow(Guid(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}"));		// SSAO, half size
 const resource::Id< render::ImageProcessSettings > c_ambientOcclusionMedium(Guid(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}"));	// SSAO, full size
 const resource::Id< render::ImageProcessSettings > c_ambientOcclusionHigh(Guid(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}"));		// HBAO, half size
@@ -53,6 +57,16 @@ render::handle_t s_handleView = 0;
 render::handle_t s_handleViewInverse = 0;
 render::handle_t s_handleProjection = 0;
 render::handle_t s_handleReflectionMap = 0;
+
+#pragma pack(1)
+struct LightShaderData
+{
+	float typeRangeRadius[4];
+	float position[4];
+	float direction[4];
+	float color[4];
+};
+#pragma pack()
 
 		}
 
@@ -457,6 +471,23 @@ bool WorldRendererForward::create(
 			return false;
 	}
 
+	// Allocate light lists.
+	for (auto& frame : m_frames)
+	{
+		AlignedVector< render::StructElement > lightShaderDataStruct;
+		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, typeRangeRadius)));
+		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, position)));
+		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, direction)));
+		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, color)));
+
+		frame.lightSBuffer = renderSystem->createStructBuffer(
+			lightShaderDataStruct,
+			render::getStructSize(lightShaderDataStruct) * c_maxLightCount
+		);
+		if (!frame.lightSBuffer)
+			return false;
+	}
+
 	// Allocate "depth" context.
 	for (auto& frame : m_frames)
 		frame.depth = new WorldContext(desc.entityRenderers);
@@ -501,6 +532,8 @@ void WorldRendererForward::destroy()
 
 		frame.visual = nullptr;
 		frame.depth = nullptr;
+
+		safeDestroy(frame.lightSBuffer);
 	}
 
 	safeDestroy(m_toneMapImageProcess);
@@ -531,6 +564,7 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
 
+	// Flush render contexts.
 	if (f.haveDepth)
 	{
 		f.depth->getRenderContext()->flush();
@@ -546,20 +580,46 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 
 	f.visual->getRenderContext()->flush();
 
-	Matrix44 viewInverse = worldRenderView.getView().inverse();
+	// Begun building new frame.
+	const Matrix44& view = worldRenderView.getView();
+	Matrix44 viewInverse = view.inverse();
+
 	worldRenderView.setEyePosition(viewInverse.translation().xyz1());
 	worldRenderView.setEyeDirection(viewInverse.axisZ().xyz0());
 
 	// Store some global values.
 	f.time = worldRenderView.getTime();
 
+	// Build global light list.
+	LightShaderData* lsd = (LightShaderData*)f.lightSBuffer->lock();
+	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
+	{
+		const auto& light = worldRenderView.getLight(i);
+		
+		lsd->typeRangeRadius[0] = (float)(light.type + 0.5f);
+		lsd->typeRangeRadius[1] = light.range;
+		lsd->typeRangeRadius[2] = light.radius;
+		lsd->typeRangeRadius[3] = 0.0f;
+		
+		(view * light.position.xyz1()).storeUnaligned(lsd->position);
+		(view * light.direction.xyz0()).storeUnaligned(lsd->direction);
+		light.color.storeUnaligned(lsd->color);
+
+		++lsd;
+	}
+	f.lightSBuffer->unlock();
+	f.lightCount = worldRenderView.getLightCount();
+
 	// Build depth context.
 	buildGBuffer(worldRenderView, frame);
 
+	// \tbd Tiled light culling.
+
+	// Build visual (with or without shadows) context.
 	if (m_shadowsQuality > QuDisabled)
-		buildShadows(worldRenderView, frame);
+		buildVisualWithShadows(worldRenderView, frame);
 	else
-		buildNoShadows(worldRenderView, frame);
+		buildVisualWithNoShadows(worldRenderView, frame);
 
 	// Prepare stereoscopic projection.
 	float screenWidth = float(m_renderView->getWidth());
@@ -844,7 +904,7 @@ void WorldRendererForward::buildGBuffer(WorldRenderView& worldRenderView, int fr
 	f.haveDepth = true;
 }
 
-void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int frame)
+void WorldRendererForward::buildVisualWithShadows(WorldRenderView& worldRenderView, int frame)
 {
 	// Find first directional light casting shadow.
 	const Light* shadowLight = 0;
@@ -936,7 +996,8 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int fr
 		s_techniqueForwardColor,
 		worldRenderView,
 		IWorldRenderPass::PfLast,
-		m_settings.ambientColor,
+		f.lightSBuffer,
+		f.lightCount,
 		m_settings.fog,
 		m_settings.fogDistanceY,
 		m_settings.fogDistanceZ,
@@ -957,7 +1018,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, int fr
 	f.haveShadows = true;
 }
 
-void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, int frame)
+void WorldRendererForward::buildVisualWithNoShadows(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -967,7 +1028,8 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, int 
 		s_techniqueForwardColor,
 		worldRenderView,
 		IWorldRenderPass::PfLast,
-		m_settings.ambientColor,
+		f.lightSBuffer,
+		f.lightCount,
 		m_settings.fog,
 		m_settings.fogDistanceY,
 		m_settings.fogDistanceZ,

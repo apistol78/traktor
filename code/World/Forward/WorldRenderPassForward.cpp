@@ -12,8 +12,6 @@ namespace traktor
 		namespace
 		{
 
-enum { MaxForwardLightCount = 2 };
-
 bool s_handlesInitialized = false;
 render::handle_t s_techniqueDefault;
 render::handle_t s_handleView;
@@ -21,10 +19,6 @@ render::handle_t s_handleViewInverse;
 render::handle_t s_handleWorld;
 render::handle_t s_handleWorldView;
 render::handle_t s_handleColorMap;
-render::handle_t s_handleLightAmbientColor;
-render::handle_t s_handleLightPositionAndType;
-render::handle_t s_handleLightDirectionAndRange;
-render::handle_t s_handleLightColor;
 render::handle_t s_handleFogEnable;
 render::handle_t s_handleFogDistanceAndDensity;
 render::handle_t s_handleFogColor;
@@ -32,6 +26,8 @@ render::handle_t s_handleShadowEnable;
 render::handle_t s_handleShadowMask;
 render::handle_t s_handleDepthEnable;
 render::handle_t s_handleDepthMap;
+render::handle_t s_handleLightCount;
+render::handle_t s_handleLights;
 
 void initializeHandles()
 {
@@ -45,10 +41,6 @@ void initializeHandles()
 	s_handleWorld = render::getParameterHandle(L"World_World");
 	s_handleWorldView = render::getParameterHandle(L"World_WorldView");
 	s_handleColorMap = render::getParameterHandle(L"World_ColorMap");
-	s_handleLightAmbientColor = render::getParameterHandle(L"World_LightAmbientColor");
-	s_handleLightPositionAndType = render::getParameterHandle(L"World_LightPositionAndType");
-	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
-	s_handleLightColor = render::getParameterHandle(L"World_LightColor");
 	s_handleFogEnable = render::getParameterHandle(L"World_FogEnable");
 	s_handleFogDistanceAndDensity = render::getParameterHandle(L"World_FogDistanceAndDensity");
 	s_handleFogColor = render::getParameterHandle(L"World_FogColor");
@@ -56,6 +48,8 @@ void initializeHandles()
 	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
 	s_handleDepthEnable = render::getParameterHandle(L"World_DepthEnable");
 	s_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
+	s_handleLightCount = render::getParameterHandle(L"World_LightCount");
+	s_handleLights = render::getParameterHandle(L"World_Lights");
 
 	s_handlesInitialized = true;
 }
@@ -68,7 +62,8 @@ WorldRenderPassForward::WorldRenderPassForward(
 	render::handle_t technique,
 	const WorldRenderView& worldRenderView,
 	uint32_t passFlags,
-	const Vector4& ambientColor,
+	render::StructBuffer* lightSBuffer,
+	uint32_t lightCount,
 	bool fogEnabled,
 	float fogDistanceY,
 	float fogDistanceZ,
@@ -82,7 +77,8 @@ WorldRenderPassForward::WorldRenderPassForward(
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
 ,	m_passFlags(passFlags)
-,	m_ambientColor(ambientColor)
+,	m_lightSBuffer(lightSBuffer)
+,	m_lightCount(lightCount)
 ,	m_fogEnabled(fogEnabled)
 ,	m_fogDistanceY(fogDistanceY)
 ,	m_fogDistanceZ(fogDistanceZ)
@@ -108,7 +104,8 @@ WorldRenderPassForward::WorldRenderPassForward(
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
 ,	m_passFlags(passFlags)
-,	m_ambientColor(0.0f, 0.0f, 0.0f, 0.0f)
+,	m_lightSBuffer(nullptr)
+,	m_lightCount(0)
 ,	m_fogEnabled(false)
 ,	m_fogDistanceY(0.0f)
 ,	m_fogDistanceZ(0.0f)
@@ -117,7 +114,7 @@ WorldRenderPassForward::WorldRenderPassForward(
 ,	m_fogColor(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_colorMap(colorMap)
 ,	m_depthMap(depthMap)
-,	m_shadowMask(0)
+,	m_shadowMask(nullptr)
 {
 	initializeHandles();
 
@@ -149,37 +146,6 @@ void WorldRenderPassForward::setShaderCombination(render::Shader* shader) const
 	}
 }
 
-void WorldRenderPassForward::setShaderCombination(render::Shader* shader, const Transform& world, const Aabb3& bounds) const
-{
-	if (m_technique == s_techniqueDefault)
-	{
-		int lightDirectionalCount = 0;
-		int lightPointCount = 0;
-
-		Scalar radius = bounds.empty() ? Scalar(0.0f) : bounds.getExtent().length();
-
-		// Collect lights affecting entity.
-		for (int i = 0; i < m_worldRenderView.getLightCount(); ++i)
-		{
-			const Light& light = m_worldRenderView.getLight(i);
-			if (light.type == LtDirectional)
-			{
-				lightDirectionalCount++;
-			}
-			else if (light.type == LtPoint)
-			{
-				Scalar distance = (world.translation() - light.position).length();
-				if (distance - radius <= light.range)
-					lightPointCount++;
-			}
-		}
-
-		shader->setCombination(s_handleFogEnable, m_fogEnabled);
-		shader->setCombination(s_handleShadowEnable, m_shadowMask != 0);
-		shader->setCombination(s_handleDepthEnable, m_depthMap != 0);
-	}
-}
-
 void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams) const
 {
 	setWorldProgramParameters(programParams, Transform::identity());
@@ -203,7 +169,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	if (m_technique == s_techniqueDefault)
 	{
 		setColorMapProgramParameters(programParams);
-		setLightProgramParameters(programParams, world, bounds);
+		setLightProgramParameters(programParams);
 		setFogProgramParameters(programParams);
 		setShadowMapProgramParameters(programParams);
 		setDepthMapProgramParameters(programParams);
@@ -222,98 +188,8 @@ void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters
 
 void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters* programParams) const
 {
-	const Matrix44& view = m_worldRenderView.getView();
-
-	// Pack light parameters.
-	Vector4 lightPositionAndType[MaxForwardLightCount], *lightPositionAndTypePtr = lightPositionAndType;
-	Vector4 lightDirectionAndRange[MaxForwardLightCount], *lightDirectionAndRangePtr = lightDirectionAndRange;
-	Vector4 lightColor[MaxForwardLightCount], *lightColorPtr = lightColor;
-
-	int lightCount = std::min< int >(m_worldRenderView.getLightCount(), MaxForwardLightCount);
-	for (int i = 0; i < lightCount; ++i)
-	{
-		const Light& light = m_worldRenderView.getLight(i);
-		*lightPositionAndTypePtr++ = (view * light.position).xyz0() + Vector4(0.0f, 0.0f, 0.0f, float(light.type));
-		*lightDirectionAndRangePtr++ = (view * light.direction).xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
-		*lightColorPtr++ = light.color;
-	}
-
-	// Disable excessive lights.
-	for (int i = lightCount; i < MaxForwardLightCount; ++i)
-	{
-		const static Vector4 c_typeDisabled(0.0f, 0.0f, 0.0f, float(LtDisabled));
-		*lightPositionAndTypePtr++ = c_typeDisabled;
-		*lightDirectionAndRangePtr++ = Vector4::zero();
-		*lightColorPtr++ = Vector4::zero();
-	}
-
-	// Finally set shader parameters.
-	programParams->setVectorParameter(s_handleLightAmbientColor, m_ambientColor);
-	programParams->setVectorArrayParameter(s_handleLightPositionAndType, lightPositionAndType, MaxForwardLightCount);
-	programParams->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, MaxForwardLightCount);
-	programParams->setVectorArrayParameter(s_handleLightColor, lightColor, MaxForwardLightCount);
-}
-
-void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters* programParams, const Transform& world, const Aabb3& bounds) const
-{
-	const Light* lightDirectional[MaxForwardLightCount]; int lightDirectionalCount = 0;
-	const Light* lightPoint[MaxForwardLightCount]; int lightPointCount = 0;
-
-	Scalar radius = bounds.empty() ? Scalar(0.0f) : bounds.getExtent().length();
-
-	// Collect lights affecting entity.
-	int lightCount = std::min< int >(m_worldRenderView.getLightCount(), MaxForwardLightCount);
-	for (int i = 0; i < lightCount; ++i)
-	{
-		const Light& light = m_worldRenderView.getLight(i);
-		if (light.type == LtDirectional)
-		{
-			lightDirectional[lightDirectionalCount++] = &light;
-		}
-		else if (light.type == LtPoint)
-		{
-			Scalar distance = (world.translation() - light.position).length();
-			if (distance - radius <= light.range)
-				lightPoint[lightPointCount++] = &light;
-		}
-	}
-
-	const Matrix44& view = m_worldRenderView.getView();
-
-	// Pack light parameters.
-	Vector4 lightPositionAndType[MaxForwardLightCount], *lightPositionAndTypePtr = lightPositionAndType;
-	Vector4 lightDirectionAndRange[MaxForwardLightCount], *lightDirectionAndRangePtr = lightDirectionAndRange;
-	Vector4 lightColor[MaxForwardLightCount], *lightColorPtr = lightColor;
-
-	for (int i = 0; i < lightDirectionalCount; ++i)
-	{
-		const static Vector4 c_typeDirectional(0.0f, 0.0f, 0.0f, float(LtDirectional));
-		*lightPositionAndTypePtr++ = c_typeDirectional;
-		*lightDirectionAndRangePtr++ = (view * lightDirectional[i]->direction).xyz0();
-		*lightColorPtr++ = lightDirectional[i]->color;
-	}
-	for (int i = 0; i < lightPointCount; ++i)
-	{
-		const static Vector4 c_typePoint(0.0f, 0.0f, 0.0f, float(LtPoint));
-		*lightPositionAndTypePtr++ = (view * lightPoint[i]->position).xyz0() + c_typePoint;
-		*lightDirectionAndRangePtr++ = Vector4(0.0f, 0.0f, 0.0f, lightPoint[i]->range);
-		*lightColorPtr++ = lightPoint[i]->color;
-	}
-
-	// Disable excessive lights.
-	for (int i = lightDirectionalCount + lightPointCount; i < MaxForwardLightCount; ++i)
-	{
-		const static Vector4 c_typeDisabled(0.0f, 0.0f, 0.0f, float(LtDisabled));
-		*lightPositionAndTypePtr++ = c_typeDisabled;
-		*lightDirectionAndRangePtr++ = Vector4::zero();
-		*lightColorPtr++ = Vector4::zero();
-	}
-
-	// Finally set shader parameters.
-	programParams->setVectorParameter(s_handleLightAmbientColor, m_ambientColor);
-	programParams->setVectorArrayParameter(s_handleLightPositionAndType, lightPositionAndType, MaxForwardLightCount);
-	programParams->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, MaxForwardLightCount);
-	programParams->setVectorArrayParameter(s_handleLightColor, lightColor, MaxForwardLightCount);
+	programParams->setFloatParameter(s_handleLightCount, (float)m_lightCount);
+	programParams->setStructBufferParameter(s_handleLights, m_lightSBuffer);
 }
 
 void WorldRenderPassForward::setFogProgramParameters(render::ProgramParameters* programParams) const
