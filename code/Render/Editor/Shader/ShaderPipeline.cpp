@@ -403,20 +403,28 @@ bool ShaderPipeline::buildOutput(
 	Ref< ShaderResource > shaderResource = new ShaderResource();
 	uint32_t parameterBit = 1;
 
+	// Resolve all local variables.
+	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved(ShaderGraphStatic::VrtLocal);
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to resolve local variables." << Endl;
+		return false;
+	}
+
 	// Link shader fragments.
 	FragmentReaderAdapter fragmentReader(pipelineBuilder);
 	shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true);
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to link shader fragments" << Endl;
+		log::error << L"ShaderPipeline failed; unable to link shader fragments." << Endl;
 		return false;
 	}
 
-	// Resolve all variables.
-	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved();
+	// Resolve all global variables.
+	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved(ShaderGraphStatic::VrtGlobal);
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to resolve variables" << Endl;
+		log::error << L"ShaderPipeline failed; unable to resolve global variables." << Endl;
 		return false;
 	}
 
@@ -424,7 +432,7 @@ bool ShaderPipeline::buildOutput(
 	shaderGraph = render::ShaderGraphStatic(shaderGraph).getConnectedPermutation();
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to resolve connected permutation" << Endl;
+		log::error << L"ShaderPipeline failed; unable to resolve connected permutation." << Endl;
 		return false;
 	}
 
@@ -435,7 +443,7 @@ bool ShaderPipeline::buildOutput(
 	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(platformSignature);
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to get platform permutation" << Endl;
+		log::error << L"ShaderPipeline failed; unable to get platform permutation." << Endl;
 		return false;
 	}
 
@@ -443,7 +451,7 @@ bool ShaderPipeline::buildOutput(
 	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to remove unused branches" << Endl;
+		log::error << L"ShaderPipeline failed; unable to remove unused branches." << Endl;
 		return false;
 	}
 

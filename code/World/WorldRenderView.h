@@ -58,14 +58,6 @@ public:
 
 	void setEyeDirection(const Vector4& eyeDirection);
 
-	void setInterocularDistance(float interocularDistance);
-
-	void setDistortionValue(float distortionValue);
-
-	void setScreenPlaneDistance(float screenPlaneDistance);
-
-	void setGodRayDirection(const Vector4& direction);
-
 	void addLight(const Light& light);
 
 	void resetLights();
@@ -130,22 +122,6 @@ public:
 		return m_eyeDirection;
 	}
 
-	T_FORCE_INLINE float getInterocularDistance() const {
-		return m_interocularDistance;
-	}
-
-	T_FORCE_INLINE float getDistortionValue() const {
-		return m_distortionValue;
-	}
-
-	T_FORCE_INLINE float getScreenPlaneDistance() const {
-		return m_screenPlaneDistance;
-	}
-
-	T_FORCE_INLINE const Vector4& getGodRayDirection() const {
-		return m_godRayDirection;
-	}
-
 private:
 	int32_t m_index;
 	Frustum m_viewFrustum;
@@ -161,10 +137,6 @@ private:
 	float m_interval;
 	Vector4 m_eyePosition;
 	Vector4 m_eyeDirection;
-	float m_interocularDistance;
-	float m_distortionValue;
-	float m_screenPlaneDistance;
-	Vector4 m_godRayDirection;
 };
 
 	}

@@ -487,7 +487,7 @@ Ref< BoxedVector4 > BoxedPlane::rayIntersection(
 	Vector4 result;
 	Scalar k;
 
-	if (m_value.rayIntersection(origin, direction, k, &result))
+	if (m_value.rayIntersection(origin, direction, k, result))
 		return new BoxedVector4(result);
 	else
 		return nullptr;

@@ -9,6 +9,7 @@
 #include "Database/Database.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Drawing/Filters/ConvolutionFilter.h"
 #include "Drawing/Filters/DilateFilter.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
@@ -155,7 +156,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			light.type = Light::LtDirectional;
 			light.position = Vector4::origo();
 			light.direction = -lightEntityData->getTransform().axisY();
-			light.color = Color4f(lightComponentData->getColor());
+			light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
 			light.range = Scalar(0.0f);
 			tracer.addLight(light);
 		}
@@ -164,8 +165,18 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			light.type = Light::LtPoint;
 			light.position = lightEntityData->getTransform().translation().xyz1();
 			light.direction = Vector4::zero();
-			light.color = Color4f(lightComponentData->getColor());
+			light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
 			light.range = Scalar(lightComponentData->getRange());
+			tracer.addLight(light);
+		}
+		else if (lightComponentData->getLightType() == world::LtSpot)
+		{
+			light.type = Light::LtSpot;
+			light.position = lightEntityData->getTransform().translation().xyz1();
+			light.direction = -lightEntityData->getTransform().axisY();
+			light.color = Color4f(lightComponentData->getColor());
+			light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
+			light.radius = Scalar(lightComponentData->getRadius());
 			tracer.addLight(light);
 		}
 		else
@@ -447,6 +458,9 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		// Dilate lightmap to prevent leaking.
 		drawing::DilateFilter dilateFilter(3);
 		lightmap->apply(&dilateFilter);
+
+		// Blur indirect lightmap to reduce noise from path tracing.
+		lightmap->apply(drawing::ConvolutionFilter::createGaussianBlur(1));
 
 		// Discard alpha.
 		lightmap->clearAlpha(1.0f);

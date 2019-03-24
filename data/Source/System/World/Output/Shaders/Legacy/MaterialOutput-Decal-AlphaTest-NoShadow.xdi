@@ -233,7 +233,7 @@
 				<second>960</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{6C4C9393-CAC6-EA40-821B-0210B20047C3}</id>
 			<comment/>
 			<position>
@@ -241,8 +241,9 @@
 				<second>774</second>
 			</position>
 			<name>Vertex_ViewNormal</name>
+			<global>true</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{9EFF9485-B396-2346-A6FA-525D70C27AA6}</id>
 			<comment/>
 			<position>
@@ -250,6 +251,7 @@
 				<second>982</second>
 			</position>
 			<name>Vertex_ViewPosition</name>
+			<global>true</global>
 		</item>
 		<item type="traktor.render.Connected" version="traktor.render.Node:1">
 			<id>{D392A29E-B3F6-9642-81C2-E6EB73D74E41}</id>

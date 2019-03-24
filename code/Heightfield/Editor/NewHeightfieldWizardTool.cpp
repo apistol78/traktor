@@ -57,7 +57,7 @@ bool NewHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edito
 			Scalar k;
 			Vector4 p = Vector4::zero();
 
-			worldPlane.rayIntersection(Vector4(wx, -1e8f, wz, 1.0f), Vector4(0.0f, 1.0f, 0.0f, 0.0f), k, &p);
+			worldPlane.rayIntersection(Vector4(wx, -1e8f, wz, 1.0f), Vector4(0.0f, 1.0f, 0.0f, 0.0f), k, p);
 
 			float h = heightfield->worldToUnit(p.y());
 

@@ -23,6 +23,7 @@ class ImageProcess;
 class ISimpleTexture;
 class RenderContext;
 class RenderTargetSet;
+class StructBuffer;
 
 	}
 
@@ -69,41 +70,39 @@ public:
 	virtual void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const override final;
 
 private:
-	struct Slice
+	struct ShadowContext
 	{
-		Ref< WorldContext > shadow[MaxLightShadowCount];
-		Matrix44 shadowLightView[MaxLightShadowCount];
-		Matrix44 shadowLightProjection[MaxLightShadowCount];
-		Matrix44 viewToLightSpace[MaxLightShadowCount];
+		Ref< WorldContext > shadow;
+		Matrix44 shadowLightView;
+		Matrix44 shadowLightProjection;
+		Matrix44 viewToLightSpace;
 	};
 
 	struct Frame
 	{
-		Slice slice[MaxSliceCount];
+		ShadowContext slice[MaxSliceCount];
+		ShadowContext atlas[16];
+
 		Ref< WorldContext > gbuffer;
 		Ref< WorldContext > irradiance;
 		Ref< WorldContext > velocity;
 		Ref< WorldContext > visual;
-		float time;
-		float A;
-		float B;
+
+		AlignedVector< Light > lights;
+		Ref< render::StructBuffer > lightSBuffer;
+
+		Frustum viewFrustum;
+
 		Matrix44 projection;
 		Matrix44 lastView;
 		Matrix44 view;
-		Frustum viewFrustum;
-		AlignedVector< Light > lights;
-		Vector4 godRayDirection;
-		bool haveGBuffer;
-		bool haveIrradiance;
-		bool haveVelocity;
+
+		int32_t atlasCount;
+		float time;
 
 		Frame()
 		:	time(0.0f)
-		,	A(0.0f)
-		,	B(0.0f)
-		,	haveGBuffer(false)
-		,	haveIrradiance(false)
-		,	haveVelocity(false)
+		,	atlasCount(0)
 		{
 		}
 	};
@@ -129,6 +128,7 @@ private:
 
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;
+
 	Quality m_toneMapQuality;
 	Quality m_motionBlurQuality;
 	Quality m_shadowsQuality;
@@ -137,19 +137,25 @@ private:
 	Quality m_antiAliasQuality;
 
 	Ref< render::IRenderView > m_renderView;
+
 	Ref< IWorldShadowProjection > m_shadowProjection0;
 	Ref< IWorldShadowProjection > m_shadowProjection;
+
 	Ref< render::RenderTargetSet > m_visualTargetSet;
 	Ref< render::RenderTargetSet > m_intermediateTargetSet;
 	Ref< render::RenderTargetSet > m_gbufferTargetSet;
 	Ref< render::RenderTargetSet > m_velocityTargetSet;
 	Ref< render::RenderTargetSet > m_colorTargetSet;
-	Ref< render::RenderTargetSet > m_shadowTargetSet;
-	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
+	
+	Ref< render::RenderTargetSet > m_shadowCascadeTargetSet;
+	Ref< render::RenderTargetSet > m_shadowAtlasTargetSet;
+
 	Ref< render::RenderTargetSet > m_lightAccumulationTargetSet;
+	
 	Ref< render::RenderContext > m_globalContext;
+	
 	resource::Proxy< render::ITexture > m_reflectionMap;
-	Ref< render::ImageProcess > m_shadowMaskProject;
+	
 	Ref< render::ImageProcess > m_colorTargetCopy;
 	Ref< render::ImageProcess > m_ambientOcclusion;
 	Ref< render::ImageProcess > m_antiAlias;
@@ -158,7 +164,9 @@ private:
 	Ref< render::ImageProcess > m_motionBlurPrimeImageProcess;
 	Ref< render::ImageProcess > m_motionBlurImageProcess;
 	Ref< render::ImageProcess > m_toneMapImageProcess;
+	
 	Ref< LightRendererDeferred > m_lightRenderer;
+
 	RefArray< Entity > m_buildEntities;
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];
@@ -173,9 +181,7 @@ private:
 
 	void buildVelocity(WorldRenderView& worldRenderView, int frame);
 
-	void buildLightWithShadows(WorldRenderView& worldRenderView, int frame);
-
-	void buildLightWithNoShadows(WorldRenderView& worldRenderView, int frame);
+	void buildLights(WorldRenderView& worldRenderView, int frame);
 
 	void buildVisual(WorldRenderView& worldRenderView, int frame);
 };

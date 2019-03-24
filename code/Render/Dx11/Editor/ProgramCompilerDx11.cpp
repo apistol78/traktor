@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/Adler32.h"

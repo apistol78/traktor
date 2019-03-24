@@ -662,12 +662,19 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 	return shaderGraph;
 }
 
-Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved() const
+Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved(VariableResolveType resolve) const
 {
 	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
 
+	// Get all variable nodes from shader graph.
 	RefArray< Variable > variableNodes;
 	shaderGraph->findNodesOf< Variable >(variableNodes);
+
+	// Ignore variables of other scopes.
+	auto it = std::remove_if(variableNodes.begin(), variableNodes.end(), [&](const Variable* variableNode) {
+		return bool((resolve == VrtLocal && variableNode->isGlobal()) || (resolve == VrtGlobal && !variableNode->isGlobal()));
+	});
+	variableNodes.erase(it, variableNodes.end());
 
 	// Join variable references.
 	for (const auto variableNode : variableNodes)
@@ -677,10 +684,10 @@ Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved() const
 
 		if (shaderGraph->getDestinationCount(variableOutput) > 0)
 		{
-			RefArray< Variable >::iterator j = std::find_if(variableNodes.begin(), variableNodes.end(), ReadVariablePred(shaderGraph, variableNode->getName()));
-			if (j != variableNodes.end())
+			auto it = std::find_if(variableNodes.begin(), variableNodes.end(), ReadVariablePred(shaderGraph, variableNode->getName()));
+			if (it != variableNodes.end())
 			{
-				const InputPin* variableInput = (*j)->getInputPin(0);
+				const InputPin* variableInput = (*it)->getInputPin(0);
 				T_ASSERT(variableInput);
 
 				const OutputPin* sourcePin = shaderGraph->findSourcePin(variableInput);

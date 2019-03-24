@@ -229,6 +229,17 @@ public:
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 
+/*! \brief Set target viewport block.
+ * \ingroup Render
+ */
+class T_DLLCLASS SetViewportRenderBlock : public RenderBlock
+{
+public:
+	Viewport viewport;
+
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
+};
+
 /*! \brief Chain render block.
  * \ingroup Render
  */

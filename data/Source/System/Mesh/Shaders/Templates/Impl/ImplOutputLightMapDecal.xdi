@@ -5,8 +5,8 @@
 			<id>{F3DA9160-6EA0-44B7-BDC6-68BA043171CD}</id>
 			<comment/>
 			<position>
-				<first>1066</first>
-				<second>548</second>
+				<first>1072</first>
+				<second>354</second>
 			</position>
 			<name>T_ViewVelocity</name>
 			<connectable>true</connectable>
@@ -18,8 +18,8 @@
 			<id>{4E36EC8B-5317-45CD-9008-23F6B945CC9C}</id>
 			<comment/>
 			<position>
-				<first>1076</first>
-				<second>394</second>
+				<first>1072</first>
+				<second>506</second>
 			</position>
 			<name>T_Roughness</name>
 			<connectable>true</connectable>
@@ -31,8 +31,8 @@
 			<id>{D710345F-679E-414F-845A-EE9D399114DC}</id>
 			<comment/>
 			<position>
-				<first>1066</first>
-				<second>433</second>
+				<first>1072</first>
+				<second>544</second>
 			</position>
 			<name>T_Transparency</name>
 			<connectable>true</connectable>
@@ -44,8 +44,8 @@
 			<id>{289CD48A-9CB6-4736-AAC4-5CA6E7A16593}</id>
 			<comment/>
 			<position>
-				<first>1086</first>
-				<second>356</second>
+				<first>1092</first>
+				<second>468</second>
 			</position>
 			<name>T_Metalness</name>
 			<connectable>true</connectable>
@@ -57,8 +57,8 @@
 			<id>{EEF85D37-46B1-422A-8C5A-E23DABA4EB3E}</id>
 			<comment/>
 			<position>
-				<first>1096</first>
-				<second>279</second>
+				<first>1092</first>
+				<second>392</second>
 			</position>
 			<name>T_Emissive</name>
 			<connectable>true</connectable>
@@ -70,8 +70,8 @@
 			<id>{3AB47D2F-F16B-4398-8814-FBD90C42D02E}</id>
 			<comment/>
 			<position>
-				<first>1076</first>
-				<second>471</second>
+				<first>1072</first>
+				<second>278</second>
 			</position>
 			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
@@ -83,8 +83,8 @@
 			<id>{D059E0E8-F4CD-409D-8E85-F275ED02EB51}</id>
 			<comment/>
 			<position>
-				<first>1076</first>
-				<second>509</second>
+				<first>1072</first>
+				<second>316</second>
 			</position>
 			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
@@ -96,8 +96,8 @@
 			<id>{F6A033FD-B0FB-498A-93C7-B28292F04459}</id>
 			<comment/>
 			<position>
-				<first>1066</first>
-				<second>241</second>
+				<first>1072</first>
+				<second>240</second>
 			</position>
 			<name>T_SurfaceColor</name>
 			<connectable>true</connectable>
@@ -109,8 +109,8 @@
 			<id>{63D03AB6-AC64-4923-8F06-CFB28B13F4CB}</id>
 			<comment/>
 			<position>
-				<first>1087</first>
-				<second>319</second>
+				<first>1092</first>
+				<second>430</second>
 			</position>
 			<name>T_Irradiance</name>
 			<connectable>true</connectable>
@@ -119,11 +119,11 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{B6645A4E-A86C-4AE2-8C26-0B93454B3F31}</id>
+			<id>{12E0D058-A991-234B-8BAB-69063C348721}</id>
 			<comment/>
 			<position>
-				<first>1471</first>
-				<second>338</second>
+				<first>1532</first>
+				<second>322</second>
 			</position>
 			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
 			<inputPins>
@@ -131,6 +131,26 @@
 					<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
 					<name>SurfaceColor</name>
 					<optional>false</optional>
+				</item>
+				<item>
+					<id>{D9D1FD13-4CD0-B949-A524-3276089CD08A}</id>
+					<name>ViewNormal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{86D35046-A057-024C-ADA3-9585DB3208BB}</id>
+					<name>ViewPosition</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{21B82E2F-6A92-574E-98B6-CBE4A37D9C1E}</id>
+					<name>ViewVelocity</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{94E22A68-7854-594C-9319-8AAF20D6DCA1}</id>
+					<name>Cast shadow</name>
+					<optional>true</optional>
 				</item>
 				<item>
 					<id>{A5F0E607-E44E-4D43-8743-2CE73EC070EC}</id>
@@ -157,24 +177,13 @@
 					<name>Transparency</name>
 					<optional>true</optional>
 				</item>
-				<item>
-					<id>{D9D1FD13-4CD0-B949-A524-3276089CD08A}</id>
-					<name>ViewNormal</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{86D35046-A057-024C-ADA3-9585DB3208BB}</id>
-					<name>ViewPosition</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{21B82E2F-6A92-574E-98B6-CBE4A37D9C1E}</id>
-					<name>ViewVelocity</name>
-					<optional>true</optional>
-				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
+				<item>
+					<first>Cast shadow</first>
+					<second>1</second>
+				</item>
 				<item>
 					<first>Emissive</first>
 					<second>0</second>
@@ -213,6 +222,16 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Irradiance</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
@@ -233,12 +252,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
-				<name>ViewVelocity</name>
+				<name>ViewNormal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -253,22 +272,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
-				<name>ViewNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Irradiance</name>
+				<name>ViewVelocity</name>
 			</destination>
 		</item>
 	</edges>

@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include "Core/Misc/SafeDestroy.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"

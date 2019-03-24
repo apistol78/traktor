@@ -15,7 +15,7 @@
 			<comment/>
 			<position>
 				<first>-152</first>
-				<second>189</second>
+				<second>188</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -26,7 +26,7 @@
 			<id>{B17783A0-1655-9B4E-B47F-14807CCEDD7D}</id>
 			<comment/>
 			<position>
-				<first>-57</first>
+				<first>-56</first>
 				<second>514</second>
 			</position>
 			<name>TexCoord</name>
@@ -38,8 +38,8 @@
 			<id>{9AF9D3C3-9B05-4C95-969D-37C0B417284C}</id>
 			<comment/>
 			<position>
-				<first>217</first>
-				<second>201</second>
+				<first>216</first>
+				<second>200</second>
 			</position>
 			<fragmentGuid>{93C8C2C3-BE05-EA45-9C6C-BE87B6E6D412}</fragmentGuid>
 			<inputPins>
@@ -92,12 +92,21 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{E38CE7F0-F55A-47B0-9619-28CB9AD937DC}</id>
+		<item type="traktor.render.Color" version="1,traktor.render.Node:1">
+			<id>{4E367554-5362-4F26-AB8B-C30BF039FF25}</id>
 			<comment/>
 			<position>
-				<first>608</first>
-				<second>447</second>
+				<first>97</first>
+				<second>421</second>
+			</position>
+			<color>1, 0, 0, 0</color>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{EDE3B640-C01A-0A49-8E86-9310091D8194}</id>
+			<comment/>
+			<position>
+				<first>598</first>
+				<second>370</second>
 			</position>
 			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
 			<inputPins>
@@ -105,6 +114,26 @@
 					<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
 					<name>SurfaceColor</name>
 					<optional>false</optional>
+				</item>
+				<item>
+					<id>{D9D1FD13-4CD0-B949-A524-3276089CD08A}</id>
+					<name>ViewNormal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{86D35046-A057-024C-ADA3-9585DB3208BB}</id>
+					<name>ViewPosition</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{21B82E2F-6A92-574E-98B6-CBE4A37D9C1E}</id>
+					<name>ViewVelocity</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{94E22A68-7854-594C-9319-8AAF20D6DCA1}</id>
+					<name>Cast shadow</name>
+					<optional>true</optional>
 				</item>
 				<item>
 					<id>{A5F0E607-E44E-4D43-8743-2CE73EC070EC}</id>
@@ -131,24 +160,13 @@
 					<name>Transparency</name>
 					<optional>true</optional>
 				</item>
-				<item>
-					<id>{D9D1FD13-4CD0-B949-A524-3276089CD08A}</id>
-					<name>ViewNormal</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{86D35046-A057-024C-ADA3-9585DB3208BB}</id>
-					<name>ViewPosition</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{21B82E2F-6A92-574E-98B6-CBE4A37D9C1E}</id>
-					<name>ViewVelocity</name>
-					<optional>true</optional>
-				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
+				<item>
+					<first>Cast shadow</first>
+					<second>1</second>
+				</item>
 				<item>
 					<first>Emissive</first>
 					<second>0</second>
@@ -162,15 +180,6 @@
 					<second>0.8</second>
 				</item>
 			</values>
-		</item>
-		<item type="traktor.render.Color" version="traktor.render.Node:1">
-			<id>{4E367554-5362-4F26-AB8B-C30BF039FF25}</id>
-			<comment/>
-			<position>
-				<first>270</first>
-				<second>429</second>
-			</position>
-			<color>255, 0, 0, 0</color>
 		</item>
 	</nodes>
 	<edges>
@@ -196,12 +205,42 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>SurfaceColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>ClipVelocity</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>ViewVelocity</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>ViewPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>ViewNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>ViewNormal</name>
 			</destination>
 		</item>
 	</edges>

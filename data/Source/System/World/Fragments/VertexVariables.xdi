@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{2F34B71D-0735-40F5-8968-BB5603B88FFD}</id>
 			<comment/>
 			<position>
 				<first>732</first>
-				<second>342</second>
+				<second>341</second>
 			</position>
 			<name>Vertex_ViewBinormal</name>
+			<global>true</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{9CF3D80A-FC32-4735-B421-2CF59E756993}</id>
 			<comment/>
 			<position>
@@ -18,8 +19,9 @@
 				<second>660</second>
 			</position>
 			<name>Vertex_ViewTangent</name>
+			<global>true</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{3ECEE07A-66BD-4B81-B3B5-31DDAD569065}</id>
 			<comment/>
 			<position>
@@ -27,8 +29,9 @@
 				<second>555</second>
 			</position>
 			<name>Vertex_ViewPosition</name>
+			<global>true</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{E67450BA-1017-470C-A59D-096FAF4C7584}</id>
 			<comment/>
 			<position>
@@ -36,8 +39,9 @@
 				<second>447</second>
 			</position>
 			<name>Vertex_ViewNormal</name>
+			<global>true</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{B10B8D1E-3EDD-46B6-9698-902302C5FEFC}</id>
 			<comment/>
 			<position>
@@ -45,6 +49,7 @@
 				<second>237</second>
 			</position>
 			<name>Vertex_ViewVelocity</name>
+			<global>true</global>
 		</item>
 		<item type="traktor.render.Comment" version="traktor.render.Node:1">
 			<id>{ECC2BCEC-E32D-45A7-B932-6724A7C039FB}</id>

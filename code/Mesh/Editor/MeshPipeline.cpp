@@ -343,14 +343,14 @@ bool MeshPipeline::buildOutput(
 		{
 			if (it->second.isNull())
 			{
-				log::info << L"Material \"" << i->first << L"\" disabled; skipped" << Endl;
+				log::info << L"Material \"" << i->first << L"\" disabled; skipped." << Endl;
 				continue;
 			}
 
 			materialShaderGraph = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(it->second);
 			if (!materialShaderGraph)
 			{
-				log::error << L"Mesh pipeline failed; unable to read material shader \"" << i->first << L"\"" << Endl;
+				log::error << L"Mesh pipeline failed; unable to read material shader \"" << i->first << L"\"." << Endl;
 				return false;
 			}
 		}
@@ -374,7 +374,7 @@ bool MeshPipeline::buildOutput(
 			);
 			if (!materialShaderGraph)
 			{
-				log::error << L"Mesh pipeline failed; unable to generate material shader \"" << i->first << L"\"" << Endl;
+				log::error << L"Mesh pipeline failed; unable to generate material shader \"" << i->first << L"\"." << Endl;
 				return false;
 			}
 		}
@@ -388,20 +388,28 @@ bool MeshPipeline::buildOutput(
 				external->setFragmentGuid(vertexShaderGuid);
 		}
 
+		// Resolve all local variables.
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getVariableResolved(render::ShaderGraphStatic::VrtLocal);
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to resolve local variables." << Endl;
+			return false;
+		}
+
 		// Link shader fragments.
 		FragmentReaderAdapter fragmentReader(pipelineBuilder);
 		materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, true);
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to link shader fragments, material shader \"" << i->first << L"\"" << Endl;
+			log::error << L"MeshPipeline failed; unable to link shader fragments, material shader \"" << i->first << L"\"." << Endl;
 			return false;
 		}
 
-		// Resolve all variables.
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getVariableResolved();
+		// Resolve all global variables.
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getVariableResolved(render::ShaderGraphStatic::VrtGlobal);
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to resolve variables" << Endl;
+			log::error << L"MeshPipeline failed; unable to resolve global variables." << Endl;
 			return false;
 		}
 
@@ -412,7 +420,7 @@ bool MeshPipeline::buildOutput(
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getPlatformPermutation(platformSignature);
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to get platform permutation" << Endl;
+			log::error << L"MeshPipeline failed; unable to get platform permutation." << Endl;
 			return false;
 		}
 
@@ -420,7 +428,7 @@ bool MeshPipeline::buildOutput(
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getConnectedPermutation();
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to freeze connected conditionals, material shader \"" << i->first << L"\"" << Endl;
+			log::error << L"MeshPipeline failed; unable to freeze connected conditionals, material shader \"" << i->first << L"\"." << Endl;
 			return false;
 		}
 
@@ -428,7 +436,7 @@ bool MeshPipeline::buildOutput(
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph).getTypePermutation();
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to freeze types, material shader \"" << i->first << L"\"" << Endl;
+			log::error << L"MeshPipeline failed; unable to freeze types, material shader \"" << i->first << L"\"." << Endl;
 			return false;
 		}
 
@@ -436,7 +444,7 @@ bool MeshPipeline::buildOutput(
 		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).mergeBranches();
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to merge branches, material shader \"" << i->first << L"\"" << Endl;
+			log::error << L"MeshPipeline failed; unable to merge branches, material shader \"" << i->first << L"\"." << Endl;
 			return false;
 		}
 

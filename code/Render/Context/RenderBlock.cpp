@@ -165,6 +165,15 @@ void TargetClearRenderBlock::render(IRenderView* renderView, const ProgramParame
 	T_CONTEXT_POP_MARKER(renderView);
 }
 
+void SetViewportRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
+{
+	T_CONTEXT_PUSH_MARKER(renderView, name);
+
+	renderView->setViewport(viewport);
+
+	T_CONTEXT_POP_MARKER(renderView);
+}
+
 void ChainRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
 	T_CONTEXT_PUSH_MARKER(renderView, name);

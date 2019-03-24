@@ -65,6 +65,11 @@ struct LightShaderData
 	float position[4];
 	float direction[4];
 	float color[4];
+	float viewToLight0[4];
+	float viewToLight1[4];
+	float viewToLight2[4];
+	float viewToLight3[4];
+	float atlasTransform[4];
 };
 #pragma pack()
 
@@ -101,17 +106,14 @@ bool WorldRendererForward::create(
 {
 	m_renderView = renderView;
 
+	// Store settings.
 	m_settings = *desc.worldRenderSettings;
-	m_shadowSettings = m_settings.shadowSettings[desc.shadowsQuality];
 	m_toneMapQuality = desc.toneMapQuality;
 	m_shadowsQuality = desc.shadowsQuality;
 	m_ambientOcclusionQuality = desc.ambientOcclusionQuality;
 	m_antiAliasQuality = desc.antiAliasQuality;
 
-	// Disable shadows early if projection is null.
-	if (m_shadowSettings.maskProject.isNull())
-		m_shadowsQuality = QuDisabled;
-
+	// Allocate frames, one for each queued frame.
 	m_frames.resize(desc.frameCount);
 
 	// Create post process target pool to enable sharing of targets between multiple processes.
@@ -121,7 +123,7 @@ bool WorldRendererForward::create(
 	{
 		render::RenderTargetSetCreateDesc rtscd;
 
-		rtscd.count = 2;
+		rtscd.count = 3;
 		rtscd.width = desc.width;
 		rtscd.height = desc.height;
 		rtscd.multiSample = desc.multiSample;
@@ -129,8 +131,9 @@ bool WorldRendererForward::create(
 		rtscd.usingPrimaryDepthStencil = (desc.sharedDepthStencil == nullptr) ? true : false;
 		rtscd.sharedDepthStencil = desc.sharedDepthStencil;
 		rtscd.preferTiled = true;
-		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
-		rtscd.targets[1].format = render::TfR16G16F;		// Normals (RG)
+		rtscd.targets[0].format = render::TfR16F;		// Depth (R)
+		rtscd.targets[1].format = render::TfR16G16F;	// Normals (RG)
+		rtscd.targets[2].format = render::TfR8;			// Ambient occlusion (R)
 
 		m_gbufferTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_gbufferTargetSet)
@@ -140,97 +143,44 @@ bool WorldRendererForward::create(
 		}
 	}
 
-	// Create projection and filter processes.
-	resource::Proxy< render::ImageProcessSettings > shadowMaskProject;
-	if (!resourceManager->bind(m_shadowSettings.maskProject, shadowMaskProject))
-	{
-		log::warning << L"Unable to create shadow project process; shadows disabled" << Endl;
-		m_shadowsQuality = QuDisabled;
-	}
-
 	// Allocate "shadow map" targets.
 	if (m_shadowsQuality > QuDisabled)
 	{
-		render::RenderSystemInformation info;
-		renderSystem->getInformation(info);
+		// \tbd Do we need different projections? Not used...
+		m_shadowProjection = new UniformShadowProjection(1024);
 
-		int32_t maxResolution = m_shadowSettings.resolution;
-		if (info.dedicatedMemoryTotal < 512 * 1024 * 1024)
-			maxResolution /= 2;
-
-		int32_t resolution = min< int32_t >(nearestLog2(int32_t(max< int32_t >(desc.width, desc.height) * 1.9f)), maxResolution);
-		T_DEBUG(L"Using shadow map resolution " << resolution);
-
-		// Create shadow map target.
+		// Create shadow cascade map target.
 		render::RenderTargetSetCreateDesc rtscd;
 		rtscd.count = 0;
-		rtscd.width =
-		rtscd.height = resolution;
+		rtscd.width = 1024;
+		rtscd.height = m_settings.shadowSettings[m_shadowsQuality].cascadingSlices * 1024;
 		rtscd.multiSample = 0;
 		rtscd.createDepthStencil = true;
 		rtscd.usingDepthStencilAsTexture = true;
 		rtscd.usingPrimaryDepthStencil = false;
 		rtscd.ignoreStencil = true;
 		rtscd.preferTiled = true;
-		m_shadowTargetSet = renderSystem->createRenderTargetSet(rtscd);
-
-		// Create shadow mask target.
-		rtscd.count = 1;
-		rtscd.width = desc.width / m_shadowSettings.maskDenominator;
-		rtscd.height = desc.height / m_shadowSettings.maskDenominator;
-		rtscd.multiSample = 0;
-		rtscd.createDepthStencil = false;
-		rtscd.usingPrimaryDepthStencil = false;
-		rtscd.targets[0].format = render::TfR8;
-		rtscd.preferTiled = true;
-		m_shadowMaskProjectTargetSet = renderSystem->createRenderTargetSet(rtscd);
-
-		m_shadowMaskProject = new render::ImageProcess();
-		if (!m_shadowMaskProject->create(
-			shadowMaskProject,
-			postProcessTargetPool,
-			resourceManager,
-			renderSystem,
-			rtscd.width,
-			rtscd.height,
-			desc.allTargetsPersistent
-		))
-		{
-			log::warning << L"Unable to create shadow project process; shadows disabled" << Endl;
+		if ((m_shadowCascadeTargetSet = renderSystem->createRenderTargetSet(rtscd)) == nullptr)
 			m_shadowsQuality = QuDisabled;
-		}
 
-		// Use "shadow map is a depth texture" combination.
-		m_shadowMaskProject->setCombination(render::getParameterHandle(L"World_ShadowMapDepthTexture"), true);
-
-		if (m_shadowsQuality > QuDisabled)
-		{
-			switch (m_shadowSettings.projection)
-			{
-			case WorldRenderSettings::SpBox:
-				m_shadowProjection = new BoxShadowProjection();
-				break;
-
-			case WorldRenderSettings::SpLiSP:
-				m_shadowProjection = new LiSPShadowProjection();
-				break;
-
-			case WorldRenderSettings::SpTrapezoid:
-				m_shadowProjection = new TrapezoidShadowProjection();
-				break;
-
-			default:
-			case WorldRenderSettings::SpUniform:
-				m_shadowProjection = new UniformShadowProjection(resolution);
-				break;
-			}
-		}
+		// Create shadow atlas map target.
+		rtscd.count = 0;
+		rtscd.width =
+		rtscd.height = 4096;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = true;
+		rtscd.usingDepthStencilAsTexture = true;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.ignoreStencil = true;
+		rtscd.preferTiled = true;
+		if ((m_shadowAtlasTargetSet = renderSystem->createRenderTargetSet(rtscd)) == nullptr)
+			m_shadowsQuality = QuDisabled;
 
 		// Ensure targets are destroyed if something went wrong in setup.
 		if (m_shadowsQuality == QuDisabled)
 		{
-			safeDestroy(m_shadowTargetSet);
-			safeDestroy(m_shadowMaskProjectTargetSet);
+			safeDestroy(m_shadowCascadeTargetSet);
+			safeDestroy(m_shadowAtlasTargetSet);
 		}
 	}
 
@@ -479,6 +429,12 @@ bool WorldRendererForward::create(
 		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, position)));
 		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, direction)));
 		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, color)));
+		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, viewToLight0)));
+		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, viewToLight1)));
+		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, viewToLight2)));
+		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, viewToLight3)));
+		lightShaderDataStruct.push_back(render::StructElement(render::DtFloat4, offsetof(LightShaderData, atlasTransform)));
+		T_FATAL_ASSERT(sizeof(LightShaderData) == render::getStructSize(lightShaderDataStruct));
 
 		frame.lightSBuffer = renderSystem->createStructBuffer(
 			lightShaderDataStruct,
@@ -497,8 +453,11 @@ bool WorldRendererForward::create(
 	{
 		for (auto& frame : m_frames)
 		{
-			for (int32_t i = 0; i < m_shadowSettings.cascadingSlices; ++i)
+			for (int32_t i = 0; i < m_settings.shadowSettings[m_shadowsQuality].cascadingSlices; ++i)
 				frame.slice[i].shadow = new WorldContext(desc.entityRenderers);
+
+			for (int32_t i = 0; i < 16; ++i)
+				frame.atlas[i].shadow = new WorldContext(desc.entityRenderers);
 		}
 	}
 
@@ -508,16 +467,17 @@ bool WorldRendererForward::create(
 
 	// Allocate "global" parameter context; as it's reset for each render
 	// call this can be fairly small.
-	m_globalContext = new render::RenderContext(4096);
+	m_globalContext = new render::RenderContext(16 * 1024);
 
 	// Determine slice distances.
-	for (int32_t i = 0; i < m_shadowSettings.cascadingSlices; ++i)
+	const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
+	for (int32_t i = 0; i < shadowSettings.cascadingSlices; ++i)
 	{
-		float ii = float(i) / m_shadowSettings.cascadingSlices;
-		float log = powf(ii, m_shadowSettings.cascadingLambda);
-		m_slicePositions[i] = lerp(m_settings.viewNearZ, m_shadowSettings.farZ, log);
+		float ii = float(i) / shadowSettings.cascadingSlices;
+		float log = powf(ii, shadowSettings.cascadingLambda);
+		m_slicePositions[i] = lerp(m_settings.viewNearZ, shadowSettings.farZ, log);
 	}
-	m_slicePositions[m_shadowSettings.cascadingSlices] = m_shadowSettings.farZ;
+	m_slicePositions[shadowSettings.cascadingSlices] = shadowSettings.farZ;
 
 	m_count = 0;
 	return true;
@@ -530,6 +490,9 @@ void WorldRendererForward::destroy()
 		for (int32_t i = 0; i < MaxSliceCount; ++i)
 			frame.slice[i].shadow = nullptr;
 
+		for (int32_t i = 0; i < 16; ++i)
+			frame.atlas[i].shadow = nullptr;
+
 		frame.visual = nullptr;
 		frame.depth = nullptr;
 
@@ -539,13 +502,12 @@ void WorldRendererForward::destroy()
 	safeDestroy(m_toneMapImageProcess);
 	safeDestroy(m_gammaCorrectionImageProcess);
 	safeDestroy(m_visualImageProcess);
-	safeDestroy(m_shadowMaskProject);
-	m_reflectionMap.clear();
-	safeDestroy(m_shadowMaskProjectTargetSet);
-	safeDestroy(m_shadowTargetSet);
+	safeDestroy(m_shadowCascadeTargetSet);
+	safeDestroy(m_shadowAtlasTargetSet);
 	safeDestroy(m_gbufferTargetSet);
 	safeDestroy(m_visualTargetSet);
 
+	m_reflectionMap.clear();
 	m_renderView = nullptr;
 }
 
@@ -576,6 +538,9 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 		int32_t cascadingSlices = m_settings.shadowSettings[m_shadowsQuality].cascadingSlices;
 		for (int32_t i = 0; i < cascadingSlices; ++i)
 			f.slice[i].shadow->getRenderContext()->flush();
+
+		for (int32_t i = 0; i < 16; ++i)
+			f.atlas[i].shadow->getRenderContext()->flush();
 	}
 
 	f.visual->getRenderContext()->flush();
@@ -590,41 +555,21 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 	// Store some global values.
 	f.time = worldRenderView.getTime();
 
-	// Build global light list.
-	LightShaderData* lsd = (LightShaderData*)f.lightSBuffer->lock();
-	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
-	{
-		const auto& light = worldRenderView.getLight(i);
-		
-		lsd->typeRangeRadius[0] = (float)(light.type + 0.5f);
-		lsd->typeRangeRadius[1] = light.range;
-		lsd->typeRangeRadius[2] = light.radius;
-		lsd->typeRangeRadius[3] = 0.0f;
-		
-		(view * light.position.xyz1()).storeUnaligned(lsd->position);
-		(view * light.direction.xyz0()).storeUnaligned(lsd->direction);
-		light.color.storeUnaligned(lsd->color);
-
-		++lsd;
-	}
-	f.lightSBuffer->unlock();
-	f.lightCount = worldRenderView.getLightCount();
+	// \tbd Improve light iteration... 
+	worldRenderView.resetLights();
 
 	// Build depth context.
 	buildGBuffer(worldRenderView, frame);
 
+	// \tbd Lights have now been collected as a side effect...
+
+	// Build light and shadow contexts.
+	buildLights(worldRenderView, frame);
+
 	// \tbd Tiled light culling.
 
-	// Build visual (with or without shadows) context.
-	if (m_shadowsQuality > QuDisabled)
-		buildVisualWithShadows(worldRenderView, frame);
-	else
-		buildVisualWithNoShadows(worldRenderView, frame);
-
-	// Prepare stereoscopic projection.
-	float screenWidth = float(m_renderView->getWidth());
-	f.A = std::abs((worldRenderView.getDistortionValue() * worldRenderView.getInterocularDistance()) / screenWidth);
-	f.B = std::abs(f.A * worldRenderView.getScreenPlaneDistance() * (1.0f / f.projection(1, 1)));
+	// Build visual context.
+	buildVisual(worldRenderView, frame);
 
 	m_count++;
 }
@@ -644,31 +589,12 @@ bool WorldRendererForward::beginRender(int frame, render::EyeType eye, const Col
 void WorldRendererForward::render(int frame, render::EyeType eye)
 {
 	Frame& f = m_frames[frame];
-	Matrix44 projection;
-
-	// Calculate stereoscopic projection.
-	if (eye != render::EtCyclop)
-	{
-		float A = f.A;
-		float B = f.B;
-
-		if (eye == render::EtLeft)
-			A = -A;
-		else
-			B = -B;
-
-		projection = translate(A, 0.0f, 0.0f) * f.projection * translate(B, 0.0f, 0.0f);
-	}
-	else
-	{
-		projection = f.projection;
-	}
 
 	// Prepare global program parameters.
 	render::ProgramParameters defaultProgramParams;
 	defaultProgramParams.beginParameters(m_globalContext);
 	defaultProgramParams.setFloatParameter(s_handleTime, f.time);
-	defaultProgramParams.setMatrixParameter(s_handleProjection, projection);
+	defaultProgramParams.setMatrixParameter(s_handleProjection, f.projection);
 	defaultProgramParams.setTextureParameter(s_handleReflectionMap, m_reflectionMap);
 	defaultProgramParams.endParameters(m_globalContext);
 
@@ -680,10 +606,37 @@ void WorldRendererForward::render(int frame, render::EyeType eye)
 			const float clearZ = f.viewFrustum.getFarZ();
 			const Color4f depthColor(clearZ, clearZ, clearZ, clearZ);
 			const Color4f normalColor(0.0f, 0.0f, 1.0f, 0.0f);
-			const Color4f clearColors[] = { depthColor, normalColor };
+			const Color4f aoColor(1.0f, 1.0f, 1.0f, 1.0f);
+			const Color4f clearColors[] = { depthColor, normalColor, aoColor };
 
 			m_renderView->clear(render::CfColor | render::CfDepth, clearColors, 1.0f, 0);
 			f.depth->getRenderContext()->render(m_renderView, render::RpOpaque, &defaultProgramParams);
+			m_renderView->end();
+		}
+		T_RENDER_POP_MARKER(m_renderView);
+	}
+
+	// Render gbuffer ambient occlusion.
+	if (m_ambientOcclusion)
+	{
+		T_RENDER_PUSH_MARKER(m_renderView, "World: GBuffer AO");
+		if (m_renderView->begin(m_gbufferTargetSet, 2))
+		{
+			render::ImageProcessStep::Instance::RenderParams params;
+			params.viewFrustum = f.viewFrustum;
+			params.view = f.view;
+			params.projection = f.projection;
+			params.deltaTime = 0.0f;
+
+			m_ambientOcclusion->render(
+				m_renderView,
+				nullptr,	// color
+				m_gbufferTargetSet->getColorTexture(0),	// depth
+				m_gbufferTargetSet->getColorTexture(1),	// normal
+				nullptr,	// velocity
+				nullptr,	// shadow mask
+				params
+			);
 			m_renderView->end();
 		}
 		T_RENDER_POP_MARKER(m_renderView);
@@ -694,63 +647,47 @@ void WorldRendererForward::render(int frame, render::EyeType eye)
 	{
 		if (f.haveShadows)
 		{
-			for (int32_t i = 0; i < m_shadowSettings.cascadingSlices; ++i)
+			// Shadow atlas.
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map, atlas");
+			if (m_renderView->begin(m_shadowAtlasTargetSet))
 			{
-				render::ProgramParameters shadowProgramParams;
-				shadowProgramParams.beginParameters(m_globalContext);
-				shadowProgramParams.setFloatParameter(s_handleTime, f.time);
-				shadowProgramParams.setMatrixParameter(s_handleView, f.slice[i].shadowLightView);
-				shadowProgramParams.setMatrixParameter(s_handleViewInverse, f.slice[i].shadowLightView.inverse());
-				shadowProgramParams.setMatrixParameter(s_handleProjection, f.slice[i].shadowLightProjection);
-				shadowProgramParams.endParameters(m_globalContext);
-
-				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
-				if (m_renderView->begin(m_shadowTargetSet))
+				m_renderView->clear(render::CfDepth, nullptr, 1.0f, 0);
+				for (int32_t i = 0; i < 16; ++i)
 				{
-					m_renderView->clear(render::CfDepth, nullptr, 1.0f, 0);
-					f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RpOpaque, &shadowProgramParams);
-					m_renderView->end();
+					render::ProgramParameters shadowProgramParams;
+					shadowProgramParams.beginParameters(m_globalContext);
+					shadowProgramParams.setFloatParameter(s_handleTime, f.time);
+					shadowProgramParams.setMatrixParameter(s_handleView, f.atlas[i].shadowLightView);
+					shadowProgramParams.setMatrixParameter(s_handleViewInverse, f.atlas[i].shadowLightView.inverse());
+					shadowProgramParams.setMatrixParameter(s_handleProjection, f.atlas[i].shadowLightProjection);
+					shadowProgramParams.endParameters(m_globalContext);
+
+					f.atlas[i].shadow->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
 				}
-				T_RENDER_POP_MARKER(m_renderView);
-
-				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask project");
-				if (m_renderView->begin(m_shadowMaskProjectTargetSet, 0))
-				{
-					if (i == 0)
-					{
-						const Color4f maskClear(1.0f, 1.0f, 1.0f, 1.0f);
-						m_renderView->clear(render::CfColor, &maskClear, 0.0f, 0);
-					}
-
-					Scalar zn(max(m_slicePositions[i], m_settings.viewNearZ));
-					Scalar zf(min(m_slicePositions[i + 1], m_shadowSettings.farZ));
-
-					render::ImageProcessStep::Instance::RenderParams params;
-					params.viewFrustum = f.viewFrustum;
-					params.viewToLight = f.slice[i].viewToLightSpace;
-					params.projection = projection;
-					params.sliceCount = m_shadowSettings.cascadingSlices;
-					params.sliceIndex = i;
-					params.sliceNearZ = zn;
-					params.sliceFarZ = zf;
-					params.shadowFarZ = m_shadowSettings.farZ;
-					params.shadowMapBias = m_shadowSettings.bias + i * m_shadowSettings.biasCoeff;
-					params.deltaTime = 0.0f;
-
-					m_shadowMaskProject->render(
-						m_renderView,
-						m_shadowTargetSet->getDepthTexture(),	// color
-						m_gbufferTargetSet->getColorTexture(0),	// depth
-						m_gbufferTargetSet->getColorTexture(1),	// normal
-						nullptr,	// velocity
-						nullptr,	// shadow mask
-						params
-					);
-
-					m_renderView->end();
-				}
-				T_RENDER_POP_MARKER(m_renderView);
+				m_renderView->end();
 			}
+			T_RENDER_POP_MARKER(m_renderView);
+
+			// Directional shadow cascades.
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map, cascades");
+			if (m_renderView->begin(m_shadowCascadeTargetSet))
+			{
+				m_renderView->clear(render::CfDepth, nullptr, 1.0f, 0);
+				for (int32_t i = 0; i < m_settings.shadowSettings[m_shadowsQuality].cascadingSlices; ++i)
+				{
+					render::ProgramParameters shadowProgramParams;
+					shadowProgramParams.beginParameters(m_globalContext);
+					shadowProgramParams.setFloatParameter(s_handleTime, f.time);
+					shadowProgramParams.setMatrixParameter(s_handleView, f.slice[i].shadowLightView);
+					shadowProgramParams.setMatrixParameter(s_handleViewInverse, f.slice[i].shadowLightView.inverse());
+					shadowProgramParams.setMatrixParameter(s_handleProjection, f.slice[i].shadowLightProjection);
+					shadowProgramParams.endParameters(m_globalContext);
+
+					f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
+				}
+				m_renderView->end();
+			}
+			T_RENDER_POP_MARKER(m_renderView);
 		}
 	}
 
@@ -767,25 +704,6 @@ void WorldRendererForward::render(int frame, render::EyeType eye)
 void WorldRendererForward::endRender(int frame, render::EyeType eye, float deltaTime)
 {
 	Frame& f = m_frames[frame];
-	Matrix44 projection;
-
-	// Calculate stereoscopic projection.
-	if (eye != render::EtCyclop)
-	{
-		float A = f.A;
-		float B = f.B;
-
-		if (eye == render::EtLeft)
-			A = -A;
-		else
-			B = -B;
-
-		projection = translate(A, 0.0f, 0.0f) * f.projection * translate(B, 0.0f, 0.0f);
-	}
-	else
-	{
-		projection = f.projection;
-	}
 
 	if (m_visualTargetSet)
 	{
@@ -793,7 +711,6 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 
 		render::ImageProcessStep::Instance::RenderParams params;
 		params.viewFrustum = f.viewFrustum;
-		params.viewToLight = f.viewToLightSpace;
 		params.view = f.view;
 		params.projection = f.projection;
 		// params.godRayDirection = f.godRayDirection;
@@ -827,7 +744,7 @@ void WorldRendererForward::endRender(int frame, render::EyeType eye, float delta
 				m_gbufferTargetSet->getColorTexture(0),		// depth
 				m_gbufferTargetSet->getColorTexture(1),		// normal
 				nullptr,	// velocity
-				m_shadowTargetSet ? m_shadowTargetSet->getColorTexture(0) : nullptr,	// shadow mask
+				m_shadowCascadeTargetSet ? m_shadowCascadeTargetSet->getColorTexture(0) : nullptr,	// shadow mask
 				params
 			);
 
@@ -859,16 +776,14 @@ void WorldRendererForward::getDebugTargets(std::vector< render::DebugTarget >& o
 	{
 		outTargets.push_back(render::DebugTarget(L"GBuffer depth", render::DtvViewDepth, m_gbufferTargetSet->getColorTexture(0)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer normals", render::DtvNormals, m_gbufferTargetSet->getColorTexture(1)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer AO", render::DtvDefault, m_gbufferTargetSet->getColorTexture(2)));
 	}
 
-	if (m_shadowTargetSet)
-		outTargets.push_back(render::DebugTarget(L"Shadow map (last cascade)", render::DtvShadowMap, m_shadowTargetSet->getColorTexture(0)));
+	if (m_shadowCascadeTargetSet)
+		outTargets.push_back(render::DebugTarget(L"Shadow map (cascade)", render::DtvShadowMap, m_shadowCascadeTargetSet->getDepthTexture()));
 
-	if (m_shadowMaskProjectTargetSet)
-		outTargets.push_back(render::DebugTarget(L"Shadow mask (projection)",render:: DtvShadowMask, m_shadowMaskProjectTargetSet->getColorTexture(0)));
-
-	if (m_shadowMaskProject)
-		m_shadowMaskProject->getDebugTargets(outTargets);
+	if (m_shadowAtlasTargetSet)
+		outTargets.push_back(render::DebugTarget(L"Shadow map (atlas)", render::DtvShadowMap, m_shadowAtlasTargetSet->getDepthTexture()));
 
 	if (m_ambientOcclusion)
 		m_ambientOcclusion->getDebugTargets(outTargets);
@@ -892,8 +807,9 @@ void WorldRendererForward::buildGBuffer(WorldRenderView& worldRenderView, int fr
 
 	WorldRenderPassForward pass(
 		s_techniqueForwardGBufferWrite,
-		worldRenderView,
 		IWorldRenderPass::PfFirst,
+		worldRenderView.getView(),
+		nullptr,
 		nullptr,
 		nullptr
 	);
@@ -904,130 +820,239 @@ void WorldRendererForward::buildGBuffer(WorldRenderView& worldRenderView, int fr
 	f.haveDepth = true;
 }
 
-void WorldRendererForward::buildVisualWithShadows(WorldRenderView& worldRenderView, int frame)
+void WorldRendererForward::buildLights(WorldRenderView& worldRenderView, int frame)
 {
-	// Find first directional light casting shadow.
-	const Light* shadowLight = 0;
-	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
-	{
-		const Light& light = worldRenderView.getLight(i);
-		if (light.type == LtDirectional && light.castShadow)
-		{
-			shadowLight = &light;
-			break;
-		}
-	}
-
-	// If no shadow casting light found, we do simple path.
-	if (!shadowLight)
-	{
-		buildVisualWithNoShadows(worldRenderView, frame);
-		return;
-	}
-
 	Frame& f = m_frames[frame];
 
+	Matrix44 view = worldRenderView.getView();
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 	Aabb3 shadowBox = worldRenderView.getShadowBox();
 
-	for (int32_t slice = 0; slice < m_shadowSettings.cascadingSlices; ++slice)
+	bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
+
+	LightShaderData* lightShaderData = (LightShaderData*)f.lightSBuffer->lock();
+	T_FATAL_ASSERT(lightShaderData != nullptr);
+
+	int32_t atlasIndex = 0;
+	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
 	{
-		Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
-		Scalar zf(min(m_slicePositions[slice + 1], m_shadowSettings.farZ));
+		const Light& light = worldRenderView.getLight(i);
 
-		// Create sliced view frustum.
-		Frustum sliceViewFrustum = viewFrustum;
-		sliceViewFrustum.setNearZ(zn);
-		sliceViewFrustum.setFarZ(zf);
+		lightShaderData->typeRangeRadius[0] = (float)light.type;
+		lightShaderData->typeRangeRadius[1] = light.range;
+		lightShaderData->typeRangeRadius[2] = light.radius / 2.0f;
+		lightShaderData->typeRangeRadius[3] = 0.0f;
+		
+		(view * light.position.xyz1()).storeUnaligned(lightShaderData->position);
+		(view * light.direction.xyz0()).storeUnaligned(lightShaderData->direction);
+		light.color.storeUnaligned(lightShaderData->color);
 
-		// Calculate shadow map projection.
-		Matrix44 shadowLightView;
-		Matrix44 shadowLightProjection;
-		Frustum shadowFrustum;
+		if (shadowsEnable && light.castShadow && light.type == LtDirectional)
+		{
+			Matrix44 shadowLightView;
+			Matrix44 shadowLightProjection;
+			Frustum shadowFrustum;
 
-		m_shadowProjection->calculate(
-			viewInverse,
-			shadowLight->position,
-			shadowLight->direction,
-			sliceViewFrustum,
-			shadowBox,
-			m_shadowSettings.farZ,
-			m_shadowSettings.quantizeProjection,
-			shadowLightView,
-			shadowLightProjection,
-			shadowFrustum
-		);
+			const auto& shadowSettings = m_settings.shadowSettings[m_shadowsQuality];
 
-		// Render shadow map.
-		WorldRenderView shadowRenderView;
-		shadowRenderView.resetLights();
-		shadowRenderView.setProjection(shadowLightProjection);
-		shadowRenderView.setView(shadowLightView, shadowLightView);
-		shadowRenderView.setViewFrustum(shadowFrustum);
-		shadowRenderView.setCullFrustum(shadowFrustum);
-		shadowRenderView.setEyePosition(worldRenderView.getEyePosition());
-		shadowRenderView.setTimes(
-			worldRenderView.getTime(),
-			worldRenderView.getDeltaTime(),
-			worldRenderView.getInterval()
-		);
+			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
+			{
+				Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
+				Scalar zf(min(m_slicePositions[slice + 1], shadowSettings.farZ));
 
-		WorldRenderPassForward shadowPass(
-			s_techniqueShadow,
-			shadowRenderView,
-			IWorldRenderPass::PfNone,
-			nullptr,
-			nullptr
-		);
-		for (auto entity : m_buildEntities)
-			f.slice[slice].shadow->build(shadowRenderView, shadowPass, entity);
-		f.slice[slice].shadow->flush(shadowRenderView, shadowPass);
+				// Create sliced view frustum.
+				Frustum sliceViewFrustum = viewFrustum;
+				sliceViewFrustum.setNearZ(zn);
+				sliceViewFrustum.setFarZ(zf);
 
-		f.slice[slice].shadowLightView = shadowLightView;
-		f.slice[slice].shadowLightProjection = shadowLightProjection;
-		f.slice[slice].viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
+				// Calculate shadow map projection.
+				m_shadowProjection->calculate(
+					viewInverse,
+					light.position,
+					light.direction,
+					sliceViewFrustum,
+					shadowBox,
+					shadowSettings.farZ,
+					shadowSettings.quantizeProjection,
+					shadowLightView,
+					shadowLightProjection,
+					shadowFrustum
+				);
+
+				WorldRenderView shadowRenderView;
+				shadowRenderView.resetLights();
+				shadowRenderView.setProjection(shadowLightProjection);
+				shadowRenderView.setView(shadowLightView, shadowLightView);
+				shadowRenderView.setViewFrustum(shadowFrustum);
+				shadowRenderView.setCullFrustum(shadowFrustum);
+				shadowRenderView.setEyePosition(worldRenderView.getEyePosition());
+				shadowRenderView.setTimes(
+					worldRenderView.getTime(),
+					worldRenderView.getDeltaTime(),
+					worldRenderView.getInterval()
+				);
+
+				WorldRenderPassForward shadowPass(
+					s_techniqueShadow,
+					IWorldRenderPass::PfNone,
+					shadowRenderView.getView(),
+					nullptr,
+					nullptr,
+					nullptr
+				);
+
+				// Set viewport to current cascade.
+				auto svrb = f.slice[slice].shadow->getRenderContext()->alloc< render::SetViewportRenderBlock >();
+				svrb->viewport = render::Viewport(
+					0,
+					slice * 1024,
+					1024,
+					1024,
+					0.0f,
+					1.0f
+				);
+				f.slice[slice].shadow->getRenderContext()->draw(render::RpSetup, svrb);	
+
+				for (auto entity : m_buildEntities)
+					f.slice[slice].shadow->build(shadowRenderView, shadowPass, entity);
+				f.slice[slice].shadow->flush(shadowRenderView, shadowPass);
+
+				f.slice[slice].shadowLightView = shadowLightView;
+				f.slice[slice].shadowLightProjection = shadowLightProjection;
+				f.slice[slice].viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
+
+				// Write transposed matrix to shaders as shaders have row-major order.
+				Matrix44 vls = f.slice[slice].viewToLightSpace.transpose();
+				vls.axisX().storeUnaligned(lightShaderData->viewToLight0);
+				vls.axisY().storeUnaligned(lightShaderData->viewToLight1);
+				vls.axisZ().storeUnaligned(lightShaderData->viewToLight2);
+				vls.translation().storeUnaligned(lightShaderData->viewToLight3);
+
+				// Write slice coordinates to shaders.
+				Vector4(
+					0.0f,
+					float(slice) / shadowSettings.cascadingSlices,
+					1.0f,
+					1.0f / shadowSettings.cascadingSlices
+				).storeUnaligned(lightShaderData->atlasTransform);
+			}
+		}
+		else if (shadowsEnable && light.castShadow && light.type == LtSpot)
+		{
+			Matrix44 shadowLightView;
+			Matrix44 shadowLightProjection;
+			Frustum shadowFrustum;
+
+			shadowFrustum.buildPerspective(
+				light.radius,
+				1.0f,
+				0.1f,
+				light.range
+			);
+
+			shadowLightProjection = perspectiveLh(light.radius, 1.0f, 0.1f, light.range);
+
+			Vector4 lightAxisX, lightAxisY, lightAxisZ;
+			lightAxisZ = -light.direction.xyz0().normalized();
+			lightAxisX = cross(viewInverse.axisZ(), lightAxisZ).normalized();
+			lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
+
+			shadowLightView = Matrix44(
+				lightAxisX,
+				lightAxisY,
+				lightAxisZ,
+				light.position.xyz1()
+			);
+			shadowLightView = shadowLightView.inverse();
+
+			WorldRenderView shadowRenderView;
+			shadowRenderView.resetLights();
+			shadowRenderView.setProjection(shadowLightProjection);
+			shadowRenderView.setView(shadowLightView, shadowLightView);
+			shadowRenderView.setViewFrustum(shadowFrustum);
+			shadowRenderView.setCullFrustum(shadowFrustum);
+			shadowRenderView.setEyePosition(worldRenderView.getEyePosition());
+			shadowRenderView.setTimes(
+				worldRenderView.getTime(),
+				worldRenderView.getDeltaTime(),
+				worldRenderView.getInterval()
+			);
+
+			WorldRenderPassForward shadowPass(
+				s_techniqueShadow,
+				IWorldRenderPass::PfNone,
+				shadowRenderView.getView(),
+				nullptr,
+				nullptr,
+				nullptr
+			);
+
+			// Set viewport to light atlas slot.
+			auto svrb = f.atlas[atlasIndex].shadow->getRenderContext()->alloc< render::SetViewportRenderBlock >();
+			svrb->viewport = render::Viewport(
+				(atlasIndex & 3) * 1024,
+				(atlasIndex / 4) * 1024,
+				1024,
+				1024,
+				0.0f,
+				1.0f
+			);
+			f.atlas[atlasIndex].shadow->getRenderContext()->draw(render::RpSetup, svrb);	
+
+			for (auto entity : m_buildEntities)
+				f.atlas[atlasIndex].shadow->build(shadowRenderView, shadowPass, entity);
+			f.atlas[atlasIndex].shadow->flush(shadowRenderView, shadowPass);
+
+			f.atlas[atlasIndex].shadowLightView = shadowLightView;
+			f.atlas[atlasIndex].shadowLightProjection = shadowLightProjection;
+			f.atlas[atlasIndex].viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
+
+			// Write transposed matrix to shaders as shaders have row-major order.
+			Matrix44 vls = f.atlas[atlasIndex].viewToLightSpace.transpose();
+			vls.axisX().storeUnaligned(lightShaderData->viewToLight0);
+			vls.axisY().storeUnaligned(lightShaderData->viewToLight1);
+			vls.axisZ().storeUnaligned(lightShaderData->viewToLight2);
+			vls.translation().storeUnaligned(lightShaderData->viewToLight3);
+
+			// Write atlas coordinates to shaders.
+			Vector4(
+				(atlasIndex & 3) / 4.0f,
+				(atlasIndex / 4) / 4.0f,
+				1.0f / 4.0f,
+				1.0f / 4.0f
+			).storeUnaligned(lightShaderData->atlasTransform);
+
+			++atlasIndex;
+		}
+		else if (!shadowsEnable || !light.castShadow)
+		{
+			Vector4::zero().storeUnaligned(lightShaderData->viewToLight0);
+			Vector4::zero().storeUnaligned(lightShaderData->viewToLight1);
+			Vector4::zero().storeUnaligned(lightShaderData->viewToLight2);
+			Vector4::zero().storeUnaligned(lightShaderData->viewToLight3);
+		}
+
+		++lightShaderData;
 	}
 
+	f.lightSBuffer->unlock();
+	f.lightCount = worldRenderView.getLightCount();
+	f.haveShadows = shadowsEnable;
+
 	worldRenderView.resetLights();
-
-	// Render visuals.
-	WorldRenderPassForward defaultPass(
-		s_techniqueForwardColor,
-		worldRenderView,
-		IWorldRenderPass::PfLast,
-		f.lightSBuffer,
-		f.lightCount,
-		m_settings.fog,
-		m_settings.fogDistanceY,
-		m_settings.fogDistanceZ,
-		m_settings.fogDensityY,
-		m_settings.fogDensityZ,
-		m_settings.fogColor,
-		nullptr,
-		m_gbufferTargetSet->getColorTexture(0),
-		m_shadowMaskProjectTargetSet->getColorTexture(0)
-	);
-	for (auto entity : m_buildEntities)
-		f.visual->build(worldRenderView, defaultPass, entity);
-	f.visual->flush(worldRenderView, defaultPass);
-
-	f.projection = worldRenderView.getProjection();
-	f.view = worldRenderView.getView();
-	f.viewFrustum = worldRenderView.getViewFrustum();
-	f.haveShadows = true;
 }
 
-void WorldRendererForward::buildVisualWithNoShadows(WorldRenderView& worldRenderView, int frame)
+void WorldRendererForward::buildVisual(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
 
-	worldRenderView.resetLights();
+	bool shadowsEnable = (bool)(m_shadowsQuality != QuDisabled);
 
 	WorldRenderPassForward defaultPass(
 		s_techniqueForwardColor,
-		worldRenderView,
 		IWorldRenderPass::PfLast,
+		worldRenderView.getView(),
 		f.lightSBuffer,
 		f.lightCount,
 		m_settings.fog,
@@ -1038,7 +1063,9 @@ void WorldRendererForward::buildVisualWithNoShadows(WorldRenderView& worldRender
 		m_settings.fogColor,
 		nullptr,
 		m_gbufferTargetSet->getColorTexture(0),
-		nullptr
+		m_gbufferTargetSet->getColorTexture(2),
+		shadowsEnable ? m_shadowCascadeTargetSet->getDepthTexture() : nullptr,
+		shadowsEnable ? m_shadowAtlasTargetSet->getDepthTexture() : nullptr
 	);
 	for (auto entity : m_buildEntities)
 		f.visual->build(worldRenderView, defaultPass, entity);
@@ -1047,7 +1074,6 @@ void WorldRendererForward::buildVisualWithNoShadows(WorldRenderView& worldRender
 	f.projection = worldRenderView.getProjection();
 	f.view = worldRenderView.getView();
 	f.viewFrustum = worldRenderView.getViewFrustum();
-	f.haveShadows = false;
 }
 
 	}

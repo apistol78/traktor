@@ -266,7 +266,7 @@
 				<second>1128</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{02B7F80C-5808-3246-94A5-8D9E8C927298}</id>
 			<comment/>
 			<position>
@@ -274,8 +274,9 @@
 				<second>1598</second>
 			</position>
 			<name>Vertex_ViewVelocity</name>
+			<global>true</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{D92434E8-1292-5644-8B45-902EEDC7D206}</id>
 			<comment/>
 			<position>
@@ -283,8 +284,9 @@
 				<second>1390</second>
 			</position>
 			<name>Vertex_ViewPosition</name>
+			<global>true</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{3AE1D112-0667-A04A-A62D-D37D9F85F173}</id>
 			<comment/>
 			<position>
@@ -292,6 +294,7 @@
 				<second>1182</second>
 			</position>
 			<name>Vertex_ViewNormal</name>
+			<global>true</global>
 		</item>
 		<item type="traktor.render.Connected" version="traktor.render.Node:1">
 			<id>{C142E158-E5E4-4E4B-B653-54B3D53E24DB}</id>

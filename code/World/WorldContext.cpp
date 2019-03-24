@@ -20,8 +20,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldContext", WorldContext, Object)
 WorldContext::WorldContext(WorldEntityRenderers* entityRenderers)
 :	m_entityRenderers(entityRenderers)
 ,	m_renderContext(new render::RenderContext(c_renderContextSize))
-,	m_lastRenderableType(0)
-,	m_lastRenderer(0)
+,	m_lastRenderableType(nullptr)
+,	m_lastRenderer(nullptr)
 {
 }
 
@@ -36,7 +36,7 @@ void WorldContext::build(WorldRenderView& worldRenderView, IWorldRenderPass& wor
 	if (!renderable)
 		return;
 
-	IEntityRenderer* renderer = 0;
+	IEntityRenderer* renderer = nullptr;
 
 	const TypeInfo& renderableType = type_of(renderable);
 	if (m_lastRenderableType == &renderableType)
@@ -58,10 +58,8 @@ void WorldContext::build(WorldRenderView& worldRenderView, IWorldRenderPass& wor
 
 void WorldContext::flush(WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass)
 {
-	T_ASSERT(m_entityRenderers);
-	const RefArray< IEntityRenderer >& entityRenderers = m_entityRenderers->get();
-	for (RefArray< IEntityRenderer >::const_iterator i = entityRenderers.begin(); i != entityRenderers.end(); ++i)
-		(*i)->flush(*this, worldRenderView, worldRenderPass);
+	for (auto entityRenderer : m_entityRenderers->get())
+		entityRenderer->flush(*this, worldRenderView, worldRenderPass);
 }
 
 	}

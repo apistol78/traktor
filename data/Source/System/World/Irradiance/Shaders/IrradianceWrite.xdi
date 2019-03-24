@@ -5,23 +5,23 @@
 			<id>{3A13FF6D-318D-BA4A-AD8C-EE4BA9531795}</id>
 			<comment/>
 			<position>
-				<first>1463</first>
-				<second>617</second>
+				<first>1468</first>
+				<second>608</second>
 			</position>
 			<technique>World_IrradianceWrite</technique>
 			<priority>
 				<setup>false</setup>
 				<opaque>false</opaque>
 				<postOpaque>false</postOpaque>
-				<alphaBlend>false</alphaBlend>
+				<alphaBlend>true</alphaBlend>
 				<postAlphaBlend>false</postAlphaBlend>
-				<overlay>true</overlay>
+				<overlay>false</overlay>
 			</priority>
 			<cullMode>CmClockWise</cullMode>
-			<blendEnable>false</blendEnable>
+			<blendEnable>true</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
-			<blendColorDestination>BfZero</blendColorDestination>
+			<blendColorDestination>BfOne</blendColorDestination>
 			<blendAlphaOperation>BoAdd</blendAlphaOperation>
 			<blendAlphaSource>BfOne</blendAlphaSource>
 			<blendAlphaDestination>BfOne</blendAlphaDestination>
@@ -66,7 +66,7 @@
 			<id>{D2F30CBD-E1C1-4AD0-81DA-FA92D9C627C5}</id>
 			<comment/>
 			<position>
-				<first>1190</first>
+				<first>1200</first>
 				<second>606</second>
 			</position>
 			<name>Enable</name>
@@ -79,13 +79,23 @@
 			<id>{0918D4BD-C6E0-4E37-9082-BD033010A21E}</id>
 			<comment/>
 			<position>
-				<first>1180</first>
+				<first>1200</first>
 				<second>698</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 		</item>
 	</nodes>
 	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input1</name>
+			</destination>
+		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
@@ -104,16 +114,6 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

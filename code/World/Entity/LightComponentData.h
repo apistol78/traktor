@@ -45,6 +45,10 @@ public:
 
 	const Color4f& getColor() const { return m_color; }
 
+	void setIntensity(float intensity) { m_intensity = intensity; }
+
+	float getIntensity() const { return m_intensity; }
+
 	void setProbeDiffuseTexture(const resource::Id< render::ITexture >& probeTexture) { m_probeDiffuseTexture = probeTexture; }
 
 	const resource::Id< render::ITexture >& getProbeDiffuseTexture() const { return m_probeDiffuseTexture; }
@@ -76,6 +80,7 @@ public:
 private:
 	LightType m_lightType;
 	Color4f m_color;
+	float m_intensity;
 	resource::Id< render::ITexture > m_probeDiffuseTexture;
 	resource::Id< render::ITexture > m_probeSpecularTexture;
 	bool m_castShadow;

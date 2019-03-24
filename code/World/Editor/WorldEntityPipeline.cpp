@@ -4,13 +4,10 @@
 #include "World/Entity/ScriptComponentData.h"
 #include "World/Entity/DecalComponentData.h"
 #include "World/Entity/DecalEventData.h"
-#include "World/Entity/DirectionalLightEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/LightComponentData.h"
-#include "World/Entity/PointLightEntityData.h"
 #include "World/Entity/ProbeComponentData.h"
-#include "World/Entity/SpotLightEntityData.h"
 
 namespace traktor
 {
@@ -25,13 +22,10 @@ TypeInfoSet WorldEntityPipeline::getAssetTypes() const
 	typeSet.insert< ScriptComponentData >();
 	typeSet.insert< DecalComponentData >();
 	typeSet.insert< DecalEventData >();
-	typeSet.insert< DirectionalLightEntityData >();
 	typeSet.insert< ExternalEntityData >();
 	typeSet.insert< GroupEntityData >();
 	typeSet.insert< LightComponentData >();
-	typeSet.insert< PointLightEntityData >();
 	typeSet.insert< ProbeComponentData >();
-	typeSet.insert< SpotLightEntityData >();
 	return typeSet;
 }
 

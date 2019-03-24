@@ -478,7 +478,8 @@ void RenderViewDx11::setViewport(const Viewport& viewport)
 		d3dViewport.MinDepth = viewport.nearZ;
 		d3dViewport.MaxDepth = viewport.farZ;
 
-		m_context->getD3DDeviceContext()->RSSetViewports(1, &d3dViewport);
+		if (!m_targetsDirty)
+			m_context->getD3DDeviceContext()->RSSetViewports(1, &d3dViewport);
 	}
 }
 

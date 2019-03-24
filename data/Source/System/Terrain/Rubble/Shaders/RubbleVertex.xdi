@@ -825,73 +825,6 @@ Wind amplitude
 				<second>674</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
-			<id>{0728C604-BDDC-0047-92B4-4283965121AB}</id>
-			<comment/>
-			<position>
-				<first>3026</first>
-				<second>338</second>
-			</position>
-			<name>Vertex_ViewBinormal</name>
-		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
-			<id>{B20B9ED3-6669-AD46-9086-3D78700DC6D1}</id>
-			<comment/>
-			<position>
-				<first>3026</first>
-				<second>236</second>
-			</position>
-			<name>Vertex_ViewTangent</name>
-		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
-			<id>{83AC014C-4E48-824E-ACC5-B6974B17D618}</id>
-			<comment/>
-			<position>
-				<first>3026</first>
-				<second>32</second>
-			</position>
-			<name>Vertex_ViewPosition</name>
-		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
-			<id>{E34F54CD-582E-F047-8C10-04C14B61FA38}</id>
-			<comment/>
-			<position>
-				<first>3026</first>
-				<second>134</second>
-			</position>
-			<name>Vertex_ViewNormal</name>
-		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
-			<id>{DA14A848-EDD6-5B42-9A1F-6E99455F7FDA}</id>
-			<comment/>
-			<position>
-				<first>3026</first>
-				<second>440</second>
-			</position>
-			<name>Vertex_ViewVelocity</name>
-		</item>
-		<item type="traktor.render.Comment" version="traktor.render.Node:1">
-			<id>{2EB0258E-FA2B-5549-A2B4-4D7346B829CF}</id>
-			<comment>
-			<![CDATA[
-All "default" vertex are exposed as variables
-to provide values to material output fragments.
-			]]>
-			</comment>
-			<position>
-				<first>2954</first>
-				<second>-54</second>
-			</position>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{1F940969-CD35-4E45-AC2D-F2CD73FF568B}</id>
-			<comment/>
-			<position>
-				<first>2738</first>
-				<second>554</second>
-			</position>
-			<value>0</value>
-		</item>
 		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
 			<id>{F75BF2F3-4E70-5547-A012-39C558ADBDBC}</id>
 			<comment/>
@@ -1626,56 +1559,6 @@ to provide values to material output fragments.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[75]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[76]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[25]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[74]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[73]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[79]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[77]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[48]"/>
 				<name>Output</name>
 			</source>
@@ -1700,13 +1583,13 @@ to provide values to material output fragments.
 				<name>Scale</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[80]"/>
+				<node ref="/object/nodes/item[73]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[80]"/>
+				<node ref="/object/nodes/item[73]"/>
 				<name>Output</name>
 			</source>
 			<destination>
