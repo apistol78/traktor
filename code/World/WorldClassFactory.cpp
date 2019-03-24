@@ -21,12 +21,10 @@
 #include "World/Entity/CameraComponentData.h"
 #include "World/Entity/ComponentEntity.h"
 #include "World/Entity/ComponentEntityData.h"
-#include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightComponentData.h"
-#include "World/Entity/PointLightEntity.h"
 #include "World/Entity/ScriptComponent.h"
 #include "World/Entity/ScriptComponentData.h"
 #include "World/Entity/VolumeComponent.h"
@@ -218,18 +216,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classGroupEntity->addMethod("getEntitiesOf", &GroupEntity_getEntitiesOf);
 	classGroupEntity->addMethod("getFirstEntityOf", &GroupEntity_getFirstEntityOf);
 	registrar->registerClass(classGroupEntity);
-
-	auto classPointLightEntity = new AutoRuntimeClass< PointLightEntity >();
-	classPointLightEntity->addProperty("color", &PointLightEntity::getColor);
-	classPointLightEntity->addProperty("range", &PointLightEntity::getRange);
-	classPointLightEntity->addProperty("randomFlicker", &PointLightEntity::getRandomFlicker);
-	registrar->registerClass(classPointLightEntity);
-
-	auto classDirectionalLightEntity = new AutoRuntimeClass< DirectionalLightEntity >();
-	//classDirectionalLightEntity->addConstructor< const Transform&, const Vector4&, const Vector4&, const Vector4&, bool >();
-	classDirectionalLightEntity->addProperty("color", &DirectionalLightEntity::setColor, &DirectionalLightEntity::getColor);
-	classDirectionalLightEntity->addProperty("castShadow", &DirectionalLightEntity::setCastShadow, &DirectionalLightEntity::getCastShadow);
-	registrar->registerClass(classDirectionalLightEntity);
 
 	auto classIEntityComponentData = new AutoRuntimeClass< IEntityComponentData >();
 	registrar->registerClass(classIEntityComponentData);

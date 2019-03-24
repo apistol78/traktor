@@ -5,8 +5,8 @@
 			<id>{E6FE72A5-B871-0A4C-AC4A-A2FD90779FF0}</id>
 			<comment/>
 			<position>
-				<first>1510</first>
-				<second>978</second>
+				<first>1572</first>
+				<second>972</second>
 			</position>
 			<technique>World_ForwardColor</technique>
 			<priority>
@@ -57,15 +57,15 @@ Eye direction
 			]]>
 			</comment>
 			<position>
-				<first>-96</first>
-				<second>294</second>
+				<first>-26</first>
+				<second>312</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{505DD2CD-E305-084F-8673-848F43B149F0}</id>
 			<comment/>
 			<position>
-				<first>-630</first>
+				<first>-798</first>
 				<second>230</second>
 			</position>
 			<name>ViewPosition</name>
@@ -78,7 +78,7 @@ Eye direction
 			<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>
 			<comment/>
 			<position>
-				<first>-630</first>
+				<first>-798</first>
 				<second>120</second>
 			</position>
 			<name>SurfaceColor</name>
@@ -91,7 +91,7 @@ Eye direction
 			<id>{C15FFA71-480D-3948-BF4B-5D1FD2F40B3C}</id>
 			<comment/>
 			<position>
-				<first>-630</first>
+				<first>-798</first>
 				<second>284</second>
 			</position>
 			<name>ViewNormal</name>
@@ -104,7 +104,7 @@ Eye direction
 			<id>{28AF9CD6-D160-E641-AF57-D097F6C47895}</id>
 			<comment/>
 			<position>
-				<first>-620</first>
+				<first>-788</first>
 				<second>174</second>
 			</position>
 			<name>Roughness</name>
@@ -125,7 +125,7 @@ Eye direction
 			<id>{90915AE3-5221-0149-9582-FC06B2EF0B10}</id>
 			<comment/>
 			<position>
-				<first>-414</first>
+				<first>-440</first>
 				<second>246</second>
 			</position>
 			<swizzle>xyz</swizzle>
@@ -142,7 +142,7 @@ Eye direction
 			<id>{C69E8B72-4A8F-5946-B8E5-094E5673E7CE}</id>
 			<comment/>
 			<position>
-				<first>-324</first>
+				<first>-350</first>
 				<second>246</second>
 			</position>
 		</item>
@@ -150,7 +150,7 @@ Eye direction
 			<id>{980741C9-0C50-9148-BA4E-9D2C18C63559}</id>
 			<comment/>
 			<position>
-				<first>-332</first>
+				<first>-358</first>
 				<second>384</second>
 			</position>
 			<swizzle>xyz</swizzle>
@@ -159,7 +159,7 @@ Eye direction
 			<id>{72048415-F7D0-42B2-BF26-7F7F4D97A902}</id>
 			<comment/>
 			<position>
-				<first>-602</first>
+				<first>-770</first>
 				<second>66</second>
 			</position>
 			<name>Enable</name>
@@ -210,53 +210,11 @@ Eye direction
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{1C040227-E119-4EF2-9EC5-C1F0C443031E}</id>
-			<comment>
-			<![CDATA[
-World_ForwardGBufferWrite
-			]]>
-			</comment>
-			<position>
-				<first>-188</first>
-				<second>578</second>
-			</position>
-			<fragmentGuid>{55898E80-6B69-4F55-A40C-138A23496B50}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{30E85928-7B55-E740-9734-68440CE06674}</id>
-					<name>ViewNormal</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{DF015B38-4B91-6C48-BB5E-81FC8355D961}</id>
-					<name>ViewPosition</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{38143377-57B7-4388-9D3F-3AA62077F273}</id>
-					<name>Alpha</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{0533A842-649E-41EB-848E-C14E9F7A6DF9}</id>
-					<name>Enable</name>
-					<optional>true</optional>
-				</item>
-			</inputPins>
-			<outputPins/>
-			<values>
-				<item>
-					<first>Alpha</first>
-					<second>1</second>
-				</item>
-			</values>
-		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{11CC706F-9C87-4161-9063-1CBB049A1A86}</id>
 			<comment/>
 			<position>
-				<first>-624</first>
+				<first>-792</first>
 				<second>342</second>
 			</position>
 			<name>Metalness</name>
@@ -265,7 +223,7 @@ World_ForwardGBufferWrite
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{89E1CDA2-8640-461E-8677-775630A147CB}</id>
 			<comment/>
 			<position>
@@ -273,6 +231,7 @@ World_ForwardGBufferWrite
 				<second>774</second>
 			</position>
 			<name>F0</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{E814BC8D-DC8E-41F9-8AD3-A2E8F28C3B37}</id>
@@ -308,7 +267,7 @@ World_ForwardGBufferWrite
 				<second>1286</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{AD00EC4D-533C-4F99-90F6-20F925463AE9}</id>
 			<comment/>
 			<position>
@@ -316,6 +275,7 @@ World_ForwardGBufferWrite
 				<second>1172</second>
 			</position>
 			<name>kS</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{FCCA7252-00AF-48CD-95E3-822D1386C4ED}</id>
@@ -334,7 +294,7 @@ World_ForwardGBufferWrite
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{CD6AE713-E5F4-49AA-B73F-E50B34F6A711}</id>
 			<comment/>
 			<position>
@@ -342,8 +302,9 @@ World_ForwardGBufferWrite
 				<second>1274</second>
 			</position>
 			<name>BRDF</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{2D7E85C3-B38E-4177-B5AE-575F7976F1B6}</id>
 			<comment/>
 			<position>
@@ -351,6 +312,7 @@ World_ForwardGBufferWrite
 				<second>1022</second>
 			</position>
 			<name>BRDF</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{B1B8C9CA-87C6-4A33-AD49-D72E7C94DE7D}</id>
@@ -365,7 +327,7 @@ World_ForwardGBufferWrite
 			<id>{A77FB6B0-6335-4093-AA6F-783CD5A3B837}</id>
 			<comment/>
 			<position>
-				<first>77</first>
+				<first>76</first>
 				<second>1050</second>
 			</position>
 		</item>
@@ -391,7 +353,7 @@ World_ForwardGBufferWrite
 			<id>{1629109C-DE99-473C-840F-5DA08DDD77BA}</id>
 			<comment/>
 			<position>
-				<first>67</first>
+				<first>66</first>
 				<second>914</second>
 			</position>
 			<external>{934F1D92-C961-485A-A5B8-6703A51266D8}</external>
@@ -401,19 +363,19 @@ World_ForwardGBufferWrite
 			<id>{0FCA9A24-D88D-409F-A1A8-E9A97CC26E9E}</id>
 			<comment/>
 			<position>
-				<first>1248</first>
-				<second>1112</second>
+				<first>1310</first>
+				<second>1106</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{8C811806-6883-4316-95B5-0EEAC1DCEA1E}</id>
 			<comment/>
 			<position>
-				<first>1050</first>
-				<second>1230</second>
+				<first>1074</first>
+				<second>1226</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{4BAD39E7-54DA-45EA-B095-7D8699ECBB16}</id>
 			<comment/>
 			<position>
@@ -421,8 +383,9 @@ World_ForwardGBufferWrite
 				<second>1194</second>
 			</position>
 			<name>Specular</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{D8E55AD1-4E5B-4926-AA3D-9CD45B9F38E8}</id>
 			<comment/>
 			<position>
@@ -430,6 +393,7 @@ World_ForwardGBufferWrite
 				<second>1226</second>
 			</position>
 			<name>F0</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{62B11440-436C-4FA4-8262-9031BB911E4C}</id>
@@ -443,20 +407,20 @@ World_ForwardGBufferWrite
 			<id>{BE2659C6-3F04-4052-B643-5C06B00A02D5}</id>
 			<comment/>
 			<position>
-				<first>-429</first>
-				<second>1371</second>
+				<first>-428</first>
+				<second>1370</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{72A27B5B-7184-4369-B6CA-A3046AFFB402}</id>
 			<comment/>
 			<position>
-				<first>-595</first>
-				<second>1375</second>
+				<first>-640</first>
+				<second>1376</second>
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{1A89549B-E637-46FF-98AF-B83C4F0E346F}</id>
 			<comment/>
 			<position>
@@ -464,16 +428,17 @@ World_ForwardGBufferWrite
 				<second>1070</second>
 			</position>
 			<name>kD</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{77B319C2-CD93-42F0-ADAD-5B8735D82CAC}</id>
 			<comment/>
 			<position>
-				<first>1052</first>
-				<second>1046</second>
+				<first>1076</first>
+				<second>1042</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{4398B2E5-9279-4C58-A0EF-FD27648150C4}</id>
 			<comment/>
 			<position>
@@ -481,43 +446,46 @@ World_ForwardGBufferWrite
 				<second>990</second>
 			</position>
 			<name>Diffuse</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{B065C46B-7687-4F8D-AD4E-2EADE6527B75}</id>
 			<comment/>
 			<position>
-				<first>32</first>
-				<second>1416</second>
+				<first>64</first>
+				<second>1414</second>
 			</position>
 			<name>kD</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{F576288F-1517-48E0-BB9F-E880F3536EB0}</id>
 			<comment/>
 			<position>
-				<first>-601</first>
-				<second>1503</second>
+				<first>-646</first>
+				<second>1504</second>
 			</position>
 			<name>kS</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.Sub" version="traktor.render.Node:1">
 			<id>{8A2FABB9-AB5A-4AD5-A4C0-0BEF43525753}</id>
 			<comment/>
 			<position>
-				<first>-429</first>
-				<second>1461</second>
+				<first>-428</first>
+				<second>1460</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{615A8199-6B8D-4F16-9EDF-14440DC8650D}</id>
 			<comment/>
 			<position>
-				<first>-591</first>
-				<second>1459</second>
+				<first>-636</first>
+				<second>1460</second>
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{6F39E350-B6CE-429E-A2FE-92C3D97AF145}</id>
 			<comment/>
 			<position>
@@ -525,6 +493,7 @@ World_ForwardGBufferWrite
 				<second>1236</second>
 			</position>
 			<name>kS</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
 			<id>{B770A0B1-3336-4E79-8541-541B6806ED42}</id>
@@ -577,16 +546,17 @@ World_ForwardGBufferWrite
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{FCB3ED1B-2235-4740-93D0-866EB7F74FC1}</id>
 			<comment/>
 			<position>
-				<first>138</first>
-				<second>216</second>
+				<first>206</first>
+				<second>234</second>
 			</position>
 			<name>L_EyeDirection</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{A6B5D9E5-5700-49CE-AFBC-625D5D23283F}</id>
 			<comment/>
 			<position>
@@ -594,17 +564,19 @@ World_ForwardGBufferWrite
 				<second>1068</second>
 			</position>
 			<name>L_EyeDirection</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{56D10940-03F3-410C-82C8-4701B4D3A5EE}</id>
 			<comment/>
 			<position>
-				<first>-370</first>
-				<second>526</second>
+				<first>-536</first>
+				<second>434</second>
 			</position>
 			<name>L_ViewNormal</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{A6716D93-BCE9-4467-94B8-D6BB9E0BEA55}</id>
 			<comment/>
 			<position>
@@ -612,24 +584,27 @@ World_ForwardGBufferWrite
 				<second>1170</second>
 			</position>
 			<name>L_ViewNormal</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{07A5ADCA-D0DC-42A1-86D4-D75F0E6AFB43}</id>
 			<comment/>
 			<position>
-				<first>980</first>
-				<second>462</second>
+				<first>1520</first>
+				<second>435</second>
 			</position>
 			<name>Specular</name>
+			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{9949DA8D-D8EB-4ABC-A734-455E538642CE}</id>
 			<comment/>
 			<position>
-				<first>1178</first>
-				<second>340</second>
+				<first>1521</first>
+				<second>272</second>
 			</position>
 			<name>Diffuse</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{5C0A78D5-5B32-4F58-99B1-0452EEDB5D3F}</id>
@@ -644,7 +619,7 @@ World_ForwardGBufferWrite
 			<comment/>
 			<position>
 				<first>798</first>
-				<second>477</second>
+				<second>468</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -656,6 +631,104 @@ World_ForwardGBufferWrite
 				<second>402</second>
 			</position>
 			<swizzle>xyz</swizzle>
+		</item>
+		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
+			<id>{5F5E8D5B-9842-D645-8574-C0EAE0355422}</id>
+			<comment/>
+			<position>
+				<first>732</first>
+				<second>-132</second>
+			</position>
+			<parameterName>World_OcclusionMap</parameterName>
+			<type>PtTexture2D</type>
+			<frequency>UfOnce</frequency>
+		</item>
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{82E78EEA-807E-2C41-8D8A-E3FDD3C6F309}</id>
+			<comment/>
+			<position>
+				<first>754</first>
+				<second>-20</second>
+			</position>
+		</item>
+		<item type="traktor.render.TargetSize" version="traktor.render.Node:1">
+			<id>{FFA5A0A5-1675-8C44-A23F-4F67FD491104}</id>
+			<comment/>
+			<position>
+				<first>578</first>
+				<second>28</second>
+			</position>
+		</item>
+		<item type="traktor.render.FragmentPosition" version="traktor.render.Node:1">
+			<id>{1B7C8C17-2F8B-8148-9C15-36275D18A976}</id>
+			<comment/>
+			<position>
+				<first>528</first>
+				<second>-18</second>
+			</position>
+		</item>
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{75B4C33F-C24C-4045-92D6-21CF192D129E}</id>
+			<comment/>
+			<position>
+				<first>986</first>
+				<second>-74</second>
+			</position>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
+			<addressU>AdWrap</addressU>
+			<addressV>AdWrap</addressV>
+			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{29AAFE09-9BE2-3348-BABE-6B484E0A6551}</id>
+			<comment/>
+			<position>
+				<first>1228</first>
+				<second>-46</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{5FF0897F-0A11-2E41-A05B-674C94077CC3}</id>
+			<comment/>
+			<position>
+				<first>1395</first>
+				<second>-54</second>
+			</position>
+			<name>L_Occlusion</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{CD9DEAF0-5112-C14E-B3A3-93A9E569640C}</id>
+			<comment/>
+			<position>
+				<first>997</first>
+				<second>210</second>
+			</position>
+			<name>L_Occlusion</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{CA197000-FBC8-CD48-B7BF-B1CF18494EBC}</id>
+			<comment/>
+			<position>
+				<first>1274</first>
+				<second>257</second>
+			</position>
+		</item>
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{43297BFF-C35B-364F-8268-EEA18348A25B}</id>
+			<comment/>
+			<position>
+				<first>1288</first>
+				<second>440</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -771,22 +844,12 @@ World_ForwardGBufferWrite
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[15]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<name>ViewNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<name>ViewPosition</name>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -795,17 +858,7 @@ World_ForwardGBufferWrite
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[17]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[14]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -815,43 +868,23 @@ World_ForwardGBufferWrite
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[17]"/>
+				<node ref="/object/nodes/item[16]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
+				<node ref="/object/nodes/item[13]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[17]"/>
+				<node ref="/object/nodes/item[16]"/>
 				<name>Blend</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[45]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[44]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[44]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[46]"/>
-				<name>CosTheta</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[46]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -861,11 +894,81 @@ World_ForwardGBufferWrite
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[42]"/>
+				<node ref="/object/nodes/item[43]"/>
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[45]"/>
+				<name>CosTheta</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[45]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[41]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[39]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[37]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[34]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[33]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[33]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[32]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -875,17 +978,37 @@ World_ForwardGBufferWrite
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[41]"/>
+				<node ref="/object/nodes/item[32]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[38]"/>
+				<node ref="/object/nodes/item[32]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[37]"/>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[45]"/>
+				<name>F0</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[30]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -895,133 +1018,53 @@ World_ForwardGBufferWrite
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[37]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[35]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[34]"/>
+				<node ref="/object/nodes/item[28]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[34]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[33]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[41]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[33]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[33]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[39]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[32]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[46]"/>
-				<name>F0</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[31]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[37]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[29]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[30]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[29]"/>
+				<node ref="/object/nodes/item[28]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[44]"/>
+				<node ref="/object/nodes/item[43]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[25]"/>
 				<name>X</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[25]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[27]"/>
+				<node ref="/object/nodes/item[26]"/>
 				<name>TexCoord</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[28]"/>
+				<node ref="/object/nodes/item[27]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[27]"/>
+				<node ref="/object/nodes/item[26]"/>
 				<name>Texture</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[27]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[25]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[25]"/>
+				<node ref="/object/nodes/item[26]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1031,42 +1074,22 @@ World_ForwardGBufferWrite
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[23]"/>
+				<node ref="/object/nodes/item[24]"/>
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[22]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[21]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[19]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[19]"/>
-				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1075,7 +1098,7 @@ World_ForwardGBufferWrite
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[21]"/>
+				<node ref="/object/nodes/item[18]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -1085,7 +1108,17 @@ World_ForwardGBufferWrite
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[21]"/>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -1095,7 +1128,27 @@ World_ForwardGBufferWrite
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[30]"/>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -1105,17 +1158,17 @@ World_ForwardGBufferWrite
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[47]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[48]"/>
+				<node ref="/object/nodes/item[47]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[45]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -1125,23 +1178,23 @@ World_ForwardGBufferWrite
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[48]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[50]"/>
+				<node ref="/object/nodes/item[49]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[45]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[29]"/>
+				<node ref="/object/nodes/item[28]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1151,21 +1204,11 @@ World_ForwardGBufferWrite
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[53]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[52]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[53]"/>
+				<node ref="/object/nodes/item[52]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -1175,7 +1218,7 @@ World_ForwardGBufferWrite
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<name>Roughness</name>
 			</destination>
 		</item>
@@ -1185,17 +1228,7 @@ World_ForwardGBufferWrite
 				<name>Specular</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[54]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[54]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[51]"/>
+				<node ref="/object/nodes/item[53]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1205,28 +1238,148 @@ World_ForwardGBufferWrite
 				<name>Diffuse</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[55]"/>
+				<node ref="/object/nodes/item[54]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[55]"/>
+				<node ref="/object/nodes/item[54]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[53]"/>
+				<node ref="/object/nodes/item[52]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
+				<node ref="/object/nodes/item[13]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[34]"/>
+				<node ref="/object/nodes/item[33]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[58]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[56]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[57]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[56]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[55]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[59]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[56]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[59]"/>
+				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[62]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[63]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[52]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[63]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[63]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[51]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[53]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[64]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[62]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[64]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[64]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[50]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[59]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[60]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[60]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[61]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

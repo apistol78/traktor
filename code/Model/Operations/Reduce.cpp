@@ -107,7 +107,7 @@ Vector4 triangleTipPoint(const Model& model, const ModelAdjacency& adjacency, ui
 			Vector4 pivot;
 			Scalar k;
 
-			if (!Plane(cross(normal, diff).normalized(), midPoint).rayIntersection(position0, edge.normalized(), k, &pivot))
+			if (!Plane(cross(normal, diff).normalized(), midPoint).rayIntersection(position0, edge.normalized(), k, pivot))
 				continue;
 
 			Vector4 V = (pivot - sharedMidPoint).normalized();

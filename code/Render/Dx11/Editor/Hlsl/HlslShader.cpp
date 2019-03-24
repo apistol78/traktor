@@ -164,7 +164,8 @@ void HlslShader::pushOutputStream(BlockType blockType, StringOutputStream* outpu
 
 void HlslShader::popOutputStream(BlockType blockType)
 {
-	m_outputStreams[int(blockType)].pop_back();
+	if (!m_outputStreams[int(blockType)].empty())
+		m_outputStreams[int(blockType)].pop_back();
 }
 
 StringOutputStream& HlslShader::getOutputStream(BlockType blockType)

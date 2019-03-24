@@ -84,7 +84,7 @@ public:
 	virtual void getDebugTargets(std::vector< render::DebugTarget >& outTargets) const override final;
 
 private:
-	struct Slice
+	struct FrameShadow
 	{
 		Ref< WorldContext > shadow;
 		Matrix44 shadowLightView;
@@ -94,25 +94,24 @@ private:
 
 	struct Frame
 	{
-		Slice slice[MaxSliceCount];
+		FrameShadow slice[MaxSliceCount];
+		FrameShadow atlas[16];
+
 		Ref< WorldContext > depth;
 		Ref< WorldContext > visual;
+
 		Ref< render::StructBuffer > lightSBuffer;
+
 		Matrix44 projection;
 		Matrix44 view;
-		Matrix44 viewToLightSpace;
 		Frustum viewFrustum;
 		float time;
-		float A;
-		float B;
 		int32_t lightCount;
 		bool haveDepth;
 		bool haveShadows;
 
 		Frame()
 		:	time(0.0f)
-		,	A(0.0f)
-		,	B(0.0f)
 		,	lightCount(0)
 		,	haveDepth(false)
 		,	haveShadows(false)
@@ -121,27 +120,30 @@ private:
 	};
 
 	WorldRenderSettings m_settings;
-	WorldRenderSettings::ShadowSettings m_shadowSettings;
 	Quality m_toneMapQuality;
 	Quality m_shadowsQuality;
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
 
 	Ref< render::IRenderView > m_renderView;
-	Ref< IWorldShadowProjection > m_shadowProjection;
 	Ref< render::RenderTargetSet > m_visualTargetSet;
 	Ref< render::RenderTargetSet > m_intermediateTargetSet;
 	Ref< render::RenderTargetSet > m_gbufferTargetSet;
-	Ref< render::RenderTargetSet > m_shadowTargetSet;
-	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
 	Ref< render::RenderContext > m_globalContext;
 	resource::Proxy< render::ITexture > m_reflectionMap;
-	Ref< render::ImageProcess > m_shadowMaskProject;
 	Ref< render::ImageProcess > m_ambientOcclusion;
 	Ref< render::ImageProcess > m_antiAlias;
 	Ref< render::ImageProcess > m_visualImageProcess;
 	Ref< render::ImageProcess > m_gammaCorrectionImageProcess;
 	Ref< render::ImageProcess > m_toneMapImageProcess;
+
+	// Directional shadow map.
+	Ref< IWorldShadowProjection > m_shadowProjection;
+	Ref< render::RenderTargetSet > m_shadowCascadeTargetSet;
+
+	// Point/Spot shadow map.
+	Ref< render::RenderTargetSet > m_shadowAtlasTargetSet;
+
 	RefArray< Entity > m_buildEntities;
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];
@@ -149,9 +151,9 @@ private:
 
 	void buildGBuffer(WorldRenderView& worldRenderView, int frame);
 
-	void buildVisualWithShadows(WorldRenderView& worldRenderView, int frame);
+	void buildLights(WorldRenderView& worldRenderView, int frame);
 
-	void buildVisualWithNoShadows(WorldRenderView& worldRenderView, int frame);
+	void buildVisual(WorldRenderView& worldRenderView, int frame);
 };
 
 	}

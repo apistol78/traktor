@@ -23,9 +23,10 @@ render::handle_t s_handleFogEnable;
 render::handle_t s_handleFogDistanceAndDensity;
 render::handle_t s_handleFogColor;
 render::handle_t s_handleShadowEnable;
-render::handle_t s_handleShadowMask;
-render::handle_t s_handleDepthEnable;
+render::handle_t s_handleShadowCascade;
+render::handle_t s_handleShadowAtlas;
 render::handle_t s_handleDepthMap;
+render::handle_t s_handleOcclusionMap;
 render::handle_t s_handleLightCount;
 render::handle_t s_handleLights;
 
@@ -45,9 +46,10 @@ void initializeHandles()
 	s_handleFogDistanceAndDensity = render::getParameterHandle(L"World_FogDistanceAndDensity");
 	s_handleFogColor = render::getParameterHandle(L"World_FogColor");
 	s_handleShadowEnable = render::getParameterHandle(L"World_ShadowEnable");
-	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
-	s_handleDepthEnable = render::getParameterHandle(L"World_DepthEnable");
+	s_handleShadowCascade = render::getParameterHandle(L"World_ShadowCascade");
+	s_handleShadowAtlas = render::getParameterHandle(L"World_ShadowAtlas");
 	s_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
+	s_handleOcclusionMap = render::getParameterHandle(L"World_OcclusionMap");
 	s_handleLightCount = render::getParameterHandle(L"World_LightCount");
 	s_handleLights = render::getParameterHandle(L"World_Lights");
 
@@ -60,8 +62,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderPassForward", WorldRenderPassF
 
 WorldRenderPassForward::WorldRenderPassForward(
 	render::handle_t technique,
-	const WorldRenderView& worldRenderView,
 	uint32_t passFlags,
+	const Matrix44& view,
 	render::StructBuffer* lightSBuffer,
 	uint32_t lightCount,
 	bool fogEnabled,
@@ -72,11 +74,14 @@ WorldRenderPassForward::WorldRenderPassForward(
 	const Vector4& fogColor,
 	render::ISimpleTexture* colorMap,
 	render::ISimpleTexture* depthMap,
-	render::ISimpleTexture* shadowMask
+	render::ISimpleTexture* occlusionMap,
+	render::ISimpleTexture* shadowCascade,
+	render::ISimpleTexture* shadowAtlas
 )
 :	m_technique(technique)
-,	m_worldRenderView(worldRenderView)
 ,	m_passFlags(passFlags)
+,	m_view(view)
+,	m_viewInverse(view.inverse())
 ,	m_lightSBuffer(lightSBuffer)
 ,	m_lightCount(lightCount)
 ,	m_fogEnabled(fogEnabled)
@@ -87,23 +92,25 @@ WorldRenderPassForward::WorldRenderPassForward(
 ,	m_fogColor(fogColor)
 ,	m_colorMap(colorMap)
 ,	m_depthMap(depthMap)
-,	m_shadowMask(shadowMask)
+,	m_occlusionMap(occlusionMap)
+,	m_shadowCascade(shadowCascade)
+,	m_shadowAtlas(shadowAtlas)
 {
 	initializeHandles();
-
-	m_viewInverse = m_worldRenderView.getView().inverse();
 }
 
 WorldRenderPassForward::WorldRenderPassForward(
 	render::handle_t technique,
-	const WorldRenderView& worldRenderView,
 	uint32_t passFlags,
+	const Matrix44& view,
 	render::ISimpleTexture* colorMap,
-	render::ISimpleTexture* depthMap
+	render::ISimpleTexture* depthMap,
+	render::ISimpleTexture* occlusionMap
 )
 :	m_technique(technique)
-,	m_worldRenderView(worldRenderView)
 ,	m_passFlags(passFlags)
+,	m_view(view)
+,	m_viewInverse(view.inverse())
 ,	m_lightSBuffer(nullptr)
 ,	m_lightCount(0)
 ,	m_fogEnabled(false)
@@ -114,11 +121,10 @@ WorldRenderPassForward::WorldRenderPassForward(
 ,	m_fogColor(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_colorMap(colorMap)
 ,	m_depthMap(depthMap)
-,	m_shadowMask(nullptr)
+,	m_occlusionMap(occlusionMap)
+,	m_shadowCascade(nullptr)
 {
 	initializeHandles();
-
-	m_viewInverse = m_worldRenderView.getView().inverse();
 }
 
 render::handle_t WorldRenderPassForward::getTechnique() const
@@ -141,8 +147,7 @@ void WorldRenderPassForward::setShaderCombination(render::Shader* shader) const
 	if (m_technique == s_techniqueDefault)
 	{
 		shader->setCombination(s_handleFogEnable, m_fogEnabled);
-		shader->setCombination(s_handleShadowEnable, m_shadowMask != 0);
-		shader->setCombination(s_handleDepthEnable, m_depthMap != 0);
+		shader->setCombination(s_handleShadowEnable, m_shadowCascade != nullptr && m_shadowAtlas != nullptr);
 	}
 }
 
@@ -158,6 +163,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 		setFogProgramParameters(programParams);
 		setShadowMapProgramParameters(programParams);
 		setDepthMapProgramParameters(programParams);
+		setOcclusionMapProgramParameters(programParams);
 	}
 }
 
@@ -173,17 +179,17 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 		setFogProgramParameters(programParams);
 		setShadowMapProgramParameters(programParams);
 		setDepthMapProgramParameters(programParams);
+		setOcclusionMapProgramParameters(programParams);
 	}
 }
 
 void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& world) const
 {
 	Matrix44 w = world.toMatrix44();
-	const Matrix44& v = m_worldRenderView.getView();
-	programParams->setMatrixParameter(s_handleView, v);
+	programParams->setMatrixParameter(s_handleView, m_view);
 	programParams->setMatrixParameter(s_handleViewInverse, m_viewInverse);
 	programParams->setMatrixParameter(s_handleWorld, w);
-	programParams->setMatrixParameter(s_handleWorldView, v * w);
+	programParams->setMatrixParameter(s_handleWorldView, m_view * w);
 }
 
 void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters* programParams) const
@@ -209,14 +215,22 @@ void WorldRenderPassForward::setColorMapProgramParameters(render::ProgramParamet
 
 void WorldRenderPassForward::setShadowMapProgramParameters(render::ProgramParameters* programParams) const
 {
-	if (m_shadowMask)
-		programParams->setTextureParameter(s_handleShadowMask, m_shadowMask);
+	if (m_shadowCascade)
+		programParams->setTextureParameter(s_handleShadowCascade, m_shadowCascade);
+	if (m_shadowAtlas)
+		programParams->setTextureParameter(s_handleShadowAtlas, m_shadowAtlas);
 }
 
 void WorldRenderPassForward::setDepthMapProgramParameters(render::ProgramParameters* programParams) const
 {
 	if (m_depthMap)
 		programParams->setTextureParameter(s_handleDepthMap, m_depthMap);
+}
+
+void WorldRenderPassForward::setOcclusionMapProgramParameters(render::ProgramParameters* programParams) const
+{
+	if (m_occlusionMap)
+		programParams->setTextureParameter(s_handleOcclusionMap, m_occlusionMap);
 }
 
 	}

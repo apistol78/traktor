@@ -11,23 +11,15 @@
 #include "World/Entity/DecalComponentData.h"
 #include "World/Entity/DecalEvent.h"
 #include "World/Entity/DecalEventData.h"
-#include "World/Entity/DirectionalLightEntity.h"
-#include "World/Entity/DirectionalLightEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
-#include "World/Entity/GodRayComponent.h"
-#include "World/Entity/GodRayComponentData.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightComponentData.h"
-#include "World/Entity/PointLightEntity.h"
-#include "World/Entity/PointLightEntityData.h"
 #include "World/Entity/ProbeComponent.h"
 #include "World/Entity/ProbeComponentData.h"
 #include "World/Entity/ScriptComponent.h"
 #include "World/Entity/ScriptComponentData.h"
-#include "World/Entity/SpotLightEntity.h"
-#include "World/Entity/SpotLightEntityData.h"
 #include "World/Entity/VolumeComponent.h"
 #include "World/Entity/VolumeComponentData.h"
 #include "World/Entity/WorldEntityFactory.h"
@@ -49,11 +41,8 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert< ComponentEntityData >();
-	typeSet.insert< DirectionalLightEntityData >();
 	typeSet.insert< ExternalEntityData >();
 	typeSet.insert< GroupEntityData >();
-	typeSet.insert< PointLightEntityData >();
-	typeSet.insert< SpotLightEntityData >();
 	return typeSet;
 }
 
@@ -69,7 +58,6 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert< CameraComponentData >();
 	typeSet.insert< DecalComponentData >();
-	typeSet.insert< GodRayComponentData >();
 	typeSet.insert< LightComponentData >();
 	typeSet.insert< ProbeComponentData >();
 	typeSet.insert< ScriptComponentData >();
@@ -83,7 +71,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 	{
 		resource::Proxy< EntityData > resolvedEntityData;
 		if (!m_resourceManager->bind(externalEntityData->getEntityData(), resolvedEntityData))
-			return 0;
+			return nullptr;
 
 		resolvedEntityData->setName(externalEntityData->getName());
 		resolvedEntityData->setTransform(externalEntityData->getTransform());
@@ -96,7 +84,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 			if (factory)
 				return factory->createEntity(builder->getCompositeEntityBuilder(), *resolvedEntityData.getResource());
 			else
-				return 0;
+				return nullptr;
 		}
 		else
 			return builder->create(resolvedEntityData.getResource());
@@ -117,37 +105,6 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		return groupEntity;
 	}
 
-	if (const DirectionalLightEntityData* directionalLightData = dynamic_type_cast< const DirectionalLightEntityData* >(&entityData))
-	{
-		return new DirectionalLightEntity(
-			directionalLightData->getTransform(),
-			directionalLightData->getColor(),
-			directionalLightData->getCastShadow()
-		);
-	}
-
-	if (const PointLightEntityData* pointLightData = dynamic_type_cast< const PointLightEntityData* >(&entityData))
-	{
-		return new PointLightEntity(
-			pointLightData->getTransform(),
-			pointLightData->getColor(),
-			pointLightData->getRange(),
-			pointLightData->getRandomFlickerAmount(),
-			pointLightData->getRandomFlickerFilter()
-		);
-	}
-
-	if (const SpotLightEntityData* spotLightData = dynamic_type_cast< const SpotLightEntityData* >(&entityData))
-	{
-		return new SpotLightEntity(
-			spotLightData->getTransform(),
-			spotLightData->getColor(),
-			spotLightData->getRange(),
-			spotLightData->getRadius(),
-			spotLightData->getCastShadow()
-		);
-	}
-
 	if (const ComponentEntityData* componentData = dynamic_type_cast< const ComponentEntityData* >(&entityData))
 	{
 		Ref< ComponentEntity > componentEntity = new ComponentEntity(componentData->getTransform());
@@ -157,7 +114,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 			if (!component)
 			{
 				if (!m_editor)
-					return 0;
+					return nullptr;
 				else
 					continue;
 			}
@@ -166,7 +123,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		return componentEntity;
 	}
 
-	return 0;
+	return nullptr;
 }
 
 Ref< IEntityEvent > WorldEntityFactory::createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const
@@ -183,7 +140,7 @@ Ref< IEntityEvent > WorldEntityFactory::createEntityEvent(const IEntityBuilder* 
 		if (m_resourceManager->bind(decalData->getShader(), decal->m_shader))
 			return decal;
 	}
-	return 0;
+	return nullptr;
 }
 
 Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const IEntityComponentData& entityComponentData) const
@@ -208,9 +165,6 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 		return decalComponent;
 	}
 
-	if (const GodRayComponentData* godRayComponentData = dynamic_type_cast< const GodRayComponentData* >(&entityComponentData))
-		return new GodRayComponent();
-
 	if (const LightComponentData* lightComponentData = dynamic_type_cast<const LightComponentData*>(&entityComponentData))
 	{
 		resource::Proxy< render::ITexture > probeDiffuseTexture;
@@ -229,7 +183,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 
 		return new LightComponent(
 			lightComponentData->getLightType(),
-			lightComponentData->getColor(),
+			lightComponentData->getColor() * Scalar(lightComponentData->getIntensity()),
 			probeDiffuseTexture,
 			probeSpecularTexture,
 			lightComponentData->getCastShadow(),

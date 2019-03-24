@@ -247,7 +247,7 @@ bool Winding3::rayIntersection(
 	if (!getPlane(plane))
 		return false;
 
-	if (!plane.rayIntersection(origin, direction, outK, &p) || outK <= 0.0f)
+	if (!plane.rayIntersection(origin, direction, outK, p) || outK <= 0.0f)
 		return false;
 
 	Vector4 u, v;

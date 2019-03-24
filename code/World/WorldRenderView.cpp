@@ -16,10 +16,6 @@ WorldRenderView::WorldRenderView()
 ,	m_time(0.0f)
 ,	m_deltaTime(0.0f)
 ,	m_interval(0.0f)
-,	m_interocularDistance(4.5f)
-,	m_distortionValue(0.8f)
-,	m_screenPlaneDistance(13.0f)
-,	m_godRayDirection(Vector4::zero())
 {
 }
 
@@ -96,26 +92,6 @@ void WorldRenderView::setEyePosition(const Vector4& eyePosition)
 void WorldRenderView::setEyeDirection(const Vector4& eyeDirection)
 {
 	m_eyeDirection = eyeDirection;
-}
-
-void WorldRenderView::setInterocularDistance(float interocularDistance)
-{
-	m_interocularDistance = interocularDistance;
-}
-
-void WorldRenderView::setDistortionValue(float distortionValue)
-{
-	m_distortionValue = distortionValue;
-}
-
-void WorldRenderView::setScreenPlaneDistance(float screenPlaneDistance)
-{
-	m_screenPlaneDistance = screenPlaneDistance;
-}
-
-void WorldRenderView::setGodRayDirection(const Vector4& direction)
-{
-	m_godRayDirection = direction;
 }
 
 void WorldRenderView::addLight(const Light& light)

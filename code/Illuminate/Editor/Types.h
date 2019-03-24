@@ -40,7 +40,8 @@ struct Light
 	{
 		LtDirectional = 0,
 		LtPoint = 1,
-		LtProbe = 2
+		LtSpot = 2,
+		LtProbe = 3
 	};
 
 	LightType type;
@@ -48,11 +49,17 @@ struct Light
 	Vector4 direction;
 	Color4f color;
 	Scalar range;
+	Scalar radius;
 	Ref< IProbe > probe;
 	int32_t surface;
 
 	Light()
 	:	type(LtDirectional)
+	,	position(Vector4::origo())
+	,	direction(Vector4::zero())
+	,	color(0.0f, 0.0f, 0.0f, 1.0f)
+	,	range(0.0f)
+	,	radius(0.0f)
 	,	surface(0)
 	{
 	}

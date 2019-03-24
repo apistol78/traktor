@@ -5,8 +5,8 @@
 			<id>{9C16C3CA-3FE5-48F4-8176-454E1F24A112}</id>
 			<comment/>
 			<position>
-				<first>884</first>
-				<second>285</second>
+				<first>939</first>
+				<second>454</second>
 			</position>
 			<name>T_Irradiance</name>
 			<connectable>true</connectable>
@@ -18,8 +18,8 @@
 			<id>{CAE62244-D1AD-4608-AA3C-684583F6FD21}</id>
 			<comment/>
 			<position>
-				<first>864</first>
-				<second>208</second>
+				<first>919</first>
+				<second>248</second>
 			</position>
 			<name>T_SurfaceColor</name>
 			<connectable>true</connectable>
@@ -31,8 +31,8 @@
 			<id>{BD452362-8381-4262-A5BA-FACBB9B82990}</id>
 			<comment/>
 			<position>
-				<first>874</first>
-				<second>476</second>
+				<first>919</first>
+				<second>330</second>
 			</position>
 			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
@@ -44,8 +44,8 @@
 			<id>{AD975345-7766-4021-90DB-1BD0F5F2F003}</id>
 			<comment/>
 			<position>
-				<first>874</first>
-				<second>438</second>
+				<first>919</first>
+				<second>289</second>
 			</position>
 			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
@@ -57,8 +57,8 @@
 			<id>{750D8F02-EC0B-44F3-9D58-50C57E87ED04}</id>
 			<comment/>
 			<position>
-				<first>894</first>
-				<second>246</second>
+				<first>939</first>
+				<second>413</second>
 			</position>
 			<name>T_Emissive</name>
 			<connectable>true</connectable>
@@ -70,8 +70,8 @@
 			<id>{827286B1-E1EB-438F-A6A8-8F2BEE422BCF}</id>
 			<comment/>
 			<position>
-				<first>884</first>
-				<second>323</second>
+				<first>939</first>
+				<second>496</second>
 			</position>
 			<name>T_Metalness</name>
 			<connectable>true</connectable>
@@ -83,8 +83,8 @@
 			<id>{611C1AF2-3F8C-40B3-ABEA-4CEE23A5414C}</id>
 			<comment/>
 			<position>
-				<first>864</first>
-				<second>400</second>
+				<first>919</first>
+				<second>578</second>
 			</position>
 			<name>T_Transparency</name>
 			<connectable>true</connectable>
@@ -96,8 +96,8 @@
 			<id>{57AB2945-A833-4179-AA07-709BB8F0F597}</id>
 			<comment/>
 			<position>
-				<first>874</first>
-				<second>361</second>
+				<first>919</first>
+				<second>537</second>
 			</position>
 			<name>T_Roughness</name>
 			<connectable>true</connectable>
@@ -109,8 +109,8 @@
 			<id>{45A80FDA-37F5-477C-8037-D719F45F477A}</id>
 			<comment/>
 			<position>
-				<first>864</first>
-				<second>514</second>
+				<first>919</first>
+				<second>372</second>
 			</position>
 			<name>T_ViewVelocity</name>
 			<connectable>true</connectable>
@@ -119,11 +119,11 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{93D9CE4E-2694-41B9-A554-A4558B3FEC31}</id>
+			<id>{508EB416-C865-7E44-BBEB-AF3F6D23B902}</id>
 			<comment/>
 			<position>
-				<first>1267</first>
-				<second>302</second>
+				<first>1290</first>
+				<second>331</second>
 			</position>
 			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
 			<inputPins>
@@ -131,6 +131,26 @@
 					<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
 					<name>SurfaceColor</name>
 					<optional>false</optional>
+				</item>
+				<item>
+					<id>{D9D1FD13-4CD0-B949-A524-3276089CD08A}</id>
+					<name>ViewNormal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{86D35046-A057-024C-ADA3-9585DB3208BB}</id>
+					<name>ViewPosition</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{21B82E2F-6A92-574E-98B6-CBE4A37D9C1E}</id>
+					<name>ViewVelocity</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{94E22A68-7854-594C-9319-8AAF20D6DCA1}</id>
+					<name>Cast shadow</name>
+					<optional>true</optional>
 				</item>
 				<item>
 					<id>{A5F0E607-E44E-4D43-8743-2CE73EC070EC}</id>
@@ -157,24 +177,13 @@
 					<name>Transparency</name>
 					<optional>true</optional>
 				</item>
-				<item>
-					<id>{D9D1FD13-4CD0-B949-A524-3276089CD08A}</id>
-					<name>ViewNormal</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{86D35046-A057-024C-ADA3-9585DB3208BB}</id>
-					<name>ViewPosition</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{21B82E2F-6A92-574E-98B6-CBE4A37D9C1E}</id>
-					<name>ViewVelocity</name>
-					<optional>true</optional>
-				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
+				<item>
+					<first>Cast shadow</first>
+					<second>1</second>
+				</item>
 				<item>
 					<first>Emissive</first>
 					<second>0</second>
@@ -203,12 +212,52 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>ViewNormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>ViewVelocity</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Emissive</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Irradiance</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -229,46 +278,6 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Roughness</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>ViewVelocity</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>ViewNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Irradiance</name>
 			</destination>
 		</item>
 	</edges>

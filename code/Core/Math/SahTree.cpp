@@ -110,7 +110,7 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 					continue;
 
 				const Plane& plane = m_planes[*i];
-				if (plane.rayIntersection(origin, direction, T, &p) && T > 0.0f && T <= outResult.distance)
+				if (plane.rayIntersection(origin, direction, T, p) && T > 0.0f && T <= outResult.distance)
 				{
 					Vector2 pnt(
 						dot3(m_projectedU[*i], p),
@@ -205,7 +205,7 @@ bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& directi
 					continue;
 
 				const Plane& plane = m_planes[*i];
-				if (plane.rayIntersection(origin, direction, T, &p) && T > 0.0f && T < md)
+				if (plane.rayIntersection(origin, direction, T, p) && T > 0.0f && T < md)
 				{
 					Vector2 pnt(
 						dot3(m_projectedU[*i], p),

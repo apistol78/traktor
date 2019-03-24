@@ -83,8 +83,7 @@ T_MATH_INLINE Vector4 Plane::project(const Vector4& v) const
 T_MATH_INLINE bool Plane::rayIntersection(
 	const Vector4& origin,
 	const Vector4& direction,
-	Scalar& outK,
-	Vector4* outPoint
+	Scalar& outK
 ) const
 {
 	Scalar denom = -dot3(m_normal, direction);
@@ -92,11 +91,24 @@ T_MATH_INLINE bool Plane::rayIntersection(
 		return false;
 
 	Scalar divend = distance(origin);
-
 	outK = divend / denom;
-	if (outPoint != 0)
-		*outPoint = origin + direction * outK;
+	return true;
+}
 
+T_MATH_INLINE bool Plane::rayIntersection(
+	const Vector4& origin,
+	const Vector4& direction,
+	Scalar& outK,
+	Vector4& outPoint
+) const
+{
+	Scalar denom = -dot3(m_normal, direction);
+	if (denom == 0.0f)
+		return false;
+
+	Scalar divend = distance(origin);
+	outK = divend / denom;
+	outPoint = origin + direction * outK;
 	return true;
 }
 

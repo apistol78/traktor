@@ -92,10 +92,10 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 		}
 
 		// Resolve variables of each fragment.
-		fragmentShaderGraph = ShaderGraphStatic(fragmentShaderGraph).getVariableResolved();
+		fragmentShaderGraph = ShaderGraphStatic(fragmentShaderGraph).getVariableResolved(ShaderGraphStatic::VrtLocal);
 		if (!fragmentShaderGraph)
 		{
-			log::error << errorPrefix << L"unable to resolve variables in fragment \"" << externalNode->getFragmentGuid().format() << L"\"" << Endl;
+			log::error << errorPrefix << L"unable to resolve local variables in fragment \"" << externalNode->getFragmentGuid().format() << L"\"" << Endl;
 			return nullptr;
 		}
 

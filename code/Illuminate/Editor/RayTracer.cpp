@@ -15,7 +15,7 @@ const Scalar c_epsilonOffset(0.02f);
 Scalar attenuation(const Scalar& distance)
 {
 	return clamp(
-		Scalar(1.0f) / distance,
+		Scalar(1.0f) / (distance * distance),
 		Scalar(0.0f),
 		Scalar(1.0f)
 	);
@@ -61,75 +61,7 @@ void RayTracer::addModel(const model::Model* model, const Transform& transform)
 
 bool RayTracer::prepare()
 {
-	log::info << L"Building SAH structure..." << Endl;
 	m_sah.build(m_windings);
-
-	// Build photon map.
-	log::info << L"Building photon map..." << Endl;
-	if (m_windings.size() > 0)
-	{
-		for (int32_t i = 0; i < m_configuration->getPhotonCount(); ++i)
-		{
-			uint32_t index = (uint32_t)(m_random.nextFloat() * (m_windings.size() - 1));
-
-			const auto& targetWinding = m_windings[index];
-
-			Aabb3 targetBounds;
-
-			for (const auto& point : targetWinding.getPoints())
-				targetBounds.contain(point);
-
-			Vector4 r(
-				m_random.nextFloat(),
-				m_random.nextFloat(),
-				m_random.nextFloat(),
-				0.0f
-			);
-
-			Vector4 target(targetBounds.mn + (targetBounds.mx - targetBounds.mn) * r);
-
-			for (const auto& light : m_lights)
-			{
-				switch (light.type)
-				{
-				case Light::LtPoint:
-					{
-						Vector4 direction = (target - light.position).xyz0();
-						Scalar length = direction.normalize();
-
-						SahTree::QueryResult result;
-						if (m_sah.queryClosestIntersection(light.position, direction, result, m_sahCache))
-						{
-							Scalar a1 = attenuation(result.distance);
-
-							// Bounce light and trace again to place photon; photons are only used for
-							// indirect, bounced, light.
-							Vector4 r = reflect(-direction, result.normal);
-							if (m_sah.queryClosestIntersection(result.position + result.normal * c_epsilonOffset, r, result, m_sahCache))
-							{
-								Scalar a2 = attenuation(result.distance);
-
-								Photon photon;
-								photon.position = result.position.xyz1();
-								photon.direction = r;
-								photon.intensity = m_surfaces[result.index].albedo * light.color * a1 * a2;
-								m_photonMap.insert(photon);
-							}
-
-							// Photon photon;
-							// photon.position = result.position.xyz1();
-							// photon.direction = direction;
-							// photon.intensity = light.color * attenuation(result.distance);
-							// m_photonMap.insert(photon);
-						}
-					}
-					break;
-				}
-			}
-		}
-	}
-	
-	log::info << L"Done" << Endl;
 	return true;
 }
 
@@ -148,67 +80,26 @@ Color4f RayTracer::traceIndirect(const Vector4& origin, const Vector4& normal, f
 	Color4f irradiance(0.0f, 0.0f, 0.0f, 0.0f);
 	SahTree::QueryResult result;
 
-	// Sample photon map for indirect lighting from given point.
-	m_photons.resize(0);
-	m_photonMap.queryWithinDistance(origin, m_configuration->getPhotonSampleRadius(), m_photons);
-	if (!m_photons.empty())
-	{
-		Color4f contribution(0.0f, 0.0f, 0.0f, 0.0f);
-		float weight = 0.0f;
+	const Scalar p(1.0f / (2.0f * PI));
 
-		for (const auto& photon : m_photons)
-		{
-			Scalar phi = dot3(normal, -photon.direction);
-			if (phi > 0.0f)
-			{
-				float k = clamp(1.0f - (photon.position - origin).xyz0().length() / m_configuration->getPhotonSampleRadius(), 0.0f, 1.0f);
-				contribution += photon.intensity * phi * Scalar(k);
-				weight += k;
-			}
-		}
-
-		if (weight > 0.0f)
-		{
-			contribution /= Scalar(weight);
-			irradiance += contribution;
-		}
-	}
-
-/*	
 	for (uint32_t i = 0; i < m_configuration->getIrradianceSampleCount(); ++i)
 	{
-		Vector4 direction = lerp(normal, m_random.nextHemi(normal), Scalar(roughness)).normalized();
+		Vector4 direction = m_random.nextHemi(normal);
 		if (m_sah.queryClosestIntersection(origin + normal * c_epsilonOffset, direction, m_maxDistance, -1, result, m_sahCache))
 		{
-			photons.resize(0);
-			m_photonMap.queryWithinDistance(result.position, c_samplePhotonRadius, photons);
-			if (photons.empty())
-				continue;
-
-			Color4f contribution(0.0f, 0.0f, 0.0f, 0.0f);
-			float weight = 0.0f;
-
-			for (const auto& photon : photons)
-			{
-				Scalar phi = dot3(result.normal, -photon.direction);
-				if (phi > 0.0f)
-				{
-					float k = clamp(1.0f - (photon.position - result.position).xyz0().length() / c_samplePhotonRadius, 0.0f, 1.0f);
-					contribution += photon.intensity * phi * Scalar(k);
-					weight += k;
-				}
-			}
-
-			if (weight <= 0.0f)
-				continue;
-
-			contribution /= Scalar(weight);
-
-			irradiance += contribution * attenuation((result.position - origin).xyz0().length());
+			Scalar ct = dot3(normal, direction);
+			Color4f brdf = m_surfaces[result.index].albedo / Scalar(PI);
+			Color4f incoming = sampleAnalyticalLights(
+				result.position,
+				result.normal,
+				1,
+				0.0f
+			);
+			irradiance += brdf * incoming * ct / p;
 		}
 	}
+
 	irradiance /= Scalar(m_configuration->getIrradianceSampleCount());
-*/
 
 	return irradiance;
 }
@@ -296,6 +187,54 @@ Color4f RayTracer::sampleAnalyticalLights(const Vector4& origin, const Vector4& 
 				}
 
 				contribution += light.color * phi * min(f, Scalar(1.0f)) * shadowAttenuate;
+			}
+			break;
+
+		case Light::LtSpot:
+			{
+				Vector4 lightToPoint = (origin - light.position).xyz0();
+				Scalar lightDistance = lightToPoint.normalize();
+
+				Scalar alpha = dot3(light.direction, lightToPoint);
+				Scalar k0 = Scalar(1.0f - std::acos(alpha) / (light.radius / 2.0f));
+				if (k0 < 0.0f)
+					break;
+
+				Scalar k1 = dot3(normal, -lightToPoint);
+				if (k1 <= 0.0f)
+					break;
+
+				Scalar k2 = attenuation(lightDistance);
+				if (k2 <= 0.0f)
+					break;
+
+				Scalar shadowAttenuate(1.0f);
+
+				//if (shadowSampleCount > 0)
+				//{
+				//	Vector4 u, v;
+				//	orthogonalFrame(lightDirection, u, v);
+
+				//	int32_t shadowCount = 0;
+				//	for (uint32_t j = 0; j < shadowSampleCount; ++j)
+				//	{
+				//		float a, b;
+				//		do
+				//		{
+				//			a = m_random.nextFloat() * 2.0f - 1.0f;
+				//			b = m_random.nextFloat() * 2.0f - 1.0f;
+				//		}
+				//		while ((a * a) + (b * b) > 1.0f);
+
+				//		Vector4 shadowDirection = (light.position + u * Scalar(a * pointLightShadowRadius) + v * Scalar(b * pointLightShadowRadius) - origin).xyz0();
+
+				//		if (m_sah.queryAnyIntersection(origin + normal * c_epsilonOffset, shadowDirection.normalized(), lightDistance - c_epsilonOffset, -1, m_sahCache))
+				//			shadowCount++;
+				//	}
+				//	shadowAttenuate = Scalar(1.0f - float(shadowCount) / m_configuration->getShadowSampleCount());
+				//}
+
+				contribution += light.color * k0 * k1 * k2 * shadowAttenuate;
 			}
 			break;
 

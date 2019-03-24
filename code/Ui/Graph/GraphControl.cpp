@@ -1006,6 +1006,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 	}
 
 	// Node shapes.
+	graphCanvas.setFont(m_paintSettings->getFont());
 	Rect cullRc = rc / m_scale;
 	for (auto node : m_nodes)
 	{

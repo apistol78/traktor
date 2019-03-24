@@ -2263,13 +2263,14 @@ void Uniform::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Variable", 0, Variable, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Variable", 1, Variable, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Variable_i[] = { { L"Input", true }, { 0 } };
 const ImmutableNode::OutputPinDesc c_Variable_o[] = { { L"Output" }, { 0 } };
 
 Variable::Variable()
 :	ImmutableNode(c_Variable_i, c_Variable_o)
+,	m_global(false)
 {
 }
 
@@ -2283,6 +2284,11 @@ const std::wstring& Variable::getName() const
 	return m_name;
 }
 
+bool Variable::isGlobal() const
+{
+	return m_global;
+}
+
 std::wstring Variable::getInformation() const
 {
 	return m_name;
@@ -2291,7 +2297,11 @@ std::wstring Variable::getInformation() const
 void Variable::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
+
 	s >> Member< std::wstring >(L"name", m_name);
+
+	if (s.getVersion< Variable >() >= 1)
+		s >> Member< bool >(L"global", m_global);
 }
 
 /*---------------------------------------------------------------------------*/

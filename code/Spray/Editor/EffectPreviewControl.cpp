@@ -603,10 +603,11 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 		world::WorldRenderPassForward defaultPass(
 			render::getParameterHandle(L"World_ForwardColor"),
-			worldRenderView,
-			true,
+			world::IWorldRenderPass::PfFirst,
+			viewTransform,
 			m_background,
-			m_depthTexture->getColorTexture(0)
+			m_depthTexture->getColorTexture(0),
+			nullptr
 		);
 
 		m_pointRenderer->flush(m_renderContext, defaultPass);

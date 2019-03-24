@@ -36,12 +36,13 @@
 #include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ColorNodeFacade.h"
 #include "Render/Editor/Shader/Facades/CommentNodeFacade.h"
+#include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
 #include "Render/Editor/Shader/Facades/InterpolatorNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ScriptNodeFacade.h"
 #include "Render/Editor/Shader/Facades/SwitchNodeFacade.h"
 #include "Render/Editor/Shader/Facades/SwizzleNodeFacade.h"
-#include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
 #include "Render/Editor/Shader/Facades/TextureNodeFacade.h"
+#include "Render/Editor/Shader/Facades/VariableNodeFacade.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
@@ -233,12 +234,13 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 	m_nodeFacades[&type_of< Color >()] = new ColorNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Comment >()] = new CommentNodeFacade(m_editorGraph);
+	m_nodeFacades[&type_of< External >()] = new ExternalNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Interpolator >()] = new InterpolatorNodeFacade();
 	m_nodeFacades[&type_of< Script >()] = new ScriptNodeFacade(this, m_editorGraph);
 	m_nodeFacades[&type_of< Switch >()] = new SwitchNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Swizzle >()] = new SwizzleNodeFacade(m_editorGraph);
-	m_nodeFacades[&type_of< External >()] = new ExternalNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Texture >()] = new TextureNodeFacade(m_editorGraph);
+	m_nodeFacades[&type_of< Variable >()] = new VariableNodeFacade(m_editorGraph);
 
 	createEditorNodes(
 		m_shaderGraph->getNodes(),
@@ -626,7 +628,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_document->push();
 
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getVariableResolved();
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getVariableResolved(ShaderGraphStatic::VrtLocal);
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);

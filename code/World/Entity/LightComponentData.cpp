@@ -1,5 +1,7 @@
 #include "Core/Math/Const.h"
-#include "Core/Serialization/AttributeHdr.h"
+#include "Core/Serialization/AttributeAngles.h"
+#include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
@@ -12,11 +14,12 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 6, LightComponentData, IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 7, LightComponentData, IEntityComponentData)
 
 LightComponentData::LightComponentData()
 :	m_lightType(LtDisabled)
 ,	m_color(1.0f, 1.0f, 1.0f, 0.0f)
+,	m_intensity(1000.0f)
 ,	m_castShadow(false)
 ,	m_range(10.0f)
 ,	m_radius(HALF_PI)
@@ -40,7 +43,9 @@ void LightComponentData::serialize(ISerializer& s)
 	s >> MemberEnum< LightType >(L"lightType", m_lightType, c_LightType_Keys);
 
 	if (s.getVersion() >= 5)
-		s >> Member< Color4f >(L"color", m_color, AttributeHdr());
+	{
+		s >> Member< Color4f >(L"color", m_color);
+	}
 	else
 	{
 		Vector4 sunColor = Vector4::zero();
@@ -53,6 +58,9 @@ void LightComponentData::serialize(ISerializer& s)
 
 		m_color = Color4f(sunColor);
 	}
+
+	if (s.getVersion() >= 7)
+		s >> Member< float >(L"intensity", m_intensity, AttributeRange(0.0f) | AttributeUnit(AuLumens));
 
 	if (s.getVersion() >= 1)
 	{
@@ -80,8 +88,8 @@ void LightComponentData::serialize(ISerializer& s)
 	}
 
 	s >> Member< bool >(L"castShadow", m_castShadow);
-	s >> Member< float >(L"range", m_range);
-	s >> Member< float >(L"radius", m_radius);
+	s >> Member< float >(L"range", m_range, AttributeUnit(AuMetres));
+	s >> Member< float >(L"radius", m_radius, AttributeUnit(AuRadians) | AttributeAngles());
 	s >> Member< float >(L"flickerAmount", m_flickerAmount);
 	s >> Member< float >(L"flickerFilter", m_flickerFilter);
 }

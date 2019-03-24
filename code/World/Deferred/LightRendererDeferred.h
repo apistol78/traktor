@@ -48,19 +48,20 @@ public:
 
 	void destroy();
 
-	/*! \brief Render a single light, with or without shadows. */
-	void renderLight(
+	/*! \brief Render all lights. */
+	void renderLights(
 		render::IRenderView* renderView,
 		float time,
+		int32_t lightCount,
 		const Matrix44& projection,
 		const Matrix44& view,
-		const Light& light,
+		render::StructBuffer* lightSBuffer,
 		render::ITexture* depthMap,
 		render::ITexture* normalMap,
 		render::ITexture* miscMap,
 		render::ITexture* colorMap,
-		float shadowMaskSize,
-		render::ITexture* shadowMask
+		render::ITexture* shadowMapCascade,
+		render::ITexture* shadowMapAtlas
 	);
 
 	/*! \brief Render lit final colors. */
@@ -69,7 +70,7 @@ public:
 		float time,
 		const Matrix44& projection,
 		const Matrix44& view,
-		const Vector4& ambientColor,
+		//const Vector4& ambientColor,
 		render::ITexture* depthMap,
 		render::ITexture* normalMap,
 		render::ITexture* miscMap,
@@ -109,13 +110,17 @@ public:
 	);
 
 private:
-	resource::Proxy< render::Shader > m_lightDirectionalShader;
-	resource::Proxy< render::Shader > m_lightPointShader;
-	resource::Proxy< render::Shader > m_lightSpotShader;
-	resource::Proxy< render::Shader > m_lightProbeShader;
+	resource::Proxy< render::Shader > m_lightShader;
+
+	//resource::Proxy< render::Shader > m_lightDirectionalShader;
+	//resource::Proxy< render::Shader > m_lightPointShader;
+	//resource::Proxy< render::Shader > m_lightSpotShader;
+	//resource::Proxy< render::Shader > m_lightProbeShader;
+
 	resource::Proxy< render::Shader > m_finalColorShader;
 	resource::Proxy< render::Shader > m_reflectionShader;
 	resource::Proxy< render::Shader > m_fogShader;
+
 	Ref< render::VertexBuffer > m_vertexBufferQuad;
 	render::Primitives m_primitivesQuad;
 };

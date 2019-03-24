@@ -23,8 +23,6 @@ class StructBuffer;
 	namespace world
 	{
 
-class WorldRenderView;
-
 /*! \brief World render pass.
  * \ingroup World
  */
@@ -35,32 +33,30 @@ class T_DLLCLASS WorldRenderPassForward : public IWorldRenderPass
 public:
 	WorldRenderPassForward(
 		render::handle_t technique,
-		const WorldRenderView& worldRenderView,
 		uint32_t passFlags,
-		
-		//const Vector4& ambientColor,
-		
+		const Matrix44& view,
 		render::StructBuffer* lightSBuffer,
 		uint32_t lightCount,
-
 		bool fogEnabled,
 		float fogDistanceY,
 		float fogDistanceZ,
 		float fogDensityY,
 		float fogDensityZ,
 		const Vector4& fogColor,
-
 		render::ISimpleTexture* colorMap,
 		render::ISimpleTexture* depthMap,
-		render::ISimpleTexture* shadowMask
+		render::ISimpleTexture* occlusionMap,
+		render::ISimpleTexture* shadowCascade,
+		render::ISimpleTexture* shadowAtlas
 	);
 
 	WorldRenderPassForward(
 		render::handle_t technique,
-		const WorldRenderView& worldRenderView,
 		uint32_t passFlags,
+		const Matrix44& view,
 		render::ISimpleTexture* colorMap,
-		render::ISimpleTexture* depthMap
+		render::ISimpleTexture* depthMap,
+		render::ISimpleTexture* occlusionMap
 	);
 
 	virtual render::handle_t getTechnique() const override final;
@@ -77,9 +73,9 @@ public:
 
 private:
 	render::handle_t m_technique;
-	const WorldRenderView& m_worldRenderView;
-	Matrix44 m_viewInverse;
 	uint32_t m_passFlags;
+	Matrix44 m_view;
+	Matrix44 m_viewInverse;
 	render::StructBuffer* m_lightSBuffer;
 	uint32_t m_lightCount;
 	bool m_fogEnabled;
@@ -90,7 +86,9 @@ private:
 	Vector4 m_fogColor;
 	render::ISimpleTexture* m_colorMap;
 	render::ISimpleTexture* m_depthMap;
-	render::ISimpleTexture* m_shadowMask;
+	render::ISimpleTexture* m_occlusionMap;
+	render::ISimpleTexture* m_shadowCascade;
+	render::ISimpleTexture* m_shadowAtlas;
 
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& world) const;
 
@@ -103,6 +101,8 @@ private:
 	void setShadowMapProgramParameters(render::ProgramParameters* programParams) const;
 
 	void setDepthMapProgramParameters(render::ProgramParameters* programParams) const;
+
+	void setOcclusionMapProgramParameters(render::ProgramParameters* programParams) const;
 };
 
 	}

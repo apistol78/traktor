@@ -12,10 +12,8 @@
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/GroupEntityData.h"
-#include "World/Entity/PointLightEntity.h"
-#include "World/Entity/SpotLightEntity.h"
+#include "World/Entity/LightComponentData.h"
 
 namespace traktor
 {
@@ -34,14 +32,7 @@ DefaultEntityEditor::DefaultEntityEditor(SceneEditorContext* context, EntityAdap
 
 bool DefaultEntityEditor::isPickable() const
 {
-	if (
-		is_a< world::DirectionalLightEntity >(m_entityAdapter->getEntity()) ||
-		is_a< world::PointLightEntity >(m_entityAdapter->getEntity()) ||
-		is_a< world::SpotLightEntity >(m_entityAdapter->getEntity())
-	)
-		return false;
-	else
-		return !isGroup();
+	return !isGroup();
 }
 
 bool DefaultEntityEditor::isGroup() const
@@ -168,43 +159,100 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 	const Vector4 c_expandBoundingBox(0.001f, 0.001f, 0.001f, 0.0f);
 
 	Transform transform = m_entityAdapter->getTransform();
-
 	Aabb3 boundingBox = m_entityAdapter->getBoundingBox();
 	boundingBox.mn -= c_expandBoundingBox;
 	boundingBox.mx += c_expandBoundingBox;
 
-	if (is_a< world::DirectionalLightEntity >(m_entityAdapter->getEntity()))
+	if (auto lightComponentData = m_entityAdapter->getComponentData< world::LightComponentData >())
 	{
-		if (m_context->shouldDrawGuide(L"Entity.Light"))
+		if (!m_context->shouldDrawGuide(L"Entity.Light"))
+			return;
+
+		Vector4 lightPosition = transform.translation();
+		Vector4 lightDirection = -transform.axisY();
+		Vector4 lightX = transform.axisX();
+		Vector4 lightZ = transform.axisZ();
+
+		primitiveRenderer->pushDepthState(true, true, false);
+
+		if (lightComponentData->getLightType() == world::LtDirectional)
 		{
-			Vector4 lightPosition = transform.translation();
-			Vector4 lightDirection = -transform.axisY();
-			Vector4 lightX = transform.axisX();
-			Vector4 lightZ = transform.axisZ();
-
-			primitiveRenderer->pushDepthState(true, true, false);
-
+			primitiveRenderer->drawSolidPoint(lightPosition, 8.0f, Color4ub(255, 255, 0));
 			primitiveRenderer->drawLine(
-				lightPosition - lightDirection * Scalar(0.5f),
+				lightPosition,
 				lightPosition + lightDirection * Scalar(0.5f),
 				5.0f,
-				Color4ub(255, 255, 0)
+				Color4ub(255, 255, 255)
 			);
 			primitiveRenderer->drawArrowHead(
 				lightPosition + lightDirection * Scalar(0.5f),
 				lightPosition + lightDirection * Scalar(0.7f),
 				0.5f,
-				Color4ub(255, 255, 0)
+				Color4ub(255, 255, 255)
 			);
+		}
+		else if (lightComponentData->getLightType() == world::LtPoint)
+		{
+			primitiveRenderer->drawSolidPoint(lightPosition, 8.0f, Color4ub(255, 255, 0));
+		}
+		else if (lightComponentData->getLightType() == world::LtSpot)
+		{
+			primitiveRenderer->drawSolidPoint(lightPosition, 8.0f, Color4ub(255, 255, 0));
 
-			primitiveRenderer->popDepthState();
+			Frustum spotFrustum;
+			spotFrustum.buildPerspective(lightComponentData->getRadius(), 1.0f, 0.1f, lightComponentData->getRange());
 
-			primitiveRenderer->pushWorld(transform.toMatrix44());
-			primitiveRenderer->drawWireAabb(Aabb3(Vector4(-0.25f, -0.25f, -0.25f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f)), m_colorBoundingBox);
+			primitiveRenderer->pushWorld(transform.toMatrix44() * rotateX(deg2rad(90.0f)));
+			primitiveRenderer->drawWireQuad(
+				spotFrustum.corners[0],
+				spotFrustum.corners[1],
+				spotFrustum.corners[2],
+				spotFrustum.corners[3],
+				Color4ub(255, 255, 255)
+			);
+			primitiveRenderer->drawWireQuad(
+				spotFrustum.corners[4],
+				spotFrustum.corners[5],
+				spotFrustum.corners[6],
+				spotFrustum.corners[7],
+				Color4ub(255, 255, 255)
+			);
+			primitiveRenderer->drawLine(
+				spotFrustum.corners[0],
+				spotFrustum.corners[4],
+				Color4ub(255, 255, 255)
+			);
+			primitiveRenderer->drawLine(
+				spotFrustum.corners[1],
+				spotFrustum.corners[5],
+				Color4ub(255, 255, 255)
+			);
+			primitiveRenderer->drawLine(
+				spotFrustum.corners[2],
+				spotFrustum.corners[6],
+				Color4ub(255, 255, 255)
+			);
+			primitiveRenderer->drawLine(
+				spotFrustum.corners[3],
+				spotFrustum.corners[7],
+				Color4ub(255, 255, 255)
+			);
 			primitiveRenderer->popWorld();
 		}
+		else if (lightComponentData->getLightType() == world::LtProbe)
+		{
+			primitiveRenderer->drawSolidPoint(lightPosition, 8.0f, Color4ub(255, 255, 0));
+		}
+
+		primitiveRenderer->popDepthState();
+
+		primitiveRenderer->pushWorld(transform.toMatrix44());
+		primitiveRenderer->drawWireAabb(Aabb3(Vector4(-0.25f, -0.25f, -0.25f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f)), m_colorBoundingBox);
+		primitiveRenderer->popWorld();
+
+		return;
 	}
-	else
+
 	{
 		if (!m_entityAdapter->getParent())
 			return;

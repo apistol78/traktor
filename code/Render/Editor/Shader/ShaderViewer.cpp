@@ -296,6 +296,9 @@ void ShaderViewer::eventTimer(ui::TimerEvent* event)
 	}
 	else if (m_pendingShaderGraph)
 	{
+		if (!isVisible(true))
+			return;
+
 		Ref< const IProgramCompiler > compiler = m_dropCompiler->getSelectedData< IProgramCompiler >();
 		if (!compiler)
 			return;
@@ -318,20 +321,32 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	const wchar_t* platformSignature = compiler->getPlatformSignature();
 	T_ASSERT(platformSignature);
 
+	// Resolve all local variables.
+	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved(ShaderGraphStatic::VrtLocal);
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to resolve local variables." << Endl;
+		return;
+	}
+
 	// Link shader fragments.
 	FragmentReaderAdapter fragmentReader(m_editor->getSourceDatabase());
 	if ((shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true)) == 0)
 		return;
 
-	// Resolve all variables.
-	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved();
-	T_ASSERT(shaderGraph);
+	// Resolve all global variables.
+	shaderGraph = ShaderGraphStatic(shaderGraph).getVariableResolved(ShaderGraphStatic::VrtGlobal);
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to resolve global variables." << Endl;
+		return;
+	}
 
 	// Get connected permutation.
 	shaderGraph = render::ShaderGraphStatic(shaderGraph).getConnectedPermutation();
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to resolve connected permutation" << Endl;
+		log::error << L"ShaderPipeline failed; unable to resolve connected permutation." << Endl;
 		return;
 	}
 

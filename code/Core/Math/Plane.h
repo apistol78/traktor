@@ -58,8 +58,14 @@ public:
 	T_MATH_INLINE bool rayIntersection(
 		const Vector4& origin,
 		const Vector4& direction,
+		Scalar& outK
+	) const;
+
+	T_MATH_INLINE bool rayIntersection(
+		const Vector4& origin,
+		const Vector4& direction,
 		Scalar& outK,
-		Vector4* outPoint = 0
+		Vector4& outPoint
 	) const;
 
 	T_MATH_INLINE bool segmentIntersection(

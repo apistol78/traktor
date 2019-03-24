@@ -246,7 +246,7 @@ void NumericPropertyItem::eventEditFocus(FocusEvent* event)
 		else
 		{
 			ss >> m_value;
-			if (m_representation == RpDecibel)
+			if (m_representation == RpAngle)
 				m_value = deg2rad(m_value);
 		}
 

@@ -171,8 +171,8 @@ void FinalRenderControl::updateWorldRenderer()
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
 		(*i)->createEntityRenderers(m_context, m_renderView, nullptr, entityRenderers);
-		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
-			worldEntityRenderers->add(*j);
+		for (auto entityRenderer : entityRenderers)
+			worldEntityRenderers->add(entityRenderer);
 	}
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();

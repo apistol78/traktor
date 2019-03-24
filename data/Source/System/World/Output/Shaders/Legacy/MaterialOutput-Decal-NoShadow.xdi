@@ -217,7 +217,7 @@ values from variables.
 				<second>806</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{8B9C5290-659C-814D-8F0F-ECDABAE7359E}</id>
 			<comment/>
 			<position>
@@ -225,8 +225,9 @@ values from variables.
 				<second>622</second>
 			</position>
 			<name>Vertex_ViewNormal</name>
+			<global>true</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{10D41D4B-41A1-6245-AF1E-CDA7F202412B}</id>
 			<comment/>
 			<position>
@@ -234,8 +235,9 @@ values from variables.
 				<second>830</second>
 			</position>
 			<name>Vertex_ViewPosition</name>
+			<global>true</global>
 		</item>
-		<item type="traktor.render.Variable" version="traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{1A7C3A34-853C-9046-8542-45260ED878C8}</id>
 			<comment/>
 			<position>
@@ -243,6 +245,7 @@ values from variables.
 				<second>1038</second>
 			</position>
 			<name>Vertex_ViewVelocity</name>
+			<global>true</global>
 		</item>
 		<item type="traktor.render.Connected" version="traktor.render.Node:1">
 			<id>{494CDC9A-9541-DB4F-9EF5-AC132F214A85}</id>
