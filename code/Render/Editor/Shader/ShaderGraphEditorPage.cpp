@@ -356,7 +356,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 			Ref< ShaderGraphEditorClipboardData > data = new ShaderGraphEditorClipboardData();
 
 			ui::Rect bounds(0, 0, 0, 0);
-			for (RefArray< ui::Node >::iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
+			for (auto i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
 			{
 				Ref< Node > shaderNode = (*i)->getData< Node >(L"SHADERNODE");
 				T_ASSERT(shaderNode);
@@ -376,9 +376,9 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 			data->setBounds(bounds);
 
-			for (RefArray< ui::Edge >::iterator i = selectedEdges.begin(); i != selectedEdges.end(); ++i)
+			for (auto selectedEdge : selectedEdges)
 			{
-				Ref< Edge > shaderEdge = (*i)->getData< Edge >(L"SHADEREDGE");
+				Ref< Edge > shaderEdge = selectedEdge->getData< Edge >(L"SHADEREDGE");
 				T_ASSERT(shaderEdge);
 				data->addEdge(shaderEdge);
 			}
@@ -395,16 +395,16 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 				selectedEdges.resize(0);
 				m_editorGraph->getConnectedEdges(selectedNodes, false, selectedEdges);
 
-				for (RefArray< ui::Edge >::iterator i = selectedEdges.begin(); i != selectedEdges.end(); ++i)
+				for (auto selectedEdge : selectedEdges)
 				{
-					m_shaderGraph->removeEdge((*i)->getData< Edge >(L"SHADEREDGE"));
-					m_editorGraph->removeEdge(*i);
+					m_shaderGraph->removeEdge(selectedEdge->getData< Edge >(L"SHADEREDGE"));
+					m_editorGraph->removeEdge(selectedEdge);
 				}
 
-				for (RefArray< ui::Node >::iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
+				for (auto selectedNode : selectedNodes)
 				{
-					m_shaderGraph->removeNode((*i)->getData< Node >(L"SHADERNODE"));
-					m_editorGraph->removeNode(*i);
+					m_shaderGraph->removeNode(selectedNode->getData< Node >(L"SHADERNODE"));
+					m_editorGraph->removeNode(selectedNode);
 				}
 			}
 		}

@@ -379,8 +379,8 @@ local outputs =
 		}
 	},
 	{
-		name = "Amalgam",
-		path = "../../runtime/themes/%s/Images/Amalgam",
+		name = "Runtime",
+		path = "../../runtime/themes/%s/Images/Runtime",
 		resources =
 		{
 			{ name = "Logos", column = 0, row = 10, width = 13, height = 1, base = 24 },
@@ -457,8 +457,8 @@ local outputs =
 		}
 	},	
 	{
-		name = "Amalgam_Run",
-		path = "../../runtime/themes/%s/Images/Amalgam",
+		name = "Runtime_Run",
+		path = "../../runtime/themes/%s/Images/Runtime",
 		resources =
 		{
 			{ name = "Error", column = 0, row = 35, width = 3, height = 10 },

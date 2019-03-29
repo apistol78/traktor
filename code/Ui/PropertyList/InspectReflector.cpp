@@ -220,8 +220,8 @@ void InspectReflector::operator >> (const Member< int32_t >& m)
 {
 	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
 
-	float min = std::numeric_limits< int32_t >::min();
-	float max = std::numeric_limits< int32_t >::max();
+	float min = std::numeric_limits< float >::min();
+	float max = std::numeric_limits< float >::max();
 
 	const AttributeRange* range = findAttribute< AttributeRange >(m);
 	if (range)
@@ -278,8 +278,8 @@ void InspectReflector::operator >> (const Member< int64_t >& m)
 {
 	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
 
-	double min = std::numeric_limits< int64_t >::min();
-	double max = std::numeric_limits< int64_t >::max();
+	double min = std::numeric_limits< double >::min();
+	double max = std::numeric_limits< double >::max();
 
 	const AttributeRange* range = findAttribute< AttributeRange >(m);
 	if (range)
@@ -306,8 +306,8 @@ void InspectReflector::operator >> (const Member< uint64_t >& m)
 {
 	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
 
-	double min = std::numeric_limits< uint64_t >::min();
-	double max = std::numeric_limits< uint64_t >::max();
+	double min = std::numeric_limits< double >::min();
+	double max = std::numeric_limits< double >::max();
 
 	const AttributeRange* range = findAttribute< AttributeRange >(m);
 	if (range)

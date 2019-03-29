@@ -415,17 +415,17 @@
 
 		<!-- TargetListControl -->
 		<item>
-			<type>traktor.amalgam.TargetListControl</type>
+			<type>traktor.runtime.TargetListControl</type>
 			<element>item-background-color</element>
 			<color>255, 255, 255, 255</color>
 		</item>
 		<item>
-			<type>traktor.amalgam.TargetListControl</type>
+			<type>traktor.runtime.TargetListControl</type>
 			<element>item-seperator-color</element>
 			<color>200, 200, 200, 255</color>
 		</item>	
 		<item>
-			<type>traktor.amalgam.TargetListControl</type>
+			<type>traktor.runtime.TargetListControl</type>
 			<element>item-connection-background-color</element>
 			<color>220, 220, 220, 255</color>
 		</item>
@@ -1041,32 +1041,32 @@
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/SearchWildCard.image</value>
 		</item>
 		<item>
-			<name>Amalgam.Logos</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Amalgam/Logos.image</value>
+			<name>Runtime.Logos</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/Logos.image</value>
 		</item>
 		<item>
-			<name>Amalgam.TargetPlay</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Amalgam/TargetPlay.image</value>
+			<name>Runtime.TargetPlay</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetPlay.image</value>
 		</item>
 		<item>
-			<name>Amalgam.TargetStop</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Amalgam/TargetStop.image</value>
+			<name>Runtime.TargetStop</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetStop.image</value>
 		</item>
 		<item>
-			<name>Amalgam.TargetBuild</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Amalgam/TargetBuild.image</value>
+			<name>Runtime.TargetBuild</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetBuild.image</value>
 		</item>
 		<item>
-			<name>Amalgam.TargetMigrate</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Amalgam/TargetMigrate.image</value>
+			<name>Runtime.TargetMigrate</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetMigrate.image</value>
 		</item>
 		<item>
-			<name>Amalgam.TargetBrowse</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Amalgam/TargetBrowse.image</value>
+			<name>Runtime.TargetBrowse</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetBrowse.image</value>
 		</item>
 		<item>
-			<name>Amalgam.TargetProfile</name>
-			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Amalgam/TargetProfile.image</value>
+			<name>Runtime.TargetProfile</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/Runtime/TargetProfile.image</value>
 		</item>
 		<item>
 			<name>Input.Alignment</name>

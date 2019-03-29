@@ -24,6 +24,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Splitter", Splitter, Widget)
 
 const int c_splitterSize = 2;
 
+Splitter::Splitter()
+:	m_vertical(true)
+,	m_position(0)
+,	m_negative(false)
+,	m_border(0)
+,	m_drag(false)
+{
+}
+
 bool Splitter::create(Widget* parent, bool vertical, int position, bool relative, int border)
 {
 	if (!Widget::create(parent))
