@@ -24,7 +24,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureNodeFacade", TextureNodeFacade, I
 
 TextureNodeFacade::TextureNodeFacade(ui::GraphControl* graphControl)
 {
-	m_nodeShape = new ui::DefaultNodeShape(graphControl);
+	m_nodeShape = new ui::DefaultNodeShape(graphControl, ui::DefaultNodeShape::StDefault);
 }
 
 Ref< Node > TextureNodeFacade::createShaderNode(

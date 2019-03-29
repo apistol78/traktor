@@ -19,7 +19,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DefaultNodeFacade", DefaultNodeFacade, I
 
 DefaultNodeFacade::DefaultNodeFacade(ui::GraphControl* graphControl)
 {
-	m_nodeShapes[0] = new ui::DefaultNodeShape(graphControl);
+	m_nodeShapes[0] = new ui::DefaultNodeShape(graphControl, ui::DefaultNodeShape::StDefault);
 	m_nodeShapes[1] = new ui::InputNodeShape(graphControl);
 	m_nodeShapes[2] = new ui::OutputNodeShape(graphControl);
 }

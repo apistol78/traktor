@@ -193,7 +193,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ScriptNodeFacade", ScriptNodeFacade, INo
 ScriptNodeFacade::ScriptNodeFacade(ShaderGraphEditorPage* page, ui::GraphControl* graphControl)
 :	m_page(page)
 {
-	m_nodeShape = new ui::DefaultNodeShape(graphControl);
+	m_nodeShape = new ui::DefaultNodeShape(graphControl, ui::DefaultNodeShape::StScript);
 }
 
 Ref< Node > ScriptNodeFacade::createShaderNode(

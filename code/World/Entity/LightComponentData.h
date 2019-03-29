@@ -19,6 +19,7 @@ namespace traktor
 	{
 
 class ITexture;
+class SHCoeffs;
 
 	}
 
@@ -49,14 +50,6 @@ public:
 
 	float getIntensity() const { return m_intensity; }
 
-	void setProbeDiffuseTexture(const resource::Id< render::ITexture >& probeTexture) { m_probeDiffuseTexture = probeTexture; }
-
-	const resource::Id< render::ITexture >& getProbeDiffuseTexture() const { return m_probeDiffuseTexture; }
-
-	void setProbeSpecularTexture(const resource::Id< render::ITexture >& probeTexture) { m_probeSpecularTexture = probeTexture; }
-
-	const resource::Id< render::ITexture >& getProbeSpecularTexture() const { return m_probeSpecularTexture; }
-
 	void setCastShadow(bool castShadow) { m_castShadow = castShadow; }
 
 	bool getCastShadow() const { return m_castShadow; }
@@ -77,17 +70,20 @@ public:
 
 	float getFlickerFilter() const { return m_flickerFilter; }
 
+	void setSHCoeffs(const render::SHCoeffs* shCoeffs) { m_shCoeffs = shCoeffs; }
+
+	const render::SHCoeffs* getSHCoeffs() const { return m_shCoeffs; }
+
 private:
 	LightType m_lightType;
 	Color4f m_color;
 	float m_intensity;
-	resource::Id< render::ITexture > m_probeDiffuseTexture;
-	resource::Id< render::ITexture > m_probeSpecularTexture;
 	bool m_castShadow;
 	float m_range;
 	float m_radius;
 	float m_flickerAmount;
 	float m_flickerFilter;
+	Ref< const render::SHCoeffs > m_shCoeffs;
 };
 
 	}

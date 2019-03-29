@@ -13,7 +13,18 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MessageBox", MessageBox, ConfigDialog)
 
 bool MessageBox::create(Widget* parent, const std::wstring& message, const std::wstring& caption, int style)
 {
-	if (!ConfigDialog::create(parent, caption, dpi96(200), dpi96(100), Dialog::WsDefaultFixed, new TableLayout(L"100%", L"100%,*", dpi96(4), dpi96(4))))
+	int dialogStyle = WsCenterParent | WsSystemBox | WsCloseBox | WsCaption;
+	if (style & MbYesNo)
+		dialogStyle |= ConfigDialog::WsYesNoButtons;
+
+	if (!ConfigDialog::create(
+		parent,
+		caption,
+		dpi96(200),
+		dpi96(100),
+		dialogStyle,
+		new TableLayout(L"100%", L"100%,*", dpi96(4), dpi96(4))
+	))
 		return false;
 
 	Ref< Container > ctContent = new Container();
@@ -22,6 +33,7 @@ bool MessageBox::create(Widget* parent, const std::wstring& message, const std::
 	Ref< Static > staticMessage = new Static();
 	staticMessage->create(ctContent, message);
 
+	fit();
 	return true;
 }
 

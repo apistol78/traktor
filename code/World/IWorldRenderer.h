@@ -148,26 +148,23 @@ public:
 	/*! \brief Begin render "render contexts".
 	 *
 	 * \param frame Multi threaded context frame.
-	 * \param eye Stereoscopic eye.
 	 * \param clearColor Clear visual target color.
 	 * \return True if rendering begun.
 	 */
-	virtual bool beginRender(int frame, render::EyeType eye, const Color4f& clearColor) = 0;
+	virtual bool beginRender(int32_t frame, const Color4f& clearColor) = 0;
 
 	/*! \brief Render "render contexts".
 	 *
 	 * \param frame Multi threaded context frame.
-	 * \param eye Stereoscopic eye.
 	 */
-	virtual void render(int frame, render::EyeType eye) = 0;
+	virtual void render(int32_t frame) = 0;
 
 	/*! \brief End render "render contexts".
 	 *
 	 * \param frame Multi threaded context frame.
-	 * \param eye Stereoscopic eye.
 	 * \param deltaTime Last frame delta time.
 	 */
-	virtual void endRender(int frame, render::EyeType eye, float deltaTime) = 0;
+	virtual void endRender(int32_t frame, float deltaTime) = 0;
 
 	//@}
 

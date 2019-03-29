@@ -19,8 +19,7 @@ public:
 	{
 	}
 
-	inline
-	Vector4 nextUnit()
+	inline Vector4 nextUnit()
 	{
 		double z = 2.0 * nextDouble() - 1.0;
 		double t = 2.0 * PI * nextDouble();
@@ -35,12 +34,11 @@ public:
 		);
 	}
 
-	inline
-	Vector4 nextHemi(const Vector4& direction)
+	inline Vector4 nextHemi(const Vector4& direction)
 	{
-		Vector4 out;
-		do { out = nextUnit(); }
-		while (dot3(out, direction) < 0.0f);
+		Vector4 out = nextUnit();
+		if (dot3(out, direction.xyz0()) < 0.0f)
+			out = -out;
 		return out;
 	}
 };

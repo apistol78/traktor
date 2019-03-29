@@ -16,7 +16,7 @@ namespace traktor
 	namespace render
 	{
 
-class ITexture;
+class SHCoeffs;
 
 	}
 
@@ -36,13 +36,12 @@ public:
 	LightComponent(
 		LightType lightType,
 		const Vector4& color,
-		const resource::Proxy< render::ITexture >& probeDiffuseTexture,
-		const resource::Proxy< render::ITexture >& probeSpecularTexture,
 		bool castShadow,
 		float range,
 		float radius,
 		float flickerAmount,
-		float flickerFilter
+		float flickerFilter,
+		const render::SHCoeffs* shCoeffs
 	);
 
 	virtual void destroy() override final;
@@ -65,14 +64,6 @@ public:
 
 	const Vector4& getColor() const { return m_color; }
 
-	void setProbeDiffuseTexture(const resource::Proxy< render::ITexture >& probeTexture) { m_probeDiffuseTexture = probeTexture; }
-
-	const resource::Proxy< render::ITexture >& getProbeDiffuseTexture() const { return m_probeDiffuseTexture; }
-
-	void setProbeSpecularTexture(const resource::Proxy< render::ITexture >& probeTexture) { m_probeSpecularTexture = probeTexture; }
-
-	const resource::Proxy< render::ITexture >& getProbeSpecularTexture() const { return m_probeSpecularTexture; }
-
 	void setCastShadow(bool castShadow) { m_castShadow = castShadow; }
 
 	bool getCastShadow() const { return m_castShadow; }
@@ -93,17 +84,20 @@ public:
 
 	float getFlickerFilter() const { return m_flickerFilter; }
 
+	void setSHCoeffs(const render::SHCoeffs* shCoeffs) { m_shCoeffs = shCoeffs; }
+
+	const render::SHCoeffs* getSHCoeffs() const { return m_shCoeffs; }
+
 private:
 	Entity* m_owner;
 	LightType m_lightType;
 	Vector4 m_color;
-	resource::Proxy< render::ITexture > m_probeDiffuseTexture;
-	resource::Proxy< render::ITexture > m_probeSpecularTexture;
 	bool m_castShadow;
 	float m_range;
 	float m_radius;
 	float m_flickerAmount;
 	float m_flickerFilter;
+	Ref< const render::SHCoeffs > m_shCoeffs;
 };
 
 	}

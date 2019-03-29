@@ -68,6 +68,19 @@ local outputs =
 	},
 
 	{
+		source = "Script.svg",
+		name = "UI_Graph_Script",
+		path = "../../runtime/themes/%s/Images/UI/Graph",
+		resources =
+		{
+			{ name = "Script", column = 0, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
+			{ name = "ScriptSelected", column = 3, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
+			{ name = "ScriptError", column = 0, row = 3, width = 3, height = 3 }, -- , base = 16*96/45 },
+			{ name = "ScriptErrorSelected", column = 3, row = 3, width = 3, height = 3 }, -- , base = 16*96/45 },
+		}
+	},
+
+	{
 		source = "Input.svg",
 		name = "UI_Graph_Input",
 		path = "../../runtime/themes/%s/Images/UI/Graph",
@@ -92,6 +105,19 @@ local outputs =
 			{ name = "InOutErrorSelected", column = 3, row = 2, width = 3, height = 2 }, -- , base = 16*96/45 },
 		}
 	},
+
+	{
+		source = "Uniform.svg",
+		name = "UI_Graph_Uniform",
+		path = "../../runtime/themes/%s/Images/UI/Graph",
+		resources =
+		{
+			{ name = "Uniform", column = 0, row = 0, width = 3, height = 2 }, -- , base = 16*96/45 },
+			{ name = "UniformSelected", column = 3, row = 0, width = 3, height = 2 }, -- , base = 16*96/45 },
+			{ name = "UniformError", column = 0, row = 2, width = 3, height = 2 }, -- , base = 16*96/45 },
+			{ name = "UniformErrorSelected", column = 3, row = 2, width = 3, height = 2 }, -- , base = 16*96/45 },
+		}
+	},	
 
 	{
 		source = "Output.svg",
@@ -469,7 +495,8 @@ local dpis =
 	120,
 	144,
 	192,
-	240
+	240,
+	312,
 }
 
 -- -j -i Dark

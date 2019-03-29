@@ -74,11 +74,10 @@ public:
 	/*! \brief Render state.
 	 *
 	 * \param frame Render frame.
-	 * \param eye Render eye.
 	 * \param info Update information.
 	 * \return True if rendered successfully.
 	 */
-	virtual bool render(uint32_t frame, render::EyeType eye, const UpdateInfo& info) = 0;
+	virtual bool render(uint32_t frame, const UpdateInfo& info) = 0;
 
 	/*! \brief Flush built frames.
 	 */

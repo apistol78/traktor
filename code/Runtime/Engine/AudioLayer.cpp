@@ -153,7 +153,7 @@ void AudioLayer::build(const UpdateInfo& info, uint32_t frame)
 {
 }
 
-void AudioLayer::render(render::EyeType eye, uint32_t frame)
+void AudioLayer::render(uint32_t frame)
 {
 }
 

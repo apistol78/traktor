@@ -204,7 +204,6 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classRenderServer->addProperty< float >("screenAspectRatio", 0, &IRenderServer::getScreenAspectRatio);
 	classRenderServer->addProperty< float >("viewAspectRatio", 0, &IRenderServer::getViewAspectRatio);
 	classRenderServer->addProperty< float >("aspectRatio", 0, &IRenderServer::getAspectRatio);
-	classRenderServer->addProperty< bool >("stereoscopic", 0, &IRenderServer::getStereoscopic);
 	classRenderServer->addProperty< int32_t >("multiSample", 0, &IRenderServer::getMultiSample);
 	classRenderServer->addProperty< int32_t >("frameRate", 0, &IRenderServer::getFrameRate);
 	registrar->registerClass(classRenderServer);

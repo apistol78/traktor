@@ -81,7 +81,7 @@ public:
 
 	virtual void build(const runtime::UpdateInfo& info, uint32_t frame) override final;
 
-	virtual void render(render::EyeType eye, uint32_t frame) override final;
+	virtual void render(uint32_t frame) override final;
 
 	virtual void flush() override final;
 

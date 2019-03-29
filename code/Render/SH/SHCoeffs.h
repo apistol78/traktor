@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Vector4.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -26,24 +27,24 @@ class T_DLLCLASS SHCoeffs : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	void resize(uint32_t coefficientCount);
+	void resize(size_t coefficientCount);
 
 	bool empty() const;
 
 	SHCoeffs transform(const SHMatrix& matrix) const;
 
-	float operator * (const SHCoeffs& coeffs) const;
+	Vector4 operator * (const SHCoeffs& coeffs) const;
 
-	float& operator [] (uint32_t index) { return m_coefficients[index]; }
+	Vector4& operator [] (uint32_t index) { return m_data[index]; }
 
-	float operator [] (uint32_t index) const { return m_coefficients[index]; }
+	const Vector4& operator [] (uint32_t index) const { return m_data[index]; }
 
-	const AlignedVector< float >& get() const { return m_coefficients; }
+	const AlignedVector< Vector4 >& get() const { return m_data; }
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	AlignedVector< float > m_coefficients;
+	AlignedVector< Vector4 > m_data;
 };
 
 	}

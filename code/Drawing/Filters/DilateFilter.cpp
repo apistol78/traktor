@@ -40,7 +40,7 @@ void DilateFilter::apply(Image* image) const
 				{
 					for (int32_t ix = -1; ix <= 1; ++ix)
 					{
-						if (ix == 0 || iy == 0)
+						if (ix == 0 && iy == 0)
 							continue;
 
 						if (image->getPixel(x + ix, y + iy, tmp))

@@ -1,3 +1,4 @@
+#include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -16,14 +17,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderControl", RenderControl, ui::Widget)
 
-RenderControl::RenderControl(uint32_t matrixCount)
-:	m_editMatrix(0)
+RenderControl::RenderControl()
+:	m_cameraHead(PI / 4.0f)
+,	m_cameraPitch(-0.4f)
+,	m_cameraZ(4.0f)
+,	m_lastMousePosition(0, 0)
 {
-	for (uint32_t i = 0; i < matrixCount; ++i)
-	{
-		m_angles.push_back(Vector4::zero());
-		m_matrices.push_back(Matrix44::identity());
-	}
 }
 
 bool RenderControl::create(ui::Widget* parent, IRenderSystem* renderSystem, db::Database* database)
@@ -68,13 +67,8 @@ void RenderControl::destroy()
 
 void RenderControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
-	if (event->getButton() == ui::MbtRight)
-		m_editMatrix = (m_editMatrix + 1) % m_matrices.size();
-	else
-	{
-		m_lastPoint = event->getPosition();
-		setCapture();
-	}
+	m_lastMousePosition = event->getPosition();
+	setCapture();
 }
 
 void RenderControl::eventButtonUp(ui::MouseButtonUpEvent* event)
@@ -87,19 +81,23 @@ void RenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 	if (!hasCapture())
 		return;
 
-	float deltaX = float(event->getPosition().x - m_lastPoint.x) * 0.02f;
-	float deltaY = float(event->getPosition().y - m_lastPoint.y) * 0.02f;
+	ui::Point mousePosition = event->getPosition();
 
-	Vector4& angles = m_angles[m_editMatrix];
-	if (event->getKeyState() && ui::KsControl)
-		angles -= Vector4(0.0f, 0.0f, deltaX, 0.0f);
+	Vector2 mouseDelta(
+		float(m_lastMousePosition.x - mousePosition.x),
+		float(m_lastMousePosition.y - mousePosition.y)
+	);
+
+	if (event->getButton() != ui::MbtRight)
+	{
+		m_cameraHead += mouseDelta.x / 100.0f;
+		m_cameraPitch += mouseDelta.y / 100.0f;
+	}
 	else
-		angles -= Vector4(deltaY, deltaX, 0.0f, 0.0f);
+		m_cameraZ -= mouseDelta.y * 0.1f;
 
-	Matrix44& matrix = m_matrices[m_editMatrix];
-	matrix = rotateZ(angles.z()) * rotateX(angles.x()) * rotateY(angles.y());
+	m_lastMousePosition = mousePosition;
 
-	m_lastPoint = event->getPosition();
 	update();
 }
 
@@ -108,21 +106,30 @@ void RenderControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView)
 		return;
 
-	if (!m_renderView->begin(EtCyclop))
+	if (!m_renderView->begin())
 		return;
 
 	Color4f clearColor(0.25f, 0.25f, 0.25f, 1.0f);
 	m_renderView->clear(CfColor | CfDepth, &clearColor, 1.0f, 0);
 
 	ui::Rect innerRect = getInnerRect();
-	float ratio = float(innerRect.getSize().cx) / innerRect.getSize().cy;
+	float aspect = float(innerRect.getSize().cx) / innerRect.getSize().cy;
 
-	m_primitiveRenderer->begin(0, orthoLh(4.0f * ratio, 4.0f, -2.0f, 2.0f));
-	//m_primitiveRenderer->pushProjection(perspectiveLh(45.0f * PI / 180.0f, ratio, 0.1f, 1000.0f));
+	Matrix44 viewTransform = translate(0.0f, 0.0f, m_cameraZ) * rotateX(m_cameraPitch) * rotateY(m_cameraHead);
+	Matrix44 projectionTransform = perspectiveLh(
+		80.0f * PI / 180.0f,
+		aspect,
+		0.1f,
+		2000.0f
+	);
 
-	RenderControlEvent renderEvent(this, m_renderView, m_primitiveRenderer, m_angles, m_matrices);
+	m_primitiveRenderer->begin(0, projectionTransform);
+	m_primitiveRenderer->pushView(viewTransform);
+
+	RenderControlEvent renderEvent(this, m_renderView, m_primitiveRenderer);
 	raiseEvent(&renderEvent);
 
+	m_primitiveRenderer->popView();
 	m_primitiveRenderer->end(0);
 	m_primitiveRenderer->render(m_renderView, 0);
 

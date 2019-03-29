@@ -436,14 +436,12 @@ struct DisplayMode
 	uint32_t height;
 	uint16_t refreshRate;
 	uint16_t colorBits;
-	bool stereoscopic;
 
 	DisplayMode()
 	:	width(0)
 	,	height(0)
 	,	refreshRate(0)
 	,	colorBits(0)
-	,	stereoscopic(false)
 	{
 	}
 };

@@ -15,12 +15,19 @@ bool ConfigDialog::create(Widget* parent, const std::wstring& text, int width, i
 		return false;
 
 	m_ok = new Button();
-	m_ok->create(this, L"Ok", Button::WsDefaultButton);
+	m_ok->create(
+		this,
+		(style & WsYesNoButtons) ? L"Yes" : L"Ok",
+		Button::WsDefaultButton
+	);
 	m_ok->addEventHandler< ButtonClickEvent >(this, &ConfigDialog::eventButtonClick);
 	m_ok->unlink();
 
 	m_cancel = new Button();
-	m_cancel->create(this, L"Cancel");
+	m_cancel->create(
+		this,
+		(style & WsYesNoButtons) ? L"No" : L"Cancel"
+	);
 	m_cancel->addEventHandler< ButtonClickEvent >(this, &ConfigDialog::eventButtonClick);
 	m_cancel->unlink();
 

@@ -10,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-const Scalar c_epsilonOffset(0.02f);
+const Scalar c_epsilonOffset(0.1f);
 
 Scalar attenuation(const Scalar& distance)
 {
@@ -65,9 +65,15 @@ bool RayTracer::prepare()
 	return true;
 }
 
-Color4f RayTracer::traceDirect(const Vector4& origin, const Vector4& normal, float roughness)
+Ref< RayTracer::Context > RayTracer::createContext()
+{
+	return new RayTracer::Context();
+}
+
+Color4f RayTracer::traceDirect(Context* context, const Vector4& origin, const Vector4& normal) const
 {
 	return sampleAnalyticalLights(
+		context,
 		origin,
 		normal,
 		m_configuration->getShadowSampleCount(),
@@ -75,21 +81,21 @@ Color4f RayTracer::traceDirect(const Vector4& origin, const Vector4& normal, flo
 	);
 }
 
-Color4f RayTracer::traceIndirect(const Vector4& origin, const Vector4& normal, float roughness)
+Color4f RayTracer::traceIndirect(Context* context, const Vector4& origin, const Vector4& normal) const
 {
 	Color4f irradiance(0.0f, 0.0f, 0.0f, 0.0f);
 	SahTree::QueryResult result;
 
 	const Scalar p(1.0f / (2.0f * PI));
-
-	for (uint32_t i = 0; i < m_configuration->getIrradianceSampleCount(); ++i)
+	for (uint32_t i = 0; i < m_configuration->getIndirectSampleCount(); ++i)
 	{
-		Vector4 direction = m_random.nextHemi(normal);
-		if (m_sah.queryClosestIntersection(origin + normal * c_epsilonOffset, direction, m_maxDistance, -1, result, m_sahCache))
+		Vector4 direction = context->random.nextHemi(normal);
+		if (m_sah.queryClosestIntersection(origin + normal * c_epsilonOffset, direction, m_maxDistance, -1, result, context->sahCache))
 		{
 			Scalar ct = dot3(normal, direction);
 			Color4f brdf = m_surfaces[result.index].albedo / Scalar(PI);
 			Color4f incoming = sampleAnalyticalLights(
+				context,
 				result.position,
 				result.normal,
 				1,
@@ -99,27 +105,11 @@ Color4f RayTracer::traceIndirect(const Vector4& origin, const Vector4& normal, f
 		}
 	}
 
-	irradiance /= Scalar(m_configuration->getIrradianceSampleCount());
-
+	irradiance /= Scalar(m_configuration->getIndirectSampleCount());
 	return irradiance;
 }
 
-Scalar RayTracer::traceOcclusion(const Vector4& origin, const Vector4& normal)
-{
-	const float occlusionDistance = 10.0f;
-	
-	uint32_t occlusion = 0;
-	for (uint32_t i = 0; i < m_configuration->getOcclusionSampleCount(); ++i)
-	{
-		Vector4 occlusionDirection = m_random.nextHemi(normal);
-		if (m_sah.queryAnyIntersection(origin + normal * c_epsilonOffset, occlusionDirection, occlusionDistance, -1, m_sahCache))
-			occlusion++;
-	}
-
-	return Scalar((float)occlusion / m_configuration->getOcclusionSampleCount());
-}
-
-Color4f RayTracer::sampleAnalyticalLights(const Vector4& origin, const Vector4& normal, uint32_t shadowSampleCount, float pointLightShadowRadius)
+Color4f RayTracer::sampleAnalyticalLights(Context* context, const Vector4& origin, const Vector4& normal, uint32_t shadowSampleCount, float pointLightShadowRadius) const
 {
 	Color4f contribution(0.0f, 0.0f, 0.0f, 0.0f);
 	for (const auto& light : m_lights)
@@ -136,7 +126,7 @@ Color4f RayTracer::sampleAnalyticalLights(const Vector4& origin, const Vector4& 
 						-light.direction,
 						m_maxDistance,
 						-1,
-						m_sahCache
+						context->sahCache
 					))
 					{
 						contribution += light.color * phi;
@@ -173,17 +163,17 @@ Color4f RayTracer::sampleAnalyticalLights(const Vector4& origin, const Vector4& 
 						float a, b;
 						do
 						{
-							a = m_random.nextFloat() * 2.0f - 1.0f;
-							b = m_random.nextFloat() * 2.0f - 1.0f;
+							a = context->random.nextFloat() * 2.0f - 1.0f;
+							b = context->random.nextFloat() * 2.0f - 1.0f;
 						}
 						while ((a * a) + (b * b) > 1.0f);
 
 						Vector4 shadowDirection = (light.position + u * Scalar(a * pointLightShadowRadius) + v * Scalar(b * pointLightShadowRadius) - origin).xyz0();
 
-						if (m_sah.queryAnyIntersection(origin + normal * c_epsilonOffset, shadowDirection.normalized(), lightDistance - c_epsilonOffset, -1, m_sahCache))
+						if (m_sah.queryAnyIntersection(origin + normal * c_epsilonOffset, shadowDirection.normalized(), lightDistance - c_epsilonOffset, -1, context->sahCache))
 							shadowCount++;
 					}
-					shadowAttenuate = Scalar(1.0f - float(shadowCount) / m_configuration->getShadowSampleCount());
+					shadowAttenuate = Scalar(1.0f - float(shadowCount) / shadowSampleCount);
 				}
 
 				contribution += light.color * phi * min(f, Scalar(1.0f)) * shadowAttenuate;
@@ -194,10 +184,12 @@ Color4f RayTracer::sampleAnalyticalLights(const Vector4& origin, const Vector4& 
 			{
 				Vector4 lightToPoint = (origin - light.position).xyz0();
 				Scalar lightDistance = lightToPoint.normalize();
+				if (lightDistance <= 0.0f)
+					break;
 
-				Scalar alpha = dot3(light.direction, lightToPoint);
+				float alpha = clamp< float >(dot3(light.direction, lightToPoint), -1.0f, 1.0f);
 				Scalar k0 = Scalar(1.0f - std::acos(alpha) / (light.radius / 2.0f));
-				if (k0 < 0.0f)
+				if (k0 <= 0.0f)
 					break;
 
 				Scalar k1 = dot3(normal, -lightToPoint);
@@ -210,37 +202,31 @@ Color4f RayTracer::sampleAnalyticalLights(const Vector4& origin, const Vector4& 
 
 				Scalar shadowAttenuate(1.0f);
 
-				//if (shadowSampleCount > 0)
-				//{
-				//	Vector4 u, v;
-				//	orthogonalFrame(lightDirection, u, v);
+				if (shadowSampleCount > 0)
+				{
+					Vector4 u, v;
+					orthogonalFrame(-lightToPoint, u, v);
 
-				//	int32_t shadowCount = 0;
-				//	for (uint32_t j = 0; j < shadowSampleCount; ++j)
-				//	{
-				//		float a, b;
-				//		do
-				//		{
-				//			a = m_random.nextFloat() * 2.0f - 1.0f;
-				//			b = m_random.nextFloat() * 2.0f - 1.0f;
-				//		}
-				//		while ((a * a) + (b * b) > 1.0f);
+					int32_t shadowCount = 0;
+					for (uint32_t j = 0; j < shadowSampleCount; ++j)
+					{
+						float a, b;
+						do
+						{
+							a = context->random.nextFloat() * 2.0f - 1.0f;
+							b = context->random.nextFloat() * 2.0f - 1.0f;
+						}
+						while ((a * a) + (b * b) > 1.0f);
 
-				//		Vector4 shadowDirection = (light.position + u * Scalar(a * pointLightShadowRadius) + v * Scalar(b * pointLightShadowRadius) - origin).xyz0();
+						Vector4 shadowDirection = (light.position + u * Scalar(a * pointLightShadowRadius) + v * Scalar(b * pointLightShadowRadius) - origin).xyz0();
 
-				//		if (m_sah.queryAnyIntersection(origin + normal * c_epsilonOffset, shadowDirection.normalized(), lightDistance - c_epsilonOffset, -1, m_sahCache))
-				//			shadowCount++;
-				//	}
-				//	shadowAttenuate = Scalar(1.0f - float(shadowCount) / m_configuration->getShadowSampleCount());
-				//}
+						if (m_sah.queryAnyIntersection(origin + normal * c_epsilonOffset, shadowDirection.normalized(), lightDistance - c_epsilonOffset, -1, context->sahCache))
+							shadowCount++;
+					}
+					shadowAttenuate = Scalar(1.0f - float(shadowCount) / shadowSampleCount);
+				}
 
 				contribution += light.color * k0 * k1 * k2 * shadowAttenuate;
-			}
-			break;
-
-		case Light::LtProbe:
-			{
-
 			}
 			break;
 		}

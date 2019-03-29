@@ -24,7 +24,7 @@ class T_DLLCLASS SHFunction : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual float evaluate(float phi, float theta, const Vector4& unit) const = 0;
+	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const = 0;
 };
 
 	}

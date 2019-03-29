@@ -315,13 +315,13 @@ void WorldLayer::build(const UpdateInfo& info, uint32_t frame)
 	m_deltaTime = info.getFrameDeltaTime();
 }
 
-void WorldLayer::render(render::EyeType eye, uint32_t frame)
+void WorldLayer::render(uint32_t frame)
 {
 	T_PROFILER_SCOPE(L"WorldLayer render");
 	if (!m_worldRenderer || !m_scene)
 		return;
 
-	if (m_worldRenderer->beginRender(frame, eye, c_clearColor))
+	if (m_worldRenderer->beginRender(frame, c_clearColor))
 	{
 		// Bind per-scene post processing parameters.
 		render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
@@ -332,8 +332,8 @@ void WorldLayer::render(render::EyeType eye, uint32_t frame)
 		}
 
 		// Render world.
-		m_worldRenderer->render(frame, eye);
-		m_worldRenderer->endRender(frame, eye, m_deltaTime);
+		m_worldRenderer->render(frame);
+		m_worldRenderer->endRender(frame, m_deltaTime);
 	}
 }
 

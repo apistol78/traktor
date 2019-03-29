@@ -230,7 +230,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView || !m_moviePlayer)
 		return;
 
-	if (m_renderView->begin(render::EtCyclop))
+	if (m_renderView->begin())
 	{
 		if (m_scaffoldingObject)
 		{
@@ -257,7 +257,7 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 			0
 		);
 
-		m_displayRenderer->render(m_renderView, 0, render::EtCyclop, Vector2(0.0f, 0.0f), 1.0f);
+		m_displayRenderer->render(m_renderView, 0, Vector2(0.0f, 0.0f), 1.0f);
 		m_displayRendererWire->render(m_renderView, uint32_t(0));
 
 		m_renderView->end();

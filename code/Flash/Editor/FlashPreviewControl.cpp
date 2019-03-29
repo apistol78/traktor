@@ -308,7 +308,7 @@ void FlashPreviewControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView)
 		return;
 
-	if (m_renderView->begin(render::EtCyclop))
+	if (m_renderView->begin())
 	{
 		// Build render context.
 		if (m_movie)
@@ -326,7 +326,7 @@ void FlashPreviewControl::eventPaint(ui::PaintEvent* event)
 			0
 		);
 
-		m_displayRenderer->render(m_renderView, 0, render::EtCyclop, Vector2(0.0f, 0.0f), 1.0f);
+		m_displayRenderer->render(m_renderView, 0, Vector2(0.0f, 0.0f), 1.0f);
 
 		m_renderView->end();
 		m_renderView->present();

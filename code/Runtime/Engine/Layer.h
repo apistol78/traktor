@@ -72,10 +72,9 @@ public:
 	 * the "build" method so special care must be
 	 * taken to ensure integrity of data.
 	 *
-	 * \param eye Render eye.
 	 * \param frame Render frame.
 	 */
-	virtual void render(render::EyeType eye, uint32_t frame) = 0;
+	virtual void render(uint32_t frame) = 0;
 
 	/*! \brief Flush anything pending; such as render contexts etc.
 	 *

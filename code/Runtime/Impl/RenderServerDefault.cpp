@@ -101,10 +101,7 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 		for (uint32_t j = 0; j < displayModeCount; ++j)
 		{
 			render::DisplayMode check = renderSystem->getDisplayMode(j);
-			if (
-				check.colorBits != c_preferColorBits[i] ||
-				check.stereoscopic != criteria.stereoscopic
-			)
+			if (check.colorBits != c_preferColorBits[i])
 				continue;
 
 			int32_t match =
@@ -216,40 +213,29 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 
 #if defined(_PS3)
 
-	if (!m_originalDisplayMode.stereoscopic)
+	switch (m_originalDisplayMode.height)
 	{
-		switch (m_originalDisplayMode.height)
-		{
-		case 720:
-			log::info << L"Using HD television settings" << Endl;
-			m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/Width", 1280);
-			m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/Height", 720);
-			m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/MultiSample", 0);
-			break;
+	case 720:
+		log::info << L"Using HD television settings" << Endl;
+		m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/Width", 1280);
+		m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/Height", 720);
+		m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionHD/MultiSample", 0);
+		break;
 
-		case 1080:
-			log::info << L"Using FullHD television settings" << Endl;
-			m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/Width", 1440);
-			m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/Height", 1080);
-			m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/MultiSample", 0);
-			break;
+	case 1080:
+		log::info << L"Using FullHD television settings" << Endl;
+		m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/Width", 1440);
+		m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/Height", 1080);
+		m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionFullHD/MultiSample", 0);
+		break;
 
-		default:
-			log::info << L"Using default television settings" << Endl;
-			m_renderViewDesc.displayMode.width = m_originalDisplayMode.width;
-			m_renderViewDesc.displayMode.height = m_originalDisplayMode.height;
-			m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionStandard/MultiSample", 0);
-		}
-		m_renderViewDesc.displayMode.stereoscopic = false;
+	default:
+		log::info << L"Using default television settings" << Endl;
+		m_renderViewDesc.displayMode.width = m_originalDisplayMode.width;
+		m_renderViewDesc.displayMode.height = m_originalDisplayMode.height;
+		m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/TelevisionStandard/MultiSample", 0);
 	}
-	else
-	{
-		log::info << L"Using 3D television settings" << Endl;
-		m_renderViewDesc.displayMode.width = settings->getProperty< int32_t >(L"Render.DisplayMode/Television3D/Width", 960);
-		m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode/Television3D/Height", 720);
-		m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.DisplayMode/Television3D/MultiSample", 0);
-		m_renderViewDesc.displayMode.stereoscopic = true;
-	}
+
 	m_renderViewDesc.displayMode.colorBits = 24;
 
 #else
@@ -267,7 +253,6 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 		m_renderViewDesc.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Height", m_originalDisplayMode.height / defaultDenominator);
 	}
 
-	m_renderViewDesc.displayMode.stereoscopic = settings->getProperty< bool >(L"Render.Stereoscopic", false);
 	m_renderViewDesc.displayMode.colorBits = 24;
 
 #endif
@@ -280,7 +265,7 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	{
 		if (!findDisplayMode(renderSystem, m_renderViewDesc.displayMode, m_renderViewDesc.displayMode))
 		{
-			log::error << L"Render server failed; unable to find an acceptable display mode" << Endl;
+			log::error << L"Render server failed; unable to find an acceptable display mode." << Endl;
 			renderSystem->destroy();
 			return false;
 		}
@@ -289,7 +274,7 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	Ref< render::IRenderView > renderView = renderSystem->createRenderView(m_renderViewDesc);
 	if (!renderView)
 	{
-		log::error << L"Render server failed; unable to create render view" << Endl;
+		log::error << L"Render server failed; unable to create render view." << Endl;
 		renderSystem->destroy();
 		return false;
 	}
@@ -303,25 +288,13 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	}
 #endif
 
-	settings->setProperty< PropertyBoolean >(L"Render.Stereoscopic", m_renderViewDesc.displayMode.stereoscopic);
-
-	// Create VR compositor.
-	if (vrCompositor)
-	{
-		if (!vrCompositor->create(renderSystem, renderView))
-			return false;
-	}
-
 	m_renderSystem = renderSystem;
 	m_renderView = renderView;
-	m_vrCompositor = vrCompositor;
-
 	return true;
 }
 
 void RenderServerDefault::destroy()
 {
-	safeDestroy(m_vrCompositor);
 	safeClose(m_renderView);
 	safeDestroy(m_renderSystem);
 }
@@ -404,7 +377,6 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 		rvdd.displayMode.height = settings->getProperty< int32_t >(L"Render.DisplayMode.Window/Height", m_originalDisplayMode.height / 2);
 	}
 
-	rvdd.displayMode.stereoscopic = settings->getProperty< bool >(L"Render.Stereoscopic", false);
 	rvdd.displayMode.colorBits = 24;
 
 #endif
@@ -427,8 +399,7 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 		m_renderViewDesc.waitVBlanks != rvdd.waitVBlanks ||
 		m_renderViewDesc.fullscreen != rvdd.fullscreen ||
 		m_renderViewDesc.displayMode.width != rvdd.displayMode.width ||
-		m_renderViewDesc.displayMode.height != rvdd.displayMode.height ||
-		m_renderViewDesc.displayMode.stereoscopic != rvdd.displayMode.stereoscopic
+		m_renderViewDesc.displayMode.height != rvdd.displayMode.height
 	)
 	{
 		T_DEBUG(L"Render view settings changed; resetting view...");
@@ -533,25 +504,14 @@ render::IRenderView* RenderServerDefault::getRenderView()
 	return m_renderView;
 }
 
-render::IVRCompositor* RenderServerDefault::getVRCompositor()
-{
-	return m_vrCompositor;
-}
-
 int32_t RenderServerDefault::getWidth() const
 {
-	if (m_vrCompositor)
-		return m_vrCompositor->getWidth();
-	else
-		return m_renderView->getWidth();
+	return m_renderView->getWidth();
 }
 
 int32_t RenderServerDefault::getHeight() const
 {
-	if (m_vrCompositor)
-		return m_vrCompositor->getHeight();
-	else
-		return m_renderView->getHeight();
+	return m_renderView->getHeight();
 }
 
 float RenderServerDefault::getScreenAspectRatio() const
@@ -568,11 +528,6 @@ float RenderServerDefault::getViewAspectRatio() const
 float RenderServerDefault::getAspectRatio() const
 {
 	return m_renderView->isFullScreen() ? getScreenAspectRatio() : getViewAspectRatio();
-}
-
-bool RenderServerDefault::getStereoscopic() const
-{
-	return m_renderViewDesc.displayMode.stereoscopic;
 }
 
 int32_t RenderServerDefault::getMultiSample() const

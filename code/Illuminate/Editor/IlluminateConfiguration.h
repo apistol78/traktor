@@ -29,21 +29,13 @@ public:
 
 	bool traceIndirect() const { return m_traceIndirect; }
 
-	bool traceOcclusion() const { return m_traceOcclusion; }
-
-	uint32_t getIrradianceSampleCount() const { return m_irradianceSampleCount; }
+	uint32_t getIndirectSampleCount() const { return m_indirectSampleCount; }
 
 	uint32_t getShadowSampleCount() const { return m_shadowSampleCount; }
-
-	uint32_t getOcclusionSampleCount() const { return m_occlusionSampleCount; }
 
 	float getPointLightShadowRadius() const { return m_pointLightShadowRadius; }
 
 	float getLumelDensity() const { return m_lumelDensity; }
-
-	uint32_t getPhotonCount() const { return m_photonCount; }
-
-	float getPhotonSampleRadius() const { return m_photonSampleRadius; }
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -51,14 +43,10 @@ private:
 	Guid m_seedGuid;
 	bool m_traceDirect;
 	bool m_traceIndirect;
-	bool m_traceOcclusion;
-	uint32_t m_irradianceSampleCount;
+	uint32_t m_indirectSampleCount;
 	uint32_t m_shadowSampleCount;
-	uint32_t m_occlusionSampleCount;
 	float m_pointLightShadowRadius;
 	float m_lumelDensity;
-	uint32_t m_photonCount;
-	float m_photonSampleRadius;
 };
 
 	}

@@ -7,7 +7,7 @@ namespace traktor
 	namespace render
 	{
 
-class ITexture;
+class SHCoeffs;
 
 	}
 
@@ -53,8 +53,7 @@ enum LightType
 
 struct LightProbe
 {
-	render::ITexture* diffuse;	/*!< Irradiance */
-	render::ITexture* specular;	/*!< Radiance */
+	const render::SHCoeffs* shCoeffs;
 };
 
 struct Light

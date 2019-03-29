@@ -58,21 +58,17 @@ private:
 	editor::IEditor* m_editor;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< ui::Container > m_container;
-	Ref< RenderControl > m_renderControls[4];
+	Ref< RenderControl > m_renderControls[2];
 	Ref< SHEngine > m_engine;
 	Ref< SHFunction > m_lightFunction;
-	Ref< SHFunction > m_phaseFunction;
+	//Ref< SHFunction > m_phaseFunction;
 	SHCoeffs m_lightCoefficients;
-	SHCoeffs m_phaseCoefficients;
-	SHMatrix m_phaseTransfer;
+	//SHCoeffs m_phaseCoefficients;
+	//SHMatrix m_phaseTransfer;
 
 	void eventRender1(RenderControlEvent* event);
 
 	void eventRender2(RenderControlEvent* event);
-
-	void eventRender3(RenderControlEvent* event);
-
-	void eventRender4(RenderControlEvent* event);
 };
 
 	}

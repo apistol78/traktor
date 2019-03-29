@@ -18,9 +18,9 @@ namespace traktor
 		{
 
 const int32_t c_marginWidth = 3;	/*< Distance from image edge to "visual" edge. */
-const int32_t c_textMargin = 8;
+const int32_t c_textMargin = 16;
 const int32_t c_textHeight = 16;
-const int32_t c_minExtent = 30;
+const int32_t c_minExtent = 40;
 const int32_t c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
 
 int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
@@ -33,13 +33,23 @@ int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.InOutNodeShape", InOutNodeShape, INodeShape)
 
-InOutNodeShape::InOutNodeShape(GraphControl* graphControl)
+InOutNodeShape::InOutNodeShape(GraphControl* graphControl, Style style)
 :	m_graphControl(graphControl)
 {
-	m_imageNode[0] = new ui::StyleBitmap(L"UI.Graph.InOut");
-	m_imageNode[1] = new ui::StyleBitmap(L"UI.Graph.InOutSelected");
-	m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.InOutError");
-	m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.InOutErrorSelected");
+	if (style == StDefault)
+	{
+		m_imageNode[0] = new ui::StyleBitmap(L"UI.Graph.InOut");
+		m_imageNode[1] = new ui::StyleBitmap(L"UI.Graph.InOutSelected");
+		m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.InOutError");
+		m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.InOutErrorSelected");
+	}
+	else if (style == StUniform)
+	{
+		m_imageNode[0] = new ui::StyleBitmap(L"UI.Graph.Uniform");
+		m_imageNode[1] = new ui::StyleBitmap(L"UI.Graph.UniformSelected");
+		m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.UniformError");
+		m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.UniformErrorSelected");
+	}
 
 	m_imagePin = new ui::StyleBitmap(L"UI.Graph.Pin");
 	m_imagePinHot = new ui::StyleBitmap(L"UI.Graph.PinHot");
@@ -72,7 +82,7 @@ Pin* InOutNodeShape::getPinAt(const Node* node, const Point& pt) const
 	if (x >= rc.getWidth() - ui::dpi96(c_pinHitWidth) && x <= rc.getWidth() && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
 		return node->getOutputPins()[0];
 
-	return 0;
+	return nullptr;
 }
 
 void InOutNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* canvas, const Size& offset) const

@@ -73,11 +73,11 @@ public:
 
 	virtual void endBuild(WorldRenderView& worldRenderView, int frame) override final;
 
-	virtual bool beginRender(int frame, render::EyeType eye, const Color4f& clearColor) override final;
+	virtual bool beginRender(int32_t frame, const Color4f& clearColor) override final;
 
-	virtual void render(int frame, render::EyeType eye) override final;
+	virtual void render(int32_t frame) override final;
 
-	virtual void endRender(int frame, render::EyeType eye, float deltaTime) override final;
+	virtual void endRender(int32_t frame, float deltaTime) override final;
 
 	virtual render::ImageProcess* getVisualImageProcess() override final;
 

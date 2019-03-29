@@ -177,9 +177,9 @@ bool SceneEditorPage::create(ui::Container* parent)
 	// Create profiles, plugins, resource factories, entity editors and guide ids.
 	TypeInfoSet profileTypes;
 	type_of< ISceneEditorProfile >().findAllOf(profileTypes);
-	for (TypeInfoSet::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
+	for (auto profileType : profileTypes)
 	{
-		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >((*i)->createInstance());
+		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >(profileType->createInstance());
 		if (!profile)
 			continue;
 
@@ -187,13 +187,13 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 		RefArray< ISceneEditorPlugin > editorPlugins;
 		profile->createEditorPlugins(m_context, editorPlugins);
-		for (RefArray< ISceneEditorPlugin >::iterator j = editorPlugins.begin(); j != editorPlugins.end(); ++j)
-			m_context->addEditorPlugin(*j);
+		for (auto editorPlugin : editorPlugins)
+			m_context->addEditorPlugin(editorPlugin);
 
 		RefArray< const resource::IResourceFactory > resourceFactories;
 		profile->createResourceFactories(m_context, resourceFactories);
-		for (RefArray< const resource::IResourceFactory >::iterator j = resourceFactories.begin(); j != resourceFactories.end(); ++j)
-			resourceManager->addFactory(*j);
+		for (auto resourceFactory : resourceFactories)
+			resourceManager->addFactory(resourceFactory);
 
 		profile->getGuideDrawIds(guideIds);
 	}
@@ -297,13 +297,13 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_gridGuides->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_NAME"), ui::dpi96(150)));
 	m_gridGuides->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_VISIBLE"), ui::dpi96(50)));
 
-	for (std::set< std::wstring >::const_iterator i = guideIds.begin(); i != guideIds.end(); ++i)
+	for (const auto& guideId : guideIds)
 	{
-		bool shouldDraw = m_editor->getSettings()->getProperty< bool >(L"SceneEditor.Guides/" + *i, true);
-		m_context->setDrawGuide(*i, shouldDraw);
+		bool shouldDraw = m_editor->getSettings()->getProperty< bool >(L"SceneEditor.Guides/" + guideId, true);
+		m_context->setDrawGuide(guideId, shouldDraw);
 
 		Ref< ui::GridRow > row = new ui::GridRow();
-		row->add(new ui::GridItem(*i));
+		row->add(new ui::GridItem(guideId));
 		row->add(new ui::GridItem(shouldDraw ? m_imageVisible : m_imageHidden));
 		m_gridGuides->addRow(row);
 	}
@@ -803,7 +803,7 @@ bool SceneEditorPage::createSceneAsset()
 		if (!sceneAsset)
 			return false;
 
-		const RefArray< world::LayerEntityData >& layers = sceneAsset->getLayers();
+		const auto& layers = sceneAsset->getLayers();
 		T_ASSERT(layers.size() >= 2);
 
 		layers[1]->addEntityData(entityData);

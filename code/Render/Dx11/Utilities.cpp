@@ -147,7 +147,6 @@ bool getDisplayMode(IDXGIOutput* dxgiOutput, uint32_t index, DisplayMode& outDis
 	outDisplayMode.height = dxgiDisplayModes[index].Height;
 	outDisplayMode.refreshRate = dxgiDisplayModes[index].RefreshRate.Numerator / dxgiDisplayModes[index].RefreshRate.Denominator;
 	outDisplayMode.colorBits = 32;
-	outDisplayMode.stereoscopic = false;
 
 	return true;
 }

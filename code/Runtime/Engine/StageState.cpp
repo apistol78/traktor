@@ -58,9 +58,9 @@ StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info
 		return BrFailed;
 }
 
-bool StageState::render(uint32_t frame, render::EyeType eye, const UpdateInfo& info)
+bool StageState::render(uint32_t frame, const UpdateInfo& info)
 {
-	m_stage->render(eye, frame);
+	m_stage->render(frame);
 	return true;
 }
 

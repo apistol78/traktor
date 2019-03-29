@@ -1,6 +1,7 @@
 #include "Render/Shader.h"
 #include "Render/Types.h"
 #include "Render/Context/ProgramParameters.h"
+#include "Render/SH/SHCoeffs.h"
 #include "World/WorldRenderView.h"
 #include "World/Deferred/WorldRenderPassDeferred.h"
 
@@ -16,6 +17,7 @@ enum { MaxForwardLightCount = 2 };
 bool s_handlesInitialized = false;
 render::handle_t s_techniqueDeferredColor;
 render::handle_t s_techniqueVelocityWrite;
+render::handle_t s_techniqueIrradianceWrite;
 render::handle_t s_handleWorld;
 render::handle_t s_handleWorldView;
 render::handle_t s_handleLastWorld;
@@ -26,6 +28,14 @@ render::handle_t s_handleLightPositionAndType;
 render::handle_t s_handleLightDirectionAndRange;
 render::handle_t s_handleLightColor;
 
+render::handle_t s_handleProbeR0_3;
+render::handle_t s_handleProbeR4_7;
+render::handle_t s_handleProbeG0_3;
+render::handle_t s_handleProbeG4_7;
+render::handle_t s_handleProbeB0_3;
+render::handle_t s_handleProbeB4_7;
+render::handle_t s_handleProbeRGB_8;
+
 void initializeHandles()
 {
 	if (s_handlesInitialized)
@@ -33,6 +43,7 @@ void initializeHandles()
 
 	s_techniqueDeferredColor = render::getParameterHandle(L"World_DeferredColor");
 	s_techniqueVelocityWrite = render::getParameterHandle(L"World_VelocityWrite");
+	s_techniqueIrradianceWrite = render::getParameterHandle(L"World_IrradianceWrite");
 
 	s_handleWorld = render::getParameterHandle(L"World_World");
 	s_handleWorldView = render::getParameterHandle(L"World_WorldView");
@@ -43,6 +54,14 @@ void initializeHandles()
 	s_handleLightPositionAndType = render::getParameterHandle(L"World_LightPositionAndType");
 	s_handleLightDirectionAndRange = render::getParameterHandle(L"World_LightDirectionAndRange");
 	s_handleLightColor = render::getParameterHandle(L"World_LightColor");
+
+	s_handleProbeR0_3 = render::getParameterHandle(L"World_ProbeR0_3");
+	s_handleProbeR4_7 = render::getParameterHandle(L"World_ProbeR4_7");
+	s_handleProbeG0_3 = render::getParameterHandle(L"World_ProbeG0_3");
+	s_handleProbeG4_7 = render::getParameterHandle(L"World_ProbeG4_7");
+	s_handleProbeB0_3 = render::getParameterHandle(L"World_ProbeB0_3");
+	s_handleProbeB4_7 = render::getParameterHandle(L"World_ProbeB4_7");
+	s_handleProbeRGB_8 = render::getParameterHandle(L"World_ProbeRGB_8");
 
 	s_handlesInitialized = true;
 }
@@ -108,15 +127,13 @@ void WorldRenderPassDeferred::setShaderCombination(render::Shader* shader) const
 void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams) const
 {
 	setWorldProgramParameters(programParams, Transform::identity(), Transform::identity());
-	if (m_technique == s_techniqueDeferredColor)
-		setLightProgramParameters(programParams);
 }
 
 void WorldRenderPassDeferred::setProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world, const Aabb3& bounds) const
 {
 	setWorldProgramParameters(programParams, lastWorld, world);
-	if (m_technique == s_techniqueDeferredColor)
-		setLightProgramParameters(programParams);
+	if (m_technique == s_techniqueIrradianceWrite)
+		setProbeProgramParameters(programParams, world, bounds);
 }
 
 void WorldRenderPassDeferred::setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const
@@ -133,37 +150,62 @@ void WorldRenderPassDeferred::setWorldProgramParameters(render::ProgramParameter
 	}
 }
 
-void WorldRenderPassDeferred::setLightProgramParameters(render::ProgramParameters* programParams) const
+void WorldRenderPassDeferred::setProbeProgramParameters(render::ProgramParameters* programParams, const Transform& world, const Aabb3& bounds) const
 {
-	const Matrix44& view = m_worldRenderView.getView();
+	// \tbd Blend closest 3 probes.
 
-	// Pack light parameters.
-	Vector4 lightPositionAndType[MaxForwardLightCount], *lightPositionAndTypePtr = lightPositionAndType;
-	Vector4 lightDirectionAndRange[MaxForwardLightCount], *lightDirectionAndRangePtr = lightDirectionAndRange;
-	Vector4 lightColor[MaxForwardLightCount], *lightColorPtr = lightColor;
+	// \hack For now use brute force...
+	AlignedVector< Light > lights;
 
-	int lightCount = std::min< int >(m_worldRenderView.getLightCount(), MaxForwardLightCount);
-	for (int i = 0; i < lightCount; ++i)
+	for (int i = 0; i < m_worldRenderView.getLightCount(); ++i)
 	{
 		const Light& light = m_worldRenderView.getLight(i);
-		*lightPositionAndTypePtr++ = (view * light.position).xyz0() + Vector4(0.0f, 0.0f, 0.0f, float(light.type));
-		*lightDirectionAndRangePtr++ = (view * light.direction).xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
-		*lightColorPtr++ = light.color;
+		if (light.type == LtProbe && light.probe.shCoeffs != nullptr)
+		{
+			const auto& c = light.probe.shCoeffs->get();
+			if (c.size() >= 9)
+				lights.push_back(light);
+		}
 	}
+	if (lights.empty())
+		return;
 
-	// Disable excessive lights.
-	for (int i = lightCount; i < MaxForwardLightCount; ++i)
+	Vector4 position = world.translation();
+
+	std::sort(lights.begin(), lights.end(), [&](const Light& a, const Light& b) {
+		Scalar la = (a.position - position).xyz0().length2();
+		Scalar lb = (b.position - position).xyz0().length2();
+		return la < lb;
+	});
+
+	AlignedVector< Vector4 > c(9);
+
+	if (lights.size() >= 2)
 	{
-		const static Vector4 c_typeDisabled(0.0f, 0.0f, 0.0f, float(LtDisabled));
-		*lightPositionAndTypePtr++ = c_typeDisabled;
-		*lightDirectionAndRangePtr++ = Vector4::zero();
-		*lightColorPtr++ = Vector4::zero();
-	}
+		const auto& c0 = lights[0].probe.shCoeffs->get();
+		const auto& c1 = lights[1].probe.shCoeffs->get();
 
-	// Finally set shader parameters.
-	programParams->setVectorArrayParameter(s_handleLightPositionAndType, lightPositionAndType, MaxForwardLightCount);
-	programParams->setVectorArrayParameter(s_handleLightDirectionAndRange, lightDirectionAndRange, MaxForwardLightCount);
-	programParams->setVectorArrayParameter(s_handleLightColor, lightColor, MaxForwardLightCount);
+		Scalar l0 = (lights[0].position - position).xyz0().length();
+		Scalar l1 = (lights[1].position - position).xyz0().length();
+
+		Scalar f0 = l0 / (l0 + l1);
+		Scalar f1 = l1 / (l0 + l1);
+
+		for (int i = 0; i < 9; ++i)
+		{
+			c[i] = c0[i] * f0 + c1[i] * f1;
+		}
+	}
+	else
+		c = lights[0].probe.shCoeffs->get();
+
+	programParams->setVectorParameter(s_handleProbeR0_3, Vector4(c[0].x(), c[1].x(), c[2].x(), c[3].x()));
+	programParams->setVectorParameter(s_handleProbeR4_7, Vector4(c[4].x(), c[5].x(), c[6].x(), c[7].x()));
+	programParams->setVectorParameter(s_handleProbeG0_3, Vector4(c[0].y(), c[1].y(), c[2].y(), c[3].y()));
+	programParams->setVectorParameter(s_handleProbeG4_7, Vector4(c[4].y(), c[5].y(), c[6].y(), c[7].y()));
+	programParams->setVectorParameter(s_handleProbeB0_3, Vector4(c[0].z(), c[1].z(), c[2].z(), c[3].z()));
+	programParams->setVectorParameter(s_handleProbeB4_7, Vector4(c[4].z(), c[5].z(), c[6].z(), c[7].z()));
+	programParams->setVectorParameter(s_handleProbeRGB_8, Vector4(c[8].x(), c[8].y(), c[8].z(), 0.0f));
 }
 
 	}

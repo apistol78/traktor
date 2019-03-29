@@ -34,7 +34,7 @@ public:
 
 	HlslVariable* emitOutput(Node* node, const std::wstring& outputPinName, HlslType type);
 
-	void emitOutput(Node* node, const std::wstring& outputPinName, HlslVariable* variable);
+	//void emitOutput(Node* node, const std::wstring& outputPinName, HlslVariable* variable);
 
 	void findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins) const;
 

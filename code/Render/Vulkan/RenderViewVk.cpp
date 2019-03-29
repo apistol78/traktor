@@ -196,7 +196,7 @@ SystemWindow RenderViewVk::getSystemWindow()
 #endif
 }
 
-bool RenderViewVk::begin(EyeType eye)
+bool RenderViewVk::begin()
 {
 #if defined(_WIN32) || defined(__LINUX__)
 	VkSemaphoreCreateInfo semaphoreCreateInfo = { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, 0, 0 };

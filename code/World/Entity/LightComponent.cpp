@@ -11,24 +11,22 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightComponent", LightComponent, IEntityC
 LightComponent::LightComponent(
 	LightType lightType,
 	const Vector4& color,
-	const resource::Proxy< render::ITexture >& probeDiffuseTexture,
-	const resource::Proxy< render::ITexture >& probeSpecularTexture,
 	bool castShadow,
 	float range,
 	float radius,
 	float flickerAmount,
-	float flickerFilter
+	float flickerFilter,
+	const render::SHCoeffs* shCoeffs
 )
 :	m_owner(0)
 ,	m_lightType(lightType)
 ,	m_color(color)
-,	m_probeDiffuseTexture(probeDiffuseTexture)
-,	m_probeSpecularTexture(probeSpecularTexture)
 ,	m_castShadow(castShadow)
 ,	m_range(range)
 ,	m_radius(radius)
 ,	m_flickerAmount(flickerAmount)
 ,	m_flickerFilter(flickerFilter)
+,	m_shCoeffs(shCoeffs)
 {
 }
 

@@ -42,6 +42,7 @@
 #include "Render/Editor/Shader/Facades/SwitchNodeFacade.h"
 #include "Render/Editor/Shader/Facades/SwizzleNodeFacade.h"
 #include "Render/Editor/Shader/Facades/TextureNodeFacade.h"
+#include "Render/Editor/Shader/Facades/UniformNodeFacade.h"
 #include "Render/Editor/Shader/Facades/VariableNodeFacade.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
@@ -240,6 +241,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_nodeFacades[&type_of< Switch >()] = new SwitchNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Swizzle >()] = new SwizzleNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Texture >()] = new TextureNodeFacade(m_editorGraph);
+	m_nodeFacades[&type_of< Uniform >()] = new UniformNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Variable >()] = new VariableNodeFacade(m_editorGraph);
 
 	createEditorNodes(

@@ -23,13 +23,12 @@ class T_DLLCLASS DirectionalLight : public SHFunction
 	T_RTTI_CLASS;
 
 public:
-	DirectionalLight(const Vector4& direction, float cutOffAngle);
+	DirectionalLight(const Vector4& direction);
 
-	virtual float evaluate(float phi, float theta, const Vector4& unit) const override final;
+	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final;
 
 private:
 	Vector4 m_direction;
-	float m_cutOffAngle;
 };
 
 	}

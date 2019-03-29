@@ -33,8 +33,7 @@ void LightRenderer::render(
 	light.color = lightComponent->getColor();
 	light.range = Scalar(lightComponent->getRange());
 	light.radius = Scalar(lightComponent->getRadius());
-	light.probe.diffuse = lightComponent->getProbeDiffuseTexture();
-	light.probe.specular = lightComponent->getProbeSpecularTexture();
+	light.probe.shCoeffs = lightComponent->getSHCoeffs();
 	light.castShadow = lightComponent->getCastShadow();
 
 	worldRenderView.addLight(light);

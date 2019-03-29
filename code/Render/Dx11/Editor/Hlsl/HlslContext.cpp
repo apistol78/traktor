@@ -86,10 +86,16 @@ bool HlslContext::emit(Node* node)
 
 	bool allOutputsEmitted = true;
 
-	// Check if all outputs of node already has been emitted.
+	// Check if all active outputs of node already has been emitted.
 	int32_t outputPinCount = node->getOutputPinCount();
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
+		const OutputPin* outputPin = node->getOutputPin(i);
+		T_ASSERT(outputPin != nullptr);
+
+		if (m_shaderGraph->getDestinationCount(outputPin) == 0)
+			continue;
+
 		HlslVariable* variable = m_currentShader->getVariable(node->getOutputPin(i));
 		if (!variable)
 		{
@@ -114,7 +120,7 @@ HlslVariable* HlslContext::emitInput(const InputPin* inputPin)
 		return nullptr;
 
 	// Check if node's output already has been emitted.
-	HlslVariable* variable = m_currentShader->getVariable(sourcePin);
+	Ref< HlslVariable > variable = m_currentShader->getVariable(sourcePin);
 	if (variable)
 		return variable;
 
@@ -168,13 +174,13 @@ HlslVariable* HlslContext::emitOutput(Node* node, const std::wstring& outputPinN
 	return out;
 }
 
-void HlslContext::emitOutput(Node* node, const std::wstring& outputPinName, HlslVariable* variable)
-{
-	const OutputPin* outputPin = node->findOutputPin(outputPinName);
-	T_ASSERT(outputPin);
-
-	m_currentShader->associateVariable(outputPin, variable);
-}
+//void HlslContext::emitOutput(Node* node, const std::wstring& outputPinName, HlslVariable* variable)
+//{
+//	const OutputPin* outputPin = node->findOutputPin(outputPinName);
+//	T_ASSERT(outputPin);
+//
+//	m_currentShader->associateVariable(outputPin, variable);
+//}
 
 void HlslContext::findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins) const
 {

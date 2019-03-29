@@ -108,9 +108,9 @@ SystemWindow RenderViewCapture::getSystemWindow()
 	return m_renderView->getSystemWindow();
 }
 
-bool RenderViewCapture::begin(EyeType eye)
+bool RenderViewCapture::begin()
 {
-	if (!m_renderView->begin(eye))
+	if (!m_renderView->begin())
 		return false;
 
 	m_targetDepth = 1;

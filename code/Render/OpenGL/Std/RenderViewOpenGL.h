@@ -93,7 +93,7 @@ public:
 
 	virtual SystemWindow getSystemWindow() override final;
 
-	virtual bool begin(EyeType eye) override final;
+	virtual bool begin() override final;
 
 	virtual bool begin(RenderTargetSet* renderTargetSet) override final;
 
