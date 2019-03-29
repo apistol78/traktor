@@ -1458,6 +1458,11 @@ Directional
 					<name>Distance</name>
 					<optional>false</optional>
 				</item>
+				<item>
+					<id>{04D84585-4D76-5A49-AC65-7C0619D59949}</id>
+					<name>Range</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -1480,6 +1485,11 @@ Directional
 					<id>{8159BE48-C353-BC41-97A6-B8AA34887102}</id>
 					<name>Distance</name>
 					<optional>false</optional>
+				</item>
+				<item>
+					<id>{04D84585-4D76-5A49-AC65-7C0619D59949}</id>
+					<name>Range</name>
+					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -2180,6 +2190,26 @@ Directional
 				<second>878</second>
 			</position>
 			<name>L_Iteration</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{0073A4F7-89FD-5F48-B544-F34BFEFD5985}</id>
+			<comment/>
+			<position>
+				<first>3413</first>
+				<second>-108</second>
+			</position>
+			<name>L_Range</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{44A620E3-078B-1545-A091-D0058FDC09EC}</id>
+			<comment/>
+			<position>
+				<first>3042</first>
+				<second>692</second>
+			</position>
+			<name>L_Range</name>
 			<global>false</global>
 		</item>
 	</nodes>
@@ -4202,6 +4232,26 @@ Directional
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[193]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[121]"/>
+				<name>Range</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[194]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[122]"/>
+				<name>Range</name>
 			</destination>
 		</item>
 	</edges>

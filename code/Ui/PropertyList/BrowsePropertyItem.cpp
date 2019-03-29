@@ -83,8 +83,8 @@ void BrowsePropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 	std::vector< WidgetRect > childRects;
 	PropertyItem::resizeInPlaceControls(rc, childRects);
 
-	int width = rc.getHeight();
-	int right = rc.right - childRects.size() * width;
+	int32_t width = rc.getHeight();
+	int32_t right = rc.right - int32_t(childRects.size()) * width;
 
 	outChildRects.insert(outChildRects.end(), childRects.begin(), childRects.end());
 

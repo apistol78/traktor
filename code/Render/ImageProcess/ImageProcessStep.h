@@ -57,6 +57,17 @@ public:
 			float shadowFarZ;
 			float shadowMapBias;
 			float deltaTime;
+
+			RenderParams()
+			:	sliceCount(0)
+			,	sliceIndex(0)
+			,	sliceNearZ(0.0f)
+			,	sliceFarZ(0.0f)
+			,	shadowFarZ(0.0f)
+			,	shadowMapBias(0.0f)
+			,	deltaTime(0.0f)
+			{
+			}
 		};
 
 		virtual void destroy() = 0;

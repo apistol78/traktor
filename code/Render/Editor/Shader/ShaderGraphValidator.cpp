@@ -109,12 +109,13 @@ public:
 	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
 	{
 		std::map< std::wstring, uint32_t > techniqueCount;
-
-		const RefArray< Node >& nodes = shaderGraph->getNodes();
-		for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+		for (auto node : shaderGraph->getNodes())
 		{
-			if (PixelOutput* pixelOutput = dynamic_type_cast< PixelOutput* >(*i))
+			if (PixelOutput* pixelOutput = dynamic_type_cast< PixelOutput* >(node))
 			{
+				// If pixel output node's "Enable" pin connected then we cannot ensure uniqueness.
+				if (shaderGraph->findSourcePin(pixelOutput->findInputPin(L"Enable")) != nullptr)
+					continue;
 				if (++techniqueCount[pixelOutput->getTechnique()] > 1)
 					outReport.addError(L"Technique names clashing", pixelOutput);
 			}
@@ -260,13 +261,60 @@ class VariableNames : public Specification
 public:
 	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
 	{
-		std::set< std::wstring > variableNames, usedOutputNames;
-		for (std::set< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
+		// Ensure all variables has a name.
+		for (auto activeNode : activeNodes)
 		{
-			if (const Variable* variableNode = dynamic_type_cast< const Variable* >(*i))
+			if (const Variable * variableNode = dynamic_type_cast<const Variable*>(activeNode))
 			{
 				if (variableNode->getName().empty())
-					outReport.addError(L"Invalid variable name, no name", variableNode);
+					outReport.addError(L"Invalid variable name.", variableNode);
+			}
+		}
+
+		// Ensure variables are written only once.
+		std::set< std::wstring > written;
+		for (auto activeNode : activeNodes)
+		{
+			if (const Variable * variableNode = dynamic_type_cast<const Variable*>(activeNode))
+			{
+				if (shaderGraph->findSourcePin(variableNode->findInputPin(L"Input")) != nullptr)
+				{
+					const auto& name = variableNode->getName();
+					if (written.find(name) != written.end())
+						outReport.addError(L"Variable \"" + name + L"\" already being written to.");
+					else
+						written.insert(name);
+				}
+			}
+		}
+
+		// Ensure read local variables has been written to.
+		written.clear();
+		for (auto activeNode : activeNodes)
+		{
+			if (const Variable * variableNode = dynamic_type_cast<const Variable*>(activeNode))
+			{
+				if (variableNode->isGlobal())
+					continue;
+				if (shaderGraph->findSourcePin(variableNode->findInputPin(L"Input")) == nullptr)
+					continue;
+
+				const auto & name = variableNode->getName();
+				written.insert(name);
+			}
+		}
+		for (auto activeNode : activeNodes)
+		{
+			if (const Variable * variableNode = dynamic_type_cast<const Variable*>(activeNode))
+			{
+				if (variableNode->isGlobal())
+					continue;
+				if (shaderGraph->getDestinationCount(variableNode->findOutputPin(L"Output")) > 0)
+				{
+					const auto& name = variableNode->getName();
+					if (written.find(name) != written.end())
+						outReport.addError(L"Cannot read local variable \"" + name + L"\" as it's not being written to.");
+				}
 			}
 		}
 	}
@@ -283,8 +331,8 @@ ShaderGraphValidator::ShaderGraphValidator(const ShaderGraph* shaderGraph)
 
 bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Node* >* outErrorNodes) const
 {
+	// Collect root nodes.
 	RefArray< Node > roots;
-
 	for (auto node : m_shaderGraph->getNodes())
 	{
 		if (node->getOutputPinCount() <= 0 && node->getInputPinCount() > 0)
@@ -293,25 +341,29 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Nod
 			roots.push_back(node);
 	}
 
+	// Collect active nodes from root nodes.
 	CollectVisitor visitor;
 	ShaderGraphTraverse(m_shaderGraph, roots).preorder(visitor);
 
+	// Perform checks on active nodes.
 	Report report(outErrorNodes);
 
 	EdgeNodes().check(report, m_shaderGraph, visitor.m_nodes);
-	// UniqueTechniques().check(report, m_shaderGraph, visitor.m_nodes);
+	UniqueTechniques().check(report, m_shaderGraph, visitor.m_nodes);
 	NonOptionalInputs().check(report, m_shaderGraph, visitor.m_nodes);
 	SwizzlePatterns().check(report, m_shaderGraph, visitor.m_nodes);
 	ParameterNames().check(report, m_shaderGraph, visitor.m_nodes);
+	VariableNames().check(report, m_shaderGraph, visitor.m_nodes);
+
 	if (type == SgtFragment)
 		PortNames().check(report, m_shaderGraph, visitor.m_nodes);
-	else
+	else if (type == SgtProgram)
 	{
 		NoPorts().check(report, m_shaderGraph, visitor.m_nodes);
-		if (type == SgtProgram)
-			NoMetaNodes().check(report, m_shaderGraph, visitor.m_nodes);
+		NoMetaNodes().check(report, m_shaderGraph, visitor.m_nodes);
 	}
-	VariableNames().check(report, m_shaderGraph, visitor.m_nodes);
+	else
+		NoPorts().check(report, m_shaderGraph, visitor.m_nodes);
 
 	return bool(report.getErrorCount() == 0);
 }
@@ -319,13 +371,10 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Nod
 bool ShaderGraphValidator::validateIntegrity() const
 {
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
-	const RefArray< Edge >& edges = m_shaderGraph->getEdges();
-
-	for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
+	for (auto edge : m_shaderGraph->getEdges())
 	{
-		const OutputPin* sourcePin = (*i)->getSource();
-		const InputPin* destinationPin = (*i)->getDestination();
-
+		const OutputPin* sourcePin = edge->getSource();
+		const InputPin* destinationPin = edge->getDestination();
 		if (!sourcePin || !destinationPin)
 		{
 			log::error << L"Invalid edge found in shader graph." << Endl;
@@ -343,7 +392,6 @@ bool ShaderGraphValidator::validateIntegrity() const
 			return false;
 		}
 	}
-
 	return true;
 }
 

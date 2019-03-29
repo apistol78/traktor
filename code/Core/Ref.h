@@ -36,7 +36,7 @@ public:
 	}
 
 #if defined(T_CXX11)
-	Ref(Ref&& ref)
+	Ref(Ref&& ref) noexcept
 	:	m_ptr(ref.m_ptr)
 	{
 		ref.m_ptr = 0;
@@ -131,7 +131,7 @@ public:
 	}
 
 #if defined(T_CXX11)
-	Ref& operator = (Ref&& ref)
+	Ref& operator = (Ref&& ref) noexcept
 	{
 		T_SAFE_RELEASE(m_ptr);
 		m_ptr = ref.m_ptr;

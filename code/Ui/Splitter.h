@@ -23,6 +23,8 @@ class T_DLLCLASS Splitter : public Widget
 	T_RTTI_CLASS;
 
 public:
+	Splitter();
+
 	/*! \brief Create splitter control.
 	 *
 	 * \param parent Parent widget.

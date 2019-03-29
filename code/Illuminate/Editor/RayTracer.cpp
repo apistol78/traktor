@@ -12,13 +12,11 @@ namespace traktor
 
 const Scalar c_epsilonOffset(0.1f);
 
-Scalar attenuation(const Scalar& distance)
+Scalar attenuation(const Scalar& distance, const Scalar& range)
 {
-	return clamp(
-		Scalar(1.0f) / (distance * distance),
-		Scalar(0.0f),
-		Scalar(1.0f)
-	);
+	Scalar k0 = clamp(Scalar(1.0f) / (distance * distance), Scalar(0.0f), Scalar(1.0f));
+	Scalar k1 = clamp(Scalar(1.0f) - (distance / range), Scalar(0.0f), Scalar(1.0f));
+	return k0 * k1;
 }
 
 		}
@@ -146,7 +144,7 @@ Color4f RayTracer::sampleAnalyticalLights(Context* context, const Vector4& origi
 				if (phi <= 0.0f)
 					break;
 
-				Scalar f = Scalar(1.0f) - lightDistance / Scalar(light.range);
+				Scalar f = attenuation(lightDistance, light.range);
 				if (f <= 0.0f)
 					break;
 
@@ -196,7 +194,7 @@ Color4f RayTracer::sampleAnalyticalLights(Context* context, const Vector4& origi
 				if (k1 <= 0.0f)
 					break;
 
-				Scalar k2 = attenuation(lightDistance);
+				Scalar k2 = attenuation(lightDistance, light.range);
 				if (k2 <= 0.0f)
 					break;
 
