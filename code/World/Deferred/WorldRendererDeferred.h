@@ -59,11 +59,11 @@ public:
 
 	virtual void endBuild(WorldRenderView& worldRenderView, int frame) override final;
 
-	virtual bool beginRender(int frame, render::EyeType eye, const Color4f& clearColor) override final;
+	virtual bool beginRender(int32_t frame, const Color4f& clearColor) override final;
 
-	virtual void render(int frame, render::EyeType eye) override final;
+	virtual void render(int32_t frame) override final;
 
-	virtual void endRender(int frame, render::EyeType eye, float deltaTime) override final;
+	virtual void endRender(int32_t frame, float deltaTime) override final;
 
 	virtual render::ImageProcess* getVisualImageProcess() override final;
 
@@ -90,6 +90,8 @@ private:
 
 		AlignedVector< Light > lights;
 		Ref< render::StructBuffer > lightSBuffer;
+		
+		Ref< render::StructBuffer > tileSBuffer;
 
 		Frustum viewFrustum;
 
@@ -124,7 +126,8 @@ private:
 	static render::handle_t ms_handleReflectionMap;
 	static render::handle_t ms_handleFogDistanceAndDensity;
 	static render::handle_t ms_handleFogColor;
-	static render::handle_t ms_handleShadowMask;
+	static render::handle_t ms_handleLightCount;
+	static render::handle_t ms_handleLightSBuffer;
 
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;

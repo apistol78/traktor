@@ -94,10 +94,10 @@ public:
 	virtual ISystemBitmap* getSystemBitmap() const override final;
 
 	/*! \brief Load bitmap from file. */
-	static Ref< Bitmap > load(const std::wstring& fileName);
+	static Ref< Bitmap > load(const std::wstring& fileName, int32_t dpi = -1);
 
 	/*! \brief Load bitmap from resource. */
-	static Ref< Bitmap > load(const void* resource, uint32_t size, const std::wstring& extension);
+	static Ref< Bitmap > load(const void* resource, uint32_t size, const std::wstring& extension, int32_t dpi = -1);
 
 private:
 	ISystemBitmap* m_bitmap;

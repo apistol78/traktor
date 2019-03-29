@@ -31,8 +31,6 @@ public:
 
 	virtual render::IRenderView* getRenderView() override final;
 
-	virtual render::IVRCompositor* getVRCompositor() override final;
-
 	virtual int32_t getWidth() const override final;
 
 	virtual int32_t getHeight() const override final;
@@ -42,8 +40,6 @@ public:
 	virtual float getViewAspectRatio() const override final;
 
 	virtual float getAspectRatio() const override final;
-
-	virtual bool getStereoscopic() const override final;
 
 	virtual int32_t getMultiSample() const override final;
 

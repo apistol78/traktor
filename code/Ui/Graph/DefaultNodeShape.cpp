@@ -34,13 +34,33 @@ int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.DefaultNodeShape", DefaultNodeShape, INodeShape)
 
-DefaultNodeShape::DefaultNodeShape(GraphControl* graphControl)
+DefaultNodeShape::DefaultNodeShape(GraphControl* graphControl, Style style)
 :	m_graphControl(graphControl)
 {
-	m_imageNode[0] = new ui::StyleBitmap(L"UI.Graph.Node");
-	m_imageNode[1] = new ui::StyleBitmap(L"UI.Graph.NodeSelected");
-	m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.NodeError");
-	m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.NodeErrorSelected");
+	switch (style)
+	{
+	default:
+	case StDefault:
+		m_imageNode[0] = new ui::StyleBitmap(L"UI.Graph.Node");
+		m_imageNode[1] = new ui::StyleBitmap(L"UI.Graph.NodeSelected");
+		m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.NodeError");
+		m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.NodeErrorSelected");
+		break;
+
+	case StExternal:
+		m_imageNode[0] = new ui::StyleBitmap(L"UI.Graph.External");
+		m_imageNode[1] = new ui::StyleBitmap(L"UI.Graph.ExternalSelected");
+		m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.ExternalError");
+		m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.ExternalErrorSelected");
+		break;
+
+	case StScript:
+		m_imageNode[0] = new ui::StyleBitmap(L"UI.Graph.Script");
+		m_imageNode[1] = new ui::StyleBitmap(L"UI.Graph.ScriptSelected");
+		m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.ScriptError");
+		m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.ScriptErrorSelected");
+		break;
+	}
 
 	m_imagePin = new ui::StyleBitmap(L"UI.Graph.Pin");
 	m_imagePinHot = new ui::StyleBitmap(L"UI.Graph.PinHot");
@@ -64,9 +84,9 @@ Point DefaultNodeShape::getPinPosition(const Node* node, const Pin* pin) const
 		rc.right - ui::dpi96(c_marginWidth);
 
 	const RefArray< Pin >& pins = (pin->getDirection() == Pin::DrInput) ? node->getInputPins() : node->getOutputPins();
-	RefArray< Pin >::const_iterator i = std::find(pins.begin(), pins.end(), pin);
+	const auto i = std::find(pins.begin(), pins.end(), pin);
 
-	top += int(std::distance(pins.begin(), i)) * textHeight;
+	top += int32_t(std::distance(pins.begin(), i)) * textHeight;
 
 	return Point(x, rc.top + top);
 }
@@ -95,7 +115,7 @@ Pin* DefaultNodeShape::getPinAt(const Node* node, const Point& pt) const
 		pins = &node->getOutputPins();
 
 	if (!pins)
-		return 0;
+		return nullptr;
 
 	for (int32_t i = 0; i < int32_t(pins->size()); ++i)
 	{
@@ -103,7 +123,7 @@ Pin* DefaultNodeShape::getPinAt(const Node* node, const Point& pt) const
 			return (*pins)[i];
 	}
 
-	return 0;
+	return nullptr;
 }
 
 void DefaultNodeShape::paint(const Node* node, const Pin* hotPin, GraphCanvas* canvas, const Size& offset) const

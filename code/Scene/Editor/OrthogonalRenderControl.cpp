@@ -27,10 +27,10 @@
 #include "Ui/Widget.h"
 #include "Ui/Itf/IWidget.h"
 #include "World/IEntityEventManager.h"
+#include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
-#include "World/Forward/WorldRendererForward.h"
 
 namespace traktor
 {
@@ -186,18 +186,31 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	// Create entity renderers; every renderer is wrapped in a custom renderer in order to check flags etc.
 	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
+	for (auto editorProfile : m_context->getEditorProfiles())
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
-		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
-		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
+		editorProfile->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
+		for (auto entityRenderer : entityRenderers)
 		{
-			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(entityRendererCache, *j, [&](const EntityAdapter* adapter) {
+			Ref< EntityRendererAdapter > entityRendererAdapter = new EntityRendererAdapter(entityRendererCache, entityRenderer, [&](const EntityAdapter* adapter) {
 				return adapter->isVisible();
 			});
-			worldEntityRenderers->add(entityRenderer);
+			worldEntityRenderers->add(entityRendererAdapter);
 		}
 	}
+
+	const PropertyGroup* settings = m_context->getEditor()->getSettings();
+	T_ASSERT(settings);
+
+	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
+
+	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
+	if (!worldRendererType)
+		return;
+
+	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast<world::IWorldRenderer*>(worldRendererType->createInstance());
+	if (!worldRenderer)
+		return;
 
 	// Create world renderer.
 	world::WorldCreateDesc wcd;
@@ -213,7 +226,6 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	wcd.height = sz.cy;
 	wcd.frameCount = 1;
 
-	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererForward();
 	if (worldRenderer->create(
 		m_context->getResourceManager(),
 		m_context->getRenderSystem(),
@@ -465,7 +477,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	// Render world.
-	if (m_renderView->begin(render::EtCyclop))
+	if (m_renderView->begin())
 	{
 		const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
 
@@ -500,18 +512,9 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 			m_worldRenderer->endBuild(worldRenderView, 0);
 		}
 
-		m_worldRenderer->beginRender(
-			0,
-			render::EtCyclop,
-			Color4f(tmp[0], tmp[1], tmp[2], tmp[3])
-		);
-
-		m_worldRenderer->render(
-			0,
-			render::EtCyclop
-		);
-
-		m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
+		m_worldRenderer->beginRender(0, Color4f(tmp[0], tmp[1], tmp[2], tmp[3]));
+		m_worldRenderer->render(0);
+		m_worldRenderer->endRender(0, deltaTime);
 
 		// Draw wire guides.
 		m_primitiveRenderer->begin(0, worldRenderView.getProjection());

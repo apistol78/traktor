@@ -60,7 +60,7 @@ private:
 
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const;
 
-	void setLightProgramParameters(render::ProgramParameters* programParams) const;
+	void setProbeProgramParameters(render::ProgramParameters* programParams, const Transform& world, const Aabb3& bounds) const;
 };
 
 	}

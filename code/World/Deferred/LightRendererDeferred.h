@@ -56,27 +56,13 @@ public:
 		const Matrix44& projection,
 		const Matrix44& view,
 		render::StructBuffer* lightSBuffer,
+		render::StructBuffer* tileSBuffer,
 		render::ITexture* depthMap,
 		render::ITexture* normalMap,
 		render::ITexture* miscMap,
 		render::ITexture* colorMap,
 		render::ITexture* shadowMapCascade,
 		render::ITexture* shadowMapAtlas
-	);
-
-	/*! \brief Render lit final colors. */
-	void renderFinalColor(
-		render::IRenderView* renderView,
-		float time,
-		const Matrix44& projection,
-		const Matrix44& view,
-		//const Vector4& ambientColor,
-		render::ITexture* depthMap,
-		render::ITexture* normalMap,
-		render::ITexture* miscMap,
-		render::ITexture* colorMap,
-		render::ITexture* lightDiffuseMap,
-		render::ITexture* lightSpecularMap
 	);
 
 	/*! \brief Render screenspace reflections. */
@@ -111,16 +97,8 @@ public:
 
 private:
 	resource::Proxy< render::Shader > m_lightShader;
-
-	//resource::Proxy< render::Shader > m_lightDirectionalShader;
-	//resource::Proxy< render::Shader > m_lightPointShader;
-	//resource::Proxy< render::Shader > m_lightSpotShader;
-	//resource::Proxy< render::Shader > m_lightProbeShader;
-
-	resource::Proxy< render::Shader > m_finalColorShader;
 	resource::Proxy< render::Shader > m_reflectionShader;
 	resource::Proxy< render::Shader > m_fogShader;
-
 	Ref< render::VertexBuffer > m_vertexBufferQuad;
 	render::Primitives m_primitivesQuad;
 };

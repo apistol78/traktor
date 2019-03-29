@@ -49,6 +49,8 @@ public:
 
 	void buildFromPlanes(const Plane planes_[6]);
 
+	void buildFromCorners(const Vector4 corners_[8]);
+
 	void buildPerspective(float vfov, float aspect, float zn, float zf);
 
 	void buildOrtho(float width, float height, float zn, float zf);

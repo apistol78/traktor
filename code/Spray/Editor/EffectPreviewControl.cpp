@@ -438,7 +438,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView)
 		return;
 
-	if (!m_renderView->begin(render::EtCyclop))
+	if (!m_renderView->begin())
 		return;
 
 	float tmp[4];

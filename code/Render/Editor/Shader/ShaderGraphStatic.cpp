@@ -136,8 +136,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphStatic", ShaderGraphStatic, O
 ShaderGraphStatic::ShaderGraphStatic(const ShaderGraph* shaderGraph)
 {
 	T_ASSERT(ShaderGraphValidator(shaderGraph).validateIntegrity());
-	m_shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
-	T_ASSERT(ShaderGraphValidator(m_shaderGraph).validateIntegrity());
+	m_shaderGraph = shaderGraph;
 }
 
 Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring& platform) const

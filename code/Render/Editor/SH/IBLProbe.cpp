@@ -9,13 +9,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"IBLProbe", IBLProbe, SHFunction)
 
-IBLProbe::IBLProbe(drawing::Image* image, const Vector4& modulate)
+IBLProbe::IBLProbe(drawing::Image* image)
 :	m_image(image)
-,	m_modulate(modulate)
 {
 }
 
-float IBLProbe::evaluate(float phi, float theta, const Vector4& unit) const
+Vector4 IBLProbe::evaluate(float phi, float theta, const Vector4& unit) const
 {
 	float T_MATH_ALIGN16 u[4];
 	unit.storeAligned(u);
@@ -26,19 +25,13 @@ float IBLProbe::evaluate(float phi, float theta, const Vector4& unit) const
 	int y = int(m_image->getHeight() * (-u[1] * r * 0.5f + 0.5f));
 
 	if (x < 0 || y < 0)
-		return 0.0f;
+		return Vector4::zero();
 
 	Color4f color;
 	if (!m_image->getPixel(x, y, color))
-		return 0.0f;
+		return Vector4::zero();
 
-	Scalar result = dot3(
-		Vector4(color.getRed(), color.getGreen(), color.getBlue()),
-		m_modulate
-	);
-	T_ASSERT(result >= 0.0f && result <= 1.0f);
-
-	return result;
+	return color;
 }
 
 	}

@@ -14,8 +14,8 @@
 			<id>{CB7EDEEA-56B5-4243-9F68-FBB74B9F69B8}</id>
 			<comment/>
 			<position>
-				<first>277</first>
-				<second>213</second>
+				<first>94</first>
+				<second>200</second>
 			</position>
 			<name>T_TexCoord0</name>
 			<connectable>true</connectable>
@@ -27,8 +27,8 @@
 			<id>{2459EDE9-4A8E-6845-96BB-A74BA8A09A2E}</id>
 			<comment/>
 			<position>
-				<first>277</first>
-				<second>252</second>
+				<first>94</first>
+				<second>238</second>
 			</position>
 			<name>T_TexCoord1</name>
 			<connectable>true</connectable>
@@ -36,6 +36,63 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{2390B360-B489-8C40-9F08-7A0DADE8CF54}</id>
+			<comment/>
+			<position>
+				<first>376</first>
+				<second>205</second>
+			</position>
+			<fragmentGuid>{00B5CC57-3B3B-6244-9FD2-4AF4A76F022C}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{E40A3E2A-E260-5447-8121-DA739B087636}</id>
+					<name>ViewNormal</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{D53B9A8E-9BD2-9141-9BDB-9299702A8ABC}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{65149CA7-E2E7-3242-9A62-D802318DBD93}</id>
+			<comment/>
+			<position>
+				<first>94</first>
+				<second>276</second>
+			</position>
+			<name>T_ViewNormal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
 	</nodes>
-	<edges/>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>ViewNormal</name>
+			</destination>
+		</item>
+	</edges>
 </object>

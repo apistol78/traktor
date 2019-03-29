@@ -257,10 +257,10 @@ bool Stage::build(const UpdateInfo& info, uint32_t frame)
 	return true;
 }
 
-void Stage::render(render::EyeType eye, uint32_t frame)
+void Stage::render(uint32_t frame)
 {
-	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->render(eye, frame);
+	for (auto layer : m_layers)
+		layer->render(frame);
 
 	if (m_shaderFade && m_fade > FUZZY_EPSILON)
 	{

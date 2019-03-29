@@ -361,7 +361,7 @@ void SceneEditorContext::buildEntities()
 
 		// Create entities from scene layers.
 		RefArray< world::LayerEntityData > layers = m_sceneAsset->getLayers();
-		RefArray< world::LayerEntityData >::iterator i = std::remove(layers.begin(), layers.end(), (world::LayerEntityData*)0);
+		RefArray< world::LayerEntityData >::iterator i = std::remove(layers.begin(), layers.end(), (world::LayerEntityData*)nullptr);
 		layers.erase(i, layers.end());
 
 		m_layerEntityAdapters.resize(layers.size());

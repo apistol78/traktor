@@ -1,11 +1,14 @@
 #include "Core/Math/Const.h"
 #include "Core/Serialization/AttributeAngles.h"
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Render/ITexture.h"
+#include "Render/SH/SHCoeffs.h"
 #include "Resource/Member.h"
 #include "World/Entity/LightComponentData.h"
 
@@ -14,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 7, LightComponentData, IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 8, LightComponentData, IEntityComponentData)
 
 LightComponentData::LightComponentData()
 :	m_lightType(LtDisabled)
@@ -62,23 +65,23 @@ void LightComponentData::serialize(ISerializer& s)
 	if (s.getVersion() >= 7)
 		s >> Member< float >(L"intensity", m_intensity, AttributeRange(0.0f) | AttributeUnit(AuLumens));
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion() >= 1 && s.getVersion() < 8)
 	{
+		resource::Id< render::ITexture > probeDiffuseTexture;
+		resource::Id< render::ITexture > probeSpecularTexture;
 		if (s.getVersion() >= 3)
 		{
-			s >> resource::Member< render::ITexture >(L"probeDiffuseTexture", m_probeDiffuseTexture);
+			s >> resource::Member< render::ITexture >(L"probeDiffuseTexture", probeDiffuseTexture);
 			if (s.getVersion() >= 4)
-				s >> resource::Member< render::ITexture >(L"probeSpecularTexture", m_probeSpecularTexture);
+				s >> resource::Member< render::ITexture >(L"probeSpecularTexture", probeSpecularTexture);
 		}
 		else if (s.getVersion() >= 2)
 		{
-			s >> resource::Member< render::ITexture >(L"probeDiffuseTexture", m_probeDiffuseTexture);
-
-			resource::Id< render::ITexture > probeSpecularTexture;
+			s >> resource::Member< render::ITexture >(L"probeDiffuseTexture", probeDiffuseTexture);
 			s >> resource::Member< render::ITexture >(L"probeSpecularTexture", probeSpecularTexture);
 		}
 		else
-			s >> resource::Member< render::ITexture >(L"probeTexture", m_probeDiffuseTexture);
+			s >> resource::Member< render::ITexture >(L"probeTexture", probeDiffuseTexture);
 	}
 
 	if (s.getVersion() < 6)
@@ -90,8 +93,11 @@ void LightComponentData::serialize(ISerializer& s)
 	s >> Member< bool >(L"castShadow", m_castShadow);
 	s >> Member< float >(L"range", m_range, AttributeUnit(AuMetres));
 	s >> Member< float >(L"radius", m_radius, AttributeUnit(AuRadians) | AttributeAngles());
-	s >> Member< float >(L"flickerAmount", m_flickerAmount);
-	s >> Member< float >(L"flickerFilter", m_flickerFilter);
+	s >> Member< float >(L"flickerAmount", m_flickerAmount, AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"flickerFilter", m_flickerFilter, AttributeRange(0.0f, 1.0f));
+
+	if (s.getVersion() >= 8)
+		s >> MemberRef< const render::SHCoeffs >(L"shCoeffs", m_shCoeffs);
 }
 
 	}

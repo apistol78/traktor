@@ -139,7 +139,7 @@ public:
 
 	bool build(const UpdateInfo& info, uint32_t frame);
 
-	void render(render::EyeType eye, uint32_t frame);
+	void render(uint32_t frame);
 
 	void flush();
 

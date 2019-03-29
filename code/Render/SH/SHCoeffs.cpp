@@ -10,43 +10,43 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SHCoeffs", 0, SHCoeffs, ISerializable)
 
-void SHCoeffs::resize(uint32_t coefficientCount)
+void SHCoeffs::resize(size_t coefficientCount)
 {
-	m_coefficients.resize(coefficientCount);
+	m_data.resize(coefficientCount, Vector4::zero());
 }
 
 bool SHCoeffs::empty() const
 {
-	return m_coefficients.empty();
+	return m_data.empty();
 }
 
 SHCoeffs SHCoeffs::transform(const SHMatrix& matrix) const
 {
 	SHCoeffs out;
-	out.resize(uint32_t(m_coefficients.size()));
+	out.resize(m_data.size());
 	for (int r = 0; r < matrix.getRows(); ++r)
 	{
-		out.m_coefficients[r] = 0.0f;
+		out.m_data[r] = Vector4::zero();
 		for (int c = 0; c < matrix.getColumns(); ++c)
-			out.m_coefficients[r] += m_coefficients[c] * matrix.r(r, c);
+			out.m_data[r] += m_data[c] * Scalar(matrix.r(r, c));
 	}
 	return out;
 }
 
-float SHCoeffs::operator * (const SHCoeffs& coeffs) const
+Vector4 SHCoeffs::operator * (const SHCoeffs& coeffs) const
 {
-	T_ASSERT(m_coefficients.size() == coeffs.m_coefficients.size());
+	T_ASSERT(m_data.size() == coeffs.m_data.size());
 
-	float result = 0.0f;
-	for (uint32_t i = 0; i < m_coefficients.size(); ++i)
-		result += m_coefficients[i] * coeffs.m_coefficients[i];
+	Vector4 result = Vector4::zero();
+	for (uint32_t i = 0; i < m_data.size(); ++i)
+		result += m_data[i] * coeffs.m_data[i];
 
 	return result;
 }
 
 void SHCoeffs::serialize(ISerializer& s)
 {
-	s >> MemberAlignedVector< float >(L"coefficients", m_coefficients);
+	s >> MemberAlignedVector< Vector4 >(L"data", m_data);
 }
 
 	}

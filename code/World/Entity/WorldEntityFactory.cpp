@@ -167,30 +167,15 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 
 	if (const LightComponentData* lightComponentData = dynamic_type_cast<const LightComponentData*>(&entityComponentData))
 	{
-		resource::Proxy< render::ITexture > probeDiffuseTexture;
-		resource::Proxy< render::ITexture > probeSpecularTexture;
-
-		if (lightComponentData->getProbeDiffuseTexture())
-		{
-			if (!m_resourceManager->bind(lightComponentData->getProbeDiffuseTexture(), probeDiffuseTexture))
-				return nullptr;
-		}
-		if (lightComponentData->getProbeSpecularTexture())
-		{
-			if (!m_resourceManager->bind(lightComponentData->getProbeSpecularTexture(), probeSpecularTexture))
-				return nullptr;
-		}
-
 		return new LightComponent(
 			lightComponentData->getLightType(),
 			lightComponentData->getColor() * Scalar(lightComponentData->getIntensity()),
-			probeDiffuseTexture,
-			probeSpecularTexture,
 			lightComponentData->getCastShadow(),
 			lightComponentData->getRange(),
 			lightComponentData->getRadius(),
 			lightComponentData->getFlickerAmount(),
-			lightComponentData->getFlickerFilter()
+			lightComponentData->getFlickerFilter(),
+			lightComponentData->getSHCoeffs()
 		);
 	}
 

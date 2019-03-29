@@ -312,7 +312,7 @@ void GraphEditor::updateView()
 				type_name(node),
 				L"",
 				ui::Point(position.first, position.second),
-				new ui::DefaultNodeShape(m_graph)
+				new ui::DefaultNodeShape(m_graph, ui::DefaultNodeShape::StDefault)
 			);
 		}
 

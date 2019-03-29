@@ -29,6 +29,8 @@ public:
 
 	std::wstring cast(HlslType to) const;
 
+	HlslVariable& operator = (const HlslVariable& other);
+
 private:
 	const Node* m_node;
 	std::wstring m_name;

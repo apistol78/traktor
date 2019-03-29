@@ -17,7 +17,6 @@ namespace traktor
 		{
 
 const resource::Id< render::Shader > c_lightShader(Guid(L"{707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}"));
-const resource::Id< render::Shader > c_finalColorShader(Guid(L"{AA7A6074-6CFC-1947-857C-8D9903D0880F}"));
 const resource::Id< render::Shader > c_reflectionShader(Guid(L"{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}"));
 const resource::Id< render::Shader > c_fogShader(Guid(L"{9453D74C-76C4-8748-9A5B-9E3D6D4F9406}"));
 
@@ -42,11 +41,11 @@ render::handle_t s_handleProbeSpecular;
 render::handle_t s_handleProbeSpecularMips;
 render::handle_t s_handleFogDistanceAndDensity;
 render::handle_t s_handleFogColor;
-
 render::handle_t s_handleLightCount;
 render::handle_t s_handleShadowMapCascade;
 render::handle_t s_handleShadowMapAtlas;
 render::handle_t s_handleLightSBuffer;
+render::handle_t s_handleTileSBuffer;
 
 #pragma pack(1)
 struct LightVertex
@@ -87,6 +86,7 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleShadowMapCascade = render::getParameterHandle(L"World_ShadowMapCascade");
 	s_handleShadowMapAtlas = render::getParameterHandle(L"World_ShadowMapAtlas");
 	s_handleLightSBuffer = render::getParameterHandle(L"World_LightSBuffer");
+	s_handleTileSBuffer = render::getParameterHandle(L"World_TileSBuffer");
 }
 
 bool LightRendererDeferred::create(
@@ -95,8 +95,6 @@ bool LightRendererDeferred::create(
 )
 {
 	if (!resourceManager->bind(c_lightShader, m_lightShader))
-		return false;
-	if (!resourceManager->bind(c_finalColorShader, m_finalColorShader))
 		return false;
 	if (!resourceManager->bind(c_reflectionShader, m_reflectionShader))
 		return false;
@@ -117,7 +115,6 @@ bool LightRendererDeferred::create(
 	vertex[0].pos[0] = -1.0f; vertex[0].pos[1] =  1.0f; vertex[0].texCoord[0] = 0.0f; vertex[0].texCoord[1] = 0.0f;
 	vertex[1].pos[0] =  1.0f; vertex[1].pos[1] =  1.0f; vertex[1].texCoord[0] = 1.0f; vertex[1].texCoord[1] = 0.0f;
 	vertex[2].pos[0] =  1.0f; vertex[2].pos[1] = -1.0f; vertex[2].texCoord[0] = 1.0f; vertex[2].texCoord[1] = 1.0f;
-
 	vertex[3].pos[0] = -1.0f; vertex[3].pos[1] =  1.0f; vertex[3].texCoord[0] = 0.0f; vertex[3].texCoord[1] = 0.0f;
 	vertex[4].pos[0] =  1.0f; vertex[4].pos[1] = -1.0f; vertex[4].texCoord[0] = 1.0f; vertex[4].texCoord[1] = 1.0f;
 	vertex[5].pos[0] = -1.0f; vertex[5].pos[1] = -1.0f; vertex[5].texCoord[0] = 0.0f; vertex[5].texCoord[1] = 1.0f;
@@ -141,6 +138,7 @@ void LightRendererDeferred::renderLights(
 	const Matrix44& projection,
 	const Matrix44& view,
 	render::StructBuffer* lightSBuffer,
+	render::StructBuffer* tileSBuffer,
 	render::ITexture* depthMap,
 	render::ITexture* normalMap,
 	render::ITexture* miscMap,
@@ -164,38 +162,9 @@ void LightRendererDeferred::renderLights(
 	m_lightShader->setTextureParameter(s_handleShadowMapCascade, shadowMapCascade);
 	m_lightShader->setTextureParameter(s_handleShadowMapAtlas, shadowMapAtlas);
 	m_lightShader->setStructBufferParameter(s_handleLightSBuffer, lightSBuffer);
+	m_lightShader->setStructBufferParameter(s_handleTileSBuffer, tileSBuffer);
 
 	m_lightShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
-
-}
-
-void LightRendererDeferred::renderFinalColor(
-	render::IRenderView* renderView,
-	float time,
-	const Matrix44& projection,
-	const Matrix44& view,
-	render::ITexture* depthMap,
-	render::ITexture* normalMap,
-	render::ITexture* miscMap,
-	render::ITexture* colorMap,
-	render::ITexture* lightDiffuseMap,
-	render::ITexture* lightSpecularMap
-)
-{
-	Scalar p11 = projection.get(0, 0);
-	Scalar p22 = projection.get(1, 1);
-
-	m_finalColorShader->setMatrixParameter(s_handleProjection, projection);
-	m_finalColorShader->setMatrixParameter(s_handleViewInverse, view.inverse());
-	m_finalColorShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-	m_finalColorShader->setTextureParameter(s_handleDepthMap, depthMap);
-	m_finalColorShader->setTextureParameter(s_handleNormalMap, normalMap);
-	m_finalColorShader->setTextureParameter(s_handleMiscMap, miscMap);
-	m_finalColorShader->setTextureParameter(s_handleColorMap, colorMap);
-	m_finalColorShader->setTextureParameter(s_handleLightDiffuseMap, lightDiffuseMap);
-	m_finalColorShader->setTextureParameter(s_handleLightSpecularMap, lightSpecularMap);
-
-	m_finalColorShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 }
 
 void LightRendererDeferred::renderReflections(

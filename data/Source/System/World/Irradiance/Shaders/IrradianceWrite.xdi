@@ -5,20 +5,20 @@
 			<id>{3A13FF6D-318D-BA4A-AD8C-EE4BA9531795}</id>
 			<comment/>
 			<position>
-				<first>1468</first>
-				<second>608</second>
+				<first>1462</first>
+				<second>590</second>
 			</position>
 			<technique>World_IrradianceWrite</technique>
 			<priority>
 				<setup>false</setup>
-				<opaque>false</opaque>
+				<opaque>true</opaque>
 				<postOpaque>false</postOpaque>
-				<alphaBlend>true</alphaBlend>
+				<alphaBlend>false</alphaBlend>
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
 			</priority>
 			<cullMode>CmClockWise</cullMode>
-			<blendEnable>true</blendEnable>
+			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
 			<blendColorDestination>BfOne</blendColorDestination>
@@ -75,27 +75,8 @@
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Color" version="1,traktor.render.Node:1">
-			<id>{0918D4BD-C6E0-4E37-9082-BD033010A21E}</id>
-			<comment/>
-			<position>
-				<first>1200</first>
-				<second>698</second>
-			</position>
-			<color>0, 0, 0, 0</color>
-		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input1</name>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[2]"/>

@@ -245,11 +245,6 @@ render::IRenderView* RenderServerEmbedded::getRenderView()
 	return m_renderView;
 }
 
-render::IVRCompositor* RenderServerEmbedded::getVRCompositor()
-{
-	return m_vrCompositor;
-}
-
 int32_t RenderServerEmbedded::getWidth() const
 {
 	return m_renderView->getWidth();
@@ -274,11 +269,6 @@ float RenderServerEmbedded::getViewAspectRatio() const
 float RenderServerEmbedded::getAspectRatio() const
 {
 	return m_renderView->isFullScreen() ? getScreenAspectRatio() : getViewAspectRatio();
-}
-
-bool RenderServerEmbedded::getStereoscopic() const
-{
-	return m_renderViewDesc.stereoscopic;
 }
 
 int32_t RenderServerEmbedded::getMultiSample() const

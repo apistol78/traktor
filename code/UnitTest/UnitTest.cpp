@@ -66,8 +66,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case job" << Endl;
 	//traktor::CaseJob().execute(context);
 
-	//log::info << L"Case math" << Endl;
-	//traktor::CaseMath().execute(context);
+	log::info << L"Case math" << Endl;
+	traktor::CaseMath().execute(context);
 
 	//log::info << L"Case matrix 3x3" << Endl;
 	//traktor::CaseMatrix33().execute(context);
@@ -81,8 +81,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case small map" << Endl;
 	//traktor::CaseSmallMap().execute(context);
 
-	log::info << L"Case transform" << Endl;
-	traktor::CaseTransform().execute(context);
+	//log::info << L"Case transform" << Endl;
+	//traktor::CaseTransform().execute(context);
 
 	//log::info << L"Case value template" << Endl;
 	//traktor::CaseValueTemplate().execute(context);

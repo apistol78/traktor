@@ -209,7 +209,7 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 	std::vector< render::DebugTarget > debugTargets = m_context->getDebugTargets();
 	std::sort(debugTargets.begin(), debugTargets.end(), DebugTargetPredicate);
 
-	if (m_renderView->begin(render::EtCyclop))
+	if (m_renderView->begin())
 	{
 		const Color4f clearColor(0.7f, 0.7f, 0.7f, 0.0f);
 		m_renderView->clear(

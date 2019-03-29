@@ -10,9 +10,9 @@
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
 #include "Ui/Application.h"
+#include "Ui/Graph/DefaultNodeShape.h"
 #include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
-#include "Ui/Graph/ExternalNodeShape.h"
 #include "Ui/Graph/PaintSettings.h"
 
 namespace traktor
@@ -24,7 +24,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ExternalNodeFacade", ExternalNodeFacade,
 
 ExternalNodeFacade::ExternalNodeFacade(ui::GraphControl* graphControl)
 {
-	m_nodeShape = new ui::ExternalNodeShape(graphControl);
+	m_nodeShape = new ui::DefaultNodeShape(graphControl, ui::DefaultNodeShape::StExternal);
 }
 
 Ref< Node > ExternalNodeFacade::createShaderNode(

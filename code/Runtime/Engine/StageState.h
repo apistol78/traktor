@@ -39,7 +39,7 @@ public:
 
 	virtual BuildResult build(uint32_t frame, const UpdateInfo& info) override final;
 
-	virtual bool render(uint32_t frame, render::EyeType eye, const UpdateInfo& info) override final;
+	virtual bool render(uint32_t frame, const UpdateInfo& info) override final;
 
 	virtual void flush() override final;
 

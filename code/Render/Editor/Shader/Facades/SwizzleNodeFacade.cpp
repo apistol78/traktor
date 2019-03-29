@@ -15,7 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SwizzleNodeFacade", SwizzleNodeFacade, I
 
 SwizzleNodeFacade::SwizzleNodeFacade(ui::GraphControl* graphControl)
 {
-	m_nodeShape = new ui::InOutNodeShape(graphControl);
+	m_nodeShape = new ui::InOutNodeShape(graphControl, ui::InOutNodeShape::StDefault);
 }
 
 Ref< Node > SwizzleNodeFacade::createShaderNode(

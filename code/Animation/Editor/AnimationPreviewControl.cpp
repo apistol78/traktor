@@ -300,7 +300,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = float(m_timer.getElapsedTime());
 
-	if (!m_renderView || !m_renderView->begin(render::EtCyclop))
+	if (!m_renderView || !m_renderView->begin())
 		return;
 
 	float tmp[4];
@@ -359,18 +359,9 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_worldRenderer->endBuild(m_worldRenderView, 0);
 	}
 
-	m_worldRenderer->beginRender(
-		0,
-		render::EtCyclop,
-		clearColor
-	);
-
-	m_worldRenderer->render(
-		0,
-		render::EtCyclop
-	);
-
-	m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
+	m_worldRenderer->beginRender(0, clearColor);
+	m_worldRenderer->render(0);
+	m_worldRenderer->endRender(0, deltaTime);
 
 	if (m_primitiveRenderer->begin(0, projectionTransform))
 	{

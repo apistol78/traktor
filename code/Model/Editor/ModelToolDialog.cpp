@@ -808,7 +808,7 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 	T_ASSERT(m_renderView);
 	T_ASSERT(m_primitiveRenderer);
 
-	if (!m_renderView->begin(render::EtCyclop))
+	if (!m_renderView->begin())
 		return;
 
 	const Color4f clearColor(46/255.0f, 56/255.0f, 92/255.0f, 1.0f);

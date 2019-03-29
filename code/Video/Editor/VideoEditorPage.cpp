@@ -142,7 +142,7 @@ void VideoEditorPage::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView)
 		return;
 
-	if (m_renderView->begin(render::EtCyclop))
+	if (m_renderView->begin())
 	{
 		const Color4f clearColor(0.8f, 0.8f, 0.8f, 0.0);
 		m_renderView->clear(

@@ -513,7 +513,7 @@ void CubicRenderControl::capture(const Vector4& pivot)
 	);
 
 	// Render world.
-	if (m_renderView->begin(render::EtCyclop))
+	if (m_renderView->begin())
 	{
 		// Render all faces of cube map.
 		for (int32_t face = 0; face < 6; ++face)
@@ -571,18 +571,9 @@ void CubicRenderControl::capture(const Vector4& pivot)
 					}
 				}
 
-				m_worldRenderer->beginRender(
-					0,
-					render::EtCyclop,
-					clearColor
-				);
-
-				m_worldRenderer->render(
-					0,
-					render::EtCyclop
-				);
-
-				m_worldRenderer->endRender(0, render::EtCyclop, 1.0f / 60.0f);
+				m_worldRenderer->beginRender(0, clearColor);
+				m_worldRenderer->render(0);
+				m_worldRenderer->endRender(0, 1.0f / 60.0f);
 
 				m_renderView->end();
 			}
@@ -688,7 +679,7 @@ void CubicRenderControl::eventPaint(ui::PaintEvent* event)
 	//capture(Vector4::origo());
 
 	// Render world.
-	if (m_renderView->begin(render::EtCyclop))
+	if (m_renderView->begin())
 	{
 		// Render cube preview.
 		const Color4f clearColor(0.3f, 0.3f, 0.3f, 1.0f);

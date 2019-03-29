@@ -76,7 +76,7 @@ public:
 
 	void build(render::RenderContext* renderContext, uint32_t frame);
 
-	void render(render::IRenderView* renderView, uint32_t frame, render::EyeType eye, const Vector2& offset, float scale);
+	void render(render::IRenderView* renderView, uint32_t frame, const Vector2& offset, float scale);
 
 	void flush();
 

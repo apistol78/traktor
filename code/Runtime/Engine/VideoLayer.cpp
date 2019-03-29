@@ -136,7 +136,7 @@ void VideoLayer::build(const UpdateInfo& info, uint32_t frame)
 {
 }
 
-void VideoLayer::render(render::EyeType eye, uint32_t frame)
+void VideoLayer::render(uint32_t frame)
 {
 	if (!m_visible)
 		return;
@@ -146,7 +146,7 @@ void VideoLayer::render(render::EyeType eye, uint32_t frame)
 		m_screenRenderer = new render::ScreenRenderer();
 		if (!m_screenRenderer->create(m_environment->getRender()->getRenderSystem()))
 		{
-			m_screenRenderer = 0;
+			m_screenRenderer = nullptr;
 			return;
 		}
 	}

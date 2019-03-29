@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Matrix44.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -40,7 +38,7 @@ class T_DLLCLASS RenderControl : public ui::Widget
 	T_RTTI_CLASS;
 
 public:
-	RenderControl(uint32_t matrixCount);
+	RenderControl();
 
 	bool create(ui::Widget* parent, IRenderSystem* renderSystem, db::Database* database);
 
@@ -50,10 +48,10 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< IRenderView > m_renderView;
 	Ref< PrimitiveRenderer > m_primitiveRenderer;
-	ui::Point m_lastPoint;
-	AlignedVector< Vector4 > m_angles;
-	AlignedVector< Matrix44 > m_matrices;
-	uint32_t m_editMatrix;
+	float m_cameraHead;
+	float m_cameraPitch;
+	float m_cameraZ;
+	ui::Point m_lastMousePosition;
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
 

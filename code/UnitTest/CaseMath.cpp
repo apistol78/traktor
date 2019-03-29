@@ -1,6 +1,9 @@
+#pragma optimize( "", off )
+
 #include <cmath>
 #include "UnitTest/CaseMath.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Frustum.h"
 #include "Core/Math/Line2.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Plane.h"
@@ -181,6 +184,56 @@ void CaseMath::run()
 	Scalar pl3d = pl3.distance(pt);	// 1.0f
 
 	CASE_ASSERT_COMPARE(pl3.distance(pt), 3.0f, compareFuzzyEqual);
+
+	// Plane buildFromCorners
+
+	{
+		Frustum viewFrustum;
+		viewFrustum.buildPerspective(deg2rad(80.0f), 1.0f, 1.0f, 100.0f);
+		//viewFrustum.buildOrtho(10.0f, 10.0f, 1.0f, 100.0f);
+
+		const float dx = 1.0f; // / 16.0f;
+		const float dy = 1.0f; // / 16.0f;
+
+		Vector4 nh = viewFrustum.corners[1] - viewFrustum.corners[0];
+		Vector4 nv = viewFrustum.corners[3] - viewFrustum.corners[0];
+		Vector4 fh = viewFrustum.corners[5] - viewFrustum.corners[4];
+		Vector4 fv = viewFrustum.corners[7] - viewFrustum.corners[4];
+
+		for (int32_t y = 0; y < 1; ++y)
+		{
+			float fy = float(y) * dy;
+			for (int32_t x = 0; x < 1; ++x)
+			{
+				float fx = float(x) * dx;
+
+				Vector4 corners[] =
+				{
+					// Near
+					viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy),				// l t
+					viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy),		// r t
+					viewFrustum.corners[0] + nh * Scalar(fx + dx) + nv * Scalar(fy + dy),	// r b
+					viewFrustum.corners[0] + nh * Scalar(fx) + nv * Scalar(fy + dy),		// l b
+					// Far
+					viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy),				// l t
+					viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy),		// r t
+					viewFrustum.corners[4] + fh * Scalar(fx + dx) + fv * Scalar(fy + dy),	// r b
+					viewFrustum.corners[4] + fh * Scalar(fx) + fv * Scalar(fy + dy)			// l b
+				};
+
+				Frustum tileFrustum;
+				tileFrustum.buildFromCorners(corners);
+
+				CASE_ASSERT(dot3(viewFrustum.planes[0].normal(), tileFrustum.planes[0].normal()) > 0.0f);
+				CASE_ASSERT(dot3(viewFrustum.planes[1].normal(), tileFrustum.planes[1].normal()) > 0.0f);
+				CASE_ASSERT(dot3(viewFrustum.planes[2].normal(), tileFrustum.planes[2].normal()) > 0.0f);
+				CASE_ASSERT(dot3(viewFrustum.planes[3].normal(), tileFrustum.planes[3].normal()) > 0.0f);
+				CASE_ASSERT(dot3(viewFrustum.planes[4].normal(), tileFrustum.planes[4].normal()) > 0.0f);
+				CASE_ASSERT(dot3(viewFrustum.planes[5].normal(), tileFrustum.planes[5].normal()) > 0.0f);
+			}
+		}
+	}
+
 }
 
 }

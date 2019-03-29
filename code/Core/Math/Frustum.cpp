@@ -22,6 +22,17 @@ void Frustum::buildFromPlanes(const Plane planes_[6])
 	update();
 }
 
+void Frustum::buildFromCorners(const Vector4 corners_[8])
+{
+	planes[0] = Plane(corners_[0], corners_[3], corners_[4]);	// left
+	planes[1] = Plane(corners_[2], corners_[1], corners_[6]);	// right
+	planes[2] = Plane(corners_[2], corners_[6], corners_[3]);	// bottom 2 3 6
+	planes[3] = Plane(corners_[1], corners_[0], corners_[5]);	// top
+	planes[4] = Plane(corners_[3], corners_[0], corners_[2]);	// near
+	planes[5] = Plane(corners_[6], corners_[5], corners_[7]);	// far
+	update();
+}
+
 void Frustum::buildPerspective(float vfov, float aspect, float zn, float zf)
 {
 	vfov /= 2.0f;

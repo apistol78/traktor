@@ -16,7 +16,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SwitchNodeFacade", SwitchNodeFacade, INo
 
 SwitchNodeFacade::SwitchNodeFacade(ui::GraphControl* graphControl)
 {
-	m_nodeShape = new ui::DefaultNodeShape(graphControl);
+	m_nodeShape = new ui::DefaultNodeShape(graphControl, ui::DefaultNodeShape::StDefault);
 }
 
 Ref< Node > SwitchNodeFacade::createShaderNode(

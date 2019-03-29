@@ -28,7 +28,9 @@ class T_DLLCLASS ConfigDialog : public Dialog
 public:
 	enum StyleFlags
 	{
-		WsApplyButton = (WsUser << 1)
+		WsOkCancelButtons = 0,
+		WsYesNoButtons = (WsUser << 1),
+		WsApplyButton = (WsUser << 2)
 	};
 
 	bool create(Widget* parent, const std::wstring& text, int width, int height, int style, Layout* layout);

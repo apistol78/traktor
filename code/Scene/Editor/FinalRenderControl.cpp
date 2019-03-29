@@ -17,6 +17,7 @@
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/FinalRenderControl.h"
+#include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Scene/Editor/Events/FrameEvent.h"
@@ -109,26 +110,29 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	m_renderWidget->addEventHandler< ui::SizeEvent >(this, &FinalRenderControl::eventSize);
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &FinalRenderControl::eventPaint);
 
-	resource::Id< scene::Scene > sceneId(m_context->getDocument()->getInstance(0)->getGuid());
+	if (m_context->getDocument()->getInstance(0)->getPrimaryType() == &type_of< SceneAsset >())
+	{
+		resource::Id< scene::Scene > sceneId(m_context->getDocument()->getInstance(0)->getGuid());
 
-	RefArray< const world::IEntityFactory > entityFactories;
+		RefArray< const world::IEntityFactory > entityFactories;
 
-	for (auto editorProfile : m_context->getEditorProfiles())
-		editorProfile->createEntityFactories(m_context, entityFactories);
+		for (auto editorProfile : m_context->getEditorProfiles())
+			editorProfile->createEntityFactories(m_context, entityFactories);
 
-	Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder();
-	for (auto entityFactory : entityFactories)
-		entityBuilder->addFactory(entityFactory);
+		Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder();
+		for (auto entityFactory : entityFactories)
+			entityBuilder->addFactory(entityFactory);
 
-	m_context->getResourceManager()->addFactory(
-		new scene::SceneFactory(context->getRenderSystem(), entityBuilder)
-	);
+		m_context->getResourceManager()->addFactory(
+			new scene::SceneFactory(context->getRenderSystem(), entityBuilder)
+		);
 	
-	if (!m_context->getResourceManager()->bind(
-		sceneId,
-		m_sceneInstance
-	))
-		return false;
+		if (!m_context->getResourceManager()->bind(
+			sceneId,
+			m_sceneInstance
+		))
+			return false;
+	}
 
 	updateSettings();
 	updateWorldRenderer();
@@ -381,6 +385,7 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	float colorClear[4];
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = m_context->getTime();
+	float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
 
 	m_colorClear.getRGBA32F(colorClear);
 
@@ -405,6 +410,16 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 			return;
 	}
 
+	// Update scene entities; final render control has it's own set of entities thus
+	// need to manually update those.
+	world::UpdateParams update;
+	update.totalTime = scaledTime;
+	update.deltaTime = deltaTime;
+	update.alternateTime = scaledTime;
+
+	m_sceneInstance->updateController(update);
+	m_sceneInstance->updateEntity(update);
+
 	// Update world render view.
 	m_worldRenderView.setPerspective(
 		sz.cx,
@@ -420,7 +435,7 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	Matrix44 view = getViewTransform();
 
 	// Render world.
-	if (m_renderView->begin(render::EtCyclop))
+	if (m_renderView->begin())
 	{
 		// Render entities.
 		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
@@ -436,22 +451,13 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 		render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
 		if (postProcess)
 		{
-			for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = m_sceneInstance->getImageProcessParams().begin(); i != m_sceneInstance->getImageProcessParams().end(); ++i)
-				postProcess->setTextureParameter(i->first, i->second);
+			for (const auto& imageProcessParam : m_sceneInstance->getImageProcessParams())
+				postProcess->setTextureParameter(imageProcessParam.first, imageProcessParam.second);
 		}
 
-		m_worldRenderer->beginRender(
-			0,
-			render::EtCyclop,
-			Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3])
-		);
-
-		m_worldRenderer->render(
-			0,
-			render::EtCyclop
-		);
-
-		m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
+		m_worldRenderer->beginRender(0, Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]));
+		m_worldRenderer->render(0);
+		m_worldRenderer->endRender(0, deltaTime);
 
 		m_renderView->end();
 		m_renderView->present();

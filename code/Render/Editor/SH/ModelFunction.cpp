@@ -36,18 +36,9 @@ void ModelFunction::setEvaluationPoint(const Vector4& position, const Vector4& n
 	m_normal = normal;
 }
 
-float ModelFunction::evaluate(float phi, float theta, const Vector4& unit) const
+Vector4 ModelFunction::evaluate(float phi, float theta, const Vector4& unit) const
 {
-	Scalar diffuse = dot3(m_normal, unit);
-	if (diffuse <= 0.0f)
-		return 0.0f;
-
-	T_ASSERT(diffuse >= 0.0 && diffuse <= 1.0);
-
-	// if (m_sahTree->queryAnyIntersection(m_position + unit * 0.01f, unit, std::numeric_limits< float >::max()))
-	// 	return 0.0f;
-
-	return diffuse;
+	return Vector4::zero();
 }
 
 	}

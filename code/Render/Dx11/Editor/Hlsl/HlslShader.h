@@ -59,8 +59,6 @@ public:
 
 	HlslVariable* createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, HlslType type);
 
-	void associateVariable(const OutputPin* outputPin, HlslVariable* variable);
-
 	HlslVariable* getVariable(const OutputPin* outputPin) const;
 
 	void pushScope();
@@ -98,11 +96,17 @@ public:
 	std::wstring getGeneratedShader();
 
 private:
-	typedef std::map< const OutputPin*, Ref< HlslVariable > > scope_t;
+	struct OutputPinVariable
+	{
+		const OutputPin* outputPin;
+		Ref< HlslVariable > variable;
+	};
 
 	ShaderType m_shaderType;
 	std::set< std::wstring > m_inputs;
-	std::list< scope_t > m_variables;
+	AlignedVector< OutputPinVariable > m_variables;
+	AlignedVector< uint32_t > m_variableScopes;
+	AlignedVector< OutputPinVariable > m_outerVariables;
 	int32_t m_interpolatorCount;
 	int32_t m_booleanRegisterCount;
 	std::set< std::wstring > m_scripts;

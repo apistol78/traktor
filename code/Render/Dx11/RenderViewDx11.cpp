@@ -504,7 +504,7 @@ SystemWindow RenderViewDx11::getSystemWindow()
 	return sw;
 }
 
-bool RenderViewDx11::begin(EyeType eye)
+bool RenderViewDx11::begin()
 {
 	T_ASSERT(m_renderStateStack.empty());
 
@@ -529,7 +529,6 @@ bool RenderViewDx11::begin(EyeType eye)
 	m_drawCalls = 0;
 	m_primitiveCount = 0;
 	m_targetsDirty = true;
-
 	return true;
 }
 

@@ -411,13 +411,10 @@ DisplayMode RenderSystemDx11::getCurrentDisplayMode() const
 	EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm);
 
 	DisplayMode cdm;
-
 	cdm.width = dm.dmPelsWidth;
 	cdm.height = dm.dmPelsHeight;
 	cdm.refreshRate = uint16_t(dm.dmDisplayFrequency);
 	cdm.colorBits = uint16_t(dm.dmBitsPerPel);
-	cdm.stereoscopic = false;
-
 	return cdm;
 }
 
@@ -429,11 +426,10 @@ float RenderSystemDx11::getDisplayAspectRatio() const
 Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewDefaultDesc& desc)
 {
 	Ref< RenderViewDx11 > renderView = new RenderViewDx11(m_context, m_window);
-
-	if (!renderView->reset(desc))
-		return 0;
-
-	return renderView;
+	if (renderView->reset(desc))
+		return renderView;
+	else
+		return nullptr;
 }
 
 Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDesc& desc)

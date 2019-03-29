@@ -30,13 +30,12 @@ class T_DLLCLASS IBLProbe : public SHFunction
 	T_RTTI_CLASS;
 
 public:
-	IBLProbe(drawing::Image* image, const Vector4& modulate);
+	IBLProbe(drawing::Image* image);
 
-	virtual float evaluate(float phi, float theta, const Vector4& unit) const override final;
+	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final;
 
 private:
 	Ref< drawing::Image > m_image;
-	Vector4 m_modulate;
 };
 
 	}

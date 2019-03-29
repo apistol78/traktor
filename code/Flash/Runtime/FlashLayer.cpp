@@ -484,7 +484,7 @@ void FlashLayer::build(const runtime::UpdateInfo& info, uint32_t frame)
 	m_moviePlayer->render(m_movieRenderer);
 }
 
-void FlashLayer::render(render::EyeType eye, uint32_t frame)
+void FlashLayer::render(uint32_t frame)
 {
 	T_PROFILER_SCOPE(L"FlashLayer render");
 	if (!m_displayRenderer || !m_visible)
@@ -503,7 +503,6 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 			m_displayRenderer->render(
 				renderView,
 				frame,
-				eye,
 				m_offset,
 				m_scale
 			);
@@ -527,7 +526,6 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 		m_displayRenderer->render(
 			renderView,
 			frame,
-			eye,
 			m_offset,
 			m_scale
 		);

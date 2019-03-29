@@ -1,11 +1,17 @@
+#include <functional>
+#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
+#include "Core/Math/Float.h"
+#include "Core/Math/Format.h"
 #include "Core/Math/Log2.h"
 #include "Core/Math/Triangulator.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 #include "Database/Database.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -13,6 +19,7 @@
 #include "Drawing/Filters/DilateFilter.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
+#include "Illuminate/Editor/GBuffer.h"
 #include "Illuminate/Editor/IlluminateConfiguration.h"
 #include "Illuminate/Editor/IlluminatePipelineOperator.h"
 #include "Illuminate/Editor/RayTracer.h"
@@ -25,6 +32,8 @@
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/Editor/Texture/TextureOutput.h"
+#include "Render/SH/SHEngine.h"
+#include "Render/SH/SHFunction.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/ComponentEntityData.h"
@@ -38,41 +47,62 @@ namespace traktor
 		namespace
 		{
 
-Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
+class WrappedSHFunction : public render::SHFunction
 {
-	Ref< Reflection > reflection = Reflection::create(object);
-
-	RefArray< ReflectionMember > objectMembers;
-	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-
-	while (!objectMembers.empty())
+public:
+	WrappedSHFunction(const RayTracer& tracer, RayTracer::Context* tracerContext, const Vector4& origin)
+	:	m_tracer(tracer)
+	,	m_tracerContext(tracerContext)
+	,	m_origin(origin)
 	{
-		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
-		objectMembers.pop_front();
-
-		if (const world::ExternalEntityData* externalEntityDataRef = dynamic_type_cast< const world::ExternalEntityData* >(objectMember->get()))
-		{
-			Ref< const ISerializable > externalEntityData = pipeline->getObjectReadOnly(externalEntityDataRef->getEntityData());
-			if (!externalEntityData)
-				return nullptr;
-
-			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(pipeline, externalEntityData));
-			if (!resolvedEntityData)
-				return nullptr;
-
-			resolvedEntityData->setName(externalEntityDataRef->getName());
-			resolvedEntityData->setTransform(externalEntityDataRef->getTransform());
-
-			objectMember->set(resolvedEntityData);
-		}
-		else if (objectMember->get())
-		{
-			objectMember->set(resolveAllExternal(pipeline, objectMember->get()));
-		}
 	}
 
-	return reflection->clone();
-}
+	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final
+	{
+		return m_tracer.traceIndirect(m_tracerContext, m_origin, unit);
+	}
+
+private:
+	const RayTracer& m_tracer;
+	Ref< RayTracer::Context > m_tracerContext;
+	Vector4 m_origin;
+};
+
+//Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
+//{
+//	Ref< Reflection > reflection = Reflection::create(object);
+//
+//	RefArray< ReflectionMember > objectMembers;
+//	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+//
+//	while (!objectMembers.empty())
+//	{
+//		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
+//		objectMembers.pop_front();
+//
+//		if (const world::ExternalEntityData* externalEntityDataRef = dynamic_type_cast< const world::ExternalEntityData* >(objectMember->get()))
+//		{
+//			Ref< const ISerializable > externalEntityData = pipeline->getObjectReadOnly(externalEntityDataRef->getEntityData());
+//			if (!externalEntityData)
+//				return nullptr;
+//
+//			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(pipeline, externalEntityData));
+//			if (!resolvedEntityData)
+//				return nullptr;
+//
+//			resolvedEntityData->setName(externalEntityDataRef->getName());
+//			resolvedEntityData->setTransform(externalEntityDataRef->getTransform());
+//
+//			objectMember->set(resolvedEntityData);
+//		}
+//		else if (objectMember->get())
+//		{
+//			objectMember->set(resolveAllExternal(pipeline, objectMember->get()));
+//		}
+//	}
+//
+//	return reflection->clone();
+//}
 
 void collectTraceEntities(
 	const ISerializable* object,
@@ -145,6 +175,9 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 	// Prepare tracer; add lights and models.
 	RayTracer tracer(configuration);
 
+	Ref< RayTracer::Context > tracerContext = tracer.createContext();
+	T_ASSERT(tracerContext);
+
 	for (const auto lightEntityData : lightEntityDatas)
 	{
 		world::LightComponentData* lightComponentData = lightEntityData->getComponent< world::LightComponentData >();
@@ -179,7 +212,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			light.radius = Scalar(lightComponentData->getRadius());
 			tracer.addLight(light);
 		}
-		else
+		else if (lightComponentData->getLightType() != world::LtProbe)
 			log::warning << L"IlluminateEntityPipeline warning; unsupported light type of light \"" << lightEntityData->getName() << L"\"." << Endl;
 	}
 
@@ -211,6 +244,46 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 	// Finished adding lights and model; need to prepare acceleration structure.
 	tracer.prepare();
 
+	// Raytrace IBL probes.
+	render::SHEngine shEngine(3);
+	shEngine.generateSamplePoints(20000);
+
+	RefArray< Job > jobs;
+	for (uint32_t i = 0; i < lightEntityDatas.size(); ++i)
+	{
+		auto lightEntityData = lightEntityDatas[i];
+		T_FATAL_ASSERT(lightEntityData != nullptr);
+
+		auto lightComponentData = lightEntityData->getComponent< world::LightComponentData >();
+		T_FATAL_ASSERT(lightComponentData != nullptr);
+
+		if (lightComponentData->getLightType() != world::LtProbe)
+			continue;
+
+		log::info << L"Tracing SH probe \"" << lightEntityData->getName() << L"\" (" << i << L"/" << lightEntityDatas.size() << L")..." << Endl;
+
+		auto position = lightEntityData->getTransform().translation().xyz1();
+
+		auto job = JobManager::getInstance().add(makeFunctor([&, lightComponentData]() {
+			Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
+
+			Ref< RayTracer::Context > context = tracer.createContext();
+			WrappedSHFunction shFunction(tracer, context, position);
+			shEngine.generateCoefficients(&shFunction, *shCoeffs);
+
+			lightComponentData->setSHCoeffs(shCoeffs);
+		}));
+		if (!job)
+			return false;
+
+		jobs.push_back(job);
+	}
+	while (!jobs.empty())
+	{
+		jobs.back()->wait();
+		jobs.pop_back();
+	}
+
 	// Raytrace lightmap for each mesh.
 	for (uint32_t i = 0; i < meshEntityDatas.size(); ++i)
 	{
@@ -222,6 +295,8 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		);
 		if (!meshAsset)
 			continue;
+
+		log::info << L"Tracing lightmap \"" << meshEntityData->getName() << L"\" (" << i << L"/" << meshEntityDatas.size() << L")..." << Endl;
 
 		Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
 			return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
@@ -258,200 +333,39 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			return false;
 		}
 
+		// Create G-Buffer of mesh's geometry.
+		GBuffer gbuffer;
+		gbuffer.create(outputSize, outputSize, *model, meshEntityData->getTransform(), channel);
+		gbuffer.saveAsImages(meshEntityData->getName() + L"_GBuffer");
+
+		// Trace lightmap.
 		Ref< drawing::Image > lightmap = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
 		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-		for (const auto& polygon : model->getPolygons())
+		for (int32_t y = 0; y < outputSize; ++y)
 		{
-			AlignedVector< Vector4 > positions;
-			AlignedVector< Vector4 > normals;
-			Winding2 texCoords;
-
-			// Extract data for polygon.
-			for (const auto index : polygon.getVertices())
+			for (int32_t x = 0; x < outputSize; ++x)
 			{
-				const auto& vertex = model->getVertex(index);
+				const auto& elm = gbuffer.get(x, y);
+				if (elm.polygon == model::c_InvalidIndex)
+					continue;
 
-				uint32_t positionIndex = vertex.getPosition();
-				positions.push_back(meshEntityData->getTransform() * model->getPosition(positionIndex).xyz1());
+				const Vector4& position = elm.position;
+				const Vector4& normal = elm.normal;
 
-				uint32_t normalIndex = vertex.getNormal();
-				normals.push_back(meshEntityData->getTransform() * model->getNormal(normalIndex).xyz0());
+				Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
+				Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
+				Scalar occlusion(0.0f);
 
-				uint32_t texCoordIndex = vertex.getTexCoord(channel);
-				texCoords.points.push_back(model->getTexCoord(texCoordIndex) * Vector2(outputSize, outputSize));
-			}
+				// if (configuration->traceDirect())
+				// 	direct = tracer.traceDirect(position, normal);
 
-			float roughness = clamp(model->getMaterial(polygon.getMaterial()).getRoughness(), 0.0f, 1.0f);
+				if (configuration->traceIndirect())
+					indirect = tracer.traceIndirect(tracerContext, position, normal);
 
-			// Triangulate winding so we can easily traverse lightmap fragments.
-			AlignedVector< Triangulator::Triangle > triangles;
-			Triangulator().freeze(texCoords.points, triangles);
-
-			// Trace edges first, store count in alpha so we can average.
-			for (const auto& triangle : triangles)
-			{
-				size_t i0 = triangle.indices[0];
-				size_t i1 = triangle.indices[1];
-				size_t i2 = triangle.indices[2];
-
-				const Vector4& p0 = positions[i0];
-				const Vector4& p1 = positions[i1];
-				const Vector4& p2 = positions[i2];
-
-				const Vector4& n0 = normals[i0];
-				const Vector4& n1 = normals[i1];
-				const Vector4& n2 = normals[i2];
-
-				const Vector2& tc0 = texCoords.points[i0];
-				const Vector2& tc1 = texCoords.points[i1];
-				const Vector2& tc2 = texCoords.points[i2];
-
-				Aabb2 aabb;
-				aabb.contain(tc0);
-				aabb.contain(tc1);
-				aabb.contain(tc2);
-
-				int32_t x0 = int32_t(aabb.mn.x);
-				int32_t x1 = int32_t(aabb.mx.x + 1);
-				int32_t y0 = int32_t(aabb.mn.y);
-				int32_t y1 = int32_t(aabb.mx.y + 1);
-
-				float denom = (tc1.y - tc2.y) * (tc0.x - tc2.x) + (tc2.x - tc1.x) * (tc0.y - tc2.y);
-				float invDenom = 1.0f / denom;
-
-				Winding2 wt;
-				wt.points.resize(3);
-				wt.points[0] = tc0;
-				wt.points[1] = tc1;
-				wt.points[2] = tc2;
-
-				for (int32_t y = y0; y <= y1; ++y)
-				{
-					for (int32_t x = x0; x <= x1; ++x)
-					{
-						const Vector2 pt(x + 0.5f, y + 0.5f);
-
-						bool inside1 = 
-							wt.inside(Vector2(x, y)) ||
-							wt.inside(Vector2(x + 1, y)) ||
-							wt.inside(Vector2(x, y + 1)) ||
-							wt.inside(Vector2(x + 1, y + 1));
-
-						float alpha = ((tc1.y - tc2.y) * (pt.x - tc2.x) + (tc2.x - tc1.x) * (pt.y - tc2.y)) * invDenom;
-						float beta = ((tc2.y - tc0.y) * (pt.x - tc2.x) + (tc0.x - tc2.x) * (pt.y - tc2.y)) * invDenom;
-						float gamma = 1.0f - alpha - beta;
-
-						bool inside2 = (alpha >= 0.0f && beta >= 0.0f && gamma >= 0.0f);
-
-						if (inside1 && !inside2)
-						{
-							Vector4 position = (p0 * Scalar(alpha) + p1 * Scalar(beta) + p2 * Scalar(gamma)).xyz1();
-							Vector4 normal = (n0 * Scalar(alpha) + n1 * Scalar(beta) + n2 * Scalar(gamma)).xyz0().normalized();
-
-							Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
-							Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
-							Scalar occlusion(0.0f);
-
-							if (configuration->traceDirect())
-								direct = tracer.traceDirect(position, normal, roughness);
-
-							if (configuration->traceIndirect())
-								indirect = tracer.traceIndirect(position, normal, roughness);
-
-							if (configuration->traceOcclusion())
-								occlusion = tracer.traceOcclusion(position, normal);
-
-							Color4f source = ((direct + indirect) * (Scalar(1.0f) - occlusion)).rgb1();
-							Color4f dest; lightmap->getPixel(x, y, dest);
-
-							lightmap->setPixel(x, y, source + dest);
-						}
-					}
-				}
-			}
-
-			// Calculate averages.
-			for (uint32_t y = 0; y < outputSize; ++y)
-			{
-				for (uint32_t x = 0; x < outputSize; ++x)
-				{
-					Color4f source;
-					lightmap->getPixel(x, y, source);
-					if (source.getAlpha() > 0.0f)
-					{
-						source = (source / source.getAlpha()).rgb1();
-						lightmap->setPixel(x, y, source);
-					}
-				}
-			}
-			
-			// Trace triangle interiors.
-			for (const auto& triangle : triangles)
-			{
-				size_t i0 = triangle.indices[0];
-				size_t i1 = triangle.indices[1];
-				size_t i2 = triangle.indices[2];
-
-				const Vector4& p0 = positions[i0];
-				const Vector4& p1 = positions[i1];
-				const Vector4& p2 = positions[i2];
-
-				const Vector4& n0 = normals[i0];
-				const Vector4& n1 = normals[i1];
-				const Vector4& n2 = normals[i2];
-
-				const Vector2& tc0 = texCoords.points[i0];
-				const Vector2& tc1 = texCoords.points[i1];
-				const Vector2& tc2 = texCoords.points[i2];
-
-				Aabb2 aabb;
-				aabb.contain(tc0);
-				aabb.contain(tc1);
-				aabb.contain(tc2);
-
-				int32_t x0 = int32_t(aabb.mn.x);
-				int32_t x1 = int32_t(aabb.mx.x + 1);
-				int32_t y0 = int32_t(aabb.mn.y);
-				int32_t y1 = int32_t(aabb.mx.y + 1);
-
-				float denom = (tc1.y - tc2.y) * (tc0.x - tc2.x) + (tc2.x - tc1.x) * (tc0.y - tc2.y);
-				float invDenom = 1.0f / denom;
-
-				for (int32_t y = y0; y <= y1; ++y)
-				{
-					for (int32_t x = x0; x <= x1; ++x)
-					{
-						const Vector2 pt(x + 0.5f, y + 0.5f);
-
-						float alpha = ((tc1.y - tc2.y) * (pt.x - tc2.x) + (tc2.x - tc1.x) * (pt.y - tc2.y)) * invDenom;
-						float beta = ((tc2.y - tc0.y) * (pt.x - tc2.x) + (tc0.x - tc2.x) * (pt.y - tc2.y)) * invDenom;
-						float gamma = 1.0f - alpha - beta;
-
-						bool inside = (alpha >= 0.0f && beta >= 0.0f && gamma >= 0.0f);
-						if (inside)
-						{
-							Vector4 position = (p0 * Scalar(alpha) + p1 * Scalar(beta) + p2 * Scalar(gamma)).xyz1();
-							Vector4 normal = (n0 * Scalar(alpha) + n1 * Scalar(beta) + n2 * Scalar(gamma)).xyz0().normalized();
-
-							Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
-							Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
-							Scalar occlusion(0.0f);
-
-							if (configuration->traceDirect())
-								direct = tracer.traceDirect(position, normal, roughness);
-
-							if (configuration->traceIndirect())
-								indirect = tracer.traceIndirect(position, normal, roughness);
-
-							if (configuration->traceOcclusion())
-								occlusion = tracer.traceOcclusion(position, normal);
-
-							Color4f source = ((direct + indirect) * (Scalar(1.0f) - occlusion)).rgb1();
-							lightmap->setPixel(x, y, source);
-						}
-					}
-				}
+				// Color4f source = ((direct + indirect) * (Scalar(1.0f) - occlusion)).rgb1();
+				Color4f source = indirect.rgb1();
+				lightmap->setPixel(x, y, source);				
 			}
 		}
 
@@ -460,7 +374,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		lightmap->apply(&dilateFilter);
 
 		// Blur indirect lightmap to reduce noise from path tracing.
-		lightmap->apply(drawing::ConvolutionFilter::createGaussianBlur(1));
+		//lightmap->apply(drawing::ConvolutionFilter::createGaussianBlur(1));
 
 		// Discard alpha.
 		lightmap->clearAlpha(1.0f);

@@ -50,11 +50,6 @@ bool WorldEntityPipeline::buildDependencies(
 		for (auto entityData : groupEntityData->getEntityData())
 			pipelineDepends->addDependency(entityData);
 	}
-	else if (const LightComponentData* lightComponentData = dynamic_type_cast<const LightComponentData*>(sourceAsset))
-	{
-		pipelineDepends->addDependency(lightComponentData->getProbeDiffuseTexture(), editor::PdfBuild | editor::PdfResource);
-		pipelineDepends->addDependency(lightComponentData->getProbeSpecularTexture(), editor::PdfBuild | editor::PdfResource);
-	}
 	else if (const ProbeComponentData* probeComponentData = dynamic_type_cast<const ProbeComponentData*>(sourceAsset))
 	{
 		pipelineDepends->addDependency(probeComponentData->getProbeDiffuseTexture(), editor::PdfBuild | editor::PdfResource);

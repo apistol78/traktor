@@ -414,7 +414,7 @@ SystemWindow RenderViewOpenGL::getSystemWindow()
 	return sw;
 }
 
-bool RenderViewOpenGL::begin(EyeType eye)
+bool RenderViewOpenGL::begin()
 {
 	T_ASSERT(!m_targetsDirty);
 

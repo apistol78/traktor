@@ -18,7 +18,7 @@ HlslShader::HlslShader(ShaderType shaderType)
 ,	m_needTargetSize(false)
 ,	m_needInstanceID(false)
 {
-	pushScope();
+	m_variableScopes.push_back(0);
 	for (int32_t i = 0; i < BtLast; ++i)
 		pushOutputStream((BlockType)i, new StringOutputStream());
 }
@@ -27,7 +27,6 @@ HlslShader::~HlslShader()
 {
 	for (int32_t i = 0; i < BtLast; ++i)
 		popOutputStream((BlockType)i);
-	popScope();
 }
 
 bool HlslShader::haveInput(const std::wstring& inputName) const
@@ -49,52 +48,50 @@ HlslVariable* HlslShader::createTemporaryVariable(const OutputPin* outputPin, Hl
 
 HlslVariable* HlslShader::createVariable(const OutputPin* outputPin, const std::wstring& variableName, HlslType type)
 {
-	T_ASSERT(!m_variables.empty());
+	for (uint32_t i = m_variableScopes.back(); i < m_variables.size(); ++i)
+	{
+		const auto& v = m_variables[i];
+		T_FATAL_ASSERT (v.outputPin != outputPin);
+	}
 
-	HlslVariable* variable = new HlslVariable(outputPin->getNode(), variableName, type);
-	m_variables.back().insert(std::make_pair(outputPin, variable));
-
-	return variable;
+	auto& v = m_variables.push_back();
+	v.outputPin = outputPin;
+	v.variable = new HlslVariable(outputPin->getNode(), variableName, type);
+	return v.variable;
 }
 
 HlslVariable* HlslShader::createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, HlslType type)
 {
-	T_ASSERT(!m_variables.empty());
-
-	HlslVariable* variable = new HlslVariable(outputPin->getNode(), variableName, type);
-	m_variables.front().insert(std::make_pair(outputPin, variable));
-
-	return variable;
-}
-
-void HlslShader::associateVariable(const OutputPin* outputPin, HlslVariable* variable)
-{
-	m_variables.back().insert(std::make_pair(outputPin, variable));
+	auto& v = m_outerVariables.push_back();
+	v.outputPin = outputPin;
+	v.variable = new HlslVariable(outputPin->getNode(), variableName, type);
+	return v.variable;
 }
 
 HlslVariable* HlslShader::getVariable(const OutputPin* outputPin) const
 {
-	T_ASSERT(!m_variables.empty());
-
-	for (std::list< scope_t >::const_reverse_iterator i = m_variables.rbegin(); i != m_variables.rend(); ++i)
+	for (auto it = m_variables.rbegin(); it != m_variables.rend(); ++it)
 	{
-		scope_t::const_iterator j = i->find(outputPin);
-		if (j != i->end())
-			return j->second;
+		if (it->outputPin == outputPin)
+			return it->variable;
 	}
-
-	return 0;
+	for (auto it = m_outerVariables.begin(); it != m_outerVariables.end(); ++it)
+	{
+		if (it->outputPin == outputPin)
+			return it->variable;
+	}
+	return nullptr;
 }
 
 void HlslShader::pushScope()
 {
-	m_variables.push_back(scope_t());
+	m_variableScopes.push_back(m_variables.size());
 }
 
 void HlslShader::popScope()
 {
-	T_ASSERT(!m_variables.empty());
-	m_variables.pop_back();
+	m_variables.resize(m_variableScopes.back());
+	m_variableScopes.pop_back();
 }
 
 int32_t HlslShader::allocateInterpolator()
@@ -129,7 +126,7 @@ void HlslShader::allocateTargetSize()
 
 bool HlslShader::defineScript(const std::wstring& signature)
 {
-	std::set< std::wstring >::iterator i = m_scripts.find(signature);
+	auto i = m_scripts.find(signature);
 	if (i != m_scripts.end())
 		return false;
 

@@ -11,22 +11,25 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.StyleBitmap", StyleBitmap, IBitmap)
 
-StyleBitmap::StyleBitmap(const wchar_t* const name)
+StyleBitmap::StyleBitmap(const wchar_t* const name, int32_t dpi)
 :	m_name(name)
+,	m_dpi(dpi)
 {
 }
 
-StyleBitmap::StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap)
+StyleBitmap::StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap, int32_t dpi)
 :	m_name(name)
+,	m_dpi(dpi)
 ,	m_defaultBitmap(defaultBitmap)
 ,	m_ownDefaultBitmap(false)
 {
 	T_FATAL_ASSERT_M(m_defaultBitmap, L"Default bitmap is null.");
 }
 
-StyleBitmap::StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize)
+StyleBitmap::StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize, int32_t dpi)
 :	m_name(name)
-,	m_defaultBitmap(Bitmap::load(defaultBitmapResource, defaultBitmapResourceSize, L"image"))
+,	m_dpi(dpi)
+,	m_defaultBitmap(Bitmap::load(defaultBitmapResource, defaultBitmapResourceSize, L"image", dpi))
 ,	m_ownDefaultBitmap(true)
 {
 	T_FATAL_ASSERT_M(m_defaultBitmap, L"Unable to load default bitmap resource.");
@@ -77,7 +80,7 @@ bool StyleBitmap::resolve() const
 
 	safeDestroy(m_bitmap);
 
-	if ((m_bitmap = Bitmap::load(bmp)) == nullptr)
+	if ((m_bitmap = Bitmap::load(bmp, m_dpi)) == nullptr)
 		m_bitmap = m_defaultBitmap;
 
 	m_path = bmp;

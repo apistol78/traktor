@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Matrix44.h"
 #include "Ui/Event.h"
 
 // import/export mechanism.
@@ -28,24 +26,16 @@ public:
 	RenderControlEvent(
 		ui::EventSubject* sender,
 		IRenderView* renderView,
-		PrimitiveRenderer* primitiveRenderer,
-		const AlignedVector< Vector4 >& angles,
-		const AlignedVector< Matrix44 >& matrices
+		PrimitiveRenderer* primitiveRenderer
 	);
 
 	IRenderView* getRenderView() { return m_renderView; }
 
 	PrimitiveRenderer* getPrimitiveRenderer() { return m_primitiveRenderer; }
 
-	const AlignedVector< Vector4 >& getAngles() const { return m_angles; }
-
-	const AlignedVector< Matrix44 >& getMatrices() const { return m_matrices; }
-
 private:
 	Ref< IRenderView > m_renderView;
 	Ref< PrimitiveRenderer > m_primitiveRenderer;
-	const AlignedVector< Vector4 >& m_angles;
-	const AlignedVector< Matrix44 >& m_matrices;
 };
 
 	}

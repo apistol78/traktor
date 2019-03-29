@@ -269,7 +269,7 @@ SystemWindow RenderViewOpenGLES2::getSystemWindow()
 #endif
 }
 
-bool RenderViewOpenGLES2::begin(EyeType eye)
+bool RenderViewOpenGLES2::begin()
 {
 	if (!m_context->enter())
 		return false;

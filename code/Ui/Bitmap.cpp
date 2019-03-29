@@ -163,7 +163,7 @@ ISystemBitmap* Bitmap::getSystemBitmap() const
 	return m_bitmap;
 }
 
-Ref< Bitmap > Bitmap::load(const std::wstring& fileName)
+Ref< Bitmap > Bitmap::load(const std::wstring& fileName, int32_t dpi)
 {
 	Ref< Bitmap > bitmap;
 	if (Path(fileName).getExtension() == L"image")
@@ -180,7 +180,7 @@ Ref< Bitmap > Bitmap::load(const std::wstring& fileName)
 		const void* resource = &dms.getBuffer()[0];
 		uint32_t size = dms.getBuffer().size();
 
-		int32_t systemDPI = getSystemDPI();
+		int32_t systemDPI = dpi <= 0 ? getSystemDPI() : dpi;
 		int32_t bestFit = std::numeric_limits< int32_t >::max();
 		int32_t bestFitIndex = 0;
 
@@ -219,12 +219,12 @@ Ref< Bitmap > Bitmap::load(const std::wstring& fileName)
 	return bitmap;
 }
 
-Ref< Bitmap > Bitmap::load(const void* resource, uint32_t size, const std::wstring& extension)
+Ref< Bitmap > Bitmap::load(const void* resource, uint32_t size, const std::wstring& extension, int32_t dpi)
 {
 	Ref< Bitmap > bitmap = new Bitmap();
 	if (extension == L"image")
 	{
-		int32_t systemDPI = getSystemDPI();
+		int32_t systemDPI = dpi <= 0 ? getSystemDPI() : dpi;
 		int32_t bestFit = std::numeric_limits< int32_t >::max();
 		int32_t bestFitIndex = 0;
 

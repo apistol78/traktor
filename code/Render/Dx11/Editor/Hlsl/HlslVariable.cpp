@@ -36,5 +36,13 @@ std::wstring HlslVariable::cast(HlslType to) const
 	return f ? replaceAll< std::wstring >(f, L"%", m_name) : m_name;
 }
 
+HlslVariable& HlslVariable::operator = (const HlslVariable& other)
+{
+	m_node = other.m_node;
+	m_name = other.m_name;
+	m_type = other.m_type;
+	return *this;
+}
+
 	}
 }

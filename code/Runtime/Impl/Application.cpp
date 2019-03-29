@@ -837,62 +837,22 @@ bool Application::update()
 				render::IRenderView* renderView = m_renderServer->getRenderView();
 				if (renderView)
 				{
-					if (!m_renderServer->getStereoscopic())
+					if (renderView->begin())
 					{
-						if (renderView->begin(render::EtCyclop))
+						if (currentState)
+							currentState->render(m_frameBuild, m_updateInfo);
+						else
 						{
-							if (currentState)
-								currentState->render(m_frameBuild, render::EtCyclop, m_updateInfo);
-							else
-							{
-								renderView->clear(
-									render::CfColor | render::CfDepth | render::CfStencil,
-									&m_backgroundColor,
-									1.0f,
-									0
-								);
-							}
-
-							renderView->end();
-							renderView->present();
+							renderView->clear(
+								render::CfColor | render::CfDepth | render::CfStencil,
+								&m_backgroundColor,
+								1.0f,
+								0
+							);
 						}
-					}
-					else
-					{
-						if (renderView->begin(render::EtLeft))
-						{
-							if (currentState)
-								currentState->render(m_frameBuild, render::EtLeft, m_updateInfo);
-							else
-							{
-								renderView->clear(
-									render::CfColor | render::CfDepth | render::CfStencil,
-									&m_backgroundColor,
-									1.0f,
-									0
-								);
-							}
 
-							renderView->end();
-						}
-						if (renderView->begin(render::EtRight))
-						{
-							if (currentState)
-								currentState->render(m_frameBuild, render::EtRight, m_updateInfo);
-							else
-							{
-								renderView->clear(
-									render::CfColor | render::CfDepth | render::CfStencil,
-									&m_backgroundColor,
-									1.0f,
-									0
-								);
-							}
-
-							renderView->end();
-						}
+						renderView->end();
 						renderView->present();
-						renderView->getStatistics(m_renderViewStats);
 					}
 				}
 
@@ -1094,117 +1054,30 @@ void Application::threadRender()
 				double renderBegin = m_timer.getElapsedTime();
 
 				render::IRenderView* renderView = m_renderServer->getRenderView();
-				render::IVRCompositor* vrCompositor = m_renderServer->getVRCompositor();
-
 				if (renderView && !renderView->isMinimized())
 				{
-					if (!m_renderServer->getStereoscopic() && !vrCompositor)
+					T_PROFILER_BEGIN(L"Application render");
+					if (renderView->begin())
 					{
-						T_PROFILER_BEGIN(L"Application render");
-						if (renderView->begin(render::EtCyclop))
+						if (m_stateRender)
+							m_stateRender->render(m_frameRender, m_updateInfoRender);
+						else
 						{
-							if (m_stateRender)
-								m_stateRender->render(m_frameRender, render::EtCyclop, m_updateInfoRender);
-							else
-							{
-								renderView->clear(
-									render::CfColor | render::CfDepth | render::CfStencil,
-									&m_backgroundColor,
-									1.0f,
-									0
-								);
-							}
-
-							renderView->end();
+							renderView->clear(
+								render::CfColor | render::CfDepth | render::CfStencil,
+								&m_backgroundColor,
+								1.0f,
+								0
+							);
 						}
-						T_PROFILER_END();
 
-						T_PROFILER_BEGIN(L"Application render present");
-						renderView->present();
-						T_PROFILER_END();
+						renderView->end();
 					}
-					else if (vrCompositor)
-					{
-						T_PROFILER_BEGIN(L"Application render left");
-						if (vrCompositor->beginRenderEye(renderView, render::EtLeft))
-						{
-							if (m_stateRender)
-								m_stateRender->render(m_frameRender, render::EtLeft, m_updateInfoRender);
-							else
-								renderView->clear(
-									render::CfColor | render::CfDepth | render::CfStencil,
-									&m_backgroundColor,
-									1.0f,
-									0
-								);
-							vrCompositor->endRenderEye(renderView, render::EtLeft);
-						}
-						T_PROFILER_END();
+					T_PROFILER_END();
 
-						T_PROFILER_BEGIN(L"Application render right");
-						if (vrCompositor->beginRenderEye(renderView, render::EtRight))
-						{
-							if (m_stateRender)
-								m_stateRender->render(m_frameRender, render::EtRight, m_updateInfoRender);
-							else
-								renderView->clear(
-									render::CfColor | render::CfDepth | render::CfStencil,
-									&m_backgroundColor,
-									1.0f,
-									0
-								);
-							vrCompositor->endRenderEye(renderView, render::EtRight);
-						}
-						T_PROFILER_END();
-
-						T_PROFILER_BEGIN(L"Application render present");
-						vrCompositor->presentCompositeOutput(renderView);
-						T_PROFILER_END();
-					}
-					else if (m_renderServer->getStereoscopic())
-					{
-						T_PROFILER_BEGIN(L"Application render left");
-						if (renderView->begin(render::EtLeft))
-						{
-							if (m_stateRender)
-								m_stateRender->render(m_frameRender, render::EtLeft, m_updateInfoRender);
-							else
-							{
-								renderView->clear(
-									render::CfColor | render::CfDepth | render::CfStencil,
-									&m_backgroundColor,
-									1.0f,
-									0
-								);
-							}
-
-							renderView->end();
-						}
-						T_PROFILER_END();
-
-						T_PROFILER_BEGIN(L"Application render left");
-						if (renderView->begin(render::EtRight))
-						{
-							if (m_stateRender)
-								m_stateRender->render(m_frameRender, render::EtRight, m_updateInfoRender);
-							else
-							{
-								renderView->clear(
-									render::CfColor | render::CfDepth | render::CfStencil,
-									&m_backgroundColor,
-									1.0f,
-									0
-								);
-							}
-
-							renderView->end();
-						}
-						T_PROFILER_END();
-
-						T_PROFILER_BEGIN(L"Application render present");
-						renderView->present();
-						T_PROFILER_END();
-					}
+					T_PROFILER_BEGIN(L"Application render present");
+					renderView->present();
+					T_PROFILER_END();
 
 					renderView->getStatistics(m_renderViewStats);
 				}

@@ -351,7 +351,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	Matrix44 view = m_cameraEntities[0]->getTransform().inverse().toMatrix44();
 
 	// Render world.
-	if (m_renderView->begin(render::EtCyclop))
+	if (m_renderView->begin())
 	{
 		// Render entities.
 		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
@@ -375,18 +375,9 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 			}
 		}
 
-		m_worldRenderer->beginRender(
-			0,
-			render::EtCyclop,
-			Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3])
-		);
-
-		m_worldRenderer->render(
-			0,
-			render::EtCyclop
-		);
-
-		m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
+		m_worldRenderer->beginRender(0, Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]));
+		m_worldRenderer->render(0);
+		m_worldRenderer->endRender(0, deltaTime);
 
 		m_renderView->end();
 		m_renderView->present();

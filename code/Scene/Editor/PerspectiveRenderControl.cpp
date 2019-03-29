@@ -182,16 +182,16 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	// Create entity renderers.
 	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
+	for (auto editorProfile : m_context->getEditorProfiles())
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
-		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
-		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
+		editorProfile->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
+		for (auto entityRenderer : entityRenderers)
 		{
-			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(entityRendererCache, *j, [&](const EntityAdapter* adapter) {
+			Ref< EntityRendererAdapter > entityRendererAdapter = new EntityRendererAdapter(entityRendererCache, entityRenderer, [&](const EntityAdapter * adapter) {
 				return adapter->isVisible();
 			});
-			worldEntityRenderers->add(entityRenderer);
+			worldEntityRenderers->add(entityRendererAdapter);
 		}
 	}
 
@@ -503,7 +503,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	Matrix44 view = getViewTransform();
 
 	// Render world.
-	if (m_renderView->begin(render::EtCyclop))
+	if (m_renderView->begin())
 	{
 		// Render entities.
 		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
@@ -527,18 +527,9 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			}
 		}
 
-		m_worldRenderer->beginRender(
-			0,
-			render::EtCyclop,
-			Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3])
-		);
-
-		m_worldRenderer->render(
-			0,
-			render::EtCyclop
-		);
-
-		m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
+		m_worldRenderer->beginRender(0, Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]));
+		m_worldRenderer->render(0);
+		m_worldRenderer->endRender(0, deltaTime);
 
 		// Render wire guides.
 		m_primitiveRenderer->begin(0, projection);

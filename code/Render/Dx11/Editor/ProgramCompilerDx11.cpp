@@ -230,6 +230,8 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 				T_ASSERT((dsvd.StartOffset & 3) == 0);
 
 				d3dTypeReflection->GetDesc(&dstd);
+				if (dstd.Class == D3D_SVC_STRUCT)
+					continue;
 				T_ASSERT(dstd.Type == D3D10_SVT_FLOAT);
 
 				std::wstring name = mbstows(dsvd.Name);
@@ -406,6 +408,8 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 				T_ASSERT((dsvd.StartOffset & 3) == 0);
 
 				d3dTypeReflection->GetDesc(&dstd);
+				if (dstd.Class == D3D_SVC_STRUCT)
+					continue;
 				T_ASSERT(dstd.Type == D3D10_SVT_FLOAT);
 
 				std::wstring name = mbstows(dsvd.Name);

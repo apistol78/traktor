@@ -574,7 +574,7 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 	m_count++;
 }
 
-bool WorldRendererForward::beginRender(int frame, render::EyeType eye, const Color4f& clearColor)
+bool WorldRendererForward::beginRender(int32_t frame, const Color4f& clearColor)
 {
 	if (m_visualTargetSet)
 	{
@@ -586,7 +586,7 @@ bool WorldRendererForward::beginRender(int frame, render::EyeType eye, const Col
 	return true;
 }
 
-void WorldRendererForward::render(int frame, render::EyeType eye)
+void WorldRendererForward::render(int32_t frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -643,52 +643,49 @@ void WorldRendererForward::render(int frame, render::EyeType eye)
 	}
 
 	// Render shadow map.
-	if (eye == render::EtCyclop || eye == render::EtLeft)
+	if (f.haveShadows)
 	{
-		if (f.haveShadows)
+		// Shadow atlas.
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map, atlas");
+		if (m_renderView->begin(m_shadowAtlasTargetSet))
 		{
-			// Shadow atlas.
-			T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map, atlas");
-			if (m_renderView->begin(m_shadowAtlasTargetSet))
+			m_renderView->clear(render::CfDepth, nullptr, 1.0f, 0);
+			for (int32_t i = 0; i < 16; ++i)
 			{
-				m_renderView->clear(render::CfDepth, nullptr, 1.0f, 0);
-				for (int32_t i = 0; i < 16; ++i)
-				{
-					render::ProgramParameters shadowProgramParams;
-					shadowProgramParams.beginParameters(m_globalContext);
-					shadowProgramParams.setFloatParameter(s_handleTime, f.time);
-					shadowProgramParams.setMatrixParameter(s_handleView, f.atlas[i].shadowLightView);
-					shadowProgramParams.setMatrixParameter(s_handleViewInverse, f.atlas[i].shadowLightView.inverse());
-					shadowProgramParams.setMatrixParameter(s_handleProjection, f.atlas[i].shadowLightProjection);
-					shadowProgramParams.endParameters(m_globalContext);
+				render::ProgramParameters shadowProgramParams;
+				shadowProgramParams.beginParameters(m_globalContext);
+				shadowProgramParams.setFloatParameter(s_handleTime, f.time);
+				shadowProgramParams.setMatrixParameter(s_handleView, f.atlas[i].shadowLightView);
+				shadowProgramParams.setMatrixParameter(s_handleViewInverse, f.atlas[i].shadowLightView.inverse());
+				shadowProgramParams.setMatrixParameter(s_handleProjection, f.atlas[i].shadowLightProjection);
+				shadowProgramParams.endParameters(m_globalContext);
 
-					f.atlas[i].shadow->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
-				}
-				m_renderView->end();
+				f.atlas[i].shadow->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
 			}
-			T_RENDER_POP_MARKER(m_renderView);
-
-			// Directional shadow cascades.
-			T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map, cascades");
-			if (m_renderView->begin(m_shadowCascadeTargetSet))
-			{
-				m_renderView->clear(render::CfDepth, nullptr, 1.0f, 0);
-				for (int32_t i = 0; i < m_settings.shadowSettings[m_shadowsQuality].cascadingSlices; ++i)
-				{
-					render::ProgramParameters shadowProgramParams;
-					shadowProgramParams.beginParameters(m_globalContext);
-					shadowProgramParams.setFloatParameter(s_handleTime, f.time);
-					shadowProgramParams.setMatrixParameter(s_handleView, f.slice[i].shadowLightView);
-					shadowProgramParams.setMatrixParameter(s_handleViewInverse, f.slice[i].shadowLightView.inverse());
-					shadowProgramParams.setMatrixParameter(s_handleProjection, f.slice[i].shadowLightProjection);
-					shadowProgramParams.endParameters(m_globalContext);
-
-					f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
-				}
-				m_renderView->end();
-			}
-			T_RENDER_POP_MARKER(m_renderView);
+			m_renderView->end();
 		}
+		T_RENDER_POP_MARKER(m_renderView);
+
+		// Directional shadow cascades.
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map, cascades");
+		if (m_renderView->begin(m_shadowCascadeTargetSet))
+		{
+			m_renderView->clear(render::CfDepth, nullptr, 1.0f, 0);
+			for (int32_t i = 0; i < m_settings.shadowSettings[m_shadowsQuality].cascadingSlices; ++i)
+			{
+				render::ProgramParameters shadowProgramParams;
+				shadowProgramParams.beginParameters(m_globalContext);
+				shadowProgramParams.setFloatParameter(s_handleTime, f.time);
+				shadowProgramParams.setMatrixParameter(s_handleView, f.slice[i].shadowLightView);
+				shadowProgramParams.setMatrixParameter(s_handleViewInverse, f.slice[i].shadowLightView.inverse());
+				shadowProgramParams.setMatrixParameter(s_handleProjection, f.slice[i].shadowLightProjection);
+				shadowProgramParams.endParameters(m_globalContext);
+
+				f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
+			}
+			m_renderView->end();
+		}
+		T_RENDER_POP_MARKER(m_renderView);
 	}
 
 	// Render visuals.
@@ -701,7 +698,7 @@ void WorldRendererForward::render(int frame, render::EyeType eye)
 	m_globalContext->flush();
 }
 
-void WorldRendererForward::endRender(int frame, render::EyeType eye, float deltaTime)
+void WorldRendererForward::endRender(int32_t frame, float deltaTime)
 {
 	Frame& f = m_frames[frame];
 

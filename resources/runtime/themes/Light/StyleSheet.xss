@@ -1245,6 +1245,22 @@
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ExternalErrorSelected.image</value>
 		</item>
 		<item>
+			<name>UI.Graph.Script</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Script.image</value>
+		</item>
+		<item>
+			<name>UI.Graph.ScriptSelected</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ScriptSelected.image</value>
+		</item>
+		<item>
+			<name>UI.Graph.ScriptError</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ScriptError.image</value>
+		</item>
+		<item>
+			<name>UI.Graph.ScriptErrorSelected</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/ScriptErrorSelected.image</value>
+		</item>
+		<item>
 			<name>UI.Graph.Input</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Input.image</value>
 		</item>
@@ -1275,6 +1291,22 @@
 		<item>
 			<name>UI.Graph.InOutErrorSelected</name>
 			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/InOutErrorSelected.image</value>
+		</item>
+		<item>
+			<name>UI.Graph.Uniform</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/Uniform.image</value>
+		</item>
+		<item>
+			<name>UI.Graph.UniformSelected</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/UniformSelected.image</value>
+		</item>
+		<item>
+			<name>UI.Graph.UniformError</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/UniformError.image</value>
+		</item>
+		<item>
+			<name>UI.Graph.UniformErrorSelected</name>
+			<value>$(TRAKTOR_HOME)/resources/runtime/themes/Light/Images/UI/Graph/UniformErrorSelected.image</value>
 		</item>
 		<item>
 			<name>UI.Graph.Output</name>

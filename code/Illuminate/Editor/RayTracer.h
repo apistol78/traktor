@@ -32,6 +32,12 @@ class T_DLLCLASS RayTracer : public Object
 	T_RTTI_CLASS;
 
 public:
+	struct Context : public RefCountImpl< IRefCount >
+	{
+		SahTree::QueryCache sahCache;
+		RandomGeometry random;
+	};
+
 	explicit RayTracer(const IlluminateConfiguration* configuration);
 
 	void addLight(const Light& light);
@@ -40,11 +46,11 @@ public:
 
 	bool prepare();
 
-	Color4f traceDirect(const Vector4& origin, const Vector4& normal, float roughness);
+	Ref< Context > createContext();
 
-	Color4f traceIndirect(const Vector4& origin, const Vector4& normal, float roughness);
+	Color4f traceDirect(Context* context, const Vector4& origin, const Vector4& normal) const;
 
-	Scalar traceOcclusion(const Vector4& origin, const Vector4& normal);
+	Color4f traceIndirect(Context* context, const Vector4& origin, const Vector4& normal) const;
 
 private:
 	struct Surface
@@ -54,14 +60,12 @@ private:
 
 	const IlluminateConfiguration* m_configuration;
 	SahTree m_sah;
-	SahTree::QueryCache m_sahCache;
 	AlignedVector< Light > m_lights;
 	AlignedVector< Winding3 > m_windings;
 	AlignedVector< Surface > m_surfaces;
-	RandomGeometry m_random;
 	float m_maxDistance;
 
-	Color4f sampleAnalyticalLights(const Vector4& origin, const Vector4& normal, uint32_t shadowSampleCount, float pointLightShadowRadius);
+	Color4f sampleAnalyticalLights(Context* context, const Vector4& origin, const Vector4& normal, uint32_t shadowSampleCount, float pointLightShadowRadius) const;
 };
 
 	}

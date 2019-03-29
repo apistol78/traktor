@@ -133,7 +133,7 @@ Matrix44 OpenVRCompositor::getEyeToHead(int32_t eye) const
 
 bool OpenVRCompositor::beginRenderEye(IRenderView* renderView, int32_t eye)
 {
-	if (!renderView->begin(m_targetSet, eye == EtLeft ? 0 : 1))
+	if (!renderView->begin(m_targetSet))
 		return false;
 
 	const Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);

@@ -26,7 +26,13 @@ class T_DLLCLASS InOutNodeShape : public INodeShape
 	T_RTTI_CLASS;
 
 public:
-	InOutNodeShape(GraphControl* graphControl);
+	enum Style
+	{
+		StDefault = 0,
+		StUniform = 1
+	};
+
+	InOutNodeShape(GraphControl* graphControl, Style style);
 
 	virtual Point getPinPosition(const Node* node, const Pin* pin) const override final;
 
