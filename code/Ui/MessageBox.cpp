@@ -23,15 +23,12 @@ bool MessageBox::create(Widget* parent, const std::wstring& message, const std::
 		dpi96(200),
 		dpi96(100),
 		dialogStyle,
-		new TableLayout(L"100%", L"100%,*", dpi96(4), dpi96(4))
+		new TableLayout(L"*", L"*", dpi96(4), dpi96(4))
 	))
 		return false;
 
-	Ref< Container > ctContent = new Container();
-	ctContent->create(this, WsNone, new TableLayout(L"100%", L"100%", 0, 0));
-
 	Ref< Static > staticMessage = new Static();
-	staticMessage->create(ctContent, message);
+	staticMessage->create(this, message);
 
 	fit();
 	return true;

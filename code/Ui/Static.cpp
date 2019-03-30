@@ -1,3 +1,4 @@
+#include "Core/Misc/StringSplit.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/Static.h"
@@ -22,7 +23,17 @@ bool Static::create(Widget* parent, const std::wstring& text)
 
 Size Static::getPreferedSize() const
 {
-	return getFontMetric().getExtent(getText()) + Size(dpi96(1), dpi96(1));
+	Size extent(0, 0);
+
+	auto fontMetric = getFontMetric();
+	for (auto s : StringSplit< std::wstring >(getText(), L"\n\r"))
+	{
+		auto sz = fontMetric.getExtent(s);
+		extent.cx = std::max(sz.cx, extent.cx);
+		extent.cy += sz.cy;
+	}
+
+	return extent + Size(dpi96(1), dpi96(1));
 }
 
 Size Static::getMaximumSize() const
@@ -41,7 +52,16 @@ void Static::eventPaint(PaintEvent* event)
 	canvas.fillRect(rcInner);
 
 	canvas.setForeground(ss->getColor(this, L"color"));
-	canvas.drawText(rcInner, getText(), AnLeft, AnCenter);
+
+	Point pt(0, 0);
+
+	auto fontMetric = getFontMetric();
+	for (auto s : StringSplit< std::wstring >(getText(), L"\n\r"))
+	{
+		auto sz = fontMetric.getExtent(s);
+		canvas.drawText(pt, s);
+		pt.y += sz.cy;
+	}
 
 	event->consume();
 }
