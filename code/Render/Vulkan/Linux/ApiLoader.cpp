@@ -71,6 +71,7 @@ PFN_vkGetEventStatus vkGetEventStatus = nullptr;
 PFN_vkCmdExecuteCommands vkCmdExecuteCommands = nullptr;
 PFN_vkResetDescriptorPool vkResetDescriptorPool = nullptr;
 PFN_vkFreeCommandBuffers vkFreeCommandBuffers = nullptr;
+PFN_vkDeviceWaitIdle vkDeviceWaitIdle = nullptr;
 
 PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = nullptr;
@@ -81,6 +82,7 @@ PFN_vkCreateSwapchainKHR vkCreateSwapchainKHR = nullptr;
 PFN_vkGetSwapchainImagesKHR vkGetSwapchainImagesKHR = nullptr;
 PFN_vkAcquireNextImageKHR vkAcquireNextImageKHR = nullptr;
 PFN_vkQueuePresentKHR vkQueuePresentKHR = nullptr;
+PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR = nullptr;
 
 bool initializeVulkanApi()
 {
@@ -497,6 +499,13 @@ bool initializeVulkanApi()
 		return false;
 	}
 
+	vkDeviceWaitIdle = (PFN_vkDeviceWaitIdle)dlsym(s_hVulkanModule, "vkDeviceWaitIdle");
+	if (vkDeviceWaitIdle == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkDeviceWaitIdle\"." << Endl;
+		return false;
+	}
+
 	return true;
 }
 
@@ -562,6 +571,13 @@ bool initializeVulkanExtensions(VkInstance instance)
 	if (vkQueuePresentKHR == nullptr)
 	{
 		log::error << L"Failed to resolve Vulkan extension entry point \"vkQueuePresentKHR\"." << Endl;
+		return false;
+	}
+
+	vkDestroySwapchainKHR = (PFN_vkDestroySwapchainKHR)vkGetInstanceProcAddr(instance, "vkDestroySwapchainKHR");
+	if (vkDestroySwapchainKHR == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan extension entry point \"vkDestroySwapchainKHR\"." << Endl;
 		return false;
 	}
 

@@ -92,18 +92,18 @@ public:
 
 	virtual Ref< IHandle > loadAsync(const std::wstring& url) const override final
 	{
-		return 0;
+		return nullptr;
 	}
 
 	virtual Ref< Movie > load(const std::wstring& url) const override final
 	{
-		std::map< std::wstring, resource::Proxy< Movie > >::const_iterator i = m_externalMovies.find(url);
-		if (i != m_externalMovies.end())
-			return i->second.getResource();
+		auto it = m_externalMovies.find(url);
+		if (it != m_externalMovies.end())
+			return it->second.getResource();
 		else
 		{
 			log::error << L"Unable to load external movie \"" << url << L"\"; no such movie defined." << Endl;
-			return 0;
+			return nullptr;
 		}
 	}
 
@@ -168,7 +168,7 @@ void FlashLayer::destroy()
 			feedbackManager->removeListener(spray::FbtUI, this);
 	}
 
-	m_environment = 0;
+	m_environment = nullptr;
 	m_movie.clear();
 	m_externalMovies.clear();
 	m_imageProcessSettings.clear();
@@ -205,7 +205,7 @@ void FlashLayer::transition(Layer* fromLayer)
 			m_movie.consume();
 			m_moviePlayer = fromFlashLayer->m_moviePlayer;
 			m_moviePlayer->setExternalCall(this);
-			fromFlashLayer->m_moviePlayer = 0;
+			fromFlashLayer->m_moviePlayer = nullptr;
 		}
 
 		// Also do not flush caches if same movie will be used again;
@@ -216,8 +216,8 @@ void FlashLayer::transition(Layer* fromLayer)
 	// Keep display and sound renderer.
 	m_displayRenderer = fromFlashLayer->m_displayRenderer;
 	m_soundRenderer = fromFlashLayer->m_soundRenderer;
-	fromFlashLayer->m_displayRenderer = 0;
-	fromFlashLayer->m_soundRenderer = 0;
+	fromFlashLayer->m_displayRenderer = nullptr;
+	fromFlashLayer->m_soundRenderer = nullptr;
 
 	// Ensure display renderer's caches are fresh.
 	if (m_displayRenderer && shouldFlush)
@@ -230,14 +230,14 @@ void FlashLayer::prepare(const runtime::UpdateInfo& info)
 
 	if (m_movie.changed())
 	{
-		m_moviePlayer = 0;
+		m_moviePlayer = nullptr;
 		m_movie.consume();
 	}
 
 	if (m_imageProcessSettings.changed())
 	{
-		m_imageProcess = 0;
-		m_imageTargetSet = 0;
+		m_imageProcess = nullptr;
+		m_imageTargetSet = nullptr;
 		m_imageProcessSettings.consume();
 	}
 
@@ -281,6 +281,9 @@ void FlashLayer::update(const runtime::UpdateInfo& info)
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	input::InputSystem* inputSystem = m_environment->getInput()->getInputSystem();
 	std::string command, args;
+
+	if (!m_moviePlayer)
+		return;
 
 	// Do NOT propagate input in case user is fabricating input.
 	if (!m_environment->getInput()->isFabricating())
@@ -513,10 +516,10 @@ void FlashLayer::render(uint32_t frame)
 			m_imageProcess->render(
 				renderView,
 				m_imageTargetSet->getColorTexture(0),
-				0,
-				0,
-				0,
-				0,
+				nullptr,
+				nullptr,
+				nullptr,
+				nullptr,
 				params
 			);
 		}
@@ -541,7 +544,7 @@ void FlashLayer::flush()
 void FlashLayer::preReconfigured()
 {
 	// Discard post processing; need to be fully re-created if used.
-	m_imageProcess = 0;
+	m_imageProcess = nullptr;
 }
 
 void FlashLayer::postReconfigured()
@@ -578,7 +581,7 @@ ActionContext* FlashLayer::getContext()
 	if (!m_moviePlayer)
 	{
 		log::warning << L"Unable to get context; no movie player initialized." << Endl;
-		return 0;
+		return nullptr;
 	}
 	return m_moviePlayer->getMovieInstance()->getContext();
 }
@@ -588,15 +591,15 @@ SpriteInstance* FlashLayer::getRoot()
 	if (!m_moviePlayer)
 	{
 		log::warning << L"Unable to get root; no movie player initialized." << Endl;
-		return 0;
+		return nullptr;
 	}
 	return m_moviePlayer->getMovieInstance();
 }
 
 Movie* FlashLayer::getExternal(const std::wstring& id) const
 {
-	std::map< std::wstring, resource::Proxy< Movie > >::const_iterator i = m_externalMovies.find(id);
-	return i != m_externalMovies.end() ? i->second.getResource() : 0;
+	auto it = m_externalMovies.find(id);
+	return it != m_externalMovies.end() ? it->second.getResource() : nullptr;
 }
 
 Any FlashLayer::externalCall(const std::string& methodName, uint32_t argc, const Any* argv)
@@ -633,9 +636,9 @@ std::wstring FlashLayer::getPrintableString(const std::wstring& text, const std:
 		if (!isWhiteSpace(ch))
 		{
 			valid = false;
-			for (SmallMap< uint16_t, Ref< Font > >::const_iterator j = fonts.begin(); j != fonts.end(); ++j)
+			for (auto font : fonts)
 			{
-				if (j->second->lookupIndex(ch) != 0)
+				if (font.second->lookupIndex(ch) != 0)
 				{
 					valid = true;
 					break;
@@ -709,12 +712,14 @@ void FlashLayer::createMoviePlayer()
 
 		// Connect to remote debugger.
 		Ref< MovieDebugger > movieDebugger;
+#if 0
 		Ref< net::TcpSocket > remoteDebuggerSocket = new net::TcpSocket();
 		if (remoteDebuggerSocket->connect(net::SocketAddressIPv4(L"localhost", 12345)))
 			movieDebugger = new MovieDebugger(
 				new net::BidirectionalObjectTransport(remoteDebuggerSocket),
 				getName()
 			);
+#endif
 
 		Ref< MoviePlayer > moviePlayer = new MoviePlayer(
 			new DefaultCharacterFactory(),

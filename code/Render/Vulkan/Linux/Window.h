@@ -16,7 +16,7 @@ namespace traktor
 class Window : public Object
 {
 public:
-	Window(::Display* display);
+	Window();
 
 	virtual ~Window();
 

@@ -109,7 +109,7 @@ void SimpleTextureVk::unlock(int32_t level)
 
 void* SimpleTextureVk::getInternalHandle()
 {
-	return 0;
+	return nullptr;
 }
 
 	}

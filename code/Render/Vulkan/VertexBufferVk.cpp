@@ -31,13 +31,13 @@ void VertexBufferVk::destroy()
 
 void* VertexBufferVk::lock()
 {
-	void* ptr = 0;
-	return (vkMapMemory(m_device, m_vertexBufferMemory, 0, VK_WHOLE_SIZE, 0, &ptr) == VK_SUCCESS) ? ptr : 0;
+	void* ptr = nullptr;
+	return (vkMapMemory(m_device, m_vertexBufferMemory, 0, VK_WHOLE_SIZE, 0, &ptr) == VK_SUCCESS) ? ptr : nullptr;
 }
 
 void* VertexBufferVk::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
-	return 0;
+	return nullptr;
 }
 
 void VertexBufferVk::unlock()

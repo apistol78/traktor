@@ -22,8 +22,8 @@ void IndexBufferVk::destroy()
 
 void* IndexBufferVk::lock()
 {
-	void* ptr = 0;
-	return (vkMapMemory(m_device, m_indexBufferMemory, 0, VK_WHOLE_SIZE, 0, &ptr) == VK_SUCCESS) ? ptr : 0;
+	void* ptr = nullptr;
+	return (vkMapMemory(m_device, m_indexBufferMemory, 0, VK_WHOLE_SIZE, 0, &ptr) == VK_SUCCESS) ? ptr : nullptr;
 }
 
 void IndexBufferVk::unlock()

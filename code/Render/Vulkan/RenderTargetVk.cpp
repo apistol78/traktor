@@ -90,18 +90,22 @@ RenderTargetVk::~RenderTargetVk()
 
 bool RenderTargetVk::createPrimary(VkPhysicalDevice physicalDevice, VkDevice device, int32_t width, int32_t height, VkFormat format, VkImage image)
 {
-	VkImageViewCreateInfo imageViewCreateInfo = {};
-	imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-	imageViewCreateInfo.image = image;
-	imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-	imageViewCreateInfo.format = format;
-	imageViewCreateInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
-	imageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	imageViewCreateInfo.subresourceRange.baseMipLevel = 0;
-	imageViewCreateInfo.subresourceRange.levelCount = 1;
-	imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
-	imageViewCreateInfo.subresourceRange.layerCount = 1;
- 	if (vkCreateImageView(device, &imageViewCreateInfo, nullptr, &m_imageView) != VK_SUCCESS)
+	VkImageViewCreateInfo ivci = {};
+	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	ivci.image = image;
+	ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
+	ivci.format = format;
+	ivci.components.r = VK_COMPONENT_SWIZZLE_R;
+	ivci.components.g = VK_COMPONENT_SWIZZLE_G;
+	ivci.components.b = VK_COMPONENT_SWIZZLE_B;
+	ivci.components.a = VK_COMPONENT_SWIZZLE_A;
+	ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	ivci.subresourceRange.baseMipLevel = 0;
+	ivci.subresourceRange.levelCount = 1;
+	ivci.subresourceRange.baseArrayLayer = 0;
+	ivci.subresourceRange.layerCount = 1;
+
+ 	if (vkCreateImageView(device, &ivci, nullptr, &m_imageView) != VK_SUCCESS)
 		return false;
 
 	m_format = format;
@@ -143,10 +147,10 @@ bool RenderTargetVk::create(VkPhysicalDevice physicalDevice, VkDevice device, co
 
 	VkDeviceMemory imageMemory = {};
 	if (vkAllocateMemory(device, &imageAllocateInfo, nullptr, &imageMemory) != VK_SUCCESS)
-		return 0;
+		return false;
 
 	if (vkBindImageMemory(device, m_image, imageMemory, 0) != VK_SUCCESS)
-		return 0;
+		return false;
 
 	//if (!performImageTranslation(
 	//	device,
@@ -156,20 +160,20 @@ bool RenderTargetVk::create(VkPhysicalDevice physicalDevice, VkDevice device, co
 	//	VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
 	//	VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	//))
-	//	return 0;
+	//	return false;
 
-	VkImageViewCreateInfo imageViewCreateInfo = {};
-	imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-	imageViewCreateInfo.image = m_image;
-	imageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-	imageViewCreateInfo.format = imageCreateInfo.format;
-	imageViewCreateInfo.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
-	imageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	imageViewCreateInfo.subresourceRange.baseMipLevel = 0;
-	imageViewCreateInfo.subresourceRange.levelCount = 1;
-	imageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
-	imageViewCreateInfo.subresourceRange.layerCount = 1;
- 	if (vkCreateImageView(device, &imageViewCreateInfo, nullptr, &m_imageView) != VK_SUCCESS)
+	VkImageViewCreateInfo ivci = {};
+	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	ivci.image = m_image;
+	ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
+	ivci.format = imageCreateInfo.format;
+	ivci.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+	ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	ivci.subresourceRange.baseMipLevel = 0;
+	ivci.subresourceRange.levelCount = 1;
+	ivci.subresourceRange.baseArrayLayer = 0;
+	ivci.subresourceRange.layerCount = 1;
+ 	if (vkCreateImageView(device, &ivci, nullptr, &m_imageView) != VK_SUCCESS)
 		return false;
 
 	m_format = imageCreateInfo.format;
