@@ -26,13 +26,15 @@ public:
 
 	virtual ~Window();
 
-	bool create();
+	bool create(int32_t width, int32_t height);
 
 	void setTitle(const wchar_t* title);
 
 	void setWindowedStyle(int32_t width, int32_t height);
 
 	void setFullScreenStyle(int32_t width, int32_t height);
+
+	void show();
 
 	void hide();
 

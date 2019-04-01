@@ -67,6 +67,7 @@ extern PFN_vkGetEventStatus vkGetEventStatus;
 extern PFN_vkCmdExecuteCommands vkCmdExecuteCommands;
 extern PFN_vkResetDescriptorPool vkResetDescriptorPool;
 extern PFN_vkFreeCommandBuffers vkFreeCommandBuffers;
+extern PFN_vkDeviceWaitIdle vkDeviceWaitIdle;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;
@@ -78,6 +79,7 @@ extern PFN_vkCreateSwapchainKHR vkCreateSwapchainKHR;
 extern PFN_vkGetSwapchainImagesKHR vkGetSwapchainImagesKHR;
 extern PFN_vkAcquireNextImageKHR vkAcquireNextImageKHR;
 extern PFN_vkQueuePresentKHR vkQueuePresentKHR;
+extern PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR;
 
 bool initializeVulkanApi();
 

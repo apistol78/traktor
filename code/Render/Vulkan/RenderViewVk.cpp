@@ -254,12 +254,20 @@ bool RenderViewVk::setGamma(float gamma)
 
 void RenderViewVk::setViewport(const Viewport& viewport)
 {
-	// vkCmdSetViewport(info.cmd, 0, NUM_VIEWPORTS, &info.viewport);
+	if (m_targetStateStack.empty())
+	{
+		m_viewport = viewport;
+	}
+	else
+	{
+		m_targetStateStack.back().viewport = viewport;
+		// vkCmdSetViewport(info.cmd, 0, NUM_VIEWPORTS, &info.viewport);
+	}
 }
 
 Viewport RenderViewVk::getViewport()
 {
-	return Viewport();
+	return m_targetStateStack.empty() ? m_viewport : m_targetStateStack.back().viewport;
 }
 
 SystemWindow RenderViewVk::getSystemWindow()
@@ -303,6 +311,7 @@ bool RenderViewVk::begin()
 	ts.clearMask = 0;
 	ts.clearDepth = 1.0f;
 	ts.clearStencil = 0;
+	ts.viewport = m_viewport;
 
 	m_targetStateStack.push_back(ts);
 	m_targetStateDirty = true;
@@ -317,6 +326,7 @@ bool RenderViewVk::begin(RenderTargetSet* renderTargetSet)
 	ts.clearMask = 0;
 	ts.clearDepth = 1.0f;
 	ts.clearStencil = 0;
+	ts.viewport = Viewport(0, 0, ts.rts->getWidth(), ts.rts->getHeight(), 0.0f, 1.0f);
 
 	m_targetStateStack.push_back(ts);
 	m_targetStateDirty = true;
@@ -776,7 +786,14 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	VkSemaphoreCreateInfo sci = {};
 	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
     vkCreateSemaphore(m_logicalDevice, &sci, nullptr, &m_presentCompleteSemaphore);
-	
+
+	// Set default viewport.
+	m_viewport.left = 0;
+	m_viewport.top = 0;
+	m_viewport.width = width;
+	m_viewport.height = height;
+	m_viewport.nearZ = 0.0f;
+	m_viewport.farZ = 1.0f;
 	return true;
 }
 

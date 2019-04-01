@@ -124,6 +124,7 @@ private:
 		Color4f clearColors[4];
 		float clearDepth;
 		int32_t clearStencil;
+		Viewport viewport;
 	};
 
 	VkInstance m_instance;
@@ -150,6 +151,8 @@ private:
 
 	std::list< RenderEvent > m_eventQueue;
 	uint32_t m_currentImageIndex;
+
+	Viewport m_viewport;
 
 	AlignedVector< TargetState > m_targetStateStack;
 	bool m_targetStateDirty;
