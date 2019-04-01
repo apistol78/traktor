@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/IndexBufferVk.h"
@@ -7,6 +8,7 @@
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
+#include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexBufferVk.h"
 
 namespace traktor
@@ -35,50 +37,110 @@ struct RenderEventTypePred
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewVk", RenderViewVk, IRenderView)
 
-#if defined(_WIN32) || defined(__LINUX__)
 RenderViewVk::RenderViewVk(
-	Window* window,
-	VkDevice device,
-	VkSwapchainKHR swapChain,
-	VkQueue presentQueue,
-	VkCommandPool commandPool,
-	VkCommandBuffer drawCmdBuffer,
-	VkDescriptorSetLayout descriptorSetLayout,
-	VkPipelineLayout pipelineLayout,
-	VkDescriptorPool descriptorPool,
-	const RefArray< RenderTargetSetVk >& primaryTargets
+	VkInstance instance,
+	VkPhysicalDevice physicalDevice,
+	VkDevice logicalDevice,
+	uint32_t graphicsQueueIndex
 )
-:	m_window(window)
-,	m_device(device)
-,	m_swapChain(swapChain)
-,	m_presentQueue(presentQueue)
-,	m_currentImageIndex(0)
-,	m_commandPool(commandPool)
-,	m_drawCmdBuffer(drawCmdBuffer)
-,	m_descriptorSetLayout(descriptorSetLayout)
-,	m_pipelineLayout(pipelineLayout)
-,	m_descriptorPool(descriptorPool)
-,	m_primaryTargets(primaryTargets)
-,	m_presentCompleteSemaphore(0)
-,	m_renderingCompleteSemaphore(0)
-,	m_targetStateDirty(false)
-,	m_pipeline(0)
-{
-#	if defined(_WIN32)
-	if (m_window)
-		m_window->addListener(this);
-#	endif
-}
-#else
-RenderViewVk::RenderViewVk(VkDevice device)
-:	m_device(device)
+:	m_instance(instance)
+,	m_physicalDevice(physicalDevice)
+,	m_logicalDevice(logicalDevice)
+,	m_graphicsQueueIndex(graphicsQueueIndex)
+,	m_surface(nullptr)
+,	m_presentQueueIndex(~0)
+,	m_presentQueue(nullptr)
+,	m_commandPool(nullptr)
+,	m_drawCommandBuffer(nullptr)
+,	m_swapChain(nullptr)
+,	m_descriptorSetLayout(nullptr)
+,	m_descriptorPool(nullptr)
+,	m_pipelineLayout(nullptr)
+,	m_renderFence(nullptr)
+,	m_presentCompleteSemaphore(nullptr)
 {
 }
-#endif
 
 RenderViewVk::~RenderViewVk()
 {
 	close();
+}
+
+bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
+{
+	// Create render window.
+	m_window = new Window();
+	if (!m_window->create(desc.displayMode.width, desc.displayMode.height))
+	{
+		log::error << L"Failed to create render view; unable to create window." << Endl;
+		return false;
+	}
+	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - Vulkan Renderer");
+	m_window->show();
+
+#if defined(_WIN32)
+	if (m_window)
+		m_window->addListener(this);
+#endif
+
+	// Create renderable surface.
+#if defined(_WIN32)
+    VkWin32SurfaceCreateInfoKHR sci = {};
+    sci.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+    sci.hinstance = GetModuleHandle(nullptr);
+    sci.hwnd = (HWND)*m_window;
+    if (vkCreateWin32SurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface." << Endl;
+		return false;
+	}
+#elif defined(__LINUX__)
+	VkXlibSurfaceCreateInfoKHR sci = {};
+	sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+	sci.dpy = m_window->getDisplay();
+	sci.window = m_window->getWindow();
+    if (vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface." << Endl;
+		return false;
+	}
+#endif
+
+	if (!create(desc.displayMode.width, desc.displayMode.height))
+		return false;
+
+	return true;	
+}
+
+bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
+{
+	// Create renderable surface.
+#if defined(_WIN32)
+    VkWin32SurfaceCreateInfoKHR sci = {};
+    sci.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+    sci.hinstance = GetModuleHandle(nullptr);
+    sci.hwnd = desc.syswin.hWnd;
+    if (vkCreateWin32SurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; unable to create Win32 renderable surface." << Endl;
+		return false;
+	}
+#elif defined(__LINUX__)
+	VkXlibSurfaceCreateInfoKHR sci = {};
+	sci.sType = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
+	sci.dpy = (::Display*)desc.syswin.display;
+	sci.window = desc.syswin.window;
+    if (vkCreateXlibSurfaceKHR(m_instance, &sci, nullptr, &m_surface) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; unable to create X11 renderable surface." << Endl;
+		return false;
+	}
+#endif
+
+	if (!create(100, 100))
+		return false;
+
+	return true;
 }
 
 bool RenderViewVk::nextEvent(RenderEvent& outEvent)
@@ -108,17 +170,23 @@ bool RenderViewVk::nextEvent(RenderEvent& outEvent)
 
 void RenderViewVk::close()
 {
+    vkDestroySemaphore(m_logicalDevice, m_presentCompleteSemaphore, nullptr);
+	vkDestroyFence(m_logicalDevice, m_renderFence, nullptr);	
 }
 
 bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 {
-#if defined(_WIN32)
 	// Cannot reset embedded view.
 	if (!m_window)
 		return false;
 
+#if defined(_WIN32)
 	m_window->removeListener(this);
+#endif
+
 	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - Vulkan Renderer");
+
+#if defined(_WIN32)
 	m_window->addListener(this);
 #endif
 	return true;
@@ -126,7 +194,15 @@ bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 
 bool RenderViewVk::reset(int32_t width, int32_t height)
 {
-	return false;
+	vkDeviceWaitIdle(m_logicalDevice);
+
+	// Destroy previous swap chain.
+	vkDestroySwapchainKHR(m_logicalDevice, m_swapChain, nullptr);	
+
+	if (create(width, height))
+		return true;
+	else
+		return false;
 }
 
 int RenderViewVk::getWidth() const
@@ -178,6 +254,7 @@ bool RenderViewVk::setGamma(float gamma)
 
 void RenderViewVk::setViewport(const Viewport& viewport)
 {
+	// vkCmdSetViewport(info.cmd, 0, NUM_VIEWPORTS, &info.viewport);
 }
 
 Viewport RenderViewVk::getViewport()
@@ -199,28 +276,33 @@ SystemWindow RenderViewVk::getSystemWindow()
 bool RenderViewVk::begin()
 {
 #if defined(_WIN32) || defined(__LINUX__)
-	VkSemaphoreCreateInfo semaphoreCreateInfo = { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO, 0, 0 };
-    vkCreateSemaphore(m_device, &semaphoreCreateInfo, nullptr, &m_presentCompleteSemaphore);
-    vkCreateSemaphore(m_device, &semaphoreCreateInfo, nullptr, &m_renderingCompleteSemaphore);
-
 	// Get next target from swap chain.
-    vkAcquireNextImageKHR(m_device, m_swapChain, UINT64_MAX, m_presentCompleteSemaphore, VK_NULL_HANDLE, &m_currentImageIndex);
+    vkAcquireNextImageKHR(
+		m_logicalDevice,
+		m_swapChain,
+		UINT64_MAX,
+		m_presentCompleteSemaphore,
+		VK_NULL_HANDLE,
+		&m_currentImageIndex
+	);
 #endif
 
 	// Reset descriptor pool.
-	vkResetDescriptorPool(m_device, m_descriptorPool, 0);
+	vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0);
 
-	// Begin recording *PRIMARY* command buffer.
+	// Begin recording command buffer.
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	vkBeginCommandBuffer(m_drawCmdBuffer, &beginInfo);
+	vkBeginCommandBuffer(m_drawCommandBuffer, &beginInfo);
 
 	// Push primary target onto stack.
 	TargetState ts;
 	ts.rts = m_primaryTargets[m_currentImageIndex];
 	ts.colorIndex = 0;
 	ts.clearMask = 0;
+	ts.clearDepth = 1.0f;
+	ts.clearStencil = 0;
 
 	m_targetStateStack.push_back(ts);
 	m_targetStateDirty = true;
@@ -233,10 +315,11 @@ bool RenderViewVk::begin(RenderTargetSet* renderTargetSet)
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	ts.colorIndex = 0;
 	ts.clearMask = 0;
+	ts.clearDepth = 1.0f;
+	ts.clearStencil = 0;
 
 	m_targetStateStack.push_back(ts);
 	m_targetStateDirty = true;
-
 	return true;
 }
 
@@ -246,10 +329,11 @@ bool RenderViewVk::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	ts.colorIndex = renderTarget;
 	ts.clearMask = 0;
+	ts.clearDepth = 1.0f;
+	ts.clearStencil = 0;
 
 	m_targetStateStack.push_back(ts);
 	m_targetStateDirty = true;
-
 	return true;
 }
 
@@ -277,45 +361,8 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	VertexBufferVk* vb = mandatory_non_null_type_cast< VertexBufferVk* >(vertexBuffer);
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
 
-
-	// Validate render pass and framebuffer, into *PRIMARY* command buffer.
 	validateTargetState();
-
-
-	// Create *SECONDARY* command buffer for each draw.
-	VkCommandBuffer cmdBuffer = 0;
-	VkCommandBufferAllocateInfo commandBufferAllocationInfo = {};
-	commandBufferAllocationInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	commandBufferAllocationInfo.commandPool = m_commandPool;
-	commandBufferAllocationInfo.level = VK_COMMAND_BUFFER_LEVEL_SECONDARY;
-	commandBufferAllocationInfo.commandBufferCount = 1;
-	if (vkAllocateCommandBuffers(m_device, &commandBufferAllocationInfo, &cmdBuffer) != VK_SUCCESS)
-		return;
-
-	m_cleanupCmdBuffers.push_back(cmdBuffer);
-
-
-	// Begin recording *SECONDARY* command buffer.
-	T_FATAL_ASSERT (!m_targetStateStack.empty());
-	TargetState& ts = m_targetStateStack.back();
-
-	VkCommandBufferInheritanceInfo inheritanceInfo = {};
-	inheritanceInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO;
-	inheritanceInfo.renderPass = ts.rts->getVkRenderPass();
-	inheritanceInfo.subpass = 0;
-	inheritanceInfo.framebuffer = ts.rts->getVkFramebuffer();
-	inheritanceInfo.occlusionQueryEnable = VK_FALSE;
-
-
-	VkCommandBufferBeginInfo beginInfo = {};
-	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT;
-	beginInfo.pInheritanceInfo = &inheritanceInfo;
-	vkBeginCommandBuffer(cmdBuffer, &beginInfo);
-
-
-	validatePipeline(cmdBuffer, vb, p, primitives.type);
-
+	validatePipeline(vb, p, primitives.type);
 
 	VkDescriptorSet descriptorSet = 0;
 	VkDescriptorSetAllocateInfo allocateInfo;
@@ -324,13 +371,13 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	allocateInfo.descriptorPool = m_descriptorPool;
 	allocateInfo.descriptorSetCount = 1;
 	allocateInfo.pSetLayouts = &m_descriptorSetLayout;
-	if (vkAllocateDescriptorSets(m_device, &allocateInfo, &descriptorSet) != VK_SUCCESS)
+	if (vkAllocateDescriptorSets(m_logicalDevice, &allocateInfo, &descriptorSet) != VK_SUCCESS)
 		return;
 
-	p->validate(m_device, descriptorSet);
+	p->validate(m_logicalDevice, descriptorSet);
 
 	vkCmdBindDescriptorSets(
-		cmdBuffer,
+		m_drawCommandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
 		m_pipelineLayout,
 		0,
@@ -338,23 +385,28 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 		0, nullptr
 	);
 
-
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 2, 3 };
 	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type];
 
 	VkBuffer vbb = vb->getVkBuffer();
 	VkDeviceSize offsets = {};
-	vkCmdBindVertexBuffers(cmdBuffer, 0, 1, &vbb, &offsets);
+	vkCmdBindVertexBuffers(m_drawCommandBuffer, 0, 1, &vbb, &offsets);
 
 	if (indexBuffer && primitives.indexed)
 	{
-		IndexBufferVk* ib = mandatory_non_null_type_cast<IndexBufferVk*>(indexBuffer);
+		IndexBufferVk* ib = mandatory_non_null_type_cast< IndexBufferVk* >(indexBuffer);
 		VkBuffer ibb = ib->getVkBuffer();
+
 		VkDeviceSize offset = {};
-		vkCmdBindIndexBuffer(cmdBuffer, ibb, offset, (ib->getIndexType() == ItUInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32);
+		vkCmdBindIndexBuffer(
+			m_drawCommandBuffer,
+			ibb,
+			offset,
+			(ib->getIndexType() == ItUInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32
+		);
 
 		vkCmdDrawIndexed(
-			cmdBuffer,
+			m_drawCommandBuffer,
 			vertexCount,	// index count
 			1,	// instance count
 			primitives.offset,	// first index
@@ -365,21 +417,13 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	else
 	{
 		vkCmdDraw(
-			cmdBuffer,
+			m_drawCommandBuffer,
 			vertexCount,   // vertex count
 			1,   // instance count
 			primitives.offset,   // first vertex
 			0 // first instance
 		);
 	}
-
-
-	// End recording *SECONDARY* command buffer.
-	vkEndCommandBuffer(cmdBuffer);
-
-
-	// Execute *SECONDARY* command buffer from *PRIMARY*
-	vkCmdExecuteCommands(m_drawCmdBuffer, 1, &cmdBuffer);
 }
 
 void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
@@ -393,9 +437,10 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 
 void RenderViewVk::end()
 {
-	// Close current render pass if it has begun.
-	if (!m_targetStateDirty)
-		vkCmdEndRenderPass(m_drawCmdBuffer);
+	validateTargetState();
+
+	// Close current render pass.
+	vkCmdEndRenderPass(m_drawCommandBuffer);
 
 	// Pop previous render pass from stack.
 	m_targetStateStack.pop_back();
@@ -407,54 +452,45 @@ void RenderViewVk::present()
 	T_FATAL_ASSERT (m_targetStateStack.empty());
 
 	// Prepare primary color for presentation.
-	m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->prepareForPresentation(m_drawCmdBuffer);
+	m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->prepareForPresentation(m_drawCommandBuffer);
 
 	// End recording command buffer.
-	vkEndCommandBuffer(m_drawCmdBuffer);
+	vkEndCommandBuffer(m_drawCommandBuffer);
 
-    VkFence renderFence;
-    VkFenceCreateInfo fenceCreateInfo = {};
-    fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-    vkCreateFence(m_device, &fenceCreateInfo, nullptr, &renderFence);
+	// Wait until GPU has finished rendering all commands.
+    VkPipelineStageFlags waitStageMash = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 
-    VkPipelineStageFlags waitStageMash = { VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT };
-    VkSubmitInfo submitInfo = {};
-    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    submitInfo.waitSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = &m_presentCompleteSemaphore;
-    submitInfo.pWaitDstStageMask = &waitStageMash;
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &m_drawCmdBuffer;
-    submitInfo.signalSemaphoreCount = 1;
-    submitInfo.pSignalSemaphores = &m_renderingCompleteSemaphore;
-    vkQueueSubmit(m_presentQueue, 1, &submitInfo, renderFence);
+    VkSubmitInfo si = {};
+    si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    si.waitSemaphoreCount = 1;
+    si.pWaitSemaphores = &m_presentCompleteSemaphore;
+    si.pWaitDstStageMask = &waitStageMash;
+    si.commandBufferCount = 1;
+    si.pCommandBuffers = &m_drawCommandBuffer;
+    si.signalSemaphoreCount = 0;
+    si.pSignalSemaphores = nullptr;
 
-    vkWaitForFences(m_device, 1, &renderFence, VK_TRUE, UINT64_MAX);
-    vkDestroyFence(m_device, renderFence, nullptr);
+    vkQueueSubmit(m_presentQueue, 1, &si, m_renderFence);
 
+    vkWaitForFences(m_logicalDevice, 1, &m_renderFence, VK_TRUE, UINT64_MAX);
+
+	// Queue presentation of current primary target.
 #if defined(_WIN32) || defined(__LINUX__)
-    VkPresentInfoKHR presentInfo = {};
-    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-    presentInfo.waitSemaphoreCount = 1;
-    presentInfo.pWaitSemaphores = &m_renderingCompleteSemaphore;
-    presentInfo.swapchainCount = 1;
-    presentInfo.pSwapchains = &m_swapChain;
-    presentInfo.pImageIndices = &m_currentImageIndex;
-    presentInfo.pResults = nullptr;
-    vkQueuePresentKHR(m_presentQueue, &presentInfo);
+    VkPresentInfoKHR pi = {};
+    pi.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    pi.swapchainCount = 1;
+    pi.pSwapchains = &m_swapChain;
+    pi.pImageIndices = &m_currentImageIndex;
+    pi.waitSemaphoreCount = 0;
+    pi.pWaitSemaphores = nullptr;
+    pi.pResults = nullptr;
+
+    vkQueuePresentKHR(m_presentQueue, &pi);
 #endif
 
-	for (auto c : m_cleanupCmdBuffers)
-		vkFreeCommandBuffers(m_device, m_commandPool, 1, &c);
-	m_cleanupCmdBuffers.resize(0);
-
-	for (auto p : m_cleanupPipelines)
-		vkDestroyPipeline(m_device, p, nullptr);
-	m_cleanupPipelines.resize(0);
-
-
-    vkDestroySemaphore(m_device, m_presentCompleteSemaphore, nullptr);
-    vkDestroySemaphore(m_device, m_renderingCompleteSemaphore, nullptr);
+	// for (auto p : m_cleanupPipelines)
+	// 	vkDestroyPipeline(m_logicalDevice, p, nullptr);
+	// m_cleanupPipelines.resize(0);
 }
 
 void RenderViewVk::pushMarker(const char* const marker)
@@ -476,6 +512,274 @@ bool RenderViewVk::getBackBufferContent(void* buffer) const
 	return false;
 }
 
+bool RenderViewVk::create(uint32_t width, uint32_t height)
+{
+	// Find present queue.
+	uint32_t queueFamilyCount = 0;
+	vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, 0);
+
+	AutoArrayPtr< VkQueueFamilyProperties > queueFamilyProperties(new VkQueueFamilyProperties[queueFamilyCount]);
+	vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, queueFamilyProperties.ptr());
+
+	m_presentQueueIndex = ~0;
+	for (uint32_t i = 0; i < queueFamilyCount; ++i)
+	{
+		VkBool32 supportsPresent;
+		vkGetPhysicalDeviceSurfaceSupportKHR(m_physicalDevice, i, m_surface, &supportsPresent);
+		if (supportsPresent)
+		{
+			m_presentQueueIndex = i;
+			break;
+		}
+	}
+	if (m_presentQueueIndex == ~0)
+	{
+		log::error << L"Failed to create Vulkan; no suitable present queue found." << Endl;
+		return false;
+	}
+
+	// Get opaque queues.
+	vkGetDeviceQueue(m_logicalDevice, m_presentQueueIndex, 0, &m_presentQueue);
+
+	// Create command pool.
+	VkCommandPoolCreateInfo cpci = {};
+	cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+	cpci.queueFamilyIndex = m_graphicsQueueIndex;
+
+	if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_commandPool) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; unable to create command pool." << Endl;
+		return false;
+	}
+
+	// Create command buffers from pool.
+	VkCommandBufferAllocateInfo cbai = {};
+	cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	cbai.commandPool = m_commandPool;
+	cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	cbai.commandBufferCount = 1;
+
+	if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, &m_drawCommandBuffer) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; failed to allocate draw command buffer." << Endl;
+		return false;
+	}
+
+	// Determine primary target color format/space.
+	uint32_t surfaceFormatCount = 0;
+	vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &surfaceFormatCount, nullptr);
+	if (surfaceFormatCount == 0)
+	{
+		log::error << L"Failed to create Vulkan; no surface formats." << Endl;
+		return false;
+	}
+
+	AutoArrayPtr< VkSurfaceFormatKHR > surfaceFormats(new VkSurfaceFormatKHR[surfaceFormatCount]);
+	vkGetPhysicalDeviceSurfaceFormatsKHR(m_physicalDevice, m_surface, &surfaceFormatCount, surfaceFormats.ptr());
+
+	VkFormat colorFormat = surfaceFormats[0].format;
+	if (colorFormat == VK_FORMAT_UNDEFINED)
+		colorFormat = VK_FORMAT_B8G8R8_UNORM;
+
+	VkColorSpaceKHR colorSpace = surfaceFormats[0].colorSpace;
+
+	// Determine number of images in swapchain.
+	VkSurfaceCapabilitiesKHR surfaceCapabilities = {};
+	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(m_physicalDevice, m_surface, &surfaceCapabilities);
+
+	uint32_t desiredImageCount = 2;
+	if (desiredImageCount < surfaceCapabilities.minImageCount)
+		desiredImageCount = surfaceCapabilities.minImageCount;
+	else if (surfaceCapabilities.maxImageCount != 0 && desiredImageCount > surfaceCapabilities.maxImageCount)
+		desiredImageCount = surfaceCapabilities.maxImageCount;
+
+	VkExtent2D surfaceResolution =  surfaceCapabilities.currentExtent;
+	if (surfaceResolution.width <= -1)
+	{
+		surfaceResolution.width = width;
+		surfaceResolution.height = height;
+	}
+
+	VkSurfaceTransformFlagBitsKHR preTransform = surfaceCapabilities.currentTransform;
+	if (surfaceCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR)
+		preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
+
+	// Determine presentation mode.
+	uint32_t presentModeCount = 0;
+	vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, nullptr);
+
+	AutoArrayPtr< VkPresentModeKHR > presentModes(new VkPresentModeKHR[presentModeCount]);
+	vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, presentModes.ptr());
+
+	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;   // always supported.
+	for (uint32_t i = 0; i < presentModeCount; ++i)
+	{
+		if (presentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR)
+		{
+			presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
+			break;
+		}
+	}
+
+	// Create swap chain.
+	VkSwapchainCreateInfoKHR scci = {};
+	scci.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+	scci.surface = m_surface;
+	scci.minImageCount = desiredImageCount;
+	scci.imageFormat = colorFormat;
+	scci.imageColorSpace = colorSpace;
+	scci.imageExtent = surfaceResolution;
+	scci.imageArrayLayers = 1;
+	scci.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+	scci.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	scci.preTransform = preTransform;
+	scci.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+	scci.presentMode = presentationMode;
+	scci.clipped = true;
+
+	uint32_t queueFamilyIndices[] = { m_graphicsQueueIndex, m_presentQueueIndex };
+	if (m_graphicsQueueIndex != m_presentQueueIndex)
+	{
+		// Need to be sharing between queues in order to be presentable.
+		scci.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+		scci.queueFamilyIndexCount = 2;
+		scci.pQueueFamilyIndices = queueFamilyIndices;
+	}
+
+	if (vkCreateSwapchainKHR(m_logicalDevice, &scci, nullptr, &m_swapChain) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; unable to create swap chain." << Endl;
+		return false;
+	}
+
+	// Get primary color images.
+	uint32_t imageCount = 0;
+	vkGetSwapchainImagesKHR(m_logicalDevice, m_swapChain, &imageCount, nullptr);
+
+	AlignedVector< VkImage > presentImages(imageCount);
+	vkGetSwapchainImagesKHR(m_logicalDevice, m_swapChain, &imageCount, presentImages.ptr());
+
+	// Create primary depth image.
+	VkImage depthImage = nullptr;
+
+	VkImageCreateInfo ici = {};
+	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+	ici.imageType = VK_IMAGE_TYPE_2D;
+	ici.format = VK_FORMAT_D16_UNORM;
+	ici.extent = { width, height, 1 };
+	ici.mipLevels = 1;
+	ici.arrayLayers = 1;
+	ici.samples = VK_SAMPLE_COUNT_1_BIT;
+	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
+	ici.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+	ici.queueFamilyIndexCount = 0;
+	ici.pQueueFamilyIndices = nullptr;
+	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+	ici.flags = 0;
+
+ 	if (vkCreateImage(m_logicalDevice, &ici, nullptr, &depthImage) != VK_SUCCESS)
+		return false;
+
+	VkMemoryRequirements memoryRequirements = {};
+	vkGetImageMemoryRequirements(m_logicalDevice, depthImage, &memoryRequirements);
+
+	VkMemoryAllocateInfo iai = {};
+	iai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	iai.allocationSize = memoryRequirements.size;
+	iai.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
+
+	VkDeviceMemory imageMemory = {};
+	if (vkAllocateMemory(m_logicalDevice, &iai, nullptr, &imageMemory) != VK_SUCCESS)
+		return false;
+
+	if (vkBindImageMemory(m_logicalDevice, depthImage, imageMemory, 0) != VK_SUCCESS)
+		return false;
+
+	// Create primary targets.
+	m_primaryTargets.resize(imageCount);
+	for (uint32_t i = 0; i < imageCount; ++i)
+	{
+		m_primaryTargets[i] = new RenderTargetSetVk();
+		if (!m_primaryTargets[i]->createPrimary(
+			m_physicalDevice,
+			m_logicalDevice,
+			width,
+			height,
+			colorFormat,
+			presentImages[i],
+			VK_FORMAT_D16_UNORM,
+			depthImage
+		))
+			return false;
+	}
+
+	// Create descriptor set layouts for shader uniforms;
+	// each shader type has 3 bindings (Once, Frame and Draw cbuffers):
+	VkDescriptorSetLayoutBinding dslb[6];
+	for (int32_t i = 0; i < 3; ++i)
+	{
+		dslb[i] = {};
+		dslb[i].binding = i;
+		dslb[i].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		dslb[i].descriptorCount = 1;
+		dslb[i].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+		dslb[i + 3] = {};
+		dslb[i + 3].binding = i + 3;
+		dslb[i + 3].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		dslb[i + 3].descriptorCount = 1;
+		dslb[i + 3].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	}
+
+	VkDescriptorSetLayoutCreateInfo dlci = {};
+	dlci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	dlci.pNext = nullptr;
+	dlci.bindingCount = sizeof_array(dslb);
+	dlci.pBindings = dslb;
+
+	if (vkCreateDescriptorSetLayout(m_logicalDevice, &dlci, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
+		return false;
+
+	// Create descriptor pool.
+	VkDescriptorPoolSize dps[1];
+	dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	dps[0].descriptorCount = 4 * 6;
+
+	VkDescriptorPoolCreateInfo dpci = {};
+	dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	dpci.pNext = nullptr;
+	dpci.maxSets = 4;
+	dpci.poolSizeCount = 1;
+	dpci.pPoolSizes = dps;
+
+	if (vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_descriptorPool) != VK_SUCCESS)
+		return false;
+
+	// Create pipeline layout.
+	VkPipelineLayoutCreateInfo lci = {};
+	lci.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	lci.setLayoutCount = 1;
+	lci.pSetLayouts = &m_descriptorSetLayout;
+	lci.pushConstantRangeCount = 0;
+	lci.pPushConstantRanges = nullptr;
+
+	if (vkCreatePipelineLayout(m_logicalDevice, &lci, nullptr, &m_pipelineLayout) != VK_SUCCESS)
+		return false;
+
+	// Create synchronization primitives.
+    VkFenceCreateInfo fci = {};
+    fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    vkCreateFence(m_logicalDevice, &fci, nullptr, &m_renderFence);
+
+	VkSemaphoreCreateInfo sci = {};
+	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    vkCreateSemaphore(m_logicalDevice, &sci, nullptr, &m_presentCompleteSemaphore);
+	
+	return true;
+}
+
 void RenderViewVk::validateTargetState()
 {
 	if (!m_targetStateDirty)
@@ -485,7 +789,7 @@ void RenderViewVk::validateTargetState()
 	TargetState& ts = m_targetStateStack.back();
 
 	// Prepare primary color for target rendering.
-	ts.rts->getColorTargetVk(ts.colorIndex)->prepareAsTarget(m_drawCmdBuffer);
+	ts.rts->getColorTargetVk(ts.colorIndex)->prepareAsTarget(m_drawCommandBuffer);
 
 	// Bind render pass and framebuffer.
 	VkClearValue clearValue[2];
@@ -503,12 +807,12 @@ void RenderViewVk::validateTargetState()
 	renderPassBeginInfo.renderArea.extent.height = ts.rts->getHeight();
 	renderPassBeginInfo.clearValueCount = 2;
 	renderPassBeginInfo.pClearValues = clearValue;
-	vkCmdBeginRenderPass(m_drawCmdBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+	vkCmdBeginRenderPass(m_drawCommandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
 
 	m_targetStateDirty = false;
 }
 
-bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt)
+bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt)
 {
 	T_FATAL_ASSERT (!m_targetStateStack.empty());
 	TargetState& ts = m_targetStateStack.back();
@@ -570,26 +874,35 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 		VK_BLEND_OP_MAX
 	};
 
-	VkViewport viewport = {};
-	viewport.x = 0.0f;
-	viewport.y = 0.0f;
-	viewport.width = ts.rts->getWidth();
-	viewport.height = ts.rts->getHeight();
-	viewport.minDepth = 0.0f;
-	viewport.maxDepth = 1.0f;
+	const VkPrimitiveTopology c_primitiveTopology[] =
+	{
+		VK_PRIMITIVE_TOPOLOGY_POINT_LIST,
+		VK_PRIMITIVE_TOPOLOGY_LINE_STRIP,
+		VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
+		VK_PRIMITIVE_TOPOLOGY_TRIANGLE_STRIP,
+		VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST
+	};
 
-	VkRect2D scissors = {};
-	scissors.offset.x = 0;
-	scissors.offset.y = 0;
-	scissors.extent.width = ts.rts->getWidth();
-	scissors.extent.height = ts.rts->getHeight();
+	// VkViewport viewport = {};
+	// viewport.x = 0.0f;
+	// viewport.y = 0.0f;
+	// viewport.width = ts.rts->getWidth();
+	// viewport.height = ts.rts->getHeight();
+	// viewport.minDepth = 0.0f;
+	// viewport.maxDepth = 1.0f;
+
+	// VkRect2D scissors = {};
+	// scissors.offset.x = 0;
+	// scissors.offset.y = 0;
+	// scissors.extent.width = ts.rts->getWidth();
+	// scissors.extent.height = ts.rts->getHeight();
 
 	VkPipelineViewportStateCreateInfo viewportState = {};
 	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-	viewportState.viewportCount = 1;
-	viewportState.pViewports = &viewport;
-	viewportState.scissorCount = 1;
-	viewportState.pScissors = &scissors;
+	// viewportState.viewportCount = 1;
+	// viewportState.pViewports = &viewport;
+	// viewportState.scissorCount = 1;
+	// viewportState.pScissors = &scissors;
 
 	VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo = {};
 	vertexInputStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -628,7 +941,7 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 	multisampleState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 	multisampleState.sampleShadingEnable = VK_FALSE;
 	multisampleState.minSampleShading = 0;
-	multisampleState.pSampleMask = NULL;
+	multisampleState.pSampleMask = nullptr;
 	multisampleState.alphaToCoverageEnable = rs.alphaToCoverageEnable ? VK_TRUE : VK_FALSE;
 	multisampleState.alphaToOneEnable = VK_FALSE;
 
@@ -674,15 +987,15 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 	colorBlendState.blendConstants[2] = 0.0;
 	colorBlendState.blendConstants[3] = 0.0;
 
-/*	VkDynamicState dynamicState[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+	VkDynamicState dynamicStates[1] = { VK_DYNAMIC_STATE_VIEWPORT };
 	VkPipelineDynamicStateCreateInfo dynamicStateCreateInfo = {};
 	dynamicStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-	dynamicStateCreateInfo.dynamicStateCount = 2;
-	dynamicStateCreateInfo.pDynamicStates = dynamicState;*/
+	dynamicStateCreateInfo.dynamicStateCount = sizeof_array(dynamicStates);
+	dynamicStateCreateInfo.pDynamicStates = dynamicStates;
 
 	VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo = {};
 	inputAssemblyStateCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-	inputAssemblyStateCreateInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+	inputAssemblyStateCreateInfo.topology = c_primitiveTopology[pt];
 	inputAssemblyStateCreateInfo.primitiveRestartEnable = VK_FALSE;
 
 	VkGraphicsPipelineCreateInfo pipelineCreateInfo = {};
@@ -701,19 +1014,22 @@ bool RenderViewVk::validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* v
 	pipelineCreateInfo.layout = m_pipelineLayout;
 	pipelineCreateInfo.renderPass = ts.rts->getVkRenderPass();
 	pipelineCreateInfo.subpass = 0;
-	pipelineCreateInfo.basePipelineHandle = 0;
+	pipelineCreateInfo.basePipelineHandle = nullptr;
 	pipelineCreateInfo.basePipelineIndex = 0;
 
 	if (m_pipeline)
 	{
 		m_cleanupPipelines.push_back(m_pipeline);
-		m_pipeline = 0;
+		m_pipeline = nullptr;
 	}
 
-	if (vkCreateGraphicsPipelines(m_device, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &m_pipeline) != VK_SUCCESS)
+	if (vkCreateGraphicsPipelines(m_logicalDevice, VK_NULL_HANDLE, 1, &pipelineCreateInfo, nullptr, &m_pipeline) != VK_SUCCESS)
+	{
+		log::error << L"Unable to create Vulkan graphics pipeline." << Endl;
 		return false;
+	}
 
-	vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
+	vkCmdBindPipeline(m_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
 	return true;
 }
 

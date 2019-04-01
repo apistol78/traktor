@@ -21,8 +21,8 @@ const int32_t _NET_WM_STATE_TOGGLE = 2;
 
 		}
 
-Window::Window(::Display* display)
-:	m_display(display)
+Window::Window()
+:	m_display(nullptr)
 ,	m_window(None)
 ,	m_screen(0)
 ,	m_width(0)
@@ -32,16 +32,6 @@ Window::Window(::Display* display)
 ,	m_cursorShow(true)
 ,	m_cursorShown(true)
 {
-	// Initialize X11 protocol atoms.
-	m_atomWmBypassCompositor = XInternAtom(display, "_NET_WM_BYPASS_COMPOSITOR", False);
-	m_atomWmState = XInternAtom(display, "_NET_WM_STATE", False);
-	m_atomWmStateFullscreen = XInternAtom(display, "_NET_WM_STATE_FULLSCREEN", False);
-	m_atomWmStateMaximizedVert = XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
-	m_atomWmStateMaximizedHorz= XInternAtom(display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
-	m_atomWmStateAbove = XInternAtom(display, "_NET_WM_STATE_ABOVE", False);
-	m_atomWmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
-
-	m_screen = DefaultScreen(m_display);
 }
 
 Window::~Window()
@@ -50,6 +40,22 @@ Window::~Window()
 
 bool Window::create(int32_t width, int32_t height)
 {
+	if ((m_display = XOpenDisplay(0)) == nullptr)
+	{
+		log::error << L"Unable to create Vulkan renderer; Failed to open X display" << Endl;
+		return false;
+	}
+
+	// Initialize X11 protocol atoms.
+	m_atomWmBypassCompositor = XInternAtom(m_display, "_NET_WM_BYPASS_COMPOSITOR", False);
+	m_atomWmState = XInternAtom(m_display, "_NET_WM_STATE", False);
+	m_atomWmStateFullscreen = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", False);
+	m_atomWmStateMaximizedVert = XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
+	m_atomWmStateMaximizedHorz= XInternAtom(m_display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
+	m_atomWmStateAbove = XInternAtom(m_display, "_NET_WM_STATE_ABOVE", False);
+	m_atomWmDeleteWindow = XInternAtom(m_display, "WM_DELETE_WINDOW", False);
+
+	m_screen = DefaultScreen(m_display);
 	m_width = width;
 	m_height = height;
 

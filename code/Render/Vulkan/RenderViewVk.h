@@ -44,24 +44,18 @@ class RenderViewVk
 	T_RTTI_CLASS;
 
 public:
-#if defined(_WIN32) || defined(__LINUX__)
 	RenderViewVk(
-		Window* window,
+		VkInstance instance,
+		VkPhysicalDevice physicalDevice,
 		VkDevice device,
-		VkSwapchainKHR swapChain,
-		VkQueue presentQueue,
-		VkCommandPool commandPool,
-		VkCommandBuffer drawCmdBuffer,
-		VkDescriptorSetLayout descriptorSetLayout,
-		VkPipelineLayout pipelineLayout,
-		VkDescriptorPool descriptorPool,
-		const RefArray< RenderTargetSetVk >& primaryTargets
+		uint32_t graphicsQueueIndex
 	);
-#else
-	RenderViewVk(VkDevice device);
-#endif
 
 	virtual ~RenderViewVk();
+
+	bool create(const RenderViewDefaultDesc& desc);
+
+	bool create(const RenderViewEmbeddedDesc& desc);
 
 	virtual bool nextEvent(RenderEvent& outEvent) override final;
 
@@ -122,24 +116,6 @@ public:
 	virtual bool getBackBufferContent(void* buffer) const override final;
 
 private:
-#if defined(_WIN32) || defined(__LINUX__)
-	Ref< Window > m_window;
-#endif
-	VkDevice m_device;
-	VkSwapchainKHR m_swapChain;
-	VkQueue m_presentQueue;
-	uint32_t m_currentImageIndex;
-	VkCommandPool m_commandPool;
-	VkCommandBuffer m_drawCmdBuffer;
-	VkDescriptorSetLayout m_descriptorSetLayout;
-	VkPipelineLayout m_pipelineLayout;
-	VkDescriptorPool m_descriptorPool;
-	RefArray< RenderTargetSetVk > m_primaryTargets;
-	VkSemaphore m_presentCompleteSemaphore;
-	VkSemaphore m_renderingCompleteSemaphore;
-	std::list< RenderEvent > m_eventQueue;
-
-
 	struct TargetState
 	{
 		Ref< RenderTargetSetVk > rts;
@@ -150,18 +126,43 @@ private:
 		int32_t clearStencil;
 	};
 
+	VkInstance m_instance;
+	VkPhysicalDevice m_physicalDevice;
+	VkDevice m_logicalDevice;
+	uint32_t m_graphicsQueueIndex;
+
+#if defined(_WIN32) || defined(__LINUX__)
+	Ref< Window > m_window;
+#endif
+
+	VkSurfaceKHR m_surface;
+	uint32_t m_presentQueueIndex;
+	VkQueue m_presentQueue;
+	VkCommandPool m_commandPool;
+	VkCommandBuffer m_drawCommandBuffer;
+	VkSwapchainKHR m_swapChain;
+	VkDescriptorSetLayout m_descriptorSetLayout;
+	VkDescriptorPool m_descriptorPool;
+	VkPipelineLayout m_pipelineLayout;
+	VkFence m_renderFence;
+	VkSemaphore m_presentCompleteSemaphore;
+	RefArray< RenderTargetSetVk > m_primaryTargets;
+
+	std::list< RenderEvent > m_eventQueue;
+	uint32_t m_currentImageIndex;
+
 	AlignedVector< TargetState > m_targetStateStack;
 	bool m_targetStateDirty;
 
 	VkPipeline m_pipeline;
 
 	AlignedVector< VkPipeline > m_cleanupPipelines;
-	AlignedVector< VkCommandBuffer > m_cleanupCmdBuffers;
+
+	bool create(uint32_t width, uint32_t height);
 
 	void validateTargetState();
 
-	bool validatePipeline(VkCommandBuffer cmdBuffer, VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt);
-
+	bool validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt);
 
 #if defined(_WIN32)
 	// \name IWindowListener implementation.

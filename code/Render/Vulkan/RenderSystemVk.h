@@ -94,11 +94,13 @@ private:
 #if defined(_WIN32) || defined(__LINUX__)
 	Ref< Window > m_window;
 #endif
+#if defined(__LINUX__)
+	::Display* m_display;
+#endif
 	VkInstance m_instance;
-	VkSurfaceKHR m_surface;
 	VkPhysicalDevice m_physicalDevice;
-	uint32_t m_physicalDeviceQueueIndex;
-	VkDevice m_device;
+	VkDevice m_logicalDevice;
+	uint32_t m_graphicsQueueIndex;
 	bool m_haveValidationLayer;
 };
 
