@@ -29,7 +29,7 @@ Window::~Window()
 	}
 }
 
-bool Window::create()
+bool Window::create(int32_t width, int32_t height)
 {
 	T_ASSERT(!m_hWnd);
 
@@ -52,8 +52,8 @@ bool Window::create()
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
-		64,
-		64,
+		width,
+		height,
 		NULL,
 		NULL,
 		static_cast< HMODULE >(GetModuleHandle(NULL)),
@@ -62,6 +62,7 @@ bool Window::create()
 	if (!m_hWnd)
 		return false;
 
+	setWindowedStyle(width, height);
 	return true;
 }
 
@@ -120,6 +121,11 @@ void Window::setFullScreenStyle(int32_t width, int32_t height)
 	ShowWindow(m_hWnd, SW_MAXIMIZE);
 
 	m_fullScreen = true;
+}
+
+void Window::show()
+{
+	ShowWindow(m_hWnd, SW_SHOW);
 }
 
 void Window::hide()

@@ -1,3 +1,4 @@
+#include "Core/Math/Ray3.h"
 #include "Render/Shader.h"
 #include "Render/Types.h"
 #include "Render/Context/ProgramParameters.h"
@@ -185,15 +186,16 @@ void WorldRenderPassDeferred::setProbeProgramParameters(render::ProgramParameter
 		const auto& c0 = lights[0].probe.shCoeffs->get();
 		const auto& c1 = lights[1].probe.shCoeffs->get();
 
-		Scalar l0 = (lights[0].position - position).xyz0().length();
-		Scalar l1 = (lights[1].position - position).xyz0().length();
+		Vector4 direction = lights[1].position - lights[0].position;
+		Scalar length = direction.normalize();
 
-		Scalar f0 = l0 / (l0 + l1);
-		Scalar f1 = l1 / (l0 + l1);
+		Vector4 v = (position - lights[0].position).xyz0();
+		Scalar ln2 = v.normalize();
 
+		Scalar k = clamp(dot3(direction, v), Scalar(0.0f), Scalar(1.0f));
 		for (int i = 0; i < 9; ++i)
 		{
-			c[i] = c0[i] * f0 + c1[i] * f1;
+			c[i] = c0[i] * (Scalar(1.0f) - k) + c1[i] * k;
 		}
 	}
 	else
