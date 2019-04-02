@@ -5,8 +5,8 @@
 			<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
 			<comment/>
 			<position>
-				<first>-1472</first>
-				<second>94</second>
+				<first>-1470</first>
+				<second>93</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -18,8 +18,8 @@
 			<id>{D9D1FD13-4CD0-B949-A524-3276089CD08A}</id>
 			<comment/>
 			<position>
-				<first>-1472</first>
-				<second>-32</second>
+				<first>-1470</first>
+				<second>-30</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -31,8 +31,8 @@
 			<id>{86D35046-A057-024C-ADA3-9585DB3208BB}</id>
 			<comment/>
 			<position>
-				<first>-1472</first>
-				<second>8</second>
+				<first>-1470</first>
+				<second>6</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -45,7 +45,7 @@
 			<comment/>
 			<position>
 				<first>-1452</first>
-				<second>136</second>
+				<second>135</second>
 			</position>
 			<name>Roughness</name>
 			<connectable>true</connectable>
@@ -57,7 +57,7 @@
 			<id>{A5F0E607-E44E-4D43-8743-2CE73EC070EC}</id>
 			<comment/>
 			<position>
-				<first>-1432</first>
+				<first>-1431</first>
 				<second>180</second>
 			</position>
 			<name>Emissive</name>
@@ -83,8 +83,8 @@
 			<id>{21B82E2F-6A92-574E-98B6-CBE4A37D9C1E}</id>
 			<comment/>
 			<position>
-				<first>-1472</first>
-				<second>52</second>
+				<first>-1470</first>
+				<second>51</second>
 			</position>
 			<name>ViewVelocity</name>
 			<connectable>true</connectable>
@@ -96,8 +96,8 @@
 			<id>{A6D7BFAB-0138-4EFD-A71A-1397BCE9E584}</id>
 			<comment/>
 			<position>
-				<first>-1630</first>
-				<second>334</second>
+				<first>-1629</first>
+				<second>333</second>
 			</position>
 			<name>Transparency</name>
 			<connectable>true</connectable>
@@ -113,8 +113,8 @@ World_DeferredColor
 			]]>
 			</comment>
 			<position>
-				<first>-328</first>
-				<second>344</second>
+				<first>-327</first>
+				<second>342</second>
 			</position>
 			<fragmentGuid>{AE1F1751-0133-426A-9F69-2DE781788F0C}</fragmentGuid>
 			<inputPins>
@@ -165,8 +165,8 @@ World_DeferredGBufferWrite
 			]]>
 			</comment>
 			<position>
-				<first>-310</first>
-				<second>-52</second>
+				<first>-309</first>
+				<second>-51</second>
 			</position>
 			<fragmentGuid>{B02CB855-C540-492F-B6E6-1ECEE2498127}</fragmentGuid>
 			<inputPins>
@@ -214,7 +214,7 @@ World_DeferredGBufferWrite
 			<comment/>
 			<position>
 				<first>-612</first>
-				<second>388</second>
+				<second>387</second>
 			</position>
 			<fragmentGuid>{819D0D66-7FB8-4EA0-9D8D-445F3EBC2E8D}</fragmentGuid>
 			<inputPins>
@@ -241,7 +241,7 @@ Deferred / Opaque
 			</comment>
 			<position>
 				<first>-408</first>
-				<second>-164</second>
+				<second>-162</second>
 			</position>
 		</item>
 		<item type="traktor.render.Comment" version="traktor.render.Node:1">
@@ -253,7 +253,7 @@ Deferred / Transparent
 			</comment>
 			<position>
 				<first>-360</first>
-				<second>220</second>
+				<second>219</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
@@ -264,7 +264,7 @@ World_ShadowWrite
 			]]>
 			</comment>
 			<position>
-				<first>-314</first>
+				<first>-312</first>
 				<second>621</second>
 			</position>
 			<fragmentGuid>{6EF33326-74C7-B640-BB38-5C57D2199FB4}</fragmentGuid>
@@ -291,8 +291,8 @@ World_VelocityWrite
 			]]>
 			</comment>
 			<position>
-				<first>-314</first>
-				<second>743</second>
+				<first>-312</first>
+				<second>741</second>
 			</position>
 			<fragmentGuid>{E3C34875-BEFA-3C4E-BB51-8D334C1FD4D6}</fragmentGuid>
 			<inputPins>
@@ -319,7 +319,7 @@ Opaque
 			</comment>
 			<position>
 				<first>-1044</first>
-				<second>346</second>
+				<second>345</second>
 			</position>
 			<name>E_Opaque</name>
 			<global>false</global>
@@ -332,7 +332,7 @@ Opaque
 			]]>
 			</comment>
 			<position>
-				<first>-578</first>
+				<first>-576</first>
 				<second>24</second>
 			</position>
 			<name>E_Opaque</name>
@@ -347,7 +347,7 @@ Opaque
 			</comment>
 			<position>
 				<first>-792</first>
-				<second>380</second>
+				<second>378</second>
 			</position>
 			<name>E_Opaque</name>
 			<global>false</global>
@@ -361,7 +361,7 @@ Opaque
 			</comment>
 			<position>
 				<first>-492</first>
-				<second>793</second>
+				<second>792</second>
 			</position>
 			<name>E_Opaque</name>
 			<global>false</global>
@@ -370,16 +370,16 @@ Opaque
 			<id>{13F72F90-B1F3-47A8-BB73-82A2E1AF6E9D}</id>
 			<comment/>
 			<position>
-				<first>-1274</first>
-				<second>344</second>
+				<first>-1272</first>
+				<second>342</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{AB3E2221-A189-4331-B267-74105A830AE4}</id>
 			<comment/>
 			<position>
-				<first>-1550</first>
-				<second>400</second>
+				<first>-1548</first>
+				<second>399</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -387,7 +387,7 @@ Opaque
 			<id>{37DFD845-F1F5-44A6-8889-531D5F4F5769}</id>
 			<comment/>
 			<position>
-				<first>-1550</first>
+				<first>-1548</first>
 				<second>432</second>
 			</position>
 			<value>1</value>
@@ -396,8 +396,8 @@ Opaque
 			<id>{8471E6CB-0CA4-44FA-BA9A-C6FA85A0516A}</id>
 			<comment/>
 			<position>
-				<first>-1610</first>
-				<second>680</second>
+				<first>-1608</first>
+				<second>678</second>
 			</position>
 			<name>Irradiance</name>
 			<connectable>true</connectable>
@@ -413,7 +413,7 @@ World_IrradianceWrite
 			]]>
 			</comment>
 			<position>
-				<first>-314</first>
+				<first>-312</first>
 				<second>924</second>
 			</position>
 			<fragmentGuid>{3C686137-97F0-FD40-A34A-0D745E7FE333}</fragmentGuid>
@@ -436,7 +436,7 @@ World_IrradianceWrite
 			<id>{CFD26C88-C630-4513-BFAD-469CE5F67A92}</id>
 			<comment/>
 			<position>
-				<first>-1274</first>
+				<first>-1272</first>
 				<second>606</second>
 			</position>
 		</item>
@@ -448,8 +448,8 @@ World_IrradianceWrite
 			]]>
 			</comment>
 			<position>
-				<first>-1046</first>
-				<second>608</second>
+				<first>-1044</first>
+				<second>606</second>
 			</position>
 			<name>E_Irradiance</name>
 			<global>false</global>
@@ -472,7 +472,7 @@ World_IrradianceWrite
 			<id>{DD015A1D-72B9-401D-B3B3-2C23E65C2DFB}</id>
 			<comment/>
 			<position>
-				<first>-1274</first>
+				<first>-1272</first>
 				<second>450</second>
 			</position>
 		</item>
@@ -480,8 +480,8 @@ World_IrradianceWrite
 			<id>{1921AA6A-BD5A-49A2-ABBF-A6225C4EF3C4}</id>
 			<comment/>
 			<position>
-				<first>-1550</first>
-				<second>500</second>
+				<first>-1548</first>
+				<second>498</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -493,8 +493,8 @@ Always set transparency
 			]]>
 			</comment>
 			<position>
-				<first>-1046</first>
-				<second>460</second>
+				<first>-1044</first>
+				<second>459</second>
 			</position>
 			<name>V_Transparency</name>
 			<global>false</global>
@@ -508,7 +508,7 @@ Always set transparency
 			</comment>
 			<position>
 				<first>-606</first>
-				<second>514</second>
+				<second>513</second>
 			</position>
 			<name>V_Transparency</name>
 			<global>false</global>
@@ -517,8 +517,8 @@ Always set transparency
 			<id>{94E22A68-7854-594C-9319-8AAF20D6DCA1}</id>
 			<comment/>
 			<position>
-				<first>-1630</first>
-				<second>958</second>
+				<first>-1629</first>
+				<second>957</second>
 			</position>
 			<name>Cast shadow</name>
 			<connectable>true</connectable>
@@ -530,8 +530,8 @@ Always set transparency
 			<id>{3E6ABE61-4446-DA40-BDA8-C60ABC1A8388}</id>
 			<comment/>
 			<position>
-				<first>-1274</first>
-				<second>890</second>
+				<first>-1272</first>
+				<second>888</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
@@ -543,7 +543,7 @@ Opaque
 			</comment>
 			<position>
 				<first>-1518</first>
-				<second>862</second>
+				<second>861</second>
 			</position>
 			<name>E_Opaque</name>
 			<global>false</global>
@@ -556,8 +556,8 @@ Opaque
 			]]>
 			</comment>
 			<position>
-				<first>-1046</first>
-				<second>890</second>
+				<first>-1044</first>
+				<second>888</second>
 			</position>
 			<name>E_CastShadow</name>
 			<global>false</global>
@@ -570,8 +570,8 @@ Opaque
 			]]>
 			</comment>
 			<position>
-				<first>-508</first>
-				<second>665</second>
+				<first>-507</first>
+				<second>663</second>
 			</position>
 			<name>E_CastShadow</name>
 			<global>false</global>
@@ -580,8 +580,8 @@ Opaque
 			<id>{B7DB3524-2D5B-BC4F-A3DD-ECEC98A5E566}</id>
 			<comment/>
 			<position>
-				<first>-1274</first>
-				<second>722</second>
+				<first>-1272</first>
+				<second>720</second>
 			</position>
 		</item>
 		<item type="traktor.render.Color" version="1,traktor.render.Node:1">
@@ -589,7 +589,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1590</first>
-				<second>788</second>
+				<second>786</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 		</item>
@@ -601,8 +601,8 @@ Opaque
 			]]>
 			</comment>
 			<position>
-				<first>-1046</first>
-				<second>728</second>
+				<first>-1044</first>
+				<second>726</second>
 			</position>
 			<name>V_Irradiance</name>
 			<global>false</global>
@@ -616,7 +616,7 @@ Opaque
 			</comment>
 			<position>
 				<first>-750</first>
-				<second>880</second>
+				<second>879</second>
 			</position>
 			<name>V_Irradiance</name>
 			<global>false</global>
@@ -626,7 +626,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1170</first>
-				<second>112</second>
+				<second>111</second>
 			</position>
 			<name>V_SurfaceColor</name>
 			<global>false</global>
@@ -635,8 +635,8 @@ Opaque
 			<id>{BBB7D383-36D8-B740-A988-A970C45DB47E}</id>
 			<comment/>
 			<position>
-				<first>-590</first>
-				<second>260</second>
+				<first>-588</first>
+				<second>258</second>
 			</position>
 			<name>V_SurfaceColor</name>
 			<global>false</global>
@@ -666,7 +666,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-594</first>
-				<second>100</second>
+				<second>99</second>
 			</position>
 			<name>V_Roughness</name>
 			<global>false</global>
@@ -675,7 +675,7 @@ Opaque
 			<id>{6FBEB4DF-7201-904B-B6C0-1E2A475BC0AD}</id>
 			<comment/>
 			<position>
-				<first>-590</first>
+				<first>-588</first>
 				<second>456</second>
 			</position>
 			<name>V_Roughness</name>
@@ -686,7 +686,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1170</first>
-				<second>214</second>
+				<second>213</second>
 			</position>
 			<name>V_Metalness</name>
 			<global>false</global>
@@ -696,7 +696,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-594</first>
-				<second>62</second>
+				<second>60</second>
 			</position>
 			<name>V_Metalness</name>
 			<global>false</global>
@@ -706,7 +706,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1170</first>
-				<second>-38</second>
+				<second>-36</second>
 			</position>
 			<name>V_ViewNormal</name>
 			<global>false</global>
@@ -716,7 +716,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-594</first>
-				<second>-52</second>
+				<second>-51</second>
 			</position>
 			<name>V_ViewNormal</name>
 			<global>false</global>
@@ -725,8 +725,8 @@ Opaque
 			<id>{6548C93B-D955-1D46-AE2D-2C3AF6423E8F}</id>
 			<comment/>
 			<position>
-				<first>-590</first>
-				<second>302</second>
+				<first>-588</first>
+				<second>300</second>
 			</position>
 			<name>V_ViewNormal</name>
 			<global>false</global>
@@ -736,7 +736,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1170</first>
-				<second>10</second>
+				<second>9</second>
 			</position>
 			<name>V_ViewPosition</name>
 			<global>false</global>
@@ -746,7 +746,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-594</first>
-				<second>-14</second>
+				<second>-12</second>
 			</position>
 			<name>V_ViewPosition</name>
 			<global>false</global>
@@ -755,8 +755,8 @@ Opaque
 			<id>{9CF0E497-5DD7-3742-B376-FDAAA292C25A}</id>
 			<comment/>
 			<position>
-				<first>-590</first>
-				<second>346</second>
+				<first>-588</first>
+				<second>345</second>
 			</position>
 			<name>V_ViewPosition</name>
 			<global>false</global>
@@ -765,8 +765,8 @@ Opaque
 			<id>{13FE0BAD-046C-4642-BD77-56768CA3955A}</id>
 			<comment/>
 			<position>
-				<first>-508</first>
-				<second>623</second>
+				<first>-507</first>
+				<second>621</second>
 			</position>
 			<name>V_ViewPosition</name>
 			<global>false</global>
@@ -776,7 +776,7 @@ Opaque
 			<comment/>
 			<position>
 				<first>-1170</first>
-				<second>62</second>
+				<second>60</second>
 			</position>
 			<name>V_ViewVelocity</name>
 			<global>false</global>
@@ -785,8 +785,8 @@ Opaque
 			<id>{755BF05A-439B-A247-9710-C8332954F171}</id>
 			<comment/>
 			<position>
-				<first>-508</first>
-				<second>745</second>
+				<first>-507</first>
+				<second>744</second>
 			</position>
 			<name>V_ViewVelocity</name>
 			<global>false</global>
@@ -805,8 +805,151 @@ Opaque
 			<id>{61406CF4-8725-C241-8470-D911CAB6FB2B}</id>
 			<comment/>
 			<position>
-				<first>-542</first>
+				<first>-540</first>
 				<second>879</second>
+			</position>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{B46B61A8-7D63-4ABF-A7B9-96A23573C6CF}</id>
+			<comment/>
+			<position>
+				<first>826</first>
+				<second>-6</second>
+			</position>
+			<fragmentGuid>{6CFFC4E2-474E-4CEA-9812-C59AEDD8FF6E}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>
+					<name>SurfaceColor</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{72048415-F7D0-42B2-BF26-7F7F4D97A902}</id>
+					<name>Enable</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{0139F9E7-1D5D-4C41-95C3-E7FB6FC8BE2E}</id>
+			<comment/>
+			<position>
+				<first>808</first>
+				<second>323</second>
+			</position>
+			<fragmentGuid>{ECC44A02-46CE-4D25-A06B-14C0A8F6DB2B}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>
+					<name>SurfaceColor</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{72048415-F7D0-42B2-BF26-7F7F4D97A902}</id>
+					<name>Enable</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values/>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{5B182F4F-5DA3-4A74-A008-B8C9910111B9}</id>
+			<comment/>
+			<position>
+				<first>601</first>
+				<second>0</second>
+			</position>
+			<name>V_SurfaceColor</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{5F17878C-B112-4B95-A59C-C6469FCB8216}</id>
+			<comment/>
+			<position>
+				<first>604</first>
+				<second>317</second>
+			</position>
+			<name>V_SurfaceColor</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{5E35B2DC-4C56-4D3A-86CB-940208C0CE4A}</id>
+			<comment>
+			<![CDATA[
+Opaque
+			]]>
+			</comment>
+			<position>
+				<first>628</first>
+				<second>58</second>
+			</position>
+			<name>E_Opaque</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{D41F82F0-BB7C-4D73-8316-335D8C197FDA}</id>
+			<comment>
+			<![CDATA[
+Opaque
+			]]>
+			</comment>
+			<position>
+				<first>433</first>
+				<second>369</second>
+			</position>
+			<name>E_Opaque</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{E3BFCBF8-0D3E-4D69-80FA-99EFC58CE748}</id>
+			<comment/>
+			<position>
+				<first>613</first>
+				<second>378</second>
+			</position>
+			<fragmentGuid>{819D0D66-7FB8-4EA0-9D8D-445F3EBC2E8D}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{3BEE6FBC-73D2-40AE-8491-667E79827E2E}</id>
+					<name>Input</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{1A2E1C23-7F96-4CB8-90B1-50C178F9B27F}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{60DAF837-DE3D-46D4-B433-726AAD3C3F57}</id>
+			<comment>
+			<![CDATA[
+Simple / Opaque
+
+			]]>
+			</comment>
+			<position>
+				<first>738</first>
+				<second>-129</second>
+			</position>
+		</item>
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{D9253E89-C316-4F3B-880E-ADDA8B7376B6}</id>
+			<comment>
+			<![CDATA[
+Simple / Transparent
+
+			]]>
+			</comment>
+			<position>
+				<first>732</first>
+				<second>213</second>
 			</position>
 		</item>
 	</nodes>
@@ -1249,6 +1392,56 @@ Opaque
 			<destination>
 				<node ref="/object/nodes/item[23]"/>
 				<name>Irradiance</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[62]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[60]"/>
+				<name>SurfaceColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[61]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[59]"/>
+				<name>SurfaceColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[63]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[59]"/>
+				<name>Enable</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[64]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[65]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[65]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[60]"/>
+				<name>Enable</name>
 			</destination>
 		</item>
 	</edges>
