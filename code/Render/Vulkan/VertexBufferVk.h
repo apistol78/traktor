@@ -36,7 +36,8 @@ public:
 		VkBuffer vertexBuffer,
 		VkDeviceMemory vertexBufferMemory,
 		const VkVertexInputBindingDescription& vertexBindingDescription,
-		const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions
+		const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
+		uint32_t hash
 	);
 
 	virtual void destroy() override final;
@@ -53,12 +54,15 @@ public:
 
 	const AlignedVector< VkVertexInputAttributeDescription >& getVkVertexInputAttributeDescriptions() const { return m_vertexAttributeDescriptions; }
 
+	uint32_t getHash() const { return m_hash; }
+
 private:
 	VkDevice m_device;
 	VkBuffer m_vertexBuffer;
 	VkDeviceMemory m_vertexBufferMemory;
 	VkVertexInputBindingDescription m_vertexBindingDescription;
 	AlignedVector< VkVertexInputAttributeDescription > m_vertexAttributeDescriptions;
+	uint32_t m_hash;
 };
 
 	}

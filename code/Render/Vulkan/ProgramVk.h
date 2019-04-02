@@ -66,6 +66,8 @@ public:
 
 	VkShaderModule getFragmentVkShaderModule() const { return m_fragmentShaderModule; }
 
+	uint32_t getHash() const { return m_hash; }
+
 private:
 	struct ParameterMap
 	{
@@ -108,7 +110,7 @@ private:
 	};
 
 	RenderState m_renderState;
-
+	
 	VkShaderModule m_vertexShaderModule;
 	VkShaderModule m_fragmentShaderModule;
 
@@ -117,6 +119,8 @@ private:
 
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
 	AlignedVector< float > m_parameterScalarData;
+
+	uint32_t m_hash;
 };
 
 	}

@@ -15,6 +15,7 @@
 #endif
 
 #include <list>
+#include <tuple>
 #include "Core/Containers/AlignedVector.h"
 #include "Render/IRenderView.h"
 #if defined(_WIN32)
@@ -157,9 +158,8 @@ private:
 	AlignedVector< TargetState > m_targetStateStack;
 	bool m_targetStateDirty;
 
-	VkPipeline m_pipeline;
-
-	AlignedVector< VkPipeline > m_cleanupPipelines;
+	typedef std::tuple< uint32_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
+	SmallMap< pipeline_key_t, VkPipeline > m_pipelines;
 
 	bool create(uint32_t width, uint32_t height);
 

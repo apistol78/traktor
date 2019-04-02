@@ -12,6 +12,8 @@ namespace traktor
 		namespace
 		{
 
+const uint32_t c_deviceBufferCount = 16;
+
 bool storeIfNotEqual(const float* source, int length, float* dest)
 {
 	for (int i = 0; i < length; ++i)
@@ -47,6 +49,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVk", ProgramVk, IProgram)
 ProgramVk::ProgramVk()
 :	m_vertexShaderModule(0)
 ,	m_fragmentShaderModule(0)
+,	m_hash(0)
 {
 }
 
@@ -58,21 +61,22 @@ ProgramVk::~ProgramVk()
 bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const ProgramResourceVk* resource)
 {
 	m_renderState = resource->m_renderState;
+	m_hash = resource->m_hash;
 
 	// Create vertex shader module.
-	VkShaderModuleCreateInfo vertexShaderCreationInfo = {};
-	vertexShaderCreationInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	vertexShaderCreationInfo.codeSize = resource->m_vertexShader.size() * sizeof(uint32_t);
-	vertexShaderCreationInfo.pCode = &resource->m_vertexShader[0];
-	if (vkCreateShaderModule(device, &vertexShaderCreationInfo, nullptr, &m_vertexShaderModule) != VK_SUCCESS)
+	VkShaderModuleCreateInfo vsmci = {};
+	vsmci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	vsmci.codeSize = resource->m_vertexShader.size() * sizeof(uint32_t);
+	vsmci.pCode = &resource->m_vertexShader[0];
+	if (vkCreateShaderModule(device, &vsmci, nullptr, &m_vertexShaderModule) != VK_SUCCESS)
 		return false;
 
 	// Create fragment shader module.
-	VkShaderModuleCreateInfo fragmentShaderCreationInfo = {};
-	fragmentShaderCreationInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	fragmentShaderCreationInfo.codeSize = resource->m_fragmentShader.size() * sizeof(uint32_t);
-	fragmentShaderCreationInfo.pCode = &resource->m_fragmentShader[0];
-	if (vkCreateShaderModule(device, &fragmentShaderCreationInfo, nullptr, &m_fragmentShaderModule) != VK_SUCCESS)
+	VkShaderModuleCreateInfo fsmci = {};
+	fsmci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	fsmci.codeSize = resource->m_fragmentShader.size() * sizeof(uint32_t);
+	fsmci.pCode = &resource->m_fragmentShader[0];
+	if (vkCreateShaderModule(device, &fsmci, nullptr, &m_fragmentShaderModule) != VK_SUCCESS)
 		return false;
 
 	// Create uniform buffers.
@@ -81,32 +85,37 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 		// Vertex
 		if (resource->m_vertexUniformBuffers[i].size > 0)
 		{
-			m_vertexUniformBuffers[i].deviceBuffers.resize(4);
-			for (uint32_t j = 0; j < 4; ++j)
+			m_vertexUniformBuffers[i].deviceBuffers.resize(c_deviceBufferCount);
+			for (uint32_t j = 0; j < c_deviceBufferCount; ++j)
 			{
-				VkBufferCreateInfo uniformBufferCreationInfo = {};
-				uniformBufferCreationInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-				uniformBufferCreationInfo.pNext = nullptr;
-				uniformBufferCreationInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-				uniformBufferCreationInfo.size = resource->m_vertexUniformBuffers[i].size * 4;
-				uniformBufferCreationInfo.queueFamilyIndexCount = 0;
-				uniformBufferCreationInfo.pQueueFamilyIndices = nullptr;
-				uniformBufferCreationInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-				uniformBufferCreationInfo.flags = 0;
-				if (vkCreateBuffer(device, &uniformBufferCreationInfo, nullptr, &m_vertexUniformBuffers[i].deviceBuffers[j].buffer) != VK_SUCCESS)
+				VkBufferCreateInfo bci = {};
+				bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+				bci.pNext = nullptr;
+				bci.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+				bci.size = resource->m_vertexUniformBuffers[i].size * 4;
+				bci.queueFamilyIndexCount = 0;
+				bci.pQueueFamilyIndices = nullptr;
+				bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+				bci.flags = 0;
+				if (vkCreateBuffer(device, &bci, nullptr, &m_vertexUniformBuffers[i].deviceBuffers[j].buffer) != VK_SUCCESS)
 					return false;
 
 				VkMemoryRequirements memoryRequirements = {};
 				vkGetBufferMemoryRequirements(device, m_vertexUniformBuffers[i].deviceBuffers[j].buffer, &memoryRequirements);
 
-				VkMemoryAllocateInfo bufferAllocateInfo = {};
-				bufferAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-				bufferAllocateInfo.allocationSize = memoryRequirements.size;
-				bufferAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
-				if (vkAllocateMemory(device, &bufferAllocateInfo, nullptr, &m_vertexUniformBuffers[i].deviceBuffers[j].memory) != VK_SUCCESS)
+				VkMemoryAllocateInfo bai = {};
+				bai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+				bai.allocationSize = memoryRequirements.size;
+				bai.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
+				if (vkAllocateMemory(device, &bai, nullptr, &m_vertexUniformBuffers[i].deviceBuffers[j].memory) != VK_SUCCESS)
 					return false;
 
-				vkBindBufferMemory(device, m_vertexUniformBuffers[i].deviceBuffers[j].buffer, m_vertexUniformBuffers[i].deviceBuffers[j].memory, 0);
+				vkBindBufferMemory(
+					device,
+					m_vertexUniformBuffers[i].deviceBuffers[j].buffer,
+					m_vertexUniformBuffers[i].deviceBuffers[j].memory,
+					0
+				);
 			}
 
 			m_vertexUniformBuffers[i].size = resource->m_vertexUniformBuffers[i].size * 4;
@@ -124,32 +133,37 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 		// Fragment
 		if (resource->m_fragmentUniformBuffers[i].size > 0)
 		{
-			m_fragmentUniformBuffers[i].deviceBuffers.resize(4);
-			for (uint32_t j = 0; j < 4; ++j)
+			m_fragmentUniformBuffers[i].deviceBuffers.resize(c_deviceBufferCount);
+			for (uint32_t j = 0; j < c_deviceBufferCount; ++j)
 			{
-				VkBufferCreateInfo uniformBufferCreationInfo = {};
-				uniformBufferCreationInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-				uniformBufferCreationInfo.pNext = nullptr;
-				uniformBufferCreationInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-				uniformBufferCreationInfo.size = resource->m_fragmentUniformBuffers[i].size * 4;
-				uniformBufferCreationInfo.queueFamilyIndexCount = 0;
-				uniformBufferCreationInfo.pQueueFamilyIndices = nullptr;
-				uniformBufferCreationInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-				uniformBufferCreationInfo.flags = 0;
-				if (vkCreateBuffer(device, &uniformBufferCreationInfo, nullptr, &m_fragmentUniformBuffers[i].deviceBuffers[j].buffer) != VK_SUCCESS)
+				VkBufferCreateInfo bci = {};
+				bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+				bci.pNext = nullptr;
+				bci.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+				bci.size = resource->m_fragmentUniformBuffers[i].size * 4;
+				bci.queueFamilyIndexCount = 0;
+				bci.pQueueFamilyIndices = nullptr;
+				bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+				bci.flags = 0;
+				if (vkCreateBuffer(device, &bci, nullptr, &m_fragmentUniformBuffers[i].deviceBuffers[j].buffer) != VK_SUCCESS)
 					return false;
 
 				VkMemoryRequirements memoryRequirements = {};
 				vkGetBufferMemoryRequirements(device, m_fragmentUniformBuffers[i].deviceBuffers[j].buffer, &memoryRequirements);
 
-				VkMemoryAllocateInfo bufferAllocateInfo = {};
-				bufferAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-				bufferAllocateInfo.allocationSize = memoryRequirements.size;
-				bufferAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
-				if (vkAllocateMemory(device, &bufferAllocateInfo, nullptr, &m_fragmentUniformBuffers[i].deviceBuffers[j].memory) != VK_SUCCESS)
+				VkMemoryAllocateInfo bai = {};
+				bai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+				bai.allocationSize = memoryRequirements.size;
+				bai.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
+				if (vkAllocateMemory(device, &bai, nullptr, &m_fragmentUniformBuffers[i].deviceBuffers[j].memory) != VK_SUCCESS)
 					return false;
 
-				vkBindBufferMemory(device, m_fragmentUniformBuffers[i].deviceBuffers[j].buffer, m_fragmentUniformBuffers[i].deviceBuffers[j].memory, 0);
+				vkBindBufferMemory(
+					device,
+					m_fragmentUniformBuffers[i].deviceBuffers[j].buffer,
+					m_fragmentUniformBuffers[i].deviceBuffers[j].memory,
+					0
+				);
 			}
 
 			m_fragmentUniformBuffers[i].size = resource->m_fragmentUniformBuffers[i].size * 4;
@@ -184,10 +198,11 @@ bool ProgramVk::validate(VkDevice device, VkDescriptorSet descriptorSet)
 		if (!m_vertexUniformBuffers[i].size)
 			continue;
 
+		// Grab a device buffer; cycle buffers for each draw call.
 		DeviceBuffer& db = m_vertexUniformBuffers[i].deviceBuffers[m_vertexUniformBuffers[i].updateCount];
-		m_vertexUniformBuffers[i].updateCount = (m_vertexUniformBuffers[i].updateCount + 1) % 4;
+		m_vertexUniformBuffers[i].updateCount = (m_vertexUniformBuffers[i].updateCount + 1) % c_deviceBufferCount;
 
-		uint8_t* ptr = 0;
+		uint8_t* ptr = nullptr;
 		if (vkMapMemory(device, db.memory, 0, m_vertexUniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
 			return false;
 
@@ -225,10 +240,11 @@ bool ProgramVk::validate(VkDevice device, VkDescriptorSet descriptorSet)
 		if (!m_fragmentUniformBuffers[i].size)
 			continue;
 
+		// Grab a device buffer; cycle buffers for each draw call.
 		DeviceBuffer& db = m_fragmentUniformBuffers[i].deviceBuffers[m_fragmentUniformBuffers[i].updateCount];
-		m_fragmentUniformBuffers[i].updateCount = (m_fragmentUniformBuffers[i].updateCount + 1) % 4;
+		m_fragmentUniformBuffers[i].updateCount = (m_fragmentUniformBuffers[i].updateCount + 1) % c_deviceBufferCount;
 
-		uint8_t* ptr = 0;
+		uint8_t* ptr = nullptr;
 		if (vkMapMemory(device, db.memory, 0, m_fragmentUniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
 			return false;
 

@@ -1,8 +1,8 @@
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStaticArray.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 
 namespace traktor
@@ -60,19 +60,21 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 0, ProgramRe
 ProgramResourceVk::ProgramResourceVk()
 :	m_parameterScalarSize(0)
 ,	m_parameterTextureSize(0)
+,	m_hash(0)
 {
 }
 
 void ProgramResourceVk::serialize(ISerializer& s)
 {
 	s >> MemberRenderState(L"renderState", m_renderState);
-	s >> MemberStlVector< uint32_t >(L"vertexShader", m_vertexShader);
-	s >> MemberStlVector< uint32_t >(L"fragmentShader", m_fragmentShader);
+	s >> MemberAlignedVector< uint32_t >(L"vertexShader", m_vertexShader);
+	s >> MemberAlignedVector< uint32_t >(L"fragmentShader", m_fragmentShader);
 	s >> MemberStaticArray< UniformBufferDesc, 3, MemberComposite< UniformBufferDesc > >(L"vertexUniformBuffers", m_vertexUniformBuffers);
 	s >> MemberStaticArray< UniformBufferDesc, 3, MemberComposite< UniformBufferDesc > >(L"fragmentUniformBuffers", m_fragmentUniformBuffers);
-	s >> MemberStlVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
+	s >> MemberAlignedVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
 	s >> Member< uint32_t >(L"parameterScalarSize", m_parameterScalarSize);
 	s >> Member< uint32_t >(L"parameterTextureSize", m_parameterTextureSize);
+	s >> Member< uint32_t >(L"hash", m_hash);
 }
 
 void ProgramResourceVk::ParameterDesc::serialize(ISerializer& s)
@@ -92,7 +94,7 @@ void ProgramResourceVk::ParameterMappingDesc::serialize(ISerializer& s)
 void ProgramResourceVk::UniformBufferDesc::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"size", size);
-	s >> MemberStlVector< ParameterMappingDesc, MemberComposite< ParameterMappingDesc > >(L"parameters", parameters);
+	s >> MemberAlignedVector< ParameterMappingDesc, MemberComposite< ParameterMappingDesc > >(L"parameters", parameters);
 }
 
 	}
