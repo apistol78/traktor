@@ -10,6 +10,7 @@
 #include <SPIRV/disassemble.h>
 
 #include "Core/Log/Log.h"
+#include "Core/Misc/Adler32.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/Split.h"
 #include "Render/Editor/Shader/Nodes.h"
@@ -161,7 +162,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (vertexOutputs.size() != 1 || pixelOutputs.size() != 1)
 	{
 		log::error << L"Unable to generate Vulkan GLSL shader; incorrect number of outputs" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	GlslContext cx(shaderGraph);
@@ -189,7 +190,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (!vertexResult)
 	{
 		log::error << L"Failed to compile shader; Failed to parse vertex shader." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	program->addShader(vertexShader);
@@ -210,7 +211,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (!fragmentResult)
 	{
 		log::error << L"Failed to compile shader; Failed to parse fragment shader." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	program->addShader(fragmentShader);
@@ -219,7 +220,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (!program->link(EShMsgDefault))
 	{
 		log::error << L"Failed to compile shader; Program link failed." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	Ref< ProgramResourceVk > programResource = new ProgramResourceVk();
@@ -228,8 +229,13 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	programResource->m_renderState = cx.getRenderState();
 
 	// Generate SPIR-V from program AST.
-	glslang::GlslangToSpv(*program->getIntermediate(EShLangVertex), programResource->m_vertexShader);
-	glslang::GlslangToSpv(*program->getIntermediate(EShLangFragment), programResource->m_fragmentShader);
+	std::vector< uint32_t > vs;
+	glslang::GlslangToSpv(*program->getIntermediate(EShLangVertex), vs);
+	programResource->m_vertexShader = AlignedVector< uint32_t >(vs.begin(), vs.end());
+
+	std::vector< uint32_t > fs;
+	glslang::GlslangToSpv(*program->getIntermediate(EShLangFragment), fs);
+	programResource->m_fragmentShader = AlignedVector< uint32_t >(fs.begin(), fs.end());
 
 	// Setup parameter mapping to uniforms.
 	const uint32_t scalarTypeSize[] = { 1, 4, 16, 0, 0, 0 };
@@ -290,6 +296,15 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			ubd.size += scalarTypeSize[parameter->type] * parameter->length;
 		}
 	}
+
+	// Calculate hash of renderstate and shaders.
+	Adler32 cs;
+	cs.begin();
+	cs.feed(cx.getRenderState());
+	cs.feed(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
+	cs.feed(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
+	cs.end();
+	programResource->m_hash = cs.get();
 
 	/*
 	// Disassemble SPIR-V.

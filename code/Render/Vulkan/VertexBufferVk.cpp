@@ -14,7 +14,8 @@ VertexBufferVk::VertexBufferVk(
 	VkBuffer vertexBuffer,
 	VkDeviceMemory vertexBufferMemory,
 	const VkVertexInputBindingDescription& vertexBindingDescription,
-	const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions
+	const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
+	uint32_t hash
 )
 :	VertexBuffer(bufferSize)
 ,	m_device(device)
@@ -22,6 +23,7 @@ VertexBufferVk::VertexBufferVk(
 ,	m_vertexBufferMemory(vertexBufferMemory)
 ,	m_vertexBindingDescription(vertexBindingDescription)
 ,	m_vertexAttributeDescriptions(vertexAttributeDescriptions)
+,	m_hash(hash)
 {
 }
 

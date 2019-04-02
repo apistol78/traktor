@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Render/Types.h"
 #include "Render/Resource/ProgramResource.h"
 
@@ -76,7 +76,7 @@ public:
 	struct UniformBufferDesc
 	{
 		uint32_t size;	//!< Size in 4-byte floats.
-		std::vector< ParameterMappingDesc > parameters;
+		AlignedVector< ParameterMappingDesc > parameters;
 
 		UniformBufferDesc()
 		:	size(0)
@@ -96,15 +96,17 @@ private:
 
 	RenderState m_renderState;
 
-	std::vector< uint32_t > m_vertexShader;
-	std::vector< uint32_t > m_fragmentShader;
+	AlignedVector< uint32_t > m_vertexShader;
+	AlignedVector< uint32_t > m_fragmentShader;
 
 	UniformBufferDesc m_vertexUniformBuffers[3];	// Once(0), Frame(1) and Draw(2)
 	UniformBufferDesc m_fragmentUniformBuffers[3];
 
-	std::vector< ParameterDesc > m_parameters;
+	AlignedVector< ParameterDesc > m_parameters;
 	uint32_t m_parameterScalarSize;
 	uint32_t m_parameterTextureSize;
+
+	uint32_t m_hash;
 };
 
 	}

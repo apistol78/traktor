@@ -21,6 +21,14 @@ namespace traktor
 	namespace render
 	{
 
+// Mappings between our enums and Vulkan.
+extern const VkCullModeFlagBits c_cullMode[];
+extern const VkCompareOp c_compareOperations[];
+extern const VkStencilOp c_stencilOperations[];
+extern const VkBlendFactor c_blendFactors[];
+extern const VkBlendOp c_blendOperations[];
+extern const VkPrimitiveTopology c_primitiveTopology[];
+
 uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags memoryFlags, const VkMemoryRequirements& memoryRequirements);
 
 bool changeImageLayout(VkDevice device, VkQueue presentQueue, VkCommandBuffer setupCmdBuffer, VkImage image, VkAccessFlags dstAccessMask, VkImageLayout newLayout);

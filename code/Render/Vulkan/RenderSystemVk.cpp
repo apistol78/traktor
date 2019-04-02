@@ -1,5 +1,6 @@
 #include <cstring>
 #include "Core/Log/Log.h"
+#include "Core/Misc/Adler32.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -385,13 +386,20 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 		vertexAttributeDescriptions.push_back(vertexAttributeDescription);
 	}
 
+	// Calculate hash of vertex declaration.
+	Adler32 cs;
+	cs.begin();
+	cs.feed(vertexElements.c_ptr(), vertexElements.size() * sizeof(VertexElement));
+	cs.end();
+
 	return new VertexBufferVk(
 		bufferSize,
 		m_logicalDevice,
 		vertexBuffer,
 		vertexBufferMemory,
 		vibd,
-		vertexAttributeDescriptions
+		vertexAttributeDescriptions,
+		cs.get()
 	);
 }
 

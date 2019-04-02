@@ -5,16 +5,16 @@
 			<id>{562AB98F-26C1-6644-92EF-8DA2262C1C21}</id>
 			<comment/>
 			<position>
-				<first>805</first>
-				<second>359</second>
+				<first>804</first>
+				<second>358</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{A8D396C6-9136-E449-B994-4129BDB8EBDF}</id>
 			<comment/>
 			<position>
-				<first>667</first>
-				<second>400</second>
+				<first>666</first>
+				<second>399</second>
 			</position>
 			<swizzle>zyxw</swizzle>
 		</item>
@@ -22,8 +22,8 @@
 			<id>{CC5DC130-E372-0B4F-807D-3646BE794EA7}</id>
 			<comment/>
 			<position>
-				<first>482</first>
-				<second>473</second>
+				<first>455</first>
+				<second>448</second>
 			</position>
 			<name>Input</name>
 			<connectable>true</connectable>
@@ -35,8 +35,8 @@
 			<id>{97544039-E417-514E-BA37-0529DAA2C665}</id>
 			<comment/>
 			<position>
-				<first>1021</first>
-				<second>402</second>
+				<first>1069</first>
+				<second>397</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -90,6 +90,16 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>OpenGL ES2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Vulkan</name>
 			</destination>
 		</item>
 	</edges>

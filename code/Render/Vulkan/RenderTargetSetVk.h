@@ -68,6 +68,8 @@ public:
 
 	VkFramebuffer getVkFramebuffer() const { return m_framebuffer; }
 
+	uint32_t getId() const { return m_id; }
+
 private:
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;
@@ -75,6 +77,7 @@ private:
 	int32_t m_height;
 	VkRenderPass m_renderPass;
 	VkFramebuffer m_framebuffer;
+	uint32_t m_id;
 };
 
 	}

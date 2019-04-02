@@ -10,6 +10,12 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+uint32_t s_nextId = 1;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVk", RenderTargetSetVk, RenderTargetSet)
 
@@ -19,6 +25,7 @@ RenderTargetSetVk::RenderTargetSetVk()
 ,	m_height(0)
 ,	m_renderPass(0)
 ,	m_framebuffer(0)
+,	m_id(s_nextId++)
 {
 }
 
