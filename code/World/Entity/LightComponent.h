@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Math/Random.h"
 #include "Resource/Proxy.h"
 #include "World/IEntityComponent.h"
 
@@ -84,6 +85,8 @@ public:
 
 	float getFlickerFilter() const { return m_flickerFilter; }
 
+	float getFlickerCoeff() const { return m_flickerCoeff; }
+
 	void setSHCoeffs(const render::SHCoeffs* shCoeffs) { m_shCoeffs = shCoeffs; }
 
 	const render::SHCoeffs* getSHCoeffs() const { return m_shCoeffs; }
@@ -97,6 +100,9 @@ private:
 	float m_radius;
 	float m_flickerAmount;
 	float m_flickerFilter;
+	float m_flickerValue;
+	float m_flickerCoeff;
+	Random m_random;
 	Ref< const render::SHCoeffs > m_shCoeffs;
 };
 
