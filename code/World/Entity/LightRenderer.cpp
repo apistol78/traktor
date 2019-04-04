@@ -36,6 +36,12 @@ void LightRenderer::render(
 	light.probe.shCoeffs = lightComponent->getSHCoeffs();
 	light.castShadow = lightComponent->getCastShadow();
 
+	if (lightComponent->getFlickerAmount() > FUZZY_EPSILON)
+	{
+		Scalar randomFlicker(lightComponent->getFlickerCoeff());
+		light.color *= randomFlicker;
+	}
+
 	worldRenderView.addLight(light);
 }
 
