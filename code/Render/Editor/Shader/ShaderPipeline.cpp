@@ -116,14 +116,14 @@ struct BuildCombinationTask : public Object
 		Ref< ILogTarget > localTarget = log::error.getLocalTarget();
 		log::error.setLocalTarget(new LogStreamTarget(&errorLog));
 
-		const std::map< std::wstring, uint32_t >& parameterBits = shaderResource->getParameterBits();
+		const auto& parameterBits = shaderResource->getParameterBits();
 
 		// Remap parameter mask and value for this combination as shader consist of multiple techniques.
 		uint32_t mask = combinations->getCombinationMask(combination);
 		uint32_t value = combinations->getCombinationValue(combination);
 
-		std::vector< std::wstring > maskNames = combinations->getParameterNames(mask);
-		std::vector< std::wstring > valueNames = combinations->getParameterNames(value);
+		auto maskNames = combinations->getParameterNames(mask);
+		auto valueNames = combinations->getParameterNames(value);
 
 		for (const auto& maskName : maskNames)
 			shaderResourceCombination->mask |= parameterBits.find(maskName)->second;
@@ -237,7 +237,7 @@ struct BuildCombinationTask : public Object
 			const Guid& textureGuid = textureNode->getExternal();
 			int32_t textureIndex;
 
-			std::vector< Guid >::iterator it = std::find(shaderResourceCombination->textures.begin(), shaderResourceCombination->textures.end(), textureGuid);
+			auto it = std::find(shaderResourceCombination->textures.begin(), shaderResourceCombination->textures.end(), textureGuid);
 			if (it != shaderResourceCombination->textures.end())
 				textureIndex = int32_t(std::distance(shaderResourceCombination->textures.begin(), it));
 			else
@@ -319,15 +319,13 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 
 void ShaderPipeline::destroy()
 {
-	m_programHints = 0;
-	m_programCompiler = 0;
+	m_programHints = nullptr;
+	m_programCompiler = nullptr;
 }
 
 TypeInfoSet ShaderPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< ShaderGraph >();
-	return typeSet;
+	return makeTypeInfoSet< ShaderGraph >();
 }
 
 bool ShaderPipeline::buildDependencies(
@@ -362,9 +360,9 @@ bool ShaderPipeline::buildDependencies(
 	RefArray< External > externalNodes;
 	shaderGraph->findNodesOf< External >(externalNodes);
 
-	for (RefArray< External >::const_iterator i = externalNodes.begin(); i != externalNodes.end(); ++i)
+	for (auto externalNode : externalNodes)
 	{
-		const Guid& fragmentGuid = (*i)->getFragmentGuid();
+		const Guid& fragmentGuid = externalNode->getFragmentGuid();
 		pipelineDepends->addDependency(fragmentGuid, editor::PdfUse);
 	}
 
@@ -372,9 +370,9 @@ bool ShaderPipeline::buildDependencies(
 	RefArray< Texture > textureNodes;
 	shaderGraph->findNodesOf< Texture >(textureNodes);
 
-	for (RefArray< Texture >::const_iterator i = textureNodes.begin(); i != textureNodes.end(); ++i)
+	for (auto textureNode : textureNodes)
 	{
-		const Guid& textureGuid = (*i)->getExternal();
+		const Guid& textureGuid = textureNode->getExternal();
 		if (textureGuid.isNotNull())
 			pipelineDepends->addDependency(textureGuid, editor::PdfBuild | editor::PdfResource);
 	}

@@ -28,10 +28,13 @@ extern const VkStencilOp c_stencilOperations[];
 extern const VkBlendFactor c_blendFactors[];
 extern const VkBlendOp c_blendOperations[];
 extern const VkPrimitiveTopology c_primitiveTopology[];
+extern const VkFilter c_filters[];
+extern const VkSamplerMipmapMode c_mipMapModes[];
+extern const VkSamplerAddressMode c_addressModes[];
 
 uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags memoryFlags, const VkMemoryRequirements& memoryRequirements);
 
-bool changeImageLayout(VkDevice device, VkQueue presentQueue, VkCommandBuffer setupCmdBuffer, VkImage image, VkAccessFlags dstAccessMask, VkImageLayout newLayout);
+bool changeImageLayout(VkDevice device, VkCommandPool commandPool, VkQueue queue, VkImage image, VkImageLayout newLayout);
 
 const wchar_t* getHumanResult(VkResult result);
 

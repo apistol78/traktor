@@ -53,14 +53,39 @@ private:
 	RenderState& m_ref;
 };
 
+class MemberSamplerState : public MemberComplex
+{
+public:
+	MemberSamplerState(const wchar_t* const name, SamplerState& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual void serialize(ISerializer& s) const
+	{
+		s >> MemberEnumByValue< Filter >(L"minFilter", m_ref.minFilter);
+		s >> MemberEnumByValue< Filter >(L"mipFilter", m_ref.mipFilter);
+		s >> MemberEnumByValue< Filter >(L"magFilter", m_ref.magFilter);
+		s >> MemberEnumByValue< Address >(L"addressU", m_ref.addressU);
+		s >> MemberEnumByValue< Address >(L"addressV", m_ref.addressV);
+		s >> MemberEnumByValue< Address >(L"addressW", m_ref.addressW);
+		s >> MemberEnumByValue< CompareFunction >(L"compare", m_ref.compare);
+		s >> Member< float >(L"mipBias", m_ref.mipBias);
+		s >> Member< bool >(L"ignoreMips", m_ref.ignoreMips);
+		s >> Member< bool >(L"useAnisotropic", m_ref.useAnisotropic);
+	}
+
+private:
+	SamplerState& m_ref;
+};
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 0, ProgramResourceVk, ProgramResource)
 
 ProgramResourceVk::ProgramResourceVk()
-:	m_parameterScalarSize(0)
-,	m_parameterTextureSize(0)
-,	m_hash(0)
+:	m_hash(0)
 {
 }
 
@@ -69,32 +94,30 @@ void ProgramResourceVk::serialize(ISerializer& s)
 	s >> MemberRenderState(L"renderState", m_renderState);
 	s >> MemberAlignedVector< uint32_t >(L"vertexShader", m_vertexShader);
 	s >> MemberAlignedVector< uint32_t >(L"fragmentShader", m_fragmentShader);
-	s >> MemberStaticArray< UniformBufferDesc, 3, MemberComposite< UniformBufferDesc > >(L"vertexUniformBuffers", m_vertexUniformBuffers);
-	s >> MemberStaticArray< UniformBufferDesc, 3, MemberComposite< UniformBufferDesc > >(L"fragmentUniformBuffers", m_fragmentUniformBuffers);
+	s >> MemberStaticArray< uint32_t, 3 >(L"uniformBufferSizes", m_uniformBufferSizes);
 	s >> MemberAlignedVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
-	s >> Member< uint32_t >(L"parameterScalarSize", m_parameterScalarSize);
-	s >> Member< uint32_t >(L"parameterTextureSize", m_parameterTextureSize);
+	s >> MemberAlignedVector< SamplerDesc, MemberComposite< SamplerDesc > >(L"samplers", m_samplers);
+	s >> MemberAlignedVector< TextureDesc, MemberComposite< TextureDesc > >(L"textures", m_textures);
 	s >> Member< uint32_t >(L"hash", m_hash);
 }
 
 void ProgramResourceVk::ParameterDesc::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
+	s >> Member< uint32_t >(L"buffer", buffer);
 	s >> Member< uint32_t >(L"offset", offset);
 	s >> Member< uint32_t >(L"size", size);
 }
 
-void ProgramResourceVk::ParameterMappingDesc::serialize(ISerializer& s)
+void ProgramResourceVk::SamplerDesc::serialize(ISerializer& s)
 {
-	s >> Member< uint32_t >(L"uniformBufferOffset", uniformBufferOffset);
-	s >> Member< uint32_t >(L"offset", offset);
-	s >> Member< uint32_t >(L"size", size);
+	s >> Member< uint32_t >(L"binding", binding);
+	s >> MemberSamplerState(L"state", state);
 }
 
-void ProgramResourceVk::UniformBufferDesc::serialize(ISerializer& s)
+void ProgramResourceVk::TextureDesc::serialize(ISerializer& s)
 {
-	s >> Member< uint32_t >(L"size", size);
-	s >> MemberAlignedVector< ParameterMappingDesc, MemberComposite< ParameterMappingDesc > >(L"parameters", parameters);
+	s >> Member< uint32_t >(L"binding", binding);
 }
 
 	}

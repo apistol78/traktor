@@ -143,9 +143,7 @@ private:
 	VkCommandPool m_commandPool;
 	VkCommandBuffer m_drawCommandBuffer;
 	VkSwapchainKHR m_swapChain;
-	VkDescriptorSetLayout m_descriptorSetLayout;
 	VkDescriptorPool m_descriptorPool;
-	VkPipelineLayout m_pipelineLayout;
 	VkFence m_renderFence;
 	VkSemaphore m_presentCompleteSemaphore;
 	RefArray< RenderTargetSetVk > m_primaryTargets;

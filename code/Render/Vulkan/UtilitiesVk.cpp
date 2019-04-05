@@ -70,6 +70,26 @@ const VkPrimitiveTopology c_primitiveTopology[] =
 	VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST
 };
 
+const VkFilter c_filters[] =
+{
+	VK_FILTER_NEAREST,
+	VK_FILTER_LINEAR
+};
+
+const VkSamplerMipmapMode c_mipMapModes[] =
+{
+	VK_SAMPLER_MIPMAP_MODE_NEAREST,
+	VK_SAMPLER_MIPMAP_MODE_LINEAR
+};
+
+const VkSamplerAddressMode c_addressModes[] =
+{
+	VK_SAMPLER_ADDRESS_MODE_REPEAT,
+	VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT,
+	VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE,
+	VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER
+};
+
 uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags memoryFlags, const VkMemoryRequirements& memoryRequirements)
 {
 	VkPhysicalDeviceMemoryProperties memoryProperties = {};
@@ -89,7 +109,47 @@ uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFla
 	return 0;
 }
 
-bool changeImageLayout(VkDevice device, VkQueue presentQueue, VkCommandBuffer setupCmdBuffer, VkImage image, VkAccessFlags dstAccessMask, VkImageLayout newLayout)
+VkCommandBuffer beginSingleTimeCommands(VkDevice device, VkCommandPool commandPool)
+{
+	// Allocate command buffer.
+	VkCommandBuffer commandBuffer = nullptr;
+
+	VkCommandBufferAllocateInfo cbai = {};
+	cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	cbai.commandPool = commandPool;
+	cbai.commandBufferCount = 1;
+
+	vkAllocateCommandBuffers(device, &cbai, &commandBuffer);
+
+	// Begin recording command buffer.
+	VkCommandBufferBeginInfo cbbi = {};
+	cbbi.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	cbbi.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+	vkBeginCommandBuffer(commandBuffer, &cbbi);
+
+	return commandBuffer;
+}
+
+void endSingleTimeCommands(VkDevice device, VkCommandPool commandPool, VkCommandBuffer commandBuffer, VkQueue queue)
+{
+	// End recording command buffer.
+	vkEndCommandBuffer(commandBuffer);
+
+	// Submit command buffer onto queue and wait until command has been executed.
+	VkSubmitInfo si = {};
+	si.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	si.commandBufferCount = 1;
+	si.pCommandBuffers = &commandBuffer;
+
+	vkQueueSubmit(queue, 1, &si, VK_NULL_HANDLE);
+	vkQueueWaitIdle(queue);
+
+	vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+}
+
+bool changeImageLayout(VkDevice device, VkCommandPool commandPool, VkQueue queue, VkImage image, VkImageLayout newLayout)
 {
 	VkFence submitFence;
 
@@ -97,26 +157,28 @@ bool changeImageLayout(VkDevice device, VkQueue presentQueue, VkCommandBuffer se
 	fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
 	vkCreateFence(device, &fci, nullptr, &submitFence);
 
-	VkCommandBufferBeginInfo bi = {};
-	bi.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-	bi.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	vkBeginCommandBuffer(setupCmdBuffer, &bi);
+	auto commandBuffer = beginSingleTimeCommands(device, commandPool);
 
 	VkImageMemoryBarrier imb = {};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.srcAccessMask = 0;
-	imb.dstAccessMask = dstAccessMask;
 	imb.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	imb.newLayout = newLayout;
 	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	imb.image = image;
+	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	imb.subresourceRange.baseMipLevel = 0;
+	imb.subresourceRange.levelCount = 1;
+	imb.subresourceRange.baseArrayLayer = 0;
+	imb.subresourceRange.layerCount = 1;
+	imb.srcAccessMask = 0;
+	imb.dstAccessMask = 0;
 
 	VkImageSubresourceRange resourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
 	imb.subresourceRange = resourceRange;
 
 	vkCmdPipelineBarrier(
-		setupCmdBuffer,
+		commandBuffer,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
 		0,
@@ -125,27 +187,7 @@ bool changeImageLayout(VkDevice device, VkQueue presentQueue, VkCommandBuffer se
 		1, &imb
 	);
 
-	vkEndCommandBuffer(setupCmdBuffer);
-
-	VkPipelineStageFlags waitStageMask[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-
-	VkSubmitInfo submitInfo = {};
-	submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-	submitInfo.waitSemaphoreCount = 0;
-	submitInfo.pWaitSemaphores = nullptr;
-	submitInfo.pWaitDstStageMask = waitStageMask;
-	submitInfo.commandBufferCount = 1;
-	submitInfo.pCommandBuffers = &setupCmdBuffer;
-	submitInfo.signalSemaphoreCount = 0;
-	submitInfo.pSignalSemaphores = nullptr;
-
-	if (vkQueueSubmit(presentQueue, 1, &submitInfo, submitFence) != VK_SUCCESS)
-		return false;
-
-	vkWaitForFences(device, 1, &submitFence, VK_TRUE, UINT64_MAX);
-	vkResetFences(device, 1, &submitFence);
-	vkResetCommandBuffer(setupCmdBuffer, 0);
-	vkDestroyFence(device, submitFence, nullptr);
+	endSingleTimeCommands(device, commandPool, commandBuffer, queue);
 	return true;
 }
 

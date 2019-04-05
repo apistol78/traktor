@@ -68,6 +68,9 @@ extern PFN_vkCmdExecuteCommands vkCmdExecuteCommands;
 extern PFN_vkResetDescriptorPool vkResetDescriptorPool;
 extern PFN_vkFreeCommandBuffers vkFreeCommandBuffers;
 extern PFN_vkDeviceWaitIdle vkDeviceWaitIdle;
+extern PFN_vkFlushMappedMemoryRanges vkFlushMappedMemoryRanges;
+extern PFN_vkCreateSampler vkCreateSampler;
+extern PFN_vkQueueWaitIdle vkQueueWaitIdle;
 
 // Linux Vulkan extensions.
 extern PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;

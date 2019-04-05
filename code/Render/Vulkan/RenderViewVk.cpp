@@ -53,9 +53,7 @@ RenderViewVk::RenderViewVk(
 ,	m_commandPool(nullptr)
 ,	m_drawCommandBuffer(nullptr)
 ,	m_swapChain(nullptr)
-,	m_descriptorSetLayout(nullptr)
 ,	m_descriptorPool(nullptr)
-,	m_pipelineLayout(nullptr)
 ,	m_renderFence(nullptr)
 ,	m_presentCompleteSemaphore(nullptr)
 {
@@ -170,8 +168,8 @@ bool RenderViewVk::nextEvent(RenderEvent& outEvent)
 
 void RenderViewVk::close()
 {
-    vkDestroySemaphore(m_logicalDevice, m_presentCompleteSemaphore, nullptr);
-	vkDestroyFence(m_logicalDevice, m_renderFence, nullptr);	
+ //   vkDestroySemaphore(m_logicalDevice, m_presentCompleteSemaphore, nullptr);
+	//vkDestroyFence(m_logicalDevice, m_renderFence, nullptr);	
 }
 
 bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
@@ -374,29 +372,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	validateTargetState();
 	validatePipeline(vb, p, primitives.type);
 
-	// Allocate a descriptor set for parameters.
-	VkDescriptorSet descriptorSet = 0;
-	VkDescriptorSetAllocateInfo allocateInfo;
-	allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-	allocateInfo.pNext = nullptr;
-	allocateInfo.descriptorPool = m_descriptorPool;
-	allocateInfo.descriptorSetCount = 1;
-	allocateInfo.pSetLayouts = &m_descriptorSetLayout;
-	if (vkAllocateDescriptorSets(m_logicalDevice, &allocateInfo, &descriptorSet) != VK_SUCCESS)
-		return;
-
-	// Validate program, ie update parameters.
-	p->validate(m_logicalDevice, descriptorSet);
-
-	// Bind descriptor sets.
-	vkCmdBindDescriptorSets(
-		m_drawCommandBuffer,
-		VK_PIPELINE_BIND_POINT_GRAPHICS,
-		m_pipelineLayout,
-		0,
-		1, &descriptorSet,
-		0, nullptr
-	);
+	p->validate(m_logicalDevice, m_descriptorPool, m_drawCommandBuffer);
 
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 2, 3 };
 	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type];
@@ -724,58 +700,64 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 			return false;
 	}
 
-	// Create descriptor set layouts for shader uniforms;
-	// each shader type has 3 bindings (Once, Frame and Draw cbuffers):
-	VkDescriptorSetLayoutBinding dslb[6];
-	for (int32_t i = 0; i < 3; ++i)
-	{
-		dslb[i] = {};
-		dslb[i].binding = i;
-		dslb[i].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		dslb[i].descriptorCount = 1;
-		dslb[i].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-
-		dslb[i + 3] = {};
-		dslb[i + 3].binding = i + 3;
-		dslb[i + 3].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		dslb[i + 3].descriptorCount = 1;
-		dslb[i + 3].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-	}
-
-	VkDescriptorSetLayoutCreateInfo dlci = {};
-	dlci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-	dlci.pNext = nullptr;
-	dlci.bindingCount = sizeof_array(dslb);
-	dlci.pBindings = dslb;
-
-	if (vkCreateDescriptorSetLayout(m_logicalDevice, &dlci, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
-		return false;
-
 	// Create descriptor pool.
-	VkDescriptorPoolSize dps[1];
+	VkDescriptorPoolSize dps[3];
 	dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	dps[0].descriptorCount = 6;
+	dps[0].descriptorCount = 6;	// \tbd number of frames in swapchain, ie in-flight?
+	dps[1].type = VK_DESCRIPTOR_TYPE_SAMPLER;
+	dps[1].descriptorCount = 6;	// \tbd number of frames in swapchain, ie in-flight?
+	dps[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+	dps[2].descriptorCount = 6;	// \tbd number of frames in swapchain, ie in-flight?
 
 	VkDescriptorPoolCreateInfo dpci = {};
 	dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	dpci.pNext = nullptr;
 	dpci.maxSets = 1024;
-	dpci.poolSizeCount = 1;
+	dpci.poolSizeCount = sizeof_array(dps);
 	dpci.pPoolSizes = dps;
 
 	if (vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_descriptorPool) != VK_SUCCESS)
 		return false;
 
-	// Create pipeline layout.
-	VkPipelineLayoutCreateInfo lci = {};
-	lci.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	lci.setLayoutCount = 1;
-	lci.pSetLayouts = &m_descriptorSetLayout;
-	lci.pushConstantRangeCount = 0;
-	lci.pPushConstantRanges = nullptr;
 
-	if (vkCreatePipelineLayout(m_logicalDevice, &lci, nullptr, &m_pipelineLayout) != VK_SUCCESS)
-		return false;
+	// // Create descriptor set layouts for shader uniforms;
+	// // each shader type has 3 bindings (Once, Frame and Draw cbuffers):
+	// VkDescriptorSetLayoutBinding dslb[6];
+	// for (int32_t i = 0; i < 3; ++i)
+	// {
+	// 	dslb[i] = {};
+	// 	dslb[i].binding = i;
+	// 	dslb[i].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	// 	dslb[i].descriptorCount = 1;
+	// 	dslb[i].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+
+	// 	dslb[i + 3] = {};
+	// 	dslb[i + 3].binding = i + 3;
+	// 	dslb[i + 3].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	// 	dslb[i + 3].descriptorCount = 1;
+	// 	dslb[i + 3].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	// }
+
+	// VkDescriptorSetLayoutCreateInfo dlci = {};
+	// dlci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	// dlci.pNext = nullptr;
+	// dlci.bindingCount = sizeof_array(dslb);
+	// dlci.pBindings = dslb;
+
+	// if (vkCreateDescriptorSetLayout(m_logicalDevice, &dlci, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
+	// 	return false;
+
+	// // Create pipeline layout.
+	// VkPipelineLayoutCreateInfo lci = {};
+	// lci.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	// lci.setLayoutCount = 1;
+	// lci.pSetLayouts = &m_descriptorSetLayout;
+	// lci.pushConstantRangeCount = 0;
+	// lci.pPushConstantRanges = nullptr;
+
+	// if (vkCreatePipelineLayout(m_logicalDevice, &lci, nullptr, &m_pipelineLayout) != VK_SUCCESS)
+	// 	return false;
+
 
 	// Create synchronization primitives.
     VkFenceCreateInfo fci = {};
@@ -977,7 +959,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		gpci.pDepthStencilState = &dssci;
 		gpci.pColorBlendState = &cbsci;
 		gpci.pDynamicState = nullptr; // &dsci;
-		gpci.layout = m_pipelineLayout;
+		gpci.layout = p->getPipelineLayout(); // m_pipelineLayout;
 		gpci.renderPass = ts.rts->getVkRenderPass();
 		gpci.subpass = 0;
 		gpci.basePipelineHandle = nullptr;

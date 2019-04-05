@@ -15,7 +15,7 @@ TextureLinker::TextureLinker(TextureReader& textureReader)
 
 bool TextureLinker::link(const ShaderResource::Combination& shaderCombination, IProgram* program)
 {
-	const std::vector< Guid >& textures = shaderCombination.textures;
+	const auto& textures = shaderCombination.textures;
 	for (uint32_t i = 0; i < textures.size(); ++i)
 	{
 		Ref< ITexture > texture = m_textureReader.read(textures[i]);
