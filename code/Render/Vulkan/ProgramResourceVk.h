@@ -25,45 +25,23 @@ class T_DLLCLASS ProgramResourceVk : public ProgramResource
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Parameter description. */
 	struct ParameterDesc
 	{
 		std::wstring name;
+		uint32_t buffer;	//!< Index into which uniform buffer (0-2).
 		uint32_t offset;	//!< Offset in 4-byte floats.
 		uint32_t size;		//!< Size in 4-byte floats.
 
 		ParameterDesc()
-		:	offset(0)
-		,	size(0)
-		{
-		}
-
-		ParameterDesc(const std::wstring& name_, uint32_t offset_, uint32_t size_)
-		:	name(name_)
-		,	offset(offset_)
-		,	size(size_)
-		{
-		}
-
-		void serialize(ISerializer& s);
-	};
-
-	/*! \brief Mapping from parameter buffer into a uniform buffer. */
-	struct ParameterMappingDesc
-	{
-		uint32_t uniformBufferOffset;	//!< Offset in 4-byte floats.
-		uint32_t offset;	//!< Offset in 4-byte floats.
-		uint32_t size;		//!< Size in 4-byte floats.
-
-		ParameterMappingDesc()
-		:	uniformBufferOffset(0)
+		:	buffer(0)
 		,	offset(0)
 		,	size(0)
 		{
 		}
 
-		ParameterMappingDesc(uint32_t uniformBufferOffset_, uint32_t offset_, uint32_t size_)
-		:	uniformBufferOffset(uniformBufferOffset_)
+		ParameterDesc(const std::wstring& name_, uint32_t buffer_, uint32_t offset_, uint32_t size_)
+		:	name(name_)
+		,	buffer(buffer_)
 		,	offset(offset_)
 		,	size(size_)
 		{
@@ -72,14 +50,36 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	/*! \brief Uniform buffer description and mappings from parameter buffer into uniform buffer. */
-	struct UniformBufferDesc
+	struct SamplerDesc
 	{
-		uint32_t size;	//!< Size in 4-byte floats.
-		AlignedVector< ParameterMappingDesc > parameters;
+		uint32_t binding;
+		SamplerState state;
 
-		UniformBufferDesc()
-		:	size(0)
+		SamplerDesc()
+		:	binding(0)
+		{
+		}
+
+		SamplerDesc(uint32_t binding_, const SamplerState& state_)
+		:	binding(binding_)
+		,	state(state_)
+		{
+		}
+
+		void serialize(ISerializer& s);
+	};
+
+	struct TextureDesc
+	{
+		uint32_t binding;
+
+		TextureDesc()
+		:	binding(0)
+		{
+		}
+
+		explicit TextureDesc(uint32_t binding_)
+		:	binding(binding_)
 		{
 		}
 
@@ -99,12 +99,11 @@ private:
 	AlignedVector< uint32_t > m_vertexShader;
 	AlignedVector< uint32_t > m_fragmentShader;
 
-	UniformBufferDesc m_vertexUniformBuffers[3];	// Once(0), Frame(1) and Draw(2)
-	UniformBufferDesc m_fragmentUniformBuffers[3];
-
 	AlignedVector< ParameterDesc > m_parameters;
-	uint32_t m_parameterScalarSize;
-	uint32_t m_parameterTextureSize;
+	uint32_t m_uniformBufferSizes[3];	// Once(0), Frame(1) and Draw(2)
+
+	AlignedVector< SamplerDesc > m_samplers;
+	AlignedVector< TextureDesc > m_textures;
 
 	uint32_t m_hash;
 };

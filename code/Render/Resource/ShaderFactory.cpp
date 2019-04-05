@@ -30,7 +30,7 @@ public:
 		if (m_resourceManager->bind(resource::Id< ITexture >(textureGuid), texture))
 			return new TextureProxy(texture);
 		else
-			return (ITexture*)0;
+			return (ITexture*)nullptr;
 	}
 
 private:
@@ -73,20 +73,18 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 	Ref< Shader > shader = new Shader();
 
 	// Create combination parameter mapping.
-	const std::map< std::wstring, uint32_t >& parameterBits = shaderResource->getParameterBits();
-	for (std::map< std::wstring, uint32_t >::const_iterator i = parameterBits.begin(); i != parameterBits.end(); ++i)
-		shader->m_parameterBits[getParameterHandle(i->first)] = i->second;
+	for (auto parameterBit : shaderResource->getParameterBits())
+		shader->m_parameterBits[getParameterHandle(parameterBit.first)] = parameterBit.second;
 
 	// Create shader techniques.
-	const std::vector< ShaderResource::Technique >& techniques = shaderResource->getTechniques();
-	for (std::vector< ShaderResource::Technique >::const_iterator i = techniques.begin(); i != techniques.end(); ++i)
+	for (auto resourceTechnique : shaderResource->getTechniques())
 	{
-		std::wstring programName = shaderName + L"." + i->name;
+		std::wstring programName = shaderName + L"." + resourceTechnique.name;
 
-		Shader::Technique& technique = shader->m_techniques[getParameterHandle(i->name)];
-		technique.mask = i->mask;
+		Shader::Technique& technique = shader->m_techniques[getParameterHandle(resourceTechnique.name)];
+		technique.mask = resourceTechnique.mask;
 
-		for (const auto& resourceCombination : i->combinations)
+		for (const auto& resourceCombination : resourceTechnique.combinations)
 		{
 			if (!resourceCombination.program)
 				continue;

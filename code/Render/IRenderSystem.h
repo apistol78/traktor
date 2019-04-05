@@ -141,10 +141,10 @@ public:
 	/*! \brief Create render target set. */
 	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc) = 0;
 
-	/*! \brief Create shader from shader resource.
+	/*! \brief Create program from program resource.
 	 *
-	 * \param shaderResource Compiled shader resource.
-	 * \return Shader suitable for rendering with this render system.
+	 * \param programResource Compiled program resource.
+	 * \return Program suitable for rendering with this render system.
 	 */
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource, const wchar_t* const tag) = 0;
 

@@ -11,6 +11,7 @@ std::wstring glsl_type_name(GlslType type)
 	const wchar_t* c[] =
 	{
 		L"void",
+		L"bool",
 		L"float",
 		L"vec2",
 		L"vec3",
@@ -28,6 +29,7 @@ int32_t glsl_type_width(GlslType type)
 {
 	const int32_t w[] =
 	{
+		0,
 		0,
 		1,
 		2,
@@ -72,7 +74,8 @@ GlslType glsl_from_parameter_type(ParameterType type)
 		GtFloat4x4,
 		GtTexture2D,
 		GtTexture3D,
-		GtTextureCube
+		GtTextureCube,
+		GtStructBuffer
 	};
 	T_ASSERT(type < sizeof_array(c));
 	return c[type];

@@ -19,6 +19,9 @@
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/Editor/ProgramCompilerVk.h"
 #include "Render/Vulkan/Editor/Glsl/GlslContext.h"
+#include "Render/Vulkan/Editor/Glsl/GlslSampler.h"
+#include "Render/Vulkan/Editor/Glsl/GlslTexture.h"
+#include "Render/Vulkan/Editor/Glsl/GlslUniformBuffer.h"
 
 namespace traktor
 {
@@ -125,6 +128,8 @@ const TBuiltInResource c_defaultTBuiltInResource =
     }
 };
 
+const uint32_t c_parameterTypeWidths[] = { 1, 4, 16, 0, 0, 0 };
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerVk", 0, ProgramCompilerVk, IProgramCompiler)
@@ -169,8 +174,10 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	cx.getEmitter().emit(cx, pixelOutputs[0]);
 	cx.getEmitter().emit(cx, vertexOutputs[0]);
 
-	const char* vertexShaderText = strdup(wstombs(cx.getVertexShader().getGeneratedShader()).c_str());
-	const char* fragmentShaderText = strdup(wstombs(cx.getFragmentShader().getGeneratedShader()).c_str());
+	const auto& layout = cx.getLayout();
+
+	const char* vertexShaderText = _strdup(wstombs(cx.getVertexShader().getGeneratedShader(layout)).c_str());
+	const char* fragmentShaderText = _strdup(wstombs(cx.getFragmentShader().getGeneratedShader(layout)).c_str());
 
 	glslang::TProgram* program = new glslang::TProgram();
 
@@ -237,63 +244,85 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	glslang::GlslangToSpv(*program->getIntermediate(EShLangFragment), fs);
 	programResource->m_fragmentShader = AlignedVector< uint32_t >(fs.begin(), fs.end());
 
-	// Setup parameter mapping to uniforms.
-	const uint32_t scalarTypeSize[] = { 1, 4, 16, 0, 0, 0 };
-	std::map< std::wstring, uint32_t > pm;
+	// Map parameters to uniforms.
+	struct ParameterMapping
+	{
+		uint32_t buffer;
+		uint32_t offset;
+		uint32_t length;
+	};
+	std::map< std::wstring, ParameterMapping > parameterMapping;
 
-	uint32_t offset = 0;
+	for (auto resource : cx.getLayout().get())
+	{
+		if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
+		{
+			programResource->m_samplers.push_back(ProgramResourceVk::SamplerDesc(
+				sampler->getBinding(),
+				sampler->getState()
+			));
+		}
+		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
+		{
+			auto& pm = parameterMapping[texture->getName()];
+			pm.buffer = texture->getBinding();
+			pm.offset = (uint32_t)programResource->m_textures.size();
+			pm.length = 0;
+
+			programResource->m_textures.push_back(ProgramResourceVk::TextureDesc(
+				texture->getBinding()
+			));
+		}
+		else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
+		{
+			uint32_t size = 0;
+			for (auto uniform : uniformBuffer->get())
+			{
+				if (uniform.length > 1)
+					size = alignUp(size, 4);
+
+				auto& pm = parameterMapping[uniform.name];
+				pm.buffer = uniformBuffer->getBinding();
+				pm.offset = size;
+				pm.length = glsl_type_width(uniform.type) * uniform.length;
+
+				size += glsl_type_width(uniform.type) * uniform.length;
+			}
+			programResource->m_uniformBufferSizes[uniformBuffer->getBinding()] = size;
+		}
+	}
+
 	for (auto p : cx.getParameters())
 	{
 		if (p.type <= PtMatrix)
 		{
+			auto it = parameterMapping.find(p.name);
+			if (it == parameterMapping.end())
+				continue;
+
+			const auto& pm = it->second;
+
 			programResource->m_parameters.push_back(ProgramResourceVk::ParameterDesc(
 				p.name,
-				offset,
-				scalarTypeSize[p.type] * p.length
+				pm.buffer,
+				pm.offset,
+				pm.length
 			));
-			pm[p.name] = offset;
-			offset = alignUp(offset + scalarTypeSize[p.type] * p.length, 4);
 		}
-	}
-	programResource->m_parameterScalarSize = offset;
-
-	for (auto u : cx.getVertexShader().getUniforms())
-	{
-		const GlslContext::Parameter* parameter = cx.getParameter(u);
-		if (parameter)
+		else if (p.type >= PtTexture2D && p.type <= PtTextureCube)
 		{
-			ProgramResourceVk::UniformBufferDesc& ubd = programResource->m_vertexUniformBuffers[parameter->frequency];
+			auto it = parameterMapping.find(p.name);
+			if (it == parameterMapping.end())
+				continue;
 
-			if (parameter->length > 1)
-				ubd.size = alignUp(ubd.size, 4);
+			const auto& pm = it->second;
 
-			ubd.parameters.push_back(ProgramResourceVk::ParameterMappingDesc(
-				ubd.size,
-				pm[parameter->name],
-				scalarTypeSize[parameter->type] * parameter->length
+			programResource->m_parameters.push_back(ProgramResourceVk::ParameterDesc(
+				p.name,
+				pm.buffer,
+				pm.offset,
+				pm.length
 			));
-
-			ubd.size += scalarTypeSize[parameter->type] * parameter->length;
-		}
-	}
-
-	for (auto u : cx.getFragmentShader().getUniforms())
-	{
-		const GlslContext::Parameter* parameter = cx.getParameter(u);
-		if (parameter)
-		{
-			ProgramResourceVk::UniformBufferDesc& ubd = programResource->m_fragmentUniformBuffers[parameter->frequency];
-
-			if (parameter->length > 1)
-				ubd.size = alignUp(ubd.size, 4);
-
-			ubd.parameters.push_back(ProgramResourceVk::ParameterMappingDesc(
-				ubd.size,
-				pm[parameter->name],
-				scalarTypeSize[parameter->type] * parameter->length
-			));
-
-			ubd.size += scalarTypeSize[parameter->type] * parameter->length;
 		}
 	}
 
@@ -353,8 +382,56 @@ bool ProgramCompilerVk::generate(
 	cx.getEmitter().emit(cx, pixelOutputs[0]);
 	cx.getEmitter().emit(cx, vertexOutputs[0]);
 
-	outVertexShader = cx.getVertexShader().getGeneratedShader();
-	outPixelShader = cx.getFragmentShader().getGeneratedShader();
+	const auto& layout = cx.getLayout();
+
+	StringOutputStream ss;
+	for (auto resource : layout.get())
+	{
+		ss << L"// Layout" << Endl;
+		if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
+		{
+			ss << L"// [" << sampler->getBinding() << L"] = sampler" << Endl;
+			ss << L"//   .name = \"" << sampler->getName() << L"\"" << Endl;
+		}
+		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
+		{
+			ss << L"// [" << texture->getBinding() << L"] = texture" << Endl;
+			ss << L"//   .name = \"" << texture->getName() << L"\"" << Endl;
+			ss << L"//   .type = " << int32_t(texture->getUniformType()) << Endl;
+		}
+		else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
+		{
+			ss << L"// [" << uniformBuffer->getBinding() << L"] = uniform buffer" << Endl;
+			ss << L"//   .name = \"" << uniformBuffer->getName() << L"\"" << Endl;
+			ss << L"//   .uniforms = {" << Endl;
+			for (auto uniform : uniformBuffer->get())
+			{
+				ss << L"//      " << int32_t(uniform.type) << L" \"" << uniform.name << L"\" " << uniform.length << Endl;
+			}
+			ss << L"//   }" << Endl;
+		}
+	}
+
+	// Vertex
+	{
+		StringOutputStream vss;
+		vss << cx.getVertexShader().getGeneratedShader(layout);
+		vss << Endl;
+		vss << ss.str();
+		vss << Endl;
+		outVertexShader = vss.str();
+	}
+
+	// Pixel
+	{
+		StringOutputStream fss;
+		fss << cx.getFragmentShader().getGeneratedShader(layout);
+		fss << Endl;
+		fss << ss.str();
+		fss << Endl;
+		outPixelShader = fss.str();
+	}
+
 	return true;
 }
 

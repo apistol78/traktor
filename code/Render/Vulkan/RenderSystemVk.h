@@ -101,6 +101,9 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	uint32_t m_graphicsQueueIndex;
+	VkQueue m_graphicsQueue;
+	VkCommandPool m_commandPool;
+	VkCommandBuffer m_setupCommandBuffer;
 	bool m_haveValidationLayer;
 };
 

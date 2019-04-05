@@ -38,7 +38,7 @@ public:
 
 	bool create(VkPhysicalDevice physicalDevice, VkDevice device, const ProgramResourceVk* resource);
 
-	bool validate(VkDevice device, VkDescriptorSet descriptorSet);
+	bool validate(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer);
 
 	virtual void destroy() override final;
 
@@ -66,19 +66,21 @@ public:
 
 	VkShaderModule getFragmentVkShaderModule() const { return m_fragmentShaderModule; }
 
+	VkPipelineLayout getPipelineLayout() const { return m_pipelineLayout; }
+
 	uint32_t getHash() const { return m_hash; }
 
 private:
 	struct ParameterMap
 	{
-		uint32_t offset;	//!< Offset into m_parameterScalarData
+		uint32_t buffer;	//!< Uniform buffer index.
+		uint32_t offset;	//!< Offset into uniform buffer's data.
 		uint32_t size;		//!< Number of floats.
-		uint32_t uniformBufferOffset;
 
 		ParameterMap()
-		:	offset(0)
+		:	buffer(0)
+		,	offset(0)
 		,	size(0)
-		,	uniformBufferOffset(0)
 		{
 		}
 	};
@@ -100,7 +102,7 @@ private:
 		AlignedVector< DeviceBuffer > deviceBuffers;
 		uint32_t size;
 		uint32_t updateCount;
-		AlignedVector< ParameterMap > parameters;
+		AlignedVector< float > data;
 
 		UniformBuffer()
 		:	size(0)
@@ -109,16 +111,32 @@ private:
 		}
 	};
 
+	struct Sampler
+	{
+		uint32_t binding;
+		VkSampler sampler;
+	};
+
+	struct Texture
+	{
+		uint32_t binding;
+		Ref< ITexture > texture;
+	};
+
 	RenderState m_renderState;
 	
 	VkShaderModule m_vertexShaderModule;
 	VkShaderModule m_fragmentShaderModule;
 
-	UniformBuffer m_vertexUniformBuffers[3];
-	UniformBuffer m_fragmentUniformBuffers[3];
+	VkDescriptorSetLayout m_descriptorSetLayout;
+	VkPipelineLayout m_pipelineLayout;
+
+	UniformBuffer m_uniformBuffers[3];
 
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
-	AlignedVector< float > m_parameterScalarData;
+	
+	AlignedVector< Sampler > m_samplers;
+	AlignedVector< Texture > m_textures;
 
 	uint32_t m_hash;
 };

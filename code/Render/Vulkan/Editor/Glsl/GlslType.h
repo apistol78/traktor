@@ -14,6 +14,7 @@ namespace traktor
 enum GlslType
 {
 	GtVoid,
+	GtBoolean,
 	GtFloat,
 	GtFloat2,
 	GtFloat3,
@@ -21,7 +22,8 @@ enum GlslType
 	GtFloat4x4,
 	GtTexture2D,
 	GtTexture3D,
-	GtTextureCube
+	GtTextureCube,
+	GtStructBuffer
 };
 
 std::wstring glsl_type_name(GlslType type);

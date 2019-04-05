@@ -35,7 +35,13 @@ public:
 
 	virtual ~SimpleTextureVk();
 
-	bool create(VkPhysicalDevice physicalDevice, VkDevice device, const SimpleTextureCreateDesc& desc);
+	bool create(
+		VkPhysicalDevice physicalDevice,
+		VkDevice device,
+		VkCommandPool commandPool,
+		VkQueue queue,
+		const SimpleTextureCreateDesc& desc
+	);
 
 	virtual void destroy() override final;
 
@@ -53,8 +59,13 @@ public:
 
 	virtual void* getInternalHandle() override final;
 
+	VkImage getVkImage() const { return m_textureImage; }
+
+	VkImageView getVkImageView() const { return m_textureView; }
+
 private:
-	VkImage m_image;
+	VkImage m_textureImage;
+	VkImageView m_textureView;
 	int32_t m_width;
 	int32_t m_height;
 };

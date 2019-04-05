@@ -71,6 +71,9 @@ PFN_vkCmdExecuteCommands vkCmdExecuteCommands = nullptr;
 PFN_vkResetDescriptorPool vkResetDescriptorPool = nullptr;
 PFN_vkFreeCommandBuffers vkFreeCommandBuffers = nullptr;
 PFN_vkDeviceWaitIdle vkDeviceWaitIdle = nullptr;
+PFN_vkFlushMappedMemoryRanges vkFlushMappedMemoryRanges = nullptr;
+PFN_vkCreateSampler vkCreateSampler = nullptr;
+PFN_vkQueueWaitIdle vkQueueWaitIdle = nullptr;
 
 PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = nullptr;
@@ -502,6 +505,27 @@ bool initializeVulkanApi()
 	if (vkDeviceWaitIdle == nullptr)
 	{
 		log::error << L"Failed to resolve Vulkan entry point \"vkDeviceWaitIdle\"." << Endl;
+		return false;
+	}
+
+	vkFlushMappedMemoryRanges = (PFN_vkFlushMappedMemoryRanges)GetProcAddress(s_hVulkanModule, "vkFlushMappedMemoryRanges");
+	if (vkFlushMappedMemoryRanges == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkFlushMappedMemoryRanges\"." << Endl;
+		return false;
+	}
+
+	vkCreateSampler = (PFN_vkCreateSampler)GetProcAddress(s_hVulkanModule, "vkCreateSampler");
+	if (vkCreateSampler == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCreateSampler\"." << Endl;
+		return false;
+	}
+
+	vkQueueWaitIdle = (PFN_vkQueueWaitIdle)GetProcAddress(s_hVulkanModule, "vkQueueWaitIdle");
+	if (vkQueueWaitIdle == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkQueueWaitIdle\"." << Endl;
 		return false;
 	}
 

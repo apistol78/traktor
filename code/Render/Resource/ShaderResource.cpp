@@ -2,7 +2,7 @@
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Render/Resource/ShaderResource.h"
 
 namespace traktor
@@ -12,12 +12,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderResource", 3, ShaderResource, ISerializable)
 
-const std::map< std::wstring, uint32_t >& ShaderResource::getParameterBits() const
+const SmallMap< std::wstring, uint32_t >& ShaderResource::getParameterBits() const
 {
 	return m_parameterBits;
 }
 
-const std::vector< ShaderResource::Technique >& ShaderResource::getTechniques() const
+const AlignedVector< ShaderResource::Technique >& ShaderResource::getTechniques() const
 {
 	return m_techniques;
 }
@@ -25,8 +25,8 @@ const std::vector< ShaderResource::Technique >& ShaderResource::getTechniques() 
 void ShaderResource::serialize(ISerializer& s)
 {
 	T_ASSERT(s.getVersion() >= 3);
-	s >> MemberStlMap< std::wstring, uint32_t >(L"parameterBits", m_parameterBits);
-	s >> MemberStlVector< Technique, MemberComposite< Technique > >(L"techniques", m_techniques);
+	s >> MemberSmallMap< std::wstring, uint32_t >(L"parameterBits", m_parameterBits);
+	s >> MemberAlignedVector< Technique, MemberComposite< Technique > >(L"techniques", m_techniques);
 }
 
 void ShaderResource::InitializeUniformScalar::serialize(ISerializer& s)
@@ -47,7 +47,7 @@ void ShaderResource::Combination::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"value", value);
 	s >> Member< uint32_t >(L"priority", priority);
 	s >> MemberRef< ISerializable >(L"program", program);
-	s >> MemberStlVector< Guid >(L"textures", textures);
+	s >> MemberAlignedVector< Guid >(L"textures", textures);
 	s >> MemberAlignedVector< InitializeUniformScalar, MemberComposite< InitializeUniformScalar > >(L"initializeUniformScalar", initializeUniformScalar);
 	s >> MemberAlignedVector< InitializeUniformVector, MemberComposite< InitializeUniformVector > >(L"initializeUniformVector", initializeUniformVector);
 }
@@ -56,7 +56,7 @@ void ShaderResource::Technique::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
 	s >> Member< uint32_t >(L"mask", mask);
-	s >> MemberStlVector< Combination, MemberComposite< Combination > >(L"combinations", combinations);
+	s >> MemberAlignedVector< Combination, MemberComposite< Combination > >(L"combinations", combinations);
 }
 
 	}

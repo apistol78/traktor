@@ -794,6 +794,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Simple</name>
+								<items>
+									<item type="File">
+										<fileName>Simple/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">

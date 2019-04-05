@@ -61,6 +61,9 @@ RenderSystemVk::RenderSystemVk()
 ,	m_physicalDevice(nullptr)
 ,	m_logicalDevice(nullptr)
 ,	m_graphicsQueueIndex(~0)
+,	m_graphicsQueue(nullptr)
+,	m_commandPool(nullptr)
+,	m_setupCommandBuffer(nullptr)
 ,	m_haveValidationLayer(false)
 {
 }
@@ -201,6 +204,34 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
     if (vkCreateDevice(m_physicalDevice, &dci, 0, &m_logicalDevice) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create logical device." << Endl;
+		return false;
+	}
+
+	// Get opaque queues.
+	vkGetDeviceQueue(m_logicalDevice, m_graphicsQueueIndex, 0, &m_graphicsQueue);
+
+	// Create command pool.
+	VkCommandPoolCreateInfo cpci = {};
+	cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+	cpci.queueFamilyIndex = m_graphicsQueueIndex;
+
+	if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_commandPool) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; unable to create command pool." << Endl;
+		return false;
+	}
+
+	// Create command buffers from pool.
+	VkCommandBufferAllocateInfo cbai = {};
+	cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	cbai.commandPool = m_commandPool;
+	cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	cbai.commandBufferCount = 1;
+
+	if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, &m_setupCommandBuffer) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; failed to allocate setup command buffer." << Endl;
 		return false;
 	}
 
@@ -442,7 +473,13 @@ Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< Stru
 Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	Ref< SimpleTextureVk > texture = new SimpleTextureVk();
-	if (texture->create(m_physicalDevice, m_logicalDevice, desc))
+	if (texture->create(
+		m_physicalDevice,
+		m_logicalDevice,
+		m_commandPool,
+		m_graphicsQueue,
+		desc
+	))
 		return texture;
 	else
 		return nullptr;

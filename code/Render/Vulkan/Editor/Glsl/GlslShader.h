@@ -15,6 +15,7 @@ namespace traktor
 	namespace render
 	{
 
+class GlslLayout;
 class OutputPin;
 
 /*!
@@ -26,16 +27,17 @@ public:
 	enum ShaderType
 	{
 		StVertex,
-		StFragment
+		StFragment,
+		StCompute
 	};
 
 	enum BlockType
 	{
-		BtCBufferOnce,
-		BtCBufferFrame,
-		BtCBufferDraw,
-		BtTextures,
-		BtSamplers,
+		//BtCBufferOnce,
+		//BtCBufferFrame,
+		//BtCBufferDraw,
+		//BtTextures,
+		//BtSamplers,
 		BtInput,
 		BtOutput,
 		BtScript,
@@ -57,7 +59,7 @@ public:
 
 	GlslVariable* createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type);
 
-	void associateVariable(const OutputPin* outputPin, GlslVariable* variable);
+	//void associateVariable(const OutputPin* outputPin, GlslVariable* variable);
 
 	GlslVariable* getVariable(const OutputPin* outputPin);
 
@@ -65,15 +67,11 @@ public:
 
 	void popScope();
 
-	void allocateTargetSize();
-
-	void addUniform(const std::wstring& uniform);
-
-	bool haveUniform(const std::wstring& uniform) const;
-
-	const std::list< std::wstring >& getUniforms() const;
-
 	bool defineScript(const std::wstring& signature);
+
+
+	/*! \name Output streams */
+	/*! \{ */
 
 	void pushOutputStream(BlockType blockType, StringOutputStream* outputStream);
 
@@ -83,18 +81,25 @@ public:
 
 	const StringOutputStream& getOutputStream(BlockType blockType) const;
 
-	std::wstring getGeneratedShader() const;
+	/*! \} */
+
+
+	std::wstring getGeneratedShader(const GlslLayout& layout) const;
 
 private:
-	typedef std::map< const OutputPin*, Ref< GlslVariable > > scope_t;
+	struct OutputPinVariable
+	{
+		const OutputPin* outputPin;
+		Ref< GlslVariable > variable;
+	};
 
 	ShaderType m_shaderType;
-	std::map< std::wstring, GlslVariable* > m_inputVariables;
-	std::list< scope_t > m_variables;
-	std::list< std::wstring > m_uniforms;
+	std::map< std::wstring, Ref< GlslVariable > > m_inputVariables;
+	AlignedVector< OutputPinVariable > m_variables;
+	AlignedVector< uint32_t > m_variableScopes;
+	AlignedVector< OutputPinVariable > m_outerVariables;
 	std::set< std::wstring > m_scriptSignatures;
 	int32_t m_nextTemporaryVariable;
-	bool m_needTargetSize;
 	RefArray< StringOutputStream > m_outputStreams[BtLast];
 };
 

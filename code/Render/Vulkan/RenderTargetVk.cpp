@@ -152,16 +152,6 @@ bool RenderTargetVk::create(VkPhysicalDevice physicalDevice, VkDevice device, co
 	if (vkBindImageMemory(device, m_image, imageMemory, 0) != VK_SUCCESS)
 		return false;
 
-	//if (!performImageTranslation(
-	//	device,
-	//	presentQueue,
-	//	setupCmdBuffer,
-	//	m_image,
-	//	VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
-	//	VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
-	//))
-	//	return false;
-
 	VkImageViewCreateInfo ivci = {};
 	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	ivci.image = m_image;

@@ -1,9 +1,7 @@
 #pragma once
 
-#include <map>
-#include <vector>
 #include "Core/Guid.h"
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -75,7 +73,7 @@ public:
 		uint32_t value;
 		uint32_t priority;
 		Ref< ISerializable > program;
-		std::vector< Guid > textures;
+		AlignedVector< Guid > textures;
 		AlignedVector< InitializeUniformScalar > initializeUniformScalar;
 		AlignedVector< InitializeUniformVector > initializeUniformVector;
 
@@ -93,7 +91,7 @@ public:
 	{
 		std::wstring name;
 		uint32_t mask;
-		std::vector< Combination > combinations;
+		AlignedVector< Combination > combinations;
 
 		Technique()
 		:	mask(0)
@@ -103,17 +101,17 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	const std::map< std::wstring, uint32_t >& getParameterBits() const;
+	const SmallMap< std::wstring, uint32_t >& getParameterBits() const;
 
-	const std::vector< Technique >& getTechniques() const;
+	const AlignedVector< Technique >& getTechniques() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	friend class ShaderPipeline;
 
-	std::map< std::wstring, uint32_t > m_parameterBits;
-	std::vector< Technique > m_techniques;
+	SmallMap< std::wstring, uint32_t > m_parameterBits;
+	AlignedVector< Technique > m_techniques;
 };
 
 	}

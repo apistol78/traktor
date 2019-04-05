@@ -12,7 +12,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureVk", SimpleTextureVk, ISimpleTexture)
 
 SimpleTextureVk::SimpleTextureVk()
-:	m_image(0)
+:	m_textureImage(nullptr)
+,	m_textureView(nullptr)
 ,	m_width(0)
 ,	m_height(0)
 {
@@ -23,52 +24,95 @@ SimpleTextureVk::~SimpleTextureVk()
 	destroy();
 }
 
-bool SimpleTextureVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const SimpleTextureCreateDesc& desc)
+bool SimpleTextureVk::create(
+	VkPhysicalDevice physicalDevice,
+	VkDevice device,
+	VkCommandPool commandPool,
+	VkQueue queue,
+	const SimpleTextureCreateDesc& desc
+)
 {
 	if (desc.immutable)
 	{
-		VkImage stagingImage;
-		VkDeviceMemory stagingImageMemory;
-
-		VkImageCreateInfo imageInfo = {};
-		imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		imageInfo.imageType = VK_IMAGE_TYPE_2D;
-		imageInfo.extent.width = desc.width;
-		imageInfo.extent.height = desc.height;
-		imageInfo.extent.depth = 1;
-		imageInfo.mipLevels = 1; // desc.mipCount;
-		imageInfo.arrayLayers = 1;
-		imageInfo.format = VK_FORMAT_R8G8B8A8_UNORM;
-		imageInfo.tiling = VK_IMAGE_TILING_LINEAR;
-		imageInfo.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
-		imageInfo.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-		imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-		imageInfo.flags = 0;
-		if (vkCreateImage(device, &imageInfo, nullptr, &stagingImage) != VK_SUCCESS)
+		// Create texture image.
+		VkImageCreateInfo ici = {};
+		ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+		ici.imageType = VK_IMAGE_TYPE_2D;
+		ici.extent.width = desc.width;
+		ici.extent.height = desc.height;
+		ici.extent.depth = 1;
+		ici.mipLevels = 1; // desc.mipCount;
+		ici.arrayLayers = 1;
+		ici.format = VK_FORMAT_R8G8B8A8_UNORM;
+		ici.tiling = VK_IMAGE_TILING_LINEAR;
+		ici.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
+		ici.usage = VK_IMAGE_USAGE_SAMPLED_BIT;
+		ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		ici.samples = VK_SAMPLE_COUNT_1_BIT;
+		ici.flags = 0;
+		
+		if (vkCreateImage(device, &ici, nullptr, &m_textureImage) != VK_SUCCESS)
 			return false;
 
+		// Calculate memory requirement of texture image.
 		VkMemoryRequirements memoryRequirements;
-		vkGetImageMemoryRequirements(device, stagingImage, &memoryRequirements);
+		vkGetImageMemoryRequirements(device, m_textureImage, &memoryRequirements);
 
-		VkMemoryAllocateInfo allocInfo = {};
-		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		allocInfo.allocationSize = memoryRequirements.size;
-		allocInfo.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
-		if (vkAllocateMemory(device, &allocInfo, nullptr, &stagingImageMemory) != VK_SUCCESS)
+		// Allocate texture memory.
+		VkDeviceMemory textureImageMemory = nullptr;
+
+		VkMemoryAllocateInfo mai = {};
+		mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+		mai.allocationSize = memoryRequirements.size;
+		mai.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, memoryRequirements);
+
+		if (vkAllocateMemory(device, &mai, nullptr, &textureImageMemory) != VK_SUCCESS)
 			return false;
 
-		vkBindImageMemory(device, stagingImage, stagingImageMemory, 0);
+		vkBindImageMemory(device, m_textureImage, textureImageMemory, 0);
 
+		// Copy source data into texture image.
 		uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, 0);
 
-		void* data;
-		if (vkMapMemory(device, stagingImageMemory, 0, mipSize, 0, &data) != VK_SUCCESS)
+		void* data = nullptr;
+		if (vkMapMemory(device, textureImageMemory, 0, mipSize, 0, &data) != VK_SUCCESS)
 			return false;
 
 		std::memcpy(data, desc.initialData[0].data, mipSize);
 
-		vkUnmapMemory(device, stagingImageMemory);
+		VkMappedMemoryRange mmr = {};
+		mmr.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+		mmr.memory = textureImageMemory;
+		mmr.offset = 0;
+		mmr.size = VK_WHOLE_SIZE;
+		vkFlushMappedMemoryRanges(device, 1, &mmr);
+
+		vkUnmapMemory(device, textureImageMemory);
+
+		// Create texture view.
+		VkImageViewCreateInfo ivci = {};
+		ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+		ivci.image = m_textureImage;
+		ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		ivci.format = VK_FORMAT_R8G8B8A8_UNORM;
+		ivci.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+		ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		ivci.subresourceRange.baseMipLevel = 0;
+		ivci.subresourceRange.levelCount = 1;
+		ivci.subresourceRange.baseArrayLayer = 0;
+		ivci.subresourceRange.layerCount = 1;
+
+		if (vkCreateImageView(device, &ivci, NULL, &m_textureView) != VK_SUCCESS)
+			return false;
+
+		// Transition image layout into optimal GPU read.
+		changeImageLayout(
+			device,
+			commandPool,
+			queue,
+			m_textureImage,
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
+		);
 	}
 
 	return true;
