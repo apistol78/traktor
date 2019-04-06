@@ -90,6 +90,116 @@ const VkSamplerAddressMode c_addressModes[] =
 	VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER
 };
 
+const VkFormat c_vkTextureFormats[] =
+{
+	VK_FORMAT_UNDEFINED,
+
+	VK_FORMAT_R8_UNORM,
+	VK_FORMAT_R8G8B8A8_UNORM,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_A2R10G10B10_UNORM_PACK32,
+
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+
+	VK_FORMAT_R16G16B16A16_SFLOAT,
+	VK_FORMAT_R32G32B32A32_SFLOAT,
+	VK_FORMAT_R16G16_SFLOAT,
+	VK_FORMAT_R32G32_SFLOAT,
+	VK_FORMAT_R16_SFLOAT,
+	VK_FORMAT_R32_SFLOAT,
+	VK_FORMAT_B10G11R11_UFLOAT_PACK32,
+
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+
+	VK_FORMAT_BC1_RGBA_UNORM_BLOCK,	// DXT1
+	VK_FORMAT_BC2_UNORM_BLOCK,	// DXT2
+	VK_FORMAT_BC2_UNORM_BLOCK,	// DXT3
+	VK_FORMAT_BC3_UNORM_BLOCK,	// DXT4
+	VK_FORMAT_BC3_UNORM_BLOCK,	// DXT5
+
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED
+};
+
+const VkFormat c_vkTextureFormats_sRGB[] =
+{
+	VK_FORMAT_UNDEFINED,
+
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_R8G8B8A8_SRGB,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+
+	VK_FORMAT_BC1_RGBA_SRGB_BLOCK,	// DXT1
+	VK_FORMAT_BC2_SRGB_BLOCK,	// DXT2
+	VK_FORMAT_BC3_SRGB_BLOCK,	// DXT3
+	VK_FORMAT_BC4_UNORM_BLOCK,	// DXT4
+	VK_FORMAT_BC5_UNORM_BLOCK,	// DXT5
+
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED,
+	VK_FORMAT_UNDEFINED
+};
+
 uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags memoryFlags, const VkMemoryRequirements& memoryRequirements)
 {
 	VkPhysicalDeviceMemoryProperties memoryProperties = {};
@@ -107,6 +217,32 @@ uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFla
 		memoryTypeBits = memoryTypeBits >> 1;
 	}
 	return 0;
+}
+
+bool createBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags memoryFlags, VkBuffer& outBuffer, VkDeviceMemory& outBufferMemory)
+{
+	VkBufferCreateInfo bufferInfo = {};
+	bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	bufferInfo.size = size;
+	bufferInfo.usage = usage;
+	bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	if (vkCreateBuffer(device, &bufferInfo, nullptr, &outBuffer) != VK_SUCCESS)
+		return false;
+
+	VkMemoryRequirements memRequirements;
+	vkGetBufferMemoryRequirements(device, outBuffer, &memRequirements);
+
+	VkMemoryAllocateInfo allocInfo = {};
+	allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	allocInfo.allocationSize = memRequirements.size;
+	allocInfo.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, memoryFlags, memRequirements);
+
+	if (vkAllocateMemory(device, &allocInfo, nullptr, &outBufferMemory) != VK_SUCCESS)
+		return false;
+
+	vkBindBufferMemory(device, outBuffer, outBufferMemory, 0);
+	return true;
 }
 
 VkCommandBuffer beginSingleTimeCommands(VkDevice device, VkCommandPool commandPool)
@@ -149,7 +285,7 @@ void endSingleTimeCommands(VkDevice device, VkCommandPool commandPool, VkCommand
 	vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 }
 
-bool changeImageLayout(VkDevice device, VkCommandPool commandPool, VkQueue queue, VkImage image, VkImageLayout newLayout)
+bool changeImageLayout(VkDevice device, VkCommandPool commandPool, VkQueue queue, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout)
 {
 	VkFence submitFence;
 
@@ -161,7 +297,7 @@ bool changeImageLayout(VkDevice device, VkCommandPool commandPool, VkQueue queue
 
 	VkImageMemoryBarrier imb = {};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	imb.oldLayout = oldLayout; // VK_IMAGE_LAYOUT_UNDEFINED;
 	imb.newLayout = newLayout;
 	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
