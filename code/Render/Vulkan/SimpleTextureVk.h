@@ -66,6 +66,7 @@ public:
 private:
 	VkImage m_textureImage;
 	VkImageView m_textureView;
+	int32_t m_mips;
 	int32_t m_width;
 	int32_t m_height;
 };

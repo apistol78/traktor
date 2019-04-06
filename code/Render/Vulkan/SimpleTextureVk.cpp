@@ -14,6 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureVk", SimpleTextureVk, ISimp
 SimpleTextureVk::SimpleTextureVk()
 :	m_textureImage(nullptr)
 ,	m_textureView(nullptr)
+,	m_mips(0)
 ,	m_width(0)
 ,	m_height(0)
 {
@@ -34,6 +35,38 @@ bool SimpleTextureVk::create(
 {
 	if (desc.immutable)
 	{
+		const VkFormat* vkTextureFormats = desc.sRGB ? c_vkTextureFormats_sRGB : c_vkTextureFormats;
+		if (vkTextureFormats[desc.format] == VK_FORMAT_UNDEFINED)
+			return false;
+
+		uint32_t imageSize = getTextureSize(desc.format, desc.width, desc.height, desc.mipCount);
+
+		// Create staging buffer.
+		VkBuffer stagingBuffer = nullptr;
+		VkDeviceMemory stagingBufferMemory = nullptr;
+
+		if (!createBuffer(
+			physicalDevice,
+			device,
+			imageSize,
+			VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
+			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+			stagingBuffer,
+			stagingBufferMemory
+		))
+			return false;
+
+		// Copy data into staging buffer.
+		uint8_t* data = nullptr;
+		vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, (void**)&data);
+		for (int32_t mip = 0; mip < desc.mipCount; ++mip)
+		{
+			uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, mip);
+			std::memcpy(data, desc.initialData[mip].data, mipSize);
+			data += mipSize;
+		}
+		vkUnmapMemory(device, stagingBufferMemory);
+
 		// Create texture image.
 		VkImageCreateInfo ici = {};
 		ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -41,12 +74,12 @@ bool SimpleTextureVk::create(
 		ici.extent.width = desc.width;
 		ici.extent.height = desc.height;
 		ici.extent.depth = 1;
-		ici.mipLevels = 1; // desc.mipCount;
+		ici.mipLevels = desc.mipCount;
 		ici.arrayLayers = 1;
-		ici.format = VK_FORMAT_R8G8B8A8_UNORM;
-		ici.tiling = VK_IMAGE_TILING_LINEAR;
-		ici.initialLayout = VK_IMAGE_LAYOUT_PREINITIALIZED;
-		ici.usage = VK_IMAGE_USAGE_SAMPLED_BIT;
+		ici.format = vkTextureFormats[desc.format];
+		ici.tiling = VK_IMAGE_TILING_OPTIMAL;
+		ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		ici.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 		ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		ici.samples = VK_SAMPLE_COUNT_1_BIT;
 		ici.flags = 0;
@@ -64,57 +97,92 @@ bool SimpleTextureVk::create(
 		VkMemoryAllocateInfo mai = {};
 		mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		mai.allocationSize = memoryRequirements.size;
-		mai.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, memoryRequirements);
+		mai.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
 
 		if (vkAllocateMemory(device, &mai, nullptr, &textureImageMemory) != VK_SUCCESS)
 			return false;
 
 		vkBindImageMemory(device, m_textureImage, textureImageMemory, 0);
 
-		// Copy source data into texture image.
-		uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, 0);
-
-		void* data = nullptr;
-		if (vkMapMemory(device, textureImageMemory, 0, mipSize, 0, &data) != VK_SUCCESS)
-			return false;
-
-		std::memcpy(data, desc.initialData[0].data, mipSize);
-
-		VkMappedMemoryRange mmr = {};
-		mmr.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-		mmr.memory = textureImageMemory;
-		mmr.offset = 0;
-		mmr.size = VK_WHOLE_SIZE;
-		vkFlushMappedMemoryRanges(device, 1, &mmr);
-
-		vkUnmapMemory(device, textureImageMemory);
-
 		// Create texture view.
 		VkImageViewCreateInfo ivci = {};
 		ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 		ivci.image = m_textureImage;
 		ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
-		ivci.format = VK_FORMAT_R8G8B8A8_UNORM;
+		ivci.format = vkTextureFormats[desc.format];
 		ivci.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
 		ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 		ivci.subresourceRange.baseMipLevel = 0;
-		ivci.subresourceRange.levelCount = 1;
+		ivci.subresourceRange.levelCount = desc.mipCount;
 		ivci.subresourceRange.baseArrayLayer = 0;
 		ivci.subresourceRange.layerCount = 1;
 
 		if (vkCreateImageView(device, &ivci, NULL, &m_textureView) != VK_SUCCESS)
 			return false;
 
-		// Transition image layout into optimal GPU read.
+		// Change layout of texture to be able to copy staging buffer into texture.
 		changeImageLayout(
 			device,
 			commandPool,
 			queue,
 			m_textureImage,
+			VK_IMAGE_LAYOUT_UNDEFINED,
 			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
 		);
+
+		// Copy staging buffer into texture.
+		VkCommandBuffer commandBuffer = beginSingleTimeCommands(device, commandPool);
+
+		uint32_t offset = 0;
+		for (int32_t mip = 0; mip < desc.mipCount; ++mip)
+		{
+			uint32_t mipWidth = getTextureMipSize(desc.width, mip);
+			uint32_t mipHeight = getTextureMipSize(desc.height, mip);
+			uint32_t mipSize = getTextureMipPitch(desc.format, desc.width, desc.height, mip);
+
+			VkBufferImageCopy region = {};
+			region.bufferOffset = offset;
+			region.bufferRowLength = 0;
+			region.bufferImageHeight = 0;
+			region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			region.imageSubresource.mipLevel = mip;
+			region.imageSubresource.baseArrayLayer = 0;
+			region.imageSubresource.layerCount = 1;
+			region.imageOffset = { 0, 0, 0 };
+			region.imageExtent = { mipWidth, mipHeight, 1 };
+
+			vkCmdCopyBufferToImage(
+				commandBuffer,
+				stagingBuffer,
+				m_textureImage,
+				VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+				1,
+				&region
+			);
+
+			offset += mipSize;
+		}
+
+		endSingleTimeCommands(device, commandPool, commandBuffer, queue);
+
+		// Change layout of texture to optimal sampling.
+		changeImageLayout(
+			device,
+			commandPool,
+			queue,
+			m_textureImage,
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+		);
+
+		// \tbd Free staging buffer.
+		//vkDestroyBuffer(device, stagingBuffer, nullptr);
+		//vkFreeMemory(device, stagingBufferMemory, nullptr);
 	}
 
+	m_mips = desc.mipCount;
+	m_width = desc.width;
+	m_height = desc.height;
 	return true;
 }
 
@@ -129,7 +197,7 @@ ITexture* SimpleTextureVk::resolve()
 
 int32_t SimpleTextureVk::getMips() const
 {
-	return 1;
+	return m_mips;
 }
 
 int32_t SimpleTextureVk::getWidth() const
@@ -144,7 +212,7 @@ int32_t SimpleTextureVk::getHeight() const
 
 bool SimpleTextureVk::lock(int32_t level, Lock& lock)
 {
-	return true;
+	return false;
 }
 
 void SimpleTextureVk::unlock(int32_t level)

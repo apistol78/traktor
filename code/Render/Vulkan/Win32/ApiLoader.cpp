@@ -74,6 +74,7 @@ PFN_vkDeviceWaitIdle vkDeviceWaitIdle = nullptr;
 PFN_vkFlushMappedMemoryRanges vkFlushMappedMemoryRanges = nullptr;
 PFN_vkCreateSampler vkCreateSampler = nullptr;
 PFN_vkQueueWaitIdle vkQueueWaitIdle = nullptr;
+PFN_vkCmdCopyBufferToImage vkCmdCopyBufferToImage = nullptr;
 
 PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = nullptr;
@@ -526,6 +527,13 @@ bool initializeVulkanApi()
 	if (vkQueueWaitIdle == nullptr)
 	{
 		log::error << L"Failed to resolve Vulkan entry point \"vkQueueWaitIdle\"." << Endl;
+		return false;
+	}
+
+	vkCmdCopyBufferToImage = (PFN_vkCmdCopyBufferToImage)GetProcAddress(s_hVulkanModule, "vkCmdCopyBufferToImage");
+	if (vkCmdCopyBufferToImage == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdCopyBufferToImage\"." << Endl;
 		return false;
 	}
 

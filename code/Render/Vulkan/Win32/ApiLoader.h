@@ -71,6 +71,7 @@ extern PFN_vkDeviceWaitIdle vkDeviceWaitIdle;
 extern PFN_vkFlushMappedMemoryRanges vkFlushMappedMemoryRanges;
 extern PFN_vkCreateSampler vkCreateSampler;
 extern PFN_vkQueueWaitIdle vkQueueWaitIdle;
+extern PFN_vkCmdCopyBufferToImage vkCmdCopyBufferToImage;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;
