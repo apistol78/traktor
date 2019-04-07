@@ -503,7 +503,13 @@ Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDes
 Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 	Ref< VolumeTextureVk > texture = new VolumeTextureVk();
-	if (texture->create(desc))
+	if (texture->create(
+		m_physicalDevice,
+		m_logicalDevice,
+		m_commandPool,
+		m_graphicsQueue,
+		desc
+	))
 		return texture;
 	else
 		return nullptr;
