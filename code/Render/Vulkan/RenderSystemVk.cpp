@@ -488,7 +488,13 @@ Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCre
 Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	Ref< CubeTextureVk > texture = new CubeTextureVk();
-	if (texture->create(desc))
+	if (texture->create(
+		m_physicalDevice,
+		m_logicalDevice,
+		m_commandPool,
+		m_graphicsQueue,
+		desc
+	))
 		return texture;
 	else
 		return nullptr;
