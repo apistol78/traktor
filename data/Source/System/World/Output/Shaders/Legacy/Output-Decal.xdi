@@ -5,8 +5,8 @@
 			<id>{BE55800A-A91B-A54F-BBB5-6805EC57C10F}</id>
 			<comment/>
 			<position>
-				<first>471</first>
-				<second>637</second>
+				<first>384</first>
+				<second>708</second>
 			</position>
 			<name>Output</name>
 			<connectable>true</connectable>
@@ -18,8 +18,8 @@
 			<id>{27A8EEA5-684E-A149-9CA5-7143CA91052A}</id>
 			<comment/>
 			<position>
-				<first>482</first>
-				<second>718</second>
+				<first>394</first>
+				<second>789</second>
 			</position>
 			<name>State</name>
 			<connectable>true</connectable>
@@ -31,8 +31,8 @@
 			<id>{902DD930-ADC5-C340-93EB-70F3ECC8DD6B}</id>
 			<comment/>
 			<position>
-				<first>693</first>
-				<second>527</second>
+				<first>694</first>
+				<second>526</second>
 			</position>
 			<technique>World_ForwardColor</technique>
 			<priority>
@@ -80,12 +80,60 @@
 			<comment/>
 			<position>
 				<first>694</first>
-				<second>706</second>
+				<second>698</second>
 			</position>
 			<technique>World_DeferredColor</technique>
 			<priority>
 				<setup>false</setup>
 				<opaque>true</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
+			<cullMode>CmClockWise</cullMode>
+			<blendEnable>false</blendEnable>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
+			<colorWriteMask>
+				<red>true</red>
+				<green>true</green>
+				<blue>true</blue>
+				<alpha>true</alpha>
+			</colorWriteMask>
+			<depthEnable>true</depthEnable>
+			<depthWriteEnable>true</depthWriteEnable>
+			<depthFunction>CfLessEqual</depthFunction>
+			<alphaTestEnable>false</alphaTestEnable>
+			<alphaTestFunction>CfLess</alphaTestFunction>
+			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
+			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
+			<precisionHint>PhUndefined</precisionHint>
+		</item>
+		<item type="traktor.render.PixelOutput" version="7,traktor.render.Node:1">
+			<id>{7C4F433D-7280-0349-8F14-3EB1D16155AB}</id>
+			<comment/>
+			<position>
+				<first>694</first>
+				<second>871</second>
+			</position>
+			<technique>World_SimpleColor</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
 				<postOpaque>false</postOpaque>
 				<alphaBlend>false</alphaBlend>
 				<postAlphaBlend>false</postAlphaBlend>
@@ -163,6 +211,26 @@
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

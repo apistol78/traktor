@@ -20,6 +20,14 @@ GlslResource* GlslLayout::get(int32_t binding)
 	return m_resources[binding];
 }
 
+GlslResource* GlslLayout::get(const std::wstring& name)
+{
+	auto it = std::find_if(m_resources.begin(), m_resources.end(), [&](const GlslResource* resource) {
+		return resource->getName() == name;
+	});
+	return it != m_resources.end() ? (*it).ptr() : nullptr;
+}
+
 uint32_t GlslLayout::count(const TypeInfo& resourceType) const
 {
 	uint32_t c = 0;

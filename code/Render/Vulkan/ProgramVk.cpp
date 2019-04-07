@@ -17,6 +17,7 @@ namespace traktor
 		{
 
 const uint32_t c_deviceBufferCount = 16;
+handle_t s_handleTargetSize = 0;
 
 bool storeIfNotEqual(const float* source, int length, float* dest)
 {
@@ -57,6 +58,7 @@ ProgramVk::ProgramVk()
 ,	m_pipelineLayout(nullptr)
 ,	m_hash(0)
 {
+	s_handleTargetSize = getParameterHandle(L"_vk_targetSize");
 }
 
 ProgramVk::~ProgramVk()
@@ -124,7 +126,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 	VkDescriptorSetLayoutCreateInfo dlci = {};
 	dlci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	dlci.pNext = nullptr;
-	dlci.bindingCount = dslb.size();
+	dlci.bindingCount = (uint32_t)dslb.size();
 	dlci.pBindings = dslb.c_ptr();
 
 	if (vkCreateDescriptorSetLayout(device, &dlci, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
@@ -228,8 +230,11 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 	return true;
 }
 
-bool ProgramVk::validate(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer)
+bool ProgramVk::validate(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, float targetSize[2])
 {
+	// Set implicit parameters.
+	setVectorParameter(s_handleTargetSize, Vector4(targetSize[0], targetSize[1], 0.0f, 0.0f));
+
 	// Allocate a descriptor set for parameters.
 	VkDescriptorSet descriptorSet = nullptr;
 
@@ -349,7 +354,7 @@ bool ProgramVk::validate(VkDevice device, VkDescriptorPool descriptorPool, VkCom
 	}
 
 	if (!writes.empty())
-		vkUpdateDescriptorSets(device, writes.size(), writes.c_ptr(), 0, nullptr);
+		vkUpdateDescriptorSets(device, (uint32_t)writes.size(), writes.c_ptr(), 0, nullptr);
 
 	// Push command.
 	vkCmdBindDescriptorSets(

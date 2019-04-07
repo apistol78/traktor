@@ -38,7 +38,7 @@ public:
 
 	bool create(VkPhysicalDevice physicalDevice, VkDevice device, const ProgramResourceVk* resource);
 
-	bool validate(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer);
+	bool validate(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, float targetSize[2]);
 
 	virtual void destroy() override final;
 

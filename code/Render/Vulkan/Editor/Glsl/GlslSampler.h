@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include "Render/Types.h"
 #include "Render/Vulkan/Editor/Glsl/GlslResource.h"
 
