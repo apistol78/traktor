@@ -19,6 +19,8 @@ public:
 
 	GlslResource* get(int32_t binding);
 
+	GlslResource* get(const std::wstring& name);
+
 	template < typename T >
 	T* get(int32_t binding) { return dynamic_type_cast< T* >(get(binding)); }
 

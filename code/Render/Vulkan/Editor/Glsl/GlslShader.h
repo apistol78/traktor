@@ -33,11 +33,6 @@ public:
 
 	enum BlockType
 	{
-		//BtCBufferOnce,
-		//BtCBufferFrame,
-		//BtCBufferDraw,
-		//BtTextures,
-		//BtSamplers,
 		BtInput,
 		BtOutput,
 		BtScript,

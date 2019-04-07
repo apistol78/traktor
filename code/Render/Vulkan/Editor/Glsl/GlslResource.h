@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Core/Object.h"
 
 namespace traktor
@@ -23,6 +24,7 @@ private:
 	friend class GlslLayout;
 
 	int32_t m_binding;
+	std::wstring m_name;
 };
 
 	}

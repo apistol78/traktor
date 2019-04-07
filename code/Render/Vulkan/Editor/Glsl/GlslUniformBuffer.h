@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include "Core/Containers/AlignedVector.h"
 #include "Render/Vulkan/Editor/Glsl/GlslResource.h"
 #include "Render/Vulkan/Editor/Glsl/GlslType.h"
@@ -24,7 +23,7 @@ public:
 
 	GlslUniformBuffer(const std::wstring& name);
 
-	void add(const std::wstring& uniformName, GlslType uniformType, int32_t length);
+	bool add(const std::wstring& uniformName, GlslType uniformType, int32_t length);
 
 	const AlignedVector< Uniform >& get() const { return m_uniforms; }
 

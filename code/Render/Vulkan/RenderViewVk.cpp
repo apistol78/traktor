@@ -366,13 +366,20 @@ void RenderViewVk::clear(uint32_t clearMask, const Color4f* colors, float depth,
 
 void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
+	TargetState& ts = m_targetStateStack.back();
+
 	VertexBufferVk* vb = mandatory_non_null_type_cast< VertexBufferVk* >(vertexBuffer);
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
 
 	validateTargetState();
 	validatePipeline(vb, p, primitives.type);
 
-	p->validate(m_logicalDevice, m_descriptorPool, m_drawCommandBuffer);
+	float targetSize[] =
+	{
+		(float)ts.rts->getWidth(),
+		(float)ts.rts->getHeight()
+	};
+	p->validate(m_logicalDevice, m_descriptorPool, m_drawCommandBuffer, targetSize);
 
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 2, 3 };
 	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type];

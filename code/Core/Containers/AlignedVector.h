@@ -205,12 +205,12 @@ public:
 		typedef value_type* pointer;
 		typedef value_type& reference;
 
-		reference operator * ()
+		reference operator * () const
 		{
 			return *_O::m_ptr;
 		}
 
-		pointer operator -> ()
+		pointer operator -> () const
 		{
 			return _O::m_ptr;
 		}
