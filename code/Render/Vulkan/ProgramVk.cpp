@@ -5,8 +5,11 @@
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
+#include "Render/Vulkan/RenderTargetDepthVk.h"
+#include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
+#include "Render/Vulkan/VolumeTextureVk.h"
 
 #undef max
 
@@ -327,12 +330,12 @@ bool ProgramVk::validate(VkDevice device, VkDescriptorPool descriptorPool, VkCom
 			imageView = static_cast< SimpleTextureVk* >(resolved.ptr())->getVkImageView();
 		else if (is_a< CubeTextureVk >(resolved))
 			imageView = static_cast< CubeTextureVk* >(resolved.ptr())->getVkImageView();
-		//else if (is_a< RenderTargetDx11 >(resolved))
-		//	d3dTextureResourceView = static_cast< RenderTargetDx11* >(resolved.ptr())->getD3D11TextureResourceView();
-		//else if (is_a< RenderTargetDepthDx11 >(resolved))
-		//	d3dTextureResourceView = static_cast< RenderTargetDepthDx11* >(resolved.ptr())->getD3D11TextureResourceView();
-		//else if (is_a< VolumeTextureDx11 >(resolved))
-		//	d3dTextureResourceView = static_cast< VolumeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+		else if (is_a< RenderTargetVk >(resolved))
+			imageView = static_cast< RenderTargetVk* >(resolved.ptr())->getVkImageView();
+		else if (is_a< RenderTargetDepthVk >(resolved))
+			imageView = static_cast< RenderTargetDepthVk* >(resolved.ptr())->getVkImageView();
+		else if (is_a< VolumeTextureVk >(resolved))
+			imageView = static_cast< VolumeTextureVk* >(resolved.ptr())->getVkImageView();
 
 		if (!imageView)
 			continue;
