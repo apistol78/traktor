@@ -16,12 +16,9 @@ class GlslTexture : public GlslResource
 public:
 	GlslTexture(const std::wstring& name, GlslType uniformType);
 
-	const std::wstring& getName() const { return m_name; }
-
 	GlslType getUniformType() const { return m_uniformType; }
 
 private:
-	std::wstring m_name;
 	GlslType m_uniformType;
 };
 

@@ -15,11 +15,6 @@ GlslShader::GlslShader(ShaderType shaderType)
 ,	m_nextTemporaryVariable(0)
 {
 	pushScope();
-	//pushOutputStream(BtCBufferOnce, new StringOutputStream());
-	//pushOutputStream(BtCBufferFrame, new StringOutputStream());
-	//pushOutputStream(BtCBufferDraw, new StringOutputStream());
-	//pushOutputStream(BtTextures, new StringOutputStream());
-	//pushOutputStream(BtSamplers, new StringOutputStream());
 	pushOutputStream(BtInput, new StringOutputStream());
 	pushOutputStream(BtOutput, new StringOutputStream());
 	pushOutputStream(BtScript, new StringOutputStream());
@@ -32,11 +27,6 @@ GlslShader::~GlslShader()
 	popOutputStream(BtScript);
 	popOutputStream(BtOutput);
 	popOutputStream(BtInput);
-	//popOutputStream(BtSamplers);
-	//popOutputStream(BtTextures);
-	//popOutputStream(BtCBufferDraw);
-	//popOutputStream(BtCBufferFrame);
-	//popOutputStream(BtCBufferOnce);
 	popScope();
 }
 
@@ -80,11 +70,6 @@ GlslVariable* GlslShader::createOuterVariable(const OutputPin* outputPin, const 
 	return v.variable;
 }
 
-//void GlslShader::associateVariable(const OutputPin* outputPin, GlslVariable* variable)
-//{
-//	m_variables.back().insert(std::make_pair(outputPin, variable));
-//}
-
 GlslVariable* GlslShader::getVariable(const OutputPin* outputPin)
 {
 	for (auto it = m_variables.rbegin(); it != m_variables.rend(); ++it)
@@ -110,25 +95,6 @@ void GlslShader::popScope()
 	m_variables.resize(m_variableScopes.back());
 	m_variableScopes.pop_back();
 }
-
-//bool GlslShader::addUniform(const std::wstring& uniform)
-//{
-//	if (haveUniform(uniform))
-//		return false;
-//
-//	m_uniforms.push_back(uniform);
-//	return true;
-//}
-//
-//const std::list< std::wstring >& GlslShader::getUniforms() const
-//{
-//	return m_uniforms;
-//}
-//
-//bool GlslShader::haveUniform(const std::wstring& uniform) const
-//{
-//	return std::find(m_uniforms.begin(), m_uniforms.end(), uniform) != m_uniforms.end();
-//}
 
 bool GlslShader::defineScript(const std::wstring& signature)
 {
@@ -169,6 +135,7 @@ std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout) const
 	ss << L"#version 450" << Endl;
 	ss << L"#extension GL_ARB_separate_shader_objects : enable" << Endl;
 	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
+	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
 	ss << Endl;
 
 	if (m_shaderType == StFragment)
@@ -190,7 +157,12 @@ std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout) const
 				ss << L"{" << Endl;
 				ss << IncreaseIndent;
 				for (auto uniform : uniformBuffer->get())
-					ss << glsl_type_name(uniform.type) << L" " << uniform.name << L";" << Endl;
+				{
+					if (uniform.length <= 1)
+						ss << glsl_type_name(uniform.type) << L" " << uniform.name << L";" << Endl;
+					else
+						ss << glsl_type_name(uniform.type) << L" " << uniform.name << L"[" << uniform.length << L"];" << Endl;
+				}
 				ss << DecreaseIndent;
 				ss << L"};" << Endl;
 				ss << Endl;
@@ -198,53 +170,31 @@ std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout) const
 		}
 		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
 		{
-			ss << L"layout(set = 0, binding = " << texture->getBinding() << L") uniform texture2D " << texture->getName() << L";" << Endl;
+			switch (texture->getUniformType())
+			{
+			case GtTexture2D:
+				ss << L"layout(set = 0, binding = " << texture->getBinding() << L") uniform texture2D " << texture->getName() << L";" << Endl;
+				break;
+
+			case GtTexture3D:
+				ss << L"layout(set = 0, binding = " << texture->getBinding() << L") uniform texture3D " << texture->getName() << L";" << Endl;
+				break;
+
+			case GtTextureCube:
+				ss << L"layout(set = 0, binding = " << texture->getBinding() << L") uniform textureCube " << texture->getName() << L";" << Endl;
+				break;
+			}
 			ss << Endl;
 		}
 		else if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 		{
-			ss << L"layout(set = 0, binding = " << sampler->getBinding() << L") uniform sampler " << sampler->getName() << L";" << Endl;
+			if (sampler->getState().compare == CfNone)
+				ss << L"layout(set = 0, binding = " << sampler->getBinding() << L") uniform sampler " << sampler->getName() << L";" << Endl;
+			else
+				ss << L"layout(set = 0, binding = " << sampler->getBinding() << L") uniform samplerShadow " << sampler->getName() << L";" << Endl;
 			ss << Endl;
 		}
 	}
-
-	//for (uint32_t frequency = UfOnce; frequency <= UfDraw; ++frequency)
-	//{
-	//	const auto& uniforms = cx.getScalarUniforms((UpdateFrequency)frequency);
-	//	if (!uniforms.empty())
-	//	{
-	//		const wchar_t* c_uniformBufferNames[] = { L"UbOnce", L"UbFrame", L"UbDraw" };
-	//		ss << L"layout (std140, binding = " << frequency << L") uniform " << c_uniformBufferNames[frequency] << Endl;
-	//		ss << L"{" << Endl;
-	//		ss << IncreaseIndent;
-	//	
-	//		for (auto uniform : uniforms.get())
-	//			ss << uniform.type << L" " << uniform.name << L";" << Endl;
-
-	//		ss << DecreaseIndent;
-	//		ss << L"};" << Endl;
-	//		ss << Endl;
-	//	}
-	//}
-
-	//const auto& textureUniforms = cx.getTextureUniforms();
-	//if (!textureUniforms.empty())
-	//{
-	//}
-
-	//std::wstring texturesText = getOutputStream(BtTextures).str();
-	//if (!texturesText.empty())
-	//{
-	//	ss << texturesText;
-	//	ss << Endl;
-	//}
-
-	//std::wstring samplersText = getOutputStream(BtSamplers).str();
-	//if (!samplersText.empty())
-	//{
-	//	ss << samplersText;
-	//	ss << Endl;
-	//}
 
 	std::wstring inputText = getOutputStream(BtInput).str();
 	if (!inputText.empty())
