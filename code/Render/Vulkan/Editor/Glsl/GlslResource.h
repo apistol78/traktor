@@ -12,9 +12,12 @@ class GlslResource : public Object
 	T_RTTI_CLASS;
 
 public:
-	GlslResource();
-
 	int32_t getBinding() const { return m_binding; }
+
+	const std::wstring& getName() const { return m_name; }
+
+protected:
+	GlslResource(const std::wstring& name);
 
 private:
 	friend class GlslLayout;

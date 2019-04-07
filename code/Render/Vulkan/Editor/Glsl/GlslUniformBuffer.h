@@ -24,14 +24,11 @@ public:
 
 	GlslUniformBuffer(const std::wstring& name);
 
-	const std::wstring& getName() const { return m_name; }
-
 	void add(const std::wstring& uniformName, GlslType uniformType, int32_t length);
 
 	const AlignedVector< Uniform >& get() const { return m_uniforms; }
 
 private:
-	std::wstring m_name;
 	AlignedVector< Uniform > m_uniforms;
 };
 

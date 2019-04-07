@@ -71,6 +71,7 @@ extern PFN_vkDeviceWaitIdle vkDeviceWaitIdle;
 extern PFN_vkFlushMappedMemoryRanges vkFlushMappedMemoryRanges;
 extern PFN_vkCreateSampler vkCreateSampler;
 extern PFN_vkQueueWaitIdle vkQueueWaitIdle;
+extern PFN_vkCmdCopyBufferToImage vkCmdCopyBufferToImage;
 
 // Linux Vulkan extensions.
 extern PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;

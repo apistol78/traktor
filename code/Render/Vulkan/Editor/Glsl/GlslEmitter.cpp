@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iomanip>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -22,13 +23,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-//const GlslShader::BlockType c_blockType[] =
-//{
-//	GlslShader::BtCBufferOnce,
-//	GlslShader::BtCBufferFrame,
-//	GlslShader::BtCBufferDraw
-//};
 
 std::wstring formatFloat(float v)
 {
@@ -1208,15 +1202,6 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", (samplerState.compare == CfNone) ? GtFloat4 : GtFloat);
 
 	bool needAddressW = bool(texture->getType() > GtTexture2D);
-
-	//if (!cx.getShader().haveUniform(samplerName))
-	//{
-	//	auto& fu = cx.getShader().getOutputStream(GlslShader::BtSamplers);
-	//	int32_t binding = cx.allocateResourceBinding();
-	//	fu << L"layout(set = 0, binding = " << binding << L") uniform sampler " << samplerName << L";" << Endl;
-	//	cx.getShader().addUniform(samplerName);
-	//}
-
 	std::wstring samplerName;
 
 	// Check if we already have a suitable sampler in the layout.
@@ -1259,8 +1244,11 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 					break;
 
 				case GtTexture3D:
+					assign(f, out) << L"texture(sampler3D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L");" << Endl;
+					break;
+
 				case GtTextureCube:
-					assign(f, out) << L"texture(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L");" << Endl;
+					assign(f, out) << L"texture(samplerCube(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L");" << Endl;
 					break;
 
 				default:
@@ -1276,8 +1264,11 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 					break;
 
 				case GtTexture3D:
+					assign(f, out) << L"textureLod(sampler3D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
+					break;
+
 				case GtTextureCube:
-					assign(f, out) << L"textureLod(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
+					assign(f, out) << L"textureLod(samplerCube(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
 					break;
 
 				default:
@@ -1285,19 +1276,22 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				}
 			}
 		}
-		else
+		else	// Compare
 		{
 			if (!samplerState.ignoreMips)
 			{
 				switch (texture->getType())
 				{
 				case GtTexture2D:
-					assign(f, out) << L"texture(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L" * vec3(1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.5));" << Endl;
+					assign(f, out) << L"texture(sampler2DShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L" * vec3(1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.5));" << Endl;
 					break;
 
 				case GtTexture3D:
+					assign(f, out) << L"texture(sampler3DShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5)));" << Endl;
+					break;
+
 				case GtTextureCube:
-					assign(f, out) << L"texture(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5)));" << Endl;
+					assign(f, out) << L"texture(samplerCubeShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5)));" << Endl;
 					break;
 
 				default:
@@ -1309,12 +1303,15 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				switch (texture->getType())
 				{
 				case GtTexture2D:
-					assign(f, out) << L"textureLod(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L" * vec3(1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.5), 0.0);" << Endl;
+					assign(f, out) << L"textureLod(sampler2DShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L" * vec3(1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.5), 0.0);" << Endl;
 					break;
 
 				case GtTexture3D:
+					assign(f, out) << L"textureLod(sampler3DShadow(" << texture->getName() << L", " << samplerName << L"), " <<  texCoord->cast(GtFloat4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5), 0.0);" << Endl;
+					break;
+
 				case GtTextureCube:
-					assign(f, out) << L"textureLod(sampler2D(" << texture->getName() << L", " << samplerName << L"), " <<  texCoord->cast(GtFloat4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5), 0.0);" << Endl;
+					assign(f, out) << L"textureLod(samplerCubeShadow(" << texture->getName() << L", " << samplerName << L"), " <<  texCoord->cast(GtFloat4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5), 0.0);" << Endl;
 					break;
 
 				default:
@@ -1329,11 +1326,11 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		switch (texture->getType())
 		{
 		case GtTexture2D:
-		case GtTexture3D:
-		case GtTextureCube:
 			assign(f, out) << L"texture(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
 			break;
 
+		case GtTexture3D:
+		case GtTextureCube:
         default:
             return false;
 		}
@@ -1878,15 +1875,15 @@ bool emitTextureSize(GlslContext& cx, TextureSize* node)
 	switch (in->getType())
 	{
 	case GtTexture2D:
-		f << L"vec3 " << out->getName() << L" = vec3(textureSize(_gl_sampler_" << textureName << L", 0).xy, 0.0f);" << Endl;
+		f << L"vec3 " << out->getName() << L" = vec3(textureSize(" << textureName << L", 0).xy, 0.0f);" << Endl;
 		break;
 
 	case GtTexture3D:
-		f << L"vec3 " << out->getName() << L" = textureSize(_gl_sampler_" << textureName << L", 0);" << Endl;
+		f << L"vec3 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
 		break;
 
 	case GtTextureCube:
-		f << L"vec3 " << out->getName() << L" = textureSize(_gl_sampler_" << textureName << L", 0);" << Endl;
+		f << L"vec3 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
 		break;
 
 	default:
@@ -1940,31 +1937,6 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 	if (!out)
 		return false;
 
-	//// Emit uniform declaration to shader if not already used.
-	//if (!cx.getShader().haveUniform(node->getParameterName()))
-	//{
-	//	const GlslShader::BlockType c_blockType[] =
-	//	{
-	//		GlslShader::BtCBufferOnce,
-	//		GlslShader::BtCBufferFrame,
-	//		GlslShader::BtCBufferDraw
-	//	};
-	//	
-	//	if (out->getType() < GtTexture2D)
-	//	{
-	//		auto& fu = cx.getShader().getOutputStream(c_blockType[node->getFrequency()]);
-	//		fu << glsl_type_name(out->getType()) << L" " << node->getParameterName() << L";" << Endl;
-	//	}
-	//	else
-	//	{
-	//		auto& ft = cx.getShader().getOutputStream(GlslShader::BtTextures);
-	//		int32_t binding = cx.allocateResourceBinding();
-	//		ft << L"layout(set = 0, binding = " << binding << L") uniform texture2D " << node->getParameterName() << L";" << Endl;
-	//	}
-
-	//	cx.getShader().addUniform(node->getParameterName());
-	//}
-
 	// Add uniform to layout.
 	if (out->getType() < GtTexture2D)
 	{
@@ -1979,7 +1951,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 	{
 		cx.getLayout().add(new GlslTexture(
 			node->getParameterName(),
-			GtTexture2D
+			out->getType()
 		));
 	}
 

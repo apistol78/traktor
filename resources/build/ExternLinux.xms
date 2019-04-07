@@ -4880,7 +4880,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.vulkan.glslang</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/vulkan/glslang</sourcePath>
+			<sourcePath>$(GLSLANG)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -4888,7 +4888,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/vulkan/glslang</item>
+						<item>$(GLSLANG)</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -4911,7 +4911,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/vulkan/glslang</item>
+						<item>$(GLSLANG)</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -4934,7 +4934,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/vulkan/glslang</item>
+						<item>$(GLSLANG)</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -4962,7 +4962,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/vulkan/glslang</item>
+						<item>$(GLSLANG)</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -5059,6 +5059,7 @@
 						</item>
 					</items>
 				</item>
+				<!--
 				<item type="Filter">
 					<name>hlsl</name>
 					<items>
@@ -5068,6 +5069,7 @@
 						</item>
 					</items>
 				</item>
+			-->
 				<item type="Filter">
 					<name>OGLCompilersDLL</name>
 					<items>

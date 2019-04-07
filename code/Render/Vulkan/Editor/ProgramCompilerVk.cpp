@@ -115,6 +115,17 @@ const TBuiltInResource c_defaultTBuiltInResource =
 	/* .MaxCullDistances = */ 8,
 	/* .MaxCombinedClipAndCullDistances = */ 8,
 	/* .MaxSamples = */ 4,
+
+	/* .maxMeshOutputVerticesNV; =*/ 0,
+    /* .maxMeshOutputPrimitivesNV; =*/ 0,
+    /* .maxMeshWorkGroupSizeX_NV; =*/ 0,
+    /* .maxMeshWorkGroupSizeY_NV; =*/ 0,
+    /* .maxMeshWorkGroupSizeZ_NV; =*/ 0,
+    /* .maxTaskWorkGroupSizeX_NV; =*/ 0,
+    /* .maxTaskWorkGroupSizeY_NV; =*/ 0,
+    /* .maxTaskWorkGroupSizeZ_NV; =*/ 0,
+    /* .maxMeshViewCountNV; =*/ 0,
+
 	/* .limits = */ {
 		/* .nonInductiveForLoops = */ 1,
 		/* .whileLoops = */ 1,
@@ -176,8 +187,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 	const auto& layout = cx.getLayout();
 
-	const char* vertexShaderText = _strdup(wstombs(cx.getVertexShader().getGeneratedShader(layout)).c_str());
-	const char* fragmentShaderText = _strdup(wstombs(cx.getFragmentShader().getGeneratedShader(layout)).c_str());
+	const char* vertexShaderText = strdup(wstombs(cx.getVertexShader().getGeneratedShader(layout)).c_str());
+	const char* fragmentShaderText = strdup(wstombs(cx.getFragmentShader().getGeneratedShader(layout)).c_str());
 
 	glslang::TProgram* program = new glslang::TProgram();
 

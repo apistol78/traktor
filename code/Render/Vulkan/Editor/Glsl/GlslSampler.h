@@ -16,12 +16,9 @@ class GlslSampler : public GlslResource
 public:
 	GlslSampler(const std::wstring& name, const SamplerState& state);
 
-	const std::wstring& getName() const { return m_name; }
-
 	const SamplerState& getState() const { return m_state; }
 
 private:
-	std::wstring m_name;
 	SamplerState m_state;
 };
 
