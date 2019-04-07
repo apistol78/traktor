@@ -2,6 +2,7 @@
 #include <limits>
 #include "Core/Math/Matrix44.h"
 #include "Render/Vulkan/ApiLoader.h"
+#include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/ProgramVk.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
@@ -324,8 +325,8 @@ bool ProgramVk::validate(VkDevice device, VkDescriptorPool descriptorPool, VkCom
 		VkImageView imageView = nullptr;
 		if (is_a< SimpleTextureVk >(resolved))
 			imageView = static_cast< SimpleTextureVk* >(resolved.ptr())->getVkImageView();
-		//else if (is_a< CubeTextureDx11 >(resolved))
-		//	d3dTextureResourceView = static_cast< CubeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+		else if (is_a< CubeTextureVk >(resolved))
+			imageView = static_cast< CubeTextureVk* >(resolved.ptr())->getVkImageView();
 		//else if (is_a< RenderTargetDx11 >(resolved))
 		//	d3dTextureResourceView = static_cast< RenderTargetDx11* >(resolved.ptr())->getD3D11TextureResourceView();
 		//else if (is_a< RenderTargetDepthDx11 >(resolved))

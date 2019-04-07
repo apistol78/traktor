@@ -52,7 +52,7 @@ std::wstring expandScalar(float v, GlslType type)
 	return vs;
 }
 
-auto& assign(OutputStream& f, Ref< GlslVariable > out)
+OutputStream& assign(OutputStream& f, Ref< GlslVariable > out)
 {
 	f << glsl_type_name(out->getType()) << L" " << out->getName() << L" = ";
 	return f;
