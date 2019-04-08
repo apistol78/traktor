@@ -1,34 +1,13 @@
+#include "Core/Log/Log.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/RenderTargetDepthVk.h"
+#include "Render/Vulkan/UtilitiesVk.h"
 
 namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
-
-uint32_t getMemoryTypeIndex(VkPhysicalDevice physicalDevice, VkMemoryPropertyFlags memoryFlags, const VkMemoryRequirements& memoryRequirements)
-{
-	VkPhysicalDeviceMemoryProperties memoryProperties = {};
-	vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memoryProperties);
-
-	uint32_t memoryTypeBits = memoryRequirements.memoryTypeBits;
-	for (uint32_t i = 0; i < 32; ++i)
-	{
-		VkMemoryType memoryType = memoryProperties.memoryTypes[i];
-		if (memoryTypeBits & 1)
-		{
-			if ((memoryType.propertyFlags & memoryFlags) == memoryFlags)
-				return i;
-		}
-		memoryTypeBits = memoryTypeBits >> 1;
-	}
-	return 0;
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDepthVk", RenderTargetDepthVk, ISimpleTexture)
 
@@ -76,6 +55,8 @@ bool RenderTargetDepthVk::createPrimary(VkPhysicalDevice physicalDevice, VkDevic
 
 bool RenderTargetDepthVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const RenderTargetSetCreateDesc& setDesc)
 {
+	VkResult result;
+
 	VkImageCreateInfo imageCreateInfo = {};
 	imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -92,8 +73,11 @@ bool RenderTargetDepthVk::create(VkPhysicalDevice physicalDevice, VkDevice devic
 	imageCreateInfo.queueFamilyIndexCount = 0;
 	imageCreateInfo.pQueueFamilyIndices = nullptr;
 	imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
- 	if (vkCreateImage(device, &imageCreateInfo, nullptr, &m_image) != VK_SUCCESS)
+ 	if ((result = vkCreateImage(device, &imageCreateInfo, nullptr, &m_image)) != VK_SUCCESS)
+	{
+		log::error << L"RenderTargetDepthVk::create failed; vkCreateImage returned error " << getHumanResult(result) << L"." << Endl;
 		return false;
+	}
 
 	VkMemoryRequirements memoryRequirements = {};
 	vkGetImageMemoryRequirements(device, m_image, &memoryRequirements);
@@ -104,11 +88,17 @@ bool RenderTargetDepthVk::create(VkPhysicalDevice physicalDevice, VkDevice devic
 	imageAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
 
 	VkDeviceMemory imageMemory = {};
-	if (vkAllocateMemory(device, &imageAllocateInfo, nullptr, &imageMemory) != VK_SUCCESS)
+	if ((result = vkAllocateMemory(device, &imageAllocateInfo, nullptr, &imageMemory)) != VK_SUCCESS)
+	{
+		log::error << L"RenderTargetDepthVk::create failed; vkAllocateMemory returned error " << getHumanResult(result) << L"." << Endl;
 		return false;
+	}
 
-	if (vkBindImageMemory(device, m_image, imageMemory, 0) != VK_SUCCESS)
+	if ((result = vkBindImageMemory(device, m_image, imageMemory, 0)) != VK_SUCCESS)
+	{
+		log::error << L"RenderTargetDepthVk::create failed; vkBindImageMemory returned error " << getHumanResult(result) << L"." << Endl;
 		return false;
+	}
 
 	VkImageViewCreateInfo ivci = {};
 	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -121,13 +111,15 @@ bool RenderTargetDepthVk::create(VkPhysicalDevice physicalDevice, VkDevice devic
 	ivci.subresourceRange.levelCount = 1;
 	ivci.subresourceRange.baseArrayLayer = 0;
 	ivci.subresourceRange.layerCount = 1;
- 	if (vkCreateImageView(device, &ivci, nullptr, &m_imageView) != VK_SUCCESS)
+ 	if ((result = vkCreateImageView(device, &ivci, nullptr, &m_imageView)) != VK_SUCCESS)
+	{
+		log::error << L"RenderTargetDepthVk::create failed; vkCreateImageView returned error " << getHumanResult(result) << L"." << Endl;
 		return false;
+	}
 
 	m_format = imageCreateInfo.format;
 	m_width = setDesc.width;
 	m_height = setDesc.height;
-
 	return true;
 }
 

@@ -1,3 +1,6 @@
+#pragma optimize( "", off )
+
+#include <limits>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Types.h"
@@ -21,10 +24,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVk", RenderTargetSetVk, R
 
 RenderTargetSetVk::RenderTargetSetVk()
 :	RenderTargetSet()
-,	m_width(0)
-,	m_height(0)
-,	m_renderPass(0)
-,	m_framebuffer(0)
+,	m_renderPass(nullptr)
+,	m_frameBuffer(nullptr)
+,	m_lastColorIndex(std::numeric_limits< int32_t >::max())
+,	m_lastClearMask(0)
 ,	m_id(s_nextId++)
 {
 }
@@ -45,64 +48,75 @@ bool RenderTargetSetVk::createPrimary(VkPhysicalDevice physicalDevice, VkDevice 
 	if (!m_depthTarget->createPrimary(physicalDevice, device, width, height, depthFormat, depthImage))
 		return false;
 
-	VkAttachmentDescription passAttachments[2] = {};
-	passAttachments[0].format = colorFormat;
-	passAttachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
-	passAttachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	passAttachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-	passAttachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	passAttachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	passAttachments[0].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-	passAttachments[0].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-	passAttachments[1].format = depthFormat;
-	passAttachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
-	passAttachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	passAttachments[1].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	passAttachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	passAttachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	passAttachments[1].initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-	passAttachments[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	//VkAttachmentDescription passAttachments[2] = {};
+	//passAttachments[0].format = depthFormat;
+	//passAttachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
+	//passAttachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	//passAttachments[0].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	//passAttachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	//passAttachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	//passAttachments[0].initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	//passAttachments[0].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	//passAttachments[1].format = colorFormat;
+	//passAttachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
+	//passAttachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+	//passAttachments[1].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+	//passAttachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+	//passAttachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+	//passAttachments[1].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	//passAttachments[1].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-	VkAttachmentReference colorAttachmentReference = {};
-	colorAttachmentReference.attachment = 0;
-	colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+	//VkAttachmentReference colorAttachmentReference = {};
+	//colorAttachmentReference.attachment = 0;
+	//colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-	VkAttachmentReference depthAttachmentReference = {};
-	depthAttachmentReference.attachment = 1;
-	depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+	//VkAttachmentReference depthAttachmentReference = {};
+	//depthAttachmentReference.attachment = 1;
+	//depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-	VkSubpassDescription subpass = {};
-	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-	subpass.colorAttachmentCount = 1;
-	subpass.pColorAttachments = &colorAttachmentReference;
-	subpass.pDepthStencilAttachment = &depthAttachmentReference;
+	//VkSubpassDescription subpass = {};
+	//subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+	//subpass.colorAttachmentCount = 1;
+	//subpass.pColorAttachments = &colorAttachmentReference;
+	//subpass.pDepthStencilAttachment = &depthAttachmentReference;
 
-	VkRenderPassCreateInfo renderPassCreateInfo = {};
-	renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	renderPassCreateInfo.attachmentCount = 2;
-	renderPassCreateInfo.pAttachments = passAttachments;
-	renderPassCreateInfo.subpassCount = 1;
-	renderPassCreateInfo.pSubpasses = &subpass;
-	if (vkCreateRenderPass(device, &renderPassCreateInfo, nullptr, &m_renderPass) != VK_SUCCESS)
-		return false;
+	//VkRenderPassCreateInfo renderPassCreateInfo = {};
+	//renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+	//renderPassCreateInfo.attachmentCount = 2;
+	//renderPassCreateInfo.pAttachments = passAttachments;
+	//renderPassCreateInfo.subpassCount = 1;
+	//renderPassCreateInfo.pSubpasses = &subpass;
+	//if (vkCreateRenderPass(device, &renderPassCreateInfo, nullptr, &m_renderPass) != VK_SUCCESS)
+	//	return false;
 
- 	VkImageView frameBufferAttachments[2];
-	frameBufferAttachments[0] = m_colorTargets[0]->getVkImageView();
-	frameBufferAttachments[1] = m_depthTarget->getVkImageView();
+ //	VkImageView frameBufferAttachments[2];
+	//frameBufferAttachments[0] = m_depthTarget->getVkImageView();
+	//frameBufferAttachments[1] = m_colorTargets[0]->getVkImageView();
 
-	VkFramebufferCreateInfo frameBufferCreateInfo = {};
-	frameBufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-	frameBufferCreateInfo.renderPass = m_renderPass;
-	frameBufferCreateInfo.attachmentCount = 2;
-	frameBufferCreateInfo.pAttachments = frameBufferAttachments;
-	frameBufferCreateInfo.width = width;
-	frameBufferCreateInfo.height = height;
-	frameBufferCreateInfo.layers = 1;
-	if (vkCreateFramebuffer(device, &frameBufferCreateInfo, nullptr, &m_framebuffer) != VK_SUCCESS)
-		return false;
+	//VkFramebufferCreateInfo frameBufferCreateInfo = {};
+	//frameBufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+	//frameBufferCreateInfo.renderPass = m_renderPass;
+	//frameBufferCreateInfo.attachmentCount = 2;
+	//frameBufferCreateInfo.pAttachments = frameBufferAttachments;
+	//frameBufferCreateInfo.width = width;
+	//frameBufferCreateInfo.height = height;
+	//frameBufferCreateInfo.layers = 1;
+	//if (vkCreateFramebuffer(device, &frameBufferCreateInfo, nullptr, &m_frameBuffer) != VK_SUCCESS)
+	//	return false;
 
-	m_width = width;
-	m_height = height;
+	m_setDesc.count = 1;
+	m_setDesc.width = width;
+	m_setDesc.height = height;
+	m_setDesc.multiSample = 0;
+	m_setDesc.createDepthStencil = true;
+	m_setDesc.usingDepthStencilAsTexture = false;
+	m_setDesc.usingPrimaryDepthStencil = false;	// We contain primary depth thus do not share.
+	m_setDesc.preferTiled = false;
+	m_setDesc.ignoreStencil = false;
+	m_setDesc.generateMips = false;
+	m_setDesc.sharedDepthStencil = nullptr;
+	m_setDesc.targets[0].format = TfR8G8B8A8;
+	m_setDesc.targets[0].sRGB = false;
 
 	return true;
 }
@@ -124,85 +138,13 @@ bool RenderTargetSetVk::create(VkPhysicalDevice physicalDevice, VkDevice device,
 			return false;
 	}
 
-	AlignedVector< VkAttachmentDescription > passAttachments;
-	for (int i = 0; i < setDesc.count; ++i)
-	{
-		VkAttachmentDescription passAttachment = {};
-		passAttachment.format = m_colorTargets[i]->getVkFormat();
-		passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-		passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		passAttachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-		passAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-		passAttachments.push_back(passAttachment);
-	}
-
-	if (m_depthTarget)
-	{
-		VkAttachmentDescription passAttachment = {};
-		passAttachment.format = m_depthTarget->getVkFormat();
-		passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-		passAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		passAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-		passAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-		passAttachments.push_back(passAttachment);
-	}
-
-	VkAttachmentReference colorAttachmentReference = {};
-	colorAttachmentReference.attachment = 0;
-	colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-	VkAttachmentReference depthAttachmentReference = {};
-	depthAttachmentReference.attachment = 1;
-	depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-	VkSubpassDescription subpass = {};
-	subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-	subpass.colorAttachmentCount = 1;
-	subpass.pColorAttachments = &colorAttachmentReference;
-	if (m_depthTarget)
-		subpass.pDepthStencilAttachment = &depthAttachmentReference;
-
-	VkRenderPassCreateInfo renderPassCreateInfo = {};
-	renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	renderPassCreateInfo.attachmentCount = passAttachments.size();
-	renderPassCreateInfo.pAttachments = passAttachments.ptr();
-	renderPassCreateInfo.subpassCount = 1;
-	renderPassCreateInfo.pSubpasses = &subpass;
-	if (vkCreateRenderPass(device, &renderPassCreateInfo, nullptr, &m_renderPass) != VK_SUCCESS)
-		return false;
-
- 	AlignedVector< VkImageView > frameBufferAttachments;
-	for (int i = 0; i < setDesc.count; ++i)
-		frameBufferAttachments.push_back(m_colorTargets[i]->getVkImageView());
-	if (m_depthTarget)
-		frameBufferAttachments.push_back(m_depthTarget->getVkImageView());
-
-	VkFramebufferCreateInfo frameBufferCreateInfo = {};
-	frameBufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-	frameBufferCreateInfo.renderPass = m_renderPass;
-	frameBufferCreateInfo.attachmentCount = frameBufferAttachments.size();
-	frameBufferCreateInfo.pAttachments = frameBufferAttachments.ptr();
-	frameBufferCreateInfo.width = setDesc.width;
-	frameBufferCreateInfo.height = setDesc.height;
-	frameBufferCreateInfo.layers = 1;
-	if (vkCreateFramebuffer(device, &frameBufferCreateInfo, nullptr, &m_framebuffer) != VK_SUCCESS)
-		return false;
-
-	m_width = setDesc.width;
-	m_height = setDesc.height;
-
+	m_setDesc = setDesc;
 	return true;
 }
 
 void RenderTargetSetVk::destroy()
 {
-	for (RefArray< RenderTargetVk >::iterator i = m_colorTargets.begin(); i != m_colorTargets.end(); ++i)
+	for (auto i = m_colorTargets.begin(); i != m_colorTargets.end(); ++i)
 	{
 		if (*i)
 			(*i)->destroy();
@@ -213,17 +155,17 @@ void RenderTargetSetVk::destroy()
 
 int32_t RenderTargetSetVk::getWidth() const
 {
-	return m_width;
+	return m_setDesc.width;
 }
 
 int32_t RenderTargetSetVk::getHeight() const
 {
-	return m_height;
+	return m_setDesc.height;
 }
 
 ISimpleTexture* RenderTargetSetVk::getColorTexture(int32_t index) const
 {
-	return index < int(m_colorTargets.size()) ? m_colorTargets[index] : 0;
+	return index < int32_t(m_colorTargets.size()) ? m_colorTargets[index] : nullptr;
 }
 
 ISimpleTexture* RenderTargetSetVk::getDepthTexture() const
@@ -250,6 +192,213 @@ bool RenderTargetSetVk::isContentValid() const
 bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 {
 	return false;
+}
+
+bool RenderTargetSetVk::prepareAsTarget(
+	VkDevice device,
+	VkCommandBuffer commandBuffer,
+	int32_t colorIndex,
+	uint32_t clearMask,
+	const Color4f* colors,
+	float depth,
+	int32_t stencil,
+	RenderTargetDepthVk* primaryDepthTarget
+)
+{
+	// Do we need to nuke previous render pass and framebuffer?
+	if (m_lastColorIndex != colorIndex || m_lastClearMask != clearMask)
+	{
+		m_renderPass = nullptr;
+		m_frameBuffer = nullptr;
+		m_lastColorIndex = colorIndex;
+		m_lastClearMask = clearMask;
+	}
+
+	// (Re-)create render pass.
+	if (!m_renderPass)
+	{
+		AlignedVector< VkAttachmentDescription > passAttachments;
+
+		if (m_depthTarget)
+		{
+			VkAttachmentDescription passAttachment = {};
+			passAttachment.format = m_depthTarget->getVkFormat();
+			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+			passAttachment.loadOp = ((clearMask & CfDepth) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;// VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			passAttachment.stencilLoadOp = ((clearMask & CfStencil) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;//VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			passAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			passAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			passAttachments.push_back(passAttachment);
+		}
+		else if (m_setDesc.usingPrimaryDepthStencil)
+		{
+			VkAttachmentDescription passAttachment = {};
+			passAttachment.format = primaryDepthTarget->getVkFormat();
+			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+			passAttachment.loadOp = ((clearMask & CfDepth) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;//VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			passAttachment.stencilLoadOp = ((clearMask & CfStencil) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;//VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			passAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			passAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			passAttachments.push_back(passAttachment);
+		}
+
+		if (colorIndex >= 0)
+		{
+			// One color target selected.
+			VkAttachmentDescription passAttachment = {};
+			passAttachment.format = m_colorTargets[colorIndex]->getVkFormat();
+			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+			passAttachment.loadOp = ((clearMask & CfColor) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+			passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			passAttachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			passAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			passAttachments.push_back(passAttachment);
+		}
+		else
+		{
+			// Attach all color targets for MRT.
+			for (int i = 0; i < m_setDesc.count; ++i)
+			{
+				VkAttachmentDescription passAttachment = {};
+				passAttachment.format = m_colorTargets[i]->getVkFormat();
+				passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+				passAttachment.loadOp = ((clearMask & CfColor) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+				passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+				passAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+				passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+				passAttachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+				passAttachment.finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+				passAttachments.push_back(passAttachment);
+			}
+		}
+
+		VkAttachmentReference depthAttachmentReference = {};
+		depthAttachmentReference.attachment = 0;
+		depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+		AlignedVector< VkAttachmentReference > colorAttachmentReferences;
+		if (colorIndex >= 0)
+		{
+			auto& colorAttachmentReference = colorAttachmentReferences.push_back();
+			colorAttachmentReference.attachment = (m_depthTarget || m_setDesc.usingPrimaryDepthStencil) ? 1 : 0;
+			colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		}
+		else
+		{
+			for (int i = 0; i < m_setDesc.count; ++i)
+			{
+				auto& colorAttachmentReference = colorAttachmentReferences.push_back();
+				colorAttachmentReference.attachment = ((m_depthTarget || m_setDesc.usingPrimaryDepthStencil) ? 1 : 0) + i;
+				colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+			}
+		}
+
+		VkSubpassDescription subpass = {};
+		subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+		subpass.colorAttachmentCount = (uint32_t)colorAttachmentReferences.size();
+		subpass.pColorAttachments = colorAttachmentReferences.c_ptr();
+		if (m_depthTarget || m_setDesc.usingPrimaryDepthStencil)
+			subpass.pDepthStencilAttachment = &depthAttachmentReference;
+
+		VkRenderPassCreateInfo renderPassCreateInfo = {};
+		renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+		renderPassCreateInfo.attachmentCount = passAttachments.size();
+		renderPassCreateInfo.pAttachments = passAttachments.ptr();
+		renderPassCreateInfo.subpassCount = 1;
+		renderPassCreateInfo.pSubpasses = &subpass;
+		if (vkCreateRenderPass(device, &renderPassCreateInfo, nullptr, &m_renderPass) != VK_SUCCESS)
+			return false;
+	}
+
+	// (Re-)create frame buffer.
+	if (!m_frameBuffer)
+	{
+ 		AlignedVector< VkImageView > frameBufferAttachments;
+		
+		if (m_depthTarget)
+			frameBufferAttachments.push_back(m_depthTarget->getVkImageView());
+		else if (m_setDesc.usingPrimaryDepthStencil)
+			frameBufferAttachments.push_back(primaryDepthTarget->getVkImageView());
+
+		if (colorIndex >= 0)
+			frameBufferAttachments.push_back(m_colorTargets[colorIndex]->getVkImageView());
+		else
+		{
+			for (int32_t i = 0; i < m_setDesc.count; ++i)
+				frameBufferAttachments.push_back(m_colorTargets[i]->getVkImageView());
+		}
+
+		VkFramebufferCreateInfo frameBufferCreateInfo = {};
+		frameBufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+		frameBufferCreateInfo.renderPass = m_renderPass;
+		frameBufferCreateInfo.attachmentCount = (uint32_t)frameBufferAttachments.size();
+		frameBufferCreateInfo.pAttachments = frameBufferAttachments.ptr();
+		frameBufferCreateInfo.width = m_setDesc.width;
+		frameBufferCreateInfo.height = m_setDesc.height;
+		frameBufferCreateInfo.layers = 1;
+		if (vkCreateFramebuffer(device, &frameBufferCreateInfo, nullptr, &m_frameBuffer) != VK_SUCCESS)
+			return false;
+	}
+
+	T_ASSERT(m_renderPass != nullptr);
+	T_ASSERT(m_frameBuffer != nullptr);
+
+	if (colorIndex >= 0)
+		m_colorTargets[colorIndex]->prepareAsTarget(commandBuffer);
+	else
+	{
+		for (auto colorTarget : m_colorTargets)
+			colorTarget->prepareAsTarget(commandBuffer);
+	}
+
+	AlignedVector< VkClearValue > clearValues;
+
+	if (m_depthTarget || m_setDesc.usingPrimaryDepthStencil)
+	{
+		auto& cv = clearValues.push_back();
+		cv.depthStencil.depth = depth;
+		cv.depthStencil.stencil = stencil;
+	}
+	if (colorIndex >= 0)
+	{
+		auto& cv = clearValues.push_back();
+		colors[0].storeUnaligned(cv.color.float32);
+	}
+	else
+	{
+		for (int32_t i = 0; i < m_setDesc.count; ++i)
+		{
+			auto& cv = clearValues.push_back();
+			colors[i].storeUnaligned(cv.color.float32);
+		}
+	}
+
+	VkRenderPassBeginInfo renderPassBeginInfo = {};
+	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+	renderPassBeginInfo.renderPass = m_renderPass;
+	renderPassBeginInfo.framebuffer = m_frameBuffer;
+	renderPassBeginInfo.renderArea.offset.x = 0;
+	renderPassBeginInfo.renderArea.offset.y = 0;
+	renderPassBeginInfo.renderArea.extent.width = m_setDesc.width;
+	renderPassBeginInfo.renderArea.extent.height = m_setDesc.height;
+	renderPassBeginInfo.clearValueCount = (uint32_t)clearValues.size();
+	renderPassBeginInfo.pClearValues = clearValues.c_ptr();
+	vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+
+	return true;
+}
+
+bool RenderTargetSetVk::prepareAsTexture(VkCommandBuffer commandBuffer)
+{
+	for (int32_t i = 0; i < m_setDesc.count; ++i)
+		m_colorTargets[i]->prepareAsTexture(commandBuffer);
+	return true;
 }
 
 	}

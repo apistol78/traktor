@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
@@ -18,6 +20,7 @@
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
+#include "Render/Vulkan/StructBufferVk.h"
 #include "Render/Vulkan/TimeQueryVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexAttributesVk.h"
@@ -64,7 +67,6 @@ RenderSystemVk::RenderSystemVk()
 ,	m_graphicsQueue(nullptr)
 ,	m_commandPool(nullptr)
 ,	m_setupCommandBuffer(nullptr)
-,	m_haveValidationLayer(false)
 {
 }
 
@@ -92,15 +94,12 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	AutoArrayPtr< VkLayerProperties > layersAvailable(new VkLayerProperties[layerCount]);
 	vkEnumerateInstanceLayerProperties(&layerCount, layersAvailable.ptr());
 
-	log::info << IncreaseIndent;
+	AlignedVector< const char* > validationLayers;
 	for (uint32_t i = 0; i < layerCount; ++i)
 	{
-		if (std::strcmp(layersAvailable[i].layerName, c_validationLayerNames[0]) == 0)
-			m_haveValidationLayer = true;
+		if (strcmp(layersAvailable[i].layerName, c_validationLayerNames[0]) == 0)
+			validationLayers.push_back(strdup(layersAvailable[i].layerName));	// \tbd Memory leak...
 	}
-	log::info << DecreaseIndent;
-	if (!m_haveValidationLayer)
-		log::warning << L"No Vulkan validation layer found." << Endl;
 
 	// Create Vulkan instance.
 	VkApplicationInfo ai = {};
@@ -114,15 +113,10 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	VkInstanceCreateInfo ii = {};
 	ii.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	ii.pApplicationInfo = &ai;
-	ii.enabledLayerCount = 0;
-	ii.ppEnabledLayerNames = nullptr;
+	ii.enabledLayerCount = (uint32_t)validationLayers.size();
+	ii.ppEnabledLayerNames = validationLayers.c_ptr();
 	ii.enabledExtensionCount = sizeof_array(c_extensions);
 	ii.ppEnabledExtensionNames = c_extensions;
-	if (m_haveValidationLayer)
-	{
-		ii.enabledLayerCount = sizeof_array(c_validationLayerNames);
-		ii.ppEnabledLayerNames = c_validationLayerNames;
-	}
 
 	if ((result = vkCreateInstance(&ii, 0, &m_instance)) != VK_SUCCESS)
 	{
@@ -187,15 +181,10 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	dci.pNext = nullptr;
     dci.queueCreateInfoCount = 1;
     dci.pQueueCreateInfos = &dqci;
-    dci.enabledLayerCount = 0;
-    dci.ppEnabledLayerNames = nullptr;
+	dci.enabledLayerCount = (uint32_t)validationLayers.size();
+	dci.ppEnabledLayerNames = validationLayers.c_ptr();
     dci.enabledExtensionCount = sizeof_array(c_deviceExtensions);
     dci.ppEnabledExtensionNames = c_deviceExtensions;
-	if (m_haveValidationLayer)
-	{
-		dci.enabledLayerCount = sizeof_array(c_validationLayerNames);
-		dci.ppEnabledLayerNames = c_validationLayerNames;
-	}
 
     VkPhysicalDeviceFeatures features = {};
     features.shaderClipDistance = VK_TRUE;
@@ -467,7 +456,33 @@ Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32
 
 Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
 {
-	return nullptr;
+	VkBuffer storageBuffer = nullptr;
+
+	VkBufferCreateInfo bci = {};
+	bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	bci.size = bufferSize;
+	bci.usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+	bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+	if (vkCreateBuffer(m_logicalDevice, &bci, nullptr, &storageBuffer) != VK_SUCCESS)
+		return nullptr;
+
+	VkPhysicalDeviceMemoryProperties memoryProperties = {};
+	vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &memoryProperties);
+
+	VkMemoryRequirements storageBufferMemoryRequirements = {};
+	vkGetBufferMemoryRequirements(m_logicalDevice, storageBuffer, &storageBufferMemoryRequirements);
+
+	VkMemoryAllocateInfo mai = {};
+	mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+	mai.allocationSize = storageBufferMemoryRequirements.size;
+ 	mai.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, storageBufferMemoryRequirements);
+
+	VkDeviceMemory storageBufferMemory;
+	if (vkAllocateMemory(m_logicalDevice, &mai, nullptr, &storageBufferMemory) != VK_SUCCESS)
+		return nullptr;
+
+	return new StructBufferVk(bufferSize, m_logicalDevice, storageBuffer, storageBufferMemory);
 }
 
 Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc)

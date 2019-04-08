@@ -477,7 +477,11 @@ void ProgramVk::setTextureParameter(handle_t handle, ITexture* texture)
 
 void ProgramVk::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
 {
-	T_FATAL_ERROR;
+	auto i = m_parameterMap.find(handle);
+	if (i != m_parameterMap.end())
+	{
+		m_sbuffers[i->second.offset].sbuffer = structBuffer;
+	}
 }
 
 void ProgramVk::setStencilReference(uint32_t stencilReference)
