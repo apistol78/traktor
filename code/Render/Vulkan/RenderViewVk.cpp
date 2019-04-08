@@ -320,7 +320,7 @@ bool RenderViewVk::begin(RenderTargetSet* renderTargetSet)
 {
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
-	ts.colorIndex = 0;
+	ts.colorIndex = -1;
 	ts.clearMask = 0;
 	ts.clearDepth = 1.0f;
 	ts.clearStencil = 0;
@@ -437,6 +437,13 @@ void RenderViewVk::end()
 
 	// Close current render pass.
 	vkCmdEndRenderPass(m_drawCommandBuffer);
+
+	// Transition target to texture if necessary.
+	if (m_targetStateStack.size() >= 2)
+	{
+		TargetState& ts = m_targetStateStack.back();
+		ts.rts->prepareAsTexture(m_drawCommandBuffer);
+	}
 
 	// Pop previous render pass from stack.
 	m_targetStateStack.pop_back();
@@ -726,46 +733,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	if (vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_descriptorPool) != VK_SUCCESS)
 		return false;
 
-
-	// // Create descriptor set layouts for shader uniforms;
-	// // each shader type has 3 bindings (Once, Frame and Draw cbuffers):
-	// VkDescriptorSetLayoutBinding dslb[6];
-	// for (int32_t i = 0; i < 3; ++i)
-	// {
-	// 	dslb[i] = {};
-	// 	dslb[i].binding = i;
-	// 	dslb[i].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	// 	dslb[i].descriptorCount = 1;
-	// 	dslb[i].stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-
-	// 	dslb[i + 3] = {};
-	// 	dslb[i + 3].binding = i + 3;
-	// 	dslb[i + 3].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	// 	dslb[i + 3].descriptorCount = 1;
-	// 	dslb[i + 3].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-	// }
-
-	// VkDescriptorSetLayoutCreateInfo dlci = {};
-	// dlci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-	// dlci.pNext = nullptr;
-	// dlci.bindingCount = sizeof_array(dslb);
-	// dlci.pBindings = dslb;
-
-	// if (vkCreateDescriptorSetLayout(m_logicalDevice, &dlci, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
-	// 	return false;
-
-	// // Create pipeline layout.
-	// VkPipelineLayoutCreateInfo lci = {};
-	// lci.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	// lci.setLayoutCount = 1;
-	// lci.pSetLayouts = &m_descriptorSetLayout;
-	// lci.pushConstantRangeCount = 0;
-	// lci.pPushConstantRanges = nullptr;
-
-	// if (vkCreatePipelineLayout(m_logicalDevice, &lci, nullptr, &m_pipelineLayout) != VK_SUCCESS)
-	// 	return false;
-
-
 	// Create synchronization primitives.
     VkFenceCreateInfo fci = {};
     fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
@@ -793,26 +760,18 @@ void RenderViewVk::validateTargetState()
 	T_FATAL_ASSERT (!m_targetStateStack.empty());
 	TargetState& ts = m_targetStateStack.back();
 
-	// Prepare primary color for target rendering.
-	ts.rts->getColorTargetVk(ts.colorIndex)->prepareAsTarget(m_drawCommandBuffer);
-
-	// Bind render pass and framebuffer.
-	VkClearValue clearValue[2];
-	ts.clearColors[0].storeUnaligned(clearValue[0].color.float32);
-	clearValue[1].depthStencil.depth = ts.clearDepth;
-	clearValue[1].depthStencil.stencil = ts.clearStencil;
-
-	VkRenderPassBeginInfo renderPassBeginInfo = {};
-	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassBeginInfo.renderPass = ts.rts->getVkRenderPass();
-	renderPassBeginInfo.framebuffer = ts.rts->getVkFramebuffer();
-	renderPassBeginInfo.renderArea.offset.x = 0;
-	renderPassBeginInfo.renderArea.offset.y = 0;
-	renderPassBeginInfo.renderArea.extent.width = ts.rts->getWidth();
-	renderPassBeginInfo.renderArea.extent.height = ts.rts->getHeight();
-	renderPassBeginInfo.clearValueCount = 2;
-	renderPassBeginInfo.pClearValues = clearValue;
-	vkCmdBeginRenderPass(m_drawCommandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+	// Prepare render target set as targets.
+	if (!ts.rts->prepareAsTarget(
+		m_logicalDevice,
+		m_drawCommandBuffer,
+		ts.colorIndex,
+		ts.clearMask,
+		ts.clearColors,
+		ts.clearDepth,
+		ts.clearStencil,
+		m_primaryTargets[m_currentImageIndex]->getDepthTargetVk()
+	))
+		return;
 
 	m_targetStateDirty = false;
 }
@@ -966,7 +925,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		gpci.pDepthStencilState = &dssci;
 		gpci.pColorBlendState = &cbsci;
 		gpci.pDynamicState = nullptr; // &dsci;
-		gpci.layout = p->getPipelineLayout(); // m_pipelineLayout;
+		gpci.layout = p->getPipelineLayout();
 		gpci.renderPass = ts.rts->getVkRenderPass();
 		gpci.subpass = 0;
 		gpci.basePipelineHandle = nullptr;

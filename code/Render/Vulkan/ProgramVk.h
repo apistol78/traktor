@@ -123,6 +123,12 @@ private:
 		Ref< ITexture > texture;
 	};
 
+	struct SBuffer
+	{
+		uint32_t binding;
+		Ref< StructBuffer > sbuffer;
+	};
+
 	RenderState m_renderState;
 	
 	VkShaderModule m_vertexShaderModule;
@@ -137,6 +143,7 @@ private:
 	
 	AlignedVector< Sampler > m_samplers;
 	AlignedVector< Texture > m_textures;
+	AlignedVector< SBuffer > m_sbuffers;
 
 	uint32_t m_hash;
 };

@@ -104,7 +104,6 @@ private:
 	VkQueue m_graphicsQueue;
 	VkCommandPool m_commandPool;
 	VkCommandBuffer m_setupCommandBuffer;
-	bool m_haveValidationLayer;
 };
 
 	}

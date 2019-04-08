@@ -1,3 +1,6 @@
+#pragma optimize( "", off )
+
+#include "Core/Log/Log.h"
 #include "Render/Types.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/RenderTargetVk.h"
@@ -7,69 +10,6 @@ namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
-
-VkFormat convertFormat(TextureFormat textureFormat)
-{
-	switch (textureFormat)
-	{
-	case TfR8:
-		return VK_FORMAT_R8_UNORM;
-
-	case TfR8G8B8A8:
-		return VK_FORMAT_R8G8B8A8_UNORM;
-
-	case TfR5G6B5:
-		return VK_FORMAT_R5G6B5_UNORM_PACK16;
-
-	case TfR5G5B5A1:
-		return VK_FORMAT_R5G5B5A1_UNORM_PACK16;
-
-	case TfR4G4B4A4:
-		return VK_FORMAT_R4G4B4A4_UNORM_PACK16;
-
-	case TfR10G10B10A2:
-		return VK_FORMAT_R16G16B16A16_UNORM;
-
-	case TfR16G16B16A16F:
-		return VK_FORMAT_R16G16B16A16_SFLOAT;
-
-	case TfR32G32B32A32F:
-		return VK_FORMAT_R32G32B32A32_SFLOAT;
-
-	case TfR16G16F:
-		return VK_FORMAT_R16G16_SFLOAT;
-
-	case TfR32G32F:
-		return VK_FORMAT_R32G32_SFLOAT;
-
-	case TfR16F:
-		return VK_FORMAT_R16_SFLOAT;
-
-	case TfR32F:
-		return VK_FORMAT_R32_SFLOAT;
-
-	case TfR11G11B10F:
-		return VK_FORMAT_R16G16B16A16_SFLOAT;
-
-	//TfDXT1 = 30,
-	//TfDXT2 = 31,
-	//TfDXT3 = 32,
-	//TfDXT4 = 33,
-	//TfDXT5 = 34,
-	//TfPVRTC1 = 40,	// 4bpp, no alpha
-	//TfPVRTC2 = 41,	// 2bpp, no alpha
-	//TfPVRTC3 = 42,	// 4bpp, alpha
-	//TfPVRTC4 = 43,	// 2bpp, alpha
-	//TfETC1 = 44
-
-	default:
-		return VK_FORMAT_UNDEFINED;
-	}
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetVk", RenderTargetVk, ISimpleTexture)
 
@@ -118,10 +58,12 @@ bool RenderTargetVk::createPrimary(VkPhysicalDevice physicalDevice, VkDevice dev
 
 bool RenderTargetVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
 {
+	VkResult result;
+
 	VkImageCreateInfo imageCreateInfo = {};
 	imageCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-	imageCreateInfo.format = convertFormat(desc.format);
+	imageCreateInfo.format = c_vkTextureFormats[desc.format];
 	imageCreateInfo.extent.width = setDesc.width;
 	imageCreateInfo.extent.height = setDesc.height;
 	imageCreateInfo.extent.depth = 1;
@@ -129,13 +71,16 @@ bool RenderTargetVk::create(VkPhysicalDevice physicalDevice, VkDevice device, co
 	imageCreateInfo.arrayLayers = 1;
 	imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 	imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-	imageCreateInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+	imageCreateInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 	imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	imageCreateInfo.queueFamilyIndexCount = 0;
 	imageCreateInfo.pQueueFamilyIndices = nullptr;
 	imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
- 	if (vkCreateImage(device, &imageCreateInfo, nullptr, &m_image) != VK_SUCCESS)
+ 	if ((result = vkCreateImage(device, &imageCreateInfo, nullptr, &m_image)) != VK_SUCCESS)
+	{
+		log::error << L"RenderTargetVk::create failed; vkCreateImage returned error " << getHumanResult(result) << L"." << Endl;
 		return false;
+	}
 
 	VkMemoryRequirements memoryRequirements = {};
 	vkGetImageMemoryRequirements(device, m_image, &memoryRequirements);
@@ -146,11 +91,17 @@ bool RenderTargetVk::create(VkPhysicalDevice physicalDevice, VkDevice device, co
 	imageAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
 
 	VkDeviceMemory imageMemory = {};
-	if (vkAllocateMemory(device, &imageAllocateInfo, nullptr, &imageMemory) != VK_SUCCESS)
+	if ((result = vkAllocateMemory(device, &imageAllocateInfo, nullptr, &imageMemory)) != VK_SUCCESS)
+	{
+		log::error << L"RenderTargetVk::create failed; vkAllocateMemory returned error " << getHumanResult(result) << L"." << Endl;
 		return false;
+	}
 
-	if (vkBindImageMemory(device, m_image, imageMemory, 0) != VK_SUCCESS)
+	if ((result = vkBindImageMemory(device, m_image, imageMemory, 0)) != VK_SUCCESS)
+	{
+		log::error << L"RenderTargetVk::create failed; vkBindImageMemory returned error " << getHumanResult(result) << L"." << Endl;
 		return false;
+	}
 
 	VkImageViewCreateInfo ivci = {};
 	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -163,13 +114,15 @@ bool RenderTargetVk::create(VkPhysicalDevice physicalDevice, VkDevice device, co
 	ivci.subresourceRange.levelCount = 1;
 	ivci.subresourceRange.baseArrayLayer = 0;
 	ivci.subresourceRange.layerCount = 1;
- 	if (vkCreateImageView(device, &ivci, nullptr, &m_imageView) != VK_SUCCESS)
+ 	if ((result = vkCreateImageView(device, &ivci, nullptr, &m_imageView)) != VK_SUCCESS)
+	{
+		log::error << L"RenderTargetVk::create failed; vkCreateImageView returned error " << getHumanResult(result) << L"." << Endl;
 		return false;
+	}
 
 	m_format = imageCreateInfo.format;
 	m_width = setDesc.width;
 	m_height = setDesc.height;
-
 	return true;
 }
 
@@ -208,7 +161,7 @@ void RenderTargetVk::unlock(int32_t level)
 
 void* RenderTargetVk::getInternalHandle()
 {
-	return 0;
+	return nullptr;
 }
 
 void RenderTargetVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
@@ -271,6 +224,31 @@ void RenderTargetVk::prepareForPresentation(VkCommandBuffer cmdBuffer)
 
 void RenderTargetVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 {
+	//if (m_imageLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL)
+	//	return;
+
+	//VkImageMemoryBarrier layoutTransitionBarrier = {};
+	//layoutTransitionBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+	//layoutTransitionBarrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+	//layoutTransitionBarrier.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+	//layoutTransitionBarrier.oldLayout = m_imageLayout;
+	//layoutTransitionBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	//layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	//layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+	//layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
+	//layoutTransitionBarrier.image = m_image;
+
+	//vkCmdPipelineBarrier(
+	//	cmdBuffer,
+	//	VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
+	//	VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+	//	0,
+	//	0, nullptr,
+	//	0, nullptr,
+	//	1, &layoutTransitionBarrier
+	//);
+
+	//m_imageLayout = layoutTransitionBarrier.newLayout;
 }
 
 	}

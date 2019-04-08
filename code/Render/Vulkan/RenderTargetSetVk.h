@@ -15,6 +15,7 @@
 #endif
 
 #include "Core/RefArray.h"
+#include "Core/Math/Color4f.h"
 #include "Render/RenderTargetSet.h"
 
 namespace traktor
@@ -60,23 +61,37 @@ public:
 
 	virtual bool read(int32_t index, void* buffer) const override final;
 
+	bool prepareAsTarget(
+		VkDevice device,
+		VkCommandBuffer commandBuffer,
+		int32_t colorIndex,
+		uint32_t clearMask,
+		const Color4f* colors,
+		float depth,
+		int32_t stencil,
+		RenderTargetDepthVk* primaryDepthTarget
+	);
+
+	bool prepareAsTexture(VkCommandBuffer commandBuffer);
+
 	RenderTargetVk* getColorTargetVk(int32_t index) const { return m_colorTargets[index]; }
 
 	RenderTargetDepthVk* getDepthTargetVk() const { return m_depthTarget; }
 
 	VkRenderPass getVkRenderPass() const { return m_renderPass; }
 
-	VkFramebuffer getVkFramebuffer() const { return m_framebuffer; }
+	VkFramebuffer getVkFramebuffer() const { return m_frameBuffer; }
 
 	uint32_t getId() const { return m_id; }
 
 private:
+	RenderTargetSetCreateDesc m_setDesc;
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;
-	int32_t m_width;
-	int32_t m_height;
 	VkRenderPass m_renderPass;
-	VkFramebuffer m_framebuffer;
+	VkFramebuffer m_frameBuffer;
+	int32_t m_lastColorIndex;
+	uint32_t m_lastClearMask;
 	uint32_t m_id;
 };
 
