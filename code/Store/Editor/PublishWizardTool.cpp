@@ -7,6 +7,7 @@
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
+#include "Editor/Asset.h"
 #include "Editor/IEditor.h"
 #include "Editor/IPipelineDependencySet.h"
 #include "Editor/PipelineDependency.h"
@@ -88,7 +89,7 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 		auto guid = instance->getGuid();
 
 		auto migrateInstance = database->createInstance(
-			instance->getPath(),
+			L"Instances/" + instance->getPath(),
 			db::CifDefault,
 			&guid
 		);
@@ -125,28 +126,33 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 			return false;
 		}
 	}
-	database->close();
-	database = nullptr;
 
-	// Copy files.
+	// Embed files.
 	Path assetPath = FileSystem::getInstance().getAbsolutePath(Path(L"data/Assets"));
-
 	for (const auto& file : files)
 	{
 		Path sourceFile;
 		FileSystem::getInstance().getRelativePath(file, assetPath, sourceFile);
 
-		Path bundleFile = Path(L"data/Temp/Publish/Assets/" + sourceFile.getPathName());
+		Ref< db::Instance > assetInstance = database->createInstance(L"Assets/" + sourceFile.getPathName());
+		assetInstance->setObject(new editor::Asset(sourceFile));
 
-		FileSystem::getInstance().makeAllDirectories(bundleFile.getPathOnly());
+		Ref< IStream > assetStream = assetInstance->writeData(L"Data");
+		if (!assetStream)
+			return false;
 
-		FileSystem::getInstance().copy(
-			bundleFile,
-			file,
-			true
-		);
-		
+		Ref< IStream > fileStream = FileSystem::getInstance().open(file, File::FmRead);
+		if (!fileStream)
+			return false;
+
+		if (!StreamCopy(assetStream, fileStream).execute())
+			return false;
+
+		assetInstance->commit();
 	}
+
+	database->close();
+	database = nullptr;
 
 	log::info << L"Published successfully." << Endl;
 	return true;

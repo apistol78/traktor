@@ -115,37 +115,52 @@ bool migrateGroup(db::Group* targetGroup, db::Group* sourceGroup)
 	return true;
 }
 
-bool copyFiles(const Path& targetPath, const Path& sourcePath)
+bool copyFiles(const Path& targetPath, db::Group* sourceGroup)
 {
 	if (!FileSystem::getInstance().makeAllDirectories(targetPath))
 		return false;
 
-	RefArray< File > files;
-	FileSystem::getInstance().find(sourcePath.getPathName() + L"/*.*", files);
-	
-	for (auto file : files)
+	RefArray< db::Instance > childInstances;
+	sourceGroup->getChildInstances(childInstances);
+
+	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
 	{
-		auto p = file->getPath();
-		if (p.getFileName() == L"." || p.getFileName() == L"..")
-			continue;
+		Ref< db::Instance > sourceInstance = *i;
+		T_ASSERT(sourceInstance);
 
-		if (!file->isDirectory())
-		{
-			if (!FileSystem::getInstance().copy(
-				targetPath.getPathName() + L"/" + p.getFileName(),
-				sourcePath.getPathName() + L"/" + p.getFileName()
-			))
-				return false;
+		log::info << L"Unpacking \"" << sourceInstance->getPath() << L"\" as \"" << targetPath.getPathName() + L"/" + sourceInstance->getName() << L"\"..." << Endl;
 
-		}
-		else
+		Ref< IStream > fileStream = FileSystem::getInstance().open(targetPath + L"/" + sourceInstance->getName(), File::FmWrite);
+		if (!fileStream)
 		{
-			if (!copyFiles(
-				targetPath.getPathName() + L"/" + p.getFileName(),
-				sourcePath.getPathName() + L"/" + p.getFileName()
-			))
-				return false;
+			log::error << L"Unable to create file." << Endl;
+			return false;
 		}
+
+		Ref< IStream > assetStream = sourceInstance->readData(L"Data");
+		if (!assetStream)
+		{
+			log::error << L"Unable to open source stream." << Endl;
+			return false;
+		}
+
+		if (!StreamCopy(fileStream, assetStream).execute())
+		{
+			log::error << L"Unable to copy file." << Endl;
+			return false;
+		}
+	}
+
+	RefArray< db::Group > childGroups;
+	sourceGroup->getChildGroups(childGroups);
+
+	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
+	{
+		Ref< db::Group > sourceChildGroup = *i;
+		T_ASSERT(sourceChildGroup);
+
+		if (!copyFiles(Path(targetPath.getPathName() + L"/" + sourceChildGroup->getName()), sourceChildGroup))
+			return false;
 	}
 
 	return true;
@@ -189,19 +204,21 @@ bool ImportAssetTool::launch(ui::Widget* parent, editor::IEditor* editor, const 
 	if (!database->open(L"provider=traktor.db.CompactDatabase;fileName=" + fileName.getPathName() + L";readOnly=true"))
 		return false;
 
-	log::info << L"Mergin instances from database..." << Endl;
+	log::info << L"Merging instances from database..." << Endl;
 
-	Ref< db::Group > sourceGroup = database->getRootGroup();
+	Ref< db::Group > sourceGroup = database->getGroup(L"Instances");
 	Ref< db::Group > targetGroup = editor->getSourceDatabase()->getRootGroup();
 
 	if (!migrateGroup(targetGroup, sourceGroup))
 		return false;
 
-	// Copy assets from bundle into workspace's assets.
-	Path sourceAssetsPath = fileName.getPathOnly() + L"/Assets";
+	// Copy embedded assets from bundle into workspace's assets.
+	log::info << L"Unpacking assets from database..." << Endl;
+
+	Ref< db::Group > assetGroup = database->getGroup(L"Assets");
 	Path destinationAssetsPath = FileSystem::getInstance().getAbsolutePath(Path(L"data/Assets"));
 
-	if (!copyFiles(destinationAssetsPath, sourceAssetsPath))
+	if (!copyFiles(destinationAssetsPath, assetGroup))
 		return false;
 
 	log::info << L"Bundle imported successfully." << Endl;
