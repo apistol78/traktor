@@ -2,6 +2,7 @@
 #include "Render/Vulkan/Editor/Glsl/GlslLayout.h"
 #include "Render/Vulkan/Editor/Glsl/GlslSampler.h"
 #include "Render/Vulkan/Editor/Glsl/GlslShader.h"
+#include "Render/Vulkan/Editor/Glsl/GlslStorageBuffer.h"
 #include "Render/Vulkan/Editor/Glsl/GlslTexture.h"
 #include "Render/Vulkan/Editor/Glsl/GlslUniformBuffer.h"
 
@@ -192,6 +193,24 @@ std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout) const
 				ss << L"layout(set = 0, binding = " << sampler->getBinding() << L") uniform sampler " << sampler->getName() << L";" << Endl;
 			else
 				ss << L"layout(set = 0, binding = " << sampler->getBinding() << L") uniform samplerShadow " << sampler->getName() << L";" << Endl;
+			ss << Endl;
+		}
+		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
+		{
+			ss << L"struct " << storageBuffer->getName() << L"_Type" << Endl;
+			ss << L"{" << Endl;
+			ss << IncreaseIndent;
+			for (auto element : storageBuffer->get())
+				ss << glsl_type_name(element.type) << L" " << element.name << L";" << Endl;
+			ss << DecreaseIndent;
+			ss << L"};" << Endl;
+			ss << Endl;
+			ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L") buffer " << storageBuffer->getName() << Endl;
+			ss << L"{" << Endl;
+			ss << IncreaseIndent;
+			ss << storageBuffer->getName() << L"_Type " << storageBuffer->getName() << L"_Data[];" << Endl;
+			ss << DecreaseIndent;
+			ss << L"};" << Endl;
 			ss << Endl;
 		}
 	}

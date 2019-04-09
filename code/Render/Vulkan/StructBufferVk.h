@@ -36,6 +36,8 @@ public:
 
 	virtual void unlock() override final;
 
+	VkBuffer getVkBuffer() const { return m_storageBuffer; }
+
 private:
 	VkDevice m_device;
 	VkBuffer m_storageBuffer;

@@ -86,6 +86,23 @@ public:
 		void serialize(ISerializer& s);
 	};
 
+	struct SBufferDesc
+	{
+		uint32_t binding;
+
+		SBufferDesc()
+		:	binding(0)
+		{
+		}
+
+		explicit SBufferDesc(uint32_t binding_)
+		:	binding(binding_)
+		{
+		}
+
+		void serialize(ISerializer& s);
+	};
+
 	ProgramResourceVk();
 
 	virtual void serialize(ISerializer& s) override final;
@@ -104,6 +121,7 @@ private:
 
 	AlignedVector< SamplerDesc > m_samplers;
 	AlignedVector< TextureDesc > m_textures;
+	AlignedVector< SBufferDesc > m_sbuffers;
 
 	uint32_t m_hash;
 };

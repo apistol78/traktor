@@ -219,33 +219,6 @@ bool RenderTargetSetVk::prepareAsTarget(
 	{
 		AlignedVector< VkAttachmentDescription > passAttachments;
 
-		if (m_depthTarget)
-		{
-			VkAttachmentDescription passAttachment = {};
-			passAttachment.format = m_depthTarget->getVkFormat();
-			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-			passAttachment.loadOp = ((clearMask & CfDepth) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;// VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			passAttachment.stencilLoadOp = ((clearMask & CfStencil) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;//VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			passAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-			passAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-			passAttachments.push_back(passAttachment);
-		}
-		else if (m_setDesc.usingPrimaryDepthStencil)
-		{
-			VkAttachmentDescription passAttachment = {};
-			passAttachment.format = primaryDepthTarget->getVkFormat();
-			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-			passAttachment.loadOp = ((clearMask & CfDepth) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;//VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			passAttachment.stencilLoadOp = ((clearMask & CfStencil) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;//VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			passAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-			passAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-			passAttachments.push_back(passAttachment);
-		}
-
 		if (colorIndex >= 0)
 		{
 			// One color target selected.
@@ -278,25 +251,56 @@ bool RenderTargetSetVk::prepareAsTarget(
 			}
 		}
 
-		VkAttachmentReference depthAttachmentReference = {};
-		depthAttachmentReference.attachment = 0;
-		depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		if (m_depthTarget)
+		{
+			VkAttachmentDescription passAttachment = {};
+			passAttachment.format = m_depthTarget->getVkFormat();
+			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+			passAttachment.loadOp = ((clearMask & CfDepth) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;// VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			passAttachment.stencilLoadOp = ((clearMask & CfStencil) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;//VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			passAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			passAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			passAttachments.push_back(passAttachment);
+		}
+		else if (m_setDesc.usingPrimaryDepthStencil)
+		{
+			VkAttachmentDescription passAttachment = {};
+			passAttachment.format = primaryDepthTarget->getVkFormat();
+			passAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+			passAttachment.loadOp = ((clearMask & CfDepth) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			passAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;//VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			passAttachment.stencilLoadOp = ((clearMask & CfStencil) != 0) ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD;// VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			passAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;//VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			passAttachment.initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			passAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+			passAttachments.push_back(passAttachment);
+		}
 
 		AlignedVector< VkAttachmentReference > colorAttachmentReferences;
+		VkAttachmentReference depthAttachmentReference = {};
+
 		if (colorIndex >= 0)
 		{
 			auto& colorAttachmentReference = colorAttachmentReferences.push_back();
-			colorAttachmentReference.attachment = (m_depthTarget || m_setDesc.usingPrimaryDepthStencil) ? 1 : 0;
+			colorAttachmentReference.attachment = 0;
 			colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+			depthAttachmentReference.attachment = 1;
+			depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 		}
 		else
 		{
 			for (int i = 0; i < m_setDesc.count; ++i)
 			{
 				auto& colorAttachmentReference = colorAttachmentReferences.push_back();
-				colorAttachmentReference.attachment = ((m_depthTarget || m_setDesc.usingPrimaryDepthStencil) ? 1 : 0) + i;
+				colorAttachmentReference.attachment = i;
 				colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 			}
+
+			depthAttachmentReference.attachment = m_setDesc.count;
+			depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 		}
 
 		VkSubpassDescription subpass = {};
@@ -321,11 +325,6 @@ bool RenderTargetSetVk::prepareAsTarget(
 	{
  		AlignedVector< VkImageView > frameBufferAttachments;
 		
-		if (m_depthTarget)
-			frameBufferAttachments.push_back(m_depthTarget->getVkImageView());
-		else if (m_setDesc.usingPrimaryDepthStencil)
-			frameBufferAttachments.push_back(primaryDepthTarget->getVkImageView());
-
 		if (colorIndex >= 0)
 			frameBufferAttachments.push_back(m_colorTargets[colorIndex]->getVkImageView());
 		else
@@ -333,6 +332,11 @@ bool RenderTargetSetVk::prepareAsTarget(
 			for (int32_t i = 0; i < m_setDesc.count; ++i)
 				frameBufferAttachments.push_back(m_colorTargets[i]->getVkImageView());
 		}
+
+		if (m_depthTarget)
+			frameBufferAttachments.push_back(m_depthTarget->getVkImageView());
+		else if (m_setDesc.usingPrimaryDepthStencil)
+			frameBufferAttachments.push_back(primaryDepthTarget->getVkImageView());
 
 		VkFramebufferCreateInfo frameBufferCreateInfo = {};
 		frameBufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -359,12 +363,6 @@ bool RenderTargetSetVk::prepareAsTarget(
 
 	AlignedVector< VkClearValue > clearValues;
 
-	if (m_depthTarget || m_setDesc.usingPrimaryDepthStencil)
-	{
-		auto& cv = clearValues.push_back();
-		cv.depthStencil.depth = depth;
-		cv.depthStencil.stencil = stencil;
-	}
 	if (colorIndex >= 0)
 	{
 		auto& cv = clearValues.push_back();
@@ -377,6 +375,12 @@ bool RenderTargetSetVk::prepareAsTarget(
 			auto& cv = clearValues.push_back();
 			colors[i].storeUnaligned(cv.color.float32);
 		}
+	}
+	if (m_depthTarget || m_setDesc.usingPrimaryDepthStencil)
+	{
+		auto& cv = clearValues.push_back();
+		cv.depthStencil.depth = depth;
+		cv.depthStencil.stencil = stencil;
 	}
 
 	VkRenderPassBeginInfo renderPassBeginInfo = {};
