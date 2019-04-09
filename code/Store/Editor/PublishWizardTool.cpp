@@ -3,6 +3,8 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/ConnectionString.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -46,9 +48,14 @@ uint32_t PublishWizardTool::getFlags() const
 
 bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
-	// Create our temporary working directory.
-	FileSystem::getInstance().makeAllDirectories(L"data/Temp/Publish");
+	std::wstring publishPath = editor->getSettings()->getProperty< std::wstring >(L"Store.PublishPath");
+	if (publishPath.empty())
+	{
+		log::error << L"Publish failed; no path set." << Endl;
+		return false;
+	}
 
+	// Create our temporary working directory.
 	RefSet< db::Instance > instances;
 	std::set< Path > files;
 
@@ -78,7 +85,7 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 
 	// Create a compact database with all selected instances migrated.
 	Ref< db::Database > database = new db::Database();
-	if (!database->create(db::ConnectionString(L"provider=traktor.db.CompactDatabase;fileName=data/Temp/Publish/Instances.compact")))
+	if (!database->create(db::ConnectionString(L"provider=traktor.db.CompactDatabase;fileName=" + publishPath + L"/Instances.compact")))
 	{
 		log::error << L"Publish failed; unable to create bundle database." << Endl;
 		return false;
