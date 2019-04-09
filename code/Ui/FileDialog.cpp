@@ -102,6 +102,8 @@ int32_t FileDialog::showModal(Path& outPath)
 	std::wstring path = Application::getInstance()->getProperties()->getProperty< std::wstring >(m_key);
 	if (!path.empty())
 		m_currentPath = path;
+	else if (!outPath.empty())
+		m_currentPath = outPath;
 	else
 		m_currentPath = FileSystem::getInstance().getCurrentVolumeAndDirectory();
 

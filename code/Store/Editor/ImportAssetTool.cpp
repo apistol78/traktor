@@ -4,6 +4,8 @@
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -128,12 +130,14 @@ bool copyFiles(const Path& targetPath, db::Group* sourceGroup)
 		Ref< db::Instance > sourceInstance = *i;
 		T_ASSERT(sourceInstance);
 
-		log::info << L"Unpacking \"" << sourceInstance->getPath() << L"\" as \"" << targetPath.getPathName() + L"/" + sourceInstance->getName() << L"\"..." << Endl;
+		std::wstring targetFileName = targetPath.getPathName() + L"/" + sourceInstance->getName();
 
-		Ref< IStream > fileStream = FileSystem::getInstance().open(targetPath + L"/" + sourceInstance->getName(), File::FmWrite);
+		log::info << L"Unpacking \"" << sourceInstance->getPath() << L"\" as \"" << targetFileName << L"\"..." << Endl;
+
+		Ref< IStream > fileStream = FileSystem::getInstance().open(targetFileName, File::FmWrite);
 		if (!fileStream)
 		{
-			log::error << L"Unable to create file." << Endl;
+			log::error << L"Unable to create file \"" << targetFileName << L"\"." << Endl;
 			return false;
 		}
 
@@ -187,11 +191,18 @@ bool ImportAssetTool::needOutputResources(std::set< Guid >& outDependencies) con
 
 bool ImportAssetTool::launch(ui::Widget* parent, editor::IEditor* editor, const PropertyGroup* param)
 {
+	std::wstring publishPath = editor->getSettings()->getProperty< std::wstring >(L"Store.PublishPath");
+	if (publishPath.empty())
+	{
+		log::error << L"Publish failed; no path set." << Endl;
+		return false;
+	}
+
 	ui::FileDialog fileDialog;
 	if (!fileDialog.create(parent, type_name(this), L"Select asset bundle to import", L"All files;*.*"))
 		return false;
 
-	Path fileName;
+	Path fileName = publishPath;
 	if (fileDialog.showModal(fileName) != ui::DrOk)
 	{
 		fileDialog.destroy();
