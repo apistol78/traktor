@@ -14,6 +14,7 @@
 #include "Render/Vulkan/Editor/Glsl/GlslContext.h"
 #include "Render/Vulkan/Editor/Glsl/GlslEmitter.h"
 #include "Render/Vulkan/Editor/Glsl/GlslSampler.h"
+#include "Render/Vulkan/Editor/Glsl/GlslStorageBuffer.h"
 #include "Render/Vulkan/Editor/Glsl/GlslTexture.h"
 #include "Render/Vulkan/Editor/Glsl/GlslUniformBuffer.h"
 
@@ -722,7 +723,7 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 		if (out[i] && initial[i])
 			assign(f, out[i]) << initial[i]->cast(out[i]->getType()) << L";" << Endl;
 		else if (out[i])
-			assign(f, out[i]) << L"0;" << Endl;
+			assign(f, out[i]) << expandScalar(0.0f, out[i]->getType()) << L";" << Endl;
 	}
 
 	// Write outer for-loop statement.
@@ -1213,6 +1214,27 @@ bool emitPow(GlslContext& cx, Pow* node)
 	GlslType type = std::max< GlslType >(exponent->getType(), in->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 	assign(f, out) << L"pow(max(" << in->cast(type) << L", 0.0), " << exponent->cast(type) << L");" << Endl;
+	return true;
+}
+
+bool emitReadStruct(GlslContext& cx, ReadStruct* node)
+{
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
+	Ref< GlslVariable > strct = cx.emitInput(node, L"Struct");
+	if (!strct || strct->getType() != GtStructBuffer)
+		return false;
+
+	const Struct* sn = mandatory_non_null_type_cast< const Struct* >(strct->getNode());
+
+	DataType type = sn->getElementType(node->getName());
+
+	Ref< GlslVariable > index = cx.emitInput(node, L"Index");
+	if (!index)
+		return false;
+
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", glsl_from_data_type(type));
+	assign(f, out) << strct->getName() << L"_Data[int(" << index->cast(GtFloat) << L")]." << node->getName() << L";" << Endl;
 	return true;
 }
 
@@ -1725,6 +1747,48 @@ bool emitStep(GlslContext& cx, Step* node)
 	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 	assign(f, out) << L"step(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
+	return true;
+}
+
+bool emitStruct(GlslContext& cx, Struct* node)
+{
+	Ref< GlslVariable > out = cx.getShader().createVariable(
+		node->findOutputPin(L"Output"),
+		node->getParameterName(),
+		GtStructBuffer
+	);
+
+	auto existing = cx.getLayout().get(node->getParameterName());
+	if (existing != nullptr)
+	{
+		if (auto existingStorageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(existing))
+		{
+			// Storage buffer already exist; \tbd ensure elements match.
+			return false;
+		}
+		else
+		{
+			// Resource already exist but is not a storage buffer.
+			return false;
+		}
+	}
+	else
+	{
+		// Storage buffer do not exist; add new storage buffer resource.
+		Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(node->getParameterName());
+		for (const auto& element : node->getElements())
+			storageBuffer->add(element.name, glsl_from_data_type(element.type));
+		cx.getLayout().add(storageBuffer);
+	}
+
+	// Define parameter in context.
+	cx.addParameter(
+		node->getParameterName(),
+		PtStructBuffer,
+		1,
+		UfDraw
+	);
+
 	return true;
 }
 
@@ -2367,6 +2431,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Polynomial >()] = new EmitterCast< Polynomial >(emitPolynomial);
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
+	m_emitters[&type_of< ReadStruct >()] = new EmitterCast< ReadStruct >(emitReadStruct);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
 	m_emitters[&type_of< Repeat >()] = new EmitterCast< Repeat >(emitRepeat);
@@ -2378,6 +2443,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
 	m_emitters[&type_of< Sqrt >()] = new EmitterCast< Sqrt >(emitSqrt);
 	m_emitters[&type_of< Step >()] = new EmitterCast< Step >(emitStep);
+	m_emitters[&type_of< Struct >()] = new EmitterCast< Struct >(emitStruct);
 	m_emitters[&type_of< Sub >()] = new EmitterCast< Sub >(emitSub);
 	m_emitters[&type_of< Sum >()] = new EmitterCast< Sum >(emitSum);
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);

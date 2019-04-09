@@ -880,26 +880,54 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		dssci.minDepthBounds = 0;
 		dssci.maxDepthBounds = 0;
 
-		VkPipelineColorBlendAttachmentState cbas = {};
-		cbas.blendEnable = rs.blendEnable ? VK_TRUE : VK_FALSE;
-		cbas.srcColorBlendFactor = c_blendFactors[rs.blendColorSource];
-		cbas.dstColorBlendFactor = c_blendFactors[rs.blendColorDestination];
-		cbas.colorBlendOp = c_blendOperations[rs.blendColorOperation];
-		cbas.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		cbas.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		cbas.alphaBlendOp = VK_BLEND_OP_ADD;
-		cbas.colorWriteMask = rs.colorWriteMask;
+		
+		AlignedVector< VkPipelineColorBlendAttachmentState > blendAttachments;
+
+		for (int32_t i = 0; ts.rts->getColorTargetVk(i) != nullptr; ++i)
+		{
+			auto& cbas = blendAttachments.push_back();
+			cbas.blendEnable = rs.blendEnable ? VK_TRUE : VK_FALSE;
+			cbas.srcColorBlendFactor = c_blendFactors[rs.blendColorSource];
+			cbas.dstColorBlendFactor = c_blendFactors[rs.blendColorDestination];
+			cbas.colorBlendOp = c_blendOperations[rs.blendColorOperation];
+			cbas.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+			cbas.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+			cbas.alphaBlendOp = VK_BLEND_OP_ADD;
+			cbas.colorWriteMask = rs.colorWriteMask;
+		}
 
 		VkPipelineColorBlendStateCreateInfo cbsci = {};
 		cbsci.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
 		cbsci.logicOpEnable = VK_FALSE;
 		cbsci.logicOp = VK_LOGIC_OP_CLEAR;
-		cbsci.attachmentCount = 1;
-		cbsci.pAttachments = &cbas;
+		cbsci.attachmentCount = (uint32_t)blendAttachments.size();
+		cbsci.pAttachments = blendAttachments.c_ptr();
 		cbsci.blendConstants[0] = 0.0;
 		cbsci.blendConstants[1] = 0.0;
 		cbsci.blendConstants[2] = 0.0;
 		cbsci.blendConstants[3] = 0.0;
+
+
+		//VkPipelineColorBlendAttachmentState cbas = {};
+		//cbas.blendEnable = rs.blendEnable ? VK_TRUE : VK_FALSE;
+		//cbas.srcColorBlendFactor = c_blendFactors[rs.blendColorSource];
+		//cbas.dstColorBlendFactor = c_blendFactors[rs.blendColorDestination];
+		//cbas.colorBlendOp = c_blendOperations[rs.blendColorOperation];
+		//cbas.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		//cbas.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		//cbas.alphaBlendOp = VK_BLEND_OP_ADD;
+		//cbas.colorWriteMask = rs.colorWriteMask;
+
+		//VkPipelineColorBlendStateCreateInfo cbsci = {};
+		//cbsci.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+		//cbsci.logicOpEnable = VK_FALSE;
+		//cbsci.logicOp = VK_LOGIC_OP_CLEAR;
+		//cbsci.attachmentCount = 1;
+		//cbsci.pAttachments = &cbas;
+		//cbsci.blendConstants[0] = 0.0;
+		//cbsci.blendConstants[1] = 0.0;
+		//cbsci.blendConstants[2] = 0.0;
+		//cbsci.blendConstants[3] = 0.0;
 
 		VkDynamicState ds[1] = { VK_DYNAMIC_STATE_VIEWPORT };
 		VkPipelineDynamicStateCreateInfo dsci = {};

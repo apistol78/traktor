@@ -8,6 +8,7 @@
 #include "Render/Vulkan/RenderTargetDepthVk.h"
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
+#include "Render/Vulkan/StructBufferVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
 
@@ -127,6 +128,17 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 		lb.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
 	}
 
+	// Append sbuffer bindings.
+	for (const auto& sbuffer : resource->m_sbuffers)
+	{
+		auto& lb = dslb.push_back();
+		lb = {};
+		lb.binding = sbuffer.binding;
+		lb.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		lb.descriptorCount = 1;
+		lb.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
+	}
+
 	VkDescriptorSetLayoutCreateInfo dlci = {};
 	dlci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 	dlci.pNext = nullptr;
@@ -220,6 +232,12 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 	for (const auto& resourceTexture : resource->m_textures)
 	{
 		m_textures.push_back({ resourceTexture.binding });
+	}
+
+	// Create sbuffers.
+	for (const auto& resourceSBuffer : resource->m_sbuffers)
+	{
+		m_sbuffers.push_back({ resourceSBuffer.binding });
 	}
 
 	// Setup parameter mapping.
@@ -355,6 +373,31 @@ bool ProgramVk::validate(VkDevice device, VkDescriptorPool descriptorPool, VkCom
 		write.pImageInfo = &imageInfo;
 		write.dstArrayElement = 0;
 		write.dstBinding = texture.binding;
+	}
+
+	// Update sbuffer bindings.
+	for (const auto& sbuffer : m_sbuffers)
+	{
+		if (!sbuffer.sbuffer)
+			continue;
+
+		auto sbvk = static_cast< StructBufferVk* >(sbuffer.sbuffer.ptr());
+
+		auto& bufferInfo = bufferInfos.push_back();
+		bufferInfo.buffer = sbvk->getVkBuffer();
+		bufferInfo.offset = 0;
+		bufferInfo.range = sbvk->getBufferSize();
+
+		auto& write = writes.push_back();
+		write = {};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext = nullptr;
+		write.dstSet = descriptorSet;
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		write.pBufferInfo = &bufferInfo;
+		write.dstArrayElement = 0;
+		write.dstBinding = sbuffer.binding;
 	}
 
 	if (!writes.empty())

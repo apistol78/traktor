@@ -20,6 +20,7 @@
 #include "Render/Vulkan/Editor/ProgramCompilerVk.h"
 #include "Render/Vulkan/Editor/Glsl/GlslContext.h"
 #include "Render/Vulkan/Editor/Glsl/GlslSampler.h"
+#include "Render/Vulkan/Editor/Glsl/GlslStorageBuffer.h"
 #include "Render/Vulkan/Editor/Glsl/GlslTexture.h"
 #include "Render/Vulkan/Editor/Glsl/GlslUniformBuffer.h"
 
@@ -301,6 +302,17 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			}
 			programResource->m_uniformBufferSizes[uniformBuffer->getBinding()] = size;
 		}
+		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
+		{
+			auto& pm = parameterMapping[storageBuffer->getName()];
+			pm.buffer = storageBuffer->getBinding();
+			pm.offset = (uint32_t)programResource->m_sbuffers.size();
+			pm.length = 0;
+
+			programResource->m_sbuffers.push_back(ProgramResourceVk::SBufferDesc(
+				storageBuffer->getBinding()
+			));
+		}
 	}
 
 	for (auto p : cx.getParameters())
@@ -321,6 +333,21 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			));
 		}
 		else if (p.type >= PtTexture2D && p.type <= PtTextureCube)
+		{
+			auto it = parameterMapping.find(p.name);
+			if (it == parameterMapping.end())
+				continue;
+
+			const auto& pm = it->second;
+
+			programResource->m_parameters.push_back(ProgramResourceVk::ParameterDesc(
+				p.name,
+				pm.buffer,
+				pm.offset,
+				pm.length
+			));
+		}
+		else if (p.type >= PtStructBuffer)
 		{
 			auto it = parameterMapping.find(p.name);
 			if (it == parameterMapping.end())
@@ -418,6 +445,17 @@ bool ProgramCompilerVk::generate(
 			for (auto uniform : uniformBuffer->get())
 			{
 				ss << L"//      " << int32_t(uniform.type) << L" \"" << uniform.name << L"\" " << uniform.length << Endl;
+			}
+			ss << L"//   }" << Endl;
+		}
+		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
+		{
+			ss << L"// [" << storageBuffer->getBinding() << L"] = storage buffer" << Endl;
+			ss << L"//   .name = \"" << storageBuffer->getName() << L"\"" << Endl;
+			ss << L"//   .elements = {" << Endl;
+			for (auto element : storageBuffer->get())
+			{
+				ss << L"//      " << int32_t(element.type) << L" \"" << element.name << Endl;
 			}
 			ss << L"//   }" << Endl;
 		}

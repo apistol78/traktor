@@ -98,6 +98,7 @@ void ProgramResourceVk::serialize(ISerializer& s)
 	s >> MemberAlignedVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
 	s >> MemberAlignedVector< SamplerDesc, MemberComposite< SamplerDesc > >(L"samplers", m_samplers);
 	s >> MemberAlignedVector< TextureDesc, MemberComposite< TextureDesc > >(L"textures", m_textures);
+	s >> MemberAlignedVector< SBufferDesc, MemberComposite< SBufferDesc > >(L"sbuffers", m_sbuffers);
 	s >> Member< uint32_t >(L"hash", m_hash);
 }
 
@@ -116,6 +117,11 @@ void ProgramResourceVk::SamplerDesc::serialize(ISerializer& s)
 }
 
 void ProgramResourceVk::TextureDesc::serialize(ISerializer& s)
+{
+	s >> Member< uint32_t >(L"binding", binding);
+}
+
+void ProgramResourceVk::SBufferDesc::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"binding", binding);
 }
