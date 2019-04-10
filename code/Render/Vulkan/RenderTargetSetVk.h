@@ -14,7 +14,9 @@
 #	include <vulkan.h>
 #endif
 
+#include <tuple>
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Color4f.h"
 #include "Render/RenderTargetSet.h"
 
@@ -78,21 +80,34 @@ public:
 
 	RenderTargetDepthVk* getDepthTargetVk() const { return m_depthTarget; }
 
-	VkRenderPass getVkRenderPass() const { return m_renderPass; }
+	VkRenderPass getVkRenderPass() const { return m_activeRenderPass.renderPass; }
 
-	VkFramebuffer getVkFramebuffer() const { return m_frameBuffer; }
+	VkFramebuffer getVkFramebuffer() const { return m_activeRenderPass.frameBuffer; }
 
-	uint32_t getId() const { return m_id; }
+	uint32_t getId() const { return m_activeRenderPass.id; }
 
 private:
+	struct RenderPass
+	{
+		uint32_t id;
+		VkRenderPass renderPass;
+		VkFramebuffer frameBuffer;
+
+		RenderPass()
+		:	id(0)
+		,	renderPass(nullptr)
+		,	frameBuffer(nullptr)
+		{
+		}
+	};
+
+	typedef std::tuple< int32_t, uint32_t > render_pass_key_t;
+
 	RenderTargetSetCreateDesc m_setDesc;
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;
-	VkRenderPass m_renderPass;
-	VkFramebuffer m_frameBuffer;
-	int32_t m_lastColorIndex;
-	uint32_t m_lastClearMask;
-	uint32_t m_id;
+	SmallMap< render_pass_key_t, RenderPass > m_renderPasses;
+	RenderPass m_activeRenderPass;
 };
 
 	}

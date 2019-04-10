@@ -24,11 +24,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVk", RenderTargetSetVk, R
 
 RenderTargetSetVk::RenderTargetSetVk()
 :	RenderTargetSet()
-,	m_renderPass(nullptr)
-,	m_frameBuffer(nullptr)
-,	m_lastColorIndex(std::numeric_limits< int32_t >::max())
-,	m_lastClearMask(0)
-,	m_id(s_nextId++)
 {
 }
 
@@ -149,18 +144,17 @@ bool RenderTargetSetVk::prepareAsTarget(
 	RenderTargetDepthVk* primaryDepthTarget
 )
 {
-	// Do we need to nuke previous render pass and framebuffer?
-	if (m_lastColorIndex != colorIndex || m_lastClearMask != clearMask)
-	{
-		m_renderPass = nullptr;
-		m_frameBuffer = nullptr;
-		m_lastColorIndex = colorIndex;
-		m_lastClearMask = clearMask;
-	}
+	auto key = std::make_tuple(
+		colorIndex,
+		clearMask
+	);
 
-	// (Re-)create render pass.
-	if (!m_renderPass)
+	auto& rt = m_renderPasses[key];
+
+	if (rt.renderPass == nullptr)
 	{
+		rt.id = s_nextId++;
+
 		AlignedVector< VkAttachmentDescription > passAttachments;
 
 		if (colorIndex >= 0)
@@ -260,12 +254,12 @@ bool RenderTargetSetVk::prepareAsTarget(
 		renderPassCreateInfo.pAttachments = passAttachments.ptr();
 		renderPassCreateInfo.subpassCount = 1;
 		renderPassCreateInfo.pSubpasses = &subpass;
-		if (vkCreateRenderPass(device, &renderPassCreateInfo, nullptr, &m_renderPass) != VK_SUCCESS)
+		if (vkCreateRenderPass(device, &renderPassCreateInfo, nullptr, &rt.renderPass) != VK_SUCCESS)
 			return false;
 	}
 
 	// (Re-)create frame buffer.
-	if (!m_frameBuffer)
+	if (rt.frameBuffer == nullptr)
 	{
  		AlignedVector< VkImageView > frameBufferAttachments;
 		
@@ -284,18 +278,18 @@ bool RenderTargetSetVk::prepareAsTarget(
 
 		VkFramebufferCreateInfo frameBufferCreateInfo = {};
 		frameBufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		frameBufferCreateInfo.renderPass = m_renderPass;
+		frameBufferCreateInfo.renderPass = rt.renderPass;
 		frameBufferCreateInfo.attachmentCount = (uint32_t)frameBufferAttachments.size();
 		frameBufferCreateInfo.pAttachments = frameBufferAttachments.ptr();
 		frameBufferCreateInfo.width = m_setDesc.width;
 		frameBufferCreateInfo.height = m_setDesc.height;
 		frameBufferCreateInfo.layers = 1;
-		if (vkCreateFramebuffer(device, &frameBufferCreateInfo, nullptr, &m_frameBuffer) != VK_SUCCESS)
+		if (vkCreateFramebuffer(device, &frameBufferCreateInfo, nullptr, &rt.frameBuffer) != VK_SUCCESS)
 			return false;
 	}
 
-	T_ASSERT(m_renderPass != nullptr);
-	T_ASSERT(m_frameBuffer != nullptr);
+	T_ASSERT(rt.renderPass != nullptr);
+	T_ASSERT(rt.frameBuffer != nullptr);
 
 	if (colorIndex >= 0)
 		m_colorTargets[colorIndex]->prepareAsTarget(commandBuffer);
@@ -329,16 +323,17 @@ bool RenderTargetSetVk::prepareAsTarget(
 
 	VkRenderPassBeginInfo renderPassBeginInfo = {};
 	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	renderPassBeginInfo.renderPass = m_renderPass;
-	renderPassBeginInfo.framebuffer = m_frameBuffer;
+	renderPassBeginInfo.renderPass = rt.renderPass;
+	renderPassBeginInfo.framebuffer = rt.frameBuffer;
 	renderPassBeginInfo.renderArea.offset.x = 0;
 	renderPassBeginInfo.renderArea.offset.y = 0;
 	renderPassBeginInfo.renderArea.extent.width = m_setDesc.width;
 	renderPassBeginInfo.renderArea.extent.height = m_setDesc.height;
 	renderPassBeginInfo.clearValueCount = (uint32_t)clearValues.size();
 	renderPassBeginInfo.pClearValues = clearValues.c_ptr();
-	vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_SECONDARY_COMMAND_BUFFERS);
+	vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo,  VK_SUBPASS_CONTENTS_INLINE);
 
+	m_activeRenderPass = rt;
 	return true;
 }
 
