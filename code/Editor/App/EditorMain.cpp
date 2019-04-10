@@ -79,6 +79,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	log::info << L"DYLD_LIBRARY_PATH = \"" << check << L"\"" << Endl;
 #endif
 
+#if defined(__LINUX__)
+	std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB";
+	FileSystem::getInstance().makeAllDirectories(writableFolder);
+#endif
+
 	ui::Application::getInstance()->initialize(
 		new WidgetFactoryImpl(),
 		0
