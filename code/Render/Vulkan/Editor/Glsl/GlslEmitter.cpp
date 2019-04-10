@@ -2075,6 +2075,8 @@ bool emitTargetSize(GlslContext& cx, TargetSize* node)
 	))
 		return false;
 
+	cx.addParameter(L"_vk_targetSize", PtVector, 1, UfOnce);
+
 	assign(f, out) << L"_vk_targetSize.xy;" << Endl;
 	return true;
 }

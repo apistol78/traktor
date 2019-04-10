@@ -75,6 +75,7 @@ PFN_vkFlushMappedMemoryRanges vkFlushMappedMemoryRanges = nullptr;
 PFN_vkCreateSampler vkCreateSampler = nullptr;
 PFN_vkQueueWaitIdle vkQueueWaitIdle = nullptr;
 PFN_vkCmdCopyBufferToImage vkCmdCopyBufferToImage = nullptr;
+PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties = nullptr;
 
 PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = nullptr;
@@ -86,6 +87,8 @@ PFN_vkGetSwapchainImagesKHR vkGetSwapchainImagesKHR = nullptr;
 PFN_vkAcquireNextImageKHR vkAcquireNextImageKHR = nullptr;
 PFN_vkQueuePresentKHR vkQueuePresentKHR = nullptr;
 PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR = nullptr;
+PFN_vkCmdDebugMarkerBeginEXT vkCmdDebugMarkerBeginEXT = nullptr;
+PFN_vkCmdDebugMarkerEndEXT vkCmdDebugMarkerEndEXT = nullptr;
 
 bool initializeVulkanApi()
 {
@@ -537,6 +540,13 @@ bool initializeVulkanApi()
 		return false;
 	}
 
+	vkEnumerateDeviceExtensionProperties = (PFN_vkEnumerateDeviceExtensionProperties)GetProcAddress(s_hVulkanModule, "vkEnumerateDeviceExtensionProperties");
+	if (vkEnumerateDeviceExtensionProperties == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkEnumerateDeviceExtensionProperties\"." << Endl;
+		return false;
+	}
+
 	return true;
 }
 
@@ -609,6 +619,20 @@ bool initializeVulkanExtensions(VkInstance instance)
 	if (vkDestroySwapchainKHR == nullptr)
 	{
 		log::error << L"Failed to resolve Vulkan extension entry point \"vkDestroySwapchainKHR\"." << Endl;
+		return false;
+	}
+
+	*(void**)&vkCmdDebugMarkerBeginEXT = vkGetInstanceProcAddr(instance, "vkCmdDebugMarkerBeginEXT");
+	if (vkCmdDebugMarkerBeginEXT == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdDebugMarkerBeginEXT\"." << Endl;
+		return false;
+	}
+
+	*(void**)&vkCmdDebugMarkerEndEXT = vkGetInstanceProcAddr(instance, "vkCmdDebugMarkerEndEXT");
+	if (vkCmdDebugMarkerEndEXT == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdDebugMarkerEndEXT\"." << Endl;
 		return false;
 	}
 

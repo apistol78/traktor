@@ -373,19 +373,6 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	cs.end();
 	programResource->m_hash = cs.get();
 
-	/*
-	// Disassemble SPIR-V.
-	std::ostringstream vos;
-	spv::Disassemble(vos, programResource->m_vertexShader);
-	log::info << L"Vertex SPIRV:" << Endl;
-	log::info << mbstows(vos.str()) << Endl;
-
-	std::ostringstream fos;
-	spv::Disassemble(fos, programResource->m_fragmentShader);
-	log::info << L"Fragment SPIRV:" << Endl;
-	log::info << mbstows(fos.str()) << Endl;
-	*/
-
 	// \note Need to delete program before shaders due to glslang weirdness.
 	delete program;
 	delete fragmentShader;
@@ -421,6 +408,67 @@ bool ProgramCompilerVk::generate(
 	cx.getEmitter().emit(cx, vertexOutputs[0]);
 
 	const auto& layout = cx.getLayout();
+
+	const char* vertexShaderText = strdup(wstombs(cx.getVertexShader().getGeneratedShader(layout)).c_str());
+	const char* fragmentShaderText = strdup(wstombs(cx.getFragmentShader().getGeneratedShader(layout)).c_str());
+
+	//glslang::TProgram* program = new glslang::TProgram();
+
+	//// Vertex shader.
+	//glslang::TShader* vertexShader = new glslang::TShader(EShLangVertex);
+	//vertexShader->setStrings(&vertexShaderText, 1);
+	//vertexShader->setEntryPoint("main");
+
+	//bool vertexResult = vertexShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
+
+	//if (vertexShader->getInfoLog())
+	//	log::info << mbstows(vertexShader->getInfoLog()) << Endl;
+
+	//if (vertexShader->getInfoDebugLog())
+	//	log::info << mbstows(vertexShader->getInfoDebugLog()) << Endl;
+
+	//if (!vertexResult)
+	//{
+	//	log::error << L"Failed to compile shader; Failed to parse vertex shader." << Endl;
+	//	return false;
+	//}
+
+	//program->addShader(vertexShader);
+
+	//// Fragment shader.
+	//glslang::TShader* fragmentShader = new glslang::TShader(EShLangFragment);
+	//fragmentShader->setStrings(&fragmentShaderText, 1);
+	//fragmentShader->setEntryPoint("main");
+
+	//bool fragmentResult = fragmentShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
+
+	//if (fragmentShader->getInfoLog())
+	//	log::info << mbstows(fragmentShader->getInfoLog()) << Endl;
+
+	//if (fragmentShader->getInfoDebugLog())
+	//	log::info << mbstows(fragmentShader->getInfoDebugLog()) << Endl;
+
+	//if (!fragmentResult)
+	//{
+	//	log::error << L"Failed to compile shader; Failed to parse fragment shader." << Endl;
+	//	return false;
+	//}
+
+	//program->addShader(fragmentShader);
+
+	//// Link program shaders.
+	//if (!program->link(EShMsgDefault))
+	//{
+	//	log::error << L"Failed to compile shader; Program link failed." << Endl;
+	//	return false;
+	//}
+
+	//// Generate SPIR-V from program AST.
+	//std::vector< uint32_t > vertexShaderSpv;
+	//glslang::GlslangToSpv(*program->getIntermediate(EShLangVertex), vertexShaderSpv);
+
+	//std::vector< uint32_t > fragmentShaderSpv;
+	//glslang::GlslangToSpv(*program->getIntermediate(EShLangFragment), fragmentShaderSpv);
 
 	StringOutputStream ss;
 	for (auto resource : layout.get())
@@ -461,25 +509,35 @@ bool ProgramCompilerVk::generate(
 		}
 	}
 
-	// Vertex
-	{
-		StringOutputStream vss;
-		vss << cx.getVertexShader().getGeneratedShader(layout);
-		vss << Endl;
-		vss << ss.str();
-		vss << Endl;
-		outVertexShader = vss.str();
-	}
+	//// Vertex
+	//{
+	//	StringOutputStream vss;
+	//	vss << cx.getVertexShader().getGeneratedShader(layout);
+	//	vss << Endl;
+	//	vss << ss.str();
+	//	vss << Endl;
 
-	// Pixel
-	{
-		StringOutputStream fss;
-		fss << cx.getFragmentShader().getGeneratedShader(layout);
-		fss << Endl;
-		fss << ss.str();
-		fss << Endl;
-		outPixelShader = fss.str();
-	}
+	//	std::ostringstream vos;
+	//	spv::Disassemble(vos, vertexShaderSpv);
+	//	vss << mbstows(vos.str()) << Endl;
+
+	//	outVertexShader = vss.str();
+	//}
+
+	//// Pixel
+	//{
+	//	StringOutputStream fss;
+	//	fss << cx.getFragmentShader().getGeneratedShader(layout);
+	//	fss << Endl;
+	//	fss << ss.str();
+	//	fss << Endl;
+
+	//	std::ostringstream fos;
+	//	spv::Disassemble(fos, fragmentShaderSpv);
+	//	fss << mbstows(fos.str()) << Endl;
+
+	//	outPixelShader = fss.str();
+	//}
 
 	return true;
 }

@@ -40,7 +40,7 @@ namespace traktor
 		namespace
 		{
 
-const char* c_validationLayerNames[] = /*{ "VK_LAYER_RENDERDOC_Capture" };*/ { "VK_LAYER_LUNARG_standard_validation" };
+const char* c_validationLayerNames[] = { "VK_LAYER_LUNARG_standard_validation", nullptr };
 #if defined(_WIN32)
 const char* c_extensions[] = { "VK_KHR_surface", "VK_KHR_win32_surface", "VK_EXT_debug_report" };
 #elif defined(__LINUX__)
@@ -87,7 +87,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 #endif
 
-	// Check for validation layers.
+	// Check for available layers.
 	uint32_t layerCount = 0;
 	vkEnumerateInstanceLayerProperties(&layerCount, 0);
 
@@ -97,8 +97,14 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	AlignedVector< const char* > validationLayers;
 	for (uint32_t i = 0; i < layerCount; ++i)
 	{
-		if (strcmp(layersAvailable[i].layerName, c_validationLayerNames[0]) == 0)
-			validationLayers.push_back(strdup(layersAvailable[i].layerName));	// \tbd Memory leak...
+		bool found = false;
+		for (uint32_t j = 0; c_validationLayerNames[j] != nullptr; ++j)
+		{
+			if (strcmp(layersAvailable[i].layerName, c_validationLayerNames[j]) == 0)
+				found = true;
+		}
+		if (found)
+			validationLayers.push_back(strdup(layersAvailable[i].layerName));
 	}
 
 	// Create Vulkan instance.

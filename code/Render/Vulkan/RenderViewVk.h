@@ -146,6 +146,9 @@ private:
 	VkDescriptorPool m_descriptorPool;
 	VkFence m_renderFence;
 	VkSemaphore m_presentCompleteSemaphore;
+
+	bool m_haveDebugMarkers;
+
 	RefArray< RenderTargetSetVk > m_primaryTargets;
 
 	std::list< RenderEvent > m_eventQueue;

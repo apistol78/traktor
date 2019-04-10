@@ -56,6 +56,7 @@ RenderViewVk::RenderViewVk(
 ,	m_descriptorPool(nullptr)
 ,	m_renderFence(nullptr)
 ,	m_presentCompleteSemaphore(nullptr)
+,	m_haveDebugMarkers(false)
 {
 }
 
@@ -494,10 +495,21 @@ void RenderViewVk::present()
 
 void RenderViewVk::pushMarker(const char* const marker)
 {
+	if (m_haveDebugMarkers)
+	{
+		VkDebugMarkerMarkerInfoEXT mi = {};
+		mi.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
+		mi.pMarkerName = marker;
+		vkCmdDebugMarkerBeginEXT(m_drawCommandBuffer, &mi);
+	}
 }
 
 void RenderViewVk::popMarker()
 {
+	if (m_haveDebugMarkers)
+	{
+		vkCmdDebugMarkerEndEXT(m_drawCommandBuffer);
+	}
 }
 
 void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
@@ -749,6 +761,25 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	m_viewport.height = height;
 	m_viewport.nearZ = 0.0f;
 	m_viewport.farZ = 1.0f;
+
+	// Check if debug marker extension is available.
+	uint32_t extensionCount;
+	vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, nullptr);
+
+	AlignedVector< VkExtensionProperties > extensions(extensionCount);
+	vkEnumerateDeviceExtensionProperties(m_physicalDevice, nullptr, &extensionCount, extensions.ptr());
+
+	m_haveDebugMarkers = false;
+	//for (auto extension : extensions)
+	//{
+	//	if (strcmp(extension.extensionName, VK_EXT_DEBUG_MARKER_EXTENSION_NAME) == 0)
+	//	{
+	//		log::info << L"Found debug marker extension; debug markers enabled." << Endl;
+	//		m_haveDebugMarkers = true;
+	//		break;
+	//	}
+	//}
+
 	return true;
 }
 
@@ -872,7 +903,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		dssci.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 		dssci.depthTestEnable = rs.depthEnable ? VK_TRUE : VK_FALSE;
 		dssci.depthWriteEnable = rs.depthWriteEnable ? VK_TRUE : VK_FALSE;
-		dssci.depthCompareOp = c_compareOperations[rs.depthFunction];
+		dssci.depthCompareOp = rs.depthEnable ? c_compareOperations[rs.depthFunction] : VK_COMPARE_OP_ALWAYS;
 		dssci.depthBoundsTestEnable = VK_FALSE;
 		dssci.stencilTestEnable = rs.stencilEnable ? VK_TRUE : VK_FALSE;
 		dssci.front = sops;
@@ -880,7 +911,6 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		dssci.minDepthBounds = 0;
 		dssci.maxDepthBounds = 0;
 
-		
 		AlignedVector< VkPipelineColorBlendAttachmentState > blendAttachments;
 
 		for (int32_t i = 0; ts.rts->getColorTargetVk(i) != nullptr; ++i)
@@ -906,28 +936,6 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		cbsci.blendConstants[1] = 0.0;
 		cbsci.blendConstants[2] = 0.0;
 		cbsci.blendConstants[3] = 0.0;
-
-
-		//VkPipelineColorBlendAttachmentState cbas = {};
-		//cbas.blendEnable = rs.blendEnable ? VK_TRUE : VK_FALSE;
-		//cbas.srcColorBlendFactor = c_blendFactors[rs.blendColorSource];
-		//cbas.dstColorBlendFactor = c_blendFactors[rs.blendColorDestination];
-		//cbas.colorBlendOp = c_blendOperations[rs.blendColorOperation];
-		//cbas.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		//cbas.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-		//cbas.alphaBlendOp = VK_BLEND_OP_ADD;
-		//cbas.colorWriteMask = rs.colorWriteMask;
-
-		//VkPipelineColorBlendStateCreateInfo cbsci = {};
-		//cbsci.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
-		//cbsci.logicOpEnable = VK_FALSE;
-		//cbsci.logicOp = VK_LOGIC_OP_CLEAR;
-		//cbsci.attachmentCount = 1;
-		//cbsci.pAttachments = &cbas;
-		//cbsci.blendConstants[0] = 0.0;
-		//cbsci.blendConstants[1] = 0.0;
-		//cbsci.blendConstants[2] = 0.0;
-		//cbsci.blendConstants[3] = 0.0;
 
 		VkDynamicState ds[1] = { VK_DYNAMIC_STATE_VIEWPORT };
 		VkPipelineDynamicStateCreateInfo dsci = {};
