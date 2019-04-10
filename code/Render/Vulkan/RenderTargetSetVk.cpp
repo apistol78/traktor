@@ -48,62 +48,6 @@ bool RenderTargetSetVk::createPrimary(VkPhysicalDevice physicalDevice, VkDevice 
 	if (!m_depthTarget->createPrimary(physicalDevice, device, width, height, depthFormat, depthImage))
 		return false;
 
-	//VkAttachmentDescription passAttachments[2] = {};
-	//passAttachments[0].format = depthFormat;
-	//passAttachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
-	//passAttachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	//passAttachments[0].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	//passAttachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	//passAttachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	//passAttachments[0].initialLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-	//passAttachments[0].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-	//passAttachments[1].format = colorFormat;
-	//passAttachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
-	//passAttachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-	//passAttachments[1].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-	//passAttachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-	//passAttachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-	//passAttachments[1].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-	//passAttachments[1].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-	//VkAttachmentReference colorAttachmentReference = {};
-	//colorAttachmentReference.attachment = 0;
-	//colorAttachmentReference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-	//VkAttachmentReference depthAttachmentReference = {};
-	//depthAttachmentReference.attachment = 1;
-	//depthAttachmentReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-	//VkSubpassDescription subpass = {};
-	//subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-	//subpass.colorAttachmentCount = 1;
-	//subpass.pColorAttachments = &colorAttachmentReference;
-	//subpass.pDepthStencilAttachment = &depthAttachmentReference;
-
-	//VkRenderPassCreateInfo renderPassCreateInfo = {};
-	//renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-	//renderPassCreateInfo.attachmentCount = 2;
-	//renderPassCreateInfo.pAttachments = passAttachments;
-	//renderPassCreateInfo.subpassCount = 1;
-	//renderPassCreateInfo.pSubpasses = &subpass;
-	//if (vkCreateRenderPass(device, &renderPassCreateInfo, nullptr, &m_renderPass) != VK_SUCCESS)
-	//	return false;
-
- //	VkImageView frameBufferAttachments[2];
-	//frameBufferAttachments[0] = m_depthTarget->getVkImageView();
-	//frameBufferAttachments[1] = m_colorTargets[0]->getVkImageView();
-
-	//VkFramebufferCreateInfo frameBufferCreateInfo = {};
-	//frameBufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-	//frameBufferCreateInfo.renderPass = m_renderPass;
-	//frameBufferCreateInfo.attachmentCount = 2;
-	//frameBufferCreateInfo.pAttachments = frameBufferAttachments;
-	//frameBufferCreateInfo.width = width;
-	//frameBufferCreateInfo.height = height;
-	//frameBufferCreateInfo.layers = 1;
-	//if (vkCreateFramebuffer(device, &frameBufferCreateInfo, nullptr, &m_frameBuffer) != VK_SUCCESS)
-	//	return false;
-
 	m_setDesc.count = 1;
 	m_setDesc.width = width;
 	m_setDesc.height = height;

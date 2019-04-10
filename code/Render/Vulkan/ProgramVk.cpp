@@ -255,7 +255,10 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 bool ProgramVk::validate(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, float targetSize[2])
 {
 	// Set implicit parameters.
-	setVectorParameter(s_handleTargetSize, Vector4(targetSize[0], targetSize[1], 0.0f, 0.0f));
+	setVectorParameter(
+		s_handleTargetSize,
+		Vector4(targetSize[0], targetSize[1], 0.0f, 0.0f)
+	);
 
 	// Allocate a descriptor set for parameters.
 	VkDescriptorSet descriptorSet = nullptr;
