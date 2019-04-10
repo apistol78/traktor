@@ -952,7 +952,7 @@ void WorldRendererDeferred::render(int32_t frame)
 
 	// Render light accumulation buffers.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Lighting");
-	if (m_renderView->begin(m_visualTargetSet, 0))
+	if (m_renderView->begin(m_visualTargetSet))
 	{
 		const Color4f lightClear[] = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
 		m_renderView->clear(render::CfColor, lightClear, 1.0f, 0);
@@ -1018,7 +1018,7 @@ void WorldRendererDeferred::render(int32_t frame)
 
 	// Copy visual target into smaller copy, generate mips.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (0)");
-	if (m_renderView->begin(m_colorTargetSet, 0))
+	if (m_renderView->begin(m_colorTargetSet))
 	{
 		render::ImageProcessStep::Instance::RenderParams params;
 		params.viewFrustum = f.viewFrustum;
@@ -1041,7 +1041,7 @@ void WorldRendererDeferred::render(int32_t frame)
 
 	// Render fog.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Fog");
-	if (m_renderView->begin(m_visualTargetSet, 0))
+	if (m_renderView->begin(m_visualTargetSet))
 	{
 		m_lightRenderer->renderFog(
 			m_renderView,
@@ -1062,7 +1062,7 @@ void WorldRendererDeferred::render(int32_t frame)
 
 	// Render opaque visuals.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Visual opaque");
-	if (m_renderView->begin(m_visualTargetSet, 0))
+	if (m_renderView->begin(m_visualTargetSet))
 	{
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
@@ -1088,7 +1088,7 @@ void WorldRendererDeferred::render(int32_t frame)
 
 	// Copy color into off target.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (1)");
-	if (m_renderView->begin(m_colorTargetSet, 0))
+	if (m_renderView->begin(m_colorTargetSet))
 	{
 		render::ImageProcessStep::Instance::RenderParams params;
 		params.viewFrustum = f.viewFrustum;
@@ -1110,7 +1110,7 @@ void WorldRendererDeferred::render(int32_t frame)
 	T_RENDER_POP_MARKER(m_renderView);
 
 	// Render post opaque + alpha visuals.
-	if (m_renderView->begin(m_visualTargetSet, 0))
+	if (m_renderView->begin(m_visualTargetSet))
 	{
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
@@ -1141,7 +1141,7 @@ void WorldRendererDeferred::render(int32_t frame)
 
 	// Copy color into off target.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (2)");
-	if (m_renderView->begin(m_colorTargetSet, 0))
+	if (m_renderView->begin(m_colorTargetSet))
 	{
 		render::ImageProcessStep::Instance::RenderParams params;
 		params.viewFrustum = f.viewFrustum;
@@ -1163,7 +1163,7 @@ void WorldRendererDeferred::render(int32_t frame)
 	T_RENDER_POP_MARKER(m_renderView);
 
 	// Render post alpha visuals.
-	if (m_renderView->begin(m_visualTargetSet, 0))
+	if (m_renderView->begin(m_visualTargetSet))
 	{
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
