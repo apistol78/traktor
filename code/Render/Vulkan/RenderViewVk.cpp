@@ -188,6 +188,13 @@ bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 #if defined(_WIN32)
 	m_window->addListener(this);
 #endif
+
+	if (!reset(
+		desc.displayMode.width,
+		desc.displayMode.height
+	))
+		return false;
+
 	return true;
 }
 
@@ -677,7 +684,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	VkImageCreateInfo ici = {};
 	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	ici.imageType = VK_IMAGE_TYPE_2D;
-	ici.format = VK_FORMAT_D16_UNORM;
+	ici.format = VK_FORMAT_D24_UNORM_S8_UINT;
 	ici.extent = { width, height, 1 };
 	ici.mipLevels = 1;
 	ici.arrayLayers = 1;
@@ -720,7 +727,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 			height,
 			colorFormat,
 			presentImages[i],
-			VK_FORMAT_D16_UNORM,
+			VK_FORMAT_D24_UNORM_S8_UINT,
 			depthImage
 		))
 			return false;
