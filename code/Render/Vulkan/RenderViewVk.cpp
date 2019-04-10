@@ -811,6 +811,7 @@ void RenderViewVk::validateTargetState()
 	))
 		return;
 
+	ts.clearMask = 0;
 	m_targetStateDirty = false;
 }
 
