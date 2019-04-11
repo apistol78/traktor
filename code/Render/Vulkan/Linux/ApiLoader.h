@@ -72,6 +72,7 @@ extern PFN_vkFlushMappedMemoryRanges vkFlushMappedMemoryRanges;
 extern PFN_vkCreateSampler vkCreateSampler;
 extern PFN_vkQueueWaitIdle vkQueueWaitIdle;
 extern PFN_vkCmdCopyBufferToImage vkCmdCopyBufferToImage;
+extern PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties;
 
 // Linux Vulkan extensions.
 extern PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;
@@ -84,6 +85,8 @@ extern PFN_vkGetSwapchainImagesKHR vkGetSwapchainImagesKHR;
 extern PFN_vkAcquireNextImageKHR vkAcquireNextImageKHR;
 extern PFN_vkQueuePresentKHR vkQueuePresentKHR;
 extern PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR;
+extern PFN_vkCmdDebugMarkerBeginEXT vkCmdDebugMarkerBeginEXT;
+extern PFN_vkCmdDebugMarkerEndEXT vkCmdDebugMarkerEndEXT;
 
 bool initializeVulkanApi();
 
