@@ -1623,6 +1623,10 @@ void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int fr
 						if (tileFrustum.inside(lvp, Scalar(light.range)) != Frustum::IrOutside)
 							tileShaderData[x + y * 16].lights[count++] = float(i);
 					}
+					else if (light.type == LtSpot)
+					{
+						tileShaderData[x + y * 16].lights[count++] = float(i);
+					}
 
 					if (count >= 4)
 						break;
