@@ -80,22 +80,16 @@ public:
 
 	RenderTargetDepthVk* getDepthTargetVk() const { return m_depthTarget; }
 
-	VkRenderPass getVkRenderPass() const { return m_activeRenderPass.renderPass; }
-
-	VkFramebuffer getVkFramebuffer() const { return m_activeRenderPass.frameBuffer; }
-
-	uint32_t getId() const { return m_activeRenderPass.id; }
+	uint32_t getId() const { return m_id; }
 
 private:
 	struct RenderPass
 	{
-		uint32_t id;
 		VkRenderPass renderPass;
 		VkFramebuffer frameBuffer;
 
 		RenderPass()
-		:	id(0)
-		,	renderPass(nullptr)
+		:	renderPass(nullptr)
 		,	frameBuffer(nullptr)
 		{
 		}
@@ -103,11 +97,11 @@ private:
 
 	typedef std::tuple< int32_t, uint32_t > render_pass_key_t;
 
+	uint32_t m_id;
 	RenderTargetSetCreateDesc m_setDesc;
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;
 	SmallMap< render_pass_key_t, RenderPass > m_renderPasses;
-	RenderPass m_activeRenderPass;
 };
 
 	}

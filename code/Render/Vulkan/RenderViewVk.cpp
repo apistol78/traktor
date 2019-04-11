@@ -970,7 +970,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		gpci.pColorBlendState = &cbsci;
 		gpci.pDynamicState = nullptr; // &dsci;
 		gpci.layout = p->getPipelineLayout();
-		gpci.renderPass = ts.rts->getVkRenderPass();
+		gpci.renderPass = nullptr; // ts.rts->getVkRenderPass();
 		gpci.subpass = 0;
 		gpci.basePipelineHandle = nullptr;
 		gpci.basePipelineIndex = 0;
