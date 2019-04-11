@@ -24,6 +24,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVk", RenderTargetSetVk, R
 
 RenderTargetSetVk::RenderTargetSetVk()
 :	RenderTargetSet()
+,	m_id(s_nextId++)
 {
 }
 
@@ -153,8 +154,6 @@ bool RenderTargetSetVk::prepareAsTarget(
 
 	if (rt.renderPass == nullptr)
 	{
-		rt.id = s_nextId++;
-
 		AlignedVector< VkAttachmentDescription > passAttachments;
 
 		if (colorIndex >= 0)
@@ -333,7 +332,6 @@ bool RenderTargetSetVk::prepareAsTarget(
 	renderPassBeginInfo.pClearValues = clearValues.c_ptr();
 	vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo,  VK_SUBPASS_CONTENTS_INLINE);
 
-	m_activeRenderPass = rt;
 	return true;
 }
 
