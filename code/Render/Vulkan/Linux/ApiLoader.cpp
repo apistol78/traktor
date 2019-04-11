@@ -76,6 +76,7 @@ PFN_vkFlushMappedMemoryRanges vkFlushMappedMemoryRanges = nullptr;
 PFN_vkCreateSampler vkCreateSampler = nullptr;
 PFN_vkQueueWaitIdle vkQueueWaitIdle = nullptr;
 PFN_vkCmdCopyBufferToImage vkCmdCopyBufferToImage = nullptr;
+PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties = nullptr;
 
 PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = nullptr;
@@ -87,6 +88,8 @@ PFN_vkGetSwapchainImagesKHR vkGetSwapchainImagesKHR = nullptr;
 PFN_vkAcquireNextImageKHR vkAcquireNextImageKHR = nullptr;
 PFN_vkQueuePresentKHR vkQueuePresentKHR = nullptr;
 PFN_vkDestroySwapchainKHR vkDestroySwapchainKHR = nullptr;
+PFN_vkCmdDebugMarkerBeginEXT vkCmdDebugMarkerBeginEXT = nullptr;
+PFN_vkCmdDebugMarkerEndEXT vkCmdDebugMarkerEndEXT = nullptr;
 
 bool initializeVulkanApi()
 {
@@ -538,6 +541,13 @@ bool initializeVulkanApi()
 		return false;
 	}
 
+	vkEnumerateDeviceExtensionProperties = (PFN_vkEnumerateDeviceExtensionProperties)dlsym(s_hVulkanModule, "vkEnumerateDeviceExtensionProperties");
+	if (vkEnumerateDeviceExtensionProperties == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkEnumerateDeviceExtensionProperties\"." << Endl;
+		return false;
+	}
+
 	return true;
 }
 
@@ -610,6 +620,20 @@ bool initializeVulkanExtensions(VkInstance instance)
 	if (vkDestroySwapchainKHR == nullptr)
 	{
 		log::error << L"Failed to resolve Vulkan extension entry point \"vkDestroySwapchainKHR\"." << Endl;
+		return false;
+	}
+
+	vkCmdDebugMarkerBeginEXT = (PFN_vkCmdDebugMarkerBeginEXT)vkGetInstanceProcAddr(instance, "vkCmdDebugMarkerBeginEXT");
+	if (vkCmdDebugMarkerBeginEXT == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdDebugMarkerBeginEXT\"." << Endl;
+		return false;
+	}
+
+	vkCmdDebugMarkerEndEXT = (PFN_vkCmdDebugMarkerEndEXT)vkGetInstanceProcAddr(instance, "vkCmdDebugMarkerEndEXT");
+	if (vkCmdDebugMarkerEndEXT == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdDebugMarkerEndEXT\"." << Endl;
 		return false;
 	}
 
