@@ -72,6 +72,12 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 	{
 		auto dependency = dependencySet->get(i);
 		auto dependencyInstance = editor->getSourceDatabase()->getInstance(dependency->sourceInstanceGuid);
+		if (!dependencyInstance)
+		{
+			log::warning << L"Unable to read dependency instance \"" << dependency->sourceInstanceGuid.format() << L"\"." << Endl;
+			continue;
+		}
+
 		if (isSystemInstance(instance) || !isSystemInstance(dependencyInstance))
 		{
 			for (const auto& file : dependency->files)
@@ -85,7 +91,7 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 
 	// Create a compact database with all selected instances migrated.
 	Ref< db::Database > database = new db::Database();
-	if (!database->create(db::ConnectionString(L"provider=traktor.db.CompactDatabase;fileName=" + publishPath + L"/Instances.compact")))
+	if (!database->create(db::ConnectionString(L"provider=traktor.db.CompactDatabase;fileName=" + publishPath + L"/" + instance->getName() + L".compact")))
 	{
 		log::error << L"Publish failed; unable to create bundle database." << Endl;
 		return false;
