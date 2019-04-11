@@ -71,7 +71,11 @@ public:
 		const Color4f* colors,
 		float depth,
 		int32_t stencil,
-		RenderTargetDepthVk* primaryDepthTarget
+		RenderTargetDepthVk* primaryDepthTarget,
+
+		// Out
+		uint32_t& outId,
+		VkRenderPass& outRenderPass
 	);
 
 	bool prepareAsTexture(VkCommandBuffer commandBuffer);
@@ -80,11 +84,10 @@ public:
 
 	RenderTargetDepthVk* getDepthTargetVk() const { return m_depthTarget; }
 
-	uint32_t getId() const { return m_id; }
-
 private:
 	struct RenderPass
 	{
+		uint32_t id;
 		VkRenderPass renderPass;
 		VkFramebuffer frameBuffer;
 
@@ -97,7 +100,6 @@ private:
 
 	typedef std::tuple< int32_t, uint32_t > render_pass_key_t;
 
-	uint32_t m_id;
 	RenderTargetSetCreateDesc m_setDesc;
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;
