@@ -159,6 +159,9 @@ private:
 	AlignedVector< TargetState > m_targetStateStack;
 	bool m_targetStateDirty;
 
+	uint32_t m_targetId;
+	VkRenderPass m_targetRenderPass;
+
 	typedef std::tuple< uint32_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
 	SmallMap< pipeline_key_t, VkPipeline > m_pipelines;
 

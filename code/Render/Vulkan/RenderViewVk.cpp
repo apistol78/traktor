@@ -57,6 +57,9 @@ RenderViewVk::RenderViewVk(
 ,	m_renderFence(nullptr)
 ,	m_presentCompleteSemaphore(nullptr)
 ,	m_haveDebugMarkers(false)
+,	m_targetStateDirty(false)
+,	m_targetId(0)
+,	m_targetRenderPass(nullptr)
 {
 }
 
@@ -807,7 +810,11 @@ void RenderViewVk::validateTargetState()
 		ts.clearColors,
 		ts.clearDepth,
 		ts.clearStencil,
-		m_primaryTargets[m_currentImageIndex]->getDepthTargetVk()
+		m_primaryTargets[m_currentImageIndex]->getDepthTargetVk(),
+		
+		// Out
+		m_targetId,
+		m_targetRenderPass
 	))
 		return;
 
@@ -821,11 +828,10 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 	TargetState& ts = m_targetStateStack.back();
 
 	uint32_t primitiveId = (uint32_t)pt;
-	uint32_t targetId = ts.rts->getId();
 	uint32_t declHash = vb->getHash();
 	uint32_t programHash = p->getHash();
 
-	const auto key = std::make_tuple(primitiveId, targetId, declHash, programHash);
+	const auto key = std::make_tuple(primitiveId, m_targetId, declHash, programHash);
 
 	VkPipeline pipeline = nullptr;
 
@@ -970,7 +976,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		gpci.pColorBlendState = &cbsci;
 		gpci.pDynamicState = nullptr; // &dsci;
 		gpci.layout = p->getPipelineLayout();
-		gpci.renderPass = nullptr; // ts.rts->getVkRenderPass();
+		gpci.renderPass = m_targetRenderPass;
 		gpci.subpass = 0;
 		gpci.basePipelineHandle = nullptr;
 		gpci.basePipelineIndex = 0;
