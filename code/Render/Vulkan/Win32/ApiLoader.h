@@ -73,6 +73,7 @@ extern PFN_vkCreateSampler vkCreateSampler;
 extern PFN_vkQueueWaitIdle vkQueueWaitIdle;
 extern PFN_vkCmdCopyBufferToImage vkCmdCopyBufferToImage;
 extern PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties;
+extern PFN_vkCmdSetViewport vkCmdSetViewport;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;
