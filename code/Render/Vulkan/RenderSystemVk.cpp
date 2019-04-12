@@ -50,6 +50,21 @@ const char* c_extensions[] = { "VK_KHR_surface", "VK_EXT_debug_report" };
 #endif
 const char* c_deviceExtensions[] = { "VK_KHR_swapchain" };
 
+VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+	VkDebugReportFlagsEXT flags,
+	VkDebugReportObjectTypeEXT objectType,
+	uint64_t object,
+	size_t location,
+	int32_t messageCode,
+	const char* pLayerPrefix,
+	const char* pMessage,
+	void* pUserData
+)
+{
+	if (pMessage)
+		log::error << mbstows(pMessage) << Endl;
+	return VK_FALSE;
+}
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemVk", 0, RenderSystemVk, IRenderSystem)
@@ -134,6 +149,21 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	if (!initializeVulkanExtensions(m_instance))
 	{
 		log::error << L"Failed to create Vulkan; failed to load extensions." << Endl;
+		return false;
+	}
+
+	// Setup debug port callback.
+	VkDebugReportCallbackEXT reportCallback = nullptr;
+
+	VkDebugReportCallbackCreateInfoEXT drcci = {};
+	drcci.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
+    drcci.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT | VK_DEBUG_REPORT_INFORMATION_BIT_EXT | VK_DEBUG_REPORT_DEBUG_BIT_EXT;
+    drcci.pfnCallback = debugCallback;
+    drcci.pUserData = (void*)this;
+
+	if ((result = vkCreateDebugReportCallbackEXT(m_instance, &drcci, nullptr, &reportCallback)) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; failed to set debug report callback." << Endl;
 		return false;
 	}
 
