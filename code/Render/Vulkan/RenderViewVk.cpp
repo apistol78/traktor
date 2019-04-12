@@ -263,6 +263,9 @@ bool RenderViewVk::setGamma(float gamma)
 
 void RenderViewVk::setViewport(const Viewport& viewport)
 {
+	T_ASSERT(viewport.width > 0);
+	T_ASSERT(viewport.height > 0);
+
 	if (m_targetStateStack.empty())
 	{
 		m_viewport = viewport;
@@ -270,7 +273,18 @@ void RenderViewVk::setViewport(const Viewport& viewport)
 	else
 	{
 		m_targetStateStack.back().viewport = viewport;
-		// vkCmdSetViewport(info.cmd, 0, NUM_VIEWPORTS, &info.viewport);
+
+		if (!m_targetStateDirty)
+		{
+			VkViewport vp = {};
+			vp.x = viewport.left;
+			vp.y = viewport.top;
+			vp.width = viewport.width;
+			vp.height = viewport.height;
+			vp.minDepth = viewport.nearZ;
+			vp.maxDepth = viewport.farZ;
+			vkCmdSetViewport(m_drawCommandBuffer, 0, 1, &vp);
+		}
 	}
 }
 
@@ -329,6 +343,18 @@ bool RenderViewVk::begin()
 
 bool RenderViewVk::begin(RenderTargetSet* renderTargetSet)
 {
+	// End current render pass, restart later.
+	// \tbd
+	// This indicate poor use of render passes,
+	// some draw calls on pass before and after
+	// nested begin/end.
+	// Also this will cause viewport to be
+	// reset along with other stuff.
+	// Also targets transition to "target" multiple
+	// times.
+	if (!m_targetStateDirty)
+		vkCmdEndRenderPass(m_drawCommandBuffer);
+
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	ts.colorIndex = -1;
@@ -344,12 +370,17 @@ bool RenderViewVk::begin(RenderTargetSet* renderTargetSet)
 
 bool RenderViewVk::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
+	// End current render pass, restart later.
+	if (!m_targetStateDirty)
+		vkCmdEndRenderPass(m_drawCommandBuffer);
+
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	ts.colorIndex = renderTarget;
 	ts.clearMask = 0;
 	ts.clearDepth = 1.0f;
 	ts.clearStencil = 0;
+	ts.viewport = Viewport(0, 0, ts.rts->getWidth(), ts.rts->getHeight(), 0.0f, 1.0f);
 
 	m_targetStateStack.push_back(ts);
 	m_targetStateDirty = true;
@@ -687,7 +718,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	VkImageCreateInfo ici = {};
 	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	ici.imageType = VK_IMAGE_TYPE_2D;
-	ici.format = VK_FORMAT_D24_UNORM_S8_UINT;
+	ici.format = VK_FORMAT_D16_UNORM; // VK_FORMAT_D24_UNORM_S8_UINT;
 	ici.extent = { width, height, 1 };
 	ici.mipLevels = 1;
 	ici.arrayLayers = 1;
@@ -730,7 +761,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 			height,
 			colorFormat,
 			presentImages[i],
-			VK_FORMAT_D24_UNORM_S8_UINT,
+			VK_FORMAT_D16_UNORM, //VK_FORMAT_D24_UNORM_S8_UINT,
 			depthImage
 		))
 			return false;
@@ -820,15 +851,21 @@ void RenderViewVk::validateTargetState()
 	))
 		return;
 
+	VkViewport vp = {};
+	vp.x = ts.viewport.left;
+	vp.y = ts.viewport.top;
+	vp.width = ts.viewport.width;
+	vp.height = ts.viewport.height;
+	vp.minDepth = ts.viewport.nearZ;
+	vp.maxDepth = ts.viewport.farZ;
+	vkCmdSetViewport(m_drawCommandBuffer, 0, 1, &vp);
+
 	ts.clearMask = 0;
 	m_targetStateDirty = false;
 }
 
 bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveType pt)
 {
-	T_FATAL_ASSERT (!m_targetStateStack.empty());
-	TargetState& ts = m_targetStateStack.back();
-
 	uint32_t primitiveId = (uint32_t)pt;
 	uint32_t declHash = vb->getHash();
 	uint32_t programHash = p->getHash();
@@ -844,26 +881,12 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 	{
 		const RenderState& rs = p->getRenderState();
 
-		VkViewport viewport = {};
-		viewport.x = 0.0f;
-		viewport.y = 0.0f;
-		viewport.width = ts.rts->getWidth();
-		viewport.height = ts.rts->getHeight();
-		viewport.minDepth = 0.0f;
-		viewport.maxDepth = 1.0f;
-
-		VkRect2D scissors = {};
-		scissors.offset.x = 0;
-		scissors.offset.y = 0;
-		scissors.extent.width = ts.rts->getWidth();
-		scissors.extent.height = ts.rts->getHeight();
-
 		VkPipelineViewportStateCreateInfo vsci = {};
 		vsci.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-		vsci.viewportCount = 1;
-		vsci.pViewports = &viewport;
-		vsci.scissorCount = 1;
-		vsci.pScissors = &scissors;
+		vsci.viewportCount = 0;
+		vsci.pViewports = nullptr;
+		vsci.scissorCount = 0;
+		vsci.pScissors = nullptr;
 
 		VkPipelineVertexInputStateCreateInfo visci = {};
 		visci.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -929,7 +952,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 
 		AlignedVector< VkPipelineColorBlendAttachmentState > blendAttachments;
 
-		for (int32_t i = 0; ts.rts->getColorTargetVk(i) != nullptr; ++i)
+		for (uint32_t i = 0; i < 4; ++i)
 		{
 			auto& cbas = blendAttachments.push_back();
 			cbas.blendEnable = rs.blendEnable ? VK_TRUE : VK_FALSE;
@@ -976,7 +999,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		gpci.pMultisampleState = &mssci;
 		gpci.pDepthStencilState = &dssci;
 		gpci.pColorBlendState = &cbsci;
-		gpci.pDynamicState = nullptr; // &dsci;
+		gpci.pDynamicState = &dsci;
 		gpci.layout = p->getPipelineLayout();
 		gpci.renderPass = m_targetRenderPass;
 		gpci.subpass = 0;

@@ -80,6 +80,8 @@ public:
 
 	bool prepareAsTexture(VkCommandBuffer commandBuffer);
 
+	uint32_t getColorTargetCount() const { return (uint32_t)m_colorTargets.size(); }
+
 	RenderTargetVk* getColorTargetVk(int32_t index) const { return m_colorTargets[index]; }
 
 	RenderTargetDepthVk* getDepthTargetVk() const { return m_depthTarget; }

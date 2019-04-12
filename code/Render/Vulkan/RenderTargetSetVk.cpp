@@ -303,6 +303,9 @@ bool RenderTargetSetVk::prepareAsTarget(
 			colorTarget->prepareAsTarget(commandBuffer);
 	}
 
+	if (m_depthTarget)
+		m_depthTarget->prepareAsTarget(commandBuffer);
+
 	AlignedVector< VkClearValue > clearValues;
 
 	if (colorIndex >= 0)
@@ -347,6 +350,10 @@ bool RenderTargetSetVk::prepareAsTexture(VkCommandBuffer commandBuffer)
 {
 	for (int32_t i = 0; i < m_setDesc.count; ++i)
 		m_colorTargets[i]->prepareAsTexture(commandBuffer);
+
+	if (m_depthTarget)
+		m_depthTarget->prepareAsTexture(commandBuffer);
+
 	return true;
 }
 

@@ -217,6 +217,9 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 		sci.addressModeW = c_addressModes[resourceSampler.state.addressW];
 		sci.mipLodBias = resourceSampler.state.mipBias;
 		sci.anisotropyEnable = VK_FALSE; // resourceSampler.state.useAnisotropic ? VK_TRUE : VK_FALSE;
+		sci.maxAnisotropy = 0.0f;
+		sci.compareEnable = (resourceSampler.state.compare != CfNone) ? VK_TRUE : VK_FALSE;
+		sci.compareOp = c_compareOperations[resourceSampler.state.compare];
 		sci.minLod = 0.0f;
 		sci.maxLod = resourceSampler.state.ignoreMips ? 0.0f : std::numeric_limits< float >::max();
 		sci.borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;
