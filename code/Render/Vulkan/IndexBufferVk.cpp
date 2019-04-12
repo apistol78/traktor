@@ -29,7 +29,6 @@ void* IndexBufferVk::lock()
 void IndexBufferVk::unlock()
 {
 	vkUnmapMemory(m_device, m_indexBufferMemory);
-	vkBindBufferMemory(m_device, m_indexBuffer, m_indexBufferMemory, 0);
 }
 
 	}

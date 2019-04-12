@@ -45,7 +45,6 @@ void* VertexBufferVk::lock(uint32_t vertexOffset, uint32_t vertexCount)
 void VertexBufferVk::unlock()
 {
 	vkUnmapMemory(m_device, m_vertexBufferMemory);
-	vkBindBufferMemory(m_device, m_vertexBuffer, m_vertexBufferMemory, 0);
 }
 
 	}

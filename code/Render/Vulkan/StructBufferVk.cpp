@@ -34,7 +34,6 @@ void* StructBufferVk::lock(uint32_t structOffset, uint32_t structCount)
 void StructBufferVk::unlock()
 {
 	vkUnmapMemory(m_device, m_storageBufferMemory);
-	vkBindBufferMemory(m_device, m_storageBuffer, m_storageBufferMemory, 0);
 }
 
 	}
