@@ -70,7 +70,6 @@ public:
 	bool linearLighting;
 	float exposureBias;
 	ShadowSettings shadowSettings[QuLast];
-	Color4f ambientColor;
 	bool fog;
 	float fogDistanceY;
 	float fogDistanceZ;
