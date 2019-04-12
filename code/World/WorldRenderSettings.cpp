@@ -46,14 +46,13 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 29, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 30, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
 ,	viewFarZ(100.0f)
 ,	linearLighting(true)
 ,	exposureBias(2.0f)
-,	ambientColor(0.0f, 0.0f, 0.0f)
 ,	fog(false)
 ,	fogDistanceY(0.0f)
 ,	fogDistanceZ(90.0f)
@@ -103,9 +102,12 @@ void WorldRenderSettings::serialize(ISerializer& s)
 	else
 		s >> MemberStaticArray< ShadowSettings, sizeof_array(shadowSettings), MemberComposite< ShadowSettings > >(L"shadowSettings", shadowSettings, c_ShadowSettings_elementNames18);
 
-	if (s.getVersion() >= 26)
+	if (s.getVersion() >= 26 && s.getVersion() < 30)
+	{
+		Color4f ambientColor;
 		s >> Member< Color4f >(L"ambientColor", ambientColor, AttributeHdr());
-
+	}
+	
 	if (s.getVersion() >= 23)
 	{
 		if (s.getVersion() < 24)
