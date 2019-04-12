@@ -76,6 +76,7 @@ PFN_vkCreateSampler vkCreateSampler = nullptr;
 PFN_vkQueueWaitIdle vkQueueWaitIdle = nullptr;
 PFN_vkCmdCopyBufferToImage vkCmdCopyBufferToImage = nullptr;
 PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties = nullptr;
+PFN_vkCmdSetViewport vkCmdSetViewport = nullptr;
 
 PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = nullptr;
@@ -545,6 +546,13 @@ bool initializeVulkanApi()
 	if (vkEnumerateDeviceExtensionProperties == nullptr)
 	{
 		log::error << L"Failed to resolve Vulkan entry point \"vkEnumerateDeviceExtensionProperties\"." << Endl;
+		return false;
+	}
+
+	vkCmdSetViewport = (PFN_vkCmdSetViewport)GetProcAddress(s_hVulkanModule, "vkCmdSetViewport");
+	if (vkCmdSetViewport == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdSetViewport\"." << Endl;
 		return false;
 	}
 

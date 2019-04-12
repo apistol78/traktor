@@ -907,14 +907,14 @@ bool emitMatrixIn(GlslContext& cx, MatrixIn* node)
 	Ref< GlslVariable > zaxis = cx.emitInput(node, L"ZAxis");
 	Ref< GlslVariable > translate = cx.emitInput(node, L"Translate");
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat4x4);
-	f << L"mat4 " << out->getName() << L" = mat4(" << Endl;
+	f << L"mat4 " << out->getName() << L" = transpose(mat4(" << Endl;
 	f << IncreaseIndent;
 	f << (xaxis     ? xaxis->cast(GtFloat4)     : L"vec4(1.0, 0.0, 0.0, 0.0)") << L"," << Endl;
 	f << (yaxis     ? yaxis->cast(GtFloat4)     : L"vec4(0.0, 1.0, 0.0, 0.0)") << L"," << Endl;
 	f << (zaxis     ? zaxis->cast(GtFloat4)     : L"vec4(0.0, 0.0, 1.0, 0.0)") << L"," << Endl;
 	f << (translate ? translate->cast(GtFloat4) : L"vec4(0.0, 0.0, 0.0, 1.0)") << Endl;
 	f << DecreaseIndent;
-	f << L");" << Endl;
+	f << L"));" << Endl;
 	return true;
 }
 
@@ -1451,7 +1451,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				switch (texture->getType())
 				{
 				case GtTexture2D:
-					assign(f, out) << L"texture(sampler2DShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L" * vec3(1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.5));" << Endl;
+					assign(f, out) << L"texture(sampler2DShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L");" << Endl;
 					break;
 
 				case GtTexture3D:
@@ -1471,7 +1471,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				switch (texture->getType())
 				{
 				case GtTexture2D:
-					assign(f, out) << L"textureLod(sampler2DShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L" * vec3(1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.5), 0.0);" << Endl;
+					assign(f, out) << L"textureLod(sampler2DShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
 					break;
 
 				case GtTexture3D:

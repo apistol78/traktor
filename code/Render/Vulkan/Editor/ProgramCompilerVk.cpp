@@ -509,35 +509,35 @@ bool ProgramCompilerVk::generate(
 		}
 	}
 
-	//// Vertex
-	//{
-	//	StringOutputStream vss;
-	//	vss << cx.getVertexShader().getGeneratedShader(layout);
-	//	vss << Endl;
-	//	vss << ss.str();
-	//	vss << Endl;
+	// Vertex
+	{
+		StringOutputStream vss;
+		vss << cx.getVertexShader().getGeneratedShader(layout);
+		vss << Endl;
+		vss << ss.str();
+		vss << Endl;
 
-	//	std::ostringstream vos;
-	//	spv::Disassemble(vos, vertexShaderSpv);
-	//	vss << mbstows(vos.str()) << Endl;
+		//std::ostringstream vos;
+		//spv::Disassemble(vos, vertexShaderSpv);
+		//vss << mbstows(vos.str()) << Endl;
 
-	//	outVertexShader = vss.str();
-	//}
+		outVertexShader = vss.str();
+	}
 
-	//// Pixel
-	//{
-	//	StringOutputStream fss;
-	//	fss << cx.getFragmentShader().getGeneratedShader(layout);
-	//	fss << Endl;
-	//	fss << ss.str();
-	//	fss << Endl;
+	// Pixel
+	{
+		StringOutputStream fss;
+		fss << cx.getFragmentShader().getGeneratedShader(layout);
+		fss << Endl;
+		fss << ss.str();
+		fss << Endl;
 
-	//	std::ostringstream fos;
-	//	spv::Disassemble(fos, fragmentShaderSpv);
-	//	fss << mbstows(fos.str()) << Endl;
+		//std::ostringstream fos;
+		//spv::Disassemble(fos, fragmentShaderSpv);
+		//fss << mbstows(fos.str()) << Endl;
 
-	//	outPixelShader = fss.str();
-	//}
+		outPixelShader = fss.str();
+	}
 
 	return true;
 }
