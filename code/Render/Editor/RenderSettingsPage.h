@@ -43,6 +43,8 @@ private:
 	Ref< ui::Edit > m_editMipBias;
 	Ref< ui::Edit > m_editMaxAnisotropy;
 	Ref< ui::Edit > m_editMultiSample;
+	Ref< ui::Edit > m_editSkipMips;
+	Ref< ui::Edit > m_editClampSize;
 };
 
 	}

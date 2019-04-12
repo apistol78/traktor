@@ -57,6 +57,18 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_editMultiSample = new ui::Edit();
 	m_editMultiSample->create(container, L"", ui::WsNone, new ui::NumericEditValidator(false, 0, 8));
 
+	Ref< ui::Static > staticSkipMips = new ui::Static();
+	staticSkipMips->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_SKIP_TEXTURE_MIPS"));
+
+	m_editSkipMips = new ui::Edit();
+	m_editSkipMips->create(container, L"", ui::WsNone, new ui::NumericEditValidator(false, 0));
+
+	Ref< ui::Static > staticClampSize = new ui::Static();
+	staticClampSize->create(container, i18n::Text(L"EDITOR_SETTINGS_RENDERER_CLAMP_TEXTURE_SIZE"));
+
+	m_editClampSize = new ui::Edit();
+	m_editClampSize->create(container, L"", ui::WsNone, new ui::NumericEditValidator(false, 0));
+
 	std::wstring renderSystemType = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
 
 	TypeInfoSet renderSystemTypes;
@@ -86,6 +98,8 @@ bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_editMipBias->setText(toString(settings->getProperty< float >(L"Editor.MipBias")));
 	m_editMaxAnisotropy->setText(toString(settings->getProperty< int32_t >(L"Editor.MaxAnisotropy")));
 	m_editMultiSample->setText(toString(settings->getProperty< int32_t >(L"Editor.MultiSample", 0)));
+	m_editSkipMips->setText(toString(settings->getProperty< int32_t >(L"TexturePipeline.SkipMips", 0)));
+	m_editClampSize->setText(toString(settings->getProperty< int32_t >(L"TexturePipeline.ClampSize", 0)));
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_RENDERER"));
 	return true;
@@ -102,6 +116,8 @@ bool RenderSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyFloat >(L"Editor.MipBias", parseString< float >(m_editMipBias->getText()));
 	settings->setProperty< PropertyInteger >(L"Editor.MaxAnisotropy", parseString< int32_t >(m_editMaxAnisotropy->getText()));
 	settings->setProperty< PropertyInteger >(L"Editor.MultiSample", parseString< int32_t >(m_editMultiSample->getText()));
+	settings->setProperty< PropertyInteger >(L"TexturePipeline.SkipMips", parseString< int32_t >(m_editSkipMips->getText()));
+	settings->setProperty< PropertyInteger >(L"TexturePipeline.ClampSize", parseString< int32_t >(m_editClampSize->getText()));
 	return true;
 }
 
