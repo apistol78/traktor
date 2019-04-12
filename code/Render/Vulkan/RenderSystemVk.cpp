@@ -157,7 +157,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	VkDebugReportCallbackCreateInfoEXT drcci = {};
 	drcci.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
-    drcci.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT | VK_DEBUG_REPORT_INFORMATION_BIT_EXT | VK_DEBUG_REPORT_DEBUG_BIT_EXT;
+    drcci.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT; // | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT | VK_DEBUG_REPORT_INFORMATION_BIT_EXT | VK_DEBUG_REPORT_DEBUG_BIT_EXT;
     drcci.pfnCallback = debugCallback;
     drcci.pUserData = (void*)this;
 
@@ -442,6 +442,8 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 		vertexAttributeDescriptions.push_back(vertexAttributeDescription);
 	}
 
+	vkBindBufferMemory(m_logicalDevice, vertexBuffer, vertexBufferMemory, 0);
+
 	// Calculate hash of vertex declaration.
 	Adler32 cs;
 	cs.begin();
@@ -487,6 +489,8 @@ Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32
 	if (vkAllocateMemory(m_logicalDevice, &mai, nullptr, &indexBufferMemory) != VK_SUCCESS)
 		return nullptr;
 
+	vkBindBufferMemory(m_logicalDevice, indexBuffer, indexBufferMemory, 0);
+
 	return new IndexBufferVk(indexType, bufferSize, m_logicalDevice, indexBuffer, indexBufferMemory);
 }
 
@@ -517,6 +521,8 @@ Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< Stru
 	VkDeviceMemory storageBufferMemory;
 	if (vkAllocateMemory(m_logicalDevice, &mai, nullptr, &storageBufferMemory) != VK_SUCCESS)
 		return nullptr;
+
+	vkBindBufferMemory(m_logicalDevice, storageBuffer, storageBufferMemory, 0);
 
 	return new StructBufferVk(bufferSize, m_logicalDevice, storageBuffer, storageBufferMemory);
 }

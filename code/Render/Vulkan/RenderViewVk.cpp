@@ -737,13 +737,15 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	}
 
 	// Create descriptor pool.
-	VkDescriptorPoolSize dps[3];
+	VkDescriptorPoolSize dps[4];
 	dps[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-	dps[0].descriptorCount = 6;	// \tbd number of frames in swapchain, ie in-flight?
+	dps[0].descriptorCount = 1000;
 	dps[1].type = VK_DESCRIPTOR_TYPE_SAMPLER;
-	dps[1].descriptorCount = 6;	// \tbd number of frames in swapchain, ie in-flight?
+	dps[1].descriptorCount = 1000;
 	dps[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-	dps[2].descriptorCount = 6;	// \tbd number of frames in swapchain, ie in-flight?
+	dps[2].descriptorCount = 1000;
+	dps[3].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+	dps[3].descriptorCount = 1000;
 
 	VkDescriptorPoolCreateInfo dpci = {};
 	dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
