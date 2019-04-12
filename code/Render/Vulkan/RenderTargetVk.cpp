@@ -15,8 +15,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetVk", RenderTargetVk, ISimple
 
 RenderTargetVk::RenderTargetVk()
 :	m_format(VK_FORMAT_UNDEFINED)
-,	m_image(0)
-,	m_imageView(0)
+,	m_image(nullptr)
+,	m_imageView(nullptr)
 ,	m_imageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
 ,	m_width(0)
 ,	m_height(0)

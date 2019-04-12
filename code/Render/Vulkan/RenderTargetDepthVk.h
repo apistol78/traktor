@@ -55,6 +55,10 @@ public:
 
 	virtual void* getInternalHandle() override final;
 
+	void prepareAsTarget(VkCommandBuffer cmdBuffer);
+
+	void prepareAsTexture(VkCommandBuffer cmdBuffer);
+
 	VkFormat getVkFormat() const { return m_format; }
 
 	VkImage getVkImage() const { return m_image; }
@@ -65,6 +69,7 @@ private:
 	VkFormat m_format;
 	VkImage m_image;
 	VkImageView m_imageView;
+	VkImageLayout m_imageLayout;
 	int32_t m_width;
 	int32_t m_height;
 };

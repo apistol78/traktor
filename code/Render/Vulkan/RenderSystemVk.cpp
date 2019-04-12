@@ -62,7 +62,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 )
 {
 	if (pMessage)
-		log::error << mbstows(pMessage) << Endl;
+		log::info << mbstows(pMessage) << Endl;
 	return VK_FALSE;
 }
 		}
