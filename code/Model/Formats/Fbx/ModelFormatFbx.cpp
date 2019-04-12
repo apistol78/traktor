@@ -294,6 +294,15 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref
 				material.setColor(Color4ub(255, 255, 255));
 				material.setDiffuseTerm(1.0f);
 				material.setSpecularTerm(1.0f);
+
+				if (true /* has uv */)
+				{
+					material.setNormalMap(Material::Map(L"Normals", 0, false));
+					material.setDiffuseMap(Material::Map(L"Albedo", 0, true));
+					material.setMetalnessMap(Material::Map(L"Metalness", 0, false));
+					material.setRoughnessMap(Material::Map(L"Roughness", 0, false));
+				}
+
 				defaultMaterialIndex = model->addMaterial(material);
 			}
 
