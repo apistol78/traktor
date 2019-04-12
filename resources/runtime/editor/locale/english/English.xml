@@ -1018,6 +1018,14 @@
       <second>Renderer</second>
     </item>
     <item>
+    	<first>EDITOR_SETTINGS_RENDERER_SKIP_TEXTURE_MIPS</first>
+    	<second>Skip texture mips</second>
+    </item>
+    <item>
+    	<first>EDITOR_SETTINGS_RENDERER_CLAMP_TEXTURE_SIZE</first>
+    	<second>Clamp max texture size</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_RESET_ALL_SHORTCUTS</first>
       <second>Reset all shortcuts</second>
     </item>

@@ -577,6 +577,8 @@ bool TextureOutputPipeline::buildOutput(
 		mipCount = textureOutput->m_generateMips ? log2(std::max(width, height)) + 1 : 1;
 		T_ASSERT(mipCount >= 1);
 
+		log::info << L"Building 2D texture, " << width << L" * " << height << L"..." << Endl;
+
 		Writer writer(stream);
 
 		writer << uint32_t(12);
@@ -750,6 +752,8 @@ bool TextureOutputPipeline::buildOutput(
 		mipCount = textureOutput->m_generateMips ? log2(height) + 1 : 1;
 		T_ASSERT(mipCount >= 1);
 
+		log::info << L"Building 3D texture, " << sliceWidth << L" * " << sliceHeight << L" * " << sliceDepth << L"..." << Endl;
+
 		Writer writer(stream);
 
 		writer << uint32_t(12);
@@ -848,6 +852,8 @@ bool TextureOutputPipeline::buildOutput(
 
 		mipCount = textureOutput->m_generateMips ? log2(sideSize) + 1 : 1;
 		T_ASSERT(mipCount >= 1);
+
+		log::info << L"Building cube texture, " << sideSize << L"..." << Endl;
 
 		Writer writer(stream);
 
