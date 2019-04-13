@@ -97,14 +97,15 @@ void ImageProcessStepGodRay::InstanceGodRay::render(
 	Vector4 lightPositionView = params.view * (params.godRayDirection * Scalar(m_step->m_lightDistance)).xyz1();
 	Vector4 lightPosition = params.projection * lightPositionView;
 
+	// \tbd
 	// If light is behind camera near plane then skip god rays; but
 	// ensure target is cleared so no lingering rays are kept.
-	if (params.godRayDirection.length2() <= FUZZY_EPSILON || lightPosition.w() <= 0.0f)
-	{
-		const static Color4f c_clearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		renderView->clear(CfColor, &c_clearColor, 0.0f, 0);
-		return;
-	}
+	// if (params.godRayDirection.length2() <= FUZZY_EPSILON || lightPosition.w() <= 0.0f)
+	// {
+	// 	const static Color4f c_clearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	// 	renderView->clear(CfColor, &c_clearColor, 0.0f, 0);
+	// 	return;
+	// }
 
 	lightPosition /= lightPosition.w();
 

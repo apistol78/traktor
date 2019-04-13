@@ -513,16 +513,18 @@ void CubicRenderControl::capture(const Vector4& pivot)
 	);
 
 	// Render world.
-	if (m_renderView->begin())
+	if (m_renderView->begin(nullptr))
 	{
+		render::Clear cl;
+		cl.mask = render::CfColor | render::CfDepth;
+		cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+		cl.depth = 1.0f;
+
 		// Render all faces of cube map.
 		for (int32_t face = 0; face < 6; ++face)
 		{
-			if (m_renderView->begin(m_renderTargetSet, face))
+			if (m_renderView->begin(m_renderTargetSet, face, &cl))
 			{
-				const Color4f clearColor(0.0f, 0.0f, 0.0f, 1.0f);
-				m_renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
-
 				Matrix44 view;
 				switch (face)
 				{
@@ -571,7 +573,7 @@ void CubicRenderControl::capture(const Vector4& pivot)
 					}
 				}
 
-				m_worldRenderer->beginRender(0, clearColor);
+				m_worldRenderer->beginRender(0, cl.colors[0]);
 				m_worldRenderer->render(0);
 				m_worldRenderer->endRender(0, 1.0f / 60.0f);
 
@@ -582,6 +584,8 @@ void CubicRenderControl::capture(const Vector4& pivot)
 		// Download each target and update cube texture.
 		for (int32_t side = 0; side < 6; ++side)
 		{
+			m_cubeImages[side]->clear(Color4f(1.0f, 0.0f, 0.0f, 1.0f));
+
 			if (!m_renderTargetSet->read(side, m_cubeImages[side]->getData()))
 				log::error << L"Unable to read render target " << side << L" into cube image." << Endl;
 
@@ -679,12 +683,14 @@ void CubicRenderControl::eventPaint(ui::PaintEvent* event)
 	//capture(Vector4::origo());
 
 	// Render world.
-	if (m_renderView->begin())
+	render::Clear cl;
+	cl.mask = render::CfColor | render::CfDepth;
+	cl.colors[0] = Color4f(0.3f, 0.3f, 0.3f, 0.0f);
+	cl.depth = 1.0f;
+
+	if (m_renderView->begin(&cl))
 	{
 		// Render cube preview.
-		const Color4f clearColor(0.3f, 0.3f, 0.3f, 1.0f);
-		m_renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
-
 		ui::Size sz = m_renderWidget->getInnerRect().getSize();
 		float aspect = float(sz.cx) / sz.cy;
 

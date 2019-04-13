@@ -108,42 +108,52 @@ SystemWindow RenderViewCapture::getSystemWindow()
 	return m_renderView->getSystemWindow();
 }
 
-bool RenderViewCapture::begin()
+bool RenderViewCapture::begin(
+	const Clear* clear
+)
 {
-	if (!m_renderView->begin())
+	if (!m_renderView->begin(clear))
 		return false;
 
 	m_targetDepth = 1;
 	return true;
 }
 
-bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet)
+bool RenderViewCapture::begin(
+	RenderTargetSet* renderTargetSet,
+	const Clear* clear
+)
 {
 	RenderTargetSetCapture* rtsc = mandatory_non_null_type_cast< RenderTargetSetCapture* >(renderTargetSet);
 
-	if (!m_renderView->begin(rtsc->getRenderTargetSet()))
+	if (!m_renderView->begin(
+		rtsc->getRenderTargetSet(),
+		clear
+	))
 		return false;
 
 	++m_targetDepth;
 	return true;
 }
 
-bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet, int renderTarget)
+bool RenderViewCapture::begin(
+	RenderTargetSet* renderTargetSet,
+	int32_t renderTarget,
+	const Clear* clear
+)
 {
 	RenderTargetSetCapture* rtsc = mandatory_non_null_type_cast< RenderTargetSetCapture* >(renderTargetSet);
 	T_CAPTURE_ASSERT (rtsc->haveColorTexture(renderTarget), L"No such render target.");
 
-	if (!m_renderView->begin(rtsc->getRenderTargetSet(), renderTarget))
+	if (!m_renderView->begin(
+		rtsc->getRenderTargetSet(),
+		renderTarget,
+		clear
+	))
 		return false;
 
 	++m_targetDepth;
 	return true;
-}
-
-void RenderViewCapture::clear(uint32_t clearMask, const Color4f* color, float depth, int32_t stencil)
-{
-	T_CAPTURE_ASSERT (m_targetDepth >= 1, L"Cannot clear outside of begin/end.");
-	m_renderView->clear(clearMask, color, depth, stencil);
 }
 
 void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)

@@ -45,12 +45,16 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 
 		if (renderTargetSet)
 		{
-			renderView->begin(renderTargetSet, 0);
 			if (clear)
 			{
-				const static Color4f cc(0.0f, 0.0f, 0.0f, 0.0f);
-				renderView->clear(render::CfColor, &cc, 1.0f, 0);
+				render::Clear cl;
+				cl.mask = render::CfColor;
+				cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+
+				renderView->begin(renderTargetSet, 0, &cl);
 			}
+			else
+				renderView->begin(renderTargetSet, 0, nullptr);
 		}
 
 		screenRenderer->draw(renderView, program);

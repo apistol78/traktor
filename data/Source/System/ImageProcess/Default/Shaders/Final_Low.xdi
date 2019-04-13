@@ -87,8 +87,8 @@
 			<id>{CAD42BAD-B7E7-5343-8B5A-625D48C197B3}</id>
 			<comment/>
 			<position>
-				<first>1707</first>
-				<second>49</second>
+				<first>1667</first>
+				<second>48</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -142,8 +142,8 @@
 			<id>{B3F4EF57-6341-B947-BED6-7ACF71064F42}</id>
 			<comment/>
 			<position>
-				<first>1706</first>
-				<second>81</second>
+				<first>1666</first>
+				<second>80</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -152,9 +152,9 @@
 			<comment/>
 			<position>
 				<first>1912</first>
-				<second>140</second>
+				<second>139</second>
 			</position>
-			<value>25</value>
+			<value>60</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{E9D4908F-B501-8D48-BDC9-4519184C5D2A}</id>
@@ -163,7 +163,7 @@
 				<first>1907</first>
 				<second>174</second>
 			</position>
-			<value>0.7</value>
+			<value>0.2</value>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{F9E814A5-B055-044F-BA7A-87ADEE163236}</id>

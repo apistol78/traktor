@@ -363,17 +363,6 @@ ISimpleTexture* RenderTargetSetOpenGLES2::getDepthTexture() const
 	return m_depthTarget;
 }
 
-void RenderTargetSetOpenGLES2::swap(int32_t index1, int32_t index2)
-{
-	T_ASSERT(index1 >= 0);
-	T_ASSERT(index1 < sizeof_array(m_renderTargets));
-	T_ASSERT(index2 >= 0);
-	T_ASSERT(index2 < sizeof_array(m_renderTargets));
-	std::swap(m_targetFBO[index1], m_targetFBO[index2]);
-	std::swap(m_targetTextures[index1], m_targetTextures[index2]);
-	std::swap(m_renderTargets[index1], m_renderTargets[index2]);
-}
-
 void RenderTargetSetOpenGLES2::discard()
 {
 #if defined(__ANDROID__)

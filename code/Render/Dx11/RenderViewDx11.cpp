@@ -504,7 +504,9 @@ SystemWindow RenderViewDx11::getSystemWindow()
 	return sw;
 }
 
-bool RenderViewDx11::begin()
+bool RenderViewDx11::begin(
+	const Clear* clear
+)
 {
 	T_ASSERT(m_renderStateStack.empty());
 
@@ -524,6 +526,29 @@ bool RenderViewDx11::begin()
 		{ m_targetSize[0], m_targetSize[1] }
 	};
 
+	if ((clearMask & CfColor) == CfColor)
+	{
+		float T_MATH_ALIGN16 tmp[4];
+		if (rs.d3dRenderView[0] != 0)
+		{
+			color.storeAligned(tmp);
+			m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[0], tmp);
+		}
+	}
+
+	if ((clearMask & (CfDepth | CfStencil)) != 0)
+	{
+		if (rs.d3dDepthStencilView)
+		{
+			UINT d3dClear = 0;
+			if ((clearMask & CfDepth) != 0)
+				d3dClear |= D3D11_CLEAR_DEPTH;
+			if ((clearMask & CfStencil) != 0)
+				d3dClear |= D3D11_CLEAR_STENCIL;
+			m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, d3dClear, depth, stencil);
+		}
+	}
+
 	m_renderStateStack.push_back(rs);
 
 	m_drawCalls = 0;
@@ -532,7 +557,10 @@ bool RenderViewDx11::begin()
 	return true;
 }
 
-bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
+bool RenderViewDx11::begin(
+	RenderTargetSet* renderTargetSet,
+	const Clear* clear
+)
 {
 	T_ASSERT(!m_renderStateStack.empty());
 
@@ -639,44 +667,7 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 	else
 		return false;
 
-	return true;
-}
-
-bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet, int renderTarget)
-{
-	T_ASSERT(!m_renderStateStack.empty());
-
-	if (!m_context)
-		return false;
-
-	RenderTargetSetDx11* rts = checked_type_cast< RenderTargetSetDx11*, false >(renderTargetSet);
-	RenderTargetDepthDx11* rtd = checked_type_cast< RenderTargetDepthDx11*, true >(rts->getDepthTexture());
-	RenderTargetDx11* rt = checked_type_cast< RenderTargetDx11*, false >(rts->getColorTexture(renderTarget));
-	RenderState rs =
-	{
-		{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
-		rts,
-		{ rt, 0, 0, 0 },
-		{ rt->getD3D11RenderTargetView(), 0, 0, 0 },
-		(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
-		{ rts->getWidth(), rts->getHeight() }
-	};
-
-	if (rts->usingPrimaryDepthStencil())
-		rs.d3dDepthStencilView = m_d3dDepthStencilView;
-
-	m_renderStateStack.push_back(rs);
-	m_targetsDirty = true;
-
-	return true;
-}
-
-void RenderViewDx11::clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil)
-{
-	T_ASSERT(!m_renderStateStack.empty());
-
 	const RenderState& rs = m_renderStateStack.back();
-
 	if ((clearMask & CfColor) == CfColor)
 	{
 		float T_MATH_ALIGN16 tmp[4];
@@ -714,6 +705,64 @@ void RenderViewDx11::clear(uint32_t clearMask, const Color4f* colors, float dept
 			m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, d3dClear, depth, stencil);
 		}
 	}
+
+	return true;
+}
+
+bool RenderViewDx11::begin(
+	RenderTargetSet* renderTargetSet,
+	int32_t renderTarget,
+	const Clear* clear
+)
+{
+	T_ASSERT(!m_renderStateStack.empty());
+
+	if (!m_context)
+		return false;
+
+	RenderTargetSetDx11* rts = checked_type_cast< RenderTargetSetDx11*, false >(renderTargetSet);
+	RenderTargetDepthDx11* rtd = checked_type_cast< RenderTargetDepthDx11*, true >(rts->getDepthTexture());
+	RenderTargetDx11* rt = checked_type_cast< RenderTargetDx11*, false >(rts->getColorTexture(renderTarget));
+	RenderState rs =
+	{
+		{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+		rts,
+		{ rt, 0, 0, 0 },
+		{ rt->getD3D11RenderTargetView(), 0, 0, 0 },
+		(rtd != 0) ? rtd->getD3D11DepthTextureView() : 0,
+		{ rts->getWidth(), rts->getHeight() }
+	};
+
+	if (rts->usingPrimaryDepthStencil())
+		rs.d3dDepthStencilView = m_d3dDepthStencilView;
+
+	if ((clearMask & CfColor) == CfColor)
+	{
+		float T_MATH_ALIGN16 tmp[4];
+		if (rs.d3dRenderView[0] != 0)
+		{
+			color.storeAligned(tmp);
+			m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[0], tmp);
+		}
+	}
+
+	if ((clearMask & (CfDepth | CfStencil)) != 0)
+	{
+		if (rs.d3dDepthStencilView)
+		{
+			UINT d3dClear = 0;
+			if ((clearMask & CfDepth) != 0)
+				d3dClear |= D3D11_CLEAR_DEPTH;
+			if ((clearMask & CfStencil) != 0)
+				d3dClear |= D3D11_CLEAR_STENCIL;
+			m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, d3dClear, depth, stencil);
+		}
+	}
+
+	m_renderStateStack.push_back(rs);
+	m_targetsDirty = true;
+
+	return true;
 }
 
 void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)

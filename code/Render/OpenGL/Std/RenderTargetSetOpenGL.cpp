@@ -224,16 +224,6 @@ ISimpleTexture* RenderTargetSetOpenGL::getDepthTexture() const
 	return m_depthTarget;
 }
 
-void RenderTargetSetOpenGL::swap(int32_t index1, int32_t index2)
-{
-	T_ASSERT(index1 >= 0);
-	T_ASSERT(index1 < sizeof_array(m_colorTargets));
-	T_ASSERT(index2 >= 0);
-	T_ASSERT(index2 < sizeof_array(m_colorTargets));
-	std::swap(m_targetTextures[index1], m_targetTextures[index2]);
-	std::swap(m_colorTargets[index1], m_colorTargets[index2]);
-}
-
 void RenderTargetSetOpenGL::discard()
 {
 	m_contentValid = false;

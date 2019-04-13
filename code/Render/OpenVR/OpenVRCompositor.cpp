@@ -133,16 +133,14 @@ Matrix44 OpenVRCompositor::getEyeToHead(int32_t eye) const
 
 bool OpenVRCompositor::beginRenderEye(IRenderView* renderView, int32_t eye)
 {
-	if (!renderView->begin(m_targetSet))
-		return false;
+	render::Clear cl;
+	cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
+	cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0);
+	cl.depth = 1.0f;
+	cl.stencil = 0;
 
-	const Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	renderView->clear(
-		render::CfColor | render::CfDepth | render::CfStencil,
-		&clearColor,
-		1.0f,
-		0
-	);
+	if (!renderView->begin(m_targetSet, &cl))
+		return false;
 
 	return true;
 }

@@ -304,7 +304,9 @@ SystemWindow RenderViewVk::getSystemWindow()
 #endif
 }
 
-bool RenderViewVk::begin()
+bool RenderViewVk::begin(
+	const Clear* clear
+)
 {
 #if defined(_WIN32) || defined(__LINUX__)
 	// Get next target from swap chain.
@@ -319,29 +321,35 @@ bool RenderViewVk::begin()
 #endif
 
 	// Reset descriptor pool.
-	vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0);
+	if (vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0) != VK_SUCCESS)
+		return false;
 
 	// Begin recording command buffer.
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	vkBeginCommandBuffer(m_drawCommandBuffer, &beginInfo);
+	if (vkBeginCommandBuffer(m_drawCommandBuffer, &beginInfo) != VK_SUCCESS)
+		return false;
 
 	// Push primary target onto stack.
 	TargetState ts;
 	ts.rts = m_primaryTargets[m_currentImageIndex];
 	ts.colorIndex = 0;
-	ts.clearMask = 0;
-	ts.clearDepth = 1.0f;
-	ts.clearStencil = 0;
+	ts.clear.mask = 0;
 	ts.viewport = m_viewport;
+
+	if (clear)
+		ts.clear = *clear;
 
 	m_targetStateStack.push_back(ts);
 	m_targetStateDirty = true;
 	return true;
 }
 
-bool RenderViewVk::begin(RenderTargetSet* renderTargetSet)
+bool RenderViewVk::begin(
+	RenderTargetSet* renderTargetSet,
+	const Clear* clear
+)
 {
 	// End current render pass, restart later.
 	// \tbd
@@ -358,17 +366,22 @@ bool RenderViewVk::begin(RenderTargetSet* renderTargetSet)
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	ts.colorIndex = -1;
-	ts.clearMask = 0;
-	ts.clearDepth = 1.0f;
-	ts.clearStencil = 0;
+	ts.clear.mask = 0;
 	ts.viewport = Viewport(0, 0, ts.rts->getWidth(), ts.rts->getHeight(), 0.0f, 1.0f);
+
+	if (clear)
+		ts.clear = *clear;
 
 	m_targetStateStack.push_back(ts);
 	m_targetStateDirty = true;
 	return true;
 }
 
-bool RenderViewVk::begin(RenderTargetSet* renderTargetSet, int renderTarget)
+bool RenderViewVk::begin(
+	RenderTargetSet* renderTargetSet,
+	int32_t renderTarget,
+	const Clear* clear
+)
 {
 	// End current render pass, restart later.
 	if (!m_targetStateDirty)
@@ -377,36 +390,23 @@ bool RenderViewVk::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
 	ts.colorIndex = renderTarget;
-	ts.clearMask = 0;
-	ts.clearDepth = 1.0f;
-	ts.clearStencil = 0;
+	ts.clear.mask = 0;
 	ts.viewport = Viewport(0, 0, ts.rts->getWidth(), ts.rts->getHeight(), 0.0f, 1.0f);
+
+	if (clear)
+		ts.clear = *clear;
 
 	m_targetStateStack.push_back(ts);
 	m_targetStateDirty = true;
 	return true;
 }
 
-void RenderViewVk::clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil)
+void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
-	TargetState& ts = m_targetStateStack.back();
-	if (m_targetStateDirty)
-	{
-		ts.clearMask |= clearMask;
-		if (clearMask & CfColor)
-			ts.clearColors[0] = colors[0];
-		if (clearMask & CfDepth)
-			ts.clearDepth = depth;
-		if (clearMask & CfStencil)
-			ts.clearStencil = stencil;
-	}
-	else
-	{
-		// Target state already validated; clear again or begin/end render pass?
-	}
+	draw(vertexBuffer, indexBuffer, program, primitives, 1);
 }
 
-void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
+void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
 	TargetState& ts = m_targetStateStack.back();
 
@@ -446,7 +446,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 		vkCmdDrawIndexed(
 			m_drawCommandBuffer,
 			vertexCount,	// index count
-			1,	// instance count
+			instanceCount,	// instance count
 			primitives.offset,	// first index
 			0,	// vertex offset
 			0	// first instance id
@@ -457,16 +457,11 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 		vkCmdDraw(
 			m_drawCommandBuffer,
 			vertexCount,   // vertex count
-			1,   // instance count
+			instanceCount,   // instance count
 			primitives.offset,   // first vertex
 			0 // first instance
 		);
 	}
-}
-
-void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
-{
-	validateTargetState();
 }
 
 void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
@@ -836,10 +831,7 @@ void RenderViewVk::validateTargetState()
 	if (!ts.rts->prepareAsTarget(
 		m_drawCommandBuffer,
 		ts.colorIndex,
-		ts.clearMask,
-		ts.clearColors,
-		ts.clearDepth,
-		ts.clearStencil,
+		ts.clear,
 		m_primaryTargets[m_currentImageIndex]->getDepthTargetVk(),
 		
 		// Out
@@ -857,7 +849,7 @@ void RenderViewVk::validateTargetState()
 	vp.maxDepth = ts.viewport.farZ;
 	vkCmdSetViewport(m_drawCommandBuffer, 0, 1, &vp);
 
-	ts.clearMask = 0;
+	ts.clear.mask = 0;
 	m_targetStateDirty = false;
 }
 

@@ -453,15 +453,7 @@ bool emitInstance(GlslContext& cx, Instance* node)
 {
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
-#if !defined(T_OPENGL_ES2)
 	assign(f, out) << L"float(gl_InstanceID);" << Endl;
-#else
-	const PropertyGroup* settings = cx.getSettings();
-	if (settings && settings->getProperty< bool >(L"Glsl.ES2.SupportHwInstancing", false))
-		assign(f, out) << L"float(gl_InstanceIDEXT);" << Endl;
-	else
-		assign(f, out) << L"_gl_instanceID;" << Endl;
-#endif
 	return true;
 }
 
@@ -1345,11 +1337,7 @@ bool emitRound(GlslContext& cx, Round* node)
 	if (!in)
 		return false;
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
-#if !defined(T_OPENGL_ES2)
 	assign(f, out) << L"round(" << in->getName() << L");" << Endl;
-#else
-	assign(f, out) << L"trunc(" << in->getName() << L" + " << expandScalar(0.5f, in->getType()) << L");" << Endl;
-#endif
 	return true;
 }
 

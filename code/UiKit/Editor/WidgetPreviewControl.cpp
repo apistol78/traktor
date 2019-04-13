@@ -230,7 +230,13 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView || !m_moviePlayer)
 		return;
 
-	if (m_renderView->begin())
+	render::Clear cl;
+	cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
+	cl.colors[0] = Color4f(0.8f, 0.8f, 0.8f, 0.0);
+	cl.depth = 1.0f;
+	cl.stencil = 0;
+
+	if (m_renderView->begin(&cl))
 	{
 		if (m_scaffoldingObject)
 		{
@@ -249,14 +255,6 @@ void WidgetPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_displayRendererWire->end(uint32_t(0));
 
 		// Flush render context.
-		const Color4f clearColor(0.8f, 0.8f, 0.8f, 0.0);
-		m_renderView->clear(
-			render::CfColor | render::CfDepth | render::CfStencil,
-			&clearColor,
-			1.0f,
-			0
-		);
-
 		m_displayRenderer->render(m_renderView, 0, Vector2(0.0f, 0.0f), 1.0f);
 		m_displayRendererWire->render(m_renderView, uint32_t(0));
 

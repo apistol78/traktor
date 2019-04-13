@@ -269,7 +269,7 @@ SystemWindow RenderViewOpenGLES2::getSystemWindow()
 #endif
 }
 
-bool RenderViewOpenGLES2::begin()
+bool RenderViewOpenGLES2::begin(const Clear* clear)
 {
 	if (!m_context->enter())
 		return false;
@@ -296,12 +296,12 @@ bool RenderViewOpenGLES2::begin()
 	return true;
 }
 
-bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet)
+bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, const Clear* clear)
 {
-	return begin(renderTargetSet, 0);
+	return begin(renderTargetSet, 0, clear);
 }
 
-bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarget)
+bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
 {
 	RenderTargetSetOpenGLES2* rts = checked_type_cast< RenderTargetSetOpenGLES2* >(renderTargetSet);
 
@@ -326,47 +326,46 @@ bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarg
 	));
 
 	m_renderTargetStack.push(s);
+
+	if (clear && clear->mask != 0)
+	{
+		const GLuint c_clearMask[] =
+		{
+			0,
+			GL_COLOR_BUFFER_BIT,
+			GL_DEPTH_BUFFER_BIT,
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
+			GL_STENCIL_BUFFER_BIT,
+			GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+			GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
+			GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT
+		};
+
+		GLuint cm = c_clearMask[clear->mask];
+
+		if (cm & GL_COLOR_BUFFER_BIT)
+		{
+			m_stateCache->setColorMask(RenderStateOpenGL::CmAll);
+			float r = clear->colors[0].getRed();
+			float g = clear->colors[0].getGreen();
+			float b = clear->colors[0].getBlue();
+			float a = clear->colors[0].getAlpha();
+			T_OGL_SAFE(glClearColor(r, g, b, a));
+		}
+
+		if (cm & GL_DEPTH_BUFFER_BIT)
+		{
+			m_stateCache->setDepthMask(GL_TRUE);
+			T_OGL_SAFE(glClearDepthf(clear->depth));
+		}
+
+		if (cm & GL_STENCIL_BUFFER_BIT)
+			T_OGL_SAFE(glClearStencil(clear->stencil));
+
+		T_OGL_SAFE(glClear(cm));
+	}
+
 	return true;
-}
-
-void RenderViewOpenGLES2::clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil)
-{
-	const GLuint c_clearMask[] =
-	{
-		0,
-		GL_COLOR_BUFFER_BIT,
-		GL_DEPTH_BUFFER_BIT,
-		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
-		GL_STENCIL_BUFFER_BIT,
-		GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
-		GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
-		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT
-	};
-
-	GLuint cm = c_clearMask[clearMask];
-	if (!cm)
-		return;
-
-	if (cm & GL_COLOR_BUFFER_BIT)
-	{
-		m_stateCache->setColorMask(RenderStateOpenGL::CmAll);
-		float r = colors[0].getRed();
-		float g = colors[0].getGreen();
-		float b = colors[0].getBlue();
-		float a = colors[0].getAlpha();
-		T_OGL_SAFE(glClearColor(r, g, b, a));
-	}
-
-	if (cm & GL_DEPTH_BUFFER_BIT)
-	{
-		m_stateCache->setDepthMask(GL_TRUE);
-		T_OGL_SAFE(glClearDepthf(depth));
-	}
-
-	if (cm & GL_STENCIL_BUFFER_BIT)
-		T_OGL_SAFE(glClearStencil(stencil));
-
-	T_OGL_SAFE(glClear(cm));
 }
 
 void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)

@@ -134,7 +134,11 @@ void TargetBeginRenderBlock::render(IRenderView* renderView, const ProgramParame
 {
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
-	renderView->begin(renderTargetSet, renderTargetIndex);
+	renderView->begin(
+		renderTargetSet,
+		renderTargetIndex,
+		&clear
+	);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }
@@ -144,23 +148,6 @@ void TargetEndRenderBlock::render(IRenderView* renderView, const ProgramParamete
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	renderView->end();
-
-	T_CONTEXT_POP_MARKER(renderView);
-}
-
-void TargetClearRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
-{
-	T_CONTEXT_PUSH_MARKER(renderView, name);
-
-	if (clearMask)
-	{
-		renderView->clear(
-			clearMask,
-			&clearColor,
-			clearDepth,
-			clearStencil
-		);
-	}
 
 	T_CONTEXT_POP_MARKER(renderView);
 }

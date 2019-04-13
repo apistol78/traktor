@@ -100,33 +100,36 @@ public:
 
 	/*! \brief Begin rendering to back buffer.
 	 *
+	 * \param clear Optional clear parameters.
 	 * \return True if successful.
 	 */
-	virtual bool begin() = 0;
+	virtual bool begin(
+		const Clear* clear
+	) = 0;
 
 	/*! \brief Begin rendering to all render targets in set.
 	 *
 	 * \param renderTargetSet Set of render targets.
+	 * \param clear Optional clear parameters.
 	 * \return True if successful.
 	 */
-	virtual bool begin(RenderTargetSet* renderTargetSet) = 0;
+	virtual bool begin(
+		RenderTargetSet* renderTargetSet,
+		const Clear* clear
+	) = 0;
 
 	/*! \brief Begin rendering to a render target set.
 	 *
 	 * \param renderTargetSet Set of render targets.
 	 * \param renderTarget Index of render target in set.
+	 * \param clear Optional clear parameters.
 	 * \return True if successful.
 	 */
-	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget) = 0;
-
-	/*! \brief Clear current target.
-	 *
-	 * \param clearMask Combination of ClearFlags.
-	 * \param colors Clear color values; must be one color for each bound target.
-	 * \param depth Clear depth value.
-	 * \param stencil Clear stencil value.
-	 */
-	virtual void clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil) = 0;
+	virtual bool begin(
+		RenderTargetSet* renderTargetSet,
+		int32_t renderTarget,
+		const Clear* clear
+	) = 0;
 
 	/*! \brief Draw primitives.
 	 *

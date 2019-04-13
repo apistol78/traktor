@@ -351,7 +351,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	Matrix44 view = m_cameraEntities[0]->getTransform().inverse().toMatrix44();
 
 	// Render world.
-	if (m_renderView->begin())
+	if (m_renderView->begin(nullptr))
 	{
 		// Render entities.
 		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);

@@ -142,15 +142,12 @@ void VideoEditorPage::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView)
 		return;
 
-	if (m_renderView->begin())
+	render::Clear cl;
+	cl.mask = render::CfColor;
+	cl.colors[0] = Color4f(0.8f, 0.8f, 0.8f, 0.0);
+
+	if (m_renderView->begin(&cl))
 	{
-		const Color4f clearColor(0.8f, 0.8f, 0.8f, 0.0);
-		m_renderView->clear(
-			render::CfColor,
-			&clearColor,
-			0.0f,
-			0
-		);
 		if (m_video)
 		{
 			render::ISimpleTexture* texture = m_video->getTexture();

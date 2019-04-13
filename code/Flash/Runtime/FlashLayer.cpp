@@ -498,11 +498,13 @@ void FlashLayer::render(uint32_t frame)
 
 	if (m_imageProcess)
 	{
-		if (renderView->begin(m_imageTargetSet, 0))
+		render::Clear cl;
+		cl.mask = render::CfColor | render::CfDepth;
+		cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0);
+		cl.depth = 1.0f;
+		
+		if (renderView->begin(m_imageTargetSet, 0, &cl))
 		{
-			const static Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
-			renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
-
 			m_displayRenderer->render(
 				renderView,
 				frame,

@@ -321,19 +321,20 @@ void AccDisplayRenderer::begin(
 	m_frameBoundsVisible.mn = frameBounds.mn + (frameBounds.mx - frameBounds.mn) * (Ft_offset / Ft_scale);
 	m_frameBoundsVisible.mx = frameBounds.mn + (frameBounds.mx - frameBounds.mn) * ((Vector2::one() - Ft_offset) / Ft_scale);
 
-	if (m_clearBackground && !m_clipToDirtyRegion)
-	{
-		render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (color+stencil)");
-		renderBlock->clearMask = render::CfColor | render::CfStencil;
-		renderBlock->clearColor = backgroundColor;
-		m_renderContext->draw(render::RpOverlay, renderBlock);
-	}
-	else
-	{
-		render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (stencil)");
-		renderBlock->clearMask = render::CfStencil;
-		m_renderContext->draw(render::RpOverlay, renderBlock);
-	}
+	// \tbd
+	// if (m_clearBackground && !m_clipToDirtyRegion)
+	// {
+	// 	render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (color+stencil)");
+	// 	renderBlock->clearMask = render::CfColor | render::CfStencil;
+	// 	renderBlock->clearColor = backgroundColor;
+	// 	m_renderContext->draw(render::RpOverlay, renderBlock);
+	// }
+	// else
+	// {
+	// 	render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (stencil)");
+	// 	renderBlock->clearMask = render::CfStencil;
+	// 	m_renderContext->draw(render::RpOverlay, renderBlock);
+	// }
 
 	// Flush glyph cache is RT has become invalid.
 	if (!m_renderTargetGlyphs->isContentValid())

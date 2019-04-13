@@ -186,12 +186,14 @@ class T_DLLCLASS TargetBeginRenderBlock : public RenderBlock
 public:
 	Ref< RenderTargetSet > renderTargetSet;
 	int32_t renderTargetIndex;
+	Clear clear;
 
 	TargetBeginRenderBlock()
 	:	RenderBlock()
 	,	renderTargetSet(0)
 	,	renderTargetIndex(0)
 	{
+		clear.mask = 0;
 	}
 
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
@@ -203,29 +205,6 @@ public:
 class T_DLLCLASS TargetEndRenderBlock : public RenderBlock
 {
 public:
-	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
-};
-
-/*! \brief Clear target render block.
- * \ingroup Render
- */
-class T_DLLCLASS TargetClearRenderBlock : public RenderBlock
-{
-public:
-	uint32_t clearMask;
-	Color4f clearColor;
-	float clearDepth;
-	uint8_t clearStencil;
-
-	TargetClearRenderBlock()
-	:	RenderBlock()
-	,	clearMask(0)
-	,	clearColor(0.0f, 0.0f, 0.0f, 0.0f)
-	,	clearDepth(1.0f)
-	,	clearStencil(0)
-	{
-	}
-
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const override final;
 };
 

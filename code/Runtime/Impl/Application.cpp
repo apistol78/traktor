@@ -837,19 +837,10 @@ bool Application::update()
 				render::IRenderView* renderView = m_renderServer->getRenderView();
 				if (renderView)
 				{
-					if (renderView->begin())
+					if (renderView->begin(nullptr))
 					{
 						if (currentState)
 							currentState->render(m_frameBuild, m_updateInfo);
-						else
-						{
-							renderView->clear(
-								render::CfColor | render::CfDepth | render::CfStencil,
-								&m_backgroundColor,
-								1.0f,
-								0
-							);
-						}
 
 						renderView->end();
 						renderView->present();
@@ -1057,20 +1048,10 @@ void Application::threadRender()
 				if (renderView && !renderView->isMinimized())
 				{
 					T_PROFILER_BEGIN(L"Application render");
-					if (renderView->begin())
+					if (renderView->begin(nullptr))
 					{
 						if (m_stateRender)
 							m_stateRender->render(m_frameRender, m_updateInfoRender);
-						else
-						{
-							renderView->clear(
-								render::CfColor | render::CfDepth | render::CfStencil,
-								&m_backgroundColor,
-								1.0f,
-								0
-							);
-						}
-
 						renderView->end();
 					}
 					T_PROFILER_END();

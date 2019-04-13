@@ -65,7 +65,7 @@ WidgetFactoryX11::WidgetFactoryX11()
 	XSetErrorHandler(xerrorHandler);
 
 	// Get system dpi.
-	m_dpi = (int32_t)getSystemDpi(display);
+	m_dpi = (int32_t)96; //210; // getSystemDpi(display);
 
 	// Open input method.
 	XSetLocaleModifiers("");
@@ -121,12 +121,12 @@ IForm* WidgetFactoryX11::createForm(EventSubject* owner)
 
 INotificationIcon* WidgetFactoryX11::createNotificationIcon(EventSubject* owner)
 {
-	return 0;
+	return nullptr;
 }
 
 IPathDialog* WidgetFactoryX11::createPathDialog(EventSubject* owner)
 {
-	return 0;
+	return nullptr;
 }
 
 IToolForm* WidgetFactoryX11::createToolForm(EventSubject* owner)
@@ -141,7 +141,7 @@ IUserWidget* WidgetFactoryX11::createUserWidget(EventSubject* owner)
 
 IWebBrowser* WidgetFactoryX11::createWebBrowser(EventSubject* owner)
 {
-	return 0;
+	return nullptr;
 }
 
 ISystemBitmap* WidgetFactoryX11::createBitmap()

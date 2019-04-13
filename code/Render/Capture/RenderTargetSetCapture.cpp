@@ -78,25 +78,6 @@ ISimpleTexture* RenderTargetSetCapture::getDepthTexture() const
 	return m_depthTexture;
 }
 
-void RenderTargetSetCapture::swap(int32_t index1, int32_t index2)
-{
-	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
-
-	if (!m_renderTargetSet)
-		return;
-
-	T_CAPTURE_ASSERT (index1 >= 0, L"Swap index 1 invalid");
-	T_CAPTURE_ASSERT (index2 >= 0, L"Swap index 2 invalid");
-	T_CAPTURE_ASSERT (index1 < 4, L"Swap index 1 invalid");
-	T_CAPTURE_ASSERT (index2 < 4, L"Swap index 2 invalid");
-
-	m_renderTargetSet->swap(index1, index2);
-
-	Ref< SimpleTextureCapture > tmp = m_colorTextures[index1];
-	m_colorTextures[index1] = m_colorTextures[index2];
-	m_colorTextures[index2] = tmp;
-}
-
 void RenderTargetSetCapture::discard()
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");

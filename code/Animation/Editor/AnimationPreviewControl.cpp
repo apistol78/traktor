@@ -300,19 +300,17 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = float(m_timer.getElapsedTime());
 
-	if (!m_renderView || !m_renderView->begin())
-		return;
-
 	float tmp[4];
 	m_colorClear.getRGBA32F(tmp);
 	Color4f clearColor(tmp[0], tmp[1], tmp[2], tmp[3]);
 
-	m_renderView->clear(
-		render::CfColor | render::CfDepth,
-		&clearColor,
-		1.0f,
-		128
-	);
+	render::Clear cl;
+	cl.mask = render::CfColor | render::CfDepth;
+	cl.colors[0] = clearColor;
+	cl.depth = 1.0f;
+
+	if (!m_renderView || !m_renderView->begin(&cl))
+		return;
 
 	render::Viewport viewport = m_renderView->getViewport();
 	float aspect = float(viewport.width) / viewport.height;

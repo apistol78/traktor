@@ -209,16 +209,13 @@ void DebugRenderControl::eventPaint(ui::PaintEvent* event)
 	std::vector< render::DebugTarget > debugTargets = m_context->getDebugTargets();
 	std::sort(debugTargets.begin(), debugTargets.end(), DebugTargetPredicate);
 
-	if (m_renderView->begin())
-	{
-		const Color4f clearColor(0.7f, 0.7f, 0.7f, 0.0f);
-		m_renderView->clear(
-			render::CfColor | render::CfDepth,
-			&clearColor,
-			1.0f,
-			128
-		);
+	render::Clear cl;
+	cl.mask = render::CfColor | render::CfDepth;
+	cl.colors[0] = Color4f(0.7f, 0.7f, 0.7f, 0.0f);
+	cl.depth = 1.0f;
 
+	if (m_renderView->begin(&cl))
+	{
 		if (!debugTargets.empty())
 		{
 			int32_t size = int32_t(std::sqrt(float(debugTargets.size())) + 0.5f);

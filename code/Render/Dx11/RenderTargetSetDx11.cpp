@@ -103,11 +103,6 @@ ISimpleTexture* RenderTargetSetDx11::getDepthTexture() const
 	return m_depthTexture;
 }
 
-void RenderTargetSetDx11::swap(int32_t index1, int32_t index2)
-{
-	std::swap(m_colorTextures[index1], m_colorTextures[index2]);
-}
-
 void RenderTargetSetDx11::discard()
 {
 	m_contentValid = false;

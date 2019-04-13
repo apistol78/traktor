@@ -93,8 +93,8 @@
 			<id>{5F4F73BB-BCC2-446B-BECC-4F93C59E4134}</id>
 			<comment/>
 			<position>
-				<first>377</first>
-				<second>222</second>
+				<first>427</first>
+				<second>248</second>
 			</position>
 			<color>0.862745, 0.905882, 1, 0</color>
 		</item>
@@ -114,8 +114,8 @@
 			<id>{AEBC7357-819A-47ED-AE14-CF70970E48B7}</id>
 			<comment/>
 			<position>
-				<first>258</first>
-				<second>398</second>
+				<first>472</first>
+				<second>387</second>
 			</position>
 			<name>Where</name>
 			<usage>DuCustom</usage>
@@ -126,16 +126,16 @@
 			<id>{CA4ED710-9D91-493D-BDDE-DA31E4EB74C9}</id>
 			<comment/>
 			<position>
-				<first>636</first>
-				<second>320</second>
+				<first>850</first>
+				<second>309</second>
 			</position>
 		</item>
 		<item type="traktor.render.Color" version="1,traktor.render.Node:1">
 			<id>{6BFCEC2C-EABB-4546-864E-5D33D3A525FE}</id>
 			<comment/>
 			<position>
-				<first>333</first>
-				<second>300</second>
+				<first>462</first>
+				<second>321</second>
 			</position>
 			<color>0.988235, 0.988235, 0.988235, 0</color>
 		</item>
@@ -143,8 +143,8 @@
 			<id>{389C19B6-D0F5-4CED-B8C4-A6C44232A9D2}</id>
 			<comment/>
 			<position>
-				<first>1148</first>
-				<second>432</second>
+				<first>1458</first>
+				<second>427</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -152,8 +152,8 @@
 			<id>{04BAEBE5-B31D-485F-8FFF-C8AB0D37C276}</id>
 			<comment/>
 			<position>
-				<first>1138</first>
-				<second>546</second>
+				<first>1445</first>
+				<second>472</second>
 			</position>
 			<value>0.7</value>
 		</item>
@@ -213,7 +213,7 @@
 				</item>
 				<item>
 					<id>{A6D7BFAB-0138-4EFD-A71A-1397BCE9E584}</id>
-					<name>Transparency</name>
+					<name>Transparent</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
@@ -235,30 +235,11 @@
 					<first>Roughness</first>
 					<second>0.8</second>
 				</item>
+				<item>
+					<first>Transparent</first>
+					<second>0</second>
+				</item>
 			</values>
-		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{2982CD3A-6700-3141-AAD1-71AAD5DF517D}</id>
-			<comment/>
-			<position>
-				<first>1097</first>
-				<second>121</second>
-			</position>
-			<fragmentGuid>{00B5CC57-3B3B-6244-9FD2-4AF4A76F022C}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{E40A3E2A-E260-5447-8121-DA739B087636}</id>
-					<name>ViewNormal</name>
-					<optional>false</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{D53B9A8E-9BD2-9141-9BDB-9299702A8ABC}</id>
-					<name>Output</name>
-				</item>
-			</outputPins>
-			<values/>
 		</item>
 	</nodes>
 	<edges>
@@ -384,32 +365,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>ViewNormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[12]"/>
-				<name>ViewNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
 				<name>SurfaceColor</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Irradiance</name>
 			</destination>
 		</item>
 	</edges>

@@ -174,7 +174,7 @@
 				</item>
 				<item>
 					<id>{A6D7BFAB-0138-4EFD-A71A-1397BCE9E584}</id>
-					<name>Transparency</name>
+					<name>Transparent</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
@@ -195,6 +195,10 @@
 				<item>
 					<first>Roughness</first>
 					<second>0.8</second>
+				</item>
+				<item>
+					<first>Transparent</first>
+					<second>1</second>
 				</item>
 			</values>
 		</item>
@@ -248,16 +252,6 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Roughness</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Transparency</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">

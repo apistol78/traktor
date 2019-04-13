@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderView.h"
 #include "Render/IRenderSystem.h"
 #include "Render/RenderTargetSet.h"
@@ -58,37 +59,33 @@ bool ScreenRenderer::create(IRenderSystem* renderSystem)
 
 void ScreenRenderer::destroy()
 {
-	if (m_vertexBuffer)
-	{
-		m_vertexBuffer->destroy();
-		m_vertexBuffer = 0;
-	}
+	safeDestroy(m_vertexBuffer);
 }
 
 void ScreenRenderer::draw(IRenderView* renderView, IProgram* program)
 {
-	renderView->draw(m_vertexBuffer, 0, program, m_primitives);
+	renderView->draw(m_vertexBuffer, nullptr, program, m_primitives);
 }
 
 void ScreenRenderer::draw(IRenderView* renderView, Shader* shader)
 {
-	shader->draw(renderView, m_vertexBuffer, 0, m_primitives);
+	shader->draw(renderView, m_vertexBuffer, nullptr, m_primitives);
 }
 
-void ScreenRenderer::draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, IProgram* program)
+void ScreenRenderer::draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int32_t renderTarget, IProgram* program)
 {
-	if (renderView->begin(renderTargetSet, renderTarget))
+	if (renderView->begin(renderTargetSet, renderTarget, nullptr))
 	{
-		renderView->draw(m_vertexBuffer, 0, program, m_primitives);
+		renderView->draw(m_vertexBuffer, nullptr, program, m_primitives);
 		renderView->end();
 	}
 }
 
-void ScreenRenderer::draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, Shader* shader)
+void ScreenRenderer::draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int32_t renderTarget, Shader* shader)
 {
-	if (renderView->begin(renderTargetSet, renderTarget))
+	if (renderView->begin(renderTargetSet, renderTarget, nullptr))
 	{
-		shader->draw(renderView, m_vertexBuffer, 0, m_primitives);
+		shader->draw(renderView, m_vertexBuffer, nullptr, m_primitives);
 		renderView->end();
 	}
 }

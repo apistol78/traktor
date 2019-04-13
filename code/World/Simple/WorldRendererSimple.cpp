@@ -106,7 +106,6 @@ void WorldRendererSimple::endBuild(WorldRenderView& worldRenderView, int frame)
 
 bool WorldRendererSimple::beginRender(int32_t frame, const Color4f& clearColor)
 {
-	m_renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
 	return true;
 }
 

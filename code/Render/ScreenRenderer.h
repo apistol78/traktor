@@ -45,9 +45,9 @@ public:
 
 	void draw(IRenderView* renderView, Shader* shader);
 
-	void draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, IProgram* program);
+	void draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int32_t renderTarget, IProgram* program);
 
-	void draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, Shader* shader);
+	void draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int32_t renderTarget, Shader* shader);
 
 private:
 	Ref< VertexBuffer > m_vertexBuffer;

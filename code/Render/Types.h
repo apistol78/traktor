@@ -5,6 +5,7 @@
 #include "Core/Platform.h"
 #include "Core/Ref.h"
 #include "Core/Io/Path.h"
+#include "Core/Math/Color4f.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -703,6 +704,15 @@ struct DebugTarget
 	,	texture(texture_)
 	{
 	}
+};
+
+/*! \brief Clear parameters. */
+struct Clear
+{
+	uint32_t mask;		//!< Combination of ClearFlags.
+	Color4f colors[RenderTargetSetCreateDesc::MaxTargets];	//!< Clear color values; must be one color for each bound target.
+	float depth;		//!< Clear depth value.
+	int32_t stencil;	//!< Clear stencil value.
 };
 
 /*! \brief Draw primitives. */
