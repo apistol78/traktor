@@ -287,17 +287,11 @@ void endSingleTimeCommands(VkDevice device, VkCommandPool commandPool, VkCommand
 
 bool changeImageLayout(VkDevice device, VkCommandPool commandPool, VkQueue queue, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout)
 {
-	VkFence submitFence;
-
-	VkFenceCreateInfo fci = {};
-	fci.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	vkCreateFence(device, &fci, nullptr, &submitFence);
-
 	auto commandBuffer = beginSingleTimeCommands(device, commandPool);
 
 	VkImageMemoryBarrier imb = {};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.oldLayout = oldLayout; // VK_IMAGE_LAYOUT_UNDEFINED;
+	imb.oldLayout = oldLayout;
 	imb.newLayout = newLayout;
 	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
@@ -309,9 +303,6 @@ bool changeImageLayout(VkDevice device, VkCommandPool commandPool, VkQueue queue
 	imb.subresourceRange.layerCount = 1;
 	imb.srcAccessMask = 0;
 	imb.dstAccessMask = 0;
-
-	VkImageSubresourceRange resourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1 };
-	imb.subresourceRange = resourceRange;
 
 	vkCmdPipelineBarrier(
 		commandBuffer,
