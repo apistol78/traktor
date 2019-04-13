@@ -9,13 +9,15 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ProbeComponent", ProbeComponent, IEntityComponent)
 
 ProbeComponent::ProbeComponent(
-	const resource::Proxy< render::ITexture >& probeDiffuseTexture,
-	const resource::Proxy< render::ITexture >& probeSpecularTexture,
+	const resource::Proxy< render::ITexture >& diffuseTexture,
+	const resource::Proxy< render::ITexture >& specularTexture,
+	bool local,
 	const Aabb3& volume
 )
 :	m_owner(nullptr)
-,	m_probeDiffuseTexture(probeDiffuseTexture)
-,	m_probeSpecularTexture(probeSpecularTexture)
+,	m_diffuseTexture(diffuseTexture)
+,	m_specularTexture(specularTexture)
+,	m_local(local)
 ,	m_volume(volume)
 {
 }
