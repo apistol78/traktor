@@ -200,7 +200,7 @@ void TerrainSurfaceCache::begin(
 		render::ISimpleTexture* colorMap = terrain->getColorMap();
 		render::ISimpleTexture* splatMap = terrain->getSplatMap();
 
-		shader->setCombination(L"ColorEnable", colorMap != 0);
+		shader->setCombination(m_handleColorEnable, colorMap != nullptr);
 
 		if (!shader->getCurrentProgram())
 			return;
@@ -304,7 +304,7 @@ void TerrainSurfaceCache::get(
 	render::ISimpleTexture* colorMap = terrain->getColorMap();
 	render::ISimpleTexture* splatMap = terrain->getSplatMap();
 
-	shader->setCombination(m_handleColorEnable, colorMap != 0);
+	shader->setCombination(m_handleColorEnable, colorMap != nullptr);
 
 	if (!shader->getCurrentProgram())
 		return;
@@ -341,7 +341,7 @@ void TerrainSurfaceCache::get(
 	{
 		TerrainSurfaceRenderBlock* renderBlockChain = static_cast< TerrainSurfaceRenderBlock* >(outRenderBlock);
 
-		renderBlockChain->renderTargetSet = 0;
+		renderBlockChain->renderTargetSet = nullptr;
 		renderBlockChain->clear = false;
 
 		renderBlock->next = renderBlockChain;

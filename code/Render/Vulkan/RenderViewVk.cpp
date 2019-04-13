@@ -870,12 +870,22 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 	{
 		const RenderState& rs = p->getRenderState();
 
+		VkViewport vp = {};
+		vp.width = 1;
+		vp.height = 1;
+		vp.minDepth = 0.0f;
+		vp.maxDepth = 1.0f;
+
+		VkRect2D sc = {};
+		sc.offset = { 0, 0 };
+		sc.extent = { 65536, 65536 };
+
 		VkPipelineViewportStateCreateInfo vsci = {};
 		vsci.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
-		vsci.viewportCount = 0;
-		vsci.pViewports = nullptr;
-		vsci.scissorCount = 0;
-		vsci.pScissors = nullptr;
+		vsci.viewportCount = 1;
+		vsci.pViewports = &vp;
+		vsci.scissorCount = 1;
+		vsci.pScissors = &sc;
 
 		VkPipelineVertexInputStateCreateInfo visci = {};
 		visci.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
