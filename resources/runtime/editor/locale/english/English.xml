@@ -2190,8 +2190,12 @@
       <second>Add entity...</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_ADD_COMPONENT_ENTITY</first>
+      <second>Add component entity</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_ADD_GROUP_ENTITY</first>
-      <second>Add group entity...</second>
+      <second>Add group entity</second>
     </item>
     <item>
       <first>SCENE_EDITOR_ADD_REFERENCE</first>
