@@ -34,7 +34,7 @@ bool RenderTargetDepthVk::createPrimary(VkPhysicalDevice physicalDevice, VkDevic
 	ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
 	ivci.format = format;
 	ivci.components = { VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY };
-	ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT; // | VK_IMAGE_ASPECT_STENCIL_BIT;
+	ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
 	ivci.subresourceRange.baseMipLevel = 0;
 	ivci.subresourceRange.levelCount = 1;
 	ivci.subresourceRange.baseArrayLayer = 0;
@@ -173,7 +173,7 @@ void RenderTargetDepthVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 	layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	layoutTransitionBarrier.image = m_image;
-	layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT /* | VK_IMAGE_ASPECT_STENCIL_BIT */, 0, 1, 0, 1 };
+	layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT /*| VK_IMAGE_ASPECT_STENCIL_BIT*/, 0, 1, 0, 1 };
 
 	vkCmdPipelineBarrier(
 		cmdBuffer,
@@ -201,7 +201,7 @@ void RenderTargetDepthVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 	layoutTransitionBarrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 	layoutTransitionBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 	layoutTransitionBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT /* | VK_IMAGE_ASPECT_STENCIL_BIT*/, 0, 1, 0, 1 };
+	layoutTransitionBarrier.subresourceRange = { VK_IMAGE_ASPECT_DEPTH_BIT /*| VK_IMAGE_ASPECT_STENCIL_BIT*/, 0, 1, 0, 1 };
 	layoutTransitionBarrier.image = m_image;
 
 	vkCmdPipelineBarrier(

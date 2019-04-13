@@ -37,13 +37,13 @@ class RenderTargetSetVk : public RenderTargetSet
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetSetVk();
+	RenderTargetSetVk(VkPhysicalDevice physicalDevice, VkDevice device);
 
 	virtual ~RenderTargetSetVk();
 
-	bool createPrimary(VkPhysicalDevice physicalDevice, VkDevice device, int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage);
+	bool createPrimary(int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage);
 
-	bool create(VkPhysicalDevice physicalDevice, VkDevice device, const RenderTargetSetCreateDesc& setDesc);
+	bool create(const RenderTargetSetCreateDesc& setDesc);
 
 	virtual void destroy() override final;
 
@@ -64,7 +64,6 @@ public:
 	virtual bool read(int32_t index, void* buffer) const override final;
 
 	bool prepareAsTarget(
-		VkDevice device,
 		VkCommandBuffer commandBuffer,
 		int32_t colorIndex,
 		uint32_t clearMask,
@@ -102,6 +101,8 @@ private:
 
 	typedef std::tuple< int32_t, uint32_t > render_pass_key_t;
 
+	VkPhysicalDevice m_physicalDevice;
+	VkDevice m_device;
 	RenderTargetSetCreateDesc m_setDesc;
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;

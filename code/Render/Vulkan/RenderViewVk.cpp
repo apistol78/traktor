@@ -718,7 +718,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	VkImageCreateInfo ici = {};
 	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	ici.imageType = VK_IMAGE_TYPE_2D;
-	ici.format = VK_FORMAT_D16_UNORM; // VK_FORMAT_D24_UNORM_S8_UINT;
+	ici.format = VK_FORMAT_D24_UNORM_S8_UINT;
 	ici.extent = { width, height, 1 };
 	ici.mipLevels = 1;
 	ici.arrayLayers = 1;
@@ -753,15 +753,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	m_primaryTargets.resize(imageCount);
 	for (uint32_t i = 0; i < imageCount; ++i)
 	{
-		m_primaryTargets[i] = new RenderTargetSetVk();
+		m_primaryTargets[i] = new RenderTargetSetVk(m_physicalDevice, m_logicalDevice);
 		if (!m_primaryTargets[i]->createPrimary(
-			m_physicalDevice,
-			m_logicalDevice,
 			width,
 			height,
 			colorFormat,
 			presentImages[i],
-			VK_FORMAT_D16_UNORM, //VK_FORMAT_D24_UNORM_S8_UINT,
+			VK_FORMAT_D24_UNORM_S8_UINT,
 			depthImage
 		))
 			return false;
@@ -836,7 +834,6 @@ void RenderViewVk::validateTargetState()
 
 	// Prepare render target set as targets.
 	if (!ts.rts->prepareAsTarget(
-		m_logicalDevice,
 		m_drawCommandBuffer,
 		ts.colorIndex,
 		ts.clearMask,

@@ -544,14 +544,14 @@ Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCre
 
 Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
-	Ref< CubeTextureVk > texture = new CubeTextureVk();
-	if (texture->create(
+	Ref< CubeTextureVk > texture = new CubeTextureVk(
 		m_physicalDevice,
 		m_logicalDevice,
 		m_commandPool,
 		m_graphicsQueue,
 		desc
-	))
+	);
+	if (texture->create())
 		return texture;
 	else
 		return nullptr;
@@ -574,8 +574,8 @@ Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCre
 
 Ref< RenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-	Ref< RenderTargetSetVk > renderTargetSet = new RenderTargetSetVk();
-	if (renderTargetSet->create(m_physicalDevice, m_logicalDevice, desc))
+	Ref< RenderTargetSetVk > renderTargetSet = new RenderTargetSetVk(m_physicalDevice, m_logicalDevice);
+	if (renderTargetSet->create(desc))
 		return renderTargetSet;
 	else
 		return nullptr;

@@ -15,6 +15,7 @@
 #endif
 
 #include "Render/ICubeTexture.h"
+#include "Render/Types.h"
 
 namespace traktor
 {
@@ -31,17 +32,17 @@ class CubeTextureVk : public ICubeTexture
 	T_RTTI_CLASS;
 
 public:
-	CubeTextureVk();
+	CubeTextureVk(
+		VkPhysicalDevice physicalDevice,
+		VkDevice logicalDevice,
+		VkCommandPool setupCommandPool,
+		VkQueue setupQueue,
+		const CubeTextureCreateDesc& desc
+	);
 
 	virtual ~CubeTextureVk();
 
-	bool create(
-		VkPhysicalDevice physicalDevice,
-		VkDevice device,
-		VkCommandPool commandPool,
-		VkQueue queue,
-		const CubeTextureCreateDesc& desc
-	);
+	bool create();
 
 	virtual void destroy() override final;
 
@@ -60,10 +61,19 @@ public:
 	VkImageView getVkImageView() const { return m_textureView; }
 
 private:
+	VkPhysicalDevice m_physicalDevice;
+	VkDevice m_logicalDevice;
+	VkCommandPool m_setupCommandPool;
+	VkQueue m_setupQueue;
+
+	CubeTextureCreateDesc m_desc;
+
 	VkImage m_textureImage;
+	VkDeviceMemory m_textureImageMemory;
 	VkImageView m_textureView;
-	int32_t m_mips;
-	int32_t m_side;
+
+	VkBuffer m_stagingBuffer;
+	VkDeviceMemory m_stagingBufferMemory;
 };
 
 	}
