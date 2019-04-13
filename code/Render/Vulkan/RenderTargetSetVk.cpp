@@ -22,8 +22,10 @@ uint32_t s_nextId = 1;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetVk", RenderTargetSetVk, RenderTargetSet)
 
-RenderTargetSetVk::RenderTargetSetVk()
+RenderTargetSetVk::RenderTargetSetVk(VkPhysicalDevice physicalDevice, VkDevice device)
 :	RenderTargetSet()
+,	m_physicalDevice(physicalDevice)
+,	m_device(device)
 {
 }
 
@@ -32,15 +34,15 @@ RenderTargetSetVk::~RenderTargetSetVk()
 	destroy();
 }
 
-bool RenderTargetSetVk::createPrimary(VkPhysicalDevice physicalDevice, VkDevice device, int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage)
+bool RenderTargetSetVk::createPrimary(int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage)
 {
 	m_colorTargets.resize(1);
 	m_colorTargets[0] = new RenderTargetVk();
-	if (!m_colorTargets[0]->createPrimary(physicalDevice, device, width, height, colorFormat, colorImage))
+	if (!m_colorTargets[0]->createPrimary(m_physicalDevice, m_device, width, height, colorFormat, colorImage))
 		return false;
 
 	m_depthTarget = new RenderTargetDepthVk();
-	if (!m_depthTarget->createPrimary(physicalDevice, device, width, height, depthFormat, depthImage))
+	if (!m_depthTarget->createPrimary(m_physicalDevice, m_device, width, height, depthFormat, depthImage))
 		return false;
 
 	m_setDesc.count = 1;
@@ -60,20 +62,20 @@ bool RenderTargetSetVk::createPrimary(VkPhysicalDevice physicalDevice, VkDevice 
 	return true;
 }
 
-bool RenderTargetSetVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const RenderTargetSetCreateDesc& setDesc)
+bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc)
 {
 	m_colorTargets.resize(setDesc.count);
 	for (int32_t i = 0; i < setDesc.count; ++i)
 	{
 		m_colorTargets[i] = new RenderTargetVk();
-		if (!m_colorTargets[i]->create(physicalDevice, device, setDesc, setDesc.targets[i]))
+		if (!m_colorTargets[i]->create(m_physicalDevice, m_device, setDesc, setDesc.targets[i]))
 			return false;
 	}
 
 	if (setDesc.createDepthStencil)
 	{
 		m_depthTarget = new RenderTargetDepthVk();
-		if (!m_depthTarget->create(physicalDevice, device, setDesc))
+		if (!m_depthTarget->create(m_physicalDevice, m_device, setDesc))
 			return false;
 	}
 
@@ -130,11 +132,23 @@ bool RenderTargetSetVk::isContentValid() const
 
 bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 {
-	return false;
+	if (index < 0 || index >= (int32_t)m_colorTargets.size())
+		return false;
+
+	// Create offscreen image copy.
+
+	// Transfer color target into image.
+
+	// Change layout general to become mappable.
+
+	// Read back data.
+
+	// Cleanup
+
+	return true;
 }
 
 bool RenderTargetSetVk::prepareAsTarget(
-	VkDevice device,
 	VkCommandBuffer commandBuffer,
 	int32_t colorIndex,
 	uint32_t clearMask,
@@ -258,7 +272,7 @@ bool RenderTargetSetVk::prepareAsTarget(
 		renderPassCreateInfo.pAttachments = passAttachments.ptr();
 		renderPassCreateInfo.subpassCount = 1;
 		renderPassCreateInfo.pSubpasses = &subpass;
-		if (vkCreateRenderPass(device, &renderPassCreateInfo, nullptr, &rt.renderPass) != VK_SUCCESS)
+		if (vkCreateRenderPass(m_device, &renderPassCreateInfo, nullptr, &rt.renderPass) != VK_SUCCESS)
 			return false;
 	}
 
@@ -288,7 +302,7 @@ bool RenderTargetSetVk::prepareAsTarget(
 		frameBufferCreateInfo.width = m_setDesc.width;
 		frameBufferCreateInfo.height = m_setDesc.height;
 		frameBufferCreateInfo.layers = 1;
-		if (vkCreateFramebuffer(device, &frameBufferCreateInfo, nullptr, &rt.frameBuffer) != VK_SUCCESS)
+		if (vkCreateFramebuffer(m_device, &frameBufferCreateInfo, nullptr, &rt.frameBuffer) != VK_SUCCESS)
 			return false;
 	}
 

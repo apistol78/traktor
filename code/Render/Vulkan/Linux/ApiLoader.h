@@ -74,6 +74,8 @@ extern PFN_vkQueueWaitIdle vkQueueWaitIdle;
 extern PFN_vkCmdCopyBufferToImage vkCmdCopyBufferToImage;
 extern PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties;
 extern PFN_vkCmdSetViewport vkCmdSetViewport;
+extern PFN_vkFreeMemory vkFreeMemory;
+extern PFN_vkDestroyBuffer vkDestroyBuffer;
 
 // Linux Vulkan extensions.
 extern PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;
