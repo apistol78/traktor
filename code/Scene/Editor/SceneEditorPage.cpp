@@ -61,11 +61,11 @@
 #include "Ui/GridView/GridRowStateChangeEvent.h"
 #include "Ui/GridView/GridItem.h"
 #include "World/Entity.h"
-#include "World/EntityData.h"
 #include "World/EntityEventManager.h"
 #include "World/IEntityComponent.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/LayerEntityData.h"
+#include "World/Entity/ComponentEntityData.h"
 
 namespace traktor
 {
@@ -229,6 +229,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityMenuGroup->add(new ui::MenuItem(L"-"));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.CreateExternal"), i18n::Text(L"SCENE_EDITOR_CREATE_EXTERNAL")));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
+	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddComponentEntity"), i18n::Text(L"SCENE_EDITOR_ADD_COMPONENT_ENTITY")));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddGroupEntity"), i18n::Text(L"SCENE_EDITOR_ADD_GROUP_ENTITY")));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 
@@ -620,6 +621,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		result = createExternal();
 	else if (command == L"Scene.Editor.AddEntity")
 		result = addEntity(0);
+	else if (command == L"Scene.Editor.AddComponentEntity")
+		result = addEntity(&type_of< world::ComponentEntityData >());
 	else if (command == L"Scene.Editor.AddGroupEntity")
 		result = addEntity(&type_of< world::GroupEntityData >());
 	else if (command == L"Scene.Editor.MoveToEntity")
