@@ -2930,6 +2930,10 @@
       <second>Iterate</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_ITERATE2</first>
+      <second>Iterate 2</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_ITERATE2D</first>
       <second>Iterate 2D</second>
     </item>
