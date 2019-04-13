@@ -162,8 +162,11 @@ struct ImpostorUpdateRenderBlock : public render::RenderBlock
 
 	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const
 	{
-		renderView->begin(impostorTargetSet, 0);
-		renderView->clear(render::CfColor, &impostorClearColor, 0.0f, 0);
+		render::Clear clear;
+		clear.mask = render::CfColor;
+		clear.colors[0] = impostorClearColor;
+
+		renderView->begin(impostorTargetSet, 0, &clear);
 
 		for (uint32_t i = 0; i < particlePassCount; ++i)
 			particlePass[i]->render(renderView, globalParameters);

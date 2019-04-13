@@ -456,7 +456,7 @@ Generated texture from surface cache.
 				</item>
 				<item>
 					<id>{A6D7BFAB-0138-4EFD-A71A-1397BCE9E584}</id>
-					<name>Transparency</name>
+					<name>Transparent</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
@@ -477,6 +477,10 @@ Generated texture from surface cache.
 				<item>
 					<first>Roughness</first>
 					<second>0.8</second>
+				</item>
+				<item>
+					<first>Transparent</first>
+					<second>0</second>
 				</item>
 			</values>
 		</item>

@@ -576,19 +576,25 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 
 bool WorldRendererForward::beginRender(int32_t frame, const Color4f& clearColor)
 {
-	if (m_visualTargetSet)
-	{
-		if (!m_renderView->begin(m_visualTargetSet, 0))
-			return false;
-	}
+	// If we don't have a visual target set then we cannot clear.
+	if (!m_visualTargetSet)
+		return true;
 
-	m_renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
+	render::Clear clear;
+	clear.mask = render::CfColor | render::CfDepth;
+	clear.colors[0] = clearColor;
+	clear.depth = 1.0f;
+
+	if (!m_renderView->begin(m_visualTargetSet, 0, &clear))
+		return false;
+
 	return true;
 }
 
 void WorldRendererForward::render(int32_t frame)
 {
 	Frame& f = m_frames[frame];
+	render::Clear clear;
 
 	// Prepare global program parameters.
 	render::ProgramParameters defaultProgramParams;
@@ -601,15 +607,17 @@ void WorldRendererForward::render(int32_t frame)
 	// Render gbuffer.
 	{
 		T_RENDER_PUSH_MARKER(m_renderView, "World: GBuffer");
-		if (m_renderView->begin(m_gbufferTargetSet))
-		{
-			const float clearZ = f.viewFrustum.getFarZ();
-			const Color4f depthColor(clearZ, clearZ, clearZ, clearZ);
-			const Color4f normalColor(0.0f, 0.0f, 1.0f, 0.0f);
-			const Color4f aoColor(1.0f, 1.0f, 1.0f, 1.0f);
-			const Color4f clearColors[] = { depthColor, normalColor, aoColor };
 
-			m_renderView->clear(render::CfColor | render::CfDepth, clearColors, 1.0f, 0);
+		const float clearZ = f.viewFrustum.getFarZ();
+
+		clear.mask = render::CfColor | render::CfDepth;
+		clear.colors[0] = Color4f(clearZ, clearZ, clearZ, clearZ);	// depth
+		clear.colors[1] = Color4f(0.0f, 0.0f, 1.0f, 0.0f);	// normal
+		clear.colors[2] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);	// ao
+		clear.depth = 1.0f;
+
+		if (m_renderView->begin(m_gbufferTargetSet, &clear))
+		{
 			f.depth->getRenderContext()->render(m_renderView, render::RpOpaque, &defaultProgramParams);
 			m_renderView->end();
 		}
@@ -620,7 +628,7 @@ void WorldRendererForward::render(int32_t frame)
 	if (m_ambientOcclusion)
 	{
 		T_RENDER_PUSH_MARKER(m_renderView, "World: GBuffer AO");
-		if (m_renderView->begin(m_gbufferTargetSet, 2))
+		if (m_renderView->begin(m_gbufferTargetSet, 2, nullptr))
 		{
 			render::ImageProcessStep::Instance::RenderParams params;
 			params.viewFrustum = f.viewFrustum;
@@ -647,9 +655,12 @@ void WorldRendererForward::render(int32_t frame)
 	{
 		// Shadow atlas.
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map, atlas");
-		if (m_renderView->begin(m_shadowAtlasTargetSet))
+
+		clear.mask = render::CfDepth;
+		clear.depth = 1.0f;
+
+		if (m_renderView->begin(m_shadowAtlasTargetSet, &clear))
 		{
-			m_renderView->clear(render::CfDepth, nullptr, 1.0f, 0);
 			for (int32_t i = 0; i < 16; ++i)
 			{
 				render::ProgramParameters shadowProgramParams;
@@ -668,9 +679,12 @@ void WorldRendererForward::render(int32_t frame)
 
 		// Directional shadow cascades.
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map, cascades");
-		if (m_renderView->begin(m_shadowCascadeTargetSet))
+
+		clear.mask = render::CfDepth;
+		clear.depth = 1.0f;
+
+		if (m_renderView->begin(m_shadowCascadeTargetSet, &clear))
 		{
-			m_renderView->clear(render::CfDepth, nullptr, 1.0f, 0);
 			for (int32_t i = 0; i < m_settings.shadowSettings[m_shadowsQuality].cascadingSlices; ++i)
 			{
 				render::ProgramParameters shadowProgramParams;
@@ -710,7 +724,6 @@ void WorldRendererForward::endRender(int32_t frame, float deltaTime)
 		params.viewFrustum = f.viewFrustum;
 		params.view = f.view;
 		params.projection = f.projection;
-		// params.godRayDirection = f.godRayDirection;
 		params.deltaTime = deltaTime;
 
 		render::RenderTargetSet* sourceTargetSet = m_visualTargetSet;
@@ -733,13 +746,13 @@ void WorldRendererForward::endRender(int32_t frame, float deltaTime)
 
 			bool haveNext = bool((i + 1) < processes.size());
 			if (haveNext)
-				m_renderView->begin(outputTargetSet);
+				m_renderView->begin(outputTargetSet, nullptr);
 
 			processes[i]->render(
 				m_renderView,
 				sourceTargetSet->getColorTexture(0),	// color
-				m_gbufferTargetSet->getColorTexture(0),		// depth
-				m_gbufferTargetSet->getColorTexture(1),		// normal
+				m_gbufferTargetSet->getColorTexture(0),	// depth
+				m_gbufferTargetSet->getColorTexture(1),	// normal
 				nullptr,	// velocity
 				m_shadowCascadeTargetSet ? m_shadowCascadeTargetSet->getColorTexture(0) : nullptr,	// shadow mask
 				params

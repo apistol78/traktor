@@ -74,11 +74,6 @@ ISimpleTexture* RenderTargetSetPs4::getDepthTexture() const
 	return m_depthTarget;
 }
 
-void RenderTargetSetPs4::swap(int index1, int index2)
-{
-	//std::swap(m_colorTextures[index1], m_colorTextures[index2]);
-}
-
 void RenderTargetSetPs4::discard()
 {
 }

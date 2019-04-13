@@ -55,8 +55,6 @@ public:
 
 	virtual ISimpleTexture* getDepthTexture() const override final;
 
-	virtual void swap(int32_t index1, int32_t index2) override final;
-
 	virtual void discard() override final;
 
 	virtual bool isContentValid() const override final;
@@ -66,10 +64,7 @@ public:
 	bool prepareAsTarget(
 		VkCommandBuffer commandBuffer,
 		int32_t colorIndex,
-		uint32_t clearMask,
-		const Color4f* colors,
-		float depth,
-		int32_t stencil,
+		const Clear& clear,
 		RenderTargetDepthVk* primaryDepthTarget,
 
 		// Out

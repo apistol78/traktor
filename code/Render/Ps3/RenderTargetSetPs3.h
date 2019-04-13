@@ -51,8 +51,6 @@ public:
 
 	virtual ISimpleTexture* getDepthTexture() const;
 
-	virtual void swap(int index1, int index2);
-
 	virtual void discard();
 
 	virtual bool isContentValid() const;

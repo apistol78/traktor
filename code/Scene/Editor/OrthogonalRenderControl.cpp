@@ -477,7 +477,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	// Render world.
-	if (m_renderView->begin())
+	if (m_renderView->begin(nullptr))
 	{
 		const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
 

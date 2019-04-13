@@ -832,6 +832,7 @@ bool WorldRendererDeferred::beginRender(int32_t frame, const Color4f& clearColor
 void WorldRendererDeferred::render(int32_t frame)
 {
 	Frame& f = m_frames[frame];
+	render::Clear clear;
 
 	// Render gbuffer.
 	{
@@ -844,16 +845,18 @@ void WorldRendererDeferred::render(int32_t frame)
 		gbufferProgramParams.endParameters(m_globalContext);
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: GBuffer");
-		if (m_renderView->begin(m_gbufferTargetSet))
-		{
-			const float clearZ = f.viewFrustum.getFarZ();
-			const Color4f depthColor(clearZ, clearZ, clearZ, clearZ);
-			const Color4f normalColor(0.0f, 0.0f, 1.0f, 0.0f);
-			const Color4f miscColor(0.0f, 0.0f, 0.0f, 0.0f);
-			const Color4f surfaceColor(0.0f, 0.0f, 0.0f, 0.0f);
-			const Color4f clearColors[] = { depthColor, normalColor, miscColor, surfaceColor };
 
-			m_renderView->clear(render::CfColor | render::CfDepth, clearColors, 1.0f, 0);
+		const float clearZ = f.viewFrustum.getFarZ();
+
+		clear.mask = render::CfColor | render::CfDepth;
+		clear.colors[0] = Color4f(clearZ, clearZ, clearZ, clearZ);	// depth
+		clear.colors[1] = Color4f(0.0f, 0.0f, 1.0f, 0.0f);	// normal
+		clear.colors[2] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);	// misc
+		clear.colors[3] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);	// surface
+		clear.depth = 1.0f;
+
+		if (m_renderView->begin(m_gbufferTargetSet, &clear))
+		{
 			f.gbuffer->getRenderContext()->render(m_renderView, render::RpOpaque, &gbufferProgramParams);
 			m_renderView->end();
 		}
@@ -872,11 +875,12 @@ void WorldRendererDeferred::render(int32_t frame)
 		velocityProgramParams.endParameters(m_globalContext);
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Velocity");
-		if (m_renderView->begin(m_velocityTargetSet))
-		{
-			const Color4f velocityColor(0.0f, 0.0f, 0.0f, 0.0f);
-			m_renderView->clear(render::CfColor, &velocityColor, 1.0f, 0);
 
+		clear.mask = render::CfColor;
+		clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+
+		if (m_renderView->begin(m_velocityTargetSet, &clear))
+		{
 			// Prime velocity with camera motion only.
 			if (m_motionBlurPrimeImageProcess)
 			{
@@ -909,9 +913,12 @@ void WorldRendererDeferred::render(int32_t frame)
 	{
 		// Directional shadow cascades.
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map (cascade)");
-		if (m_renderView->begin(m_shadowCascadeTargetSet))
+
+		clear.mask = render::CfDepth;
+		clear.depth = 1.0f;
+
+		if (m_renderView->begin(m_shadowCascadeTargetSet, &clear))
 		{
-			m_renderView->clear(render::CfDepth, nullptr, 1.0f, 0);
 			for (int32_t i = 0; i < m_shadowSettings.cascadingSlices; ++i)
 			{
 				render::ProgramParameters shadowProgramParams;
@@ -930,9 +937,12 @@ void WorldRendererDeferred::render(int32_t frame)
 
 		// Spot/point shadow atlas.
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map (atlas)");
-		if (m_renderView->begin(m_shadowAtlasTargetSet))
+
+		clear.mask = render::CfDepth;
+		clear.depth = 1.0f;
+
+		if (m_renderView->begin(m_shadowAtlasTargetSet, &clear))
 		{
-			m_renderView->clear(render::CfDepth, nullptr, 1.0f, 0);
 			for (int32_t i = 0; i < f.atlasCount; ++i)
 			{
 				render::ProgramParameters shadowProgramParams;
@@ -952,11 +962,12 @@ void WorldRendererDeferred::render(int32_t frame)
 
 	// Render light accumulation buffers.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Lighting");
-	if (m_renderView->begin(m_visualTargetSet))
-	{
-		const Color4f lightClear[] = { Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f) };
-		m_renderView->clear(render::CfColor, lightClear, 1.0f, 0);
 
+	clear.mask = render::CfColor;
+	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+
+	if (m_renderView->begin(m_visualTargetSet, &clear))
+	{
 		// Pre-baked indirect lighting.
 		// \tbd
 		//	1. move into base pass (aka gbuffer pass)
@@ -1018,7 +1029,7 @@ void WorldRendererDeferred::render(int32_t frame)
 
 	// Copy visual target into smaller copy, generate mips.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (0)");
-	if (m_renderView->begin(m_colorTargetSet))
+	if (m_renderView->begin(m_colorTargetSet, nullptr))
 	{
 		render::ImageProcessStep::Instance::RenderParams params;
 		params.viewFrustum = f.viewFrustum;
@@ -1041,7 +1052,7 @@ void WorldRendererDeferred::render(int32_t frame)
 
 	// Render fog.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Fog");
-	if (m_renderView->begin(m_visualTargetSet))
+	if (m_renderView->begin(m_visualTargetSet, nullptr))
 	{
 		m_lightRenderer->renderFog(
 			m_renderView,
@@ -1062,7 +1073,7 @@ void WorldRendererDeferred::render(int32_t frame)
 
 	// Render opaque visuals.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Visual opaque");
-	if (m_renderView->begin(m_visualTargetSet))
+	if (m_renderView->begin(m_visualTargetSet, nullptr))
 	{
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
@@ -1088,7 +1099,7 @@ void WorldRendererDeferred::render(int32_t frame)
 
 	// Copy color into off target.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (1)");
-	if (m_renderView->begin(m_colorTargetSet))
+	if (m_renderView->begin(m_colorTargetSet, nullptr))
 	{
 		render::ImageProcessStep::Instance::RenderParams params;
 		params.viewFrustum = f.viewFrustum;
@@ -1110,7 +1121,7 @@ void WorldRendererDeferred::render(int32_t frame)
 	T_RENDER_POP_MARKER(m_renderView);
 
 	// Render post opaque + alpha visuals.
-	if (m_renderView->begin(m_visualTargetSet))
+	if (m_renderView->begin(m_visualTargetSet, nullptr))
 	{
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
@@ -1141,7 +1152,7 @@ void WorldRendererDeferred::render(int32_t frame)
 
 	// Copy color into off target.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (2)");
-	if (m_renderView->begin(m_colorTargetSet))
+	if (m_renderView->begin(m_colorTargetSet, nullptr))
 	{
 		render::ImageProcessStep::Instance::RenderParams params;
 		params.viewFrustum = f.viewFrustum;
@@ -1163,7 +1174,7 @@ void WorldRendererDeferred::render(int32_t frame)
 	T_RENDER_POP_MARKER(m_renderView);
 
 	// Render post alpha visuals.
-	if (m_renderView->begin(m_visualTargetSet))
+	if (m_renderView->begin(m_visualTargetSet, nullptr))
 	{
 		render::ProgramParameters visualProgramParams;
 		visualProgramParams.beginParameters(m_globalContext);
@@ -1222,7 +1233,7 @@ void WorldRendererDeferred::endRender(int32_t frame, float deltaTime)
 
 		bool haveNext = bool((i + 1) < processes.size());
 		if (haveNext)
-			m_renderView->begin(outputTargetSet);
+			m_renderView->begin(outputTargetSet, nullptr);
 
 		processes[i]->render(
 			m_renderView,

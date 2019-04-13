@@ -144,10 +144,11 @@ bool ImageProcess::render(
 		Target& target = i->second;
 		if (target.rts && target.shouldClear)
 		{
-			if (renderView->begin(target.rts, 0))
+			Clear clear;
+			clear.mask = CfColor;
+			clear.colors[0] = Color4f::loadUnaligned(target.clearColor);
+			if (renderView->begin(target.rts, 0, &clear))
 			{
-				Color4f c(target.clearColor);
-				renderView->clear(CfColor, &c, 0.0f, 0);
 				renderView->end();
 				target.shouldClear = false;
 			}
@@ -175,13 +176,13 @@ bool ImageProcess::render(
 				target.rtscd,
 				target.rts
 			);
-			target.rts = 0;
+			target.rts = nullptr;
 		}
 	}
 
 	T_RENDER_POP_MARKER(renderView);
 
-	T_ASSERT_M(m_currentTarget == 0, L"Invalid post-process steps");
+	T_ASSERT_M(m_currentTarget == nullptr, L"Invalid post-process steps");
 	return true;
 }
 
@@ -197,8 +198,8 @@ void ImageProcess::defineTarget(const std::wstring& name, handle_t id, const Ren
 	Target& t = m_targets[id];
 	t.name = name;
 	t.rtscd = rtscd;
-	t.rts = 0;
-	t.rt = 0;
+	t.rts = nullptr;
+	t.rt = nullptr;
 	t.shouldClear = persistent || m_allTargetsPersistent;
 	t.persistent = persistent || m_allTargetsPersistent;
 	clearColor.storeUnaligned(t.clearColor);
@@ -219,7 +220,7 @@ void ImageProcess::setTarget(IRenderView* renderView, handle_t id)
 	{
 		Target& t = m_targets[id];
 
-		if (t.rts == 0)
+		if (t.rts == nullptr)
 		{
 			t.rts = m_targetPool->acquireTarget(t.rtscd);
 			T_ASSERT(t.rts);
@@ -231,17 +232,17 @@ void ImageProcess::setTarget(IRenderView* renderView, handle_t id)
 		m_currentTarget = t.rts;
 		T_ASSERT(m_currentTarget);
 
-		renderView->begin(m_currentTarget, 0);
+		renderView->begin(m_currentTarget, 0, nullptr);
 	}
 	else
-		m_currentTarget = 0;
+		m_currentTarget = nullptr;
 }
 
 ISimpleTexture* ImageProcess::getTarget(handle_t id)
 {
 	Target& t = m_targets[id];
 
-	if (t.rt == 0)
+	if (t.rt == nullptr)
 	{
 		if (t.implicit)
 		{
@@ -260,10 +261,10 @@ ISimpleTexture* ImageProcess::getTarget(handle_t id)
 				log::error << L"\"InputShadowMask\"" << Endl;
 			else
 				log::error << L"unknown" << Endl;
-			return 0;
+			return nullptr;
 		}
 
-		T_ASSERT(t.rts == 0);
+		T_ASSERT(t.rts == nullptr);
 
 		t.rts = m_targetPool->acquireTarget(t.rtscd);
 		T_ASSERT(t.rts);
@@ -289,8 +290,8 @@ void ImageProcess::discardTarget(handle_t id)
 			target.rtscd,
 			target.rts
 		);
-		target.rts = 0;
-		target.rt = 0;
+		target.rts = nullptr;
+		target.rt = nullptr;
 	}
 }
 

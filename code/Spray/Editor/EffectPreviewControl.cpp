@@ -52,7 +52,7 @@
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "World/WorldRenderView.h"
-#include "World/Forward/WorldRenderPassForward.h"
+#include "World/Simple/WorldRenderPassSimple.h"
 
 namespace traktor
 {
@@ -435,22 +435,19 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	float time = float(m_timer.getElapsedTime());
 	float deltaTime = float(m_timer.getDeltaTime() * 0.9f + m_lastDeltaTime * 0.1f);
 
+	float tmp[4];
+	m_colorClear.getRGBA32F(tmp);
+
+	render::Clear cl;
+	cl.mask = render::CfColor | render::CfDepth;
+	cl.colors[0] = Color4f(tmp[0], tmp[1], tmp[2], tmp[3]);
+	cl.depth = 1.0f;
+
 	if (!m_renderView)
 		return;
 
-	if (!m_renderView->begin())
+	if (!m_renderView->begin(&cl))
 		return;
-
-	float tmp[4];
-	m_colorClear.getRGBA32F(tmp);
-	Color4f clearColor(tmp[0], tmp[1], tmp[2], tmp[3]);
-
-	m_renderView->clear(
-		render::CfColor | render::CfDepth,
-		&clearColor,
-		1.0f,
-		128
-	);
 
 	render::Viewport viewport = m_renderView->getViewport();
 	float aspect = float(viewport.width) / viewport.height;
@@ -507,12 +504,18 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	m_primitiveRenderer->render(m_renderView, 0);
 
 	// Draw depth-only ground plane.
-	if (m_depthTexture && m_renderView->begin(m_depthTexture, 0))
-	{
-		const float farZ = 10000.0f;
-		const Color4f clearColor(farZ, farZ, farZ, farZ);
-		m_renderView->clear(render::CfColor, &clearColor, 1.0f, 0);
+	const float farZ = 10000.0f;
 
+	cl.mask = render::CfColor;
+	cl.colors[0] = Color4f(farZ, farZ, farZ, farZ);
+	cl.depth = 1.0f;
+	cl.stencil = 0;
+
+	if (
+		m_depthTexture &&
+		m_renderView->begin(m_depthTexture, 0, &cl)
+	)
+	{
 		if (m_groundClip && m_primitiveRenderer->begin(0, projectionTransform))
 		{
 			m_primitiveRenderer->pushView(viewTransform);
@@ -537,8 +540,10 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	if (m_postProcess)
 	{
-		if (m_renderView->begin(m_postTargetSet, 0))
-			m_renderView->clear(render::CfColor, &clearColor, 1.0f, 0);
+		cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
+		cl.colors[0] = Color4f(tmp[0], tmp[1], tmp[2], tmp[3]);
+		
+		m_renderView->begin(m_postTargetSet, 0, &cl);
 	}
 
 	if (m_effectInstance)
@@ -573,7 +578,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_effectInstance->update(m_context, effectTransform, true);
 		m_effectInstance->synchronize();
 		m_effectInstance->render(
-			render::getParameterHandle(L"World_ForwardColor"),
+			render::getParameterHandle(L"World_SimpleColor"),
 			m_pointRenderer,
 			m_meshRenderer,
 			m_trailRenderer,
@@ -601,13 +606,9 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		globalLight.range = Scalar(0.0f);
 		worldRenderView.addLight(globalLight);
 
-		world::WorldRenderPassForward defaultPass(
-			render::getParameterHandle(L"World_ForwardColor"),
-			world::IWorldRenderPass::PfFirst,
-			viewTransform,
-			m_background,
-			m_depthTexture->getColorTexture(0),
-			nullptr
+		world::WorldRenderPassSimple defaultPass(
+			render::getParameterHandle(L"World_SimpleColor"),
+			viewTransform
 		);
 
 		m_pointRenderer->flush(m_renderContext, defaultPass);

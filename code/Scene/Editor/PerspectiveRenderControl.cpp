@@ -503,7 +503,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	Matrix44 view = getViewTransform();
 
 	// Render world.
-	if (m_renderView->begin())
+	if (m_renderView->begin(nullptr))
 	{
 		// Render entities.
 		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);

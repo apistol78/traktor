@@ -106,11 +106,13 @@ void RenderControl::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView)
 		return;
 
-	if (!m_renderView->begin())
-		return;
+	Clear cl;
+	cl.mask = CfColor | CfDepth;
+	cl.colors[0] = Color4f(0.25f, 0.25f, 0.25f, 1.0f);
+	cl.depth = 1.0f;
 
-	Color4f clearColor(0.25f, 0.25f, 0.25f, 1.0f);
-	m_renderView->clear(CfColor | CfDepth, &clearColor, 1.0f, 0);
+	if (!m_renderView->begin(&cl))
+		return;
 
 	ui::Rect innerRect = getInnerRect();
 	float aspect = float(innerRect.getSize().cx) / innerRect.getSize().cy;

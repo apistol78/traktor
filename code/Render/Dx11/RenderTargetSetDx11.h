@@ -38,8 +38,6 @@ public:
 
 	virtual ISimpleTexture* getDepthTexture() const override final;
 
-	virtual void swap(int32_t index1, int32_t index2) override final;
-
 	virtual void discard() override final;
 
 	virtual bool isContentValid() const override final;

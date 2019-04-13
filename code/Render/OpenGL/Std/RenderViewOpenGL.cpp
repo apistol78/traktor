@@ -414,7 +414,7 @@ SystemWindow RenderViewOpenGL::getSystemWindow()
 	return sw;
 }
 
-bool RenderViewOpenGL::begin()
+bool RenderViewOpenGL::begin(const Clear* clear)
 {
 	T_ASSERT(!m_targetsDirty);
 
@@ -429,10 +429,10 @@ bool RenderViewOpenGL::begin()
 	m_drawCalls = 0;
 	m_primitiveCount = 0;
 
-	return begin(m_primaryTarget, 0);
+	return begin(m_primaryTarget, 0, clear);
 }
 
-bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet)
+bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, const Clear* clear)
 {
 	// Ensure deferred clears on targets are executed.
 	if (m_targetsDirty && !m_targetStack.empty())
@@ -453,7 +453,7 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet)
 	return true;
 }
 
-bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
+bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
 {
 	// Ensure deferred clears on targets are executed.
 	if (m_targetsDirty && !m_targetStack.empty())
@@ -474,62 +474,62 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	return true;
 }
 
-void RenderViewOpenGL::clear(uint32_t clearMask, const Color4f* color, float depth, int32_t stencil)
-{
-	T_FATAL_ASSERT(!m_targetStack.empty());
-	TargetScope& ts = m_targetStack.back();
+// void RenderViewOpenGL::clear(uint32_t clearMask, const Color4f* color, float depth, int32_t stencil)
+// {
+// 	T_FATAL_ASSERT(!m_targetStack.empty());
+// 	TargetScope& ts = m_targetStack.back();
 
-	if (!m_targetsDirty)
-	{
-		if (clearMask & CfColor)
-		{
-			for (int32_t i = 0; i < 8; ++i)
-			{
-				if (!ts.renderTargetSet->getColorTexture(i))
-					continue;
+// 	if (!m_targetsDirty)
+// 	{
+// 		if (clearMask & CfColor)
+// 		{
+// 			for (int32_t i = 0; i < 8; ++i)
+// 			{
+// 				if (!ts.renderTargetSet->getColorTexture(i))
+// 					continue;
 
-				float T_ALIGN16 cl[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-				color[i].storeAligned(cl);
+// 				float T_ALIGN16 cl[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+// 				color[i].storeAligned(cl);
 
-				T_OGL_SAFE(glClearBufferfv(GL_COLOR, i, cl));
-			}
-		}
+// 				T_OGL_SAFE(glClearBufferfv(GL_COLOR, i, cl));
+// 			}
+// 		}
 
-		if (clearMask & CfDepth)
-		{
-			T_OGL_SAFE(glDepthMask(GL_TRUE));
-			T_OGL_SAFE(glClearDepth(depth));
-			T_OGL_SAFE(glClear(GL_DEPTH_BUFFER_BIT));
-		}
+// 		if (clearMask & CfDepth)
+// 		{
+// 			T_OGL_SAFE(glDepthMask(GL_TRUE));
+// 			T_OGL_SAFE(glClearDepth(depth));
+// 			T_OGL_SAFE(glClear(GL_DEPTH_BUFFER_BIT));
+// 		}
 
-		if (clearMask & CfStencil)
-		{
-			T_OGL_SAFE(glStencilMask(~0U));
-			T_OGL_SAFE(glClearStencil(stencil));
-			T_OGL_SAFE(glClear(GL_STENCIL_BUFFER_BIT));
-		}
-	}
-	else
-	{
-		// As targets are not bound yet we defer clearing until they become bound.
-		ts.clearMask |= clearMask;
+// 		if (clearMask & CfStencil)
+// 		{
+// 			T_OGL_SAFE(glStencilMask(~0U));
+// 			T_OGL_SAFE(glClearStencil(stencil));
+// 			T_OGL_SAFE(glClear(GL_STENCIL_BUFFER_BIT));
+// 		}
+// 	}
+// 	else
+// 	{
+// 		// As targets are not bound yet we defer clearing until they become bound.
+// 		ts.clearMask |= clearMask;
 
-		if (clearMask & CfColor)
-		{
-			for (int32_t i = 0; i < 8; ++i)
-			{
-				if (ts.renderTargetSet->getColorTexture(i))
-					ts.clearColor[i] = color[i];
-			}
-		}
+// 		if (clearMask & CfColor)
+// 		{
+// 			for (int32_t i = 0; i < 8; ++i)
+// 			{
+// 				if (ts.renderTargetSet->getColorTexture(i))
+// 					ts.clearColor[i] = color[i];
+// 			}
+// 		}
 
-		if (clearMask & CfDepth)
-			ts.clearDepth = depth;
+// 		if (clearMask & CfDepth)
+// 			ts.clearDepth = depth;
 
-		if (clearMask & CfStencil)
-			ts.clearStencil = stencil;
-	}
-}
+// 		if (clearMask & CfStencil)
+// 			ts.clearStencil = stencil;
+// 	}
+// }
 
 void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
@@ -850,16 +850,16 @@ void RenderViewOpenGL::bindTargets()
 
 	m_targetsDirty = false;
 
-	if (ts.clearMask != 0)
-	{
-		clear(
-			ts.clearMask,
-			ts.clearColor,
-			ts.clearDepth,
-			ts.clearStencil
-		);
-		ts.clearMask = 0;
-	}
+	// if (ts.clearMask != 0)
+	// {
+	// 	clear(
+	// 		ts.clearMask,
+	// 		ts.clearColor,
+	// 		ts.clearDepth,
+	// 		ts.clearStencil
+	// 	);
+	// 	ts.clearMask = 0;
+	// }
 }
 
 #if defined(_WIN32)

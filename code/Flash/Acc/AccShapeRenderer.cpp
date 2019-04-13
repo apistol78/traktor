@@ -278,23 +278,20 @@ void AccShapeRenderer::beginCacheAsBitmap(
 			render::TargetBeginRenderBlock* renderBlockBegin = renderContext->alloc< render::TargetBeginRenderBlock >("Flash sprite cache begin");
 			renderBlockBegin->renderTargetSet = m_renderTargetShapes;
 			renderBlockBegin->renderTargetIndex = 0;
-			renderContext->draw(render::RpOverlay, renderBlockBegin);
 
 			if (slot == 0)
 			{
-				render::TargetClearRenderBlock* renderBlockClear = renderContext->alloc< render::TargetClearRenderBlock >("Flash sprite cache clear (color|stencil)");
-				renderBlockClear->clearMask = render::CfColor | render::CfStencil;
-				renderBlockClear->clearColor = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-				renderBlockClear->clearStencil = maskReference;
-				renderContext->draw(render::RpOverlay, renderBlockClear);
+				renderBlockBegin->clear.mask = render::CfColor | render::CfStencil;
+				renderBlockBegin->clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+				renderBlockBegin->clear.stencil = maskReference;
 			}
 			else
 			{
-				render::TargetClearRenderBlock* renderBlockClear = renderContext->alloc< render::TargetClearRenderBlock >("Flash sprite cache clear (stencil)");
-				renderBlockClear->clearMask = render::CfStencil;
-				renderBlockClear->clearStencil = maskReference;
-				renderContext->draw(render::RpOverlay, renderBlockClear);
+				renderBlockBegin->clear.mask = render::CfStencil;
+				renderBlockBegin->clear.stencil = maskReference;
 			}
+
+			renderContext->draw(render::RpOverlay, renderBlockBegin);
 
 			m_renderIntoSlot = slot;
 		}

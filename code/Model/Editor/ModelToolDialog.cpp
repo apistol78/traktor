@@ -808,16 +808,14 @@ void ModelToolDialog::eventRenderPaint(ui::PaintEvent* event)
 	T_ASSERT(m_renderView);
 	T_ASSERT(m_primitiveRenderer);
 
-	if (!m_renderView->begin())
-		return;
+	render::Clear cl;
+	cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
+	cl.colors[0] = Color4f(46/255.0f, 56/255.0f, 92/255.0f, 1.0f);
+	cl.depth = 1.0f;
+	cl.stencil = 0;
 
-	const Color4f clearColor(46/255.0f, 56/255.0f, 92/255.0f, 1.0f);
-	m_renderView->clear(
-		render::CfColor | render::CfDepth,
-		&clearColor,
-		1.0f,
-		128
-	);
+	if (!m_renderView->begin(&cl))
+		return;
 
 	render::Viewport viewport = m_renderView->getViewport();
 	float aspect = float(viewport.width) / viewport.height;
