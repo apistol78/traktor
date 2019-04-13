@@ -91,47 +91,47 @@ void RenderContext::render(IRenderView* renderView, uint32_t priorities, const P
 	// Render setup blocks unsorted.
 	if (priorities & RpSetup)
 	{
-		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[0].begin(); i != m_renderQueue[0].end(); ++i)
-			(*i)->render(renderView, globalParameters);
+		for (auto renderBlock : m_renderQueue[0])
+			renderBlock->render(renderView, globalParameters);
 	}
 
 	// Render opaque blocks, sorted by shader.
 	if (priorities & RpOpaque)
 	{
 		std::sort(m_renderQueue[1].begin(), m_renderQueue[1].end(), SortOpaquePredicate);
-		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[1].begin(); i != m_renderQueue[1].end(); ++i)
-			(*i)->render(renderView, globalParameters);
+		for (auto renderBlock : m_renderQueue[1])
+			renderBlock->render(renderView, globalParameters);
 	}
 
 	// Render post opaque blocks, sorted by shader.
 	if (priorities & RpPostOpaque)
 	{
 		std::sort(m_renderQueue[2].begin(), m_renderQueue[2].end(), SortOpaquePredicate);
-		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[2].begin(); i != m_renderQueue[2].end(); ++i)
-			(*i)->render(renderView, globalParameters);
+		for (auto renderBlock : m_renderQueue[2])
+			renderBlock->render(renderView, globalParameters);
 	}
 
 	// Render alpha blend blocks back to front.
 	if (priorities & RpAlphaBlend)
 	{
 		std::sort(m_renderQueue[3].begin(), m_renderQueue[3].end(), SortAlphaBlendPredicate);
-		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[3].begin(); i != m_renderQueue[3].end(); ++i)
-			(*i)->render(renderView, globalParameters);
+		for (auto renderBlock : m_renderQueue[3])
+			renderBlock->render(renderView, globalParameters);
 	}
 
 	// Render post alpha blend blocks back to front.
 	if (priorities & RpPostAlphaBlend)
 	{
 		std::sort(m_renderQueue[4].begin(), m_renderQueue[4].end(), SortAlphaBlendPredicate);
-		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[4].begin(); i != m_renderQueue[4].end(); ++i)
-			(*i)->render(renderView, globalParameters);
+		for (auto renderBlock : m_renderQueue[4])
+			renderBlock->render(renderView, globalParameters);
 	}
 
 	// Render overlay blocks unsorted.
 	if (priorities & RpOverlay)
 	{
-		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[5].begin(); i != m_renderQueue[5].end(); ++i)
-			(*i)->render(renderView, globalParameters);
+		for (auto renderBlock : m_renderQueue[5])
+			renderBlock->render(renderView, globalParameters);
 	}
 }
 
@@ -141,8 +141,8 @@ void RenderContext::flush()
 	for (int32_t i = 0; i < sizeof_array(m_renderQueue); ++i)
 	{
 		// As blocks are allocated from a fixed pool we need to manually call destructors.
-		for (AlignedVector< RenderBlock* >::const_iterator j = m_renderQueue[i].begin(); j != m_renderQueue[i].end(); ++j)
-			(*j)->~RenderBlock();
+		for (auto renderBlock : m_renderQueue[i])
+			renderBlock->~RenderBlock();
 
 		m_renderQueue[i].resize(0);
 	}

@@ -139,7 +139,7 @@ bool RenderViewVk::create(const RenderViewEmbeddedDesc& desc)
 	}
 #endif
 
-	if (!create(100, 100))
+	if (!create(64, 64))
 		return false;
 
 	return true;

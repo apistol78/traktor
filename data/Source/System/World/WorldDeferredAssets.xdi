@@ -50,27 +50,11 @@
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
 		<item>
-			<id>{F4F7C11E-BCB3-1045-9C78-1F0658D34229}</id>
-			<editorDeployOnly>false</editorDeployOnly>
-		</item>
-		<item>
-			<id>{E00C6B91-3266-A044-BE9E-56C8E70CA539}</id>
-			<editorDeployOnly>false</editorDeployOnly>
-		</item>
-		<item>
-			<id>{3FD07AEE-3FB5-C84D-87E1-3F9A2F0CAD5E}</id>
-			<editorDeployOnly>false</editorDeployOnly>
-		</item>
-		<item>
 			<id>{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
 		<item>
 			<id>{9453D74C-76C4-8748-9A5B-9E3D6D4F9406}</id>
-			<editorDeployOnly>false</editorDeployOnly>
-		</item>
-		<item>
-			<id>{673434A8-2663-9141-8E23-91A2F38A7B69}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
 		<item>
@@ -91,10 +75,6 @@
 		</item>
 		<item>
 			<id>{BDFEFBE0-C5E9-2643-B445-DB02AC5C7687}</id>
-			<editorDeployOnly>false</editorDeployOnly>
-		</item>
-		<item>
-			<id>{AA7A6074-6CFC-1947-857C-8D9903D0880F}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
 		<item>

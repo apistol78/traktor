@@ -53,7 +53,7 @@ bool CubeTextureVk::create()
 	ici.arrayLayers = 6;
 	ici.format = vkTextureFormats[m_desc.format];
 	ici.tiling = VK_IMAGE_TILING_OPTIMAL;
-	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+	ici.initialLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 	ici.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	ici.samples = VK_SAMPLE_COUNT_1_BIT;
