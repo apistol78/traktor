@@ -52,8 +52,8 @@ bool WorldEntityPipeline::buildDependencies(
 	}
 	else if (const ProbeComponentData* probeComponentData = dynamic_type_cast<const ProbeComponentData*>(sourceAsset))
 	{
-		pipelineDepends->addDependency(probeComponentData->getProbeDiffuseTexture(), editor::PdfBuild | editor::PdfResource);
-		pipelineDepends->addDependency(probeComponentData->getProbeSpecularTexture(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(probeComponentData->getDiffuseTexture(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(probeComponentData->getSpecularTexture(), editor::PdfBuild | editor::PdfResource);
 	}
 	return true;
 }

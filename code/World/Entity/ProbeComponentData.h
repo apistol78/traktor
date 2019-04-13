@@ -37,21 +37,26 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	void setProbeDiffuseTexture(const resource::Id< render::ITexture >& probeTexture) { m_probeDiffuseTexture = probeTexture; }
+	void setDiffuseTexture(const resource::Id< render::ITexture >& probeTexture) { m_diffuseTexture = probeTexture; }
 
-	const resource::Id< render::ITexture >& getProbeDiffuseTexture() const { return m_probeDiffuseTexture; }
+	const resource::Id< render::ITexture >& getDiffuseTexture() const { return m_diffuseTexture; }
 
-	void setProbeSpecularTexture(const resource::Id< render::ITexture >& probeTexture) { m_probeSpecularTexture = probeTexture; }
+	void setSpecularTexture(const resource::Id< render::ITexture >& probeTexture) { m_specularTexture = probeTexture; }
 
-	const resource::Id< render::ITexture >& getProbeSpecularTexture() const { return m_probeSpecularTexture; }
+	const resource::Id< render::ITexture >& getSpecularTexture() const { return m_specularTexture; }
+
+	void setLocal(bool local) { m_local = local; }
+
+	bool getLocal() const { return m_local; }
 
 	void setVolume(const Aabb3& volume) { m_volume = volume; }
 
 	const Aabb3& getVolume() const { return m_volume; }
 
 private:
-	resource::Id< render::ITexture > m_probeDiffuseTexture;
-	resource::Id< render::ITexture > m_probeSpecularTexture;
+	resource::Id< render::ITexture > m_diffuseTexture;
+	resource::Id< render::ITexture > m_specularTexture;
+	bool m_local;
 	Aabb3 m_volume;
 };
 

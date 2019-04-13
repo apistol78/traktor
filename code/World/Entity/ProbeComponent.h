@@ -34,8 +34,9 @@ class T_DLLCLASS ProbeComponent : public IEntityComponent
 
 public:
 	ProbeComponent(
-		const resource::Proxy< render::ITexture >& probeDiffuseTexture,
-		const resource::Proxy< render::ITexture >& probeSpecularTexture,
+		const resource::Proxy< render::ITexture >& diffuseTexture,
+		const resource::Proxy< render::ITexture >& specularTexture,
+		bool local,
 		const Aabb3& volume
 	);
 
@@ -51,20 +52,23 @@ public:
 
 	Transform getTransform() const;
 
-	void setProbeDiffuseTexture(const resource::Proxy< render::ITexture >& probeTexture) { m_probeDiffuseTexture = probeTexture; }
+	void setDiffuseTexture(const resource::Proxy< render::ITexture >& probeTexture) { m_diffuseTexture = probeTexture; }
 
-	const resource::Proxy< render::ITexture >& getProbeDiffuseTexture() const { return m_probeDiffuseTexture; }
+	const resource::Proxy< render::ITexture >& getDiffuseTexture() const { return m_diffuseTexture; }
 
-	void setProbeSpecularTexture(const resource::Proxy< render::ITexture >& probeTexture) { m_probeSpecularTexture = probeTexture; }
+	void setSpecularTexture(const resource::Proxy< render::ITexture >& probeTexture) { m_specularTexture = probeTexture; }
 
-	const resource::Proxy< render::ITexture >& getProbeSpecularTexture() const { return m_probeSpecularTexture; }
+	const resource::Proxy< render::ITexture >& getSpecularTexture() const { return m_specularTexture; }
+
+	bool getLocal() const { return m_local; }
 
 	const Aabb3& getVolume() const { return m_volume; }
 
 private:
 	Entity* m_owner;
-	resource::Proxy< render::ITexture > m_probeDiffuseTexture;
-	resource::Proxy< render::ITexture > m_probeSpecularTexture;
+	resource::Proxy< render::ITexture > m_diffuseTexture;
+	resource::Proxy< render::ITexture > m_specularTexture;
+	bool m_local;
 	Aabb3 m_volume;
 };
 
