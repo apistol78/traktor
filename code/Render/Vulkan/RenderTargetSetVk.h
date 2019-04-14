@@ -77,7 +77,10 @@ public:
 		VkRenderPass& outRenderPass
 	);
 
-	bool prepareAsTexture(VkCommandBuffer commandBuffer);
+	bool prepareAsTexture(
+		VkCommandBuffer commandBuffer,
+		int32_t colorIndex
+	);
 
 	uint32_t getColorTargetCount() const { return (uint32_t)m_colorTargets.size(); }
 

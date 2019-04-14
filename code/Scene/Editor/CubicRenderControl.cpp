@@ -517,7 +517,7 @@ void CubicRenderControl::capture(const Vector4& pivot)
 	{
 		render::Clear cl;
 		cl.mask = render::CfColor | render::CfDepth;
-		cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+		cl.colors[0] = Color4f(1.0f, 1.0f, 0.0f, 1.0f);
 		cl.depth = 1.0f;
 
 		// Render all faces of cube map.
@@ -581,6 +581,9 @@ void CubicRenderControl::capture(const Vector4& pivot)
 			}
 		}
 
+		m_renderView->end();
+		m_renderView->present();
+
 		// Download each target and update cube texture.
 		for (int32_t side = 0; side < 6; ++side)
 		{
@@ -600,9 +603,6 @@ void CubicRenderControl::capture(const Vector4& pivot)
 			else
 				log::error << L"Unable to lock cubemap side " << side << L"." << Endl;
 		}
-
-		m_renderView->end();
-		m_renderView->present();
 	}
 }
 

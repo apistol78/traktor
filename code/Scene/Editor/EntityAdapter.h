@@ -141,7 +141,7 @@ public:
 	template < typename AttributeType >
 	const AttributeType* getLayerAttribute() const
 	{
-		return checked_type_cast< const AttributeType*, true >(getLayerAttribute(type_of< AttributeType >()));
+		return checked_type_cast< const AttributeType* >(getLayerAttribute(type_of< AttributeType >()));
 	}
 
 	//@}

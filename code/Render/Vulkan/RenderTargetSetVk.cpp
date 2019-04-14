@@ -180,9 +180,13 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL
 	);
 
+	// Convert target for optimal read.
 	VkCommandBuffer commandBuffer = beginSingleTimeCommands(m_logicalDevice, m_setupCommandPool);
-
 	m_colorTargets[index]->prepareForReadBack(commandBuffer);
+	endSingleTimeCommands(m_logicalDevice, m_setupCommandPool, commandBuffer, m_setupQueue);
+
+	// Copy target into host image.
+	commandBuffer = beginSingleTimeCommands(m_logicalDevice, m_setupCommandPool);
 
 	VkImageCopy ic = {};
 	ic.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -201,6 +205,9 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 		&ic
 	);
 
+	endSingleTimeCommands(m_logicalDevice, m_setupCommandPool, commandBuffer, m_setupQueue);
+
+	// Convert host image into general layout; must be general to be mappable.
 	changeImageLayout(
 		m_logicalDevice,
 		m_setupCommandPool,
@@ -209,8 +216,6 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 		VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		VK_IMAGE_LAYOUT_GENERAL
 	);
-
-	endSingleTimeCommands(m_logicalDevice, m_setupCommandPool, commandBuffer, m_setupQueue);
 
 	// Get information about image.
 	VkImageSubresource isr = {};
@@ -452,12 +457,20 @@ bool RenderTargetSetVk::prepareAsTarget(
 	return true;
 }
 
-bool RenderTargetSetVk::prepareAsTexture(VkCommandBuffer commandBuffer)
+bool RenderTargetSetVk::prepareAsTexture(
+	VkCommandBuffer commandBuffer,
+	int32_t colorIndex
+)
 {
-	for (int32_t i = 0; i < m_setDesc.count; ++i)
-		m_colorTargets[i]->prepareAsTexture(commandBuffer);
-
-	if (m_depthTarget)
+	if (colorIndex >= 0)
+		m_colorTargets[colorIndex]->prepareAsTexture(commandBuffer);
+	else
+	{
+		for (int32_t i = 0; i < m_setDesc.count; ++i)
+			m_colorTargets[i]->prepareAsTexture(commandBuffer);
+	}
+	
+	if (m_depthTarget && m_setDesc.usingDepthStencilAsTexture)
 		m_depthTarget->prepareAsTexture(commandBuffer);
 
 	return true;
