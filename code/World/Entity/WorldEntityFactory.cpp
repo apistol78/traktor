@@ -198,6 +198,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 		return new ProbeComponent(
 			diffuseTexture,
 			specularTexture,
+			probeComponentData->getIntensity(),
 			probeComponentData->getLocal(),
 			probeComponentData->getVolume()
 		);

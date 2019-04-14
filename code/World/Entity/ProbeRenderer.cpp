@@ -33,6 +33,7 @@ render::handle_t s_handleProbeVolumeCenter;
 render::handle_t s_handleProbeVolumeExtent;
 render::handle_t s_handleProbeDiffuse;
 render::handle_t s_handleProbeSpecular;
+render::handle_t s_handleProbeIntensity;
 render::handle_t s_handleProbeSpecularMips;
 render::handle_t s_handleMagicCoeffs;
 render::handle_t s_handleWorldViewInv;
@@ -53,6 +54,7 @@ ProbeRenderer::ProbeRenderer(
 	s_handleProbeVolumeExtent = render::getParameterHandle(L"World_ProbeVolumeExtent");
 	s_handleProbeDiffuse = render::getParameterHandle(L"World_ProbeDiffuse");
 	s_handleProbeSpecular = render::getParameterHandle(L"World_ProbeSpecular");
+	s_handleProbeIntensity = render::getParameterHandle(L"World_ProbeIntensity");
 	s_handleProbeSpecularMips = render::getParameterHandle(L"World_ProbeSpecularMips");
 	s_handleMagicCoeffs = render::getParameterHandle(L"World_MagicCoeffs");
 	s_handleWorldViewInv = render::getParameterHandle(L"World_WorldViewInv");
@@ -224,6 +226,7 @@ void ProbeRenderer::flush(
 			renderBlock->programParams->setVectorParameter(s_handleProbeVolumeExtent, probeComponent->getVolume().getExtent());
 		}
 
+		renderBlock->programParams->setFloatParameter(s_handleProbeIntensity, probeComponent->getIntensity());
 		renderBlock->programParams->setFloatParameter(s_handleProbeSpecularMips, probeComponent->getSpecularTexture() != nullptr ? (float)probeComponent->getSpecularTexture()->getMips() : 0.0f);
 		renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
 		renderBlock->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);

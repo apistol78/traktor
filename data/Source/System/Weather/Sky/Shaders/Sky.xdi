@@ -265,7 +265,7 @@
 				<first>624</first>
 				<second>264</second>
 			</position>
-			<color>1, 0.960784, 0.823529, 1</color>
+			<color>3, 2.956863, 2.811765, 1</color>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{FE0789FC-772E-4541-A069-034AF72D25E6}</id>

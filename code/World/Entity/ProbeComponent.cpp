@@ -11,12 +11,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ProbeComponent", ProbeComponent, IEntityC
 ProbeComponent::ProbeComponent(
 	const resource::Proxy< render::ITexture >& diffuseTexture,
 	const resource::Proxy< render::ITexture >& specularTexture,
+	float intensity,
 	bool local,
 	const Aabb3& volume
 )
 :	m_owner(nullptr)
 ,	m_diffuseTexture(diffuseTexture)
 ,	m_specularTexture(specularTexture)
+,	m_intensity(intensity)
 ,	m_local(local)
 ,	m_volume(volume)
 {

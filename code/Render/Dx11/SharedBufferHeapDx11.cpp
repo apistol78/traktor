@@ -71,7 +71,7 @@ bool SharedBufferHeapDx11::alloc(uint32_t bufferSize, uint32_t vertexStride, Chu
 	// Prepare buffer descriptor; if requested size is larger than configured we
 	// create one such large buffer instead.
 	D3D11_BUFFER_DESC dbd = m_dbd;
-	dbd.ByteWidth = max(dbd.ByteWidth, bufferSize);
+	dbd.ByteWidth = std::max(dbd.ByteWidth, bufferSize);
 
 	// No free block found; allocate a new chain.
 	hr = m_context->getD3DDevice()->CreateBuffer(&dbd, NULL, &chain.d3dBuffer.getAssign());

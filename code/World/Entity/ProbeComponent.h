@@ -36,6 +36,7 @@ public:
 	ProbeComponent(
 		const resource::Proxy< render::ITexture >& diffuseTexture,
 		const resource::Proxy< render::ITexture >& specularTexture,
+		float intensity,
 		bool local,
 		const Aabb3& volume
 	);
@@ -60,6 +61,8 @@ public:
 
 	const resource::Proxy< render::ITexture >& getSpecularTexture() const { return m_specularTexture; }
 
+	float getIntensity() const { return m_intensity; }
+
 	bool getLocal() const { return m_local; }
 
 	const Aabb3& getVolume() const { return m_volume; }
@@ -68,6 +71,7 @@ private:
 	Entity* m_owner;
 	resource::Proxy< render::ITexture > m_diffuseTexture;
 	resource::Proxy< render::ITexture > m_specularTexture;
+	float m_intensity;
 	bool m_local;
 	Aabb3 m_volume;
 };

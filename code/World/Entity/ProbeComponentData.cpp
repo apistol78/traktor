@@ -13,7 +13,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ProbeComponentData", 0, ProbeComponentData, IEntityComponentData)
 
 ProbeComponentData::ProbeComponentData()
-:	m_local(false)
+:	m_intensity(1.0f)
+,	m_local(false)
 ,	m_volume(Vector4::zero(), Vector4::zero())
 {
 }
@@ -22,6 +23,7 @@ void ProbeComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::ITexture >(L"diffuseTexture", m_diffuseTexture);
 	s >> resource::Member< render::ITexture >(L"specularTexture", m_specularTexture);
+	s >> Member< float >(L"intensity", m_intensity);
 	s >> Member< bool >(L"local", m_local);
 	s >> MemberAabb3(L"volume", m_volume);
 }
