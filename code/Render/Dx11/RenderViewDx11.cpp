@@ -526,26 +526,29 @@ bool RenderViewDx11::begin(
 		{ m_targetSize[0], m_targetSize[1] }
 	};
 
-	if ((clearMask & CfColor) == CfColor)
+	if (clear)
 	{
-		float T_MATH_ALIGN16 tmp[4];
-		if (rs.d3dRenderView[0] != 0)
+		if ((clear->mask & CfColor) == CfColor)
 		{
-			color.storeAligned(tmp);
-			m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[0], tmp);
+			float T_MATH_ALIGN16 tmp[4];
+			if (rs.d3dRenderView[0] != 0)
+			{
+				clear->colors[0].storeAligned(tmp);
+				m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[0], tmp);
+			}
 		}
-	}
 
-	if ((clearMask & (CfDepth | CfStencil)) != 0)
-	{
-		if (rs.d3dDepthStencilView)
+		if ((clear->mask & (CfDepth | CfStencil)) != 0)
 		{
-			UINT d3dClear = 0;
-			if ((clearMask & CfDepth) != 0)
-				d3dClear |= D3D11_CLEAR_DEPTH;
-			if ((clearMask & CfStencil) != 0)
-				d3dClear |= D3D11_CLEAR_STENCIL;
-			m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, d3dClear, depth, stencil);
+			if (rs.d3dDepthStencilView)
+			{
+				UINT d3dClear = 0;
+				if ((clear->mask & CfDepth) != 0)
+					d3dClear |= D3D11_CLEAR_DEPTH;
+				if ((clear->mask & CfStencil) != 0)
+					d3dClear |= D3D11_CLEAR_STENCIL;
+				m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, d3dClear, clear->depth, clear->stencil);
+			}
 		}
 	}
 
@@ -667,42 +670,45 @@ bool RenderViewDx11::begin(
 	else
 		return false;
 
-	const RenderState& rs = m_renderStateStack.back();
-	if ((clearMask & CfColor) == CfColor)
+	if (clear)
 	{
-		float T_MATH_ALIGN16 tmp[4];
-		if (rs.d3dRenderView[0] != 0)
+		const RenderState& rs = m_renderStateStack.back();
+		if ((clear->mask & CfColor) == CfColor)
 		{
-			colors[0].storeAligned(tmp);
-			m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[0], tmp);
+			float T_MATH_ALIGN16 tmp[4];
+			if (rs.d3dRenderView[0] != 0)
+			{
+				clear->colors[0].storeAligned(tmp);
+				m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[0], tmp);
+			}
+			if (rs.d3dRenderView[1] != 0)
+			{
+				clear->colors[1].storeAligned(tmp);
+				m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[1], tmp);
+			}
+			if (rs.d3dRenderView[2] != 0)
+			{
+				clear->colors[2].storeAligned(tmp);
+				m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[2], tmp);
+			}
+			if (rs.d3dRenderView[3] != 0)
+			{
+				clear->colors[3].storeAligned(tmp);
+				m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[3], tmp);
+			}
 		}
-		if (rs.d3dRenderView[1] != 0)
-		{
-			colors[1].storeAligned(tmp);
-			m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[1], tmp);
-		}
-		if (rs.d3dRenderView[2] != 0)
-		{
-			colors[2].storeAligned(tmp);
-			m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[2], tmp);
-		}
-		if (rs.d3dRenderView[3] != 0)
-		{
-			colors[3].storeAligned(tmp);
-			m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[3], tmp);
-		}
-	}
 
-	if ((clearMask & (CfDepth | CfStencil)) != 0)
-	{
-		if (rs.d3dDepthStencilView)
+		if ((clear->mask & (CfDepth | CfStencil)) != 0)
 		{
-			UINT d3dClear = 0;
-			if ((clearMask & CfDepth) != 0)
-				d3dClear |= D3D11_CLEAR_DEPTH;
-			if ((clearMask & CfStencil) != 0)
-				d3dClear |= D3D11_CLEAR_STENCIL;
-			m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, d3dClear, depth, stencil);
+			if (rs.d3dDepthStencilView)
+			{
+				UINT d3dClear = 0;
+				if ((clear->mask & CfDepth) != 0)
+					d3dClear |= D3D11_CLEAR_DEPTH;
+				if ((clear->mask & CfStencil) != 0)
+					d3dClear |= D3D11_CLEAR_STENCIL;
+				m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, d3dClear, clear->depth, clear->stencil);
+			}
 		}
 	}
 
@@ -736,26 +742,29 @@ bool RenderViewDx11::begin(
 	if (rts->usingPrimaryDepthStencil())
 		rs.d3dDepthStencilView = m_d3dDepthStencilView;
 
-	if ((clearMask & CfColor) == CfColor)
+	if (clear)
 	{
-		float T_MATH_ALIGN16 tmp[4];
-		if (rs.d3dRenderView[0] != 0)
+		if ((clear->mask & CfColor) == CfColor)
 		{
-			color.storeAligned(tmp);
-			m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[0], tmp);
+			float T_MATH_ALIGN16 tmp[4];
+			if (rs.d3dRenderView[0] != 0)
+			{
+				clear->colors[0].storeAligned(tmp);
+				m_context->getD3DDeviceContext()->ClearRenderTargetView(rs.d3dRenderView[0], tmp);
+			}
 		}
-	}
 
-	if ((clearMask & (CfDepth | CfStencil)) != 0)
-	{
-		if (rs.d3dDepthStencilView)
+		if ((clear->mask & (CfDepth | CfStencil)) != 0)
 		{
-			UINT d3dClear = 0;
-			if ((clearMask & CfDepth) != 0)
-				d3dClear |= D3D11_CLEAR_DEPTH;
-			if ((clearMask & CfStencil) != 0)
-				d3dClear |= D3D11_CLEAR_STENCIL;
-			m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, d3dClear, depth, stencil);
+			if (rs.d3dDepthStencilView)
+			{
+				UINT d3dClear = 0;
+				if ((clear->mask & CfDepth) != 0)
+					d3dClear |= D3D11_CLEAR_DEPTH;
+				if ((clear->mask & CfStencil) != 0)
+					d3dClear |= D3D11_CLEAR_STENCIL;
+				m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, d3dClear, clear->depth, clear->stencil);
+			}
 		}
 	}
 

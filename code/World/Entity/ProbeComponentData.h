@@ -45,6 +45,10 @@ public:
 
 	const resource::Id< render::ITexture >& getSpecularTexture() const { return m_specularTexture; }
 
+	void setIntensity(float intensity) { m_intensity = intensity; }
+
+	float getIntensity() const { return m_intensity; }
+
 	void setLocal(bool local) { m_local = local; }
 
 	bool getLocal() const { return m_local; }
@@ -56,6 +60,7 @@ public:
 private:
 	resource::Id< render::ITexture > m_diffuseTexture;
 	resource::Id< render::ITexture > m_specularTexture;
+	float m_intensity;
 	bool m_local;
 	Aabb3 m_volume;
 };
