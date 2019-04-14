@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
@@ -9,7 +7,6 @@
 #include "Core/Misc/TString.h"
 #include "Render/VertexElement.h"
 #include "Render/Vulkan/ApiLoader.h"
-#include "Render/Vulkan/ContextVk.h"
 #include "Render/Vulkan/CubeTextureVk.h"
 #include "Render/Vulkan/IndexBufferVk.h"
 #include "Render/Vulkan/ProgramVk.h"

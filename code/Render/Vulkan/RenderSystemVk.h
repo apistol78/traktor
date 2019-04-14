@@ -30,8 +30,6 @@ namespace traktor
 	namespace render
 	{
 
-class ContextVk;
-
 #if defined(_WIN32) || defined(__LINUX__)
 class Window;
 #endif
