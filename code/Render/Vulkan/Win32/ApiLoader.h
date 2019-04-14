@@ -76,6 +76,8 @@ extern PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProper
 extern PFN_vkCmdSetViewport vkCmdSetViewport;
 extern PFN_vkFreeMemory vkFreeMemory;
 extern PFN_vkDestroyBuffer vkDestroyBuffer;
+extern PFN_vkCmdCopyImage vkCmdCopyImage;
+extern PFN_vkGetImageSubresourceLayout vkGetImageSubresourceLayout;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;
