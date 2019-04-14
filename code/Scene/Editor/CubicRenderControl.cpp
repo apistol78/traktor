@@ -30,6 +30,7 @@
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
+#include "Render/Editor/Texture/CubeMap.h"
 #include "Render/Editor/Texture/IrradianceProbeAsset.h"
 #include "Render/Editor/Texture/RadianceProbeAsset.h"
 #include "Render/ImageProcess/ImageProcess.h"
@@ -584,16 +585,42 @@ void CubicRenderControl::capture(const Vector4& pivot)
 		m_renderView->end();
 		m_renderView->present();
 
-		// Download each target and update cube texture.
+		// Download each target.
 		for (int32_t side = 0; side < 6; ++side)
 		{
-			m_cubeImages[side]->clear(Color4f(1.0f, 0.0f, 0.0f, 1.0f));
-
 			if (!m_renderTargetSet->read(side, m_cubeImages[side]->getData()))
 				log::error << L"Unable to read render target " << side << L" into cube image." << Endl;
 
 			m_cubeImages[side]->clearAlpha(1.0f);
+		}
 
+		// Write ground.
+		if (true)
+		{
+			render::CubeMap cubeMap(m_cubeImages);
+			for (int32_t i = 0; i < 6; ++i)
+			{
+				for (int32_t y = 0; y < c_previewFaceSize; ++y)
+				{
+					for (int32_t x = 0; x < c_previewFaceSize; ++x)
+					{
+						Vector4 d = cubeMap.getDirection(i, x, y);
+
+						Scalar f = clamp(d.y() * Scalar(0.5f) + Scalar(0.5f), Scalar(0.0f), Scalar(1.0f));
+
+						Color4f src = Color4f(0.0f, 1.0f, 0.0f, 1.0f);
+						Color4f dst = cubeMap.get(d);
+
+						Color4f out = Color4f(lerp(src, dst, f));
+						cubeMap.set(d, out);
+					}
+				}
+			}
+		}
+
+		// Update cube texture
+		for (int32_t side = 0; side < 6; ++side)
+		{
 			render::ITexture::Lock lock;
 			if (m_cubeMapTexture->lock(side, 0, lock))
 			{
@@ -679,8 +706,6 @@ void CubicRenderControl::eventPaint(ui::PaintEvent* event)
 {
 	if (!m_renderView)
 		return;
-
-	//capture(Vector4::origo());
 
 	// Render world.
 	render::Clear cl;

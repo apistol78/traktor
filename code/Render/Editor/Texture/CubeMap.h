@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Color4f.h"
 
 // import/export mechanism.
@@ -35,6 +36,8 @@ public:
 	explicit CubeMap(int32_t size, const drawing::PixelFormat& pixelFormat);
 
 	explicit CubeMap(const drawing::Image* cubeMap);
+
+	explicit CubeMap(const Ref< drawing::Image > sides[6]);
 
 	/*! \brief Create flatten "cross" image. */
 	Ref< drawing::Image > createCrossImage() const;

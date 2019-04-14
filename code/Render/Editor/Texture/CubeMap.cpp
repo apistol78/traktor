@@ -106,6 +106,14 @@ CubeMap::CubeMap(const drawing::Image* cubeMap)
 	}
 }
 
+CubeMap::CubeMap(const Ref< drawing::Image > sides[6])
+{
+	for (int32_t i = 0; i < 6; ++i)
+		m_side[i] = sides[i];
+
+	m_size = sides[0]->getWidth();
+}
+
 Ref< drawing::Image > CubeMap::createCrossImage() const
 {
 	Ref< drawing::Image > cross = new drawing::Image(m_side[0]->getPixelFormat(), m_size * 3, m_size * 4);
