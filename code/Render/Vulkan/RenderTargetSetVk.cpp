@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <cstring>
 #include <limits>
 #include "Core/Containers/AlignedVector.h"
@@ -143,7 +141,7 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	VkImageCreateInfo ici = {};
 	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 	ici.imageType = VK_IMAGE_TYPE_2D;
-	ici.format = m_colorTargets[index]->getVkFormat(); //  VK_FORMAT_R8G8B8A8_UNORM;
+	ici.format = m_colorTargets[index]->getVkFormat();
 	ici.extent.width = m_setDesc.width;
 	ici.extent.height = m_setDesc.height;
 	ici.extent.depth = 1;
@@ -243,8 +241,7 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	
 	// Cleanup
 	vkFreeMemory(m_logicalDevice, hostImageMemory, nullptr);
-	// vkDestroyImage(m_logicalDevice, hostImage, nullptr);
-
+	vkDestroyImage(m_logicalDevice, hostImage, nullptr);
 	return true;
 }
 
