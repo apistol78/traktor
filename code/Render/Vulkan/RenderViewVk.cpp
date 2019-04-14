@@ -479,7 +479,10 @@ void RenderViewVk::end()
 	if (m_targetStateStack.size() >= 2)
 	{
 		TargetState& ts = m_targetStateStack.back();
-		ts.rts->prepareAsTexture(m_drawCommandBuffer);
+		ts.rts->prepareAsTexture(
+			m_drawCommandBuffer,
+			ts.colorIndex
+		);
 	}
 
 	// Pop previous render pass from stack.
