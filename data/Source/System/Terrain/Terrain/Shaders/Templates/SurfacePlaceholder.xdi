@@ -5,8 +5,8 @@
 			<id>{524CBBA2-C160-CB43-ADE9-BE7299EFF622}</id>
 			<comment/>
 			<position>
-				<first>494</first>
-				<second>456</second>
+				<first>503</first>
+				<second>445</second>
 			</position>
 			<name>T_Normal</name>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{10231020-AD85-D648-98B2-E9B028704052}</id>
 			<comment/>
 			<position>
-				<first>494</first>
-				<second>425</second>
+				<first>503</first>
+				<second>412</second>
 			</position>
 			<name>T_Color</name>
 		</item>
@@ -23,8 +23,8 @@
 			<id>{5E3C7A16-8233-0946-9F8E-656A2F545AD8}</id>
 			<comment/>
 			<position>
-				<first>44</first>
-				<second>381</second>
+				<first>54</first>
+				<second>380</second>
 			</position>
 			<name>T_PatchTexCoord</name>
 			<connectable>true</connectable>
@@ -36,7 +36,7 @@
 			<id>{0F740AA1-AF96-F141-B047-9F2E0FFAA003}</id>
 			<comment/>
 			<position>
-				<first>85</first>
+				<first>84</first>
 				<second>486</second>
 			</position>
 			<name>T_Normal</name>
@@ -49,7 +49,7 @@
 			<id>{8230C4D0-206C-CD4A-9A60-1B39BCCA921F}</id>
 			<comment/>
 			<position>
-				<first>41</first>
+				<first>54</first>
 				<second>416</second>
 			</position>
 			<name>T_WorldTexCoord</name>
@@ -62,8 +62,8 @@
 			<id>{5B0F7E0B-4BD2-5F49-80CB-173E05D74159}</id>
 			<comment/>
 			<position>
-				<first>89</first>
-				<second>521</second>
+				<first>104</first>
+				<second>520</second>
 			</position>
 			<name>T_Height</name>
 			<connectable>true</connectable>
@@ -88,22 +88,31 @@ This is the contract of a terrain surface shader.
 			]]>
 			</comment>
 			<position>
-				<first>207</first>
-				<second>215</second>
+				<first>206</first>
+				<second>214</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{8F2904B3-D860-A043-98F0-4AE6AC0D4ED1}</id>
 			<comment/>
 			<position>
-				<first>26</first>
-				<second>451</second>
+				<first>34</first>
+				<second>450</second>
 			</position>
 			<name>T_WorldEyeDirection</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{C20462C0-7BDF-4542-A9AE-B885F31015EE}</id>
+			<comment/>
+			<position>
+				<first>503</first>
+				<second>478</second>
+			</position>
+			<name>T_Roughness</name>
 		</item>
 	</nodes>
 	<edges>
@@ -124,6 +133,16 @@ This is the contract of a terrain surface shader.
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Input</name>
 			</destination>
 		</item>

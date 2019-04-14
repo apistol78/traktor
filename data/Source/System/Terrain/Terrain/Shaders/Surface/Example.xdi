@@ -44,8 +44,8 @@
 			<id>{11C43171-02B2-F64A-A2FD-354CF2011EF6}</id>
 			<comment/>
 			<position>
-				<first>1261</first>
-				<second>-1289</second>
+				<first>1343</first>
+				<second>-1296</second>
 			</position>
 			<name>T_Color</name>
 		</item>
@@ -83,8 +83,8 @@
 			<id>{32C7B481-B077-D64A-A379-4644D759ACF0}</id>
 			<comment/>
 			<position>
-				<first>1261</first>
-				<second>-1223</second>
+				<first>1343</first>
+				<second>-1232</second>
 			</position>
 			<name>T_Normal</name>
 		</item>
@@ -125,6 +125,11 @@
 					<name>NormalMap</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<id>{1B5C10E5-B1BB-0842-BAC1-F5BC96F97E44}</id>
+					<name>RoughnessMap</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -135,10 +140,18 @@
 					<id>{75081155-EEF4-154C-8CCD-B5851DFDE202}</id>
 					<name>Normal</name>
 				</item>
+				<item>
+					<id>{02092CA8-E885-0C40-813D-314C83BE9D88}</id>
+					<name>Roughness</name>
+				</item>
 			</outputPins>
 			<values>
 				<item>
 					<first>NormalMap</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>RoughnessMap</first>
 					<second>0</second>
 				</item>
 			</values>
@@ -167,6 +180,11 @@
 					<name>NormalMap</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<id>{1B5C10E5-B1BB-0842-BAC1-F5BC96F97E44}</id>
+					<name>RoughnessMap</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -177,10 +195,18 @@
 					<id>{75081155-EEF4-154C-8CCD-B5851DFDE202}</id>
 					<name>Normal</name>
 				</item>
+				<item>
+					<id>{02092CA8-E885-0C40-813D-314C83BE9D88}</id>
+					<name>Roughness</name>
+				</item>
 			</outputPins>
 			<values>
 				<item>
 					<first>NormalMap</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>RoughnessMap</first>
 					<second>0</second>
 				</item>
 			</values>
@@ -209,6 +235,11 @@
 					<name>NormalMap</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<id>{1B5C10E5-B1BB-0842-BAC1-F5BC96F97E44}</id>
+					<name>RoughnessMap</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -219,10 +250,18 @@
 					<id>{75081155-EEF4-154C-8CCD-B5851DFDE202}</id>
 					<name>Normal</name>
 				</item>
+				<item>
+					<id>{02092CA8-E885-0C40-813D-314C83BE9D88}</id>
+					<name>Roughness</name>
+				</item>
 			</outputPins>
 			<values>
 				<item>
 					<first>NormalMap</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>RoughnessMap</first>
 					<second>0</second>
 				</item>
 			</values>
@@ -251,6 +290,11 @@
 					<name>NormalMap</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<id>{1B5C10E5-B1BB-0842-BAC1-F5BC96F97E44}</id>
+					<name>RoughnessMap</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -261,10 +305,18 @@
 					<id>{75081155-EEF4-154C-8CCD-B5851DFDE202}</id>
 					<name>Normal</name>
 				</item>
+				<item>
+					<id>{02092CA8-E885-0C40-813D-314C83BE9D88}</id>
+					<name>Roughness</name>
+				</item>
 			</outputPins>
 			<values>
 				<item>
 					<first>NormalMap</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>RoughnessMap</first>
 					<second>0</second>
 				</item>
 			</values>
@@ -333,6 +385,26 @@
 					<name>OcclusionMap</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<id>{D20C18AF-3146-804C-8002-7096CCF185D5}</id>
+					<name>Roughness1</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{D4E74FF1-6A49-3749-9C4E-A0ACE7037C72}</id>
+					<name>Roughness2</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{ABC7D7C1-DECA-744F-879E-FD86C7B445B3}</id>
+					<name>Roughness3</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{A117C3FC-8299-F549-8A19-BC6209609223}</id>
+					<name>Roughness4</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -342,6 +414,10 @@
 				<item>
 					<id>{33ED69BF-F760-3443-A3C1-35BBE2A71B6B}</id>
 					<name>Normal</name>
+				</item>
+				<item>
+					<id>{64E37C99-0E2F-304F-938A-7B048C129EE6}</id>
+					<name>Roughness</name>
 				</item>
 			</outputPins>
 			<values>
@@ -383,6 +459,22 @@
 				</item>
 				<item>
 					<first>OcclusionMap</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>Roughness1</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>Roughness2</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>Roughness3</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>Roughness4</first>
 					<second>0</second>
 				</item>
 			</values>
@@ -466,6 +558,15 @@
 			</position>
 			<external>{3E183D81-82D5-CF49-BC47-A0B72CE1CCD2}</external>
 			<type>PtTexture2D</type>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{EC1BEAE4-64B4-2946-A6EC-0A98FCC19BF1}</id>
+			<comment/>
+			<position>
+				<first>1343</first>
+				<second>-1168</second>
+			</position>
+			<name>T_Roughness</name>
 		</item>
 	</nodes>
 	<edges>
@@ -717,6 +818,16 @@
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Roughness</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
