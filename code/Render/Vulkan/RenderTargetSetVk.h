@@ -37,7 +37,12 @@ class RenderTargetSetVk : public RenderTargetSet
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetSetVk(VkPhysicalDevice physicalDevice, VkDevice device);
+	RenderTargetSetVk(
+		VkPhysicalDevice physicalDevice,
+		VkDevice logicalDevice,
+		VkCommandPool setupCommandPool,
+		VkQueue setupQueue
+	);
 
 	virtual ~RenderTargetSetVk();
 
@@ -97,10 +102,14 @@ private:
 	typedef std::tuple< int32_t, uint32_t > render_pass_key_t;
 
 	VkPhysicalDevice m_physicalDevice;
-	VkDevice m_device;
+	VkDevice m_logicalDevice;
+	VkCommandPool m_setupCommandPool;
+	VkQueue m_setupQueue;
+
 	RenderTargetSetCreateDesc m_setDesc;
 	RefArray< RenderTargetVk > m_colorTargets;
 	Ref< RenderTargetDepthVk > m_depthTarget;
+	
 	SmallMap< render_pass_key_t, RenderPass > m_renderPasses;
 };
 

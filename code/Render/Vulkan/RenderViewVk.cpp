@@ -748,7 +748,12 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	m_primaryTargets.resize(imageCount);
 	for (uint32_t i = 0; i < imageCount; ++i)
 	{
-		m_primaryTargets[i] = new RenderTargetSetVk(m_physicalDevice, m_logicalDevice);
+		m_primaryTargets[i] = new RenderTargetSetVk(
+			m_physicalDevice,
+			m_logicalDevice,
+			nullptr,
+			nullptr
+		);
 		if (!m_primaryTargets[i]->createPrimary(
 			width,
 			height,

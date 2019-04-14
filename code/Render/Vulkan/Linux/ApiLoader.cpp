@@ -80,6 +80,8 @@ PFN_vkEnumerateDeviceExtensionProperties vkEnumerateDeviceExtensionProperties = 
 PFN_vkCmdSetViewport vkCmdSetViewport = nullptr;
 PFN_vkFreeMemory vkFreeMemory = nullptr;
 PFN_vkDestroyBuffer vkDestroyBuffer = nullptr;
+PFN_vkCmdCopyImage vkCmdCopyImage = nullptr;
+PFN_vkGetImageSubresourceLayout vkGetImageSubresourceLayout = nullptr;
 
 PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = nullptr;
@@ -570,6 +572,20 @@ bool initializeVulkanApi()
 	if (vkDestroyBuffer == nullptr)
 	{
 		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyBuffer\"." << Endl;
+		return false;
+	}
+
+	vkCmdCopyImage = (PFN_vkCmdCopyImage)dlsym(s_hVulkanModule, "vkCmdCopyImage");
+	if (vkCmdCopyImage == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdCopyImage\"." << Endl;
+		return false;
+	}
+
+	vkGetImageSubresourceLayout = (PFN_vkGetImageSubresourceLayout)dlsym(s_hVulkanModule, "vkGetImageSubresourceLayout");
+	if (vkGetImageSubresourceLayout == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkGetImageSubresourceLayout\"." << Endl;
 		return false;
 	}
 
