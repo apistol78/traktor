@@ -44,12 +44,12 @@ RenderTargetSetVk::~RenderTargetSetVk()
 bool RenderTargetSetVk::createPrimary(int32_t width, int32_t height, VkFormat colorFormat, VkImage colorImage, VkFormat depthFormat, VkImage depthImage)
 {
 	m_colorTargets.resize(1);
-	m_colorTargets[0] = new RenderTargetVk();
-	if (!m_colorTargets[0]->createPrimary(m_physicalDevice, m_logicalDevice, width, height, colorFormat, colorImage))
+	m_colorTargets[0] = new RenderTargetVk(m_physicalDevice, m_logicalDevice);
+	if (!m_colorTargets[0]->createPrimary(width, height, colorFormat, colorImage))
 		return false;
 
-	m_depthTarget = new RenderTargetDepthVk();
-	if (!m_depthTarget->createPrimary(m_physicalDevice, m_logicalDevice, width, height, depthFormat, depthImage))
+	m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice);
+	if (!m_depthTarget->createPrimary(width, height, depthFormat, depthImage))
 		return false;
 
 	m_setDesc.count = 1;
@@ -74,15 +74,15 @@ bool RenderTargetSetVk::create(const RenderTargetSetCreateDesc& setDesc)
 	m_colorTargets.resize(setDesc.count);
 	for (int32_t i = 0; i < setDesc.count; ++i)
 	{
-		m_colorTargets[i] = new RenderTargetVk();
-		if (!m_colorTargets[i]->create(m_physicalDevice, m_logicalDevice, setDesc, setDesc.targets[i]))
+		m_colorTargets[i] = new RenderTargetVk(m_physicalDevice, m_logicalDevice);
+		if (!m_colorTargets[i]->create(setDesc, setDesc.targets[i]))
 			return false;
 	}
 
 	if (setDesc.createDepthStencil)
 	{
-		m_depthTarget = new RenderTargetDepthVk();
-		if (!m_depthTarget->create(m_physicalDevice, m_logicalDevice, setDesc))
+		m_depthTarget = new RenderTargetDepthVk(m_physicalDevice, m_logicalDevice);
+		if (!m_depthTarget->create(setDesc))
 			return false;
 	}
 

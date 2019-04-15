@@ -11,9 +11,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDepthVk", RenderTargetDepthVk, ISimpleTexture)
 
-RenderTargetDepthVk::RenderTargetDepthVk()
-:	m_format(VK_FORMAT_UNDEFINED)
+RenderTargetDepthVk::RenderTargetDepthVk(VkPhysicalDevice physicalDevice, VkDevice logicalDevice)
+:	m_physicalDevice(physicalDevice)
+,	m_logicalDevice(logicalDevice)
+,	m_format(VK_FORMAT_UNDEFINED)
 ,	m_image(nullptr)
+,	m_imageMemory(nullptr)
 ,	m_imageView(nullptr)
 ,	m_imageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
 ,	m_width(0)
@@ -26,7 +29,7 @@ RenderTargetDepthVk::~RenderTargetDepthVk()
 	destroy();
 }
 
-bool RenderTargetDepthVk::createPrimary(VkPhysicalDevice physicalDevice, VkDevice device, int32_t width, int32_t height, VkFormat format, VkImage image)
+bool RenderTargetDepthVk::createPrimary(int32_t width, int32_t height, VkFormat format, VkImage image)
 {
 	VkImageViewCreateInfo ivci = {};
 	ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -40,7 +43,7 @@ bool RenderTargetDepthVk::createPrimary(VkPhysicalDevice physicalDevice, VkDevic
 	ivci.subresourceRange.baseArrayLayer = 0;
 	ivci.subresourceRange.layerCount = 1;
 
- 	if (vkCreateImageView(device, &ivci, nullptr, &m_imageView) != VK_SUCCESS)
+ 	if (vkCreateImageView(m_logicalDevice, &ivci, nullptr, &m_imageView) != VK_SUCCESS)
 		return false;
 
 	m_format = format;
@@ -51,7 +54,7 @@ bool RenderTargetDepthVk::createPrimary(VkPhysicalDevice physicalDevice, VkDevic
 	return true;
 }
 
-bool RenderTargetDepthVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const RenderTargetSetCreateDesc& setDesc)
+bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc)
 {
 	VkResult result;
 
@@ -75,28 +78,27 @@ bool RenderTargetDepthVk::create(VkPhysicalDevice physicalDevice, VkDevice devic
 	imageCreateInfo.pQueueFamilyIndices = nullptr;
 	imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	
- 	if ((result = vkCreateImage(device, &imageCreateInfo, nullptr, &m_image)) != VK_SUCCESS)
+ 	if ((result = vkCreateImage(m_logicalDevice, &imageCreateInfo, nullptr, &m_image)) != VK_SUCCESS)
 	{
 		log::error << L"RenderTargetDepthVk::create failed; vkCreateImage returned error " << getHumanResult(result) << L"." << Endl;
 		return false;
 	}
 
 	VkMemoryRequirements memoryRequirements = {};
-	vkGetImageMemoryRequirements(device, m_image, &memoryRequirements);
+	vkGetImageMemoryRequirements(m_logicalDevice, m_image, &memoryRequirements);
 
 	VkMemoryAllocateInfo imageAllocateInfo = {};
 	imageAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 	imageAllocateInfo.allocationSize = memoryRequirements.size;
-	imageAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
+	imageAllocateInfo.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryRequirements);
 
-	VkDeviceMemory imageMemory = {};
-	if ((result = vkAllocateMemory(device, &imageAllocateInfo, nullptr, &imageMemory)) != VK_SUCCESS)
+	if ((result = vkAllocateMemory(m_logicalDevice, &imageAllocateInfo, nullptr, &m_imageMemory)) != VK_SUCCESS)
 	{
 		log::error << L"RenderTargetDepthVk::create failed; vkAllocateMemory returned error " << getHumanResult(result) << L"." << Endl;
 		return false;
 	}
 
-	if ((result = vkBindImageMemory(device, m_image, imageMemory, 0)) != VK_SUCCESS)
+	if ((result = vkBindImageMemory(m_logicalDevice, m_image, m_imageMemory, 0)) != VK_SUCCESS)
 	{
 		log::error << L"RenderTargetDepthVk::create failed; vkBindImageMemory returned error " << getHumanResult(result) << L"." << Endl;
 		return false;
@@ -113,7 +115,7 @@ bool RenderTargetDepthVk::create(VkPhysicalDevice physicalDevice, VkDevice devic
 	ivci.subresourceRange.levelCount = 1;
 	ivci.subresourceRange.baseArrayLayer = 0;
 	ivci.subresourceRange.layerCount = 1;
- 	if ((result = vkCreateImageView(device, &ivci, nullptr, &m_imageView)) != VK_SUCCESS)
+ 	if ((result = vkCreateImageView(m_logicalDevice, &ivci, nullptr, &m_imageView)) != VK_SUCCESS)
 	{
 		log::error << L"RenderTargetDepthVk::create failed; vkCreateImageView returned error " << getHumanResult(result) << L"." << Endl;
 		return false;
@@ -127,6 +129,19 @@ bool RenderTargetDepthVk::create(VkPhysicalDevice physicalDevice, VkDevice devic
 
 void RenderTargetDepthVk::destroy()
 {
+	// Do not destroy image unless we have allocated memory for it;
+	// otherwise it's primary targets thus owned by swapchain.
+	if (m_imageMemory == nullptr)
+		return;
+
+	vkFreeMemory(m_logicalDevice, m_imageMemory, nullptr);
+	m_imageMemory = nullptr;
+
+	if (m_image != nullptr)
+	{
+		vkDestroyImage(m_logicalDevice, m_image, nullptr);
+		m_image = nullptr;
+	}
 }
 
 ITexture* RenderTargetDepthVk::resolve()

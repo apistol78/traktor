@@ -205,8 +205,17 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 {
 	vkDeviceWaitIdle(m_logicalDevice);
 
+	// Destroy primary targets.
+	for (auto primaryTarget : m_primaryTargets)
+		primaryTarget->destroy();
+	m_primaryTargets.resize(0);
+
 	// Destroy previous swap chain.
-	vkDestroySwapchainKHR(m_logicalDevice, m_swapChain, nullptr);	
+	if (m_swapChain != nullptr)
+	{
+		vkDestroySwapchainKHR(m_logicalDevice, m_swapChain, nullptr);	
+		m_swapChain = nullptr;
+	}
 
 	if (create(width, height))
 		return true;

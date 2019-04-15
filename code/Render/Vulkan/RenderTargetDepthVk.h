@@ -31,13 +31,13 @@ class RenderTargetDepthVk : public ISimpleTexture
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetDepthVk();
+	RenderTargetDepthVk(VkPhysicalDevice physicalDevice, VkDevice logicalDevice);
 
 	virtual ~RenderTargetDepthVk();
 
-	bool createPrimary(VkPhysicalDevice physicalDevice, VkDevice device, int32_t width, int32_t height, VkFormat format, VkImage image);
+	bool createPrimary(int32_t width, int32_t height, VkFormat format, VkImage image);
 
-	bool create(VkPhysicalDevice physicalDevice, VkDevice device, const RenderTargetSetCreateDesc& setDesc);
+	bool create(const RenderTargetSetCreateDesc& setDesc);
 
 	virtual void destroy() override final;
 
@@ -66,8 +66,11 @@ public:
 	VkImageView getVkImageView() const { return m_imageView; }
 
 private:
+	VkPhysicalDevice m_physicalDevice;
+	VkDevice m_logicalDevice;
 	VkFormat m_format;
 	VkImage m_image;
+	VkDeviceMemory m_imageMemory;
 	VkImageView m_imageView;
 	VkImageLayout m_imageLayout;
 	int32_t m_width;
