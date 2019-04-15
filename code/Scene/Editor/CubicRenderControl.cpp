@@ -21,6 +21,7 @@
 #include "Drawing/Filters/TransformFilter.h"
 #include "Editor/IEditor.h"
 #include "Editor/TypeBrowseFilter.h"
+#include "I18N/Text.h"
 #include "Render/ICubeTexture.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
@@ -49,15 +50,21 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Scene/Editor/Events/FrameEvent.h"
+#include "Ui/Application.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
+#include "Ui/Slider.h"
+#include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Widget.h"
+#include "Ui/ColorPicker/ColorControl.h"
+#include "Ui/ColorPicker/ColorDialog.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarEmbed.h"
 #include "World/Entity.h"
 #include "World/IEntityEventManager.h"
 #include "World/IWorldRenderer.h"
@@ -163,6 +170,28 @@ bool CubicRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 	m_toolBar->addItem(new ui::ToolBarButton(L"Capture at selected", ui::Command(L"Scene.Editor.CaptureAtSelected"), ui::ToolBarButton::BsText));
 	m_toolBar->addItem(new ui::ToolBarButton(L"Save cubemap...", ui::Command(L"Scene.Editor.SaveCubeMap"), ui::ToolBarButton::BsText));
 	m_toolBar->addItem(new ui::ToolBarButton(L"Update probe...", ui::Command(L"Scene.Editor.UpdateProbe"), ui::ToolBarButton::BsText));
+	
+	Ref< ui::Container > containerIntensity = new ui::Container();
+	containerIntensity->create(m_toolBar, ui::WsNone, new ui::TableLayout(L"100,40", L"24", 2, 2));
+
+	m_sliderIntensity = new ui::Slider();
+	m_sliderIntensity->create(containerIntensity);
+	m_sliderIntensity->setRange(1, 100);
+	m_sliderIntensity->setValue(100);
+	m_sliderIntensity->addEventHandler< ui::ContentChangeEvent >(this, &CubicRenderControl::eventSliderIntensityChange);
+
+	m_staticIntensity = new ui::Static();
+	m_staticIntensity->create(containerIntensity, L"100%");
+
+	m_toolBar->addItem(new ui::ToolBarEmbed(containerIntensity, ui::dpi96(100)));
+	
+	m_colorControl = new ui::ColorControl();
+	m_colorControl->create(m_toolBar, ui::WsBorder);
+	m_colorControl->setColor(Color4ub(128, 128, 128, 255));
+	m_colorControl->addEventHandler< ui::MouseButtonUpEvent >(this, &CubicRenderControl::eventColorClick);
+
+	m_toolBar->addItem(new ui::ToolBarEmbed(m_colorControl, 32));
+
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &CubicRenderControl::eventToolClick);
 
 	m_renderWidget = new ui::Widget();
@@ -597,6 +626,8 @@ void CubicRenderControl::capture(const Vector4& pivot)
 		// Write ground.
 		if (true)
 		{
+			Color4f ground = Color4f::fromColor4ub(m_colorControl->getColor()).rgb1();
+
 			render::CubeMap cubeMap(m_cubeImages);
 			for (int32_t i = 0; i < 6; ++i)
 			{
@@ -606,13 +637,19 @@ void CubicRenderControl::capture(const Vector4& pivot)
 					{
 						Vector4 d = cubeMap.getDirection(i, x, y);
 
-						Scalar f = clamp(d.y() * Scalar(0.5f) + Scalar(0.5f), Scalar(0.0f), Scalar(1.0f));
+						float f = -d.y();
+						if (f < 0.0f)
+							f = std::sin(f * PI + PI / 2.0f);
+						else
+							f = 1.0f;
 
-						Color4f src = Color4f(0.0f, 1.0f, 0.0f, 1.0f);
-						Color4f dst = cubeMap.get(d);
+						f = clamp(f, 0.0f, 1.0f);
 
-						Color4f out = Color4f(lerp(src, dst, f));
-						cubeMap.set(d, out);
+						Color4f sky = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
+						cubeMap.getSide(i)->getPixel(x, y, sky);
+
+						Color4f out = Color4f(lerp(sky, ground, Scalar(f)));
+						cubeMap.getSide(i)->setPixel(x, y, out.rgb1());
 					}
 				}
 			}
@@ -631,6 +668,30 @@ void CubicRenderControl::capture(const Vector4& pivot)
 				log::error << L"Unable to lock cubemap side " << side << L"." << Endl;
 		}
 	}
+}
+
+void CubicRenderControl::eventSliderIntensityChange(ui::ContentChangeEvent* event)
+{
+	int32_t value = m_sliderIntensity->getValue();
+	m_staticIntensity->setText(toString(value) + L"%");
+	m_staticIntensity->update();
+}
+
+void CubicRenderControl::eventColorClick(ui::MouseButtonUpEvent* event)
+{
+	ui::ColorDialog colorDialog;
+	colorDialog.create(
+		m_container,
+		i18n::Text(L"COLOR_DIALOG_TEXT"),
+		ui::ColorDialog::WsDefaultFixed,
+		Color4f::fromColor4ub(m_colorControl->getColor())
+	);
+	if (colorDialog.showModal() == ui::DrOk)
+	{
+		Color4ub color = colorDialog.getColor().toColor4ub();
+		m_colorControl->setColor(color);
+	}
+	colorDialog.destroy();
 }
 
 void CubicRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
@@ -715,6 +776,8 @@ void CubicRenderControl::eventPaint(ui::PaintEvent* event)
 
 	if (m_renderView->begin(&cl))
 	{
+		float intensity = m_sliderIntensity->getValue() / 100.0f;
+
 		// Render cube preview.
 		ui::Size sz = m_renderWidget->getInnerRect().getSize();
 		float aspect = float(sz.cx) / sz.cy;
@@ -722,6 +785,7 @@ void CubicRenderControl::eventPaint(ui::PaintEvent* event)
 		m_shader->setMatrixParameter(L"World", translate(0.0f, 0.0f, 3.5f) * rotateX(m_previewPitch) * rotateY(m_previewHead));
 		m_shader->setMatrixParameter(L"Projection", perspectiveLh(deg2rad(80.0f), aspect, 0.1f, 10.0f));
 		m_shader->setTextureParameter(L"Texture", m_cubeMapTexture);
+		m_shader->setFloatParameter(L"Intensity", intensity);
 		m_shader->draw(m_renderView, m_vertexBuffer, m_indexBuffer, render::Primitives(render::PtTriangles, 0, 12, 0, 7));
 
 		m_renderView->end();
