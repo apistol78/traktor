@@ -23,6 +23,11 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 	const wchar_t* alphaPrefix[] = { L"o", L"a", L"ao" };
 	std::wstring pathName = fileName.getPathName();
 
+	// Stat source file.
+	Ref< File > file = FileSystem::getInstance().get(fileName);
+	if (!file)
+		return nullptr;
+
 	// Generate checksum of full path to source image.
 	Adler32 adler;
 	adler.begin();
@@ -35,24 +40,18 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 		toString(adler.get()) + L"_" +
 		toString(width) + L"x" + toString(height) + L"_" +
 		alphaPrefix[int32_t(alphaMode)] +
+		toString(file->getLastWriteTime().getSecondsSinceEpoch()) +
 		L".png";
 
 	if (FileSystem::getInstance().exist(thumbFileName))
 	{
-		// Cached thumb exist; ensure source hasn't been modified.
-		Ref< File > file = FileSystem::getInstance().get(fileName);
-		if (!file)
-			return 0;
-		if (!file->isArchive())
-		{
-			// Source hasn't been modified; load thumb.
-			return drawing::Image::load(thumbFileName);
-		}
+		// Cached thumb exist; load thumb and assume it's up to date.
+		return drawing::Image::load(thumbFileName);
 	}
 
 	Ref< drawing::Image > image = drawing::Image::load(fileName);
 	if (!image)
-		return 0;
+		return nullptr;
 
 	drawing::ScaleFilter scale(
 		width,
