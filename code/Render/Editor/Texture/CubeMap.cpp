@@ -247,8 +247,9 @@ void CubeMap::set(const Vector4& direction, const Color4f& value)
 	u *= n;
 	v *= n;
 
-	int32_t x = clamp< int32_t >((u * 0.5f + 0.5f) * m_size, 0, m_size);
-	int32_t y = clamp< int32_t >((v * 0.5f + 0.5f) * m_size, 0, m_size);
+	int32_t s = m_size - 1;
+	int32_t x = clamp< int32_t >((u * 0.5f + 0.5f) * s, 0, s);
+	int32_t y = clamp< int32_t >((v * 0.5f + 0.5f) * s, 0, s);
 
 	m_side[side]->setPixel(x, y, value);
 }
@@ -283,12 +284,15 @@ Color4f CubeMap::get(const Vector4& direction) const
 	u *= n;
 	v *= n;
 
-	int32_t x = clamp< int32_t >((u * 0.5f + 0.5f) * m_size, 0, m_size);
-	int32_t y = clamp< int32_t >((v * 0.5f + 0.5f) * m_size, 0, m_size);
+	int32_t s = m_size - 1;
+	int32_t x = clamp< int32_t >((u * 0.5f + 0.5f) * s, 0, s);
+	int32_t y = clamp< int32_t >((v * 0.5f + 0.5f) * s, 0, s);
 
-	Color4f s;
-	m_side[side]->getPixel(x, y, s);
-	return s;
+	Color4f color;
+	if (m_side[side]->getPixel(x, y, color))
+		return color;
+	else
+		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 	}

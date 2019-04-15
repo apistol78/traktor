@@ -36,7 +36,10 @@ class VertexBuffer;
 	namespace ui
 	{
 
+class ColorControl;
 class Container;
+class Slider;
+class Static;
 class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
@@ -92,6 +95,9 @@ private:
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::Container > m_container;
 	Ref< ui::ToolBar > m_toolBar;
+	Ref< ui::Slider > m_sliderIntensity;
+	Ref< ui::Static > m_staticIntensity;
+	Ref< ui::ColorControl > m_colorControl;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_renderTargetSet;
@@ -118,6 +124,10 @@ private:
 	ui::Size m_dirtySize;
 
 	void capture(const Vector4& capture);
+
+	void eventSliderIntensityChange(ui::ContentChangeEvent* event);
+
+	void eventColorClick(ui::MouseButtonUpEvent* event);
 
 	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 
