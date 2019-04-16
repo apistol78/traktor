@@ -76,8 +76,10 @@ RenderSystemVk::RenderSystemVk()
 ,	m_physicalDevice(nullptr)
 ,	m_logicalDevice(nullptr)
 ,	m_graphicsQueueIndex(~0)
+,	m_computeQueueIndex(~0)
 ,	m_graphicsQueue(nullptr)
-,	m_commandPool(nullptr)
+,	m_computeQueue(nullptr)
+,	m_graphicsCommandPool(nullptr)
 ,	m_setupCommandBuffer(nullptr)
 {
 }
@@ -180,6 +182,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	// Get physical device graphics queue.
 	m_graphicsQueueIndex = ~0;
+	m_computeQueueIndex = ~0;
 
 	uint32_t queueFamilyCount = 0;
 	vkGetPhysicalDeviceQueueFamilyProperties(m_physicalDevice, &queueFamilyCount, 0);
@@ -189,15 +192,19 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	for (uint32_t i = 0; i < queueFamilyCount; ++i)
 	{
-		if (queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
-		{
+		if (m_graphicsQueueIndex == ~0 && queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT)
 			m_graphicsQueueIndex = i;
-			break;
-		}
+		if (m_computeQueueIndex == ~0 && queueFamilyProperties[i].queueFlags & VK_QUEUE_COMPUTE_BIT)
+			m_computeQueueIndex = i;
 	}
 	if (m_graphicsQueueIndex == ~0)
 	{
 		log::error << L"Failed to create Vulkan; no suitable graphics queue found." << Endl;
+		return false;
+	}
+	if (m_computeQueueIndex == ~0)
+	{
+		log::error << L"Failed to create Vulkan; no suitable compute queue found." << Endl;
 		return false;
 	}
 
@@ -231,23 +238,24 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	// Get opaque queues.
 	vkGetDeviceQueue(m_logicalDevice, m_graphicsQueueIndex, 0, &m_graphicsQueue);
+	vkGetDeviceQueue(m_logicalDevice, m_computeQueueIndex, 0, &m_computeQueue);
 
-	// Create command pool.
+	// Create graphics command pool.
 	VkCommandPoolCreateInfo cpci = {};
 	cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 	cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 	cpci.queueFamilyIndex = m_graphicsQueueIndex;
 
-	if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_commandPool) != VK_SUCCESS)
+	if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_graphicsCommandPool) != VK_SUCCESS)
 	{
-		log::error << L"Failed to create Vulkan; unable to create command pool." << Endl;
+		log::error << L"Failed to create Vulkan; unable to create graphics command pool." << Endl;
 		return false;
 	}
 
-	// Create command buffers from pool.
+	// Create "setup" command buffer from pool.
 	VkCommandBufferAllocateInfo cbai = {};
 	cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	cbai.commandPool = m_commandPool;
+	cbai.commandPool = m_graphicsCommandPool;
 	cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 	cbai.commandBufferCount = 1;
 
@@ -357,7 +365,8 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewDefaultDesc&
 		m_instance,
 		m_physicalDevice,
 		m_logicalDevice,
-		m_graphicsQueueIndex
+		m_graphicsQueueIndex,
+		m_computeQueueIndex
 	);
 	if (renderView->create(desc))
 		return renderView;
@@ -371,7 +380,8 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc
 		m_instance,
 		m_physicalDevice,
 		m_logicalDevice,
-		m_graphicsQueueIndex
+		m_graphicsQueueIndex,
+		m_computeQueueIndex
 	);
 	if (renderView->create(desc))
 		return renderView;
@@ -530,7 +540,7 @@ Ref< ISimpleTexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCre
 	if (texture->create(
 		m_physicalDevice,
 		m_logicalDevice,
-		m_commandPool,
+		m_graphicsCommandPool,
 		m_graphicsQueue,
 		desc
 	))
@@ -544,7 +554,7 @@ Ref< ICubeTexture > RenderSystemVk::createCubeTexture(const CubeTextureCreateDes
 	Ref< CubeTextureVk > texture = new CubeTextureVk(
 		m_physicalDevice,
 		m_logicalDevice,
-		m_commandPool,
+		m_graphicsCommandPool,
 		m_graphicsQueue,
 		desc
 	);
@@ -560,7 +570,7 @@ Ref< IVolumeTexture > RenderSystemVk::createVolumeTexture(const VolumeTextureCre
 	if (texture->create(
 		m_physicalDevice,
 		m_logicalDevice,
-		m_commandPool,
+		m_graphicsCommandPool,
 		m_graphicsQueue,
 		desc
 	))
@@ -574,7 +584,7 @@ Ref< RenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTargetS
 	Ref< RenderTargetSetVk > renderTargetSet = new RenderTargetSetVk(
 		m_physicalDevice,
 		m_logicalDevice,
-		m_commandPool,
+		m_graphicsCommandPool,
 		m_graphicsQueue
 	);
 	if (renderTargetSet->create(desc))

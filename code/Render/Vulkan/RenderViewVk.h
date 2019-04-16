@@ -49,7 +49,8 @@ public:
 		VkInstance instance,
 		VkPhysicalDevice physicalDevice,
 		VkDevice device,
-		uint32_t graphicsQueueIndex
+		uint32_t graphicsQueueIndex,
+		uint32_t computeQueueIndex
 	);
 
 	virtual ~RenderViewVk();
@@ -136,6 +137,7 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	uint32_t m_graphicsQueueIndex;
+	uint32_t m_computeQueueIndex;
 
 #if defined(_WIN32) || defined(__LINUX__)
 	Ref< Window > m_window;
@@ -144,8 +146,10 @@ private:
 	VkSurfaceKHR m_surface;
 	uint32_t m_presentQueueIndex;
 	VkQueue m_presentQueue;
-	VkCommandPool m_commandPool;
-	VkCommandBuffer m_drawCommandBuffer;
+	VkCommandPool m_graphicsCommandPool;
+	VkCommandPool m_computeCommandPool;
+	VkCommandBuffer m_graphicsCommandBuffer;
+	VkCommandBuffer m_computeCommandBuffer;
 	VkSwapchainKHR m_swapChain;
 	VkDescriptorPool m_descriptorPool;
 	VkFence m_renderFence;

@@ -38,7 +38,9 @@ public:
 
 	bool create(VkPhysicalDevice physicalDevice, VkDevice device, const ProgramResourceVk* resource);
 
-	bool validate(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, float targetSize[2]);
+	bool validateGraphics(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, float targetSize[2]);
+
+	bool validateCompute(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer);
 
 	virtual void destroy() override final;
 
@@ -133,6 +135,7 @@ private:
 	
 	VkShaderModule m_vertexShaderModule;
 	VkShaderModule m_fragmentShaderModule;
+	VkShaderModule m_computeShaderModule;
 
 	VkDescriptorSetLayout m_descriptorSetLayout;
 	VkPipelineLayout m_pipelineLayout;

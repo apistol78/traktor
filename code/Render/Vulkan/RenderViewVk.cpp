@@ -41,17 +41,21 @@ RenderViewVk::RenderViewVk(
 	VkInstance instance,
 	VkPhysicalDevice physicalDevice,
 	VkDevice logicalDevice,
-	uint32_t graphicsQueueIndex
+	uint32_t graphicsQueueIndex,
+	uint32_t computeQueueIndex
 )
 :	m_instance(instance)
 ,	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_graphicsQueueIndex(graphicsQueueIndex)
+,	m_computeQueueIndex(computeQueueIndex)
 ,	m_surface(nullptr)
 ,	m_presentQueueIndex(~0)
 ,	m_presentQueue(nullptr)
-,	m_commandPool(nullptr)
-,	m_drawCommandBuffer(nullptr)
+,	m_graphicsCommandPool(nullptr)
+,	m_computeCommandPool(nullptr)
+,	m_graphicsCommandBuffer(nullptr)
+,	m_computeCommandBuffer(nullptr)
 ,	m_swapChain(nullptr)
 ,	m_descriptorPool(nullptr)
 ,	m_renderFence(nullptr)
@@ -292,7 +296,7 @@ void RenderViewVk::setViewport(const Viewport& viewport)
 			vp.height = viewport.height;
 			vp.minDepth = viewport.nearZ;
 			vp.maxDepth = viewport.farZ;
-			vkCmdSetViewport(m_drawCommandBuffer, 0, 1, &vp);
+			vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
 		}
 	}
 }
@@ -337,7 +341,7 @@ bool RenderViewVk::begin(
 	VkCommandBufferBeginInfo beginInfo = {};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	if (vkBeginCommandBuffer(m_drawCommandBuffer, &beginInfo) != VK_SUCCESS)
+	if (vkBeginCommandBuffer(m_graphicsCommandBuffer, &beginInfo) != VK_SUCCESS)
 		return false;
 
 	// Push primary target onto stack.
@@ -370,7 +374,7 @@ bool RenderViewVk::begin(
 	// Also targets transition to "target" multiple
 	// times.
 	if (!m_targetStateDirty)
-		vkCmdEndRenderPass(m_drawCommandBuffer);
+		vkCmdEndRenderPass(m_graphicsCommandBuffer);
 
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
@@ -394,7 +398,7 @@ bool RenderViewVk::begin(
 {
 	// End current render pass, restart later.
 	if (!m_targetStateDirty)
-		vkCmdEndRenderPass(m_drawCommandBuffer);
+		vkCmdEndRenderPass(m_graphicsCommandBuffer);
 
 	TargetState ts;
 	ts.rts = mandatory_non_null_type_cast< RenderTargetSetVk* >(renderTargetSet);
@@ -430,14 +434,14 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 		(float)ts.rts->getWidth(),
 		(float)ts.rts->getHeight()
 	};
-	p->validate(m_logicalDevice, m_descriptorPool, m_drawCommandBuffer, targetSize);
+	p->validateGraphics(m_logicalDevice, m_descriptorPool, m_graphicsCommandBuffer, targetSize);
 
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 2, 3 };
 	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type];
 
 	VkBuffer vbb = vb->getVkBuffer();
 	VkDeviceSize offsets = {};
-	vkCmdBindVertexBuffers(m_drawCommandBuffer, 0, 1, &vbb, &offsets);
+	vkCmdBindVertexBuffers(m_graphicsCommandBuffer, 0, 1, &vbb, &offsets);
 
 	if (indexBuffer && primitives.indexed)
 	{
@@ -446,14 +450,14 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 		VkDeviceSize offset = {};
 		vkCmdBindIndexBuffer(
-			m_drawCommandBuffer,
+			m_graphicsCommandBuffer,
 			ibb,
 			offset,
 			(ib->getIndexType() == ItUInt16) ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32
 		);
 
 		vkCmdDrawIndexed(
-			m_drawCommandBuffer,
+			m_graphicsCommandBuffer,
 			vertexCount,	// index count
 			instanceCount,	// instance count
 			primitives.offset,	// first index
@@ -464,7 +468,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	else
 	{
 		vkCmdDraw(
-			m_drawCommandBuffer,
+			m_graphicsCommandBuffer,
 			vertexCount,   // vertex count
 			instanceCount,   // instance count
 			primitives.offset,   // first vertex
@@ -475,6 +479,9 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 {
+	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
+	p->validateCompute(m_logicalDevice, m_descriptorPool, m_computeCommandBuffer);
+	vkCmdDispatch(m_computeCommandBuffer, workSize[0], workSize[1], workSize[2]);
 }
 
 void RenderViewVk::end()
@@ -482,14 +489,14 @@ void RenderViewVk::end()
 	validateTargetState();
 
 	// Close current render pass.
-	vkCmdEndRenderPass(m_drawCommandBuffer);
+	vkCmdEndRenderPass(m_graphicsCommandBuffer);
 
 	// Transition target to texture if necessary.
 	if (m_targetStateStack.size() >= 2)
 	{
 		TargetState& ts = m_targetStateStack.back();
 		ts.rts->prepareAsTexture(
-			m_drawCommandBuffer,
+			m_graphicsCommandBuffer,
 			ts.colorIndex
 		);
 	}
@@ -504,10 +511,10 @@ void RenderViewVk::present()
 	T_FATAL_ASSERT (m_targetStateStack.empty());
 
 	// Prepare primary color for presentation.
-	m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->prepareForPresentation(m_drawCommandBuffer);
+	m_primaryTargets[m_currentImageIndex]->getColorTargetVk(0)->prepareForPresentation(m_graphicsCommandBuffer);
 
 	// End recording command buffer.
-	vkEndCommandBuffer(m_drawCommandBuffer);
+	vkEndCommandBuffer(m_graphicsCommandBuffer);
 
 	// Wait until GPU has finished rendering all commands.
     VkPipelineStageFlags waitStageMash = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -518,7 +525,7 @@ void RenderViewVk::present()
     si.pWaitSemaphores = &m_presentCompleteSemaphore;
     si.pWaitDstStageMask = &waitStageMash;
     si.commandBufferCount = 1;
-    si.pCommandBuffers = &m_drawCommandBuffer;
+    si.pCommandBuffers = &m_graphicsCommandBuffer;
     si.signalSemaphoreCount = 0;
     si.pSignalSemaphores = nullptr;
 
@@ -548,7 +555,7 @@ void RenderViewVk::pushMarker(const char* const marker)
 		VkDebugMarkerMarkerInfoEXT mi = {};
 		mi.sType = VK_STRUCTURE_TYPE_DEBUG_MARKER_MARKER_INFO_EXT;
 		mi.pMarkerName = marker;
-		vkCmdDebugMarkerBeginEXT(m_drawCommandBuffer, &mi);
+		vkCmdDebugMarkerBeginEXT(m_graphicsCommandBuffer, &mi);
 	}
 }
 
@@ -556,7 +563,7 @@ void RenderViewVk::popMarker()
 {
 	if (m_haveDebugMarkers)
 	{
-		vkCmdDebugMarkerEndEXT(m_drawCommandBuffer);
+		vkCmdDebugMarkerEndEXT(m_graphicsCommandBuffer);
 	}
 }
 
@@ -600,28 +607,53 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	// Get opaque queues.
 	vkGetDeviceQueue(m_logicalDevice, m_presentQueueIndex, 0, &m_presentQueue);
 
-	// Create command pool.
+	// Create graphics command pool.
 	VkCommandPoolCreateInfo cpci = {};
 	cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
 	cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 	cpci.queueFamilyIndex = m_graphicsQueueIndex;
 
-	if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_commandPool) != VK_SUCCESS)
+	if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_graphicsCommandPool) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create command pool." << Endl;
 		return false;
 	}
 
-	// Create command buffers from pool.
+	// Create compute command pool.
+	cpci = {};
+	cpci.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	cpci.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+	cpci.queueFamilyIndex = m_computeQueueIndex;
+
+	if (vkCreateCommandPool(m_logicalDevice, &cpci, 0, &m_computeCommandPool) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; unable to create compute command pool." << Endl;
+		return false;
+	}
+
+	// Create graphics command buffers from pool.
 	VkCommandBufferAllocateInfo cbai = {};
 	cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-	cbai.commandPool = m_commandPool;
+	cbai.commandPool = m_graphicsCommandPool;
 	cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 	cbai.commandBufferCount = 1;
 
-	if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, &m_drawCommandBuffer) != VK_SUCCESS)
+	if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, &m_graphicsCommandBuffer) != VK_SUCCESS)
 	{
-		log::error << L"Failed to create Vulkan; failed to allocate draw command buffer." << Endl;
+		log::error << L"Failed to create Vulkan; failed to allocate graphics command buffer." << Endl;
+		return false;
+	}
+
+	// Create compute command buffers from pool.
+	cbai = {};
+	cbai.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	cbai.commandPool = m_computeCommandPool;
+	cbai.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	cbai.commandBufferCount = 1;
+
+	if (vkAllocateCommandBuffers(m_logicalDevice, &cbai, &m_computeCommandBuffer) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; failed to allocate compute command buffer." << Endl;
 		return false;
 	}
 
@@ -846,7 +878,7 @@ void RenderViewVk::validateTargetState()
 
 	// Prepare render target set as targets.
 	if (!ts.rts->prepareAsTarget(
-		m_drawCommandBuffer,
+		m_graphicsCommandBuffer,
 		ts.colorIndex,
 		ts.clear,
 		m_primaryTargets[m_currentImageIndex]->getDepthTargetVk(),
@@ -864,7 +896,7 @@ void RenderViewVk::validateTargetState()
 	vp.height = ts.viewport.height;
 	vp.minDepth = ts.viewport.nearZ;
 	vp.maxDepth = ts.viewport.farZ;
-	vkCmdSetViewport(m_drawCommandBuffer, 0, 1, &vp);
+	vkCmdSetViewport(m_graphicsCommandBuffer, 0, 1, &vp);
 
 	ts.clear.mask = 0;
 	m_targetStateDirty = false;
@@ -1034,7 +1066,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 	if (!pipeline)
 		return false;
 
-	vkCmdBindPipeline(m_drawCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
+	vkCmdBindPipeline(m_graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 	return true;
 }
 

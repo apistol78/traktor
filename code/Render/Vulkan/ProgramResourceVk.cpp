@@ -94,6 +94,7 @@ void ProgramResourceVk::serialize(ISerializer& s)
 	s >> MemberRenderState(L"renderState", m_renderState);
 	s >> MemberAlignedVector< uint32_t >(L"vertexShader", m_vertexShader);
 	s >> MemberAlignedVector< uint32_t >(L"fragmentShader", m_fragmentShader);
+	s >> MemberAlignedVector< uint32_t >(L"computeShader", m_computeShader);
 	s >> MemberStaticArray< uint32_t, 3 >(L"uniformBufferSizes", m_uniformBufferSizes);
 	s >> MemberAlignedVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
 	s >> MemberAlignedVector< SamplerDesc, MemberComposite< SamplerDesc > >(L"samplers", m_samplers);

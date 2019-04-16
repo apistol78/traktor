@@ -1,4 +1,5 @@
 #include "Render/Editor/Shader/OutputPin.h"
+#include "Render/Vulkan/Editor/Glsl/GlslImage.h"
 #include "Render/Vulkan/Editor/Glsl/GlslLayout.h"
 #include "Render/Vulkan/Editor/Glsl/GlslSampler.h"
 #include "Render/Vulkan/Editor/Glsl/GlslShader.h"
@@ -133,6 +134,9 @@ std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout) const
 {
 	StringOutputStream ss;
 
+	if (getOutputStream(BtBody).empty())
+		return L"";
+
 	ss << L"#version 450" << Endl;
 	ss << L"#extension GL_ARB_separate_shader_objects : enable" << Endl;
 	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
@@ -193,6 +197,11 @@ std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout) const
 				ss << L"layout(set = 0, binding = " << sampler->getBinding() << L") uniform sampler " << sampler->getName() << L";" << Endl;
 			else
 				ss << L"layout(set = 0, binding = " << sampler->getBinding() << L") uniform samplerShadow " << sampler->getName() << L";" << Endl;
+			ss << Endl;
+		}
+		else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
+		{
+			ss << L"layout(set = 0, binding = " << image->getBinding() << L", rgba32f) uniform image2D " << image->getName() << L";" << Endl;
 			ss << Endl;
 		}
 		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))

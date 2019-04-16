@@ -99,8 +99,10 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	uint32_t m_graphicsQueueIndex;
+	uint32_t m_computeQueueIndex;
 	VkQueue m_graphicsQueue;
-	VkCommandPool m_commandPool;
+	VkQueue m_computeQueue;
+	VkCommandPool m_graphicsCommandPool;
 	VkCommandBuffer m_setupCommandBuffer;
 };
 

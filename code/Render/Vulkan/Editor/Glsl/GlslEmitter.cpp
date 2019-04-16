@@ -13,6 +13,7 @@
 #include "Render/Vulkan/VertexAttributesVk.h"
 #include "Render/Vulkan/Editor/Glsl/GlslContext.h"
 #include "Render/Vulkan/Editor/Glsl/GlslEmitter.h"
+#include "Render/Vulkan/Editor/Glsl/GlslImage.h"
 #include "Render/Vulkan/Editor/Glsl/GlslSampler.h"
 #include "Render/Vulkan/Editor/Glsl/GlslStorageBuffer.h"
 #include "Render/Vulkan/Editor/Glsl/GlslTexture.h"
@@ -124,6 +125,59 @@ bool emitColor(GlslContext& cx, Color* node)
 		return false;
 	Vector4 value = node->getColor();
 	assign(f, out) << L"vec4(" << formatFloat(value.x()) << L", " << formatFloat(value.y()) << L", " << formatFloat(value.z()) << L", " << formatFloat(value.w()) << L");" << Endl;
+	return true;
+}
+
+bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
+{
+	cx.enterCompute();
+
+	// Manually handle uniform set for "Storage" input as we need to treat it
+	// as an image rather than texture.
+	const Uniform* storageUniformNode = dynamic_type_cast< const Uniform* >(cx.getInputNode(node, L"Storage"));
+	if (!storageUniformNode)
+		return false;
+	if (storageUniformNode->getParameterType() != PtTexture2D)
+		return false;
+
+	auto existing = cx.getLayout().get(storageUniformNode->getParameterName());
+	if (existing != nullptr)
+	{
+		auto existingImage = dynamic_type_cast< const GlslImage* >(existing);
+		if (!existingImage)
+			return false;
+	}
+	else
+	{
+		// Image do not exist; add new image resource.
+		cx.getLayout().add(new GlslImage(
+			storageUniformNode->getParameterName()
+		));
+	}
+
+	GlslVariable* offset = cx.emitInput(node, L"Offset");
+	if (!offset)
+		return false;
+
+	GlslVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+
+
+	//auto& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
+	//fu << L"layout(rgba32f, binding = 0) uniform image2D " << storage->getName() << L";" << Endl;
+
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	f << L"imageStore(" << storageUniformNode->getParameterName() << L", " << offset->castToInteger(GtFloat2) << L", " << in->cast(GtFloat4) << L");" << Endl;
+
+	// Define parameter in context.
+	cx.addParameter(
+		storageUniformNode->getParameterName(),
+		PtTexture2D,
+		1,
+		UfDraw
+	);
+
 	return true;
 }
 
@@ -2390,6 +2444,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< ArcusTan >()] = new EmitterCast< ArcusTan >(emitArcusTan);
 	m_emitters[&type_of< Clamp >()] = new EmitterCast< Clamp >(emitClamp);
 	m_emitters[&type_of< Color >()] = new EmitterCast< Color >(emitColor);
+	m_emitters[&type_of< ComputeOutput >()] = new EmitterCast< ComputeOutput >(emitComputeOutput);
 	m_emitters[&type_of< Conditional >()] = new EmitterCast< Conditional >(emitConditional);
 	m_emitters[&type_of< Cos >()] = new EmitterCast< Cos >(emitCos);
 	m_emitters[&type_of< Cross >()] = new EmitterCast< Cross >(emitCross);
