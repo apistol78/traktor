@@ -21,6 +21,7 @@ ActionWriteData::ActionWriteData(const Path& instancePath, const std::wstring& d
 ,	m_dataName(dataName)
 ,	m_existingBlob(false)
 {
+	m_dataBuffer.reserve(1 * 1024 * 1024);
 	m_dataStream = new DynamicMemoryStream(
 		m_dataBuffer,
 		false,

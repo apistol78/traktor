@@ -122,6 +122,7 @@ TextureOutputPipeline::TextureOutputPipeline()
 ,	m_compressionQuality(1)
 ,	m_gamma(2.2f)
 ,	m_sRGB(false)
+,	m_compressedData(true)
 {
 }
 
@@ -133,6 +134,7 @@ bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 	m_compressionQuality = settings->getProperty< int32_t >(L"TexturePipeline.CompressionQuality", 1);
 	m_gamma = settings->getProperty< float >(L"TexturePipeline.Gamma", 2.2f);
 	m_sRGB = settings->getProperty< bool >(L"TexturePipeline.sRGB", false);
+	m_compressedData = settings->getProperty< bool >(L"TexturePipeline.CompressedData", true);
 
 	std::wstring compressionMethod = settings->getProperty< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
 	if (compareIgnoreCase< std::wstring >(compressionMethod, L"None") == 0)
@@ -589,12 +591,17 @@ bool TextureOutputPipeline::buildOutput(
 		writer << int32_t(textureFormat);
 		writer << bool(sRGB);
 		writer << uint8_t(Tt2D);
-		writer << bool(true);
+		writer << bool(m_compressedData);
 		writer << bool(textureOutput->m_systemTexture);
 
 		dataOffsetBegin = stream->tell();
 
-		Ref< IStream > streamData = new BufferedStream(new compress::DeflateStreamLzf(stream), 64 * 1024);
+		Ref< IStream > streamData;
+		if (m_compressedData)
+			streamData = new BufferedStream(new compress::DeflateStreamLzf(stream), 64 * 1024);
+		else
+			streamData = stream;
+
 		Writer writerData(streamData);
 
 		RefArray< drawing::Image > mipImages(mipCount);
@@ -764,13 +771,18 @@ bool TextureOutputPipeline::buildOutput(
 		writer << int32_t(textureFormat);
 		writer << bool(sRGB);
 		writer << uint8_t(Tt3D);
-		writer << bool(true);
+		writer << bool(m_compressedData);
 		writer << bool(textureOutput->m_systemTexture);
 
 		dataOffsetBegin = stream->tell();
 
 		// Create data writer, use deflate compression if enabled.
-		Ref< IStream > streamData = new compress::DeflateStreamLzf(stream);
+		Ref< IStream > streamData;
+		if (m_compressedData)
+			streamData = new BufferedStream(new compress::DeflateStreamLzf(stream), 64 * 1024);
+		else
+			streamData = stream;
+
 		Writer writerData(streamData);
 
 		for (int32_t slice = 0; slice < sliceDepth; ++slice)
@@ -865,13 +877,18 @@ bool TextureOutputPipeline::buildOutput(
 		writer << int32_t(textureFormat);
 		writer << bool(sRGB);
 		writer << uint8_t(TtCube);
-		writer << bool(true);
+		writer << bool(m_compressedData);
 		writer << bool(textureOutput->m_systemTexture);
 
 		dataOffsetBegin = stream->tell();
 
 		// Create data writer, use deflate compression if enabled.
-		Ref< IStream > streamData = new compress::DeflateStreamLzf(stream);
+		Ref< IStream > streamData;
+		if (m_compressedData)
+			streamData = new BufferedStream(new compress::DeflateStreamLzf(stream), 64 * 1024);
+		else
+			streamData = stream;
+
 		Writer writerData(streamData);
 
 		for (int side = 0; side < 6; ++side)
@@ -979,7 +996,7 @@ Ref< ISerializable > TextureOutputPipeline::buildOutput(
 ) const
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 	}
