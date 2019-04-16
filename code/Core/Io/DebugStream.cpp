@@ -57,7 +57,7 @@ void DebugStream::close()
 {
 	T_ASSERT(m_stream)
 	m_stream->close();
-	m_stream = 0;
+	m_stream = nullptr;
 }
 
 bool DebugStream::canRead() const

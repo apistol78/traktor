@@ -37,7 +37,7 @@ void MemoryStream::close()
 	if (m_own && m_buffer)
 	{
 		delete[] m_buffer;
-		m_buffer = 0;
+		m_buffer = nullptr;
 	}
 }
 

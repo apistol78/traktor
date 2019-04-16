@@ -34,13 +34,13 @@ void* BlockAllocator::top()
 
 void* BlockAllocator::alloc()
 {
-	void* p = 0;
+	void* p = nullptr;
 
 	if (m_free)
 	{
 		p = m_free;
 		m_free = reinterpret_cast< size_t* >(*m_free);
-		T_ASSERT(m_free >= m_top && m_free < m_end || m_free == 0);
+		T_ASSERT(m_free >= m_top && m_free < m_end || m_free == nullptr);
 
 #if defined(_DEBUG)
 		m_alloced++;
@@ -54,7 +54,7 @@ void* BlockAllocator::alloc()
 	}
 #endif
 
-	T_ASSERT(((size_t*)p >= m_top && (size_t*)p < m_end) || p == 0);
+	T_ASSERT(((size_t*)p >= m_top && (size_t*)p < m_end) || p == nullptr);
 	return p;
 }
 

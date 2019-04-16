@@ -38,7 +38,7 @@ void* DebugAllocator::alloc(size_t size, size_t align, const char* const tag)
 
 	uint8_t* ptr = static_cast< uint8_t* >(m_systemAllocator->alloc(size + c_wallSize * 2, align, tag));
 	if (!ptr)
-		return 0;
+		return nullptr;
 
 	uint32_t* whp = reinterpret_cast< uint32_t* >(ptr);
 	uint32_t* wtp = reinterpret_cast< uint32_t* >(ptr + c_wallSize + size);
@@ -56,7 +56,7 @@ void* DebugAllocator::alloc(size_t size, size_t align, const char* const tag)
 	block.size = size + c_wallSize * 2;
 
 	for (int i = 0; i < sizeof_array(block.at); ++i)
-		block.at[i] = 0;
+		block.at[i] = nullptr;
 
 	getCallStack(sizeof_array(block.at), block.at, 1);
 

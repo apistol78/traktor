@@ -10,8 +10,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.BufferedStream", BufferedStream, IStream)
 BufferedStream::BufferedStream(IStream* stream, uint32_t internalBufferSize)
 :	m_stream(stream)
 ,	m_internalBufferSize(internalBufferSize)
-,	m_readBuf(0)
-,	m_writeBuf(0)
+,	m_readBuf(nullptr)
+,	m_writeBuf(nullptr)
 {
 	m_readBufCnt[0] =
 	m_readBufCnt[1] = 0;
@@ -54,7 +54,7 @@ void BufferedStream::close()
 	{
 		flushWriteBuffer();
 		m_stream->close();
-		m_stream = 0;
+		m_stream = nullptr;
 	}
 }
 

@@ -1,6 +1,7 @@
 #include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/IEncoding.h"
 #include "Core/Io/IStream.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Acquire.h"
 
 namespace traktor
@@ -15,11 +16,7 @@ FileOutputStreamBuffer::FileOutputStreamBuffer(IStream* stream, IEncoding* encod
 
 void FileOutputStreamBuffer::close()
 {
-	if (m_stream)
-	{
-		m_stream->close();
-		m_stream = 0;
-	}
+	safeClose(m_stream);
 }
 
 int32_t FileOutputStreamBuffer::overflow(const wchar_t* buffer, int32_t count)

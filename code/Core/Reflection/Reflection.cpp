@@ -10,7 +10,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.Reflection", Reflection, RfmCompound)
 Ref< Reflection > Reflection::create(const ISerializable* object)
 {
 	if (!object)
-		return 0;
+		return nullptr;
 
 	Ref< Reflection > r = new Reflection(type_of(object));
 
@@ -33,7 +33,7 @@ Ref< ISerializable > Reflection::clone() const
 	if (apply(object))
 		return object;
 	else
-		return 0;
+		return nullptr;
 }
 
 Reflection::Reflection(const TypeInfo& objectType)
