@@ -59,6 +59,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVk", ProgramVk, IProgram)
 ProgramVk::ProgramVk()
 :	m_vertexShaderModule(nullptr)
 ,	m_fragmentShaderModule(nullptr)
+,	m_computeShaderModule(nullptr)
 ,	m_descriptorSetLayout(nullptr)
 ,	m_pipelineLayout(nullptr)
 ,	m_hash(0)
@@ -73,24 +74,43 @@ ProgramVk::~ProgramVk()
 
 bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const ProgramResourceVk* resource)
 {
+	VkShaderStageFlags stageFlags;
+
 	m_renderState = resource->m_renderState;
 	m_hash = resource->m_hash;
 
-	// Create vertex shader module.
-	VkShaderModuleCreateInfo vsmci = {};
-	vsmci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	vsmci.codeSize = resource->m_vertexShader.size() * sizeof(uint32_t);
-	vsmci.pCode = &resource->m_vertexShader[0];
-	if (vkCreateShaderModule(device, &vsmci, nullptr, &m_vertexShaderModule) != VK_SUCCESS)
-		return false;
+	if (!resource->m_vertexShader.empty() && !resource->m_fragmentShader.empty())
+	{
+		// Create vertex shader module.
+		VkShaderModuleCreateInfo vsmci = {};
+		vsmci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		vsmci.codeSize = resource->m_vertexShader.size() * sizeof(uint32_t);
+		vsmci.pCode = &resource->m_vertexShader[0];
+		if (vkCreateShaderModule(device, &vsmci, nullptr, &m_vertexShaderModule) != VK_SUCCESS)
+			return false;
 
-	// Create fragment shader module.
-	VkShaderModuleCreateInfo fsmci = {};
-	fsmci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-	fsmci.codeSize = resource->m_fragmentShader.size() * sizeof(uint32_t);
-	fsmci.pCode = &resource->m_fragmentShader[0];
-	if (vkCreateShaderModule(device, &fsmci, nullptr, &m_fragmentShaderModule) != VK_SUCCESS)
-		return false;
+		// Create fragment shader module.
+		VkShaderModuleCreateInfo fsmci = {};
+		fsmci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		fsmci.codeSize = resource->m_fragmentShader.size() * sizeof(uint32_t);
+		fsmci.pCode = &resource->m_fragmentShader[0];
+		if (vkCreateShaderModule(device, &fsmci, nullptr, &m_fragmentShaderModule) != VK_SUCCESS)
+			return false;
+
+		stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
+	}
+	else if (!resource->m_computeShader.empty())
+	{
+		// Create compute shader module.
+		VkShaderModuleCreateInfo csmci = {};
+		csmci.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		csmci.codeSize = resource->m_computeShader.size() * sizeof(uint32_t);
+		csmci.pCode = &resource->m_computeShader[0];
+		if (vkCreateShaderModule(device, &csmci, nullptr, &m_computeShaderModule) != VK_SUCCESS)
+			return false;
+
+		stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
+	}
 
 	// Create descriptor set layouts for shader uniforms.
 	AlignedVector< VkDescriptorSetLayoutBinding  > dslb;
@@ -103,7 +123,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 		lb.binding = i;
 		lb.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 		lb.descriptorCount = 1;
-		lb.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
+		lb.stageFlags = stageFlags;
 	}
 
 	// Append sampler bindings.
@@ -114,7 +134,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 		lb.binding = sampler.binding;
 		lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
 		lb.descriptorCount = 1;
-		lb.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
+		lb.stageFlags = stageFlags;
 	}
 
 	// Append texture bindings.
@@ -125,7 +145,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 		lb.binding = texture.binding;
 		lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 		lb.descriptorCount = 1;
-		lb.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
+		lb.stageFlags = stageFlags;
 	}
 
 	// Append sbuffer bindings.
@@ -136,7 +156,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 		lb.binding = sbuffer.binding;
 		lb.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
 		lb.descriptorCount = 1;
-		lb.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT | VK_SHADER_STAGE_VERTEX_BIT;
+		lb.stageFlags = stageFlags;
 	}
 
 	VkDescriptorSetLayoutCreateInfo dlci = {};
@@ -255,7 +275,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 	return true;
 }
 
-bool ProgramVk::validate(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, float targetSize[2])
+bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, float targetSize[2])
 {
 	// Set implicit parameters.
 	setVectorParameter(
@@ -413,6 +433,167 @@ bool ProgramVk::validate(VkDevice device, VkDescriptorPool descriptorPool, VkCom
 	vkCmdBindDescriptorSets(
 		commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		m_pipelineLayout,
+		0,
+		1, &descriptorSet,
+		0, nullptr
+	);
+
+	return true;
+}
+
+bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer)
+{
+	// Allocate a descriptor set for parameters.
+	VkDescriptorSet descriptorSet = nullptr;
+
+	VkDescriptorSetAllocateInfo allocateInfo;
+	allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+	allocateInfo.pNext = nullptr;
+	allocateInfo.descriptorPool = descriptorPool;
+	allocateInfo.descriptorSetCount = 1;
+	allocateInfo.pSetLayouts = &m_descriptorSetLayout;
+
+	if (vkAllocateDescriptorSets(device, &allocateInfo, &descriptorSet) != VK_SUCCESS)
+		return false;
+
+	AlignedVector< VkDescriptorBufferInfo > bufferInfos;
+	AlignedVector< VkDescriptorImageInfo > imageInfos;
+	AlignedVector< VkWriteDescriptorSet > writes;
+	
+	// Update scalar uniform buffers.
+	for (uint32_t i = 0; i < 3; ++i)
+	{
+		if (!m_uniformBuffers[i].size)
+			continue;
+
+		// Grab a device buffer; cycle buffers for each draw call.
+		DeviceBuffer& db = m_uniformBuffers[i].deviceBuffers[m_uniformBuffers[i].updateCount];
+		m_uniformBuffers[i].updateCount = (m_uniformBuffers[i].updateCount + 1) % c_deviceBufferCount;
+
+		uint8_t* ptr = nullptr;
+		if (vkMapMemory(device, db.memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
+			return false;
+
+		std::memcpy(
+			ptr,
+			m_uniformBuffers[i].data.c_ptr(),
+			m_uniformBuffers[i].size
+		);
+
+		vkUnmapMemory(device, db.memory);
+
+		auto& bufferInfo = bufferInfos.push_back();
+		bufferInfo.buffer = db.buffer;
+		bufferInfo.offset = 0;
+		bufferInfo.range = m_uniformBuffers[i].size;
+
+		auto& write = writes.push_back();
+		write = {};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext = nullptr;
+		write.dstSet = descriptorSet;
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		write.pBufferInfo = &bufferInfo;
+		write.dstArrayElement = 0;
+		write.dstBinding = i;
+	}
+
+	// Update sampler bindings.
+	for (const auto& sampler : m_samplers)
+	{
+		auto& imageInfo = imageInfos.push_back();
+		imageInfo.sampler = sampler.sampler;
+		imageInfo.imageView = nullptr;
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+		auto& write = writes.push_back();
+		write = {};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext = nullptr;
+		write.dstSet = descriptorSet;
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+		write.pImageInfo = &imageInfo;
+		write.dstArrayElement = 0;
+		write.dstBinding = sampler.binding;
+	}
+
+	// Update texture bindings.
+	for (const auto& texture : m_textures)
+	{
+		if (!texture.texture)
+			continue;
+		
+		Ref< ITexture > resolved = texture.texture->resolve();
+		if (!resolved)
+			continue;
+
+		VkImageView imageView = nullptr;
+		if (is_a< SimpleTextureVk >(resolved))
+			imageView = static_cast< SimpleTextureVk* >(resolved.ptr())->getVkImageView();
+		else if (is_a< CubeTextureVk >(resolved))
+			imageView = static_cast< CubeTextureVk* >(resolved.ptr())->getVkImageView();
+		else if (is_a< RenderTargetVk >(resolved))
+			imageView = static_cast< RenderTargetVk* >(resolved.ptr())->getVkImageView();
+		else if (is_a< RenderTargetDepthVk >(resolved))
+			imageView = static_cast< RenderTargetDepthVk* >(resolved.ptr())->getVkImageView();
+		else if (is_a< VolumeTextureVk >(resolved))
+			imageView = static_cast< VolumeTextureVk* >(resolved.ptr())->getVkImageView();
+
+		if (!imageView)
+			continue;
+
+		auto& imageInfo = imageInfos.push_back();
+		imageInfo.sampler = nullptr;
+		imageInfo.imageView = imageView;
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+		auto& write = writes.push_back();
+		write = {};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext = nullptr;
+		write.dstSet = descriptorSet;
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+		write.pImageInfo = &imageInfo;
+		write.dstArrayElement = 0;
+		write.dstBinding = texture.binding;
+	}
+
+	// Update sbuffer bindings.
+	for (const auto& sbuffer : m_sbuffers)
+	{
+		if (!sbuffer.sbuffer)
+			continue;
+
+		auto sbvk = static_cast< StructBufferVk* >(sbuffer.sbuffer.ptr());
+
+		auto& bufferInfo = bufferInfos.push_back();
+		bufferInfo.buffer = sbvk->getVkBuffer();
+		bufferInfo.offset = 0;
+		bufferInfo.range = sbvk->getBufferSize();
+
+		auto& write = writes.push_back();
+		write = {};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext = nullptr;
+		write.dstSet = descriptorSet;
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+		write.pBufferInfo = &bufferInfo;
+		write.dstArrayElement = 0;
+		write.dstBinding = sbuffer.binding;
+	}
+
+	if (!writes.empty())
+		vkUpdateDescriptorSets(device, (uint32_t)writes.size(), writes.c_ptr(), 0, nullptr);
+
+	// Push command.
+	vkCmdBindDescriptorSets(
+		commandBuffer,
+		VK_PIPELINE_BIND_POINT_COMPUTE,
 		m_pipelineLayout,
 		0,
 		1, &descriptorSet,

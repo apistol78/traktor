@@ -79,7 +79,7 @@ bool SimpleTextureVk::create(
 		ici.format = vkTextureFormats[desc.format];
 		ici.tiling = VK_IMAGE_TILING_OPTIMAL;
 		ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		ici.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+		ici.usage = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT;
 		ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		ici.samples = VK_SAMPLE_COUNT_1_BIT;
 		ici.flags = 0;

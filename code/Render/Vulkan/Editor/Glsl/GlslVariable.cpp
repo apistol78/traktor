@@ -37,6 +37,24 @@ std::wstring GlslVariable::cast(GlslType to) const
 	return f ? replaceAll< std::wstring >(f, L"%", m_name) : m_name;
 }
 
+std::wstring GlslVariable::castToInteger(GlslType to) const
+{
+	const wchar_t* c[8][8] =
+	{
+		{ 0, 0, 0, 0, 0, 0, 0 },
+		{ 0, 0, 0, 0, 0, 0, 0 },
+		{ 0, 0, L"%", L"ivec2(%, %)", L"ivec3(%, %, %)", L"ivec4(%, %, %, %)", 0, 0 },
+		{ 0, 0, L"%.x", L"ivec2(%)", L"ivec3(%.xy, 0)", L"ivec4(%.xy, 0, 0)", 0, 0 },
+		{ 0, 0, L"%.x", L"ivec2(%.xy)", L"ivec3(%)", L"ivec4(%.xyz, 0)", 0, 0 },
+		{ 0, 0, L"%.x", L"ivec2(%.xy)", L"ivec3(%.xyz)", L"ivec4(%)", 0, 0 },
+		{ 0, 0, 0, 0, 0, 0, L"%", 0 },
+		{ 0, 0, 0, 0, 0, 0, 0, L"%" }
+	};
+
+	const wchar_t* f = c[m_type][to];
+	return f ? replaceAll< std::wstring >(f, L"%", m_name) : m_name;
+}
+
 GlslVariable& GlslVariable::operator = (const GlslVariable& other)
 {
 	m_node = other.m_node;

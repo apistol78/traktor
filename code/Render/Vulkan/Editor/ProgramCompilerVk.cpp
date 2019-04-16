@@ -19,6 +19,7 @@
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/Editor/ProgramCompilerVk.h"
 #include "Render/Vulkan/Editor/Glsl/GlslContext.h"
+#include "Render/Vulkan/Editor/Glsl/GlslImage.h"
 #include "Render/Vulkan/Editor/Glsl/GlslSampler.h"
 #include "Render/Vulkan/Editor/Glsl/GlslStorageBuffer.h"
 #include "Render/Vulkan/Editor/Glsl/GlslTexture.h"
@@ -172,68 +173,103 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 {
 	RefArray< VertexOutput > vertexOutputs;
 	RefArray< PixelOutput > pixelOutputs;
+	RefArray< ComputeOutput > computeOutputs;
 
 	shaderGraph->findNodesOf< VertexOutput >(vertexOutputs);
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
-
-	if (vertexOutputs.size() != 1 || pixelOutputs.size() != 1)
-	{
-		log::error << L"Unable to generate Vulkan GLSL shader; incorrect number of outputs" << Endl;
-		return nullptr;
-	}
+	shaderGraph->findNodesOf< ComputeOutput >(computeOutputs);
 
 	GlslContext cx(shaderGraph);
-	cx.getEmitter().emit(cx, pixelOutputs[0]);
-	cx.getEmitter().emit(cx, vertexOutputs[0]);
-
-	const auto& layout = cx.getLayout();
-
-	const char* vertexShaderText = strdup(wstombs(cx.getVertexShader().getGeneratedShader(layout)).c_str());
-	const char* fragmentShaderText = strdup(wstombs(cx.getFragmentShader().getGeneratedShader(layout)).c_str());
 
 	glslang::TProgram* program = new glslang::TProgram();
+	glslang::TShader* vertexShader = nullptr;
+	glslang::TShader* fragmentShader = nullptr;
+	glslang::TShader* computeShader = nullptr;
 
-	// Vertex shader.
-	glslang::TShader* vertexShader = new glslang::TShader(EShLangVertex);
-	vertexShader->setStrings(&vertexShaderText, 1);
-	vertexShader->setEntryPoint("main");
-
-	bool vertexResult = vertexShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
-
-	if (vertexShader->getInfoLog())
-		log::info << mbstows(vertexShader->getInfoLog()) << Endl;
-
-	if (vertexShader->getInfoDebugLog())
-		log::info << mbstows(vertexShader->getInfoDebugLog()) << Endl;
-
-	if (!vertexResult)
+	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 	{
-		log::error << L"Failed to compile shader; Failed to parse vertex shader." << Endl;
+		cx.getEmitter().emit(cx, pixelOutputs[0]);
+		cx.getEmitter().emit(cx, vertexOutputs[0]);
+
+		const auto& layout = cx.getLayout();
+		const char* vertexShaderText = strdup(wstombs(cx.getVertexShader().getGeneratedShader(layout)).c_str());
+		const char* fragmentShaderText = strdup(wstombs(cx.getFragmentShader().getGeneratedShader(layout)).c_str());
+
+		// Vertex shader.
+		vertexShader = new glslang::TShader(EShLangVertex);
+		vertexShader->setStrings(&vertexShaderText, 1);
+		vertexShader->setEntryPoint("main");
+
+		bool vertexResult = vertexShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
+
+		if (vertexShader->getInfoLog())
+			log::info << mbstows(vertexShader->getInfoLog()) << Endl;
+
+		if (vertexShader->getInfoDebugLog())
+			log::info << mbstows(vertexShader->getInfoDebugLog()) << Endl;
+
+		if (!vertexResult)
+		{
+			log::error << L"Failed to compile shader; Failed to parse vertex shader." << Endl;
+			return nullptr;
+		}
+
+		program->addShader(vertexShader);
+
+		// Fragment shader.
+		fragmentShader = new glslang::TShader(EShLangFragment);
+		fragmentShader->setStrings(&fragmentShaderText, 1);
+		fragmentShader->setEntryPoint("main");
+
+		bool fragmentResult = fragmentShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
+
+		if (fragmentShader->getInfoLog())
+			log::info << mbstows(fragmentShader->getInfoLog()) << Endl;
+
+		if (fragmentShader->getInfoDebugLog())
+			log::info << mbstows(fragmentShader->getInfoDebugLog()) << Endl;
+
+		if (!fragmentResult)
+		{
+			log::error << L"Failed to compile shader; Failed to parse fragment shader." << Endl;
+			return nullptr;
+		}
+
+		program->addShader(fragmentShader);
+	}
+	else if (computeOutputs.size() == 1)
+	{
+		cx.getEmitter().emit(cx, computeOutputs[0]);
+
+		const auto& layout = cx.getLayout();
+		const char* computeShaderText = strdup(wstombs(cx.getComputeShader().getGeneratedShader(layout)).c_str());
+
+		// Compute shader.
+		computeShader = new glslang::TShader(EShLangCompute);
+		computeShader->setStrings(&computeShaderText, 1);
+		computeShader->setEntryPoint("main");
+
+		bool vertexResult = computeShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
+
+		if (computeShader->getInfoLog())
+			log::info << mbstows(computeShader->getInfoLog()) << Endl;
+
+		if (computeShader->getInfoDebugLog())
+			log::info << mbstows(computeShader->getInfoDebugLog()) << Endl;
+
+		if (!vertexResult)
+		{
+			log::error << L"Failed to compile shader; Failed to parse compute shader." << Endl;
+			return nullptr;
+		}
+
+		program->addShader(computeShader);
+	}
+	else
+	{
+		log::error << L"Unable to generate Vulkan GLSL shader; incorrect number of outputs." << Endl;
 		return nullptr;
 	}
-
-	program->addShader(vertexShader);
-
-	// Fragment shader.
-	glslang::TShader* fragmentShader = new glslang::TShader(EShLangFragment);
-	fragmentShader->setStrings(&fragmentShaderText, 1);
-	fragmentShader->setEntryPoint("main");
-
-	bool fragmentResult = fragmentShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
-
-	if (fragmentShader->getInfoLog())
-		log::info << mbstows(fragmentShader->getInfoLog()) << Endl;
-
-	if (fragmentShader->getInfoDebugLog())
-		log::info << mbstows(fragmentShader->getInfoDebugLog()) << Endl;
-
-	if (!fragmentResult)
-	{
-		log::error << L"Failed to compile shader; Failed to parse fragment shader." << Endl;
-		return nullptr;
-	}
-
-	program->addShader(fragmentShader);
 
 	// Link program shaders.
 	if (!program->link(EShMsgDefault))
@@ -248,13 +284,29 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	programResource->m_renderState = cx.getRenderState();
 
 	// Generate SPIR-V from program AST.
-	std::vector< uint32_t > vs;
-	glslang::GlslangToSpv(*program->getIntermediate(EShLangVertex), vs);
-	programResource->m_vertexShader = AlignedVector< uint32_t >(vs.begin(), vs.end());
+	auto vsi = program->getIntermediate(EShLangVertex);
+	if (vsi != nullptr)
+	{
+		std::vector< uint32_t > vs;
+		glslang::GlslangToSpv(*vsi, vs);
+		programResource->m_vertexShader = AlignedVector< uint32_t >(vs.begin(), vs.end());
+	}
 
-	std::vector< uint32_t > fs;
-	glslang::GlslangToSpv(*program->getIntermediate(EShLangFragment), fs);
-	programResource->m_fragmentShader = AlignedVector< uint32_t >(fs.begin(), fs.end());
+	auto fsi = program->getIntermediate(EShLangFragment);
+	if (fsi != nullptr)
+	{
+		std::vector< uint32_t > fs;
+		glslang::GlslangToSpv(*fsi, fs);
+		programResource->m_fragmentShader = AlignedVector< uint32_t >(fs.begin(), fs.end());
+	}
+
+	auto csi = program->getIntermediate(EShLangCompute);
+	if (csi != nullptr)
+	{
+		std::vector< uint32_t > cs;
+		glslang::GlslangToSpv(*csi, cs);
+		programResource->m_computeShader = AlignedVector< uint32_t >(cs.begin(), cs.end());
+	}
 
 	// Map parameters to uniforms.
 	struct ParameterMapping
@@ -283,6 +335,17 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 			programResource->m_textures.push_back(ProgramResourceVk::TextureDesc(
 				texture->getBinding()
+			));
+		}
+		else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
+		{
+			auto& pm = parameterMapping[image->getName()];
+			pm.buffer = image->getBinding();
+			pm.offset = (uint32_t)programResource->m_textures.size();
+			pm.length = 0;
+
+			programResource->m_textures.push_back(ProgramResourceVk::TextureDesc(
+				image->getBinding()
 			));
 		}
 		else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
@@ -365,18 +428,20 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	}
 
 	// Calculate hash of renderstate and shaders.
-	Adler32 cs;
-	cs.begin();
-	cs.feed(cx.getRenderState());
-	cs.feed(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
-	cs.feed(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
-	cs.end();
-	programResource->m_hash = cs.get();
+	Adler32 checksum;
+	checksum.begin();
+	checksum.feed(cx.getRenderState());
+	checksum.feed(programResource->m_vertexShader.c_ptr(), programResource->m_vertexShader.size() * sizeof(uint32_t));
+	checksum.feed(programResource->m_fragmentShader.c_ptr(), programResource->m_fragmentShader.size() * sizeof(uint32_t));
+	checksum.feed(programResource->m_computeShader.c_ptr(), programResource->m_computeShader.size() * sizeof(uint32_t));
+	checksum.end();
+	programResource->m_hash = checksum.get();
 
 	// \note Need to delete program before shaders due to glslang weirdness.
 	delete program;
 	delete fragmentShader;
 	delete vertexShader;
+	delete computeShader;
 
 	return programResource;
 }
@@ -393,82 +458,30 @@ bool ProgramCompilerVk::generate(
 {
 	RefArray< VertexOutput > vertexOutputs;
 	RefArray< PixelOutput > pixelOutputs;
+	RefArray< ComputeOutput > computeOutputs;
 
 	shaderGraph->findNodesOf< VertexOutput >(vertexOutputs);
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputs);
+	shaderGraph->findNodesOf< ComputeOutput >(computeOutputs);
 
-	if (vertexOutputs.size() != 1 || pixelOutputs.size() != 1)
+	GlslContext cx(shaderGraph);
+
+	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
+	{
+		cx.getEmitter().emit(cx, pixelOutputs[0]);
+		cx.getEmitter().emit(cx, vertexOutputs[0]);
+	}
+	else if (computeOutputs.size() == 1)
+	{
+		cx.getEmitter().emit(cx, computeOutputs[0]);
+	}
+	else
 	{
 		log::error << L"Unable to generate Vulkan GLSL shader; incorrect number of outputs" << Endl;
 		return false;
 	}
 
-	GlslContext cx(shaderGraph);
-	cx.getEmitter().emit(cx, pixelOutputs[0]);
-	cx.getEmitter().emit(cx, vertexOutputs[0]);
-
 	const auto& layout = cx.getLayout();
-
-	const char* vertexShaderText = strdup(wstombs(cx.getVertexShader().getGeneratedShader(layout)).c_str());
-	const char* fragmentShaderText = strdup(wstombs(cx.getFragmentShader().getGeneratedShader(layout)).c_str());
-
-	//glslang::TProgram* program = new glslang::TProgram();
-
-	//// Vertex shader.
-	//glslang::TShader* vertexShader = new glslang::TShader(EShLangVertex);
-	//vertexShader->setStrings(&vertexShaderText, 1);
-	//vertexShader->setEntryPoint("main");
-
-	//bool vertexResult = vertexShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
-
-	//if (vertexShader->getInfoLog())
-	//	log::info << mbstows(vertexShader->getInfoLog()) << Endl;
-
-	//if (vertexShader->getInfoDebugLog())
-	//	log::info << mbstows(vertexShader->getInfoDebugLog()) << Endl;
-
-	//if (!vertexResult)
-	//{
-	//	log::error << L"Failed to compile shader; Failed to parse vertex shader." << Endl;
-	//	return false;
-	//}
-
-	//program->addShader(vertexShader);
-
-	//// Fragment shader.
-	//glslang::TShader* fragmentShader = new glslang::TShader(EShLangFragment);
-	//fragmentShader->setStrings(&fragmentShaderText, 1);
-	//fragmentShader->setEntryPoint("main");
-
-	//bool fragmentResult = fragmentShader->parse(&c_defaultTBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules));
-
-	//if (fragmentShader->getInfoLog())
-	//	log::info << mbstows(fragmentShader->getInfoLog()) << Endl;
-
-	//if (fragmentShader->getInfoDebugLog())
-	//	log::info << mbstows(fragmentShader->getInfoDebugLog()) << Endl;
-
-	//if (!fragmentResult)
-	//{
-	//	log::error << L"Failed to compile shader; Failed to parse fragment shader." << Endl;
-	//	return false;
-	//}
-
-	//program->addShader(fragmentShader);
-
-	//// Link program shaders.
-	//if (!program->link(EShMsgDefault))
-	//{
-	//	log::error << L"Failed to compile shader; Program link failed." << Endl;
-	//	return false;
-	//}
-
-	//// Generate SPIR-V from program AST.
-	//std::vector< uint32_t > vertexShaderSpv;
-	//glslang::GlslangToSpv(*program->getIntermediate(EShLangVertex), vertexShaderSpv);
-
-	//std::vector< uint32_t > fragmentShaderSpv;
-	//glslang::GlslangToSpv(*program->getIntermediate(EShLangFragment), fragmentShaderSpv);
 
 	StringOutputStream ss;
 	for (auto resource : layout.get())
@@ -496,6 +509,11 @@ bool ProgramCompilerVk::generate(
 			}
 			ss << L"//   }" << Endl;
 		}
+		else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
+		{
+			ss << L"// [" << image->getBinding() << L"] = image" << Endl;
+			ss << L"//   .name = \"" << image->getName() << L"\"" << Endl;
+		}
 		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
 		{
 			ss << L"// [" << storageBuffer->getBinding() << L"] = storage buffer" << Endl;
@@ -516,11 +534,6 @@ bool ProgramCompilerVk::generate(
 		vss << Endl;
 		vss << ss.str();
 		vss << Endl;
-
-		//std::ostringstream vos;
-		//spv::Disassemble(vos, vertexShaderSpv);
-		//vss << mbstows(vos.str()) << Endl;
-
 		outVertexShader = vss.str();
 	}
 
@@ -531,12 +544,17 @@ bool ProgramCompilerVk::generate(
 		fss << Endl;
 		fss << ss.str();
 		fss << Endl;
-
-		//std::ostringstream fos;
-		//spv::Disassemble(fos, fragmentShaderSpv);
-		//fss << mbstows(fos.str()) << Endl;
-
 		outPixelShader = fss.str();
+	}
+
+	// Compute
+	{
+		StringOutputStream css;
+		css << cx.getComputeShader().getGeneratedShader(layout);
+		css << Endl;
+		css << ss.str();
+		css << Endl;
+		outComputeShader = css.str();
 	}
 
 	return true;

@@ -44,8 +44,6 @@ public:
 
 	GlslVariable* emitOutput(Node* node, const std::wstring& outputPinName, GlslType type);
 
-	//void emitOutput(Node* node, const std::wstring& outputPinName, GlslVariable* variable);
-
 	void findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins) const;
 
 	void findCommonOutputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, AlignedVector< const OutputPin* >& outOutputPins) const;
@@ -118,6 +116,8 @@ public:
 	GlslShader& getVertexShader() { return m_vertexShader; }
 
 	GlslShader& getFragmentShader() { return m_fragmentShader; }
+
+	GlslShader& getComputeShader() { return m_computeShader; }
 
 	GlslEmitter& getEmitter() { return m_emitter; }
 

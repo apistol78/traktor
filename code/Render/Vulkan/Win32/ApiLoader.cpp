@@ -82,6 +82,7 @@ PFN_vkDestroyBuffer vkDestroyBuffer = nullptr;
 PFN_vkCmdCopyImage vkCmdCopyImage = nullptr;
 PFN_vkGetImageSubresourceLayout vkGetImageSubresourceLayout = nullptr;
 PFN_vkDestroyImage vkDestroyImage = nullptr;
+PFN_vkCmdDispatch vkCmdDispatch = nullptr;
 
 PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = nullptr;
@@ -593,6 +594,13 @@ bool initializeVulkanApi()
 	if (vkDestroyImage == nullptr)
 	{
 		log::error << L"Failed to resolve Vulkan entry point \"vkDestroyImage\"." << Endl;
+		return false;
+	}
+
+	vkCmdDispatch = (PFN_vkCmdDispatch)GetProcAddress(s_hVulkanModule, "vkCmdDispatch");
+	if (vkCmdDispatch == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdDispatch\"." << Endl;
 		return false;
 	}
 

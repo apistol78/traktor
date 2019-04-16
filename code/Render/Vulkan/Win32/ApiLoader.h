@@ -79,6 +79,7 @@ extern PFN_vkDestroyBuffer vkDestroyBuffer;
 extern PFN_vkCmdCopyImage vkCmdCopyImage;
 extern PFN_vkGetImageSubresourceLayout vkGetImageSubresourceLayout;
 extern PFN_vkDestroyImage vkDestroyImage;
+extern PFN_vkCmdDispatch vkCmdDispatch;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;

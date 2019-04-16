@@ -115,6 +115,7 @@ private:
 
 	AlignedVector< uint32_t > m_vertexShader;
 	AlignedVector< uint32_t > m_fragmentShader;
+	AlignedVector< uint32_t > m_computeShader;
 
 	AlignedVector< ParameterDesc > m_parameters;
 	uint32_t m_uniformBufferSizes[3];	// Once(0), Frame(1) and Draw(2)
