@@ -263,7 +263,7 @@ Ref< const ReflectionMember > ReflectionApplySerializer::getNextMember()
 		return m_compoundMember->getMember(m_memberIndex++);
 	}
 	else
-		return 0;
+		return nullptr;
 }
 
 }

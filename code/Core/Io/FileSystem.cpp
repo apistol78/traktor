@@ -51,11 +51,11 @@ FileSystem::FileSystem()
 
 FileSystem& FileSystem::getInstance()
 {
-	static FileSystem* s_instance = 0;
+	static FileSystem* s_instance = nullptr;
 	if (!s_instance)
 	{
 		s_instance = new FileSystem();
-		s_instance->addRef(0);
+		s_instance->addRef(nullptr);
 		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
@@ -68,7 +68,7 @@ void FileSystem::mount(const std::wstring& id, IVolume* volume)
 
 void FileSystem::umount(const std::wstring& id)
 {
-	std::map< std::wstring, Ref< IVolume > >::iterator i = m_volumes.find(id);
+	auto i = m_volumes.find(id);
 	if (i != m_volumes.end())
 		m_volumes.erase(i);
 }
@@ -80,15 +80,15 @@ int32_t FileSystem::getVolumeCount() const
 
 IVolume* FileSystem::getVolume(int32_t index) const
 {
-	std::map< std::wstring, Ref< IVolume > >::const_iterator i = m_volumes.begin();
+	auto i = m_volumes.begin();
 	while (i != m_volumes.end() && index-- > 0)
 		++i;
-	return i != m_volumes.end() ? i->second : 0;
+	return i != m_volumes.end() ? i->second : nullptr;
 }
 
 std::wstring FileSystem::getVolumeId(int32_t index) const
 {
-	std::map< std::wstring, Ref< IVolume > >::const_iterator i = m_volumes.begin();
+	auto i = m_volumes.begin();
 	while (i != m_volumes.end() && index-- > 0)
 		++i;
 	return i != m_volumes.end() ? i->first : L"";
@@ -125,7 +125,7 @@ Path FileSystem::getCurrentVolumeAndDirectory() const
 Ref< File > FileSystem::get(const Path& fileName)
 {
 	Ref< IVolume > volume = getVolume(fileName);
-	return volume ? volume->get(fileName) : 0;
+	return volume ? volume->get(fileName) : nullptr;
 }
 
 int FileSystem::find(const Path& fileMask, RefArray< File >& out)
@@ -202,7 +202,7 @@ bool FileSystem::copy(const Path& destination, const Path& source, bool overwrit
 	if (overwrite == false)
 	{
 		if (exist(destination) == true)
-			return 0;
+			return false;
 	}
 
 	// Open source file.
@@ -212,7 +212,7 @@ bool FileSystem::copy(const Path& destination, const Path& source, bool overwrit
 #if defined(_DEBUG)
 		log::error << L"Unable to open file \"" << source.getPathName() << L"\" for reading" << Endl;
 #endif
-		return 0;
+		return false;
 	}
 
 	// Create destination file.
@@ -222,7 +222,7 @@ bool FileSystem::copy(const Path& destination, const Path& source, bool overwrit
 #if defined(_DEBUG)
 		log::error << L"Unable to open file \"" << destination.getPathName() << L"\" for writing" << Endl;
 #endif
-		return 0;
+		return false;
 	}
 
 	// Copy entire content.
@@ -252,9 +252,9 @@ bool FileSystem::makeAllDirectories(const Path& directory)
 		return true;
 
 	std::wstring build = directory.isRelative() ? L"" : L"/";
-	for (std::vector< std::wstring >::iterator i = directories.begin(); i != directories.end(); ++i)
+	for (const auto& directory : directories)
 	{
-		build += *i;
+		build += directory;
 		if (!volume->makeDirectory(build))
 			return false;
 		build += L"/";
@@ -354,11 +354,11 @@ void FileSystem::destroy()
 
 IVolume* FileSystem::getVolume(const Path& path) const
 {
-	IVolume* volume = 0;
+	IVolume* volume = nullptr;
 
 	if (path.hasVolume() == true)
 	{
-		std::map< std::wstring, Ref< IVolume > >::const_iterator it = m_volumes.find(toLower(path.getVolume()));
+		auto it = m_volumes.find(toLower(path.getVolume()));
 		if (it != m_volumes.end())
 			volume = it->second;
 #if defined(_DEBUG)

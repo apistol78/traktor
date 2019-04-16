@@ -66,7 +66,7 @@ FastAllocator::~FastAllocator()
 
 void* FastAllocator::alloc(size_t size, size_t align, const char* const tag)
 {
-	void* p = 0;
+	void* p = nullptr;
 
 	if (size > 0 && size <= 256 && align <= 16)
 	{
