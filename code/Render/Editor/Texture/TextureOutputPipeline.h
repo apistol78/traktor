@@ -70,6 +70,7 @@ private:
 	int32_t m_compressionQuality;
 	float m_gamma;
 	bool m_sRGB;
+	bool m_compressedData;
 };
 
 	}
