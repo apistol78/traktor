@@ -30,7 +30,7 @@ Generated texture from surface cache.
 			</comment>
 			<position>
 				<first>608</first>
-				<second>-217</second>
+				<second>-216</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -58,7 +58,7 @@ Generated texture from surface cache.
 			<id>{218C34B0-0940-E64D-B67A-47D961C504A3}</id>
 			<comment/>
 			<position>
-				<first>487</first>
+				<first>486</first>
 				<second>-160</second>
 			</position>
 		</item>
@@ -382,14 +382,14 @@ Generated texture from surface cache.
 			<comment/>
 			<position>
 				<first>1366</first>
-				<second>-403</second>
+				<second>-402</second>
 			</position>
 		</item>
 		<item type="traktor.render.Type" version="traktor.render.Node:1">
 			<id>{C8CF1913-A529-0A4E-99BC-740D2E69114D}</id>
 			<comment/>
 			<position>
-				<first>727</first>
+				<first>726</first>
 				<second>-672</second>
 			</position>
 		</item>
@@ -672,7 +672,7 @@ Generated texture from surface cache.
 			<comment/>
 			<position>
 				<first>490</first>
-				<second>-1001</second>
+				<second>-1000</second>
 			</position>
 			<parameterName>VisualizeMap</parameterName>
 		</item>
@@ -681,7 +681,7 @@ Generated texture from surface cache.
 			<comment/>
 			<position>
 				<first>2436</first>
-				<second>-999</second>
+				<second>-998</second>
 			</position>
 			<external>{3AE0BB95-AF2A-8245-B402-77FDD19B0DD6}</external>
 			<type>PtTexture2D</type>
@@ -691,7 +691,7 @@ Generated texture from surface cache.
 			<comment/>
 			<position>
 				<first>2544</first>
-				<second>-849</second>
+				<second>-848</second>
 			</position>
 			<swizzle>x0</swizzle>
 		</item>
@@ -700,7 +700,7 @@ Generated texture from surface cache.
 			<comment/>
 			<position>
 				<first>2674</first>
-				<second>-907</second>
+				<second>-906</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -844,6 +844,11 @@ Generated texture from surface cache.
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{18DB5E7B-0EF6-8548-80BA-8D59FDE4CF7E}</id>
+					<name>Specular</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{A6D7BFAB-0138-4EFD-A71A-1397BCE9E584}</id>
 					<name>Transparent</name>
 					<optional>true</optional>
@@ -868,6 +873,10 @@ Generated texture from surface cache.
 					<second>0.8</second>
 				</item>
 				<item>
+					<first>Specular</first>
+					<second>0</second>
+				</item>
+				<item>
 					<first>Transparent</first>
 					<second>0</second>
 				</item>
@@ -877,7 +886,7 @@ Generated texture from surface cache.
 			<id>{98DD55D6-0E12-5240-978C-7EE822AE4165}</id>
 			<comment/>
 			<position>
-				<first>3255</first>
+				<first>3254</first>
 				<second>-302</second>
 			</position>
 			<value>0, 0, 0, 0</value>
@@ -1736,16 +1745,6 @@ Generated texture from surface cache.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[58]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[67]"/>
-				<name>SurfaceColor</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[31]"/>
 				<name>Output</name>
 			</source>
@@ -1802,6 +1801,16 @@ Generated texture from surface cache.
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>False</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[58]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[67]"/>
+				<name>SurfaceColor</name>
 			</destination>
 		</item>
 	</edges>

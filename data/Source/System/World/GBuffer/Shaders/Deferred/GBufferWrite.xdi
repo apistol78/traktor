@@ -13,7 +13,7 @@
 			<id>{DF015B38-4B91-6C48-BB5E-81FC8355D961}</id>
 			<comment/>
 			<position>
-				<first>-165</first>
+				<first>-164</first>
 				<second>196</second>
 			</position>
 			<name>ViewPosition</name>
@@ -26,7 +26,7 @@
 			<id>{252CEB06-2DB2-4F44-A9BB-C5307CEF08B1}</id>
 			<comment/>
 			<position>
-				<first>165</first>
+				<first>164</first>
 				<second>-112</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
@@ -38,7 +38,7 @@
 			<comment/>
 			<position>
 				<first>892</first>
-				<second>409</second>
+				<second>408</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -59,7 +59,7 @@
 			<id>{8D3DC51D-D9AA-DC4F-B3E3-558D3B60192F}</id>
 			<comment/>
 			<position>
-				<first>330</first>
+				<first>340</first>
 				<second>508</second>
 			</position>
 			<name>Roughness</name>
@@ -72,7 +72,7 @@
 			<id>{A326DE3C-1B9E-7848-9560-7C28ACC9158D}</id>
 			<comment/>
 			<position>
-				<first>409</first>
+				<first>408</first>
 				<second>288</second>
 			</position>
 			<swizzle>z</swizzle>
@@ -112,7 +112,7 @@
 			<id>{363C0FA0-DF9F-564E-9671-C530C17B6AAA}</id>
 			<comment/>
 			<position>
-				<first>1143</first>
+				<first>1142</first>
 				<second>362</second>
 			</position>
 			<technique>World_DeferredGBufferWrite</technique>
@@ -161,7 +161,7 @@
 			<comment/>
 			<position>
 				<first>320</first>
-				<second>597</second>
+				<second>596</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -182,8 +182,8 @@
 			<id>{B42C4326-75E5-D349-BA09-26F98B16B4D0}</id>
 			<comment/>
 			<position>
-				<first>535</first>
-				<second>597</second>
+				<first>534</first>
+				<second>596</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -191,7 +191,7 @@
 			<id>{54DD8807-808F-3342-BF1E-6AD08820DCFB}</id>
 			<comment/>
 			<position>
-				<first>655</first>
+				<first>664</first>
 				<second>464</second>
 			</position>
 		</item>
@@ -199,8 +199,8 @@
 			<id>{E00555C0-78D1-7041-99AD-C032D560FDEC}</id>
 			<comment/>
 			<position>
-				<first>535</first>
-				<second>509</second>
+				<first>534</first>
+				<second>508</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -208,8 +208,8 @@
 			<id>{327CBB43-0B18-0F4A-9C61-ADEAD84B701C}</id>
 			<comment/>
 			<position>
-				<first>331</first>
-				<second>465</second>
+				<first>340</first>
+				<second>464</second>
 			</position>
 			<name>Metalness</name>
 			<connectable>true</connectable>
@@ -269,6 +269,28 @@
 				<second>183</second>
 			</position>
 			<operator>CoGreaterEqual</operator>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{0EF96363-9F6F-9E4F-876E-15937FC05263}</id>
+			<comment/>
+			<position>
+				<first>534</first>
+				<second>552</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{E965B68D-2C18-1547-B41D-F4766F74530B}</id>
+			<comment/>
+			<position>
+				<first>360</first>
+				<second>552</second>
+			</position>
+			<name>Specular</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>1</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -470,6 +492,26 @@
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Z</name>
 			</destination>
 		</item>
 	</edges>

@@ -19,6 +19,8 @@ namespace traktor
 		{
 
 const Guid c_materialShader(L"{CCDB27F2-644B-0742-857D-680E846B5BA3}");
+
+// Templates
 const Guid c_tplDiffuseParams(L"{4AC7418D-FF43-FE40-ADDC-33A162636FDC}");
 const Guid c_tplEmissiveParams(L"{1E35F0A7-23A9-EA49-A518-125A77BAD564}");
 const Guid c_tplNormalParams(L"{77489017-FBE8-4A4F-B11A-FDE48C69E021}");
@@ -26,8 +28,11 @@ const Guid c_tplOutput(L"{6DA4BE0A-BE19-4440-9B08-FC3FD1FFECDC}");
 const Guid c_tplTransparencyParams(L"{052265E6-233C-754C-A297-9369803ADB88}");
 const Guid c_tplLightMapParams(L"{2449B257-5B2A-5242-86F9-32105E1F1771}");
 const Guid c_tplRoughnessParams(L"{709A171A-6050-1249-AAA7-5AAE428B956C}");
+const Guid c_tplSpecularParams(L"{78C32C63-EE8D-AB4C-B2CF-E3FF242980DA}");
 const Guid c_tplMetalnessParams(L"{43E7FEE9-043B-A242-B031-BC274995A3A8}");
 const Guid c_tplVertexParams(L"{AEBE83FB-68D4-9D45-A672-0A8487A197CD}");
+
+// Implementations
 const Guid c_implDiffuseConst(L"{BA68E2CA-77EB-684E-AD2B-0CD4BC35608D}");
 const Guid c_implDiffuseVertex(L"{A3DC951A-8BAC-BF40-AFEC-6C47DAF2313F}");
 const Guid c_implDiffuseMap0(L"{EE7D62D6-B5A8-DC48-8328-A3513B998DD4}");
@@ -52,6 +57,9 @@ const Guid c_implLightMap1(L"{54546782-D141-7C48-BF31-FDAC1161516C}");
 const Guid c_implRoughnessConst(L"{361EE108-403F-C740-B0DF-8B0EAF3155EE}");
 const Guid c_implRoughnessMap0(L"{2D117E15-90B9-6C4C-B28C-DA18B2AF7B4F}");
 const Guid c_implRoughnessMap1(L"{CC075F37-B198-6340-B9C6-E654EE6D3165}");
+const Guid c_implSpecularConst(L"{93DA7E24-5B2F-C24B-8589-FA3D4F025B51}");
+const Guid c_implSpecularMap0(L"{2E084B99-F346-9E41-84A4-6FEDE3C065FF}");
+const Guid c_implSpecularMap1(L"{2323E6F3-4D09-CE43-AB39-995BEE4232FA}");
 const Guid c_implMetalnessConst(L"{1760350E-1C62-6B42-B6AA-0D06146A1375}");
 const Guid c_implMetalnessMap0(L"{FDC79CBC-D1EF-2844-9C17-47EE92A06713}");
 const Guid c_implMetalnessMap1(L"{13D0B4B7-C095-6E4B-B628-94F2D5B0B553}");
@@ -115,11 +123,12 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 
 	Ref< render::ShaderGraph > materialShaderGraph = database->getObjectReadOnly< render::ShaderGraph >(templateGuid);
 	if (!materialShaderGraph)
-		return 0;
+		return nullptr;
 
 	// Patch material template shader with concrete implementations of value fetching fragments.
 	Guid diffuseTexture = lookupTexture(textures, material.getDiffuseMap().name);
 	Guid roughnessTexture = lookupTexture(textures, material.getRoughnessMap().name);
+	Guid specularTexture = lookupTexture(textures, material.getSpecularMap().name);
 	Guid metalnessTexture = lookupTexture(textures, material.getMetalnessMap().name);
 	Guid transparencyTexture = lookupTexture(textures, material.getTransparencyMap().name);
 	Guid emissiveTexture = lookupTexture(textures, material.getEmissiveMap().name);
@@ -205,6 +214,13 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			else
 				(*i)->setFragmentGuid(material.getRoughnessMap().channel == 0 ? c_implRoughnessMap0 : c_implRoughnessMap1);
 		}
+		else if (fragmentGuid == c_tplSpecularParams)
+		{
+			if (specularTexture.isNull())
+				(*i)->setFragmentGuid(c_implSpecularConst);
+			else
+				(*i)->setFragmentGuid(material.getSpecularMap().channel == 0 ? c_implSpecularMap0 : c_implSpecularMap1);
+		}
 		else if (fragmentGuid == c_tplMetalnessParams)
 		{
 			if (metalnessTexture.isNull())
@@ -220,7 +236,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	FragmentReaderAdapter fragmentReader(database);
 	materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, false);
 	if (!materialShaderGraph)
-		return 0;
+		return nullptr;
 
 	// Patch constant values, such as colors, from materials into shader.
 	const RefArray< render::Node >& nodes = materialShaderGraph->getNodes();
@@ -273,6 +289,19 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			roughnessTextureNode->setExternal(roughnessTexture);
 			propagateAnisotropic(materialShaderGraph, roughnessTextureNode, material.getRoughnessMap().anisotropic);
 		}
+		else if (comment == L"Tag_Specular")
+		{
+			render::Scalar* specularNode = checked_type_cast< render::Scalar* >(*i);
+			specularNode->setComment(L"");
+			specularNode->set(material.getSpecularTerm());
+		}
+		else if (comment == L"Tag_SpecularMap")
+		{
+			render::Texture* specularTextureNode = checked_type_cast< render::Texture* >(*i);
+			specularTextureNode->setComment(L"");
+			specularTextureNode->setExternal(specularTexture);
+			propagateAnisotropic(materialShaderGraph, specularTextureNode, material.getSpecularMap().anisotropic);
+		}
 		else if (comment == L"Tag_Metalness")
 		{
 			render::Scalar* metalnessNode = checked_type_cast< render::Scalar* >(*i);
@@ -321,6 +350,8 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipelineDepends)
 {
 	pipelineDepends->addDependency(c_materialShader, editor::PdfUse);
+
+	// Templates
 	pipelineDepends->addDependency(c_tplDiffuseParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplEmissiveParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplNormalParams, editor::PdfUse);
@@ -328,8 +359,11 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_tplTransparencyParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplLightMapParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplRoughnessParams, editor::PdfUse);
+	pipelineDepends->addDependency(c_tplSpecularParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplMetalnessParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplVertexParams, editor::PdfUse);
+
+	// Implementations
 	pipelineDepends->addDependency(c_implDiffuseConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implDiffuseVertex, editor::PdfUse);
 	pipelineDepends->addDependency(c_implDiffuseMap0, editor::PdfUse);
@@ -354,6 +388,9 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_implRoughnessConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implRoughnessMap0, editor::PdfUse);
 	pipelineDepends->addDependency(c_implRoughnessMap1, editor::PdfUse);
+	pipelineDepends->addDependency(c_implSpecularConst, editor::PdfUse);
+	pipelineDepends->addDependency(c_implSpecularMap0, editor::PdfUse);
+	pipelineDepends->addDependency(c_implSpecularMap1, editor::PdfUse);
 	pipelineDepends->addDependency(c_implMetalnessConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implMetalnessMap0, editor::PdfUse);
 	pipelineDepends->addDependency(c_implMetalnessMap1, editor::PdfUse);
