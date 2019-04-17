@@ -61,7 +61,7 @@ public:
 		render::ITexture* normalMap,
 		render::ITexture* miscMap,
 		render::ITexture* colorMap,
-		render::ITexture* shadowMapCascade,
+		render::ITexture* shadowMask,
 		render::ITexture* shadowMapAtlas
 	);
 

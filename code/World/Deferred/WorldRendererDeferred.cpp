@@ -316,6 +316,30 @@ bool WorldRendererDeferred::create(
 		int32_t resolution = min< int32_t >(nearestLog2(int32_t(max< int32_t >(desc.width, desc.height) * 1.9f)), maxResolution);
 		T_DEBUG(L"Using shadow map resolution " << resolution);
 
+		// Create shadow screen projection processes.
+		resource::Proxy< render::ImageProcessSettings > shadowMaskProject;
+		if (!resourceManager->bind(m_shadowSettings.maskProject, shadowMaskProject))
+		{
+			log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
+			m_shadowsQuality = QuDisabled;
+		}
+
+		m_shadowMaskProject = new render::ImageProcess();
+		if (!m_shadowMaskProject->create(
+			shadowMaskProject,
+			postProcessTargetPool,
+			resourceManager,
+			renderSystem,
+			desc.width / m_shadowSettings.maskDenominator,
+			desc.height / m_shadowSettings.maskDenominator,
+			desc.allTargetsPersistent
+		))
+		{
+			log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
+			m_shadowsQuality = QuDisabled;
+		}
+
+		// Create shadow render targets.
 		if (m_shadowsQuality > QuDisabled)
 		{
 			render::RenderTargetSetCreateDesc rtscd;
@@ -323,7 +347,7 @@ bool WorldRendererDeferred::create(
 			// Create shadow cascade map target.
 			rtscd.count = 0;
 			rtscd.width = resolution;
-			rtscd.height = resolution * m_shadowSettings.cascadingSlices;
+			rtscd.height = resolution;
 			rtscd.multiSample = 0;
 			rtscd.createDepthStencil = true;
 			rtscd.usingDepthStencilAsTexture = true;
@@ -331,6 +355,21 @@ bool WorldRendererDeferred::create(
 			rtscd.ignoreStencil = true;
 			rtscd.preferTiled = true;
 			if ((m_shadowCascadeTargetSet = renderSystem->createRenderTargetSet(rtscd)) == nullptr)
+				m_shadowsQuality = QuDisabled;
+
+			// Create shadow screen mask map target.
+			rtscd.count = 1;
+			rtscd.width = desc.width / m_shadowSettings.maskDenominator;
+			rtscd.height = desc.height / m_shadowSettings.maskDenominator;
+			rtscd.multiSample = 0;
+			rtscd.createDepthStencil = false;
+			rtscd.usingDepthStencilAsTexture = false;
+			rtscd.usingPrimaryDepthStencil = false;
+			rtscd.ignoreStencil = true;
+			rtscd.preferTiled = true;
+			rtscd.targets[0].format = render::TfR8;
+			rtscd.targets[0].sRGB = false;
+			if ((m_shadowMaskTargetSet = renderSystem->createRenderTargetSet(rtscd)) == nullptr)
 				m_shadowsQuality = QuDisabled;
 
 			// Create shadow atlas map target.
@@ -376,6 +415,7 @@ bool WorldRendererDeferred::create(
 		if (m_shadowsQuality == QuDisabled)
 		{
 			safeDestroy(m_shadowCascadeTargetSet);
+			safeDestroy(m_shadowMaskTargetSet);
 			safeDestroy(m_shadowAtlasTargetSet);
 		}
 	}
@@ -742,10 +782,13 @@ void WorldRendererDeferred::destroy()
 	safeDestroy(m_antiAlias);
 	safeDestroy(m_ambientOcclusion);
 	safeDestroy(m_colorTargetCopy);
+	safeDestroy(m_shadowMaskProject);
 
 	m_reflectionMap.clear();
 	m_globalContext = nullptr;
 
+	safeDestroy(m_shadowAtlasTargetSet);
+	safeDestroy(m_shadowMaskTargetSet);
 	safeDestroy(m_shadowCascadeTargetSet);
 	safeDestroy(m_colorTargetSet);
 	safeDestroy(m_velocityTargetSet);
@@ -912,14 +955,14 @@ void WorldRendererDeferred::render(int32_t frame)
 	if (m_shadowsQuality > QuDisabled)
 	{
 		// Directional shadow cascades.
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map (cascade)");
-
-		clear.mask = render::CfDepth;
-		clear.depth = 1.0f;
-
-		if (m_renderView->begin(m_shadowCascadeTargetSet, &clear))
+		for (int32_t i = 0; i < m_shadowSettings.cascadingSlices; ++i)
 		{
-			for (int32_t i = 0; i < m_shadowSettings.cascadingSlices; ++i)
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Cascade shadow map");
+
+			clear.mask = render::CfDepth;
+			clear.depth = 1.0f;
+
+			if (m_renderView->begin(m_shadowCascadeTargetSet, &clear))
 			{
 				render::ProgramParameters shadowProgramParams;
 				shadowProgramParams.beginParameters(m_globalContext);
@@ -930,10 +973,47 @@ void WorldRendererDeferred::render(int32_t frame)
 				shadowProgramParams.endParameters(m_globalContext);
 
 				f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &shadowProgramParams);
+
+				m_renderView->end();
 			}
-			m_renderView->end();
+			T_RENDER_POP_MARKER(m_renderView);
+
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Cascade shadow mask project");
+
+			clear.mask = render::CfColor;
+			clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+
+			if (m_renderView->begin(m_shadowMaskTargetSet, (i == 0) ? &clear : nullptr))
+			{
+				Scalar zn(max(m_slicePositions[i], m_settings.viewNearZ));
+				Scalar zf(min(m_slicePositions[i + 1], m_shadowSettings.farZ));
+
+				render::ImageProcessStep::Instance::RenderParams params;
+				params.viewFrustum = f.viewFrustum;
+				params.viewToLight = f.slice[i].viewToLightSpace;
+				params.projection = f.projection;
+				params.sliceCount = m_shadowSettings.cascadingSlices;
+				params.sliceIndex = i;
+				params.sliceNearZ = zn;
+				params.sliceFarZ = zf;
+				params.shadowFarZ = m_shadowSettings.farZ;
+				params.shadowMapBias = m_shadowSettings.bias + i * m_shadowSettings.biasCoeff;
+				params.deltaTime = 0.0f;
+
+				m_shadowMaskProject->render(
+					m_renderView,
+					m_shadowCascadeTargetSet->getDepthTexture(),	// color
+					m_gbufferTargetSet->getColorTexture(0),	// depth
+					m_gbufferTargetSet->getColorTexture(1),	// normal
+					nullptr,	// velocity
+					nullptr,	// shadow mask
+					params
+				);
+
+				m_renderView->end();
+			}
+			T_RENDER_POP_MARKER(m_renderView);
 		}
-		T_RENDER_POP_MARKER(m_renderView);
 
 		// Spot/point shadow atlas.
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map (atlas)");
@@ -960,7 +1040,7 @@ void WorldRendererDeferred::render(int32_t frame)
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 
-	// Render light accumulation buffers.
+	// Render lighting.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Lighting");
 
 	clear.mask = render::CfColor;
@@ -998,7 +1078,7 @@ void WorldRendererDeferred::render(int32_t frame)
 			m_gbufferTargetSet->getColorTexture(1),	// normals
 			m_gbufferTargetSet->getColorTexture(2),	// metalness/roughness
 			m_gbufferTargetSet->getColorTexture(3),	// surface color
-			m_shadowCascadeTargetSet != nullptr ? m_shadowCascadeTargetSet->getDepthTexture() : nullptr,	// shadow map cascade
+			m_shadowMaskTargetSet != nullptr ? m_shadowMaskTargetSet->getColorTexture(0) : nullptr,	// shadow mask
 			m_shadowAtlasTargetSet != nullptr ? m_shadowAtlasTargetSet->getDepthTexture() : nullptr	// shadow map atlas
 		);
 
@@ -1287,6 +1367,9 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 	if (m_shadowCascadeTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Shadow map (cascade)", render::DtvShadowMap, m_shadowCascadeTargetSet->getDepthTexture()));
 
+	if (m_shadowMaskTargetSet)
+		outTargets.push_back(render::DebugTarget(L"Shadow mask (cascade)", render::DtvDefault, m_shadowMaskTargetSet->getColorTexture(0)));
+
 	if (m_shadowAtlasTargetSet)
 		outTargets.push_back(render::DebugTarget(L"Shadow map (atlas)", render::DtvShadowMap, m_shadowAtlasTargetSet->getDepthTexture()));
 
@@ -1385,6 +1468,7 @@ void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int fr
 	T_FATAL_ASSERT(tileShaderData != nullptr);
 
 	bool castShadow = bool(m_shadowsQuality > QuDisabled);
+	bool haveCascade = false;
 	int32_t resolution = castShadow ? m_shadowCascadeTargetSet->getWidth() : 0;
 	int32_t atlasIndex = 0;
 
@@ -1408,7 +1492,7 @@ void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int fr
 		light.color.storeUnaligned(lightShaderData->color);
 
 		// Prepare shadows for each light, add information about shadow map into sbuffer.
-		if (castShadow && light.castShadow && light.type == LtDirectional)
+		if (castShadow && !haveCascade && light.castShadow && light.type == LtDirectional)
 		{
 			for (int32_t slice = 0; slice < m_shadowSettings.cascadingSlices; ++slice)
 			{
@@ -1477,22 +1561,9 @@ void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int fr
 				f.slice[slice].shadowLightView = shadowLightView;
 				f.slice[slice].shadowLightProjection = shadowLightProjection;
 				f.slice[slice].viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
-
-				// Write transposed matrix to shaders as shaders have row-major order.
-				Matrix44 vls = f.slice[slice].viewToLightSpace.transpose();
-				vls.axisX().storeUnaligned(lightShaderData->viewToLight0);
-				vls.axisY().storeUnaligned(lightShaderData->viewToLight1);
-				vls.axisZ().storeUnaligned(lightShaderData->viewToLight2);
-				vls.translation().storeUnaligned(lightShaderData->viewToLight3);
-
-				// Write slice coordinates to shaders.
-				Vector4(
-					0.0f,
-					float(slice) / m_shadowSettings.cascadingSlices,
-					1.0f,
-					1.0f / m_shadowSettings.cascadingSlices
-				).storeUnaligned(lightShaderData->atlasTransform);
 			}
+
+			haveCascade = true;
 		}
 		else if (castShadow && light.castShadow && light.type == LtPoint)
 		{
