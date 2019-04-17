@@ -42,7 +42,7 @@ render::handle_t s_handleProbeSpecularMips;
 render::handle_t s_handleFogDistanceAndDensity;
 render::handle_t s_handleFogColor;
 render::handle_t s_handleLightCount;
-render::handle_t s_handleShadowMapCascade;
+render::handle_t s_handleShadowMask;
 render::handle_t s_handleShadowMapAtlas;
 render::handle_t s_handleLightSBuffer;
 render::handle_t s_handleTileSBuffer;
@@ -83,7 +83,7 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleFogDistanceAndDensity = render::getParameterHandle(L"World_FogDistanceAndDensity");
 	s_handleFogColor = render::getParameterHandle(L"World_FogColor");
 	s_handleLightCount = render::getParameterHandle(L"World_LightCount");
-	s_handleShadowMapCascade = render::getParameterHandle(L"World_ShadowMapCascade");
+	s_handleShadowMask = render::getParameterHandle(L"World_ShadowMask");
 	s_handleShadowMapAtlas = render::getParameterHandle(L"World_ShadowMapAtlas");
 	s_handleLightSBuffer = render::getParameterHandle(L"World_LightSBuffer");
 	s_handleTileSBuffer = render::getParameterHandle(L"World_TileSBuffer");
@@ -143,14 +143,14 @@ void LightRendererDeferred::renderLights(
 	render::ITexture* normalMap,
 	render::ITexture* miscMap,
 	render::ITexture* colorMap,
-	render::ITexture* shadowMapCascade,
+	render::ITexture* shadowMask,
 	render::ITexture* shadowMapAtlas
 )
 {
 	Scalar p11 = projection.get(0, 0);
 	Scalar p22 = projection.get(1, 1);
 
-	m_lightShader->setCombination(s_handleShadowEnable, bool(shadowMapCascade != nullptr && shadowMapAtlas != nullptr));
+	m_lightShader->setCombination(s_handleShadowEnable, bool(shadowMask != nullptr && shadowMask != nullptr));
 	m_lightShader->setFloatParameter(s_handleTime, time);
 	m_lightShader->setFloatParameter(s_handleLightCount, float(lightCount));
 	m_lightShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
@@ -159,7 +159,7 @@ void LightRendererDeferred::renderLights(
 	m_lightShader->setTextureParameter(s_handleNormalMap, normalMap);
 	m_lightShader->setTextureParameter(s_handleMiscMap, miscMap);
 	m_lightShader->setTextureParameter(s_handleColorMap, colorMap);
-	m_lightShader->setTextureParameter(s_handleShadowMapCascade, shadowMapCascade);
+	m_lightShader->setTextureParameter(s_handleShadowMask, shadowMask);
 	m_lightShader->setTextureParameter(s_handleShadowMapAtlas, shadowMapAtlas);
 	m_lightShader->setStructBufferParameter(s_handleLightSBuffer, lightSBuffer);
 	m_lightShader->setStructBufferParameter(s_handleTileSBuffer, tileSBuffer);

@@ -150,10 +150,9 @@ private:
 	Ref< render::RenderTargetSet > m_velocityTargetSet;
 	Ref< render::RenderTargetSet > m_colorTargetSet;
 	
-	Ref< render::RenderTargetSet > m_shadowCascadeTargetSet;
-	Ref< render::RenderTargetSet > m_shadowAtlasTargetSet;
-
-	Ref< render::RenderTargetSet > m_lightAccumulationTargetSet;
+	Ref< render::RenderTargetSet > m_shadowCascadeTargetSet;	//!< Shadow map for directional lights.
+	Ref< render::RenderTargetSet > m_shadowMaskTargetSet;		//!< Screen space projected shadow mask, directional lights.
+	Ref< render::RenderTargetSet > m_shadowAtlasTargetSet;		//!< Shadow map atlas for spot and point lights.
 	
 	Ref< render::RenderContext > m_globalContext;
 	
@@ -167,7 +166,8 @@ private:
 	Ref< render::ImageProcess > m_motionBlurPrimeImageProcess;
 	Ref< render::ImageProcess > m_motionBlurImageProcess;
 	Ref< render::ImageProcess > m_toneMapImageProcess;
-	
+	Ref< render::ImageProcess > m_shadowMaskProject;
+
 	Ref< LightRendererDeferred > m_lightRenderer;
 
 	RefArray< Entity > m_buildEntities;

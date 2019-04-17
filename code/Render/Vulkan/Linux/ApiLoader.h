@@ -78,6 +78,8 @@ extern PFN_vkFreeMemory vkFreeMemory;
 extern PFN_vkDestroyBuffer vkDestroyBuffer;
 extern PFN_vkCmdCopyImage vkCmdCopyImage;
 extern PFN_vkGetImageSubresourceLayout vkGetImageSubresourceLayout;
+extern PFN_vkDestroyImage vkDestroyImage;
+extern PFN_vkCmdDispatch vkCmdDispatch;
 
 // Linux Vulkan extensions.
 extern PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;
