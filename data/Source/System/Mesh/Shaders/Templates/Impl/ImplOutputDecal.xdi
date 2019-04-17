@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>939</first>
-				<second>454</second>
+				<second>453</second>
 			</position>
 			<name>T_Irradiance</name>
 			<connectable>true</connectable>
@@ -58,7 +58,7 @@
 			<comment/>
 			<position>
 				<first>939</first>
-				<second>413</second>
+				<second>412</second>
 			</position>
 			<name>T_Emissive</name>
 			<connectable>true</connectable>
@@ -71,7 +71,7 @@
 			<comment/>
 			<position>
 				<first>939</first>
-				<second>496</second>
+				<second>494</second>
 			</position>
 			<name>T_Metalness</name>
 			<connectable>true</connectable>
@@ -84,7 +84,7 @@
 			<comment/>
 			<position>
 				<first>919</first>
-				<second>578</second>
+				<second>576</second>
 			</position>
 			<name>T_Transparency</name>
 			<connectable>true</connectable>
@@ -97,7 +97,7 @@
 			<comment/>
 			<position>
 				<first>919</first>
-				<second>537</second>
+				<second>535</second>
 			</position>
 			<name>T_Roughness</name>
 			<connectable>true</connectable>
@@ -110,7 +110,7 @@
 			<comment/>
 			<position>
 				<first>919</first>
-				<second>372</second>
+				<second>371</second>
 			</position>
 			<name>T_ViewVelocity</name>
 			<connectable>true</connectable>
@@ -173,6 +173,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{18DB5E7B-0EF6-8548-80BA-8D59FDE4CF7E}</id>
+					<name>Specular</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{A6D7BFAB-0138-4EFD-A71A-1397BCE9E584}</id>
 					<name>Transparent</name>
 					<optional>true</optional>
@@ -197,10 +202,27 @@
 					<second>0.8</second>
 				</item>
 				<item>
+					<first>Specular</first>
+					<second>1</second>
+				</item>
+				<item>
 					<first>Transparent</first>
 					<second>0</second>
 				</item>
 			</values>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{4EF80A09-BEC5-DE4D-8928-B6831890B9E9}</id>
+			<comment/>
+			<position>
+				<first>939</first>
+				<second>617</second>
+			</position>
+			<name>T_Specular</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -282,6 +304,16 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Roughness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Specular</name>
 			</destination>
 		</item>
 	</edges>

@@ -447,7 +447,7 @@ void MeshAssetEditor::updateMaterialList()
 				if (modelTextures[j] == i->getDiffuseMap().name)
 					ss << L" | Diffuse";
 				if (modelTextures[j] == i->getSpecularMap().name)
-					ss << L" | Specular (*)";
+					ss << L" | Specular";
 				if (modelTextures[j] == i->getRoughnessMap().name)
 					ss << L" | Roughness";
 				if (modelTextures[j] == i->getMetalnessMap().name)

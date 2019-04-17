@@ -240,7 +240,7 @@ bool WorldRendererDeferred::create(
 #if !defined(__PS3__)
 		rtscd.targets[0].format = render::TfR16F;			// Depth (R)
 		rtscd.targets[1].format = render::TfR16G16F;		// Normals (RG)
-		rtscd.targets[2].format = render::TfR16G16F;		// Metalness (R), Roughness (G)
+		rtscd.targets[2].format = render::TfR11G11B10F;		// Metalness (R), Roughness (G), Specular (B)
 		rtscd.targets[3].format = render::TfR11G11B10F;		// Surface color (RGB)
 #else
 		rtscd.targets[0].format = render::TfR8G8B8A8;		// Encoded depth
@@ -1274,6 +1274,7 @@ void WorldRendererDeferred::getDebugTargets(std::vector< render::DebugTarget >& 
 		outTargets.push_back(render::DebugTarget(L"GBuffer normals", render::DtvNormals, m_gbufferTargetSet->getColorTexture(1)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer metalness", render::DtvDeferredMetalness, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer roughness", render::DtvDeferredRoughness, m_gbufferTargetSet->getColorTexture(2)));
+		outTargets.push_back(render::DebugTarget(L"GBuffer specular", render::DtvDeferredSpecular, m_gbufferTargetSet->getColorTexture(2)));
 		outTargets.push_back(render::DebugTarget(L"GBuffer surface color", render::DtvDefault, m_gbufferTargetSet->getColorTexture(3)));
 	}
 

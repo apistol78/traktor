@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="8">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="27">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="30">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<linearLighting>true</linearLighting>
-		<depthPass>true</depthPass>
+		<exposureBias>2</exposureBias>
 		<shadowSettings>
 			<disabled>
 				<projection>SpUniform</projection>
@@ -67,7 +67,6 @@
 				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
 			</ultra>
 		</shadowSettings>
-		<ambientColor>0, 0, 0, 0</ambientColor>
 		<fog>false</fog>
 		<fogDistanceY>0</fogDistanceY>
 		<fogDistanceZ>90</fogDistanceZ>
@@ -93,26 +92,6 @@
 			</transform>
 			<entityData>
 				<item type="traktor.world.ComponentEntityData">
-					<name>Light</name>
-					<transform>
-						<translation>0, 0, 0, 0</translation>
-						<rotation>-0.364972, 0.277816, 0.115075, 0.88112</rotation>
-					</transform>
-					<components>
-						<item type="traktor.world.LightComponentData" version="6">
-							<lightType>LtProbe</lightType>
-							<color>1, 1, 1, 0</color>
-							<probeDiffuseTexture>{1BCA1D09-83D0-974C-B2CE-032EA1F71B1B}</probeDiffuseTexture>
-							<probeSpecularTexture>{67B5BA16-0AA5-EC48-8279-E98FD0EE663C}</probeSpecularTexture>
-							<castShadow>false</castShadow>
-							<range>10</range>
-							<radius>1.570796</radius>
-							<flickerAmount>0</flickerAmount>
-							<flickerFilter>0</flickerFilter>
-						</item>
-					</components>
-				</item>
-				<item type="traktor.world.ComponentEntityData">
 					<name>Sky</name>
 					<transform>
 						<translation>0, 0, 0, 0</translation>
@@ -125,9 +104,48 @@
 						</item>
 					</components>
 				</item>
+				<item type="traktor.world.ComponentEntityData">
+					<name>Light</name>
+					<transform>
+						<translation>0, 0, 0, 0</translation>
+						<rotation>-0.364972, 0.277816, 0.115075, 0.88112</rotation>
+					</transform>
+					<components>
+						<item type="traktor.world.LightComponentData" version="8">
+							<lightType>LtDirectional</lightType>
+							<color>1, 1, 1, 0</color>
+							<intensity>10</intensity>
+							<castShadow>false</castShadow>
+							<range>10</range>
+							<radius>1.570796</radius>
+							<flickerAmount>0</flickerAmount>
+							<flickerFilter>0</flickerFilter>
+							<shCoeffs/>
+						</item>
+					</components>
+				</item>
+				<item type="traktor.world.ComponentEntityData">
+					<name>Ambient</name>
+					<transform>
+						<translation>0, 0, 0, 0</translation>
+						<rotation>0, 0, 0, 1</rotation>
+					</transform>
+					<components>
+						<item type="traktor.world.ProbeComponentData">
+							<diffuseTexture>{1BCA1D09-83D0-974C-B2CE-032EA1F71B1B}</diffuseTexture>
+							<specularTexture>{67B5BA16-0AA5-EC48-8279-E98FD0EE663C}</specularTexture>
+							<intensity>1</intensity>
+							<local>false</local>
+							<volume>
+								<mn>0, 0, 0, 1</mn>
+								<mx>0, 0, 0, 1</mx>
+							</volume>
+						</item>
+					</components>
+				</item>
 			</entityData>
 			<visible>true</visible>
-			<locked>true</locked>
+			<locked>false</locked>
 			<include>true</include>
 			<dynamic>false</dynamic>
 			<attributes/>

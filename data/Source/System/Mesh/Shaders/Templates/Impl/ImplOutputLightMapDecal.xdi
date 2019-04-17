@@ -5,8 +5,8 @@
 			<id>{F3DA9160-6EA0-44B7-BDC6-68BA043171CD}</id>
 			<comment/>
 			<position>
-				<first>1072</first>
-				<second>354</second>
+				<first>1077</first>
+				<second>351</second>
 			</position>
 			<name>T_ViewVelocity</name>
 			<connectable>true</connectable>
@@ -18,8 +18,8 @@
 			<id>{4E36EC8B-5317-45CD-9008-23F6B945CC9C}</id>
 			<comment/>
 			<position>
-				<first>1072</first>
-				<second>506</second>
+				<first>1077</first>
+				<second>499</second>
 			</position>
 			<name>T_Roughness</name>
 			<connectable>true</connectable>
@@ -31,8 +31,8 @@
 			<id>{D710345F-679E-414F-845A-EE9D399114DC}</id>
 			<comment/>
 			<position>
-				<first>1072</first>
-				<second>544</second>
+				<first>1077</first>
+				<second>536</second>
 			</position>
 			<name>T_Transparency</name>
 			<connectable>true</connectable>
@@ -44,8 +44,8 @@
 			<id>{289CD48A-9CB6-4736-AAC4-5CA6E7A16593}</id>
 			<comment/>
 			<position>
-				<first>1092</first>
-				<second>468</second>
+				<first>1097</first>
+				<second>462</second>
 			</position>
 			<name>T_Metalness</name>
 			<connectable>true</connectable>
@@ -57,8 +57,8 @@
 			<id>{EEF85D37-46B1-422A-8C5A-E23DABA4EB3E}</id>
 			<comment/>
 			<position>
-				<first>1092</first>
-				<second>392</second>
+				<first>1097</first>
+				<second>388</second>
 			</position>
 			<name>T_Emissive</name>
 			<connectable>true</connectable>
@@ -70,8 +70,8 @@
 			<id>{3AB47D2F-F16B-4398-8814-FBD90C42D02E}</id>
 			<comment/>
 			<position>
-				<first>1072</first>
-				<second>278</second>
+				<first>1077</first>
+				<second>277</second>
 			</position>
 			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
@@ -83,8 +83,8 @@
 			<id>{D059E0E8-F4CD-409D-8E85-F275ED02EB51}</id>
 			<comment/>
 			<position>
-				<first>1072</first>
-				<second>316</second>
+				<first>1077</first>
+				<second>314</second>
 			</position>
 			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
@@ -96,7 +96,7 @@
 			<id>{F6A033FD-B0FB-498A-93C7-B28292F04459}</id>
 			<comment/>
 			<position>
-				<first>1072</first>
+				<first>1077</first>
 				<second>240</second>
 			</position>
 			<name>T_SurfaceColor</name>
@@ -109,8 +109,8 @@
 			<id>{63D03AB6-AC64-4923-8F06-CFB28B13F4CB}</id>
 			<comment/>
 			<position>
-				<first>1092</first>
-				<second>430</second>
+				<first>1097</first>
+				<second>425</second>
 			</position>
 			<name>T_Irradiance</name>
 			<connectable>true</connectable>
@@ -173,6 +173,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{18DB5E7B-0EF6-8548-80BA-8D59FDE4CF7E}</id>
+					<name>Specular</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{A6D7BFAB-0138-4EFD-A71A-1397BCE9E584}</id>
 					<name>Transparent</name>
 					<optional>true</optional>
@@ -197,10 +202,27 @@
 					<second>0.8</second>
 				</item>
 				<item>
+					<first>Specular</first>
+					<second>1</second>
+				</item>
+				<item>
 					<first>Transparent</first>
 					<second>0</second>
 				</item>
 			</values>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{7561B5F6-B46D-054E-A128-723113665F8C}</id>
+			<comment/>
+			<position>
+				<first>1097</first>
+				<second>573</second>
+			</position>
+			<name>T_Specular</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -282,6 +304,16 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>ViewVelocity</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Specular</name>
 			</destination>
 		</item>
 	</edges>

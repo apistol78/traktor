@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{C024E223-E3B4-E649-A8CE-A9512F4435B7}</id>
+			<comment/>
+			<position>
+				<first>468</first>
+				<second>332</second>
+			</position>
+			<value>0</value>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{990E03F4-6CD9-4548-B2FD-84D42D5685B0}</id>
+			<comment/>
+			<position>
+				<first>629</first>
+				<second>332</second>
+			</position>
+			<name>T_Specular</name>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{4ED91E46-072F-2C4A-BDD6-AE170BFFC68C}</id>
+			<comment/>
+			<position>
+				<first>192</first>
+				<second>313</second>
+			</position>
+			<name>T_TexCoord0</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{497B3C86-9F5A-AF4F-8AD7-0396265DA354}</id>
+			<comment/>
+			<position>
+				<first>192</first>
+				<second>352</second>
+			</position>
+			<name>T_TexCoord1</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>

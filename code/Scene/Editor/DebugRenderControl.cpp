@@ -30,6 +30,7 @@ const wchar_t* c_visualizeTechniques[] =
 	L"Velocity",
 	L"Roughness",
 	L"Metalness",
+	L"Specular",
 	L"ShadowMap",
 	L"ShadowMask"
 };

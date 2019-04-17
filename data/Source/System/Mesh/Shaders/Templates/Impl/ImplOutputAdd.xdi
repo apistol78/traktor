@@ -6,7 +6,7 @@
 			<comment/>
 			<position>
 				<first>339</first>
-				<second>523</second>
+				<second>518</second>
 			</position>
 			<name>T_Roughness</name>
 			<connectable>true</connectable>
@@ -32,7 +32,7 @@
 			<comment/>
 			<position>
 				<first>339</first>
-				<second>255</second>
+				<second>254</second>
 			</position>
 			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
@@ -45,7 +45,7 @@
 			<comment/>
 			<position>
 				<first>339</first>
-				<second>300</second>
+				<second>298</second>
 			</position>
 			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
@@ -58,7 +58,7 @@
 			<comment/>
 			<position>
 				<first>359</first>
-				<second>389</second>
+				<second>386</second>
 			</position>
 			<name>T_Emissive</name>
 			<connectable>true</connectable>
@@ -71,7 +71,7 @@
 			<comment/>
 			<position>
 				<first>339</first>
-				<second>568</second>
+				<second>562</second>
 			</position>
 			<name>T_Transparency</name>
 			<connectable>true</connectable>
@@ -84,7 +84,7 @@
 			<comment/>
 			<position>
 				<first>359</first>
-				<second>434</second>
+				<second>430</second>
 			</position>
 			<name>T_Irradiance</name>
 			<connectable>true</connectable>
@@ -97,7 +97,7 @@
 			<comment/>
 			<position>
 				<first>359</first>
-				<second>478</second>
+				<second>474</second>
 			</position>
 			<name>T_Metalness</name>
 			<connectable>true</connectable>
@@ -110,7 +110,7 @@
 			<comment/>
 			<position>
 				<first>339</first>
-				<second>344</second>
+				<second>342</second>
 			</position>
 			<name>T_ViewVelocity</name>
 			<connectable>true</connectable>
@@ -173,6 +173,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{18DB5E7B-0EF6-8548-80BA-8D59FDE4CF7E}</id>
+					<name>Specular</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{A6D7BFAB-0138-4EFD-A71A-1397BCE9E584}</id>
 					<name>Transparent</name>
 					<optional>true</optional>
@@ -182,7 +187,7 @@
 			<values>
 				<item>
 					<first>Cast shadow</first>
-					<second>1</second>
+					<second>0</second>
 				</item>
 				<item>
 					<first>Emissive</first>
@@ -197,10 +202,27 @@
 					<second>0.8</second>
 				</item>
 				<item>
+					<first>Specular</first>
+					<second>1</second>
+				</item>
+				<item>
 					<first>Transparent</first>
 					<second>1</second>
 				</item>
 			</values>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{70F90E95-DF67-2647-B47A-F4FDA7D7A2BA}</id>
+			<comment/>
+			<position>
+				<first>359</first>
+				<second>606</second>
+			</position>
+			<name>T_Specular</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -282,6 +304,16 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Emissive</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Specular</name>
 			</destination>
 		</item>
 	</edges>

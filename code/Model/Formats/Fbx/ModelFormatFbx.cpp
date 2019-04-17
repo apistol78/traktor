@@ -301,6 +301,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref
 					material.setDiffuseMap(Material::Map(L"Albedo", 0, true));
 					material.setMetalnessMap(Material::Map(L"Metalness", 0, false));
 					material.setRoughnessMap(Material::Map(L"Roughness", 0, false));
+					material.setSpecularMap(Material::Map(L"Specular", 0, false));
 				}
 
 				defaultMaterialIndex = model->addMaterial(material);

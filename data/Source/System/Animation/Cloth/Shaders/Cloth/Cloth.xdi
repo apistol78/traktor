@@ -156,6 +156,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{18DB5E7B-0EF6-8548-80BA-8D59FDE4CF7E}</id>
+					<name>Specular</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{A6D7BFAB-0138-4EFD-A71A-1397BCE9E584}</id>
 					<name>Transparent</name>
 					<optional>true</optional>
@@ -178,6 +183,10 @@
 				<item>
 					<first>Roughness</first>
 					<second>0.8</second>
+				</item>
+				<item>
+					<first>Specular</first>
+					<second>1</second>
 				</item>
 				<item>
 					<first>Transparent</first>
