@@ -1546,7 +1546,7 @@ void WorldRendererDeferred::buildLights(WorldRenderView& worldRenderView, int fr
 				auto svrb = f.slice[slice].shadow->getRenderContext()->alloc< render::SetViewportRenderBlock >();
 				svrb->viewport = render::Viewport(
 					0,
-					slice * resolution,
+					0,
 					resolution,
 					resolution,
 					0.0f,
