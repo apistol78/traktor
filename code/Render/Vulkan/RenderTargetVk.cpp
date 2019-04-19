@@ -73,7 +73,7 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	imageCreateInfo.arrayLayers = 1;
 	imageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 	imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-	imageCreateInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
+	imageCreateInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | /*VK_IMAGE_USAGE_STORAGE_BIT |*/ VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
 	imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	imageCreateInfo.queueFamilyIndexCount = 0;
 	imageCreateInfo.pQueueFamilyIndices = nullptr;
@@ -186,7 +186,7 @@ void RenderTargetVk::prepareAsTarget(VkCommandBuffer cmdBuffer)
 
 	VkImageMemoryBarrier imb = {};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.srcAccessMask = m_accessFlags;
+	imb.srcAccessMask = 0; // m_accessFlags;
 	imb.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 	imb.oldLayout = m_imageLayout;
 	imb.newLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
@@ -218,7 +218,7 @@ void RenderTargetVk::prepareForPresentation(VkCommandBuffer cmdBuffer)
 
 	VkImageMemoryBarrier imb = {};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.srcAccessMask = m_accessFlags;
+	imb.srcAccessMask = 0; // m_accessFlags;
 	imb.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
 	imb.oldLayout = m_imageLayout;
 	imb.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
@@ -250,7 +250,7 @@ void RenderTargetVk::prepareAsTexture(VkCommandBuffer cmdBuffer)
 
 	VkImageMemoryBarrier imb = {};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.srcAccessMask = m_accessFlags;
+	imb.srcAccessMask = 0; // m_accessFlags;
 	imb.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 	imb.oldLayout = m_imageLayout;
 	imb.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -282,7 +282,7 @@ void RenderTargetVk::prepareForReadBack(VkCommandBuffer cmdBuffer)
 
 	VkImageMemoryBarrier imb = {};
 	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	imb.srcAccessMask = m_accessFlags;
+	imb.srcAccessMask = 0; // m_accessFlags;
 	imb.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
 	imb.oldLayout = m_imageLayout;
 	imb.newLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
