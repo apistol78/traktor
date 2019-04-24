@@ -108,12 +108,21 @@ public:
 	{
 	}
 
-	virtual int32_t httpClientRequest(HttpServer* server, const HttpRequest* request, OutputStream& os, Ref< traktor::IStream >& outStream, bool& outCache, std::wstring& inoutSession)
+	virtual int32_t httpClientRequest(
+		HttpServer* server,
+		const HttpRequest* request,
+		IStream* clientStream,
+		OutputStream& os,
+		Ref< traktor::IStream >& outStream,
+		bool& outCache,
+		std::wstring& inoutSession
+	)
 	{
 		Any argv[] =
 		{
 			CastAny< HttpServer* >::set(server),
-			CastAny< const HttpRequest* >::set(request)
+			CastAny< const HttpRequest* >::set(request),
+			CastAny< IStream* >::set(clientStream)
 		};
 		Any ret = m_delegateListener->call(sizeof_array(argv), argv);
 		if (ret.isString())

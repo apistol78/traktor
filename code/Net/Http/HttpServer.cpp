@@ -1,11 +1,13 @@
 #include "Core/RefArray.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/StreamCopy.h"
+#include "Core/Io/StreamStream.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketStream.h"
@@ -74,7 +76,7 @@ public:
 			if (!clientSocket->select(true, false, false, 10000))
 			{
 				clientSocket->close();
-				clientSocket = 0;
+				clientSocket = nullptr;
 				continue;
 			}
 
@@ -136,7 +138,21 @@ public:
 				}
 
 				if (m_listener)
-					result = m_listener->httpClientRequest(m_server, request, ssr, ds, cache, session);
+				{
+					if (request->getMethod() == HttpRequest::MtPost || request->getMethod() == HttpRequest::MtPut)
+					{
+						int32_t contentLength = parseString< int32_t >(request->getValue(L"Content-Length"));
+						if (contentLength > 0)
+						{
+							StreamStream payloadStream(&clientStream, clientStream.tell() + contentLength);
+							result = m_listener->httpClientRequest(m_server, request, &payloadStream, ssr, ds, cache, session);
+						}
+					}
+					else
+					{
+						result = m_listener->httpClientRequest(m_server, request, nullptr, ssr, ds, cache, session);
+					}
+				}
 
 				FileOutputStream os(&clientStream, new Utf8Encoding(), OutputStream::LeWin);
 				if (result >= 200 && result < 300)
