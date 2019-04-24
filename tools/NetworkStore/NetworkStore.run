@@ -1,0 +1,88 @@
+import(traktor)
+import(traktor.net)
+
+-- Get list of available bundles.
+local function bundles(category)
+	local fs = FileSystem.getInstance()
+	local fa = fs:find("bundles/" .. category .. "/*.*")
+	assert(fa ~= nil)
+
+	local bundles = ""
+	for i = 0, fa:size() - 1 do
+
+		local f = fa:get(i)
+		assert(f ~= nil)
+
+		if f.directory and f.path.fileName ~= "." and f.path.fileName ~= ".." then
+			bundles = bundles ..
+				"<bundle>" ..
+				"<description>Rock Texture</description>" ..
+				"<image-url>bundles/" .. category .. "/" .. f.path.fileName .. "/image.png</image-url>" ..
+				"<asset-url>bundles/" .. category .. "/" .. f.path.fileName .. "/asset.compact</asset-url>" ..
+				"</bundle>"
+		end
+	end
+
+	return
+		"<?xml version=\"1.0\"?>" ..
+		"<bundles>" ..
+		bundles ..
+		"</bundles>"
+end
+
+-- Upload file to new bundle.
+local function upload(category, fileName, clientStream)
+	local fs = FileSystem.getInstance()
+	local f = fs:open(Path("bundles/" .. category .. "/" .. fileName), File.FmWrite)
+	StreamCopy(f, clientStream):execute()
+	f:close()
+	return "<?xml version=\"1.0\"?><status>0</status>\n"	
+end
+
+-- Download requested resource.
+local function serve(resource)
+	local fs = FileSystem.getInstance()
+	return fs:open(Path("." .. resource), File.FmRead)
+end
+
+function main()
+	local server = HttpServer()
+
+	-- Create HTTP server.
+	if not server:create(8080) then
+		print("Unable to create server")
+		return 1
+	end
+
+	-- Set our request listener.
+	server:setRequestListener(function(_, request, clientStream)
+
+		print("Got request")
+		print(request.method)
+		print(request.resource)
+
+		local s, e, c = request.resource:find("?")
+
+		local category = "textures"
+		local fileName = "image.png"
+
+		if request.resource == "/bundles" then
+			return bundles(category)
+		elseif request.resource == "/upload" then
+			return upload(category, fileName, clientStream)
+		else
+			return serve(request.resource)
+		end
+
+		return nil
+
+	end)
+
+	-- Process server until Ctrl+C
+	while true do
+		server:update(1000)
+	end
+
+	-- Cleanup
+	server:destroy()
+end

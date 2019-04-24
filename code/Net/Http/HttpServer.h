@@ -44,6 +44,7 @@ public:
 		virtual int32_t httpClientRequest(
 			HttpServer* server,
 			const HttpRequest* request,
+			IStream* clientStream,
 			OutputStream& os,
 			Ref< IStream >& outStream,
 			bool& outCache,

@@ -67,7 +67,15 @@ public:
 	{
 	}
 
-	virtual int32_t httpClientRequest(net::HttpServer* server, const net::HttpRequest* request, OutputStream& os, Ref< traktor::IStream >& outStream, bool& outCache, std::wstring& inoutSession)
+	virtual int32_t httpClientRequest(
+		net::HttpServer* server,
+		const net::HttpRequest* request,
+		IStream* clientStream,
+		OutputStream& os,
+		Ref< traktor::IStream >& outStream,
+		bool& outCache,
+		std::wstring& inoutSession
+	) override final
 	{
 		std::wstring resource = request->getResource();
 
