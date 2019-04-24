@@ -31,6 +31,12 @@ public:
 
 	std::wstring getValue(const wchar_t* const name) const;
 
+	/*! \brief Merge this style sheet with another.
+	 *
+	 * Styles defined in right override existing styles.
+	 * */
+	Ref< StyleSheet > merge(const StyleSheet* right) const;
+
 	virtual void serialize(ISerializer& s) override;
 
 private:
@@ -55,6 +61,8 @@ private:
 	std::vector< Value > m_values;
 
 	void setColor(const wchar_t* const type, const wchar_t* const element, const Color4ub& color);
+
+	void setValue(const wchar_t* const name, const wchar_t* const value);
 };
 
 	}

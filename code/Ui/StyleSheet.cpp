@@ -112,6 +112,21 @@ std::wstring StyleSheet::getValue(const wchar_t* const name) const
 	return L"";
 }
 
+Ref< StyleSheet > StyleSheet::merge(const StyleSheet* right) const
+{
+	Ref< StyleSheet > ss = new StyleSheet();
+
+	ss->m_groups = m_groups;
+	for (auto group : right->m_groups)
+		ss->setColor(group.type.c_str(), group.element.c_str(), group.color);
+
+	ss->m_values = m_values;
+	for (auto value : right->m_values)
+		ss->setValue(value.name.c_str(), value.value.c_str());
+
+	return ss;
+}
+
 void StyleSheet::serialize(ISerializer& s)
 {
 	s >> MemberStlVector< Group, MemberComposite< Group > >(L"groups", m_groups);
@@ -120,11 +135,39 @@ void StyleSheet::serialize(ISerializer& s)
 
 void StyleSheet::setColor(const wchar_t* const type, const wchar_t* const element, const Color4ub& color)
 {
+	for (auto& group : m_groups)
+	{
+		if (group.type == type && group.element == element)
+		{
+			group.color = color;
+			return;
+		}
+	}
+
+	// If we reach here then no such group.
 	Group g;
 	g.type = type;
 	g.element = element;
 	g.color = color;
 	m_groups.push_back(g);
+}
+
+void StyleSheet::setValue(const wchar_t* const name, const wchar_t* const value)
+{
+	for (auto& v : m_values)
+	{
+		if (v.name == name)
+		{
+			v.value = value;
+			return;
+		}
+	}
+
+	// If we reach here then no such value.
+	Value v;
+	v.name = name;
+	v.value = value;
+	m_values.push_back(v);
 }
 
 void StyleSheet::Group::serialize(ISerializer& s)
