@@ -325,7 +325,7 @@ Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
 	if (file)
 		return xml::XmlDeserializer(file, pathName.getPathName()).readObject< ui::StyleSheet >();
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< db::Database > openDatabase(const std::wstring& connectionString, bool create)
@@ -334,7 +334,7 @@ Ref< db::Database > openDatabase(const std::wstring& connectionString, bool crea
 	if (!database->open(connectionString))
 	{
 		if (!create || !database->create(connectionString))
-			return 0;
+			return nullptr;
 	}
 	return database;
 }
@@ -455,6 +455,13 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_mergedSettings = m_globalSettings;
 
 	// Load editor stylesheet.
+	Ref< ui::StyleSheet > styleSheetShared = loadStyleSheet(L"$(TRAKTOR_HOME)/resources/runtime/themes/Shared/StyleSheet.xss");
+	if (!styleSheetShared)
+	{
+		log::error << L"Unable to load shared stylesheet." << Endl;
+		return false;
+	}
+
 	std::wstring styleSheetName = m_mergedSettings->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss");
 	Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
 	if (!styleSheet)
@@ -462,7 +469,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		log::error << L"Unable to load stylesheet " << styleSheetName << Endl;
 		return false;
 	}
-	ui::Application::getInstance()->setStyleSheet(styleSheet);
+
+	ui::Application::getInstance()->setStyleSheet(
+		styleSheetShared->merge(styleSheet)
+	);
 
 	// Load dependent modules.
 	loadModules();
@@ -2560,10 +2570,15 @@ bool EditorForm::handleCommand(const ui::Command& command)
 					m_mergedSettings = m_globalSettings;
 
 				// Load editor stylesheet.
+				Ref< ui::StyleSheet > styleSheetShared = loadStyleSheet(L"$(TRAKTOR_HOME)/resources/runtime/themes/Shared/StyleSheet.xss");
+				T_FATAL_ASSERT(styleSheetShared);
+				
 				std::wstring styleSheetName = m_mergedSettings->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/resources/runtime/themes/Light.xss");
 				Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
 				if (styleSheet)
-					ui::Application::getInstance()->setStyleSheet(styleSheet);
+					ui::Application::getInstance()->setStyleSheet(
+						styleSheetShared->merge(styleSheet)
+					);
 				else
 					log::error << L"Unable to load stylesheet " << styleSheetName << Endl;
 
