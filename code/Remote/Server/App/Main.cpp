@@ -70,7 +70,7 @@ public:
 	virtual int32_t httpClientRequest(
 		net::HttpServer* server,
 		const net::HttpRequest* request,
-		IStream* clientStream,
+		traktor::IStream* clientStream,
 		OutputStream& os,
 		Ref< traktor::IStream >& outStream,
 		bool& outCache,
