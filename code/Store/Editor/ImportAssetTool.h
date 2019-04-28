@@ -2,12 +2,20 @@
 
 #include "Editor/IEditorTool.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_STORE_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace store
 	{
 
-class ImportAssetTool : public editor::IEditorTool
+class T_DLLCLASS ImportAssetTool : public editor::IEditorTool
 {
 	T_RTTI_CLASS;
 

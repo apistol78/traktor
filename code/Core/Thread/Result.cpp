@@ -57,6 +57,17 @@ bool Result::succeeded() const
 	return m_succeeded;
 }
 
+void Result::defer(IDeferred* _deferred)
+{
+	T_ASSERT(_deferred != nullptr);
+
+	if (m_deferred == nullptr)
+		addRef(nullptr);
+
+	m_deferred = _deferred;
+	deferred();
+}
+
 void Result::wait() const
 {
 	while (!m_ready)
@@ -68,7 +79,8 @@ void Result::deferred()
 	if (m_ready && m_deferred)
 	{
 		m_deferred->dispatch(*this);
-		m_deferred = 0;
+		m_deferred = nullptr;
+		release(nullptr);
 	}
 }
 

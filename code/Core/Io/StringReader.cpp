@@ -52,9 +52,9 @@ int64_t StringReader::readLine(std::wstring& out)
 			int64_t result = -1;
 			if (m_stream)
 			{
-				result = m_stream->read(&m_buffer[m_count], sizeof(m_buffer) - m_count);
+				result = m_stream->read(&m_buffer[m_count], 1);
 				if (result < 0)
-					m_stream = 0;
+					m_stream = nullptr;
 			}
 			if (result > 0)
 				m_count += result;
@@ -70,7 +70,13 @@ int64_t StringReader::readLine(std::wstring& out)
 
 		int32_t result = m_encoding->translate(m_buffer, m_count, ch);
 		if (result <= 0)
-			break;
+		{
+			// Need more characters in buffer; read another byte.
+			if (m_stream != nullptr && m_count < sizeof(m_buffer))
+				continue;
+			else
+				return -1;
+		}
 
 		std::memmove(&m_buffer[0], &m_buffer[result], m_count - result);
 		m_count -= result;

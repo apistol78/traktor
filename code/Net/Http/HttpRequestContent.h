@@ -12,6 +12,9 @@
 
 namespace traktor
 {
+
+class IStream;
+
 	namespace net
 	{
 
@@ -25,14 +28,23 @@ class T_DLLCLASS HttpRequestContent : public IHttpRequestContent
 public:
 	HttpRequestContent();
 
-	HttpRequestContent(const std::wstring& content);
+	explicit HttpRequestContent(const std::wstring& content);
+
+	explicit HttpRequestContent(IStream* stream);
 
 	void set(const std::wstring& content);
 
-	virtual std::wstring getUrlEncodedContent() const override final;
+	void set(IStream* stream);
+
+	virtual std::wstring getContentType() const override final;
+
+	virtual uint32_t getContentLength() const override final;
+
+	virtual bool encodeIntoStream(IStream* stream) const override final;
 
 private:
-	std::wstring m_content;
+	std::wstring m_contentType;
+	AlignedVector< uint8_t > m_content;
 };
 
 	}

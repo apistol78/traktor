@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

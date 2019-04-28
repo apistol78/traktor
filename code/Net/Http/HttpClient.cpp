@@ -1,8 +1,10 @@
 #include "Core/Functor/Functor.h"
+#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/StreamStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Thread/JobManager.h"
 #include "Net/SocketAddressIPv6.h"
@@ -25,17 +27,26 @@ namespace traktor
 void executeRequestJob(std::wstring method, net::Url url, Ref< const IHttpRequestContent > content, Ref< HttpClientResult > result)
 {
 	if (url.getProtocol() != L"http")
+	{
+		result->fail();
 		return;
+	}
 
 	// Lookup host address.
 	SocketAddressIPv6 addr(url.getHost(), url.getPort());
 	if (!addr.valid())
+	{
+		result->fail();
 		return;
+	}
 
 	// Create and connect socket to host.
 	Ref< TcpSocket > socket = new TcpSocket();
 	if (!socket->connect(addr))
+	{
+		result->fail();
 		return;
+	}
 
 	// Build GET string.
 	std::wstring resource = url.getPath();
@@ -49,7 +60,9 @@ void executeRequestJob(std::wstring method, net::Url url, Ref< const IHttpReques
 		resource += L"#" + ref;
 
 	// Create request header.
-	StringOutputStream ss;
+	DynamicMemoryStream ms(false, true);
+	FileOutputStream ss(&ms, new Utf8Encoding());
+
 	ss << method << L" " << resource << L" HTTP/1.1\r\n";
 	ss << L"Host: " << url.getHost() << L"\r\n";
 	ss << L"User-Agent: traktor/1.0\r\n";
@@ -57,25 +70,34 @@ void executeRequestJob(std::wstring method, net::Url url, Ref< const IHttpReques
 
 	if (content)
 	{
-		std::wstring uec = content->getUrlEncodedContent();
-		ss << L"Content-Type: application/x-www-form-urlencoded\r\n";
-		ss << L"Content-Length: " << uec.length() << L"\r\n";
+		ss << L"Content-Type: " << content->getContentType() << L"\r\n";
+	 	ss << L"Content-Length: " << content->getContentLength() << L"\r\n";
+	 	ss << L"\r\n";
 		ss << L"\r\n";
-		ss << uec;
+
+		if (!content->encodeIntoStream(&ms))
+		{
+			result->fail();
+			return;
+		}		 
 	}
 	else
+	{
 		ss << L"\r\n";
+		ss << L"\r\n";
+	}
 
+	// Send request and payload.
 	Ref< IStream > stream = new SocketStream(socket);
-
-	// Send request, UTF-8 encoded.
-	FileOutputStream fos(stream, new Utf8Encoding());
-	fos << ss.str();
+	stream->write(ms.getBuffer().c_ptr(), ms.getBuffer().size());
 
 	// Accept and parse response from server.
 	Ref< HttpResponse > response = new HttpResponse();
 	if (!response->parse(stream))
+	{
+		result->fail();
 		return;
+	}
 
 	// Reset offset in stream to origin.
 	stream->seek(IStream::SeekSet, 0);
