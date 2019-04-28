@@ -59,7 +59,7 @@ bool BrowseAssetDialog::create(ui::Widget* parent)
     */
     Ref< net::HttpClient > httpClient = new net::HttpClient();
     
-    auto queryCatalogue = httpClient->get(net::Url(L"http://" + m_serverHost + L"/catalogue?category={0516941b-6d18-418d-95bc-f76d64bf8ed9}"));
+    auto queryCatalogue = httpClient->get(net::Url(L"http://" + m_serverHost + L"/catalogue?category=Texture"));
     queryCatalogue->defer([=]() {
 
         if (!queryCatalogue->succeeded())
@@ -71,7 +71,7 @@ bool BrowseAssetDialog::create(ui::Widget* parent)
 
         Ref< ui::GridRow > rowCategory = new ui::GridRow();
         rowCategory->add(new ui::GridItem(L""));
-        rowCategory->add(new ui::GridItem(L"Textures"));
+        rowCategory->add(new ui::GridItem(L"Texture"));
         m_gridAssets->addRow(rowCategory);
         m_gridAssets->requestUpdate();
 
@@ -88,7 +88,7 @@ bool BrowseAssetDialog::create(ui::Widget* parent)
             rowCategory->addChild(rowPackage);
             m_gridAssets->requestUpdate();
 
-            auto queryManifest = httpClient->get(net::Url(L"http://" + m_serverHost + L"/{0516941b-6d18-418d-95bc-f76d64bf8ed9}/" + id + L"/Manifest.xml"));
+            auto queryManifest = httpClient->get(net::Url(L"http://" + m_serverHost + L"/Texture/" + id + L"/Manifest.xml"));
             queryManifest->defer([=]() {
 
                 if (!queryManifest->succeeded())
@@ -102,7 +102,7 @@ bool BrowseAssetDialog::create(ui::Widget* parent)
                 std::wstring databaseUrl = getChildElementValue(xm->getDocumentElement(), L"database-url", L"Database.compact");
 
                 rowPackage->get(1)->setText(name);
-                rowPackage->setData(L"URL", new net::Url(L"http://" + m_serverHost + L"/{0516941b-6d18-418d-95bc-f76d64bf8ed9}/" + id + L"/" + databaseUrl));
+                rowPackage->setData(L"URL", new net::Url(L"http://" + m_serverHost + L"/Texture/" + id + L"/" + databaseUrl));
                 m_gridAssets->requestUpdate();
             });
         }

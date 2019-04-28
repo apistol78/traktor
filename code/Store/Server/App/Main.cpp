@@ -36,7 +36,7 @@ public:
 	virtual int32_t httpClientRequest(
 		net::HttpServer* server,
 		const net::HttpRequest* request,
-		IStream* clientStream,
+		traktor::IStream* clientStream,
 		OutputStream& os,
 		Ref< traktor::IStream >& outStream,
 		bool& outCache,
@@ -120,7 +120,7 @@ public:
                 return 404;
             }
 
-            Ref< IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmWrite);
+            Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmWrite);
             if (!fileStream)
             {
                 log::error << L"Failed to create file \"" << filePath.getPathName() << L"\"." << Endl;
@@ -154,11 +154,11 @@ int main(int argc, const char** argv)
 {
    	log::info << L"Traktor.Store.Server.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
  
-    const Path dataPath = FileSystem::getInstance().getAbsolutePath(L"packages");
+    const Path dataPath = FileSystem::getInstance().getAbsolutePath(L"$(TRAKTOR_HOME)/data/Store");
 
     if (!FileSystem::getInstance().makeAllDirectories(dataPath))
     {
-        log::error << L"Data path do not exist nor cannot it be created." << Endl;
+        log::error << L"Data path \"" << dataPath.getPathName() << L"\" do not exist nor cannot it be created." << Endl;
         return 1;
     }
 
