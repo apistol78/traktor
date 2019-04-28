@@ -191,13 +191,12 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 		os << L"\t<database-url>Database.compact</database-url>" << Endl;
 		os << L"</manifest>" << Endl;
 
-		Guid categoryId = Guid(L"{0516941b-6d18-418d-95bc-f76d64bf8ed9}");
 		Guid packageId = Guid::create();
 
 		// Upload manifest.
 		Ref< net::HttpClient > httpClient = new net::HttpClient();
 		auto uploadManifest = httpClient->put(
-			net::Url(L"http://" + serverHost + L"/" + categoryId.format() + L"/" + packageId.format() + L"/Manifest.xml"),
+			net::Url(L"http://" + serverHost + L"/Texture/" + packageId.format() + L"/Manifest.xml"),
 			new net::HttpRequestContent(os.str())
 		);
 		if (!uploadManifest || !uploadManifest->succeeded())
@@ -207,7 +206,7 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 		auto fileStream = FileSystem::getInstance().open(Path(L"$(TRAKTOR_HOME)/data/Temp/Store/Upload/Database.compact"), File::FmRead);
 
 		auto uploadDatabase = httpClient->put(
-			net::Url(L"http://" + serverHost + L"/" + categoryId.format() + L"/" + packageId.format() + L"/Database.compact"),
+			net::Url(L"http://" + serverHost + L"/Texture/" + packageId.format() + L"/Database.compact"),
 			new net::HttpRequestContent(fileStream)
 		);
 		if (!uploadDatabase || !uploadDatabase->succeeded())
