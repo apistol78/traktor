@@ -67,7 +67,10 @@ bool BrowseAssetDialog::create(ui::Widget* parent)
 
         xml::Document xc;
         if (!xc.loadFromStream(queryCatalogue->getStream()))
+        {
+            log::error << L"Unable to parse catalogue." << Endl;
             return;
+        }
 
         Ref< ui::GridRow > rowCategory = new ui::GridRow();
         rowCategory->add(new ui::GridItem(L""));
@@ -96,7 +99,10 @@ bool BrowseAssetDialog::create(ui::Widget* parent)
 
                 Ref< xml::Document > xm = new xml::Document();
                 if (!xm->loadFromStream(queryManifest->getStream()))
+                {
+                    log::error << L"Unable to parse manifest." << Endl;
                     return;
+                }
 
                 std::wstring name = getChildElementValue(xm->getDocumentElement(), L"name", L"Unnamed");
                 std::wstring databaseUrl = getChildElementValue(xm->getDocumentElement(), L"database-url", L"Database.compact");
