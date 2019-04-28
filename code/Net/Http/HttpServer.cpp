@@ -37,7 +37,7 @@ public:
 
 	bool create(const SocketAddressIPv4& bind)
 	{
-		if (!m_serverSocket.bind(bind))
+		if (!m_serverSocket.bind(bind, true))
 			return false;
 
 		if (!m_serverSocket.listen())
@@ -81,8 +81,9 @@ public:
 			}
 
 			SocketStream clientStream(clientSocket, true, true, 100);
-			StringReader clientReader(&clientStream, new Utf8Encoding());
 
+			// Read request until two blank lines.
+			StringReader clientReader(&clientStream, new Utf8Encoding());
 			StringOutputStream ss;
 			for (;;)
 			{
@@ -147,6 +148,8 @@ public:
 							StreamStream payloadStream(&clientStream, clientStream.tell() + contentLength);
 							result = m_listener->httpClientRequest(m_server, request, &payloadStream, ssr, ds, cache, session);
 						}
+						else
+							log::warning << L"Got PUT/POST request but no \"Content-Length\"; ignoring request." << Endl;
 					}
 					else
 					{

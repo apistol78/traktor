@@ -44,16 +44,10 @@ Ref< IProviderGroup > LocalGroup::createGroup(const std::wstring& groupName)
 	Path newGroupPath = m_groupPath.getPathName() + L"/" + groupName;
 
 	if (FileSystem::getInstance().exist(newGroupPath))
-	{
-		log::error << L"GROUP ALREADY EXIST" << Endl;
-		return 0;
-	}
+		return nullptr;
 
 	if (!FileSystem::getInstance().makeDirectory(newGroupPath))
-	{
-		log::error << L"UNABLE TO CREATE PHYSICAL GROUP " << newGroupPath.getPathName() << Endl;
-		return 0;
-	}
+		return nullptr;
 
 	return new LocalGroup(m_context, newGroupPath);
 }

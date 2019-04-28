@@ -14,120 +14,138 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.AddAggregatesTool", AddAggregatesTool, Custo
 
 bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 {
-	const RefArray< Project >& projects = solution->getProjects();
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (auto project : solution->getProjects())
 	{
-		const RefArray< Configuration >& configurations = (*i)->getConfigurations();
-		for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+		for (auto configuration : project->getConfigurations())
 		{
 			if (
-				(*j)->getTargetFormat() == Configuration::TfStaticLibrary ||
-				(*j)->getTargetFormat() == Configuration::TfSharedLibrary
+				configuration->getTargetFormat() == Configuration::TfStaticLibrary ||
+				configuration->getTargetFormat() == Configuration::TfSharedLibrary
 			)
 			{
 				// \hack Add aggregation output path as consumer library path.
-				if ((*j)->getConsumerLibraryPath().empty())
-					(*j)->setConsumerLibraryPath(toLower((*j)->getName()));
+				if (configuration->getConsumerLibraryPath().empty())
+					configuration->setConsumerLibraryPath(toLower(configuration->getName()));
 			}
 
-			if (!(*j)->getAggregationItems().empty())
+			if (!configuration->getAggregationItems().empty())
 			{
 				// \hack Add .lib rule first if missing in existing .dll aggregates.
-				std::wstring sourceFile = (*j)->getAggregationItems().front()->getSourceFile();
-				if (compareIgnoreCase< std::wstring >(sourceFile, (*i)->getName() + L".dll") == 0)
+				std::wstring sourceFile = configuration->getAggregationItems().front()->getSourceFile();
+				if (compareIgnoreCase< std::wstring >(sourceFile, project->getName() + L".dll") == 0)
 				{
-					RefArray< AggregationItem > items = (*j)->getAggregationItems();
+					RefArray< AggregationItem > items = configuration->getAggregationItems();
 
 					Ref< AggregationItem > a = new AggregationItem();
-					a->setSourceFile((*i)->getName() + L".lib");
-					a->setTargetPath(toLower((*j)->getName()));
+					a->setSourceFile(project->getName() + L".lib");
+					a->setTargetPath(toLower(configuration->getName()));
 					items.push_front(a);
 
-					(*j)->setAggregationItems(items);
+					configuration->setAggregationItems(items);
 				}
-				else if (compareIgnoreCase< std::wstring >(sourceFile, (*i)->getName() + L".lib") == 0)
+				else if (compareIgnoreCase< std::wstring >(sourceFile, project->getName() + L".lib") == 0)
 				{
-					RefArray< AggregationItem > items = (*j)->getAggregationItems();
+					RefArray< AggregationItem > items = configuration->getAggregationItems();
 
 					Ref< AggregationItem > a = new AggregationItem();
-					a->setSourceFile((*i)->getName() + L".pdb");
-					a->setTargetPath(toLower((*j)->getName()));
+					a->setSourceFile(project->getName() + L".pdb");
+					a->setTargetPath(toLower(configuration->getName()));
 					items.push_front(a);
 
-					(*j)->setAggregationItems(items);
+					configuration->setAggregationItems(items);
 				}
 
-				if ((*j)->getTargetFormat() == Configuration::TfStaticLibrary)
+				if (configuration->getTargetFormat() == Configuration::TfStaticLibrary)
 				{
 					if (!(
-						compareIgnoreCase< std::wstring >((*j)->getName(), L"DebugStatic") == 0 ||
-						compareIgnoreCase< std::wstring >((*j)->getName(), L"ReleaseStatic") == 0
+						compareIgnoreCase< std::wstring >(configuration->getName(), L"DebugStatic") == 0 ||
+						compareIgnoreCase< std::wstring >(configuration->getName(), L"ReleaseStatic") == 0
 					))
 					{
-						(*j)->setConsumerLibraryPath(L"");
+						configuration->setConsumerLibraryPath(L"");
 					}
 				}
 			}
 			else
 			{
-				switch ((*j)->getTargetFormat())
+				switch (configuration->getTargetFormat())
 				{
 				case Configuration::TfStaticLibrary:
 					if (
-						compareIgnoreCase< std::wstring >((*j)->getName(), L"DebugStatic") == 0 ||
-						compareIgnoreCase< std::wstring >((*j)->getName(), L"ReleaseStatic") == 0
+						compareIgnoreCase< std::wstring >(configuration->getName(), L"DebugStatic") == 0 ||
+						compareIgnoreCase< std::wstring >(configuration->getName(), L"ReleaseStatic") == 0
 					)
 					{
 						{
 							Ref< AggregationItem > a = new AggregationItem();
-							a->setSourceFile((*i)->getName() + L".lib");
-							a->setTargetPath(toLower((*j)->getName()));
-							(*j)->addAggregationItem(a);
+#if defined(__LINUX__)
+							a->setSourceFile(L"lib" + project->getName() + L".a");
+#else
+							a->setSourceFile(project->getName() + L".lib");
+#endif
+							a->setTargetPath(toLower(configuration->getName()));
+							configuration->addAggregationItem(a);
 						}
+#if !defined(__LINUX__)
 						{
 							Ref< AggregationItem > a = new AggregationItem();
-							a->setSourceFile((*i)->getName() + L".pdb");
-							a->setTargetPath(toLower((*j)->getName()));
-							(*j)->addAggregationItem(a);
+							a->setSourceFile(project->getName() + L".pdb");
+							a->setTargetPath(toLower(configuration->getName()));
+							configuration->addAggregationItem(a);
 						}
+#endif
 					}
 					else
-						(*j)->setConsumerLibraryPath(L"");
+						configuration->setConsumerLibraryPath(L"");
 					break;
+
 				case Configuration::TfSharedLibrary:
 					{
 						Ref< AggregationItem > a = new AggregationItem();
-						a->setSourceFile((*i)->getName() + L".lib");
-						a->setTargetPath(toLower((*j)->getName()));
-						(*j)->addAggregationItem(a);
+#if defined(__LINUX__)						
+						a->setSourceFile(L"lib" + project->getName() + L".so");
+#else
+						a->setSourceFile(project->getName() + L".lib");
+#endif
+						a->setTargetPath(toLower(configuration->getName()));
+						configuration->addAggregationItem(a);
+					}
+#if !defined(__LINUX__)
+					{
+						Ref< AggregationItem > a = new AggregationItem();
+						a->setSourceFile(project->getName() + L".dll");
+						a->setTargetPath(toLower(configuration->getName()));
+						configuration->addAggregationItem(a);
 					}
 					{
 						Ref< AggregationItem > a = new AggregationItem();
-						a->setSourceFile((*i)->getName() + L".dll");
-						a->setTargetPath(toLower((*j)->getName()));
-						(*j)->addAggregationItem(a);
+						a->setSourceFile(project->getName() + L".pdb");
+						a->setTargetPath(toLower(configuration->getName()));
+						configuration->addAggregationItem(a);
 					}
-					{
-						Ref< AggregationItem > a = new AggregationItem();
-						a->setSourceFile((*i)->getName() + L".pdb");
-						a->setTargetPath(toLower((*j)->getName()));
-						(*j)->addAggregationItem(a);
-					}
+#endif
 					break;
+
 				case Configuration::TfExecutable:
 				case Configuration::TfExecutableConsole:
 					{
 						Ref< AggregationItem > a = new AggregationItem();
-						a->setSourceFile((*i)->getName() + L".exe");
-						a->setTargetPath(toLower((*j)->getName()));
-						(*j)->addAggregationItem(a);
+#if defined(__LINUX__)						
+						a->setSourceFile(project->getName());
+#else
+						a->setSourceFile(project->getName() + L".exe");
+#endif
+						a->setTargetPath(toLower(configuration->getName()));
+						configuration->addAggregationItem(a);
 					}
+#if !defined(__LINUX__)
 					{
 						Ref< AggregationItem > a = new AggregationItem();
-						a->setSourceFile((*i)->getName() + L".pdb");
-						a->setTargetPath(toLower((*j)->getName()));
-						(*j)->addAggregationItem(a);
+						a->setSourceFile(project->getName() + L".pdb");
+						a->setTargetPath(toLower(configuration->getName()));
+						configuration->addAggregationItem(a);
 					}
+#endif
 					break;
 				}
 			}

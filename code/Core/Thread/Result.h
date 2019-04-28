@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 
@@ -71,6 +72,23 @@ public:
 		method_t m_method;
 	};
 
+	class DeferredLambda : public IDeferred
+	{
+	public:
+		DeferredLambda(const std::function< void() >& fn)
+		:	m_fn(fn)
+		{
+		}
+
+		virtual void dispatch(const Result& result) const override final
+		{
+			m_fn();
+		}
+
+	private:
+		std::function< void() > m_fn;
+	};
+
 	Result();
 
 	Result(bool succeed);
@@ -83,16 +101,17 @@ public:
 
 	bool succeeded() const;
 
-	void defer(IDeferred* deferred_)
-	{
-		m_deferred = deferred_;
-		deferred();
-	}
+	void defer(IDeferred* deferred);
 
 	template < typename ClassType >
 	void defer(ClassType* object, typename DeferredMethod< ClassType >::method_t method)
 	{
 		defer(new DeferredMethod< ClassType >(object, method));
+	}
+
+	void defer(const std::function< void() >& fn)
+	{
+		defer(new DeferredLambda(fn));
 	}
 
 protected:

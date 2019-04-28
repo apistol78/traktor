@@ -5,6 +5,9 @@
 
 namespace traktor
 {
+
+class IStream;
+
 	namespace net
 	{
 
@@ -16,7 +19,11 @@ class IHttpRequestContent : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual std::wstring getUrlEncodedContent() const = 0;
+	virtual std::wstring getContentType() const = 0;
+
+	virtual uint32_t getContentLength() const = 0;
+
+	virtual bool encodeIntoStream(IStream* stream) const = 0;
 };
 
 	}

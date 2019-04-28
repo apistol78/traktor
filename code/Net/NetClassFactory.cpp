@@ -18,7 +18,6 @@
 #include "Net/Http/HttpResponse.h"
 #include "Net/Http/HttpRequest.h"
 #include "Net/Http/HttpRequestContent.h"
-#include "Net/Http/HttpRequestParameters.h"
 #include "Net/Http/HttpServer.h"
 #include "Net/Replication/INetworkTopology.h"
 #include "Net/Replication/IPeer2PeerProvider.h"
@@ -374,18 +373,12 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classUrlConnection);
 
 	auto classIHttpRequestContent = new AutoRuntimeClass< IHttpRequestContent >();
-	classIHttpRequestContent->addProperty("urlEncodedContent", &IHttpRequestContent::getUrlEncodedContent);
 	registrar->registerClass(classIHttpRequestContent);
 
 	auto classHttpRequestContent = new AutoRuntimeClass< HttpRequestContent >();
 	classHttpRequestContent->addConstructor();
 	classHttpRequestContent->addConstructor< const std::wstring& >();
 	registrar->registerClass(classHttpRequestContent);
-
-	auto classHttpRequestParameters = new AutoRuntimeClass< HttpRequestParameters >();
-	classHttpRequestParameters->addConstructor();
-	classHttpRequestParameters->addMethod("set", &HttpRequestParameters::set);
-	registrar->registerClass(classHttpRequestParameters);
 
 	auto classHttpClient = new AutoRuntimeClass< HttpClient >();
 	classHttpClient->addConstructor();

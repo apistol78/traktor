@@ -12,6 +12,10 @@
 #include "Database/Traverse.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
+#include "Net/Url.h"
+#include "Net/Http/HttpClient.h"
+#include "Net/Http/HttpClientResult.h"
+#include "Store/Editor/BrowseAssetDialog.h"
 #include "Store/Editor/ImportAssetTool.h"
 #include "Ui/FileDialog.h"
 
@@ -191,48 +195,80 @@ bool ImportAssetTool::needOutputResources(std::set< Guid >& outDependencies) con
 
 bool ImportAssetTool::launch(ui::Widget* parent, editor::IEditor* editor, const PropertyGroup* param)
 {
-	std::wstring publishPath = editor->getSettings()->getProperty< std::wstring >(L"Store.PublishPath");
-	if (publishPath.empty())
+	RefArray< net::Url > urls;
+
+	std::wstring serverHost = editor->getSettings()->getProperty< std::wstring >(L"Store.Server", L"127.0.0.1:8118");
+	if (serverHost.empty())
+		return false;
+
+	// Let user selected packages to import.
+	BrowseAssetDialog browseAssetDialog(serverHost);
+	browseAssetDialog.create(parent);
+	if (browseAssetDialog.showModal(urls) != ui::DrOk)
 	{
-		log::error << L"Publish failed; no path set." << Endl;
+		browseAssetDialog.destroy();
 		return false;
 	}
+	browseAssetDialog.destroy();
 
-	ui::FileDialog fileDialog;
-	if (!fileDialog.create(parent, type_name(this), L"Select asset bundle to import", L"All files;*.*"))
+	// Ensure temporary folder for download exist.
+	if (!FileSystem::getInstance().makeAllDirectories(Path(L"$(TRAKTOR_HOME)/data/Temp/Store/Download")))
 		return false;
 
-	Path fileName = publishPath;
-	if (fileDialog.showModal(fileName) != ui::DrOk)
-	{
-		fileDialog.destroy();
-		return false;
+	// Download and each selected package.
+	Ref< net::HttpClient > httpClient = new net::HttpClient();
+	
+	RefArray< net::HttpClientResult > downloadQueries;
+	for (auto url : urls)
+	{	
+		auto downloadQuery = httpClient->get(*url);
+		if (!downloadQuery)
+			return false;
+		if (!downloadQuery->succeeded())
+			return false;
+
+		auto tempFile = FileSystem::getInstance().open(Path(L"$(TRAKTOR_HOME)/data/Temp/Store/Download/Database.compact"), File::FmWrite);
+		if (!tempFile)
+			return false;
+
+		auto stream = downloadQuery->getStream();
+		if (!StreamCopy(tempFile, stream).execute())
+			return false;
+
+		tempFile->close();
+		tempFile = nullptr;
+
+		// Migrate instances from bundle's database into workspace source database.
+		Ref< db::Database > database = new db::Database();
+		if (!database->open(db::ConnectionString(L"provider=traktor.db.CompactDatabase;fileName=$(TRAKTOR_HOME)/data/Temp/Store/Download/Database.compact;readOnly=true")))
+			return false;
+
+		log::info << L"Merging instances from database..." << Endl;
+
+		Ref< db::Group > sourceGroup = database->getGroup(L"Instances");
+		if (sourceGroup != nullptr)
+		{
+			Ref< db::Group > targetGroup = editor->getSourceDatabase()->getRootGroup();
+			if (!migrateGroup(targetGroup, sourceGroup))
+				return false;
+		}
+
+		// Copy embedded assets from bundle into workspace's assets.
+		log::info << L"Unpacking assets from database..." << Endl;
+
+		Ref< db::Group > assetGroup = database->getGroup(L"Assets");
+		if (assetGroup != nullptr)
+		{
+			Path destinationAssetsPath = FileSystem::getInstance().getAbsolutePath(Path(L"data/Assets"));
+			if (!copyFiles(destinationAssetsPath, assetGroup))
+				return false;
+		}
+
+		database->close();
+		database = nullptr;
 	}
-	fileDialog.destroy();
 
-	// Migrate instances from bundle's database into workspace source database.
-	Ref< db::Database > database = new db::Database();
-	if (!database->open(L"provider=traktor.db.CompactDatabase;fileName=" + fileName.getPathName() + L";readOnly=true"))
-		return false;
-
-	log::info << L"Merging instances from database..." << Endl;
-
-	Ref< db::Group > sourceGroup = database->getGroup(L"Instances");
-	Ref< db::Group > targetGroup = editor->getSourceDatabase()->getRootGroup();
-
-	if (!migrateGroup(targetGroup, sourceGroup))
-		return false;
-
-	// Copy embedded assets from bundle into workspace's assets.
-	log::info << L"Unpacking assets from database..." << Endl;
-
-	Ref< db::Group > assetGroup = database->getGroup(L"Assets");
-	Path destinationAssetsPath = FileSystem::getInstance().getAbsolutePath(Path(L"data/Assets"));
-
-	if (!copyFiles(destinationAssetsPath, assetGroup))
-		return false;
-
-	log::info << L"Bundle imported successfully." << Endl;
+	log::info << L"Package(s) imported successfully." << Endl;
 	return true;
 }
 

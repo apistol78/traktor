@@ -2,6 +2,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
@@ -13,6 +14,10 @@
 #include "Editor/IEditor.h"
 #include "Editor/IPipelineDependencySet.h"
 #include "Editor/PipelineDependency.h"
+#include "Net/Url.h"
+#include "Net/Http/HttpClient.h"
+#include "Net/Http/HttpClientResult.h"
+#include "Net/Http/HttpRequestContent.h"
 #include "Store/Editor/PublishWizardTool.h"
 
 namespace traktor
@@ -48,12 +53,13 @@ uint32_t PublishWizardTool::getFlags() const
 
 bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
-	std::wstring publishPath = editor->getSettings()->getProperty< std::wstring >(L"Store.PublishPath");
-	if (publishPath.empty())
-	{
-		log::error << L"Publish failed; no path set." << Endl;
+	std::wstring serverHost = editor->getSettings()->getProperty< std::wstring >(L"Store.Server", L"127.0.0.1:8118");
+	if (serverHost.empty())
 		return false;
-	}
+
+	// Ensure temporary folder for upload exist.
+	if (!FileSystem::getInstance().makeAllDirectories(Path(L"$(TRAKTOR_HOME)/data/Temp/Store/Upload")))
+		return false;
 
 	// Create our temporary working directory.
 	RefSet< db::Instance > instances;
@@ -91,7 +97,7 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 
 	// Create a compact database with all selected instances migrated.
 	Ref< db::Database > database = new db::Database();
-	if (!database->create(db::ConnectionString(L"provider=traktor.db.CompactDatabase;fileName=" + publishPath + L"/" + instance->getName() + L".compact")))
+	if (!database->create(db::ConnectionString(L"provider=traktor.db.CompactDatabase;fileName=$(TRAKTOR_HOME)/data/Temp/Store/Upload/Database.compact")))
 	{
 		log::error << L"Publish failed; unable to create bundle database." << Endl;
 		return false;
@@ -166,6 +172,50 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 
 	database->close();
 	database = nullptr;
+
+	// Upload files.
+	{
+		StringOutputStream os;
+
+		os << L"<?xml version=\"1.0\"?>" << Endl;
+		os << L"<manifest>" << Endl;
+		os << L"\t<name>" << instance->getName() << L"</name>" << Endl;
+		os << L"\t<description>" << instance->getName() << L"</description>" << Endl;
+		os << L"\t<author>" << Endl;
+		os << L"\t\t<name/>" << Endl;
+		os << L"\t\t<e-mail>anders.pistol@doctorentertainment.com</e-mail>" << Endl;
+		os << L"\t\t<phone/>" << Endl;
+		os << L"\t\t<site/>" << Endl;
+		os << L"\t</author>" << Endl;
+		os << L"\t<thumbnail-url/>" << Endl;
+		os << L"\t<database-url>Database.compact</database-url>" << Endl;
+		os << L"</manifest>" << Endl;
+
+		Guid categoryId = Guid(L"{0516941b-6d18-418d-95bc-f76d64bf8ed9}");
+		Guid packageId = Guid::create();
+
+		// Upload manifest.
+		Ref< net::HttpClient > httpClient = new net::HttpClient();
+		auto uploadManifest = httpClient->put(
+			net::Url(L"http://" + serverHost + L"/" + categoryId.format() + L"/" + packageId.format() + L"/Manifest.xml"),
+			new net::HttpRequestContent(os.str())
+		);
+		if (!uploadManifest || !uploadManifest->succeeded())
+			return false;
+
+		// Upload database.
+		auto fileStream = FileSystem::getInstance().open(Path(L"$(TRAKTOR_HOME)/data/Temp/Store/Upload/Database.compact"), File::FmRead);
+
+		auto uploadDatabase = httpClient->put(
+			net::Url(L"http://" + serverHost + L"/" + categoryId.format() + L"/" + packageId.format() + L"/Database.compact"),
+			new net::HttpRequestContent(fileStream)
+		);
+		if (!uploadDatabase || !uploadDatabase->succeeded())
+			return false;
+
+		fileStream->close();
+		fileStream = nullptr;
+	}
 
 	log::info << L"Published successfully." << Endl;
 	return true;
