@@ -42,7 +42,7 @@ bool BrowseAssetDialog::create(ui::Widget* parent)
         L"Browse assets",
         ui::dpi96(1024),
         ui::dpi96(600),
-        ui::ConfigDialog::WsOkCancelButtons,
+		ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsOkCancelButtons,
         new ui::FloodLayout()
     ))
         return false;
