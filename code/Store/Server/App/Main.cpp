@@ -69,37 +69,56 @@ public:
             if (resource == L"/catalogue")
             {
                 auto category = params[L"category"];
-                if (!Guid(category).isValid())
-                    return 404;
+                if (!category.empty())
+				{
+					os << L"<?xml version=\"1.0\"?>" << Endl;
+					os << L"<catalogue>" << Endl;
 
-                os << L"<?xml version=\"1.0\"?>" << Endl;
-                os << L"<catalogue>" << Endl;
+					// Find all package directories in category.
+					RefArray< File > files;
+					FileSystem::getInstance().find(m_dataPath.getPathName() + L"/" + category + L"/*.*", files);
+					for (auto file : files)
+					{
+						const auto p = file->getPath();
+						if (!file->isDirectory() || p.getFileName() == L"." || p.getFileName() == L"..")
+							continue;
 
-                // Find all package directories in category.
-                RefArray< File > files;
-                FileSystem::getInstance().find(m_dataPath.getPathName() + L"/" + category + L"/*.*", files);
-                for (auto file : files)
-                {
-                    const auto p = file->getPath();
-                    if (!file->isDirectory() || p.getFileName() == L"." || p.getFileName() == L"..")
-                        continue;
+						if (!Guid(p.getFileName()).isValid())
+							continue;
 
-                    if (!Guid(p.getFileName()).isValid())
-                        continue;
+						Path manifestPath = FileSystem::getInstance().getAbsolutePath(p.getPathName() + L"/Manifest.xml");
 
-                    Path manifestPath = FileSystem::getInstance().getAbsolutePath(p.getPathName() + L"/Manifest.xml");
+						Path manifestPathRel;
+						FileSystem::getInstance().getRelativePath(
+							manifestPath,
+							m_dataPath,
+							manifestPathRel
+						);
 
-                    Path manifestPathRel;
-                    FileSystem::getInstance().getRelativePath(
-                        manifestPath,
-                        m_dataPath,
-                        manifestPathRel
-                    );
-
-                    os << L"\t<package id=\"" << p.getFileName() << L"\"/>" << Endl;
-                }
+						os << L"\t<package id=\"" << p.getFileName() << L"\"/>" << Endl;
+					}
                 
-                os << L"</catalogue>" << Endl;
+					os << L"</catalogue>" << Endl;
+				}
+				else
+				{
+					os << L"<?xml version=\"1.0\"?>" << Endl;
+					os << L"<catalogue>" << Endl;
+
+					// Find all category types.
+					RefArray< File > files;
+					FileSystem::getInstance().find(m_dataPath.getPathName() + L"/*.*", files);
+					for (auto file : files)
+					{
+						const auto p = file->getPath();
+						if (!file->isDirectory() || p.getFileName() == L"." || p.getFileName() == L"..")
+							continue;
+
+						os << L"\t<category id=\"" << p.getFileName() << L"\"/>" << Endl;
+					}
+
+					os << L"</catalogue>" << Endl;
+				}
                 return 200;
             }
             else
