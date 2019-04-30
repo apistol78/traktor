@@ -3521,5 +3521,21 @@
       <first>TOOLBAR_UNDO</first>
       <second>Undo</second>
     </item>
+    <item>
+      <first>STORE_PUBLISH_WIZARDTOOL_DESCRIPTION</first>
+      <second>Publish package...</second>
+    </item>
+    <item>
+      <first>STORE_IMPORT_ASSET_TOOL_DESCRIPTION</first>
+      <second>Import package(s)...</second>
+    </item>
+    <item>
+      <first>STORE_IMPORT_ASSET_TOOL_IMPORTING_CAPTION</first>
+      <second>Importing...</second>
+    </item>
+    <item>
+      <first>STORE_IMPORT_ASSET_TOOL_IMPORTING_MESSAGE</first>
+      <second>Importing packages(s)...</second>
+    </item>
   </map>
 </object>

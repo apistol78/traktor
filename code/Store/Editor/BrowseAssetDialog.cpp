@@ -4,7 +4,9 @@
 #include "Net/Http/HttpClientResult.h"
 #include "Store/Editor/BrowseAssetDialog.h"
 #include "Ui/Application.h"
+#include "Ui/CheckBox.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/TableLayout.h"
 #include "Ui/GridView/GridColumn.h"
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridRow.h"
@@ -43,76 +45,40 @@ bool BrowseAssetDialog::create(ui::Widget* parent)
         ui::dpi96(1024),
         ui::dpi96(600),
 		ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsOkCancelButtons,
-        new ui::FloodLayout()
+        new ui::TableLayout(L"*,100%", L"100%", 0, 0)
     ))
         return false;
+
+    Ref< ui::Container > containerTags = new ui::Container();
+    containerTags->create(this, ui::WsNone, new ui::TableLayout(L"100%", L"*", ui::dpi96(8), ui::dpi96(8)));
 
     m_gridAssets = new ui::GridView();
     m_gridAssets->create(this, ui::GridView::WsMultiSelect | ui::WsDoubleBuffer);
     m_gridAssets->addColumn(new ui::GridColumn(L"Thumbnail", ui::dpi96(100)));
     m_gridAssets->addColumn(new ui::GridColumn(L"Name", ui::dpi96(600)));
 
-    // Get categories.
-    /*
-        textures = {0516941b-6d18-418d-95bc-f76d64bf8ed9}
-        Example = {5680d18e-2346-41e6-b385-99382e213002}
-    */
+    // Get all unique tags stored on server.
     Ref< net::HttpClient > httpClient = new net::HttpClient();
-    
-    auto queryCatalogue = httpClient->get(net::Url(L"http://" + m_serverHost + L"/catalogue?category=Texture"));
-    queryCatalogue->defer([=]() {
 
-        if (!queryCatalogue->succeeded())
-            return;
+    auto queryTags = httpClient->get(net::Url(L"http://" + m_serverHost + L"/tags"));
+    if (!queryTags->succeeded())
+        return false;
 
-        xml::Document xc;
-        if (!xc.loadFromStream(queryCatalogue->getStream()))
-        {
-            log::error << L"Unable to parse catalogue." << Endl;
-            return;
-        }
+    xml::Document tagsDocument;
+    if (!tagsDocument.loadFromStream(queryTags->getStream()))
+        return false;
 
-        Ref< ui::GridRow > rowCategory = new ui::GridRow();
-        rowCategory->add(new ui::GridItem(L""));
-        rowCategory->add(new ui::GridItem(L"Texture"));
-        m_gridAssets->addRow(rowCategory);
-        m_gridAssets->requestUpdate();
-
-        RefArray< xml::Element > xps;
-        xc.getDocumentElement()->get(L"package", xps);
-
-        for (auto xp : xps)
-        {
-            auto id = xp->getAttribute(L"id", L"")->getValue();
-            
-            Ref< ui::GridRow > rowPackage = new ui::GridRow();
-            rowPackage->add(new ui::GridItem(L""));
-            rowPackage->add(new ui::GridItem(L"Pending..."));
-            rowCategory->addChild(rowPackage);
-            m_gridAssets->requestUpdate();
-
-            auto queryManifest = httpClient->get(net::Url(L"http://" + m_serverHost + L"/Texture/" + id + L"/Manifest.xml"));
-            queryManifest->defer([=]() {
-
-                if (!queryManifest->succeeded())
-                    return;
-
-                Ref< xml::Document > xm = new xml::Document();
-                if (!xm->loadFromStream(queryManifest->getStream()))
-                {
-                    log::error << L"Unable to parse manifest." << Endl;
-                    return;
-                }
-
-                std::wstring name = getChildElementValue(xm->getDocumentElement(), L"name", L"Unnamed");
-                std::wstring databaseUrl = getChildElementValue(xm->getDocumentElement(), L"database-url", L"Database.compact");
-
-                rowPackage->get(1)->setText(name);
-                rowPackage->setData(L"URL", new net::Url(L"http://" + m_serverHost + L"/Texture/" + id + L"/" + databaseUrl));
-                m_gridAssets->requestUpdate();
-            });
-        }
-    });
+    RefArray< xml::Element > tags;
+    tagsDocument.getDocumentElement()->get(L"tag", tags);
+    for (auto tag : tags)
+    {
+        Ref< ui::CheckBox > checkTag = new ui::CheckBox();
+        checkTag->create(containerTags, tag->getValue(), false);
+        checkTag->addEventHandler< ui::ButtonClickEvent >([&](ui::ButtonClickEvent* event) {
+            updatePackages();
+        });
+        m_checkTags.push_back(checkTag);
+    }
 
     update();
     return true;
@@ -134,6 +100,72 @@ bool BrowseAssetDialog::showModal(RefArray< net::Url >& outUrls)
     }
 
 	return true;
+}
+
+void BrowseAssetDialog::updatePackages()
+{
+    m_gridAssets->removeAllRows();
+    m_gridAssets->update();
+
+    std::wstring tags;
+    for (auto checkTag : m_checkTags)
+    {
+        if (!tags.empty())
+            tags += L";";
+        if (checkTag->isChecked())
+            tags += checkTag->getText();
+    }
+
+    Ref< net::HttpClient > httpClient = new net::HttpClient();
+
+    auto queryCatalogue = httpClient->get(net::Url(L"http://" + m_serverHost + L"/catalogue?tags=" + tags));
+    queryCatalogue->defer([=]() {
+        if (!queryCatalogue->succeeded())
+            return;
+
+        xml::Document catalogueDocument;
+        if (!catalogueDocument.loadFromStream(queryCatalogue->getStream()))
+        {
+            log::error << L"Unable to parse catalogue." << Endl;
+            return;
+        }
+
+        RefArray< xml::Element > packageElements;
+        catalogueDocument.getDocumentElement()->get(L"package", packageElements);
+        for (auto packageElement : packageElements)
+        {
+            auto id = packageElement->getAttribute(L"id", L"")->getValue();
+            
+            Ref< ui::GridRow > rowPackage = new ui::GridRow();
+            rowPackage->add(new ui::GridItem(L""));
+            rowPackage->add(new ui::GridItem(L"Pending..."));
+            m_gridAssets->addRow(rowPackage);
+            m_gridAssets->requestUpdate();
+
+            auto queryManifest = httpClient->get(net::Url(L"http://" + m_serverHost + L"/" + id + L"/Manifest.xml"));
+            queryManifest->defer([=]() {
+
+                if (!queryManifest->succeeded())
+                    return;
+
+                xml::Document manifestDocument;
+                if (!manifestDocument.loadFromStream(queryManifest->getStream()))
+                {
+                    log::error << L"Unable to parse manifest." << Endl;
+                    return;
+                }
+
+                auto de = manifestDocument.getDocumentElement();
+
+                std::wstring name = getChildElementValue(de, L"name", L"Unnamed");
+                std::wstring databaseUrl = getChildElementValue(de, L"database-url", L"Database.compact");
+
+                rowPackage->get(1)->setText(name);
+                rowPackage->setData(L"URL", new net::Url(L"http://" + m_serverHost + L"/" + id + L"/" + databaseUrl));
+                m_gridAssets->requestUpdate();
+            });
+        }
+    });
 }
 
     }
