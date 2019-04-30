@@ -6,6 +6,8 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -17,6 +19,7 @@
 #include "Net/Http/HttpClientResult.h"
 #include "Store/Editor/BrowseAssetDialog.h"
 #include "Store/Editor/ImportAssetTool.h"
+#include "Ui/BackgroundWorkerDialog.h"
 #include "Ui/FileDialog.h"
 
 namespace traktor
@@ -28,6 +31,8 @@ namespace traktor
 
 bool migrateInstance(Ref< db::Instance > sourceInstance, Ref< db::Group > targetGroup)
 {
+	log::info << L"Migrating instance \"" << sourceInstance->getName() << L"\"..." << Endl;
+
 	Ref< ISerializable > sourceObject = sourceInstance->getObject();
 	if (!sourceObject)
 	{
@@ -43,31 +48,31 @@ bool migrateInstance(Ref< db::Instance > sourceInstance, Ref< db::Group > target
 	Ref< db::Instance > targetInstance = targetGroup->createInstance(sourceInstance->getName(), db::CifReplaceExisting, &sourceGuid);
 	if (!targetInstance)
 	{
-		log::error << L"Failed, unable to create target instance" << Endl;
+		log::error << L"Failed, unable to create target instance \"" << sourceInstance->getName() << L"\"." << Endl;
 		return false;
 	}
 
 	targetInstance->setObject(sourceObject);
 
-	for (std::vector< std::wstring >::iterator j = dataNames.begin(); j != dataNames.end(); ++j)
+	for (const auto& dataName : dataNames)
 	{
-		Ref< IStream > sourceStream = sourceInstance->readData(*j);
+		Ref< IStream > sourceStream = sourceInstance->readData(dataName);
 		if (!sourceStream)
 		{
-			log::error << L"Failed, unable to open source stream" << Endl;
+			log::error << L"Failed, unable to open source stream \"" << dataName << L"\"." << Endl;
 			return false;
 		}
 
-		Ref< IStream > targetStream = targetInstance->writeData(*j);
+		Ref< IStream > targetStream = targetInstance->writeData(dataName);
 		if (!targetStream)
 		{
-			log::error << L"Failed, unable to open target stream" << Endl;
+			log::error << L"Failed, unable to open target stream \"" << dataName << L"\"." << Endl;
 			return false;
 		}
 
 		if (!StreamCopy(targetStream, sourceStream).execute())
 		{
-			log::error << L"Failed, unable to copy data" << Endl;
+			log::error << L"Failed, unable to copy data \"" << dataName << L"\"." << Endl;
 			return false;
 		}
 
@@ -89,32 +94,26 @@ bool migrateGroup(db::Group* targetGroup, db::Group* sourceGroup)
 	RefArray< db::Instance > childInstances;
 	sourceGroup->getChildInstances(childInstances);
 
-	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	for (auto childInstance : childInstances)
 	{
-		Ref< db::Instance > sourceInstance = *i;
-		T_ASSERT(sourceInstance);
-
-		if (!migrateInstance(sourceInstance, targetGroup))
+		if (!migrateInstance(childInstance, targetGroup))
 			return false;
 	}
 
 	RefArray< db::Group > childGroups;
 	sourceGroup->getChildGroups(childGroups);
 
-	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
+	for (auto childGroup : childGroups)
 	{
-		Ref< db::Group > sourceChildGroup = *i;
-		T_ASSERT(sourceChildGroup);
-
-		Ref< db::Group > targetChildGroup = targetGroup->getGroup(sourceChildGroup->getName());
+		Ref< db::Group > targetChildGroup = targetGroup->getGroup(childGroup->getName());
 		if (!targetChildGroup)
 		{
-			targetChildGroup = targetGroup->createGroup(sourceChildGroup->getName());
+			targetChildGroup = targetGroup->createGroup(childGroup->getName());
 			if (!targetChildGroup)
 				return false;
 		}
 
-		if (!migrateGroup(targetChildGroup, sourceChildGroup))
+		if (!migrateGroup(targetChildGroup, childGroup))
 			return false;
 	}
 
@@ -129,14 +128,11 @@ bool copyFiles(const Path& targetPath, db::Group* sourceGroup)
 	RefArray< db::Instance > childInstances;
 	sourceGroup->getChildInstances(childInstances);
 
-	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	for (auto childInstance : childInstances)
 	{
-		Ref< db::Instance > sourceInstance = *i;
-		T_ASSERT(sourceInstance);
+		std::wstring targetFileName = targetPath.getPathName() + L"/" + childInstance->getName();
 
-		std::wstring targetFileName = targetPath.getPathName() + L"/" + sourceInstance->getName();
-
-		log::info << L"Unpacking \"" << sourceInstance->getPath() << L"\" as \"" << targetFileName << L"\"..." << Endl;
+		log::info << L"Unpacking \"" << childInstance->getPath() << L"\" as \"" << targetFileName << L"\"..." << Endl;
 
 		Ref< IStream > fileStream = FileSystem::getInstance().open(targetFileName, File::FmWrite);
 		if (!fileStream)
@@ -145,7 +141,7 @@ bool copyFiles(const Path& targetPath, db::Group* sourceGroup)
 			return false;
 		}
 
-		Ref< IStream > assetStream = sourceInstance->readData(L"Data");
+		Ref< IStream > assetStream = childInstance->readData(L"Data");
 		if (!assetStream)
 		{
 			log::error << L"Unable to open source stream." << Endl;
@@ -162,12 +158,9 @@ bool copyFiles(const Path& targetPath, db::Group* sourceGroup)
 	RefArray< db::Group > childGroups;
 	sourceGroup->getChildGroups(childGroups);
 
-	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
+	for (auto childGroup : childGroups)
 	{
-		Ref< db::Group > sourceChildGroup = *i;
-		T_ASSERT(sourceChildGroup);
-
-		if (!copyFiles(Path(targetPath.getPathName() + L"/" + sourceChildGroup->getName()), sourceChildGroup))
+		if (!copyFiles(Path(targetPath.getPathName() + L"/" + childGroup->getName()), childGroup))
 			return false;
 	}
 
@@ -215,61 +208,91 @@ bool ImportAssetTool::launch(ui::Widget* parent, editor::IEditor* editor, const 
 	if (!FileSystem::getInstance().makeAllDirectories(Path(L"$(TRAKTOR_HOME)/data/Temp/Store/Download")))
 		return false;
 
-	// Download and each selected package.
-	Ref< net::HttpClient > httpClient = new net::HttpClient();
-	
-	RefArray< net::HttpClientResult > downloadQueries;
-	for (auto url : urls)
-	{	
-		auto downloadQuery = httpClient->get(*url);
-		if (!downloadQuery)
-			return false;
-		if (!downloadQuery->succeeded())
-			return false;
+	bool importResult = false;
 
-		auto tempFile = FileSystem::getInstance().open(Path(L"$(TRAKTOR_HOME)/data/Temp/Store/Download/Database.compact"), File::FmWrite);
-		if (!tempFile)
-			return false;
+	// Create download task.
+	Ref< Functor > fn = makeFunctor([&]() {
 
-		auto stream = downloadQuery->getStream();
-		if (!StreamCopy(tempFile, stream).execute())
-			return false;
+		// Download and each selected package.
+		Ref< net::HttpClient > httpClient = new net::HttpClient();
+		for (auto url : urls)
+		{	
+			auto downloadQuery = httpClient->get(*url);
+			if (!downloadQuery)
+				return;
+			if (!downloadQuery->succeeded())
+				return;
 
-		tempFile->close();
-		tempFile = nullptr;
+			auto tempFile = FileSystem::getInstance().open(Path(L"$(TRAKTOR_HOME)/data/Temp/Store/Download/Database.compact"), File::FmWrite);
+			if (!tempFile)
+				return;
 
-		// Migrate instances from bundle's database into workspace source database.
-		Ref< db::Database > database = new db::Database();
-		if (!database->open(db::ConnectionString(L"provider=traktor.db.CompactDatabase;fileName=$(TRAKTOR_HOME)/data/Temp/Store/Download/Database.compact;readOnly=true")))
-			return false;
+			auto stream = downloadQuery->getStream();
+			if (!StreamCopy(tempFile, stream).execute())
+				return;
 
-		log::info << L"Merging instances from database..." << Endl;
+			tempFile->close();
+			tempFile = nullptr;
 
-		Ref< db::Group > sourceGroup = database->getGroup(L"Instances");
-		if (sourceGroup != nullptr)
-		{
-			Ref< db::Group > targetGroup = editor->getSourceDatabase()->getRootGroup();
-			if (!migrateGroup(targetGroup, sourceGroup))
-				return false;
+			// Migrate instances from bundle's database into workspace source database.
+			Ref< db::Database > database = new db::Database();
+			if (!database->open(db::ConnectionString(L"provider=traktor.db.CompactDatabase;fileName=$(TRAKTOR_HOME)/data/Temp/Store/Download/Database.compact;readOnly=true")))
+				return;
+
+			log::info << L"Merging instances from database..." << Endl;
+
+			Ref< db::Group > sourceGroup = database->getGroup(L"Instances");
+			if (sourceGroup != nullptr)
+			{
+				Ref< db::Group > targetGroup = editor->getSourceDatabase()->getRootGroup();
+				if (!migrateGroup(targetGroup, sourceGroup))
+					return;
+			}
+
+			// Copy embedded assets from bundle into workspace's assets.
+			log::info << L"Unpacking assets from database..." << Endl;
+
+			Ref< db::Group > assetGroup = database->getGroup(L"Assets");
+			if (assetGroup != nullptr)
+			{
+				Path destinationAssetsPath = FileSystem::getInstance().getAbsolutePath(Path(L"data/Assets"));
+				if (!copyFiles(destinationAssetsPath, assetGroup))
+					return;
+			}
+
+			database->close();
+			database = nullptr;
 		}
 
-		// Copy embedded assets from bundle into workspace's assets.
-		log::info << L"Unpacking assets from database..." << Endl;
+		importResult = true;
+	});
 
-		Ref< db::Group > assetGroup = database->getGroup(L"Assets");
-		if (assetGroup != nullptr)
-		{
-			Path destinationAssetsPath = FileSystem::getInstance().getAbsolutePath(Path(L"data/Assets"));
-			if (!copyFiles(destinationAssetsPath, assetGroup))
-				return false;
-		}
+	// Execute download task, show busy dialog.
+	Thread* thread = ThreadManager::getInstance().create(fn);
+	if (!thread)
+		return false;
 
-		database->close();
-		database = nullptr;
+	thread->start();
+
+	ui::BackgroundWorkerDialog busyDialog;
+	busyDialog.create(
+		parent,
+		i18n::Text(L"STORE_IMPORT_ASSET_TOOL_IMPORTING_CAPTION"),
+		i18n::Text(L"STORE_IMPORT_ASSET_TOOL_IMPORTING_MESSAGE"),
+		false
+	);
+	busyDialog.execute(thread, nullptr);
+	busyDialog.destroy();
+
+	ThreadManager::getInstance().destroy(thread);
+
+	if (importResult)
+	{
+		log::info << L"Package(s) imported successfully." << Endl;
+		return true;
 	}
-
-	log::info << L"Package(s) imported successfully." << Endl;
-	return true;
+	else
+		return false;
 }
 
 	}

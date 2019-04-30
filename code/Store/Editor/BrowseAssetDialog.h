@@ -15,7 +15,9 @@ class Url;
     namespace ui
     {
 
+class CheckBox;
 class GridView;
+
     }
 
     namespace store
@@ -34,7 +36,10 @@ public:
 
 private:
     std::wstring m_serverHost;
+    RefArray< ui::CheckBox > m_checkTags;
     Ref< ui::GridView > m_gridAssets;
+
+    void updatePackages();
 };
 
     }
