@@ -14,10 +14,12 @@
 #include "Editor/IEditor.h"
 #include "Editor/IPipelineDependencySet.h"
 #include "Editor/PipelineDependency.h"
+#include "I18N/Text.h"
 #include "Net/Url.h"
 #include "Net/Http/HttpClient.h"
 #include "Net/Http/HttpClientResult.h"
 #include "Net/Http/HttpRequestContent.h"
+#include "Store/Editor/PublishWizardDialog.h"
 #include "Store/Editor/PublishWizardTool.h"
 
 namespace traktor
@@ -43,7 +45,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.store.ScriptClassWizardTool", 0, Publis
 
 std::wstring PublishWizardTool::getDescription() const
 {
-	return L"STORE_PUBLISH_WIZARDTOOL_DESCRIPTION";
+	return i18n::Text(L"STORE_PUBLISH_WIZARDTOOL_DESCRIPTION");
 }
 
 uint32_t PublishWizardTool::getFlags() const
@@ -94,6 +96,16 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 	}
 
 	instances.insert(instance);
+
+	// Let user enter meta data.
+	PublishWizardDialog publishDialog;
+	if (!publishDialog.create(parent, instance->getName()))
+		return false;
+	if (publishDialog.showModal() != ui::DrOk)
+	{
+		publishDialog.destroy();
+		return false;
+	}
 
 	// Create a compact database with all selected instances migrated.
 	Ref< db::Database > database = new db::Database();
@@ -179,24 +191,29 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 
 		os << L"<?xml version=\"1.0\"?>" << Endl;
 		os << L"<manifest>" << Endl;
-		os << L"\t<name>" << instance->getName() << L"</name>" << Endl;
-		os << L"\t<description>" << instance->getName() << L"</description>" << Endl;
+		os << L"\t<name>" << publishDialog.getName() << L"</name>" << Endl;
+		os << L"\t<description>" << publishDialog.getDescription() << L"</description>" << Endl;
 		os << L"\t<author>" << Endl;
-		os << L"\t\t<name/>" << Endl;
-		os << L"\t\t<e-mail>anders.pistol@doctorentertainment.com</e-mail>" << Endl;
-		os << L"\t\t<phone/>" << Endl;
-		os << L"\t\t<site/>" << Endl;
+		os << L"\t\t<name>" << publishDialog.getAuthor() << L"</name>" << Endl;
+		os << L"\t\t<e-mail>" << publishDialog.getEMail() << L"</e-mail>" << Endl;
+		os << L"\t\t<phone>" << publishDialog.getPhone() << L"</phone> " << Endl;
+		os << L"\t\t<site>" << publishDialog.getSite() << L"</site>" << Endl;
 		os << L"\t</author>" << Endl;
+		os << L"\t<tags>" << Endl;
+		for (auto tag : publishDialog.getTags())
+			os << L"\t\t<tag>" << tag << L"</tag>" << Endl;
+		os << L"\t</tags>" << Endl;
 		os << L"\t<thumbnail-url/>" << Endl;
 		os << L"\t<database-url>Database.compact</database-url>" << Endl;
 		os << L"</manifest>" << Endl;
 
+		// Create unique ID of package.
 		Guid packageId = Guid::create();
 
 		// Upload manifest.
 		Ref< net::HttpClient > httpClient = new net::HttpClient();
 		auto uploadManifest = httpClient->put(
-			net::Url(L"http://" + serverHost + L"/Texture/" + packageId.format() + L"/Manifest.xml"),
+			net::Url(L"http://" + serverHost + L"/" + packageId.format() + L"/Manifest.xml"),
 			new net::HttpRequestContent(os.str())
 		);
 		if (!uploadManifest || !uploadManifest->succeeded())
@@ -206,7 +223,7 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 		auto fileStream = FileSystem::getInstance().open(Path(L"$(TRAKTOR_HOME)/data/Temp/Store/Upload/Database.compact"), File::FmRead);
 
 		auto uploadDatabase = httpClient->put(
-			net::Url(L"http://" + serverHost + L"/Texture/" + packageId.format() + L"/Database.compact"),
+			net::Url(L"http://" + serverHost + L"/" + packageId.format() + L"/Database.compact"),
 			new net::HttpRequestContent(fileStream)
 		);
 		if (!uploadDatabase || !uploadDatabase->succeeded())
@@ -215,6 +232,9 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 		fileStream->close();
 		fileStream = nullptr;
 	}
+
+
+	publishDialog.destroy();
 
 	log::info << L"Published successfully." << Endl;
 	return true;
