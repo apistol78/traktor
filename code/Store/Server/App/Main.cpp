@@ -1,3 +1,4 @@
+#include <set>
 #include "Core/Guid.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
@@ -66,26 +67,76 @@ public:
         if (request->getMethod() == net::HttpRequest::MtGet)
         {
             log::info << L"GET " << resource << Endl;
-            if (resource == L"/catalogue")
-            {
-                auto category = params[L"category"];
-                if (!category.empty())
+			if (resource == L"/tags")
+			{
+				std::set< std::wstring > tags;
+
+				RefArray< File > files;
+				FileSystem::getInstance().find(m_dataPath.getPathName() + L"/*.*", files);
+				for (auto file : files)
 				{
-					os << L"<?xml version=\"1.0\"?>" << Endl;
-					os << L"<catalogue>" << Endl;
+					const auto p = file->getPath();
+					if (!file->isDirectory() || p.getFileName() == L"." || p.getFileName() == L"..")
+						continue;
 
-					// Find all package directories in category.
-					RefArray< File > files;
-					FileSystem::getInstance().find(m_dataPath.getPathName() + L"/" + category + L"/*.*", files);
-					for (auto file : files)
+					xml::Document manifestDocument;
+					if (!manifestDocument.loadFromFile(p.getPathName() + L"/Manifest.xml"))
+						continue;
+
+					RefArray< xml::Element > tagElements;
+					manifestDocument.getDocumentElement()->get(L"tags/tag", tagElements);
+					for (auto tagElement : tagElements)
 					{
-						const auto p = file->getPath();
-						if (!file->isDirectory() || p.getFileName() == L"." || p.getFileName() == L"..")
-							continue;
+						auto v = tagElement->getValue();
+						if (!v.empty())
+							tags.insert(v);
+					}
+				}
 
-						if (!Guid(p.getFileName()).isValid())
-							continue;
+				os << L"<?xml version=\"1.0\"?>" << Endl;
+				os << L"<tags>" << Endl;
+				for (auto tag : tags)
+					os << L"\t<tag>" << tag << L"</tag>" << Endl;
+				os << L"</tags>" << Endl;
+			}
+            else if (resource == L"/catalogue")
+            {
+				std::set< std::wstring > tags;
+				for (auto s : StringSplit< std::wstring >(params[L"tags"], L";"))
+					tags.insert(s);
 
+				os << L"<?xml version=\"1.0\"?>" << Endl;
+				os << L"<catalogue>" << Endl;
+
+				// Find all package directories in category.
+				RefArray< File > files;
+				FileSystem::getInstance().find(m_dataPath.getPathName() + L"/*.*", files);
+				for (auto file : files)
+				{
+					const auto p = file->getPath();
+					if (!file->isDirectory() || p.getFileName() == L"." || p.getFileName() == L"..")
+						continue;
+
+					xml::Document manifestDocument;
+					if (!manifestDocument.loadFromFile(p.getPathName() + L"/Manifest.xml"))
+						continue;
+
+					bool containTag = false;
+
+					RefArray< xml::Element > tagElements;
+					manifestDocument.getDocumentElement()->get(L"tags/tag", tagElements);
+					for (auto tagElement : tagElements)
+					{
+						auto v = tagElement->getValue();
+						if (tags.find(v) != tags.end())
+						{
+							containTag = true;
+							break;
+						}
+					}
+
+					if (containTag)
+					{
 						Path manifestPath = FileSystem::getInstance().getAbsolutePath(p.getPathName() + L"/Manifest.xml");
 
 						Path manifestPathRel;
@@ -97,28 +148,9 @@ public:
 
 						os << L"\t<package id=\"" << p.getFileName() << L"\"/>" << Endl;
 					}
+				}
                 
-					os << L"</catalogue>" << Endl;
-				}
-				else
-				{
-					os << L"<?xml version=\"1.0\"?>" << Endl;
-					os << L"<catalogue>" << Endl;
-
-					// Find all category types.
-					RefArray< File > files;
-					FileSystem::getInstance().find(m_dataPath.getPathName() + L"/*.*", files);
-					for (auto file : files)
-					{
-						const auto p = file->getPath();
-						if (!file->isDirectory() || p.getFileName() == L"." || p.getFileName() == L"..")
-							continue;
-
-						os << L"\t<category id=\"" << p.getFileName() << L"\"/>" << Endl;
-					}
-
-					os << L"</catalogue>" << Endl;
-				}
+				os << L"</catalogue>" << Endl;
                 return 200;
             }
             else
