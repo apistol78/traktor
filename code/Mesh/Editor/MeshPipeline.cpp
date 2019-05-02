@@ -285,6 +285,13 @@ bool MeshPipeline::buildOutput(
 		// Scale model according to scale factor in asset.
 		model::Transform(scale(asset->getScaleFactor(), asset->getScaleFactor(), asset->getScaleFactor())).apply(*model);
 
+		if (asset->getCenter())
+		{
+			log::info << L"Re-center model..." << Endl;
+			Aabb3 boundingBox = model->getBoundingBox();
+			model::Transform(translate(-boundingBox.getCenter())).apply(*model);
+		}
+
 		if (m_enableBakeOcclusion && asset->getBakeOcclusion())
 		{
 			log::info << L"Baking occlusion..." << Endl;

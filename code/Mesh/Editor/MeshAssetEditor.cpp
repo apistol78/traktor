@@ -152,6 +152,10 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	Ref< ui::Container > containerLeft = new ui::Container();
 	containerLeft->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*", L"*", 0, 4));
 
+	m_checkCenter = new ui::CheckBox();
+	if (!m_checkCenter->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_CENTER")))
+		return false;
+
 	m_checkBakeOcclusion = new ui::CheckBox();
 	if (!m_checkBakeOcclusion->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_BAKE_OCCLUSION")))
 		return false;
@@ -248,6 +252,7 @@ void MeshAssetEditor::apply()
 {
 	m_asset->setFileName(m_editFileName->getText());
 	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected()));
+	m_asset->setCenter(m_checkCenter->isChecked());
 	m_asset->setBakeOcclusion(m_checkBakeOcclusion->isChecked());
 	m_asset->setCullDistantFaces(m_checkCullDistantFaces->isChecked());
 	m_asset->setLodSteps(m_sliderLodSteps->getValue());
@@ -330,6 +335,7 @@ void MeshAssetEditor::updateFile()
 
 	m_editFileName->setText(assetRelPath.getPathName());
 	m_dropMeshType->select(m_asset->getMeshType());
+	m_checkCenter->setChecked(m_asset->getCenter());
 	m_checkBakeOcclusion->setChecked(m_asset->getBakeOcclusion());
 	m_checkCullDistantFaces->setChecked(m_asset->getCullDistantFaces());
 
