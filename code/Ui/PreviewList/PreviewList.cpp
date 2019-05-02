@@ -20,10 +20,17 @@ const int32_t c_itemHeight = 100;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.PreviewList", PreviewList, AutoWidget)
 
+PreviewList::PreviewList()
+:	m_single(true)
+{
+}
+
 bool PreviewList::create(Widget* parent, uint32_t style)
 {
 	if (!AutoWidget::create(parent, style))
 		return false;
+
+	m_single = bool((style & WsMultiple) == 0);
 
 	addEventHandler< MouseButtonDownEvent >(this, &PreviewList::eventButtonDown);
 	return true;
@@ -47,7 +54,7 @@ Ref< PreviewItems > PreviewList::getItems() const
 PreviewItem* PreviewList::getSelectedItem() const
 {
 	if (!m_items)
-		return 0;
+		return nullptr;
 
 	for (int32_t i = 0; i < m_items->count(); ++i)
 	{
@@ -56,6 +63,18 @@ PreviewItem* PreviewList::getSelectedItem() const
 	}
 
 	return nullptr;
+}
+
+void PreviewList::getSelectedItems(RefArray< PreviewItem >& outItems) const
+{
+	if (!m_items)
+		return;
+
+	for (int32_t i = 0; i < m_items->count(); ++i)
+	{
+		if (m_items->get(i)->isSelected())
+			outItems.push_back(m_items->get(i));
+	}
 }
 
 void PreviewList::layoutCells(const Rect& rc)
@@ -115,8 +134,11 @@ void PreviewList::eventButtonDown(MouseButtonDownEvent* event)
 	const Point& position = event->getPosition();
 	if (m_items)
 	{
-		for (int32_t i = 0; i < m_items->count(); ++i)
-			m_items->get(i)->setSelected(false);
+		if (m_single || (event->getKeyState() & (KsShift | KsControl)) == 0)
+		{
+			for (int32_t i = 0; i < m_items->count(); ++i)
+				m_items->get(i)->setSelected(false);
+		}
 
 		AutoWidgetCell* cell = hitTest(position);
 		if (PreviewItem* item = dynamic_type_cast< PreviewItem* >(cell))
@@ -128,7 +150,7 @@ void PreviewList::eventButtonDown(MouseButtonDownEvent* event)
 		}
 		else
 		{
-			PreviewSelectionChangeEvent selectionChangeEvent(this, 0);
+			PreviewSelectionChangeEvent selectionChangeEvent(this, nullptr);
 			raiseEvent(&selectionChangeEvent);
 		}
 	}

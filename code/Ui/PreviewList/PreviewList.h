@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Ref.h"
+#include "Core/RefArray.h"
 #include "Ui/Auto/AutoWidget.h"
 #include "Ui/PreviewList/PreviewSelectionChangeEvent.h"
 
@@ -24,6 +25,14 @@ class T_DLLCLASS PreviewList : public ui::AutoWidget
 	T_RTTI_CLASS;
 
 public:
+	enum
+	{
+		WsSingle = 0,
+		WsMultiple = WsUser
+	};
+
+	PreviewList();
+
 	bool create(Widget* parent, uint32_t style);
 
 	void setItems(PreviewItems* items);
@@ -32,8 +41,11 @@ public:
 
 	PreviewItem* getSelectedItem() const;
 
+	void getSelectedItems(RefArray< PreviewItem >& outItems) const;
+
 private:
 	Ref< PreviewItems > m_items;
+	bool m_single;
 
 	virtual void layoutCells(const Rect& rc) override final;
 
