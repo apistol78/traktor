@@ -1822,6 +1822,10 @@
       <second>Properties</second>
     </item>
     <item>
+      <first>MESHASSET_EDITOR_CENTER</first>
+      <second>Center</second>
+    </item>
+    <item>
       <first>MESHASSET_EDITOR_BAKE_OCCLUSION</first>
       <second>Bake occlusion</second>
     </item>
