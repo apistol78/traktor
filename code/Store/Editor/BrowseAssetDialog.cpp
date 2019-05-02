@@ -1,16 +1,17 @@
 #include "Core/Log/Log.h"
+#include "Drawing/Image.h"
 #include "Net/Url.h"
 #include "Net/Http/HttpClient.h"
 #include "Net/Http/HttpClientResult.h"
 #include "Store/Editor/BrowseAssetDialog.h"
 #include "Ui/Application.h"
+#include "Ui/Bitmap.h"
 #include "Ui/CheckBox.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/PreviewList/PreviewItem.h"
+#include "Ui/PreviewList/PreviewItems.h"
+#include "Ui/PreviewList/PreviewList.h"
 #include "Ui/TableLayout.h"
-#include "Ui/GridView/GridColumn.h"
-#include "Ui/GridView/GridItem.h"
-#include "Ui/GridView/GridRow.h"
-#include "Ui/GridView/GridView.h"
 #include "Xml/Attribute.h"
 #include "Xml/Document.h"
 #include "Xml/Element.h"
@@ -52,10 +53,8 @@ bool BrowseAssetDialog::create(ui::Widget* parent)
     Ref< ui::Container > containerTags = new ui::Container();
     containerTags->create(this, ui::WsNone, new ui::TableLayout(L"100%", L"*", ui::dpi96(8), ui::dpi96(8)));
 
-    m_gridAssets = new ui::GridView();
-    m_gridAssets->create(this, ui::GridView::WsMultiSelect | ui::WsDoubleBuffer);
-    m_gridAssets->addColumn(new ui::GridColumn(L"Thumbnail", ui::dpi96(100)));
-    m_gridAssets->addColumn(new ui::GridColumn(L"Name", ui::dpi96(600)));
+    m_listAssets = new ui::PreviewList();
+    m_listAssets->create(this, ui::PreviewList::WsMultiple | ui::WsDoubleBuffer);
 
     // Get all unique tags stored on server.
     Ref< net::HttpClient > httpClient = new net::HttpClient();
@@ -89,12 +88,12 @@ bool BrowseAssetDialog::showModal(RefArray< net::Url >& outUrls)
 	if (ui::ConfigDialog::showModal() != ui::DrOk)
 		return false;
 
-    RefArray< ui::GridRow > selectedRows;
-    m_gridAssets->getRows(selectedRows, ui::GridView::GfDescendants | ui::GridView::GfSelectedOnly);
+    RefArray< ui::PreviewItem > selectedItems;
+    m_listAssets->getSelectedItems(selectedItems);
 	
-    for (auto selectedRow : selectedRows)
+    for (auto selectedItem : selectedItems)
     {
-        auto url = selectedRow->getData< net::Url >(L"URL");
+        auto url = selectedItem->getData< net::Url >(L"URL");
         if (url)
             outUrls.push_back(url);
     }
@@ -104,8 +103,9 @@ bool BrowseAssetDialog::showModal(RefArray< net::Url >& outUrls)
 
 void BrowseAssetDialog::updatePackages()
 {
-    m_gridAssets->removeAllRows();
-    m_gridAssets->update();
+    Ref< ui::PreviewItems > items = new ui::PreviewItems();
+    m_listAssets->setItems(items);
+    m_listAssets->update();
 
     std::wstring tags;
     for (auto checkTag : m_checkTags)
@@ -135,12 +135,11 @@ void BrowseAssetDialog::updatePackages()
         for (auto packageElement : packageElements)
         {
             auto id = packageElement->getAttribute(L"id", L"")->getValue();
-            
-            Ref< ui::GridRow > rowPackage = new ui::GridRow();
-            rowPackage->add(new ui::GridItem(L""));
-            rowPackage->add(new ui::GridItem(L"Pending..."));
-            m_gridAssets->addRow(rowPackage);
-            m_gridAssets->requestUpdate();
+
+            Ref< ui::PreviewItem > item = new ui::PreviewItem();
+            item->setText(L"Pending...");
+            items->add(item);
+            m_listAssets->requestUpdate();
 
             auto queryManifest = httpClient->get(net::Url(L"http://" + m_serverHost + L"/" + id + L"/Manifest.xml"));
             queryManifest->defer([=]() {
@@ -158,11 +157,30 @@ void BrowseAssetDialog::updatePackages()
                 auto de = manifestDocument.getDocumentElement();
 
                 std::wstring name = getChildElementValue(de, L"name", L"Unnamed");
+                std::wstring thumbnailUrl = getChildElementValue(de, L"thumbnail-url", L"");
                 std::wstring databaseUrl = getChildElementValue(de, L"database-url", L"Database.compact");
 
-                rowPackage->get(1)->setText(name);
-                rowPackage->setData(L"URL", new net::Url(L"http://" + m_serverHost + L"/" + id + L"/" + databaseUrl));
-                m_gridAssets->requestUpdate();
+                item->setText(name);
+                item->setData(L"URL", new net::Url(L"http://" + m_serverHost + L"/" + id + L"/" + databaseUrl));
+
+                m_listAssets->requestUpdate();
+
+                if (!thumbnailUrl.empty())
+                {
+                    auto queryThumb = httpClient->get(net::Url(L"http://" + m_serverHost + L"/" + id + L"/" + thumbnailUrl));
+                    queryThumb->defer([=]() {
+                        
+                        Ref< drawing::Image > thumbnail = drawing::Image::load(
+                            queryThumb->getStream(),
+                            Path(thumbnailUrl).getExtension()
+                        );
+                        if (thumbnail)
+                        {
+                            item->setImage(new ui::Bitmap(thumbnail));
+                            m_listAssets->requestUpdate();
+                        }
+                    });
+                }
             });
         }
     });

@@ -16,7 +16,7 @@ class Url;
     {
 
 class CheckBox;
-class GridView;
+class PreviewList;
 
     }
 
@@ -37,7 +37,7 @@ public:
 private:
     std::wstring m_serverHost;
     RefArray< ui::CheckBox > m_checkTags;
-    Ref< ui::GridView > m_gridAssets;
+    Ref< ui::PreviewList > m_listAssets;
 
     void updatePackages();
 };
