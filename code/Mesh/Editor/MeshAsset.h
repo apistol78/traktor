@@ -58,6 +58,10 @@ public:
 
 	float getScaleFactor() const { return m_scaleFactor; }
 
+	void setCenter(bool center) { m_center = center; }
+
+	bool getCenter() const { return m_center; }
+
 	void setBakeOcclusion(bool bakeOcclusion) { m_bakeOcclusion = bakeOcclusion; }
 
 	bool getBakeOcclusion() const { return m_bakeOcclusion; }
@@ -84,6 +88,7 @@ private:
 	std::map< std::wstring, Guid > m_materialShaders;
 	std::map< std::wstring, Guid > m_materialTextures;
 	float m_scaleFactor;
+	bool m_center;
 	bool m_bakeOcclusion;
 	bool m_cullDistantFaces;
 	int32_t m_lodSteps;
