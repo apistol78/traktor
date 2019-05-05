@@ -136,7 +136,7 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 		return false;
 
 	// Create offscreen image copy.
-	VkImage hostImage = nullptr;
+	VkImage hostImage = 0;
 
 	VkImageCreateInfo ici = {};
 	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -158,7 +158,7 @@ bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 	VkMemoryRequirements memoryRequirements;
 	vkGetImageMemoryRequirements(m_logicalDevice, hostImage, &memoryRequirements);
 
-	VkDeviceMemory hostImageMemory = nullptr;
+	VkDeviceMemory hostImageMemory = 0;
 
 	VkMemoryAllocateInfo mai = {};
 	mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -263,7 +263,7 @@ bool RenderTargetSetVk::prepareAsTarget(
 
 	auto& rt = m_renderPasses[key];
 
-	if (rt.renderPass == nullptr)
+	if (rt.renderPass == 0)
 	{
 		rt.id = s_nextId++;
 
@@ -371,7 +371,7 @@ bool RenderTargetSetVk::prepareAsTarget(
 	}
 
 	// (Re-)create frame buffer.
-	if (rt.frameBuffer == nullptr)
+	if (rt.frameBuffer == 0)
 	{
  		AlignedVector< VkImageView > frameBufferAttachments;
 		
@@ -400,8 +400,8 @@ bool RenderTargetSetVk::prepareAsTarget(
 			return false;
 	}
 
-	T_ASSERT(rt.renderPass != nullptr);
-	T_ASSERT(rt.frameBuffer != nullptr);
+	T_ASSERT(rt.renderPass != 0);
+	T_ASSERT(rt.frameBuffer != 0);
 
 	if (colorIndex >= 0)
 		m_colorTargets[colorIndex]->prepareAsTarget(commandBuffer);

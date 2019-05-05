@@ -15,9 +15,9 @@ RenderTargetVk::RenderTargetVk(VkPhysicalDevice physicalDevice, VkDevice logical
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_format(VK_FORMAT_UNDEFINED)
-,	m_image(nullptr)
-,	m_imageMemory(nullptr)
-,	m_imageView(nullptr)
+,	m_image(0)
+,	m_imageMemory(0)
+,	m_imageView(0)
 ,	m_imageLayout(VK_IMAGE_LAYOUT_UNDEFINED)
 ,	m_accessFlags(VK_ACCESS_MEMORY_READ_BIT)
 ,	m_width(0)
@@ -132,16 +132,16 @@ void RenderTargetVk::destroy()
 {
 	// Do not destroy image unless we have allocated memory for it;
 	// otherwise it's primary targets thus owned by swapchain.
-	if (m_imageMemory == nullptr)
+	if (m_imageMemory == 0)
 		return;
 
-	vkFreeMemory(m_logicalDevice, m_imageMemory, nullptr);
-	m_imageMemory = nullptr;
+	vkFreeMemory(m_logicalDevice, m_imageMemory, 0);
+	m_imageMemory = 0;
 
-	if (m_image != nullptr)
+	if (m_image != 0)
 	{
-		vkDestroyImage(m_logicalDevice, m_image, nullptr);
-		m_image = nullptr;
+		vkDestroyImage(m_logicalDevice, m_image, 0);
+		m_image = 0;
 	}
 }
 

@@ -96,8 +96,8 @@ private:
 		VkFramebuffer frameBuffer;
 
 		RenderPass()
-		:	renderPass(nullptr)
-		,	frameBuffer(nullptr)
+		:	renderPass(0)
+		,	frameBuffer(0)
 		{
 		}
 	};

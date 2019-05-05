@@ -57,11 +57,11 @@ bool storeIfNotEqual(const Vector4* source, int length, float* dest)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramVk", ProgramVk, IProgram)
 
 ProgramVk::ProgramVk()
-:	m_vertexShaderModule(nullptr)
-,	m_fragmentShaderModule(nullptr)
-,	m_computeShaderModule(nullptr)
-,	m_descriptorSetLayout(nullptr)
-,	m_pipelineLayout(nullptr)
+:	m_vertexShaderModule(0)
+,	m_fragmentShaderModule(0)
+,	m_computeShaderModule(0)
+,	m_descriptorSetLayout(0)
+,	m_pipelineLayout(0)
 ,	m_hash(0)
 {
 	s_handleTargetSize = getParameterHandle(L"_vk_targetSize");
@@ -225,7 +225,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 	// Create samplers.
 	for (const auto& resourceSampler : resource->m_samplers)
 	{
-		VkSampler sampler = nullptr;
+		VkSampler sampler = 0;
 
 		VkSamplerCreateInfo sci = {};
 		sci.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
@@ -284,7 +284,7 @@ bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPoo
 	);
 
 	// Allocate a descriptor set for parameters.
-	VkDescriptorSet descriptorSet = nullptr;
+	VkDescriptorSet descriptorSet = 0;
 
 	VkDescriptorSetAllocateInfo allocateInfo;
 	allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -344,7 +344,7 @@ bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPoo
 	{
 		auto& imageInfo = imageInfos.push_back();
 		imageInfo.sampler = sampler.sampler;
-		imageInfo.imageView = nullptr;
+		imageInfo.imageView = 0;
 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 		auto& write = writes.push_back();
@@ -369,7 +369,7 @@ bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPoo
 		if (!resolved)
 			continue;
 
-		VkImageView imageView = nullptr;
+		VkImageView imageView = 0;
 		if (is_a< SimpleTextureVk >(resolved))
 			imageView = static_cast< SimpleTextureVk* >(resolved.ptr())->getVkImageView();
 		else if (is_a< CubeTextureVk >(resolved))
@@ -385,7 +385,7 @@ bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPoo
 			continue;
 
 		auto& imageInfo = imageInfos.push_back();
-		imageInfo.sampler = nullptr;
+		imageInfo.sampler = 0;
 		imageInfo.imageView = imageView;
 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
@@ -445,7 +445,7 @@ bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPoo
 bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer)
 {
 	// Allocate a descriptor set for parameters.
-	VkDescriptorSet descriptorSet = nullptr;
+	VkDescriptorSet descriptorSet = 0;
 
 	VkDescriptorSetAllocateInfo allocateInfo;
 	allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -505,7 +505,7 @@ bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool
 	{
 		auto& imageInfo = imageInfos.push_back();
 		imageInfo.sampler = sampler.sampler;
-		imageInfo.imageView = nullptr;
+		imageInfo.imageView = 0;
 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 		auto& write = writes.push_back();
@@ -530,7 +530,7 @@ bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool
 		if (!resolved)
 			continue;
 
-		VkImageView imageView = nullptr;
+		VkImageView imageView = 0;
 		if (is_a< SimpleTextureVk >(resolved))
 			imageView = static_cast< SimpleTextureVk* >(resolved.ptr())->getVkImageView();
 		else if (is_a< CubeTextureVk >(resolved))
@@ -546,7 +546,7 @@ bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool
 			continue;
 
 		auto& imageInfo = imageInfos.push_back();
-		imageInfo.sampler = nullptr;
+		imageInfo.sampler = 0;
 		imageInfo.imageView = imageView;
 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 

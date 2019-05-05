@@ -12,8 +12,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureVk", VolumeTextureVk, IVolumeTexture)
 
 VolumeTextureVk::VolumeTextureVk()
-:	m_textureImage(nullptr)
-,	m_textureView(nullptr)
+:	m_textureImage(0)
+,	m_textureView(0)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_depth(0)
@@ -42,8 +42,8 @@ bool VolumeTextureVk::create(
 		uint32_t imageSize = getTextureSize(desc.format, desc.width, desc.height, 1) * desc.depth;
 
 		// Create staging buffer.
-		VkBuffer stagingBuffer = nullptr;
-		VkDeviceMemory stagingBufferMemory = nullptr;
+		VkBuffer stagingBuffer = 0;
+		VkDeviceMemory stagingBufferMemory = 0;
 
 		if (!createBuffer(
 			physicalDevice,
@@ -92,7 +92,7 @@ bool VolumeTextureVk::create(
 		vkGetImageMemoryRequirements(device, m_textureImage, &memoryRequirements);
 
 		// Allocate texture memory.
-		VkDeviceMemory textureImageMemory = nullptr;
+		VkDeviceMemory textureImageMemory = 0;
 
 		VkMemoryAllocateInfo mai = {};
 		mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
