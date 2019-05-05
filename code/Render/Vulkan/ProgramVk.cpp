@@ -21,7 +21,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_deviceBufferCount = 16;
+const uint32_t c_deviceBufferCount = 32;
 handle_t s_handleTargetSize = 0;
 
 bool storeIfNotEqual(const float* source, int length, float* dest)
