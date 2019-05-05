@@ -31,9 +31,17 @@ public:
 		WsMultiple = WsUser
 	};
 
+	enum ItemSize
+	{
+		IsSmall = 0,
+		IsLarge = 1
+	};
+
 	PreviewList();
 
 	bool create(Widget* parent, uint32_t style);
+
+	void setItemSize(ItemSize itemSize);
 
 	void setItems(PreviewItems* items);
 
@@ -44,6 +52,7 @@ public:
 	void getSelectedItems(RefArray< PreviewItem >& outItems) const;
 
 private:
+	ItemSize m_itemSize;
 	Ref< PreviewItems > m_items;
 	bool m_single;
 
