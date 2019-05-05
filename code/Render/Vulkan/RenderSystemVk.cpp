@@ -69,18 +69,18 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemVk", 0, RenderSystem
 RenderSystemVk::RenderSystemVk()
 #if defined(__LINUX__)
 :	m_display(nullptr)
-,	m_instance(nullptr)
+,	m_instance(0)
 #else
-:	m_instance(nullptr)
+:	m_instance(0)
 #endif
-,	m_physicalDevice(nullptr)
-,	m_logicalDevice(nullptr)
+,	m_physicalDevice(0)
+,	m_logicalDevice(0)
 ,	m_graphicsQueueIndex(~0)
 ,	m_computeQueueIndex(~0)
-,	m_graphicsQueue(nullptr)
-,	m_computeQueue(nullptr)
-,	m_graphicsCommandPool(nullptr)
-,	m_setupCommandBuffer(nullptr)
+,	m_graphicsQueue(0)
+,	m_computeQueue(0)
+,	m_graphicsCommandPool(0)
+,	m_setupCommandBuffer(0)
 {
 }
 
@@ -152,7 +152,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 	// Setup debug port callback.
-	VkDebugReportCallbackEXT reportCallback = nullptr;
+	VkDebugReportCallbackEXT reportCallback = 0;
 
 	VkDebugReportCallbackCreateInfoEXT drcci = {};
 	drcci.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT;
@@ -391,7 +391,7 @@ Ref< IRenderView > RenderSystemVk::createRenderView(const RenderViewEmbeddedDesc
 
 Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	VkBuffer vertexBuffer = nullptr;
+	VkBuffer vertexBuffer = 0;
 
 	VkBufferCreateInfo bci = {};
 	bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -470,7 +470,7 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 
 Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	VkBuffer indexBuffer = nullptr;
+	VkBuffer indexBuffer = 0;
 
 	VkBufferCreateInfo bci = {};
 	bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -503,7 +503,7 @@ Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32
 
 Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
 {
-	VkBuffer storageBuffer = nullptr;
+	VkBuffer storageBuffer = 0;
 
 	VkBufferCreateInfo bci = {};
 	bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;

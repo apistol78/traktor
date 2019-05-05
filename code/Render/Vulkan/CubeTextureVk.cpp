@@ -23,11 +23,11 @@ CubeTextureVk::CubeTextureVk(
 ,	m_setupCommandPool(setupCommandPool)
 ,	m_setupQueue(setupQueue)
 ,	m_desc(desc)
-,	m_textureImage(nullptr)
-,	m_textureImageMemory(nullptr)
-,	m_textureView(nullptr)
-,	m_stagingBuffer(nullptr)
-,	m_stagingBufferMemory(nullptr)
+,	m_textureImage(0)
+,	m_textureImageMemory(0)
+,	m_textureView(0)
+,	m_stagingBuffer(0)
+,	m_stagingBufferMemory(0)
 {
 }
 
@@ -237,8 +237,8 @@ void CubeTextureVk::unlock(int32_t side, int32_t level)
 	vkDestroyBuffer(m_logicalDevice, m_stagingBuffer, nullptr);
 	vkFreeMemory(m_logicalDevice, m_stagingBufferMemory, nullptr);
 
-	m_stagingBuffer = nullptr;
-	m_stagingBufferMemory = nullptr;
+	m_stagingBuffer = 0;
+	m_stagingBufferMemory = 0;
 }
 
 	}

@@ -12,8 +12,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureVk", SimpleTextureVk, ISimpleTexture)
 
 SimpleTextureVk::SimpleTextureVk()
-:	m_textureImage(nullptr)
-,	m_textureView(nullptr)
+:	m_textureImage(0)
+,	m_textureView(0)
 ,	m_mips(0)
 ,	m_width(0)
 ,	m_height(0)
@@ -42,8 +42,8 @@ bool SimpleTextureVk::create(
 		uint32_t imageSize = getTextureSize(desc.format, desc.width, desc.height, desc.mipCount);
 
 		// Create staging buffer.
-		VkBuffer stagingBuffer = nullptr;
-		VkDeviceMemory stagingBufferMemory = nullptr;
+		VkBuffer stagingBuffer = 0;
+		VkDeviceMemory stagingBufferMemory = 0;
 
 		if (!createBuffer(
 			physicalDevice,
@@ -92,7 +92,7 @@ bool SimpleTextureVk::create(
 		vkGetImageMemoryRequirements(device, m_textureImage, &memoryRequirements);
 
 		// Allocate texture memory.
-		VkDeviceMemory textureImageMemory = nullptr;
+		VkDeviceMemory textureImageMemory = 0;
 
 		VkMemoryAllocateInfo mai = {};
 		mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -117,7 +117,7 @@ bool SimpleTextureVk::create(
 		ivci.subresourceRange.baseArrayLayer = 0;
 		ivci.subresourceRange.layerCount = 1;
 
-		if (vkCreateImageView(device, &ivci, NULL, &m_textureView) != VK_SUCCESS)
+		if (vkCreateImageView(device, &ivci, nullptr, &m_textureView) != VK_SUCCESS)
 			return false;
 
 		// Change layout of texture to be able to copy staging buffer into texture.
@@ -176,8 +176,8 @@ bool SimpleTextureVk::create(
 		);
 
 		// Free staging buffer.
-		vkDestroyBuffer(device, stagingBuffer, nullptr);
-		vkFreeMemory(device, stagingBufferMemory, nullptr);
+		vkDestroyBuffer(device, stagingBuffer, 0);
+		vkFreeMemory(device, stagingBufferMemory, 0);
 	}
 
 	m_mips = desc.mipCount;

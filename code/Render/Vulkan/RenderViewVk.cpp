@@ -49,21 +49,21 @@ RenderViewVk::RenderViewVk(
 ,	m_logicalDevice(logicalDevice)
 ,	m_graphicsQueueIndex(graphicsQueueIndex)
 ,	m_computeQueueIndex(computeQueueIndex)
-,	m_surface(nullptr)
+,	m_surface(0)
 ,	m_presentQueueIndex(~0)
-,	m_presentQueue(nullptr)
-,	m_graphicsCommandPool(nullptr)
-,	m_computeCommandPool(nullptr)
-,	m_graphicsCommandBuffer(nullptr)
-,	m_computeCommandBuffer(nullptr)
-,	m_swapChain(nullptr)
-,	m_descriptorPool(nullptr)
-,	m_renderFence(nullptr)
-,	m_presentCompleteSemaphore(nullptr)
+,	m_presentQueue(0)
+,	m_graphicsCommandPool(0)
+,	m_computeCommandPool(0)
+,	m_graphicsCommandBuffer(0)
+,	m_computeCommandBuffer(0)
+,	m_swapChain(0)
+,	m_descriptorPool(0)
+,	m_renderFence(0)
+,	m_presentCompleteSemaphore(0)
 ,	m_haveDebugMarkers(false)
 ,	m_targetStateDirty(false)
 ,	m_targetId(0)
-,	m_targetRenderPass(nullptr)
+,	m_targetRenderPass(0)
 {
 }
 
@@ -74,6 +74,7 @@ RenderViewVk::~RenderViewVk()
 
 bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 {
+#if defined(_WIN32) || defined(__LINUX__)
 	// Create render window.
 	m_window = new Window();
 	if (!m_window->create(desc.displayMode.width, desc.displayMode.height))
@@ -83,7 +84,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 	}
 	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - Vulkan Renderer");
 	m_window->show();
-
+#endif
 #if defined(_WIN32)
 	if (m_window)
 		m_window->addListener(this);
@@ -182,18 +183,20 @@ void RenderViewVk::close()
 
 bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 {
+#if defined(_WIN32) || defined(__LINUX__)
 	// Cannot reset embedded view.
 	if (!m_window)
 		return false;
 
-#if defined(_WIN32)
+#	if defined(_WIN32)
 	m_window->removeListener(this);
-#endif
+#	endif
 
 	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - Vulkan Renderer");
 
-#if defined(_WIN32)
+#	if defined(_WIN32)
 	m_window->addListener(this);
+#	endif
 #endif
 
 	if (!reset(
@@ -215,10 +218,10 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	m_primaryTargets.resize(0);
 
 	// Destroy previous swap chain.
-	if (m_swapChain != nullptr)
+	if (m_swapChain != 0)
 	{
-		vkDestroySwapchainKHR(m_logicalDevice, m_swapChain, nullptr);	
-		m_swapChain = nullptr;
+		vkDestroySwapchainKHR(m_logicalDevice, m_swapChain, 0);	
+		m_swapChain = 0;
 	}
 
 	if (create(width, height))
@@ -698,7 +701,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 
 	// Determine presentation mode.
 	uint32_t presentModeCount = 0;
-	vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, nullptr);
+	vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, 0);
 
 	AutoArrayPtr< VkPresentModeKHR > presentModes(new VkPresentModeKHR[presentModeCount]);
 	vkGetPhysicalDeviceSurfacePresentModesKHR(m_physicalDevice, m_surface, &presentModeCount, presentModes.ptr());
@@ -738,7 +741,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 		scci.pQueueFamilyIndices = queueFamilyIndices;
 	}
 
-	if (vkCreateSwapchainKHR(m_logicalDevice, &scci, nullptr, &m_swapChain) != VK_SUCCESS)
+	if (vkCreateSwapchainKHR(m_logicalDevice, &scci, 0, &m_swapChain) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create swap chain." << Endl;
 		return false;
@@ -746,13 +749,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 
 	// Get primary color images.
 	uint32_t imageCount = 0;
-	vkGetSwapchainImagesKHR(m_logicalDevice, m_swapChain, &imageCount, nullptr);
+	vkGetSwapchainImagesKHR(m_logicalDevice, m_swapChain, &imageCount, 0);
 
 	AlignedVector< VkImage > presentImages(imageCount);
 	vkGetSwapchainImagesKHR(m_logicalDevice, m_swapChain, &imageCount, presentImages.ptr());
 
 	// Create primary depth image.
-	VkImage depthImage = nullptr;
+	VkImage depthImage = 0;
 
 	VkImageCreateInfo ici = {};
 	ici.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -795,8 +798,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 		m_primaryTargets[i] = new RenderTargetSetVk(
 			m_physicalDevice,
 			m_logicalDevice,
-			nullptr,
-			nullptr
+			0,
+			0
 		);
 		if (!m_primaryTargets[i]->createPrimary(
 			width,
@@ -910,7 +913,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 
 	const auto key = std::make_tuple(primitiveId, m_targetId, declHash, programHash);
 
-	VkPipeline pipeline = nullptr;
+	VkPipeline pipeline = 0;
 
 	auto it = m_pipelines.find(key);
 	if (it != m_pipelines.end())
@@ -1051,7 +1054,7 @@ bool RenderViewVk::validatePipeline(VertexBufferVk* vb, ProgramVk* p, PrimitiveT
 		gpci.layout = p->getPipelineLayout();
 		gpci.renderPass = m_targetRenderPass;
 		gpci.subpass = 0;
-		gpci.basePipelineHandle = nullptr;
+		gpci.basePipelineHandle = 0;
 		gpci.basePipelineIndex = 0;
 
 		if (vkCreateGraphicsPipelines(m_logicalDevice, VK_NULL_HANDLE, 1, &gpci, nullptr, &pipeline) != VK_SUCCESS)
