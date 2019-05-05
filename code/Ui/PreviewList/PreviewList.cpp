@@ -13,15 +13,16 @@ namespace traktor
 
 const int32_t c_marginX = 10;
 const int32_t c_marginY = 10;
-const int32_t c_itemWidth = 120;
-const int32_t c_itemHeight = 100;
+const int32_t c_itemWidth[] = { 120, 240 };
+const int32_t c_itemHeight[] = { 100, 200 };
 
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.PreviewList", PreviewList, AutoWidget)
 
 PreviewList::PreviewList()
-:	m_single(true)
+:	m_itemSize(IsSmall)
+,	m_single(true)
 {
 }
 
@@ -34,6 +35,11 @@ bool PreviewList::create(Widget* parent, uint32_t style)
 
 	addEventHandler< MouseButtonDownEvent >(this, &PreviewList::eventButtonDown);
 	return true;
+}
+
+void PreviewList::setItemSize(ItemSize itemSize)
+{
+	m_itemSize = itemSize;
 }
 
 void PreviewList::setItems(PreviewItems* items)
@@ -83,7 +89,10 @@ void PreviewList::layoutCells(const Rect& rc)
 	if (nitems <= 0)
 		return;
 
-	int32_t ncolumns = (rc.getWidth() - dpi96(c_marginX * 2)) / dpi96(c_itemWidth);
+	int32_t width = dpi96(c_itemWidth[m_itemSize]);
+	int32_t height = dpi96(c_itemHeight[m_itemSize]);
+
+	int32_t ncolumns = (rc.getWidth() - dpi96(c_marginX * 2)) / width;
 	if (ncolumns <= 0)
 		return;
 
@@ -97,10 +106,10 @@ void PreviewList::layoutCells(const Rect& rc)
 		int32_t row = i / ncolumns;
 
 		Rect rcItem(
-			dpi96(c_marginX + column * c_itemWidth),
-			dpi96(c_marginY + row * c_itemHeight),
-			dpi96(c_marginX + column * c_itemWidth + c_itemWidth),
-			dpi96(c_marginY + row * c_itemHeight + c_itemHeight)
+			dpi96(c_marginX + column * width),
+			dpi96(c_marginY + row * height),
+			dpi96(c_marginX + column * width + width),
+			dpi96(c_marginY + row * height + height)
 		);
 
 		placeCell(m_items->get(i), rcItem);
@@ -116,10 +125,10 @@ void PreviewList::layoutCells(const Rect& rc)
 		int32_t row = i / ncolumns;
 
 		Rect rcItem(
-			dpi96(c_marginX + column * c_itemWidth),
-			dpi96(c_marginY + row * c_itemHeight),
-			dpi96(c_marginX + column * c_itemWidth + c_itemWidth),
-			dpi96(c_marginY + row * c_itemHeight + c_itemHeight)
+			dpi96(c_marginX + column * width),
+			dpi96(c_marginY + row * height),
+			dpi96(c_marginX + column * width + width),
+			dpi96(c_marginY + row * height + height)
 		);
 
 		placeCell(m_items->get(i), rcItem);
