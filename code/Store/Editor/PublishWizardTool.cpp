@@ -10,6 +10,8 @@
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
+#include "Drawing/Image.h"
+#include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/Asset.h"
 #include "Editor/IEditor.h"
 #include "Editor/IPipelineDependencySet.h"
@@ -55,6 +57,8 @@ uint32_t PublishWizardTool::getFlags() const
 
 bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
+	Path assetPath = FileSystem::getInstance().getAbsolutePath(Path(L"data/Assets"));
+
 	std::wstring serverHost = editor->getSettings()->getProperty< std::wstring >(L"Store.Server", L"127.0.0.1:8118");
 	if (serverHost.empty())
 		return false;
@@ -159,7 +163,6 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 	}
 
 	// Embed files.
-	Path assetPath = FileSystem::getInstance().getAbsolutePath(Path(L"data/Assets"));
 	for (const auto& file : files)
 	{
 		Path sourceFile;
@@ -187,6 +190,47 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 
 	// Upload files.
 	{
+		Ref< net::HttpClient > httpClient = new net::HttpClient();
+
+		// Create unique ID of package.
+		Guid packageId = Guid::create();
+
+		// In case it's an asset which points to an image then upload thumbnail.
+		bool haveThumbnail = false;
+		{
+			auto asset = dynamic_type_cast< editor::Asset* >(object);
+			if (asset)
+			{
+				Path filePath = FileSystem::getInstance().getAbsolutePath(assetPath + asset->getFileName());
+				Ref< drawing::Image > thumbnail = drawing::Image::load(filePath);
+				if (thumbnail)
+				{
+					drawing::ScaleFilter scaleFilter(
+						256,
+						256,
+						drawing::ScaleFilter::MnAverage,
+						drawing::ScaleFilter::MgLinear
+					);
+					thumbnail->apply(&scaleFilter);
+					thumbnail->save(Path(L"$(TRAKTOR_HOME)/data/Temp/Store/Upload/Thumbnail.png"));
+
+					auto fileStream = FileSystem::getInstance().open(Path(L"$(TRAKTOR_HOME)/data/Temp/Store/Upload/Thumbnail.png"), File::FmRead);
+
+					auto uploadDatabase = httpClient->put(
+						net::Url(L"http://" + serverHost + L"/" + packageId.format() + L"/Thumbnail.png"),
+						new net::HttpRequestContent(fileStream)
+					);
+					if (!uploadDatabase || !uploadDatabase->succeeded())
+						return false;
+
+					fileStream->close();
+					fileStream = nullptr;
+
+					haveThumbnail = true;
+				}
+			}
+		}
+
 		StringOutputStream os;
 
 		os << L"<?xml version=\"1.0\"?>" << Endl;
@@ -203,15 +247,14 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 		for (auto tag : publishDialog.getTags())
 			os << L"\t\t<tag>" << tag << L"</tag>" << Endl;
 		os << L"\t</tags>" << Endl;
-		os << L"\t<thumbnail-url/>" << Endl;
+		if (haveThumbnail)
+			os << L"\t<thumbnail-url>Thumbnail.png</thumbnail-url>" << Endl;
+		else
+			os << L"\t<thumbnail-url/>" << Endl;
 		os << L"\t<database-url>Database.compact</database-url>" << Endl;
 		os << L"</manifest>" << Endl;
 
-		// Create unique ID of package.
-		Guid packageId = Guid::create();
-
 		// Upload manifest.
-		Ref< net::HttpClient > httpClient = new net::HttpClient();
 		auto uploadManifest = httpClient->put(
 			net::Url(L"http://" + serverHost + L"/" + packageId.format() + L"/Manifest.xml"),
 			new net::HttpRequestContent(os.str())

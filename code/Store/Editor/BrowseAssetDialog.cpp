@@ -55,6 +55,7 @@ bool BrowseAssetDialog::create(ui::Widget* parent)
 
     m_listAssets = new ui::PreviewList();
     m_listAssets->create(this, ui::PreviewList::WsMultiple | ui::WsDoubleBuffer);
+    m_listAssets->setItemSize(ui::PreviewList::IsLarge);
 
     // Get all unique tags stored on server.
     Ref< net::HttpClient > httpClient = new net::HttpClient();
