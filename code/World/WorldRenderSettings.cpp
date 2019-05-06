@@ -178,10 +178,10 @@ void WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
 
 	s >> Member< float >(L"farZ", farZ, AttributeRange(0.0f));
 	s >> Member< int32_t >(L"resolution", resolution, AttributeRange(1));
-	s >> Member< float >(L"bias", bias);
-	s >> Member< float >(L"biasCoeff", biasCoeff);
+	s >> Member< float >(L"bias", bias, AttributeRange(0.0f, 8.0f));
+	s >> Member< float >(L"biasCoeff", biasCoeff, AttributeRange(0.0f, 8.0f));
 	s >> Member< int32_t >(L"cascadingSlices", cascadingSlices, AttributeRange(1, MaxSliceCount));
-	s >> Member< float >(L"cascadingLambda", cascadingLambda, AttributeRange(0.0f));
+	s >> Member< float >(L"cascadingLambda", cascadingLambda, AttributeRange(0.0f, 10.0f));
 	s >> Member< bool >(L"quantizeProjection", quantizeProjection);
 	s >> Member< int32_t >(L"maskDenominator", maskDenominator, AttributeRange(1));
 	s >> resource::Member< render::ImageProcessSettings >(L"maskProject", maskProject);
