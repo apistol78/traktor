@@ -28,7 +28,7 @@ void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depth
 		NSOpenGLPFAAccelerated,
 		NSOpenGLPFANoRecovery,
 		NSOpenGLPFAOpenGLProfile, NSOpenGLProfileVersion3_2Core,
-		nil
+		0
 	};
 
 	NSOpenGLPixelFormat* nspf = [[NSOpenGLPixelFormat alloc] initWithAttributes: attribs];

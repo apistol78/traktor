@@ -54,7 +54,7 @@ bool Debugger::isDebuggerAttached() const
 
     size = sizeof(info);
     junk = sysctl(mib, sizeof(mib) / sizeof(*mib), &info, &size, NULL, 0);
-    T_ASSERT((junk == 0);
+    T_ASSERT(junk == 0);
 
     return ((info.kp_proc.p_flag & P_TRACED) != 0);
 #else

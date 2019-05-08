@@ -421,7 +421,7 @@ for i = 0, configurations:size() - 1 do
 		local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
 
 		if os == "windows" then
-			output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
+			output:printLn("\t@xcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
 		elseif os == "osx" or os == "linux" then
 			printWithColor(35, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
 			output:printLn("\t@mkdir -p \"" .. targetPath.pathNameNoVolume .. "/\"")
@@ -488,7 +488,7 @@ if #architectures > 0 then
 			local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
 
 			if os == "windows" then
-				output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
+				output:printLn("\t@xcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
 			elseif os == "osx" or os == "linux" then
 				printWithColor(35, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
 				output:printLn("\t@mkdir -p \"" .. targetPath.pathNameNoVolume .. "/\"")
@@ -615,7 +615,7 @@ else -- No architectures
 			local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
 
 			if os == "windows" then
-				output:printLn("\txcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
+				output:printLn("\t@xcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
 			elseif os == "osx" or os == "linux" then
 				printWithColor(35, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
 				output:printLn("\t@mkdir -p \"" .. targetPath.pathNameNoVolume .. "/\"")

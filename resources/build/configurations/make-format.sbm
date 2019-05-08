@@ -69,6 +69,7 @@ end
 
 function CC(solution, project, configuration, architecture, filePath, outputPath, output)
 	local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
+	local verbose = (OS.getInstance():getEnvironment("MAKE_VERBOSE") ~= "false")
 	local profile = configuration:getTargetProfile()
 	local format = configuration:getTargetFormat()
 
@@ -97,14 +98,21 @@ function CC(solution, project, configuration, architecture, filePath, outputPath
 		adco = " "
 	end
 
+	local icc
+	if verbose then
+		icc = "$(" .. cc .. ")"
+	else
+		icc = "@$(" .. cc .. ")"
+	end
+
 	if format == "StaticLibrary" then
-		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath.pathName .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t" .. icc .. " -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_STATIC" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath.pathName .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	elseif format == "SharedLibrary" then
-		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath.pathName .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t" .. icc .. " -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_SHARED" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath.pathName .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	elseif format == "Executable" then
-		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath.pathName .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t" .. icc .. " -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath.pathName .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	elseif format == "ExecutableConsole" then
-		output:printLn("\t$(" .. cc .. ") -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath.pathName .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
+		output:printLn("\t" .. icc .. " -c $(" .. cc .. "_FLAGS_" .. profile:upper() .. "_EXECUTABLE" .. ao .. ") $(" .. configuration:getName():upper() .. "_INCLUDE) $(" .. configuration:getName():upper() .. "_DEFINES) " .. filePath.pathName .. adco .. "$(" .. cc .. "_FLAG_OUTPUT)" .. ws .. outputPath)
 	end
 end
 
@@ -136,6 +144,7 @@ end
 function LINK(solution, project, configuration, architecture, sourcePath, sourceFiles, libraryPaths, libraries, externalLibraries, definitionFile, output)
 	local os = OS.getInstance():getEnvironment("MAKE_OS")
 	local toolchain = OS.getInstance():getEnvironment("MAKE_TOOLCHAIN")
+	local verbose = (OS.getInstance():getEnvironment("MAKE_VERBOSE") ~= "false")
 	local profile = configuration:getTargetProfile()
 	local format = configuration:getTargetFormat()
 
@@ -211,17 +220,27 @@ function LINK(solution, project, configuration, architecture, sourcePath, source
 		lo = lo .. " " .. adlo
 	end
 
+	local iar
+	local ilink
+	if verbose then
+		iar = "$(AR)"
+		ilink = "$(LINK)"
+	else
+		iar = "@$(AR)"
+		ilink = "@$(LINK)"
+	end	
+
 	if format == "StaticLibrary" then
-		output:printLn("\t$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS)")
+		output:printLn("\t" .. iar .. " $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS)")
 	elseif format == "SharedLibrary" then
 		if os ~= "osx" then
-			output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS) " .. lo)
+			output:printLn("\t" .. ilink .. " $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS) " .. lo)
 		else
-			output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) -dynamiclib -install_name @executable_path/" .. productName .. " $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS) " .. lo)
+			output:printLn("\t" .. ilink .. " $(LINK_FLAGS_" .. profile:upper() .. "_SHARED) -dynamiclib -install_name @executable_path/" .. productName .. " $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS) " .. lo)
 		end
 	elseif format == "Executable" then
-		output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS)" .. lo)
+		output:printLn("\t" .. ilink .. " $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS)" .. lo)
 	elseif format == "ExecutableConsole" then
-		output:printLn("\t$(LINK) $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS)" .. lo)
+		output:printLn("\t" .. ilink .. " $(LINK_FLAGS_" .. profile:upper() .. "_EXECUTABLE) $(LINK_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. ao .. "/" .. productName .. " $(" .. configuration:getName() .. ao .. "_OBJS)" .. lo)
 	end	
 end

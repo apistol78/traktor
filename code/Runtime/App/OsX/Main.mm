@@ -1,7 +1,5 @@
 #import <Cocoa/Cocoa.h>
 
-#include "Amalgam/Game/App/OsX/ErrorDialog.h"
-#include "Amalgam/Game/Impl/Application.h"
 #include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -18,6 +16,8 @@
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
+#include "Runtime/App/OsX/ErrorDialog.h"
+#include "Runtime/Impl/Application.h"
 #include "Ui/Application.h"
 #include "Ui/Cocoa/EventLoopCocoa.h"
 #include "Ui/Cocoa/WidgetFactoryCocoa.h"
@@ -255,8 +255,8 @@ int main(int argc, const char** argv)
 		return 1;
 	}
 
-	// Create amalgam application.
-	Ref< amalgam::Application > application = new amalgam::Application();
+	// Create runtime application.
+	Ref< runtime::Application > application = new runtime::Application();
 	if (application->create(
 		defaultSettings,
 		settings,

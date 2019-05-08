@@ -293,7 +293,7 @@ public:
 	}
 
 #if defined(T_CXX11)
-	RefArray(RefArray&& ref) noexcept
+	RefArray(RefArray&& ref) T_NOEXCEPT
 	:	m_items(ref.m_items)
 	,	m_size(ref.m_size)
 	,	m_capacity(ref.m_capacity)
@@ -660,7 +660,7 @@ public:
 	}
 
 #if defined(T_CXX11)
-	RefArray& operator = (RefArray&& ref) noexcept
+	RefArray& operator = (RefArray&& ref) T_NOEXCEPT
 	{
 		for (size_type i = 0; i < m_size; ++i)
 			T_SAFE_RELEASE(m_items[i]);
