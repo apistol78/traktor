@@ -2744,7 +2744,6 @@
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
-						<item>OC_X86_ASM</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -2771,7 +2770,6 @@
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
-						<item>OC_X86_ASM</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -2798,7 +2796,6 @@
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
-						<item>OC_X86_ASM</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -2830,7 +2827,6 @@
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
-						<item>OC_X86_ASM</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -2859,19 +2855,6 @@
 				<item type="File">
 					<fileName>*.h</fileName>
 					<items/>
-				</item>
-				<item type="Filter">
-					<name>x86</name>
-					<items>
-						<item type="File">
-							<fileName>x86/*.c</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>x86/*.h</fileName>
-							<items/>
-						</item>
-					</items>
 				</item>
 			</items>
 			<dependencies>
@@ -5072,7 +5055,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.cmft</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/cmft-master/src</sourcePath>
 			<configurations>
