@@ -342,6 +342,8 @@ void EditorPlugin::handleWorkspaceOpened()
 	std::wstring systemOs = L"osx";
 #elif defined(__LINUX__)
 	std::wstring systemOs = L"linux";
+#elif defined(__RPI__)
+	std::wstring systemOs = L"rpi";
 #endif
 
 #if !defined(__LINUX__)
