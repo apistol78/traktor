@@ -17,7 +17,7 @@
 #	include "Render/OpenGL/ES2/PNaCl/ContextOpenGLES2.h"
 #elif defined(_WIN32)
 #	include "Render/OpenGL/ES2/Win32/ContextOpenGLES2.h"
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 #	include "Render/OpenGL/ES2/Linux/ContextOpenGLES2.h"
 #endif
 
@@ -235,19 +235,21 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 			type = GL_FLOAT;
 			break;
 
+#if !defined(__RPI__)
 		case TfR16G16F:
-#if defined(GL_HALF_FLOAT_OES)
+#	if defined(GL_HALF_FLOAT_OES)
 			internalFormat = GL_RG16_EXT;
 			format = GL_RGBA;
 			type = GL_HALF_FLOAT_OES;
 			break;
-#endif
+#	endif
 
 		case TfR32G32F:
 			internalFormat = GL_RG16_EXT;
 			format = GL_RGBA;
 			type = GL_FLOAT;
 			break;
+#endif
 
 		case TfR16F:
 			if (haveExtension("GL_EXT_texture_rg"))

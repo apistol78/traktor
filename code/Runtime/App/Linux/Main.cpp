@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <X11/Xlib.h>
+#if !defined(__RPI__)
+#	include <X11/Xlib.h>
+#endif
 #include "Runtime/IOnlineServer.h"
 #include "Runtime/Impl/Application.h"
 #include "Runtime/Impl/Environment.h"
@@ -120,9 +122,11 @@ int main(int argc, const char** argv)
 	signal(SIGILL, signalHandler);
 	signal(SIGSEGV, signalHandler);
 
+#if !defined(__RPI__)
 	// Initialize X11 thread primitives; thus must be performed very early.
 	XInitThreads();
-
+#endif
+	
 	// Let's continue with the application.
 	CommandLine cmdLine(argc, argv);
 

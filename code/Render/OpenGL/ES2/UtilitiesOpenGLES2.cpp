@@ -1,9 +1,3 @@
-/*
-================================================================================================
-CONFIDENTIAL AND PROPRIETARY INFORMATION/NOT FOR DISCLOSURE WITHOUT WRITTEN PERMISSION
-Copyright 2017 Doctor Entertainment AB. All Rights Reserved.
-================================================================================================
-*/
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Render/OpenGL/ES2/Platform.h"
@@ -269,12 +263,14 @@ bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, 
 		break;
 
 	case TfR16F:
+#if !defined(__RPI__)
 		if (haveExtension("GL_EXT_texture_rg"))
 		{
 			outInternalFormat = GL_RED_EXT;
 			outFormat = GL_RED_EXT;
 		}
 		else
+#endif
 		{
 			log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different outFormat which may cause performance issues (TfR16F requested)." << Endl;
 			outInternalFormat = GL_RGBA;
@@ -290,6 +286,7 @@ bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, 
 		break;
 
 	case TfR32F:
+#if !defined(__RPI__)
 		if (haveExtension("GL_EXT_texture_rg"))
 		{
 			outInternalFormat = GL_RED_EXT;
@@ -297,6 +294,7 @@ bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, 
 			outType = GL_FLOAT;
 		}
 		else
+#endif
 		{
 			log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different outFormat which may cause performance issues (TfR32F requested)." << Endl;
 			outInternalFormat = GL_RGBA;

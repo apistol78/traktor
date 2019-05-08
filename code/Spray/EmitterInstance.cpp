@@ -404,7 +404,7 @@ void EmitterInstance::updateTask(float deltaTime)
 	{
 #if defined(_WIN32)
 		qsort_s(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
 #elif !defined(__EMSCRIPTEN__) && !defined(__ANDROID__) && !defined(__PS3__) && !defined(__PS4__)
 		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), &m_sortPlane, &pointPredicate);

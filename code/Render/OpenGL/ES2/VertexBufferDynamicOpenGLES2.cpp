@@ -14,7 +14,7 @@
 #	include "Render/OpenGL/ES2/PNaCl/ContextOpenGLES2.h"
 #elif defined(_WIN32)
 #	include "Render/OpenGL/ES2/Win32/ContextOpenGLES2.h"
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 #	include "Render/OpenGL/ES2/Linux/ContextOpenGLES2.h"
 #endif
 #include "Render/OpenGL/ES2/Editor/Glsl/GlslType.h"
