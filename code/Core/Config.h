@@ -14,6 +14,7 @@
 #	define T_RESTRICT __restrict
 #	define T_FORCE_INLINE __forceinline
 #	define T_ALIGN16 __declspec(align(16))
+#	define T_NOEXCEPT noexcept
 #	if _MSC_VER >= 1700
 #		define T_CXX11
 #	endif
@@ -25,6 +26,9 @@
 #	endif
 #	define T_FORCE_INLINE inline
 #	define T_ALIGN16 __attribute__((aligned(16)))
+#	if !defined(__APPLE__)
+#		define T_NOEXCEPT noexcept
+#	endif
 #	if __cplusplus >= 201103L || (defined(__PS3__) && !defined(SPU)) || defined(__APPLE__)
 #		define T_CXX11
 #	endif
@@ -53,6 +57,9 @@
 #endif
 #if !defined(T_ALIGN16)
 #	define T_ALIGN16
+#endif
+#if !defined(T_NOEXCEPT)
+#	define T_NOEXCEPT
 #endif
 #if !defined(T_UNALIGNED)
 #	define T_UNALIGNED

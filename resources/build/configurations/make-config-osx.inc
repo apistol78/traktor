@@ -28,8 +28,8 @@ CC_FLAGS_DEBUG_EXECUTABLE=$(CC_FLAGS_COMMON) -g -D _UNICODE -D UNICODE
 CC_FLAGS_RELEASE_EXECUTABLE=$(CC_FLAGS_COMMON) -O3 -D _UNICODE -D UNICODE
 CC_FLAG_OUTPUT=-o 
 
-MM=ccache $(TOOLCHAIN_BIN)/clang
-MM_FLAGS_COMMON=-arch $(ARCH) -stdlib=libc++ -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -fno-strict-aliasing -fno-common -Wall -Wundef -Wno-ctor-dtor-privacy -Wno-c++11-extensions -isysroot $(SDK_SYSROOT)
+MM=ccache $(TOOLCHAIN_BIN)/clang++
+MM_FLAGS_COMMON=-arch $(ARCH) -std=c++11 -stdlib=libc++ -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -fno-strict-aliasing -fno-common -Wall -Wundef -Wno-ctor-dtor-privacy -isysroot $(SDK_SYSROOT)
 MM_FLAGS_DEBUG_SHARED=$(MM_FLAGS_COMMON) -g -D _UNICODE -D UNICODE -fPIC
 MM_FLAGS_RELEASE_SHARED=$(MM_FLAGS_COMMON) -O3 -D _UNICODE -D UNICODE -fPIC
 MM_FLAGS_DEBUG_STATIC=$(MM_FLAGS_COMMON) -g -D _UNICODE -D UNICODE

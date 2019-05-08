@@ -25,7 +25,7 @@ public:
 	typedef ClassType& reference;
 
 	Ref()
-	:	m_ptr(0)
+	:	m_ptr(nullptr)
 	{
 	}
 
@@ -36,10 +36,10 @@ public:
 	}
 
 #if defined(T_CXX11)
-	Ref(Ref&& ref) noexcept
+	Ref(Ref&& ref) T_NOEXCEPT
 	:	m_ptr(ref.m_ptr)
 	{
-		ref.m_ptr = 0;
+		ref.m_ptr = nullptr;
 	}
 #endif
 
@@ -71,7 +71,7 @@ public:
 	void reset()
 	{
 		T_SAFE_RELEASE(m_ptr);
-		m_ptr = 0;
+		m_ptr = nullptr;
 	}
 
 	void replace(pointer ptr)
@@ -87,7 +87,7 @@ public:
 	pointer disown()
 	{
 		pointer ptr = m_ptr;
-		m_ptr = 0;
+		m_ptr = nullptr;
 		return ptr;
 	}
 
@@ -131,11 +131,11 @@ public:
 	}
 
 #if defined(T_CXX11)
-	Ref& operator = (Ref&& ref) noexcept
+	Ref& operator = (Ref&& ref) T_NOEXCEPT
 	{
 		T_SAFE_RELEASE(m_ptr);
 		m_ptr = ref.m_ptr;
-		ref.m_ptr = 0;
+		ref.m_ptr = nullptr;
 		return *this;
 	}
 #endif
@@ -240,7 +240,7 @@ typename IsPointer< T >::base_t* checked_type_cast(const Ref< T0 >& obj)
 template < typename T, bool AllowNull, typename T0 >
 typename IsPointer< T >::base_t* checked_type_cast(const Ref< T0 >& obj)
 {
-	T_ASSERT(!(!AllowNull && obj.ptr() == 0));
+	T_ASSERT(!(!AllowNull && obj.ptr() == nullptr));
 	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
 }
 

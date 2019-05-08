@@ -31,38 +31,38 @@ void NativeStream::close()
 	{
 		flush();
 		fclose(m_fp);
-		m_fp = NULL;
+		m_fp = nullptr;
 	}
 }
 
 bool NativeStream::canRead() const
 {
-	return (m_fp != 0 && m_mode == File::FmRead);
+	return (m_fp != nullptr && m_mode == File::FmRead);
 }
 
 bool NativeStream::canWrite() const
 {
-	return (m_fp != 0 && (m_mode == File::FmWrite || m_mode == File::FmAppend));
+	return (m_fp != nullptr && (m_mode == File::FmWrite || m_mode == File::FmAppend));
 }
 
 bool NativeStream::canSeek() const
 {
-	return (m_fp != 0);
+	return (m_fp != nullptr);
 }
 
 int64_t NativeStream::tell() const
 {
-	return (m_fp != 0) ? (int64_t)ftell(m_fp) : 0;
+	return (m_fp != nullptr) ? (int64_t)ftell(m_fp) : 0;
 }
 
 int64_t NativeStream::available() const
 {
-	return (m_fp != 0) ? ((int64_t)m_fileSize - tell()) : 0;
+	return (m_fp != nullptr) ? ((int64_t)m_fileSize - tell()) : 0;
 }
 
 int64_t NativeStream::seek(SeekOriginType origin, int64_t offset)
 {
-	if (m_fp == 0)
+	if (m_fp == nullptr)
 		return 0;
 
 	const int fo[] = { SEEK_CUR, SEEK_END, SEEK_SET };
@@ -71,7 +71,7 @@ int64_t NativeStream::seek(SeekOriginType origin, int64_t offset)
 
 int64_t NativeStream::read(void* block, int64_t nbytes)
 {
-	if (m_fp == 0)
+	if (m_fp == nullptr)
 		return 0;
 
 	return int64_t(fread(block, 1, nbytes, m_fp));
@@ -79,7 +79,7 @@ int64_t NativeStream::read(void* block, int64_t nbytes)
 
 int64_t NativeStream::write(const void* block, int64_t nbytes)
 {
-	if (m_fp == 0)
+	if (m_fp == nullptr)
 		return 0;
 
 	return int64_t(fwrite(block, 1, nbytes, m_fp));
@@ -87,7 +87,7 @@ int64_t NativeStream::write(const void* block, int64_t nbytes)
 
 void NativeStream::flush()
 {
-	if (m_fp != 0)
+	if (m_fp != nullptr)
 		fflush(m_fp);
 }
 
