@@ -1,3 +1,4 @@
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/TString.h"

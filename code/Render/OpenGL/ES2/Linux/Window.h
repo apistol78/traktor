@@ -4,7 +4,9 @@
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
 #include <X11/cursorfont.h>
-#include <X11/extensions/Xrandr.h>
+#if !defined(__RPI__)
+#	include <X11/extensions/Xrandr.h>
+#endif
 #include "Core/Object.h"
 #include "Render/Types.h"
 

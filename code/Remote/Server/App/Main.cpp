@@ -403,23 +403,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #if defined(_WIN32)
 	platforms.push_back(L"Android");
 	platforms.push_back(L"Emscripten");
-	platforms.push_back(L"PNaCl");
 	platforms.push_back(L"PS3");
 	platforms.push_back(L"PS4");
-	platforms.push_back(L"Win32");
 	platforms.push_back(L"Win64");
-	platforms.push_back(L"XBox360");
 #elif defined(__APPLE__)
 	platforms.push_back(L"Android");
 	platforms.push_back(L"Emscripten");
 	platforms.push_back(L"iOS");
 	platforms.push_back(L"OSX");
-	platforms.push_back(L"PNaCl");
 #elif defined(__LINUX__)
 	platforms.push_back(L"Android");
 	platforms.push_back(L"Emscripten");
 	platforms.push_back(L"Linux");
-	platforms.push_back(L"PNaCl");
+#elif defined(__RPI__)
+	platforms.push_back(L"RaspberryPI");
 #endif
 
 	int32_t mode = net::MdPublishServices;

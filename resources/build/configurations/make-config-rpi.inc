@@ -1,22 +1,14 @@
 # Configuration file
 
 # Toolchain and SDK configuration.
-TOOLCHAIN_BIN=$(RPI_ROOT)/arm-bcm2708/arm-rpi-4.9.3-linux-gnueabihf/bin
-SYSROOT=$(RPI_ROOT)/arm-linux-gnueabihf/sysroot
+SYSROOT=$(RPI_SYSROOT)
 INCLUDES=
 
 # Build tools.
-C="$(TOOLCHAIN_BIN)/arm-linux-gnueabihf-gcc"
-
-#	-static-libstdc++\
-#	-MMD\
-#	-marm\
-#	-march=armv7-a\
-#	-mtune=cortex-a8\
-#	-mfpu=neon\
-#	-mfloat-abi=hard\
-
+C=clang
 C_FLAGS_COMMON=\
+	--target=arm-linux-gnueabihf\
+	--sysroot=$(SYSROOT)\
 	-pthread\
 	-fPIC\
 	-D __RPI__\
@@ -30,17 +22,10 @@ C_FLAGS_DEBUG_EXECUTABLE=$(C_FLAGS_COMMON) -g -D _UNICODE -D UNICODE
 C_FLAGS_RELEASE_EXECUTABLE=$(C_FLAGS_COMMON) -O2 -D _UNICODE -D UNICODE -D NDEBUG
 C_FLAG_OUTPUT=-o 
 
-CC="$(TOOLCHAIN_BIN)/arm-linux-gnueabihf-c++"
-
-#	-static-libstdc++\
-#	-MMD\
-#	-marm\
-#	-march=armv7-a\
-#	-mtune=cortex-a8\
-#	-mfpu=neon\
-#	-mfloat-abi=hard\
-
+CC=clang++
 CC_FLAGS_COMMON=\
+	--target=arm-linux-gnueabihf\
+	--sysroot=$(SYSROOT)\
 	-std=c++11\
 	-pthread\
 	-fPIC\
@@ -55,15 +40,16 @@ CC_FLAGS_DEBUG_EXECUTABLE=$(CC_FLAGS_COMMON) -g -D _UNICODE -D UNICODE
 CC_FLAGS_RELEASE_EXECUTABLE=$(CC_FLAGS_COMMON) -O2 -D _UNICODE -D UNICODE -D NDEBUG
 CC_FLAG_OUTPUT=-o
 
-AR="$(TOOLCHAIN_BIN)/arm-linux-gnueabihf-ar"
+AR=ar
 AR_FLAGS_COMMON=-r -s
 AR_FLAGS_DEBUG_STATIC=$(AR_FLAGS_COMMON)
 AR_FLAGS_RELEASE_STATIC=$(AR_FLAGS_COMMON)
 AR_FLAG_OUTPUT=
 
-LINK="$(TOOLCHAIN_BIN)/arm-linux-gnueabihf-c++"
-#LINK_LIBS=-lgcc -shared
-LINK_LIBS=
+LINK=clang++
+LINK_LIBS=-fuse-ld=lld --target=arm-linux-gnueabihf --sysroot=$(SYSROOT) -Wl,-rpath=\$$ORIGIN
+LINK_FLAGS_DEBUG_SHARED=$(LINK_LIBS) -shared
+LINK_FLAGS_RELEASE_SHARED=$(LINK_LIBS) -shared
 LINK_FLAGS_DEBUG_EXECUTABLE=$(LINK_LIBS)
 LINK_FLAGS_RELEASE_EXECUTABLE=$(LINK_LIBS)
 LINK_FLAG_OUTPUT=-o

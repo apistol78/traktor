@@ -6,7 +6,7 @@
 #	include <Ui/Win32/WidgetFactoryWin32.h>
 #elif defined(__APPLE__)
 #	include <Ui/Cocoa/WidgetFactoryCocoa.h>
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 #	include <Ui/X11/WidgetFactoryX11.h>
 #endif
 #include <Core/Config.h>
@@ -42,7 +42,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		new ui::WidgetFactoryCocoa(),
 		0
 	);
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 	ui::Application::getInstance()->initialize(
 		new ui::WidgetFactoryX11(),
 		0

@@ -209,8 +209,10 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
     std::wstring system = L"win32";
 #elif defined(__APPLE__)
     std::wstring system = L"osx";
-#else   // LINUX
+#elif defined(__LINUX__)
     std::wstring system = L"linux";
+#elif defined(__RPI__)
+    std::wstring system = L"rpi";
 #endif
 
 	std::wstring globalFile = pathName.getPathName();

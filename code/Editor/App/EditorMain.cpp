@@ -23,7 +23,7 @@ typedef traktor::ui::WidgetFactoryWin32 WidgetFactoryImpl;
 #elif defined(__APPLE__)
 #	include <Ui/Cocoa/WidgetFactoryCocoa.h>
 typedef traktor::ui::WidgetFactoryCocoa WidgetFactoryImpl;
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 #	include <Ui/X11/WidgetFactoryX11.h>
 typedef traktor::ui::WidgetFactoryX11 WidgetFactoryImpl;
 #endif
@@ -55,7 +55,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
 
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(__RPI__)
 	// Initialize X11 thread primitives; thus must be performed very early.
 	XInitThreads();
 #endif
@@ -79,7 +79,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	log::info << L"DYLD_LIBRARY_PATH = \"" << check << L"\"" << Endl;
 #endif
 
-#if defined(__LINUX__)
+#if defined(__LINUX__) || defined(__RPI__)
 	std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB";
 	FileSystem::getInstance().makeAllDirectories(writableFolder);
 #endif
