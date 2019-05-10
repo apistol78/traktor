@@ -1,6 +1,5 @@
 #include <fontconfig/fontconfig.h>
 #include <X11/Xresource.h>
-#include <X11/extensions/Xrandr.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Ui/X11/BitmapX11.h"

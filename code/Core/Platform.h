@@ -75,7 +75,7 @@ namespace traktor
 		{
 		}
 
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 		void* display;
 		unsigned long window;
 

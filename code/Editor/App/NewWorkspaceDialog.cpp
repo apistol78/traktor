@@ -142,7 +142,7 @@ void NewWorkspaceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 				L"$(TRAKTOR_HOME)/bin/latest/win32/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run",
 #elif defined(__APPLE__)
 				L"$(TRAKTOR_HOME)/bin/latest/osx/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run",
-#elif defined(__LINUX__)
+#elif defined(__LINUX__) || defined(__RPI__)
 				L"$(TRAKTOR_HOME)/bin/latest/linux/releaseshared/Traktor.Run.App $(TRAKTOR_HOME)/scripts/runtime/editor/templates/create-workspace.run",
 #endif
 				file->getPath().getPathOnly(),
