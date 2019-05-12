@@ -19,7 +19,6 @@ namespace traktor
 	{
 
 class ImageProcessSettings;
-class ITexture;
 
 	}
 
@@ -76,7 +75,6 @@ public:
 	float fogDensityY;
 	float fogDensityZ;
 	Color4f fogColor;
-	resource::Id< render::ITexture > reflectionMap;
 	resource::Id< render::ImageProcessSettings > imageProcess[QuLast];
 
 	WorldRenderSettings();
