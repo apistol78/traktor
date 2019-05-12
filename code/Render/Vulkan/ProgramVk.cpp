@@ -306,21 +306,27 @@ bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPoo
 		if (!m_uniformBuffers[i].size)
 			continue;
 
-		// Grab a device buffer; cycle buffers for each draw call.
+		// Grab a device buffer; cycle buffers for each update call.
+		if (m_uniformBuffers[i].dirty)
+		{
+			m_uniformBuffers[i].updateCount = (m_uniformBuffers[i].updateCount + 1) % c_deviceBufferCount;
+			DeviceBuffer& db = m_uniformBuffers[i].deviceBuffers[m_uniformBuffers[i].updateCount];
+
+			uint8_t* ptr = nullptr;
+			if (vkMapMemory(device, db.memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
+				return false;
+
+			std::memcpy(
+				ptr,
+				m_uniformBuffers[i].data.c_ptr(),
+				m_uniformBuffers[i].size
+			);
+
+			vkUnmapMemory(device, db.memory);
+			m_uniformBuffers[i].dirty = false;
+		}
+
 		DeviceBuffer& db = m_uniformBuffers[i].deviceBuffers[m_uniformBuffers[i].updateCount];
-		m_uniformBuffers[i].updateCount = (m_uniformBuffers[i].updateCount + 1) % c_deviceBufferCount;
-
-		uint8_t* ptr = nullptr;
-		if (vkMapMemory(device, db.memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
-			return false;
-
-		std::memcpy(
-			ptr,
-			m_uniformBuffers[i].data.c_ptr(),
-			m_uniformBuffers[i].size
-		);
-
-		vkUnmapMemory(device, db.memory);
 
 		auto& bufferInfo = bufferInfos.push_back();
 		bufferInfo.buffer = db.buffer;
@@ -467,21 +473,27 @@ bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool
 		if (!m_uniformBuffers[i].size)
 			continue;
 
-		// Grab a device buffer; cycle buffers for each draw call.
+		// Grab a device buffer; cycle buffers for each update.
+		if (m_uniformBuffers[i].dirty)
+		{
+			m_uniformBuffers[i].updateCount = (m_uniformBuffers[i].updateCount + 1) % c_deviceBufferCount;
+			DeviceBuffer& db = m_uniformBuffers[i].deviceBuffers[m_uniformBuffers[i].updateCount];
+
+			uint8_t* ptr = nullptr;
+			if (vkMapMemory(device, db.memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
+				return false;
+
+			std::memcpy(
+				ptr,
+				m_uniformBuffers[i].data.c_ptr(),
+				m_uniformBuffers[i].size
+			);
+
+			vkUnmapMemory(device, db.memory);
+			m_uniformBuffers[i].dirty = false;
+		}
+
 		DeviceBuffer& db = m_uniformBuffers[i].deviceBuffers[m_uniformBuffers[i].updateCount];
-		m_uniformBuffers[i].updateCount = (m_uniformBuffers[i].updateCount + 1) % c_deviceBufferCount;
-
-		uint8_t* ptr = nullptr;
-		if (vkMapMemory(device, db.memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
-			return false;
-
-		std::memcpy(
-			ptr,
-			m_uniformBuffers[i].data.c_ptr(),
-			m_uniformBuffers[i].size
-		);
-
-		vkUnmapMemory(device, db.memory);
 
 		auto& bufferInfo = bufferInfos.push_back();
 		bufferInfo.buffer = db.buffer;
@@ -614,12 +626,7 @@ void ProgramVk::setFloatParameter(handle_t handle, float param)
 	{
 		auto& ub = m_uniformBuffers[i->second.buffer];
 		if (storeIfNotEqual(&param, 1, &ub.data[i->second.offset]))
-		{
-			//if (i->second.cbuffer[0])
-			//	i->second.cbuffer[0]->dirty = true;
-			//if (i->second.cbuffer[1])
-			//	i->second.cbuffer[1]->dirty = true;
-		}
+			ub.dirty = true;
 	}
 }
 
@@ -629,18 +636,8 @@ void ProgramVk::setFloatArrayParameter(handle_t handle, const float* param, int 
 	if (i != m_parameterMap.end())
 	{
 		auto& ub = m_uniformBuffers[i->second.buffer];
-		float* out = &ub.data[i->second.offset];
-		for (int j = 0; j < length - 1; ++j)
-		{
-			Vector4(Scalar(param[j])).storeAligned(out);
-			out += 4;
-		}
-		*out++ = param[length - 1];
-
-		//if (i->second.cbuffer[0])
-		//	i->second.cbuffer[0]->dirty = true;
-		//if (i->second.cbuffer[1])
-		//	i->second.cbuffer[1]->dirty = true;
+		if (storeIfNotEqual(param, length, &ub.data[i->second.offset]))
+			ub.dirty = true;
 	}
 }
 
@@ -657,12 +654,7 @@ void ProgramVk::setVectorArrayParameter(handle_t handle, const Vector4* param, i
 		T_FATAL_ASSERT (length * 4 <= i->second.size);
 		auto& ub = m_uniformBuffers[i->second.buffer];
 		if (storeIfNotEqual(param, length, &ub.data[i->second.offset]))
-		{
-			//if (i->second.cbuffer[0])
-			//	i->second.cbuffer[0]->dirty = true;
-			//if (i->second.cbuffer[1])
-			//	i->second.cbuffer[1]->dirty = true;
-		}
+			ub.dirty = true;
 	}
 }
 
@@ -673,10 +665,7 @@ void ProgramVk::setMatrixParameter(handle_t handle, const Matrix44& param)
 	{
 		auto& ub = m_uniformBuffers[i->second.buffer];
 		param.storeAligned(&ub.data[i->second.offset]);
-		//if (i->second.cbuffer[0])
-		//	i->second.cbuffer[0]->dirty = true;
-		//if (i->second.cbuffer[1])
-		//	i->second.cbuffer[1]->dirty = true;
+		ub.dirty = true;
 	}
 }
 
@@ -689,10 +678,7 @@ void ProgramVk::setMatrixArrayParameter(handle_t handle, const Matrix44* param, 
 		auto& ub = m_uniformBuffers[i->second.buffer];
 		for (int j = 0; j < length; ++j)
 			param[j].storeAligned(&ub.data[i->second.offset + j * 16]);
-		//if (i->second.cbuffer[0])
-		//	i->second.cbuffer[0]->dirty = true;
-		//if (i->second.cbuffer[1])
-		//	i->second.cbuffer[1]->dirty = true;
+		ub.dirty = true;
 	}
 }
 
@@ -700,18 +686,14 @@ void ProgramVk::setTextureParameter(handle_t handle, ITexture* texture)
 {
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
-	{
 		m_textures[i->second.offset].texture = texture;
-	}
 }
 
 void ProgramVk::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
 {
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
-	{
 		m_sbuffers[i->second.offset].sbuffer = structBuffer;
-	}
 }
 
 void ProgramVk::setStencilReference(uint32_t stencilReference)
