@@ -105,10 +105,12 @@ private:
 		uint32_t size;
 		uint32_t updateCount;
 		AlignedVector< float > data;
+		bool dirty;
 
 		UniformBuffer()
 		:	size(0)
 		,	updateCount(0)
+		,	dirty(true)
 		{
 		}
 	};
