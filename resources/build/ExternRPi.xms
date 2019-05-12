@@ -5055,7 +5055,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Extern.cmft</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/cmft-master/src</sourcePath>
 			<configurations>
