@@ -99,7 +99,6 @@ bool ScenePipeline::buildDependencies(
 	const world::WorldRenderSettings* wrs = sceneAsset->getWorldRenderSettings();
 	if (wrs)
 	{
-		pipelineDepends->addDependency(wrs->reflectionMap, editor::PdfBuild | editor::PdfResource);
 		if (!m_suppressShadows)
 		{
 			for (int32_t i = 0; i < sizeof_array(wrs->shadowSettings); ++i)

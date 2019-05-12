@@ -29,7 +29,6 @@ render::handle_t s_handleView;
 render::handle_t s_handleViewInverse;
 render::handle_t s_handleMagicCoeffs;
 render::handle_t s_handleScreenMap;
-render::handle_t s_handleReflectionMap;
 render::handle_t s_handleDepthMap;
 render::handle_t s_handleNormalMap;
 render::handle_t s_handleMiscMap;
@@ -70,7 +69,6 @@ LightRendererDeferred::LightRendererDeferred()
 	s_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
 	s_handleMagicCoeffs = render::getParameterHandle(L"World_MagicCoeffs");
 	s_handleScreenMap = render::getParameterHandle(L"World_ScreenMap");
-	s_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
 	s_handleDepthMap = render::getParameterHandle(L"World_DepthMap");
 	s_handleNormalMap = render::getParameterHandle(L"World_NormalMap");
 	s_handleMiscMap = render::getParameterHandle(L"World_MiscMap");
@@ -175,7 +173,6 @@ void LightRendererDeferred::renderReflections(
 	const Vector4& fogColor,
 	bool traceReflections,
 	render::ITexture* screenMap,
-	render::ITexture* reflectionMap,
 	render::ITexture* depthMap,
 	render::ITexture* normalMap,
 	render::ITexture* miscMap,
@@ -192,7 +189,6 @@ void LightRendererDeferred::renderReflections(
 	m_reflectionShader->setVectorParameter(s_handleFogDistanceAndDensity, fogDistanceAndDensity);
 	m_reflectionShader->setVectorParameter(s_handleFogColor, fogColor);
 	m_reflectionShader->setTextureParameter(s_handleScreenMap, screenMap);
-	m_reflectionShader->setTextureParameter(s_handleReflectionMap, reflectionMap);
 	m_reflectionShader->setTextureParameter(s_handleDepthMap, depthMap);
 	m_reflectionShader->setTextureParameter(s_handleNormalMap, normalMap);
 	m_reflectionShader->setTextureParameter(s_handleMiscMap, miscMap);
@@ -207,7 +203,6 @@ void LightRendererDeferred::renderFog(
 	const Matrix44& view,
 	const Vector4& fogDistanceAndDensity,
 	const Vector4& fogColor,
-	render::ITexture* reflectionMap,
 	render::ITexture* depthMap,
 	render::ITexture* normalMap,
 	render::ITexture* miscMap,
@@ -223,7 +218,6 @@ void LightRendererDeferred::renderFog(
 	m_fogShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 	m_fogShader->setVectorParameter(s_handleFogDistanceAndDensity, fogDistanceAndDensity);
 	m_fogShader->setVectorParameter(s_handleFogColor, fogColor);
-	m_fogShader->setTextureParameter(s_handleReflectionMap, reflectionMap);
 	m_fogShader->setTextureParameter(s_handleDepthMap, depthMap);
 	m_fogShader->setTextureParameter(s_handleNormalMap, normalMap);
 	m_fogShader->setTextureParameter(s_handleMiscMap, miscMap);

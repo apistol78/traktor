@@ -46,7 +46,7 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 30, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 31, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
@@ -142,8 +142,11 @@ void WorldRenderSettings::serialize(ISerializer& s)
 		fogColor = Color4f(fc.r / 255.0f, fc.g / 255.0f, fc.b / 255.0f, fc.a / 255.0f);
 	}
 
-	if (s.getVersion() >= 20)
+	if (s.getVersion() >= 20 && s.getVersion() <= 30)
+	{
+		resource::Id< render::ITexture > reflectionMap;
 		s >> resource::Member< render::ITexture >(L"reflectionMap", reflectionMap);
+	}
 
 	if (s.getVersion() >= 22)
 		s >> MemberStaticArray< resource::Id< render::ImageProcessSettings >, sizeof_array(imageProcess), resource::Member< render::ImageProcessSettings > >(L"imageProcess", imageProcess, c_ImageProcess_elementNames);

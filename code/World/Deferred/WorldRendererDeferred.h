@@ -141,7 +141,6 @@ private:
 
 	Ref< render::IRenderView > m_renderView;
 
-	Ref< IWorldShadowProjection > m_shadowProjection0;
 	Ref< IWorldShadowProjection > m_shadowProjection;
 
 	Ref< render::RenderTargetSet > m_visualTargetSet;
@@ -155,8 +154,6 @@ private:
 	Ref< render::RenderTargetSet > m_shadowAtlasTargetSet;		//!< Shadow map atlas for spot and point lights.
 	
 	Ref< render::RenderContext > m_globalContext;
-	
-	resource::Proxy< render::ITexture > m_reflectionMap;
 	
 	Ref< render::ImageProcess > m_colorTargetCopy;
 	Ref< render::ImageProcess > m_ambientOcclusion;

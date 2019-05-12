@@ -50,9 +50,6 @@ bool ScenePermutationPipeline::buildDependencies(
 
 	pipelineDepends->addDependency(scenePermutationAsset->m_scene, editor::PdfUse);
 
-	if (scenePermutationAsset->m_overrideWorldRenderSettings)
-		pipelineDepends->addDependency(scenePermutationAsset->m_overrideWorldRenderSettings->reflectionMap, editor::PdfBuild | editor::PdfResource);
-
 	const SmallMap< std::wstring, resource::Id< render::ITexture > >& params = scenePermutationAsset->m_overrideImageProcessParams;
 	for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = params.begin(); i != params.end(); ++i)
 		pipelineDepends->addDependency(i->second, editor::PdfBuild | editor::PdfResource);

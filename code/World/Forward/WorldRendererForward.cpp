@@ -56,7 +56,6 @@ render::handle_t s_handleTime = 0;
 render::handle_t s_handleView = 0;
 render::handle_t s_handleViewInverse = 0;
 render::handle_t s_handleProjection = 0;
-render::handle_t s_handleReflectionMap = 0;
 
 #pragma pack(1)
 struct LightShaderData
@@ -94,7 +93,6 @@ WorldRendererForward::WorldRendererForward()
 	s_handleView = render::getParameterHandle(L"World_View");
 	s_handleViewInverse = render::getParameterHandle(L"World_ViewInverse");
 	s_handleProjection = render::getParameterHandle(L"World_Projection");
-	s_handleReflectionMap = render::getParameterHandle(L"World_ReflectionMap");
 }
 
 bool WorldRendererForward::create(
@@ -386,13 +384,6 @@ bool WorldRendererForward::create(
 		}
 	}
 
-	// Create global reflection map.
-	if (m_settings.reflectionMap)
-	{
-		if (!resourceManager->bind(m_settings.reflectionMap, m_reflectionMap))
-			log::warning << L"Unable to create reflection map" << Endl;
-	}
-
 	// Create "visual" and "intermediate" target.
 	if (m_antiAlias || m_visualImageProcess || m_gammaCorrectionImageProcess)
 	{
@@ -507,7 +498,6 @@ void WorldRendererForward::destroy()
 	safeDestroy(m_gbufferTargetSet);
 	safeDestroy(m_visualTargetSet);
 
-	m_reflectionMap.clear();
 	m_renderView = nullptr;
 }
 
@@ -601,7 +591,6 @@ void WorldRendererForward::render(int32_t frame)
 	defaultProgramParams.beginParameters(m_globalContext);
 	defaultProgramParams.setFloatParameter(s_handleTime, f.time);
 	defaultProgramParams.setMatrixParameter(s_handleProjection, f.projection);
-	defaultProgramParams.setTextureParameter(s_handleReflectionMap, m_reflectionMap);
 	defaultProgramParams.endParameters(m_globalContext);
 
 	// Render gbuffer.

@@ -130,7 +130,6 @@ private:
 	Ref< render::RenderTargetSet > m_intermediateTargetSet;
 	Ref< render::RenderTargetSet > m_gbufferTargetSet;
 	Ref< render::RenderContext > m_globalContext;
-	resource::Proxy< render::ITexture > m_reflectionMap;
 	Ref< render::ImageProcess > m_ambientOcclusion;
 	Ref< render::ImageProcess > m_antiAlias;
 	Ref< render::ImageProcess > m_visualImageProcess;
