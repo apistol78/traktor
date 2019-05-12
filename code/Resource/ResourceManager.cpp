@@ -50,9 +50,8 @@ void ResourceManager::addFactory(const IResourceFactory* factory)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	{
-		TypeInfoSet typeSet = factory->getResourceTypes();
-		for (TypeInfoSet::const_iterator i = typeSet.begin(); i != typeSet.end(); ++i)
-			m_resourceFactories.push_back(std::make_pair(*i, factory));
+		for (auto resourceType : factory->getResourceTypes())
+			m_resourceFactories.push_back(std::make_pair(resourceType, factory));
 	}
 }
 
@@ -82,7 +81,7 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 		if (!instance)
 		{
 			log::error << L"Unable to preload resource " << i->second.format() << L"; no such instance." << Endl;
-			return 0;
+			return false;
 		}
 
 		// Get type of resource.
@@ -90,7 +89,7 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 		if (!resourceType)
 		{
 			log::error << L"Unable to preload resource " << i->second.format() << L"; unable to read resource type." << Endl;
-			return 0;
+			return false;
 		}
 
 		// Find factory which can create products from resource.
@@ -98,7 +97,7 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 		if (!factory)
 		{
 			log::error << L"Unable to preload resource " << i->second.format() << L"; no factory for specified resource type \"" << resourceType->getName() << L"\"." << Endl;
-			return 0;
+			return false;
 		}
 
 		// Determine product type; must be explicitly determined if we can safely preload the resource.
@@ -143,31 +142,31 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 	if (guid.isNull() || !guid.isValid())
 	{
 		if (!guid.isNull())
-			log::error << L"Unable to create " << productType.getName() << L" resource; invalid id." << Endl;
-		return 0;
+			log::error << L"Unable to bind a " << productType.getName() << L" resource; invalid id." << Endl;
+		return nullptr;
 	}
 
 	// Get resource instance from database.
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)
 	{
-		log::error << L"Unable to create " << productType.getName() << L" resource; no such instance (" << guid.format() << L")." << Endl;
-		return 0;
+		log::error << L"Unable to bind a " << productType.getName() << L" resource; no such instance (" << guid.format() << L")." << Endl;
+		return nullptr;
 	}
 
 	// Get type of resource.
 	const TypeInfo* resourceType = instance->getPrimaryType();
 	if (!resourceType)
 	{
-		log::error << L"Unable to create " << productType.getName() << L" resource; unable to read resource type (" << guid.format() << L")." << Endl;
-		return 0;
+		log::error << L"Unable to bind a " << productType.getName() << L" resource; unable to read resource type (" << guid.format() << L")." << Endl;
+		return nullptr;
 	}
 
 	// Find factory which can create products from resource.
 	const IResourceFactory* factory = findFactory(*resourceType);
 	if (!factory)
 	{
-		log::error << L"Unable to create " << productType.getName() << L" resource; no factory for specified resource type \"" << resourceType->getName() << L"\" (" << guid.format() << L")." << Endl;
+		log::error << L"Unable to bind a " << productType.getName() << L" resource; no factory for instance type \"" << resourceType->getName() << L"\" (" << guid.format() << L")." << Endl;
 		return 0;
 	}
 
@@ -356,12 +355,12 @@ void ResourceManager::unloadUnusedResident()
 		if (
 			!i->second->isPersistent() &&
 			i->second->getReferenceCount() <= 1 &&
-			i->second->get() != 0
+			i->second->get() != nullptr
 		)
 		{
 			if (m_verbose)
 				log::info << L"Unloading resource \"" << i->first.format() << L"\" (" << type_name(i->second->get()) << L")." << Endl;
-			i->second->replace(0);
+			i->second->replace(nullptr);
 		}
 	}
 }
@@ -374,7 +373,7 @@ void ResourceManager::getStatistics(ResourceManagerStatistics& outStatistics) co
 	outStatistics.residentCount = 0;
 	for (std::map< Guid, Ref< ResidentResourceHandle > >::const_iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
 	{
-		if (i->second->get() != 0)
+		if (i->second->get() != nullptr)
 			++outStatistics.residentCount;
 	}
 
@@ -398,7 +397,7 @@ const IResourceFactory* ResourceManager::findFactory(const TypeInfo& resourceTyp
 		if (is_type_of(*i->first, resourceType))
 			return i->second;
 	}
-	return 0;
+	return nullptr;
 }
 
 void ResourceManager::load(const db::Instance* instance, const IResourceFactory* factory, const TypeInfo& productType, ResourceHandle* handle)
