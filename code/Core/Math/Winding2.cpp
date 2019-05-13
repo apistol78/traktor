@@ -1,4 +1,5 @@
 #include <algorithm>
+#include "Core/Math/Line2.h"
 #include "Core/Math/Winding2.h"
 
 namespace traktor
@@ -70,6 +71,43 @@ bool Winding2::inside(const Vector2& pnt) const
 			c = !c;
 	}
 	return c;
+}
+
+Vector2 Winding2::closest(const Vector2& pnt) const
+{
+	// Check if point is inside winding.
+	if (inside(pnt))
+		return pnt;
+
+	float minD2 = std::numeric_limits< float >::max();
+	Vector2 minP(0.0f, 0.0f);
+
+	for (int32_t i = 0, j = int32_t(points.size()) - 1; i < int32_t(points.size()); j = i++)
+	{
+		const Vector2& pi = points[i];
+		const Vector2& pj = points[j];
+		Line2 ln(pi, pj);
+
+		// Project point onto edge line.
+		Vector2 pc = ln.project(pnt);
+
+		// Clamp projected point within edge.
+		float k = dot(pc - pi, ln.delta()) / (ln.length() * ln.length());
+		if (k < 0.0f)
+			pc = pi;
+		else if (k > 1.0f)
+			pc = pj;
+
+		// Check if projected point is closest.
+		float d2 = (pc - pnt).length2();
+		if (d2 < minD2)
+		{
+			minP = pc;
+			minD2 = d2;
+		}
+	}
+
+	return minP;
 }
 
 }
