@@ -27,6 +27,9 @@ public:
 
 	/*! \brief Check if point is within winding. */
 	bool inside(const Vector2& pnt) const;
+
+	/*! \brief Calculate closest point. */
+	Vector2 closest(const Vector2& pnt) const;
 };
 
 }
