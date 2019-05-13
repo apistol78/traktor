@@ -98,6 +98,7 @@ public:
 				for (auto tag : tags)
 					os << L"\t<tag>" << tag << L"</tag>" << Endl;
 				os << L"</tags>" << Endl;
+				return 200;
 			}
             else if (resource == L"/catalogue")
             {
@@ -190,9 +191,8 @@ public:
             fileStream = nullptr;
             return 200;
         }
-
-        log::error << L"Unhandled method." << Endl;        
-        return 404;
+		log::error << L"Unhandled method." << Endl;        
+		return 404;
 	}
 
 private:
