@@ -9,6 +9,73 @@ namespace traktor
 {
 	namespace illuminate
 	{
+		namespace
+		{
+
+class Barycentric
+{
+public:
+	Barycentric(
+		const Vector2& v0,
+		const Vector2& v1,
+		const Vector2& v2
+	)
+	:	m_v0(v0)
+	,	m_v1(v1)
+	,	m_v2(v2)
+	{
+		float denom = (v1.y - v2.y) * (v0.x - v2.x) + (v2.x - v1.x) * (v0.y - v2.y);
+		m_invDenom = 1.0f / denom;
+	}
+
+	Vector4 factors(const Vector2& pt) const
+	{
+		float alpha = ((m_v1.y - m_v2.y) * (pt.x - m_v2.x) + (m_v2.x - m_v1.x) * (pt.y - m_v2.y)) * m_invDenom;
+		float beta = ((m_v2.y - m_v0.y) * (pt.x - m_v2.x) + (m_v0.x - m_v2.x) * (pt.y - m_v2.y)) * m_invDenom;
+		float gamma = 1.0f - alpha - beta;
+		return Vector4(alpha, beta, gamma, 0.0f);
+	}
+
+	bool inside(const Vector2& pt) const
+	{
+		Vector4 f = factors(pt).xyz1();
+		return compareAllGreaterEqual(f, Vector4::zero());
+	}
+
+private:
+	Vector2 m_v0;
+	Vector2 m_v1;
+	Vector2 m_v2;
+	float m_invDenom;
+};
+
+class Interpolants
+{
+public:
+	Interpolants(
+		const Vector4 v0,
+		const Vector4 v1,
+		const Vector4 v2
+	)
+	:	m_v0(v0)
+	,	m_v1(v1)
+	,	m_v2(v2)
+	{
+	}
+
+	Vector4 evaluate(const Barycentric& bary, const Vector2& pt) const
+	{
+		Vector4 f = bary.factors(pt);
+		return m_v0 * f.x() + m_v1 * f.y() + m_v2 * f.z();
+	}
+
+private:
+	Vector4 m_v0;
+	Vector4 m_v1;
+	Vector4 m_v2;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.illuminate.GBuffer", GBuffer, Object)
 
@@ -44,84 +111,15 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			normals.push_back(transform * model.getNormal(normalIndex).xyz0());
 
 			uint32_t texCoordIndex = vertex.getTexCoord(texCoordChannel);
-			texCoords.points.push_back(model.getTexCoord(texCoordIndex) * Vector2(width - 1, height - 1));
+			texCoords.points.push_back(
+				model.getTexCoord(texCoordIndex) * Vector2(width - 1, height - 1)
+			);
 		}
 
 		// Triangulate winding so we can easily traverse lightmap fragments.
 		AlignedVector< Triangulator::Triangle > triangles;
 		Triangulator().freeze(texCoords.points, triangles);
 
-		// Trace edges first, store count in alpha so we can average.
-		for (const auto& triangle : triangles)
-		{
-			size_t i0 = triangle.indices[0];
-			size_t i1 = triangle.indices[1];
-			size_t i2 = triangle.indices[2];
-
-			const Vector4& p0 = positions[i0];
-			const Vector4& p1 = positions[i1];
-			const Vector4& p2 = positions[i2];
-
-			const Vector4& n0 = normals[i0];
-			const Vector4& n1 = normals[i1];
-			const Vector4& n2 = normals[i2];
-
-			const Vector2& tc0 = texCoords.points[i0];
-			const Vector2& tc1 = texCoords.points[i1];
-			const Vector2& tc2 = texCoords.points[i2];
-
-			Aabb2 aabb;
-			aabb.contain(tc0);
-			aabb.contain(tc1);
-			aabb.contain(tc2);
-
-			int32_t x0 = int32_t(aabb.mn.x);
-			int32_t x1 = int32_t(aabb.mx.x + 1);
-			int32_t y0 = int32_t(aabb.mn.y);
-			int32_t y1 = int32_t(aabb.mx.y + 1);
-
-			float denom = (tc1.y - tc2.y) * (tc0.x - tc2.x) + (tc2.x - tc1.x) * (tc0.y - tc2.y);
-			float invDenom = 1.0f / denom;
-
-			Winding2 wt;
-			wt.points.resize(3);
-			wt.points[0] = tc0;
-			wt.points[1] = tc1;
-			wt.points[2] = tc2;
-
-			for (int32_t y = y0; y <= y1; ++y)
-			{
-				for (int32_t x = x0; x <= x1; ++x)
-				{
-					const Vector2 pt(x + 0.5f, y + 0.5f);
-
-					bool inside1 = 
-						wt.inside(Vector2(x, y)) ||
-						wt.inside(Vector2(x + 1, y)) ||
-						wt.inside(Vector2(x, y + 1)) ||
-						wt.inside(Vector2(x + 1, y + 1));
-
-					float alpha = ((tc1.y - tc2.y) * (pt.x - tc2.x) + (tc2.x - tc1.x) * (pt.y - tc2.y)) * invDenom;
-					float beta = ((tc2.y - tc0.y) * (pt.x - tc2.x) + (tc0.x - tc2.x) * (pt.y - tc2.y)) * invDenom;
-					float gamma = 1.0f - alpha - beta;
-
-					bool inside2 = (alpha >= 0.0f && beta >= 0.0f && gamma >= 0.0f);
-
-					if (inside1 && !inside2)
-					{
-						Vector4 position = (p0 * Scalar(alpha) + p1 * Scalar(beta) + p2 * Scalar(gamma)).xyz1();
-						Vector4 normal = (n0 * Scalar(alpha) + n1 * Scalar(beta) + n2 * Scalar(gamma)).xyz0().normalized();
-
-						auto& elm = m_data[x + y * m_width];
-						elm.polygon = i;
-						elm.material = polygon.getMaterial();
-						elm.position = position;
-						elm.normal = normal;
-					}
-				}
-			}
-		}
-		
 		// Trace triangle interiors.
 		for (const auto& triangle : triangles)
 		{
@@ -129,81 +127,57 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			size_t i1 = triangle.indices[1];
 			size_t i2 = triangle.indices[2];
 
-			const Vector4& p0 = positions[i0];
-			const Vector4& p1 = positions[i1];
-			const Vector4& p2 = positions[i2];
+			Barycentric bary(
+				texCoords.points[i0],
+				texCoords.points[i1],
+				texCoords.points[i2]
+			);
 
-			const Vector4& n0 = normals[i0];
-			const Vector4& n1 = normals[i1];
-			const Vector4& n2 = normals[i2];
+			Interpolants ipolPositions(
+				positions[i0],
+				positions[i1],
+				positions[i2]
+			);
 
-			const Vector2& tc0 = texCoords.points[i0];
-			const Vector2& tc1 = texCoords.points[i1];
-			const Vector2& tc2 = texCoords.points[i2];
+			Interpolants ipolNormals(
+				normals[i0],
+				normals[i1],
+				normals[i2]
+			);
 
 			Aabb2 aabb;
-			aabb.contain(tc0);
-			aabb.contain(tc1);
-			aabb.contain(tc2);
+			aabb.contain(texCoords.points[i0]);
+			aabb.contain(texCoords.points[i1]);
+			aabb.contain(texCoords.points[i2]);
 
 			int32_t x0 = int32_t(aabb.mn.x);
 			int32_t x1 = int32_t(aabb.mx.x + 1);
 			int32_t y0 = int32_t(aabb.mn.y);
 			int32_t y1 = int32_t(aabb.mx.y + 1);
 
-			float denom = (tc1.y - tc2.y) * (tc0.x - tc2.x) + (tc2.x - tc1.x) * (tc0.y - tc2.y);
-			float invDenom = 1.0f / denom;
-
 			for (int32_t y = y0; y <= y1; ++y)
 			{
 				for (int32_t x = x0; x <= x1; ++x)
 				{
-					const Vector2 pt(x + 0.5f, y + 0.5f);
+					const Vector2 pt(x, y);
+					
+					bool inside = false;
+					for (int32_t dy = -3; dy <= 3; ++dy)
+					{
+						for (int32_t dx = -3; dx <= 3; ++dx)
+							inside |= bary.inside(pt + Vector2(dx, dy));
+					}
 
-					float alpha = ((tc1.y - tc2.y) * (pt.x - tc2.x) + (tc2.x - tc1.x) * (pt.y - tc2.y)) * invDenom;
-					float beta = ((tc2.y - tc0.y) * (pt.x - tc2.x) + (tc0.x - tc2.x) * (pt.y - tc2.y)) * invDenom;
-					float gamma = 1.0f - alpha - beta;
-
-					bool inside = (alpha >= 0.0f && beta >= 0.0f && gamma >= 0.0f);
 					if (inside)
 					{
-						Vector4 position = (p0 * Scalar(alpha) + p1 * Scalar(beta) + p2 * Scalar(gamma)).xyz1();
-						Vector4 normal = (n0 * Scalar(alpha) + n1 * Scalar(beta) + n2 * Scalar(gamma)).xyz0().normalized();
+						Vector2 cpt = pt; //texCoords.closest(pt);
 
 						auto& elm = m_data[x + y * m_width];
 						elm.polygon = i;
 						elm.material = polygon.getMaterial();
-						elm.position = position;
-						elm.normal = normal;
-					}
-				}
-			}
-		}
-	}
-
-	const int32_t c_offsets[][2] = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
-	for (int32_t i = 0; i < 16; ++i)
-	{
-		for (int32_t y = 0; y < m_height; ++y)
-		{
-			for (int32_t x = 0; x < m_width; ++x)
-			{
-				auto& elm = m_data[x + y * m_width];
-				if (elm.polygon != model::c_InvalidIndex)
-					continue;
-
-				for (int32_t i = 0; i < 4; ++i)
-				{
-					int32_t ox = x + c_offsets[i][0];
-					int32_t oy = y + c_offsets[i][1];
-					if (ox >= 0 && oy >= 0 && ox < m_width && oy < m_height)
-					{
-						const auto& elm2 = m_data[ox + oy * m_width];
-						if (elm2.polygon != model::c_InvalidIndex)
-						{
-							elm = elm2;
-							break;
-						}
+						elm.position = ipolPositions.evaluate(bary, cpt).xyz1();
+						elm.normal = ipolNormals.evaluate(bary, cpt).xyz0().normalized();
+						elm.delta = ipolPositions.evaluate(bary, cpt + Vector2(1.0f, 1.0f)).xyz1() - elm.position;
 					}
 				}
 			}

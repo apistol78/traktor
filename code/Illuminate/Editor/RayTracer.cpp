@@ -68,6 +68,20 @@ Ref< RayTracer::Context > RayTracer::createContext()
 	return new RayTracer::Context();
 }
 
+bool RayTracer::trace(Context* context, const Vector4& origin, const Vector4& direction, const Scalar& maxDistance, Result& outResult) const
+{
+	SahTree::QueryResult qr;
+	if (m_sah.queryClosestIntersection(origin, direction, maxDistance, -1, qr, context->sahCache))
+	{
+		outResult.distance = qr.distance;
+		outResult.position = qr.position;
+		outResult.normal = qr.normal;
+		return true;
+	}
+	else
+		return false;
+}
+
 Color4f RayTracer::traceDirect(Context* context, const Vector4& origin, const Vector4& normal) const
 {
 	return sampleAnalyticalLights(

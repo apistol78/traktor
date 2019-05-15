@@ -214,6 +214,10 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		}
 		else if (lightComponentData->getLightType() != world::LtProbe)
 			log::warning << L"IlluminateEntityPipeline warning; unsupported light type of light \"" << lightEntityData->getName() << L"\"." << Endl;
+
+		// Disable all dynamic lights in scene if we're tracing direct lighting also.
+		if (configuration->traceDirect())
+			lightComponentData->setIntensity(0.0f);
 	}
 
 	for (const auto meshEntityData : meshEntityDatas)
@@ -326,11 +330,15 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		log::info << L"Lumel density " << configuration->getLumelDensity() << L" lumels/unit => lightmap size " << outputSize << Endl;
 
 		// Unwrap lightmap UV.
-		uint32_t channel = model->addUniqueTexCoordChannel(L"Illuminate_LightmapUV");
-		if (!model::UnwrapUV(channel, outputSize).apply(*model))
+		uint32_t channel = 0;
+		if (configuration->getEnableAutoTexCoords())
 		{
-			log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV of model \"" << meshAsset->getFileName().getOriginal() << L"\"." << Endl;
-			return false;
+			channel = model->addUniqueTexCoordChannel(L"Illuminate_LightmapUV");
+			if (!model::UnwrapUV(channel, outputSize).apply(*model))
+			{
+				log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV of model \"" << meshAsset->getFileName().getOriginal() << L"\"." << Endl;
+				return false;
+			}
 		}
 
 		// Create G-Buffer of mesh's geometry.
@@ -350,31 +358,54 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 				if (elm.polygon == model::c_InvalidIndex)
 					continue;
 
-				const Vector4& position = elm.position;
-				const Vector4& normal = elm.normal;
+				Vector4 position = elm.position;
+				Vector4 normal = elm.normal;
+
+				if (configuration->getEnableShadowFix())
+				{
+					Vector4 u, v;
+					orthogonalFrame(normal, u, v);
+
+					const Scalar l = elm.delta.length();
+					const Vector4 d[] = { u, -u, v, -v };
+					for (int32_t i = 0; i < 8; ++i)
+					{
+						int32_t ii = i % 4;
+
+						RayTracer::Result result;
+						if (!tracer.trace(tracerContext, position + normal * Scalar(0.01f), d[ii], l, result))
+							continue;
+
+						if (dot3(result.normal, d[ii]) < 0.0f)
+							continue;
+
+						position = position + d[ii] * result.distance + result.normal * Scalar(0.01f);
+					}
+				}
 
 				Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
 				Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
-				Scalar occlusion(0.0f);
 
-				// if (configuration->traceDirect())
-				// 	direct = tracer.traceDirect(position, normal);
+				if (configuration->traceDirect())
+				 	direct = tracer.traceDirect(tracerContext, position, normal);
 
 				if (configuration->traceIndirect())
 					indirect = tracer.traceIndirect(tracerContext, position, normal);
 
-				// Color4f source = ((direct + indirect) * (Scalar(1.0f) - occlusion)).rgb1();
-				Color4f source = indirect.rgb1();
+				Color4f source = (direct + indirect).rgb1();
 				lightmap->setPixel(x, y, source);				
 			}
 		}
 
-		// Dilate lightmap to prevent leaking.
-		drawing::DilateFilter dilateFilter(3);
-		lightmap->apply(&dilateFilter);
+		if (configuration->getEnableDilate())
+		{
+			// Dilate lightmap to prevent leaking.
+			drawing::DilateFilter dilateFilter(3);
+			lightmap->apply(&dilateFilter);
+		}
 
-		// Blur indirect lightmap to reduce noise from path tracing.
-		//lightmap->apply(drawing::ConvolutionFilter::createGaussianBlur(1));
+		// // Blur indirect lightmap to reduce noise from path tracing.
+		// lightmap->apply(drawing::ConvolutionFilter::createGaussianBlur(1));
 
 		// Discard alpha.
 		lightmap->clearAlpha(1.0f);

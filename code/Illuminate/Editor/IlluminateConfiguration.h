@@ -37,6 +37,12 @@ public:
 
 	float getLumelDensity() const { return m_lumelDensity; }
 
+	bool getEnableAutoTexCoords() const { return m_enableAutoTexCoords; }
+
+	bool getEnableShadowFix() const { return m_enableShadowFix; }
+
+	bool getEnableDilate() const { return m_enableDilate; }
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -47,6 +53,9 @@ private:
 	uint32_t m_shadowSampleCount;
 	float m_pointLightShadowRadius;
 	float m_lumelDensity;
+	bool m_enableAutoTexCoords;
+	bool m_enableShadowFix;
+	bool m_enableDilate;
 };
 
 	}
