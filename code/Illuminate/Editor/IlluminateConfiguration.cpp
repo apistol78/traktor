@@ -8,7 +8,7 @@ namespace traktor
 	namespace illuminate
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.illuminate.IlluminateConfiguration", 0, IlluminateConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.illuminate.IlluminateConfiguration", 3, IlluminateConfiguration, ISerializable)
 
 IlluminateConfiguration::IlluminateConfiguration()
 :	m_seedGuid(Guid::create())
@@ -18,6 +18,9 @@ IlluminateConfiguration::IlluminateConfiguration()
 ,	m_shadowSampleCount(100)
 ,	m_pointLightShadowRadius(1.5f)
 ,	m_lumelDensity(4.0f)
+,	m_enableAutoTexCoords(true)
+,	m_enableShadowFix(true)
+,	m_enableDilate(true)
 {
 }
 
@@ -30,6 +33,15 @@ void IlluminateConfiguration::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"shadowSampleCount", m_shadowSampleCount);
 	s >> Member< float >(L"pointLightShadowRadius", m_pointLightShadowRadius);
 	s >> Member< float >(L"lumelDensity", m_lumelDensity);
+
+	if (s.getVersion() >= 2)
+		s >> Member< bool >(L"enableAutoTexCoords", m_enableAutoTexCoords);
+
+	if (s.getVersion() >= 1)
+		s >> Member< bool >(L"enableShadowFix", m_enableShadowFix);
+
+	if (s.getVersion() >= 3)
+		s >> Member< bool >(L"enableDilate", m_enableDilate);
 }
 
 	}
