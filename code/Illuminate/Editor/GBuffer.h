@@ -41,7 +41,11 @@ public:
 
 	bool create(int32_t width, int32_t height, const model::Model& model, const Transform& transform, uint32_t texCoordChannel);
 
+	void set(int32_t x, int32_t y, const Element& elm) { m_data[x + y * m_width] = elm; }
+
 	const Element& get(int32_t x, int32_t y) const { return m_data[x + y * m_width]; }
+
+	Element& get(int32_t x, int32_t y) { return m_data[x + y * m_width]; }
 
 	void saveAsImages(const std::wstring& outputPath) const;
 

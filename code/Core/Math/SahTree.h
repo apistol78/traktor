@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include "Core/Ref.h"
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
@@ -159,7 +158,7 @@ private:
 	struct Node
 	{
 		Aabb3 aabb;
-		std::vector< int32_t > indices;
+		AlignedVector< int32_t > indices;
 		int32_t axis;
 		Scalar split;
 		Node* leftChild;

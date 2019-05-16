@@ -1,3 +1,6 @@
+#include <algorithm>
+#include <functional>
+#include <vector>
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Triangulator.h"
 #include "Core/Math/Winding2.h"
@@ -11,6 +14,178 @@ namespace traktor
 	{
 		namespace
 		{
+
+void triangleTop(const Vector2& v1, const Vector2& v2, const Vector2& v3, const std::function< void(float, float) >& fn)
+{
+	Vector2 mn = min(v1, min(v2, v3));
+	Vector2 mx = max(v1, max(v2, v3));
+
+	if (std::fabs(v2.y - v1.y) <= 1.0f)
+	{
+		float mny = std::floor(v1.y);
+		float mxy = std::floor(v2.y) + 1.0f;
+		for (float y = mny; y <= mxy; y += 1.0f)
+		{
+			for (float x = mn.x - 1.0f; x <= mx.x + 1.0f; ++x)
+				fn(x, y);
+		}
+	}
+	else
+	{
+		float invslope1 = (v2.x - v1.x) / (v2.y - v1.y);
+		float invslope2 = (v3.x - v1.x) / (v3.y - v1.y);
+
+		if (invslope1 < invslope2)
+		{
+			float tmp = invslope1;
+			invslope1 = invslope2;
+			invslope2 = tmp;
+		}
+
+		float curx1 = v1.x;
+		float curx2 = v1.x;
+
+		float bias1 = std::fabs(invslope1);
+		float bias2 = std::fabs(invslope2);
+
+		float scanlineY = std::floor(v1.y);
+		for (; scanlineY <= std::floor(v2.y); scanlineY += 1.0f)
+		{
+			float sx = std::floor(curx2 - bias2);
+			float ex = std::floor(curx1 + bias1) + 1.0f;
+
+			if (sx < mn.x - 1.0f)
+				sx = mn.x - 1.0f;
+
+			if (ex > mx.x + 2.0f)
+				ex = mx.x + 2.0f;
+
+			for (float x = sx; x <= ex; ++x)
+				fn(x, scanlineY);
+
+			curx1 += invslope1;
+			curx2 += invslope2;
+		}
+	}
+}
+
+void triangleBottom(const Vector2& v1, const Vector2& v2, const Vector2& v3, const std::function< void(float, float) >& fn)
+{
+	Vector2 mn = min(v1, min(v2, v3));
+	Vector2 mx = max(v1, max(v2, v3));
+
+	if (std::fabs(v2.y - v3.y) <= 1.0f)
+	{
+		float mny = std::floor(v2.y);
+		float mxy = std::floor(v3.y) + 1.0f;
+		for (float y = mny; y <= mxy; y += 1.0f)
+		{
+			for (float x = mn.x - 1.0f; x <= mx.x + 1.0f; ++x)
+				fn(x, y);
+		}
+	}
+	else
+	{
+		float invslope1 = (v3.x - v1.x) / (v3.y - v1.y);
+		float invslope2 = (v3.x - v2.x) / (v3.y - v2.y);
+
+		if (invslope1 > invslope2)
+		{
+			float tmp = invslope1;
+			invslope1 = invslope2;
+			invslope2 = tmp;
+		}
+
+		float curx1 = v3.x;
+		float curx2 = v3.x;
+
+		float bias1 = std::fabs(invslope1);
+		float bias2 = std::fabs(invslope2);
+
+		float scanlineY = std::floor(v3.y) + 1.0f;
+		for (; scanlineY > std::floor(v1.y); scanlineY -= 1.0f)
+		{
+			float sx = std::floor(curx2 - bias2);
+			float ex = std::floor(curx1 + bias1) + 1.0f;
+
+			if (sx < mn.x - 1.0f)
+				sx = mn.x - 1.0f;
+
+			if (ex > mx.x + 2.0f)
+				ex = mx.x + 2.0f;
+
+			for (float x = sx; x <= ex; ++x)
+				fn(x, scanlineY);
+
+			curx1 -= invslope1;
+			curx2 -= invslope2;
+		}
+	}
+}
+
+void triangleVisit(const Vector2& v1, const Vector2& v2, const Vector2& v3, const std::function< void(float, float) >& fn)
+{
+	std::vector< Vector2 > v(3);
+	v[0] = v1;
+	v[1] = v2;
+	v[2] = v3;
+
+	std::sort(v.begin(), v.end(), [](const Vector2& a, const Vector2& b) {
+		return a.y < b.y;
+	});
+
+	Vector2 vm(
+		v[0].x + ((v[1].y - v[0].y) / (v[2].y - v[0].y)) * (v[2].x - v[0].x),
+		v[1].y
+	);
+	triangleTop(v[0], v[1], vm, fn);
+	triangleBottom(v[1], vm, v[2], fn);
+}
+
+
+Vector2 closestOnLine(const Vector2& v1, const Vector2& v2, const Vector2& pt)
+{
+	Vector2 d = v2 - v1;
+	Vector2 p = d.perpendicular().normalized();
+	float k = dot(p, pt - v1);
+
+	Vector2 pt0 = pt - p * k;
+
+	float k2 = dot(d, pt0- v1) / (d.length() * d.length());
+	if (k2 >= 0 && k2 <= 1)
+		return pt0;
+	else if (k2 < 0)
+		return v1;
+	else
+		return v2;
+}
+
+Vector2 closestOnTriangle(const Vector2& v1, const Vector2& v2, const Vector2& v3, const Vector2& pt)
+{
+	Vector2 p1 = closestOnLine(v1, v2, pt);
+	Vector2 p2 = closestOnLine(v2, v3, pt);
+	Vector2 p3 = closestOnLine(v3, v1, pt);
+
+	float ln1 = (p1 - pt).length();
+	float ln2 = (p2 - pt).length();
+	float ln3 = (p3 - pt).length();
+
+	if (ln1 < ln2)
+	{
+		if (ln1 < ln3)
+			return p1;
+	}
+	else
+	{
+		if (ln2 < ln3)
+			return p2;
+	}
+
+	return p3;
+}
+
+
+
 
 class Barycentric
 {
@@ -145,16 +320,48 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 				normals[i2]
 			);
 
-			Aabb2 aabb;
-			aabb.contain(texCoords.points[i0]);
-			aabb.contain(texCoords.points[i1]);
-			aabb.contain(texCoords.points[i2]);
+			triangleVisit(
+				texCoords.points[i0],
+				texCoords.points[i1],
+				texCoords.points[i2],
+				[&](float x, float y)
+				{
 
-			int32_t x0 = int32_t(aabb.mn.x);
-			int32_t x1 = int32_t(aabb.mx.x + 1);
-			int32_t y0 = int32_t(aabb.mn.y);
-			int32_t y1 = int32_t(aabb.mx.y + 1);
+					int32_t ix = (int32_t)x;
+					int32_t iy = (int32_t)y;
+					if (ix >= 0 && iy >= 0 && ix < width && iy < height)
+					{
+						Vector2 cpt(x, y);
 
+						bool inside = bary.inside(cpt);
+
+						if (!inside)
+						{
+							cpt = closestOnTriangle(
+								texCoords.points[i0],
+								texCoords.points[i1],
+								texCoords.points[i2],
+								cpt
+							);	
+						}
+
+						auto& elm = m_data[x + y * m_width];
+
+						if (!inside && elm.polygon != model::c_InvalidIndex)
+							return;
+
+						elm.polygon = i;
+						elm.material = polygon.getMaterial();
+						elm.position = ipolPositions.evaluate(bary, cpt).xyz1();
+						elm.normal = ipolNormals.evaluate(bary, cpt).xyz0().normalized();
+						elm.delta = ipolPositions.evaluate(bary, cpt + Vector2(1.0f, 1.0f)).xyz1() - elm.position;
+
+					}
+
+				}
+			);
+
+/*
 			for (int32_t y = y0; y <= y1; ++y)
 			{
 				for (int32_t x = x0; x <= x1; ++x)
@@ -162,25 +369,30 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 					const Vector2 pt(x, y);
 					
 					bool inside = false;
-					for (int32_t dy = -3; dy <= 3; ++dy)
+					for (int32_t dy = -1; dy <= 1; ++dy)
 					{
-						for (int32_t dx = -3; dx <= 3; ++dx)
+						for (int32_t dx = -1; dx <= 1; ++dx)
 							inside |= bary.inside(pt + Vector2(dx, dy));
 					}
 
 					if (inside)
 					{
-						Vector2 cpt = pt; //texCoords.closest(pt);
-
 						auto& elm = m_data[x + y * m_width];
-						elm.polygon = i;
-						elm.material = polygon.getMaterial();
-						elm.position = ipolPositions.evaluate(bary, cpt).xyz1();
-						elm.normal = ipolNormals.evaluate(bary, cpt).xyz0().normalized();
-						elm.delta = ipolPositions.evaluate(bary, cpt + Vector2(1.0f, 1.0f)).xyz1() - elm.position;
+						bool center = bary.inside(pt);
+						if (center || elm.polygon == model::c_InvalidIndex)
+						{
+							Vector2 cpt = center ? pt : texCoords.closest(pt);
+
+							elm.polygon = i;
+							elm.material = polygon.getMaterial();
+							elm.position = ipolPositions.evaluate(bary, cpt).xyz1();
+							elm.normal = ipolNormals.evaluate(bary, cpt).xyz0().normalized();
+							elm.delta = ipolPositions.evaluate(bary, cpt + Vector2(1.0f, 1.0f)).xyz1() - elm.position;
+						}
 					}
 				}
 			}
+*/
 		}
 	}
 

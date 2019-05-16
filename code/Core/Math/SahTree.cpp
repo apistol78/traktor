@@ -104,21 +104,21 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 
 		if (IS_LEAF(N))
 		{
-			for (std::vector< int32_t >::const_iterator i = N->indices.begin(); i != N->indices.end(); ++i)
+			for (auto index : N->indices)
 			{
-				if (tags[*i])
+				if (tags[index])
 					continue;
 
-				const Plane& plane = m_planes[*i];
+				const Plane& plane = m_planes[index];
 				if (plane.rayIntersection(origin, direction, T, p) && T > 0.0f && T <= outResult.distance)
 				{
 					Vector2 pnt(
-						dot3(m_projectedU[*i], p),
-						dot3(m_projectedV[*i], p)
+						dot3(m_projectedU[index], p),
+						dot3(m_projectedV[index], p)
 					);
-					if (m_projected[*i].inside(pnt))
+					if (m_projected[index].inside(pnt))
 					{
-						outResult.index = *i;
+						outResult.index = index;
 						outResult.distance = T;
 						outResult.position = origin + direction * T;
 						outResult.normal = plane.normal();
@@ -126,7 +126,7 @@ bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& dir
 					}
 				}
 
-				tags.set(*i);
+				tags.set(index);
 			}
 		}
 		else
@@ -199,23 +199,23 @@ bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& directi
 
 		if (IS_LEAF(N))
 		{
-			for (std::vector< int32_t >::const_iterator i = N->indices.begin(); i != N->indices.end(); ++i)
+			for (auto index : N->indices)
 			{
-				if (tags[*i])
+				if (tags[index])
 					continue;
 
-				const Plane& plane = m_planes[*i];
+				const Plane& plane = m_planes[index];
 				if (plane.rayIntersection(origin, direction, T, p) && T > 0.0f && T < md)
 				{
 					Vector2 pnt(
-						dot3(m_projectedU[*i], p),
-						dot3(m_projectedV[*i], p)
+						dot3(m_projectedU[index], p),
+						dot3(m_projectedV[index], p)
 					);
-					if (m_projected[*i].inside(pnt))
+					if (m_projected[index].inside(pnt))
 						return true;
 				}
 
-				tags.set(*i);
+				tags.set(index);
 			}
 		}
 		else
@@ -273,9 +273,9 @@ void SahTree::buildNode(Node* node, int32_t depth)
 	AlignedVector< std::pair< float, float > > spatialRanges;
 
 	spatialRanges.reserve(node->indices.size());
-	for (std::vector< int32_t >::const_iterator i = node->indices.begin(); i != node->indices.end(); ++i)
+	for (auto index : node->indices)
 	{
-		const Winding3& polygon = m_polygons[*i];
+		const Winding3& polygon = m_polygons[index];
 		const Winding3::points_t& points = polygon.getPoints();
 
 		std::pair< float, float > range(
@@ -357,10 +357,10 @@ void SahTree::buildNode(Node* node, int32_t depth)
 		return;
 
 	// Split triangles into left and right sets.
-	std::vector< int32_t > leftIndices, rightIndices;
+	AlignedVector< int32_t > leftIndices, rightIndices;
 	leftIndices.reserve(bestCandidate->countLeft);
 	rightIndices.reserve(bestCandidate->countRight);
-	for (std::vector< int32_t >::iterator i = node->indices.begin(); i != node->indices.end(); ++i)
+	for (AlignedVector< int32_t >::iterator i = node->indices.begin(); i != node->indices.end(); ++i)
 	{
 		const std::pair< float, float >& range = spatialRanges[std::distance(node->indices.begin(), i)];
 		if (range.first <= bestCandidate->position)
