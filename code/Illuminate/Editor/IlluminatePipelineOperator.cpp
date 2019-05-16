@@ -346,28 +346,26 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		gbuffer.create(outputSize, outputSize, *model, meshEntityData->getTransform(), channel);
 		gbuffer.saveAsImages(meshEntityData->getName() + L"_GBuffer");
 
-		// Trace lightmap.
-		Ref< drawing::Image > lightmap = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
-		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-
-		for (int32_t y = 0; y < outputSize; ++y)
+		// Adjust gbuffer positions to help fix some shadowing issues.
+		if (configuration->getEnableShadowFix())
 		{
-			for (int32_t x = 0; x < outputSize; ++x)
+			for (int32_t y = 0; y < outputSize; ++y)
 			{
-				const auto& elm = gbuffer.get(x, y);
-				if (elm.polygon == model::c_InvalidIndex)
-					continue;
-
-				Vector4 position = elm.position;
-				Vector4 normal = elm.normal;
-
-				if (configuration->getEnableShadowFix())
+				for (int32_t x = 0; x < outputSize; ++x)
 				{
+					auto& elm = gbuffer.get(x, y);
+					if (elm.polygon == model::c_InvalidIndex)
+						continue;
+
+					Vector4 position = elm.position;
+					Vector4 normal = elm.normal;
+
 					Vector4 u, v;
 					orthogonalFrame(normal, u, v);
 
 					const Scalar l = elm.delta.length();
 					const Vector4 d[] = { u, -u, v, -v };
+
 					for (int32_t i = 0; i < 8; ++i)
 					{
 						int32_t ii = i % 4;
@@ -376,25 +374,60 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 						if (!tracer.trace(tracerContext, position + normal * Scalar(0.01f), d[ii], l, result))
 							continue;
 
-						if (dot3(result.normal, d[ii]) < 0.0f)
+						if (dot3(result.normal, d[ii]) > 0.0f)
 							continue;
 
 						position = position + d[ii] * result.distance + result.normal * Scalar(0.01f);
 					}
 				}
-
-				Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
-				Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
-
-				if (configuration->traceDirect())
-				 	direct = tracer.traceDirect(tracerContext, position, normal);
-
-				if (configuration->traceIndirect())
-					indirect = tracer.traceIndirect(tracerContext, position, normal);
-
-				Color4f source = (direct + indirect).rgb1();
-				lightmap->setPixel(x, y, source);				
 			}
+		}
+
+		// Trace lightmap.
+		Ref< drawing::Image > lightmap = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
+		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+		for (int32_t ty = 0; ty < outputSize; ty += 16)
+		{
+			for (int32_t tx = 0; tx < outputSize; tx += 16)
+			{
+				auto job = JobManager::getInstance().add(makeFunctor([&, tx, ty]() {
+					Ref< RayTracer::Context > context = tracer.createContext();
+					for (int32_t y = ty; y < ty + 16; ++y)
+					{
+						for (int32_t x = tx; x < tx + 16; ++x)
+						{
+							const auto& elm = gbuffer.get(x, y);
+							if (elm.polygon == model::c_InvalidIndex)
+								continue;
+
+							Vector4 position = elm.position;
+							Vector4 normal = elm.normal;
+
+							Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
+							Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
+
+							if (configuration->traceDirect())
+								direct = tracer.traceDirect(context, position, normal);
+
+							if (configuration->traceIndirect())
+								indirect = tracer.traceIndirect(context, position, normal);
+
+							Color4f source = (direct + indirect).rgb1();
+							lightmap->setPixel(x, y, source);				
+						}
+					}
+				}));
+				if (!job)
+					return false;
+
+				jobs.push_back(job);
+			}
+		}
+		while (!jobs.empty())
+		{
+			jobs.back()->wait();
+			jobs.pop_back();
 		}
 
 		if (configuration->getEnableDilate())
