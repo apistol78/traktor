@@ -414,7 +414,9 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 								indirect = tracer.traceIndirect(context, position, normal);
 
 							Color4f source = (direct + indirect).rgb1();
-							lightmap->setPixel(x, y, source);				
+							lightmap->setPixel(x, y, source);
+
+							// lightmap->setPixel(x, y, Color4f(position));
 						}
 					}
 				}));
@@ -453,7 +455,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 
 		// Create a texture build step.
 		Ref< render::TextureOutput > textureOutput = new render::TextureOutput();
-		textureOutput->m_textureFormat = render::TfR16G16B16A16F;
+		textureOutput->m_textureFormat = render::TfR32G32B32A32F; // TfR16G16B16A16F;
 		textureOutput->m_keepZeroAlpha = false;
 		textureOutput->m_hasAlpha = false;
 		textureOutput->m_ignoreAlpha = true;
