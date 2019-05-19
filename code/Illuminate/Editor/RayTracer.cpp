@@ -147,7 +147,7 @@ Color4f RayTracer::sampleAnalyticalLights(Context* context, const Vector4& origi
 			}
 			break;
 
-			case Light::LtPoint:
+		case Light::LtPoint:
 			{
 				Vector4 lightDirection = (light.position - origin).xyz0();
 				Scalar lightDistance = lightDirection.normalize();

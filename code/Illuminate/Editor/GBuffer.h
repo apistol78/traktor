@@ -26,6 +26,7 @@ public:
 		Vector4 position;
 		Vector4 normal;
 		Vector4 delta;
+		bool inside;
 		
 		Element()
 		:	polygon(model::c_InvalidIndex)
@@ -33,6 +34,7 @@ public:
 		,	position(Vector4::origo())
 		,	normal(Vector4::zero())
 		,	delta(Vector4::zero())
+		,	inside(false)
 		{
 		}
 	};

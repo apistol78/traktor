@@ -1,7 +1,9 @@
 #include <algorithm>
 #include <functional>
 #include <vector>
+#include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
+#include "Core/Math/Format.h"
 #include "Core/Math/Triangulator.h"
 #include "Core/Math/Winding2.h"
 #include "Drawing/Image.h"
@@ -22,9 +24,7 @@ void triangleTop(const Vector2& v1, const Vector2& v2, const Vector2& v3, const 
 
 	if (std::fabs(v2.y - v1.y) <= 1.0f)
 	{
-		float mny = std::floor(v1.y);
-		float mxy = std::floor(v2.y) + 1.0f;
-		for (float y = mny; y <= mxy; y += 1.0f)
+		for (float y = std::floor(mn.y); y <= std::ceil(mx.y); y += 1.0f)
 		{
 			for (float x = mn.x - 1.0f; x <= mx.x + 1.0f; ++x)
 				fn(x, y);
@@ -49,13 +49,13 @@ void triangleTop(const Vector2& v1, const Vector2& v2, const Vector2& v3, const 
 		float bias2 = std::fabs(invslope2);
 
 		float scanlineY = std::floor(v1.y);
-		for (; scanlineY <= std::floor(v2.y); scanlineY += 1.0f)
+		for (; scanlineY <= std::ceil(v2.y); scanlineY += 1.0f)
 		{
-			float sx = std::floor(curx2 - bias2);
-			float ex = std::floor(curx1 + bias1) + 1.0f;
+			float sx = std::floor(curx2 - bias2) - 1.0f;
+			float ex = std::ceil(curx1 + bias1) + 1.0f;
 
-			if (sx < mn.x - 1.0f)
-				sx = mn.x - 1.0f;
+			if (sx < mn.x - 2.0f)
+				sx = mn.x - 2.0f;
 
 			if (ex > mx.x + 2.0f)
 				ex = mx.x + 2.0f;
@@ -76,9 +76,7 @@ void triangleBottom(const Vector2& v1, const Vector2& v2, const Vector2& v3, con
 
 	if (std::fabs(v2.y - v3.y) <= 1.0f)
 	{
-		float mny = std::floor(v2.y);
-		float mxy = std::floor(v3.y) + 1.0f;
-		for (float y = mny; y <= mxy; y += 1.0f)
+		for (float y = std::floor(mn.y); y <= std::ceil(mx.y); y += 1.0f)
 		{
 			for (float x = mn.x - 1.0f; x <= mx.x + 1.0f; ++x)
 				fn(x, y);
@@ -102,14 +100,14 @@ void triangleBottom(const Vector2& v1, const Vector2& v2, const Vector2& v3, con
 		float bias1 = std::fabs(invslope1);
 		float bias2 = std::fabs(invslope2);
 
-		float scanlineY = std::floor(v3.y) + 1.0f;
+		float scanlineY = std::ceil(v3.y) + 1.0f;
 		for (; scanlineY > std::floor(v1.y); scanlineY -= 1.0f)
 		{
-			float sx = std::floor(curx2 - bias2);
-			float ex = std::floor(curx1 + bias1) + 1.0f;
+			float sx = std::floor(curx2 - bias2) - 1.0f;
+			float ex = std::ceil(curx1 + bias1) + 1.0f;
 
-			if (sx < mn.x - 1.0f)
-				sx = mn.x - 1.0f;
+			if (sx < mn.x - 2.0f)
+				sx = mn.x - 2.0f;
 
 			if (ex > mx.x + 2.0f)
 				ex = mx.x + 2.0f;
@@ -183,8 +181,6 @@ Vector2 closestOnTriangle(const Vector2& v1, const Vector2& v2, const Vector2& v
 
 	return p3;
 }
-
-
 
 
 class Barycentric
@@ -287,7 +283,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 
 			uint32_t texCoordIndex = vertex.getTexCoord(texCoordChannel);
 			texCoords.points.push_back(
-				model.getTexCoord(texCoordIndex) * Vector2(width - 1, height - 1)
+				model.getTexCoord(texCoordIndex) * Vector2(width, height) - Vector2(0.5f, 0.5f) // - 1, height - 1)
 			);
 		}
 
@@ -331,19 +327,19 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 					int32_t iy = (int32_t)y;
 					if (ix >= 0 && iy >= 0 && ix < width && iy < height)
 					{
-						Vector2 cpt(x, y);
+						Vector2 cpt(ix, iy);
 
 						bool inside = bary.inside(cpt);
 
-						if (!inside)
-						{
-							cpt = closestOnTriangle(
-								texCoords.points[i0],
-								texCoords.points[i1],
-								texCoords.points[i2],
-								cpt
-							);	
-						}
+						// if (!inside)
+						// {
+						// 	cpt = closestOnTriangle(
+						// 		texCoords.points[i0],
+						// 		texCoords.points[i1],
+						// 		texCoords.points[i2],
+						// 		cpt
+						// 	);	
+						// }
 
 						auto& elm = m_data[x + y * m_width];
 
@@ -355,6 +351,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 						elm.position = ipolPositions.evaluate(bary, cpt).xyz1();
 						elm.normal = ipolNormals.evaluate(bary, cpt).xyz0().normalized();
 						elm.delta = ipolPositions.evaluate(bary, cpt + Vector2(1.0f, 1.0f)).xyz1() - elm.position;
+						elm.inside = inside;
 
 					}
 
