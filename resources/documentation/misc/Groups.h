@@ -1,6 +1,4 @@
 
-/*! \defgroup Amalgam Amalgam */
-
 /*! \defgroup AI AI */
 
 /*! \defgroup Core Core */
@@ -11,30 +9,24 @@
 /*! \defgroup Model Intermediate 3D model library. */
 
 /*! \defgroup UI User interface */
-/*! \defgroup UIC User interface - Custom widgets */
 /*! \defgroup UIW32 User interface - Win32 backend */
 
 /*! \defgroup Editor Editor */
 
 /*! \defgroup Resource Resource system */
-
-/*! \defgroup Graphics Graphics */
-/*! \defgroup GDI Graphics - GDI */
+/*! \defgroup Runtime Runtime */
 
 /*! \defgroup Render Render */
-/*! \defgroup DX9 Render - DirectX 9 */
-/*! \defgroup DX10 Render - DirectX 10 */
 /*! \defgroup DX11 Render - DirectX 11 */
 /*! \defgroup OGL Render - OpenGL */
-/*! \defgroup SW Render - Software */
-/*! \defgroup Xbox360 Render - Xbox 360 */
 /*! \defgroup PS3 Render - Playstation 3 libGCM */
+/*! \defgroup GNM Render - Playstation 4 libGNM */
+/*! \defgroup Vulkan Render - Vulkan */
 
 /*! \defgroup Animation Animation */
 
 /*! \defgroup Script Scripting */
 /*! \defgroup LUA Scripting - LUA */
-/*! \defgroup JS Scripting - JavaScript */
 
 /*! \defgroup Physics Physics */
 /*! \defgroup Bullet Physics - Bullet */
@@ -54,8 +46,9 @@
 
 /*! \defgroup Flash SWF player */
 
-/*! \defgroup HTML HTML Parser */
-/*! \defgroup XML XML Parser */
+/*! \defgroup HTML HTML parser */
+/*! \defgroup XML XML parser */
+/*! \defgroup JSON JSON parser */
 
 /*! \defgroup Online Online services */
 
