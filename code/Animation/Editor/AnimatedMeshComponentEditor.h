@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Scene/Editor/DefaultEntityEditor.h"
+#include "Scene/Editor/DefaultComponentEditor.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,21 +18,14 @@ namespace traktor
 /*! \brief
  * \ingroup Animation
  */
-class T_DLLCLASS AnimatedMeshEntityEditor : public scene::DefaultEntityEditor
+class T_DLLCLASS AnimatedMeshComponentEditor : public scene::DefaultComponentEditor
 {
 	T_RTTI_CLASS;
 
 public:
-	AnimatedMeshEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
-
-	virtual bool handleCommand(const ui::Command& command) override final;
+	AnimatedMeshComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
 
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
-
-private:
-	Color4ub m_colorBone;
-
-	void updateSettings();
 };
 
 	}

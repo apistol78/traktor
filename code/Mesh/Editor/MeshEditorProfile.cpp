@@ -1,15 +1,11 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Database/Instance.h"
-#include "Mesh/MeshEntityData.h"
-#include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshComponentRenderer.h"
-#include "Mesh/MeshEntityRenderer.h"
+#include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshFactory.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshEditorProfile.h"
-#include "Mesh/Editor/Batch/BatchMeshEntityFactory.h"
 #include "Mesh/Instance/InstanceMeshComponentRenderer.h"
-#include "Mesh/Instance/InstanceMeshEntityRenderer.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
 
@@ -53,7 +49,6 @@ void MeshEditorProfile::createEntityFactories(
 ) const
 {
 	outEntityFactories.push_back(new mesh::MeshEntityFactory(context->getResourceManager()));
-	outEntityFactories.push_back(new mesh::BatchMeshEntityFactory(context->getResourceManager()));
 }
 
 void MeshEditorProfile::createEntityRenderers(
@@ -64,9 +59,7 @@ void MeshEditorProfile::createEntityRenderers(
 ) const
 {
 	outEntityRenderers.push_back(new mesh::MeshComponentRenderer());
-	outEntityRenderers.push_back(new mesh::MeshEntityRenderer());
 	outEntityRenderers.push_back(new mesh::InstanceMeshComponentRenderer());
-	outEntityRenderers.push_back(new mesh::InstanceMeshEntityRenderer());
 }
 
 void MeshEditorProfile::createControllerEditorFactories(
@@ -95,18 +88,20 @@ Ref< world::EntityData > MeshEditorProfile::createEntityData(
 	db::Instance* instance
 ) const
 {
-	const TypeInfo* primaryType = instance->getPrimaryType();
-	if (!primaryType)
-		return 0;
+	//const TypeInfo* primaryType = instance->getPrimaryType();
+	//if (!primaryType)
+	//	return 0;
 
-	if (!is_type_of< MeshAsset >(*primaryType))
-		return 0;
+	//if (!is_type_of< MeshAsset >(*primaryType))
+	//	return 0;
 
-	Ref< MeshEntityData > entityData = new MeshEntityData();
-	entityData->setName(instance->getName());
-	entityData->setMesh(resource::Id< IMesh >(instance->getGuid()));
+	//Ref< MeshEntityData > entityData = new MeshEntityData();
+	//entityData->setName(instance->getName());
+	//entityData->setMesh(resource::Id< IMesh >(instance->getGuid()));
 
-	return entityData;
+	//return entityData;
+
+	return nullptr;
 }
 
 void MeshEditorProfile::getDebugTargets(

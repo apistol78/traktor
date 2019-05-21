@@ -35,9 +35,9 @@ class T_DLLCLASS DefaultComponentEditor : public IComponentEditor
 public:
 	DefaultComponentEditor(SceneEditorContext* context, EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
 
-	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override;
 
-private:
+protected:
 	SceneEditorContext* m_context;
 	EntityAdapter* m_entityAdapter;
 	world::IEntityComponentData* m_componentData;

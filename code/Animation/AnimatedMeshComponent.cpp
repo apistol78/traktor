@@ -1,5 +1,5 @@
 #include <cmath>
-#include "Animation/AnimatedMeshEntity.h"
+#include "Animation/AnimatedMeshComponent.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
 #include "Animation/IPoseController.h"
@@ -7,7 +7,9 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/JobManager.h"
+#include "Mesh/MeshCulling.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
+#include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
@@ -27,9 +29,9 @@ render::handle_t s_handleWorld_ShadowWrite;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshEntity", AnimatedMeshEntity, mesh::MeshEntity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponent", AnimatedMeshComponent, mesh::MeshComponent)
 
-AnimatedMeshEntity::AnimatedMeshEntity(
+AnimatedMeshComponent::AnimatedMeshComponent(
 	const Transform& transform,
 	const resource::Proxy< mesh::SkinnedMesh >& mesh,
 	const resource::Proxy< Skeleton >& skeleton,
@@ -40,7 +42,7 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 	bool normalizeTransform,
 	bool screenSpaceCulling
 )
-:	mesh::MeshEntity(transform, screenSpaceCulling)
+:	mesh::MeshComponent(screenSpaceCulling)
 ,	m_mesh(mesh)
 ,	m_skeleton(skeleton)
 ,	m_poseController(poseController)
@@ -75,24 +77,24 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 	}
 }
 
-AnimatedMeshEntity::~AnimatedMeshEntity()
+AnimatedMeshComponent::~AnimatedMeshComponent()
 {
 }
 
-void AnimatedMeshEntity::destroy()
+void AnimatedMeshComponent::destroy()
 {
 	synchronize();
 
 	safeDestroy(m_poseController);
 
-	for (std::vector< Binding >::iterator i = m_bindings.begin(); i != m_bindings.end(); ++i)
-		safeDestroy(i->entity);
+	for (auto binding : m_bindings)
+		safeDestroy(binding.entity);
 	m_bindings.clear();
 
-	mesh::MeshEntity::destroy();
+	mesh::MeshComponent::destroy();
 }
 
-Aabb3 AnimatedMeshEntity::getBoundingBox() const
+Aabb3 AnimatedMeshComponent::getBoundingBox() const
 {
 	synchronize();
 
@@ -111,19 +113,26 @@ Aabb3 AnimatedMeshEntity::getBoundingBox() const
 	return boundingBox;
 }
 
-bool AnimatedMeshEntity::supportTechnique(render::handle_t technique) const
+void AnimatedMeshComponent::render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass)
 {
-	return m_mesh->supportTechnique(technique);
-}
+	if (!m_mesh->supportTechnique(worldRenderPass.getTechnique()))
+		return;
 
-void AnimatedMeshEntity::render(
-	world::WorldContext& worldContext,
-	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass,
-	float distance
-)
-{
 	synchronize();
+
+	Transform worldTransform = m_transform.get(worldRenderView.getInterval());
+	Transform lastWorldTransform = m_transform.get(worldRenderView.getInterval() - 1.0f);
+
+	float distance = 0.0f;
+	if (!mesh::isMeshVisible(
+		m_mesh->getBoundingBox(),
+		worldRenderView.getCullFrustum(),
+		worldRenderView.getView() * worldTransform.toMatrix44(),
+		worldRenderView.getProjection(),
+		m_screenSpaceCulling ? 0.0001f : 0.0f,
+		distance
+	))
+		return;
 
 	const AlignedVector< Vector4 >& skinTransforms0 = m_skinTransforms[1 - m_index];
 	const AlignedVector< Vector4 >& skinTransforms1 = m_skinTransforms[m_index];
@@ -141,15 +150,15 @@ void AnimatedMeshEntity::render(
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderPass,
-		m_transform.get(worldRenderView.getInterval() - 1.0f),
-		m_transform.get(worldRenderView.getInterval()),
+		lastWorldTransform,
+		worldTransform,
 		m_skinTransforms[2],
 		distance,
 		getParameterCallback()
 	);
 
-	for (std::vector< Binding >::iterator i = m_bindings.begin(); i != m_bindings.end(); ++i)
-		worldContext.build(worldRenderView, worldRenderPass, i->entity);
+	for (auto binding : m_bindings)
+		worldContext.build(worldRenderView, worldRenderPass, binding.entity);
 
 	// If only entity's shadow is visible then reduce frequency of controller updates.
 	if (m_updateController == 0 && worldRenderPass.getTechnique() == s_handleWorld_ShadowWrite)
@@ -164,7 +173,7 @@ void AnimatedMeshEntity::render(
 	}
 }
 
-void AnimatedMeshEntity::update(const world::UpdateParams& update)
+void AnimatedMeshComponent::update(const world::UpdateParams& update)
 {
 	if (m_updateController == 1)
 	{
@@ -199,9 +208,9 @@ void AnimatedMeshEntity::update(const world::UpdateParams& update)
 		m_index = 1 - m_index;
 
 #if defined(T_USE_UPDATE_JOBS)
-		m_updatePoseControllerJob = JobManager::getInstance().add(makeFunctor< AnimatedMeshEntity, int32_t, float >(
+		m_updatePoseControllerJob = JobManager::getInstance().add(makeFunctor< AnimatedMeshComponent, int32_t, float >(
 			this,
-			&AnimatedMeshEntity::updatePoseController,
+			&AnimatedMeshComponent::updatePoseController,
 			m_index,
 			update.deltaTime
 		));
@@ -227,19 +236,19 @@ void AnimatedMeshEntity::update(const world::UpdateParams& update)
 	if (m_updateController > 0)
 		--m_updateController;
 
-	mesh::MeshEntity::update(update);
+	mesh::MeshComponent::update(update);
 }
 
-void AnimatedMeshEntity::setTransform(const Transform& transform)
+void AnimatedMeshComponent::setTransform(const Transform& transform)
 {
 	// Let pose controller know that entity has been manually repositioned.
 	if (m_poseController)
 		m_poseController->setTransform(transform);
 
-	mesh::MeshEntity::setTransform(transform);
+	mesh::MeshComponent::setTransform(transform);
 }
 
-bool AnimatedMeshEntity::getJointTransform(render::handle_t jointName, Transform& outTransform) const
+bool AnimatedMeshComponent::getJointTransform(render::handle_t jointName, Transform& outTransform) const
 {
 	uint32_t index;
 	if (!m_skeleton->findJoint(jointName, index))
@@ -254,7 +263,7 @@ bool AnimatedMeshEntity::getJointTransform(render::handle_t jointName, Transform
 	return true;
 }
 
-bool AnimatedMeshEntity::getPoseTransform(render::handle_t jointName, Transform& outTransform) const
+bool AnimatedMeshComponent::getPoseTransform(render::handle_t jointName, Transform& outTransform) const
 {
 	uint32_t index;
 	if (!m_skeleton->findJoint(jointName, index))
@@ -269,7 +278,7 @@ bool AnimatedMeshEntity::getPoseTransform(render::handle_t jointName, Transform&
 	return true;
 }
 
-bool AnimatedMeshEntity::getSkinTransform(render::handle_t jointName, Transform& outTransform) const
+bool AnimatedMeshComponent::getSkinTransform(render::handle_t jointName, Transform& outTransform) const
 {
 	uint32_t index;
 	if (!m_skeleton->findJoint(jointName, index))
@@ -294,7 +303,7 @@ bool AnimatedMeshEntity::getSkinTransform(render::handle_t jointName, Transform&
 	return true;
 }
 
-bool AnimatedMeshEntity::setPoseTransform(render::handle_t jointName, const Transform& transform, bool inclusive)
+bool AnimatedMeshComponent::setPoseTransform(render::handle_t jointName, const Transform& transform, bool inclusive)
 {
 	uint32_t index;
 	if (!m_skeleton->findJoint(jointName, index))
@@ -319,14 +328,14 @@ bool AnimatedMeshEntity::setPoseTransform(render::handle_t jointName, const Tran
 
 		m_skeleton->findChildren(index, children);
 
-		for (std::vector< uint32_t >::const_iterator i = children.begin(); i != children.end(); ++i)
-			m_poseTransforms[*i] = delta * m_jointTransforms[*i];
+		for (auto child : children)
+			m_poseTransforms[child] = delta * m_jointTransforms[child];
 	}
 
 	return true;
 }
 
-void AnimatedMeshEntity::synchronize() const
+void AnimatedMeshComponent::synchronize() const
 {
 #if defined(T_USE_UPDATE_JOBS)
 	if (m_updatePoseControllerJob)
@@ -337,7 +346,7 @@ void AnimatedMeshEntity::synchronize() const
 #endif
 }
 
-void AnimatedMeshEntity::updatePoseController(int32_t index, float deltaTime)
+void AnimatedMeshComponent::updatePoseController(int32_t index, float deltaTime)
 {
 	bool updateController = false;
 

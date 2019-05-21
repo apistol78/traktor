@@ -27,7 +27,6 @@
 #include "Heightfield/Editor/OcclusionTextureAsset.h"
 #include "Heightfield/Editor/OcclusionTexturePipeline.h"
 #include "Mesh/MeshComponentData.h"
-#include "Mesh/MeshEntityData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
@@ -68,11 +67,11 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 		{
 			Ref< const ISerializable > externalEntityData = pipeline->getObjectReadOnly(externalEntityDataRef->getEntityData());
 			if (!externalEntityData)
-				return 0;
+				return nullptr;
 
 			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(pipeline, externalEntityData));
 			if (!resolvedEntityData)
-				return 0;
+				return nullptr;
 
 			resolvedEntityData->setName(externalEntityDataRef->getName());
 			resolvedEntityData->setTransform(externalEntityDataRef->getTransform());
@@ -100,14 +99,7 @@ void collectMeshes(const ISerializable* object, AlignedVector< MeshAndTransform 
 		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
 		objectMembers.pop_front();
 
-		if (mesh::MeshEntityData* meshEntityData = dynamic_type_cast< mesh::MeshEntityData* >(objectMember->get()))
-		{
-			MeshAndTransform mat;
-			mat.mesh = meshEntityData->getMesh();
-			mat.transform = meshEntityData->getTransform();
-			outMeshes.push_back(mat);
-		}
-		else if (world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(objectMember->get()))
+		if (world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(objectMember->get()))
 		{
 			mesh::MeshComponentData* meshComponentData = componentEntityData->getComponent< mesh::MeshComponentData >();
 			if (meshComponentData)

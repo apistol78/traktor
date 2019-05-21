@@ -6,7 +6,7 @@
 #include "Ai/NavMeshResource.h"
 #include "Ai/Editor/NavMeshAsset.h"
 #include "Ai/Editor/NavMeshPipeline.h"
-#include "Animation/AnimatedMeshEntityData.h"
+#include "Animation/AnimatedMeshComponentData.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -29,7 +29,6 @@
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Mesh/MeshComponentData.h"
-#include "Mesh/MeshEntityData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
@@ -138,20 +137,13 @@ void collectNavigationEntities(const ISerializable* object, RefArray< world::Ent
 		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
 		objectMembers.pop_front();
 
-		if (mesh::MeshEntityData* meshEntityData = dynamic_type_cast< mesh::MeshEntityData* >(objectMember->get()))
-		{
-			outEntityData.push_back(meshEntityData);
-		}
-		else if (animation::AnimatedMeshEntityData* animatedMeshEntityData = dynamic_type_cast< animation::AnimatedMeshEntityData* >(objectMember->get()))
-		{
-			outEntityData.push_back(animatedMeshEntityData);
-		}
-		else if (world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(objectMember->get()))
+		if (world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(objectMember->get()))
 		{
 			if (
-				componentEntityData->getComponent< terrain::TerrainComponentData >() != 0 ||
-				componentEntityData->getComponent< terrain::OceanComponentData >() != 0 ||
-				componentEntityData->getComponent< mesh::MeshComponentData >() != 0
+				componentEntityData->getComponent< terrain::TerrainComponentData >() != nullptr ||
+				componentEntityData->getComponent< terrain::OceanComponentData >() != nullptr ||
+				componentEntityData->getComponent< mesh::MeshComponentData >() != nullptr ||
+				componentEntityData->getComponent< animation::AnimatedMeshComponentData >() != nullptr
 			)
 				outEntityData.push_back(componentEntityData);
 		}
@@ -250,10 +242,10 @@ bool NavMeshPipeline::buildOutput(
 
 	sourceData = resolveAllExternal(pipelineBuilder, sourceData);
 
-	RefArray< world::EntityData > entityData;
-	collectNavigationEntities(sourceData, entityData);
+	RefArray< world::EntityData > entityDatas;
+	collectNavigationEntities(sourceData, entityDatas);
 
-	log::info << L"Found " << int32_t(entityData.size()) << L" entity(s)" << Endl;
+	log::info << L"Found " << int32_t(entityDatas.size()) << L" entity(s)" << Endl;
 
 	AlignedVector< NavMeshSourceModel > navModels;
 
@@ -265,71 +257,11 @@ bool NavMeshPipeline::buildOutput(
 		log::info << L"Loading/generating source models..." << Endl;
 
 		std::map< std::wstring, Ref< const model::Model > > modelCache;
-		for (RefArray< world::EntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
+		for (auto entityData : entityDatas)
 		{
-			if (const mesh::MeshEntityData* meshEntityData = dynamic_type_cast< const mesh::MeshEntityData* >(*i))
+			if (auto componentEntityData = dynamic_type_cast< const world::ComponentEntityData* >(entityData))
 			{
-				const resource::Id< mesh::IMesh >& mesh = meshEntityData->getMesh();
-
-				Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(mesh);
-				if (!meshAsset)
-					continue;
-
-				auto j = modelCache.find(meshAsset->getFileName().getOriginal());
-				if (j != modelCache.end())
-				{
-					navModels.push_back(NavMeshSourceModel(j->second, (*i)->getTransform()));
-				}
-				else
-				{
-					Ref< model::Model > meshModel = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
-						return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
-					});
-					if (!meshModel)
-					{
-						log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
-						continue;
-					}
-
-					model::Triangulate().apply(*meshModel);
-
-					modelCache[meshAsset->getFileName().getOriginal()] = meshModel;
-					navModels.push_back(NavMeshSourceModel(meshModel, (*i)->getTransform()));
-				}
-			}
-			else if (const animation::AnimatedMeshEntityData* animatedMeshEntityData = dynamic_type_cast< const animation::AnimatedMeshEntityData* >(*i))
-			{
-				const resource::Id< mesh::SkinnedMesh >& mesh = animatedMeshEntityData->getMesh();
-
-				Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(mesh);
-				if (!meshAsset)
-					continue;
-
-				auto j = modelCache.find(meshAsset->getFileName().getOriginal());
-				if (j != modelCache.end())
-				{
-					navModels.push_back(NavMeshSourceModel(j->second, (*i)->getTransform()));
-				}
-				else
-				{
-					Ref< model::Model > meshModel = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
-						return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
-					});
-					if (!meshModel)
-					{
-						log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
-						continue;
-					}
-
-					model::Triangulate().apply(*meshModel);
-
-					modelCache[meshAsset->getFileName().getOriginal()] = meshModel;
-					navModels.push_back(NavMeshSourceModel(meshModel, (*i)->getTransform()));
-				}
-			}
-			else if (const world::ComponentEntityData* componentEntityData = dynamic_type_cast< const world::ComponentEntityData* >(*i))
-			{
-				if (const mesh::MeshComponentData* meshComponentData = componentEntityData->getComponent< mesh::MeshComponentData >())
+				if (auto meshComponentData = componentEntityData->getComponent< mesh::MeshComponentData >())
 				{
 					const resource::Id< mesh::IMesh >& mesh = meshComponentData->getMesh();
 
@@ -340,7 +272,7 @@ bool NavMeshPipeline::buildOutput(
 					auto j = modelCache.find(meshAsset->getFileName().getOriginal());
 					if (j != modelCache.end())
 					{
-						navModels.push_back(NavMeshSourceModel(j->second, (*i)->getTransform()));
+						navModels.push_back(NavMeshSourceModel(j->second, entityData->getTransform()));
 					}
 					else
 					{
@@ -356,11 +288,42 @@ bool NavMeshPipeline::buildOutput(
 						model::Triangulate().apply(*meshModel);
 
 						modelCache[meshAsset->getFileName().getOriginal()] = meshModel;
-						navModels.push_back(NavMeshSourceModel(meshModel, (*i)->getTransform()));
+						navModels.push_back(NavMeshSourceModel(meshModel, entityData->getTransform()));
 					}
 				}
 
-				if (const terrain::TerrainComponentData* terrainComponentData = componentEntityData->getComponent< terrain::TerrainComponentData >())
+				if (auto animatedMeshComponentData = componentEntityData->getComponent< animation::AnimatedMeshComponentData >())
+				{
+					const resource::Id< mesh::SkinnedMesh >& mesh = animatedMeshComponentData->getMesh();
+
+					Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(mesh);
+					if (!meshAsset)
+						continue;
+
+					auto j = modelCache.find(meshAsset->getFileName().getOriginal());
+					if (j != modelCache.end())
+					{
+						navModels.push_back(NavMeshSourceModel(j->second, entityData->getTransform()));
+					}
+					else
+					{
+						Ref< model::Model > meshModel = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
+							return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+						});
+						if (!meshModel)
+						{
+							log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
+							continue;
+						}
+
+						model::Triangulate().apply(*meshModel);
+
+						modelCache[meshAsset->getFileName().getOriginal()] = meshModel;
+						navModels.push_back(NavMeshSourceModel(meshModel, entityData->getTransform()));
+					}
+				}
+
+				if (auto terrainComponentData = componentEntityData->getComponent< terrain::TerrainComponentData >())
 				{
 					const resource::Id< terrain::Terrain >& terrain = terrainComponentData->getTerrain();
 
@@ -485,7 +448,8 @@ bool NavMeshPipeline::buildOutput(
 
 					navModels.push_back(NavMeshSourceModel(navModel, Transform::identity()));
 				}
-				if (const terrain::OceanComponentData* oceanComponentData = componentEntityData->getComponent< terrain::OceanComponentData >())
+
+				if (auto oceanComponentData = componentEntityData->getComponent< terrain::OceanComponentData >())
 				{
 					oceanHeight = max< float >(oceanHeight, componentEntityData->getTransform().translation().y());
 					oceanClip = true;

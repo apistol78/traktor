@@ -1,11 +1,13 @@
-#include "Animation/AnimatedMeshEntityFactory.h"
+#include "Animation/AnimatedMeshComponentFactory.h"
 #include "Animation/Animation/AnimationFactory.h"
 #include "Animation/Boids/BoidsEntityFactory.h"
 #include "Animation/Boids/BoidsEntityRenderer.h"
 #include "Animation/Cloth/ClothEntityFactory.h"
 #include "Animation/Cloth/ClothEntityRenderer.h"
 #include "Animation/Editor/AnimationEditorProfile.h"
-#include "Animation/Editor/AnimationEntityEditorFactory.h"
+#include "Animation/Editor/AnimatedMeshComponentEditorFactory.h"
+#include "Animation/Editor/Cloth/ClothEntityEditorFactory.h"
+#include "Animation/Editor/PathEntity/PathEntityEditorFactory.h"
 #include "Animation/PathEntity/PathEntityFactory.h"
 #include "Animation/PathEntity/PathEntityRenderer.h"
 #include "Core/Serialization/ISerializable.h"
@@ -54,7 +56,7 @@ void AnimationEditorProfile::createEntityFactories(
 	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(new AnimatedMeshEntityFactory(context->getResourceManager(), context->getPhysicsManager()));
+	outEntityFactories.push_back(new AnimatedMeshComponentFactory(context->getResourceManager(), context->getPhysicsManager()));
 	outEntityFactories.push_back(new BoidsEntityFactory());
 	outEntityFactories.push_back(new ClothEntityFactory(context->getResourceManager(), context->getRenderSystem()));
 	outEntityFactories.push_back(new PathEntityFactory());
@@ -84,7 +86,8 @@ void AnimationEditorProfile::createEntityEditorFactories(
 	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
-	outEntityEditorFactories.push_back(new AnimationEntityEditorFactory());
+	outEntityEditorFactories.push_back(new ClothEntityEditorFactory());
+	outEntityEditorFactories.push_back(new PathEntityEditorFactory());
 }
 
 void AnimationEditorProfile::createComponentEditorFactories(
@@ -92,6 +95,7 @@ void AnimationEditorProfile::createComponentEditorFactories(
 	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
 ) const
 {
+	outComponentEditorFactories.push_back(new AnimatedMeshComponentEditorFactory());
 }
 
 Ref< world::EntityData > AnimationEditorProfile::createEntityData(
