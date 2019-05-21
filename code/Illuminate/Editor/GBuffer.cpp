@@ -140,48 +140,46 @@ void triangleVisit(const Vector2& v1, const Vector2& v2, const Vector2& v3, cons
 	triangleBottom(v[1], vm, v[2], fn);
 }
 
+// Vector2 closestOnLine(const Vector2& v1, const Vector2& v2, const Vector2& pt)
+// {
+// 	Vector2 d = v2 - v1;
+// 	Vector2 p = d.perpendicular().normalized();
+// 	float k = dot(p, pt - v1);
 
-Vector2 closestOnLine(const Vector2& v1, const Vector2& v2, const Vector2& pt)
-{
-	Vector2 d = v2 - v1;
-	Vector2 p = d.perpendicular().normalized();
-	float k = dot(p, pt - v1);
+// 	Vector2 pt0 = pt - p * k;
 
-	Vector2 pt0 = pt - p * k;
+// 	float k2 = dot(d, pt0- v1) / (d.length() * d.length());
+// 	if (k2 >= 0 && k2 <= 1)
+// 		return pt0;
+// 	else if (k2 < 0)
+// 		return v1;
+// 	else
+// 		return v2;
+// }
 
-	float k2 = dot(d, pt0- v1) / (d.length() * d.length());
-	if (k2 >= 0 && k2 <= 1)
-		return pt0;
-	else if (k2 < 0)
-		return v1;
-	else
-		return v2;
-}
+// Vector2 closestOnTriangle(const Vector2& v1, const Vector2& v2, const Vector2& v3, const Vector2& pt)
+// {
+// 	Vector2 p1 = closestOnLine(v1, v2, pt);
+// 	Vector2 p2 = closestOnLine(v2, v3, pt);
+// 	Vector2 p3 = closestOnLine(v3, v1, pt);
 
-Vector2 closestOnTriangle(const Vector2& v1, const Vector2& v2, const Vector2& v3, const Vector2& pt)
-{
-	Vector2 p1 = closestOnLine(v1, v2, pt);
-	Vector2 p2 = closestOnLine(v2, v3, pt);
-	Vector2 p3 = closestOnLine(v3, v1, pt);
+// 	float ln1 = (p1 - pt).length();
+// 	float ln2 = (p2 - pt).length();
+// 	float ln3 = (p3 - pt).length();
 
-	float ln1 = (p1 - pt).length();
-	float ln2 = (p2 - pt).length();
-	float ln3 = (p3 - pt).length();
+// 	if (ln1 < ln2)
+// 	{
+// 		if (ln1 < ln3)
+// 			return p1;
+// 	}
+// 	else
+// 	{
+// 		if (ln2 < ln3)
+// 			return p2;
+// 	}
 
-	if (ln1 < ln2)
-	{
-		if (ln1 < ln3)
-			return p1;
-	}
-	else
-	{
-		if (ln2 < ln3)
-			return p2;
-	}
-
-	return p3;
-}
-
+// 	return p3;
+// }
 
 class Barycentric
 {
@@ -283,7 +281,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 
 			uint32_t texCoordIndex = vertex.getTexCoord(texCoordChannel);
 			texCoords.points.push_back(
-				model.getTexCoord(texCoordIndex) * Vector2(width, height) - Vector2(0.5f, 0.5f) // - 1, height - 1)
+				model.getTexCoord(texCoordIndex) * Vector2(width, height) - Vector2(0.5f, 0.5f)
 			);
 		}
 
@@ -322,7 +320,6 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 				texCoords.points[i2],
 				[&](float x, float y)
 				{
-
 					int32_t ix = (int32_t)x;
 					int32_t iy = (int32_t)y;
 					if (ix >= 0 && iy >= 0 && ix < width && iy < height)
@@ -330,16 +327,21 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 						Vector2 cpt(ix, iy);
 
 						bool inside = bary.inside(cpt);
+						if (!inside)
+						{
+							Vector2 cpt2 = texCoords.closest(cpt);
+							
+							Vector2 d = cpt2 - cpt;
+							
+							float ln = d.length();
+							if (ln > FUZZY_EPSILON)
+							{
+								d /= ln;
+								cpt2 += d * Vector2(0.1f / width, 0.1f / height);
+							}
 
-						// if (!inside)
-						// {
-						// 	cpt = closestOnTriangle(
-						// 		texCoords.points[i0],
-						// 		texCoords.points[i1],
-						// 		texCoords.points[i2],
-						// 		cpt
-						// 	);	
-						// }
+							cpt = cpt2;
+						}
 
 						auto& elm = m_data[x + y * m_width];
 
@@ -352,44 +354,9 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 						elm.normal = ipolNormals.evaluate(bary, cpt).xyz0().normalized();
 						elm.delta = ipolPositions.evaluate(bary, cpt + Vector2(1.0f, 1.0f)).xyz1() - elm.position;
 						elm.inside = inside;
-
 					}
-
 				}
 			);
-
-/*
-			for (int32_t y = y0; y <= y1; ++y)
-			{
-				for (int32_t x = x0; x <= x1; ++x)
-				{
-					const Vector2 pt(x, y);
-					
-					bool inside = false;
-					for (int32_t dy = -1; dy <= 1; ++dy)
-					{
-						for (int32_t dx = -1; dx <= 1; ++dx)
-							inside |= bary.inside(pt + Vector2(dx, dy));
-					}
-
-					if (inside)
-					{
-						auto& elm = m_data[x + y * m_width];
-						bool center = bary.inside(pt);
-						if (center || elm.polygon == model::c_InvalidIndex)
-						{
-							Vector2 cpt = center ? pt : texCoords.closest(pt);
-
-							elm.polygon = i;
-							elm.material = polygon.getMaterial();
-							elm.position = ipolPositions.evaluate(bary, cpt).xyz1();
-							elm.normal = ipolNormals.evaluate(bary, cpt).xyz0().normalized();
-							elm.delta = ipolPositions.evaluate(bary, cpt + Vector2(1.0f, 1.0f)).xyz1() - elm.position;
-						}
-					}
-				}
-			}
-*/
 		}
 	}
 

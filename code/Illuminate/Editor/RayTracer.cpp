@@ -10,6 +10,7 @@ namespace traktor
 		namespace
 		{
 
+const Scalar p(1.0f / (2.0f * PI));
 const Scalar c_epsilonOffset(0.1f);
 
 Scalar attenuation(const Scalar& distance, const Scalar& range)
@@ -65,7 +66,21 @@ bool RayTracer::prepare()
 
 Ref< RayTracer::Context > RayTracer::createContext()
 {
-	return new RayTracer::Context();
+	Ref< RayTracer::Context > context = new RayTracer::Context();
+
+	/*
+	// Create randomized, hemispherical, directions. Sorted by locality 
+	// to improve SAH cache efficiency.
+	context->dirs.resize(m_configuration->getIndirectSampleCount());
+	for (uint32_t i = 0; i < m_configuration->getIndirectSampleCount(); ++i)
+		context->dirs[i] = context->random.nextHemi(Vector4(0.0f, 0.0f, 1.0f));
+
+	std::sort(context->dirs.begin(), context->dirs.end(), [](const Vector4& lh, const Vector4& rh) {
+		return lh.z() > rh.z();
+	});
+	*/
+
+	return context;
 }
 
 bool RayTracer::trace(Context* context, const Vector4& origin, const Vector4& direction, const Scalar& maxDistance, Result& outResult) const
@@ -98,7 +113,6 @@ Color4f RayTracer::traceIndirect(Context* context, const Vector4& origin, const 
 	Color4f irradiance(0.0f, 0.0f, 0.0f, 0.0f);
 	SahTree::QueryResult result;
 
-	const Scalar p(1.0f / (2.0f * PI));
 	for (uint32_t i = 0; i < m_configuration->getIndirectSampleCount(); ++i)
 	{
 		Vector4 direction = context->random.nextHemi(normal);
@@ -172,13 +186,16 @@ Color4f RayTracer::sampleAnalyticalLights(Context* context, const Vector4& origi
 					int32_t shadowCount = 0;
 					for (uint32_t j = 0; j < shadowSampleCount; ++j)
 					{
-						float a, b;
-						do
+						float a = 0.0f, b = 0.0f;
+						if (shadowSampleCount > 1)
 						{
-							a = context->random.nextFloat() * 2.0f - 1.0f;
-							b = context->random.nextFloat() * 2.0f - 1.0f;
+							do
+							{
+								a = context->random.nextFloat() * 2.0f - 1.0f;
+								b = context->random.nextFloat() * 2.0f - 1.0f;
+							}
+							while ((a * a) + (b * b) > 1.0f);
 						}
-						while ((a * a) + (b * b) > 1.0f);
 
 						Vector4 shadowDirection = (light.position + u * Scalar(a * pointLightShadowRadius) + v * Scalar(b * pointLightShadowRadius) - origin).xyz0();
 
@@ -222,13 +239,16 @@ Color4f RayTracer::sampleAnalyticalLights(Context* context, const Vector4& origi
 					int32_t shadowCount = 0;
 					for (uint32_t j = 0; j < shadowSampleCount; ++j)
 					{
-						float a, b;
-						do
+						float a = 0.0f, b = 0.0f;
+						if (shadowSampleCount > 1)
 						{
-							a = context->random.nextFloat() * 2.0f - 1.0f;
-							b = context->random.nextFloat() * 2.0f - 1.0f;
+							do
+							{
+								a = context->random.nextFloat() * 2.0f - 1.0f;
+								b = context->random.nextFloat() * 2.0f - 1.0f;
+							}
+							while ((a * a) + (b * b) > 1.0f);
 						}
-						while ((a * a) + (b * b) > 1.0f);
 
 						Vector4 shadowDirection = (light.position + u * Scalar(a * pointLightShadowRadius) + v * Scalar(b * pointLightShadowRadius) - origin).xyz0();
 

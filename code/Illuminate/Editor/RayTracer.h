@@ -36,6 +36,7 @@ public:
 	{
 		SahTree::QueryCache sahCache;
 		RandomGeometry random;
+		AlignedVector< Vector4 > dirs;
 	};
 
 	struct Result
