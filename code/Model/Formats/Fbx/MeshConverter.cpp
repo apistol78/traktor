@@ -158,7 +158,8 @@ bool convertMesh(
 					vertex.setJointInfluence(k->first, k->second);
 			}
 
-			for (int32_t k = 0; k < mesh->GetLayerCount(); ++k)
+			//for (int32_t k = 0; k < mesh->GetLayerCount(); ++k)
+			for (int32_t k = mesh->GetLayerCount() - 1; k >= 0; --k)
 			{
 				FbxLayerElementVertexColor* layerVertexColors = mesh->GetLayer(k)->GetVertexColors();
 				if (layerVertexColors)
@@ -219,6 +220,7 @@ bool convertMesh(
 				if (layerUVs)
 				{
 					uint32_t channel = uvChannel(outModel, layerUVs->GetName());
+
 					switch (layerUVs->GetMappingMode())
 					{
 					case FbxLayerElement::eByControlPoint:
@@ -246,13 +248,19 @@ bool convertMesh(
 
 					case FbxLayerElement::eByPolygonVertex:
 						{
-							int32_t textureUVIndex = mesh->GetTextureUVIndex(i, j);
 							switch (layerUVs->GetReferenceMode())
 							{
 							case FbxLayerElement::eDirect:
+								{
+									Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(vertexId)) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f);
+									vertex.setTexCoord(channel, outModel.addUniqueTexCoord(uv));
+								}
+								break;
+
 							case FbxLayerElement::eIndexToDirect:
 								{
-									Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(textureUVIndex)) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f);
+									int32_t id = layerUVs->GetIndexArray().GetAt(vertexId);
+									Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(id)) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f);
 									vertex.setTexCoord(channel, outModel.addUniqueTexCoord(uv));
 								}
 								break;
