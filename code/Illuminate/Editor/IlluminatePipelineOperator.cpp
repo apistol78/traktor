@@ -6,6 +6,7 @@
 #include "Core/Math/Format.h"
 #include "Core/Math/Log2.h"
 #include "Core/Math/Triangulator.h"
+#include "Core/Misc/String.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
@@ -355,7 +356,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		// Create G-Buffer of mesh's geometry.
 		GBuffer gbuffer;
 		gbuffer.create(outputSize, outputSize, *model, meshEntityData->getTransform(), channel);
-		gbuffer.saveAsImages(meshEntityData->getName() + L"_GBuffer");
+		gbuffer.saveAsImages(meshEntityData->getName() + L"_" + toString(i) + L"_GBuffer");
 
 		// Adjust gbuffer positions to help fix some shadowing issues.
 		if (configuration->getEnableShadowFix())
@@ -429,8 +430,6 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 								Color4f indirect = tracer.traceIndirect(context, position, normal);
 								lightmapIndirect->setPixel(x, y, indirect.rgb1());
 							}
-
-							// lightmap->setPixel(x, y, Color4f(position));
 						}
 					}
 				}));
@@ -446,6 +445,14 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			jobs.pop_back();
 		}
 
+		if (configuration->getEnableDilate())
+		{
+			// Dilate lightmap to prevent leaking.
+			drawing::DilateFilter dilateFilter(3);
+			lightmapDirect->apply(&dilateFilter);
+			lightmapIndirect->apply(&dilateFilter);
+		}
+
 		// Blur indirect lightmap to reduce noise from path tracing.
 		lightmapIndirect->apply(drawing::ConvolutionFilter::createGaussianBlur(1));
 
@@ -455,13 +462,6 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			drawing::BlendFunction::BfOne,
 			drawing::BlendFunction::BoAdd
 		));
-
-		if (configuration->getEnableDilate())
-		{
-			// Dilate lightmap to prevent leaking.
-			drawing::DilateFilter dilateFilter(3);
-			lightmapDirect->apply(&dilateFilter);
-		}
 
 		// Discard alpha.
 		lightmapDirect->clearAlpha(1.0f);
@@ -476,7 +476,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 
 		// Create a texture build step.
 		Ref< render::TextureOutput > textureOutput = new render::TextureOutput();
-		textureOutput->m_textureFormat = render::TfR32G32B32A32F; // TfR16G16B16A16F;
+		textureOutput->m_textureFormat = render::TfR16G16B16A16F;
 		textureOutput->m_keepZeroAlpha = false;
 		textureOutput->m_hasAlpha = false;
 		textureOutput->m_ignoreAlpha = true;
