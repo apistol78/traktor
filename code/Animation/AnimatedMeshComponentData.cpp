@@ -1,5 +1,5 @@
-#include "Animation/AnimatedMeshEntity.h"
-#include "Animation/AnimatedMeshEntityData.h"
+#include "Animation/AnimatedMeshComponent.h"
+#include "Animation/AnimatedMeshComponentData.h"
 #include "Animation/IPoseControllerData.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
@@ -10,6 +10,7 @@
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "World/EntityData.h"
 #include "World/IEntityBuilder.h"
 
 namespace traktor
@@ -17,24 +18,24 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimatedMeshEntityData", 3, AnimatedMeshEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimatedMeshComponentData", 0, AnimatedMeshComponentData, world::IEntityComponentData)
 
-AnimatedMeshEntityData::AnimatedMeshEntityData()
+AnimatedMeshComponentData::AnimatedMeshComponentData()
 :	m_normalizePose(false)
 ,	m_normalizeTransform(false)
 ,	m_screenSpaceCulling(true)
 {
 }
 
-Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const world::IEntityBuilder* entityBuilder) const
+Ref< AnimatedMeshComponent > AnimatedMeshComponentData::createComponent(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const world::IEntityBuilder* entityBuilder) const
 {
 	resource::Proxy< mesh::SkinnedMesh > mesh;
 	if (!resourceManager->bind(m_mesh, mesh))
-		return 0;
+		return nullptr;
 
 	resource::Proxy< Skeleton > skeleton;
 	if (!resourceManager->bind(m_skeleton, skeleton))
-		return 0;
+		return nullptr;
 
 	Ref< IPoseController > poseController;
 	if (m_poseController)
@@ -42,7 +43,7 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 			resourceManager,
 			physicsManager,
 			skeleton,
-			getTransform()
+			Transform::identity()
 		);
 
 	std::vector< int32_t > jointRemap(skeleton->getJointCount());
@@ -59,21 +60,21 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 		jointRemap[i] = j->second;
 	}
 
-	std::vector< AnimatedMeshEntity::Binding > bindings;
+	std::vector< AnimatedMeshComponent::Binding > bindings;
 	for (size_t i = 0; i < m_bindings.size(); ++i)
 	{
 		Ref< world::Entity > entity = entityBuilder->create(m_bindings[i].entityData);
 		if (entity)
 		{
-			AnimatedMeshEntity::Binding binding;
+			AnimatedMeshComponent::Binding binding;
 			binding.jointHandle = render::getParameterHandle(m_bindings[i].jointName);
 			binding.entity = entity;
 			bindings.push_back(binding);
 		}
 	}
 
-	return new AnimatedMeshEntity(
-		getTransform(),
+	return new AnimatedMeshComponent(
+		Transform::identity(),
 		mesh,
 		skeleton,
 		poseController,
@@ -85,28 +86,18 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 	);
 }
 
-void AnimatedMeshEntityData::serialize(ISerializer& s)
+void AnimatedMeshComponentData::serialize(ISerializer& s)
 {
-	world::EntityData::serialize(s);
-
 	s >> resource::Member< mesh::SkinnedMesh >(L"mesh", m_mesh);
 	s >> resource::Member< Skeleton >(L"skeleton", m_skeleton);
 	s >> MemberRef< IPoseControllerData >(L"poseController", m_poseController);
-
-	if (s.getVersion() >= 1)
-	{
-		s >> Member< bool >(L"normalizePose", m_normalizePose);
-		s >> Member< bool >(L"normalizeTransform", m_normalizeTransform);
-	}
-
-	if (s.getVersion() >= 2)
-		s >> Member< bool >(L"screenSpaceCulling", m_screenSpaceCulling);
-
-	if (s.getVersion() >= 3)
-		s >> MemberStlVector< Binding, MemberComposite< Binding > >(L"bindings", m_bindings);
+	s >> Member< bool >(L"normalizePose", m_normalizePose);
+	s >> Member< bool >(L"normalizeTransform", m_normalizeTransform);
+	s >> Member< bool >(L"screenSpaceCulling", m_screenSpaceCulling);
+	s >> MemberStlVector< Binding, MemberComposite< Binding > >(L"bindings", m_bindings);
 }
 
-void AnimatedMeshEntityData::Binding::serialize(ISerializer& s)
+void AnimatedMeshComponentData::Binding::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"jointName", jointName);
 	s >> MemberRef< world::EntityData >(L"entityData", entityData);

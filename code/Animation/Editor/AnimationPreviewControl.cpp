@@ -1,4 +1,4 @@
-#include "Animation/AnimatedMeshEntity.h"
+#include "Animation/AnimatedMeshComponent.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
@@ -10,7 +10,6 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
 #include "Mesh/MeshComponentRenderer.h"
-#include "Mesh/MeshEntityRenderer.h"
 #include "Mesh/MeshFactory.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Render/IRenderSystem.h"
@@ -26,6 +25,7 @@
 #include "Ui/Itf/IWidget.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
+#include "World/Entity/ComponentEntity.h"
 #include "World/Forward/WorldRendererForward.h"
 
 namespace traktor
@@ -172,8 +172,9 @@ void AnimationPreviewControl::updatePreview()
 		}
 	}
 
-	std::vector< AnimatedMeshEntity::Binding > noBindings;
-	m_entity = new AnimatedMeshEntity(
+	std::vector< AnimatedMeshComponent::Binding > noBindings;
+
+	Ref< AnimatedMeshComponent > meshComponent = new AnimatedMeshComponent(
 		Transform::identity(),
 		m_mesh,
 		m_skeleton,
@@ -184,6 +185,9 @@ void AnimationPreviewControl::updatePreview()
 		false,
 		false
 	);
+
+	m_entity = new world::ComponentEntity();
+	m_entity->setComponent(meshComponent);
 }
 
 void AnimationPreviewControl::updateWorldRenderer()
@@ -196,7 +200,6 @@ void AnimationPreviewControl::updateWorldRenderer()
 
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	worldEntityRenderers->add(new mesh::MeshComponentRenderer());
-	worldEntityRenderers->add(new mesh::MeshEntityRenderer());
 
 	world::WorldRenderSettings wrs;
 	wrs.viewNearZ = 0.1f;
@@ -381,63 +384,63 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 			);
 		}
 
-		if (m_entity && m_entity->getSkeleton())
-		{
-			m_primitiveRenderer->pushDepthState(false, false, false);
+		//if (m_entity && m_entity->getSkeleton())
+		//{
+		//	m_primitiveRenderer->pushDepthState(false, false, false);
 
-			const resource::Proxy< Skeleton >& skeleton = m_entity->getSkeleton();
+		//	const resource::Proxy< Skeleton >& skeleton = m_entity->getSkeleton();
 
-			AlignedVector< Transform > poseTransforms = m_entity->getPoseTransforms();
-			if (poseTransforms.empty())
-				calculateJointTransforms(skeleton, poseTransforms);
+		//	AlignedVector< Transform > poseTransforms = m_entity->getPoseTransforms();
+		//	if (poseTransforms.empty())
+		//		calculateJointTransforms(skeleton, poseTransforms);
 
-			if (poseTransforms.size() == skeleton->getJointCount())
-			{
-				for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
-				{
-					const Joint* joint = skeleton->getJoint(i);
+		//	if (poseTransforms.size() == skeleton->getJointCount())
+		//	{
+		//		for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+		//		{
+		//			const Joint* joint = skeleton->getJoint(i);
 
-					Color4ub color = Color4ub(255, 255, 0, 128);
+		//			Color4ub color = Color4ub(255, 255, 0, 128);
 
-					m_primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
+		//			m_primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
 
-					if (joint->getParent() >= 0)
-					{
-						const Joint* parent = skeleton->getJoint(joint->getParent());
-						T_ASSERT(parent);
+		//			if (joint->getParent() >= 0)
+		//			{
+		//				const Joint* parent = skeleton->getJoint(joint->getParent());
+		//				T_ASSERT(parent);
 
-						Vector4 start = poseTransforms[joint->getParent()].translation().xyz1();
-						Vector4 end = poseTransforms[i].translation().xyz1();
+		//				Vector4 start = poseTransforms[joint->getParent()].translation().xyz1();
+		//				Vector4 end = poseTransforms[i].translation().xyz1();
 
-						Vector4 z = (end - start).normalized();
-						Vector4 y = cross(z, Vector4(0.0f, 1.0f, 0.0f, 0.0f));
-						Vector4 x = cross(y, z);
+		//				Vector4 z = (end - start).normalized();
+		//				Vector4 y = cross(z, Vector4(0.0f, 1.0f, 0.0f, 0.0f));
+		//				Vector4 x = cross(y, z);
 
-						Scalar radius(parent->getRadius());
-						x *= radius;
-						y *= radius;
-						z *= radius;
+		//				Scalar radius(parent->getRadius());
+		//				x *= radius;
+		//				y *= radius;
+		//				z *= radius;
 
-						m_primitiveRenderer->drawLine(start, start + z + x + y, color);
-						m_primitiveRenderer->drawLine(start, start + z - x + y, color);
-						m_primitiveRenderer->drawLine(start, start + z + x - y, color);
-						m_primitiveRenderer->drawLine(start, start + z - x - y, color);
+		//				m_primitiveRenderer->drawLine(start, start + z + x + y, color);
+		//				m_primitiveRenderer->drawLine(start, start + z - x + y, color);
+		//				m_primitiveRenderer->drawLine(start, start + z + x - y, color);
+		//				m_primitiveRenderer->drawLine(start, start + z - x - y, color);
 
-						m_primitiveRenderer->drawLine(start + z + x + y, end, color);
-						m_primitiveRenderer->drawLine(start + z - x + y, end, color);
-						m_primitiveRenderer->drawLine(start + z + x - y, end, color);
-						m_primitiveRenderer->drawLine(start + z - x - y, end, color);
+		//				m_primitiveRenderer->drawLine(start + z + x + y, end, color);
+		//				m_primitiveRenderer->drawLine(start + z - x + y, end, color);
+		//				m_primitiveRenderer->drawLine(start + z + x - y, end, color);
+		//				m_primitiveRenderer->drawLine(start + z - x - y, end, color);
 
-						m_primitiveRenderer->drawLine(start + z + x + y, start + z - x + y, color);
-						m_primitiveRenderer->drawLine(start + z - x + y, start + z - x - y, color);
-						m_primitiveRenderer->drawLine(start + z - x - y, start + z + x - y, color);
-						m_primitiveRenderer->drawLine(start + z + x - y, start + z + x + y, color);
-					}
-				}
-			}
+		//				m_primitiveRenderer->drawLine(start + z + x + y, start + z - x + y, color);
+		//				m_primitiveRenderer->drawLine(start + z - x + y, start + z - x - y, color);
+		//				m_primitiveRenderer->drawLine(start + z - x - y, start + z + x - y, color);
+		//				m_primitiveRenderer->drawLine(start + z + x - y, start + z + x + y, color);
+		//			}
+		//		}
+		//	}
 
-			m_primitiveRenderer->popDepthState();
-		}
+		//	m_primitiveRenderer->popDepthState();
+		//}
 
 		m_primitiveRenderer->end(0);
 		m_primitiveRenderer->render(m_renderView, 0);

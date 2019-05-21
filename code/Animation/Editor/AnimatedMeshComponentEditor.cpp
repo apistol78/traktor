@@ -1,13 +1,10 @@
-#include "Animation/Editor/AnimatedMeshEntityEditor.h"
-#include "Animation/AnimatedMeshEntityData.h"
-#include "Animation/AnimatedMeshEntity.h"
+#include "Animation/Editor/AnimatedMeshComponentEditor.h"
+#include "Animation/AnimatedMeshComponentData.h"
+#include "Animation/AnimatedMeshComponent.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
 #include "Animation/IPoseController.h"
 #include "Animation/Joint.h"
-#include "Core/Settings/PropertyColor.h"
-#include "Core/Settings/PropertyGroup.h"
-#include "Editor/IEditor.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
@@ -18,35 +15,26 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshEntityEditor", AnimatedMeshEntityEditor, scene::DefaultEntityEditor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponentEditor", AnimatedMeshComponentEditor, scene::DefaultComponentEditor)
 
-AnimatedMeshEntityEditor::AnimatedMeshEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter)
-:	scene::DefaultEntityEditor(context, entityAdapter)
+AnimatedMeshComponentEditor::AnimatedMeshComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData)
+:	scene::DefaultComponentEditor(context, entityAdapter, componentData)
 {
-	updateSettings();
 }
 
-bool AnimatedMeshEntityEditor::handleCommand(const ui::Command& command)
+void AnimatedMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	if (command == L"Editor.SettingsChanged")
-		updateSettings();
+	const AnimatedMeshComponentData* animatedMeshComponentData = checked_type_cast< const AnimatedMeshComponentData* >(m_componentData);
+	const AnimatedMeshComponent* animatedMeshComponent = dynamic_type_cast< const AnimatedMeshComponent* >(m_entityAdapter->getComponent< AnimatedMeshComponent >());
 
-	return scene::DefaultEntityEditor::handleCommand(command);
-}
-
-void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
-{
-	const AnimatedMeshEntityData* animatedEntityData = checked_type_cast< const AnimatedMeshEntityData* >(getEntityAdapter()->getEntityData());
-	/*const*/ AnimatedMeshEntity* animatedEntity = dynamic_type_cast< /*const*/ AnimatedMeshEntity* >(getEntityAdapter()->getEntity());
-
-	if (getContext()->shouldDrawGuide(L"Animation.Skeleton"))
+	if (m_context->shouldDrawGuide(L"Animation.Skeleton"))
 	{
-		primitiveRenderer->pushWorld(getEntityAdapter()->getTransform().toMatrix44());
+		primitiveRenderer->pushWorld(m_entityAdapter->getTransform().toMatrix44());
 		primitiveRenderer->pushDepthState(false, false, false);
 
-		if (animatedEntity)
+		if (animatedMeshComponent)
 		{
-			const resource::Proxy< Skeleton >& skeleton = animatedEntity->getSkeleton();
+			const resource::Proxy< Skeleton >& skeleton = animatedMeshComponent->getSkeleton();
 
 #if 0
 			// Draw bind skeleton.
@@ -75,7 +63,7 @@ void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 #endif
 
 			// Draw current pose.
-			AlignedVector< Transform > poseTransforms = animatedEntity->getPoseTransforms();
+			AlignedVector< Transform > poseTransforms = animatedMeshComponent->getPoseTransforms();
 			if (poseTransforms.size() == skeleton->getJointCount())
 			{
 				const Color4ub color(255, 255, 0, 255);
@@ -103,12 +91,7 @@ void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 		primitiveRenderer->popWorld();
 	}
 
-	scene::DefaultEntityEditor::drawGuide(primitiveRenderer);
-}
-
-void AnimatedMeshEntityEditor::updateSettings()
-{
-	m_colorBone = getContext()->getEditor()->getSettings()->getProperty< Color4ub >(L"Editor.Colors/BoneWire");
+	scene::DefaultComponentEditor::drawGuide(primitiveRenderer);
 }
 
 	}

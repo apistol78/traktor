@@ -21,9 +21,7 @@ void MeshComponentPipeline::destroy()
 
 TypeInfoSet MeshComponentPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< MeshComponentData >();
-	return typeSet;
+	return makeTypeInfoSet< MeshComponentData >();
 }
 
 bool MeshComponentPipeline::buildDependencies(

@@ -1,7 +1,5 @@
-#include "Mesh/AbstractMeshEntityData.h"
 #include "Mesh/MeshComponent.h"
 #include "Mesh/MeshComponentData.h"
-#include "Mesh/MeshEntity.h"
 #include "Mesh/MeshEntityFactory.h"
 
 namespace traktor
@@ -18,9 +16,7 @@ MeshEntityFactory::MeshEntityFactory(resource::IResourceManager* resourceManager
 
 const TypeInfoSet MeshEntityFactory::getEntityTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< AbstractMeshEntityData >();
-	return typeSet;
+	return TypeInfoSet();
 }
 
 const TypeInfoSet MeshEntityFactory::getEntityEventTypes() const
@@ -30,20 +26,17 @@ const TypeInfoSet MeshEntityFactory::getEntityEventTypes() const
 
 const TypeInfoSet MeshEntityFactory::getEntityComponentTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< MeshComponentData >();
-	return typeSet;
+	return makeTypeInfoSet< MeshComponentData >();
 }
 
 Ref< world::Entity > MeshEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	const AbstractMeshEntityData* meshEntityData = mandatory_non_null_type_cast< const AbstractMeshEntityData* >(&entityData);
-	return meshEntityData->createEntity(m_resourceManager, builder);
+	return nullptr;
 }
 
 Ref< world::IEntityEvent > MeshEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< world::IEntityComponent > MeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const

@@ -5,7 +5,7 @@
 #include "Runtime/Impl/RenderServer.h"
 #include "Runtime/Impl/ScriptServer.h"
 #include "Runtime/Impl/WorldServer.h"
-#include "Animation/AnimatedMeshEntityFactory.h"
+#include "Animation/AnimatedMeshComponentFactory.h"
 #include "Animation/Boids/BoidsEntityFactory.h"
 #include "Animation/Boids/BoidsEntityRenderer.h"
 #include "Animation/Cloth/ClothEntityFactory.h"
@@ -20,9 +20,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Mesh/MeshComponentRenderer.h"
 #include "Mesh/MeshEntityFactory.h"
-#include "Mesh/MeshEntityRenderer.h"
 #include "Mesh/Instance/InstanceMeshComponentRenderer.h"
-#include "Mesh/Instance/InstanceMeshEntityRenderer.h"
 #include "Physics/World/EntityRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/SceneFactory.h"
@@ -156,9 +154,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_entityRenderers->add(new world::LightRenderer());
 	m_entityRenderers->add(new world::ProbeRenderer(m_resourceServer->getResourceManager(), m_renderServer->getRenderSystem()));
 	m_entityRenderers->add(new mesh::MeshComponentRenderer());
-	m_entityRenderers->add(new mesh::MeshEntityRenderer());
 	m_entityRenderers->add(new mesh::InstanceMeshComponentRenderer());
-	m_entityRenderers->add(new mesh::InstanceMeshEntityRenderer());
 	m_entityRenderers->add(m_effectEntityRenderer);
 	m_entityRenderers->add(new animation::BoidsEntityRenderer());
 	m_entityRenderers->add(new animation::ClothEntityRenderer());
@@ -201,7 +197,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
-	m_entityBuilder->addFactory(new animation::AnimatedMeshEntityFactory(resourceManager, physicsManager));
+	m_entityBuilder->addFactory(new animation::AnimatedMeshComponentFactory(resourceManager, physicsManager));
 	m_entityBuilder->addFactory(new animation::BoidsEntityFactory());
 	m_entityBuilder->addFactory(new animation::ClothEntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new animation::PathEntityFactory());

@@ -41,6 +41,7 @@ class IResourceManager;
 	namespace world
 	{
 
+class ComponentEntity;
 class IWorldRenderer;
 
 	}
@@ -48,7 +49,7 @@ class IWorldRenderer;
 	namespace animation
 	{
 
-class AnimatedMeshEntity;
+class AnimatedMeshComponent;
 class IPoseController;
 class Skeleton;
 
@@ -88,7 +89,7 @@ private:
 	resource::Proxy< mesh::SkinnedMesh > m_mesh;
 	resource::Proxy< Skeleton > m_skeleton;
 	Ref< IPoseController > m_poseController;
-	Ref< AnimatedMeshEntity > m_entity;
+	Ref< world::ComponentEntity > m_entity;
 	Color4ub m_colorClear;
 	Color4ub m_colorGrid;
 	Timer m_timer;

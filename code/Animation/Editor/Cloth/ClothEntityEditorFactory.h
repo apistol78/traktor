@@ -10,7 +10,7 @@ namespace traktor
 /*! \brief
  * \ingroup Animation
  */
-class AnimationEntityEditorFactory : public scene::IEntityEditorFactory
+class ClothEntityEditorFactory : public scene::IEntityEditorFactory
 {
 	T_RTTI_CLASS;
 
@@ -22,4 +22,3 @@ public:
 
 	}
 }
-

@@ -3,7 +3,7 @@
 #include <vector>
 #include "Core/Ref.h"
 #include "Resource/Id.h"
-#include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,6 +39,7 @@ class IResourceManager;
 	namespace world
 	{
 
+class EntityData;
 class IEntityBuilder;
 
 	}
@@ -46,14 +47,14 @@ class IEntityBuilder;
 	namespace animation
 	{
 
-class AnimatedMeshEntity;
+class AnimatedMeshComponent;
 class Skeleton;
 class IPoseControllerData;
 
 /*! \brief Animated mesh entity data.
  * \ingroup Animation
  */
-class T_DLLCLASS AnimatedMeshEntityData : public world::EntityData
+class T_DLLCLASS AnimatedMeshComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
@@ -66,9 +67,9 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	AnimatedMeshEntityData();
+	AnimatedMeshComponentData();
 
-	Ref< AnimatedMeshEntity > createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const world::IEntityBuilder* entityBuilder) const;
+	Ref< AnimatedMeshComponent > createComponent(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const world::IEntityBuilder* entityBuilder) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

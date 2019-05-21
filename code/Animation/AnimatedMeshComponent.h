@@ -4,8 +4,9 @@
 #include "Animation/Pose.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Job.h"
+#include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "Mesh/MeshEntity.h"
+#include "Mesh/MeshComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,7 +34,7 @@ class IPoseController;
 /*! \brief Animated mesh entity.
  * \ingroup Animation
  */
-class T_DLLCLASS AnimatedMeshEntity : public mesh::MeshEntity
+class T_DLLCLASS AnimatedMeshComponent : public mesh::MeshComponent
 {
 	T_RTTI_CLASS;
 
@@ -44,7 +45,7 @@ public:
 		Ref< world::Entity > entity;
 	};
 
-	AnimatedMeshEntity(
+	AnimatedMeshComponent(
 		const Transform& transform,
 		const resource::Proxy< mesh::SkinnedMesh >& mesh,
 		const resource::Proxy< Skeleton >& skeleton,
@@ -56,20 +57,13 @@ public:
 		bool screenSpaceCulling
 	);
 
-	virtual ~AnimatedMeshEntity();
+	virtual ~AnimatedMeshComponent();
 
 	virtual void destroy() override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual bool supportTechnique(render::handle_t technique) const override final;
-
-	virtual void render(
-		world::WorldContext& worldContext,
-		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass,
-		float distance
-	) override final;
+	virtual void render(world::WorldContext& worldContext, world::WorldRenderView& worldRenderView, world::IWorldRenderPass& worldRenderPass) override final;
 
 	virtual void update(const world::UpdateParams& update) override final;
 
