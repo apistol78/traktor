@@ -690,15 +690,15 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 
 			Ref< ui::GridRow > row = new ui::GridRow();
 			row->add(new ui::GridItem(i->getName()));
-			row->add(new ui::GridItem(i->getDiffuseMap().name));
-			row->add(new ui::GridItem(i->getSpecularMap().name));
-			row->add(new ui::GridItem(i->getRoughnessMap().name));
-			row->add(new ui::GridItem(i->getMetalnessMap().name));
-			row->add(new ui::GridItem(i->getTransparencyMap().name));
-			row->add(new ui::GridItem(i->getEmissiveMap().name));
-			row->add(new ui::GridItem(i->getReflectiveMap().name));
-			row->add(new ui::GridItem(i->getNormalMap().name));
-			row->add(new ui::GridItem(i->getLightMap().name));
+			row->add(new ui::GridItem(i->getDiffuseMap().name + L" [" + toString(i->getDiffuseMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getSpecularMap().name + L" [" + toString(i->getSpecularMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getRoughnessMap().name + L" [" + toString(i->getRoughnessMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getMetalnessMap().name + L" [" + toString(i->getMetalnessMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getTransparencyMap().name + L" [" + toString(i->getTransparencyMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getEmissiveMap().name + L" [" + toString(i->getEmissiveMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getReflectiveMap().name + L" [" + toString(i->getReflectiveMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getNormalMap().name + L" [" + toString(i->getNormalMap().channel) + L"]"));
+			row->add(new ui::GridItem(i->getLightMap().name + L" [" + toString(i->getLightMap().channel) + L"]"));
 			row->add(new ui::GridItem( toString((int32_t)cl.r) + L", " + toString((int32_t)cl.g) + L", " + toString((int32_t)cl.b) + L", " + toString((int32_t)cl.a)));
 			row->add(new ui::GridItem(toString(i->getDiffuseTerm())));
 			row->add(new ui::GridItem(toString(i->getSpecularTerm())));

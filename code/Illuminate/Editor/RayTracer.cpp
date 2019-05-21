@@ -196,7 +196,7 @@ Color4f RayTracer::sampleAnalyticalLights(Context* context, const Vector4& origi
 			{
 				Vector4 lightToPoint = (origin - light.position).xyz0();
 				Scalar lightDistance = lightToPoint.normalize();
-				if (lightDistance <= 0.0f)
+				if (lightDistance > light.range)
 					break;
 
 				float alpha = clamp< float >(dot3(light.direction, lightToPoint), -1.0f, 1.0f);

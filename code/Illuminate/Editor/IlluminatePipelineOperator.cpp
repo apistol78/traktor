@@ -17,6 +17,7 @@
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
 #include "Drawing/Filters/DilateFilter.h"
+#include "Drawing/Functions/BlendFunction.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
 #include "Illuminate/Editor/GBuffer.h"
@@ -209,6 +210,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			light.direction = -lightEntityData->getTransform().axisY();
 			light.color = Color4f(lightComponentData->getColor());
 			light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
+			light.range = Scalar(lightComponentData->getRange());
 			light.radius = Scalar(lightComponentData->getRadius());
 			tracer.addLight(light);
 		}
@@ -340,6 +342,15 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 				return false;
 			}
 		}
+		else
+		{
+			channel = model->getTexCoordChannel(L"Lightmap");
+			if (channel == model::c_InvalidIndex)
+			{
+				log::warning << L"IlluminateEntityPipeline warning; no uv channel named \"Lightmap\" found, using channel 0." << Endl;
+				channel = 0;
+			}
+		}
 
 		// Create G-Buffer of mesh's geometry.
 		GBuffer gbuffer;
@@ -384,8 +395,11 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		}
 
 		// Trace lightmap.
-		Ref< drawing::Image > lightmap = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
-		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+		Ref< drawing::Image > lightmapDirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
+		Ref< drawing::Image > lightmapIndirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
+
+		lightmapDirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+		lightmapIndirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 		for (int32_t ty = 0; ty < outputSize; ty += 16)
 		{
@@ -404,17 +418,17 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 							Vector4 position = elm.position;
 							Vector4 normal = elm.normal;
 
-							Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
-							Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
-
 							if (configuration->traceDirect())
-								direct = tracer.traceDirect(context, position, normal);
+							{
+								Color4f direct = tracer.traceDirect(context, position, normal);
+								lightmapDirect->setPixel(x, y, direct.rgb1());
+							}
 
 							if (configuration->traceIndirect())
-								indirect = tracer.traceIndirect(context, position, normal);
-
-							Color4f source = (direct + indirect).rgb1();
-							lightmap->setPixel(x, y, source);
+							{
+								Color4f indirect = tracer.traceIndirect(context, position, normal);
+								lightmapIndirect->setPixel(x, y, indirect.rgb1());
+							}
 
 							// lightmap->setPixel(x, y, Color4f(position));
 						}
@@ -432,20 +446,27 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			jobs.pop_back();
 		}
 
+		// Blur indirect lightmap to reduce noise from path tracing.
+		lightmapIndirect->apply(drawing::ConvolutionFilter::createGaussianBlur(1));
+
+		// Merge direct and indirect lightmaps.
+		lightmapDirect->copy(lightmapIndirect, 0, 0, outputSize, outputSize, drawing::BlendFunction(
+			drawing::BlendFunction::BfOne,
+			drawing::BlendFunction::BfOne,
+			drawing::BlendFunction::BoAdd
+		));
+
 		if (configuration->getEnableDilate())
 		{
 			// Dilate lightmap to prevent leaking.
 			drawing::DilateFilter dilateFilter(3);
-			lightmap->apply(&dilateFilter);
+			lightmapDirect->apply(&dilateFilter);
 		}
 
-		// // Blur indirect lightmap to reduce noise from path tracing.
-		// lightmap->apply(drawing::ConvolutionFilter::createGaussianBlur(1));
-
 		// Discard alpha.
-		lightmap->clearAlpha(1.0f);
+		lightmapDirect->clearAlpha(1.0f);
 
-		lightmap->save(meshEntityData->getName() + L"_Lightmap.png");
+		lightmapDirect->save(meshEntityData->getName() + L"_Lightmap.png");
 		model::ModelFormat::writeAny(meshEntityData->getName() + L"_Unwrapped.tmd", model);
 
 		// "Permutate" output ids.
@@ -469,7 +490,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			textureOutput,
 			L"Generated/" + idGenerated.format() + L"/" + idLightMap.format() + L"/__Texture__",
 			idLightMap,
-			lightmap
+			lightmapDirect
 		);
 
 		// Modify model materials to use our illumination texture.
