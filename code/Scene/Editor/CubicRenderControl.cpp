@@ -358,6 +358,10 @@ void CubicRenderControl::updateWorldRenderer()
 	}
 }
 
+void CubicRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
+{
+}
+
 void CubicRenderControl::setAspect(float aspect)
 {
 }

@@ -104,6 +104,10 @@ void DebugRenderControl::updateWorldRenderer()
 {
 }
 
+void DebugRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
+{
+}
+
 void DebugRenderControl::setAspect(float aspect)
 {
 }

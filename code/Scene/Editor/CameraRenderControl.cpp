@@ -196,6 +196,10 @@ void CameraRenderControl::updateWorldRenderer()
 	}
 }
 
+void CameraRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
+{
+}
+
 void CameraRenderControl::setAspect(float aspect)
 {
 	if (aspect > 0.0f)

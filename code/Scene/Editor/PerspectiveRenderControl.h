@@ -50,11 +50,13 @@ class PerspectiveRenderControl : public ISceneRenderControl
 public:
 	PerspectiveRenderControl();
 
-	bool create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId);
+	bool create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId, const TypeInfo& worldRendererType);
 
 	virtual void destroy() override final;
 
 	virtual void updateWorldRenderer() override final;
+
+	virtual void setWorldRendererType(const TypeInfo& worldRendererType) override final;
 
 	virtual void setAspect(float aspect) override final;
 
@@ -80,6 +82,7 @@ private:
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
+	const TypeInfo* m_worldRendererType;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
 	world::WorldRenderSettings m_worldRenderSettings;

@@ -72,7 +72,8 @@ Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRenderControl, ISceneRenderControl)
 
 OrthogonalRenderControl::OrthogonalRenderControl()
-:	m_shadowQuality(world::QuDisabled)
+:	m_worldRendererType(nullptr)
+,	m_shadowQuality(world::QuDisabled)
 ,	m_reflectionsQuality(world::QuDisabled)
 ,	m_motionBlurQuality(world::QuDisabled)
 ,	m_ambientOcclusionQuality(world::QuDisabled)
@@ -88,10 +89,12 @@ OrthogonalRenderControl::OrthogonalRenderControl()
 {
 }
 
-bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* context, ViewPlane viewPlane, int32_t cameraId)
+bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* context, ViewPlane viewPlane, int32_t cameraId, const TypeInfo& worldRendererType)
 {
 	m_context = context;
 	T_ASSERT(m_context);
+
+	m_worldRendererType = &worldRendererType;
 
 	m_multiSample = m_context->getEditor()->getSettings()->getProperty< int32_t >(L"Editor.MultiSample", c_defaultMultiSample);
 	m_viewPlane = viewPlane;
@@ -202,13 +205,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT(settings);
 
-	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
-
-	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
-	if (!worldRendererType)
-		return;
-
-	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast<world::IWorldRenderer*>(worldRendererType->createInstance());
+	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast<world::IWorldRenderer*>(m_worldRendererType->createInstance());
 	if (!worldRenderer)
 		return;
 
@@ -235,6 +232,12 @@ void OrthogonalRenderControl::updateWorldRenderer()
 		m_worldRenderer = worldRenderer;
 
 	m_viewFarZ = worldRenderSettings->viewFarZ;
+}
+
+void OrthogonalRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
+{
+	m_worldRendererType = &worldRendererType;
+	updateWorldRenderer();
 }
 
 void OrthogonalRenderControl::setAspect(float aspect)
@@ -462,8 +465,11 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 {
 	Ref< scene::Scene > sceneInstance = m_context->getScene();
 
+	float colorClear[4];
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = m_context->getTime();
+
+	m_colorClear.getRGBA32F(colorClear);
 
 	if (!sceneInstance || !m_renderView || !m_primitiveRenderer)
 		return;
@@ -477,12 +483,15 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	// Render world.
-	if (m_renderView->begin(nullptr))
+	render::Clear clear = { 0 };
+	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
+	clear.colors[0] = Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]);
+	clear.depth = 1.0f;
+	clear.stencil = 0;
+
+	if (m_renderView->begin(&clear))
 	{
 		const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
-
-		float tmp[4];
-		m_colorClear.getRGBA32F(tmp);
 
 		float ratio = float(m_dirtySize.cx) / m_dirtySize.cy;
 		float width = m_magnification;
@@ -512,7 +521,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 			m_worldRenderer->endBuild(worldRenderView, 0);
 		}
 
-		m_worldRenderer->beginRender(0, Color4f(tmp[0], tmp[1], tmp[2], tmp[3]));
+		m_worldRenderer->beginRender(0, Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]));
 		m_worldRenderer->render(0);
 		m_worldRenderer->endRender(0, deltaTime);
 

@@ -55,6 +55,8 @@ public:
 
 	virtual void updateWorldRenderer() override final;
 
+	virtual void setWorldRendererType(const TypeInfo& worldRendererType) override final;
+
 	virtual void setAspect(float aspect) override final;
 
 	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) override final;
