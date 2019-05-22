@@ -47,7 +47,10 @@ bool HttpGetTool::launch(ui::Widget* parent, IEditor* editor, const PropertyGrou
 		f,
 		sizeof_array(f)
 	);
-	if (inputDialog.showModal() != ui::DrOk)
+	auto result = inputDialog.showModal();
+	inputDialog.destroy();
+
+	if (result != ui::DrOk)
 		return true;
 
 	net::Url url(f[0].value);

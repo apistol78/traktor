@@ -1,6 +1,7 @@
 // Include all event headers.
 
 // Widget
+#include "Ui/Events/ActivateEvent.h"
 #include "Ui/Events/ChildEvent.h"
 #include "Ui/Events/CloseEvent.h"
 #include "Ui/Events/CommandEvent.h"
