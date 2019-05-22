@@ -67,41 +67,10 @@ int ToolFormX11::showModal()
 
 	m_context->pushModal(&m_data);
 
-	int fd = ConnectionNumber(m_context->getDisplay());
-	XEvent e;
-
-	Timer timer;
-	timer.start();
-
 	for (m_modal = true; m_modal; )
 	{
-        int nr = 0;
-		if (!XPending(m_context->getDisplay()))
-		{
-			fd_set fds;
-			FD_ZERO(&fds);
-			FD_SET(fd, &fds);
-
-			struct timeval tv;
-			tv.tv_usec = 1 * 1000;
-			tv.tv_sec = 0;
-
-			nr = select(fd + 1, &fds, nullptr, nullptr, &tv);
-		}
-		else
-			nr = 1;
-
-        if (nr > 0)
-		{
-			while (XPending(m_context->getDisplay()))
-			{
-				XNextEvent(m_context->getDisplay(), &e);
-				m_context->dispatch(e);
-			}
-		}
-
-		double dt = timer.getDeltaTime();
-		Timers::getInstance().update(dt);
+		if (!Application::getInstance()->process())
+			break;
 	}
 
 	setVisible(false);

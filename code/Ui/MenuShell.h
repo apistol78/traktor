@@ -30,6 +30,8 @@ public:
 
 	bool create(Widget* parent, int32_t maxItems = -1);
 
+	virtual void destroy() override;
+
 	void add(MenuItem* item);
 
 	MenuItem* getItem(const Point& at) const;
@@ -46,12 +48,18 @@ private:
 	Ref< ScrollBar > m_scrollBar;
 	Ref< MenuItem > m_trackItem;
 	Ref< Widget > m_trackSubMenu;
+	Ref< IEventHandler > m_eventHandlerButtonDown;
+	Ref< IEventHandler > m_eventHandlerButtonUp;
 
 	void eventMouseMove(MouseMoveEvent* event);
 
-	void eventButtonDown(MouseButtonDownEvent* event);
+	void eventGlobalButtonDown(MouseButtonDownEvent* event);
 
-	void eventButtonUp(MouseButtonUpEvent* event);
+	void eventGlobalButtonUp(MouseButtonUpEvent* event);
+
+	// void eventButtonDown(MouseButtonDownEvent* event);
+
+	// void eventButtonUp(MouseButtonUpEvent* event);
 
 	void eventPaint(PaintEvent* e);
 

@@ -26,8 +26,6 @@ bool MenuShell::create(Widget* parent, int32_t maxItems)
 		return false;
 
 	addEventHandler< MouseMoveEvent >(this, &MenuShell::eventMouseMove);
-	addEventHandler< MouseButtonDownEvent >(this, &MenuShell::eventButtonDown);
-	addEventHandler< MouseButtonUpEvent >(this, &MenuShell::eventButtonUp);
 	addEventHandler< PaintEvent >(this, &MenuShell::eventPaint);
 	addEventHandler< SizeEvent >(this, &MenuShell::eventSize);
 
@@ -40,7 +38,18 @@ bool MenuShell::create(Widget* parent, int32_t maxItems)
 		m_scrollBar->addEventHandler< ScrollEvent >(this, &MenuShell::eventScroll);
 	}
 
+	m_eventHandlerButtonDown = Application::getInstance()->addEventHandler< MouseButtonDownEvent >(this, &MenuShell::eventGlobalButtonDown);
+	m_eventHandlerButtonUp = Application::getInstance()->addEventHandler< MouseButtonUpEvent >(this, &MenuShell::eventGlobalButtonUp);
+
 	return true;
+}
+
+void MenuShell::destroy()
+{
+	Application::getInstance()->removeEventHandler< MouseButtonUpEvent >(m_eventHandlerButtonUp);
+	Application::getInstance()->removeEventHandler< MouseButtonDownEvent >(m_eventHandlerButtonDown);
+
+	Widget::destroy();
 }
 
 void MenuShell::add(MenuItem* item)
@@ -170,9 +179,14 @@ void MenuShell::eventMouseMove(MouseMoveEvent* event)
 	// setCapture();
 }
 
-void MenuShell::eventButtonDown(MouseButtonDownEvent* event)
+void MenuShell::eventGlobalButtonDown(MouseButtonDownEvent* event)
 {
-	MenuItem* item = getItem(event->getPosition());
+	// If sub menu already created then lets assume it's event handler perform click event.
+	if (m_trackSubMenu)
+		return;
+
+	Point clientPosition = screenToClient(event->getPosition());
+	MenuItem* item = getItem(clientPosition);
 	if (item == nullptr)
 	{
 		MenuClickEvent clickEvent(this, nullptr, Command());
@@ -180,9 +194,14 @@ void MenuShell::eventButtonDown(MouseButtonDownEvent* event)
 	}
 }
 
-void MenuShell::eventButtonUp(MouseButtonUpEvent* event)
+void MenuShell::eventGlobalButtonUp(MouseButtonUpEvent* event)
 {
-	MenuItem* item = getItem(event->getPosition());
+	// If sub menu already created then lets assume it's event handler perform click event.
+	if (m_trackSubMenu)
+		return;
+
+	Point clientPosition = screenToClient(event->getPosition());
+	MenuItem* item = getItem(clientPosition);
 	if (item && item->isEnable())
 	{
 		MenuClickEvent clickEvent(this, item, item->getCommand());

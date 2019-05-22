@@ -147,6 +147,9 @@ public:
 			{
 				XUnmapWindow(m_context->getDisplay(), m_data.window);
 			}
+
+			ShowEvent showEvent(m_owner, visible);
+			m_owner->raiseEvent(&showEvent);
 		}
 	}
 

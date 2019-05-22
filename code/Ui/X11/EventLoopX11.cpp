@@ -3,6 +3,9 @@
 #include "Core/Timer/Timer.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/IdleEvent.h"
+#include "Ui/Events/MouseButtonDownEvent.h"
+#include "Ui/Events/MouseButtonUpEvent.h"
+#include "Ui/Events/MouseMoveEvent.h"
 #include "Ui/Events/KeyDownEvent.h"
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Events/KeyUpEvent.h"
@@ -246,10 +249,76 @@ bool EventLoopX11::preTranslateEvent(EventSubject* owner, XEvent& e)
 	else if (e.type == MotionNotify)
 	{
 		m_keyState = e.xmotion.state;
+
+		int32_t button = 0;
+		if ((e.xmotion.state & Button1Mask) != 0)
+			button = MbtLeft;
+		if ((e.xmotion.state & Button2Mask) != 0)
+			button = MbtMiddle;
+		if ((e.xmotion.state & Button3Mask) != 0)
+			button = MbtRight;
+
+		Window dw; int x, y;
+		XTranslateCoordinates(
+			m_context->getDisplay(),
+			e.xmotion.window,
+			DefaultRootWindow(m_context->getDisplay()),
+			e.xmotion.x,
+			e.xmotion.y,
+			&x,
+			&y,
+			&dw
+		);
+
+		MouseMoveEvent mouseMoveEvent(
+			owner,
+			button,
+			Point(x, y)
+		);
+		owner->raiseEvent(&mouseMoveEvent);
 	}
 	else if (e.type == ButtonPress || e.type == ButtonRelease)
 	{
 		m_keyState = e.xbutton.state;
+
+		int32_t button = 0;
+		if ((e.xbutton.state & Button1Mask) != 0)
+			button = MbtLeft;
+		if ((e.xbutton.state & Button2Mask) != 0)
+			button = MbtMiddle;
+		if ((e.xbutton.state & Button3Mask) != 0)
+			button = MbtRight;
+
+		Window dw; int x, y;
+		XTranslateCoordinates(
+			m_context->getDisplay(),
+			e.xbutton.window,
+			DefaultRootWindow(m_context->getDisplay()),
+			e.xbutton.x,
+			e.xbutton.y,
+			&x,
+			&y,
+			&dw
+		);
+
+		if (e.type == ButtonPress)
+		{
+			MouseButtonDownEvent mouseButtonDownEvent(
+				owner,
+				button,
+				Point(x, y)
+			);
+			owner->raiseEvent(&mouseButtonDownEvent);
+		}
+		else
+		{
+			MouseButtonUpEvent mouseButtonUpEvent(
+				owner,
+				button,
+				Point(x, y)
+			);
+			owner->raiseEvent(&mouseButtonUpEvent);
+		}
 	}
 
 	return consumed;
