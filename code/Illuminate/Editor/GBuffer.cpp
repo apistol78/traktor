@@ -3,6 +3,7 @@
 #include <vector>
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
 #include "Core/Math/Triangulator.h"
 #include "Core/Math/Winding2.h"
