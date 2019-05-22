@@ -35,6 +35,8 @@ public:
 
 	virtual void updateWorldRenderer() override final;
 
+	virtual void setWorldRendererType(const TypeInfo& worldRendererType) override final;
+
 	virtual void setAspect(float aspect) override final;
 
 	virtual void setQuality(world::Quality imageProcessQuality, world::Quality shadowQuality, world::Quality reflectionsQuality, world::Quality motionBlurQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) override final;
@@ -63,6 +65,7 @@ private:
 	Ref< ui::ToolBarButton > m_toolToggleGuide;
 	Ref< ui::ToolBarDropDown > m_toolView;
 	Ref< ui::ToolBarDropDown > m_toolAspect;
+	Ref< ui::ToolBarDropDown > m_toolWorldRenderer;
 	Ref< ui::MenuItem > m_menuPostProcess;
 	Ref< ui::MenuItem > m_menuMotionBlur;
 	Ref< ui::MenuItem > m_menuShadows;

@@ -34,6 +34,8 @@ public:
 
 	virtual void updateWorldRenderer() = 0;
 
+	virtual void setWorldRendererType(const TypeInfo& worldRendererType) = 0;
+
 	virtual void setAspect(float aspect) = 0;
 
 	virtual void setQuality(

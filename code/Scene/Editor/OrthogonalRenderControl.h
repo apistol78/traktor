@@ -56,11 +56,13 @@ public:
 
 	OrthogonalRenderControl();
 
-	bool create(ui::Widget* parent, SceneEditorContext* context, ViewPlane viewPlane, int32_t cameraId);
+	bool create(ui::Widget* parent, SceneEditorContext* context, ViewPlane viewPlane, int32_t cameraId, const TypeInfo& worldRendererType);
 
 	virtual void destroy() override final;
 
 	virtual void updateWorldRenderer() override final;
+
+	virtual void setWorldRendererType(const TypeInfo& worldRendererType) override final;
 
 	virtual void setAspect(float aspect) override final;
 
@@ -85,6 +87,7 @@ private:
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
+	const TypeInfo* m_worldRendererType;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::Quality m_shadowQuality;
 	world::Quality m_reflectionsQuality;

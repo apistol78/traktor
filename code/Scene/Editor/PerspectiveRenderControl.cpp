@@ -77,7 +77,8 @@ Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ISceneRenderControl)
 
 PerspectiveRenderControl::PerspectiveRenderControl()
-:	m_imageProcessQuality(world::QuDisabled)
+:	m_worldRendererType(nullptr)
+,	m_imageProcessQuality(world::QuDisabled)
 ,	m_shadowQuality(world::QuDisabled)
 ,	m_reflectionsQuality(world::QuDisabled)
 ,	m_motionBlurQuality(world::QuDisabled)
@@ -93,10 +94,12 @@ PerspectiveRenderControl::PerspectiveRenderControl()
 {
 }
 
-bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId)
+bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId, const TypeInfo& worldRendererType)
 {
 	m_context = context;
 	T_ASSERT(m_context);
+
+	m_worldRendererType = &worldRendererType;
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT(settings);
@@ -156,7 +159,7 @@ void PerspectiveRenderControl::destroy()
 	if (m_camera)
 	{
 		m_camera->setEnable(false);
-		m_camera = 0;
+		m_camera = nullptr;
 	}
 
 	safeDestroy(m_worldRenderer);
@@ -195,16 +198,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		}
 	}
 
-	const PropertyGroup* settings = m_context->getEditor()->getSettings();
-	T_ASSERT(settings);
-
-	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
-
-	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
-	if (!worldRendererType)
-		return;
-
-	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(worldRendererType->createInstance());
+	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldRendererType->createInstance());
 	if (!worldRenderer)
 		return;
 
@@ -232,6 +226,12 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	{
 		m_worldRenderer = worldRenderer;
 	}
+}
+
+void PerspectiveRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
+{
+	m_worldRendererType = &worldRendererType;
+	updateWorldRenderer();
 }
 
 void PerspectiveRenderControl::setAspect(float aspect)
@@ -503,7 +503,13 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	Matrix44 view = getViewTransform();
 
 	// Render world.
-	if (m_renderView->begin(nullptr))
+	render::Clear clear = { 0 };
+	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
+	clear.colors[0] = Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3]);
+	clear.depth = 1.0f;
+	clear.stencil = 0;
+
+	if (m_renderView->begin(&clear))
 	{
 		// Render entities.
 		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);

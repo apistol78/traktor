@@ -182,7 +182,9 @@ void FinalRenderControl::updateWorldRenderer()
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT(settings);
 
-	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
+	// For now always use deferred renderer assuming what's being used by target. Which allows
+	// us to have simple renderer in other views.
+	std::wstring worldRendererTypeName = L"traktor.world.WorldRendererDeferred"; // settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
 
 	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
 	if (!worldRendererType)
@@ -216,6 +218,10 @@ void FinalRenderControl::updateWorldRenderer()
 	{
 		m_worldRenderer = worldRenderer;
 	}
+}
+
+void FinalRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
+{
 }
 
 void FinalRenderControl::setAspect(float aspect)

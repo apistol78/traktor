@@ -3,6 +3,7 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Scene/Editor/Camera.h"
@@ -170,6 +171,12 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuAA->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.AntiAliasQuality"), L"Ultra", true, 0));
 	toolQualityMenu->add(m_menuAA);
 
+	m_toolWorldRenderer = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.WorldRenderer"), ui::dpi96(130), i18n::Text(L"SCENE_EDITOR_WORLD_RENDERER"));
+	m_toolWorldRenderer->add(L"Simple");
+	m_toolWorldRenderer->add(L"Forward");
+	m_toolWorldRenderer->add(L"Deferred");
+	m_toolWorldRenderer->select(2);
+
 	m_toolBar->addItem(m_toolView);
 	m_toolBar->addItem(m_toolToggleGrid);
 	m_toolBar->addItem(m_toolToggleGuide);
@@ -177,6 +184,8 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(m_toolAspect);
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(toolQualityMenu);
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(m_toolWorldRenderer);
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DefaultRenderControl::eventToolClick);
 
 	m_menuPostProcess->get(0)->setChecked(true);
@@ -201,18 +210,18 @@ void DefaultRenderControl::destroy()
 	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_viewId), m_toolToggleGuide->isToggled());
 
 	m_context->getEditor()->commitGlobalSettings();
-	m_toolView = 0;
+	m_toolView = nullptr;
 
 	if (m_renderControl)
 	{
 		m_renderControl->destroy();
-		m_renderControl = 0;
+		m_renderControl = nullptr;
 	}
 
 	if (m_container)
 	{
 		m_container->destroy();
-		m_container = 0;
+		m_container = nullptr;
 	}
 }
 
@@ -220,6 +229,13 @@ void DefaultRenderControl::updateWorldRenderer()
 {
 	if (m_renderControl)
 		m_renderControl->updateWorldRenderer();
+}
+
+
+void DefaultRenderControl::setWorldRendererType(const TypeInfo& worldRendererType)
+{
+	if (m_renderControl)
+		m_renderControl->setWorldRendererType(worldRendererType);
 }
 
 void DefaultRenderControl::setAspect(float aspect)
@@ -286,12 +302,21 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 {
 	safeDestroy(m_renderControl);
 
+	const PropertyGroup* settings = m_context->getEditor()->getSettings();
+	T_ASSERT(settings);
+
+	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
+
+	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
+	if (!worldRendererType)
+		return false;
+
 	switch (type)
 	{
 	case 0:
 		{
 			Ref< PerspectiveRenderControl > renderControl = new PerspectiveRenderControl();
-			if (!renderControl->create(m_container, m_context, m_cameraId))
+			if (!renderControl->create(m_container, m_context, m_cameraId, *worldRendererType))
 				return false;
 			m_renderControl = renderControl;
 		}
@@ -300,7 +325,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	case 1:	// Front
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveZ, m_cameraId))
+			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveZ, m_cameraId, *worldRendererType))
 				return false;
 			m_renderControl = renderControl;
 		}
@@ -309,7 +334,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	case 2:	// Back
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeZ, m_cameraId))
+			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeZ, m_cameraId, *worldRendererType))
 				return false;
 			m_renderControl = renderControl;
 		}
@@ -318,7 +343,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	case 3:	// Top
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveY, m_cameraId))
+			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveY, m_cameraId, *worldRendererType))
 				return false;
 			m_renderControl = renderControl;
 		}
@@ -327,7 +352,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	case 4:	// Bottom
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeY, m_cameraId))
+			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeY, m_cameraId, *worldRendererType))
 				return false;
 			m_renderControl = renderControl;
 		}
@@ -336,7 +361,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	case 5:	// Left
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveX, m_cameraId))
+			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveX, m_cameraId, *worldRendererType))
 				return false;
 			m_renderControl = renderControl;
 		}
@@ -345,7 +370,7 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	case 6:	// Right
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeX, m_cameraId))
+			if (!renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeX, m_cameraId, *worldRendererType))
 				return false;
 			m_renderControl = renderControl;
 		}
@@ -403,12 +428,15 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	else
 		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGuide"));
 
-	Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
-	T_ASSERT(settings);
+	{
+		Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
+		T_ASSERT(settings);
 
-	settings->setProperty< PropertyInteger >(L"SceneEditor.View" + toString(m_viewId), type);
+		settings->setProperty< PropertyInteger >(L"SceneEditor.View" + toString(m_viewId), type);
 
-	m_context->getEditor()->commitGlobalSettings();
+		m_context->getEditor()->commitGlobalSettings();
+	}
+
 	return true;
 }
 
@@ -487,6 +515,13 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 		for (int i = 0; i < m_menuAA->count(); ++i)
 			m_menuAA->get(i)->setChecked(bool(i == event->getCommand().getId()));
 		updateQuality = true;
+	}
+	else if (event->getCommand() == L"Scene.Editor.WorldRenderer")
+	{
+		const wchar_t* c_worldRendererTypes[] = { L"traktor.world.WorldRendererSimple", L"traktor.world.WorldRendererForward", L"traktor.world.WorldRendererDeferred" };
+		const TypeInfo* worldRendererType = TypeInfo::find(c_worldRendererTypes[m_toolWorldRenderer->getSelected()]);
+		if (worldRendererType)
+			m_renderControl->setWorldRendererType(*worldRendererType);
 	}
 
 	if (updateQuality)
