@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.db.LocalInstanceMeta">
+	<guid>{09CB1141-1924-3349-934A-CEB9728D7A61}</guid>
+	<primaryType>traktor.physics.CollisionSpecification</primaryType>
+	<blobs/>
+</object>
