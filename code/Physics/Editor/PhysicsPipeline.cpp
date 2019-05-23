@@ -29,6 +29,7 @@ TypeInfoSet PhysicsPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert< BodyDesc >();
+	typeSet.insert< CharacterComponentData >();
 	typeSet.insert< RigidBodyComponentData >();
 	typeSet.insert< VehicleComponentData >();
 	return typeSet;
