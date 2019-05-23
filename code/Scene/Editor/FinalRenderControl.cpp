@@ -163,6 +163,9 @@ void FinalRenderControl::updateWorldRenderer()
 {
 	safeDestroy(m_worldRenderer);
 
+	if (!m_sceneInstance)
+		return;
+
 	ui::Size sz = m_renderWidget->getInnerRect().getSize();
 	if (sz.cx <= 0 || sz.cy <= 0)
 		return;
@@ -182,9 +185,7 @@ void FinalRenderControl::updateWorldRenderer()
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT(settings);
 
-	// For now always use deferred renderer assuming what's being used by target. Which allows
-	// us to have simple renderer in other views.
-	std::wstring worldRendererTypeName = L"traktor.world.WorldRendererDeferred"; // settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
+	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
 
 	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
 	if (!worldRendererType)
