@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Render/Vulkan/ApiLoader.h"
 #include "Render/Vulkan/UniformBufferPoolVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
@@ -12,6 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.UniformBufferPoolVk", UniformBufferPoolV
 UniformBufferPoolVk::UniformBufferPoolVk(VkPhysicalDevice physicalDevice, VkDevice logicalDevice)
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
+,	m_counter(0)
 {
 }
 
@@ -21,7 +23,7 @@ bool UniformBufferPoolVk::acquire(uint32_t size, VkBuffer& outBuffer, VkDeviceMe
 	{
 		T_FATAL_ASSERT(outDeviceMemory != 0);
 
-		BufferChain& bc = m_released.push_back();
+		BufferChain& bc = m_released[m_counter].push_back();
 		bc.size = size;
 		bc.buffer = outBuffer;
 		bc.deviceMemory = outDeviceMemory;
@@ -49,7 +51,10 @@ bool UniformBufferPoolVk::acquire(uint32_t size, VkBuffer& outBuffer, VkDeviceMe
 		bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		bci.flags = 0;
 		if (vkCreateBuffer(m_logicalDevice, &bci, nullptr, &outBuffer) != VK_SUCCESS)
+		{
+			log::warning << L"Unable to acquire uniform buffer; vkCreateBuffer failed." << Endl;
 			return false;
+		}
 
 		VkMemoryRequirements memoryRequirements = {};
 		vkGetBufferMemoryRequirements(m_logicalDevice, outBuffer, &memoryRequirements);
@@ -59,7 +64,10 @@ bool UniformBufferPoolVk::acquire(uint32_t size, VkBuffer& outBuffer, VkDeviceMe
 		bai.allocationSize = memoryRequirements.size;
 		bai.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
 		if (vkAllocateMemory(m_logicalDevice, &bai, nullptr, &outDeviceMemory) != VK_SUCCESS)
+		{
+			log::warning << L"Unable to acquire uniform buffer; vkAllocateMemory failed." << Endl;
 			return false;
+		}
 
 		vkBindBufferMemory(
 			m_logicalDevice,
@@ -74,11 +82,13 @@ bool UniformBufferPoolVk::acquire(uint32_t size, VkBuffer& outBuffer, VkDeviceMe
 
 void UniformBufferPoolVk::collect()
 {
-	if (!m_released.empty())
+	uint32_t c = (m_counter + 1) % MaxPendingFrames;
+	if (!m_released[c].empty())
 	{
-		m_free.insert(m_free.end(), m_released.begin(), m_released.end());
-		m_released.resize(0);
+		m_free.insert(m_free.end(), m_released[c].begin(), m_released[c].end());
+		m_released[c].resize(0);
 	}
+	m_counter = c;
 }
 
 	}
