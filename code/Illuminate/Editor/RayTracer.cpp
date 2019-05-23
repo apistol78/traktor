@@ -26,7 +26,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.illuminate.RayTracer", RayTracer, Object)
 
 RayTracer::RayTracer(const IlluminateConfiguration* configuration)
 :	m_configuration(configuration)
-,	m_maxDistance(1000.0f)
+,	m_maxDistance(10.0f)
 {
 }
 
