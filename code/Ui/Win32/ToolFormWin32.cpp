@@ -59,19 +59,17 @@ bool ToolFormWin32::create(IWidget* parent, const std::wstring& text, int width,
 
 int ToolFormWin32::showModal()
 {
-	MSG msg;
-
 	// Ensure tool form is visible.
 	setVisible(true);
 
 	// Disable parent window, should be application main window.
 	HWND hParentWnd = GetParent(m_hWnd);
-	if (hParentWnd)
-	{
-		while (GetParent(hParentWnd))
-			hParentWnd = GetParent(hParentWnd);
-		EnableWindow(hParentWnd, FALSE);
-	}
+	//if (hParentWnd)
+	//{
+	//	while (GetParent(hParentWnd))
+	//		hParentWnd = GetParent(hParentWnd);
+	//	EnableWindow(hParentWnd, FALSE);
+	//}
 
 	// Handle events from the dialog.
 	m_result = DrCancel;
@@ -79,20 +77,14 @@ int ToolFormWin32::showModal()
 
 	while (m_modal)
 	{
-		if (!GetMessage(&msg, NULL, 0, 0))
+		if (!Application::getInstance()->process())
 			break;
-
-		if (!IsDialogMessage(m_hWnd, &msg))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
 	}
 
 	if (hParentWnd)
 	{
 		// Enable parent window.
-		EnableWindow(hParentWnd, TRUE);
+		//EnableWindow(hParentWnd, TRUE);
 		SetWindowPos(hParentWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 	}
 

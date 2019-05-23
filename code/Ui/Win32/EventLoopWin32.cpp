@@ -1,7 +1,11 @@
+#include "Core/Log/Log.h"
 #include "Ui/Enums.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/FocusEvent.h"
 #include "Ui/Events/IdleEvent.h"
+#include "Ui/Events/MouseButtonDownEvent.h"
+#include "Ui/Events/MouseButtonUpEvent.h"
+#include "Ui/Events/MouseMoveEvent.h"
 #include "Ui/Events/KeyDownEvent.h"
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Events/KeyUpEvent.h"
@@ -30,12 +34,6 @@ EventLoopWin32::EventLoopWin32()
 #endif
 
 	OleInitialize(NULL);
-
-	//INITCOMMONCONTROLSEX icc;
-	//std::memset(&icc, 0, sizeof(icc));
-	//icc.dwSize = sizeof(icc);
-	//icc.dwICC = ICC_WIN95_CLASSES | ICC_COOL_CLASSES;
-	//InitCommonControlsEx(&icc);
 
 #if defined(T_USE_DIRECT2D)
 	CanvasDirect2DWin32::startup();
@@ -81,27 +79,8 @@ bool EventLoopWin32::process(EventSubject* owner)
 		bool dispatch = !preTranslateMessage(owner, msg);
 		if (dispatch)
 		{
-			//HWND hwndFocus = GetFocus();
-			//HWND hwndTop = hwndFocus;
-
-			//for (; GetParent(hwndTop) != NULL; hwndTop = GetParent(hwndTop))
-			//	;
-
-			//BOOL handled = FALSE;
-			//if (hwndTop != NULL)
-			//	handled = IsDialogMessage(hwndTop, &msg);
-
-			//if (!handled)
-			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-
-				//if (hwndFocus != GetFocus())
-				//{
-				//	FocusEvent focusEvent(owner, true);
-				//	owner->raiseEvent(&focusEvent);
-				//}
-			}
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
 	}
 
@@ -120,27 +99,8 @@ int32_t EventLoopWin32::execute(EventSubject* owner)
 			bool dispatch = !preTranslateMessage(owner, msg);
 			if (dispatch)
 			{
-				//HWND hwndFocus = GetFocus();
-				//HWND hwndTop = hwndFocus;
-
-				//for (; hwndTop != NULL && GetParent(hwndTop) != NULL; hwndTop = GetParent(hwndTop))
-				//	;
-
-				//BOOL handled = FALSE;
-				//if (hwndTop != NULL)
-				//	handled = IsDialogMessage(hwndTop, &msg);
-
-				//if (!handled)
-				{
-					TranslateMessage(&msg);
-					DispatchMessage(&msg);
-
-					//if (hwndFocus != GetFocus())
-					//{
-					//	FocusEvent focusEvent(owner, true);
-					//	owner->raiseEvent(&focusEvent);
-					//}
-				}
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
 			}
 
 			m_idle = false;
@@ -208,6 +168,69 @@ bool EventLoopWin32::preTranslateMessage(EventSubject* owner, const MSG& msg)
 		KeyUpEvent keyEvent(owner, translateToVirtualKey(int(msg.wParam)), int(msg.wParam), 0);
 		owner->raiseEvent(&keyEvent);
 		consumed = keyEvent.consumed();
+	}
+	else if (msg.message == WM_MOUSEMOVE)
+	{
+		int32_t button = MbtNone;
+		if (msg.wParam & MK_LBUTTON)
+			button |= MbtLeft;
+		if (msg.wParam & MK_MBUTTON)
+			button |= MbtMiddle;
+		if (msg.wParam & MK_RBUTTON)
+			button |= MbtRight;
+
+		POINT pnt = { GET_X_LPARAM(msg.lParam), GET_Y_LPARAM(msg.lParam) };
+		ClientToScreen(msg.hwnd, &pnt);
+
+		Point pt(pnt.x, pnt.y);
+		MouseMoveEvent m(owner, button, pt);
+		owner->raiseEvent(&m);
+	}
+	else if (msg.message == WM_LBUTTONDOWN || msg.message == WM_MBUTTONDOWN || msg.message == WM_RBUTTONDOWN)
+	{
+		int32_t button = MbtNone;
+		switch (msg.message)
+		{
+		case WM_LBUTTONDOWN:
+			button = MbtLeft;
+			break;
+		case WM_MBUTTONDOWN:
+			button = MbtMiddle;
+			break;
+		case WM_RBUTTONDOWN:
+			button = MbtRight;
+			break;
+		}
+
+		POINT pnt = { GET_X_LPARAM(msg.lParam), GET_Y_LPARAM(msg.lParam) };
+		ClientToScreen(msg.hwnd, &pnt);
+
+		Point pt(pnt.x, pnt.y);
+		MouseButtonDownEvent m(owner, button, pt);
+		owner->raiseEvent(&m);
+	}
+	else if (msg.message == WM_LBUTTONUP || msg.message == WM_MBUTTONUP || msg.message == WM_RBUTTONUP)
+	{
+		int32_t button = MbtNone;
+		switch (msg.message)
+		{
+		case WM_LBUTTONUP:
+			button = MbtLeft;
+			break;
+		case WM_MBUTTONUP:
+			button = MbtMiddle;
+			break;
+		case WM_RBUTTONUP:
+			button = MbtRight;
+			break;
+		}
+
+		POINT pnt = { GET_X_LPARAM(msg.lParam), GET_Y_LPARAM(msg.lParam) };
+		ClientToScreen(msg.hwnd, &pnt);
+
+		Point pt(pnt.x, pnt.y);
+		MouseButtonUpEvent m(owner, button, pt);
+		owner->raiseEvent(&m);
 	}
 	return consumed;
 }
