@@ -70,41 +70,41 @@ private:
 	Vector4 m_origin;
 };
 
-//Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
-//{
-//	Ref< Reflection > reflection = Reflection::create(object);
-//
-//	RefArray< ReflectionMember > objectMembers;
-//	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-//
-//	while (!objectMembers.empty())
-//	{
-//		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
-//		objectMembers.pop_front();
-//
-//		if (const world::ExternalEntityData* externalEntityDataRef = dynamic_type_cast< const world::ExternalEntityData* >(objectMember->get()))
-//		{
-//			Ref< const ISerializable > externalEntityData = pipeline->getObjectReadOnly(externalEntityDataRef->getEntityData());
-//			if (!externalEntityData)
-//				return nullptr;
-//
-//			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(pipeline, externalEntityData));
-//			if (!resolvedEntityData)
-//				return nullptr;
-//
-//			resolvedEntityData->setName(externalEntityDataRef->getName());
-//			resolvedEntityData->setTransform(externalEntityDataRef->getTransform());
-//
-//			objectMember->set(resolvedEntityData);
-//		}
-//		else if (objectMember->get())
-//		{
-//			objectMember->set(resolveAllExternal(pipeline, objectMember->get()));
-//		}
-//	}
-//
-//	return reflection->clone();
-//}
+Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
+{
+	Ref< Reflection > reflection = Reflection::create(object);
+
+	RefArray< ReflectionMember > objectMembers;
+	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+
+	while (!objectMembers.empty())
+	{
+		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
+		objectMembers.pop_front();
+
+		if (const world::ExternalEntityData* externalEntityDataRef = dynamic_type_cast< const world::ExternalEntityData* >(objectMember->get()))
+		{
+			Ref< const ISerializable > externalEntityData = pipeline->getObjectReadOnly(externalEntityDataRef->getEntityData());
+			if (!externalEntityData)
+				return nullptr;
+
+			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveAllExternal(pipeline, externalEntityData));
+			if (!resolvedEntityData)
+				return nullptr;
+
+			resolvedEntityData->setName(externalEntityDataRef->getName());
+			resolvedEntityData->setTransform(externalEntityDataRef->getTransform());
+
+			objectMember->set(resolvedEntityData);
+		}
+		else if (objectMember->get())
+		{
+			objectMember->set(resolveAllExternal(pipeline, objectMember->get()));
+		}
+	}
+
+	return reflection->clone();
+}
 
 void collectTraceEntities(
 	const ISerializable* object,
@@ -160,19 +160,26 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 	RefArray< world::ComponentEntityData > lightEntityDatas;
 	RefArray< world::ComponentEntityData > meshEntityDatas;
 
+	// Find all static meshes and lights; replace external referenced entities with local if necessary.
+	RefArray< world::LayerEntityData > layers;
 	for (const auto layer : inoutSceneAsset->getLayers())
 	{
-		if (!layer->isInclude() || layer->isDynamic())
-			continue;
+		if (layer->isInclude() && !layer->isDynamic())
+		{
+			// Resolve all external entities.
+			Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(resolveAllExternal(pipelineBuilder, layer));
+			if (!flattenedLayer)
+				return false;
 
-		//// Resolve all external entities.
-		//Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(resolveAllExternal(pipelineBuilder, layer));
-		//if (!flattenedLayer)
-		//	return false;
+			// Get all trace entities.
+			collectTraceEntities(flattenedLayer, lightEntityDatas, meshEntityDatas);
 
-		// Get all trace entities.
-		collectTraceEntities(layer, lightEntityDatas, meshEntityDatas);
+			layers.push_back(flattenedLayer);
+		}
+		else
+			layers.push_back(layer);
 	}
+	inoutSceneAsset->setLayers(layers);
 
 	// Prepare tracer; add lights and models.
 	RayTracer tracer(configuration);
