@@ -23,6 +23,7 @@ namespace traktor
 	{
 
 class ProgramResourceVk;
+class UniformBufferPoolVk;
 
 /*!
  * \ingroup Vulkan
@@ -38,9 +39,9 @@ public:
 
 	bool create(VkPhysicalDevice physicalDevice, VkDevice device, const ProgramResourceVk* resource);
 
-	bool validateGraphics(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, float targetSize[2]);
+	bool validateGraphics(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool, float targetSize[2]);
 
-	bool validateCompute(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer);
+	bool validateCompute(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool);
 
 	virtual void destroy() override final;
 
@@ -87,29 +88,18 @@ private:
 		}
 	};
 
-	struct DeviceBuffer
-	{
-		VkBuffer buffer;
-		VkDeviceMemory memory;
-
-		DeviceBuffer()
-		:	buffer(0)
-		,	memory(0)
-		{
-		}
-	};
-
 	struct UniformBuffer
 	{
-		AlignedVector< DeviceBuffer > deviceBuffers;
 		uint32_t size;
-		uint32_t updateCount;
 		AlignedVector< float > data;
+		VkBuffer buffer;
+		VkDeviceMemory memory;
 		bool dirty;
 
 		UniformBuffer()
 		:	size(0)
-		,	updateCount(0)
+		,	buffer(0)
+		,	memory(0)
 		,	dirty(true)
 		{
 		}
@@ -134,22 +124,16 @@ private:
 	};
 
 	RenderState m_renderState;
-	
 	VkShaderModule m_vertexShaderModule;
 	VkShaderModule m_fragmentShaderModule;
 	VkShaderModule m_computeShaderModule;
-
 	VkDescriptorSetLayout m_descriptorSetLayout;
 	VkPipelineLayout m_pipelineLayout;
-
 	UniformBuffer m_uniformBuffers[3];
-
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
-	
 	AlignedVector< Sampler > m_samplers;
 	AlignedVector< Texture > m_textures;
 	AlignedVector< SBuffer > m_sbuffers;
-
 	uint32_t m_hash;
 };
 

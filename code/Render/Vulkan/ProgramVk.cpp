@@ -9,6 +9,7 @@
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/SimpleTextureVk.h"
 #include "Render/Vulkan/StructBufferVk.h"
+#include "Render/Vulkan/UniformBufferPoolVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VolumeTextureVk.h"
 
@@ -21,7 +22,6 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_deviceBufferCount = 32;
 handle_t s_handleTargetSize = 0;
 
 bool storeIfNotEqual(const float* source, int length, float* dest)
@@ -179,47 +179,11 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 	if (vkCreatePipelineLayout(device, &lci, nullptr, &m_pipelineLayout) != VK_SUCCESS)
 		return false;
 
-	// Create uniform buffers.
+	// Create uniform shadow buffers.
 	for (uint32_t i = 0; i < 3; ++i)
 	{
-		if (resource->m_uniformBufferSizes[i] > 0)
-		{
-			m_uniformBuffers[i].deviceBuffers.resize(c_deviceBufferCount);
-			for (uint32_t j = 0; j < c_deviceBufferCount; ++j)
-			{
-				VkBufferCreateInfo bci = {};
-				bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-				bci.pNext = nullptr;
-				bci.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-				bci.size = resource->m_uniformBufferSizes[i] * 4;
-				bci.queueFamilyIndexCount = 0;
-				bci.pQueueFamilyIndices = nullptr;
-				bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-				bci.flags = 0;
-				if (vkCreateBuffer(device, &bci, nullptr, &m_uniformBuffers[i].deviceBuffers[j].buffer) != VK_SUCCESS)
-					return false;
-
-				VkMemoryRequirements memoryRequirements = {};
-				vkGetBufferMemoryRequirements(device, m_uniformBuffers[i].deviceBuffers[j].buffer, &memoryRequirements);
-
-				VkMemoryAllocateInfo bai = {};
-				bai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-				bai.allocationSize = memoryRequirements.size;
-				bai.memoryTypeIndex = getMemoryTypeIndex(physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, memoryRequirements);
-				if (vkAllocateMemory(device, &bai, nullptr, &m_uniformBuffers[i].deviceBuffers[j].memory) != VK_SUCCESS)
-					return false;
-
-				vkBindBufferMemory(
-					device,
-					m_uniformBuffers[i].deviceBuffers[j].buffer,
-					m_uniformBuffers[i].deviceBuffers[j].memory,
-					0
-				);
-			}
-
-			m_uniformBuffers[i].size = resource->m_uniformBufferSizes[i] * 4;
-			m_uniformBuffers[i].data.resize(resource->m_uniformBufferSizes[i], 0.0f);
-		}
+		m_uniformBuffers[i].size = resource->m_uniformBufferSizes[i] * 4;
+		m_uniformBuffers[i].data.resize(resource->m_uniformBufferSizes[i], 0.0f);
 	}
 
 	// Create samplers.
@@ -275,7 +239,7 @@ bool ProgramVk::create(VkPhysicalDevice physicalDevice, VkDevice device, const P
 	return true;
 }
 
-bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, float targetSize[2])
+bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool, float targetSize[2])
 {
 	// Set implicit parameters.
 	setVectorParameter(
@@ -309,11 +273,15 @@ bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPoo
 		// Grab a device buffer; cycle buffers for each update call.
 		if (m_uniformBuffers[i].dirty)
 		{
-			m_uniformBuffers[i].updateCount = (m_uniformBuffers[i].updateCount + 1) % c_deviceBufferCount;
-			DeviceBuffer& db = m_uniformBuffers[i].deviceBuffers[m_uniformBuffers[i].updateCount];
+			if (!uniformBufferPool->acquire(
+				m_uniformBuffers[i].size,
+				m_uniformBuffers[i].buffer,
+				m_uniformBuffers[i].memory
+			))
+				return false;
 
 			uint8_t* ptr = nullptr;
-			if (vkMapMemory(device, db.memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
+			if (vkMapMemory(device, m_uniformBuffers[i].memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
 				return false;
 
 			std::memcpy(
@@ -322,14 +290,12 @@ bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPoo
 				m_uniformBuffers[i].size
 			);
 
-			vkUnmapMemory(device, db.memory);
+			vkUnmapMemory(device, m_uniformBuffers[i].memory);
 			m_uniformBuffers[i].dirty = false;
 		}
 
-		DeviceBuffer& db = m_uniformBuffers[i].deviceBuffers[m_uniformBuffers[i].updateCount];
-
 		auto& bufferInfo = bufferInfos.push_back();
-		bufferInfo.buffer = db.buffer;
+		bufferInfo.buffer = m_uniformBuffers[i].buffer;
 		bufferInfo.offset = 0;
 		bufferInfo.range = m_uniformBuffers[i].size;
 
@@ -448,7 +414,7 @@ bool ProgramVk::validateGraphics(VkDevice device, VkDescriptorPool descriptorPoo
 	return true;
 }
 
-bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer)
+bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool, VkCommandBuffer commandBuffer, UniformBufferPoolVk* uniformBufferPool)
 {
 	// Allocate a descriptor set for parameters.
 	VkDescriptorSet descriptorSet = 0;
@@ -473,14 +439,18 @@ bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool
 		if (!m_uniformBuffers[i].size)
 			continue;
 
-		// Grab a device buffer; cycle buffers for each update.
+		// Grab a device buffer; cycle buffers for each update call.
 		if (m_uniformBuffers[i].dirty)
 		{
-			m_uniformBuffers[i].updateCount = (m_uniformBuffers[i].updateCount + 1) % c_deviceBufferCount;
-			DeviceBuffer& db = m_uniformBuffers[i].deviceBuffers[m_uniformBuffers[i].updateCount];
+			if (!uniformBufferPool->acquire(
+				m_uniformBuffers[i].size,
+				m_uniformBuffers[i].buffer,
+				m_uniformBuffers[i].memory
+			))
+				return false;
 
 			uint8_t* ptr = nullptr;
-			if (vkMapMemory(device, db.memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
+			if (vkMapMemory(device, m_uniformBuffers[i].memory, 0, m_uniformBuffers[i].size, 0, (void **)&ptr) != VK_SUCCESS)
 				return false;
 
 			std::memcpy(
@@ -489,14 +459,12 @@ bool ProgramVk::validateCompute(VkDevice device, VkDescriptorPool descriptorPool
 				m_uniformBuffers[i].size
 			);
 
-			vkUnmapMemory(device, db.memory);
+			vkUnmapMemory(device, m_uniformBuffers[i].memory);
 			m_uniformBuffers[i].dirty = false;
 		}
 
-		DeviceBuffer& db = m_uniformBuffers[i].deviceBuffers[m_uniformBuffers[i].updateCount];
-
 		auto& bufferInfo = bufferInfos.push_back();
-		bufferInfo.buffer = db.buffer;
+		bufferInfo.buffer = m_uniformBuffers[i].buffer;
 		bufferInfo.offset = 0;
 		bufferInfo.range = m_uniformBuffers[i].size;
 
