@@ -27,6 +27,8 @@ class UniformBufferPoolVk : public Object
 	T_RTTI_CLASS;
 
 public:
+	enum { MaxPendingFrames = 4 };
+
 	UniformBufferPoolVk(VkPhysicalDevice physicalDevice, VkDevice logicalDevice);
 
 	bool acquire(uint32_t size, VkBuffer& inoutBuffer, VkDeviceMemory& inoutDeviceMemory);
@@ -44,7 +46,8 @@ private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	AlignedVector< BufferChain > m_free;
-	AlignedVector< BufferChain > m_released;
+	AlignedVector< BufferChain > m_released[MaxPendingFrames];
+	uint32_t m_counter;
 };
 
 	}
