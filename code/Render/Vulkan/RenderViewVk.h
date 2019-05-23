@@ -31,6 +31,7 @@ namespace traktor
 
 class ProgramVk;
 class RenderTargetSetVk;
+class UniformBufferPoolVk;
 class VertexBufferVk;
 
 /*!
@@ -172,6 +173,8 @@ private:
 
 	typedef std::tuple< uint32_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
 	SmallMap< pipeline_key_t, VkPipeline > m_pipelines;
+
+	Ref< UniformBufferPoolVk > m_uniformBufferPool;
 
 	bool create(uint32_t width, uint32_t height);
 

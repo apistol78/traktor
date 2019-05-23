@@ -8,6 +8,7 @@
 #include "Render/Vulkan/RenderTargetVk.h"
 #include "Render/Vulkan/RenderTargetSetVk.h"
 #include "Render/Vulkan/RenderViewVk.h"
+#include "Render/Vulkan/UniformBufferPoolVk.h"
 #include "Render/Vulkan/UtilitiesVk.h"
 #include "Render/Vulkan/VertexBufferVk.h"
 
@@ -437,7 +438,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 		(float)ts.rts->getWidth(),
 		(float)ts.rts->getHeight()
 	};
-	p->validateGraphics(m_logicalDevice, m_descriptorPool, m_graphicsCommandBuffer, targetSize);
+	p->validateGraphics(m_logicalDevice, m_descriptorPool, m_graphicsCommandBuffer, m_uniformBufferPool, targetSize);
 
 	const uint32_t c_primitiveMul[] = { 1, 0, 2, 2, 3 };
 	uint32_t vertexCount = primitives.count * c_primitiveMul[primitives.type];
@@ -483,7 +484,7 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 {
 	ProgramVk* p = mandatory_non_null_type_cast< ProgramVk* >(program);
-	p->validateCompute(m_logicalDevice, m_descriptorPool, m_computeCommandBuffer);
+	p->validateCompute(m_logicalDevice, m_descriptorPool, m_computeCommandBuffer, m_uniformBufferPool);
 	vkCmdDispatch(m_computeCommandBuffer, workSize[0], workSize[1], workSize[2]);
 }
 
@@ -549,6 +550,9 @@ void RenderViewVk::present()
 
     vkQueuePresentKHR(m_presentQueue, &pi);
 #endif
+
+	// Collect, or cycle, released buffers.
+	m_uniformBufferPool->collect();
 }
 
 void RenderViewVk::pushMarker(const char* const marker)
@@ -868,6 +872,8 @@ bool RenderViewVk::create(uint32_t width, uint32_t height)
 	//	}
 	//}
 
+	// Create uniform buffer pool.
+	m_uniformBufferPool = new UniformBufferPoolVk(m_physicalDevice, m_logicalDevice);
 	return true;
 }
 
