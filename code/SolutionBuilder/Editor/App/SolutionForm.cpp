@@ -70,7 +70,7 @@ Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
 	if (file)
 		return xml::XmlDeserializer(file, pathName.getPathName()).readObject< ui::StyleSheet >();
 	else
-		return 0;
+		return nullptr;
 }
 
 		}
@@ -892,8 +892,20 @@ void SolutionForm::eventTreeButtonDown(ui::MouseButtonDownEvent* event)
 			}
 			else if (command == L"Filter.AddFile")
 			{
+				std::wstring fileName;
+				for (auto item = selectedItem; item != nullptr; item = item->getParent())
+				{
+					if (const auto filterItem = item->getData< Filter >(L"PRIMARY"))
+					{
+						if (!fileName.empty())
+							fileName = filterItem->getName() + L"/" + fileName;
+						else
+							fileName = filterItem->getName();
+					}
+				}
+
 				Ref< sb::File > file = new sb::File();
-				file->setFileName(filter->getName() + L"/*.*");
+				file->setFileName(fileName + L"/*.*");
 
 				filter->addItem(file);
 
