@@ -771,15 +771,17 @@ void SceneEditorPage::handleDatabaseEvent(db::Database* database, const Guid& ev
 	m_context->getEntities(entityAdapters);
 
 	bool externalModified = false;
-	for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+	for (auto entityAdapter : entityAdapters)
 	{
 		Guid externalGuid;
-		if ((*i)->getExternalGuid(externalGuid))
+		if (entityAdapter->getExternalGuid(externalGuid))
 		{
 			if (externalGuid == eventId)
 			{
 				// Modified external entity detected; need to recreate the scene.
+				// Also drop hash to ensure external entity is recreated, hash doesn't include hash of external data.
 				externalModified = true;
+				entityAdapter->dropHash();
 				break;
 			}
 		}
@@ -798,9 +800,9 @@ bool SceneEditorPage::createSceneAsset()
 	if (!documentObject)
 		return false;
 
-	if (SceneAsset* sceneAsset = dynamic_type_cast< SceneAsset* >(documentObject))
+	if (auto sceneAsset = dynamic_type_cast< SceneAsset* >(documentObject))
 		m_context->setSceneAsset(sceneAsset);
-	else if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(documentObject))
+	else if (auto entityData = dynamic_type_cast< world::EntityData* >(documentObject))
 	{
 		Ref< SceneAsset > sceneAsset = m_context->getSourceDatabase()->getObjectReadOnly< SceneAsset >(c_guidWhiteRoomScene);
 		if (!sceneAsset)
@@ -824,7 +826,7 @@ void SceneEditorPage::createControllerEditor()
 	if (m_context->getControllerEditor())
 	{
 		m_context->getControllerEditor()->destroy();
-		m_context->setControllerEditor(0);
+		m_context->setControllerEditor(nullptr);
 	}
 
 	m_site->hideAdditionalPanel(m_controllerPanel);
@@ -901,7 +903,7 @@ void SceneEditorPage::updateScene()
 Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityAdapter)
 {
 	if (m_entityFilterType && !filterIncludeEntity(*m_entityFilterType, entityAdapter))
-		return 0;
+		return nullptr;
 
 	Ref< ui::GridRow > row = new ui::GridRow(0);
 	row->setData(L"ENTITY", entityAdapter);
@@ -978,16 +980,14 @@ void SceneEditorPage::updateInstanceGridRow(ui::GridRow* row)
 		(entityAdapter->isExpanded() ? ui::GridRow::RsExpanded : 0)
 	);
 
-	const RefArray< ui::GridRow >& childRows = row->getChildren();
-	for (RefArray< ui::GridRow >::const_iterator i = childRows.begin(); i != childRows.end(); ++i)
-		updateInstanceGridRow(*i);
+	for (auto childRow : row->getChildren())
+		updateInstanceGridRow(childRow);
 }
 
 void SceneEditorPage::updateInstanceGrid()
 {
-	const RefArray< ui::GridRow >& rows = m_instanceGrid->getRows();
-	for (RefArray< ui::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
-		updateInstanceGridRow(*i);
+	for (auto row : m_instanceGrid->getRows())
+		updateInstanceGridRow(row);
 
 	m_instanceGrid->update();
 }
@@ -1062,7 +1062,7 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 	m_context->getDocument()->push();
 
 	Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
-	entityAdapter->prepare(entityData, 0, 0);
+	entityAdapter->prepare(entityData, nullptr, 0);
 	parentGroupAdapter->addChild(entityAdapter);
 
 	updateScene();

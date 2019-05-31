@@ -49,7 +49,7 @@ Ref< VehicleComponent > VehicleComponentData::createComponent(
 {
 	Ref< Body > body = physicsManager->createBody(resourceManager, m_bodyDesc);
 	if (!body)
-		return 0;
+		return nullptr;
 
 	body->setEnable(false);
 
@@ -60,18 +60,18 @@ Ref< VehicleComponent > VehicleComponentData::createComponent(
 	uint32_t traceInclude = 0;
 	uint32_t traceIgnore = 0;
 
-	for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = m_traceInclude.begin(); i != m_traceInclude.end(); ++i)
+	for (auto ti : m_traceInclude)
 	{
 		resource::Proxy< CollisionSpecification > traceGroup;
-		if (!resourceManager->bind(*i, traceGroup))
-			return 0;
+		if (!resourceManager->bind(ti, traceGroup))
+			return nullptr;
 		traceInclude |= traceGroup->getBitMask();
 	}
-	for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = m_traceIgnore.begin(); i != m_traceIgnore.end(); ++i)
+	for (auto ti : m_traceIgnore)
 	{
 		resource::Proxy< CollisionSpecification > traceGroup;
-		if (!resourceManager->bind(*i, traceGroup))
-			return 0;
+		if (!resourceManager->bind(ti, traceGroup))
+			return nullptr;
 		traceIgnore |= traceGroup->getBitMask();
 	}
 

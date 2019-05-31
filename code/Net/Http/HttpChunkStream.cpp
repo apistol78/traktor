@@ -87,7 +87,7 @@ int64_t HttpChunkStream::read(void* block, int64_t nbytes)
 
 		*p = '\0';
 #if defined(_MSC_VER)
-		sscanf_s(buf, "%x", &m_available);
+		sscanf_s(buf, "%I64x", &m_available);
 #else
 		std::sscanf(buf, "%x", &m_available);
 #endif

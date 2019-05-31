@@ -628,10 +628,11 @@ void CubicRenderControl::capture(const Vector4& pivot)
 		}
 
 		// Write ground.
-		if (true)
-		{
-			Color4f ground = Color4f::fromColor4ub(m_colorControl->getColor()).rgb1();
+		Color4f ground = Color4f::fromColor4ub(m_colorControl->getColor()).rgb1();
+		float alpha = m_colorControl->getColor().a / 255.0f;
 
+		if (alpha > FUZZY_EPSILON)
+		{
 			render::CubeMap cubeMap(m_cubeImages);
 			for (int32_t i = 0; i < 6; ++i)
 			{
@@ -647,7 +648,7 @@ void CubicRenderControl::capture(const Vector4& pivot)
 						else
 							f = 1.0f;
 
-						f = clamp(f, 0.0f, 1.0f);
+						f = clamp(f, 0.0f, 1.0f) * alpha;
 
 						Color4f sky = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 						cubeMap.getSide(i)->getPixel(x, y, sky);
@@ -687,7 +688,7 @@ void CubicRenderControl::eventColorClick(ui::MouseButtonUpEvent* event)
 	colorDialog.create(
 		m_container,
 		i18n::Text(L"COLOR_DIALOG_TEXT"),
-		ui::ColorDialog::WsDefaultFixed,
+		ui::ColorDialog::WsDefaultFixed | ui::ColorDialog::WsAlpha,
 		Color4f::fromColor4ub(m_colorControl->getColor())
 	);
 	if (colorDialog.showModal() == ui::DrOk)

@@ -399,7 +399,7 @@ public:
 		if (!m_stream)
 			return false;
 
-		while (m_stream != nullptr && m_queued < outSoundBlock.samplesCount)
+		while (m_stream != nullptr && m_queued < (int32_t)outSoundBlock.samplesCount)
 		{
 			int32_t decodedSamples = 0;
 			while (decodedSamples <= 0)

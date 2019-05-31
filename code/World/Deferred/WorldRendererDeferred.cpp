@@ -158,6 +158,7 @@ render::handle_t WorldRendererDeferred::ms_handleFogDistanceAndDensity = 0;
 render::handle_t WorldRendererDeferred::ms_handleFogColor = 0;
 render::handle_t WorldRendererDeferred::ms_handleLightCount = 0;
 render::handle_t WorldRendererDeferred::ms_handleLightSBuffer = 0;
+render::handle_t WorldRendererDeferred::ms_handleTileSBuffer = 0;
 
 WorldRendererDeferred::WorldRendererDeferred()
 :	m_toneMapQuality(QuDisabled)
@@ -190,6 +191,7 @@ WorldRendererDeferred::WorldRendererDeferred()
 	ms_handleFogColor = render::getParameterHandle(L"World_FogColor");
 	ms_handleLightCount = render::getParameterHandle(L"World_LightCount");
 	ms_handleLightSBuffer = render::getParameterHandle(L"World_LightSBuffer");
+	ms_handleTileSBuffer = render::getParameterHandle(L"World_TileSBuffer");
 }
 
 bool WorldRendererDeferred::create(
@@ -1075,28 +1077,28 @@ void WorldRendererDeferred::render(int32_t frame)
 	}
 	T_RENDER_POP_MARKER(m_renderView);
 
-	// // Copy visual target into smaller copy, generate mips.
-	// T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (0)");
-	// if (m_renderView->begin(m_colorTargetSet, nullptr))
-	// {
-	// 	render::ImageProcessStep::Instance::RenderParams params;
-	// 	params.viewFrustum = f.viewFrustum;
-	// 	params.projection = f.projection;
-	// 	params.deltaTime = 0.0f;
+	 // Copy visual target into smaller copy, generate mips.
+	 T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy (0)");
+	 if (m_renderView->begin(m_colorTargetSet, nullptr))
+	 {
+	 	render::ImageProcessStep::Instance::RenderParams params;
+	 	params.viewFrustum = f.viewFrustum;
+	 	params.projection = f.projection;
+	 	params.deltaTime = 0.0f;
 
-	// 	m_colorTargetCopy->render(
-	// 		m_renderView,
-	// 		m_visualTargetSet->getColorTexture(0),	// color
-	// 		nullptr,	// depth
-	// 		nullptr,	// normal
-	// 		nullptr,	// velocity
-	// 		nullptr,	// shadow mask
-	// 		params
-	// 	);
+	 	m_colorTargetCopy->render(
+	 		m_renderView,
+	 		m_visualTargetSet->getColorTexture(0),	// color
+	 		nullptr,	// depth
+	 		nullptr,	// normal
+	 		nullptr,	// velocity
+	 		nullptr,	// shadow mask
+	 		params
+	 	);
 
-	// 	m_renderView->end();
-	// }
-	// T_RENDER_POP_MARKER(m_renderView);
+	 	m_renderView->end();
+	 }
+	 T_RENDER_POP_MARKER(m_renderView);
 
 	// Render fog.
 	T_RENDER_PUSH_MARKER(m_renderView, "World: Fog");
@@ -1182,6 +1184,7 @@ void WorldRendererDeferred::render(int32_t frame)
 		visualProgramParams.setTextureParameter(ms_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
 		visualProgramParams.setTextureParameter(ms_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
 		visualProgramParams.setStructBufferParameter(ms_handleLightSBuffer, f.lightSBuffer);
+		visualProgramParams.setStructBufferParameter(ms_handleTileSBuffer, f.tileSBuffer);
 		visualProgramParams.endParameters(m_globalContext);
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post opaque");
@@ -1232,6 +1235,8 @@ void WorldRendererDeferred::render(int32_t frame)
 		visualProgramParams.setTextureParameter(ms_handleColorMap, m_colorTargetSet->getColorTexture(0));
 		visualProgramParams.setTextureParameter(ms_handleDepthMap, m_gbufferTargetSet->getColorTexture(0));
 		visualProgramParams.setTextureParameter(ms_handleNormalMap, m_gbufferTargetSet->getColorTexture(1));
+		visualProgramParams.setStructBufferParameter(ms_handleLightSBuffer, f.lightSBuffer);
+		visualProgramParams.setStructBufferParameter(ms_handleTileSBuffer, f.tileSBuffer);
 		visualProgramParams.endParameters(m_globalContext);
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post alpha blend");

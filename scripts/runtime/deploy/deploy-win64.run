@@ -53,7 +53,7 @@ local function createIcon()
 	end
 
 	iconImage:apply(ScaleFilter(256, 256))
-	return iconImage:save("Traktor.Amalgam.Game.App.ico")
+	return iconImage:save("Traktor.Runtime.App.ico")
 end
 
 
@@ -110,13 +110,13 @@ local function linkStaticProduct()
 	end
 
 	-- Generate resource script.
-	if run:run("$(TRAKTOR_HOME)/resources/runtime/deploy/win64/Traktor.Amalgam.Game.App.rc.template", "Traktor.Amalgam.Game.App.rc") ~= 0 then
+	if run:run("$(TRAKTOR_HOME)/resources/runtime/deploy/win64/Traktor.Runtime.App.rc.template", "Traktor.Runtime.App.rc") ~= 0 then
 		stderr:printLn("Unable to generate resource script.")
 		return 1
 	end
 
 	-- Compile resources.
-	local cmd = "rc /fo\"%DEPLOY_EXECUTABLE%.res\" Traktor.Amalgam.Game.App.rc"
+	local cmd = "rc /fo\"%DEPLOY_EXECUTABLE%.res\" Traktor.Runtime.App.rc"
 	local result = run:execute(preamble .. cmd, nil)
 	if result ~= 0 then
 		stderr:printLn("Unable to build product resources.")

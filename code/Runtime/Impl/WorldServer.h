@@ -48,6 +48,8 @@ public:
 
 	void createEntityFactories(IEnvironment* environment);
 
+	void createEntityRenderers(IEnvironment* environment);
+
 	int32_t reconfigure(const PropertyGroup* settings);
 
 	virtual void addEntityFactory(world::IEntityFactory* entityFactory) override final;

@@ -133,35 +133,8 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_renderServer = renderServer;
 	m_resourceServer = resourceServer;
 	m_entityBuilder = new world::EntityBuilder();
-
 	m_feedbackManager = new spray::FeedbackManager();
-
-	float sprayLod1Distance = c_sprayLodDistances[m_particleQuality][0];
-	float sprayLod2Distance = c_sprayLodDistances[m_particleQuality][1];
-	m_effectEntityRenderer = new spray::EffectEntityRenderer(m_renderServer->getRenderSystem(), sprayLod1Distance, sprayLod2Distance);
-
-	m_terrainEntityRenderer = new terrain::EntityRenderer(
-		c_terrainDetailDistances[m_terrainQuality],
-		c_terrainSurfaceCacheSizes[m_terrainQuality],
-		bool(m_terrainQuality >= world::QuMedium),
-		bool(m_oceanQuality >= world::QuHigh)
-	);
-
 	m_entityRenderers = new world::WorldEntityRenderers();
-	m_entityRenderers->add(new world::ComponentEntityRenderer());
-	m_entityRenderers->add(new world::DecalRenderer(m_renderServer->getRenderSystem()));
-	m_entityRenderers->add(new world::GroupEntityRenderer());
-	m_entityRenderers->add(new world::LightRenderer());
-	m_entityRenderers->add(new world::ProbeRenderer(m_resourceServer->getResourceManager(), m_renderServer->getRenderSystem()));
-	m_entityRenderers->add(new mesh::MeshComponentRenderer());
-	m_entityRenderers->add(new mesh::InstanceMeshComponentRenderer());
-	m_entityRenderers->add(m_effectEntityRenderer);
-	m_entityRenderers->add(new animation::BoidsEntityRenderer());
-	m_entityRenderers->add(new animation::ClothEntityRenderer());
-	m_entityRenderers->add(new animation::PathEntityRenderer());
-	m_entityRenderers->add(new physics::EntityRenderer());
-	m_entityRenderers->add(new weather::WeatherRenderer());
-	m_entityRenderers->add(m_terrainEntityRenderer);
 
 	int32_t maxEventInstances = settings->getProperty< int32_t >(L"World.MaxEventInstances", 512);
 	m_eventManager = new world::EntityEventManager(maxEventInstances);
@@ -171,12 +144,12 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 
 void WorldServer::destroy()
 {
-	m_worldType = 0;
-	m_resourceServer = 0;
-	m_renderServer = 0;
-	m_entityBuilder = 0;
-	m_entityRenderers = 0;
-	m_eventManager = 0;
+	m_worldType = nullptr;
+	m_resourceServer = nullptr;
+	m_renderServer = nullptr;
+	m_entityBuilder = nullptr;
+	m_entityRenderers = nullptr;
+	m_eventManager = nullptr;
 }
 
 void WorldServer::createResourceFactories(IEnvironment* environment)
@@ -192,8 +165,8 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 
 void WorldServer::createEntityFactories(IEnvironment* environment)
 {
-	physics::PhysicsManager* physicsManager = environment->getPhysics() ? environment->getPhysics()->getPhysicsManager() : 0;
-	sound::ISoundPlayer* soundPlayer = environment->getAudio() ? environment->getAudio()->getSoundPlayer() : 0;
+	physics::PhysicsManager* physicsManager = environment->getPhysics() ? environment->getPhysics()->getPhysicsManager() : nullptr;
+	sound::ISoundPlayer* soundPlayer = environment->getAudio() ? environment->getAudio()->getSoundPlayer() : nullptr;
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
@@ -207,6 +180,38 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new weather::WeatherFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new world::WorldEntityFactory(resourceManager, false));
+}
+
+void WorldServer::createEntityRenderers(IEnvironment* environment)
+{
+	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
+	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
+
+	float sprayLod1Distance = c_sprayLodDistances[m_particleQuality][0];
+	float sprayLod2Distance = c_sprayLodDistances[m_particleQuality][1];
+	m_effectEntityRenderer = new spray::EffectEntityRenderer(m_renderServer->getRenderSystem(), sprayLod1Distance, sprayLod2Distance);
+
+	m_terrainEntityRenderer = new terrain::EntityRenderer(
+		c_terrainDetailDistances[m_terrainQuality],
+		c_terrainSurfaceCacheSizes[m_terrainQuality],
+		bool(m_terrainQuality >= world::QuMedium),
+		bool(m_oceanQuality >= world::QuHigh)
+	);
+
+	m_entityRenderers->add(new world::ComponentEntityRenderer());
+	m_entityRenderers->add(new world::DecalRenderer(m_renderServer->getRenderSystem()));
+	m_entityRenderers->add(new world::GroupEntityRenderer());
+	m_entityRenderers->add(new world::LightRenderer());
+	m_entityRenderers->add(new world::ProbeRenderer(resourceManager, renderSystem));
+	m_entityRenderers->add(new mesh::MeshComponentRenderer());
+	m_entityRenderers->add(new mesh::InstanceMeshComponentRenderer());
+	m_entityRenderers->add(m_effectEntityRenderer);
+	m_entityRenderers->add(new animation::BoidsEntityRenderer());
+	m_entityRenderers->add(new animation::ClothEntityRenderer());
+	m_entityRenderers->add(new animation::PathEntityRenderer());
+	m_entityRenderers->add(new physics::EntityRenderer());
+	m_entityRenderers->add(new weather::WeatherRenderer());
+	m_entityRenderers->add(m_terrainEntityRenderer);
 }
 
 int32_t WorldServer::reconfigure(const PropertyGroup* settings)
@@ -332,7 +337,7 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::World
 		m_renderServer->getRenderView(),
 		wcd
 	))
-		return 0;
+		return nullptr;
 
 	return worldRenderer;
 }

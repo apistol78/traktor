@@ -34,7 +34,7 @@ bool Isolate::createIsolatedInstance(Instance* instance, IStream* stream)
 		Ref< IStream > dataStream = instance->readData(dataName);
 		T_ASSERT(dataStream);
 
-		int32_t dataSize = dataStream->available();
+		int32_t dataSize = (int32_t)dataStream->available();
 		writer << dataSize;
 
 		if (!StreamCopy(stream, dataStream).execute(dataSize))

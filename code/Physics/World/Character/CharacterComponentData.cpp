@@ -39,7 +39,7 @@ Ref< CharacterComponent > CharacterComponentData::createComponent(
 {
 	Ref< Body > body = physicsManager->createBody(resourceManager, m_bodyDesc);
 	if (!body)
-		return 0;
+		return nullptr;
 
 	body->setEnable(false);
 
@@ -50,14 +50,14 @@ Ref< CharacterComponent > CharacterComponentData::createComponent(
 	{
 		resource::Proxy< CollisionSpecification > traceGroup;
 		if (!resourceManager->bind(*i, traceGroup))
-			return 0;
+			return nullptr;
 		traceInclude |= traceGroup->getBitMask();
 	}
 	for (std::set< resource::Id< CollisionSpecification > >::const_iterator i = m_traceIgnore.begin(); i != m_traceIgnore.end(); ++i)
 	{
 		resource::Proxy< CollisionSpecification > traceGroup;
 		if (!resourceManager->bind(*i, traceGroup))
-			return 0;
+			return nullptr;
 		traceIgnore |= traceGroup->getBitMask();
 	}
 

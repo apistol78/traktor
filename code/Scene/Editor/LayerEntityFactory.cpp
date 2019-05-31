@@ -46,12 +46,12 @@ Ref< world::Entity > LayerEntityFactory::createEntity(const world::IEntityBuilde
 
 Ref< world::IEntityEvent > LayerEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
 {
-	return 0;
+	return nullptr;
 }
 
 Ref< world::IEntityComponent > LayerEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	return 0;
+	return nullptr;
 }
 
 	}

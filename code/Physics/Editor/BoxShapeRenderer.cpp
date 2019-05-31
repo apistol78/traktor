@@ -23,8 +23,9 @@ void BoxShapeRenderer::draw(
 ) const
 {
 	const BoxShapeDesc* boxShapeDesc = checked_type_cast< const BoxShapeDesc*, false >(shapeDesc);
+	const Vector4 margin(Scalar(boxShapeDesc->getMargin()));
 
-	Aabb3 boundingBox(-boxShapeDesc->getExtent(), boxShapeDesc->getExtent());
+	Aabb3 boundingBox(-boxShapeDesc->getExtent() - margin, boxShapeDesc->getExtent() + margin);
 
 	primitiveRenderer->pushWorld((body1Transform * shapeDesc->getLocalTransform()).toMatrix44());
 

@@ -900,6 +900,7 @@
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Traktor.Flash</item>
+						<item>Traktor.Flash.Runtime</item>
 					</value>
 				</second>
 			</item>
