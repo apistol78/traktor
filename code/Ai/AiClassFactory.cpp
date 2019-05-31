@@ -1,7 +1,7 @@
 #include "Ai/AiClassFactory.h"
 #include "Ai/MoveQuery.h"
 #include "Ai/NavMesh.h"
-#include "Ai/NavMeshEntity.h"
+#include "Ai/NavMeshComponent.h"
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -49,7 +49,7 @@ Vector4 NavMesh_findRandomPoint_2(NavMesh* self, const Vector4& center, float ra
 		return Vector4::zero();
 }
 
-const NavMesh* NavMeshEntity_get(NavMeshEntity* self)
+const NavMesh* NavMeshComponent_get(NavMeshComponent* self)
 {
 	return self->get();
 }
@@ -71,9 +71,9 @@ void AiClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classNavMesh->addMethod("findRandomPoint", &NavMesh_findRandomPoint_2);
 	registrar->registerClass(classNavMesh);
 
-	auto classNavMeshEntity = new AutoRuntimeClass< NavMeshEntity >();
-	classNavMeshEntity->addMethod("get", &NavMeshEntity_get);
-	registrar->registerClass(classNavMeshEntity);
+	auto classNavMeshComponent = new AutoRuntimeClass< NavMeshComponent >();
+	classNavMeshComponent->addMethod("get", &NavMeshComponent_get);
+	registrar->registerClass(classNavMeshComponent);
 }
 
 	}

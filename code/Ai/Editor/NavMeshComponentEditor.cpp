@@ -1,6 +1,6 @@
-#include "Ai/Editor/NavMeshEntityEditor.h"
+#include "Ai/Editor/NavMeshComponentEditor.h"
 #include "Ai/NavMesh.h"
-#include "Ai/NavMeshEntityData.h"
+#include "Ai/NavMeshComponentData.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Editor/EntityAdapter.h"
@@ -11,21 +11,21 @@ namespace traktor
 	namespace ai
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshEntityEditor", NavMeshEntityEditor, scene::DefaultEntityEditor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshComponentEditor", NavMeshComponentEditor, scene::DefaultComponentEditor)
 
-NavMeshEntityEditor::NavMeshEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter)
-:	scene::DefaultEntityEditor(context, entityAdapter)
+NavMeshComponentEditor::NavMeshComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData)
+:	scene::DefaultComponentEditor(context, entityAdapter, componentData)
 {
 }
 
-void NavMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
+void NavMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	const NavMeshEntityData* navMeshEntityData = checked_type_cast< const NavMeshEntityData* >(getEntityAdapter()->getEntityData());
+	auto navMeshComponentData = m_entityAdapter->getComponentData< NavMeshComponentData >();
 
-	if (getContext()->shouldDrawGuide(L"Ai.NavMesh"))
+	if (m_context->shouldDrawGuide(L"Ai.NavMesh"))
 	{
 		resource::Proxy< NavMesh > navMesh;
-		if (!getContext()->getResourceManager()->bind(navMeshEntityData->get(), navMesh))
+		if (!m_context->getResourceManager()->bind(navMeshComponentData->get(), navMesh))
 			return;
 
 		if (navMesh->m_navMeshPolygons.empty())
@@ -84,7 +84,7 @@ void NavMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 		primitiveRenderer->popWorld();
 	}
 
-	scene::DefaultEntityEditor::drawGuide(primitiveRenderer);
+	scene::DefaultComponentEditor::drawGuide(primitiveRenderer);
 }
 
 	}

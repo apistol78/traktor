@@ -15,7 +15,7 @@ MoveQuery::MoveQuery()
 :	m_startPosition(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_endPosition(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_filter(new dtQueryFilter())
-,	m_navQuery(0)
+,	m_navQuery(nullptr)
 ,	m_pathCount(0)
 ,	m_steerIndex(0)
 {

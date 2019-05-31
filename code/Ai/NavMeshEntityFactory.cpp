@@ -1,6 +1,6 @@
 #include "Ai/NavMesh.h"
-#include "Ai/NavMeshEntity.h"
-#include "Ai/NavMeshEntityData.h"
+#include "Ai/NavMeshComponent.h"
+#include "Ai/NavMeshComponentData.h"
 #include "Ai/NavMeshEntityFactory.h"
 #include "Resource/IResourceManager.h"
 
@@ -19,7 +19,7 @@ NavMeshEntityFactory::NavMeshEntityFactory(resource::IResourceManager* resourceM
 
 const TypeInfoSet NavMeshEntityFactory::getEntityTypes() const
 {
-	return makeTypeInfoSet< NavMeshEntityData >();
+	return TypeInfoSet();
 }
 
 const TypeInfoSet NavMeshEntityFactory::getEntityEventTypes() const
@@ -29,7 +29,7 @@ const TypeInfoSet NavMeshEntityFactory::getEntityEventTypes() const
 
 const TypeInfoSet NavMeshEntityFactory::getEntityComponentTypes() const
 {
-	return TypeInfoSet();
+	return makeTypeInfoSet< NavMeshComponentData >();
 }
 
 Ref< world::Entity > NavMeshEntityFactory::createEntity(
@@ -37,18 +37,7 @@ Ref< world::Entity > NavMeshEntityFactory::createEntity(
 	const world::EntityData& entityData
 ) const
 {
-	if (!m_editor)
-	{
-		const NavMeshEntityData* navMeshEntityData = checked_type_cast< const NavMeshEntityData* >(&entityData);
-
-		resource::Proxy< NavMesh > navMesh;
-		if (!m_resourceManager->bind(navMeshEntityData->get(), navMesh))
-			return nullptr;
-
-		return new NavMeshEntity(navMesh);
-	}
-	else
-		return new NavMeshEntity();
+	return nullptr;
 }
 
 Ref< world::IEntityEvent > NavMeshEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
@@ -58,7 +47,18 @@ Ref< world::IEntityEvent > NavMeshEntityFactory::createEntityEvent(const world::
 
 Ref< world::IEntityComponent > NavMeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	return nullptr;
+	if (!m_editor)
+	{
+		auto navMeshComponentData = checked_type_cast< const NavMeshComponentData* >(&entityComponentData);
+
+		resource::Proxy< NavMesh > navMesh;
+		if (!m_resourceManager->bind(navMeshComponentData->get(), navMesh))
+			return nullptr;
+
+		return new NavMeshComponent(navMesh);
+	}
+	else
+		return new NavMeshComponent();
 }
 
 	}

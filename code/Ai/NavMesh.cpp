@@ -107,8 +107,8 @@ Ref< MoveQuery > NavMesh::createMoveQuery(const Vector4& startPosition, const Ve
 		outputQuery->m_path,
 		outputQuery->m_pathCount,
 		steerPath,
-		0,
-		0,
+		nullptr,
+		nullptr,
 		&steerPathCount,
 		256
 	);
