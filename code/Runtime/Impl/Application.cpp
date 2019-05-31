@@ -302,6 +302,11 @@ bool Application::create(
 	if (m_worldServer && m_physicsServer)
 		m_physicsServer->createEntityFactories(m_environment);
 
+	// Entity renderers.
+	T_DEBUG(L"Creating entity renderers...");
+	if (m_worldServer)
+		m_worldServer->createEntityRenderers(m_environment);
+
 	// Setup voice chat feature.
 	if (m_onlineServer && m_audioServer)
 		m_onlineServer->setupVoice(m_audioServer);
@@ -337,7 +342,7 @@ bool Application::create(
 			return false;
 		}
 
-		log::info << L"Plugin \"" << type_name(plugin) << L"\" initialized successfully." << Endl;
+		T_DEBUG(L"Plugin \"" << type_name(plugin) << L"\" initialized successfully.");
 		plugins.push_back(plugin);
 	}
 
@@ -349,7 +354,7 @@ bool Application::create(
 	}
 	if (!state)
 	{
-		log::error << L"Application failed; unable to create initial state" << Endl;
+		log::error << L"Application failed; unable to create initial state (scanned " << int32_t(plugins.size()) << L" plugins)." << Endl;
 		return false;
 	}
 

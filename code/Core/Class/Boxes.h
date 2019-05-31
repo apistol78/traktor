@@ -469,6 +469,8 @@ public:
 
 	static Transform lerp(const BoxedTransform* a, const BoxedTransform* b, float c) { return traktor::lerp(a->m_value, b->m_value, Scalar(c)); }
 
+	static Transform lookAt(const BoxedVector4* position, const BoxedVector4* target, const BoxedVector4* up);
+
 	const Transform& unbox() const { return m_value; }
 
 	virtual std::wstring toString() const override final;

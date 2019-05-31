@@ -120,7 +120,7 @@ public:
 		// Read and decode until desired amount of samples have been decoded.
 		while (m_decodedCount < outSoundBlock.samplesCount || m_sampleRate == 0)
 		{
-			int32_t nread = m_stream->read(m_readBuffer, sizeof(m_readBuffer));
+			int64_t nread = m_stream->read(m_readBuffer, sizeof(m_readBuffer));
 			if (nread <= 0)
 			{
 				// No more bytes from source stream; if we have encoded some samples lets output them

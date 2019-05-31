@@ -74,7 +74,7 @@ void PhysicsComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 				Vector4 position = anchorL + axisL * -suspLen;
 
 				primitiveRenderer->drawWireCylinder(
-					translate(position),
+					translate(position) * rotateY(deg2rad(90.0f)),
 					wheel->data->getRadius(),
 					wheel->data->getRadius() / 2.0f,
 					Color4ub(0, 255, 255, 255)

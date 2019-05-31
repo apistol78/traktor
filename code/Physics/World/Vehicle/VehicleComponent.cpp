@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Physics/Body.h"
@@ -34,7 +36,7 @@ VehicleComponent::VehicleComponent(
 	uint32_t traceInclude,
 	uint32_t traceIgnore
 )
-:	m_owner(0)
+:	m_owner(nullptr)
 ,	m_physicsManager(physicsManager)
 ,	m_data(data)
 ,	m_body(body)
@@ -53,12 +55,12 @@ VehicleComponent::VehicleComponent(
 void VehicleComponent::destroy()
 {
 	safeDestroy(m_body);
-	m_owner = 0;
+	m_owner = nullptr;
 }
 
 void VehicleComponent::setOwner(world::Entity* owner)
 {
-	if ((m_owner = owner) != 0)
+	if ((m_owner = owner) != nullptr)
 	{
 		Transform transform;
 		if (m_owner->getTransform(transform))
@@ -126,12 +128,12 @@ void VehicleComponent::updateSteering(float dT)
 		m_steerAngle -= dA;
 	}
 
-	for (RefArray< Wheel >::iterator i = m_wheels.begin(); i != m_wheels.end(); ++i)
+	for (auto wheel : m_wheels)
 	{
-		if ((*i)->data->getSteer())
+		if (wheel->data->getSteer())
 		{
-			(*i)->direction = Vector4(std::sin(m_steerAngle), 0.0f, std::cos(m_steerAngle), 0.0f);
-			(*i)->directionPerp = Vector4(std::cos(m_steerAngle), 0.0f, -std::sin(m_steerAngle), 0.0f);
+			wheel->direction = Vector4(std::sin(m_steerAngle), 0.0f, std::cos(m_steerAngle), 0.0f);
+			wheel->directionPerp = Vector4(std::cos(m_steerAngle), 0.0f, -std::sin(m_steerAngle), 0.0f);
 		}
 	}
 }
@@ -145,10 +147,10 @@ void VehicleComponent::updateSuspension(float dT)
 
 	m_airBorn = true;
 
-	for (RefArray< Wheel >::iterator i = m_wheels.begin(); i != m_wheels.end(); ++i)
+	for (auto wheel : m_wheels)
 	{
-		const WheelData* data = (*i)->data;
-		T_ASSERT(data != 0);
+		const WheelData* data = wheel->data;
+		T_ASSERT(data != nullptr);
 
 		Vector4 anchorW = bodyT * data->getAnchor().xyz1();
 		Vector4 axisW = bodyT * -data->getAxis().xyz0().normalized();
@@ -185,7 +187,7 @@ void VehicleComponent::updateSuspension(float dT)
 				suspensionLength = data->getSuspensionLength().max;
 
 			// Suspension velocity.
-			float suspensionVelocity = ((*i)->suspensionPreviousLength - suspensionLength) / dT;
+			float suspensionVelocity = (wheel->suspensionPreviousLength - suspensionLength) / dT;
 
 			// Suspension forces.
 			float t = 1.0f - (suspensionLength - data->getSuspensionLength().min) / (data->getSuspensionLength().max - data->getSuspensionLength().min);
@@ -208,38 +210,38 @@ void VehicleComponent::updateSuspension(float dT)
 			);
 
 			// Save suspension state.
-			(*i)->suspensionPreviousLength = suspensionLength;
+			wheel->suspensionPreviousLength = suspensionLength;
 
 			// Contact attributes.
 			Vector4 wheelVelocity = m_body->getVelocityAt(result.position.xyz1(), false);
 			Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
 			Vector4 velocity = wheelVelocity - groundVelocity;
 
-			(*i)->contact = true;
-			(*i)->contactFudge = contactFudge;
-			(*i)->contactMaterial = result.material;
-			(*i)->contactPosition = result.position.xyz1();
-			(*i)->contactNormal = normal;
+			wheel->contact = true;
+			wheel->contactFudge = contactFudge;
+			wheel->contactMaterial = result.material;
+			wheel->contactPosition = result.position.xyz1();
+			wheel->contactNormal = normal;
 
 			Scalar k = dot3(normal, velocity);
-			(*i)->contactVelocity = velocity - normal * (-k);
+			wheel->contactVelocity = velocity - normal * (-k);
 
 			m_airBorn = false;
 		}
 		else
 		{
 			// Save suspension state.
-			(*i)->suspensionPreviousLength = data->getSuspensionLength().max;
+			wheel->suspensionPreviousLength = data->getSuspensionLength().max;
 
-			(*i)->contact = false;
-			(*i)->contactFudge = 0.0f;
-			(*i)->contactMaterial = 0;
-			(*i)->contactPosition = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-			(*i)->contactNormal = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-			(*i)->contactVelocity = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+			wheel->contact = false;
+			wheel->contactFudge = 0.0f;
+			wheel->contactMaterial = 0;
+			wheel->contactPosition = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+			wheel->contactNormal = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+			wheel->contactVelocity = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 		}
 
-		(*i)->suspensionFilteredLength = (*i)->suspensionPreviousLength * 0.2f + (*i)->suspensionFilteredLength * 0.8f;
+		wheel->suspensionFilteredLength = wheel->suspensionPreviousLength * 0.2f + wheel->suspensionFilteredLength * 0.8f;
 	}
 }
 
@@ -265,27 +267,27 @@ void VehicleComponent::updateFriction(float /*dT*/)
 
 	float massPerWheel = m_totalMass / m_wheels.size();
 
-	for (RefArray< Wheel >::iterator i = m_wheels.begin(); i != m_wheels.end(); ++i)
+	for (auto wheel : m_wheels)
 	{
-		if (!(*i)->contact)
+		if (!wheel->contact)
 			continue;
 
-		const WheelData* data = (*i)->data;
+		const WheelData* data = wheel->data;
 		T_ASSERT(data != 0);
 
 		Vector4 axis = bodyT * data->getAxis();
 
-		Vector4 directionW = bodyT * (*i)->direction;
-		Vector4 directionPerpW = bodyT * (*i)->directionPerp;
+		Vector4 directionW = bodyT * wheel->direction;
+		Vector4 directionPerpW = bodyT * wheel->directionPerp;
 
-		directionW -= (*i)->contactNormal * dot3((*i)->contactNormal, directionW);
-		directionPerpW -= (*i)->contactNormal * dot3((*i)->contactNormal, directionPerpW);
+		directionW -= wheel->contactNormal * dot3(wheel->contactNormal, directionW);
+		directionPerpW -= wheel->contactNormal * dot3(wheel->contactNormal, directionPerpW);
 
 		directionW = directionW.normalized();
 		directionPerpW = directionPerpW.normalized();
 
-		Scalar forwardVelocity = dot3(directionW, (*i)->contactVelocity);
-		Scalar sideVelocity = dot3(directionPerpW, (*i)->contactVelocity);
+		Scalar forwardVelocity = dot3(directionW, wheel->contactVelocity);
+		Scalar sideVelocity = dot3(directionPerpW, wheel->contactVelocity);
 
 		//sideVelocity = clamp(
 		//	sideVelocity,
@@ -299,7 +301,7 @@ void VehicleComponent::updateFriction(float /*dT*/)
 		Scalar grip(0.01f);
 
 		m_body->addImpulse(
-			(*i)->contactPosition,
+			wheel->contactPosition,
 			directionPerpW * -sideVelocity * Scalar(massPerWheel * grip/* * frictionPower*/),
 			false
 		);
@@ -354,24 +356,24 @@ void VehicleComponent::updateEngine(float /*dT*/)
 	Scalar forwardVelocity = dot3(m_body->getLinearVelocity(), bodyT.axisZ());
 	Scalar engineForce = Scalar(m_engineThrottle * m_data->getEngineForceCoeff()) * (Scalar(1.0f) - clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), Scalar(0.0f), Scalar(1.0f)));
 
-	for (RefArray< Wheel >::iterator i = m_wheels.begin(); i != m_wheels.end(); ++i)
+	for (auto wheel : m_wheels)
 	{
-		if (!(*i)->contact)
+		if (!wheel->contact)
 			continue;
 
-		const WheelData* data = (*i)->data;
-		T_ASSERT(data != 0);
+		const WheelData* data = wheel->data;
+		T_ASSERT(data != nullptr);
 
 		if (!data->getDrive())
 			continue;
 
-		Vector4 direction = (*i)->direction * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
+		Vector4 direction = wheel->direction * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
 		direction.normalize();
 
-		Scalar grip = clamp((*i)->contactNormal.y(), Scalar(0.0f), Scalar(1.0f)) * Scalar((*i)->contactFudge);
+		Scalar grip = clamp(wheel->contactNormal.y(), Scalar(0.0f), Scalar(1.0f)) * Scalar(wheel->contactFudge);
 
 		m_body->addForceAt(
-			bodyTinv * (*i)->contactPosition,
+			bodyTinv * wheel->contactPosition,
 			direction * engineForce * grip,
 			true
 		);
@@ -382,27 +384,27 @@ void VehicleComponent::updateWheels(float dT)
 {
 	Transform bodyT = m_body->getTransform();
 
-	for (RefArray< Wheel >::iterator i = m_wheels.begin(); i != m_wheels.end(); ++i)
+	for (auto wheel : m_wheels)
 	{
 		float targetVelocity = 0.0f;
 
-		const WheelData* data = (*i)->data;
-		T_ASSERT(data != 0);
+		const WheelData* data = wheel->data;
+		T_ASSERT(data != nullptr);
 
 		if (!data->getDrive() || abs(m_engineThrottle) <= FUZZY_EPSILON)
-			targetVelocity = (*i)->velocity * 0.95f;
+			targetVelocity = wheel->velocity * 0.95f;
 		else
 			targetVelocity = (m_engineThrottle * m_data->getMaxVelocity()) / data->getRadius();
 
-		if ((*i)->contact)
+		if (wheel->contact)
 		{
-			float d = dot3((*i)->contactVelocity, bodyT * (*i)->direction);
-			(*i)->velocity = lerp(d / data->getRadius(), targetVelocity, 0.25f);
+			float d = dot3(wheel->contactVelocity, bodyT * wheel->direction);
+			wheel->velocity = lerp(d / data->getRadius(), targetVelocity, 0.25f);
 		}
 		else
-			(*i)->velocity = targetVelocity;
+			wheel->velocity = targetVelocity;
 
-		(*i)->angle += (*i)->velocity * dT;
+		wheel->angle += wheel->velocity * dT;
 	}
 }
 

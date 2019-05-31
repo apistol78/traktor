@@ -28,7 +28,7 @@ class T_DLLCLASS ShapeDesc : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	enum { Version = 5 };
+	enum { Version = 6 };
 
 	ShapeDesc();
 

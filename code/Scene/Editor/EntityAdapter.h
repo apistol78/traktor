@@ -90,6 +90,8 @@ public:
 		return checked_type_cast< ComponentType* >(getComponent(type_of< ComponentType >()));
 	}
 
+	void dropHash();
+
 	uint32_t getHash() const;
 
 	//@}

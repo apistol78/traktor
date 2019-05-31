@@ -128,6 +128,7 @@ private:
 	static render::handle_t ms_handleFogColor;
 	static render::handle_t ms_handleLightCount;
 	static render::handle_t ms_handleLightSBuffer;
+	static render::handle_t ms_handleTileSBuffer;
 
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;

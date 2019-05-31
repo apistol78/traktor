@@ -167,7 +167,7 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 	if (!factory)
 	{
 		log::error << L"Unable to bind a " << productType.getName() << L" resource; no factory for instance type \"" << resourceType->getName() << L"\" (" << guid.format() << L")." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	// Create resource handle.
@@ -175,9 +175,9 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 	if (cacheable)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.find(guid);
-		if (i != m_residentHandles.end())
-			handle = i->second;
+		auto it = m_residentHandles.find(guid);
+		if (it != m_residentHandles.end())
+			handle = it->second;
 		else
 		{
 			Ref< ResidentResourceHandle > residentHandle = new ResidentResourceHandle(productType, false);
@@ -191,11 +191,11 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 		RefArray< ExclusiveResourceHandle >& handles = m_exclusiveHandles[guid];
 
 		// First try to reuse handles which are no longer in use.
-		for (RefArray< ExclusiveResourceHandle >::iterator i = handles.begin(); i != handles.end(); ++i)
+		for (auto h : handles)
 		{
-			if (!(*i)->get())
+			if (!h->get())
 			{
-				handle = *i;
+				handle = h;
 				break;
 			}
 		}

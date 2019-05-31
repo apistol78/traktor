@@ -122,17 +122,23 @@ public:
 					if (!manifestDocument.loadFromFile(p.getPathName() + L"/Manifest.xml"))
 						continue;
 
-					bool containTag = false;
-
-					RefArray< xml::Element > tagElements;
-					manifestDocument.getDocumentElement()->get(L"tags/tag", tagElements);
-					for (auto tagElement : tagElements)
+					// Filter on tags if given; no tags means no filtering.
+					bool containTag = true;
+					if (!tags.empty())
 					{
-						auto v = tagElement->getValue();
-						if (tags.find(v) != tags.end())
+						containTag = false;
+
+						RefArray< xml::Element > tagElements;
+						manifestDocument.getDocumentElement()->get(L"tags/tag", tagElements);
+
+						for (auto tagElement : tagElements)
 						{
-							containTag = true;
-							break;
+							auto v = tagElement->getValue();
+							if (tags.find(v) != tags.end())
+							{
+								containTag = true;
+								break;
+							}
 						}
 					}
 

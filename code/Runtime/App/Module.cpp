@@ -4,7 +4,7 @@
 
 namespace traktor
 {
-	namespace video
+	namespace runtime
 	{
 
 extern "C" void __module__Traktor_Runtime_App()

@@ -1123,7 +1123,7 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 
 	// Create new batch if necessary.
 	AlignedVector< Batch >& batches = m_currentFrame->batches;
-	uint32_t projection = m_currentFrame->projections.size() - 1;
+	uint32_t projection = (uint32_t)m_currentFrame->projections.size() - 1;
 	if (
 		batches.empty() ||
 		batches.back().projection != projection ||

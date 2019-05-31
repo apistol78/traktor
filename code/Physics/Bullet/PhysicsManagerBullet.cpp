@@ -508,7 +508,7 @@ void deleteShape(btCollisionShape* shape)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerBullet", 0, PhysicsManagerBullet, PhysicsManager)
 
-PhysicsManagerBullet* PhysicsManagerBullet::ms_this = 0;
+PhysicsManagerBullet* PhysicsManagerBullet::ms_this = nullptr;
 
 PhysicsManagerBullet::PhysicsManagerBullet()
 :	m_configuration(0)
@@ -595,7 +595,6 @@ bool PhysicsManagerBullet::create(const PhysicsCreateDesc& desc)
 		m_configuration
 	);
 #	endif
-
 #endif
 
 	m_dispatcher->setNearCallback(&PhysicsManagerBullet::nearCallback);
@@ -641,13 +640,13 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (!desc)
-		return 0;
+		return nullptr;
 
 	const ShapeDesc* shapeDesc = desc->getShape();
 	if (!shapeDesc)
 	{
 		log::error << L"Unable to create body, no shape defined" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	// Create collision shape.
@@ -657,6 +656,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	if (const BoxShapeDesc* boxShape = dynamic_type_cast< const BoxShapeDesc* >(shapeDesc))
 	{
 		shape = new btBoxShape(toBtVector3(boxShape->getExtent()));
+		shape->setMargin(boxShape->getMargin());
 	}
 	else if (const CapsuleShapeDesc* capsuleShape = dynamic_type_cast< const CapsuleShapeDesc* >(shapeDesc))
 	{
@@ -677,7 +677,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		if (!resourceManager->bind(meshShape->getMesh(), mesh))
 		{
 			log::error << L"Unable to load collision mesh resource " << Guid(meshShape->getMesh()).format() << Endl;
-			return 0;
+			return nullptr;
 		}
 
 		if (is_a< DynamicBodyDesc >(desc))
@@ -687,7 +687,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			if (hullIndices.empty())
 			{
 				log::error << L"Unable to create body, mesh hull empty" << Endl;
-				return 0;
+				return nullptr;
 			}
 
 			// Build point list, only hull points.
@@ -727,7 +727,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		if (!resourceManager->bind(heightfieldShape->getHeightfield(), heightfield))
 		{
 			log::error << L"Unable to load heightfield resource" << Endl;
-			return 0;
+			return nullptr;
 		}
 
 		shape = new HeightfieldShapeBullet(heightfield);
@@ -735,7 +735,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	else
 	{
 		log::error << L"Unsupported shape type \"" << type_name(shapeDesc) << L"\"" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	T_ASSERT(shape);
@@ -777,7 +777,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			if (!resourceManager->bind(*i, collisionGroup))
 			{
 				log::error << L"Unable to bind collision group specification" << Endl;
-				return 0;
+				return nullptr;
 			}
 			mergedCollisionGroup |= collisionGroup->getBitMask();
 		}
@@ -789,7 +789,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			if (!resourceManager->bind(*i, collisionMask))
 			{
 				log::error << L"Unable to bind collision mask specification" << Endl;
-				return 0;
+				return nullptr;
 			}
 			mergedCollisionMask |= collisionMask->getBitMask();
 		}
@@ -850,7 +850,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			if (!resourceManager->bind(*i, collisionGroup))
 			{
 				log::error << L"Unable to bind collision group specification" << Endl;
-				return 0;
+				return nullptr;
 			}
 			mergedCollisionGroup |= collisionGroup->getBitMask();
 		}
@@ -862,7 +862,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			if (!resourceManager->bind(*i, collisionMask))
 			{
 				log::error << L"Unable to bind collision mask specification" << Endl;
-				return 0;
+				return nullptr;
 			}
 			mergedCollisionMask |= collisionMask->getBitMask();
 		}
@@ -904,7 +904,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (!desc)
-		return 0;
+		return nullptr;
 
 	BodyBullet* bb1 = checked_type_cast< BodyBullet* >(body1);
 	BodyBullet* bb2 = checked_type_cast< BodyBullet* >(body2);
@@ -916,7 +916,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 	if (const AxisJointDesc* axisDesc = dynamic_type_cast< const AxisJointDesc* >(desc))
 	{
-		btHingeConstraint* hingeConstraint = 0;
+		btHingeConstraint* hingeConstraint = nullptr;
 
 		if (b1 && b2)
 		{
@@ -958,7 +958,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	}
 	else if (const BallJointDesc* ballDesc = dynamic_type_cast< const BallJointDesc* >(desc))
 	{
-		btPoint2PointConstraint* pointConstraint = 0;
+		btPoint2PointConstraint* pointConstraint = nullptr;
 
 		if (b1 && b2)
 		{
@@ -1024,7 +1024,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	}
 	else if (const FixedJointDesc* fixedDesc = dynamic_type_cast< const FixedJointDesc* >(desc))
 	{
-		btGeneric6DofConstraint* fixedConstraint = 0;
+		btGeneric6DofConstraint* fixedConstraint = nullptr;
 
 		if (b1 && b2)
 		{
@@ -1062,7 +1062,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	}
 	else if (const HingeJointDesc* hingeDesc = dynamic_type_cast< const HingeJointDesc* >(desc))
 	{
-		btHingeConstraint* hingeConstraint = 0;
+		btHingeConstraint* hingeConstraint = nullptr;
 
 		if (b1 && b2)
 		{
@@ -1115,7 +1115,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	}
 	else if (const Hinge2JointDesc* hinge2Desc = dynamic_type_cast< const Hinge2JointDesc* >(desc))
 	{
-		btHinge2Constraint* hinge2Constraint = 0;
+		btHinge2Constraint* hinge2Constraint = nullptr;
 
 		if (b1 && b2)
 		{
@@ -1156,7 +1156,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			hinge2Constraint->setEquilibriumPoint();
 		}
 		else
-			return 0;
+			return nullptr;
 
 		joint = new Hinge2JointBullet(this, hinge2Constraint, bb1, bb2);
 	}

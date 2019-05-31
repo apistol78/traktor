@@ -49,7 +49,7 @@ void EntityAdapter::prepare(
 		T_FATAL_ASSERT (f);
 
 		m_entityEditor = f->createEntityEditor(m_context, this);
-		T_FATAL_ASSERT (m_entityEditor != 0);
+		T_FATAL_ASSERT (m_entityEditor != nullptr);
 	}
 
 	// Create component editors.
@@ -87,7 +87,7 @@ world::IEntityComponentData* EntityAdapter::getComponentData(const TypeInfo& com
 	if (componentEntityData)
 		return componentEntityData->getComponent(componentDataType);
 	else
-		return 0;
+		return nullptr;
 }
 
 world::IEntityComponent* EntityAdapter::getComponent(const TypeInfo& componentType) const
@@ -96,7 +96,12 @@ world::IEntityComponent* EntityAdapter::getComponent(const TypeInfo& componentTy
 	if (componentEntity)
 		return componentEntity->getComponent(componentType);
 	else
-		return 0;
+		return nullptr;
+}
+
+void EntityAdapter::dropHash()
+{
+	m_hash = 0;
 }
 
 uint32_t EntityAdapter::getHash() const
@@ -301,7 +306,7 @@ void EntityAdapter::unlinkChild(EntityAdapter* child)
 	m_children.erase(i);
 	m_childMap.remove(child->getEntity());
 
-	child->m_parent = 0;
+	child->m_parent = nullptr;
 }
 
 void EntityAdapter::unlinkAllChildren()
@@ -314,7 +319,7 @@ void EntityAdapter::unlinkFromParent()
 {
 	if (m_parent)
 		m_parent->unlinkChild(this);
-	T_FATAL_ASSERT (m_parent == 0);
+	T_FATAL_ASSERT (m_parent == nullptr);
 }
 
 IEntityEditor* EntityAdapter::getEntityEditor() const

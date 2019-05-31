@@ -594,6 +594,11 @@ Vector4 BoxedTransform::transform(const BoxedVector4* v) const
 	return m_value * v->unbox();
 }
 
+Transform BoxedTransform::lookAt(const BoxedVector4* position, const BoxedVector4* target, const BoxedVector4* up)
+{
+	return Transform(traktor::lookAt(position->unbox(), target->unbox(), up->unbox()).inverse());
+}
+
 std::wstring BoxedTransform::toString() const
 {
 	return L"(transform)";
@@ -1629,6 +1634,7 @@ void BoxesClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedTransform->addMethod("concat", &BoxedTransform::concat);
 	classBoxedTransform->addMethod("transform", &BoxedTransform::transform);
 	classBoxedTransform->addStaticMethod("lerp", &BoxedTransform::lerp);
+	classBoxedTransform->addStaticMethod("lookAt", &BoxedTransform::lookAt);
 	classBoxedTransform->addOperator< Vector4, const BoxedVector4* >('*', &BoxedTransform::transform);
 	classBoxedTransform->addOperator< Transform, const BoxedTransform* >('*', &BoxedTransform::concat);
 	registrar->registerClass(classBoxedTransform);

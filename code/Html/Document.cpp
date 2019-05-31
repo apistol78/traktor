@@ -57,7 +57,7 @@ public:
 	{
 		if (m_count < IEncoding::MaxEncodingSize)
 		{
-			int32_t nread = m_stream->read(&m_buffer[m_count], IEncoding::MaxEncodingSize - m_count);
+			int64_t nread = m_stream->read(&m_buffer[m_count], IEncoding::MaxEncodingSize - m_count);
 			if (nread <= 0 && m_count <= 0)
 				return false;
 

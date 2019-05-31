@@ -27,9 +27,8 @@ void collectAllAdapters(EntityAdapter* entityAdapter, RefArray< EntityAdapter >&
 
 	outEntityAdapters.push_back(entityAdapter);
 
-	const RefArray< EntityAdapter >& childAdapters = entityAdapter->getChildren();
-	for (RefArray< EntityAdapter >::const_iterator i = childAdapters.begin(); i != childAdapters.end(); ++i)
-		collectAllAdapters(*i, outEntityAdapters);
+	for (auto childAdapter : entityAdapter->getChildren())
+		collectAllAdapters(childAdapter, outEntityAdapters);
 }
 
 		}

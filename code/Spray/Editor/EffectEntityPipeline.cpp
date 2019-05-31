@@ -1,4 +1,5 @@
 #include "Editor/IPipelineDepends.h"
+#include "Spray/EffectComponentData.h"
 #include "Spray/EffectEntityData.h"
 #include "Spray/SoundEventData.h"
 #include "Spray/SpawnEffectEventData.h"
@@ -14,6 +15,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEntityPipeline", 1, EffectE
 TypeInfoSet EffectEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert< EffectComponentData >();
 	typeSet.insert< EffectEntityData >();
 	typeSet.insert< SoundEventData >();
 	typeSet.insert< SpawnEffectEventData >();
@@ -28,11 +30,13 @@ bool EffectEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const EffectEntityData* effectEntityData = dynamic_type_cast< const EffectEntityData* >(sourceAsset))
+	if (auto effectComponentData = dynamic_type_cast< const EffectComponentData* >(sourceAsset))
+		pipelineDepends->addDependency(effectComponentData->getEffect(), editor::PdfBuild | editor::PdfResource);
+	else if (auto effectEntityData = dynamic_type_cast< const EffectEntityData* >(sourceAsset))
 		pipelineDepends->addDependency(effectEntityData->getEffect(), editor::PdfBuild | editor::PdfResource);
-	else if (const SoundEventData* soundEventData = dynamic_type_cast< const SoundEventData* >(sourceAsset))
+	else if (auto soundEventData = dynamic_type_cast< const SoundEventData* >(sourceAsset))
 		pipelineDepends->addDependency(soundEventData->m_sound, editor::PdfBuild | editor::PdfResource);
-	else if (const SpawnEffectEventData* spawnEventData = dynamic_type_cast< const SpawnEffectEventData* >(sourceAsset))
+	else if (auto spawnEventData = dynamic_type_cast< const SpawnEffectEventData* >(sourceAsset))
 		pipelineDepends->addDependency(spawnEventData->getEffect(), editor::PdfBuild | editor::PdfResource);
 
 	return true;
@@ -43,20 +47,20 @@ Ref< ISerializable > EffectEntityPipeline::buildOutput(
 	const ISerializable* sourceAsset
 ) const
 {
-	if (const EffectEntityData* effectEntityData = dynamic_type_cast< const EffectEntityData* >(sourceAsset))
+	if (auto effectEntityData = dynamic_type_cast< const EffectEntityData* >(sourceAsset))
 	{
 		if (effectEntityData->getEffect().isNull())
-			return 0;
+			return nullptr;
 	}
-	else if (const SoundEventData* soundEventData = dynamic_type_cast< const SoundEventData* >(sourceAsset))
+	else if (auto soundEventData = dynamic_type_cast< const SoundEventData* >(sourceAsset))
 	{
 		if (soundEventData->m_sound.isNull())
-			return 0;
+			return nullptr;
 	}
-	else if (const SpawnEffectEventData* spawnEventData = dynamic_type_cast< const SpawnEffectEventData* >(sourceAsset))
+	else if (auto spawnEventData = dynamic_type_cast< const SpawnEffectEventData* >(sourceAsset))
 	{
 		if (spawnEventData->getEffect().isNull())
-			return 0;
+			return nullptr;
 	}
 
 	return world::EntityPipeline::buildOutput(pipelineBuilder, sourceAsset);
