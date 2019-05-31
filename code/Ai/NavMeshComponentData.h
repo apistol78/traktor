@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Resource/Id.h"
-#include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,7 +21,7 @@ class NavMesh;
 /*! \brief Navigation mesh entity data.
  * \ingroup AI
  */
-class T_DLLCLASS NavMeshEntityData : public world::EntityData
+class T_DLLCLASS NavMeshComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
@@ -36,4 +36,3 @@ private:
 
 	}
 }
-

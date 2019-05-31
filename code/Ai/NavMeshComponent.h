@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Resource/Proxy.h"
-#include "World/Entity.h"
+#include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,14 +24,20 @@ class NavMesh;
  * Navigation mesh entities are used to attach a navigation mesh
  * to a scene and thus being accessible through-out the engine.
  */
-class T_DLLCLASS NavMeshEntity : public world::Entity
+class T_DLLCLASS NavMeshComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	NavMeshEntity();
+	NavMeshComponent();
 
-	NavMeshEntity(const resource::Proxy< NavMesh >& navMesh);
+	explicit NavMeshComponent(const resource::Proxy< NavMesh >& navMesh);
+
+	virtual void destroy() override final;
+
+	virtual void setOwner(world::Entity* owner) override final;
+
+	virtual void setTransform(const Transform& transform) override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
 

@@ -66,7 +66,7 @@ public:
 
 private:
 	friend class NavMeshFactory;
-	friend class NavMeshEntityEditor;
+	friend class NavMeshComponentEditor;
 
 	dtNavMesh* m_navMesh;
 	AlignedVector< Vector4 > m_navMeshVertices;

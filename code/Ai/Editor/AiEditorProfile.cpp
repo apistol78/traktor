@@ -1,7 +1,7 @@
 #include "Ai/NavMeshEntityFactory.h"
 #include "Ai/NavMeshFactory.h"
 #include "Ai/Editor/AiEditorProfile.h"
-#include "Ai/Editor/NavMeshEntityEditorFactory.h"
+#include "Ai/Editor/NavMeshComponentEditorFactory.h"
 #include "Scene/Editor/SceneEditorContext.h"
 
 namespace traktor
@@ -68,7 +68,6 @@ void AiEditorProfile::createEntityEditorFactories(
 	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
-	outEntityEditorFactories.push_back(new NavMeshEntityEditorFactory());
 }
 
 void AiEditorProfile::createComponentEditorFactories(
@@ -76,6 +75,7 @@ void AiEditorProfile::createComponentEditorFactories(
 	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
 ) const
 {
+	outComponentEditorFactories.push_back(new NavMeshComponentEditorFactory());
 }
 
 Ref< world::EntityData > AiEditorProfile::createEntityData(

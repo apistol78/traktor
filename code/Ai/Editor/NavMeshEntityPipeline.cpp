@@ -1,4 +1,4 @@
-#include "Ai/NavMeshEntityData.h"
+#include "Ai/NavMeshComponentData.h"
 #include "Ai/Editor/NavMeshEntityPipeline.h"
 #include "Editor/IPipelineDepends.h"
 
@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshEntityPipeline", 1, NavMeshEn
 
 TypeInfoSet NavMeshEntityPipeline::getAssetTypes() const
 {
-	return makeTypeInfoSet< NavMeshEntityData >();
+	return makeTypeInfoSet< NavMeshComponentData >();
 }
 
 bool NavMeshEntityPipeline::buildDependencies(
@@ -22,7 +22,7 @@ bool NavMeshEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const NavMeshEntityData* entityData = checked_type_cast< const NavMeshEntityData*, false >(sourceAsset);
+	const NavMeshComponentData* entityData = checked_type_cast< const NavMeshComponentData*, false >(sourceAsset);
 
 	if (!world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid))
 		return false;
