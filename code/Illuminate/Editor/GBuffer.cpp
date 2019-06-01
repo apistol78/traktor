@@ -260,6 +260,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 	m_width = width;
 	m_height = height;
 	m_data.resize(width * height);
+	m_boundingBox = Aabb3();
 
 	for (uint32_t i = 0; i < model.getPolygonCount(); ++i)
 	{
@@ -284,6 +285,8 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			texCoords.points.push_back(
 				model.getTexCoord(texCoordIndex) * Vector2(width, height) - Vector2(0.5f, 0.5f)
 			);
+
+			m_boundingBox.contain(positions.back());
 		}
 
 		// Triangulate winding so we can easily traverse lightmap fragments.

@@ -11,7 +11,7 @@ C_FLAGS_RELEASE_EXECUTABLE=$(C_FLAGS_COMMON) -O3 -g
 C_FLAG_OUTPUT=-o 
 
 CC=ccache gcc
-CC_FLAGS_COMMON=-fno-common -std=c++11 -march=core2 -D _UNICODE -D UNICODE -D __LINUX__ -fPIC -fvisibility=hidden
+CC_FLAGS_COMMON=-fno-common -std=c++14 -march=core2 -D _UNICODE -D UNICODE -D __LINUX__ -fPIC -fvisibility=hidden
 CC_FLAGS_DEBUG_SHARED=$(CC_FLAGS_COMMON) -g
 CC_FLAGS_RELEASE_SHARED=$(CC_FLAGS_COMMON) -O3 -g
 CC_FLAGS_DEBUG_STATIC=$(CC_FLAGS_COMMON) -g

@@ -2,7 +2,7 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Vector4.h"
+#include "Core/Math/Aabb3.h"
 #include "Illuminate/Editor/Types.h"
 #include "Model/Model.h"
 
@@ -49,12 +49,19 @@ public:
 
 	Element& get(int32_t x, int32_t y) { return m_data[x + y * m_width]; }
 
+	int32_t getWidth() const { return m_width; }
+
+	int32_t getHeight() const { return m_height; }
+
+	const Aabb3& getBoundingBox() const { return m_boundingBox; }
+
 	void saveAsImages(const std::wstring& outputPath) const;
 
 private:
 	int32_t m_width;
 	int32_t m_height;
 	AlignedVector< Element > m_data;
+	Aabb3 m_boundingBox;
 };
 
 	}

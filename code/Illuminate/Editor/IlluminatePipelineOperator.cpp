@@ -6,13 +6,16 @@
 #include "Core/Math/Format.h"
 #include "Core/Math/Log2.h"
 #include "Core/Math/Triangulator.h"
+#include "Core/Math/Winding3.h"
 #include "Core/Misc/String.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
+#include "Core/Timer/Timer.h"
 #include "Database/Database.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -24,7 +27,8 @@
 #include "Illuminate/Editor/GBuffer.h"
 #include "Illuminate/Editor/IlluminateConfiguration.h"
 #include "Illuminate/Editor/IlluminatePipelineOperator.h"
-#include "Illuminate/Editor/RayTracer.h"
+#include "Illuminate/Editor/RayTracerLocal.h"
+#include "Illuminate/Editor/RayTracerRadeonRays.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
@@ -49,26 +53,26 @@ namespace traktor
 		namespace
 		{
 
-class WrappedSHFunction : public render::SHFunction
-{
-public:
-	WrappedSHFunction(const RayTracer& tracer, RayTracer::Context* tracerContext, const Vector4& origin)
-	:	m_tracer(tracer)
-	,	m_tracerContext(tracerContext)
-	,	m_origin(origin)
-	{
-	}
+// class WrappedSHFunction : public render::SHFunction
+// {
+// public:
+// 	WrappedSHFunction(const RayTracer& tracer, RayTracer::Context* tracerContext, const Vector4& origin)
+// 	:	m_tracer(tracer)
+// 	,	m_tracerContext(tracerContext)
+// 	,	m_origin(origin)
+// 	{
+// 	}
 
-	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final
-	{
-		return m_tracer.traceIndirect(m_tracerContext, m_origin, unit);
-	}
+// 	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final
+// 	{
+// 		return m_tracer.traceIndirect(m_tracerContext, m_origin, unit);
+// 	}
 
-private:
-	const RayTracer& m_tracer;
-	Ref< RayTracer::Context > m_tracerContext;
-	Vector4 m_origin;
-};
+// private:
+// 	const RayTracer& m_tracer;
+// 	Ref< RayTracer::Context > m_tracerContext;
+// 	Vector4 m_origin;
+// };
 
 Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
 {
@@ -157,6 +161,12 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 {
 	const auto configuration = mandatory_non_null_type_cast< const IlluminateConfiguration* >(operatorData);
 
+	// Create raytracer implementation.
+	//Ref< IRayTracer > rayTracer = new RayTracerLocal();
+	Ref< IRayTracer > rayTracer = new RayTracerRadeonRays();
+	if (!rayTracer->create(configuration))
+		return false;
+
 	RefArray< world::ComponentEntityData > lightEntityDatas;
 	RefArray< world::ComponentEntityData > meshEntityDatas;
 
@@ -181,12 +191,6 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 	}
 	inoutSceneAsset->setLayers(layers);
 
-	// Prepare tracer; add lights and models.
-	RayTracer tracer(configuration);
-
-	Ref< RayTracer::Context > tracerContext = tracer.createContext();
-	T_ASSERT(tracerContext);
-
 	for (const auto lightEntityData : lightEntityDatas)
 	{
 		world::LightComponentData* lightComponentData = lightEntityData->getComponent< world::LightComponentData >();
@@ -200,7 +204,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			light.direction = -lightEntityData->getTransform().axisY();
 			light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
 			light.range = Scalar(0.0f);
-			tracer.addLight(light);
+			rayTracer->addLight(light);
 		}
 		else if (lightComponentData->getLightType() == world::LtPoint)
 		{
@@ -209,7 +213,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			light.direction = Vector4::zero();
 			light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
 			light.range = Scalar(lightComponentData->getRange());
-			tracer.addLight(light);
+			rayTracer->addLight(light);
 		}
 		else if (lightComponentData->getLightType() == world::LtSpot)
 		{
@@ -220,7 +224,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
 			light.range = Scalar(lightComponentData->getRange());
 			light.radius = Scalar(lightComponentData->getRadius());
-			tracer.addLight(light);
+			rayTracer->addLight(light);
 		}
 		else if (lightComponentData->getLightType() != world::LtProbe)
 			log::warning << L"IlluminateEntityPipeline warning; unsupported light type of light \"" << lightEntityData->getName() << L"\"." << Endl;
@@ -229,6 +233,9 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		if (configuration->traceDirect())
 			lightComponentData->setIntensity(0.0f);
 	}
+
+	RefArray< mesh::MeshAsset > meshAssets;
+	RefArray< model::Model > models;
 
 	for (const auto meshEntityData : meshEntityDatas)
 	{
@@ -247,80 +254,71 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			continue;
 		}
 
+		meshAssets.push_back(meshAsset);
+		models.push_back(DeepClone(model).create< model::Model >());
+
 		model->clear(model::Model::CfColors | model::Model::CfTexCoords | model::Model::CfJoints);
 		model::Triangulate().apply(*model);
 		model::CleanDuplicates(0.001f).apply(*model);
 		model::CleanDegenerate().apply(*model);
 
-		tracer.addModel(model, meshEntityData->getTransform());
+		rayTracer->addModel(model, meshEntityData->getTransform());
 	}
 
-	// Finished adding lights and model; need to prepare acceleration structure.
-	tracer.prepare();
+	// Commit all lights and models; after this point
+	// no more lights nor models can be added to tracer.
+	rayTracer->commit();
 
-	// Raytrace IBL probes.
-	render::SHEngine shEngine(3);
-	shEngine.generateSamplePoints(20000);
+	// // Raytrace IBL probes.
+	// render::SHEngine shEngine(3);
+	// shEngine.generateSamplePoints(20000);
 
-	RefArray< Job > jobs;
-	for (uint32_t i = 0; i < lightEntityDatas.size(); ++i)
-	{
-		auto lightEntityData = lightEntityDatas[i];
-		T_FATAL_ASSERT(lightEntityData != nullptr);
+	// RefArray< Job > jobs;
+	// for (uint32_t i = 0; i < lightEntityDatas.size(); ++i)
+	// {
+	// 	auto lightEntityData = lightEntityDatas[i];
+	// 	T_FATAL_ASSERT(lightEntityData != nullptr);
 
-		auto lightComponentData = lightEntityData->getComponent< world::LightComponentData >();
-		T_FATAL_ASSERT(lightComponentData != nullptr);
+	// 	auto lightComponentData = lightEntityData->getComponent< world::LightComponentData >();
+	// 	T_FATAL_ASSERT(lightComponentData != nullptr);
 
-		if (lightComponentData->getLightType() != world::LtProbe)
-			continue;
+	// 	if (lightComponentData->getLightType() != world::LtProbe)
+	// 		continue;
 
-		log::info << L"Tracing SH probe \"" << lightEntityData->getName() << L"\" (" << i << L"/" << lightEntityDatas.size() << L")..." << Endl;
+	// 	log::info << L"Tracing SH probe \"" << lightEntityData->getName() << L"\" (" << i << L"/" << lightEntityDatas.size() << L")..." << Endl;
 
-		auto position = lightEntityData->getTransform().translation().xyz1();
+	// 	auto position = lightEntityData->getTransform().translation().xyz1();
 
-		auto job = JobManager::getInstance().add(makeFunctor([&, lightComponentData]() {
-			Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
+	// 	auto job = JobManager::getInstance().add(makeFunctor([&, lightComponentData]() {
+	// 		Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
 
-			Ref< RayTracer::Context > context = tracer.createContext();
-			WrappedSHFunction shFunction(tracer, context, position);
-			shEngine.generateCoefficients(&shFunction, *shCoeffs);
+	// 		Ref< RayTracer::Context > context = tracer.createContext();
+	// 		WrappedSHFunction shFunction(tracer, context, position);
+	// 		shEngine.generateCoefficients(&shFunction, *shCoeffs);
 
-			lightComponentData->setSHCoeffs(shCoeffs);
-		}));
-		if (!job)
-			return false;
+	// 		lightComponentData->setSHCoeffs(shCoeffs);
+	// 	}));
+	// 	if (!job)
+	// 		return false;
 
-		jobs.push_back(job);
-	}
-	while (!jobs.empty())
-	{
-		jobs.back()->wait();
-		jobs.pop_back();
-	}
+	// 	jobs.push_back(job);
+	// }
+	// while (!jobs.empty())
+	// {
+	// 	jobs.back()->wait();
+	// 	jobs.pop_back();
+	// }
 
 	// Raytrace lightmap for each mesh.
+	GBuffer gbuffer;
 	for (uint32_t i = 0; i < meshEntityDatas.size(); ++i)
 	{
 		auto meshEntityData = meshEntityDatas[i];
 		T_FATAL_ASSERT(meshEntityData != nullptr);
 
-		Ref< mesh::MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< mesh::MeshAsset >(
-			meshEntityData->getComponent< mesh::MeshComponentData >()->getMesh()
-		);
-		if (!meshAsset)
-			continue;
-
 		log::info << L"Tracing lightmap \"" << meshEntityData->getName() << L"\" (" << i << L"/" << meshEntityDatas.size() << L")..." << Endl;
 
-		Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
-			return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
-		});
-		if (!model)
-		{
-			log::warning << L"IlluminateEntityPipeline warning; unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"." << Endl;
-			continue;
-		}
-
+		Ref< model::Model > model = models[i];
 		model::Triangulate().apply(*model);
 
 		// Calculate output size from lumel density.
@@ -346,7 +344,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			channel = model->addUniqueTexCoordChannel(L"Illuminate_LightmapUV");
 			if (!model::UnwrapUV(channel, outputSize).apply(*model))
 			{
-				log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV of model \"" << meshAsset->getFileName().getOriginal() << L"\"." << Endl;
+				log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV of model \"" << meshEntityData->getName() << L"\"." << Endl;
 				return false;
 			}
 		}
@@ -361,120 +359,100 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		}
 
 		// Create G-Buffer of mesh's geometry.
-		GBuffer gbuffer;
 		gbuffer.create(outputSize, outputSize, *model, meshEntityData->getTransform(), channel);
-		gbuffer.saveAsImages(meshEntityData->getName() + L"_" + toString(i) + L"_GBuffer");
+		//gbuffer.saveAsImages(meshEntityData->getName() + L"_" + toString(i) + L"_GBuffer");
 
-		// Adjust gbuffer positions to help fix some shadowing issues.
-		if (configuration->getEnableShadowFix())
-		{
-			for (int32_t y = 0; y < outputSize; ++y)
-			{
-				for (int32_t x = 0; x < outputSize; ++x)
-				{
-					auto& elm = gbuffer.get(x, y);
-					if (elm.polygon == model::c_InvalidIndex)
-						continue;
+		// // Adjust gbuffer positions to help fix some shadowing issues.
+		// if (configuration->getEnableShadowFix())
+		// {
+		// 	for (int32_t y = 0; y < outputSize; ++y)
+		// 	{
+		// 		for (int32_t x = 0; x < outputSize; ++x)
+		// 		{
+		// 			auto& elm = gbuffer.get(x, y);
+		// 			if (elm.polygon == model::c_InvalidIndex)
+		// 				continue;
 
-					Vector4 position = elm.position;
-					Vector4 normal = elm.normal;
+		// 			Vector4 position = elm.position;
+		// 			Vector4 normal = elm.normal;
 
-					Vector4 u, v;
-					orthogonalFrame(normal, u, v);
+		// 			Vector4 u, v;
+		// 			orthogonalFrame(normal, u, v);
 
-					const Scalar l = elm.delta.length();
-					const Vector4 d[] = { u, -u, v, -v };
+		// 			const Scalar l = elm.delta.length();
+		// 			const Vector4 d[] = { u, -u, v, -v };
 
-					for (int32_t i = 0; i < 8; ++i)
-					{
-						int32_t ii = i % 4;
+		// 			for (int32_t i = 0; i < 8; ++i)
+		// 			{
+		// 				int32_t ii = i % 4;
 
-						RayTracer::Result result;
-						if (!tracer.trace(tracerContext, position + normal * Scalar(0.01f), d[ii], l, result))
-							continue;
+		// 				RayTracer::Result result;
+		// 				if (!tracer.trace(tracerContext, position + normal * Scalar(0.01f), d[ii], l, result))
+		// 					continue;
 
-						if (dot3(result.normal, d[ii]) > 0.0f)
-							continue;
+		// 				if (dot3(result.normal, d[ii]) > 0.0f)
+		// 					continue;
 
-						position = position + d[ii] * result.distance + result.normal * Scalar(0.01f);
-					}
-				}
-			}
-		}
+		// 				position = position + d[ii] * result.distance + result.normal * Scalar(0.01f);
+		// 			}
+		// 		}
+		// 	}
+		// }
 
-		// Trace lightmap.
-		Ref< drawing::Image > lightmapDirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
-		Ref< drawing::Image > lightmapIndirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
+		Timer timer;
+		timer.start();
 
-		lightmapDirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-		lightmapIndirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+		Ref< drawing::Image > lightmapDirect;
+		if (configuration->traceDirect())
+			lightmapDirect = rayTracer->traceDirect(&gbuffer);
 
-		for (int32_t ty = 0; ty < outputSize; ty += 16)
-		{
-			for (int32_t tx = 0; tx < outputSize; tx += 16)
-			{
-				auto job = JobManager::getInstance().add(makeFunctor([&, tx, ty]() {
-					Ref< RayTracer::Context > context = tracer.createContext();
-					for (int32_t y = ty; y < ty + 16; ++y)
-					{
-						for (int32_t x = tx; x < tx + 16; ++x)
-						{
-							const auto& elm = gbuffer.get(x, y);
-							if (elm.polygon == model::c_InvalidIndex)
-								continue;
+		Ref< drawing::Image > lightmapIndirect;
+		if (configuration->traceIndirect())
+			lightmapIndirect = rayTracer->traceIndirect(&gbuffer);
 
-							Vector4 position = elm.position;
-							Vector4 normal = elm.normal;
-
-							if (configuration->traceDirect())
-							{
-								Color4f direct = tracer.traceDirect(context, position, normal);
-								lightmapDirect->setPixel(x, y, direct.rgb1());
-							}
-
-							if (configuration->traceIndirect())
-							{
-								Color4f indirect = tracer.traceIndirect(context, position, normal);
-								lightmapIndirect->setPixel(x, y, indirect.rgb1());
-							}
-						}
-					}
-				}));
-				if (!job)
-					return false;
-
-				jobs.push_back(job);
-			}
-		}
-		while (!jobs.empty())
-		{
-			jobs.back()->wait();
-			jobs.pop_back();
-		}
+		double Tend = timer.getElapsedTime();
+		log::info << L"Lightmap traced in " << int32_t(Tend * 1000.0) << L" ms." << Endl;
 
 		if (configuration->getEnableDilate())
 		{
 			// Dilate lightmap to prevent leaking.
 			drawing::DilateFilter dilateFilter(3);
-			lightmapDirect->apply(&dilateFilter);
-			lightmapIndirect->apply(&dilateFilter);
+			if (lightmapDirect)
+				lightmapDirect->apply(&dilateFilter);
+			if (lightmapIndirect)
+				lightmapIndirect->apply(&dilateFilter);
 		}
 
 		// Blur indirect lightmap to reduce noise from path tracing.
-		lightmapIndirect->apply(drawing::ConvolutionFilter::createGaussianBlur(1));
+		if (lightmapIndirect)
+			lightmapIndirect->apply(drawing::ConvolutionFilter::createGaussianBlur(1));
 
 		// Merge direct and indirect lightmaps.
-		lightmapDirect->copy(lightmapIndirect, 0, 0, outputSize, outputSize, drawing::BlendFunction(
-			drawing::BlendFunction::BfOne,
-			drawing::BlendFunction::BfOne,
-			drawing::BlendFunction::BoAdd
-		));
+		Ref< drawing::Image > lightmap = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
+		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+		if (lightmapDirect)
+			lightmap->copy(lightmapDirect, 0, 0, outputSize, outputSize, drawing::BlendFunction(
+				drawing::BlendFunction::BfOne,
+				drawing::BlendFunction::BfOne,
+				drawing::BlendFunction::BoAdd
+			));
+
+		if (lightmapIndirect)
+			lightmap->copy(lightmapIndirect, 0, 0, outputSize, outputSize, drawing::BlendFunction(
+				drawing::BlendFunction::BfOne,
+				drawing::BlendFunction::BfOne,
+				drawing::BlendFunction::BoAdd
+			));
+
+		lightmapDirect = nullptr;
+		lightmapIndirect = nullptr;
 
 		// Discard alpha.
-		lightmapDirect->clearAlpha(1.0f);
+		lightmap->clearAlpha(1.0f);
 
-		lightmapDirect->save(meshEntityData->getName() + L"_Lightmap.png");
-		model::ModelFormat::writeAny(meshEntityData->getName() + L"_Unwrapped.tmd", model);
+		//lightmap->save(meshEntityData->getName() + L"_Lightmap.png");
+		//model::ModelFormat::writeAny(meshEntityData->getName() + L"_Unwrapped.tmd", model);
 
 		// "Permutate" output ids.
 		Guid idGenerated = configuration->getSeedGuid().permutate(0);
@@ -497,7 +475,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			textureOutput,
 			L"Generated/" + idGenerated.format() + L"/" + idLightMap.format() + L"/__Texture__",
 			idLightMap,
-			lightmapDirect
+			lightmap
 		);
 
 		// Modify model materials to use our illumination texture.
@@ -510,7 +488,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		model->setMaterials(materials);
 
 		// Create a new mesh asset which use the fresh baked illumination texture.
-		auto materialTextures = meshAsset->getMaterialTextures();
+		auto materialTextures = meshAssets[i]->getMaterialTextures();
 		materialTextures[L"__Illumination__"] = idLightMap;
 
 		Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
