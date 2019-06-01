@@ -144,12 +144,15 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 
 void WorldServer::destroy()
 {
-	m_worldType = nullptr;
-	m_resourceServer = nullptr;
-	m_renderServer = nullptr;
 	m_entityBuilder = nullptr;
 	m_entityRenderers = nullptr;
 	m_eventManager = nullptr;
+	m_renderServer = nullptr;
+	m_resourceServer = nullptr;
+	m_effectEntityRenderer = nullptr;
+	m_feedbackManager = nullptr;
+	m_terrainEntityRenderer = nullptr;
+	m_worldType = nullptr;
 }
 
 void WorldServer::createResourceFactories(IEnvironment* environment)

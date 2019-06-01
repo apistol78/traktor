@@ -159,6 +159,10 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIEntityEventManager->addMethod("cancelAllEnd", &IEntityEventManager_cancelAllEnd);
 	registrar->registerClass(classIEntityEventManager);
 
+	auto classEntityEventSet = new AutoRuntimeClass< EntityEventSet >();
+	classEntityEventSet->addMethod("getEvent", &EntityEventSet::getEvent);
+	registrar->registerClass(classEntityEventSet);
+
 	auto classIEntitySchema = new AutoRuntimeClass< IEntitySchema >();
 	classIEntitySchema->addMethod< Entity*, uint32_t >("getEntity", &IEntitySchema::getEntity);
 	classIEntitySchema->addMethod< Entity*, const std::wstring&, uint32_t >("getEntity", &IEntitySchema::getEntity);

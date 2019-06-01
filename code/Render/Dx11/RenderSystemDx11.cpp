@@ -328,16 +328,16 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 
 void RenderSystemDx11::destroy()
 {
-	m_resourceCache = 0;
-
-	safeDestroy(m_indexBufferStaticHeap);
-	safeDestroy(m_vertexBufferStaticHeap);
+	m_resourceCache = nullptr;
 
 	if (m_context)
 	{
 		m_context->deleteResources();
-		m_context = 0;
+		m_context = nullptr;
 	}
+
+	safeDestroy(m_indexBufferStaticHeap);
+	safeDestroy(m_vertexBufferStaticHeap);
 }
 
 bool RenderSystemDx11::reset(const RenderSystemDesc& desc)
