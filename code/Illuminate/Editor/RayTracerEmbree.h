@@ -1,25 +1,24 @@
 #pragma once
 
+#include <embree3/rtcore.h>
 #include "Illuminate/Editor/IRayTracer.h"
-
-namespace RadeonRays
-{
-
-class IntersectionApi;
-    
-}
 
 namespace traktor
 {
+
+class RandomGeometry;
+
     namespace illuminate
     {
 
-class RayTracerRadeonRays : public IRayTracer
+class RayTracer;
+
+class RayTracerEmbree : public IRayTracer
 {
     T_RTTI_CLASS;
 
 public:
-    RayTracerRadeonRays();
+    RayTracerEmbree();
 
     virtual bool create(const IlluminateConfiguration* configuration) override final;
 
@@ -36,9 +35,24 @@ public:
     virtual Ref< drawing::Image > traceIndirect(const GBuffer* gbuffer) const override final;
 
 private:
+	struct Surface
+	{
+		Color4f albedo;
+	};
+
 	const IlluminateConfiguration* m_configuration;
-    RadeonRays::IntersectionApi* m_api;
 	AlignedVector< Light > m_lights;
+
+	RTCDevice m_device;
+	RTCScene m_scene;
+	float m_maxDistance;
+
+	Color4f sampleAnalyticalLights(
+        RandomGeometry& random,
+        const Vector4& origin,
+        const Vector4& normal,
+		bool secondary
+    ) const;
 };
 
     }

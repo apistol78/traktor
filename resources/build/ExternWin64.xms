@@ -86,6 +86,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.expat.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.expat.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -116,6 +120,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.expat.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.expat.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -227,6 +235,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.bullet.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.bullet.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -256,6 +268,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.bullet.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.bullet.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -472,6 +488,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.freetype-2.3.5.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.freetype-2.3.5.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -502,6 +522,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.freetype-2.3.5.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.freetype-2.3.5.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -1557,6 +1581,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.jpeg-6b.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.jpeg-6b.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -1586,6 +1614,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.jpeg-6b.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.jpeg-6b.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -1697,6 +1729,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.libflac-1.2.1.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.libflac-1.2.1.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -1730,6 +1766,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.libflac-1.2.1.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.libflac-1.2.1.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -1918,6 +1958,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.libmad-0.15.1b.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.libmad-0.15.1b.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -1949,6 +1993,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.libmad-0.15.1b.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.libmad-0.15.1b.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -2142,6 +2190,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.libogg-1.3.0.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.libogg-1.3.0.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -2170,6 +2222,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.libogg-1.3.0.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.libogg-1.3.0.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -2272,6 +2328,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.libvorbis-1.3.3.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.libvorbis-1.3.3.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -2302,6 +2362,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.libvorbis-1.3.3.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.libvorbis-1.3.3.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -2612,6 +2676,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.lpng.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.lpng.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -2641,6 +2709,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.lpng.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.lpng.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -2742,6 +2814,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Extern.zlib.pdb</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Extern.zlib.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
@@ -2771,6 +2847,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Extern.zlib.pdb</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Extern.zlib.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
@@ -2874,6 +2954,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.lwObject.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.lwObject.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -2902,6 +2986,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.lwObject.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.lwObject.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -3044,6 +3132,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.squish-1.10.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.squish-1.10.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -3072,6 +3164,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.squish-1.10.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.squish-1.10.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -3169,6 +3265,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.sqlite.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.sqlite.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -3197,6 +3297,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.sqlite.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.sqlite.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -3300,6 +3404,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.libtheora-1.1.1.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.libtheora-1.1.1.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -3329,6 +3437,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.libtheora-1.1.1.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.libtheora-1.1.1.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -3448,6 +3560,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.mpg123-1.13.2.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.mpg123-1.13.2.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -3480,6 +3596,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.mpg123-1.13.2.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.mpg123-1.13.2.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -3790,6 +3910,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.minilzo-2.05.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.minilzo-2.05.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -3818,6 +3942,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.minilzo-2.05.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.minilzo-2.05.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -3911,6 +4039,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.liblzf-3.6.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.liblzf-3.6.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -3938,6 +4070,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.liblzf-3.6.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.liblzf-3.6.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -4047,6 +4183,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.stb_vorbis.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.stb_vorbis.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -4074,6 +4214,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.stb_vorbis.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.stb_vorbis.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -4166,6 +4310,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.glew.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.glew.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -4194,6 +4342,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.glew.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.glew.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -4283,6 +4435,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.recast.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.recast.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -4310,6 +4466,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.recast.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.recast.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -4413,6 +4573,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.detour.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.detour.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -4440,6 +4604,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.detour.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.detour.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -4503,6 +4671,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.angle.libGLESv2.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.angle.libGLESv2.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -4543,6 +4715,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.angle.libGLESv2.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.angle.libGLESv2.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
@@ -4581,6 +4757,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.angle.libGLESv2.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.angle.libGLESv2.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -4615,6 +4795,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.angle.libGLESv2.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.angle.libGLESv2.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -4751,6 +4935,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Extern.angle.libANGLE.pdb</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Extern.angle.libANGLE.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
@@ -4789,6 +4977,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Extern.angle.libANGLE.pdb</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Extern.angle.libANGLE.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
@@ -4991,6 +5183,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.angle.libEGL.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.angle.libEGL.lib</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
@@ -5028,6 +5224,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.angle.libEGL.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.angle.libEGL.lib</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
@@ -5063,6 +5263,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.angle.libEGL.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.angle.libEGL.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -5094,6 +5298,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.angle.libEGL.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.angle.libEGL.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -5201,6 +5409,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.rg_etc1.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.rg_etc1.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -5228,6 +5440,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.rg_etc1.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.rg_etc1.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -5326,6 +5542,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.OpenEXR.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.OpenEXR.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -5354,6 +5574,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.OpenEXR.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.OpenEXR.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -5472,6 +5696,10 @@
 								<debugWorkingDirectory/>
 								<aggregationItems>
 									<item type="AggregationItem">
+										<sourceFile>Extern.ilmbase.pdb</sourceFile>
+										<targetPath>debugstatic</targetPath>
+									</item>
+									<item type="AggregationItem">
 										<sourceFile>Extern.ilmbase.lib</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
@@ -5505,6 +5733,10 @@
 								<debugEnvironment/>
 								<debugWorkingDirectory/>
 								<aggregationItems>
+									<item type="AggregationItem">
+										<sourceFile>Extern.ilmbase.pdb</sourceFile>
+										<targetPath>releasestatic</targetPath>
+									</item>
 									<item type="AggregationItem">
 										<sourceFile>Extern.ilmbase.lib</sourceFile>
 										<targetPath>releasestatic</targetPath>
@@ -5678,6 +5910,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.lua.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.lua.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -5706,6 +5942,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.lua.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.lua.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -5805,6 +6045,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.agg.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.agg.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -5834,6 +6078,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.agg.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.agg.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -5950,6 +6198,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.vulkan.glslang.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.vulkan.glslang.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -5977,6 +6229,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.vulkan.glslang.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.vulkan.glslang.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -6101,11 +6357,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.detours.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.detours.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
-					<consumerLibraryPath/>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
@@ -6131,11 +6391,15 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.detours.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.detours.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
-					<consumerLibraryPath/>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugShared</name>
@@ -6315,6 +6579,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.cmft.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.cmft.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -6344,6 +6612,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.cmft.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.cmft.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -6451,6 +6723,10 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
+							<sourceFile>Extern.thekla_atlas.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
 							<sourceFile>Extern.thekla_atlas.lib</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
@@ -6481,6 +6757,10 @@
 					<debugEnvironment/>
 					<debugWorkingDirectory/>
 					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.thekla_atlas.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 						<item type="AggregationItem">
 							<sourceFile>Extern.thekla_atlas.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
@@ -6644,6 +6924,493 @@
 									<items/>
 								</item>
 							</items>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>false</enable>
+			<name>Extern.embree</name>
+			<sourcePath>$(EMBREE_SDK)</sourcePath>
+			<configurations>
+				<item type="Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(EMBREE_SDK)/include</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(EMBREE_SDK)/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>embree3.lib</item>
+						<item>tbb.lib</item>
+						<item>tbbmalloc.lib</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(EMBREE_SDK)/include</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(EMBREE_SDK)/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>embree3.lib</item>
+						<item>tbb.lib</item>
+						<item>tbbmalloc.lib</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(EMBREE_SDK)/include</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(EMBREE_SDK)/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>embree3.lib</item>
+						<item>tbb.lib</item>
+						<item>tbbmalloc.lib</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.embree.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.embree.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(EMBREE_SDK)/include</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(EMBREE_SDK)/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>embree3.lib</item>
+						<item>tbb.lib</item>
+						<item>tbbmalloc.lib</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.embree.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.embree.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
+				</item>
+			</configurations>
+			<items/>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>false</enable>
+			<name>Extern.RadeonRays</name>
+			<sourcePath>$(RADEONRAYS_SDK)</sourcePath>
+			<configurations>
+				<item type="Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(RADEONRAYS_SDK)/RadeonRays/include</item>
+						<item>$(RADEONRAYS_SDK)/Calc/inc</item>
+						<item>$(RADEONRAYS_SDK)/CLW</item>
+						<item>$(RADEONRAYS_SDK)/RadeonRays/src/kernels/CL</item>
+						<item>$(RADEONRAYS_SDK)/CLW/CL</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+						<item>USE_OPENCL=1</item>
+						<item>CALC_STATIC_LIBRARY</item>
+						<item>CL_TARGET_OPENCL_VERSION=220</item>
+						<item>RR_EMBED_KERNELS</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>OpenCL</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(RADEONRAYS_SDK)/RadeonRays/include</item>
+						<item>$(RADEONRAYS_SDK)/Calc/inc</item>
+						<item>$(RADEONRAYS_SDK)/CLW</item>
+						<item>$(RADEONRAYS_SDK)/RadeonRays/src/kernels/CL</item>
+						<item>$(RADEONRAYS_SDK)/CLW/CL</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+						<item>USE_OPENCL=1</item>
+						<item>CALC_STATIC_LIBRARY</item>
+						<item>CL_TARGET_OPENCL_VERSION=220</item>
+						<item>RR_EMBED_KERNELS</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>OpenCL</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems/>
+					<consumerLibraryPath/>
+				</item>
+				<item type="Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(RADEONRAYS_SDK)/RadeonRays/include</item>
+						<item>$(RADEONRAYS_SDK)/Calc/inc</item>
+						<item>$(RADEONRAYS_SDK)/CLW</item>
+						<item>$(RADEONRAYS_SDK)/RadeonRays/src/kernels/CL</item>
+						<item>$(RADEONRAYS_SDK)/CLW/CL</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+						<item>USE_OPENCL=1</item>
+						<item>CALC_STATIC_LIBRARY</item>
+						<item>CL_TARGET_OPENCL_VERSION=220</item>
+						<item>RR_EMBED_KERNELS</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>OpenCL</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.RadeonRays.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.RadeonRays.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(RADEONRAYS_SDK)/RadeonRays/include</item>
+						<item>$(RADEONRAYS_SDK)/Calc/inc</item>
+						<item>$(RADEONRAYS_SDK)/CLW</item>
+						<item>$(RADEONRAYS_SDK)/RadeonRays/src/kernels/CL</item>
+						<item>$(RADEONRAYS_SDK)/CLW/CL</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+						<item>USE_OPENCL=1</item>
+						<item>CALC_STATIC_LIBRARY</item>
+						<item>CL_TARGET_OPENCL_VERSION=220</item>
+						<item>RR_EMBED_KERNELS</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>OpenCL</item>
+					</libraries>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Extern.RadeonRays.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Extern.RadeonRays.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>RadeonRays</name>
+					<items>
+						<item type="Filter">
+							<name>include</name>
+							<items>
+								<item type="Filter">
+									<name>math</name>
+									<items>
+										<item type="File">
+											<fileName>RadeonRays/include/math/*.*</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="File">
+									<fileName>RadeonRays/include/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>src</name>
+							<items>
+								<item type="Filter">
+									<name>accelerator</name>
+									<items>
+										<item type="File">
+											<fileName>RadeonRays/src/accelerator/*.*</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="Filter">
+									<name>api</name>
+									<items>
+										<item type="File">
+											<fileName>RadeonRays/src/api/*.*</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="Filter">
+									<name>async</name>
+									<items>
+										<item type="File">
+											<fileName>RadeonRays/src/async/*.*</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="Filter">
+									<name>device</name>
+									<items>
+										<item type="File">
+											<fileName>RadeonRays/src/device/calc_holder.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>RadeonRays/src/device/calc_intersection_device.cpp</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>RadeonRays/src/device/calc_intersection_device.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>RadeonRays/src/device/calc_intersection_device_cl.cpp</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>RadeonRays/src/device/calc_intersection_device_cl.h</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>RadeonRays/src/device/intersection_device.h</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="Filter">
+									<name>except</name>
+									<items>
+										<item type="File">
+											<fileName>RadeonRays/src/except/*.*</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="Filter">
+									<name>intersector</name>
+									<items>
+										<item type="File">
+											<fileName>RadeonRays/src/intersector/*.*</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="Filter">
+									<name>kernels</name>
+									<items>
+										<item type="Filter">
+											<name>CL</name>
+											<items>
+												<item type="File">
+													<fileName>RadeonRays/src/kernels/CL/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+									</items>
+								</item>
+								<item type="Filter">
+									<name>primitive</name>
+									<items>
+										<item type="File">
+											<fileName>RadeonRays/src/primitive/*.*</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="Filter">
+									<name>translator</name>
+									<items>
+										<item type="File">
+											<fileName>RadeonRays/src/translator/*.*</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="Filter">
+									<name>util</name>
+									<items>
+										<item type="File">
+											<fileName>RadeonRays/src/util/*.*</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="Filter">
+									<name>world</name>
+									<items>
+										<item type="File">
+											<fileName>RadeonRays/src/world/*.*</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+							</items>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Calc</name>
+					<items>
+						<item type="Filter">
+							<name>inc</name>
+							<items>
+								<item type="File">
+									<fileName>Calc/inc/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>src</name>
+							<items>
+								<item type="File">
+									<fileName>Calc/src/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>CLW</name>
+					<items>
+						<item type="File">
+							<fileName>CLW/*.*</fileName>
+							<items/>
 						</item>
 					</items>
 				</item>

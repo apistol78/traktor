@@ -188,7 +188,7 @@ bool CalculateTangents::apply(Model& model) const
 	vertexTangentBases.resize(model.getVertexCount());
 	for (uint32_t i = 0; i < uint32_t(polygons.size()); ++i)
 	{
-		const Polygon& polygon = polygons[i];
+		Polygon polygon = polygons[i];
 
 		const AlignedVector< uint32_t >& vertices = polygon.getVertices();
 		for (AlignedVector< uint32_t >::const_iterator j = vertices.begin(); j != vertices.end(); ++j)
@@ -200,6 +200,9 @@ bool CalculateTangents::apply(Model& model) const
 			if (polygonTangentBases[i].binormal.length() > FUZZY_EPSILON)
 				vertexTangentBases[*j].binormal += polygonTangentBases[i].binormal;
 		}
+
+		polygon.setNormal(model.addUniqueNormal(polygonTangentBases[i].normal));
+		model.setPolygon(i, polygon);
 	}
 
 	// Normalize vertex tangent bases.

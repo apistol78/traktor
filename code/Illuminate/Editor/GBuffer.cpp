@@ -1,10 +1,12 @@
 #include <algorithm>
+#include <ctime>
 #include <functional>
 #include <vector>
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
+#include "Core/Math/Random.h"
 #include "Core/Math/Triangulator.h"
 #include "Core/Math/Winding2.h"
 #include "Drawing/Image.h"
@@ -25,7 +27,7 @@ void triangleTop(const Vector2& v1, const Vector2& v2, const Vector2& v3, const 
 
 	if (std::fabs(v2.y - v1.y) <= 1.0f)
 	{
-		for (float y = std::floor(mn.y); y <= std::ceil(mx.y); y += 1.0f)
+		for (float y = std::floor(mn.y - 0.5f); y <= std::ceil(mx.y + 0.5f); y += 1.0f)
 		{
 			for (float x = mn.x - 1.0f; x <= mx.x + 1.0f; ++x)
 				fn(x, y);
@@ -77,7 +79,7 @@ void triangleBottom(const Vector2& v1, const Vector2& v2, const Vector2& v3, con
 
 	if (std::fabs(v2.y - v3.y) <= 1.0f)
 	{
-		for (float y = std::floor(mn.y); y <= std::ceil(mx.y); y += 1.0f)
+		for (float y = std::floor(mn.y - 0.5f); y <= std::ceil(mx.y + 0.5f); y += 1.0f)
 		{
 			for (float x = mn.x - 1.0f; x <= mx.x + 1.0f; ++x)
 				fn(x, y);
@@ -140,47 +142,6 @@ void triangleVisit(const Vector2& v1, const Vector2& v2, const Vector2& v3, cons
 	triangleTop(v[0], v[1], vm, fn);
 	triangleBottom(v[1], vm, v[2], fn);
 }
-
-// Vector2 closestOnLine(const Vector2& v1, const Vector2& v2, const Vector2& pt)
-// {
-// 	Vector2 d = v2 - v1;
-// 	Vector2 p = d.perpendicular().normalized();
-// 	float k = dot(p, pt - v1);
-
-// 	Vector2 pt0 = pt - p * k;
-
-// 	float k2 = dot(d, pt0- v1) / (d.length() * d.length());
-// 	if (k2 >= 0 && k2 <= 1)
-// 		return pt0;
-// 	else if (k2 < 0)
-// 		return v1;
-// 	else
-// 		return v2;
-// }
-
-// Vector2 closestOnTriangle(const Vector2& v1, const Vector2& v2, const Vector2& v3, const Vector2& pt)
-// {
-// 	Vector2 p1 = closestOnLine(v1, v2, pt);
-// 	Vector2 p2 = closestOnLine(v2, v3, pt);
-// 	Vector2 p3 = closestOnLine(v3, v1, pt);
-
-// 	float ln1 = (p1 - pt).length();
-// 	float ln2 = (p2 - pt).length();
-// 	float ln3 = (p3 - pt).length();
-
-// 	if (ln1 < ln2)
-// 	{
-// 		if (ln1 < ln3)
-// 			return p1;
-// 	}
-// 	else
-// 	{
-// 		if (ln2 < ln3)
-// 			return p2;
-// 	}
-
-// 	return p3;
-// }
 
 class Barycentric
 {
@@ -262,6 +223,15 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 	m_data.resize(width * height);
 	m_boundingBox = Aabb3();
 
+	for (uint32_t i = 0; i < width * height; ++i)
+	{
+		m_data[i].polygon = model::c_InvalidIndex;
+		m_data[i].material = 0;
+		m_data[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+		m_data[i].normal = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+		m_data[i].delta = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+	}
+
 	for (uint32_t i = 0; i < model.getPolygonCount(); ++i)
 	{
 		const auto& polygon = model.getPolygon(i);
@@ -270,6 +240,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 		AlignedVector< Vector4 > positions;
 		AlignedVector< Vector4 > normals;
 		Winding2 texCoords;
+		Aabb2 texBounds;
 
 		for (const auto index : polygon.getVertices())
 		{
@@ -285,6 +256,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			texCoords.points.push_back(
 				model.getTexCoord(texCoordIndex) * Vector2(width, height) - Vector2(0.5f, 0.5f)
 			);
+			texBounds.contain(texCoords.points.back());
 
 			m_boundingBox.contain(positions.back());
 		}
@@ -318,49 +290,36 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 				normals[i2]
 			);
 
-			triangleVisit(
-				texCoords.points[i0],
-				texCoords.points[i1],
-				texCoords.points[i2],
-				[&](float x, float y)
+			for (int32_t x = 0; x < width; ++x)
+			{
+				for (int32_t y = 0; y < height; ++y)
 				{
-					int32_t ix = (int32_t)x;
-					int32_t iy = (int32_t)y;
-					if (ix >= 0 && iy >= 0 && ix < width && iy < height)
+					Vector2 cpt(x, y);
+
+					bool inside =
+						bary.inside(cpt) |
+						bary.inside(cpt + Vector2(-0.5f, -0.5f)) |
+						bary.inside(cpt + Vector2( 0.5f, -0.5f)) |
+						bary.inside(cpt + Vector2(-0.5f,  0.5f)) |
+						bary.inside(cpt + Vector2( 0.5f,  0.5f));
+					if (!inside)
+						continue;
+
+					Element& elm = m_data[x + y * m_width];
+
+					if (elm.polygon != model::c_InvalidIndex)
 					{
-						Vector2 cpt(ix, iy);
-
-						bool inside = bary.inside(cpt);
-						if (!inside)
-						{
-							Vector2 cpt2 = texCoords.closest(cpt);
-							
-							Vector2 d = cpt2 - cpt;
-							
-							float ln = d.length();
-							if (ln > FUZZY_EPSILON)
-							{
-								d /= ln;
-								cpt2 += d * Vector2(0.1f / width, 0.1f / height);
-							}
-
-							cpt = cpt2;
-						}
-
-						auto& elm = m_data[x + y * m_width];
-
-						if (!inside && elm.polygon != model::c_InvalidIndex)
-							return;
-
-						elm.polygon = i;
-						elm.material = polygon.getMaterial();
-						elm.position = ipolPositions.evaluate(bary, cpt).xyz1();
-						elm.normal = ipolNormals.evaluate(bary, cpt).xyz0().normalized();
-						elm.delta = ipolPositions.evaluate(bary, cpt + Vector2(1.0f, 1.0f)).xyz1() - elm.position;
-						elm.inside = inside;
+						if (!bary.inside(cpt))
+							continue;
 					}
+
+					elm.polygon = i;
+					elm.material = polygon.getMaterial();
+					elm.position = ipolPositions.evaluate(bary, cpt).xyz1();
+					elm.normal = ipolNormals.evaluate(bary, cpt).xyz0().normalized();
+					elm.delta = ipolPositions.evaluate(bary, cpt + Vector2(1.0f, 1.0f)).xyz1() - elm.position;
 				}
-			);
+			}
 		}
 	}
 
@@ -407,6 +366,36 @@ void GBuffer::saveAsImages(const std::wstring& outputPath) const
 		}
 	}
 	image->save(outputPath + L"_Normals.png");
+
+	// Polygons
+	image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), m_width, m_height);
+	image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+	SmallMap< uint32_t, Color4f > colors;
+	Random rnd(std::clock());
+
+	for (int32_t y = 0; y < m_height; ++y)
+	{
+		for (int32_t x = 0; x < m_width; ++x)
+		{
+			const Element& e = m_data[x + y * m_width];
+			if (e.polygon == model::c_InvalidIndex)
+				continue;
+
+			if (colors.find(e.polygon) == colors.end())
+			{
+				colors[e.polygon] = Color4f(
+					rnd.nextFloat(),
+					rnd.nextFloat(),
+					rnd.nextFloat(),
+					1.0f
+				);
+			}
+
+			image->setPixel(x, y, colors[e.polygon]);
+		}
+	}
+	image->save(outputPath + L"_Polygons.png");
 }
 
 	}

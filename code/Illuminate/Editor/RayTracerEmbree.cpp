@@ -1,0 +1,427 @@
+#include <embree3/rtcore.h>
+#include <embree3/rtcore_ray.h>
+#include "Core/Functor/Functor.h"
+#include "Core/Math/RandomGeometry.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
+#include "Illuminate/Editor/GBuffer.h"
+#include "Illuminate/Editor/IlluminateConfiguration.h"
+#include "Illuminate/Editor/RayTracerEmbree.h"
+
+namespace traktor
+{
+    namespace illuminate
+    {
+		namespace
+		{
+
+const Scalar p(1.0f / (2.0f * PI));
+const float c_epsilonOffset = 0.1f;
+
+Scalar attenuation(const Scalar& distance, const Scalar& range)
+{
+	Scalar k0 = clamp(Scalar(1.0f) / (distance * distance), Scalar(0.0f), Scalar(1.0f));
+	Scalar k1 = clamp(Scalar(1.0f) - (distance / range), Scalar(0.0f), Scalar(1.0f));
+	return k0 * k1;
+}
+
+		}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.illuminate.RayTracerEmbree", RayTracerEmbree, IRayTracer)
+
+RayTracerEmbree::RayTracerEmbree()
+:	m_device(nullptr)
+,	m_scene(nullptr)
+,	m_maxDistance(0.0f)
+{
+}
+
+bool RayTracerEmbree::create(const IlluminateConfiguration* configuration)
+{
+	m_configuration = configuration;
+    m_maxDistance = 1000.0f;
+
+	m_device = rtcNewDevice(nullptr);
+	m_scene = rtcNewScene(m_device);
+
+    return true;
+}
+
+void RayTracerEmbree::destroy()
+{
+}
+
+void RayTracerEmbree::addLight(const Light& light)
+{
+    m_lights.push_back(light);
+}
+
+void RayTracerEmbree::addModel(const model::Model* model, const Transform& transform)
+{
+	const auto& polygons = model->getPolygons();
+
+	RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
+
+	float* vertices = (float*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, 3 * sizeof(float), model->getPositions().size());
+	for (const auto& position : model->getPositions())
+	{
+		Vector4 p = transform * position.xyz1();
+		*vertices++ = p.x();
+		*vertices++ = p.y();
+		*vertices++ = p.z();
+	}
+
+	uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), model->getPolygons().size());
+	for (const auto& polygon : model->getPolygons())
+	{
+		*triangles++ = model->getVertex(polygon.getVertex(2)).getPosition();
+		*triangles++ = model->getVertex(polygon.getVertex(1)).getPosition();
+		*triangles++ = model->getVertex(polygon.getVertex(0)).getPosition();
+	}
+
+	rtcCommitGeometry(mesh);
+	rtcAttachGeometry(m_scene, mesh);
+	rtcReleaseGeometry(mesh);
+}
+
+void RayTracerEmbree::commit()
+{
+	rtcCommitScene(m_scene);
+}
+
+Ref< drawing::Image > RayTracerEmbree::traceDirect(const GBuffer* gbuffer) const
+{
+	RandomGeometry random;
+
+    int32_t width = gbuffer->getWidth();
+    int32_t height = gbuffer->getHeight();
+
+    Ref< drawing::Image > lightmapDirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), width, height);
+    lightmapDirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+	for (int32_t y = 0; y < height; ++y)
+	{
+		for (int32_t x = 0; x < width; ++x)
+		{
+            const auto& elm = gbuffer->get(x, y);
+            if (elm.polygon == model::c_InvalidIndex)
+                continue;
+
+            Color4f direct = sampleAnalyticalLights(
+                random,
+                elm.position,
+                elm.normal,
+				false
+            );
+
+            lightmapDirect->setPixel(x, y, direct.rgb1());
+		}
+	}
+
+    return lightmapDirect;
+}
+
+Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) const
+{
+	RandomGeometry random;
+	RTCRayHit16 T_MATH_ALIGN16 rh;
+
+    int32_t width = gbuffer->getWidth();
+    int32_t height = gbuffer->getHeight();
+
+    Ref< drawing::Image > lightmapIndirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), width, height);
+    lightmapIndirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+	uint32_t sampleCount = alignUp(m_configuration->getIndirectSampleCount(), 16);
+
+	const int32_t c_valid[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+	Vector4 direction[16];
+
+	for (int32_t y = 0; y < height; ++y)
+	{
+		for (int32_t x = 0; x < width; ++x)
+		{
+            const auto& elm = gbuffer->get(x, y);
+            if (elm.polygon == model::c_InvalidIndex)
+                continue;
+
+            Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
+
+            for (uint32_t i = 0; i < sampleCount; i += 16)
+            {
+				for (uint32_t j = 0; j < 16; ++j)
+				{
+					direction[j] = random.nextHemi(elm.normal);
+
+					rh.ray.org_x[j] = elm.position.x();
+					rh.ray.org_y[j] = elm.position.y();
+					rh.ray.org_z[j] = elm.position.z();
+
+					rh.ray.dir_x[j] = direction[j].x();
+					rh.ray.dir_y[j] = direction[j].y();
+					rh.ray.dir_z[j] = direction[j].z();
+
+					rh.ray.tnear[j] = c_epsilonOffset;
+					rh.ray.time[j] = 0.0f;
+					rh.ray.tfar[j] = m_maxDistance;
+
+					rh.ray.mask[j] = 0;
+					rh.ray.id[j] = 0;
+					rh.ray.flags[j] = 0;
+
+					rh.hit.geomID[j] = RTC_INVALID_GEOMETRY_ID;
+					rh.hit.instID[0][j] = RTC_INVALID_GEOMETRY_ID;
+				}
+
+				RTCIntersectContext context;
+				rtcInitIntersectContext(&context);
+
+				rtcIntersect16(c_valid, m_scene, &context, &rh);
+
+				for (uint32_t j = 0; j < 16; ++j)
+				{
+					if (rh.hit.geomID[j] != RTC_INVALID_GEOMETRY_ID)
+					{
+						Vector4 hitPosition = (elm.position + direction[j] * Scalar(rh.ray.tfar[j])).xyz1();
+						Vector4 hitNormal = Vector4(rh.hit.Ng_x[j], rh.hit.Ng_y[j], rh.hit.Ng_z[j], 0.0f).normalized();
+
+						Scalar ct = dot3(elm.normal, direction[j]);
+						Color4f brdf = /*m_surfaces[result.index].albedo*/ Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
+						Color4f incoming = sampleAnalyticalLights(
+							random,
+							hitPosition,
+							hitNormal,
+							true
+						);
+						indirect += brdf * incoming * ct / p;
+					}
+				}
+            }
+
+            indirect /= Scalar(m_configuration->getIndirectSampleCount());
+
+            lightmapIndirect->setPixel(x, y, indirect.rgb1());
+        }
+	}
+
+    return lightmapIndirect;
+}
+
+Color4f RayTracerEmbree::sampleAnalyticalLights(
+    RandomGeometry& random,
+    const Vector4& origin,
+    const Vector4& normal,
+	bool secondary
+ ) const
+{
+	const uint32_t shadowSampleCount = !secondary ? m_configuration->getShadowSampleCount() : 1;
+    const float shadowRadius = !secondary ? m_configuration->getPointLightShadowRadius() : 0.0f;
+	RTCRay T_MATH_ALIGN16 r;
+
+	Color4f contribution(0.0f, 0.0f, 0.0f, 0.0f);
+	for (const auto& light : m_lights)
+	{
+		switch (light.type)
+		{
+		case Light::LtDirectional:
+			{
+				Scalar phi = dot3(normal, -light.direction);
+				if (phi <= 0.0f)
+					break;
+
+				Scalar shadowAttenuate(1.0f);
+
+				if (shadowSampleCount > 0)
+				{
+					Vector4 u, v;
+					orthogonalFrame(normal, u, v);
+
+					int32_t shadowCount = 0;
+					for (uint32_t j = 0; j < shadowSampleCount; ++j)
+					{
+						Vector4 lumelPosition = origin;
+						Vector4 traceDirection = -light.direction;
+
+						if (shadowSampleCount > 1)
+						{
+							float a = 0.0f, b = 0.0f;
+							do
+							{
+								a = random.nextFloat() * 2.0f - 1.0f;
+								b = random.nextFloat() * 2.0f - 1.0f;
+							}
+							while ((a * a) + (b * b) > 1.0f);
+							lumelPosition += u * Scalar(a * shadowRadius) + v * Scalar(b * shadowRadius);
+						}
+
+						lumelPosition.storeAligned(&r.org_x); 
+						traceDirection.storeAligned(&r.dir_x);
+
+						r.tnear = c_epsilonOffset;
+						r.time = 0.0f;
+						r.tfar = m_maxDistance;
+
+						r.mask = 0;
+						r.id = 0;
+						r.flags = 0;
+		
+						RTCIntersectContext context;
+						rtcInitIntersectContext(&context);
+
+						rtcOccluded1(m_scene, &context, &r);
+
+						if (r.tfar < 0.0f)
+							shadowCount++;
+					}
+					shadowAttenuate = Scalar(1.0f - float(shadowCount) / shadowSampleCount);
+				}
+
+				contribution += light.color * phi * shadowAttenuate;
+			}
+			break;
+
+		case Light::LtPoint:
+			{
+				Vector4 lightDirection = (light.position - origin).xyz0();
+				Scalar lightDistance = lightDirection.normalize();
+				if (lightDistance > light.range)
+					break;
+
+				Scalar phi = dot3(normal, lightDirection);
+				if (phi <= 0.0f)
+					break;
+
+				Scalar f = attenuation(lightDistance, light.range);
+				if (f <= 0.0f)
+					break;
+
+				Scalar shadowAttenuate(1.0f);
+
+				if (shadowSampleCount > 0)
+				{
+					Vector4 u, v;
+					orthogonalFrame(lightDirection, u, v);
+
+					int32_t shadowCount = 0;
+					for (uint32_t j = 0; j < shadowSampleCount; ++j)
+					{
+						Vector4 lumelPosition = origin;
+						Vector4 traceDirection = (light.position - origin).xyz0().normalized();
+
+						if (shadowSampleCount > 1)
+						{
+							float a = 0.0f, b = 0.0f;
+							do
+							{
+								a = random.nextFloat() * 2.0f - 1.0f;
+								b = random.nextFloat() * 2.0f - 1.0f;
+							}
+							while ((a * a) + (b * b) > 1.0f);
+							traceDirection = (light.position + u * Scalar(a * shadowRadius) + v * Scalar(b * shadowRadius) - origin).xyz0().normalized();
+						}
+
+						lumelPosition.storeAligned(&r.org_x); 
+						traceDirection.storeAligned(&r.dir_x);
+
+						r.tnear = c_epsilonOffset;
+						r.time = 0.0f;
+						r.tfar = lightDistance - c_epsilonOffset * 2;
+
+						r.mask = 0;
+						r.id = 0;
+						r.flags = 0;
+		
+						RTCIntersectContext context;
+						rtcInitIntersectContext(&context);
+
+						rtcOccluded1(m_scene, &context, &r);
+
+						if (r.tfar < 0.0f)
+							shadowCount++;
+					}
+					shadowAttenuate = Scalar(1.0f - float(shadowCount) / shadowSampleCount);
+				}
+
+				contribution += light.color * phi * min(f, Scalar(1.0f)) * shadowAttenuate;
+			}
+			break;
+
+		case Light::LtSpot:
+			{
+				Vector4 lightToPoint = (origin - light.position).xyz0();
+				Scalar lightDistance = lightToPoint.normalize();
+				if (lightDistance > light.range)
+					break;
+
+				float alpha = clamp< float >(dot3(light.direction, lightToPoint), -1.0f, 1.0f);
+				Scalar k0 = Scalar(1.0f - std::acos(alpha) / (light.radius / 2.0f));
+				if (k0 <= 0.0f)
+					break;
+
+				Scalar k1 = dot3(normal, -lightToPoint);
+				if (k1 <= 0.0f)
+					break;
+
+				Scalar k2 = attenuation(lightDistance, light.range);
+				if (k2 <= 0.0f)
+					break;
+
+				Scalar shadowAttenuate(1.0f);
+
+				if (shadowSampleCount > 0)
+				{
+					Vector4 u, v;
+					orthogonalFrame(-lightToPoint, u, v);
+
+					int32_t shadowCount = 0;
+					for (uint32_t j = 0; j < shadowSampleCount; ++j)
+					{
+						Vector4 lumelPosition = origin;
+						Vector4 traceDirection = (light.position - origin).xyz0().normalized();
+
+						if (shadowSampleCount > 1)
+						{
+							float a = 0.0f, b = 0.0f;
+							do
+							{
+								a = random.nextFloat() * 2.0f - 1.0f;
+								b = random.nextFloat() * 2.0f - 1.0f;
+							}
+							while ((a * a) + (b * b) > 1.0f);
+							traceDirection = (light.position + u * Scalar(a * shadowRadius) + v * Scalar(b * shadowRadius) - origin).xyz0().normalized();
+						}
+
+						lumelPosition.storeAligned(&r.org_x); 
+						traceDirection.storeAligned(&r.dir_x);
+
+						r.tnear = c_epsilonOffset;
+						r.time = 0.0f;
+						r.tfar = lightDistance - c_epsilonOffset * 2;
+
+						r.mask = 0;
+						r.id = 0;
+						r.flags = 0;
+		
+						RTCIntersectContext context;
+						rtcInitIntersectContext(&context);
+
+						rtcOccluded1(m_scene, &context, &r);
+
+						if (r.tfar < 0.0f)
+							shadowCount++;
+					}
+					shadowAttenuate = Scalar(1.0f - float(shadowCount) / shadowSampleCount);
+				}
+
+				contribution += light.color * k0 * k1 * k2 * shadowAttenuate;
+			}
+			break;
+		}
+	}
+	return contribution;
+}
+
+    }
+}

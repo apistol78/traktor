@@ -16887,6 +16887,12 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkNo</link>
+					<solutionFileName>ExternWin64.xms</solutionFileName>
+					<projectName>Extern.embree</projectName>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
