@@ -18,8 +18,11 @@ PACKAGES="
     lunarg-vulkan-sdk
     mesa-vulkan-drivers
     libgles2-mesa-dev
+    libopenimageio-dev
+    libglew-dev
+    freeglut3-dev
+    opencl-dev
 "
 
 apt-get install $PACKAGES
-
-sudo apt install lunarg-vulkan-sdk
+apt install lunarg-vulkan-sdk
