@@ -31,25 +31,23 @@ using namespace traktor::sb;
 
 void flattenIncludePaths(Project* project, std::map< std::wstring, std::set< std::wstring > >& outConfigurationIncludePaths)
 {
-	const RefArray< Configuration >& configurations = project->getConfigurations();
-	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (auto configuration : project->getConfigurations())
 	{
-		const std::vector< std::wstring >& includePaths = (*i)->getIncludePaths();
-		outConfigurationIncludePaths[(*i)->getName()].insert(
+		const auto& includePaths = configuration->getIncludePaths();
+		outConfigurationIncludePaths[configuration->getName()].insert(
 			includePaths.begin(),
 			includePaths.end()
 		);
 	}
 
-	const RefArray< Dependency >& dependencies = project->getDependencies();
-	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	for (auto dependency : project->getDependencies())
 	{
-		if (!(*i)->getInheritIncludePaths())
+		if (!dependency->getInheritIncludePaths())
 			continue;
 
-		if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*i))
+		if (auto projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency))
 			flattenIncludePaths(projectDependency->getProject(), outConfigurationIncludePaths);
-		else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*i))
+		else if (auto externalDependency = dynamic_type_cast< const ExternalDependency* >(dependency))
 			flattenIncludePaths(externalDependency->getProject(), outConfigurationIncludePaths);
 	}
 }
@@ -139,25 +137,23 @@ int main(int argc, const char** argv)
 		if (cmdLine.hasOption('v', L"verbose"))
 			traktor::log::info << L"Flatten include paths..." << Endl;
 
-		const RefArray< Project >& projects = solution->getProjects();
-		for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+		for (auto project : solution->getProjects())
 		{
 			std::map< std::wstring, std::set< std::wstring > > configurationIncludePaths;
-			flattenIncludePaths(*i, configurationIncludePaths);
+			flattenIncludePaths(project, configurationIncludePaths);
 
-			const RefArray< Configuration >& configurations = (*i)->getConfigurations();
-			for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+			for (auto configuration : project->getConfigurations())
 			{
-				const std::set< std::wstring >& includePaths = configurationIncludePaths[(*j)->getName()];
+				const auto& includePaths = configurationIncludePaths[configuration->getName()];
 
 				if (cmdLine.hasOption('v', L"verbose"))
 				{
-					traktor::log::info << L"Include paths of \"" << (*i)->getName() << L"\" " << (*j)->getName() << Endl;
-					for (std::set< std::wstring >::const_iterator k = includePaths.begin(); k != includePaths.end(); ++k)
-						traktor::log::info << L"\t" << *k << Endl;
+					traktor::log::info << L"Include paths of \"" << project->getName() << L"\" " << configuration->getName() << Endl;
+					for (auto includePath : includePaths)
+						traktor::log::info << L"\t" << includePath << Endl;
 				}
 
-				(*j)->setIncludePaths(std::vector< std::wstring >(
+				configuration->setIncludePaths(std::vector< std::wstring >(
 					includePaths.begin(),
 					includePaths.end()
 				));

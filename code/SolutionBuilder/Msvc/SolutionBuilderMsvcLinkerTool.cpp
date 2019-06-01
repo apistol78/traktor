@@ -63,10 +63,10 @@ bool SolutionBuilderMsvcLinkerTool::generate(GeneratorContext& context, Solution
 		additionalLibraryPaths
 	);
 
-	for (std::set< std::wstring >::const_iterator i = additionalLibraries.begin(); i != additionalLibraries.end(); ++i)
-		os << *i << L" ";
+	for (auto additionalLibrary : additionalLibraries)
+		os << additionalLibrary << L" ";
 
-	std::map< std::wstring, std::wstring >::const_iterator i1 = m_staticOptions.find(L"AdditionalDependencies");
+	auto i1 = m_staticOptions.find(L"AdditionalDependencies");
 	if (i1 != m_staticOptions.end())
 		os << context.format(i1->second) << L" ";
 
@@ -191,15 +191,17 @@ void SolutionBuilderMsvcLinkerTool::collectAdditionalLibraries(
 		configuration->getLibraryPaths().end()
 	);
 
-	const RefArray< Dependency >& dependencies = project->getDependencies();
-	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	for (auto dependency : project->getDependencies())
 	{
-		// Skip dependencies with we shouldn't link with.
-		if ((*i)->getLink() == Dependency::LnkNo)
+		// Skip dependencies which we shouldn't link with.
+		if (dependency->getLink() == Dependency::LnkNo)
+		{
+			log::info << project->getName() << L" < = > " << dependency->getName() << L" no link." << Endl;
 			continue;
+		}
 
 		// Traverse all static library dependencies and add their "additional libraries" as well.
-		if (ProjectDependency* projectDependency = dynamic_type_cast< ProjectDependency* >(*i))
+		if (auto projectDependency = dynamic_type_cast< ProjectDependency* >(dependency))
 		{
 			Configuration* dependentConfiguration = projectDependency->getProject()->getConfiguration(configuration->getName());
 			if (!dependentConfiguration)
@@ -221,7 +223,7 @@ void SolutionBuilderMsvcLinkerTool::collectAdditionalLibraries(
 		}
 
 		// Add products from external dependencies and add their "additional libraries" as well.
-		if (ExternalDependency* externalDependency = dynamic_type_cast< ExternalDependency* >(*i))
+		if (auto externalDependency = dynamic_type_cast< ExternalDependency* >(dependency))
 		{
 			Ref< Configuration > externalConfiguration = externalDependency->getProject()->getConfiguration(configuration->getName());
 			if (!externalConfiguration)

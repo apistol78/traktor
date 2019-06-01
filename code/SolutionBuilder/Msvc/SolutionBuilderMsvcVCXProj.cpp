@@ -257,8 +257,8 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	os << IncreaseIndent;
 
 	// Custom property groups.
-	for (RefArray< SolutionBuilderMsvcVCXPropertyGroup >::const_iterator i = m_propertyGroupsBeforeImports.begin(); i != m_propertyGroupsBeforeImports.end(); ++i)
-		(*i)->generate(
+	for (auto propertyGroup : m_propertyGroupsBeforeImports)
+		propertyGroup->generate(
 			context,
 			solution,
 			project,
@@ -269,12 +269,8 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	os << L"<ItemGroup Label=\"ProjectConfigurations\">" << Endl;
 	os << IncreaseIndent;
 
-	const RefArray< Configuration >& configurations = project->getConfigurations();
-	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (auto configuration : project->getConfigurations())
 	{
-		const Configuration* configuration = *i;
-		T_ASSERT(configuration);
-
 		os << L"<ProjectConfiguration Include=\"" << configuration->getName() << L"|" << m_platform << L"\">" << Endl;
 		os << IncreaseIndent;
 
@@ -307,24 +303,21 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	os << L"<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />" << Endl;
 
 	// Configurations
-	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (auto configuration : project->getConfigurations())
 	{
-		const Configuration* configuration = *i;
-		T_ASSERT(configuration);
-
 		os << L"<PropertyGroup Label=\"Configuration\" Condition=\"'$(Configuration)|$(Platform)'=='" << configuration->getName() << L"|" << m_platform << L"'\">" << Endl;
 		os << IncreaseIndent;
 
 		if (configuration->getTargetProfile() == Configuration::TpDebug)
 		{
-			const std::map< std::wstring, std::wstring >& cd = m_configurationDefinitionsDebug[configuration->getTargetFormat()];
-			for (std::map< std::wstring, std::wstring >::const_iterator i = cd.begin(); i != cd.end(); ++i)
+			const auto& cd = m_configurationDefinitionsDebug[configuration->getTargetFormat()];
+			for (auto i = cd.begin(); i != cd.end(); ++i)
 				os << L"<" << i->first << L">" << i->second << L"</" << i->first << L">" << Endl;
 		}
 		else
 		{
-			const std::map< std::wstring, std::wstring >& cd = m_configurationDefinitionsRelease[configuration->getTargetFormat()];
-			for (std::map< std::wstring, std::wstring >::const_iterator i = cd.begin(); i != cd.end(); ++i)
+			const auto& cd = m_configurationDefinitionsRelease[configuration->getTargetFormat()];
+			for (auto i = cd.begin(); i != cd.end(); ++i)
 				os << L"<" << i->first << L">" << i->second << L"</" << i->first << L">" << Endl;
 		}
 
@@ -333,12 +326,12 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	}
 
 	// Imports
-	for (RefArray< SolutionBuilderMsvcVCXImportCommon >::const_iterator i = m_imports.begin(); i != m_imports.end(); ++i)
-		(*i)->generate(os);
+	for (auto import : m_imports)
+		import->generate(os);
 
 	// Custom property groups.
-	for (RefArray< SolutionBuilderMsvcVCXPropertyGroup >::const_iterator i = m_propertyGroupsAfterImports.begin(); i != m_propertyGroupsAfterImports.end(); ++i)
-		(*i)->generate(
+	for (auto propertyGroup : m_propertyGroupsAfterImports)
+		propertyGroup->generate(
 			context,
 			solution,
 			project,
@@ -349,11 +342,8 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	os << L"<PropertyGroup>" << Endl;
 	os << IncreaseIndent;
 	os << L"<_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>" << Endl;
-	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (auto configuration : project->getConfigurations())
 	{
-		const Configuration* configuration = *i;
-		T_ASSERT(configuration);
-
 		std::wstring name = configuration->getName();
 		std::wstring projectName = m_targetPrefixes[int(configuration->getTargetFormat())] + project->getName();
 
@@ -389,9 +379,8 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	os << L"</PropertyGroup>" << Endl;
 
 	// Build definitions.
-	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (auto configuration : project->getConfigurations())
 	{
-		Ref< const Configuration > configuration = *i;
 		std::wstring name = configuration->getName();
 
 		os << L"<ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">" << Endl;
@@ -482,13 +471,12 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	os << L"<ItemGroup>" << Endl;
 	os << IncreaseIndent;
 
-	const RefArray< Dependency >& dependencies = project->getDependencies();
-	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	for (auto dependency : project->getDependencies())
 	{
-		Ref< const ProjectDependency > projectDependency = dynamic_type_cast< const ProjectDependency* >(*i);
+		auto projectDependency = dynamic_type_cast< const ProjectDependency* >(dependency);
 		if (projectDependency)
 		{
-			Ref< Project > dependentProject = projectDependency->getProject();
+			auto dependentProject = projectDependency->getProject();
 			T_ASSERT(dependentProject);
 
 			std::wstring dependentSolutionPath;

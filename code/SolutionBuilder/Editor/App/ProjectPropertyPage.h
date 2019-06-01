@@ -22,11 +22,12 @@ class ProjectPropertyPage : public ui::Container
 public:
 	bool create(ui::Widget* parent);
 
-	void set(Solution* solution, Project* project);
+	void set(Solution* solution, Project* project, const std::wstring& solutionFileName);
 
 private:
 	Ref< Solution > m_solution;
 	Ref< Project > m_project;
+	std::wstring m_solutionFileName;
 	Ref< ui::CheckBox > m_checkEnable;
 	Ref< ui::Edit > m_editSourcePath;
 	Ref< ui::GridView > m_listDependencies;
