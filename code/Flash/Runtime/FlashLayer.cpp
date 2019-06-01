@@ -678,9 +678,7 @@ void FlashLayer::createMoviePlayer()
 			log::error << L"Unable to create display renderer." << Endl;
 			return;
 		}
-
 		m_displayRenderer = displayRenderer;
-		m_movieRenderer = new MovieRenderer(m_displayRenderer, 0);
 	}
 
 	// Create sound Flash renderer.
@@ -696,6 +694,13 @@ void FlashLayer::createMoviePlayer()
 			}
 			m_soundRenderer = soundRenderer;
 		}
+	}
+
+	// Create Flash movie renderer.
+	if (!m_movieRenderer)
+	{
+		T_ASSERT(m_displayRenderer);
+		m_movieRenderer = new MovieRenderer(m_displayRenderer, nullptr);
 	}
 
 	// Create Flash movie player.

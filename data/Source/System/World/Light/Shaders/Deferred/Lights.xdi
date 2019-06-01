@@ -5,7 +5,7 @@
 			<id>{7F42A76B-91D3-3B47-A39D-AC28EE6C30AE}</id>
 			<comment/>
 			<position>
-				<first>1157</first>
+				<first>1156</first>
 				<second>-700</second>
 			</position>
 			<fragmentGuid>{8FEDE215-7BFC-A248-97FE-BA4D10C043BE}</fragmentGuid>
@@ -47,7 +47,7 @@
 			<comment/>
 			<position>
 				<first>8586</first>
-				<second>581</second>
+				<second>580</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -94,7 +94,7 @@
 			<id>{94DD5FDC-A4A2-674D-BB3E-D6A9254AE063}</id>
 			<comment/>
 			<position>
-				<first>1483</first>
+				<first>1482</first>
 				<second>758</second>
 			</position>
 			<name>L_AtlasTransform</name>
@@ -104,7 +104,7 @@
 			<id>{8B622A30-D71F-0B4D-AC5C-80A9229278E2}</id>
 			<comment/>
 			<position>
-				<first>1229</first>
+				<first>1228</first>
 				<second>762</second>
 			</position>
 			<name>AtlasTransform</name>
@@ -113,7 +113,7 @@
 			<id>{EA3F0282-065C-A342-A50F-44F98B02E767}</id>
 			<comment/>
 			<position>
-				<first>1485</first>
+				<first>1484</first>
 				<second>518</second>
 			</position>
 		</item>
@@ -121,7 +121,7 @@
 			<id>{9CEFF858-AD61-1148-96D5-8B65236D282F}</id>
 			<comment/>
 			<position>
-				<first>1229</first>
+				<first>1228</first>
 				<second>654</second>
 			</position>
 			<name>ViewToLight3</name>
@@ -130,7 +130,7 @@
 			<id>{B99237AC-EA3C-4846-A4C5-FB7E011C14CC}</id>
 			<comment/>
 			<position>
-				<first>1229</first>
+				<first>1228</first>
 				<second>546</second>
 			</position>
 			<name>ViewToLight2</name>
@@ -139,7 +139,7 @@
 			<id>{D21C5404-A229-654D-A11E-CEB12D89E691}</id>
 			<comment/>
 			<position>
-				<first>1229</first>
+				<first>1228</first>
 				<second>438</second>
 			</position>
 			<name>ViewToLight1</name>
@@ -148,7 +148,7 @@
 			<id>{D4787169-BBFD-6244-9950-9ABA6FDA464C}</id>
 			<comment/>
 			<position>
-				<first>1229</first>
+				<first>1228</first>
 				<second>330</second>
 			</position>
 			<name>ViewToLight0</name>
@@ -157,7 +157,7 @@
 			<id>{219B2EB4-5FCB-6D41-8765-C28B262D01BB}</id>
 			<comment/>
 			<position>
-				<first>1705</first>
+				<first>1704</first>
 				<second>522</second>
 			</position>
 			<name>L_ViewToLight</name>
@@ -167,8 +167,8 @@
 			<id>{9815A4F2-BB14-8941-A1C6-CC7B209E4210}</id>
 			<comment/>
 			<position>
-				<first>1481</first>
-				<second>-21</second>
+				<first>1480</first>
+				<second>-20</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -176,7 +176,7 @@
 			<id>{B2145C18-80F7-834A-90E0-B265095E7E89}</id>
 			<comment/>
 			<position>
-				<first>1659</first>
+				<first>1658</first>
 				<second>12</second>
 			</position>
 			<name>L_Radius</name>
@@ -186,8 +186,8 @@
 			<id>{D6E7DBED-411A-2C42-9C93-11F679423E61}</id>
 			<comment/>
 			<position>
-				<first>1481</first>
-				<second>-67</second>
+				<first>1480</first>
+				<second>-66</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -195,8 +195,8 @@
 			<id>{01D7AB21-B61C-DD4E-A7A0-B77664309C2B}</id>
 			<comment/>
 			<position>
-				<first>1481</first>
-				<second>-111</second>
+				<first>1480</first>
+				<second>-110</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -204,7 +204,7 @@
 			<id>{F5E4A604-B90C-DD42-89FA-54933916CA0D}</id>
 			<comment/>
 			<position>
-				<first>767</first>
+				<first>766</first>
 				<second>442</second>
 			</position>
 			<name>L_LightIndex</name>
@@ -214,8 +214,8 @@
 			<id>{092D8AAE-E5B0-DC42-8604-82FC56DFA64C}</id>
 			<comment/>
 			<position>
-				<first>1229</first>
-				<second>-101</second>
+				<first>1228</first>
+				<second>-100</second>
 			</position>
 			<name>TypeRangeRadius</name>
 		</item>
@@ -223,7 +223,7 @@
 			<id>{2BA938FA-1F71-3F41-A73F-908AB0E43B1A}</id>
 			<comment/>
 			<position>
-				<first>1229</first>
+				<first>1228</first>
 				<second>6</second>
 			</position>
 			<name>Position</name>
@@ -232,7 +232,7 @@
 			<id>{01B9868B-AE12-1C4C-8D1A-84416D6B2004}</id>
 			<comment/>
 			<position>
-				<first>1229</first>
+				<first>1228</first>
 				<second>114</second>
 			</position>
 			<name>Direction</name>
@@ -241,7 +241,7 @@
 			<id>{3628BB60-0C8E-1B40-B2A7-FA941D8D47E0}</id>
 			<comment/>
 			<position>
-				<first>1229</first>
+				<first>1228</first>
 				<second>222</second>
 			</position>
 			<name>Color</name>
@@ -250,7 +250,7 @@
 			<id>{3B66F807-CCDC-DE47-8BD9-12E817E81BC6}</id>
 			<comment/>
 			<position>
-				<first>703</first>
+				<first>702</first>
 				<second>614</second>
 			</position>
 			<parameterName>World_LightSBuffer</parameterName>
@@ -297,7 +297,7 @@
 			<id>{03717F26-FBBC-B342-B08E-D96C35655553}</id>
 			<comment/>
 			<position>
-				<first>1505</first>
+				<first>1504</first>
 				<second>84</second>
 			</position>
 			<name>L_Position</name>
@@ -307,7 +307,7 @@
 			<id>{DB4D7B8B-E01E-5A41-98CE-744D69B08524}</id>
 			<comment/>
 			<position>
-				<first>1505</first>
+				<first>1504</first>
 				<second>168</second>
 			</position>
 			<name>L_Direction</name>
@@ -317,8 +317,8 @@
 			<id>{9862A088-CC38-2F4D-8B23-3B8928D3B71C}</id>
 			<comment/>
 			<position>
-				<first>1659</first>
-				<second>-77</second>
+				<first>1658</first>
+				<second>-76</second>
 			</position>
 			<name>L_Range</name>
 			<global>false</global>
@@ -327,8 +327,8 @@
 			<id>{A8492207-1673-DB47-A0A4-1ED711626B7E}</id>
 			<comment/>
 			<position>
-				<first>1659</first>
-				<second>-169</second>
+				<first>1658</first>
+				<second>-168</second>
 			</position>
 			<name>L_Type</name>
 			<global>false</global>
@@ -337,7 +337,7 @@
 			<id>{D50DB023-978B-F243-A15F-537F50A9BFF8}</id>
 			<comment/>
 			<position>
-				<first>1505</first>
+				<first>1504</first>
 				<second>254</second>
 			</position>
 			<name>L_Color</name>
@@ -428,7 +428,7 @@
 			<id>{DEAB230A-AF12-A24F-A076-16E4A51B25BB}</id>
 			<comment/>
 			<position>
-				<first>3259</first>
+				<first>3258</first>
 				<second>-1182</second>
 			</position>
 			<parameterName>World_ShadowEnable</parameterName>
@@ -555,9 +555,9 @@
 			<comment/>
 			<position>
 				<first>3106</first>
-				<second>1187</second>
+				<second>1186</second>
 			</position>
-			<value>0.0005</value>
+			<value>0.0001</value>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{0B0450C1-5C54-FD43-8CC2-8355E167593C}</id>

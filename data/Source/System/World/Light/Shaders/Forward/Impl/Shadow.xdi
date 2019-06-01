@@ -238,8 +238,8 @@ Light space position
 			<id>{A7D9AE88-308A-E842-AC54-BD1036B198BC}</id>
 			<comment/>
 			<position>
-				<first>3754</first>
-				<second>312</second>
+				<first>3578</first>
+				<second>433</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -427,7 +427,7 @@ Light space position
 				<first>3299</first>
 				<second>299</second>
 			</position>
-			<value>40</value>
+			<value>200</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{CBC61432-7666-6949-97CE-D49AE45FEBE7}</id>
@@ -852,16 +852,6 @@ Light space position
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[37]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[38]"/>
 				<name>Output</name>
 			</source>
@@ -878,6 +868,16 @@ Light space position
 			<destination>
 				<node ref="/object/nodes/item[37]"/>
 				<name>CaseFalse</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

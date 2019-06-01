@@ -394,7 +394,7 @@ bool Application::create(
 
 void Application::destroy()
 {
-	Profiler::getInstance().setListener(0);
+	Profiler::getInstance().setListener(nullptr);
 
 #if !defined(__EMSCRIPTEN__)
 
@@ -402,14 +402,14 @@ void Application::destroy()
 	{
 		m_threadRender->stop();
 		ThreadManager::getInstance().destroy(m_threadRender);
-		m_threadRender = 0;
+		m_threadRender = nullptr;
 	}
 
 	if (m_threadDatabase)
 	{
 		m_threadDatabase->stop();
 		ThreadManager::getInstance().destroy(m_threadDatabase);
-		m_threadDatabase = 0;
+		m_threadDatabase = nullptr;
 	}
 
 #endif
@@ -426,12 +426,12 @@ void Application::destroy()
 	safeDestroy(m_scriptServer);
 	safeDestroy(m_onlineServer);
 
-	m_environment = 0;
+	m_environment = nullptr;
 
 	if (m_database)
 	{
 		m_database->close();
-		m_database = 0;
+		m_database = nullptr;
 	}
 
 	for (RefArray< Library >::iterator i = m_libraries.begin(); i != m_libraries.end(); ++i)

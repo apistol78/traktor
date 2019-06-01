@@ -1,5 +1,4 @@
 #include <intrin.h>
-#include <BugSplat.h>
 #include "Runtime/App/Win32/ErrorDialog.h"
 #include "Runtime/Impl/Application.h"
 #include "Core/Date/DateTime.h"
@@ -95,7 +94,6 @@ private:
 };
 
 Ref< LogTailTarget > g_logTail;
-MiniDmpSender* g_sender = nullptr;
 Path g_logFilePath;
 
 /*! \brief
@@ -364,27 +362,12 @@ void logDriverVersion()
 	nvmlShutdown();
 }
 
-bool miniDmpExceptionCallback(UINT nCode, LPVOID lpVal1, LPVOID lpVal2)
-{
-	if (nCode == MDSCB_EXCEPTIONCODE)
-	{
-		std::wstring fn = g_logFilePath.getPathName();
-		if (!fn.empty())
-			g_sender->sendAdditionalFile(fn.c_str());
-	}
-	return false;
-}
-
 }
 
 /*! \brief
  */
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 {
-	// BugSplat crash reporting.
-    g_sender = new MiniDmpSender(L"doctorentertainment_01", L"gearup", L"1.0.1", NULL, MDSF_LOGFILE);
-	g_sender->setCallback(miniDmpExceptionCallback);
-
 	// Our code begin here.
 	std::vector< std::wstring > argv;
 	SystemApplication sysapp;

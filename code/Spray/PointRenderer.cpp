@@ -117,7 +117,7 @@ void PointRenderer::destroy()
 	if (m_vertex)
 	{
 		m_vertexBuffers[m_count]->unlock();
-		m_vertex = 0;
+		m_vertex = nullptr;
 	}
 
 	for (uint32_t i = 0; i < sizeof_array(m_vertexBuffers); ++i)
@@ -210,7 +210,7 @@ void PointRenderer::render(
 
 		Vector4 position = point.position + cameraOffsetV;
 
-		for (int j = 0; j < 4; ++j)
+		for (int32_t j = 0; j < 4; ++j)
 		{
 			// \note We're assuming locked vertex buffer is 16-aligned.
 			position.storeAligned(m_vertex->positionAndOrientation);
@@ -251,28 +251,28 @@ void PointRenderer::flush(
 
 		T_ASSERT(m_vertex);
 
-		for (AlignedVector< Batch >::const_iterator i = m_batches.begin(); i != m_batches.end(); ++i)
+		for (const auto& batch : m_batches)
 		{
-			if (!i->count || !i->shader)
+			if (!batch.count || !batch.shader)
 				continue;
 
-			worldRenderPass.setShaderTechnique(i->shader);
-			worldRenderPass.setShaderCombination(i->shader);
+			worldRenderPass.setShaderTechnique(batch.shader);
+			worldRenderPass.setShaderCombination(batch.shader);
 
-			render::IProgram* program = i->shader->getCurrentProgram();
+			render::IProgram* program = batch.shader->getCurrentProgram();
 			if (!program)
 				continue;
 
 			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("PointRenderer");
 
-			renderBlock->distance = i->distance;
+			renderBlock->distance = batch.distance;
 			renderBlock->program = program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->indexBuffer = m_indexBuffer;
 			renderBlock->vertexBuffer = m_vertexBuffers[m_count];
 			renderBlock->primitive = render::PtTriangles;
-			renderBlock->offset = i->offset;
-			renderBlock->count = i->count;
+			renderBlock->offset = batch.offset;
+			renderBlock->count = batch.count;
 			renderBlock->minIndex = 0;
 			renderBlock->maxIndex = m_pointOffset * 4;
 
@@ -280,9 +280,9 @@ void PointRenderer::flush(
 			worldRenderPass.setProgramParameters(renderBlock->programParams);
 			renderBlock->programParams->endParameters(renderContext);
 
-			renderContext->draw(i->shader->getCurrentPriority(), renderBlock);
+			renderContext->draw(batch.shader->getCurrentPriority(), renderBlock);
 
-			m_vertex = 0;
+			m_vertex = nullptr;
 		}
 
 		m_pointOffset = 0;

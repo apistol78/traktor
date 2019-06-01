@@ -97,17 +97,17 @@
 			<id>{CC1485EC-9AE7-4047-85BB-B39F1E4816B0}</id>
 			<comment/>
 			<position>
-				<first>196</first>
-				<second>416</second>
+				<first>169</first>
+				<second>414</second>
 			</position>
-			<value>0.65</value>
+			<value>1.3</value>
 		</item>
 		<item type="traktor.render.Uniform" version="1,traktor.render.Node:1">
 			<id>{22930DAF-46D9-7D4E-AEF3-67E7731FF23F}</id>
 			<comment/>
 			<position>
-				<first>194</first>
-				<second>342</second>
+				<first>178</first>
+				<second>349</second>
 			</position>
 			<parameterName>DeltaTime</parameterName>
 			<type>PtScalar</type>
