@@ -37,15 +37,11 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 {
 	StringOutputStream ssip, ssd, ssl, sslp;
 
-	const std::vector< std::wstring >& includePaths = configuration->getIncludePaths();
-	for (std::vector< std::wstring >::const_iterator i = includePaths.begin(); i != includePaths.end(); ++i)
-	{
-		std::wstring includePath = context.getProjectRelativePath(*i, m_resolvePaths);
-		ssip << includePath << L";";
-	}
+	for (auto includePath : configuration->getIncludePaths())
+		ssip << context.getProjectRelativePath(includePath, m_resolvePaths) << L";";
 
-	for (std::vector< std::wstring >::const_iterator i = configuration->getDefinitions().begin(); i != configuration->getDefinitions().end(); ++i)
-		ssd << *i << L";";
+	for (auto definition : configuration->getDefinitions())
+		ssd << definition << L";";
 
 	std::set< std::wstring > libraries, libraryPaths;
 	collectAdditionalLibraries(solution, project, configuration, libraries, libraryPaths);
@@ -180,12 +176,15 @@ void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
 				continue;
 			}
 
-			std::wstring externalRootPath = externalDependency->getSolution()->getRootPath();
-			std::wstring externalProjectPath = externalRootPath + L"/" + toLower(externalConfiguration->getName());
-			std::wstring externalProjectName = externalDependency->getProject()->getName() + L".lib";
+			if (externalDependency->getLink() != Dependency::LnkNo)
+			{
+				std::wstring externalRootPath = externalDependency->getSolution()->getRootPath();
+				std::wstring externalProjectPath = externalRootPath + L"/" + toLower(externalConfiguration->getName());
+				std::wstring externalProjectName = externalDependency->getProject()->getName() + L".lib";
 
-			outAdditionalLibraries.insert(externalProjectName);
-			outAdditionalLibraryPaths.insert(externalProjectPath);
+				outAdditionalLibraries.insert(externalProjectName);
+				outAdditionalLibraryPaths.insert(externalProjectPath);
+			}
 
 			if (externalConfiguration->getTargetFormat() == Configuration::TfStaticLibrary)
 			{

@@ -1,20 +1,21 @@
-#include <Ui/Application.h>
-#include <Ui/TableLayout.h>
-#include <Ui/Static.h>
-#include <Ui/Button.h>
-#include <Ui/MessageBox.h>
-#include <Ui/FileDialog.h>
-#include <Ui/InputDialog.h>
-#include <Ui/GridView/GridColumn.h>
-#include <Ui/GridView/GridItem.h>
-#include <Ui/GridView/GridRow.h>
+#include "Core/Io/FileSystem.h"
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/ExternalDependency.h"
 #include "SolutionBuilder/SolutionLoader.h"
-#include "ProjectPropertyPage.h"
-#include "ImportProjectDialog.h"
+#include "SolutionBuilder/Editor/App/ProjectPropertyPage.h"
+#include "SolutionBuilder/Editor/App/ImportProjectDialog.h"
+#include "Ui/Application.h"
+#include "Ui/TableLayout.h"
+#include "Ui/Static.h"
+#include "Ui/Button.h"
+#include "Ui/MessageBox.h"
+#include "Ui/FileDialog.h"
+#include "Ui/InputDialog.h"
+#include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridItem.h"
+#include "Ui/GridView/GridRow.h"
 
 namespace traktor
 {
@@ -103,10 +104,11 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 	return true;
 }
 
-void ProjectPropertyPage::set(Solution* solution, Project* project)
+void ProjectPropertyPage::set(Solution* solution, Project* project, const std::wstring& solutionFileName)
 {
 	m_solution = solution;
 	m_project = project;
+	m_solutionFileName = solutionFileName;
 
 	m_checkEnable->setChecked(project->getEnable());
 	m_editSourcePath->setText(project->getSourcePath());
@@ -296,11 +298,19 @@ void ProjectPropertyPage::eventClickAddExternal(ui::ButtonClickEvent* event)
 
 			if (importDialog.showModal() == ui::DrOk)
 			{
+				Path filePathRel;
+				if (!FileSystem::getInstance().getRelativePath(
+					filePath,
+					Path(m_solutionFileName).getPathOnly(),
+					filePathRel
+				))
+					filePathRel = filePath;
+
 				RefArray< Project > externalProjects;
 				importDialog.getSelectedProjects(externalProjects);
 
-				for (RefArray< Project >::iterator i = externalProjects.begin(); i != externalProjects.end(); ++i)
-					m_project->addDependency(new ExternalDependency(filePath.getPathName(), (*i)->getName()));
+				for (auto externalProject : externalProjects)
+					m_project->addDependency(new ExternalDependency(filePathRel.getPathName(), externalProject->getName()));
 
 				updateDependencyList();
 			}

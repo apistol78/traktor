@@ -1088,7 +1088,7 @@ void SolutionForm::eventTreeSelect(ui::SelectionChangeEvent* event)
 	if (project)
 	{
 		m_pageProject->show();
-		m_pageProject->set(m_solution, project);
+		m_pageProject->set(m_solution, project, m_solutionFileName);
 	}
 
 	Ref< Aggregation > aggregation = treeItem->getData< Aggregation >(L"PRIMARY");
