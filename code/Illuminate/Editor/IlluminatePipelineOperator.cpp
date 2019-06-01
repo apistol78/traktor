@@ -27,12 +27,13 @@
 #include "Illuminate/Editor/GBuffer.h"
 #include "Illuminate/Editor/IlluminateConfiguration.h"
 #include "Illuminate/Editor/IlluminatePipelineOperator.h"
+#include "Illuminate/Editor/RayTracerEmbree.h"
 #include "Illuminate/Editor/RayTracerLocal.h"
-#include "Illuminate/Editor/RayTracerRadeonRays.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
+#include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/Triangulate.h"
@@ -162,8 +163,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 	const auto configuration = mandatory_non_null_type_cast< const IlluminateConfiguration* >(operatorData);
 
 	// Create raytracer implementation.
-	//Ref< IRayTracer > rayTracer = new RayTracerLocal();
-	Ref< IRayTracer > rayTracer = new RayTracerRadeonRays();
+	Ref< IRayTracer > rayTracer = new RayTracerEmbree(); // RayTracerLocal();
 	if (!rayTracer->create(configuration))
 		return false;
 
@@ -261,6 +261,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		model::Triangulate().apply(*model);
 		model::CleanDuplicates(0.001f).apply(*model);
 		model::CleanDegenerate().apply(*model);
+		model::CalculateTangents().apply(*model);
 
 		rayTracer->addModel(model, meshEntityData->getTransform());
 	}
@@ -410,8 +411,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		if (configuration->traceIndirect())
 			lightmapIndirect = rayTracer->traceIndirect(&gbuffer);
 
-		double Tend = timer.getElapsedTime();
-		log::info << L"Lightmap traced in " << int32_t(Tend * 1000.0) << L" ms." << Endl;
+		double TendTrace = timer.getElapsedTime();
 
 		if (configuration->getEnableDilate())
 		{
@@ -451,8 +451,10 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		// Discard alpha.
 		lightmap->clearAlpha(1.0f);
 
-		//lightmap->save(meshEntityData->getName() + L"_Lightmap.png");
-		//model::ModelFormat::writeAny(meshEntityData->getName() + L"_Unwrapped.tmd", model);
+		double TendFilter = timer.getElapsedTime();
+
+		//lightmap->save(meshEntityData->getName() + L"_" + toString(i) + L"_Lightmap.png");
+		//model::ModelFormat::writeAny(meshEntityData->getName() + L"_" + toString(i) + L"_Unwrapped.tmd", model);
 
 		// "Permutate" output ids.
 		Guid idGenerated = configuration->getSeedGuid().permutate(0);
@@ -505,6 +507,13 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		meshEntityData->getComponent< mesh::MeshComponentData >()->setMesh(resource::Id< mesh::IMesh >(
 			idMesh
 		));
+
+		double TendWrite = timer.getElapsedTime();
+
+		log::info << L"Lightmap time breakdown;" << Endl;
+		log::info << L"  trace  " << int32_t(TendTrace * 1000.0) << L" ms." << Endl;
+		log::info << L"  filter " << int32_t((TendFilter - TendTrace) * 1000.0) << L" ms." << Endl;
+		log::info << L"  output " << int32_t((TendWrite - TendFilter) * 1000.0) << L" ms." << Endl;
 	}
 
 	return true;

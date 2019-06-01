@@ -14217,12 +14217,6 @@
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[13]/project/dependencies/item[7]/project"/>
 				</item>
-				<item type="ExternalDependency" version="3">
-					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
-					<solutionFileName>ExternLinux.xms</solutionFileName>
-					<projectName>Extern.RadeonRays</projectName>
-				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
