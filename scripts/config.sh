@@ -18,7 +18,7 @@ export EXPAT_SDK=$TRAKTOR_HOME/3rdp/libexpat-R_2_2_5/expat
 export ZLIB_SDK=$TRAKTOR_HOME/3rdp/zlib-1.2.11
 export P4_SDK=$TRAKTOR_HOME/3rdp/p4api-2018.1.1660568
 export RPI_SYSROOT=$TRAKTOR_HOME/3rdp/raspberry-sysroot
-export RADEONRAYS_SDK=$TRAKTOR_HOME/3rdp/RadeonRays_SDK-master
+export EMBREE_SDK=$TRAKTOR_HOME/3rdp/embree-3.5.2.x86_64.linux
 
 # Export name of solution builder binary.
 if [[ `uname -s` == Linux* ]]; then
