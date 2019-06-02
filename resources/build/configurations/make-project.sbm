@@ -132,57 +132,57 @@ local function collectDependencies(
 			local externalSolution = dep:getSolution()
 			local externalProject = dep:getProject()
 			local externalConfig = externalProject:getConfiguration(configuration:getName())
+
+			-- Add path to library.
+			if externalConfig:getConsumerLibraryPath() ~= "" then
+				local aggregateOutputPath = Path(externalSolution:getAggregateOutputPath())
+				local consumerLibraryPath = Path(externalConfig:getConsumerLibraryPath())
+
+				local consumerRelPath = fileSystem:getRelativePath(
+					aggregateOutputPath:concat(consumerLibraryPath),
+					projectPath
+				)
+
+				if consumerRelPath ~= nil then
+					insertLast(outLibraryPaths, consumerRelPath.pathName)
+				end
+			else
+				local externalRelPath = fileSystem:getRelativePath(
+					Path(externalSolution:getRootPath() .. "/" .. configuration:getName()),
+					projectPath
+				)
+				if externalRelPath ~= nil then
+					insertLast(outLibraryPaths, externalRelPath.pathName)
+				end
+			end
+
+			-- Add library.
 			if externalProject:getEnable() then
-
-				-- Add path to library.
-				if externalConfig:getConsumerLibraryPath() ~= "" then
-					local aggregateOutputPath = Path(externalSolution:getAggregateOutputPath())
-					local consumerLibraryPath = Path(externalConfig:getConsumerLibraryPath())
-
-					local consumerRelPath = fileSystem:getRelativePath(
-						aggregateOutputPath:concat(consumerLibraryPath),
-						projectPath
-					)
-
-					if consumerRelPath ~= nil then
-						insertLast(outLibraryPaths, consumerRelPath.pathName)
-					end
-				else
-					local externalRelPath = fileSystem:getRelativePath(
-						Path(externalSolution:getRootPath() .. "/" .. configuration:getName()),
-						projectPath
-					)
-					if externalRelPath ~= nil then
-						insertLast(outLibraryPaths, externalRelPath.pathName)
-					end
-				end
-
-				-- Add library.
 				insertLast(outLibraries, externalProject:getName())
+			end
 
-				-- Recurse with child dependencies.
-				if externalConfig:getTargetFormat() == "StaticLibrary" then
-					collectDependencies(
-						externalSolution,
-						externalProject,
-						externalConfig,
-						outIncludePaths,
-						outLibraries,
-						outLibrariesExternal,
-						outLibraryPaths
-					)
-				else
+			-- Recurse with child dependencies.
+			if externalConfig:getTargetFormat() == "StaticLibrary" then
+				collectDependencies(
+					externalSolution,
+					externalProject,
+					externalConfig,
+					outIncludePaths,
+					outLibraries,
+					outLibrariesExternal,
+					outLibraryPaths
+				)
+			else
 
-					-- Only add include paths when dealing with shared library dependencies.
-					local includePaths = externalConfig:getIncludePaths()
-					for j = 0, includePaths:size() - 1 do
-						local ip = Path(includePaths:get(j)).pathName
-						if ip ~= "" then
-							insertLast(outIncludePaths, ip)
-						end
+				-- Only add include paths when dealing with shared library dependencies.
+				local includePaths = externalConfig:getIncludePaths()
+				for j = 0, includePaths:size() - 1 do
+					local ip = Path(includePaths:get(j)).pathName
+					if ip ~= "" then
+						insertLast(outIncludePaths, ip)
 					end
-
 				end
+
 			end
 		end
 	end
