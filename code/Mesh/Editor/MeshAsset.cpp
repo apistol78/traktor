@@ -9,13 +9,12 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 13, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 14, MeshAsset, editor::Asset)
 
 MeshAsset::MeshAsset()
 :	m_meshType(MtStatic)
 ,	m_scaleFactor(1.0f)
 ,	m_center(false)
-,	m_bakeOcclusion(false)
 ,	m_cullDistantFaces(false)
 ,	m_lodSteps(8)
 ,	m_lodMaxDistance(100.0f)
@@ -57,9 +56,12 @@ void MeshAsset::serialize(ISerializer& s)
 	if (s.getVersion() >= 13)
 		s >> Member< bool >(L"center", m_center);
 
-	if (s.getVersion() >= 2)
-		s >> Member< bool >(L"bakeOcclusion", m_bakeOcclusion);
-
+	if (s.getVersion() >= 2 && s.getVersion() < 14)
+	{
+		bool bakeOcclusion = false;
+		s >> Member< bool >(L"bakeOcclusion", bakeOcclusion);
+	}
+	
 	if (s.getVersion() >= 3)
 		s >> Member< bool >(L"cullDistantFaces", m_cullDistantFaces);
 

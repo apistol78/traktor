@@ -30,7 +30,6 @@
 #include "Mesh/Editor/Stream/StreamMeshConverter.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
-#include "Model/Operations/BakeVertexOcclusion.h"
 #include "Model/Operations/CullDistantFaces.h"
 #include "Model/Operations/Transform.h"
 #include "Render/Editor/IProgramCompiler.h"
@@ -128,7 +127,6 @@ MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
 ,	m_enableCustomShaders(true)
 ,	m_enableCustomTemplates(true)
-,	m_enableBakeOcclusion(true)
 ,	m_editor(false)
 {
 }
@@ -139,7 +137,6 @@ bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 	m_promoteHalf = settings->getProperty< bool >(L"MeshPipeline.PromoteHalf", false);
 	m_enableCustomShaders = settings->getProperty< bool >(L"MeshPipeline.EnableCustomShaders", true);
 	m_enableCustomTemplates = settings->getProperty< bool >(L"MeshPipeline.EnableCustomTemplates", true);
-	m_enableBakeOcclusion = settings->getProperty< bool >(L"MeshPipeline.BakeOcclusion", true);
 	m_includeOnlyTechniques = settings->getProperty< std::set< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
 	m_programCompilerTypeName = settings->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
 	m_editor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
@@ -290,12 +287,6 @@ bool MeshPipeline::buildOutput(
 			log::info << L"Re-center model..." << Endl;
 			Aabb3 boundingBox = model->getBoundingBox();
 			model::Transform(translate(-boundingBox.getCenter())).apply(*model);
-		}
-
-		if (m_enableBakeOcclusion && asset->getBakeOcclusion())
-		{
-			log::info << L"Baking occlusion..." << Endl;
-			model::BakeVertexOcclusion().apply(*model);
 		}
 
 		if (asset->getCullDistantFaces())
