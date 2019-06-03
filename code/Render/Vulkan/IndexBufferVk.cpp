@@ -8,11 +8,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferVk", IndexBufferVk, IndexBuffer)
 
-IndexBufferVk::IndexBufferVk(IndexType indexType, uint32_t bufferSize, VkDevice device, VkBuffer indexBuffer, VkDeviceMemory indexBufferMemory)
+IndexBufferVk::IndexBufferVk(
+	IndexType indexType,
+	uint32_t bufferSize,
+	VmaAllocator allocator,
+	VmaAllocation allocation,
+	VkBuffer indexBuffer
+)
 :	IndexBuffer(indexType, bufferSize)
-,	m_device(device)
+,	m_allocator(allocator)
+,	m_allocation(allocation)
 ,	m_indexBuffer(indexBuffer)
-,	m_indexBufferMemory(indexBufferMemory)
+,	m_locked(false)
 {
 }
 
@@ -23,12 +30,22 @@ void IndexBufferVk::destroy()
 void* IndexBufferVk::lock()
 {
 	void* ptr = nullptr;
-	return (vkMapMemory(m_device, m_indexBufferMemory, 0, VK_WHOLE_SIZE, 0, &ptr) == VK_SUCCESS) ? ptr : nullptr;
+	if (vmaMapMemory(m_allocator, m_allocation, &ptr) == VK_SUCCESS)
+	{
+		m_locked = true;
+		return ptr;
+	}
+	else
+		return nullptr;
 }
 
 void IndexBufferVk::unlock()
 {
-	vkUnmapMemory(m_device, m_indexBufferMemory);
+	if (m_locked)
+	{
+		vmaUnmapMemory(m_allocator, m_allocation);
+		m_locked = false;
+	}
 }
 
 	}

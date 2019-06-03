@@ -13,6 +13,7 @@
 #	define VK_NO_PROTOTYPES
 #	include <vulkan.h>
 #endif
+#include <vk_mem_alloc.h>
 
 #include "Core/Ref.h"
 #include "Render/IRenderSystem.h"
@@ -104,6 +105,7 @@ private:
 	VkQueue m_computeQueue;
 	VkCommandPool m_graphicsCommandPool;
 	VkCommandBuffer m_setupCommandBuffer;
+	VmaAllocator m_allocator;
 };
 
 	}

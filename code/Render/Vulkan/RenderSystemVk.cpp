@@ -81,6 +81,7 @@ RenderSystemVk::RenderSystemVk()
 ,	m_computeQueue(0)
 ,	m_graphicsCommandPool(0)
 ,	m_setupCommandBuffer(0)
+,	m_allocator(0)
 {
 }
 
@@ -265,6 +266,40 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
+	// Create memory allocator.
+	VmaVulkanFunctions vf = {};
+	vf.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
+	vf.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
+	vf.vkAllocateMemory = vkAllocateMemory;
+	vf.vkFreeMemory = vkFreeMemory;
+	vf.vkMapMemory = vkMapMemory;
+	vf.vkUnmapMemory = vkUnmapMemory;
+	vf.vkFlushMappedMemoryRanges = vkFlushMappedMemoryRanges;
+	vf.vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges;
+	vf.vkBindBufferMemory = vkBindBufferMemory;
+	vf.vkBindImageMemory = vkBindImageMemory;
+	vf.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements;
+	vf.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements;
+	vf.vkCreateBuffer = vkCreateBuffer;
+	vf.vkDestroyBuffer = vkDestroyBuffer;
+	vf.vkCreateImage = vkCreateImage;
+	vf.vkDestroyImage = vkDestroyImage;
+	vf.vkCmdCopyBuffer = vkCmdCopyBuffer;
+	// if (hasGetMemReq2 && hasDedicatedAllocation) {
+	// 	vf.vkGetBufferMemoryRequirements2KHR = reinterpret_cast<PFN_vkGetBufferMemoryRequirements2KHR>(vk::GetDeviceProcAddr(m_dev, "vkGetBufferMemoryRequirements2KHR"));
+	// 	vf.vkGetImageMemoryRequirements2KHR = reinterpret_cast<PFN_vkGetImageMemoryRequirements2KHR>(vk::GetDeviceProcAddr(m_dev, "vkGetImageMemoryRequirements2KHR"));
+	// }
+
+	VmaAllocatorCreateInfo aci = {};
+	aci.physicalDevice = m_physicalDevice;
+	aci.device = m_logicalDevice;
+	aci.pVulkanFunctions = &vf;
+	if (vmaCreateAllocator(&aci, &m_allocator) != VK_SUCCESS)
+	{
+		log::error << L"Failed to create Vulkan; failed to create allocator." << Endl;
+		return false;
+	}
+
 	log::info << L"Vulkan render system created successfully." << Endl;
 	return true;
 }
@@ -396,25 +431,14 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 	VkBufferCreateInfo bci = {};
 	bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 	bci.size = bufferSize;
-	bci.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+	bci.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 	bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	if (vkCreateBuffer(m_logicalDevice, &bci, nullptr, &vertexBuffer) != VK_SUCCESS)
-		return nullptr;
+	VmaAllocationCreateInfo aci = {};
+	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU; // \tbd VMA_MEMORY_USAGE_GPU_ONLY;
 
-	VkPhysicalDeviceMemoryProperties memoryProperties = {};
-	vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &memoryProperties);
-
-	VkMemoryRequirements vertexBufferMemoryRequirements = {};
-	vkGetBufferMemoryRequirements(m_logicalDevice, vertexBuffer, &vertexBufferMemoryRequirements);
-
-	VkMemoryAllocateInfo mai = {};
-	mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	mai.allocationSize = vertexBufferMemoryRequirements.size;
-	mai.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, vertexBufferMemoryRequirements);
-
-	VkDeviceMemory vertexBufferMemory;
-	if (vkAllocateMemory(m_logicalDevice, &mai, nullptr, &vertexBufferMemory) != VK_SUCCESS)
+	VmaAllocation allocation;
+	if (vmaCreateBuffer(m_allocator, &bci, &aci, &vertexBuffer, &allocation, nullptr) != VK_SUCCESS)
 		return nullptr;
 
 	VkVertexInputBindingDescription vibd = {};
@@ -449,8 +473,6 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 		vertexAttributeDescriptions.push_back(vertexAttributeDescription);
 	}
 
-	vkBindBufferMemory(m_logicalDevice, vertexBuffer, vertexBufferMemory, 0);
-
 	// Calculate hash of vertex declaration.
 	Adler32 cs;
 	cs.begin();
@@ -459,9 +481,9 @@ Ref< VertexBuffer > RenderSystemVk::createVertexBuffer(const AlignedVector< Vert
 
 	return new VertexBufferVk(
 		bufferSize,
-		m_logicalDevice,
+		m_allocator,
+		allocation,
 		vertexBuffer,
-		vertexBufferMemory,
 		vibd,
 		vertexAttributeDescriptions,
 		cs.get()
@@ -475,30 +497,17 @@ Ref< IndexBuffer > RenderSystemVk::createIndexBuffer(IndexType indexType, uint32
 	VkBufferCreateInfo bci = {};
 	bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
 	bci.size = bufferSize;
-	bci.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+	bci.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 	bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-	if (vkCreateBuffer(m_logicalDevice, &bci, nullptr, &indexBuffer) != VK_SUCCESS)
+	VmaAllocationCreateInfo aci = {};
+	aci.usage = VMA_MEMORY_USAGE_CPU_TO_GPU; // \tbd VMA_MEMORY_USAGE_GPU_ONLY;
+
+	VmaAllocation allocation;
+	if (vmaCreateBuffer(m_allocator, &bci, &aci, &indexBuffer, &allocation, nullptr) != VK_SUCCESS)
 		return nullptr;
 
-	VkPhysicalDeviceMemoryProperties memoryProperties = {};
-	vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &memoryProperties);
-
-	VkMemoryRequirements indexBufferMemoryRequirements = {};
-	vkGetBufferMemoryRequirements(m_logicalDevice, indexBuffer, &indexBufferMemoryRequirements);
-
-	VkMemoryAllocateInfo mai = {};
-	mai.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-	mai.allocationSize = indexBufferMemoryRequirements.size;
- 	mai.memoryTypeIndex = getMemoryTypeIndex(m_physicalDevice, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, indexBufferMemoryRequirements);
-
-	VkDeviceMemory indexBufferMemory;
-	if (vkAllocateMemory(m_logicalDevice, &mai, nullptr, &indexBufferMemory) != VK_SUCCESS)
-		return nullptr;
-
-	vkBindBufferMemory(m_logicalDevice, indexBuffer, indexBufferMemory, 0);
-
-	return new IndexBufferVk(indexType, bufferSize, m_logicalDevice, indexBuffer, indexBufferMemory);
+	return new IndexBufferVk(indexType, bufferSize, m_allocator, allocation, indexBuffer);
 }
 
 Ref< StructBuffer > RenderSystemVk::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
