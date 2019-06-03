@@ -291,7 +291,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::function< Ref
 			{
 				Material material;
 				material.setName(L"FBX_Default");
-				material.setColor(Color4ub(255, 255, 255));
+				material.setColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 				material.setDiffuseTerm(1.0f);
 				material.setSpecularTerm(1.0f);
 

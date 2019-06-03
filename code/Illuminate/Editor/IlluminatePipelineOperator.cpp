@@ -54,27 +54,6 @@ namespace traktor
 		namespace
 		{
 
-// class WrappedSHFunction : public render::SHFunction
-// {
-// public:
-// 	WrappedSHFunction(const RayTracer& tracer, RayTracer::Context* tracerContext, const Vector4& origin)
-// 	:	m_tracer(tracer)
-// 	,	m_tracerContext(tracerContext)
-// 	,	m_origin(origin)
-// 	{
-// 	}
-
-// 	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final
-// 	{
-// 		return m_tracer.traceIndirect(m_tracerContext, m_origin, unit);
-// 	}
-
-// private:
-// 	const RayTracer& m_tracer;
-// 	Ref< RayTracer::Context > m_tracerContext;
-// 	Vector4 m_origin;
-// };
-
 Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
@@ -270,45 +249,26 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 	// no more lights nor models can be added to tracer.
 	rayTracer->commit();
 
-	// // Raytrace IBL probes.
-	// render::SHEngine shEngine(3);
-	// shEngine.generateSamplePoints(20000);
+	// Raytrace IBL probes.
+	for (uint32_t i = 0; i < lightEntityDatas.size(); ++i)
+	{
+		auto lightEntityData = lightEntityDatas[i];
+		T_FATAL_ASSERT(lightEntityData != nullptr);
 
-	// RefArray< Job > jobs;
-	// for (uint32_t i = 0; i < lightEntityDatas.size(); ++i)
-	// {
-	// 	auto lightEntityData = lightEntityDatas[i];
-	// 	T_FATAL_ASSERT(lightEntityData != nullptr);
+		auto lightComponentData = lightEntityData->getComponent< world::LightComponentData >();
+		T_FATAL_ASSERT(lightComponentData != nullptr);
 
-	// 	auto lightComponentData = lightEntityData->getComponent< world::LightComponentData >();
-	// 	T_FATAL_ASSERT(lightComponentData != nullptr);
+		if (lightComponentData->getLightType() != world::LtProbe)
+			continue;
 
-	// 	if (lightComponentData->getLightType() != world::LtProbe)
-	// 		continue;
+		log::info << L"Tracing SH probe \"" << lightEntityData->getName() << L"\" (" << i << L"/" << lightEntityDatas.size() << L")..." << Endl;
 
-	// 	log::info << L"Tracing SH probe \"" << lightEntityData->getName() << L"\" (" << i << L"/" << lightEntityDatas.size() << L")..." << Endl;
+		auto position = lightEntityData->getTransform().translation().xyz1();
 
-	// 	auto position = lightEntityData->getTransform().translation().xyz1();
-
-	// 	auto job = JobManager::getInstance().add(makeFunctor([&, lightComponentData]() {
-	// 		Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
-
-	// 		Ref< RayTracer::Context > context = tracer.createContext();
-	// 		WrappedSHFunction shFunction(tracer, context, position);
-	// 		shEngine.generateCoefficients(&shFunction, *shCoeffs);
-
-	// 		lightComponentData->setSHCoeffs(shCoeffs);
-	// 	}));
-	// 	if (!job)
-	// 		return false;
-
-	// 	jobs.push_back(job);
-	// }
-	// while (!jobs.empty())
-	// {
-	// 	jobs.back()->wait();
-	// 	jobs.pop_back();
-	// }
+		Ref< render::SHCoeffs > shCoeffs = rayTracer->traceProbe(position);
+		if (shCoeffs)
+			lightComponentData->setSHCoeffs(shCoeffs);
+	}
 
 	// Raytrace lightmap for each mesh.
 	GBuffer gbuffer;
@@ -359,48 +319,21 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			}
 		}
 
-		// Create G-Buffer of mesh's geometry.
-		gbuffer.create(outputSize, outputSize, *model, meshEntityData->getTransform(), channel);
-		//gbuffer.saveAsImages(meshEntityData->getName() + L"_" + toString(i) + L"_GBuffer");
-
-		// // Adjust gbuffer positions to help fix some shadowing issues.
-		// if (configuration->getEnableShadowFix())
-		// {
-		// 	for (int32_t y = 0; y < outputSize; ++y)
-		// 	{
-		// 		for (int32_t x = 0; x < outputSize; ++x)
-		// 		{
-		// 			auto& elm = gbuffer.get(x, y);
-		// 			if (elm.polygon == model::c_InvalidIndex)
-		// 				continue;
-
-		// 			Vector4 position = elm.position;
-		// 			Vector4 normal = elm.normal;
-
-		// 			Vector4 u, v;
-		// 			orthogonalFrame(normal, u, v);
-
-		// 			const Scalar l = elm.delta.length();
-		// 			const Vector4 d[] = { u, -u, v, -v };
-
-		// 			for (int32_t i = 0; i < 8; ++i)
-		// 			{
-		// 				int32_t ii = i % 4;
-
-		// 				RayTracer::Result result;
-		// 				if (!tracer.trace(tracerContext, position + normal * Scalar(0.01f), d[ii], l, result))
-		// 					continue;
-
-		// 				if (dot3(result.normal, d[ii]) > 0.0f)
-		// 					continue;
-
-		// 				position = position + d[ii] * result.distance + result.normal * Scalar(0.01f);
-		// 			}
-		// 		}
-		// 	}
-		// }
-
 		Timer timer;
+		timer.start();
+
+		// Create GBuffer of mesh's geometry.
+		gbuffer.create(outputSize, outputSize, *model, meshEntityData->getTransform(), channel);
+		gbuffer.saveAsImages(meshEntityData->getName() + L"_" + toString(i) + L"_GBuffer_Pre");
+
+		double TendGBuffer = timer.getElapsedTime();
+		timer.start();
+
+		// Preprocess GBuffer.
+		rayTracer->preprocess(&gbuffer);
+		gbuffer.saveAsImages(meshEntityData->getName() + L"_" + toString(i) + L"_GBuffer_Post");
+
+		double TendPreProcess = timer.getElapsedTime();
 		timer.start();
 
 		Ref< drawing::Image > lightmapDirect;
@@ -412,6 +345,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 			lightmapIndirect = rayTracer->traceIndirect(&gbuffer);
 
 		double TendTrace = timer.getElapsedTime();
+		timer.start();
 
 		if (configuration->getEnableDilate())
 		{
@@ -452,6 +386,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		lightmap->clearAlpha(1.0f);
 
 		double TendFilter = timer.getElapsedTime();
+		timer.start();
 
 		//lightmap->save(meshEntityData->getName() + L"_" + toString(i) + L"_Lightmap.png");
 		//model::ModelFormat::writeAny(meshEntityData->getName() + L"_" + toString(i) + L"_Unwrapped.tmd", model);
@@ -509,11 +444,14 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		));
 
 		double TendWrite = timer.getElapsedTime();
+		timer.start();
 
 		log::info << L"Lightmap time breakdown;" << Endl;
-		log::info << L"  trace  " << int32_t(TendTrace * 1000.0) << L" ms." << Endl;
-		log::info << L"  filter " << int32_t((TendFilter - TendTrace) * 1000.0) << L" ms." << Endl;
-		log::info << L"  output " << int32_t((TendWrite - TendFilter) * 1000.0) << L" ms." << Endl;
+		log::info << L"  gbuffer    " << int32_t(TendGBuffer * 1000.0) << L" ms." << Endl;
+		log::info << L"  preprocess " << int32_t(TendPreProcess * 1000.0) << L" ms." << Endl;
+		log::info << L"  trace      " << int32_t(TendTrace * 1000.0) << L" ms." << Endl;
+		log::info << L"  filter     " << int32_t((TendFilter) * 1000.0) << L" ms." << Endl;
+		log::info << L"  output     " << int32_t((TendWrite) * 1000.0) << L" ms." << Endl;
 	}
 
 	return true;

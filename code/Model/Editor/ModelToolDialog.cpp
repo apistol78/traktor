@@ -10,9 +10,7 @@
 #include "Model/ModelFormat.h"
 #include "Model/Pose.h"
 #include "Model/Editor/ModelToolDialog.h"
-#include "Model/Operations/BakePixelOcclusion.h"
 #include "Model/Operations/CalculateConvexHull.h"
-#include "Model/Operations/CalculateOccluder.h"
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
@@ -28,7 +26,6 @@
 #include "Model/Operations/MergeCoplanarAdjacents.h"
 #include "Model/Operations/Unweld.h"
 #include "Model/Operations/UnwrapUV.h"
-#include "Model/Operations/WeldHoles.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/ISimpleTexture.h"
@@ -236,7 +233,6 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.CullDistantFaces"), L"Cull Distant Faces"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.FlattenDoubleSided"), L"Flatten Double Sided"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.MergeCoplanar"), L"Merge Coplanar"));
-	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Occluder"), L"Occluder"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Quantize"), L"Quantize"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.Reduce"), L"Reduce"));
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.ScaleAlongNormal"), L"Scale Along Normal"));
@@ -246,19 +242,11 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.WeldHoles"), L"Weld Holes"));
 	m_modelRootPopup->add(modelRootPopupAdd);
 
-	Ref< ui::MenuItem > modelRootPopupPerform = new ui::MenuItem(L"Perform Operation...");
-	modelRootPopupPerform->add(new ui::MenuItem(ui::Command(L"ModelTool.BakeOcclusion"), L"Bake Occlusion..."));
-	m_modelRootPopup->add(modelRootPopupPerform);
-
 	m_modelRootPopup->add(new ui::MenuItem(L"-"));
 	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.SaveAs"), L"Save As..."));
 	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Remove"), L"Remove"));
 
 	m_modelChildPopup = new ui::Menu();
-
-	Ref< ui::MenuItem > modelChildPopupPerform = new ui::MenuItem(L"Perform Operation...");
-	modelChildPopupPerform->add(new ui::MenuItem(ui::Command(L"ModelTool.BakeOcclusion"), L"Bake Occlusion..."));
-	m_modelChildPopup->add(modelChildPopupPerform);
 
 	m_modelChildPopup->add(new ui::MenuItem(L"-"));
 	m_modelChildPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.SaveAs"), L"Save As..."));
@@ -332,13 +320,13 @@ bool ModelToolDialog::loadModel()
 	}
 	fileDialog.destroy();
 
-	for (std::vector< Path >::const_iterator i = fileNames.begin(); i != fileNames.end(); ++i)
+	for (auto fileName : fileNames)
 	{
-		Ref< Model > model = ModelFormat::readAny(*i);
+		Ref< Model > model = ModelFormat::readAny(fileName);
 		if (!model)
 			continue;
 
-		Ref< ui::TreeViewItem > item = m_modelTree->createItem(0, i->getFileName(), 0);
+		Ref< ui::TreeViewItem > item = m_modelTree->createItem(0, fileName.getFileName(), 0);
 		item->setData(L"MODEL", model);
 	}
 
@@ -415,58 +403,21 @@ bool ModelToolDialog::saveModel(Model* model)
 	return ModelFormat::writeAny(fileName, &clone);
 }
 
-void ModelToolDialog::bakeOcclusion(Model* model)
-{
-	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, type_name(this), L"Save occlusion image as...", L"All files;*.*", true))
-		return;
-
-	Path fileName;
-	if (fileDialog.showModal(fileName) != ui::DrOk)
-	{
-		fileDialog.destroy();
-		return;
-	}
-	fileDialog.destroy();
-
-	Ref< drawing::Image > imageOcclusion = new drawing::Image(
-		drawing::PixelFormat::getA8R8G8B8(),
-		1024,
-		1024
-	);
-	Ref< IModelOperation > operation = new BakePixelOcclusion(
-		imageOcclusion,
-		64,
-		0.75f,
-		0.05f
-	);
-	if (operation->apply(*model))
-	{
-		if (imageOcclusion->save(fileName))
-			log::info << L"Occlusion.png saved successfully!" << Endl;
-		else
-			log::error << L"Unable to save " << fileName.getPathName() << Endl;
-	}
-	else
-		log::error << L"Unable to bake occlusion" << Endl;
-}
-
 void ModelToolDialog::updateOperations(ui::TreeViewItem* itemModel)
 {
-	T_ASSERT(itemModel->getParent() == 0);
+	T_ASSERT(itemModel->getParent() == nullptr);
 
 	Ref< Model > model = itemModel->getData< Model >(L"MODEL");
 
-	const RefArray< ui::TreeViewItem >& children = itemModel->getChildren();
-	for (RefArray< ui::TreeViewItem >::const_iterator i = children.begin(); i != children.end(); ++i)
+	for (auto child : itemModel->getChildren())
 	{
-		const IModelOperation* operation = (*i)->getData< IModelOperation >(L"OPERATION");
-		T_ASSERT(operation != 0);
+		const IModelOperation* operation = child->getData< IModelOperation >(L"OPERATION");
+		T_ASSERT(operation != nullptr);
 
 		model = new Model(*model);
 		operation->apply(*model);
 
-		(*i)->setData(L"MODEL", model);
+		child->setData(L"MODEL", model);
 	}
 }
 
@@ -559,12 +510,6 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 				itemOperation->setData(L"OPERATION", new MergeCoplanarAdjacents(true));
 				updateOperations(itemModel);
 			}
-			else if (command == L"ModelTool.Occluder")
-			{
-				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Occluder", 0);
-				itemOperation->setData(L"OPERATION", new CalculateOccluder());
-				updateOperations(itemModel);
-			}
 			else if (command == L"ModelTool.Quantize")
 			{
 				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Quantize", 0);
@@ -601,16 +546,6 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 				itemOperation->setData(L"OPERATION", new UnwrapUV(0, 1024));
 				updateOperations(itemModel);
 			}
-			else if (command == L"ModelTool.WeldHoles")
-			{
-				Ref< ui::TreeViewItem > itemOperation = m_modelTree->createItem(itemModel, L"Weld Holes", 0);
-				itemOperation->setData(L"OPERATION", new WeldHoles());
-				updateOperations(itemModel);
-			}
-			else if (command == L"ModelTool.BakeOcclusion")
-			{
-				bakeOcclusion(itemModel->getData< Model >(L"MODEL"));
-			}
 			else if (command == L"ModelTool.SaveAs")
 			{
 				saveModel(itemModel->getData< Model >(L"MODEL"));
@@ -633,11 +568,7 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 		if (selected)
 		{
 			const ui::Command& command = selected->getCommand();
-			if (command == L"ModelTool.BakeOcclusion")
-			{
-				bakeOcclusion(itemOperation->getData< Model >(L"MODEL"));
-			}
-			else if (command == L"ModelTool.SaveAs")
+			if (command == L"ModelTool.SaveAs")
 			{
 				saveModel(itemModel->getData< Model >(L"MODEL"));
 			}
@@ -645,9 +576,9 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 			{
 				m_modelTree->removeItem(itemOperation);
 				updateOperations(itemModel);
-				m_model = 0;
-				m_modelTris = 0;
-				m_modelAdjacency = 0;
+				m_model = nullptr;
+				m_modelTris = nullptr;
+				m_modelAdjacency = nullptr;
 				m_renderWidget->update();
 			}
 		}
@@ -663,9 +594,9 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 		m_model = items[0]->getData< Model >(L"MODEL");
 	else
 	{
-		m_model = 0;
-		m_modelTris = 0;
-		m_modelAdjacency = 0;
+		m_model = nullptr;
+		m_modelTris = nullptr;
+		m_modelAdjacency = nullptr;
 	}
 
 	m_materialGrid->removeAllRows();
@@ -699,7 +630,7 @@ void ModelToolDialog::eventModelTreeSelect(ui::SelectionChangeEvent* event)
 			row->add(new ui::GridItem(i->getReflectiveMap().name + L" [" + toString(i->getReflectiveMap().channel) + L"]"));
 			row->add(new ui::GridItem(i->getNormalMap().name + L" [" + toString(i->getNormalMap().channel) + L"]"));
 			row->add(new ui::GridItem(i->getLightMap().name + L" [" + toString(i->getLightMap().channel) + L"]"));
-			row->add(new ui::GridItem( toString((int32_t)cl.r) + L", " + toString((int32_t)cl.g) + L", " + toString((int32_t)cl.b) + L", " + toString((int32_t)cl.a)));
+			row->add(new ui::GridItem( toString(cl.getRed()) + L", " + toString(cl.getGreen()) + L", " + toString(cl.getBlue()) + L", " + toString(cl.getAlpha())));
 			row->add(new ui::GridItem(toString(i->getDiffuseTerm())));
 			row->add(new ui::GridItem(toString(i->getSpecularTerm())));
 			row->add(new ui::GridItem(toString(i->getRoughness())));

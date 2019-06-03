@@ -19,14 +19,9 @@ class OutputStream;
 
 	namespace net
 	{
-		namespace
-		{
-
-class HttpServerImpl;
-
-		}
 
 class HttpRequest;
+class HttpServerImpl;
 class SocketAddressIPv4;
 
 /*! \brief

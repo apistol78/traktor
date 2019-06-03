@@ -29,7 +29,7 @@ std::wstring ModelTool::getDescription() const
 
 Ref< ui::IBitmap > ModelTool::getIcon() const
 {
-	return 0;
+	return nullptr;
 }
 
 bool ModelTool::needOutputResources(std::set< Guid >& outDependencies) const

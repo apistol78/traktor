@@ -3,7 +3,7 @@
 #include <string>
 #include "Core/Config.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Core/Math/Color4ub.h"
+#include "Core/Math/Color4f.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -103,9 +103,9 @@ public:
 
 	float getLightMapRange() const;
 
-	void setColor(const Color4ub& color);
+	void setColor(const Color4f& color);
 
-	const Color4ub& getColor() const;
+	const Color4f& getColor() const;
 
 	void setDiffuseTerm(float diffuseTerm);
 
@@ -161,7 +161,7 @@ private:
 	Map m_normalMap;
 	Map m_lightMap;
 	float m_lightMapRange;
-	Color4ub m_color;
+	Color4f m_color;
 	float m_diffuseTerm;
 	float m_specularTerm;
 	float m_roughness;
