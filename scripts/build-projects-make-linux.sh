@@ -15,6 +15,7 @@ export MAKE_OBJECT_FILE="%s.o"
 export MAKE_STATIC_LIBRARY_FILE="lib%s.a"
 export MAKE_SHARED_LIBRARY_FILE="lib%s.so"
 export MAKE_EXECUTABLE_FILE="%s"
+export MAKE_VERBOSE=false
 
 # Steam redistributable aggregate.
 if [ "`uname -m`" == "x86_64" ]; then

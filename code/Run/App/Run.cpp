@@ -31,7 +31,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 	if (file)
 		return xml::XmlDeserializer(file, settingsFile).readObject< PropertyGroup >();
 	else
-		return 0;
+		return nullptr;
 }
 
 		}
@@ -234,7 +234,7 @@ Any Run::getProperty(const std::wstring& fileName1, const std::wstring& fileName
 		if (!pr)
 			return Any();
 
-		if ((p = p->merge(pr, PropertyGroup::MmReplace)) == 0)
+		if ((p = p->merge(pr, PropertyGroup::MmReplace)) == nullptr)
 			return Any();
 	}
 

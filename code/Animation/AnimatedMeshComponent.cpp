@@ -225,12 +225,12 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 	}
 
 	// Update entity to joint bindings.
-	for (std::vector< Binding >::iterator i = m_bindings.begin(); i != m_bindings.end(); ++i)
+	for (const auto& binding : m_bindings)
 	{
 		Transform T;
-		if (getPoseTransform(i->jointHandle, T))
-			i->entity->setTransform(m_transform.get() * T);
-		i->entity->update(update);
+		if (getPoseTransform(binding.jointHandle, T))
+			binding.entity->setTransform(m_transform.get() * T);
+		binding.entity->update(update);
 	}
 
 	if (m_updateController > 0)
@@ -341,7 +341,7 @@ void AnimatedMeshComponent::synchronize() const
 	if (m_updatePoseControllerJob)
 	{
 		m_updatePoseControllerJob->wait();
-		m_updatePoseControllerJob = 0;
+		m_updatePoseControllerJob = nullptr;
 	}
 #endif
 }

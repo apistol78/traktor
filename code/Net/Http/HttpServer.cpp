@@ -19,8 +19,6 @@ namespace traktor
 {
 	namespace net
 	{
-		namespace
-		{
 
 class HttpServerImpl : public Object
 {
@@ -191,8 +189,6 @@ private:
 	TcpSocket m_serverSocket;
 	Ref< HttpServer::IRequestListener > m_listener;
 };
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.HttpServer", HttpServer, Object)
 

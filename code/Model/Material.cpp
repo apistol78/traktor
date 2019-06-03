@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Material", 0, Material, PropertyG
 Material::Material()
 :	m_name(L"")
 ,	m_lightMapRange(0.0f)
-,	m_color(255, 255, 255, 255)
+,	m_color(1.0f, 1.0f, 1.0f, 1.0f)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
 ,	m_roughness(0.8f)
@@ -31,7 +31,7 @@ Material::Material()
 Material::Material(const std::wstring& name)
 :	m_name(name)
 ,	m_lightMapRange(0.0f)
-,	m_color(255, 255, 255, 255)
+,	m_color(1.0f, 1.0f, 1.0f, 1.0f)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
 ,	m_roughness(0.8f)
@@ -151,12 +151,12 @@ float Material::getLightMapRange() const
 	return m_lightMapRange;
 }
 
-void Material::setColor(const Color4ub& color)
+void Material::setColor(const Color4f& color)
 {
 	m_color = color;
 }
 
-const Color4ub& Material::getColor() const
+const Color4f& Material::getColor() const
 {
 	return m_color;
 }
@@ -285,7 +285,7 @@ void Material::serialize(ISerializer& s)
 	s >> MemberComposite< Map >(L"normalMap", m_normalMap);
 	s >> MemberComposite< Map >(L"lightMap", m_lightMap);
 	s >> Member< float >(L"lightMapRange", m_lightMapRange);
-	s >> Member< Color4ub >(L"color", m_color);
+	s >> Member< Color4f >(L"color", m_color);
 	s >> Member< float >(L"diffuseTerm", m_diffuseTerm);
 	s >> Member< float >(L"specularTerm", m_specularTerm);
 	s >> Member< float >(L"roughness", m_roughness);

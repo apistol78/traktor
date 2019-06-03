@@ -177,11 +177,11 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 				if (phongDiffuse.IsValid())
 				{
 					FbxDouble3 diffuse = phongDiffuse.Get();
-					mm.setColor(Color4ub(
-						uint8_t(diffuse[0] * 255),
-						uint8_t(diffuse[1] * 255),
-						uint8_t(diffuse[2] * 255),
-						255
+					mm.setColor(Color4f(
+						(float)diffuse[0],
+						(float)diffuse[1],
+						(float)diffuse[2],
+						1.0f
 					));
 				}
 			}
@@ -238,11 +238,11 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 				if (lambertDiffuse.IsValid())
 				{
 					FbxDouble3 diffuse = lambertDiffuse.Get();
-					mm.setColor(Color4ub(
-						uint8_t(diffuse[0] * 255),
-						uint8_t(diffuse[1] * 255),
-						uint8_t(diffuse[2] * 255),
-						255
+					mm.setColor(Color4f(
+						(float)diffuse[0],
+						(float)diffuse[1],
+						(float)diffuse[2],
+						1.0f
 					));
 				}
 			}

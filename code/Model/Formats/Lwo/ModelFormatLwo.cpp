@@ -215,11 +215,11 @@ bool createMaterials(const lwObject* lwo, Model* outModel, AlignedVector< std::s
 				T_DEBUG(L"No bump texture clip for surface \"" << mbstows(surface->name) << L"\"");
 		}
 
-		material.setColor(Color4ub(
-			uint8_t(std::pow(surface->color.rgb[0], 2.2f) * 255.0f),
-			uint8_t(std::pow(surface->color.rgb[1], 2.2f) * 255.0f),
-			uint8_t(std::pow(surface->color.rgb[2], 2.2f) * 255.0f),
-			uint8_t((1.0f - surface->transparency.val.val) * 255.0f)
+		material.setColor(Color4f(
+			std::pow(surface->color.rgb[0], 2.2f),
+			std::pow(surface->color.rgb[1], 2.2f),
+			std::pow(surface->color.rgb[2], 2.2f),
+			1.0f - surface->transparency.val.val
 		));
 
 		if (surface->transparency.val.val >= FUZZY_EPSILON)

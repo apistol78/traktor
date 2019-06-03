@@ -247,7 +247,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 		{
 			render::Color* colorNode = checked_type_cast< render::Color* >(*i);
 			colorNode->setComment(L"");
-			colorNode->setColor(Color4f::fromColor4ub(material.getColor()));
+			colorNode->setColor(material.getColor());
 		}
 		else if (comment == L"Tag_DiffuseMap")
 		{

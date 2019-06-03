@@ -91,6 +91,89 @@ void RayTracerEmbree::commit()
 	rtcCommitScene(m_scene);
 }
 
+void RayTracerEmbree::preprocess(GBuffer* gbuffer) const
+{
+	RTCRayHit T_MATH_ALIGN16 rh;
+
+    int32_t width = gbuffer->getWidth();
+    int32_t height = gbuffer->getHeight();
+
+	// Offset gbuffer positions to reduce shadowing issues.
+	if (m_configuration->getEnableShadowFix())
+	{
+		for (int32_t y = 0; y < height; ++y)
+		{
+			for (int32_t x = 0; x < width; ++x)
+			{
+				auto& elm = gbuffer->get(x, y);
+				if (elm.polygon == model::c_InvalidIndex)
+					continue;
+
+				Vector4 position = elm.position;
+				Vector4 normal = elm.normal;
+
+				Vector4 u, v;
+				orthogonalFrame(normal, u, v);
+
+				const Scalar l = elm.delta.length();
+				const Scalar hl = l * Scalar(0.5f);
+				const Vector4 d[] = { u, -u, v, -v };
+
+				for (int32_t i = 0; i < 4; ++i)
+				{
+					Vector4 traceOrigin = position + normal * hl;
+					Vector4 traceDirection = d[i];
+
+					rh.ray.org_x = traceOrigin.x();
+					rh.ray.org_y = traceOrigin.y();
+					rh.ray.org_z = traceOrigin.z();
+
+					rh.ray.dir_x = traceDirection.x();
+					rh.ray.dir_y = traceDirection.y();
+					rh.ray.dir_z = traceDirection.z();
+
+					rh.ray.tnear = 0.0f;
+					rh.ray.time = 0.0f;
+					rh.ray.tfar = hl;
+
+					rh.ray.mask = 0;
+					rh.ray.id = 0;
+					rh.ray.flags = 0;
+
+					rh.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+					rh.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+
+					RTCIntersectContext context;
+					rtcInitIntersectContext(&context);
+					rtcIntersect1(m_scene, &context, &rh);					
+
+					if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
+						continue;
+
+					Vector4 hitNormal = Vector4(rh.hit.Ng_x, rh.hit.Ng_y, rh.hit.Ng_z, 0.0f).normalized();
+
+					if (dot3(hitNormal, traceDirection) > 0.0f)
+						hitNormal = -hitNormal;
+
+					// Project hit normal onto lightmap normal.
+					Scalar k = dot3(hitNormal, normal);
+					hitNormal = (hitNormal - normal * k).normalized();
+
+					// Offset position.
+					position = position + traceDirection * Scalar(rh.ray.tfar) + hitNormal * Scalar(hl - rh.ray.tfar);
+				}
+
+				elm.position = position;
+			}
+		}
+	}	
+}
+
+Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) const
+{
+	return nullptr;
+}
+
 Ref< drawing::Image > RayTracerEmbree::traceDirect(const GBuffer* gbuffer) const
 {
 	RandomGeometry random;
@@ -177,7 +260,6 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 
 				RTCIntersectContext context;
 				rtcInitIntersectContext(&context);
-
 				rtcIntersect16(c_valid, m_scene, &context, &rh);
 
 				for (uint32_t j = 0; j < 16; ++j)

@@ -20,6 +20,11 @@ namespace traktor
 class Model;
 
 /*! \brief Pose
+ *         A pose is a set of joint transformations.
+ *
+ * The transformation stored in Joint is rest/bind pose, aka the T-pose.
+ * Transformations in a pose replace each joint's T-pose transformation.
+ *
  * \ingroup Model
  */
 class T_DLLCLASS Pose : public ISerializable
@@ -31,6 +36,13 @@ public:
 
 	const Transform& getJointTransform(uint32_t jointId) const;
 
+	/*! \brief Evaluate global joint transformation.
+	 *         Traverse chain of joints to concate the global joint transform (in object space).
+	 *
+	 * \param model Model containing base skeleton with joint relationships.
+	 * \param jointId Id of joint which we want global transformation calculated.
+	 * \return Global joint transformation.
+	 */
 	Transform getJointGlobalTransform(const Model* model, uint32_t jointId) const;
 
 	virtual void serialize(ISerializer& s) override final;

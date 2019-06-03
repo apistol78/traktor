@@ -228,16 +228,17 @@ void ScriptManagerLua::destroy()
 	T_ANONYMOUS_VAR(Ref< ScriptManagerLua >)(this);
 
 	// Discard all tags from C++ rtti types.
+	for (auto& rc : m_classRegistry)
 	for (AlignedVector< RegisteredClass >::iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
 	{
 		TypeInfoSet derivedTypes;
-		i->runtimeClass->getExportType().findAllOf(derivedTypes);
-		for (TypeInfoSet::iterator j = derivedTypes.begin(); j != derivedTypes.end(); ++j)
-			(*j)->setTag(0);
+		rc.runtimeClass->getExportType().findAllOf(derivedTypes);
+		for (auto& derivedType : derivedTypes)
+			derivedType->setTag(0);
 	}
 
-	m_debugger = 0;
-	m_profiler = 0;
+	m_debugger = nullptr;
+	m_profiler = nullptr;
 
 	while (!m_contexts.empty())
 		m_contexts.back()->destroy();
@@ -246,7 +247,7 @@ void ScriptManagerLua::destroy()
 	m_objectTableRef = LUA_NOREF;
 
 	lua_close(m_luaState);
-	m_luaState = 0;
+	m_luaState = nullptr;
 }
 
 void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)

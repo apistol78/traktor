@@ -98,8 +98,6 @@ private:
 
 	bool saveModel(Model* model);
 
-	void bakeOcclusion(Model* model);
-
 	void updateOperations(ui::TreeViewItem* itemModel);
 
 	void addStatistic(const std::wstring& name, const std::wstring& value);

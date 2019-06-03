@@ -17,6 +17,27 @@ namespace traktor
 const Scalar p(1.0f / (2.0f * PI));
 const Scalar c_epsilonOffset(0.1f);
 
+// class WrappedSHFunction : public render::SHFunction
+// {
+// public:
+// 	WrappedSHFunction(const RayTracer& tracer, RayTracer::Context* tracerContext, const Vector4& origin)
+// 	:	m_tracer(tracer)
+// 	,	m_tracerContext(tracerContext)
+// 	,	m_origin(origin)
+// 	{
+// 	}
+
+// 	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final
+// 	{
+// 		return m_tracer.traceIndirect(m_tracerContext, m_origin, unit);
+// 	}
+
+// private:
+// 	const RayTracer& m_tracer;
+// 	Ref< RayTracer::Context > m_tracerContext;
+// 	Vector4 m_origin;
+// };
+
 Scalar attenuation(const Scalar& distance, const Scalar& range)
 {
 	Scalar k0 = clamp(Scalar(1.0f) / (distance * distance), Scalar(0.0f), Scalar(1.0f));
@@ -67,13 +88,97 @@ void RayTracerLocal::addModel(const model::Model* model, const Transform& transf
 
 		auto& s = m_surfaces.push_back();
 		const auto& material = model->getMaterial(polygon.getMaterial());
-		s.albedo = Color4f::fromColor4ub(material.getColor());
+		s.albedo = material.getColor();
 	}
 }
 
 void RayTracerLocal::commit()
 {
 	m_sah.build(m_windings);
+}
+
+void RayTracerLocal::preprocess(GBuffer* gbuffer) const
+{
+	// // Adjust gbuffer positions to help fix some shadowing issues.
+	// if (configuration->getEnableShadowFix())
+	// {
+	// 	for (int32_t y = 0; y < outputSize; ++y)
+	// 	{
+	// 		for (int32_t x = 0; x < outputSize; ++x)
+	// 		{
+	// 			auto& elm = gbuffer.get(x, y);
+	// 			if (elm.polygon == model::c_InvalidIndex)
+	// 				continue;
+
+	// 			Vector4 position = elm.position;
+	// 			Vector4 normal = elm.normal;
+
+	// 			Vector4 u, v;
+	// 			orthogonalFrame(normal, u, v);
+
+	// 			const Scalar l = elm.delta.length();
+	// 			const Vector4 d[] = { u, -u, v, -v };
+
+	// 			for (int32_t i = 0; i < 8; ++i)
+	// 			{
+	// 				int32_t ii = i % 4;
+
+	// 				RayTracer::Result result;
+	// 				if (!tracer.trace(tracerContext, position + normal * Scalar(0.01f), d[ii], l, result))
+	// 					continue;
+
+	// 				if (dot3(result.normal, d[ii]) > 0.0f)
+	// 					continue;
+
+	// 				position = position + d[ii] * result.distance + result.normal * Scalar(0.01f);
+	// 			}
+	// 		}
+	// 	}
+	// }
+}
+
+Ref< render::SHCoeffs > RayTracerLocal::traceProbe(const Vector4& position) const
+{
+	// // Raytrace IBL probes.
+	// render::SHEngine shEngine(3);
+	// shEngine.generateSamplePoints(20000);
+
+	// RefArray< Job > jobs;
+	// for (uint32_t i = 0; i < lightEntityDatas.size(); ++i)
+	// {
+	// 	auto lightEntityData = lightEntityDatas[i];
+	// 	T_FATAL_ASSERT(lightEntityData != nullptr);
+
+	// 	auto lightComponentData = lightEntityData->getComponent< world::LightComponentData >();
+	// 	T_FATAL_ASSERT(lightComponentData != nullptr);
+
+	// 	if (lightComponentData->getLightType() != world::LtProbe)
+	// 		continue;
+
+	// 	log::info << L"Tracing SH probe \"" << lightEntityData->getName() << L"\" (" << i << L"/" << lightEntityDatas.size() << L")..." << Endl;
+
+	// 	auto position = lightEntityData->getTransform().translation().xyz1();
+
+	// 	auto job = JobManager::getInstance().add(makeFunctor([&, lightComponentData]() {
+	// 		Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
+
+	// 		Ref< RayTracer::Context > context = tracer.createContext();
+	// 		WrappedSHFunction shFunction(tracer, context, position);
+	// 		shEngine.generateCoefficients(&shFunction, *shCoeffs);
+
+	// 		lightComponentData->setSHCoeffs(shCoeffs);
+	// 	}));
+	// 	if (!job)
+	// 		return false;
+
+	// 	jobs.push_back(job);
+	// }
+	// while (!jobs.empty())
+	// {
+	// 	jobs.back()->wait();
+	// 	jobs.pop_back();
+	// }	
+	return nullptr;
 }
 
 Ref< drawing::Image > RayTracerLocal::traceDirect(const GBuffer* gbuffer) const

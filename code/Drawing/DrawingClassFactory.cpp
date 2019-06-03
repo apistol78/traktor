@@ -298,6 +298,8 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classITransferFunction);
 
 	auto classImage = new AutoRuntimeClass< Image >();
+	classImage->addProperty("width", &Image::getWidth);
+	classImage->addProperty("height", &Image::getHeight);
 	classImage->addConstructor();
 	classImage->addConstructor< const BoxedPixelFormat*, uint32_t, uint32_t >(&Image_constructor_3);
 	classImage->addMethod("clone", &Image::clone);
@@ -314,8 +316,6 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classImage->addStaticMethod("loadFromFile", &Image_loadFromFile);
 	classImage->addStaticMethod("loadFromStream", &Image_loadFromStream);
 	classImage->addMethod("save", &Image_save);
-	classImage->addMethod("getWidth", &Image::getWidth);
-	classImage->addMethod("getHeight", &Image::getHeight);
 	registrar->registerClass(classImage);
 
 	auto classBlurFilter = new AutoRuntimeClass< BlurFilter >();
