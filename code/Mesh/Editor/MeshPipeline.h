@@ -70,7 +70,6 @@ private:
 	bool m_promoteHalf;
 	bool m_enableCustomShaders;
 	bool m_enableCustomTemplates;
-	bool m_enableBakeOcclusion;
 	std::set< std::wstring > m_includeOnlyTechniques;
 	std::wstring m_programCompilerTypeName;
 	bool m_editor;
