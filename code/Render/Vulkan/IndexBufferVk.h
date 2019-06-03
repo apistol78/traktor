@@ -13,6 +13,7 @@
 #	define VK_NO_PROTOTYPES
 #	include <vulkan.h>
 #endif
+#include <vk_mem_alloc.h>
 
 #include "Render/IndexBuffer.h"
 
@@ -29,7 +30,13 @@ class IndexBufferVk : public IndexBuffer
 	T_RTTI_CLASS;
 
 public:
-	IndexBufferVk(IndexType indexType, uint32_t bufferSize, VkDevice device, VkBuffer indexBuffer, VkDeviceMemory indexBufferMemory);
+	IndexBufferVk(
+		IndexType indexType,
+		uint32_t bufferSize,
+		VmaAllocator allocator,
+		VmaAllocation allocation,
+		VkBuffer indexBuffer
+	);
 
 	virtual void destroy() override final;
 
@@ -40,9 +47,11 @@ public:
 	VkBuffer getVkBuffer() const { return m_indexBuffer; }
 
 private:
-	VkDevice m_device;
+	VmaAllocator m_allocator;
+	VmaAllocation m_allocation;
 	VkBuffer m_indexBuffer;
 	VkDeviceMemory m_indexBufferMemory;
+	bool m_locked;
 };
 
 	}

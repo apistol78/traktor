@@ -19,6 +19,7 @@ export ZLIB_SDK=$TRAKTOR_HOME/3rdp/zlib-1.2.11
 export P4_SDK=$TRAKTOR_HOME/3rdp/p4api-2018.1.1660568
 export RPI_SYSROOT=$TRAKTOR_HOME/3rdp/raspberry-sysroot
 export EMBREE_SDK=$TRAKTOR_HOME/3rdp/embree-3.5.2.x86_64.linux
+export VMA_SDK=$TRAKTOR_HOME/3rdp/VulkanMemoryAllocator-master
 
 # Export name of solution builder binary.
 if [[ `uname -s` == Linux* ]]; then

@@ -13,6 +13,7 @@
 #	define VK_NO_PROTOTYPES
 #	include <vulkan.h>
 #endif
+#include <vk_mem_alloc.h>
 
 #include "Core/Containers/AlignedVector.h"
 #include "Render/VertexBuffer.h"
@@ -32,9 +33,9 @@ class VertexBufferVk : public VertexBuffer
 public:
 	VertexBufferVk(
 		uint32_t bufferSize,
-		VkDevice device,
+		VmaAllocator allocator,
+		VmaAllocation allocation,
 		VkBuffer vertexBuffer,
-		VkDeviceMemory vertexBufferMemory,
 		const VkVertexInputBindingDescription& vertexBindingDescription,
 		const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
 		uint32_t hash
@@ -57,12 +58,13 @@ public:
 	uint32_t getHash() const { return m_hash; }
 
 private:
-	VkDevice m_device;
+	VmaAllocator m_allocator;
+	VmaAllocation m_allocation;
 	VkBuffer m_vertexBuffer;
-	VkDeviceMemory m_vertexBufferMemory;
 	VkVertexInputBindingDescription m_vertexBindingDescription;
 	AlignedVector< VkVertexInputAttributeDescription > m_vertexAttributeDescriptions;
 	uint32_t m_hash;
+	bool m_locked;
 };
 
 	}
