@@ -243,7 +243,11 @@ int RenderViewVk::getHeight() const
 
 bool RenderViewVk::isActive() const
 {
+#if defined(_WIN32)
 	return true;
+#else
+	return m_window->isActive();
+#endif
 }
 
 bool RenderViewVk::isMinimized() const
@@ -256,7 +260,7 @@ bool RenderViewVk::isFullScreen() const
 #if defined(_WIN32)
 	return m_window->haveFullScreenStyle();
 #else
-	return true;
+	return m_window->isFullScreen();
 #endif
 }
 
