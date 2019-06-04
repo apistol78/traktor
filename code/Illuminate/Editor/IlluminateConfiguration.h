@@ -43,6 +43,8 @@ public:
 
 	bool getEnableDilate() const { return m_enableDilate; }
 
+	bool getEnableDenoise() const { return m_enableDenoise; }
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -56,6 +58,7 @@ private:
 	bool m_enableAutoTexCoords;
 	bool m_enableShadowFix;
 	bool m_enableDilate;
+	bool m_enableDenoise;
 };
 
 	}

@@ -8,6 +8,7 @@
 #include "Core/Math/Triangulator.h"
 #include "Core/Math/Winding3.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
@@ -46,6 +47,8 @@
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/LightComponentData.h"
+
+#include <OpenImageDenoise/oidn.h>
 
 namespace traktor
 {
@@ -116,6 +119,65 @@ void collectTraceEntities(
 		else if (objectMember->get())
 			collectTraceEntities(objectMember->get(), outLightEntityData, outMeshEntityData);
 	}
+}
+
+Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
+{
+	int32_t width = lightmap->getWidth();
+	int32_t height = lightmap->getHeight();
+
+	lightmap->convert(drawing::PixelFormat::getRGBAF32());
+
+	Ref< drawing::Image > albedo = new drawing::Image(
+		drawing::PixelFormat::getRGBAF32(),
+		lightmap->getWidth(),
+		lightmap->getHeight()
+	);
+	albedo->clear(Color4f(1, 1, 1, 1));
+
+	Ref< drawing::Image > normals = new drawing::Image(
+		drawing::PixelFormat::getRGBAF32(),
+		lightmap->getWidth(),
+		lightmap->getHeight()
+	);
+	for (int32_t y = 0; y < height; ++y)
+	{
+		for (int32_t x = 0; x < width; ++x)
+		{
+			const auto elm = gbuffer.get(x, y);
+			normals->setPixel(x, y, Color4f(elm.normal));
+		}
+	}
+
+	Ref< drawing::Image > output = new drawing::Image(
+		drawing::PixelFormat::getRGBAF32(),
+		lightmap->getWidth(),
+		lightmap->getHeight()
+	);
+
+	OIDNDevice device = oidnNewDevice(OIDN_DEVICE_TYPE_DEFAULT);
+	oidnCommitDevice(device);
+
+	OIDNFilter filter = oidnNewFilter(device, "RT"); // generic ray tracing filter
+	oidnSetSharedFilterImage(filter, "color",  lightmap->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0);
+	oidnSetSharedFilterImage(filter, "albedo", albedo->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0); // optional
+	oidnSetSharedFilterImage(filter, "normal", normals->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0); // optional
+	oidnSetSharedFilterImage(filter, "output", output->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0);
+	oidnSetFilter1b(filter, "hdr", true); // image is HDR
+	oidnCommitFilter(filter);
+
+	oidnExecuteFilter(filter);	
+
+	// Check for errors
+	const char* errorMessage;
+	if (oidnGetDeviceError(device, &errorMessage) != OIDN_ERROR_NONE)
+		log::error << mbstows(errorMessage) << Endl;
+
+	// Cleanup
+	oidnReleaseFilter(filter);
+	oidnReleaseDevice(device);	
+
+	return output;
 }
 
 		}
@@ -358,8 +420,13 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		}
 
 		// Blur indirect lightmap to reduce noise from path tracing.
-		if (lightmapIndirect)
-			lightmapIndirect->apply(drawing::ConvolutionFilter::createGaussianBlur(1));
+		if (configuration->getEnableDenoise())
+		{
+			if (lightmapDirect)
+				lightmapDirect = denoise(gbuffer, lightmapDirect);
+			if (lightmapIndirect)
+				lightmapIndirect = denoise(gbuffer, lightmapIndirect);
+		}
 
 		// Merge direct and indirect lightmaps.
 		Ref< drawing::Image > lightmap = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);

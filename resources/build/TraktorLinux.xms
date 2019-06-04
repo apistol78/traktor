@@ -14219,9 +14219,15 @@
 				</item>
 				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
-					<link>LnkYes</link>
+					<link>LnkNo</link>
 					<solutionFileName>ExternLinux.xms</solutionFileName>
 					<projectName>Extern.embree</projectName>
+				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkNo</link>
+					<solutionFileName>ExternLinux.xms</solutionFileName>
+					<projectName>Extern.oidn</projectName>
 				</item>
 			</dependencies>
 		</item>
