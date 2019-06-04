@@ -20,6 +20,11 @@ namespace traktor
 const Scalar p(1.0f / (2.0f * PI));
 const float c_epsilonOffset = 0.1f;
 
+Scalar attenuation(const Scalar& distance)
+{
+	return clamp(Scalar(1.0f) / (distance * distance), Scalar(0.0f), Scalar(1.0f));
+}
+
 Scalar attenuation(const Scalar& distance, const Scalar& range)
 {
 	Scalar k0 = clamp(Scalar(1.0f) / (distance * distance), Scalar(0.0f), Scalar(1.0f));
@@ -266,7 +271,12 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 				{
 					if (rh.hit.geomID[j] != RTC_INVALID_GEOMETRY_ID)
 					{
-						Vector4 hitPosition = (elm.position + direction[j] * Scalar(rh.ray.tfar[j])).xyz1();
+						Scalar distance(rh.ray.tfar[j]);
+						Scalar f = attenuation(distance);
+						if (f <= 0.0f)
+							continue;
+
+						Vector4 hitPosition = (elm.position + direction[j] * distance).xyz1();
 						Vector4 hitNormal = Vector4(rh.hit.Ng_x[j], rh.hit.Ng_y[j], rh.hit.Ng_z[j], 0.0f).normalized();
 
 						Scalar ct = dot3(elm.normal, direction[j]);
@@ -277,7 +287,7 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 							hitNormal,
 							true
 						);
-						indirect += brdf * incoming * ct / p;
+						indirect += brdf * incoming * f * ct / p;
 					}
 				}
             }

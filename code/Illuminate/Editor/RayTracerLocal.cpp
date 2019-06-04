@@ -38,6 +38,11 @@ const Scalar c_epsilonOffset(0.1f);
 // 	Vector4 m_origin;
 // };
 
+Scalar attenuation(const Scalar& distance)
+{
+	return clamp(Scalar(1.0f) / (distance * distance), Scalar(0.0f), Scalar(1.0f));
+}
+
 Scalar attenuation(const Scalar& distance, const Scalar& range)
 {
 	Scalar k0 = clamp(Scalar(1.0f) / (distance * distance), Scalar(0.0f), Scalar(1.0f));
@@ -273,6 +278,10 @@ Ref< drawing::Image > RayTracerLocal::traceIndirect(const GBuffer* gbuffer) cons
                             Vector4 direction = random.nextHemi(elm.normal);
                             if (m_sah.queryClosestIntersection(elm.position + elm.normal * c_epsilonOffset, direction, m_maxDistance, -1, result, sahCache))
                             {
+								Scalar f = attenuation(result.distance);
+								if (f <= 0.0f)
+									continue;
+
                                 Scalar ct = dot3(elm.normal, direction);
                                 Color4f brdf = m_surfaces[result.index].albedo / Scalar(PI);
                                 Color4f incoming = sampleAnalyticalLights(
@@ -284,7 +293,7 @@ Ref< drawing::Image > RayTracerLocal::traceIndirect(const GBuffer* gbuffer) cons
                                     1,
                                     0.0f
                                 );
-                                indirect += brdf * incoming * ct / p;
+                                indirect += brdf * incoming * f * ct / p;
                             }
                         }
                         indirect /= Scalar(m_configuration->getIndirectSampleCount());
