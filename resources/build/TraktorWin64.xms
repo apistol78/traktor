@@ -16893,6 +16893,12 @@
 					<solutionFileName>ExternWin64.xms</solutionFileName>
 					<projectName>Extern.embree</projectName>
 				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkNo</link>
+					<solutionFileName>ExternWin64.xms</solutionFileName>
+					<projectName>Extern.oidn</projectName>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
@@ -18282,7 +18288,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src/vulkan</item>
+						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EXPORT</item>
@@ -18320,7 +18326,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src/vulkan</item>
+						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EXPORT</item>
@@ -18358,7 +18364,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src/vulkan</item>
+						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -18392,7 +18398,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/vulkan/Vulkan-Docs/src/vulkan</item>
+						<item>$(VULKAN_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -18445,6 +18451,12 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkNo</link>
+					<solutionFileName>ExternWin64.xms</solutionFileName>
+					<projectName>Extern.VulkanMemoryAllocator</projectName>
 				</item>
 			</dependencies>
 		</item>

@@ -83,6 +83,8 @@ PFN_vkCmdCopyImage vkCmdCopyImage = nullptr;
 PFN_vkGetImageSubresourceLayout vkGetImageSubresourceLayout = nullptr;
 PFN_vkDestroyImage vkDestroyImage = nullptr;
 PFN_vkCmdDispatch vkCmdDispatch = nullptr;
+PFN_vkInvalidateMappedMemoryRanges vkInvalidateMappedMemoryRanges = nullptr;
+PFN_vkCmdCopyBuffer vkCmdCopyBuffer = nullptr;
 
 PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = nullptr;
 PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = nullptr;
@@ -601,6 +603,20 @@ bool initializeVulkanApi()
 	if (vkCmdDispatch == nullptr)
 	{
 		log::error << L"Failed to resolve Vulkan entry point \"vkCmdDispatch\"." << Endl;
+		return false;
+	}
+
+	vkInvalidateMappedMemoryRanges = (PFN_vkInvalidateMappedMemoryRanges)GetProcAddress(s_hVulkanModule, "vkInvalidateMappedMemoryRanges");
+	if (vkInvalidateMappedMemoryRanges == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkInvalidateMappedMemoryRanges\"." << Endl;
+		return false;
+	}
+
+	vkCmdCopyBuffer = (PFN_vkCmdCopyBuffer)GetProcAddress(s_hVulkanModule, "vkCmdCopyBuffer");
+	if (vkCmdCopyBuffer == nullptr)
+	{
+		log::error << L"Failed to resolve Vulkan entry point \"vkCmdCopyBuffer\"." << Endl;
 		return false;
 	}
 
