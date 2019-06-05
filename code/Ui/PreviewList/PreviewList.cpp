@@ -106,10 +106,10 @@ void PreviewList::layoutCells(const Rect& rc)
 		int32_t row = i / ncolumns;
 
 		Rect rcItem(
-			dpi96(c_marginX + column * width),
-			dpi96(c_marginY + row * height),
-			dpi96(c_marginX + column * width + width),
-			dpi96(c_marginY + row * height + height)
+			dpi96(c_marginX) + column * width,
+			dpi96(c_marginY) + row * height,
+			dpi96(c_marginX) + column * width + width,
+			dpi96(c_marginY) + row * height + height
 		);
 
 		placeCell(m_items->get(i), rcItem);
@@ -125,10 +125,10 @@ void PreviewList::layoutCells(const Rect& rc)
 		int32_t row = i / ncolumns;
 
 		Rect rcItem(
-			dpi96(c_marginX + column * width),
-			dpi96(c_marginY + row * height),
-			dpi96(c_marginX + column * width + width),
-			dpi96(c_marginY + row * height + height)
+			dpi96(c_marginX) + column * width,
+			dpi96(c_marginY) + row * height,
+			dpi96(c_marginX) + column * width + width,
+			dpi96(c_marginY) + row * height + height
 		);
 
 		placeCell(m_items->get(i), rcItem);
