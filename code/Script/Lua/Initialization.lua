@@ -118,6 +118,20 @@ function class(name, super)
  		rawset(instance, member, value)
 	end
 
+	cl.__pairs = function(tbl)
+		local function itr(tbl, k)
+			local idx = k + 1
+			if idx < tbl.__size then
+				return idx, tbl:get(idx)
+			else
+				tbl.__size = nil
+				return nil
+			end
+		end
+		tbl.__size = tbl:size()
+		return itr, tbl, -1
+	end
+
 	return cl
 end
 

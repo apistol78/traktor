@@ -50,6 +50,12 @@ bool SolutionBuilderFBuild::generate(Solution* solution)
 
 	log::info << L"Generating FASTBuild projects..." << Endl;
 
+	if (!m_scriptProcessor->prepare(m_projectTemplate))
+	{
+		log::error << L"Script processor failed using project template \"" << m_projectTemplate << L"\"." << Endl;
+		return false;
+	}
+
 	const RefArray< Project >& projects = solution->getProjects();
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
@@ -70,7 +76,7 @@ bool SolutionBuilderFBuild::generate(Solution* solution)
 		// Generate project
 		{
 			std::wstring projectOut;
-			if (!m_scriptProcessor->generateFromFile(solution, project, projectPath, m_projectTemplate, projectOut))
+			if (!m_scriptProcessor->generate(solution, project, projectPath, projectOut))
 			{
 				log::error << L"Script processor failed using project template \"" << m_projectTemplate << L"\"." << Endl;
 				return false;
@@ -94,10 +100,16 @@ bool SolutionBuilderFBuild::generate(Solution* solution)
 
 	log::info << L"Generating FASTBuild solution..." << Endl;
 
+	if (!m_scriptProcessor->prepare(m_solutionTemplate))
+	{
+		log::error << L"Script processor failed using solution template \"" << m_solutionTemplate << L"\"." << Endl;
+		return false;
+	}
+
 	// Generate build file.
 	{
 		std::wstring solutionOut;
-		if (!m_scriptProcessor->generateFromFile(solution, 0, solution->getRootPath(), m_solutionTemplate, solutionOut))
+		if (!m_scriptProcessor->generate(solution, nullptr, solution->getRootPath(), solutionOut))
 		{
 			log::error << L"Script processor failed using solution template \"" << m_solutionTemplate << L"\"." << Endl;
 			return false;

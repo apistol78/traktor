@@ -47,6 +47,9 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 
 	log::info << L"Generating projects..." << Endl;
 
+	if (!m_scriptProcessor->prepare(m_projectTemplate))
+		return false;
+
 	const RefArray< Project >& projects = solution->getProjects();
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
@@ -64,7 +67,7 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 		// Generate project
 		{
 			std::wstring projectOut;
-			if (!m_scriptProcessor->generateFromFile(solution, project, projectPath, m_projectTemplate, projectOut))
+			if (!m_scriptProcessor->generate(solution, project, projectPath, projectOut))
 				return false;
 
 			Ref< IStream > file = FileSystem::getInstance().open(
@@ -82,10 +85,13 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 
 	log::info << L"Generating workspace..." << Endl;
 
+	if (!m_scriptProcessor->prepare(m_workspaceTemplate))
+		return false;
+
 	// Generate workspace
 	{
 		std::wstring cprojectOut;
-		if (!m_scriptProcessor->generateFromFile(solution, 0, solution->getRootPath(), m_workspaceTemplate, cprojectOut))
+		if (!m_scriptProcessor->generate(solution, nullptr, solution->getRootPath(), cprojectOut))
 			return false;
 
 		Ref< IStream > file = FileSystem::getInstance().open(

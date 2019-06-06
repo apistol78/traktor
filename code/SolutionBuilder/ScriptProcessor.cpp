@@ -32,6 +32,11 @@ class Output : public Object
 	T_RTTI_CLASS;
 
 public:
+	explicit Output(const std::vector< std::wstring >& sections)
+	:	m_sections(sections)
+	{
+	}
+
 	void print(const std::wstring& str)
 	{
 		m_ss << str;
@@ -44,14 +49,8 @@ public:
 
 	void printSection(int32_t id)
 	{
-		T_ASSERT(id >= 0 && id < int32_t(m_sections.size()));
+		T_FATAL_ASSERT(id >= 0 && id < int32_t(m_sections.size()));
 		m_ss << m_sections[id];
-	}
-
-	int32_t addSection(const std::wstring& section)
-	{
-		m_sections.push_back(section);
-		return int32_t(m_sections.size()) - 1;
 	}
 
 	std::wstring getProduct()
@@ -60,7 +59,7 @@ public:
 	}
 
 private:
-	std::vector< std::wstring > m_sections;
+	const std::vector< std::wstring >& m_sections;
 	StringOutputStream m_ss;
 };
 
@@ -117,8 +116,8 @@ RefArray< Path > File_getSystemFiles(sb::File* file, const std::wstring& sourceP
 	file->getSystemFiles(sourcePath, systemFiles);
 
 	RefArray< Path > systemFilesOut;
-	for (std::set< Path >::const_iterator i = systemFiles.begin(); i != systemFiles.end(); ++i)
-		systemFilesOut.push_back(new Path(*i));
+	for (auto systemFile : systemFiles)
+		systemFilesOut.push_back(new Path(systemFile));
 
 	return systemFilesOut;
 }
@@ -139,7 +138,7 @@ Ref< Path > FileSystem_getRelativePath(FileSystem* fileSystem, const Path& absol
 	if (fileSystem->getRelativePath(absolutePath, relativeToPath, relativePath))
 		return new Path(relativePath);
 	else
-		return 0;
+		return nullptr;
 }
 
 			}
@@ -148,6 +147,7 @@ T_IMPLEMENT_RTTI_CLASS(L"ScriptProcessor", ScriptProcessor, Object)
 
 bool ScriptProcessor::create()
 {
+	// Create script manager and register our classes.
 	m_scriptManager = new script::ScriptManagerLua();
 
 	BoxesClassFactory().createClasses(m_scriptManager);
@@ -160,6 +160,10 @@ bool ScriptProcessor::create()
 	m_scriptManager->registerClass(classOutput);
 
 	auto classSolution = new AutoRuntimeClass< Solution >();
+	classSolution->addProperty("name", &Solution::getName);
+	classSolution->addProperty("rootPath", &Solution::getRootPath);
+	classSolution->addProperty("aggregateOutputPath", &Solution::getAggregateOutputPath);
+	classSolution->addProperty("projects", &Solution::getProjects);
 	classSolution->addMethod("getName", &Solution::getName);
 	classSolution->addMethod("getRootPath", &Solution::getRootPath);
 	classSolution->addMethod("getAggregateOutputPath", &Solution::getAggregateOutputPath);
@@ -167,16 +171,38 @@ bool ScriptProcessor::create()
 	m_scriptManager->registerClass(classSolution);
 
 	auto classProject = new AutoRuntimeClass< Project >();
+	classProject->addProperty("enable", &Project::getEnable);
+	classProject->addProperty("name", &Project::getName);
+	classProject->addProperty("sourcePath", &Project::getSourcePath);
+	classProject->addProperty("configurations", &Project::getConfigurations);
+	classProject->addProperty("items", &Project::getItems);
+	classProject->addProperty("dependencies", &Project::getDependencies);
 	classProject->addMethod("getEnable", &Project::getEnable);
 	classProject->addMethod("getName", &Project::getName);
 	classProject->addMethod("getSourcePath", &Project::getSourcePath);
 	classProject->addMethod("getConfigurations", &Project::getConfigurations);
-	classProject->addMethod("getConfiguration", &Project::getConfiguration);
+	classProject->addMethod("getConfiguration", &Project::getConfiguration);	// keep
 	classProject->addMethod("getItems", &Project::getItems);
 	classProject->addMethod("getDependencies", &Project::getDependencies);
 	m_scriptManager->registerClass(classProject);
 
 	auto classConfiguration = new AutoRuntimeClass< Configuration >();
+	classConfiguration->addProperty("name", &Configuration::getName);
+	classConfiguration->addProperty("targetFormat", &Configuration_getTargetFormat);
+	classConfiguration->addProperty("targetProfile", &Configuration_getTargetProfile);
+	classConfiguration->addProperty("precompiledHeader", &Configuration::getPrecompiledHeader);
+	classConfiguration->addProperty("includePaths", &Configuration::getIncludePaths);
+	classConfiguration->addProperty("definitions", &Configuration::getDefinitions);
+	classConfiguration->addProperty("libraryPaths", &Configuration::getLibraryPaths);
+	classConfiguration->addProperty("libraries", &Configuration::getLibraries);
+	classConfiguration->addProperty("additionalCompilerOptions", &Configuration::getAdditionalCompilerOptions);
+	classConfiguration->addProperty("additionalLinkerOptions", &Configuration::getAdditionalLinkerOptions);
+	classConfiguration->addProperty("debugExecutable", &Configuration::getDebugExecutable);
+	classConfiguration->addProperty("debugArguments", &Configuration::getDebugArguments);
+	classConfiguration->addProperty("debugEnvironment", &Configuration::getDebugEnvironment);
+	classConfiguration->addProperty("debugWorkingDirectory", &Configuration::getDebugWorkingDirectory);
+	classConfiguration->addProperty("aggregationItems", &Configuration::getAggregationItems);
+	classConfiguration->addProperty("consumerLibraryPath", &Configuration::getConsumerLibraryPath);
 	classConfiguration->addMethod("getName", &Configuration::getName);
 	classConfiguration->addMethod("getTargetFormat", &Configuration_getTargetFormat);
 	classConfiguration->addMethod("getTargetProfile", &Configuration_getTargetProfile);
@@ -196,36 +222,48 @@ bool ScriptProcessor::create()
 	m_scriptManager->registerClass(classConfiguration);
 
 	auto classProjectItem = new AutoRuntimeClass< ProjectItem >();
+	classProjectItem->addProperty("items", &ProjectItem::getItems);
 	classProjectItem->addMethod("getItems", &ProjectItem::getItems);
 	m_scriptManager->registerClass(classProjectItem);
 
 	Ref< AutoRuntimeClass< sb::File > > classFile = new AutoRuntimeClass< sb::File >();
+	classFile->addProperty("fileName", &sb::File::getFileName);
 	classFile->addMethod("getFileName", &sb::File::getFileName);
 	classFile->addMethod("getSystemFiles", &File_getSystemFiles);
 	m_scriptManager->registerClass(classFile);
 
 	auto classFilter = new AutoRuntimeClass< Filter >();
+	classFilter->addProperty("name", &Filter::getName);
 	classFilter->addMethod("getName", &Filter::getName);
 	m_scriptManager->registerClass(classFilter);
 
 	auto classAggregationItem = new AutoRuntimeClass< AggregationItem >();
+	classAggregationItem->addProperty("sourceFile", &AggregationItem::getSourceFile);
+	classAggregationItem->addProperty("targetPath", &AggregationItem::getTargetPath);
 	classAggregationItem->addMethod("getSourceFile", &AggregationItem::getSourceFile);
 	classAggregationItem->addMethod("getTargetPath", &AggregationItem::getTargetPath);
 	m_scriptManager->registerClass(classAggregationItem);
 
 	auto classDependency = new AutoRuntimeClass< Dependency >();
+	classDependency->addProperty("link", &Dependency_getLink);
+	classDependency->addProperty("name", &Dependency::getName);
+	classDependency->addProperty("location", &Dependency::getLocation);
 	classDependency->addMethod("getLink", &Dependency_getLink);
 	classDependency->addMethod("getName", &Dependency::getName);
 	classDependency->addMethod("getLocation", &Dependency::getLocation);
 	m_scriptManager->registerClass(classDependency);
 
 	auto classExternalDependency = new AutoRuntimeClass< ExternalDependency >();
+	classExternalDependency->addProperty("solutionFileName", &ExternalDependency::getSolutionFileName);
+	classExternalDependency->addProperty("solution", &ExternalDependency::getSolution);
+	classExternalDependency->addProperty("project", &ExternalDependency::getProject);
 	classExternalDependency->addMethod("getSolutionFileName", &ExternalDependency::getSolutionFileName);
 	classExternalDependency->addMethod("getSolution", &ExternalDependency::getSolution);
 	classExternalDependency->addMethod("getProject", &ExternalDependency::getProject);
 	m_scriptManager->registerClass(classExternalDependency);
 
 	auto classProjectDependency = new AutoRuntimeClass< ProjectDependency >();
+	classProjectDependency->addProperty("project", &ProjectDependency::getProject);
 	classProjectDependency->addMethod("getProject", &ProjectDependency::getProject);
 	m_scriptManager->registerClass(classProjectDependency);
 
@@ -237,8 +275,9 @@ void ScriptProcessor::destroy()
 	safeDestroy(m_scriptManager);
 }
 
-bool ScriptProcessor::generateFromFile(const Solution* solution, const Project* project, const std::wstring& projectPath, const std::wstring& fileName, std::wstring& output) const
+bool ScriptProcessor::prepare(const std::wstring& fileName)
 {
+	// Read generator script into memory.
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
 	if (!file)
 		return false;
@@ -254,18 +293,16 @@ bool ScriptProcessor::generateFromFile(const Solution* solution, const Project* 
 
 	file->close();
 
-	return generateFromSource(solution, project, projectPath, fileName, ss.str(), output);
-}
+	// Keep source from stream.
+	std::wstring source = ss.str();
+	ss.reset();
 
-bool ScriptProcessor::generateFromSource(const Solution* solution, const Project* project, const std::wstring& projectPath, const std::wstring& sourceName, const std::wstring& source, std::wstring& output) const
-{
-	StringOutputStream ss;
+	// Transform generator script into pure code script.
 	size_t offset = 0;
-
-	Ref< Output > o = new Output();
 
 	ss << L"function __main__()" << Endl;
 
+	m_sections.resize(0);
 	for (;;)
 	{
 		size_t s = source.find(L"<?--", offset);
@@ -276,34 +313,48 @@ bool ScriptProcessor::generateFromSource(const Solution* solution, const Project
 		if (e == source.npos)
 			return false;
 
-		int32_t id = o->addSection(source.substr(offset, s - offset));
-		ss << L"\toutput:printSection(" << id << L")" << Endl;
+		std::wstring section = source.substr(offset, s - offset);
+		m_sections.push_back(section);
+
+		ss << L"\toutput:printSection(" << (int32_t)(m_sections.size() - 1) << L")" << Endl;
 		ss << source.substr(s + 5, e - s - 5) << Endl;
 
 		offset = e + 4;
 	}
 
-	int32_t id = o->addSection(source.substr(offset));
-	ss << L"\toutput:printSection(" << id << L")" << Endl;
+	std::wstring section = source.substr(offset);
+	m_sections.push_back(section);
+
+	ss << L"\toutput:printSection(" << (int32_t)(m_sections.size() - 1) << L")" << Endl;
 	ss << L"end" << Endl;
 
-	Ref< script::IScriptBlob > scriptBlob = m_scriptManager->compile(sourceName, ss.str(), 0);
+	// Compile script into blob.
+	Ref< script::IScriptBlob > scriptBlob = m_scriptManager->compile(fileName, ss.str(), 0);
 	if (!scriptBlob)
 		return false;
 
-	Ref< script::IScriptContext > scriptContext = m_scriptManager->createContext(true);
-	if (!scriptContext)
+	// Create execution context.
+	m_scriptContext = m_scriptManager->createContext(true);
+	if (!m_scriptContext)
 		return false;
 
-	if (!scriptContext->load(scriptBlob))
+	if (!m_scriptContext->load(scriptBlob))
 		return false;
 
-	scriptContext->setGlobal("output", Any::fromObject(o));
-	scriptContext->setGlobal("solution", Any::fromObject(const_cast< Solution* >(solution)));
-	scriptContext->setGlobal("project", Any::fromObject(const_cast< Project* >(project)));
-	scriptContext->setGlobal("projectPath", Any::fromObject(new Path(projectPath)));
-	scriptContext->setGlobal("fileSystem", Any::fromObject(&FileSystem::getInstance()));
-	scriptContext->executeFunction("__main__");
+	return true;
+}
+
+bool ScriptProcessor::generate(const Solution* solution, const Project* project, const std::wstring& projectPath, std::wstring& output) const
+{
+	Ref< Output > o = new Output(m_sections);
+
+	m_scriptContext->setGlobal("output", Any::fromObject(o));
+	m_scriptContext->setGlobal("solution", Any::fromObject(const_cast< Solution* >(solution)));
+	m_scriptContext->setGlobal("project", Any::fromObject(const_cast< Project* >(project)));
+	m_scriptContext->setGlobal("projectPath", Any::fromObject(new Path(projectPath)));
+	m_scriptContext->setGlobal("fileSystem", Any::fromObject(&FileSystem::getInstance()));
+	m_scriptContext->executeFunction("__main__");
+	m_scriptManager->collectGarbage(true);
 
 	output = o->getProduct();
 	return true;

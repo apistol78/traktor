@@ -3,9 +3,8 @@
 <?--
 
 -- Dependency scanner cache global.
-if _G.__cache == nil then
-	_G.__cache = {}
-end
+-- if _G.__cache__ == nil then _G.__cache__ = {} end
+local HEADER_CACHE = _G.__cache__ or {}
 
 import(traktor)
 
@@ -59,32 +58,30 @@ local function collectDependencies(
 	outLibraryPaths
 )
 	-- Add include paths.
-	local includePaths = configuration:getIncludePaths()
-	for i = 0, includePaths:size() - 1 do
-		local ip = Path(includePaths:get(i)).pathName
+	for _, includePath in pairs(configuration.includePaths) do
+		local ip = Path(includePath).pathName
 		if ip ~= "" then
 			insertLast(outIncludePaths, ip)
 		end
 	end
 
 	-- Add external libraries, ex precompiled libraries etc.
-	local libraries = configuration:getLibraries()
-	for i = 0, libraries:size() - 1 do
-		insertLast(outLibrariesExternal, libraries:get(i))
+	for _, library in pairs(configuration.libraries) do
+		insertLast(outLibrariesExternal, library)
 	end
 
 	-- Add library paths.
-	local libraryPaths = configuration:getLibraryPaths()
-	for i = 0, libraryPaths:size() - 1 do
+	for _, libraryPath in pairs(configuration.libraryPaths) do
+		local libraryPath = Path(libraryPath)
 		local libraryRelPath = fileSystem:getRelativePath(
-			Path(libraryPaths:get(i)),
+			libraryPath,
 			projectPath
 		)
 		local lp = ""
 		if libraryRelPath ~= nil then
 			lp = libraryRelPath.pathName
 		else
-			lp = Path(libraryPaths:get(i)).pathName
+			lp = libraryPath.pathName
 		end
 		if lp ~= "" then
 			insertLast(outLibraryPaths, lp)
@@ -92,20 +89,18 @@ local function collectDependencies(
 	end
 
 	-- Recurse with dependencies.
-	local dependencies = project:getDependencies()
-	for i = 0, dependencies:size() - 1 do
-		local dep = dependencies:get(i)
-		if isa(dep, ProjectDependency) then
+	for _, dependency in pairs(project.dependencies) do
+		if isa(dependency, ProjectDependency) then
 			local localSolution = solution
-			local localProject = dep:getProject()
-			local localConfig = localProject:getConfiguration(configuration:getName())
-			if localProject:getEnable() then
+			local localProject = dependency.project
+			local localConfig = localProject:getConfiguration(configuration.name)
+			if localProject.enable then
 
 				-- Add library.
-				insertLast(outLibraries, localProject:getName())
+				insertLast(outLibraries, localProject.name)
 
 				-- Recurse with child dependencies.
-				if localConfig:getTargetFormat() == "StaticLibrary" then
+				if localConfig.targetFormat == "StaticLibrary" then
 					collectDependencies(
 						localSolution,
 						localProject,
@@ -116,27 +111,24 @@ local function collectDependencies(
 						outLibraryPaths
 					)
 				else
-
 					-- Only add include paths when dealing with shared library dependencies.
-					local includePaths = localConfig:getIncludePaths()
-					for j = 0, includePaths:size() - 1 do
-						local ip = Path(includePaths:get(j)).pathName
+					for _, includePath in pairs(localConfig.includePaths) do
+						local ip = Path(includePath).pathName
 						if ip ~= "" then
 							insertLast(outIncludePaths, ip)
 						end
 					end
-
 				end
 			end
-		elseif isa(dep, ExternalDependency) then
-			local externalSolution = dep:getSolution()
-			local externalProject = dep:getProject()
-			local externalConfig = externalProject:getConfiguration(configuration:getName())
+		elseif isa(dependency, ExternalDependency) then
+			local externalSolution = dependency.solution
+			local externalProject = dependency.project
+			local externalConfig = externalProject:getConfiguration(configuration.name)
 
 			-- Add path to library.
-			if externalConfig:getConsumerLibraryPath() ~= "" then
-				local aggregateOutputPath = Path(externalSolution:getAggregateOutputPath())
-				local consumerLibraryPath = Path(externalConfig:getConsumerLibraryPath())
+			if externalConfig.consumerLibraryPath ~= "" then
+				local aggregateOutputPath = Path(externalSolution.aggregateOutputPath)
+				local consumerLibraryPath = Path(externalConfig.consumerLibraryPath)
 
 				local consumerRelPath = fileSystem:getRelativePath(
 					aggregateOutputPath:concat(consumerLibraryPath),
@@ -148,7 +140,7 @@ local function collectDependencies(
 				end
 			else
 				local externalRelPath = fileSystem:getRelativePath(
-					Path(externalSolution:getRootPath() .. "/" .. configuration:getName()),
+					Path(externalSolution.rootPath .. "/" .. configuration.name),
 					projectPath
 				)
 				if externalRelPath ~= nil then
@@ -157,12 +149,12 @@ local function collectDependencies(
 			end
 
 			-- Add library.
-			if externalProject:getEnable() then
-				insertLast(outLibraries, externalProject:getName())
+			if externalProject.enable then
+				insertLast(outLibraries, externalProject.name)
 			end
 
 			-- Recurse with child dependencies.
-			if externalConfig:getTargetFormat() == "StaticLibrary" then
+			if externalConfig.targetFormat == "StaticLibrary" then
 				collectDependencies(
 					externalSolution,
 					externalProject,
@@ -173,35 +165,32 @@ local function collectDependencies(
 					outLibraryPaths
 				)
 			else
-
 				-- Only add include paths when dealing with shared library dependencies.
-				local includePaths = externalConfig:getIncludePaths()
-				for j = 0, includePaths:size() - 1 do
-					local ip = Path(includePaths:get(j)).pathName
+				for _, includePath in pairs(externalConfig.includePaths) do
+					local ip = Path(includePath).pathName
 					if ip ~= "" then
 						insertLast(outIncludePaths, ip)
 					end
 				end
-
 			end
 		end
 	end
 end
 
 local function collectFiles(project, projectOrFilter, pred)
-	local items = projectOrFilter:getItems()
-	for i = 0, items:size() - 1 do
-		local item = items:get(i)
+	for _, item in pairs(projectOrFilter.items) do
 		if isa(item, Filter) then
 			collectFiles(project, item, pred)
 		else
 			local files = item:getSystemFiles(project:getSourcePath())
-			for i = 0, files:size() - 1 do
-				local file = files:get(i)
-				if os ~= "windows" then
-					file = Path(files:get(i).pathNameNoVolume)
+			if os == "windows" then
+				for _, file in pairs(files) do
+					pred(file)
 				end
-				pred(file)
+			else
+				for _, file in pairs(files) do
+					pred(Path(file.pathNameNoVolume))
+				end
 			end
 		end
 	end
@@ -213,21 +202,22 @@ local function mergeTable(t, s)
 	end
 end
 
-local function scanHeaderDependencies(cache, includePaths, file)
-	-- Check if already cached.
+local function scanHeaderDependencies(includePaths, file)
 	local fpn = file.pathName
-	if cache[fpn] ~= nil then return cache[fpn]	end
+
+	local c = HEADER_CACHE[fpn]
+	if c ~= nil then
+		return c
+	end
 
 	local c = {}
-	c.dependencies = {}
-	c.missing = {}
-	cache[fpn] = c
+	HEADER_CACHE[fpn] = c
 
 	-- Scan for dependencies in files.
 	local fs = fileSystem:open(file, File.FmRead)
 	if fs == nil then return c end
 
-	local sr = StringReader(BufferedStream(fs), AnsiEncoding())
+	local sr = StringReader(fs, AnsiEncoding())
 	while true do
 		local s = sr:readLine()
 		if s == nil then break end
@@ -237,12 +227,10 @@ local function scanHeaderDependencies(cache, includePaths, file)
 			for _, ip in ipairs(includePaths) do
 				local ipp = Path(ip .. "/" .. p):normalized()
 				if fileSystem:exist(ipp) then
-					if c.dependencies[ipp.pathName] ~= true then
-						c.dependencies[ipp.pathName] = true
-
-						local rc = scanHeaderDependencies(cache, includePaths, ipp)
-						mergeTable(c.dependencies, rc.dependencies)
-						mergeTable(c.missing, rc.missing)
+					if c[ipp.pathName] ~= true then
+						c[ipp.pathName] = true
+						local rc = scanHeaderDependencies(includePaths, ipp)
+						mergeTable(c, rc)
 					end
 					found = true
 					break
@@ -251,19 +239,17 @@ local function scanHeaderDependencies(cache, includePaths, file)
 			if not found then
 				local ipp = Path(file.pathOnly .. "/" .. p):normalized()
 				if fileSystem:exist(ipp) then
-					if c.dependencies[ipp.pathName] ~= true then
-						c.dependencies[ipp.pathName] = true
-
-						local rc = scanHeaderDependencies(cache, includePaths, ipp)
-						mergeTable(c.dependencies, rc.dependencies)
-						mergeTable(c.missing, rc.missing)
+					if c[ipp.pathName] ~= true then
+						c[ipp.pathName] = true
+						local rc = scanHeaderDependencies(includePaths, ipp)
+						mergeTable(c, rc)
 					end
 					found = true
 				end
 			end
-			if not found then
-				c.missing[p] = true
-			end
+			-- if not found then
+			-- 	c.missing[p] = true
+			-- end
 		end
 	end
 
@@ -282,15 +268,15 @@ if include ~= nil then
 	output:printLn("")
 end
 
-local configurations = project:getConfigurations()
-local sourcePath = Path(project:getSourcePath())
+local configurations = project.configurations
+local sourcePath = Path(project.sourcePath)
 
 -- Scan configurations.
 local includePaths = {}
 local libraries = {}
 local externalLibraries = {}
 local libraryPaths = {}
-for i = 0, configurations:size() - 1 do
+for i, configuration in pairs(configurations) do
 	includePaths[i] = {}
 	libraries[i] = {}
 	externalLibraries[i] = {}
@@ -298,7 +284,7 @@ for i = 0, configurations:size() - 1 do
 	collectDependencies(
 		solution,
 		project,
-		configurations:get(i),
+		configuration,
 		includePaths[i],
 		libraries[i],
 		externalLibraries[i],
@@ -310,7 +296,6 @@ end
 local sourceFiles = {}
 local resourceFiles = {}
 local definitionFile = nil
-
 collectFiles(
 	project,
 	project,
@@ -335,12 +320,9 @@ end
 ------------------------------------------------
 
 -- Include paths.
-for i = 0, configurations:size() - 1 do
-	local configuration = configurations:get(i)
-	output:print(configuration:getName():upper() .. "_INCLUDE=")
-
+for i, configuration in pairs(configurations) do
+	output:print(configuration.name:upper() .. "_INCLUDE=")
 	INCLUDE(solution, project, configuration, includePaths[i], libraryPaths[i], output)
-
 	output:printLn("")
 end
 
@@ -348,13 +330,9 @@ end
 output:printLn("")
 
 -- Definitions.
-for i = 0, configurations:size() - 1 do
-	local configuration = configurations:get(i)
-	output:print(configuration:getName():upper() .. "_DEFINES=")
-
-	local definitions = configuration:getDefinitions()
-	for j = 0, definitions:size() - 1 do
-		local definition = definitions:get(j)
+for i, configuration in pairs(configurations) do
+	output:print(configuration.name:upper() .. "_DEFINES=")
+	for _, definition in pairs(configuration.definitions) do
 		local def0 = string.sub(definition, 1, 1)
 		if not (def0 == "'" or def0 == "`") then
 			DEFINE(solution, project, configuration, definition, output)
@@ -362,7 +340,6 @@ for i = 0, configurations:size() - 1 do
 			output:print(definition)
 		end
 	end
-
 	output:printLn("")
 end
 
@@ -372,9 +349,8 @@ output:printLn("")
 -- "all" target.
 output:printLn(".PHONY: all")
 output:print("all :")
-for i = 0, configurations:size() - 1 do
-	local configuration = configurations:get(i)
-	output:print(" " .. configuration:getName())
+for i, configuration in pairs(configurations) do
+	output:print(" " .. configuration.name)
 end
 output:printLn("")
 output:printLn("\t@echo all")
@@ -385,21 +361,20 @@ output:printLn("")
 -- "clean" target.
 output:printLn(".PHONY: clean")
 output:printLn("clean :")
-for i = 0, configurations:size() - 1 do
-	local configuration = configurations:get(i)
+for i, configuration in pairs(configurations) do
 	if #architectures > 0 then
 		for _, a in ipairs(architectures) do
 			if os == "linux" or os == "osx" then
-				output:printLn("\trm -Rf " .. configuration:getName() .. "_" .. a)
+				output:printLn("\trm -Rf " .. configuration.name .. "_" .. a)
 			elseif os == "windows" then
-				output:printLn("\tdel /F /Q " .. configuration:getName() .. "_" .. a)
+				output:printLn("\tdel /F /Q " .. configuration.name .. "_" .. a)
 			end			
 		end
 	else
 		if os == "linux" or os == "osx" then
-			output:printLn("\trm -Rf " .. configuration:getName())
+			output:printLn("\trm -Rf " .. configuration.name)
 		elseif os == "windows" then
-			output:printLn("\tdel /F /Q " .. configuration:getName())
+			output:printLn("\tdel /F /Q " .. configuration.name)
 		end
 	end
 end
@@ -410,16 +385,11 @@ output:printLn("")
 -- "install" target.
 output:printLn(".PHONY: install")
 output:printLn("install :")
-for i = 0, configurations:size() - 1 do
-	local configuration = configurations:get(i)
-	local aggregationItems = configuration:getAggregationItems()
-	for i = 0, aggregationItems:size() - 1 do
-		local aggregationItem = aggregationItems:get(i)
-
-		local aggregateOutputPath = Path(solution:getAggregateOutputPath())
-		local sourceFile = Path("../" .. configuration:getName()):concat(Path(aggregationItem:getSourceFile()))
-		local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
-
+for i, configuration in pairs(configurations) do
+	for _, aggregationItem in pairs(configuration.aggregationItems) do
+		local aggregateOutputPath = Path(solution.aggregateOutputPath)
+		local sourceFile = Path("../" .. configuration.name):concat(Path(aggregationItem.sourceFile))
+		local targetPath = aggregateOutputPath:concat(Path(aggregationItem.targetPath))
 		if os == "windows" then
 			output:printLn("\t@xcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
 		elseif os == "osx" or os == "linux" then
@@ -437,55 +407,50 @@ if #architectures > 0 then
 	output:printLn("")
 
 	-- Architecture targets.
-	for i = 0, configurations:size() - 1 do
-		local configuration = configurations:get(i)
-		local profile = configuration:getTargetProfile()
-		local format = configuration:getTargetFormat()
+	for i, configuration in pairs(configurations) do
+		local profile = configuration.targetProfile
+		local format = configuration.targetFormat
 
-		local configuration = configurations:get(i)
-		output:printLn(".PHONY: " .. configuration:getName())
-		output:print(configuration:getName() .. " :")
+		output:printLn(".PHONY: " .. configuration.name)
+		output:print(configuration.name .. " :")
 		for _, a in ipairs(architectures) do
 			output:printLn(" \\")
-			output:print("\t" .. configuration:getName() .. "_" .. a)
+			output:print("\t" .. configuration.name .. "_" .. a)
 		end
 		output:printLn("")
 
 		if dialect == "nmake" then
-			output:printLn("\t-mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
+			output:printLn("\t-mkdir \"../" .. configuration.name .. "\" 1>nul 2>&1")
 		elseif dialect == "make" then
 			if os == "windows" then
-				output:printLn("\t-mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
+				output:printLn("\t-mkdir \"../" .. configuration.name .. "\" 1>nul 2>&1")
 			else
-				output:printLn("\t@mkdir -p ../" .. configuration:getName())
+				output:printLn("\t@mkdir -p ../" .. configuration.name)
 			end
 		end
 
 		if format == "StaticLibrary" then
 			local productName = PRODUCTNAME(solution, project, configuration)
 
-			printWithColor(35, "Merging architectures into " .. configuration:getName() .. "/" .. productName)
+			printWithColor(35, "Merging architectures into " .. configuration.name .. "/" .. productName)
 
 			local ws = ""
 			if toolchain == "gcc" or toolchain == "clang" then
 				ws = " "
 			end
 
-			output:print("\t@$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. "../" .. configuration:getName() .. "/" .. productName)
+			output:print("\t@$(AR) $(AR_FLAGS_" .. profile:upper() .. "_STATIC) $(AR_FLAG_OUTPUT)" .. ws .. "../" .. configuration.name .. "/" .. productName)
 			for _, a in ipairs(architectures) do
-				output:print(" ../" ..configuration:getName() .. "_" .. a .. "/" .. productName)
+				output:print(" ../" ..configuration.name .. "_" .. a .. "/" .. productName)
 			end
 
 			output:printLn("")
 		end
 
-		local aggregationItems = configuration:getAggregationItems()
-		for i = 0, aggregationItems:size() - 1 do
-			local aggregationItem = aggregationItems:get(i)
-
-			local aggregateOutputPath = Path(solution:getAggregateOutputPath())
-			local sourceFile = Path("../" .. configuration:getName()):concat(Path(aggregationItem:getSourceFile()))
-			local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
+		for _, aggregationItems in pairs(configuration.aggregationItems) do
+			local aggregateOutputPath = Path(solution.aggregateOutputPath)
+			local sourceFile = Path("../" .. configuration.name):concat(Path(aggregationItem.sourceFile))
+			local targetPath = aggregateOutputPath:concat(Path(aggregationItem.targetPath))
 
 			if os == "windows" then
 				output:printLn("\t@xcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
@@ -502,33 +467,32 @@ if #architectures > 0 then
 	------------------------------------------------
 
 	-- Link targets.
-	for i = 0, configurations:size() - 1 do
-		local configuration = configurations:get(i)
+	for i, configuration in pairs(configurations) do
 		local profile = configuration:getTargetProfile()
 		local format = configuration:getTargetFormat()
 
 		for _, a in ipairs(architectures) do
-			output:print(configuration:getName() .. "_" .. a .. "_OBJS=")
+			output:print(configuration.name .. "_" .. a .. "_OBJS=")
 			for _, file in ipairs(sourceFiles) do
 				local f = fileSystem:getRelativePath(file, sourcePath)
 				assert (f ~= nil)
 				output:printLn(" \\")
-				output:print("\t" .. configuration:getName() .. "_" .. a .. "/" .. OBJNAME(f))
+				output:print("\t" .. configuration.name .. "_" .. a .. "/" .. OBJNAME(f))
 			end
 			output:printLn("")
 
-			output:printLn(configuration:getName() .. "_" .. a .. " : \\")
-			output:printLn("\t$(" .. configuration:getName() .. "_" .. a .. "_OBJS)")
+			output:printLn(configuration.name .. "_" .. a .. " : \\")
+			output:printLn("\t$(" .. configuration.name .. "_" .. a .. "_OBJS)")
 
-			printWithColor(35, "Assembling " .. project:getName() .. " (" .. a .. ")...")
+			printWithColor(35, "Assembling " .. project.name .. " (" .. a .. ")...")
 
 			if dialect == "nmake" then
-				output:printLn("\t-@mkdir \"../" .. configuration:getName() .. "_" .. a .. "\" 1>nul 2>&1")
+				output:printLn("\t-@mkdir \"../" .. configuration.name .. "_" .. a .. "\" 1>nul 2>&1")
 			elseif dialect == "make" then
 				if os == "windows" then
-					output:printLn("\t-mkdir \"../" .. configuration:getName() .. "_" .. a .. "\" 1>nul 2>&1")
+					output:printLn("\t-mkdir \"../" .. configuration.name .. "_" .. a .. "\" 1>nul 2>&1")
 				else
-					output:printLn("\t@mkdir -p ../" .. configuration:getName() .. "_" .. a)
+					output:printLn("\t@mkdir -p ../" .. configuration.name .. "_" .. a)
 				end
 			end
 
@@ -556,39 +520,38 @@ else -- No architectures
 	output:printLn("")
 
 	-- Link targets.
-	for i = 0, configurations:size() - 1 do
-		local configuration = configurations:get(i)
+	for i, configuration in pairs(configurations) do
 		local profile = configuration:getTargetProfile()
 		local format = configuration:getTargetFormat()
 
-		output:print(configuration:getName() .. "_OBJS=")
+		output:print(configuration.name .. "_OBJS=")
 		for _, file in ipairs(sourceFiles) do
 			local f = fileSystem:getRelativePath(file, sourcePath)
 			assert (f ~= nil)
 			output:printLn(" \\")
-			output:print("\t" .. configuration:getName() .. "/" .. OBJNAME(f))
+			output:print("\t" .. configuration.name .. "/" .. OBJNAME(f))
 		end
 		output:printLn("")
 		output:printLn("")
 
-		output:printLn(".PHONY: " .. configuration:getName())
-		output:printLn(configuration:getName() .. " : \\")
-		output:printLn("\t../" .. configuration:getName() .. "/" .. PRODUCTNAME(solution, project, configuration))
+		output:printLn(".PHONY: " .. configuration.name)
+		output:printLn(configuration.name .. " : \\")
+		output:printLn("\t../" .. configuration.name .. "/" .. PRODUCTNAME(solution, project, configuration))
 
 		output:printLn("")
 
-		output:printLn("../" .. configuration:getName() .. "/" .. PRODUCTNAME(solution, project, configuration) .. " : \\")
-		output:printLn("\t$(" .. configuration:getName() .. "_OBJS)")
+		output:printLn("../" .. configuration.name .. "/" .. PRODUCTNAME(solution, project, configuration) .. " : \\")
+		output:printLn("\t$(" .. configuration.name .. "_OBJS)")
 
-		printWithColor(35, "Assembling " .. project:getName() .. "...")
+		printWithColor(35, "Assembling " .. project.name .. "...")
 
 		if dialect == "nmake" then
-			output:printLn("\t-@mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
+			output:printLn("\t-@mkdir \"../" .. configuration.name .. "\" 1>nul 2>&1")
 		elseif dialect == "make" then
 			if os == "windows" then
-				output:printLn("\t-mkdir \"../" .. configuration:getName() .. "\" 1>nul 2>&1")
+				output:printLn("\t-mkdir \"../" .. configuration.name .. "\" 1>nul 2>&1")
 			else
-				output:printLn("\t@mkdir -p ../" .. configuration:getName())
+				output:printLn("\t@mkdir -p ../" .. configuration.name)
 			end
 		end
 
@@ -606,13 +569,10 @@ else -- No architectures
 			output
 		)
 
-		local aggregationItems = configuration:getAggregationItems()
-		for i = 0, aggregationItems:size() - 1 do
-			local aggregationItem = aggregationItems:get(i)
-
-			local aggregateOutputPath = Path(solution:getAggregateOutputPath())
-			local sourceFile = Path("../" .. configuration:getName()):concat(Path(aggregationItem:getSourceFile()))
-			local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
+		for _, aggregationItem in pairs(configuration.aggregationItems) do
+			local aggregateOutputPath = Path(solution.aggregateOutputPath)
+			local sourceFile = Path("../" .. configuration.name):concat(Path(aggregationItem.sourceFile))
+			local targetPath = aggregateOutputPath:concat(Path(aggregationItem.targetPath))
 
 			if os == "windows" then
 				output:printLn("\t@xcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
@@ -632,15 +592,14 @@ end
 
 -- Resource targets.
 
-for i = 0, configurations:size() - 1 do
-	local configuration = configurations:get(i)
+for i, configuration in pairs(configurations) do
 	for _, file in ipairs(resourceFiles) do
 		local f1 = fileSystem:getRelativePath(file, projectPath)
 		assert (f1 ~= nil)
 
 		local inputFileNoExt = f1.pathNameNoExtension
 		local inputFile = f1.pathName
-		local outputFileNoExt = configuration:getName() .. "/Resources/" .. file.fileNameNoExtension
+		local outputFileNoExt = configuration.name .. "/Resources/" .. file.fileNameNoExtension
 		local outputFileH = outputFileNoExt .. ".h"
 
 		output:printLn(outputFileH .. " : \\")
@@ -649,12 +608,12 @@ for i = 0, configurations:size() - 1 do
 		-- \hack Compile PS3/CG embedded shaders.
 		local ext = f1.extension
 		if ext == "cgv" then
-			local intermediateFile = configuration:getName() .. "/" .. file.fileNameNoExtension .. ".vpo"
+			local intermediateFile = configuration.name .. "/" .. file.fileNameNoExtension .. ".vpo"
 			printWithColor(35, "Compiling vertex shader " .. file.fileNameNoExtension .. "...")
 			output:printLn("\t@$(CGC) -profile sce_vp_rsx -o \"" .. intermediateFile .. "\" \"" .. inputFile .. "\"")
 			inputFile = intermediateFile
 		elseif ext == "cgf" then
-			local intermediateFile = configuration:getName() .. "/" .. file.fileNameNoExtension .. ".fpo"
+			local intermediateFile = configuration.name .. "/" .. file.fileNameNoExtension .. ".fpo"
 			printWithColor(35, "Compiling fragment shader " .. file.fileNameNoExtension .. "...")
 			output:printLn("\t@$(CGC) -profile sce_fp_rsx -o \"" .. intermediateFile .. "\" \"" .. inputFile .. "\"")
 			inputFile = intermediateFile
@@ -679,10 +638,9 @@ end
 ------------------------------------------------
 
 -- Unit targets.
-for i = 0, configurations:size() - 1 do
-	local configuration = configurations:get(i)
+for i, configuration in pairs(configurations) do
 	for _, file in ipairs(sourceFiles) do
-		local c = scanHeaderDependencies(_G.__cache, includePaths[i], file)
+		local headers = scanHeaderDependencies(includePaths[i], file)
 
 		local f = fileSystem:getRelativePath(file, sourcePath)
 		assert (f ~= nil)
@@ -693,9 +651,9 @@ for i = 0, configurations:size() - 1 do
 		if #architectures > 0 then
 			for _, a in ipairs(architectures) do
 
-				output:printLn(configuration:getName() .. "_" .. a .. "/" .. OBJNAME(f) .. " : \\")
+				output:printLn(configuration.name .. "_" .. a .. "/" .. OBJNAME(f) .. " : \\")
 				output:print("\t" .. f1.pathName)
-				for dep, _ in pairs(c.dependencies) do
+				for dep, _ in pairs(headers) do
 					local f2 = fileSystem:getRelativePath(Path(dep), projectPath)
 					assert (f2 ~= nil)
 					output:printLn(" \\")
@@ -706,7 +664,7 @@ for i = 0, configurations:size() - 1 do
 				-- resources are built first and always.
 				for _, file in ipairs(resourceFiles) do
 					output:printLn(" \\")
-					output:print("\t" .. configuration:getName() .. "/Resources/" .. file.fileNameNoExtension .. ".h")
+					output:print("\t" .. configuration.name .. "/Resources/" .. file.fileNameNoExtension .. ".h")
 				end		
 
 				output:printLn("")
@@ -736,9 +694,10 @@ for i = 0, configurations:size() - 1 do
 				output:printLn("")
 			end
 		else
-			output:printLn(configuration:getName() .. "/" .. OBJNAME(f) .. " : \\")
+			output:printLn(configuration.name .. "/" .. OBJNAME(f) .. " : \\")
 			output:print("\t" .. f1.pathName)
-			for dep, _ in pairs(c.dependencies) do
+
+			for dep, _ in pairs(headers) do
 				local f2 = fileSystem:getRelativePath(Path(dep), projectPath)
 				assert (f2 ~= nil)
 				output:printLn(" \\")
@@ -749,7 +708,7 @@ for i = 0, configurations:size() - 1 do
 			-- resources are built first and always.
 			for _, file in ipairs(resourceFiles) do
 				output:printLn(" \\")
-				output:print("\t" .. configuration:getName() .. "/Resources/" .. file.fileNameNoExtension .. ".h")
+				output:print("\t" .. configuration.name .. "/Resources/" .. file.fileNameNoExtension .. ".h")
 			end		
 
 			output:printLn("")
