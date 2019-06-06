@@ -15,6 +15,7 @@ namespace traktor
 	namespace script
 	{
 
+class IScriptContext;
 class IScriptManager;
 
 	}
@@ -34,12 +35,14 @@ public:
 
 	void destroy();
 
-	bool generateFromFile(const Solution* solution, const Project* project, const std::wstring& projectPath, const std::wstring& fileName, std::wstring& output) const;
+	bool prepare(const std::wstring& fileName);
 
-	bool generateFromSource(const Solution* solution, const Project* project, const std::wstring& projectPath, const std::wstring& sourceName, const std::wstring& source, std::wstring& output) const;
+	bool generate(const Solution* solution, const Project* project, const std::wstring& projectPath, std::wstring& output) const;
 
 private:
 	Ref< script::IScriptManager > m_scriptManager;
+	Ref< script::IScriptContext > m_scriptContext;
+	std::vector< std::wstring > m_sections;
 };
 
 	}

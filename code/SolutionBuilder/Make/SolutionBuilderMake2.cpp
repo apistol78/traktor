@@ -51,6 +51,9 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 	log::info << L"Generating project makefiles..." << Endl;
 	log::info << IncreaseIndent;
 
+	if (!m_scriptProcessor->prepare(m_projectTemplate))
+		return false;
+
 	const RefArray< Project >& projects = solution->getProjects();
 	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
@@ -71,7 +74,7 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 		// Generate project makefile.
 		{
 			std::wstring projectOut;
-			if (!m_scriptProcessor->generateFromFile(solution, project, projectPath, m_projectTemplate, projectOut))
+			if (!m_scriptProcessor->generate(solution, project, projectPath, projectOut))
 				return false;
 
 			Ref< IStream > file = FileSystem::getInstance().open(
@@ -96,10 +99,13 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 	log::info << L"Generating solution makefile..." << Endl;
 	log::info << IncreaseIndent;
 
+	if (!m_scriptProcessor->prepare(m_solutionTemplate))
+		return false;
+
 	// Generate solution makefile.
 	{
 		std::wstring cprojectOut;
-		if (!m_scriptProcessor->generateFromFile(solution, 0, solution->getRootPath(), m_solutionTemplate, cprojectOut))
+		if (!m_scriptProcessor->generate(solution, nullptr, solution->getRootPath(), cprojectOut))
 			return false;
 
 		std::wstring solutionPath = solution->getRootPath() + L"/" + solution->getName() + L".mak";

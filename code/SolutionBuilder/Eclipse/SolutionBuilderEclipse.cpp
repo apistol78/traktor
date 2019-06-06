@@ -72,8 +72,11 @@ bool SolutionBuilderEclipse::generate(Solution* solution)
 
 		// Generate .project
 		{
+			if (!m_scriptProcessor->prepare(m_projectFile))
+				return false;
+
 			std::wstring projectOut;
-			if (!m_scriptProcessor->generateFromFile(solution, project, projectPath, m_projectFile, projectOut))
+			if (!m_scriptProcessor->generate(solution, project, projectPath, projectOut))
 			{
 				log::error << L"Unable to generate project \"" << projectFileName << L"\" using \"" << m_projectFile << L"\"" << Endl;
 				return false;
@@ -96,8 +99,11 @@ bool SolutionBuilderEclipse::generate(Solution* solution)
 
 		// Generate .cproject
 		{
+			if (!m_scriptProcessor->prepare(m_cprojectFile))
+				return false;
+
 			std::wstring cprojectOut;
-			if (!m_scriptProcessor->generateFromFile(solution, project, projectPath, m_cprojectFile, cprojectOut))
+			if (!m_scriptProcessor->generate(solution, project, projectPath, cprojectOut))
 			{
 				log::error << L"Unable to generate cproject \"" << cprojectFileName << L"\" using template \"" << m_cprojectFile << L"\"" << Endl;
 				return false;
