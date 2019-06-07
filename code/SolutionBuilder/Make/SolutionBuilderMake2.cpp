@@ -54,11 +54,8 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 	if (!m_scriptProcessor->prepare(m_projectTemplate))
 		return false;
 
-	const RefArray< Project >& projects = solution->getProjects();
-	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (auto project : solution->getProjects())
 	{
-		const Project* project = *i;
-
 		// Skip disabled projects.
 		if (!project->getEnable())
 			continue;
@@ -90,7 +87,7 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 		}
 
 		double timeEnd = timer.getElapsedTime();
-		log::info << L" (" << int32_t((timeEnd - timeStart) + 0.5) << L" s)" << Endl;
+		log::info << L" (" << int32_t((timeEnd - timeStart) * 1000.0 + 0.5) << L" ms)" << Endl;
 	}
 
 	log::info << DecreaseIndent;
@@ -125,7 +122,7 @@ bool SolutionBuilderMake2::generate(Solution* solution)
 		file->close();
 
 		double timeEnd = timer.getElapsedTime();
-		log::info << L" (" << int32_t((timeEnd - timeStart) + 0.5) << L" s)" << Endl;
+		log::info << L" (" << int32_t((timeEnd - timeStart) * 1000.0 + 0.5) << L" ms)" << Endl;
 	}
 
 	log::info << DecreaseIndent;

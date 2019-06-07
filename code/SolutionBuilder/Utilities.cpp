@@ -15,26 +15,21 @@ bool writeFileIfMismatch(const std::wstring& fileName, const AlignedVector< uint
 	bool needToWrite = false;
 
 	Ref< File > existingFile = FileSystem::getInstance().get(fileName);
-	if (existingFile)
+	if (existingFile != nullptr && existingFile->getSize() == data.size())
 	{
-		if (existingFile->getSize() == data.size())
+		if (!data.empty())
 		{
-			if (!data.empty())
+			Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
+			if (file)
 			{
-				Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
-				if (file)
-				{
-					MemoryStream dataStream(&data[0], data.size());
-					if (!StreamCompare(file, &dataStream).execute())
-						needToWrite = true;
-					file->close();
-				}
-				else
+				MemoryStream dataStream(&data[0], data.size());
+				if (!StreamCompare(file, &dataStream).execute())
 					needToWrite = true;
+				file->close();
 			}
+			else
+				needToWrite = true;
 		}
-		else
-			needToWrite = true;
 	}
 	else
 		needToWrite = true;
@@ -46,7 +41,7 @@ bool writeFileIfMismatch(const std::wstring& fileName, const AlignedVector< uint
 			return false;
 
 		if (!data.empty())
-			file->write(&data[0], int(data.size()));
+			file->write(&data[0], int64_t(data.size()));
 
 		file->close();
 	}

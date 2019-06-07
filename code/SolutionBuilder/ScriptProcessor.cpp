@@ -354,7 +354,6 @@ bool ScriptProcessor::generate(const Solution* solution, const Project* project,
 	m_scriptContext->setGlobal("projectPath", Any::fromObject(new Path(projectPath)));
 	m_scriptContext->setGlobal("fileSystem", Any::fromObject(&FileSystem::getInstance()));
 	m_scriptContext->executeFunction("__main__");
-	m_scriptManager->collectGarbage(true);
 
 	output = o->getProduct();
 	return true;

@@ -68,12 +68,12 @@ const RefArray< Configuration >& Project::getConfigurations() const
 
 Configuration* Project::getConfiguration(const std::wstring& name) const
 {
-	for (RefArray< Configuration >::const_iterator i = m_configurations.begin(); i != m_configurations.end(); ++i)
+	for (auto configuration : m_configurations)
 	{
-		if ((*i)->getName() == name)
-			return *i;
+		if (configuration->getName() == name)
+			return configuration;
 	}
-	return 0;
+	return nullptr;
 }
 
 void Project::addItem(ProjectItem* item)
