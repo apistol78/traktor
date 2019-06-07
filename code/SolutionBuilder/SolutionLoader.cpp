@@ -28,7 +28,7 @@ Solution* SolutionLoader::load(const std::wstring& fileName)
 	// Open solution file and deserialize solution object.
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!file)
-		return 0;
+		return nullptr;
 
 	Ref< Solution > solution = xml::XmlDeserializer(file).readObject< Solution >();
 
@@ -37,25 +37,20 @@ Solution* SolutionLoader::load(const std::wstring& fileName)
 	// Resolve dependencies.
 	if (solution)
 	{
-		const RefArray< Project >& projects = solution->getProjects();
-		for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+		for (auto project : solution->getProjects())
 		{
-			const RefArray< Dependency >& dependencies = (*i)->getDependencies();
-			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+			for (auto dependency : project->getDependencies())
 			{
-				if (!(*j)->resolve(Path(fileName), this))
-					return 0;
+				if (!dependency->resolve(Path(fileName), this))
+					return nullptr;
 			}
 		}
-
-		const RefArray< Aggregation >& aggregations = solution->getAggregations();
-		for (RefArray< Aggregation >::const_iterator i = aggregations.begin(); i != aggregations.end(); ++i)
+		for (auto aggregation : solution->getAggregations())
 		{
-			const RefArray< Dependency >& dependencies = (*i)->getDependencies();
-			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+			for (auto dependency : aggregation->getDependencies())
 			{
-				if (!(*j)->resolve(Path(fileName), this))
-					return 0;
+				if (!dependency->resolve(Path(fileName), this))
+					return nullptr;
 			}
 		}
 	}

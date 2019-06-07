@@ -3,7 +3,7 @@
 <?--
 
 -- Dependency scanner cache global.
--- if _G.__cache__ == nil then _G.__cache__ = {} end
+if _G.__cache__ == nil then _G.__cache__ = {} end
 local HEADER_CACHE = _G.__cache__ or {}
 
 import(traktor)
@@ -37,6 +37,16 @@ local include = OS.getInstance():getEnvironment("MAKE_INCLUDE")
 local architectures = split(OS.getInstance():getEnvironment("MAKE_ARCHITECTURES"), ",") -- "armv7,armv7s,arm64,i386,x86_64"
 
 dofile(format)
+
+local Color =
+{
+	Red = 31,
+	Green = 32,
+	Yellow = 33,
+	Blue = 34,
+	Magenta = 35,
+	Cyan = 36
+}
 
 local function printWithColor(c, s)
 	if os == "windows" then
@@ -196,12 +206,6 @@ local function collectFiles(project, projectOrFilter, pred)
 	end
 end
 
-local function mergeTable(t, s)
-	for k, v in pairs(s) do
-		t[k] = v
-	end
-end
-
 local function scanHeaderDependencies(includePaths, file)
 	local fpn = file.pathName
 
@@ -227,10 +231,8 @@ local function scanHeaderDependencies(includePaths, file)
 			for _, ip in ipairs(includePaths) do
 				local ipp = Path(ip .. "/" .. p):normalized()
 				if fileSystem:exist(ipp) then
-					if c[ipp.pathName] ~= true then
-						c[ipp.pathName] = true
-						local rc = scanHeaderDependencies(includePaths, ipp)
-						mergeTable(c, rc)
+					if c[ipp.pathName] == nil then
+						c[ipp.pathName] = scanHeaderDependencies(includePaths, ipp)
 					end
 					found = true
 					break
@@ -239,17 +241,11 @@ local function scanHeaderDependencies(includePaths, file)
 			if not found then
 				local ipp = Path(file.pathOnly .. "/" .. p):normalized()
 				if fileSystem:exist(ipp) then
-					if c[ipp.pathName] ~= true then
-						c[ipp.pathName] = true
-						local rc = scanHeaderDependencies(includePaths, ipp)
-						mergeTable(c, rc)
+					if c[ipp.pathName] == nil then
+						c[ipp.pathName] = scanHeaderDependencies(includePaths, ipp)
 					end
-					found = true
 				end
 			end
-			-- if not found then
-			-- 	c.missing[p] = true
-			-- end
 		end
 	end
 
@@ -393,7 +389,7 @@ for i, configuration in pairs(configurations) do
 		if os == "windows" then
 			output:printLn("\t@xcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
 		elseif os == "osx" or os == "linux" then
-			printWithColor(35, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
+			printWithColor(Color.Blue, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
 			output:printLn("\t@mkdir -p \"" .. targetPath.pathNameNoVolume .. "/\"")
 			output:printLn("\t@-cp -Rf " .. sourceFile.pathNameNoVolume .. " \"" .. targetPath.pathNameNoVolume .. "/\"")
 		end
@@ -432,7 +428,7 @@ if #architectures > 0 then
 		if format == "StaticLibrary" then
 			local productName = PRODUCTNAME(solution, project, configuration)
 
-			printWithColor(35, "Merging architectures into " .. configuration.name .. "/" .. productName)
+			printWithColor(Color.Cyan, "Merging architectures into " .. configuration.name .. "/" .. productName)
 
 			local ws = ""
 			if toolchain == "gcc" or toolchain == "clang" then
@@ -455,7 +451,7 @@ if #architectures > 0 then
 			if os == "windows" then
 				output:printLn("\t@xcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
 			elseif os == "osx" or os == "linux" then
-				printWithColor(35, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
+				printWithColor(Color.Yellow, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
 				output:printLn("\t@mkdir -p \"" .. targetPath.pathNameNoVolume .. "/\"")
 				output:printLn("\t@-cp -Rf " .. sourceFile.pathNameNoVolume .. " \"" .. targetPath.pathNameNoVolume .. "/\"")
 			end
@@ -468,8 +464,8 @@ if #architectures > 0 then
 
 	-- Link targets.
 	for i, configuration in pairs(configurations) do
-		local profile = configuration:getTargetProfile()
-		local format = configuration:getTargetFormat()
+		local profile = configuration.targetProfile
+		local format = configuration.targetFormat
 
 		for _, a in ipairs(architectures) do
 			output:print(configuration.name .. "_" .. a .. "_OBJS=")
@@ -484,7 +480,11 @@ if #architectures > 0 then
 			output:printLn(configuration.name .. "_" .. a .. " : \\")
 			output:printLn("\t$(" .. configuration.name .. "_" .. a .. "_OBJS)")
 
-			printWithColor(35, "Assembling " .. project.name .. " (" .. a .. ")...")
+			if format == "StaticLibrary" then
+				printWithColor(Color.Yellow, "Archiving " .. project.name .. " (" .. a .. ")...")
+			else
+				printWithColor(Color.Yellow, "Linking " .. project.name .. " (" .. a .. ")...")
+			end
 
 			if dialect == "nmake" then
 				output:printLn("\t-@mkdir \"../" .. configuration.name .. "_" .. a .. "\" 1>nul 2>&1")
@@ -521,8 +521,8 @@ else -- No architectures
 
 	-- Link targets.
 	for i, configuration in pairs(configurations) do
-		local profile = configuration:getTargetProfile()
-		local format = configuration:getTargetFormat()
+		local profile = configuration.targetProfile
+		local format = configuration.targetFormat
 
 		output:print(configuration.name .. "_OBJS=")
 		for _, file in ipairs(sourceFiles) do
@@ -543,7 +543,11 @@ else -- No architectures
 		output:printLn("../" .. configuration.name .. "/" .. PRODUCTNAME(solution, project, configuration) .. " : \\")
 		output:printLn("\t$(" .. configuration.name .. "_OBJS)")
 
-		printWithColor(35, "Assembling " .. project.name .. "...")
+		if format == "StaticLibrary" then
+			printWithColor(Color.Yellow, "Archiving " .. project.name .. "...")
+		else
+			printWithColor(Color.Yellow, "Linking " .. project.name .. "...")
+		end
 
 		if dialect == "nmake" then
 			output:printLn("\t-@mkdir \"../" .. configuration.name .. "\" 1>nul 2>&1")
@@ -577,7 +581,7 @@ else -- No architectures
 			if os == "windows" then
 				output:printLn("\t@xcopy /D /F /R /Y /I \"" .. sourceFile.pathName .. "\" \"" .. targetPath.pathName .. "\\\"")
 			elseif os == "osx" or os == "linux" then
-				printWithColor(35, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
+				printWithColor(Color.Yellow, "Copy " .. sourceFile.pathNameNoVolume .. " to " .. targetPath.pathNameNoVolume)
 				output:printLn("\t@mkdir -p \"" .. targetPath.pathNameNoVolume .. "/\"")
 				output:printLn("\t@-cp -Rf " .. sourceFile.pathNameNoVolume .. " \"" .. targetPath.pathNameNoVolume .. "/\"")
 			end
@@ -585,7 +589,6 @@ else -- No architectures
 
 		output:printLn("")
 	end
-
 end
 
 ------------------------------------------------
@@ -609,17 +612,17 @@ for i, configuration in pairs(configurations) do
 		local ext = f1.extension
 		if ext == "cgv" then
 			local intermediateFile = configuration.name .. "/" .. file.fileNameNoExtension .. ".vpo"
-			printWithColor(35, "Compiling vertex shader " .. file.fileNameNoExtension .. "...")
+			printWithColor(Color.Magenta, "Compiling vertex shader " .. file.fileNameNoExtension .. "...")
 			output:printLn("\t@$(CGC) -profile sce_vp_rsx -o \"" .. intermediateFile .. "\" \"" .. inputFile .. "\"")
 			inputFile = intermediateFile
 		elseif ext == "cgf" then
 			local intermediateFile = configuration.name .. "/" .. file.fileNameNoExtension .. ".fpo"
-			printWithColor(35, "Compiling fragment shader " .. file.fileNameNoExtension .. "...")
+			printWithColor(Color.Magenta, "Compiling fragment shader " .. file.fileNameNoExtension .. "...")
 			output:printLn("\t@$(CGC) -profile sce_fp_rsx -o \"" .. intermediateFile .. "\" \"" .. inputFile .. "\"")
 			inputFile = intermediateFile
 		end
 
-		printWithColor(35, "Converting " .. file.fileName .. "...")
+		printWithColor(Color.Magenta, "Converting " .. file.fileName .. "...")
 		if dialect == "nmake" then
 			output:printLn("\t-@mkdir \"$(@D)\" 1>nul 2>&1")
 		elseif dialect == "make" then
@@ -637,9 +640,19 @@ end
 
 ------------------------------------------------
 
+local function writeHeaders(headers)
+	for dep, _ in pairs(headers) do
+		local f2 = fileSystem:getRelativePath(Path(dep), projectPath)
+		assert (f2 ~= nil)
+		output:printLn(" \\")
+		output:print("\t")
+		output:print(f2.pathName)
+	end
+end
+
 -- Unit targets.
 for i, configuration in pairs(configurations) do
-	for _, file in ipairs(sourceFiles) do
+	for index, file in ipairs(sourceFiles) do
 		local headers = scanHeaderDependencies(includePaths[i], file)
 
 		local f = fileSystem:getRelativePath(file, sourcePath)
@@ -650,15 +663,9 @@ for i, configuration in pairs(configurations) do
 
 		if #architectures > 0 then
 			for _, a in ipairs(architectures) do
-
 				output:printLn(configuration.name .. "_" .. a .. "/" .. OBJNAME(f) .. " : \\")
 				output:print("\t" .. f1.pathName)
-				for dep, _ in pairs(headers) do
-					local f2 = fileSystem:getRelativePath(Path(dep), projectPath)
-					assert (f2 ~= nil)
-					output:printLn(" \\")
-					output:print("\t" .. f2.pathName)
-				end
+				writeHeaders(headers)
 
 				-- Add resource builds as dependency to all targets to ensure
 				-- resources are built first and always.
@@ -669,7 +676,7 @@ for i, configuration in pairs(configurations) do
 
 				output:printLn("")
 
-				printWithColor(35, "Compiling " .. f.fileName .. " (" .. a .. ")...")
+				printWithColor(Color.Magenta, "[" .. index .. "/" .. #sourceFiles .. "] " .. f.fileName .. " (" .. a .. ")...")
 
 				if dialect == "nmake" then
 					output:printLn("\t-@mkdir \"$(@D)\" 1>nul 2>&1")
@@ -696,13 +703,7 @@ for i, configuration in pairs(configurations) do
 		else
 			output:printLn(configuration.name .. "/" .. OBJNAME(f) .. " : \\")
 			output:print("\t" .. f1.pathName)
-
-			for dep, _ in pairs(headers) do
-				local f2 = fileSystem:getRelativePath(Path(dep), projectPath)
-				assert (f2 ~= nil)
-				output:printLn(" \\")
-				output:print("\t" .. f2.pathName)
-			end
+			writeHeaders(headers)
 
 			-- Add resource builds as dependency to all targets to ensure
 			-- resources are built first and always.
@@ -713,7 +714,7 @@ for i, configuration in pairs(configurations) do
 
 			output:printLn("")
 
-			printWithColor(35, "Compiling " .. f.fileName .. "...")
+			printWithColor(Color.Magenta, "[" .. index .. "/" .. #sourceFiles .. "] " .. f.fileName .. "...")
 
 			if dialect == "nmake" then
 				output:printLn("\t-@mkdir \"$(@D)\" 1>nul 2>&1")
