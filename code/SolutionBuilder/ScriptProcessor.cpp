@@ -13,6 +13,7 @@
 #include "SolutionBuilder/Configuration.h"
 #include "SolutionBuilder/ScriptProcessor.h"
 #include "SolutionBuilder/ExternalDependency.h"
+#include "SolutionBuilder/HeaderScanner.h"
 #include "SolutionBuilder/File.h"
 #include "SolutionBuilder/Filter.h"
 #include "SolutionBuilder/Project.h"
@@ -141,6 +142,15 @@ Ref< Path > FileSystem_getRelativePath(FileSystem* fileSystem, const Path& absol
 		return nullptr;
 }
 
+Any HeaderScanner_get(HeaderScanner* self, const std::wstring& fileName, const std::wstring& projectPath)
+{
+	SmallSet< std::wstring > headerFiles;
+	self->get(fileName, projectPath, headerFiles);
+	return Any::fromObject(new BoxedAlignedVector(
+		AlignedVector< std::wstring >(headerFiles.begin(), headerFiles.end())
+	));
+}
+
 			}
 
 T_IMPLEMENT_RTTI_CLASS(L"ScriptProcessor", ScriptProcessor, Object)
@@ -266,6 +276,13 @@ bool ScriptProcessor::create()
 	classProjectDependency->addProperty("project", &ProjectDependency::getProject);
 	classProjectDependency->addMethod("getProject", &ProjectDependency::getProject);
 	m_scriptManager->registerClass(classProjectDependency);
+
+	auto classHeaderScanner = new AutoRuntimeClass< HeaderScanner >();
+	classHeaderScanner->addConstructor();
+	classHeaderScanner->addMethod("removeAllIncludePaths", &HeaderScanner::removeAllIncludePaths);
+	classHeaderScanner->addMethod("addIncludePath", &HeaderScanner::addIncludePath);
+	classHeaderScanner->addMethod("get", &HeaderScanner_get);
+	m_scriptManager->registerClass(classHeaderScanner);
 
 	return true;
 }

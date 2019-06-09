@@ -6,7 +6,7 @@ namespace traktor
 {
 
 StringOutputStreamBuffer::StringOutputStreamBuffer()
-:	m_buffer(new wchar_t [1024])
+:	m_buffer((wchar_t*)getAllocator()->alloc(newCapacity * sizeof(wchar_t), 16, T_FILE_LINE))
 ,	m_capacity(1024)
 ,	m_tail(0)
 {
@@ -36,13 +36,16 @@ void StringOutputStreamBuffer::reset()
 
 int32_t StringOutputStreamBuffer::overflow(const wchar_t* buffer, int32_t count)
 {
+	if (count <= 0)
+		return 0;
+
 	size_t newTail = m_tail + count;
 	if (newTail + 1 >= m_capacity)
 	{
-		size_t newCapacity = alignUp(newTail, 1024);
+		size_t newCapacity = alignDown(newTail, 1024) + 1024;
 
 		// Allocate a new bigger buffer.
-		AutoArrayPtr< wchar_t > newBuffer(new wchar_t [newCapacity]);
+		AutoArrayPtr< wchar_t > newBuffer((wchar_t*)getAllocator()->alloc(newCapacity * sizeof(wchar_t), 16, T_FILE_LINE));
 		std::memcpy(newBuffer.ptr(), m_buffer.c_ptr(), m_tail * sizeof(wchar_t));
 
 		m_buffer.move(newBuffer);
@@ -68,7 +71,7 @@ StringOutputStream::~StringOutputStream()
 {
 	T_EXCEPTION_GUARD_BEGIN
 
-	setBuffer(0);
+	setBuffer(nullptr);
 
 	T_EXCEPTION_GUARD_END
 }

@@ -68,7 +68,7 @@ namespace traktor
 	{
 	public:
 		AutoPtr()
-		:	m_ptr(0)
+		:	m_ptr(nullptr)
 		{
 		}
 
@@ -80,7 +80,7 @@ namespace traktor
 		explicit AutoPtr(AutoPtr< Type, ReleasePolicy >& lh)
 		{
 			m_ptr = lh.m_ptr;
-			lh.m_ptr = 0;
+			lh.m_ptr = nullptr;
 		}
 
 		virtual ~AutoPtr()
@@ -93,7 +93,7 @@ namespace traktor
 			if (m_ptr)
 			{
 				ReleasePolicy< Type >::release(m_ptr);
-				m_ptr = 0;
+				m_ptr = nullptr;
 			}
 		}
 
@@ -115,8 +115,9 @@ namespace traktor
 
 		void move(AutoPtr< Type, ReleasePolicy >& lh)
 		{
+			release();
 			m_ptr = lh.m_ptr;
-			lh.m_ptr = 0;
+			lh.m_ptr = nullptr;
 		}
 
 		Type* operator -> ()
@@ -148,7 +149,7 @@ namespace traktor
 	{
 	public:
 		AutoArrayPtr()
-		:	m_ptr(0)
+		:	m_ptr(nullptr)
 		{
 		}
 
@@ -160,7 +161,7 @@ namespace traktor
 		explicit AutoArrayPtr(AutoArrayPtr< Type, ReleasePolicy >& lh)
 		{
 			m_ptr = lh.m_ptr;
-			lh.m_ptr = 0;
+			lh.m_ptr = nullptr;
 		}
 
 		virtual ~AutoArrayPtr()
@@ -173,7 +174,7 @@ namespace traktor
 			if (m_ptr)
 			{
 				ReleasePolicy< Type >::release(m_ptr);
-				m_ptr = 0;
+				m_ptr = nullptr;
 			}
 		}
 
@@ -195,8 +196,9 @@ namespace traktor
 
 		void move(AutoArrayPtr< Type, ReleasePolicy >& lh)
 		{
+			release();
 			m_ptr = lh.m_ptr;
-			lh.m_ptr = 0;
+			lh.m_ptr = nullptr;
 		}
 
 		Type& operator [] (size_t index)

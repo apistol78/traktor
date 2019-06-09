@@ -3,8 +3,7 @@
 <?--
 
 -- Dependency scanner cache global.
-if _G.__cache__ == nil then _G.__cache__ = {} end
-local HEADER_CACHE = _G.__cache__ or {}
+local headerScanner = traktor.sb.HeaderScanner()
 
 import(traktor)
 
@@ -204,53 +203,6 @@ local function collectFiles(project, projectOrFilter, pred)
 			end
 		end
 	end
-end
-
-local function scanHeaderDependencies(includePaths, file)
-	local fpn = file.pathName
-
-	local c = HEADER_CACHE[fpn]
-	if c ~= nil then
-		return c
-	end
-
-	local c = {}
-	HEADER_CACHE[fpn] = c
-
-	-- Scan for dependencies in files.
-	local fs = fileSystem:open(file, File.FmRead)
-	if fs == nil then return c end
-
-	local sr = StringReader(fs, AnsiEncoding())
-	while true do
-		local s = sr:readLine()
-		if s == nil then break end
-		local p = s:match("#include.*\"(.*)\"") -- or s:match("#include.*<(.*)>")
-		if p ~= nil then
-			local found = false
-			for _, ip in ipairs(includePaths) do
-				local ipp = Path(ip .. "/" .. p):normalized()
-				if fileSystem:exist(ipp) then
-					if c[ipp.pathName] == nil then
-						c[ipp.pathName] = scanHeaderDependencies(includePaths, ipp)
-					end
-					found = true
-					break
-				end
-			end
-			if not found then
-				local ipp = Path(file.pathOnly .. "/" .. p):normalized()
-				if fileSystem:exist(ipp) then
-					if c[ipp.pathName] == nil then
-						c[ipp.pathName] = scanHeaderDependencies(includePaths, ipp)
-					end
-				end
-			end
-		end
-	end
-
-	fs:close()
-	return c
 end
 
 ------------------------------------------------
@@ -640,20 +592,16 @@ end
 
 ------------------------------------------------
 
-local function writeHeaders(headers)
-	for dep, _ in pairs(headers) do
-		local f2 = fileSystem:getRelativePath(Path(dep), projectPath)
-		assert (f2 ~= nil)
-		output:printLn(" \\")
-		output:print("\t")
-		output:print(f2.pathName)
-	end
-end
-
 -- Unit targets.
 for i, configuration in pairs(configurations) do
+
+	headerScanner:removeAllIncludePaths()
+	for _, ip in ipairs(includePaths[i]) do
+		headerScanner:addIncludePath(ip)
+	end
+
 	for index, file in ipairs(sourceFiles) do
-		local headers = scanHeaderDependencies(includePaths[i], file)
+		local headers = headerScanner:get(file.pathName, projectPath.pathName)
 
 		local f = fileSystem:getRelativePath(file, sourcePath)
 		assert (f ~= nil)
@@ -665,7 +613,11 @@ for i, configuration in pairs(configurations) do
 			for _, a in ipairs(architectures) do
 				output:printLn(configuration.name .. "_" .. a .. "/" .. OBJNAME(f) .. " : \\")
 				output:print("\t" .. f1.pathName)
-				writeHeaders(headers)
+				for _, dep in pairs(headers) do
+					output:printLn(" \\")
+					output:print("\t")
+					output:print(dep)
+				end
 
 				-- Add resource builds as dependency to all targets to ensure
 				-- resources are built first and always.
@@ -703,7 +655,11 @@ for i, configuration in pairs(configurations) do
 		else
 			output:printLn(configuration.name .. "/" .. OBJNAME(f) .. " : \\")
 			output:print("\t" .. f1.pathName)
-			writeHeaders(headers)
+			for _, dep in pairs(headers) do
+				output:printLn(" \\")
+				output:print("\t")
+				output:print(dep)
+			end
 
 			-- Add resource builds as dependency to all targets to ensure
 			-- resources are built first and always.

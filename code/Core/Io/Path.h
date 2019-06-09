@@ -183,6 +183,16 @@ public:
 	 */
 	bool operator < (const Path& rh) const;
 
+	/*! \brief Compare greater-than operator.
+	 *
+	 * Implemented to be able to have
+	 * Path objects in an ordered stl map.
+	 *
+	 * \param rh Compare to path.
+	 * \return True if path is lexically greater than given path.
+	 */
+	bool operator > (const Path& rh) const;
+
 private:
 	std::wstring m_original;
 	std::wstring m_volume;
