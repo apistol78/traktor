@@ -310,6 +310,11 @@ Script::~Script()
 		delete outputPin;
 }
 
+void Script::setName(const std::wstring& name)
+{
+	m_name = name;
+}
+
 const std::wstring& Script::getName() const
 {
 	return m_name;

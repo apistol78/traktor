@@ -201,7 +201,17 @@ Ref< Node > ScriptNodeFacade::createShaderNode(
 	editor::IEditor* editor
 )
 {
-	return new Script();
+	Ref< Script > sc = new Script();
+	sc->setName(L"Unnamed");
+	sc->addInputPin(Guid::create(), L"Input", PtScalar);
+	sc->addOutputPin(Guid::create(), L"Output", PtScalar);
+	sc->setScript(
+		L"ENTRY\n"
+		L"{\n"
+		L"\tOutput = Input;\n"
+		L"}\n"
+	);
+	return sc;
 }
 
 Ref< ui::Node > ScriptNodeFacade::createEditorNode(
