@@ -11,7 +11,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.PerforceChangeListFile", 0, PerforceChangeListFile, ISerializable)
 
 PerforceChangeListFile::PerforceChangeListFile()
-:	m_action(AtNotOpened)
+:	m_action(PerforceAction::AtNotOpened)
 {
 }
 
@@ -49,10 +49,10 @@ void PerforceChangeListFile::serialize(ISerializer& s)
 {
 	const MemberEnum< PerforceAction >::Key c_PerforceAction_Keys[] =
 	{
-		{ L"AtNotOpened", AtNotOpened },
-		{ L"AtAdd", AtAdd },
-		{ L"AtEdit", AtEdit },
-		{ L"AtDelete", AtDelete },
+		{ L"AtNotOpened", PerforceAction::AtNotOpened },
+		{ L"AtAdd", PerforceAction::AtAdd },
+		{ L"AtEdit", PerforceAction::AtEdit },
+		{ L"AtDelete", PerforceAction::AtDelete },
 		{ 0 }
 	};
 

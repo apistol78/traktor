@@ -36,7 +36,7 @@ public:
 			{ L"CmNever", CmNever },
 			{ L"CmClockWise", CmClockWise },
 			{ L"CmCounterClockWise", CmCounterClockWise },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		const MemberEnum< BlendOperation >::Key kBlendOperations[] =
@@ -46,7 +46,7 @@ public:
 			{ L"BoReverseSubtract", BoReverseSubtract },
 			{ L"BoMin", BoMin },
 			{ L"BoMax", BoMax },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		const MemberEnum< BlendFactor >::Key kBlendFactors[] =
@@ -61,7 +61,7 @@ public:
 			{ L"BfOneMinusSourceAlpha", BfOneMinusSourceAlpha },
 			{ L"BfDestinationAlpha", BfDestinationAlpha },
 			{ L"BfOneMinusDestinationAlpha", BfOneMinusDestinationAlpha },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		const MemberEnum< CompareFunction >::Key kCompareFunctions[] =
@@ -74,7 +74,7 @@ public:
 			{ L"CfGreaterEqual", CfGreaterEqual },
 			{ L"CfEqual", CfEqual },
 			{ L"CfNotEqual", CfNotEqual },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		const MemberBitMask::Bit kColorWriteBits[] =
@@ -83,7 +83,7 @@ public:
 			{ L"green", CwGreen },
 			{ L"blue", CwBlue },
 			{ L"alpha", CwAlpha },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		const MemberEnum< StencilOperation >::Key kStencilOperations[] =
@@ -96,7 +96,7 @@ public:
 			{ L"SoInvert", SoInvert },
 			{ L"SoIncrement", SoIncrement },
 			{ L"SoDecrement", SoDecrement },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		s >> MemberEnum< CullMode >(L"cullMode", m_ref.cullMode, kCullMode);
@@ -168,7 +168,7 @@ public:
 		{
 			{ L"FtPoint", FtPoint },
 			{ L"FtLinear", FtLinear },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		const MemberEnum< Address >::Key kAddress[] =
@@ -177,7 +177,7 @@ public:
 			{ L"AdMirror", AdMirror },
 			{ L"AdClamp", AdClamp },
 			{ L"AdBorder", AdBorder },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		const MemberEnum< CompareFunction >::Key kCompareFunctions[] =
@@ -191,7 +191,7 @@ public:
 			{ L"CfEqual", CfEqual },
 			{ L"CfNotEqual", CfNotEqual },
 			{ L"CfNone", CfNone },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		s >> MemberEnum< Filter >(L"minFilter", m_ref.minFilter, kFilter);
@@ -350,7 +350,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Color", 1, Color, ImmutableNode)
 const ImmutableNode::OutputPinDesc c_Color_o[] = { { L"Output" }, { 0 } };
 
 Color::Color(const traktor::Color4f& color)
-:	ImmutableNode(0, c_Color_o)
+:	ImmutableNode(nullptr, c_Color_o)
 ,	m_color(color)
 {
 }
@@ -496,7 +496,7 @@ void Conditional::serialize(ISerializer& s)
 		{ L"BrAuto", BrAuto },
 		{ L"BrStatic", BrStatic },
 		{ L"BrDynamic", BrDynamic },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	const MemberEnum< Operator >::Key kOperator[] =
@@ -507,7 +507,7 @@ void Conditional::serialize(ISerializer& s)
 		{ L"CoNotEqual", CoNotEqual },
 		{ L"CoGreater", CoGreater },
 		{ L"CoGreaterEqual", CoGreaterEqual },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	if (s.getVersion() >= 1)
@@ -590,7 +590,7 @@ void Derivative::serialize(ISerializer& s)
 	{
 		{ L"DaX", DaX },
 		{ L"DaY", DaY },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> MemberEnum< Axis >(L"axis", m_axis, kAxis);
@@ -637,7 +637,7 @@ void Discard::serialize(ISerializer& s)
 		{ L"CoNotEqual", CoNotEqual },
 		{ L"CoGreater", CoGreater },
 		{ L"CoGreaterEqual", CoGreaterEqual },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> MemberEnum< Operator >(L"operator", m_operator, kOperator);
@@ -710,7 +710,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.FragmentPosition", 0, FragmentPo
 const ImmutableNode::OutputPinDesc c_FragmentPosition_o[] = { { L"Output" }, { 0 } };
 
 FragmentPosition::FragmentPosition()
-:	ImmutableNode(0, c_FragmentPosition_o)
+:	ImmutableNode(nullptr, c_FragmentPosition_o)
 {
 }
 
@@ -721,7 +721,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.FrontFace", 0, FrontFace, Immuta
 const ImmutableNode::OutputPinDesc c_FrontFace_o[] = { { L"Output" }, { 0 } };
 
 FrontFace::FrontFace()
-:	ImmutableNode(0, c_FrontFace_o)
+:	ImmutableNode(nullptr, c_FrontFace_o)
 {
 }
 
@@ -802,7 +802,7 @@ void IndexedUniform::serialize(ISerializer& s)
 		{ L"PtScalar", PtScalar },
 		{ L"PtVector", PtVector },
 		{ L"PtMatrix", PtMatrix },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	const MemberEnum< UpdateFrequency >::Key kUpdateFrequency_Keys[] =
@@ -810,7 +810,7 @@ void IndexedUniform::serialize(ISerializer& s)
 		{ L"UfOnce", UfOnce },
 		{ L"UfFrame", UfFrame },
 		{ L"UfDraw", UfDraw },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
@@ -829,7 +829,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.InputPort", 2, InputPort, Immuta
 const ImmutableNode::OutputPinDesc c_InputPort_o[] = { { L"Output" }, { 0 } };
 
 InputPort::InputPort()
-:	ImmutableNode(0, c_InputPort_o)
+:	ImmutableNode(nullptr, c_InputPort_o)
 ,	m_name(L"")
 ,	m_connectable(true)
 ,	m_optional(false)
@@ -839,7 +839,7 @@ InputPort::InputPort()
 }
 
 InputPort::InputPort(const std::wstring& name, bool connectable, bool optional, bool haveDefaultValue, float defaultValue)
-:	ImmutableNode(0, c_InputPort_o)
+:	ImmutableNode(nullptr, c_InputPort_o)
 ,	m_name(name)
 ,	m_connectable(connectable)
 ,	m_optional(optional)
@@ -930,7 +930,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Instance", 0, Instance, Immutabl
 const ImmutableNode::OutputPinDesc c_Instance_o[] = { { L"Output" }, { 0 } };
 
 Instance::Instance()
-:	ImmutableNode(0, c_Instance_o)
+:	ImmutableNode(nullptr, c_Instance_o)
 {
 }
 
@@ -1169,7 +1169,7 @@ void Log::serialize(ISerializer& s)
 		{ L"LbTwo", LbTwo },
 		{ L"LbTen", LbTen },
 		{ L"LbNatural", LbNatural },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> MemberEnum< Base >(L"base", m_base, kBase);
@@ -1302,7 +1302,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.OutputPort", 0, OutputPort, Immu
 const ImmutableNode::InputPinDesc c_OutputPort_i[] = { { L"Input", false }, { 0 } };
 
 OutputPort::OutputPort(const std::wstring& name)
-:	ImmutableNode(c_OutputPort_i, 0)
+:	ImmutableNode(c_OutputPort_i, nullptr)
 ,	m_name(name)
 {
 }
@@ -1335,7 +1335,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 7, PixelOutput, Im
 const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Enable", true }, { L"Input", false }, { L"Input1", true }, { L"Input2", true }, { L"Input3", true }, { L"State", true }, { 0 } };
 
 PixelOutput::PixelOutput()
-:	ImmutableNode(c_PixelOutput_i, 0)
+:	ImmutableNode(c_PixelOutput_i, nullptr)
 ,	m_technique(L"Default")
 ,	m_priority(0)
 ,	m_registerCount(0)
@@ -1606,7 +1606,7 @@ void Sampler::serialize(ISerializer& s)
 		{
 			{ L"FtPoint", FtPoint },
 			{ L"FtLinear", FtLinear },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		const MemberEnum< Address >::Key kAddress[] =
@@ -1615,7 +1615,7 @@ void Sampler::serialize(ISerializer& s)
 			{ L"AdMirror", AdMirror },
 			{ L"AdClamp", AdClamp },
 			{ L"AdBorder", AdBorder },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		const MemberEnum< CompareFunction >::Key kCompare[] =
@@ -1629,7 +1629,7 @@ void Sampler::serialize(ISerializer& s)
 			{ L"CmGreaterEqual", CfGreaterEqual },
 			{ L"CmEqual", CfEqual },
 			{ L"CmNotEqual", CfNotEqual },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		s >> MemberEnum< Filter >(L"minFilter", m_state.minFilter, kFilter);
@@ -1660,7 +1660,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Scalar", 0, Scalar, ImmutableNod
 const ImmutableNode::OutputPinDesc c_Scalar_o[] = { { L"Output" }, { 0 } };
 
 Scalar::Scalar(float value)
-:	ImmutableNode(0, c_Scalar_o)
+:	ImmutableNode(nullptr, c_Scalar_o)
 ,	m_value(value)
 {
 }
@@ -1732,7 +1732,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.State", 7, State, ImmutableNode)
 const ImmutableNode::OutputPinDesc c_State_o[] = { { L"Output" }, { 0 } };
 
 State::State()
-:	ImmutableNode(0, c_State_o)
+:	ImmutableNode(nullptr, c_State_o)
 ,	m_priority(0)
 {
 }
@@ -1854,7 +1854,7 @@ void Struct::NamedElement::serialize(ISerializer& s)
 		{ L"DtShort4N", DtShort4N },
 		{ L"DtHalf2", DtHalf2 },
 		{ L"DtHalf4", DtHalf4 },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> Member< std::wstring >(L"name", name);
@@ -1988,7 +1988,7 @@ void Switch::serialize(ISerializer& s)
 		{ L"BrAuto", BrAuto },
 		{ L"BrStatic", BrStatic },
 		{ L"BrDynamic", BrDynamic },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	if (s.getVersion() >= 1)
@@ -2110,7 +2110,7 @@ void Texture::serialize(ISerializer& s)
 		{ L"PtTexture2D", PtTexture2D },
 		{ L"PtTexture3D", PtTexture3D },
 		{ L"PtTextureCube", PtTextureCube },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> Member< Guid >(L"external", m_external, AttributeType(type_of< ITexture >()));
@@ -2243,7 +2243,7 @@ void Uniform::serialize(ISerializer& s)
 		{ L"PtTexture2D", PtTexture2D },
 		{ L"PtTexture3D", PtTexture3D },
 		{ L"PtTextureCube", PtTextureCube },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	const MemberEnum< UpdateFrequency >::Key kUpdateFrequency_Keys[] =
@@ -2251,7 +2251,7 @@ void Uniform::serialize(ISerializer& s)
 		{ L"UfOnce", UfOnce },
 		{ L"UfFrame", UfFrame },
 		{ L"UfDraw", UfDraw },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
@@ -2311,7 +2311,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Vector", 0, Vector, ImmutableNod
 const ImmutableNode::OutputPinDesc c_Vector_o[] = { { L"Output" }, { 0 } };
 
 Vector::Vector(const Vector4& value)
-:	ImmutableNode(0, c_Vector_o)
+:	ImmutableNode(nullptr, c_Vector_o)
 ,	m_value(value)
 {
 }
@@ -2346,7 +2346,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexInput", 0, VertexInput, Im
 const ImmutableNode::OutputPinDesc c_VertexInput_o[] = { { L"Output" }, { 0 } };
 
 VertexInput::VertexInput(const std::wstring& name, DataUsage usage, DataType type, int index)
-:	ImmutableNode(0, c_VertexInput_o)
+:	ImmutableNode(nullptr, c_VertexInput_o)
 ,	m_name(name)
 ,	m_usage(usage)
 ,	m_type(type)
@@ -2411,7 +2411,7 @@ void VertexInput::serialize(ISerializer& s)
 		{ L"DuBinormal", DuBinormal },
 		{ L"DuColor", DuColor },
 		{ L"DuCustom", DuCustom },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	const MemberEnum< DataType >::Key kDataType[] =
@@ -2428,7 +2428,7 @@ void VertexInput::serialize(ISerializer& s)
 		{ L"DtShort4N", DtShort4N },
 		{ L"DtHalf2", DtHalf2 },
 		{ L"DtHalf4", DtHalf4 },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> Member< std::wstring >(L"name", m_name);

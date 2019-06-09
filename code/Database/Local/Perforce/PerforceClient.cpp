@@ -158,11 +158,11 @@ public:
 			changeListFile->setDepotPath(mbstows(depotFile->Text()));
 
 			if (*action == "add")
-				changeListFile->setAction(AtAdd);
+				changeListFile->setAction(PerforceAction::AtAdd);
 			else if (*action == "edit")
-				changeListFile->setAction(AtEdit);
+				changeListFile->setAction(PerforceAction::AtEdit);
 			else if (*action == "delete")
-				changeListFile->setAction(AtDelete);
+				changeListFile->setAction(PerforceAction::AtDelete);
 
 			m_outChangeListFiles.push_back(changeListFile);
 		}
@@ -201,12 +201,12 @@ public:
 	:	ClientUserAdapter(outLastError)
 	,	m_outAction(outAction)
 	{
-		m_outAction = AtNotOpened;
+		m_outAction = PerforceAction::AtNotOpened;
 	}
 
 	virtual void OutputError(const char* errBuf)
 	{
-		m_outAction = AtNotOpened;
+		m_outAction = PerforceAction::AtNotOpened;
 		ClientUserAdapter::OutputError(errBuf);
 	}
 
@@ -219,13 +219,13 @@ public:
 			return;
 
 		if (*action == "add")
-			m_outAction = AtAdd;
+			m_outAction = PerforceAction::AtAdd;
 		else if (*action == "edit")
-			m_outAction = AtEdit;
+			m_outAction = PerforceAction::AtEdit;
 		else if (*action == "delete")
-			m_outAction = AtDelete;
+			m_outAction = PerforceAction::AtDelete;
 		else
-			m_outAction = AtNotOpened;
+			m_outAction = PerforceAction::AtNotOpened;
 	}
 
 private:
@@ -358,7 +358,7 @@ Ref< PerforceChangeList > PerforceClient::createChangeList(const std::wstring& d
 	if (createChangeListAdapter.failed())
 	{
 		log::error << m_lastError << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	return new PerforceChangeList(

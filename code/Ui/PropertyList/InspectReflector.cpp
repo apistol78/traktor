@@ -72,7 +72,7 @@ template < typename AttributeType, typename MemberType >
 const AttributeType* findAttribute(const MemberType& m)
 {
 	const Attribute* attributes = m.getAttributes();
-	return attributes ? attributes->find< AttributeType >() : 0;
+	return attributes ? attributes->find< AttributeType >() : nullptr;
 }
 
 		}
@@ -93,7 +93,7 @@ Serializer::Direction InspectReflector::getDirection() const
 
 void InspectReflector::operator >> (const Member< bool >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 	addPropertyItem(
 		new CheckPropertyItem(stylizeMemberName(m.getName()), m),
 		memberPrivate
@@ -102,7 +102,7 @@ void InspectReflector::operator >> (const Member< bool >& m)
 
 void InspectReflector::operator >> (const Member< int8_t >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 
 	float min = std::numeric_limits< int8_t >::min();
 	float max = std::numeric_limits< int8_t >::max();
@@ -130,7 +130,7 @@ void InspectReflector::operator >> (const Member< int8_t >& m)
 
 void InspectReflector::operator >> (const Member< uint8_t >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 
 	float min = std::numeric_limits< uint8_t >::min();
 	float max = std::numeric_limits< uint8_t >::max();
@@ -151,7 +151,7 @@ void InspectReflector::operator >> (const Member< uint8_t >& m)
 			min,
 			max,
 			false,
-			hex != 0,
+			hex != nullptr,
 			NumericPropertyItem::RpNormal
 		),
 		memberPrivate
@@ -160,7 +160,7 @@ void InspectReflector::operator >> (const Member< uint8_t >& m)
 
 void InspectReflector::operator >> (const Member< int16_t >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 
 	float min = std::numeric_limits< int16_t >::min();
 	float max = std::numeric_limits< int16_t >::max();
@@ -188,7 +188,7 @@ void InspectReflector::operator >> (const Member< int16_t >& m)
 
 void InspectReflector::operator >> (const Member< uint16_t >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 
 	float min = std::numeric_limits< uint16_t >::min();
 	float max = std::numeric_limits< uint16_t >::max();
@@ -209,7 +209,7 @@ void InspectReflector::operator >> (const Member< uint16_t >& m)
 			min,
 			max,
 			false,
-			hex != 0,
+			hex != nullptr,
 			NumericPropertyItem::RpNormal
 		),
 		memberPrivate
@@ -218,7 +218,7 @@ void InspectReflector::operator >> (const Member< uint16_t >& m)
 
 void InspectReflector::operator >> (const Member< int32_t >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 
 	float min = std::numeric_limits< float >::min();
 	float max = std::numeric_limits< float >::max();
@@ -246,7 +246,7 @@ void InspectReflector::operator >> (const Member< int32_t >& m)
 
 void InspectReflector::operator >> (const Member< uint32_t >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 
 	double min = std::numeric_limits< uint32_t >::min();
 	double max = std::numeric_limits< uint32_t >::max();
@@ -267,7 +267,7 @@ void InspectReflector::operator >> (const Member< uint32_t >& m)
 			min,
 			max,
 			false,
-			hex != 0,
+			hex != nullptr,
 			NumericPropertyItem::RpNormal
 		),
 		memberPrivate
@@ -276,7 +276,7 @@ void InspectReflector::operator >> (const Member< uint32_t >& m)
 
 void InspectReflector::operator >> (const Member< int64_t >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 
 	double min = std::numeric_limits< double >::min();
 	double max = std::numeric_limits< double >::max();
@@ -304,7 +304,7 @@ void InspectReflector::operator >> (const Member< int64_t >& m)
 
 void InspectReflector::operator >> (const Member< uint64_t >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 
 	double min = std::numeric_limits< double >::min();
 	double max = std::numeric_limits< double >::max();
@@ -325,7 +325,7 @@ void InspectReflector::operator >> (const Member< uint64_t >& m)
 			min,
 			max,
 			false,
-			hex != 0,
+			hex != nullptr,
 			NumericPropertyItem::RpNormal
 		),
 		memberPrivate
@@ -334,7 +334,7 @@ void InspectReflector::operator >> (const Member< uint64_t >& m)
 
 void InspectReflector::operator >> (const Member< float >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 
 	float min = -std::numeric_limits< float >::max();
 	float max = std::numeric_limits< float >::max();
@@ -368,7 +368,7 @@ void InspectReflector::operator >> (const Member< float >& m)
 
 void InspectReflector::operator >> (const Member< double >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 
 	double min = -std::numeric_limits< double >::max();
 	double max = std::numeric_limits< double >::max();
@@ -402,7 +402,7 @@ void InspectReflector::operator >> (const Member< double >& m)
 
 void InspectReflector::operator >> (const Member< std::string >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 	addPropertyItem(
 		new TextPropertyItem(stylizeMemberName(m.getName()), mbstows(m), false),
 		memberPrivate
@@ -417,7 +417,7 @@ void InspectReflector::operator >> (const Member< std::wstring >& m)
 		new TextPropertyItem(
 			stylizeMemberName(m.getName()),
 			m,
-			multiLine != 0
+			multiLine != nullptr
 		),
 		memberPrivate
 	);
@@ -425,12 +425,12 @@ void InspectReflector::operator >> (const Member< std::wstring >& m)
 
 void InspectReflector::operator >> (const Member< Guid >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 	const AttributeType* memberType = findAttribute< AttributeType >(m);
 	addPropertyItem(
 		new BrowsePropertyItem(stylizeMemberName(
 			m.getName()),
-			memberType ? &(memberType->getMemberType()) : 0,
+			memberType ? &(memberType->getMemberType()) : nullptr,
 			m
 		),
 		memberPrivate
@@ -439,7 +439,7 @@ void InspectReflector::operator >> (const Member< Guid >& m)
 
 void InspectReflector::operator >> (const Member< Path >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 	addPropertyItem(
 		new FilePropertyItem(stylizeMemberName(m.getName()), *m),
 		memberPrivate
@@ -448,7 +448,7 @@ void InspectReflector::operator >> (const Member< Path >& m)
 
 void InspectReflector::operator >> (const Member< Color4ub >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 	Color4f value(
 		m->r / 255.0f,
 		m->g / 255.0f,
@@ -473,7 +473,7 @@ void InspectReflector::operator >> (const Member< Color4f >& m)
 
 void InspectReflector::operator >> (const Member< Scalar >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 
 	float min = std::numeric_limits< float >::min();
 	float max = std::numeric_limits< float >::max();
@@ -508,7 +508,7 @@ void InspectReflector::operator >> (const Member< Scalar >& m)
 
 void InspectReflector::operator >> (const Member< Vector2 >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 	const VectorPropertyItem::vector_t value = { m->x, m->y };
 	addPropertyItem(
 		new VectorPropertyItem(stylizeMemberName(m.getName()), value, 2),
@@ -518,7 +518,7 @@ void InspectReflector::operator >> (const Member< Vector2 >& m)
 
 void InspectReflector::operator >> (const Member< Vector4 >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 
 	const AttributeDirection* direction = findAttribute< AttributeDirection >(m);
 	if (direction)
@@ -607,14 +607,14 @@ void InspectReflector::operator >> (const Member< Quaternion >& m)
 
 void InspectReflector::operator >> (const Member< ISerializable* >& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 	const AttributeType* memberType = findAttribute< AttributeType >(m);
 
 	Ref< ISerializable > object = *m;
 
 	Ref< ObjectPropertyItem > propertyItem = new ObjectPropertyItem(
 		stylizeMemberName(m.getName()),
-		memberType ? &(memberType->getMemberType()) : 0,
+		memberType ? &(memberType->getMemberType()) : nullptr,
 		object
 	);
 	addPropertyItem(propertyItem, memberPrivate);
@@ -633,13 +633,13 @@ void InspectReflector::operator >> (const Member< void* >& m)
 
 void InspectReflector::operator >> (const MemberArray& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 	const AttributeType* memberType = findAttribute< AttributeType >(m);
 	const AttributeReadOnly* memberReadOnly = findAttribute< AttributeReadOnly >(m);
 
 	Ref< ArrayPropertyItem > propertyItem = new ArrayPropertyItem(
 		stylizeMemberName(m.getName()),
-		memberType ? &(memberType->getMemberType()) : 0,
+		memberType ? &(memberType->getMemberType()) : nullptr,
 		memberReadOnly ? true : false
 	);
 	addPropertyItem(propertyItem, memberPrivate);
@@ -652,7 +652,7 @@ void InspectReflector::operator >> (const MemberArray& m)
 
 void InspectReflector::operator >> (const MemberComplex& m)
 {
-	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != 0);
+	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
 
 	if (m.getCompound())
 	{
@@ -672,12 +672,11 @@ void InspectReflector::operator >> (const MemberEnumBase& m)
 	Ref< ListPropertyItem > propertyItem = new ListPropertyItem(stylizeMemberName(m.getName()));
 	addPropertyItem(propertyItem, false);
 
-	for (const MemberEnumBase::Key* key = m.keys(); key && key->id; ++key)
-	{
-		int32_t i = propertyItem->add(key->id);
-		if (m.get() == key->id)
-			propertyItem->select(i);
-	}
+	m.enumerate([&](const wchar_t* id) {
+		int32_t i = propertyItem->add(id);
+		if (m.get() == id)
+			propertyItem->select(i);		
+	});
 }
 
 void InspectReflector::addPropertyItem(PropertyItem* propertyItem, bool propertyPrivate)
@@ -685,9 +684,9 @@ void InspectReflector::addPropertyItem(PropertyItem* propertyItem, bool property
 	// Check if child of a private property; privacy is propagated to children.
 	if (!propertyPrivate)
 	{
-		for (RefArray< PropertyItem >::const_iterator i = m_propertyItemStack.begin(); i != m_propertyItemStack.end(); ++i)
+		for (auto item : m_propertyItemStack)
 		{
-			if (!(*i)->isVisible())
+			if (!item->isVisible())
 				propertyPrivate = true;
 		}
 	}

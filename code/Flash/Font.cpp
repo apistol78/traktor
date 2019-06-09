@@ -165,7 +165,7 @@ void Font::serialize(ISerializer& s)
 	{
 		{ L"CtTwips", CtTwips },
 		{ L"CtEMSquare", CtEMSquare },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> Member< std::string >(L"fontName", m_fontName);

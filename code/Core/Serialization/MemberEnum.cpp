@@ -4,15 +4,9 @@
 namespace traktor
 {
 
-MemberEnumBase::MemberEnumBase(const wchar_t* const name, const Key* keys)
+MemberEnumBase::MemberEnumBase(const wchar_t* const name)
 :	MemberComplex(name, false)
-,	m_keys(keys)
 {
-}
-
-const MemberEnumBase::Key* MemberEnumBase::keys() const
-{
-	return m_keys;
 }
 
 void MemberEnumBase::serialize(ISerializer& s) const

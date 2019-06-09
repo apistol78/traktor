@@ -50,7 +50,7 @@ char* refStringCreate(const char* s, int32_t id)
 
 	void* ptr = getAllocator()->alloc(sizeof(StringType) + (len + 1) * sizeof(char), 4, T_FILE_LINE);
 	if (!ptr)
-		return 0;
+		return nullptr;
 
 	StringType* base = static_cast< StringType* >(ptr);
 	base->rc = 1;
@@ -84,7 +84,7 @@ char* refStringDec(char* s)
 #if defined(_DEBUG)
 		--s_stringCount;
 #endif
-		return 0;
+		return nullptr;
 	}
 	return s;
 }
@@ -100,7 +100,7 @@ int32_t refStringId(char* s)
 ActionValue::ActionValue()
 :	m_type(AvtUndefined)
 {
-	m_value.o = 0;
+	m_value.o = nullptr;
 }
 
 ActionValue::ActionValue(const ActionValue& v)
@@ -215,7 +215,7 @@ void ActionValue::clear()
 		{ T_SAFE_RELEASE_WEAK_REF(m_value.o); }
 
 	m_type = AvtUndefined;
-	m_value.o = 0;
+	m_value.o = nullptr;
 }
 
 bool ActionValue::getBoolean() const
@@ -369,7 +369,7 @@ void ActionValue::serialize(ISerializer& s)
 		{ L"AvtString", AvtString },
 		{ L"AvtObject", AvtObject },
 		{ L"AvtObjectWeak", AvtObjectWeak },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> MemberEnum< Type >(L"type", m_type, kType);
@@ -579,12 +579,12 @@ bool ActionValue::operator == (const ActionValue& r) const
 	else if (isObject() && r.isUndefined())
 	{
 		ActionObject* object1 = getObject();
-		return object1 == 0;
+		return object1 == nullptr;
 	}
 	else if (isUndefined() && r.isObject())
 	{
 		ActionObject* object2 = r.getObject();
-		return object2 == 0;
+		return object2 == nullptr;
 	}
 	else if (isUndefined() && r.isUndefined())
 		return true;
@@ -596,7 +596,7 @@ void ActionValue::disposeReference(Collectable* collectable)
 {
 	T_ASSERT(m_type == AvtObjectWeak);
 	T_ASSERT(m_value.o == collectable);
-	m_value.o = 0;
+	m_value.o = nullptr;
 }
 
 	}
