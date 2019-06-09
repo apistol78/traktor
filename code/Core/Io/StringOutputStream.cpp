@@ -1,6 +1,5 @@
 #include <cstring>
 #include "Core/Io/StringOutputStream.h"
-#include "Core/Misc/Align.h"
 
 namespace traktor
 {
@@ -42,7 +41,9 @@ int32_t StringOutputStreamBuffer::overflow(const wchar_t* buffer, int32_t count)
 	size_t newTail = m_tail + count;
 	if (newTail + 1 >= m_capacity)
 	{
-		size_t newCapacity = alignDown(newTail, 1024) + 1024;
+		size_t newCapacity = m_capacity * 2;
+		while (newTail + 1 >= newCapacity)
+			newCapacity += m_capacity;
 
 		// Allocate a new bigger buffer.
 		AutoArrayPtr< wchar_t, AllocatorFree > newBuffer((wchar_t*)getAllocator()->alloc(newCapacity * sizeof(wchar_t), 16, T_FILE_LINE));
