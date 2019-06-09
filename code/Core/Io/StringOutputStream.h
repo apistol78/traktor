@@ -21,7 +21,7 @@ namespace traktor
 class StringOutputStreamBuffer : public OutputStreamBuffer
 {
 public:
-	StringOutputStreamBuffer();
+	StringOutputStreamBuffer(size_t initialCapacity = 1024);
 
 	bool empty() const;
 
@@ -49,7 +49,7 @@ class T_DLLCLASS StringOutputStream : public OutputStream
 	T_RTTI_CLASS;
 
 public:
-	StringOutputStream();
+	StringOutputStream(size_t initialCapacity = 1024);
 
 	virtual ~StringOutputStream();
 

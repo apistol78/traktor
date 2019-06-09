@@ -35,6 +35,7 @@ class Output : public Object
 public:
 	explicit Output(const std::vector< std::wstring >& sections)
 	:	m_sections(sections)
+	,	m_ss(1 * 1024 * 1024)
 	{
 	}
 

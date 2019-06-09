@@ -5,9 +5,9 @@
 namespace traktor
 {
 
-StringOutputStreamBuffer::StringOutputStreamBuffer()
-:	m_buffer((wchar_t*)getAllocator()->alloc(newCapacity * sizeof(wchar_t), 16, T_FILE_LINE))
-,	m_capacity(1024)
+StringOutputStreamBuffer::StringOutputStreamBuffer(size_t initialCapacity)
+:	m_buffer((wchar_t*)getAllocator()->alloc(initialCapacity * sizeof(wchar_t), 16, T_FILE_LINE))
+,	m_capacity(initialCapacity)
 ,	m_tail(0)
 {
 	m_buffer[0] = L'\0';
@@ -45,7 +45,7 @@ int32_t StringOutputStreamBuffer::overflow(const wchar_t* buffer, int32_t count)
 		size_t newCapacity = alignDown(newTail, 1024) + 1024;
 
 		// Allocate a new bigger buffer.
-		AutoArrayPtr< wchar_t > newBuffer((wchar_t*)getAllocator()->alloc(newCapacity * sizeof(wchar_t), 16, T_FILE_LINE));
+		AutoArrayPtr< wchar_t, AllocatorFree > newBuffer((wchar_t*)getAllocator()->alloc(newCapacity * sizeof(wchar_t), 16, T_FILE_LINE));
 		std::memcpy(newBuffer.ptr(), m_buffer.c_ptr(), m_tail * sizeof(wchar_t));
 
 		m_buffer.move(newBuffer);
@@ -62,7 +62,8 @@ int32_t StringOutputStreamBuffer::overflow(const wchar_t* buffer, int32_t count)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.StringOutputStream", StringOutputStream, OutputStream);
 
-StringOutputStream::StringOutputStream()
+StringOutputStream::StringOutputStream(size_t initialCapacity)
+:	m_buffer(initialCapacity)
 {
 	setBuffer(&m_buffer);
 }
