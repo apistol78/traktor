@@ -34,6 +34,8 @@ class T_DLLCLASS Script : public Node
 public:
 	virtual ~Script();
 
+	void setName(const std::wstring& name);
+
 	const std::wstring& getName() const;
 
 	void setScript(const std::wstring& script);
