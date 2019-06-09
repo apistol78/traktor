@@ -36,7 +36,7 @@ public:
 private:
 	friend class StringOutputStream;
 
-	AutoArrayPtr< wchar_t > m_buffer;
+	AutoArrayPtr< wchar_t, AllocatorFree > m_buffer;
 	size_t m_capacity;
 	size_t m_tail;
 };

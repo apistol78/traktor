@@ -78,7 +78,7 @@ std::wstring Path::getFileNameNoExtension() const
 
 std::wstring Path::getPathOnly() const
 {
-	std::wstringstream ss;
+	StringOutputStream ss;
 
 	if (!m_volume.empty())
 		ss << m_volume << L":";
@@ -93,7 +93,7 @@ std::wstring Path::getPathOnly() const
 
 std::wstring Path::getPathOnlyNoVolume() const
 {
-	std::wstringstream ss;
+	StringOutputStream ss;
 
 	if (!m_relative)
 		ss << L"/";
@@ -106,7 +106,7 @@ std::wstring Path::getPathOnlyNoVolume() const
 
 std::wstring Path::getPathName() const
 {
-	std::wstringstream ss;
+	StringOutputStream ss;
 
 	if (!m_volume.empty())
 		ss << m_volume << L":";
@@ -158,11 +158,11 @@ std::wstring Path::getPathNameNoVolume() const
 
 Path Path::normalized() const
 {
-	std::vector< std::wstring > p;
+	AlignedVector< std::wstring > p;
 	p.reserve(32);
 
 	StringSplit< std::wstring > ss(getPathNameNoVolume(), L"/");
-	for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
+	for (auto i = ss.begin(); i != ss.end(); ++i)
 	{
 		if (*i == L".")
 			continue;
@@ -185,7 +185,7 @@ Path Path::normalized() const
 	{
 		if (!isRelative())
 			s << L"/";
-		for (std::vector< std::wstring >::const_iterator i = p.begin(); i != p.end() - 1; ++i)
+		for (auto i = p.begin(); i != p.end() - 1; ++i)
 			s << *i << L"/";
 		s << p.back();
 	}
@@ -215,6 +215,11 @@ bool Path::operator == (const Path& rh) const
 bool Path::operator < (const Path& rh) const
 {
 	return bool(getPathName() < rh.getPathName());
+}
+
+bool Path::operator > (const Path& rh) const
+{
+	return bool(getPathName() > rh.getPathName());
 }
 
 void Path::resolve()
