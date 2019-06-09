@@ -69,12 +69,11 @@ const HeaderScanner::Includes* HeaderScanner::scan(const std::wstring& fileName)
 	Includes* includes = new Includes();
 	m_cache[fileName] = includes;
 
-	if (!FileSystem::getInstance().exist(fileName))
-		return includes;
-
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
 	if (!file)
 		return includes;
+
+	auto filePath = Path(fileName).getPathOnly();
 
 	BufferedStream bufferedFile(file);
 	StringReader sr(&bufferedFile, new AnsiEncoding());
@@ -86,23 +85,17 @@ const HeaderScanner::Includes* HeaderScanner::scan(const std::wstring& fileName)
 		if (line.empty() || line[0] != L'#')
 			continue;
 
-		std::wstring::size_type p = line.find(L"include ");
-		if (p == line.npos)
+		size_t s = line.find(L"include \"");
+		if (s == line.npos)
+			continue;
+		s += 9;
+
+		size_t e = line.find_first_of(L'\"', s + 1);
+		if (e == line.npos)
 			continue;
 
-		std::wstring dep = line.substr(p + 8);
-		if (dep.length() <= 2 || dep[0] != L'\"')
-			continue;
+		std::wstring dep = line.substr(s, e - s);
 
-		dep = dep.substr(1);
-
-		p = dep.find_first_of('\"');
-		if (p == line.npos)
-			continue;
-
-		dep = dep.substr(0, p);
-
-		auto filePath = Path(fileName).getPathOnly();
 		if (!filePath.empty())
 		{
 			std::wstring dependencyName = filePath + L"/" + dep;
