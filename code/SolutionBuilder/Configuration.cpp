@@ -223,14 +223,14 @@ void Configuration::serialize(ISerializer& s)
 		{ L"TfSharedLibrary", TfSharedLibrary },
 		{ L"TfExecutable", TfExecutable },
 		{ L"TfExecutableConsole", TfExecutableConsole },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	MemberEnum< TargetProfile >::Key kTargetProfile[] =
 	{
 		{ L"TpDebug", TpDebug },
 		{ L"TpRelease", TpRelease },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	MemberEnum< WarningLevel >::Key kWarningLevel[] =
@@ -239,7 +239,7 @@ void Configuration::serialize(ISerializer& s)
 		{ L"WlCriticalOnly", WlCriticalOnly },
 		{ L"WlCompilerDefault", WlCompilerDefault },
 		{ L"WlAllWarnings", WlAllWarnings },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> Member< std::wstring >(L"name", m_name);

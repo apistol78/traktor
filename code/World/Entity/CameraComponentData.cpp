@@ -66,7 +66,7 @@ void CameraComponentData::serialize(ISerializer& s)
 	{
 		{ L"CtOrthographic", CtOrthographic },
 		{ L"CtPerspective", CtPerspective },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> MemberEnum< CameraType >(L"type", m_type, kCameraType);

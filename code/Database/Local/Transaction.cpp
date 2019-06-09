@@ -44,7 +44,7 @@ bool Transaction::create(const Guid& transactionGuid)
 	{
 		T_DEBUG(L"Unable to create transaction \"" << m_transactionGuid.format() << L"\"; already exclusively locked");
 		m_lock->release();
-		m_lock = 0;
+		m_lock = nullptr;
 		return false;
 	}
 #endif
@@ -67,7 +67,7 @@ void Transaction::destroy()
 	if (m_lock)
 	{
 		m_lock->release();
-		m_lock = 0;
+		m_lock = nullptr;
 	}
 #endif
 
@@ -81,7 +81,7 @@ void Transaction::destroy()
 void Transaction::add(Action* action)
 {
 	// Discard redundant actions.
-	for (RefArray< Action >::iterator i = m_actions.begin(); i != m_actions.end(); )
+	for (auto i = m_actions.begin(); i != m_actions.end(); )
 	{
 		if ((*i)->redundant(action))
 			i = m_actions.erase(i);
@@ -95,12 +95,12 @@ void Transaction::add(Action* action)
 
 uint32_t Transaction::get(const TypeInfo& actionType, RefArray< Action >& outActions) const
 {
-	for (RefArray< Action >::const_iterator i = m_actions.begin(); i != m_actions.end(); ++i)
+	for (auto action : m_actions)
 	{
-		if (is_type_a(actionType, type_of(*i)))
-			outActions.push_back(*i);
+		if (is_type_a(actionType, type_of(action)))
+			outActions.push_back(action);
 	}
-	return outActions.size();
+	return (uint32_t)outActions.size();
 }
 
 bool Transaction::commit(Context* context)
@@ -110,7 +110,7 @@ bool Transaction::commit(Context* context)
 	bool result = true;
 
 	// Execute actions.
-	for (int32_t i = 0; i < int32_t(m_actions.size()); ++i)
+	for (uint32_t i = 0; i < (uint32_t)m_actions.size(); ++i)
 	{
 		if (!m_actions[i]->execute(context))
 		{
@@ -126,7 +126,7 @@ bool Transaction::commit(Context* context)
 	}
 
 	// Cleanup action temporary data.
-	for (int32_t i = 0; i < int32_t(m_actions.size()); ++i)
+	for (uint32_t i = 0; i < (uint32_t)m_actions.size(); ++i)
 		m_actions[i]->clean(context);
 
 	if (result)

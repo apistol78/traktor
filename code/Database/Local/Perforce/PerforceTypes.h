@@ -8,7 +8,7 @@ namespace traktor
 /*! \brief P4 actions.
  * \ingroup Database
  */
-enum PerforceAction
+enum class PerforceAction
 {
 	AtNotOpened,
 	AtAdd,

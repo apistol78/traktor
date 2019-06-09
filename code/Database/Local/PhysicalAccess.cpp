@@ -1,6 +1,6 @@
 #include <cstring>
-#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Database/Local/PhysicalAccess.h"
 #include "Xml/XmlSerializer.h"
@@ -30,24 +30,24 @@ Ref< ISerializable > readPhysicalObject(const Path& objectPath)
 {
 	Ref< IStream > objectStream = FileSystem::getInstance().open(objectPath, File::FmRead);
 	if (!objectStream)
-		return 0;
+		return nullptr;
 
 	// Read head bytes in order to be able to determine serialization type.
 	uint8_t head[5];
 	if (objectStream->read(head, sizeof(head)) != sizeof(head))
 	{
 		objectStream->close();
-		return 0;
+		return nullptr;
 	}
 
-	// Read object through serialization; append head to buffered stream.
-	BufferedStream bs(objectStream, head, sizeof(head));
+	// Rewind to head of stream.
+	objectStream->seek(IStream::SeekSet, 0);
 
 	Ref< ISerializable > object;
 	if (std::memcmp(head, "<?xml", sizeof(head)) != 0)
-		object = BinarySerializer(&bs).readObject();
+		object = BinarySerializer(objectStream).readObject();
 	else
-		object = xml::XmlDeserializer(&bs, objectPath.getPathName()).readObject();
+		object = xml::XmlDeserializer(objectStream, objectPath.getPathName()).readObject();
 
 	objectStream->close();
 	return object;

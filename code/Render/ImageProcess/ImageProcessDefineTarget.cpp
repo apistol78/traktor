@@ -73,7 +73,7 @@ void ImageProcessDefineTarget::serialize(ISerializer& s)
 		{ L"TfR16F", TfR16F },
 		{ L"TfR32F", TfR32F },
 		{ L"TfR11G11B10F", TfR11G11B10F },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> Member< std::wstring >(L"id", m_id);

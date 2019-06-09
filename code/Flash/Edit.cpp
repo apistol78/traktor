@@ -176,7 +176,7 @@ void Edit::serialize(ISerializer& s)
 		{ L"StaRight", StaRight },
 		{ L"StaCenter", StaCenter },
 		{ L"StaJustify", StaJustify },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	Character::serialize(s);

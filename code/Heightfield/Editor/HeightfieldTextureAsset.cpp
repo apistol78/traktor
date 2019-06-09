@@ -27,7 +27,7 @@ void HeightfieldTextureAsset::serialize(ISerializer& s)
 		{ L"OtNormals", OtNormals },
 		{ L"OtCuts", OtCuts },
 		{ L"OtUnwrap", OtUnwrap },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> resource::Member< Heightfield >(L"heightfield", m_heightfield);

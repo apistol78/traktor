@@ -114,7 +114,7 @@ void FillStyle::serialize(ISerializer& s)
 		{ L"GtInvalid", GtInvalid },
 		{ L"GtLinear", GtLinear },
 		{ L"GtRadial", GtRadial },
-		{ 0, 0 }
+		{ 0 }
 	};
 
 	s >> MemberAlignedVector< ColorRecord, MemberComposite< ColorRecord > >(L"colorRecords", m_colorRecords);

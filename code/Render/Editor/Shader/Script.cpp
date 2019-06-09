@@ -54,7 +54,7 @@ public:
 			{ L"PtTexture3D", PtTexture3D },
 			{ L"PtTextureCube", PtTextureCube },
 			{ L"PtStructBuffer", PtStructBuffer },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		if (s.getDirection() == ISerializer::SdWrite)
@@ -138,7 +138,7 @@ public:
 			{ L"PtTexture3D", PtTexture3D },
 			{ L"PtTextureCube", PtTextureCube },
 			{ L"PtStructBuffer", PtStructBuffer },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		if (s.getDirection() == ISerializer::SdWrite)
@@ -256,7 +256,7 @@ public:
 		{
 			{ L"FtPoint", FtPoint },
 			{ L"FtLinear", FtLinear },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		const MemberEnum< Address >::Key kAddress[] =
@@ -265,7 +265,7 @@ public:
 			{ L"AdMirror", AdMirror },
 			{ L"AdClamp", AdClamp },
 			{ L"AdBorder", AdBorder },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		const MemberEnum< CompareFunction >::Key kCompareFunctions[] =
@@ -279,7 +279,7 @@ public:
 			{ L"CfEqual", CfEqual },
 			{ L"CfNotEqual", CfNotEqual },
 			{ L"CfNone", CfNone },
-			{ 0, 0 }
+			{ 0 }
 		};
 
 		s >> MemberEnum< Filter >(L"minFilter", m_ref.minFilter, kFilter);

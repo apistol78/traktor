@@ -86,7 +86,7 @@ uint32_t PerforceFileStore::flags(const Path& filePath)
 
 	PerforceAction action;
 	m_p4client->isOpened(filePath.getPathName(), action);
-	if (action == AtNotOpened)
+	if (action == PerforceAction::AtNotOpened)
 		flags |= IfReadOnly;
 	else
 		flags |= IfModified;
@@ -106,7 +106,7 @@ bool PerforceFileStore::remove(const Path& filePath)
 	PerforceAction pa;
 	if (m_p4client->isOpened(localFile, pa))
 	{
-		if (pa == AtAdd)
+		if (pa == PerforceAction::AtAdd)
 		{
 			// File has been added; revert in change list then remove local.
 			if (!m_p4client->revertFile(m_p4changeList, localFile))
@@ -114,7 +114,7 @@ bool PerforceFileStore::remove(const Path& filePath)
 
 			return FileSystem::getInstance().remove(localFile);
 		}
-		else if (pa == AtEdit)
+		else if (pa == PerforceAction::AtEdit)
 		{
 			// File has been opened for edit; revert in change list then open for delete.
 			if (!m_p4client->revertFile(m_p4changeList, localFile))
@@ -122,7 +122,7 @@ bool PerforceFileStore::remove(const Path& filePath)
 
 			return m_p4client->openForDelete(m_p4changeList, localFile);
 		}
-		else if (pa == AtDelete)
+		else if (pa == PerforceAction::AtDelete)
 		{
 			// File has already been opened for delete.
 			return true;
@@ -145,7 +145,7 @@ bool PerforceFileStore::edit(const Path& filePath)
 	PerforceAction pa;
 	if (m_p4client->isOpened(localFile, pa))
 	{
-		if (pa == AtAdd || pa == AtEdit)
+		if (pa == PerforceAction::AtAdd || pa == PerforceAction::AtEdit)
 			return true;
 
 		if (m_p4client->openForEdit(m_p4changeList, filePath.getPathName()))

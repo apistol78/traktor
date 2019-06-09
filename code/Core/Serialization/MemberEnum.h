@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComplex.h"
 
@@ -20,24 +21,15 @@ namespace traktor
 class T_DLLCLASS MemberEnumBase : public MemberComplex
 {
 public:
-	struct Key
-	{
-		const wchar_t* id;
-		int32_t val;
-	};
-
-	MemberEnumBase(const wchar_t* const name, const Key* keys);
-
-	const Key* keys() const;
+	MemberEnumBase(const wchar_t* const name);
 
 	virtual bool set(const std::wstring& id) const = 0;
 
 	virtual const wchar_t* const get() const = 0;
 
-	virtual void serialize(ISerializer& s) const override final;
+	virtual void enumerate(const std::function< void(const wchar_t*) >& fn) const = 0;
 
-private:
-	const Key* m_keys;
+	virtual void serialize(ISerializer& s) const override final;
 };
 
 /*! \brief Enumeration member.
@@ -49,15 +41,22 @@ class MemberEnum : public MemberEnumBase
 public:
 	typedef EnumType value_type;
 
+	struct Key
+	{
+		const wchar_t* id;
+		EnumType val;
+	};
+
 	MemberEnum(const wchar_t* const name, EnumType& en, const Key* keys)
-	:	MemberEnumBase(name, keys)
+	:	MemberEnumBase(name)
+	,	m_keys(keys)
 	,	m_en(en)
 	{
 	}
 
-	virtual bool set(const std::wstring& id) const
+	virtual bool set(const std::wstring& id) const override final
 	{
-		for (const Key* k = keys(); k->id; ++k)
+		for (const Key* k = m_keys; k->id; ++k)
 		{
 			if (k->id == id)
 			{
@@ -68,17 +67,26 @@ public:
 		return false;
 	}
 
-	virtual const wchar_t* const get() const
+	virtual const wchar_t* const get() const override final
 	{
-		for (const Key* k = keys(); k->id; ++k)
+		for (const Key* k = m_keys; k->id; ++k)
 		{
 			if (k->val == m_en)
 				return k->id;
 		}
-		return 0;
+		return nullptr;
 	}
 
+	virtual void enumerate(const std::function< void(const wchar_t*) >& fn) const override final
+	{
+		for (const Key* k = m_keys; k->id; ++k)
+			fn(k->id);		
+	}
+
+	const Key* keys() const { return m_keys; }
+
 private:
+	const Key* m_keys;
 	EnumType& m_en;
 };
 
