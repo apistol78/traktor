@@ -41,7 +41,7 @@ double getSystemDpi(Display* display)
 	if (XrmGetResource(db, "Xft.dpi", "String", &type, &value) == True)
 	{
 		if (value.addr)
-			dpi = atof(value.addr) * 2.0;
+			dpi = atof(value.addr);
 	}
 
 	return dpi;
@@ -64,7 +64,7 @@ WidgetFactoryX11::WidgetFactoryX11()
 	XSetErrorHandler(xerrorHandler);
 
 	// Get system dpi.
-	m_dpi = (int32_t)96; //210; // getSystemDpi(display);
+	m_dpi = (int32_t)getSystemDpi(display);
 
 	// Open input method.
 	XSetLocaleModifiers("");
