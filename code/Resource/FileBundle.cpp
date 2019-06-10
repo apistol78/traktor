@@ -12,8 +12,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.resource.FileBundle", 0, FileBundle, IS
 
 std::wstring FileBundle::lookup(const std::wstring& id) const
 {
-	std::map< std::wstring, std::wstring >::const_iterator i = m_dataIds.find(toLower(id));
-	return i != m_dataIds.end() ? i->second : L"";
+	auto it = m_dataIds.find(toLower(id));
+	return it != m_dataIds.end() ? it->second : L"";
 }
 
 void FileBundle::serialize(ISerializer& s)

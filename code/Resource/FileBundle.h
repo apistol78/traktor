@@ -17,6 +17,11 @@ namespace traktor
 	namespace resource
 	{
 
+/*! \brief File bundle
+ *         A file bundle is a serialized instance with a collection of named data streams attached.
+ *
+ * \ingroup Resource
+ */
 class T_DLLCLASS FileBundle : public ISerializable
 {
 	T_RTTI_CLASS;

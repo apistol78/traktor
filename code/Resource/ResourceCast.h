@@ -8,6 +8,9 @@
 namespace traktor
 {
 
+/*! \brief
+ * \ingroup Resource
+ */
 template < typename ResourceType >
 struct CastAny < resource::Proxy< ResourceType >, false >
 {
@@ -36,6 +39,9 @@ struct CastAny < resource::Proxy< ResourceType >, false >
 	}
 };
 
+/*! \brief
+ * \ingroup Resource
+ */
 template < typename ResourceType >
 struct CastAny < const resource::Proxy< ResourceType >&, false >
 {

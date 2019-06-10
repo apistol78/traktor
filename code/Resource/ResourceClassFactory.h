@@ -15,6 +15,9 @@ namespace traktor
 	namespace resource
 	{
 
+/*! \brief
+ * \ingroup Resource
+ */
 class T_DLLCLASS ResourceClassFactory : public IRuntimeClassFactory
 {
 	T_RTTI_CLASS;
