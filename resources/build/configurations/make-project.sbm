@@ -428,9 +428,24 @@ if #architectures > 0 then
 				output:print("\t" .. configuration.name .. "_" .. a .. "/" .. OBJNAME(f))
 			end
 			output:printLn("")
+			output:printLn("")
+
+			output:print(configuration.name .. "_" .. a .. "_PROJECTS=")
+			for _, dependency in pairs(project.dependencies) do
+				if isa(dependency, ProjectDependency) then
+					local c = dependency.project:getConfiguration(configuration.name)
+					if c ~= nil then
+						output:printLn(" \\")
+						output:print("\t../" .. configuration.name .. "_" .. a .. "/" .. PRODUCTNAME(solution, dependency.project, c))
+					end
+				end
+			end
+			output:printLn("")
+			output:printLn("")
 
 			output:printLn(configuration.name .. "_" .. a .. " : \\")
-			output:printLn("\t$(" .. configuration.name .. "_" .. a .. "_OBJS)")
+			output:printLn("\t$(" .. configuration.name .. "_" .. a .. "_OBJS) \\")
+			output:printLn("\t$(" .. configuration.name .. "_" .. a .. "_PROJECTS)")
 
 			if format == "StaticLibrary" then
 				printWithColor(Color.Yellow, "Archiving " .. project.name .. " (" .. a .. ")...")
@@ -486,6 +501,19 @@ else -- No architectures
 		output:printLn("")
 		output:printLn("")
 
+		output:print(configuration.name .. "_PROJECTS=")
+		for _, dependency in pairs(project.dependencies) do
+			if isa(dependency, ProjectDependency) then
+				local c = dependency.project:getConfiguration(configuration.name)
+				if c ~= nil then
+					output:printLn(" \\")
+					output:print("\t../" .. configuration.name .. "/" .. PRODUCTNAME(solution, dependency.project, c))
+				end
+			end
+		end
+		output:printLn("")
+		output:printLn("")
+
 		output:printLn(".PHONY: " .. configuration.name)
 		output:printLn(configuration.name .. " : \\")
 		output:printLn("\t../" .. configuration.name .. "/" .. PRODUCTNAME(solution, project, configuration))
@@ -493,7 +521,8 @@ else -- No architectures
 		output:printLn("")
 
 		output:printLn("../" .. configuration.name .. "/" .. PRODUCTNAME(solution, project, configuration) .. " : \\")
-		output:printLn("\t$(" .. configuration.name .. "_OBJS)")
+		output:printLn("\t$(" .. configuration.name .. "_OBJS) \\")
+		output:printLn("\t$(" .. configuration.name .. "_PROJECTS)")
 
 		if format == "StaticLibrary" then
 			printWithColor(Color.Yellow, "Archiving " .. project.name .. "...")
