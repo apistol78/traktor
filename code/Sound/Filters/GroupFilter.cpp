@@ -61,9 +61,9 @@ void GroupFilter::addFilter(IFilter* filter)
 Ref< IFilterInstance > GroupFilter::createInstance() const
 {
 	Ref< GroupFilterInstance > gfi = new GroupFilterInstance();
-	for (RefArray< IFilter >::const_iterator i = m_filters.begin(); i != m_filters.end(); ++i)
+	for (auto filter : m_filters)
 	{
-		Ref< IFilterInstance > instance = (*i)->createInstance();
+		Ref< IFilterInstance > instance = filter->createInstance();
 		gfi->m_instances.push_back(instance);
 	}
 	return gfi;

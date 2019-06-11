@@ -14,7 +14,7 @@ DitherFilter::DitherFilter(uint32_t bitsPerSample)
 
 Ref< IFilterInstance > DitherFilter::createInstance() const
 {
-	return 0;
+	return nullptr;
 }
 
 void DitherFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const

@@ -24,7 +24,7 @@ const float c_maxDelay = 1.0f;
 const int32_t c_maxSimultaneousEchos = 8;
 
 Semaphore s_historyAllocLock;
-BlockAllocator* s_historyAlloc = 0;
+BlockAllocator* s_historyAlloc = nullptr;
 
 float* allocHistory()
 {
@@ -35,10 +35,10 @@ float* allocHistory()
 		int32_t size = alignUp(samples * sizeof(float) * SbcMaxChannelCount, 16);
 
 		void* ptr = Alloc::acquireAlign(c_maxSimultaneousEchos * size, 16, T_FILE_LINE);
-		T_FATAL_ASSERT (ptr);
+		T_FATAL_ASSERT(ptr);
 
 		s_historyAlloc = new BlockAllocator(ptr, c_maxSimultaneousEchos, size);
-		T_FATAL_ASSERT (s_historyAlloc);
+		T_FATAL_ASSERT(s_historyAlloc);
 	}
 
 	return static_cast< float* >(s_historyAlloc->alloc());
@@ -61,7 +61,7 @@ struct EchoFilterInstance : public RefCountImpl< IFilterInstance >
 
 	EchoFilterInstance()
 	{
-		m_history[0] = 0;
+		m_history[0] = nullptr;
 	}
 
 	virtual ~EchoFilterInstance()
