@@ -59,16 +59,16 @@ private:
 	uint32_t m_count;
 };
 
-struct WorkSetSortPredicate
-{
-	bool operator () (const std::pair< uint32_t, Ref< const Object > >& a, const std::pair< uint32_t, Ref< const Object > >& b) const
-	{
-		if (a.second && !b.second)
-			return true;
-		else
-			return false;
-	}
-};
+// struct WorkSetSortPredicate
+// {
+// 	bool operator () (const std::pair< uint32_t, Ref< const Object > >& a, const std::pair< uint32_t, Ref< const Object > >& b) const
+// 	{
+// 		if (a.second && !b.second)
+// 			return true;
+// 		else
+// 			return false;
+// 	}
+// };
 
 void calculateGlobalHash(
 	const IPipelineDependencySet* dependencySet,
@@ -162,7 +162,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 		log::info << L"Analyzing conditions of " << dependencyCount << L" build item(s)..." << Endl;
 
 	// Determine build reasons.
-	m_reasons.resize(dependencyCount, 0);
+	std::vector< uint32_t > reasons(dependencyCount, 0);
 	for (uint32_t i = 0; i < dependencyCount; ++i)
 	{
 		const PipelineDependency* dependency = dependencySet->get(i);
@@ -195,7 +195,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 #if defined(_DEBUG)
 				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed." << Endl;
 #endif
-				m_reasons[i] |= PbrSourceModified;
+				reasons[i] |= PbrSourceModified;
 				++modifiedCount;
 			}
 			else if (
@@ -216,12 +216,12 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 				dependency->dump(log::info);
 				log::info << DecreaseIndent;
 #endif
-				m_reasons[i] |= PbrSourceModified;
+				reasons[i] |= PbrSourceModified;
 				++modifiedCount;
 			}
 		}
 		else
-			m_reasons[i] |= PbrForced;
+			reasons[i] |= PbrForced;
 	}
 
 	if (!rebuild)
@@ -255,8 +255,8 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 				continue;
 			}
 
-			if ((m_reasons[children.back()] & PbrSourceModified) != 0)
-				m_reasons[i] |= PbrDependencyModified;
+			if ((reasons[children.back()] & PbrSourceModified) != 0)
+				reasons[i] |= PbrDependencyModified;
 
 			visited.insert(children.back());
 
@@ -264,8 +264,14 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 			children.insert(children.end(), childDependency->children.begin(), childDependency->children.end());
 		}
 
-		if (m_reasons[i] != 0)
-			m_workSet.push_back(std::make_pair(i, Ref< const Object >()));
+		if (reasons[i] != 0)
+		{
+			WorkEntry we;
+			we.dependency = dependency;
+			we.buildParams = nullptr;
+			we.reason = reasons[i];
+			m_workSet.push_back(we);
+		}
 	}
 
 	T_DEBUG(L"Pipeline build; analyzed build reasons in " << int32_t(timer.getDeltaTime() * 1000) << L" ms");
@@ -273,7 +279,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 	log::info << L"Dispatching builds..." << Endl;
 
 	// Sort work set to build those with user parameters first.
-	m_workSet.sort(WorkSetSortPredicate());
+	// m_workSet.sort(WorkSetSortPredicate());
 
 	m_progress = 0;
 	m_progressEnd = m_workSet.size();
@@ -317,7 +323,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 			if (threads[i])
 			{
 				ThreadPool::getInstance().join(threads[i]);
-				threads[i] = 0;
+				threads[i] = nullptr;
 			}
 		}
 	}
@@ -348,7 +354,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAsset)
 {
 	if (!sourceAsset)
-		return 0;
+		return nullptr;
 
 	uint32_t sourceHash = DeepHash(sourceAsset).get();
 
@@ -374,14 +380,14 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 	uint32_t pipelineHash;
 
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
-		return 0;
+		return nullptr;
 
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT(pipeline);
 
 	Ref< ISerializable > product = pipeline->buildOutput(this, sourceAsset);
 	if (!product)
-		return 0;
+		return nullptr;
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
@@ -403,16 +409,16 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 		return false;
 
-#if 1
+#if 0
 
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT(pipeline);
 
 	if (!pipeline->buildOutput(
 		this,
-		0,
-		0,
-		0,
+		nullptr,
+		nullptr,
+		nullptr,
 		sourceAsset,
 		0,
 		outputPath,
@@ -430,16 +436,17 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 	dependency->outputPath = outputPath;
 	dependency->outputGuid = outputGuid;
 	dependency->pipelineHash = pipelineHash;
+	dependency->sourceAssetHash = 0;
 	dependency->flags = PdfBuild;
-	dependency->reason = PbrSynthesized;
 
 	{
-
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
-		m_workSet.push_back(std::make_pair(
-			dependency,
-			buildParams
-		));
+
+		WorkEntry we;
+		we.dependency = dependency;
+		we.buildParams = buildParams;
+		we.reason = PbrSynthesized;
+		m_workSet.push_back(we);
 	}
 
 #endif
@@ -667,8 +674,8 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 			log::info << L"Instance(s) built:" << Endl;
 			log::info << IncreaseIndent;
 
-			for (RefArray< db::Instance >::const_iterator j = builtInstances.begin(); j != builtInstances.end(); ++j)
-				log::info << L"\"" << (*j)->getPath() << L"\" " << (*j)->getGuid().format() << Endl;
+			for (auto builtInstance : builtInstances)
+				log::info << L"\"" << builtInstance->getPath() << L"\" " << builtInstance->getGuid().format() << Endl;
 
 			log::info << DecreaseIndent;
 		}
@@ -758,33 +765,30 @@ void PipelineBuilder::buildThread(
 {
 	while (!controlThread->stopped())
 	{
-		uint32_t workDependencyIndex;
-		Ref< const Object > workBuildParams;
+		WorkEntry we = { nullptr, nullptr, 0 };
 
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
 			if (!m_workSet.empty())
 			{
-				workDependencyIndex = m_workSet.back().first;
-				workBuildParams = m_workSet.back().second;
+				we = m_workSet.back();
 				m_workSet.pop_back();
 			}
 			else
 				break;
 		}
 
-		const PipelineDependency* workDependency = dependencySet->get(workDependencyIndex);
-		T_ASSERT(workDependency);
+		T_ASSERT(we.dependency);
 
 		if (m_listener)
 			m_listener->beginBuild(
 				cpuCore,
 				m_progress,
 				m_progressEnd,
-				workDependency
+				we.dependency
 			);
 
-		BuildResult result = performBuild(dependencySet, workDependency, workBuildParams, m_reasons[workDependencyIndex]);
+		BuildResult result = performBuild(dependencySet, we.dependency, we.buildParams, we.reason);
 		if (result == BrSucceeded || result == BrSucceededWithWarnings)
 			Atomic::increment(m_succeeded);
 		else
@@ -795,11 +799,11 @@ void PipelineBuilder::buildThread(
 				cpuCore,
 				m_progress,
 				m_progressEnd,
-				workDependency,
+				we.dependency,
 				result
 			);
 
-		if (!workBuildParams)
+		if (!we.buildParams)
 			Atomic::increment(m_progress);
 	}
 }

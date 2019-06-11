@@ -36,7 +36,7 @@ void FilePipelineCache::destroy()
 Ref< IStream > FilePipelineCache::get(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	if (!m_accessRead)
-		return 0;
+		return nullptr;
 
 	// Format guid as string and use two first, textual, bytes as subfolders.
 	std::wstring gs = guid.format();
@@ -50,7 +50,7 @@ Ref< IStream > FilePipelineCache::get(const Guid& guid, const PipelineDependency
 	// Open cached file.
 	Ref< IStream > fileStream = FileSystem::getInstance().open(ss.str(), File::FmRead);
 	if (!fileStream)
-		return 0;
+		return nullptr;
 
 	return new BufferedStream(fileStream);
 }
@@ -58,7 +58,7 @@ Ref< IStream > FilePipelineCache::get(const Guid& guid, const PipelineDependency
 Ref< IStream > FilePipelineCache::put(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	if (!m_accessWrite)
-		return 0;
+		return nullptr;
 
 	// Format guid as string and use two first, textual, bytes as subfolders.
 	std::wstring gs = guid.format();
@@ -74,7 +74,7 @@ Ref< IStream > FilePipelineCache::put(const Guid& guid, const PipelineDependency
 	if (!FileSystem::getInstance().makeAllDirectories(p.getPathOnly()))
 	{
 		log::error << L"File pipeline cache failed; unable to create cache directory for " << p.getPathName() << L"." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	// Create cached file, will be renamed when stream has been closed.
@@ -82,7 +82,7 @@ Ref< IStream > FilePipelineCache::put(const Guid& guid, const PipelineDependency
 	if (!fileStream)
 	{
 		log::error << L"File pipeline cache failed; unable to create cache entry " << p.getPathName() << L"." << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	return new FilePipelinePutStream(
