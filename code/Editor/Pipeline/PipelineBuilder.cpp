@@ -59,17 +59,6 @@ private:
 	uint32_t m_count;
 };
 
-// struct WorkSetSortPredicate
-// {
-// 	bool operator () (const std::pair< uint32_t, Ref< const Object > >& a, const std::pair< uint32_t, Ref< const Object > >& b) const
-// 	{
-// 		if (a.second && !b.second)
-// 			return true;
-// 		else
-// 			return false;
-// 	}
-// };
-
 void calculateGlobalHash(
 	const IPipelineDependencySet* dependencySet,
 	const PipelineDependency* dependency,
@@ -278,9 +267,6 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 
 	log::info << L"Dispatching builds..." << Endl;
 
-	// Sort work set to build those with user parameters first.
-	// m_workSet.sort(WorkSetSortPredicate());
-
 	m_progress = 0;
 	m_progressEnd = m_workSet.size();
 	m_succeeded = dependencyCount - m_progressEnd;
@@ -290,50 +276,50 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 	m_cacheMiss = 0;
 	m_cacheVoid = 0;
 
-	int32_t cpuCores = OS::getInstance().getCPUCoreCount();
-	if (
-		m_threadedBuildEnable &&
-		m_workSet.size() >= cpuCores * 2
-	)
+	if (!m_workSet.empty())
 	{
-		std::vector< Thread* > threads(cpuCores, (Thread*)0);
-		for (int32_t i = 0; i < cpuCores; ++i)
+		int32_t cpuCores = OS::getInstance().getCPUCoreCount();
+		if (m_threadedBuildEnable)
 		{
-			ThreadPool::getInstance().spawn(
-				makeFunctor
-				<
-					PipelineBuilder,
-					const IPipelineDependencySet*,
-					Thread*,
-					int32_t
-				>
-				(
-					this,
-					&PipelineBuilder::buildThread,
-					dependencySet,
-					ThreadManager::getInstance().getCurrentThread(),
-					i
-				),
-				threads[i]
-			);
-		}
-
-		for (int32_t i = 0; i < cpuCores; ++i)
-		{
-			if (threads[i])
+			std::vector< Thread* > threads(cpuCores, (Thread*)0);
+			for (int32_t i = 0; i < cpuCores; ++i)
 			{
-				ThreadPool::getInstance().join(threads[i]);
-				threads[i] = nullptr;
+				ThreadPool::getInstance().spawn(
+					makeFunctor
+					<
+						PipelineBuilder,
+						const IPipelineDependencySet*,
+						Thread*,
+						int32_t
+					>
+					(
+						this,
+						&PipelineBuilder::buildThread,
+						dependencySet,
+						ThreadManager::getInstance().getCurrentThread(),
+						i
+					),
+					threads[i]
+				);
+			}
+
+			for (int32_t i = 0; i < cpuCores; ++i)
+			{
+				if (threads[i])
+				{
+					ThreadPool::getInstance().join(threads[i]);
+					threads[i] = nullptr;
+				}
 			}
 		}
-	}
-	else
-	{
-		buildThread(
-			dependencySet,
-			ThreadManager::getInstance().getCurrentThread(),
-			0
-		);
+		else
+		{
+			buildThread(
+				dependencySet,
+				ThreadManager::getInstance().getCurrentThread(),
+				0
+			);
+		}
 	}
 
 	T_DEBUG(L"Pipeline build; total " << int32_t(timer.getElapsedTime() * 1000) << L" ms");
@@ -436,8 +422,12 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 	dependency->outputPath = outputPath;
 	dependency->outputGuid = outputGuid;
 	dependency->pipelineHash = pipelineHash;
-	dependency->sourceAssetHash = 0;
+	dependency->sourceAssetHash = DeepHash(sourceAsset).get();
+	dependency->sourceDataHash = 0;
 	dependency->flags = PdfBuild;
+
+	if (auto hashableBuildParams = dynamic_type_cast< const ISerializable* >(buildParams))
+		dependency->sourceDataHash = DeepHash(hashableBuildParams).get();
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
@@ -457,7 +447,7 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 Ref< ISerializable > PipelineBuilder::getBuildProduct(const ISerializable* sourceAsset)
 {
 	if (!sourceAsset)
-		return 0;
+		return nullptr;
 
 	uint32_t sourceHash = DeepHash(sourceAsset).get();
 
@@ -479,7 +469,7 @@ Ref< ISerializable > PipelineBuilder::getBuildProduct(const ISerializable* sourc
 		}
 	}
 
-	return 0;
+	return nullptr;
 }
 
 Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
@@ -490,7 +480,7 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 	if (instanceGuid.isNull() || !instanceGuid.isValid())
 	{
 		log::error << L"Invalid guid for output instance" << Endl;
-		return 0;
+		return nullptr;
 	}
 
 	instance = m_outputDatabase->getInstance(instanceGuid);
@@ -507,7 +497,7 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 		if (!result)
 		{
 			log::error << L"Unable to remove existing instance \"" << instance->getPath() << L"\"" << Endl;
-			return 0;
+			return nullptr;
 		}
 	}
 
@@ -526,7 +516,7 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 	else
 	{
 		log::error << L"Unable to create output instance" << Endl;
-		return 0;
+		return nullptr;
 	}
 }
 
@@ -603,8 +593,9 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	log::info << L"Building asset \"" << dependency->outputPath << L"\"..." << Endl;
 	log::info << IncreaseIndent;
 
-	// Get output instances from cache.
-	if (m_cache && !buildParams)
+	// Get output instances from cache; synthesized without data hash cannot be cached.
+	bool cacheable = !(reason == PbrSynthesized && dependency->sourceDataHash == 0);
+	if (m_cache && cacheable)
 	{
 		if (getInstancesFromCache(dependency->outputGuid, currentDependencyHash))
 		{
@@ -662,7 +653,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 
 	if (result)
 	{
-		if (m_cache && !buildParams)
+		if (m_cache && cacheable)
 			putInstancesInCache(
 				dependency->outputGuid,
 				currentDependencyHash,
