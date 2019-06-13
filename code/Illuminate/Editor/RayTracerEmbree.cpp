@@ -34,7 +34,7 @@ Scalar attenuation(const Scalar& distance, const Scalar& range)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.illuminate.RayTracerEmbree", RayTracerEmbree, IRayTracer)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.illuminate.RayTracerEmbree", 0, RayTracerEmbree, IRayTracer)
 
 RayTracerEmbree::RayTracerEmbree()
 :	m_device(nullptr)

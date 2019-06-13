@@ -184,9 +184,22 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.illuminate.IlluminatePipelineOperator", 0, IlluminatePipelineOperator, scene::IScenePipelineOperator)
 
+IlluminatePipelineOperator::IlluminatePipelineOperator()
+:	m_rayTracerType(nullptr)
+{
+}
+
 bool IlluminatePipelineOperator::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	
+	m_rayTracerType = TypeInfo::find(settings->getProperty< std::wstring >(L"IlluminatePipelineOperator.RayTracerType", L"traktor.illuminate.RayTracerEmbree").c_str());
+	if (!m_rayTracerType)
+	{
+		log::error << L"Failed to initialize illuminate pipeline operator; no such ray tracer type." << Endl;
+		return false;
+	}
+
 	return true;
 }
 
@@ -204,7 +217,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 	const auto configuration = mandatory_non_null_type_cast< const IlluminateConfiguration* >(operatorData);
 
 	// Create raytracer implementation.
-	Ref< IRayTracer > rayTracer = new RayTracerEmbree(); // RayTracerLocal();
+	Ref< IRayTracer > rayTracer = checked_type_cast< IRayTracer* >(m_rayTracerType->createInstance());
 	if (!rayTracer->create(configuration))
 		return false;
 

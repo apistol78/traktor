@@ -52,7 +52,7 @@ Scalar attenuation(const Scalar& distance, const Scalar& range)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.illuminate.RayTracerLocal", RayTracerLocal, IRayTracer)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.illuminate.RayTracerLocal", 0, RayTracerLocal, IRayTracer)
 
 RayTracerLocal::RayTracerLocal()
 {
