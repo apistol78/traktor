@@ -20,6 +20,8 @@ class T_DLLCLASS IlluminatePipelineOperator : public scene::IScenePipelineOperat
 	T_RTTI_CLASS;
 
 public:
+	IlluminatePipelineOperator();
+
 	virtual bool create(const editor::IPipelineSettings* settings) override final;
 
 	virtual void destroy() override final;
@@ -30,6 +32,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
+	const TypeInfo* m_rayTracerType;
 };
 
 	}

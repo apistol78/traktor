@@ -395,26 +395,8 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 		return false;
 
-#if 0
-
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT(pipeline);
-
-	if (!pipeline->buildOutput(
-		this,
-		nullptr,
-		nullptr,
-		nullptr,
-		sourceAsset,
-		0,
-		outputPath,
-		outputGuid,
-		buildParams,
-		PbrSourceModified
-	))
-		return false;
-
-#else
 
 	Ref< PipelineDependency > dependency = new PipelineDependency();
 	dependency->pipelineType = pipelineType;
@@ -429,19 +411,102 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 	if (auto hashableBuildParams = dynamic_type_cast< const ISerializable* >(buildParams))
 		dependency->sourceDataHash = DeepHash(hashableBuildParams).get();
 
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
+	// Calculate hash entry, no children thus no need for dependency set.
+	PipelineDependencyHash currentDependencyHash;
+	calculateGlobalHash(
+		nullptr,
+		dependency,
+		currentDependencyHash.pipelineHash,
+		currentDependencyHash.sourceAssetHash,
+		currentDependencyHash.sourceDataHash,
+		currentDependencyHash.filesHash
+	);
 
-		WorkEntry we;
-		we.dependency = dependency;
-		we.buildParams = buildParams;
-		we.reason = PbrSynthesized;
-		m_workSet.push_back(we);
+	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
+
+	log::info << L"Building asset \"" << dependency->outputPath << L"\"..." << Endl;
+	log::info << IncreaseIndent;
+
+	// Get output instances from cache.
+	if (m_cache && dependency->sourceDataHash != 0)
+	{
+		if (getInstancesFromCache(dependency->outputGuid, currentDependencyHash))
+		{
+			log::info << L"Cached output used of \"" << dependency->outputPath << L"\"." << Endl;
+			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
+			Atomic::increment(m_cacheHit);
+			Atomic::increment(m_succeededBuilt);
+			return BrSucceeded;
+		}
+		else
+			Atomic::increment(m_cacheMiss);
+	}
+	else if (m_cache)
+		Atomic::increment(m_cacheVoid);
+
+	// Build output instances; keep an array of written instances as we
+	// need them to update the cache.
+	RefArray< db::Instance >* previousBuiltInstances = reinterpret_cast< RefArray< db::Instance >* >(m_buildInstances.get());
+	RefArray< db::Instance > builtInstances;
+	m_buildInstances.set(&builtInstances);
+
+	LogTargetFilter infoTarget(log::info.getLocalTarget());
+	LogTargetFilter warningTarget(log::warning.getLocalTarget());
+	LogTargetFilter errorTarget(log::error.getLocalTarget());
+
+	log::info.setLocalTarget(&infoTarget);
+	log::warning.setLocalTarget(&warningTarget);
+	log::error.setLocalTarget(&errorTarget);
+
+	Timer timer;
+	timer.start();
+
+	bool result = pipeline->buildOutput(
+		this,
+		nullptr,
+		nullptr,
+		nullptr,
+		sourceAsset,
+		0,
+		outputPath,
+		outputGuid,
+		buildParams,
+		PbrSourceModified
+	);
+
+	double buildTime = timer.getElapsedTime();
+
+	log::info.setLocalTarget(infoTarget.getTarget());
+	log::warning.setLocalTarget(warningTarget.getTarget());
+	log::error.setLocalTarget(errorTarget.getTarget());
+
+	if (result)
+	{
+		if (m_cache && dependency->sourceDataHash != 0)
+			putInstancesInCache(
+				dependency->outputGuid,
+				currentDependencyHash,
+				builtInstances
+			);
+
+		if (!builtInstances.empty())
+		{
+			log::info << L"Instance(s) built:" << Endl;
+			log::info << IncreaseIndent;
+
+			for (auto builtInstance : builtInstances)
+				log::info << L"\"" << builtInstance->getPath() << L"\" " << builtInstance->getGuid().format() << Endl;
+
+			log::info << DecreaseIndent;
+		}
 	}
 
-#endif
+	log::info << DecreaseIndent;
+	log::info << (result ? L"Build successful" : L"Build failed") << Endl;
 
-	return true;
+	// Restore previous set; needed by parent build thread.
+	m_buildInstances.set(previousBuiltInstances);
+	return result;
 }
 
 Ref< ISerializable > PipelineBuilder::getBuildProduct(const ISerializable* sourceAsset)
@@ -593,9 +658,8 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	log::info << L"Building asset \"" << dependency->outputPath << L"\"..." << Endl;
 	log::info << IncreaseIndent;
 
-	// Get output instances from cache; synthesized without data hash cannot be cached.
-	bool cacheable = !(reason == PbrSynthesized && dependency->sourceDataHash == 0);
-	if (m_cache && cacheable)
+	// Get output instances from cache.
+	if (m_cache)
 	{
 		if (getInstancesFromCache(dependency->outputGuid, currentDependencyHash))
 		{
@@ -634,7 +698,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 		this,
 		dependencySet,
 		dependency,
-		dependency->sourceInstanceGuid.isNotNull() ? m_sourceDatabase->getInstance(dependency->sourceInstanceGuid) : 0,
+		dependency->sourceInstanceGuid.isNotNull() ? m_sourceDatabase->getInstance(dependency->sourceInstanceGuid) : nullptr,
 		dependency->sourceAsset,
 		dependency->sourceAssetHash,
 		dependency->outputPath,
@@ -653,7 +717,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 
 	if (result)
 	{
-		if (m_cache && cacheable)
+		if (m_cache)
 			putInstancesInCache(
 				dependency->outputGuid,
 				currentDependencyHash,

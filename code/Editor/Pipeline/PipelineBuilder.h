@@ -109,11 +109,7 @@ private:
 	Semaphore m_builtCacheLock;
 	Semaphore m_workSetLock;
 
-
-	//std::vector< uint32_t > m_reasons;
-	//std::list< std::pair< uint32_t, Ref< const Object > > > m_workSet;
 	std::list< WorkEntry > m_workSet;
-
 
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
