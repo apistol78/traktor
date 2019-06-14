@@ -317,6 +317,11 @@ Ref< drawing::Image > RayTracerLocal::traceIndirect(const GBuffer* gbuffer) cons
     return lightmapIndirect;
 }
 
+Ref< drawing::Image > RayTracerLocal::traceCamera(const Transform& transform, int32_t width, int32_t height, float fov) const
+{
+	return nullptr;
+}
+
 void RayTracerLocal::cullLights(const GBuffer* gbuffer, AlignedVector< Light >& outLights) const
 {
 	for (auto light : m_lights)

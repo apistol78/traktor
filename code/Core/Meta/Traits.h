@@ -1,6 +1,4 @@
 #pragma once
-#ifndef traktor_Traits_H
-#define traktor_Traits_H
 
 namespace traktor
 {
@@ -8,7 +6,7 @@ namespace traktor
 /*! \ingroup Core */
 //@{
 
-/*! \brief Is type a pointer. */
+/*! Is type a pointer. */
 template < typename Type >
 struct IsPointer
 {
@@ -18,7 +16,7 @@ struct IsPointer
 	enum { value = false };
 };
 
-/*! \brief Is type a pointer, pointer specialization. */
+/*! Is type a pointer, pointer specialization. */
 template < typename Type >
 struct IsPointer < Type* >
 {
@@ -28,7 +26,7 @@ struct IsPointer < Type* >
 	enum { value = true };
 };
 
-/*! \brief Is type a pointer, const pointer specialization. */
+/*! Is type a pointer, const pointer specialization. */
 template < typename Type >
 struct IsPointer < const Type* >
 {
@@ -38,7 +36,7 @@ struct IsPointer < const Type* >
 	enum { value = true };
 };
 
-/*! \brief Is type a pointer, reference specialization. */
+/*! Is type a pointer, reference specialization. */
 template < typename Type >
 struct IsPointer < Type& >
 {
@@ -48,7 +46,7 @@ struct IsPointer < Type& >
 	enum { value = false };
 };
 
-/*! \brief Is type a pointer, const reference specialization. */
+/*! Is type a pointer, const reference specialization. */
 template < typename Type >
 struct IsPointer < const Type& >
 {
@@ -58,7 +56,7 @@ struct IsPointer < const Type& >
 	enum { value = false };
 };
 
-/*! \brief Is type a reference. */
+/*! Is type a reference. */
 template < typename Type >
 struct IsReference
 {
@@ -68,7 +66,7 @@ struct IsReference
 	enum { value = false };
 };
 
-/*! \brief Is type a reference, reference specialization. */
+/*! Is type a reference, reference specialization. */
 template < typename Type >
 struct IsReference < Type& >
 {
@@ -78,7 +76,7 @@ struct IsReference < Type& >
 	enum { value = true };
 };
 
-/*! \brief Is type a reference, const reference specialization. */
+/*! Is type a reference, const reference specialization. */
 template < typename Type >
 struct IsReference < const Type& >
 {
@@ -88,7 +86,7 @@ struct IsReference < const Type& >
 	enum { value = true };
 };
 
-/*! \brief Is type const. */
+/*! Is type const. */
 template < typename Type >
 struct IsConst
 {
@@ -97,7 +95,7 @@ struct IsConst
 	enum { value = false };
 };
 
-/*! \brief Is type const, specialization. */
+/*! Is type const, specialization. */
 template < typename Type >
 struct IsConst < const Type >
 {
@@ -109,5 +107,3 @@ struct IsConst < const Type >
 //@}
 
 }
-
-#endif	// traktor_Traits_H

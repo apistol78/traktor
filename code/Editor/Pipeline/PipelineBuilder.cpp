@@ -504,8 +504,11 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 	log::info << DecreaseIndent;
 	log::info << (result ? L"Build successful" : L"Build failed") << Endl;
 
-	// Restore previous set; needed by parent build thread.
+	// Restore previous set but also insert built instances from synthesized build;
+	// when caching is enabled then synthesized built instances should be included in parent build as well.
+	previousBuiltInstances->insert(previousBuiltInstances->end(), builtInstances.begin(), builtInstances.end());
 	m_buildInstances.set(previousBuiltInstances);
+
 	return result;
 }
 

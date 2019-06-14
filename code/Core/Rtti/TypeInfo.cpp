@@ -138,14 +138,14 @@ TypeInfo::TypeInfo(
 ,	m_factory(factory)
 ,	m_tag(0)
 {
-	T_SAFE_ADDREF(m_factory);
 	__registerTypeInfo(this);
 }
 
 TypeInfo::~TypeInfo()
 {
 	__unregisterTypeInfo(this);
-	T_SAFE_RELEASE(m_factory);
+	if (m_factory)
+		delete m_factory;
 }
 
 ITypedObject* TypeInfo::createInstance(void* memory) const
@@ -153,7 +153,7 @@ ITypedObject* TypeInfo::createInstance(void* memory) const
 	if (m_factory)
 		return m_factory->createInstance(memory);
 	else
-		return 0;
+		return nullptr;
 }
 
 const TypeInfo* TypeInfo::find(const wchar_t* name)

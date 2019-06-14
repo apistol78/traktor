@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Config.h"
-#include "Core/IRefCount.h"
 #include "Core/Containers/SmallSet.h"
 #include "Core/Meta/Traits.h"
 
@@ -18,20 +17,20 @@ namespace traktor
 
 class ITypedObject;
 
-/*! \brief Instance factory.
+/*! Instance factory.
  * \ingroup Core
  */
-class IInstanceFactory : public IRefCount
+class IInstanceFactory
 {
 public:
 	virtual ITypedObject* createInstance(void* memory) const = 0;
 };
 
-/*! \brief Default instance factory implementation.
+/*! Specialized instance factory implementation.
  * \ingroup Core
  */
 template < typename T >
-class InstanceFactory : public RefCountImpl< IInstanceFactory >
+class InstanceFactory : public IInstanceFactory
 {
 public:
 	virtual ITypedObject* createInstance(void* memory) const
@@ -43,7 +42,7 @@ public:
 	}
 };
 
-/*! \brief Type information.
+/*! Type information.
  * \ingroup Core
  */
 class T_DLLCLASS TypeInfo
@@ -60,63 +59,63 @@ public:
 
 	virtual ~TypeInfo();
 
-	/*! \brief Name of type.
+	/*! Name of type.
 	 *
 	 * \return Type name.
 	 */
 	const wchar_t* getName() const { return m_name; }
 
-	/*! \brief Size of type in bytes.
+	/*! Size of type in bytes.
 	 *
 	 * \return Type size in bytes.
 	 */
 	uint32_t getSize() const { return m_size; }
 
-	/*! \brief Version of type.
+	/*! Version of type.
 	 *
 	 * \return Type version.
 	 */
 	int32_t getVersion() const { return m_version; }
 
-	/*! \brief Editable type.
+	/*! Editable type.
 	 *
 	 * \return True if type is editable.
 	 */
 	bool isEditable() const { return m_editable; }
 
-	/*! \brief Return super type.
+	/*! Return super type.
 	 *
 	 * \return Super type.
 	 */
 	const TypeInfo* getSuper() const { return m_super; }
 
-	/*! \brief Instantiable type.
+	/*! Instantiable type.
 	 *
 	 * \return True if type is Instantiable.
 	 */
 	bool isInstantiable() const { return m_factory != 0; }
 
-	/*! \brief Create new instance of type.
+	/*! Create new instance of type.
 	 *
 	 * \param memory Optional pointer to memory location.
 	 * \return New instance.
 	 */
 	ITypedObject* createInstance(void* memory = 0) const;
 
-	/*! \brief Find type from string representation.
+	/*! Find type from string representation.
 	 *
 	 * \return Type pointer, null if type not found.
 	 */
 	static const TypeInfo* find(const wchar_t* name);
 
-	/*! \brief Find all types derived from this type.
+	/*! Find all types derived from this type.
 	 *
 	 * \param outTypes Found types.
 	 * \param inclusive If this type should be included in result.
 	 */
 	void findAllOf(class TypeInfoSet& outTypes, bool inclusive = true) const;
 
-	/*! \brief Create instance from type name.
+	/*! Create instance from type name.
 	 *
 	 * \param name Type name.
 	 * \param memory Optional pointer to memory location.
@@ -124,12 +123,12 @@ public:
 	 */
 	static ITypedObject* createInstance(const wchar_t* name, void* memory = 0);
 
-	/*! \brief Set tag.
+	/*! Set tag.
 	 * \note This is specifically used for maintaining script class mapping.
 	 */
 	void setTag(uint32_t tag) const;
 
-	/*! \brief Get tag.
+	/*! Get tag.
 	 */
 	uint32_t getTag() const { return m_tag; }
 
@@ -143,7 +142,7 @@ private:
 	mutable uint32_t m_tag;
 };
 
-/*! \brief Set of type information.
+/*! Set of type information.
  * \ingroup Core
  */
 class T_DLLCLASS TypeInfoSet : public SmallSet< const TypeInfo* >
@@ -159,22 +158,22 @@ public:
 	bool insert(const TypeInfo* typeInfo) { return SmallSet< const TypeInfo* >::insert(typeInfo); }
 };
 
-/*! \brief Create type info set from single type.
+/*! Create type info set from single type.
  * \ingroup Core
  */
 TypeInfoSet T_DLLCLASS makeTypeInfoSet(const TypeInfo& t1);
 
-/*! \brief Create type info set from single type.
+/*! Create type info set from single type.
  * \ingroup Core
  */
 TypeInfoSet T_DLLCLASS makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2);
 
-/*! \brief Create type info set from single type.
+/*! Create type info set from single type.
  * \ingroup Core
  */
 TypeInfoSet T_DLLCLASS makeTypeInfoSet(const TypeInfo& t1, const TypeInfo& t2, const TypeInfo& t3);
 
-/*! \brief Check if type is identical.
+/*! Check if type is identical.
  * \ingroup Core
  */
 inline bool is_type_a(const TypeInfo& base, const TypeInfo& type)
@@ -182,7 +181,7 @@ inline bool is_type_a(const TypeInfo& base, const TypeInfo& type)
 	return &base == &type;
 }
 
-/*! \brief Check if type is derived from a base type.
+/*! Check if type is derived from a base type.
  * \ingroup Core
  */
 inline bool is_type_of(const TypeInfo& base, const TypeInfo& type)
@@ -196,13 +195,13 @@ inline bool is_type_of(const TypeInfo& base, const TypeInfo& type)
 	return is_type_of(base, *type.getSuper());
 }
 
-/*! \brief Return type difference.
+/*! Return type difference.
  * \ingroup Core
  */
 uint32_t T_DLLCLASS type_difference(const TypeInfo& base, const TypeInfo& type);
 
 
-/*! \brief Force linker to keep reference to type.
+/*! Force linker to keep reference to type.
  * \ingroup Core
  */
 //@{

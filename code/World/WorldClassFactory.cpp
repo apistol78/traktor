@@ -230,8 +230,8 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIEntityComponent);
 
 	auto classCameraComponentData = new AutoRuntimeClass< CameraComponentData >();
-	classCameraComponentData->addConstant("CtOrthographic", Any::fromInt32(CtOrthographic));
-	classCameraComponentData->addConstant("CtPerspective", Any::fromInt32(CtPerspective));
+	classCameraComponentData->addConstant("CtOrthographic", Any::fromInt32(CameraType::CtOrthographic));
+	classCameraComponentData->addConstant("CtPerspective", Any::fromInt32(CameraType::CtPerspective));
 	classCameraComponentData->addConstructor();
 	classCameraComponentData->addProperty("cameraType", &CameraComponentData_setCameraType, &CameraComponentData_getCameraType);
 	classCameraComponentData->addProperty("fieldOfView", &CameraComponentData::setFieldOfView, &CameraComponentData::getFieldOfView);
@@ -240,8 +240,8 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classCameraComponentData);
 
 	auto classCameraComponent = new AutoRuntimeClass< CameraComponent >();
-	classCameraComponent->addConstant("CtOrthographic", Any::fromInt32(CtOrthographic));
-	classCameraComponent->addConstant("CtPerspective", Any::fromInt32(CtPerspective));
+	classCameraComponent->addConstant("CtOrthographic", Any::fromInt32(CameraType::CtOrthographic));
+	classCameraComponent->addConstant("CtPerspective", Any::fromInt32(CameraType::CtPerspective));
 	classCameraComponent->addProperty("cameraType", &CameraComponent_setCameraType, &CameraComponent_getCameraType);
 	classCameraComponent->addProperty("fieldOfView", &CameraComponent::setFieldOfView, &CameraComponent::getFieldOfView);
 	classCameraComponent->addProperty("width", &CameraComponent::setWidth, &CameraComponent::getWidth);
@@ -293,11 +293,11 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classComponentEntity);
 
 	auto classIWorldRenderer = new AutoRuntimeClass< IWorldRenderer >();
-	classIWorldRenderer->addConstant("QuDisabled", Any::fromInt32(QuDisabled));
-	classIWorldRenderer->addConstant("QuLow", Any::fromInt32(QuLow));
-	classIWorldRenderer->addConstant("QuMedium", Any::fromInt32(QuMedium));
-	classIWorldRenderer->addConstant("QuHigh", Any::fromInt32(QuHigh));
-	classIWorldRenderer->addConstant("QuUltra", Any::fromInt32(QuUltra));
+	classIWorldRenderer->addConstant("QuDisabled", Any::fromInt32(Quality::QuDisabled));
+	classIWorldRenderer->addConstant("QuLow", Any::fromInt32(Quality::QuLow));
+	classIWorldRenderer->addConstant("QuMedium", Any::fromInt32(Quality::QuMedium));
+	classIWorldRenderer->addConstant("QuHigh", Any::fromInt32(Quality::QuHigh));
+	classIWorldRenderer->addConstant("QuUltra", Any::fromInt32(Quality::QuUltra));
 	registrar->registerClass(classIWorldRenderer);
 }
 

@@ -72,11 +72,6 @@ private:
 
 	/*! \brief Perform build. */
 	bool performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency);
-
-	/*! \brief */
-	void agentBuildSucceeded(const PipelineDependency* dependency, PipelineDependencyHash hash, int32_t agentIndex);
-
-	void agentBuildFailed(const PipelineDependency* dependency, int32_t agentIndex);
 };
 
 	}

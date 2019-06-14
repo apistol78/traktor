@@ -55,8 +55,7 @@ public:
 
     virtual void commit() = 0;
 
-    /*! \brief Preprocess GBuffer.
-     *         Preprocess GBuffer so it's more optimal for tracing.
+    /*! Preprocess GBuffer.
      *
      * Preprocessing can include functions which modify gbuffer data to reduce
      * fake shadowing artifacts etc.
@@ -70,6 +69,19 @@ public:
     virtual Ref< drawing::Image > traceDirect(const GBuffer* gbuffer) const = 0;
 
     virtual Ref< drawing::Image > traceIndirect(const GBuffer* gbuffer) const = 0;
+
+    /*! Trace camera view.
+     *
+     * Trace scene from camera view. Useful for debugging traceable
+     * geometry etc.
+     *
+     * \param transform Camera origin and orientation.
+     * \param width Width in pixels.
+     * \param height Height in pixels.
+     * \param fov Field of view.
+     * \return Traced image; null if trace failed.
+     */
+    virtual Ref< drawing::Image > traceCamera(const Transform& transform, int32_t width, int32_t height, float fov) const = 0;
 };
 
     }
