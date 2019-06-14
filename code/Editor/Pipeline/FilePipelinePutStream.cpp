@@ -20,7 +20,7 @@ void FilePipelinePutStream::close()
 	if (m_file)
 	{
 		m_file->close();
-		m_file = 0;
+		m_file = nullptr;
 
 		if (!FileSystem::getInstance().move(
 			m_path,

@@ -2,10 +2,8 @@
 
 namespace traktor
 {
-	namespace
-	{
 
-TypeInfo s_ITypedObject_typeInfo(
+const TypeInfo ITypedObject::ms_typeInfo(
 	L"traktor.ITypedObject",
 	sizeof(ITypedObject),
 	0,
@@ -14,11 +12,9 @@ TypeInfo s_ITypedObject_typeInfo(
 	0
 );
 
-	}
-
 const TypeInfo& ITypedObject::getClassTypeInfo()
 {
-	return s_ITypedObject_typeInfo;
+	return ms_typeInfo;
 }
 
 }

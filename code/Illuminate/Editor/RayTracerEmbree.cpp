@@ -301,6 +301,67 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
     return lightmapIndirect;
 }
 
+Ref< drawing::Image > RayTracerEmbree::traceCamera(const Transform& transform, int32_t width, int32_t height, float fov) const
+{
+	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getRGBAF32(), width, height);
+	image->clear(Color4f(0.0f, 0.0f, 0.0f, 1.0f));
+
+	RandomGeometry random;
+	RTCRayHit T_MATH_ALIGN16 rh;
+
+	for (int32_t y = 0; y < height; ++y)
+	{
+		for (int32_t x = 0; x < width; ++x)
+		{
+			float fx = -1.0f + (2.0f * (float)x / width);
+			float fy = -1.0f + (2.0f * (float)y / height);
+
+			Vector4 traceOrigin = transform.translation().xyz1();
+			Vector4 traceDirection = (transform * Vector4(fx, fy, 1.0f, 0.0f)).normalized();
+
+			rh.ray.org_x = traceOrigin.x();
+			rh.ray.org_y = traceOrigin.y();
+			rh.ray.org_z = traceOrigin.z();
+
+			rh.ray.dir_x = traceDirection.x();
+			rh.ray.dir_y = traceDirection.y();
+			rh.ray.dir_z = traceDirection.z();
+
+			rh.ray.tnear = 0.0f;
+			rh.ray.time = 0.0f;
+			rh.ray.tfar = 1000.0f;
+
+			rh.ray.mask = 0;
+			rh.ray.id = 0;
+			rh.ray.flags = 0;
+
+			rh.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+			rh.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+
+			RTCIntersectContext context;
+			rtcInitIntersectContext(&context);
+			rtcIntersect1(m_scene, &context, &rh);					
+
+			if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
+				continue;
+
+			Scalar hitDistance(rh.ray.tfar);
+			Vector4 hitPosition = (traceOrigin + traceDirection * hitDistance).xyz1();
+			Vector4 hitNormal = Vector4(rh.hit.Ng_x, rh.hit.Ng_y, rh.hit.Ng_z, 0.0f).normalized();
+
+			Color4f incoming = sampleAnalyticalLights(
+				random,
+				hitPosition,
+				hitNormal,
+				true
+			);
+			image->setPixelUnsafe(x, y, incoming);
+		}
+	}
+
+	return image;
+}
+
 Color4f RayTracerEmbree::sampleAnalyticalLights(
     RandomGeometry& random,
     const Vector4& origin,

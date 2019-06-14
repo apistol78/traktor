@@ -1,4 +1,3 @@
-#include "Core/Functor/Functor.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Editor/IPipeline.h"
@@ -33,11 +32,11 @@ Ref< PipelineAgent > PipelineAgent::create(
 {
 	net::SocketAddressIPv4::Interface itf;
 	if (!net::SocketAddressIPv4::getBestInterface(itf))
-		return 0;
+		return nullptr;
 
 	Ref< net::TcpSocket > socket = new net::TcpSocket();
 	if (!socket->connect(net::SocketAddressIPv4(host, port)))
-		return 0;
+		return nullptr;
 
 	Ref< net::BidirectionalObjectTransport > transport = new net::BidirectionalObjectTransport(socket);
 
@@ -49,7 +48,7 @@ Ref< PipelineAgent > PipelineAgent::create(
 		streamServer->getListenPort()
 	);
 	if (!transport->send(&agentConnect))
-		return 0;
+		return nullptr;
 
 	return new PipelineAgent(streamServer, transport, description);
 }
@@ -74,17 +73,8 @@ void PipelineAgent::update()
 	Ref< AgentStatus > agentStatus;
 	if (m_transport->recv< AgentStatus >(0, agentStatus) >= 1)
 	{
-		if (agentStatus->getResult())
-		{
-			if (m_functorSucceeded)
-				(*m_functorSucceeded)();
-		}
-		else
-		{
-			if (m_functorFailed)
-				(*m_functorFailed)();
-		}
-		--m_buildingCount;
+		m_result(agentStatus->getResult());
+		m_buildingCount--;
 	}
 }
 
@@ -98,7 +88,7 @@ bool PipelineAgent::isIdle() const
 	return m_buildingCount <= 0;
 }
 
-bool PipelineAgent::build(const PipelineDependency* dependency, Functor* functorSucceeded, Functor* functorFailed)
+bool PipelineAgent::build(const PipelineDependency* dependency, const std::function< void(bool) >& result)
 {
 	AgentBuild agentBuild(
 		dependency->pipelineType->getName(),
@@ -111,15 +101,11 @@ bool PipelineAgent::build(const PipelineDependency* dependency, Functor* functor
 	);
 	if (!m_transport->send(&agentBuild))
 	{
-		if (functorFailed)
-			(*functorFailed)();
+		result(false);
 		return false;
 	}
-
-	m_functorSucceeded = functorSucceeded;
-	m_functorFailed = functorFailed;
-
-	++m_buildingCount;
+	m_result = result;
+	m_buildingCount++;
 	return true;
 }
 

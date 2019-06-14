@@ -14,25 +14,21 @@
 namespace traktor
 {
 
-/*! \brief Rtti declaration and implementation macros.
+/*! Rtti declaration and implementation macros.
  * \ingroup Core
  */
 //@{
 
-#define T_RTTI_CLASS														\
-	public:																	\
-		static const traktor::TypeInfo& getClassTypeInfo();					\
+#define T_RTTI_CLASS													\
+	public:																\
+		static const traktor::TypeInfo& getClassTypeInfo();				\
 		virtual const traktor::TypeInfo& getTypeInfo() const override;	\
-	private:																\
+	private:															\
 		static traktor::TypeInfo ms_typeInfo;
 
-#define T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)									\
-	const traktor::TypeInfo& CLASS::getClassTypeInfo() { return ms_typeInfo; }	\
+#define T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)										\
+	const traktor::TypeInfo& CLASS::getClassTypeInfo() { return ms_typeInfo; }		\
 	const traktor::TypeInfo& CLASS::getTypeInfo() const { return ms_typeInfo; }
-
-#define T_IMPLEMENT_RTTI_TEMPLATE_CLASS_COMMON(CLASS, TARGS)										\
-	template < TARGS > const traktor::TypeInfo& CLASS::getClassTypeInfo() { return ms_typeInfo; }	\
-	template < TARGS > const traktor::TypeInfo& CLASS::getTypeInfo() const { return ms_typeInfo; }
 
 #define T_IMPLEMENT_RTTI_CLASS_ROOT(ID, CLASS)	\
 	traktor::TypeInfo CLASS::ms_typeInfo(		\
@@ -67,15 +63,15 @@ namespace traktor
 	);																\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
-#define T_IMPLEMENT_RTTI_FACTORY_CLASS_ROOT(ID, VERSION, CLASS)	\
-	traktor::TypeInfo CLASS::ms_typeInfo(						\
-		ID,														\
-		sizeof(CLASS),											\
-		VERSION,												\
-		false,													\
-		0,														\
-		new traktor::InstanceFactory< CLASS >()					\
-	);															\
+#define T_IMPLEMENT_RTTI_FACTORY_CLASS_ROOT(ID, VERSION, CLASS)		\
+	traktor::TypeInfo CLASS::ms_typeInfo(							\
+		ID,															\
+		sizeof(CLASS),												\
+		VERSION,													\
+		false,														\
+		0,															\
+		new traktor::InstanceFactory< CLASS >()						\
+	);																\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
 #define T_IMPLEMENT_RTTI_FACTORY_CLASS(ID, VERSION, CLASS, SUPER)	\
@@ -111,20 +107,9 @@ namespace traktor
 	);															\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
-#define T_IMPLEMENT_RTTI_TEMPLATE_CLASS(CLASS, TARGS, SUPER)	\
-	template < TARGS > traktor::TypeInfo CLASS::ms_typeInfo(	\
-		0,														\
-		sizeof(CLASS),											\
-		0,														\
-		false,													\
-		&traktor::type_of< SUPER >(),							\
-		0														\
-	);															\
-	T_IMPLEMENT_RTTI_TEMPLATE_CLASS_COMMON(CLASS, TARGS)
-
 //@}
 
-/*! \brief RTTI object.
+/*! RTTI object.
  * \ingroup Core
  */
 class T_DLLCLASS ITypedObject : public IRefCount
@@ -133,9 +118,12 @@ public:
 	static const TypeInfo& getClassTypeInfo();
 
 	virtual const TypeInfo& getTypeInfo() const = 0;
+
+private:
+	static const traktor::TypeInfo ms_typeInfo;
 };
 
-/*! \brief Get type of object.
+/*! Get type of object.
  * \ingroup Core
  *
  * \param obj Object to get type of.
@@ -146,7 +134,7 @@ inline const TypeInfo& type_of(const ITypedObject* obj)
 	return obj->getTypeInfo();
 }
 
-/*! \brief Return type name.
+/*! Return type name.
  * \ingroup Core
  *
  * \param o Object.
@@ -157,7 +145,7 @@ inline const wchar_t* type_name(const ITypedObject* obj)
 	return obj ? obj->getTypeInfo().getName() : L"(null)";
 }
 
-/*! \brief Get type of class.
+/*! Get type of class.
  * \ingroup Core
  */
 template < typename T >
@@ -167,18 +155,18 @@ const TypeInfo& type_of()
 	return tt::getClassTypeInfo();
 }
 
-/*! \brief Return type name.
+/*! Return type name.
  * \ingroup Core
  *
  * \return Type name.
  */
 template < typename T >
-inline const wchar_t* type_name()
+const wchar_t* type_name()
 {
 	return type_of< T >().getName();
 }
 
-/*! \brief Create type info set from single type.
+/*! Create type info set from single type.
  * \ingroup Core
  */
 template < typename T1 >
@@ -187,7 +175,7 @@ inline TypeInfoSet makeTypeInfoSet()
 	return makeTypeInfoSet(type_of< T1 >());
 }
 
-/*! \brief Create type info set from two types.
+/*! Create type info set from two types.
  * \ingroup Core
  */
 template < typename T1, typename T2 >
@@ -196,7 +184,7 @@ inline TypeInfoSet makeTypeInfoSet()
 	return makeTypeInfoSet(type_of< T1 >(), type_of< T2 >());
 }
 
-/*! \brief Create type info set from three types.
+/*! Create type info set from three types.
  * \ingroup Core
  */
 template < typename T1, typename T2, typename T3 >
@@ -205,7 +193,7 @@ inline TypeInfoSet makeTypeInfoSet()
 	return makeTypeInfoSet(type_of< T1 >(), type_of< T2 >(), type_of< T3 >());
 }
 
-/*! \brief Check if type is identical.
+/*! Check if type is identical.
  * \ingroup Core
  */
 template < typename T >
@@ -214,7 +202,7 @@ bool is_type_a(const TypeInfo& type)
 	return is_type_a(type_of< T >(), type);
 }
 
-/*! \brief Check if type is derived from a base type.
+/*! Check if type is derived from a base type.
  * \ingroup Core
  */
 template < typename T >
@@ -223,7 +211,7 @@ bool is_type_of(const TypeInfo& type)
 	return is_type_of(type_of< T >(), type);
 }
 
-/*! \brief Return type difference.
+/*! Return type difference.
  * \ingroup Core
  */
 template < typename T >
@@ -232,7 +220,7 @@ uint32_t type_difference(const TypeInfo& type)
 	return type_difference(type_of< T >(), type);
 }
 
-/*! \brief Return type difference.
+/*! Return type difference.
  * \ingroup Core
  */
 template < typename B, typename T >
@@ -241,7 +229,7 @@ uint32_t type_difference()
 	return type_difference(type_of< B >(), type_of< T >());
 }
 
-/*! \brief Check if an object is of a certain type.
+/*! Check if an object is of a certain type.
  * \ingroup Core
  */
 template < typename T >
@@ -260,7 +248,7 @@ bool is_a(const ITypedObject* obj)
 	return false;
 }
 
-/*! \brief Dynamic cast object.
+/*! Dynamic cast object.
  *
  * \param T Cast to type.
  * \param obj Object
@@ -272,7 +260,7 @@ T dynamic_type_cast(T0* obj)
 	return is_a< T >(obj) ? static_cast< T >(obj) : 0;
 }
 
-/*! \brief Dynamic cast object.
+/*! Dynamic cast object.
  *
  * \param T Cast to type.
  * \param obj Object
@@ -284,7 +272,7 @@ T dynamic_type_cast(const T0* obj)
 	return is_a< T >(obj) ? static_cast< T >(obj) : 0;
 }
 
-/*! \brief Safe cast object.
+/*! Safe cast object.
  *
  * The cast will assert if object is of incorrect type.
  *
@@ -299,7 +287,7 @@ T checked_type_cast(T0* obj)
 	return static_cast< T >(obj);
 }
 
-/*! \brief Safe cast object.
+/*! Safe cast object.
  *
  * The cast will assert if object is of incorrect type.
  *
@@ -315,7 +303,7 @@ T checked_type_cast(T0* obj)
 	return static_cast< T >(obj);
 }
 
-/*! \brief Safe cast object.
+/*! Safe cast object.
  *
  * The cast will assert if object is of incorrect type.
  *
@@ -330,7 +318,7 @@ T checked_type_cast(const T0* obj)
 	return static_cast< T >(obj);
 }
 
-/*! \brief Safe cast object.
+/*! Safe cast object.
  *
  * The cast will assert if object is of incorrect type.
  *
@@ -346,7 +334,7 @@ T checked_type_cast(const T0* obj)
 	return static_cast< T >(obj);
 }
 
-/*! \brief Safe cast object.
+/*! Safe cast object.
  *
  * The cast will cause system error if object is null or
  * of incorrect type.
@@ -362,7 +350,7 @@ T mandatory_non_null_type_cast(T0* obj)
 	return static_cast< T >(obj);
 }
 
-/*! \brief Safe cast object.
+/*! Safe cast object.
  *
  * The cast will cause system error if object is null or
  * of incorrect type.

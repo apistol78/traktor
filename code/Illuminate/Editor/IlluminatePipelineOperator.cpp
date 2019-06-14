@@ -44,6 +44,7 @@
 #include "Render/SH/SHFunction.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "World/Editor/LayerEntityData.h"
+#include "World/Entity/CameraComponentData.h"
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/LightComponentData.h"
@@ -96,7 +97,8 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 void collectTraceEntities(
 	const ISerializable* object,
 	RefArray< world::ComponentEntityData >& outLightEntityData,
-	RefArray< world::ComponentEntityData >& outMeshEntityData
+	RefArray< world::ComponentEntityData >& outMeshEntityData,
+	RefArray< world::ComponentEntityData >& outCameraEntityData
 )
 {
 	Ref< Reflection > reflection = Reflection::create(object);
@@ -115,9 +117,11 @@ void collectTraceEntities(
 				outLightEntityData.push_back(componentEntityData);
 			if (componentEntityData->getComponent< mesh::MeshComponentData >() != nullptr)
 				outMeshEntityData.push_back(componentEntityData);
+			if (componentEntityData->getComponent< world::CameraComponentData >() != nullptr)
+				outCameraEntityData.push_back(componentEntityData);
 		}
 		else if (objectMember->get())
-			collectTraceEntities(objectMember->get(), outLightEntityData, outMeshEntityData);
+			collectTraceEntities(objectMember->get(), outLightEntityData, outMeshEntityData, outCameraEntityData);
 	}
 }
 
@@ -176,7 +180,6 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 	// Cleanup
 	oidnReleaseFilter(filter);
 	oidnReleaseDevice(device);	
-
 	return output;
 }
 
@@ -223,6 +226,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 
 	RefArray< world::ComponentEntityData > lightEntityDatas;
 	RefArray< world::ComponentEntityData > meshEntityDatas;
+	RefArray< world::ComponentEntityData > cameraEntityDatas;
 
 	// Find all static meshes and lights; replace external referenced entities with local if necessary.
 	RefArray< world::LayerEntityData > layers;
@@ -236,7 +240,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 				return false;
 
 			// Get all trace entities.
-			collectTraceEntities(flattenedLayer, lightEntityDatas, meshEntityDatas);
+			collectTraceEntities(flattenedLayer, lightEntityDatas, meshEntityDatas, cameraEntityDatas);
 
 			layers.push_back(flattenedLayer);
 		}
@@ -323,6 +327,27 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 	// Commit all lights and models; after this point
 	// no more lights nor models can be added to tracer.
 	rayTracer->commit();
+
+	// Raytrace "ground truths" of each camera.
+	for (uint32_t i = 0; i < cameraEntityDatas.size(); ++i)
+	{
+		auto cameraEntityData = cameraEntityDatas[i];
+		T_FATAL_ASSERT(cameraEntityData != nullptr);
+
+		auto cameraComponentData = cameraEntityData->getComponent< world::CameraComponentData >();
+		T_FATAL_ASSERT(cameraComponentData != nullptr);
+
+		if (cameraComponentData->getCameraType() != world::CtPerspective)
+			continue;
+
+		log::info << L"Tracing camera \"" << cameraEntityData->getName() << L"\" (" << i << L"/" << cameraEntityDatas.size() << L")..." << Endl;
+
+		Ref< drawing::Image > image = rayTracer->traceCamera(cameraEntityData->getTransform(), 1280, 720, 1.0f);
+		if (!image)
+			continue;
+
+		image->save(cameraEntityData->getName() + L"_" + toString(i) + L"_Camera.png");
+	}
 
 	// Raytrace IBL probes.
 	for (uint32_t i = 0; i < lightEntityDatas.size(); ++i)

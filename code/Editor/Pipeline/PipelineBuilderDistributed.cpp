@@ -209,7 +209,7 @@ bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencyS
 Ref< ISerializable > PipelineBuilderDistributed::buildOutput(const ISerializable* sourceAsset)
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 bool PipelineBuilderDistributed::buildOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
@@ -221,49 +221,49 @@ bool PipelineBuilderDistributed::buildOutput(const ISerializable* sourceAsset, c
 Ref< ISerializable > PipelineBuilderDistributed::getBuildProduct(const ISerializable* sourceAsset)
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 Ref< db::Instance > PipelineBuilderDistributed::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 Ref< db::Database > PipelineBuilderDistributed::getOutputDatabase() const
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 Ref< db::Database > PipelineBuilderDistributed::getSourceDatabase() const
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 Ref< const ISerializable > PipelineBuilderDistributed::getObjectReadOnly(const Guid& instanceGuid)
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 Ref< IStream > PipelineBuilderDistributed::openFile(const Path& basePath, const std::wstring& fileName)
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 Ref< IStream > PipelineBuilderDistributed::createTemporaryFile(const std::wstring& fileName)
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 Ref< IStream > PipelineBuilderDistributed::openTemporaryFile(const std::wstring& fileName)
 {
 	T_FATAL_ERROR;
-	return 0;
+	return nullptr;
 }
 
 bool PipelineBuilderDistributed::performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency)
@@ -309,52 +309,25 @@ bool PipelineBuilderDistributed::performBuild(const IPipelineDependencySet* depe
 
 	result = agent->build(
 		dependency,
-		makeFunctor(
-			this,
-			&PipelineBuilderDistributed::agentBuildSucceeded,
-			dependency,
-			currentDependencyHash,
-			agentIndex
-		),
-		makeFunctor(
-			this,
-			&PipelineBuilderDistributed::agentBuildFailed,
-			dependency,
-			agentIndex
-		)
+		[=](bool result)
+		{
+			if (result)
+				m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
+
+			if (m_listener)
+				m_listener->endBuild(
+					agentIndex,
+					m_progress,
+					m_progressEnd,
+					dependency,
+					result ? BrSucceeded : BrFailed
+				);
+
+			Atomic::increment(m_progress);
+		}
 	);
 
 	return result;
-}
-
-void PipelineBuilderDistributed::agentBuildSucceeded(const PipelineDependency* dependency, PipelineDependencyHash hash, int32_t agentIndex)
-{
-	m_pipelineDb->setDependency(dependency->outputGuid, hash);
-
-	if (m_listener)
-		m_listener->endBuild(
-			agentIndex,
-			m_progress,
-			m_progressEnd,
-			dependency,
-			BrSucceeded
-		);
-
-	Atomic::increment(m_progress);
-}
-
-void PipelineBuilderDistributed::agentBuildFailed(const PipelineDependency* dependency, int32_t agentIndex)
-{
-	if (m_listener)
-		m_listener->endBuild(
-			agentIndex,
-			m_progress,
-			m_progressEnd,
-			dependency,
-			BrFailed
-		);
-
-	Atomic::increment(m_progress);
 }
 
 	}

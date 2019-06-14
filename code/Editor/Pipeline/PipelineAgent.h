@@ -1,12 +1,12 @@
 #pragma once
 
+#include <functional>
 #include "Core/Object.h"
 #include "Core/Guid.h"
 
 namespace traktor
 {
 
-class Functor;
 class PropertyGroup;
 
 	namespace net
@@ -40,7 +40,7 @@ public:
 		uint16_t databasePort
 	);
 
-	bool build(const PipelineDependency* dependency, Functor* functorSucceeded, Functor* functorFailed);
+	bool build(const PipelineDependency* dependency, const std::function< void(bool) >& result);
 
 	void update();
 
@@ -57,8 +57,7 @@ private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	std::wstring m_description;
 	uint32_t m_buildingCount;
-	Ref< Functor > m_functorSucceeded;
-	Ref< Functor > m_functorFailed;
+	std::function< void(bool) > m_result;
 
 	PipelineAgent(
 		net::StreamServer* streamServer,

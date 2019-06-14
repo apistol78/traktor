@@ -13,7 +13,7 @@
 #include "Core/System/Environment.h"
 #include "Core/System/OS.h"
 #include "Drawing/DrawingClassFactory.h"
-#include "Json/JsonClassFactory.h"
+// #include "Json/JsonClassFactory.h"
 #include "Net/NetClassFactory.h"
 #include "Net/Network.h"
 #include "Run/App/ProduceOutput.h"
@@ -102,7 +102,7 @@ void registerRuntimeClasses()
 	T_FORCE_LINK_REF(CoreClassFactory);
 	T_FORCE_LINK_REF(CoreClassFactory2);
 	T_FORCE_LINK_REF(drawing::DrawingClassFactory);
-	T_FORCE_LINK_REF(json::JsonClassFactory);
+	// T_FORCE_LINK_REF(json::JsonClassFactory);
 	T_FORCE_LINK_REF(net::NetClassFactory);
 	T_FORCE_LINK_REF(xml::XmlClassFactory);
 	T_FORCE_LINK_REF(sql::SqlClassFactory);
