@@ -3,55 +3,18 @@ import(traktor.drawing)
 import(traktor.run)
 
 
--- Tools
-local tools =
-{
-	pipeline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App",
-	migrate = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App",
-	remote = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Remote.Client.App"
-}
-
-
-function string:split(sep)
-	local sep, fields = sep or ":", {}
-	local pattern = string.format("([^%s]+)", sep)
-	self:gsub(pattern, function(c) fields[#fields+1] = c end)
-	return fields
-end
-
-
-function string:endswith(send)
-	return #self >= #send and self:find(send, #self - #send + 1, true) and true or false
-end
-
-
-local function createIcon()
-	local projectRoot = os:getEnvironment("DEPLOY_PROJECT_ROOT")
-	assert (projectRoot ~= "")
-
-	local iconFile = os:getEnvironment("DEPLOY_PROJECT_ICON")
-	if #iconFile <= 0 then
-		iconFile = "$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/DefaultIcon.png"
-	end
-
-	iconFile = Path(projectRoot):concat(Path(iconFile)).pathName
-
-	local iconImage = Image.loadFromFile(iconFile)
-	if iconImage == nil then 
-		print("Unable to load image " .. iconFile)
-		return false
-	end
-
-	iconImage:apply(ScaleFilter(256, 256))
-	return iconImage:save("Default.png")
+-- Load common script.
+if not run:loadScript("$(RUN_SCRIPT_PATH)/common/common.run") then
+	stderr:printLn("Unable to load \"common.run\"; installation broken?")
+	return 1
 end
 
 
 function build(args)
 	stdout:printLn("Building asset(s)...")
 	local cmdline = tools.pipeline .. " -p -standalone -s=Pipeline"
-	for i = 1, args:size() - 1 do
-		cmdline = cmdline .. " " .. args:get(i)
+	for _, arg in pairs(args) do
+		cmdline = cmdline .. " " .. arg
 	end
 	return run:execute(cmdline)
 end
@@ -89,10 +52,15 @@ function deploy(args)
 	end
 
 	-- Create icon resource.
-	if not createIcon()	then
-		stderr:printLn("Unable to create product icon.")
+	local icon = createIcon()
+	if icon == nil then
+		stderr:printLn("Unable to create product icon; failed to generate icon image.")
 		return 1
-	end	
+	end
+	if not icon:save("Default.png") then
+		stderr:printLn("Unable to create product icon; failed to save icon.")
+		return 1
+	end
 
 	-- Default icon.
 	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" Default.png", nil)
@@ -146,10 +114,15 @@ function migrate(args)
 	end
 
 	-- Create icon resource.
-	if not createIcon()	then
-		stderr:printLn("Unable to create product icon.")
+	local icon = createIcon()
+	if icon == nil then
+		stderr:printLn("Unable to create product icon; failed to generate icon image.")
 		return 1
-	end	
+	end
+	if not icon:save("Default.png") then
+		stderr:printLn("Unable to create product icon; failed to save icon.")
+		return 1
+	end
 
 	return 0
 end
@@ -165,6 +138,14 @@ function main(args)
 		return launch(args)
 	elseif action == "migrate" then
 		return migrate(args)
+	else
+		stdout:printLn("Usage: deploy-linux [action]")
+		stdout:printLn()
+		stdout:printLn("  Actions:")
+		stdout:printLn("    build")
+		stdout:printLn("    deploy")
+		stdout:printLn("    launch")
+		stdout:printLn("    migrate")
 	end
 	return 1
 end

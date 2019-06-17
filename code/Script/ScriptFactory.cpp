@@ -53,7 +53,7 @@ Ref< Object > ScriptFactory::create(resource::IResourceManager* resourceManager,
 		if (!scriptClass)
 		{
 			log::error << L"Unable to create script class; no such class \"" << instance->getName() << L"\"" << Endl;
-			return 0;
+			return nullptr;
 		}
 
 		return const_cast< IRuntimeClass* >(scriptClass.ptr());
@@ -64,27 +64,26 @@ Ref< Object > ScriptFactory::create(resource::IResourceManager* resourceManager,
 		if (!scriptResource)
 		{
 			log::error << L"Unable to create script class; incorrect instance type." << Endl;
-			return 0;
+			return nullptr;
 		}
 
-		const std::vector< Guid >& dependencies = scriptResource->getDependencies();
-		for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+		for (auto dependency : scriptResource->getDependencies())
 		{
-			Ref< resource::ResourceHandle > chunkHandle = resourceManager->bind(type_of< ScriptChunk >(), *i);
+			Ref< resource::ResourceHandle > chunkHandle = resourceManager->bind(type_of< ScriptChunk >(), dependency);
 			if (!chunkHandle)
-				return 0;
+				return nullptr;
 		}
 
 		if (!m_scriptContext->load(scriptResource->getBlob()))
 		{
 			log::error << L"Unable to create script class; load resource failed." << Endl;
-			return 0;
+			return nullptr;
 		}
 
 		return new Object();
 	}
 	else
-		return 0;
+		return nullptr;
 }
 
 	}

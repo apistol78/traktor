@@ -61,7 +61,17 @@ public:
 
 	virtual void getStatistics(ScriptStatistics& outStatistics) const override final;
 
-//private:
+	void pushObject(ITypedObject* object);
+
+	void pushAny(const Any& any);
+
+	void pushAny(const Any* anys, int32_t count);
+
+	Any toAny(int32_t index);
+
+	void toAny(int32_t base, int32_t count, Any* outAnys);
+
+private:
 	friend class ScriptClassLua;
 	friend class ScriptContextLua;
 	friend class ScriptDebuggerLua;
@@ -108,16 +118,6 @@ public:
 	}
 
 	void destroyContext(ScriptContextLua* context);
-
-	void pushObject(ITypedObject* object);
-
-	void pushAny(const Any& any);
-
-	void pushAny(const Any* anys, int32_t count);
-
-	Any toAny(int32_t index);
-
-	void toAny(int32_t base, int32_t count, Any* outAnys);
 
 	void collectGarbageFull();
 

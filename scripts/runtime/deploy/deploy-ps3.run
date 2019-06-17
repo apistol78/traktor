@@ -2,33 +2,18 @@ import(traktor)
 import(traktor.run)
 
 
--- Tools
-local tools =
-{
-	pipeline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App",
-	migrate = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App",
-	remote = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Remote.Client.App"
-}
-
-
-function string:split(sep)
-	local sep, fields = sep or ":", {}
-	local pattern = string.format("([^%s]+)", sep)
-	self:gsub(pattern, function(c) fields[#fields+1] = c end)
-	return fields
-end
-
-
-function string:endswith(send)
-	return #self >= #send and self:find(send, #self - #send + 1, true) and true or false
+-- Load common script.
+if not run:loadScript("$(RUN_SCRIPT_PATH)/common/common.run") then
+	stderr:printLn("Unable to load \"common.run\"; installation broken?")
+	return 1
 end
 
 
 function build(args)
 	stdout:printLn("Building asset(s)...")
 	local cmdline = tools.pipeline .. " -p -s=Pipeline"
-	for i = 1, args:size() - 1 do
-		cmdline = cmdline .. " " .. args:get(i)
+	for _, arg in pairs(args) do
+		cmdline = cmdline .. " " .. arg
 	end
 	return run:execute(cmdline)
 end
@@ -180,6 +165,14 @@ function main(args)
 		return launch(args)
 	elseif action == "migrate" then
 		return migrate(args)
+	else
+		stdout:printLn("Usage: deploy-ps3 [action]")
+		stdout:printLn()
+		stdout:printLn("  Actions:")
+		stdout:printLn("    build")
+		stdout:printLn("    deploy")
+		stdout:printLn("    launch")
+		stdout:printLn("    migrate")
 	end
 	return 1
 end

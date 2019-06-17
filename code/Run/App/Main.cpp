@@ -1,31 +1,19 @@
-#include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes.h"
-#include "Core/Class/CoreClassFactory.h"
-#include "Core/Class/CoreClassFactory2.h"
-#include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"
-#include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/System/Environment.h"
 #include "Core/System/OS.h"
-#include "Drawing/DrawingClassFactory.h"
-// #include "Json/JsonClassFactory.h"
-#include "Net/NetClassFactory.h"
 #include "Net/Network.h"
 #include "Run/App/ProduceOutput.h"
 #include "Run/App/Run.h"
 #include "Run/App/StdOutput.h"
-#include "Run/App/StreamInput.h"
-#include "Run/App/StreamOutput.h"
 #include "Script/IScriptContext.h"
 #include "Script/Lua/ScriptManagerLua.h"
-#include "Sql/SqlClassFactory.h"
-#include "Sql/Sqlite3/Sqlite3ClassFactory.h"
-#include "Xml/XmlClassFactory.h"
 
 namespace
 {
@@ -39,157 +27,11 @@ namespace traktor
 	namespace run
 	{
 
-void registerRuntimeClasses();
-
-int32_t Run_run_1(Run* self, const std::wstring& command)
-{
-	return self->run(command);
-}
-
-int32_t Run_run_2(Run* self, const std::wstring& command, const Any& saveOutputAs)
-{
-	return self->run(command, saveOutputAs.isString() ? saveOutputAs.getWideString() : L"(null)");
-}
-
-int32_t Run_run_3(Run* self, const std::wstring& command, const Any& saveOutputAs, const Environment* env)
-{
-	return self->run(command, saveOutputAs.isString() ? saveOutputAs.getWideString() : L"(null)", env);
-}
-
-int32_t Run_execute_1(Run* self, const std::wstring& command)
-{
-	return self->execute(command);
-}
-
-int32_t Run_execute_2(Run* self, const std::wstring& command, const Any& saveOutputAs)
-{
-	return self->execute(command, saveOutputAs.isString() ? saveOutputAs.getWideString() : L"(null)");
-}
-
-int32_t Run_execute_3(Run* self, const std::wstring& command, const Any& saveOutputAs, const Environment* env)
-{
-	return self->execute(command, saveOutputAs.isString() ? saveOutputAs.getWideString() : L"(null)", env);
-}
-
-Any Run_getProperty_1(Run* self, const std::wstring& fileName, const std::wstring& propertyName, const Any& defaultValue)
-{
-	return self->getProperty(fileName, std::wstring(), propertyName, defaultValue);
-}
-
-Any Run_getProperty_2(Run* self, const std::wstring& fileName1, const std::wstring& fileName2, const std::wstring& propertyName, const Any& defaultValue)
-{
-	return self->getProperty(fileName1, fileName2, propertyName, defaultValue);
-}
-
-bool Run_loadModule(Run* self, const std::wstring& moduleName)
-{
-	Library library;
-	if (!library.open(Path(moduleName)))
-		return false;
-
-	// Re-register all runtime classes in-case a new factory has been loaded.
-	registerRuntimeClasses();
-
-	library.detach();
-	return true;
-}
-
-void registerRuntimeClasses()
-{
-	OrderedClassRegistrar registrar;
-
-	// System classes.
-	T_FORCE_LINK_REF(CoreClassFactory);
-	T_FORCE_LINK_REF(CoreClassFactory2);
-	T_FORCE_LINK_REF(drawing::DrawingClassFactory);
-	// T_FORCE_LINK_REF(json::JsonClassFactory);
-	T_FORCE_LINK_REF(net::NetClassFactory);
-	T_FORCE_LINK_REF(xml::XmlClassFactory);
-	T_FORCE_LINK_REF(sql::SqlClassFactory);
-	T_FORCE_LINK_REF(sql::Sqlite3ClassFactory);
-
-	// Register all runtime classes, first collect all classes
-	// and then register them in class dependency order.
-	TypeInfoSet runtimeClassFactoryTypes;
-	type_of< IRuntimeClassFactory >().findAllOf(runtimeClassFactoryTypes, false);
-	for (const auto runtimeClassFactoryType : runtimeClassFactoryTypes)
-	{
-		Ref< IRuntimeClassFactory > runtimeClassFactory = dynamic_type_cast< IRuntimeClassFactory* >(runtimeClassFactoryType->createInstance());
-		if (runtimeClassFactory)
-			runtimeClassFactory->createClasses(&registrar);
-	}
-
-	// IOutput
-	auto classIOutput = new AutoRuntimeClass< IOutput >();
-	classIOutput->addMethod("print", &IOutput::print);
-	classIOutput->addMethod("printLn", &IOutput::printLn);
-	registrar.registerClass(classIOutput);
-
-	// ProduceOutput
-	auto classProduceOutput = new AutoRuntimeClass< ProduceOutput >();
-	classProduceOutput->addMethod("printSection", &ProduceOutput::printSection);
-	classProduceOutput->addMethod("addSection", &ProduceOutput::addSection);
-	registrar.registerClass(classProduceOutput);
-
-	// StdOutput
-	auto classStdOutput = new AutoRuntimeClass< StdOutput >();
-	registrar.registerClass(classStdOutput);
-
-	// StreamOutput
-	auto classStreamOutput = new AutoRuntimeClass< StreamOutput >();
-	classStreamOutput->addConstructor< traktor::IStream*, IEncoding* >();
-	classStreamOutput->addConstructor< traktor::IStream*, IEncoding*, const std::wstring& >();
-	registrar.registerClass(classStreamOutput);
-
-	// IInput
-	auto classIInput = new AutoRuntimeClass< IInput >();
-	classIInput->addMethod("endOfFile", &IInput::endOfFile);
-	classIInput->addMethod("readChar", &IInput::readChar);
-	classIInput->addMethod("readLn", &IInput::readLn);
-	registrar.registerClass(classIInput);
-
-	// StreamInput
-	auto classStreamInput = new AutoRuntimeClass< StreamInput >();
-	classStreamInput->addConstructor< traktor::IStream*, IEncoding* >();
-	registrar.registerClass(classStreamInput);
-
-	// Run
-	auto classRun = new AutoRuntimeClass< Run >();
-	classRun->addConstructor();
-	classRun->addMethod("cd", &Run::cd);
-	classRun->addMethod("pushd", &Run::pushd);
-	classRun->addMethod("popd", &Run::popd);
-	classRun->addMethod("cwd", &Run::cwd);
-	classRun->addMethod("run", &Run_run_1);
-	classRun->addMethod("run", &Run_run_2);
-	classRun->addMethod("run", &Run_run_3);
-	classRun->addMethod("execute", &Run_execute_1);
-	classRun->addMethod("execute", &Run_execute_2);
-	classRun->addMethod("execute", &Run_execute_3);
-	classRun->addMethod("stdOut", &Run::stdOut);
-	classRun->addMethod("stdErr", &Run::stdErr);
-	classRun->addMethod("exitCode", &Run::exitCode);
-	classRun->addMethod("exist", &Run::exist);
-	classRun->addMethod("rm", &Run::rm);
-	classRun->addMethod("copy", &Run::copy);
-	classRun->addMethod("replace", &Run::replace);
-	classRun->addMethod("mkdir", &Run::mkdir);
-	classRun->addMethod("rmdir", &Run::rmdir);
-	classRun->addMethod("sleep", &Run::sleep);
-	classRun->addMethod("getProperty", &Run_getProperty_1);
-	classRun->addMethod("getProperty", &Run_getProperty_2);
-	classRun->addMethod("setProperty", &Run::setProperty);
-	classRun->addMethod("loadModule", &Run_loadModule);
-	registrar.registerClass(classRun);
-
-	// Register all classes to script manager; in class hierarchy order.
-	registrar.registerClassesInOrder(g_scriptManager);
-}
-
+/*! Execute run script. */
 int32_t executeRun(const std::wstring& text, const Path& fileName, const CommandLine& cmdLine)
 {
 	// Compile script into a runnable blob.
-	Ref< script::IScriptBlob > scriptBlob = g_scriptManager->compile(fileName.getPathName(), text, 0);
+	Ref< script::IScriptBlob > scriptBlob = g_scriptManager->compile(fileName.getPathName(), text, nullptr);
 	if (!scriptBlob)
 	{
 		log::error << L"Unable to compile script" << Endl;
@@ -201,11 +43,13 @@ int32_t executeRun(const std::wstring& text, const Path& fileName, const Command
 	if (!scriptContext)
 		return 1;
 
+	// Expose some environment variables of running script.
+	OS::getInstance().setEnvironment(L"RUN_SCRIPT", fileName.getPathName());
+	OS::getInstance().setEnvironment(L"RUN_SCRIPT_PATH", fileName.getPathOnly());
+
 	// Setup globals in script context.
-	Ref< Environment > environment = OS::getInstance().getEnvironment();
-	environment->set(L"RUN_SCRIPT", fileName.getPathName());
-	scriptContext->setGlobal("environment", Any::fromObject(environment));
-	scriptContext->setGlobal("run", Any::fromObject(new Run()));
+	scriptContext->setGlobal("environment", Any::fromObject(OS::getInstance().getEnvironment()));
+	scriptContext->setGlobal("run", Any::fromObject(new Run(g_scriptManager, scriptContext)));
 	scriptContext->setGlobal("fileSystem", Any::fromObject(&FileSystem::getInstance()));
 	scriptContext->setGlobal("os", Any::fromObject(&OS::getInstance()));
 	scriptContext->setGlobal("stdout", Any::fromObject(new StdOutput(stdout)));
@@ -232,6 +76,7 @@ int32_t executeRun(const std::wstring& text, const Path& fileName, const Command
 	return retval.getInt32();
 }
 
+/*! Execute template script. */
 int32_t executeTemplate(const std::wstring& text, const Path& fileName, const CommandLine& cmdLine)
 {
 	Ref< ProduceOutput > o = new ProduceOutput();
@@ -263,7 +108,7 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 	int32_t id = o->addSection(text.substr(offset));
 	ss << L"output:printSection(" << id << L")" << Endl;
 
-	Ref< script::IScriptBlob > scriptBlob = g_scriptManager->compile(fileName.getPathName(), ss.str(), 0);
+	Ref< script::IScriptBlob > scriptBlob = g_scriptManager->compile(fileName.getPathName(), ss.str(), nullptr);
 	if (!scriptBlob)
 	{
 		log::error << L"Unable to compile script" << Endl;
@@ -279,10 +124,13 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 	if (!scriptContext)
 		return 1;
 
-	Ref< Environment > environment = OS::getInstance().getEnvironment();
-	environment->set(L"RUN_SCRIPT", fileName.getPathName());
-	scriptContext->setGlobal("environment", Any::fromObject(environment));
-	scriptContext->setGlobal("run", Any::fromObject(new Run()));
+	// Expose some environment variables of running script.
+	OS::getInstance().setEnvironment(L"RUN_SCRIPT", fileName.getPathName());
+	OS::getInstance().setEnvironment(L"RUN_SCRIPT_PATH", fileName.getPathOnly());
+
+	// Setup globals in script context.
+	scriptContext->setGlobal("environment", Any::fromObject(OS::getInstance().getEnvironment()));
+	scriptContext->setGlobal("run", Any::fromObject(new Run(g_scriptManager, scriptContext)));
 	scriptContext->setGlobal("fileSystem", Any::fromObject(&FileSystem::getInstance()));
 	scriptContext->setGlobal("os", Any::fromObject(&OS::getInstance()));
 	scriptContext->setGlobal("stdout", Any::fromObject(new StdOutput(stdout)));
@@ -295,7 +143,6 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 	safeDestroy(scriptContext);
 
 	log::info << o->getProduct() << Endl;
-
 	return 0;
 }
 
@@ -355,8 +202,7 @@ int main(int argc, const char** argv)
 		return 1;
 	}
 
-	run::registerRuntimeClasses();
-
+	run::Run::registerRuntimeClasses(g_scriptManager);
 	net::Network::initialize();
 
 	int32_t result = 1;

@@ -1,0 +1,75 @@
+import(traktor)
+import(traktor.drawing)
+
+
+-- Tools
+tools =
+{
+	pipeline = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Pipeline.App",
+	migrate = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Database.Migrate.App",
+	remote = "$(DEPLOY_SYSTEM_ROOT)/bin/latest/$(DEPLOY_HOST_OS)/releaseshared/Traktor.Remote.Client.App"
+}
+
+
+function string:split(sep)
+	local sep, fields = sep or ":", {}
+	local pattern = string.format("([^%s]+)", sep)
+	self:gsub(pattern, function(c) fields[#fields+1] = c end)
+	return fields
+end
+
+
+function string:startswith(st)
+	return self:sub(1, #st) == st
+end
+
+
+function string:endswith(send)
+	return #self >= #send and self:find(send, #self - #send + 1, true) and true or false
+end
+
+
+function string:trim()
+	return self:find'^%s*$' and '' or self:match'^%s*(.*%S)'
+end
+
+
+-- Linux, Win64
+function createIcon()
+	local projectRoot = os:getEnvironment("DEPLOY_PROJECT_ROOT")
+	assert (projectRoot ~= "")
+
+	local iconFile = os:getEnvironment("DEPLOY_PROJECT_ICON")
+	if #iconFile <= 0 then
+		iconFile = "$(DEPLOY_SYSTEM_ROOT)/resources/runtime/deploy/DefaultIcon.png"
+	end
+
+	iconFile = Path(projectRoot):concat(Path(iconFile)).pathName
+
+	local iconImage = Image.loadFromFile(iconFile)
+	if iconImage == nil then 
+		print("Unable to load image " .. iconFile)
+		return nil
+	end
+
+	iconImage:apply(ScaleFilter(256, 256))
+    return iconImage
+end
+
+
+-- Android, iOS
+local function generateImage(fileName, image, width, height)
+	local outputAspect = width / height
+
+	local sourceWidth = image:getWidth()
+	local sourceHeight = image:getHeight()
+
+	local cropWidth = sourceWidth
+	local cropHeight = math.floor(sourceWidth / outputAspect)
+
+	local output = image:clone(true)
+	output:apply(CropFilter(0, 0, cropWidth, cropHeight))
+	output:apply(ScaleFilter(width, height))
+	output:save(fileName)
+end
+

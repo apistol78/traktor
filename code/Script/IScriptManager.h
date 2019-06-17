@@ -26,18 +26,18 @@ class IScriptContext;
 class IScriptDebugger;
 class IScriptProfiler;
 
-/*! \brief Script error callback.
-* \ingroup Script
-*/
+/*! Script error callback.
+ * \ingroup Script
+ */
 class IErrorCallback
 {
 public:
 	virtual ~IErrorCallback() {}
 
-	/*! \brief Syntax error callback. */
+	/*! Syntax error callback. */
 	virtual void syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message) = 0;
 
-	/*! \brief Other error callback. */
+	/*! Other error callback. */
 	virtual void otherError(const std::wstring& message) = 0;
 };
 
@@ -49,7 +49,7 @@ struct ScriptStatistics
 	uint32_t memoryUsage;
 };
 
-/*! \brief Script manager.
+/*! Script manager.
  * \ingroup Script
  *
  * A script manager is the major communicator
@@ -66,10 +66,10 @@ class T_DLLCLASS IScriptManager
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Destroy script manager. */
+	/*! Destroy script manager. */
 	virtual void destroy() = 0;
 
-	/*! \brief Compile script into "consumable" blob.
+	/*! Compile script into "consumable" blob.
 	 *
 	 * \param fileName Script file name.
 	 * \param script Script
@@ -79,26 +79,26 @@ public:
 	 */
 	virtual Ref< IScriptBlob > compile(const std::wstring& fileName, const std::wstring& script, IErrorCallback* errorCallback) const = 0;
 
-	/*! \brief Create script context.
+	/*! Create script context.
 	 *
 	 * \param strict Strict global variable declaration required.
 	 * \return Script context instance.
 	 */
 	virtual Ref< IScriptContext > createContext(bool strict) = 0;
 
-	/*! \brief Create debugger.
+	/*! Create debugger.
 	 *
 	 * \return Debugger instance.
 	 */
 	virtual Ref< IScriptDebugger > createDebugger() = 0;
 
-	/*! \brief Create profiler.
+	/*! Create profiler.
 	 *
 	 * \return Profiler instance.
 	 */
 	virtual Ref< IScriptProfiler > createProfiler() = 0;
 
-	/*! \brief Collect garbage.
+	/*! Collect garbage.
 	 *
 	 * This is exposed in order to make some scripting languages which
 	 * rely on garbage collection behave more sane in real-time applications
