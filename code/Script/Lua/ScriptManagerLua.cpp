@@ -474,16 +474,16 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	// be able to skip traversing class hierarchy while constructing.
 	TypeInfoSet derivedTypes;
 	exportType.findAllOf(derivedTypes);
-	for (TypeInfoSet::iterator i = derivedTypes.begin(); i != derivedTypes.end(); ++i)
+	for (auto derivedType : derivedTypes)
 	{
-		if ((*i)->getTag() != 0)
+		if (derivedType->getTag() != 0)
 		{
-			const RegisteredClass& rc2 = m_classRegistry[(*i)->getTag() - 1];
+			const RegisteredClass& rc2 = m_classRegistry[derivedType->getTag() - 1];
 			const TypeInfo& exportType2 = rc2.runtimeClass->getExportType();
 			if (is_type_of(exportType, exportType2))
 				continue;
 		}
-		(*i)->setTag(classRegistryIndex + 1);
+		derivedType->setTag(classRegistryIndex + 1);
 	}
 
 	// Add constants last as constants might be instances of this class, i.e. singletons etc.
@@ -608,11 +608,6 @@ void ScriptManagerLua::collectGarbage(bool full)
 void ScriptManagerLua::getStatistics(ScriptStatistics& outStatistics) const
 {
 	outStatistics.memoryUsage = uint32_t(m_totalMemoryUse);
-}
-
-void ScriptManagerLua::destroyContext(ScriptContextLua* context)
-{
-	m_contexts.remove(context);
 }
 
 void ScriptManagerLua::pushObject(ITypedObject* object)
@@ -837,6 +832,11 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 			outAnys[i] = Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState));
 		}
 	}
+}
+
+void ScriptManagerLua::destroyContext(ScriptContextLua* context)
+{
+	m_contexts.remove(context);
 }
 
 void ScriptManagerLua::collectGarbageFull()

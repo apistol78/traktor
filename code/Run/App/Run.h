@@ -9,6 +9,14 @@ namespace traktor
 
 class Environment;
 
+	namespace script
+	{
+
+class IScriptContext;
+class IScriptManager;
+
+	}
+
 	namespace run
 	{
 
@@ -20,7 +28,7 @@ class Run : public Object
 	T_RTTI_CLASS;
 
 public:
-	Run();
+	Run(script::IScriptManager* scriptManager, script::IScriptContext* scriptContext);
 
 	void cd(const std::wstring& path);
 
@@ -58,7 +66,15 @@ public:
 
 	bool setProperty(const std::wstring& fileName, const std::wstring& propertyName, const Any& value) const;
 
+	bool loadModule(const std::wstring& moduleName);
+
+	bool loadScript(const std::wstring& fileName);
+
+	static void registerRuntimeClasses(script::IScriptManager* scriptManager);
+
 private:
+	Ref< script::IScriptManager > m_scriptManager;
+	Ref< script::IScriptContext > m_scriptContext;
 	std::list< std::wstring > m_cwd;
 	std::wstring m_stdOut;
 	std::wstring m_stdErr;
