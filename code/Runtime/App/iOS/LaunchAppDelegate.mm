@@ -1,5 +1,5 @@
-#import "Amalgam/Game/App/iOS/AppViewController.h"
-#import "Amalgam/Game/App/iOS/LaunchAppDelegate.h"
+#import "Runtime/App/iOS/AppViewController.h"
+#import "Runtime/App/iOS/LaunchAppDelegate.h"
 
 #include "Core/Log/Log.h"
 
