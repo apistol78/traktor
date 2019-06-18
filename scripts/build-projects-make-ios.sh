@@ -8,7 +8,7 @@ export MAKE_OS=osx
 export MAKE_DIALECT=make
 export MAKE_FORMAT=$TRAKTOR_HOME/resources/build/configurations/make-format.sbm
 export MAKE_INCLUDE="\$(TRAKTOR_HOME)/resources/build/configurations/make-config-ios.inc"
-export MAKE_ARCHITECTURES="armv7,armv7s,arm64,i386,x86_64"
+export MAKE_ARCHITECTURES="arm64,x86_64"
 
 # Used by default format.
 export MAKE_TOOLCHAIN=clang
