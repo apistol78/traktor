@@ -26,7 +26,7 @@ public:
 
 	int32_t getFrameCount() const { return m_frameCount; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	int32_t m_frameCount;

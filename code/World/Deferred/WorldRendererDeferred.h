@@ -103,8 +103,8 @@ private:
 		float time;
 
 		Frame()
-		:	time(0.0f)
-		,	atlasCount(0)
+		:	atlasCount(0)
+		,	time(0.0f)
 		{
 		}
 	};

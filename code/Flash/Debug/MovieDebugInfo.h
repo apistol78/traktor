@@ -26,7 +26,7 @@ public:
 
 	const std::wstring& getName() const { return m_name; }
 
-	virtual void serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::wstring m_name;
