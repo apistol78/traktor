@@ -51,7 +51,9 @@
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/LightComponentData.h"
 
-#include <OpenImageDenoise/oidn.h>
+#if !defined(__RPI__)
+#	include <OpenImageDenoise/oidn.h>
+#endif
 
 namespace traktor
 {
@@ -127,6 +129,7 @@ void collectTraceEntities(
 	}
 }
 
+#if !defined(__RPI__)
 Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 {
 	int32_t width = lightmap->getWidth();
@@ -184,6 +187,7 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 	oidnReleaseDevice(device);	
 	return output;
 }
+#endif
 
 void lineTraverse(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const std::function< void(int32_t, int32_t) >& fn)
 {
@@ -556,10 +560,12 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		// Blur indirect lightmap to reduce noise from path tracing.
 		if (configuration->getEnableDenoise())
 		{
+#if !defined(__RPI__)
 			if (lightmapDirect)
 				lightmapDirect = denoise(gbuffer, lightmapDirect);
 			if (lightmapIndirect)
 				lightmapIndirect = denoise(gbuffer, lightmapIndirect);
+#endif
 		}
 
 		// Merge direct and indirect lightmaps.
