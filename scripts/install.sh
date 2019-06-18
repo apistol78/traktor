@@ -7,6 +7,8 @@ apt update
 
 # install packages.
 PACKAGES="
+    clang
+    lld
     build-essential
     ccache
     libglu1-mesa-dev
