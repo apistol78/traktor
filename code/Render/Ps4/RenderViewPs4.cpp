@@ -188,7 +188,7 @@ SystemWindow RenderViewPs4::getSystemWindow()
 	return sw;
 }
 
-bool RenderViewPs4::begin(EyeType eye)
+bool RenderViewPs4::begin(const Clear* clear)
 {
 	RenderQueuePs4* queue = m_queues[m_currentQueue];
 	T_ASSERT (queue);
@@ -239,18 +239,14 @@ bool RenderViewPs4::begin(EyeType eye)
 	return true;
 }
 
-bool RenderViewPs4::begin(RenderTargetSet* renderTargetSet)
+bool RenderViewPs4::begin(RenderTargetSet* renderTargetSet, const Clear* clear)
 {
 	return true;
 }
 
-bool RenderViewPs4::begin(RenderTargetSet* renderTargetSet, int renderTarget)
+bool RenderViewPs4::begin(RenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
 {
 	return true;
-}
-
-void RenderViewPs4::clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil)
-{
 }
 
 void RenderViewPs4::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)

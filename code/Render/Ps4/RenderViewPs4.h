@@ -58,13 +58,11 @@ public:
 
 	virtual SystemWindow getSystemWindow() override final;
 
-	virtual bool begin(EyeType eye) override final;
+	virtual bool begin(const Clear* clear) override final;
 
-	virtual bool begin(RenderTargetSet* renderTargetSet) override final;
+	virtual bool begin(RenderTargetSet* renderTargetSet, const Clear* clear) override final;
 
-	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget) override final;
-
-	virtual void clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil) override final;
+	virtual bool begin(RenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear) override final;
 
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives) override final;
 

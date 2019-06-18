@@ -189,10 +189,7 @@ void WorldRenderPassDeferred::setProbeProgramParameters(render::ProgramParameter
 		const auto& c1 = lights[1].probe.shCoeffs->get();
 
 		Vector4 direction = lights[1].position - lights[0].position;
-		Scalar length = direction.normalize();
-
 		Vector4 v = (position - lights[0].position).xyz0();
-		Scalar ln2 = v.normalize();
 
 		Scalar k = clamp(dot3(direction, v), Scalar(0.0f), Scalar(1.0f));
 		for (int i = 0; i < 9; ++i)

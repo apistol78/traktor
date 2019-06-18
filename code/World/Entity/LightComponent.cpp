@@ -33,12 +33,12 @@ LightComponent::LightComponent(
 ,	m_flickerFilter(flickerFilter)
 ,	m_flickerValue(0.0f)
 ,	m_flickerCoeff(0.0f)
-,	m_shCoeffs(shCoeffs)
 #if !defined(WINCE)
 ,	m_random(uint32_t(clock()))
 #else
 ,	m_random(uint32_t(clock_ce()))
 #endif
+,	m_shCoeffs(shCoeffs)
 {
 }
 

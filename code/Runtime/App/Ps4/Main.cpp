@@ -1,4 +1,4 @@
-#include "Amalgam/Game/Impl/Application.h"
+#include "Runtime/Impl/Application.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -56,7 +56,7 @@ int main(int argc, const char** argv)
 	Ref< PropertyGroup > settings = DeepClone(defaultSettings).create< PropertyGroup >();
 	T_FATAL_ASSERT (settings);
 
-	Ref< amalgam::Application > application = new amalgam::Application();
+	Ref< runtime::Application > application = new runtime::Application();
 	if (application->create(
 		defaultSettings,
 		settings,
