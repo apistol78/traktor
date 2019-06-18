@@ -83,6 +83,8 @@ PFN_vkCmdCopyImage vkCmdCopyImage = nullptr;
 PFN_vkGetImageSubresourceLayout vkGetImageSubresourceLayout = nullptr;
 PFN_vkDestroyImage vkDestroyImage = nullptr;
 PFN_vkCmdDispatch vkCmdDispatch = nullptr;
+PFN_vkInvalidateMappedMemoryRanges vkInvalidateMappedMemoryRanges = nullptr;
+PFN_vkCmdCopyBuffer vkCmdCopyBuffer = nullptr;
 
 //PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR = 0;
 //PFN_vkGetPhysicalDeviceSurfaceSupportKHR vkGetPhysicalDeviceSurfaceSupportKHR = 0;
