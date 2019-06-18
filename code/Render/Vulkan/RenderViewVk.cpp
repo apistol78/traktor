@@ -243,7 +243,7 @@ int RenderViewVk::getHeight() const
 
 bool RenderViewVk::isActive() const
 {
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__ANDROID__)
 	return true;
 #else
 	return m_window->isActive();
@@ -259,6 +259,8 @@ bool RenderViewVk::isFullScreen() const
 {
 #if defined(_WIN32)
 	return m_window->haveFullScreenStyle();
+#elif defined(__ANDROID__)
+	return true;
 #else
 	return m_window->isFullScreen();
 #endif

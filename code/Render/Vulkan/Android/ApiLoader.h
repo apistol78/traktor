@@ -2,7 +2,7 @@
 
 #define VK_USE_PLATFORM_ANDROID_KHR
 #define VK_NO_PROTOTYPES
-#include <vulkan.h>
+#include <vulkan/vulkan.h>
 
 namespace traktor
 {
@@ -80,6 +80,8 @@ extern PFN_vkCmdCopyImage vkCmdCopyImage;
 extern PFN_vkGetImageSubresourceLayout vkGetImageSubresourceLayout;
 extern PFN_vkDestroyImage vkDestroyImage;
 extern PFN_vkCmdDispatch vkCmdDispatch;
+extern PFN_vkInvalidateMappedMemoryRanges vkInvalidateMappedMemoryRanges;
+extern PFN_vkCmdCopyBuffer vkCmdCopyBuffer;
 
 //// Win32 Vulkan extensions.
 //extern PFN_vkCreateXlibSurfaceKHR vkCreateXlibSurfaceKHR;
