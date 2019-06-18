@@ -72,18 +72,8 @@ local function collectDependencies(
 	-- Add library paths.
 	local libraryPaths = configuration:getLibraryPaths()
 	for i = 0, libraryPaths:size() - 1 do
-		-- local libraryRelPath = fileSystem:getRelativePath(
-		-- 	Path(libraryPaths:get(i)),
-		-- 	projectPath
-		-- )
 		local libraryAbsPath = fileSystem:getAbsolutePath(Path(libraryPaths:get(i)))
-		local lp = ""
-		lp = libraryAbsPath.pathName
-		-- if libraryRelPath ~= nil then
-		-- 	lp = libraryRelPath.pathName
-		-- else
-		-- 	lp = Path(libraryPaths:get(i)).pathName
-		-- end
+		local lp = libraryAbsPath.pathName
 		if lp ~= "" then
 			insertLast(outLibraryPaths, lp)
 		end
@@ -131,49 +121,47 @@ local function collectDependencies(
 			local externalSolution = dep:getSolution()
 			local externalProject = dep:getProject()
 			local externalConfig = externalProject:getConfiguration(configuration:getName())
-			if externalProject:getEnable() then
 
-				-- Add path to library.
-				if externalConfig:getConsumerLibraryPath() ~= "" then
-					local aggregateOutputPath = Path(externalSolution:getAggregateOutputPath())
-					local consumerLibraryPath = Path(externalConfig:getConsumerLibraryPath())
+			-- Add path to library.
+			if externalConfig:getConsumerLibraryPath() ~= "" then
+				local aggregateOutputPath = Path(externalSolution:getAggregateOutputPath())
+				local consumerLibraryPath = Path(externalConfig:getConsumerLibraryPath())
 
-					local consumerAbsPath = fileSystem:getAbsolutePath(aggregateOutputPath:concat(consumerLibraryPath))
-					insertLast(outLibraryPaths, consumerAbsPath.pathName)
-				else
-					local externalAbsPath = fileSystem:getAbsolutePath(
-						Path(externalSolution:getRootPath() .. "/" .. configuration:getName())
-					)
-					if externalAbsPath ~= nil then
-						insertLast(outLibraryPaths, externalAbsPath.pathName)
-					end
+				local consumerAbsPath = fileSystem:getAbsolutePath(aggregateOutputPath:concat(consumerLibraryPath))
+				insertLast(outLibraryPaths, consumerAbsPath.pathName)
+			else
+				local externalAbsPath = fileSystem:getAbsolutePath(
+					Path(externalSolution:getRootPath() .. "/" .. configuration:getName())
+				)
+				if externalAbsPath ~= nil then
+					insertLast(outLibraryPaths, externalAbsPath.pathName)
 				end
+			end
 
+			if externalProject:getEnable() then
 				-- Add library.
 				insertLast(outLibraries, externalProject:getName())
+			end
 
-				-- Recurse with child dependencies.
-				if externalConfig:getTargetFormat() == "StaticLibrary" then
-					collectDependencies(
-						externalSolution,
-						externalProject,
-						externalConfig,
-						outIncludePaths,
-						outLibraries,
-						outLibrariesExternal,
-						outLibraryPaths
-					)
-				else
-
-					-- Only add include paths when dealing with shared library dependencies.
-					local includePaths = externalConfig:getIncludePaths()
-					for j = 0, includePaths:size() - 1 do
-						local ip = Path(includePaths:get(j)).pathName
-						if ip ~= "" then
-							insertLast(outIncludePaths, ip)
-						end
+			-- Recurse with child dependencies.
+			if externalConfig:getTargetFormat() == "StaticLibrary" then
+				collectDependencies(
+					externalSolution,
+					externalProject,
+					externalConfig,
+					outIncludePaths,
+					outLibraries,
+					outLibrariesExternal,
+					outLibraryPaths
+				)
+			else
+				-- Only add include paths when dealing with shared library dependencies.
+				local includePaths = externalConfig:getIncludePaths()
+				for j = 0, includePaths:size() - 1 do
+					local ip = Path(includePaths:get(j)).pathName
+					if ip ~= "" then
+						insertLast(outIncludePaths, ip)
 					end
-
 				end
 			end
 		end
