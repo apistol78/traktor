@@ -5,7 +5,7 @@ SYSROOT=$(RPI_SYSROOT)
 INCLUDES=
 
 # Build tools.
-C=clang
+C=ccache clang
 C_FLAGS_COMMON=\
 	--target=arm-linux-gnueabihf\
 	--sysroot=$(SYSROOT)\
@@ -22,7 +22,7 @@ C_FLAGS_DEBUG_EXECUTABLE=$(C_FLAGS_COMMON) -g -D _UNICODE -D UNICODE
 C_FLAGS_RELEASE_EXECUTABLE=$(C_FLAGS_COMMON) -O2 -D _UNICODE -D UNICODE -D NDEBUG
 C_FLAG_OUTPUT=-o 
 
-CC=clang++
+CC=ccache clang++
 CC_FLAGS_COMMON=\
 	--target=arm-linux-gnueabihf\
 	--sysroot=$(SYSROOT)\
@@ -46,7 +46,7 @@ AR_FLAGS_DEBUG_STATIC=$(AR_FLAGS_COMMON)
 AR_FLAGS_RELEASE_STATIC=$(AR_FLAGS_COMMON)
 AR_FLAG_OUTPUT=
 
-LINK=clang++
+LINK=ccache clang++
 LINK_LIBS=-fuse-ld=lld --target=arm-linux-gnueabihf --sysroot=$(SYSROOT) -Wl,-rpath=\$$ORIGIN
 LINK_FLAGS_DEBUG_SHARED=$(LINK_LIBS) -shared
 LINK_FLAGS_RELEASE_SHARED=$(LINK_LIBS) -shared
