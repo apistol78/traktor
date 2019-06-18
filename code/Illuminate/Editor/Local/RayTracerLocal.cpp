@@ -5,7 +5,7 @@
 #include "Drawing/PixelFormat.h"
 #include "Illuminate/Editor/GBuffer.h"
 #include "Illuminate/Editor/IlluminateConfiguration.h"
-#include "Illuminate/Editor/RayTracerLocal.h"
+#include "Illuminate/Editor/Local/RayTracerLocal.h"
 
 namespace traktor
 {

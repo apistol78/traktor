@@ -14165,6 +14165,24 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="Filter">
+					<name>Local</name>
+					<items>
+						<item type="File">
+							<fileName>Local/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Embree</name>
+					<items>
+						<item type="File">
+							<fileName>Embree/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">

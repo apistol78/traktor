@@ -16724,6 +16724,22 @@
 							<sourceFile>Traktor.Illuminate.Editor.dll</sourceFile>
 							<targetPath>debugshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(EMBREE_SDK)/bin/embree3.dll</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(EMBREE_SDK)/bin/tbb.dll</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(EMBREE_SDK)/bin/tbbmalloc.dll</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(OIDN_SDK)/bin/OpenImageDenoise.dll</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
 					</aggregationItems>
 					<consumerLibraryPath>debugshared</consumerLibraryPath>
 				</item>
@@ -16759,6 +16775,22 @@
 							<sourceFile>Traktor.Illuminate.Editor.dll</sourceFile>
 							<targetPath>releaseshared</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(EMBREE_SDK)/bin/embree3.dll</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(EMBREE_SDK)/bin/tbb.dll</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(EMBREE_SDK)/bin/tbbmalloc.dll</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(OIDN_SDK)/bin/OpenImageDenoise.dll</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releaseshared</consumerLibraryPath>
 				</item>
@@ -16788,6 +16820,22 @@
 						</item>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Illuminate.Editor.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(EMBREE_SDK)/bin/embree3.dll</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(EMBREE_SDK)/bin/tbb.dll</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(EMBREE_SDK)/bin/tbbmalloc.dll</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(OIDN_SDK)/bin/OpenImageDenoise.dll</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -16821,6 +16869,22 @@
 							<sourceFile>Traktor.Illuminate.Editor.lib</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(EMBREE_SDK)/bin/embree3.dll</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(EMBREE_SDK)/bin/tbb.dll</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(EMBREE_SDK)/bin/tbbmalloc.dll</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>$(OIDN_SDK)/bin/OpenImageDenoise.dll</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
 				</item>
@@ -16829,6 +16893,24 @@
 				<item type="File">
 					<fileName>*.*</fileName>
 					<items/>
+				</item>
+				<item type="Filter">
+					<name>Local</name>
+					<items>
+						<item type="File">
+							<fileName>Local/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Embree</name>
+					<items>
+						<item type="File">
+							<fileName>Embree/*.*</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>
