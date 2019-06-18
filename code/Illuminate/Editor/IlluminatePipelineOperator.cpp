@@ -51,7 +51,7 @@
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/LightComponentData.h"
 
-#if !defined(__RPI__)
+#if !defined(__RPI__) && !defined(__APPLE__)
 #	include <OpenImageDenoise/oidn.h>
 #endif
 
@@ -129,7 +129,7 @@ void collectTraceEntities(
 	}
 }
 
-#if !defined(__RPI__)
+#if !defined(__RPI__) && !defined(__APPLE__)
 Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 {
 	int32_t width = lightmap->getWidth();
@@ -560,7 +560,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		// Blur indirect lightmap to reduce noise from path tracing.
 		if (configuration->getEnableDenoise())
 		{
-#if !defined(__RPI__)
+#if !defined(__RPI__) && !defined(__APPLE__)
 			if (lightmapDirect)
 				lightmapDirect = denoise(gbuffer, lightmapDirect);
 			if (lightmapIndirect)

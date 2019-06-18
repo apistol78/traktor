@@ -14401,7 +14401,7 @@
 				</item>
 				<item type="Configuration" version="5">
 					<name>DebugStatic</name>
-					<targetFormat>TfExecutable</targetFormat>
+					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
@@ -14433,7 +14433,7 @@
 				</item>
 				<item type="Configuration" version="5">
 					<name>ReleaseStatic</name>
-					<targetFormat>TfExecutable</targetFormat>
+					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
