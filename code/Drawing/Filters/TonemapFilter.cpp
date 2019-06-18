@@ -30,7 +30,7 @@ void TonemapFilter::apply(Image* image) const
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
 			image->getPixelUnsafe(x, y, in);
-			image->setPixelUnsafe(x, y, in / intensity);
+			image->setPixelUnsafe(x, y, (in / intensity).rgb1());
 		}
 	}
 }

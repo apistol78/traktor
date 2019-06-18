@@ -37,6 +37,8 @@ public:
 
 	float getLumelDensity() const { return m_lumelDensity; }
 
+	int32_t getMinimumLightMapSize() const { return m_minimumLightMapSize; }
+
 	bool getEnableAutoTexCoords() const { return m_enableAutoTexCoords; }
 
 	bool getEnableShadowFix() const { return m_enableShadowFix; }
@@ -44,6 +46,8 @@ public:
 	bool getEnableDilate() const { return m_enableDilate; }
 
 	bool getEnableDenoise() const { return m_enableDenoise; }
+
+	float getClampShadowThreshold() const { return m_clampShadowThreshold; }
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -55,10 +59,12 @@ private:
 	uint32_t m_shadowSampleCount;
 	float m_pointLightShadowRadius;
 	float m_lumelDensity;
+	int32_t m_minimumLightMapSize;
 	bool m_enableAutoTexCoords;
 	bool m_enableShadowFix;
 	bool m_enableDilate;
 	bool m_enableDenoise;
+	float m_clampShadowThreshold;
 };
 
 	}
