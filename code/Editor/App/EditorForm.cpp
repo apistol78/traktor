@@ -279,7 +279,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
 				return false;
 			}
 
-			*outSettings = (*outSettings)->merge(userSettings, PropertyGroup::MmReplace);
+			*outSettings = (*outSettings)->merge(userSettings, PropertyGroup::MmJoin);
 			T_FATAL_ASSERT (*outSettings);
 		}
 	}

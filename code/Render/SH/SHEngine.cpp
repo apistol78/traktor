@@ -218,7 +218,6 @@ Vector4 SHEngine::evaluate3(float phi, float theta, const SHCoeffs& coefficients
 	result += Scalar(shd[6]) * coefficients[6];
 	result += Scalar(shd[7]) * coefficients[7];
 	result += Scalar(shd[8]) * coefficients[8];
-	result += Scalar(shd[9]) * coefficients[9];
 
 	return result;
 }
