@@ -395,7 +395,7 @@ if #architectures > 0 then
 			output:printLn("")
 		end
 
-		for _, aggregationItems in pairs(configuration.aggregationItems) do
+		for _, aggregationItem in pairs(configuration.aggregationItems) do
 			local aggregateOutputPath = Path(solution.aggregateOutputPath)
 			local sourceFile = Path("../" .. configuration.name):concat(Path(aggregationItem.sourceFile))
 			local targetPath = aggregateOutputPath:concat(Path(aggregationItem.targetPath))

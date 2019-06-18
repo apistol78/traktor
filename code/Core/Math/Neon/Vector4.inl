@@ -77,7 +77,7 @@ T_MATH_INLINE Vector4::Vector4(float x, float y, float z, float w)
 
 T_MATH_INLINE Vector4::Vector4(const float* p)
 {
-	T_ASSERT((p);
+	T_ASSERT(p);
 	m_data = vld1q_f32((const float32_t*)p);
 }
 
@@ -163,7 +163,7 @@ T_MATH_INLINE Scalar Vector4::length2() const
 T_MATH_INLINE Scalar Vector4::normalize()
 {
 	Scalar ln = length();
-	T_ASSERT((abs(ln) > 0.0f);
+	T_ASSERT(abs(ln) > 0.0f);
 	*this /= ln;
 	return ln;
 }
@@ -171,7 +171,7 @@ T_MATH_INLINE Scalar Vector4::normalize()
 T_MATH_INLINE Vector4 Vector4::normalized() const
 {
 	Scalar il = reciprocalSquareRoot(dot4(*this, *this));
-	T_ASSERT((abs(il) > 0.0f);
+	T_ASSERT(abs(il) > 0.0f);
 	return *this * il;
 }
 
@@ -182,27 +182,27 @@ T_MATH_INLINE Vector4 Vector4::absolute() const
 
 T_MATH_INLINE Vector4 Vector4::loadAligned(const float* in)
 {
-	T_ASSERT((in);
+	T_ASSERT(in);
 	Vector4 v; v.m_data = vld1q_f32((const float32_t*)in);
 	return v;
 }
 
 T_MATH_INLINE Vector4 Vector4::loadUnaligned(const float* in)
 {
-	T_ASSERT((in);
+	T_ASSERT(in);
 	Vector4 v; v.m_data = vld1q_f32((const float32_t*)in);
 	return v;
 }
 
 T_MATH_INLINE void Vector4::storeAligned(float* out) const
 {
-	T_ASSERT((out);
+	T_ASSERT(out);
 	vst1q_f32((float32_t*)out, m_data);
 }
 
 T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 {
-	T_ASSERT((out);
+	T_ASSERT(out);
 	vst1q_f32((float32_t*)out, m_data);
 }
 
@@ -268,7 +268,7 @@ T_MATH_INLINE Vector4& Vector4::operator *= (const Vector4& v)
 
 T_MATH_INLINE Vector4& Vector4::operator /= (const Scalar& v)
 {
-	T_ASSERT((abs(v.m_data) > 0.0f);
+	T_ASSERT(abs(v.m_data) > 0.0f);
 	float32x4_t v4 = vdupq_n_f32(v.m_data);
 	m_data = v_vec_div(m_data, v4);
 	return *this;
@@ -370,7 +370,7 @@ T_MATH_INLINE Vector4 operator * (const Vector4& l, const Vector4& r)
 
 T_MATH_INLINE Vector4 operator / (const Vector4& l, const Scalar& r)
 {
-	T_ASSERT((abs(r.m_data) > 0.0);
+	T_ASSERT(abs(r.m_data) > 0.0);
 	float32x4_t v4 = vdupq_n_f32(r.m_data);
 	return Vector4(v_vec_div(l.m_data, v4));
 }

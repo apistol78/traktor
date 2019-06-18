@@ -235,7 +235,7 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 			type = GL_FLOAT;
 			break;
 
-#if !defined(__RPI__)
+#if !defined(__RPI__) && !defined(__IOS__)
 		case TfR16G16F:
 #	if defined(GL_HALF_FLOAT_OES)
 			internalFormat = GL_RG16_EXT;
