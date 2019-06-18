@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Core/Functor/Functor.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
@@ -18,9 +19,9 @@ namespace traktor
 Vector4 polarToCartesian(double phi, double theta)
 {
 	return Vector4(
-		float(cosf(theta) * sinf(phi)),
-		float(cosf(phi)),
-		float(sinf(theta) * sinf(phi))
+		(float)(std::cos(theta) * std::sin(phi)),
+		(float)(std::cos(phi)),
+		(float)(std::sin(theta) * std::sin(phi))
 	);
 }
 
@@ -202,11 +203,7 @@ Vector4 SHEngine::evaluate(float phi, float theta, const SHCoeffs& coefficients)
 
 Vector4 SHEngine::evaluate3(float phi, float theta, const SHCoeffs& coefficients) const
 {
-	Vector4 dir(
-		cos(theta) * sin(phi),
-		cos(phi),
-		sin(theta) * sin(phi)
-	);
+	Vector4 dir = polarToCartesian(phi, theta);
 
 	float shd[9];
 	shEvaluate3(dir.x(), dir.y(), dir.z(), shd);

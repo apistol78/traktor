@@ -14,27 +14,22 @@ const uint32_t c_allRefreshRates =
 
 const ResolutionDesc c_resolutionDescs[] =
 {
-	{ 1920, 1080, c_allRefreshRates, false, CELL_VIDEO_OUT_RESOLUTION_1080 },
-	{ 1280, 720, c_allRefreshRates, false, CELL_VIDEO_OUT_RESOLUTION_720 },
-	{ 720, 576, CELL_VIDEO_OUT_REFRESH_RATE_50HZ, false, CELL_VIDEO_OUT_RESOLUTION_576 },
-	{ 720, 480, c_allRefreshRates, false, CELL_VIDEO_OUT_RESOLUTION_480 },
-	{ 1600, 1080, c_allRefreshRates, false, CELL_VIDEO_OUT_RESOLUTION_1600x1080 },
-	{ 1440, 1080, c_allRefreshRates, false, CELL_VIDEO_OUT_RESOLUTION_1440x1080 },
-	{ 1280, 1080, c_allRefreshRates, false, CELL_VIDEO_OUT_RESOLUTION_1280x1080 },
-	{ 960, 1080, c_allRefreshRates, false, CELL_VIDEO_OUT_RESOLUTION_960x1080 },
-	{ 1280, 720, c_allRefreshRates, true, CELL_VIDEO_OUT_RESOLUTION_720_3D_FRAME_PACKING },
-	{ 1024, 720, c_allRefreshRates, true, CELL_VIDEO_OUT_RESOLUTION_1024x720_3D_FRAME_PACKING },
-	{ 960, 720, c_allRefreshRates, true, CELL_VIDEO_OUT_RESOLUTION_960x720_3D_FRAME_PACKING },
-	{ 800, 720, c_allRefreshRates, true, CELL_VIDEO_OUT_RESOLUTION_800x720_3D_FRAME_PACKING },
-	{ 640, 720, c_allRefreshRates, true, CELL_VIDEO_OUT_RESOLUTION_640x720_3D_FRAME_PACKING },
+	{ 1920, 1080, c_allRefreshRates, CELL_VIDEO_OUT_RESOLUTION_1080 },
+	{ 1280, 720, c_allRefreshRates, CELL_VIDEO_OUT_RESOLUTION_720 },
+	{ 720, 576, CELL_VIDEO_OUT_REFRESH_RATE_50HZ, CELL_VIDEO_OUT_RESOLUTION_576 },
+	{ 720, 480, c_allRefreshRates, CELL_VIDEO_OUT_RESOLUTION_480 },
+	{ 1600, 1080, c_allRefreshRates, CELL_VIDEO_OUT_RESOLUTION_1600x1080 },
+	{ 1440, 1080, c_allRefreshRates, CELL_VIDEO_OUT_RESOLUTION_1440x1080 },
+	{ 1280, 1080, c_allRefreshRates, CELL_VIDEO_OUT_RESOLUTION_1280x1080 },
+	{ 960, 1080, c_allRefreshRates, CELL_VIDEO_OUT_RESOLUTION_960x1080 },
 	{ 0, 0, false, 0 }
 };
 
-const ResolutionDesc* findResolutionDesc(int32_t width, int32_t height, bool stereoscopic)
+const ResolutionDesc* findResolutionDesc(int32_t width, int32_t height)
 {
 	for (const ResolutionDesc* i = c_resolutionDescs; i->id; ++i)
 	{
-		if (i->width == width && i->height == height && i->stereoscopic == stereoscopic)
+		if (i->width == width && i->height == height)
 			return i;
 	}
 	return 0;

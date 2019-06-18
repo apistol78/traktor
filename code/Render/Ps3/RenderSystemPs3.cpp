@@ -118,7 +118,7 @@ bool RenderSystemPs3::create(const RenderSystemDesc& desc)
 	// Determine supported display modes.
 	for (const ResolutionDesc* i = c_resolutionDescs; i->id; ++i)
 	{
-		if (!i->stereoscopic && !(i->refreshRates & videoState.displayMode.refreshRates))
+		if (!(i->refreshRates & videoState.displayMode.refreshRates))
 		{
 			log::debug << L"Skipping unsupported display mode " << i->width << L"*" << i->height << Endl;
 			continue;
@@ -158,7 +158,6 @@ DisplayMode RenderSystemPs3::getDisplayMode(uint32_t index) const
 	dm.height = m_resolutions[index]->height;
 	dm.refreshRate = 0;
 	dm.colorBits = 24;
-	dm.stereoscopic = m_resolutions[index]->stereoscopic;
 	return dm;
 }
 
@@ -206,7 +205,6 @@ DisplayMode RenderSystemPs3::getCurrentDisplayMode() const
 	dm.height = videoResolution.height;
 	dm.refreshRate = 0;
 	dm.colorBits = 24;
-	dm.stereoscopic = false;
 	return dm;
 }
 

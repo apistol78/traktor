@@ -23,6 +23,8 @@ class ITypedObject;
 class IInstanceFactory
 {
 public:
+	virtual ~IInstanceFactory() {}
+
 	virtual ITypedObject* createInstance(void* memory) const = 0;
 };
 

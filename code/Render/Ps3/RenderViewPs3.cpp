@@ -201,8 +201,7 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 
 	const ResolutionDesc* resolution = findResolutionDesc(
 		desc.displayMode.width,
-		desc.displayMode.height,
-		desc.displayMode.stereoscopic
+		desc.displayMode.height
 	);
 	if (!resolution)
 	{
@@ -238,235 +237,20 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 		return false;
 	}
 
-	if (!desc.displayMode.stereoscopic)
+	cellGcmSetFlipMode(CELL_GCM_DISPLAY_HSYNC);
+
+	uint32_t colorSize = alignUp(m_colorPitch * alignUp(m_height, 64), 65536);
+	m_colorObject = m_localMemoryHeap->alloc(sizeof_array(m_colorAddr) * colorSize, 65536, true);
+
+	for (size_t i = 0; i < sizeof_array(m_colorAddr); i++)
 	{
-		cellGcmSetFlipMode(CELL_GCM_DISPLAY_HSYNC);
-
-		uint32_t colorSize = alignUp(m_colorPitch * alignUp(m_height, 64), 65536);
-		m_colorObject = m_localMemoryHeap->alloc(sizeof_array(m_colorAddr) * colorSize, 65536, true);
-
-		for (size_t i = 0; i < sizeof_array(m_colorAddr); i++)
-		{
-			m_colorAddr[i] = (uint8_t*)m_colorObject->getPointer() + (i * colorSize);
-			m_colorOffset[i] = m_colorObject->getOffset() + (i * colorSize);
+		m_colorAddr[i] = (uint8_t*)m_colorObject->getPointer() + (i * colorSize);
+		m_colorOffset[i] = m_colorObject->getOffset() + (i * colorSize);
 
 #if defined(T_RENDER_PS3_USE_TILES)
-			// Only put color buffers in tiled memory if we're not multisampling.
-			if (desc.multiSample <= 0)
-			{
-				if (m_tileArea.alloc(colorSize / 0x10000, 1, m_colorTile[i]))
-				{
-					err = cellGcmSetTileInfo(
-						m_colorTile[i].index,
-						CELL_GCM_LOCATION_LOCAL,
-						m_colorOffset[i],
-						colorSize,
-						m_colorPitch,
-						CELL_GCM_COMPMODE_DISABLED,
-						m_colorTile[i].base,
-						m_colorTile[i].dramBank
-					);
-					if (err != CELL_OK)
-						log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
-
-					err = cellGcmBindTile(m_colorTile[i].index);
-					if (err != CELL_OK)
-						log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
-				}
-			}
-#endif
-
-			err = cellGcmSetDisplayBuffer(
-				i,
-				m_colorOffset[i],
-				m_colorPitch,
-				m_width,
-				m_height
-			);
-			if (err != CELL_OK)
-			{
-				log::error << L"Create render view failed; unable to set display buffers" << Endl;
-				return false;
-			}
-		}
-
-		std::memset(&m_colorTexture, 0, sizeof(m_colorTexture));
-		m_colorTexture.format = CELL_GCM_TEXTURE_LN | CELL_GCM_TEXTURE_NR;
-		m_colorTexture.mipmap = 1;
-		m_colorTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
-		m_colorTexture.cubemap = CELL_GCM_FALSE;
-		m_colorTexture.remap =
-			CELL_GCM_TEXTURE_REMAP_REMAP << 14 |
-			CELL_GCM_TEXTURE_REMAP_REMAP << 12 |
-			CELL_GCM_TEXTURE_REMAP_REMAP << 10 |
-			CELL_GCM_TEXTURE_REMAP_REMAP << 8 |
-			CELL_GCM_TEXTURE_REMAP_FROM_B << 6 |
-			CELL_GCM_TEXTURE_REMAP_FROM_G << 4 |
-			CELL_GCM_TEXTURE_REMAP_FROM_R << 2 |
-			CELL_GCM_TEXTURE_REMAP_FROM_A;
-		m_colorTexture.width = m_width;
-		m_colorTexture.height = m_height;
-		m_colorTexture.depth = 1;
-		m_colorTexture.location = CELL_GCM_LOCATION_LOCAL;
-		m_colorTexture.offset = 0;
-		m_colorTexture.pitch = m_colorPitch;
-
-		// Allocate multi-sampled target buffer.
-		if (desc.multiSample > 1)
+		// Only put color buffers in tiled memory if we're not multisampling.
+		if (desc.multiSample <= 0)
 		{
-			int32_t targetWidth = m_width * 2;
-			int32_t targetHeight = m_height;
-
-			std::memset(&m_targetTexture, 0, sizeof(m_targetTexture));
-			m_targetTexture.format = CELL_GCM_TEXTURE_A8R8G8B8 | CELL_GCM_TEXTURE_LN | CELL_GCM_TEXTURE_NR;
-			m_targetTexture.mipmap = 1;
-			m_targetTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
-			m_targetTexture.cubemap = CELL_GCM_FALSE;
-			m_targetTexture.remap =
-				CELL_GCM_TEXTURE_REMAP_REMAP << 14 |
-				CELL_GCM_TEXTURE_REMAP_REMAP << 12 |
-				CELL_GCM_TEXTURE_REMAP_REMAP << 10 |
-				CELL_GCM_TEXTURE_REMAP_REMAP << 8 |
-				CELL_GCM_TEXTURE_REMAP_FROM_B << 6 |
-				CELL_GCM_TEXTURE_REMAP_FROM_G << 4 |
-				CELL_GCM_TEXTURE_REMAP_FROM_R << 2 |
-				CELL_GCM_TEXTURE_REMAP_FROM_A;
-			m_targetTexture.width = targetWidth;
-			m_targetTexture.height = targetHeight;
-			m_targetTexture.depth = 1;
-			m_targetTexture.location = CELL_GCM_LOCATION_LOCAL;
-			m_targetTexture.offset = 0;
-			m_targetTexture.pitch = cellGcmGetTiledPitchSize(targetWidth * 4);
-
-			uint32_t targetColorSize = alignUp(m_targetTexture.pitch * alignUp(targetHeight, 64), 65536);
-
-			m_targetData = m_localMemoryHeap->alloc(targetColorSize, 65536, true);
-			if (!m_targetData)
-			{
-				log::error << L"Unable to allocate target buffer" << Endl;
-				return false;
-			}
-
-#if defined(T_RENDER_PS3_USE_TILES)
-			if (m_tileArea.alloc(targetColorSize / 0x10000, 1, m_targetTileInfo))
-			{
-				err = cellGcmSetTileInfo(
-					m_targetTileInfo.index,
-					CELL_GCM_LOCATION_LOCAL,
-					m_targetData->getOffset(),
-					m_targetData->getSize(),
-					m_targetTexture.pitch,
-					CELL_GCM_COMPMODE_C32_2X1,
-					m_targetTileInfo.base,
-					m_targetTileInfo.dramBank
-				);
-				if (err != CELL_OK)
-					log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
-
-				err = cellGcmBindTile(m_targetTileInfo.index);
-				if (err != CELL_OK)
-					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
-			}
-#endif
-
-			m_targetSurfaceAntialias = CELL_GCM_SURFACE_DIAGONAL_CENTERED_2;
-		}
-
-		// Allocate depth buffer.
-		{
-			int32_t depthWidth = m_width;
-			int32_t depthHeight = m_height;
-
-			if (desc.multiSample > 1)
-				depthWidth *= 2;
-
-			m_depthTexture.format = CELL_GCM_TEXTURE_DEPTH24_D8 | CELL_GCM_TEXTURE_LN;
-			m_depthTexture.mipmap = 1;
-			m_depthTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
-			m_depthTexture.cubemap = 0;
-			m_depthTexture.remap = 0;
-			m_depthTexture.width = alignUp(depthWidth, 64);
-			m_depthTexture.height = alignUp(depthHeight, 64);
-			m_depthTexture.depth = 1;
-			m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
-			m_depthTexture.pitch = cellGcmGetTiledPitchSize(m_depthTexture.width * 4);
-			m_depthTexture.offset = 0;
-
-			uint32_t depthSize = alignUp(m_depthTexture.pitch * m_depthTexture.height, 65536);
-			m_depthObject = m_localMemoryHeap->alloc(depthSize, 65536, true);
-
-			m_depthAddr = m_depthObject->getPointer();
-			m_depthTexture.offset = m_depthObject->getOffset();
-
-#if defined(T_RENDER_PS3_USE_TILES)
-			// Allocate tile area for depth buffer.
-			if (m_tileArea.alloc(depthSize / 0x10000, 1, m_depthTile))
-			{
-				err = cellGcmSetTileInfo(
-					m_depthTile.index,
-					m_depthTexture.location,
-					m_depthTexture.offset,
-					depthSize,
-					m_depthTexture.pitch,
-					(desc.multiSample > 1) ?
-						CELL_GCM_COMPMODE_Z32_SEPSTENCIL_DIAGONAL :
-						CELL_GCM_COMPMODE_Z32_SEPSTENCIL,
-					m_depthTile.base,
-					m_depthTile.dramBank
-				);
-				if (err != CELL_OK)
-					log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
-
-				err = cellGcmBindTile(m_depthTile.index);
-				if (err != CELL_OK)
-					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
-			}
-#endif
-
-#if defined(T_RENDER_PS3_USE_ZCULL)
-			// Setup Z-cull binding.
-			if (m_zcullArea.alloc(m_depthTexture.width * m_depthTexture.height, 4096, m_zcullTile))
-			{
-				err = cellGcmBindZcull(
-					m_zcullTile.index,
-					m_depthTexture.offset,
-					m_depthTexture.width,
-					m_depthTexture.height,
-					0,
-					CELL_GCM_ZCULL_Z24S8,
-					CELL_GCM_SURFACE_CENTER_1,
-					CELL_GCM_ZCULL_GREATER,
-					CELL_GCM_ZCULL_MSB,
-					CELL_GCM_SCULL_SFUNC_ALWAYS,
-					0,
-					0
-				);
-				if (err != CELL_OK)
-					log::error << L"Unable to bind ZCull (" << lookupGcmError(err) << L")" << Endl;
-			}
-#endif
-		}
-	}
-	else	// Setup stereoscopic frame buffers.
-	{
-		if (desc.multiSample > 1)
-		{
-			log::error << L"MSAA not permitted in stereoscopic views" << Endl;
-			return false;
-		}
-
-		cellGcmSetFlipMode(CELL_GCM_DISPLAY_HSYNC);
-
-		// Allocate color buffer; 30 lines gap.
-		uint32_t colorSize = alignUp(m_colorPitch * (m_height * 2 + 30), 65536);
-		m_colorObject = m_localMemoryHeap->alloc(sizeof_array(m_colorAddr) * colorSize, 65536, true);
-
-		for (size_t i = 0; i < sizeof_array(m_colorAddr); i++)
-		{
-			m_colorAddr[i] = (uint8_t*)m_colorObject->getPointer() + (i * colorSize);
-			m_colorOffset[i] = m_colorObject->getOffset() + (i * colorSize);
-
-#if defined(T_RENDER_PS3_USE_TILES)
 			if (m_tileArea.alloc(colorSize / 0x10000, 1, m_colorTile[i]))
 			{
 				err = cellGcmSetTileInfo(
@@ -486,88 +270,178 @@ bool RenderViewPs3::reset(const RenderViewDefaultDesc& desc)
 				if (err != CELL_OK)
 					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
 			}
+		}
 #endif
 
-			err = cellGcmSetDisplayBuffer(
-				i,
-				m_colorOffset[i],
-				m_colorPitch,
-				m_width,
-				m_height * 2 + 30
-			);
-			if (err != CELL_OK)
-			{
-				log::error << L"Create render view failed; unable to set display buffers" << Endl;
-				return false;
-			}
+		err = cellGcmSetDisplayBuffer(
+			i,
+			m_colorOffset[i],
+			m_colorPitch,
+			m_width,
+			m_height
+		);
+		if (err != CELL_OK)
+		{
+			log::error << L"Create render view failed; unable to set display buffers" << Endl;
+			return false;
+		}
+	}
+
+	std::memset(&m_colorTexture, 0, sizeof(m_colorTexture));
+	m_colorTexture.format = CELL_GCM_TEXTURE_LN | CELL_GCM_TEXTURE_NR;
+	m_colorTexture.mipmap = 1;
+	m_colorTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
+	m_colorTexture.cubemap = CELL_GCM_FALSE;
+	m_colorTexture.remap =
+		CELL_GCM_TEXTURE_REMAP_REMAP << 14 |
+		CELL_GCM_TEXTURE_REMAP_REMAP << 12 |
+		CELL_GCM_TEXTURE_REMAP_REMAP << 10 |
+		CELL_GCM_TEXTURE_REMAP_REMAP << 8 |
+		CELL_GCM_TEXTURE_REMAP_FROM_B << 6 |
+		CELL_GCM_TEXTURE_REMAP_FROM_G << 4 |
+		CELL_GCM_TEXTURE_REMAP_FROM_R << 2 |
+		CELL_GCM_TEXTURE_REMAP_FROM_A;
+	m_colorTexture.width = m_width;
+	m_colorTexture.height = m_height;
+	m_colorTexture.depth = 1;
+	m_colorTexture.location = CELL_GCM_LOCATION_LOCAL;
+	m_colorTexture.offset = 0;
+	m_colorTexture.pitch = m_colorPitch;
+
+	// Allocate multi-sampled target buffer.
+	if (desc.multiSample > 1)
+	{
+		int32_t targetWidth = m_width * 2;
+		int32_t targetHeight = m_height;
+
+		std::memset(&m_targetTexture, 0, sizeof(m_targetTexture));
+		m_targetTexture.format = CELL_GCM_TEXTURE_A8R8G8B8 | CELL_GCM_TEXTURE_LN | CELL_GCM_TEXTURE_NR;
+		m_targetTexture.mipmap = 1;
+		m_targetTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
+		m_targetTexture.cubemap = CELL_GCM_FALSE;
+		m_targetTexture.remap =
+			CELL_GCM_TEXTURE_REMAP_REMAP << 14 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 12 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 10 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 8 |
+			CELL_GCM_TEXTURE_REMAP_FROM_B << 6 |
+			CELL_GCM_TEXTURE_REMAP_FROM_G << 4 |
+			CELL_GCM_TEXTURE_REMAP_FROM_R << 2 |
+			CELL_GCM_TEXTURE_REMAP_FROM_A;
+		m_targetTexture.width = targetWidth;
+		m_targetTexture.height = targetHeight;
+		m_targetTexture.depth = 1;
+		m_targetTexture.location = CELL_GCM_LOCATION_LOCAL;
+		m_targetTexture.offset = 0;
+		m_targetTexture.pitch = cellGcmGetTiledPitchSize(targetWidth * 4);
+
+		uint32_t targetColorSize = alignUp(m_targetTexture.pitch * alignUp(targetHeight, 64), 65536);
+
+		m_targetData = m_localMemoryHeap->alloc(targetColorSize, 65536, true);
+		if (!m_targetData)
+		{
+			log::error << L"Unable to allocate target buffer" << Endl;
+			return false;
 		}
 
-		// Allocate depth buffer; we share depth buffer for both eyes.
+#if defined(T_RENDER_PS3_USE_TILES)
+		if (m_tileArea.alloc(targetColorSize / 0x10000, 1, m_targetTileInfo))
 		{
-			m_depthTexture.format = CELL_GCM_TEXTURE_DEPTH24_D8 | CELL_GCM_TEXTURE_LN;
-			m_depthTexture.mipmap = 1;
-			m_depthTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
-			m_depthTexture.cubemap = 0;
-			m_depthTexture.remap = 0;
-			m_depthTexture.width = alignUp(m_width, 64);
-			m_depthTexture.height = alignUp(m_height + 6, 64);	// 720+6 in order to be able use tiled memory.
-			m_depthTexture.depth = 1;
-			m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
-			m_depthTexture.pitch = cellGcmGetTiledPitchSize(m_depthTexture.width * 4);
-			m_depthTexture.offset = 0;
+			err = cellGcmSetTileInfo(
+				m_targetTileInfo.index,
+				CELL_GCM_LOCATION_LOCAL,
+				m_targetData->getOffset(),
+				m_targetData->getSize(),
+				m_targetTexture.pitch,
+				CELL_GCM_COMPMODE_C32_2X1,
+				m_targetTileInfo.base,
+				m_targetTileInfo.dramBank
+			);
+			if (err != CELL_OK)
+				log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
 
-			uint32_t depthSize = alignUp(m_depthTexture.pitch * m_depthTexture.height, 65536);
-			m_depthObject = m_localMemoryHeap->alloc(depthSize, 65536, true);
+			err = cellGcmBindTile(m_targetTileInfo.index);
+			if (err != CELL_OK)
+				log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
+		}
+#endif
 
-			m_depthAddr = m_depthObject->getPointer();
-			m_depthTexture.offset = m_depthObject->getOffset();
+		m_targetSurfaceAntialias = CELL_GCM_SURFACE_DIAGONAL_CENTERED_2;
+	}
+
+	// Allocate depth buffer.
+	{
+		int32_t depthWidth = m_width;
+		int32_t depthHeight = m_height;
+
+		if (desc.multiSample > 1)
+			depthWidth *= 2;
+
+		m_depthTexture.format = CELL_GCM_TEXTURE_DEPTH24_D8 | CELL_GCM_TEXTURE_LN;
+		m_depthTexture.mipmap = 1;
+		m_depthTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
+		m_depthTexture.cubemap = 0;
+		m_depthTexture.remap = 0;
+		m_depthTexture.width = alignUp(depthWidth, 64);
+		m_depthTexture.height = alignUp(depthHeight, 64);
+		m_depthTexture.depth = 1;
+		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
+		m_depthTexture.pitch = cellGcmGetTiledPitchSize(m_depthTexture.width * 4);
+		m_depthTexture.offset = 0;
+
+		uint32_t depthSize = alignUp(m_depthTexture.pitch * m_depthTexture.height, 65536);
+		m_depthObject = m_localMemoryHeap->alloc(depthSize, 65536, true);
+
+		m_depthAddr = m_depthObject->getPointer();
+		m_depthTexture.offset = m_depthObject->getOffset();
 
 #if defined(T_RENDER_PS3_USE_TILES)
-			// Allocate tile area for depth buffer.
-			if (m_tileArea.alloc(depthSize / 0x10000, 1, m_depthTile))
-			{
-				err = cellGcmSetTileInfo(
-					m_depthTile.index,
-					m_depthTexture.location,
-					m_depthTexture.offset,
-					depthSize,
-					m_depthTexture.pitch,
+		// Allocate tile area for depth buffer.
+		if (m_tileArea.alloc(depthSize / 0x10000, 1, m_depthTile))
+		{
+			err = cellGcmSetTileInfo(
+				m_depthTile.index,
+				m_depthTexture.location,
+				m_depthTexture.offset,
+				depthSize,
+				m_depthTexture.pitch,
+				(desc.multiSample > 1) ?
+					CELL_GCM_COMPMODE_Z32_SEPSTENCIL_DIAGONAL :
 					CELL_GCM_COMPMODE_Z32_SEPSTENCIL,
-					m_depthTile.base,
-					m_depthTile.dramBank
-				);
-				if (err != CELL_OK)
-					log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
+				m_depthTile.base,
+				m_depthTile.dramBank
+			);
+			if (err != CELL_OK)
+				log::error << L"Unable to set tile info (" << lookupGcmError(err) << L")" << Endl;
 
-				err = cellGcmBindTile(m_depthTile.index);
-				if (err != CELL_OK)
-					log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
-			}
+			err = cellGcmBindTile(m_depthTile.index);
+			if (err != CELL_OK)
+				log::error << L"Unable to bind tile (" << lookupGcmError(err) << L")" << Endl;
+		}
 #endif
 
 #if defined(T_RENDER_PS3_USE_ZCULL)
-			// Setup Z-cull binding.
-			if (m_zcullArea.alloc(m_depthTexture.width * m_depthTexture.height, 4096, m_zcullTile))
-			{
-				err = cellGcmBindZcull(
-					m_zcullTile.index,
-					m_depthTexture.offset,
-					m_depthTexture.width,
-					m_depthTexture.height,
-					0,
-					CELL_GCM_ZCULL_Z24S8,
-					CELL_GCM_SURFACE_CENTER_1,
-					CELL_GCM_ZCULL_GREATER,
-					CELL_GCM_ZCULL_MSB,
-					CELL_GCM_SCULL_SFUNC_ALWAYS,
-					0,
-					0
-				);
-				if (err != CELL_OK)
-					log::error << L"Unable to bind ZCull (" << lookupGcmError(err) << L")" << Endl;
-			}
-#endif
+		// Setup Z-cull binding.
+		if (m_zcullArea.alloc(m_depthTexture.width * m_depthTexture.height, 4096, m_zcullTile))
+		{
+			err = cellGcmBindZcull(
+				m_zcullTile.index,
+				m_depthTexture.offset,
+				m_depthTexture.width,
+				m_depthTexture.height,
+				0,
+				CELL_GCM_ZCULL_Z24S8,
+				CELL_GCM_SURFACE_CENTER_1,
+				CELL_GCM_ZCULL_GREATER,
+				CELL_GCM_ZCULL_MSB,
+				CELL_GCM_SCULL_SFUNC_ALWAYS,
+				0,
+				0
+			);
+			if (err != CELL_OK)
+				log::error << L"Unable to bind ZCull (" << lookupGcmError(err) << L")" << Endl;
 		}
+#endif
 	}
 
 #if defined(T_RENDER_PS3_USE_ZCULL)
@@ -665,30 +539,17 @@ SystemWindow RenderViewPs3::getSystemWindow()
 	return SystemWindow();
 }
 
-bool RenderViewPs3::begin(EyeType eye)
+bool RenderViewPs3::begin(const Clear* clear)
 {
-	// \hack Assume we're rendering Left then Right
-	if (eye == EtCyclop || eye == EtLeft)
-	{
-		m_renderSystem->beginRendering();
+	m_renderSystem->beginRendering();
 #if USE_TIME_MEASURE
-		T_GCM_CALL(cellGcmSetTimeStamp)(gCellGcmCurrentContext, c_reportTimeStamp0);
+	T_GCM_CALL(cellGcmSetTimeStamp)(gCellGcmCurrentContext, c_reportTimeStamp0);
 #endif
 
-		// We need to compensate for 1-Z depth buffer arrangement by ensuring correct state is set.
-		T_GCM_CALL(cellGcmSetDepthFunc)(gCellGcmCurrentContext, CELL_GCM_GREATER);
-	}
+	// We need to compensate for 1-Z depth buffer arrangement by ensuring correct state is set.
+	T_GCM_CALL(cellGcmSetDepthFunc)(gCellGcmCurrentContext, CELL_GCM_GREATER);
 
 	uint32_t frameIndex = m_frameCounter % sizeof_array(m_colorOffset);
-
-	uint32_t eyeOffset = 0;
-	uint32_t eyeWindowOffset = 0;
-	if (eye == EtRight)
-	{
-		eyeOffset = 744 * m_colorPitch;
-		eyeWindowOffset = 6;
-	}
-
 	if (!m_targetData)
 	{
 		RenderState rs =
@@ -698,12 +559,12 @@ bool RenderViewPs3::begin(EyeType eye)
 			m_height,
 			CELL_GCM_SURFACE_CENTER_1,
 			CELL_GCM_SURFACE_A8R8G8B8,
-			{ m_colorOffset[frameIndex] + eyeOffset, 0, 0, 0 },
+			{ m_colorOffset[frameIndex], 0, 0, 0 },
 			{ m_colorPitch, 0, 0, 0 },
 			CELL_GCM_SURFACE_Z24S8,
 			m_depthTexture.offset,
 			m_depthTexture.pitch,
-			eyeWindowOffset,
+			0,
 			0,
 			true,
 			0,
@@ -774,7 +635,7 @@ bool RenderViewPs3::begin(EyeType eye)
 	return true;
 }
 
-bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet)
+bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, const Clear* clear)
 {
 	T_ASSERT (!m_renderTargetStack.empty());
 
@@ -841,7 +702,7 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet)
 	return true;
 }
 
-bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget)
+bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int32_t renderTarget, const Clear* clear)
 {
 	T_ASSERT (!m_renderTargetStack.empty());
 
@@ -894,6 +755,7 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	return true;
 }
 
+/*
 void RenderViewPs3::clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil)
 {
 	T_ASSERT (!m_renderTargetStack.empty());
@@ -915,6 +777,7 @@ void RenderViewPs3::clear(uint32_t clearMask, const Color4f* colors, float depth
 	if (!m_renderTargetDirty)
 		clearImmediate();
 }
+*/
 
 void RenderViewPs3::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {

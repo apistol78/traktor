@@ -111,13 +111,12 @@ struct ResolutionDesc
 	int32_t width;
 	int32_t height;
 	uint32_t refreshRates;
-	bool stereoscopic;
 	int32_t id;
 };
 
 extern const ResolutionDesc c_resolutionDescs[];
 
-const ResolutionDesc* findResolutionDesc(int32_t width, int32_t height, bool stereoscopic);
+const ResolutionDesc* findResolutionDesc(int32_t width, int32_t height);
 
 bool getGcmSurfaceInfo(TextureFormat textureFormat, uint8_t& outGcmTextureFormat, uint8_t& outGcmSurfaceFormat, uint8_t& outByteSize);
 
