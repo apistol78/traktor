@@ -5201,7 +5201,7 @@
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>libTraktor.Runtime.a</sourceFile>
-							<targetPath>releasestatics</targetPath>
+							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
 					<consumerLibraryPath>releasestatic</consumerLibraryPath>
