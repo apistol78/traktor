@@ -173,11 +173,13 @@ void WorldRenderPassDeferred::setProbeProgramParameters(render::ProgramParameter
 
 	Vector4 position = world.translation();
 
+#if !defined(__PS3__)
 	std::sort(lights.begin(), lights.end(), [&](const Light& a, const Light& b) {
 		Scalar la = (a.position - position).xyz0().length2();
 		Scalar lb = (b.position - position).xyz0().length2();
 		return la < lb;
 	});
+#endif
 
 	AlignedVector< Vector4 > c(9);
 

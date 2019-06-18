@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <limits>
 #include "Core/Math/Line2.h"
 #include "Core/Math/Winding2.h"
 

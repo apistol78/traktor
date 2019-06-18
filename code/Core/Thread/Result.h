@@ -1,8 +1,11 @@
 #pragma once
 
-#include <functional>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+
+#if defined(T_CXX11) && !defined(__PS3__)
+#	include <functional>
+#endif
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -72,6 +75,7 @@ public:
 		method_t m_method;
 	};
 
+#if defined(T_CXX11) && !defined(__PS3__)
 	class DeferredLambda : public IDeferred
 	{
 	public:
@@ -88,6 +92,7 @@ public:
 	private:
 		std::function< void() > m_fn;
 	};
+#endif
 
 	Result();
 
@@ -109,10 +114,12 @@ public:
 		defer(new DeferredMethod< ClassType >(object, method));
 	}
 
+#if defined(T_CXX11) && !defined(__PS3__)
 	void defer(const std::function< void() >& fn)
 	{
 		defer(new DeferredLambda(fn));
 	}
+#endif
 
 protected:
 	void wait() const;
