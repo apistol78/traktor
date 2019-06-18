@@ -1,9 +1,8 @@
 #include <algorithm>
 #include <dispatch/dispatch.h>
 
-#import "Amalgam/Game/App/iOS/EAGLView.h"
+#import "Runtime/App/iOS/EAGLView.h"
 
-#include "Amalgam/Game/Impl/Application.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -14,6 +13,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Runtime/Impl/Application.h"
 #include "Xml/XmlDeserializer.h"
 
 using namespace traktor;
@@ -48,7 +48,7 @@ void updateApplicationThread(Ref< PropertyGroup > defaultSettings, EAGLView* vie
 	T_FATAL_ASSERT (settings);
 
 	// Create application.
-	Ref< amalgam::Application > application = new amalgam::Application();
+	Ref< runtime::Application > application = new runtime::Application();
 	if (!application->create(
 		defaultSettings,
 		settings,
