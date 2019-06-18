@@ -1,8 +1,8 @@
-#include "Runtime/Editor/Prefab/PrefabEntityData.h"
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStaticArray.h"
+#include "Runtime/Editor/Prefab/PrefabEntityData.h"
 #include "World/EntityData.h"
 
 namespace traktor
@@ -27,9 +27,9 @@ void PrefabEntityData::addEntityData(world::EntityData* entityData)
 
 void PrefabEntityData::removeEntityData(world::EntityData* entityData)
 {
-	RefArray< world::EntityData >::iterator i = std::find(m_entityData.begin(), m_entityData.end(), entityData);
-	if (i != m_entityData.end())
-		m_entityData.erase(i);
+	auto it = std::find(m_entityData.begin(), m_entityData.end(), entityData);
+	if (it != m_entityData.end())
+		m_entityData.erase(it);
 }
 
 void PrefabEntityData::removeAllEntityData()
@@ -40,10 +40,10 @@ void PrefabEntityData::removeAllEntityData()
 void PrefabEntityData::setTransform(const Transform& transform)
 {
 	Transform deltaTransform = transform * getTransform().inverse();
-	for (RefArray< world::EntityData >::iterator i = m_entityData.begin(); i != m_entityData.end(); ++i)
+	for (auto entityData : m_entityData)
 	{
-		Transform currentTransform = (*i)->getTransform();
-		(*i)->setTransform(deltaTransform * currentTransform);
+		Transform currentTransform = entityData->getTransform();
+		entityData->setTransform(deltaTransform * currentTransform);
 	}
 	world::EntityData::setTransform(transform);
 }

@@ -225,78 +225,97 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 	uint32_t sampleCount = alignUp(m_configuration->getIndirectSampleCount(), 16);
 
 	const int32_t c_valid[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
-	Vector4 direction[16];
 
-	for (int32_t y = 0; y < height; ++y)
-	{
-		for (int32_t x = 0; x < width; ++x)
-		{
-            const auto& elm = gbuffer->get(x, y);
-            if (elm.polygon == model::c_InvalidIndex)
-                continue;
+    RefArray< Job > jobs;
+    for (int32_t ty = 0; ty < height; ty += 16)
+    {
+        for (int32_t tx = 0; tx < width; tx += 16)
+        {
+            auto job = JobManager::getInstance().add(makeFunctor([&, tx, ty]() {
+				Vector4 direction[16];
 
-            Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
-
-            for (uint32_t i = 0; i < sampleCount; i += 16)
-            {
-				for (uint32_t j = 0; j < 16; ++j)
-				{
-					direction[j] = random.nextHemi(elm.normal);
-
-					rh.ray.org_x[j] = elm.position.x();
-					rh.ray.org_y[j] = elm.position.y();
-					rh.ray.org_z[j] = elm.position.z();
-
-					rh.ray.dir_x[j] = direction[j].x();
-					rh.ray.dir_y[j] = direction[j].y();
-					rh.ray.dir_z[j] = direction[j].z();
-
-					rh.ray.tnear[j] = c_epsilonOffset;
-					rh.ray.time[j] = 0.0f;
-					rh.ray.tfar[j] = m_maxDistance;
-
-					rh.ray.mask[j] = 0;
-					rh.ray.id[j] = 0;
-					rh.ray.flags[j] = 0;
-
-					rh.hit.geomID[j] = RTC_INVALID_GEOMETRY_ID;
-					rh.hit.instID[0][j] = RTC_INVALID_GEOMETRY_ID;
-				}
-
-				RTCIntersectContext context;
-				rtcInitIntersectContext(&context);
-				rtcIntersect16(c_valid, m_scene, &context, &rh);
-
-				for (uint32_t j = 0; j < 16; ++j)
-				{
-					if (rh.hit.geomID[j] != RTC_INVALID_GEOMETRY_ID)
-					{
-						Scalar distance(rh.ray.tfar[j]);
-						Scalar f = attenuation(distance);
-						if (f <= 0.0f)
+                for (int32_t y = ty; y < ty + 16; ++y)
+                {
+                    for (int32_t x = tx; x < tx + 16; ++x)
+                    {
+						const auto& elm = gbuffer->get(x, y);
+						if (elm.polygon == model::c_InvalidIndex)
 							continue;
 
-						Vector4 hitPosition = (elm.position + direction[j] * distance).xyz1();
-						Vector4 hitNormal = Vector4(rh.hit.Ng_x[j], rh.hit.Ng_y[j], rh.hit.Ng_z[j], 0.0f).normalized();
+						Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
 
-						Scalar ct = dot3(elm.normal, direction[j]);
-						Color4f brdf = /*m_surfaces[result.index].albedo*/ Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
-						Color4f incoming = sampleAnalyticalLights(
-							random,
-							hitPosition,
-							hitNormal,
-							true
-						);
-						indirect += brdf * incoming * f * ct / p;
+						for (uint32_t i = 0; i < sampleCount; i += 16)
+						{
+							for (uint32_t j = 0; j < 16; ++j)
+							{
+								direction[j] = random.nextHemi(elm.normal);
+
+								rh.ray.org_x[j] = elm.position.x();
+								rh.ray.org_y[j] = elm.position.y();
+								rh.ray.org_z[j] = elm.position.z();
+
+								rh.ray.dir_x[j] = direction[j].x();
+								rh.ray.dir_y[j] = direction[j].y();
+								rh.ray.dir_z[j] = direction[j].z();
+
+								rh.ray.tnear[j] = c_epsilonOffset;
+								rh.ray.time[j] = 0.0f;
+								rh.ray.tfar[j] = m_maxDistance;
+
+								rh.ray.mask[j] = 0;
+								rh.ray.id[j] = 0;
+								rh.ray.flags[j] = 0;
+
+								rh.hit.geomID[j] = RTC_INVALID_GEOMETRY_ID;
+								rh.hit.instID[0][j] = RTC_INVALID_GEOMETRY_ID;
+							}
+
+							RTCIntersectContext context;
+							rtcInitIntersectContext(&context);
+							rtcIntersect16(c_valid, m_scene, &context, &rh);
+
+							for (uint32_t j = 0; j < 16; ++j)
+							{
+								if (rh.hit.geomID[j] != RTC_INVALID_GEOMETRY_ID)
+								{
+									Scalar distance(rh.ray.tfar[j]);
+									Scalar f = attenuation(distance);
+									if (f <= 0.0f)
+										continue;
+
+									Vector4 hitPosition = (elm.position + direction[j] * distance).xyz1();
+									Vector4 hitNormal = Vector4(rh.hit.Ng_x[j], rh.hit.Ng_y[j], rh.hit.Ng_z[j], 0.0f).normalized();
+
+									Scalar ct = dot3(elm.normal, direction[j]);
+									Color4f brdf = /*m_surfaces[result.index].albedo*/ Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
+									Color4f incoming = sampleAnalyticalLights(
+										random,
+										hitPosition,
+										hitNormal,
+										true
+									);
+									indirect += brdf * incoming * f * ct / p;
+								}
+							}
+						}
+
+						indirect /= Scalar(m_configuration->getIndirectSampleCount());
+
+						lightmapIndirect->setPixel(x, y, indirect.rgb1());
 					}
 				}
-            }
+            }));
+            if (!job)
+                return nullptr;
 
-            indirect /= Scalar(m_configuration->getIndirectSampleCount());
-
-            lightmapIndirect->setPixel(x, y, indirect.rgb1());
-        }
+            jobs.push_back(job);
+		}
 	}
+    while (!jobs.empty())
+    {
+        jobs.back()->wait();
+        jobs.pop_back();
+    }
 
     return lightmapIndirect;
 }
@@ -309,12 +328,15 @@ Ref< drawing::Image > RayTracerEmbree::traceCamera(const Transform& transform, i
 	RandomGeometry random;
 	RTCRayHit T_MATH_ALIGN16 rh;
 
+	const uint32_t sampleCount = alignUp(m_configuration->getIndirectSampleCount(), 16);
+	const float ratio = width / (float)height;
+
 	for (int32_t y = 0; y < height; ++y)
 	{
 		for (int32_t x = 0; x < width; ++x)
 		{
-			float fx = -1.0f + (2.0f * (float)x / width);
-			float fy = -1.0f + (2.0f * (float)y / height);
+			float fx = (2.0f * ((x + 0.5f) / width) - 1.0f) * std::tan(fov / 2.0f) * ratio; 
+			float fy = (1.0f - 2.0f * ((y + 0.5f) / height)) * std::tan(fov / 2.0f);
 
 			Vector4 traceOrigin = transform.translation().xyz1();
 			Vector4 traceDirection = (transform * Vector4(fx, fy, 1.0f, 0.0f)).normalized();
@@ -349,13 +371,66 @@ Ref< drawing::Image > RayTracerEmbree::traceCamera(const Transform& transform, i
 			Vector4 hitPosition = (traceOrigin + traceDirection * hitDistance).xyz1();
 			Vector4 hitNormal = Vector4(rh.hit.Ng_x, rh.hit.Ng_y, rh.hit.Ng_z, 0.0f).normalized();
 
-			Color4f incoming = sampleAnalyticalLights(
+			Color4f direct = sampleAnalyticalLights(
 				random,
 				hitPosition,
 				hitNormal,
-				true
+				false
 			);
-			image->setPixelUnsafe(x, y, incoming);
+
+			Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
+			for (uint32_t i = 0; i < sampleCount; i += 16)
+            {
+				Vector4 traceDirection = random.nextHemi(hitNormal);
+
+				rh.ray.org_x = hitPosition.x();
+				rh.ray.org_y = hitPosition.y();
+				rh.ray.org_z = hitPosition.z();
+
+				rh.ray.dir_x = traceDirection.x();
+				rh.ray.dir_y = traceDirection.y();
+				rh.ray.dir_z = traceDirection.z();
+
+				rh.ray.tnear = c_epsilonOffset;
+				rh.ray.time = 0.0f;
+				rh.ray.tfar = m_maxDistance;
+
+				rh.ray.mask = 0;
+				rh.ray.id = 0;
+				rh.ray.flags = 0;
+
+				rh.hit.geomID = RTC_INVALID_GEOMETRY_ID;
+				rh.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+
+				RTCIntersectContext context;
+				rtcInitIntersectContext(&context);
+				rtcIntersect1(m_scene, &context, &rh);					
+
+				if (rh.hit.geomID != RTC_INVALID_GEOMETRY_ID)
+				{
+					Scalar distance(rh.ray.tfar);
+					Scalar f = attenuation(distance);
+					if (f <= 0.0f)
+						continue;
+
+					Vector4 hitPosition2 = (hitPosition + traceDirection * distance).xyz1();
+					Vector4 hitNormal2 = Vector4(rh.hit.Ng_x, rh.hit.Ng_y, rh.hit.Ng_z, 0.0f).normalized();
+
+					Scalar ct = dot3(hitNormal2, traceDirection);
+					Color4f brdf = /*m_surfaces[result.index].albedo*/ Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
+					Color4f incoming = sampleAnalyticalLights(
+						random,
+						hitPosition,
+						hitNormal,
+						true
+					);
+					indirect += brdf * incoming * f * ct / p;
+				}
+            }
+
+            indirect /= Scalar(m_configuration->getIndirectSampleCount());
+
+			image->setPixelUnsafe(x, y, (direct + indirect).rgb1());
 		}
 	}
 
@@ -369,7 +444,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 	bool secondary
  ) const
 {
-	const uint32_t shadowSampleCount = !secondary ? m_configuration->getShadowSampleCount() : 1;
+	const uint32_t shadowSampleCount = !secondary ? m_configuration->getShadowSampleCount() : (m_configuration->getShadowSampleCount() > 0 ? 1 : 0);
     const float shadowRadius = !secondary ? m_configuration->getPointLightShadowRadius() : 0.0f;
 	RTCRay T_MATH_ALIGN16 r;
 

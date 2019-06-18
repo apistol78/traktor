@@ -27,14 +27,15 @@ public:
 	enum Mode
 	{
 		MdByVertex,
-		MdByPosition
+		MdByPosition,
+		MdByTexCoord
 	};
 
 	typedef StaticVector< uint32_t, 8 > share_vector_t;
 
-	ModelAdjacency(const Model* model, Mode mode);
+	ModelAdjacency(const Model* model, Mode mode, uint32_t channel = 0);
 
-	ModelAdjacency(const Model* model, const AlignedVector< uint32_t >& polygons, Mode mode);
+	ModelAdjacency(const Model* model, const AlignedVector< uint32_t >& polygons, Mode mode, uint32_t channel = 0);
 
 	/*! \brief Insert a new polygon into adjacency structure.
 	 */
@@ -102,6 +103,7 @@ private:
 
 	Ref< const Model > m_model;
 	Mode m_mode;
+	uint32_t m_channel;
 	AlignedVector< Edge > m_edges;
 };
 

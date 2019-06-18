@@ -22,6 +22,8 @@
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
 #include "Drawing/Filters/DilateFilter.h"
+#include "Drawing/Filters/GammaFilter.h"
+#include "Drawing/Filters/TonemapFilter.h"
 #include "Drawing/Functions/BlendFunction.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
@@ -33,6 +35,7 @@
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
+#include "Model/ModelAdjacency.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CleanDegenerate.h"
@@ -183,6 +186,30 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 	return output;
 }
 
+void lineTraverse(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const std::function< void(int32_t, int32_t) >& fn)
+{
+	int32_t dx = x1 - x0;
+	int32_t dy = y1 - y0;
+	int32_t x = x0;
+	int32_t y = y0;
+	int32_t p = 2 * dy - dx;
+	while (x < x1)
+	{
+		if (p >= 0)
+		{
+			fn(x, y);
+			y++;
+			p = p + 2 * dy - 2 * dx;
+		}
+		else
+		{
+			fn(x, y);
+			p = p + 2 * dy;
+		}
+		++x;
+	}
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.illuminate.IlluminatePipelineOperator", 0, IlluminatePipelineOperator, scene::IScenePipelineOperator)
@@ -329,24 +356,33 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 	rayTracer->commit();
 
 	// Raytrace "ground truths" of each camera.
-	for (uint32_t i = 0; i < cameraEntityDatas.size(); ++i)
+	if (false)
 	{
-		auto cameraEntityData = cameraEntityDatas[i];
-		T_FATAL_ASSERT(cameraEntityData != nullptr);
+		for (uint32_t i = 0; i < cameraEntityDatas.size(); ++i)
+		{
+			auto cameraEntityData = cameraEntityDatas[i];
+			T_FATAL_ASSERT(cameraEntityData != nullptr);
 
-		auto cameraComponentData = cameraEntityData->getComponent< world::CameraComponentData >();
-		T_FATAL_ASSERT(cameraComponentData != nullptr);
+			auto cameraComponentData = cameraEntityData->getComponent< world::CameraComponentData >();
+			T_FATAL_ASSERT(cameraComponentData != nullptr);
 
-		if (cameraComponentData->getCameraType() != world::CtPerspective)
-			continue;
+			if (cameraComponentData->getCameraType() != world::CtPerspective)
+				continue;
 
-		log::info << L"Tracing camera \"" << cameraEntityData->getName() << L"\" (" << i << L"/" << cameraEntityDatas.size() << L")..." << Endl;
+			log::info << L"Tracing camera \"" << cameraEntityData->getName() << L"\" (" << i << L"/" << cameraEntityDatas.size() << L")..." << Endl;
 
-		Ref< drawing::Image > image = rayTracer->traceCamera(cameraEntityData->getTransform(), 1280, 720, 1.0f);
-		if (!image)
-			continue;
+			Ref< drawing::Image > image = rayTracer->traceCamera(cameraEntityData->getTransform(), 1280, 720, cameraComponentData->getFieldOfView());
+			if (!image)
+				continue;
 
-		image->save(cameraEntityData->getName() + L"_" + toString(i) + L"_Camera.png");
+			drawing::TonemapFilter tonemapFilter;
+			image->apply(&tonemapFilter);
+
+			drawing::GammaFilter gammaFilter(1.0f / 2.2f);
+			image->apply(&gammaFilter);
+
+			image->save(cameraEntityData->getName() + L"_" + toString(i) + L"_Camera.png");
+		}
 	}
 
 	// Raytrace IBL probes.
@@ -395,7 +431,7 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		float totalLightMapArea = configuration->getLumelDensity() * configuration->getLumelDensity() * totalWorldArea;
 		float size = std::sqrt(totalLightMapArea);
 
-		int32_t outputSize = nearestLog2(int32_t(size + 0.5f));
+		int32_t outputSize = alignUp(std::max< int32_t >(configuration->getMinimumLightMapSize(), (int32_t)(size + 0.5f)), 16);
 		log::info << L"Lumel density " << configuration->getLumelDensity() << L" lumels/unit => lightmap size " << outputSize << Endl;
 
 		// Unwrap lightmap UV.
@@ -447,6 +483,67 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 		double TendTrace = timer.getElapsedTime();
 		timer.start();
 
+		/*
+		// Discontinuity filtering.
+		model::ModelAdjacency adjacency(model, model::ModelAdjacency::MdByPosition);
+		for (auto polygon : model->getPolygons())
+		for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
+		{
+			auto polygon = model->getPolygon(i);
+
+			for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
+			{
+				uint32_t halfEdge = adjacency.getEdge(i, j);
+
+				AlignedVector< uint32_t > sharedEdges;
+				adjacency.getSharedEdges(halfEdge, sharedEdges);
+				if (sharedEdges.empty())
+					continue;
+
+				auto vtxA = model->getVertex(polygon.getVertex(j));
+				auto vtxB = model->getVertex(polygon.getVertex((j + 1) % polygon.getVertexCount()));
+
+				Vector2 sourceTexCoordA = model->getTexCoord(vtxA.getTexCoord(channel));
+				Vector2 sourceTexCoordB = model->getTexCoord(vtxB.getTexCoord(channel));
+
+				int32_t sx = (int32_t)std::floor(sourceTexCoordA.x + 0.5f);
+				int32_t sy = (int32_t)std::floor(sourceTexCoordA.y + 0.5f);
+
+				int32_t dx = (int32_t)std::floor(sourceTexCoordB.x + 0.5f);
+				int32_t dy = (int32_t)std::floor(sourceTexCoordB.y + 0.5f);
+
+				for (auto sharedEdge : sharedEdges)
+				{
+					auto sharedPolygon = model->getPolygon(adjacency.getPolygon(sharedEdge));
+					auto sharedPolygonEdge = adjacency.getPolygonEdge(sharedEdge);
+
+					auto sharedVtxA = model->getVertex(sharedPolygon.getVertex(sharedPolygonEdge));
+					auto sharedVtxB = model->getVertex(sharedPolygon.getVertex((sharedPolygonEdge + 1) % sharedPolygon.getVertexCount()));
+
+					Vector2 destTexCoordA = model->getTexCoord(sharedVtxA.getTexCoord(channel));
+					Vector2 destTexCoordB = model->getTexCoord(sharedVtxB.getTexCoord(channel));
+
+					// \tbd Need line traversal function.
+
+
+					lineTraverse(
+						sx, sy,
+						dx, dy,
+						[&](int32_t x, int32_t y)
+						{
+							//float fx = (x - sx);
+							//float fy = (y - sy);
+							//float f = std::sqrt(fx * fx + fy * fy);
+
+							lightmapIndirect->setPixel(x, y, Color4f(1, 0, 0, 1));
+						}
+					);
+
+				}
+			}
+		}
+		*/
+
 		if (configuration->getEnableDilate())
 		{
 			// Dilate lightmap to prevent leaking.
@@ -486,6 +583,27 @@ bool IlluminatePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder
 
 		lightmapDirect = nullptr;
 		lightmapIndirect = nullptr;
+
+		// Clamp shadow below threshold; to prevent tonemap to bring up noise.
+		if (configuration->getClampShadowThreshold() > FUZZY_EPSILON)
+		{
+			for (uint32_t y = 0; y < lightmap->getHeight(); ++y)
+			{
+				for (uint32_t x = 0; x < lightmap->getWidth(); ++x)
+				{
+					Color4f lumel;
+					lightmap->getPixelUnsafe(x, y, lumel);
+
+					Scalar intensity = dot3(lumel, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
+
+					intensity = (intensity - Scalar(configuration->getClampShadowThreshold())) / Scalar(1.0f - configuration->getClampShadowThreshold());
+					if (intensity < 0.0f)
+						intensity = Scalar(0.0f);
+
+					lightmap->setPixelUnsafe(x, y, lumel * intensity);
+				}
+			}
+		}
 
 		// Discard alpha.
 		lightmap->clearAlpha(1.0f);
