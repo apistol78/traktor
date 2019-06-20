@@ -33,7 +33,7 @@ bool RemoteBus::putEvent(const IEvent* event)
 
 bool RemoteBus::getEvent(uint64_t& inoutSqnr, Ref< const IEvent >& outEvent, bool& outRemote)
 {
-	Ref< DbmGetEventResult > result = m_connection->sendMessage< DbmGetEventResult >(DbmGetEvent(m_handle));
+	Ref< DbmGetEventResult > result = m_connection->sendMessage< DbmGetEventResult >(DbmGetEvent(m_handle, inoutSqnr));
 	if (!result)
 		return false;
 

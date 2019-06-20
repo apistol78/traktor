@@ -45,7 +45,8 @@ bool BusMessageListener::messageGetEvent(const DbmGetEvent* message)
 		return true;
 	}
 
-	uint64_t sqnr;
+	uint64_t sqnr = message->getSequenceNumber();
+
 	Ref< const IEvent > event;
 	bool remote;
 

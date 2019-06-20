@@ -127,6 +127,7 @@ bool LocalBus::putEvent(const IEvent* event)
 
 bool LocalBus::getEvent(uint64_t& inoutSqnr, Ref< const IEvent >& outEvent, bool& outRemote)
 {
+	T_ANONYMOUS_VAR(Acquire< Mutex >)(m_globalLock);
 	Ref< EventJournal > eventJournal;
 
 	// Read journal.
