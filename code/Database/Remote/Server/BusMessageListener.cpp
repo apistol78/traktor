@@ -45,10 +45,11 @@ bool BusMessageListener::messageGetEvent(const DbmGetEvent* message)
 		return true;
 	}
 
+	uint64_t sqnr;
 	Ref< const IEvent > event;
 	bool remote;
 
-	bool result = bus->getEvent(event, remote);
+	bool result = bus->getEvent(sqnr, event, remote);
 	if (!result)
 	{
 		m_connection->sendReply(DbmGetEventResult());
@@ -56,6 +57,7 @@ bool BusMessageListener::messageGetEvent(const DbmGetEvent* message)
 	}
 
 	m_connection->sendReply(DbmGetEventResult(
+		sqnr,
 		event,
 		remote
 	));

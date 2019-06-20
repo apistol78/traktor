@@ -46,6 +46,8 @@ class T_DLLCLASS Database
 	T_RTTI_CLASS;
 
 public:
+	Database();
+
 	/*! \brief Open database from provider instance.
 	 *
 	 * \param providerDatabase Concrete provider database implementation.
@@ -140,6 +142,7 @@ private:
 	Ref< Group > m_rootGroup;
 	mutable Semaphore m_lock;
 	std::map< Guid, Ref< Instance > > m_instanceMap;
+	uint64_t m_lastEntrySqnr;
 
 	// \name IInstanceEventListener
 	// \{

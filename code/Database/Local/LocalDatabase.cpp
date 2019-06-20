@@ -43,7 +43,7 @@ bool LocalDatabase::open(const ConnectionString& connectionString)
 		return false;
 
 	Path groupPath = FileSystem::getInstance().getAbsolutePath(connectionString.get(L"groupPath"));
-	bool eventFile = connectionString.have(L"eventFile") ? parseString< bool >(connectionString.get(L"eventFile")) : true;
+	bool journal = connectionString.have(L"journal") ? parseString< bool >(connectionString.get(L"journal")) : true;
 	bool binary = connectionString.have(L"binary") ? parseString< bool >(connectionString.get(L"binary")) : false;
 
 	// Ensure group path exists.
@@ -71,7 +71,7 @@ bool LocalDatabase::open(const ConnectionString& connectionString)
 		if (!fileStore->create(connectionString))
 		{
 			log::error << L"Unable to create file store  \"" << fileStoreTypeName << L"\"; using default file store" << Endl;
-			fileStore = 0;
+			fileStore = nullptr;
 		}
 	}
 
@@ -92,18 +92,17 @@ bool LocalDatabase::open(const ConnectionString& connectionString)
 		fileStore
 	);
 
-	// Create event file.
-	if (eventFile)
+	// Create event journal file.
+	if (journal)
 	{
-		Path eventPath = groupPath.getPathName() + L"/Events.shm";
+		Path eventPath = groupPath.getPathName() + L"/Journal.bin";
 		if (!FileSystem::getInstance().makeAllDirectories(eventPath.getPathOnly()))
 		{
-			log::error << L"Unable to ensure event file directory exist" << Endl;
+			log::error << L"Unable to ensure event journal directory exist." << Endl;
 			return false;
 		}
 
 		m_bus = new LocalBus(eventPath.getPathName());
-		T_DEBUG(L"Using shared event file \"" << eventPath.getPathName() << L"\"");
 	}
 
 	m_rootGroup = new LocalGroup(m_context, groupPath);
@@ -113,19 +112,19 @@ bool LocalDatabase::open(const ConnectionString& connectionString)
 void LocalDatabase::close()
 {
 	if (m_rootGroup)
-		m_rootGroup = 0;
+		m_rootGroup = nullptr;
 
 	if (m_bus)
 	{
 		m_bus->close();
-		m_bus = 0;
+		m_bus = nullptr;
 	}
 
 	if (m_context)
 	{
 		if (m_context->getFileStore())
 			m_context->getFileStore()->destroy();
-		m_context = 0;
+		m_context = nullptr;
 	}
 }
 

@@ -43,6 +43,11 @@ void buildInstanceMap(Group* group, std::map< Guid, Ref< Instance > >& outInstan
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Database", Database, Object)
 
+Database::Database()
+:	m_lastEntrySqnr(0)
+{
+}
+
 bool Database::open(IProviderDatabase* providerDatabase)
 {
 	T_ASSERT(providerDatabase);
@@ -50,6 +55,21 @@ bool Database::open(IProviderDatabase* providerDatabase)
 
 	m_providerDatabase = providerDatabase;
 	m_providerBus = m_providerDatabase->getBus();
+
+	m_lastEntrySqnr = 0;
+	if (m_providerBus)
+	{
+		Ref< const IEvent > event;
+		bool remote;
+
+		// Read sequence number of last entry so
+		// we know where to start from.
+		m_providerBus->getEvent(
+			m_lastEntrySqnr,
+			event,
+			remote
+		);
+	}
 
 	m_rootGroup = new Group(this, this);
 	if (!m_rootGroup->internalCreate(m_providerDatabase->getRootGroup(), nullptr))
@@ -263,7 +283,7 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 {
 	T_ASSERT(m_providerDatabase);
 
-	if (!m_providerBus || !m_providerBus->getEvent(outEvent, outRemote))
+	if (!m_providerBus || !m_providerBus->getEvent(m_lastEntrySqnr, outEvent, outRemote))
 		return false;
 
 	if (outRemote)

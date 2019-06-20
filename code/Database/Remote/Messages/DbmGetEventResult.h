@@ -28,7 +28,9 @@ class T_DLLCLASS DbmGetEventResult : public IMessage
 public:
 	DbmGetEventResult();
 
-	DbmGetEventResult(const IEvent* event, bool remote);
+	DbmGetEventResult(uint64_t sqnr, const IEvent* event, bool remote);
+
+	uint64_t getSequenceNumber() const { return m_sqnr; }
 
 	const IEvent* getEvent() const { return m_event; }
 
@@ -37,6 +39,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	uint64_t m_sqnr;
 	Ref< const IEvent > m_event;
 	bool m_remote;
 };
