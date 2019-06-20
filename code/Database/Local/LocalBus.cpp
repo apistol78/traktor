@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -91,20 +92,13 @@ bool LocalBus::putEvent(const IEvent* event)
 	// Read journal.
 	{
 		Ref< IStream > journalFile = FileSystem::getInstance().open(m_journalFileName, File::FmRead);
-		if (!journalFile)
+		if (journalFile)
 		{
-			log::error << L"Unable to insert event into database journal; unable to open journal for read." << Endl;
-			return false;
+			eventJournal = BinarySerializer(journalFile).readObject< EventJournal >();
+			journalFile->close();
 		}
-
-		eventJournal = BinarySerializer(journalFile).readObject< EventJournal >();
-		journalFile->close();
-
 		if (!eventJournal)
-		{
-			log::error << L"Unable to insert event into database journal; unable to parse journal." << Endl;
-			return false;
-		}
+			eventJournal = new EventJournal();
 	}
 
 	// Determine sequence number.
@@ -138,30 +132,38 @@ bool LocalBus::getEvent(uint64_t& inoutSqnr, Ref< const IEvent >& outEvent, bool
 	// Read journal.
 	{
 		Ref< IStream > journalFile = FileSystem::getInstance().open(m_journalFileName, File::FmRead);
-		if (!journalFile)
+		if (journalFile)
 		{
-			log::error << L"Unable to get event from database journal; unable to open journal for read." << Endl;
-			return false;
+			eventJournal = BinarySerializer(journalFile).readObject< EventJournal >();
+			journalFile->close();
 		}
-
-		eventJournal = BinarySerializer(journalFile).readObject< EventJournal >();
-		journalFile->close();
-
 		if (!eventJournal)
-		{
-			log::error << L"Unable to get event from database journal; unable to parse journal." << Endl;
-			return false;
-		}
+			eventJournal = new EventJournal();
 	}
 
-	// Find newer entry than given sequence number.
-	for (const auto& entry : eventJournal->getEntries())
+	if (inoutSqnr != std::numeric_limits< uint64_t >::max())
 	{
-		if (entry.sqnr > inoutSqnr)
+		// Find newer entry than given sequence number.
+		for (const auto& entry : eventJournal->getEntries())
 		{
-			inoutSqnr = entry.sqnr;
-			outEvent = entry.event;
-			outRemote = (bool)(entry.sender != m_localGuid);
+			if (entry.sqnr > inoutSqnr)
+			{
+				inoutSqnr = entry.sqnr;
+				outEvent = entry.event;
+				outRemote = (bool)(entry.sender != m_localGuid);
+				return true;
+			}
+		}
+	}
+	else
+	{
+		// Get last entry.
+		const auto& entries = eventJournal->getEntries();
+		if (!entries.empty())
+		{
+			inoutSqnr = entries.back().sqnr;
+			outEvent = entries.back().event;
+			outRemote = (bool)(entries.back().sender != m_localGuid);
 			return true;
 		}
 	}

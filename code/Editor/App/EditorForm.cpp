@@ -1121,8 +1121,8 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 	// Find factory supporting instance type.
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-	Ref< const IEditorPageFactory > editorPageFactory;
-	Ref< const IObjectEditorFactory > objectEditorFactory;
+	Ref< IEditorPageFactory > editorPageFactory;
+	Ref< IObjectEditorFactory > objectEditorFactory;
 
 	for (RefArray< IEditorPageFactory >::iterator i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
 	{
@@ -1199,26 +1199,6 @@ bool EditorForm::openEditor(db::Instance* instance)
 			}
 		}
 
-		/*
-		Ref< EditorPageForm > formPage = new EditorPageForm();
-		formPage->addRef(0);
-
-		formPage->create(this);
-		formPage->show();
-		formPage->update(0, true);
-
-		editorPage->create(formPage);
-
-		formPage->show();
-		formPage->update();
-
-		formPage->setData(L"NEEDOUTPUTRESOURCES", new PropertyBoolean(needOutputResources));
-		formPage->setData(L"EDITORPAGESITE", site);
-		formPage->setData(L"EDITORPAGE", editorPage);
-		formPage->setData(L"DOCUMENT", document);
-		formPage->setData(L"PRIMARY", instance);
-		*/
-
 		// Create tab page container.
 		Ref< ui::TabPage > tabPage = new ui::TabPage();
 		if (!tabPage->create(m_tab, instance->getName(), iconIndex, new ui::FloodLayout()))
@@ -1246,6 +1226,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 		// Save references to editor in tab page's user data.
 		tabPage->setData(L"NEEDOUTPUTRESOURCES", new PropertyBoolean(needOutputResources));
+		tabPage->setData(L"EDITORPAGEFACTORY", editorPageFactory);
 		tabPage->setData(L"EDITORPAGESITE", site);
 		tabPage->setData(L"EDITORPAGE", editorPage);
 		tabPage->setData(L"DOCUMENT", document);
@@ -1683,7 +1664,7 @@ void EditorForm::updateAdditionalPanelMenu()
 	}
 }
 
-void EditorForm::buildDependent(const RefArray< db::Instance >& modifiedInstances)
+void EditorForm::buildAssetsForOpenedEditors()
 {
 	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.CachePath");
 	std::vector< Guid > assetGuids;
@@ -1696,59 +1677,26 @@ void EditorForm::buildDependent(const RefArray< db::Instance >& modifiedInstance
 		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
 		T_ASSERT(tabPage);
 
-		if (m_tab->getActivePage() == tabPage)
-			continue;
-
 		Ref< PropertyBoolean > needOutputResources = tabPage->getData< PropertyBoolean >(L"NEEDOUTPUTRESOURCES");
 		if (!needOutputResources || !*needOutputResources)
 			continue;
 
+		Ref< IEditorPageFactory > editorPageFactory = tabPage->getData< IEditorPageFactory >(L"EDITORPAGEFACTORY");
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		if (!editorPage)
-			continue;
-
 		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		if (!document)
+		if (!editorPageFactory || !editorPage || !document)
 			continue;
 
-		const RefArray< db::Instance >& instances = document->getInstances();
-		if (instances.empty())
-			continue;
+		std::set< Guid > dependencies;
 
-		PipelineDependencySet dependencySet;
-		PipelineDependsIncremental pipelineDepends(
-			&pipelineFactory,
-			m_sourceDatabase,
-			&dependencySet,
-			m_pipelineDb,
-			&pipelineInstanceCache
-		);
+		// First add pre-defined resources.
+		editorPageFactory->needOutputResources(type_of(document->getInstance(0)), dependencies);
 
-		for (RefArray< db::Instance >::const_iterator j = instances.begin(); j != instances.end(); ++j)
-			pipelineDepends.addDependency(*j, PdfUse);
+		// Add document instances.
+		for (auto instance : document->getInstances())
+			dependencies.insert(instance->getGuid());
 
-		pipelineDepends.waitUntilFinished();
-
-		bool buildInstances = false;
-		for (uint32_t j = 0; j < dependencySet.size(); ++j)
-		{
-			const PipelineDependency* dependency = dependencySet.get(j);
-			T_ASSERT(dependency);
-
-			if (!dependency->sourceInstanceGuid.isNotNull())
-				continue;
-
-			for (RefArray< db::Instance >::const_iterator k = modifiedInstances.begin(); !buildInstances && k != modifiedInstances.end(); ++k)
-			{
-				if ((*k)->getGuid() == dependency->sourceInstanceGuid)
-					buildInstances = true;
-			}
-		}
-		if (buildInstances)
-		{
-			for (RefArray< db::Instance >::const_iterator j = instances.begin(); j != instances.end(); ++j)
-				assetGuids.push_back((*j)->getGuid());
-		}
+		assetGuids.insert(assetGuids.end(), dependencies.begin(), dependencies.end());
 	}
 
 	if (!assetGuids.empty())
@@ -2130,7 +2078,7 @@ void EditorForm::saveCurrentDocument()
 			m_statusBar->setText(L"Document saved successfully");
 			log::info << L"Document saved successfully" << Endl;
 
-			buildDependent(document->getInstances());
+			buildAssetsForOpenedEditors();
 		}
 		else
 		{
@@ -2922,7 +2870,7 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 			const db::EvtInstanceCommitted* committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event);
 			if (committed)
 			{
-				T_DEBUG((remote ? L"Remotely" : L"Locally") << L" modified instance " << committed->getInstanceGuid().format() << L" detected (1); propagate to editor pages...");
+				log::info << (remote ? L"Remotely" : L"Locally") << L" modified source instance " << committed->getInstanceGuid().format() << L" detected; propagate to editor pages..." << Endl;
 				m_eventIds.push_back(std::make_pair(m_sourceDatabase, committed->getInstanceGuid()));
 				anyCommitted = true;
 			}
@@ -2930,7 +2878,7 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 		}
 		if (anyCommitted && m_mergedSettings->getProperty< bool >(L"Editor.BuildWhenSourceModified"))
 		{
-			buildAssets(false);
+			buildAssetsForOpenedEditors();
 
 			// Notify all plugins of automatic build.
 			for (RefArray< EditorPluginSite >::const_iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
@@ -2947,7 +2895,7 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 			const db::EvtInstanceCommitted* committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event);
 			if (committed)
 			{
-				T_DEBUG((remote ? L"Remotely" : L"Locally") << L" modified instance " << committed->getInstanceGuid().format() << L" detected (2); propagate to editor pages...");
+				log::info << (remote ? L"Remotely" : L"Locally") << L" modified output instance " << committed->getInstanceGuid().format() << L" detected; propagate to editor pages..." << Endl;
 				m_eventIds.push_back(std::make_pair(m_outputDatabase, committed->getInstanceGuid()));
 			}
 		}
