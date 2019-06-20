@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Thread/Acquire.h"
@@ -64,11 +65,13 @@ bool Database::open(IProviderDatabase* providerDatabase)
 
 		// Read sequence number of last entry so
 		// we know where to start from.
-		m_providerBus->getEvent(
+		m_lastEntrySqnr = std::numeric_limits< uint64_t >::max();
+		if (!m_providerBus->getEvent(
 			m_lastEntrySqnr,
 			event,
 			remote
-		);
+		))
+			return false;
 	}
 
 	m_rootGroup = new Group(this, this);

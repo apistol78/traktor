@@ -235,7 +235,7 @@ private:
 
 	void updateAdditionalPanelMenu();
 
-	void buildDependent(const RefArray< db::Instance >& modifiedInstances);
+	void buildAssetsForOpenedEditors();
 
 	void buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild);
 
