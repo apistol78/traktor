@@ -23,14 +23,17 @@ class T_DLLCLASS DbmGetEvent : public IMessage
 	T_RTTI_CLASS;
 
 public:
-	DbmGetEvent(uint32_t handle = 0);
+	DbmGetEvent(uint32_t handle = 0, uint64_t sqnr = 0);
 
 	uint32_t getHandle() const { return m_handle; }
+
+	uint64_t getSequenceNumber() const { return m_sqnr; }
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	uint32_t m_handle;
+	uint64_t m_sqnr;
 };
 
 	}

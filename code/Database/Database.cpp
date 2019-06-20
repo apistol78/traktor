@@ -71,7 +71,10 @@ bool Database::open(IProviderDatabase* providerDatabase)
 			event,
 			remote
 		))
-			return false;
+		{
+			// Will fail to get event if journal is empty; assume first sequence number.
+			m_lastEntrySqnr = 0;
+		}
 	}
 
 	m_rootGroup = new Group(this, this);

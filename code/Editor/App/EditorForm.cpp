@@ -242,7 +242,7 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
         {
             if (outOriginalSettings)
             {
-                outOriginalSettings = outOriginalSettings->merge(systemSettings, PropertyGroup::MmReplace);
+                outOriginalSettings = outOriginalSettings->merge(systemSettings, PropertyGroup::MmJoin);
                 T_ASSERT(outOriginalSettings);
             }
             else
