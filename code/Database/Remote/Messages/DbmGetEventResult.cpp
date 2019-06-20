@@ -12,18 +12,21 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetEventResult", 0, DbmGetEventResult, IMessage)
 
 DbmGetEventResult::DbmGetEventResult()
-:	m_remote(false)
+:	m_sqnr(0)
+,	m_remote(false)
 {
 }
 
-DbmGetEventResult::DbmGetEventResult(const IEvent* event, bool remote)
-:	m_event(event)
+DbmGetEventResult::DbmGetEventResult(uint64_t sqnr, const IEvent* event, bool remote)
+:	m_sqnr(sqnr)
+,	m_event(event)
 ,	m_remote(remote)
 {
 }
 
 void DbmGetEventResult::serialize(ISerializer& s)
 {
+	s >> Member< uint64_t >(L"sqnr", m_sqnr);
 	s >> MemberRef< const IEvent >(L"event", m_event);
 	s >> Member< bool >(L"remote", m_remote);
 }

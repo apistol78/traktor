@@ -105,7 +105,7 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	}
 
 	// Set database connection strings.
-	db::ConnectionString sourceDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=db;binary=true;eventFile=false");
+	db::ConnectionString sourceDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=db;binary=true;journal=false");
 	db::ConnectionString outputDatabaseCs(L"provider=traktor.db.CompactDatabase;fileName=Content.compact;flushAlways=false");
 	db::ConnectionString applicationDatabaseCs(L"provider=traktor.db.CompactDatabase;fileName=Content.compact;readOnly=true");
 
@@ -116,12 +116,12 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	const std::list< Guid >& featureIds = m_targetConfiguration->getFeatures();
 
 	RefArray< const Feature > features;
-	for (std::list< Guid >::const_iterator i = featureIds.begin(); i != featureIds.end(); ++i)
+	for (auto featureId : featureIds)
 	{
-		Ref< const Feature > feature = m_database->getObjectReadOnly< Feature >(*i);
+		Ref< const Feature > feature = m_database->getObjectReadOnly< Feature >(featureId);
 		if (!feature)
 		{
-			log::warning << L"Unable to get feature \"" << i->format() << L"\"; feature skipped." << Endl;
+			log::warning << L"Unable to get feature \"" << featureId.format() << L"\"; feature skipped." << Endl;
 			continue;
 		}
 		features.push_back(feature);
@@ -130,11 +130,8 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	features.sort(FeaturePriorityPred());
 
 	// Insert target's features into migrate configuration.
-	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
+	for (auto feature : features)
 	{
-		const Feature* feature = *i;
-		T_ASSERT(feature);
-
 		Ref< const PropertyGroup > migrateProperties = feature->getMigrateProperties();
 		if (!migrateProperties)
 			continue;
@@ -149,11 +146,8 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	Ref< PropertyGroup > applicationConfiguration = new PropertyGroup();
 
 	// Insert features into runtime configuration. Also get executable file.
-	for (RefArray< const Feature >::const_iterator i = features.begin(); i != features.end(); ++i)
+	for (auto feature : features)
 	{
-		const Feature* feature = *i;
-		T_ASSERT(feature);
-
 		Ref< const PropertyGroup > runtimeProperties = feature->getRuntimeProperties();
 		if (runtimeProperties)
 			applicationConfiguration = applicationConfiguration->merge(runtimeProperties, PropertyGroup::MmJoin);

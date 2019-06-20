@@ -43,11 +43,12 @@ public:
 
 	/*! \brief Get event from bus.
 	 *
+	 * \param inoutSqnr Sequence number of last retrieved event, will return sequence number of returned event.
 	 * \param outEvent Event instance.
 	 * \param outRemote True if event originates from another connection; ie. another process.
 	 * \return True if event was read from bus, false if no events are available.
 	 */
-	virtual bool getEvent(Ref< const IEvent >& outEvent, bool& outRemote) = 0;
+	virtual bool getEvent(uint64_t& inoutSqnr, Ref< const IEvent >& outEvent, bool& outRemote) = 0;
 };
 
 	}

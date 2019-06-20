@@ -23,7 +23,7 @@ public:
 
 	virtual bool putEvent(const IEvent* event) override final;
 
-	virtual bool getEvent(Ref< const IEvent >& outEvent, bool& outRemote) override final;
+	virtual bool getEvent(uint64_t& inoutSqnr, Ref< const IEvent >& outEvent, bool& outRemote) override final;
 
 private:
 	Ref< RemoteConnection > m_connection;

@@ -31,7 +31,7 @@ bool RemoteBus::putEvent(const IEvent* event)
 	return result ? result->getStatus() == StSuccess : false;
 }
 
-bool RemoteBus::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
+bool RemoteBus::getEvent(uint64_t& inoutSqnr, Ref< const IEvent >& outEvent, bool& outRemote)
 {
 	Ref< DbmGetEventResult > result = m_connection->sendMessage< DbmGetEventResult >(DbmGetEvent(m_handle));
 	if (!result)
@@ -40,6 +40,7 @@ bool RemoteBus::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 	if (!result->getEvent())
 		return false;
 
+	inoutSqnr = result->getSequenceNumber();
 	outEvent = result->getEvent();
 	outRemote = result->getRemote();
 
