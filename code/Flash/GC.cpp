@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-static GC* s_instance = 0;
+static GC* s_instance = nullptr;
 
 		}
 
@@ -115,7 +115,7 @@ void GC::collectCycles(bool full)
 void GC::destroy()
 {
 	T_ASSERT(s_instance == this);
-	delete s_instance, s_instance = 0;
+	delete s_instance; s_instance = nullptr;
 }
 
 GC::~GC()
