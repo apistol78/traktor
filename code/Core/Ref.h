@@ -13,7 +13,7 @@
 namespace traktor
 {
 
-/*! \brief Single object reference container.
+/*! Object reference container.
  * \ingroup Core
  */
 template < typename ClassType >
@@ -24,11 +24,13 @@ public:
 	typedef ClassType* pointer;
 	typedef ClassType& reference;
 
+	/*! Empty constructor. */
 	Ref()
 	:	m_ptr(nullptr)
 	{
 	}
 
+	/*! New reference to object. */
 	Ref(const Ref& ref)
 	:	m_ptr(ref.m_ptr)
 	{
@@ -36,6 +38,7 @@ public:
 	}
 
 #if defined(T_CXX11)
+	/*! Move reference to object. */
 	Ref(Ref&& ref) T_NOEXCEPT
 	:	m_ptr(ref.m_ptr)
 	{
@@ -43,12 +46,14 @@ public:
 	}
 #endif
 
+	/*! New naked reference to object. */
 	Ref(pointer ptr)
 	:	m_ptr(ptr)
 	{
 		T_SAFE_ADDREF(m_ptr);
 	}
 
+	/*! New reference to object including safe, implicit, down cast. */
 	template < typename RefClassType >
 	Ref(const Ref< RefClassType >& ref)
 	:	m_ptr(static_cast< pointer >(ref))
@@ -56,6 +61,7 @@ public:
 		T_SAFE_ADDREF(m_ptr);
 	}
 
+	/*! New reference to object including safe, implicit, down cast from inplace container. */
 	template < typename InplaceClassType >
 	Ref(const InplaceRef< InplaceClassType >& ref)
 	:	m_ptr(static_cast< pointer >(ref))
@@ -63,17 +69,20 @@ public:
 		T_SAFE_ADDREF(m_ptr);
 	}
 
+	/*! Release reference to object. */
 	virtual ~Ref()
 	{
 		T_SAFE_RELEASE(m_ptr);
 	}
 
+	/*! Reset reference to object. */
 	void reset()
 	{
 		T_SAFE_RELEASE(m_ptr);
 		m_ptr = nullptr;
 	}
 
+	/*! Replace object which is referenced. */
 	void replace(pointer ptr)
 	{
 		if (ptr != m_ptr)
@@ -84,18 +93,13 @@ public:
 		}
 	}
 
-	pointer disown()
-	{
-		pointer ptr = m_ptr;
-		m_ptr = nullptr;
-		return ptr;
-	}
-
+	/*! Get naked pointer to object. */
 	pointer ptr() const
 	{
 		return m_ptr;
 	}
 
+	/*! Get naked, constant, pointer to object. */
 	const pointer c_ptr() const
 	{
 		return m_ptr;
@@ -104,6 +108,7 @@ public:
 	// \name Dereference operators
 	// @{
 
+	/*! Get reference to object. */
 	reference operator * () const
 	{
 		return *m_ptr;
@@ -180,6 +185,7 @@ public:
 	// \name Compare operators
 	// @{
 
+	/*! Compare pointer by value, used for sorted sets etc. */
 	bool operator < (const Ref& rh) const
 	{
 		return m_ptr < rh.m_ptr;
@@ -203,7 +209,7 @@ T checked_type_cast(T0* obj);
 template < typename T, typename T0 >
 T checked_type_cast(const T0* obj);
 
-/*! \brief Dynamic cast object.
+/*! Dynamic cast object.
  *
  * \param T Cast to type.
  * \param o Object.
@@ -215,7 +221,7 @@ typename IsPointer< T >::base_t* dynamic_type_cast(const Ref< T0 >& obj)
 	return dynamic_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
 }
 
-/*! \brief Safe cast object.
+/*! Safe cast object.
  *
  * The cast will assert if object is of incorrect type.
  *
@@ -229,7 +235,7 @@ typename IsPointer< T >::base_t* checked_type_cast(const Ref< T0 >& obj)
 	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
 }
 
-/*! \brief Safe cast object.
+/*! Safe cast object.
  *
  * The cast will assert if object is of incorrect type.
  *
@@ -244,7 +250,7 @@ typename IsPointer< T >::base_t* checked_type_cast(const Ref< T0 >& obj)
 	return checked_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
 }
 
-/*! \brief Safe cast object.
+/*! Safe cast object.
  *
  * The cast will cause system error if object is null or
  * of incorrect type.
