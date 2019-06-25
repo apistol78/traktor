@@ -12,6 +12,8 @@ class ISharedMemory;
 	namespace db
 	{
 
+class EventJournal;
+
 /*! \brief Local database event bus.
  * \ingroup Database
  *
@@ -37,6 +39,7 @@ private:
 	Guid m_localGuid;
 	Mutex m_globalLock;
 	std::wstring m_journalFileName;
+	Ref< EventJournal > m_eventJournal;
 
 	bool lock();
 
