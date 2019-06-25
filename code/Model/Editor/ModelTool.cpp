@@ -1,4 +1,5 @@
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
@@ -52,7 +53,7 @@ bool ModelTool::launch(ui::Widget* parent, editor::IEditor* editor, const Proper
 	if (!database)
 		return false;
 
-	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager(database, true);
+	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager(database, editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
 	resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 

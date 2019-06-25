@@ -21,6 +21,7 @@ extern void NSLogCpp(const wchar_t* s);
 	namespace
 	{
 
+/*! Standard IO console target. */
 class LogTargetConsole : public ILogTarget
 {
 public:
@@ -56,6 +57,7 @@ private:
 	Semaphore m_lock;
 };
 
+/*! Debug log target, OS specific debug channel. */
 class LogTargetDebug : public ILogTarget
 {
 public:
@@ -79,12 +81,31 @@ private:
 	Semaphore m_lock;
 };
 
+/*! Default local target which propagate logs into global target. */
+class LogTargetGlobalSink : public ILogTarget
+{
+public:
+	LogTargetGlobalSink(const Ref< ILogTarget >& globalTarget)
+	:	m_globalTarget(globalTarget)
+	{
+	}
+
+	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final
+	{
+		if (m_globalTarget)
+			m_globalTarget->log(threadId, level, str);
+	}
+
+private:
+	const Ref< ILogTarget >& m_globalTarget;
+};
+
 class LogStreamLocalBuffer : public IOutputStreamBuffer
 {
 public:
 	LogStreamLocalBuffer(int32_t level, const Ref< ILogTarget >& globalTarget)
 	:	m_level(level)
-	,	m_globalTarget(globalTarget)
+	,	m_localTarget(new LogTargetGlobalSink(globalTarget))
 	{
 	}
 
@@ -135,14 +156,11 @@ public:
 			wchar_t c = buffer[i];
 			if (c == L'\n')
 			{
-				uint32_t threadId = ThreadManager::getInstance().getCurrentThread()->id();
-
-				if (m_globalTarget)
-					m_globalTarget->log(threadId, m_level, m_buffer.c_str());
-
 				if (m_localTarget)
+				{
+					uint32_t threadId = ThreadManager::getInstance().getCurrentThread()->id();
 					m_localTarget->log(threadId, m_level, m_buffer.c_str());
-
+				}
 				m_buffer.reset();
 			}
 			else if (c != L'\r')
@@ -154,7 +172,6 @@ public:
 private:
 	int32_t m_level;
 	StringOutputStreamBuffer m_buffer;
-	const Ref< ILogTarget >& m_globalTarget;
 	Ref< ILogTarget > m_localTarget;
 };
 
@@ -180,7 +197,7 @@ public:
 	LogStreamLocalBuffer* getThreadLocalBuffer() const
 	{
 		LogStreamLocalBuffer* os;
-		if ((os = static_cast< LogStreamLocalBuffer* >(m_buffers.get())) == 0)
+		if ((os = static_cast< LogStreamLocalBuffer* >(m_buffers.get())) == nullptr)
 		{
 			os = new LogStreamLocalBuffer(m_level, m_globalTarget);
 			T_SAFE_ADDREF(os);
@@ -240,34 +257,32 @@ LogStream::LogStream(int32_t level, ILogTarget* globalTarget)
 LogStream::~LogStream()
 {
 	T_EXCEPTION_GUARD_BEGIN
-
-	setBuffer(0);
-
+	setBuffer(nullptr);
 	T_EXCEPTION_GUARD_END
 }
 
 ILogTarget* LogStream::getGlobalTarget()
 {
-	LogStreamGlobalBuffer* globalBuffer = checked_type_cast< LogStreamGlobalBuffer*, false >(getBuffer());
+	LogStreamGlobalBuffer* globalBuffer = mandatory_non_null_type_cast< LogStreamGlobalBuffer* >(getBuffer());
 	return globalBuffer->getTarget();
 }
 
 void LogStream::setGlobalTarget(ILogTarget* target)
 {
-	LogStreamGlobalBuffer* globalBuffer = checked_type_cast< LogStreamGlobalBuffer*, false >(getBuffer());
+	LogStreamGlobalBuffer* globalBuffer = mandatory_non_null_type_cast< LogStreamGlobalBuffer* >(getBuffer());
 	globalBuffer->setTarget(target);
 }
 
 ILogTarget* LogStream::getLocalTarget()
 {
-	LogStreamGlobalBuffer* globalBuffer = checked_type_cast< LogStreamGlobalBuffer*, false >(getBuffer());
+	LogStreamGlobalBuffer* globalBuffer = mandatory_non_null_type_cast< LogStreamGlobalBuffer* >(getBuffer());
 	LogStreamLocalBuffer* localBuffer = globalBuffer->getThreadLocalBuffer();
 	return localBuffer->getTarget();
 }
 
 void LogStream::setLocalTarget(ILogTarget* target)
 {
-	LogStreamGlobalBuffer* globalBuffer = checked_type_cast< LogStreamGlobalBuffer*, false >(getBuffer());
+	LogStreamGlobalBuffer* globalBuffer = mandatory_non_null_type_cast< LogStreamGlobalBuffer* >(getBuffer());
 	LogStreamLocalBuffer* localBuffer = globalBuffer->getThreadLocalBuffer();
 	localBuffer->setTarget(target);
 }

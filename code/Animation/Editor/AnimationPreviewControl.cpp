@@ -6,6 +6,7 @@
 #include "Animation/Editor/AnimationPreviewControl.h"
 #include "Core/Math/Plane.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
@@ -64,7 +65,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	if (!resourceDatabase)
 		return false;
 
-	m_resourceManager = new resource::ResourceManager(resourceDatabase, true);
+	m_resourceManager = new resource::ResourceManager(resourceDatabase, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	m_resourceManager->addFactory(new AnimationFactory());
 	m_resourceManager->addFactory(new mesh::MeshFactory(m_renderSystem));
 	m_resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));

@@ -31,14 +31,14 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::destroy()
 {
-	for (std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
-		i->second->replace(0);
+	for (auto& residentHandle : m_residentHandles)
+		residentHandle.second->replace(nullptr);
 
-	for (std::map< Guid, RefArray< ExclusiveResourceHandle > >::iterator i = m_exclusiveHandles.begin(); i != m_exclusiveHandles.end(); ++i)
+	for (auto& exclusiveHandle : m_exclusiveHandles)
 	{
-		for (RefArray< ExclusiveResourceHandle >::iterator j = i->second.begin(); j != i->second.end(); ++j)
-			(*j)->replace(0);
-		i->second.clear();
+		for (auto handle : exclusiveHandle.second)
+			handle->replace(nullptr);
+		exclusiveHandle.second.clear();
 	}
 
 	m_resourceFactories.clear();
@@ -116,7 +116,7 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 		}
 
 		Ref< ResidentResourceHandle >& residentHandle = m_residentHandles[i->second];
-		if (residentHandle == 0 || residentHandle->get() == 0)
+		if (residentHandle == nullptr || residentHandle->get() == nullptr)
 		{
 			const TypeInfo& productType = *(*productTypes.begin());
 

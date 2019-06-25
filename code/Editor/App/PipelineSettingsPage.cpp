@@ -25,6 +25,12 @@ bool PipelineSettingsPage::create(ui::Container* parent, const PropertyGroup* or
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, 4)))
 		return false;
 
+	bool verbose = settings->getProperty< bool >(L"Pipeline.Verbose", false);
+
+	m_checkVerbose = new ui::CheckBox();
+	m_checkVerbose->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_VERBOSE"));
+	m_checkVerbose->setChecked(verbose);
+
 	bool dependsThreads = settings->getProperty< bool >(L"Pipeline.DependsThreads", true);
 
 	m_checkDependsThreads = new ui::CheckBox();
@@ -101,6 +107,8 @@ void PipelineSettingsPage::destroy()
 
 bool PipelineSettingsPage::apply(PropertyGroup* settings)
 {
+	settings->setProperty< PropertyBoolean >(L"Pipeline.Verbose", m_checkVerbose->isChecked());
+
 	settings->setProperty< PropertyBoolean >(L"Pipeline.DependsThreads", m_checkDependsThreads->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", m_checkBuildThreads->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Pipeline.BuildDistributed", m_checkBuildDistributed->isChecked());

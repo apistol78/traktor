@@ -1,5 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
@@ -191,7 +193,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_soundSystem)
 		log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
 
-	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), true);
+	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	m_resourceManager->addFactory(new SoundFactory());
 
 	updateBankControl();

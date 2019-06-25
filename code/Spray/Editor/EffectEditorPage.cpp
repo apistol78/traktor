@@ -123,14 +123,14 @@ bool EffectEditorPage::create(ui::Container* parent)
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 	T_ASSERT(database);
 
-	m_resourceManager = new resource::ResourceManager(database, true);
+	m_resourceManager = new resource::ResourceManager(database, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	m_resourceManager->addFactory(new mesh::MeshFactory(renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
 	m_resourceManager->addFactory(new render::SequenceTextureFactory());
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 	m_resourceManager->addFactory(new sound::SoundFactory());
 	m_resourceManager->addFactory(new render::ImageProcessFactory());
-	m_resourceManager->addFactory(new EffectFactory(0));
+	m_resourceManager->addFactory(new EffectFactory(nullptr));
 
 	m_effectData = m_document->getObject< EffectData >(0);
 	if (!m_effectData)

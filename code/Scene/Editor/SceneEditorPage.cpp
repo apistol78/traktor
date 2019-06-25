@@ -160,7 +160,10 @@ bool SceneEditorPage::create(ui::Container* parent)
 	physicsManager->setGravity(Vector4(0.0f, -9.81f, 0.0f, 0.0f));
 
 	// Create resource manager.
-	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), true);
+	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager(
+		m_editor->getOutputDatabase(),
+		m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false)
+	);
 
 	// Create editor context.
 	m_context = new SceneEditorContext(

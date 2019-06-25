@@ -42,6 +42,7 @@ private:
 	Ref< ui::CheckBox > m_checkBuildAfterBrowseInstance;
 	Ref< ui::CheckBox > m_checkPropertyHelpVisible;
 	Ref< ui::CheckBox > m_checkShowNewLogTargets;
+	Ref< ui::CheckBox > m_checkVerboseResourceLoading;
 };
 
 	}

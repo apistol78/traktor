@@ -124,6 +124,10 @@ bool GeneralSettingsPage::create(ui::Container* parent, const PropertyGroup* ori
 	m_checkShowNewLogTargets->create(container, i18n::Text(L"EDITOR_SETTINGS_SHOW_NEW_LOG_TARGETS"));
 	m_checkShowNewLogTargets->setChecked(settings->getProperty< bool >(L"Editor.ShowNewLogTargets"));
 
+	m_checkVerboseResourceLoading = new ui::CheckBox();
+	m_checkVerboseResourceLoading->create(container, i18n::Text(L"EDITOR_SETTINGS_VERBOSE_RESOURCE_LOADING"));
+	m_checkVerboseResourceLoading->setChecked(settings->getProperty< bool >(L"Resource.Verbose"));
+
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_GENERAL"));
 	return true;
 }
@@ -145,6 +149,7 @@ bool GeneralSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildAfterBrowseInstance", m_checkBuildAfterBrowseInstance->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.PropertyHelpVisible", m_checkPropertyHelpVisible->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.ShowNewLogTargets", m_checkShowNewLogTargets->isChecked());
+	settings->setProperty< PropertyBoolean >(L"Resource.Verbose", m_checkVerboseResourceLoading->isChecked());
 	return true;
 }
 
