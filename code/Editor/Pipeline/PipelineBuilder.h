@@ -54,7 +54,8 @@ public:
 		IPipelineDb* db,
 		IPipelineInstanceCache* instanceCache,
 		IListener* listener,
-		bool threadedBuildEnable
+		bool threadedBuildEnable,
+		bool verbose
 	);
 
 	virtual bool build(const IPipelineDependencySet* dependencySet, bool rebuild) override final;
@@ -103,6 +104,7 @@ private:
 	Ref< IPipelineInstanceCache > m_instanceCache;
 	IListener* m_listener;
 	bool m_threadedBuildEnable;
+	bool m_verbose;
 
 	Semaphore m_createOutputLock;
 	ReaderWriterLock m_readCacheLock;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Runtime/Editor/TargetInstance.h"
 #include "Core/RefArray.h"
+#include "Runtime/Editor/TargetInstance.h"
 #include "Ui/Auto/ChildWidgetCell.h"
 
 namespace traktor
@@ -10,6 +10,7 @@ namespace traktor
 	{
 
 class ButtonClickEvent;
+class IBitmap;
 
 	}
 
@@ -38,6 +39,7 @@ public:
 	virtual void paint(ui::Canvas& canvas, const ui::Rect& rect) override final;
 
 private:
+	Ref< ui::IBitmap > m_bitmapLogos;
 	Ref< ProgressCell > m_progressCell;
 	Ref< DropListCell > m_hostsCell;
 	Ref< ButtonCell > m_playCell;

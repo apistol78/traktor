@@ -37,8 +37,9 @@ namespace traktor
 class LogTargetFilter : public ILogTarget
 {
 public:
-	LogTargetFilter(ILogTarget* target)
+	LogTargetFilter(ILogTarget* target, bool muted)
 	:	m_target(target)
+	,	m_muted(muted)
 	,	m_count(0)
 	{
 	}
@@ -46,7 +47,7 @@ public:
 	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final
 	{
 		++m_count;
-		if (m_target)
+		if (m_target && !m_muted)
 			m_target->log(threadId, level, str);
 	}
 
@@ -56,6 +57,7 @@ public:
 
 private:
 	Ref< ILogTarget > m_target;
+	bool m_muted;
 	uint32_t m_count;
 };
 
@@ -105,7 +107,8 @@ PipelineBuilder::PipelineBuilder(
 	IPipelineDb* pipelineDb,
 	IPipelineInstanceCache* instanceCache,
 	IListener* listener,
-	bool threadedBuildEnable
+	bool threadedBuildEnable,
+	bool verbose
 )
 :	m_pipelineFactory(pipelineFactory)
 ,	m_sourceDatabase(sourceDatabase)
@@ -115,6 +118,7 @@ PipelineBuilder::PipelineBuilder(
 ,	m_instanceCache(instanceCache)
 ,	m_listener(listener)
 ,	m_threadedBuildEnable(threadedBuildEnable)
+,	m_verbose(verbose)
 ,	m_progress(0)
 ,	m_progressEnd(0)
 ,	m_succeeded(0)
@@ -147,7 +151,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 	uint32_t dependencyCount = dependencySet->size();
 	uint32_t modifiedCount = 0;
 
-	if (!rebuild)
+	if (m_verbose && !rebuild)
 		log::info << L"Analyzing conditions of " << dependencyCount << L" build item(s)..." << Endl;
 
 	// Determine build reasons.
@@ -213,7 +217,7 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 			reasons[i] |= PbrForced;
 	}
 
-	if (!rebuild)
+	if (!rebuild && (modifiedCount > 0 || m_verbose))
 		log::info << modifiedCount << L" modified instance(s)." << Endl;
 
 	for (uint32_t i = 0; i < dependencyCount; ++i)
@@ -265,7 +269,8 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 
 	T_DEBUG(L"Pipeline build; analyzed build reasons in " << int32_t(timer.getDeltaTime() * 1000) << L" ms");
 
-	log::info << L"Dispatching builds..." << Endl;
+	if (m_verbose)
+		log::info << L"Dispatching builds..." << Endl;
 
 	m_progress = 0;
 	m_progressEnd = m_workSet.size();
@@ -424,7 +429,8 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 
-	log::info << L"Building asset \"" << dependency->outputPath << L"\"..." << Endl;
+	if (m_verbose)
+		log::info << L"Building asset \"" << dependency->outputPath << L"\"..." << Endl;
 	log::info << IncreaseIndent;
 
 	// Get output instances from cache.
@@ -432,7 +438,8 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 	{
 		if (getInstancesFromCache(dependency->outputGuid, currentDependencyHash))
 		{
-			log::info << L"Cached output used of \"" << dependency->outputPath << L"\"." << Endl;
+			if (m_verbose)
+				log::info << L"Cached output used of \"" << dependency->outputPath << L"\"." << Endl;
 			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 			Atomic::increment(m_cacheHit);
 			Atomic::increment(m_succeededBuilt);
@@ -449,14 +456,6 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 	RefArray< db::Instance >* previousBuiltInstances = reinterpret_cast< RefArray< db::Instance >* >(m_buildInstances.get());
 	RefArray< db::Instance > builtInstances;
 	m_buildInstances.set(&builtInstances);
-
-	LogTargetFilter infoTarget(log::info.getLocalTarget());
-	LogTargetFilter warningTarget(log::warning.getLocalTarget());
-	LogTargetFilter errorTarget(log::error.getLocalTarget());
-
-	log::info.setLocalTarget(&infoTarget);
-	log::warning.setLocalTarget(&warningTarget);
-	log::error.setLocalTarget(&errorTarget);
 
 	Timer timer;
 	timer.start();
@@ -476,10 +475,6 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 
 	double buildTime = timer.getElapsedTime();
 
-	log::info.setLocalTarget(infoTarget.getTarget());
-	log::warning.setLocalTarget(warningTarget.getTarget());
-	log::error.setLocalTarget(errorTarget.getTarget());
-
 	if (result)
 	{
 		if (m_cache && dependency->sourceDataHash != 0)
@@ -489,7 +484,7 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 				builtInstances
 			);
 
-		if (!builtInstances.empty())
+		if (m_verbose && !builtInstances.empty())
 		{
 			log::info << L"Instance(s) built:" << Endl;
 			log::info << IncreaseIndent;
@@ -502,7 +497,8 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 	}
 
 	log::info << DecreaseIndent;
-	log::info << (result ? L"Build successful" : L"Build failed") << Endl;
+	if (m_verbose)
+		log::info << (result ? L"Build successful" : L"Build failed") << Endl;
 
 	// Restore previous set but also insert built instances from synthesized build;
 	// when caching is enabled then synthesized built instances should be included in parent build as well.
@@ -666,7 +662,8 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	{
 		if (getInstancesFromCache(dependency->outputGuid, currentDependencyHash))
 		{
-			log::info << L"Cached output used of \"" << dependency->outputPath << L"\"." << Endl;
+			if (m_verbose)
+				log::info << L"Cached output used of \"" << dependency->outputPath << L"\"." << Endl;
 			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 			Atomic::increment(m_cacheHit);
 			Atomic::increment(m_succeededBuilt);
@@ -683,9 +680,9 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	RefArray< db::Instance > builtInstances;
 	m_buildInstances.set(&builtInstances);
 
-	LogTargetFilter infoTarget(log::info.getLocalTarget());
-	LogTargetFilter warningTarget(log::warning.getLocalTarget());
-	LogTargetFilter errorTarget(log::error.getLocalTarget());
+	LogTargetFilter infoTarget(log::info.getLocalTarget(), !m_verbose);
+	LogTargetFilter warningTarget(log::warning.getLocalTarget(), false);
+	LogTargetFilter errorTarget(log::error.getLocalTarget(), false);
 
 	log::info.setLocalTarget(&infoTarget);
 	log::warning.setLocalTarget(&warningTarget);
@@ -727,7 +724,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 				builtInstances
 			);
 
-		if (!builtInstances.empty())
+		if (m_verbose && !builtInstances.empty())
 		{
 			log::info << L"Instance(s) built:" << Endl;
 			log::info << IncreaseIndent;
@@ -742,7 +739,8 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	}
 
 	log::info << DecreaseIndent;
-	log::info << (result ? L"Build successful" : L"Build failed") << Endl;
+	if (m_verbose)
+		log::info << (result ? L"Build successful" : L"Build failed") << Endl;
 
 	if (result)
 		return (warningTarget.getCount() + errorTarget.getCount()) > 0 ? BrSucceededWithWarnings : BrSucceeded;

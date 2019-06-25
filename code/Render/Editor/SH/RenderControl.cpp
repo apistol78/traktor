@@ -41,7 +41,7 @@ bool RenderControl::create(ui::Widget* parent, IRenderSystem* renderSystem, db::
 	if (!m_renderView)
 		return false;
 
-	m_resourceManager = new resource::ResourceManager(database, true);
+	m_resourceManager = new resource::ResourceManager(database, false);
 	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 

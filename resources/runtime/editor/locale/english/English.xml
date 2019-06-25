@@ -986,6 +986,10 @@
       <second>Use dependency cache</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_PIPELINE_VERBOSE</first>
+      <second>Verbose</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_PROPERTY_HELP_VISIBLE</first>
       <second>Help section visible in property view</second>
     </item>
@@ -1112,6 +1116,10 @@
     <item>
       <first>EDITOR_SETTINGS_TITLE</first>
       <second>Settings</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_VERBOSE_RESOURCE_LOADING</first>
+      <second>Verbose resource loading</second>
     </item>
     <item>
       <first>EDITOR_SURE_TO_REBUILD_CAPTION</first>

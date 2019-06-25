@@ -1,5 +1,6 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IDocument.h"
@@ -85,7 +86,7 @@ bool VideoEditorPage::create(ui::Container* parent)
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
 
-	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), true);
+	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 
 	if (!m_resourceManager->bind(c_idShaderMovie, m_shader))

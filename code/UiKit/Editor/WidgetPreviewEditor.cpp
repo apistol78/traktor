@@ -1,5 +1,7 @@
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
 #include "Flash/MovieResourceFactory.h"
 #include "Render/IRenderSystem.h"
@@ -51,7 +53,7 @@ bool WidgetPreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 		return false;
 
 	// Create resource manager.
-	m_resourceManager = new resource::ResourceManager(database, false);
+	m_resourceManager = new resource::ResourceManager(database, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
 	m_resourceManager->addFactory(new script::ScriptFactory(m_scriptContext));

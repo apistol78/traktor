@@ -1,6 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Editor/IDocument.h"
@@ -155,7 +157,7 @@ bool GraphEditor::create(ui::Container* parent)
 	if (!m_soundSystem)
 		log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
 
-	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), true);
+	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	m_resourceManager->addFactory(new SoundFactory());
 
 	updateView();

@@ -32,6 +32,7 @@ public:
 	virtual bool apply(PropertyGroup* settings) override final;
 
 private:
+	Ref< ui::CheckBox > m_checkVerbose;
 	Ref< ui::CheckBox > m_checkDependsThreads;
 	Ref< ui::CheckBox > m_checkBuildThreads;
 	Ref< ui::CheckBox > m_checkBuildDistributed;

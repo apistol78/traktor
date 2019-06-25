@@ -1,4 +1,6 @@
 #include <iomanip>
+#include "Core/Misc/String.h"
+#include "I18N/Text.h"
 #include "Runtime/Editor/HostEnumerator.h"
 #include "Runtime/Editor/TargetConnection.h"
 #include "Runtime/Editor/Ui/ButtonCell.h"
@@ -14,8 +16,6 @@
 #include "Runtime/Editor/Ui/TargetStopEvent.h"
 #include "Runtime/Editor/Deploy/Platform.h"
 #include "Runtime/Editor/Deploy/TargetConfiguration.h"
-#include "Core/Misc/String.h"
-#include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/Edit.h"
 #include "Ui/StyleBitmap.h"
@@ -28,8 +28,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-Ref< ui::IBitmap > s_bitmapLogos;
 
 const int32_t c_performanceLineHeight = 14;
 const int32_t c_performanceHeight = 6 * c_performanceLineHeight;
@@ -83,8 +81,7 @@ TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, T
 :	m_instance(instance)
 ,	m_lastInstanceState((TargetState)-1)
 {
-	if (!s_bitmapLogos)
-		s_bitmapLogos = new ui::StyleBitmap(L"Runtime.Logos");
+	m_bitmapLogos = new ui::StyleBitmap(L"Runtime.Logos");
 
 	m_progressCell = new ProgressCell();
 	m_hostsCell = new DropListCell(hostEnumerator, instance);
@@ -115,7 +112,7 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 	ui::Rect controlRect = rect;
 	controlRect.bottom = rect.top + ui::dpi96(28);
 
-	int32_t logoSize = s_bitmapLogos->getSize().cy;
+	int32_t logoSize = m_bitmapLogos->getSize().cy;
 
 	if (m_instance->getState() == TsIdle)
 	{
@@ -293,12 +290,12 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	else
 		m_progressCell->setProgress(-1);
 
-	int32_t logoSize = s_bitmapLogos->getSize().cy;
+	int32_t logoSize = m_bitmapLogos->getSize().cy;
 	canvas.drawBitmap(
 		ui::Point(controlRect.left + 2, controlRect.getCenter().y - logoSize / 2),
 		ui::Point(platform->getIconIndex() * logoSize, 0),
 		ui::Size(logoSize, logoSize),
-		s_bitmapLogos,
+		m_bitmapLogos,
 		ui::BmAlpha
 	);
 
