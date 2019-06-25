@@ -541,7 +541,7 @@ bool perform(const PipelineParameters* params)
 		sourceDatabaseAndCache.cache,
 		statusListener.ptr(),
 		settings->getProperty< bool >(L"Pipeline.BuildThreads", true),
-		params->getVerbose()
+		true/*params->getVerbose()*/
 	);
 
 	if (params->getRebuild())
