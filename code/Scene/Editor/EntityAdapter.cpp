@@ -23,7 +23,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapter", EntityAdapter, Object)
 
 EntityAdapter::EntityAdapter(SceneEditorContext* context)
 :	m_context(context)
-,	m_parent(0)
+,	m_entityDataType(nullptr)
+,	m_parent(nullptr)
 ,	m_selected(false)
 ,	m_expanded(false)
 ,	m_visible(true)
@@ -42,13 +43,21 @@ void EntityAdapter::prepare(
 	m_entity = entity;
 	m_hash = hash;
 
+	// If entity data type is different then ensure we re-create editors.
+	if (m_entityDataType != &type_of(m_entityData))
+	{
+		m_entityEditor = nullptr;
+		m_componentEditors.resize(0);
+		m_entityDataType = &type_of(m_entityData);
+	}
+
 	// Create entity editor; assume type of entity data is same if already created.
 	if (!m_entityEditor)
 	{
-		const IEntityEditorFactory* f = m_context->findEntityEditorFactory(type_of(entityData));
-		T_FATAL_ASSERT (f);
+		const IEntityEditorFactory* factory = m_context->findEntityEditorFactory(type_of(entityData));
+		T_FATAL_ASSERT (factory);
 
-		m_entityEditor = f->createEntityEditor(m_context, this);
+		m_entityEditor = factory->createEntityEditor(m_context, this);
 		T_FATAL_ASSERT (m_entityEditor != nullptr);
 	}
 
@@ -56,14 +65,12 @@ void EntityAdapter::prepare(
 	if (const world::ComponentEntityData* componentEntityData = dynamic_type_cast< const world::ComponentEntityData* >(m_entityData))
 	{
 		m_componentEditors.resize(0);
-
-		const RefArray< world::IEntityComponentData >& componentData = componentEntityData->getComponents();
-		for (RefArray< world::IEntityComponentData >::const_iterator i = componentData.begin(); i != componentData.end(); ++i)
+		for (auto componentData : componentEntityData->getComponents())
 		{
-			const IComponentEditorFactory* f = m_context->findComponentEditorFactory(type_of(*i));
-			T_FATAL_ASSERT (f);
+			const IComponentEditorFactory* factory = m_context->findComponentEditorFactory(type_of(componentData));
+			T_FATAL_ASSERT (factory);
 
-			Ref< IComponentEditor > componentEditor = f->createComponentEditor(m_context, this, *i);
+			Ref< IComponentEditor > componentEditor = factory->createComponentEditor(m_context, this, componentData);
 			T_FATAL_ASSERT (componentEditor);
 
 			m_componentEditors.push_back(componentEditor);

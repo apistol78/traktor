@@ -28,8 +28,8 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="7.9999996"
-     inkscape:cx="47.046602"
-     inkscape:cy="-1289.7416"
+     inkscape:cx="-14.07166"
+     inkscape:cy="-1276.5389"
      inkscape:document-units="px"
      inkscape:current-layer="g5948"
      showgrid="true"
@@ -37,9 +37,9 @@
      inkscape:snap-grids="true"
      inkscape:snap-to-guides="false"
      inkscape:window-width="3840"
-     inkscape:window-height="1948"
-     inkscape:window-x="0"
-     inkscape:window-y="76"
+     inkscape:window-height="2080"
+     inkscape:window-x="-11"
+     inkscape:window-y="-11"
      inkscape:window-maximized="1"
      units="px"
      inkscape:showpageshadow="false"
@@ -1704,7 +1704,7 @@
      inkscape:groupmode="layer"
      id="layer27"
      inkscape:label="Light"
-     style="display:inline">
+     style="display:none">
     <g
        inkscape:groupmode="layer"
        id="layer1"
@@ -7622,7 +7622,7 @@
                    style="fill:none" />
                 <polygon
                    id="polygon7496"
-                   points="494.73,82.049 494.73,81.218 489.103,81.218 489.103,82.049 491.427,82.049 491.427,88.467 492.408,88.467 492.408,82.049 " />
+                   points="492.408,82.049 494.73,82.049 494.73,81.218 489.103,81.218 489.103,82.049 491.427,82.049 491.427,88.467 492.408,88.467 " />
               </g>
               <g
                  id="g7498">
@@ -7633,7 +7633,7 @@
                    style="fill:none" />
                 <polygon
                    id="polygon7502"
-                   points="498.566,88.467 499.537,88.467 501.49,82.577 501.49,88.467 502.3,88.467 502.3,81.218 501.119,81.218 499.085,87.409 496.984,81.218 495.632,81.218 495.632,88.467 496.613,88.467 496.613,82.577 " />
+                   points="501.49,82.577 501.49,88.467 502.3,88.467 502.3,81.218 501.119,81.218 499.085,87.409 496.984,81.218 495.632,81.218 495.632,88.467 496.613,88.467 496.613,82.577 498.566,88.467 499.537,88.467 " />
               </g>
               <path
                  id="path7504"
@@ -11857,9 +11857,27 @@
        id="path8174-4-9"
        d="m 48.21783,1349.5336 v 6 h 6"
        style="display:inline;opacity:1;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <circle
+       style="display:inline;opacity:0.59899998;fill:#000000;fill-opacity:0.9908467;stroke:none;stroke-width:1.52290905;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path7982-50-1-6-0-9-5"
+       cx="7.9601612"
+       cy="1335.0496"
+       r="2.539278" />
+    <circle
+       style="display:inline;opacity:0.59899998;fill:#000000;fill-opacity:0.9908467;stroke:none;stroke-width:1.52290905;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path7982-50-1-6-0-9-5-4"
+       cx="15.960161"
+       cy="1335.0496"
+       r="2.539278" />
+    <circle
+       style="display:inline;opacity:0.59899998;fill:#000000;fill-opacity:0.9908467;stroke:none;stroke-width:1.52290905;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path7982-50-1-6-0-9-5-40"
+       cx="23.960161"
+       cy="1335.0496"
+       r="2.539278" />
   </g>
   <g
-     style="display:none;opacity:1"
+     style="display:inline;opacity:1"
      inkscape:label="Dark"
      id="g5948"
      inkscape:groupmode="layer">
@@ -17780,7 +17798,7 @@
                    d="M 502.3,24.062 H 180.797 v 64.45 0.633 H 502.921 V 24.062 Z m -13.197,57.156 h 5.627 v 0.831 h -2.322 v 6.418 h -0.98 v -6.418 h -2.324 v -0.831 z"
                    id="path8038" />
                 <polygon
-                   points="492.408,88.467 492.408,82.049 494.73,82.049 494.73,81.218 489.103,81.218 489.103,82.049 491.427,82.049 491.427,88.467 "
+                   points="489.103,81.218 489.103,82.049 491.427,82.049 491.427,88.467 492.408,88.467 492.408,82.049 494.73,82.049 494.73,81.218 "
                    id="polygon8040" />
               </g>
               <g
@@ -17791,7 +17809,7 @@
                    d="M 502.3,24.062 H 180.797 v 64.45 0.633 H 502.921 V 24.062 Z m -6.668,57.156 h 1.352 l 2.102,6.191 2.033,-6.191 h 1.182 v 7.249 h -0.811 v -5.89 l -1.953,5.89 h -0.971 l -1.953,-5.89 v 5.89 h -0.98 v -7.249 z"
                    id="path8044" />
                 <polygon
-                   points="496.613,88.467 496.613,82.577 498.566,88.467 499.537,88.467 501.49,82.577 501.49,88.467 502.3,88.467 502.3,81.218 501.119,81.218 499.085,87.409 496.984,81.218 495.632,81.218 495.632,88.467 "
+                   points="502.3,81.218 501.119,81.218 499.085,87.409 496.984,81.218 495.632,81.218 495.632,88.467 496.613,88.467 496.613,82.577 498.566,88.467 499.537,88.467 501.49,82.577 501.49,88.467 502.3,88.467 "
                    id="polygon8046" />
               </g>
               <path
@@ -22044,5 +22062,41 @@
        id="path8174-2"
        d="m 49.21783,1349.2836 v 6 h 6"
        style="display:inline;opacity:1;fill:none;fill-rule:evenodd;stroke:#c7c7c7;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <circle
+       style="display:inline;opacity:1;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-width:1.52290905;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path7982-50-1-6-0-9-5-0"
+       cx="7.9601612"
+       cy="1335.0496"
+       r="2.539278" />
+    <circle
+       style="display:inline;opacity:1;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-width:1.52290905;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path7982-50-1-6-0-9-5-4-1"
+       cx="15.960161"
+       cy="1335.0496"
+       r="2.539278" />
+    <circle
+       style="display:inline;opacity:1;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-width:1.52290905;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path7982-50-1-6-0-9-5-40-4"
+       cx="23.960161"
+       cy="1335.0496"
+       r="2.539278" />
+    <circle
+       style="display:inline;opacity:1;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-width:1.52290905;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path7982-50-1-6-0-9-5-9"
+       cx="7.9601612"
+       cy="1335.0496"
+       r="2.539278" />
+    <circle
+       style="display:inline;opacity:1;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-width:1.52290905;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path7982-50-1-6-0-9-5-4-4"
+       cx="15.960161"
+       cy="1335.0496"
+       r="2.539278" />
+    <circle
+       style="display:inline;opacity:1;fill:#c7c7c7;fill-opacity:1;stroke:none;stroke-width:1.52290905;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path7982-50-1-6-0-9-5-40-6"
+       cx="23.960161"
+       cy="1335.0496"
+       r="2.539278" />
   </g>
 </svg>

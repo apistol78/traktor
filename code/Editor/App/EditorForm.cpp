@@ -1980,7 +1980,7 @@ void EditorForm::beginBuild(int32_t core, int32_t index, int32_t count, const Pi
 {
 	showProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count, 100);
 	m_buildView->beginBuild(core, dependency->outputPath);
-	//m_buildProgress->setProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count);
+	m_buildProgress->setProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count);
 	m_buildStep = (index * 1000) / count;
 	m_buildStepMessage = dependency->outputPath;
 }

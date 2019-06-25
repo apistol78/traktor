@@ -225,12 +225,14 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityMenuDefault->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
 	m_entityMenuDefault->add(new ui::MenuItem(L"-"));
 	m_entityMenuDefault->add(new ui::MenuItem(ui::Command(L"Scene.Editor.CreateExternal"), i18n::Text(L"SCENE_EDITOR_CREATE_EXTERNAL")));
+	m_entityMenuDefault->add(new ui::MenuItem(L"-"));
 	m_entityMenuDefault->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 
 	m_entityMenuGroup = new ui::Menu();
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
 	m_entityMenuGroup->add(new ui::MenuItem(L"-"));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.CreateExternal"), i18n::Text(L"SCENE_EDITOR_CREATE_EXTERNAL")));
+	m_entityMenuGroup->add(new ui::MenuItem(L"-"));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddComponentEntity"), i18n::Text(L"SCENE_EDITOR_ADD_COMPONENT_ENTITY")));
 	m_entityMenuGroup->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddGroupEntity"), i18n::Text(L"SCENE_EDITOR_ADD_GROUP_ENTITY")));
@@ -238,6 +240,8 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_entityMenuExternal = new ui::Menu();
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.MoveToEntity"), i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY")));
+	m_entityMenuExternal->add(new ui::MenuItem(L"-"));
+	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.ResolveExternal"), i18n::Text(L"SCENE_EDITOR_RESOLVE_EXTERNAL")));
 	m_entityMenuExternal->add(new ui::MenuItem(L"-"));
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.FindInDatabase"), i18n::Text(L"SCENE_EDITOR_FIND_IN_DATABASE")));
 	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
@@ -622,6 +626,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Scene.Editor.CreateExternal")
 		result = createExternal();
+	else if (command == L"Scene.Editor.ResolveExternal")
+		result = resolveExternal();
 	else if (command == L"Scene.Editor.AddEntity")
 		result = addEntity(0);
 	else if (command == L"Scene.Editor.AddComponentEntity")
@@ -1101,9 +1107,46 @@ bool SceneEditorPage::createExternal()
 		return false;
 	}
 
-	// \tbd Replace seleced entity with external reference to entity.
+	// \tbd Replace selected entity with external reference to entity.
 
 	m_editor->updateDatabaseView();
+	return true;
+}
+
+bool SceneEditorPage::resolveExternal()
+{
+	RefArray< EntityAdapter > selectedEntities;
+	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants | SceneEditorContext::GfExternalOnly) != 1)
+		return false;
+
+	auto externalAdapter = selectedEntities.front();
+
+	Guid externalId;
+	if (!externalAdapter->getExternalGuid(externalId))
+		return false;
+
+	Ref< world::EntityData > resolvedEntityData = m_context->getSourceDatabase()->getObjectReadOnly< world::EntityData >(externalId);
+	if (!resolvedEntityData)
+	{
+		log::error << L"Unable to resolve external; failed to read entity from database." << Endl;
+		return false;
+	}
+
+	resolvedEntityData->setName(externalAdapter->getName());
+	resolvedEntityData->setTransform(externalAdapter->getTransform0());
+
+	auto parent = externalAdapter->getParent();
+	T_FATAL_ASSERT(parent != nullptr);
+
+	Ref< EntityAdapter > resolvedEntityAdapter = new EntityAdapter(m_context);
+	resolvedEntityAdapter->prepare(resolvedEntityData, nullptr, 0);
+
+	parent->addChild(resolvedEntityAdapter);
+	parent->swapChildren(externalAdapter, resolvedEntityAdapter);
+	parent->removeChild(externalAdapter);
+
+	updateScene();
+	createInstanceGrid();
 	return true;
 }
 

@@ -552,14 +552,14 @@ void DatabaseView::setDatabase(db::Database* db)
 
 	// Ensure database views is cleaned.
 	m_treeDatabase->removeAllItems();
-	m_treeState = 0;
+	m_treeState = nullptr;
 
 	updateView();
 }
 
 void DatabaseView::updateView()
 {
-	bool shouldApplyState = bool(m_treeState != 0);
+	bool shouldApplyState = bool(m_treeState != nullptr);
 
 	Ref< ui::HierarchicalState > treeState = m_treeDatabase->captureState();
 	m_treeState = m_treeState ? m_treeState->merge(treeState) : treeState;
@@ -573,13 +573,11 @@ void DatabaseView::updateView()
 		m_rootInstances.clear();
 		m_favoriteInstances.clear();
 
-		std::vector< std::wstring > rootInstances = m_editor->getSettings()->getProperty< std::vector< std::wstring > >(L"Editor.RootInstances");
-		for (std::vector< std::wstring >::const_iterator i = rootInstances.begin(); i != rootInstances.end(); ++i)
-			m_rootInstances.insert(Guid(*i));
+		for (const auto& rootInstance : m_editor->getSettings()->getProperty< std::vector< std::wstring > >(L"Editor.RootInstances"))
+			m_rootInstances.insert(Guid(rootInstance));
 
-		std::vector< std::wstring > favoriteInstances = m_editor->getSettings()->getProperty< std::vector< std::wstring > >(L"Editor.FavoriteInstances");
-		for (std::vector< std::wstring >::const_iterator i = favoriteInstances.begin(); i != favoriteInstances.end(); ++i)
-			m_favoriteInstances.insert(Guid(*i));
+		for (const auto& favoriteInstance : m_editor->getSettings()->getProperty< std::vector< std::wstring > >(L"Editor.FavoriteInstances"))
+			m_favoriteInstances.insert(Guid(favoriteInstance));
 
 		int32_t viewMode = m_toolViewMode->getSelected();
 
@@ -1179,8 +1177,8 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 	group->getChildGroups(childGroups);
 	childGroups.sort(GroupByNamePred());
 
-	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
-		buildTreeItem(treeView, groupItem, *i);
+	for (auto childGroup : childGroups)
+		buildTreeItem(treeView, groupItem, childGroup);
 
 	bool showFiltered = m_toolFilterShow->isToggled();
 	bool showFavorites = m_toolFavoritesShow->isToggled();
@@ -1190,21 +1188,21 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 	group->getChildInstances(childInstances);
 	childInstances.sort(InstanceByNamePred());
 
-	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	for (auto childInstance : childInstances)
 	{
-		const TypeInfo* primaryType = (*i)->getPrimaryType();
+		const TypeInfo* primaryType = childInstance->getPrimaryType();
 		if (!primaryType)
 			continue;
 
 		if (showFavorites)
 		{
-			if (m_favoriteInstances.find((*i)->getGuid()) == m_favoriteInstances.end())
+			if (m_favoriteInstances.find(childInstance->getGuid()) == m_favoriteInstances.end())
 				continue;
 		}
 
 		if (!showPrivate)
 		{
-			if (isInstanceInPrivate(*i))
+			if (isInstanceInPrivate(childInstance))
 				continue;
 		}
 
@@ -1212,32 +1210,31 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 
 		if (!showFiltered)
 		{
-			if (!m_filter->acceptInstance((*i)))
+			if (!m_filter->acceptInstance(childInstance))
 				continue;
 		}
 		else
 		{
-			if (!m_filter->acceptInstance((*i)))
+			if (!m_filter->acceptInstance(childInstance))
 				iconIndex += 23;
 		}
 
-		Ref< ui::TreeViewItem > instanceItem = treeView->createItem(groupItem, (*i)->getName(), 2);
-		instanceItem->setImage(0, -1);
-		instanceItem->setImage(1, iconIndex);
+		Ref< ui::TreeViewItem > instanceItem = treeView->createItem(groupItem, childInstance->getName(), 2);
+		instanceItem->setImage(0, iconIndex);
 
-		if (m_rootInstances.find((*i)->getGuid()) != m_rootInstances.end())
+		if (m_rootInstances.find(childInstance->getGuid()) != m_rootInstances.end())
 			instanceItem->setBold(true);
 
 		instanceItem->setEditable(true);
 		instanceItem->setData(L"GROUP", group);
-		instanceItem->setData(L"INSTANCE", (*i));
+		instanceItem->setData(L"INSTANCE", childInstance);
 	}
 
 	// Remove group if it's empty.
 	if ((showFavorites || !m_filter->acceptEmptyGroups()) && !groupItem->hasChildren())
 	{
 		treeView->removeItem(groupItem);
-		groupItem = 0;
+		groupItem = nullptr;
 	}
 
 	return groupItem;
@@ -1254,70 +1251,8 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::TreeView* treeView,
 	group->getChildGroups(childGroups);
 	childGroups.sort(GroupByNamePred());
 
-	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
-		buildTreeItemSplit(treeView, groupItem, *i);
-
-	/*
-	bool showFiltered = m_toolFilterShow->isToggled();
-	bool showFavorites = m_toolFavoritesShow->isToggled();
-	bool showPrivate = true;
-
-	RefArray< db::Instance > childInstances;
-	group->getChildInstances(childInstances);
-	childInstances.sort(InstanceByNamePred());
-
-	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
-	{
-		const TypeInfo* primaryType = (*i)->getPrimaryType();
-		if (!primaryType)
-			continue;
-
-		if (showFavorites)
-		{
-			if (m_favoriteInstances.find((*i)->getGuid()) == m_favoriteInstances.end())
-				continue;
-		}
-
-		if (!showPrivate)
-		{
-			if (isInstanceInPrivate(*i))
-				continue;
-		}
-
-		int32_t iconIndex = getIconIndex(primaryType);
-
-		if (!showFiltered)
-		{
-			if (!m_filter->acceptInstance((*i)))
-				continue;
-		}
-		else
-		{
-			if (!m_filter->acceptInstance((*i)))
-				iconIndex += 23;
-		}
-
-		Ref< ui::TreeViewItem > instanceItem = treeView->createItem(
-			groupItem,
-			(*i)->getName(),
-			iconIndex
-		);
-
-		if (m_rootInstances.find((*i)->getGuid()) != m_rootInstances.end())
-			instanceItem->setBold(true);
-
-		instanceItem->setEditable(true);
-		instanceItem->setData(L"GROUP", group);
-		instanceItem->setData(L"INSTANCE", (*i));
-	}
-
-	// Remove group if it's empty.
-	if ((showFavorites || !m_filter->acceptEmptyGroups()) && !groupItem->hasChildren())
-	{
-		treeView->removeItem(groupItem);
-		groupItem = 0;
-	}
-	*/
+	for (auto childGroup : childGroups)
+		buildTreeItemSplit(treeView, groupItem, childGroup);
 
 	return groupItem;
 }
@@ -1327,9 +1262,9 @@ void DatabaseView::updateTreeColors()
 	RefArray< ui::TreeViewItem > items;
 	m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfExpandedOnly);
 
-	for (RefArray< ui::TreeViewItem >::iterator i = items.begin(); i != items.end(); ++i)
+	for (auto item : items)
 	{
-		db::Instance* instance = (*i)->getData< db::Instance >(L"INSTANCE");
+		db::Instance* instance = item->getData< db::Instance >(L"INSTANCE");
 		if (instance)
 		{
 			int32_t image = 0;
@@ -1341,9 +1276,9 @@ void DatabaseView::updateTreeColors()
 
 			image += 2 + 23 + 23;	// Offset to correct image sequence.
 
-			if (image != (*i)->getImage(0))
+			if (image != item->getImage(1))
 			{
-				(*i)->setImage(0, image);
+				item->setImage(1, image);
 				m_treeDatabase->requestUpdate();
 			}
 		}
@@ -1364,16 +1299,11 @@ void DatabaseView::updateGridInstances()
 		return;
 
 	RefArray< db::Instance > childInstances;
-	for (RefArray< ui::TreeViewItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	for (auto item : items)
 	{
-		ui::TreeViewItem* treeItem = *i;
-		T_ASSERT(treeItem);
-
-		db::Group* group = treeItem->getData< db::Group >(L"GROUP");
-		if (!group)
-			continue;
-
-		db::recursiveFindChildInstances(group, db::FindInstanceAll(), childInstances);
+		db::Group* group = item->getData< db::Group >(L"GROUP");
+		if (group)
+			db::recursiveFindChildInstances(group, db::FindInstanceAll(), childInstances);
 	}
 	childInstances.sort(InstanceByNamePred());
 
@@ -1381,21 +1311,21 @@ void DatabaseView::updateGridInstances()
 	bool showFavorites = m_toolFavoritesShow->isToggled();
 	bool showPrivate = true;
 
-	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	for (auto childInstance : childInstances)
 	{
-		const TypeInfo* primaryType = (*i)->getPrimaryType();
+		const TypeInfo* primaryType = childInstance->getPrimaryType();
 		if (!primaryType)
 			continue;
 
 		if (showFavorites)
 		{
-			if (m_favoriteInstances.find((*i)->getGuid()) == m_favoriteInstances.end())
+			if (m_favoriteInstances.find(childInstance->getGuid()) == m_favoriteInstances.end())
 				continue;
 		}
 
 		if (!showPrivate)
 		{
-			if (isInstanceInPrivate(*i))
+			if (isInstanceInPrivate(childInstance))
 				continue;
 		}
 
@@ -1403,20 +1333,20 @@ void DatabaseView::updateGridInstances()
 
 		if (!showFiltered)
 		{
-			if (!m_filter->acceptInstance((*i)))
+			if (!m_filter->acceptInstance(childInstance))
 				continue;
 		}
 		else
 		{
-			if (!m_filter->acceptInstance((*i)))
+			if (!m_filter->acceptInstance(childInstance))
 				iconIndex += 23;
 		}
 
 		Ref< ui::GridRow > row = new ui::GridRow();
 		row->add(new ui::GridItem(L""));
-		row->add(new ui::GridItem((*i)->getName()));
+		row->add(new ui::GridItem(childInstance->getName()));
 		row->add(new ui::GridItem(primaryType->getName()));
-		row->setData(L"INSTANCE", (*i));
+		row->setData(L"INSTANCE", childInstance);
 		m_gridInstances->addRow(row);
 	}
 
