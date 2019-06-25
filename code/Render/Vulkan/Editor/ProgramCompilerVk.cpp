@@ -205,8 +205,10 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		if (vertexShader->getInfoLog())
 			log::info << mbstows(vertexShader->getInfoLog()) << Endl;
 
+#if defined(_DEBUG)
 		if (vertexShader->getInfoDebugLog())
 			log::info << mbstows(vertexShader->getInfoDebugLog()) << Endl;
+#endif
 
 		if (!vertexResult)
 		{
@@ -226,8 +228,10 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		if (fragmentShader->getInfoLog())
 			log::info << mbstows(fragmentShader->getInfoLog()) << Endl;
 
+#if defined(_DEBUG)
 		if (fragmentShader->getInfoDebugLog())
 			log::info << mbstows(fragmentShader->getInfoDebugLog()) << Endl;
+#endif
 
 		if (!fragmentResult)
 		{
@@ -254,8 +258,10 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		if (computeShader->getInfoLog())
 			log::info << mbstows(computeShader->getInfoLog()) << Endl;
 
+#if defined(_DEBUG)
 		if (computeShader->getInfoDebugLog())
 			log::info << mbstows(computeShader->getInfoDebugLog()) << Endl;
+#endif
 
 		if (!vertexResult)
 		{
