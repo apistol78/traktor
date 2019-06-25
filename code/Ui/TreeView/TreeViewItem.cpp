@@ -225,7 +225,7 @@ TreeViewItem* TreeViewItem::getPreviousSibling(TreeViewItem* child) const
 
 	RefArray< TreeViewItem >::const_iterator i = std::find(m_children.begin(), m_children.end(), child);
 	if (i == m_children.end() || i == m_children.begin())
-		return 0;
+		return nullptr;
 
 	return *(i - 1);
 }
@@ -236,7 +236,7 @@ TreeViewItem* TreeViewItem::getNextSibling(TreeViewItem* child) const
 
 	RefArray< TreeViewItem >::const_iterator i = std::find(m_children.begin(), m_children.end(), child);
 	if (i == m_children.end())
-		return 0;
+		return nullptr;
 
 	return *(i + 1);
 }
@@ -255,25 +255,25 @@ Ref< TreeViewItem > TreeViewItem::findChild(const std::wstring& childPath)
 {
 	std::vector< std::wstring > childNames;
 	if (Split< std::wstring >::any(childPath, L"/", childNames) <= 0)
-		return 0;
+		return nullptr;
 
 	Ref< TreeViewItem > item = this;
-	for (std::vector< std::wstring >::iterator i = childNames.begin(); i != childNames.end(); ++i)
+	for (const auto& childName : childNames)
 	{
 		const RefArray< TreeViewItem >& children = item->m_children;
 
 		Ref< TreeViewItem > next;
-		for (RefArray< TreeViewItem >::const_iterator j = children.begin(); j != children.end(); ++j)
+		for (auto child : children)
 		{
-			if ((*j)->getText() == *i)
+			if (child->getText() == childName)
 			{
-				next = *j;
+				next = child;
 				break;
 			}
 		}
 
 		if (!(item = next))
-			return 0;
+			return nullptr;
 	}
 
 	return item;
@@ -343,10 +343,11 @@ Rect TreeViewItem::calculateImageRect() const
 {
 	const int32_t d = m_view->m_image->getSize().cy;
 	const int32_t depth = calculateDepth();
+	const int32_t imageCount = getImageCount();
 
 	Rect rcItem = m_view->getCellClientRect(this);
-	rcItem.left += dpi96(4 + depth * 20 + 22);
-	rcItem.right = rcItem.left + d;
+	rcItem.left += dpi96(4 + depth * 20) + d;
+	rcItem.right = rcItem.left + imageCount * d;
 
 	int32_t dy = (rcItem.getHeight() - d) / 2;
 	rcItem.top += dy;
@@ -364,7 +365,7 @@ Rect TreeViewItem::calculateLabelRect() const
 	Size extent = m_view->getFontMetric().getExtent(m_text);
 
 	Rect rcItem = m_view->getCellClientRect(this);
-	rcItem.left += dpi96(4 + depth * 20 + 28) + imageCount * d;
+	rcItem.left += dpi96(4 + depth * 20) + d + imageCount * d;
 	rcItem.right = rcItem.left + extent.cx + d;
 
 	return rcItem;

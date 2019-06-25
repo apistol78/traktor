@@ -131,6 +131,8 @@ private:
 
 	bool createExternal();
 
+	bool resolveExternal();
+
 	bool moveToEntity();
 
 	bool moveUp();

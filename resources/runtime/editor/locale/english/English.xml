@@ -2390,6 +2390,10 @@
       <second>Render time {0} ms, FPS {1}</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_RESOLVE_EXTERNAL</first>
+      <second>Resolve external</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_RESET</first>
       <second>Reset</second>
     </item>

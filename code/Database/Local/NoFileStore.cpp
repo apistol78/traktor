@@ -20,6 +20,14 @@ void NoFileStore::destroy()
 
 uint32_t NoFileStore::flags(const Path& filePath)
 {
+	Ref< File > file = FileSystem::getInstance().get(filePath);
+	if (file)
+	{
+		if ((file->getFlags() & File::FfReadOnly) != 0)
+			return IfReadOnly;
+		else
+			return IfNormal;
+	}
 	return IfNormal;
 }
 

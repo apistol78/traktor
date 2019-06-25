@@ -58,8 +58,6 @@ public:
 	/*! \brief Prepare adapter.
 	 *
 	 * Prepare adapter for editor use.
-	 * This might be called multiple times for
-	 * same adapter (but with different entities of same type).
 	 */
 	void prepare(
 		world::EntityData* entityData,
@@ -228,6 +226,7 @@ private:
 	friend class SceneEditorContext;
 
 	SceneEditorContext* m_context;
+	const TypeInfo* m_entityDataType;
 	Ref< world::EntityData > m_entityData;
 	Ref< world::Entity > m_entity;
 	uint32_t m_hash;
