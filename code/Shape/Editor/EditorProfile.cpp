@@ -2,6 +2,8 @@
 #include "Shape/EntityFactory.h"
 #include "Shape/EntityRenderer.h"
 #include "Shape/Editor/EditorProfile.h"
+#include "Shape/Editor/Prefab/PrefabEntityFactory.h"
+#include "Shape/Editor/Prefab/PrefabEntityEditorFactory.h"
 #include "Shape/Editor/Spline/ControlPointEntityEditorFactory.h"
 #include "Shape/Editor/Spline/SplineEntityEditorFactory.h"
 
@@ -43,6 +45,7 @@ void EditorProfile::createEntityFactories(
 	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
+	outEntityFactories.push_back(new PrefabEntityFactory());
 	outEntityFactories.push_back(new EntityFactory(
 		context->getResourceManager(),
 		context->getRenderSystem()
@@ -72,6 +75,7 @@ void EditorProfile::createEntityEditorFactories(
 ) const
 {
 	outEntityEditorFactories.push_back(new ControlPointEntityEditorFactory());
+	outEntityEditorFactories.push_back(new PrefabEntityEditorFactory());
 	outEntityEditorFactories.push_back(new SplineEntityEditorFactory());
 }
 
