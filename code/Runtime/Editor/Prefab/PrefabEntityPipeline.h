@@ -42,7 +42,9 @@ public:
 
 private:
 	std::wstring m_assetPath;
-	bool m_targetEditor;
+	float m_visualMeshSnap;
+	float m_collisionMeshSnap;
+	bool m_mergeCoplanar;
 	mutable std::set< Guid > m_usedGuids;
 };
 
