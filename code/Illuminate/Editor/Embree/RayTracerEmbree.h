@@ -8,6 +8,13 @@ namespace traktor
 
 class RandomGeometry;
 
+    namespace render
+    {
+
+class SHEngine;
+
+    }
+
     namespace illuminate
     {
 
@@ -48,9 +55,9 @@ private:
 
 	const IlluminateConfiguration* m_configuration;
 	AlignedVector< Light > m_lights;
-
 	RTCDevice m_device;
 	RTCScene m_scene;
+    Ref< render::SHEngine > m_shEngine;
 	float m_maxDistance;
 
 	Color4f sampleAnalyticalLights(

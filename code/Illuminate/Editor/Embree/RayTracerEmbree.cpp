@@ -1,3 +1,4 @@
+#include <functional>
 #include <embree3/rtcore.h>
 #include <embree3/rtcore_ray.h>
 #include "Core/Functor/Functor.h"
@@ -6,6 +7,8 @@
 #include "Core/Thread/JobManager.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Render/SH/SHEngine.h"
+#include "Render/SH/SHFunction.h"
 #include "Illuminate/Editor/GBuffer.h"
 #include "Illuminate/Editor/IlluminateConfiguration.h"
 #include "Illuminate/Editor/Embree/RayTracerEmbree.h"
@@ -19,6 +22,24 @@ namespace traktor
 
 const Scalar p(1.0f / (2.0f * PI));
 const float c_epsilonOffset = 0.1f;
+const int32_t c_valid[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+
+class WrappedSHFunction : public render::SHFunction
+{
+public:
+	WrappedSHFunction(const std::function< Vector4 (const Vector4&) >& fn)
+	:	m_fn(fn)
+	{
+	}
+
+	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final
+	{
+		return m_fn(unit);
+	}
+
+private:
+	std::function< Vector4 (const Vector4&) > m_fn;
+};
 
 Scalar attenuation(const Scalar& distance)
 {
@@ -51,11 +72,15 @@ bool RayTracerEmbree::create(const IlluminateConfiguration* configuration)
 	m_device = rtcNewDevice(nullptr);
 	m_scene = rtcNewScene(m_device);
 
+	m_shEngine = new render::SHEngine(3);
+	m_shEngine->generateSamplePoints(20000);
+
     return true;
 }
 
 void RayTracerEmbree::destroy()
 {
+	m_shEngine = nullptr;
 }
 
 void RayTracerEmbree::addLight(const Light& light)
@@ -176,7 +201,77 @@ void RayTracerEmbree::preprocess(GBuffer* gbuffer) const
 
 Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) const
 {
-	return nullptr;
+	const uint32_t sampleCount = alignUp(m_configuration->getIndirectSampleCount(), 16);
+	RandomGeometry random;
+
+	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
+		Color4f indirect(0.0f, 0.0f, 0.0f, 0.0f);
+		RTCRayHit16 T_MATH_ALIGN16 rh;
+		Vector4 direction[16];
+
+		for (uint32_t i = 0; i < sampleCount; i += 16)
+		{
+			for (uint32_t j = 0; j < 16; ++j)
+			{
+				direction[j] = random.nextHemi(unit);
+
+				rh.ray.org_x[j] = position.x();
+				rh.ray.org_y[j] = position.y();
+				rh.ray.org_z[j] = position.z();
+
+				rh.ray.dir_x[j] = direction[j].x();
+				rh.ray.dir_y[j] = direction[j].y();
+				rh.ray.dir_z[j] = direction[j].z();
+
+				rh.ray.tnear[j] = c_epsilonOffset;
+				rh.ray.time[j] = 0.0f;
+				rh.ray.tfar[j] = m_maxDistance;
+
+				rh.ray.mask[j] = 0;
+				rh.ray.id[j] = 0;
+				rh.ray.flags[j] = 0;
+
+				rh.hit.geomID[j] = RTC_INVALID_GEOMETRY_ID;
+				rh.hit.instID[0][j] = RTC_INVALID_GEOMETRY_ID;
+			}
+
+			RTCIntersectContext context;
+			rtcInitIntersectContext(&context);
+			rtcIntersect16(c_valid, m_scene, &context, &rh);
+
+			for (uint32_t j = 0; j < 16; ++j)
+			{
+				if (rh.hit.geomID[j] != RTC_INVALID_GEOMETRY_ID)
+				{
+					Scalar distance(rh.ray.tfar[j]);
+					Scalar f = attenuation(distance);
+					if (f <= 0.0f)
+						continue;
+
+					Vector4 hitPosition = (position + direction[j] * distance).xyz1();
+					Vector4 hitNormal = Vector4(rh.hit.Ng_x[j], rh.hit.Ng_y[j], rh.hit.Ng_z[j], 0.0f).normalized();
+
+					Scalar ct = dot3(unit, direction[j]);
+					Color4f brdf = /*m_surfaces[result.index].albedo*/ Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
+					Color4f incoming = sampleAnalyticalLights(
+						random,
+						hitPosition,
+						hitNormal,
+						true
+					);
+					indirect += brdf * incoming * f * ct / p;
+				}
+			}
+		}
+
+		indirect /= Scalar(sampleCount);
+		return indirect;
+	});
+
+	Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
+	m_shEngine->generateCoefficients(&shFunction, *shCoeffs);
+
+	return shCoeffs;
 }
 
 Ref< drawing::Image > RayTracerEmbree::traceDirect(const GBuffer* gbuffer) const
@@ -222,9 +317,7 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
     Ref< drawing::Image > lightmapIndirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), width, height);
     lightmapIndirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-	uint32_t sampleCount = alignUp(m_configuration->getIndirectSampleCount(), 16);
-
-	const int32_t c_valid[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+	const uint32_t sampleCount = alignUp(m_configuration->getIndirectSampleCount(), 16);
 
     RefArray< Job > jobs;
     for (int32_t ty = 0; ty < height; ty += 16)
@@ -299,7 +392,7 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 							}
 						}
 
-						indirect /= Scalar(m_configuration->getIndirectSampleCount());
+						indirect /= Scalar(sampleCount);
 
 						lightmapIndirect->setPixel(x, y, indirect.rgb1());
 					}
@@ -362,7 +455,7 @@ Ref< drawing::Image > RayTracerEmbree::traceCamera(const Transform& transform, i
 
 			RTCIntersectContext context;
 			rtcInitIntersectContext(&context);
-			rtcIntersect1(m_scene, &context, &rh);					
+			rtcIntersect1(m_scene, &context, &rh);				
 
 			if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
 				continue;
