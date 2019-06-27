@@ -21,7 +21,7 @@ namespace traktor
 		{
 
 const Scalar p(1.0f / (2.0f * PI));
-const float c_epsilonOffset = 0.1f;
+const float c_epsilonOffset = 0.01f;
 const int32_t c_valid[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
 class WrappedSHFunction : public render::SHFunction
