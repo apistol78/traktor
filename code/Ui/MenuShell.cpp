@@ -176,13 +176,20 @@ void MenuShell::eventMouseMove(MouseMoveEvent* event)
 
 		update();
 	}
-	// setCapture();
 }
 
 void MenuShell::eventGlobalButtonDown(MouseButtonDownEvent* event)
 {
 	// If sub menu already created then lets assume it's event handler perform click event.
 	if (m_trackSubMenu)
+		return;
+
+	// Do not cancel if clicking on scrollbar.
+	if (
+		m_scrollBar != nullptr &&
+		m_scrollBar->isVisible(false) &&
+		m_scrollBar->hitTest(event->getPosition())
+	)
 		return;
 
 	Point clientPosition = screenToClient(event->getPosition());
@@ -198,6 +205,14 @@ void MenuShell::eventGlobalButtonUp(MouseButtonUpEvent* event)
 {
 	// If sub menu already created then lets assume it's event handler perform click event.
 	if (m_trackSubMenu)
+		return;
+
+	// Do not cancel if clicking on scrollbar.
+	if (
+		m_scrollBar != nullptr &&
+		m_scrollBar->isVisible(false) &&
+		m_scrollBar->hitTest(event->getPosition())
+	)
 		return;
 
 	Point clientPosition = screenToClient(event->getPosition());
