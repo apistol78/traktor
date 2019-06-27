@@ -1,21 +1,32 @@
-#include "Runtime/Editor/Prefab/PrefabEntityData.h"
-#include "Runtime/Editor/Prefab/PrefabEntityPipeline.h"
-#include "Runtime/Editor/Prefab/PrefabMerge.h"
 #include "Core/Log/Log.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Model/Model.h"
+#include "Model/ModelAdjacency.h"
+#include "Model/ModelFormat.h"
+#include "Model/Operations/Boolean.h"
+#include "Model/Operations/CleanDegenerate.h"
+#include "Model/Operations/CleanDuplicates.h"
+#include "Model/Operations/MergeCoplanarAdjacents.h"
+#include "Model/Operations/MergeModel.h"
+#include "Model/Operations/Quantize.h"
+#include "Model/Operations/Transform.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Runtime/Editor/Prefab/PrefabEntityData.h"
+#include "Runtime/Editor/Prefab/PrefabEntityPipeline.h"
+#include "Runtime/Editor/Prefab/PrefabMerge.h"
 #include "World/Entity/ComponentEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 
@@ -91,19 +102,38 @@ void collectComponentEntities(const ISerializable* object, RefArray< world::Comp
 	}
 }
 
+bool isModelClosed(const model::Model* model)
+{
+	model::ModelAdjacency adjacency(model, model::ModelAdjacency::MdByPosition);
+
+	// All edges must have exactly one neighbor in order for the mesh to be closed.
+	uint32_t edgeCount = adjacency.getEdgeCount();
+	for (uint32_t i = 0; i < edgeCount; ++i)
+	{
+		if (adjacency.getSharedEdgeCount(i) != 1)
+			return false;
+	}
+
+	return true;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.PrefabEntityPipeline", 0, PrefabEntityPipeline, world::EntityPipeline)
 
 PrefabEntityPipeline::PrefabEntityPipeline()
-:	m_targetEditor(false)
+:	m_visualMeshSnap(0.01f)
+,	m_collisionMeshSnap(0.01f)
+,	m_mergeCoplanar(true)
 {
 }
 
 bool PrefabEntityPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	m_targetEditor = settings->getProperty< bool >(L"Pipeline.TargetEditor", false);
+	m_visualMeshSnap = settings->getProperty< float >(L"PrefabPipeline.VisualMeshSnap", 0.01f);
+	m_collisionMeshSnap = settings->getProperty< float >(L"PrefabPipeline.CollisionMeshSnap", 0.01f);
+	m_mergeCoplanar = settings->getProperty< bool >(L"PrefabPipeline.MergeCoplanar", true);
 	m_usedGuids.clear();
 	return true;
 }
@@ -122,116 +152,32 @@ bool PrefabEntityPipeline::buildDependencies(
 ) const
 {
 	const PrefabEntityData* sourcePrefabEntityData = mandatory_non_null_type_cast< const PrefabEntityData* >(sourceAsset);
+	
+	// Get output guids so we can verify integrity early.
+	Guid outputRenderMeshGuid = sourcePrefabEntityData->getOutputGuid(0);
+	Guid outputCollisionShapeGuid = sourcePrefabEntityData->getOutputGuid(1);
 
-	// Verify integrity of output guids.
-	if (m_usedGuids.find(sourcePrefabEntityData->getOutputGuid(0)) != m_usedGuids.end())
+	if (m_usedGuids.find(outputRenderMeshGuid) != m_usedGuids.end())
 	{
 		log::error << L"PrefabEntityPipeline failed; Output guid 0 of prefab \"" << sourcePrefabEntityData->getName() << L"\" already used." << Endl;
 		return false;
 	}
+	m_usedGuids.insert(outputRenderMeshGuid);
 
-	m_usedGuids.insert(sourcePrefabEntityData->getOutputGuid(0));
-
-	if (m_usedGuids.find(sourcePrefabEntityData->getOutputGuid(1)) != m_usedGuids.end())
+	if (m_usedGuids.find(outputCollisionShapeGuid) != m_usedGuids.end())
 	{
 		log::error << L"PrefabEntityPipeline failed; Output guid 1 of prefab \"" << sourcePrefabEntityData->getName() << L"\" already used." << Endl;
 		return false;
 	}
+	m_usedGuids.insert(outputCollisionShapeGuid);
 
-	m_usedGuids.insert(sourcePrefabEntityData->getOutputGuid(1));
-
-	if (!m_targetEditor)
-	{
-		Ref< PrefabEntityData > prefabEntityData = checked_type_cast< PrefabEntityData* >(resolveAllExternal(pipelineDepends, sourcePrefabEntityData));
-		if (!prefabEntityData)
-		{
-			log::error << L"PrefabEntityPipeline failed; unable to resolve all external entities" << Endl;
-			return false;
-		}
-
-		Guid outputRenderMeshGuid = prefabEntityData->getOutputGuid(0);
-		Guid outputCollisionShapeGuid = prefabEntityData->getOutputGuid(1);
-
-		Transform Tprefab = prefabEntityData->getTransform();
-		Transform TprefabInv = Tprefab.inverse();
-
-		Ref< PrefabMerge > prefabMergeRender = new PrefabMerge(prefabEntityData->partitionMesh());
-		prefabMergeRender->setName(prefabEntityData->getName() + L"_Render");
-
-		Ref< PrefabMerge > prefabMergeCollision = new PrefabMerge();
-		prefabMergeCollision->setName(prefabEntityData->getName() + L"_Collision");
-
-		// Get all component entities.
-		RefArray< world::ComponentEntityData > componentEntityData;
-		collectComponentEntities(prefabEntityData, componentEntityData);
-
-		for (RefArray< world::ComponentEntityData >::const_iterator i = componentEntityData.begin(); i != componentEntityData.end(); ++i)
-		{
-			const mesh::MeshComponentData* meshComponent = (*i)->getComponent< mesh::MeshComponentData >();
-			if (meshComponent)
-			{
-				Guid meshAssetGuid = meshComponent->getMesh();
-				Ref< const mesh::MeshAsset > meshAsset = pipelineDepends->getObjectReadOnly< mesh::MeshAsset >(meshAssetGuid);
-				if (!meshAsset)
-				{
-					log::warning << L"Skipped entity \"" << (*i)->getName() << L"\"; unable to read visual mesh asset" << Endl;
-					continue;
-				}
-
-				prefabMergeRender->addVisualMesh(meshAsset, TprefabInv * (*i)->getTransform());
-			}
-
-			const physics::RigidBodyComponentData* rigidBodyComponent = (*i)->getComponent< physics::RigidBodyComponentData >();
-			if (rigidBodyComponent)
-			{
-				const physics::BodyDesc* bodyDesc = rigidBodyComponent->getBodyDesc();
-				if (bodyDesc)
-				{
-					const physics::MeshShapeDesc* meshShapeDesc = dynamic_type_cast< const physics::MeshShapeDesc* >(bodyDesc->getShape());
-					if (meshShapeDesc)
-					{
-						Guid meshShapeAssetGuid = meshShapeDesc->getMesh();
-						Ref< const physics::MeshAsset > meshShapeAsset = pipelineDepends->getObjectReadOnly< physics::MeshAsset >(meshShapeAssetGuid);
-						if (!meshShapeAsset)
-						{
-							log::warning << L"Skipped entity \"" << (*i)->getName() << L"\"; unable to read collision mesh asset" << Endl;
-							continue;
-						}
-
-						prefabMergeCollision->addShapeMesh(meshShapeAsset, TprefabInv * (*i)->getTransform());
-					}
-					else
-						log::warning << L"Prefab \"" << prefabEntityData->getName() << L"\"'s entity \"" << (*i)->getName() << L"\" must have a mesh collision shape; " << type_name(bodyDesc->getShape()) << L" not supported in prefabs" << Endl;
-				}
-			}
-		}
-
-		if (!prefabMergeRender->getVisualMeshes().empty())
-			pipelineDepends->addDependency(
-				prefabMergeRender,
-				L"Generated/Mesh_" + outputRenderMeshGuid.format(),
-				outputRenderMeshGuid,
-				editor::PdfBuild | editor::PdfResource
-			);
-
-		if (!prefabMergeCollision->getShapeMeshes().empty())
-			pipelineDepends->addDependency(
-				prefabMergeCollision,
-				L"Generated/Collision_" + outputCollisionShapeGuid.format(),
-				outputCollisionShapeGuid,
-				editor::PdfBuild | editor::PdfResource
-			);
-
-		return true;
-	}
-	else
-		return world::EntityPipeline::buildDependencies(
-			pipelineDepends,
-			sourceInstance,
-			sourceAsset,
-			outputPath,
-			outputGuid
-		);
+	return world::EntityPipeline::buildDependencies(
+		pipelineDepends,
+		sourceInstance,
+		sourceAsset,
+		outputPath,
+		outputGuid
+	);
 }
 
 Ref< ISerializable > PrefabEntityPipeline::buildOutput(
@@ -239,87 +185,251 @@ Ref< ISerializable > PrefabEntityPipeline::buildOutput(
 	const ISerializable* sourceAsset
 ) const
 {
-	if (!m_targetEditor)
+	Ref< PrefabEntityData > prefabEntityData = checked_type_cast< PrefabEntityData* >(resolveAllExternal(pipelineBuilder, sourceAsset));
+	if (!prefabEntityData)
 	{
-		Ref< PrefabEntityData > prefabEntityData = checked_type_cast< PrefabEntityData* >(resolveAllExternal(pipelineBuilder, sourceAsset));
-		if (!prefabEntityData)
+		log::error << L"Prefab entity pipeline failed; Unable to resolve all external entities." << Endl;
+		return nullptr;
+	}
+
+	Guid outputRenderMeshGuid = prefabEntityData->getOutputGuid(0);
+	Guid outputCollisionShapeGuid = prefabEntityData->getOutputGuid(1);
+
+	std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
+	std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
+
+	// Get all component entities which contain visual and/or physics meshes.
+	RefArray< world::ComponentEntityData > componentEntityDatas;
+	collectComponentEntities(prefabEntityData, componentEntityDatas);
+
+	Ref< PrefabMerge > merge = new PrefabMerge();
+
+	std::set< resource::Id< physics::CollisionSpecification > > shapeCollisionGroup;
+	std::set< resource::Id< physics::CollisionSpecification > > shapeCollisionMask;
+
+	Transform Tprefab = prefabEntityData->getTransform();
+	Transform TprefabInv = Tprefab.inverse();
+
+	for (auto componentEntityData : componentEntityDatas)
+	{
+		const mesh::MeshComponentData* meshComponent = componentEntityData->getComponent< mesh::MeshComponentData >();
+		if (meshComponent)
 		{
-			log::error << L"Prefab entity pipeline failed; Unable to resolve all external entities" << Endl;
-			return nullptr;
+			Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(meshComponent->getMesh());
+			if (meshAsset)
+			{
+				merge->addVisualMesh(
+					meshAsset,
+					TprefabInv * componentEntityData->getTransform()
+				);
+			}
+			else
+				log::warning << L"Skipped visual mesh of \"" << componentEntityData->getName() << L"\"; unable to read visual mesh asset." << Endl;
 		}
 
-		Transform Tprefab = prefabEntityData->getTransform();
-
-		Guid outputRenderMeshGuid = prefabEntityData->getOutputGuid(0);
-		Guid outputCollisionShapeGuid = prefabEntityData->getOutputGuid(1);
-
-		// Get all rigid entities.
-		RefArray< world::ComponentEntityData > componentEntityData;
-		collectComponentEntities(prefabEntityData, componentEntityData);
-
-		uint32_t renderMeshes = 0;
-		uint32_t shapeMeshes = 0;
-		std::set< resource::Id< physics::CollisionSpecification > > shapeCollisionGroup;
-		std::set< resource::Id< physics::CollisionSpecification > > shapeCollisionMask;
-
-		for (RefArray< world::ComponentEntityData >::const_iterator i = componentEntityData.begin(); i != componentEntityData.end(); ++i)
+		const physics::RigidBodyComponentData* rigidBodyComponent = componentEntityData->getComponent< physics::RigidBodyComponentData >();
+		if (rigidBodyComponent)
 		{
-			const mesh::MeshComponentData* meshComponent = (*i)->getComponent< mesh::MeshComponentData >();
-			if (meshComponent)
-				++renderMeshes;
-
-			const physics::RigidBodyComponentData* rigidBodyComponent = (*i)->getComponent< physics::RigidBodyComponentData >();
-			if (rigidBodyComponent)
+			const physics::BodyDesc* bodyDesc = rigidBodyComponent->getBodyDesc();
+			if (bodyDesc)
 			{
-				const physics::BodyDesc* bodyDesc = rigidBodyComponent->getBodyDesc();
-				if (bodyDesc)
+				const physics::MeshShapeDesc* meshShapeDesc = dynamic_type_cast< const physics::MeshShapeDesc* >(bodyDesc->getShape());
+				if (meshShapeDesc)
 				{
-					const physics::MeshShapeDesc* meshShapeDesc = dynamic_type_cast< const physics::MeshShapeDesc* >(bodyDesc->getShape());
-					if (meshShapeDesc)
+					Ref< const physics::MeshAsset > meshShapeAsset = pipelineBuilder->getObjectReadOnly< physics::MeshAsset >(meshShapeDesc->getMesh());
+					if (meshShapeAsset)
 					{
-						++shapeMeshes;
+						merge->addShapeMesh(
+							meshShapeAsset,
+							TprefabInv * componentEntityData->getTransform()
+						);
+
 						shapeCollisionGroup.insert(meshShapeDesc->getCollisionGroup().begin(), meshShapeDesc->getCollisionGroup().end());
 						shapeCollisionMask.insert(meshShapeDesc->getCollisionMask().begin(), meshShapeDesc->getCollisionMask().end());
 					}
+					else
+						log::warning << L"Skipped physics mesh of \"" << componentEntityData->getName() << L"\"; unable to read collision mesh asset." << Endl;
 				}
 			}
 		}
-
-		Ref< world::ComponentEntityData > outputEntityData = new world::ComponentEntityData();
-		outputEntityData->setName(prefabEntityData->getName());
-		outputEntityData->setTransform(Tprefab);
-
-		if (shapeMeshes > 0 && outputCollisionShapeGuid.isNotNull())
-		{
-			Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc();
-			outputShapeDesc->setMesh(resource::Id< physics::Mesh >(outputCollisionShapeGuid));
-			outputShapeDesc->setCollisionGroup(shapeCollisionGroup);
-			outputShapeDesc->setCollisionMask(shapeCollisionMask);
-
-			Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
-			outputBodyDesc->setShape(outputShapeDesc);
-
-			Ref< physics::RigidBodyComponentData > outputRigidBodyComponent = new physics::RigidBodyComponentData(
-				outputBodyDesc
-			);
-			outputEntityData->setComponent(outputRigidBodyComponent);
-		}
-
-		if (renderMeshes > 0 && outputRenderMeshGuid.isNotNull())
-		{
-			Ref< mesh::MeshComponentData > outputMeshComponent = new mesh::MeshComponentData(
-				resource::Id< mesh::IMesh >(outputRenderMeshGuid)
-			);
-			outputEntityData->setComponent(outputMeshComponent);
-		}
-
-		return outputEntityData;
 	}
-	else
-		return world::EntityPipeline::buildOutput(
-			pipelineBuilder,
-			sourceAsset
+
+	// Create our output entity which will only contain the merged meshes.
+	Ref< world::ComponentEntityData > outputEntityData = new world::ComponentEntityData();
+	outputEntityData->setName(prefabEntityData->getName());
+	outputEntityData->setTransform(prefabEntityData->getTransform());
+
+	// Merge visual meshes.
+	if (!merge->getVisualMeshes().empty())
+	{
+		Ref< model::Model > mergedModel = new model::Model();
+		std::map< std::wstring, Guid > mergedMaterialShaders;
+		std::map< std::wstring, Guid > mergedMaterialTextures;
+		std::map< std::wstring, Ref< const model::Model > > modelCache;
+
+		uint32_t vertexCount = 0;
+		uint32_t polygonCount = 0;
+
+		for (const auto& visualMesh : merge->getVisualMeshes())
+		{
+			Ref< const mesh::MeshAsset > meshAsset = visualMesh.meshAsset;
+			T_ASSERT(meshAsset);
+
+			// Insert custom material shaders.
+			for (const auto materialShader : meshAsset->getMaterialShaders())
+			{
+				const auto it = mergedMaterialShaders.find(materialShader.first);
+				if (it != mergedMaterialShaders.end() && it->second != materialShader.second)
+					log::warning << L"Different shaders on material with same name \"" << materialShader.first << L"\"; not allowed in prefab." << Endl;
+
+				mergedMaterialShaders[materialShader.first] = materialShader.second;
+			}
+
+			// Insert material textures.
+			for (const auto materialTexture : meshAsset->getMaterialTextures())
+			{
+				const auto it = mergedMaterialTextures.find(materialTexture.first);
+				if (it != mergedMaterialTextures.end() && it->second != materialTexture.second)
+					log::warning << L"Different textures on material with same name \"" << materialTexture.first << L"\"; not allowed in prefab." << Endl;
+
+				mergedMaterialTextures[materialTexture.first] = materialTexture.second;
+			}
+
+			uint32_t currentVertexCount = mergedModel->getVertexCount();
+			uint32_t currentPolygonCount = mergedModel->getPolygonCount();
+
+			std::map< std::wstring, Ref< const model::Model > >::const_iterator j = modelCache.find(meshAsset->getFileName().getOriginal());
+			if (j != modelCache.end())
+			{
+				model::MergeModel(*(j->second), visualMesh.transform, m_visualMeshSnap).apply(*mergedModel);
+				vertexCount += j->second->getVertexCount();
+				polygonCount += j->second->getPolygonCount();
+			}
+			else
+			{
+				Ref< model::Model > partModel = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
+					return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+				});
+				if (!partModel)
+				{
+					log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
+					continue;
+				}
+
+				partModel->clear( model::Model::CfColors | model::Model::CfJoints );
+
+				model::CleanDuplicates(0.01f).apply(*partModel);
+				model::MergeModel(*partModel, visualMesh.transform, m_visualMeshSnap).apply(*mergedModel);
+
+				vertexCount += partModel->getVertexCount();
+				polygonCount += partModel->getPolygonCount();
+				modelCache[meshAsset->getFileName().getOriginal()] = partModel;
+			}
+		}
+
+		log::info << L"Output visual model ('original' to 'merged'):" << Endl;
+		log::info << L"\t" << vertexCount << L" to " << mergedModel->getVertexCount() << L" vertices" << Endl;
+		log::info << L"\t" << polygonCount << L" to " << mergedModel->getPolygonCount() << L" polygon(s)" << Endl;
+
+		// Build output mesh from merged model.
+		Ref< mesh::MeshAsset > mergedMeshAsset = new mesh::MeshAsset();
+		mergedMeshAsset->setMeshType(prefabEntityData->partitionMesh() ? mesh::MeshAsset::MtPartition : mesh::MeshAsset::MtStatic);
+		mergedMeshAsset->setMaterialShaders(mergedMaterialShaders);
+		mergedMeshAsset->setMaterialTextures(mergedMaterialTextures);
+
+		pipelineBuilder->buildOutput(
+			mergedMeshAsset,
+			outputRenderMeshPath,
+			outputRenderMeshGuid,
+			mergedModel
 		);
+
+		// Replace mesh component referencing our merged mesh.
+		outputEntityData->setComponent(new mesh::MeshComponentData(
+			resource::Id< mesh::IMesh >(outputRenderMeshGuid)
+		));
+	}
+
+	// Merge physics meshes.
+	if (!merge->getShapeMeshes().empty())
+	{
+		Ref< model::Model > mergedModel = new model::Model();
+		std::map< std::wstring, Ref< const model::Model > > modelCache;
+
+		uint32_t vertexCount = 0;
+		uint32_t polygonCount = 0;
+
+		for (const auto& shapeMesh : merge->getShapeMeshes())
+		{
+			Ref< const physics::MeshAsset > meshShapeAsset = shapeMesh.meshAsset;
+			T_ASSERT(meshShapeAsset);
+
+			const auto it = modelCache.find(meshShapeAsset->getFileName().getOriginal());
+			if (it != modelCache.end())
+			{
+				model::MergeModel(*(it->second), shapeMesh.transform, m_collisionMeshSnap).apply(*mergedModel);
+			}
+			else
+			{
+				Ref< model::Model > partModel = model::ModelFormat::readAny(meshShapeAsset->getFileName(), [&](const Path& p) {
+					return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+				});
+				if (!partModel)
+				{
+					log::warning << L"Unable to read model \"" << meshShapeAsset->getFileName().getOriginal() << L"\"" << Endl;
+					continue;
+				}
+
+				partModel->clear(model::Model::CfMaterials | model::Model::CfColors | model::Model::CfNormals | model::Model::CfTexCoords | model::Model::CfJoints);
+
+				model::CleanDuplicates(m_collisionMeshSnap).apply(*partModel);
+				model::CleanDegenerate().apply(*partModel);
+
+				if (m_mergeCoplanar)
+					model::MergeCoplanarAdjacents(true).apply(*partModel);
+
+				if (!isModelClosed(partModel))
+					log::warning << L"Prefab physics model \"" << meshShapeAsset->getFileName().getOriginal() << L"\" is not closed!" << Endl;
+
+				model::MergeModel(*partModel, shapeMesh.transform, m_collisionMeshSnap).apply(*mergedModel);
+
+				modelCache[meshShapeAsset->getFileName().getOriginal()] = partModel;
+			}
+		}
+
+		// Collapse coplanar adjacent polygons.
+		if (m_mergeCoplanar)
+			model::MergeCoplanarAdjacents(true).apply(*mergedModel);
+
+		log::info << L"Output physics model ('original' to 'merged'):" << Endl;
+		log::info << L"\t" << vertexCount << L" to " << mergedModel->getVertexCount() << L" vertices" << Endl;
+		log::info << L"\t" << polygonCount << L" to " << mergedModel->getPolygonCount() << L" polygon(s)" << Endl;
+
+		Ref< physics::MeshAsset > mergedMeshAsset = new physics::MeshAsset();
+		mergedMeshAsset->setCalculateConvexHull(false);
+
+		pipelineBuilder->buildOutput(
+			mergedMeshAsset,
+			outputCollisionShapePath,
+			outputCollisionShapeGuid,
+			mergedModel
+		);
+
+		// Replace mesh component referencing our merged physics mesh.
+		Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc();
+		outputShapeDesc->setMesh(resource::Id< physics::Mesh >(outputCollisionShapeGuid));
+		outputShapeDesc->setCollisionGroup(shapeCollisionGroup);
+		outputShapeDesc->setCollisionMask(shapeCollisionMask);
+
+		Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
+		outputBodyDesc->setShape(outputShapeDesc);
+
+		outputEntityData->setComponent(new physics::RigidBodyComponentData(
+			outputBodyDesc
+		));
+	}
+
+	return outputEntityData;
 }
 
 	}

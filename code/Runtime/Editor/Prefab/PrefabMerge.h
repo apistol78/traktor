@@ -2,11 +2,8 @@
 
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Io/Path.h"
 #include "Core/Math/Transform.h"
-#include "Core/Serialization/ISerializable.h"
-#include "Mesh/Editor/MeshAsset.h"
-#include "Physics/Editor/MeshAsset.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,10 +15,24 @@
 
 namespace traktor
 {
+	namespace mesh
+	{
+
+class MeshAsset;
+
+	}
+
+	namespace physics
+	{
+
+class MeshAsset;
+
+	}
+
 	namespace runtime
 	{
 
-class T_DLLCLASS PrefabMerge : public ISerializable
+class T_DLLCLASS PrefabMerge : public Object
 {
 	T_RTTI_CLASS;
 
@@ -42,14 +53,6 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	PrefabMerge(bool partitionMesh = false);
-
-	void setName(const std::wstring& name);
-
-	const std::wstring& getName() const { return m_name; }
-
-	bool partitionMesh() const { return m_partitionMesh; }
-
 	void addVisualMesh(const mesh::MeshAsset* visualMeshAsset, const Transform& transform);
 
 	void addShapeMesh(const physics::MeshAsset* shapeMeshAsset, const Transform& transform);
@@ -58,11 +61,7 @@ public:
 
 	const AlignedVector< ShapeMesh >& getShapeMeshes() const { return m_shapeMeshes; }
 
-	virtual void serialize(ISerializer& s) override final;
-
 private:
-	std::wstring m_name;
-	bool m_partitionMesh;
 	AlignedVector< VisualMesh > m_visualMeshes;
 	AlignedVector< ShapeMesh > m_shapeMeshes;
 };
