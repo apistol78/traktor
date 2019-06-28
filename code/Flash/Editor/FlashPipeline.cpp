@@ -343,7 +343,7 @@ bool FlashPipeline::buildOutput(
 			atlasImage->save(L"FlashBitmapAtlas" + toString(count) + L".png");
 #endif
 
-			Guid bitmapOutputGuid = outputGuid.permutate(count++);
+			Guid bitmapOutputGuid = outputGuid.permutation(count++);
 
 			Ref< render::TextureOutput > output = new render::TextureOutput();
 			output->m_textureFormat = render::TfInvalid;
@@ -428,7 +428,7 @@ bool FlashPipeline::buildOutput(
 		bitmapImage->save(L"FlashBitmap" + toString(count) + L".png");
 #endif
 
-		Guid bitmapOutputGuid = outputGuid.permutate(count++);
+		Guid bitmapOutputGuid = outputGuid.permutation(count++);
 
 		Ref< render::TextureOutput > output = new render::TextureOutput();
 		output->m_textureFormat = render::TfInvalid;

@@ -623,7 +623,7 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 			os << DecreaseIndent;
 			os << L"</ItemGroup>" << Endl;
 
-			filterGuid = filterGuid.permutate(1);
+			filterGuid = filterGuid.permutation(1);
 		}
 	}
 

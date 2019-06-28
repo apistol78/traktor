@@ -27,10 +27,6 @@
 #include "Drawing/Functions/BlendFunction.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
-#include "Shape/Editor/Bake/GBuffer.h"
-#include "Shape/Editor/Bake/BakeConfiguration.h"
-#include "Shape/Editor/Bake/BakePipelineOperator.h"
-#include "Shape/Editor/Bake/IRayTracer.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
@@ -39,12 +35,19 @@
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
+#include "Model/Operations/MergeModel.h"
+#include "Model/Operations/Transform.h"
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "Render/SH/SHEngine.h"
 #include "Render/SH/SHFunction.h"
 #include "Scene/Editor/SceneAsset.h"
+#include "Shape/Editor/Bake/GBuffer.h"
+#include "Shape/Editor/Bake/BakeConfiguration.h"
+#include "Shape/Editor/Bake/BakePipelineOperator.h"
+#include "Shape/Editor/Bake/IRayTracer.h"
+#include "Shape/Editor/Prefab/PrefabEntityData.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/CameraComponentData.h"
 #include "World/Entity/ComponentEntityData.h"
@@ -62,12 +65,23 @@ namespace traktor
 		namespace
 		{
 
+struct BakeProcessMesh
+{
+	std::wstring name;
+	Ref< model::Model > renderModel;	//!< Render model, using lightmap.
+	Ref< model::Model > tracerModel;	//!< Tracer model, part of RT scene.
+	Guid lightMapId;
+	Ref< render::TextureOutput > lightMapTextureAsset;
+	Guid meshId;
+	Ref< mesh::MeshAsset > meshAsset;
+};
+
 Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 
-	RefArray< ReflectionMember > objectMembers;
-	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+	RefArray< RfmObject > objectMembers;
+	reflection->findMembers< RfmObject >(objectMembers);
 
 	while (!objectMembers.empty())
 	{
@@ -98,34 +112,57 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 	return reflection->clone();
 }
 
-void collectTraceEntities(
-	const ISerializable* object,
-	RefArray< world::ComponentEntityData >& outLightEntityData,
-	RefArray< world::ComponentEntityData >& outMeshEntityData,
-	RefArray< world::ComponentEntityData >& outCameraEntityData
-)
+// void collectTraceEntities(
+// 	const ISerializable* object,
+// 	RefArray< world::ComponentEntityData >& outLightEntityData,
+// 	RefArray< world::ComponentEntityData >& outMeshEntityData,
+// 	RefArray< world::ComponentEntityData >& outCameraEntityData
+// )
+// {
+// 	Ref< Reflection > reflection = Reflection::create(object);
+
+// 	RefArray< ReflectionMember > objectMembers;
+// 	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+
+// 	while (!objectMembers.empty())
+// 	{
+// 		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
+// 		objectMembers.pop_front();
+
+// 		if (world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(objectMember->get()))
+// 		{
+// 			if (componentEntityData->getComponent< world::LightComponentData >() != nullptr)
+// 				outLightEntityData.push_back(componentEntityData);
+// 			if (componentEntityData->getComponent< mesh::MeshComponentData >() != nullptr)
+// 				outMeshEntityData.push_back(componentEntityData);
+// 			if (componentEntityData->getComponent< world::CameraComponentData >() != nullptr)
+// 				outCameraEntityData.push_back(componentEntityData);
+// 		}
+// 		else if (objectMember->get())
+// 			collectTraceEntities(objectMember->get(), outLightEntityData, outMeshEntityData, outCameraEntityData);
+// 	}
+// }
+
+/*! Traverse data structure, visit each entity data.
+ * \param object Current object in data structure.
+ * \param visitor Function called for each found entity data, return true if should recurse further.
+ */
+void visit(ISerializable* object, const std::function< bool(world::EntityData*) >& visitor)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 
-	RefArray< ReflectionMember > objectMembers;
-	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+	RefArray< RfmObject > objectMembers;
+	reflection->findMembers< RfmObject >(objectMembers);
 
-	while (!objectMembers.empty())
+	for (auto objectMember : objectMembers)
 	{
-		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
-		objectMembers.pop_front();
-
-		if (world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(objectMember->get()))
+		if (auto entityData = dynamic_type_cast< world::EntityData* >(objectMember->get()))
 		{
-			if (componentEntityData->getComponent< world::LightComponentData >() != nullptr)
-				outLightEntityData.push_back(componentEntityData);
-			if (componentEntityData->getComponent< mesh::MeshComponentData >() != nullptr)
-				outMeshEntityData.push_back(componentEntityData);
-			if (componentEntityData->getComponent< world::CameraComponentData >() != nullptr)
-				outCameraEntityData.push_back(componentEntityData);
+			if (visitor(entityData))
+				visit(entityData, visitor);
 		}
 		else if (objectMember->get())
-			collectTraceEntities(objectMember->get(), outLightEntityData, outMeshEntityData, outCameraEntityData);
+			visit(objectMember->get(), visitor);
 	}
 }
 
@@ -189,30 +226,6 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
 }
 #endif
 
-void lineTraverse(int32_t x0, int32_t y0, int32_t x1, int32_t y1, const std::function< void(int32_t, int32_t) >& fn)
-{
-	int32_t dx = x1 - x0;
-	int32_t dy = y1 - y0;
-	int32_t x = x0;
-	int32_t y = y0;
-	int32_t p = 2 * dy - dx;
-	while (x < x1)
-	{
-		if (p >= 0)
-		{
-			fn(x, y);
-			y++;
-			p = p + 2 * dy - 2 * dx;
-		}
-		else
-		{
-			fn(x, y);
-			p = p + 2 * dy;
-		}
-		++x;
-	}
-}
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.BakePipelineOperator", 0, BakePipelineOperator, scene::IScenePipelineOperator)
@@ -248,15 +261,18 @@ TypeInfoSet BakePipelineOperator::getOperatorTypes() const
 bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, const ISerializable* operatorData, scene::SceneAsset* inoutSceneAsset) const
 {
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
+	Guid seedId = configuration->getSeedGuid();
 
 	// Create raytracer implementation.
 	Ref< IRayTracer > rayTracer = checked_type_cast< IRayTracer* >(m_rayTracerType->createInstance());
 	if (!rayTracer->create(configuration))
 		return false;
 
-	RefArray< world::ComponentEntityData > lightEntityDatas;
-	RefArray< world::ComponentEntityData > meshEntityDatas;
-	RefArray< world::ComponentEntityData > cameraEntityDatas;
+	AlignedVector< BakeProcessMesh > processMeshes;
+
+	// RefArray< world::ComponentEntityData > lightEntityDatas;
+	// RefArray< world::ComponentEntityData > meshEntityDatas;
+	// RefArray< world::ComponentEntityData > cameraEntityDatas;
 
 	// Find all static meshes and lights; replace external referenced entities with local if necessary.
 	RefArray< world::LayerEntityData > layers;
@@ -269,8 +285,265 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 			if (!flattenedLayer)
 				return false;
 
-			// Get all trace entities.
-			collectTraceEntities(flattenedLayer, lightEntityDatas, meshEntityDatas, cameraEntityDatas);
+			visit(flattenedLayer, [&](world::EntityData* entityData) -> bool
+			{
+				if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(entityData))
+				{
+					if (auto lightComponentData = componentEntityData->getComponent< world::LightComponentData >())
+					{
+						// Add light to tracer scene.
+						Light light;
+						if (lightComponentData->getLightType() == world::LtDirectional)
+						{
+							light.type = Light::LtDirectional;
+							light.position = Vector4::origo();
+							light.direction = -entityData->getTransform().axisY();
+							light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
+							light.range = Scalar(0.0f);
+							rayTracer->addLight(light);
+						}
+						else if (lightComponentData->getLightType() == world::LtPoint)
+						{
+							light.type = Light::LtPoint;
+							light.position = entityData->getTransform().translation().xyz1();
+							light.direction = Vector4::zero();
+							light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
+							light.range = Scalar(lightComponentData->getRange());
+							rayTracer->addLight(light);
+						}
+						else if (lightComponentData->getLightType() == world::LtSpot)
+						{
+							light.type = Light::LtSpot;
+							light.position = entityData->getTransform().translation().xyz1();
+							light.direction = -entityData->getTransform().axisY();
+							light.color = Color4f(lightComponentData->getColor());
+							light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
+							light.range = Scalar(lightComponentData->getRange());
+							light.radius = Scalar(lightComponentData->getRadius());
+							rayTracer->addLight(light);
+						}
+						else if (lightComponentData->getLightType() != world::LtProbe)
+							log::warning << L"IlluminateEntityPipeline warning; unsupported light type of light \"" << entityData->getName() << L"\"." << Endl;
+
+						// Remove this light when we're tracing direct lighting.
+						if (configuration->traceDirect())
+							componentEntityData->removeComponent(lightComponentData);
+					}
+
+					if (auto meshComponentData = componentEntityData->getComponent< mesh::MeshComponentData >())
+					{
+						Ref< mesh::MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< mesh::MeshAsset >(
+							meshComponentData->getMesh()
+						);
+						if (!meshAsset)
+							return false;
+
+						// \tbd We should probably ignore mesh assets with custom shaders.
+
+						Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
+							return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+						});
+						if (!model)
+							return false;
+
+						// Transform model into world space.
+						model::Transform(entityData->getTransform().toMatrix44()).apply(*model);
+
+						uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+
+						auto& processMesh = processMeshes.push_back();
+						processMesh.name = entityData->getName();
+
+						// Create render model.
+						processMesh.renderModel = DeepClone(model).create< model::Model >();
+						AlignedVector< model::Material > materials = processMesh.renderModel->getMaterials();
+						for (auto& material : materials)
+						{
+							material.setBlendOperator(model::Material::BoDecal);
+							material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
+						}
+						processMesh.renderModel->setMaterials(materials);
+
+						// Create tracer model.						
+						processMesh.tracerModel = DeepClone(model).create< model::Model >();
+						processMesh.tracerModel->clear(model::Model::CfColors | model::Model::CfJoints);
+						model::Triangulate().apply(*processMesh.tracerModel);
+						model::CleanDuplicates(0.001f).apply(*processMesh.tracerModel);
+						model::CleanDegenerate().apply(*processMesh.tracerModel);
+						model::CalculateTangents().apply(*processMesh.tracerModel);
+						rayTracer->addModel(processMesh.tracerModel, Transform::identity());
+
+						// Create lightmap texture.
+						processMesh.lightMapId = seedId.permutate();
+						processMesh.lightMapTextureAsset = new render::TextureOutput();
+						processMesh.lightMapTextureAsset->m_textureFormat = render::TfR16G16B16A16F;
+						processMesh.lightMapTextureAsset->m_keepZeroAlpha = false;
+						processMesh.lightMapTextureAsset->m_hasAlpha = false;
+						processMesh.lightMapTextureAsset->m_ignoreAlpha = true;
+						processMesh.lightMapTextureAsset->m_linearGamma = true;
+						processMesh.lightMapTextureAsset->m_enableCompression = false;
+						processMesh.lightMapTextureAsset->m_sharpenRadius = 0;
+						processMesh.lightMapTextureAsset->m_systemTexture = true;
+						processMesh.lightMapTextureAsset->m_generateMips = false;
+
+						// Create output mesh asset.
+						auto materialTextures = meshAsset->getMaterialTextures();
+						materialTextures[L"__Illumination__"] = processMesh.lightMapId;
+
+						processMesh.meshId = seedId.permutate();
+						processMesh.meshAsset = new mesh::MeshAsset();
+						processMesh.meshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+						processMesh.meshAsset->setMaterialTextures(materialTextures);
+
+						// Modify component to reference our output mesh asset.
+						meshComponentData->setMesh(resource::Id< mesh::IMesh >(
+							processMesh.meshId
+						));
+					}
+
+					// Do not recurse further as we cannot make sure we know which
+					// other kinds of components own untraceable entities.
+					return false;
+				}
+				else if (auto prefabEntityData = dynamic_type_cast< PrefabEntityData* >(entityData))
+				{
+					RefArray< model::Model > models;
+					std::map< std::wstring, Guid > materialTextures;
+
+					// We have reached a prefab; collect all models and remove all mesh components from prefab.
+					visit(prefabEntityData, [&](world::EntityData* entityData) -> bool
+					{
+						if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(entityData))
+						{
+							if (auto meshComponentData = componentEntityData->getComponent< mesh::MeshComponentData >())
+							{
+								Ref< mesh::MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< mesh::MeshAsset >(
+									meshComponentData->getMesh()
+								);
+								if (!meshAsset)
+									return false;
+
+								// \tbd We should probably ignore mesh assets with custom shaders.
+
+								Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
+									return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
+								});
+								if (!model)
+									return false;
+
+								// Transform model into world space.
+								model::Transform(entityData->getTransform().toMatrix44()).apply(*model);
+
+								model->clear(model::Model::CfColors | model::Model::CfJoints);
+								models.push_back(model);
+
+								materialTextures.insert(
+									meshAsset->getMaterialTextures().begin(),
+									meshAsset->getMaterialTextures().end()
+								);
+
+								componentEntityData->removeComponent(meshComponentData);
+							}			
+						}
+						return true;
+					});
+
+					if (!models.empty())
+					{
+						// Calculate number of UV tiles.
+						int32_t tiles = (int32_t)(std::sqrt(models.size()) + 0.5f);
+
+						// Offset lightmap UV into tiles.
+						for (int32_t i = 0; i < (int32_t)models.size(); ++i)
+						{
+							float tileU = (float)(i % tiles) / tiles;
+							float tileV = (float)(i / tiles) / tiles;
+
+							uint32_t channel = models[i]->getTexCoordChannel(L"Lightmap");
+							if (channel != model::c_InvalidIndex)
+							{
+								AlignedVector< model::Vertex > vertices = models[i]->getVertices();
+								for (auto& vertex : vertices)
+								{
+									Vector2 uv = models[i]->getTexCoord(vertex.getTexCoord(channel));
+									uv *= (float)(1.0f / tiles);
+									uv += Vector2(tileU, tileV);
+									vertex.setTexCoord(channel, models[i]->addUniqueTexCoord(uv));
+								}
+								models[i]->setVertices(vertices);
+							}
+						}
+
+						auto& processMesh = processMeshes.push_back();
+						processMesh.name = entityData->getName();
+
+						// Create merged model.
+						Ref< model::Model > mergedModel = new model::Model();
+						for (int32_t i = 0; i < (int32_t)models.size(); ++i)
+						{
+							model::CleanDuplicates(0.01f).apply(*models[i]);
+							model::MergeModel(*models[i], Transform::identity(), 0.01f).apply(*mergedModel);
+						}
+
+						uint32_t channel = mergedModel->getTexCoordChannel(L"Lightmap");
+
+						// Create render model.
+						processMesh.renderModel = DeepClone(mergedModel).create< model::Model >();
+						AlignedVector< model::Material > materials = processMesh.renderModel->getMaterials();
+						for (auto& material : materials)
+						{
+							material.setBlendOperator(model::Material::BoDecal);
+							material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
+						}
+						processMesh.renderModel->setMaterials(materials);
+
+						// Create tracer model.						
+						processMesh.tracerModel = DeepClone(mergedModel).create< model::Model >();
+						processMesh.tracerModel->clear(model::Model::CfColors | model::Model::CfJoints);
+						model::Triangulate().apply(*processMesh.tracerModel);
+						model::CleanDuplicates(0.001f).apply(*processMesh.tracerModel);
+						model::CleanDegenerate().apply(*processMesh.tracerModel);
+						model::CalculateTangents().apply(*processMesh.tracerModel);
+						rayTracer->addModel(processMesh.tracerModel, Transform::identity());
+
+						// Create lightmap texture.
+						processMesh.lightMapId = seedId.permutate();
+						processMesh.lightMapTextureAsset = new render::TextureOutput();
+						processMesh.lightMapTextureAsset->m_textureFormat = render::TfR16G16B16A16F;
+						processMesh.lightMapTextureAsset->m_keepZeroAlpha = false;
+						processMesh.lightMapTextureAsset->m_hasAlpha = false;
+						processMesh.lightMapTextureAsset->m_ignoreAlpha = true;
+						processMesh.lightMapTextureAsset->m_linearGamma = true;
+						processMesh.lightMapTextureAsset->m_enableCompression = false;
+						processMesh.lightMapTextureAsset->m_sharpenRadius = 0;
+						processMesh.lightMapTextureAsset->m_systemTexture = true;
+						processMesh.lightMapTextureAsset->m_generateMips = false;
+
+						// Create output mesh asset.
+						materialTextures[L"__Illumination__"] = processMesh.lightMapId;
+
+						processMesh.meshId = seedId.permutate();
+						processMesh.meshAsset = new mesh::MeshAsset();
+						processMesh.meshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+						processMesh.meshAsset->setMaterialTextures(materialTextures);
+
+						// Create a new child entity to prefab which contain reference to our merged visual mesh.
+						Ref< mesh::MeshComponentData > meshComponentData = new mesh::MeshComponentData();
+						meshComponentData->setMesh(resource::Id< mesh::IMesh >(
+							processMesh.meshId
+						));
+
+						Ref< world::ComponentEntityData > mergedEntity = new world::ComponentEntityData();
+						mergedEntity->setComponent(meshComponentData);
+						prefabEntityData->addEntityData(mergedEntity);						
+					}
+
+					// As we have already taken care of prefabs's children we stop from recursing further.
+					return false;
+				}
+				else
+					return true;
+			});
 
 			layers.push_back(flattenedLayer);
 		}
@@ -279,198 +552,119 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 	}
 	inoutSceneAsset->setLayers(layers);
 
-	for (const auto lightEntityData : lightEntityDatas)
-	{
-		world::LightComponentData* lightComponentData = lightEntityData->getComponent< world::LightComponentData >();
-		T_FATAL_ASSERT(lightComponentData != nullptr);
-
-		Light light;
-		if (lightComponentData->getLightType() == world::LtDirectional)
-		{
-			light.type = Light::LtDirectional;
-			light.position = Vector4::origo();
-			light.direction = -lightEntityData->getTransform().axisY();
-			light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
-			light.range = Scalar(0.0f);
-			rayTracer->addLight(light);
-		}
-		else if (lightComponentData->getLightType() == world::LtPoint)
-		{
-			light.type = Light::LtPoint;
-			light.position = lightEntityData->getTransform().translation().xyz1();
-			light.direction = Vector4::zero();
-			light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
-			light.range = Scalar(lightComponentData->getRange());
-			rayTracer->addLight(light);
-		}
-		else if (lightComponentData->getLightType() == world::LtSpot)
-		{
-			light.type = Light::LtSpot;
-			light.position = lightEntityData->getTransform().translation().xyz1();
-			light.direction = -lightEntityData->getTransform().axisY();
-			light.color = Color4f(lightComponentData->getColor());
-			light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
-			light.range = Scalar(lightComponentData->getRange());
-			light.radius = Scalar(lightComponentData->getRadius());
-			rayTracer->addLight(light);
-		}
-		else if (lightComponentData->getLightType() != world::LtProbe)
-			log::warning << L"IlluminateEntityPipeline warning; unsupported light type of light \"" << lightEntityData->getName() << L"\"." << Endl;
-
-		// Disable all dynamic lights in scene if we're tracing direct lighting also.
-		if (configuration->traceDirect())
-			lightComponentData->setIntensity(0.0f);
-	}
-
-	RefArray< mesh::MeshAsset > meshAssets;
-	RefArray< model::Model > models;
-
-	for (const auto meshEntityData : meshEntityDatas)
-	{
-		Ref< mesh::MeshAsset > meshAsset = pipelineBuilder->getSourceDatabase()->getObjectReadOnly< mesh::MeshAsset >(
-			meshEntityData->getComponent< mesh::MeshComponentData >()->getMesh()
-		);
-		if (!meshAsset)
-			continue;
-
-		Ref< model::Model > model = model::ModelFormat::readAny(meshAsset->getFileName(), [&](const Path& p) {
-			return pipelineBuilder->openFile(Path(m_assetPath), p.getOriginal());
-		});
-		if (!model)
-		{
-			log::warning << L"IlluminateEntityPipeline warning; unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"." << Endl;
-			continue;
-		}
-
-		meshAssets.push_back(meshAsset);
-		models.push_back(DeepClone(model).create< model::Model >());
-
-		model->clear(model::Model::CfColors | model::Model::CfTexCoords | model::Model::CfJoints);
-		model::Triangulate().apply(*model);
-		model::CleanDuplicates(0.001f).apply(*model);
-		model::CleanDegenerate().apply(*model);
-		model::CalculateTangents().apply(*model);
-
-		rayTracer->addModel(model, meshEntityData->getTransform());
-	}
-
 	// Commit all lights and models; after this point
 	// no more lights nor models can be added to tracer.
 	rayTracer->commit();
 
 	// Raytrace "ground truths" of each camera.
-	if (false)
-	{
-		for (uint32_t i = 0; i < cameraEntityDatas.size(); ++i)
-		{
-			auto cameraEntityData = cameraEntityDatas[i];
-			T_FATAL_ASSERT(cameraEntityData != nullptr);
+	// if (false)
+	// {
+	// 	for (uint32_t i = 0; i < cameraEntityDatas.size(); ++i)
+	// 	{
+	// 		auto cameraEntityData = cameraEntityDatas[i];
+	// 		T_FATAL_ASSERT(cameraEntityData != nullptr);
 
-			auto cameraComponentData = cameraEntityData->getComponent< world::CameraComponentData >();
-			T_FATAL_ASSERT(cameraComponentData != nullptr);
+	// 		auto cameraComponentData = cameraEntityData->getComponent< world::CameraComponentData >();
+	// 		T_FATAL_ASSERT(cameraComponentData != nullptr);
 
-			if (cameraComponentData->getCameraType() != world::CtPerspective)
-				continue;
+	// 		if (cameraComponentData->getCameraType() != world::CtPerspective)
+	// 			continue;
 
-			log::info << L"Tracing camera \"" << cameraEntityData->getName() << L"\" (" << i << L"/" << cameraEntityDatas.size() << L")..." << Endl;
+	// 		log::info << L"Tracing camera \"" << cameraEntityData->getName() << L"\" (" << i << L"/" << cameraEntityDatas.size() << L")..." << Endl;
 
-			Ref< drawing::Image > image = rayTracer->traceCamera(cameraEntityData->getTransform(), 1280, 720, cameraComponentData->getFieldOfView());
-			if (!image)
-				continue;
+	// 		Ref< drawing::Image > image = rayTracer->traceCamera(cameraEntityData->getTransform(), 1280, 720, cameraComponentData->getFieldOfView());
+	// 		if (!image)
+	// 			continue;
 
-			drawing::TonemapFilter tonemapFilter;
-			image->apply(&tonemapFilter);
+	// 		drawing::TonemapFilter tonemapFilter;
+	// 		image->apply(&tonemapFilter);
 
-			drawing::GammaFilter gammaFilter(1.0f / 2.2f);
-			image->apply(&gammaFilter);
+	// 		drawing::GammaFilter gammaFilter(1.0f / 2.2f);
+	// 		image->apply(&gammaFilter);
 
-			image->save(cameraEntityData->getName() + L"_" + toString(i) + L"_Camera.png");
-		}
-	}
+	// 		image->save(cameraEntityData->getName() + L"_" + toString(i) + L"_Camera.png");
+	// 	}
+	// }
 
 	// Raytrace IBL probes.
-	for (uint32_t i = 0; i < lightEntityDatas.size(); ++i)
-	{
-		auto lightEntityData = lightEntityDatas[i];
-		T_FATAL_ASSERT(lightEntityData != nullptr);
+	// for (uint32_t i = 0; i < lightEntityDatas.size(); ++i)
+	// {
+	// 	auto lightEntityData = lightEntityDatas[i];
+	// 	T_FATAL_ASSERT(lightEntityData != nullptr);
 
-		auto lightComponentData = lightEntityData->getComponent< world::LightComponentData >();
-		T_FATAL_ASSERT(lightComponentData != nullptr);
+	// 	auto lightComponentData = lightEntityData->getComponent< world::LightComponentData >();
+	// 	T_FATAL_ASSERT(lightComponentData != nullptr);
 
-		if (lightComponentData->getLightType() != world::LtProbe)
-			continue;
+	// 	if (lightComponentData->getLightType() != world::LtProbe)
+	// 		continue;
 
-		log::info << L"Tracing SH probe \"" << lightEntityData->getName() << L"\" (" << i << L"/" << lightEntityDatas.size() << L")..." << Endl;
+	// 	log::info << L"Tracing SH probe \"" << lightEntityData->getName() << L"\" (" << i << L"/" << lightEntityDatas.size() << L")..." << Endl;
 
-		auto position = lightEntityData->getTransform().translation().xyz1();
+	// 	auto position = lightEntityData->getTransform().translation().xyz1();
 
-		Ref< render::SHCoeffs > shCoeffs = rayTracer->traceProbe(position);
-		if (shCoeffs)
-			lightComponentData->setSHCoeffs(shCoeffs);
-	}
+	// 	Ref< render::SHCoeffs > shCoeffs = rayTracer->traceProbe(position);
+	// 	if (shCoeffs)
+	// 		lightComponentData->setSHCoeffs(shCoeffs);
+	// }
 
 	// Raytrace lightmap for each mesh.
 	GBuffer gbuffer;
-	for (uint32_t i = 0; i < meshEntityDatas.size(); ++i)
+	for (uint32_t i = 0; i < processMeshes.size(); ++i)
 	{
-		auto meshEntityData = meshEntityDatas[i];
-		T_FATAL_ASSERT(meshEntityData != nullptr);
-
-		log::info << L"Tracing lightmap \"" << meshEntityData->getName() << L"\" (" << i << L"/" << meshEntityDatas.size() << L")..." << Endl;
-
-		Ref< model::Model > model = models[i];
-		model::Triangulate().apply(*model);
+		auto renderModel = processMeshes[i].renderModel;
 
 		// Calculate output size from lumel density.
 		float totalWorldArea = 0.0f;
-		for (const auto& polygon : model->getPolygons())
+		for (const auto& polygon : renderModel->getPolygons())
 		{
 			Winding3 polygonWinding;
 			for (const auto index : polygon.getVertices())
-				polygonWinding.push(model->getVertexPosition(index));
+				polygonWinding.push(renderModel->getVertexPosition(index));
 			totalWorldArea += abs(polygonWinding.area());
 		}
 
-		float totalLightMapArea = configuration->getLumelDensity() * configuration->getLumelDensity() * totalWorldArea;
-		float size = std::sqrt(totalLightMapArea);
-
-		int32_t outputSize = alignUp(std::max< int32_t >(configuration->getMinimumLightMapSize(), (int32_t)(size + 0.5f)), 16);
-		log::info << L"Lumel density " << configuration->getLumelDensity() << L" lumels/unit => lightmap size " << outputSize << Endl;
+		const float totalLightMapArea = configuration->getLumelDensity() * configuration->getLumelDensity() * totalWorldArea;
+		const float size = std::sqrt(totalLightMapArea);
+		
+		const int32_t outputSize = alignUp(std::max< int32_t >(
+			configuration->getMinimumLightMapSize(),
+			 (int32_t)(size + 0.5f)
+		), 16);
 
 		// Unwrap lightmap UV.
 		uint32_t channel = 0;
-		if (configuration->getEnableAutoTexCoords())
-		{
-			channel = model->addUniqueTexCoordChannel(L"Illuminate_LightmapUV");
-			if (!model::UnwrapUV(channel, outputSize).apply(*model))
-			{
-				log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV of model \"" << meshEntityData->getName() << L"\"." << Endl;
-				return false;
-			}
-		}
-		else
-		{
-			channel = model->getTexCoordChannel(L"Lightmap");
-			if (channel == model::c_InvalidIndex)
-			{
-				log::warning << L"IlluminateEntityPipeline warning; no uv channel named \"Lightmap\" found, using channel 0." << Endl;
-				channel = 0;
-			}
-		}
+		// if (configuration->getEnableAutoTexCoords())
+		// {
+		// 	channel = model->addUniqueTexCoordChannel(L"Illuminate_LightmapUV");
+		// 	if (!model::UnwrapUV(channel, outputSize).apply(*model))
+		// 	{
+		// 		log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV of model \"" << meshEntityData->getName() << L"\"." << Endl;
+		// 		return false;
+		// 	}
+		// }
+		// else
+		// {
+		 	channel = renderModel->getTexCoordChannel(L"Lightmap");
+		// 	if (channel == model::c_InvalidIndex)
+		// 	{
+		// 		log::warning << L"IlluminateEntityPipeline warning; no uv channel named \"Lightmap\" found, using channel 0." << Endl;
+		// 		channel = 0;
+		// 	}
+		// }
 
 		Timer timer;
 		timer.start();
 
 		// Create GBuffer of mesh's geometry.
-		gbuffer.create(outputSize, outputSize, *model, meshEntityData->getTransform(), channel);
-		gbuffer.saveAsImages(meshEntityData->getName() + L"_" + toString(i) + L"_GBuffer_Pre");
+		gbuffer.create(outputSize, outputSize, *renderModel, Transform::identity(), channel);
+		// gbuffer.saveAsImages(meshEntityData->getName() + L"_" + toString(i) + L"_GBuffer_Pre");
 
 		double TendGBuffer = timer.getElapsedTime();
 		timer.start();
 
 		// Preprocess GBuffer.
 		rayTracer->preprocess(&gbuffer);
-		gbuffer.saveAsImages(meshEntityData->getName() + L"_" + toString(i) + L"_GBuffer_Post");
+		// gbuffer.saveAsImages(meshEntityData->getName() + L"_" + toString(i) + L"_GBuffer_Post");
 
 		double TendPreProcess = timer.getElapsedTime();
 		timer.start();
@@ -485,67 +679,6 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 
 		double TendTrace = timer.getElapsedTime();
 		timer.start();
-
-		/*
-		// Discontinuity filtering.
-		model::ModelAdjacency adjacency(model, model::ModelAdjacency::MdByPosition);
-		for (auto polygon : model->getPolygons())
-		for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
-		{
-			auto polygon = model->getPolygon(i);
-
-			for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
-			{
-				uint32_t halfEdge = adjacency.getEdge(i, j);
-
-				AlignedVector< uint32_t > sharedEdges;
-				adjacency.getSharedEdges(halfEdge, sharedEdges);
-				if (sharedEdges.empty())
-					continue;
-
-				auto vtxA = model->getVertex(polygon.getVertex(j));
-				auto vtxB = model->getVertex(polygon.getVertex((j + 1) % polygon.getVertexCount()));
-
-				Vector2 sourceTexCoordA = model->getTexCoord(vtxA.getTexCoord(channel));
-				Vector2 sourceTexCoordB = model->getTexCoord(vtxB.getTexCoord(channel));
-
-				int32_t sx = (int32_t)std::floor(sourceTexCoordA.x + 0.5f);
-				int32_t sy = (int32_t)std::floor(sourceTexCoordA.y + 0.5f);
-
-				int32_t dx = (int32_t)std::floor(sourceTexCoordB.x + 0.5f);
-				int32_t dy = (int32_t)std::floor(sourceTexCoordB.y + 0.5f);
-
-				for (auto sharedEdge : sharedEdges)
-				{
-					auto sharedPolygon = model->getPolygon(adjacency.getPolygon(sharedEdge));
-					auto sharedPolygonEdge = adjacency.getPolygonEdge(sharedEdge);
-
-					auto sharedVtxA = model->getVertex(sharedPolygon.getVertex(sharedPolygonEdge));
-					auto sharedVtxB = model->getVertex(sharedPolygon.getVertex((sharedPolygonEdge + 1) % sharedPolygon.getVertexCount()));
-
-					Vector2 destTexCoordA = model->getTexCoord(sharedVtxA.getTexCoord(channel));
-					Vector2 destTexCoordB = model->getTexCoord(sharedVtxB.getTexCoord(channel));
-
-					// \tbd Need line traversal function.
-
-
-					lineTraverse(
-						sx, sy,
-						dx, dy,
-						[&](int32_t x, int32_t y)
-						{
-							//float fx = (x - sx);
-							//float fy = (y - sy);
-							//float f = std::sqrt(fx * fx + fy * fy);
-
-							lightmapIndirect->setPixel(x, y, Color4f(1, 0, 0, 1));
-						}
-					);
-
-				}
-			}
-		}
-		*/
 
 		if (configuration->getEnableDilate())
 		{
@@ -619,67 +752,29 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 		//lightmap->save(meshEntityData->getName() + L"_" + toString(i) + L"_Lightmap.png");
 		//model::ModelFormat::writeAny(meshEntityData->getName() + L"_" + toString(i) + L"_Unwrapped.tmd", model);
 
-		// "Permutate" output ids.
-		Guid idGenerated = configuration->getSeedGuid().permutate(0);
-		Guid idLightMap = configuration->getSeedGuid().permutate(i * 10 + 1);
-		Guid idMesh = configuration->getSeedGuid().permutate(i * 10 + 2);
-
-		// Create a texture build step.
-		Ref< render::TextureOutput > textureOutput = new render::TextureOutput();
-		textureOutput->m_textureFormat = render::TfR16G16B16A16F;
-		textureOutput->m_keepZeroAlpha = false;
-		textureOutput->m_hasAlpha = false;
-		textureOutput->m_ignoreAlpha = true;
-		textureOutput->m_linearGamma = true;
-		textureOutput->m_enableCompression = false;
-		textureOutput->m_sharpenRadius = 0;
-		textureOutput->m_systemTexture = true;
-		textureOutput->m_generateMips = false;
-
 		pipelineBuilder->buildOutput(
-			textureOutput,
-			L"Generated/" + idGenerated.format() + L"/" + idLightMap.format() + L"/__Texture__",
-			idLightMap,
+			processMeshes[i].lightMapTextureAsset,
+			L"Generated/" + processMeshes[i].lightMapId.format(),
+			processMeshes[i].lightMapId,
 			lightmap
 		);
 
-		// Modify model materials to use our illumination texture.
-		AlignedVector< model::Material > materials = model->getMaterials();
-		for (auto& material : materials)
-		{
-			material.setBlendOperator(model::Material::BoDecal);
-			material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
-		}
-		model->setMaterials(materials);
-
-		// Create a new mesh asset which use the fresh baked illumination texture.
-		auto materialTextures = meshAssets[i]->getMaterialTextures();
-		materialTextures[L"__Illumination__"] = idLightMap;
-
-		Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-		outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-		outputMeshAsset->setMaterialTextures(materialTextures);
 		pipelineBuilder->buildOutput(
-			outputMeshAsset,
-			L"Generated/" + idGenerated.format() + L"/" + idMesh.format() + L"/__Mesh__",
-			idMesh,
-			model
+			processMeshes[i].meshAsset,
+			L"Generated/" + processMeshes[i].meshId.format(),
+			processMeshes[i].meshId,
+			processMeshes[i].renderModel
 		);
-
-		 // Replace mesh reference to our synthesized mesh instead.
-		meshEntityData->getComponent< mesh::MeshComponentData >()->setMesh(resource::Id< mesh::IMesh >(
-			idMesh
-		));
 
 		double TendWrite = timer.getElapsedTime();
 		timer.start();
 
-		log::info << L"Lightmap time breakdown;" << Endl;
-		log::info << L"  gbuffer    " << int32_t(TendGBuffer * 1000.0) << L" ms." << Endl;
-		log::info << L"  preprocess " << int32_t(TendPreProcess * 1000.0) << L" ms." << Endl;
-		log::info << L"  trace      " << int32_t(TendTrace * 1000.0) << L" ms." << Endl;
-		log::info << L"  filter     " << int32_t((TendFilter) * 1000.0) << L" ms." << Endl;
-		log::info << L"  output     " << int32_t((TendWrite) * 1000.0) << L" ms." << Endl;
+		log::debug << L"Lightmap time breakdown;" << Endl;
+		log::debug << L"  gbuffer    " << int32_t(TendGBuffer * 1000.0) << L" ms." << Endl;
+		log::debug << L"  preprocess " << int32_t(TendPreProcess * 1000.0) << L" ms." << Endl;
+		log::debug << L"  trace      " << int32_t(TendTrace * 1000.0) << L" ms." << Endl;
+		log::debug << L"  filter     " << int32_t((TendFilter) * 1000.0) << L" ms." << Endl;
+		log::debug << L"  output     " << int32_t((TendWrite) * 1000.0) << L" ms." << Endl;
 	}
 
 	return true;

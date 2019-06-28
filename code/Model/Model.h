@@ -59,6 +59,8 @@ public:
 
 	const Material& getMaterial(uint32_t index) const { return m_materials[index]; }
 
+	uint32_t getMaterialCount() const { return uint32_t(m_materials.size()); }
+
 	void setMaterials(const AlignedVector< Material >& materials) { m_materials = materials; }
 
 	const AlignedVector< Material >& getMaterials() const { return m_materials; }

@@ -67,7 +67,7 @@ bool SequenceTexturePipeline::buildOutput(
 	Ref< SequenceTextureResource > resource = new SequenceTextureResource();
 	resource->m_rate = asset->m_rate;
 
-	Guid frameOutputGuid = outputGuid.permutate(1);
+	Guid frameOutputGuid = outputGuid.permutation(1);
 
 	for (const auto& p : asset->m_fileNames)
 	{
@@ -105,7 +105,7 @@ bool SequenceTexturePipeline::buildOutput(
 			frameOutputGuid
 		));
 
-		frameOutputGuid = frameOutputGuid.permutate(1);
+		frameOutputGuid = frameOutputGuid.permutation(1);
 	}
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
