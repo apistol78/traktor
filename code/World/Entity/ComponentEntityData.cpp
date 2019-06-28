@@ -12,25 +12,33 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ComponentEntityData", 0, ComponentEn
 
 void ComponentEntityData::setComponent(IEntityComponentData* component)
 {
-	for (RefArray< IEntityComponentData >::iterator i = m_components.begin(); i != m_components.end(); ++i)
+	const auto componentType = type_of(component);
+	for (auto existingComponent : m_components)
 	{
-		if (is_type_a(type_of(*i), type_of(component)))
+		if (is_type_a(type_of(existingComponent), componentType))
 		{
-			*i = component;
+			existingComponent = component;
 			return;
 		}
 	}
 	m_components.push_back(component);
 }
 
+void ComponentEntityData::removeComponent(IEntityComponentData* component)
+{
+	auto it = std::find(m_components.begin(), m_components.end(), component);
+	if (it != m_components.end())
+		m_components.erase(it);
+}
+
 IEntityComponentData* ComponentEntityData::getComponent(const TypeInfo& componentType) const
 {
-	for (RefArray< IEntityComponentData >::const_iterator i = m_components.begin(); i != m_components.end(); ++i)
+	for (auto component : m_components)
 	{
-		if (is_type_a(componentType, type_of(*i)))
-			return *i;
+		if (is_type_a(componentType, type_of(component)))
+			return component;
 	}
-	return 0;
+	return nullptr;
 }
 
 const RefArray< IEntityComponentData >& ComponentEntityData::getComponents() const

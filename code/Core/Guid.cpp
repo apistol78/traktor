@@ -156,7 +156,14 @@ bool Guid::isNotNull() const
 	return isValid() && !isNull();
 }
 
-Guid Guid::permutate(uint32_t iterations) const
+Guid Guid::permutate()
+{
+	Guid current = *this;
+	reinterpret_cast< uint64_t& >(m_data[8]) += 1;
+	return current;
+}
+
+Guid Guid::permutation(uint32_t iterations) const
 {
 	uint8_t d[16];
 	std::memcpy(d, m_data, 16);
@@ -164,7 +171,7 @@ Guid Guid::permutate(uint32_t iterations) const
 	return Guid(d);
 }
 
-Guid Guid::permutate(const Guid& seed) const
+Guid Guid::permutation(const Guid& seed) const
 {
 	uint8_t d[16];
 	for (int i = 0; i < 16; ++i)

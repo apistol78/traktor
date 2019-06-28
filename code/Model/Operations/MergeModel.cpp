@@ -39,11 +39,15 @@ MergeModel::MergeModel(const Model& sourceModel, const Transform& sourceTransfor
 bool MergeModel::apply(Model& model) const
 {
 	std::map< uint32_t, uint32_t > materialMap;
+	std::map< uint32_t, uint32_t > channelMap;
 
 	// Merge materials.
-	const AlignedVector< Material >& sourceMaterials = m_sourceModel.getMaterials();
-	for (uint32_t i = 0; i < sourceMaterials.size(); ++i)
-		materialMap[i] = model.addUniqueMaterial(sourceMaterials[i]);
+	for (uint32_t i = 0; i < m_sourceModel.getMaterialCount(); ++i)
+		materialMap[i] = model.addUniqueMaterial(m_sourceModel.getMaterial(i));
+
+	// Merge texture channels.
+	for (uint32_t i = 0; i < m_sourceModel.getTexCoordChannels().size(); ++i)
+		channelMap[i] = model.addUniqueTexCoordChannel(m_sourceModel.getTexCoordChannels()[i]);
 
 	// Merge geometry.
 	const AlignedVector< Polygon >& sourcePolygons = m_sourceModel.getPolygons();
@@ -94,7 +98,7 @@ bool MergeModel::apply(Model& model) const
 			if (texCoord != c_InvalidIndex)
 			{
 				texCoord = model.addUniqueTexCoord(m_sourceModel.getTexCoord(texCoord));
-				v.setTexCoord(j, texCoord);
+				v.setTexCoord(channelMap[j], texCoord);
 			}
 		}
 

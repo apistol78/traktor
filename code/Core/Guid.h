@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-/*! \brief Globally unique identifier.
+/*! Globally unique identifier.
  * \ingroup Core
  *
  * Globally unique identifier, with support of translating
@@ -25,7 +25,7 @@ class T_DLLCLASS Guid
 public:
 	Guid();
 
-	/*! \brief Initialize guid from string.
+	/*! Initialize guid from string.
 	 * String must be properly formated or else
 	 * the guid will be invalid.
 	 *
@@ -33,53 +33,58 @@ public:
 	 */
 	explicit Guid(const std::wstring& s);
 
-	/*! \brief Initialize guid from bytes. */
+	/*! Initialize guid from bytes. */
 	explicit Guid(const uint8_t data[16]);
 
-	/*! \brief Create guid from string. */
+	/*! Create guid from string. */
 	bool create(const std::wstring& s);
 
-	/*! \brief Create unique guid.
+	/*! Create unique guid.
 	 * Create guid which is "guaranteed" to be
 	 * globally unique from various parameters such as mac address etc.
 	 */
 	static Guid create();
 
-	/*! \brief Format guid string. */
+	/*! Format guid string. */
 	std::wstring format() const;
 
-	/*! \brief Check if guid is valid. */
+	/*! Check if guid is valid. */
 	bool isValid() const;
 
-	/*! \brief Check if guid is all zeros.
+	/*! Check if guid is all zeros.
 	 *
 	 * Note a null guid is still a valid guid, just
 	 * not representative of a guid.
 	 */
 	bool isNull() const;
 
-	/*! \brief Check if guid is valid and not null. */
+	/*! Check if guid is valid and not null. */
 	bool isNotNull() const;
 
-	/*! \brief Generate a permutation of this guid in N iterations. */
-	Guid permutate(uint32_t iterations) const;
+	/*! Permutate this guid.
+	 * \return Current guid before permutation.
+	 */
+	Guid permutate();
 
-	/*! \brief Generate a permutation of this guid combined with another guid. */
-	Guid permutate(const Guid& seed) const;
+	/*! Generate a permutation of this guid in N iterations. */
+	Guid permutation(uint32_t iterations) const;
 
-	/*! \brief Convert guid into 16 bytes. */
+	/*! Generate a permutation of this guid combined with another guid. */
+	Guid permutation(const Guid& seed) const;
+
+	/*! Convert guid into 16 bytes. */
 	operator const uint8_t* () const;
 
-	/*! \brief Equal compare. */
+	/*! Equal compare. */
 	bool operator == (const Guid& r) const;
 
-	/*! \brief Not equal compare. */
+	/*! Not equal compare. */
 	bool operator != (const Guid& r) const;
 
-	/*! \brief Less than compare. */
+	/*! Less than compare. */
 	bool operator < (const Guid& r) const;
 
-	/*! \brief Greater than compare. */
+	/*! Greater than compare. */
 	bool operator > (const Guid& r) const;
 
 private:

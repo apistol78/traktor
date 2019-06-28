@@ -40,6 +40,16 @@ public:
 
 	void findMembers(const ReflectionMemberPredicate& predicate, RefArray< ReflectionMember >& outMembers) const;
 
+	template < typename MemberType >
+	void findMembers(RefArray< MemberType >& outMembers) const
+	{
+		for (auto member : m_members)
+		{
+			if (is_a< MemberType >(member))
+				outMembers.push_back(static_cast< MemberType* >(member));
+		}
+	}
+
 	virtual bool replace(const ReflectionMember* source) override final;
 
 private:

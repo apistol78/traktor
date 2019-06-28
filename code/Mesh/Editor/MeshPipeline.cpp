@@ -320,7 +320,7 @@ bool MeshPipeline::buildOutput(
 	Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
 	T_ASSERT(vertexShaderGuid.isValid());
 
-	Guid materialGuid = vertexShaderGuid.permutate(outputGuid);
+	Guid materialGuid = vertexShaderGuid.permutation(outputGuid);
 	T_ASSERT(materialGuid.isValid());
 
 	MaterialShaderGenerator generator;
