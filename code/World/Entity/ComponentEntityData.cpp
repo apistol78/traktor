@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ComponentEntityData", 0, ComponentEn
 
 void ComponentEntityData::setComponent(IEntityComponentData* component)
 {
-	const auto componentType = type_of(component);
+	const auto& componentType = type_of(component);
 	for (auto existingComponent : m_components)
 	{
 		if (is_type_a(type_of(existingComponent), componentType))
