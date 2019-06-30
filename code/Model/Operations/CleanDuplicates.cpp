@@ -19,28 +19,28 @@ bool CleanDuplicates::apply(Model& model) const
 	Model cleaned;
 	uint32_t id;
 
-	const AlignedVector< Material >& materials = model.getMaterials();
-	for (AlignedVector< Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
-		cleaned.addMaterial(*i);
+	for (const auto& material : model.getMaterials())
+		cleaned.addMaterial(material);
 
-	const AlignedVector< Polygon >& polygons = model.getPolygons();
-	for (AlignedVector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	for (const auto& channel : model.getTexCoordChannels())
+		cleaned.addUniqueTexCoordChannel(channel);
+
+	for (const auto& polygon : model.getPolygons())
 	{
 		Polygon cleanedPolygon;
 
-		cleanedPolygon.setMaterial(i->getMaterial());
+		cleanedPolygon.setMaterial(polygon.getMaterial());
 
-		id = i->getNormal();
+		id = polygon.getNormal();
 		if (id != c_InvalidIndex)
 			cleanedPolygon.setNormal(cleaned.addUniqueNormal(model.getNormal(id).normalized()));
 
-		const AlignedVector< uint32_t >& vertices = i->getVertices();
-		for (AlignedVector< uint32_t >::const_iterator j = vertices.begin(); j != vertices.end(); ++j)
+		for (auto vertexId : polygon.getVertices())
 		{
-			if (*j == c_InvalidIndex)
+			if (vertexId == c_InvalidIndex)
 				continue;
 
-			const Vertex& vertex = model.getVertex(*j);
+			const Vertex& vertex = model.getVertex(vertexId);
 			Vertex cleanedVertex;
 
 			id = vertex.getPosition();

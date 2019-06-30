@@ -2,6 +2,7 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Aabb2.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Format.h"
 #include "Core/Math/Log2.h"
@@ -151,11 +152,15 @@ void visit(ISerializable* object, const std::function< bool(world::EntityData*) 
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 
-	RefArray< RfmObject > objectMembers;
-	reflection->findMembers< RfmObject >(objectMembers);
+	//RefArray< RfmObject > objectMembers;
+	//reflection->findMembers< RfmObject >(objectMembers);
+ 	RefArray< ReflectionMember > objectMembers;
+ 	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
 
-	for (auto objectMember : objectMembers)
+	for (auto objectMember2 : objectMembers)
 	{
+		RfmObject* objectMember = dynamic_type_cast< RfmObject* >(objectMember2);
+
 		if (auto entityData = dynamic_type_cast< world::EntityData* >(objectMember->get()))
 		{
 			if (visitor(entityData))
@@ -527,7 +532,7 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 						processMesh.meshAsset->setMeshType(mesh::MeshAsset::MtStatic);
 						processMesh.meshAsset->setMaterialTextures(materialTextures);
 
-						// Create a new child entity to prefab which contain reference to our merged visual mesh.
+						// Create a new child entity to layer (we cannot add to prefab) which contain reference to our merged visual mesh.
 						Ref< mesh::MeshComponentData > meshComponentData = new mesh::MeshComponentData();
 						meshComponentData->setMesh(resource::Id< mesh::IMesh >(
 							processMesh.meshId
@@ -535,7 +540,7 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 
 						Ref< world::ComponentEntityData > mergedEntity = new world::ComponentEntityData();
 						mergedEntity->setComponent(meshComponentData);
-						prefabEntityData->addEntityData(mergedEntity);						
+						flattenedLayer->addEntityData(mergedEntity);						
 					}
 
 					// As we have already taken care of prefabs's children we stop from recursing further.
@@ -749,8 +754,9 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 		double TendFilter = timer.getElapsedTime();
 		timer.start();
 
-		//lightmap->save(meshEntityData->getName() + L"_" + toString(i) + L"_Lightmap.png");
-		//model::ModelFormat::writeAny(meshEntityData->getName() + L"_" + toString(i) + L"_Unwrapped.tmd", model);
+		lightmap->save(processMeshes[i].name + L"_" + toString(i) + L"_Lightmap.png");
+		model::ModelFormat::writeAny(processMeshes[i].name + L"_" + toString(i) + L"_Tracer.tmd", processMeshes[i].tracerModel);
+		model::ModelFormat::writeAny(processMeshes[i].name + L"_" + toString(i) + L"_Render.tmd", processMeshes[i].renderModel);
 
 		pipelineBuilder->buildOutput(
 			processMeshes[i].lightMapTextureAsset,
