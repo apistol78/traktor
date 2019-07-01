@@ -41,13 +41,45 @@ bool MergeModel::apply(Model& model) const
 	std::map< uint32_t, uint32_t > materialMap;
 	std::map< uint32_t, uint32_t > channelMap;
 
-	// Merge materials.
-	for (uint32_t i = 0; i < m_sourceModel.getMaterialCount(); ++i)
-		materialMap[i] = model.addUniqueMaterial(m_sourceModel.getMaterial(i));
-
 	// Merge texture channels.
 	for (uint32_t i = 0; i < m_sourceModel.getTexCoordChannels().size(); ++i)
 		channelMap[i] = model.addUniqueTexCoordChannel(m_sourceModel.getTexCoordChannels()[i]);
+
+	// Merge materials.
+	for (uint32_t i = 0; i < m_sourceModel.getMaterialCount(); ++i)
+	{
+		Material material = m_sourceModel.getMaterial(i);
+
+		// Ensure texture channels are remapped in material before adding.
+		Material::Map mm[] =
+		{
+			material.getDiffuseMap(),
+			material.getSpecularMap(),
+			material.getRoughnessMap(),
+			material.getMetalnessMap(),
+			material.getTransparencyMap(),
+			material.getEmissiveMap(),
+			material.getReflectiveMap(),
+			material.getNormalMap(),
+			material.getLightMap()
+		};
+		for (auto& m : mm)
+		{
+			if (!m.name.empty())
+				m.channel = channelMap[m.channel];
+		}
+		material.setDiffuseMap(mm[0]);
+		material.setSpecularMap(mm[1]);
+		material.setRoughnessMap(mm[2]);
+		material.setMetalnessMap(mm[3]);
+		material.setTransparencyMap(mm[4]);
+		material.setEmissiveMap(mm[5]);
+		material.setReflectiveMap(mm[6]);
+		material.setNormalMap(mm[7]);
+		material.setLightMap(mm[8], 1.0f);
+
+		materialMap[i] = model.addUniqueMaterial(material);
+	}
 
 	// Merge geometry.
 	const AlignedVector< Polygon >& sourcePolygons = m_sourceModel.getPolygons();

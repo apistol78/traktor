@@ -423,7 +423,7 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 					if (!models.empty())
 					{
 						// Calculate number of UV tiles.
-						int32_t tiles = (int32_t)(std::sqrt(models.size()) + 0.5f);
+						int32_t tiles = (int32_t)(std::ceil(std::sqrt(models.size())) + 0.5f);
 
 						// Offset lightmap UV into tiles.
 						for (int32_t i = 0; i < (int32_t)models.size(); ++i)
