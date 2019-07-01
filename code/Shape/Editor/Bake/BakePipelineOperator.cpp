@@ -6,6 +6,7 @@
 #include "Core/Math/Float.h"
 #include "Core/Math/Format.h"
 #include "Core/Math/Log2.h"
+#include "Core/Math/Random.h"
 #include "Core/Math/Triangulator.h"
 #include "Core/Math/Winding3.h"
 #include "Core/Misc/String.h"
@@ -646,9 +647,52 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 		timer.start();
 
 		Ref< drawing::Image > lightmapDirect;
-		if (configuration->traceDirect())
-			lightmapDirect = rayTracer->traceDirect(&gbuffer);
 
+		if (true)
+		{
+			if (configuration->traceDirect())
+				lightmapDirect = rayTracer->traceDirect(&gbuffer);
+		}
+		else
+		{
+			const int32_t width = gbuffer.getWidth();
+			const int32_t height = gbuffer.getHeight();
+
+		    lightmapDirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), width, height);
+			lightmapDirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+			SmallMap< uint32_t, Color4f > colors;
+			Random random;
+
+			for (int32_t y = 0; y < height; ++y)
+			{
+				for (int32_t x = 0; x < width; ++x)
+				{
+					const auto& elm = gbuffer.get(x, y);
+					if (elm.polygon == model::c_InvalidIndex)
+						continue;
+
+					Color4f c;
+					
+					auto ci = colors.find(elm.polygon);
+					if (ci != colors.end())
+						c = ci->second;
+					else
+					{
+						c = Color4f(
+							random.nextFloat(),
+							random.nextFloat(),
+							random.nextFloat(),
+							1.0f
+						);
+						colors[elm.polygon] = c;
+					}
+
+					lightmapDirect->setPixel(x, y, c.rgb1());
+				}
+			}
+		}
+		
 		Ref< drawing::Image > lightmapIndirect;
 		if (configuration->traceIndirect())
 			lightmapIndirect = rayTracer->traceIndirect(&gbuffer);

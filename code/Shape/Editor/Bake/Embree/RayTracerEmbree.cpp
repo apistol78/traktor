@@ -309,7 +309,6 @@ Ref< drawing::Image > RayTracerEmbree::traceDirect(const GBuffer* gbuffer) const
 Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) const
 {
 	RandomGeometry random;
-	RTCRayHit16 T_MATH_ALIGN16 rh;
 
     int32_t width = gbuffer->getWidth();
     int32_t height = gbuffer->getHeight();
@@ -325,6 +324,7 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
         for (int32_t tx = 0; tx < width; tx += 16)
         {
             auto job = JobManager::getInstance().add(makeFunctor([&, tx, ty]() {
+				RTCRayHit16 T_MATH_ALIGN16 rh;
 				Vector4 direction[16];
 
                 for (int32_t y = ty; y < ty + 16; ++y)
@@ -341,7 +341,7 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 						{
 							for (uint32_t j = 0; j < 16; ++j)
 							{
-								direction[j] = random.nextHemi(elm.normal);
+								direction[j] = (elm.normal * Scalar(0.2f) + random.nextHemi(elm.normal)).normalized();
 
 								rh.ray.org_x[j] = elm.position.x();
 								rh.ray.org_y[j] = elm.position.y();
@@ -379,7 +379,13 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 									Vector4 hitPosition = (elm.position + direction[j] * distance).xyz1();
 									Vector4 hitNormal = Vector4(rh.hit.Ng_x[j], rh.hit.Ng_y[j], rh.hit.Ng_z[j], 0.0f).normalized();
 
+									if (dot3(hitNormal, direction[j]) > 0.0f)
+										continue;
+
 									Scalar ct = dot3(elm.normal, direction[j]);
+									if (ct < 0.0f)
+										ct = Scalar(0.0f);
+
 									Color4f brdf = /*m_surfaces[result.index].albedo*/ Color4f(1.0f, 1.0f, 1.0f, 0.0f) / Scalar(PI);
 									Color4f incoming = sampleAnalyticalLights(
 										random,
@@ -399,7 +405,7 @@ Ref< drawing::Image > RayTracerEmbree::traceIndirect(const GBuffer* gbuffer) con
 				}
             }));
             if (!job)
-                return nullptr;
+               return nullptr;
 
             jobs.push_back(job);
 		}
