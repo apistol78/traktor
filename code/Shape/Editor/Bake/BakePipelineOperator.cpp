@@ -81,13 +81,12 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 
-	RefArray< RfmObject > objectMembers;
-	reflection->findMembers< RfmObject >(objectMembers);
+ 	RefArray< ReflectionMember > objectMembers;
+ 	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
 
-	while (!objectMembers.empty())
+	for (auto member : objectMembers)
 	{
-		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
-		objectMembers.pop_front();
+		RfmObject* objectMember = dynamic_type_cast< RfmObject* >(member);
 
 		if (const world::ExternalEntityData* externalEntityDataRef = dynamic_type_cast< const world::ExternalEntityData* >(objectMember->get()))
 		{
@@ -113,37 +112,6 @@ Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const
 	return reflection->clone();
 }
 
-// void collectTraceEntities(
-// 	const ISerializable* object,
-// 	RefArray< world::ComponentEntityData >& outLightEntityData,
-// 	RefArray< world::ComponentEntityData >& outMeshEntityData,
-// 	RefArray< world::ComponentEntityData >& outCameraEntityData
-// )
-// {
-// 	Ref< Reflection > reflection = Reflection::create(object);
-
-// 	RefArray< ReflectionMember > objectMembers;
-// 	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-
-// 	while (!objectMembers.empty())
-// 	{
-// 		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
-// 		objectMembers.pop_front();
-
-// 		if (world::ComponentEntityData* componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(objectMember->get()))
-// 		{
-// 			if (componentEntityData->getComponent< world::LightComponentData >() != nullptr)
-// 				outLightEntityData.push_back(componentEntityData);
-// 			if (componentEntityData->getComponent< mesh::MeshComponentData >() != nullptr)
-// 				outMeshEntityData.push_back(componentEntityData);
-// 			if (componentEntityData->getComponent< world::CameraComponentData >() != nullptr)
-// 				outCameraEntityData.push_back(componentEntityData);
-// 		}
-// 		else if (objectMember->get())
-// 			collectTraceEntities(objectMember->get(), outLightEntityData, outMeshEntityData, outCameraEntityData);
-// 	}
-// }
-
 /*! Traverse data structure, visit each entity data.
  * \param object Current object in data structure.
  * \param visitor Function called for each found entity data, return true if should recurse further.
@@ -152,14 +120,12 @@ void visit(ISerializable* object, const std::function< bool(world::EntityData*) 
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 
-	//RefArray< RfmObject > objectMembers;
-	//reflection->findMembers< RfmObject >(objectMembers);
  	RefArray< ReflectionMember > objectMembers;
  	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
 
-	for (auto objectMember2 : objectMembers)
+	for (auto member : objectMembers)
 	{
-		RfmObject* objectMember = dynamic_type_cast< RfmObject* >(objectMember2);
+		RfmObject* objectMember = dynamic_type_cast< RfmObject* >(member);
 
 		if (auto entityData = dynamic_type_cast< world::EntityData* >(objectMember->get()))
 		{
@@ -275,10 +241,6 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 
 	AlignedVector< BakeProcessMesh > processMeshes;
 
-	// RefArray< world::ComponentEntityData > lightEntityDatas;
-	// RefArray< world::ComponentEntityData > meshEntityDatas;
-	// RefArray< world::ComponentEntityData > cameraEntityDatas;
-
 	// Find all static meshes and lights; replace external referenced entities with local if necessary.
 	RefArray< world::LayerEntityData > layers;
 	for (const auto layer : inoutSceneAsset->getLayers())
@@ -292,6 +254,8 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 
 			visit(flattenedLayer, [&](world::EntityData* entityData) -> bool
 			{
+				log::info << L"Visit \"" << entityData->getName() << L"\" (" << type_name(entityData) << L")..." << Endl;
+
 				if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(entityData))
 				{
 					if (auto lightComponentData = componentEntityData->getComponent< world::LightComponentData >())
@@ -353,6 +317,9 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 
 						// Transform model into world space.
 						model::Transform(entityData->getTransform().toMatrix44()).apply(*model);
+
+						// Reset transformation of entity.
+						componentEntityData->setTransform(Transform::identity());
 
 						uint32_t channel = model->getTexCoordChannel(L"Lightmap");
 
@@ -556,6 +523,10 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 			layers.push_back(layer);
 	}
 	inoutSceneAsset->setLayers(layers);
+
+	log::info << L"Found " << (int32_t)processMeshes.size() << L" meshes to process..." << Endl;
+	for (int32_t i = 0; i < (int32_t)processMeshes.size(); ++i)
+		log::info << i << L". \"" << processMeshes[i].name << L"\"" << Endl;
 
 	// Commit all lights and models; after this point
 	// no more lights nor models can be added to tracer.
