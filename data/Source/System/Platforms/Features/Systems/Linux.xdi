@@ -70,8 +70,8 @@
 					<value>
 						<item>Traktor.Database</item>
 						<item>Traktor.Database.Local</item>
-						<item>Traktor.Illuminate.Editor</item>
 						<item>Traktor.Resource.Editor</item>
+						<item>Traktor.Shape.Editor</item>
 					</value>
 				</second>
 			</item>
