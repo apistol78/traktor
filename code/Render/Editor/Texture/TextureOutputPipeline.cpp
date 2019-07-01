@@ -112,7 +112,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 32, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 33, TextureOutputPipeline, editor::IPipeline)
 
 TextureOutputPipeline::TextureOutputPipeline()
 :	m_generateMipsThread(false)
@@ -533,9 +533,9 @@ bool TextureOutputPipeline::buildOutput(
 		}
 
 		// Ensure power-of-2 textures.
-		if (!isLog2(width) || !isLog2(height))
+		if (textureOutput->m_generateMips && (!isLog2(width) || !isLog2(height)))
 		{
-			log::warning << L"Texture dimension not power-of-2; resized to nearest valid dimension" << Endl;
+			log::warning << L"Texture (using mipmaps) dimension not power-of-2; resized to nearest valid dimension." << Endl;
 
 			if (nearestLog2(width) - width < width - previousLog2(width))
 				width = nearestLog2(width);

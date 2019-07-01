@@ -26,15 +26,6 @@ public:
 		Vector4 position;
 		Vector4 normal;
 		Vector4 delta;
-		
-		//Element()
-		//:	polygon(model::c_InvalidIndex)
-		//,	material(model::c_InvalidIndex)
-		//,	position(Vector4::origo())
-		//,	normal(Vector4::zero())
-		//,	delta(Vector4::zero())
-		//{
-		//}
 	};
 
 	GBuffer();
