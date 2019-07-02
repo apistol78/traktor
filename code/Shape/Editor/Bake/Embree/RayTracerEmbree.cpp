@@ -146,7 +146,7 @@ void RayTracerEmbree::preprocess(GBuffer* gbuffer) const
 				orthogonalFrame(normal, u, v);
 
 				const Scalar l = elm.delta.length();
-				const Scalar hl = l * Scalar(0.5f);
+				const Scalar hl = l * Scalar(0.3f);
 				const Vector4 d[] = { u, -u, v, -v };
 
 				for (int32_t i = 0; i < 4; ++i)
@@ -190,7 +190,8 @@ void RayTracerEmbree::preprocess(GBuffer* gbuffer) const
 					hitNormal = (hitNormal - normal * k).normalized();
 
 					// Offset position.
-					position = position + traceDirection * Scalar(rh.ray.tfar) + hitNormal * Scalar(hl - rh.ray.tfar);
+					//position = position + /*traceDirection * Scalar(rh.ray.tfar) + */hitNormal * Scalar(hl/* - rh.ray.tfar*/);
+					position = position + traceDirection * Scalar(-hl);
 				}
 
 				elm.position = position;
@@ -281,6 +282,8 @@ Ref< drawing::Image > RayTracerEmbree::traceDirect(const GBuffer* gbuffer) const
     int32_t width = gbuffer->getWidth();
     int32_t height = gbuffer->getHeight();
 
+	const int32_t sampleCount = 16;
+
     Ref< drawing::Image > lightmapDirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), width, height);
     lightmapDirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
@@ -292,12 +295,27 @@ Ref< drawing::Image > RayTracerEmbree::traceDirect(const GBuffer* gbuffer) const
             if (elm.polygon == model::c_InvalidIndex)
                 continue;
 
-            Color4f direct = sampleAnalyticalLights(
-                random,
-                elm.position,
-                elm.normal,
-				false
-            );
+			Scalar hl = elm.delta.length() * Scalar(0.3f);
+
+			Vector4 u, v;
+			orthogonalFrame(elm.normal, u, v);
+
+			Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
+			for (int32_t i = 0; i < sampleCount; ++i)
+			{
+				float fu = random.nextFloat() * 2.0f - 1.0f;
+				float fv = random.nextFloat() * 2.0f - 1.0f;
+
+				Vector4 position = elm.position + (u * Scalar(fu) + v * Scalar(fv)) * hl;
+
+				direct += sampleAnalyticalLights(
+					random,
+					position,
+					elm.normal,
+					false
+				);
+			}
+			direct /= Scalar(sampleCount);
 
             lightmapDirect->setPixel(x, y, direct.rgb1());
 		}
