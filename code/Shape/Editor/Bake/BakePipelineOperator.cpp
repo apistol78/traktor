@@ -647,11 +647,15 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 		timer.start();
 
 		Ref< drawing::Image > lightmapDirect;
+		Ref< drawing::Image > lightmapIndirect;
 
-		if (true)
+		if (!configuration->traceDebug())
 		{
 			if (configuration->traceDirect())
 				lightmapDirect = rayTracer->traceDirect(&gbuffer);
+
+			if (configuration->traceIndirect())
+				lightmapIndirect = rayTracer->traceIndirect(&gbuffer);
 		}
 		else
 		{
@@ -693,10 +697,6 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 			}
 		}
 		
-		Ref< drawing::Image > lightmapIndirect;
-		if (configuration->traceIndirect())
-			lightmapIndirect = rayTracer->traceIndirect(&gbuffer);
-
 		double TendTrace = timer.getElapsedTime();
 		timer.start();
 

@@ -19,7 +19,7 @@ namespace traktor
 	{
 		namespace
 		{
-
+/*
 void triangleTop(const Vector2& v1, const Vector2& v2, const Vector2& v3, const std::function< void(float, float) >& fn)
 {
 	Vector2 mn = min(v1, min(v2, v3));
@@ -141,7 +141,7 @@ void triangleVisit(const Vector2& v1, const Vector2& v2, const Vector2& v3, cons
 	);
 	triangleTop(v[0], v[1], vm, fn);
 	triangleBottom(v[1], vm, v[2], fn);
-}
+}*/
 
 class Barycentric
 {
@@ -296,12 +296,14 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 				{
 					Vector2 cpt(x, y);
 
-					bool inside =
-						bary.inside(cpt) |
-						bary.inside(cpt + Vector2(-0.5f, -0.5f)) |
-						bary.inside(cpt + Vector2( 0.5f, -0.5f)) |
-						bary.inside(cpt + Vector2(-0.5f,  0.5f)) |
-						bary.inside(cpt + Vector2( 0.5f,  0.5f));
+					bool inside = bary.inside(cpt);
+					for (int32_t iy = -2; !inside && iy <= 2; ++iy)
+					{
+						for (int32_t ix = -2; !inside && ix <= 2; ++ix)
+						{
+							inside |= bary.inside(cpt + Vector2(ix / 2.0f, iy / 2.0f));
+						}
+					}
 					if (!inside)
 						continue;
 
