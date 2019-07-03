@@ -43,12 +43,12 @@ public:
 
 	virtual void hideAdditionalPanel(ui::Widget* widget) override final;
 
-	const std::map< Ref< ui::Widget >, bool >& getPanelWidgets() const { return m_panelWidgets; }
+	const std::map< ui::Widget*, bool >& getPanelWidgets() const { return m_panelWidgets; }
 
 private:
 	EditorForm* m_editor;
 	Ref< Object > m_properties;
-	std::map< Ref< ui::Widget >, bool > m_panelWidgets;
+	std::map< ui::Widget*, bool > m_panelWidgets;
 	bool m_active;
 };
 

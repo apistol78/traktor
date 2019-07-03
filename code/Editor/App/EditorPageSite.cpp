@@ -21,7 +21,7 @@ void EditorPageSite::show()
 
 	m_editor->setPropertyObject(m_properties);
 
-	for (std::map< Ref< ui::Widget >, bool >::iterator i = m_panelWidgets.begin(); i != m_panelWidgets.end(); ++i)
+	for (auto i = m_panelWidgets.begin(); i != m_panelWidgets.end(); ++i)
 	{
 		if (i->second)
 			m_editor->showAdditionalPanel(i->first);
@@ -37,7 +37,7 @@ void EditorPageSite::hide()
 
 	m_editor->setPropertyObject(0);
 
-	for (std::map< Ref< ui::Widget >, bool >::iterator i = m_panelWidgets.begin(); i != m_panelWidgets.end(); ++i)
+	for (auto i = m_panelWidgets.begin(); i != m_panelWidgets.end(); ++i)
 	{
 		i->second = i->first->isVisible(false);
 		m_editor->hideAdditionalPanel(i->first);
@@ -71,7 +71,7 @@ void EditorPageSite::destroyAdditionalPanel(ui::Widget* widget)
 
 void EditorPageSite::showAdditionalPanel(ui::Widget* widget)
 {
-	std::map< Ref< ui::Widget >, bool >::iterator i = m_panelWidgets.find(widget);
+	auto i = m_panelWidgets.find(widget);
 	if (i != m_panelWidgets.end())
 	{
 		if (m_active)
@@ -83,7 +83,7 @@ void EditorPageSite::showAdditionalPanel(ui::Widget* widget)
 
 void EditorPageSite::hideAdditionalPanel(ui::Widget* widget)
 {
-	std::map< Ref< ui::Widget >, bool >::iterator i = m_panelWidgets.find(widget);
+	auto i = m_panelWidgets.find(widget);
 	if (i != m_panelWidgets.end())
 	{
 		if (m_active)

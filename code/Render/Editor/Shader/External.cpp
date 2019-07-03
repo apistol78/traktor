@@ -173,7 +173,7 @@ public:
 	virtual void read(ISerializer& s) const
 	{
 		if (m_index >= m_pins.size())
-			m_pins.push_back(0);
+			m_pins.push_back(nullptr);
 		s >> PinMember(L"item", m_node, m_pins[m_index++]);
 	}
 
@@ -266,6 +266,18 @@ External::External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph)
 	// Sort pins lexicographically.
 	std::sort(m_inputPins.begin(), m_inputPins.end(), SortInputPinPredicate());
 	std::sort(m_outputPins.begin(), m_outputPins.end(), SortOutputPinPredicate());
+}
+
+External::~External()
+{
+	for (auto pin : m_inputPins)
+		delete pin;
+
+	for (auto pin : m_outputPins)
+		delete pin;
+
+	m_inputPins.clear();
+	m_outputPins.clear();
 }
 
 void External::setFragmentGuid(const Guid& fragmentGuid)

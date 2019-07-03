@@ -9,7 +9,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshComponent", MeshComponent, world::IEntityComponent)
 
 MeshComponent::MeshComponent(bool screenSpaceCulling)
-:	m_owner(0)
+:	m_owner(nullptr)
 ,	m_screenSpaceCulling(screenSpaceCulling)
 ,	m_transform(Transform::identity())
 {
@@ -17,12 +17,12 @@ MeshComponent::MeshComponent(bool screenSpaceCulling)
 
 void MeshComponent::destroy()
 {
-	m_owner = 0;
+	m_owner = nullptr;
 }
 
 void MeshComponent::setOwner(world::Entity* owner)
 {
-	if ((m_owner = owner) != 0)
+	if ((m_owner = owner) != nullptr)
 	{
 		Transform T;
 		if (m_owner->getTransform(T))

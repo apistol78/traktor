@@ -20,6 +20,11 @@ ComponentEntity::ComponentEntity(const Transform& transform)
 {
 }
 
+ComponentEntity::~ComponentEntity()
+{
+	destroy();
+}
+
 void ComponentEntity::destroy()
 {
 	for (auto component : m_components)

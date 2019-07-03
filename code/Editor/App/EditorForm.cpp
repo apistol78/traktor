@@ -873,13 +873,13 @@ void EditorForm::destroy()
 	closeWorkspace();
 
 	// Destroy all plugins.
-	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
-		(*i)->destroy();
-	m_editorPluginSites.resize(0);
+	for (auto editorPluginSite : m_editorPluginSites)
+		editorPluginSite->destroy();
+	m_editorPluginSites.clear();
 
 	// Destroy discovery manager.
 	safeDestroy(m_discoveryManager);
-	setStoreObject(L"DiscoveryManager", 0);
+	setStoreObject(L"DiscoveryManager", nullptr);
 
 	// Destroy shortcut table.
 	safeDestroy(m_shortcutTable);
@@ -941,7 +941,7 @@ Ref< ILogTarget > EditorForm::createLogTarget(const std::wstring& title)
 	{
 		Ref< ui::TabPage > tabPageLog = new ui::TabPage();
 		if (!tabPageLog->create(m_tabOutput, title, new ui::FloodLayout()))
-			return 0;
+			return nullptr;
 
 		Ref< LogView > logView = new LogView(this);
 		logView->create(tabPageLog);
@@ -1652,8 +1652,8 @@ void EditorForm::updateAdditionalPanelMenu()
 
 	if (m_activeEditorPageSite)
 	{
-		const std::map< Ref< ui::Widget >, bool >& panelWidgets = m_activeEditorPageSite->getPanelWidgets();
-		for (std::map< Ref< ui::Widget >, bool >::const_iterator i = panelWidgets.begin(); i != panelWidgets.end(); ++i)
+		const auto& panelWidgets = m_activeEditorPageSite->getPanelWidgets();
+		for (auto i = panelWidgets.begin(); i != panelWidgets.end(); ++i)
 		{
 			Ref< ui::MenuItem > menuItem = new ui::MenuItem(
 				ui::Command(L"Editor.ViewOther", i->first),
@@ -2659,8 +2659,8 @@ bool EditorForm::handleCommand(const ui::Command& command)
 
 			if (!activeEditorFocus && m_activeEditorPageSite)
 			{
-				const std::map< Ref< ui::Widget >, bool >& panelWidgets = m_activeEditorPageSite->getPanelWidgets();
-				for (std::map< Ref< ui::Widget >, bool >::const_iterator i = panelWidgets.begin(); i != panelWidgets.end(); ++i)
+				const auto& panelWidgets = m_activeEditorPageSite->getPanelWidgets();
+				for (auto i = panelWidgets.begin(); i != panelWidgets.end(); ++i)
 				{
 					if (i->first && i->first->containFocus())
 					{
