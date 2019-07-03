@@ -2,6 +2,7 @@
 #include <stack>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Timer/Timer.h"
@@ -87,23 +88,31 @@ SceneEditorContext::~SceneEditorContext()
 
 void SceneEditorContext::destroy()
 {
-	m_editor = 0;
-	m_document = 0;
-	m_resourceDb = 0;
-	m_sourceDb = 0;
-	m_resourceManager = 0;
-	m_renderSystem = 0;
+	safeDestroy(m_scene);
+	safeDestroy(m_resourceManager);
+
+	m_editor = nullptr;
+	m_document = nullptr;
+	m_resourceDb = nullptr;
+	m_sourceDb = nullptr;
+	m_eventManager = nullptr;
+	m_renderSystem = nullptr;
 	m_debugTargets.clear();
-	m_physicsManager = 0;
+	m_physicsManager = nullptr;
 	m_editorProfiles.clear();
 	m_editorPlugins.clear();
-	m_controllerEditor = 0;
-	m_modifier = 0;
+	m_entityEditorFactories.clear();
+	m_componentEditorFactories.clear();
+	m_controllerEditor = nullptr;
+	m_modifier = nullptr;
 	for (int32_t i = 0; i < sizeof_array(m_cameras); ++i)
-		m_cameras[i] = 0;
-	m_sceneAsset = 0;
-	m_scene = 0;
+		m_cameras[i] = nullptr;
+	m_sceneAsset = nullptr;
+	m_scene = nullptr;
 	m_layerEntityAdapters.clear();
+	m_entityAdapterMap.clear();
+
+	removeAllEventHandlers();
 }
 
 void SceneEditorContext::addEditorProfile(ISceneEditorProfile* editorProfile)
@@ -121,10 +130,10 @@ void SceneEditorContext::createFactories()
 	m_entityEditorFactories.resize(0);
 	m_componentEditorFactories.resize(0);
 
-	for (RefArray< ISceneEditorProfile >::const_iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
+	for (auto editorProfile : m_editorProfiles)
 	{
-		(*i)->createEntityEditorFactories(this, m_entityEditorFactories);
-		(*i)->createComponentEditorFactories(this, m_componentEditorFactories);
+		editorProfile->createEntityEditorFactories(this, m_entityEditorFactories);
+		editorProfile->createComponentEditorFactories(this, m_componentEditorFactories);
 	}
 }
 
@@ -135,7 +144,7 @@ void SceneEditorContext::setControllerEditor(ISceneControllerEditor* controllerE
 
 void SceneEditorContext::setModifier(IModifier* modifier)
 {
-	if ((m_modifier = modifier) != 0)
+	if ((m_modifier = modifier) != nullptr)
 	{
 		m_modifier->selectionChanged();
 		raiseModifierChanged();
@@ -209,9 +218,8 @@ bool SceneEditorContext::getPhysicsEnable() const
 
 void SceneEditorContext::resetPhysics()
 {
-	RefArray< physics::Body > bodies = m_physicsManager->getBodies();
-	for (RefArray< physics::Body >::const_iterator i = bodies.begin(); i != bodies.end(); ++i)
-		(*i)->reset();
+	for (auto body : m_physicsManager->getBodies())
+		body->reset();
 }
 
 Camera* SceneEditorContext::getCamera(int index) const

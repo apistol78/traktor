@@ -22,6 +22,7 @@
 #include "Scene/ISceneController.h"
 #include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
+#include "Scene/SceneFactory.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityClipboardData.h"
@@ -61,6 +62,7 @@
 #include "Ui/GridView/GridRowStateChangeEvent.h"
 #include "Ui/GridView/GridItem.h"
 #include "World/Entity.h"
+#include "World/EntityBuilder.h"
 #include "World/EntityEventManager.h"
 #include "World/IEntityComponent.h"
 #include "World/WorldRenderSettings.h"
@@ -190,17 +192,35 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 		RefArray< ISceneEditorPlugin > editorPlugins;
 		profile->createEditorPlugins(m_context, editorPlugins);
+
 		for (auto editorPlugin : editorPlugins)
 			m_context->addEditorPlugin(editorPlugin);
 
 		RefArray< const resource::IResourceFactory > resourceFactories;
 		profile->createResourceFactories(m_context, resourceFactories);
+
 		for (auto resourceFactory : resourceFactories)
 			resourceManager->addFactory(resourceFactory);
 
 		profile->getGuideDrawIds(guideIds);
 	}
+
+	// Create entity and component editor factories.
 	m_context->createFactories();
+
+	// Create scene instance resource factory, used by final render control etc.
+	RefArray< const world::IEntityFactory > entityFactories;
+
+	for (auto editorProfile : m_context->getEditorProfiles())
+		editorProfile->createEntityFactories(m_context, entityFactories);
+
+	Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder();
+	for (auto entityFactory : entityFactories)
+		entityBuilder->addFactory(entityFactory);
+
+	m_context->getResourceManager()->addFactory(
+		new SceneFactory(m_context->getRenderSystem(), entityBuilder)
+	);
 
 	// Create editor panel.
 	m_editPanel = new ui::Container();
@@ -375,8 +395,7 @@ void SceneEditorPage::destroy()
 	if (m_context->getPhysicsManager())
 		m_context->getPhysicsManager()->destroy();
 
-	m_context->destroy();
-	m_context = 0;
+	safeDestroy(m_context);
 }
 
 bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

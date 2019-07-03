@@ -13,7 +13,7 @@
 #include "Render/ImageProcess/ImageProcess.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Scene.h"
-#include "Scene/SceneFactory.h"
+//#include "Scene/SceneFactory.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/FinalRenderControl.h"
@@ -29,7 +29,7 @@
 #include "Ui/AspectLayout.h"
 #include "Ui/Itf/IWidget.h"
 #include "World/Entity.h"
-#include "World/EntityBuilder.h"
+//#include "World/EntityBuilder.h"
 #include "World/IEntityEventManager.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
@@ -113,20 +113,6 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	if (m_context->getDocument()->getInstance(0)->getPrimaryType() == &type_of< SceneAsset >())
 	{
 		resource::Id< scene::Scene > sceneId(m_context->getDocument()->getInstance(0)->getGuid());
-
-		RefArray< const world::IEntityFactory > entityFactories;
-
-		for (auto editorProfile : m_context->getEditorProfiles())
-			editorProfile->createEntityFactories(m_context, entityFactories);
-
-		Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder();
-		for (auto entityFactory : entityFactories)
-			entityBuilder->addFactory(entityFactory);
-
-		m_context->getResourceManager()->addFactory(
-			new scene::SceneFactory(context->getRenderSystem(), entityBuilder)
-		);
-	
 		if (!m_context->getResourceManager()->bind(
 			sceneId,
 			m_sceneInstance
@@ -174,10 +160,10 @@ void FinalRenderControl::updateWorldRenderer()
 
 	// Create entity renderers.
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
+	for (auto editorProfile : m_context->getEditorProfiles())
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
-		(*i)->createEntityRenderers(m_context, m_renderView, nullptr, entityRenderers);
+		editorProfile->createEntityRenderers(m_context, m_renderView, nullptr, entityRenderers);
 		for (auto entityRenderer : entityRenderers)
 			worldEntityRenderers->add(entityRenderer);
 	}

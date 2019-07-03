@@ -39,6 +39,8 @@ public:
 
 	External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph);
 
+	virtual ~External();
+
 	void setFragmentGuid(const Guid& fragmentGuid);
 
 	const Guid& getFragmentGuid() const;

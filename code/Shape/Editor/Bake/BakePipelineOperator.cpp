@@ -255,8 +255,6 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 
 			visit(flattenedLayer, [&](world::EntityData* entityData) -> bool
 			{
-				log::info << L"Visit \"" << entityData->getName() << L"\" (" << type_name(entityData) << L")..." << Endl;
-
 				if (auto componentEntityData = dynamic_type_cast< world::ComponentEntityData* >(entityData))
 				{
 					if (auto lightComponentData = componentEntityData->getComponent< world::LightComponentData >())
@@ -524,10 +522,6 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 			layers.push_back(layer);
 	}
 	inoutSceneAsset->setLayers(layers);
-
-	log::info << L"Found " << (int32_t)processMeshes.size() << L" meshes to process..." << Endl;
-	for (int32_t i = 0; i < (int32_t)processMeshes.size(); ++i)
-		log::info << i << L". \"" << processMeshes[i].name << L"\"" << Endl;
 
 	// Commit all lights and models; after this point
 	// no more lights nor models can be added to tracer.

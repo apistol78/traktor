@@ -32,7 +32,9 @@ class T_DLLCLASS ComponentEntity : public Entity
 public:
 	ComponentEntity();
 
-	ComponentEntity(const Transform& transform);
+	explicit ComponentEntity(const Transform& transform);
+
+	virtual ~ComponentEntity();
 
 	virtual void destroy() override;
 
