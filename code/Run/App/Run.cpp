@@ -411,7 +411,7 @@ void Run::registerRuntimeClasses(script::IScriptManager* scriptManager)
 	T_FORCE_LINK_REF(CoreClassFactory);
 	T_FORCE_LINK_REF(CoreClassFactory2);
 	T_FORCE_LINK_REF(drawing::DrawingClassFactory);
-	// T_FORCE_LINK_REF(json::JsonClassFactory);
+	T_FORCE_LINK_REF(json::JsonClassFactory);
 	T_FORCE_LINK_REF(net::NetClassFactory);
 	T_FORCE_LINK_REF(xml::XmlClassFactory);
 	T_FORCE_LINK_REF(sql::SqlClassFactory);
