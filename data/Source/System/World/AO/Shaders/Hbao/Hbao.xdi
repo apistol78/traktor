@@ -1027,7 +1027,7 @@ Pb
 				<first>558</first>
 				<second>1162</second>
 			</position>
-			<value>0.3</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{41B1E442-29C4-C045-B308-053378BDA2A0}</id>
@@ -1159,7 +1159,7 @@ g_Strength
 				<first>350</first>
 				<second>-10</second>
 			</position>
-			<value>2</value>
+			<value>1.2</value>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{26FBF8CA-18CF-C649-842C-CDA5FD166BE6}</id>
@@ -1271,7 +1271,7 @@ g_Strength
 				<first>-1126</first>
 				<second>1114</second>
 			</position>
-			<value>1.1</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
 			<id>{AE1597FA-C889-FE47-AAC9-4E9A7B927406}</id>
