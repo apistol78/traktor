@@ -502,7 +502,8 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 
 	// Restore previous set but also insert built instances from synthesized build;
 	// when caching is enabled then synthesized built instances should be included in parent build as well.
-	previousBuiltInstances->insert(previousBuiltInstances->end(), builtInstances.begin(), builtInstances.end());
+	if (previousBuiltInstances)
+		previousBuiltInstances->insert(previousBuiltInstances->end(), builtInstances.begin(), builtInstances.end());
 	m_buildInstances.set(previousBuiltInstances);
 
 	return result;

@@ -34,7 +34,7 @@ class IEditorPage;
 class IBrowseFilter;
 class IPipelineDependencySet;
 
-/*! \brief Editor base interface.
+/*! Editor base interface.
  * \ingroup Editor
  *
  * This is the interface by which other modules
@@ -46,87 +46,90 @@ public:
 	/*! \name Settings */
 	/*! \{ */
 
-	/*! \brief Get read-only settings; contain merged workspace and global settings. */
+	/*! Get read-only settings; contain merged workspace and global settings. */
 	virtual Ref< const PropertyGroup > getSettings() const = 0;
 
-	/*! \brief Checkout writable global settings. */
+	/*! Checkout writable global settings. */
 	virtual Ref< PropertyGroup > checkoutGlobalSettings() = 0;
 
-	/*! \brief Commit global settings. */
+	/*! Commit global settings. */
 	virtual void commitGlobalSettings() = 0;
 
-	/*! \brief Revert global settings. */
+	/*! Revert global settings. */
 	virtual void revertGlobalSettings() = 0;
 
-	/*! \brief Checkout writable workspace settings. */
+	/*! Checkout writable workspace settings. */
 	virtual Ref< PropertyGroup > checkoutWorkspaceSettings() = 0;
 
-	/*! \brief Commit workspace settings. */
+	/*! Commit workspace settings. */
 	virtual void commitWorkspaceSettings() = 0;
 
-	/*! \brief Revert workspace settings. */
+	/*! Revert workspace settings. */
 	virtual void revertWorkspaceSettings() = 0;
 
 	/*! \} */
 
-	/*! \brief Create log targets. */
+	/*! Create log targets. */
 	virtual Ref< ILogTarget > createLogTarget(const std::wstring& title) = 0;
 
-	/*! \brief Get source asset database. */
+	/*! Get source asset database. */
 	virtual Ref< db::Database > getSourceDatabase() const = 0;
 
-	/*! \brief Get output database. */
+	/*! Get output database. */
 	virtual Ref< db::Database > getOutputDatabase() const = 0;
 
-	/*! \brief Update database view. */
+	/*! Update database view. */
 	virtual void updateDatabaseView() = 0;
 
-	/*! \brief High light instance in database view. */
+	/*! High light instance in database view. */
 	virtual bool highlightInstance(const db::Instance* instance) = 0;
 
-	/*! \brief Browse for rtti type. */
+	/*! Browse for rtti type. */
 	virtual const TypeInfo* browseType() = 0;
 
-	/*! \brief Browse for rtti type. */
+	/*! Browse for rtti type. */
 	virtual const TypeInfo* browseType(const TypeInfoSet& base, bool onlyEditable, bool onlyInstantiable) = 0;
 
-	/*! \brief Browse database group. */
+	/*! Browse database group. */
 	virtual Ref< db::Group > browseGroup() = 0;
 
-	/*! \brief Browse database instance. */
+	/*! Browse database instance. */
 	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType) = 0;
 
-	/*! \brief Browse database instance. */
+	/*! Browse database instance. */
 	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter = 0) = 0;
 
-	/*! \brief Open instance in appropriate editor. */
+	/*! Open instance in appropriate editor. */
 	virtual bool openEditor(db::Instance* instance) = 0;
 
-	/*! \brief Open instance using default editor. */
+	/*! Open instance using default editor. */
 	virtual bool openDefaultEditor(db::Instance* instance) = 0;
 
-	/*! \brief Open tool. */
+	/*! Open tool. */
 	virtual bool openTool(const std::wstring& toolType, const PropertyGroup* param) = 0;
 
-	/*! \brief Open browser to given resource. */
+	/*! Open browser to given resource. */
 	virtual bool openBrowser(const net::Url& url) = 0;
 
-	/*! \brief Get active editor. */
+	/*! Get active editor. */
 	virtual Ref< IEditorPage > getActiveEditorPage() = 0;
 
-	/*! \brief Set active editor. */
+	/*! Set active editor. */
 	virtual void setActiveEditorPage(IEditorPage* editorPage) = 0;
 
-	/*! \brief Build assets. */
+	/*! Build assets. */
 	virtual void buildAssets(const std::vector< Guid >& assetGuids, bool rebuild) = 0;
 
-	/*! \brief Build asset. */
+	/*! Build asset. */
 	virtual void buildAsset(const Guid& assetGuid, bool rebuild) = 0;
 
-	/*! \brief Build assets. */
+	/*! Build asset. */
+	virtual bool buildAsset(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams = nullptr) = 0;
+
+	/*! Build assets. */
 	virtual void buildAssets(bool rebuild) = 0;
 
-	/*! \brief Build asset dependencies.
+	/*! Build asset dependencies.
 	 *
 	 * \param asset Source asset.
 	 * \param recursionDepth Max dependency recursion depth.
@@ -134,21 +137,21 @@ public:
 	 */
 	virtual Ref< IPipelineDependencySet > buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth) = 0;
 
-	/*! \brief Set object in object store.
+	/*! Set object in object store.
 	 *
 	 * \param name Name of object.
 	 * \param object Object.
 	 */
 	virtual void setStoreObject(const std::wstring& name, Object* object) = 0;
 
-	/*! \brief Get object from object store.
+	/*! Get object from object store.
 	 *
 	 * \param name Name of object.
 	 * \return Object, null if no such named object exists in store.
 	 */
 	virtual Object* getStoreObject(const std::wstring& name) const = 0;
 
-	/*! \brief Get object from object store.
+	/*! Get object from object store.
 	 *
 	 * \param name Name of object.
 	 * \return Object, null if no such named object exists in store.

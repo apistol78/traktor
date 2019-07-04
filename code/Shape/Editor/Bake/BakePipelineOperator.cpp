@@ -1,38 +1,19 @@
 #include <functional>
-#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
-#include "Core/Math/Aabb2.h"
-#include "Core/Math/Const.h"
-#include "Core/Math/Float.h"
-#include "Core/Math/Format.h"
-#include "Core/Math/Log2.h"
-#include "Core/Math/Random.h"
-#include "Core/Math/Triangulator.h"
-#include "Core/Math/Winding3.h"
-#include "Core/Misc/String.h"
-#include "Core/Misc/TString.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Thread/Job.h"
-#include "Core/Thread/JobManager.h"
-#include "Core/Timer/Timer.h"
 #include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Drawing/Filters/ConvolutionFilter.h"
-#include "Drawing/Filters/DilateFilter.h"
-#include "Drawing/Filters/GammaFilter.h"
-#include "Drawing/Filters/TonemapFilter.h"
-#include "Drawing/Functions/BlendFunction.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
-#include "Model/ModelAdjacency.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/CalculateTangents.h"
 #include "Model/Operations/CleanDegenerate.h"
@@ -42,13 +23,14 @@
 #include "Model/Operations/Triangulate.h"
 #include "Model/Operations/UnwrapUV.h"
 #include "Render/Editor/Texture/TextureOutput.h"
-#include "Render/SH/SHEngine.h"
-#include "Render/SH/SHFunction.h"
 #include "Scene/Editor/SceneAsset.h"
-#include "Shape/Editor/Bake/GBuffer.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
-#include "Shape/Editor/Bake/IRayTracer.h"
+#include "Shape/Editor/Bake/TracerLight.h"
+#include "Shape/Editor/Bake/TracerModel.h"
+#include "Shape/Editor/Bake/TracerOutput.h"
+#include "Shape/Editor/Bake/TracerProcessor.h"
+#include "Shape/Editor/Bake/TracerTask.h"
 #include "Shape/Editor/Prefab/PrefabEntityData.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/CameraComponentData.h"
@@ -56,27 +38,12 @@
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/LightComponentData.h"
 
-#if !defined(__RPI__) && !defined(__APPLE__)
-#	include <OpenImageDenoise/oidn.h>
-#endif
-
 namespace traktor
 {
 	namespace shape
 	{
 		namespace
 		{
-
-struct BakeProcessMesh
-{
-	std::wstring name;
-	Ref< model::Model > renderModel;	//!< Render model, using lightmap.
-	Ref< model::Model > tracerModel;	//!< Tracer model, part of RT scene.
-	Guid lightMapId;
-	Ref< render::TextureOutput > lightMapTextureAsset;
-	Guid meshId;
-	Ref< mesh::MeshAsset > meshAsset;
-};
 
 Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
 {
@@ -138,86 +105,19 @@ void visit(ISerializable* object, const std::function< bool(world::EntityData*) 
 	}
 }
 
-#if !defined(__RPI__) && !defined(__APPLE__)
-Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap)
-{
-	int32_t width = lightmap->getWidth();
-	int32_t height = lightmap->getHeight();
-
-	lightmap->convert(drawing::PixelFormat::getRGBAF32());
-
-	Ref< drawing::Image > albedo = new drawing::Image(
-		drawing::PixelFormat::getRGBAF32(),
-		lightmap->getWidth(),
-		lightmap->getHeight()
-	);
-	albedo->clear(Color4f(1, 1, 1, 1));
-
-	Ref< drawing::Image > normals = new drawing::Image(
-		drawing::PixelFormat::getRGBAF32(),
-		lightmap->getWidth(),
-		lightmap->getHeight()
-	);
-	for (int32_t y = 0; y < height; ++y)
-	{
-		for (int32_t x = 0; x < width; ++x)
-		{
-			const auto elm = gbuffer.get(x, y);
-			normals->setPixel(x, y, Color4f(elm.normal));
-		}
-	}
-
-	Ref< drawing::Image > output = new drawing::Image(
-		drawing::PixelFormat::getRGBAF32(),
-		lightmap->getWidth(),
-		lightmap->getHeight()
-	);
-
-	OIDNDevice device = oidnNewDevice(OIDN_DEVICE_TYPE_DEFAULT);
-	oidnCommitDevice(device);
-
-	OIDNFilter filter = oidnNewFilter(device, "RT"); // generic ray tracing filter
-	oidnSetSharedFilterImage(filter, "color",  lightmap->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0);
-	oidnSetSharedFilterImage(filter, "albedo", albedo->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0); // optional
-	oidnSetSharedFilterImage(filter, "normal", normals->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0); // optional
-	oidnSetSharedFilterImage(filter, "output", output->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0);
-	oidnSetFilter1b(filter, "hdr", true); // image is HDR
-	oidnCommitFilter(filter);
-
-	oidnExecuteFilter(filter);	
-
-	// Check for errors
-	const char* errorMessage;
-	if (oidnGetDeviceError(device, &errorMessage) != OIDN_ERROR_NONE)
-		log::error << mbstows(errorMessage) << Endl;
-
-	// Cleanup
-	oidnReleaseFilter(filter);
-	oidnReleaseDevice(device);	
-	return output;
-}
-#endif
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.BakePipelineOperator", 0, BakePipelineOperator, scene::IScenePipelineOperator)
 
+Ref< TracerProcessor > BakePipelineOperator::ms_tracerProcessor = nullptr;
+
 BakePipelineOperator::BakePipelineOperator()
-:	m_rayTracerType(nullptr)
 {
 }
 
 bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	
-	m_rayTracerType = TypeInfo::find(settings->getProperty< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree").c_str());
-	if (!m_rayTracerType)
-	{
-		log::error << L"Failed to initialize shape pipeline operator; no such ray tracer type." << Endl;
-		return false;
-	}
-
 	return true;
 }
 
@@ -230,17 +130,25 @@ TypeInfoSet BakePipelineOperator::getOperatorTypes() const
 	return makeTypeInfoSet< BakeConfiguration >();
 }
 
-bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, const ISerializable* operatorData, scene::SceneAsset* inoutSceneAsset) const
+bool BakePipelineOperator::build(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const ISerializable* operatorData,
+	const db::Instance* sourceInstance,
+	scene::SceneAsset* inoutSceneAsset
+) const
 {
+	// In case no tracer processor is registered we fail gracefully so
+	// scene pipeline can continue as without bake configuration.
+	if (!ms_tracerProcessor)
+		return true;
+
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
 	Guid seedId = configuration->getSeedGuid();
 
-	// Create raytracer implementation.
-	Ref< IRayTracer > rayTracer = checked_type_cast< IRayTracer* >(m_rayTracerType->createInstance());
-	if (!rayTracer->create(configuration))
-		return false;
-
-	AlignedVector< BakeProcessMesh > processMeshes;
+	Ref< TracerTask > tracerTask = new TracerTask(
+		sourceInstance->getGuid(),
+		configuration
+	);
 
 	// Find all static meshes and lights; replace external referenced entities with local if necessary.
 	RefArray< world::LayerEntityData > layers;
@@ -268,7 +176,7 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 							light.direction = -entityData->getTransform().axisY();
 							light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
 							light.range = Scalar(0.0f);
-							rayTracer->addLight(light);
+							tracerTask->addTracerLight(new TracerLight(light));
 						}
 						else if (lightComponentData->getLightType() == world::LtPoint)
 						{
@@ -277,7 +185,7 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 							light.direction = Vector4::zero();
 							light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
 							light.range = Scalar(lightComponentData->getRange());
-							rayTracer->addLight(light);
+							tracerTask->addTracerLight(new TracerLight(light));
 						}
 						else if (lightComponentData->getLightType() == world::LtSpot)
 						{
@@ -288,7 +196,7 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 							light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
 							light.range = Scalar(lightComponentData->getRange());
 							light.radius = Scalar(lightComponentData->getRadius());
-							rayTracer->addLight(light);
+							tracerTask->addTracerLight(new TracerLight(light));
 						}
 						else if (lightComponentData->getLightType() != world::LtProbe)
 							log::warning << L"IlluminateEntityPipeline warning; unsupported light type of light \"" << entityData->getName() << L"\"." << Endl;
@@ -322,53 +230,74 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 
 						uint32_t channel = model->getTexCoordChannel(L"Lightmap");
 
-						auto& processMesh = processMeshes.push_back();
-						processMesh.name = entityData->getName();
+						// Create tracer model.						
+						Ref< model::Model > tm = DeepClone(model).create< model::Model >();
+						tm->clear(model::Model::CfColors | model::Model::CfJoints);
+						model::Triangulate().apply(*tm);
+						model::CleanDuplicates(0.001f).apply(*tm);
+						model::CleanDegenerate().apply(*tm);
+						model::CalculateTangents().apply(*tm);
+						tracerTask->addTracerModel(new TracerModel(tm));
 
-						// Create render model.
-						processMesh.renderModel = DeepClone(model).create< model::Model >();
-						AlignedVector< model::Material > materials = processMesh.renderModel->getMaterials();
+						// Create tracer output.
+						Ref< model::Model > rm = DeepClone(model).create< model::Model >();
+						AlignedVector< model::Material > materials = rm->getMaterials();
 						for (auto& material : materials)
 						{
 							material.setBlendOperator(model::Material::BoDecal);
 							material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
 						}
-						processMesh.renderModel->setMaterials(materials);
+						rm->setMaterials(materials);
 
-						// Create tracer model.						
-						processMesh.tracerModel = DeepClone(model).create< model::Model >();
-						processMesh.tracerModel->clear(model::Model::CfColors | model::Model::CfJoints);
-						model::Triangulate().apply(*processMesh.tracerModel);
-						model::CleanDuplicates(0.001f).apply(*processMesh.tracerModel);
-						model::CleanDegenerate().apply(*processMesh.tracerModel);
-						model::CalculateTangents().apply(*processMesh.tracerModel);
-						rayTracer->addModel(processMesh.tracerModel, Transform::identity());
+						Guid lightmapId = seedId.permutate();
 
-						// Create lightmap texture.
-						processMesh.lightMapId = seedId.permutate();
-						processMesh.lightMapTextureAsset = new render::TextureOutput();
-						processMesh.lightMapTextureAsset->m_textureFormat = render::TfR16G16B16A16F;
-						processMesh.lightMapTextureAsset->m_keepZeroAlpha = false;
-						processMesh.lightMapTextureAsset->m_hasAlpha = false;
-						processMesh.lightMapTextureAsset->m_ignoreAlpha = true;
-						processMesh.lightMapTextureAsset->m_linearGamma = true;
-						processMesh.lightMapTextureAsset->m_enableCompression = false;
-						processMesh.lightMapTextureAsset->m_sharpenRadius = 0;
-						processMesh.lightMapTextureAsset->m_systemTexture = true;
-						processMesh.lightMapTextureAsset->m_generateMips = false;
+						Ref< render::TextureOutput > lightmapTextureAsset = new render::TextureOutput();
+						lightmapTextureAsset->m_textureFormat = render::TfR16G16B16A16F;
+						lightmapTextureAsset->m_keepZeroAlpha = false;
+						lightmapTextureAsset->m_hasAlpha = false;
+						lightmapTextureAsset->m_ignoreAlpha = true;
+						lightmapTextureAsset->m_linearGamma = true;
+						lightmapTextureAsset->m_enableCompression = false;
+						lightmapTextureAsset->m_sharpenRadius = 0;
+						lightmapTextureAsset->m_systemTexture = true;
+						lightmapTextureAsset->m_generateMips = false;
+
+						Ref< drawing::Image > lightmapWhite = new drawing::Image(drawing::PixelFormat::getARGBF32(), 1, 1);
+						lightmapWhite->setPixelUnsafe(0, 0, Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+
+						pipelineBuilder->buildOutput(
+							lightmapTextureAsset,
+							L"Generated/" + lightmapId.format(),
+							lightmapId,
+							lightmapWhite
+						);
+
+						tracerTask->addTracerOutput(new TracerOutput(
+							rm,
+							lightmapId,
+							lightmapTextureAsset
+						));
 
 						// Create output mesh asset.
 						auto materialTextures = meshAsset->getMaterialTextures();
-						materialTextures[L"__Illumination__"] = processMesh.lightMapId;
+						materialTextures[L"__Illumination__"] = lightmapId;
 
-						processMesh.meshId = seedId.permutate();
-						processMesh.meshAsset = new mesh::MeshAsset();
-						processMesh.meshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-						processMesh.meshAsset->setMaterialTextures(materialTextures);
+						Guid outputMeshId = seedId.permutate();
+						
+						Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+						outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+						outputMeshAsset->setMaterialTextures(materialTextures);
+
+						pipelineBuilder->buildOutput(
+							outputMeshAsset,
+							L"Generated/" + outputMeshId.format(),
+							outputMeshId,
+							rm
+						);
 
 						// Modify component to reference our output mesh asset.
 						meshComponentData->setMesh(resource::Id< mesh::IMesh >(
-							processMesh.meshId
+							outputMeshId
 						));
 					}
 
@@ -445,9 +374,6 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 							}
 						}
 
-						auto& processMesh = processMeshes.push_back();
-						processMesh.name = entityData->getName();
-
 						// Create merged model.
 						Ref< model::Model > mergedModel = new model::Model();
 						for (int32_t i = 0; i < (int32_t)models.size(); ++i)
@@ -458,50 +384,74 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 
 						uint32_t channel = mergedModel->getTexCoordChannel(L"Lightmap");
 
-						// Create render model.
-						processMesh.renderModel = DeepClone(mergedModel).create< model::Model >();
-						AlignedVector< model::Material > materials = processMesh.renderModel->getMaterials();
+						// Create tracer model.						
+						Ref< model::Model > tm = DeepClone(mergedModel).create< model::Model >();
+						tm->clear(model::Model::CfColors | model::Model::CfJoints);
+						model::Triangulate().apply(*tm);
+						model::CleanDuplicates(0.001f).apply(*tm);
+						model::CleanDegenerate().apply(*tm);
+						model::CalculateTangents().apply(*tm);
+						tracerTask->addTracerModel(new TracerModel(tm));
+
+						// Create tracer output.
+						Ref< model::Model > rm = DeepClone(mergedModel).create< model::Model >();
+						AlignedVector< model::Material > materials = rm->getMaterials();
 						for (auto& material : materials)
 						{
 							material.setBlendOperator(model::Material::BoDecal);
 							material.setLightMap(model::Material::Map(L"__Illumination__", channel, false), 1.0f);
 						}
-						processMesh.renderModel->setMaterials(materials);
+						rm->setMaterials(materials);
 
-						// Create tracer model.						
-						processMesh.tracerModel = DeepClone(mergedModel).create< model::Model >();
-						processMesh.tracerModel->clear(model::Model::CfColors | model::Model::CfJoints);
-						model::Triangulate().apply(*processMesh.tracerModel);
-						model::CleanDuplicates(0.001f).apply(*processMesh.tracerModel);
-						model::CleanDegenerate().apply(*processMesh.tracerModel);
-						model::CalculateTangents().apply(*processMesh.tracerModel);
-						rayTracer->addModel(processMesh.tracerModel, Transform::identity());
+						Guid lightmapId = seedId.permutate();
 
-						// Create lightmap texture.
-						processMesh.lightMapId = seedId.permutate();
-						processMesh.lightMapTextureAsset = new render::TextureOutput();
-						processMesh.lightMapTextureAsset->m_textureFormat = render::TfR16G16B16A16F;
-						processMesh.lightMapTextureAsset->m_keepZeroAlpha = false;
-						processMesh.lightMapTextureAsset->m_hasAlpha = false;
-						processMesh.lightMapTextureAsset->m_ignoreAlpha = true;
-						processMesh.lightMapTextureAsset->m_linearGamma = true;
-						processMesh.lightMapTextureAsset->m_enableCompression = false;
-						processMesh.lightMapTextureAsset->m_sharpenRadius = 0;
-						processMesh.lightMapTextureAsset->m_systemTexture = true;
-						processMesh.lightMapTextureAsset->m_generateMips = false;
+						Ref< render::TextureOutput > lightmapTextureAsset = new render::TextureOutput();
+						lightmapTextureAsset->m_textureFormat = render::TfR16G16B16A16F;
+						lightmapTextureAsset->m_keepZeroAlpha = false;
+						lightmapTextureAsset->m_hasAlpha = false;
+						lightmapTextureAsset->m_ignoreAlpha = true;
+						lightmapTextureAsset->m_linearGamma = true;
+						lightmapTextureAsset->m_enableCompression = false;
+						lightmapTextureAsset->m_sharpenRadius = 0;
+						lightmapTextureAsset->m_systemTexture = true;
+						lightmapTextureAsset->m_generateMips = false;
+
+						Ref< drawing::Image > lightmapWhite = new drawing::Image(drawing::PixelFormat::getARGBF32(), 1, 1);
+						lightmapWhite->setPixelUnsafe(0, 0, Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+
+						pipelineBuilder->buildOutput(
+							lightmapTextureAsset,
+							L"Generated/" + lightmapId.format(),
+							lightmapId,
+							lightmapWhite
+						);
+
+						tracerTask->addTracerOutput(new TracerOutput(
+							rm,
+							lightmapId,
+							lightmapTextureAsset
+						));
 
 						// Create output mesh asset.
-						materialTextures[L"__Illumination__"] = processMesh.lightMapId;
+						materialTextures[L"__Illumination__"] = lightmapId;
 
-						processMesh.meshId = seedId.permutate();
-						processMesh.meshAsset = new mesh::MeshAsset();
-						processMesh.meshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-						processMesh.meshAsset->setMaterialTextures(materialTextures);
+						Guid outputMeshId = seedId.permutate();
+
+						Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+						outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+						outputMeshAsset->setMaterialTextures(materialTextures);
+
+						pipelineBuilder->buildOutput(
+							outputMeshAsset,
+							L"Generated/" + outputMeshId.format(),
+							outputMeshId,
+							rm
+						);						
 
 						// Create a new child entity to layer (we cannot add to prefab) which contain reference to our merged visual mesh.
 						Ref< mesh::MeshComponentData > meshComponentData = new mesh::MeshComponentData();
 						meshComponentData->setMesh(resource::Id< mesh::IMesh >(
-							processMesh.meshId
+							outputMeshId
 						));
 
 						Ref< world::ComponentEntityData > mergedEntity = new world::ComponentEntityData();
@@ -523,9 +473,7 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 	}
 	inoutSceneAsset->setLayers(layers);
 
-	// Commit all lights and models; after this point
-	// no more lights nor models can be added to tracer.
-	rayTracer->commit();
+	ms_tracerProcessor->enqueue(tracerTask);
 
 	// Raytrace "ground truths" of each camera.
 	// if (false)
@@ -578,221 +526,12 @@ bool BakePipelineOperator::build(editor::IPipelineBuilder* pipelineBuilder, cons
 	// 		lightComponentData->setSHCoeffs(shCoeffs);
 	// }
 
-	// Raytrace lightmap for each mesh.
-	GBuffer gbuffer;
-	for (uint32_t i = 0; i < processMeshes.size(); ++i)
-	{
-		auto renderModel = processMeshes[i].renderModel;
-
-		// Calculate output size from lumel density.
-		float totalWorldArea = 0.0f;
-		for (const auto& polygon : renderModel->getPolygons())
-		{
-			Winding3 polygonWinding;
-			for (const auto index : polygon.getVertices())
-				polygonWinding.push(renderModel->getVertexPosition(index));
-			totalWorldArea += abs(polygonWinding.area());
-		}
-
-		const float totalLightMapArea = configuration->getLumelDensity() * configuration->getLumelDensity() * totalWorldArea;
-		const float size = std::sqrt(totalLightMapArea);
-		
-		const int32_t outputSize = alignUp(std::max< int32_t >(
-			configuration->getMinimumLightMapSize(),
-			 (int32_t)(size + 0.5f)
-		), 16);
-
-		// Unwrap lightmap UV.
-		uint32_t channel = 0;
-		// if (configuration->getEnableAutoTexCoords())
-		// {
-		// 	channel = model->addUniqueTexCoordChannel(L"Illuminate_LightmapUV");
-		// 	if (!model::UnwrapUV(channel, outputSize).apply(*model))
-		// 	{
-		// 		log::error << L"IlluminateEntityPipeline failed; unable to unwrap UV of model \"" << meshEntityData->getName() << L"\"." << Endl;
-		// 		return false;
-		// 	}
-		// }
-		// else
-		// {
-		 	channel = renderModel->getTexCoordChannel(L"Lightmap");
-		// 	if (channel == model::c_InvalidIndex)
-		// 	{
-		// 		log::warning << L"IlluminateEntityPipeline warning; no uv channel named \"Lightmap\" found, using channel 0." << Endl;
-		// 		channel = 0;
-		// 	}
-		// }
-
-		Timer timer;
-		timer.start();
-
-		// Create GBuffer of mesh's geometry.
-		gbuffer.create(outputSize, outputSize, *renderModel, Transform::identity(), channel);
-		// gbuffer.saveAsImages(meshEntityData->getName() + L"_" + toString(i) + L"_GBuffer_Pre");
-
-		double TendGBuffer = timer.getElapsedTime();
-		timer.start();
-
-		// Preprocess GBuffer.
-		rayTracer->preprocess(&gbuffer);
-		// gbuffer.saveAsImages(meshEntityData->getName() + L"_" + toString(i) + L"_GBuffer_Post");
-
-		double TendPreProcess = timer.getElapsedTime();
-		timer.start();
-
-		Ref< drawing::Image > lightmapDirect;
-		Ref< drawing::Image > lightmapIndirect;
-
-		if (!configuration->traceDebug())
-		{
-			if (configuration->traceDirect())
-				lightmapDirect = rayTracer->traceDirect(&gbuffer);
-
-			if (configuration->traceIndirect())
-				lightmapIndirect = rayTracer->traceIndirect(&gbuffer);
-		}
-		else
-		{
-			const int32_t width = gbuffer.getWidth();
-			const int32_t height = gbuffer.getHeight();
-
-		    lightmapDirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), width, height);
-			lightmapDirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-
-			SmallMap< uint32_t, Color4f > colors;
-			Random random;
-
-			for (int32_t y = 0; y < height; ++y)
-			{
-				for (int32_t x = 0; x < width; ++x)
-				{
-					const auto& elm = gbuffer.get(x, y);
-					if (elm.polygon == model::c_InvalidIndex)
-						continue;
-
-					Color4f c;
-					
-					auto ci = colors.find(elm.polygon);
-					if (ci != colors.end())
-						c = ci->second;
-					else
-					{
-						c = Color4f(
-							random.nextFloat(),
-							random.nextFloat(),
-							random.nextFloat(),
-							1.0f
-						);
-						colors[elm.polygon] = c;
-					}
-
-					lightmapDirect->setPixel(x, y, c.rgb1());
-				}
-			}
-		}
-		
-		double TendTrace = timer.getElapsedTime();
-		timer.start();
-
-		if (configuration->getEnableDilate())
-		{
-			// Dilate lightmap to prevent leaking.
-			drawing::DilateFilter dilateFilter(3);
-			if (lightmapDirect)
-				lightmapDirect->apply(&dilateFilter);
-			if (lightmapIndirect)
-				lightmapIndirect->apply(&dilateFilter);
-		}
-
-		// Blur indirect lightmap to reduce noise from path tracing.
-		if (configuration->getEnableDenoise())
-		{
-#if !defined(__RPI__) && !defined(__APPLE__)
-			if (lightmapDirect)
-				lightmapDirect = denoise(gbuffer, lightmapDirect);
-			if (lightmapIndirect)
-				lightmapIndirect = denoise(gbuffer, lightmapIndirect);
-#endif
-		}
-
-		// Merge direct and indirect lightmaps.
-		Ref< drawing::Image > lightmap = new drawing::Image(drawing::PixelFormat::getRGBAF32(), outputSize, outputSize);
-		lightmap->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-
-		if (lightmapDirect)
-			lightmap->copy(lightmapDirect, 0, 0, outputSize, outputSize, drawing::BlendFunction(
-				drawing::BlendFunction::BfOne,
-				drawing::BlendFunction::BfOne,
-				drawing::BlendFunction::BoAdd
-			));
-
-		if (lightmapIndirect)
-			lightmap->copy(lightmapIndirect, 0, 0, outputSize, outputSize, drawing::BlendFunction(
-				drawing::BlendFunction::BfOne,
-				drawing::BlendFunction::BfOne,
-				drawing::BlendFunction::BoAdd
-			));
-
-		lightmapDirect = nullptr;
-		lightmapIndirect = nullptr;
-
-		// Clamp shadow below threshold; to prevent tonemap to bring up noise.
-		if (configuration->getClampShadowThreshold() > FUZZY_EPSILON)
-		{
-			for (uint32_t y = 0; y < lightmap->getHeight(); ++y)
-			{
-				for (uint32_t x = 0; x < lightmap->getWidth(); ++x)
-				{
-					Color4f lumel;
-					lightmap->getPixelUnsafe(x, y, lumel);
-
-					Scalar intensity = dot3(lumel, Vector4(1.0f, 1.0f, 1.0f, 0.0f));
-
-					intensity = (intensity - Scalar(configuration->getClampShadowThreshold())) / Scalar(1.0f - configuration->getClampShadowThreshold());
-					if (intensity < 0.0f)
-						intensity = Scalar(0.0f);
-
-					lightmap->setPixelUnsafe(x, y, lumel * intensity);
-				}
-			}
-		}
-
-		// Discard alpha.
-		lightmap->clearAlpha(1.0f);
-
-		double TendFilter = timer.getElapsedTime();
-		timer.start();
-
-		lightmap->save(processMeshes[i].name + L"_" + toString(i) + L"_Lightmap.png");
-		model::ModelFormat::writeAny(processMeshes[i].name + L"_" + toString(i) + L"_Tracer.tmd", processMeshes[i].tracerModel);
-		model::ModelFormat::writeAny(processMeshes[i].name + L"_" + toString(i) + L"_Render.tmd", processMeshes[i].renderModel);
-
-		pipelineBuilder->buildOutput(
-			processMeshes[i].lightMapTextureAsset,
-			L"Generated/" + processMeshes[i].lightMapId.format(),
-			processMeshes[i].lightMapId,
-			lightmap
-		);
-
-		pipelineBuilder->buildOutput(
-			processMeshes[i].meshAsset,
-			L"Generated/" + processMeshes[i].meshId.format(),
-			processMeshes[i].meshId,
-			processMeshes[i].renderModel
-		);
-
-		double TendWrite = timer.getElapsedTime();
-		timer.start();
-
-		log::debug << L"Lightmap time breakdown;" << Endl;
-		log::debug << L"  gbuffer    " << int32_t(TendGBuffer * 1000.0) << L" ms." << Endl;
-		log::debug << L"  preprocess " << int32_t(TendPreProcess * 1000.0) << L" ms." << Endl;
-		log::debug << L"  trace      " << int32_t(TendTrace * 1000.0) << L" ms." << Endl;
-		log::debug << L"  filter     " << int32_t((TendFilter) * 1000.0) << L" ms." << Endl;
-		log::debug << L"  output     " << int32_t((TendWrite) * 1000.0) << L" ms." << Endl;
-	}
-
 	return true;
+}
+
+void BakePipelineOperator::setTracerProcessor(TracerProcessor* tracerProcessor)
+{
+	ms_tracerProcessor = tracerProcessor;
 }
 
 	}
