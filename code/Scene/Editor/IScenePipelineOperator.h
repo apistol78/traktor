@@ -15,6 +15,13 @@ namespace traktor
 
 class ISerializable;
 
+	namespace db
+	{
+
+class Instance;
+
+	}
+
 	namespace editor
 	{
 
@@ -42,7 +49,12 @@ public:
 
 	virtual TypeInfoSet getOperatorTypes() const = 0;
 
-	virtual bool build(editor::IPipelineBuilder* pipelineBuilder, const ISerializable* operatorData, SceneAsset* inoutSceneAsset) const = 0;
+	virtual bool build(
+		editor::IPipelineBuilder* pipelineBuilder,
+		const ISerializable* operatorData,
+		const db::Instance* sourceInstance,
+		SceneAsset* inoutSceneAsset
+	) const = 0;
 };
 
 	}

@@ -1532,20 +1532,21 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 
 void EditorForm::closeWorkspace()
 {
-	// Notify plugins about workspace closing.
-	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
-		(*i)->handleWorkspaceClosed();
-
 	buildCancel();
+
+	// Notify plugins about workspace closing.
+	for (auto editorPluginSite : m_editorPluginSites)
+		editorPluginSite->handleWorkspaceClosed();
+
 	closeAllEditors();
 
 	// Ensure all tabs are closed, home tab isn't closed automatically by "close all editors".
 	m_tab->removeAllPages();
 
 	// Remove store objects.
-	setStoreObject(L"StreamServer", 0);
-	setStoreObject(L"DbConnectionManager", 0);
-	setStoreObject(L"PipelineAgentsManager", 0);
+	setStoreObject(L"StreamServer", nullptr);
+	setStoreObject(L"DbConnectionManager", nullptr);
+	setStoreObject(L"PipelineAgentsManager", nullptr);
 
 	// Shutdown agents manager.
 	safeDestroy(m_agentsManager);
@@ -1566,7 +1567,7 @@ void EditorForm::closeWorkspace()
 
 	// Update UI views.
 	updateTitle();
-	m_dataBaseView->setDatabase(0);
+	m_dataBaseView->setDatabase(nullptr);
 }
 
 void EditorForm::setPropertyObject(Object* properties)
@@ -1940,6 +1941,63 @@ void EditorForm::buildAssets(bool rebuild)
 	buildAssets(assetGuids, rebuild);
 }
 
+bool EditorForm::buildAsset(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
+{
+	bool verbose = m_mergedSettings->getProperty< bool >(L"Pipeline.Verbose", false);
+
+	// Create cache if enabled.
+	Ref< editor::IPipelineCache > pipelineCache;
+	if (m_mergedSettings->getProperty< bool >(L"Pipeline.MemCached", false))
+	{
+		pipelineCache = new editor::MemCachedPipelineCache();
+		if (!pipelineCache->create(m_mergedSettings))
+		{
+			traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled" << Endl;
+			pipelineCache = nullptr;
+		}
+	}
+	if (m_mergedSettings->getProperty< bool >(L"Pipeline.FileCache", false))
+	{
+		pipelineCache = new editor::FilePipelineCache();
+		if (!pipelineCache->create(m_mergedSettings))
+		{
+			traktor::log::warning << L"Unable to create pipeline file cache; cache disabled" << Endl;
+			pipelineCache = nullptr;
+		}
+	}
+
+	std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.CachePath");
+
+	// Create pipeline factory.
+	PipelineFactory pipelineFactory(m_mergedSettings);
+	PipelineDependencySet dependencySet;
+	PipelineInstanceCache instanceCache(m_sourceDatabase, cachePath);
+
+	Ref< IPipelineBuilder > pipelineBuilder = new PipelineBuilder(
+		&pipelineFactory,
+		m_sourceDatabase,
+		m_outputDatabase,
+		pipelineCache,
+		m_pipelineDb,
+		&instanceCache,
+		this,
+		m_mergedSettings->getProperty< bool >(L"Pipeline.BuildThreads", true),
+		verbose
+	);
+
+	bool result = pipelineBuilder->buildOutput(
+		sourceAsset,
+		outputPath,
+		outputGuid,
+		buildParams
+	);
+
+	if (pipelineCache)
+		pipelineCache->destroy();
+
+	return result;
+}
+
 Ref< IPipelineDependencySet > EditorForm::buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth)
 {
 	T_ASSERT(m_sourceDatabase);
@@ -2007,11 +2065,14 @@ void EditorForm::updateMRU()
 
 void EditorForm::updateTitle()
 {
-	std::wstringstream ss;
+	StringOutputStream ss;
 
-	std::wstring targetTitle = m_mergedSettings->getProperty< std::wstring >(L"Editor.TargetTitle");
-	if (!targetTitle.empty())
-		ss << targetTitle << L" - ";
+	if (m_mergedSettings)
+	{
+		std::wstring targetTitle = m_mergedSettings->getProperty< std::wstring >(L"Editor.TargetTitle");
+		if (!targetTitle.empty())
+			ss << targetTitle << L" - ";
+	}
 
 	ss << c_title;
 
@@ -2185,15 +2246,17 @@ void EditorForm::closeCurrentEditor()
 	if (tabPage)
 		setActiveEditorPage(tabPage->getData< IEditorPage >(L"EDITORPAGE"));
 	else
-		setActiveEditorPage(0);
+		setActiveEditorPage(nullptr);
 }
 
 void EditorForm::closeAllEditors()
 {
+#if 0
 	T_ANONYMOUS_VAR(EnterLeave)(
 		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
+#endif
 
 	// Get all other pages to close; ignore home.
 	RefArray< ui::TabPage > closePages;
@@ -2238,10 +2301,12 @@ void EditorForm::closeAllEditors()
 
 void EditorForm::closeAllOtherEditors()
 {
+#if 0
 	T_ANONYMOUS_VAR(EnterLeave)(
 		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
+#endif
 
 	// Get all other pages to close; ignore active page and home.
 	RefArray< ui::TabPage > closePages;

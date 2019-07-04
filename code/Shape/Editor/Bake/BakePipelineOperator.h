@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Ref.h"
 #include "Scene/Editor/IScenePipelineOperator.h"
 
 // import/export mechanism.
@@ -15,6 +16,8 @@ namespace traktor
 	namespace shape
 	{
 
+class TracerProcessor;
+
 class T_DLLCLASS BakePipelineOperator : public scene::IScenePipelineOperator
 {
 	T_RTTI_CLASS;
@@ -28,11 +31,18 @@ public:
 
 	virtual TypeInfoSet getOperatorTypes() const override final;
 
-	virtual bool build(editor::IPipelineBuilder* pipelineBuilder, const ISerializable* operatorData, scene::SceneAsset* inoutSceneAsset) const override final;
+	virtual bool build(
+		editor::IPipelineBuilder* pipelineBuilder,
+		const ISerializable* operatorData,
+		const db::Instance* sourceInstance,
+		scene::SceneAsset* inoutSceneAsset
+	) const override final;
+
+	static void setTracerProcessor(TracerProcessor* tracerProcessor);
 
 private:
 	std::wstring m_assetPath;
-	const TypeInfo* m_rayTracerType;
+	static Ref< TracerProcessor > ms_tracerProcessor;	
 };
 
 	}
