@@ -14,6 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.StyleBitmap", StyleBitmap, IBitmap)
 StyleBitmap::StyleBitmap(const wchar_t* const name, int32_t dpi)
 :	m_name(name)
 ,	m_dpi(dpi)
+,	m_ownDefaultBitmap(false)
 {
 }
 
