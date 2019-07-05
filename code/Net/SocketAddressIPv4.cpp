@@ -182,9 +182,9 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 
 #elif defined(__LINUX__) || defined(__ANDROID__) || defined(__APPLE__) && !defined(__IOS__)
 
-    uint8_t buf[1024] = { 0 };
+    uint8_t buf[32767] = { 0 };
     struct ifconf ifc = { 0 };
-    struct ifreq* ifr = 0;
+    struct ifreq* ifr = nullptr;
     int32_t s;
 
     s = socket(PF_INET, SOCK_DGRAM, 0);
@@ -204,37 +204,41 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
         return false;
     }
 
-    ifr = ifc.ifc_req;
-
-    uint32_t nnic = ifc.ifc_len / sizeof(struct ifreq);
-    for (uint32_t i = 0; i < nnic; ++i)
+	uint8_t* ptr = (uint8_t*)ifc.ifc_req;
+    for (uint32_t i = 0; i < ifc.ifc_len; )
     {
-        struct ifreq& r = ifr[i];
+        struct ifreq& r = *(struct ifreq*)&ptr[i];
 
-	if (ioctl(s, SIOCGIFADDR, &r) != 0)
-		continue;
+#if defined(__LINUX__) || defined(__ANDROID__)
+		i += sizeof(r);
+#else
+		i += IFNAMSIZ + r.ifr_addr.sa_len;
+#endif
 
-	struct sockaddr& sa = r.ifr_addr;
+		if (ioctl(s, SIOCGIFADDR, &r) < 0)
+			continue;
+
+		struct sockaddr& sa = r.ifr_addr;
         if (sa.sa_family == AF_INET)
         {
-		Interface n;
-		n.type = ItDefault;
-		n.addr = new SocketAddressIPv4(*(sockaddr_in*)&sa);
+			Interface n;
+			n.type = ItDefault;
+			n.addr = new SocketAddressIPv4(*(sockaddr_in*)&sa);
 
-		if (ioctl(s, SIOCGIFFLAGS, &r) >= 0)
-		{
-                	if (r.ifr_flags & IFF_POINTOPOINT)
-				n.type = ItVPN;
-			if (r.ifr_flags & IFF_LOOPBACK)
-				n.type = ItLoopback;
-		}
-		else
-                	T_DEBUG(L"Unable to query interface flags; assuming wired interface");
+			if (ioctl(s, SIOCGIFFLAGS, &r) >= 0)
+			{
+				if (r.ifr_flags & IFF_POINTOPOINT)
+					n.type = ItVPN;
+				if (r.ifr_flags & IFF_LOOPBACK)
+					n.type = ItLoopback;
+			}
+			else
+				T_DEBUG(L"Unable to query interface flags; assuming wired interface");
 
-		outInterfaces.push_back(n);
+			outInterfaces.push_back(n);
         }
         else
-		T_DEBUG(L"Interface " << i << L" not IPv4; skipped");
+			T_DEBUG(L"Interface " << i << L" not IPv4; skipped");
     }
 
     ::close(s);
