@@ -252,7 +252,7 @@ bool BakePipelineOperator::build(
 						Guid lightmapId = seedId.permutate();
 
 						Ref< render::TextureOutput > lightmapTextureAsset = new render::TextureOutput();
-						lightmapTextureAsset->m_textureFormat = render::TfR16G16B16A16F;
+						lightmapTextureAsset->m_textureFormat = render::TfR8G8B8A8;
 						lightmapTextureAsset->m_keepZeroAlpha = false;
 						lightmapTextureAsset->m_hasAlpha = false;
 						lightmapTextureAsset->m_ignoreAlpha = true;
@@ -262,7 +262,7 @@ bool BakePipelineOperator::build(
 						lightmapTextureAsset->m_systemTexture = true;
 						lightmapTextureAsset->m_generateMips = false;
 
-						Ref< drawing::Image > lightmapWhite = new drawing::Image(drawing::PixelFormat::getARGBF32(), 1, 1);
+						Ref< drawing::Image > lightmapWhite = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 1, 1);
 						lightmapWhite->setPixelUnsafe(0, 0, Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 
 						pipelineBuilder->buildOutput(
@@ -274,8 +274,7 @@ bool BakePipelineOperator::build(
 
 						tracerTask->addTracerOutput(new TracerOutput(
 							rm,
-							lightmapId,
-							lightmapTextureAsset
+							lightmapId
 						));
 
 						// Create output mesh asset.
@@ -406,7 +405,7 @@ bool BakePipelineOperator::build(
 						Guid lightmapId = seedId.permutate();
 
 						Ref< render::TextureOutput > lightmapTextureAsset = new render::TextureOutput();
-						lightmapTextureAsset->m_textureFormat = render::TfR16G16B16A16F;
+						lightmapTextureAsset->m_textureFormat = render::TfR8G8B8A8;
 						lightmapTextureAsset->m_keepZeroAlpha = false;
 						lightmapTextureAsset->m_hasAlpha = false;
 						lightmapTextureAsset->m_ignoreAlpha = true;
@@ -416,7 +415,7 @@ bool BakePipelineOperator::build(
 						lightmapTextureAsset->m_systemTexture = true;
 						lightmapTextureAsset->m_generateMips = false;
 
-						Ref< drawing::Image > lightmapWhite = new drawing::Image(drawing::PixelFormat::getARGBF32(), 1, 1);
+						Ref< drawing::Image > lightmapWhite = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 1, 1);
 						lightmapWhite->setPixelUnsafe(0, 0, Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 
 						pipelineBuilder->buildOutput(
@@ -428,8 +427,7 @@ bool BakePipelineOperator::build(
 
 						tracerTask->addTracerOutput(new TracerOutput(
 							rm,
-							lightmapId,
-							lightmapTextureAsset
+							lightmapId
 						));
 
 						// Create output mesh asset.

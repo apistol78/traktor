@@ -21,13 +21,6 @@ class Model;
 
     }
 
-    namespace render
-    {
-
-class TextureOutput;
-
-    }
-
     namespace shape
     {
 
@@ -38,20 +31,16 @@ class T_DLLCLASS TracerOutput : public Object
 public:
     TracerOutput(
         const model::Model* model,
-        const Guid& lightmapId,
-        const render::TextureOutput* lightmapTextureAsset
+        const Guid& lightmapId
     );
 
     const model::Model* getModel() const { return m_model; }
 
     const Guid& getLightmapId() const { return m_lightmapId; }
 
-    const render::TextureOutput* getLightmapTextureAsset() const { return m_lightmapTextureAsset; }
-
 private:
 	Ref< const model::Model > m_model;
 	Guid m_lightmapId;
-	Ref< const render::TextureOutput > m_lightmapTextureAsset;
 };
 
     }
