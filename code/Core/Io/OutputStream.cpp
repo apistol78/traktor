@@ -439,10 +439,14 @@ OutputStream& FormatMultipleLines(OutputStream& s, const std::wstring& str)
 	size_t p0 = 0;
 	for (uint32_t ln = 1;; ++ln)
 	{
-		size_t p1 = str.find('\n', p0);
-		s << ln << L": " << str.substr(p0, p1 - p0 - 1) << Endl;
+		size_t p1 = str.find_first_of(L"\r\n", p0);
+		s << ln << L": " << str.substr(p0, p1 - p0) << Endl;
 		if (p1 != str.npos)
+		{
 			p0 = p1 + 1;
+			while (str[p0] == L'\r' || str[p0] == L'\n')
+				++p0;
+		}
 		else
 			break;
 	}
