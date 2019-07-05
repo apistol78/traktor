@@ -1,3 +1,4 @@
+#include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Winding3.h"
 #include "Core/Misc/TString.h"
@@ -5,12 +6,15 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/DilateFilter.h"
 #include "Drawing/Functions/BlendFunction.h"
 #include "Editor/IEditor.h"
 #include "Model/Model.h"
-#include "Render/Editor/Texture/TextureOutput.h"
+#include "Render/Types.h"
+#include "Render/Resource/TextureResource.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/GBuffer.h"
 #include "Shape/Editor/Bake/IRayTracer.h"
@@ -290,13 +294,65 @@ bool TracerProcessor::process(const TracerTask* task) const
         // Discard alpha.
         lightmap->clearAlpha(1.0f);
 
-        // Lightmap finished; issue pipeline build to update texture.
-        m_editor->buildAsset(
-            tracerOutput->getLightmapTextureAsset(),
-            L"Generated/" + tracerOutput->getLightmapId().format(),
-            tracerOutput->getLightmapId(),
-            lightmap
-        );
+		// Convert into format which our lightmap texture will be.
+		lightmap->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
+
+		Guid lightmapId = tracerOutput->getLightmapId();
+
+		// Create output instance.
+		Ref< render::TextureResource > outputResource = new render::TextureResource();
+		Ref< db::Instance > outputInstance = m_editor->getOutputDatabase()->createInstance(
+			L"Generated/" + tracerOutput->getLightmapId().format(),
+			db::CifReplaceExisting,
+			&lightmapId
+		);
+		if (!outputInstance)
+		{
+			log::error << L"Trace failed; unable to create output instance." << Endl;
+			return false;
+		}
+
+		outputInstance->setObject(outputResource);
+
+		// Create output data stream.
+		Ref< IStream > stream = outputInstance->writeData(L"Data");
+		if (!stream)
+		{
+			log::error << L"Trace failed; unable to create texture data stream." << Endl;
+			outputInstance->revert();
+			return false;
+		}
+
+		Writer writer(stream);
+
+		writer << uint32_t(12);
+		writer << int32_t(lightmap->getWidth());
+		writer << int32_t(lightmap->getHeight());
+		writer << int32_t(1);
+		writer << int32_t(1);
+		writer << int32_t(render::TfR16G16B16A16F);
+		writer << bool(false);
+		writer << uint8_t(render::Tt2D);
+		writer << bool(false);
+		writer << bool(false);
+
+		uint32_t dataSize = render::getTextureMipPitch(
+			render::TfR16G16B16A16F,
+			lightmap->getWidth(),
+			lightmap->getHeight()
+		);
+
+		const uint8_t* data = static_cast< const uint8_t* >(lightmap->getData());
+		if (writer.write(data, dataSize, 1) != dataSize)
+			return false;
+
+		stream->close();
+
+		if (!outputInstance->commit())
+		{
+			log::error << L"Trace failed; unable to commit output instance." << Endl;
+			return false;
+		}
     }
 
     return true;
