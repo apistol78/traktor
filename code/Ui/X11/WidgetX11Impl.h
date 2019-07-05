@@ -197,7 +197,7 @@ public:
 
 	virtual void startTimer(int interval, int id) T_OVERRIDE
 	{
-		m_timers[id] = Timers::getInstance().bind(interval, [&](int32_t){
+		m_timers[id] = Timers::getInstance().bind(interval, [=](int32_t){
 			if (!isVisible())
 				return;
 			TimerEvent timerEvent(m_owner, id);
