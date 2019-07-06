@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Source environment configuration.
 . "`dirname \"$BASH_SOURCE\"`/config.sh"
@@ -12,12 +12,12 @@ if [ -z $CONFIG ] ; then
 fi
 
 if [ $CONFIG == "static" ] ; then
-	$TRAKTOR_HOME/bin/osx/SolutionBuilder -f=xcode -xcode-root-suffix=-static TraktorOSX.xms -d=DebugStatic -r=ReleaseStatic
+	$SOLUTIONBUILDER -f=xcode -xcode-root-suffix=-static $TRAKTOR_HOME/resources/build/TraktorOSX.xms -d=DebugStatic -r=ReleaseStatic
 elif [ $CONFIG == "shared" ] ; then
-	$TRAKTOR_HOME/bin/osx/SolutionBuilder -f=xcode -xcode-root-suffix=-shared TraktorOSX.xms -d=DebugShared -r=ReleaseShared
+	$SOLUTIONBUILDER -f=xcode -xcode-root-suffix=-shared $TRAKTOR_HOME/resources/build/TraktorOSX.xms -d=DebugShared -r=ReleaseShared
 else
-	$TRAKTOR_HOME/bin/osx/SolutionBuilder -f=xcode -xcode-root-suffix=-static TraktorOSX.xms -d=DebugStatic -r=ReleaseStatic
-	$TRAKTOR_HOME/bin/osx/SolutionBuilder -f=xcode -xcode-root-suffix=-shared TraktorOSX.xms -d=DebugShared -r=ReleaseShared
+	$SOLUTIONBUILDER -f=xcode -xcode-root-suffix=-static $TRAKTOR_HOME/resources/build/TraktorOSX.xms -d=DebugStatic -r=ReleaseStatic
+	$SOLUTIONBUILDER -f=xcode -xcode-root-suffix=-shared $TRAKTOR_HOME/resources/build/TraktorOSX.xms -d=DebugShared -r=ReleaseShared
 fi
 
 popd

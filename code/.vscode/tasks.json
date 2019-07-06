@@ -5,10 +5,7 @@
 			"label": "DebugShared",
 			"type": "shell",
 			"command": "${workspaceRoot}/../scripts/build-vscode.sh DebugShared",
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			},
+			"group": "build",
 			"problemMatcher": [
 				"$gcc"
 			]

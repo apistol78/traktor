@@ -433,10 +433,12 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_settingsPath = Path(L"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config");
 
 #if defined(__APPLE__)
+	/*
 	// Load configuration from bundle resources.
 	bool forceConsole = cmdLine.hasOption(L"console");
 	if (!forceConsole)
 		m_settingsPath = Path(L"$(BUNDLE_PATH)/Contents/Resources//resources/runtime/configurations/Traktor.Editor.config");
+	*/
 #endif
 
 	// Overridden configuration file.
