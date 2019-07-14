@@ -37,7 +37,7 @@ IForm* WidgetFactoryCocoa::createForm(EventSubject* owner)
 
 INotificationIcon* WidgetFactoryCocoa::createNotificationIcon(EventSubject* owner)
 {
-	return 0;
+	return nullptr;
 }
 
 IPathDialog* WidgetFactoryCocoa::createPathDialog(EventSubject* owner)
@@ -57,7 +57,7 @@ IUserWidget* WidgetFactoryCocoa::createUserWidget(EventSubject* owner)
 
 IWebBrowser* WidgetFactoryCocoa::createWebBrowser(EventSubject* owner)
 {
-	return 0;
+	return nullptr;
 }
 
 ISystemBitmap* WidgetFactoryCocoa::createBitmap()
@@ -84,6 +84,8 @@ void WidgetFactoryCocoa::getSystemFonts(std::list< std::wstring >& outFonts)
 
 void WidgetFactoryCocoa::getDesktopRects(std::list< Rect >& outRects) const
 {
+	NSRect frame = [[NSScreen mainScreen] frame];
+	outRects.push_back(fromNSRect(frame));
 }
 
 	}

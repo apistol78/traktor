@@ -37,7 +37,7 @@ namespace traktor
 NSString* makeNSString(const std::wstring& str)
 {
 	std::string mbs = wstombs(Utf8Encoding(), str);
-	return [[[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding] autorelease];
+	return [[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding];
 }
 #endif
 
@@ -144,7 +144,9 @@ bool OS::openFile(const std::wstring& file) const
 	system(("open " + wstombs(file)).c_str());
 	return true;
 #else
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString: makeNSString(file)]];	
+	NSString* fs = makeNSString(file);
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString: fs]];
+	[fs release];	
     return true;
 #endif
 }

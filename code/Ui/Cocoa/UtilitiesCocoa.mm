@@ -1,4 +1,6 @@
 #import <Cocoa/Cocoa.h>
+
+#include "Core/Io/OutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
@@ -55,6 +57,19 @@ NSRect makeNSRect(const Rect& rc)
 	return nrc;
 }
 
+NSRect makeNSRect(const NSPoint& pt)
+{
+	return NSMakeRect(pt.x, pt.y, 0, 0);
+}
+
+NSRect flipNSRect(const NSRect& rc)
+{
+	NSRect screenFrame = [[NSScreen mainScreen] frame];
+	NSRect nrc = rc;
+	nrc.origin.y = screenFrame.size.height - rc.origin.y - rc.size.height;
+	return nrc;
+}
+
 Size fromNSSize(const NSSize& sz)
 {
 	return Size(
@@ -85,6 +100,24 @@ Rect fromNSRect(const NSRect& rc)
 		)
 	);
 	return trc;
+}
+
+OutputStream& formatNSSize(OutputStream& os, const NSSize& sz)
+{
+	os << sz.width << L" * " << sz.height;
+	return os;
+}
+
+OutputStream& formatNSPoint(OutputStream& os, const NSPoint& pt)
+{
+	os << pt.x << L", " << pt.y;
+	return os;
+}
+
+OutputStream& formatNSRect(OutputStream& os, const NSRect& rc)
+{
+	formatNSPoint(os, rc.origin); os << L" - "; formatNSSize(os, rc.size);
+	return os;
 }
 
 VirtualKey translateKeyCode(NSUInteger keyCode)

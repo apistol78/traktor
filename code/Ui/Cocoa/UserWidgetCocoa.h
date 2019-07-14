@@ -18,29 +18,29 @@ public:
 
 	// IWidget
 
-	virtual void destroy() T_OVERRIDE T_FINAL;
+	virtual void destroy() override final;
 
 	// IUserWidget
 
-	virtual bool create(IWidget* parent, int style) T_OVERRIDE T_FINAL;
+	virtual bool create(IWidget* parent, int style) override final;
 
 	// INSControlEventsCallback
 
-	virtual bool event_drawRect(const NSRect& rect) T_OVERRIDE T_FINAL;
+	virtual bool event_drawRect(const NSRect& rect) override final;
 
-	virtual bool event_viewDidEndLiveResize() T_OVERRIDE T_FINAL;
+	virtual bool event_viewDidEndLiveResize() override final;
 
-	virtual bool event_mouseDown(NSEvent* theEvent, int button) T_OVERRIDE T_FINAL;
+	virtual bool event_mouseDown(NSEvent* theEvent, int button) override final;
 
-	virtual bool event_mouseUp(NSEvent* theEvent, int button) T_OVERRIDE T_FINAL;
+	virtual bool event_mouseUp(NSEvent* theEvent, int button) override final;
 
-	virtual bool event_mouseMoved(NSEvent* theEvent, int button) T_OVERRIDE T_FINAL;
+	virtual bool event_mouseMoved(NSEvent* theEvent, int button) override final;
 
-	virtual bool event_keyDown(NSEvent* theEvent) T_OVERRIDE T_FINAL;
+	virtual bool event_keyDown(NSEvent* theEvent) override final;
 
-	virtual bool event_keyUp(NSEvent* theEvent) T_OVERRIDE T_FINAL;
+	virtual bool event_keyUp(NSEvent* theEvent) override final;
 
-	virtual bool event_performKeyEquivalent(NSEvent* theEvent) T_OVERRIDE T_FINAL;
+	virtual bool event_performKeyEquivalent(NSEvent* theEvent) override final;
 };
 
 	}

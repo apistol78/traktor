@@ -4,7 +4,6 @@
 #include "Ui/Enums.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Cocoa/EventLoopCocoa.h"
-#include "Ui/Cocoa/NSDebugAutoreleasePool.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/Events/AllEvents.h"
 
@@ -20,14 +19,11 @@ EventLoopCocoa::EventLoopCocoa()
 ,	m_modifierFlags(0)
 ,	m_idleMode(true)
 {
-	m_pool = [[NSDebugAutoreleasePool alloc] init];
 	[NSApplication sharedApplication];
 }
 
 EventLoopCocoa::~EventLoopCocoa()
 {
-	NSAutoreleasePool* pool = (NSAutoreleasePool*)m_pool;
-	[pool release];
 }
 
 void EventLoopCocoa::destroy()
@@ -48,7 +44,7 @@ bool EventLoopCocoa::process(EventSubject* owner)
 
 	// Process a single event.
 	{
-		NSDebugAutoreleasePool* pool = [[NSDebugAutoreleasePool alloc] init];
+		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
 		if (m_idleMode)
 		{
@@ -58,9 +54,11 @@ bool EventLoopCocoa::process(EventSubject* owner)
 			{
 				if (!handleGlobalEvents(owner, event))
 				{
-					// Process event.
-					[NSApp sendEvent: event];
-					[NSApp updateWindows];
+					if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
+					{
+						[NSApp sendEvent: event];
+						[NSApp updateWindows];
+					}
 				}
 			}
 			else
@@ -83,9 +81,11 @@ bool EventLoopCocoa::process(EventSubject* owner)
 
 				if (!handleGlobalEvents(owner, event))
 				{
-					// Process event.
-					[NSApp sendEvent: event];
-					[NSApp updateWindows];
+					if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
+					{
+						[NSApp sendEvent: event];
+						[NSApp updateWindows];
+					}
 				}
 			}
 			m_idleMode = true;
@@ -107,7 +107,7 @@ int EventLoopCocoa::execute(EventSubject* owner)
 
 	while (!m_terminated)
 	{
-		NSDebugAutoreleasePool* pool = [[NSDebugAutoreleasePool alloc] init];
+		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
 		if (m_idleMode)
 		{
@@ -117,9 +117,11 @@ int EventLoopCocoa::execute(EventSubject* owner)
 			{
 				if (!handleGlobalEvents(owner, event))
 				{
-					// Process event.
-					[NSApp sendEvent: event];
-					[NSApp updateWindows];
+					if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
+					{
+						[NSApp sendEvent: event];
+						[NSApp updateWindows];
+					}
 				}
 			}
 			else
@@ -139,9 +141,11 @@ int EventLoopCocoa::execute(EventSubject* owner)
 			{
 				if (!handleGlobalEvents(owner, event))
 				{
-					// Process event.
-					[NSApp sendEvent: event];
-					[NSApp updateWindows];
+					if (m_modalWindows.empty() || m_modalWindows.back() == [event window])
+					{
+						[NSApp sendEvent: event];
+						[NSApp updateWindows];
+					}
 				}
 			}
 			m_idleMode = true;
@@ -185,6 +189,16 @@ bool EventLoopCocoa::isKeyDown(VirtualKey vk) const
 	return false;
 }
 
+void EventLoopCocoa::pushModal(void* modalWindow)
+{
+	m_modalWindows.push_back(modalWindow);
+}
+
+void EventLoopCocoa::popModal()
+{
+	m_modalWindows.pop_back();
+}
+
 bool EventLoopCocoa::handleGlobalEvents(EventSubject* owner, void* event)
 {
 	NSEvent* evt = (NSEvent*)event;
@@ -222,6 +236,48 @@ bool EventLoopCocoa::handleGlobalEvents(EventSubject* owner, void* event)
 			owner->raiseEvent(&keyEvent);
 			return keyEvent.consumed();
 		}
+	}
+	else if (eventType == NSEventTypeLeftMouseDown || eventType == NSEventTypeRightMouseDown)
+	{
+		NSPoint mousePosition = [NSEvent mouseLocation];
+		NSRect frame = [[NSScreen mainScreen] frame];
+
+		auto pt = fromNSPoint(mousePosition);
+		pt.y = frame.size.height - pt.y;
+
+		int32_t button = 0;
+		if ([evt buttonNumber] == 1)
+			button = MbtLeft;
+		else if ([evt buttonNumber] == 2)
+			button = MbtRight;
+
+		MouseButtonDownEvent mouseButtonDownEvent(
+			owner,
+			button,
+			pt
+		);
+		owner->raiseEvent(&mouseButtonDownEvent);
+	}
+	else if (eventType == NSEventTypeLeftMouseUp|| eventType == NSEventTypeRightMouseUp)
+	{
+		NSPoint mousePosition = [NSEvent mouseLocation];
+		NSRect frame = [[NSScreen mainScreen] frame];
+
+		auto pt = fromNSPoint(mousePosition);
+		pt.y = frame.size.height - pt.y;
+
+		int32_t button = 0;
+		if ([evt buttonNumber] == 1)
+			button = MbtLeft;
+		else if ([evt buttonNumber] == 2)
+			button = MbtRight;
+
+		MouseButtonUpEvent mouseButtonUpEvent(
+			owner,
+			button,
+			pt
+		);
+		owner->raiseEvent(&mouseButtonUpEvent);
 	}
 
 	return false;

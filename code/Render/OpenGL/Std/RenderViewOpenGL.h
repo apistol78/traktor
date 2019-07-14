@@ -120,12 +120,9 @@ public:
 private:
 	struct TargetScope
 	{
-		Ref< RenderTargetSetOpenGL > renderTargetSet;
-		int32_t renderTarget;
-		uint32_t clearMask;
-		Color4f clearColor[8];
-		float clearDepth;
-		int32_t clearStencil;
+		Ref< RenderTargetSetOpenGL > rts;
+		int32_t colorIndex;
+		Clear clear;
 	};
 
 #if defined(_WIN32)
