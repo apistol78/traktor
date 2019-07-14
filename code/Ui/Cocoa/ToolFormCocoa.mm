@@ -1,6 +1,10 @@
+#import "Ui/Cocoa/NSCustomControl.h"
+
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Ui/Application.h"
 #include "Ui/EventSubject.h"
+#include "Ui/Cocoa/EventLoopCocoa.h"
 #include "Ui/Cocoa/ToolFormCocoa.h"
 #include "Ui/Cocoa/NSTargetProxy.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
@@ -13,6 +17,7 @@ namespace traktor
 
 ToolFormCocoa::ToolFormCocoa(EventSubject* owner)
 :	m_owner(owner)
+,	m_parent(nullptr)
 {
 }
 
@@ -38,43 +43,82 @@ bool ToolFormCocoa::create(IWidget* parent, const std::wstring& text, int width,
 
 	[m_window setTitle:makeNSString(text)];
 
-	NSWindowDelegateProxy* proxy = [[NSWindowDelegateProxy alloc] init];
-	[proxy setCallback: this];
-
+	NSWindowDelegateProxy* proxy = [[NSWindowDelegateProxy alloc] initWithCallback: this];
 	[m_window setDelegate: proxy];
+
+	NSView* contentView = [[NSCustomControl alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
+	[m_window setContentView: contentView];
+
+	if ((m_parent = parent) != nullptr)
+	{
+		NSControl* parentControl = (NSControl*)parent->getInternalHandle();
+		NSWindow* parentWindow = [parentControl window];
+		[parentWindow addChildWindow: m_window ordered: NSWindowAbove];
+	}
 
 	return true;
 }
 
 int ToolFormCocoa::showModal()
 {
-	return DrCancel;
+	m_result = -1;
+	[m_window makeKeyAndOrderFront: nil];
+
+	NSModalSession session = [NSApp beginModalSessionForWindow: m_window];
+
+	EventLoopCocoa* eventLoop = static_cast< EventLoopCocoa* >(Application::getInstance()->getEventLoop());
+	eventLoop->pushModal(m_window);
+
+  	while (m_result < 0)
+    {
+		if (!Application::getInstance()->process())
+			break;
+	}
+
+	eventLoop->popModal();
+
+    [NSApp endModalSession:session];
+
+	return m_result;
 }
 
 void ToolFormCocoa::endModal(int result)
 {
+	m_result = result;
+	[NSApp abortModal];
 }
 
 // IWidget implementation
 
 void ToolFormCocoa::destroy()
 {
+	if (m_parent != nullptr)
+	{
+		NSControl* parentControl = (NSControl*)m_parent->getInternalHandle();
+		NSWindow* parentWindow = [parentControl window];
+		[parentWindow removeChildWindow: m_window];
+		m_parent = nullptr;
+	}
+
 	// Release all timers.
-	for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
-		[i->second invalidate];
+	for (auto timer : m_timers)
+		[timer.second invalidate];
 
 	m_timers.clear();
 
 	// Release objects.
 	if (m_window)
 	{
+		[m_window orderOut: nil];
 		[m_window setDelegate: nil];
-		[m_window autorelease]; m_window = 0;
+		[m_window release];
+		m_window = nullptr;
 	}
 }
 
 void ToolFormCocoa::setParent(IWidget* parent)
 {
+	log::info << mbstows(T_FILE_LINE) << L": setParent NI" << Endl;
 }
 
 void ToolFormCocoa::setText(const std::wstring& text)
@@ -89,10 +133,12 @@ std::wstring ToolFormCocoa::getText() const
 
 void ToolFormCocoa::setForeground()
 {
+	log::info << mbstows(T_FILE_LINE) << L": setForeground NI" << Endl;
 }
 
 bool ToolFormCocoa::isForeground() const
 {
+	log::info << mbstows(T_FILE_LINE) << L": isForeground NI" << Endl;
 	return false;
 }
 
@@ -106,16 +152,18 @@ void ToolFormCocoa::setVisible(bool visible)
 
 bool ToolFormCocoa::isVisible() const
 {
-	return false;
+	return (bool)[m_window isVisible];
 }
 
 void ToolFormCocoa::setEnable(bool enable)
 {
+	log::info << mbstows(T_FILE_LINE) << L": setEnable NI" << Endl;
 }
 
 bool ToolFormCocoa::isEnable() const
 {
-	return false;
+	log::info << mbstows(T_FILE_LINE) << L": isEnable NI" << Endl;
+	return true;
 }
 
 bool ToolFormCocoa::hasFocus() const
@@ -129,15 +177,18 @@ void ToolFormCocoa::setFocus()
 
 bool ToolFormCocoa::hasCapture() const
 {
+	log::info << mbstows(T_FILE_LINE) << L": hasCapture NI" << Endl;
 	return false;
 }
 
 void ToolFormCocoa::setCapture()
 {
+	log::info << mbstows(T_FILE_LINE) << L": setCapture NI" << Endl;
 }
 
 void ToolFormCocoa::releaseCapture()
 {
+	log::info << mbstows(T_FILE_LINE) << L": releaseCapture NI" << Endl;
 }
 
 void ToolFormCocoa::startTimer(int interval, int id)
@@ -168,22 +219,23 @@ void ToolFormCocoa::startTimer(int interval, int id)
 
 void ToolFormCocoa::stopTimer(int id)
 {
-	std::map< int, NSTimer* >::iterator i = m_timers.find(id);
-	if (i != m_timers.end())
+	auto it = m_timers.find(id);
+	if (it != m_timers.end())
 	{
-		[i->second invalidate];
-		m_timers.erase(i);
+		[it->second invalidate];
+		m_timers.erase(it);
 	}
 }
 
 void ToolFormCocoa::setRect(const Rect& rect)
 {
-	[m_window setFrame: makeNSRect(rect) display: YES];
+	NSRect frame = makeNSRect(rect);
+	[m_window setFrame: flipNSRect(frame) display: YES];
 }
 
 Rect ToolFormCocoa::getRect() const
 {
-	NSRect frame = [m_window frame];
+	NSRect frame = flipNSRect([m_window frame]);
 	return fromNSRect(frame);
 }
 
@@ -196,15 +248,18 @@ Rect ToolFormCocoa::getInnerRect() const
 
 Rect ToolFormCocoa::getNormalRect() const
 {
+	log::info << mbstows(T_FILE_LINE) << L": getNormalRect NI" << Endl;
 	return Rect(0, 0, 0, 0);
 }
 
 void ToolFormCocoa::setFont(const Font& font)
 {
+	log::info << mbstows(T_FILE_LINE) << L": setFont NI" << Endl;
 }
 
 Font ToolFormCocoa::getFont() const
 {
+	log::info << mbstows(T_FILE_LINE) << L": getFont NI" << Endl;
 	return Font();
 }
 
@@ -215,20 +270,24 @@ const IFontMetric* ToolFormCocoa::getFontMetric() const
 
 void ToolFormCocoa::setCursor(Cursor cursor)
 {
+	log::info << mbstows(T_FILE_LINE) << L": setCursor NI" << Endl;
 }
 
 Point ToolFormCocoa::getMousePosition(bool relative) const
 {
+	log::info << mbstows(T_FILE_LINE) << L": getMousePosition NI" << Endl;
 	return Point(0, 0);
 }
 
 Point ToolFormCocoa::screenToClient(const Point& pt) const
 {
+	log::info << mbstows(T_FILE_LINE) << L": screenToClient NI" << Endl;
 	return Point(0, 0);
 }
 
 Point ToolFormCocoa::clientToScreen(const Point& pt) const
 {
+	log::info << mbstows(T_FILE_LINE) << L": clientToScreen NI" << Endl;
 	return Point(0, 0);
 }
 
@@ -239,25 +298,28 @@ bool ToolFormCocoa::hitTest(const Point& pt) const
 
 void ToolFormCocoa::setChildRects(const std::vector< IWidgetRect >& childRects)
 {
-	for (std::vector< IWidgetRect >::const_iterator i = childRects.begin(); i != childRects.end(); ++i)
+	for (const auto& childRect : childRects)
 	{
-		if (i->widget)
-			i->widget->setRect(i->rect);
+		if (childRect.widget)
+			childRect.widget->setRect(childRect.rect);
 	}
 }
 
 Size ToolFormCocoa::getMinimumSize() const
 {
+	log::info << mbstows(T_FILE_LINE) << L": getMinimumSize NI" << Endl;
 	return Size(0, 0);
 }
 
 Size ToolFormCocoa::getPreferedSize() const
 {
+	log::info << mbstows(T_FILE_LINE) << L": getPreferedSize NI" << Endl;
 	return Size(0, 0);
 }
 
 Size ToolFormCocoa::getMaximumSize() const
 {
+	log::info << mbstows(T_FILE_LINE) << L": getMaximumSize NI" << Endl;
 	return Size(0, 0);
 }
 
@@ -277,23 +339,34 @@ SystemWindow ToolFormCocoa::getSystemWindow()
 
 void ToolFormCocoa::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
 {
+	log::info << mbstows(T_FILE_LINE) << L": getAscentAndDescent NI" << Endl;
 	outAscent = 0;
 	outDescent = 0;
 }
 
 int32_t ToolFormCocoa::getAdvance(wchar_t ch, wchar_t next) const
 {
+	log::info << mbstows(T_FILE_LINE) << L": getAdvance NI" << Endl;
 	return 0;
 }
 
 int32_t ToolFormCocoa::getLineSpacing() const
 {
+	log::info << mbstows(T_FILE_LINE) << L": getLineSpacing NI" << Endl;
 	return 0;
 }
 
 Size ToolFormCocoa::getExtent(const std::wstring& text) const
 {
-	return Size(0, 0);
+	NSFont* font = [NSFont controlContentFontOfSize: 11];
+
+	NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
+	[attributes setObject: font forKey:NSFontAttributeName];
+
+	NSString* str = makeNSString(text);
+	NSSize sz = [str sizeWithAttributes: attributes];
+
+	return fromNSSize(sz);
 }
 
 void ToolFormCocoa::event_windowDidMove()

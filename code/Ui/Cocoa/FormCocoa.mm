@@ -92,7 +92,7 @@ void FormCocoa::destroy()
 	if (m_window)
 	{
 		[m_window setDelegate: nil];
-		[m_window autorelease]; m_window = 0;
+		[m_window release]; m_window = nullptr;
 	}
 }
 

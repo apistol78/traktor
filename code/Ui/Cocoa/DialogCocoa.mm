@@ -2,8 +2,10 @@
 
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Ui/Application.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Cocoa/DialogCocoa.h"
+#include "Ui/Cocoa/EventLoopCocoa.h"
 #include "Ui/Cocoa/NSTargetProxy.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/Events/CloseEvent.h"
@@ -39,9 +41,7 @@ bool DialogCocoa::create(IWidget* parent, const std::wstring& text, int width, i
 
 	[m_window setTitle:makeNSString(text)];
 
-	NSWindowDelegateProxy* proxy = [[NSWindowDelegateProxy alloc] init];
-	[proxy setCallback: this];
-
+	NSWindowDelegateProxy* proxy = [[NSWindowDelegateProxy alloc] initWithCallback: this];
 	[m_window setDelegate: proxy];
 
 	NSView* contentView = [[NSCustomControl alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
@@ -56,10 +56,24 @@ void DialogCocoa::setIcon(ISystemBitmap* icon)
 
 int DialogCocoa::showModal()
 {
+	m_result = -1;
 	[m_window makeKeyAndOrderFront: nil];
-	[m_window center];
-	[NSApp runModalForWindow: m_window];
-	[m_window orderOut: nil];
+
+	NSModalSession session = [NSApp beginModalSessionForWindow: m_window];
+
+	EventLoopCocoa* eventLoop = static_cast< EventLoopCocoa* >(Application::getInstance()->getEventLoop());
+	eventLoop->pushModal(m_window);
+
+  	while (m_result < 0)
+    {
+		if (!Application::getInstance()->process())
+			break;
+	}
+
+	eventLoop->popModal();
+
+    [NSApp endModalSession:session];
+
 	return m_result;
 }
 
@@ -86,8 +100,10 @@ void DialogCocoa::destroy()
 	// Release objects.
 	if (m_window)
 	{
+		[m_window orderOut: nil];
 		[m_window setDelegate: nil];
-		[m_window autorelease]; m_window = 0;
+		[m_window release];
+		m_window = nullptr;
 	}
 }
 

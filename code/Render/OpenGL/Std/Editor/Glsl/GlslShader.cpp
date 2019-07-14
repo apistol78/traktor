@@ -150,7 +150,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 
 	if (m_shaderType == StVertex || m_shaderType == StFragment)
 	{
-		ss << L"#version 430" << Endl;
+		ss << L"#version 150" << Endl;
 		ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
 		if (!name.empty())
 			ss << L"// " << name << Endl;

@@ -20,8 +20,6 @@ struct WrContext
 
 void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depthBits, int stencilBits, int multisample)
 {
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-
 	NSOpenGLPixelFormatAttribute attribs[] =
 	{
 		NSOpenGLPFADoubleBuffer,
@@ -41,8 +39,6 @@ void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depth
 	wrc->view = (NSView*)nativeWindowHandle;
 	wrc->context = nsctx;
 	wrc->waitVBlanks = 0;
-
-	[pool release];
 
 	return (void*)wrc;
 }

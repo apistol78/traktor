@@ -19,26 +19,25 @@ namespace traktor
 
 class EventSubject;
 
-template < typename ControlType, typename NSControlType, typename NSViewType = NSControlType >
+template < typename ControlType, typename NSControlType >
 class WidgetCocoaImpl
 :	public ControlType
 ,	public IFontMetric
 ,	public INotificationProxyCallback
 {
 public:
-	typedef WidgetCocoaImpl< ControlType, NSControlType, NSViewType > class_t;
+	typedef WidgetCocoaImpl< ControlType, NSControlType > class_t;
 
 	WidgetCocoaImpl(EventSubject* owner)
 	:	m_owner(owner)
-	,	m_control(0)
-	,	m_view(0)
-	,	m_notificationProxy(0)
+	,	m_control(nullptr)
+	,	m_notificationProxy(nullptr)
 	,	m_haveFocus(false)
 	,	m_tracking(false)
 	{
 	}
 
-	virtual void destroy() T_OVERRIDE
+	virtual void destroy() override
 	{
 		// Remove notification observer.
 		if (m_notificationProxy)
@@ -46,8 +45,8 @@ public:
 			NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
 			[notificationCenter removeObserver: m_notificationProxy];
 
-			[m_notificationProxy autorelease];
-			m_notificationProxy = 0;
+			[m_notificationProxy release];
+			m_notificationProxy = nullptr;
 		}
 
 		// Release all timers.
@@ -57,27 +56,21 @@ public:
 		m_timers.clear();
 
 		// Remove widget from parent.
-		NSView* view = getView();
+		NSView* view = m_control;
 		if (view)
 			[view removeFromSuperview];
 
 		// Release objects.
 		if (m_control)
 		{
-			[m_control autorelease];
-			m_control = 0;
-		}
-
-		if (m_view)
-		{
-			[m_view autorelease];
-			m_view = 0;
+			[m_control release];
+			m_control = nullptr;
 		}
 	}
 
-	virtual void setParent(IWidget* parent) T_OVERRIDE
+	virtual void setParent(IWidget* parent) override
 	{
-		NSView* view = getView();
+		NSView* view = m_control;
 
 		[view removeFromSuperview];
 
@@ -87,48 +80,48 @@ public:
 		[contentView addSubview: view];
 	}
 
-	virtual void setText(const std::wstring& text) T_OVERRIDE
+	virtual void setText(const std::wstring& text) override
 	{
-		[getControl() setStringValue: makeNSString(text)];
+		[m_control setStringValue: makeNSString(text)];
 	}
 
-	virtual std::wstring getText() const T_OVERRIDE
+	virtual std::wstring getText() const override
 	{
 		return fromNSString([m_control stringValue]);
 	}
 
-	virtual void setForeground() T_OVERRIDE
+	virtual void setForeground() override
 	{
 	}
 
-	virtual bool isForeground() const T_OVERRIDE
+	virtual bool isForeground() const override
 	{
 		return false;
 	}
 
-	virtual void setVisible(bool visible) T_OVERRIDE
+	virtual void setVisible(bool visible) override
 	{
-		[getView() setHidden: visible ? NO : YES];
+		[m_control setHidden: visible ? NO : YES];
 	}
 
-	virtual bool isVisible() const T_OVERRIDE
+	virtual bool isVisible() const override
 	{
-		return [getView() isHidden] == NO;
+		return [m_control isHidden] == NO;
 	}
 
-	virtual void setEnable(bool enable) T_OVERRIDE
+	virtual void setEnable(bool enable) override
 	{
-		[getControl() setEnabled: enable ? YES : NO];
+		[m_control setEnabled: enable ? YES : NO];
 	}
 
-	virtual bool isEnable() const T_OVERRIDE
+	virtual bool isEnable() const override
 	{
-		return [getControl() isEnabled] == YES;
+		return [m_control isEnabled] == YES;
 	}
 
-	virtual bool hasFocus() const T_OVERRIDE
+	virtual bool hasFocus() const override
 	{
-		NSWindow* window = [getControl() window];
+		NSWindow* window = [m_control window];
 		if (!window)
 			return false;
 
@@ -141,29 +134,29 @@ public:
 		return false;
 	}
 
-	virtual void setFocus() T_OVERRIDE
+	virtual void setFocus() override
 	{
-		NSWindow* window = [getControl() window];
+		NSWindow* window = [m_control window];
 		if (window)
 			[window makeFirstResponder: m_control];
 	}
 
-	virtual bool hasCapture() const T_OVERRIDE
+	virtual bool hasCapture() const override
 	{
 		return m_tracking;
 	}
 
-	virtual void setCapture() T_OVERRIDE
+	virtual void setCapture() override
 	{
 		m_tracking = true;
 	}
 
-	virtual void releaseCapture() T_OVERRIDE
+	virtual void releaseCapture() override
 	{
 		m_tracking = false;
 	}
 
-	virtual void startTimer(int interval, int id) T_OVERRIDE
+	virtual void startTimer(int interval, int id) override
 	{
 		ITargetProxyCallback* targetCallback = new TargetProxyCallbackImpl< class_t >(
 			this,
@@ -189,42 +182,42 @@ public:
 		m_timers[id] = timer;
 	}
 
-	virtual void stopTimer(int id) T_OVERRIDE
+	virtual void stopTimer(int id) override
 	{
-		std::map< int, NSTimer* >::iterator i = m_timers.find(id);
-		if (i != m_timers.end())
+		auto it = m_timers.find(id);
+		if (it != m_timers.end())
 		{
-			[i->second invalidate];
-			m_timers.erase(i);
+			[it->second invalidate];
+			m_timers.erase(it);
 		}
 	}
 
-	virtual void setRect(const Rect& rect) T_OVERRIDE
+	virtual void setRect(const Rect& rect) override
 	{
-		[getView() setFrame: makeNSRect(rect)];
+		[m_control setFrame: makeNSRect(rect)];
 		raiseSizeEvent();
 	}
 
-	virtual Rect getRect() const T_OVERRIDE
+	virtual Rect getRect() const override
 	{
-		NSRect rc = [getView() frame];
+		NSRect rc = [m_control frame];
 		return fromNSRect(rc);
 	}
 
-	virtual Rect getInnerRect() const T_OVERRIDE
+	virtual Rect getInnerRect() const override
 	{
-		NSRect rc = [getView() frame];
+		NSRect rc = [m_control frame];
 		rc.origin.x =
 		rc.origin.y = 0;
 		return fromNSRect(rc);
 	}
 
-	virtual Rect getNormalRect() const T_OVERRIDE
+	virtual Rect getNormalRect() const override
 	{
 		return Rect(0, 0, 0, 0);
 	}
 
-	virtual void setFont(const Font& font) T_OVERRIDE
+	virtual void setFont(const Font& font) override
 	{
 		NSFont* nsfnt = [NSFont
 			fontWithName: makeNSString(font.getFace())
@@ -233,12 +226,12 @@ public:
 		if (!nsfnt)
 			return;
 
-		[getControl() setFont: nsfnt];
+		[m_control setFont: nsfnt];
 	}
 
-	virtual Font getFont() const T_OVERRIDE
+	virtual Font getFont() const override
 	{
-		NSFont* font = [getControl() font];
+		NSFont* font = [m_control font];
 		if (!font)
 			font = [NSFont controlContentFontOfSize: 11];
 
@@ -248,38 +241,53 @@ public:
 		);
 	}
 
-	virtual const IFontMetric* getFontMetric() const
+	virtual const IFontMetric* getFontMetric() const override
 	{
 		return this;
 	}
 
-	virtual void setCursor(Cursor cursor) T_OVERRIDE
+	virtual void setCursor(Cursor cursor) override
 	{
 	}
 
-	virtual Point getMousePosition(bool relative) const T_OVERRIDE
+	virtual Point getMousePosition(bool relative) const override
 	{
 		return Point(0, 0);
 	}
 
-	virtual Point screenToClient(const Point& pt) const T_OVERRIDE
+	virtual Point screenToClient(const Point& pt) const override
 	{
-		NSPoint basePt = [m_view convertPoint: makeNSPoint(pt) toView: nil];
-		return fromNSPoint(basePt);
+		NSWindow* window = [m_control window];
+		NSRect windowFrame = flipNSRect([window contentRectForFrameRect: [window frame]]);
+
+		NSPoint pointInScreen = makeNSPoint(pt);
+		NSPoint pointInWindow = pointInScreen;
+		pointInWindow.x -= windowFrame.origin.x;
+		pointInWindow.y -= windowFrame.origin.y;
+
+		NSPoint clientPoint = [m_control convertPoint: pointInWindow fromView: [window contentView]];
+		return fromNSPoint(clientPoint);
 	}
 
-	virtual Point clientToScreen(const Point& pt) const T_OVERRIDE
+	virtual Point clientToScreen(const Point& pt) const override
 	{
-		NSPoint localPt = [m_view convertPoint: makeNSPoint(pt) fromView: nil];
-		return fromNSPoint(localPt);
+		NSWindow* window = [m_control window];
+		NSRect windowFrame = flipNSRect([window contentRectForFrameRect: [window frame]]);
+
+		NSPoint pointInWindow = [[window contentView] convertPoint: makeNSPoint(pt) fromView: m_control];
+		NSPoint pointInScreen = pointInWindow;
+		pointInScreen.x += windowFrame.origin.x;
+		pointInScreen.y += windowFrame.origin.y;
+
+		return fromNSPoint(pointInScreen);
 	}
 
-	virtual bool hitTest(const Point& pt) const T_OVERRIDE
+	virtual bool hitTest(const Point& pt) const override
 	{
 		return false;
 	}
 
-	virtual void setChildRects(const std::vector< IWidgetRect >& childRects) T_OVERRIDE
+	virtual void setChildRects(const std::vector< IWidgetRect >& childRects) override
 	{
 		for (std::vector< IWidgetRect >::const_iterator i = childRects.begin(); i != childRects.end(); ++i)
 		{
@@ -288,45 +296,45 @@ public:
 		}
 	}
 
-	virtual Size getMinimumSize() const T_OVERRIDE
+	virtual Size getMinimumSize() const override
 	{
 		return Size(0, 0);
 	}
 
-	virtual Size getPreferedSize() const T_OVERRIDE
+	virtual Size getPreferedSize() const override
 	{
-		NSSize idealSize = [[getControl() cell] cellSize];
+		NSSize idealSize = [[m_control cell] cellSize];
 		return Size(idealSize.width, idealSize.height);
 	}
 
-	virtual Size getMaximumSize() const T_OVERRIDE
+	virtual Size getMaximumSize() const override
 	{
 		return Size(65535, 65535);
 	}
 
-	virtual void update(const Rect* rc, bool immediate) T_OVERRIDE
+	virtual void update(const Rect* rc, bool immediate) override
 	{
 		if (immediate)
-			[getView() display];
+			[m_control display];
 		else
-			[getView() setNeedsDisplay: YES];
+			[m_control setNeedsDisplay: YES];
 	}
 
-	virtual void* getInternalHandle() T_OVERRIDE
+	virtual void* getInternalHandle() override
 	{
 		return m_control;
 	}
 
-	virtual SystemWindow getSystemWindow() T_OVERRIDE
+	virtual SystemWindow getSystemWindow() override
 	{
 		return SystemWindow(m_control);
 	}
 
 	// IFontMetric
 
-	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const T_OVERRIDE
+	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const override
 	{
-		NSFont* font = [getControl() font];
+		NSFont* font = [m_control font];
 		if (!font)
 			font = [NSFont controlContentFontOfSize: 11];
 
@@ -334,10 +342,10 @@ public:
 		outDescent = [font descender];
 	}
 
-	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const T_OVERRIDE
+	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const override
 	{
 /*
-		NSFont* font = [getControl() font];
+		NSFont* font = [m_control font];
 		if (!font)
 			font = [NSFont controlContentFontOfSize: 11];
 
@@ -349,16 +357,16 @@ public:
 		return 0;
 	}
 
-	virtual int32_t getLineSpacing() const T_OVERRIDE
+	virtual int32_t getLineSpacing() const override
 	{
 		return 0;
 	}
 
-	virtual Size getExtent(const std::wstring& text) const T_OVERRIDE
+	virtual Size getExtent(const std::wstring& text) const override
 	{
 		NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
 
-		NSFont* font = [getControl() font];
+		NSFont* font = [m_control font];
 		if (!font)
 			font = [NSFont controlContentFontOfSize: 11];
 
@@ -373,7 +381,6 @@ public:
 protected:
 	EventSubject* m_owner;
 	NSControlType* m_control;
-	NSViewType* m_view;
 	NSNotificationProxy* m_notificationProxy;
 	std::map< int, NSTimer* > m_timers;
 	bool m_haveFocus;
@@ -395,16 +402,6 @@ protected:
 		return true;
 	}
 
-	NSControl* getControl() const
-	{
-		return m_control;
-	}
-
-	NSView* getView() const
-	{
-		return m_view != 0 ? m_view : (NSView*)m_control;
-	}
-
 	void raiseSizeEvent()
 	{
 		Size sz = getRect().getSize();
@@ -412,7 +409,7 @@ protected:
 		m_owner->raiseEvent(&s);
 	}
 
-	void notificationProxy_recv(NSNotification* notification)
+	virtual void notificationProxy_recv(NSNotification* notification) override final
 	{
 		bool haveFocus = hasFocus();
 		if (m_haveFocus != haveFocus)

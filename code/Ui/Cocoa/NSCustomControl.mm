@@ -23,7 +23,7 @@
 - (void) setStringValue: (NSString*)aString
 {
 	if (m_string)
-		[m_string autorelease];
+		[m_string release];
 
 	m_string = aString;
 
@@ -39,7 +39,7 @@
 - (void) setFont: (NSFont*)font
 {
 	if (m_font)
-		[m_font autorelease];
+		[m_font release];
 
 	m_font = font;
 

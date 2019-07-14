@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "Ui/Itf/IEventLoop.h"
 
 // import/export mechanism.
@@ -36,13 +37,17 @@ public:
 
 	virtual bool isKeyDown(VirtualKey vk) const T_OVERRIDE T_FINAL;
 
+	void pushModal(void* modalWindow);
+
+	void popModal();
+
 private:
-	void* m_pool;
 	bool m_launching;
 	int32_t m_exitCode;
 	bool m_terminated;
 	uint32_t m_modifierFlags;
 	bool m_idleMode;
+	std::vector< void* > m_modalWindows;
 
 	bool handleGlobalEvents(EventSubject* owner, void* event);
 };

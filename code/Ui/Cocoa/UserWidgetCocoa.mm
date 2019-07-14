@@ -49,14 +49,15 @@ bool UserWidgetCocoa::event_drawRect(const NSRect& rect)
 	if (!m_owner->hasEventHandler< PaintEvent >())
 		return false;
 
-	Rect rc = fromNSRect(rect);
-
 	NSFont* font = [m_control font];
 	if (!font)
 		return false;
 
+	// Create wrapped canvas.
 	CanvasCocoa canvasImpl(m_control, font);
 	Canvas canvas(&canvasImpl);
+
+	Rect rc = fromNSRect(rect);
 	PaintEvent paintEvent(m_owner, canvas, rc);
 	m_owner->raiseEvent(&paintEvent);
 
