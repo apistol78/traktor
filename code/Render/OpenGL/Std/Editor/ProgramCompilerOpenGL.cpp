@@ -280,6 +280,7 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 	}
 
 	programResource->m_renderState = cx.getRenderState();
+	programResource->m_texturesCount = 0;
 
 	// Map parameters to uniforms.
 	struct ParameterMapping

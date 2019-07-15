@@ -288,7 +288,7 @@ void ProgramOpenGL::setVectorArrayParameter(handle_t handle, const Vector4* para
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT (length * 4 <= i->second.size);
+		T_FATAL_ASSERT(length * 4 <= i->second.size);
 		auto& ub = m_uniformBuffers[i->second.buffer];
 		if (storeIfNotEqual(param, length, &ub.data[i->second.offset]))
 			ub.dirty = true;
@@ -311,7 +311,7 @@ void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* par
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT (length * 16 <= i->second.size);
+		T_FATAL_ASSERT(length * 16 <= i->second.size);
 		auto& ub = m_uniformBuffers[i->second.buffer];
 		for (int j = 0; j < length; ++j)
 			param[j].storeAligned(&ub.data[i->second.offset + j * 16]);
@@ -323,7 +323,10 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 {
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
+	{
+		T_FATAL_ASSERT(i->second.offset < m_textures.size());
 		m_textures[i->second.offset] = texture;
+	}
 }
 
 void ProgramOpenGL::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
