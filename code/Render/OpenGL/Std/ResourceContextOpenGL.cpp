@@ -9,6 +9,37 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+		
+const GLenum c_glFilter[] =
+{
+	GL_NEAREST,
+	GL_LINEAR
+};
+
+const GLenum c_glWrap[] =
+{
+	GL_REPEAT,
+	GL_REPEAT,
+	GL_CLAMP_TO_EDGE,
+	GL_CLAMP_TO_EDGE
+};
+
+const GLenum c_glCompare[] =
+{
+	GL_ALWAYS,
+	GL_NEVER,
+	GL_LESS,
+	GL_LEQUAL,
+	GL_GREATER,
+	GL_GEQUAL,
+	GL_EQUAL,
+	GL_NOTEQUAL,
+	GL_INVALID_ENUM
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ResourceContextOpenGL", ResourceContextOpenGL, ContextOpenGL)
 
@@ -70,105 +101,82 @@ GLuint ResourceContextOpenGL::createShaderObject(const char* shader, GLenum shad
 	return shaderObject;
 }
 
-uint32_t ResourceContextOpenGL::createRenderStateObject(const RenderStateOpenGL& renderState)
+uint32_t ResourceContextOpenGL::createRenderStateObject(const RenderState& renderState)
 {
 	Adler32 adler;
-	adler.feed(renderState.cullFaceEnable);
-	adler.feed(renderState.cullFace);
-	adler.feed(renderState.blendEnable);
-	adler.feed(renderState.blendColorEquation);
-	adler.feed(renderState.blendAlphaEquation);
-	adler.feed(renderState.blendFuncColorSrc);
-	adler.feed(renderState.blendFuncColorDest);
-	adler.feed(renderState.blendFuncAlphaSrc);
-	adler.feed(renderState.blendFuncAlphaDest);
-	adler.feed(renderState.depthTestEnable);
-	adler.feed(renderState.colorMask);
-	adler.feed(renderState.depthMask);
-	adler.feed(renderState.depthFunc);
-	adler.feed(renderState.alphaTestEnable);
-	adler.feed(renderState.alphaFunc);
-	adler.feed(renderState.alphaRef);
-	adler.feed(renderState.stencilTestEnable);
-	adler.feed(renderState.stencilOpFail);
-	adler.feed(renderState.stencilOpZFail);
-	adler.feed(renderState.stencilOpZPass);
+	adler.feed(renderState);
 
-	SmallMap< uint32_t, uint32_t >::iterator i = m_renderStateListCache.find(adler.get());
-	if (i != m_renderStateListCache.end())
-		return i->second;
+	auto it = m_renderStateListCache.find(adler.get());
+	if (it != m_renderStateListCache.end())
+		return it->second;
 
 	uint32_t list = m_renderStateList.size() + 1;
 
 	m_renderStateList.push_back(renderState);
-	if (m_renderStateList.back().cullFace == GL_FRONT)
-		m_renderStateList.back().cullFace = GL_BACK;
-	else
-		m_renderStateList.back().cullFace = GL_FRONT;
-
-	m_renderStateList.push_back(renderState);
-	if (m_renderStateList.back().cullFace == GL_FRONT)
-		m_renderStateList.back().cullFace = GL_BACK;
-	else
-		m_renderStateList.back().cullFace = GL_FRONT;
-
-	RenderStateOpenGL& rs = m_renderStateList.back();
-
-	rs.depthTestEnable = GL_FALSE;
-	rs.depthMask = GL_FALSE;
-	rs.stencilTestEnable = GL_FALSE;
-
 	m_renderStateListCache.insert(std::make_pair(adler.get(), list));
 	return list;
 }
 
-uint32_t ResourceContextOpenGL::createSamplerStateObject(const SamplerStateOpenGL& samplerState)
+uint32_t ResourceContextOpenGL::createSamplerStateObject(const SamplerState& samplerState)
 {
 	Adler32 adler;
-	adler.feed(samplerState.minFilter);
-	adler.feed(samplerState.magFilter);
-	adler.feed(samplerState.wrapS);
-	adler.feed(samplerState.wrapT);
-	adler.feed(samplerState.wrapR);
-	adler.feed(samplerState.compare);
+	adler.feed(samplerState);
 
-	SmallMap< uint32_t, SamplerStateObject >::iterator i = m_samplerStateObjects.find(adler.get());
-	if (i != m_samplerStateObjects.end())
-		return i->first;
+	auto it = m_samplerStateObjects.find(adler.get());
+	if (it != m_samplerStateObjects.end())
+		return it->first;
 
-	SamplerStateObject& sso = m_samplerStateObjects[adler.get()];
+	auto& sso = m_samplerStateObjects[adler.get()];
 	glGenSamplers(2, sso.samplers);
 
 	for (uint32_t i = 0; i < sizeof_array(sso.samplers); ++i)
 	{
-		T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_WRAP_S, samplerState.wrapS));
-		T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_WRAP_T, samplerState.wrapT));
-		T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_WRAP_R, samplerState.wrapR));
-
-		T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
-
-		bool withMips = bool(i == 0);
-		if (withMips)
+		// Texture filtering.
+		if (i == 0)
 		{
-			T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_MIN_FILTER, samplerState.minFilter));
-			if (m_maxAnisotropy > 0.0f)
-				T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotropy));
+			bool minLinear = samplerState.minFilter != FtPoint;
+			bool mipLinear = samplerState.mipFilter != FtPoint;
+
+			if (!minLinear && !mipLinear)
+				{ T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_MIN_FILTER, GL_NEAREST)); }
+			else if (!minLinear && mipLinear)
+				{ T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR)); }
+			else if (minLinear && !mipLinear)
+				{ T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST)); }
+			else
+				{ T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)); }
+
+	 		if (m_maxAnisotropy > 0.0f)
+	 			{ T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_MAX_ANISOTROPY_EXT, m_maxAnisotropy)); }
 		}
 		else
 		{
-			T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+			bool minLinear = samplerState.minFilter != FtPoint;
+			if (!minLinear)
+				{ T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_MIN_FILTER, GL_NEAREST)); }
+			else
+				{ T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_MIN_FILTER, GL_LINEAR)); }
 		}
 
-		if (samplerState.compare != GL_INVALID_ENUM)
-		{
-			T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE));
-			T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_COMPARE_FUNC, samplerState.compare));
-		}
-		else
-		{
-			T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_COMPARE_MODE, GL_NONE));
-		}
-	}
+	 	T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_MAG_FILTER, c_glFilter[samplerState.magFilter]));
+
+		// Texture address mode.
+	 	T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_WRAP_S, c_glWrap[samplerState.addressU]));
+	 	T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_WRAP_T, c_glWrap[samplerState.addressV]));
+	 	T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_WRAP_R, c_glWrap[samplerState.addressW]));
+
+		// Shadow compare operation.
+		GLenum compare = c_glCompare[samplerState.compare];
+	 	if (compare != GL_INVALID_ENUM)
+	 	{
+	 		T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE));
+	 		T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_COMPARE_FUNC, compare));
+	 	}
+	 	else
+	 	{
+	 		T_OGL_SAFE(glSamplerParameteri(sso.samplers[i], GL_TEXTURE_COMPARE_MODE, GL_NONE));
+	 	}
+	 }
 
 	return adler.get();
 }
@@ -184,8 +192,8 @@ void ResourceContextOpenGL::deleteResources()
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	if (!m_deleteResources.empty())
 	{
-		for (AlignedVector< IDeleteCallback* >::iterator i = m_deleteResources.begin(); i != m_deleteResources.end(); ++i)
-			(*i)->deleteResource();
+		for (auto deleteResource : m_deleteResources)
+			deleteResource->deleteResource();
 		m_deleteResources.resize(0);
 	}
 }

@@ -55,69 +55,70 @@ public:
 	uint32_t getAttributeHash() const { return m_attributeHash; }
 
 private:
-	struct Uniform
+	struct ParameterMap
 	{
-		GLint location;
-		GLenum type;
-		uint32_t offset;
-		uint32_t length;
+		uint32_t buffer;	//!< Uniform buffer index.
+		uint32_t offset;	//!< Offset into uniform buffer's data.
+		uint32_t size;		//!< Number of floats.
+
+		ParameterMap()
+		:	buffer(0)
+		,	offset(0)
+		,	size(0)
+		{
+		}
+	};
+
+	struct UniformBuffer
+	{
+		uint32_t size;
+		AlignedVector< float > data;
+		GLuint object;
 		bool dirty;
 
-		Uniform()
-		:	location(0)
-		,	type(0)
-		,	offset(0)
-		,	length(0)
-		,	dirty(false)
+		UniformBuffer()
+		:	size(0)
+		,	object(0)
+		,	dirty(true)
 		{
 		}
 	};
 
 	struct Sampler
 	{
-		GLint location;
-		uint32_t texture;
-		uint32_t unit;
-		GLuint object;
+		GLint unit;
+		uint32_t state;
+		uint32_t textureIndex;
 
 		Sampler()
-		:	location(0)
-		,	texture(0)
-		,	unit(0)
-		,	object(0)
-		{
-		}
-	};
-
-	struct TextureSize
-	{
-		GLint location;
-		uint32_t texture;
-
-		TextureSize()
-		:	location(0)
-		,	texture(0)
+		:	unit(0)
+		,	state(0)
+		,	textureIndex(0)
 		{
 		}
 	};
 
 	Ref< ResourceContextOpenGL > m_resourceContext;
 	GLuint m_program;
-	RenderStateOpenGL m_renderState;
 	GLuint m_renderStateList;
-	GLint m_locationTargetSize;
+	uint32_t m_stencilReference;
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];			//!< Vertex attribute locations.
 	uint32_t m_attributeHash;
-	SmallMap< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
-	AlignedVector< Uniform > m_uniforms;					//!< Scalar uniforms.
-	AlignedVector< Sampler > m_samplers;					//!< Samplers.
-	AlignedVector< TextureSize > m_textureSize;
-	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
+	UniformBuffer m_uniformBuffers[3];
 	RefArray< ITexture > m_textures;
-	float m_targetSize[2];
-	bool m_textureDirty;
-	bool m_validated;
-	bool m_valid;
+	AlignedVector< Sampler > m_samplers;
+	SmallMap< handle_t, ParameterMap > m_parameterMap;
+
+	// SmallMap< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
+	// AlignedVector< Uniform > m_uniforms;					//!< Scalar uniforms.
+	// AlignedVector< Sampler > m_samplers;					//!< Samplers.
+	// AlignedVector< TextureSize > m_textureSize;
+	// AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
+	// RefArray< ITexture > m_textures;
+	// float m_targetSize[2];
+	// bool m_textureDirty;
+	// bool m_validated;
+	// bool m_valid;
 
 	ProgramOpenGL(ResourceContextOpenGL* resourceContext, GLuint program, const ProgramResource* resource);
 };

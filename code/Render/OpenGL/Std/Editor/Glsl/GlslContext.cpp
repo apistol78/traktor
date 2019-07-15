@@ -1,11 +1,14 @@
 #include "Core/Log/Log.h"
-#include "Render/OpenGL/Std/Editor/Glsl/GlslContext.h"
-#include "Render/OpenGL/Std/Editor/Glsl/GlslShader.h"
+#include "Core/Misc/Adler32.h"
+#include "Core/Misc/String.h"
 #include "Render/Editor/Shader/InputPin.h"
 #include "Render/Editor/Shader/Node.h"
 #include "Render/Editor/Shader/OutputPin.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphTraverse.h"
+#include "Render/OpenGL/Std/Editor/Glsl/GlslContext.h"
+#include "Render/OpenGL/Std/Editor/Glsl/GlslShader.h"
+#include "Render/OpenGL/Std/Editor/Glsl/GlslUniformBuffer.h"
 
 namespace traktor
 {
@@ -23,31 +26,31 @@ std::wstring getClassNameOnly(const Object* o)
 
 		}
 
-GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* settings)
+GlslContext::GlslContext(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
-,	m_settings(settings)
 ,	m_vertexShader(GlslShader::StVertex)
 ,	m_fragmentShader(GlslShader::StFragment)
 ,	m_computeShader(GlslShader::StCompute)
-,	m_currentShader(0)
-,	m_nextStage(0)
+,	m_currentShader(nullptr)
 {
+	m_layout.add(new GlslUniformBuffer(L"UbOnce", 0));
+	m_layout.add(new GlslUniformBuffer(L"UbFrame", 1));
+	m_layout.add(new GlslUniformBuffer(L"UbDraw", 2));
 }
 
-Node* GlslContext::getInputNode(const InputPin* inputPin) const
+Node* GlslContext::getInputNode(const InputPin* inputPin)
 {
 	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
 	return sourcePin ? sourcePin->getNode() : nullptr;
 }
 
-Node* GlslContext::getInputNode(Node* node, const std::wstring& inputPinName) const
+Node* GlslContext::getInputNode(Node* node, const std::wstring& inputPinName)
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
 	T_ASSERT(inputPin);
 
 	return getInputNode(inputPin);
 }
-
 bool GlslContext::emit(Node* node)
 {
 	// In case we're in failure state we ignore recursing further.
@@ -56,10 +59,16 @@ bool GlslContext::emit(Node* node)
 
 	bool allOutputsEmitted = true;
 
-	// Check if all outputs of node already has been emitted.
+	// Check if all active outputs of node already has been emitted.
 	int32_t outputPinCount = node->getOutputPinCount();
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
+		const OutputPin* outputPin = node->getOutputPin(i);
+		T_ASSERT(outputPin != nullptr);
+
+		if (m_shaderGraph->getDestinationCount(outputPin) == 0)
+			continue;
+
 		GlslVariable* variable = m_currentShader->getVariable(node->getOutputPin(i));
 		if (!variable)
 		{
@@ -84,7 +93,7 @@ GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 		return nullptr;
 
 	// Check if node's output already has been emitted.
-	GlslVariable* variable = m_currentShader->getVariable(sourcePin);
+	Ref< GlslVariable > variable = m_currentShader->getVariable(sourcePin);
 	if (variable)
 		return variable;
 
@@ -138,13 +147,13 @@ GlslVariable* GlslContext::emitOutput(Node* node, const std::wstring& outputPinN
 	return out;
 }
 
-void GlslContext::emitOutput(Node* node, const std::wstring& outputPinName, GlslVariable* variable)
-{
-	const OutputPin* outputPin = node->findOutputPin(outputPinName);
-	T_ASSERT(outputPin);
-
-	m_currentShader->associateVariable(outputPin, variable);
-}
+//void GlslContext::emitOutput(Node* node, const std::wstring& outputPinName, GlslVariable* variable)
+//{
+//	const OutputPin* outputPin = node->findOutputPin(outputPinName);
+//	T_ASSERT(outputPin);
+//
+//	m_currentShader->associateVariable(outputPin, variable);
+//}
 
 void GlslContext::findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const AlignedVector< const OutputPin* >& dependentOutputPins, AlignedVector< const OutputPin* >& outOutputPins) const
 {
@@ -176,17 +185,17 @@ void GlslContext::enterCompute()
 
 bool GlslContext::inVertex() const
 {
-	return (bool)(m_currentShader == &m_vertexShader);
+	return bool(m_currentShader == &m_vertexShader);
 }
 
 bool GlslContext::inFragment() const
 {
-	return (bool)(m_currentShader == &m_fragmentShader);
+	return bool(m_currentShader == &m_fragmentShader);
 }
 
 bool GlslContext::inCompute() const
 {
-	return (bool)(m_currentShader == &m_computeShader);
+	return bool(m_currentShader == &m_computeShader);
 }
 
 bool GlslContext::allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset)
@@ -200,9 +209,7 @@ bool GlslContext::allocateInterpolator(int32_t width, int32_t& outId, int32_t& o
 		{
 			outId = i;
 			outOffset = occupied;
-
 			occupied += width;
-
 			return false;
 		}
 	}
@@ -211,127 +218,40 @@ bool GlslContext::allocateInterpolator(int32_t width, int32_t& outId, int32_t& o
 	outOffset = 0;
 
 	m_interpolatorMap.push_back(width);
-
 	return true;
 }
 
-GlslRequirements& GlslContext::requirements()
+bool GlslContext::addParameter(const std::wstring& name, ParameterType type, int32_t length, UpdateFrequency frequency)
 {
-	return m_requirements;
+	if (haveParameter(name))
+		return false;
+	m_parameters.push_back({
+		name,
+		type,
+		length,
+		frequency
+	});
+	return true;
 }
 
-const GlslRequirements& GlslContext::requirements() const
+bool GlslContext::haveParameter(const std::wstring& name) const
 {
-	return m_requirements;
-}
-
-const PropertyGroup* GlslContext::getSettings() const
-{
-	return m_settings;
-}
-
-GlslShader& GlslContext::getVertexShader()
-{
-	return m_vertexShader;
-}
-
-GlslShader& GlslContext::getFragmentShader()
-{
-	return m_fragmentShader;
-}
-
-GlslShader& GlslContext::getComputeShader()
-{
-	return m_computeShader;
-}
-
-GlslShader& GlslContext::getShader()
-{
-	T_ASSERT(m_currentShader);
-	return *m_currentShader;
-}
-
-GlslEmitter& GlslContext::getEmitter()
-{
-	return m_emitter;
-}
-
-RenderStateOpenGL& GlslContext::getRenderState()
-{
-	return m_renderState;
-}
-
-void GlslContext::defineTexture(const std::wstring& texture)
-{
-	if (std::find(m_textures.begin(), m_textures.end(), texture) == m_textures.end())
-		m_textures.push_back(texture);
-}
-
-bool GlslContext::defineUniform(const std::wstring& name, GLenum type, GLuint length)
-{
-	for (std::vector< NamedUniformType >::const_iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
+	for (const auto& parameter : m_parameters)
 	{
-		if (i->name == name)
-		{
-			if (i->type == type && i->length == length)
-				return true;
-			else
-				return false;
-		}
+		if (parameter.name == name)
+			return true;
 	}
-
-	NamedUniformType nut;
-	nut.name = name;
-	nut.type = type;
-	nut.length = length;
-	m_uniforms.push_back(nut);
-
-	return true;
+	return false;
 }
 
-bool GlslContext::defineSampler(const std::wstring& name, uint32_t stateHash, GLenum target, const std::wstring& texture, int32_t& outStage)
+GlslLayout& GlslContext::getLayout()
 {
-	std::vector< std::wstring >::iterator i = std::find(m_textures.begin(), m_textures.end(), texture);
-	T_ASSERT(i != m_textures.end());
-
-	uint32_t textureId = uint32_t(std::distance(m_textures.begin(), i));
-
-	for (uint32_t i = 0; i < uint32_t(m_samplers.size()); ++i)
-	{
-		const SamplerBindingOpenGL& sampler = m_samplers[i];
-		if (m_samplerStateHashes[i] == stateHash && sampler.target == target && sampler.texture == textureId)
-		{
-			outStage = sampler.unit;
-			return false;
-		}
-	}
-
-	outStage = m_nextStage++;
-
-	SamplerBindingOpenGL sb;
-	sb.name = name;
-	sb.unit = outStage;
-	sb.target = target;
-	sb.texture = textureId;
-	m_samplers.push_back(sb);
-	m_samplerStateHashes.push_back(stateHash);
-
-	return true;
+	return m_layout;
 }
 
-const std::vector< std::wstring >& GlslContext::getTextures() const
+void GlslContext::setRenderState(const RenderState& renderState)
 {
-	return m_textures;
-}
-
-const std::vector< NamedUniformType >& GlslContext::getUniforms() const
-{
-	return m_uniforms;
-}
-
-const std::vector< SamplerBindingOpenGL >& GlslContext::getSamplers() const
-{
-	return m_samplers;
+	m_renderState = renderState;
 }
 
 	}

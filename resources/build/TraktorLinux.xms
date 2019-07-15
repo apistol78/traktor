@@ -16748,6 +16748,7 @@
 					<definitions>
 						<item>T_RENDER_OPENGL_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
+						<item>T_ENABLE_GLSL_VERIFY</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -16777,6 +16778,7 @@
 					<definitions>
 						<item>T_RENDER_OPENGL_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
+						<item>T_ENABLE_GLSL_VERIFY</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -16806,6 +16808,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>T_ENABLE_GLSL_VERIFY</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -16835,6 +16838,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>T_ENABLE_GLSL_VERIFY</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -16884,6 +16888,12 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[28]"/>
+				</item>
+				<item type="ExternalDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<solutionFileName>ExternLinux.xms</solutionFileName>
+					<projectName>Extern.vulkan.glslang</projectName>
 				</item>
 			</dependencies>
 		</item>

@@ -1,7 +1,11 @@
-#include "Core/Settings/PropertyBoolean.h"
-#include "Core/Settings/PropertyGroup.h"
 #include "Render/Editor/Shader/OutputPin.h"
+#include "Render/OpenGL/Std/Editor/Glsl/GlslImage.h"
+#include "Render/OpenGL/Std/Editor/Glsl/GlslLayout.h"
+#include "Render/OpenGL/Std/Editor/Glsl/GlslSampler.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslShader.h"
+#include "Render/OpenGL/Std/Editor/Glsl/GlslStorageBuffer.h"
+#include "Render/OpenGL/Std/Editor/Glsl/GlslTexture.h"
+#include "Render/OpenGL/Std/Editor/Glsl/GlslUniformBuffer.h"
 
 namespace traktor
 {
@@ -13,7 +17,6 @@ GlslShader::GlslShader(ShaderType shaderType)
 ,	m_nextTemporaryVariable(0)
 {
 	pushScope();
-	pushOutputStream(BtUniform, new StringOutputStream());
 	pushOutputStream(BtInput, new StringOutputStream());
 	pushOutputStream(BtOutput, new StringOutputStream());
 	pushOutputStream(BtScript, new StringOutputStream());
@@ -26,7 +29,6 @@ GlslShader::~GlslShader()
 	popOutputStream(BtScript);
 	popOutputStream(BtOutput);
 	popOutputStream(BtInput);
-	popOutputStream(BtUniform);
 	popScope();
 }
 
@@ -50,62 +52,50 @@ GlslVariable* GlslShader::createTemporaryVariable(const OutputPin* outputPin, Gl
 
 GlslVariable* GlslShader::createVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type)
 {
-	T_ASSERT(!m_variables.empty());
+	for (uint32_t i = m_variableScopes.back(); i < m_variables.size(); ++i)
+	{
+		const auto& v = m_variables[i];
+		T_FATAL_ASSERT (v.outputPin != outputPin);
+	}
 
-	Ref< GlslVariable > variable = new GlslVariable(outputPin->getNode(), variableName, type);
-	m_variables.back().insert(std::make_pair(outputPin, variable));
-
-	return variable;
+	auto& v = m_variables.push_back();
+	v.outputPin = outputPin;
+	v.variable = new GlslVariable(outputPin->getNode(), variableName, type);
+	return v.variable;
 }
 
 GlslVariable* GlslShader::createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type)
 {
-	T_ASSERT(!m_variables.empty());
-
-	Ref< GlslVariable > variable = new GlslVariable(outputPin->getNode(), variableName, type);
-	m_variables.front().insert(std::make_pair(outputPin, variable));
-
-	return variable;
-}
-
-void GlslShader::associateVariable(const OutputPin* outputPin, GlslVariable* variable)
-{
-	m_variables.back().insert(std::make_pair(outputPin, variable));
+	auto& v = m_outerVariables.push_back();
+	v.outputPin = outputPin;
+	v.variable = new GlslVariable(outputPin->getNode(), variableName, type);
+	return v.variable;
 }
 
 GlslVariable* GlslShader::getVariable(const OutputPin* outputPin)
 {
-	T_ASSERT(!m_variables.empty());
-
-	for (std::list< scope_t >::reverse_iterator i = m_variables.rbegin(); i != m_variables.rend(); ++i)
+	for (auto it = m_variables.rbegin(); it != m_variables.rend(); ++it)
 	{
-		scope_t::iterator j = i->find(outputPin);
-		if (j != i->end())
-			return j->second;
+		if (it->outputPin == outputPin)
+			return it->variable;
 	}
-
-	return 0;
+	for (auto it = m_outerVariables.begin(); it != m_outerVariables.end(); ++it)
+	{
+		if (it->outputPin == outputPin)
+			return it->variable;
+	}
+	return nullptr;
 }
 
 void GlslShader::pushScope()
 {
-	m_variables.push_back(scope_t());
+	m_variableScopes.push_back((uint32_t)m_variables.size());
 }
 
 void GlslShader::popScope()
 {
-	if (!m_variables.empty())
-		m_variables.pop_back();
-}
-
-void GlslShader::addUniform(const std::wstring& uniform)
-{
-	m_uniforms.insert(uniform);
-}
-
-const std::set< std::wstring >& GlslShader::getUniforms() const
-{
-	return m_uniforms;
+	m_variables.resize(m_variableScopes.back());
+	m_variableScopes.pop_back();
 }
 
 bool GlslShader::defineScript(const std::wstring& signature)
@@ -125,8 +115,7 @@ void GlslShader::pushOutputStream(BlockType blockType, StringOutputStream* outpu
 
 void GlslShader::popOutputStream(BlockType blockType)
 {
-	if (!m_outputStreams[int(blockType)].empty())
-		m_outputStreams[int(blockType)].pop_back();
+	m_outputStreams[int(blockType)].pop_back();
 }
 
 StringOutputStream& GlslShader::getOutputStream(BlockType blockType)
@@ -141,92 +130,138 @@ const StringOutputStream& GlslShader::getOutputStream(BlockType blockType) const
 	return *(m_outputStreams[int(blockType)].back());
 }
 
-std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const std::wstring& name, const GlslRequirements& requirements) const
+std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout) const
 {
 	StringOutputStream ss;
 
 	if (getOutputStream(BtBody).empty())
 		return L"";
 
-	if (m_shaderType == StVertex || m_shaderType == StFragment)
+	ss << L"#version 430" << Endl;
+	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
+	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
+	ss << Endl;
+
+	if (m_shaderType == StFragment)
 	{
-		ss << L"#version 150" << Endl;
-		ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
-		if (!name.empty())
-			ss << L"// " << name << Endl;
-		ss << Endl;
-
-		ss << L"precision highp float;" << Endl;
-		ss << Endl;
-
-		ss << L"uniform vec2 _gl_targetSize;" << Endl;
-		ss << Endl;
-	}
-	else if (m_shaderType == StCompute)
-	{
-		ss << L"#version 430" << Endl;
-		ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
-		if (!name.empty())
-			ss << L"// " << name << Endl;
-		ss << Endl;
-
-		ss << L"layout(local_size_x = 1, local_size_y = 1) in;" << Endl;
+		ss << L"layout (location = 0) out vec4 _gl_FragData_0;" << Endl;
+		ss << L"layout (location = 1) out vec4 _gl_FragData_1;" << Endl;
+		ss << L"layout (location = 2) out vec4 _gl_FragData_2;" << Endl;
+		ss << L"layout (location = 3) out vec4 _gl_FragData_3;" << Endl;
 		ss << Endl;
 	}
 
-	if (m_shaderType == StVertex)
+	for (auto resource : layout.get())
 	{
-		// Add post-scale transform function.
-		ss << L"vec4 PV(in vec4 cp0)" << Endl;
-		ss << L"{" << Endl;
-		ss << L"\treturn vec4(cp0.x, -cp0.y, cp0.z, cp0.w);" << Endl;
-		ss << L"}" << Endl;
-		ss << Endl;
-
-		// Add bilinear texture fetch.
-		if (requirements.vertexBilinearSampler)
+		if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
 		{
-			ss << L"vec4 texture2DBilinear(sampler2D sampler, vec2 uv)" << Endl;
-			ss << L"{" << Endl;
-			ss << L"\tvec2 textureSize = vec2(textureSize(sampler, 0));" << Endl;
-			ss << L"\tvec2 texelSize = 1.0 / textureSize;" << Endl;
-			ss << L"\tvec4 tl = texture(sampler, uv);" << Endl;
-			ss << L"\tvec4 tr = texture(sampler, uv + vec2(texelSize.x, 0.0));" << Endl;
-			ss << L"\tvec4 bl = texture(sampler, uv + vec2(0.0, texelSize.y));" << Endl;
-			ss << L"\tvec4 br = texture(sampler, uv + texelSize);" << Endl;
-			ss << L"\tvec2 f = fract(uv * textureSize);" << Endl;
-			ss << L"\tvec4 a = mix(tl, tr, f.x);" << Endl;
-			ss << L"\tvec4 b = mix(bl, br, f.x);" << Endl;
-			ss << L"\treturn mix(a, b, f.y);" << Endl;
-			ss << L"}" << Endl;
+			if (!uniformBuffer->get().empty())
+			{
+				ss << L"layout (std140, binding = " << uniformBuffer->getBinding() << L") uniform " << uniformBuffer->getName() << Endl;
+				ss << L"{" << Endl;
+				ss << IncreaseIndent;
+				for (auto uniform : uniformBuffer->get())
+				{
+					if (uniform.length <= 1)
+						ss << glsl_type_name(uniform.type) << L" " << uniform.name << L";" << Endl;
+					else
+						ss << glsl_type_name(uniform.type) << L" " << uniform.name << L"[" << uniform.length << L"];" << Endl;
+				}
+				ss << DecreaseIndent;
+				ss << L"};" << Endl;
+				ss << Endl;
+			}
+		}
+		else if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
+		{
+			const auto texture = layout.get< GlslTexture >([&](const GlslTexture* resource) {
+				return resource->getName() == sampler->getTextureName();
+			});
+			if (!texture)
+				return L"";
+
+			if (sampler->getState().compare == CfNone)
+			{
+				switch (texture->getUniformType())
+				{
+				case GtTexture2D:
+					ss << L"layout (binding = " << sampler->getUnit() << L") uniform sampler2D " << sampler->getName() << L";" << Endl;
+					break;
+
+				case GtTexture3D:
+					ss << L"layout (binding = " << sampler->getUnit() << L") uniform sampler3D " << sampler->getName() << L";" << Endl;
+					break;
+
+				case GtTextureCube:
+					ss << L"layout (binding = " << sampler->getUnit() << L") uniform samplerCube " << sampler->getName() << L";" << Endl;
+					break;
+				}
+			}
+			else
+			{
+				switch (texture->getUniformType())
+				{
+				case GtTexture2D:
+					ss << L"layout (binding = " << sampler->getUnit() << L") uniform sampler2DShadow " << sampler->getName() << L";" << Endl;
+					break;
+
+				case GtTexture3D:
+					ss << L"layout (binding = " << sampler->getUnit() << L") uniform sampler3DShadow " << sampler->getName() << L";" << Endl;
+					break;
+
+				case GtTextureCube:
+					ss << L"layout (binding = " << sampler->getUnit() << L") uniform samplerCubeShadow " << sampler->getName() << L";" << Endl;
+					break;
+				}				
+			}
+
 			ss << Endl;
 		}
+		// else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
+		// {
+		// 	ss << L"layout(binding = " << image->getBinding() << L", rgba32f) uniform image2D " << image->getName() << L";" << Endl;
+		// 	ss << Endl;
+		// }
+		// else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
+		// {
+		// 	ss << L"struct " << storageBuffer->getName() << L"_Type" << Endl;
+		// 	ss << L"{" << Endl;
+		// 	ss << IncreaseIndent;
+		// 	for (auto element : storageBuffer->get())
+		// 		ss << glsl_type_name(element.type) << L" " << element.name << L";" << Endl;
+		// 	ss << DecreaseIndent;
+		// 	ss << L"};" << Endl;
+		// 	ss << Endl;
+		// 	ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L") buffer " << storageBuffer->getName() << Endl;
+		// 	ss << L"{" << Endl;
+		// 	ss << IncreaseIndent;
+		// 	ss << storageBuffer->getName() << L"_Type " << storageBuffer->getName() << L"_Data[];" << Endl;
+		// 	ss << DecreaseIndent;
+		// 	ss << L"};" << Endl;
+		// 	ss << Endl;
+		// }
 	}
-	else if (m_shaderType == StFragment)
+
+	std::wstring inputText = getOutputStream(BtInput).str();
+	if (!inputText.empty())
 	{
-		// Add fragment outputs.
-		ss << L"out vec4 _gl_FragData_0;" << Endl;
-		ss << L"out vec4 _gl_FragData_1;" << Endl;
-		ss << L"out vec4 _gl_FragData_2;" << Endl;
-		ss << L"out vec4 _gl_FragData_3;" << Endl;
+		ss << inputText;
 		ss << Endl;
 	}
 
-	std::wstring uniform = getOutputStream(BtUniform).str();
-	if (!uniform.empty())
-		ss << uniform << Endl;
+	std::wstring outputText = getOutputStream(BtOutput).str();
+	if (!outputText.empty())
+	{
+		ss << outputText;
+		ss << Endl;
+	}
 
-	std::wstring input = getOutputStream(BtInput).str();
-	if (!input.empty())
-		ss << input << Endl;
-
-	std::wstring output = getOutputStream(BtOutput).str();
-	if (!output.empty())
-		ss << output << Endl;
-
-	std::wstring script = getOutputStream(BtScript).str();
-	if (!script.empty())
-		ss << script << Endl;
+	std::wstring scriptText = getOutputStream(BtScript).str();
+	if (!scriptText.empty())
+	{
+		ss << scriptText;
+		ss << Endl;
+	}
 
 	ss << L"void main()" << Endl;
 	ss << L"{" << Endl;

@@ -23,6 +23,8 @@ class T_DLLCLASS ProgramCompilerOpenGL : public IProgramCompiler
 	T_RTTI_CLASS;
 
 public:
+	ProgramCompilerOpenGL();
+
 	virtual const wchar_t* getPlatformSignature() const override final;
 
 	virtual Ref< ProgramResource > compile(
