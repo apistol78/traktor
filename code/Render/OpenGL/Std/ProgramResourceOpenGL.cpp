@@ -85,8 +85,12 @@ private:
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 12, ProgramResourceOpenGL, ProgramResource)
 
 ProgramResourceOpenGL::ProgramResourceOpenGL()
-:	m_hash(0)
+:	m_texturesCount(0)
+,	m_hash(0)
 {
+	m_uniformBufferSizes[0] =
+	m_uniformBufferSizes[1] =
+	m_uniformBufferSizes[2] = 0;
 }
 
 void ProgramResourceOpenGL::serialize(ISerializer& s)
