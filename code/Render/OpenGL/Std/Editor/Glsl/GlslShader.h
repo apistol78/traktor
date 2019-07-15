@@ -6,21 +6,20 @@
 #include <string>
 #include "Core/RefArray.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Render/Types.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslType.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslVariable.h"
 
 namespace traktor
 {
-
-class PropertyGroup;
-
 	namespace render
 	{
 
+class GlslLayout;
 class OutputPin;
 
 /*!
- * \ingroup OGL
+ * \ingroup Vulkan
  */
 class GlslShader
 {
@@ -34,7 +33,6 @@ public:
 
 	enum BlockType
 	{
-		BtUniform,
 		BtInput,
 		BtOutput,
 		BtScript,
@@ -56,7 +54,7 @@ public:
 
 	GlslVariable* createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, GlslType type);
 
-	void associateVariable(const OutputPin* outputPin, GlslVariable* variable);
+	//void associateVariable(const OutputPin* outputPin, GlslVariable* variable);
 
 	GlslVariable* getVariable(const OutputPin* outputPin);
 
@@ -64,11 +62,11 @@ public:
 
 	void popScope();
 
-	void addUniform(const std::wstring& uniform);
-
-	const std::set< std::wstring >& getUniforms() const;
-
 	bool defineScript(const std::wstring& signature);
+
+
+	/*! \name Output streams */
+	/*! \{ */
 
 	void pushOutputStream(BlockType blockType, StringOutputStream* outputStream);
 
@@ -78,15 +76,23 @@ public:
 
 	const StringOutputStream& getOutputStream(BlockType blockType) const;
 
-	std::wstring getGeneratedShader(const PropertyGroup* settings, const std::wstring& name, const GlslRequirements& requirements) const;
+	/*! \} */
+
+
+	std::wstring getGeneratedShader(const GlslLayout& layout) const;
 
 private:
-	typedef std::map< const OutputPin*, Ref< GlslVariable > > scope_t;
+	struct OutputPinVariable
+	{
+		const OutputPin* outputPin;
+		Ref< GlslVariable > variable;
+	};
 
 	ShaderType m_shaderType;
-	std::map< std::wstring, GlslVariable* > m_inputVariables;
-	std::list< scope_t > m_variables;
-	std::set< std::wstring > m_uniforms;
+	std::map< std::wstring, Ref< GlslVariable > > m_inputVariables;
+	AlignedVector< OutputPinVariable > m_variables;
+	AlignedVector< uint32_t > m_variableScopes;
+	AlignedVector< OutputPinVariable > m_outerVariables;
 	std::set< std::wstring > m_scriptSignatures;
 	int32_t m_nextTemporaryVariable;
 	RefArray< StringOutputStream > m_outputStreams[BtLast];
@@ -94,3 +100,4 @@ private:
 
 	}
 }
+

@@ -34,7 +34,7 @@ public:
 
 	bool programActivate(const ProgramOpenGL* program);
 
-	void bindRenderStateObject(uint32_t renderStateObject);
+	void bindRenderStateObject(uint32_t renderStateObject, uint32_t stencilReference);
 
 	void bindSamplerStateObject(uint32_t samplerStateObject, uint32_t stage, bool haveMips);
 
@@ -54,7 +54,6 @@ private:
 	const ProgramOpenGL* m_currentProgram;
 	uint32_t m_currentRenderStateList;
 	int32_t m_lastWaitVBlanks;
-	// GLuint m_vertexArrayObjects[4096];
 	SmallMap< uint32_t, GLuint > m_vertexArrayObjects;
 };
 

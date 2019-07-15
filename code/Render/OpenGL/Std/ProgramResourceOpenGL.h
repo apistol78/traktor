@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include <vector>
-#include "Render/OpenGL/Std/TypesOpenGL.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Render/Types.h"
 #include "Render/Resource/ProgramResource.h"
 
 // import/export mechanism.
@@ -26,52 +26,91 @@ class T_DLLCLASS ProgramResourceOpenGL : public ProgramResource
 	T_RTTI_CLASS;
 
 public:
+	struct ParameterDesc
+	{
+		std::wstring name;
+		uint32_t buffer;	//!< Index of which uniform buffer (0-2), or texture index.
+		uint32_t offset;	//!< Offset in 4-byte floats.
+		uint32_t size;		//!< Size in 4-byte floats.
+
+		ParameterDesc()
+		:	buffer(0)
+		,	offset(0)
+		,	size(0)
+		{
+		}
+
+		ParameterDesc(const std::wstring& name_, uint32_t buffer_, uint32_t offset_, uint32_t size_)
+		:	name(name_)
+		,	buffer(buffer_)
+		,	offset(offset_)
+		,	size(size_)
+		{
+		}
+
+		void serialize(ISerializer& s);
+	};
+
+	struct SamplerDesc
+	{
+		uint32_t unit;
+		SamplerState state;
+		uint32_t textureIndex;	//!< Index into texture parameter list.
+
+		SamplerDesc()
+		:	unit(0)
+		,	textureIndex(0)
+		{
+		}
+
+		SamplerDesc(uint32_t unit_, const SamplerState& state_, uint32_t textureIndex_)
+		:	unit(unit_)
+		,	state(state_)
+		,	textureIndex(textureIndex_)
+		{
+		}
+
+		void serialize(ISerializer& s);
+	};
+
+	struct SBufferDesc
+	{
+		uint32_t binding;
+
+		SBufferDesc()
+		:	binding(0)
+		{
+		}
+
+		explicit SBufferDesc(uint32_t binding_)
+		:	binding(binding_)
+		{
+		}
+
+		void serialize(ISerializer& s);
+	};
+
 	ProgramResourceOpenGL();
-
-	ProgramResourceOpenGL(
-		const std::string& vertexShader,
-		const std::string& fragmentShader,
-		const std::vector< std::wstring >& textures,
-		const std::vector< NamedUniformType >& uniforms,
-		const std::vector< SamplerBindingOpenGL >& samplers,
-		const RenderStateOpenGL& renderState
-	);
-
-	ProgramResourceOpenGL(
-		const std::string& computeShader,
-		const std::vector< std::wstring >& textures,
-		const std::vector< NamedUniformType >& uniforms,
-		const std::vector< SamplerBindingOpenGL >& samplers
-	);
-
-	const std::string& getVertexShader() const { return m_vertexShader; }
-
-	const std::string& getFragmentShader() const { return m_fragmentShader; }
-
-	const std::string& getComputeShader() const { return m_computeShader; }
-
-	const std::vector< std::wstring >& getTextures() const { return m_textures; }
-
-	const std::vector< NamedUniformType >& getUniforms() const { return m_uniforms; }
-
-	const std::vector< SamplerBindingOpenGL >& getSamplers() const { return m_samplers; }
-
-	const RenderStateOpenGL& getRenderState() const { return m_renderState; }
-
-	void setHash(uint32_t hash) { m_hash = hash; }
-
-	uint32_t getHash() const { return m_hash; }
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	friend class ProgramOpenGL;
+	friend class ProgramCompilerOpenGL;
+
+	RenderState m_renderState;
+
 	std::string m_vertexShader;
 	std::string m_fragmentShader;
 	std::string m_computeShader;
-	std::vector< std::wstring > m_textures;
-	std::vector< NamedUniformType > m_uniforms;
-	std::vector< SamplerBindingOpenGL > m_samplers;
-	RenderStateOpenGL m_renderState;
+
+	AlignedVector< ParameterDesc > m_parameters;
+	uint32_t m_uniformBufferSizes[3];	// Once(0), Frame(1) and Draw(2)
+	uint32_t m_texturesCount;
+
+	AlignedVector< SamplerDesc > m_samplers;
+	AlignedVector< SBufferDesc > m_sbuffers;
+
 	uint32_t m_hash;
 };
 

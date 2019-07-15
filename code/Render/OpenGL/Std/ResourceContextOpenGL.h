@@ -45,9 +45,9 @@ public:
 
 	GLuint createShaderObject(const char* shader, GLenum shaderType);
 
-	uint32_t createRenderStateObject(const RenderStateOpenGL& renderState);
+	uint32_t createRenderStateObject(const RenderState& renderState);
 
-	uint32_t createSamplerStateObject(const SamplerStateOpenGL& samplerState);
+	uint32_t createSamplerStateObject(const SamplerState& samplerState);
 
 	void deleteResource(IDeleteCallback* callback);
 
@@ -55,13 +55,13 @@ public:
 
 	const SmallMap< uint32_t, SamplerStateObject >& getSamplerStateObjects() const { return m_samplerStateObjects; }
 
-	const AlignedVector< RenderStateOpenGL >& getRenderStateList() const { return m_renderStateList; }
+	const AlignedVector< RenderState >& getRenderStateList() const { return m_renderStateList; }
 
 private:
 	SmallMap< uint32_t, GLuint > m_shaderObjects;
 	SmallMap< uint32_t, uint32_t > m_renderStateListCache;
 	SmallMap< uint32_t, SamplerStateObject > m_samplerStateObjects;
-	AlignedVector< RenderStateOpenGL > m_renderStateList;
+	AlignedVector< RenderState > m_renderStateList;
 	AlignedVector< IDeleteCallback* > m_deleteResources;
 	GLfloat m_maxAnisotropy;
 };

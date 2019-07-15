@@ -9,6 +9,64 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+		
+const GLenum c_oglCullFace[] =
+{
+	GL_FRONT,	// Never, culling is disabled.
+	GL_FRONT,
+	GL_BACK
+};
+
+const GLenum c_oglBlendEquation[] =
+{
+	GL_FUNC_ADD,
+	GL_FUNC_SUBTRACT,
+	GL_FUNC_REVERSE_SUBTRACT,
+	GL_MIN,
+	GL_MAX
+};
+
+const GLenum c_oglBlendFunction[] =
+{
+	GL_ONE,
+	GL_ZERO,
+	GL_SRC_COLOR,
+	GL_ONE_MINUS_SRC_COLOR,
+	GL_DST_COLOR,
+	GL_ONE_MINUS_DST_COLOR,
+	GL_SRC_ALPHA,
+	GL_ONE_MINUS_SRC_ALPHA,
+	GL_DST_ALPHA,
+	GL_ONE_MINUS_DST_ALPHA
+};
+
+const GLenum c_oglFunction[] =
+{
+	GL_ALWAYS,
+	GL_NEVER,
+	GL_LESS,
+	GL_LEQUAL,
+	GL_GREATER,
+	GL_GEQUAL,
+	GL_EQUAL,
+	GL_NOTEQUAL
+};
+
+const GLenum c_oglStencilOperation[] =
+{
+	GL_KEEP,
+	GL_ZERO,
+	GL_REPLACE,
+	GL_INCR,
+	GL_DECR,
+	GL_INVERT,
+	GL_INCR_WRAP,
+	GL_DECR_WRAP
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderContextOpenGL", RenderContextOpenGL, ContextOpenGL)
 
@@ -89,62 +147,93 @@ bool RenderContextOpenGL::programActivate(const ProgramOpenGL* program)
 	return alreadyActive;
 }
 
-void RenderContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
+void RenderContextOpenGL::bindRenderStateObject(uint32_t renderStateObject, uint32_t stencilReference)
 {
-	renderStateObject += (m_permitDepth ? 0 : 1);
-	if (renderStateObject == m_currentRenderStateList)
-		return;
-
-	const AlignedVector< RenderStateOpenGL >& renderStateList = m_resourceContext->getRenderStateList();
-
+	const AlignedVector< RenderState >& renderStateList = m_resourceContext->getRenderStateList();
 	T_ASSERT(renderStateObject > 0);
 	T_ASSERT(renderStateObject <= renderStateList.size());
-	const RenderStateOpenGL& rs = renderStateList[renderStateObject - 1];
+	const RenderState& rs = renderStateList[renderStateObject - 1];
 
-	if (rs.cullFaceEnable)
-		{ T_OGL_SAFE(glEnable(GL_CULL_FACE)); }
+	if (renderStateObject == m_currentRenderStateList)
+	{
+		// Only ensure stencil reference is properly updated.
+		if (rs.stencilEnable)
+		{
+	 		T_OGL_SAFE(glStencilFunc(
+	 			c_oglFunction[rs.stencilFunction],
+	 			stencilReference,
+	 			~0U
+	 		));
+		}
+		return;
+	}
+
+	if (rs.cullMode != CmNever)
+	 	{ T_OGL_SAFE(glEnable(GL_CULL_FACE)); }
 	else
 		{ T_OGL_SAFE(glDisable(GL_CULL_FACE)); }
 
-	T_OGL_SAFE(glCullFace(rs.cullFace));
+	T_OGL_SAFE(glCullFace(c_oglCullFace[rs.cullMode]));
 
 	if (rs.blendEnable)
-		{ T_OGL_SAFE(glEnable(GL_BLEND)); }
+	 	{ T_OGL_SAFE(glEnable(GL_BLEND)); }
 	else
-		{ T_OGL_SAFE(glDisable(GL_BLEND)); }
+	 	{ T_OGL_SAFE(glDisable(GL_BLEND)); }
 
-	T_OGL_SAFE(glBlendFuncSeparate(rs.blendFuncColorSrc, rs.blendFuncColorDest, rs.blendFuncAlphaSrc, rs.blendFuncAlphaDest));
-	T_OGL_SAFE(glBlendEquationSeparate(rs.blendColorEquation, rs.blendAlphaEquation));
-
-	if (rs.depthTestEnable)
-		{ T_OGL_SAFE(glEnable(GL_DEPTH_TEST)); }
-	else
-		{ T_OGL_SAFE(glDisable(GL_DEPTH_TEST)); }
-
-	T_OGL_SAFE(glDepthFunc(rs.depthFunc));
-	T_OGL_SAFE(glDepthMask(rs.depthMask));
-
-	T_OGL_SAFE(glColorMask(
-		(rs.colorMask & RenderStateOpenGL::CmRed) ? GL_TRUE : GL_FALSE,
-		(rs.colorMask & RenderStateOpenGL::CmGreen) ? GL_TRUE : GL_FALSE,
-		(rs.colorMask & RenderStateOpenGL::CmBlue) ? GL_TRUE : GL_FALSE,
-		(rs.colorMask & RenderStateOpenGL::CmAlpha) ? GL_TRUE : GL_FALSE
+	T_OGL_SAFE(glBlendFuncSeparate(
+		 c_oglBlendFunction[rs.blendColorSource],
+		 c_oglBlendFunction[rs.blendColorDestination],
+		 c_oglBlendFunction[rs.blendAlphaSource],
+		 c_oglBlendFunction[rs.blendAlphaDestination]
+	));
+	T_OGL_SAFE(glBlendEquationSeparate(
+		 c_oglBlendEquation[rs.blendColorOperation],
+		 c_oglBlendEquation[rs.blendAlphaOperation]
 	));
 
-	if (rs.stencilTestEnable)
+	if (rs.depthEnable && m_permitDepth)
+	 	{ T_OGL_SAFE(glEnable(GL_DEPTH_TEST)); }
+	else
+	 	{ T_OGL_SAFE(glDisable(GL_DEPTH_TEST)); }
+
+	T_OGL_SAFE(glDepthFunc(c_oglFunction[rs.depthFunction]));
+	T_OGL_SAFE(glDepthMask(rs.depthWriteEnable ? GL_TRUE : GL_FALSE));
+
+	T_OGL_SAFE(glColorMask(
+	 	(rs.colorWriteMask & CwRed) ? GL_TRUE : GL_FALSE,
+	 	(rs.colorWriteMask & CwGreen) ? GL_TRUE : GL_FALSE,
+	 	(rs.colorWriteMask & CwBlue) ? GL_TRUE : GL_FALSE,
+	 	(rs.colorWriteMask & CwAlpha) ? GL_TRUE : GL_FALSE
+	 ));
+
+	if (rs.stencilEnable)
 		{ T_OGL_SAFE(glEnable(GL_STENCIL_TEST)); }
 	else
-		{ T_OGL_SAFE(glDisable(GL_STENCIL_TEST)); }
+	 	{ T_OGL_SAFE(glDisable(GL_STENCIL_TEST)); }
 
 	T_OGL_SAFE(glStencilMask(~0U));
-	T_OGL_SAFE(glStencilOp(rs.stencilOpFail, rs.stencilOpZFail, rs.stencilOpZPass));
+	T_OGL_SAFE(glStencilOp(
+		 c_oglStencilOperation[rs.stencilFail],
+		 c_oglStencilOperation[rs.stencilZFail],
+		 c_oglStencilOperation[rs.stencilPass]
+	));
+
+	T_OGL_SAFE(glStencilFunc(
+		c_oglFunction[rs.stencilFunction],
+		stencilReference,
+		~0U
+	));
 
 	m_currentRenderStateList = renderStateObject;
 }
 
 void RenderContextOpenGL::bindSamplerStateObject(uint32_t samplerStateObject, uint32_t stage, bool haveMips)
 {
-	auto it = m_resourceContext->getSamplerStateObjects().find(samplerStateObject);
+	const auto& samplerStateObjects = m_resourceContext->getSamplerStateObjects();
+	
+	auto it = samplerStateObjects.find(samplerStateObject);
+	T_FATAL_ASSERT(it != samplerStateObjects.end());
+
 	if (haveMips)
 	{
 		T_ASSERT(glIsSampler(it->second.samplers[0]) == GL_TRUE);
@@ -179,6 +268,7 @@ bool RenderContextOpenGL::bindVertexArrayObject(uint32_t vertexBufferId)
 void RenderContextOpenGL::setPermitDepth(bool permitDepth)
 {
 	m_permitDepth = permitDepth;
+	m_currentRenderStateList = ~0U;
 }
 
 	}

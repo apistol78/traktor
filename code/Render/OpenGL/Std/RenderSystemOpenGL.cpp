@@ -213,12 +213,16 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 
 #endif
 
-	log::info << L"OpenGL " << mbstows((const char *)glGetString(GL_VERSION)) << L" renderer created." << Endl;
+	log::info << L"OpenGL renderer created." << Endl;
+
+	// Log shading version.
+	log::info << L"GL_VENDOR = \"" << mbstows((const char*)glGetString(GL_VENDOR)) << L"\"" << Endl;
+	log::info << L"GL_RENDERER = \"" << mbstows((const char*)glGetString(GL_RENDERER)) << L"\"" << Endl;
+	log::info << L"GL_VERSION = \"" << mbstows((const char*)glGetString(GL_VERSION)) << L"\"" << Endl;
+	log::info << L"GL_SHADING_LANGUAGE_VERSION = \"" << mbstows((const char*)glGetString(GL_SHADING_LANGUAGE_VERSION)) << L"\"" << Endl;
 
 	// Determine hardware vendor.
 	std::wstring vendor = mbstows((const char*)glGetString(GL_VENDOR));
-	log::info << L"GL_VENDOR = \"" << vendor << L"\"" << Endl;
-
 	if (toLower(vendor).find(L"nvidia") != vendor.npos)
 		m_info.vendor = AvtNVidia;
 	else if (toLower(vendor).find(L"ati") != vendor.npos || toLower(vendor).find(L"amd") != vendor.npos)

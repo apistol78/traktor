@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iomanip>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -6,12 +7,17 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
-#include "Render/OpenGL/Std/Platform.h"
+#include "Render/VertexElement.h"
+#include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/Script.h"
 #include "Render/OpenGL/Std/TypesOpenGL.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslContext.h"
 #include "Render/OpenGL/Std/Editor/Glsl/GlslEmitter.h"
-#include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/Script.h"
+#include "Render/OpenGL/Std/Editor/Glsl/GlslImage.h"
+#include "Render/OpenGL/Std/Editor/Glsl/GlslSampler.h"
+#include "Render/OpenGL/Std/Editor/Glsl/GlslStorageBuffer.h"
+#include "Render/OpenGL/Std/Editor/Glsl/GlslTexture.h"
+#include "Render/OpenGL/Std/Editor/Glsl/GlslUniformBuffer.h"
 
 namespace traktor
 {
@@ -48,7 +54,7 @@ std::wstring expandScalar(float v, GlslType type)
 	return vs;
 }
 
-StringOutputStream& assign(StringOutputStream& f, GlslVariable* out)
+OutputStream& assign(OutputStream& f, Ref< GlslVariable > out)
 {
 	f << glsl_type_name(out->getType()) << L" " << out->getName() << L" = ";
 	return f;
@@ -56,65 +62,65 @@ StringOutputStream& assign(StringOutputStream& f, GlslVariable* out)
 
 bool emitAbs(GlslContext& cx, Abs* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"abs(" << in->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitAdd(GlslContext& cx, Add* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in1 = cx.emitInput(node, L"Input1");
-	GlslVariable* in2 = cx.emitInput(node, L"Input2");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
 	if (!in1 || !in2)
 		return false;
 	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
-	GlslVariable* out = cx.emitOutput(node, L"Output", type);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 	assign(f, out) << in1->cast(type) << L" + " << in2->cast(type) << L";" << Endl;
 	return true;
 }
 
 bool emitArcusCos(GlslContext& cx, ArcusCos* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* theta = cx.emitInput(node, L"Theta");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > theta = cx.emitInput(node, L"Theta");
 	if (!theta || theta->getType() != GtFloat)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 	assign(f, out) << L"acos(" << theta->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitArcusTan(GlslContext& cx, ArcusTan* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* xy = cx.emitInput(node, L"XY");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > xy = cx.emitInput(node, L"XY");
 	if (!xy || xy->getType() != GtFloat2)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 	assign(f, out) << L"atan(" << xy->getName() << L".x, " << xy->getName() << L".y);" << Endl;
 	return true;
 }
 
 bool emitClamp(GlslContext& cx, Clamp* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"clamp(" << in->getName() << L", " << formatFloat(node->getMin()) << L", " << formatFloat(node->getMax()) << L");" << Endl;
 	return true;
 }
 
 bool emitColor(GlslContext& cx, Color* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat4);
 	if (!out)
 		return false;
 	Vector4 value = node->getColor();
@@ -126,9 +132,30 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 {
 	cx.enterCompute();
 
-	GlslVariable* storage = cx.emitInput(node, L"Storage");
-	if (!storage || storage->getType() < GtTexture2D)
+	// Manually handle uniform set for "Storage" input as we need to treat it
+	// as an image rather than texture.
+	const Uniform* storageUniformNode = dynamic_type_cast< const Uniform* >(cx.getInputNode(node, L"Storage"));
+	if (!storageUniformNode)
 		return false;
+	if (storageUniformNode->getParameterType() != PtTexture2D)
+		return false;
+
+	auto existing = cx.getLayout().get([&](const GlslResource* resource) {
+		return resource->getName() == storageUniformNode->getParameterName();
+	});
+	if (existing != nullptr)
+	{
+		auto existingImage = dynamic_type_cast< const GlslImage* >(existing);
+		if (!existingImage)
+			return false;
+	}
+	else
+	{
+		// Image do not exist; add new image resource.
+		cx.getLayout().add(new GlslImage(
+			storageUniformNode->getParameterName()
+		));
+	}
 
 	GlslVariable* offset = cx.emitInput(node, L"Offset");
 	if (!offset)
@@ -138,22 +165,31 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 	if (!in)
 		return false;
 
-	StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-	fu << L"layout(rgba32f, binding = 0) uniform image2D " << storage->getName() << L";" << Endl;
 
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	f << L"imageStore(" << storage->getName() << L", " << offset->castToInteger(GtFloat2) << L", " << in->cast(GtFloat4) << L");" << Endl;
+	//auto& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
+	//fu << L"layout(rgba32f, binding = 0) uniform image2D " << storage->getName() << L";" << Endl;
+
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	f << L"imageStore(" << storageUniformNode->getParameterName() << L", " << offset->castToInteger(GtFloat2) << L", " << in->cast(GtFloat4) << L");" << Endl;
+
+	// Define parameter in context.
+	cx.addParameter(
+		storageUniformNode->getParameterName(),
+		PtTexture2D,
+		1,
+		UfDraw
+	);
 
 	return true;
 }
 
 bool emitConditional(GlslContext& cx, Conditional* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	// Emit input and reference branches.
-	GlslVariable* in = cx.emitInput(node, L"Input");
-	GlslVariable* ref = cx.emitInput(node, L"Reference");
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
+	Ref< GlslVariable > ref = cx.emitInput(node, L"Reference");
 	if (!in || !ref)
 		return false;
 
@@ -174,7 +210,7 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 		cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
 		cx.getShader().pushScope();
 
-		GlslVariable* ct = cx.emitInput(node, L"CaseTrue");
+		Ref< GlslVariable > ct = cx.emitInput(node, L"CaseTrue");
 		if (!ct)
 			return false;
 
@@ -192,7 +228,7 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 		cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
 		cx.getShader().pushScope();
 
-		GlslVariable* cf = cx.emitInput(node, L"CaseFalse");
+		Ref< GlslVariable > cf = cx.emitInput(node, L"CaseFalse");
 		if (!cf)
 			return false;
 
@@ -206,7 +242,7 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 	// Create output variable.
 	GlslType outputType = std::max< GlslType >(caseTrue.getType(), caseFalse.getType());
 
-	GlslVariable* out = cx.emitOutput(node, L"Output", outputType);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", outputType);
 	f << glsl_type_name(out->getType()) << L" " << out->getName() << L";" << Endl;
 
 	switch (node->getOperator())
@@ -256,34 +292,34 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 
 bool emitCos(GlslContext& cx, Cos* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* theta = cx.emitInput(node, L"Theta");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > theta = cx.emitInput(node, L"Theta");
 	if (!theta || theta->getType() != GtFloat)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 	assign(f, out) << L"cos(" << theta->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitCross(GlslContext& cx, Cross* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in1 = cx.emitInput(node, L"Input1");
-	GlslVariable* in2 = cx.emitInput(node, L"Input2");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
 	if (!in1 || !in2)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat3);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat3);
 	assign(f, out) << L"cross(" << in1->cast(GtFloat3) << L", " << in2->cast(GtFloat3) << L");" << Endl;
 	return true;
 }
 
 bool emitDerivative(GlslContext& cx, Derivative* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* input = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > input = cx.emitInput(node, L"Input");
 	if (!input)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", input->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", input->getType());
 	switch (node->getAxis())
 	{
 	case Derivative::DaX:
@@ -293,17 +329,16 @@ bool emitDerivative(GlslContext& cx, Derivative* node)
 		assign(f, out) << L"dFdy(" << input->getName() << L");" << Endl;
 		break;
 	}
-	cx.requirements().derivatives = true;
 	return true;
 }
 
 bool emitDiscard(GlslContext& cx, Discard* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	// Emit input and reference branches.
-	GlslVariable* in = cx.emitInput(node, L"Input");
-	GlslVariable* ref = cx.emitInput(node, L"Reference");
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
+	Ref< GlslVariable > ref = cx.emitInput(node, L"Reference");
 	if (!in || !ref)
 		return false;
 
@@ -334,49 +369,37 @@ bool emitDiscard(GlslContext& cx, Discard* node)
 
 	f << L"\tdiscard;" << Endl;
 
-	GlslVariable* pass = cx.emitInput(node, L"Pass");
+	Ref< GlslVariable > pass = cx.emitInput(node, L"Pass");
 	if (!pass)
 		return false;
 
-	GlslVariable* out = cx.emitOutput(node, L"Output", pass->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", pass->getType());
 	assign(f, out) << pass->getName() << L";" << Endl;
-
-	return true;
-}
-
-bool emitDispatchIndex(GlslContext& cx, DispatchIndex* node)
-{
-	if (!cx.inCompute())
-		return false;
-
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat3);
-	assign(f, out) << L"vec3(gl_GlobalInvocationID.xyz);" << Endl;
 
 	return true;
 }
 
 bool emitDiv(GlslContext& cx, Div* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in1 = cx.emitInput(node, L"Input1");
-	GlslVariable* in2 = cx.emitInput(node, L"Input2");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
 	if (!in1 || !in2)
 		return false;
 	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
-	GlslVariable* out = cx.emitOutput(node, L"Output", type);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 	assign(f, out) << in1->cast(type) << L" / " << in2->cast(type) << L";" << Endl;
 	return true;
 }
 
 bool emitDot(GlslContext& cx, Dot* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in1 = cx.emitInput(node, L"Input1");
-	GlslVariable* in2 = cx.emitInput(node, L"Input2");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
 	if (!in1 || !in2)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
 	assign(f, out) << L"dot(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
 	return true;
@@ -384,22 +407,22 @@ bool emitDot(GlslContext& cx, Dot* node)
 
 bool emitExp(GlslContext& cx, Exp* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"exp(" << in->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitFraction(GlslContext& cx, Fraction* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"fract(" << in->getName() << L");" << Endl;
 	return true;
 }
@@ -409,8 +432,8 @@ bool emitFragmentPosition(GlslContext& cx, FragmentPosition* node)
 	if (!cx.inFragment())
 		return false;
 
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat2);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat2);
 	assign(f, out) << L"gl_FragCoord.xy;" << Endl;
 
 	return true;
@@ -421,8 +444,8 @@ bool emitFrontFace(GlslContext& cx, FrontFace* node)
 	if (!cx.inFragment())
 		return false;
 
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 	assign(f, out) << L"gl_FrontFacing ? 1.0 : 0.0;" << Endl;
 
 	return true;
@@ -434,62 +457,58 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 	if (!indexNode)
 		return false;
 
-	GlslVariable* out = cx.getShader().createTemporaryVariable(
+	Ref< GlslVariable > out = cx.getShader().createTemporaryVariable(
 		node->findOutputPin(L"Output"),
 		glsl_from_parameter_type(node->getParameterType())
 	);
 
-	StringOutputStream& fb = cx.getShader().getOutputStream(GlslShader::BtBody);
+	auto& fb = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	if (const Scalar* scalarIndexNode = dynamic_type_cast< const Scalar* >(indexNode))
 		assign(fb, out) << node->getParameterName() << L"[" << int32_t(scalarIndexNode->get()) << L"];" << Endl;
 	else
 	{
-		GlslVariable* index = cx.emitInput(node, L"Index");
+		Ref< GlslVariable > index = cx.emitInput(node, L"Index");
 		if (!index)
 			return false;
 
 		assign(fb, out) << node->getParameterName() << L"[int(" << index->getName() << L")];" << Endl;
 	}
 
-	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-	if (uniforms.find(node->getParameterName()) == uniforms.end())
+	//if (!cx.getShader().haveUniform(node->getParameterName()))
+	//{
+	//	auto& fu = cx.getShader().getOutputStream(c_blockType[node->getFrequency()]);
+	//	fu << glsl_type_name(out->getType()) << L" " << node->getParameterName() << L"[" << node->getLength() << L"];" << Endl;
+	//	cx.getShader().addUniform(node->getParameterName());
+	//}
+
+	// Add uniform to layout.
+	if (out->getType() < GtTexture2D)
 	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-		fu << L"uniform " << glsl_type_name(out->getType()) << L" " << node->getParameterName() << L"[" << node->getLength() << L"];" << Endl;
-		cx.getShader().addUniform(node->getParameterName());
+		auto ub = cx.getLayout().get< GlslUniformBuffer >((int32_t)node->getFrequency());
+		ub->add(
+			node->getParameterName(),
+			out->getType(),
+			node->getLength()
+		);
 	}
-
-	switch (out->getType())
-	{
-	case GtFloat:
-		if (!cx.defineUniform(node->getParameterName(), GL_FLOAT, node->getLength()))
-			return false;
-		break;
-
-	case GtFloat2:
-	case GtFloat3:
-	case GtFloat4:
-		if (!cx.defineUniform(node->getParameterName(), GL_FLOAT_VEC4, node->getLength()))
-			return false;
-		break;
-
-	case GtFloat4x4:
-		if (!cx.defineUniform(node->getParameterName(), GL_FLOAT_MAT4, node->getLength()))
-			return false;
-		break;
-
-	default:
+	else
 		return false;
-	}
 
+	// Define parameter in context.
+	cx.addParameter(
+		node->getParameterName(),
+		node->getParameterType(),
+		node->getLength(),
+		node->getFrequency()
+	);
 	return true;
 }
 
 bool emitInstance(GlslContext& cx, Instance* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 	assign(f, out) << L"float(gl_InstanceID);" << Endl;
 	return true;
 }
@@ -499,16 +518,16 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 	if (!cx.inFragment())
 	{
 		// We're already in vertex state; skip interpolation.
-		GlslVariable* in = cx.emitInput(node, L"Input");
+		Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 		if (!in)
 		{
 			log::error << L"Unable to emit interpolator input (1)" << Endl;
 			return false;
 		}
 
-		GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
-		StringOutputStream& fb = cx.getShader().getOutputStream(GlslShader::BtBody);
+		auto& fb = cx.getShader().getOutputStream(GlslShader::BtBody);
 		assign(fb, out) << in->getName() << L";" << Endl;
 
 		return true;
@@ -516,7 +535,7 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 
 	cx.enterVertex();
 
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 	{
 		log::error << L"Unable to emit interpolator input (2)" << Endl;
@@ -540,7 +559,7 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 	std::wstring interpolatorName = L"Attr" + toString(interpolatorId);
 	std::wstring interpolatorMask = interpolatorName + L"." + std::wstring(L"xyzw").substr(interpolatorOffset, interpolatorWidth);
 
-	StringOutputStream& fb = cx.getVertexShader().getOutputStream(GlslShader::BtBody);
+	auto& fb = cx.getVertexShader().getOutputStream(GlslShader::BtBody);
 	fb << interpolatorMask << L" = " << in->getName() << L";" << Endl;
 
 	cx.getFragmentShader().createOuterVariable(
@@ -551,10 +570,11 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 
 	if (declare)
 	{
-		StringOutputStream& fvo = cx.getVertexShader().getOutputStream(GlslShader::BtOutput);
-		StringOutputStream& fpi = cx.getFragmentShader().getOutputStream(GlslShader::BtInput);
-		fvo << L"out vec4 " << interpolatorName << L";" << Endl;
-		fpi << L"in vec4 " << interpolatorName << L";" << Endl;
+		auto& fvo = cx.getVertexShader().getOutputStream(GlslShader::BtOutput);
+		auto& fpi = cx.getFragmentShader().getOutputStream(GlslShader::BtInput);
+
+		fvo << L"layout (location = " << interpolatorId << L") out vec4 " << interpolatorName << L";" << Endl;
+		fpi << L"layout (location = " << interpolatorId << L") in vec4 " << interpolatorName << L";" << Endl;
 	}
 
 	return true;
@@ -562,16 +582,16 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 
 bool emitIterate(GlslContext& cx, Iterate* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	std::wstring inputName;
 
 	// Create iterator variable.
-	GlslVariable* N = cx.emitOutput(node, L"N", GtFloat);
+	Ref< GlslVariable > N = cx.emitOutput(node, L"N", GtFloat);
 	T_ASSERT(N);
 
 	// Create void output variable; change type later when we know
 	// the type of the input branch.
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtVoid);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtVoid);
 	T_ASSERT(out);
 
 	// Find non-dependent, external, output pins from input branch;
@@ -591,12 +611,12 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 	cx.getShader().pushScope();
 
 	{
-		GlslVariable* input = cx.emitInput(node, L"Input");
+		Ref< GlslVariable > input = cx.emitInput(node, L"Input");
 		if (!input)
 			return false;
 
 		// Emit post condition if connected; break iteration if condition is false.
-		GlslVariable* condition = cx.emitInput(node, L"Condition");
+		Ref< GlslVariable > condition = cx.emitInput(node, L"Condition");
 		if (condition)
 		{
 			fs << L"if (" << condition->cast(GtFloat) << L" == 0.0)" << Endl;
@@ -615,7 +635,7 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 
 	// As we now know the type of output variable we can safely
 	// initialize it.
-	GlslVariable* initial = cx.emitInput(node, L"Initial");
+	Ref< GlslVariable > initial = cx.emitInput(node, L"Initial");
 	if (initial)
 		assign(f, out) << initial->cast(out->getType()) << L";" << Endl;
 	else
@@ -639,16 +659,16 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 
 bool emitIterate2(GlslContext& cx, Iterate2* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	std::wstring inputNames[4];
 
 	// Create iterator variable.
-	GlslVariable* N = cx.emitOutput(node, L"N", GtFloat);
+	Ref< GlslVariable > N = cx.emitOutput(node, L"N", GtFloat);
 	T_ASSERT(N);
 
 	// Create void output variables; change type later when we know
 	// the type of the input branches.
-	GlslVariable* out[] =
+	Ref< GlslVariable > out[] =
 	{
 		cx.getInputNode(node, L"Input0") != nullptr ? cx.emitOutput(node, L"Output0", GtVoid) : nullptr,
 		cx.getInputNode(node, L"Input1") != nullptr ? cx.emitOutput(node, L"Output1", GtVoid) : nullptr,
@@ -696,7 +716,7 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 	cx.getShader().pushScope();
 
 	{
-		GlslVariable* input[] =
+		Ref< GlslVariable > input[] =
 		{
 			cx.emitInput(node, L"Input0"),
 			cx.emitInput(node, L"Input1"),
@@ -704,13 +724,17 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 			cx.emitInput(node, L"Input3")
 		};
 		if (!input[0])
+		{
+			cx.getShader().popScope();
+			cx.getShader().popOutputStream(GlslShader::BtBody);
 			return false;
+		}
 
 		// Emit post condition if connected; break iteration if condition is false.
-		GlslVariable* condition = cx.emitInput(node, L"Condition");
+		Ref< GlslVariable > condition = cx.emitInput(node, L"Condition");
 		if (condition)
 		{
-			fs << L"if (" << condition->castToInteger(GtFloat) << L" == 0)" << Endl;
+			fs << L"if (!(bool)" << condition->cast(GtFloat) << L")" << Endl;
 			fs << L"\tbreak;" << Endl;
 		}
 
@@ -735,7 +759,7 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 
 	// As we now know the type of output variable we can safely
 	// initialize it.
-	GlslVariable* initial[] =
+	Ref< GlslVariable > initial[] =
 	{
 		out[0] != nullptr ? cx.emitInput(node, L"Initial0") : nullptr,
 		out[1] != nullptr ? cx.emitInput(node, L"Initial1") : nullptr,
@@ -751,12 +775,12 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 	}
 
 	// Write outer for-loop statement.
-	GlslVariable* from = cx.emitInput(node, L"From");
-	GlslVariable* to = cx.emitInput(node, L"To");
+	Ref< GlslVariable > from = cx.emitInput(node, L"From");
+	Ref< GlslVariable > to = cx.emitInput(node, L"To");
 	if (!from || !to)
 		return false;
 
-	f << L"for (int " << N->getName() << L" = int(" << from->castToInteger(GtFloat) << L"); " << N->getName() << L" <= int(" << to->castToInteger(GtFloat) << L"); ++" << N->getName() << L")" << Endl;
+	f << L"for (int " << N->getName() << L" = int(" << from->cast(GtFloat) << L"); " << N->getName() << L" <= int(" << to->cast(GtFloat) << L"); ++" << N->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
@@ -781,19 +805,19 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 
 bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	std::wstring inputName;
 
 	// Create iterator variables.
-	GlslVariable* X = cx.emitOutput(node, L"X", GtFloat);
+	Ref< GlslVariable > X = cx.emitOutput(node, L"X", GtFloat);
 	T_ASSERT(X);
 
-	GlslVariable* Y = cx.emitOutput(node, L"Y", GtFloat);
+	Ref< GlslVariable > Y = cx.emitOutput(node, L"Y", GtFloat);
 	T_ASSERT(Y);
 
 	// Create void output variable; change type later when we know
 	// the type of the input branch.
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtVoid);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtVoid);
 	T_ASSERT(out);
 
 	// Find non-dependent, external, output pins from input branch;
@@ -813,12 +837,12 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 	cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
 	cx.getShader().pushScope();
 
-	GlslVariable* input = cx.emitInput(node, L"Input");
+	Ref< GlslVariable > input = cx.emitInput(node, L"Input");
 	if (!input)
 		return false;
 
 	// Emit post condition if connected; break iteration if condition is false.
-	GlslVariable* condition = cx.emitInput(node, L"Condition");
+	Ref< GlslVariable > condition = cx.emitInput(node, L"Condition");
 	if (condition)
 	{
 		fs << L"if (" << condition->cast(GtFloat) << L" == 0.0)" << Endl;
@@ -836,7 +860,7 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 
 	// As we now know the type of output variable we can safely
 	// initialize it.
-	GlslVariable* initial = cx.emitInput(node, L"Initial");
+	Ref< GlslVariable > initial = cx.emitInput(node, L"Initial");
 	if (initial)
 		assign(f, out) << initial->cast(out->getType()) << L";" << Endl;
 	else
@@ -874,38 +898,38 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 
 bool emitLength(GlslContext& cx, Length* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 	assign(f, out) << L"length(" << in->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitLerp(GlslContext& cx, Lerp* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in1 = cx.emitInput(node, L"Input1");
-	GlslVariable* in2 = cx.emitInput(node, L"Input2");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
 	if (!in1 || !in2)
 		return false;
 	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
-	GlslVariable* blend = cx.emitInput(node, L"Blend");
+	Ref< GlslVariable > blend = cx.emitInput(node, L"Blend");
 	if (!blend || blend->getType() != GtFloat)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", type);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 	assign(f, out) << L"mix(" << in1->cast(type) << L", " << in2->cast(type) << L", " << blend->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitLog(GlslContext& cx, Log* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 	switch (node->getBase())
 	{
 	case Log::LbTwo:
@@ -925,31 +949,31 @@ bool emitLog(GlslContext& cx, Log* node)
 
 bool emitMatrixIn(GlslContext& cx, MatrixIn* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* xaxis = cx.emitInput(node, L"XAxis");
-	GlslVariable* yaxis = cx.emitInput(node, L"YAxis");
-	GlslVariable* zaxis = cx.emitInput(node, L"ZAxis");
-	GlslVariable* translate = cx.emitInput(node, L"Translate");
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4x4);
-	f << L"mat4 " << out->getName() << L" = mat4(" << Endl;
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > xaxis = cx.emitInput(node, L"XAxis");
+	Ref< GlslVariable > yaxis = cx.emitInput(node, L"YAxis");
+	Ref< GlslVariable > zaxis = cx.emitInput(node, L"ZAxis");
+	Ref< GlslVariable > translate = cx.emitInput(node, L"Translate");
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat4x4);
+	f << L"mat4 " << out->getName() << L" = transpose(mat4(" << Endl;
 	f << IncreaseIndent;
 	f << (xaxis     ? xaxis->cast(GtFloat4)     : L"vec4(1.0, 0.0, 0.0, 0.0)") << L"," << Endl;
 	f << (yaxis     ? yaxis->cast(GtFloat4)     : L"vec4(0.0, 1.0, 0.0, 0.0)") << L"," << Endl;
 	f << (zaxis     ? zaxis->cast(GtFloat4)     : L"vec4(0.0, 0.0, 1.0, 0.0)") << L"," << Endl;
 	f << (translate ? translate->cast(GtFloat4) : L"vec4(0.0, 0.0, 0.0, 1.0)") << Endl;
 	f << DecreaseIndent;
-	f << L");" << Endl;
+	f << L"));" << Endl;
 	return true;
 }
 
 bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
 
-	GlslVariable* xaxis = cx.emitOutput(node, L"XAxis", GtFloat4);
+	Ref< GlslVariable > xaxis = cx.emitOutput(node, L"XAxis", GtFloat4);
 	if (xaxis)
 	{
 		assign(f, xaxis) <<
@@ -961,7 +985,7 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 			L");" << Endl;
 	}
 
-	GlslVariable* yaxis = cx.emitOutput(node, L"YAxis", GtFloat4);
+	Ref< GlslVariable > yaxis = cx.emitOutput(node, L"YAxis", GtFloat4);
 	if (yaxis)
 	{
 		assign(f, yaxis) <<
@@ -973,7 +997,7 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 			L");" << Endl;
 	}
 
-	GlslVariable* zaxis = cx.emitOutput(node, L"ZAxis", GtFloat4);
+	Ref< GlslVariable > zaxis = cx.emitOutput(node, L"ZAxis", GtFloat4);
 	if (zaxis)
 	{
 		assign(f, zaxis) <<
@@ -985,7 +1009,7 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 			L");" << Endl;
 	}
 
-	GlslVariable* translate = cx.emitOutput(node, L"Translate", GtFloat4);
+	Ref< GlslVariable > translate = cx.emitOutput(node, L"Translate", GtFloat4);
 	if (translate)
 	{
 		assign(f, translate) <<
@@ -1002,56 +1026,56 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 
 bool emitMax(GlslContext& cx, Max* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in1 = cx.emitInput(node, L"Input1");
-	GlslVariable* in2 = cx.emitInput(node, L"Input2");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
 	if (!in1 || !in2)
 		return false;
 	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
-	GlslVariable* out = cx.emitOutput(node, L"Output", type);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 	assign(f, out) << L"max(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
 	return true;
 }
 
 bool emitMin(GlslContext& cx, Min* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in1 = cx.emitInput(node, L"Input1");
-	GlslVariable* in2 = cx.emitInput(node, L"Input2");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
 	if (!in1 || !in2)
 		return false;
 	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
-	GlslVariable* out = cx.emitOutput(node, L"Output", type);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 	assign(f, out) << L"min(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
 	return true;
 }
 
 bool emitMixIn(GlslContext& cx, MixIn* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* x = cx.emitInput(node, L"X");
-	GlslVariable* y = cx.emitInput(node, L"Y");
-	GlslVariable* z = cx.emitInput(node, L"Z");
-	GlslVariable* w = cx.emitInput(node, L"W");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > x = cx.emitInput(node, L"X");
+	Ref< GlslVariable > y = cx.emitInput(node, L"Y");
+	Ref< GlslVariable > z = cx.emitInput(node, L"Z");
+	Ref< GlslVariable > w = cx.emitInput(node, L"W");
 
 	if (!y && !z && !w)
 	{
-		GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 		assign(f, out) << L"(" << (x ? x->getName() : L"0.0") << L");" << Endl;
 	}
 	else if (!z && !w)
 	{
-		GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat2);
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat2);
 		assign(f, out) << L"vec2(" << (x ? x->getName() : L"0.0") << L", " << (y ? y->getName() : L"0.0") << L");" << Endl;
 	}
 	else if (!w)
 	{
-		GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat3);
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat3);
 		assign(f, out) << L"vec3(" << (x ? x->getName() : L"0.0") << L", " << (y ? y->getName() : L"0.0") << L", " << (z ? z->getName() : L"0.0") << L");" << Endl;
 	}
 	else
 	{
-		GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat4);
 		assign(f, out) << L"vec4(" << (x ? x->getName() : L"0.0") << L", " << (y ? y->getName() : L"0.0") << L", " << (z ? z->getName() : L"0.0") << L", " << (w ? w->getName() : L"0.0") << L");" << Endl;
 	}
 
@@ -1060,8 +1084,8 @@ bool emitMixIn(GlslContext& cx, MixIn* node)
 
 bool emitMixOut(GlslContext& cx, MixOut* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
 
@@ -1069,15 +1093,15 @@ bool emitMixOut(GlslContext& cx, MixOut* node)
 	{
 	case GtFloat:
 		{
-			GlslVariable* x = cx.emitOutput(node, L"X", GtFloat);
+			Ref< GlslVariable > x = cx.emitOutput(node, L"X", GtFloat);
 			assign(f, x) << in->getName() << L";" << Endl;
 		}
 		break;
 
 	case GtFloat2:
 		{
-			GlslVariable* x = cx.emitOutput(node, L"X", GtFloat);
-			GlslVariable* y = cx.emitOutput(node, L"Y", GtFloat);
+			Ref< GlslVariable > x = cx.emitOutput(node, L"X", GtFloat);
+			Ref< GlslVariable > y = cx.emitOutput(node, L"Y", GtFloat);
 			assign(f, x) << in->getName() << L".x;" << Endl;
 			assign(f, y) << in->getName() << L".y;" << Endl;
 		}
@@ -1085,9 +1109,9 @@ bool emitMixOut(GlslContext& cx, MixOut* node)
 
 	case GtFloat3:
 		{
-			GlslVariable* x = cx.emitOutput(node, L"X", GtFloat);
-			GlslVariable* y = cx.emitOutput(node, L"Y", GtFloat);
-			GlslVariable* z = cx.emitOutput(node, L"Z", GtFloat);
+			Ref< GlslVariable > x = cx.emitOutput(node, L"X", GtFloat);
+			Ref< GlslVariable > y = cx.emitOutput(node, L"Y", GtFloat);
+			Ref< GlslVariable > z = cx.emitOutput(node, L"Z", GtFloat);
 			assign(f, x) << in->getName() << L".x;" << Endl;
 			assign(f, y) << in->getName() << L".y;" << Endl;
 			assign(f, z) << in->getName() << L".z;" << Endl;
@@ -1096,10 +1120,10 @@ bool emitMixOut(GlslContext& cx, MixOut* node)
 
 	case GtFloat4:
 		{
-			GlslVariable* x = cx.emitOutput(node, L"X", GtFloat);
-			GlslVariable* y = cx.emitOutput(node, L"Y", GtFloat);
-			GlslVariable* z = cx.emitOutput(node, L"Z", GtFloat);
-			GlslVariable* w = cx.emitOutput(node, L"W", GtFloat);
+			Ref< GlslVariable > x = cx.emitOutput(node, L"X", GtFloat);
+			Ref< GlslVariable > y = cx.emitOutput(node, L"Y", GtFloat);
+			Ref< GlslVariable > z = cx.emitOutput(node, L"Z", GtFloat);
+			Ref< GlslVariable > w = cx.emitOutput(node, L"W", GtFloat);
 			assign(f, x) << in->getName() << L".x;" << Endl;
 			assign(f, y) << in->getName() << L".y;" << Endl;
 			assign(f, z) << in->getName() << L".z;" << Endl;
@@ -1116,115 +1140,61 @@ bool emitMixOut(GlslContext& cx, MixOut* node)
 
 bool emitMul(GlslContext& cx, Mul* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in1 = cx.emitInput(node, L"Input1");
-	GlslVariable* in2 = cx.emitInput(node, L"Input2");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
 	if (!in1 || !in2)
 		return false;
 	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
-	GlslVariable* out = cx.emitOutput(node, L"Output", type);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 	assign(f, out) << in1->cast(type) << L" * " << in2->cast(type) << L";" << Endl;
 	return true;
 }
 
 bool emitMulAdd(GlslContext& cx, MulAdd* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in1 = cx.emitInput(node, L"Input1");
-	GlslVariable* in2 = cx.emitInput(node, L"Input2");
-	GlslVariable* in3 = cx.emitInput(node, L"Input3");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
+	Ref< GlslVariable > in3 = cx.emitInput(node, L"Input3");
 	if (!in1 || !in2 || !in3)
 		return false;
 	GlslType type = std::max< GlslType >(std::max< GlslType >(in1->getType(), in2->getType()), in3->getType());
-	GlslVariable* out = cx.emitOutput(node, L"Output", type);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 	assign(f, out) << in1->cast(type) << L" * " << in2->cast(type) << L" + " << in3->cast(type) << L";" << Endl;
 	return true;
 }
 
 bool emitNeg(GlslContext& cx, Neg* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"-" << in->getName() << L";" << Endl;
 	return true;
 }
 
 bool emitNormalize(GlslContext& cx, Normalize* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"normalize(" << in->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 {
-	const GLenum c_oglCullFace[] =
-	{
-		GL_FRONT,
-		GL_BACK,
-		GL_FRONT
-	};
-
-	const GLenum c_oglBlendEquation[] =
-	{
-		GL_FUNC_ADD,
-		GL_FUNC_SUBTRACT,
-		GL_FUNC_REVERSE_SUBTRACT,
-		GL_MIN,
-		GL_MAX
-	};
-
-	const GLenum c_oglBlendFunction[] =
-	{
-		GL_ONE,
-		GL_ZERO,
-		GL_SRC_COLOR,
-		GL_ONE_MINUS_SRC_COLOR,
-		GL_DST_COLOR,
-		GL_ONE_MINUS_DST_COLOR,
-		GL_SRC_ALPHA,
-		GL_ONE_MINUS_SRC_ALPHA,
-		GL_DST_ALPHA,
-		GL_ONE_MINUS_DST_ALPHA
-	};
-
-	const GLenum c_oglFunction[] =
-	{
-		GL_ALWAYS,
-		GL_NEVER,
-		GL_LESS,
-		GL_LEQUAL,
-		GL_GREATER,
-		GL_GEQUAL,
-		GL_EQUAL,
-		GL_NOTEQUAL
-	};
-
-	const GLenum c_oglStencilOperation[] =
-	{
-		GL_KEEP,
-		GL_ZERO,
-		GL_REPLACE,
-		GL_INCR,
-		GL_DECR,
-		GL_INVERT,
-		GL_INCR_WRAP,
-		GL_DECR_WRAP
-	};
-
 	RenderState rs = node->getRenderState();
 
 	cx.enterFragment();
 
 	const wchar_t* inputs[] = { L"Input", L"Input1", L"Input2", L"Input3" };
-	GlslVariable* in[4];
+	Ref< GlslVariable > in[4];
 
 	for (int32_t i = 0; i < sizeof_array(in); ++i)
 		in[i] = cx.emitInput(node, inputs[i]);
@@ -1237,74 +1207,23 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 		if (!in[i])
 			continue;
 
-		StringOutputStream& fpb = cx.getFragmentShader().getOutputStream(GlslShader::BtBody);
+		auto& fpb = cx.getFragmentShader().getOutputStream(GlslShader::BtBody);
 		fpb << L"_gl_FragData_" << i << L" = " << in[i]->cast(GtFloat4) << L";" << Endl;
 	}
 
-	uint32_t colorMask =
-		((rs.colorWriteMask & CwRed) ? RenderStateOpenGL::CmRed : 0) |
-		((rs.colorWriteMask & CwGreen) ? RenderStateOpenGL::CmGreen : 0) |
-		((rs.colorWriteMask & CwBlue) ? RenderStateOpenGL::CmBlue : 0) |
-		((rs.colorWriteMask & CwAlpha) ? RenderStateOpenGL::CmAlpha : 0);
-
-	RenderStateOpenGL& rsogl = cx.getRenderState();
-	rsogl.cullFaceEnable = (rs.cullMode == CmNever) ? GL_FALSE : GL_TRUE;
-	rsogl.cullFace = c_oglCullFace[rs.cullMode];
-	rsogl.blendEnable = rs.blendEnable ? GL_TRUE : GL_FALSE;
-	rsogl.blendColorEquation = c_oglBlendEquation[rs.blendColorOperation];
-	rsogl.blendFuncColorSrc = c_oglBlendFunction[rs.blendColorSource];
-	rsogl.blendFuncColorDest = c_oglBlendFunction[rs.blendColorDestination];
-	rsogl.blendAlphaEquation = c_oglBlendEquation[rs.blendAlphaOperation];
-	rsogl.blendFuncAlphaSrc = c_oglBlendFunction[rs.blendAlphaSource];
-	rsogl.blendFuncAlphaDest = c_oglBlendFunction[rs.blendAlphaDestination];
-	rsogl.depthTestEnable = rs.depthEnable ? GL_TRUE : GL_FALSE;
-	rsogl.colorMask = colorMask;
-	rsogl.depthMask = rs.depthWriteEnable ? GL_TRUE : GL_FALSE;
-	rsogl.depthFunc = c_oglFunction[rs.depthFunction];
-	rsogl.alphaTestEnable = rs.alphaTestEnable ? GL_TRUE : GL_FALSE;
-	rsogl.alphaFunc = c_oglFunction[rs.alphaTestFunction];
-	rsogl.alphaRef = GLclampf(rs.alphaTestReference / 255.0f);
-	rsogl.stencilTestEnable = rs.stencilEnable;
-	rsogl.stencilFunc = c_oglFunction[rs.stencilFunction];
-	rsogl.stencilRef = rs.stencilReference;
-	rsogl.stencilOpFail = c_oglStencilOperation[rs.stencilFail];
-	rsogl.stencilOpZFail = c_oglStencilOperation[rs.stencilZFail];
-	rsogl.stencilOpZPass = c_oglStencilOperation[rs.stencilPass];
-
-	cx.requirements().precisionHint = node->getPrecisionHint();
-	return true;
-}
-
-bool emitReadStruct(GlslContext& cx, ReadStruct* node)
-{
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-
-	GlslVariable* strct = cx.emitInput(node, L"Struct");
-	if (!strct || strct->getType() != GtStructBuffer)
-		return false;
-
-	const Struct* sn = mandatory_non_null_type_cast< const Struct* >(strct->getNode());
-
-	DataType type = sn->getElementType(node->getName());
-
-	GlslVariable* index = cx.emitInput(node, L"Index");
-	if (!index)
-		return false;
-
-	GlslVariable* out = cx.emitOutput(node, L"Output", glsl_from_data_type(type));
-	assign(f, out) << strct->getName() << L".sdata[" << index->castToInteger(GtFloat) << L"]." << node->getName() << L";" << Endl;
+	cx.setRenderState(rs);
 	return true;
 }
 
 bool emitPolynomial(GlslContext& cx, Polynomial* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-	GlslVariable* x = cx.emitInput(node, L"X");
-	GlslVariable* coeffs = cx.emitInput(node, L"Coefficients");
+	Ref< GlslVariable > x = cx.emitInput(node, L"X");
+	Ref< GlslVariable > coeffs = cx.emitInput(node, L"Coefficients");
 	if (!x || !coeffs)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 
 	assign(f, out);
 	switch (coeffs->getType())
@@ -1335,52 +1254,73 @@ bool emitPolynomial(GlslContext& cx, Polynomial* node)
 
 bool emitPow(GlslContext& cx, Pow* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* exponent = cx.emitInput(node, L"Exponent");
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > exponent = cx.emitInput(node, L"Exponent");
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!exponent || !in)
 		return false;
 	GlslType type = std::max< GlslType >(exponent->getType(), in->getType());
-	GlslVariable* out = cx.emitOutput(node, L"Output", type);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 	assign(f, out) << L"pow(max(" << in->cast(type) << L", 0.0), " << exponent->cast(type) << L");" << Endl;
+	return true;
+}
+
+bool emitReadStruct(GlslContext& cx, ReadStruct* node)
+{
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
+	Ref< GlslVariable > strct = cx.emitInput(node, L"Struct");
+	if (!strct || strct->getType() != GtStructBuffer)
+		return false;
+
+	const Struct* sn = mandatory_non_null_type_cast< const Struct* >(strct->getNode());
+
+	DataType type = sn->getElementType(node->getName());
+
+	Ref< GlslVariable > index = cx.emitInput(node, L"Index");
+	if (!index)
+		return false;
+
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", glsl_from_data_type(type));
+	assign(f, out) << strct->getName() << L"_Data[int(" << index->cast(GtFloat) << L")]." << node->getName() << L";" << Endl;
 	return true;
 }
 
 bool emitReflect(GlslContext& cx, Reflect* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* normal = cx.emitInput(node, L"Normal");
-	GlslVariable* direction = cx.emitInput(node, L"Direction");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > normal = cx.emitInput(node, L"Normal");
+	Ref< GlslVariable > direction = cx.emitInput(node, L"Direction");
 	if (!normal || !direction)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", direction->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", direction->getType());
 	assign(f, out) << L"reflect(" << direction->getName() << L", " << normal->cast(direction->getType()) << L");" << Endl;
 	return true;
 }
 
 bool emitRecipSqrt(GlslContext& cx, RecipSqrt* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"inversesqrt(" << in->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitRepeat(GlslContext& cx, Repeat* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	std::wstring inputName;
 
 	// Create iterator variable.
-	GlslVariable* N = cx.emitOutput(node, L"N", GtFloat);
+	Ref< GlslVariable > N = cx.emitOutput(node, L"N", GtFloat);
 	T_ASSERT(N);
 
 	// Create void output variable; change type later when we know
 	// the type of the input branch.
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtVoid);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtVoid);
 	T_ASSERT(out);
 
 	// Find non-dependent, external, output pins from input branch;
@@ -1401,14 +1341,14 @@ bool emitRepeat(GlslContext& cx, Repeat* node)
 
 	{
 		// Emit pre-condition, break iteration if condition is false.
-		GlslVariable* condition = cx.emitInput(node, L"Condition");
+		Ref< GlslVariable > condition = cx.emitInput(node, L"Condition");
 		if (condition)
 		{
 			fs << L"if (" << condition->cast(GtFloat) << L" == 0.0)" << Endl;
 			fs << L"\tbreak;" << Endl;
 		}
 
-		GlslVariable* input = cx.emitInput(node, L"Input");
+		Ref< GlslVariable > input = cx.emitInput(node, L"Input");
 		if (!input)
 			return false;
 
@@ -1424,7 +1364,7 @@ bool emitRepeat(GlslContext& cx, Repeat* node)
 
 	// As we now know the type of output variable we can safely
 	// initialize it.
-	GlslVariable* initial = cx.emitInput(node, L"Initial");
+	Ref< GlslVariable > initial = cx.emitInput(node, L"Initial");
 	if (initial)
 		assign(f, out) << initial->cast(out->getType()) << L";" << Endl;
 	else
@@ -1448,181 +1388,41 @@ bool emitRepeat(GlslContext& cx, Repeat* node)
 
 bool emitRound(GlslContext& cx, Round* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"round(" << in->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitSampler(GlslContext& cx, Sampler* node)
 {
-	const GLenum c_glFilter[] =
-	{
-		GL_NEAREST,
-		GL_LINEAR
-	};
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-	const GLenum c_glWrap[] =
-	{
-		GL_REPEAT,
-		GL_REPEAT,
-		GL_CLAMP_TO_EDGE,
-		GL_CLAMP_TO_EDGE
-	};
-
-	const GLenum c_glCompare[] =
-	{
-		GL_ALWAYS,
-		GL_NEVER,
-		GL_LESS,
-		GL_LEQUAL,
-		GL_GREATER,
-		GL_GEQUAL,
-		GL_EQUAL,
-		GL_NOTEQUAL,
-		GL_INVALID_ENUM
-	};
-
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-
-	GlslVariable* texture = cx.emitInput(node, L"Texture");
+	Ref< GlslVariable > texture = cx.emitInput(node, L"Texture");
 	if (!texture || texture->getType() < GtTexture2D)
 		return false;
 
-	GlslVariable* texCoord = cx.emitInput(node, L"TexCoord");
+	Ref< GlslVariable > texCoord = cx.emitInput(node, L"TexCoord");
 	if (!texCoord)
 		return false;
 
-	GlslVariable* mip = cx.emitInput(node, L"Mip");
-
-	const SamplerState& samplerState = node->getSamplerState();
-
-	GlslVariable* out = cx.emitOutput(node, L"Output", (samplerState.compare == CfNone) ? GtFloat4 : GtFloat);
-
+	const auto& samplerState = node->getSamplerState();
 	bool needAddressW = bool(texture->getType() > GtTexture2D);
-	GLenum target = GL_INVALID_ENUM;
+	int32_t samplerUnit = (int32_t)cx.getLayout().count< GlslSampler >();
+	std::wstring samplerName = L"_gl_sampler" + toString(samplerUnit);
 
-	switch (texture->getType())
-	{
-	case GtTexture2D:
-		target = GL_TEXTURE_2D;
-		break;
+	cx.getLayout().add(new GlslSampler(
+		samplerName,
+		samplerUnit,
+		samplerState,
+		texture->getName()
+	));
 
-	case GtTexture3D:
-		target = 0x806F; // GL_TEXTURE_3D;
-		break;
-
-	case GtTextureCube:
-		target = GL_TEXTURE_CUBE_MAP;
-		break;
-
-	default:
-		return false;
-	}
-
-	// ES 2.0 require extension for sampling 3D textures.
-	if (texture->getType() == GtTexture3D)
-		cx.requirements().texture3D = true;
-
-	// Calculate sampler hash.
-	Adler32 samplerHash;
-	samplerHash.feed(texture->getName());
-	samplerHash.feed(samplerState.minFilter);
-	samplerHash.feed(samplerState.mipFilter);
-	samplerHash.feed(samplerState.magFilter);
-	samplerHash.feed(samplerState.addressU);
-	samplerHash.feed(samplerState.addressV);
-	if (needAddressW)
-		samplerHash.feed(samplerState.addressW);
-	samplerHash.feed(samplerState.compare);
-
-    // Use same stage index for both vertex and fragment shader.
-    // Sampler name is defined by which stage it's associated with.
-	int32_t stage;
-
-	// Define sampler.
-	std::wstring samplerName = L"_gl_sampler_" + texture->getName();
-    bool defineStates = cx.defineSampler(samplerName, samplerHash.get(), target, texture->getName(), stage);
-
-	if (defineStates)
-	{
-		RenderStateOpenGL& rs = cx.getRenderState();
-
-		bool minLinear = samplerState.minFilter != FtPoint;
-		bool mipLinear = samplerState.mipFilter != FtPoint;
-
-		if (!minLinear && !mipLinear)
-			rs.samplerStates[stage].minFilter = GL_NEAREST;
-		else if (!minLinear && mipLinear)
-			rs.samplerStates[stage].minFilter = GL_NEAREST_MIPMAP_LINEAR;
-		else if (minLinear && !mipLinear)
-			rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;
-		else
-			rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_LINEAR;
-
-		rs.samplerStates[stage].magFilter = c_glFilter[samplerState.magFilter];
-		rs.samplerStates[stage].wrapS = c_glWrap[samplerState.addressU];
-		rs.samplerStates[stage].wrapT = c_glWrap[samplerState.addressV];
-
-		if (needAddressW)
-			rs.samplerStates[stage].wrapR = c_glWrap[samplerState.addressW];
-
-		rs.samplerStates[stage].compare = c_glCompare[samplerState.compare];
-	}
-
-	if (cx.getShader().getUniforms().find(samplerName) == cx.getShader().getUniforms().end())
-	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-		if (samplerState.compare == CfNone)
-		{
-			switch (texture->getType())
-			{
-			case GtTexture2D:
-				fu << L"uniform sampler2D " << samplerName << L";" << Endl;
-				break;
-
-			case GtTexture3D:
-				fu << L"uniform sampler3D " << samplerName << L";" << Endl;
-				break;
-
-			case GtTextureCube:
-				fu << L"uniform samplerCube " << samplerName << L";" << Endl;
-				break;
-
-			default:
-				return false;
-			}
-		}
-		else
-		{
-			if (!cx.inFragment())
-				return false;
-
-			cx.requirements().shadowSamplers = true;
-
-			switch (texture->getType())
-			{
-			case GtTexture2D:
-				fu << L"uniform sampler2DShadow " << samplerName << L";" << Endl;
-				break;
-
-			case GtTexture3D:
-				fu << L"uniform sampler3DShadow " << samplerName << L";" << Endl;
-				break;
-
-			case GtTextureCube:
-				fu << L"uniform samplerCubeShadow " << samplerName << L";" << Endl;
-				break;
-
-			default:
-				return false;
-			}
-		}
-		cx.getShader().addUniform(samplerName);
-	}
+	Ref< GlslVariable > mip = cx.emitInput(node, L"Mip");
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", (samplerState.compare == CfNone) ? GtFloat4 : GtFloat);
 
 	if (cx.inFragment())
 	{
@@ -1667,7 +1467,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				}
 			}
 		}
-		else
+		else	// Compare
 		{
 			if (!samplerState.ignoreMips)
 			{
@@ -1711,17 +1511,17 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		switch (texture->getType())
 		{
 		case GtTexture2D:
-			assign(f, out) << L"texture2DBilinear(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
-			cx.requirements().vertexBilinearSampler = true;
-			break;
+			// assign(f, out) << L"texture2DBilinear(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+			// cx.requirements().vertexBilinearSampler = true;
+			// break;
 
 		case GtTexture3D:
 		case GtTextureCube:
 			assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
 			break;
 
-        default:
-            return false;
+		default:
+			return false;
 		}
 	}
 
@@ -1730,26 +1530,26 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 
 bool emitScalar(GlslContext& cx, Scalar* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 	f << L"const float " << out->getName() << L" = " << formatFloat(node->get()) << L";" << Endl;
 	return true;
 }
 
 bool emitSign(GlslContext& cx, Sign* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"sign(" << in->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitScript(GlslContext& cx, Script* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	// Get platform specific script from node.
 	std::wstring script = node->getScript();
@@ -1795,32 +1595,32 @@ bool emitScript(GlslContext& cx, Script* node)
 
 			const SamplerState& samplerState = it->second;
 
-			const GLenum c_glFilter[] =
-			{
-				GL_NEAREST,
-				GL_LINEAR
-			};
+			//const GLenum c_glFilter[] =
+			//{
+			//	GL_NEAREST,
+			//	GL_LINEAR
+			//};
 
-			const GLenum c_glWrap[] =
-			{
-				GL_REPEAT,
-				GL_REPEAT,
-				GL_CLAMP_TO_EDGE,
-				GL_CLAMP_TO_EDGE
-			};
+			//const GLenum c_glWrap[] =
+			//{
+			//	GL_REPEAT,
+			//	GL_REPEAT,
+			//	GL_CLAMP_TO_EDGE,
+			//	GL_CLAMP_TO_EDGE
+			//};
 
-			const GLenum c_glCompare[] =
-			{
-				GL_ALWAYS,
-				GL_NEVER,
-				GL_LESS,
-				GL_LEQUAL,
-				GL_GREATER,
-				GL_GEQUAL,
-				GL_EQUAL,
-				GL_NOTEQUAL,
-				GL_INVALID_ENUM
-			};
+			//const GLenum c_glCompare[] =
+			//{
+			//	GL_ALWAYS,
+			//	GL_NEVER,
+			//	GL_LESS,
+			//	GL_LEQUAL,
+			//	GL_GREATER,
+			//	GL_GEQUAL,
+			//	GL_EQUAL,
+			//	GL_NOTEQUAL,
+			//	GL_INVALID_ENUM
+			//};
 
 			Adler32 samplerHash;
 			samplerHash.feed(node->getInputPin(i)->getName());
@@ -1832,51 +1632,37 @@ bool emitScript(GlslContext& cx, Script* node)
 			samplerHash.feed(samplerState.addressW);
 			samplerHash.feed(samplerState.compare);
 
-			// Use same stage index for both vertex and fragment shader.
-			// Sampler name is defined by which stage it's associated with.
-			int32_t stage;
-
 			// Define sampler.
-			bool defineStates = cx.defineSampler(samplerId, samplerHash.get(), GL_TEXTURE_2D, in[i]->getName(), stage);
-			if (defineStates)
-			{
-				RenderStateOpenGL& rs = cx.getRenderState();
+			//bool defineStates = cx.defineSampler(samplerId, samplerHash.get(), GL_TEXTURE_2D, in[i]->getName(), stage);
+			//if (defineStates)
+			//{
+			//	RenderStateOpenGL& rs = cx.getRenderState();
 
-				bool minLinear = samplerState.minFilter != FtPoint;
-				bool mipLinear = samplerState.mipFilter != FtPoint;
+			//	bool minLinear = samplerState.minFilter != FtPoint;
+			//	bool mipLinear = samplerState.mipFilter != FtPoint;
 
-				if (!minLinear && !mipLinear)
-					rs.samplerStates[stage].minFilter = GL_NEAREST;
-				else if (!minLinear && mipLinear)
-					rs.samplerStates[stage].minFilter = GL_NEAREST_MIPMAP_LINEAR;
-				else if (minLinear && !mipLinear)
-					rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;
-				else
-					rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_LINEAR;
+			//	if (!minLinear && !mipLinear)
+			//		rs.samplerStates[stage].minFilter = GL_NEAREST;
+			//	else if (!minLinear && mipLinear)
+			//		rs.samplerStates[stage].minFilter = GL_NEAREST_MIPMAP_LINEAR;
+			//	else if (minLinear && !mipLinear)
+			//		rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;
+			//	else
+			//		rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_LINEAR;
 
-				rs.samplerStates[stage].magFilter = c_glFilter[samplerState.magFilter];
-				rs.samplerStates[stage].wrapS = c_glWrap[samplerState.addressU];
-				rs.samplerStates[stage].wrapT = c_glWrap[samplerState.addressV];
-				rs.samplerStates[stage].wrapR = c_glWrap[samplerState.addressW];
-				rs.samplerStates[stage].compare = c_glCompare[samplerState.compare];
-			}
+			//	rs.samplerStates[stage].magFilter = c_glFilter[samplerState.magFilter];
+			//	rs.samplerStates[stage].wrapS = c_glWrap[samplerState.addressU];
+			//	rs.samplerStates[stage].wrapT = c_glWrap[samplerState.addressV];
+			//	rs.samplerStates[stage].wrapR = c_glWrap[samplerState.addressW];
+			//	rs.samplerStates[stage].compare = c_glCompare[samplerState.compare];
+			//}
 
-			if (cx.getShader().getUniforms().find(samplerId) == cx.getShader().getUniforms().end())
-			{
-				StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-				if (samplerState.compare == CfNone)
-				{
-					fu << L"uniform sampler2D " << samplerId << L";" << Endl;
-				}
-				else
-				{
-					if (!cx.inFragment())
-						return false;
-
-					fu << L"uniform sampler2DShadow " << samplerId << L";" << Endl;
-				}
-				cx.getShader().addUniform(samplerId);
-			}
+			//if (!cx.getShader().haveUniform(samplerId))
+			//{
+			//	auto& fu = cx.getShader().getOutputStream(GlslShader::BtSamplers);
+			//	fu << L"uniform sampler " << samplerId << L";" << Endl;
+			//	cx.getShader().addUniform(samplerId);
+			//}
 		}
 	}
 
@@ -1909,7 +1695,7 @@ bool emitScript(GlslContext& cx, Script* node)
 			ss << L"out " << glsl_type_name(out[i]->getType()) << L" " << node->getOutputPin(i)->getName();
 		}
 
-		ss << L")" << Endl;
+		ss << L")";
 
 		std::wstring processedScript = replaceAll< std::wstring >(script, L"ENTRY", ss.str());
 		T_ASSERT(!processedScript.empty());
@@ -1952,92 +1738,108 @@ bool emitScript(GlslContext& cx, Script* node)
 
 bool emitSin(GlslContext& cx, Sin* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* theta = cx.emitInput(node, L"Theta");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > theta = cx.emitInput(node, L"Theta");
 	if (!theta || theta->getType() != GtFloat)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 	assign(f, out) << L"sin(" << theta->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitSqrt(GlslContext& cx, Sqrt* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"sqrt(" << in->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitStep(GlslContext& cx, Step* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in1 = cx.emitInput(node, L"X");
-	GlslVariable* in2 = cx.emitInput(node, L"Y");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in1 = cx.emitInput(node, L"X");
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Y");
 	if (!in1 || !in2)
 		return false;
 	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
-	GlslVariable* out = cx.emitOutput(node, L"Output", type);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 	assign(f, out) << L"step(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
 	return true;
 }
 
 bool emitStruct(GlslContext& cx, Struct* node)
 {
-	GlslVariable* out = cx.getShader().createVariable(
+	Ref< GlslVariable > out = cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		node->getParameterName(),
 		GtStructBuffer
 	);
 
-	const auto& uniforms = cx.getShader().getUniforms();
-	if (uniforms.find(node->getParameterName()) == uniforms.end())
+	auto existing = cx.getLayout().get([&](const GlslResource* resource) {
+		return resource->getName() == node->getParameterName();
+	});
+	if (existing != nullptr)
 	{
-		StringOutputStream& fs = cx.getShader().getOutputStream(GlslShader::BtUniform);
-		fs << L"struct SBufferData0" << Endl;
-		fs << L"{" << Endl;
-		for (const auto& element : node->getElements())
-			fs << L"\t" << glsl_type_name(glsl_from_data_type(element.type)) << L" " << element.name << L";" << Endl;
-		fs << L"};" << Endl;
-		fs << Endl;
-		fs << L"layout (std430, binding = 0) buffer SBufferData0_Layout" << Endl;
-		fs << L"{" << Endl;
-		fs << L"\tSBufferData0 sdata[];" << Endl;
-		fs << L"} " << node->getParameterName() << L";" << Endl;
-
-		cx.getShader().addUniform(node->getParameterName());
+		if (auto existingStorageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(existing))
+		{
+			// Storage buffer already exist; \tbd ensure elements match.
+			return false;
+		}
+		else
+		{
+			// Resource already exist but is not a storage buffer.
+			return false;
+		}
 	}
+	else
+	{
+		// Storage buffer do not exist; add new storage buffer resource.
+		Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(node->getParameterName());
+		for (const auto& element : node->getElements())
+			storageBuffer->add(element.name, glsl_from_data_type(element.type));
+		cx.getLayout().add(storageBuffer);
+	}
+
+	// Define parameter in context.
+	cx.addParameter(
+		node->getParameterName(),
+		PtStructBuffer,
+		1,
+		UfDraw
+	);
+
 	return true;
 }
 
 bool emitSub(GlslContext& cx, Sub* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in1 = cx.emitInput(node, L"Input1");
-	GlslVariable* in2 = cx.emitInput(node, L"Input2");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
+	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
 	if (!in1 || !in2)
 		return false;
 	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
-	GlslVariable* out = cx.emitOutput(node, L"Output", type);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 	assign(f, out) << in1->cast(type) << L" - " << in2->cast(type) << L";" << Endl;
 	return true;
 }
 
 bool emitSum(GlslContext& cx, Sum* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	std::wstring inputName;
 
 	// Create iterator variable.
-	GlslVariable* N = cx.emitOutput(node, L"N", GtFloat);
+	Ref< GlslVariable > N = cx.emitOutput(node, L"N", GtFloat);
 	T_ASSERT(N);
 
 	// Create void output variable; change type later when we know
 	// the type of the input branch.
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtVoid);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtVoid);
 	T_ASSERT(out);
 
 	// Find non-dependent, external, output pins from input branch;
@@ -2057,7 +1859,7 @@ bool emitSum(GlslContext& cx, Sum* node)
 	cx.getShader().pushScope();
 
 	{
-		GlslVariable* input = cx.emitInput(node, L"Input");
+		Ref< GlslVariable > input = cx.emitInput(node, L"Input");
 		if (!input)
 			return false;
 
@@ -2093,7 +1895,7 @@ bool emitSum(GlslContext& cx, Sum* node)
 
 bool emitSwizzle(GlslContext& cx, Swizzle* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	std::wstring map = toLower(node->get());
 	if (map.length() == 0)
@@ -2102,23 +1904,23 @@ bool emitSwizzle(GlslContext& cx, Swizzle* node)
 	const GlslType types[] = { GtFloat, GtFloat2, GtFloat3, GtFloat4 };
 	GlslType type = types[map.length() - 1];
 
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
 
-	if (
-		(map == L"xyzw" && in->getType() == GtFloat4) ||
-		(map == L"xyz" && in->getType() == GtFloat3) ||
-		(map == L"xy" && in->getType() == GtFloat2) ||
-		(map == L"x" && in->getType() == GtFloat)
-	)
+	//if (
+	//	(map == L"xyzw" && in->getType() == GtFloat4) ||
+	//	(map == L"xyz" && in->getType() == GtFloat3) ||
+	//	(map == L"xy" && in->getType() == GtFloat2) ||
+	//	(map == L"x" && in->getType() == GtFloat)
+	//)
+	//{
+	//	// No need to swizzle; pass variable further.
+	//	cx.emitOutput(node, L"Output", in);
+	//}
+	//else
 	{
-		// No need to swizzle; pass variable further.
-		cx.emitOutput(node, L"Output", in);
-	}
-	else
-	{
-		GlslVariable* out = cx.emitOutput(node, L"Output", type);
+		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 		bool containConstant = false;
 		for (size_t i = 0; i < map.length() && !containConstant; ++i)
@@ -2181,9 +1983,9 @@ bool emitSwizzle(GlslContext& cx, Swizzle* node)
 
 bool emitSwitch(GlslContext& cx, Switch* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-	GlslVariable* in = cx.emitInput(node, L"Select");
+	Ref< GlslVariable > in = cx.emitInput(node, L"Select");
 	if (!in)
 		return false;
 
@@ -2203,7 +2005,7 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 		const InputPin* caseInput = node->getInputPin(i + 2);
 		T_ASSERT(caseInput);
 
-		GlslVariable* caseInputVariable = cx.emitInput(caseInput);
+		Ref< GlslVariable > caseInputVariable = cx.emitInput(caseInput);
 		T_ASSERT(caseInputVariable);
 
 		caseBranches.push_back(fs.str());
@@ -2224,7 +2026,7 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 		const InputPin* caseInput = node->getInputPin(1);
 		T_ASSERT(caseInput);
 
-		GlslVariable* caseInputVariable = cx.emitInput(caseInput);
+		Ref< GlslVariable > caseInputVariable = cx.emitInput(caseInput);
 		T_ASSERT(caseInputVariable);
 
 		caseBranches.push_back(fs.str());
@@ -2235,7 +2037,7 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 		cx.getShader().popOutputStream(GlslShader::BtBody);
 	}
 
-	GlslVariable* out = cx.emitOutput(node, L"Output", outputType);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", outputType);
 	assign(f, out) << expandScalar(0.0f, outputType) << L";" << Endl;
 
 	const std::vector< int32_t >& cases = node->getCases();
@@ -2274,45 +2076,73 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 
 bool emitTan(GlslContext& cx, Tan* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* theta = cx.emitInput(node, L"Theta");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > theta = cx.emitInput(node, L"Theta");
 	if (!theta || theta->getType() != GtFloat)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat);
 	assign(f, out) << L"tan(" << theta->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitTargetSize(GlslContext& cx, TargetSize* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat2);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat2);
+
+	auto ub = cx.getLayout().get< GlslUniformBuffer >(
+		[](const GlslUniformBuffer* ub) { return ub->getBinding() == UfOnce; }
+	);
+
+	if (!ub->add(
+		L"_gl_targetSize",
+		GtFloat4,
+		1
+	))
+		return false;
+
+	cx.addParameter(L"_gl_targetSize", PtVector, 1, UfOnce);
+
 	assign(f, out) << L"_gl_targetSize.xy;" << Endl;
 	return true;
 }
 
 bool emitTextureSize(GlslContext& cx, TextureSize* node)
 {
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in || in->getType() < GtTexture2D)
 		return false;
 
-	std::wstring uniformName = L"_gl_textureSize_" + in->getName();
+	const SamplerState samplerState;
+	int32_t samplerUnit = (int32_t)cx.getLayout().count< GlslSampler >();
+	std::wstring samplerName = L"_gl_sampler" + toString(samplerUnit);
 
-	GlslVariable* out = cx.getShader().createVariable(
-		node->findOutputPin(L"Output"),
-		uniformName,
-		GtFloat4
-	);
-    if (!out)
-        return false;
+	cx.getLayout().add(new GlslSampler(
+		samplerName,
+		samplerUnit,
+		samplerState,
+		in->getName()
+	));
 
-	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-	if (uniforms.find(uniformName) == uniforms.end())
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat3);
+	switch (in->getType())
 	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-		fu << L"uniform vec4 " << uniformName << L";" << Endl;
-		cx.getShader().addUniform(uniformName);
+	case GtTexture2D:
+		f << L"vec3 " << out->getName() << L" = vec3(textureSize(" << samplerName << L", 0).xy, 0.0f);" << Endl;
+		break;
+
+	case GtTexture3D:
+		f << L"vec3 " << out->getName() << L" = textureSize(" << samplerName << L", 0);" << Endl;
+		break;
+
+	case GtTextureCube:
+		f << L"vec3 " << out->getName() << L" = textureSize(" << samplerName << L", 0);" << Endl;
+		break;
+
+	default:
+		return false;
 	}
 
 	return true;
@@ -2320,90 +2150,103 @@ bool emitTextureSize(GlslContext& cx, TextureSize* node)
 
 bool emitTransform(GlslContext& cx, Transform* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
-	GlslVariable* transform = cx.emitInput(node, L"Transform");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
+	Ref< GlslVariable > transform = cx.emitInput(node, L"Transform");
 	if (!in || !transform)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat4);
 	assign(f, out) << transform->getName() << L" * " << in->cast(GtFloat4) << L";" << Endl;
 	return true;
 }
 
 bool emitTranspose(GlslContext& cx, Transpose* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"transpose(" << in->getName() << L");" << Endl;
-	cx.requirements().transpose = true;
 	return true;
 }
 
 bool emitTruncate(GlslContext& cx, Truncate* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
-	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << in->getName() << L" - fract(" << in->getName() << L");" << Endl;
 	return true;
 }
 
 bool emitUniform(GlslContext& cx, Uniform* node)
 {
-	GlslVariable* out = cx.getShader().createVariable(
+	Ref< GlslVariable > out = cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		node->getParameterName(),
 		glsl_from_parameter_type(node->getParameterType())
 	);
+	if (!out)
+		return false;
 
+	// Add uniform to layout.
 	if (out->getType() < GtTexture2D)
 	{
-		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-		if (uniforms.find(node->getParameterName()) == uniforms.end())
-		{
-			StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-			fu << L"uniform " << glsl_type_name(out->getType()) << L" " << node->getParameterName() << L";" << Endl;
-			cx.getShader().addUniform(node->getParameterName());
-		}
-
-		switch (out->getType())
-		{
-		case GtFloat:
-			if (!cx.defineUniform(node->getParameterName(), GL_FLOAT, 1))
-				return false;
-			break;
-
-		case GtFloat2:
-		case GtFloat3:
-		case GtFloat4:
-			if (!cx.defineUniform(node->getParameterName(), GL_FLOAT_VEC4, 1))
-				return false;
-			break;
-
-		case GtFloat4x4:
-			if (!cx.defineUniform(node->getParameterName(), GL_FLOAT_MAT4, 1))
-				return false;
-			break;
-
-		default:
+		auto ub = cx.getLayout().get< GlslUniformBuffer >(node->getFrequency());
+		if (!ub->add(
+			node->getParameterName(),
+			out->getType(),
+			1
+		))
 			return false;
-		}
 	}
 	else
-		cx.defineTexture(node->getParameterName());
+	{
+		auto existing = cx.getLayout().get([&](const GlslResource* resource) {
+			return resource->getName() == node->getParameterName();
+		});
+		if (existing != nullptr)
+		{
+			if (auto existingTexture = dynamic_type_cast< const GlslTexture* >(existing))
+			{
+				// Texture already exist; ensure type match.
+				if (existingTexture->getUniformType() != out->getType())
+					return false;
+			}
+			else
+			{
+				// Resource already exist but is not a texture.
+				return false;
+			}
+		}
+		else
+		{
+			// Texture do not exist; add new texture resource.
+			cx.getLayout().add(new GlslTexture(
+				node->getParameterName(),
+				out->getType()
+			));
+		}
+	}
+
+	// Define parameter in context.
+	cx.addParameter(
+		node->getParameterName(),
+		node->getParameterType(),
+		1,
+		node->getFrequency()
+	);
 
 	return true;
 }
 
 bool emitVector(GlslContext& cx, Vector* node)
 {
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GtFloat4);
 	assign(f, out) << L"vec4(" << formatFloat(node->get().x()) << L", " << formatFloat(node->get().y()) << L", " << formatFloat(node->get().z()) << L", " << formatFloat(node->get().w()) << L");" << Endl;
 	return true;
 }
@@ -2413,14 +2256,14 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 	if (!cx.inVertex())
 		return false;
 
-	GlslVariable* out = cx.getShader().getInputVariable(node->getName());
+	Ref< GlslVariable > out = cx.getShader().getInputVariable(node->getName());
 	if (!out)
 	{
 		GlslType type = glsl_from_data_type(node->getDataType());
 		std::wstring attributeName = VertexAttribute::getName(node->getDataUsage(), node->getIndex());
 
-		StringOutputStream& fi = cx.getVertexShader().getOutputStream(GlslShader::BtInput);
-		fi << L"in " << glsl_type_name(type) << L" " << attributeName << L";" << Endl;
+		auto& fi = cx.getVertexShader().getOutputStream(GlslShader::BtInput);
+		fi << L"layout (location = " << VertexAttribute::getLocation(node->getDataUsage(), node->getIndex()) << L") in " << glsl_type_name(type) << L" " << attributeName << L";" << Endl;
 
 		if (node->getDataUsage() == DuPosition && type != GtFloat4)
 		{
@@ -2428,7 +2271,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 				node->findOutputPin(L"Output"),
 				GtFloat4
 			);
-			StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+			auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 			switch (type)
 			{
 			case GtFloat:
@@ -2453,7 +2296,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 				node->findOutputPin(L"Output"),
 				GtFloat4
 			);
-			StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+			auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 			switch (type)
 			{
 			case GtFloat:
@@ -2478,7 +2321,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 				node->findOutputPin(L"Output"),
 				type
 			);
-			StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+			auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 			switch (type)
 			{
 			case GtFloat:
@@ -2528,27 +2371,27 @@ bool emitVertexOutput(GlslContext& cx, VertexOutput* node)
 {
 	cx.enterVertex();
 
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
 
-	StringOutputStream& fb = cx.getVertexShader().getOutputStream(GlslShader::BtBody);
+	auto& fb = cx.getVertexShader().getOutputStream(GlslShader::BtBody);
 	switch (in->getType())
 	{
 	case GtFloat:
-		fb << L"gl_Position = PV(vec4(" << in->getName() << L", 0.0, 0.0, 1.0));" << Endl;
+		fb << L"gl_Position = vec4(1.0f, -1.0f, 1.0f, 1.0f) * vec4(" << in->getName() << L", 0.0, 0.0, 1.0);" << Endl;
 		break;
 
 	case GtFloat2:
-		fb << L"gl_Position = PV(vec4(" << in->getName() << L".xy, 0.0, 1.0));" << Endl;
+		fb << L"gl_Position = vec4(1.0f, -1.0f, 1.0f, 1.0f) * vec4(" << in->getName() << L".xy, 0.0, 1.0);" << Endl;
 		break;
 
 	case GtFloat3:
-		fb << L"gl_Position = PV(vec4(" << in->getName() << L".xyz, 1.0));" << Endl;
+		fb << L"gl_Position = vec4(1.0f, -1.0f, 1.0f, 1.0f) * vec4(" << in->getName() << L".xyz, 1.0);" << Endl;
 		break;
 
 	case GtFloat4:
-		fb << L"gl_Position = PV(" << in->getName() << L");" << Endl;
+		fb << L"gl_Position = vec4(1.0f, -1.0f, 1.0f, 1.0f) * " << in->getName() << L";" << Endl;
 		break;
 
 	default:
@@ -2579,7 +2422,7 @@ struct EmitterCast : public Emitter
 	{
 	}
 
-	virtual bool emit(GlslContext& c, Node* node)
+	virtual bool emit(GlslContext& c, Node* node) override final
 	{
 		T_ASSERT(is_a< NodeType >(node));
 		return (*m_function)(c, static_cast< NodeType* >(node));
@@ -2599,9 +2442,8 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Cos >()] = new EmitterCast< Cos >(emitCos);
 	m_emitters[&type_of< Cross >()] = new EmitterCast< Cross >(emitCross);
 	m_emitters[&type_of< Derivative >()] = new EmitterCast< Derivative >(emitDerivative);
-	m_emitters[&type_of< Discard >()] = new EmitterCast< Discard >(emitDiscard);
-	m_emitters[&type_of< DispatchIndex >()] = new EmitterCast< DispatchIndex >(emitDispatchIndex);
 	m_emitters[&type_of< Div >()] = new EmitterCast< Div >(emitDiv);
+	m_emitters[&type_of< Discard >()] = new EmitterCast< Discard >(emitDiscard);
 	m_emitters[&type_of< Dot >()] = new EmitterCast< Dot >(emitDot);
 	m_emitters[&type_of< Exp >()] = new EmitterCast< Exp >(emitExp);
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);
@@ -2626,10 +2468,10 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< MulAdd >()] = new EmitterCast< MulAdd >(emitMulAdd);
 	m_emitters[&type_of< Neg >()] = new EmitterCast< Neg >(emitNeg);
 	m_emitters[&type_of< Normalize >()] = new EmitterCast< Normalize >(emitNormalize);
-	m_emitters[&type_of< ReadStruct >()] = new EmitterCast< ReadStruct >(emitReadStruct);
 	m_emitters[&type_of< Polynomial >()] = new EmitterCast< Polynomial >(emitPolynomial);
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
+	m_emitters[&type_of< ReadStruct >()] = new EmitterCast< ReadStruct >(emitReadStruct);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
 	m_emitters[&type_of< Repeat >()] = new EmitterCast< Repeat >(emitRepeat);
@@ -2660,22 +2502,18 @@ GlslEmitter::GlslEmitter()
 
 GlslEmitter::~GlslEmitter()
 {
-	for (std::map< const TypeInfo*, Emitter* >::iterator i = m_emitters.begin(); i != m_emitters.end(); ++i)
-		delete i->second;
+	for (auto emitter : m_emitters)
+		delete emitter.second;
 }
 
 bool GlslEmitter::emit(GlslContext& c, Node* node)
 {
-	// Find emitter for node.
-	std::map< const TypeInfo*, Emitter* >::iterator i = m_emitters.find(&type_of(node));
-	if (i == m_emitters.end())
+	auto i = m_emitters.find(&type_of(node));
+	if (i == m_emitters.end() || i->second == nullptr)
 	{
-		log::error << L"No emitter for node " << type_name(node) << Endl;
+		log::error << L"No emitter for node " << type_name(node) << L"." << Endl;
 		return false;
 	}
-
-	// Emit GLSL code.
-	T_ASSERT(i->second);
 	return i->second->emit(c, node);
 }
 

@@ -8,12 +8,13 @@ namespace traktor
 	namespace render
 	{
 
-/*! \ingroup OGL */
+/*! \ingroup Vulkan */
 //@{
 
 enum GlslType
 {
 	GtVoid,
+	GtBoolean,
 	GtFloat,
 	GtFloat2,
 	GtFloat3,
@@ -23,26 +24,6 @@ enum GlslType
 	GtTexture3D,
 	GtTextureCube,
 	GtStructBuffer
-};
-
-struct GlslRequirements
-{
-	bool derivatives;
-	bool transpose;
-	bool texture3D;
-	bool shadowSamplers;
-	bool vertexBilinearSampler;
-	PrecisionHint precisionHint;
-
-	GlslRequirements()
-	:	derivatives(false)
-	,	transpose(false)
-	,	texture3D(false)
-	,	shadowSamplers(false)
-	,	vertexBilinearSampler(false)
-	,	precisionHint(PhUndefined)
-	{
-	}
 };
 
 std::wstring glsl_type_name(GlslType type);

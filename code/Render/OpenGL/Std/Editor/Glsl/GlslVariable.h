@@ -12,7 +12,6 @@ namespace traktor
 class Node;
 
 /*!
- * \ingroup OGL
  */
 class GlslVariable : public Object
 {
@@ -31,6 +30,8 @@ public:
 
 	std::wstring castToInteger(GlslType to) const;
 
+	GlslVariable& operator = (const GlslVariable& other);
+
 private:
 	const Node* m_node;
 	std::wstring m_name;
@@ -39,3 +40,4 @@ private:
 
 	}
 }
+

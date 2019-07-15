@@ -16,7 +16,7 @@ class GlslContext;
 struct Emitter;
 
 /*!
- * \ingroup OGL
+ * \ingroup Vulkan
  */
 class GlslEmitter
 {
