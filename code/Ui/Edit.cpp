@@ -87,7 +87,7 @@ void Edit::selectAll()
 	if (!text.empty())
 	{
 		m_selectionStart = 0;
-		m_selectionEnd = text.length();
+		m_selectionEnd = (int32_t)text.length();
 	}
 	else
 	{
@@ -122,25 +122,31 @@ std::wstring Edit::getSelectedText() const
 
 void Edit::insert(const std::wstring& text)
 {
-	std::wstring current = getText();
+	// Remove all occurances of invalid characters.
+	std::wstring nwst = text;
+	auto it = std::remove_if(nwst.begin(), nwst.end(), [](wchar_t ch) {
+		return ch == L'\n' || ch == L'\r';
+	});
+	nwst.erase(it, nwst.end());
 
+	std::wstring current = getText();
 	if (!haveSelection())
 	{
 		if (m_caret >= current.length())
 		{
-			current += text;
-			m_caret = current.length();
+			current += nwst;
+			m_caret = (int32_t)current.length();
 		}
 		else
 		{
-			current = current.substr(0, m_caret) + text + current.substr(m_caret);
-			m_caret = m_caret + text.length();
+			current = current.substr(0, m_caret) + nwst + current.substr(m_caret);
+			m_caret = m_caret + (int32_t)nwst.length();
 		}
 	}
 	else
 	{
-		current = current.substr(0, m_selectionStart) + text + current.substr(m_selectionEnd);
-		m_caret = m_selectionStart + text.length();
+		current = current.substr(0, m_selectionStart) + nwst + current.substr(m_selectionEnd);
+		m_caret = m_selectionStart + (int32_t)nwst.length();
 		deselect();
 	}
 
@@ -194,7 +200,7 @@ void Edit::setText(const std::wstring& text)
 	Widget::setText(text);
 
 	// Ensure caret position is clamped within text limits.
-	m_caret = std::min< int32_t >(m_caret, text.length());
+	m_caret = std::min< int32_t >(m_caret, (int32_t)text.length());
 	m_caret = std::max< int32_t >(m_caret, 0);
 
 	deselect();
@@ -307,24 +313,48 @@ void Edit::eventKeyDown(KeyDownEvent* event)
 	case VkRight:
 		{
 			std::wstring text = getText();
-			caret = std::min< int32_t >(caret + 1, text.length());
+			caret = std::min< int32_t >(caret + 1, (int32_t)text.length());
 			modified = true;
-	}
+		}
 		break;
 
 	case VkHome:
 		{
 			caret = 0;
 			modified = true;
-	}
+		}
 		break;
 
 	case VkEnd:
 		{
 			std::wstring text = getText();
-			caret = text.length();
+			caret = (int32_t)text.length();
 			modified = true;
-	}
+		}
+		break;
+
+	case VkDelete:
+		{
+			std::wstring text = getText();
+			if (!haveSelection())
+			{
+				if (caret < (int32_t)text.length())
+				{
+					text = text.substr(0, caret) + text.substr(caret + 1);
+				}
+			}
+			else
+			{
+				text = text.substr(0, m_selectionStart) + text.substr(m_selectionEnd);
+				caret = m_selectionStart;
+			}
+			
+			m_caret = caret;
+
+			setText(text);
+			deselect();
+			update();
+		}
 		break;
 
 	default:
@@ -377,6 +407,7 @@ void Edit::eventKey(KeyEvent* event)
 			else
 			{
 				text = text.substr(0, m_selectionStart) + text.substr(m_selectionEnd);
+				caret = m_selectionStart;
 			}
 		}
 		else if (ch == 10 || ch == 13 || ch == 127)
@@ -391,7 +422,10 @@ void Edit::eventKey(KeyEvent* event)
 					text = text.substr(0, caret) + ch + text.substr(caret);
 			}
 			else
+			{
 				text = text.substr(0, m_selectionStart) + ch + text.substr(m_selectionEnd);
+				caret = m_selectionStart;
+			}
 
 			++caret;
 		}
@@ -399,7 +433,7 @@ void Edit::eventKey(KeyEvent* event)
 		deselect();
 
 		// Ensure caret position is clamped within text limits.
-		caret = std::min< int32_t >(caret, text.length());
+		caret = std::min< int32_t >(caret, (int32_t)text.length());
 		caret = std::max< int32_t >(caret, 0);
 
 		if (m_validator == nullptr || m_validator->validate(text) != EditValidator::VrInvalid)
