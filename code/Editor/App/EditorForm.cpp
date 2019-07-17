@@ -1495,10 +1495,13 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	);
 
 	// Open pipeline database.
-	std::wstring pipelineDbConnectionStr = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.Db");
-
 	m_pipelineDb = new PipelineDbFlat();
-	m_pipelineDb->open(pipelineDbConnectionStr);
+	if (!m_pipelineDb->open(m_mergedSettings->getProperty< std::wstring >(L"Pipeline.Db")))
+	{
+		log::error << L"Unable to open pipeline database; failed to open workspace." << Endl;
+		closeWorkspace();
+		return false;
+	}
 
 	// Expose servers as stock objects.
 	setStoreObject(L"StreamServer", m_streamServer);
@@ -1506,8 +1509,8 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	setStoreObject(L"PipelineAgentsManager", m_agentsManager);
 
 	// Notify plugins about opened workspace.
-	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
-		(*i)->handleWorkspaceOpened();
+	for (auto editorPluginSite : m_editorPluginSites)
+		editorPluginSite->handleWorkspaceOpened();
 
 	m_mru->usedFile(workspacePath);
 
@@ -1522,7 +1525,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 		homePage->create(tabPage, url);
 
 		m_tab->addPage(tabPage);
-		m_tab->update(0, true);
+		m_tab->update(nullptr, true);
 	}
 
 	saveRecent(OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB/Traktor.Editor.mru", m_mru);

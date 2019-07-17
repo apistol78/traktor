@@ -218,10 +218,10 @@ void EditorPlugin::destroy()
 		ThreadManager::getInstance().destroy(m_threadHostEnumerator);
 	}
 
-	m_hostEnumerator = 0;
-	m_toolTargets = 0;
-	m_connectionManager = 0;
-	m_discoveryManager = 0;
+	m_hostEnumerator = nullptr;
+	m_toolTargets = nullptr;
+	m_connectionManager = nullptr;
+	m_discoveryManager = nullptr;
 
 	safeDestroy(m_targetManager);
 
@@ -231,9 +231,9 @@ void EditorPlugin::destroy()
 	safeDestroy(m_targetList);
 	safeDestroy(m_toolBar);
 
-	m_site = 0;
-	m_parent = 0;
-	m_editor = 0;
+	m_site = nullptr;
+	m_parent = nullptr;
+	m_editor = nullptr;
 
 	net::Network::finalize();
 }
@@ -242,11 +242,8 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 {
 	if (command == L"Editor.AutoBuild")
 	{
-		for (RefArray< TargetInstance >::const_iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+		for (auto targetInstance : m_targetInstances)
 		{
-			TargetInstance* targetInstance = *i;
-			T_ASSERT(targetInstance);
-
 			// Only build for those who have any running applications.
 			if (targetInstance->getConnections().empty())
 				continue;
@@ -303,9 +300,9 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 
 void EditorPlugin::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
-	for (std::vector< EditTarget >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+	for (const auto& target : m_targets)
 	{
-		if (i->guid == eventId)
+		if (target.guid == eventId)
 		{
 			updateTargetLists();
 			updateTargetManagers();
@@ -323,7 +320,7 @@ void EditorPlugin::handleWorkspaceOpened()
 	if (!m_targetManager->create())
 	{
 		log::error << L"Unable to create target manager; target manager disabled" << Endl;
-		m_targetManager = 0;
+		m_targetManager = nullptr;
 	}
 
 	// Get connection manager.
@@ -372,7 +369,7 @@ void EditorPlugin::handleWorkspaceClosed()
 	{
 		m_pipelineSlaveProcess->terminate(0);
 		m_pipelineSlaveProcess->wait(10000);
-		m_pipelineSlaveProcess = 0;
+		m_pipelineSlaveProcess = nullptr;
 	}
 
 	m_toolTargets->removeAll();
@@ -386,7 +383,7 @@ void EditorPlugin::handleWorkspaceClosed()
 	m_targets.resize(0);
 	m_targetInstances.resize(0);
 
-	m_connectionManager = 0;
+	m_connectionManager = nullptr;
 }
 
 void EditorPlugin::updateTargetLists()
@@ -401,23 +398,19 @@ void EditorPlugin::updateTargetLists()
 		RefArray< db::Instance > targetInstances;
 		db::recursiveFindChildInstances(sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< Target >()), targetInstances);
 
-		for (RefArray< db::Instance >::iterator i = targetInstances.begin(); i != targetInstances.end(); ++i)
+		for (auto targetInstance : targetInstances)
 		{
 			EditTarget et;
 
-			et.guid = (*i)->getGuid();
-			et.name = (*i)->getName();
-			et.target = (*i)->getObject< Target >();
+			et.guid = targetInstance->getGuid();
+			et.name = targetInstance->getName();
+			et.target = targetInstance->getObject< Target >();
 			T_ASSERT(et.target);
 
 			m_targets.push_back(et);
 
-			const RefArray< TargetConfiguration >& targetConfigurations = et.target->getConfigurations();
-			for (RefArray< TargetConfiguration >::const_iterator j = targetConfigurations.begin(); j != targetConfigurations.end(); ++j)
+			for (auto targetConfiguration : et.target->getConfigurations())
 			{
-				TargetConfiguration* targetConfiguration = *j;
-				T_ASSERT(targetConfiguration);
-
 				Ref< db::Instance > platformInstance = sourceDatabase->getInstance(targetConfiguration->getPlatform());
 				if (!platformInstance)
 				{
@@ -446,15 +439,15 @@ void EditorPlugin::updateTargetLists()
 	// Add to target drop down.
 	if (!m_targets.empty())
 	{
-		for (std::vector< EditTarget >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
-			m_toolTargets->add(i->name);
+		for (const auto& target : m_targets)
+			m_toolTargets->add(target.name);
 
 		m_toolTargets->select(0);
 
-		for (RefArray< TargetInstance >::const_iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+		for (auto targetInstance : m_targetInstances)
 		{
-			if ((*i)->getTarget() == m_targets[0].target)
-				m_targetList->add(new TargetInstanceListItem(m_hostEnumerator, *i));
+			if (targetInstance->getTarget() == m_targets[0].target)
+				m_targetList->add(new TargetInstanceListItem(m_hostEnumerator, targetInstance));
 		}
 	}
 
@@ -467,16 +460,16 @@ void EditorPlugin::updateTargetManagers()
 	if (m_targetManager)
 	{
 		m_targetManager->removeAllInstances();
-		for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
-			m_targetManager->addInstance(*i);
+		for (auto targetInstance : m_targetInstances)
+			m_targetManager->addInstance(targetInstance);
 	}
 
 	if (m_connectionManager)
 	{
-		for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+		for (auto targetInstance : m_targetInstances)
 		{
-			std::wstring remoteId = (*i)->getDatabaseName();
-			std::wstring databasePath = (*i)->getOutputPath() + L"/db";
+			std::wstring remoteId = targetInstance->getDatabaseName();
+			std::wstring databasePath = targetInstance->getOutputPath() + L"/db";
 			std::wstring databaseCs = L"provider=traktor.db.LocalDatabase;groupPath=" + databasePath + L";binary=true";
 			m_connectionManager->setConnectionString(remoteId, databaseCs);
 		}

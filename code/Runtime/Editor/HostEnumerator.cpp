@@ -19,12 +19,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.HostEnumerator", HostEnumerator, Object
 HostEnumerator::HostEnumerator(const PropertyGroup* settings, net::DiscoveryManager* discoveryManager)
 :	m_discoveryManager(discoveryManager)
 {
-	std::vector< std::wstring > hosts = settings->getProperty< std::vector< std::wstring > >(L"Runtime.RemoteHosts");
-	for (std::vector< std::wstring >::const_iterator i = hosts.begin(); i != hosts.end(); ++i)
+	for (const auto& host : settings->getProperty< std::vector< std::wstring > >(L"Runtime.RemoteHosts"))
 	{
 		Host h;
-		h.host = *i;
-		h.description = *i;
+		h.host = host;
+		h.description = host;
 		h.local = false;
 		m_manual.push_back(h);
 	}
@@ -68,7 +67,7 @@ bool HostEnumerator::supportPlatform(int32_t index, const std::wstring& platform
 {
 	if (index >= 0 && index < int32_t(m_hosts.size()))
 	{
-		const std::vector< std::wstring >& platforms = m_hosts[index].platforms;
+		const auto& platforms = m_hosts[index].platforms;
 		if (!platforms.empty())
 			return std::find(platforms.begin(), platforms.end(), platform) != platforms.end();
 		else
@@ -101,12 +100,12 @@ void HostEnumerator::update()
 		m_pending.clear();
 		m_pending.insert(m_pending.end(), m_manual.begin(), m_manual.end());
 
-		for (RefArray< net::NetworkService >::const_iterator i = services.begin(); i != services.end(); ++i)
+		for (auto service : services)
 		{
-			if ((*i)->getType() != L"RemoteTools/Server")
+			if (service->getType() != L"RemoteTools/Server")
 				continue;
 
-			const PropertyGroup* properties = (*i)->getProperties();
+			const PropertyGroup* properties = service->getProperties();
 			if (!properties)
 				continue;
 
