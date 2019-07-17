@@ -5,7 +5,10 @@
 #	include "Core/CycleRefDebugger.h"
 #endif
 #include "Core/Debug/Debugger.h"
+#include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/Split.h"
@@ -42,6 +45,30 @@ extern "C"
 }
 #endif
 
+
+namespace
+{
+
+
+class LogStreamTarget : public ILogTarget
+{
+public:
+	LogStreamTarget(OutputStream* stream)
+	:	m_stream(stream)
+	{
+	}
+
+	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final
+	{
+		(*m_stream) << L"[" << DateTime::now().format(L"%H:%M:%S") << L"] " << str << Endl;
+	}
+
+private:
+	Ref< OutputStream > m_stream;
+};
+
+}
+
 #if !defined(_WIN32) || defined(_CONSOLE)
 int main(int argc, const char** argv)
 {
@@ -51,6 +78,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 {
 	wchar_t file[MAX_PATH] = L"";
 	GetModuleFileName(NULL, file, sizeof_array(file));
+	Ref< traktor::IStream > logFile;
 
 	CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
@@ -63,6 +91,62 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #if 0
 	CycleRefDebugger cycleDebugger;
 	Object::setReferenceDebugger(&cycleDebugger);
+#endif
+
+#if !defined(_DEBUG)
+	{
+		RefArray< File > logs;
+		FileSystem::getInstance().find(L"Editor_*.log", logs);
+
+		// Get "alive" log ids.
+		std::vector< int32_t > logIds;
+		for (auto log : logs)
+		{
+			std::wstring logName = log->getPath().getFileNameNoExtension();
+			size_t p = logName.find(L'_');
+			if (p != logName.npos)
+			{
+				int32_t id = parseString< int32_t >(logName.substr(p + 1), -1);
+				if (id != -1)
+					logIds.push_back(id);
+			}
+		}
+
+		int32_t nextLogId = 0;
+		if (!logIds.empty())
+		{
+			std::sort(logIds.begin(), logIds.end());
+
+			// Don't keep more than 10 log files.
+			while (logIds.size() >= 10)
+			{
+				StringOutputStream ss;
+				ss << L"Editor_" << logIds.front() << L".log";
+				FileSystem::getInstance().remove(ss.str());
+				logIds.erase(logIds.begin());
+			}
+
+			nextLogId = logIds.back() + 1;
+		}
+
+		// Create new log file.
+		StringOutputStream ss;
+		ss << L"Editor_" << nextLogId << L".log";
+		logFile = FileSystem::getInstance().open(ss.str(), File::FmWrite);
+		if (logFile)
+		{
+			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
+			Ref< LogStreamTarget > logTarget = new LogStreamTarget(logStream);
+
+			log::info   .setGlobalTarget(logTarget);
+			log::warning.setGlobalTarget(logTarget);
+			log::error  .setGlobalTarget(logTarget);
+
+			log::info << L"Log file \"" << ss.str() << L"\" created." << Endl;
+		}
+		else
+			log::error << L"Unable to create log file; logging only to std pipes." << Endl;
+	}
 #endif
 
 #if defined(__APPLE__)
@@ -86,7 +170,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	ui::Application::getInstance()->initialize(
 		new WidgetFactoryImpl(),
-		0
+		nullptr
 	);
 
 	net::Network::initialize();
@@ -124,6 +208,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	net::Network::finalize();
 
 	ui::Application::getInstance()->finalize();
+
+#if !defined(_DEBUG)
+	if (logFile)
+	{
+		logFile->close();
+		logFile = nullptr;
+	}
+#endif
 
 #if 0
 	Object::setReferenceDebugger(0);
