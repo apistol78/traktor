@@ -7,6 +7,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
+#include "Core/Log/LogRedirectTarget.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepClone.h"
@@ -69,28 +70,6 @@ public:
 
 private:
 	Ref< OutputStream > m_stream;
-};
-
-/*! \brief
- */
-class LogDualTarget : public ILogTarget
-{
-public:
-	LogDualTarget(ILogTarget* target1, ILogTarget* target2)
-	:	m_target1(target1)
-	,	m_target2(target2)
-	{
-	}
-
-	virtual void log(uint32_t threadId, int32_t level, const wchar_t* str) override final
-	{
-		m_target1->log(threadId, level, str);
-		m_target2->log(threadId, level, str);
-	}
-
-private:
-	Ref< ILogTarget > m_target1;
-	Ref< ILogTarget > m_target2;
 };
 
 Ref< LogTailTarget > g_logTail;
@@ -450,9 +429,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	g_logTail = new LogTailTarget();
 
-	log::info   .setGlobalTarget(new LogDualTarget(g_logTail, log::info   .getGlobalTarget()));
-	log::warning.setGlobalTarget(new LogDualTarget(g_logTail, log::warning.getGlobalTarget()));
-	log::error  .setGlobalTarget(new LogDualTarget(g_logTail, log::error  .getGlobalTarget()));
+	log::info   .setGlobalTarget(new LogRedirectTarget(g_logTail, log::info   .getGlobalTarget()));
+	log::warning.setGlobalTarget(new LogRedirectTarget(g_logTail, log::warning.getGlobalTarget()));
+	log::error  .setGlobalTarget(new LogRedirectTarget(g_logTail, log::error  .getGlobalTarget()));
 
 #if defined(_WIN64)
 	log::info << L"Application starting (64-bit) ..." << Endl;
@@ -469,7 +448,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	// Initialize native UI.
 	ui::Application::getInstance()->initialize(
 		new ui::WidgetFactoryWin32(),
-		0
+		nullptr
 	);
 
 	Ref< runtime::Application > application;
@@ -556,7 +535,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 			defaultSettings,
 			settings,
 			sysapp,
-			0
+			nullptr
 		))
 		{
 			for (;;)
@@ -592,7 +571,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	if (logFile)
 	{
 		logFile->close();
-		logFile;
+		logFile = nullptr;
 	}
 #endif
 
