@@ -281,6 +281,7 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 
 	programResource->m_renderState = cx.getRenderState();
 	programResource->m_texturesCount = 0;
+	programResource->m_sbufferCount = 0;
 
 	// Map parameters to uniforms.
 	struct ParameterMapping
@@ -306,18 +307,13 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 			programResource->m_samplers.push_back(ProgramResourceOpenGL::SamplerDesc(
 				sampler->getUnit(),
 				sampler->getState(),
-				(int32_t)std::distance(textures.begin(), it)
+				(uint32_t)std::distance(textures.begin(), it)
 			));
 		}
 		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
 		{
-			const auto textures = cx.getLayout().get< GlslTexture >();
-
-			auto it = std::find(textures.begin(), textures.end(), texture);
-			T_FATAL_ASSERT(it != textures.end());
-
 			auto& pm = parameterMapping[texture->getName()];
-			pm.buffer = (int32_t)std::distance(textures.begin(), it);
+			pm.buffer = (int32_t)cx.getLayout().typedIndexOf< GlslTexture >(texture);
 			pm.offset = 0;
 			pm.length = 0;
 
@@ -347,13 +343,15 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 			}
 			programResource->m_uniformBufferSizes[uniformBuffer->getBinding()] = size;
 		}
-		// else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
-		// {
-		// 	auto& pm = parameterMapping[storageBuffer->getName()];
-		// 	pm.buffer = storageBuffer->getBinding();
-		// 	pm.offset = 0;
-		// 	pm.length = 0;
-		// }
+		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
+		{
+			auto& pm = parameterMapping[storageBuffer->getName()];
+			pm.buffer = (int32_t)cx.getLayout().typedIndexOf< GlslStorageBuffer >(storageBuffer);
+			pm.offset = 0;
+			pm.length = 0;
+
+			programResource->m_sbufferCount++;
+		}
 	}
 
 	for (auto p : cx.getParameters())

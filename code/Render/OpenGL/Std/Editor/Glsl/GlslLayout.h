@@ -75,6 +75,22 @@ public:
 	template < typename T >
 	uint32_t count() const { return count(type_of< T >()); }
 
+	template < typename T >
+	int32_t typedIndexOf(const T* needleResource) const
+	{
+		int32_t index = 0;
+		for (auto resource : m_resources)
+		{
+			if (auto typed = dynamic_type_cast< T* >(resource))
+			{
+				if (typed == needleResource)
+					break;
+				++index;
+			}
+		}
+		return index;
+	}
+
 private:
 	RefArray< GlslResource > m_resources;
 };

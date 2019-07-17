@@ -222,24 +222,34 @@ std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout) const
 		// 	ss << L"layout(binding = " << image->getBinding() << L", rgba32f) uniform image2D " << image->getName() << L";" << Endl;
 		// 	ss << Endl;
 		// }
-		// else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
-		// {
-		// 	ss << L"struct " << storageBuffer->getName() << L"_Type" << Endl;
-		// 	ss << L"{" << Endl;
-		// 	ss << IncreaseIndent;
-		// 	for (auto element : storageBuffer->get())
-		// 		ss << glsl_type_name(element.type) << L" " << element.name << L";" << Endl;
-		// 	ss << DecreaseIndent;
-		// 	ss << L"};" << Endl;
-		// 	ss << Endl;
-		// 	ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L") buffer " << storageBuffer->getName() << Endl;
-		// 	ss << L"{" << Endl;
-		// 	ss << IncreaseIndent;
-		// 	ss << storageBuffer->getName() << L"_Type " << storageBuffer->getName() << L"_Data[];" << Endl;
-		// 	ss << DecreaseIndent;
-		// 	ss << L"};" << Endl;
-		// 	ss << Endl;
-		// }
+		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
+		{
+			uint32_t binding = layout.typedIndexOf< GlslStorageBuffer >(storageBuffer);
+
+			ss << L"struct " << storageBuffer->getName() << L"_Type" << Endl;
+			ss << L"{" << Endl;
+			ss << IncreaseIndent;
+			for (auto element : storageBuffer->get())
+				ss << glsl_type_name(element.type) << L" " << element.name << L";" << Endl;
+			ss << DecreaseIndent;
+			ss << L"};" << Endl;
+			ss << Endl;
+// #if defined(T_ENABLE_OPENGL_STORAGE_BUFFERS)
+			ss << L"layout (std140, binding = " << (binding + 3) << L") buffer " << storageBuffer->getName() << Endl;
+// #else
+// 			ss << L"layout (std140, binding = " << (binding + 3) << L") uniform " << storageBuffer->getName() << Endl;
+// #endif
+			ss << L"{" << Endl;
+			ss << IncreaseIndent;
+// #if defined(T_ENABLE_OPENGL_STORAGE_BUFFERS)
+			ss << storageBuffer->getName() << L"_Type " << storageBuffer->getName() << L"_Data[];" << Endl;
+// #else
+// 			ss << storageBuffer->getName() << L"_Type " << storageBuffer->getName() << L"_Data[1024];" << Endl;
+// #endif
+			ss << DecreaseIndent;
+			ss << L"};" << Endl;
+			ss << Endl;
+		}
 	}
 
 	std::wstring inputText = getOutputStream(BtInput).str();

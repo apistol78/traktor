@@ -107,18 +107,8 @@ private:
 	UniformBuffer m_uniformBuffers[3];
 	RefArray< ITexture > m_textures;
 	AlignedVector< Sampler > m_samplers;
+	RefArray< StructBuffer > m_sbuffers;
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
-
-	// SmallMap< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
-	// AlignedVector< Uniform > m_uniforms;					//!< Scalar uniforms.
-	// AlignedVector< Sampler > m_samplers;					//!< Samplers.
-	// AlignedVector< TextureSize > m_textureSize;
-	// AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
-	// RefArray< ITexture > m_textures;
-	// float m_targetSize[2];
-	// bool m_textureDirty;
-	// bool m_validated;
-	// bool m_valid;
 
 	ProgramOpenGL(ResourceContextOpenGL* resourceContext, GLuint program, const ProgramResource* resource);
 };

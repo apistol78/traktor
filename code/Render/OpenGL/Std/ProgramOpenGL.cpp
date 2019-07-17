@@ -21,6 +21,7 @@
 #include "Render/OpenGL/Std/RenderTargetDepthOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
 #include "Render/OpenGL/Std/ResourceContextOpenGL.h"
+#include "Render/OpenGL/Std/StructBufferOpenGL.h"
 
 namespace traktor
 {
@@ -331,7 +332,12 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 
 void ProgramOpenGL::setStructBufferParameter(handle_t handle, StructBuffer* structBuffer)
 {
-	T_FATAL_ERROR;
+	auto i = m_parameterMap.find(handle);
+	if (i != m_parameterMap.end())
+	{
+		T_FATAL_ASSERT(i->second.offset < m_sbuffers.size());
+		m_sbuffers[i->second.offset] = structBuffer;
+	}
 }
 
 void ProgramOpenGL::setStencilReference(uint32_t stencilReference)
@@ -393,6 +399,23 @@ bool ProgramOpenGL::activateRender(RenderContextOpenGL* renderContext, float tar
 
 		tb->bindTexture(sampler.unit);
 		renderContext->bindSamplerStateObject(sampler.state, sampler.unit, tb->haveMips());
+	}
+
+	// Bind sbuffers.
+	for (uint32_t i = 0; i < m_sbuffers.size(); ++i)
+	{
+		StructBufferOpenGL* sbufferOpenGL = checked_type_cast< StructBufferOpenGL* >(m_sbuffers[i]);
+// #if defined(T_ENABLE_OPENGL_STORAGE_BUFFERS)
+		if (sbufferOpenGL)
+			{ T_OGL_SAFE(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i + 3, sbufferOpenGL->getBuffer())); }
+		else
+			{ T_OGL_SAFE(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i + 3, 0)); }
+// #else
+// 		if (sbufferOpenGL)
+// 			{ T_OGL_SAFE(glBindBufferBase(GL_UNIFORM_BUFFER, i + 3, sbufferOpenGL->getBuffer())); }
+// 		else
+// 			{ T_OGL_SAFE(glBindBufferBase(GL_UNIFORM_BUFFER, i + 3, 0)); }
+// #endif
 	}
 
 	return true;
@@ -462,6 +485,9 @@ ProgramOpenGL::ProgramOpenGL(ResourceContextOpenGL* resourceContext, GLuint prog
 		s.state = resourceContext->createSamplerStateObject(resourceSampler.state);
 		s.textureIndex = resourceSampler.textureIndex;
 	}
+
+	// Allocate sbuffer slots.
+	m_sbuffers.resize(resourceOpenGL->m_sbufferCount);
 
 	// Setup parameter mapping.
 	for (auto p : resourceOpenGL->m_parameters)

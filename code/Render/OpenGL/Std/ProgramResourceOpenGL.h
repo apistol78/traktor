@@ -73,23 +73,6 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	struct SBufferDesc
-	{
-		uint32_t binding;
-
-		SBufferDesc()
-		:	binding(0)
-		{
-		}
-
-		explicit SBufferDesc(uint32_t binding_)
-		:	binding(binding_)
-		{
-		}
-
-		void serialize(ISerializer& s);
-	};
-
 	ProgramResourceOpenGL();
 
 	virtual void serialize(ISerializer& s) override final;
@@ -107,10 +90,9 @@ private:
 	AlignedVector< ParameterDesc > m_parameters;
 	uint32_t m_uniformBufferSizes[3];	// Once(0), Frame(1) and Draw(2)
 	uint32_t m_texturesCount;
+	uint32_t m_sbufferCount;
 
 	AlignedVector< SamplerDesc > m_samplers;
-	AlignedVector< SBufferDesc > m_sbuffers;
-
 	uint32_t m_hash;
 };
 
