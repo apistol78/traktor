@@ -31,6 +31,8 @@ public:
 
 	virtual void unlock() override final;
 
+	GLuint getBuffer() const { return m_buffer; }
+
 private:
 	Ref< ResourceContextOpenGL > m_resourceContext;
 	GLuint m_buffer;

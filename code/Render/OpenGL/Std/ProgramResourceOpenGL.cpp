@@ -86,6 +86,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 12, Prog
 
 ProgramResourceOpenGL::ProgramResourceOpenGL()
 :	m_texturesCount(0)
+,	m_sbufferCount(0)
 ,	m_hash(0)
 {
 	m_uniformBufferSizes[0] =
@@ -103,9 +104,9 @@ void ProgramResourceOpenGL::serialize(ISerializer& s)
 	s >> Member< std::string >(L"computeShader", m_computeShader);
 	s >> MemberStaticArray< uint32_t, 3 >(L"uniformBufferSizes", m_uniformBufferSizes);
 	s >> Member< uint32_t >(L"texturesCount", m_texturesCount);
+	s >> Member< uint32_t >(L"sbufferCount", m_sbufferCount);
 	s >> MemberAlignedVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
 	s >> MemberAlignedVector< SamplerDesc, MemberComposite< SamplerDesc > >(L"samplers", m_samplers);
-	s >> MemberAlignedVector< SBufferDesc, MemberComposite< SBufferDesc > >(L"sbuffers", m_sbuffers);
 	s >> Member< uint32_t >(L"hash", m_hash);
 }
 
@@ -122,11 +123,6 @@ void ProgramResourceOpenGL::SamplerDesc::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"unit", unit);
 	s >> MemberSamplerState(L"state", state);
 	s >> Member< uint32_t >(L"textureIndex", textureIndex);
-}
-
-void ProgramResourceOpenGL::SBufferDesc::serialize(ISerializer& s)
-{
-	s >> Member< uint32_t >(L"binding", binding);
 }
 
 	}
