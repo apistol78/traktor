@@ -78,7 +78,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 {
 	wchar_t file[MAX_PATH] = L"";
 	GetModuleFileName(NULL, file, sizeof_array(file));
-	Ref< traktor::IStream > logFile;
 
 	CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
@@ -93,6 +92,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	Object::setReferenceDebugger(&cycleDebugger);
 #endif
 
+	Ref< traktor::IStream > logFile;
 #if !defined(_DEBUG)
 	{
 		RefArray< File > logs;
