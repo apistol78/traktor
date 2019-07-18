@@ -3,6 +3,7 @@
 #include <sched.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include "Core/Misc/TString.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Functor/Functor.h"
 
@@ -87,7 +88,10 @@ bool Thread::start(Priority priority)
 	pthread_attr_destroy(&attr);
 
 	if (rc == 0)
+	{
+		pthread_setname_np(in->thread, wstombs(m_name).c_str());
 		m_handle = in;
+	}
 	else
 		delete in;
 
