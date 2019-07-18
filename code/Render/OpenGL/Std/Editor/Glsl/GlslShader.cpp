@@ -139,7 +139,6 @@ std::wstring GlslShader::getGeneratedShader(const GlslLayout& layout) const
 
 	ss << L"#version 430" << Endl;
 	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
-	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
 	ss << Endl;
 
 	if (m_shaderType == StFragment)

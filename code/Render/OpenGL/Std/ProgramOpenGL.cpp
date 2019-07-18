@@ -139,7 +139,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ResourceContextOpenGL* resourceContex
 	 		Ref< IStream > file = FileSystem::getInstance().open(ss.str(), File::FmRead);
 	 		if (file)
 	 		{
-	 			binaryLength = file->available();
+	 			binaryLength = (GLint)file->available();
 	 			binary.reset(new uint8_t [binaryLength]);
 	 			file->read(binary.ptr(), binaryLength);
 	 			file->close();
@@ -289,7 +289,7 @@ void ProgramOpenGL::setVectorArrayParameter(handle_t handle, const Vector4* para
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT(length * 4 <= i->second.size);
+		T_FATAL_ASSERT(length * 4 <= (int)i->second.size);
 		auto& ub = m_uniformBuffers[i->second.buffer];
 		if (storeIfNotEqual(param, length, &ub.data[i->second.offset]))
 			ub.dirty = true;
@@ -312,7 +312,7 @@ void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* par
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT(length * 16 <= i->second.size);
+		T_FATAL_ASSERT(length * 16 <= (int)i->second.size);
 		auto& ub = m_uniformBuffers[i->second.buffer];
 		for (int j = 0; j < length; ++j)
 			param[j].storeAligned(&ub.data[i->second.offset + j * 16]);
@@ -325,8 +325,8 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT(i->second.offset < m_textures.size());
-		m_textures[i->second.offset] = texture;
+		T_FATAL_ASSERT(i->second.buffer < m_textures.size());
+		m_textures[i->second.buffer] = texture;
 	}
 }
 
@@ -335,8 +335,8 @@ void ProgramOpenGL::setStructBufferParameter(handle_t handle, StructBuffer* stru
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		T_FATAL_ASSERT(i->second.offset < m_sbuffers.size());
-		m_sbuffers[i->second.offset] = structBuffer;
+		T_FATAL_ASSERT(i->second.buffer < m_sbuffers.size());
+		m_sbuffers[i->second.buffer] = structBuffer;
 	}
 }
 
