@@ -32,12 +32,21 @@ bool GlslUniformBuffer::add(const std::wstring& uniformName, GlslType uniformTyp
 	m_uniforms.push_back({ uniformName, uniformType, length });
 
 	// Always keep list sorted by type first then name.
+#if !defined(__APPLE__)
 	std::stable_sort(m_uniforms.begin(), m_uniforms.end(), [](const Uniform& lh, const Uniform& rh) {
 		return lh.name > rh.name;
 	});
 	std::stable_sort(m_uniforms.begin(), m_uniforms.end(), [](const Uniform& lh, const Uniform& rh) {
 		return lh.type > rh.type;
 	});
+#else
+	std::sort(m_uniforms.begin(), m_uniforms.end(), [](const Uniform& lh, const Uniform& rh) {
+		return lh.name > rh.name;
+	});
+	std::sort(m_uniforms.begin(), m_uniforms.end(), [](const Uniform& lh, const Uniform& rh) {
+		return lh.type > rh.type;
+	});
+#endif
 
 	return true;
 }
