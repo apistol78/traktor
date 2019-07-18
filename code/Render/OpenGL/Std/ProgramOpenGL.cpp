@@ -405,17 +405,12 @@ bool ProgramOpenGL::activateRender(RenderContextOpenGL* renderContext, float tar
 	for (uint32_t i = 0; i < m_sbuffers.size(); ++i)
 	{
 		StructBufferOpenGL* sbufferOpenGL = checked_type_cast< StructBufferOpenGL* >(m_sbuffers[i]);
-// #if defined(T_ENABLE_OPENGL_STORAGE_BUFFERS)
+#if !defined(__APPLE__)
 		if (sbufferOpenGL)
 			{ T_OGL_SAFE(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i + 3, sbufferOpenGL->getBuffer())); }
 		else
 			{ T_OGL_SAFE(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i + 3, 0)); }
-// #else
-// 		if (sbufferOpenGL)
-// 			{ T_OGL_SAFE(glBindBufferBase(GL_UNIFORM_BUFFER, i + 3, sbufferOpenGL->getBuffer())); }
-// 		else
-// 			{ T_OGL_SAFE(glBindBufferBase(GL_UNIFORM_BUFFER, i + 3, 0)); }
-// #endif
+#endif
 	}
 
 	return true;
