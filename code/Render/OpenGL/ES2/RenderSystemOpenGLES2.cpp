@@ -155,7 +155,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefau
 	if (m_context)
 		return new RenderViewOpenGLES2(m_context);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewEmbeddedDesc& desc)
@@ -167,7 +167,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewEmbed
 	if (m_context)
 		return new RenderViewOpenGLES2(m_context);
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< VertexBuffer > RenderSystemOpenGLES2::createVertexBuffer(const AlignedVector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
@@ -197,7 +197,7 @@ Ref< ISimpleTexture > RenderSystemOpenGLES2::createSimpleTexture(const SimpleTex
 	if (texture->create(desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< ICubeTexture > RenderSystemOpenGLES2::createCubeTexture(const CubeTextureCreateDesc& desc)
@@ -207,7 +207,7 @@ Ref< ICubeTexture > RenderSystemOpenGLES2::createCubeTexture(const CubeTextureCr
 	if (texture->create(desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTextureCreateDesc& desc)
@@ -217,7 +217,7 @@ Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTex
 	if (texture->create(desc))
 		return texture;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
@@ -227,7 +227,7 @@ Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const Render
 	if (renderTargetSet->create(desc))
 		return renderTargetSet;
 	else
-		return 0;
+		return nullptr;
 }
 
 Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource, const wchar_t* const tag)
@@ -238,7 +238,7 @@ Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* prog
 
 Ref< ITimeQuery > RenderSystemOpenGLES2::createTimeQuery() const
 {
-	return 0;
+	return nullptr;
 }
 
 void RenderSystemOpenGLES2::purge()
