@@ -22,10 +22,9 @@ struct DeleteBufferCallback : public ResourceContextOpenGL::IDeleteCallback
 
 	virtual void deleteResource()
 	{
-// #if defined(T_ENABLE_OPENGL_STORAGE_BUFFERS)
+#if !defined(__APPLE__)
 		T_OGL_SAFE(glDeleteBuffers(1, &m_buffer));
-// #else
-// #endif
+#endif
 		delete this;
 	}
 };
@@ -40,16 +39,12 @@ StructBufferOpenGL::StructBufferOpenGL(ResourceContextOpenGL* resourceContext, c
 ,	m_buffer(0)
 ,	m_lock(nullptr)
 {
+#if !defined(__APPLE__)
 	T_OGL_SAFE(glGenBuffers(1, &m_buffer));
-// #if defined(T_ENABLE_OPENGL_STORAGE_BUFFERS)
 	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_buffer));
 	T_OGL_SAFE(glBufferData(GL_SHADER_STORAGE_BUFFER, bufferSize, nullptr, GL_DYNAMIC_COPY));
 	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0));
-// #else
-// 	T_OGL_SAFE(glBindBuffer(GL_UNIFORM_BUFFER, m_buffer));
-// 	T_OGL_SAFE(glBufferData(GL_UNIFORM_BUFFER, bufferSize, NULL, GL_STATIC_DRAW));
-// 	T_OGL_SAFE(glBindBuffer(GL_UNIFORM_BUFFER, 0));	
-// #endif
+#endif
 }
 
 StructBufferOpenGL::~StructBufferOpenGL()
@@ -72,13 +67,10 @@ void* StructBufferOpenGL::lock()
 	T_ASSERT_M(!m_lock, L"Struct buffer already locked");
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 
-// #if defined(T_ENABLE_OPENGL_STORAGE_BUFFERS)
+#if !defined(__APPLE__)
 	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_buffer));
 	m_lock = (uint8_t*)glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY);
-// #else
-// 	T_OGL_SAFE(glBindBuffer(GL_UNIFORM_BUFFER, m_buffer));
-// 	m_lock = (uint8_t*)glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
-// #endif	
+#endif	
 
 	return m_lock;
 }
@@ -93,13 +85,10 @@ void StructBufferOpenGL::unlock()
 	T_ASSERT_M(m_lock, L"Struct buffer not locked");
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
 
-// #if defined(T_ENABLE_OPENGL_STORAGE_BUFFERS)
+#if !defined(__APPLE__)
 	T_OGL_SAFE(glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_buffer));
 	T_OGL_SAFE(glUnmapBuffer(GL_SHADER_STORAGE_BUFFER));
-// #else
-// 	T_OGL_SAFE(glBindBuffer(GL_UNIFORM_BUFFER, m_buffer));
-// 	T_OGL_SAFE(glUnmapBuffer(GL_UNIFORM_BUFFER));
-// #endif
+#endif
 
 	m_lock = nullptr;
 }

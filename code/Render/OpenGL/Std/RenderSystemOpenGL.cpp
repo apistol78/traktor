@@ -777,7 +777,11 @@ Ref< IndexBuffer > RenderSystemOpenGL::createIndexBuffer(IndexType indexType, ui
 Ref< StructBuffer > RenderSystemOpenGL::createStructBuffer(const AlignedVector< StructElement >& structElements, uint32_t bufferSize)
 {
 	T_ANONYMOUS_VAR(ContextOpenGL::Scope)(m_resourceContext);
+#if !defined(__APPLE__)
 	return new StructBufferOpenGL(m_resourceContext, structElements, bufferSize);
+#else
+	return nullptr;
+#endif
 }
 
 Ref< ISimpleTexture > RenderSystemOpenGL::createSimpleTexture(const SimpleTextureCreateDesc& desc)
