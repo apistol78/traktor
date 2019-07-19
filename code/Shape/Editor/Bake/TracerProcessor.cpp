@@ -144,7 +144,8 @@ void TracerProcessor::waitUntilIdle()
 
 void TracerProcessor::processorThread()
 {
-    while (!m_thread->stopped())
+    Thread* thread = ThreadManager::getInstance().getCurrentThread();
+    while (!thread->stopped())
     {
         if (!m_event.wait(100))
             continue;
