@@ -2,12 +2,17 @@
 
 # Source environment configuration.
 . "`dirname \"$BASH_SOURCE\"`/config.sh"
+. "`dirname \"$BASH_SOURCE\"`/config-android.sh"
 
 # Mandatory parameters.
 export MAKE_OS=linux
 export MAKE_DIALECT=make
 export MAKE_FORMAT=$TRAKTOR_HOME/resources/build/configurations/make-format.sbm
-export MAKE_INCLUDE="\$(TRAKTOR_HOME)/resources/build/configurations/make-config-android.inc"
+if [[ `uname -s` == Linux* ]]; then
+	export MAKE_INCLUDE="\$(TRAKTOR_HOME)/resources/build/configurations/make-config-android-linux.inc"
+elif [[ `uname -s` == Darwin* ]]; then
+	export MAKE_INCLUDE="\$(TRAKTOR_HOME)/resources/build/configurations/make-config-android-darwin.inc"
+fi
 
 # Used by default format.
 export MAKE_TOOLCHAIN=gcc
