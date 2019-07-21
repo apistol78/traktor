@@ -30,15 +30,19 @@ class T_DLLCLASS TracerOutput : public Object
 
 public:
     TracerOutput(
+		const std::wstring& name,
         const model::Model* model,
         const Guid& lightmapId
     );
+
+	const std::wstring& getName() const { return m_name; }
 
     const model::Model* getModel() const { return m_model; }
 
     const Guid& getLightmapId() const { return m_lightmapId; }
 
 private:
+	std::wstring m_name;
 	Ref< const model::Model > m_model;
 	Guid m_lightmapId;
 };

@@ -35,6 +35,14 @@ class T_DLLCLASS TracerProcessor : public Object
     T_RTTI_CLASS;
 
 public:
+	struct Status
+	{
+		bool active;
+		uint32_t current;
+		uint32_t total;
+		std::wstring description;
+	};
+
     TracerProcessor(editor::IEditor* editor);
 
     virtual ~TracerProcessor();
@@ -45,6 +53,8 @@ public:
 
 	void waitUntilIdle();
 
+	Status getStatus() const;
+
 private:
     editor::IEditor* m_editor;
 	const TypeInfo* m_rayTracerType;
@@ -52,10 +62,11 @@ private:
     Semaphore m_lock;
     Event m_event;
     RefArray< const TracerTask > m_tasks;
+	Status m_status;
 
     void processorThread();
 
-    bool process(const TracerTask* task) const;
+    bool process(const TracerTask* task);
 };
 
     }

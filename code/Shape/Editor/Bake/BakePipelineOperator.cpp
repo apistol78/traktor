@@ -251,28 +251,33 @@ bool BakePipelineOperator::build(
 
 						Guid lightmapId = seedId.permutate();
 
-						Ref< render::TextureOutput > lightmapTextureAsset = new render::TextureOutput();
-						lightmapTextureAsset->m_textureFormat = render::TfR8G8B8A8;
-						lightmapTextureAsset->m_keepZeroAlpha = false;
-						lightmapTextureAsset->m_hasAlpha = false;
-						lightmapTextureAsset->m_ignoreAlpha = true;
-						lightmapTextureAsset->m_linearGamma = true;
-						lightmapTextureAsset->m_enableCompression = false;
-						lightmapTextureAsset->m_sharpenRadius = 0;
-						lightmapTextureAsset->m_systemTexture = true;
-						lightmapTextureAsset->m_generateMips = false;
+						// Create a dummy, white, output texture only if no previous lightmap exist.
+						if (pipelineBuilder->getOutputDatabase()->getInstance(lightmapId) == nullptr)
+						{
+							Ref< render::TextureOutput > lightmapTextureAsset = new render::TextureOutput();
+							lightmapTextureAsset->m_textureFormat = render::TfR8G8B8A8;
+							lightmapTextureAsset->m_keepZeroAlpha = false;
+							lightmapTextureAsset->m_hasAlpha = false;
+							lightmapTextureAsset->m_ignoreAlpha = true;
+							lightmapTextureAsset->m_linearGamma = true;
+							lightmapTextureAsset->m_enableCompression = false;
+							lightmapTextureAsset->m_sharpenRadius = 0;
+							lightmapTextureAsset->m_systemTexture = true;
+							lightmapTextureAsset->m_generateMips = false;
 
-						Ref< drawing::Image > lightmapWhite = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 1, 1);
-						lightmapWhite->setPixelUnsafe(0, 0, Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+							Ref< drawing::Image > lightmapWhite = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 1, 1);
+							lightmapWhite->setPixelUnsafe(0, 0, Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 
-						pipelineBuilder->buildOutput(
-							lightmapTextureAsset,
-							L"Generated/" + lightmapId.format(),
-							lightmapId,
-							lightmapWhite
-						);
+							pipelineBuilder->buildOutput(
+								lightmapTextureAsset,
+								L"Generated/" + lightmapId.format(),
+								lightmapId,
+								lightmapWhite
+							);
+						}
 
 						tracerTask->addTracerOutput(new TracerOutput(
+							entityData->getName(),
 							rm,
 							lightmapId
 						));
@@ -404,28 +409,33 @@ bool BakePipelineOperator::build(
 
 						Guid lightmapId = seedId.permutate();
 
-						Ref< render::TextureOutput > lightmapTextureAsset = new render::TextureOutput();
-						lightmapTextureAsset->m_textureFormat = render::TfR8G8B8A8;
-						lightmapTextureAsset->m_keepZeroAlpha = false;
-						lightmapTextureAsset->m_hasAlpha = false;
-						lightmapTextureAsset->m_ignoreAlpha = true;
-						lightmapTextureAsset->m_linearGamma = true;
-						lightmapTextureAsset->m_enableCompression = false;
-						lightmapTextureAsset->m_sharpenRadius = 0;
-						lightmapTextureAsset->m_systemTexture = true;
-						lightmapTextureAsset->m_generateMips = false;
+						// Create a dummy, white, output texture only if no previous lightmap exist.
+						if (pipelineBuilder->getOutputDatabase()->getInstance(lightmapId) == nullptr)
+						{
+							Ref< render::TextureOutput > lightmapTextureAsset = new render::TextureOutput();
+							lightmapTextureAsset->m_textureFormat = render::TfR8G8B8A8;
+							lightmapTextureAsset->m_keepZeroAlpha = false;
+							lightmapTextureAsset->m_hasAlpha = false;
+							lightmapTextureAsset->m_ignoreAlpha = true;
+							lightmapTextureAsset->m_linearGamma = true;
+							lightmapTextureAsset->m_enableCompression = false;
+							lightmapTextureAsset->m_sharpenRadius = 0;
+							lightmapTextureAsset->m_systemTexture = true;
+							lightmapTextureAsset->m_generateMips = false;
 
-						Ref< drawing::Image > lightmapWhite = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 1, 1);
-						lightmapWhite->setPixelUnsafe(0, 0, Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+							Ref< drawing::Image > lightmapWhite = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 1, 1);
+							lightmapWhite->setPixelUnsafe(0, 0, Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 
-						pipelineBuilder->buildOutput(
-							lightmapTextureAsset,
-							L"Generated/" + lightmapId.format(),
-							lightmapId,
-							lightmapWhite
-						);
+							pipelineBuilder->buildOutput(
+								lightmapTextureAsset,
+								L"Generated/" + lightmapId.format(),
+								lightmapId,
+								lightmapWhite
+							);
+						}
 
 						tracerTask->addTracerOutput(new TracerOutput(
+							entityData->getName(),
 							rm,
 							lightmapId
 						));
@@ -530,6 +540,11 @@ bool BakePipelineOperator::build(
 void BakePipelineOperator::setTracerProcessor(TracerProcessor* tracerProcessor)
 {
 	ms_tracerProcessor = tracerProcessor;
+}
+
+TracerProcessor* BakePipelineOperator::getTracerProcessor()
+{
+	return ms_tracerProcessor;
 }
 
 	}
