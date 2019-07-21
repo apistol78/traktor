@@ -282,44 +282,65 @@ Ref< drawing::Image > RayTracerEmbree::traceDirect(const GBuffer* gbuffer) const
     int32_t width = gbuffer->getWidth();
     int32_t height = gbuffer->getHeight();
 
-	const int32_t sampleCount = 16;
-
     Ref< drawing::Image > lightmapDirect = new drawing::Image(drawing::PixelFormat::getRGBAF32(), width, height);
     lightmapDirect->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-	for (int32_t y = 0; y < height; ++y)
-	{
-		for (int32_t x = 0; x < width; ++x)
-		{
-            const auto& elm = gbuffer->get(x, y);
-            if (elm.polygon == model::c_InvalidIndex)
-                continue;
+	const int32_t sampleCount = 16;
 
-			Scalar hl = elm.delta.length() * Scalar(0.3f);
+    RefArray< Job > jobs;
+    for (int32_t ty = 0; ty < height; ty += 16)
+    {
+        for (int32_t tx = 0; tx < width; tx += 16)
+        {
+            auto job = JobManager::getInstance().add(makeFunctor([&, tx, ty]() {
+				RTCRayHit16 T_MATH_ALIGN16 rh;
+				Vector4 direction[16];
 
-			Vector4 u, v;
-			orthogonalFrame(elm.normal, u, v);
+                for (int32_t y = ty; y < ty + 16; ++y)
+                {
+                    for (int32_t x = tx; x < tx + 16; ++x)
+                    {
+						const auto& elm = gbuffer->get(x, y);
+						if (elm.polygon == model::c_InvalidIndex)
+							continue;
 
-			Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
-			for (int32_t i = 0; i < sampleCount; ++i)
-			{
-				float fu = random.nextFloat() * 2.0f - 1.0f;
-				float fv = random.nextFloat() * 2.0f - 1.0f;
+						Scalar hl = elm.delta.length() * Scalar(0.3f);
 
-				Vector4 position = elm.position + (u * Scalar(fu) + v * Scalar(fv)) * hl;
+						Vector4 u, v;
+						orthogonalFrame(elm.normal, u, v);
 
-				direct += sampleAnalyticalLights(
-					random,
-					position,
-					elm.normal,
-					false
-				);
-			}
-			direct /= Scalar(sampleCount);
+						Color4f direct(0.0f, 0.0f, 0.0f, 0.0f);
+						for (int32_t i = 0; i < sampleCount; ++i)
+						{
+							float fu = random.nextFloat() * 2.0f - 1.0f;
+							float fv = random.nextFloat() * 2.0f - 1.0f;
 
-            lightmapDirect->setPixel(x, y, direct.rgb1());
+							Vector4 position = elm.position + (u * Scalar(fu) + v * Scalar(fv)) * hl;
+
+							direct += sampleAnalyticalLights(
+								random,
+								position,
+								elm.normal,
+								false
+							);
+						}
+						direct /= Scalar(sampleCount);
+
+						lightmapDirect->setPixel(x, y, direct.rgb1());
+					}
+				}
+            }));
+            if (!job)
+               return nullptr;
+
+            jobs.push_back(job);
 		}
 	}
+    while (!jobs.empty())
+    {
+        jobs.back()->wait();
+        jobs.pop_back();
+    }
 
     return lightmapDirect;
 }

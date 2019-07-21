@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Ref.h"
 #include "Editor/IEditorPlugin.h"
 
 // import/export mechanism.
@@ -22,6 +23,8 @@ class IEditor;
     namespace shape
     {
 
+class TracerPanel;
+
 class T_DLLCLASS TracerEditorPlugin : public editor::IEditorPlugin
 {
     T_RTTI_CLASS;
@@ -43,6 +46,8 @@ public:
 
 private:
     editor::IEditor* m_editor;
+	editor::IEditorPageSite* m_site;
+	Ref< TracerPanel > m_tracerPanel;
 };
 
     }

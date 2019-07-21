@@ -41,6 +41,8 @@ public:
 
 	static void setTracerProcessor(TracerProcessor* tracerProcessor);
 
+	static TracerProcessor* getTracerProcessor();
+
 private:
 	std::wstring m_assetPath;
 	static Ref< TracerProcessor > ms_tracerProcessor;	

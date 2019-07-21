@@ -142,6 +142,11 @@ void TracerProcessor::waitUntilIdle()
 {
 }
 
+TracerProcessor::Status TracerProcessor::getStatus() const
+{
+	return m_status;
+}
+
 void TracerProcessor::processorThread()
 {
     Thread* thread = ThreadManager::getInstance().getCurrentThread();
@@ -163,13 +168,15 @@ void TracerProcessor::processorThread()
 
         if (task)
         {
+			m_status.active = true;
             process(task);
+			m_status.active = false;
             task = nullptr;
         }
     }
 }
 
-bool TracerProcessor::process(const TracerTask* task) const
+bool TracerProcessor::process(const TracerTask* task)
 {
     auto configuration = task->getConfiguration();
     T_FATAL_ASSERT(configuration != nullptr);
@@ -188,10 +195,17 @@ bool TracerProcessor::process(const TracerTask* task) const
     rayTracer->commit();
 
     // Trace each lightmap in task.
-    for (auto tracerOutput : task->getTracerOutputs())
+	const auto& tracerOutputs = task->getTracerOutputs();
+	for (uint32_t i = 0; i < tracerOutputs.size(); ++i)
     {
+		auto tracerOutput = tracerOutputs[i];
         auto renderModel = tracerOutput->getModel();
         T_FATAL_ASSERT(renderModel != nullptr);
+
+		// Update status.
+		m_status.current = i;
+		m_status.total = tracerOutputs.size();
+		m_status.description = tracerOutput->getName();
 
         // Calculate output size from lumel density.
         float totalWorldArea = 0.0f;
