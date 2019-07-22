@@ -1,9 +1,10 @@
 #include <limits>
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
+#include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/BinarySerializer.h"
-#include "Core/Thread/Acquire.h"
+#include "Core/System/ISharedMemory.h"
+#include "Core/System/OS.h"
+#include "Database/IEvent.h"
 #include "Database/Local/EventJournal.h"
 #include "Database/Local/LocalBus.h"
 
@@ -11,136 +12,146 @@ namespace traktor
 {
 	namespace db
 	{
+		namespace
+		{
 
-const Guid c_guidGlobalLock(L"{6DC29473-147F-4b3f-8DF5-BBC7EDF79111}");
+const uint32_t c_maxJournalSize = 8 * 1024 * 1024;
+
+#pragma pack(1)
+
+struct JournalHeader
+{
+	uint64_t nsqnr;	//!< Next sequence number.
+	uint32_t count;	//!< Number of entries in journal.
+	uint32_t last;	//!< Offset to last entry.
+	uint32_t tail;	//!< Offset to after last entry.
+};
+
+struct EntryHeader
+{
+	uint8_t sender[16];	//!< ID of sender.
+	uint64_t sqnr;		//!< Sequence number of entry.
+	uint32_t size;		//!< Size of entry event.
+};
+
+#pragma pack()
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.LocalBus", LocalBus, IProviderBus)
 
 LocalBus::LocalBus(const std::wstring& journalFileName)
 :	m_localGuid(Guid::create())
-,	m_globalLock(c_guidGlobalLock)
 ,	m_journalFileName(journalFileName)
 {
+	m_shm = OS::getInstance().createSharedMemory(journalFileName, c_maxJournalSize);
+	T_FATAL_ASSERT(m_shm != nullptr);
 }
 
 LocalBus::~LocalBus()
 {
+	T_FATAL_ASSERT(m_shm == nullptr);
 }
 
 void LocalBus::close()
 {
-	T_ANONYMOUS_VAR(Acquire< Mutex >)(m_globalLock);
-	m_eventJournal = nullptr;
+	m_shm = nullptr;
 }
 
 bool LocalBus::putEvent(const IEvent* event)
 {
-	T_ANONYMOUS_VAR(Acquire< Mutex >)(m_globalLock);
-	T_ASSERT(event);
+	T_FATAL_ASSERT(event);
 
-	m_eventJournal = nullptr;
+	uint8_t* wp = (uint8_t*)m_shm->acquireWritePointer();
+	if (!wp)
+		return false;
 
-	// Read journal.
+	JournalHeader* jh = (JournalHeader*)wp;
+
+	// Prepare tail if first event in journal.
+	if (jh->count == 0)
 	{
-		Ref< IStream > journalFile = FileSystem::getInstance().open(m_journalFileName, File::FmRead);
-		if (journalFile)
-		{
-			m_eventJournal = BinarySerializer(journalFile).readObject< EventJournal >();
-			journalFile->close();
-		}
-		if (!m_eventJournal)
-			m_eventJournal = new EventJournal();
+		T_FATAL_ASSERT(jh->tail == 0);
+		jh->tail = sizeof(JournalHeader);
 	}
 
-	// Determine sequence number.
-	uint64_t sqnr = 0;
-	if (!m_eventJournal->getEntries().empty())
-		sqnr = m_eventJournal->getEntries().back().sqnr + 1;
+	// Write entry header.
+	EntryHeader* eh = (EntryHeader*)(wp + jh->tail);
+	std::memcpy(eh->sender, m_localGuid, 16);
+	eh->sqnr = ++jh->nsqnr;
+	eh->size = 0;
 
-	// Add entry to journal.
-	m_eventJournal->addEntry(m_localGuid, sqnr, event);
-
-	// Write journal.
+	// Write entry event.
+	MemoryStream ms(eh + 1, c_maxJournalSize, false, true);
+	if (!BinarySerializer(&ms).writeObject(event))
 	{
-		Ref< IStream > journalFile = FileSystem::getInstance().open(m_journalFileName, File::FmWrite);
-		if (!journalFile)
-		{
-			log::error << L"Unable to insert event into database journal; unable to open journal for write." << Endl;
-			return false;
-		}
-
-		BinarySerializer(journalFile).writeObject(m_eventJournal);
-		journalFile->close();
+		m_shm->releaseWritePointer();
+		return false;
 	}
 
+	// Patch entry header with size of event.
+	eh->size = (uint32_t)ms.tell();
+
+	// Update journal header.
+	jh->count++;
+	jh->last = jh->tail;
+	jh->tail += sizeof(EntryHeader) + eh->size;
+
+	m_shm->releaseWritePointer();
 	return true;
 }
 
 bool LocalBus::getEvent(uint64_t& inoutSqnr, Ref< const IEvent >& outEvent, bool& outRemote)
 {
-	T_ANONYMOUS_VAR(Acquire< Mutex >)(m_globalLock);
+	const uint8_t* rp = (const uint8_t*)m_shm->acquireReadPointer();
+	if (!rp)
+		return false;
 
-	// Check already loaded entries first.
-	if (m_eventJournal)
+	const JournalHeader* jh = (const JournalHeader*)rp;
+
+	if (jh->count == 0)
 	{
-		// Cannot use pre-loaded entries to check last sequence number; need to flush it.
-		if (inoutSqnr != std::numeric_limits< uint64_t >::max())
-		{
-			for (const auto& entry : m_eventJournal->getEntries())
-			{
-				if (entry.sqnr > inoutSqnr)
-				{
-					inoutSqnr = entry.sqnr;
-					outEvent = entry.event;
-					outRemote = (bool)(entry.sender != m_localGuid);
-					return true;
-				}
-			}
-		}
-
-		// No entries in loaded journal; need to re-load journal.
-		m_eventJournal = nullptr;
-	}
-
-	// Read journal.
-	{
-		Ref< IStream > journalFile = FileSystem::getInstance().open(m_journalFileName, File::FmRead);
-		if (journalFile)
-		{
-			m_eventJournal = BinarySerializer(journalFile).readObject< EventJournal >();
-			journalFile->close();
-		}
-		if (!m_eventJournal)
-			m_eventJournal = new EventJournal();
+		m_shm->releaseReadPointer();
+		return false;
 	}
 
 	if (inoutSqnr != std::numeric_limits< uint64_t >::max())
 	{
 		// Find newer entry than given sequence number.
-		for (const auto& entry : m_eventJournal->getEntries())
+		const uint8_t* erp = rp + sizeof(JournalHeader);
+		for (uint32_t i = 0; i < jh->count; ++i)
 		{
-			if (entry.sqnr > inoutSqnr)
+			const EntryHeader* eh = (const EntryHeader*)(erp);
+			if (eh->sqnr > inoutSqnr)
 			{
-				inoutSqnr = entry.sqnr;
-				outEvent = entry.event;
-				outRemote = (bool)(entry.sender != m_localGuid);
+				inoutSqnr = eh->sqnr;
+				
+				MemoryStream ms(eh + 1, c_maxJournalSize);
+				outEvent = BinarySerializer(&ms).readObject< const IEvent >();
+
+				outRemote = (bool)(Guid(eh->sender) != m_localGuid);
+
+				m_shm->releaseReadPointer();
 				return true;
 			}
+			erp += sizeof(EntryHeader) + eh->size;
 		}
 	}
 	else
 	{
-		// Get last entry.
-		const auto& entries = m_eventJournal->getEntries();
-		if (!entries.empty())
-		{
-			inoutSqnr = entries.back().sqnr;
-			outEvent = entries.back().event;
-			outRemote = (bool)(entries.back().sender != m_localGuid);
-			return true;
-		}
+		const EntryHeader* eh = (const EntryHeader*)(rp + jh->last);
+		inoutSqnr = eh->sqnr;
+				
+		MemoryStream ms(eh + 1, c_maxJournalSize);
+		outEvent = BinarySerializer(&ms).readObject< const IEvent >();
+
+		outRemote = (bool)(Guid(eh->sender) != m_localGuid);
+
+		m_shm->releaseReadPointer();
+		return true;
 	}
 
+	m_shm->releaseReadPointer();
 	return false;
 }
 

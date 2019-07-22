@@ -27,11 +27,13 @@ public:
 
 	bool create(const std::wstring& name, uint32_t size);
 
-	virtual Ref< IStream > read(bool exclusive) override final;
+	virtual const void* acquireReadPointer(bool exclusive) override final;
 
-	virtual Ref< IStream > write() override final;
+	virtual void releaseReadPointer() override final;
 
-	virtual bool clear() override final;
+	virtual void* acquireWritePointer() override final;
+
+	virtual void releaseWritePointer() override final;
 
 private:
 	HANDLE m_hMap;

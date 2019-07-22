@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -16,7 +15,7 @@ namespace traktor
 
 class IStream;
 
-/*! \brief Process shared memory.
+/*! Process shared memory.
 *
 * Simple wrapper for shared memory across several processes.
 * Designed around a simple "single writer/multiple readers" pattern.
@@ -26,22 +25,26 @@ class T_DLLCLASS ISharedMemory : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Read data from shared memory.
+	/*! Acquire read pointer from memory.
 	 *
 	 * \param exclusive If exclusive access to memory is required.
-	 * \return Stream to shared memory, null if failed to acquire access.
+	 * \return Pointer to readable shared memory, null if failed to acquire access.
 	 */
-	virtual Ref< IStream > read(bool exclusive = false) = 0;
+	virtual const void* acquireReadPointer(bool exclusive = false) = 0;
 
-	/*! \brief Write data to shared memory.
+	/*! Release read pointer to memory.
+	 */
+	virtual void releaseReadPointer() = 0;
+
+	/*! Acquire write pointer to memory.
 	 *
-	 * \return Stream to shared memory, null if failed to acquire access.
+	 * \return Pointer to writable shared memory, null if failed to acquire access.
 	 */
-	virtual Ref< IStream > write() = 0;
+	virtual void* acquireWritePointer() = 0;
 
-	/*! \brief Clear shared memory.
+	/*! Release write pointer to memory.
 	 */
-	virtual bool clear() = 0;
+	virtual void releaseWritePointer() = 0;
 };
 
 }

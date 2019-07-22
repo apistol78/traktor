@@ -475,9 +475,6 @@ void CoreClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIProcess);
 
 	auto classISharedMemory = new AutoRuntimeClass< ISharedMemory >();
-	//classISharedMemory->addMethod("read", &ISharedMemory::read);
-	//classISharedMemory->addMethod("write", &ISharedMemory::write);
-	classISharedMemory->addMethod("clear", &ISharedMemory::clear);
 	registrar->registerClass(classISharedMemory);
 
 	auto classOS = new AutoRuntimeClass< OS >();
