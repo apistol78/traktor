@@ -365,7 +365,7 @@ Rect TreeViewItem::calculateLabelRect() const
 	Size extent = m_view->getFontMetric().getExtent(m_text);
 
 	Rect rcItem = m_view->getCellClientRect(this);
-	rcItem.left += dpi96(4 + depth * 20) + d + imageCount * d;
+	rcItem.left += dpi96(4 + depth * 20) + d + imageCount * d + (imageCount > 0 ? dpi96(4) : 0);
 	rcItem.right = rcItem.left + extent.cx + d;
 
 	return rcItem;

@@ -59,17 +59,21 @@ Ref< Widget > Menu::show(Widget* parent, const Point& at) const
 	// Ensure form is placed inside desktop.
 	std::list< Rect > desktopRects;
 	Application::getInstance()->getWidgetFactory()->getDesktopRects(desktopRects);
-	for (auto r : desktopRects)
+	auto it = std::find_if(desktopRects.begin(), desktopRects.end(), [&](const Rect& rc) {
+		return rc.inside(rcForm.getTopLeft(), true);
+	});
+	if (it != desktopRects.end())
 	{
-		if (rcForm.left < r.left)
-			rcForm = rcForm.offset(-(rcForm.left - r.left), 0);
-		if (rcForm.right > r.right)
-			rcForm = rcForm.offset(-(rcForm.right - r.right), 0);
-		if (rcForm.top < r.top)
-			rcForm = rcForm.offset(0, -(rcForm.top - r.top));
-		if (rcForm.bottom > r.bottom)
-			rcForm = rcForm.offset(0, -(rcForm.bottom - r.bottom));
+		if (rcForm.left < it->left)
+			rcForm = rcForm.offset(-(rcForm.left - it->left), 0);
+		if (rcForm.right > it->right)
+			rcForm = rcForm.offset(-(rcForm.right - it->right), 0);
+		if (rcForm.top < it->top)
+			rcForm = rcForm.offset(0, -(rcForm.top - it->top));
+		if (rcForm.bottom > it->bottom)
+			rcForm = rcForm.offset(0, -(rcForm.bottom - it->bottom));
 	}
+	form->setRect(rcForm);
 
 	// Show form.
 	form->setRect(rcForm);
@@ -119,18 +123,20 @@ const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width, 
 	// Ensure form is placed inside desktop.
 	std::list< Rect > desktopRects;
 	Application::getInstance()->getWidgetFactory()->getDesktopRects(desktopRects);
-	for (auto r : desktopRects)
+	auto it = std::find_if(desktopRects.begin(), desktopRects.end(), [&](const Rect& rc) {
+		return rc.inside(rcForm.getTopLeft(), true);
+	});
+	if (it != desktopRects.end())
 	{
-		if (rcForm.left < r.left)
-			rcForm = rcForm.offset(-(rcForm.left - r.left), 0);
-		if (rcForm.right > r.right)
-			rcForm = rcForm.offset(-(rcForm.right - r.right), 0);
-		if (rcForm.top < r.top)
-			rcForm = rcForm.offset(0, -(rcForm.top - r.top));
-		if (rcForm.bottom > r.bottom)
-			rcForm = rcForm.offset(0, -(rcForm.bottom - r.bottom));
+		if (rcForm.left < it->left)
+			rcForm = rcForm.offset(-(rcForm.left - it->left), 0);
+		if (rcForm.right > it->right)
+			rcForm = rcForm.offset(-(rcForm.right - it->right), 0);
+		if (rcForm.top < it->top)
+			rcForm = rcForm.offset(0, -(rcForm.top - it->top));
+		if (rcForm.bottom > it->bottom)
+			rcForm = rcForm.offset(0, -(rcForm.bottom - it->bottom));
 	}
-
 	form->setRect(rcForm);
 
 	// Show form.
