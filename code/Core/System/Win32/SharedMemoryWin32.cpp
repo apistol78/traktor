@@ -1,4 +1,4 @@
-#include "Core/Io/MemoryStream.h"
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/System/Win32/SharedMemoryWin32.h"
 
@@ -12,67 +12,8 @@ struct Header
 {
 	LONG readerCount;
 	LONG writerCount;
-	LONG dataSize;
 };
 #pragma pack()
-
-class SharedReaderStream : public MemoryStream
-{
-public:
-	SharedReaderStream(Header* header, void* buffer, uint32_t bufferSize)
-	:	MemoryStream(buffer, bufferSize, true, false)
-	,	m_header(header)
-	{
-	}
-
-	virtual ~SharedReaderStream()
-	{
-		close();
-	}
-
-	virtual void close()
-	{
-		if (m_header)
-		{
-			InterlockedDecrement(&m_header->readerCount);
-			MemoryStream::close();
-			m_header = 0;
-		}
-	}
-
-private:
-	Header* m_header;
-};
-
-class SharedWriterStream : public MemoryStream
-{
-public:
-	SharedWriterStream(Header* header, void* buffer, uint32_t bufferSize)
-	:	MemoryStream(buffer, bufferSize, false, true)
-	,	m_header(header)
-	{
-	}
-
-	virtual ~SharedWriterStream()
-	{
-		close();
-	}
-
-	virtual void close()
-	{
-		if (m_header)
-		{
-			m_header->dataSize = tell();
-			T_ASSERT(m_header->writerCount == 1);
-			InterlockedDecrement(&m_header->writerCount);
-			MemoryStream::close();
-			m_header = 0;
-		}
-	}
-
-private:
-	Header* m_header;
-};
 
 	}
 
@@ -80,7 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.SharedMemoryWin32", SharedMemoryWin32, ISharedM
 
 SharedMemoryWin32::SharedMemoryWin32()
 :	m_hMap(NULL)
-,	m_ptr(0)
+,	m_ptr(nullptr)
 ,	m_size(0)
 {
 }
@@ -90,7 +31,7 @@ SharedMemoryWin32::~SharedMemoryWin32()
 	if (m_ptr)
 	{
 		UnmapViewOfFile(m_ptr);
-		m_ptr = 0;
+		m_ptr = nullptr;
 	}
 	if (m_hMap)
 	{
@@ -137,25 +78,21 @@ bool SharedMemoryWin32::create(const std::wstring& name, uint32_t size)
 		return false;
 	}
 
-	// Initialize header.
+	// Initialize header and memory region, ensure everything is zero.
 	if (initializeMemory)
-	{
-		Header* header = static_cast< Header* >(m_ptr);
-		header->readerCount = 0;
-		header->writerCount = 0;
-		header->dataSize = 0;
-	}
+		std::memset(m_ptr, 0, size);
 
 	m_size = size;
 	return true;
 }
 
-Ref< IStream > SharedMemoryWin32::read(bool exclusive)
+const void* SharedMemoryWin32::acquireReadPointer(bool exclusive)
 {
 	Header* header = static_cast< Header* >(m_ptr);
 	if (!header)
-		return 0;
+		return nullptr;
 
+	// Wait until no writers so we can acquire a reader.
 	for (;;)
 	{
 		while (InterlockedCompareExchange(&header->writerCount, 0, 0) != 0)
@@ -169,14 +106,24 @@ Ref< IStream > SharedMemoryWin32::read(bool exclusive)
 		InterlockedDecrement(&header->readerCount);
 	}
 
-	return new SharedReaderStream(header, header + 1, header->dataSize);
+	return static_cast< void* >(header + 1);
 }
 
-Ref< IStream > SharedMemoryWin32::write()
+void SharedMemoryWin32::releaseReadPointer()
 {
 	Header* header = static_cast< Header* >(m_ptr);
 	if (!header)
-		return 0;
+		return;
+
+	T_FATAL_ASSERT(header->readerCount >= 1);
+	InterlockedDecrement(&header->readerCount);
+}
+
+void* SharedMemoryWin32::acquireWritePointer()
+{
+	Header* header = static_cast< Header* >(m_ptr);
+	if (!header)
+		return nullptr;
 
 	// Wait until no writers.
 	while (InterlockedCompareExchange(&header->writerCount, 1, 0) != 0)
@@ -186,27 +133,17 @@ Ref< IStream > SharedMemoryWin32::write()
 	while (InterlockedCompareExchange(&header->readerCount, 0, 0) != 0)
 		Sleep(0);
 
-	header->dataSize = 0;
-
-	return new SharedWriterStream(header, header + 1, m_size);
+	return static_cast< void* >(header + 1);
 }
 
-bool SharedMemoryWin32::clear()
+void SharedMemoryWin32::releaseWritePointer()
 {
 	Header* header = static_cast< Header* >(m_ptr);
 	if (!header)
-		return false;
+		return;
 
-	// Wait until no writers.
-	while (InterlockedCompareExchange(&header->writerCount, 1, 0) != 0)
-		Sleep(0);
-
-	// Wait until no readers.
-	while (InterlockedCompareExchange(&header->readerCount, 0, 0) != 0)
-		Sleep(0);
-
-	header->dataSize = 0;
-	return true;
+	T_FATAL_ASSERT(header->writerCount == 1);
+	InterlockedDecrement(&header->writerCount);
 }
 
 }

@@ -2,7 +2,6 @@
 
 #include "Database/Provider/IProviderBus.h"
 #include "Core/Guid.h"
-#include "Core/Thread/Mutex.h"
 
 namespace traktor
 {
@@ -12,9 +11,7 @@ class ISharedMemory;
 	namespace db
 	{
 
-class EventJournal;
-
-/*! \brief Local database event bus.
+/*! Local database event bus.
  * \ingroup Database
  *
  * Using named mutex to listen for new events across multiple
@@ -37,13 +34,8 @@ public:
 
 private:
 	Guid m_localGuid;
-	Mutex m_globalLock;
 	std::wstring m_journalFileName;
-	Ref< EventJournal > m_eventJournal;
-
-	bool lock();
-
-	void unlock();
+	Ref< ISharedMemory > m_shm;
 };
 
 	}
