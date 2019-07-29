@@ -65,6 +65,8 @@ RenderViewVk::RenderViewVk(
 ,	m_targetStateDirty(false)
 ,	m_targetId(0)
 ,	m_targetRenderPass(0)
+,	m_drawCalls(0)
+,	m_primitiveCount(0)
 {
 }
 
@@ -366,6 +368,9 @@ bool RenderViewVk::begin(
 
 	m_targetStateStack.push_back(ts);
 	m_targetStateDirty = true;
+
+	m_drawCalls = 0;
+	m_primitiveCount = 0;
 	return true;
 }
 
@@ -485,6 +490,9 @@ void RenderViewVk::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 			0 // first instance
 		);
 	}
+
+	m_drawCalls++;
+	m_primitiveCount += primitives.count * instanceCount;
 }
 
 void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
@@ -582,8 +590,8 @@ void RenderViewVk::popMarker()
 
 void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
 {
-	outStatistics.drawCalls = 0;
-	outStatistics.primitiveCount = 0;
+	outStatistics.drawCalls = m_drawCalls;
+	outStatistics.primitiveCount = m_primitiveCount;
 }
 
 bool RenderViewVk::getBackBufferContent(void* buffer) const
