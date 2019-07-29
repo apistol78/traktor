@@ -58,11 +58,11 @@ end
 
 
 -- Android, iOS
-local function generateImage(fileName, image, width, height)
+function generateImage(fileName, image, width, height)
 	local outputAspect = width / height
 
-	local sourceWidth = image:getWidth()
-	local sourceHeight = image:getHeight()
+	local sourceWidth = image.width
+	local sourceHeight = image.height
 
 	local cropWidth = sourceWidth
 	local cropHeight = math.floor(sourceWidth / outputAspect)
